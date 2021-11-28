@@ -1299,12 +1299,10 @@ void OSystem_Android::pushEvent(const Common::Event &event) {
 	_event_queue_lock->unlock();
 }
 
-void OSystem_Android::pushKeyPressEvent(Common::Event &event) {
+void OSystem_Android::pushEvent(const Common::Event &event1, const Common::Event &event2) {
 	_event_queue_lock->lock();
-	event.type = Common::EVENT_KEYDOWN;
-	_event_queue.push(event);
-	event.type = Common::EVENT_KEYUP;
-	_event_queue.push(event);
+	_event_queue.push(event1);
+	_event_queue.push(event2);
 	_event_queue_lock->unlock();
 }
 

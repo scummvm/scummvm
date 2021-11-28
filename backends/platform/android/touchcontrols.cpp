@@ -79,23 +79,23 @@ void TouchControls::touchToJoystickState(int dX, int dY, FunctionState &state) {
 	}
 
 	if (dY > abs(dX)) {
-		state.main = Common::KEYCODE_DOWN;
+		state.main = Common::JOYSTICK_BUTTON_DPAD_DOWN;
 		state.clip = Common::Rect(256, 0, 384, 128);
 	} else if (dX > abs(dY)) {
-		state.main = Common::KEYCODE_RIGHT;
+		state.main = Common::JOYSTICK_BUTTON_DPAD_RIGHT;
 		state.clip = Common::Rect(128, 0, 256, 128);
 	} else if (-dY > abs(dX)) {
-		state.main = Common::KEYCODE_UP;
+		state.main = Common::JOYSTICK_BUTTON_DPAD_UP;
 		state.clip = Common::Rect(0, 0, 128, 128);
 	} else if (-dX > abs(dY)) {
-		state.main = Common::KEYCODE_LEFT;
+		state.main = Common::JOYSTICK_BUTTON_DPAD_LEFT;
 		state.clip = Common::Rect(384, 0, 512, 128);
 	} else {
 		return;
 	}
 
 	if (sqNorm > 20000) {
-		state.modifier = Common::KEYCODE_LSHIFT;
+		state.modifier = Common::JOYSTICK_BUTTON_RIGHT_SHOULDER;
 	}
 
 }
@@ -103,7 +103,7 @@ void TouchControls::touchToJoystickState(int dX, int dY, FunctionState &state) {
 void TouchControls::touchToCenterState(int dX, int dY, FunctionState &state) {
 	int sqNorm = dX * dX + dY * dY;
 	if (sqNorm < 50 * 50) {
-		state.main = Common::KEYCODE_RETURN;
+		state.main = Common::JOYSTICK_BUTTON_GUIDE;
 	}
 }
 
@@ -112,41 +112,41 @@ void TouchControls::touchToRightState(int dX, int dY, FunctionState &state) {
 		return;
 	}
 
-	if (dY > abs(dX)) {
-		// down
-		state.main = Common::KEYCODE_PAGEDOWN;
-		state.clip = Common::Rect(256, 0, 384, 128);
+	if (dX > abs(dY)) {
+		// right
+		state.main = Common::JOYSTICK_BUTTON_RIGHT_STICK;
+		state.clip = Common::Rect(512, 128, 640, 256);
 		return;
-	} else if (-dY > abs(dX)) {
-		// up
-		state.main = Common::KEYCODE_PAGEUP;
-		state.clip = Common::Rect(0, 0, 128, 128);
+	} else if (-dX > abs(dY)) {
+		// left
+		state.main = Common::JOYSTICK_BUTTON_LEFT_STICK;
+		state.clip = Common::Rect(512, 0, 640, 128);
 		return;
 	}
 
-	static Common::KeyCode keycodes[5] = {
-		Common::KEYCODE_i, Common::KEYCODE_p, // left zone
-		Common::KEYCODE_INVALID, // center
-		Common::KEYCODE_u, Common::KEYCODE_l // right zone
+	static Common::JoystickButton buttons[5] = {
+		Common::JOYSTICK_BUTTON_Y, Common::JOYSTICK_BUTTON_B, // top zone
+		Common::JOYSTICK_BUTTON_INVALID, // center
+		Common::JOYSTICK_BUTTON_A, Common::JOYSTICK_BUTTON_X // bottom zone
 	};
 
 	static int16 clips[5][4] = {
-		{   0, 128, 128, 256 }, // i
-		{ 128, 128, 256, 256 }, // p
+		{   0, 128, 128, 256 }, // y
+		{ 128, 128, 256, 256 }, // b
 		{   0,   0,   0,   0 }, // center
-		{ 256, 128, 384, 256 }, // u
-		{ 384, 128, 512, 256 }  // l
+		{ 256, 128, 384, 256 }, // a
+		{ 384, 128, 512, 256 }  // x
 	};
-	static const uint offset = (ARRAYSIZE(keycodes) - 1) / 2;
+	static const uint offset = (ARRAYSIZE(buttons) - 1) / 2;
 
-	int idx = (dX / 100) + offset;
+	int idx = (dY / 100) + offset;
 	if (idx < 0) {
 		idx = 0;
 	}
-	if (idx >= ARRAYSIZE(keycodes)) {
-		idx = ARRAYSIZE(keycodes) - 1;
+	if (idx >= ARRAYSIZE(buttons)) {
+		idx = ARRAYSIZE(buttons) - 1;
 	}
-	state.main = keycodes[idx];
+	state.main = buttons[idx];
 	state.clip = Common::Rect(clips[idx][0], clips[idx][1], clips[idx][2], clips[idx][3]);
 }
 
@@ -266,18 +266,18 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 
 		FunctionState &oldState = _functionStates[ptr->function];
 
-		if (!behavior.keyPressOnRelease) {
+		if (!behavior.pressOnRelease) {
 			// send key presses continuously
 			// first old remove main key, then update modifier, then press new main key
 			if (oldState.main != newState.main) {
-				keyUp(oldState.main);
+				buttonUp(oldState.main);
 			}
 			if (oldState.modifier != newState.modifier) {
-				keyUp(oldState.modifier);
-				keyDown(newState.modifier);
+				buttonUp(oldState.modifier);
+				buttonDown(newState.modifier);
 			}
 			if (oldState.main != newState.main) {
-				keyDown(newState.main);
+				buttonDown(newState.main);
 			}
 		}
 		oldState = newState;
@@ -290,10 +290,10 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 		FunctionBehavior &behavior = functionBehaviors[ptr->function];
 		FunctionState &functionState = _functionStates[ptr->function];
 
-		if (!behavior.keyPressOnRelease) {
-			// We sent key down continously: keyUp everything
-			keyUp(functionState.main);
-			keyUp(functionState.modifier);
+		if (!behavior.pressOnRelease) {
+			// We sent key down continously: buttonUp everything
+			buttonUp(functionState.main);
+			buttonUp(functionState.modifier);
 		} else {
 			int dX = x - ptr->startX;
 			int dY = y - ptr->startY;
@@ -301,9 +301,9 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 			FunctionState newState;
 			functionBehaviors[ptr->function].touchToState(dX, dY, newState);
 
-			keyDown(newState.modifier);
-			keyPress(newState.main);
-			keyUp(newState.modifier);
+			buttonDown(newState.modifier);
+			buttonPress(newState.main);
+			buttonUp(newState.modifier);
 		}
 
 		functionState.reset();
@@ -318,10 +318,10 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 			FunctionBehavior &behavior = functionBehaviors[i];
 			FunctionState &functionState = _functionStates[i];
 
-			if (!behavior.keyPressOnRelease) {
-				// We sent key down continously: keyUp everything
-				keyUp(functionState.main);
-				keyUp(functionState.modifier);
+			if (!behavior.pressOnRelease) {
+				// We sent key down continously: buttonUp everything
+				buttonUp(functionState.main);
+				buttonUp(functionState.modifier);
 			}
 
 			functionState.reset();
@@ -329,34 +329,37 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 	}
 }
 
-void TouchControls::keyDown(Common::KeyCode kc) {
-	if (kc == Common::KEYCODE_INVALID) {
+void TouchControls::buttonDown(Common::JoystickButton jb) {
+	if (jb == Common::JOYSTICK_BUTTON_INVALID) {
 		return;
 	}
 
 	Common::Event ev;
-	ev.type = Common::EVENT_KEYDOWN;
-	ev.kbd.keycode = kc;
+	ev.type = Common::EVENT_JOYBUTTON_DOWN;
+	ev.joystick.button = jb;
 	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
-void TouchControls::keyUp(Common::KeyCode kc) {
-	if (kc == Common::KEYCODE_INVALID) {
+void TouchControls::buttonUp(Common::JoystickButton jb) {
+	if (jb == Common::JOYSTICK_BUTTON_INVALID) {
 		return;
 	}
 
 	Common::Event ev;
-	ev.type = Common::EVENT_KEYUP;
-	ev.kbd.keycode = kc;
+	ev.type = Common::EVENT_JOYBUTTON_UP;
+	ev.joystick.button = jb;
 	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
-void TouchControls::keyPress(Common::KeyCode kc) {
-	if (kc == Common::KEYCODE_INVALID) {
+void TouchControls::buttonPress(Common::JoystickButton jb) {
+	if (jb == Common::JOYSTICK_BUTTON_INVALID) {
 		return;
 	}
 
-	Common::Event ev;
-	ev.kbd.keycode = kc;
-	dynamic_cast<OSystem_Android *>(g_system)->pushKeyPressEvent(ev);
+	Common::Event ev1, ev2;
+	ev1.type = Common::EVENT_JOYBUTTON_DOWN;
+	ev1.joystick.button = jb;
+	ev2.type = Common::EVENT_JOYBUTTON_UP;
+	ev2.joystick.button = jb;
+	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev1, ev2);
 }
