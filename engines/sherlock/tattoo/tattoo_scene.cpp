@@ -80,7 +80,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 		talk._talkToAbort = false;
 	}
 
-	// Check if it's a scene we need to keep trakc track of how many times we've visited
+	// Check if it's a scene we need to keep track of how many times we've visited
 	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
 		if (_sceneTripCounters[idx]._sceneNumber == _currentScene) {
 			if (--_sceneTripCounters[idx]._numTimes == 0) {
