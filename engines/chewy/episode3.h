@@ -79,6 +79,7 @@ void r49_talk_boy(int16 aad_nr);
 void r49_look_hotel();
 
 int16 r49_use_boy();
+void r49_use_boy_cigar();
 
 void r49_entry(int16 eib_nr);
 

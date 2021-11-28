@@ -2377,11 +2377,24 @@ int16 calc_person_txt(int16 p_nr) {
 
 int16 calc_person_click(int16 p_nr) {
 	int16 action_ret = false;
+
 	switch (p_nr) {
 	case P_CHEWY:
 		switch (_G(spieler).AkInvent) {
 		case K_MASKE_INV:
 			r28_set_pump();
+			action_ret = true;
+			break;
+
+		case CIGAR_INV:
+			if (_G(spieler).PersonRoomNr[P_CHEWY] == 49) {
+				r49_use_boy_cigar();
+				action_ret = true;
+			}
+			break;
+
+		case 112:
+			r90_proc2();
 			action_ret = true;
 			break;
 
@@ -2404,7 +2417,6 @@ int16 calc_person_click(int16 p_nr) {
 		default:
 			action_ret = false;
 			break;
-
 		}
 		break;
 
@@ -2432,6 +2444,7 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	}
+
 	return action_ret;
 }
 
