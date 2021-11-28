@@ -26,8 +26,9 @@
 namespace Bbvs {
 
 enum BBVSGameFeatures {
-	GF_GUILANGSWITCH =    (1 << 0), // If GUI language switch is required for menus
-	GF_LOOGIE_DEMO   =    (1 << 1)
+	GF_GUILANGSWITCH   =    (1 << 0), // If GUI language switch is required for menus
+	GF_LOOGIE_DEMO     =    (1 << 1),
+	GF_LOOGIE_ALT_DEMO =    (1 << 2)
 };
 
 } // End of namespace Bbvs

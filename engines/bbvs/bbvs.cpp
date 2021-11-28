@@ -177,7 +177,7 @@ Common::Error BbvsEngine::run() {
 	_spriteModule = new SpriteModule();
 	_sound = new SoundMan();
 
-	if (isLoogieDemo()) {
+	if (isLoogieDemo() || isLoogieAltDemo()) {
 		Minigame *minigame = new MinigameBbLoogie(this);
 
 		minigame->run(true);

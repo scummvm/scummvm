@@ -468,7 +468,7 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 		_objects[2].kind = 1;
 	}
 
-	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+	if (_vm->isDemo()) {
 		_objects[0].frameIndex = 0;
 	}
 
@@ -576,7 +576,7 @@ bool MinigameBbLoogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) 
 	} else if (_bonusDisplayDelay2 > 0) {
 		if (--_bonusDisplayDelay2 == 0) {
 			_bonusDisplayDelay3 = 150;
-			if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+			if (!_vm->isDemo()) {
 				playSound(38);
 			}
 		} else if (_timeBonusCtr > 0) {
@@ -890,7 +890,7 @@ void MinigameBbLoogie::updateCar(int objIndex) {
 				loogieObj->ticks = getAnimation(5)->frameTicks[12];
 				obj->frameIndex = 4;
 				obj->ticks = getAnimation(2)->frameTicks[4];
-				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+				if (!_vm->isDemo()) {
 					playSound(34);
 				}
 				playRndSound();
@@ -927,7 +927,7 @@ void MinigameBbLoogie::updateBike(int objIndex) {
 				loogieObj->ticks = getAnimation(5)->frameTicks[12];
 				obj->frameIndex = 4;
 				obj->ticks = getAnimation(3)->frameTicks[4];
-				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+				if (!_vm->isDemo()) {
 					playSound(35);
 				}
 				playRndSound();
@@ -964,7 +964,7 @@ void MinigameBbLoogie::updateSquirrel(int objIndex) {
 				obj->x += kSquirrelOffX[obj->frameIndex];
 				obj->frameIndex = obj->frameIndex < 29 ? 54 : 58;
 				obj->ticks = getAnimation(7)->frameTicks[obj->frameIndex];
-				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+				if (!_vm->isDemo()) {
 					playSound(36);
 				}
 				playRndSound();
@@ -999,7 +999,7 @@ void MinigameBbLoogie::updatePaperPlane(int objIndex) {
 				obj->frameIndex = (obj->frameIndex + 1) % 8;
 				obj->xIncr = kPlaneOffX[obj->frameIndex];
 				obj->yIncr = kPlaneOffY[obj->frameIndex];
-				if (!(_vm->_gameDescription->flags & ADGF_DEMO)) {
+				if (!_vm->isDemo()) {
 					playSound(37);
 				}
 				playRndSound();
@@ -1310,7 +1310,7 @@ void MinigameBbLoogie::playRndSound() {
 
 bool MinigameBbLoogie::run(bool fromMainGame) {
 
-	if (!_vm->isLoogieDemo()) {
+	if (!_vm->isLoogieDemo() && !_vm->isLoogieAltDemo()) {
 		Common::strlcpy(_prefix, "bbloogie/", 20);
 	} else {
 		_prefix[0] = 0;
@@ -1320,7 +1320,7 @@ bool MinigameBbLoogie::run(bool fromMainGame) {
 
 	_numbersAnim = getAnimation(9);
 
-	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+	if (_vm->isDemo() && !_vm->isLoogieAltDemo()) {
 		_backgroundSpriteIndex = 209;
 		_titleScreenSpriteIndex = 210;
 	} else {
@@ -1403,7 +1403,7 @@ void MinigameBbLoogie::update() {
 }
 
 void MinigameBbLoogie::loadSounds() {
-	if (_vm->_gameDescription->flags & ADGF_DEMO) {
+	if (_vm->isDemo()) {
 		for (uint i = 0; i < kDemoSoundFilenamesCount; ++i) {
 			Common::String filename = Common::String::format("%s%s", _prefix, kDemoSoundFilenames[i]);
 			_vm->_sound->loadSound(filename.c_str());

@@ -215,7 +215,7 @@ bool BbvsEngine::changeScene() {
 		_sceneVisited[_currSceneNum] = 1;
 		_playVideoNumber = _newSceneNum - 30;
 		_currSceneNum = _newSceneNum;
-		if (_gameDescription->flags & ADGF_DEMO)
+		if (isDemo())
 			_newSceneNum = kAfterVideoSceneNumDemo[_playVideoNumber];
 		else
 			_newSceneNum = kAfterVideoSceneNum[_playVideoNumber];

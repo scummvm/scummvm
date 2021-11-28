@@ -69,7 +69,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("BBLOOGIE.000", "83921c65bd93be7e35056c31bd37310b", 324764),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		GF_LOOGIE_DEMO | ADGF_DEMO | ADGF_DROPPLATFORM,
+		GF_LOOGIE_ALT_DEMO | ADGF_DEMO | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 

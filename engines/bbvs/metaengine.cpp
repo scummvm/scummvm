@@ -31,8 +31,16 @@
 
 namespace Bbvs {
 
+bool BbvsEngine::isDemo() const {
+	return _gameDescription->flags & ADGF_DEMO;
+}
+
 bool BbvsEngine::isLoogieDemo() const {
 	return _gameDescription->flags & GF_LOOGIE_DEMO;
+}
+
+bool BbvsEngine::isLoogieAltDemo() const {
+	return _gameDescription->flags & GF_LOOGIE_ALT_DEMO;
 }
 
 } // End of namespace Bbvs
