@@ -55,6 +55,9 @@ int r71_proc6() {
 	return 0;
 }
 
+void r71_proc7() {
+}
+
 int r73_proc1() {
 	return 0;
 }
@@ -111,6 +114,9 @@ int r82_proc3() {
 
 int r82_proc6() {
 	return 0;
+}
+
+void r82_proc8() {
 }
 
 int r82_proc9() {
