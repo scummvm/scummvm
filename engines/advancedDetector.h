@@ -399,11 +399,11 @@ protected:
 
 private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
-	void sanityCheck() const;
-	bool sanityCheckEntry(const ADGameDescription *g) const;
+	void preprocessDescriptions() const;
+	bool isEntryGrayListed(const ADGameDescription *g) const;
 
 private:
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _blackListMap;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;
 
 protected:
 	/**
