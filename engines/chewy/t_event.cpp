@@ -2196,6 +2196,30 @@ void calc_inv_use_txt(int16 test_nr) {
 	}
 }
 
+static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
+	int16 txt_anz;
+	const char *s;
+
+	s = atds->ats_get_txt(31, TXT_MARK_USE, &txt_anz, 16);
+	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
+
+	atds->load_atds(cur_inv, INV_ATS_DATEI);
+	ERROR
+
+	s = atds->ats_get_txt(cur_inv, TXT_MARK_NAME, &txt_anz, 6);
+	_G(calc_inv_text_str1) += s;
+
+	s = atds->ats_get_txt(32, TXT_MARK_USE, &txt_anz, 16);
+	_G(calc_inv_text_str2) = Common::String::format("%s ", s);
+
+	atds->load_atds(test_nr, INV_ATS_DATEI);
+	ERROR
+
+	s = atds->ats_get_txt(test_nr, TXT_MARK_NAME, &txt_anz, 6);
+	_G(calc_inv_text_str2) += s;
+	_G(calc_inv_text_set) = true;
+}
+
 bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	int16 inv_mode;
 	int16 txt_nr = 0;
@@ -2203,6 +2227,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	int16 r_val = 0;
 	int16 ok;
 	ret = false;
+
 	switch (mode) {
 	case INVENTAR_NORMAL:
 		inv_mode = IUID_IIB;
@@ -2231,8 +2256,8 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	default:
 		inv_mode = -1;
 		break;
-
 	}
+
 	if (inv_mode != -1) {
 		txt_nr = atds->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
 		ERROR
@@ -2252,12 +2277,18 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 			if (inv_mode == IUID_SPIELER)
 				ok = calc_person_click(test_nr);
 			if (!ok) {
-				warning("FIXME - use of random");
+				r_val = g_engine->getRandomNumber(5);
 
-				ret = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+				if (flags.InventMenu) {
+					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
+					look_invent(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
+				} else {
+					ret = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+				}
 			}
 		}
 	}
+
 	return ret;
 }
 

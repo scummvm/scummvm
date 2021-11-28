@@ -92,6 +92,10 @@ public:
 	 * Save savegame data
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
+
+	uint getRandomNumber(uint max) {
+		return _rnd.getRandomNumber(max);
+	}
 };
 
 extern ChewyEngine *g_engine;
