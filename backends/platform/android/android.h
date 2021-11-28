@@ -132,7 +132,7 @@ public:
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);
-	void pushKeyPressEvent(Common::Event &event);
+	void pushEvent(const Common::Event &event1, const Common::Event &event2);
 
 	TouchControls &getTouchControls() { return _touchControls; }
 

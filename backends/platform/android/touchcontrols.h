@@ -81,30 +81,30 @@ private:
 	Pointer *findPointerFromFunction(Function function);
 
 	struct FunctionState {
-		FunctionState() : main(Common::KEYCODE_INVALID),
-			modifier(Common::KEYCODE_INVALID) {}
+		FunctionState() : main(Common::JOYSTICK_BUTTON_INVALID),
+			modifier(Common::JOYSTICK_BUTTON_INVALID) {}
 		void reset() {
-			main = Common::KEYCODE_INVALID;
-			modifier = Common::KEYCODE_INVALID;
+			main = Common::JOYSTICK_BUTTON_INVALID;
+			modifier = Common::JOYSTICK_BUTTON_INVALID;
 			clip = Common::Rect();
 		}
 
-		Common::KeyCode main;
-		Common::KeyCode modifier;
+		Common::JoystickButton main;
+		Common::JoystickButton modifier;
 		Common::Rect clip;
 	};
 
 	FunctionState _functionStates[kFunctionMax + 1];
 
 	GLESTexture *_arrows_texture;
-	void keyDown(Common::KeyCode kc);
-	void keyUp(Common::KeyCode kc);
-	void keyPress(Common::KeyCode kc);
+	void buttonDown(Common::JoystickButton jb);
+	void buttonUp(Common::JoystickButton jb);
+	void buttonPress(Common::JoystickButton jb);
 
 	/* Functions implementations */
 	struct FunctionBehavior {
 		void (*touchToState)(int, int, TouchControls::FunctionState &);
-		bool keyPressOnRelease;
+		bool pressOnRelease;
 		float xRatio;
 		float yRatio;
 	};
