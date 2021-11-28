@@ -261,10 +261,8 @@ int People::findSpeaker(int speaker) {
 		Object &obj = scene._bgShapes[idx];
 
 		if (obj._type == ACTIVE_BG_SHAPE) {
-			Common::String name(obj._name.c_str(), obj._name.c_str() + 4);
-
-			if (name.equalsIgnoreCase(portrait)
-				&& obj._name[4] >= '0' && obj._name[4] <= '9')
+			if (scumm_strnicmp(portrait, obj._name.c_str(), 4) == 0
+				&& Common::isDigit(obj._name[4]))
 				return idx;
 		}
 	}
