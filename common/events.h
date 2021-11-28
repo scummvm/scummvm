@@ -144,6 +144,7 @@ struct JoystickState {
  *  The list of named buttons available from a joystick.
  */
 enum JoystickButton {
+	JOYSTICK_BUTTON_INVALID,
 	JOYSTICK_BUTTON_A,
 	JOYSTICK_BUTTON_B,
 	JOYSTICK_BUTTON_X,
