@@ -718,6 +718,43 @@ int16 r49_use_boy() {
 	return action_ret;
 }
 
+void r49_use_boy_cigar() {
+	hide_cur();
+	del_inventar(_G(spieler).AkInvent);
+	r49_talk_boy(263);
+	SetUpScreenFunc = nullptr;
+	auto_move(5, 0);
+
+	int16 zoom = room->room_info->ZoomFak;
+	room->set_zoom(zoom);
+	go_auto_xy(416, 79, 1, 0);
+	set_person_spr(0, 1);
+	flags.NoScroll = true;
+
+	auto_scroll(164, 0);
+	flic_cut(67, 0);
+	test_intro(17);
+	ERROR
+
+	room->set_timer_status(255, 0);
+	uhr->reset_timer(_G(timer_nr)[0], 0);
+	det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
+	det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
+
+	flags.NoScroll = false;
+	set_person_spr(1, 0);
+	start_aad_wait(264, -1);
+	room->set_zoom(zoom);
+
+	obj->add_inventar(68, &room_blk);
+	inventory_2_cur(68);
+	atds->set_steuer_bit(318, 1, 1);
+
+	SetUpScreenFunc = r49setup_func;
+	_G(spieler).R49BoyWeg = true;
+	show_cur();
+}
+
 void r49_talk_boy() {
 	if (!_G(spieler).R49BoyWeg) {
 		auto_move(3, P_CHEWY);

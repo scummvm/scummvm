@@ -76,6 +76,7 @@ int r89_proc3();
 int r89_proc4();
 int r89_proc5();
 
+void r90_proc2();
 int r90_proc3();
 int r90_proc4();
 int r90_proc6();

@@ -170,6 +170,9 @@ int r89_proc5() {
 	return 0;
 }
 
+void r90_proc2() {
+}
+
 int r90_proc3() {
 	return 0;
 }
