@@ -34,6 +34,7 @@ namespace Chewy {
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
+#define ANI_5 5
 #define GITTER_BLITZEN 7
 
 void play_scene_ani(int16 nr, int16 mode) {
@@ -50,19 +51,22 @@ void play_scene_ani(int16 nr, int16 mode) {
 	r_nr = _G(spieler).PersonRoomNr[P_CHEWY] * 100 + nr;
 
 	switch (r_nr) {
-
 	case ROOM_2_3:
-		start_aad(49);
+		det->start_detail(ANI_5, 255, ANI_VOR);
+		start_spz(ANI_5, 255, 0, ANI_VOR);
+		start_aad_wait(49, -1);
+		det->stop_detail(ANI_5);
+
 		det->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
 		_G(spieler).R2KabelBork = 1;
 		del_inventar(_G(spieler).AkInvent);
+
 		atds->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
 		atds->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
 		atds->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
 		atds->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
 		atds->set_ats_str(11, 1, ATS_DATEI);
-
 		break;
 
 	case ROOM_8_17:
@@ -74,17 +78,15 @@ void play_scene_ani(int16 nr, int16 mode) {
 		del_inventar(_G(spieler).AkInvent);
 		break;
 
+	default:
+		break;
 	}
+
 	start_detail_wait(nr, 1, mode);
 
 	switch (r_nr) {
-
-	case ROOM_0_3:
-		start_detail_wait(STERNE_ANI, 2, ANI_VOR);
-		set_person_pos(222, 106, P_CHEWY, P_LEFT);
-		break;
-
 	case ROOM_2_3:
+		start_spz(16, 255, 0, P_CHEWY);
 		start_aad_wait(47, -1);
 		break;
 
@@ -94,7 +96,6 @@ void play_scene_ani(int16 nr, int16 mode) {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		atds->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
 		atds->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
-
 		break;
 
 	case ROOM_3_1:
@@ -103,6 +104,9 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	case ROOM_9_4:
 		r9_gtuer();
+		break;
+
+	default:
 		break;
 	}
 
@@ -292,6 +296,7 @@ void check_ged_action(int16 index) {
 	int16 flag;
 	index -= 50;
 	index /= 4;
+
 	if (!flags.GedAction) {
 		flags.GedAction = true;
 		flag = false;
