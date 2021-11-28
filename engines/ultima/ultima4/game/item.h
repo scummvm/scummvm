@@ -44,7 +44,6 @@ class Items;
 typedef bool (Items::*IsInInventoryProc)(int item);
 typedef void (Items::*InventoryActionProc)(int item);
 
-#include "common/pack-start.h"	// START STRUCT PACKING
 struct ItemLocation {
 	const char *_name;
 	const char *_shortName;
@@ -54,8 +53,7 @@ struct ItemLocation {
 	InventoryActionProc _useItem;
 	int _data;
 	byte _conditions;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+};
 
 typedef void (*DestroyAllCreaturesCallback)();
 #define N_ITEMS 34
