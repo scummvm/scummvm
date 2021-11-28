@@ -335,7 +335,9 @@ private:
 	uint8 _history[256];
 	uint8 _techData[4096];
 	char _ennemyNamePt2[20];
-
+	char _nameBuffer[20];
+	uint8 _messageToBePrinted[400];
+	
 	uint8 *_mapBitmapRef;
 	uint8 *_mapUnknownPtr;
 	uint8 *_mapMonstersPtr;

@@ -202,6 +202,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	for (int i = 0; i < 20; ++i) {
 		_portraitSubFilesArray[i] = nullptr;
 		_ennemyNamePt2[i] = 0;
+		_nameBuffer[i] = 0;
 	}
 
 	for (int i = 0; i < 100; ++i)
@@ -247,6 +248,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C894 = 0;
 	_word2C8D7 = -1;
 	_word2C87A = false;
+
+	memset(_messageToBePrinted, 0, 400);
 }
 
 EfhEngine::~EfhEngine() {
@@ -1140,6 +1143,7 @@ int16 EfhEngine::handleCharacterJoining() {
 		return -1;
 
 	removeCharacterFromTeam(charId);
+	return 2;
 }
 
 void EfhEngine::drawMapWindow() {
@@ -1157,7 +1161,7 @@ void EfhEngine::copyString(uint8 *srcStr, uint8 *destStr) {
 
 int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX, int maxY, int argC) {	
 	bool doneFlag = false;
-	int16 var_F2 = 0xFFFF;
+	int16 var_F2 = -1;
 	int16 var_F0 = 0xFF;
 	int16 var_EE = 0xFF;
 	const char *stringToDisplay = " ";
@@ -1446,7 +1450,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosX = _mapPosX = scriptNumberArray[0];
 				_oldMapPosY = _mapPosY = scriptNumberArray[1];
 				_largeMapFlag = true;
-				_word2C894 = 0xFFFF;
+				_word2C894 = -1;
 			}
 			break;
 		case 0x16:
@@ -1494,8 +1498,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				} else {
 					warning("STUB case 0x18");
 					copyString((uint8 *)_npcBuf[_teamCharId[counter]]._name, (uint8 *)_ennemyNamePt2);
-					copyString((uint8 *)_items[var110]._name, buffer);
-					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, (char *)buffer);
+					copyString((uint8 *)_items[var110]._name, (uint8 *)_nameBuffer);
+					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, _nameBuffer);
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
@@ -1507,7 +1511,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				if (var110 != -1) {
 					_mapUnknownPtr[var110 * 9 + 1] = 0xFF;
 				}
-				_word2C894 = 0xFFFF;
+				_word2C894 = -1;
 			}
 			break;
 		case 0x19:
@@ -1592,28 +1596,29 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 	return var_F0;
 }
 
-void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
+void EfhEngine::sub133E5(uint8 *srcPtr, int posX, int posY, int maxX, int maxY, int argC) {
 	uint16 stringIdx = 0;
-	uint8 message[200];
-	memset(message, 0, sizeof(message));
+	uint8 *impPtr = srcPtr;
+	memset(_messageToBePrinted, 0, 200);
 	
 	for (;;) {
 		uint8 curChar = *impPtr;
+		
 		if (curChar == 0 || curChar == 0x40 || curChar == 0x60)
 			break;
 
 		if (curChar == 0x0D) {
-			message[stringIdx++] = ' ';
+			_messageToBePrinted[stringIdx++] = ' ';
 			++impPtr;
 		} else if (curChar == 0x0A) {
 			++impPtr;
 		} else {
-			message[stringIdx++] = curChar;
+			_messageToBePrinted[stringIdx++] = curChar;
 			++impPtr;
 		}
 	}
 
-	script_parse(message, posX, posY, maxX, maxY, argC);
+	script_parse(_messageToBePrinted, posX, posY, maxX, maxY, argC);
 }
 
 void EfhEngine::sub1512B() {
