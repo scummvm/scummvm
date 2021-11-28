@@ -51,19 +51,14 @@ class MsgScroll;
 
 #define TORCH_LIGHT_LEVEL    3
 
-// Explicit packing used below to fix MSVC warning
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 struct U6ObjectType { // object properties & usecode
+	bool (U6UseCode::*usefunc)(Obj *, UseCodeEvent); // usecode function
 	uint16 obj_n; // type
 	uint8 frame_n; // 0xFF matches any frame
 	uint8 dist; // distance to trigger (depends on event, usually 0)
 	UseCodeEvent trigger; // accepted event(s)
-	bool (U6UseCode::*usefunc)(Obj *, UseCodeEvent); // usecode function
 	uint16 flags; // properties (OBJTYPE)
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
+};
 
 typedef enum {
 	LAT,
