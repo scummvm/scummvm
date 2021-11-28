@@ -540,7 +540,7 @@ struct Flags {
 	uint16 StaticUseTxt : 1;
 	uint16 GedAction : 1;
 	uint16 ChAutoMov : 1;
-	uint16 ChAutoMovXy : 1;
+	uint16 ChAutoMovXy : 1;		// TODO: Check removal in favor of stopAutoMove
 	uint16 BreakAMov : 1;
 
 	uint16 AtsAction : 1;

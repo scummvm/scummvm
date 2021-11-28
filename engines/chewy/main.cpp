@@ -1353,18 +1353,21 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 	int16 move_status;
 	int16 tmp;
 	int16 ende;
-	if (!flags.ChAutoMovXy) {
+
+	if (!_G(stopAutoMove)[p_nr] &&
+			_G(spieler).PersonRoomNr[p_nr] == _G(spieler).PersonRoomNr[P_CHEWY]) {
 		move_status = true;
-		flags.ChAutoMovXy = true;
 		tmp = _G(maus_links_click);
 		_G(maus_links_click) = false;
 		ende = 0;
+
 		spieler_mi[p_nr].XyzStart[0] = spieler_vector[p_nr].Xypos[0];
 		spieler_mi[p_nr].XyzStart[1] = spieler_vector[p_nr].Xypos[1];
 		spieler_mi[p_nr].XyzEnd[0] = x;
 		spieler_mi[p_nr].XyzEnd[1] = y;
-		mov->get_mov_vector((int16
-		                     *)spieler_mi[p_nr].XyzStart, spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]);
+		mov->get_mov_vector((int16 *)spieler_mi[p_nr].XyzStart,
+			spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]);
+
 		if (spieler_vector[p_nr].Count)
 			get_phase(&spieler_vector[p_nr], &spieler_mi[p_nr]);
 		if (mode == ANI_WAIT) {
@@ -1385,8 +1388,8 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 				set_up_screen(DO_SETUP);
 			}
 		}
+
 		_G(maus_links_click) = tmp;
-		flags.ChAutoMovXy = false;
 	}
 }
 
