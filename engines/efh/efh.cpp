@@ -59,6 +59,87 @@ void EfhGraphicsStruct::copy(EfhGraphicsStruct *src) {
 	_area = src->_area;
 }
 
+void InvObject::init() {
+	_ref = 0;
+	_stat1 = 0;
+	_stat2 = 0;
+}
+
+void ItemStruct::init() {
+	for (int16 idx = 0; idx < 15; ++idx)
+		_name[idx] = 0;
+
+	_damage = 0;
+	_defense = 0;
+	_attacks = 0;
+	_uses = 0;
+	field_13 = 0;
+	_range = 0;
+	_attackType = 0;
+	field_16 = 0;
+	field17_attackTypeDefense = 0;
+	field_18 = 0;
+	field_19 = 0;
+	field_1A = 0;
+}
+
+void NPCStruct::init() {
+	for (int i = 0; i < 9; ++i)
+		_name[i] =  0;
+	field_9 = 0;
+	field_A = 0;
+	field_B = 0;
+	field_C = 0;
+	field_D = 0;
+	field_E = 0;
+	field_F = 0;
+	field_10 = 0;
+	field_11 = 0;
+	field_12 = 0;
+	field_14 = 0;
+	_xp = 0;
+
+	for (int i = 0; i < 15; ++i)
+		_activeScore[i] = 0;
+
+	for (int i = 0; i < 11; ++i) {
+		_passiveScore[i] = 0;
+		_infoScore[i] = 0;
+	}
+
+	field_3F = 0;
+	field_40 = 0;
+
+	for (int i = 0; i < 10; ++i)
+		_inventory[i].init();
+	
+	_possessivePronounSHL6 = 0;
+	_speed = 0;
+	field_6B = 0;
+	field_6C = 0;
+	field_6D = 0;
+	_unkItemId = 0;
+	field_6F = 0;
+	field_70 = 0;
+	field_71 = 0;
+	field_72 = 0;
+	field_73 = 0;
+	_hitPoints = 0;
+	_maxHP = 0;
+	field_78 = 0;
+	field_79 = 0;
+	field_7B = 0;
+	field_7D = 0;
+	field_7E = 0;
+	field_7F = 0;
+	field_80 = 0;
+	field_81 = 0;
+	field_82 = 0;
+	field_83 = 0;
+	field_84 = 0;
+	field_85 = 0;
+}
+
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -107,7 +188,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_imageDataPtr._width = 0;
 	_imageDataPtr._startX = _imageDataPtr._startY = 0;
 	_imageDataPtr._height = 0;
-	_imageDataPtr._fieldA = 0;
+	_imageDataPtr._lineDataSize = 0;
 	_imageDataPtr._paletteTransformation = 0;
 	_imageDataPtr._fieldD = 0;
 
@@ -118,8 +199,10 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_techId = 0;
 	_currentAnimImageSetId = 0xFF;
 
-	for (int i = 0; i < 20; ++i)
+	for (int i = 0; i < 20; ++i) {
 		_portraitSubFilesArray[i] = nullptr;
+		_ennemyNamePt2[i] = 0;
+	}
 
 	for (int i = 0; i < 100; ++i)
 		_imp1PtrArray[i] = nullptr;
@@ -136,9 +219,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_fullPlaceId = 0xFF;
 	_guessAnimationAmount = 9;
 	_largeMapFlag = 0xFFFF;
-	_teamCharIdArray = 0;
-	_charId = -1;
-	_word2C8B8 = -1;
+	_teamCharId[0] = 0;
+	_teamCharId[1] = _teamCharId[2] = -1;
 
 	for (int i = 0; i < 3; ++i) {
 		_teamCharStatus[i]._status = 0;
@@ -155,9 +237,16 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_oldMapPosX = _oldMapPosY = 31;
 	_techDataId_MapPosX = _techDataId_MapPosY = 31;
 
+	_textPosX = 0;
+	_textPosY = 0;
+
 	_lastMainPlaceId = 0;
 	_word2C86E = 0;
 	_dword2C856 = nullptr;
+	_word2C880 = 0;
+	_word2C894 = 0;
+	_word2C8D7 = -1;
+	_word2C87A = false;
 }
 
 EfhEngine::~EfhEngine() {
@@ -220,9 +309,6 @@ Common::Error EfhEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 	_soundHandler->init();
-
-	CursorMan.replaceCursor(_normalCursor, 16, 16, 0, 0, 0);
-	CursorMan.showMouse(true);
 */
 	initEngine();
 	sub15150(true);
@@ -330,7 +416,7 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	
 }
 
-void EfhEngine::loadPlacesFile(uint16 fullPlaceId, int16 unused, bool forceReloadFl) {
+void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 	//TODO : Remove unused parameter when all the calls are implemented
 	if (fullPlaceId == 0xFF)
 		return;
@@ -387,12 +473,98 @@ void EfhEngine::readTileFact() {
 
 void EfhEngine::readItems() {
 	Common::String fileName = "items";
-	readFileToBuffer(fileName, _items);
+	uint8 itemBuff[8100];
+	readFileToBuffer(fileName, itemBuff);
+	uint8 *curPtr = itemBuff;
+
+	for (int i = 0; i < 300; ++i) {
+		for (int16 idx = 0; idx < 15; ++idx)
+			_items[i]._name[idx] = *curPtr++;
+
+		
+		_items[i]._damage = *curPtr++;
+		_items[i]._defense = *curPtr++;
+		_items[i]._attacks = *curPtr++;
+		_items[i]._uses = *curPtr++;
+		_items[i].field_13 = *curPtr++;
+		_items[i]._range = *curPtr++;
+		_items[i]._attackType = *curPtr++;
+		_items[i].field_16 = *curPtr++;
+		_items[i].field17_attackTypeDefense = *curPtr++;
+		_items[i].field_18 = *curPtr++;
+		_items[i].field_19 = *curPtr++;
+		_items[i].field_1A = *curPtr++;
+	}
 }
 
 void EfhEngine::loadNPCS() {
 	Common::String fileName = "npcs";
-	readFileToBuffer(fileName, _npcBuf);
+	uint8 npcLoading[13400];
+	readFileToBuffer(fileName, npcLoading);
+	uint8 *curPtr = npcLoading;
+
+	for (int i = 0; i < 99; ++i) {
+		for (int idx = 0; idx < 9; ++idx)
+			_npcBuf[i]._name[idx] = *curPtr++;
+		_npcBuf[i].field_9 = *curPtr++;
+		_npcBuf[i].field_A = *curPtr++;
+		_npcBuf[i].field_B = *curPtr++;
+		_npcBuf[i].field_C = *curPtr++;
+		_npcBuf[i].field_D = *curPtr++;
+		_npcBuf[i].field_E = *curPtr++;
+		_npcBuf[i].field_F = *curPtr++;
+		_npcBuf[i].field_10 = *curPtr++;
+		_npcBuf[i].field_11 = *curPtr++;
+		_npcBuf[i].field_12 = READ_LE_INT16(curPtr);
+		_npcBuf[i].field_14 = READ_LE_INT16(curPtr + 2);
+		curPtr += 4;
+		_npcBuf[i]._xp = READ_LE_INT32(curPtr);
+		curPtr += 4;
+		for (int idx = 0; idx < 15; ++idx) {
+			_npcBuf[i]._activeScore[idx] = *curPtr++;
+		}
+		for (int idx = 0; idx < 11; ++idx) {
+			_npcBuf[i]._passiveScore[idx] = *curPtr++;
+		}
+		for (int idx = 0; idx < 11; ++idx) {
+			_npcBuf[i]._infoScore[idx] = *curPtr++;
+		}
+		_npcBuf[i].field_3F = *curPtr++;
+		_npcBuf[i].field_40 = *curPtr++;
+		for (int idx = 0; idx < 10; ++idx) {
+			_npcBuf[i]._inventory[idx]._ref = READ_LE_INT16(curPtr);
+			curPtr += 2;
+			_npcBuf[i]._inventory[idx]._stat1 = *curPtr++;
+			_npcBuf[i]._inventory[idx]._stat2 = *curPtr++;
+		}
+		_npcBuf[i]._possessivePronounSHL6 = *curPtr++;
+		_npcBuf[i]._speed = *curPtr++;
+		_npcBuf[i].field_6B = *curPtr++;
+		_npcBuf[i].field_6C = *curPtr++;
+		_npcBuf[i].field_6D = *curPtr++;
+		_npcBuf[i]._unkItemId = *curPtr++;
+		_npcBuf[i].field_6F = *curPtr++;
+		_npcBuf[i].field_70 = *curPtr++;
+		_npcBuf[i].field_71 = *curPtr++;
+		_npcBuf[i].field_72 = *curPtr++;
+		_npcBuf[i].field_73 = *curPtr++;
+		_npcBuf[i]._hitPoints = READ_LE_INT16(curPtr);
+		_npcBuf[i]._maxHP = READ_LE_INT16(curPtr + 2);
+		curPtr += 4;
+		_npcBuf[i].field_78 = *curPtr++;
+		_npcBuf[i].field_79 = READ_LE_INT16(curPtr);
+		_npcBuf[i].field_7B = READ_LE_INT16(curPtr + 2);
+		curPtr += 4;
+		_npcBuf[i].field_7D = *curPtr++;
+		_npcBuf[i].field_7E = *curPtr++;
+		_npcBuf[i].field_7F = *curPtr++;
+		_npcBuf[i].field_80 = *curPtr++;
+		_npcBuf[i].field_81 = *curPtr++;
+		_npcBuf[i].field_82 = *curPtr++;
+		_npcBuf[i].field_83 = *curPtr++;
+		_npcBuf[i].field_84 = *curPtr++;
+		_npcBuf[i].field_85 = *curPtr++;
+	}
 }
 
 void EfhEngine::setDefaultNoteDuration() {
@@ -415,10 +587,10 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 	uint8 *curPtr;
 
 	if (!techMapFl) {
-		_imp2PtrArray[++counter] = curPtr = _imp2;
+		_imp2PtrArray[counter++] = curPtr = _imp2;
 		target = 431;
 	} else {
-		_imp2PtrArray[++counter] = curPtr = _imp1;
+		_imp2PtrArray[counter++] = curPtr = _imp1;
 		target = 99;
 	}
 
@@ -427,9 +599,9 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 		if (*curPtr == 0x40) {
 			curPtr += 3;
 			if (!techMapFl)
-				_imp2PtrArray[++counter] = curPtr;
+				_imp2PtrArray[counter++] = curPtr;
 			else
-				_imp1PtrArray[++counter] = curPtr;
+				_imp1PtrArray[counter++] = curPtr;
 		} else
 			++curPtr;
 	} while (*curPtr != 0x60 && counter <= target);
@@ -498,6 +670,7 @@ void EfhEngine::playIntro() {
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
+	// With GF on the bed
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
@@ -507,6 +680,7 @@ void EfhEngine::playIntro() {
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
+	// Poof
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16);
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
@@ -518,6 +692,7 @@ void EfhEngine::playIntro() {
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
+	// On the phone
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16);
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
@@ -588,7 +763,8 @@ void EfhEngine::initEngine() {
 	memset(_imp1, 0, sizeof(_imp1));
 	memset(_imp2, 0, sizeof(_imp2));
 	memset(_titleSong, 0, sizeof(_titleSong));
-	memset(_items, 0, sizeof(_items));
+	for (int i = 0; i < 300; ++i)
+		_items[i].init();
 	memset(_tileFact, 0, sizeof(_tileFact));
 	memset(_animInfo, 0, sizeof(_animInfo));
 	memset(_history, 0, sizeof(_history));
@@ -707,19 +883,19 @@ void EfhEngine::initMapMonsters() {
 
 		uint8 groupSize = _mapMonsters[monsterId]._groupSize;
 		if (groupSize == 0)
-			groupSize = _rnd->getRandomNumber(10);
+			groupSize = getRandom(10);
 
 		for (uint8 counter = 0; counter < groupSize; ++counter) {
-			uint rand100 = _rnd->getRandomNumber(99) + 1;
+			uint rand100 = getRandom(100);
 			uint16 pictureRef = kEncounters[_mapMonsters[monsterId]._MonsterRef]._pictureRef;
 
 			if (rand100 <= 25) {
-				uint16 delta = _rnd->getRandomNumber((pictureRef / 2) - 1) + 1;
+				uint16 delta = getRandom(pictureRef / 2);
 				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef - delta;
 			} else if (rand100 <= 75) {
 				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef;
 			} else {
-				uint16 delta = _rnd->getRandomNumber((pictureRef / 2) - 1) + 1;
+				uint16 delta = getRandom(pictureRef / 2);
 				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef + delta;
 			}
 		}		
@@ -815,83 +991,629 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 
 void EfhEngine::displayFctFullScreen() {
 	// CHECKME: 319 is in the original but looks suspicious.
-	displayBitmapAtPos(0, 0, 319, 200);
+	copyDirtyRect(0, 0, 319, 200);
 }
 
-void EfhEngine::displayBitmapAtPos(int16 minX, int16 minY, int16 maxX, int16 maxY) {
+void EfhEngine::copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY) {
 	_graphicsStruct->copy(_vgaGraphicsStruct2);
 	_initRect = Common::Rect(minX, minY, maxX, maxY);
-	displayBitmap(_vgaGraphicsStruct2, _vgaGraphicsStruct1, _initRect, minX, minY);
+	copyGraphicBufferFromTo(_vgaGraphicsStruct2, _vgaGraphicsStruct1, _initRect, minX, minY);
 }
 
-void EfhEngine::displayBitmap(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
-	warning("STUB - displayBitmap");
+void EfhEngine::copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
+	warning("STUB - copyGraphicBufferFromTo");
 }
 
 void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
-#if 0
-	static uint16 byte2C80C[72] = {
-		   0,    1,    2,    3,    4,    5,    6,    7,
-		   8,    9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
-		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
-		0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
-		0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
-		0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-		0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-		   0,    0,    0,    0, 0x3F,    1, 0xC7,    0
-	};
-
-	if (bufferBM == nullptr)
-		return;
-
-	Common::Rect unkRect;
-	unkRect.left = posX - bufferBM->_startX;
-	unkRect.right = unkRect.left + bufferBM->_width - 1;
-	unkRect.top = posY - bufferBM->_startY;
-	unkRect.bottom = unkRect.top + bufferBM->_height - 1;
-
-	Common::Rect destRect;
-	if (!computeLargeRect(_graphicsStruct->_area, &unkRect, &destRect))
-		return;
-	
-	uint16 bufferFieldA = bufferBM->_fieldA;
-	int16 deltaMinY = (destRect.top - unkRect.top) * bufferFieldA;
-	int16 destWidth = destRect.width() + 1;
-
-	int16 deltaMinX = -1;
-	int16 tmpVal = (destRect.left - unkRect.left) * 2;
-
-	if (tmpVal < 0)
-		deltaMinX = 0;
-
-	int16 deltaWidth = (unkRect.right - unkRect.left) * 2 - (destRect.right - unkRect.left) * 2 + tmpVal;
-
-	uint8 *si = &bufferBM->_dataPtr[deltaMinY + tmpVal];
-	uint8 ch = bufferBM->_paletteTransformation;
-	uint8 cl = 4;
-	uint16 var3A = byte2C80C[bufferBM->_fieldD << 3];
-	//incomplete
-#endif
-
 	// TODO: Quick code to display stuff, may require to really reverse the actual function
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
-	// warning("%d %d - startX %d startY %d width %d height %d fieldA %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_fieldA, bufferBM->_fieldD);
+	// warning("%d %d - startX %d startY %d width %d height %d lineDataSize %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_lineDataSize, bufferBM->_fieldD);
 	int counter = 0;
-	for (int j = 0; j < bufferBM->_height; ++j) {
-		for (int i = 0; i < bufferBM->_fieldA; ++i) {
-			destPtr[320 * j + 2 * i] = bufferBM->_dataPtr[counter] >> 4;
-			destPtr[320 * j + 2 * i + 1] = bufferBM->_dataPtr[counter] & 0xF;
+	for (int line = 0; line < bufferBM->_height; ++line) {
+		for (int col = 0; col < bufferBM->_lineDataSize; ++col) { // _lineDataSize = _width / 2
+			destPtr[320 * line + 2 * col] = bufferBM->_dataPtr[counter] >> 4;
+			destPtr[320 * line + 2 * col + 1] = bufferBM->_dataPtr[counter] & 0xF;
 			++counter;
 		}
 	}
 
-	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
 
+uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
+	uint8 *buffer = srcBuffer;
+
+	for (int16 i = 0; i < destArraySize; ++i) {
+		buffer = script_getNumber(buffer, &destArray[i]);
+	}
+
+	return buffer;
+}
+
+uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retval) {
+	uint8 *buffer = srcBuffer; 
+	int16 var2 = 0;
+	for (;;) {
+		uint8 curChar = *buffer;
+		if (curChar < 0x30 || curChar > 0x39) {
+			*retval = var2;
+			return buffer;
+		}
+		var2 = var2 * 10 + curChar - 0x30;
+	}
+}
+
+void EfhEngine::removeObject(int16 charId, int16 objectId) {
+	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
+	_npcBuf[charId]._inventory[objectId]._stat1 = 0;
+	_npcBuf[charId]._inventory[objectId]._stat2 = 0;
+}
+
+void EfhEngine::totalPartyKill() {
+	for (int16 counter = 0; counter < 3; ++counter) {
+		if (_teamCharId[counter] != -1)
+			_npcBuf[counter]._hitPoints = 0;
+	}
+}
+
+int16 EfhEngine::getRandom(int16 maxVal) {
+	if (maxVal == 0)
+		return 0;
+
+	return 1 + _rnd->getRandomNumber(maxVal - 1);
+}
+
+void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
+	warning("STUB - removeCharacterFromTeam");
+}
+
+void EfhEngine::emptyFunction(int i) {
+	// TODO: Eventually remove this useless function
+}
+
+void EfhEngine::refreshTeamSize() {
+	_teamSize = 0;
+	for (int16 counter = 0; counter < 3; ++counter) {
+		if (_teamCharId[counter] != -1)
+			++_teamSize;
+	}
+}
+
+bool EfhEngine::isCharacterATeamMember(int16 id) {
+	for (int16 counter = 0; counter < _teamSize; ++counter) {
+		if (_teamCharId[counter] == id)
+			return true;
+	}
+
+	return false;
+}
+
+void EfhEngine::handleWinSequence() {
+	warning("STUB - handleWinSequence");
+}
+
+bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
+	warning("STUB - giveItemTo");
+
+	return false;
+}
+
+void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
+	warning("STUB - sub26437");
+}
+
+void EfhEngine::displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY) {
+	uint16 length = getStringWidth(str);
+	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
+	sub26437(str, startCenteredDisplayX, posY, _unkVideoRelatedWord1);
+}
+
+int16 EfhEngine::chooseCharacterToReplace() {
+	warning("STUB - chooseCharacterToReplace");
+	return 0x1B;
+}
+
+int16 EfhEngine::handleCharacterJoining() {
+	static char strReplaceWho[13] = "Replace Who?";
+	for (int16 counter = 0; counter < 3; ++counter) {
+		if (_teamCharId[counter] == -1) {
+			return counter;
+		}
+	}
+
+	for (int16 counter = 0; counter < 2; ++counter) {
+		drawMenuBox(200, 112, 278, 132, 0);
+		displayCenteredString(strReplaceWho, 200, 278, 117);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+
+	int16 charId = chooseCharacterToReplace();
+	for (int16 counter = 0; counter < 2; ++counter) {
+		drawMenuBox(200, 112, 278, 132, 0);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+
+	if (charId == 0x1B) // Escape Keycode
+		return -1;
+
+	removeCharacterFromTeam(charId);
+}
+
+void EfhEngine::drawMapWindow() {
+	drawMenuBox(128, 8, 303, 135, 0);
+}
+
+void EfhEngine::copyString(uint8 *srcStr, uint8 *destStr) {
+	uint8 lastChar = 1;
+	int16 idx = 0;
+
+	while (lastChar != 0) {
+		lastChar = destStr[idx] = srcStr[idx];
+	}
+}
+
+int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX, int maxY, int argC) {	
+	bool doneFlag = false;
+	int16 var_F2 = 0xFFFF;
+	int16 var_F0 = 0xFF;
+	int16 var_EE = 0xFF;
+	const char *stringToDisplay = " ";
+	uint16 curLine = 0;
+	int16 numbLines = (1 + maxY - posY) / 9;
+	int16 width = maxX - posX;
+	int16 var_114 = getStringWidth((char *)stringToDisplay);
+	uint8 *buffer = stringBuffer;
+	char var_EC[80];
+	char dest[150];
+	memset(var_EC, 0, sizeof(var_EC));
+	memset(dest, 0, sizeof(dest));
+	int16 var_116 = 0;
+	setTextPos(posX, curLine * 9 + posY);
+
+	while (!doneFlag) {
+		uint8 curChar = *buffer;
+		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) {
+			var_F2 = 0;
+			var_EC[++var_116] = curChar;
+			++buffer;
+			continue;
+		}
+
+		if (curChar != 0x5E) {
+			if (curChar == 0)
+				doneFlag = true;
+			else if (curChar == 0x7C)
+				var_F2 = 0;
+
+			var_EC[var_116] = 0;
+			int16 var_11A = getStringWidth(var_EC);
+			int16 var_118 = var_114 + getStringWidth(dest);
+
+			if (var_118 + var_11A > width || curChar == 0x7C) {
+				if (curLine >= numbLines) {
+					doneFlag = true;
+				} else {
+					if (var_F2 == 0)
+						unkFct_displayString_2(dest);
+
+					*dest = 0;
+					strcpy(dest, var_EC);
+					strcat(dest, " ");
+					++curLine;
+					setTextPos(posX, posY + curLine * 9);
+					var_116 = 0;
+				}
+			} else {
+				strcat(dest, var_EC);
+				strcat(dest, " ");
+				var_116 = 0;
+			}
+			++buffer;
+			continue;
+		}
+
+		// At this point, curChar == 0x5E
+		++buffer;
+		int16 var_108 = 0;
+		buffer = script_getNumber(buffer, &var_108);
+		int16 scriptNumberArray[10];
+		memset(scriptNumberArray, 0, ARRAYSIZE(scriptNumberArray));
+
+		switch (var_108) {
+		case 0x00:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				if (_largeMapFlag) {
+					_largeMapFlag = false;
+					_techDataId_MapPosX = _mapPosX;
+					_techDataId_MapPosY = _mapPosY;
+				}
+				_oldMapPosX = _mapPosX = scriptNumberArray[1];
+				_oldMapPosY = _mapPosY = scriptNumberArray[2];
+				loadPlacesFile(scriptNumberArray[0], false);
+				_word2C880 = -1;
+				_word2C894 = -1;
+			}
+			break;
+		case 0x01:
+			if (argC != 0) {
+				_largeMapFlag = true;
+				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
+				_oldMapPosY = _mapPosY = _techDataId_MapPosY;
+				_word2C880 = -1;
+				_word2C894 = -1;
+			}
+			break;
+		case 0x02:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				if (_word2C8D7)
+					writeTechAndMapFiles();
+				_oldMapPosX = _mapPosX = scriptNumberArray[1];
+				_oldMapPosY = _mapPosY = scriptNumberArray[2];
+				loadTechMapImp(scriptNumberArray[0]);
+				_largeMapFlag = true;
+				_word2C880 = -1;
+				_word2C894 = -1;
+				doneFlag = true;
+			}
+			break;
+		case 0x03:
+			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[2] - scriptNumberArray[0];
+				int16 var10E = scriptNumberArray[3] - scriptNumberArray[1];
+
+				_mapPosX = getRandom(var110) + scriptNumberArray[0] - 1;
+				_mapPosY = getRandom(var10E) + scriptNumberArray[1] - 1;
+				_word2C880 = -1;
+				_word2C894 = -1;
+			}
+			break;
+		case 0x04:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				_mapPosX = scriptNumberArray[0];
+				_mapPosY = scriptNumberArray[1];
+				_word2C880 = -1;
+				_word2C894 = -1;
+			}
+			break;
+		case 0x05:
+			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				if (var110 != -1) {
+					int16 var10E = scriptNumberArray[1];
+					_npcBuf[var110]._activeScore[var10E] += scriptNumberArray[2] & 0xFF;
+					_npcBuf[var110]._activeScore[var10E] -= scriptNumberArray[3] & 0xFF;
+				}
+			}
+			break;
+		case 0x06:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				if (var110 != -1) {
+					int16 var10E = scriptNumberArray[1];
+					_npcBuf[var110]._activeScore[var10E] = scriptNumberArray[1];
+				}
+			}
+			break;
+		case 0x07:
+			if (argC != 0) {
+				totalPartyKill();
+				emptyFunction(2);
+			}
+			break;
+		case 0x08:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0 && scriptNumberArray[0] != -1) {
+				_npcBuf[_teamCharId[scriptNumberArray[0]]]._hitPoints = 0;
+			}
+			break;		
+		case 0x09:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				if (var110 != -1) {
+					int16 var10E = getRandom(scriptNumberArray[1]);
+					_npcBuf[var110]._hitPoints += var10E;
+					if (_npcBuf[var110]._hitPoints > _npcBuf[var110]._maxHP)
+						_npcBuf[var110]._hitPoints = _npcBuf[var110]._maxHP;
+				}
+			}
+			break;
+		case 0x0A:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				if (var110 != -1) {
+					_npcBuf[var110]._hitPoints = _npcBuf[var110]._maxHP;
+				}
+			}
+			break;
+		case 0x0B:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				if (var110 != -1) {
+					int16 var10E = getRandom(scriptNumberArray[1]);
+					_npcBuf[var110]._hitPoints -= var10E;
+					if (_npcBuf[var110]._hitPoints < 0)
+						_npcBuf[var110]._hitPoints = 0;
+				}
+			}
+			break;
+		case 0x0C:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				bool found = false;
+				for (int16 counter = 0; counter < _teamSize && !found; ++counter) {
+					for (int16 objectId = 0; objectId < 10; ++objectId) {
+						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
+							removeObject(_teamCharId[counter], objectId);
+							found = true;
+							break;
+						}						
+					}
+				}
+			}
+			break;
+		case 0x0D:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				for (int16 counter = 0; counter < _teamSize; ++counter) {
+					if (giveItemTo(_teamCharId[counter], var110, 0xFF))
+						break;
+				}
+			}
+			break;
+		case 0x0E:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[0];
+				bool found = false;
+				for (int16 counter = 0; counter < _teamSize && !found; ++counter) {
+					for (int16 objectId = 0; objectId < 10; ++objectId) {
+						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
+							found = true;
+							break;
+						}
+					}
+				}
+
+				if (found)
+					var_F0 = scriptNumberArray[1];
+				else
+					var_F0 = scriptNumberArray[2];
+			}
+			break;
+		case 0x0F:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[0];
+				if (isCharacterATeamMember(var110))
+					var_F0 = scriptNumberArray[1];
+				else
+					var_F0 = scriptNumberArray[2];	
+			}
+			break;
+		case 0x10:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0)
+				var_F0 = scriptNumberArray[0];
+
+			break;
+		case 0x11:
+			if (argC != 0)
+				_unkArray2C8AA[0] = 0;
+			break;
+		case 0x12:
+			if (argC != 0) {
+				int16 var110 = sub151FD(_mapPosX, _mapPosY);
+				if (var110 != -1)
+					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+			}
+			break;
+		case 0x13:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0 && _largeMapFlag) {
+				_word2C87A = true;
+				loadPlacesFile(scriptNumberArray[0], false);
+				sub15A28(scriptNumberArray[1], scriptNumberArray[2]);
+				sub2455E(scriptNumberArray[0], scriptNumberArray[1], scriptNumberArray[2]);
+				var_F0 = -1;
+			}
+			break;
+		case 0x14:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[0];
+				if (!isCharacterATeamMember(var110))
+					var_EE = var110;
+				var_F0 = -1;
+			}
+			break;
+		case 0x15:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				_oldMapPosX = _mapPosX = scriptNumberArray[0];
+				_oldMapPosY = _mapPosY = scriptNumberArray[1];
+				_largeMapFlag = true;
+				_word2C894 = 0xFFFF;
+			}
+			break;
+		case 0x16:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[0];
+				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
+				if (isCharacterATeamMember(var110)) {
+					for (int16 counter = 0; counter < 3; ++counter) {
+						if (_teamCharId[counter] == var110) {
+							removeCharacterFromTeam(counter);
+							break;
+						}
+					}
+				}				
+			}
+			break;
+		case 0x17:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[0];
+				displayAnimFrames(var110, true);
+			}
+			break;
+		case 0x18:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = scriptNumberArray[1] - scriptNumberArray[0] + 1;
+				bool found = false;
+				var110 = getRandom(var110) + scriptNumberArray[0] - 1;
+				int16 counter;
+				for (counter = 0; counter < _teamSize; ++counter) {
+					if (giveItemTo(_teamCharId[counter], var110, 0xFF)) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					drawMapWindow();
+					displayFctFullScreen();
+					drawMapWindow();
+					var110 = sub1C219("Nothing...", 1, 2, 0xFFFF);
+					displayFctFullScreen();
+				} else {
+					warning("STUB case 0x18");
+					copyString((uint8 *)_npcBuf[_teamCharId[counter]]._name, (uint8 *)_ennemyNamePt2);
+					copyString((uint8 *)_items[var110]._name, buffer);
+					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, (char *)buffer);
+					drawMapWindow();
+					displayFctFullScreen();
+					drawMapWindow();
+					var110 = sub1C219(dest, 1, 2, 0xFFFF);
+					displayFctFullScreen();
+				}
+
+				var110 = sub151FD(_mapPosX, _mapPosY);
+				if (var110 != -1) {
+					_mapUnknownPtr[var110 * 9 + 1] = 0xFF;
+				}
+				_word2C894 = 0xFFFF;
+			}
+			break;
+		case 0x19:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				if (_largeMapFlag) {
+					_mapGameMapPtr[scriptNumberArray[0] * 6 + scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
+				} else {
+					_curPlace[scriptNumberArray[0] * 24 + scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
+				}
+			}
+			break;
+		case 0x1A:
+			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
+				if (var110 != -1) {
+					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+				}
+			}
+			break;
+		case 0x1B:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
+				if (var110 != -1) {
+					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+				}
+				_mapUnknownPtr[9 * scriptNumberArray[2] + 1] = scriptNumberArray[0];
+				_mapUnknownPtr[9 * scriptNumberArray[2] + 2] = scriptNumberArray[1];
+			}
+			break;
+		case 0x1C:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				_history[scriptNumberArray[0]] = 0xFF;
+			}
+			break;
+		case 0x1D:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0) {
+				_history[scriptNumberArray[0]] = 0;
+			}
+			break;
+		case 0x1E:
+			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
+			if (argC != 0) {
+				if (_history[scriptNumberArray[0]] == 0)
+					var_F0 = scriptNumberArray[2];
+				else
+					var_F0 = scriptNumberArray[1];
+			}
+			break;
+		case 0x1F:
+			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
+			if (argC != 0)
+				_unkArray2C8AA[0] = scriptNumberArray[0];
+
+			break;
+		case 0x20:
+			if (argC != 0) {
+				handleWinSequence();
+				_system->quit();
+			}
+		default:
+			break;
+		}
+	}
+
+	if (*dest != 0 && curLine < numbLines && var_F2 == 0)
+		unkFct_displayString_2(dest);
+
+	if (var_EE != 0xFF) {
+		displayLowStatusScreen(-1);
+		int16 teamSlot = handleCharacterJoining();
+		if (teamSlot > -1) {
+			_teamCharId[teamSlot] = var_EE;
+		}
+		refreshTeamSize();
+	}
+
+	return var_F0;
+}
+
 void EfhEngine::sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC) {
-	warning("STUB - sub133E5");
+	uint16 stringIdx = 0;
+	uint8 message[200];
+	memset(message, 0, sizeof(message));
+	
+	for (;;) {
+		uint8 curChar = *impPtr;
+		if (curChar == 0 || curChar == 0x40 || curChar == 0x60)
+			break;
+
+		if (curChar == 0x0D) {
+			message[stringIdx++] = ' ';
+			++impPtr;
+		} else if (curChar == 0x0A) {
+			++impPtr;
+		} else {
+			message[stringIdx++] = curChar;
+			++impPtr;
+		}
+	}
+
+	script_parse(message, posX, posY, maxX, maxY, argC);
 }
 
 void EfhEngine::sub1512B() {
@@ -934,6 +1656,24 @@ void EfhEngine::sub15018() {
 	sub10B77_unkDisplayFct1(_circleImageSubFileArray[6], 304, 136);
 }
 
+void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
+	warning("STUB: sub15A28");
+}
+
+void EfhEngine::sub2455E(int16 arg0, int16 arg1, int16 arg2) {
+	warning("STUB: sub2455E");
+}
+
+int16 EfhEngine::sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl) {
+	warning("STUB: sub1C219");
+	return -1;
+}
+
+int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
+	warning("STUB: sub151FD");
+	return -1;
+}
+
 void EfhEngine::setNumLock() {
 	// No implementation in ScummVM
 }
@@ -955,6 +1695,10 @@ void EfhEngine::unkFct_anim() {
 	}
 
 	unkfct_mapFunction();
+}
+
+void EfhEngine::unkFct_displayString_2(char *message) {
+	warning("STUB - unkFct_displayString_2 %s", message);
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
@@ -979,9 +1723,6 @@ void EfhEngine::restoreAnimImageSetId() {
 }
 
 void EfhEngine::checkProtection() {
-	// bool successfulCheck = false;
-	// uint8 protectionItemId = _rnd->getRandomNumber(5);
-	// uint8 ProtectionArrayId = _rnd->getRandomNumber(14);
 	_unkVideoRelatedWord1 = 0xE;
 
 	//CHECKME : Well, yeah, some code may be missing there. Who knows.
@@ -997,8 +1738,6 @@ void EfhEngine::loadGame() {
 	//
 	// The savegame is used to initialize the engine, so this part is reimplemented.
 	// The check for existence is replaced by an error.
-	//
-	// Fun fact : it was therefore expected to overwrite the original savegame on the floppy each time you saved. What could possibly go wrong?
 
 	Common::String fileName = "savegame";
 	Common::File f;
@@ -1010,9 +1749,9 @@ void EfhEngine::loadGame() {
 	_fullPlaceId = f.readUint16LE();
 	_guessAnimationAmount = f.readSint16LE();
 	_largeMapFlag = f.readUint16LE();
-	_teamCharIdArray = f.readSint16LE();
-	_charId = f.readSint16LE();
-	_word2C8B8 = f.readSint16LE();
+	_teamCharId[0] = f.readSint16LE();
+	_teamCharId[1] = f.readSint16LE();
+	_teamCharId[2] = f.readSint16LE();
 
 	for (int i = 0; i < 3; ++i) {
 		_teamCharStatus[i]._status = f.readSint16LE();
@@ -1044,7 +1783,7 @@ void EfhEngine::loadGame() {
 	loadTechMapImp(_techId);
 
 	_lastMainPlaceId = 0xFFFF;
-	loadPlacesFile(_fullPlaceId, 0, true);
+	loadPlacesFile(_fullPlaceId, true);
 }
 
 uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
@@ -1170,6 +1909,34 @@ void EfhEngine::displayNextAnimFrame() {
 	displayAnimFrame();
 }
 
+void EfhEngine::writeTechAndMapFiles() {
+	warning("STUB - writeTechAndMapFiles");
+}
+
+uint16 EfhEngine::getStringWidth(char *buffer) {
+	uint16 retVal = 0;
+
+	for (;;) {
+		uint8 curChar = (uint8) *buffer++;
+		if (curChar == 0) {
+			--buffer;
+			break;
+		}
+
+		if (curChar < 0x20)
+			continue;
+
+		retVal += _fontDescr._widthArray[curChar - 0x20] + 1;
+	}
+
+	return retVal;
+}
+
+void EfhEngine::setTextPos(int16 textPosX, int16 textPosY) {
+	_textPosX = textPosX;
+	_textPosY = textPosY;
+}
+
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
 	uint8 *placesPtr = &_places[576 * id];
 
@@ -1182,10 +1949,10 @@ void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY)
 	uint16 width = READ_LE_INT16(imagePtr + 2);
 	uint8 *imageData = imagePtr + 4;
 
-	_imageDataPtr._fieldA = width;
+	_imageDataPtr._lineDataSize = width;
 	_imageDataPtr._dataPtr = imageData;
 	_imageDataPtr._height = height;
-	_imageDataPtr._width = width * 2;
+	_imageDataPtr._width = width * 2; // 2 pixels per byte
 	_imageDataPtr._startX = _imageDataPtr._startY = 0;
 	
 	sub24D92(&_imageDataPtr, posX, posY);
