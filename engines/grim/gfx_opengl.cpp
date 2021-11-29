@@ -1094,7 +1094,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
 		byte *texData = nullptr;
-		const byte *texOut = nullptr;
+		byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
 		GLint type = GL_UNSIGNED_BYTE;
@@ -1114,7 +1114,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					texData = new byte[bytes * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				const uint16 *bitmapData = reinterpret_cast<const uint16 *>(bitmap->getImageData(pic).getPixels());
+				uint16 *bitmapData = (uint16 *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += bytes, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -1133,9 +1133,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				texOut = texData;
 			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
 				bitmap->convertToColorFormat(pic, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
+				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
 			} else {
-				texOut = (const byte *)bitmap->getImageData(pic).getPixels();
+				texOut = (byte *)const_cast<void *>(bitmap->getImageData(pic).getPixels());
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
