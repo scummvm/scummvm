@@ -475,7 +475,7 @@ bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 
 bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteIndex) {
 	const int32 left = posX + ptr.offsetX(spriteIndex);
-	if (left > _engine->_interface->_clip.right) {
+	if (left >= _engine->_interface->_clip.right) {
 		return false;
 	}
 	const int32 right = ptr.surface(spriteIndex).w + left;
@@ -483,7 +483,7 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 		return false;
 	}
 	const int32 top = posY + ptr.offsetY(spriteIndex);
-	if (top > _engine->_interface->_clip.bottom) {
+	if (top >= _engine->_interface->_clip.bottom) {
 		return false;
 	}
 	const int32 bottom = ptr.surface(spriteIndex).h + top;
@@ -506,7 +506,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 	}
 
 	const int32 left = posX + *(ptr + 2);
-	if (left > _engine->_interface->_clip.right) {
+	if (left >= _engine->_interface->_clip.right) {
 		return false;
 	}
 	const int32 right = *ptr + left;
@@ -514,7 +514,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 		return false;
 	}
 	const int32 top = posY + *(ptr + 3);
-	if (top > _engine->_interface->_clip.bottom) {
+	if (top >= _engine->_interface->_clip.bottom) {
 		return false;
 	}
 	const int32 bottom = (int32)*(ptr + 1) + top;
