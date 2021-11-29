@@ -613,9 +613,9 @@ const BlockData *Grid::getBlockLibrary(int32 blockIdx) const {
 	return _currentBlockLibrary.getLayout(blockIdx - 1);
 }
 
-void Grid::getBrickPos(int32 x, int32 y, int32 z) {
-	_brickPixelPosX = (x - z) * 24 + _engine->width() / 2 - GRID_SIZE_X / 2;
-	_brickPixelPosY = ((x + z) * 12) - (y * 15) + _engine->height() / 2 - GRID_SIZE_Y;
+void Grid::getBrickPos(int32 x, int32 y, int32 z, int32 &posx, int32 &posy) const {
+	posx = (x - z) * 24 + _engine->width() / 2 - GRID_SIZE_X / 2;
+	posy = ((x + z) * 12) - (y * 15) + _engine->height() / 2 - GRID_SIZE_Y;
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
@@ -627,25 +627,28 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 		return;
 	}
 
-	getBrickPos(x - _newCamera.x, y - _newCamera.y, z - _newCamera.z);
+	int32 brickPixelPosX = 0;
+	int32 brickPixelPosY = 0;
 
-	if (_brickPixelPosX < -24) {
+	getBrickPos(x - _newCamera.x, y - _newCamera.y, z - _newCamera.z, brickPixelPosX, brickPixelPosY);
+
+	if (brickPixelPosX < -24) {
 		return;
 	}
-	if (_brickPixelPosX >= _engine->width()) {
+	if (brickPixelPosX >= _engine->width()) {
 		return;
 	}
-	if (_brickPixelPosY < -38) {
+	if (brickPixelPosY < -38) {
 		return;
 	}
-	if (_brickPixelPosY >= _engine->height()) {
+	if (brickPixelPosY >= _engine->height()) {
 		return;
 	}
 
 	// draw the background brick
-	drawBrick(brickIdx - 1, _brickPixelPosX, _brickPixelPosY);
+	drawBrick(brickIdx - 1, brickPixelPosX, brickPixelPosY);
 
-	int32 brickBuffIdx = (_brickPixelPosX + 24) / 24;
+	int32 brickBuffIdx = (brickPixelPosX + 24) / 24;
 
 	if (_brickInfoBuffer[brickBuffIdx] >= MAXBRICKS) {
 		warning("GRID: brick buffer exceeded");
@@ -657,8 +660,8 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 	currBrickEntry->x = x;
 	currBrickEntry->y = y;
 	currBrickEntry->z = z;
-	currBrickEntry->posX = _brickPixelPosX;
-	currBrickEntry->posY = _brickPixelPosY;
+	currBrickEntry->posX = brickPixelPosX;
+	currBrickEntry->posY = brickPixelPosY;
 	currBrickEntry->index = brickIdx - 1;
 	currBrickEntry->shape = brickShape;
 	currBrickEntry->sound = brickSound;

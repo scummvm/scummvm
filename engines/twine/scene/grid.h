@@ -110,7 +110,7 @@ private:
 	 * @param y column y position in the current camera
 	 * @param z column z position in the current camera
 	 */
-	void getBrickPos(int32 x, int32 y, int32 z);
+	void getBrickPos(int32 x, int32 y, int32 z, int32 &_brickPixelPosX, int32 &_brickPixelPosY) const;
 	/**
 	 * Create celling grid map from celling grid to block library buffer
 	 * @param gridPtr celling grid buffer pointer
@@ -169,11 +169,6 @@ private:
 	/** Brick info buffer */
 	int16 *_brickInfoBuffer = nullptr;
 	int32 _brickInfoBufferSize = 0;
-
-	/** Current brick pixel X position */
-	int32 _brickPixelPosX = 0;
-	/** Current brick pixel Y position */
-	int32 _brickPixelPosY = 0;
 
 	/** Celling grid brick block buffer */
 	int32 _blockBufferSize = 0;
