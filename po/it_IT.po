@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-28 23:03+0000\n"
+"POT-Creation-Date: 2021-11-29 16:17+0000\n"
 "PO-Revision-Date: 2021-11-22 10:01+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4561,7 +4561,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:742
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:735
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
 
@@ -5523,7 +5523,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Questo puzzle non è disponibile nella versione dimostrativa del gioco"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:741
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:734
 msgid "TTS Narrator"
 msgstr "Sintesi vocale"
 
@@ -7591,94 +7591,86 @@ msgid "Enable the original wall collision damage"
 msgstr ""
 "Attiva i danni causati dalle collisioni con i muri, come nel gioco originale"
 
-#: engines/twine/detection.cpp:662
-msgid "Enable cross fade"
-msgstr "Abilita dissolvenze"
-
 #: engines/twine/detection.cpp:663
-msgid "Enable cross fading of images and scenes"
-msgstr "Attiva effetti di dissolvenza per le immagini e gli scenari"
-
-#: engines/twine/detection.cpp:670
 msgid "Disable save menu"
 msgstr "Disabilita menù di salvataggio"
 
-#: engines/twine/detection.cpp:671
+#: engines/twine/detection.cpp:664
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Il gioco originale salva automaticamente. Con questa opzione puoi salvare "
 "quando lo desideri."
 
-#: engines/twine/detection.cpp:677
+#: engines/twine/detection.cpp:670
 msgid "Enable debug mode"
 msgstr "Attiva modalità debug"
 
-#: engines/twine/detection.cpp:678
+#: engines/twine/detection.cpp:671
 msgid "Enable the debug mode"
 msgstr "Attiva la modalità di debug"
 
-#: engines/twine/detection.cpp:684
+#: engines/twine/detection.cpp:677
 msgid "Enable audio CD"
 msgstr "Attiva audio CD"
 
-#: engines/twine/detection.cpp:685
+#: engines/twine/detection.cpp:678
 msgid "Enable the original audio cd track"
 msgstr "Abilita la traccia audio CD originale"
 
-#: engines/twine/detection.cpp:691
+#: engines/twine/detection.cpp:684
 msgid "Enable sound"
 msgstr "Attiva effetti sonori"
 
-#: engines/twine/detection.cpp:692
+#: engines/twine/detection.cpp:685
 msgid "Enable the sound for the game"
 msgstr "Abilita effetti sonori del gioco"
 
-#: engines/twine/detection.cpp:698
+#: engines/twine/detection.cpp:691
 msgid "Enable voices"
 msgstr "Attiva voci"
 
-#: engines/twine/detection.cpp:699
+#: engines/twine/detection.cpp:692
 msgid "Enable the voices for the game"
 msgstr "Abilita le voci del gioco"
 
-#: engines/twine/detection.cpp:705
+#: engines/twine/detection.cpp:698
 msgid "Enable text"
 msgstr "Attiva testi"
 
-#: engines/twine/detection.cpp:706
+#: engines/twine/detection.cpp:699
 msgid "Enable the text for the game"
 msgstr "Abilita i testi del gioco"
 
-#: engines/twine/detection.cpp:712
+#: engines/twine/detection.cpp:705
 msgid "Enable movies"
 msgstr "Attiva filmati"
 
-#: engines/twine/detection.cpp:713
+#: engines/twine/detection.cpp:706
 msgid "Enable the cutscenes for the game"
 msgstr "Abilita le scene d'intermezzo del gioco"
 
-#: engines/twine/detection.cpp:719
+#: engines/twine/detection.cpp:712
 msgid "Enable mouse"
 msgstr "Attiva mouse"
 
-#: engines/twine/detection.cpp:720
+#: engines/twine/detection.cpp:713
 msgid "Enable the mouse for the UI"
 msgstr "Abilita il mouse per l'interfaccia utente"
 
-#: engines/twine/detection.cpp:726
+#: engines/twine/detection.cpp:719
 msgid "Use the USA version"
 msgstr "Usa la versione americana"
 
-#: engines/twine/detection.cpp:727
+#: engines/twine/detection.cpp:720
 msgid "Enable the USA specific version flags"
 msgstr "Attiva le opzioni specifiche della versione americana del gioco"
 
-#: engines/twine/detection.cpp:733 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:726 engines/ultima/detection.cpp:85
 msgid "Enable high resolution"
 msgstr "Attiva alta risoluzione"
 
-#: engines/twine/detection.cpp:734 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:727 engines/ultima/detection.cpp:86
 msgid "Enable a higher resolution for the game"
 msgstr "Visualizza la grafica ad una risoluzione superiore"
 
@@ -8698,6 +8690,12 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid "Enable cross fade"
+#~ msgstr "Abilita dissolvenze"
+
+#~ msgid "Enable cross fading of images and scenes"
+#~ msgstr "Attiva effetti di dissolvenza per le immagini e gli scenari"
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync nei giochi 3D"

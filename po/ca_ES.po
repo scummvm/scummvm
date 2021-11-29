@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-28 23:03+0000\n"
+"POT-Creation-Date: 2021-11-29 16:17+0000\n"
 "PO-Revision-Date: 2021-11-26 12:48+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4570,7 +4570,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:742
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:735
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5483,7 +5483,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:741
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:734
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7467,108 +7467,99 @@ msgstr ""
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:662
-#, fuzzy
-msgid "Enable cross fade"
-msgstr "Activa el mode heli"
-
 #: engines/twine/detection.cpp:663
-msgid "Enable cross fading of images and scenes"
-msgstr ""
-
-#: engines/twine/detection.cpp:670
 #, fuzzy
 msgid "Disable save menu"
 msgstr "No s'ha pogut desar l'estat del joc"
 
-#: engines/twine/detection.cpp:671
+#: engines/twine/detection.cpp:664
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:677
+#: engines/twine/detection.cpp:670
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:678
+#: engines/twine/detection.cpp:671
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:684
+#: engines/twine/detection.cpp:677
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Activa el públic"
 
-#: engines/twine/detection.cpp:685
+#: engines/twine/detection.cpp:678
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:691
+#: engines/twine/detection.cpp:684
 #, fuzzy
 msgid "Enable sound"
 msgstr "Activa el públic"
 
-#: engines/twine/detection.cpp:692
+#: engines/twine/detection.cpp:685
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Títol complet del joc"
 
-#: engines/twine/detection.cpp:698
+#: engines/twine/detection.cpp:691
 #, fuzzy
 msgid "Enable voices"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:699
+#: engines/twine/detection.cpp:692
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:705
+#: engines/twine/detection.cpp:698
 #, fuzzy
 msgid "Enable text"
 msgstr "Activa el públic"
 
-#: engines/twine/detection.cpp:706
+#: engines/twine/detection.cpp:699
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Títol complet del joc"
 
-#: engines/twine/detection.cpp:712
+#: engines/twine/detection.cpp:705
 #, fuzzy
 msgid "Enable movies"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:713
+#: engines/twine/detection.cpp:706
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:719
+#: engines/twine/detection.cpp:712
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Activa el mode heli"
 
-#: engines/twine/detection.cpp:720
+#: engines/twine/detection.cpp:713
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Títol complet del joc"
 
-#: engines/twine/detection.cpp:726
+#: engines/twine/detection.cpp:719
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:727
+#: engines/twine/detection.cpp:720
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:733 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:726 engines/ultima/detection.cpp:85
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Activa la barra gràfica dels punts d'impacte"
 
-#: engines/twine/detection.cpp:734 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:727 engines/ultima/detection.cpp:86
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Títol complet del joc"
@@ -8657,6 +8648,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Enable cross fade"
+#~ msgstr "Activa el mode heli"
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Sincronització als jocs 3D"

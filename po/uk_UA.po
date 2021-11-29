@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-28 23:03+0000\n"
+"POT-Creation-Date: 2021-11-29 16:17+0000\n"
 "PO-Revision-Date: 2021-11-19 21:50+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4519,7 +4519,7 @@ msgstr "Ввімкнути генератор мови для об'єктів, �
 
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:46
 #: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:742
+#: engines/supernova/detection.cpp:53 engines/twine/detection.cpp:735
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
 
@@ -5474,7 +5474,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Ця головоломка недоступна у пробній версії гри"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:741
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:734
 msgid "TTS Narrator"
 msgstr "Ведучий TTS"
 
@@ -7498,94 +7498,86 @@ msgstr "Ввімкнути зіткнення зі стінами"
 msgid "Enable the original wall collision damage"
 msgstr "Ввімкнути пошкодження від зіткнення зі стінами як в оригіналі"
 
-#: engines/twine/detection.cpp:662
-msgid "Enable cross fade"
-msgstr "Ввімкнути плавне вицвітання"
-
 #: engines/twine/detection.cpp:663
-msgid "Enable cross fading of images and scenes"
-msgstr "Ввімкнути плавний перехід між зображеннями та сценами"
-
-#: engines/twine/detection.cpp:670
 msgid "Disable save menu"
 msgstr "Заборонити меню збереження"
 
-#: engines/twine/detection.cpp:671
+#: engines/twine/detection.cpp:664
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Оригінал мав тільки автоматичне збереження гри. Ця опція дозволить вам "
 "записатися у довільний момент."
 
-#: engines/twine/detection.cpp:677
+#: engines/twine/detection.cpp:670
 msgid "Enable debug mode"
 msgstr "Ввімкнути режим відладки"
 
-#: engines/twine/detection.cpp:678
+#: engines/twine/detection.cpp:671
 msgid "Enable the debug mode"
 msgstr "Ввімкнути режим відладки"
 
-#: engines/twine/detection.cpp:684
+#: engines/twine/detection.cpp:677
 msgid "Enable audio CD"
 msgstr "Ввімкнути аудіо CD"
 
-#: engines/twine/detection.cpp:685
+#: engines/twine/detection.cpp:678
 msgid "Enable the original audio cd track"
 msgstr "Ввімкнути оригінальний трек з CD"
 
-#: engines/twine/detection.cpp:691
+#: engines/twine/detection.cpp:684
 msgid "Enable sound"
 msgstr "Ввімкнути звук"
 
-#: engines/twine/detection.cpp:692
+#: engines/twine/detection.cpp:685
 msgid "Enable the sound for the game"
 msgstr "Ввімкнути звук у грі"
 
-#: engines/twine/detection.cpp:698
+#: engines/twine/detection.cpp:691
 msgid "Enable voices"
 msgstr "Ввімкнути озвучку"
 
-#: engines/twine/detection.cpp:699
+#: engines/twine/detection.cpp:692
 msgid "Enable the voices for the game"
 msgstr "Ввімкнути озвучку голосів у грі"
 
-#: engines/twine/detection.cpp:705
+#: engines/twine/detection.cpp:698
 msgid "Enable text"
 msgstr "Ввімкнути текст"
 
-#: engines/twine/detection.cpp:706
+#: engines/twine/detection.cpp:699
 msgid "Enable the text for the game"
 msgstr "Ввімкнути тексти у грі"
 
-#: engines/twine/detection.cpp:712
+#: engines/twine/detection.cpp:705
 msgid "Enable movies"
 msgstr "Ввімкнути роліки"
 
-#: engines/twine/detection.cpp:713
+#: engines/twine/detection.cpp:706
 msgid "Enable the cutscenes for the game"
 msgstr "Ввімкнути відеороліки у грі"
 
-#: engines/twine/detection.cpp:719
+#: engines/twine/detection.cpp:712
 msgid "Enable mouse"
 msgstr "Ввімкнути мишу"
 
-#: engines/twine/detection.cpp:720
+#: engines/twine/detection.cpp:713
 msgid "Enable the mouse for the UI"
 msgstr "Ввімкнути мишу для інтерфейса користувача"
 
-#: engines/twine/detection.cpp:726
+#: engines/twine/detection.cpp:719
 msgid "Use the USA version"
 msgstr "Використовувати версію USA"
 
-#: engines/twine/detection.cpp:727
+#: engines/twine/detection.cpp:720
 msgid "Enable the USA specific version flags"
 msgstr "Ввімкнути опції гри, специфічні для USA версії"
 
-#: engines/twine/detection.cpp:733 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:726 engines/ultima/detection.cpp:85
 msgid "Enable high resolution"
 msgstr "Ввімкнути високе розгалуження"
 
-#: engines/twine/detection.cpp:734 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:727 engines/ultima/detection.cpp:86
 msgid "Enable a higher resolution for the game"
 msgstr "Ввімкнути високе розгалуження для гри"
 
@@ -8588,6 +8580,12 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Enable cross fade"
+#~ msgstr "Ввімкнути плавне вицвітання"
+
+#~ msgid "Enable cross fading of images and scenes"
+#~ msgstr "Ввімкнути плавний перехід між зображеннями та сценами"
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Вертикальна синхронізація у 3D іграх"
