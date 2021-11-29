@@ -1054,7 +1054,7 @@ bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 	int16 ctop = clip.top;
 	int16 cbottom = clip.bottom;
 
-	if (left <= cright && bottom >= cleft && right <= cbottom && top >= ctop) {
+	if (left <= cright && right >= cleft && bottom <= cbottom && top >= ctop) {
 		if (left < cleft) {
 			left = cleft;
 		}
