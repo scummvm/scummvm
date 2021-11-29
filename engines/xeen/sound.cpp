@@ -235,6 +235,8 @@ void Sound::updateSoundSettings() {
 	_musicOn = !ConfMan.getBool("music_mute");
 	if (!_musicOn)
 		stopSong();
+	else if (!_currentMusic.empty())
+		playSong(_currentMusic);
 
 	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 	_musicVolume = CLIP(ConfMan.getInt("music_volume"), 0, 255);
