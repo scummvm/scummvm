@@ -439,11 +439,7 @@ bool Movies::playFlaMovie(const char *flaName) {
 		} while (!_engine->_input->toggleAbortAction());
 	}
 
-	if (_engine->_cfgfile.CrossFade) {
-		_engine->crossFade(_engine->_screens->_paletteRGBACustom);
-	} else {
-		_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
-	}
+	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
 
 	_engine->_sound->stopSamples();
 	return finished;

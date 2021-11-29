@@ -99,27 +99,13 @@ bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 }
 
 void Screens::fadeIn(const uint32 *pal) {
-	if (_engine->_cfgfile.CrossFade) {
-		_engine->crossFade(pal);
-	} else {
-		fadeToPal(pal);
-	}
+	fadeToPal(pal);
 
 	_engine->setPalette(pal);
 }
 
 void Screens::fadeOut(const uint32 *pal) {
-#if 0
-	if (_engine->_cfgfile.CrossFade) {
-		_engine->crossFade(pal);
-	} else {
-		fadeToBlack(pal);
-	}
-#else
-	if (!_engine->_cfgfile.CrossFade) {
-		fadeToBlack(pal);
-	}
-#endif
+	fadeToBlack(pal);
 }
 
 int32 Screens::lerp(int32 value, int32 start, int32 end, int32 t) {
