@@ -193,7 +193,6 @@ void Sound::playSong(Common::SeekableReadStream &stream) {
 }
 
 void Sound::playSong(const Common::String &name, int param) {
-	_priorMusic = _currentMusic;
 	_currentMusic = name;
 
 	Common::File mf;
