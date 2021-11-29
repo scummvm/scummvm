@@ -56,6 +56,26 @@ void r66_exit(int16 eib_nr) {
 	}
 }
 
+void r66_talk1() {
+}
+
+void r66_talk2() {
+}
+
+void r66_talk3() {
+}
+
+void r66_talk4() {
+}
+
+int r66_proc2() {
+	return 0;
+}
+
+int r66_proc7() {
+	return 0;
+}
+
 void r67_entry() {
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = r67_setup_func;
