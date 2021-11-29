@@ -524,7 +524,6 @@ int16 ged_user_func(int16 idx_nr) {
 	switch (idx_nr) {
 	case 40:
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-
 		case 8:
 			if (_G(spieler).R8GTuer)
 				idx_nr = 0;
@@ -566,12 +565,44 @@ int16 ged_user_func(int16 idx_nr) {
 			else
 				idx_nr = 4;
 			break;
+
+		case 71:
+			if (!_G(spieler).flags28_2 || !_G(spieler).flags29_4)
+				idx_nr = 0;
+			else
+				idx_nr = 4;
+			break;
+
+		case 76:
+			return idx_nr;
+
+		case 84:
+			if (!_G(spieler).flags31_1)
+				_G(spieler).flags31_4 = true;
+			break;
+
+		case 86:
+			if (!_G(spieler).flags32_2)
+				idx_nr = 0;
+			break;
+
+		case 94:
+			if (!_G(spieler).flags35_10)
+				idx_nr = 0;
+			break;
+
+		case 97:
+			if (!_G(spieler).flags35_80)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
 		}
 		break;
 
 	case 41:
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-
 		case 17:
 			if (_G(spieler).R17Location != 2)
 				idx_nr = 0;
@@ -585,10 +616,8 @@ int16 ged_user_func(int16 idx_nr) {
 			break;
 
 		case 37:
-			if (!_G(spieler).R37Kloppe) {
-
+			if (!_G(spieler).flags37_1)
 				idx_nr = 0;
-			}
 			break;
 
 		case 52:
@@ -597,9 +626,25 @@ int16 ged_user_func(int16 idx_nr) {
 			else
 				idx_nr = 4;
 			break;
+
+		case 97:
+			if (!_G(spieler).flags36_20)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
 		}
 		break;
 
+	case 42:
+		if (_G(spieler).PersonRoomNr[P_CHEWY] == 97) {
+
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	return idx_nr;
