@@ -316,16 +316,15 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	_engine->saveFrontBuffer();
 
-	const int32 itemCameraX = _engine->_grid->_newCamera.x * BRICK_SIZE;
-	const int32 itemCameraY = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
-	const int32 itemCameraZ = _engine->_grid->_newCamera.z * BRICK_SIZE;
+	IVec3 itemCamera;
+	itemCamera.x = _engine->_grid->_newCamera.x * BRICK_SIZE;
+	itemCamera.y = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
+	itemCamera.z = _engine->_grid->_newCamera.z * BRICK_SIZE;
 
 	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
-	const int32 bodyX = _engine->_scene->_sceneHero->_pos.x - itemCameraX;
-	const int32 bodyY = _engine->_scene->_sceneHero->_pos.y - itemCameraY;
-	const int32 bodyZ = _engine->_scene->_sceneHero->_pos.z - itemCameraZ;
+	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
 	Common::Rect modelRect;
-	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+	_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
 	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -337,7 +336,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
-	IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
+	IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(bodyPos);
 	projPos.y -= 150;
 
 	const int32 boxTopLeftX = projPos.x - 65;
@@ -397,7 +396,7 @@ void GameState::processFoundItem(InventoryItems item) {
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+		_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 		_engine->_interface->setClip(modelRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(modelRect);
