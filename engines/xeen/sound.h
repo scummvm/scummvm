@@ -87,11 +87,6 @@ public:
 	void stopSong() { songCommand(STOP_SONG); }
 
 	/**
-	 * Restart a previously playing song (which must still be loaded)
-	 */
-	void restartSong() { songCommand(RESTART_SONG); }
-
-	/**
 	 * Sets the in-game music volume percent. This is separate from the ScummVM volume
 	 */
 	void setMusicPercent(byte percent);
@@ -105,13 +100,6 @@ public:
 	 * Plays a song
 	 */
 	void playSong(const Common::String &name, int param = 0);
-
-	/**
-	 * Plays a song
-	 */
-	void playSong(const byte *data) {
-		_SoundDriver->playSong(data);
-	}
 
 	/**
 	 * Returns true if music is playing
