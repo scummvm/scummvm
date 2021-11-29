@@ -137,6 +137,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 
 	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	_bookFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
+	_lineHeight = (_flags.lang == Common::ZH_TWN) ? 16 : 10;
 }
 
 KyraEngine_HoF::~KyraEngine_HoF() {
@@ -195,6 +196,7 @@ Common::Error KyraEngine_HoF::init() {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
 	} else if (_flags.lang == Common::ZH_TWN) {
 		_screen->loadFont(Screen::FID_CHINESE_FNT, "HOF.PAK");
+		_screen->_lineSpacing = 1;
 	} else {
 		_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
 		_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
@@ -842,7 +844,8 @@ void KyraEngine_HoF::showMessageFromCCode(int id, int16 palIndex, int) {
 
 void KyraEngine_HoF::showMessage(const Common::String &string, int16 palIndex) {
 	_shownMessage = string;
-	_screen->fillRect(0, 190, 319, 199, 0xCF);
+	int y = (_flags.lang == Common::ZH_TWN) ? 186 : 190;
+	_screen->fillRect(0, y, 319, 199, 0xCF);
 
 	if (!string.empty()) {
 		if (palIndex != -1 || _fadeMessagePalette) {
@@ -853,7 +856,7 @@ void KyraEngine_HoF::showMessage(const Common::String &string, int16 palIndex) {
 		}
 
 		int x = _text->getCenterStringX(string, 0, 320);
-		_text->printText(string, x, 190, 255, 207, 0);
+		_text->printText(string, x, y, 255, 207, 0);
 
 		setTimer1DelaySecs(7);
 	}
@@ -874,7 +877,7 @@ void KyraEngine_HoF::showChapterMessage(int id, int16 palIndex) {
 void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	Common::String str = getTableString(str1, _cCodeBuffer, true);
 
-	if (_flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR) {
+	if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR) {
 		if (uint32 i = (uint32)str.findFirstOf(' ') + 1) {
 			str.erase(0, i);
 			str.setChar(toupper(str[0]), 0);
@@ -882,12 +885,14 @@ void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	}
 
 	if (str2 > 0) {
-		if (_flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR)
+		if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR)
 			str += " ";
-		if (_flags.lang != Common::HE_ISR)
-			str += getTableString(str2, _cCodeBuffer, 1);
-		else
+		if (_flags.lang == Common::HE_ISR)
 			str = getTableString(str2, _cCodeBuffer, 1) + " " + str + ".";
+		else if (_flags.lang == Common::ZH_TWN)
+			str = getTableString(str2, _cCodeBuffer, 1) + str;
+		else
+			str += getTableString(str2, _cCodeBuffer, 1);
 	}
 
 	showMessage(str, palIndex);
@@ -1931,7 +1936,7 @@ void KyraEngine_HoF::writeSettings() {
 
 	case 0:
 	default:
-		_flags.lang = Common::EN_ANY;
+		_flags.lang = _langIntern ? Common::ZH_TWN : Common::EN_ANY;
 	}
 
 	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)

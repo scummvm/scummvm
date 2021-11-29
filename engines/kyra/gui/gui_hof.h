@@ -77,6 +77,8 @@ private:
 
 	static const uint16 _menuStringsTalkie[];
 	static const uint16 _menuStringsOther[];
+
+	static const char *const _saveLoadStringsZH[2];
 };
 
 } // End of namespace Kyra

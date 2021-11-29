@@ -1524,7 +1524,7 @@ void Screen::drawChar(uint16 c, int x, int y, int pitch) {
 
 	const bool useOverlay = fnt->usesOverlay();
 	const int charWidth = fnt->getCharWidth(c);
-	const int charHeight = fnt->getHeight();
+	const int charHeight = fnt->getCharHeight(c);
 
 	if (x < 0 || y < 0)
 		return;
@@ -3965,6 +3965,15 @@ int MultiSubsetFont::getCharWidth(uint16 c) const {
 	int res = 0;
 	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i) {
 		if ((res = (*i)->getCharWidth(c)) != -1)
+			break;
+	}
+	return res > 0 ? res : 0;
+}
+
+int MultiSubsetFont::getCharHeight(uint16 c) const {
+	int res = 0;
+	for (Common::Array<Font*>::const_iterator i = _subsets->begin(); i != _subsets->end(); ++i) {
+		if ((res = (*i)->getCharHeight(c)) != -1)
 			break;
 	}
 	return res > 0 ? res : 0;

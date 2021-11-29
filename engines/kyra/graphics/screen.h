@@ -266,6 +266,7 @@ public:
 	int getHeight() const override { return _spacingHeight + (_border ? _borderExtraSpacingHeight : 0); }
 	int getWidth() const override { return _spacingWidth + (_border ? _borderExtraSpacingWidth : 0); }
 	int getCharWidth(uint16 c) const override { return hasGlyphForCharacter(c) ? getWidth() : -1; }
+	int getCharHeight(uint16 c) const override { return hasGlyphForCharacter(c) ? _renderHeight + (_border ? _borderExtraSpacingHeight : 0) : -1; }
 	void setColorMap(const uint8 *src) override;
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
@@ -364,6 +365,7 @@ public:
 	int getHeight() const override;
 	int getWidth() const override;
 	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 

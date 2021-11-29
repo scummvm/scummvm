@@ -108,6 +108,14 @@ Common::String GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 }
 
 Common::String GUI_HoF::getTableString(int id, bool decode) {
+	// Apparently, these were forgotten to translate in the text files...
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		if (id == 18)
+			return Common::String(_saveLoadStringsZH[1]);
+		else if (id == 42)
+			return Common::String(_saveLoadStringsZH[0]);
+	}
+
 	return _vm->getTableString(id, _vm->_optionsBuffer, decode);
 }
 
@@ -263,7 +271,22 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
 	uint8 overlay[0x100];
 	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
-	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2, Screen::CR_NO_P_CHECK);
+
+	int ry2 = 121;
+	int rh = 23;
+	int rh2 = 46;
+	int rm = 981;
+	// The Chinese version needs a couple of extra pixels for the text display.
+	// at the bottom. This means that the animation has to be clipped a bit, so
+	// that it does not collide with the text.
+	if (_flags.lang == Common::ZH_TWN) {
+		ry2 = 123;
+		rh = 21;
+		rh2 = 42;
+		rm = 896;
+	}
+
+	_screen->copyRegion(70, 144, 70, ry2, 113, rh, 0, 2, Screen::CR_NO_P_CHECK);
 	snd_playSoundEffect(0x25);
 
 	bool breakFlag = false;
@@ -275,14 +298,14 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 
 		uint32 endTime = _system->getMillis() + _tickLength;
 
-		int y = (i * 981) >> 8;
-		if (y >= 23 || i == 6) {
-			y = 23;
+		int y = (i * rm) >> 8;
+		if (y >= rh || i == 6) {
+			y = rh;
 			breakFlag = true;
 		}
 
-		_screen->applyOverlay(0x46, 0x79, 0x71, 0x17, 2, overlay);
-		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->applyOverlay(70, ry2, 113, rh, 2, overlay);
+		_screen->copyRegion(70, y+ry2, 70, 144, 113, rh2, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
 		delayUntil(endTime);

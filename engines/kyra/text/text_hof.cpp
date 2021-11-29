@@ -51,8 +51,8 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	text = preprocessString(text);
 	int lineCount = buildMessageSubstrings(text);
 	int w = getWidestLineWidth(lineCount);
-	int h = lineCount * 10;
-	y = MAX(0, y - (lineCount * 10));
+	int h = lineCount * _vm->_lineHeight;
+	y = MAX(0, y - (lineCount * _vm->_lineHeight));
 	int x1 = 0, x2 = 0;
 	calcWidestLineBounds(x1, x2, w, x);
 
@@ -69,7 +69,9 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	if (_vm->textEnabled()) {
 		for (int i = 0; i < lineCount; ++i) {
 			const char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
-			printText(msg, getCenterStringX(msg, x1, x2), i * 10 + _talkMessageY, c1, 0xCF, 0);
+			if (i == 0 || _vm->gameFlags().lang != Common::ZH_TWN)
+				x = getCenterStringX(msg, x1, x2);
+			printText(msg, x, i * _vm->_lineHeight + _talkMessageY, c1, 0xCF, 0);
 		}
 	}
 
@@ -81,6 +83,9 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
 		strcpy(_talkBuffer, str);
 	}
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		return _talkBuffer;
 
 	char *p = _talkBuffer;
 	while (*p) {
@@ -230,10 +235,10 @@ void KyraEngine_HoF::objectChatInit(const Common::String &str0, int object, int 
 		xPos = _talkObjectList[object].x;
 	}
 
-	yPos -= lineNum * 10;
+	yPos -= lineNum * _lineHeight;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
+	_text->_talkMessageH = lineNum * _lineHeight;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -271,8 +276,9 @@ void KyraEngine_HoF::objectChatPrintText(const Common::String &str0, int object)
 	for (int i = 0; i < lineNum; ++i) {
 		str = Common::String(&_text->_talkSubstrings[i*_text->maxSubstringLen()]);
 
-		int y = _text->_talkMessageY + i * 10;
-		x = _text->getCenterStringX(str, cX1, cX2);
+		int y = _text->_talkMessageY + i * _lineHeight;
+		if (i == 0 || _flags.lang != Common::ZH_TWN)
+			x = _text->getCenterStringX(str, cX1, cX2);
 
 		_text->printText(str, x, y, c1, 0xCF, 0);
 	}

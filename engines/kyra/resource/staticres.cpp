@@ -1558,6 +1558,11 @@ const int16 KyraEngine_HoF::_keyboardSounds[190] = {
 	 -1, 197,  -1, 205, 152, 139,  -1,  -1,  -1,  -1
 };
 
+const char *const GUI_HoF::_saveLoadStringsZH[2] = {
+	"[ ""\xb7\x82\x9c\x83\x9d\x83\xae\x82\xaf\x82"" ]",
+	"[ ""\xb8\x80\x81\x83\xbe\x82"" ]"
+};
+
 void KyraEngine_HoF::initInventoryButtonList() {
 	delete[] _inventoryButtons;
 
@@ -1621,20 +1626,24 @@ void GUI_HoF::initStaticData() {
 
 	const uint16 *menuStr = _vm->gameFlags().isTalkie ? _menuStringsTalkie : _menuStringsOther;
 
+	int menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 27 : 30;
+	int menuItemYInc = _vm->gameFlags().lang == Common::ZH_TWN ? 20 : 17;
+	int menuItemHeight = _vm->gameFlags().lang == Common::ZH_TWN ? 19 : 15;
+
 	GUI_V2_MENU(_mainMenu, -1, -1, 0x100, 0xAC, 0xF8, 0xF9, 0xFA, menuStr[0 * 8], 0xFB, -1, 8, 0, 7, -1, -1, -1, -1);
-	GUI_V2_MENU_ITEM(_mainMenu.item[0], 1, 0x02, -1, 0x1E, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[0], 1, 0x02, -1, menuItemYStart, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[0].callback = clickLoadMenuFunctor;
-	GUI_V2_MENU_ITEM(_mainMenu.item[1], 1, 0x03, -1, 0x2F, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[1], 1, 0x03, -1, menuItemYStart + menuItemYInc, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::saveMenu);
-	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 0x23, -1, 0x40, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 0x23, -1, menuItemYStart + menuItemYInc * 2, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::deleteMenu);
-	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, 0x51, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, menuItemYStart + menuItemYInc * 3, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptionsTalkie);
-	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, 0x62, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, menuItemYStart + menuItemYInc * 4, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::audioOptions);
-	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, 0x73, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, menuItemYStart + menuItemYInc * 5, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[5].callback = clickQuitGameFunctor;
-	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 0x06, -1, 0x90, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 0x06, -1, 0x90, 0xDC, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[6].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::resumeGame);
 	for (int i = 0; i < 7; ++i)
 		_mainMenu.item[i].itemId = menuStr[0 * 8 + i + 1];
@@ -1662,11 +1671,11 @@ void GUI_HoF::initStaticData() {
 		_gameOptions.item[3].callback = clickQuitOptionsFunctor;
 	} else {
 		_gameOptions.numberOfItems = 5;
-		GUI_V2_MENU_ITEM(_gameOptions.item[0], 0, 0x2B, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1F, 0x10, 0x20, 0);
-		GUI_V2_MENU_ITEM(_gameOptions.item[1], 0, 0x2C, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x20, 0x10, 0x31, 0);
-		GUI_V2_MENU_ITEM(_gameOptions.item[2], 0, 0x2D, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1D, 0x10, 0x42, 0);
-		GUI_V2_MENU_ITEM(_gameOptions.item[3], 0, 0x2E, 0xA0, 0x51, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1E, 0x10, 0x53, 0);
-		GUI_V2_MENU_ITEM(_gameOptions.item[4], 1, 0x18, -1, 0x6E, 0x6C, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[0], 0, 0x2B, 0xA0, menuItemYStart, 0x74, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1F, 0x10, 0x20, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[1], 0, 0x2C, 0xA0, menuItemYStart + menuItemYInc, 0x74, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x20, 0x10, 0x31, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[2], 0, 0x2D, 0xA0, menuItemYStart + menuItemYInc * 2, 0x74, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1D, 0x10, 0x42, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[3], 0, 0x2E, 0xA0, menuItemYStart + menuItemYInc * 3, 0x74, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1E, 0x10, 0x53, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[4], 1, 0x18, -1, 0x6E, 0x6C, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 		_gameOptions.item[4].callback = clickQuitOptionsFunctor;
 	}
 
@@ -1687,57 +1696,63 @@ void GUI_HoF::initStaticData() {
 		_audioOptions.item[i].itemId = menuStr[2 * 8 + i + 1];
 
 	GUI_V2_MENU(_choiceMenu, -1, -1, 0x140, 0x38, 0xF8, 0xF9, 0xFA, 0, 0xFE, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 0x14, 0x18, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 0x14, 0x18, 30, 0x48, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_choiceMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceYes);
-	GUI_V2_MENU_ITEM(_choiceMenu.item[1], 1, 0x13, 0xD8, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_choiceMenu.item[1], 1, 0x13, 0xD8, 30, 0x48, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_choiceMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::choiceNo);
 	for (int i = 2; i <= 6; ++i)
 		_choiceMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_choiceMenu.item[i].itemId = menuStr[3 * 8 + i + 1];
 
-	GUI_V2_MENU(_loadMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[4 * 8], 0xFB, -1, 8, 0, 6, 0x84, 0x16, 0x84, 0x7C);
-	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 0x29, -1, 0x27, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_loadMenu.item[1], 1, 0x2A, -1, 0x38, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_loadMenu.item[2], 1, 0x2B, -1, 0x49, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_loadMenu.item[3], 1, 0x2C, -1, 0x5A, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_loadMenu.item[4], 1, 0x2D, -1, 0x6B, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 45 : 39;
+	int menuItemScrollArrowY1 = _vm->gameFlags().lang == Common::ZH_TWN ? 26 : 22;
+	int menuItemScrollArrowY2 = _vm->gameFlags().lang == Common::ZH_TWN ? 131 : 124;
+
+	GUI_V2_MENU(_loadMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[4 * 8], 0xFB, -1, 8, 0, 6, 0x84, menuItemScrollArrowY1, 0x84, menuItemScrollArrowY2);
+	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 0x29, -1, menuItemYStart, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_loadMenu.item[1], 1, 0x2A, -1, menuItemYStart + menuItemYInc * 1, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_loadMenu.item[2], 1, 0x2B, -1, menuItemYStart + menuItemYInc * 2, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_loadMenu.item[3], 1, 0x2C, -1, menuItemYStart + menuItemYInc * 3, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_loadMenu.item[4], 1, 0x2D, -1, menuItemYStart + menuItemYInc * 4, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	for (int i = 0; i <= 4; ++i)
 		_loadMenu.item[i].callback = clickLoadSlotFunctor;
-	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_loadMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelLoadMenu);
 	_loadMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_loadMenu.item[i].itemId = menuStr[4 * 8 + i + 1];
 
-	GUI_V2_MENU(_saveMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[5 * 8], 0xFB, -1, 8, 0, 6, 0x84, 0x16, 0x84, 0x7C);
-	GUI_V2_MENU_ITEM(_saveMenu.item[0], 1, 0x29, -1, 0x27, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_saveMenu.item[1], 1, 0x2A, -1, 0x38, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_saveMenu.item[2], 1, 0x2B, -1, 0x49, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_saveMenu.item[3], 1, 0x2C, -1, 0x5A, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	GUI_V2_MENU_ITEM(_saveMenu.item[4], 1, 0x2D, -1, 0x6B, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU(_saveMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[5 * 8], 0xFB, -1, 8, 0, 6, 0x84, menuItemScrollArrowY1, 0x84, menuItemScrollArrowY2);
+	GUI_V2_MENU_ITEM(_saveMenu.item[0], 1, 0x29, -1, menuItemYStart, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_saveMenu.item[1], 1, 0x2A, -1, menuItemYStart + menuItemYInc * 1, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_saveMenu.item[2], 1, 0x2B, -1, menuItemYStart + menuItemYInc * 2, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_saveMenu.item[3], 1, 0x2C, -1, menuItemYStart + menuItemYInc * 3, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_saveMenu.item[4], 1, 0x2D, -1, menuItemYStart + menuItemYInc * 4, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	for (int i = 0; i <= 4; ++i)
 		_saveMenu.item[i].callback = clickSaveSlotFunctor;
-	GUI_V2_MENU_ITEM(_saveMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_saveMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_saveMenu.item[5].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSaveMenu);
 	_saveMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_saveMenu.item[i].itemId = menuStr[5 * 8 + i + 1];
 
 	GUI_V2_MENU(_savenameMenu, -1, -1, 0x140, 0x43, 0xF8, 0xF9, 0xFA, menuStr[6 * 8], 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 0xD, 0x18, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 0xD, 0x18, 0x2C, 0x58, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_savenameMenu.item[0].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::finishSavename);
-	GUI_V2_MENU_ITEM(_savenameMenu.item[1], 1, 0xB, 0xD0, 0x2C, 0x58, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_savenameMenu.item[1], 1, 0xB, 0xD0, 0x2C, 0x58, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_savenameMenu.item[1].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::cancelSavename);
 	for (int i = 2; i <= 6; ++i)
 		_savenameMenu.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_savenameMenu.item[i].itemId = menuStr[6 * 8 + i + 1];
 
+	menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 27 : 30;
+
 	GUI_V2_MENU(_deathMenu, -1, -1, 0xD0, 0x4C, 0xF8, 0xF9, 0xFA, menuStr[7 * 8], 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V2_MENU_ITEM(_deathMenu.item[0], 1, 2, -1, 0x1E, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_deathMenu.item[0], 1, 2, -1, menuItemYStart, 0xB4, menuItemHeight, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_deathMenu.item[0].callback = clickLoadMenuFunctor;
-	GUI_V2_MENU_ITEM(_deathMenu.item[1], 1, 5, -1, 0x2F, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	GUI_V2_MENU_ITEM(_deathMenu.item[1], 1, 5, -1, menuItemYStart + menuItemYInc, 0xB4, menuItemHeight, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_deathMenu.item[1].callback = clickQuitGameFunctor;
 	for (int i = 2; i <= 6; ++i)
 		_deathMenu.item[i].enabled = false;

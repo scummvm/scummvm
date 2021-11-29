@@ -381,6 +381,7 @@ protected:
 
 	Screen::FontId _defaultFont;
 	Screen::FontId _bookFont;
+	int _lineHeight;
 
 	// chat
 	bool _chatIsNote;

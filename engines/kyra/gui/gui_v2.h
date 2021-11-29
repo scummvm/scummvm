@@ -221,6 +221,9 @@ protected:
 	int getCharWidth(uint8 c);
 	void drawTextfieldBlock(int x, int y, uint8 c);
 
+	Screen::FontId _saveMenuFont;
+	Common::Rect _saveMenuCursor;
+
 	// choice menu
 	bool _choice;
 

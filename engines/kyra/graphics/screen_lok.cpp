@@ -493,7 +493,7 @@ void ChineseOneByteFontLoK::processColorMap() {
 	_textColor[1] = _colorMap[0];
 }
 
-ChineseTwoByteFontLoK::ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable, uint32 lookupTableSize) : ChineseFont(pitch, 15, 14, 18, 17, 0, 0),
+ChineseTwoByteFontLoK::ChineseTwoByteFontLoK(int pitch, const uint16 *lookupTable, uint32 lookupTableSize) : ChineseFont(pitch, 15, 14, 18, 17, 0, 3),
 _lookupTable(lookupTable), _lookupTableSize(lookupTableSize) {
 	assert(lookupTable);
 }

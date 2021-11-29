@@ -139,8 +139,13 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 		} else {
 			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = *str;
 			++pos;
-			if (pos >= TALK_SUBSTRING_LEN - 2)
+			if (_vm->game() == GI_KYRA2 && _vm->gameFlags().lang == Common::ZH_TWN && pos == 32) {
+				_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
+				++currentLine;
+				pos = 0;
+			} else if (pos >= TALK_SUBSTRING_LEN - 2) {
 				pos = TALK_SUBSTRING_LEN - 2;
+			}
 		}
 		++str;
 	}
@@ -162,11 +167,12 @@ int TextDisplayer::getWidestLineWidth(int linesCount) {
 }
 
 void TextDisplayer::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
+	int margin = (_vm->game() == GI_KYRA2 && _vm->gameFlags().lang == Common::ZH_TWN) ? 8 : 12;
 	x1 = cx - w / 2;
-	if (x1 + w >= Screen::SCREEN_W - 12) {
-		x1 = Screen::SCREEN_W - 12 - w - 1;
-	} else if (x1 < 12) {
-		x1 = 12;
+	if (x1 + w >= Screen::SCREEN_W - margin) {
+		x1 = Screen::SCREEN_W - margin - w - 1;
+	} else if (x1 < margin) {
+		x1 = margin;
 	}
 	x2 = x1 + w + 1;
 }
@@ -238,11 +244,11 @@ void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0,
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
+	int ls = _screen->_lineSpacing;
 	_screen->_lineSpacing = 0;
 	_screen->printText(tmp, x, y, c0, c2);
 	_screen->_charSpacing = 0;
-	if (_vm->gameFlags().lang == Common::ZH_TWN)
-		_screen->_lineSpacing = 2;
+	_screen->_lineSpacing = ls;
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {

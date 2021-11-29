@@ -797,9 +797,17 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 		letterBuffer = _res->fileData(filename, nullptr);
 	}
 
+	int x = 12;
+	int y = 10;
+
+	if (_flags.lang == Common::ZH_TWN) {
+		x = 17;
+		y = 11;
+	}
+
 	if (letterBuffer) {
 		bookDecodeText(letterBuffer);
-		bookPrintText(2, letterBuffer, 0xC, 0xA, 0x20);
+		bookPrintText(2, letterBuffer, x, y, 0x20);
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
