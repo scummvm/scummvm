@@ -6,6 +6,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Ported ResidualVM GUI theme to remastered version.
    - Fixed edge case for Punycode.
+   - Fixed checking for savegame overwrite in autosave slot.
+   - Fixed moving savegame to new slot for most engines.
 
  AGOS:
    - Fixed old Waxworks AdLib music regression.
