@@ -29,6 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      versions of Loom and Indiana Jones and the Last Crusade.
    - Improved OPL3 sound emulation for Sam&Max.
    - Fixed music not looping in The Dig.
+   - Fixed crash when loading savegames from Humongous Entertainment games.
 
 TwinE:
    - Numerous bugfixes and stability improvements.
