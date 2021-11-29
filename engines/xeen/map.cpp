@@ -901,8 +901,7 @@ void Map::load(int mapId) {
 		} else {
 			musName = "outdoors.m";
 		}
-		if (musName != sound._currentMusic)
-			sound.playSong(musName, 207);
+		sound.playSong(musName, 207);
 
 		// Load sprite sets needed for scene rendering
 		_groundSprites.load("water.out");
@@ -938,8 +937,7 @@ void Map::load(int mapId) {
 		} else {
 			musName = Res.MUSIC_FILES1[MUS_INDEXES[_mazeData->_wallKind]];
 		}
-		if (musName != sound._currentMusic)
-			sound.playSong(musName, 207);
+		sound.playSong(musName, 207);
 
 		// Load sprite sets needed for scene rendering
 		_skySprites[1].load(Common::String::format("%s.sky",
