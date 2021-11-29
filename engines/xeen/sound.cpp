@@ -109,6 +109,7 @@ void Sound::setFxOn(bool isOn) {
 	ConfMan.setBool("sfx_mute", !isOn);
 	if (isOn)
 		ConfMan.setBool("mute", false);
+	ConfMan.flushToDisk();
 
 	g_vm->syncSoundSettings();
 }
@@ -212,6 +213,7 @@ void Sound::setMusicOn(bool isOn) {
 	ConfMan.setBool("music_mute", !isOn);
 	if (isOn)
 		ConfMan.setBool("mute", false);
+	ConfMan.flushToDisk();
 
 	g_vm->syncSoundSettings();
 }
