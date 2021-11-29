@@ -59,7 +59,7 @@ private:
 public:
 	bool _fxOn;
 	bool _musicOn;
-	Common::String _currentMusic, _priorMusic;
+	Common::String _currentMusic;
 	int _musicSide;
 	bool _subtitles;
 public:
