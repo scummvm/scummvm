@@ -248,6 +248,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C894 = 0;
 	_word2C8D7 = -1;
 	_word2C87A = false;
+	_unk_sub26437_flag = 0;
 
 	memset(_messageToBePrinted, 0, 400);
 }
@@ -581,6 +582,8 @@ void EfhEngine::setDefaultNoteDuration() {
 
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	warning("STUB: playSong");
+	_system->delayMillis(1000);
+	
 	return Common::KEYCODE_INVALID;
 }
 
@@ -632,8 +635,6 @@ void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 }
 
 Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
-	warning("STUB - getLastCharAfterAnimCount");
-
 	if (delay == 0)
 		return Common::KEYCODE_INVALID;
 
@@ -668,7 +669,7 @@ void EfhEngine::playIntro() {
 
 	// Load animations on previous picture with GF
 	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
-	readImpFile(100, 0);
+	readImpFile(100, false);
 	Common::KeyCode lastInput = getLastCharAfterAnimCount(8);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
@@ -995,6 +996,10 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 void EfhEngine::displayFctFullScreen() {
 	// CHECKME: 319 is in the original but looks suspicious.
 	copyDirtyRect(0, 0, 319, 200);
+
+	
+	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+	_system->updateScreen();
 }
 
 void EfhEngine::copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY) {
@@ -1020,8 +1025,8 @@ void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
 		}
 	}
 
-	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
-	_system->updateScreen();
+//	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
+//	_system->updateScreen();
 }
 
 uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
@@ -1103,7 +1108,40 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
 }
 
 void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
-	warning("STUB - sub26437");
+	uint8 *curPtr = (uint8 *)str;
+	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
+	_unk_sub26437_flag = unkFl & 0x3FFF;
+	int16 minX = startX;
+	int16 minY = startY;                                 // Used in case 0x8000
+	int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
+
+	if (unkFl & 0x8000) {
+		warning("STUB - sub26437 - 0x8000");
+	}
+
+	for (uint8 curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
+		if (curChar == 0x0A) {
+			startX = minX;
+			startY += lineHeight;
+			continue;
+		}
+
+		if (curChar < 0x20)
+			continue;
+
+		uint16 characterId = (curChar + 0xE0) & 0xFF;
+		uint8 charWidth = _fontDescr._widthArray[characterId];
+
+		if (startX + charWidth >= 319) {
+			startX = minX;
+			startY += lineHeight;
+		}
+
+		uint8 varC = _fontDescr._extraLines[characterId];
+		sub252CE(curChar, startX, startY + varC);
+		startX += charWidth + _fontDescr._extraHorizontalSpace;
+	}
+	
 }
 
 void EfhEngine::displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY) {
@@ -1181,7 +1219,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 		uint8 curChar = *buffer;
 		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) {
 			var_F2 = 0;
-			var_EC[++var_116] = curChar;
+			var_EC[var_116++] = curChar;
 			++buffer;
 			continue;
 		}
@@ -1496,7 +1534,6 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					var110 = sub1C219("Nothing...", 1, 2, 0xFFFF);
 					displayFctFullScreen();
 				} else {
-					warning("STUB case 0x18");
 					copyString((uint8 *)_npcBuf[_teamCharId[counter]]._name, (uint8 *)_ennemyNamePt2);
 					copyString((uint8 *)_items[var110]._name, (uint8 *)_nameBuffer);
 					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, _nameBuffer);
@@ -1679,6 +1716,23 @@ int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 	return -1;
 }
 
+void EfhEngine::sub252CE(uint8 curChar, int16 posX, int posY) {
+	// Quick hacked display, may require rework
+	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
+
+	int16 charId = curChar - 0x20;
+	uint8 width = _fontDescr._widthArray[charId];
+
+	for (int16 line = 0; line < 8; ++line) {
+		int16 x = 0;
+		for (int i = 7; i >= 7 - width; --i) {
+			if (_fontDescr._fontData[charId]._lines[line] & (1 << i))
+				destPtr[320 * line + x] = 14;
+			++x;
+		}
+	}	
+}
+
 void EfhEngine::setNumLock() {
 	// No implementation in ScummVM
 }
@@ -1702,8 +1756,21 @@ void EfhEngine::unkFct_anim() {
 	unkfct_mapFunction();
 }
 
+void EfhEngine::setNextCharacterPos() {
+	if (_textPosX <= 311)
+		return;
+
+	_textPosX = 0;
+	_textPosY += 8;
+
+	if (_textPosY > 191)
+		_textPosY = 0;
+}
+
 void EfhEngine::unkFct_displayString_2(char *message) {
-	warning("STUB - unkFct_displayString_2 %s", message);
+	sub26437(message, _textPosX, _textPosY, _unkVideoRelatedWord1);
+	_textPosX += getStringWidth(message) + 1;
+	setNextCharacterPos();
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
