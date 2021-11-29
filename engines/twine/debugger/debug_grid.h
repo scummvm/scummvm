@@ -38,6 +38,7 @@ public:
 
 	bool _useFreeCamera = false;
 	bool _canChangeScenes = false;
+	bool _disableGridRendering = false;
 
 	/** Change scenario camera positions */
 	void changeGridCamera();

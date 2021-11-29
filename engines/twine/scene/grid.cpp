@@ -67,6 +67,9 @@ void Grid::init(int32 w, int32 h) {
 }
 
 void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) {
+	if (_engine->_debugGrid->_disableGridRendering) {
+		return;
+	}
 	uint8 *ptr = _brickMaskTable[index];
 
 	int32 left = x + *(ptr + 2);
@@ -495,6 +498,9 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 
 // WARNING: Rewrite this function to have better performance
 bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
+	if (_engine->_debugGrid->_disableGridRendering) {
+		return false;
+	}
 	if (!_engine->_interface->_clip.isValidRect()) {
 		return false;
 	}

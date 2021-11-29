@@ -56,6 +56,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_clips", WRAP_METHOD(TwinEConsole, doToggleClipRendering));
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
+	registerCmd("toggle_scenerendering", WRAP_METHOD(TwinEConsole, doToggleSceneRendering));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
 	registerCmd("hero_pos", WRAP_METHOD(TwinEConsole, doSetHeroPosition));
 	registerCmd("set_life", WRAP_METHOD(TwinEConsole, doSetLife));
@@ -153,6 +154,11 @@ bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
 
 bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugGrid->_canChangeScenes, "scene switching via keybinding\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleSceneRendering(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_debugGrid->_disableGridRendering, "scene rendering\n")
 	return true;
 }
 
