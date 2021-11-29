@@ -304,9 +304,12 @@ private:
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
+	void sub252CE(uint8 curChar, int16 posX, int posY);
+
 	void setNumLock();
 	void unkfct_mapFunction();
 	void unkFct_anim();
+	void setNextCharacterPos();
 	void unkFct_displayString_2(char *message);
 
 	uint8 _videoMode;
@@ -383,6 +386,7 @@ private:
 	int16 _word2C894;
 	int16 _word2C8D7;
 	bool _word2C87A;
+	int16 _unk_sub26437_flag;
 
 	int16 _imageSetSubFilesIdx;
 
