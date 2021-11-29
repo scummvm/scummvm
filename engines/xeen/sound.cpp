@@ -77,13 +77,13 @@ void Sound::playSound(const Common::String &name, int ccNum, int unused) {
 }
 
 void Sound::playVoice(const Common::String &name, int ccMode) {
+	stopSound();
+	if (!_fxOn)
+		return;
 	File f;
 	bool result = (ccMode == -1) ? f.open(name) : f.open(name, ccMode);
 	if (!result)
 		error("Could not open sound - %s", name.c_str());
-
-	stopSound();
-
 	Common::SeekableReadStream *srcStream = f.readStream(f.size());
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
@@ -148,6 +148,8 @@ void Sound::loadEffectsData() {
 
 void Sound::playFX(uint effectId) {
 	stopFX();
+	if (!_fxOn)
+		return;
 	loadEffectsData();
 
 	if (effectId < _effectsOffsets.size()) {
