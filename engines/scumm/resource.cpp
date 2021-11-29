@@ -1651,6 +1651,12 @@ const char *nameOfResType(ResType type) {
 }
 
 void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
+	// The resource isn't always loaded into memory, in which case no
+	// workaround is needed. This happens when loading some HE savegames
+	// where sound resource 1 isn't loaded. Possibly other cases as well.
+	if (!_res->isResourceLoaded(type, idx))
+		return;
+
 	int size = getResourceSize(type, idx);
 
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
