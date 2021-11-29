@@ -202,6 +202,15 @@ int r95_proc2() {
 	return 0;
 }
 
+void r97_proc2() {
+}
+
+void r97_proc3() {
+}
+
+void r97_proc4() {
+}
+
 int r97_proc5() {
 	return 0;
 }
@@ -230,8 +239,17 @@ int r97_proc11() {
 	return 0;
 }
 
+void r97_proc12() {
+}
+
+void r97_proc13() {
+}
+
 int r97_proc14() {
 	return 0;
+}
+
+void r97_proc15() {
 }
 
 } // namespace Chewy

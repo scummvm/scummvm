@@ -88,6 +88,9 @@ int r94_proc3();
 
 int r95_proc2();
 
+void r97_proc2();
+void r97_proc3();
+void r97_proc4();
 int r97_proc5();
 int r97_proc6();
 int r97_proc7();
@@ -95,7 +98,10 @@ int r97_proc8();
 int r97_proc9();
 int r97_proc10();
 int r97_proc11();
+void r97_proc12();
+void r97_proc13();
 int r97_proc14();
+void r97_proc15();
 
 } // namespace Chewy
 
