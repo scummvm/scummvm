@@ -420,6 +420,11 @@ void PuzzlePipes::updateScreen() {
 	}
 
 	if (_isLeverReady) {
+		_vm->clearGameFlag(kGameFlagBrokenPipeSpraying);
+		_vm->clearGameFlag(kGameFlagSmFtnOverflows);
+		_vm->clearGameFlag(kGameFlagFountainFilling);
+		_vm->clearGameFlag(kGameFlagSewerExplodes);
+
 		if (!_levelFlags[4])
 			_vm->setGameFlag((GameFlag)(96 + checkFlags()));
 		getScreen()->clear();
