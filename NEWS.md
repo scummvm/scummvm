@@ -36,6 +36,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - New Digital iMUSE engine.
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
+   - Fixed crash when loading savegames from Humongous Entertainment games.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
