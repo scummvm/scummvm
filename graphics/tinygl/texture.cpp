@@ -45,9 +45,7 @@ static const struct tglColorAssociation colorAssociationList[] = {
  * Note: this does not matter at all for TinyGL, but this is to be consistent
  * with future OpenGL equivalent for this code.
  */
-// TODO: remove pixel endianness conversions from tinygl callers and enable
-//#if defined(SCUMM_LITTLE_ENDIAN)
-#if 1
+#if defined(SCUMM_LITTLE_ENDIAN)
 	{Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE},
 	{Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE},
 	{Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE},

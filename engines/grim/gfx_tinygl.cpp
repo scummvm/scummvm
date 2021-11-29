@@ -909,7 +909,34 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = Graphics::tglGenBlitImage();
 			const Graphics::Surface &imageBuffer = bitmap->getImageData(i);
-			Graphics::tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
+#ifdef SCUMM_BIG_ENDIAN
+			if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 2) {
+				Graphics::Surface buffer;
+				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
+				uint16 *bufSrc = (uint16 *)const_cast<void *>(imageBuffer.getPixels());
+				uint16 *bufDst = (uint16 *)(buffer.getPixels());
+				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
+					uint16 val = SWAP_BYTES_16(bufSrc[f]);
+					bufDst[f] = val;
+				}
+				Graphics::tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
+				buffer.free();
+			} else if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 4) {
+				Graphics::Surface buffer;
+				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
+				uint32 *bufSrc = (uint32 *)const_cast<void *>(imageBuffer.getPixels());
+				uint32 *bufDst = (uint32 *)(buffer.getPixels());
+				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
+					uint32 val = SWAP_BYTES_32(bufSrc[f]);
+					bufDst[f] = val;
+				}
+				Graphics::tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
+				buffer.free();
+			} else
+#endif
+			{
+				Graphics::tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
+			}
 		}
 	}
 }
