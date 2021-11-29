@@ -718,7 +718,7 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 	return results;
 }
 
-DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist) {
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
@@ -733,7 +733,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
@@ -941,7 +941,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		}
 
 		// Take the first detection entry
-		const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+		MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 		DetectedGames candidates = metaEngine.detectGames(files);

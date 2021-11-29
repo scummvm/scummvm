@@ -48,7 +48,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override;
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -106,7 +106,7 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	assert(syst);
 	assert(engine);
 

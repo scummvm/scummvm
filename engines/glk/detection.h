@@ -57,7 +57,7 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	DetectedGames detectGames(const Common::FSList &fslist) const override;
+	DetectedGames detectGames(const Common::FSList &fslist) override;
 
 	/**
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.

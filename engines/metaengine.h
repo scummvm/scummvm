@@ -156,7 +156,7 @@ public:
 	 * (possibly empty) list of games supported by the engine that were
 	 * found among the given files.
 	 */
-	virtual DetectedGames detectGames(const Common::FSList &fslist) const = 0;
+	virtual DetectedGames detectGames(const Common::FSList &fslist) = 0;
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -269,7 +269,7 @@ public:
 	 *
 	 * @return A Common::Error describing the error that occurred, or kNoError.
 	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) = 0;
 
 	/**
 	 * Return a list of all save states associated with the given target.
@@ -576,7 +576,7 @@ public:
 	 *
 	 * Returns an empty list if none are found.
 	 */
-	DetectionResults detectGames(const Common::FSList &fslist) const;
+	DetectionResults detectGames(const Common::FSList &fslist);
 
 	/** Find a plugin by its engine ID. */
 	const Plugin *findPlugin(const Common::String &engineId) const;

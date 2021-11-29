@@ -76,7 +76,7 @@ AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(A
 	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
 }
 
-DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
+DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) {
 	FileMap allFiles;
 
 	if (fslist.empty())

@@ -248,11 +248,15 @@ bool AdvancedMetaEngineDetection::cleanupPirated(ADDetectedGames &matched) const
 	return false;
 }
 
-DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
+DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist) {
 	FileMap allFiles;
 
 	if (fslist.empty())
 		return DetectedGames();
+
+	// Sometimes this method is called directly, so we have to build the maps, especially
+	// the _directoryGlobsMap
+	preprocessDescriptions();
 
 	// Compose a hashmap of all files in fslist.
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
@@ -329,7 +333,7 @@ const ExtraGuiOptions AdvancedMetaEngineDetection::getExtraGuiOptions(const Comm
 	return options;
 }
 
-Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine **engine) {
 	assert(engine);
 
 	Common::Language language = Common::UNK_LANG;
@@ -363,6 +367,10 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	if (files.empty())
 		return Common::kNoGameDataFoundError;
+
+	// Sometimes this method is called directly, so we have to build the maps, especially
+	// the _directoryGlobsMap
+	preprocessDescriptions();
 
 	// Compose a hashmap of all files in fslist.
 	FileMap allFiles;
@@ -567,7 +575,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	return true;
 }
 
-ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) {
 	FilePropertiesMap filesProps;
 	ADDetectedGames matched;
 
@@ -794,6 +802,8 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 	_matchFullPaths = false;
 	_maxAutogenLength = 15;
 
+	_hashMapsInited = false;
+
 	for (auto f = grayList; *f; f++)
 		_grayListMap.setVal(*f, true);
 }
@@ -806,7 +816,12 @@ void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDe
 #endif
 }
 
-void AdvancedMetaEngineDetection::preprocessDescriptions() const {
+void AdvancedMetaEngineDetection::preprocessDescriptions() {
+	if (_hashMapsInited)
+		return;
+
+	_hashMapsInited = true;
+
 	// Check if the detection entries have only files from the blacklist
 	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		const ADGameDescription *g = (const ADGameDescription *)descPtr;
@@ -832,7 +847,7 @@ bool AdvancedMetaEngineDetection::isEntryGrayListed(const ADGameDescription *g) 
 	return (grayIsPresent && !nonGrayIsPresent);
 }
 
-Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	if (pl.size() == 1) {
 		const Plugin *metaEnginePlugin = PluginMan.getMetaEngineFromEngine(pl[0]);

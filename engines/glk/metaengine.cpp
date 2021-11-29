@@ -81,7 +81,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -144,7 +144,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
 
 	// Get the matching MetaEngine for this Engine.
-	const MetaEngineDetection &metaEngine = g_engine->getMetaEngineDetection();
+	MetaEngineDetection &metaEngine = g_engine->getMetaEngineDetection();
 
 	// Iterate over the files
 	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
@@ -162,7 +162,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 	return Common::String();
 }
 
-Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 #ifndef RELEASE_BUILD
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 #endif

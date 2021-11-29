@@ -44,7 +44,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
 			return Common::String::format("sword1.###");
@@ -71,7 +71,7 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsLoadingDuringRuntime);
 }
 
-Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	assert(engine);
 	*engine = new Sword1::SwordEngine(syst);
 	return Common::kNoError;

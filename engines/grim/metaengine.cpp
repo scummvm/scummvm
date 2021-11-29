@@ -38,7 +38,7 @@ public:
 		return "grim";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine) override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}

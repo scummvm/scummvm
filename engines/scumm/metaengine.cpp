@@ -245,7 +245,7 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();

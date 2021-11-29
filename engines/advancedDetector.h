@@ -357,7 +357,7 @@ public:
 	 * (possibly empty) list of games supported by the engine that were
 	 * found among the given files.
 	 */
-	DetectedGames detectGames(const Common::FSList &fslist) const override;
+	DetectedGames detectGames(const Common::FSList &fslist) override;
 
 	/**
 	 * A generic createInstance.
@@ -365,7 +365,7 @@ public:
 	 * For instantiating engine objects, this method is called first,
 	 * and then the subclass implemented createInstance is called from within.
 	 */
-	Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine);
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -399,11 +399,12 @@ protected:
 
 private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
-	void preprocessDescriptions() const;
+	void preprocessDescriptions();
 	bool isEntryGrayListed(const ADGameDescription *g) const;
 
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;
+	bool _hashMapsInited;
 
 protected:
 	/**
@@ -420,7 +421,7 @@ protected:
 	 *
 	 * @return A list of @ref ADGameDescription pointers corresponding to the matched games.
 	 */
-	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra);
 
 	/**
 	 * @return True if variant of a game with unknown files can be played with the engine and false otherwise.
@@ -473,7 +474,7 @@ public:
 	 * By the time this is called, it is assumed that there is only one
 	 * plugin engine loaded in memory.
 	 */
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override;
 
 	/**
 	 * A createInstance implementation for subclasses. To be called after the base
