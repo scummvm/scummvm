@@ -152,6 +152,11 @@ void r25_xit_gleiter() {
 	}
 }
 
+void r26_entry() {
+	// TODO
+}
+
+
 void r27_entry() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		_G(timer_nr)[0] = room->set_timer(0, 5);

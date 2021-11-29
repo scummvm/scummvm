@@ -660,15 +660,16 @@ void enter_room(int16 eib_nr) {
 	atds->stop_aad();
 	atds->stop_ats();
 	_G(spieler).DiaAMov = -1;
-
 	_G(zoom_mov_fak) = 1;
-	flags.ZoomMov = true;
+
 	for (i = 0; i < MAX_PERSON; i++) {
-		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
+		spieler_mi[i].Vorschub = 8;
 		_G(spieler).ZoomXy[i][0] = 0;
 		_G(spieler).ZoomXy[i][1] = 0;
 	}
+
 	flags.ZoomMov = false;
+	_G(spieler).ScrollxStep = 1;
 	_G(spieler).ZoomXy[P_CHEWY][ 0] = (int16)room->room_info->ZoomFak;
 	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->room_info->ZoomFak;
 
@@ -677,51 +678,40 @@ void enter_room(int16 eib_nr) {
 	SetUpScreenFunc = false;
 	HowardMov = false;
 	_G(cur_hide_flag) = false;
-	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
+	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	case 0:
 		Room0::entry();
+		break;
+
+	case 2:
+		if (!_G(spieler).R2KabelBork)
+			det->start_detail(5, 255, 0);
 		break;
 
 	case 3:
 		r3_init_sonde();
 		break;
 
-	case 6:
-		r6_entry();
+	case 5:
+		if (_G(spieler).R5Terminal)
+			det->start_detail(6, 255, 0);
 		break;
 
-	case 8:
-		r8_entry();
+	case 6: r6_entry(); break;
+
+	case 7:
+		_G(spieler).ScrollxStep = 2;
 		break;
 
-	case 9:
-		r9_entry();
-		break;
-
-	case 10:
-		r10_entry();
-		break;
-
-	case 11:
-		r11_entry();
-		break;
-
-	case 12:
-		r12_entry();
-		break;
-
-	case 13:
-		r13_entry();
-		break;
-
-	case 14:
-		r14_entry();
-		break;
-
-	case 16:
-		r16_entry();
-		break;
+	case 8: r8_entry(); break;
+	case 9: r9_entry(); break;
+	case 10: r10_entry(); break;
+	case 11: r11_entry(); break;
+	case 12: r12_entry(); break;
+	case 13: r13_entry(); break;
+	case 14: r14_entry(); break;
+	case 16: r16_entry();break;
 
 	case 17:
 		r17_entry();
@@ -731,21 +721,10 @@ void enter_room(int16 eib_nr) {
 		}
 		break;
 
-	case 18:
-		r18_entry();
-		break;
-
-	case 19:
-		r19_entry();
-		break;
-
-	case 21:
-		r21_entry();
-		break;
-
-	case 22:
-		r22_entry();
-		break;
+	case 18: r18_entry(); break;
+	case 19: r19_entry(); break;
+	case 21: r21_entry(); break;
+	case 22: r22_entry(); break;
 
 	case 23:
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -758,114 +737,39 @@ void enter_room(int16 eib_nr) {
 			det->play_sound(17, 0);
 		break;
 
-	case 25:
-		r25_entry();
-		break;
-
-	case 27:
-		r27_entry();
-		break;
-
-	case 28:
-		r28_entry(eib_nr);
-		break;
-
-	case 29:
-		r29_entry();
-		break;
-
-	case 31:
-		r31_entry();
-		break;
-
-	case 32:
-		r32_entry();
-		break;
-
-	case 33:
-		r33_entry();
-		break;
+	case 25: r25_entry(); break;
+	case 26: r26_entry(); break;
+	case 27: r27_entry(); break;
+	case 28: r28_entry(eib_nr); break;
+	case 29: r29_entry(); break;
+	case 31: r31_entry(); break;
+	case 32: r32_entry(); break;
+	case 33: r33_entry(); break;
 
 	case 34:
 		if (flags.LoadGame)
 			r34_use_kuehlschrank();
 		break;
 
-	case 35:
-		r35_entry();
-		break;
-
-	case 37:
-		r37_entry();
-		break;
-
-	case 39:
-		r39_entry();
-		break;
-
-	case 40:
-		r40_entry(eib_nr);
-		break;
-
-	case 41:
-		r41_entry();
-		break;
-
-	case 42:
-		r42_entry();
-		break;
-
-	case 45:
-		r45_entry(eib_nr);
-		break;
-
-	case 46:
-		r46_entry(eib_nr);
-		break;
-
-	case 47:
-		r47_entry();
-		break;
-
-	case 48:
-		r48_entry();
-		break;
-
-	case 49:
-		r49_entry(eib_nr);
-		break;
-
-	case 50:
-		r50_entry(eib_nr);
-		break;
-
-	case 51:
-		r51_entry();
-		break;
-
-	case 52:
-		r52_entry();
-		break;
-
-	case 53:
-		r53_entry();
-		break;
-
-	case 54:
-		r54_entry(eib_nr);
-		break;
-
-	case 55:
-		r55_entry();
-		break;
-
-	case 56:
-		r56_entry();
-		break;
-
-	case 57:
-		r57_entry();
-		break;
+	case 35: r35_entry(); break;
+	case 37: r37_entry(); break;
+	case 39: r39_entry(); break;
+	case 40: r40_entry(eib_nr); break;
+	case 41: r41_entry(); break;
+	case 42: r42_entry(); break;
+	case 45: r45_entry(eib_nr); break;
+	case 46: r46_entry(eib_nr); break;
+	case 47: r47_entry(); break;
+	case 48: r48_entry(); break;
+	case 49: r49_entry(eib_nr); break;
+	case 50: r50_entry(eib_nr); break;
+	case 51: r51_entry(); break;
+	case 52: r52_entry(); break;
+	case 53: r53_entry(); break;
+	case 54: r54_entry(eib_nr); break;
+	case 55: r55_entry(); break;
+	case 56: r56_entry(); break;
+	case 57: r57_entry(); break;
 
 	case 58:
 	case 59:
@@ -873,38 +777,46 @@ void enter_room(int16 eib_nr) {
 		r58_entry();
 		break;
 
-	case 62:
-		r62_entry();
-		break;
-
-	case 63:
-		r63_entry();
-		break;
-
-	case 64:
-		r64_entry();
-		break;
-
-	case 65:
-		r65_entry();
-		break;
-
-	case 66:
-		r66_entry(eib_nr);
-		break;
-
-	case 67:
-		r67_entry();
-		break;
-
-	case 68:
-		r68_entry();
-		break;
-
-	case 69:
-		r69_entry(eib_nr);
+	case 62: r62_entry(); break;
+	case 63: r63_entry(); break;
+	case 64: r64_entry(); break;
+	case 65: r65_entry(); break;
+	case 66: r66_entry(eib_nr); break;
+	case 67: r67_entry(); break;
+	case 68: r68_entry(); break;
+	case 69: r69_entry(eib_nr); break;
+	case 70: r70_entry(); break;
+	case 71: r71_entry(); break;
+	case 72: r72_entry(); break;
+	case 73: r73_entry(); break;
+	case 74: r74_entry(); break;
+	case 75: r75_entry(); break;
+	case 76: r76_entry(); break;
+	case 77: r77_entry(); break;
+	case 78: r78_entry(); break;
+	case 79: r79_entry(); break;
+	case 80: r80_entry(); break;
+	case 81: r81_entry(); break;
+	case 82: r82_entry(); break;
+	case 83: r83_entry(); break;
+	case 84: r84_entry(); break;
+	case 85: r85_entry(eib_nr); break;
+	case 86: r86_entry(eib_nr); break;
+	case 87: r87_entry(); break;
+	case 88: r88_entry(); break;
+	case 89: r89_entry(); break;
+	case 90: r90_entry(eib_nr); break;
+	case 91: r91_entry(); break;
+	case 92: r92_entry(); break;
+	case 93: r93_entry(); break;
+	case 94: r94_entry(); break;
+	case 95: r95_entry(eib_nr); break;
+	case 96: r96_entry(); break;
+	case 97: r97_entry(); break;
+	default:
 		break;
 	}
+
 	flags.LoadGame = false;
 }
 

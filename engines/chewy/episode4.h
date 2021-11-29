@@ -28,8 +28,13 @@ namespace Chewy {
 void switch_room(int16 nr);
 
 void r66_entry(int16 eib_nr);
-
 void r66_exit(int16 eib_nr);
+void r66_talk1();
+void r66_talk2();
+void r66_talk3();
+void r66_talk4();
+int r66_proc2();
+int r66_proc7();
 
 void r67_entry();
 

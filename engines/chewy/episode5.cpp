@@ -27,24 +27,10 @@
 
 namespace Chewy {
 
-void r66_talk1() {
+void r70_entry() {
 }
 
-void r66_talk2() {
-}
-
-void r66_talk3() {
-}
-
-void r66_talk4() {
-}
-
-int r66_proc2() {
-	return 0;
-}
-
-int r66_proc7() {
-	return 0;
+void r71_entry() {
 }
 
 int r71_proc1() {
@@ -58,6 +44,12 @@ int r71_proc6() {
 void r71_proc7() {
 }
 
+void r72_entry() {
+}
+
+void r73_entry() {
+}
+
 int r73_proc1() {
 	return 0;
 }
@@ -66,8 +58,17 @@ int r73_proc2() {
 	return 0;
 }
 
+void r74_entry() {
+}
+
 int r74_proc1() {
 	return 0;
+}
+
+void r75_entry() {
+}
+
+void r76_entry() {
 }
 
 void r76_talk1() {
@@ -84,6 +85,9 @@ int r76_proc7() {
 	return 0;
 }
 
+void r77_entry() {
+}
+
 int r77_proc1() {
 	return 0;
 }
@@ -92,11 +96,26 @@ int r77_proc2() {
 	return 0;
 }
 
+void r78_entry() {
+}
+
+void r79_entry() {
+}
+
+void r80_entry() {
+}
+
+void r81_entry() {
+}
+
 void r81_proc1() {
 }
 
 int r81_proc2() {
 	return 0;
+}
+
+void r82_entry() {
 }
 
 void r82_talk1() {
@@ -123,6 +142,12 @@ int r82_proc9() {
 	return 0;
 }
 
+void r83_entry() {
+}
+
+void r84_entry() {
+}
+
 void r84_talk1() {
 }
 
@@ -133,8 +158,17 @@ int r84_proc4() {
 	return 0;
 }
 
+void r85_entry(int16 eib_nr) {
+}
+
+void r86_entry(int16 eib_nr) {
+}
+
 int r86_proc2() {
 	return 0;
+}
+
+void r87_entry() {
 }
 
 int r87_proc2() {
@@ -143,6 +177,9 @@ int r87_proc2() {
 
 int r87_proc4() {
 	return 0;
+}
+
+void r88_entry() {
 }
 
 int r88_proc1() {
@@ -155,6 +192,9 @@ int r88_proc2() {
 
 int r88_proc3() {
 	return 0;
+}
+
+void r89_entry() {
 }
 
 void r89_talk1() {
@@ -176,6 +216,9 @@ int r89_proc5() {
 	return 0;
 }
 
+void r90_entry(int16 eib_nr) {
+}
+
 void r90_proc2() {
 }
 
@@ -191,6 +234,18 @@ int r90_proc6() {
 	return 0;
 }
 
+void r91_entry() {
+}
+
+void r92_entry() {
+}
+
+void r93_entry() {
+}
+
+void r94_entry() {
+}
+
 void r94_talk1() {
 }
 
@@ -198,8 +253,17 @@ int r94_proc3() {
 	return 0;
 }
 
+void r95_entry(int16 eib_nr) {
+}
+
 int r95_proc2() {
 	return 0;
+}
+
+void r96_entry() {
+}
+
+void r97_entry() {
 }
 
 void r97_proc2() {

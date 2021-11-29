@@ -36,6 +36,8 @@ int16 r25_use_gleiter();
 
 void r25_xit_gleiter();
 
+void r26_entry();
+
 void r27_entry();
 
 void r27_get_surimy();
