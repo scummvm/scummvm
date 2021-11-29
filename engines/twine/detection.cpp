@@ -658,13 +658,6 @@ static const ExtraGuiOption OptWallCollision = {
 	false
 };
 
-static const ExtraGuiOption OptCrossFade = {
-	_s("Enable cross fade"),
-	_s("Enable cross fading of images and scenes"),
-	"crossfade",
-	false
-};
-
 // this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
 static const ExtraGuiOption OptDisableSaveMenu = {
 	_s("Disable save menu"),
@@ -768,7 +761,6 @@ public:
 const ExtraGuiOptions TwinEMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(OptWallCollision);
-	options.push_back(OptCrossFade);
 	options.push_back(OptDisableSaveMenu);
 	options.push_back(OptMouse);
 	options.push_back(OptHighRes);

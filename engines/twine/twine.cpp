@@ -452,7 +452,6 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.Mouse = ConfGetIntOrDefault("mouse", true);
 
 	_cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
-	_cfgfile.CrossFade = ConfGetBoolOrDefault("crossfade", false);
 	_cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);
 
 	_actor->_autoAggressive = ConfGetBoolOrDefault("combatauto", true);
@@ -466,7 +465,6 @@ void TwinEEngine::initConfigurations() {
 	debug(1, "Fps:            %i", _cfgfile.Fps);
 	debug(1, "Debug:          %s", (_cfgfile.Debug ? "true" : "false"));
 	debug(1, "UseAutoSaving:  %s", (_cfgfile.UseAutoSaving ? "true" : "false"));
-	debug(1, "CrossFade:      %s", (_cfgfile.CrossFade ? "true" : "false"));
 	debug(1, "WallCollision:  %s", (_cfgfile.WallCollision ? "true" : "false"));
 	debug(1, "AutoAggressive: %s", (_actor->_autoAggressive ? "true" : "false"));
 	debug(1, "ShadowMode:     %i", _cfgfile.ShadowMode);
@@ -1109,38 +1107,6 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 		return;
 	}
 	_frontVideoBuffer.addDirtyRect(Common::Rect(left, top, right, bottom));
-}
-
-void TwinEEngine::crossFade(const uint32 *palette) {
-	Graphics::ManagedSurface backupSurface;
-	Graphics::ManagedSurface newSurface;
-	Graphics::ManagedSurface tempSurface;
-	Graphics::ManagedSurface surfaceTable;
-
-	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	backupSurface.create(_frontVideoBuffer.w, _frontVideoBuffer.h, fmt);
-	newSurface.create(_frontVideoBuffer.w, _frontVideoBuffer.h, fmt);
-	tempSurface.create(_frontVideoBuffer.w, _frontVideoBuffer.h, Graphics::PixelFormat::createFormatCLUT8());
-	tempSurface.setPalette(palette, 0, NUMOFCOLORS);
-
-	surfaceTable.create(_frontVideoBuffer.w, _frontVideoBuffer.h, fmt);
-
-	backupSurface.transBlitFrom(_frontVideoBuffer);
-	newSurface.transBlitFrom(tempSurface);
-
-	for (int32 i = 0; i < 8; i++) {
-		surfaceTable.blitFrom(backupSurface);
-		surfaceTable.transBlitFrom(newSurface, 0, false, 0, i * NUMOFCOLORS / 8);
-		_frontVideoBuffer.blitFrom(surfaceTable);
-		delaySkip(50);
-	}
-
-	_frontVideoBuffer.blitFrom(newSurface);
-
-	backupSurface.free();
-	newSurface.free();
-	tempSurface.free();
-	surfaceTable.free();
 }
 
 void TwinEEngine::readKeys() {

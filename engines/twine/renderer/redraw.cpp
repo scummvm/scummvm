@@ -687,10 +687,8 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 
 	_engine->_interface->resetClip();
 
-	// make ceiling grid fade
 	// need to be here to fade after drawing all actors in scene
 	if (_engine->_scene->_needChangeScene == SCENE_CEILING_GRID_FADE_2) {
-		_engine->crossFade(_engine->_screens->_paletteRGBA);
 		_engine->_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	}
 

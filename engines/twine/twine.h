@@ -104,8 +104,6 @@ struct ConfigFile {
 	int32 Fps = 0;
 
 	// these settings are not available in the original version
-	/** Use cross fade effect while changing images, or be as the original */
-	bool CrossFade = false;
 	/** Flag to toggle Wall Collision */
 	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
@@ -362,11 +360,6 @@ public:
 	 */
 	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
 	void copyBlockPhys(const Common::Rect &rect);
-
-	/** Cross fade feature
-	 * @param palette new palette to cross fade
-	 */
-	void crossFade(const uint32 *palette);
 
 	/** Handle keyboard pressed keys */
 	void readKeys();
