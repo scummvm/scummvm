@@ -29,6 +29,7 @@
 #include "chewy/episode2.h"
 #include "chewy/episode3.h"
 #include "chewy/episode4.h"
+#include "chewy/episode5.h"
 
 namespace Chewy {
 
@@ -300,8 +301,8 @@ void check_ged_action(int16 index) {
 	if (!flags.GedAction) {
 		flags.GedAction = true;
 		flag = false;
-		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		case 1:
 			switch (index) {
 			case 0:
@@ -324,6 +325,8 @@ void check_ged_action(int16 index) {
 				}
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -332,7 +335,6 @@ void check_ged_action(int16 index) {
 			case 0:
 				det->stop_detail(5);
 				if (!_G(spieler).R2KabelBork) {
-
 					det->start_detail(6, 2, ANI_VOR);
 				} else {
 					start_ani_block(2, ablock4);
@@ -340,6 +342,8 @@ void check_ged_action(int16 index) {
 				r2_jump_out_r1(9);
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -355,12 +359,14 @@ void check_ged_action(int16 index) {
 					set_person_pos(180, 124, P_CHEWY, P_LEFT);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 					_G(spieler).R7ChewyFlug = false;
-
 				}
 				break;
 
+			default:
+				break;
 			}
 			break;
+
 		case 9:
 			switch (index) {
 			case 0:
@@ -377,6 +383,8 @@ void check_ged_action(int16 index) {
 				r11_chewy_bo_use();
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -389,6 +397,8 @@ void check_ged_action(int16 index) {
 				}
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -402,6 +412,8 @@ void check_ged_action(int16 index) {
 				r17_door_kommando(1);
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -416,10 +428,8 @@ void check_ged_action(int16 index) {
 			break;
 
 		case 28:
-			if (!index) {
-
+			if (!index)
 				r28_get_pump();
-			}
 			break;
 
 		case 37:
@@ -465,9 +475,48 @@ void check_ged_action(int16 index) {
 			if (!index)
 				r55_talk_line();
 			break;
+
+		case 94:
+			if (!index && !_G(spieler).flags35_10)
+				switch_room(93);
+			break;
+
+		case 97:
+			switch (index) {
+			case 50:
+				r97_proc2();
+				break;
+			case 51:
+				r97_proc3();
+				break;
+			case 52:
+				r97_proc13();
+				break;
+			case 53:
+				r97_proc12();
+				break;
+			case 54:
+				r97_proc4();
+				break;
+			case 55:
+				if (_G(spieler).flags36_20)
+					auto_scroll(268, 0);
+				break;
+			case 56:
+				r97_proc15();
+				break;
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
 		}
+
 		flags.GedAction = false;
 	}
+
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 }
 
