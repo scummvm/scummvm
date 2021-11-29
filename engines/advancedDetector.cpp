@@ -468,21 +468,10 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		Common::String tstr = (_matchFullPaths && !parentName.empty() ? parentName + "/" : "") + file->getName();
 
 		if (file->isDirectory()) {
+			if (!_globsMap.contains(file->getName()))
+				continue;
+
 			Common::FSList files;
-
-			if (!_directoryGlobs)
-				continue;
-
-			bool matched = false;
-			for (const char * const *glob = _directoryGlobs; *glob; glob++)
-				if (file->getName().matchString(*glob, true)) {
-					matched = true;
-					break;
-				}
-
-			if (!matched)
-				continue;
-
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
@@ -821,6 +810,12 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 		return;
 
 	_hashMapsInited = true;
+
+	// Put all directory globs into a hashmap for faster usage
+	if (_directoryGlobs) {
+		for (auto glob = _directoryGlobs; *glob; glob++)
+			_globsMap.setVal(*glob, true);
+	}
 
 	// Check if the detection entries have only files from the blacklist
 	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
