@@ -417,7 +417,7 @@ bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 		if (vtop > vbottom) {
 			return false;
 		}
-		if (vright < clip.left - 1 || vleft > clip.right + 1 || vbottom < clip.top - 1 || vtop > clip.bottom + 1) {
+		if (vright <= clip.left || vleft >= clip.right || vbottom <= clip.top || vtop >= clip.bottom) {
 			debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", vleft, vtop, vright, vbottom, clip.left, clip.top, clip.right, clip.bottom);
 			return false;
 		}
@@ -467,7 +467,7 @@ bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
-		for (int16 i = 0; i < vsize + 2; i++) {
+		for (int16 i = 0; i <= vsize; i++) {
 			if (outPtr >= polyTabBegin && outPtr <= polyTabEnd) {
 				*outPtr = xpos;
 			}
@@ -478,7 +478,7 @@ bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
 			int16 *outPtr2 = &_colorProgressionBuffer[polyTabIndex];
 
-			for (int16 i = 0; i < vsize + 2; i++) {
+			for (int16 i = 0; i <= vsize; i++) {
 				if (outPtr2 >= colProgressBufStart && outPtr2 <= colProgressBufEnd) {
 					*outPtr2 = cvalue;
 				}
