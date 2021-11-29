@@ -38,6 +38,7 @@ ImageFile::ImageFile() {
 }
 
 ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
+	_name = name;
 	Common::SeekableReadStream *stream = _vm->_res->load(name);
 
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
@@ -52,8 +53,37 @@ ImageFile::ImageFile(Common::SeekableReadStream &stream, bool skipPal) {
 }
 
 ImageFile::~ImageFile() {
-	for (uint idx = 0; idx < size(); ++idx)
-		(*this)[idx]._frame.free();
+	for (uint idx = 0; idx < size(); ++idx) {
+		if (_frames[idx]._decoded)
+			_frames[idx]._frame.free();
+	}
+}
+
+ImageFrame& ImageFile::operator[](uint index) {
+	if (!_frames[index]._decoded) {
+		decodeFrame(_frames[index]);
+	}
+
+	return _frames[index];
+}
+
+uint ImageFile::size() {
+	return _frames.size();
+}
+
+void ImageFile::push_back(const ImageFrame &frame) {
+	_frames.push_back(frame);
+}
+
+void ImageFile::decodeFrame(ImageFrame &frame) {
+	Common::SeekableReadStream *stream = _vm->_res->load(_name);
+	stream->seek(frame._pos);
+	byte *data = new byte[frame._size + 4];
+	stream->read(data, frame._size);
+	Common::fill(data + frame._size, data + frame._size + 4, 0);
+	frame.decompressFrame(data, IS_ROSE_TATTOO);
+	delete[] data;
+	delete stream;
 }
 
 void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
@@ -92,12 +122,21 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 			frame._size = frame._width * frame._height;
 		}
 
-		// Load data for frame and decompress it
-		byte *data1 = new byte[frame._size + 4];
-		stream.read(data1, frame._size);
-		Common::fill(data1 + frame._size, data1 + frame._size + 4, 0);
-		frame.decompressFrame(data1, IS_ROSE_TATTOO);
-		delete[] data1;
+		frame._pos = stream.pos();
+
+		if (_name.empty()) {
+			// Load data for frame and decompress it
+			frame._decoded = true;
+			byte *data1 = new byte[frame._size + 4];
+			stream.read(data1, frame._size);
+			Common::fill(data1 + frame._size, data1 + frame._size + 4, 0);
+			frame.decompressFrame(data1, IS_ROSE_TATTOO);
+			delete[] data1;
+		} else {
+			frame._decoded = false;
+
+			stream.seek(MIN(stream.pos() + frame._size, stream.size()));
+		}
 
 		push_back(frame);
 	}
@@ -302,6 +341,10 @@ ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData) 
 	}
 }
 
+void ImageFile3DO::decodeFrame(ImageFrame &frame) {
+	error("ImageFile3DO: Frame should already have been decoded");
+}
+
 void ImageFile3DO::load(Common::SeekableReadStream &stream, bool isRoomData) {
 	uint32 headerId = 0;
 
@@ -354,6 +397,7 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 
 		celDataSize = stream.readUint16BE();
 
+		frame._decoded = true;
 		frame._width = stream.readUint16BE() + 1; // 2 bytes BE width
 		frame._height = stream.readByte() + 1; // 1 byte BE height
 		frame._paletteBase = 0;
@@ -586,6 +630,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			// Set up frame
 			ImageFrame imageFrame;
 
+			imageFrame._decoded = true;
 			imageFrame._width = ccbWidth;
 			imageFrame._height = ccbHeight;
 			imageFrame._paletteBase = 0;
@@ -712,6 +757,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 		{
 			ImageFrame imageFrame;
 
+			imageFrame._decoded = true;
 			imageFrame._width = ccbWidth;
 			imageFrame._height = ccbHeight;
 			imageFrame._paletteBase = 0;
@@ -956,6 +1002,7 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 		// create frame
 		ImageFrame imageFrame;
 
+		imageFrame._decoded = true;
 		imageFrame._width = widthTablePtr[curChar];
 		imageFrame._height = header_fontHeight;
 		imageFrame._paletteBase = 0;

@@ -37,6 +37,8 @@ namespace Sherlock {
 class SherlockEngine;
 
 struct ImageFrame {
+	uint32 _pos;
+	byte _decoded;
 	uint32 _size;
 	uint16 _width, _height;
 	int _paletteBase;
@@ -76,9 +78,11 @@ struct ImageFrame {
 	int sDrawYOffset(int scaleVal) const;
 };
 
-class ImageFile : public Common::Array<ImageFrame> {
+class ImageFile {
 private:
 	static SherlockEngine *_vm;
+	Common::Array<ImageFrame> _frames;
+	Common::String _name;
 
 	/**
 	 * Load the data of the sprite
@@ -89,7 +93,13 @@ private:
 	 * Gets the palette at the start of the sprite file
 	 */
 	void loadPalette(Common::SeekableReadStream &stream);
+protected:
+	virtual void decodeFrame(ImageFrame &frame);
 public:
+	ImageFrame& operator[](uint index);
+	uint size();
+	void push_back(const ImageFrame &frame);
+
 	byte _palette[256 * 3];
 public:
 	ImageFile();
@@ -151,6 +161,9 @@ private:
 	 * Load Sherlock Holmes 3DO font file
 	 */
 	void loadFont(Common::SeekableReadStream &stream);
+
+protected:
+	void decodeFrame(ImageFrame &frame);
 
 public:
 	ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType);
