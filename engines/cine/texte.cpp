@@ -410,7 +410,7 @@ void initLanguage(Common::Language lang) {
 		"Could not create save file ...", //
 		"PAUSE",
 		"Sauvegarde de | %s",
-		"Sauvegarde Annul\x82""e ...",
+		("Sauvegarde Annul\x82""e ..."),
 		"Aucune sauvegarde dans le lecteur ...",
 		"Veuillez entrer le Nom de la Sauvegarde ."
 	};
@@ -515,7 +515,7 @@ void initLanguage(Common::Language lang) {
 		"Versuchen Sie, etwas anderes zu finden",
 		// OPERATE
 		"Es geht nicht",
-		"Sagen wir, das war ein Versuch, und reden wir nicht mehr dr\x81""ber",
+		("Sagen wir, das war ein Versuch, und reden wir nicht mehr dr\x81""ber"),
 		"Nichts passiert",
 		"Sie haben wirklich was Besseres zu tun",
 		// SPEAK
@@ -562,7 +562,7 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const CommandeType defaultActionCommand_DE[] = {
-		"Pr\x81""fe", // FIXME? The third letter should be Latin Small Letter U with diaeresis
+		("Pr\x81""fe"), // FIXME? The third letter should be Latin Small Letter U with diaeresis
 		"Nimm",
 		"Bestand",
 		"Benutze",
@@ -599,7 +599,7 @@ void initLanguage(Common::Language lang) {
 		"Diese Sicherungskopie gibt es nicht",
 		"Could not create save file ...", //
 		"PAUSE",
-		"Er L\x84""dt | %s",
+		("Er L\x84""dt | %s"),
 		"Ladevorgang Abgebrochen...",
 		"Kein Backup im Laufwerk...",
 		"Geben Sie den Namen|der Sicherungsdiskette ein"
