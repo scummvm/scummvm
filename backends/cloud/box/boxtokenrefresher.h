@@ -38,7 +38,7 @@ class BoxTokenRefresher: public Networking::CurlJsonRequest {
 	void tokenRefreshed(Storage::BoolResponse response);
 
 	virtual void finishJson(Common::JSONValue *json);
-	virtual void finishError(Networking::ErrorResponse error);
+	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
 public:
 	BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	virtual ~BoxTokenRefresher();

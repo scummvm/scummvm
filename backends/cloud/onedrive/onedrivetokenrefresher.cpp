@@ -115,7 +115,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error) {
+void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
 

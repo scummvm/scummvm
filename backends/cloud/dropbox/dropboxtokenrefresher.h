@@ -38,7 +38,7 @@ class DropboxTokenRefresher: public Networking::CurlJsonRequest {
 	void tokenRefreshed(Storage::BoolResponse response);
 
 	virtual void finishJson(Common::JSONValue *json);
-	virtual void finishError(Networking::ErrorResponse error);
+	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
 public:
 	DropboxTokenRefresher(DropboxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	virtual ~DropboxTokenRefresher();
