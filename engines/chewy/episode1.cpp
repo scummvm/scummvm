@@ -2113,6 +2113,10 @@ void r13_entry() {
 	}
 }
 
+void r13_exit() {
+	warning("TODO: r13_exit");
+}
+
 #define R13_BORK_OBJ 0
 int16 r13_bork_phasen[4][2] = {
 	{ 92, 97 },

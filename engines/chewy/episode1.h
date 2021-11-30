@@ -154,6 +154,8 @@ int16 r12_cut_serv(int16 frame);
 
 void r13_entry();
 
+void r13_exit();
+
 void r13_talk_bork();
 
 void r13_jmp_band();
