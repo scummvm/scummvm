@@ -216,7 +216,7 @@ const char *kCreditsText[] = {
 	"Robert J. Ricci",
 	"Senior Communications Manager",
 	"Alan Lewis",
-	"Director, Product Development Services"
+	"Director, Product Development Services",
 	"Mary Steer",
 	"Director, Creative Services",
 	"Leslie Mills",
