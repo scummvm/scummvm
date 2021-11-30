@@ -77,6 +77,7 @@ public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
+		_matchFullPaths = true;
 
 		// initialize customTarget hashmap here
 		for (int i = 0; customTargetList[i].name != nullptr; i++)

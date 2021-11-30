@@ -27,7 +27,6 @@ namespace Director {
 
 const char *directoryGlobs[] = {
 	"install",
-	"l_zone",
 	"win_data",						// L-ZONE
 	"data",
 	"gadget",						// Gadget

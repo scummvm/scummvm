@@ -1867,7 +1867,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("lzone",  "",   "L-ZONE",		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
 	MACGAME1("lzone",  "v2", "L-ZONE",		"276bee761e48a6fd709df77d5c2f60dd", 395088, 310),
 	GENGAME1_("lzone", "",   "L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII, ADGF_MACRESFORK, 300),
-	WINGAME1t("lzone", "",   "L_ZONE.EXE",	"079429bfc54a1df8e7b4d379aefa0b59", 370009, 300),
+	WINGAME1t("lzone", "",   "L_ZONE/L_ZONE.EXE",	"079429bfc54a1df8e7b4d379aefa0b59", 370009, 300),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE

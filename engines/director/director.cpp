@@ -253,7 +253,7 @@ Common::String DirectorEngine::getEXEName() const {
 	if (startMovie.startMovie.size() > 0)
 		return startMovie.startMovie;
 
-	return Common::punycode_decodefilename(_gameDescription->desc.filesDescriptions[0].fileName);
+	return Common::punycode_decodefilename(Common::lastPathComponent(_gameDescription->desc.filesDescriptions[0].fileName, '/'));
 }
 
 void DirectorEngine::parseOptions() {
