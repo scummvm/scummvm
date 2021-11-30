@@ -117,10 +117,7 @@ int TattooMap::show() {
 	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
 	screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 
-	// Display the built map to the screen
-	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-
-	// Set initial scroll position
+	// Set initial scroll position, forcing the map to be displayed
 	_targetScroll = _bigPos;
 	screen._currentScroll = Common::Point(-1, -1);
 
