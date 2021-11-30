@@ -105,7 +105,7 @@ void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::hitPlayer() {
-	if ( _playerFrameSep < _playerFrames.size()){
+	if ( _playerFrameSep < (int)_playerFrames.size()){
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	} else {
@@ -265,7 +265,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					if (it->name == si.name) {
 
 						if (it->animation == "NONE") {
-							if (it->name[0] == _currentPlayerPosition) {
+							if ((uint32)(it->name[0]) == _currentPlayerPosition) {
 								_health = _health - it->attackWeight;
 								hitPlayer();
 							}
