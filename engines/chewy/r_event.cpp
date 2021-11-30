@@ -828,7 +828,6 @@ void exit_room(int16 eib_nr) {
 	det->disable_room_sound();
 
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-
 	case 6:
 		if (eib_nr == 8)
 			_G(spieler).R17Location = 2;
@@ -883,70 +882,42 @@ void exit_room(int16 eib_nr) {
 		_G(maus_links_click) = false;
 		break;
 
-	case 24:
-		r24_exit();
-		break;
-
-	case 27:
-		r27_exit(eib_nr);
-		break;
-
-	case 28:
-		r28_exit(eib_nr);
-		break;
-
-	case 29:
-		r29_exit();
-		break;
+	case 24: r24_exit(); break;
+	case 27: r27_exit(eib_nr); break;
+	case 28: r28_exit(eib_nr); break;
+	case 29: r29_exit(); break;
 
 	case 34:
 		flags.ChewyDontGo = false;
 		break;
 
-	case 41:
-		r41_exit();
-		break;
+	case 41: r41_exit(); break;
+	case 42: r42_calc_xit(); break;
 
-	case 45:
-		r45_exit(eib_nr);
-		break;
+	case 45: r45_exit(eib_nr); break;
+	case 46: r46_exit(); break;
+	case 47: r47_exit(); break;
 
-	case 46:
-		r46_exit();
-		break;
+	case 49: r49_exit(eib_nr); break;
 
-	case 47:
-		r47_exit();
-		break;
+	case 52: r52_exit(); break;
+	case 54: r54_exit(eib_nr); break;
 
-	case 49:
-		r49_exit(eib_nr);
-		break;
-
-	case 52:
-		r52_exit();
-		break;
-
-	case 54:
-		r54_exit(eib_nr);
-		break;
-
-	case 56:
-		r56_exit();
-		break;
-
-	case 57:
-		r57_exit(eib_nr);
-		break;
+	case 56: r56_exit(); break;
+	case 57: r57_exit(eib_nr); break;
 
 	case 64:
 		if (_G(spieler).R64Moni1Ani == 5)
 			_G(spieler).R64Moni1Ani = 3;
 		break;
 
-	case 65:
-		r65_exit();
-		break;
+	case 65: r65_exit(); break;
+
+	case 76: r76_exit(); break;
+	case 77: r77_exit(); break;
+	case 78: r78_exit(); break;
+	case 79: r79_exit(); break;
+	case 88: r88_exit(); break;
 
 	default:
 		no_exit = true;
@@ -955,8 +926,8 @@ void exit_room(int16 eib_nr) {
 
 	x = -1;
 	y = -1;
-	switch (eib_nr) {
 
+	switch (eib_nr) {
 	case 0:
 	case 3:
 	case 18:
@@ -967,6 +938,15 @@ void exit_room(int16 eib_nr) {
 	case 70:
 	case 83:
 	case 93:
+	case 103:
+	case 105:
+	case 109:
+	case 111:
+	case 114:
+	case 115:
+	case 118:
+	case 120:
+	case 139:
 		x = -44;
 		y = spieler_vector[P_CHEWY].Xypos[1];
 		break;
@@ -979,19 +959,30 @@ void exit_room(int16 eib_nr) {
 	case 39:
 	case 49:
 	case 52:
+	case 104:
+	case 106:
+	case 108:
+	case 112:
+	case 117:
+	case 119:
+	case 123:
+	case 125:
+	case 135:
 		xy = (int16 *)ablage[room_blk.AkAblage];
 		x = xy[0] + 30;
 		y = spieler_vector[P_CHEWY].Xypos[1];
 		break;
 
 	case 10:
-	case 41:
 	case 15:
+	case 41:
 	case 58:
 	case 73:
 	case 77:
 	case 78:
 	case 92:
+	case 122:
+	case 131:
 		xy = (int16 *)ablage[room_blk.AkAblage];
 		x = spieler_vector[P_CHEWY].Xypos[0];
 		y = xy[1] + 3;
@@ -1010,7 +1001,7 @@ void exit_room(int16 eib_nr) {
 	case 40:
 	case 50:
 	case 65:
-	case 74:
+	case 126:
 		set_person_pos(spieler_vector[P_CHEWY].Xypos[0],
 		               spieler_vector[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
 		set_up_screen(DO_SETUP);
@@ -1037,15 +1028,15 @@ void exit_room(int16 eib_nr) {
 		y = 80;
 		break;
 
+	case 72:
+		x = spieler_vector[P_CHEWY].Xypos[0];
+		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
+		break;
+
 	case 75:
 		x = 160;
 		y = 200;
 		det->show_static_spr(4);
-		break;
-
-	case 72:
-		x = spieler_vector[P_CHEWY].Xypos[0];
-		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
 		break;
 
 	case 84:
@@ -1079,7 +1070,31 @@ void exit_room(int16 eib_nr) {
 		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
 		break;
 
+	case 127:
+		x = 196;
+		y = 133;
+		det->show_static_spr(0);
+		break;
+
+	case 132:
+		x = 505;
+		y = 62;
+		break;
+
+	case 140:
+		x = spieler_vector[P_CHEWY].Xypos[0] + 40;
+		y = spieler_vector[P_CHEWY].Xypos[1];
+		break;
+
+	case 141:
+		x = spieler_vector[P_CHEWY].Xypos[0] - 12;
+		y = spieler_vector[P_CHEWY].Xypos[1];
+		break;
+
+	default:
+		break;
 	}
+
 	if (x != -1 && y != -1) {
 		spieler_mi[P_CHEWY].Mode = true;
 		go_auto_xy(x, y, P_CHEWY, ANI_WAIT);
@@ -1088,7 +1103,6 @@ void exit_room(int16 eib_nr) {
 
 	if (no_exit) {
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-
 		case 40:
 			r40_exit(eib_nr);
 			break;
@@ -1098,33 +1112,34 @@ void exit_room(int16 eib_nr) {
 				_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 			break;
 
-		case 50:
-			r50_exit(eib_nr);
-			break;
-
-		case 51:
-			r51_exit(eib_nr);
-			break;
-
-		case 55:
-			r55_exit(eib_nr);
-			break;
-
-		case 66:
-			r66_exit(eib_nr);
-			break;
-
-		case 67:
-			r67_exit();
-			break;
-
-		case 68:
-			r68_exit();
-			break;
-
-		case 69:
-			r69_exit(eib_nr);
-			break;
+		case 50: r50_exit(eib_nr); break;
+		case 51: r51_exit(eib_nr); break;
+		case 55: r55_exit(eib_nr); break;
+		case 66: r66_exit(eib_nr); break;
+		case 67: r67_exit(); break;
+		case 68: r68_exit(); break;
+		case 69: r69_exit(eib_nr); break;
+		case 70: r70_exit(eib_nr); break;
+		case 71: r71_exit(eib_nr); break;
+		case 72: r72_exit(eib_nr); break;
+		case 73: r73_exit(eib_nr); break;
+		case 74: r74_exit(eib_nr); break;
+		case 75: r75_exit(eib_nr); break;
+		case 81: r81_exit(eib_nr); break;
+		case 82: r82_exit(eib_nr); break;
+		case 84: r84_exit(eib_nr); break;
+		case 85: r85_exit(eib_nr); break;
+		case 86: r86_exit(eib_nr); break;
+		case 87: r87_exit(eib_nr); break;
+		case 89: r89_exit(); break;
+		case 90: r90_exit(eib_nr); break;
+		case 91: r91_exit(eib_nr); break;
+		case 93: r93_exit(); break;
+		case 94: r94_exit(); break;
+		case 95: r95_exit(eib_nr); break;
+		case 96: r96_exit(eib_nr); break;
+		case 97: r97_exit(); break;
+		default: break;
 		}
 	}
 }
