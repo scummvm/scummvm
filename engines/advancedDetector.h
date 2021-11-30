@@ -226,7 +226,20 @@ enum ADFlags {
 	 * In addition, this is useful if two variants of a game sharing the same
 	 * gameid are contained in a single directory.
 	 */
-	kADFlagUseExtraAsHint = (1 << 0)
+	kADFlagUseExtraAsHint = (1 << 0),
+
+	/**
+	 * If set, filenames will be matched against the entire path, relative to
+	 * the root detection directory.
+	 *
+	 * For example: "foo/bar.000" for a file at "<root>/foo/bar.000").
+	 * Otherwise, filenames only match the base name (e.g. "bar.000" for the same file).
+	 *
+	 * @note @c _maxScanDepth must still be configured to allow
+	 * the detector to find files inside subdirectories. @c _directoryGlobs are
+	 * extracted from the entries.
+	 */
+	 kADFlagMatchFullPaths = (1 << 1)
 };
 
 
@@ -316,18 +329,6 @@ protected:
 	 * @note The last item must be 0.
 	 */
 	const char * const *_directoryGlobs;
-
-	/**
-	 * If true, filenames will be matched against the entire path, relative to
-	 * the root detection directory.
-	 *
-	 * For example: "foo/bar.000" for a file at "<root>/foo/bar.000").
-	 * Otherwise, filenames only match the base name (e.g. "bar.000" for the same file).
-	 *
-	 * @note @c _maxScanDepth and @c _directoryGlobs must still be configured to allow
-	 * the detector to find files inside subdirectories.
-	 */
-	bool _matchFullPaths;
 
 	/**
 	 * If ADGF_AUTOGENTARGET is used, then this specifies the max length

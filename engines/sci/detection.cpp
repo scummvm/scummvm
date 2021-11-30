@@ -185,7 +185,7 @@ public:
 	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
-		_matchFullPaths = true;
+		_flags = kADFlagMatchFullPaths;
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

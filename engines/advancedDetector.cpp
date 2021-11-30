@@ -466,7 +466,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String tstr = (_matchFullPaths && !parentName.empty() ? parentName + "/" : "") + file->getName();
+		Common::String tstr = ((_flags & kADFlagMatchFullPaths) && !parentName.empty() ? parentName + "/" : "") + file->getName();
 
 		if (file->isDirectory()) {
 			if (!_globsMap.contains(file->getName()))
@@ -789,7 +789,6 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 	_guiOptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
-	_matchFullPaths = false;
 	_maxAutogenLength = 15;
 
 	_hashMapsInited = false;
@@ -825,8 +824,8 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 		// Scan for potential directory globs
 		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			if (strchr(fileDesc->fileName, '/')) {
-				if (!_matchFullPaths)
-					warning("Path component detected in entry for '%s' in engine '%s' but no _matchFullPaths is set",
+				if (!(_flags & kADFlagMatchFullPaths))
+					warning("Path component detected in entry for '%s' in engine '%s' but no kADFlagMatchFullPaths is set",
 						g->gameId, getEngineId());
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
