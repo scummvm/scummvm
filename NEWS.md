@@ -31,7 +31,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed music not looping in The Dig.
    - Fixed crash when loading savegames from Humongous Entertainment games.
 
-TwinE:
+ Sherlock:
+   - Fix crash using matches on lab table
+
+ TwinE:
    - Numerous bugfixes and stability improvements.
 
  Stark:
