@@ -1290,7 +1290,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 				break;
 			case kScValData:
 			case kScValCodePtr:
-				debugN(" %p", arg.GetPtrWithOffset());
+				debugN(" %p", (void *)arg.GetPtrWithOffset());
 				break;
 			case kScValStaticArray:
 			case kScValStaticObject:
@@ -1303,7 +1303,7 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 				if (!name.IsEmpty()) {
 					debugN(" &%s", name.GetCStr());
 				} else {
-					debugN(" %p", arg.GetPtrWithOffset());
+					debugN(" %p", (void *)arg.GetPtrWithOffset());
 				}
 			}
 			break;
