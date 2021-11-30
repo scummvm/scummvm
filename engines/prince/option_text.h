@@ -49,7 +49,7 @@ char invOptionsTextDE[5][17] = {
 	"Anschauen",
 	"Benutzen",
 	"\x84""ffnen/Sto\x7f""en",
-	"Schlie\x7f""en/Ziehen",
+	("Schlie\x7f""en/Ziehen"),
 	"Geben"
 };
 
@@ -59,7 +59,7 @@ const char optionsTextDE[7][17] = {
 	"Wegnehmen",
 	"Benutzen",
 	"\x84""ffnen/Sto\x7f""en",
-	"Schlie\x7f""en/Ziehen",
+	("Schlie\x7f""en/Ziehen"),
 	"Ansprechen"
 };
 
