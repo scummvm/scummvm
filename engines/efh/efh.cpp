@@ -65,6 +65,20 @@ void InvObject::init() {
 	_stat2 = 0;
 }
 
+void UnkAnimStruct::init() {
+	field0 = field1 = field2 = field3 = 0;
+}
+
+void AnimInfo::init() {
+	for (int i = 0; i < 15; ++i)
+		_unkAnimArray[i].init();
+
+	for (int i = 0; i < 10; ++i) {
+		_field3C_startY[i] = 0;
+		_field46_startX[i] = 0;
+	}
+}
+
 void ItemStruct::init() {
 	for (int16 idx = 0; idx < 15; ++idx)
 		_name[idx] = 0;
@@ -247,8 +261,11 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C880 = 0;
 	_word2C894 = 0;
 	_word2C8D7 = -1;
+	_word2C876 = true;
+	_word2C878 = true;
 	_word2C87A = false;
 	_unk_sub26437_flag = 0;
+	_word2C8D9 = 0;
 
 	memset(_messageToBePrinted, 0, 400);
 }
@@ -317,13 +334,15 @@ Common::Error EfhEngine::run() {
 	initEngine();
 	sub15150(true);
 	sub12A7F();
-	displayLowStatusScreen(-1);
+	displayLowStatusScreen(true);
 
 	if (!_protectionPassed)
 		return Common::kNoError;
 
 	warning("STUB - Main loop");
-
+	for (;;) {
+		displayFctFullScreen();
+	}
 	return Common::kNoError;
 }
 
@@ -345,7 +364,27 @@ int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
 
 void EfhEngine::readAnimInfo() {
 	Common::String fileName = "animinfo";
-	readFileToBuffer(fileName, _animInfo);
+	uint8 animInfoBuf[9000];
+	memset(animInfoBuf, 0, 9000);
+	uint8 *curPtr = animInfoBuf;
+	
+	readFileToBuffer(fileName, animInfoBuf);
+	for (int i = 0; i < 100; ++i) {
+		for (int id = 0; id < 15; ++id) {
+			_animInfo[i]._unkAnimArray[id].field0 = *curPtr++;
+			_animInfo[i]._unkAnimArray[id].field1 = *curPtr++;
+			_animInfo[i]._unkAnimArray[id].field2 = *curPtr++;
+			_animInfo[i]._unkAnimArray[id].field3 = *curPtr++;
+		}
+
+		for (int id = 0; id < 10; ++id)
+			_animInfo[i]._field3C_startY[id] = *curPtr++;
+
+		for (int id = 0; id < 10; ++id) {
+			_animInfo[i]._field46_startX[id] = READ_LE_INT16(curPtr);
+			curPtr += 2;
+		}
+	}
 }
 
 void EfhEngine::findMapFile(int16 mapId) {
@@ -445,7 +484,22 @@ void EfhEngine::drawUnknownMenuBox() {
 
 void EfhEngine::displayAnimFrame() {
 	// The original had a parameter. As it was always equal to zero, it was removed in ScummVM
-	warning("STUB - displayAnimFrame");
+
+	if (_animImageSetId == 0xFF)
+		return;
+
+	if (_animImageSetId == 0xFE) {
+		sub10B77_unkDisplayFct1(_portraitSubFilesArray[0], 16, 8);
+		return;
+	}
+
+	sub10B77_unkDisplayFct1(_portraitSubFilesArray[0], 16, 8);
+	for (int i = 0; i < 4; ++i) {
+		int16 var2 = _animInfo[_animImageSetId]._unkAnimArray[_unkAnimRelatedIndex].field0;
+		if (var2 == 0xFF)
+			continue;
+		sub10B77_unkDisplayFct1(_portraitSubFilesArray[var2 + 1], _animInfo[_animImageSetId]._field46_startX[var2] + 16, _animInfo[_animImageSetId]._field3C_startY[var2] + 8);
+	}
 }
 
 void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
@@ -770,7 +824,10 @@ void EfhEngine::initEngine() {
 	for (int i = 0; i < 300; ++i)
 		_items[i].init();
 	memset(_tileFact, 0, sizeof(_tileFact));
-	memset(_animInfo, 0, sizeof(_animInfo));
+
+	for (int i = 0; i < 100; ++i)
+		_animInfo[i].init();
+
 	memset(_history, 0, sizeof(_history));
 	memset(_techData, 0, sizeof(_techData));
 
@@ -931,6 +988,30 @@ void EfhEngine::saveAnimImageSetId() {
 	_animImageSetId = 255;
 }
 
+int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
+	warning("STUB: getEquipmentDefense");
+	return 0;
+}
+
+uint16 EfhEngine::sub1C80A(int16 charId, int field18, bool flag) {
+	for (int i = 0; i < 10; ++i) {
+		if ((_npcBuf[charId]._inventory[i]._stat1 & 0x80) == 0)
+			continue;
+
+		int16 itemId = _npcBuf[charId]._inventory[i]._ref;
+		
+		if (_items[itemId].field_18 != field18)
+			continue;
+
+		if (!flag)
+			return i;
+
+		return itemId;
+	}
+
+	return 0x7FFF;
+}
+
 void EfhEngine::sub15150(bool flag) {
 	uint8 mapTileInfo = getMapTileInfo(_mapPosX, _mapPosY);
 	int16 imageSetId = _currentTileBankImageSetId[mapTileInfo / 72];
@@ -956,12 +1037,108 @@ void EfhEngine::sub15150(bool flag) {
 	}
 }
 
-void EfhEngine::sub12A7F() {
-	warning("STUB - sub12A7F");
+void EfhEngine::sub1258F(bool largeMapFl, int16 posX, int16 posY, int imapSize, bool unkFl1, bool unkFl2) {
+	warning("STUB : sub1258F");
 }
 
-void EfhEngine::displayLowStatusScreen(int i) {
-	warning("STUB - displayLowStatusScreen");
+void EfhEngine::sub1256E(int16 posX, int16 posY) {
+	sub1258F(false, posX, posY, 23, _word2C876, _word2C878);
+}
+
+void EfhEngine::sub1254C(int16 posX, int16 posY) {
+	sub1258F(true, posX, posY, 63, _word2C876, _word2C878);
+}
+
+void EfhEngine::sub12A7F() {
+	for (int16 counter = 0; counter < 2; ++counter) {
+		_word2C894 = 0;
+		if (!_largeMapFlag) {
+			if (_fullPlaceId != 0xFF)
+				sub1256E(_mapPosX, _mapPosY);
+
+			if (_word2C8D9 != 0)
+				sub150EE();
+		} else {
+			if (_techId != 0xFF)
+				sub1254C(_mapPosX, _mapPosY);
+			
+			if (_word2C8D9 != 0)
+				sub150EE();
+		}
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+}
+
+void EfhEngine::displayLowStatusScreen(bool flag) {
+	static char strName[5] = "Name";
+	static char strDef[4] = "DEF";
+	static char strHp[3] = "HP";
+	static char strMaxHp[7] = "Max HP";
+	static char strWeapon[7] = "Weapon";
+	static char strDead[9] = "* DEAD *";
+
+	char buffer[80];
+	memset(buffer, 0, 80);
+	
+	for (int counter = 0; counter < 2; ++counter) {
+		if (counter == 0 || flag) {
+			unkFct_displayMenuBox_2(0);
+			set_unkVideoRelatedWord1_to_0Fh();
+			displayCenteredString(strName, 16, 88, 152);
+			displayCenteredString(strDef, 104, 128, 152);
+			displayCenteredString(strHp, 144, 176, 152);
+			displayCenteredString(strMaxHp, 192, 224, 152);
+			displayCenteredString(strWeapon, 225, 302, 152);
+			set_unkVideoRelatedWord1_to_0Ch();
+
+			for (int i = 0; i < 3; ++i) {
+				if (_teamCharId[i] == -1)
+					continue;
+				int16 charId = _teamCharId[i];
+				int16 textPosY = 161 + 9 * i;
+				copyString(_npcBuf[charId]._name, buffer);
+				setTextPos(16, textPosY);
+				unkFct_displayString_2(buffer);
+				sprintf(buffer, "%d", getEquipmentDefense(charId, false));
+				displayCenteredString(buffer, 104, 128, textPosY);
+				sprintf(buffer, "%d", _npcBuf[charId]._hitPoints);
+				displayCenteredString(buffer, 144, 176, textPosY);
+				sprintf(buffer, "%d", _npcBuf[charId]._maxHP);
+				displayCenteredString(buffer, 192, 224, textPosY);
+
+				if (_npcBuf[charId]._hitPoints <= 0) {
+					displayCenteredString(strDead, 225, 302, textPosY);
+					continue;
+				}
+
+				switch (_teamCharStatus[i]._status) {
+				case 0: {
+					uint16 var4 = sub1C80A(charId, 9, true);
+					if (var4 == 0x7FFF)
+						strcpy(_nameBuffer, "(NONE)");
+					else
+						copyString(_items[var4]._name, _nameBuffer);
+					}
+					break;				
+				case 1:
+					strcpy(_nameBuffer, "* ASLEEP *");
+					break;
+				case 2:
+					strcpy(_nameBuffer, "* FROZEN *");
+					break;
+				default:
+					strcpy(_nameBuffer, "* DISABLED *");
+					break;
+				}
+
+				displayCenteredString(_nameBuffer, 225, 302, textPosY);
+			}
+		}
+
+		if (counter == 0 && flag)
+			displayFctFullScreen();
+	}
 }
 
 void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
@@ -1188,12 +1365,13 @@ void EfhEngine::drawMapWindow() {
 	drawMenuBox(128, 8, 303, 135, 0);
 }
 
-void EfhEngine::copyString(uint8 *srcStr, uint8 *destStr) {
-	uint8 lastChar = 1;
+void EfhEngine::copyString(char *srcStr, char *destStr) {
+	char lastChar = 1;
 	int16 idx = 0;
 
 	while (lastChar != 0) {
 		lastChar = destStr[idx] = srcStr[idx];
+		++idx;
 	}
 }
 
@@ -1534,8 +1712,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					var110 = sub1C219("Nothing...", 1, 2, 0xFFFF);
 					displayFctFullScreen();
 				} else {
-					copyString((uint8 *)_npcBuf[_teamCharId[counter]]._name, (uint8 *)_ennemyNamePt2);
-					copyString((uint8 *)_items[var110]._name, (uint8 *)_nameBuffer);
+					copyString(_npcBuf[_teamCharId[counter]]._name, _ennemyNamePt2);
+					copyString(_items[var110]._name, _nameBuffer);
 					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, _nameBuffer);
 					drawMapWindow();
 					displayFctFullScreen();
@@ -1622,7 +1800,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 		unkFct_displayString_2(dest);
 
 	if (var_EE != 0xFF) {
-		displayLowStatusScreen(-1);
+		displayLowStatusScreen(true);
 		int16 teamSlot = handleCharacterJoining();
 		if (teamSlot > -1) {
 			_teamCharId[teamSlot] = var_EE;
@@ -1664,7 +1842,7 @@ void EfhEngine::sub1512B() {
 	sub150EE();
 	sub15018();
 	displayAnimFrame();
-	displayLowStatusScreen(0);
+	displayLowStatusScreen(false);
 }
 
 void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
@@ -1733,6 +1911,20 @@ void EfhEngine::sub252CE(uint8 curChar, int16 posX, int posY) {
 	}	
 }
 
+void EfhEngine::set_unkVideoRelatedWord1_to_0Fh() {
+	if (_videoMode == 8) // CGA
+		_unkVideoRelatedWord1 = 0x3;
+	else
+		_unkVideoRelatedWord1 = 0xF;
+}
+
+void EfhEngine::set_unkVideoRelatedWord1_to_0Ch() {
+	if (_videoMode == 8) // CGA
+		_unkVideoRelatedWord1 = 0x2;
+	else
+		_unkVideoRelatedWord1 = 0xC;
+}
+
 void EfhEngine::setNumLock() {
 	// No implementation in ScummVM
 }
@@ -1771,6 +1963,10 @@ void EfhEngine::unkFct_displayString_2(char *message) {
 	sub26437(message, _textPosX, _textPosY, _unkVideoRelatedWord1);
 	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
+}
+
+void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
+	drawMenuBox(16, 152, 302, 189, color);
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {

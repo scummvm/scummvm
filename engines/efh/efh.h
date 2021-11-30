@@ -79,6 +79,22 @@ struct InvObject {
 	void init();
 };
 
+struct UnkAnimStruct {
+	uint8 field0;
+	uint8 field1;
+	uint8 field2;
+	uint8 field3;
+
+	void init();
+};
+struct AnimInfo {
+	UnkAnimStruct _unkAnimArray[15];
+	uint8 _field3C_startY[10];
+	uint16 _field46_startX[10];
+
+	void init();
+};
+
 struct ItemStruct {
 	char _name[15];
 	uint8 _damage;
@@ -250,7 +266,9 @@ private:
 	void initMapMonsters();
 	void loadMapMonsters();
 	void saveAnimImageSetId();
-	void displayLowStatusScreen(int i);
+	int16 getEquipmentDefense(int16 charId, bool flag);
+	uint16 sub1C80A(int16 charId, int field18, bool flag);
+	void displayLowStatusScreen(bool flag);
 	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
 	void displayFctFullScreen();
@@ -273,6 +291,9 @@ private:
 	void setTextPos(int16 textPosX, int16 textPosY);
 
 	void sub15150(bool flag);
+	void sub1258F(bool cond, int16 pos_x, int16 pos_y, int i, bool c876, bool c878);
+	void sub1256E(int16 posX, int16 posY);
+	void sub1254C(int16 posX, int16 posY);
 	void sub12A7F();
 	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY);
 	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
@@ -292,7 +313,7 @@ private:
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	void drawMapWindow();
-	void copyString(uint8 *srcStr, uint8 *destStr);
+	void copyString(char *srcStr, char *destStr);
 	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
 	void sub1512B();
@@ -305,12 +326,15 @@ private:
 	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	void sub252CE(uint8 curChar, int16 posX, int posY);
+	void set_unkVideoRelatedWord1_to_0Fh();
+	void set_unkVideoRelatedWord1_to_0Ch();
 
 	void setNumLock();
 	void unkfct_mapFunction();
 	void unkFct_anim();
 	void setNextCharacterPos();
 	void unkFct_displayString_2(char *message);
+	void unkFct_displayMenuBox_2(int16 color);
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -334,7 +358,7 @@ private:
 	uint8 _titleSong[1024];
 	ItemStruct _items[300];
 	uint8 _tileFact[864];
-	uint8 _animInfo[9000];
+	AnimInfo _animInfo[100];
 	uint8 _history[256];
 	uint8 _techData[4096];
 	char _ennemyNamePt2[20];
@@ -385,6 +409,8 @@ private:
 	int16 _word2C880;
 	int16 _word2C894;
 	int16 _word2C8D7;
+	bool _word2C876;
+	bool _word2C878;
 	bool _word2C87A;
 	int16 _unk_sub26437_flag;
 
@@ -395,8 +421,9 @@ private:
 	int16 _techDataId_MapPosX, _techDataId_MapPosY;
 	uint16 _lastMainPlaceId;
 
-	uint8 _word2C86E;
+	uint16 _word2C86E;
 	uint8 *_dword2C856;
+	int16 _word2C8D9;
 };
 
 } // End of namespace Efh
