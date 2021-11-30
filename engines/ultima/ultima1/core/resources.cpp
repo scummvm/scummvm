@@ -65,8 +65,8 @@ static const char *const SRC_CHAR_GEN_TEXT[14] = {
 		"b) %s\n"
 		"c) %s\n"
 		"d) %s",
-	"a) %s\n"
-		"b) %s",
+	("a) %s\n"
+		"b) %s"),
 	"Select thy race:",
 	"Select thy sex:",
 	"Select thy class:",
