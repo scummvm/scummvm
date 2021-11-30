@@ -313,6 +313,14 @@ bool Sound::playSoundResource(const Common::String &name, const Common::String &
 
 		byte *decoded = (byte *)malloc((size - 1) * 2);
 
+		// WORKAROUND: The doorbell at Lord Brumwell's mansion sounds really
+		// strange at 1100 Hz. The game isn't heavy on sounds, but other sound
+		// effects seem to be mostly at 11000 Hz, and that sounds about right
+		// here since it matches the 3DO version.
+		if (name == "JFCHIME.SND" && rate == 1100) {
+			rate = 11000;
+		}
+
 		// Holmes uses Creative ADPCM 4-bit data
 		int counter = 0;
 		byte reference = ptr[0];
