@@ -78,7 +78,7 @@ private:
 
 	// Origin
 	int16 _origX, _origY;
-	int16 _screenOffset;
+	//int16 _screenOffset;
 	void calcStartStop(int &start, int &stop, int origin, int length);
 
 	// Block coding type
