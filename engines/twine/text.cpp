@@ -297,7 +297,7 @@ void Text::initInventoryText(InventoryItems index) {
 }
 
 void Text::initItemFoundText(InventoryItems index) {
-	initText((TextId)(100 + (int)index));
+	initText((TextId)index);
 }
 
 void Text::initText(TextId index) {
