@@ -29,6 +29,7 @@
 #include "common/punycode.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/tokenizer.h"
 #include "common/translation.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
@@ -817,15 +818,56 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 			_globsMap.setVal(*glob, true);
 	}
 
-	// Check if the detection entries have only files from the blacklist
+	// Now scan all detection entries
 	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		const ADGameDescription *g = (const ADGameDescription *)descPtr;
 
+		// Scan for potential directory globs
+		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			if (strchr(fileDesc->fileName, '/')) {
+				if (!_matchFullPaths)
+					warning("Path component detected in entry for '%s' in engine '%s' but no _matchFullPaths is set",
+						g->gameId, getEngineId());
+
+				Common::StringTokenizer tok(fileDesc->fileName, "/");
+
+				while (!tok.empty()) {
+					Common::String component = tok.nextToken();
+
+					if (!tok.empty()) { // If it is not the last component
+						_globsMap.setVal(component, true);
+					}
+				}
+			}
+		}
+
+		// Check if the detection entry have only files from the blacklist
 		if (isEntryGrayListed(g)) {
 			debug(0, "WARNING: Detection entry for '%s' in engine '%s' contains only blacklisted names. Add more files to the entry (%s)",
 				g->gameId, getEngineId(), g->filesDescriptions[0].md5);
 		}
 	}
+}
+
+Common::StringArray AdvancedMetaEngineDetection::getPathsFromEntry(const ADGameDescription *g) {
+	Common::StringArray result;
+
+	for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (!strchr(fileDesc->fileName, '/'))
+			continue;
+
+		Common::StringTokenizer tok(fileDesc->fileName, "/");
+
+		while (!tok.empty()) {
+			Common::String component = tok.nextToken();
+
+			if (!tok.empty()) { // If it is not the last component
+				result.push_back(component);
+			}
+		}
+	}
+
+	return result;
 }
 
 bool AdvancedMetaEngineDetection::isEntryGrayListed(const ADGameDescription *g) const {

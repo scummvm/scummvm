@@ -383,6 +383,8 @@ public:
 	 */
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
+	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
+
 protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
