@@ -109,7 +109,7 @@ public:
 	void handleEvents();
 
 protected:
-	void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 };
 
 } // End of namespace Made
