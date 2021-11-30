@@ -76,7 +76,7 @@ private:
 	};
 	HolomapProjectedPos _projectedSurfacePositions[561];
 	int _projectedSurfaceIndex = 0;
-	float _distanceModifier = 1.0f;
+	//float _distanceModifier = 1.0f;
 
 	int32 _numLocations = 0;
 	Location _locations[NUM_LOCATIONS];
