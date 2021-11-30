@@ -38,6 +38,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      versions of Loom and Indiana Jones and the Last Crusade.
    - Fixed crash when loading savegames from Humongous Entertainment games.
 
+ Sherlock:
+    - Fix crash using matches on lab table
+
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
    - Fix spell selection aborting when characters were switched.
