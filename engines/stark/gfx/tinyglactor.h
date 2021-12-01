@@ -37,8 +37,6 @@ namespace Gfx {
 
 class TinyGLDriver;
 
-#include "common/pack-start.h"
-
 struct _ActorVertex {
 	float pos1x;
 	float pos1y;
@@ -66,10 +64,8 @@ struct _ActorVertex {
 	float r;
 	float g;
 	float b;
-} PACKED_STRUCT;
+};
 typedef _ActorVertex ActorVertex;
-
-#include "common/pack-end.h"
 
 class TinyGLActorRenderer : public VisualActor {
 public:

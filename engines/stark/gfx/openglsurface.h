@@ -36,15 +36,11 @@ namespace Gfx {
 class OpenGLDriver;
 class Texture;
 
-#include "common/pack-start.h"
-
 struct _SurfaceVertex {
 	float x;
 	float y;
-} PACKED_STRUCT;
+};
 typedef _SurfaceVertex SurfaceVertex;
-
-#include "common/pack-end.h"
 
 /**
  * An programmable pipeline OpenGL surface renderer

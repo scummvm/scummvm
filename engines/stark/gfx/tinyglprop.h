@@ -38,8 +38,6 @@ namespace Gfx {
 
 class Driver;
 
-#include "common/pack-start.h"
-
 struct _PropVertex {
 	float x;
 	float y;
@@ -54,10 +52,8 @@ struct _PropVertex {
 	float r;
 	float g;
 	float b;
-} PACKED_STRUCT;
+};
 typedef _PropVertex PropVertex;
-
-#include "common/pack-end.h"
 
 class TinyGLPropRenderer : public VisualProp {
 public:
