@@ -51,16 +51,19 @@ private:
 	int8 findEmptySpot();
 	void sub05(int8 player, int8 *moves);
 	int8 sub06(int8 *moves1, int8 *moves2);
-	uint32 sub09();
+	uint32 didPlayerWin();
 	void sub10(int8 endPos, int8 pos, int unused, int player, int *val);
 	void sub11(int8 pos, int8 *candidates);
-	uint32 sub12();
+	uint32 didAiWin();
 	void sub13(int8 cell, int8 player, int8 *moves1, int8 *moves2);
 	void sub15(int8 cell, int8 *candidates);
 	void sub16(int8 cell, int8 *candidates);
 	int8 countEmtpy(int8 *moves);
 	int8 randomMoveStart();
 	int8 randomMoveStart2();
+
+	void testWinCondition(byte player, int baseX, int baseY);
+	void runTests();
 
 	int _totalBottles;
 	byte _wineRackGrid[100];
