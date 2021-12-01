@@ -518,8 +518,4 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 	return (IR_RET_SCRIPT_FINISHED);
 }
 
-#ifdef NO_EXCEPTIONS
-#undef NO_EXCEPTIONS
-#endif // NO_EXCEPTIONS
-
 } // End of namespace ICB
