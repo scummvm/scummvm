@@ -63,6 +63,7 @@ private:
 	int8 randomMoveStart2();
 
 	void testWinCondition(byte player, int baseX, int baseY);
+	void testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
 	void runTests();
 
 	int _totalBottles;

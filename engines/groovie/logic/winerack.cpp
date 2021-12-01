@@ -68,7 +68,6 @@ void WineRackGame::run(byte *scriptVariables) {
 		placeBottle(pos, kWineBottlePlayer);
 		scriptVariables[0] = pos / 10;
 		scriptVariables[1] = pos % 10;
-		
 		scriptVariables[3] = didPlayerWin();
 		break;
 	case 5:	// Opponent's move
@@ -299,7 +298,7 @@ void WineRackGame::sub11(int8 pos, int8 *candidates) {
 }
 
 uint32 WineRackGame::didAiWin() {
-	memset(_wineRackGrid2, 0, 25);
+	memset(_wineRackGrid2, 0, 100);
 
 	for (int i = 0; i < 100; i += 10) {
 		if (_wineRackGrid[i] == kWineBottleOpponent) {
@@ -475,18 +474,53 @@ void WineRackGame::testWinCondition(byte player, int baseX, int baseY) {
 	}
 
 	if (player == kWineBottlePlayer && !didPlayerWin()) {
-		error("WineRackGame::testWinCondition(%d) failed", (int)player);
+		error("WineRackGame::testWinCondition(%d, %d, %d) failed", (int)player, baseX, baseY);
 	} else if (player == kWineBottleOpponent && !didAiWin()) {
-		error("WineRackGame::testWinCondition(%d) failed", (int)player);
+		error("WineRackGame::testWinCondition(%d, %d, %d) failed", (int)player, baseX, baseY);
 	}
+}
+
+void WineRackGame::testGame(uint32 seed, Common::Array<int> moves, bool playerWin) {
+	byte vars[1024] = {};
+	byte &x = vars[0];
+	byte &y = vars[1];
+	byte &op = vars[3];
+	byte &winner = vars[3];
+	byte &difficulty = vars[4];
+	_random.setSeed(seed);
+
+	difficulty = 2;
+	op = 3;
+	run(vars);
+	winner = 0;
+
+	for (uint i = 0; i < moves.size(); i += 2) {
+		if (winner)
+			error("early winner");
+		x = moves[i];
+		y = moves[i + 1];
+		op = 1;
+		run(vars);
+	}
+
+	if (playerWin && winner != 2)
+		error("WineRackGame::testGame(%u, %u, %d) player didn't win", seed, moves.size(), (int)playerWin);
+	else if (playerWin == false && winner != 1)
+		error("WineRackGame::testGame(%u, %u, %d) ai didn't win", seed, moves.size(), (int)playerWin);
 }
 
 void WineRackGame::runTests() {
 	warning("WineRackGame::runTests() starting");
 	uint32 oldSeed = _random.getSeed();
 
-	testWinCondition(kWineBottlePlayer, 0, 0);
-	testWinCondition(kWineBottleOpponent, 0, 0);
+	for (int i = 0; i < 10; i++) {
+		testWinCondition(kWineBottlePlayer, 0, i);
+		testWinCondition(kWineBottleOpponent, i, 0);
+	}
+
+	// pairs of x,y for the player's moves
+	testGame(1, {9,0, 9,1, 9,2, 9,3, 9,4, 9,5, 9,6, 9,7, 9,8, 9,9}, false);
+	testGame(2, {5,5, 3,5, 7,4, 1,6, 9,3, 0,7, 2,6, 4,5, 6,5, 8,4}, true);
 
 	_random.setSeed(oldSeed);
 	warning("WineRackGame::runTests() finished");
