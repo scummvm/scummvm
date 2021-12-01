@@ -25,9 +25,8 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
-
 #include "common/memstream.h"
+#include "common/random.h"
 
 #include "image/jpeg.h"
 
@@ -48,7 +47,7 @@
 
 namespace ICB {
 
-#define RAND_16BIT (rand() + rand() + rand())
+#define RAND_16BIT (g_icb->getRandomSource()->getRandomNumber(32767) + g_icb->getRandomSource()->getRandomNumber(32767) + g_icb->getRandomSource()->getRandomNumber(32767))
 #define RAND_32BIT ((RAND_16BIT << 16) | (RAND_16BIT))
 #define RAND_BIT(bit) ((rands[(bit) >> 5]) & (1 << ((bit)&31)))
 
