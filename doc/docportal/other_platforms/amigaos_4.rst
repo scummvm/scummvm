@@ -16,19 +16,19 @@ ScummVM is available for download from the `ScummVM Downloads page <https://www.
 
 Download and extract the ``.lha`` file.
 
-Run the extracted ``ScummVM_Install`` script. This installer guides you through the installation process.
+Optional: Run the extracted ``ScummVM_Install`` script. This installer guides you through the installation process.
 
 .. figure:: ../images/amigaos_4/installer.png
 
     The ScummVM installer.
 
-To automatically keep ScummVM up to date through AmiUpdate, run the ``Autoinstall`` script.
+Note: AmiUpdate is already aware of ScummVM and will automatically keep ScummVM up to date through it's ``Autoinstall`` script.
 
 
 Transferring game files
 =========================
 
-For games on PC or Mac formatted discs, use the original platform to access the data files, and then transfer these to Amiga. Alternatively, if you have external hardware such as a Catweazel floppy disc controller, you might be able to use this to access the files.
+For games on PC or Mac formatted discs, use the original platform to access the data files, and then transfer these to Amiga. Alternatively, if you have external hardware such as a Catweasel Mk4(+) floppy disc controller, you might be able to use this to access the files.
 
 ScummVM for Amiga OS has Cloud and LAN functionality, to help manage the transfer of files. See :doc:`../use_scummvm/connect_cloud` and :doc:`../use_scummvm/LAN`.
 
@@ -43,14 +43,16 @@ Controls can be manually configured in the :doc:`Keymaps tab <../settings/keymap
 Paths
 =======
 
+See below for the default location of saved games and scummvm.ini.
+They can be changed in the Settings.
+
 Saved games
 *******************
-``Games:ScummVM/saves``
+``Path-to:ScummVM/saves``
 
 Configuration file
 **************************
-``Games:ScummVM/scummvm.ini``
-
+``Path-to:ScummVM/scummvm.ini``
 
 Settings
 ==========
@@ -68,4 +70,4 @@ Known issues
 
 Due to the big-endian nature of Amiga OS, there can sometimes be graphics and sounds issues with games. Check out the Platform Overview `wiki page <https://wiki.scummvm.org/index.php?title=Platforms/Overview>`_ for a list of compatible engines.
 
-If a game crashes and it's listed as compatible, report it as a :doc:`bug <../help/report_bugs>`.
+If a game crashes and it's listed as compatible, please report it as a :doc:`bug <../help/report_bugs>`.
