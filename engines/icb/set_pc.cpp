@@ -27,6 +27,10 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
+#include "common/memstream.h"
+
+#include "image/jpeg.h"
+
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/set.h"
 #include "engines/icb/global_objects.h"
@@ -35,7 +39,6 @@
 #include "engines/icb/shake.h"
 #include "engines/icb/res_man.h"
 #include "engines/icb/mission.h"
-#include "engines/icb/jpeg.h"
 #include "engines/icb/common/px_capri_maths.h"
 #include "engines/icb/common/pc_props.h"
 #include "engines/icb/sound/direct_sound.h"
@@ -703,8 +706,22 @@ void _set::Init_base_bitmap_buffers() {
 	uint8 *ptr = bgPtr + shadowTable[0];
 
 	// Decode the jpeg background
-	JpegDecoder decoder;
-	decoder.ReadImage(ptr, bg_buffer_id);
+	Image::JPEGDecoder decoder;
+	decoder.setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+	Common::SeekableReadStream *jpegStream = dynamic_cast<Common::SeekableReadStream *>(new Common::MemoryReadStream(ptr, 1024 * 1024, DisposeAfterUse::YES));
+	decoder.loadStream(*jpegStream);
+	const Graphics::Surface *jpegSurf = decoder.getSurface();
+	int16 pitch = surface_manager->Get_pitch(bg_buffer_id);
+	uint32 height = surface_manager->Get_height(bg_buffer_id);
+	uint8 *surface_address = surface_manager->Lock_surface(bg_buffer_id);
+	for (int32 i = 0; i < jpegSurf->h; i++) {
+		if (i >= (int32)height) {
+			break;
+		}
+		memcpy(surface_address + i * pitch, jpegSurf->getBasePtr(0, i), MIN(jpegSurf->pitch, pitch));
+	}
+	surface_manager->Unlock_surface(bg_buffer_id);
+	delete jpegStream;
 
 	// find the start of the weather data
 	int32 *weatherPtr = (int32 *)(bgPtr + shadowTable[1]);
