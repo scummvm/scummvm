@@ -359,6 +359,11 @@ private:
 	 * Identifies certain offsets within script data and set up lookup-table
 	 */
 	void identifyOffsets();
+
+	/**
+	 * Apply workarounds to known broken Said strings
+	 */
+	void applySaidWorkarounds();
 };
 
 } // End of namespace Sci
