@@ -989,8 +989,30 @@ void EfhEngine::saveAnimImageSetId() {
 }
 
 int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
-	warning("STUB: getEquipmentDefense");
-	return 0;
+	int16 altDef = 0;
+	int16 totalDef = 0;
+	for (int i = 0; i < 10; ++i) {
+		if (_npcBuf[charId]._inventory[i]._ref == 0x7FFF)
+			continue;
+
+		if ((_npcBuf[charId]._inventory[i]._stat1 & 0x80) == 0)
+			continue;
+
+		int16 curDef = _npcBuf[charId]._inventory[i]._stat2;
+		if (curDef == 0xFF)
+			curDef = _items[_npcBuf[charId]._inventory[i]._ref]._defense;
+
+		if (curDef <= 0)
+			continue;
+
+		totalDef += curDef;
+		altDef += (curDef / 8) + 1;
+	}
+
+	if (flag)
+		return totalDef;
+
+	return altDef;
 }
 
 uint16 EfhEngine::sub1C80A(int16 charId, int field18, bool flag) {
