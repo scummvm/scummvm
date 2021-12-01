@@ -1283,8 +1283,7 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 
 void EfhEngine::displayFctFullScreen() {
 	// CHECKME: 319 is in the original but looks suspicious.
-	copyDirtyRect(0, 0, 319, 200);
-
+	// copyDirtyRect(0, 0, 319, 200);
 	
 	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
