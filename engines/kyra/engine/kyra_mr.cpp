@@ -346,13 +346,15 @@ void KyraEngine_MR::initMainMenu() {
 	_menuAnim = new WSAMovie_v2(this);
 	_menuAnim->open("REVENGE.WSA", 1, &_screen->getPalette(0));
 	_screen->getPalette(0).fill(0, 1, 0);
+	Screen::FontId fid = (_lang == 3) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT;
+	int8 lsa = (_lang == 3) ? -1 : 0;
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
 		{ _mainMenuStrings[0], _mainMenuStrings[1], _mainMenuStrings[2], _mainMenuStrings[3], nullptr },
 		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 }, 0,
-		_lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT, _lang == 3 ? -1 : 0, 240
+		fid, lsa, 240
 	};
 
 	MainMenu::Animation anim;
