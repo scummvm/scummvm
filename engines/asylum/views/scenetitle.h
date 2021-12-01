@@ -48,6 +48,7 @@ private:
 	uint32 _spinnerFrameIndex;
 	int32  _spinnerProgress;
 	uint32 _spinnerFrameCount;
+	uint32 _chapterTitlesOffset;
 };
 
 } // End of namespace Asylum

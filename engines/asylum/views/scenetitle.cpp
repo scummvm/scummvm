@@ -37,6 +37,21 @@ namespace Asylum {
 
 SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine),
 	_start(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _spinnerFrameCount(0) {
+
+	switch (_vm->getLanguage()) {
+	default:
+	case Common::EN_ANY:
+		_chapterTitlesOffset = 1811;
+		break;
+
+	case Common::DE_DEU:
+		_chapterTitlesOffset = 1734;
+		break;
+
+	case Common::FR_FRA:
+		_chapterTitlesOffset = 1715;
+		break;
+	}
 }
 
 void SceneTitle::load() {
@@ -65,7 +80,7 @@ void SceneTitle::update(int32 tick) {
 
 	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId);
 	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, Common::Point((int16)(((_spinnerProgress / 590.0) * 580.0) - 290), 0), kDrawFlagNone, false);
-	getText()->drawCentered(Common::Point(320, 30), 24, MAKE_RESOURCE(kResourcePackText, getWorld()->chapter + 1811));
+	getText()->drawCentered(Common::Point(320, 30), 24, MAKE_RESOURCE(kResourcePackText, getWorld()->chapter + _chapterTitlesOffset));
 	getScreen()->copyBackBufferToScreen();
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.
