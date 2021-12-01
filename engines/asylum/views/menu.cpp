@@ -67,7 +67,6 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_dword_456288 = 0;
 	_caretBlink = 0;
 	_startIndex = 0;
-	_creditsFrameIndex = 0;
 	_showMovie = false;
 	memset(&_iconFrames, 0, sizeof(_iconFrames));
 
@@ -79,6 +78,23 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	// Savegames
 	_prefixWidth = 0;
 	_loadingDuringStartup = false;
+
+	// Credits
+	_creditsFrameIndex = 0;
+	switch (_vm->getLanguage()) {
+	default:
+	case Common::EN_ANY:
+		_creditsNumSteps = 8688;
+		break;
+
+	case Common::DE_DEU:
+		_creditsNumSteps = 6840;
+		break;
+
+	case Common::FR_FRA:
+		_creditsNumSteps = 6384;
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1586,7 +1602,7 @@ void Menu::updateShowCredits() {
 
 		step += 24;
 		++index;
-	} while (step < 8688);
+	} while (step < _creditsNumSteps);
 
 	if (_vm->isGameFlagSet(kGameFlagFinishGame)) {
 		if (!_dword_455D4C && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackShared, 56))) {
@@ -1597,7 +1613,7 @@ void Menu::updateShowCredits() {
 	}
 
 	_startIndex -= 2;
-	if (_startIndex < -8712)   // 8688 + 24
+	if (_startIndex < -(_creditsNumSteps + 24))
 		closeCredits();
 }
 

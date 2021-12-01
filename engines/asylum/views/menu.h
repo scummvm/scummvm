@@ -117,6 +117,7 @@ private:
 	int32            _caretBlink;
 	int32            _startIndex;
 	int32            _creditsFrameIndex;
+	int32            _creditsNumSteps;
 	bool             _showMovie;
 	uint32           _iconFrames[12];
 
