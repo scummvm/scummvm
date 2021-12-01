@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-30 14:40+0000\n"
+"POT-Creation-Date: 2021-11-30 23:32+0000\n"
 "PO-Revision-Date: 2021-11-09 18:25+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2466,7 +2466,7 @@ msgstr ""
 "Blade Runner og utallige andre spill finner du også enkelte kuriositeter og "
 "skjulte skatter det kan være verdt å gi et forsøk."
 
-#: engines/advancedDetector.cpp:241
+#: engines/advancedDetector.cpp:242
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Ugyldig spillkopi oppdaget. Vi kan dermed ikke tilby støtte i slike "

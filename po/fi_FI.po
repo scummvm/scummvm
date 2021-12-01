@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-30 14:40+0000\n"
+"POT-Creation-Date: 2021-11-30 23:32+0000\n"
 "PO-Revision-Date: 2021-11-22 01:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2421,7 +2421,7 @@ msgstr ""
 "lukuisten muiden pelien ohelta löydät myös vähemmän tunnettuja helmiä "
 "tutkittavaksesi."
 
-#: engines/advancedDetector.cpp:241
+#: engines/advancedDetector.cpp:242
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Laiton pelikopio tunnistettu. Emme tarjoa tukea tällaisissa tapauksissa"
