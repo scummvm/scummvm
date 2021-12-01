@@ -831,8 +831,10 @@ int32 assignedSounds = 0;
 void UpdateSounds10Hz() {
 	int32 i;
 
-	for (i = 0; i < MAX_REGISTERED_SOUNDS; i++)
-		g_registeredSounds[i]->Update10Hz();
+	for (i = 0; i < MAX_REGISTERED_SOUNDS; i++) {
+		if (g_registeredSounds[i])
+			g_registeredSounds[i]->Update10Hz();
+	}
 }
 
 // called every game cycle sets hearable and unhearable sounds...

@@ -139,55 +139,57 @@ void Init_globals() {
 }
 
 void CreateGlobalObjects() {
-	g_px = new c_global_switches;
-	g_oTracer = new _tracer;
-	g_ptrArray = new Common::Array<PointerReference>;
-	g_globalScriptVariables = new CpxGlobalScriptVariables;
-	g_theSequenceManager = new MovieManager;
-	g_while_u_wait_SequenceManager = new MovieManager;
-	g_personalSequenceManager = new MovieManager;
-	g_theClusterManager = new ClusterManager;
-	g_theOptionsManager = new OptionsManager;
-	g_icb_mission = new _mission;
-	g_icb_session = new _game_session;
-	g_icb_session_floors = new _floor_world;
-	g_text_bloc1 = new text_sprite;
-	g_text_bloc2 = new text_sprite;
-	g_av_actor = new psxActor;
-	g_camera = new psxCamera;
-	g_av_Light = new PSXLamp;
+	g_px = new c_global_switches();
+	g_oTracer = new _tracer();
+	g_ptrArray = new Common::Array<PointerReference>();
+	g_globalScriptVariables = new CpxGlobalScriptVariables();
+	g_theSequenceManager = new MovieManager();
+	g_while_u_wait_SequenceManager = new MovieManager();
+	g_personalSequenceManager = new MovieManager();
+	g_theClusterManager = new ClusterManager();
+	g_theOptionsManager = new OptionsManager();
+	g_icb_mission = new _mission();
+	g_icb_session = new _game_session();
+	g_icb_session_floors = new _floor_world();
+	g_text_bloc1 = new text_sprite();
+	g_text_bloc2 = new text_sprite();
+	g_av_actor = new psxActor();
+	g_camera = new psxCamera();
+	g_av_Light = new PSXLamp();
 	for (int i = 0; i < MAX_voxel_list; i++) {
-		g_megas[i] = new _mega;
-		g_vox_images[i] = new _vox_image;
+		g_megas[i] = new _mega();
+		g_vox_images[i] = new _vox_image();
 	}
 	for (int i = 0; i < MAX_session_objects; i++)
-		g_logics[i] = new _logic;
-	g_stub = new _stub;
-	gterot_pc = new MATRIXPC;
-	gtetrans_pc = new MATRIXPC;
-	gtecolour_pc = new MATRIXPC;
-	gtelight_pc = new MATRIXPC;
-	gterot = new MATRIX;
-	gtetrans = new MATRIX;
-	gtecolour = new MATRIX;
-	gtelight = new MATRIX;
+		g_logics[i] = new _logic();
+	g_stub = new _stub();
+	gterot_pc = new MATRIXPC();
+	gtetrans_pc = new MATRIXPC();
+	gtecolour_pc = new MATRIXPC();
+	gtelight_pc = new MATRIXPC();
+	gterot = new MATRIX();
+	gtetrans = new MATRIX();
+	gtecolour = new MATRIX();
+	gtelight = new MATRIX();
 	for (int i = 0; i < MAX_REGISTERED_SOUNDS; i++)
-		g_registeredSounds[i] = new CRegisteredSound;
+		g_registeredSounds[i] = new CRegisteredSound();
 
 	// The order of creation matters:
-	g_oEventManager = new _event_manager;
-	g_oLineOfSight = new _line_of_sight;
-	g_oIconMenu = new _icon_menu;
-	g_oIconListManager = new _icon_list_manager;
-	g_oRemora = new _remora;
-	g_oSoundLogicEngine = new _sound_logic;
+	g_oEventManager = new _event_manager();
+	g_oLineOfSight = new _line_of_sight();
+	g_oIconMenu = new _icon_menu();
+	g_oIconListManager = new _icon_list_manager();
+	g_oRemora = new _remora();
+	g_oSoundLogicEngine = new _sound_logic();
 }
 
 void DestroyGlobalObjects() {
 	delete g_px;
+	g_px = nullptr;
 	delete g_oTracer;
 	delete g_ptrArray;
 	delete g_globalScriptVariables;
+	g_globalScriptVariables = nullptr;
 	delete g_theSequenceManager;
 	delete g_while_u_wait_SequenceManager;
 	delete g_personalSequenceManager;
@@ -216,8 +218,10 @@ void DestroyGlobalObjects() {
 	delete gtetrans;
 	delete gtecolour;
 	delete gtelight;
-	for (int i = 0; i < MAX_REGISTERED_SOUNDS; i++)
+	for (int i = 0; i < MAX_REGISTERED_SOUNDS; i++) {
 		delete g_registeredSounds[i];
+		g_registeredSounds[i] = nullptr;
+	}
 
 	delete g_oEventManager;
 	delete g_oLineOfSight;
