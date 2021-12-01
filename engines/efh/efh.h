@@ -282,8 +282,8 @@ private:
 	void copyCurrentPlaceToBuffer(int id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
 	void drawRect(int minX, int minY, int maxX, int maxY);
-	void drawMenuBox(int minX, int minY, int maxX, int maxY, int color);
-	void displayFullScreenColoredMenuBox(int color);
+	void drawColoredRect(int minX, int minY, int maxX, int maxY, int color);
+	void clearScreen(int color);
 	Common::KeyCode handleAndMapInput(bool animFl);
 	void displayNextAnimFrame();
 	void writeTechAndMapFiles();
@@ -291,12 +291,12 @@ private:
 	void setTextPos(int16 textPosX, int16 textPosY);
 
 	void sub15150(bool flag);
-	void sub1258F(bool cond, int16 pos_x, int16 pos_y, int i, bool c876, bool c878);
-	void sub1256E(int16 posX, int16 posY);
-	void sub1254C(int16 posX, int16 posY);
+	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool unkFl1, bool unkFl2);
+	void displaySmallMap(int16 posX, int16 posY);
+	void displayLargeMap(int16 posX, int16 posY);
 	void sub12A7F();
-	void sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY);
-	void sub24D92(BufferBM *bufferBM, int16 posX, int16 posY);
+	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
+	void displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY);
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
 	void removeObject(int16 charId, int16 objectId);
@@ -316,18 +316,19 @@ private:
 	void copyString(char *srcStr, char *destStr);
 	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
-	void sub1512B();
+	void displayGameScreen();
 	void sub221FA(uint8 *impArray, bool flag);
-	void sub15094();
-	void sub150EE();
-	void sub15018();
+	void drawUpperLeftBorders();
+	void drawUpperRightBorders();
+	void drawBottomBorders();
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	void sub252CE(uint8 curChar, int16 posX, int posY);
-	void set_unkVideoRelatedWord1_to_0Fh();
-	void set_unkVideoRelatedWord1_to_0Ch();
+	void setTextColorWhite();
+	void setTextColorRed();
+	void setTextColor_08h();
 
 	void setNumLock();
 	void unkfct_mapFunction();
@@ -375,7 +376,7 @@ private:
 	FontDescr _fontDescr;
 
 	uint16 _word31E9E;
-	uint16 _unkVideoRelatedWord1;
+	uint16 _textColor;
 
 	int16 _oldAnimImageSetId;
 	int16 _animImageSetId;

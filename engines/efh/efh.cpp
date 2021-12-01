@@ -229,7 +229,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	_initRect = Common::Rect(0, 0, 0, 0);
 	_engineInitPending = true;
-	_unkVideoRelatedWord1 = 0x0E;
+	_textColor = 0x0E; // Yellow
 	_protectionPassed = false;
 	_fullPlaceId = 0xFF;
 	_guessAnimationAmount = 9;
@@ -489,16 +489,16 @@ void EfhEngine::displayAnimFrame() {
 		return;
 
 	if (_animImageSetId == 0xFE) {
-		sub10B77_unkDisplayFct1(_portraitSubFilesArray[0], 16, 8);
+		displayRawDataAtPos(_portraitSubFilesArray[0], 16, 8);
 		return;
 	}
 
-	sub10B77_unkDisplayFct1(_portraitSubFilesArray[0], 16, 8);
+	displayRawDataAtPos(_portraitSubFilesArray[0], 16, 8);
 	for (int i = 0; i < 4; ++i) {
 		int16 var2 = _animInfo[_animImageSetId]._unkAnimArray[_unkAnimRelatedIndex].field0;
 		if (var2 == 0xFF)
 			continue;
-		sub10B77_unkDisplayFct1(_portraitSubFilesArray[var2 + 1], _animInfo[_animImageSetId]._field46_startX[var2] + 16, _animInfo[_animImageSetId]._field3C_startY[var2] + 8);
+		displayRawDataAtPos(_portraitSubFilesArray[var2 + 1], _animInfo[_animImageSetId]._field46_startX[var2] + 16, _animInfo[_animImageSetId]._field3C_startY[var2] + 8);
 	}
 }
 
@@ -717,9 +717,9 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 }
 
 void EfhEngine::playIntro() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 
 	// Load animations on previous picture with GF
 	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
@@ -729,61 +729,61 @@ void EfhEngine::playIntro() {
 		return;
 
 	// With GF on the bed
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, 0);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
 	// Poof
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[1], 110, 16);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 110, 16);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[1], 110, 16);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, 0);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
 	// On the phone
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[2], 110, 16);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 110, 16);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[2], 110, 16);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, 0);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, 0);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, 0);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 144);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, 0);
 	getLastCharAfterAnimCount(80);
 }
@@ -884,9 +884,9 @@ void EfhEngine::initEngine() {
 	// Load Title Screen
 	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 	displayFctFullScreen();
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 
 	// Load map tiles bitmaps
 	loadImageSetToTileBank(1, 1);
@@ -1043,7 +1043,7 @@ void EfhEngine::sub15150(bool flag) {
 	
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
-			sub1512B();
+			displayGameScreen();
 			// TODO: _word2C86E is some kind of counter
 			if (_word2C86E != 0) {
 				// TODO: _dword2C856 is most likely an "Imp" Array
@@ -1059,16 +1059,105 @@ void EfhEngine::sub15150(bool flag) {
 	}
 }
 
-void EfhEngine::sub1258F(bool largeMapFl, int16 posX, int16 posY, int imapSize, bool unkFl1, bool unkFl2) {
-	warning("STUB : sub1258F");
+void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool unkFl1, bool unkFl2) {
+	int16 unkPosX = 5;
+	int16 unkPosY = 4;
+	int16 posX = 0;
+	int16 posY = 0;
+	int16 var6 = 0;
+	int16 minX = mapPosX - 5;
+	int16 minY = mapPosY - 4;
+
+	if (minX < 0) {
+		unkPosX -= minX;
+		minX = 0;
+	}
+
+	if (minY < 0) {
+		unkPosY -= minY;
+		minY = 0;
+	}
+
+	int16 maxX = minX + 10;
+	int16 maxY = minY + 7;
+
+	if (maxX > mapSize) {
+		unkPosX += (maxX - mapSize);
+		maxX = mapSize;
+		minX = mapSize - 10;
+	}
+
+	if (maxY > mapSize) {
+		unkPosY += (maxY - mapSize);
+		maxY = mapSize;
+		minY = mapSize - 7;
+	}
+
+	int16 var10 = 8;
+	for (int16 counterY = minY; counterY <= maxY; ++counterY) {
+		int16 var12 = 128;
+		for (int16 var16 = minX; var16 <= maxX; ++var16) {
+			if (largeMapFl) {
+				int16 idx = _mapGameMapPtr[(var16 * 64) + counterY]; // 64 = large map size (square)
+				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
+			} else {
+				int16 idx = _curPlace[(var16 * 24) + counterY]; // 24 = small map size (square)
+				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
+			}
+			var12 += 16;
+		}
+		var10 += 16;
+	}
+
+	if (unkFl1) {
+		int16 var12 = 128 + unkPosX * 16;
+		int16 var10 = 8 + unkPosY * 16;
+		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], var12, var10);
+	}
+
+	if (unkFl2) {
+		for (int16 var16 = 0; var16 < 64; ++var16) {
+			if ((_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == _fullPlaceId)){
+				bool var4 = false;
+				posX = _mapMonsters[var16]._posX;
+				posY = _mapMonsters[var16]._posY;
+
+				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
+					continue;
+
+				for (int16 counterY = 0; counterY < 9 && !var4; ++counterY) {
+					if (_mapMonsters[var16]._pictureRef[counterY] > 0)
+						var4 = true;
+				}
+
+				if (!var4)
+					continue;
+
+				var6 = 148 + kEncounters[_mapMonsters[var16]._MonsterRef]._animId;
+				int16 var1 = _mapMonsters[var16]._possessivePronounSHL6 & 0x3F;
+
+				if (var1 == 0x3F && isCharacterATeamMember(_mapMonsters[var16]._field_1))
+					continue;
+
+				int16 var12 = 128 + (posX - minX) * 16;
+				var10 = 8 + (posY - minY) * 16;
+				displayRawDataAtPos(_imageSetSubFilesArray[var6], var12, var10);
+			}
+		}
+	}
+
+	if (_word2C8D7 != 0)
+		return;
+
+	warning("drawMap() - unexpected code reached, not implemented");
 }
 
-void EfhEngine::sub1256E(int16 posX, int16 posY) {
-	sub1258F(false, posX, posY, 23, _word2C876, _word2C878);
+void EfhEngine::displaySmallMap(int16 posX, int16 posY) {
+	drawMap(false, posX, posY, 23, _word2C876, _word2C878);
 }
 
-void EfhEngine::sub1254C(int16 posX, int16 posY) {
-	sub1258F(true, posX, posY, 63, _word2C876, _word2C878);
+void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
+	drawMap(true, posX, posY, 63, _word2C876, _word2C878);
 }
 
 void EfhEngine::sub12A7F() {
@@ -1076,16 +1165,16 @@ void EfhEngine::sub12A7F() {
 		_word2C894 = 0;
 		if (!_largeMapFlag) {
 			if (_fullPlaceId != 0xFF)
-				sub1256E(_mapPosX, _mapPosY);
+				displaySmallMap(_mapPosX, _mapPosY);
 
 			if (_word2C8D9 != 0)
-				sub150EE();
+				drawUpperRightBorders();
 		} else {
 			if (_techId != 0xFF)
-				sub1254C(_mapPosX, _mapPosY);
+				displayLargeMap(_mapPosX, _mapPosY);
 			
 			if (_word2C8D9 != 0)
-				sub150EE();
+				drawUpperRightBorders();
 		}
 		if (counter == 0)
 			displayFctFullScreen();
@@ -1106,13 +1195,13 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
 			unkFct_displayMenuBox_2(0);
-			set_unkVideoRelatedWord1_to_0Fh();
+			setTextColorWhite();
 			displayCenteredString(strName, 16, 88, 152);
 			displayCenteredString(strDef, 104, 128, 152);
 			displayCenteredString(strHp, 144, 176, 152);
 			displayCenteredString(strMaxHp, 192, 224, 152);
 			displayCenteredString(strWeapon, 225, 302, 152);
-			set_unkVideoRelatedWord1_to_0Ch();
+			setTextColorRed();
 
 			for (int i = 0; i < 3; ++i) {
 				if (_teamCharId[i] == -1)
@@ -1211,7 +1300,7 @@ void EfhEngine::copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, 
 	warning("STUB - copyGraphicBufferFromTo");
 }
 
-void EfhEngine::sub24D92(BufferBM *bufferBM, int16 posX, int16 posY) {
+void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY) {
 	// TODO: Quick code to display stuff, may require to really reverse the actual function
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
 	// warning("%d %d - startX %d startY %d width %d height %d lineDataSize %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_lineDataSize, bufferBM->_fieldD);
@@ -1346,7 +1435,7 @@ void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
 void EfhEngine::displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY) {
 	uint16 length = getStringWidth(str);
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
-	sub26437(str, startCenteredDisplayX, posY, _unkVideoRelatedWord1);
+	sub26437(str, startCenteredDisplayX, posY, _textColor);
 }
 
 int16 EfhEngine::chooseCharacterToReplace() {
@@ -1363,7 +1452,7 @@ int16 EfhEngine::handleCharacterJoining() {
 	}
 
 	for (int16 counter = 0; counter < 2; ++counter) {
-		drawMenuBox(200, 112, 278, 132, 0);
+		drawColoredRect(200, 112, 278, 132, 0);
 		displayCenteredString(strReplaceWho, 200, 278, 117);
 		if (counter == 0)
 			displayFctFullScreen();
@@ -1371,7 +1460,7 @@ int16 EfhEngine::handleCharacterJoining() {
 
 	int16 charId = chooseCharacterToReplace();
 	for (int16 counter = 0; counter < 2; ++counter) {
-		drawMenuBox(200, 112, 278, 132, 0);
+		drawColoredRect(200, 112, 278, 132, 0);
 		if (counter == 0)
 			displayFctFullScreen();
 	}
@@ -1384,7 +1473,7 @@ int16 EfhEngine::handleCharacterJoining() {
 }
 
 void EfhEngine::drawMapWindow() {
-	drawMenuBox(128, 8, 303, 135, 0);
+	drawColoredRect(128, 8, 303, 135, 0);
 }
 
 void EfhEngine::copyString(char *srcStr, char *destStr) {
@@ -1858,11 +1947,11 @@ void EfhEngine::sub133E5(uint8 *srcPtr, int posX, int posY, int maxX, int maxY, 
 	script_parse(_messageToBePrinted, posX, posY, maxX, maxY, argC);
 }
 
-void EfhEngine::sub1512B() {
-	displayFullScreenColoredMenuBox(0);
-	sub15094();
-	sub150EE();
-	sub15018();
+void EfhEngine::displayGameScreen() {
+	clearScreen(0);
+	drawUpperLeftBorders();
+	drawUpperRightBorders();
+	drawBottomBorders();
 	displayAnimFrame();
 	displayLowStatusScreen(false);
 }
@@ -1870,7 +1959,7 @@ void EfhEngine::sub1512B() {
 void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 	for (uint8 counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
-			drawMenuBox(16, 115, 111, 133, 0);
+			drawColoredRect(16, 115, 111, 133, 0);
 			if (impArray != nullptr) {
 				_word2C86E = 4;
 				_dword2C856 = impArray;
@@ -1880,22 +1969,22 @@ void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 	}
 }
 
-void EfhEngine::sub15094() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[0], 0, 0);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[1], 112, 0);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[3], 16, 0);
+void EfhEngine::drawUpperLeftBorders() {
+	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[1], 112, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[3], 16, 0);
 }
 
-void EfhEngine::sub150EE() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[2], 304, 0);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[4], 128, 0);
+void EfhEngine::drawUpperRightBorders() {
+	displayRawDataAtPos(_circleImageSubFileArray[2], 304, 0);
+	displayRawDataAtPos(_circleImageSubFileArray[4], 128, 0);
 }
 
-void EfhEngine::sub15018() {
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[7], 16, 136);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[8], 16, 192);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[5], 0, 136);
-	sub10B77_unkDisplayFct1(_circleImageSubFileArray[6], 304, 136);
+void EfhEngine::drawBottomBorders() {
+	displayRawDataAtPos(_circleImageSubFileArray[7], 16, 136);
+	displayRawDataAtPos(_circleImageSubFileArray[8], 16, 192);
+	displayRawDataAtPos(_circleImageSubFileArray[5], 0, 136);
+	displayRawDataAtPos(_circleImageSubFileArray[6], 304, 136);
 }
 
 void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
@@ -1927,24 +2016,31 @@ void EfhEngine::sub252CE(uint8 curChar, int16 posX, int posY) {
 		int16 x = 0;
 		for (int i = 7; i >= 7 - width; --i) {
 			if (_fontDescr._fontData[charId]._lines[line] & (1 << i))
-				destPtr[320 * line + x] = 14;
+				destPtr[320 * line + x] = _textColor;
 			++x;
 		}
 	}	
 }
 
-void EfhEngine::set_unkVideoRelatedWord1_to_0Fh() {
+void EfhEngine::setTextColorWhite() {
 	if (_videoMode == 8) // CGA
-		_unkVideoRelatedWord1 = 0x3;
+		_textColor = 0x3;
 	else
-		_unkVideoRelatedWord1 = 0xF;
+		_textColor = 0xF;
 }
 
-void EfhEngine::set_unkVideoRelatedWord1_to_0Ch() {
+void EfhEngine::setTextColorRed() {
 	if (_videoMode == 8) // CGA
-		_unkVideoRelatedWord1 = 0x2;
+		_textColor = 0x2;
 	else
-		_unkVideoRelatedWord1 = 0xC;
+		_textColor = 0xC;
+}
+
+void EfhEngine::setTextColor_08h() {
+	if (_videoMode == 8) // CGA
+		_textColor = 0x1;
+	else
+		_textColor = 0x8;
 }
 
 void EfhEngine::setNumLock() {
@@ -1982,13 +2078,13 @@ void EfhEngine::setNextCharacterPos() {
 }
 
 void EfhEngine::unkFct_displayString_2(char *message) {
-	sub26437(message, _textPosX, _textPosY, _unkVideoRelatedWord1);
+	sub26437(message, _textPosX, _textPosY, _textColor);
 	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
 }
 
 void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
-	drawMenuBox(16, 152, 302, 189, color);
+	drawColoredRect(16, 152, 302, 189, color);
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
@@ -2013,7 +2109,7 @@ void EfhEngine::restoreAnimImageSetId() {
 }
 
 void EfhEngine::checkProtection() {
-	_unkVideoRelatedWord1 = 0xE;
+	_textColor = 0xE;
 
 	//CHECKME : Well, yeah, some code may be missing there. Who knows.
 	
@@ -2166,15 +2262,15 @@ void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
 	
 }
 
-void EfhEngine::drawMenuBox(int minX, int minY, int maxX, int maxY, int color) {
+void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int color) {
 	uint8 oldValue = _defaultBoxColor;
 	_defaultBoxColor = color;
 	drawRect(minX, minY, maxX, maxY);
 	_defaultBoxColor = oldValue;
 }
 
-void EfhEngine::displayFullScreenColoredMenuBox(int color) {
-	drawMenuBox(0, 0, 320, 200, color);
+void EfhEngine::clearScreen(int color) {
+	drawColoredRect(0, 0, 320, 200, color);
 }
 
 Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
@@ -2234,7 +2330,7 @@ void EfhEngine::copyCurrentPlaceToBuffer(int id) {
 	memcpy(_curPlace, placesPtr, 24 * 24);
 }
 
-void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY) {
+void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
 	uint16 height = READ_LE_INT16(imagePtr);
 	uint16 width = READ_LE_INT16(imagePtr + 2);
 	uint8 *imageData = imagePtr + 4;
@@ -2245,6 +2341,6 @@ void EfhEngine::sub10B77_unkDisplayFct1(uint8 *imagePtr, int16 posX, int16 posY)
 	_imageDataPtr._width = width * 2; // 2 pixels per byte
 	_imageDataPtr._startX = _imageDataPtr._startY = 0;
 	
-	sub24D92(&_imageDataPtr, posX, posY);
+	displayBufferBmAtPos(&_imageDataPtr, posX, posY);
 }
 } // End of namespace Efh
