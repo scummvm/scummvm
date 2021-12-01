@@ -25,8 +25,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
-
 #include "engines/icb/icb.h"
 #include "engines/icb/options_manager_pc.h"
 #include "engines/icb/movie_pc.h"
@@ -74,7 +72,7 @@ _rgb g_drawSelectedDark;
 #define CTRL_ACTOR_Y -15
 #define CTRL_ACTOR_Z -100
 
-#define REFRESH_LIMITER 15000
+#define REFRESH_LIMITER 15
 
 // External declaration in header
 _MOVIESLOT g_movieLibrary[TOTAL_NUMBER_OF_MOVIES];
@@ -1684,7 +1682,7 @@ void OptionsManager::DrawMainOptionsScreen(uint32 surface_id) {
 }
 
 void OptionsManager::CycleMainOptionsLogic() {
-	uint32 totalTime = GetMicroTimer();
+	uint32 totalTime = g_system->getMillis();
 
 	if (g_titleScreenInitialCount == 0) {
 		g_titleScreenInitialCount = g_system->getMillis();
@@ -1769,28 +1767,28 @@ void OptionsManager::CycleMainOptionsLogic() {
 		if (g_skipBackgroundDrawOverFrames != 0)
 			return;
 
-		movieTime = GetMicroTimer();
+		movieTime = g_system->getMillis();
 		// Now we need to draw a frame of the title movie as our backdrop (to its own private buffer)
 		g_personalSequenceManager->drawFrame(m_myScreenSurfaceID);
-		movieTime = GetMicroTimer() - movieTime;
+		movieTime = g_system->getMillis() - movieTime;
 
-		movieblitTime = GetMicroTimer();
+		movieblitTime = g_system->getMillis();
 
 		// Now blit the movie frame without transparency to the working buffer
 		surface_manager->Blit_surface_to_surface(m_myScreenSurfaceID, working_buffer_id, &m_movieRect, &m_movieRect, 0);
 
-		movieblitTime = GetMicroTimer() - movieblitTime;
+		movieblitTime = g_system->getMillis() - movieblitTime;
 
-		drawTime = GetMicroTimer();
+		drawTime = g_system->getMillis();
 
 		// And draw the options on top
 		if (!AnimateBracketsToBox(m_warpDirection, working_buffer_id))
 			DrawMainOptionsScreen(working_buffer_id);
 
-		drawTime = GetMicroTimer() - drawTime;
+		drawTime = g_system->getMillis() - drawTime;
 	}
 
-	totalTime = GetMicroTimer() - totalTime;
+	totalTime = g_system->getMillis() - totalTime;
 }
 
 void OptionsManager::CycleLogic() {
@@ -4171,7 +4169,7 @@ void OptionsManager::InitialiseAProfile() {
 
 void OptionsManager::DrawProfileScreen(uint32 surface_id) {
 	// Timing code to lock the refresh rate at a constant
-	uint32 t = GetMicroTimer();
+	uint32 t = g_system->getMillis();
 
 	const char *msg = nullptr;
 	const char *prefix = nullptr;
@@ -4401,10 +4399,10 @@ void OptionsManager::DrawProfileScreen(uint32 surface_id) {
 	surface_manager->Unlock_surface(surface_id);
 
 	// Timing code to lock the refresh rate at a constant
-	t = GetMicroTimer() - t;
-	int32 r = 40000 - t;
-	if (t < 40000) {
-		g_system->delayMillis(r / 1000);
+	t = g_system->getMillis() - t;
+	int32 r = 40 - t;
+	if (t < 40) {
+		g_system->delayMillis(r);
 	}
 }
 
@@ -4796,7 +4794,7 @@ void OptionsManager::AnimateSlotsPaging() {
 	// Only perform dirty rectangle refresh in-game (ie no movie)
 	if (m_useDirtyRects) {
 		// Time lock code
-		t = GetMicroTimer();
+		t = g_system->getMillis();
 		// Calculate dirty rectangle
 		repairRect.left = 0;
 		repairRect.right = SCREEN_WIDTH;
@@ -4986,11 +4984,11 @@ void OptionsManager::AnimateSlotsPaging() {
 
 	if (m_useDirtyRects) {
 		// Lock refresh time
-		t = GetMicroTimer() - t;
+		t = g_system->getMillis() - t;
 
 		int32 r = REFRESH_LIMITER - t;
 		if (t < REFRESH_LIMITER) {
-			g_system->delayMillis(r / 1000);
+			g_system->delayMillis(r);
 		}
 	}
 }
@@ -5057,7 +5055,7 @@ bool8 OptionsManager::AnimateBracketsToBox(bool8 forwards, uint32 surface_id) {
 	// Only perform dirty rectangle refresh in-game (ie no movie)
 	if (m_useDirtyRects) {
 		// Time lock code
-		t = GetMicroTimer();
+		t = g_system->getMillis();
 		// Calculate dirty rectangle (needs to be quite fat to cope with other languages)
 		repairRect.left = m_targetBox.left - 50;
 		repairRect.right = m_targetBox.right + 50;
@@ -5162,11 +5160,11 @@ bool8 OptionsManager::AnimateBracketsToBox(bool8 forwards, uint32 surface_id) {
 
 	if (m_useDirtyRects) {
 		// Lock refresh time
-		t = GetMicroTimer() - t;
+		t = g_system->getMillis() - t;
 
 		int32 r = REFRESH_LIMITER - t;
 		if (t < REFRESH_LIMITER) {
-			g_system->delayMillis(r / 1000);
+			g_system->delayMillis(r);
 		}
 	}
 
@@ -5188,7 +5186,7 @@ bool8 OptionsManager::AnimateThoseBrackets(bool8 forwards) {
 			return FALSE8;
 	}
 	// Time lock code
-	uint32 t = GetMicroTimer();
+	uint32 t = g_system->getMillis();
 
 	LRECT repairRect;
 	repairRect.left = m_optionsBox.left - 1;
@@ -5332,11 +5330,11 @@ bool8 OptionsManager::AnimateThoseBrackets(bool8 forwards) {
 		m_autoAnimating--;
 
 	// Lock refresh time
-	t = GetMicroTimer() - t;
+	t = g_system->getMillis() - t;
 
 	if (t < REFRESH_LIMITER) {
 		int32 r = REFRESH_LIMITER - t;
-		g_system->delayMillis(r / 1000);
+		g_system->delayMillis(r);
 	}
 
 	return TRUE8;
