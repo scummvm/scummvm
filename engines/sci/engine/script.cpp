@@ -224,6 +224,8 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 	// find all strings of this script
 	identifyOffsets();
+
+	applySaidWorkarounds();
 }
 
 void Script::identifyOffsets() {
@@ -1275,6 +1277,55 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 
 bool Script::offsetIsObject(uint32 offset) const {
 	return _buf->getUint16SEAt(offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER;
+}
+
+void Script::applySaidWorkarounds() {
+	// WORKAROUND: SQ3 version 1.018 has a messy vocab problem.
+	// Sierra added the vocab entry "scout" to this version at group id 0x953
+	// and then apparently never recompiled all the scripts. 30 scripts still
+	// reference the old vocab group ids from 0x953 to 0x990 in their Said
+	// strings. All of these commands are off by one and linked to wrong words. 
+	// For example, looking at the escape pod in the first room with "look pod"
+	// no longer works but "look chute" does. We fix this by patching the Said
+	// strings; any group ids within the broken range are incremented by one.
+	// Four scripts correctly reference vocabs in the broken range, such as
+	// the one that added "scout", and so they must not be patched.
+	// Only version 1.018 has this problem but it's also the most common as
+	// it's the final English DOS version and included in the SQ collections.
+	if (g_sci->getGameId() == GID_SQ3 &&
+		g_sci->getPlatform() == Common::kPlatformDOS &&
+		g_sci->getLanguage() == Common::EN_ANY &&
+		_nr != 0 && _nr != 42 && _nr != 44 && _nr != 70) { // exclude working scripts
+
+		// Identify SQ3 1.018 by the presence of "scout" at 0x953
+		const uint16 sq3FirstBadVocabGroup = 0x953; // scout
+		const uint16 sq3LastBadVocabGroup  = 0x990; // devil
+		ResultWordList words;
+		g_sci->getVocabulary()->lookupWord(words, "scout", 5);
+		if (!words.empty() && words.front()._group == sq3FirstBadVocabGroup) {
+			for (size_t i = 0; i < _offsetLookupArray.size(); ++i) {
+				offsetLookupArrayEntry &offsetEntry = _offsetLookupArray[i];
+				if (offsetEntry.type != SCI_SCR_OFFSET_TYPE_SAID) {
+					continue;
+				}
+
+				// parse the said string and increment groups in the broken range
+				byte *saidPtr = _buf->getUnsafeDataAt(offsetEntry.offset);
+				while (*saidPtr != 0xff) {
+					if (*saidPtr < 0xf0) {
+						uint16 vocabGroup = (*saidPtr << 8) | *(saidPtr + 1);
+						if (sq3FirstBadVocabGroup <= vocabGroup && vocabGroup <= sq3LastBadVocabGroup) {
+							vocabGroup += 1;
+							*saidPtr = vocabGroup >> 8;
+							*(saidPtr + 1) = vocabGroup & 0xff;
+						}
+						saidPtr++;
+					}
+					saidPtr++;
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Sci
