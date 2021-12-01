@@ -25,8 +25,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
-
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/map_marker.h"
 #include "engines/icb/debug.h"
