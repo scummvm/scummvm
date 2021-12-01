@@ -1177,12 +1177,15 @@ void GUI_LoK::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[2].item[5].callback = cancelSubMenuFunctor;
 
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		_menu[2].item[4].enabled = false;
+
 	int menuHeight = _vm->gameFlags().lang == Common::ZH_TWN ? 80 : 67;
 	labelYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 50 : 44;
 
 	GUI_V1_MENU(_menu[3], -1, -1, 288, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 22/*24*/, 0, labelYStart, 88, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 184/*179*/, 0, labelYStart, 88, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 22, 0, labelYStart, 88, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 184, 0, labelYStart, 88, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 
@@ -1709,6 +1712,7 @@ void GUI_HoF::initStaticData() {
 	int menuItemScrollArrowY1 = _vm->gameFlags().lang == Common::ZH_TWN ? 26 : 22;
 	int menuItemScrollArrowY2 = _vm->gameFlags().lang == Common::ZH_TWN ? 131 : 124;
 
+
 	GUI_V2_MENU(_loadMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, menuStr[4 * 8], 0xFB, -1, 8, 0, 6, 0x84, menuItemScrollArrowY1, 0x84, menuItemScrollArrowY2);
 	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 0x29, -1, menuItemYStart, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	GUI_V2_MENU_ITEM(_loadMenu.item[1], 1, 0x2A, -1, menuItemYStart + menuItemYInc * 1, 0x100, menuItemHeight, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -1736,6 +1740,9 @@ void GUI_HoF::initStaticData() {
 	_saveMenu.item[6].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_saveMenu.item[i].itemId = menuStr[5 * 8 + i + 1];
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		_loadMenu.item[4].enabled = _saveMenu.item[4].enabled = false;
 
 	GUI_V2_MENU(_savenameMenu, -1, -1, 0x140, 0x43, 0xF8, 0xF9, 0xFA, menuStr[6 * 8], 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_savenameMenu.item[0], 1, 0xD, 0x18, 0x2C, 0x58, menuItemHeight, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);

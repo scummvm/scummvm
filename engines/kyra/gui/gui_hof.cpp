@@ -1162,7 +1162,7 @@ int GUI_HoF::loadMenu(Button *caller) {
 	}
 
 	_savegameOffset = 0;
-	setupSavegameNames(_loadMenu, 5);
+	setupSavegameNames(_loadMenu, _saveLoadNumSlots);
 	initMenu(_loadMenu);
 	_isLoadMenu = true;
 	_noLoadProcess = false;

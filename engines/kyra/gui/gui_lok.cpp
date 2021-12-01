@@ -185,6 +185,7 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), 
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
+	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN) ? 4 : 5;
 }
 
 GUI_LoK::~GUI_LoK() {
@@ -563,7 +564,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	}
 
 	for (int i = startSlot; i < num; ++i)
-		menu.item[i].enabled = 0;
+		menu.item[i].enabled = false;
 
 	KyraEngine_LoK::SaveHeader header;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); i++) {
@@ -589,7 +590,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 			}
 
 			menu.item[i].itemString = _savegameNames[i];
-			menu.item[i].enabled = 1;
+			menu.item[i].enabled = true;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			delete in;
 		}
@@ -611,7 +612,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGame);
 
 	_savegameOffset = 0;
-	setupSavegames(_menu[2], 5);
+	setupSavegames(_menu[2], _saveLoadNumSlots);
 
 	initMenu(_menu[2]);
 	updateAllMenuButtons();
@@ -655,7 +656,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGame);
 
 	_savegameOffset = 0;
-	setupSavegames(_menu[2], 5);
+	setupSavegames(_menu[2], _saveLoadNumSlots);
 
 	initMenu(_menu[2]);
 	updateAllMenuButtons();
@@ -1064,7 +1065,7 @@ int GUI_LoK::scrollUp(Button *button) {
 
 	if (_savegameOffset > 0) {
 		_savegameOffset--;
-		setupSavegames(_menu[2], 5);
+		setupSavegames(_menu[2], _saveLoadNumSlots);
 		initMenu(_menu[2]);
 	}
 	return 0;
@@ -1074,9 +1075,9 @@ int GUI_LoK::scrollDown(Button *button) {
 	updateMenuButton(button);
 
 	_savegameOffset++;
-	if (uint(_savegameOffset + 5) >= _saveSlots.size())
-		_savegameOffset = MAX<int>(_saveSlots.size() - 5, 0);
-	setupSavegames(_menu[2], 5);
+	if (uint(_savegameOffset + _saveLoadNumSlots) >= _saveSlots.size())
+		_savegameOffset = MAX<int>(_saveSlots.size() - _saveLoadNumSlots, 0);
+	setupSavegames(_menu[2], _saveLoadNumSlots);
 	initMenu(_menu[2]);
 
 	return 0;

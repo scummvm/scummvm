@@ -167,6 +167,8 @@ private:
 	char _savegameNames[5][35];
 	const char *_specialSavegameString;
 
+	int _saveLoadNumSlots;
+
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
 	Button::Callback getScrollUpButtonHandler() const override { return _scrollUpFunctor; }

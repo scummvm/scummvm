@@ -47,10 +47,12 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()
 	_isDeleteMenu = false;
 	_saveMenuFont = Screen::FID_8_FNT;
 	_saveMenuCursor = Common::Rect(1, 1, 7, 8);
+	_saveLoadNumSlots = 5;
 
 	if (vm->game() == GI_KYRA2 && vm->gameFlags().lang == Common::ZH_TWN) {
 		_saveMenuFont = Screen::FID_CHINESE_FNT;
 		_saveMenuCursor = Common::Rect(0, 0, 8, 14);
+		_saveLoadNumSlots = 4;
 	}
 }
 
@@ -500,11 +502,11 @@ int GUI_v2::scrollUpButton(Button *button) {
 
 	--_savegameOffset;
 	if (_isLoadMenu) {
-		setupSavegameNames(_loadMenu, 5);
+		setupSavegameNames(_loadMenu, _saveLoadNumSlots);
 		// original calls something different here...
 		initMenu(_loadMenu);
 	} else if (_isSaveMenu || _isDeleteMenu) {
-		setupSavegameNames(_saveMenu, 5);
+		setupSavegameNames(_saveMenu, _saveLoadNumSlots);
 		// original calls something different here...
 		initMenu(_saveMenu);
 	}
@@ -516,15 +518,15 @@ int GUI_v2::scrollDownButton(Button *button) {
 	updateMenuButton(button);
 	++_savegameOffset;
 
-	if (uint(_savegameOffset + 5) >= _saveSlots.size())
-		_savegameOffset = MAX<int>(_saveSlots.size() - 5, _isDeleteMenu ? 1 : 0);
+	if (uint(_savegameOffset + _saveLoadNumSlots) >= _saveSlots.size())
+		_savegameOffset = MAX<int>(_saveSlots.size() - _saveLoadNumSlots, _isDeleteMenu ? 1 : 0);
 
 	if (_isLoadMenu) {
-		setupSavegameNames(_loadMenu, 5);
+		setupSavegameNames(_loadMenu, _saveLoadNumSlots);
 		// original calls something different here...
 		initMenu(_loadMenu);
 	} else if (_isSaveMenu || _isDeleteMenu) {
-		setupSavegameNames(_saveMenu, 5);
+		setupSavegameNames(_saveMenu, _saveLoadNumSlots);
 		// original calls something different here...
 		initMenu(_saveMenu);
 	}
@@ -612,7 +614,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	_noSaveProcess = false;
 	_saveSlot = -1;
 	_savegameOffset = 0;
-	setupSavegameNames(_saveMenu, 5);
+	setupSavegameNames(_saveMenu, _saveLoadNumSlots);
 	initMenu(_saveMenu);
 
 	updateAllMenuButtons();
@@ -642,7 +644,8 @@ int GUI_v2::saveMenu(Button *caller) {
 	thumb.free();
 
 	_displayMenu = false;
-	_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
+	if (!(_vm->game() == GI_KYRA2 && _vm->gameFlags().lang == Common::ZH_TWN))
+		_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
 	_madeSave = true;
 
 	return 0;
@@ -711,7 +714,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		backUpPage1(_vm->_screenBuffer);
 		_savegameOffset = 1;
 		_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 35 : 1;
-		setupSavegameNames(_saveMenu, 5);
+		setupSavegameNames(_saveMenu, _saveLoadNumSlots);
 		initMenu(_saveMenu);
 		_isDeleteMenu = true;
 		_slotToDelete = -1;

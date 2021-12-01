@@ -194,6 +194,8 @@ protected:
 	int clickSaveSlot(Button *caller);
 	int cancelSaveMenu(Button *caller);
 
+	int _saveLoadNumSlots;
+
 	// delete menu
 	int _slotToDelete;
 	int deleteMenu(Button *caller);
