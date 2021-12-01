@@ -540,6 +540,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getMacTicks() - movie->_lastRollTime;
 		break;
 	case kTheMachineType:
+		// These are actually coming from Gestalt machineType
+		//
 		// 1 - Macintosh 512Ke			D2
 		// 2 - Macintosh Plus			D2
 		// 3 - Macintosh SE				D2
