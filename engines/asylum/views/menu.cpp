@@ -735,6 +735,14 @@ void Menu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
+void Menu::adjustCoordinates(Common::Point &point) {
+	if (!g_system->isOverlayVisible())
+		return;
+
+	point.x *= 640.0 / g_system->getOverlayWidth();
+	point.y *= 480.0 / g_system->getOverlayHeight();
+}
+
 bool Menu::hasThumbnail(int index) {
 	if (getSaveLoad()->hasSavegame(index + _startIndex))
 		return _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex).getThumbnail();
@@ -758,7 +766,14 @@ void Menu::showThumbnail(int index) {
 	overlay.create(overlayWidth, overlayHeight, overlayFormat);
 	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
 		Graphics::Surface *screen = getScreen()->getSurface().convertTo(overlayFormat, getScreen()->getPalette());
-		overlay.copyRectToSurface(screen->getPixels(), screen->pitch, 0, 0, 640, 480);
+		if (screen->w != overlayWidth || screen->h != overlayHeight) {
+			Graphics::Surface *screen1 = screen->scale(overlayWidth, overlayHeight);
+			overlay.copyRectToSurface(screen1->getPixels(), screen1->pitch, 0, 0, screen1->w, screen1->h);
+			screen1->free();
+			delete screen1;
+		} else {
+			overlay.copyRectToSurface(screen->getPixels(), screen->pitch, 0, 0, 640, 480);
+		}
 		screen->free();
 		delete screen;
 	}
@@ -776,14 +791,7 @@ void Menu::showThumbnail(int index) {
 
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
-
-	if (g_system->isOverlayVisible()
-	 && g_system->getFeatureState(OSystem::kFeatureFullscreenMode)
-	 && ConfMan.get("gfx_mode") == "opengl") {
-
-		cursor.x *= 640.0 / g_system->getOverlayWidth();
-		cursor.y *= 480.0 / g_system->getOverlayHeight();
-	}
+	adjustCoordinates(cursor);
 
 	char text[100];
 
@@ -1639,14 +1647,7 @@ void Menu::clickNewGame() {
 
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
-
-	if (g_system->isOverlayVisible()
-	 && g_system->getFeatureState(OSystem::kFeatureFullscreenMode)
-	 && ConfMan.get("gfx_mode") == "opengl") {
-
-		cursor.x *= 640.0 / g_system->getOverlayWidth();
-		cursor.y *= 480.0 / g_system->getOverlayHeight();
-	}
+	adjustCoordinates(cursor);
 
 	g_system->hideOverlay();
 

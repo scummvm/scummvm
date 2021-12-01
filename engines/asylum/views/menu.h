@@ -208,6 +208,7 @@ private:
 	bool click(const AsylumEvent &evt);
 
 	// Thumbnails
+	void adjustCoordinates(Common::Point &point);
 	bool hasThumbnail(int index);
 	void showThumbnail(int index);
 
