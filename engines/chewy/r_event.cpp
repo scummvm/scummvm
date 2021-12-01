@@ -1633,144 +1633,143 @@ int16 sib_event_no_inv(int16 sib_nr) {
 }
 
 void sib_event_inv(int16 sib_nr) {
+	int16 ret;
+
 	switch (sib_nr) {
-
 	case SIB_TERMINAL_R5:
-		if (!_G(spieler).R5Terminal) {
-			_G(spieler).R5Terminal = 1;
-			cur_2_inventory();
-			del_inventar(RED_CARD_INV);
-
-			start_aad(103, -1);
-			det->start_detail(6, 255, ANI_VOR);
-			atds->set_ats_str(27, TXT_MARK_LOOK, 1, ATS_DATEI);
-			atds->set_ats_str(30, TXT_MARK_LOOK, 1, ATS_DATEI);
-		}
+		r28_use_surimy();
 		break;
 
 	case SIB_TKNOPF1_R6:
-		_G(spieler).R6DoorLeftF = exit_flip_flop(4, 8, -1, 33, -1, -1,
-		                                     AUSGANG_LINKS, -1,
-		                                     (int16)_G(spieler).R6DoorLeftF);
+		r29_schlitz_sitz();
 		break;
 
 	case SIB_TKNOPF2_R6:
-		_G(spieler).R6DoorLeftB = exit_flip_flop(5, 9, 12, 35, 49, SIB_TKNOPF1_R7,
-		                                     AUSGANG_LINKS, AUSGANG_OBEN,
-		                                     (int16)_G(spieler).R6DoorLeftB);
+		_G(cur_hide_flag) = false;
+		hide_cur();
+		start_spz_wait(13, 1, 0, 0);
+		_G(spieler).R18CartFach = true;
+		del_inventar(_G(spieler).AkInvent);
+		det->show_static_spr(7);
+		atds->set_ats_str(157, 1, 1);
+
+		if (_G(spieler).R18CartTerminal) {
+			start_aad_wait(121, -1);
+		} else {
+			_G(spieler).R18CartTerminal = true;
+			atds->set_ats_str(26, 1, 6);
+			start_aad_wait(120, -1);
+		}
+
+		show_cur();
 		break;
 
 	case SIB_TKNOPF3_R6:
-		_G(spieler).R6DoorRightB = exit_flip_flop(6, 11, 20, 37, 99, SIB_TKNOPF3_R11,
-		                                      AUSGANG_RECHTS, AUSGANG_LINKS,
-		                                      (int16)_G(spieler).R6DoorRightB);
+		ret = exit_flip_flop(-1, 46, 27, 132, 90, -1, 2, 2,
+			_G(spieler).R6BolaSchild ? 1 : 0);
+		_G(spieler).R21GitterMuell = ret & 1;
+		atds->set_ats_str(90, 2, 2);
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
-		del_inventar(_G(spieler).AkInvent);
-		_G(spieler).R6BolaSchild = true;
-		det->show_static_spr(2);
-		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
-		obj->hide_sib(SIB_BOLA_KNOPF_R6);
-		obj->show_sib(SIB_BOLA_R6);
-		break;
-
-	case SIB_RHAKEN_R7:
-	case SIB_LHAKEN_R7:
-		r7_haken(sib_nr);
-		break;
-
-	case SIB_GTUER:
-		r8_open_gdoor();
-		break;
-
-	case SIB_SURIMY_R10:
-		r10_get_surimy();
-		break;
-
-	case SIB_SCHLITZ_R11:
-		r11_put_card();
-		break;
-
-	case SIB_TKNOPF1_R11:
-		_G(spieler).R11DoorRightF = exit_flip_flop(1, 23, -1, 87, -1, -1,
-		                                       AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightF);
-		break;
-
-	case SIB_TKNOPF2_R11:
-		_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
-		                                       AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
-		break;
-
-	case SIB_TKNOPF3_R11:
-		_G(spieler).R6DoorRightB = exit_flip_flop(6, 20, 11, 99, 37, SIB_TKNOPF3_R6,
-		                                      AUSGANG_LINKS, AUSGANG_RECHTS,
-		                                      (int16)_G(spieler).R6DoorRightB);
-		break;
-
-	case SIB_ROEHRE_R12:
 		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
-		start_aad(115, 0);
+		atds->set_ats_str(118, 1, 1);
+		start_spz(5, 255, 0, 0);
+		start_aad_wait(115, 0);
+		if (_G(spieler).R12TransOn)
+			r12_use_linke_rohr();
 		break;
 
-	case SIB_FEUER_R14:
+	case SIB_LHAKEN_R7:
 		r14_feuer();
 		break;
 
-	case SIB_CART_FACH_R18:
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
-		_G(spieler).R18CartFach = 1;
+	case SIB_RHAKEN_R7:
 		del_inventar(_G(spieler).AkInvent);
-		if (_G(spieler).R18CartTerminal == true) {
-			_G(spieler).R18CartSave = true;
-			start_aad_wait(120, -1);
-		} else
-			start_aad_wait(121, -1);
+		atds->set_ats_str(113, 0, 1);
+		break;
+
+	case SIB_GTUER:
+		_G(spieler).R23FluxoFlex = true;
+		del_inventar(_G(spieler).AkInvent);
+		atds->set_ats_str(112, 1, 1);
+		break;
+
+	case SIB_SURIMY_R10:
+		r23_use_cartridge();
 		break;
 
 	case SIB_PAINT_R22:
+		ret = exit_flip_flop(6, 20, 11, 99, 37, 15, 1, 2,
+			(int16)_G(spieler).R6DoorRightB);
+		_G(spieler).R6DoorRightB = ret & 1;
+		break;
+
+	case SIB_SCHLITZ_R11:
+		ret = exit_flip_flop(5, 22, -1, 98, -1, -1,
+			AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
+		_G(spieler).R11DoorRightB = ret & 1;
+		break;
+
+	case SIB_TKNOPF1_R11:
+		ret = exit_flip_flop(1, 23, -1, 87, -1, -1,
+			AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightF);
+		_G(spieler).R11DoorRightB = false;
+		_G(spieler).R11TerminalOk |= ret & 1;
+		break;
+
+	case SIB_TKNOPF2_R11:
+		r11_put_card();
+		break;
+
+	case SIB_TKNOPF3_R11:
 		disable_timer();
 		r22_malen();
 		enable_timer();
 		break;
 
-	case SIB_GITTER2_R21:
-		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
-		                                        AUSGANG_RECHTS, AUSGANG_RECHTS,
-		                                        (int16)_G(spieler).R21GitterMuell);
-		atds->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
-		break;
-
 	case SIB_CARTRIDGE_R23:
-		r23_use_cartridge();
-		if (_G(spieler).R18CartSave == true)
-			atds->set_ats_str(111, 2, ATS_DATEI);
-		else
-			atds->set_ats_str(111, 1, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		r10_get_surimy();
 		break;
 
 	case SIB_FLUXO_R23:
-		_G(spieler).R23FluxoFlex = true;
-		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(112, 1, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		r8_open_gdoor();
 		break;
 
-	case SIB_TRANSLATOR_23:
-		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(113, 0, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+	case SIB_FEUER_R14:
+	case SIB_TALISMAN_R12:
+		r7_haken(sib_nr);
 		break;
 
-	case SIB_AUTO_R28:
-		r28_use_surimy();
+	case SIB_ROEHRE_R12:
+		del_inventar(_G(spieler).AkInvent);
+		_G(spieler).R6BolaSchild = true;
+		det->show_static_spr(2);
+		obj->calc_rsi_flip_flop(18);
+		obj->hide_sib(18);
+		obj->show_sib(21);
+		break;
+
+	case SIB_SEIL_R21:
+		ret = exit_flip_flop(6, 11, 20, 37, 99, 42, 2, 1,
+			(int16)_G(spieler).R6DoorRightB);
+		_G(spieler).R6DoorRightB = ret & 1;
+		break;
+
+	case SIB_CART_FACH_R18:
+		ret = exit_flip_flop(5, 9, 12, 35, 49, 22, 1, 3,
+			(int16)_G(spieler).R6DoorLeftB);
+		_G(spieler).R6DoorLeftB = ret & 1;
 		break;
 
 	case SIB_AUTO_SITZ:
-		r29_schlitz_sitz();
+		ret = exit_flip_flop(4, 8, -1, 33, -1, -1, 1, -1,
+			(int16)_G(spieler).R6DoorLeftF);
+		_G(spieler).R6DoorLeftF = ret & 1;
+		break;
+
+	default:
 		break;
 	}
 }
