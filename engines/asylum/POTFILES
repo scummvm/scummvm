@@ -1,2 +1,2 @@
 engines/asylum/metaengine.cpp
-engines/asylum/system/savegame.cpp
+engines/asylum/asylum.cpp
