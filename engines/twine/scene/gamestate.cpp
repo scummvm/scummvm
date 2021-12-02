@@ -513,7 +513,7 @@ void GameState::processGameoverAnimation() {
 		}
 
 		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->_lbaTime - startLbaTime);
-		const int32 cdot = _engine->_screens->lerp(1, 1024, 100, (_engine->_lbaTime - startLbaTime) % 100);
+		const int32 cdot = _engine->_screens->lerp(1, ANGLE_360, 100, (_engine->_lbaTime - startLbaTime) % 100);
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);

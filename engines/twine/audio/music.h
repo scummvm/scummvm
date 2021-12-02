@@ -36,7 +36,7 @@ private:
 	TwinEEngine *_engine;
 public:
 	TwinEMidiPlayer(TwinEEngine *engine);
-	void play(byte *buf, int size);
+	void play(byte *buf, int size, bool loop);
 };
 
 class Music {
@@ -80,7 +80,7 @@ public:
 	 * @param midiIdx music index under mini_mi_win.hqr
 	 * @note valid indices for lba1 are [1-32]
 	 */
-	bool playMidiMusic(int32 midiIdx, int32 loop = 0);
+	bool playMidiMusic(int32 midiIdx, int32 loop = 1);
 	/** Stop MIDI music */
 	void stopMidiMusic();
 

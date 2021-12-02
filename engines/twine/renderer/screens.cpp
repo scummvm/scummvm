@@ -32,7 +32,7 @@
 namespace TwinE {
 
 bool Screens::adelineLogo() {
-	_engine->_music->playMidiMusic(31, 1);
+	_engine->_music->playMidiMusic(31);
 
 	return loadImageDelay(_engine->_resources->adelineLogo(), 7);
 }
