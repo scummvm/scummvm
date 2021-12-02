@@ -33,6 +33,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sherlock:
    - Fix crash using matches on lab table
+   - Fix character animation in Rose Tattoo
 
  TwinE:
    - Numerous bugfixes and stability improvements.
