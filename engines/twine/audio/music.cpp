@@ -75,7 +75,7 @@ TwinEMidiPlayer::TwinEMidiPlayer(TwinEEngine* engine) : _engine(engine) {
 	}
 }
 
-void TwinEMidiPlayer::play(byte *buf, int size) {
+void TwinEMidiPlayer::play(byte *buf, int size, bool loop) {
 	if (_parser == nullptr) {
 		if (_engine->_cfgfile.MidiType == MIDIFILE_DOS) {
 			_parser = MidiParser::createParser_XMIDI();
@@ -95,8 +95,7 @@ void TwinEMidiPlayer::play(byte *buf, int size) {
 
 	syncVolume();
 
-	// All the tracks are supposed to loop
-	_isLooping = true;
+	_isLooping = loop;
 	_isPlaying = true;
 }
 
@@ -263,7 +262,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		return false;
 	}
 	debug("Play midi file for index %i", midiIdx);
-	_midiPlayer.play(midiPtr, midiSize);
+	_midiPlayer.play(midiPtr, midiSize, loop == 0 || loop > 1);
 	return true;
 }
 
