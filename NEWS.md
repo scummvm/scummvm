@@ -46,6 +46,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash on startup loading constants from xeen.ccs.
    - Fix spell selection aborting when characters were switched.
    - Fixed some bad memory accesses.
+   - Various sound fixes.
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
