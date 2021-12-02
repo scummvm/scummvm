@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-30 23:32+0000\n"
+"POT-Creation-Date: 2021-12-02 07:47+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -67,8 +67,9 @@ msgstr "Gå op"
 #: engines/engine.cpp:715 backends/dialogs/gtk/gtk-dialogs.cpp:64
 #: backends/events/default/default-events.cpp:195
 #: backends/events/default/default-events.cpp:219
-#: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
-#: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
+#: backends/platform/wii/options.cpp:48 engines/asylum/asylum.cpp:201
+#: engines/cine/saveload.cpp:864 engines/drascula/saveload.cpp:49
+#: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -4303,6 +4304,17 @@ msgstr "Skift til Spil"
 msgid "Switch to Olmec"
 msgstr "Skift til Spil"
 
+#: engines/asylum/asylum.cpp:200
+#, c-format
+msgid ""
+"Attempt to load saved game from a previous version: Version %s / Build %d"
+msgstr ""
+
+#: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
+#, fuzzy
+msgid "Load anyway"
+msgstr "Tilføj alligevel"
+
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
 msgstr "Kunne ikke initialisere ressourcer"
@@ -4472,11 +4484,6 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
-
-#: engines/cine/saveload.cpp:864
-#, fuzzy
-msgid "Load anyway"
-msgstr "Tilføj alligevel"
 
 #: engines/cryomni3d/metaengine.cpp:146
 #, fuzzy

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-11-30 23:32+0000\n"
+"POT-Creation-Date: 2021-12-02 07:47+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -67,8 +67,9 @@ msgstr "위로"
 #: engines/engine.cpp:715 backends/dialogs/gtk/gtk-dialogs.cpp:64
 #: backends/events/default/default-events.cpp:195
 #: backends/events/default/default-events.cpp:219
-#: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
-#: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
+#: backends/platform/wii/options.cpp:48 engines/asylum/asylum.cpp:201
+#: engines/cine/saveload.cpp:864 engines/drascula/saveload.cpp:49
+#: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -4247,6 +4248,16 @@ msgstr "Grimwall에게 전환"
 msgid "Switch to Olmec"
 msgstr "Olmec에게 전환"
 
+#: engines/asylum/asylum.cpp:200
+#, c-format
+msgid ""
+"Attempt to load saved game from a previous version: Version %s / Build %d"
+msgstr ""
+
+#: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
+msgid "Load anyway"
+msgstr "확인"
+
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
 msgstr "리소스 초기화 실패"
@@ -4416,10 +4427,6 @@ msgstr ""
 "경고: 현재 불러오는 세이브 파일은 잘못된 임시 형식으로 저장되었습니다. 여러 "
 "부분이 잘못 동작할 것입니다. Operation Stealth를 신규 세이브 파일로 처음부터 "
 "다시 시작하는 것을 고려해 주세요."
-
-#: engines/cine/saveload.cpp:864
-msgid "Load anyway"
-msgstr "확인"
 
 #: engines/cryomni3d/metaengine.cpp:146
 msgid "Versailles 1685 support is not compiled in"
