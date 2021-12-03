@@ -32,8 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash when loading savegames from Humongous Entertainment games.
 
  Sherlock:
-   - Fix crash using matches on lab table
-   - Fix character animation in Rose Tattoo
+   - Fix crash using matches on lab table.
+   - Fix character animation in Rose Tattoo.
+   - Fix glitch opening map in Rose Tattoo.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
