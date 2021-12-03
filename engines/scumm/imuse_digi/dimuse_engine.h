@@ -86,6 +86,8 @@ private:
 	int _outputFeedSize;
 	int _outputSampleRate;
 
+	int _maxQueuedStreams; // maximum number of streams which can be queued before they are played
+
 	int _currentSpeechVolume, _currentSpeechFrequency, _currentSpeechPan;
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
 	bool _radioChatterSFX;
