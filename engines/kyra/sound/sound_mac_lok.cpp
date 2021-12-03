@@ -182,6 +182,9 @@ void SoundMac::playTrack(uint8 track) {
 	} else if (_currentResourceSet == kMusicFinale && track == 2) {
 		_driver->doCommand(1, 0x12c);
 		return;
+	} else if (_currentResourceSet == kMusicFinale && track == 4) {
+		_driver->doCommand(1, 0x12d);
+		return;
 	} else {
 		track -= 11;
 		assert(track < 35);

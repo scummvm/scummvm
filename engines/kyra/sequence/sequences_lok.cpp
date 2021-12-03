@@ -1608,7 +1608,10 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 			_screen->updateScreen();
 			delayUntil(_malcolmTimer2);
 		}
-		snd_playWanderScoreViaMap(51, 1);
+		if (_flags.platform == Common::kPlatformMacintosh)
+			_sound->playTrack(4);
+		else
+			snd_playWanderScoreViaMap(51, 1);
 		delay(60 * _tickLength);
 		_malcolmFlag = 0;
 		return 1;
