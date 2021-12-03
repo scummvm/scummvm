@@ -41,8 +41,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
     - Fix crash using matches on lab table.
     - Fix character animation in Rose Tattoo.
-	- Fix glitch opening map in Rose Tattoo.
-	- Fix bell pull sound in Serrated Scalpel.
+    - Fix glitch opening map in Rose Tattoo.
+    - Fix bell pull sound in Serrated Scalpel.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
