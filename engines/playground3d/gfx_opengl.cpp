@@ -119,22 +119,6 @@ void OpenGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[2]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[3]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[4]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[5]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, texture->getPixels());
 }
 
 void OpenGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
@@ -142,10 +126,6 @@ void OpenGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->getPixels());
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[1]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_BGR, GL_UNSIGNED_BYTE, texture->getPixels());
 }
 
 void OpenGLRenderer::setupViewport(int x, int y, int width, int height) {
@@ -332,62 +312,7 @@ void OpenGLRenderer::drawRgbaTexture() {
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[2]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glTranslatef(0.5, 0, 0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[3]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glTranslatef(-1.5, -0.5, 0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[4]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glTranslatef(0.5, 0, 0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[5]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glTranslatef(0.5, 0, 0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glTranslatef(0.5, 0, 0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[1]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
