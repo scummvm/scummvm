@@ -190,7 +190,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_fontDescr._charHeight = 0;
 	_fontDescr._extraHorizontalSpace = _fontDescr._extraVerticalSpace = 0;
 
-	_word31E9E = 0;
+	_word31E9E = false;
 	_oldAnimImageSetId = -1;
 	_animImageSetId = 254;
 	_paletteTransformationConstant = 10;
@@ -262,8 +262,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C880 = false;
 	_word2C894 = false;
 	_word2C8D7 = true;
-	_word2C876 = true;
-	_word2C878 = true;
+	_drawHeroOnMapFl = true;
+	_drawMonstersOnMapFl = true;
 	_word2C87A = false;
 	_unk_sub26437_flag = 0;
 	_word2C8D9 = false;
@@ -500,7 +500,7 @@ void EfhEngine::readAnimInfo() {
 }
 
 void EfhEngine::findMapFile(int16 mapId) {
-	if (_word31E9E == 0)
+	if (!_word31E9E)
 		return;
 
 	Common::String fileName = Common::String::format("map.%d", mapId);
@@ -974,19 +974,9 @@ void EfhEngine::initEngine() {
 	_fontDescr._charHeight = 8;
 	_fontDescr._extraVerticalSpace = 3;
 	_fontDescr._extraHorizontalSpace = 1;
-	_word31E9E = 0;
+	_word31E9E = false;
 
 	saveAnimImageSetId();
-
-	// Save int 1C
-	// Set new int 1C:
-	// TODO: Implement that in the main loop
-	// static uint8 counter = 0;
-	// ++counter;
-	// if (counter == 4) {
-	//    counter = 0;
-	//    tick220Fl = 1;
-	// }
 
 	// Load Title Screen
 	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
@@ -1031,7 +1021,7 @@ void EfhEngine::initEngine() {
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	readImpFile(99, false);
-	_word31E9E = 0xFFFF;
+	_word31E9E = true;
 	restoreAnimImageSetId();
 
 	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure
@@ -1166,7 +1156,7 @@ void EfhEngine::sub15150(bool flag) {
 	}
 }
 
-void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool unkFl1, bool unkFl2) {
+void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool drawHeroFl, bool drawMonstersFl) {
 	int16 unkPosX = 5;
 	int16 unkPosY = 4;
 	int16 posX = 0;
@@ -1216,13 +1206,13 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSi
 		var10 += 16;
 	}
 
-	if (unkFl1) {
+	if (drawHeroFl) {
 		int16 var12 = 128 + unkPosX * 16;
 		var10 = 8 + unkPosY * 16;
 		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], var12, var10);
 	}
 
-	if (unkFl2) {
+	if (drawMonstersFl) {
 		for (int16 var16 = 0; var16 < 64; ++var16) {
 			if ((_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == _fullPlaceId)){
 				bool var4 = false;
@@ -1260,11 +1250,11 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSi
 }
 
 void EfhEngine::displaySmallMap(int16 posX, int16 posY) {
-	drawMap(false, posX, posY, 23, _word2C876, _word2C878);
+	drawMap(false, posX, posY, 23, _drawHeroOnMapFl, _drawMonstersOnMapFl);
 }
 
 void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
-	drawMap(true, posX, posY, 63, _word2C876, _word2C878);
+	drawMap(true, posX, posY, 63, _drawHeroOnMapFl, _drawMonstersOnMapFl);
 }
 
 void EfhEngine::sub12A7F() {
