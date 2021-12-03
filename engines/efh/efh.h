@@ -306,6 +306,7 @@ private:
 	void emptyFunction(int i);
 	void refreshTeamSize();
 	bool isCharacterATeamMember(int16 id);
+	bool isTPK();
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
 	void sub26437(char * str, int16 startX, int16 startY, uint16 unkFl);
@@ -329,13 +330,26 @@ private:
 	void setTextColorWhite();
 	void setTextColorRed();
 	void setTextColor_08h();
+	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
+	void goSouth();
+	void goNorth();
+	void goEast();
+	void goWest();
+	void goNorthEast();
+	void goSouthEast();
+	void goNorthWest();
+	void goSouthWest();
+	void handleNewRoundEffects();
+	bool handleDeathMenu();
 
 	void setNumLock();
-	void unkfct_mapFunction();
+	void computeMapAnimation();
 	void unkFct_anim();
 	void setNextCharacterPos();
 	void unkFct_displayString_2(char *message);
 	void unkFct_displayMenuBox_2(int16 color);
+	void sub174A0();
+	bool sub16E14();
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -407,15 +421,16 @@ private:
 	int16 _unkArray2C8AA[3];
 	int16 _teamSize;
 	int16 _word2C872;
-	int16 _word2C880;
-	int16 _word2C894;
-	int16 _word2C8D7;
+	bool _word2C880;
+	bool _word2C894;
+	bool _word2C8D7;
 	bool _word2C876;
 	bool _word2C878;
 	bool _word2C87A;
 	int16 _unk_sub26437_flag;
 
 	int16 _imageSetSubFilesIdx;
+	int16 _oldImageSetSubFilesIdx;
 
 	int16 _mapPosX, _mapPosY;
 	int16 _oldMapPosX, _oldMapPosY;
@@ -424,7 +439,8 @@ private:
 
 	uint16 _word2C86E;
 	uint8 *_dword2C856;
-	int16 _word2C8D9;
+	bool _word2C8D9;
+	bool _word2C8D5; // CHECKME: always 0?
 };
 
 } // End of namespace Efh
