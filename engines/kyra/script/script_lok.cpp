@@ -1137,9 +1137,9 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 	if (_currentCharacter->sceneId >= 187 && _currentCharacter->sceneId <= 198)
 		return 29;
 
-	// The following rooms are only a "A fireberry bush" scene in the CD version
-	// of Kyrandia 1. In all other versions they are a usual dark cave, thus we do only
-	// return a glow value of "29" over here, when we are running a CD version.
+	// The following rooms are only a "A fireberry bush" scene in the DOS CD, Macintosh and FM-Towns versions of
+	// Kyrandia 1. In the DOS floppy, PC-98 and Amiga versions they are a usual dark cave, thus we do only return
+	// a glow value of "29" here, when we are running a DOS CD, Macintosh or FM-Towns version.
 	if (_flags.isTalkie || (_flags.platform == Common::kPlatformMacintosh) || (_flags.platform == Common::kPlatformFMTowns)) {
 		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
 		        _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
