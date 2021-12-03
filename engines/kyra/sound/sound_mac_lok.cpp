@@ -39,8 +39,9 @@
 
 namespace Kyra {
 
-SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macRes(nullptr), _stuffItArchive(nullptr) {
-	_macRes = new Common::MacResManager();
+SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _resMan(0), _stuffItArchive(nullptr) {
+	_resMan = new Common::MacResManager[2];
+
 	if (vm->gameFlags().useInstallerPackage) {
 		Common::String str = Util::findMacResourceFile("Install Legend of Kyrandia");
 		if (str.empty())
@@ -52,32 +53,23 @@ SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _macRes(nullptr), _stuffItArchive(
 }
 
 SoundMacRes::~SoundMacRes() {
-	delete _macRes;
+	delete[] _resMan;
 }
 
 bool SoundMacRes::init() {
-	if (!_macRes)
+	if (!_resMan)
 		return false;
 
-	if (!_stuffItArchive) {
-		_kyraMacExe = Util::findMacResourceFile("Legend of Kyrandia");
+	_kyraMacExe = _stuffItArchive ? "Legend of Kyrandia\xaa" : Util::findMacResourceFile("Legend of Kyrandia");
 
-		if (_kyraMacExe.empty()) {
-			warning("SoundMacRes::init(): Legend of Kyrandia resource fork not found");
-			return false;
-		}
+	if (_kyraMacExe.empty()) {
+		warning("SoundMacRes::init(): Legend of Kyrandia resource fork not found");
+		return false;
 	}
 
-	setQuality(true);
-
-	if (!_stuffItArchive) {
-		for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
-			if (!_macRes->exists(*i)) {
-				warning("SoundMacRes::init(): Error opening data file: '%s'", i->c_str());
-				return false;
-			}
-		}
-	}
+	// This will also test whether the resource containers are available.
+	if (!setQuality(true))
+		return false;
 
 	// Test actual resource fork reading...
 	Common::SeekableReadStream *test = getResource(2, 'SMOD');
@@ -100,30 +92,37 @@ bool SoundMacRes::init() {
 Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 	Common::SeekableReadStream *res = nullptr;
 
-	for (Common::StringArray::iterator i = _resFiles.begin(); i != _resFiles.end(); ++i) {
-		if (_stuffItArchive) {
-			if (!_macRes->open(Common::Path(*i), *_stuffItArchive)) {
-				warning("SoundMacRes::getResource(): Error opening archive member: '%s'", i->c_str());
-			}
-		} else {
-			if (!_macRes->open(Common::Path(*i)))
-				warning("SoundMacRes::getResource(): Error opening data file: '%s'", i->c_str());
-		}
-
-		if ((res = _macRes->getResource(type, id)))
+	for (int i = 0; i < 2; ++i) {
+		if ((res = _resMan[i].getResource(type, id)))
 			break;
 	}
+
 	return res;
 }
 
-void SoundMacRes::setQuality(bool hi) {
-	_resFiles.clear();
-	_resFiles.push_back(hi ? "HQ_Music.res" : "LQ_Music.res");
+bool SoundMacRes::setQuality(bool hi) {
+	Common::String s[2];
+	s[0] = hi ? "HQ_Music.res" : "LQ_Music.res";
+	s[1] = _kyraMacExe;
+	int err = 0;
+
 	if (_stuffItArchive) {
-		_resFiles.push_back("Legend of Kyrandia\xaa");
+		for (int i = 0; i < 2; ++i)
+			err |= (_resMan[i].open(Common::Path(s[i]), *_stuffItArchive) ? 0 : (1 << i));
 	} else {
-		_resFiles.push_back(_kyraMacExe);
+		for (int i = 0; i < 2; ++i)
+			err |= (_resMan[i].open(Common::Path(s[i])) ? 0 : (1 << i));
 	}
+
+	if (err) {
+		for (int i = 0; i < 2; ++i) {
+			if (err & (1 << i))
+				warning("SoundMacRes::setQuality(): Error opening resource container: '%s'", s[i].c_str());
+		}
+		return false;
+	}
+
+	return true;
 }
 
 SoundMac::SoundMac(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _driver(nullptr), _res(nullptr), _currentResourceSet(-1), _resIDMusic(nullptr), _ready(false) {
