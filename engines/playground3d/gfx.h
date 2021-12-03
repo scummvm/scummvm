@@ -30,6 +30,9 @@
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 
+#include "graphics/surface.h"
+#include "graphics/pixelformat.h"
+
 namespace Playground3d {
 
 class Renderer {
@@ -38,6 +41,7 @@ public:
 	virtual ~Renderer();
 
 	virtual void init() = 0;
+	virtual void deinit() = 0;
 	virtual void clear(const Math::Vector4d &clearColor) = 0;
 
 	/**
@@ -55,10 +59,13 @@ public:
 	void computeScreenViewport();
 
 	virtual void setupViewport(int x, int y, int width, int height) = 0;
+	virtual void loadTextureRGBA(Graphics::Surface *texture) = 0;
+	virtual void loadTextureRGB(Graphics::Surface *texture) = 0;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void dimRegionInOut(float fade) = 0;
 	virtual void drawInViewport() = 0;
+	virtual void drawRgbaTexture() = 0;
 
 protected:
 	OSystem *_system;
@@ -70,6 +77,7 @@ protected:
 	Math::Matrix4 _mvpMatrix;
 
 	static const float cubeVertices[11 * 6 * 4];
+	Graphics::Surface *_texture;
 
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClip, float farClip) const;
 };

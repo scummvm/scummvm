@@ -68,6 +68,7 @@ Common::Error Playground3dEngine::run() {
 	// 3 - fade in/out
 	// 4 - moving filled rectangle in viewport
 	int testId = 1;
+	// 5 - drawing RGBA pattern texture to check endian correctness
 
 	switch (testId) {
 		case 1:
@@ -83,6 +84,19 @@ Common::Error Playground3dEngine::run() {
 		case 4:
 			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
 			break;
+		case 5: {
+			_clearColor = Math::Vector4d(0.5f, 0.5f, 0.5f, 1.0f);
+#if defined(SCUMM_LITTLE_ENDIAN)
+			Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
+			Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
+			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
+			_rgbaTexture = generateRgbaTexture(120, 120, pixelFormatRGBA);
+			_rgbTexture = _rgbaTexture->convertTo(pixelFormatRGB);
+			break;
+		}
 		default:
 			assert(false);
 	}
@@ -92,6 +106,9 @@ Common::Error Playground3dEngine::run() {
 		drawFrame(testId);
 	}
 
+	delete _rgbaTexture;
+	delete _rgbTexture;
+	_gfx->deinit();
 	_system->showMouse(false);
 
 	return Common::kNoError;
@@ -105,6 +122,28 @@ void Playground3dEngine::processInput() {
 			_gfx->computeScreenViewport();
 		}
 	}
+}
+
+Graphics::Surface *Playground3dEngine::generateRgbaTexture(int width, int height, Graphics::PixelFormat format) {
+	Graphics::Surface *surface = new Graphics::Surface;
+	surface->create(width, height, format);
+	const int barW = width / 4;
+	Common::Rect r(0, 0, barW, height);
+	uint32 pixel = format.ARGBToColor(255, 255, 0, 0);
+	surface->fillRect(r, pixel);
+	r.left += barW;
+	r.right += barW;
+	pixel = format.ARGBToColor(255, 0, 255, 0);
+	surface->fillRect(r, pixel);
+	r.left += barW;
+	r.right += barW;
+	pixel = format.ARGBToColor(255, 0, 0, 255);
+	surface->fillRect(r, pixel);
+	r.left += barW;
+	r.right += barW;
+	pixel = format.ARGBToColor(128, 0, 0, 0);
+	surface->fillRect(r, pixel);
+	return surface;
 }
 
 void Playground3dEngine::drawAndRotateCube() {
@@ -148,6 +187,10 @@ void Playground3dEngine::drawInViewport() {
 	_gfx->drawInViewport();
 }
 
+void Playground3dEngine::drawRgbaTexture() {
+	_gfx->drawRgbaTexture();
+}
+
 void Playground3dEngine::drawFrame(int testId) {
 	_gfx->clear(_clearColor);
 
@@ -172,6 +215,11 @@ void Playground3dEngine::drawFrame(int testId) {
 		case 4:
 			_gfx->setupViewport(vp.left + 40, _system->getHeight() - vp.top - vp.height() + 40, vp.width() - 80, vp.height() - 80);
 			drawInViewport();
+			break;
+		case 5:
+			_gfx->loadTextureRGBA(_rgbaTexture);
+			_gfx->loadTextureRGB(_rgbTexture);
+			drawRgbaTexture();
 			break;
 		default:
 			assert(false);

@@ -96,7 +96,6 @@ void Renderer::computeScreenViewport() {
 
 Math::Matrix4 Renderer::makeProjectionMatrix(float fov, float nearClip, float farClip) const {
 	float aspectRatio = kOriginalWidth / (float) kOriginalHeight;
-
 	float xmaxValue = nearClip * tanf(fov * M_PI / 360.0f);
 	float ymaxValue = xmaxValue / aspectRatio;
 	return Math::makeFrustumMatrix(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClip, farClip);
@@ -109,7 +108,6 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	Math::Matrix4 model = _modelViewMatrix;
 	proj.transpose();
 	model.transpose();
-
 	_mvpMatrix = proj * model;
 	_mvpMatrix.transpose();
 }

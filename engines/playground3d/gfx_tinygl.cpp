@@ -55,6 +55,22 @@ static const TGLfloat boxVertices[] = {
 	 1.0f, -1.0f,
 };
 
+static const TGLfloat bitmapVertices[] = {
+	//  X      Y
+	-0.2f,  0.2f,
+	 0.2f,  0.2f,
+	-0.2f, -0.2f,
+	 0.2f, -0.2f,
+};
+
+static const TGLfloat textCords[] = {
+	// S     T
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+};
+
 Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
@@ -84,6 +100,52 @@ void TinyGLRenderer::init() {
 
 	tglDisable(TGL_LIGHTING);
 	tglEnable(TGL_DEPTH_TEST);
+
+	tglGenTextures(10, _textureRgbaId);
+	tglGenTextures(10, _textureRgbId);
+}
+
+void TinyGLRenderer::deinit() {
+	//tglDeleteTextures(10, &_textureRgbaId);
+	//tglDeleteTextures(10, &_textureRgbId);
+}
+
+void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[1]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGRA, TGL_UNSIGNED_BYTE, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[2]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_INT_8_8_8_8, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[3]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGRA, TGL_UNSIGNED_INT_8_8_8_8, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[4]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_INT_8_8_8_8_REV, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[5]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGRA, TGL_UNSIGNED_INT_8_8_8_8_REV, texture->getPixels());
+}
+
+void TinyGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, texture->getPixels());
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[1]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGR, TGL_UNSIGNED_BYTE, texture->getPixels());
 }
 
 void TinyGLRenderer::clear(const Math::Vector4d &clearColor) {
@@ -230,6 +292,118 @@ void TinyGLRenderer::drawInViewport() {
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
+}
+
+void TinyGLRenderer::drawRgbaTexture() {
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ONE_MINUS_SRC_ALPHA);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+	tglEnable(TGL_TEXTURE_2D);
+
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	tglTranslatef(-0.8, 0.8, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[1]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[2]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[3]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(-1.5, -0.5, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[4]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[5]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[1]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 
 	tglMatrixMode(TGL_PROJECTION);

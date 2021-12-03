@@ -40,17 +40,23 @@ public:
 	virtual ~OpenGLRenderer();
 
 	void init() override;
+	void deinit() override;
 
 	void clear(const Math::Vector4d &clearColor) override;
+	void loadTextureRGBA(Graphics::Surface *texture) override;
+	void loadTextureRGB(Graphics::Surface *texture) override;
 
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	void dimRegionInOut(float fade) override;
 	void drawInViewport() override;
+	void drawRgbaTexture() override;
 
 private:
 	Math::Vector3d _pos;
+	GLuint _textureRgbaId[10];
+	GLuint _textureRgbId[10];
 
 	void drawFace(uint face);
 };

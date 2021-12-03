@@ -186,6 +186,8 @@ shaders/wme_sprite.fragment             FILE    "engines/wintermute/base/gfx/ope
 shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(PLAYGROUND3D)
+shaders/playground3d_bitmap.fragment    FILE    "engines/playground3d/shaders/playground3d_bitmap.fragment"
+shaders/playground3d_bitmap.vertex      FILE    "engines/playground3d/shaders/playground3d_bitmap.vertex"
 shaders/playground3d_cube.fragment      FILE    "engines/playground3d/shaders/playground3d_cube.fragment"
 shaders/playground3d_cube.vertex        FILE    "engines/playground3d/shaders/playground3d_cube.vertex"
 shaders/playground3d_fade.fragment      FILE    "engines/playground3d/shaders/playground3d_fade.fragment"

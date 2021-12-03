@@ -53,13 +53,17 @@ private:
 	Math::Vector4d _clearColor;
 	float _fade;
 	bool _fadeIn;
+	Graphics::Surface *_rgbaTexture;
+	Graphics::Surface *_rgbTexture;
 
 	float _rotateAngleX, _rotateAngleY, _rotateAngleZ;
 
+	Graphics::Surface *generateRgbaTexture(int width, int height, Graphics::PixelFormat format);
 	void drawAndRotateCube();
 	void drawPolyOffsetTest();
 	void dimRegionInOut();
 	void drawInViewport();
+	void drawRgbaTexture();
 };
 
 } // End of namespace Playground3d
