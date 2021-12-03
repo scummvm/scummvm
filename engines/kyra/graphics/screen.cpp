@@ -79,6 +79,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_customDimTable = nullptr;
 	_curDim = nullptr;
 
+	_lineBreakChar = (_vm->gameFlags().platform == Common::kPlatformMacintosh) ? '\n' : '\r';
 	_yTransOffs = 0;
 }
 
@@ -1420,7 +1421,7 @@ int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 
 		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 13 || c == 32 || c == 0x4081))) {
 			break;
-		} else if (c == '\r') {
+		} else if (c == _lineBreakChar) {
 			if (curLineLen > maxLineLen)
 				maxLineLen = curLineLen;
 			else
@@ -1479,7 +1480,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 		if (c == 0) {
 			break;
-		} else if (c == '\r') {
+		} else if (c == _lineBreakChar) {
 			x = x_start;
 			y += (charHeight + _lineSpacing);
 		} else {

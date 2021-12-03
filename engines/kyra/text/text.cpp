@@ -35,6 +35,7 @@ TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
+	_lineBreakChar = (_vm->gameFlags().platform == Common::kPlatformMacintosh) ? '\n' : '\r';
 	memset(_talkSubstrings, 0, sizeof(_talkSubstrings));
 	memset(_talkBuffer, 0, sizeof(_talkBuffer));
 }
@@ -76,7 +77,7 @@ int TextDisplayer::dropCRIntoString(char *str, int offs) {
 	str += offs;
 	while (*str) {
 		if (*str == ' ') {
-			*str = '\r';
+			*str = _lineBreakChar;
 			return pos;
 		}
 		++str;
@@ -96,7 +97,7 @@ char *TextDisplayer::preprocessString(const char *str) {
 
 	char *p = _talkBuffer;
 	while (*p) {
-		if (*p == '\r') {
+		if (*p == _lineBreakChar) {
 			return _talkBuffer;
 		}
 		++p;
@@ -131,7 +132,7 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 	int currentLine = 0;
 	int pos = 0;
 	while (*str) {
-		if (*str == '\r') {
+		if (*str == _lineBreakChar) {
 			assert(currentLine < TALK_SUBSTRING_NUM);
 			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
 			++currentLine;

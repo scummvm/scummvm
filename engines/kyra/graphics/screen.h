@@ -650,6 +650,8 @@ public:
 
 	const ScreenDim *_curDim;
 
+	char _lineBreakChar;
+
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 

@@ -74,6 +74,8 @@ protected:
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
 	bool _talkMessagePrinted;
+
+	char _lineBreakChar;
 };
 
 } // End of namespace Kyra
