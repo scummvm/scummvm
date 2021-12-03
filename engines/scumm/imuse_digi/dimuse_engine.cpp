@@ -103,6 +103,19 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 
 	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SMUSH, 198000, 0, 0);
 
+	if (_mixer->getOutputBufSize() != 0) {
+		_maxQueuedStreams = (_mixer->getOutputBufSize() / _waveOutPreferredFeedSize) + 1;
+		// This mixer's optimal output sample rate for this audio engine is 44100
+		// if it's higher than that, compensate the number of queued streams in order
+		// to try to achieve a better latency compromise
+		if (_mixer->getOutputRate() > DIMUSE_SAMPLERATE * 2) {
+			_maxQueuedStreams -= 2;
+		}
+	} else {
+		debug(5, "IMuseDigital::IMuseDigital(): WARNING: output audio buffer size not specified for this platform, defaulting _maxQueuedStreams to 4");
+		_maxQueuedStreams = 4;
+	}
+
 	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
 }
 
