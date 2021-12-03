@@ -291,7 +291,7 @@ private:
 	void setTextPos(int16 textPosX, int16 textPosY);
 
 	void sub15150(bool flag);
-	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool unkFl1, bool unkFl2);
+	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool drawHeroFl, bool drawMonstersFl);
 	void displaySmallMap(int16 posX, int16 posY);
 	void displayLargeMap(int16 posX, int16 posY);
 	void sub12A7F();
@@ -389,7 +389,7 @@ private:
 	uint8 _defaultBoxColor;
 	FontDescr _fontDescr;
 
-	uint16 _word31E9E;
+	bool _word31E9E;
 	uint16 _textColor;
 
 	int16 _oldAnimImageSetId;
@@ -424,8 +424,8 @@ private:
 	bool _word2C880;
 	bool _word2C894;
 	bool _word2C8D7;
-	bool _word2C876;
-	bool _word2C878;
+	bool _drawHeroOnMapFl;
+	bool _drawMonstersOnMapFl;
 	bool _word2C87A;
 	int16 _unk_sub26437_flag;
 
