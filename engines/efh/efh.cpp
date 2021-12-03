@@ -247,6 +247,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_teamSize = 1;
 	_word2C872 = 0;
 	_imageSetSubFilesIdx = 144;
+	_oldImageSetSubFilesIdx = 144;
 
 	_mapPosX = _mapPosY = 31;
 	_oldMapPosX = _oldMapPosY = 31;
@@ -258,14 +259,15 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_lastMainPlaceId = 0;
 	_word2C86E = 0;
 	_dword2C856 = nullptr;
-	_word2C880 = 0;
-	_word2C894 = 0;
-	_word2C8D7 = -1;
+	_word2C880 = false;
+	_word2C894 = false;
+	_word2C8D7 = true;
 	_word2C876 = true;
 	_word2C878 = true;
 	_word2C87A = false;
 	_unk_sub26437_flag = 0;
-	_word2C8D9 = 0;
+	_word2C8D9 = false;
+	_word2C8D5 = false;
 
 	memset(_messageToBePrinted, 0, 400);
 }
@@ -339,8 +341,123 @@ Common::Error EfhEngine::run() {
 	if (!_protectionPassed)
 		return Common::kNoError;
 
+	uint32 lastMs = _system->getMillis();
 	warning("STUB - Main loop");
 	for (;;) {
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			unkFct_anim();
+		}
+
+		Common::Event event;
+		_system->getEventManager()->pollEvent(event);
+		Common::KeyCode retVal = Common::KEYCODE_INVALID; 
+		Common::KeyCode lastInput = getLastCharAfterAnimCount(4);
+		if (event.type == Common::EVENT_KEYUP) {
+			retVal = lastInput;
+		}
+
+		switch (retVal) {
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
+			goSouth();
+			_imageSetSubFilesIdx = 144;
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
+			goNorth();
+			_imageSetSubFilesIdx = 145;
+			break;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
+			goEast();
+			_imageSetSubFilesIdx = 146;
+			break;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
+			goWest();
+			_imageSetSubFilesIdx = 147;
+			break;
+		case Common::KEYCODE_PAGEUP:
+		case Common::KEYCODE_KP9:
+			goNorthEast();
+			_imageSetSubFilesIdx = 146;
+			break;
+		case Common::KEYCODE_PAGEDOWN:
+		case Common::KEYCODE_KP3:
+			goSouthEast();
+			_imageSetSubFilesIdx = 146;
+			break;
+		case Common::KEYCODE_END:
+		case Common::KEYCODE_KP1:
+			goSouthWest();
+			_imageSetSubFilesIdx = 147;
+			break;
+		case Common::KEYCODE_HOME:
+		case Common::KEYCODE_KP7:
+			goNorthWest();
+			_imageSetSubFilesIdx = 147;
+			break;
+
+		default:
+			if (retVal != Common::KEYCODE_INVALID)
+				warning("Main Loop: Unhandled input %d", retVal);
+			break;
+		}
+
+		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
+			int16 var4 = sub16E14();
+			if (!_word2C8D5 || var4 != 0) {
+				_oldMapPosX = _mapPosX;
+				_oldMapPosY = _mapPosY;
+				_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
+				_word2C894 = true;
+			} else {
+				_mapPosX = _oldMapPosX;
+				_mapPosY = _oldMapPosY;
+				if (_oldImageSetSubFilesIdx != _imageSetSubFilesIdx) {
+					_word2C894 = true;
+					_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
+				}
+			}
+			if (_largeMapFlag) {
+				_techDataId_MapPosX = _mapPosX;
+				_techDataId_MapPosY = _mapPosY;
+			}			
+		}
+
+		if (!_shouldQuit) {
+			sub174A0();
+		}
+
+		if (_word2C894 && !_shouldQuit) {
+			sub12A7F();
+			displayLowStatusScreen(true);
+		}
+
+		if (!_shouldQuit) {
+			handleNewRoundEffects();
+
+			if (_word2C86E > 0) {
+				if (--_word2C86E == 0) {
+					sub221FA(nullptr, true);
+				}
+			}
+		}
+
+		if (--_unkArray2C8AA[0] < 0 && !_shouldQuit)
+			_unkArray2C8AA[0] = 0;
+
+		if (isTPK()) {
+			if (handleDeathMenu())
+				_shouldQuit = true;
+		}
+		
+		warning("Main loop - missing implementation");
+		
 		displayFctFullScreen();
 	}
 	return Common::kNoError;
@@ -1111,7 +1228,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSi
 
 	if (unkFl1) {
 		int16 var12 = 128 + unkPosX * 16;
-		int16 var10 = 8 + unkPosY * 16;
+		var10 = 8 + unkPosY * 16;
 		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], var12, var10);
 	}
 
@@ -1146,7 +1263,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSi
 		}
 	}
 
-	if (_word2C8D7 != 0)
+	if (_word2C8D7)
 		return;
 
 	warning("drawMap() - unexpected code reached, not implemented");
@@ -1162,18 +1279,18 @@ void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
 
 void EfhEngine::sub12A7F() {
 	for (int16 counter = 0; counter < 2; ++counter) {
-		_word2C894 = 0;
+		_word2C894 = false;
 		if (!_largeMapFlag) {
 			if (_fullPlaceId != 0xFF)
 				displaySmallMap(_mapPosX, _mapPosY);
 
-			if (_word2C8D9 != 0)
+			if (_word2C8D9)
 				drawUpperRightBorders();
 		} else {
 			if (_techId != 0xFF)
 				displayLargeMap(_mapPosX, _mapPosY);
 			
-			if (_word2C8D9 != 0)
+			if (_word2C8D9)
 				drawUpperRightBorders();
 		}
 		if (counter == 0)
@@ -1384,6 +1501,16 @@ bool EfhEngine::isCharacterATeamMember(int16 id) {
 	return false;
 }
 
+bool EfhEngine::isTPK() {
+	int16 zeroedChar = 0;
+	for (int16 counter = 0; counter < _teamSize; ++counter) {
+		if (_npcBuf[_teamCharId[counter]]._hitPoints <= 0)
+			++zeroedChar;
+	}
+
+	return zeroedChar == _teamSize;
+}
+
 void EfhEngine::handleWinSequence() {
 	warning("STUB - handleWinSequence");
 }
@@ -1564,8 +1691,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosX = _mapPosX = scriptNumberArray[1];
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadPlacesFile(scriptNumberArray[0], false);
-				_word2C880 = -1;
-				_word2C894 = -1;
+				_word2C880 = true;
+				_word2C894 = true;
 			}
 			break;
 		case 0x01:
@@ -1573,8 +1700,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_largeMapFlag = true;
 				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
 				_oldMapPosY = _mapPosY = _techDataId_MapPosY;
-				_word2C880 = -1;
-				_word2C894 = -1;
+				_word2C880 = true;
+				_word2C894 = true;
 			}
 			break;
 		case 0x02:
@@ -1586,8 +1713,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadTechMapImp(scriptNumberArray[0]);
 				_largeMapFlag = true;
-				_word2C880 = -1;
-				_word2C894 = -1;
+				_word2C880 = true;
+				_word2C894 = true;
 				doneFlag = true;
 			}
 			break;
@@ -1599,8 +1726,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 
 				_mapPosX = getRandom(var110) + scriptNumberArray[0] - 1;
 				_mapPosY = getRandom(var10E) + scriptNumberArray[1] - 1;
-				_word2C880 = -1;
-				_word2C894 = -1;
+				_word2C880 = true;
+				_word2C894 = true;
 			}
 			break;
 		case 0x04:
@@ -1608,8 +1735,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 			if (argC != 0) {
 				_mapPosX = scriptNumberArray[0];
 				_mapPosY = scriptNumberArray[1];
-				_word2C880 = -1;
-				_word2C894 = -1;
+				_word2C880 = true;
+				_word2C894 = true;
 			}
 			break;
 		case 0x05:
@@ -1776,7 +1903,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosX = _mapPosX = scriptNumberArray[0];
 				_oldMapPosY = _mapPosY = scriptNumberArray[1];
 				_largeMapFlag = true;
-				_word2C894 = -1;
+				_word2C894 = true;
 			}
 			break;
 		case 0x16:
@@ -1836,7 +1963,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				if (var110 != -1) {
 					_mapUnknownPtr[var110 * 9 + 1] = 0xFF;
 				}
-				_word2C894 = -1;
+				_word2C894 = true;
 			}
 			break;
 		case 0x19:
@@ -2042,12 +2169,199 @@ void EfhEngine::setTextColor_08h() {
 		_textColor = 0x8;
 }
 
+bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+
+	if (mapPosX == 0 && (mapPosY == 0 || mapPosY == maxMapBlocks))
+		return true;
+
+	if (mapPosX == maxMapBlocks && (mapPosY == 0 || mapPosY == maxMapBlocks))
+		return true;
+
+	return false;
+}
+
+void EfhEngine::goSouth() {
+	if (_largeMapFlag) {
+		if (++_mapPosY > 63)
+			_mapPosY = 63;
+	} else {
+		if (++_mapPosY > 23)
+			_mapPosY = 23;
+	}
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goNorth() {
+	if (--_mapPosY < 0)
+		_mapPosY = 0;
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goEast() {
+	if (_largeMapFlag) {
+		if (++_mapPosX > 63)
+			_mapPosX = 63;
+	} else {
+		if (++_mapPosX > 23)
+			_mapPosX = 23;
+	}
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goWest() {
+	if (--_mapPosX < 0)
+		_mapPosX = 0;
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goNorthEast() {
+	if (--_mapPosY < 0)
+		_mapPosY = 0;
+
+	if (_largeMapFlag) {
+		if (++_mapPosX > 63)
+			_mapPosX = 63;
+	} else {
+		if (++_mapPosX > 23)
+			_mapPosX = 23;
+	}
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goSouthEast() {
+	if (_largeMapFlag) {
+		if (++_mapPosX > 63)
+			_mapPosX = 63;
+	} else {
+		if (++_mapPosX > 23)
+			_mapPosX = 23;
+	}
+
+	if (_largeMapFlag) {
+		if (++_mapPosY > 63)
+			_mapPosY = 63;
+	} else {
+		if (++_mapPosY > 23)
+			_mapPosY = 23;
+	}
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goNorthWest() {
+	if (--_mapPosY < 0)
+		_mapPosY = 0;
+
+	if (--_mapPosX < 0)
+		_mapPosX = 0;
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::goSouthWest() {
+	if (--_mapPosX < 0)
+		_mapPosX = 0;
+
+	if (_largeMapFlag) {
+		if (++_mapPosY > 63)
+			_mapPosY = 63;
+	} else {
+		if (++_mapPosY > 23)
+			_mapPosY = 23;
+	}
+
+	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+	}
+}
+
+void EfhEngine::handleNewRoundEffects() {
+	warning("STUB: handleNewRoundEffects");
+}
+
+bool EfhEngine::handleDeathMenu() {
+	warning("STUB: handleDeathMenu");
+	return false;
+}
+
 void EfhEngine::setNumLock() {
 	// No implementation in ScummVM
 }
 
-void EfhEngine::unkfct_mapFunction() {
-	warning("STUB - unkfct_mapFunction");
+void EfhEngine::computeMapAnimation() {
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+
+	int16 minMapX = _mapPosX - 5;
+	int16 minMapY = _mapPosY - 4;
+
+	if (minMapX < 0)
+		minMapX = 0;
+	if (minMapY < 0)
+		minMapY = 0;
+
+	int16 maxMapX = minMapX + 10;
+	int16 maxMapY = minMapY + 7;
+
+	if (maxMapX > maxMapBlocks)
+		maxMapX = maxMapBlocks;
+	if (maxMapY > maxMapBlocks)
+		maxMapY = maxMapBlocks;
+
+	for (int16 counterY = minMapY; counterY < maxMapY; ++counterY) {
+		for (int16 counterX = minMapX; counterX < maxMapX; ++counterX) {
+			if (_largeMapFlag) {
+				if (_currentTileBankImageSetId[0] != 0)
+					continue;
+				int16 var4 = _mapGameMapPtr[counterX * 64 + counterY];
+				if (var4 >= 1 && var4 <= 0xF) {
+					if (getRandom(100) < 50)
+						_mapGameMapPtr[counterX * 64 + counterY] += 0xC5;
+				} else if (var4 >= 0xC6 && var4 <= 0xD5) {
+					if (getRandom(100) < 50)
+						_mapGameMapPtr[counterX * 64 + counterY] -= 0xC5;
+				}
+			} else {
+				if (_currentTileBankImageSetId[0] != 0)
+					continue;
+				int16 var4 = _curPlace[counterX * 24 + counterY];
+				if (var4 >= 1 && var4 <= 0xF) {
+					if (getRandom(100) < 50)
+						_curPlace[counterX * 24 + counterY] += 0xC5;
+				} else if (var4 >= 0xC6 && var4 <= 0xD5) {
+					if (getRandom(100) < 50)
+						_curPlace[counterX * 24 + counterY] -= 0xC5;
+				}
+			}
+		}
+	}
 }
 
 void EfhEngine::unkFct_anim() {
@@ -2062,7 +2376,7 @@ void EfhEngine::unkFct_anim() {
 		displayAnimFrame();
 	}
 
-	unkfct_mapFunction();
+	computeMapAnimation();
 }
 
 void EfhEngine::setNextCharacterPos() {
@@ -2084,6 +2398,15 @@ void EfhEngine::unkFct_displayString_2(char *message) {
 
 void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
 	drawColoredRect(16, 152, 302, 189, color);
+}
+
+void EfhEngine::sub174A0() {
+	warning("STUB: sub174A0");
+}
+
+bool EfhEngine::sub16E14() {
+	warning("STUB: sub16E14");
+	return false;
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
