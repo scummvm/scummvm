@@ -35,6 +35,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash using matches on lab table.
    - Fix character animation in Rose Tattoo.
    - Fix glitch opening map in Rose Tattoo.
+   - Fix bell pull sound in Serrated Scalpel.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
