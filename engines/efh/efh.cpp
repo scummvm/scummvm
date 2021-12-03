@@ -247,7 +247,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_teamSize = 1;
 	_word2C872 = 0;
 	_imageSetSubFilesIdx = 144;
-	_oldImageSetSubFilesIdx = 144;
+	_oldImageSetSubFilesIdx = 143;
 
 	_mapPosX = _mapPosY = 31;
 	_oldMapPosX = _oldMapPosY = 31;
@@ -353,12 +353,7 @@ Common::Error EfhEngine::run() {
 		}
 
 		Common::Event event;
-		_system->getEventManager()->pollEvent(event);
-		Common::KeyCode retVal = Common::KEYCODE_INVALID; 
-		Common::KeyCode lastInput = getLastCharAfterAnimCount(4);
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = lastInput;
-		}
+		Common::KeyCode retVal = getLastCharAfterAnimCount(4);
 
 		switch (retVal) {
 		case Common::KEYCODE_DOWN:
@@ -809,13 +804,8 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	if (delay == 0)
 		return Common::KEYCODE_INVALID;
 
-	Common::Event event;
-	do {
-		_system->getEventManager()->pollEvent(event);
-	} while (event.kbd.keycode != Common::KEYCODE_INVALID);
-
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
-
+	
 	uint32 lastMs = _system->getMillis();
 	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
 		_system->delayMillis(20);
@@ -1327,7 +1317,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				int16 textPosY = 161 + 9 * i;
 				copyString(_npcBuf[charId]._name, buffer);
 				setTextPos(16, textPosY);
-				unkFct_displayString_2(buffer);
+				displayStringAtTextPos(buffer);
 				sprintf(buffer, "%d", getEquipmentDefense(charId, false));
 				displayCenteredString(buffer, 104, 128, textPosY);
 				sprintf(buffer, "%d", _npcBuf[charId]._hitPoints);
@@ -1521,7 +1511,7 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
 	return false;
 }
 
-void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
+void EfhEngine::drawString(char *str, int16 startX, int16 startY, uint16 unkFl) {
 	uint8 *curPtr = (uint8 *)str;
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
 	_unk_sub26437_flag = unkFl & 0x3FFF;
@@ -1530,7 +1520,7 @@ void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
 	int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
 
 	if (unkFl & 0x8000) {
-		warning("STUB - sub26437 - 0x8000");
+		warning("STUB - drawString - 0x8000");
 	}
 
 	for (uint8 curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
@@ -1552,7 +1542,7 @@ void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
 		}
 
 		uint8 varC = _fontDescr._extraLines[characterId];
-		sub252CE(curChar, startX, startY + varC);
+		drawChar(curChar, startX, startY + varC);
 		startX += charWidth + _fontDescr._extraHorizontalSpace;
 	}
 	
@@ -1561,7 +1551,7 @@ void EfhEngine::sub26437(char *str, int16 startX, int16 startY, uint16 unkFl) {
 void EfhEngine::displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY) {
 	uint16 length = getStringWidth(str);
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
-	sub26437(str, startCenteredDisplayX, posY, _textColor);
+	drawString(str, startCenteredDisplayX, posY, _textColor);
 }
 
 int16 EfhEngine::chooseCharacterToReplace() {
@@ -1654,7 +1644,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					doneFlag = true;
 				} else {
 					if (var_F2 == 0)
-						unkFct_displayString_2(dest);
+						displayStringAtTextPos(dest);
 
 					*dest = 0;
 					strcpy(dest, var_EC);
@@ -2034,7 +2024,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 	}
 
 	if (*dest != 0 && curLine < numbLines && var_F2 == 0)
-		unkFct_displayString_2(dest);
+		displayStringAtTextPos(dest);
 
 	if (var_EE != 0xFF) {
 		displayLowStatusScreen(true);
@@ -2131,7 +2121,7 @@ int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 	return -1;
 }
 
-void EfhEngine::sub252CE(uint8 curChar, int16 posX, int posY) {
+void EfhEngine::drawChar(uint8 curChar, int16 posX, int posY) {
 	// Quick hacked display, may require rework
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
 
@@ -2390,8 +2380,8 @@ void EfhEngine::setNextCharacterPos() {
 		_textPosY = 0;
 }
 
-void EfhEngine::unkFct_displayString_2(char *message) {
-	sub26437(message, _textPosX, _textPosY, _textColor);
+void EfhEngine::displayStringAtTextPos(char *message) {
+	drawString(message, _textPosX, _textPosY, _textColor);
 	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
 }

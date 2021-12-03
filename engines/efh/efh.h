@@ -309,7 +309,7 @@ private:
 	bool isTPK();
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
-	void sub26437(char * str, int16 startX, int16 startY, uint16 unkFl);
+	void drawString(char * str, int16 startX, int16 startY, uint16 unkFl);
 	void displayCenteredString(char * str, int16 minX, int16 maxX, int16 posY);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
@@ -326,7 +326,7 @@ private:
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
-	void sub252CE(uint8 curChar, int16 posX, int posY);
+	void drawChar(uint8 curChar, int16 posX, int posY);
 	void setTextColorWhite();
 	void setTextColorRed();
 	void setTextColor_08h();
@@ -346,7 +346,7 @@ private:
 	void computeMapAnimation();
 	void unkFct_anim();
 	void setNextCharacterPos();
-	void unkFct_displayString_2(char *message);
+	void displayStringAtTextPos(char *message);
 	void unkFct_displayMenuBox_2(int16 color);
 	void sub174A0();
 	bool sub16E14();
