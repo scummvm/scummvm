@@ -106,7 +106,7 @@ void KyraEngine_LoK::seq_intro() {
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(_defaultFont);
-	if (_flags.platform == Common::kPlatformDOS || (_flags.platform == Common::kPlatformMacintosh && !_res->exists("MP_GOLD.CPS")))
+	if (_flags.platform == Common::kPlatformDOS)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
@@ -148,10 +148,8 @@ bool KyraEngine_LoK::seq_introPublisherLogos() {
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
 		delay(120 * _tickLength);
-		if (!_abortIntroFlag) {
+		if (!_abortIntroFlag)
 			_screen->fadeToBlack();
-			snd_playTheme(0, 2);
-		}
 	}
 
 	return _abortIntroFlag;
