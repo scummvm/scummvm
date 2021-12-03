@@ -177,10 +177,11 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-MixerImpl::MixerImpl(uint sampleRate)
-	: _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+MixerImpl::MixerImpl(uint sampleRate, uint outBufSize)
+	: _mutex(), _sampleRate(sampleRate), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
+	assert(outBufSize >= 0);
 
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = nullptr;
@@ -199,6 +200,10 @@ void MixerImpl::setReady(bool ready) {
 
 uint MixerImpl::getOutputRate() const {
 	return _sampleRate;
+}
+
+uint MixerImpl::getOutputBufSize() const {
+	return _outBufSize;
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
