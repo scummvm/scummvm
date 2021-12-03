@@ -2448,9 +2448,7 @@ void EfhEngine::loadGame() {
 
 	_teamSize = f.readSint16LE();
 
-	for (int i = 0; i < 3; ++i) {
-		_unkArray2C8AA[i] = f.readSint16LE();		
-	}
+	_unkArray2C8AA[0] = f.readSint16LE();		
 
 	_word2C872 = f.readSint16LE();
 
