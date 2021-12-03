@@ -305,6 +305,13 @@ public:
 	 * @return The output sample rate in Hz.
 	 */
 	virtual uint getOutputRate() const = 0;
+
+	/**
+	 * Return the output sample buffer size of the system.
+	 *
+	 * @return The number of samples processed at each audio callback.
+	 */
+	virtual uint getOutputBufSize() const = 0;
 };
 
 /** @} */
