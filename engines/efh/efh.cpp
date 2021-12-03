@@ -2384,9 +2384,170 @@ void EfhEngine::sub174A0() {
 	warning("STUB: sub174A0");
 }
 
-bool EfhEngine::sub16E14() {
-	warning("STUB: sub16E14");
+bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
+	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+		return false;
+
+	for (int16 counter = 0; counter < 9; ++counter) {
+		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
+			return true;
+	}
+
 	return false;
+}
+
+bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 arg4) {
+	warning("STUB - sub21820");
+	return false;
+}
+
+void EfhEngine::sub221D2(int16 monsterId) {
+	if (monsterId != -1) {
+		_dword2C856 = nullptr;
+		sub21820(monsterId, 5, -1);
+	}
+}
+
+int16 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
+	warning("STUB - sub15581");
+	return 0;
+}
+
+bool EfhEngine::handleFight() {
+	warning("STUB - handleFight");
+	return false;
+}
+
+int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
+	warning("STUB - handleStatusMenu");
+	return 0;
+}
+
+Common::KeyCode EfhEngine::waitForKey() {
+	warning("STUB - waitForKey");
+	return Common::KEYCODE_INVALID;
+}
+
+Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
+	warning("STUB - mapInputCode");
+	return Common::KEYCODE_INVALID;
+}
+
+bool EfhEngine::sub16E14() {
+	int16 var68 = 0;
+	char dest[20];
+	char buffer[80];
+	
+	int16 monsterId;
+	for (monsterId = 0; monsterId < 64; ++monsterId) {
+		if (!checkPictureRefAvailability(monsterId))
+			continue;
+
+		if (!(_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == 0xFE) && !(!_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == _fullPlaceId))
+			continue;
+
+		if ((_mapMonsters[monsterId]._field_1 & 0x3F) > 0x3D
+		&& (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) == 0x3F) || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)))
+			continue;
+
+		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
+			continue;
+
+		if (_word2C8D7 == 0)
+			return false;
+
+		_mapPosX = _oldMapPosX;
+		_mapPosY = _oldMapPosY;
+		if (_imageSetSubFilesIdx != _oldImageSetSubFilesIdx)
+			_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
+		_word2C894 = true;
+
+		int16 var6A = 0;
+		for (int16 var6C = 0; var6C < 9; ++var6C) {
+			if (_mapMonsters[monsterId]._pictureRef[var6C])
+				++var6A;
+		}
+
+		do {
+			for (int16 var6C = 0; var6C < 2; ++var6C) {
+				int16 var1 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
+				if (var1 <= 0x3D) {
+					strcpy(dest, kEncounters[_mapMonsters[monsterId]._MonsterRef]._name);
+					if (var6A > 1)
+						strcat(dest, " ");
+
+					sprintf(buffer, "with %d %s", var6A, dest);
+				} else if (var1 == 0x3E) {
+					strcpy(buffer, "(NOT DEFINED)");
+				} else if (var1 == 0x3F) { // Useless if, it's the last possible value
+					copyString(_npcBuf[_mapMonsters[monsterId]._MonsterRef]._name, dest);
+					sprintf(buffer, "with %s", dest);
+				}
+
+				unkFct_displayMenuBox_2(0);
+				_textColor = 0xE;
+				displayCenteredString((char *)"Interaction", 24, 296, 152);
+				displayCenteredString(buffer, 24, 296, 161);
+				setTextPos(24, 169);
+				setTextColorWhite();
+				displayStringAtTextPos((char *)"T");
+				setTextColorRed();
+				sprintf(buffer, "alk to the %s", dest);
+				displayStringAtTextPos(buffer);
+				setTextPos(24, 178);
+				setTextColorWhite();
+				displayStringAtTextPos((char *)"A");
+				setTextColorRed();
+				sprintf(buffer, "ttack the %s", dest);
+				displayStringAtTextPos(buffer);
+				setTextPos(198, 169);
+				setTextColorWhite();
+				displayStringAtTextPos((char *)"S");
+				setTextColorRed();
+				displayStringAtTextPos((char *)"tatus");
+				setTextPos(198, 178);
+				setTextColorWhite();
+				displayStringAtTextPos((char *)"L");
+				setTextColorRed();
+				displayStringAtTextPos((char *)"eave");
+				if (var6C == 0)
+					displayFctFullScreen();
+			}
+
+			Common::KeyCode input = mapInputCode(waitForKey());
+
+			switch (input) {
+			case Common::KEYCODE_a: // Attack
+				var6A = handleFight();
+				var68 = true;
+				break;
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_l: // Leave
+				var68 = true;
+				break;
+			case Common::KEYCODE_s: // Status
+				var6A = handleStatusMenu(1, _teamCharId[0]);
+				var68 = true;
+				_dword2C856 = nullptr;
+				sub15150(true);
+				break;
+			case Common::KEYCODE_t: // Talk
+				sub221D2(monsterId);
+				var68 = true;
+				break;
+			default:
+				warning("STUB: sub16E14 - Missing mapping ?");
+				break;
+			}
+		} while (!var68);
+		return true;
+	}
+
+	monsterId = sub15581(_mapPosX, _mapPosY, 1);
+	if (monsterId == 0 || monsterId == 2)
+		return false;
+
+	return true;
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {

@@ -349,6 +349,14 @@ private:
 	void displayStringAtTextPos(char *message);
 	void unkFct_displayMenuBox_2(int16 color);
 	void sub174A0();
+	bool checkPictureRefAvailability(int16 monsterId);
+	bool sub21820(int16 monsterId, int16 arg2, int16 arg4);
+	void sub221D2(int16 monsterId);
+	int16 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
+	bool handleFight();
+	int16 handleStatusMenu(int16 gameMode, int16 charId);
+	Common::KeyCode waitForKey();
+	Common::KeyCode mapInputCode(Common::KeyCode input);
 	bool sub16E14();
 
 	uint8 _videoMode;
