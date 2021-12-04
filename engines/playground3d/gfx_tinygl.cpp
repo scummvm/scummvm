@@ -109,11 +109,11 @@ void TinyGLRenderer::init() {
 }
 
 void TinyGLRenderer::deinit() {
-	//tglDeleteTextures(5, _textureRgbaId);
-	//tglDeleteTextures(5, _textureRgbId);
-	//tglDeleteTextures(2, _textureRgb565Id);
-	//tglDeleteTextures(2, _textureRgba5551Id);
-	//tglDeleteTextures(2, _textureRgba4444Id);
+	tglDeleteTextures(5, _textureRgbaId);
+	tglDeleteTextures(5, _textureRgbId);
+	tglDeleteTextures(2, _textureRgb565Id);
+	tglDeleteTextures(2, _textureRgba5551Id);
+	tglDeleteTextures(2, _textureRgba4444Id);
 }
 
 void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
