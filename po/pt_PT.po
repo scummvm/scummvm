@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-04 14:05+0000\n"
+"POT-Creation-Date: 2021-12-04 15:24+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -168,7 +168,7 @@ msgstr ""
 #: gui/massadd.cpp:89 gui/options.cpp:2141 gui/saveload-dialog.cpp:1188
 #: engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
-#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:551
+#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:553
 #: engines/parallaction/saveload.cpp:271 engines/saga/music.cpp:100
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:181 engines/scumm/scumm.cpp:1353
@@ -2499,7 +2499,7 @@ msgstr "~M~enu"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:727 engines/groovie/script.cpp:2037
+#: engines/groovie/script.cpp:729 engines/groovie/script.cpp:2039
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:737 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -2519,8 +2519,8 @@ msgstr "Guardar jogo:"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:722 engines/groovie/script.cpp:727
-#: engines/groovie/script.cpp:2037 engines/hugo/file.cpp:298
+#: engines/groovie/script.cpp:724 engines/groovie/script.cpp:729
+#: engines/groovie/script.cpp:2039 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:737
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -4131,8 +4131,8 @@ msgstr ""
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:704
-#: engines/groovie/script.cpp:739 engines/groovie/script.cpp:2024
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:706
+#: engines/groovie/script.cpp:741 engines/groovie/script.cpp:2026
 #: engines/hugo/file.cpp:400 engines/illusions/menusystem.cpp:680
 #: engines/kingdom/kingdom.cpp:747 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -4149,9 +4149,9 @@ msgstr "Restaurar jogo:"
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:704
-#: engines/groovie/script.cpp:722 engines/groovie/script.cpp:739
-#: engines/groovie/script.cpp:2024 engines/hugo/file.cpp:400
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:706
+#: engines/groovie/script.cpp:724 engines/groovie/script.cpp:741
+#: engines/groovie/script.cpp:2026 engines/hugo/file.cpp:400
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:747
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -5034,11 +5034,11 @@ msgstr ""
 msgid "GroovieV2 support is not compiled in"
 msgstr "Recursos compilados em:"
 
-#: engines/groovie/script.cpp:551
+#: engines/groovie/script.cpp:553
 msgid "Failed to save game"
 msgstr "Falha a guardar o jogo"
 
-#: engines/groovie/script.cpp:722 engines/lab/savegame.cpp:238
+#: engines/groovie/script.cpp:724 engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
 msgstr "Deseja guardar ou carregar um jogo?"
 
