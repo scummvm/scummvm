@@ -106,6 +106,11 @@ void TinyGLRenderer::init() {
 	tglGenTextures(2, _textureRgb565Id);
 	tglGenTextures(2, _textureRgba5551Id);
 	tglGenTextures(2, _textureRgba4444Id);
+	_blitImageRgba = Graphics::tglGenBlitImage();
+	_blitImageRgb = Graphics::tglGenBlitImage();
+	_blitImageRgb565 = Graphics::tglGenBlitImage();
+	_blitImageRgba5551 = Graphics::tglGenBlitImage();
+	_blitImageRgba4444 = Graphics::tglGenBlitImage();
 }
 
 void TinyGLRenderer::deinit() {
@@ -114,6 +119,11 @@ void TinyGLRenderer::deinit() {
 	tglDeleteTextures(2, _textureRgb565Id);
 	tglDeleteTextures(2, _textureRgba5551Id);
 	tglDeleteTextures(2, _textureRgba4444Id);
+	tglDeleteBlitImage(_blitImageRgba);
+	tglDeleteBlitImage(_blitImageRgb);
+	tglDeleteBlitImage(_blitImageRgb565);
+	tglDeleteBlitImage(_blitImageRgba5551);
+	tglDeleteBlitImage(_blitImageRgba4444);
 }
 
 void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
@@ -125,6 +135,7 @@ void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGRA, TGL_UNSIGNED_BYTE, texture->getPixels());
+	tglUploadBlitImage(_blitImageRgba, *texture, 0, false);
 }
 
 void TinyGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
@@ -132,6 +143,7 @@ void TinyGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, texture->getPixels());
+	tglUploadBlitImage(_blitImageRgb, *texture, 0, false);
 }
 
 void TinyGLRenderer::loadTextureRGB565(Graphics::Surface *texture) {
@@ -139,6 +151,7 @@ void TinyGLRenderer::loadTextureRGB565(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGB, TGL_UNSIGNED_SHORT_5_6_5, texture->getPixels());
+	tglUploadBlitImage(_blitImageRgb565, *texture, 0, false);
 }
 
 void TinyGLRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
@@ -146,6 +159,7 @@ void TinyGLRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1, texture->getPixels());
+	tglUploadBlitImage(_blitImageRgba5551, *texture, 0, false);
 }
 
 void TinyGLRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
@@ -153,6 +167,7 @@ void TinyGLRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4, texture->getPixels());
+	tglUploadBlitImage(_blitImageRgba4444, *texture, 0, false);
 }
 
 void TinyGLRenderer::clear(const Math::Vector4d &clearColor) {
@@ -371,6 +386,29 @@ void TinyGLRenderer::drawRgbaTexture() {
 
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	int blitTextureWidth, blitTextureHeight;
+	Graphics::tglGetBlitImageSize(_blitImageRgba, blitTextureWidth, blitTextureHeight);
+
+	Graphics::BlitTransform transform(0, 250);
+	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	tglBlit(_blitImageRgba, transform);
+	
+	transform = Graphics::BlitTransform(130, 250);
+	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	tglBlit(_blitImageRgb, transform);
+
+	transform = Graphics::BlitTransform(260, 250);
+	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	tglBlit(_blitImageRgb565, transform);
+
+	transform = Graphics::BlitTransform(390, 250);
+	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	tglBlit(_blitImageRgba5551, transform);
+
+	transform = Graphics::BlitTransform(520, 250);
+	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	tglBlit(_blitImageRgba4444, transform);
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();

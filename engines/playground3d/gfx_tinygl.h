@@ -66,6 +66,11 @@ private:
 	TGLuint _textureRgb565Id[2];
 	TGLuint _textureRgba5551Id[2];
 	TGLuint _textureRgba4444Id[2];
+	Graphics::BlitImage *_blitImageRgba;
+	Graphics::BlitImage *_blitImageRgb;
+	Graphics::BlitImage *_blitImageRgb565;
+	Graphics::BlitImage *_blitImageRgba5551;
+	Graphics::BlitImage *_blitImageRgba4444;
 
 	void drawFace(uint face);
 };
