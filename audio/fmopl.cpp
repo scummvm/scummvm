@@ -22,6 +22,9 @@
 #include "audio/fmopl.h"
 
 #include "audio/mixer.h"
+#ifdef USE_RETROWAVE
+#include "audio/rwopl3.h"
+#endif
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
 #include "audio/softsynth/opl/nuked.h"
@@ -48,6 +51,12 @@ namespace OPL2LPT {
 } // End of namespace OPL2LPT
 #endif // ENABLE_OPL2LPT
 
+#ifdef USE_RETROWAVE
+namespace RetroWaveOPL3 {
+	OPL *create(Config::OplType type);
+} // End of namespace RetroWaveOPL3
+#endif // ENABLE_RETROWAVE_OPL3
+
 // Config implementation
 
 enum OplEmulator {
@@ -57,7 +66,8 @@ enum OplEmulator {
 	kALSA = 3,
 	kNuked = 4,
 	kOPL2LPT = 5,
-	kOPL3LPT = 6
+	kOPL3LPT = 6,
+	kRWOPL3 = 7
 };
 
 OPL::OPL() {
@@ -81,6 +91,9 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #ifdef ENABLE_OPL2LPT
 	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
 	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3 },
+#endif
+#ifdef USE_RETROWAVE
+	{"rwopl3", _s("RetroWave OPL3"), kRWOPL3, kFlagOpl2 | kFlagOpl3},
 #endif
 	{ nullptr, nullptr, 0, 0 }
 };
@@ -222,6 +235,15 @@ OPL *Config::create(DriverId driver, OplType type) {
 
 		warning("OPL3LPT does not support dual OPL2");
 		return 0;
+#endif
+
+#ifdef USE_RETROWAVE
+	case kRWOPL3:
+		if (type == kDualOpl2) {
+			warning("RetroWave OPL3 does not support dual OPL2");
+			return 0;
+		}
+		return RetroWaveOPL3::create(type);
 #endif
 
 	default:

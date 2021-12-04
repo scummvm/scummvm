@@ -225,10 +225,10 @@ protected:
 	// OPL API
 	void startCallbacks(int timerFrequency);
 	void stopCallbacks();
+	virtual void onTimer();
 
 private:
 	static void timerProc(void *refCon);
-	void onTimer();
 
 	uint _baseFreq;
 	uint _remainingTicks;
