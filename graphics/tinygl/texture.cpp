@@ -131,8 +131,7 @@ void glopBindTexture(GLContext *c, GLParam *p) {
 void glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
-// "components" is guessed from "format".
-//	int components = p[3].i;
+	int internalformat = p[3].i;
 	int width = p[4].i;
 	int height = p[5].i;
 	int border = p[6].i;
@@ -145,6 +144,8 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("tglTexImage2D: target not handled");
 	if (level < 0 || level >= MAX_TEXTURE_LEVELS)
 		error("tglTexImage2D: invalid level");
+	if (internalformat != TGL_RGBA && internalformat != TGL_RGB)
+		error("tglTexImage2D: invalid internalformat");
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
 
@@ -175,6 +176,20 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		if (!found)
 			error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
 		Graphics::PixelBuffer src(pf, pixels);
+		Graphics::PixelFormat internalPf;
+#if defined(SCUMM_LITTLE_ENDIAN)
+		if (internalformat == TGL_RGBA)
+			internalPf = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+		else if (internalformat == TGL_RGB)
+			internalPf = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
+		if (internalformat == TGL_RGBA)
+			internalPf = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		else if (internalformat == TGL_RGB)
+			internalPf = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
+		Graphics::PixelBuffer srcInternal(internalPf, width * height, DisposeAfterUse::YES);
+		srcInternal.copyBuffer(0, width * height, src);
 		if (width > c->_textureSize || height > c->_textureSize)
 			filter = c->texture_mag_filter;
 		else
@@ -184,14 +199,14 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		case TGL_LINEAR_MIPMAP_LINEAR:
 		case TGL_LINEAR:
 			im->pixmap = new Graphics::BilinearTexelBuffer(
-				src,
+				srcInternal,
 				width, height,
 				c->_textureSize
 			);
 			break;
 		default:
 			im->pixmap = new Graphics::NearestTexelBuffer(
-				src,
+				srcInternal,
 				width, height,
 				c->_textureSize
 			);
