@@ -341,7 +341,6 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	bool hasAutosave = false;
 	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
@@ -358,20 +357,10 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				}
 				SaveStateDescriptor descriptor(this, slotNr, meta.name);
 
-				if (descriptor.isAutosave()) {
-					hasAutosave = true;
-				}
-
 				saveList.push_back(descriptor);
 				delete in;
 			}
 		}
-	}
-
-	if (!hasAutosave) {
-		SaveStateDescriptor descriptor(this, 0, _("(Autosave)"));
-		descriptor.setLocked(true);
-		saveList.push_back(descriptor);
 	}
 
 	// Sort saves based on slot number.
