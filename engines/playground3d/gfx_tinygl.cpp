@@ -90,7 +90,7 @@ void TinyGLRenderer::init() {
 
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
 	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(false/*ConfMan.getBool("dirtyrects")*/);
+	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

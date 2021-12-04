@@ -69,8 +69,8 @@ Common::Error Playground3dEngine::run() {
 	// 2 - rotated two triangles with depth offset
 	// 3 - fade in/out
 	// 4 - moving filled rectangle in viewport
-	int testId = 1;
 	// 5 - drawing RGBA pattern texture to check endian correctness
+	int testId = 1;
 
 	switch (testId) {
 		case 1:
@@ -93,7 +93,7 @@ Common::Error Playground3dEngine::run() {
 			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #else
 			Graphics::PixelFormat pixelFormatRGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
-			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 0, 8, 16, 0);
+			Graphics::PixelFormat pixelFormatRGB(3, 8, 8, 8, 0, 16, 8, 0, 0);
 #endif
 			Graphics::PixelFormat pixelFormatRGB565(2, 5, 6, 5, 0, 11, 5, 0, 0);
 			Graphics::PixelFormat pixelFormatRGB5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
