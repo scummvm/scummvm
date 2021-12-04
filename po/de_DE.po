@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-04 15:24+0000\n"
-"PO-Revision-Date: 2021-11-16 17:53+0000\n"
+"PO-Revision-Date: 2021-12-04 17:39+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -206,37 +206,27 @@ msgid "Download speed: %s %S"
 msgstr "Download-Geschwindigkeit: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Spielstände werden heruntergeladen..."
+msgstr "Icon-Liste wird heruntergeladen..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Spielstände werden heruntergeladen..."
+msgstr "Icon-Liste wird heruntergeladen... %d Einträge"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%d neue Packs erkannt, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Patch herunterladen"
+msgstr "Herunterladen"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Download abgeschlossen.\n"
-"%u Dateien konnten nicht heruntergeladen werden."
+msgstr "Download abgeschlossen, %d Packs heruntergeladen, %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
 #: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
@@ -249,15 +239,15 @@ msgstr "Schließen"
 #: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "FEHLER %d: %s"
 
 #: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "FEHLER: Kein Icon-Pfad gesetzt"
 
 #: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Keine neuen Icon-Packs verfügbar"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -1639,10 +1629,8 @@ msgid "Check now"
 msgstr "Jetzt prüfen"
 
 #: gui/options.cpp:2428
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Updates suchen:"
+msgstr "Icons aktualisieren"
 
 #: gui/options.cpp:2436
 msgid "Active storage:"
@@ -2389,31 +2377,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
@@ -4293,6 +4273,8 @@ msgstr "Zu Olmec wechseln"
 msgid ""
 "Attempt to load saved game from a previous version: Version %s / Build %d"
 msgstr ""
+"Versuche, den Spielstand einer vorherigen Version zu laden: Version %s / "
+"Build %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
 msgid "Load anyway"
@@ -5116,11 +5098,11 @@ msgstr "Spielt Filme mit erhöhter Geschwindigkeit ab"
 
 #: engines/groovie/detection.cpp:397
 msgid "Easier AI"
-msgstr ""
+msgstr "Vereinfachte KI"
 
 #: engines/groovie/detection.cpp:398
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Reduziere den Schwierigkeitsgrad der KI-Puzzle"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
@@ -7241,12 +7223,6 @@ msgstr ""
 "gefunden. Musik wird abgeschaltet."
 
 #: engines/scumm/scumm.cpp:1666
-#, fuzzy
-#| msgid ""
-#| "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
-#| "compression is not supported anymore for this game, audio will be "
-#| "disabled.\n"
-#| "Please reinstall the game with the correct resource files."
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7256,8 +7232,9 @@ msgstr ""
 "wurden.\n"
 "Kompression für *.BUN/*.SOU-Dateien wird in diesem Spiel nicht mehr "
 "unterstützt.\n"
-"Die Audioausgabe wird deaktiviert. BItte installiere das Spiel mit den "
-"korrekten Spieldateien neu."
+"Die Audioausgabe wird deaktiviert. Bitte kopiere die Spieldateien ohne "
+"Kompression von\n"
+"den originalen Medien."
 
 #: engines/scumm/scumm.cpp:2137
 #, c-format
