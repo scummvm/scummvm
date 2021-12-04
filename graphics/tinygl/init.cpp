@@ -45,7 +45,8 @@ void initSharedState(GLContext *c) {
 void endSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
 
-	free_texture(c, 0);
+	uint h = 0;
+	free_texture(c, h);
 	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}

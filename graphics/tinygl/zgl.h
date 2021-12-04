@@ -433,8 +433,8 @@ void gl_shade_vertex(GLContext *c, GLVertex *v);
 
 void glInitTextures(GLContext *c);
 void glEndTextures(GLContext *c);
-GLTexture *alloc_texture(GLContext *c, int h);
-void free_texture(GLContext *c, int h);
+GLTexture *alloc_texture(GLContext *c, uint h);
+void free_texture(GLContext *c, uint h);
 void free_texture(GLContext *c, GLTexture *t);
 
 // image_util.c

@@ -34,7 +34,7 @@
 
 namespace TinyGL {
 
-static GLTexture *find_texture(GLContext *c, unsigned int h) {
+static GLTexture *find_texture(GLContext *c, uint h) {
 	GLTexture *t;
 
 	t = c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
@@ -43,10 +43,10 @@ static GLTexture *find_texture(GLContext *c, unsigned int h) {
 			return t;
 		t = t->next;
 	}
-	return NULL;
+	return nullptr;
 }
 
-void free_texture(GLContext *c, int h) {
+void free_texture(GLContext *c, uint h) {
 	free_texture(c, find_texture(c, h));
 }
 
@@ -74,7 +74,7 @@ void free_texture(GLContext *c, GLTexture *t) {
 	gl_free(t);
 }
 
-GLTexture *alloc_texture(GLContext *c, int h) {
+GLTexture *alloc_texture(GLContext *c, uint h) {
 	GLTexture *t, **ht;
 
 	t = (GLTexture *)gl_zalloc(sizeof(GLTexture));
@@ -82,7 +82,7 @@ GLTexture *alloc_texture(GLContext *c, int h) {
 	ht = &c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
 
 	t->next = *ht;
-	t->prev = NULL;
+	t->prev = nullptr;
 	if (t->next)
 		t->next->prev = t;
 	*ht = t;
@@ -95,13 +95,11 @@ GLTexture *alloc_texture(GLContext *c, int h) {
 }
 
 void glInitTextures(GLContext *c) {
-	// textures
 	c->texture_2d_enabled = 0;
 	c->current_texture = find_texture(c, 0);
 	c->texture_mag_filter = TGL_LINEAR;
 	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
 #if defined(SCUMM_LITTLE_ENDIAN)
-	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
 	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
 	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE});
 	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
