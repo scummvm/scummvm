@@ -136,6 +136,14 @@ void AndroidGraphics3dManager::initSurface() {
 
 	if (_game_texture) {
 		_game_texture->reinit();
+		// We had a frame buffer initialized, we must renew it as the game textured got renewed
+		if (_frame_buffer) {
+			delete _frame_buffer;
+			_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
+	                                        _game_texture->width(), _game_texture->height(),
+	                                        _game_texture->texWidth(), _game_texture->texHeight());
+
+		}
 	}
 
 	// We don't have any content to display: just make sure surface is clean
