@@ -181,6 +181,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				if (event.kbd.keycode == Common::KEYCODE_c) {
 					background.decoder->pauseVideo(true);
 					showCredits();
+					changeScreenMode("320x200");
 					background.decoder->pauseVideo(false);
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					_lastPlayerPosition = _currentPlayerPosition; 
