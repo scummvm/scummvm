@@ -154,9 +154,11 @@ Renderer *createRenderer(OSystem *system) {
 		return CreateGfxOpenGL(system);
 	}
 #endif
+#if defined(USE_TINYGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		return CreateGfxTinyGL(system);
 	}
+#endif
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }

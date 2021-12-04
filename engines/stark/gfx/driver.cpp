@@ -78,6 +78,7 @@ Driver *Driver::create() {
 		driver = new OpenGLDriver();
 	}
 #endif
+#if defined(USE_TINYGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (StarkSettings->isAssetsModEnabled()) {
 			GUI::displayErrorDialog(Common::U32String::format(_("Software renderer does not support modded assets")));
@@ -85,7 +86,7 @@ Driver *Driver::create() {
 		}
 		driver = new TinyGLDriver();
 	}
-
+#endif
 	if (driver)
 		return driver;
 	warning("No renderers have been found for this game");

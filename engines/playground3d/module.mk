@@ -5,8 +5,12 @@ MODULE_OBJS := \
 	gfx.o \
 	gfx_opengl.o \
 	gfx_opengl_shaders.o \
-	gfx_tinygl.o \
 	playground3d.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	gfx_tinygl.o
+endif
 
 MODULE_DIRS += \
 	engines/playground3d
