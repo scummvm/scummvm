@@ -149,6 +149,8 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	void syncSoundSettings() override; ///< from ScummVM to the game
+	int getAutosaveSlot() const override { return -1; }
+
 	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
