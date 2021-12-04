@@ -1015,8 +1015,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	actorShader->use();
 	bool textured = face->_hasTexture && !_currentShadowArray;
 	actorShader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
-	actorShader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
-	actorShader->setUniform("useVertexAlpha", _selectedTexture->_colorFormat == BM_BGRA);
+	actorShader->setUniform("useVertexAlpha", _selectedTexture->_hasAlpha);
 	actorShader->setUniform1f("meshAlpha", (model->_meshAlphaMode == Actor::AlphaReplace) ? model->_meshAlpha : 1.0f);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
@@ -1119,7 +1118,6 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	extraMatrix.transpose();
 	_spriteProgram->setUniform("extraMatrix", extraMatrix);
 	_spriteProgram->setUniform("textured", GL_TRUE);
-	_spriteProgram->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 	if (g_grim->getGameType() == GType_GRIM) {
 		_spriteProgram->setUniform1f("alphaRef", 0.5f);
 	} else if (sprite->_flags2 & Sprite::AlphaTest) {
@@ -1230,29 +1228,6 @@ void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *
 		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
 	}
 
-	GLuint format = 0;
-	GLuint internalFormat = 0;
-	if (texture->_colorFormat == BM_RGBA) {
-		format = GL_RGBA;
-		internalFormat = GL_RGBA;
-	} else if (texture->_colorFormat == BM_BGRA) {
-#ifdef USE_GLES2
-		format = GL_RGBA;
-		internalFormat = GL_RGBA;
-#else
-		format = GL_BGRA;
-		internalFormat = GL_RGBA;
-#endif
-	} else { // The only other colorFormat we load right now is BGR
-#ifdef USE_GLES2
-		format = GL_RGB;
-		internalFormat = GL_RGB;
-#else
-		format = GL_BGR;
-		internalFormat = GL_RGBA;
-#endif
-	}
-
 	GLuint *textures = (GLuint *)texture->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
@@ -1267,7 +1242,7 @@ void GfxOpenGLS::createTexture(Texture *texture, const uint8 *data, const CMap *
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 

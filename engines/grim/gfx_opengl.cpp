@@ -1620,32 +1620,7 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 			}
 		}
 	} else {
-#ifdef SCUMM_BIG_ENDIAN
-		// Copy and swap
-		for (int y = 0; y < texture->_height; y++) {
-			for (int x = 0; x < texture->_width; x++) {
-				uint32 pixel = (y * texture->_width + x) * texture->_bpp;
-				for (int b = 0; b < texture->_bpp; b++) {
-					texdata[pixel + b] = data[pixel + (texture->_bpp - 1) - b];
-				}
-			}
-		}
-#else
 		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
-#endif
-	}
-
-	GLuint format = 0;
-	GLuint internalFormat = 0;
-	if (texture->_colorFormat == BM_RGBA) {
-		format = GL_RGBA;
-		internalFormat = GL_RGBA;
-	} else if (texture->_colorFormat == BM_BGRA) {
-		format = GL_BGRA;
-		internalFormat = GL_RGBA;
-	} else {    // The only other colorFormat we load right now is BGR
-		format = GL_BGR;
-		internalFormat = GL_RGB;
 	}
 
 	GLuint *textures = (GLuint *)texture->_texture;
@@ -1662,7 +1637,7 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->_width, texture->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->_width, texture->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
