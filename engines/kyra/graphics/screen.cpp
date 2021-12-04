@@ -1417,11 +1417,11 @@ int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
-		uint c = fetchChar(str);
+		uint16 c = fetchChar(str);
 
 		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 13 || c == 32 || c == 0x4081))) {
 			break;
-		} else if (c == _lineBreakChar) {
+		} else if (c == (uint16)_lineBreakChar) {
 			if (curLineLen > maxLineLen)
 				maxLineLen = curLineLen;
 			else
@@ -1475,12 +1475,12 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		if (_sjisMixedFontMode && curType == Font::kASCII)
 			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
-		uint c = fetchChar(str);
+		uint16 c = fetchChar(str);
 		charHeight = MAX<int>(charHeight, getCharHeight(c));
 
 		if (c == 0) {
 			break;
-		} else if (c == _lineBreakChar) {
+		} else if (c == (uint16)_lineBreakChar) {
 			x = x_start;
 			y += (charHeight + _lineSpacing);
 		} else {
