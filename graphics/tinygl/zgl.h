@@ -191,6 +191,11 @@ struct GLTexture {
 	bool disposed;
 };
 
+struct tglColorAssociation {
+	Graphics::PixelFormat pf;
+	TGLuint format;
+	TGLuint type;
+};
 
 // shared state
 
@@ -284,6 +289,7 @@ struct GLContext {
 	int texture_min_filter;
 	unsigned int texture_wrap_s;
 	unsigned int texture_wrap_t;
+	Common::Array<struct tglColorAssociation> colorAssociationList;
 
 	// shared state
 	GLSharedState shared_state;

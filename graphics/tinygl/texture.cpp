@@ -32,28 +32,6 @@
 
 #include "graphics/tinygl/zgl.h"
 
-struct tglColorAssociation {
-	Graphics::PixelFormat pf;
-	TGLuint format;
-	TGLuint type;
-};
-
-static const struct tglColorAssociation colorAssociationList[] = {
-#if defined(SCUMM_LITTLE_ENDIAN)
-	{Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE},
-	{Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE},
-	{Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE},
-#else
-	{Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE},
-	{Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), TGL_BGRA, TGL_UNSIGNED_BYTE},
-	{Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE},
-#endif
-	{Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5},
-	{Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1},
-	{Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4}
-};
-#define COLOR_ASSOCIATION_LIST_LENGTH (sizeof(colorAssociationList) / sizeof(*colorAssociationList))
-
 namespace TinyGL {
 
 static GLTexture *find_texture(GLContext *c, unsigned int h) {
@@ -122,6 +100,19 @@ void glInitTextures(GLContext *c) {
 	c->current_texture = find_texture(c, 0);
 	c->texture_mag_filter = TGL_LINEAR;
 	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
+#if defined(SCUMM_LITTLE_ENDIAN)
+	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
+#else
+	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), TGL_BGRA, TGL_UNSIGNED_BYTE});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
+#endif
+	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1});
+	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
 }
 
 void glopBindTexture(GLContext *c, GLParam *p) {
@@ -138,15 +129,6 @@ void glopBindTexture(GLContext *c, GLParam *p) {
 	c->current_texture = t;
 }
 
-static inline const Graphics::PixelFormat formatType2PixelFormat(TGLuint format,  TGLuint type) {
-	for (unsigned int i = 0; i < COLOR_ASSOCIATION_LIST_LENGTH; i++) {
-		if (colorAssociationList[i].format == format &&
-		    colorAssociationList[i].type == type)
-			return colorAssociationList[i].pf;
-	}
-	error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
-}
-
 void glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
@@ -155,8 +137,8 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	int width = p[4].i;
 	int height = p[5].i;
 	int border = p[6].i;
-	int format = p[7].i;
-	int type = p[8].i;
+	uint format = (uint)p[7].i;
+	uint type = (uint)p[8].i;
 	byte *pixels = (byte *)p[9].p;
 	GLImage *im;
 
@@ -180,7 +162,20 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	}
 	if (pixels != NULL) {
 		unsigned int filter;
-		Graphics::PixelBuffer src(formatType2PixelFormat(format, type), pixels);
+		Graphics::PixelFormat pf;
+		bool found = false;
+		Common::Array<struct tglColorAssociation>::const_iterator it = c->colorAssociationList.begin();
+		for (; it != c->colorAssociationList.end(); it++) {
+			if (it->format == format &&
+			    it->type == type) {
+				pf = it->pf;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
+		Graphics::PixelBuffer src(pf, pixels);
 		if (width > c->_textureSize || height > c->_textureSize)
 			filter = c->texture_mag_filter;
 		else
