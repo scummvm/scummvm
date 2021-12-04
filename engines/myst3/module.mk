@@ -9,10 +9,8 @@ MODULE_OBJS := \
 	effects.o \
 	gfx.o \
 	gfx_opengl.o \
-	gfx_tinygl.o \
 	gfx_opengl_shaders.o \
 	gfx_opengl_texture.o \
-	gfx_tinygl_texture.o \
 	hotspot.o \
 	inventory.o \
 	menu.o \
@@ -29,6 +27,12 @@ MODULE_OBJS := \
 	state.o \
 	subtitles.o \
 	transition.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	gfx_tinygl.o \
+	gfx_tinygl_texture.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)

@@ -109,13 +109,6 @@ void GfxBase::drawMesh(const Mesh *mesh) {
 		mesh->_faces[i].draw(mesh);
 }
 
-#ifndef USE_OPENGL_GAME
-// Allow CreateGfxOpenGL to be called even if OpenGL isn't included
-GfxBase *CreateGfxOpenGL() {
-	return CreateGfxTinyGL();
-}
-#endif // USE_OPENGL_GAME
-
 Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
 	Math::Vector3d u = up.getNormalized();

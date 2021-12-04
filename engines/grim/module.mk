@@ -100,7 +100,6 @@ MODULE_OBJS := \
 	debug.o \
 	font.o \
 	gfx_base.o \
-	gfx_tinygl.o \
 	gfx_opengl_shaders.o \
 	gfx_opengl.o \
 	grim.o \
@@ -141,6 +140,11 @@ MODULE_OBJS := \
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
 	movie/codecs/blocky8ARM.o
+endif
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	gfx_tinygl.o
 endif
 
 # This module can be built as a plugin

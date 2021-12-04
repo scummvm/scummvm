@@ -306,10 +306,11 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		renderer = CreateGfxOpenGL();
 	}
 #endif
+#if defined(USE_TINYGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		renderer = CreateGfxTinyGL();
 	}
-
+#endif
 	if (!renderer) {
 		error("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
