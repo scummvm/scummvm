@@ -131,10 +131,6 @@ void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texture->getPixels());
-	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[1]);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_BGRA, TGL_UNSIGNED_BYTE, texture->getPixels());
 	tglUploadBlitImage(_blitImageRgba, *texture, 0, false);
 }
 
@@ -352,7 +348,7 @@ void TinyGLRenderer::drawRgbaTexture() {
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
-	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[1]);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
 
 	tglTranslatef(0.501, 0, 0);
@@ -360,24 +356,17 @@ void TinyGLRenderer::drawRgbaTexture() {
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
-	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
-	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-
-	tglTranslatef(0.5, 0, 0);
-
-	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
-	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgb565Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
 
-	tglTranslatef(-1.5, -0.5, 0);
+	tglTranslatef(0.5, 0, 0);
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgba5551Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
 
-	tglTranslatef(0.5, 0, 0);
+	tglTranslatef(-1.5, -0.5, 0);
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);

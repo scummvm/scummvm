@@ -222,28 +222,22 @@ void ShaderRenderer::drawRgbaTexture() {
 	offset.setX(-0.3);
 	offset.setY(0.8);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[1]);
+	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	offset.setX(0.2);
 	offset.setY(0.8);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
+	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	offset.setX(0.7);
 	offset.setY(0.8);
 	_bitmapShader->setUniform("offsetXY", offset);
-	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	offset.setX(-0.8);
-	offset.setY(0.2);
-	_bitmapShader->setUniform("offsetXY", offset);
 	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	offset.setX(-0.3);
+	offset.setX(-0.8);
 	offset.setY(0.2);
 	_bitmapShader->setUniform("offsetXY", offset);
 	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
