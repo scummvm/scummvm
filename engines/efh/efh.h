@@ -348,12 +348,23 @@ private:
 	void setNextCharacterPos();
 	void displayStringAtTextPos(char *message);
 	void unkFct_displayMenuBox_2(int16 color);
+	int16 sub16B08(int16 monsterId);
+	bool moveMonsterGroupTowardsGroup_0(int16 monsterId);
+	bool moveMonsterGroupTowardsGroup_1(int16 monsterId);
+	bool moveMonsterGroupOther(int16 monsterId, int16 direction);
+	bool moveMonsterGroup(int16 monsterId);
+	int16 computeMonsterGroupDistance(int monsterId);
+	bool checkWeaponRange(int16 monsterId, int weaponId);
+	bool unkFct_checkMonsterField8(int id, bool teamFlag);
+	bool checkTeamWeaponRange(int16 monsterId);
+	bool checkIfMonsterOnSameLargelMapPlace(int16 monsterId);
+	bool checkMonsterWeaponRange(int16 monsterId);
 	void sub174A0();
 	bool checkPictureRefAvailability(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 arg4);
 	void sub221D2(int16 monsterId);
 	int16 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
-	bool handleFight();
+	bool handleFight(int16 monsterId);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	Common::KeyCode waitForKey();
 	Common::KeyCode mapInputCode(Common::KeyCode input);
@@ -425,6 +436,7 @@ private:
 	bool _engineInitPending;
 	bool _protectionPassed;
 
+	int16 _teamMonsterIdArray[5];
 	CharStatus _teamCharStatus[3];
 	int16 _unkArray2C8AA[3];
 	int16 _teamSize;
@@ -449,6 +461,7 @@ private:
 	uint8 *_dword2C856;
 	bool _word2C8D9;
 	bool _word2C8D5; // CHECKME: always 0?
+	bool _word2D0BC;
 };
 
 } // End of namespace Efh

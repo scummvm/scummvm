@@ -243,6 +243,9 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_unkArray2C8AA[i] = 0;
 	}
 
+	for (int i = 0; i < 5; ++i)
+		_teamMonsterIdArray[i] = -1;
+
 	_unkArray2C8AA[2] = 1;
 	_teamSize = 1;
 	_word2C872 = 0;
@@ -268,6 +271,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_unk_sub26437_flag = 0;
 	_word2C8D9 = false;
 	_word2C8D5 = false;
+	_word2D0BC = false;
 
 	memset(_messageToBePrinted, 0, 400);
 }
@@ -2380,8 +2384,384 @@ void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
 	drawColoredRect(16, 152, 302, 189, color);
 }
 
+int16 EfhEngine::sub16B08(int16 monsterId) {
+	// Simplified version compared to the original
+	int16 maxSize = _largeMapFlag ? 63 : 23;
+	if (_mapMonsters[monsterId]._posX < 0 || _mapMonsters[monsterId]._posY < 0 || _mapMonsters[monsterId]._posX > maxSize || _mapMonsters[monsterId]._posY > maxSize)
+		return 0;
+
+	if (_mapMonsters[monsterId]._posX == _mapPosX && _mapMonsters[monsterId]._posY == _mapPosY)
+		return 0;
+
+	for (int16 counter = 0; counter < 64; ++counter) {
+		if (counter == monsterId)
+			continue;
+
+		if (!checkPictureRefAvailability(counter))
+			continue;
+
+		if (_mapMonsters[monsterId]._guess_fullPlaceId == _mapMonsters[counter]._guess_fullPlaceId
+		 && _mapMonsters[monsterId]._posX == _mapMonsters[counter]._posX
+		 && _mapMonsters[monsterId]._posY == _mapMonsters[counter]._posY)
+			return 0;
+	}
+
+	return sub15581(_mapMonsters[monsterId]._posX, _mapMonsters[monsterId]._posY, 0);
+}
+
+bool EfhEngine::moveMonsterGroupTowardsGroup_0(int16 monsterId) {
+	if (_mapMonsters[monsterId]._posX < _mapPosX) {
+		--_mapMonsters[monsterId]._posX;
+		if (_mapMonsters[monsterId]._posY < _mapPosY)
+			--_mapMonsters[monsterId]._posY;
+		else if (_mapMonsters[monsterId]._posY > _mapPosY)
+			++_mapMonsters[monsterId]._posY;
+
+		return true;
+	}
+
+	if (_mapMonsters[monsterId]._posX > _mapPosX) {
+		++_mapMonsters[monsterId]._posX;
+		if (_mapMonsters[monsterId]._posY < _mapPosY)
+			--_mapMonsters[monsterId]._posY;
+		else if (_mapMonsters[monsterId]._posY > _mapPosY)
+			++_mapMonsters[monsterId]._posY;
+
+			return true;
+	}
+
+	// Original checks for posX equality, which is the only possible option at this point => skipped
+	if (_mapMonsters[monsterId]._posY < _mapPosY)
+		--_mapMonsters[monsterId]._posY;
+	else if (_mapMonsters[monsterId]._posY > _mapPosY)
+		++_mapMonsters[monsterId]._posY;
+	else
+		return false;
+
+	return true;
+}
+
+bool EfhEngine::moveMonsterGroupTowardsGroup_1(int16 monsterId) {
+	if (_mapMonsters[monsterId]._posX < _mapPosX) {
+		++_mapMonsters[monsterId]._posX;
+		if (_mapMonsters[monsterId]._posY < _mapPosY)
+			++_mapMonsters[monsterId]._posY;
+		else if (_mapMonsters[monsterId]._posY > _mapPosY)
+			--_mapMonsters[monsterId]._posY;
+
+		return true;
+	}
+
+	if (_mapMonsters[monsterId]._posX > _mapPosX) {
+		--_mapMonsters[monsterId]._posX;
+		if (_mapMonsters[monsterId]._posY < _mapPosY)
+			++_mapMonsters[monsterId]._posY;
+		else if (_mapMonsters[monsterId]._posY > _mapPosY)
+			--_mapMonsters[monsterId]._posY;
+
+		return true;
+	}
+
+	// Original checks for posX equality, which is the only possible option at this point => skipped
+	if (_mapMonsters[monsterId]._posY < _mapPosY)
+		++_mapMonsters[monsterId]._posY;
+	else if (_mapMonsters[monsterId]._posY > _mapPosY)
+		--_mapMonsters[monsterId]._posY;
+	else
+		return false;
+
+	return true;
+}
+
+bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
+
+	switch (direction - 1) {
+	case 0:
+		--_mapMonsters[monsterId]._posY;
+		return true;
+	case 1:
+		--_mapMonsters[monsterId]._posY;
+		++_mapMonsters[monsterId]._posX;
+		return true;
+	case 2:
+		++_mapMonsters[monsterId]._posX;
+		return true;
+	case 3:
+		++_mapMonsters[monsterId]._posX;
+		++_mapMonsters[monsterId]._posY;
+		return true;
+	case 4:
+		++_mapMonsters[monsterId]._posY;
+		return true;
+	case 5:
+		++_mapMonsters[monsterId]._posY;
+		--_mapMonsters[monsterId]._posX;
+		return true;
+	case 6:
+		--_mapMonsters[monsterId]._posX;
+		return true;
+	case 7:
+		--_mapMonsters[monsterId]._posX;
+		--_mapMonsters[monsterId]._posY;
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool EfhEngine::moveMonsterGroup(int16 monsterId) {
+	int16 rand100 = getRandom(100);
+
+	if (rand100 < 30)
+		return moveMonsterGroupTowardsGroup_1(monsterId);
+
+	if (rand100 >= 60)
+		// CHECKME: the original seems to only use 1 param??
+		return moveMonsterGroupOther(monsterId, getRandom(8));
+
+	return moveMonsterGroupTowardsGroup_0(monsterId);
+}
+
+int16 EfhEngine::computeMonsterGroupDistance(int monsterId) {
+	int16 monsterPosX = _mapMonsters[monsterId]._posX;
+	int16 monsterPosY = _mapMonsters[monsterId]._posY;
+
+	int16 deltaX = monsterPosX - _mapPosX;
+	int16 deltaY = monsterPosY - _mapPosY;
+
+	return (int16)sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+bool EfhEngine::checkWeaponRange(int16 monsterId, int weaponId) {
+	static const int16 kRange[5] = {1, 2, 3, 3, 3};
+
+	assert(_items[weaponId]._range < 5);
+	if (computeMonsterGroupDistance(monsterId) > kRange[_items[weaponId]._range])
+		return false;
+
+	return true;
+}
+
+bool EfhEngine::unkFct_checkMonsterField8(int id, bool teamFlag) {
+	int16 monsterId = id;
+	if (teamFlag)
+		monsterId = _teamMonsterIdArray[id];
+
+	if ((_mapMonsters[monsterId]._field_8 & 0xF) >= 8)
+		return true;
+
+	if (_unkArray2C8AA[0] == 0)
+		return false;
+
+	if ((_mapMonsters[monsterId]._field_8 & 0x80) != 0)
+		return true;
+
+	return false;
+}
+
+bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
+	if (!_word2D0BC)
+		return true;
+
+	for (int16 counter = 0; counter < 5; ++counter) {
+		if (_teamMonsterIdArray[counter] == monsterId && unkFct_checkMonsterField8(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon))
+			return false;
+	}
+
+	return true;
+}
+
+bool EfhEngine::checkIfMonsterOnSameLargelMapPlace(int16 monsterId) {
+	if (_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == 0xFE)
+		return true;
+
+	if (!_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == _fullPlaceId)
+		return true;
+
+	return false;
+}
+
+bool EfhEngine::checkMonsterWeaponRange(int16 monsterId) {
+	return checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon);
+}
+
 void EfhEngine::sub174A0() {
-	warning("STUB: sub174A0");
+	static int16 sub174A0_monsterPosX = -1;
+	static int16 sub174A0_monsterPosY = -1;
+	
+	int16 var14 = 0;
+	int16 var6 = 0;
+	_word2C894 = false;
+	int16 unkMonsterId = -1;
+	int16 mapSize = _largeMapFlag ? 63 : 23;
+	int16 minDisplayedMapX = CLIP<int16>(_mapPosX - 10, 0, mapSize);
+	int16 minDisplayedMapY = CLIP<int16>(_mapPosY - 9, 0, mapSize);
+	int16 maxDisplayedMapX = CLIP<int16>(minDisplayedMapX + 20, 0, mapSize);
+	int16 maxDisplayedMapY = CLIP<int16>(minDisplayedMapY + 17, 0, mapSize);
+	
+	for (int16 monsterId = 0; monsterId < 64; ++monsterId) {
+		if (!checkPictureRefAvailability(monsterId))
+			continue;
+
+		if (!checkTeamWeaponRange(monsterId))
+			continue;
+
+		if (!checkIfMonsterOnSameLargelMapPlace(monsterId))
+			continue;
+
+		int16 var4 = _mapMonsters[monsterId]._posX;
+		int16 var2 = _mapMonsters[monsterId]._posY;
+
+		if (var4 < minDisplayedMapX || var4 > maxDisplayedMapX || var2 < minDisplayedMapY || var2 > maxDisplayedMapY)
+			continue;
+
+		int16 var1A = 0;
+		var14 = 0;
+
+		sub174A0_monsterPosX = _mapMonsters[monsterId]._posX;
+		sub174A0_monsterPosY = _mapMonsters[monsterId]._posY;
+		int8 var1C = _mapMonsters[monsterId]._field_8 & 0xF;
+
+		if (_unkArray2C8AA[0] != 0 && (_mapMonsters[monsterId]._field_8 & 0x80))
+			var1C = 9;
+
+		int16 var1E = _mapMonsters[monsterId]._field_8 & 0x70;
+		var1E >>= 4;
+
+		int16 var16 = var1E;
+		do {
+			switch (var1C - 1) {
+			case 0:
+				if (getRandom(100) >= 0xE - var1E)
+					var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+				else
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			case 1:
+				if (getRandom(100) >= 0xE - var1E)
+					var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+				else
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			case 2:
+				var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+				break;
+			case 3:
+				var1A = moveMonsterGroup(monsterId);
+				break;
+			case 4:
+				if (getRandom(100) > 0x32 - var1E)
+					var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+				else
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			case 5:
+				if (getRandom(100) > 0x32 - var1E)
+					var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+				else
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			case 6:
+				if (getRandom(100) >= 0x32 - var1E)
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			case 7:
+				// var14 is not a typo.
+				var14 = checkMonsterWeaponRange(monsterId);
+				break;
+			case 8:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					if (getRandom(100) >= 0xE - var1E)
+						var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+					else
+						var1A = moveMonsterGroup(monsterId);
+				}
+				break;
+			case 9:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					if (getRandom(100) >= 0xE - var1E)
+						var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+					else
+						var1A = moveMonsterGroup(monsterId);
+				}
+				break;
+			case 10:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+				}
+				break;
+			case 11:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					var1A = moveMonsterGroup(monsterId);
+				}
+				break;
+			case 12:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					if (getRandom(100) >= 0x32 - var1E)
+						var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+					else
+						var1A = moveMonsterGroup(monsterId);
+				}
+				break;
+			case 13:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0) {
+					if (getRandom(100) >= 0x32 - var1E)
+						var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+					else
+						var1A = moveMonsterGroup(monsterId);
+				}
+				break;
+			case 14:
+				var14 = checkMonsterWeaponRange(monsterId);
+				if (var14 == 0 && getRandom(100) >= 0x32 - var1E)
+					var1A = moveMonsterGroup(monsterId);
+				break;
+			default:
+				break;
+			}
+
+			for (;;) {
+				if (var1A == 0) {
+					if (var14 == 0) {
+						var1A = -1;
+					} else {
+						unkMonsterId = monsterId;
+						var1A = -1;
+					}
+				} else {
+					int16 var18 = sub16B08(monsterId);
+
+					if (var18 == 0) {
+						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
+						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
+						var1A = 0;
+						--var16;
+					} else if (var18 == 2) {
+						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
+						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
+					}
+				}
+
+				if (var1A == 0 && var16 == 1 && var1E > 1) {
+					var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+					continue;
+				}
+				
+				break;
+			}
+			
+		} while (var1A == 0 && var16 > 0);
+		
+	}
+
+	if (unkMonsterId != -1)
+		handleFight(unkMonsterId);
 }
 
 bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
@@ -2413,7 +2793,7 @@ int16 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	return 0;
 }
 
-bool EfhEngine::handleFight() {
+bool EfhEngine::handleFight(int16 monsterId) {
 	warning("STUB - handleFight");
 	return false;
 }
@@ -2453,7 +2833,7 @@ bool EfhEngine::sub16E14() {
 		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
 			continue;
 
-		if (_word2C8D7 == 0)
+		if (!_word2C8D7)
 			return false;
 
 		_mapPosX = _oldMapPosX;
@@ -2518,7 +2898,7 @@ bool EfhEngine::sub16E14() {
 
 			switch (input) {
 			case Common::KEYCODE_a: // Attack
-				var6A = handleFight();
+				var6A = handleFight(monsterId);
 				var68 = true;
 				break;
 			case Common::KEYCODE_ESCAPE:
