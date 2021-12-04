@@ -142,6 +142,7 @@ _tremolo=no
 _flac=auto
 _mad=auto
 _opl2lpt=no
+_retrowave=no
 _alsa=auto
 _seq_midi=auto
 _sndio=auto
@@ -976,6 +977,9 @@ Optional Libraries:
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
+  
+  --with-retrowave-prefix=DIR prefix where libretrowave is installed (optional)
+  --enable-retrowave       enable RetroWave OPL3 support
 
   --with-sparkle-prefix=DIR    prefix where sparkle is installed
                            (OS X/Windows only - optional)
@@ -1103,6 +1107,8 @@ for ac_option in $@; do
 	--disable-tremor)             _tremor=no             ;;
 	--enable-opl2lpt)             _opl2lpt=yes           ;;
 	--disable-opl2lpt)            _opl2lpt=no            ;;
+	--enable-retrowave)           _retrowave=yes         ;;
+	--disable-retrowave)          _retrowave=no          ;;
 	--enable-flac)                _flac=yes              ;;
 	--disable-flac)               _flac=no               ;;
 	--enable-mad)                 _mad=yes               ;;
@@ -1244,6 +1250,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		IEEE1284_CFLAGS="-I$arg/include"
 		IEEE1284_LIBS="-L$arg/lib"
+		;;
+	--with-retrowave-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		RETROWAVE_CFLAGS="-I$arg/include"
+		RETROWAVE_LIBS="-L$arg/lib"
 		;;
 	--with-flac-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -4460,6 +4471,27 @@ if test "$_opl2lpt" = yes; then
 fi
 define_in_config_if_yes "$_opl2lpt" 'ENABLE_OPL2LPT'
 echo "$_opl2lpt"
+
+#
+# Check for retrowave for RetroWave OPL3
+#
+echocheck "RetroWave OPL3"
+if test "$_retrowave" = yes ; then
+	_retrowave=no
+	cat > $TMPC << EOF
+#include <RetroWaveLib/RetroWave.h>
+RetroWaveContext context;
+int main(void) { retrowave_init(&context); return 0; }
+EOF
+	cc_check $RETROWAVE_CFLAGS $RETROWAVE_LIBS -lretrowave && \
+	_retrowave=yes
+fi
+if test "$_retrowave" = yes; then
+	append_var LIBS "$RETROWAVE_LIBS -lretrowave"
+	append_var INCLUDES "$RETROWAVE_CFLAGS"
+fi
+define_in_config_if_yes "$_retrowave" 'USE_RETROWAVE'
+echo "$_retrowave"
 
 #
 # Check for FLAC
