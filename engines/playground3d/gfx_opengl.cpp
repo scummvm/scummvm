@@ -311,69 +311,51 @@ void OpenGLRenderer::drawRgbaTexture() {
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glTranslatef(-0.8, 0.8, 0);
-
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glTranslatef(-0.8, 0.8, 0);
+
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTranslatef(0.5, 0, 0);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgbaId[1]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTranslatef(0.5, 0, 0);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTranslatef(0.5, 0, 0);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTranslatef(-1.5, -0.5, 0);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glTranslatef(0.5, 0, 0);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);
 	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 

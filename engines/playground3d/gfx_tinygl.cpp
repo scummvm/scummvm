@@ -322,69 +322,53 @@ void TinyGLRenderer::drawRgbaTexture() {
 
 	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	tglTranslatef(-0.8, 0.8, 0);
-
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(-0.799f, 0.8, 0);
+	//tglTranslatef(-0.8, 0.8, 0); // some gfx issue
+
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
 	tglTranslatef(0.5, 0, 0);
 
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgbaId[1]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
-	tglTranslatef(0.5, 0, 0);
+	tglTranslatef(0.501, 0, 0);
+	//tglTranslatef(0.5, 0, 0); // some gfx issue
 
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
 	tglTranslatef(0.5, 0, 0);
 
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgb565Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
 	tglTranslatef(-1.5, -0.5, 0);
 
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgba5551Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
 	tglTranslatef(0.5, 0, 0);
 
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgba4444Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
