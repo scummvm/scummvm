@@ -45,6 +45,9 @@ public:
 	void clear(const Math::Vector4d &clearColor) override;
 	void loadTextureRGBA(Graphics::Surface *texture) override;
 	void loadTextureRGB(Graphics::Surface *texture) override;
+	void loadTextureRGB565(Graphics::Surface *texture) override;
+	void loadTextureRGBA5551(Graphics::Surface *texture) override;
+	void loadTextureRGBA4444(Graphics::Surface *texture) override;
 
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
@@ -63,8 +66,11 @@ private:
 	GLuint _bitmapVBO;
 
 	Common::Rect _currentViewport;
-	GLuint _textureRgbaId[10];
-	GLuint _textureRgbId[10];
+	GLuint _textureRgbaId[5];
+	GLuint _textureRgbId[5];
+	GLuint _textureRgb565Id[2];
+	GLuint _textureRgba5551Id[2];
+	GLuint _textureRgba4444Id[2];
 };
 
 } // End of namespace Playground3d

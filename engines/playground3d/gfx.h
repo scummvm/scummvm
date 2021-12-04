@@ -61,6 +61,9 @@ public:
 	virtual void setupViewport(int x, int y, int width, int height) = 0;
 	virtual void loadTextureRGBA(Graphics::Surface *texture) = 0;
 	virtual void loadTextureRGB(Graphics::Surface *texture) = 0;
+	virtual void loadTextureRGB565(Graphics::Surface *texture) = 0;
+	virtual void loadTextureRGBA5551(Graphics::Surface *texture) = 0;
+	virtual void loadTextureRGBA4444(Graphics::Surface *texture) = 0;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void dimRegionInOut(float fade) = 0;

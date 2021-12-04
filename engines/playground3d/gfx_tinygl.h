@@ -45,6 +45,9 @@ public:
 	void clear(const Math::Vector4d &clearColor) override;
 	void loadTextureRGB(Graphics::Surface *texture) override;
 	void loadTextureRGBA(Graphics::Surface *texture) override;
+	void loadTextureRGB565(Graphics::Surface *texture) override;
+	void loadTextureRGBA5551(Graphics::Surface *texture) override;
+	void loadTextureRGBA4444(Graphics::Surface *texture) override;
 
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
@@ -58,8 +61,11 @@ public:
 private:
 	TinyGL::FrameBuffer *_fb;
 	Math::Vector3d _pos;
-	TGLuint _textureRgbaId[10];
-	TGLuint _textureRgbId[10];
+	TGLuint _textureRgbaId[5];
+	TGLuint _textureRgbId[5];
+	TGLuint _textureRgb565Id[2];
+	TGLuint _textureRgba5551Id[2];
+	TGLuint _textureRgba4444Id[2];
 
 	void drawFace(uint face);
 };

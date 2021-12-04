@@ -105,13 +105,19 @@ void ShaderRenderer::init() {
 	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
 	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 8);
 
-	glGenTextures(10, _textureRgbaId);
-	glGenTextures(10, _textureRgbId);
+	glGenTextures(5, _textureRgbaId);
+	glGenTextures(5, _textureRgbId);
+	glGenTextures(2, _textureRgb565Id);
+	glGenTextures(2, _textureRgba5551Id);
+	glGenTextures(2, _textureRgba4444Id);
 }
 
 void ShaderRenderer::deinit() {
-	glDeleteTextures(10, _textureRgbaId);
-	glDeleteTextures(10, _textureRgbId);
+	glDeleteTextures(5, _textureRgbaId);
+	glDeleteTextures(5, _textureRgbId);
+	glDeleteTextures(2, _textureRgb565Id);
+	glDeleteTextures(2, _textureRgba5551Id);
+	glDeleteTextures(2, _textureRgba4444Id);
 }
 
 void ShaderRenderer::clear(const Math::Vector4d &clearColor) {
@@ -135,6 +141,27 @@ void ShaderRenderer::loadTextureRGB(Graphics::Surface *texture) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture->getPixels());
+}
+
+void ShaderRenderer::loadTextureRGB565(Graphics::Surface *texture) {
+	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, texture->getPixels());
+}
+
+void ShaderRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
+	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, texture->getPixels());
+}
+
+void ShaderRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
+	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, texture->getPixels());
 }
 
 void ShaderRenderer::setupViewport(int x, int y, int width, int height) {
@@ -202,6 +229,24 @@ void ShaderRenderer::drawRgbaTexture() {
 	offset.setY(0.8);
 	_bitmapShader->setUniform("offsetXY", offset);
 	glBindTexture(GL_TEXTURE_2D, _textureRgbId[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	offset.setX(0.7);
+	offset.setY(0.8);
+	_bitmapShader->setUniform("offsetXY", offset);
+	glBindTexture(GL_TEXTURE_2D, _textureRgb565Id[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	offset.setX(-0.8);
+	offset.setY(0.2);
+	_bitmapShader->setUniform("offsetXY", offset);
+	glBindTexture(GL_TEXTURE_2D, _textureRgba5551Id[0]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	offset.setX(-0.3);
+	offset.setY(0.2);
+	_bitmapShader->setUniform("offsetXY", offset);
+	glBindTexture(GL_TEXTURE_2D, _textureRgba4444Id[0]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	_bitmapShader->unbind();

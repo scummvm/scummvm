@@ -101,13 +101,19 @@ void TinyGLRenderer::init() {
 	tglDisable(TGL_LIGHTING);
 	tglEnable(TGL_DEPTH_TEST);
 
-	tglGenTextures(10, _textureRgbaId);
-	tglGenTextures(10, _textureRgbId);
+	tglGenTextures(5, _textureRgbaId);
+	tglGenTextures(5, _textureRgbId);
+	tglGenTextures(2, _textureRgb565Id);
+	tglGenTextures(2, _textureRgba5551Id);
+	tglGenTextures(2, _textureRgba4444Id);
 }
 
 void TinyGLRenderer::deinit() {
-	//tglDeleteTextures(10, &_textureRgbaId);
-	//tglDeleteTextures(10, &_textureRgbId);
+	//tglDeleteTextures(5, _textureRgbaId);
+	//tglDeleteTextures(5, _textureRgbId);
+	//tglDeleteTextures(2, _textureRgb565Id);
+	//tglDeleteTextures(2, _textureRgba5551Id);
+	//tglDeleteTextures(2, _textureRgba4444Id);
 }
 
 void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
@@ -126,6 +132,27 @@ void TinyGLRenderer::loadTextureRGB(Graphics::Surface *texture) {
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, texture->getPixels());
+}
+
+void TinyGLRenderer::loadTextureRGB565(Graphics::Surface *texture) {
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgb565Id[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGB, TGL_UNSIGNED_SHORT_5_6_5, texture->getPixels());
+}
+
+void TinyGLRenderer::loadTextureRGBA5551(Graphics::Surface *texture) {
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgba5551Id[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1, texture->getPixels());
+}
+
+void TinyGLRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgba4444Id[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->w, texture->h, 0, TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4, texture->getPixels());
 }
 
 void TinyGLRenderer::clear(const Math::Vector4d &clearColor) {
@@ -324,6 +351,39 @@ void TinyGLRenderer::drawRgbaTexture() {
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
 	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgb565Id[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(-1.5, -0.5, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgba5551Id[0]);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+
+	tglTranslatef(0.5, 0, 0);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
+	tglTexCoordPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), textCords);
+	tglBindTexture(TGL_TEXTURE_2D, _textureRgba4444Id[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);

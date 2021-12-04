@@ -55,6 +55,9 @@ private:
 	bool _fadeIn;
 	Graphics::Surface *_rgbaTexture;
 	Graphics::Surface *_rgbTexture;
+	Graphics::Surface *_rgb565Texture;
+	Graphics::Surface *_rgba5551Texture;
+	Graphics::Surface *_rgba4444Texture;
 
 	float _rotateAngleX, _rotateAngleY, _rotateAngleZ;
 
