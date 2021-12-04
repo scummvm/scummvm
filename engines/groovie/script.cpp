@@ -2015,6 +2015,35 @@ void Script::o2_videofromref() {
 	if (_version == kGroovieT11H && fileref == 4926 && fileref != _videoRef)
 		_videoSkipAddress = 1417;
 
+	if (_version == kGroovieT11H && fileref == 4337 && !ConfMan.getBool("originalsaveload")) {
+		if (_currentInstruction == 0xE50A) {
+			// Load from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0) {
+				_currentInstruction = 0xE790;
+				loadgame(slot);
+				return;
+			} else {
+				_currentInstruction = 0xBF37; // main menu
+			}
+		} else if (_currentInstruction == 0xE955) {
+			// Save from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String saveName = dialog->getResultString();
+			delete dialog;
+
+			if (slot >= 0) {
+				directGameSave(slot, saveName);
+			}
+
+			_currentInstruction = 0xBF37; // main menu
+		}
+	}
+
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
