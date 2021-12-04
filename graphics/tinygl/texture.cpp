@@ -97,6 +97,7 @@ GLTexture *alloc_texture(GLContext *c, uint h) {
 void glInitTextures(GLContext *c) {
 	c->texture_2d_enabled = 0;
 	c->current_texture = find_texture(c, 0);
+	c->maxTextureName = 0;
 	c->texture_mag_filter = TGL_LINEAR;
 	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
 #if defined(SCUMM_LITTLE_ENDIAN)
@@ -277,21 +278,11 @@ void glopPixelStore(GLContext *, GLParam *p) {
 
 void tglGenTextures(int n, unsigned int *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	unsigned int max;
-	TinyGL::GLTexture *t;
 
-	max = 0;
-	for (int i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
-		t = c->shared_state.texture_hash_table[i];
-		while (t) {
-			if (t->handle > max)
-				max = t->handle;
-			t = t->next;
-		}
-	}
 	for (int i = 0; i < n; i++) {
-		textures[i] = max + i + 1;
+		textures[i] = c->maxTextureName + i + 1;
 	}
+	c->maxTextureName += n;
 }
 
 void tglDeleteTextures(int n, const unsigned int *textures) {
