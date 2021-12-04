@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-04 15:24+0000\n"
-"PO-Revision-Date: 2021-12-03 01:26+0000\n"
+"PO-Revision-Date: 2021-12-05 01:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5073,11 +5073,11 @@ msgstr "Reproduz filmes em velocidade acelerada"
 
 #: engines/groovie/detection.cpp:397
 msgid "Easier AI"
-msgstr ""
+msgstr "IA mais Fácil"
 
 #: engines/groovie/detection.cpp:398
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Reduz a dificuldade da Inteligência Artificial nos quebra-cabeças"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
