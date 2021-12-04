@@ -176,7 +176,7 @@ int OthelloGame::scoreLateGame(Freeboard *freeboard) {
 }
 
 int OthelloGame::scoreBoard(Freeboard *board) {
-	if (_isLateGame)
+	if (_isLateGame || _easierAi)
 		return scoreLateGame(board);
 	else
 		return scoreEarlyGame(board);
@@ -370,7 +370,10 @@ byte OthelloGame::aiDoBestMove(Freeboard *pBoard) {
 
 	for (int move = 0; move < numPossibleMoves; move++) {
 		_isAiTurn = !_isAiTurn; // flip before recursing
-		int score = aiRecurse(&possibleMoves[move], _depths[_counter], parentScore, 100);
+		int depth = _depths[_counter];
+		if (_easierAi)
+			depth = 0;
+		int score = aiRecurse(&possibleMoves[move], depth, parentScore, 100);
 		if (bestScore < score) {
 			parentScore = score;
 			bestMove = move;
@@ -554,7 +557,7 @@ void OthelloGame::op5(byte *vars) {
 	vars[4] = 1;
 }
 
-OthelloGame::OthelloGame()
+OthelloGame::OthelloGame(bool easierAi)
 	: _random("OthelloGame"),
 	  _depths {
 		1, 4, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -619,8 +622,10 @@ OthelloGame::OthelloGame()
 	initLines();
 
 #if 0
+	_easierAi = false;
 	test();
 #endif
+	_easierAi = easierAi;
 }
 
 void OthelloGame::run(byte *vars) {

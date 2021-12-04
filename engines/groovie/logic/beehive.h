@@ -44,10 +44,12 @@ namespace Groovie {
  */
 class BeehiveGame {
 public:
-	BeehiveGame() {
+	BeehiveGame(bool easierAi) {
 #if 0
+		_easierAi = false;
 		tests();
 #endif
+		_easierAi = easierAi;
 	}
 	~BeehiveGame() {}
 
@@ -80,6 +82,7 @@ private:
 
 	Common::Array<int> overrideMoves;
 	uint overrideIndex;
+	bool _easierAi;
 };
 
 } // End of Groovie namespace

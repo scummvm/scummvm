@@ -679,8 +679,11 @@ void PenteGame::run(byte *vars) {
 		aiDepth = 5;
 	}
 
-	if (aiDepth != 2)
+	if (aiDepth != 2) {
+		if (_easierAi && aiDepth > 2)
+			aiDepth = 2;
 		_previousMove = aiGetBestMove(aiDepth);
+	}
 	else
 		warning("pente unknown else");
 
@@ -693,14 +696,16 @@ void PenteGame::run(byte *vars) {
 	moveXYToVars(x, y, vars[0], vars[1], vars[2]);
 }
 
-PenteGame::PenteGame() : _random("PenteGame") {
+PenteGame::PenteGame(bool easierAi) : _random("PenteGame") {
 	_table = nullptr;
 	_nextCapturedSpot = -1;
 	_animateCapturesBitMask = 0;
 	_previousMove = 0;
 #if 0
+	_easierAi = false;
 	test();
 #endif
+	_easierAi = easierAi;
 }
 
 void PenteGame::test() {

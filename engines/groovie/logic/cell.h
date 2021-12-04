@@ -34,7 +34,7 @@ namespace Groovie {
 
 class CellGame {
 public:
-	CellGame();
+	CellGame(bool easierAi);
 	~CellGame();
 	void run(uint16 depth, byte *scriptBoard);
 
@@ -88,6 +88,7 @@ private:
 	int _coeff3;
 	bool _flag1, _flag2, _flag4;
 	int _moveCount;
+	bool _easierAi;
 };
 
 } // End of Groovie namespace

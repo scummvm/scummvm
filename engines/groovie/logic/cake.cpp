@@ -42,7 +42,7 @@ namespace Groovie {
 *	.
 * @see UpdateScores()
 */
-CakeGame::CakeGame() : _random("CakeGame") {
+CakeGame::CakeGame(bool easierAi) : _random("CakeGame") {
 	restart();
 
 	_map = {};
@@ -89,8 +89,11 @@ CakeGame::CakeGame() : _random("CakeGame") {
 	}
 
 #if 0
+	_easierAi = false;
 	testCake();
 #endif
+
+	_easierAi = easierAi;
 }
 
 void CakeGame::run(byte *scriptVariables) {
@@ -123,7 +126,11 @@ void CakeGame::run(byte *scriptVariables) {
 		return;
 	}
 
-	lastMove = aiGetBestMove(4 + (_hasCheated == false));
+	int depth = 4 + (_hasCheated == false);
+	if (_easierAi)
+		depth = 0;
+
+	lastMove = aiGetBestMove(depth);
 	placeBonBon(lastMove);
 	if (gameEnded()) {
 		winner = STAUF;

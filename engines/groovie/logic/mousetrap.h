@@ -54,7 +54,7 @@ namespace Groovie {
  */
 class MouseTrapGame {
 public:
-	MouseTrapGame();
+	MouseTrapGame(bool easierAi);
 	void run(byte *scriptVariables);
 
 private:
@@ -94,6 +94,7 @@ private:
 	int8 _mouseTrapCells[31];
 	int8 _mouseTrapPosX, _mouseTrapPosY;
 	int8 _mouseTrapNumSteps;
+	bool _easierAi;
 };
 
 } // End of Groovie namespace

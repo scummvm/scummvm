@@ -78,7 +78,10 @@ enum kSpecialVariableTypes {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(nullptr), _savedCode(nullptr), _stacktop(0), _debugger(nullptr), _vm(vm),
 	_videoFile(nullptr), _videoRef(UINT_MAX), _cellGame(nullptr), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts"), _tlcGame(nullptr) {
+	_version(version), _random("GroovieScripts"), _tlcGame(nullptr),
+	_beehive(ConfMan.getBool("easier_ai")), _cake(ConfMan.getBool("easier_ai")), _gallery(ConfMan.getBool("easier_ai")),
+	_mouseTrap(ConfMan.getBool("easier_ai")), _othello(ConfMan.getBool("easier_ai")), _pente(ConfMan.getBool("easier_ai"))
+{
 
 	// Initialize the opcode set depending on the engine version
 	if (version == kGroovieT7G) {
@@ -2126,7 +2129,7 @@ void Script::o_gamelogic() {
 	switch (_version) {
 	case kGroovieT7G:
 		if (!_cellGame)
-			_cellGame = new CellGame;
+			_cellGame = new CellGame(ConfMan.getBool("easier_ai"));
 
 		_cellGame->run(param, &_variables[0x19]);
 

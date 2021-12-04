@@ -21,10 +21,11 @@
  */
 
 #include "groovie/logic/cell.h"
+#include "common/config-manager.h"
 
 namespace Groovie {
 
-CellGame::CellGame() {
+CellGame::CellGame(bool easierAi) {
 	_startX = _startY = _endX = _endY = 255;
 
 	_stack_index = _boardStackPtr = 0;
@@ -34,6 +35,7 @@ CellGame::CellGame() {
 	_coeff3 = 0;
 
 	_moveCount = 0;
+	_easierAi = easierAi;
 }
 
 byte CellGame::getStartX() {
@@ -756,6 +758,9 @@ void CellGame::calcMove(int8 color, uint16 depth) {
 			int newDepth;
 
 			newDepth = depths[3 * (depth - 2) + _moveCount % 3];
+			if (_easierAi)
+				newDepth = 1;
+
 			_flag2 = true;
 			if (newDepth >= 20) {
 				assert(0); // This branch is not implemented

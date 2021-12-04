@@ -49,7 +49,7 @@ struct Freeboard {
 
 class OthelloGame {
 public:
-	OthelloGame();
+	OthelloGame(bool easierAi);
 	void run(byte *scriptVariables);
 
 private:
@@ -94,6 +94,7 @@ private:
 	int8 *_linesStorage[484];
 	int8 _lineStorage[2016];
 	Freeboard _board;
+	bool _easierAi;
 };
 
 } // End of Groovie namespace

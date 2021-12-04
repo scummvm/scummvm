@@ -43,7 +43,7 @@ struct penteTable;
 
 class PenteGame {
 public:
-	PenteGame();
+	PenteGame(bool easierAi);
 	void run(byte *vars);
 
 private:
@@ -77,6 +77,7 @@ private:
 	short _previousMove;
 	short _nextCapturedSpot;
 	penteTable *_table;
+	bool _easierAi;
 };
 
 } // End of Groovie namespace

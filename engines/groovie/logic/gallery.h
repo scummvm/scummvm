@@ -79,10 +79,12 @@ namespace Groovie {
 
 class GalleryGame {
 public:
-	GalleryGame() {
+	GalleryGame(bool easierAi) {
 #if 0
+		_easierAi = false;
 		test();
 #endif
+		_easierAi = easierAi;
 	}
 	void run(byte *scriptVariables);
 
@@ -90,6 +92,7 @@ private:
 	byte galleryAI(byte *pieceStatus, int depth);
 
 	static const byte kGalleryLinks[21][10];
+	bool _easierAi;
 
 	void test();
 	void ensureSamanthaWins(int seed);

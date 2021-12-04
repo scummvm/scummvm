@@ -39,7 +39,7 @@ namespace Groovie {
  */
 class CakeGame {
 public:
-	CakeGame();
+	CakeGame(bool easierAi);
 	void run(byte *scriptVariables);
 
 private:
@@ -75,6 +75,7 @@ private:
 	bool _hasCheated;
 
 	LinesMappings _map;//!< ID numbers for all of the potential victory lines for each spot on the board
+	bool _easierAi;
 
 	void restart();
 	void setLineNum(uint x, uint y, uint index);

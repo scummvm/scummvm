@@ -309,8 +309,12 @@ void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 	int8 params[4];
 
 	*a4 = 0;
-	if (calcMove(_beehiveState, -125, -1, 4, 0, params) == 125
-			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, 4, 1, params) == 125)) {
+	int8 depth = 4;
+	if (_easierAi)
+		depth = 1;
+
+	if (calcMove(_beehiveState, -125, -1, depth, 0, params) == 125
+			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, depth, 1, params) == 125)) {
 		*a1 = -1;
 		*a2 = -1;
 		for (int i = 0; i < HEXCOUNT; ++i) {
@@ -329,8 +333,12 @@ void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 	int8 params[4];
 
 	*a4 = 0;
-	if (calcMove(_beehiveState, 125, 1, 4, 0, params) == -125
-			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, 4, 1, params) == -125)) {
+	int8 depth = 4;
+	if (_easierAi)
+		depth = 1;
+
+	if (calcMove(_beehiveState, 125, 1, depth, 0, params) == -125
+			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, depth, 1, params) == -125)) {
 		*a1 = -1;
 		*a2 = -1;
 		for (int i = 0; i < HEXCOUNT; ++i) {
