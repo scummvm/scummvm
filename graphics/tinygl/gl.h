@@ -537,8 +537,8 @@ enum {
 	TGL_NEAREST                     = 0x2600,
 	TGL_REPEAT                      = 0x2901,
 	TGL_CLAMP                       = 0x2900,
-	TGL_CLAMP_TO_EDGE		= 0x812F,
-	TGL_MIRRORED_REPEAT		= 0x8370,
+	TGL_CLAMP_TO_EDGE               = 0x812F,
+	TGL_MIRRORED_REPEAT             = 0x8370,
 	TGL_S                           = 0x2000,
 	TGL_T                           = 0x2001,
 	TGL_R                           = 0x2002,
@@ -718,28 +718,28 @@ void tglPolygonMode(int face, int mode);
 void tglBegin(int type);
 void tglEnd();
 
-#define PROTO_GL1(name)				\
-void tgl ## name ## 1f(float);		\
-void tgl ## name ## 1d(double);		\
-void tgl ## name ## 1fv(const float *);	\
+#define PROTO_GL1(name)                   \
+void tgl ## name ## 1f(float);            \
+void tgl ## name ## 1d(double);           \
+void tgl ## name ## 1fv(const float *);   \
 void tgl ## name ## 1dv(const double *);
 
-#define PROTO_GL2(name)					\
-void tgl ## name ## 2f(float, float);	\
-void tgl ## name ## 2d(double, double);	\
-void tgl ## name ## 2fv(const float *);		\
+#define PROTO_GL2(name)                   \
+void tgl ## name ## 2f(float, float);     \
+void tgl ## name ## 2d(double, double);   \
+void tgl ## name ## 2fv(const float *);   \
 void tgl ## name ## 2dv(const double *);
 
-#define PROTO_GL3(name)							\
-void tgl ## name ## 3f(float, float, float);	\
-void tgl ## name ## 3d(double, double, double);	\
-void tgl ## name ## 3fv(const float *);				\
+#define PROTO_GL3(name)                         \
+void tgl ## name ## 3f(float, float, float);    \
+void tgl ## name ## 3d(double, double, double); \
+void tgl ## name ## 3fv(const float *);         \
 void tgl ## name ## 3dv(const double *);
 
-#define PROTO_GL4(name)									\
-void tgl ## name ## 4f(float, float, float, float);		\
-void tgl ## name ## 4d(double, double, double, double);	\
-void tgl ## name ## 4fv(const float *);						\
+#define PROTO_GL4(name)                                 \
+void tgl ## name ## 4f(float, float, float, float);     \
+void tgl ## name ## 4d(double, double, double, double); \
+void tgl ## name ## 4fv(const float *);                 \
 void tgl ## name ## 4dv(const double *);
 
 PROTO_GL2(Vertex)
@@ -750,7 +750,7 @@ PROTO_GL3(Color)
 PROTO_GL4(Color)
 void tglColor3ub(unsigned char r, unsigned char g, unsigned char b);
 void tglColor4ub(unsigned char r, unsigned char g, unsigned char b,
-				 unsigned char a);
+                 unsigned char a);
 
 PROTO_GL3(Normal)
 
@@ -774,7 +774,7 @@ void tglScalef(float x, float y, float z);
 
 void tglViewport(int x, int y, int width, int height);
 void tglFrustum(double left, double right, double bottom, double top,
-				double nearv, double farv);
+                double nearv, double farv);
 void tglOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
 
 // lists
@@ -803,8 +803,8 @@ void tglGenTextures(int n, unsigned int *textures);
 void tglDeleteTextures(int n, const unsigned int *textures);
 void tglBindTexture(int target, int texture);
 void tglTexImage2D(int target, int level, int components,
-				   int width, int height, int border,
-				   int format, int type, void *pixels);
+                   int width, int height, int border,
+                   int format, int type, void *pixels);
 void tglTexEnvi(int target, int pname, int param);
 void tglTexParameteri(int target, int pname, int param);
 void tglPixelStorei(int pname, int param);
