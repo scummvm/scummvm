@@ -102,11 +102,9 @@ void glInitTextures(GLContext *c) {
 	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
 #if defined(SCUMM_LITTLE_ENDIAN)
 	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE});
 	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
 #else
 	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), TGL_BGRA, TGL_UNSIGNED_BYTE});
 	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
 #endif
 	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5});
