@@ -78,9 +78,11 @@ enum kSpecialVariableTypes {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(nullptr), _savedCode(nullptr), _stacktop(0), _debugger(nullptr), _vm(vm),
 	_videoFile(nullptr), _videoRef(UINT_MAX), _cellGame(nullptr), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts"), _tlcGame(nullptr),
+#ifdef ENABLE_GROOVIE2
 	_beehive(ConfMan.getBool("easier_ai")), _cake(ConfMan.getBool("easier_ai")), _gallery(ConfMan.getBool("easier_ai")),
-	_mouseTrap(ConfMan.getBool("easier_ai")), _othello(ConfMan.getBool("easier_ai")), _pente(ConfMan.getBool("easier_ai"))
+	_mouseTrap(ConfMan.getBool("easier_ai")), _othello(ConfMan.getBool("easier_ai")), _pente(ConfMan.getBool("easier_ai")),
+#endif
+	_version(version), _random("GroovieScripts"), _tlcGame(nullptr)
 {
 
 	// Initialize the opcode set depending on the engine version
