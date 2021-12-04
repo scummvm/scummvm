@@ -58,9 +58,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadLib("spider/sound.lib/", "spider/c_misc/sound.lib", true);
 
 	Code *credits = new Code();
-	credits->name = "credits";
+	credits->name = "<credits>";
 	credits->prefix = prefix;
-	_levels["credits"] = credits;
+	_levels["<credits>"] = credits;
+	credits->levelIfWin = "options.mi_";
 
 	Scene *sc;
 	ChangeLevel *cl;
@@ -211,7 +212,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<note>"] = note;
 
 	loadSceneLevel("factory1.mi_", "intercom.mi_", prefix);
-	loadSceneLevel("intercom.mi_", "", prefix);
+	loadSceneLevel("intercom.mi_", "c3", prefix);
+
+	loadArcadeLevel("c3.mi_", "", prefix);
+	loadArcadeLevel("c3h.mi_", "", prefix);
+
+	loadSceneLevel("movie2.mi_", "", prefix);
 	//_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
 
 	// Transition *bus_transition = new Transition("buspuz.mi_");
@@ -224,7 +230,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	// _levels["<bank_hard>"] = bankHard;
 
 	// Easy arcade levels
-	loadArcadeLevel("c3.mi_", "", prefix);
+
 	//loadArcadeLevel("c6.mi_", "", "spider");
 	// No c7 level?
 	loadArcadeLevel("c8.mi_", "", prefix);
@@ -235,7 +241,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c13.mi_", "", prefix);
 
 	// // Hard arcade levels
-	loadArcadeLevel("c3h.mi_", "", prefix);
 
 	//loadArcadeLevel("c6h.mi_", "", "spider");
 	// No c7h level?
@@ -686,9 +691,9 @@ void SpiderEngine::runNote(Code *code) {
 }
 
 void SpiderEngine::showCredits() {
+	changeScreenMode("640x480");
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
 	runIntro(video);
-	_nextLevel = "mainmenu.mi_";
 }
 
 Common::String SpiderEngine::findNextLevel(const Transition *trans) { 

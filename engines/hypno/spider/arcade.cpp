@@ -38,7 +38,7 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 ox = 0;
 	uint32 oy = 0;
 
-	if (_arcadeMode == "YC") {
+	if (_arcadeMode == "YC" || _arcadeMode == "YD") {
 		return; // Nothing to shoot
 	} else if (_arcadeMode == "YE") { 
 		ox = _screenW/2;
@@ -163,7 +163,7 @@ void SpiderEngine::drawPlayer() {
 }
 
 void SpiderEngine::drawCursorArcade(const Common::Point &mousePos) {
-	if (_arcadeMode != "YC") {
+	if (_arcadeMode != "YC" && _arcadeMode != "YD") {
 		HypnoEngine::drawCursorArcade(mousePos);
 	}
 }
