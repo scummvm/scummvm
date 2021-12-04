@@ -55,7 +55,8 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "opengl",     nullptr,             kSDLVersionAny, "FindOpenGL",   "OpenGL",   "OPENGL_INCLUDE_DIR",    "OPENGL_gl_LIBRARY",   nullptr      },
 		{ "libcurl",    "libcurl",           kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      nullptr      },
 		{ "sdlnet",     nullptr,             kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   nullptr      },
-		{ "sdlnet",     "SDL2_net",          kSDLVersion2,   nullptr,        nullptr,    nullptr,                 nullptr,               "SDL2_net"   }
+		{ "sdlnet",     "SDL2_net",          kSDLVersion2,   nullptr,        nullptr,    nullptr,                 nullptr,               "SDL2_net"   },
+		{ "retrowave",  "retrowave",         kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "retrowave"  }
 	};
 
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
