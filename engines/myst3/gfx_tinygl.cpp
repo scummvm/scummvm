@@ -87,17 +87,16 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 		// No window found ...
 		if (scaled) {
 			// ... in scaled mode draw in the original game screen area
-			Common::Rect vp = viewport();
-			tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+			_viewport = viewport();
 		} else {
 			// ... otherwise, draw on the whole screen
-			tglViewport(0, 0, _system->getWidth(), _system->getHeight());
+			_viewport = Common::Rect(_system->getWidth(), _system->getHeight());
 		}
 	} else {
 		// Found a window, draw inside it
-		Common::Rect vp = window->getPosition();
-		tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+		_viewport = window->getPosition();
 	}
+	tglViewport(_viewport.left, _system->getHeight() - _viewport.top - _viewport.height(), _viewport.width(), _viewport.height());
 
 	if (is3D) {
 		tglMatrixMode(TGL_PROJECTION);
@@ -167,14 +166,11 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 		transparency = 1.0;
 	}
 
-	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
-	int viewPort[4];
-	tglGetIntegerv(TGL_VIEWPORT, viewPort);
-
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	Graphics::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
+	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
+	Graphics::BlitTransform transform(sLeft + _viewport.left, sTop + _viewport.top);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);

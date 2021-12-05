@@ -62,6 +62,7 @@ private:
 	void drawFace(uint face, Texture *texture);
 
 	TinyGL::FrameBuffer *_fb;
+	Common::Rect _viewport;
 };
 
 } // End of namespace Myst3
