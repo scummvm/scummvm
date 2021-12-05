@@ -489,8 +489,8 @@ void MveDecoder::readNextPacket() {
 				break;
 			}
 			default:
-				error("Unknown opcode %04x", opKind);
 				_s->skip(opLen);
+				error("Unknown opcode %04x", opKind);
 				break;
 		}
 	}
