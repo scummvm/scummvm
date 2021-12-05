@@ -46,6 +46,14 @@
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
 
+// These helper macros let us setup our context only when the game has different settings than us
+#define CONTEXT_SAVE_STATE(gl_param) GLboolean saved ## gl_param; GLCALL(saved ## gl_param = glIsEnabled(gl_param))
+#define CONTEXT_SET_ENABLE(gl_param) if (!(saved ## gl_param)) { GLCALL(glEnable(gl_param)); }
+#define CONTEXT_SET_DISABLE(gl_param) if (saved ## gl_param) { GLCALL(glDisable(gl_param)); }
+// These helper macros do the opposite to get back what the game expected
+#define CONTEXT_RESET_ENABLE(gl_param) if (!(saved ## gl_param)) { GLCALL(glDisable(gl_param)); }
+#define CONTEXT_RESET_DISABLE(gl_param) if (saved ## gl_param) { GLCALL(glEnable(gl_param)); }
+
 AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_screenChangeID(0),
 	_graphicsMode(0),
@@ -160,7 +168,6 @@ void AndroidGraphics3dManager::initSurface() {
 		_mouse_texture->reinit();
 	}
 
-	initViewport();
 	updateScreenRect();
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);
@@ -218,15 +225,54 @@ void AndroidGraphics3dManager::updateScreen() {
 
 	_force_redraw = false;
 
+	// Save the game state
+	GLint savedBlendSrcRGB, savedBlendDstRGB, savedBlendSrcAlpha, savedBlendDstAlpha,
+	      savedBlendEqRGB, savedBlendEqAlpha;
+	GLint savedViewport[4];
+	CONTEXT_SAVE_STATE(GL_BLEND);
+	GLCALL(glGetIntegerv(GL_BLEND_SRC_RGB, &savedBlendSrcRGB));
+	GLCALL(glGetIntegerv(GL_BLEND_DST_RGB, &savedBlendDstRGB));
+	GLCALL(glGetIntegerv(GL_BLEND_SRC_ALPHA, &savedBlendSrcAlpha));
+	GLCALL(glGetIntegerv(GL_BLEND_DST_ALPHA, &savedBlendDstAlpha));
+	GLCALL(glGetIntegerv(GL_BLEND_EQUATION_RGB, &savedBlendEqRGB));
+	GLCALL(glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &savedBlendEqAlpha));
+	CONTEXT_SAVE_STATE(GL_CULL_FACE);
+	CONTEXT_SAVE_STATE(GL_DEPTH_TEST);
+	CONTEXT_SAVE_STATE(GL_DITHER);
+	CONTEXT_SAVE_STATE(GL_POLYGON_OFFSET_FILL);
+	CONTEXT_SAVE_STATE(GL_SAMPLE_ALPHA_TO_COVERAGE);
+	CONTEXT_SAVE_STATE(GL_SAMPLE_COVERAGE);
+	CONTEXT_SAVE_STATE(GL_SCISSOR_TEST);
+	CONTEXT_SAVE_STATE(GL_STENCIL_TEST);
+	GLCALL(glGetIntegerv(GL_VIEWPORT, savedViewport));
+
 	if (_frame_buffer) {
 		_frame_buffer->detach();
-		glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 	}
 
-	// We don't use depth stencil to draw on screen
-	glDisable(GL_DEPTH_TEST);
-	// We do blend though
-	glEnable(GL_BLEND);
+	// Make sure everything we need is correctly set up
+	// Enable what we need and disable the other if it is not already
+	CONTEXT_SET_ENABLE(GL_BLEND);
+	if (savedBlendSrcRGB != GL_SRC_ALPHA ||
+	    savedBlendDstRGB != GL_ONE_MINUS_SRC_ALPHA ||
+	    savedBlendSrcAlpha != GL_SRC_ALPHA ||
+	    savedBlendDstAlpha != GL_ONE_MINUS_SRC_ALPHA) {
+		GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	}
+	if (savedBlendEqRGB != GL_FUNC_ADD ||
+	    savedBlendEqAlpha != GL_FUNC_ADD) {
+		GLCALL(glBlendEquation(GL_FUNC_ADD));
+	}
+	CONTEXT_SET_DISABLE(GL_CULL_FACE);
+	CONTEXT_SET_DISABLE(GL_DEPTH_TEST);
+	CONTEXT_SET_DISABLE(GL_DITHER);
+	CONTEXT_SET_DISABLE(GL_POLYGON_OFFSET_FILL);
+	CONTEXT_SET_DISABLE(GL_SAMPLE_ALPHA_TO_COVERAGE);
+	CONTEXT_SET_DISABLE(GL_SAMPLE_COVERAGE);
+	CONTEXT_SET_DISABLE(GL_SCISSOR_TEST);
+	CONTEXT_SET_DISABLE(GL_STENCIL_TEST);
+
+	glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	// clear pointer leftovers in dead areas
 	clearScreen(kClear);
@@ -259,6 +305,34 @@ void AndroidGraphics3dManager::updateScreen() {
 	if (!JNI::swapBuffers()) {
 		LOGW("swapBuffers failed: 0x%x", glGetError());
 	}
+
+	// Here we restore back the GLES state so if we enabled something we disable it back if it needs too and vice versa
+
+	CONTEXT_RESET_ENABLE(GL_BLEND);
+	if (savedGL_BLEND && (
+	    savedBlendSrcRGB != GL_SRC_ALPHA ||
+	    savedBlendDstRGB != GL_ONE_MINUS_SRC_ALPHA ||
+	    savedBlendSrcAlpha != GL_SRC_ALPHA ||
+	    savedBlendDstAlpha != GL_ONE_MINUS_SRC_ALPHA)) {
+		GLCALL(glBlendFuncSeparate(savedBlendSrcRGB, savedBlendDstRGB,
+		                           savedBlendSrcAlpha, savedBlendDstAlpha));
+	}
+	if (savedGL_BLEND && (
+	    savedBlendEqRGB != GL_FUNC_ADD ||
+	    savedBlendEqAlpha != GL_FUNC_ADD)) {
+		GLCALL(glBlendEquationSeparate(savedBlendEqRGB, savedBlendEqAlpha));
+	}
+	CONTEXT_RESET_DISABLE(GL_CULL_FACE);
+	CONTEXT_RESET_DISABLE(GL_DEPTH_TEST);
+	CONTEXT_RESET_DISABLE(GL_DITHER);
+	CONTEXT_RESET_DISABLE(GL_POLYGON_OFFSET_FILL);
+	CONTEXT_RESET_DISABLE(GL_SAMPLE_ALPHA_TO_COVERAGE);
+	CONTEXT_RESET_DISABLE(GL_SAMPLE_COVERAGE);
+	CONTEXT_RESET_DISABLE(GL_SCISSOR_TEST);
+	CONTEXT_RESET_DISABLE(GL_STENCIL_TEST);
+
+	// Restore game viewport
+	GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
 
 	if (_frame_buffer) {
 		_frame_buffer->attach();
@@ -358,16 +432,24 @@ void AndroidGraphics3dManager::showOverlay() {
 		_overlay_background->release();
 
 		if (g_engine) {
+			GLint savedViewport[4];
+			GLCALL(glGetIntegerv(GL_VIEWPORT, savedViewport));
+
 			if (_frame_buffer) {
 				_frame_buffer->detach();
-				glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 			}
+
+			GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
 			_overlay_background->allocBuffer(_overlay_texture->width(), _overlay_texture->height());
 			_overlay_background->setDrawRect(0, 0,
 			                                 JNI::egl_surface_width, JNI::egl_surface_height);
 			Graphics::Surface *background = _overlay_background->surface();
-			glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-			             background->getPixels());
+			GLCALL(glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+			             background->getPixels()));
+
+			// Restore game viewport
+			GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
+
 			if (_frame_buffer) {
 				_frame_buffer->attach();
 			}
@@ -375,8 +457,6 @@ void AndroidGraphics3dManager::showOverlay() {
 	}
 
 	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
-
-	GLCALL(glDisable(GL_SCISSOR_TEST));
 }
 
 void AndroidGraphics3dManager::hideOverlay() {
@@ -396,8 +476,6 @@ void AndroidGraphics3dManager::hideOverlay() {
 
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);
-
-	GLCALL(glEnable(GL_SCISSOR_TEST));
 }
 
 void AndroidGraphics3dManager::clearOverlay() {
@@ -535,17 +613,11 @@ void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
 
 void AndroidGraphics3dManager::initSize(uint width, uint height,
                                         const Graphics::PixelFormat *format) {
-	initViewport();
-
 	// resize game texture
-	initSizeIntern(width, height, 0);
-
-	_game_texture->setGameTexture();
-}
-
-void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
-        const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
+
+	// We do only 3D with this manager and in 3D there is no format
+	assert(format == nullptr);
 
 	bool engineSupportsArbitraryResolutions = !g_engine ||
 	        g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
@@ -576,6 +648,8 @@ void AndroidGraphics3dManager::initSizeIntern(uint width, uint height,
 	_mouse_texture_palette->allocBuffer(20, 20);
 
 	clearScreen(kClear);
+
+	_game_texture->setGameTexture();
 }
 
 int AndroidGraphics3dManager::getScreenChangeID() const {
@@ -802,9 +876,6 @@ Common::List<Graphics::PixelFormat> AndroidGraphics3dManager::getSupportedFormat
 void AndroidGraphics3dManager::updateScreenRect() {
 	Common::Rect rect(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 
-	// setup the scissor to the full screen as we enable it when overlay is hidden
-	glScissor(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
-
 	_overlay_texture->setDrawRect(rect);
 
 	// Clear the overlay background so it is not displayed distorted while resizing
@@ -862,28 +933,14 @@ void AndroidGraphics3dManager::initOverlay() {
 	                              JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
-void AndroidGraphics3dManager::initViewport() {
-	LOGD("initializing viewport");
-
-	assert(JNI::haveSurface());
-
-	GLCALL(glDisable(GL_CULL_FACE));
-	GLCALL(glDisable(GL_DEPTH_TEST));
-
-	GLCALL(glEnable(GL_BLEND));
-	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
-	LOGD("viewport size: %dx%d", JNI::egl_surface_width, JNI::egl_surface_height);
-}
-
 void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 	assert(count > 0);
 
 	bool sm = _show_mouse;
 	_show_mouse = false;
 
-	GLCALL(glDisable(GL_SCISSOR_TEST));
+	CONTEXT_SAVE_STATE(GL_SCISSOR_TEST);
+	CONTEXT_SET_DISABLE(GL_SCISSOR_TEST);
 
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
@@ -905,9 +962,7 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 		}
 	}
 
-	if (!_show_overlay) {
-		GLCALL(glEnable(GL_SCISSOR_TEST));
-	}
+	CONTEXT_RESET_DISABLE(GL_SCISSOR_TEST);
 
 	_show_mouse = sm;
 	_force_redraw = true;

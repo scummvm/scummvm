@@ -133,8 +133,6 @@ private:
 	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 	void disableCursorPalette();
 	void initOverlay();
-	void initViewport();
-	void initSizeIntern(uint width, uint height, const Graphics::PixelFormat *format);
 
 	enum FixupType {
 		kClear = 0,     // glClear
