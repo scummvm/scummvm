@@ -263,7 +263,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C86E = 0;
 	_dword2C856 = nullptr;
 	_word2C880 = false;
-	_word2C894 = false;
+	_redrawNeededFl = false;
 	_word2C8D7 = true;
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
@@ -339,7 +339,7 @@ Common::Error EfhEngine::run() {
 */
 	initEngine();
 	sub15150(true);
-	sub12A7F();
+	redrawScreen();
 	displayLowStatusScreen(true);
 
 	if (!_protectionPassed)
@@ -413,12 +413,12 @@ Common::Error EfhEngine::run() {
 				_oldMapPosX = _mapPosX;
 				_oldMapPosY = _mapPosY;
 				_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			} else {
 				_mapPosX = _oldMapPosX;
 				_mapPosY = _oldMapPosY;
 				if (_oldImageSetSubFilesIdx != _imageSetSubFilesIdx) {
-					_word2C894 = true;
+					_redrawNeededFl = true;
 					_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
 				}
 			}
@@ -432,8 +432,8 @@ Common::Error EfhEngine::run() {
 			sub174A0();
 		}
 
-		if (_word2C894 && !_shouldQuit) {
-			sub12A7F();
+		if (_redrawNeededFl && !_shouldQuit) {
+			redrawScreen();
 			displayLowStatusScreen(true);
 		}
 
@@ -1261,9 +1261,9 @@ void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
 	drawMap(true, posX, posY, 63, _drawHeroOnMapFl, _drawMonstersOnMapFl);
 }
 
-void EfhEngine::sub12A7F() {
+void EfhEngine::redrawScreen() {
 	for (int16 counter = 0; counter < 2; ++counter) {
-		_word2C894 = false;
+		_redrawNeededFl = false;
 		if (!_largeMapFlag) {
 			if (_fullPlaceId != 0xFF)
 				displaySmallMap(_mapPosX, _mapPosY);
@@ -1385,7 +1385,8 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 void EfhEngine::displayFctFullScreen() {
 	// CHECKME: 319 is in the original but looks suspicious.
 	// copyDirtyRect(0, 0, 319, 200);
-	
+
+	warning("Char pos %d %d old pos %d %d", _mapPosX, _mapPosY, _oldMapPosX, _oldMapPosY);
 	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
@@ -1676,7 +1677,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadPlacesFile(scriptNumberArray[0], false);
 				_word2C880 = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x01:
@@ -1685,7 +1686,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
 				_oldMapPosY = _mapPosY = _techDataId_MapPosY;
 				_word2C880 = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x02:
@@ -1698,7 +1699,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				loadTechMapImp(scriptNumberArray[0]);
 				_largeMapFlag = true;
 				_word2C880 = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 				doneFlag = true;
 			}
 			break;
@@ -1711,7 +1712,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_mapPosX = getRandom(var110) + scriptNumberArray[0] - 1;
 				_mapPosY = getRandom(var10E) + scriptNumberArray[1] - 1;
 				_word2C880 = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x04:
@@ -1720,7 +1721,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_mapPosX = scriptNumberArray[0];
 				_mapPosY = scriptNumberArray[1];
 				_word2C880 = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x05:
@@ -1887,7 +1888,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				_oldMapPosX = _mapPosX = scriptNumberArray[0];
 				_oldMapPosY = _mapPosY = scriptNumberArray[1];
 				_largeMapFlag = true;
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x16:
@@ -1947,7 +1948,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 				if (var110 != -1) {
 					_mapUnknownPtr[var110 * 9 + 1] = 0xFF;
 				}
-				_word2C894 = true;
+				_redrawNeededFl = true;
 			}
 			break;
 		case 0x19:
@@ -2384,7 +2385,7 @@ void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
 	drawColoredRect(16, 152, 302, 189, color);
 }
 
-int16 EfhEngine::sub16B08(int16 monsterId) {
+int8 EfhEngine::sub16B08(int16 monsterId) {
 	// Simplified version compared to the original
 	int16 maxSize = _largeMapFlag ? 63 : 23;
 	if (_mapMonsters[monsterId]._posX < 0 || _mapMonsters[monsterId]._posY < 0 || _mapMonsters[monsterId]._posX > maxSize || _mapMonsters[monsterId]._posY > maxSize)
@@ -2409,7 +2410,7 @@ int16 EfhEngine::sub16B08(int16 monsterId) {
 	return sub15581(_mapMonsters[monsterId]._posX, _mapMonsters[monsterId]._posY, 0);
 }
 
-bool EfhEngine::moveMonsterGroupTowardsGroup_0(int16 monsterId) {
+bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 	if (_mapMonsters[monsterId]._posX < _mapPosX) {
 		--_mapMonsters[monsterId]._posX;
 		if (_mapMonsters[monsterId]._posY < _mapPosY)
@@ -2441,7 +2442,7 @@ bool EfhEngine::moveMonsterGroupTowardsGroup_0(int16 monsterId) {
 	return true;
 }
 
-bool EfhEngine::moveMonsterGroupTowardsGroup_1(int16 monsterId) {
+bool EfhEngine::moveMonsterTowardsTeam(int16 monsterId) {
 	if (_mapMonsters[monsterId]._posX < _mapPosX) {
 		++_mapMonsters[monsterId]._posX;
 		if (_mapMonsters[monsterId]._posY < _mapPosY)
@@ -2513,13 +2514,13 @@ bool EfhEngine::moveMonsterGroup(int16 monsterId) {
 	int16 rand100 = getRandom(100);
 
 	if (rand100 < 30)
-		return moveMonsterGroupTowardsGroup_1(monsterId);
+		return moveMonsterTowardsTeam(monsterId);
 
 	if (rand100 >= 60)
 		// CHECKME: the original seems to only use 1 param??
 		return moveMonsterGroupOther(monsterId, getRandom(8));
 
-	return moveMonsterGroupTowardsGroup_0(monsterId);
+	return moveMonsterAwayFromTeam(monsterId);
 }
 
 int16 EfhEngine::computeMonsterGroupDistance(int monsterId) {
@@ -2591,7 +2592,7 @@ void EfhEngine::sub174A0() {
 	
 	int16 var14 = 0;
 	int16 var6 = 0;
-	_word2C894 = false;
+	_redrawNeededFl = true;
 	int16 unkMonsterId = -1;
 	int16 mapSize = _largeMapFlag ? 63 : 23;
 	int16 minDisplayedMapX = CLIP<int16>(_mapPosX - 10, 0, mapSize);
@@ -2615,7 +2616,7 @@ void EfhEngine::sub174A0() {
 		if (var4 < minDisplayedMapX || var4 > maxDisplayedMapX || var2 < minDisplayedMapY || var2 > maxDisplayedMapY)
 			continue;
 
-		int16 var1A = 0;
+		bool var1A = false;
 		var14 = 0;
 
 		sub174A0_monsterPosX = _mapMonsters[monsterId]._posX;
@@ -2633,13 +2634,13 @@ void EfhEngine::sub174A0() {
 			switch (var1C - 1) {
 			case 0:
 				if (getRandom(100) >= 0xE - var1E)
-					var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+					var1A = moveMonsterTowardsTeam(monsterId);
 				else
 					var1A = moveMonsterGroup(monsterId);
 				break;
 			case 1:
 				if (getRandom(100) >= 0xE - var1E)
-					var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+					var1A = moveMonsterAwayFromTeam(monsterId);
 				else
 					var1A = moveMonsterGroup(monsterId);
 				break;
@@ -2651,13 +2652,13 @@ void EfhEngine::sub174A0() {
 				break;
 			case 4:
 				if (getRandom(100) > 0x32 - var1E)
-					var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+					var1A = moveMonsterTowardsTeam(monsterId);
 				else
 					var1A = moveMonsterGroup(monsterId);
 				break;
 			case 5:
 				if (getRandom(100) > 0x32 - var1E)
-					var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+					var1A = moveMonsterAwayFromTeam(monsterId);
 				else
 					var1A = moveMonsterGroup(monsterId);
 				break;
@@ -2673,7 +2674,7 @@ void EfhEngine::sub174A0() {
 				var14 = checkMonsterWeaponRange(monsterId);
 				if (var14 == 0) {
 					if (getRandom(100) >= 0xE - var1E)
-						var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+						var1A = moveMonsterTowardsTeam(monsterId);
 					else
 						var1A = moveMonsterGroup(monsterId);
 				}
@@ -2682,7 +2683,7 @@ void EfhEngine::sub174A0() {
 				var14 = checkMonsterWeaponRange(monsterId);
 				if (var14 == 0) {
 					if (getRandom(100) >= 0xE - var1E)
-						var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+						var1A = moveMonsterAwayFromTeam(monsterId);
 					else
 						var1A = moveMonsterGroup(monsterId);
 				}
@@ -2703,7 +2704,7 @@ void EfhEngine::sub174A0() {
 				var14 = checkMonsterWeaponRange(monsterId);
 				if (var14 == 0) {
 					if (getRandom(100) >= 0x32 - var1E)
-						var1A = moveMonsterGroupTowardsGroup_1(monsterId);
+						var1A = moveMonsterTowardsTeam(monsterId);
 					else
 						var1A = moveMonsterGroup(monsterId);
 				}
@@ -2712,7 +2713,7 @@ void EfhEngine::sub174A0() {
 				var14 = checkMonsterWeaponRange(monsterId);
 				if (var14 == 0) {
 					if (getRandom(100) >= 0x32 - var1E)
-						var1A = moveMonsterGroupTowardsGroup_0(monsterId);
+						var1A = moveMonsterAwayFromTeam(monsterId);
 					else
 						var1A = moveMonsterGroup(monsterId);
 				}
@@ -2727,20 +2728,20 @@ void EfhEngine::sub174A0() {
 			}
 
 			for (;;) {
-				if (var1A == 0) {
+				if (!var1A) {
 					if (var14 == 0) {
-						var1A = -1;
+						var1A = true;
 					} else {
 						unkMonsterId = monsterId;
-						var1A = -1;
+						var1A = true;
 					}
 				} else {
-					int16 var18 = sub16B08(monsterId);
+					int8 var18 = sub16B08(monsterId);
 
 					if (var18 == 0) {
 						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
 						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
-						var1A = 0;
+						var1A = false;
 						--var16;
 					} else if (var18 == 2) {
 						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
@@ -2748,16 +2749,14 @@ void EfhEngine::sub174A0() {
 					}
 				}
 
-				if (var1A == 0 && var16 == 1 && var1E > 1) {
+				if (!var1A && var16 == 1 && var1E > 1) {
 					var1A = moveMonsterGroupOther(monsterId, getRandom(8));
 					continue;
 				}
 				
 				break;
 			}
-			
-		} while (var1A == 0 && var16 > 0);
-		
+		} while (!var1A && var16 > 0);
 	}
 
 	if (unkMonsterId != -1)
@@ -2788,9 +2787,42 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
-int16 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
+bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 _arg6, int16 arg8, int16 imageSetId) {
+	warning("STUB - sub22293");
+	return false;
+}
+
+int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	warning("STUB - sub15581");
-	return 0;
+	int16 curTileInfo = getMapTileInfo(mapPosX, mapPosY);
+	int16 imageSetId = _currentTileBankImageSetId[curTileInfo / 72];
+	imageSetId *= 72;
+	imageSetId += curTileInfo % 72;
+
+	if (arg4 == 1 && _word2C8D7) {
+		int16 var2 = sub22293(mapPosX, mapPosY, -1, 0x7FFF, 0, imageSetId);
+	}
+
+	if (_word2C880) {
+		_word2C880 = false;
+		return -1;
+	}
+	if (_tileFact[imageSetId * 2 + 1] != 0xFF && !_word2C8D5) {
+		if ((arg4 == 1 && _word2C8D7) || (arg4 == 0 && _word2C8D7 && imageSetId != 128 && imageSetId != 121)) {
+			if (_largeMapFlag) {
+				_mapGameMapPtr[mapPosX * 64 + mapPosY] = _tileFact[imageSetId * 2 + 1];
+			} else {
+				_curPlace[mapPosX * 24 + mapPosY] = _tileFact[imageSetId * 2 + 1];
+			}
+
+			_redrawNeededFl = true;
+			if (_tileFact[imageSetId * 2] == 0)
+				return 2;
+			return 1;
+		}
+	}
+
+	return _tileFact[imageSetId * 2];
 }
 
 bool EfhEngine::handleFight(int16 monsterId) {
@@ -2840,7 +2872,7 @@ bool EfhEngine::sub16E14() {
 		_mapPosY = _oldMapPosY;
 		if (_imageSetSubFilesIdx != _oldImageSetSubFilesIdx)
 			_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
-		_word2C894 = true;
+		_redrawNeededFl = true;
 
 		int16 var6A = 0;
 		for (int16 var6C = 0; var6C < 9; ++var6C) {
@@ -2923,8 +2955,8 @@ bool EfhEngine::sub16E14() {
 		return true;
 	}
 
-	monsterId = sub15581(_mapPosX, _mapPosY, 1);
-	if (monsterId == 0 || monsterId == 2)
+	int8 check = sub15581(_mapPosX, _mapPosY, 1);
+	if (check == 0 || check == 2)
 		return false;
 
 	return true;

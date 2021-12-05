@@ -294,7 +294,7 @@ private:
 	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool drawHeroFl, bool drawMonstersFl);
 	void displaySmallMap(int16 posX, int16 posY);
 	void displayLargeMap(int16 posX, int16 posY);
-	void sub12A7F();
+	void redrawScreen();
 	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
 	void displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY);
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
@@ -348,9 +348,9 @@ private:
 	void setNextCharacterPos();
 	void displayStringAtTextPos(char *message);
 	void unkFct_displayMenuBox_2(int16 color);
-	int16 sub16B08(int16 monsterId);
-	bool moveMonsterGroupTowardsGroup_0(int16 monsterId);
-	bool moveMonsterGroupTowardsGroup_1(int16 monsterId);
+	int8 sub16B08(int16 monsterId);
+	bool moveMonsterAwayFromTeam(int16 monsterId);
+	bool moveMonsterTowardsTeam(int16 monsterId);
 	bool moveMonsterGroupOther(int16 monsterId, int16 direction);
 	bool moveMonsterGroup(int16 monsterId);
 	int16 computeMonsterGroupDistance(int monsterId);
@@ -363,7 +363,8 @@ private:
 	bool checkPictureRefAvailability(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 arg4);
 	void sub221D2(int16 monsterId);
-	int16 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
+	bool sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 _arg6, int16 arg8, int16 imageSetId);
+	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
 	bool handleFight(int16 monsterId);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	Common::KeyCode waitForKey();
@@ -442,7 +443,7 @@ private:
 	int16 _teamSize;
 	int16 _word2C872;
 	bool _word2C880;
-	bool _word2C894;
+	bool _redrawNeededFl;
 	bool _word2C8D7;
 	bool _drawHeroOnMapFl;
 	bool _drawMonstersOnMapFl;
