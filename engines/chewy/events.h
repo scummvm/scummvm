@@ -64,6 +64,8 @@ public:
 
 extern EventsManager *g_events;
 
+extern void delay(size_t time);
+
 } // namespace Chewy
 
 #endif

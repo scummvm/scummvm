@@ -38,6 +38,8 @@ namespace Chewy {
 #define ANI_5 5
 #define GITTER_BLITZEN 7
 
+static int16 flic_val1, flic_val2;
+
 void play_scene_ani(int16 nr, int16 mode) {
 #define ROOM_1_1 101
 #define ROOM_1_2 102
@@ -1144,23 +1146,155 @@ void exit_room(int16 eib_nr) {
 	}
 }
 
+void print_rows(int16 id) {
+	int16 txt_anz, len;
+	char *txtStr, *s;
+
+	out->set_fontadr(font8x8);
+	out->set_vorschub(fvorx8x8, fvory8x8);
+	txtStr = atds->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
+	out->setze_zeiger(nullptr);
+
+	for (int i = 0; i < txt_anz; ++i) {
+		s = txt->str_pos(txtStr, i);
+		len = (strlen(s) * fvorx8x8) / 2;
+
+		out->printxy(160 - len, 50 + i * 10, 14, 300, 0, "%s", s);
+	}
+}
+
+int16 flic_user_function(int16 keys) {
+	int ret;
+
+	serve_speech();
+	if (atds->aad_get_status() != -1) {
+		switch (flic_val1) {
+		case 579:
+		case 584:
+		case 588:
+		case 591:
+			out->raster_col(254, 63, 12, 46);
+			break;
+		default:
+			break;
+		}
+	}
+
+	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	if (flic_val1 == 593 && keys == 35)
+		atds->stop_aad();
+	if (flic_val1 == 594 && keys == 18)
+		atds->stop_aad();
+
+	ret = in->get_switch_code() == 1 ? -1 : 0;
+	if (flic_val2 == 140 && keys == 15)
+		ret = -2;
+	if (flic_val2 == 144 && keys == 7)
+		ret = -2;
+	if (flic_val2 == 145 || flic_val2 == 142 ||
+			flic_val2 == 141 || flic_val2 == 146) {
+		if (atds->aad_get_status() == -1)
+			ret = -2;
+	}
+
+	return ret;
+}
+
+static void flic_proc1() {
+	const int16 VALS1[] = {
+		135,  145,  142,  140,  145,  144,  142,  134,  148,  138,
+		143,  142,  146,  154,  142,  139,  146,  156,  157,  147,
+		153,  152,  141,  137,  136,  151,  151,  149,  150
+	};
+	const byte VALS2[] = {
+		1,  1,  0,  0,  0,  0,  0,  1,  1,  1,
+		1,  0,  0,  1,  1,  1,  1,  1,  0,  1,
+		1,  1,  1,  1,  0,  1,  0,  1,  0
+	};
+	const int16 VALS3[] = {
+		579, 580, 581,  -1, 582, -1, 583, 584, -1, -1,
+		585, 586, 587, 588, 589, -1, 590, 591, -1, -1,
+		 -1,  -1, 592, 593, 594, -1,  -1,  -1, -1
+	};
+	const byte VALS4[] = {
+		0,  1,  1,  0,  1,  0,  1,  0,  0,  0,
+		1,  1,  1,  0,  1,  0,  1,  0,  0,  0,
+		0,  0,  1,  0,  0,  0,  0,  0,  0
+	};
+	int16 ret = 0;
+
+	atds->load_atds(98, AAD_DATEI);
+	flc->set_custom_user_function(flic_user_function);
+	load_room_music(258);
+
+	for (int i = 0; i < 29 && ret != -1; ++i) {
+		if (VALS1[i] == 148)
+			load_room_music(259);
+		else if (VALS1[i] == 143)
+			load_room_music(260);
+		if (VALS2[i]) {
+			out->setze_zeiger(nullptr);
+			out->cls();
+		}
+
+		flic_val1 = 0;
+		if (VALS3[i] != -1) {
+			start_aad(VALS3[i], -1);
+			flic_val1 = VALS3[i];
+		}
+
+		bool flag;
+		do {
+			flic_val2 = VALS1[i];
+			mem->file->select_pool_item(Ci.Handle, flic_val2);
+			ret = flc->custom_play(&Ci);
+
+			flag = VALS4[i] && atds->aad_get_status() != -1;
+		} while (flag && ret != -1 && ret != -2);
+
+		atds->stop_aad();
+	}
+
+	flc->remove_custom_user_function();
+	if (ret == -1) {
+		out->setze_zeiger(nullptr);
+		out->cls();
+		out->raster_col(254, 62, 35, 7);
+		start_aad(595);
+		atds->print_aad(254, 0);
+
+		if (flags.InitSound && _G(spieler).SpeechSwitch) {
+			while (ailsnd->isSpeechActive() && !SHOULD_QUIT) {
+				ailsnd->serve_db_samples();
+			}
+		} else {
+			delay(6000);
+		}
+	}
+
+	out->setze_zeiger(workptr);
+	out->cls();
+}
+
 void flic_cut(int16 nr, int16 mode) {
-	int16 i;
+	const int16 FLIC_CUT_1080[] = { 80, 78, 77, 81, 82, 79, 76, 116 };
+	const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
+	const int16 FLIC_CUT_133[] = {
+		133, 123, 125, 126, 124, 128, 129, 130, 131,
+		132, 133, 127, 158
+	};
+	int16 i, ret = 0;
+
 	out->setze_zeiger(0);
 	det->disable_room_sound();
 	ailsnd->end_sound();
 	g_events->delay(50);
-	Ci.Handle = File::open("cut/cut.tap");
+	Common::File *f = File::open("cut/cut.tap");
+	Ci.Handle = f;
 	Ci.Fname = 0;
 
 	if (Ci.Handle) {
 		switch (nr) {
-		case FCUT_001:
-			ailsnd->stop_mod();
-			CurrentSong = -1;
-			mem->file->select_pool_item(Ci.Handle, nr);
-			flc->custom_play(&Ci);
-			break;
 		case FCUT_019:
 		case 19:
 		case 20:
@@ -1176,20 +1310,23 @@ void flic_cut(int16 nr, int16 mode) {
 			CurrentSong = -1;
 			nr = FCUT_019;
 			mem->file->select_pool_item(Ci.Handle, nr);
-			flc->custom_play(&Ci);
-			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+			ret = flc->custom_play(&Ci);
+			ailsnd->set_loopmode(1);
+
+			if (!modul && ret != -1) {
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
-				flc->custom_play(&Ci);
-			}
-			if (!modul) {
-				mem->file->select_pool_item(Ci.Handle, 21);
-				out->cls();
-				flc->custom_play(&Ci);
-				if (!modul) {
-					chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				ret = flc->custom_play(&Ci);
+
+				if (ret != -1) {
+					mem->file->select_pool_item(Ci.Handle, 21);
 					out->cls();
 					flc->custom_play(&Ci);
+					if (!modul) {
+						f->seek(ChunkHead::SIZE(), SEEK_CUR);
+						out->cls();
+						flc->custom_play(&Ci);
+					}
 				}
 			}
 			if (!modul) {
@@ -1203,27 +1340,27 @@ void flic_cut(int16 nr, int16 mode) {
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
 			if (!modul) {
-				chewy_fseek((Stream *)Ci.Handle, sizeof(ChunkHead), SEEK_CUR);
+				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				flc->custom_play(&Ci);
 			}
@@ -1232,6 +1369,128 @@ void flic_cut(int16 nr, int16 mode) {
 			out->ausblenden(1);
 			out->cls();
 			while (ailsnd->music_playing());
+			ailsnd->set_loopmode(_G(spieler).soundLoopMode);
+			break;
+
+		case FCUT_065:
+			ailsnd->stop_mod();
+			CurrentSong = -1;
+			load_room_music(256);
+			ailsnd->set_loopmode(1);
+			r46_kloppe();
+			ailsnd->set_loopmode(_G(spieler).soundLoopMode);
+			CurrentSong = -1;
+			break;
+
+		case 95:
+			while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
+				mem->file->select_pool_item(Ci.Handle, nr);
+				flc->custom_play(&Ci);
+			}
+			break;
+
+		case 112:
+			ailsnd->set_music_mastervol(32);
+			mem->file->select_pool_item(Ci.Handle, nr);
+			flc->custom_play(&Ci);
+			mem->file->select_pool_item(Ci.Handle, nr);
+			flc->custom_play(&Ci);
+			ailsnd->set_music_mastervol(5);
+			break;
+
+
+		case 133:
+		case 1123:
+			for (i = 0; i < 13 && i != -1 && !modul; ++i) {
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_133[i]);
+				ret = flc->custom_play(&Ci);
+				if (i == 0 || i == 1) {
+					out->setze_zeiger(nullptr);
+					out->cls();
+				}
+			}
+			break;
+
+		case 135:
+			flic_proc1();
+			break;
+
+		case 1003:
+			fx->border(workpage, 100, 0, 0);
+			print_rows(590);
+			mem->file->select_pool_item(Ci.Handle, 1);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				for (i = 0; i < 3 && ret != -1; ++i) {
+					fx->border(workpage, 100, 0, 0);
+					print_rows(591);
+					mem->file->select_pool_item(Ci.Handle, i + 3);
+					ret = flc->custom_play(&Ci);
+				}
+			}
+			break;
+
+		case 1012:
+			for (i = 0; i < 3 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, i + 12);
+				fx->border(workpage, 100, 0, 0);
+				ret = flc->custom_play(&Ci);
+			}
+
+			if (ret == -1)
+				goto close;
+
+			out->cls();
+			mem->file->select_pool_item(Ci.Handle, 17);
+			fx->border(workpage, 100, 0, 0);
+			break;
+
+
+		case 1080:
+			for (i = 0; i < 8 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1080[i]);
+				fx->border(workpage, 100, 0, 0);
+				ret = flc->custom_play(&Ci);
+			}
+
+			if (ret == -1)
+				goto close;
+			break;
+
+		case 1107:
+			mem->file->select_pool_item(Ci.Handle, 107);
+			ret = flc->custom_play(&Ci);
+			if (ret == -1)
+				goto close;
+
+			mem->file->select_pool_item(Ci.Handle, 109);
+			fx->border(workpage, 100, 0, 0);
+			break;
+
+		case 1113:
+			for (i = 0; i < 5 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1113[i]);
+				out->cls();
+				ret = flc->custom_play(&Ci);
+			}
+
+		case 1117:
+			if (mem->file->select_pool_item(Ci.Handle, 117) != -1) {
+				mem->file->select_pool_item(Ci.Handle, 119);
+				fx->border(workpage, 100, 0, 0);
+				flc->custom_play(&Ci);
+			}
+			break;
+
+
+
+
+		case FCUT_001:
+			ailsnd->stop_mod();
+			CurrentSong = -1;
+			mem->file->select_pool_item(Ci.Handle, nr);
+			flc->custom_play(&Ci);
 			break;
 
 		case FCUT_053:
@@ -1277,10 +1536,6 @@ void flic_cut(int16 nr, int16 mode) {
 			while (ailsnd->music_playing());
 			break;
 
-		case FCUT_065:
-			r46_kloppe();
-			break;
-
 		default:
 			mem->file->select_pool_item(Ci.Handle, nr);
 			if (!mode)
@@ -1296,7 +1551,11 @@ void flic_cut(int16 nr, int16 mode) {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
+
+close:
+	delete Ci.Handle;
 	ERROR;
+
 	ailsnd->end_sound();
 	g_events->delay(50);
 	ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
@@ -1314,6 +1573,7 @@ void flic_cut(int16 nr, int16 mode) {
 	uhr->reset_timer(0, 0);
 	out->setze_zeiger(workptr);
 	flags.NoPalAfterFlc = false;
+
 }
 
 uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
@@ -1402,7 +1662,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (!_G(spieler).R7Hebel)
 			atds->set_ats_str(50, 0, ATS_DATEI);
-		else if (!_G(spieler).R7BorkFlag)
+		else if (!_G(spieler).R7BorkFlug)
 			atds->set_ats_str(50, 1, ATS_DATEI);
 		else
 			atds->set_ats_str(50, 2, ATS_DATEI);
@@ -1649,7 +1909,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case 100:
-		_G(spieler).Flags33_1 = true;
+		_G(spieler).flags33_1 = true;
 		break;
 
 	default:

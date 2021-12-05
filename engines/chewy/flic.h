@@ -88,7 +88,7 @@ public:
 	void play(Common::Stream *handle, byte *vscreen, byte *load_p);
 	void set_flic_user_function(int16(*user_funktion)(int16 key));
 	void remove_flic_user_function();
-	void custom_play(CustomInfo *ci);
+	int custom_play(CustomInfo *ci);
 	void set_custom_user_function(int16(*user_funktion)(int16 key));
 	void remove_custom_user_function();
 

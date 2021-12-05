@@ -904,4 +904,9 @@ void ailclass::switch_sound(bool onOff) {
 		SoundSwitch = onOff;
 }
 
+void serve_speech() {
+	if (flags.InitSound && _G(spieler).SpeechSwitch)
+		ailsnd->serve_db_samples();
+}
+
 } // namespace Chewy

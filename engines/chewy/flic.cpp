@@ -394,8 +394,8 @@ void flic::delta_chunk_byte(byte *tmp) {
 	}
 }
 
-void flic::custom_play(CustomInfo *ci) {
-	uint16 i;
+int flic::custom_play(CustomInfo *ci) {
+	uint16 i, ret = 0;
 	char key;
 	uint32 start, ende;
 	bool trace_mode;
@@ -422,7 +422,7 @@ void flic::custom_play(CustomInfo *ci) {
 				fade_delay = 0;
 				CurrentFrame = 0;
 
-				for (i = 0; (i < custom_header.frames) && (!modul) && (key != 27); i++) {
+				for (i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0) && (key != 27); i++) {
 					if (!custom_frame.load(rs)) {
 						modul = DATEI;
 						fcode = READFEHLER;
@@ -433,8 +433,10 @@ void flic::custom_play(CustomInfo *ci) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									modul = DATEI;
 									fcode = READFEHLER;
-								} else
+								} else {
 									decode_cframe();
+									ret = modul ? -1 : 0;
+								}
 							}
 
 							// Show the next frame
@@ -466,6 +468,8 @@ void flic::custom_play(CustomInfo *ci) {
 		modul = DATEI;
 		fcode = OPENFEHLER;
 	}
+
+	return ret;
 }
 
 void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
