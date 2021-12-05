@@ -178,48 +178,26 @@ void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 	}
 }
 
-void effect::spr_blende(byte *workpage_, byte *ablage_,
-                        byte *palette, int16 frames, int16 col) {
-	int16 i;
-	int16 x, y;
-	int16 zoomx, zoomy;
-	taf_info *spr;
+void effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
+	int i, y;
 
-	spr = mem->taf_adr("cut/ch_blend.taf");
-	ERROR
-	x = 128;
-	y = 68;
-	zoomx = 128 * 2;
-	zoomy = 168 * 2;
-	out->set_clip(0, 0, 320, 200);
-
-	for (i = 0; i < 8; i++) {
-		out->box_fill(0, 0, 320, y - (zoomy / 2), 12);
-		out->box_fill(0, 0, x - (zoomx / 2), 200, 12);
-		out->box_fill(0, 200 - (y - (zoomy / 2)), 320, 200, 12);
-		out->box_fill(320 - (x - (zoomx / 2)), 0, 320, 200, 12);
-		out->scale_set(spr->image[0], x - (zoomx / 2), y - (zoomy / 2), zoomx, zoomy, 0);
-		zoomx -= ((128 * 2) / 6);
-		zoomy -= ((68 * 2) / 6);
+	if (mode) {
+		for (i = 0, y = 0; i < 20; ++i, y += 8) {
+			out->setze_zeiger(workpage_ + 4);
+			out->box_fill(0, 92 - y, 320, 92 - y + 8, col);
+			out->box_fill(0, 100 + y, 320, 108 + y, col);
+			out->back2screen(workpage_);
+			out->skip_line(lines);
+		}
+	} else {
+		for (i = 0; i < 20; ++i) {
+			out->setze_zeiger(workpage_ + 4);
+			out->box_fill(0, i, 320, i + 8, col);
+			out->box_fill(0, 192 - i, 320, 200 - i, col);
+			out->back2screen(workpage_);
+			out->skip_line(lines);
+		}
 	}
-
-	out->box_fill(128, 68, 128 + 64, 68 + 64, 12);
-	out->set_palette(palette);
-	out->setze_zeiger(workpage_);
-
-	for (i = 0; i < 8; i++) {
-		out->map_spr2screen(ablage_, _G(spieler).scrollx, _G(spieler).scrolly);
-		out->scale_set(spr->image[0], x - (zoomx / 2), y - (zoomy / 2), zoomx, zoomy, 0);
-		out->box_fill(0, 0, 320, y - (zoomy / 2), 12);
-		out->box_fill(0, 0, x - (zoomx / 2), 200, 12);
-		out->box_fill(0, 200 - (y - (zoomy / 2)), 320, 200, 12);
-		out->box_fill(320 - (x - (zoomx / 2)), 0, 320, 200, 12);
-		zoomx += ((128 * 2) / 6);
-		zoomy += ((68 * 2) / 6);
-		out->back2screen(workpage_ - 4);
-	}
-	out->back2screen(workpage_ - 4);
-	free((char *)spr);
 }
 
 } // namespace Chewy
