@@ -89,6 +89,12 @@ void GLESBaseTexture::initGL() {
 	                                   2 * sizeof(float), 0);
 }
 
+void GLESBaseTexture::unbindShader() {
+	if (_box_shader) {
+		_box_shader->unbind();
+	}
+}
+
 GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
                                  Graphics::PixelFormat pixelFormat) :
 	_glFormat(glFormat),
