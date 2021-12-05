@@ -834,7 +834,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 				while (!tok.empty()) {
 					Common::String component = tok.nextToken();
 
-					if (!tok.empty()) { // If it is not the last component
+					if (!tok.empty() && !_globsMap.contains(component.c_str())) { // If it is not the last component
 						_globsMap.setVal(component, true);
 						debugC(4, kDebugGlobalDetection, "  Added '%s' to globs", component.c_str());
 					}
