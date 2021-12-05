@@ -743,7 +743,20 @@ void KyraEngine_LoK::initStaticResource() {
 	int temp = 0;
 	_seq_Forest = _staticres->loadRawData(k1ForestSeq, temp);
 	_seq_KallakWriting = _staticres->loadRawData(k1KallakWritingSeq, temp);
+
 	_seq_KyrandiaLogo = _staticres->loadRawData(k1KyrandiaLogoSeq, temp);
+	uint8 *kyraLogo = new uint8[temp];
+	memcpy(kyraLogo, _seq_KyrandiaLogo, temp);
+	// The Kyrandia logo has been modified for the Chinese version and unfortunately
+	// this includes the sequence data. The data is currently not treated as language
+	// specific in KYRA.DAT and I want to keep it that way, since all other version
+	// use the exact same data. We just patch the data...
+	if (_flags.lang == Common::ZH_TWN) {
+		kyraLogo[30] = kyraLogo[86] = 0x0d;
+		kyraLogo[45] = kyraLogo[60] = kyraLogo[64] = 0x0e;
+	}
+	_seq_KyrandiaLogo = kyraLogo;
+
 	_seq_KallakMalcolm = _staticres->loadRawData(k1KallakMalcolmSeq, temp);
 	_seq_MalcolmTree = _staticres->loadRawData(k1MalcolmTreeSeq, temp);
 	_seq_WestwoodLogo = _staticres->loadRawData(k1WestwoodLogoSeq, temp);

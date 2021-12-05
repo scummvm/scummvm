@@ -158,6 +158,9 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i)
 		delete[] _sceneAnimTable[i];
+
+	// This one has to be deleted manually, since we allocate an extra buffer for it.
+	delete[] _seq_KyrandiaLogo;
 }
 
 Common::Error KyraEngine_LoK::init() {
