@@ -1386,7 +1386,6 @@ void EfhEngine::displayFctFullScreen() {
 	// CHECKME: 319 is in the original but looks suspicious.
 	// copyDirtyRect(0, 0, 319, 200);
 
-	warning("Char pos %d %d old pos %d %d", _mapPosX, _mapPosY, _oldMapPosX, _oldMapPosY);
 	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
@@ -2390,7 +2389,28 @@ void EfhEngine::goSouthWest() {
 }
 
 void EfhEngine::handleNewRoundEffects() {
-	warning("STUB: handleNewRoundEffects");
+	static int16 regenCounter = 0;
+
+	if (!_word2C8D7)
+		return;
+
+	for (int16 counter = 0; counter < _teamSize; ++counter) {
+		if (_teamCharStatus[counter]._status == 0) // normal
+			continue;
+		if (--_teamCharStatus[counter]._duration <= 0) {
+			_teamCharStatus[counter]._status = 0;
+			_teamCharStatus[counter]._duration = 0;
+		}
+	}
+
+	if (++regenCounter <= 8)
+		return;
+
+	for (int16 counter = 0; counter < _teamSize; ++counter) {
+		if (++_npcBuf[_teamCharId[counter]]._hitPoints > _npcBuf[_teamCharId[counter]]._maxHP)
+			_npcBuf[_teamCharId[counter]]._hitPoints = _npcBuf[_teamCharId[counter]]._maxHP;
+	}
+	regenCounter = 0;
 }
 
 bool EfhEngine::handleDeathMenu() {
@@ -2894,7 +2914,6 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 _arg6, 
 }
 
 int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
-	warning("STUB - sub15581");
 	int16 curTileInfo = getMapTileInfo(mapPosX, mapPosY);
 	int16 imageSetId = _currentTileBankImageSetId[curTileInfo / 72];
 	imageSetId *= 72;
