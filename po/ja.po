@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-04 23:09+0000\n"
-"PO-Revision-Date: 2021-12-03 01:26+0000\n"
+"PO-Revision-Date: 2021-12-05 10:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5006,11 +5006,11 @@ msgstr "速度を上げてムービーを再生"
 
 #: engines/groovie/detection.cpp:397
 msgid "Easier AI"
-msgstr ""
+msgstr "低難易度AI"
 
 #: engines/groovie/detection.cpp:398
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "AIパズルの難易度を下げる"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
