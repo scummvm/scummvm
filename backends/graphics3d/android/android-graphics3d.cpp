@@ -334,6 +334,11 @@ void AndroidGraphics3dManager::updateScreen() {
 	// Restore game viewport
 	GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
 
+	// Don't keep our texture attached to avoid the engine writing on it if it forgets to setup its own texture
+	GLCALL(glBindTexture(GL_TEXTURE_2D, 0));
+	// Unload our program to make sure engine will use its own
+	GLESBaseTexture::unbindShader();
+
 	if (_frame_buffer) {
 		_frame_buffer->attach();
 	}

@@ -39,6 +39,7 @@ class ShaderGL;
 class GLESBaseTexture {
 public:
 	static void initGL();
+	static void unbindShader();
 
 protected:
 	GLESBaseTexture(GLenum glFormat, GLenum glType,
