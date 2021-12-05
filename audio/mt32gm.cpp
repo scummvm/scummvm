@@ -137,10 +137,8 @@ MidiDriver_MT32GM::~MidiDriver_MT32GM() {
 	}
 	_driver = nullptr;
 
-	if (_controlData) {
-		for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
-			delete _controlData[i];
-		}
+	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
+		delete _controlData[i];
 	}
 	if (_activeNotes)
 		delete[] _activeNotes;
