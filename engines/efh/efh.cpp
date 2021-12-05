@@ -1496,8 +1496,109 @@ bool EfhEngine::isTPK() {
 	return zeroedChar == _teamSize;
 }
 
+Common::KeyCode EfhEngine::getInput(int16 delay) {
+	if (delay == 0)
+		return Common::KEYCODE_INVALID;
+
+	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
+	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+
+	uint32 lastMs = _system->getMillis();
+	while (delay > 0) {
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			--delay;
+			unkFct_anim();
+		}
+
+		lastChar = handleAndMapInput(false);
+		if (lastChar != Common::KEYCODE_INVALID)
+			retVal = lastChar;
+	}
+
+	return retVal;
+}
+
 void EfhEngine::handleWinSequence() {
-	warning("STUB - handleWinSequence");
+	saveAnimImageSetId();
+	findMapFile(18);
+	// clearMemory();
+	uint8 *decompBuffer = (uint8 *)malloc(41000);
+	uint8 *winSeqBuf3 = (uint8 *)malloc(40100);
+	uint8 *winSeqBuf4 = (uint8 *)malloc(40100);
+
+	uint8 *winSeqSubFilesArray1[10];
+	uint8 *winSeqSubFilesArray2[20];
+	loadImageSet(64, winSeqBuf3, winSeqSubFilesArray1, decompBuffer);
+	loadImageSet(65, winSeqBuf4, winSeqSubFilesArray2, decompBuffer);
+
+	for (int16 counter = 0; counter < 2; ++counter) {
+		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
+		displayRawDataAtPos(winSeqSubFilesArray2[0], 136, 48);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+
+	getInput(12);
+	for (int16 counter2 = 1; counter2 < 8; ++counter2) {
+		for (int16 counter = 0; counter < 2; ++counter) {
+			displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
+			displayRawDataAtPos(winSeqSubFilesArray2[counter2], 136, 48);
+			if (counter == 0)
+				displayFctFullScreen();
+		}
+		getInput(1);
+	}
+
+	Common::KeyCode var59 = Common::KEYCODE_INVALID;
+
+	while(var59 != Common::KEYCODE_ESCAPE) {
+		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
+		displayFctFullScreen();
+		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
+		var59 = getInput(32);
+		if (var59 != Common::KEYCODE_ESCAPE) {
+			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
+			displayFctFullScreen();
+			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
+			var59 = getInput(1);
+		}
+
+		if (var59 != Common::KEYCODE_ESCAPE) {
+			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
+			displayFctFullScreen();
+			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
+			var59 = getInput(1);
+		}
+
+		if (var59 != Common::KEYCODE_ESCAPE) {
+			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
+			displayFctFullScreen();
+			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
+			var59 = getInput(1);
+		}
+
+		if (var59 != Common::KEYCODE_ESCAPE) {
+			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
+			displayFctFullScreen();
+			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
+			var59 = getInput(1);
+		}
+
+		if (var59 != Common::KEYCODE_ESCAPE) {
+			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
+			displayFctFullScreen();
+			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
+			var59 = getInput(1);
+		}
+	}
+	
+	free(decompBuffer);
+	free(winSeqBuf3);
+	free(winSeqBuf4);
 }
 
 bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
