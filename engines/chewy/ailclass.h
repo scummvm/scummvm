@@ -120,6 +120,8 @@ public:
 private:
 };
 
+extern void serve_speech();
+
 } // namespace Chewy
 
 #endif

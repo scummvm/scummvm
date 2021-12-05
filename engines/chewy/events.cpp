@@ -154,4 +154,8 @@ void EventsManager::setMousePos(const Common::Point &pt) {
 	_mousePos = pt;
 }
 
+void delay(size_t time) {
+	g_events->delay(time);
+}
+
 } // namespace Chewy

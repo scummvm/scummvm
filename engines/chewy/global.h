@@ -420,6 +420,8 @@ void exit_room(int16 eib_nr);
 
 void flic_cut(int16 nr, int16 mode);
 
+void print_rows(int16 id);
+
 int16 sib_event_no_inv(int16 sib_nr);
 
 void sib_event_inv(int16 sib_nr);
