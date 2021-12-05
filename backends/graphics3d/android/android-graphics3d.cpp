@@ -633,11 +633,8 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 
 	GLTHREADCHECK;
 
-#ifdef USE_RGB_COLOR
-	initTexture(&_game_texture, width, height, format);
-#else
 	_game_texture->allocBuffer(width, height);
-#endif
+
 	delete _frame_buffer;
 	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
 	                                        _game_texture->width(), _game_texture->height(),
@@ -973,58 +970,6 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 	_force_redraw = true;
 }
 
-#ifdef USE_RGB_COLOR
-void AndroidGraphics3dManager::initTexture(GLESBaseTexture **texture,
-        uint width, uint height,
-        const Graphics::PixelFormat *format) {
-	assert(texture);
-	Graphics::PixelFormat format_clut8 =
-	    Graphics::PixelFormat::createFormatCLUT8();
-	Graphics::PixelFormat format_current;
-	Graphics::PixelFormat format_new;
-
-	if (*texture) {
-		format_current = (*texture)->getPixelFormat();
-	} else {
-		format_current = Graphics::PixelFormat();
-	}
-
-	if (format) {
-		format_new = *format;
-	} else {
-		format_new = format_clut8;
-	}
-
-	if (format_current != format_new) {
-		if (*texture)
-			LOGD("switching pixel format from: %s",
-			     (*texture)->getPixelFormat().toString().c_str());
-
-		delete *texture;
-
-		if (format_new == GLES565Texture::pixelFormat()) {
-			*texture = new GLES565Texture();
-		} else if (format_new == GLES5551Texture::pixelFormat()) {
-			*texture = new GLES5551Texture();
-		} else if (format_new == GLES4444Texture::pixelFormat()) {
-			*texture = new GLES4444Texture();
-		} else {
-			// TODO what now?
-			if (format_new != format_clut8)
-				LOGE("unsupported pixel format: %s",
-				     format_new.toString().c_str());
-
-			*texture = new GLESFakePalette565Texture;
-		}
-
-		LOGD("new pixel format: %s",
-		     (*texture)->getPixelFormat().toString().c_str());
-	}
-
-	(*texture)->allocBuffer(width, height);
-}
-#endif
-
 AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {
 	AndroidCommonGraphics::State state;
 
@@ -1040,11 +985,8 @@ AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {
 }
 
 bool AndroidGraphics3dManager::setState(const AndroidCommonGraphics::State &state) {
-#ifdef USE_RGB_COLOR
-	initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
-#else
+	// In 3d we don't have a pixel format so we ignore it
 	initSize(state.screenWidth, state.screenHeight, nullptr);
-#endif
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
