@@ -110,6 +110,7 @@ public:
 	                            const Graphics::PixelFormat *format) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
+	float getHiDPIScreenFactor() const override;
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;
