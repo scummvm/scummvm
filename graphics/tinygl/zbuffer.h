@@ -107,8 +107,10 @@ struct FrameBuffer {
 	FrameBuffer(int xsize, int ysize, const Graphics::PixelFormat &format);
 	~FrameBuffer();
 
+private:
 	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);
+public:
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
@@ -120,10 +122,12 @@ struct FrameBuffer {
 		return _zbuf;
 	}
 
+private:
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
 		pbuf.getRGBAt(pixel, r, g, b);
 	}
 
+public:
 	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
 		if (!_depthTestEnabled)
 			return true;
@@ -161,6 +165,7 @@ struct FrameBuffer {
 		return false;
 	}
 
+private:
 	FORCEINLINE bool checkAlphaTest(byte aSrc) {
 		if (!_alphaTestEnabled)
 			return true;
@@ -198,11 +203,13 @@ struct FrameBuffer {
 		return false;
 	}
 
+public:
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
 		writePixel<kEnableAlphaTest, kBlendingEnabled, false>(pixel, value, 0);
 	}
 
+private:
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
 		if (kBlendingEnabled == false) {
@@ -239,6 +246,7 @@ struct FrameBuffer {
 		writePixel(pixel, 255, rSrc, gSrc, bSrc);
 	}
 
+public:
 	FORCEINLINE bool scissorPixel(int x, int y) {
 		return !_clipRectangle.contains(x, y);
 	}
@@ -429,6 +437,7 @@ struct FrameBuffer {
 		return _sourceBlendingFactor == TGL_SRC_ALPHA && _destinationBlendingFactor == TGL_ONE_MINUS_SRC_ALPHA;
 	}
 
+private:
 	/**
 	* Blit the buffer to the screen buffer, checking the depth of the pixels.
 	* Eack pixel is copied if and only if its depth value is bigger than the
@@ -437,8 +446,10 @@ struct FrameBuffer {
 	void blitOffscreenBuffer(Buffer *buffer);
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
+public:
 	void setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt);
 
+private:
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
@@ -454,6 +465,7 @@ struct FrameBuffer {
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
+public:
 	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -465,11 +477,13 @@ struct FrameBuffer {
 	void plot(ZBufferPoint *p);
 	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2);
+private:
 	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
+public:
 	void setScissorRectangle(const Common::Rect &rect) {
 		_clipRectangle = rect;
 		_enableScissor = true;
@@ -478,37 +492,48 @@ struct FrameBuffer {
 		_enableScissor = false;
 	}
 
+private:
 	Common::Rect _clipRectangle;
 	bool _enableScissor;
+public:
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
+private:
 	int pixelbytes;
 
 	Buffer buffer;
 
+public:
 	unsigned char *shadow_mask_buf;
 	int shadow_color_r;
 	int shadow_color_g;
 	int shadow_color_b;
+private:
 	int frame_buffer_allocated;
 
 	unsigned char *dctable;
 	int *ctable;
 	const Graphics::TexelBuffer *current_texture;
+public:
 	int _textureSize;
 	int _textureSizeMask;
+private:
 	unsigned int wrapS, wrapT;
 
+public:
 	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
 	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
 	FORCEINLINE bool isAlphaTestEnabled() const { return _alphaTestEnabled; }
+private:
 	FORCEINLINE bool isDepthWriteEnabled() const { return _depthWrite; }
+public:
 	FORCEINLINE int getDepthFunc() const { return _depthFunc; }
 	FORCEINLINE int getDepthWrite() const { return _depthWrite; }
 	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
 	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
 	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
+private:
 	FORCEINLINE int getOffsetStates() const { return _offsetStates; }
 	FORCEINLINE float getOffsetFactor() const { return _offsetFactor; }
 	FORCEINLINE float getOffsetUnits() const { return _offsetUnits; }
