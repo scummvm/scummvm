@@ -184,7 +184,7 @@ void FrameBuffer::init() {
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	GLenum status=glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 		error("Framebuffer is not complete! status: %d", status);
 
@@ -194,11 +194,13 @@ void FrameBuffer::init() {
 
 void FrameBuffer::attach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	glViewport(0,0, _width, _height);
+	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
+	glViewport(0, 0, _width, _height);
 }
 
 void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
 #if !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
@@ -251,7 +253,8 @@ void MultiSampleFrameBuffer::init() {
 void MultiSampleFrameBuffer::attach() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, getFrameBufferName());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _msFrameBufferId);
-	glViewport(0,0, getWidth(), getHeight());
+	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
+	glViewport(0, 0, getWidth(), getHeight());
 }
 
 void MultiSampleFrameBuffer::detach() {
@@ -259,6 +262,7 @@ void MultiSampleFrameBuffer::detach() {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFrameBufferName());
 	glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
 #endif // !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)

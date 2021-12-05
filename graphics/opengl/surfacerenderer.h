@@ -106,6 +106,11 @@ public:
 private:
 	ShaderGL *_boxShader;
 	GLuint _boxVerticesVBO;
+	GLboolean _prevStateDepthTest;
+	GLboolean _prevStateDepthWriteMask;
+	GLboolean _prevStateBlend;
+	GLint _prevStateBlendFunc;
+	GLint _prevStateViewport[4];
 };
 
 #endif
