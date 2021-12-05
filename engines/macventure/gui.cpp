@@ -401,7 +401,7 @@ void Gui::loadBorders(Graphics::MacWindow *target, MVWindowType type) {
 void Gui::loadBorder(Graphics::MacWindow *target, MVWindowType type, bool active) {
 	Common::SeekableReadStream *stream;
 
-	bool activeFlag = (active ? Graphics::kWindowBorderActive : 0);
+	uint32 activeFlag = (active ? Graphics::kWindowBorderActive : 0);
 	bool canHaveTitle = false;
 	bool canHaveScrollbar = false;
 
