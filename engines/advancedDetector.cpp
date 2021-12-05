@@ -466,10 +466,11 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String tstr = ((_flags & kADFlagMatchFullPaths) && !parentName.empty() ? parentName + "/" : "") + file->getName();
+		Common::String efname = Common::punycode_encodefilename(file->getName());
+		Common::String tstr = ((_flags & kADFlagMatchFullPaths) && !parentName.empty() ? parentName + "/" : "") + efname;
 
 		if (file->isDirectory()) {
-			if (!_globsMap.contains(file->getName()))
+			if (!_globsMap.contains(efname))
 				continue;
 
 			Common::FSList files;
@@ -583,7 +584,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String fname = Common::punycode_decodefilename(fileDesc->fileName);
+			Common::String fname = fileDesc->fileName;
 			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), fname.c_str());
 
 			if (filesProps.contains(key))
@@ -625,7 +626,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String tstr = Common::punycode_decodefilename(fileDesc->fileName);
+			Common::String tstr = fileDesc->fileName;
 			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), tstr.c_str());
 
 			if (!filesProps.contains(key) || filesProps[key].size == -1) {
@@ -694,7 +695,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 			gotAnyMatchesWithAllFiles = true;
 		} else {
-			debugC(5, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
+			debugC(7, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
@@ -835,6 +836,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 
 					if (!tok.empty()) { // If it is not the last component
 						_globsMap.setVal(component, true);
+						debugC(4, kDebugGlobalDetection, "  Added '%s' to globs", component.c_str());
 					}
 				}
 			}
