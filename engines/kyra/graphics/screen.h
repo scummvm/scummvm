@@ -657,7 +657,7 @@ public:
 
 	const ScreenDim *_curDim;
 
-	char _lineBreakChar;
+	Common::String _lineBreakChars;
 
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
