@@ -307,6 +307,7 @@ private:
 	void refreshTeamSize();
 	bool isCharacterATeamMember(int16 id);
 	bool isTPK();
+	Common::KeyCode getInput(int16 delay);
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
 	void drawString(char * str, int16 startX, int16 startY, uint16 unkFl);
