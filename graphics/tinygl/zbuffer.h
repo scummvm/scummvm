@@ -122,12 +122,10 @@ public:
 		return _zbuf;
 	}
 
-private:
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
 		pbuf.getRGBAt(pixel, r, g, b);
 	}
 
-public:
 	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
 		if (!_depthTestEnabled)
 			return true;
