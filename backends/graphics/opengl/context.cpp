@@ -207,6 +207,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	}
 
 	// Log features supported by GL context.
+	if (g_context.shadersSupported)
+		debug(5, "GLSL version: %s", g_context.glGetString(GL_SHADING_LANGUAGE_VERSION));
+	debug(5, "OpenGL vendor: %s", g_context.glGetString(GL_VENDOR));
+	debug(5, "OpenGL renderer: %s", g_context.glGetString(GL_RENDERER));
 	debug(5, "OpenGL: NPOT texture support: %d", g_context.NPOTSupported);
 	debug(5, "OpenGL: Shader support: %d", g_context.shadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", g_context.multitextureSupported);
