@@ -532,10 +532,10 @@ bool OpenGLSdlGraphics3dManager::isVSyncEnabled() const {
 }
 
 void OpenGLSdlGraphics3dManager::drawOverlay() {
+	_surfaceRenderer->prepareState();
+
 	glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	_surfaceRenderer->prepareState();
 
 	if (_overlayBackground) {
 		_overlayBackground->draw(_surfaceRenderer);
@@ -564,9 +564,9 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 void OpenGLSdlGraphics3dManager::updateScreen() {
 	if (_frameBuffer) {
 		_frameBuffer->detach();
+		_surfaceRenderer->prepareState();
 		glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_surfaceRenderer->prepareState();
 		_surfaceRenderer->render(_frameBuffer, _gameRect);
 		_surfaceRenderer->restorePreviousState();
 	}
