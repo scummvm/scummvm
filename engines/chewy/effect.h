@@ -45,11 +45,7 @@ public:
 	void rnd_blende(byte *rnd_speicher, byte *sram_speicher,
 		byte *screen, byte *palette, int16 col, int16 skip_line);
 
-	void spr_blende(byte *workpage, byte *ablage,
-		byte *palette, int16 frames, int16 col);
-
-private:
-
+	void spr_blende(byte *workpage, int16 lines, bool mode, int16 col);
 };
 
 } // namespace Chewy
