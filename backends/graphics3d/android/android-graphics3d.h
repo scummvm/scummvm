@@ -141,10 +141,6 @@ private:
 	};
 
 	void clearScreen(FixupType type, byte count = 1);
-#ifdef USE_RGB_COLOR
-	void initTexture(GLESBaseTexture **texture, uint width, uint height,
-	                 const Graphics::PixelFormat *format);
-#endif
 
 private:
 	int _screenChangeID;
