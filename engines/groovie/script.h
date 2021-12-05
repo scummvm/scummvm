@@ -119,7 +119,6 @@ private:
 	uint8 _kbdChar;
 	uint8 _eventKbdChar;
 	uint16 _inputLoopAddress;
-	int16 _inputAction;
 	uint8 _newCursorStyle;
 	uint16 _hotspotTopAction;
 	uint16 _hotspotTopCursor;
@@ -155,6 +154,7 @@ private:
 	uint8 readScriptVar();
 	uint32 getVideoRefString(Common::String &resName);
 
+	void executeInputAction(uint16 address);
 	bool hotspot(Common::Rect rect, uint16 addr, uint8 cursor);
 
 	void loadgame(uint slot);

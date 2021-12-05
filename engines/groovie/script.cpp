@@ -230,7 +230,7 @@ void Script::directGameLoad(int slot) {
 		_savedCode = nullptr;
 	}
 
-	uint16 targetInstruction;
+	uint16 targetInstruction = 0;
 	const byte *midiInitScript = nullptr;
 	uint8 midiInitScriptSize = 0;
 
@@ -384,6 +384,7 @@ uint8 Script::readScriptChar(bool allow7C, bool limitVal, bool limitVar) {
 		parta = readScriptChar(false, false, false);
 		partb = readScriptChar(false, true, true);
 		result = _variables[0x0A * parta + partb + 0x19];
+		debugC(7, kDebugScript, "readScriptChar got | for var %d with value %d", (int)(0x0A * parta + partb + 0x19), (int)result);
 	} else if (data == kVarTypeArray) {
 		// Index an array
 		data = readScript8bits();
@@ -391,20 +392,27 @@ uint8 Script::readScriptChar(bool allow7C, bool limitVal, bool limitVar) {
 			data &= 0x7F;
 		}
 		result = _variables[data - 0x61];
+		debugC(7, kDebugScript, "readScriptChar got # for var %d with value %d", (int)(data - 0x61), (int)result);
 	} else {
 		// Immediate value
 		result = data - 0x30;
+		debugC(7, kDebugScript, "readScriptChar got %d", (int)result);
 	}
 	return result;
 }
 
 void Script::readScriptString(Common::String &str) {
 	byte c;
+	Common::String orig;
+
+	debugC(5, kDebugScript, "readScriptString start");
 
 	while ((c = readScript8bits())) {
+		orig += c;
 		switch (c) {
 		case kVarTypeArray:
 			c = readScript8bits();
+			orig += Common::String::format("%d", (int)(c - 0x61));
 			c = _variables[c - 0x61] + 0x30;
 			if (_version == kGroovieT7G) {
 				if (c >= 0x41 && c <= 0x5A) {
@@ -416,6 +424,7 @@ void Script::readScriptString(Common::String &str) {
 			uint8 parta, partb;
 			parta = readScriptChar(false, false, false);
 			partb = readScriptChar(false, false, false);
+			orig += Common::String::format("%d", (int)(0x0A * parta + partb + 0x19));
 			c = _variables[0x0A * parta + partb + 0x19] + 0x30;
 			break;
 		default:
@@ -428,6 +437,8 @@ void Script::readScriptString(Common::String &str) {
 		// Append the current character at the end of the string
 		str += c;
 	}
+
+	debugC(5, kDebugScript, "readScriptString orig: %s, ret: %s", orig.c_str(), str.c_str());
 }
 
 uint32 Script::getVideoRefString(Common::String &resName) {
@@ -435,12 +446,26 @@ uint32 Script::getVideoRefString(Common::String &resName) {
 	readScriptString(resName);
 
 	// Add a trailing dot
-	resName += 0x2E;
+	resName += '.';
 
 	debugCN(0, kDebugScript, "%s", resName.c_str());
 
 	// Get the fileref of the resource
 	return _vm->_resMan->getRef(resName);
+}
+
+void Script::executeInputAction(uint16 address) {
+	debugC(1, kDebugScript, "Groovie::Script: executeInputAction 0x%04X", (uint)address);
+
+	// Jump to the planned address
+	_currentInstruction = address;
+
+	// Exit the input loop
+	_inputLoopAddress = 0;
+
+	// Force immediate hiding of the mouse cursor (required when the next video just contains audio)
+	_vm->_grvCursorMan->show(false);
+	_vm->_graphicsMan->change();
 }
 
 bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
@@ -458,11 +483,6 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 		_vm->_system->updateScreen();
 	}
 
-	// If there's an already planned action, do nothing
-	if (_inputAction != -1) {
-		return false;
-	}
-
 	if (contained) {
 		// Change the mouse cursor
 		if (_newCursorStyle == 5) {
@@ -472,7 +492,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 		// If clicked with the mouse, jump to the specified address
 		if (_mouseClicked) {
 			_lastCursor = cursor;
-			_inputAction = address;
+			executeInputAction(address);
 		}
 	}
 
@@ -927,8 +947,7 @@ void Script::o_inputloopstart() {	//0x0B
 #endif
 	}
 
-	// Reset the input action and the mouse cursor
-	_inputAction = -1;
+	// Reset the mouse cursor
 	_newCursorStyle = 5;
 
 	// Save the input loop address
@@ -947,21 +966,11 @@ void Script::o_keyboardaction() {
 	uint8 val = readScript8bits();
 	uint16 address = readScript16bits();
 
-	// If there's an already planned action, do nothing
-	if (_inputAction != -1) {
-		debugC(5, kDebugScript, "Groovie::Script: Test key == 0x%02X @0x%04X - skipped", val, address);
-		return;
-	}
-
 	// Check the typed key
 	if (_kbdChar == val) {
 		debugC(5, kDebugScript, "Groovie::Script: Test key == 0x%02X @0x%04X - match", val, address);
 
-		// Exit the input loop
-		_inputLoopAddress = 0;
-
-		// Save the action address
-		_inputAction = address;
+		executeInputAction(address);
 	} else {
 		debugC(5, kDebugScript, "Groovie::Script: Test key == 0x%02X @0x%04X", val, address);
 	}
@@ -1052,20 +1061,6 @@ void Script::o_inputloopend() {
 	if (_hotspotLeftAction) {
 		Common::Rect rect(0, 0, 80, 480);
 		hotspot(rect, _hotspotLeftAction, 1);
-	}
-
-	// Actually execute the planned action
-	if (_inputAction != -1) {
-		// Jump to the planned address
-		_currentInstruction = _inputAction;
-
-		// Exit the input loop
-		_inputLoopAddress = 0;
-		_vm->_grvCursorMan->show(false);
-
-		// Force immediate hiding of the mouse cursor (required when the next
-		// video just contains audio)
-		_vm->_graphicsMan->change();
 	}
 
 	// Nothing to do
