@@ -475,8 +475,7 @@ void KyraEngine_v1::updateInput() {
 		}
 	}
 
-	if (updateScreen)
-		_system->updateScreen();
+	screen()->updateBackendScreen(updateScreen);
 }
 
 void KyraEngine_v1::removeInputTop() {

@@ -100,7 +100,7 @@ void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int 
 
 	getPalette(0).copy(tempPal, startIndex, size);
 	setScreenPalette(getPalette(0));
-	_system->updateScreen();
+	updateBackendScreen(true);
 }
 
 void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
@@ -355,7 +355,7 @@ void Screen_LoK_16::fadePalette(const Palette &pal, int delay, const UpdateFunct
 			if (upFunc && upFunc->isValid())
 				(*upFunc)();
 			else
-				_system->updateScreen();
+				updateBackendScreen(true);
 
 			_vm->delay((delay >> 5) * _vm->tickLength());
 		}

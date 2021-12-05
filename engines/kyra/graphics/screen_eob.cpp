@@ -252,7 +252,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	// we do not use Screen::updateScreen here
 	// so we can be sure that changes to page 0
 	// are NOT updated on the real screen here
-	_system->updateScreen();
+	updateBackendScreen(true);
 }
 
 void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size) {

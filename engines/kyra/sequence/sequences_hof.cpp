@@ -1811,7 +1811,7 @@ int SeqPlayer_HOF::cbHOF_title(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	} else if (frm == 25 && _startupSaveLoadable) {
 		int cp = _screen->setCurPage(0);
 		_screen->showMouse();
-		_system->updateScreen();
+		_screen->updateBackendScreen(true);
 		_result = _menu->handle(_vm->gameFlags().lang == Common::ZH_TWN ? 12 : 11) + 1;
 		_updateAnimations = false;
 

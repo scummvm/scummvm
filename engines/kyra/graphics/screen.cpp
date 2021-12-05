@@ -35,6 +35,9 @@
 #include "graphics/palette.h"
 #include "graphics/sjis.h"
 
+
+#define KYRA_SCREEN_IDLE_REFRESH
+
 namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
@@ -81,6 +84,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 
 	_lineBreakChar = (_vm->gameFlags().platform == Common::kPlatformMacintosh) ? '\n' : '\r';
 	_yTransOffs = 0;
+
+	_idleUpdateTimer = 0;
 }
 
 Screen::~Screen() {
@@ -363,8 +368,21 @@ void Screen::updateScreen() {
 	}
 
 	if (needRealUpdate)
-		_system->updateScreen();
+		updateBackendScreen(true);
 }
+
+#ifdef KYRA_SCREEN_IDLE_REFRESH
+void Screen::updateBackendScreen(bool force) {
+	if (force || _system->getMillis() >= _idleUpdateTimer) {
+		_system->updateScreen();
+		_idleUpdateTimer = _system->getMillis() + (force ? SCREEN_IDLEREFRESH_RESTART_MSEC : SCREEN_IDLEREFRESH_RATE_MSEC);
+	}
+}
+#else
+void Screen::updateBackendScreen(bool) {
+	_system->updateScreen();
+}
+#endif
 
 void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
@@ -789,7 +807,7 @@ void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upF
 		else if (_useHiColorScreen)
 			updateScreen();
 		else
-			_system->updateScreen();
+			updateBackendScreen(true);
 
 		if (!refreshed)
 			break;
@@ -1151,7 +1169,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 
 	if (_vm->shouldQuit()) {
 		copyRegion(sx, sy, sx, sy, w, h, srcPage, dstPage);
-		_system->updateScreen();
+		updateBackendScreen(true);
 	}
 }
 
@@ -3051,7 +3069,7 @@ void Screen::showMouse() {
 
 		// We need to call OSystem::updateScreen here, else the mouse cursor
 		// will only be visible on mouse movment.
-		_system->updateScreen();
+		updateBackendScreen(true);
 	}
 
 	if (_mouseLockCount > 0)
@@ -3115,7 +3133,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	// we do not use Screen::updateScreen here
 	// so we can be sure that changes to page 0
 	// are NOT updated on the real screen here
-	_system->updateScreen();
+	updateBackendScreen(true);
 }
 
 Palette &Screen::getPalette(int num) {
@@ -3266,7 +3284,7 @@ void Screen::shakeScreen(int times) {
 							_vm->quitGame();
 					}
 				}
-				_system->updateScreen();
+				updateBackendScreen(true);
 				now = _system->getMillis();
 				_system->delayMillis(MIN<uint>(end - now, 10));
 			}

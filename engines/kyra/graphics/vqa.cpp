@@ -654,7 +654,7 @@ void VQAMovie::play() {
 				_system->copyRectToScreen((const byte *)surface->getBasePtr(0, 0), surface->pitch, x, y, width, height);
 			}
 
-			_system->updateScreen();
+			_screen->updateBackendScreen(true);
 			_system->delayMillis(10);
 		}
 	}

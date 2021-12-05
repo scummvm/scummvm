@@ -1664,7 +1664,7 @@ void KyraEngine_HoF::cauldronItemAnim(int item) {
 			mouseY -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
 		setMousePos(mouseX, mouseY);
-		_system->updateScreen();
+		_screen->updateBackendScreen(true);
 		delayUntil(waitEnd);
 	}
 
@@ -1675,7 +1675,7 @@ void KyraEngine_HoF::cauldronItemAnim(int item) {
 			mouseX -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
 		setMousePos(mouseX, mouseY);
-		_system->updateScreen();
+		_screen->updateBackendScreen(true);
 		delayUntil(waitEnd);
 	}
 

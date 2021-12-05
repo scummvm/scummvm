@@ -535,7 +535,7 @@ void GUI_LoK::getInput() {
 	_vm->removeInputTop();
 
 	if (now - _lastScreenUpdate > 50) {
-		_vm->_system->updateScreen();
+		_screen->updateBackendScreen(true);
 		_lastScreenUpdate = now;
 	}
 

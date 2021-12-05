@@ -116,7 +116,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 
 			if (nextTime - _system->getMillis() >= 10) {
 				_system->delayMillis(10);
-				_system->updateScreen();
+				_screen->updateBackendScreen(true);
 			}
 		}
 	}

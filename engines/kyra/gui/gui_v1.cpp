@@ -386,7 +386,7 @@ void GUI_v1::checkTextfieldInput() {
 			_vm->_mouseX = pos.x;
 			_vm->_mouseY = pos.y;
 
-			_vm->_system->updateScreen();
+			_screen->updateBackendScreen(true);
 			_lastScreenUpdate = now;
 			} break;
 
@@ -396,7 +396,7 @@ void GUI_v1::checkTextfieldInput() {
 	}
 
 	if (now - _lastScreenUpdate > 50) {
-		_vm->_system->updateScreen();
+		_screen->updateBackendScreen(true);
 		_lastScreenUpdate = now;
 	}
 
@@ -469,7 +469,7 @@ bool MainMenu::getInput() {
 	}
 
 	if (updateScreen)
-		_system->updateScreen();
+		_screen->updateBackendScreen(true);
 	return false;
 }
 

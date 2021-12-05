@@ -176,7 +176,7 @@ bool SoundMidiPC::init() {
 
 	Common::Event event;
 	while (isPlaying() && !_vm->shouldQuit()) {
-		_vm->_system->updateScreen();
+		_vm->screen()->updateBackendScreen(true);
 		_vm->_eventMan->pollEvent(event);
 		_vm->_system->delayMillis(10);
 	}

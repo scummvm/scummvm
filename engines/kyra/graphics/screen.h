@@ -508,7 +508,10 @@ public:
 		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
 		SCREEN_OVL_SJIS_SIZE = 640 * 400,
 		SCREEN_PAGE_NUM = 16,
-		SCREEN_OVLS_NUM = 6
+		SCREEN_OVLS_NUM = 6,
+
+		SCREEN_IDLEREFRESH_RESTART_MSEC = 250,
+		SCREEN_IDLEREFRESH_RATE_MSEC = 16
 	};
 
 	enum CopyRegionFlags {
@@ -553,7 +556,11 @@ public:
 	virtual void setResolution();
 	virtual void enableHiColorMode(bool enabled);
 
+	// refresh
 	void updateScreen();
+	void updateBackendScreen(bool force);
+
+	uint32 _idleUpdateTimer;
 
 	// debug functions
 	bool queryScreenDebug() const { return _debugEnabled; }
