@@ -825,6 +825,9 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			delete _videoFile;
 		}
 
+		if (fileref == UINT_MAX)
+			return true;
+
 		// Try to open the new file
 		ResInfo resInfo;
 		if (!_vm->_resMan->getResInfo(fileref, resInfo)) {

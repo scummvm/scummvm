@@ -293,7 +293,7 @@ uint32 ResMan_v2::getRef(Common::String name) {
 
 	// Verify we really found the resource
 	if (!found) {
-		error("Groovie::Resource: Couldn't find resource %s", name.c_str());
+		warning("Groovie::Resource: Couldn't find resource %s", name.c_str());
 		return (uint32)-1;
 	}
 
