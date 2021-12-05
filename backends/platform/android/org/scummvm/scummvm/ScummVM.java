@@ -297,6 +297,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				_buffer_size,
 				AudioTrack.MODE_STREAM,
 				AudioManager.AUDIO_SESSION_ID_GENERATE);
+
+			// Keep track of the actual obtained audio buffer size, if supported
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+				_buffer_size = _audio_track.getBufferSizeInFrames();
 		} else {
 			//support for Android KitKat or lower
 			_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
