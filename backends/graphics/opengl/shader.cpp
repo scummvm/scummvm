@@ -253,7 +253,7 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 }
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
-	const GLchar *versionSource = g_context.type == kContextGLES2 ? "#version 100\n" : "#version 120\n";
+	const GLchar *versionSource = g_context.type == kContextGLES2 ? "#version 100\n" : "#version 110\n";
 	GLshader handle;
 	GL_ASSIGN(handle, glCreateShader(shaderType));
 	if (!handle) {
