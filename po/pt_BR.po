@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-12-05 01:26+0000\n"
+"PO-Revision-Date: 2021-12-07 00:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5081,12 +5081,14 @@ msgstr "Reduz a dificuldade da Inteligência Artificial nos quebra-cabeças"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Música de Créditos Atualizada"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Reproduz a música The Final Hour durante os créditos em vez de reutilizar "
+"músicas MIDI"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
