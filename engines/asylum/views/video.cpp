@@ -295,7 +295,13 @@ void VideoPlayer::loadSubtitles() {
 			if (!tok)
 				error("[Video::loadSubtitles] Invalid subtitle (resource id missing)!");
 
-			newSubtitle.resourceId = (ResourceId)(atoi(tok) + video_subtitle_resourceIds[_currentMovie]);
+			int index = atoi(tok);
+
+			// Original bug: index starts from 1 instead of 0
+			if (_currentMovie == 36)
+				index--;
+
+			newSubtitle.resourceId = (ResourceId)(index + video_subtitle_resourceIds[_currentMovie]);
 
 			tok = strtok(nullptr, " ");
 
