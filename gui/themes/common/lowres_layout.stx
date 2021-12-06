@@ -1308,6 +1308,7 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 
