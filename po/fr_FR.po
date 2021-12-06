@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-12-03 22:26+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2021-12-06 12:06+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5101,20 +5101,24 @@ msgstr "Joue les vidéos plus rapidement"
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "IA plus facile"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
+"Réduit la performance de l'intelligence articielle, rendant ainsi les jeux "
+"plus faciles"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Musique de générique alternative"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Joue la chanson The Final Hour pendant le générique au lieu de réutiliser "
+"des musiques MIDI"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
