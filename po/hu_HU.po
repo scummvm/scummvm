@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-12-03 01:26+0000\n"
+"PO-Revision-Date: 2021-12-06 12:42+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5044,20 +5044,22 @@ msgstr "Filmek lejátszása nagyobb sebességgel"
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "Egyszerűbb MI"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Csökkenti az MI rejtvények nehézségét"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Frissített Stáblista Zene"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"A MIDI-dalok újrafelhasználása helyett játssza le a The Final Hour című dalt "
+"a stáblista alatt"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
