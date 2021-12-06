@@ -34,19 +34,19 @@ namespace TinyGL {
 
 GLContext *gl_ctx;
 
-void GLContext::initSharedState(GLContext *c) {
-	GLSharedState *s = &c->shared_state;
+void GLContext::initSharedState() {
+	GLSharedState *s = &shared_state;
 	s->lists = (GLList **)gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
 	s->texture_hash_table = (GLTexture **)gl_zalloc(sizeof(GLTexture *) * TEXTURE_HASH_TABLE_SIZE);
 
-	c->alloc_texture(c, 0);
+	alloc_texture(0);
 }
 
-void GLContext::endSharedState(GLContext *c) {
-	GLSharedState *s = &c->shared_state;
+void GLContext::endSharedState() {
+	GLSharedState *s = &shared_state;
 
 	uint h = 0;
-	c->free_texture(c, h);
+	free_texture(h);
 	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
@@ -63,9 +63,7 @@ void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, 
 }
 
 void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
-	GLContext *c = gl_ctx;
 	GLViewport *v;
-	assert(c);
 
 	if ((textureSize & (textureSize - 1)))
 		error("glInit: texture size not power of two: %d", textureSize);
@@ -73,20 +71,20 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	if (textureSize <= 1 || textureSize > 4096)
 		error("glInit: texture size not allowed: %d", textureSize);
 
-	c->_enableDirtyRectangles = dirtyRectsEnable;
+	_enableDirtyRectangles = dirtyRectsEnable;
 
-	FrameBuffer *zbuffer = c->fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
+	FrameBuffer *zbuffer = fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
 
-	c->fb->_textureSize = c->_textureSize = textureSize;
-	c->fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
-	c->renderRect = Common::Rect(0, 0, zbuffer->xsize, zbuffer->ysize);
+	fb->_textureSize = _textureSize = textureSize;
+	fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
+	renderRect = Common::Rect(0, 0, zbuffer->xsize, zbuffer->ysize);
 
 	// allocate GLVertex array
-	c->vertex_max = POLYGON_MAX_VERTEX;
-	c->vertex = (GLVertex *)gl_malloc(POLYGON_MAX_VERTEX * sizeof(GLVertex));
+	vertex_max = POLYGON_MAX_VERTEX;
+	vertex = (GLVertex *)gl_malloc(POLYGON_MAX_VERTEX * sizeof(GLVertex));
 
 	// viewport
-	v = &c->viewport;
+	v = &viewport;
 	v->xmin = 0;
 	v->ymin = 0;
 	v->xsize = zbuffer->xsize;
@@ -94,19 +92,19 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	v->updated = 1;
 
 	// shared state
-	c->initSharedState(c);
+	initSharedState();
 
 	// lists
 
-	c->exec_flag = 1;
-	c->compile_flag = 0;
-	c->print_flag = 0;
+	exec_flag = 1;
+	compile_flag = 0;
+	print_flag = 0;
 
-	c->in_begin = 0;
+	in_begin = 0;
 
 	// lights
 	for (int i = 0; i < T_MAX_LIGHTS; i++) {
-		GLLight *l = &c->lights[i];
+		GLLight *l = &lights[i];
 		l->ambient = Vector4(0, 0, 0, 1);
 		if (i == 0) {
 			l->diffuse = Vector4(1, 1, 1, 1);
@@ -131,15 +129,15 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 		l->next = NULL;
 		l->prev = NULL;
 	}
-	c->first_light = NULL;
-	c->ambient_light_model = Vector4(0.2f, 0.2f, 0.2f, 1);
-	c->local_light_model = 0;
-	c->lighting_enabled = 0;
-	c->light_model_two_side = 0;
+	first_light = NULL;
+	ambient_light_model = Vector4(0.2f, 0.2f, 0.2f, 1);
+	local_light_model = 0;
+	lighting_enabled = 0;
+	light_model_two_side = 0;
 
 	// default materials */
 	for (int i = 0; i < 2; i++) {
-		GLMaterial *m = &c->materials[i];
+		GLMaterial *m = &materials[i];
 		m->emission = Vector4(0, 0, 0, 1);
 		m->ambient = Vector4(0.2f, 0.2f, 0.2f, 1);
 		m->diffuse = Vector4(0.8f, 0.8f, 0.8f, 1);
@@ -147,55 +145,55 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 		m->has_specular = false;
 		m->shininess = 0;
 	}
-	c->current_color_material_mode = TGL_FRONT_AND_BACK;
-	c->current_color_material_type = TGL_AMBIENT_AND_DIFFUSE;
-	c->color_material_enabled = 0;
+	current_color_material_mode = TGL_FRONT_AND_BACK;
+	current_color_material_type = TGL_AMBIENT_AND_DIFFUSE;
+	color_material_enabled = 0;
 
 	// textures
-	c->glInitTextures(c);
+	glInitTextures();
 
 	// default state
-	c->current_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	current_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	c->current_normal = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	current_normal = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 
-	c->current_edge_flag = 1;
+	current_edge_flag = 1;
 
-	c->current_tex_coord = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	current_tex_coord = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	c->polygon_mode_front = TGL_FILL;
-	c->polygon_mode_back = TGL_FILL;
+	polygon_mode_front = TGL_FILL;
+	polygon_mode_back = TGL_FILL;
 
-	c->current_front_face = 0; // 0 = GL_CCW  1 = GL_CW
-	c->current_cull_face = TGL_BACK;
-	c->current_shade_model = TGL_SMOOTH;
-	c->cull_face_enabled = 0;
+	current_front_face = 0; // 0 = GL_CCW  1 = GL_CW
+	current_cull_face = TGL_BACK;
+	current_shade_model = TGL_SMOOTH;
+	cull_face_enabled = 0;
 
 	// clear
-	c->clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	c->clear_depth = 1.0f;
+	clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	clear_depth = 1.0f;
 
 	// selection
-	c->render_mode = TGL_RENDER;
-	c->select_buffer = NULL;
-	c->name_stack_size = 0;
+	render_mode = TGL_RENDER;
+	select_buffer = NULL;
+	name_stack_size = 0;
 
 	// blending
-	c->fb->enableBlending(false);
+	fb->enableBlending(false);
 
 	// alpha test
-	c->fb->enableAlphaTest(false);
+	fb->enableAlphaTest(false);
 
 	// matrix
-	c->matrix_mode = 0;
+	matrix_mode = 0;
 
-	c->matrix_stack_depth_max[0] = MAX_MODELVIEW_STACK_DEPTH;
-	c->matrix_stack_depth_max[1] = MAX_PROJECTION_STACK_DEPTH;
-	c->matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;
+	matrix_stack_depth_max[0] = MAX_MODELVIEW_STACK_DEPTH;
+	matrix_stack_depth_max[1] = MAX_PROJECTION_STACK_DEPTH;
+	matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;
 
 	for (int i = 0; i < 3; i++) {
-		c->matrix_stack[i] = (Matrix4 *)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(Matrix4));
-		c->matrix_stack_ptr[i] = c->matrix_stack[i];
+		matrix_stack[i] = (Matrix4 *)gl_zalloc(matrix_stack_depth_max[i] * sizeof(Matrix4));
+		matrix_stack_ptr[i] = matrix_stack[i];
 	}
 
 	tglMatrixMode(TGL_PROJECTION);
@@ -211,38 +209,38 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 
 	tglDepthFunc(TGL_LESS);
 
-	c->matrix_model_projection_updated = 1;
+	matrix_model_projection_updated = 1;
 
 	// opengl 1.1 arrays
-	c->client_states = 0;
+	client_states = 0;
 
 	// opengl 1.1 polygon offset
-	c->offset_states = 0;
-	c->offset_factor = 0.0f;
-	c->offset_units = 0.0f;
+	offset_states = 0;
+	offset_factor = 0.0f;
+	offset_units = 0.0f;
 
 	// shadow mode
-	c->shadow_mode = 0;
+	shadow_mode = 0;
 
 	// clear the resize callback function pointer
-	c->gl_resize_viewport = NULL;
+	gl_resize_viewport = NULL;
 
 	// specular buffer
-	c->specbuf_first = NULL;
-	c->specbuf_used_counter = 0;
-	c->specbuf_num_buffers = 0;
+	specbuf_first = NULL;
+	specbuf_used_counter = 0;
+	specbuf_num_buffers = 0;
 
 	// depth test
-	c->depth_test = 0;
+	depth_test = 0;
 
-	c->color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
+	color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
 
 	const int kDrawCallMemory = 5 * 1024 * 1024;
 
-	c->_currentAllocatorIndex = 0;
-	c->_drawCallAllocator[0].initialize(kDrawCallMemory);
-	c->_drawCallAllocator[1].initialize(kDrawCallMemory);
-	c->_enableDirtyRectangles = true;
+	_currentAllocatorIndex = 0;
+	_drawCallAllocator[0].initialize(kDrawCallMemory);
+	_drawCallAllocator[1].initialize(kDrawCallMemory);
+	_enableDirtyRectangles = true;
 
 	TinyGL::Internal::tglBlitResetScissorRect();
 }
@@ -256,16 +254,14 @@ void destroyContext() {
 }
 
 void GLContext::deinit() {
-	GLContext *c = gl_get_context();
+	disposeDrawCallLists();
+	disposeResources();
 
-	c->disposeDrawCallLists(c);
-	c->disposeResources(c);
-
-	c->specbuf_cleanup(c);
+	specbuf_cleanup();
 	for (int i = 0; i < 3; i++)
-		gl_free(c->matrix_stack[i]);
-	c->endSharedState(c);
-	gl_free(c->vertex);
+		gl_free(matrix_stack[i]);
+	endSharedState();
+	gl_free(vertex);
 }
 
 } // end of namespace TinyGL

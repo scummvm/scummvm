@@ -46,7 +46,7 @@ namespace TinyGL {
 
 #define ZB_POINT_ST_FRAC_BITS 14
 #define ZB_POINT_ST_FRAC_SHIFT     (ZB_POINT_ST_FRAC_BITS - 1)
-#define ZB_POINT_ST_MAX            ( (c->_textureSize << ZB_POINT_ST_FRAC_BITS) - 1 )
+#define ZB_POINT_ST_MAX            ( (_textureSize << ZB_POINT_ST_FRAC_BITS) - 1 )
 
 #define ZB_POINT_RED_BITS         16
 #define ZB_POINT_RED_FRAC_BITS    8

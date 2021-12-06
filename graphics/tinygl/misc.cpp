@@ -40,13 +40,13 @@ void GLContext::glopViewport(GLContext *c, GLParam *p) {
 
 	// we may need to resize the zbuffer
 
-	if (c->viewport.xmin != xmin || c->viewport.ymin != ymin ||
-			c->viewport.xsize != xsize || c->viewport.ysize != ysize) {
+	if (viewport.xmin != xmin || viewport.ymin != ymin ||
+			viewport.xsize != xsize || viewport.ysize != ysize) {
 
 		xsize_req = xmin + xsize;
 		ysize_req = ymin + ysize;
 
-		if (c->gl_resize_viewport && c->gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
+		if (gl_resize_viewport && gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
 			error("glViewport: error while resizing display");
 		}
 
@@ -56,12 +56,12 @@ void GLContext::glopViewport(GLContext *c, GLParam *p) {
 			error("glViewport: size too small");
 		}
 
-		c->viewport.xmin = xmin;
-		c->viewport.ymin = ymin;
-		c->viewport.xsize = xsize;
-		c->viewport.ysize = ysize;
+		viewport.xmin = xmin;
+		viewport.ymin = ymin;
+		viewport.xsize = xsize;
+		viewport.ysize = ysize;
 
-		c->viewport.updated = 1;
+		viewport.updated = 1;
 	}
 }
 
@@ -71,63 +71,63 @@ void GLContext::glopEnableDisable(GLContext *c, GLParam *p) {
 
 	switch (code) {
 	case TGL_CULL_FACE:
-		c->cull_face_enabled = v;
+		cull_face_enabled = v;
 		break;
 	case TGL_LIGHTING:
-		c->lighting_enabled = v;
+		lighting_enabled = v;
 		break;
 	case TGL_COLOR_MATERIAL:
-		c->color_material_enabled = v;
+		color_material_enabled = v;
 		break;
 	case TGL_TEXTURE_2D:
-		c->texture_2d_enabled = v;
+		texture_2d_enabled = v;
 		break;
 	case TGL_NORMALIZE:
-		c->normalize_enabled = v;
+		normalize_enabled = v;
 		break;
 	case TGL_DEPTH_TEST:
-		c->depth_test = v;
-		c->fb->enableDepthTest(v);
+		depth_test = v;
+		fb->enableDepthTest(v);
 		break;
 	case TGL_ALPHA_TEST:
-		c->fb->enableAlphaTest(v);
+		fb->enableAlphaTest(v);
 		break;
 	case TGL_BLEND:
-		c->fb->enableBlending(v);
+		fb->enableBlending(v);
 		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
-			c->offset_states |= TGL_OFFSET_FILL;
+			offset_states |= TGL_OFFSET_FILL;
 		else
-			c->offset_states &= ~TGL_OFFSET_FILL;
+			offset_states &= ~TGL_OFFSET_FILL;
 		break;
 	case TGL_POLYGON_OFFSET_POINT:
 		if (v)
-			c->offset_states |= TGL_OFFSET_POINT;
+			offset_states |= TGL_OFFSET_POINT;
 		else
-			c->offset_states &= ~TGL_OFFSET_POINT;
+			offset_states &= ~TGL_OFFSET_POINT;
 		break;
 	case TGL_POLYGON_OFFSET_LINE:
 		if (v)
-			c->offset_states |= TGL_OFFSET_LINE;
+			offset_states |= TGL_OFFSET_LINE;
 		else
-			c->offset_states &= ~TGL_OFFSET_LINE;
+			offset_states &= ~TGL_OFFSET_LINE;
 		break;
 	case TGL_SHADOW_MASK_MODE:
 		if (v)
-			c->shadow_mode |= 1;
+			shadow_mode |= 1;
 		else
-			c->shadow_mode &= ~1;
+			shadow_mode &= ~1;
 		break;
 	case TGL_SHADOW_MODE:
 		if (v)
-			c->shadow_mode |= 2;
+			shadow_mode |= 2;
 		else
-			c->shadow_mode &= ~2;
+			shadow_mode &= ~2;
 		break;
 	default:
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
-			c->gl_enable_disable_light(c, code - TGL_LIGHT0, v);
+			gl_enable_disable_light(code - TGL_LIGHT0, v);
 		} else {
 			//warning("glEnableDisable: 0x%X not supported.", code);
 		}
@@ -138,33 +138,33 @@ void GLContext::glopEnableDisable(GLContext *c, GLParam *p) {
 void GLContext::glopBlendFunc(GLContext *c, GLParam *p) {
 	TGLenum sfactor = p[1].i;
 	TGLenum dfactor = p[2].i;
-	c->fb->setBlendingFactors(sfactor, dfactor);
+	fb->setBlendingFactors(sfactor, dfactor);
 }
 
 void GLContext::glopAlphaFunc(GLContext *c, GLParam *p) {
 	TGLenum func = p[1].i;
 	float ref = p[2].f;
-	c->fb->setAlphaTestFunc(func, (int)(ref * 255));
+	fb->setAlphaTestFunc(func, (int)(ref * 255));
 }
 
 void GLContext::glopDepthFunc(GLContext *c, GLParam *p) {
 	TGLenum func = p[1].i;
-	c->fb->setDepthFunc(func);
+	fb->setDepthFunc(func);
 }
 
 void GLContext::glopShadeModel(GLContext *c, GLParam *p) {
 	int code = p[1].i;
-	c->current_shade_model = code;
+	current_shade_model = code;
 }
 
 void GLContext::glopCullFace(GLContext *c, GLParam *p) {
 	int code = p[1].i;
-	c->current_cull_face = code;
+	current_cull_face = code;
 }
 
 void GLContext::glopFrontFace(GLContext *c, GLParam *p) {
 	int code = p[1].i;
-	c->current_front_face = code;
+	current_front_face = code;
 }
 
 void GLContext::glopPolygonMode(GLContext *c, GLParam *p) {
@@ -173,14 +173,14 @@ void GLContext::glopPolygonMode(GLContext *c, GLParam *p) {
 
 	switch (face) {
 	case TGL_BACK:
-		c->polygon_mode_back = mode;
+		polygon_mode_back = mode;
 		break;
 	case TGL_FRONT:
-		c->polygon_mode_front = mode;
+		polygon_mode_front = mode;
 		break;
 	case TGL_FRONT_AND_BACK:
-		c->polygon_mode_front = mode;
-		c->polygon_mode_back = mode;
+		polygon_mode_front = mode;
+		polygon_mode_back = mode;
 		break;
 	default:
 		assert(0);
@@ -192,16 +192,16 @@ void GLContext::glopHint(GLContext *, GLParam *) {
 }
 
 void GLContext::glopPolygonOffset(GLContext *c, GLParam *p) {
-	c->offset_factor = p[1].f;
-	c->offset_units = p[2].f;
+	offset_factor = p[1].f;
+	offset_units = p[2].f;
 }
 
 void GLContext::glopColorMask(GLContext *c, TinyGL::GLParam *p) {
-	c->color_mask = p[1].i;
+	color_mask = p[1].i;
 }
 
 void GLContext::glopDepthMask(GLContext *c, TinyGL::GLParam *p) {
-	c->fb->enableDepthWrite(p[1].i);
+	fb->enableDepthWrite(p[1].i);
 }
 
 } // end of namespace TinyGL

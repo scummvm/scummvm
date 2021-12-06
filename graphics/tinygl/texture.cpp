@@ -46,16 +46,16 @@ static GLTexture *find_texture(GLContext *c, uint h) {
 	return nullptr;
 }
 
-void GLContext::free_texture(GLContext *c, uint h) {
-	free_texture(c, find_texture(c, h));
+void GLContext::free_texture(uint h) {
+	free_texture(find_texture(this, h));
 }
 
-void GLContext::free_texture(GLContext *c, GLTexture *t) {
+void GLContext::free_texture(GLTexture *t) {
 	GLTexture **ht;
 	GLImage *im;
 
 	if (!t->prev) {
-		ht = &c->shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
+		ht = &shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
 		*ht = t->next;
 	} else {
 		t->prev->next = t->next;
@@ -74,12 +74,12 @@ void GLContext::free_texture(GLContext *c, GLTexture *t) {
 	gl_free(t);
 }
 
-GLTexture *GLContext::alloc_texture(GLContext *c, uint h) {
+GLTexture *GLContext::alloc_texture(uint h) {
 	GLTexture *t, **ht;
 
 	t = (GLTexture *)gl_zalloc(sizeof(GLTexture));
 
-	ht = &c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
+	ht = &shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
 
 	t->next = *ht;
 	t->prev = nullptr;
@@ -94,22 +94,22 @@ GLTexture *GLContext::alloc_texture(GLContext *c, uint h) {
 	return t;
 }
 
-void GLContext::glInitTextures(GLContext *c) {
-	c->texture_2d_enabled = 0;
-	c->current_texture = find_texture(c, 0);
-	c->maxTextureName = 0;
-	c->texture_mag_filter = TGL_LINEAR;
-	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
+void GLContext::glInitTextures() {
+	texture_2d_enabled = 0;
+	current_texture = find_texture(this, 0);
+	maxTextureName = 0;
+	texture_mag_filter = TGL_LINEAR;
+	texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
 #if defined(SCUMM_LITTLE_ENDIAN)
-	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
+	colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
+	colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
 #else
-	c->colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
+	colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE});
+	colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
 #endif
-	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1});
-	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
+	colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5});
+	colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1});
+	colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
 }
 
 void GLContext::glopBindTexture(GLContext *c, GLParam *p) {
@@ -121,9 +121,9 @@ void GLContext::glopBindTexture(GLContext *c, GLParam *p) {
 
 	t = find_texture(c, texture);
 	if (!t) {
-		t = alloc_texture(c, texture);
+		t = alloc_texture(texture);
 	}
-	c->current_texture = t;
+	current_texture = t;
 }
 
 void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
@@ -147,13 +147,13 @@ void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
 
-	if (c->current_texture == nullptr) {
+	if (current_texture == nullptr) {
 		return;
 	}
-	c->current_texture->versionNumber++;
-	im = &c->current_texture->images[level];
-	im->xsize = c->_textureSize;
-	im->ysize = c->_textureSize;
+	current_texture->versionNumber++;
+	im = &current_texture->images[level];
+	im->xsize = _textureSize;
+	im->ysize = _textureSize;
 	if (im->pixmap) {
 		delete im->pixmap;
 		im->pixmap = nullptr;
@@ -162,8 +162,8 @@ void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 		unsigned int filter;
 		Graphics::PixelFormat pf;
 		bool found = false;
-		Common::Array<struct tglColorAssociation>::const_iterator it = c->colorAssociationList.begin();
-		for (; it != c->colorAssociationList.end(); it++) {
+		Common::Array<struct tglColorAssociation>::const_iterator it = colorAssociationList.begin();
+		for (; it != colorAssociationList.end(); it++) {
 			if (it->format == format &&
 			    it->type == type) {
 				pf = it->pf;
@@ -188,10 +188,10 @@ void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 #endif
 		Graphics::PixelBuffer srcInternal(internalPf, width * height, DisposeAfterUse::YES);
 		srcInternal.copyBuffer(0, width * height, src);
-		if (width > c->_textureSize || height > c->_textureSize)
-			filter = c->texture_mag_filter;
+		if (width > _textureSize || height > _textureSize)
+			filter = texture_mag_filter;
 		else
-			filter = c->texture_min_filter;
+			filter = texture_min_filter;
 		switch (filter) {
 		case TGL_LINEAR_MIPMAP_NEAREST:
 		case TGL_LINEAR_MIPMAP_LINEAR:
@@ -199,14 +199,14 @@ void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 			im->pixmap = new Graphics::BilinearTexelBuffer(
 				srcInternal,
 				width, height,
-				c->_textureSize
+				_textureSize
 			);
 			break;
 		default:
 			im->pixmap = new Graphics::NearestTexelBuffer(
 				srcInternal,
 				width, height,
-				c->_textureSize
+				_textureSize
 			);
 			break;
 		}
@@ -244,16 +244,16 @@ error:
 
 	switch (pname) {
 	case TGL_TEXTURE_WRAP_S:
-		c->texture_wrap_s = param;
+		texture_wrap_s = param;
 		break;
 	case TGL_TEXTURE_WRAP_T:
-		c->texture_wrap_t = param;
+		texture_wrap_t = param;
 		break;
 	case TGL_TEXTURE_MAG_FILTER:
 		switch (param) {
 		case TGL_NEAREST:
 		case TGL_LINEAR:
-			c->texture_mag_filter = param;
+			texture_mag_filter = param;
 			break;
 		default:
 			goto error;
@@ -267,7 +267,7 @@ error:
 		case TGL_NEAREST_MIPMAP_LINEAR:
 		case TGL_NEAREST:
 		case TGL_LINEAR:
-			c->texture_min_filter = param;
+			texture_min_filter = param;
 			break;
 		default:
 			goto error;

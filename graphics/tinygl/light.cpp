@@ -42,9 +42,9 @@ void GLContext::glopMaterial(GLContext *c, GLParam *p) {
 		mode = TGL_BACK;
 	}
 	if (mode == TGL_FRONT)
-		m = &c->materials[0];
+		m = &materials[0];
 	else
-		m = &c->materials[1];
+		m = &materials[1];
 
 	switch (type) {
 	case TGL_EMISSION:
@@ -77,8 +77,8 @@ void GLContext::glopColorMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 
-	c->current_color_material_mode = mode;
-	c->current_color_material_type = type;
+	current_color_material_mode = mode;
+	current_color_material_type = type;
 }
 
 void GLContext::glopLight(GLContext *c, GLParam *p) {
@@ -89,7 +89,7 @@ void GLContext::glopLight(GLContext *c, GLParam *p) {
 
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
-	l = &c->lights[light - TGL_LIGHT0];
+	l = &lights[light - TGL_LIGHT0];
 
 	switch (type) {
 	case TGL_AMBIENT:
@@ -120,7 +120,7 @@ void GLContext::glopLight(GLContext *c, GLParam *p) {
 		l->spot_direction.X = v.X;
 		l->spot_direction.Y = v.Y;
 		l->spot_direction.Z = v.Z;
-		c->matrix_stack_ptr[0]->transform3x3(l->spot_direction, l->norm_spot_direction);
+		matrix_stack_ptr[0]->transform3x3(l->spot_direction, l->norm_spot_direction);
 		l->norm_spot_direction.normalize();
 		break;
 	case TGL_SPOT_EXPONENT:
@@ -153,13 +153,13 @@ void GLContext::glopLightModel(GLContext *c, GLParam *p) {
 
 	switch (pname) {
 	case TGL_LIGHT_MODEL_AMBIENT:
-		c->ambient_light_model = Vector4(p[2].f, p[3].f, p[4].f, p[5].f);
+		ambient_light_model = Vector4(p[2].f, p[3].f, p[4].f, p[5].f);
 		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:
-		c->local_light_model = (int)p[2].f;
+		local_light_model = (int)p[2].f;
 		break;
 	case TGL_LIGHT_MODEL_TWO_SIDE:
-		c->light_model_two_side = (int)p[2].f;
+		light_model_two_side = (int)p[2].f;
 		break;
 	default:
 		warning("glopLightModel: illegal pname: 0x%x", pname);
@@ -176,21 +176,21 @@ static inline float clampf(float a, float min, float max) {
 		return a;
 }
 
-void GLContext::gl_enable_disable_light(GLContext *c, int light, int v) {
-	GLLight *l = &c->lights[light];
+void GLContext::gl_enable_disable_light(int light, int v) {
+	GLLight *l = &lights[light];
 	if (v && !l->enabled) {
 		l->enabled = 1;
-		if (c->first_light != l) {
-			l->next = c->first_light;
-			if (c->first_light)
-				c->first_light->prev = l;
-			c->first_light = l;
+		if (first_light != l) {
+			l->next = first_light;
+			if (first_light)
+				first_light->prev = l;
+			first_light = l;
 			l->prev = NULL;
 		}
 	} else if (!v && l->enabled) {
 		l->enabled = 0;
 		if (!l->prev)
-			c->first_light = l->next;
+			first_light = l->next;
 		else
 			l->prev->next = l->next;
 		if (l->next)
@@ -199,24 +199,24 @@ void GLContext::gl_enable_disable_light(GLContext *c, int light, int v) {
 }
 
 // non optimized lightening model
-void GLContext::gl_shade_vertex(GLContext *c, GLVertex *v) {
+void GLContext::gl_shade_vertex(GLVertex *v) {
 	float R, G, B, A;
 	GLMaterial *m;
 	GLLight *l;
 	Vector3 n, s, d;
 	float dist, tmp, att, dot, dot_spot, dot_spec;
-	int twoside = c->light_model_two_side;
+	int twoside = light_model_two_side;
 
-	m = &c->materials[0];
+	m = &materials[0];
 
 	n = v->normal;
 
-	R = m->emission.X + m->ambient.X * c->ambient_light_model.X;
-	G = m->emission.Y + m->ambient.Y * c->ambient_light_model.Y;
-	B = m->emission.Z + m->ambient.Z * c->ambient_light_model.Z;
+	R = m->emission.X + m->ambient.X * ambient_light_model.X;
+	G = m->emission.Y + m->ambient.Y * ambient_light_model.Y;
+	B = m->emission.Z + m->ambient.Z * ambient_light_model.Z;
 	A = clampf(m->diffuse.W, 0, 1);
 
-	for (l = c->first_light; l != NULL; l = l->next) {
+	for (l = first_light; l != NULL; l = l->next) {
 		float lR, lB, lG;
 
 		// ambient
@@ -273,7 +273,7 @@ void GLContext::gl_shade_vertex(GLContext *c, GLVertex *v) {
 				}
 
 				if (has_specular) {
-					if (c->local_light_model) {
+					if (local_light_model) {
 						Vector3 vcoord;
 						vcoord.X = v->ec.X;
 						vcoord.Y = v->ec.Y;
@@ -297,7 +297,7 @@ void GLContext::gl_shade_vertex(GLContext *c, GLVertex *v) {
 						// TODO: optimize
 						// testing specular buffer code
 						// dot_spec= pow(dot_spec,m->shininess)
-						specbuf = c->specbuf_get_buffer(c, m->shininess_i, m->shininess);
+						specbuf = specbuf_get_buffer(m->shininess_i, m->shininess);
 						tmp = dot_spec * SPECULAR_BUFFER_SIZE;
 						if (tmp > SPECULAR_BUFFER_SIZE)
 							idx = SPECULAR_BUFFER_SIZE;
@@ -318,10 +318,10 @@ void GLContext::gl_shade_vertex(GLContext *c, GLVertex *v) {
 		B += att * lB;
 	}
 
-	v->color.X = clampf(c->current_color.X * R, 0, 1);
-	v->color.Y = clampf(c->current_color.Y * G, 0, 1);
-	v->color.Z = clampf(c->current_color.Z * B, 0, 1);
-	v->color.W = c->current_color.W * A;
+	v->color.X = clampf(current_color.X * R, 0, 1);
+	v->color.Y = clampf(current_color.Y * G, 0, 1);
+	v->color.Z = clampf(current_color.Z * B, 0, 1);
+	v->color.W = current_color.W * A;
 }
 
 } // end of namespace TinyGL

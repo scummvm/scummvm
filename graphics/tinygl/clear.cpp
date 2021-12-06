@@ -32,19 +32,19 @@
 namespace TinyGL {
 
 void GLContext::glopClearColor(GLContext *c, GLParam *p) {
-	c->clear_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
+	clear_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 }
 
 void GLContext::glopClearDepth(GLContext *c, GLParam *p) {
-	c->clear_depth = p[1].f;
+	clear_depth = p[1].f;
 }
 
 void GLContext::glopClear(GLContext *c, GLParam *p) {
 	int mask = p[1].i;
-	int z = (int)(c->clear_depth * ((1 << ZB_Z_BITS) - 1));
-	int r = (int)(c->clear_color.X * 255);
-	int g = (int)(c->clear_color.Y * 255);
-	int b = (int)(c->clear_color.Z * 255);
+	int z = (int)(clear_depth * ((1 << ZB_Z_BITS) - 1));
+	int r = (int)(clear_color.X * 255);
+	int g = (int)(clear_color.Y * 255);
+	int b = (int)(clear_color.Z * 255);
 
 	issueDrawCall(new ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
 }

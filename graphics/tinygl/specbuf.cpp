@@ -40,9 +40,9 @@ static void calc_buf(GLSpecBuf *buf, const float shininess) {
 	}
 }
 
-GLSpecBuf *GLContext::specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess) {
+GLSpecBuf *GLContext::specbuf_get_buffer(const int shininess_i, const float shininess) {
 	GLSpecBuf *found, *oldest;
-	found = oldest = c->specbuf_first;
+	found = oldest = specbuf_first;
 	while (found && found->shininess_i != shininess_i) {
 		if (found->last_used < oldest->last_used) {
 			oldest = found;
@@ -50,33 +50,33 @@ GLSpecBuf *GLContext::specbuf_get_buffer(GLContext *c, const int shininess_i, co
 		found = found->next;
 	}
 	if (found) {
-		found->last_used = c->specbuf_used_counter++;
+		found->last_used = specbuf_used_counter++;
 		return found;
 	}
-	if (!oldest || c->specbuf_num_buffers < MAX_SPECULAR_BUFFERS) {
+	if (!oldest || specbuf_num_buffers < MAX_SPECULAR_BUFFERS) {
 		// create new buffer
 		GLSpecBuf *buf = (GLSpecBuf *)gl_malloc(sizeof(GLSpecBuf));
 		if (!buf)
 			error("could not allocate specular buffer");
-		c->specbuf_num_buffers++;
-		buf->next = c->specbuf_first;
-		c->specbuf_first = buf;
-		buf->last_used = c->specbuf_used_counter++;
+		specbuf_num_buffers++;
+		buf->next = specbuf_first;
+		specbuf_first = buf;
+		buf->last_used = specbuf_used_counter++;
 		buf->shininess_i = shininess_i;
 		calc_buf(buf, shininess);
 		return buf;
 	}
 	//overwrite the lru buffer
 	oldest->shininess_i = shininess_i;
-	oldest->last_used = c->specbuf_used_counter++;
+	oldest->last_used = specbuf_used_counter++;
 	calc_buf(oldest, shininess);
 	return oldest;
 }
 
-void GLContext::specbuf_cleanup(GLContext *c) {
+void GLContext::specbuf_cleanup() {
 	GLSpecBuf *buf, *next;
-	buf = c->specbuf_first;
-	for (int i = 0; i < c->specbuf_num_buffers; ++i) {
+	buf = specbuf_first;
+	for (int i = 0; i < specbuf_num_buffers; ++i) {
 		next = buf->next;
 		gl_free(buf);
 		buf = next;

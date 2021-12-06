@@ -78,61 +78,61 @@ void tglSelectBuffer(int size, unsigned int *buf) {
 }
 
 void GLContext::glopInitNames(GLContext *c, GLParam *) {
-	if (c->render_mode == TGL_SELECT) {
-		c->name_stack_size = 0;
-		c->select_hit = NULL;
+	if (render_mode == TGL_SELECT) {
+		name_stack_size = 0;
+		select_hit = NULL;
 	}
 }
 
 void GLContext::glopPushName(GLContext *c, GLParam *p) {
 	if (c->render_mode == TGL_SELECT) {
 		assert(c->name_stack_size < MAX_NAME_STACK_DEPTH);
-		c->name_stack[c->name_stack_size++] = p[1].i;
-		c->select_hit = NULL;
+		name_stack[c->name_stack_size++] = p[1].i;
+		select_hit = NULL;
 	}
 }
 
 void GLContext::glopPopName(GLContext *c, GLParam *) {
-	if (c->render_mode == TGL_SELECT) {
-		assert(c->name_stack_size > 0);
-		c->name_stack_size--;
-		c->select_hit = NULL;
+	if (render_mode == TGL_SELECT) {
+		assert(name_stack_size > 0);
+		name_stack_size--;
+		select_hit = NULL;
 	}
 }
 
 void GLContext::glopLoadName(GLContext *c, GLParam *p) {
-	if (c->render_mode == TGL_SELECT) {
-		assert(c->name_stack_size > 0);
-		c->name_stack[c->name_stack_size - 1] = p[1].i;
-		c->select_hit = NULL;
+	if (render_mode == TGL_SELECT) {
+		assert(name_stack_size > 0);
+		name_stack[name_stack_size - 1] = p[1].i;
+		select_hit = NULL;
 	}
 }
 
-void GLContext::gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
+void GLContext::gl_add_select(unsigned int zmin, unsigned int zmax) {
 	unsigned int *ptr;
 	int n;
 
-	if (!c->select_overflow) {
-		if (!c->select_hit) {
-			n = c->name_stack_size;
-			if ((c->select_ptr - c->select_buffer + 3 + n) > c->select_size) {
-				c->select_overflow = 1;
+	if (!select_overflow) {
+		if (!select_hit) {
+			n = name_stack_size;
+			if ((select_ptr - select_buffer + 3 + n) > select_size) {
+				select_overflow = 1;
 			} else {
-				ptr = c->select_ptr;
-				c->select_hit = ptr;
-				*ptr++ = c->name_stack_size;
+				ptr = select_ptr;
+				select_hit = ptr;
+				*ptr++ = name_stack_size;
 				*ptr++ = zmin;
 				*ptr++ = zmax;
 				for (int i = 0; i < n; i++)
-					*ptr++ = c->name_stack[i];
-				c->select_ptr = ptr;
-				c->select_hits++;
+					*ptr++ = name_stack[i];
+				select_ptr = ptr;
+				select_hits++;
 			}
 		} else {
-			if (zmin < c->select_hit[1])
-				c->select_hit[1] = zmin;
-			if (zmax > c->select_hit[2])
-				c->select_hit[2] = zmax;
+			if (zmin < select_hit[1])
+				select_hit[1] = zmin;
+			if (zmax > select_hit[2])
+				select_hit[2] = zmax;
 		}
 	}
 }

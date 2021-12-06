@@ -127,15 +127,15 @@ static void gl_print_op(FILE *f, GLParam *p) {
 	fprintf(f, "\n");
 }
 
-static void gl_compile_op(GLContext *c, GLParam *p) {
+void GLContext::gl_compile_op(GLParam *p) {
 	int op, op_size;
 	GLParamBuffer *ob, *ob1;
 	int index;
 
 	op = p[0].op;
 	op_size = op_table_size[op];
-	index = c->current_op_buffer_index;
-	ob = c->current_op_buffer;
+	index = current_op_buffer_index;
+	ob = current_op_buffer;
 
 	// we should be able to add a NextBuffer opcode
 	if ((index + op_size) > (OP_BUFFER_MAX_SIZE - 2)) {
@@ -147,7 +147,7 @@ static void gl_compile_op(GLContext *c, GLParam *p) {
 		ob->ops[index].op = OP_NextBuffer;
 		ob->ops[index + 1].p = (void *)ob1;
 
-		c->current_op_buffer = ob1;
+		current_op_buffer = ob1;
 		ob = ob1;
 		index = 0;
 	}
@@ -156,7 +156,7 @@ static void gl_compile_op(GLContext *c, GLParam *p) {
 		ob->ops[index] = p[i];
 		index++;
 	}
-	c->current_op_buffer_index = index;
+	current_op_buffer_index = index;
 }
 
 void GLContext::gl_add_op(GLParam *p) {
@@ -164,13 +164,13 @@ void GLContext::gl_add_op(GLParam *p) {
 	int op;
 
 	op = p[0].op;
-	if (c->exec_flag) {
+	if (exec_flag) {
 		op_table_func[op](c, p);
 	}
-	if (c->compile_flag) {
-		gl_compile_op(c, p);
+	if (compile_flag) {
+		gl_compile_op(p);
 	}
-	if (c->print_flag) {
+	if (print_flag) {
 		gl_print_op(stderr, p);
 	}
 }
@@ -235,7 +235,7 @@ void tglEndList() {
 
 	// end of list
 	p[0].op = OP_EndList;
-	gl_compile_op(c, p);
+	c->gl_compile_op(p);
 
 	c->compile_flag = 0;
 	c->exec_flag = 1;

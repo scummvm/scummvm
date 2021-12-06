@@ -47,13 +47,13 @@ void GLContext::glopMatrixMode(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	switch (mode) {
 	case TGL_MODELVIEW:
-		c->matrix_mode = 0;
+		matrix_mode = 0;
 		break;
 	case TGL_PROJECTION:
-		c->matrix_mode = 1;
+		matrix_mode = 1;
 		break;
 	case TGL_TEXTURE:
-		c->matrix_mode = 2;
+		matrix_mode = 2;
 		break;
 	default:
 		assert(0);
@@ -64,7 +64,7 @@ void GLContext::glopLoadMatrix(GLContext *c, GLParam *p) {
 	Matrix4 *m;
 	GLParam *q;
 
-	m = c->matrix_stack_ptr[c->matrix_mode];
+	m = matrix_stack_ptr[c->matrix_mode];
 	q = p + 1;
 
 	for (int i = 0; i < 4; i++) {
@@ -79,7 +79,7 @@ void GLContext::glopLoadMatrix(GLContext *c, GLParam *p) {
 }
 
 void GLContext::glopLoadIdentity(GLContext *c, GLParam *) {
-	c->matrix_stack_ptr[c->matrix_mode]->identity();
+	matrix_stack_ptr[matrix_mode]->identity();
 	gl_matrix_update(c);
 }
 
@@ -96,19 +96,19 @@ void GLContext::glopMultMatrix(GLContext *c, GLParam *p) {
 		q += 4;
 	}
 
-	*c->matrix_stack_ptr[c->matrix_mode] *= m;
+	*matrix_stack_ptr[matrix_mode] *= m;
 
 	gl_matrix_update(c);
 }
 
 
 void GLContext::glopPushMatrix(GLContext *c, GLParam *) {
-	int n = c->matrix_mode;
+	int n = matrix_mode;
 	Matrix4 *m;
 
-	assert((c->matrix_stack_ptr[n] - c->matrix_stack[n] + 1) < c->matrix_stack_depth_max[n]);
+	assert((matrix_stack_ptr[n] - matrix_stack[n] + 1) < matrix_stack_depth_max[n]);
 
-	m = ++c->matrix_stack_ptr[n];
+	m = ++matrix_stack_ptr[n];
 
 	m[0] = m[-1];
 
@@ -116,10 +116,10 @@ void GLContext::glopPushMatrix(GLContext *c, GLParam *) {
 }
 
 void GLContext::glopPopMatrix(GLContext *c, GLParam *) {
-	int n = c->matrix_mode;
+	int n = matrix_mode;
 
-	assert(c->matrix_stack_ptr[n] > c->matrix_stack[n]);
-	c->matrix_stack_ptr[n]--;
+	assert(matrix_stack_ptr[n] > matrix_stack[n]);
+	matrix_stack_ptr[n]--;
 	gl_matrix_update(c);
 }
 
@@ -190,18 +190,18 @@ void GLContext::glopRotate(GLContext *c, GLParam *p) {
 	}
 	}
 
-	*c->matrix_stack_ptr[c->matrix_mode] *= m;
+	*matrix_stack_ptr[matrix_mode] *= m;
 
 	gl_matrix_update(c);
 }
 
 void GLContext::glopScale(GLContext *c, GLParam *p) {
-	c->matrix_stack_ptr[c->matrix_mode]->scale(p[1].f, p[2].f, p[3].f);
+	matrix_stack_ptr[matrix_mode]->scale(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
 void GLContext::glopTranslate(GLContext *c, GLParam *p) {
-	c->matrix_stack_ptr[c->matrix_mode]->translate(p[1].f, p[2].f, p[3].f);
+	matrix_stack_ptr[matrix_mode]->translate(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
@@ -214,7 +214,7 @@ void GLContext::glopFrustum(GLContext *c, GLParam *p) {
 	float farp = p[6].f;
 	Matrix4 m = Matrix4::frustum(left, right, bottom, top, nearp, farp);
 
-	*c->matrix_stack_ptr[c->matrix_mode] *= m;
+	*matrix_stack_ptr[matrix_mode] *= m;
 
 	gl_matrix_update(c);
 }

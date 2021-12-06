@@ -415,47 +415,46 @@ public:
 	#include "graphics/tinygl/opinfo.h"
 
 	void gl_add_op(GLParam *p);
+	void gl_compile_op(GLParam *p);
 
-	void gl_transform_to_viewport(GLContext *c, GLVertex *v);
-	void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-	void gl_draw_line(GLContext *c, GLVertex *p0, GLVertex *p1);
-	void gl_draw_point(GLContext *c, GLVertex *p0);
+	void gl_transform_to_viewport(GLVertex *v);
+	void gl_draw_triangle(GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	void gl_draw_line(GLVertex *p0, GLVertex *p1);
+	void gl_draw_point(GLVertex *p0);
 
 	static void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
 	static void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
 	static void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
 	static void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-	void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
+	void gl_draw_triangle_clip(GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
 
-	void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax);
-	void gl_add_select1(GLContext *c, int z1, int z2, int z3);
-	void gl_enable_disable_light(GLContext *c, int light, int v);
-	void gl_shade_vertex(GLContext *c, GLVertex *v);
+	void gl_add_select(unsigned int zmin, unsigned int zmax);
+	void gl_add_select1(int z1, int z2, int z3);
+	void gl_enable_disable_light(int light, int v);
+	void gl_shade_vertex(GLVertex *v);
 
-	void glInitTextures(GLContext *c);
-	void glEndTextures(GLContext *c);
-	GLTexture *alloc_texture(GLContext *c, uint h);
-	void free_texture(GLContext *c, uint h);
-	void free_texture(GLContext *c, GLTexture *t);
+	void glInitTextures();
+	void glEndTextures();
+	GLTexture *alloc_texture(uint h);
+	void free_texture(uint h);
+	void free_texture(GLTexture *t);
 
 	void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
 				const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
-	void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
-					 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+	void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest, const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
 
 	void issueDrawCall(DrawCall *drawCall);
+	void disposeResources();
+	void disposeDrawCallLists();
 
-	void disposeResources(GLContext *c);
-	void disposeDrawCallLists(GLContext *c);
-
-	void presentBufferDirtyRects(GLContext *c);
-	void presentBufferSimple(GLContext *c);
+	void presentBufferDirtyRects();
+	void presentBufferSimple();
 	
-	GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
-	void specbuf_cleanup(GLContext *c); // free all memory used
+	GLSpecBuf *specbuf_get_buffer(const int shininess_i, const float shininess);
+	void specbuf_cleanup();
 
-	void initSharedState(GLContext *c);
-	void endSharedState(GLContext *c);
+	void initSharedState();
+	void endSharedState();
 
 	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
 	void deinit();
