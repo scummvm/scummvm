@@ -1386,7 +1386,7 @@ void flic_cut(int16 nr, int16 mode) {
 				out->cls();
 				flc->custom_play(&Ci);
 			}
-			ERROR;
+			ERROR
 			ailsnd->fade_out(0);
 			out->ausblenden(1);
 			out->cls();
@@ -1516,8 +1516,6 @@ void flic_cut(int16 nr, int16 mode) {
 			flic_proc1();
 			break;
 
-
-
 		case 1003:
 			fx->border(workpage, 100, 0, 0);
 			print_rows(590);
@@ -1556,12 +1554,11 @@ void flic_cut(int16 nr, int16 mode) {
 				ret = flc->custom_play(&Ci);
 			}
 
-			if (ret == -1)
-				goto close;
-
-			out->cls();
-			mem->file->select_pool_item(Ci.Handle, 17);
-			fx->border(workpage, 100, 0, 0);
+			if (ret != -1) {
+				out->cls();
+				mem->file->select_pool_item(Ci.Handle, 17);
+				fx->border(workpage, 100, 0, 0);
+			}
 			break;
 
 		case 1015:
@@ -1713,9 +1710,6 @@ void flic_cut(int16 nr, int16 mode) {
 				fx->border(workpage, 100, 0, 0);
 				ret = flc->custom_play(&Ci);
 			}
-
-			if (ret == -1)
-				goto close;
 			break;
 
 		case 1087:
@@ -1769,11 +1763,11 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1107:
 			mem->file->select_pool_item(Ci.Handle, 107);
 			ret = flc->custom_play(&Ci);
-			if (ret == -1)
-				goto close;
 
-			mem->file->select_pool_item(Ci.Handle, 109);
-			fx->border(workpage, 100, 0, 0);
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 109);
+				fx->border(workpage, 100, 0, 0);
+			}
 			break;
 
 		case 1108:
@@ -1833,37 +1827,42 @@ void flic_cut(int16 nr, int16 mode) {
 				break;
 			}
 
-			ERROR;
+			ERROR
 			break;
 		}
+
 		chewy_fclose(Ci.Handle);
 	} else {
 		fcode = OPENFEHLER;
 		modul = DATEI;
 	}
 
-close:
-	delete Ci.Handle;
-	ERROR;
+	ERROR
 
 	ailsnd->end_sound();
 	g_events->delay(50);
 	ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
 	ailsnd->set_music_mastervol(_G(spieler).MusicVol);
-	load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
-	ERROR
-	room->load_sound();
-	ERROR
-	if (_G(spieler).SoundSwitch != false)
-		det->enable_room_sound();
+
+	if (nr < 1000 && nr != 135) {
+		load_room_music(_G(spieler).PersonRoomNr[0]);
+		ERROR
+		room->load_sound();
+		ERROR
+
+		if (_G(spieler).SpeechSwitch)
+			det->enable_room_sound();
+
+		uhr->reset_timer(0, 0);
+	}
+
 	if (!flags.NoPalAfterFlc)
 		out->set_palette(pal);
+
 	atds->stop_aad();
 	atds->stop_ats();
-	uhr->reset_timer(0, 0);
 	out->setze_zeiger(workptr);
 	flags.NoPalAfterFlc = false;
-
 }
 
 uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
