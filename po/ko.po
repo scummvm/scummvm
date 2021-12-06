@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-05 18:00+0000\n"
+"POT-Creation-Date: 2021-12-06 03:51+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -166,7 +166,7 @@ msgstr ""
 #: gui/massadd.cpp:89 gui/options.cpp:2141 gui/saveload-dialog.cpp:1188
 #: engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
-#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:573
+#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:588
 #: engines/parallaction/saveload.cpp:271 engines/saga/music.cpp:100
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:181 engines/scumm/scumm.cpp:1353
@@ -2483,7 +2483,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:749 engines/groovie/script.cpp:2037
+#: engines/groovie/script.cpp:764 engines/groovie/script.cpp:2052
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:737 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -2503,8 +2503,8 @@ msgstr "게임 저장:"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:744 engines/groovie/script.cpp:749
-#: engines/groovie/script.cpp:2037 engines/hugo/file.cpp:298
+#: engines/groovie/script.cpp:759 engines/groovie/script.cpp:764
+#: engines/groovie/script.cpp:2052 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:737
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -4121,8 +4121,8 @@ msgstr ""
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:726
-#: engines/groovie/script.cpp:761 engines/groovie/script.cpp:2024
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:741
+#: engines/groovie/script.cpp:776 engines/groovie/script.cpp:2039
 #: engines/hugo/file.cpp:400 engines/illusions/menusystem.cpp:680
 #: engines/kingdom/kingdom.cpp:747 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -4139,9 +4139,9 @@ msgstr "게임 불러오기:"
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:726
-#: engines/groovie/script.cpp:744 engines/groovie/script.cpp:761
-#: engines/groovie/script.cpp:2024 engines/hugo/file.cpp:400
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:741
+#: engines/groovie/script.cpp:759 engines/groovie/script.cpp:776
+#: engines/groovie/script.cpp:2039 engines/hugo/file.cpp:400
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:747
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -5062,11 +5062,11 @@ msgstr ""
 msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2 지원이 컴파일 되지 않음"
 
-#: engines/groovie/script.cpp:573
+#: engines/groovie/script.cpp:588
 msgid "Failed to save game"
 msgstr "게임 저장 실패"
 
-#: engines/groovie/script.cpp:744 engines/lab/savegame.cpp:238
+#: engines/groovie/script.cpp:759 engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
 msgstr "게임을 저장하거나 불러오시겠습니까?"
 
