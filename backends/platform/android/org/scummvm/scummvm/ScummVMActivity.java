@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import static android.content.res.Configuration.HARDKEYBOARDHIDDEN_NO;
 import static android.content.res.Configuration.KEYBOARD_QWERTY;
 
 public class ScummVMActivity extends Activity implements OnKeyboardVisibilityListener {
@@ -136,13 +137,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	@Override
 	public void onConfigurationChanged(@NonNull Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		if (isHWKeyboardConnected()) {
+
+		final boolean hwKeyboard = isHWKeyboardConnected();
+		_toggleKeyboardBtnIcon.setVisibility(hwKeyboard ? View.GONE : View.VISIBLE);
+		if (hwKeyboard) {
 			hideScreenKeyboard();
 		}
 	}
 
 	private boolean isHWKeyboardConnected() {
-		return getResources().getConfiguration().keyboard == KEYBOARD_QWERTY;
+		final Configuration config = getResources().getConfiguration();
+		return config.keyboard == KEYBOARD_QWERTY
+			&& config.hardKeyboardHidden == HARDKEYBOARDHIDDEN_NO;
 	}
 
 	public boolean isKeyboardOverlayShown() {
@@ -1326,7 +1332,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private void showToggleKeyboardBtnIcon(boolean show) {
 		//ImageView keyboardBtn = findViewById(R.id.show_keyboard);
 		if (_toggleKeyboardBtnIcon != null ) {
-			if (show) {
+			if (show && !isHWKeyboardConnected()) {
 				_toggleKeyboardBtnIcon.setVisibility(View.VISIBLE);
 			} else {
 				_toggleKeyboardBtnIcon.setVisibility(View.GONE);
