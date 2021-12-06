@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-06 03:51+0000\n"
+"POT-Creation-Date: 2021-12-06 10:28+0000\n"
 "PO-Revision-Date: 2021-12-03 10:50+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -168,7 +168,7 @@ msgstr ""
 #: gui/massadd.cpp:89 gui/options.cpp:2141 gui/saveload-dialog.cpp:1188
 #: engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
-#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:588
+#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:606
 #: engines/parallaction/saveload.cpp:271 engines/saga/music.cpp:100
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:181 engines/scumm/scumm.cpp:1353
@@ -2485,7 +2485,7 @@ msgstr "~V~ai a elenco giochi"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:764 engines/groovie/script.cpp:2052
+#: engines/groovie/script.cpp:782 engines/groovie/script.cpp:2070
 #: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
 #: engines/kingdom/kingdom.cpp:737 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -2505,8 +2505,8 @@ msgstr "Salva gioco:"
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/groovie/script.cpp:759 engines/groovie/script.cpp:764
-#: engines/groovie/script.cpp:2052 engines/hugo/file.cpp:298
+#: engines/groovie/script.cpp:777 engines/groovie/script.cpp:782
+#: engines/groovie/script.cpp:2070 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:737
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
@@ -4068,7 +4068,7 @@ msgstr "Non emulare gli artefatti NTSC nei testi"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:387 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:388 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -4077,7 +4077,7 @@ msgstr "Usa schermate di salvataggio originali"
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:56
-#: engines/groovie/detection.cpp:388 engines/neverhood/detection.cpp:136
+#: engines/groovie/detection.cpp:389 engines/neverhood/detection.cpp:136
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/trecision/detection.cpp:221 engines/ultima/detection.cpp:57
 #: engines/ultima/detection.cpp:108 engines/zvision/detection_tables.h:52
@@ -4153,8 +4153,8 @@ msgstr ""
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:741
-#: engines/groovie/script.cpp:776 engines/groovie/script.cpp:2039
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:759
+#: engines/groovie/script.cpp:794 engines/groovie/script.cpp:2057
 #: engines/hugo/file.cpp:400 engines/illusions/menusystem.cpp:680
 #: engines/kingdom/kingdom.cpp:747 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -4171,9 +4171,9 @@ msgstr "Carica partita:"
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
-#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:741
-#: engines/groovie/script.cpp:759 engines/groovie/script.cpp:776
-#: engines/groovie/script.cpp:2039 engines/hugo/file.cpp:400
+#: engines/gnap/menu.cpp:475 engines/groovie/script.cpp:759
+#: engines/groovie/script.cpp:777 engines/groovie/script.cpp:794
+#: engines/groovie/script.cpp:2057 engines/hugo/file.cpp:400
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:747
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
@@ -5095,31 +5095,40 @@ msgstr ""
 "In alternativa, le edizioni Steam e GOG contengono già il file FullMonkeyMap."
 "int completo"
 
-#: engines/groovie/detection.cpp:377
+#: engines/groovie/detection.cpp:378
 msgid "Fast movie speed"
 msgstr "Filmati ad alta velocità"
 
-#: engines/groovie/detection.cpp:378
+#: engines/groovie/detection.cpp:379
 msgid "Play movies at an increased speed"
 msgstr "Aumenta la velocità di riproduzione dei filmati"
 
-#: engines/groovie/detection.cpp:397
+#: engines/groovie/detection.cpp:398
 msgid "Easier AI"
 msgstr ""
 
-#: engines/groovie/detection.cpp:398
+#: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
+msgstr ""
+
+#: engines/groovie/detection.cpp:408
+msgid "Updated Credits Music"
+msgstr ""
+
+#: engines/groovie/detection.cpp:409
+msgid ""
+"Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
 msgstr "Il supporto per GroovieV2 non è stato incluso nella compilazione"
 
-#: engines/groovie/script.cpp:588
+#: engines/groovie/script.cpp:606
 msgid "Failed to save game"
 msgstr "Impossibile salvare la partita"
 
-#: engines/groovie/script.cpp:759 engines/lab/savegame.cpp:238
+#: engines/groovie/script.cpp:777 engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
 msgstr "Desideri salvare o caricare il gioco?"
 
