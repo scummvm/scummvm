@@ -32,6 +32,7 @@ namespace Groovie {
 #define GAMEOPTION_T7G_FAST_MOVIE_SPEED  GUIO_GAMEOPTIONS1
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS2
 #define GAMEOPTION_EASIER_AI GUIO_GAMEOPTIONS3
+#define GAMEOPTION_FINAL_HOUR GUIO_GAMEOPTIONS4
 
 static const DebugChannelDef debugFlagList[] = {
 	{Groovie::kDebugVideo, "Video", "Debug video and audio playback"},
@@ -127,7 +128,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 						"introd1.gjd", nullptr, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
 	},
@@ -139,7 +140,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
 	},
@@ -151,7 +152,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
-			GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI)
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
 	},
@@ -397,6 +398,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Easier AI"),
 			_s("Decrease the difficulty of AI puzzles"),
 			"easier_ai",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_FINAL_HOUR,
+		{
+			_s("Updated Credits Music"),
+			_s("Play the song The Final Hour during the credits instead of reusing MIDI songs"),
+			"credits_music",
 			false
 		}
 	},

@@ -212,7 +212,7 @@ bool Script::loadScript(Common::String filename) {
 		// when the skulls ask you to adjust your brightness, play the song Mr Death
 		memset(_code + 0x25, 1, 0x2F - 0x25);// set nop
 		_code[0x25] = 0x56;// o2_playsound
-		// o2_playsound resource id 851, 32bit uint
+		// o2_playsound resource id 851, uint32
 		_code[0x26] = 0x53;
 		_code[0x27] = 0x03;
 		_code[0x28] = 0;
@@ -221,6 +221,24 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x2A] = 0;
 		// o2_playsound val3
 		_code[0x2B] = 0;
+	} else if (_version == kGroovieT11H && filename.equals("itsawrap.grv") && _codeSize == 517 && ConfMan.getBool("credits_music")) {
+		// write nops to get rid of MIDI Control Stop and PlaySong
+		memset(_code + 0x000, 1, 5);// this one is only a PlaySong
+		memset(_code + 0x0B4, 1, 10);
+		memset(_code + 0x0136, 1, 10);
+		memset(_code + 0x019A, 1, 10);
+		memset(_code + 0x1FE, 1, 5);// this one is only a MIDI Control Stop
+		// play The Final Hour instead
+		_code[0x00] = 0x56; // o2_playsound
+		// o2_playsound resource id 845, uint32
+		_code[0x01] = 0x4D;
+		_code[0x02] = 0x03;
+		_code[0x03] = 0;
+		_code[0x04] = 0;
+		// o2_playsound loops
+		_code[0x05] = 1;
+		// o2_playsound val3
+		_code[0x06] = 0;
 	}
 
 	// Initialize the script
