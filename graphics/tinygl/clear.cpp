@@ -31,22 +31,22 @@
 
 namespace TinyGL {
 
-void glopClearColor(GLContext *c, GLParam *p) {
+void GLContext::glopClearColor(GLContext *c, GLParam *p) {
 	c->clear_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 }
 
-void glopClearDepth(GLContext *c, GLParam *p) {
+void GLContext::glopClearDepth(GLContext *c, GLParam *p) {
 	c->clear_depth = p[1].f;
 }
 
-void glopClear(GLContext *c, GLParam *p) {
+void GLContext::glopClear(GLContext *c, GLParam *p) {
 	int mask = p[1].i;
 	int z = (int)(c->clear_depth * ((1 << ZB_Z_BITS) - 1));
 	int r = (int)(c->clear_color.X * 255);
 	int g = (int)(c->clear_color.Y * 255);
 	int b = (int)(c->clear_color.Z * 255);
 
-	tglIssueDrawCall(new Graphics::ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
+	issueDrawCall(new ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
 }
 
 } // end of namespace TinyGL

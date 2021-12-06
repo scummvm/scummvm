@@ -400,75 +400,85 @@ struct GLContext {
 	bool _enableDirtyRectangles;
 
 	// blit test
-	Common::List<Graphics::BlitImage *> _blitImages;
+	Common::List<BlitImage *> _blitImages;
 
 	// Draw call queue
-	Common::List<Graphics::DrawCall *> _drawCallsQueue;
-	Common::List<Graphics::DrawCall *> _previousFrameDrawCallsQueue;
+	Common::List<DrawCall *> _drawCallsQueue;
+	Common::List<DrawCall *> _previousFrameDrawCallsQueue;
 	int _currentAllocatorIndex;
 	LinearAllocator _drawCallAllocator[2];
+
+public:
+	// The glob* functions exposed to public, however they are only for internal use.
+	// Calling them from outside of TinyGL is forbidden
+	#define ADD_OP(a, b, d) void glop ## a (GLContext *c, GLParam *p);
+	#include "graphics/tinygl/opinfo.h"
+
+	void gl_add_op(GLParam *p);
+
+	void gl_transform_to_viewport(GLContext *c, GLVertex *v);
+	void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	void gl_draw_line(GLContext *c, GLVertex *p0, GLVertex *p1);
+	void gl_draw_point(GLContext *c, GLVertex *p0);
+
+	static void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	static void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	static void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	static void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+	void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
+
+	void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax);
+	void gl_add_select1(GLContext *c, int z1, int z2, int z3);
+	void gl_enable_disable_light(GLContext *c, int light, int v);
+	void gl_shade_vertex(GLContext *c, GLVertex *v);
+
+	void glInitTextures(GLContext *c);
+	void glEndTextures(GLContext *c);
+	GLTexture *alloc_texture(GLContext *c, uint h);
+	void free_texture(GLContext *c, uint h);
+	void free_texture(GLContext *c, GLTexture *t);
+
+	void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+				const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+	void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+					 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+
+	void issueDrawCall(DrawCall *drawCall);
+
+	void disposeResources(GLContext *c);
+	void disposeDrawCallLists(GLContext *c);
+
+	void presentBufferDirtyRects(GLContext *c);
+	void presentBufferSimple(GLContext *c);
+	
+	GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
+	void specbuf_cleanup(GLContext *c); // free all memory used
+
+	void initSharedState(GLContext *c);
+	void endSharedState(GLContext *c);
+
+	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
+	void deinit();
 };
 
 extern GLContext *gl_ctx;
-
-void gl_add_op(GLParam *p);
-
-// clip.c
-void gl_transform_to_viewport(GLContext *c, GLVertex *v);
-void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-void gl_draw_line(GLContext *c, GLVertex *p0, GLVertex *p1);
-void gl_draw_point(GLContext *c, GLVertex *p0);
-
-void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
-void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
+GLContext *gl_get_context();
 
 // matrix.c
 void gl_print_matrix(const float *m);
 
-// light.c
-void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax);
-void gl_enable_disable_light(GLContext *c, int light, int v);
-void gl_shade_vertex(GLContext *c, GLVertex *v);
+void getSurfaceRef(Graphics::Surface &surface);
 
-void glInitTextures(GLContext *c);
-void glEndTextures(GLContext *c);
-GLTexture *alloc_texture(GLContext *c, uint h);
-void free_texture(GLContext *c, uint h);
-void free_texture(GLContext *c, GLTexture *t);
+Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat);
 
-// image_util.c
-void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
-		    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
-void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
-				 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
-
-void tglIssueDrawCall(Graphics::DrawCall *drawCall);
-
-// zdirtyrect.cpp
-void tglDisposeResources(GLContext *c);
-void tglDisposeDrawCallLists(TinyGL::GLContext *c);
-
-GLContext *gl_get_context();
-
-// specular buffer "api"
-GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
-void specbuf_cleanup(GLContext *c); // free all memory used
-
-void glInit(void *zbuffer, int textureSize);
-void glClose();
+void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
+void destroyContext();
 
 #ifdef DEBUG
 #define dprintf fprintf
 #else
 #define dprintf
 #endif
-
-// glopXXX functions
-
-#define ADD_OP(a,b,c) void glop ## a (GLContext *, GLParam *);
-#include "graphics/tinygl/opinfo.h"
 
 // this clip epsilon is needed to avoid some rounding errors after
 // several clipping stages

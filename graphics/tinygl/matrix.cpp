@@ -43,7 +43,7 @@ static inline void gl_matrix_update(GLContext *c) {
 	c->matrix_model_projection_updated |= (c->matrix_mode <= 1);
 }
 
-void glopMatrixMode(GLContext *c, GLParam *p) {
+void GLContext::glopMatrixMode(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	switch (mode) {
 	case TGL_MODELVIEW:
@@ -60,7 +60,7 @@ void glopMatrixMode(GLContext *c, GLParam *p) {
 	}
 }
 
-void glopLoadMatrix(GLContext *c, GLParam *p) {
+void GLContext::glopLoadMatrix(GLContext *c, GLParam *p) {
 	Matrix4 *m;
 	GLParam *q;
 
@@ -78,12 +78,12 @@ void glopLoadMatrix(GLContext *c, GLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopLoadIdentity(GLContext *c, GLParam *) {
+void GLContext::glopLoadIdentity(GLContext *c, GLParam *) {
 	c->matrix_stack_ptr[c->matrix_mode]->identity();
 	gl_matrix_update(c);
 }
 
-void glopMultMatrix(GLContext *c, GLParam *p) {
+void GLContext::glopMultMatrix(GLContext *c, GLParam *p) {
 	Matrix4 m;
 	GLParam *q;
 	q = p + 1;
@@ -102,7 +102,7 @@ void glopMultMatrix(GLContext *c, GLParam *p) {
 }
 
 
-void glopPushMatrix(GLContext *c, GLParam *) {
+void GLContext::glopPushMatrix(GLContext *c, GLParam *) {
 	int n = c->matrix_mode;
 	Matrix4 *m;
 
@@ -115,7 +115,7 @@ void glopPushMatrix(GLContext *c, GLParam *) {
 	gl_matrix_update(c);
 }
 
-void glopPopMatrix(GLContext *c, GLParam *) {
+void GLContext::glopPopMatrix(GLContext *c, GLParam *) {
 	int n = c->matrix_mode;
 
 	assert(c->matrix_stack_ptr[n] > c->matrix_stack[n]);
@@ -123,7 +123,7 @@ void glopPopMatrix(GLContext *c, GLParam *) {
 	gl_matrix_update(c);
 }
 
-void glopRotate(GLContext *c, GLParam *p) {
+void GLContext::glopRotate(GLContext *c, GLParam *p) {
 	Matrix4 m;
 	float u[3];
 	float angle;
@@ -195,17 +195,17 @@ void glopRotate(GLContext *c, GLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopScale(GLContext *c, GLParam *p) {
+void GLContext::glopScale(GLContext *c, GLParam *p) {
 	c->matrix_stack_ptr[c->matrix_mode]->scale(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
-void glopTranslate(GLContext *c, GLParam *p) {
+void GLContext::glopTranslate(GLContext *c, GLParam *p) {
 	c->matrix_stack_ptr[c->matrix_mode]->translate(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
-void glopFrustum(GLContext *c, GLParam *p) {
+void GLContext::glopFrustum(GLContext *c, GLParam *p) {
 	float left = p[1].f;
 	float right = p[2].f;
 	float bottom = p[3].f;
@@ -219,7 +219,7 @@ void glopFrustum(GLContext *c, GLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopOrtho(GLContext *context, GLParam *p) {
+void GLContext::glopOrtho(GLContext *context, GLParam *p) {
 	float *r;
 	TinyGL::Matrix4 m;
 	float left = p[1].f;

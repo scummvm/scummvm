@@ -46,11 +46,11 @@ static GLTexture *find_texture(GLContext *c, uint h) {
 	return nullptr;
 }
 
-void free_texture(GLContext *c, uint h) {
+void GLContext::free_texture(GLContext *c, uint h) {
 	free_texture(c, find_texture(c, h));
 }
 
-void free_texture(GLContext *c, GLTexture *t) {
+void GLContext::free_texture(GLContext *c, GLTexture *t) {
 	GLTexture **ht;
 	GLImage *im;
 
@@ -74,7 +74,7 @@ void free_texture(GLContext *c, GLTexture *t) {
 	gl_free(t);
 }
 
-GLTexture *alloc_texture(GLContext *c, uint h) {
+GLTexture *GLContext::alloc_texture(GLContext *c, uint h) {
 	GLTexture *t, **ht;
 
 	t = (GLTexture *)gl_zalloc(sizeof(GLTexture));
@@ -94,7 +94,7 @@ GLTexture *alloc_texture(GLContext *c, uint h) {
 	return t;
 }
 
-void glInitTextures(GLContext *c) {
+void GLContext::glInitTextures(GLContext *c) {
 	c->texture_2d_enabled = 0;
 	c->current_texture = find_texture(c, 0);
 	c->maxTextureName = 0;
@@ -112,7 +112,7 @@ void glInitTextures(GLContext *c) {
 	c->colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
 }
 
-void glopBindTexture(GLContext *c, GLParam *p) {
+void GLContext::glopBindTexture(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int texture = p[2].i;
 	GLTexture *t;
@@ -126,7 +126,7 @@ void glopBindTexture(GLContext *c, GLParam *p) {
 	c->current_texture = t;
 }
 
-void glopTexImage2D(GLContext *c, GLParam *p) {
+void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
 	int internalformat = p[3].i;
@@ -214,7 +214,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 }
 
 // TODO: not all tests are done
-void glopTexEnv(GLContext *, GLParam *p) {
+void GLContext::glopTexEnv(GLContext *, GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -232,7 +232,7 @@ error:
 }
 
 // TODO: not all tests are done
-void glopTexParameter(GLContext *c, GLParam *p) {
+void GLContext::glopTexParameter(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -278,7 +278,7 @@ error:
 	}
 }
 
-void glopPixelStore(GLContext *, GLParam *p) {
+void GLContext::glopPixelStore(GLContext *, GLParam *p) {
 	int pname = p[1].i;
 	int param = p[2].i;
 

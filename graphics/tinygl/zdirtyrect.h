@@ -34,16 +34,14 @@
 #include "common/array.h"
 
 namespace TinyGL {
-	struct GLContext;
-	struct GLVertex;
-	struct GLTexture;
-}
 
 namespace Internal {
-	void *allocateFrame(int size);
+void *allocateFrame(int size);
 }
 
-namespace Graphics {
+struct GLContext;
+struct GLVertex;
+struct GLTexture;
 
 class DrawCall {
 public:
@@ -79,7 +77,7 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 
 	void *operator new(size_t size) {
-		return ::Internal::allocateFrame(size);
+		return Internal::allocateFrame(size);
 	}
 
 	void operator delete(void *p) { }
@@ -98,7 +96,7 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 
 	void *operator new(size_t size) {
-		return ::Internal::allocateFrame(size);
+		return Internal::allocateFrame(size);
 	}
 
 	void operator delete(void *p) { }
@@ -166,7 +164,7 @@ public:
 	BlittingMode getBlittingMode() const { return _mode; }
 
 	void *operator new(size_t size) {
-		return ::Internal::allocateFrame(size);
+		return Internal::allocateFrame(size);
 	}
 
 	void operator delete(void *p) { }
@@ -201,6 +199,6 @@ private:
 	BlittingState _blitState;
 };
 
-} // end of namespace Graphics
+} // end of namespace TinyGL
 
 #endif

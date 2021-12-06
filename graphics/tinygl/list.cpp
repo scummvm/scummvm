@@ -35,21 +35,25 @@
 
 namespace TinyGL {
 
+#define ADD_OP(aa, bb, ff) \
+static void glop ## aa (GLContext *c, GLParam *p) \
+{                                                 \
+	c->glop ## aa (c, p);                         \
+}
+#include "graphics/tinygl/opinfo.h"
+
 static const char *op_table_str[] = {
 #define ADD_OP(a, b, c) "gl" #a " " #c,
-
 #include "graphics/tinygl/opinfo.h"
 };
 
 static void (*op_table_func[])(GLContext *, GLParam *) = {
 #define ADD_OP(a, b, c) glop ## a ,
-
 #include "graphics/tinygl/opinfo.h"
 };
 
 static int op_table_size[] = {
 #define ADD_OP(a, b, c) b + 1 ,
-
 #include "graphics/tinygl/opinfo.h"
 };
 
@@ -96,7 +100,7 @@ static GLList *alloc_list(GLContext *c, int list) {
 	return l;
 }
 
-void gl_print_op(FILE *f, GLParam *p) {
+static void gl_print_op(FILE *f, GLParam *p) {
 	int op;
 	const char *s;
 
@@ -123,8 +127,7 @@ void gl_print_op(FILE *f, GLParam *p) {
 	fprintf(f, "\n");
 }
 
-
-void gl_compile_op(GLContext *c, GLParam *p) {
+static void gl_compile_op(GLContext *c, GLParam *p) {
 	int op, op_size;
 	GLParamBuffer *ob, *ob1;
 	int index;
@@ -156,7 +159,7 @@ void gl_compile_op(GLContext *c, GLParam *p) {
 	c->current_op_buffer_index = index;
 }
 
-void gl_add_op(GLParam *p) {
+void GLContext::gl_add_op(GLParam *p) {
 	GLContext *c = gl_get_context();
 	int op;
 
@@ -173,16 +176,16 @@ void gl_add_op(GLParam *p) {
 }
 
 // this opcode is never called directly
-void glopEndList(GLContext *, GLParam *) {
+void GLContext::glopEndList(GLContext *, GLParam *) {
 	assert(0);
 }
 
 // this opcode is never called directly
-void glopNextBuffer(GLContext *, GLParam *) {
+void GLContext::glopNextBuffer(GLContext *, GLParam *) {
 	assert(0);
 }
 
-void glopCallList(GLContext *c, GLParam *p) {
+void GLContext::glopCallList(GLContext *c, GLParam *p) {
 	GLList *l;
 	int list, op;
 
@@ -205,7 +208,7 @@ void glopCallList(GLContext *c, GLParam *p) {
 	}
 }
 
-void glNewList(unsigned int list, int mode) {
+void tglNewList(unsigned int list, int mode) {
 	GLList *l;
 	GLContext *c = gl_get_context();
 
@@ -224,7 +227,7 @@ void glNewList(unsigned int list, int mode) {
 	c->exec_flag = (mode == TGL_COMPILE_AND_EXECUTE);
 }
 
-void glEndList() {
+void tglEndList() {
 	GLContext *c = gl_get_context();
 	GLParam p[1];
 
@@ -238,14 +241,14 @@ void glEndList() {
 	c->exec_flag = 1;
 }
 
-int glIsList(unsigned int list) {
+int tglIsList(unsigned int list) {
 	GLContext *c = gl_get_context();
 	GLList *l = find_list(c, list);
 
 	return (l != NULL);
 }
 
-unsigned int glGenLists(int range) {
+unsigned int tglGenLists(int range) {
 	GLContext *c = gl_get_context();
 	int count, list;
 	GLList **lists;

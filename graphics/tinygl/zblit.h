@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
-namespace Graphics {
+namespace TinyGL {
 
 struct BlitTransform {
 	BlitTransform(int dstX, int dstY) : _rotation(0), _originX(0), _originY(0), _aTint(1.0f),
@@ -88,11 +88,14 @@ struct BlitTransform {
 
 struct BlitImage;
 
+} // end of namespace TinyGL
+
+
 /**
 @brief Generates a new blit image.
 @return returns an opaque pointer to the blit image.
 */
-BlitImage *tglGenBlitImage();
+TinyGL::BlitImage *tglGenBlitImage();
 
 /**
 @brief Copies a surface data into the provided blit image.
@@ -101,13 +104,13 @@ BlitImage *tglGenBlitImage();
 @param color key value for alpha color keying
 @param boolean that enables alpha color keying
 */
-void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
+void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
 
 /**
 @brief Destroys an instance of blit image.
 @param pointer to the blit image.
 */
-void tglDeleteBlitImage(BlitImage *blitImage);
+void tglDeleteBlitImage(TinyGL::BlitImage *blitImage);
 
 /**
 @brief Getter for current blit image width and height
@@ -115,21 +118,21 @@ void tglDeleteBlitImage(BlitImage *blitImage);
 @param reference to the width variable
 @param reference to the height variable
 */
-void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height);
+void tglGetBlitImageSize(TinyGL::BlitImage *blitImage, int &width, int &height);
 
 /**
 @brief Provides a way to check if the image has been updated.
 @param pointer to the blit image.
 @param boolean that enables alpha color keying
 */
-int tglGetBlitImageVersion(BlitImage *blitImage);
+int tglGetBlitImageVersion(TinyGL::BlitImage *blitImage);
 
 /**
 @brief Blits an image to the color buffer.
 @param pointer to the blit image.
 @param blit transform information.
 */
-void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
+void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
 
 /**
 @brief Blits an image to the color buffer.
@@ -137,14 +140,14 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 @param x destination coordinate.
 @param y destination coordinate.
 */
-void tglBlit(BlitImage *blitImage, int x, int y);
+void tglBlit(TinyGL::BlitImage *blitImage, int x, int y);
 
 /**
 @brief Blits an image to the color buffer without performing any type of blending.
 @param pointer to the blit image.
 @param blit transform information.
 */
-void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
+void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
 
 /**
 @brief Blits an image to the color buffer without performinc any type of blending, image transformation or tinting.
@@ -152,7 +155,7 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 @param x destination coordinate.
 @param y destination coordinate.
 */
-void tglBlitFast(BlitImage *blitImage, int x, int y);
+void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y);
 
 /**
 @brief Blits an image to the depth buffer.
@@ -160,10 +163,11 @@ void tglBlitFast(BlitImage *blitImage, int x, int y);
 @param x destination coordinate.
 @param y destination coordinate.
 */
-void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
+void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y);
 
-void tglIncBlitImageRef(BlitImage *blitImage);
+void tglIncBlitImageRef(TinyGL::BlitImage *blitImage);
 
+namespace TinyGL {
 namespace Internal {
 	/**
 	@brief Performs a cleanup of disposed blit images.
@@ -171,15 +175,15 @@ namespace Internal {
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
 
 	// Documentation for those is the same as the one before, only those function are the one that actually execute the correct code path.
-	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
+	void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
 
 	// Disables blending explicitly.
-	void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
+	void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
 
 	// Disables blending, transforms and tinting.
-	void tglBlitFast(BlitImage *blitImage, int x, int y);
+	void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y);
 
-	void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
+	void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y);
 
 	/**
 	@brief Sets up a scissor rectangle for blit calls: every blit call is affected by this rectangle.
@@ -187,7 +191,6 @@ namespace Internal {
 	void tglBlitSetScissorRect(const Common::Rect &rect);
 	void tglBlitResetScissorRect(void);
 } // end of namespace Internal
-
-} // end of namespace Graphics
+} // end of namespace TinyGL
 
 #endif // GRAPHICS_TINYGL_ZBLIT_H_

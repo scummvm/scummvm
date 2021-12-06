@@ -30,7 +30,7 @@
 
 namespace TinyGL {
 
-int glRenderMode(int mode) {
+int tglRenderMode(int mode) {
 	GLContext *c = gl_get_context();
 	int result = 0;
 
@@ -68,7 +68,7 @@ int glRenderMode(int mode) {
 	return result;
 }
 
-void glSelectBuffer(int size, unsigned int *buf) {
+void tglSelectBuffer(int size, unsigned int *buf) {
 	GLContext *c = gl_get_context();
 
 	assert(c->render_mode != TGL_SELECT);
@@ -77,14 +77,14 @@ void glSelectBuffer(int size, unsigned int *buf) {
 	c->select_size = size;
 }
 
-void glopInitNames(GLContext *c, GLParam *) {
+void GLContext::glopInitNames(GLContext *c, GLParam *) {
 	if (c->render_mode == TGL_SELECT) {
 		c->name_stack_size = 0;
 		c->select_hit = NULL;
 	}
 }
 
-void glopPushName(GLContext *c, GLParam *p) {
+void GLContext::glopPushName(GLContext *c, GLParam *p) {
 	if (c->render_mode == TGL_SELECT) {
 		assert(c->name_stack_size < MAX_NAME_STACK_DEPTH);
 		c->name_stack[c->name_stack_size++] = p[1].i;
@@ -92,7 +92,7 @@ void glopPushName(GLContext *c, GLParam *p) {
 	}
 }
 
-void glopPopName(GLContext *c, GLParam *) {
+void GLContext::glopPopName(GLContext *c, GLParam *) {
 	if (c->render_mode == TGL_SELECT) {
 		assert(c->name_stack_size > 0);
 		c->name_stack_size--;
@@ -100,7 +100,7 @@ void glopPopName(GLContext *c, GLParam *) {
 	}
 }
 
-void glopLoadName(GLContext *c, GLParam *p) {
+void GLContext::glopLoadName(GLContext *c, GLParam *p) {
 	if (c->render_mode == TGL_SELECT) {
 		assert(c->name_stack_size > 0);
 		c->name_stack[c->name_stack_size - 1] = p[1].i;
@@ -108,7 +108,7 @@ void glopLoadName(GLContext *c, GLParam *p) {
 	}
 }
 
-void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
+void GLContext::gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 	unsigned int *ptr;
 	int n;
 

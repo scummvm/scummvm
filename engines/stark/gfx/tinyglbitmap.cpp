@@ -31,7 +31,7 @@ namespace Gfx {
 
 TinyGlBitmap::TinyGlBitmap() :
 	Texture() {
-	_blitImage = Graphics::tglGenBlitImage();
+	_blitImage = tglGenBlitImage();
 }
 
 TinyGlBitmap::~TinyGlBitmap() {
@@ -48,12 +48,12 @@ void TinyGlBitmap::updateLevel(uint32 level, const Graphics::Surface *surface, c
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
-		Graphics::tglUploadBlitImage(_blitImage, *convertedSurface, 0, false);
+		tglUploadBlitImage(_blitImage, *convertedSurface, 0, false);
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
 		assert(surface->format == Driver::getRGBAPixelFormat());
-		Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
+		tglUploadBlitImage(_blitImage, *surface, 0, false);
 	}
 }
 
@@ -70,7 +70,7 @@ void TinyGlBitmap::setLevelCount(uint32 count) {
 void TinyGlBitmap::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
 }
 
-Graphics::BlitImage *TinyGlBitmap::getBlitTexture() const {
+TinyGL::BlitImage *TinyGlBitmap::getBlitTexture() const {
 	return _blitImage;
 }
 

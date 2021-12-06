@@ -30,7 +30,7 @@
 
 namespace TinyGL {
 
-void glopMaterial(GLContext *c, GLParam *p) {
+void GLContext::glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
@@ -73,7 +73,7 @@ void glopMaterial(GLContext *c, GLParam *p) {
 	}
 }
 
-void glopColorMaterial(GLContext *c, GLParam *p) {
+void GLContext::glopColorMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 
@@ -81,7 +81,7 @@ void glopColorMaterial(GLContext *c, GLParam *p) {
 	c->current_color_material_type = type;
 }
 
-void glopLight(GLContext *c, GLParam *p) {
+void GLContext::glopLight(GLContext *c, GLParam *p) {
 	int light = p[1].i;
 	int type = p[2].i;
 	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
@@ -148,7 +148,7 @@ void glopLight(GLContext *c, GLParam *p) {
 	}
 }
 
-void glopLightModel(GLContext *c, GLParam *p) {
+void GLContext::glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
 
 	switch (pname) {
@@ -167,7 +167,6 @@ void glopLightModel(GLContext *c, GLParam *p) {
 	}
 }
 
-
 static inline float clampf(float a, float min, float max) {
 	if (a < min)
 		return min;
@@ -177,7 +176,7 @@ static inline float clampf(float a, float min, float max) {
 		return a;
 }
 
-void gl_enable_disable_light(GLContext *c, int light, int v) {
+void GLContext::gl_enable_disable_light(GLContext *c, int light, int v) {
 	GLLight *l = &c->lights[light];
 	if (v && !l->enabled) {
 		l->enabled = 1;
@@ -200,7 +199,7 @@ void gl_enable_disable_light(GLContext *c, int light, int v) {
 }
 
 // non optimized lightening model
-void gl_shade_vertex(GLContext *c, GLVertex *v) {
+void GLContext::gl_shade_vertex(GLContext *c, GLVertex *v) {
 	float R, G, B, A;
 	GLMaterial *m;
 	GLLight *l;
@@ -298,7 +297,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 						// TODO: optimize
 						// testing specular buffer code
 						// dot_spec= pow(dot_spec,m->shininess)
-						specbuf = specbuf_get_buffer(c, m->shininess_i, m->shininess);
+						specbuf = c->specbuf_get_buffer(c, m->shininess_i, m->shininess);
 						tmp = dot_spec * SPECULAR_BUFFER_SIZE;
 						if (tmp > SPECULAR_BUFFER_SIZE)
 							idx = SPECULAR_BUFFER_SIZE;

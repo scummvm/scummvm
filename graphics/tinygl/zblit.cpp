@@ -35,7 +35,7 @@
 #include "graphics/tinygl/gl.h"
 #include <math.h>
 
-namespace Graphics {
+namespace TinyGL {
 
 Common::Point transformPoint(float x, float y, int rotation);
 Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
@@ -273,43 +273,48 @@ private:
 	int _refcount;
 };
 
-void tglGetBlitImageSize(BlitImage *blitImage, int &width, int &height) {
+}; // end of namespace TinyGL
+
+
+void tglGetBlitImageSize(TinyGL::BlitImage *blitImage, int &width, int &height) {
 	width = blitImage->getWidth();
 	height = blitImage->getHeight();
 }
 
-void tglIncBlitImageRef(BlitImage *blitImage) {
+void tglIncBlitImageRef(TinyGL::BlitImage *blitImage) {
 	blitImage->incRefCount();
 }
 
-int tglGetBlitImageVersion(BlitImage *blitImage) {
+int tglGetBlitImageVersion(TinyGL::BlitImage *blitImage) {
 	return blitImage->getVersion();
 }
 
-BlitImage *tglGenBlitImage() {
+TinyGL::BlitImage *tglGenBlitImage() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	BlitImage *image = new BlitImage();
+	TinyGL::BlitImage *image = new TinyGL::BlitImage();
 	c->_blitImages.push_back(image);
 	return image;
 }
 
-void tglUploadBlitImage(BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey) {
+void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey) {
 	if (blitImage != nullptr) {
 		blitImage->loadData(surface, colorKey, applyColorKey);
 	}
 }
 
-void tglDeleteBlitImage(BlitImage *blitImage) {
+void tglDeleteBlitImage(TinyGL::BlitImage *blitImage) {
 	if (blitImage != nullptr) {
 		blitImage->dispose();
 	}
 }
 
+namespace TinyGL {
+
 // This function uses RLE encoding to skip transparent bitmap parts
 // This blit only supports tinting but it will fall back to simpleBlit
 // if flipping is required (or anything more complex than that, including rotationd and scaling).
 template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
-FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
+FORCEINLINE void TinyGL::BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -399,7 +404,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 
 // This blit function is called when flipping is needed but transformation isn't.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
+FORCEINLINE void TinyGL::BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -452,7 +457,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 // This function is called when scale is needed: it uses a simple nearest
 // filter to scale the blit image before copying it to the screen.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
+FORCEINLINE void TinyGL::BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
 					 float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -541,7 +546,7 @@ systems.
 */
 
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
+FORCEINLINE void TinyGL::BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
 							 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
@@ -625,30 +630,38 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 	}
 }
 
-void tglBlit(BlitImage *blitImage, int x, int y) {
-	BlitTransform transform(x, y);
-	TinyGL::tglIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
+} // end of namespace TinyGL
+
+void tglBlit(TinyGL::BlitImage *blitImage, int x, int y) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::BlitTransform transform(x, y);
+	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_Regular));
 }
 
-void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
-	TinyGL::tglIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Regular));
+void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_Regular));
 }
 
-void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
-	TinyGL::tglIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_NoBlend));
+void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_NoBlend));
 }
 
-void tglBlitFast(BlitImage *blitImage, int x, int y) {
-	BlitTransform transform(x, y);
-	TinyGL::tglIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_Fast));
+void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::BlitTransform transform(x, y);
+	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_Fast));
 }
 
-void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
-	BlitTransform transform(x, y);
-	TinyGL::tglIssueDrawCall(new BlittingDrawCall(blitImage, transform, BlittingDrawCall::BlitMode_ZBuffer));
+void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::BlitTransform transform(x, y);
+	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_ZBuffer));
 }
 
 
+namespace TinyGL {
 namespace Internal {
 
 template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
@@ -694,7 +707,7 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableC
 }
 
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
-	TinyGL::GLContext *c =TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
 	bool disableBlend = c->fb->isBlendingEnabled() == false;
@@ -727,7 +740,7 @@ void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
 }
 
 void tglCleanupImages() {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	Common::List<BlitImage *>::iterator it = c->_blitImages.begin();
 	while (it != c->_blitImages.end()) {
 		if ((*it)->isDisposed()) {
@@ -740,11 +753,11 @@ void tglCleanupImages() {
 }
 
 void tglBlitSetScissorRect(const Common::Rect &rect) {
-	TinyGL::gl_get_context()->_scissorRect = rect;
+	gl_get_context()->_scissorRect = rect;
 }
 
 void tglBlitResetScissorRect(void) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	c->_scissorRect = c->renderRect;
 }
 
@@ -779,4 +792,4 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 	return res;
 }
 
-}
+} // end of namespace TinyGL

@@ -35,7 +35,7 @@ namespace TinyGL {
 // Inversion of a 4x4 matrix.
 // It's not just unrolling, this is a different implementation that directly
 // uses the formula whereas the previous one is using another method (which is generic and thus, slower)
-int MatrixInverse(float *m) {
+static int MatrixInverse(float *m) {
 	double inv[16];
 
 	inv[0] = m[5]  * m[10] * m[15] -

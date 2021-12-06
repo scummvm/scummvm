@@ -76,11 +76,11 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-		Renderer(system),
-		_fb(nullptr) {
+		Renderer(system) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
+	TinyGL::destroyContext();
 }
 
 void TinyGLRenderer::init() {
@@ -88,9 +88,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
-	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -106,11 +104,11 @@ void TinyGLRenderer::init() {
 	tglGenTextures(2, _textureRgb565Id);
 	tglGenTextures(2, _textureRgba5551Id);
 	tglGenTextures(2, _textureRgba4444Id);
-	_blitImageRgba = Graphics::tglGenBlitImage();
-	_blitImageRgb = Graphics::tglGenBlitImage();
-	_blitImageRgb565 = Graphics::tglGenBlitImage();
-	_blitImageRgba5551 = Graphics::tglGenBlitImage();
-	_blitImageRgba4444 = Graphics::tglGenBlitImage();
+	_blitImageRgba = tglGenBlitImage();
+	_blitImageRgb = tglGenBlitImage();
+	_blitImageRgb565 = tglGenBlitImage();
+	_blitImageRgba5551 = tglGenBlitImage();
+	_blitImageRgba4444 = tglGenBlitImage();
 }
 
 void TinyGLRenderer::deinit() {
@@ -231,8 +229,10 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 }
 
 void TinyGLRenderer::flipBuffer() {
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize, 0, 0, _fb->xsize, _fb->ysize);
+	TinyGL::presentBuffer();
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch, 0, 0, glBuffer.w, glBuffer.h);
 }
 
 void TinyGLRenderer::dimRegionInOut(float fade) {
@@ -377,25 +377,25 @@ void TinyGLRenderer::drawRgbaTexture() {
 	tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 
 	int blitTextureWidth, blitTextureHeight;
-	Graphics::tglGetBlitImageSize(_blitImageRgba, blitTextureWidth, blitTextureHeight);
+	tglGetBlitImageSize(_blitImageRgba, blitTextureWidth, blitTextureHeight);
 
-	Graphics::BlitTransform transform(0, 250);
+	TinyGL::BlitTransform transform(0, 250);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
 	tglBlit(_blitImageRgba, transform);
 	
-	transform = Graphics::BlitTransform(130, 250);
+	transform = TinyGL::BlitTransform(130, 250);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
 	tglBlit(_blitImageRgb, transform);
 
-	transform = Graphics::BlitTransform(260, 250);
+	transform = TinyGL::BlitTransform(260, 250);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
 	tglBlit(_blitImageRgb565, transform);
 
-	transform = Graphics::BlitTransform(390, 250);
+	transform = TinyGL::BlitTransform(390, 250);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
 	tglBlit(_blitImageRgba5551, transform);
 
-	transform = Graphics::BlitTransform(520, 250);
+	transform = TinyGL::BlitTransform(520, 250);
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
 	tglBlit(_blitImageRgba4444, transform);
 

@@ -37,13 +37,13 @@ public:
 	TinyGLTexture2D(const Graphics::Surface *surface);
 	virtual ~TinyGLTexture2D();
 
-	Graphics::BlitImage *getBlitTexture() const;
+	TinyGL::BlitImage *getBlitTexture() const;
 
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
 private:
-	Graphics::BlitImage *_blitImage;
+	TinyGL::BlitImage *_blitImage;
 };
 
 class TinyGLTexture3D : public Texture {

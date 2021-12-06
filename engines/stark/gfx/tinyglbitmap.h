@@ -40,7 +40,7 @@ public:
 
 	// Texture API
 	void bind() const override;
-	Graphics::BlitImage *getBlitTexture() const;
+	TinyGL::BlitImage *getBlitTexture() const;
 	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
 	void setSamplingFilter(SamplingFilter filter) override;
 	void setLevelCount(uint32 count) override;
@@ -49,7 +49,7 @@ public:
 protected:
 	void updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr);
 
-	Graphics::BlitImage *_blitImage;
+	TinyGL::BlitImage *_blitImage;
 };
 
 } // End of namespace Gfx

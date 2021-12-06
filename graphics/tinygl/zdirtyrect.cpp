@@ -34,7 +34,7 @@
 
 namespace TinyGL {
 
-void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
+void GLContext::issueDrawCall(DrawCall *drawCall) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	if (c->_enableDirtyRectangles && drawCall->getDirtyRegion().isEmpty())
 		return;
@@ -42,7 +42,7 @@ void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
 }
 
 #if TGL_DIRTY_RECT_SHOW
-static void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
+static void DebugDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	if (rect.left < 0)
@@ -78,17 +78,16 @@ struct DirtyRectangle {
 	}
 };
 
-
-void tglDisposeResources(TinyGL::GLContext *c) {
+void GLContext::disposeResources(GLContext *c) {
 	// Dispose textures and resources.
 	bool allDisposed = true;
 	do {
 		allDisposed = true;
 		for (int i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
-			TinyGL::GLTexture *t = c->shared_state.texture_hash_table[i];
+			GLTexture *t = c->shared_state.texture_hash_table[i];
 			while (t) {
 				if (t->disposed) {
-					TinyGL::free_texture(c, t);
+					c->free_texture(c, t);
 					allDisposed = false;
 					break;
 				}
@@ -98,11 +97,11 @@ void tglDisposeResources(TinyGL::GLContext *c) {
 
 	} while (allDisposed == false);
 
-	Graphics::Internal::tglCleanupImages();
+	TinyGL::Internal::tglCleanupImages();
 }
 
-void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
-	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
+void GLContext::disposeDrawCallLists(GLContext *c) {
+	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
 	for (DrawCallIterator it = c->_previousFrameDrawCallsQueue.begin(); it != c->_previousFrameDrawCallsQueue.end(); ++it) {
 		delete *it;
 	}
@@ -113,15 +112,15 @@ void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
 	c->_drawCallsQueue.clear();
 }
 
-static inline void _appendDirtyRectangle(const Graphics::DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
+static inline void _appendDirtyRectangle(const DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
 	Common::Rect dirty_region = call.getDirtyRegion();
 	if (rectangles.empty() || dirty_region != rectangles.back().rectangle)
 		rectangles.push_back(DirtyRectangle(dirty_region, r, g, b));
 }
 
-static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
-	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
-	typedef Common::List<TinyGL::DirtyRectangle>::iterator RectangleIterator;
+void GLContext::presentBufferDirtyRects(GLContext *c) {
+	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
+	typedef Common::List<DirtyRectangle>::iterator RectangleIterator;
 
 	Common::List<DirtyRectangle> rectangles;
 
@@ -133,8 +132,8 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	// Compare draw calls.
 	for ( ; itPrevFrame != endPrevFrame && itFrame != endFrame;
 		++itPrevFrame, ++itFrame) {
-			const Graphics::DrawCall &currentCall = **itFrame;
-			const Graphics::DrawCall &previousCall = **itPrevFrame;
+			const DrawCall &currentCall = **itFrame;
+			const DrawCall &previousCall = **itPrevFrame;
 
 			if (previousCall != currentCall) {
 				_appendDirtyRectangle(previousCall, rectangles, 255, 255, 255);
@@ -216,7 +215,7 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 		c->fb->enableAlphaTest(false);
 
 		for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-			tglDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+			DebugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
 		}
 
 		c->fb->enableBlending(blendingEnabled);
@@ -233,14 +232,14 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	c->_drawCallsQueue.clear();
 
 
-	tglDisposeResources(c);
+	c->disposeResources(c);
 
 	c->_currentAllocatorIndex = (c->_currentAllocatorIndex + 1) & 0x1;
 	c->_drawCallAllocator[c->_currentAllocatorIndex].reset();
 }
 
-static void tglPresentBufferSimple(TinyGL::GLContext *c) {
-	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
+void GLContext::presentBufferSimple(GLContext *c) {
+	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
 
 	for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
 		(*it)->execute(true);
@@ -249,23 +248,19 @@ static void tglPresentBufferSimple(TinyGL::GLContext *c) {
 
 	c->_drawCallsQueue.clear();
 
-	tglDisposeResources(c);
+	c->disposeResources(c);
 
 	c->_drawCallAllocator[c->_currentAllocatorIndex].reset();
 }
 
-void tglPresentBuffer() {
+void presentBuffer() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	if (c->_enableDirtyRectangles) {
-		tglPresentBufferDirtyRects(c);
+		c->presentBufferDirtyRects(c);
 	} else {
-		tglPresentBufferSimple(c);
+		c->presentBufferSimple(c);
 	}
 }
-
-} // end of namespace TinyGL
-
-namespace Graphics {
 
 bool DrawCall::operator==(const DrawCall &other) const {
 	if (_type == other._type) {
@@ -290,7 +285,7 @@ bool DrawCall::operator==(const DrawCall &other) const {
 RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	_vertexCount = c->vertex_cnt;
-	_vertex = (TinyGL::GLVertex *) ::Internal::allocateFrame(_vertexCount * sizeof(TinyGL::GLVertex));
+	_vertex = (GLVertex *) Internal::allocateFrame(_vertexCount * sizeof(GLVertex));
 	_drawTriangleFront = c->draw_triangle_front;
 	_drawTriangleBack = c->draw_triangle_back;
 	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
@@ -315,7 +310,7 @@ void RasterizationDrawCall::computeDirtyRegion() {
 		for (int i = 0; i < _vertexCount; i++) {
 			TinyGL::GLVertex *v = &_vertex[i];
 			if (v->clip_code)
-				gl_transform_to_viewport(c, v);
+				c->gl_transform_to_viewport(c, v);
 			left =   MIN(left,   v->clip_code & 0x1 ?    0 : v->zp.x);
 			right =  MAX(right,  v->clip_code & 0x2 ? xmax : v->zp.x);
 			bottom = MAX(bottom, v->clip_code & 0x4 ? ymax : v->zp.y);
@@ -356,25 +351,25 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 	switch (c->begin_type) {
 	case TGL_POINTS:
 		for(int i = 0; i < cnt; i++) {
-			gl_draw_point(c, &c->vertex[i]);
+			c->gl_draw_point(c, &c->vertex[i]);
 		}
 		break;
 	case TGL_LINES:
 		for(int i = 0; i < cnt / 2; i++) {
-			gl_draw_line(c, &c->vertex[i * 2], &c->vertex[i * 2 + 1]);
+			c->gl_draw_line(c, &c->vertex[i * 2], &c->vertex[i * 2 + 1]);
 		}
 		break;
 	case TGL_LINE_LOOP:
-		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
+		c->gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		// Fall through...
 	case TGL_LINE_STRIP:
 		for(int i = 0; i < cnt - 1; i++) {
-			gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
+			c->gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
 		}
 		break;
 	case TGL_TRIANGLES:
 		for(int i = 0; i < cnt; i += 3) {
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
+			c->gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 		}
 		break;
 	case TGL_TRIANGLE_STRIP:
@@ -382,10 +377,10 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 			// needed to respect triangle orientation
 			switch (cnt & 1) {
 			case 0:
-				gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
+				c->gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
 				break;
 			case 1:
-				gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+				c->gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 				break;
 			}
 			cnt--;
@@ -394,22 +389,22 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		break;
 	case TGL_TRIANGLE_FAN:
 		for(int i = 1; i < cnt; i += 2) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[i], &c->vertex[i + 1]);
+			c->gl_draw_triangle(c, &c->vertex[0], &c->vertex[i], &c->vertex[i + 1]);
 		}
 		break;
 	case TGL_QUADS:
 		for(int i = 0; i < cnt; i += 4) {
 			c->vertex[i + 2].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
+			c->gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 1], &c->vertex[i + 2]);
 			c->vertex[i + 2].edge_flag = 1;
 			c->vertex[i + 0].edge_flag = 0;
-			gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 2], &c->vertex[i + 3]);
+			c->gl_draw_triangle(c, &c->vertex[i], &c->vertex[i + 2], &c->vertex[i + 3]);
 		}
 		break;
 	case TGL_QUAD_STRIP:
 		for( ; n >= 4; n -= 2) {
-			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-			gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
+			c->gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+			c->gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
 			for (int i = 0; i < 2; i++) {
 				c->vertex[i] = c->vertex[i + 2];
 			}
@@ -417,7 +412,7 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 		break;
 	case TGL_POLYGON: {
 		for (int i = c->vertex_cnt; i >= 3; i--) {
-			gl_draw_triangle(c, &c->vertex[i - 1], &c->vertex[0], &c->vertex[i - 2]);
+			c->gl_draw_triangle(c, &c->vertex[i - 1], &c->vertex[0], &c->vertex[i - 2]);
 		}
 		break;
 	}
@@ -527,7 +522,7 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 	return false;
 }
 
-BlittingDrawCall::BlittingDrawCall(Graphics::BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
+BlittingDrawCall::BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
 	tglIncBlitImageRef(image);
 	_blitState = captureState();
 	_imageVersion = tglGetBlitImageVersion(image);
@@ -548,17 +543,17 @@ void BlittingDrawCall::execute(bool restoreState) const {
 	applyState(_blitState);
 
 	switch (_mode) {
-	case Graphics::BlittingDrawCall::BlitMode_Regular:
-		Graphics::Internal::tglBlit(_image, _transform);
+	case BlittingDrawCall::BlitMode_Regular:
+		Internal::tglBlit(_image, _transform);
 		break;
-	case Graphics::BlittingDrawCall::BlitMode_NoBlend:
-		Graphics::Internal::tglBlitNoBlend(_image, _transform);
+	case BlittingDrawCall::BlitMode_NoBlend:
+		Internal::tglBlitNoBlend(_image, _transform);
 		break;
-	case Graphics::BlittingDrawCall::BlitMode_Fast:
-		Graphics::Internal::tglBlitFast(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
+	case BlittingDrawCall::BlitMode_Fast:
+		Internal::tglBlitFast(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;
-	case Graphics::BlittingDrawCall::BlitMode_ZBuffer:
-		Graphics::Internal::tglBlitZBuffer(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
+	case BlittingDrawCall::BlitMode_ZBuffer:
+		Internal::tglBlitZBuffer(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;
 	default:
 		break;
@@ -569,9 +564,9 @@ void BlittingDrawCall::execute(bool restoreState) const {
 }
 
 void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-	Graphics::Internal::tglBlitSetScissorRect(clippingRectangle);
+	Internal::tglBlitSetScissorRect(clippingRectangle);
 	execute(restoreState);
-	Graphics::Internal::tglBlitResetScissorRect();
+	Internal::tglBlitResetScissorRect();
 }
 
 BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
@@ -697,10 +692,9 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 			textureVersion == texture->versionNumber;
 }
 
-} // end of namespace Graphics
-
-
 void *Internal::allocateFrame(int size) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	return c->_drawCallAllocator[c->_currentAllocatorIndex].allocate(size);
 }
+
+} // end of namespace TinyGL

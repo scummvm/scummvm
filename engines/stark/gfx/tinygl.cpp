@@ -45,14 +45,13 @@ TinyGLDriver::TinyGLDriver() {
 }
 
 TinyGLDriver::~TinyGLDriver() {
+	TinyGL::destroyContext();
 }
 
 void TinyGLDriver::init() {
 	computeScreenViewport();
 
-	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
-	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -94,8 +93,10 @@ void TinyGLDriver::clearScreen() {
 }
 
 void TinyGLDriver::flipBuffer() {
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize, 0, 0, _fb->xsize, _fb->ysize);
+	TinyGL::presentBuffer();
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch, 0, 0, glBuffer.w, glBuffer.h);
 	g_system->updateScreen();
 }
 
@@ -175,7 +176,7 @@ Common::Rect TinyGLDriver::getUnscaledViewport() const {
 }
 
 Graphics::Surface *TinyGLDriver::getViewportScreenshot() const {
-	Graphics::Surface *tmp = _fb->copyToBuffer(getRGBAPixelFormat());
+	Graphics::Surface *tmp = TinyGL::copyToBuffer(getRGBAPixelFormat());
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
 	byte *src = (byte *)tmp->getPixels();

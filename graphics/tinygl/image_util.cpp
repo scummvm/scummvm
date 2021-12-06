@@ -41,7 +41,7 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 
 // TODO: more accurate resampling
 
-void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+void GLContext::gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
 		    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src) {
 	int point1_offset, point2_offset, point3_offset, dest_offset = 0;
 	int point_y_offset, point_offset;
@@ -110,7 +110,7 @@ void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
 #define FRAC_BITS 16
 
 // resizing with no interlating nor nearest pixel
-void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+void GLContext::gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
 				 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src) {
 	int dest_offset = 0;
 	int x1, y1, x1inc, y1inc;

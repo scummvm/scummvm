@@ -57,10 +57,10 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	auto viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
 	auto blitImage = ((TinyGlBitmap *)const_cast<Texture *>(texture))->getBlitTexture();
 	int blitTextureWidth, blitTextureHeight;
-	Graphics::tglGetBlitImageSize(blitImage, blitTextureWidth, blitTextureHeight);
+	tglGetBlitImageSize(blitImage, blitTextureWidth, blitTextureHeight);
 	int posX = viewport.getX() * verOffsetXY.getX() + nativeViewport.left;
 	int posY = viewport.getY() * verOffsetXY.getY() + nativeViewport.top;
-	Graphics::BlitTransform transform(posX, posY);
+	TinyGL::BlitTransform transform(posX, posY);
 
 	// WA for not clipped textues in prompt dialog
 	if (width == 256 && height == 256) {

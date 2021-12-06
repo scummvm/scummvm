@@ -31,25 +31,25 @@
 
 namespace TinyGL {
 
-void glopNormal(GLContext *c, GLParam *p) {
+void GLContext::glopNormal(GLContext *c, GLParam *p) {
 	c->current_normal.X = p[1].f;
 	c->current_normal.Y = p[2].f;
 	c->current_normal.Z = p[3].f;
 	c->current_normal.W = 0.0f;
 }
 
-void glopTexCoord(GLContext *c, GLParam *p) {
+void GLContext::glopTexCoord(GLContext *c, GLParam *p) {
 	c->current_tex_coord.X = p[1].f;
 	c->current_tex_coord.Y = p[2].f;
 	c->current_tex_coord.Z = p[3].f;
 	c->current_tex_coord.W = p[4].f;
 }
 
-void glopEdgeFlag(GLContext *c, GLParam *p) {
+void GLContext::glopEdgeFlag(GLContext *c, GLParam *p) {
 	c->current_edge_flag = p[1].i;
 }
 
-void glopColor(GLContext *c, GLParam *p) {
+void GLContext::glopColor(GLContext *c, GLParam *p) {
 	c->current_color.X = p[1].f;
 	c->current_color.Y = p[2].f;
 	c->current_color.Z = p[3].f;
@@ -64,11 +64,11 @@ void glopColor(GLContext *c, GLParam *p) {
 		q[4].f = p[2].f;
 		q[5].f = p[3].f;
 		q[6].f = p[4].f;
-		glopMaterial(c, q);
+		c->glopMaterial(c, q);
 	}
 }
 
-void gl_eval_viewport(GLContext *c) {
+static void gl_eval_viewport(GLContext *c) {
 	GLViewport *v;
 	float zsize = (1 << (ZB_Z_BITS + ZB_POINT_Z_FRAC_BITS));
 
@@ -86,7 +86,7 @@ void gl_eval_viewport(GLContext *c) {
 	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
 
-void glopBegin(GLContext *c, GLParam *p) {
+void GLContext::glopBegin(GLContext *c, GLParam *p) {
 	int type;
 
 	assert(c->in_begin == 0);
@@ -191,7 +191,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 	v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
-void glopVertex(GLContext *c, GLParam *p) {
+void GLContext::glopVertex(GLContext *c, GLParam *p) {
 	GLVertex *v;
 	int n, cnt;
 
@@ -228,7 +228,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 	// color
 
 	if (c->lighting_enabled) {
-		gl_shade_vertex(c, v);
+		c->gl_shade_vertex(c, v);
 	} else {
 		v->color = c->current_color;
 	}
@@ -244,7 +244,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 	}
 	// precompute the mapping to the viewport
 	if (v->clip_code == 0)
-		gl_transform_to_viewport(c, v);
+		c->gl_transform_to_viewport(c, v);
 
 	// edge flag
 
@@ -253,11 +253,11 @@ void glopVertex(GLContext *c, GLParam *p) {
 	c->vertex_n = n;
 }
 
-void glopEnd(GLContext *c, GLParam *) {
+void GLContext::glopEnd(GLContext *c, GLParam *) {
 	assert(c->in_begin == 1);
 
 	if (c->vertex_cnt > 0) {
-		tglIssueDrawCall(new Graphics::RasterizationDrawCall());
+		c->issueDrawCall(new RasterizationDrawCall());
 	}
 
 	c->in_begin = 0;

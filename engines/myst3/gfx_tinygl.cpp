@@ -41,11 +41,11 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-		Renderer(system),
-		_fb(nullptr) {
+		Renderer(system) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
+	TinyGL::destroyContext();
 }
 
 Texture *TinyGLRenderer::createTexture2D(const Graphics::Surface *surface) {
@@ -62,9 +62,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
-	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -172,7 +170,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglDepthMask(TGL_FALSE);
 
 	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
-	Graphics::BlitTransform transform(sLeft + _viewport.left, sTop + _viewport.top);
+	TinyGL::BlitTransform transform(sLeft + _viewport.left, sTop + _viewport.top);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
 	tglBlit(glTexture->getBlitTexture(), transform);
@@ -204,10 +202,10 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		int w = textureRect.width();
 		int h = textureRect.height();
 
-		Graphics::BlitTransform transform(x, y);
+		TinyGL::BlitTransform transform(x, y);
 		transform.sourceRectangle(textureRect.left, textureRect.top, w, h);
 		transform.flip(true, false);
-		Graphics::tglBlit(glFont->getBlitTexture(), transform);
+		tglBlit(glFont->getBlitTexture(), transform);
 
 		x += textureRect.width() - 3;
 	}
@@ -270,13 +268,14 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 }
 
 Graphics::Surface *TinyGLRenderer::getScreenshot() {
-	return _fb->copyToBuffer(Texture::getRGBAPixelFormat());
+	return TinyGL::copyToBuffer(Texture::getRGBAPixelFormat());
 }
 
 void TinyGLRenderer::flipBuffer() {
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize,
-	                           0, 0, _fb->xsize, _fb->ysize);
+	TinyGL::presentBuffer();
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch, 0, 0, glBuffer.w, glBuffer.h);
 }
 
 } // End of namespace Myst3

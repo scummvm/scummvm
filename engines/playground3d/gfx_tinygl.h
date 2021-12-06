@@ -59,18 +59,17 @@ public:
 	void flipBuffer() override;
 
 private:
-	TinyGL::FrameBuffer *_fb;
 	Math::Vector3d _pos;
 	TGLuint _textureRgbaId[5];
 	TGLuint _textureRgbId[5];
 	TGLuint _textureRgb565Id[2];
 	TGLuint _textureRgba5551Id[2];
 	TGLuint _textureRgba4444Id[2];
-	Graphics::BlitImage *_blitImageRgba;
-	Graphics::BlitImage *_blitImageRgb;
-	Graphics::BlitImage *_blitImageRgb565;
-	Graphics::BlitImage *_blitImageRgba5551;
-	Graphics::BlitImage *_blitImageRgba4444;
+	TinyGL::BlitImage *_blitImageRgba;
+	TinyGL::BlitImage *_blitImageRgb;
+	TinyGL::BlitImage *_blitImageRgb565;
+	TinyGL::BlitImage *_blitImageRgba5551;
+	TinyGL::BlitImage *_blitImageRgba4444;
 
 	void drawFace(uint face);
 };

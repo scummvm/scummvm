@@ -34,19 +34,19 @@ namespace TinyGL {
 
 GLContext *gl_ctx;
 
-void initSharedState(GLContext *c) {
+void GLContext::initSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
 	s->lists = (GLList **)gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
 	s->texture_hash_table = (GLTexture **)gl_zalloc(sizeof(GLTexture *) * TEXTURE_HASH_TABLE_SIZE);
 
-	alloc_texture(c, 0);
+	c->alloc_texture(c, 0);
 }
 
-void endSharedState(GLContext *c) {
+void GLContext::endSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
 
 	uint h = 0;
-	free_texture(c, h);
+	c->free_texture(c, h);
 	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
@@ -55,10 +55,17 @@ void endSharedState(GLContext *c) {
 	gl_free(s->texture_hash_table);
 }
 
-void glInit(void *zbuffer1, int textureSize) {
-	FrameBuffer *zbuffer = (FrameBuffer *)zbuffer1;
-	GLContext *c;
+void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
+	assert(gl_ctx == nullptr);
+	GLContext *c = new GLContext();
+	gl_ctx = c;
+	c->init(screenW, screenH, pixelFormat, textureSize, dirtyRectsEnable);
+}
+
+void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
+	GLContext *c = gl_ctx;
 	GLViewport *v;
+	assert(c);
 
 	if ((textureSize & (textureSize - 1)))
 		error("glInit: texture size not power of two: %d", textureSize);
@@ -66,10 +73,9 @@ void glInit(void *zbuffer1, int textureSize) {
 	if (textureSize <= 1 || textureSize > 4096)
 		error("glInit: texture size not allowed: %d", textureSize);
 
-	c = new GLContext();
-	gl_ctx = c;
+	c->_enableDirtyRectangles = dirtyRectsEnable;
 
-	c->fb = zbuffer;
+	FrameBuffer *zbuffer = c->fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
 
 	c->fb->_textureSize = c->_textureSize = textureSize;
 	c->fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
@@ -88,7 +94,7 @@ void glInit(void *zbuffer1, int textureSize) {
 	v->updated = 1;
 
 	// shared state
-	initSharedState(c);
+	c->initSharedState(c);
 
 	// lists
 
@@ -146,7 +152,7 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->color_material_enabled = 0;
 
 	// textures
-	glInitTextures(c);
+	c->glInitTextures(c);
 
 	// default state
 	c->current_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -238,22 +244,28 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->_drawCallAllocator[1].initialize(kDrawCallMemory);
 	c->_enableDirtyRectangles = true;
 
-	Graphics::Internal::tglBlitResetScissorRect();
+	TinyGL::Internal::tglBlitResetScissorRect();
 }
 
-void glClose() {
+void destroyContext() {
+	GLContext *c = gl_get_context();
+	assert(c);
+	c->deinit();
+	delete c;
+	gl_ctx = nullptr;
+}
+
+void GLContext::deinit() {
 	GLContext *c = gl_get_context();
 
-	tglDisposeDrawCallLists(c);
-	tglDisposeResources(c);
+	c->disposeDrawCallLists(c);
+	c->disposeResources(c);
 
-	specbuf_cleanup(c);
+	c->specbuf_cleanup(c);
 	for (int i = 0; i < 3; i++)
 		gl_free(c->matrix_stack[i]);
-	endSharedState(c);
+	c->endSharedState(c);
 	gl_free(c->vertex);
-
-	delete c;
 }
 
 } // end of namespace TinyGL

@@ -857,7 +857,7 @@ void tglDebug(int mode);
 
 namespace TinyGL {
 
-void tglPresentBuffer();
+void presentBuffer();
 
 } // end of namespace TinyGL
 

@@ -61,7 +61,6 @@ public:
 private:
 	void drawFace(uint face, Texture *texture);
 
-	TinyGL::FrameBuffer *_fb;
 	Common::Rect _viewport;
 };
 

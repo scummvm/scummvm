@@ -68,7 +68,6 @@ public:
 private:
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;
-	TinyGL::FrameBuffer *_fb;
 };
 
 } // End of namespace Gfx

@@ -40,7 +40,7 @@ namespace TinyGL {
 #define CLIP_ZMIN   (1 << 4)
 #define CLIP_ZMAX   (1 << 5)
 
-void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
+void GLContext::gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	float winv;
 
 	// coordinates
@@ -61,7 +61,7 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	}
 }
 
-static void gl_add_select1(GLContext *c, int z1, int z2, int z3) {
+void GLContext::gl_add_select1(GLContext *c, int z1, int z2, int z3) {
 	int min, max;
 
 	min = max = z1;
@@ -74,15 +74,15 @@ static void gl_add_select1(GLContext *c, int z1, int z2, int z3) {
 	if (z3 > max)
 		max = z3;
 
-	gl_add_select(c, 0xffffffff - min, 0xffffffff - max);
+	c->gl_add_select(c, 0xffffffff - min, 0xffffffff - max);
 }
 
 // point
 
-void gl_draw_point(GLContext *c, GLVertex *p0) {
+void GLContext::gl_draw_point(GLContext *c, GLVertex *p0) {
 	if (p0->clip_code == 0) {
 		if (c->render_mode == TGL_SELECT) {
-			gl_add_select(c, p0->zp.z, p0->zp.z);
+			c->gl_add_select(c, p0->zp.z, p0->zp.z);
 		} else {
 			c->fb->plot(&p0->zp);
 		}
@@ -128,7 +128,7 @@ static inline int ClipLine1(float denom, float num, float *tmin, float *tmax) {
 	return 1;
 }
 
-void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
+void GLContext::gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 	float dx, dy, dz, dw, x1, y1, z1, w1;
 	float tmin, tmax;
 	GLVertex q1, q2;
@@ -231,12 +231,10 @@ static inline void updateTmp(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *
 
 	q->clip_code = gl_clipcode(q->pc.X, q->pc.Y, q->pc.Z, q->pc.W);
 	if (q->clip_code == 0)
-		gl_transform_to_viewport(c, q);
+		c->gl_transform_to_viewport(c, q);
 }
 
-static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
-
-void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
+void GLContext::gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	int co, c_and, cc[3], front;
 	float norm;
 
@@ -286,7 +284,7 @@ void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	}
 }
 
-static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit) {
+void GLContext::gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit) {
 	int co, c_and, co1, cc[3], edge_flag_tmp, clip_mask;
 	GLVertex tmp1, tmp2, *q[3];
 	float tt;
@@ -297,7 +295,7 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVe
 
 	co = cc[0] | cc[1] | cc[2];
 	if (co == 0) {
-		gl_draw_triangle(c, p0, p1, p2);
+		c->gl_draw_triangle(c, p0, p1, p2);
 	} else {
 		c_and = cc[0] & cc[1] & cc[2];
 		// the triangle is completely outside
@@ -371,15 +369,15 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0, GLVertex *p1, GLVe
 	}
 }
 
-void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
-	gl_add_select1(c, p0->zp.z, p1->zp.z, p2->zp.z);
+void GLContext::gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
+	c->gl_add_select1(c, p0->zp.z, p1->zp.z, p2->zp.z);
 }
 
 #ifdef TINYGL_PROFILE
 int count_triangles, count_triangles_textured, count_pixels;
 #endif
 
-void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
+void GLContext::gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 #ifdef TINYGL_PROFILE
 	{
 		int norm;
@@ -426,7 +424,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 
 // Render a clipped triangle in line mode
 
-void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
+void GLContext::gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (c->depth_test) {
 		if (p0->edge_flag)
 			c->fb->fillLineZ(&p0->zp, &p1->zp);
@@ -445,7 +443,7 @@ void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 }
 
 // Render a clipped triangle in point mode
-void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
+void GLContext::gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (p0->edge_flag)
 		c->fb->plot(&p0->zp);
 	if (p1->edge_flag)

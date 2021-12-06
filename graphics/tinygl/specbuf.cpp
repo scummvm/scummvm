@@ -40,7 +40,7 @@ static void calc_buf(GLSpecBuf *buf, const float shininess) {
 	}
 }
 
-GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess) {
+GLSpecBuf *GLContext::specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess) {
 	GLSpecBuf *found, *oldest;
 	found = oldest = c->specbuf_first;
 	while (found && found->shininess_i != shininess_i) {
@@ -73,7 +73,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 	return oldest;
 }
 
-void specbuf_cleanup(GLContext *c) {
+void GLContext::specbuf_cleanup(GLContext *c) {
 	GLSpecBuf *buf, *next;
 	buf = c->specbuf_first;
 	for (int i = 0; i < c->specbuf_num_buffers; ++i) {

@@ -30,7 +30,7 @@ TinyGLTexture2D::TinyGLTexture2D(const Graphics::Surface *surface) {
 	height = surface->h;
 	format = surface->format;
 
-	_blitImage = Graphics::tglGenBlitImage();
+	_blitImage = tglGenBlitImage();
 
 	update(surface);
 }
@@ -40,7 +40,7 @@ TinyGLTexture2D::~TinyGLTexture2D() {
 }
 
 void TinyGLTexture2D::update(const Graphics::Surface *surface) {
-	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
+	tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
 
 void TinyGLTexture2D::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
@@ -48,7 +48,7 @@ void TinyGLTexture2D::updatePartial(const Graphics::Surface *surface, const Comm
 	update(surface);
 }
 
-Graphics::BlitImage *TinyGLTexture2D::getBlitTexture() const {
+TinyGL::BlitImage *TinyGLTexture2D::getBlitTexture() const {
 	return _blitImage;
 }
 
