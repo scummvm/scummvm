@@ -3797,7 +3797,7 @@ int32 Actor::getWalkIncrement(ActorDirection dir, uint32 frameIndex) const {
 
 	switch (dir) {
 	default:
-		error("[Actor::getWalkIncrement] Invalid direction");
+		error("[Actor::getWalkIncrement] Invalid direction %d", dir);
 
 	case kDirectionN:
 		return -_distancesNS[frameIndex];

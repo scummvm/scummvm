@@ -724,14 +724,15 @@ END_OPCODE
 // Opcode 0x13
 IMPLEMENT_OPCODE(JumpAndSetDirection)
 	Actor *actor = getScene()->getActor(cmd->param1);
+	ActorDirection newDirection = (ActorDirection)(cmd->param4 & 7);
 
 	if (actor->getStatus() != kActorStatusWalkingTo && actor->getStatus() != kActorStatusWalkingTo2) {
 		if (cmd->param5 != 2) {
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
-				actor->changeDirection((ActorDirection)cmd->param4);
+				actor->changeDirection(newDirection);
 			} else if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3) {
-				actor->changeDirection((ActorDirection)cmd->param4);
+				actor->changeDirection(newDirection);
 			} else {
 				actor->forceTo((int16)cmd->param2, (int16)cmd->param3, (bool)cmd->param6);
 
@@ -745,7 +746,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 			_processNextEntry = false;
 
 			if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3)
-				actor->changeDirection((ActorDirection)cmd->param4);
+				actor->changeDirection(newDirection);
 		}
 	} else {
 		if (cmd->param5 == 2)
