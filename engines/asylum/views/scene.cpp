@@ -530,6 +530,8 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 	}
 
 	Actor *player = getActor();
+	player->setLastScreenUpdate(_vm->screenUpdateCount);
+
 	switch (evt.type) {
 	default:
 		break;
