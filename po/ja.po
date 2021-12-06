@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-12-05 10:40+0000\n"
+"PO-Revision-Date: 2021-12-07 00:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5014,12 +5014,12 @@ msgstr "AIパズルの難易度を下げる"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "クレジット曲をアップデート"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr ""
+msgstr "クレジットでMIDI曲を再利用せず、代わりにThe Final Hourを流す"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
