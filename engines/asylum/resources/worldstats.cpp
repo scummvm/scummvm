@@ -202,6 +202,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	musicResourceIndex        = stream->readSint32LE();
 	musicStatusExt            = stream->readSint32LE();
 
+	// Patch a flag number which is too big
+	if (chapter == kChapter8 && ambientSounds[1].flagNum[1] == 99999)
+		ambientSounds[1].flagNum[1] = 0;
+
 load_objects:
 	//////////////////////////////////////////////////////////////////////////
 	// Read Objects

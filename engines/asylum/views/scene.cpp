@@ -852,9 +852,6 @@ void Scene::updateAmbientSounds() {
 			if (!gameFlag)
 				break;
 
-			if (gameFlag == 99999)
-				continue;
-
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet((GameFlag)gameFlag)) {
 					processSound = false;

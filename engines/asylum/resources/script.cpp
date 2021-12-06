@@ -268,6 +268,12 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 		_scripts[34].commands[13].param1 =  453;
 		_scripts[43].commands[ 9].param1 =  455;
 	}
+
+	// Patch for Demo lockup bug
+	if (_vm->checkGameVersion("Demo")) {
+		_scripts[1].commands[6].param2 = 151;
+		_scripts[1].commands[6].param3 = 332;
+	}
 }
 
 void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -628,11 +634,6 @@ END_OPCODE
 // Opcode 0x0B
 IMPLEMENT_OPCODE(SetActorPosition)
 	Actor *actor = getScene()->getActor(cmd->param1);
-
-	if (_vm->checkGameVersion("Demo") && cmd->param2 == 150 && cmd->param3 == 337) {
-		actor->setPosition(151, 332, (ActorDirection)cmd->param4, (uint32)cmd->param5);
-		return;
-	}
 
 	actor->setPosition((int16)cmd->param2, (int16)cmd->param3, (ActorDirection)cmd->param4, (uint32)cmd->param5);
 END_OPCODE
