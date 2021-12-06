@@ -1276,13 +1276,27 @@ static void flic_proc1() {
 	out->cls();
 }
 
+#define PLAY_LOOP do { \
+		mem->file->select_pool_item(Ci.Handle, nr); \
+		ret = flc->custom_play(&Ci); \
+	} while (atds->aad_get_status() != -1 && ret != -1)
+
+
 void flic_cut(int16 nr, int16 mode) {
-	const int16 FLIC_CUT_1080[] = { 80, 78, 77, 81, 82, 79, 76, 116 };
-	const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
 	const int16 FLIC_CUT_133[] = {
 		133, 123, 125, 126, 124, 128, 129, 130, 131,
 		132, 133, 127, 158
 	};
+	const int16 FLIC_CUT_1045[] = {
+		30, 47, 41, 34, 45, 52, 53, 57, 64, 63, 62
+	};
+	const int16 FLIC_CUT_1074[] = { 73, 114, 74, 75 };
+	const int16 FLIC_CUT_1080[] = { 80, 78, 77, 81, 82, 79, 76, 116 };
+	const int16 FLIC_CUT_1093[] = {
+		93, 94, 95, 96, 97, 98, 99, 100, 92, 90, 91, 89
+	};
+	const int16 FLIC_CUT_1106[] = { 106, 105, 104 };
+	const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
 	int16 i, ret = 0;
 
 	out->setze_zeiger(0);
@@ -1380,6 +1394,28 @@ void flic_cut(int16 nr, int16 mode) {
 			ailsnd->set_loopmode(_G(spieler).soundLoopMode);
 			break;
 
+		case FCUT_032:
+		case FCUT_035:
+		case FCUT_036:
+		case FCUT_037:
+		case FCUT_040:
+			PLAY_LOOP;
+			break;
+
+		case FCUT_034:
+			ailsnd->stop_mod();
+			CurrentSong = -1;
+
+			PLAY_LOOP;
+			break;
+
+		case FCUT_053:
+			for (i = 0; i < 3; ++i) {
+				mem->file->select_pool_item(Ci.Handle, nr);
+				flc->custom_play(&Ci);
+			}
+			break;
+
 		case FCUT_054:
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
@@ -1393,24 +1429,20 @@ void flic_cut(int16 nr, int16 mode) {
 			flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 			if (!modul) {
 				mem->file->select_pool_item(Ci.Handle, FCUT_059);
-
 				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 			}
 			if (!_G(spieler).R43GetPgLady) {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_060);
-
 					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 				}
 			} else {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_061);
-
 					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 				}
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_062);
-
 					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 				}
 			}
@@ -1436,6 +1468,14 @@ void flic_cut(int16 nr, int16 mode) {
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
 			break;
+
+		case 83:
+		case 1083:
+			for (i = 0; i < 2 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, 83);
+				ret = flc->custom_play(&Ci);
+			}
+
 
 		case 95:
 			while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
@@ -1524,6 +1564,148 @@ void flic_cut(int16 nr, int16 mode) {
 			fx->border(workpage, 100, 0, 0);
 			break;
 
+		case 1015:
+			for (i = 0; i < 2 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, i + 15);
+				fx->border(workpage, 100, 0, 0);
+				ret = flc->custom_play(&Ci);
+			}
+
+		case 1045:
+			for (i = 0; i < 11 && ret != -1; ++i) {
+				fx->border(workpage, 100, 0, 0);
+				print_rows(594);
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1045[i]);
+				if (FLIC_CUT_1045[i] == 53) {
+					ailsnd->stop_mod();
+					CurrentSong = -1;
+					load_room_music(256);
+				}
+
+				ret = flc->custom_play(&Ci);
+
+				if (FLIC_CUT_1045[i] == 53) {
+					ailsnd->stop_mod();
+				}
+			}
+			break;
+
+		case 1031:
+			mem->file->select_pool_item(Ci.Handle, 31);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				fx->border(workpage, 100, 0, 0);
+				mem->file->select_pool_item(Ci.Handle, 43);
+				flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1048:
+			mem->file->select_pool_item(Ci.Handle, 50);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				fx->spr_blende(workpage, 100, false, 0);
+				mem->file->select_pool_item(Ci.Handle, 48);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 49);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				fx->spr_blende(workpage, 100, false, 0);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				fx->spr_blende(workpage, 100, false, 0);
+				mem->file->select_pool_item(Ci.Handle, 54);
+			}
+			break;
+
+		case 1055:
+			for (i = 0; i < 2 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, i + 55);
+				fx->border(workpage, 100, 0, 0);
+				ret = flc->custom_play(&Ci);
+			}
+
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 46);
+				fx->border(workpage, 100, 0, 0);
+			}
+			break;
+
+		case 1058:
+			ailsnd->stop_mod();
+			CurrentSong = -1;
+			load_room_music(255);
+			mem->file->select_pool_item(Ci.Handle, 58);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 59);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 60);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 61);
+				fx->spr_blende(workpage, 100, false, 0);
+				ret = flc->custom_play(&Ci);
+			}
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 62);
+				fx->border(workpage, 100, 0, 0);
+				ret = flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1065:
+			ailsnd->stop_mod();
+			CurrentSong = -1;
+			load_room_music(256);
+
+			for (i = 0; i < 2 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, i + 65);
+				ret = flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1068:
+			mem->file->select_pool_item(Ci.Handle, 68);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				fx->border(workpage, 100, 0, 0);
+				mem->file->select_pool_item(Ci.Handle, 70);
+				flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1069:
+			mem->file->select_pool_item(Ci.Handle, 69);
+			ret = flc->custom_play(&Ci);
+
+			for (i = 0; i < 2 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, i + 71);
+				fx->spr_blende(workpage, 100, false, 0);
+				ret = flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1074:
+			for (i = 0; i < 4 && ret != -1; ++i) {
+				fx->border(workpage, 100, 0, 0);
+				print_rows(605);
+				mem->file->select_pool_item(Ci.Handle, i + FLIC_CUT_1074[i]);
+				fx->spr_blende(workpage, 100, false, 0);
+				ret = flc->custom_play(&Ci);
+			}
+			break;
 
 		case 1080:
 			for (i = 0; i < 8 && ret != -1; ++i) {
@@ -1547,6 +1729,43 @@ void flic_cut(int16 nr, int16 mode) {
 			}
 			break;
 
+		case 1088:
+			mem->file->select_pool_item(Ci.Handle, 88);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 86);
+				fx->spr_blende(workpage, 100, false, 0);
+				flc->custom_play(&Ci);
+				ailsnd->stop_mod();
+			}
+			break;
+
+		case 1093:
+			for (i = 0; i < 12 && ret != -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1093[i]);
+				switch (FLIC_CUT_1093[i]) {
+				case 90:
+				case 91:
+				case 92:
+					out->cls();
+					break;
+				default:
+					break;
+				}
+
+				ret = flc->custom_play(&Ci);
+			}
+			break;
+
+		case 1106:
+			for (i = 0; i < 3 && ret == -1; ++i) {
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1106[i]);
+				out->cls();
+				ret = flc->custom_play(&Ci);
+			}
+			break;
+
 		case 1107:
 			mem->file->select_pool_item(Ci.Handle, 107);
 			ret = flc->custom_play(&Ci);
@@ -1555,6 +1774,17 @@ void flic_cut(int16 nr, int16 mode) {
 
 			mem->file->select_pool_item(Ci.Handle, 109);
 			fx->border(workpage, 100, 0, 0);
+			break;
+
+		case 1108:
+			mem->file->select_pool_item(Ci.Handle, 108);
+			ret = flc->custom_play(&Ci);
+
+			if (ret != -1) {
+				mem->file->select_pool_item(Ci.Handle, 115);
+				fx->spr_blende(workpage, 100, false, 0);
+				flc->custom_play(&Ci);
+			}
 			break;
 
 		case 1110:
@@ -1590,26 +1820,21 @@ void flic_cut(int16 nr, int16 mode) {
 			}
 			break;
 
-
-
-		case FCUT_053:
-			for (i = 0; i < 3; i++) {
-				mem->file->select_pool_item(Ci.Handle, nr);
-
-				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
-			}
-			break;
-
-
 		default:
-			mem->file->select_pool_item(Ci.Handle, nr);
-			if (!mode)
+			switch (mem->file->select_pool_item(Ci.Handle,
+				(nr < 1000) ? nr : nr - 1000)) {
+			case 0:
 				flc->custom_play(&Ci);
-			else if (mode == 1)
+				break;
+			case 1:
 				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+				break;
+			default:
+				break;
+			}
+
 			ERROR;
 			break;
-
 		}
 		chewy_fclose(Ci.Handle);
 	} else {
