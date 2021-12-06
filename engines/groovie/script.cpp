@@ -206,6 +206,21 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x0795] = 0x41;
 		_code[0x078A] = 0x40;
 		_code[0x079B] = 0x3F;
+	} else if (_version == kGroovieT11H && filename.equals("script.grv") && _codeSize == 62447) {
+		// don't sleep before showing the skulls
+		memset(_code + 0x17, 1, 0x1F - 0x17); // set nop
+		// when the skulls ask you to adjust your brightness, play the song Mr Death
+		memset(_code + 0x25, 1, 0x2F - 0x25);// set nop
+		_code[0x25] = 0x56;// o2_playsound
+		// o2_playsound resource id 851, 32bit uint
+		_code[0x26] = 0x53;
+		_code[0x27] = 0x03;
+		_code[0x28] = 0;
+		_code[0x29] = 0;
+		// o2_playsound loops = 0 for infinite
+		_code[0x2A] = 0;
+		// o2_playsound val3
+		_code[0x2B] = 0;
 	}
 
 	// Initialize the script
