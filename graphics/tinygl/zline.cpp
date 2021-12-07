@@ -75,7 +75,7 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	// code duplication.
 
 	// Where we are in unidimensional framebuffer coordinate
-	unsigned int pixelOffset = p1->y * xsize + p1->x;
+	unsigned int pixelOffset = p1->y * _pbufWidth + p1->x;
 	// and in 2d
 	int x = p1->x;
 	int y = p1->y;
@@ -85,7 +85,7 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	const int inc_x = p1->x < p2->x ? 1 : -1;
 	const int dy = abs(p2->y - p1->y);
 	const int inc_y = p1->y < p2->y ? 1 : -1;
-	const int inc_y_pixel = p1->y < p2->y ? xsize : -xsize;
+	const int inc_y_pixel = p1->y < p2->y ? _pbufWidth : -_pbufWidth;
 
 	// When to move on each axis
 	int err = (dx > dy ? dx : -dy) / 2;
@@ -142,7 +142,7 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 }
 
 void FrameBuffer::plot(ZBufferPoint *p) {
-	const unsigned int pixelOffset = p->y * xsize + p->x;
+	const unsigned int pixelOffset = p->y * _pbufWidth + p->x;
 	const int col = RGB_TO_PIXEL(p->r, p->g, p->b);
 	const unsigned int z = p->z;
 	if (_depthWrite && _depthTestEnabled)

@@ -190,50 +190,50 @@ void Matrix4::identity() {
 Matrix4 Matrix4::transpose() const {
 	Matrix4 a;
 
-	a._m[0][0] = this->_m[0][0];
-	a._m[0][1] = this->_m[1][0];
-	a._m[0][2] = this->_m[2][0];
-	a._m[0][3] = this->_m[3][0];
+	a._m[0][0] = _m[0][0];
+	a._m[0][1] = _m[1][0];
+	a._m[0][2] = _m[2][0];
+	a._m[0][3] = _m[3][0];
 
-	a._m[1][0] = this->_m[0][1];
-	a._m[1][1] = this->_m[1][1];
-	a._m[1][2] = this->_m[2][1];
-	a._m[1][3] = this->_m[3][1];
+	a._m[1][0] = _m[0][1];
+	a._m[1][1] = _m[1][1];
+	a._m[1][2] = _m[2][1];
+	a._m[1][3] = _m[3][1];
 
-	a._m[2][0] = this->_m[0][2];
-	a._m[2][1] = this->_m[1][2];
-	a._m[2][2] = this->_m[2][2];
-	a._m[2][3] = this->_m[3][2];
+	a._m[2][0] = _m[0][2];
+	a._m[2][1] = _m[1][2];
+	a._m[2][2] = _m[2][2];
+	a._m[2][3] = _m[3][2];
 
-	a._m[3][0] = this->_m[0][3];
-	a._m[3][1] = this->_m[1][3];
-	a._m[3][2] = this->_m[2][3];
-	a._m[3][3] = this->_m[3][3];
+	a._m[3][0] = _m[0][3];
+	a._m[3][1] = _m[1][3];
+	a._m[3][2] = _m[2][3];
+	a._m[3][3] = _m[3][3];
 
 	return a;
 }
 
 void Matrix4::transpose() {
 	Matrix4 tmp = *this;
-	this->_m[0][0] = tmp._m[0][0];
-	this->_m[0][1] = tmp._m[1][0];
-	this->_m[0][2] = tmp._m[2][0];
-	this->_m[0][3] = tmp._m[3][0];
+	_m[0][0] = tmp._m[0][0];
+	_m[0][1] = tmp._m[1][0];
+	_m[0][2] = tmp._m[2][0];
+	_m[0][3] = tmp._m[3][0];
 
-	this->_m[1][0] = tmp._m[0][1];
-	this->_m[1][1] = tmp._m[1][1];
-	this->_m[1][2] = tmp._m[2][1];
-	this->_m[1][3] = tmp._m[3][1];
+	_m[1][0] = tmp._m[0][1];
+	_m[1][1] = tmp._m[1][1];
+	_m[1][2] = tmp._m[2][1];
+	_m[1][3] = tmp._m[3][1];
 
-	this->_m[2][0] = tmp._m[0][2];
-	this->_m[2][1] = tmp._m[1][2];
-	this->_m[2][2] = tmp._m[2][2];
-	this->_m[2][3] = tmp._m[3][2];
+	_m[2][0] = tmp._m[0][2];
+	_m[2][1] = tmp._m[1][2];
+	_m[2][2] = tmp._m[2][2];
+	_m[2][3] = tmp._m[3][2];
 
-	this->_m[3][0] = tmp._m[0][3];
-	this->_m[3][1] = tmp._m[1][3];
-	this->_m[3][2] = tmp._m[2][3];
-	this->_m[3][3] = tmp._m[3][3];
+	_m[3][0] = tmp._m[0][3];
+	_m[3][1] = tmp._m[1][3];
+	_m[3][2] = tmp._m[2][3];
+	_m[3][3] = tmp._m[3][3];
 }
 
 Matrix4 Matrix4::inverseOrtho() const {
@@ -241,7 +241,7 @@ Matrix4 Matrix4::inverseOrtho() const {
 
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			a._m[i][j] = this->_m[j][i];
+			a._m[i][j] = _m[j][i];
 		}
 	}
 	a._m[3][0] = 0.0f;
@@ -252,7 +252,7 @@ Matrix4 Matrix4::inverseOrtho() const {
 	for (int i = 0; i < 3; i++) {
 		float s = 0;
 		for (int j = 0; j < 3; j++) {
-			s -= this->_m[j][i] * this->_m[j][3];
+			s -= _m[j][i] * _m[j][3];
 		}
 		a._m[i][3] = s;
 	}
@@ -302,7 +302,7 @@ bool Matrix4::isIdentity() const {
 }
 
 void Matrix4::invert() {
-	MatrixInverse((float *)this->_m);
+	MatrixInverse((float *)_m);
 }
 
 Matrix4 Matrix4::frustum(float left, float right, float bottom, float top, float nearp, float farp) {

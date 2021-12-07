@@ -70,10 +70,10 @@ struct DirtyRectangle {
 
 	DirtyRectangle() { }
 	DirtyRectangle(Common::Rect rect, int red, int green, int blue) {
-		this->rectangle = rect;
-		this->r = red;
-		this->g = green;
-		this->b = blue;
+		rectangle = rect;
+		r = red;
+		g = green;
+		b = blue;
 	}
 };
 

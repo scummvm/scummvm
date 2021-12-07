@@ -68,7 +68,7 @@ namespace TinyGL {
 #define ZB_POINT_ALPHA_FRAC_SHIFT (ZB_POINT_ALPHA_FRAC_BITS - 1)
 #define ZB_POINT_ALPHA_MAX        ( (1 << ZB_POINT_ALPHA_BITS) - 1 )
 
-#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
+#define RGB_TO_PIXEL(r, g, b)     _pbufFormat.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
 
 static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
@@ -117,19 +117,19 @@ public:
 	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
 	Graphics::PixelFormat getPixelFormat() {
-		return cmode;
+		return _pbufFormat;
 	}
 
 	byte *getPixelBuffer() {
-		return pbuf.getRawBuffer();
+		return _pbuf.getRawBuffer();
 	}
 
 	int getPixelBufferWidth() {
-		return xsize;
+		return _pbufWidth;
 	}
 
 	int getPixelBufferHeight() {
-		return ysize;
+		return _pbufHeight;
 	}
 
 	unsigned int *getZBuffer() {
@@ -137,7 +137,7 @@ public:
 	}
 
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
-		pbuf.getRGBAt(pixel, r, g, b);
+		_pbuf.getRGBAt(pixel, r, g, b);
 	}
 
 	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
@@ -228,13 +228,13 @@ private:
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
 		if (kBlendingEnabled == false) {
-			this->pbuf.setPixelAt(pixel, value);
+			_pbuf.setPixelAt(pixel, value);
 			if (kDepthWrite) {
 				_zbuf[pixel] = z;
 			}
 		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
-			this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
+			_pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
 			writePixel<kEnableAlphaTest, kBlendingEnabled, kDepthWrite>(pixel, aSrc, rSrc, gSrc, bSrc, z);
 		}
@@ -300,10 +300,10 @@ public:
 		}
 
 		if (kBlendingEnabled == false) {
-			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
+			_pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
 			byte rDst, gDst, bDst, aDst;
-			this->pbuf.getARGBAt(pixel, aDst, rDst, gDst, bDst);
+			_pbuf.getARGBAt(pixel, aDst, rDst, gDst, bDst);
 			switch (_sourceBlendingFactor) {
 			case TGL_ZERO:
 				rSrc = gSrc = bSrc = 0;
@@ -397,18 +397,18 @@ public:
 			if (finalR > 255) { finalR = 255; }
 			if (finalG > 255) { finalG = 255; }
 			if (finalB > 255) { finalB = 255; }
-			this->pbuf.setPixelAt(pixel, 255, finalR, finalG, finalB);
+			_pbuf.setPixelAt(pixel, 255, finalR, finalG, finalB);
 		}
 	}
 
 	Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat) {
 		Graphics::Surface tmp;
-		tmp.init(xsize, ysize, linesize, pbuf.getRawBuffer(), cmode);
+		tmp.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf.getRawBuffer(), _pbufFormat);
 		return tmp.convertTo(dstFormat);
 	}
 
 	void getSurfaceRef(Graphics::Surface &surface) {
-		surface.init(xsize, ysize, linesize, pbuf.getRawBuffer(), cmode);
+		surface.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf.getRawBuffer(), _pbufFormat);
 	}
 
 	void setScissorRectangle(const Common::Rect &rect) {
@@ -543,15 +543,16 @@ private:
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
-	Buffer buffer;
+	Buffer _offscreenBuffer;
 
 	unsigned int *_zbuf;
-	Graphics::PixelBuffer pbuf;
 
-	int xsize, ysize;
-	int linesize; // line size, in bytes
-	Graphics::PixelFormat cmode;
-	int pixelbytes;
+	Graphics::PixelBuffer _pbuf;
+	int _pbufWidth;
+	int _pbufHeight;
+	int _pbufPitch;
+	Graphics::PixelFormat _pbufFormat;
+	int _pbufBpp;
 
 	int _textureSize;
 	int _textureSizeMask;

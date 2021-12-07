@@ -208,7 +208,7 @@ public:
 				s = 0.0;
 				for (int k = 0; k < 4; k++)
 					s += a._m[i][k] * b._m[k][j];
-				this->_m[i][j] = s;
+				_m[i][j] = s;
 			}
 		}
 		return *this;

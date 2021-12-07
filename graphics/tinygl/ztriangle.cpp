@@ -239,15 +239,15 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 	// screen coordinates
 
-	int pp1 = xsize * p0->y;
-	pz1 = _zbuf + p0->y * xsize;
+	int pp1 = _pbufWidth * p0->y;
+	pz1 = _zbuf + p0->y * _pbufWidth;
 
 	switch (kDrawLogic) {
 	case DRAW_SHADOW_MASK:
-		pm1 = _shadowMaskBuf + p0->y * xsize;
+		pm1 = _shadowMaskBuf + p0->y * _pbufWidth;
 		break;
 	case DRAW_SHADOW:
-		pm1 = _shadowMaskBuf + p0->y * xsize;
+		pm1 = _shadowMaskBuf + p0->y * _pbufWidth;
 		r1 = _shadowColorR;
 		g1 = _shadowColorG;
 		b1 = _shadowColorB;
@@ -616,11 +616,11 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 += xsize;
-			pz1 += xsize;
+			pp1 += _pbufWidth;
+			pz1 += _pbufWidth;
 
 			if (kDrawLogic == DRAW_SHADOW || kDrawLogic == DRAW_SHADOW_MASK)
-				pm1 = pm1 + xsize;
+				pm1 = pm1 + _pbufWidth;
 			nb_lines--;
 			y++;
 		}
