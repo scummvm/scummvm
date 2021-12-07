@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-12-03 22:26+0000\n"
+"PO-Revision-Date: 2021-12-07 20:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5051,20 +5051,20 @@ msgstr "Toista videot nopeampana"
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "Helpompi AI"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Madalla AI-pulmien vaikeustasoa"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Päivitetty lopputekstimusiikki"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr ""
+msgstr "Soita laulu 'The Final Hour' MIDI-musiikin sijaan lopputeksteissä"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
