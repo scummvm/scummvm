@@ -77,6 +77,7 @@ public:
 	virtual void setTextDrawableArea(const Common::Rect &r) { _textDrawableArea = r; }
 
 	virtual void resize(int x, int y, int w, int h, bool scale = true);
+	virtual Widget *addChild(Widget *newChild);
 
 	virtual int16	getRelX() const		{ return _x; }
 	virtual int16	getRelY() const		{ return _y; }

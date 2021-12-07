@@ -59,7 +59,6 @@ void ScrollContainerWidget::recalc() {
 
 	//calculate virtual height
 	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
-	int h = 0;
 	int min = spacing, max = 0;
 	Widget *ptr = _firstWidget;
 	while (ptr) {
@@ -70,7 +69,7 @@ void ScrollContainerWidget::recalc() {
 		}
 		ptr = ptr->next();
 	}
-	h = max - min;
+	int h = max - min;
 
 	if (h <= _limitH) _scrolledY = 0;
 	if (_scrolledY > h - _limitH) _scrolledY = 0;

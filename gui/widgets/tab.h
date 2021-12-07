@@ -38,6 +38,7 @@ class TabWidget : public Widget {
 		Common::U32String title;
 		Common::String dialogName;
 		Widget *firstWidget;
+		ScrollContainerWidget *scrollWidget;
 		int _tabWidth;
 	};
 	typedef Common::Array<Tab> TabList;
@@ -76,6 +77,8 @@ public:
 	 * to identify the tab (to remove it / activate it etc.).
 	 */
 	int addTab(const Common::U32String &title, const Common::String &dialogName);
+
+	virtual Widget *addChild(Widget *newChild);
 
 	/**
 	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.

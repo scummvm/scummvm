@@ -121,6 +121,7 @@ public:
 	void init();
 
 	void setNext(Widget *w) { _next = w; }
+	void setBoss(GuiObject *newBoss) { _boss = newBoss; }
 	Widget *next() { return _next; }
 
 	int16	getAbsX() const override	{ return _x + _boss->getChildX(); }

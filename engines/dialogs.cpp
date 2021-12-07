@@ -377,7 +377,7 @@ void ConfigDialog::apply() {
 }
 
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), true, domain),
+		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), false, domain),
 		_options(options) {
 
 	for (uint i = 0; i < _options.size(); i++) {
