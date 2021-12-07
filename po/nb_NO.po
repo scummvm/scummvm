@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-11-09 18:25+0000\n"
+"PO-Revision-Date: 2021-12-07 11:54+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -154,14 +154,14 @@ msgstr "Nei"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:562
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM kunne ikke åpne den valgte mappa!"
+msgstr "ScummVM kunne ikke åpne den angitte mappen!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"Kan ikke opprette mappe for nedlasting - den angitte mappa har ei fil med "
+"Kan ikke opprette mappe for nedlasting. Den angitte mappen har en fil med "
 "samme navn."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:390
@@ -204,37 +204,27 @@ msgid "Download speed: %s %S"
 msgstr "Nedlastingshastighet: %s %S"
 
 #: gui/downloadiconsdialog.cpp:82 gui/downloadiconsdialog.cpp:136
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Laster ned lagrede spill ..."
+msgstr "Laster ned ikonliste ..."
 
 #: gui/downloadiconsdialog.cpp:146
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Laster ned lagrede spill ..."
+msgstr "Laster ned ikonliste ... %d oppføringer"
 
 #: gui/downloadiconsdialog.cpp:156
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Fant %d nye pakker, %s %S"
 
 #: gui/downloadiconsdialog.cpp:158
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Last ned oppdatering"
+msgstr "Last ned"
 
 #: gui/downloadiconsdialog.cpp:181
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Nedlasting fullført.\n"
-"Klarte ikke laste ned %u filer."
+msgstr "Nedlasting fullført. Lastet ned %d pakker, %s %S"
 
 #: gui/downloadiconsdialog.cpp:187 gui/downloadiconsdialog.cpp:304
 #: gui/gui-manager.cpp:220 gui/unknown-game-dialog.cpp:54
@@ -247,15 +237,15 @@ msgstr "Lukk"
 #: gui/downloadiconsdialog.cpp:309
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "FEIL %d: %s"
 
 #: gui/downloadiconsdialog.cpp:326
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "FEIL: Ikon ikonmappe valgt"
 
 #: gui/downloadiconsdialog.cpp:356
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Ingen nye ikonpakker tilgjengelig"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
@@ -736,54 +726,46 @@ msgstr "???"
 
 #: gui/launcher.cpp:193
 msgid "Select Group by"
-msgstr ""
+msgstr "Velg Gruppere etter"
 
 #: gui/launcher.cpp:198
 msgid "Group by: "
-msgstr ""
+msgstr "Gruppere etter: "
 
 #: gui/launcher.cpp:200
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Velg et kriterie for gruppering av oppføringer"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:202
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "Ingen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:204
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "Første side"
+msgstr "Forbokstav"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:208
 msgid "Series"
-msgstr ""
+msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:210
 msgid "Publisher"
-msgstr ""
+msgstr "Utgiver"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:212
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Språk:"
+msgstr "Språk"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:214
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Plattform:"
+msgstr "Plattform"
 
 #: gui/launcher.cpp:230 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -912,7 +894,7 @@ msgstr "Velg spill:"
 
 #: gui/launcher.cpp:778
 msgid "Group by:"
-msgstr ""
+msgstr "Gruppere etter:"
 
 #: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -958,42 +940,36 @@ msgstr "~R~ediger spill..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1110 gui/launcher.cpp:1297
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Ukjent variant"
+msgstr "Ukjent spillmotor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1128 gui/launcher.cpp:1329
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Ukjent Forfatter"
+msgstr "Ukjent utgiver"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1146 gui/launcher.cpp:1315
 msgid "No Series"
-msgstr ""
+msgstr "Ingen serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1161 gui/launcher.cpp:1348
 msgid "Language not detected"
-msgstr ""
+msgstr "Språk ikke oppdaget"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1363
 msgid "Platform not detected"
-msgstr ""
+msgstr "Plattform ikke oppdaget"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1374 gui/widgets/groupedlist.cpp:123
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Alle"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1508,18 +1484,13 @@ msgid "Theme Path:"
 msgstr "Temasti:"
 
 #: gui/options.cpp:2262
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/root/ Sti:"
+msgstr "Ikonmappe:"
 
 #: gui/options.cpp:2264
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/root/ Sti:"
+msgstr "Ikonmappe:"
 
 #: gui/options.cpp:2270 gui/options.cpp:2272 gui/options.cpp:2273
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1643,10 +1614,8 @@ msgid "Check now"
 msgstr "Sjekk nå"
 
 #: gui/options.cpp:2428
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Oppdateringssjekk:"
+msgstr "Oppdater ikoner"
 
 #: gui/options.cpp:2436
 msgid "Active storage:"
@@ -1939,10 +1908,8 @@ msgid "Select directory for GUI themes"
 msgstr "Velg mappe for GUI-temaer"
 
 #: gui/options.cpp:2903
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Velg mappe for GUI-temaer"
+msgstr "Velg mappe for ikoner til GUI-oppstarteren"
 
 #: gui/options.cpp:2913
 msgid "Select directory for extra files"
@@ -2255,10 +2222,8 @@ msgid "Play"
 msgstr "Spill"
 
 #: gui/widgets/grid.cpp:222
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Lagre"
+msgstr "Lagringer"
 
 #: base/main.cpp:651
 msgid "Error running game:"
@@ -2397,31 +2362,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "kB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
@@ -4295,6 +4252,8 @@ msgstr "Bytt til Olmec"
 msgid ""
 "Attempt to load saved game from a previous version: Version %s / Build %d"
 msgstr ""
+"Forsøk å laste inn lagret spill fra en tidligere versjon: Versjon %s / "
+"Utgave %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
 msgid "Load anyway"
@@ -5111,20 +5070,22 @@ msgstr "Spill filmer med økt hastighet"
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "Enklere kunstig intelligens"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Minsk vanskelighetsgraden på utfordringer fra kunstig intelligens"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Oppdatert musikk for liste over medvirkende"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Spill av sangen The Final Hour under listen over medvirkende fremfor "
+"gjenbruk av MIDI-musikk"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
@@ -7225,6 +7186,11 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"Lydfiler komprimert med ScummVM-verktøy ble oppdaget; *.BUN/*.SOU.\n"
+"Komprimering støttes ikke lengre av dette spillet, så lyden vil bli skrudd "
+"av.\n"
+"Kopier spillet fra sitt opprinnelige lagringsmedium uten bruk av "
+"komprimering."
 
 #: engines/scumm/scumm.cpp:2137
 #, c-format
