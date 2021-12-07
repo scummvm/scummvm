@@ -1254,7 +1254,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
 	} else {
-		currentPalette = (byte *) oldPalette;
+		currentPalette = const_cast<byte *>(oldPalette);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 	}
 
