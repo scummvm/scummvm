@@ -1266,6 +1266,12 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+	
+	<dialog name = 'GameOptions_Game_Container' overlays ='Dialog.GameOptions_Game.Container' inset='0'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'Id'
@@ -1308,7 +1314,7 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<widget name = 'Container'/>
+			<widget name = 'EngineOptions'/>
 		</layout>
 	</dialog>
 
@@ -1346,12 +1352,6 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GameOptions_Engine' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 

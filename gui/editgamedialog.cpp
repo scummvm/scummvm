@@ -140,27 +140,28 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// 1) The game tab
 	//
 	tab->addTab(_("Game"), "GameOptions_Game");
+	ScrollContainerWidget *gameContainer = new ScrollContainerWidget(tab, "GameOptions_Game.Container", _("GameOptions_Game_Container"));
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
+		new StaticTextWidget(gameContainer, "GameOptions_Game_Container.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
 	else
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
-	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
+		new StaticTextWidget(gameContainer, "GameOptions_Game_Container.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
+	_domainWidget = new DomainEditTextWidget(gameContainer, "GameOptions_Game_Container.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
 	if (g_system->getOverlayWidth() > 320)
-		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
+		new StaticTextWidget(gameContainer, "GameOptions_Game_Container.Name", _("Name:"), _("Full title of the game"));
 	else
-		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
-	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
+		new StaticTextWidget(gameContainer, "GameOptions_Game_Container.Name", _c("Name:", "lowres"), _("Full title of the game"));
+	_descriptionWidget = new EditTextWidget(gameContainer, "GameOptions_Game_Container.Desc", description, _("Full title of the game"));
 
 	// Language popup
 	_langPopUpDesc = nullptr;
 	_langPopUp = nullptr;
 	if (!_guioptions.contains(GUIO_NOLANG)) {
-		_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
-		_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
+		_langPopUpDesc = new StaticTextWidget(gameContainer, "GameOptions_Game_Container.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
+		_langPopUp = new PopUpWidget(gameContainer, "GameOptions_Game_Container.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
 		_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
 		_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 		const Common::LanguageDescription *l = Common::g_languages;
@@ -172,10 +173,10 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	// Platform popup
 	if (g_system->getOverlayWidth() > 320)
-		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
+		_platformPopUpDesc = new StaticTextWidget(gameContainer, "GameOptions_Game_Container.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
 	else
-		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
+		_platformPopUpDesc = new StaticTextWidget(gameContainer, "GameOptions_Game_Container.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
+	_platformPopUp = new PopUpWidget(gameContainer, "GameOptions_Game_Container.PlatformPopup", _("Platform the game was originally designed for"));
 	_platformPopUp->appendEntry(_("<default>"));
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -194,10 +195,10 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		metaEngineDetection.registerDefaultSettings(_domain);
 		if (enginePlugin) {
 			enginePlugin->get<MetaEngine>().registerDefaultSettings(_domain);
-			_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidgetDynamic(tab, "GameOptions_Game.Container", _domain);
+			_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidgetDynamic(gameContainer, "GameOptions_Game_Container.EngineOptions", _domain);
 		}
 		if (!_engineOptions)
-			_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GameOptions_Game.Container", _domain);
+			_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(gameContainer, "GameOptions_Game_Container.EngineOptions", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);
