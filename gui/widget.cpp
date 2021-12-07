@@ -51,9 +51,7 @@ Widget::Widget(GuiObject *boss, const Common::String &name, const Common::U32Str
 }
 
 void Widget::init() {
-	// Insert into the widget list of the boss
-	_next = _boss->_firstWidget;
-	_boss->_firstWidget = this;
+	_next = _boss->addChild(this);
 	_needsRedraw = true;
 }
 
@@ -1046,10 +1044,15 @@ void OptionsContainerWidget::reflowLayout() {
 	}
 
 	Widget *w = _firstWidget;
+	int16 minY = getAbsY();
+	int maxY = minY;
 	while (w) {
 		w->reflowLayout();
+		minY = MIN(minY, w->getAbsY());
+		maxY = MAX(maxY, w->getAbsY() + w->getHeight());
 		w = w->next();
 	}
+	_h = maxY - minY;
 }
 
 bool OptionsContainerWidget::containsWidget(Widget *widget) const {

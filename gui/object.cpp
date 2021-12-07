@@ -59,6 +59,12 @@ void GuiObject::resize(int x, int y, int w, int h, bool scale) {
 	}
 }
 
+Widget *GuiObject::addChild(Widget *newChild) {
+	Widget *oldFirstWidget = _firstWidget;
+	_firstWidget = newChild;
+	return oldFirstWidget;
+}
+
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		int16 w, h;
