@@ -175,6 +175,7 @@ void TabWidget::removeTab(int tabID) {
 
 	// Deactivate the tab if it's currently the active one
 	if (tabID == _activeTab) {
+		_tabs[tabID].firstWidget = _firstWidget;
 		releaseFocus();
 		_firstWidget = nullptr;
 	}
