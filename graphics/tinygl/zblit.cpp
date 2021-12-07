@@ -273,7 +273,7 @@ private:
 	int _refcount;
 };
 
-}; // end of namespace TinyGL
+} // end of namespace TinyGL
 
 
 void tglGetBlitImageSize(TinyGL::BlitImage *blitImage, int &width, int &height) {
