@@ -304,8 +304,8 @@ void RasterizationDrawCall::computeDirtyRegion() {
 
 	if (!clip_code) {
 		GLContext *c = gl_get_context();
-		int xmax = c->fb->xsize - 1;
-		int ymax = c->fb->ysize - 1;
+		int xmax = c->fb->getPixelBufferWidth() - 1;
+		int ymax = c->fb->getPixelBufferHeight() - 1;
 		int left = xmax, right = 0, top = ymax, bottom = 0;
 		for (int i = 0; i < _vertexCount; i++) {
 			TinyGL::GLVertex *v = &_vertex[i];

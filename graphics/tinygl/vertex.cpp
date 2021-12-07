@@ -75,7 +75,7 @@ void GLContext::gl_eval_viewport() {
 	v = &viewport;
 
 	// v->ymin needs to be upside down for transformation
-	int ymin = fb->ysize - v->ysize - v->ymin;
+	int ymin = fb->getPixelBufferHeight() - v->ysize - v->ymin;
 	v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
 	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + ymin);
 	v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);

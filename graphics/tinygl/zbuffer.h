@@ -107,15 +107,29 @@ struct FrameBuffer {
 	~FrameBuffer();
 
 private:
+
 	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);
 
 public:
+
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
 
+	Graphics::PixelFormat getPixelFormat() {
+		return cmode;
+	}
+
 	byte *getPixelBuffer() {
 		return pbuf.getRawBuffer();
+	}
+
+	int getPixelBufferWidth() {
+		return xsize;
+	}
+
+	int getPixelBufferHeight() {
+		return ysize;
 	}
 
 	unsigned int *getZBuffer() {
@@ -164,6 +178,7 @@ public:
 	}
 
 private:
+
 	FORCEINLINE bool checkAlphaTest(byte aSrc) {
 		if (!_alphaTestEnabled)
 			return true;
@@ -202,12 +217,14 @@ private:
 	}
 
 public:
+
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
 		writePixel<kEnableAlphaTest, kBlendingEnabled, false>(pixel, value, 0);
 	}
 
 private:
+
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
 		if (kBlendingEnabled == false) {
@@ -245,6 +262,7 @@ private:
 	}
 
 public:
+
 	FORCEINLINE bool scissorPixel(int x, int y) {
 		return !_clipRectangle.contains(x, y);
 	}
@@ -397,12 +415,15 @@ public:
 		_clipRectangle = rect;
 		_enableScissor = true;
 	}
+
 	void resetScissorRectangle() {
 		_enableScissor = false;
 	}
+
 	void setShadowMaskBuf(byte *shadowBuffer) {
 		_shadowMaskBuf = shadowBuffer;
 	}
+
 	void setShadowRGB(int r, int g, int b) {
 		_shadowColorR = r;
 		_shadowColorG = g;
@@ -456,6 +477,11 @@ public:
 		_wrapT = wrapt;
 	}
 
+	void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
+		_textureSize = textureSize;
+		_textureSizeMask = textureSizeMask;
+	}
+
 private:
 	/**
 	* Blit the buffer to the screen buffer, checking the depth of the pixels.
@@ -482,6 +508,7 @@ private:
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 public:
+
 	void fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -493,30 +520,14 @@ public:
 	void plot(ZBufferPoint *p);
 	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2);
+
 private:
+
 	void fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
-	Common::Rect _clipRectangle;
-	bool _enableScissor;
-public:
-	int xsize, ysize;
-	int linesize; // line size, in bytes
-	Graphics::PixelFormat cmode;
-private:
-	int pixelbytes;
-
-	Buffer buffer;
-
-	unsigned char *dctable;
-	int *ctable;
-public:
-	int _textureSize;
-	int _textureSizeMask;
-
-private:
 	template <bool kDepthWrite>
 	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
 
@@ -532,8 +543,21 @@ private:
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
+	Buffer buffer;
+
 	unsigned int *_zbuf;
 	Graphics::PixelBuffer pbuf;
+
+	int xsize, ysize;
+	int linesize; // line size, in bytes
+	Graphics::PixelFormat cmode;
+	int pixelbytes;
+
+	int _textureSize;
+	int _textureSizeMask;
+
+	Common::Rect _clipRectangle;
+	bool _enableScissor;
 
 	const Graphics::TexelBuffer *_currentTexture;
 	unsigned int _wrapS, _wrapT;

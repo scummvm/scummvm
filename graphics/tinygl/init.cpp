@@ -65,19 +65,17 @@ void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, 
 void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
 	GLViewport *v;
 
-	if ((textureSize & (textureSize - 1)))
-		error("glInit: texture size not power of two: %d", textureSize);
-
-	if (textureSize <= 1 || textureSize > 4096)
-		error("glInit: texture size not allowed: %d", textureSize);
-
 	_enableDirtyRectangles = dirtyRectsEnable;
 
-	FrameBuffer *zbuffer = fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
+	fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
+	renderRect = Common::Rect(0, 0, screenW, screenH);
 
-	fb->_textureSize = _textureSize = textureSize;
-	fb->_textureSizeMask = (textureSize - 1) << ZB_POINT_ST_FRAC_BITS;
-	renderRect = Common::Rect(0, 0, zbuffer->xsize, zbuffer->ysize);
+	if ((textureSize & (textureSize - 1)))
+		error("glInit: texture size not power of two: %d", textureSize);
+	if (textureSize <= 1 || textureSize > 4096)
+		error("glInit: texture size not allowed: %d", textureSize);
+	_textureSize = textureSize;
+	fb->setTextureSizeAndMask(textureSize, (textureSize - 1) << ZB_POINT_ST_FRAC_BITS);
 
 	// allocate GLVertex array
 	vertex_max = POLYGON_MAX_VERTEX;
@@ -87,8 +85,8 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	v = &viewport;
 	v->xmin = 0;
 	v->ymin = 0;
-	v->xsize = zbuffer->xsize;
-	v->ysize = zbuffer->ysize;
+	v->xsize = screenW;
+	v->ysize = screenH;
 	v->updated = 1;
 
 	// shared state
