@@ -207,8 +207,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	}
 
 	// Load the default mouse cursor
-	if (!checkGameVersion("Demo"))
-		_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
+	// Original sets the cursor to a rotating disc
+	_cursor->set(MAKE_RESOURCE(sceneId, 10));
 	_cursor->hide();
 
 	// Clear the graphic list
