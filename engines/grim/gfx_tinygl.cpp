@@ -1501,6 +1501,8 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 	assert(x < _screenWidth);
 	assert(y < _screenHeight);
 
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
 	uint8 r, g, b;
 	int pos = x + y * _screenWidth;
 	for (int i = 0; i < height; ++i) {
@@ -1508,8 +1510,6 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 			if ((j + x) >= _screenWidth || (i + y) >= _screenHeight) {
 				buffer[0] = buffer[1] = buffer[2] = 0;
 			} else {
-				Graphics::Surface glBuffer;
-				TinyGL::getSurfaceRef(glBuffer);
 				uint32 pixel = glBuffer.getPixel(j, i);
 				glBuffer.format.colorToRGB(pixel, r, g, b);
 				buffer[0] = r;
