@@ -1212,6 +1212,7 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 
@@ -1249,12 +1250,6 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GameOptions_Engine' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
 		</layout>
 	</dialog>
 

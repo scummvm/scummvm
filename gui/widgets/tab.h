@@ -77,7 +77,7 @@ public:
 	 * Add a new tab with the given title. Returns a unique ID which can be used
 	 * to identify the tab (to remove it / activate it etc.).
 	 */
-	int addTab(const Common::U32String &title, const Common::String &dialogName);
+	int addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll = false);
 
 	virtual Widget *addChild(Widget *newChild);
 
