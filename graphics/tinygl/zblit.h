@@ -175,15 +175,15 @@ namespace Internal {
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
 
 	// Documentation for those is the same as the one before, only those function are the one that actually execute the correct code path.
-	void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
+	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 
 	// Disables blending explicitly.
-	void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
+	void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 
 	// Disables blending, transforms and tinting.
-	void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y);
+	void tglBlitFast(BlitImage *blitImage, int x, int y);
 
-	void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y);
+	void tglBlitZBuffer(BlitImage *blitImage, int x, int y);
 
 	/**
 	@brief Sets up a scissor rectangle for blit calls: every blit call is affected by this rectangle.

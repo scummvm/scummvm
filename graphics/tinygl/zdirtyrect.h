@@ -102,9 +102,9 @@ public:
 	void operator delete(void *p) { }
 private:
 	void computeDirtyRegion();
-	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
+	typedef void (*gl_draw_triangle_func_ptr)(GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	int _vertexCount;
-	TinyGL::GLVertex *_vertex;
+	GLVertex *_vertex;
 	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack;
 
 	struct RasterizationState {
@@ -116,6 +116,9 @@ private:
 		int depthFunction;
 		int depthWrite;
 		int shadowMode;
+		int shadowColorR;
+		int shadowColorG;
+		int shadowColorB;
 		int texture2DEnabled;
 		int currentShadeModel;
 		int polygonModeBack;

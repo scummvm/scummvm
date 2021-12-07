@@ -95,7 +95,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	initSharedState();
 
 	// lists
-
 	exec_flag = 1;
 	compile_flag = 0;
 	print_flag = 0;
@@ -179,10 +178,13 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	name_stack_size = 0;
 
 	// blending
-	fb->enableBlending(false);
+	blending_enabled = false;
 
 	// alpha test
-	fb->enableAlphaTest(false);
+	alpha_test_enabled = false;
+
+	// depth test
+	depth_test = false;
 
 	// matrix
 	matrix_mode = 0;
@@ -229,9 +231,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	specbuf_first = NULL;
 	specbuf_used_counter = 0;
 	specbuf_num_buffers = 0;
-
-	// depth test
-	depth_test = 0;
 
 	color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
 

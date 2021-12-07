@@ -42,7 +42,7 @@ void GLContext::issueDrawCall(DrawCall *drawCall) {
 
 #if TGL_DIRTY_RECT_SHOW
 static void DebugDrawRectangle(Common::Rect rect, int r, int g, int b) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 
 	if (rect.left < 0)
 		rect.left = 0;
@@ -253,7 +253,7 @@ void GLContext::presentBufferSimple() {
 }
 
 void presentBuffer() {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	if (c->_enableDirtyRectangles) {
 		c->presentBufferDirtyRects();
 	} else {
@@ -281,8 +281,9 @@ bool DrawCall::operator==(const DrawCall &other) const {
 	}
 }
 
+
 RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	_vertexCount = c->vertex_cnt;
 	_vertex = (GLVertex *) Internal::allocateFrame(_vertexCount * sizeof(GLVertex));
 	_drawTriangleFront = c->draw_triangle_front;
@@ -302,7 +303,7 @@ void RasterizationDrawCall::computeDirtyRegion() {
 	}
 
 	if (!clip_code) {
-		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		GLContext *c = gl_get_context();
 		int xmax = c->fb->xsize - 1;
 		int ymax = c->fb->ysize - 1;
 		int left = xmax, right = 0, top = ymax, bottom = 0;
@@ -328,7 +329,7 @@ void RasterizationDrawCall::computeDirtyRegion() {
 }
 
 void RasterizationDrawCall::execute(bool restoreState) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 
 	RasterizationDrawCall::RasterizationState backupState;
 	if (restoreState) {
@@ -336,13 +337,13 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 	}
 	applyState(_state);
 
-	TinyGL::GLVertex *prevVertex = c->vertex;
+	GLVertex *prevVertex = c->vertex;
 	int prevVertexCount = c->vertex_cnt;
 
 	c->vertex = _vertex;
 	c->vertex_cnt = _vertexCount;
-	c->draw_triangle_front = (TinyGL::gl_draw_triangle_func)_drawTriangleFront;
-	c->draw_triangle_back = (TinyGL::gl_draw_triangle_func)_drawTriangleBack;
+	c->draw_triangle_front = (gl_draw_triangle_func)_drawTriangleFront;
+	c->draw_triangle_back = (gl_draw_triangle_func)_drawTriangleBack;
 
 	int n = c->vertex_n;
 	int cnt = c->vertex_cnt;
@@ -429,13 +430,13 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 
 RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() const {
 	RasterizationState state;
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	state.alphaTest = c->fb->isAlphaTestEnabled();
-	c->fb->getBlendingFactors(state.sfactor, state.dfactor);
-	state.enableBlending = c->fb->isBlendingEnabled();
-	state.alphaFunc = c->fb->getAlphaTestFunc();
-	state.alphaRefValue = c->fb->getAlphaTestRefVal();
-
+	GLContext *c = gl_get_context();
+	state.alphaTest = c->alpha_test_enabled;
+	state.sfactor = c->source_blending_factor;
+	state.dfactor = c->destination_blending_factor;
+	state.enableBlending = c->blending_enabled;
+	state.alphaFunc = c->alpha_test_func;
+	state.alphaRefValue = c->alpha_test_ref_val;
 	state.cullFaceEnabled = c->cull_face_enabled;
 	state.beginType = c->begin_type;
 	state.colorMask = c->color_mask;
@@ -452,11 +453,14 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.texture = c->current_texture;
 	state.wrapS = c->texture_wrap_s;
 	state.wrapT = c->texture_wrap_t;
-	state.shadowMaskBuf = c->fb->shadow_mask_buf;
-	state.depthFunction = c->fb->getDepthFunc();
-	state.depthWrite = c->fb->getDepthWrite();
+	state.shadowMaskBuf = c->shadow_mask_buf;
+	state.shadowColorR = c->shadow_color_r;
+	state.shadowColorG = c->shadow_color_g;
+	state.shadowColorB = c->shadow_color_b;
+	state.depthFunction = c->depth_func;
+	state.depthWrite = c->depth_write;
 	state.lightingEnabled = c->lighting_enabled;
-	state.depthTestEnabled = c->fb->getDepthTestEnabled();
+	state.depthTestEnabled = c->depth_test;
 	if (c->current_texture != nullptr)
 		state.textureVersion = c->current_texture->versionNumber;
 
@@ -467,9 +471,9 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 }
 
 void RasterizationDrawCall::applyState(const RasterizationDrawCall::RasterizationState &state) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
+	GLContext *c = gl_get_context();
 	c->fb->enableBlending(state.enableBlending);
+	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
 	c->fb->enableAlphaTest(state.alphaTest);
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 	c->fb->setDepthFunc(state.depthFunction);
@@ -478,6 +482,25 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setOffsetStates(state.offsetStates);
 	c->fb->setOffsetFactor(state.offsetFactor);
 	c->fb->setOffsetUnits(state.offsetUnits);
+	c->fb->setShadowMaskBuf(state.shadowMaskBuf);
+	c->fb->setShadowRGB(state.shadowColorB, state.shadowColorG, state.shadowColorB);
+
+	c->blending_enabled = state.enableBlending;
+	c->source_blending_factor = state.sfactor;
+	c->destination_blending_factor = state.dfactor;
+	c->alpha_test_enabled = state.alphaTest;
+	c->alpha_test_func = state.alphaFunc;
+	c->alpha_test_ref_val = state.alphaRefValue;
+	c->depth_test = state.depthTest;
+	c->depth_func = state.depthFunction;
+	c->depth_write = state.depthWrite;
+	c->offset_states = state.offsetStates;
+	c->offset_factor = state.offsetFactor;
+	c->offset_units = state.offsetUnits;
+	c->shadow_mask_buf = state.shadowMaskBuf;
+	c->shadow_color_r = state.shadowColorR;
+	c->shadow_color_g = state.shadowColorG;
+	c->shadow_color_b = state.shadowColorB;
 
 	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
@@ -485,7 +508,6 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->color_mask = state.colorMask;
 	c->current_front_face = state.currentFrontFace;
 	c->current_shade_model = state.currentShadeModel;
-	c->depth_test = state.depthTest;
 	c->polygon_mode_back = state.polygonModeBack;
 	c->polygon_mode_front = state.polygonModeFront;
 	c->shadow_mode = state.shadowMode;
@@ -493,14 +515,13 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->current_texture = state.texture;
 	c->texture_wrap_s = state.wrapS;
 	c->texture_wrap_t = state.wrapT;
-	c->fb->shadow_mask_buf = state.shadowMaskBuf;
 
 	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));
 	memcpy(c->viewport.trans._v, state.viewportTranslation, sizeof(c->viewport.trans._v));
 }
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLContext *c = gl_get_context();
 	c->fb->setScissorRectangle(clippingRectangle);
 	execute(restoreState);
 	c->fb->resetScissorRectangle();
@@ -521,11 +542,12 @@ bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const
 	return false;
 }
 
+
 BlittingDrawCall::BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode) : DrawCall(DrawCall_Blitting), _transform(transform), _mode(blittingMode), _image(image) {
 	tglIncBlitImageRef(image);
 	_blitState = captureState();
 	_imageVersion = tglGetBlitImageVersion(image);
-	if (TinyGL::gl_get_context()->_enableDirtyRectangles) {
+	if (gl_get_context()->_enableDirtyRectangles) {
 		computeDirtyRegion();
 	}
 }
@@ -570,23 +592,32 @@ void BlittingDrawCall::execute(const Common::Rect &clippingRectangle, bool resto
 
 BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
 	BlittingState state;
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	state.alphaTest = c->fb->isAlphaTestEnabled();
-	c->fb->getBlendingFactors(state.sfactor, state.dfactor);
-	state.enableBlending = c->fb->isBlendingEnabled();
-	state.alphaFunc = c->fb->getAlphaTestFunc();
-	state.alphaRefValue = c->fb->getAlphaTestRefVal();
-	state.depthTestEnabled = c->fb->getDepthTestEnabled();
+	TinyGL::GLContext *c = gl_get_context();
+	state.enableBlending = c->blending_enabled;
+	state.sfactor = c->source_blending_factor;
+	state.dfactor = c->destination_blending_factor;
+	state.alphaTest = c->alpha_test_enabled;
+	state.alphaFunc = c->alpha_test_func;
+	state.alphaRefValue = c->alpha_test_ref_val;
+	state.depthTestEnabled = c->depth_test;
 	return state;
 }
 
 void BlittingDrawCall::applyState(const BlittingState &state) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
+	TinyGL::GLContext *c = gl_get_context();
 	c->fb->enableBlending(state.enableBlending);
+	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
 	c->fb->enableAlphaTest(state.alphaTest);
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 	c->fb->enableDepthTest(state.depthTestEnabled);
+
+	c->blending_enabled = state.enableBlending;
+	c->source_blending_factor = state.sfactor;
+	c->destination_blending_factor = state.dfactor;
+	c->alpha_test_enabled = state.alphaTest;
+	c->alpha_test_func = state.alphaFunc;
+	c->alpha_test_ref_val = state.alphaRefValue;
+	c->depth_test = state.depthTestEnabled;
 }
 
 void BlittingDrawCall::computeDirtyRegion() {
@@ -615,7 +646,7 @@ void BlittingDrawCall::computeDirtyRegion() {
 			_transform._destinationRectangle.left + blitWidth + 1,
 			_transform._destinationRectangle.top + blitHeight + 1
 		);
-		_dirtyRegion.clip(TinyGL::gl_get_context()->renderRect);
+		_dirtyRegion.clip(gl_get_context()->renderRect);
 	}
 }
 
@@ -627,21 +658,22 @@ bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
 			_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
+
 ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue)
 	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLContext *c = gl_get_context();
 	if (c->_enableDirtyRectangles) {
 		_dirtyRegion = c->renderRect;
 	}
 }
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLContext *c = gl_get_context();
 	c->fb->clear(_clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
 }
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLContext *c = gl_get_context();
 	Common::Rect clearRect = clippingRectangle.findIntersectingRect(getDirtyRegion());
 	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
 }
@@ -679,20 +711,20 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 			alphaTest == other.alphaTest &&
 			alphaFunc == other.alphaFunc &&
 			alphaRefValue == other.alphaRefValue &&
+			depthTestEnabled == other.depthTestEnabled &&
 			texture == other.texture &&
+			textureVersion == texture->versionNumber &&
 			shadowMaskBuf == other.shadowMaskBuf &&
 			viewportTranslation[0] == other.viewportTranslation[0] &&
 			viewportTranslation[1] == other.viewportTranslation[1] &&
 			viewportTranslation[2] == other.viewportTranslation[2] &&
 			viewportScaling[0] == other.viewportScaling[0] &&
 			viewportScaling[1] == other.viewportScaling[1] &&
-			viewportScaling[2] == other.viewportScaling[2] &&
-			depthTestEnabled == other.depthTestEnabled &&
-			textureVersion == texture->versionNumber;
+			viewportScaling[2] == other.viewportScaling[2];
 }
 
 void *Internal::allocateFrame(int size) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	GLContext *c = gl_get_context();
 	return c->_drawCallAllocator[c->_currentAllocatorIndex].allocate(size);
 }
 

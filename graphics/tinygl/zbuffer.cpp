@@ -80,66 +80,23 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) : _depthWrite(true), _enableScissor(false) {
-	this->xsize = width;
-	this->ysize = height;
-	this->cmode = frame_buffer.getFormat();
-	this->pixelbytes = this->cmode.bytesPerPixel;
-	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
-
-	int size = this->xsize * this->ysize * sizeof(unsigned int);
-
-	this->_zbuf = (unsigned int *)gl_zalloc(size);
-
-	this->frame_buffer_allocated = 0;
-	this->pbuf = frame_buffer;
-
-	this->current_texture = NULL;
-	this->shadow_mask_buf = NULL;
-
-	this->buffer.pbuf = this->pbuf.getRawBuffer();
-	this->buffer.zbuf = this->_zbuf;
-	_blendingEnabled = false;
-	_alphaTestEnabled = false;
-	_depthTestEnabled = false;
-	_depthFunc = TGL_LESS;
-	_offsetStates = 0;
-	_offsetFactor = 0.0f;
-	_offsetUnits = 0.0f;
-}
-
-FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format) : _depthWrite(true), _enableScissor(false) {
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format) {
 	this->xsize = width;
 	this->ysize = height;
 	this->cmode = format;
 	this->pixelbytes = this->cmode.bytesPerPixel;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
 
-	int size = this->xsize * this->ysize * sizeof(unsigned int);
+	this->buffer.zbuf = this->_zbuf = (unsigned int *)gl_zalloc(this->xsize * this->ysize * sizeof(unsigned int));
 
-	this->_zbuf = (unsigned int *)gl_zalloc(size);
-
-	byte *pixelBuffer = new byte[this->ysize * this->linesize];
-	this->pbuf.set(this->cmode, pixelBuffer);
-	this->frame_buffer_allocated = 1;
-
-	this->current_texture = NULL;
-	this->shadow_mask_buf = NULL;
-
+	this->pbuf.set(this->cmode, new byte[this->ysize * this->linesize]);
 	this->buffer.pbuf = this->pbuf.getRawBuffer();
-	this->buffer.zbuf = this->_zbuf;
-	_blendingEnabled = false;
-	_alphaTestEnabled = false;
-	_depthTestEnabled = false;
-	_depthFunc = TGL_LESS;
-	_offsetStates = 0;
-	_offsetFactor = 0.0f;
-	_offsetUnits = 0.0f;
+
+	_currentTexture = nullptr;
 }
 
 FrameBuffer::~FrameBuffer() {
-	if (frame_buffer_allocated)
-		pbuf.free();
+	pbuf.free();
 	gl_free(_zbuf);
 }
 
@@ -327,12 +284,6 @@ void FrameBuffer::clearOffscreenBuffer(Buffer *buf) {
 	memset(buf->pbuf, 0, this->ysize * this->linesize);
 	memset(buf->zbuf, 0, this->ysize * this->xsize * sizeof(unsigned int));
 	buf->used = false;
-}
-
-void FrameBuffer::setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt) {
-	current_texture = texture;
-	wrapS = wraps;
-	wrapT = wrapt;
 }
 
 void getSurfaceRef(Graphics::Surface &surface) {

@@ -57,10 +57,10 @@ void tglGetIntegerv(int pname, int *params) {
 		*params = MAX_TEXTURE_STACK_DEPTH;
 		break;
 	case TGL_BLEND:
-		*params = c->fb->isBlendingEnabled();
+		*params = c->blending_enabled;
 		break;
 	case TGL_ALPHA_TEST:
-		*params = c->fb->isAlphaTestEnabled();
+		*params = c->alpha_test_enabled;
 		break;
 	default:
 		error("tglGet: option not implemented");

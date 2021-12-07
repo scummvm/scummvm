@@ -730,12 +730,12 @@ void tglDebug(int mode) {
 
 void tglSetShadowMaskBuf(unsigned char *buf) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->shadow_mask_buf = buf;
+	c->shadow_mask_buf = buf;
 }
 
 void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->shadow_color_r = r << 8;
-	c->fb->shadow_color_g = g << 8;
-	c->fb->shadow_color_b = b << 8;
+	c->shadow_color_r = r << 8;
+	c->shadow_color_g = g << 8;
+	c->shadow_color_b = b << 8;
 }

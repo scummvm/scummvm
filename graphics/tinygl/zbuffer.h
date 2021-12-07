@@ -103,7 +103,6 @@ struct ZBufferPoint {
 };
 
 struct FrameBuffer {
-	FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
 	FrameBuffer(int xsize, int ysize, const Graphics::PixelFormat &format);
 	~FrameBuffer();
 
@@ -394,6 +393,21 @@ public:
 		surface.init(xsize, ysize, linesize, pbuf.getRawBuffer(), cmode);
 	}
 
+	void setScissorRectangle(const Common::Rect &rect) {
+		_clipRectangle = rect;
+		_enableScissor = true;
+	}
+	void resetScissorRectangle() {
+		_enableScissor = false;
+	}
+	void setShadowMaskBuf(byte *shadowBuffer) {
+		_shadowMaskBuf = shadowBuffer;
+	}
+	void setShadowRGB(int r, int g, int b) {
+		_shadowColorR = r;
+		_shadowColorG = g;
+		_shadowColorB = b;
+	}
 	void enableBlending(bool enable) {
 		_blendingEnabled = enable;
 	}
@@ -433,11 +447,13 @@ public:
 	}
 
 	void enableDepthWrite(bool enable) {
-		this->_depthWrite = enable;
+		_depthWrite = enable;
 	}
 
-	bool isAlphaBlendingEnabled() const {
-		return _sourceBlendingFactor == TGL_SRC_ALPHA && _destinationBlendingFactor == TGL_ONE_MINUS_SRC_ALPHA;
+	void setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt) {
+		_currentTexture = texture;
+		_wrapS = wraps;
+		_wrapT = wrapt;
 	}
 
 private:
@@ -449,10 +465,7 @@ private:
 	void blitOffscreenBuffer(Buffer *buffer);
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
-public:
-	void setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt);
 
-private:
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
@@ -486,16 +499,6 @@ private:
 	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
-public:
-	void setScissorRectangle(const Common::Rect &rect) {
-		_clipRectangle = rect;
-		_enableScissor = true;
-	}
-	void resetScissorRectangle() {
-		_enableScissor = false;
-	}
-
-private:
 	Common::Rect _clipRectangle;
 	bool _enableScissor;
 public:
@@ -507,42 +510,13 @@ private:
 
 	Buffer buffer;
 
-public:
-	unsigned char *shadow_mask_buf;
-	int shadow_color_r;
-	int shadow_color_g;
-	int shadow_color_b;
-private:
-	int frame_buffer_allocated;
-
 	unsigned char *dctable;
 	int *ctable;
-	const Graphics::TexelBuffer *current_texture;
 public:
 	int _textureSize;
 	int _textureSizeMask;
-private:
-	unsigned int wrapS, wrapT;
-
-public:
-	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
-	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
-	FORCEINLINE bool isAlphaTestEnabled() const { return _alphaTestEnabled; }
-private:
-	FORCEINLINE bool isDepthWriteEnabled() const { return _depthWrite; }
-public:
-	FORCEINLINE int getDepthFunc() const { return _depthFunc; }
-	FORCEINLINE int getDepthWrite() const { return _depthWrite; }
-	FORCEINLINE int getAlphaTestFunc() const { return _alphaTestFunc; }
-	FORCEINLINE int getAlphaTestRefVal() const { return _alphaTestRefVal; }
-	FORCEINLINE int getDepthTestEnabled() const { return _depthTestEnabled; }
-private:
-	FORCEINLINE int getOffsetStates() const { return _offsetStates; }
-	FORCEINLINE float getOffsetFactor() const { return _offsetFactor; }
-	FORCEINLINE float getOffsetUnits() const { return _offsetUnits; }
 
 private:
-
 	template <bool kDepthWrite>
 	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
 
@@ -559,15 +533,22 @@ private:
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	unsigned int *_zbuf;
-	bool _depthWrite;
 	Graphics::PixelBuffer pbuf;
+
+	const Graphics::TexelBuffer *_currentTexture;
+	unsigned int _wrapS, _wrapT;
+	byte *_shadowMaskBuf;
+	int _shadowColorR;
+	int _shadowColorG;
+	int _shadowColorB;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;
 	bool _alphaTestEnabled;
-	bool _depthTestEnabled;
 	int _alphaTestFunc;
 	int _alphaTestRefVal;
+	bool _depthTestEnabled;
+	bool _depthWrite;
 	int _depthFunc;
 	int _offsetStates;
 	float _offsetFactor;

@@ -265,6 +265,22 @@ struct GLContext {
 	FrameBuffer *fb;
 	Common::Rect renderRect;
 
+	// blending
+	bool blending_enabled;
+	int source_blending_factor;
+	int destination_blending_factor;
+
+	// alpha blending
+	bool alpha_test_enabled;
+	int alpha_test_func;
+	int alpha_test_ref_val;
+
+	// shadow
+	unsigned char *shadow_mask_buf;
+	int shadow_color_r;
+	int shadow_color_g;
+	int shadow_color_b;
+
 	// Internal texture size
 	int _textureSize;
 
@@ -392,7 +408,10 @@ struct GLContext {
 	int (*gl_resize_viewport)(int *xsize, int *ysize);
 
 	// depth test
-	int depth_test;
+	bool depth_test;
+	int depth_func;
+	bool depth_write;
+
 	int color_mask;
 
 	Common::Rect _scissorRect;

@@ -87,13 +87,12 @@ void GLContext::glopEnableDisable(GLParam *p) {
 		break;
 	case TGL_DEPTH_TEST:
 		depth_test = v;
-		fb->enableDepthTest(v);
 		break;
 	case TGL_ALPHA_TEST:
-		fb->enableAlphaTest(v);
+		alpha_test_enabled = v;
 		break;
 	case TGL_BLEND:
-		fb->enableBlending(v);
+		blending_enabled = v;
 		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
@@ -136,20 +135,17 @@ void GLContext::glopEnableDisable(GLParam *p) {
 }
 
 void GLContext::glopBlendFunc(GLParam *p) {
-	TGLenum sfactor = p[1].i;
-	TGLenum dfactor = p[2].i;
-	fb->setBlendingFactors(sfactor, dfactor);
+	source_blending_factor = p[1].i;
+	destination_blending_factor = p[2].i;
 }
 
 void GLContext::glopAlphaFunc(GLParam *p) {
-	TGLenum func = p[1].i;
-	float ref = p[2].f;
-	fb->setAlphaTestFunc(func, (int)(ref * 255));
+	alpha_test_func = p[1].i;
+	alpha_test_ref_val = (int)(p[2].f * 255);
 }
 
 void GLContext::glopDepthFunc(GLParam *p) {
-	TGLenum func = p[1].i;
-	fb->setDepthFunc(func);
+	depth_func = p[1].i;
 }
 
 void GLContext::glopShadeModel(GLParam *p) {
@@ -200,8 +196,8 @@ void GLContext::glopColorMask(GLParam *p) {
 	color_mask = p[1].i;
 }
 
-void GLContext::glopDepthMask(TinyGL::GLParam *p) {
-	fb->enableDepthWrite(p[1].i);
+void GLContext::glopDepthMask(GLParam *p) {
+	depth_write = p[1].i;
 }
 
 } // end of namespace TinyGL
