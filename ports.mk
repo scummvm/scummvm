@@ -450,6 +450,10 @@ ifdef USE_DISCORD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libdiscord-rpc.a
 endif
 
+ifdef USE_ENET
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libenet.a
+endif
+
 ifdef USE_SPARKLE
 ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
