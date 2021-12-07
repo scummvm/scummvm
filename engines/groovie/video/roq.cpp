@@ -359,7 +359,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// TODO: Update the screen
-		void *src = (_alpha && 0) ? _bg->getPixels() : _screen->getPixels();
+		void *src = /*(_alpha && 0)*/ false ? _bg->getPixels() : _screen->getPixels();
 		_syst->copyRectToScreen(src, _screen->pitch, 0, (_syst->getHeight() - _screen->h) / 2, _screen->w, _screen->h);
 		_syst->updateScreen();
 
