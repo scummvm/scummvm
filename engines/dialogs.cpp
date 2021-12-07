@@ -273,7 +273,7 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine", false);
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		_engineOptions = metaEngine->buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
@@ -316,14 +316,14 @@ ConfigDialog::ConfigDialog() :
 
 	Common::KeymapArray keymaps = metaEngine->initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
+		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper", false);
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
 	}
 
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend");
+	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend", false);
 
 	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalConfig_Backend.Container", _domain);
 
@@ -338,11 +338,11 @@ ConfigDialog::ConfigDialog() :
 	//
 	AchMan.setActiveDomain(metaEngine->getAchievementsInfo(gameDomain));
 	if (AchMan.getAchievementCount()) {
-		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
+		tab->addTab(_("Achievements"), "GlobalConfig_Achievements", false);
 		addAchievementsControls(tab, "GlobalConfig_Achievements.");
 	}
 	if (AchMan.getStatCount()) {
-		tab->addTab(_("Statistics"), "GlobalConfig_Achievements");
+		tab->addTab(_("Statistics"), "GlobalConfig_Achievements", false);
 		addStatisticsControls(tab, "GlobalConfig_Achievements.");
 	}
 
