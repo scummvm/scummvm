@@ -91,10 +91,18 @@ TabWidget::~TabWidget() {
 	// having been switched using setActiveTab() afterward, then the
 	// firstWidget in the _tabs list for the active tab may not be up to
 	// date. So update it now.
+
+	if (_activeTab != -1)
+		_tabs[_activeTab].firstWidget = _firstWidget;
 	_firstWidget = nullptr;
 	for (uint i = 0; i < _tabs.size(); ++i) {
-		delete _tabs[i].scrollWidget;
+		if (_tabs[i].scrollWidget) {
+			delete _tabs[i].scrollWidget;
+		} else {
+			delete _tabs[i].firstWidget;
+		}
 		_tabs[i].scrollWidget = nullptr;
+		_tabs[i].firstWidget = nullptr;
 	}
 	_tabs.clear();
 	delete _navRight;
@@ -114,7 +122,7 @@ uint16 TabWidget::getHeight() const {
 	return _h + _tabHeight;
 }
 
-int TabWidget::addTab(const Common::U32String &title, const Common::String &dialogName) {
+int TabWidget::addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll) {
 	// Add a new tab page
 	Tab newTab;
 	newTab.title = title;
@@ -135,7 +143,12 @@ int TabWidget::addTab(const Common::U32String &title, const Common::String &dial
 	// Activate the new tab, also writes back our _firstWidget
 	setActiveTab(numTabs - 1);
 
-	_tabs.back().scrollWidget = new ScrollContainerWidget(this, "", dialogName);
+	if (withScroll) {
+		_tabs.back().scrollWidget = new ScrollContainerWidget(this, "", dialogName, 'gtcr');
+		_tabs.back().scrollWidget->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+		_tabs.back().scrollWidget->setTarget(this);
+		_firstWidget = _tabs.back().scrollWidget;
+	}
 
 	return _activeTab;
 }
@@ -145,7 +158,6 @@ Widget *TabWidget::addChild(Widget *newChild) {
 		return Widget::addChild(newChild);
 
 	newChild->setBoss(_tabs[_activeTab].scrollWidget);
-	_firstWidget = newChild;
 	return _tabs[_activeTab].scrollWidget->addChild(newChild);
 }
 
@@ -343,16 +355,17 @@ void TabWidget::reflowLayout() {
 		_tabs[_activeTab].firstWidget = _firstWidget;
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
-		_tabs[i].scrollWidget->setPos(_x, _y);
-		_tabs[i].scrollWidget->setSize(_w, _h);
-		if (!_tabs[i].dialogName.empty()) {
-			g_gui.xmlEval()->reflowDialogLayout(_tabs[i].dialogName, _tabs[i].scrollWidget);
-		}
+		if (_tabs[i].scrollWidget) {
+			_tabs[i].scrollWidget->resize(_x, _y, _w, _h, false);
+			_tabs[i].scrollWidget->reflowLayout();
+		} else {
+			g_gui.xmlEval()->reflowDialogLayout(_tabs[i].dialogName, _tabs[i].firstWidget);
 
-		Widget *w = _tabs[i].scrollWidget;
-		while (w) {
-			w->reflowLayout();
-			w = w->next();
+			Widget *w = _tabs[i].firstWidget;
+			while (w) {
+				w->reflowLayout();
+				w = w->next();
+			}
 		}
 	}
 
@@ -408,14 +421,7 @@ void TabWidget::drawWidget() {
 }
 
 void TabWidget::draw() {
-	if (_activeTab == -1) {
-		Widget::draw();
-	} else {
-		_tabs[_activeTab].firstWidget = _firstWidget;
-		_firstWidget = _tabs[_activeTab].scrollWidget;
-		Widget::draw();
-		_firstWidget = _tabs[_activeTab].firstWidget;
-	}
+	Widget::draw();
 
 	if (_navButtonsVisible) {
 		_navLeft->draw();

@@ -138,7 +138,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"), "GameOptions_Game");
+	tab->addTab(_("Game"), "GameOptions_Game", true);
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
