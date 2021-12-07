@@ -462,7 +462,6 @@ void Lua_Remastered::FindSaveGames() {
 					filename, savedState->saveMajorVersion(), savedState->saveMinorVersion(),
 					SaveGame::SAVEGAME_MAJOR_VERSION, SaveGame::SAVEGAME_MINOR_VERSION);
 			}
-			delete savedState;
 			return;
 		}
 		int slot = atoi((*it).c_str() + 6);
