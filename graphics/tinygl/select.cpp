@@ -77,22 +77,22 @@ void tglSelectBuffer(int size, unsigned int *buf) {
 	c->select_size = size;
 }
 
-void GLContext::glopInitNames(GLContext *c, GLParam *) {
+void GLContext::glopInitNames(GLParam *) {
 	if (render_mode == TGL_SELECT) {
 		name_stack_size = 0;
 		select_hit = NULL;
 	}
 }
 
-void GLContext::glopPushName(GLContext *c, GLParam *p) {
-	if (c->render_mode == TGL_SELECT) {
-		assert(c->name_stack_size < MAX_NAME_STACK_DEPTH);
-		name_stack[c->name_stack_size++] = p[1].i;
+void GLContext::glopPushName(GLParam *p) {
+	if (render_mode == TGL_SELECT) {
+		assert(name_stack_size < MAX_NAME_STACK_DEPTH);
+		name_stack[name_stack_size++] = p[1].i;
 		select_hit = NULL;
 	}
 }
 
-void GLContext::glopPopName(GLContext *c, GLParam *) {
+void GLContext::glopPopName(GLParam *) {
 	if (render_mode == TGL_SELECT) {
 		assert(name_stack_size > 0);
 		name_stack_size--;
@@ -100,7 +100,7 @@ void GLContext::glopPopName(GLContext *c, GLParam *) {
 	}
 }
 
-void GLContext::glopLoadName(GLContext *c, GLParam *p) {
+void GLContext::glopLoadName(GLParam *p) {
 	if (render_mode == TGL_SELECT) {
 		assert(name_stack_size > 0);
 		name_stack[name_stack_size - 1] = p[1].i;

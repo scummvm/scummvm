@@ -112,21 +112,21 @@ void GLContext::glInitTextures() {
 	colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
 }
 
-void GLContext::glopBindTexture(GLContext *c, GLParam *p) {
+void GLContext::glopBindTexture(GLParam *p) {
 	int target = p[1].i;
 	int texture = p[2].i;
 	GLTexture *t;
 
 	assert(target == TGL_TEXTURE_2D && texture >= 0);
 
-	t = find_texture(c, texture);
+	t = find_texture(this, texture);
 	if (!t) {
 		t = alloc_texture(texture);
 	}
 	current_texture = t;
 }
 
-void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
+void GLContext::glopTexImage2D(GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
 	int internalformat = p[3].i;
@@ -214,7 +214,7 @@ void GLContext::glopTexImage2D(GLContext *c, GLParam *p) {
 }
 
 // TODO: not all tests are done
-void GLContext::glopTexEnv(GLContext *, GLParam *p) {
+void GLContext::glopTexEnv(GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -232,7 +232,7 @@ error:
 }
 
 // TODO: not all tests are done
-void GLContext::glopTexParameter(GLContext *c, GLParam *p) {
+void GLContext::glopTexParameter(GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -278,7 +278,7 @@ error:
 	}
 }
 
-void GLContext::glopPixelStore(GLContext *, GLParam *p) {
+void GLContext::glopPixelStore(GLParam *p) {
 	int pname = p[1].i;
 	int param = p[2].i;
 

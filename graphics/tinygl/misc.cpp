@@ -30,7 +30,7 @@
 
 namespace TinyGL {
 
-void GLContext::glopViewport(GLContext *c, GLParam *p) {
+void GLContext::glopViewport(GLParam *p) {
 	int xsize, ysize, xmin, ymin, xsize_req, ysize_req;
 
 	xmin = p[1].i;
@@ -46,7 +46,7 @@ void GLContext::glopViewport(GLContext *c, GLParam *p) {
 		xsize_req = xmin + xsize;
 		ysize_req = ymin + ysize;
 
-		if (gl_resize_viewport && gl_resize_viewport(c, &xsize_req, &ysize_req) != 0) {
+		if (gl_resize_viewport && gl_resize_viewport(&xsize_req, &ysize_req) != 0) {
 			error("glViewport: error while resizing display");
 		}
 
@@ -65,7 +65,7 @@ void GLContext::glopViewport(GLContext *c, GLParam *p) {
 	}
 }
 
-void GLContext::glopEnableDisable(GLContext *c, GLParam *p) {
+void GLContext::glopEnableDisable(GLParam *p) {
 	int code = p[1].i;
 	int v = p[2].i;
 
@@ -135,39 +135,39 @@ void GLContext::glopEnableDisable(GLContext *c, GLParam *p) {
 	}
 }
 
-void GLContext::glopBlendFunc(GLContext *c, GLParam *p) {
+void GLContext::glopBlendFunc(GLParam *p) {
 	TGLenum sfactor = p[1].i;
 	TGLenum dfactor = p[2].i;
 	fb->setBlendingFactors(sfactor, dfactor);
 }
 
-void GLContext::glopAlphaFunc(GLContext *c, GLParam *p) {
+void GLContext::glopAlphaFunc(GLParam *p) {
 	TGLenum func = p[1].i;
 	float ref = p[2].f;
 	fb->setAlphaTestFunc(func, (int)(ref * 255));
 }
 
-void GLContext::glopDepthFunc(GLContext *c, GLParam *p) {
+void GLContext::glopDepthFunc(GLParam *p) {
 	TGLenum func = p[1].i;
 	fb->setDepthFunc(func);
 }
 
-void GLContext::glopShadeModel(GLContext *c, GLParam *p) {
+void GLContext::glopShadeModel(GLParam *p) {
 	int code = p[1].i;
 	current_shade_model = code;
 }
 
-void GLContext::glopCullFace(GLContext *c, GLParam *p) {
+void GLContext::glopCullFace(GLParam *p) {
 	int code = p[1].i;
 	current_cull_face = code;
 }
 
-void GLContext::glopFrontFace(GLContext *c, GLParam *p) {
+void GLContext::glopFrontFace(GLParam *p) {
 	int code = p[1].i;
 	current_front_face = code;
 }
 
-void GLContext::glopPolygonMode(GLContext *c, GLParam *p) {
+void GLContext::glopPolygonMode(GLParam *p) {
 	int face = p[1].i;
 	int mode = p[2].i;
 
@@ -187,20 +187,20 @@ void GLContext::glopPolygonMode(GLContext *c, GLParam *p) {
 	}
 }
 
-void GLContext::glopHint(GLContext *, GLParam *) {
+void GLContext::glopHint(GLParam *) {
 	// do nothing
 }
 
-void GLContext::glopPolygonOffset(GLContext *c, GLParam *p) {
+void GLContext::glopPolygonOffset(GLParam *p) {
 	offset_factor = p[1].f;
 	offset_units = p[2].f;
 }
 
-void GLContext::glopColorMask(GLContext *c, TinyGL::GLParam *p) {
+void GLContext::glopColorMask(GLParam *p) {
 	color_mask = p[1].i;
 }
 
-void GLContext::glopDepthMask(GLContext *c, TinyGL::GLParam *p) {
+void GLContext::glopDepthMask(TinyGL::GLParam *p) {
 	fb->enableDepthWrite(p[1].i);
 }
 

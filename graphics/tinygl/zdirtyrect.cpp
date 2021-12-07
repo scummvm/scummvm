@@ -210,8 +210,8 @@ void GLContext::presentBufferDirtyRects() {
 
 		bool blendingEnabled = fb->isBlendingEnabled();
 		bool alphaTestEnabled = fb->isAlphaTestEnabled();
-		c->fb->enableBlending(false);
-		c->fb->enableAlphaTest(false);
+		fb->enableBlending(false);
+		fb->enableAlphaTest(false);
 
 		for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
 			DebugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);

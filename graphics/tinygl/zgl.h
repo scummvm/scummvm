@@ -389,7 +389,7 @@ struct GLContext {
 	// opaque structure for user's use
 	void *opaque;
 	// resize viewport function
-	int (*gl_resize_viewport)(GLContext *c, int *xsize, int *ysize);
+	int (*gl_resize_viewport)(int *xsize, int *ysize);
 
 	// depth test
 	int depth_test;
@@ -411,12 +411,13 @@ struct GLContext {
 public:
 	// The glob* functions exposed to public, however they are only for internal use.
 	// Calling them from outside of TinyGL is forbidden
-	#define ADD_OP(a, b, d) void glop ## a (GLContext *c, GLParam *p);
+	#define ADD_OP(a, b, d) void glop ## a (GLParam *p);
 	#include "graphics/tinygl/opinfo.h"
 
 	void gl_add_op(GLParam *p);
 	void gl_compile_op(GLParam *p);
 
+	void gl_eval_viewport();
 	void gl_transform_to_viewport(GLVertex *v);
 	void gl_draw_triangle(GLVertex *p0, GLVertex *p1, GLVertex *p2);
 	void gl_draw_line(GLVertex *p0, GLVertex *p1);

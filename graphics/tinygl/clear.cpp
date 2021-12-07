@@ -31,15 +31,15 @@
 
 namespace TinyGL {
 
-void GLContext::glopClearColor(GLContext *c, GLParam *p) {
+void GLContext::glopClearColor(GLParam *p) {
 	clear_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 }
 
-void GLContext::glopClearDepth(GLContext *c, GLParam *p) {
+void GLContext::glopClearDepth(GLParam *p) {
 	clear_depth = p[1].f;
 }
 
-void GLContext::glopClear(GLContext *c, GLParam *p) {
+void GLContext::glopClear(GLParam *p) {
 	int mask = p[1].i;
 	int z = (int)(clear_depth * ((1 << ZB_Z_BITS) - 1));
 	int r = (int)(clear_color.X * 255);

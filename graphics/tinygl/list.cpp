@@ -38,7 +38,7 @@ namespace TinyGL {
 #define ADD_OP(aa, bb, ff) \
 static void glop ## aa (GLContext *c, GLParam *p) \
 {                                                 \
-	c->glop ## aa (c, p);                         \
+	c->glop ## aa (p);                            \
 }
 #include "graphics/tinygl/opinfo.h"
 
@@ -176,21 +176,21 @@ void GLContext::gl_add_op(GLParam *p) {
 }
 
 // this opcode is never called directly
-void GLContext::glopEndList(GLContext *, GLParam *) {
+void GLContext::glopEndList(GLParam *) {
 	assert(0);
 }
 
 // this opcode is never called directly
-void GLContext::glopNextBuffer(GLContext *, GLParam *) {
+void GLContext::glopNextBuffer(GLParam *) {
 	assert(0);
 }
 
-void GLContext::glopCallList(GLContext *c, GLParam *p) {
+void GLContext::glopCallList(GLParam *p) {
 	GLList *l;
 	int list, op;
 
 	list = p[1].ui;
-	l = find_list(c, list);
+	l = find_list(this, list);
 	if (!l)
 		error("list %d not defined", list);
 	p = l->first_op_buffer->ops;
@@ -202,7 +202,7 @@ void GLContext::glopCallList(GLContext *c, GLParam *p) {
 		if (op == OP_NextBuffer) {
 			p = (GLParam *)p[1].p;
 		} else {
-			op_table_func[op](c, p);
+			op_table_func[op](this, p);
 			p += op_table_size[op];
 		}
 	}

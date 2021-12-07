@@ -30,7 +30,7 @@
 
 namespace TinyGL {
 
-void GLContext::glopMaterial(GLContext *c, GLParam *p) {
+void GLContext::glopMaterial(GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
@@ -38,7 +38,7 @@ void GLContext::glopMaterial(GLContext *c, GLParam *p) {
 
 	if (mode == TGL_FRONT_AND_BACK) {
 		p[1].i = TGL_FRONT;
-		glopMaterial(c, p);
+		glopMaterial(p);
 		mode = TGL_BACK;
 	}
 	if (mode == TGL_FRONT)
@@ -73,7 +73,7 @@ void GLContext::glopMaterial(GLContext *c, GLParam *p) {
 	}
 }
 
-void GLContext::glopColorMaterial(GLContext *c, GLParam *p) {
+void GLContext::glopColorMaterial(GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 
@@ -81,7 +81,7 @@ void GLContext::glopColorMaterial(GLContext *c, GLParam *p) {
 	current_color_material_type = type;
 }
 
-void GLContext::glopLight(GLContext *c, GLParam *p) {
+void GLContext::glopLight(GLParam *p) {
 	int light = p[1].i;
 	int type = p[2].i;
 	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
@@ -104,7 +104,7 @@ void GLContext::glopLight(GLContext *c, GLParam *p) {
 		break;
 	case TGL_POSITION: {
 		Vector4 pos;
-		c->matrix_stack_ptr[0]->transform(v, pos);
+		matrix_stack_ptr[0]->transform(v, pos);
 
 		l->position = pos;
 
@@ -148,7 +148,7 @@ void GLContext::glopLight(GLContext *c, GLParam *p) {
 	}
 }
 
-void GLContext::glopLightModel(GLContext *c, GLParam *p) {
+void GLContext::glopLightModel(GLParam *p) {
 	int pname = p[1].i;
 
 	switch (pname) {

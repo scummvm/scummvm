@@ -31,25 +31,25 @@
 
 namespace TinyGL {
 
-void GLContext::glopNormal(GLContext *c, GLParam *p) {
+void GLContext::glopNormal(GLParam *p) {
 	current_normal.X = p[1].f;
 	current_normal.Y = p[2].f;
 	current_normal.Z = p[3].f;
 	current_normal.W = 0.0f;
 }
 
-void GLContext::glopTexCoord(GLContext *c, GLParam *p) {
+void GLContext::glopTexCoord(GLParam *p) {
 	current_tex_coord.X = p[1].f;
 	current_tex_coord.Y = p[2].f;
 	current_tex_coord.Z = p[3].f;
 	current_tex_coord.W = p[4].f;
 }
 
-void GLContext::glopEdgeFlag(GLContext *c, GLParam *p) {
+void GLContext::glopEdgeFlag(GLParam *p) {
 	current_edge_flag = p[1].i;
 }
 
-void GLContext::glopColor(GLContext *c, GLParam *p) {
+void GLContext::glopColor(GLParam *p) {
 	current_color.X = p[1].f;
 	current_color.Y = p[2].f;
 	current_color.Z = p[3].f;
@@ -64,18 +64,18 @@ void GLContext::glopColor(GLContext *c, GLParam *p) {
 		q[4].f = p[2].f;
 		q[5].f = p[3].f;
 		q[6].f = p[4].f;
-		glopMaterial(c, q);
+		glopMaterial(q);
 	}
 }
 
-static void gl_eval_viewport(GLContext *c) {
+void GLContext::gl_eval_viewport() {
 	GLViewport *v;
 	float zsize = (1 << (ZB_Z_BITS + ZB_POINT_Z_FRAC_BITS));
 
-	v = &c->viewport;
+	v = &viewport;
 
 	// v->ymin needs to be upside down for transformation
-	int ymin = c->fb->ysize - v->ysize - v->ymin;
+	int ymin = fb->ysize - v->ysize - v->ymin;
 	v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
 	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + ymin);
 	v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);
@@ -86,10 +86,10 @@ static void gl_eval_viewport(GLContext *c) {
 	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
 
-void GLContext::glopBegin(GLContext *c, GLParam *p) {
+void GLContext::glopBegin(GLParam *p) {
 	int type;
 
-	assert(c->in_begin == 0);
+	assert(in_begin == 0);
 
 	type = p[1].i;
 	begin_type = type;
@@ -119,7 +119,7 @@ void GLContext::glopBegin(GLContext *c, GLParam *p) {
 
 	// viewport
 	if (viewport.updated) {
-		gl_eval_viewport(c);
+		gl_eval_viewport();
 		viewport.updated = 0;
 	}
 	// triangle drawing functions
@@ -139,7 +139,7 @@ void GLContext::glopBegin(GLContext *c, GLParam *p) {
 			break;
 		}
 
-		switch (c->polygon_mode_back) {
+		switch (polygon_mode_back) {
 		case TGL_POINT:
 			draw_triangle_back = gl_draw_triangle_point;
 			break;
@@ -191,7 +191,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 	v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
-void GLContext::glopVertex(GLContext *c, GLParam *p) {
+void GLContext::glopVertex(GLParam *p) {
 	GLVertex *v;
 	int n, cnt;
 
@@ -223,7 +223,7 @@ void GLContext::glopVertex(GLContext *c, GLParam *p) {
 	v->coord.Z = p[3].f;
 	v->coord.W = p[4].f;
 
-	gl_vertex_transform(c, v);
+	gl_vertex_transform(this, v);
 
 	// color
 
@@ -253,7 +253,7 @@ void GLContext::glopVertex(GLContext *c, GLParam *p) {
 	vertex_n = n;
 }
 
-void GLContext::glopEnd(GLContext *c, GLParam *) {
+void GLContext::glopEnd(GLParam *) {
 	assert(in_begin == 1);
 
 	if (vertex_cnt > 0) {
