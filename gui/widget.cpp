@@ -1044,7 +1044,7 @@ void OptionsContainerWidget::reflowLayout() {
 
 	Widget *w = _firstWidget;
 	int16 minY = getAbsY();
-	int maxY = minY;
+	int maxY = minY + _h;
 	while (w) {
 		w->reflowLayout();
 		minY = MIN(minY, w->getAbsY());

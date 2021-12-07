@@ -138,7 +138,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"), "GameOptions_Game", true);
+	tab->addTab(_("Game"), "GameOptions_Game");
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
@@ -204,7 +204,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GameOptions_Graphics");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GameOptions_Graphics", false);
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", "GameOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	graphicsContainer->setTarget(this);
@@ -241,14 +241,14 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	}
 
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
+		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper", false);
 		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps, domain);
 	}
 
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend");
+	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend", false);
 
 	if (g_system->getOverlayWidth() > 320)
 		_globalBackendOverride = new CheckboxWidget(tab, "GameOptions_Backend.EnableTabCheckbox", _("Override global backend settings"), Common::U32String(), kCmdGlobalBackendOverride);
@@ -367,11 +367,11 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 		AchMan.setActiveDomain(metaEngine.getAchievementsInfo(domain));
 		if (AchMan.getAchievementCount()) {
-			tab->addTab(_("Achievements"), "GameOptions_Achievements");
+			tab->addTab(_("Achievements"), "GameOptions_Achievements", false);
 			addAchievementsControls(tab, "GameOptions_Achievements.");
 		}
 		if (AchMan.getStatCount()) {
-			tab->addTab(_("Statistics"), "GameOptions_Achievements");
+			tab->addTab(_("Statistics"), "GameOptions_Achievements", false);
 			addStatisticsControls(tab, "GameOptions_Achievements.");
 		}
 	}

@@ -76,9 +76,10 @@ public:
 	 * Add a new tab with the given title. Returns a unique ID which can be used
 	 * to identify the tab (to remove it / activate it etc.).
 	 */
-	int addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll = false);
+	int addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll = true);
 
 	virtual Widget *addChild(Widget *newChild);
+	virtual void removeWidget(Widget *del);
 
 	/**
 	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.

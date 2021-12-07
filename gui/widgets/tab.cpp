@@ -161,6 +161,14 @@ Widget *TabWidget::addChild(Widget *newChild) {
 	return _tabs[_activeTab].scrollWidget->addChild(newChild);
 }
 
+void TabWidget::removeWidget(Widget *del) {
+	if (_activeTab == -1 || _tabs[_activeTab].scrollWidget == nullptr){
+		Widget::removeWidget(del);
+		return;
+	}
+	_tabs[_activeTab].scrollWidget->removeWidget(del);
+}
+
 void TabWidget::removeTab(int tabID) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 
@@ -171,7 +179,11 @@ void TabWidget::removeTab(int tabID) {
 	}
 
 	// Dispose the widgets in that tab and then the tab itself
-	delete _tabs[tabID].scrollWidget;
+	if (_tabs[tabID].scrollWidget) {
+		delete _tabs[tabID].scrollWidget;
+	} else {
+		delete _tabs[tabID].firstWidget;
+	}
 	_tabs.remove_at(tabID);
 
 	// Adjust _firstVisibleTab if necessary
@@ -201,7 +213,10 @@ void TabWidget::setActiveTab(int tabID) {
 			releaseFocus();
 		}
 		_activeTab = tabID;
-		_firstWidget = _tabs[tabID].firstWidget;
+		if (_tabs[tabID].scrollWidget)
+			_firstWidget = _tabs[_activeTab].scrollWidget;
+		else
+			_firstWidget = _tabs[tabID].firstWidget;
 
 		// Also ensure the tab is visible in the tab bar
 		if (_firstVisibleTab > tabID)

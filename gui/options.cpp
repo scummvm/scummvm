@@ -1981,7 +1981,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 1) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GlobalOptions_Graphics");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GlobalOptions_Graphics", false);
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", "GlobalOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2026,14 +2026,14 @@ void GlobalOptionsDialog::build() {
 	}
 
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
+		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper", false);
 		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps, Common::ConfigManager::kKeymapperDomain);
 	}
 
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend");
+	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend", false);
 
 	g_system->registerDefaultSettings(_domain);
 	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalOptions_Backend.Container", _domain);
@@ -2084,9 +2084,9 @@ void GlobalOptionsDialog::build() {
 	// 6) The miscellaneous tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Misc"), "GlobalOptions_Misc");
+		tab->addTab(_("Misc"), "GlobalOptions_Misc", false);
 	else
-		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc");
+		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc", false);
 	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
 	miscContainer->setTarget(this);
 	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2098,9 +2098,9 @@ void GlobalOptionsDialog::build() {
 	// 7) The Cloud tab (remote storages)
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Cloud"), "GlobalOptions_Cloud");
+		tab->addTab(_("Cloud"), "GlobalOptions_Cloud", false);
 	else
-		tab->addTab(_c("Cloud", "lowres"), "GlobalOptions_Cloud");
+		tab->addTab(_c("Cloud", "lowres"), "GlobalOptions_Cloud", false);
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", "GlobalOptions_Cloud_Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
