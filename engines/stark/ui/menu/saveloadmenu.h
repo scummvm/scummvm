@@ -24,7 +24,6 @@
 #define STARK_UI_MENU_SAVELOAD_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
-
 #include "engines/stark/visual/text.h"
 
 #include "common/error.h"
@@ -158,8 +157,8 @@ public:
 	bool hasSave() { return _hasSave; }
 
 private:
-	static const Color _outlineColor;
-	static const Color _textColor;
+	const Color _outlineColor = Color(0x1E, 0x1E, 0x96);
+	const Color _textColor = Color(0x5C, 0x48, 0x3D);
 
 	int _slot;
 	SaveLoadMenuScreen *_screen;

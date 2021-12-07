@@ -21,28 +21,22 @@
  */
 
 #include "engines/stark/ui/world/gamewindow.h"
-
 #include "engines/stark/scene.h"
-
 #include "engines/stark/gfx/driver.h"
-
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/layer.h"
-
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/userinterface.h"
-
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/actionmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
-
 #include "engines/stark/visual/text.h"
 #include "engines/stark/visual/image.h"
 

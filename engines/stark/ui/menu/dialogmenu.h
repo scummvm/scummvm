@@ -24,7 +24,6 @@
 #define STARK_UI_MENU_DIALOG_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
-
 #include "engines/stark/visual/text.h"
 
 namespace Stark {
@@ -101,7 +100,7 @@ public:
 	void onScreenChanged() { _text.resetTexture(); }
 
 private:
-	static const Color _color;
+	const Color _color = Color(0x68, 0x05, 0x04);
 
 	Common::Point _pos;
 	VisualText _text;
@@ -129,8 +128,8 @@ public:
 	}
 
 private:
-	static const Color _textColorApril;
-	static const Color _textColorNormal;
+	const Color _textColorApril = Color(0x68, 0x05, 0x04);
+	const Color _textColorNormal = Color(0x1E, 0x1E, 0x96);
 
 	Common::Point _namePos, _linePos;
 	VisualText _nameText, _lineText;
@@ -160,8 +159,8 @@ public:
 	void onScreenChanged() override;
 
 private:
-	static const Color _textColorHovered;
-	static const Color _textColorDefault;
+	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);
+	const Color _textColorDefault = Color(0x00, 0x00, 0x00);
 
 	uint _logIndex, _chapter;
 	int _width, _height;

@@ -21,18 +21,14 @@
  */
 
 #include "engines/stark/ui/cursor.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
-
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/sound.h"
-
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
 

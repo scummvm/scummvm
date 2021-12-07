@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/ui/menu/saveloadmenu.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/stateprovider.h"
@@ -29,11 +28,9 @@
 #include "engines/stark/services/settings.h"
 #include "engines/stark/services/gamechapter.h"
 #include "engines/stark/services/gamemessage.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-
 #include "engines/stark/stark.h"
 #include "engines/stark/savemetadata.h"
 
@@ -45,9 +42,6 @@
 #include "gui/message.h"
 
 namespace Stark {
-
-const Color SaveDataWidget::_outlineColor = Color(0x1E, 0x1E, 0x96);
-const Color SaveDataWidget::_textColor    = Color(0x5C, 0x48, 0x3D);
 
 SaveLoadMenuScreen::SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName) :
 		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", screenName),

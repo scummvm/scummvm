@@ -24,7 +24,6 @@
 #define STARK_UI_INVENTORY_WINDOW_H
 
 #include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/ui/window.h"
 
 #include "common/scummsys.h"

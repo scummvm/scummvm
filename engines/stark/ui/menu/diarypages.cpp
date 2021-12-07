@@ -21,15 +21,12 @@
  */
 
 #include "engines/stark/ui/menu/diarypages.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/staticprovider.h"
-
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/layer.h"
-
 #include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {

@@ -21,23 +21,19 @@
  */
 
 #include "engines/stark/ui/menu/diaryindex.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/gamemessage.h"
-
 #include "engines/stark/ui/cursor.h"
 
 #include "engines/engine.h"
+
 #include "gui/message.h"
 #include "gui/saveload.h"
 
 namespace Stark {
-
-const Color DiaryIndexScreen::_textColorHovered = Color(0x1E, 0x1E, 0x96);
-const Color DiaryIndexScreen::_textColorDefault = Color(0x00, 0x00, 0x00);
 
 DiaryIndexScreen::DiaryIndexScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryIndexLocation", Screen::kScreenDiaryIndex) {

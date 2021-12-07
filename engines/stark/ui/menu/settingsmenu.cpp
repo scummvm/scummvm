@@ -25,16 +25,10 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/staticprovider.h"
-
 #include "engines/stark/visual/image.h"
-
 #include "engines/stark/resources/sound.h"
 
 namespace Stark {
-
-const Color SettingsMenuScreen::_textColorHovered = Color(0x1E, 0x1E, 0x96);
-const Color SettingsMenuScreen::_textColorDefault = Color(0x00, 0x00, 0x00);
-const Color VolumeWidget::_textColorBgHovered = Color(0xFF, 0xFF, 0xFF);
 
 SettingsMenuScreen::SettingsMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "OptionLocation", Screen::kScreenSettingsMenu),

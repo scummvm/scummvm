@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/ui/dialogbox.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
@@ -33,9 +32,10 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/winexe_pe.h"
-#include "graphics/surface.h"
-#include "image/bmp.h"
 
+#include "graphics/surface.h"
+
+#include "image/bmp.h"
 
 namespace Stark {
 
@@ -44,7 +44,6 @@ static const uint dialogHorizontalMargin = 10;
 static const uint dialogVerticalMargin   = 20;
 static const uint buttonHorizontalMargin = 25;
 static const uint buttonVerticalMargin   = 5;
-static const Color textColor = Color(0xFF, 0xFF, 0xFF);
 
 DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
@@ -69,16 +68,16 @@ DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 	delete background;
 
 	_messageVisual = new VisualText(gfx);
-	_messageVisual->setColor(textColor);
+	_messageVisual->setColor(_textColor);
 	_messageVisual->setTargetWidth(dialogMaxWidth - 2 * dialogHorizontalMargin);
 	_messageVisual->setAlign(Graphics::kTextAlignCenter);
 
 	_confirmLabelVisual = new VisualText(gfx);
-	_confirmLabelVisual->setColor(textColor);
+	_confirmLabelVisual->setColor(_textColor);
 	_confirmLabelVisual->setTargetWidth(96);
 
 	_cancelLabelVisual = new VisualText(gfx);
-	_cancelLabelVisual->setColor(textColor);
+	_cancelLabelVisual->setColor(_textColor);
 	_cancelLabelVisual->setTargetWidth(96);
 }
 

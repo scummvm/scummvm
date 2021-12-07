@@ -21,18 +21,15 @@
  */
 
 #include "engines/stark/ui/world/gamescreen.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/global.h"
-
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/actionmenu.h"
 #include "engines/stark/ui/world/dialogpanel.h"
 #include "engines/stark/ui/world/gamewindow.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/topmenu.h"
-
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 

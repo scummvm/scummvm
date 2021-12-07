@@ -24,7 +24,6 @@
 #define STARK_UI_MENU_FMV_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
-
 #include "engines/stark/visual/text.h"
 
 namespace Stark {
@@ -36,10 +35,6 @@ class FMVWidget;
  */
 class FMVMenuScreen : public StaticLocationScreen {
 public:
-	static Common::Point _formatRectPos;
-	static int _fontHeight;
-	static uint _fmvPerPage;
-
 	FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVMenuScreen();
 
@@ -61,6 +56,10 @@ private:
 	};
 
 	Common::Array<FMVWidget *> _fmvWidgets;
+
+	Common::Point _formatRectPos;
+	int _fontHeight;
+	uint _fmvPerPage;
 
 	// Count from zero
 	uint _page, _maxPage;
@@ -97,8 +96,12 @@ public:
 	void onScreenChanged() { _title.resetTexture(); }
 
 private:
-	static const Color _textColorHovered;
-	static const Color _textColorDefault;
+	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);
+	const Color _textColorDefault = Color(0x00, 0x00, 0x00);
+
+	Common::Point _formatRectPos;
+	int _fontHeight;
+	uint _fmvPerPage;
 
 	const Common::String &_filename;
 	VisualText _title;

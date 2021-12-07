@@ -23,11 +23,9 @@
 #include "common/rect.h"
 
 #include "engines/stark/ui/world/fmvscreen.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
-
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"

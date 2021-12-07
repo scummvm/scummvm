@@ -21,11 +21,9 @@
  */
 
 #include "engines/stark/ui/world/button.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
-
 #include "engines/stark/visual/explodingimage.h"
 #include "engines/stark/visual/flashingimage.h"
 #include "engines/stark/visual/image.h"

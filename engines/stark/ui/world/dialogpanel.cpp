@@ -21,27 +21,19 @@
  */
 
 #include "engines/stark/ui/world/dialogpanel.h"
-
 #include "engines/stark/gfx/driver.h"
-
 #include "engines/stark/resources/speech.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/settings.h"
 #include "engines/stark/services/userinterface.h"
-
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/clicktext.h"
-
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
 
 namespace Stark {
-
-const Color DialogPanel::_aprilColor = Color(0xFF, 0xC0, 0x00);
-const Color DialogPanel::_otherColor = Color(0xFF, 0x40, 0x40);
 
 DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),

@@ -21,26 +21,17 @@
  */
 
 #include "engines/stark/ui/menu/dialogmenu.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/gamechapter.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/global.h"
-
 #include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/item.h"
 
 namespace Stark {
-
-const Color ChapterTitleText::_color = Color(0x68, 0x05, 0x04);
-const Color DialogTitleWidget::_textColorHovered = Color(0x1E, 0x1E, 0x96);
-const Color DialogTitleWidget::_textColorDefault = Color(0x00, 0x00, 0x00);
-const Color DialogLineText::_textColorApril = Color(0x68, 0x05, 0x04);
-const Color DialogLineText::_textColorNormal = Color(0x1E, 0x1E, 0x96);
 
 DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryLog", Screen::kScreenDialog),

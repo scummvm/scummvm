@@ -21,21 +21,16 @@
  */
 
 #include "engines/stark/ui/world/inventorywindow.h"
-
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/actionmenu.h"
-
 #include "engines/stark/gfx/driver.h"
-
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/pattable.h"
-
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
-
 #include "engines/stark/visual/image.h"
 
 namespace Stark {

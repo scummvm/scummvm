@@ -24,7 +24,6 @@
 #define STARK_UI_DIALOG_PANEL_H
 
 #include "engines/stark/ui/window.h"
-
 #include "engines/stark/visual/text.h"
 
 #include "common/scummsys.h"
@@ -105,8 +104,8 @@ private:
 	Common::Array<ClickText*> _options;
 	bool _acceptIdleMousePos;
 
-	static const Color _aprilColor;
-	static const Color _otherColor;
+	Color _aprilColor = Color(0xFF, 0xC0, 0x00);
+	Color _otherColor = Color(0xFF, 0x40, 0x40);
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 80;

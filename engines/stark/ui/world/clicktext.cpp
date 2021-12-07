@@ -21,9 +21,7 @@
  */
 
 #include "engines/stark/ui/world/clicktext.h"
-
 #include "engines/stark/services/services.h"
-
 #include "engines/stark/visual/text.h"
 
 namespace Stark {

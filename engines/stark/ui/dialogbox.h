@@ -25,6 +25,7 @@
 
 #include "engines/stark/stark.h"
 #include "engines/stark/ui/window.h"
+#include "engines/stark/visual/text.h"
 
 #include "common/keyboard.h"
 #include "common/scummsys.h"
@@ -89,6 +90,8 @@ private:
 	Common::Rect _confirmButtonRect;
 	Common::Rect _cancelButtonRect;
 	Common::Rect _messageRect;
+
+	const Color _textColor = Color(0xFF, 0xFF, 0xFF);
 
 	ConfirmCallback *_confirmCallback;
 };

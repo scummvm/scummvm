@@ -21,29 +21,21 @@
  */
 
 #include "engines/stark/ui/menu/fmvmenu.h"
-
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/staticprovider.h"
-
 #include "engines/stark/resources/location.h"
-
 #include "engines/stark/visual/text.h"
 
 namespace Stark {
 
-const Color FMVWidget::_textColorHovered = Color(0x1E, 0x1E, 0x96);
-const Color FMVWidget::_textColorDefault = Color(0x00, 0x00, 0x00);
-
-// Hard-coded parameters in case cannot retrieve the format rectangle
-Common::Point FMVMenuScreen::_formatRectPos(202, 61);
-int FMVMenuScreen::_fontHeight(16);
-uint FMVMenuScreen::_fmvPerPage(18);
-
 FMVMenuScreen::FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryFMV", Screen::kScreenFMVMenu),
 		_fmvWidgets() {
+	_formatRectPos = Common::Point(202, 61);
+	_fontHeight = 16;
+	_fmvPerPage = 18;
 }
 
 FMVMenuScreen::~FMVMenuScreen() {
@@ -184,9 +176,12 @@ FMVWidget::FMVWidget(Gfx::Driver *gfx, uint fmvIndex) :
 	Common::Rect rect = _title.getRect();
 	_width = rect.right - rect.left;
 
-	_position.x = FMVMenuScreen::_formatRectPos.x;
-	_position.y = FMVMenuScreen::_formatRectPos.y +
-	              (fmvIndex % FMVMenuScreen::_fmvPerPage) * (FMVMenuScreen::_fontHeight + 4);
+	_formatRectPos = Common::Point(202, 61);
+	_fontHeight = 16;
+	_fmvPerPage = 18;
+
+	_position.x = _formatRectPos.x;
+	_position.y = _formatRectPos.y + (fmvIndex % _fmvPerPage) * (_fontHeight + 4);
 }
 
 void FMVWidget::onClick() {
@@ -195,7 +190,7 @@ void FMVWidget::onClick() {
 
 bool FMVWidget::isMouseInside(const Common::Point &mousePos) const {
 	return mousePos.x >= _position.x && mousePos.x <= _position.x + _width &&
-		   mousePos.y >= _position.y && mousePos.y <= _position.y + FMVMenuScreen::_fontHeight;
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + _fontHeight;
 }
 
 } // End of namespace Stark

@@ -25,7 +25,6 @@
 
 #include "engines/stark/gfx/faderenderer.h"
 #include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/ui/window.h"
 
 #include "common/scummsys.h"

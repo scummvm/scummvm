@@ -49,8 +49,8 @@ private:
 	void dialogHandler();
 	void quitHandler();
 
-	static const Color _textColorHovered;
-	static const Color _textColorDefault;
+	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);
+	const Color _textColorDefault = Color(0x00, 0x00, 0x00);
 };
 
 } // End of namespace Stark
