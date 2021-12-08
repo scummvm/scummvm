@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-11-19 21:50+0000\n"
+"PO-Revision-Date: 2021-12-08 11:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -4257,6 +4257,7 @@ msgstr "Переключиться на Ольмека"
 msgid ""
 "Attempt to load saved game from a previous version: Version %s / Build %d"
 msgstr ""
+"Пытаюсь загрузить сохранение игры из предыдущей версии: Версия %s / Билд %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
 msgid "Load anyway"
@@ -5059,20 +5060,21 @@ msgstr "Воспроизводит видеоролики с увеличенн�
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "Упрощённый ИИ"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Уменьшает сложность ИИ-головоломок"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Обновлённая музыка в титрах"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Проигрывать песню The Final Hour во время финальных титров вместо MIDI-музыки"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
