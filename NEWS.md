@@ -43,6 +43,7 @@ For a more comprehensive changelog of the latest experimental code, see:
     - Fix character animation in Rose Tattoo.
     - Fix glitch opening map in Rose Tattoo.
     - Fix bell pull sound in Serrated Scalpel.
+	- Fix inventory not updating in Serrated Scalpel after examining watch.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
