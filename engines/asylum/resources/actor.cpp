@@ -479,7 +479,7 @@ void Actor::update() {
 	case kActorStatusDisabled:
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
-		if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
+		if (_vm->screenUpdateCount > _lastScreenUpdate + 300) {
 			if (_vm->getRandom(100) < 50) {
 				if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 					if (canChangeStatus(10))
@@ -2100,7 +2100,7 @@ void Actor::updateStatusEnabled() {
 
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 
-	if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
+	if (_vm->screenUpdateCount > _lastScreenUpdate + 300) {
 		// All actors except Crow and Armed Max
 		if (strcmp((char *)&_name, "Crow") && strcmp((char *)_name, "Armed Max")) {
 			if (_vm->getRandom(100) < 50
@@ -2114,7 +2114,7 @@ void Actor::updateStatusEnabled() {
 
 	// Actor: Player
 	if (_index == getSharedData()->getPlayerIndex()) {
-		if (_vm->lastScreenUpdate && (_vm->screenUpdateCount - _vm->lastScreenUpdate) > 500) {
+		if (_vm->lastScreenUpdate && (_vm->screenUpdateCount > _vm->lastScreenUpdate + 500)) {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
