@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/gfx/tinyglactor.h"
-
 #include "engines/stark/model/model.h"
 #include "engines/stark/model/animhandler.h"
 #include "engines/stark/scene.h"

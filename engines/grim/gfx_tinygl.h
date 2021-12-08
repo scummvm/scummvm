@@ -25,7 +25,7 @@
 
 #include "engines/grim/gfx_base.h"
 
-#include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/tinygl.h"
 
 namespace Graphics {
 struct Surface;

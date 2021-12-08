@@ -20,13 +20,13 @@
  *
  */
 
-#include "engines/stark/gfx/tinygl.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
 
 #include "math/matrix4.h"
 
+#include "engines/stark/gfx/tinygl.h"
 #include "engines/stark/gfx/tinyglactor.h"
 #include "engines/stark/gfx/tinyglprop.h"
 #include "engines/stark/gfx/tinyglsurface.h"

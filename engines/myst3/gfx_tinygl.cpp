@@ -25,6 +25,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/surface.h"
+#include "graphics/tinygl/tinygl.h"
 
 #include "math/vector2d.h"
 #include "math/glmath.h"
@@ -32,7 +33,6 @@
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/gfx_tinygl.h"
 #include "engines/myst3/gfx_tinygl_texture.h"
-#include "graphics/tinygl/zblit.h"
 
 namespace Myst3 {
 

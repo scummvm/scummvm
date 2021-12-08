@@ -849,16 +849,10 @@ void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoi
 // polygon offset
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
 
-// custom extension
+// custom extensions
 void tglSetShadowMaskBuf(unsigned char *buf);
 void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
 void tglEnableDirtyRects(bool enable);
 void tglDebug(int mode);
-
-namespace TinyGL {
-
-void presentBuffer();
-
-} // end of namespace TinyGL
 
 #endif

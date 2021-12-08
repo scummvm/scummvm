@@ -24,12 +24,13 @@
 #define STARK_GFX_TINYGL_H
 
 #include "common/system.h"
+
 #include "math/vector3d.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
-#include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/tinygl.h"
 
 namespace Stark {
 namespace Gfx {

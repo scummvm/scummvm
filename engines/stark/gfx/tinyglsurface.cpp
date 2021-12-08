@@ -24,7 +24,7 @@
 #include "engines/stark/gfx/tinyglbitmap.h"
 #include "engines/stark/gfx/texture.h"
 
-#include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/tinygl.h"
 
 namespace Stark {
 namespace Gfx {

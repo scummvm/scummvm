@@ -25,10 +25,12 @@
 
 #include "common/rect.h"
 #include "common/system.h"
+
 #include "math/vector3d.h"
 
 #include "engines/myst3/gfx.h"
-#include "graphics/tinygl/zgl.h"
+
+#include "graphics/tinygl/tinygl.h"
 
 namespace Myst3 {
 

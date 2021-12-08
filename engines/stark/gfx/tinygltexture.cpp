@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/gfx/tinygltexture.h"
-
 #include "engines/stark/gfx/driver.h"
 
 #include "graphics/surface.h"

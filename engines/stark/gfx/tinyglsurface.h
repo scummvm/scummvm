@@ -26,8 +26,7 @@
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/tinygl.h"
 
-#include "graphics/tinygl/zgl.h"
-#include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/tinygl.h"
 
 #include "math/vector2d.h"
 

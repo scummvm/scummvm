@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/gfx/tinyglfade.h"
-
 #include "engines/stark/gfx/tinygl.h"
 
 namespace Stark {

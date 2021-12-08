@@ -23,12 +23,12 @@
 #ifndef GFX_TINYGL_TEXTURE_H
 #define GFX_TINYGL_TEXTURE_H
 
-#include "graphics/surface.h"
-#include "graphics/tinygl/zgl.h"
 #include "common/textconsole.h"
 
+#include "graphics/surface.h"
+#include "graphics/tinygl/tinygl.h"
+
 #include "engines/myst3/gfx.h"
-#include "graphics/tinygl/zblit.h"
 
 namespace Myst3 {
 

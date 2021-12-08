@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/gfx/tinyglprop.h"
-
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/formats/biffmesh.h"
 #include "engines/stark/scene.h"

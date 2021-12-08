@@ -35,6 +35,8 @@
 #include "common/list.h"
 #include "common/scummsys.h"
 
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zmath.h"
@@ -485,13 +487,6 @@ GLContext *gl_get_context();
 
 // matrix.c
 void gl_print_matrix(const float *m);
-
-void getSurfaceRef(Graphics::Surface &surface);
-
-Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat);
-
-void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
-void destroyContext();
 
 #ifdef DEBUG
 #define dprintf fprintf

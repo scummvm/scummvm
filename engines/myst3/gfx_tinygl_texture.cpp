@@ -21,7 +21,8 @@
  */
 
 #include "engines/myst3/gfx_tinygl_texture.h"
-#include "graphics/tinygl/zblit.h"
+
+#include "graphics/tinygl/tinygl.h"
 
 namespace Myst3 {
 

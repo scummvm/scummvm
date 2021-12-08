@@ -28,7 +28,7 @@
 
 #include "math/vector3d.h"
 
-#include "graphics/tinygl/zgl.h"
+#include "graphics/tinygl/tinygl.h"
 
 #include "engines/playground3d/gfx.h"
 

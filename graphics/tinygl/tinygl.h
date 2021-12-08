@@ -1,7 +1,7 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,34 +20,22 @@
  *
  */
 
-#ifndef STARK_GFX_TINYGL_FADE_H
-#define STARK_GFX_TINYGL_FADE_H
+#ifndef GRAPHICS_TINYGL_H
+#define GRAPHICS_TINYGL_H
 
-#include "engines/stark/gfx/faderenderer.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
+#include "graphics/tinygl/gl.h"
+#include "graphics/tinygl/zblit_public.h"
 
-#include "graphics/tinygl/tinygl.h"
+namespace TinyGL {
 
-namespace Stark {
-namespace Gfx {
+void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
+void destroyContext();
+void presentBuffer();
+void getSurfaceRef(Graphics::Surface &surface);
+Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat);
 
-class TinyGLDriver;
+} // end of namespace TinyGL
 
-/**
- * An programmable pipeline TinyGL fade screen renderer
- */
-class TinyGLFadeRenderer : public FadeRenderer {
-public:
-	TinyGLFadeRenderer(TinyGLDriver *gfx);
-	~TinyGLFadeRenderer();
-
-	// FadeRenderer API
-	void render(float fadeLevel);
-
-private:
-	TinyGLDriver *_gfx;
-};
-
-} // End of namespace Gfx
-} // End of namespace Stark
-
-#endif // STARK_GFX_TINYGL_FADE_H
+#endif

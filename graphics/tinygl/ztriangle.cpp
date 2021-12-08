@@ -36,8 +36,8 @@ namespace TinyGL {
 static const int NB_INTERP = 8;
 
 template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
-									 int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a, int &dzdx) {
+FORCEINLINE void FrameBuffer::putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
+	                             int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a, int &dzdx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
 		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
@@ -45,9 +45,9 @@ FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int 
 }
 
 template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
-									   int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
-									   int &dzdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
+FORCEINLINE void FrameBuffer::putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
+	                               int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
+	                               int &dzdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
 		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
@@ -59,7 +59,7 @@ FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned in
 }
 
 template <bool kDepthWrite, bool kEnableScissor>
-FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, int &dzdx) {
+FORCEINLINE void FrameBuffer::putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, int &dzdx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
 		if (kDepthWrite) {
 			pz[_a] = z;
@@ -69,7 +69,8 @@ FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int
 }
 
 template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
-FORCEINLINE static void putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm) {
+FORCEINLINE void FrameBuffer::putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z,
+								             unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a]) && pm[_a]) {
 		buffer->writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + _a, 255, r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
@@ -77,10 +78,11 @@ FORCEINLINE static void putPixelShadow(FrameBuffer *buffer, int buf, unsigned in
 }
 
 template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf,
-						const Graphics::TexelBuffer *texture, unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, int _a,
-						int x, int y, unsigned int &z, int &t, int &s, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
-						int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
+FORCEINLINE void FrameBuffer::putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf, const Graphics::TexelBuffer *texture,
+	                                                            unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, int _a,
+	                                                            int x, int y, unsigned int &z, int &t, int &s,
+																unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
+	                                                            int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
 		uint8 c_a, c_r, c_g, c_b;
 		texture->getARGBAt(wrap_s, wrap_t, s, t, c_a, c_r, c_g, c_b);
