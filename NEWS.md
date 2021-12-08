@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed edge case for Punycode.
    - Fixed checking for savegame overwrite in autosave slot.
    - Fixed moving savegame to new slot for most engines.
+   - Scalers are now supported with the OpenGL graphics mode.
 
  AGOS:
    - Fixed old Waxworks AdLib music regression.
