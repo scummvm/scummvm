@@ -435,9 +435,9 @@ void Talk::talkTo(const Common::String filename) {
 					}
 				} else {
 					ui._menuMode = static_cast<Tattoo::TattooScene *>(_vm->_scene)->_labTableScene ? LAB_MODE : STD_MODE;
+					ui.banishWindow();
 				}
 
-				ui.banishWindow();
 				break;
 			}
 		}
