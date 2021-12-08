@@ -89,6 +89,15 @@ void TattooEngine::initialize() {
 void TattooEngine::startScene() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
 
+	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
+		// Show the map
+		_scene->_currentScene = OVERHEAD_MAP;
+		_scene->_goToScene = _map->show();
+
+		_people->_savedPos = Common::Point(-1, -1);
+		_people->_savedPos._facing = -1;
+	}
+
 	switch (_scene->_goToScene) {
 	case 7:
 	case 8:
@@ -106,16 +115,6 @@ void TattooEngine::startScene() {
 	case STARTING_INTRO_SCENE:
 		// Disable input so that the intro can't be skipped until the game's logo has been shown
 		ui._lockoutTimer = STARTUP_KEYS_DISABLED_DELAY;
-		break;
-
-	case OVERHEAD_MAP:
-	case OVERHEAD_MAP2:
-		// Show the map
-		_scene->_currentScene = OVERHEAD_MAP;
-		_scene->_goToScene = _map->show();
-
-		_people->_savedPos = Common::Point(-1, -1);
-		_people->_savedPos._facing = -1;
 		break;
 
 	case 101:
