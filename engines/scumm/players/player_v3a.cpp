@@ -27,330 +27,575 @@
 
 namespace Scumm {
 
-static const uint16 note_freqs[4][12] = {
-	{0x06B0, 0x0650, 0x05F4, 0x05A0, 0x054C, 0x0500, 0x04B8, 0x0474, 0x0434, 0x03F8, 0x03C0, 0x0388},
-	{0x0358, 0x0328, 0x02FA, 0x02D0, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C4},
-	{0x01AC, 0x0194, 0x017D, 0x0168, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D, 0x00FE, 0x00F0, 0x00E2},
-	{0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00A9, 0x00A0, 0x0097, 0x008E, 0x0086, 0x007F, 0x00F0, 0x00E2}
-};
+Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer)
+	: Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 60),
+	  _vm(scumm),
+	  _mixer(mixer),
+	  _soundHandle(),
+	  _songData(nullptr),
+	  _wavetableData(nullptr),
+	  _wavetablePtrs(nullptr),
+	  _musicTimer(0),
+	  _initState(kInitStateNotReady) {
 
-Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer) {
-	int i;
-	_vm = scumm;
-	for (i = 0; i < V3A_MAXMUS; i++) {
-		_mus[i].id = 0;
-		_mus[i].dur = 0;
+	assert(scumm);
+	assert(mixer); // this one's a bit pointless, since we had to dereference it to initialize Paula
+	assert((_vm->_game.id == GID_INDY3) || (_vm->_game.id == GID_LOOM));
+
+	stopAllSounds();
+
+	// As in the original game, the same Paula is shared between both SFX and music and plays continuously.
+	// Doing them separately would require subclassing Paula and creating two instances
+	// (since all of the important methods are protected)
+	startPaula();
+
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+}
+
+bool Player_V3A::init() {
+	byte *ptr;
+	int numInstruments = 0;
+
+	// Determine which sound resource contains the wavetable data and how large it is
+	// This is hardcoded into each game's executable
+	if (_vm->_game.id == GID_INDY3) {
+		ptr = _vm->getResourceAddress(rtSound, 83);
+		numInstruments = 12;
+	} else if (_vm->_game.id == GID_LOOM) {
+		ptr = _vm->getResourceAddress(rtSound, 79);
+		numInstruments = 9;
+	} else {
+		error("player_v3a - unknown game");
+		return false;
 	}
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		_sfx[i].id = 0;
-		_sfx[i].dur = 0;
+	if (!ptr) {
+		error("player_v3a - unable to load music samples resource");
+		return false;
 	}
 
-	_curSong = 0;
-	_songData = nullptr;
-	_songPtr = 0;
-	_songDelay = 0;
+	// Keep a copy of the resource data, since the original pointer may eventually go bad
+	int length = READ_LE_UINT16(ptr);
+	_wavetableData = new int8[length];
+	if (!_wavetableData) {
+		error("player_v3a - failed to allocate copy of wavetable data");
+		return false;
+	}
+	memcpy(_wavetableData, ptr, length);
 
-	_music_timer = 0;
+	int offset = 4;
 
-	_isinit = false;
+	// Parse the header tables into a more convenient structure
+	_wavetablePtrs = new InstData[numInstruments];
+	for (int i = 0; i < numInstruments; i++) {
 
-	_mod = new Player_MOD(mixer);
-	_mod->setUpdateProc(update_proc, this, 60);
+		// Each instrument defines 6 octaves
+		for (int j = 0; j < 6; j++) {
+			// Offset/length for intro/main component
+			int dataOff = READ_BE_UINT16(_wavetableData + offset + 0);
+			int dataLen = READ_BE_UINT16(_wavetableData + offset + 2);
+
+			if (dataLen) {
+				_wavetablePtrs[i].mainLen[j] = dataLen;
+				_wavetablePtrs[i].mainData[j] = &_wavetableData[dataOff];
+			} else {
+				_wavetablePtrs[i].mainLen[j] = 0;
+				_wavetablePtrs[i].mainData[j] = nullptr;
+			}
+
+			// Offset/length for looped component, if any
+			dataOff = READ_BE_UINT16(ptr + offset + 4);
+			dataLen = READ_BE_UINT16(ptr + offset + 6);
+
+			if (dataLen) {
+				_wavetablePtrs[i].loopLen[j] = dataLen;
+				_wavetablePtrs[i].loopData[j] = &_wavetableData[dataOff];
+			} else {
+				_wavetablePtrs[i].loopLen[j] = 0;
+				_wavetablePtrs[i].loopData[j] = nullptr;
+			}
+
+			// Octave shift for this octave
+			_wavetablePtrs[i].octave[j] = READ_BE_INT16(ptr + offset + 8);
+			offset += 10;
+		}
+
+		// Fadeout rate, in 1/256ths of a volume level
+		_wavetablePtrs[i].volumeFade = READ_BE_INT16(ptr + offset);
+		offset += 2;
+
+		if (_vm->_game.id == GID_LOOM) {
+			// Loom's sound samples aren't all in tune with each other,
+			// so it stores an extra adjustment here
+			_wavetablePtrs[i].pitchAdjust = READ_BE_INT16(ptr + offset);
+			offset += 2;
+		} else {
+			_wavetablePtrs[i].pitchAdjust = 0;
+		}
+	}
+	return true;
 }
 
 Player_V3A::~Player_V3A() {
-	int i;
-	delete _mod;
-	if (_isinit) {
-		for (i = 0; _wavetable[i] != nullptr; i++) {
-			for (int j = 0; j < 6; j++) {
-				free(_wavetable[i]->_idat[j]);
-				free(_wavetable[i]->_ldat[j]);
-			}
-			free(_wavetable[i]);
-		}
-		free(_wavetable);
+	_mixer->stopHandle(_soundHandle);
+	if (_initState == kInitStateReady) {
+		delete[] _wavetableData;
+		delete[] _wavetablePtrs;
 	}
 }
 
 void Player_V3A::setMusicVolume (int vol) {
-	_mod->setMusicVolume(vol);
-}
-
-int Player_V3A::getMusChan (int id) const {
-	int i;
-	for (i = 0; i < V3A_MAXMUS; i++) {
-		if (_mus[i].id == id)
-			break;
-	}
-	if (i == V3A_MAXMUS) {
-		if (id == 0)
-			warning("player_v3a - out of music channels");
-		return -1;
-	}
-	return i;
-}
-int Player_V3A::getSfxChan (int id) const {
-	int i;
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		if (_sfx[i].id == id)
-			break;
-	}
-	if (i == V3A_MAXSFX) {
-		if (id == 0)
-			warning("player_v3a - out of sfx channels");
-		return -1;
-	}
-	return i;
+	_mixer->setChannelVolume(_soundHandle, vol);
 }
 
 void Player_V3A::stopAllSounds() {
-	int i;
-	for (i = 0; i < V3A_MAXMUS; i++) {
-		if (_mus[i].id)
-			_mod->stopChannel(_mus[i].id);
-		_mus[i].id = 0;
-		_mus[i].dur = 0;
+	for (int i = 0; i < 4; i++) {
+		clearVoice(i);
+		_channels[i].resourceId = -1;
 	}
-	_curSong = 0;
+	_curSong = -1;
 	_songPtr = 0;
 	_songDelay = 0;
 	_songData = nullptr;
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		if (_sfx[i].id)
-			_mod->stopChannel(_sfx[i].id | 0x100);
-		_sfx[i].id = 0;
-		_sfx[i].dur = 0;
-	}
 }
 
 void Player_V3A::stopSound(int nr) {
-	int i;
-	if (nr == 0) {	// Amiga Loom does this near the end, when Chaos casts SILENCE on Hetchel
-		stopAllSounds();
+	if (nr <= 0)
 		return;
+
+	for (int i = 0; i < 4; i++) {
+		if (_channels[i].resourceId == nr) {
+			clearVoice(i);
+			_channels[i].resourceId = -1;
+		}
 	}
 	if (nr == _curSong) {
-		for (i = 0; i < V3A_MAXMUS; i++) {
-			if (_mus[i].id)
-				_mod->stopChannel(_mus[i].id);
-			_mus[i].id = 0;
-			_mus[i].dur = 0;
-		}
-		_curSong = 0;
-		_songPtr = 0;
+		_curSong = -1;
 		_songDelay = 0;
+		_songPtr = 0;
 		_songData = nullptr;
-	} else {
-		i = getSfxChan(nr);
-		if (i != -1) {
-			_mod->stopChannel(nr | 0x100);
-			_sfx[i].id = 0;
-			_sfx[i].dur = 0;
-		}
 	}
 }
 
 void Player_V3A::startSound(int nr) {
 	assert(_vm);
-	byte *data = _vm->getResourceAddress(rtSound, nr);
-	assert(data);
+	int8 *data = (int8 *)_vm->getResourceAddress(rtSound, nr);
+	if (!data)
+		return;
 
 	if ((_vm->_game.id != GID_INDY3) && (_vm->_game.id != GID_LOOM))
 		error("player_v3a - unknown game");
 
-	if (!_isinit) {
-		int i;
-		unsigned char *ptr;
-		int offset = 4;
-		int numInstruments;
+	if (_initState == kInitStateNotReady)
+		_initState = init() ? kInitStateReady : kInitStateFailed;
 
-		if (_vm->_game.id == GID_INDY3) {
-			ptr = _vm->getResourceAddress(rtSound, 83);
-			numInstruments = 12;
-		} else {
-			ptr = _vm->getResourceAddress(rtSound, 79);
-			numInstruments = 9;
-		}
-		assert(ptr);
-		_wavetable = (instData **)malloc((numInstruments + 1) * sizeof(void *));
-		for (i = 0; i < numInstruments; i++) {
-			_wavetable[i] = (instData *)malloc(sizeof(instData));
-			for (int j = 0; j < 6; j++) {
-				int off, len;
-				off = READ_BE_UINT16(ptr + offset + 0);
-				_wavetable[i]->_ilen[j] = len = READ_BE_UINT16(ptr + offset + 2);
-				if (len) {
-					_wavetable[i]->_idat[j] = (char *)malloc(len);
-					memcpy(_wavetable[i]->_idat[j],ptr + off,len);
-				} else	_wavetable[i]->_idat[j] = nullptr;
-				off = READ_BE_UINT16(ptr + offset + 4);
-				_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
-				if (len) {
-					_wavetable[i]->_ldat[j] = (char *)malloc(len);
-					memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
-				} else	_wavetable[i]->_ldat[j] = nullptr;
-				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
-				offset += 10;
-			}
-			if (_vm->_game.id == GID_INDY3) {
-				_wavetable[i]->_pitadjust = 0;
-				offset += 2;
-			} else {
-				_wavetable[i]->_pitadjust = READ_BE_UINT16(ptr + offset + 2);
-				offset += 4;
-			}
-		}
-		_wavetable[i] = nullptr;
-		_isinit = true;
-	}
-
-	if (getSoundStatus(nr))
-		stopSound(nr);	// if a sound is playing, restart it
-
+	// is this a Music resource?
 	if (data[26]) {
-		if (_curSong)
-			stopSound(_curSong);
-		_curSong = nr;
-		_songData = data;
-		_songPtr = 0x1C;
-		_songDelay = 1;
-		_music_timer = 0;
-	} else {
-		int size = READ_BE_UINT16(data + 12);
-		int rate = 3579545 / READ_BE_UINT16(data + 20);
-		char *sound = (char *)malloc(size);
-		int vol = (data[24] << 1) | (data[24] >> 5);	// if I boost this to 0-255, it gets too loud and starts to clip
-		memcpy(sound, data + READ_BE_UINT16(data + 8), size);
-		int loopStart = 0, loopEnd = 0;
-		int loopcount = data[27];
-		if (loopcount > 1) {
-			loopStart = READ_BE_UINT16(data + 10) - READ_BE_UINT16(data + 8);
-			loopEnd = READ_BE_UINT16(data + 14);
-		}
-		int i = getSfxChan();
-		if (i == -1) {
-			free(sound);
-			return;
-		}
-		_sfx[i].id = nr;
-		_sfx[i].dur = 1 + loopcount * 60 * size / rate;
-		if (READ_BE_UINT16(data + 16)) {
-			_sfx[i].rate = READ_BE_UINT16(data + 20) << 16;
-			_sfx[i].delta = (int32)READ_BE_UINT32(data + 32);
-			_sfx[i].dur = READ_BE_UINT32(data + 40);
+		if (_initState == kInitStateReady) {
+			stopAllSounds();
+			for (int i = 0; i < 4; i++) {
+				_channels[i].haltTimer = 0;
+				_channels[i].resourceId = nr;
+				_channels[i].priority = READ_BE_UINT16(data + 4);
+			}
+
+			// Keep a local copy of the song data
+			_songData = data;
+			_curSong = nr;
+			_songPtr = 0;
+			_songDelay = 1;
+
+			// Start timer at 0 and increment every 30 frames (see below)
+			_musicTimer = 0;
 		} else {
-			_sfx[i].delta = 0;
+			// debug("player_v3a - wavetable unavailable, cannot play music");
 		}
-		_mod->startChannel(nr | 0x100, sound, size, rate, vol, loopStart, loopEnd);
-	}
-}
-
-void Player_V3A::update_proc(void *param) {
-	((Player_V3A *)param)->playMusic();
-}
-
-void Player_V3A::playMusic() {
-	int i;
-	for (i = 0; i < V3A_MAXMUS; i++) {
-		if (_mus[i].id) {
-			_mus[i].dur--;
-			if (_mus[i].dur)
-				continue;
-			_mod->stopChannel(_mus[i].id);
-			_mus[i].id = 0;
-		}
-	}
-	for (i = 0; i < V3A_MAXSFX; i++) {
-		if (_sfx[i].id) {
-			if (_sfx[i].delta) {
-				uint16 oldrate = _sfx[i].rate >> 16;
-				_sfx[i].rate += _sfx[i].delta;
-				if (_sfx[i].rate < (55 << 16))
-					_sfx[i].rate = 55 << 16;	// at rates below 55, frequency
-				uint16 newrate = _sfx[i].rate >> 16;	// exceeds 65536, which is bad
-				if (oldrate != newrate)
-					_mod->setChannelFreq(_sfx[i].id | 0x100, 3579545 / newrate);
-			}
-			_sfx[i].dur--;
-			if (_sfx[i].dur)
-				continue;
-			_mod->stopChannel(_sfx[i].id | 0x100);
-			_sfx[i].id = 0;
-		}
-	}
-
-	_music_timer++;
-	if (!_curSong)
-		return;
-	if (_songDelay && --_songDelay)
-		return;
-	if (_songPtr == 0) {
-		// at the end of the song, and it wasn't looped - kill it
-		_curSong = 0;
-		return;
-	}
-	while (1) {
-		int inst, pit, vol, dur, oct;
-		inst = _songData[_songPtr++];
-		if ((inst & 0xF0) != 0x80) {
-			// tune is at the end - figure out what's still playing
-			// and see how long we have to wait until we stop/restart
-			for (i = 0; i < V3A_MAXMUS; i++) {
-				if (_songDelay < _mus[i].dur)
-					_songDelay = _mus[i].dur;
-			}
-			if (inst == 0xFB)	// it's a looped song, restart it afterwards
-				_songPtr = 0x1C;
-			else	_songPtr = 0;	// otherwise, terminate it
-			break;
-		}
-		inst &= 0xF;
-		pit = _songData[_songPtr++];
-		vol = _songData[_songPtr++] & 0x7F;	// if I boost this to 0-255, it gets too loud and starts to clip
-		dur = _songData[_songPtr++];
-		if (pit == 0) {
-			_songDelay = dur;
-			break;
-		}
-		pit += _wavetable[inst]->_pitadjust;
-		oct = (pit / 12) - 2;
-		pit = pit % 12;
-		if (oct < 0)
-			oct = 0;
-		if (oct > 5)
-			oct = 5;
-		int rate = 3579545 / note_freqs[_wavetable[inst]->_oct[oct]][pit];
-		if (!_wavetable[inst]->_llen[oct])
-			dur = _wavetable[inst]->_ilen[oct] * 60 / rate;
-		char *data = (char *)malloc(_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
-		if (_wavetable[inst]->_idat[oct])
-			memcpy(data, _wavetable[inst]->_idat[oct], _wavetable[inst]->_ilen[oct]);
-		if (_wavetable[inst]->_ldat[oct])
-			memcpy(data + _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ldat[oct], _wavetable[inst]->_llen[oct]);
-
-		i = getMusChan();
-		if (i == -1) {
-			free(data);
+	} else {
+		int priority = READ_BE_UINT16(data + 4);
+		int channel = READ_BE_UINT16(data + 6);
+		if (_channels[channel].resourceId != -1 && _channels[channel].priority > priority)
 			return;
+
+		int chan1 = SFX_CHANNEL_MAP[channel][0];
+		int chan2 = SFX_CHANNEL_MAP[channel][1];
+
+		int offsetL = READ_BE_UINT16(data + 8);
+		int offsetR = READ_BE_UINT16(data + 10);
+		int lengthL = READ_BE_UINT16(data + 12);
+		int lengthR = READ_BE_UINT16(data + 14);
+
+		// Period and Volume are both stored in fixed-point
+		_channels[chan1].period = READ_BE_UINT16(data + 20) << 16;
+		_channels[chan2].period = READ_BE_UINT16(data + 22) << 16;
+		_channels[chan1].volume = data[24] << 8;
+		_channels[chan2].volume = data[25] << 8;
+		_channels[chan1].loopCount = data[27];
+		_channels[chan2].loopCount = data[27];
+
+		int sweepOffset = READ_BE_UINT16(data + 16);
+		if (sweepOffset) {
+			// This data contains a list of offset/value pairs, processed in sequence
+			// The offset points into a data structure in the original sound engine
+			// Offset 0x18 sets the channel's Sweep Rate (fractional)
+			// Offset 0x2C with nonzero value delays until reading the next packet
+			// Offset 0x2C with zero value stops playback immediately
+			// The other offsets are unknown, but they are never used
+
+			// Indy3 always uses 0x18, 0x2C-nonzero, then 0x2C-zero
+			// Loom doesn't use these at all
+
+			for (int i = 0; i < 3; i++)
+			{
+				int offset = READ_BE_UINT32(data + sweepOffset + i*8 + 0);
+				int value = READ_BE_INT32(data + sweepOffset + i*8 + 4);
+				if (offset == 0x18)
+				{
+					_channels[chan1].sweepRate = value;
+					_channels[chan2].sweepRate = value;
+				}
+				if (offset == 0x2c && value != 0)
+				{
+					_channels[chan1].haltTimer = value;
+					_channels[chan2].haltTimer = value;
+				}
+			}
+		} else {
+			_channels[chan1].sweepRate = 0;
+			_channels[chan1].haltTimer = 0;
 		}
-		_mus[i].id = i + 1;
-		_mus[i].dur = dur + 1;
-		_mod->startChannel(_mus[i].id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], rate, vol,
-			_wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
+
+		_channels[chan1].priority = priority;
+		_channels[chan2].priority = priority;
+		_channels[chan1].resourceId = nr;
+		_channels[chan2].resourceId = nr;
+
+		// Start the Paula playing it
+		setChannelInterrupt(chan1, true);
+		setChannelInterrupt(chan2, true);
+		setChannelPeriod(chan1, MAX((_channels[chan1].period >> 16) & 0xFFFF, 124));
+		setChannelPeriod(chan2, MAX((_channels[chan2].period >> 16) & 0xFFFF, 124));
+		setChannelVolume(chan1, MIN((_channels[chan1].volume >> 8) & 0x3F, 0x3F));
+		setChannelVolume(chan2, MIN((_channels[chan2].volume >> 8) & 0x3F, 0x3F));
+
+		// Start as looped, then generate interrupts to handle looping properly
+		setChannelData(chan1, (int8 *)data + offsetL, (int8 *)data + offsetL, lengthL, lengthL);
+		setChannelData(chan2, (int8 *)data + offsetR, (int8 *)data + offsetR, lengthR, lengthR);
+		interruptChannel(chan1);
+		interruptChannel(chan2);
 	}
+}
+
+void Player_V3A::interrupt() {
+	if (_vm->_game.id == GID_INDY3) {
+		updateMusicIndy();
+	} else if (_vm->_game.id == GID_LOOM) {
+		updateMusicLoom();
+	}
+	updateSounds();
+}
+
+void Player_V3A::interruptChannel(byte channel) {
+	// check looping
+	if (_channels[channel].loopCount == -1)
+		return;
+
+	if (_channels[channel].loopCount) {
+		_channels[channel].loopCount--;
+		if (_channels[channel].loopCount <= 0) {
+			// On the last loop, set it to no longer repeat
+			setChannelInterrupt(channel, false);
+			setChannelSampleStart(channel, nullptr);
+			setChannelSampleLen(channel, 0);
+
+			// If there was no music playing, mark the channel as Unused
+			if (_curSong == -1)
+				_channels[channel].resourceId = -1;
+		}
+	}
+}
+
+void Player_V3A::updateSounds() {
+	for (int i = 0; i < 4; i++) {
+		if (!_channels[i].loopCount)
+			continue;
+
+		setChannelVolume(i, MIN((_channels[i].volume >> 8) & 0x3F, 0x3F));
+		setChannelPeriod(i, MAX((_channels[i].period >> 16) & 0xFFFF, 124));
+
+		// Only process ones that are sweeping, since others are handled by interruptChannel above
+		if (!_channels[i].sweepRate)
+			continue;
+
+		if (_channels[i].haltTimer) {
+			_channels[i].haltTimer--;
+			if (!_channels[i].haltTimer) {
+				// Once the timer reaches zero, immediately it stop looping
+				_channels[i].loopCount = 1;
+				interruptChannel(i);
+			}
+		}
+		_channels[i].period += _channels[i].sweepRate;
+	}
+}
+
+void Player_V3A::updateMusicIndy() {
+	// technically, musicTimer should only be incremented during playback, but that seems to cause problems
+	_musicTimer++;
+
+	if (!_songDelay || !_songData)
+		return;
+
+	for (int i = 0; i < 4; i++) {
+		if (_channels[i].haltTimer)
+			_channels[i].haltTimer--;
+
+		// When a looped sample runs out, fade the volume to zero
+		// Non-looped samples will be allowed to continue playing
+		if (!_channels[i].haltTimer && _channels[i].loopCount) {
+			_channels[i].volume -= _channels[i].fadeRate;
+
+			// Once the volume hits zero, immediately silence it
+			if (_channels[i].volume < 1) {
+				_channels[i].volume = 0;
+				_channels[i].loopCount = 0;
+				clearVoice(i);
+				setChannelInterrupt(i, false);
+			} else
+				setChannelVolume(i, MIN((_channels[i].volume >> 8) & 0x3F, 0x3F));
+		}
+	}
+	if (--_songDelay)
+		return;
+
+	int8 *songData = &_songData[0x1C + _songPtr];
+	while (1) {
+		int code = songData[0];
+		if ((code & 0xF0) == 0x80) {
+			// play a note
+			int instrument = songData[0] & 0xF;
+			int pitch = songData[1] & 0xFF;
+			int volume = (songData[2] / 2) & 0xFF;
+			int duration = songData[3] & 0xFF;
+
+			_songPtr += 4;
+			songData += 4;
+
+			// pitch 0 == global rest
+			if (pitch == 0) {
+				_songDelay = duration;
+				return;
+			}
+
+			// Find an available sound channel
+			// Indy3 starts at channel (inst & 3) and tries them in sequence
+			int channel = instrument & 0x3;
+			for (int i = 0; i < 4; i++) {
+				if (!_channels[channel].haltTimer)
+					break;
+				channel = (channel + 1) & 3;
+			}
+
+			startNote(channel, instrument, pitch, volume, duration);
+		} else {
+			// Reached the end
+			for (int i = 0; i < 4; i++) {
+				// Subtle bug in the original engine - it only checks the LAST playing channel
+				// (rather than checking all of them)
+				if (_channels[i].loopCount)
+					_songDelay = _channels[i].haltTimer;
+			}
+			if (_songDelay == 0) {
+				if ((code & 0xFF) == 0xFB) {
+					// repeat
+					_songPtr = 0;
+					_songDelay = 1;
+				} else {
+					// stop
+					stopSound(_curSong);
+				}
+			}
+		}
+		if ((_songDelay) || (_curSong == -1))
+			break;
+	}
+}
+
+void Player_V3A::updateMusicLoom() {
+	// technically, musicTimer should only be incremented during playback, but that seems to cause problems
+	_musicTimer++;
+
+	if (!_songDelay || !_songData)
+		return;
+
+	// Update all playing notes
+	for (int i = 0; i < 4; i++) {
+		// Mark all notes that were started during a previous update
+		_channels[i].canOverride = 1;
+		if (_channels[i].haltTimer)
+			_channels[i].haltTimer--;
+
+		// When a looped sample runs out, fade the volume to zero
+		// Non-looped samples will be allowed to continue playing
+		if (!_channels[i].haltTimer && _channels[i].loopCount) {
+			_channels[i].volume -= _channels[i].fadeRate;
+
+			// Once the volume hits zero, immediately silence it
+			if (_channels[i].volume < 1) {
+				_channels[i].volume = 0;
+				_channels[i].loopCount = 0;
+				clearVoice(i);
+				setChannelInterrupt(i, false);
+			} else
+				setChannelVolume(i, MIN((_channels[i].volume >> 8) & 0x3F, 0x3F));
+		}
+	}
+	if (--_songDelay)
+		return;
+
+	int8 *songData = &_songData[0x1C + _songPtr];
+
+	// Loom uses an elaborate queue to deal with overlapping notes and limited sound channels
+	int queuePos = 0;
+	int queueInstrument[4];
+	int queuePitch[4];
+	int queueVolume[4];
+	int queueDuration[4];
+
+	while (1) {
+		int code = songData[0];
+		if ((code & 0xF0) == 0x80) {
+			// play a note
+			int instrument = songData[0] & 0xF;
+			int pitch = songData[1] & 0xFF;
+			int volume = (((songData[2] < 0) ? (songData[2] + 1) : songData[2]) / 2) & 0xFF;
+			int duration = songData[3] & 0xFF;
+
+			_songPtr += 4;
+			songData += 4;
+
+			// pitch 0 == global rest
+			if (pitch == 0) {
+				_songDelay = duration;
+				break;
+			}
+
+			// Try to find an appropriate channel to use
+			// Channel must be playing the same instrument, started during a previous loop, and within 6 frames of ending
+			int channel;
+			for (channel = 0; channel < 4; channel++)
+				if ((_channels[channel].instrument == instrument) && (_channels[channel].canOverride) && (_channels[channel].haltTimer < 6))
+					break;
+
+			if (channel != 4) {
+				// Channel was found, so start playing the note
+				startNote(channel, instrument, pitch, volume, duration);
+			} else if (queuePos < 4) {
+				// No channel found - put it in a queue to process at the end
+				queueInstrument[queuePos] = instrument;
+				queuePitch[queuePos] = pitch;
+				queueVolume[queuePos] = volume;
+				queueDuration[queuePos] = duration;
+				++queuePos;
+			}
+		} else {
+			// Reached end of song
+			for (int i = 0; i < 4; i++) {
+				// Subtle bug in the original engine - it only checks the LAST playing channel
+				// rather than checking ALL of them
+				if (_channels[i].loopCount)
+					_songDelay = _channels[i].haltTimer;
+			}
+			if (_songDelay == 0) {
+				if ((code & 0xFF) == 0xFB) {
+					// repeat
+					_songPtr = 0;
+					_songDelay = 1;
+				} else {
+					// stop
+					stopSound(_curSong);
+				}
+			}
+		}
+		if ((_songDelay) || (_curSong == -1))
+			break;
+	}
+
+	while (queuePos--) {
+		// Take all of the enqueued note requests and try to fit them somewhere
+		int channel;
+		for (channel = 0; channel < 4; channel++) {
+			// First, find a soon-to-expire channel that wasn't explicitly assigned this loop
+			if ((_channels[channel].canOverride) && (_channels[channel].haltTimer < 6))
+				break;
+		}
+		if (channel == 4) {
+			// If no channel found, pick the first channel playing this instrument
+			for (channel = 0; channel < 4; channel++) {
+				if (_channels[channel].instrument == queueInstrument[queuePos])
+					break;
+			}
+		}
+		if (channel != 4) {
+			// If we found a channel, play the note there - otherwise, it gets lost
+			startNote(channel, queueInstrument[queuePos], queuePitch[queuePos], queueVolume[queuePos], queueDuration[queuePos]);
+		}
+	}
+}
+
+void Player_V3A::startNote(int channel, int instrument, int pitch, int volume, int duration) {
+	const InstData &instData = _wavetablePtrs[instrument];
+	SndChan &curChan = _channels[channel];
+
+	// for Loom, adjust pitch
+	pitch += instData.pitchAdjust;
+
+	// and set channel precedence parameters
+	curChan.instrument = instrument;
+	curChan.canOverride = 0;
+
+	// Split pitch into octave+offset, truncating as needed
+	int octave = (pitch / 12) - 2;
+	pitch = pitch % 12;
+	if (octave < 0)
+		octave = 0;
+	if (octave > 5)
+		octave = 5;
+	int actualOctave = instData.octave[octave];
+
+	curChan.period = NOTE_FREQS[actualOctave][pitch] << 16;
+	curChan.volume = (volume & 0xFF) << 8;
+	curChan.sweepRate = 0;
+	curChan.fadeRate = instData.volumeFade;
+	curChan.haltTimer = duration;
+
+	// For music, pre-decrement the loop counter and skip the initial interrupt
+	if (instData.loopLen[octave]) {
+		curChan.loopCount = -1;
+		setChannelInterrupt(channel, true);
+	} else {
+		curChan.loopCount = 0;
+		setChannelInterrupt(channel, false);
+	}
+
+	setChannelPeriod(channel, MAX((curChan.period >> 16) & 0xFFFF, 124));
+	setChannelVolume(channel, MIN((curChan.volume >> 8) & 0x3F, 0x3F));
+	setChannelData(channel, instData.mainData[octave], instData.loopData[octave], instData.mainLen[octave], instData.loopLen[octave]);
 }
 
 int Player_V3A::getMusicTimer() {
-	return _music_timer / 30;
+	// Actual code in Amiga version returns 5+timer/28, which syncs poorly in ScummVM
+	// Presumably, this was meant to help slower machines sync better
+
+	return _musicTimer / 30;
 }
 
 int Player_V3A::getSoundStatus(int nr) const {
+	if (nr == -1)
+		return 0;
 	if (nr == _curSong)
 		return 1;
-	if (getSfxChan(nr) != -1)
-		return 1;
+	for (int i = 0; i < 4; i++)
+		if (_channels[i].resourceId == nr)
+			return 1;
 	return 0;
 }
 
