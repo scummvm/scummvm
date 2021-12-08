@@ -287,7 +287,7 @@ private:
 	Common::KeyCode handleAndMapInput(bool animFl);
 	void displayNextAnimFrame();
 	void writeTechAndMapFiles();
-	uint16 getStringWidth(char *buffer);
+	uint16 getStringWidth(const char *buffer);
 	void setTextPos(int16 textPosX, int16 textPosY);
 
 	void sub15150(bool flag);
@@ -310,8 +310,8 @@ private:
 	Common::KeyCode getInput(int16 delay);
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
-	void drawString(char *str, int16 startX, int16 startY, uint16 unkFl);
-	void displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY);
+	void drawString(const char *str, int16 startX, int16 startY, uint16 unkFl);
+	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	void drawMapWindow();
@@ -330,7 +330,7 @@ private:
 	void drawChar(uint8 curChar, int16 posX, int posY);
 	void setTextColorWhite();
 	void setTextColorRed();
-	void setTextColor_08h();
+	void setTextColorGrey();
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
 	void goNorth();
@@ -347,7 +347,7 @@ private:
 	void computeMapAnimation();
 	void unkFct_anim();
 	void setNextCharacterPos();
-	void displayStringAtTextPos(char *message);
+	void displayStringAtTextPos(const char *message);
 	void unkFct_displayMenuBox_2(int16 color);
 	int8 sub16B08(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
@@ -377,7 +377,7 @@ private:
 	void unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 _guess_displayString_3(const char * str, int16 arg2, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 displayString_3(const char * str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 _objectId);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
@@ -481,7 +481,7 @@ private:
 	bool _word2C8D5; // CHECKME: always 0?
 	bool _word2D0BC;
 	bool _word2C8D2;
-	int16 _word2D0BE;
+	int16 _menuDepth;
 	int16 _word2D0BA;
 
 	int16 _word3273A[15];
