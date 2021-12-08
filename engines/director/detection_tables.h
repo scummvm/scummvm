@@ -3228,6 +3228,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// CD has audio tracks, unsure if called from game
 	WINGAME2t("milo", "", "LAUNCHER.EXE", "09441c0931944d1cb3e3da72b59efc12", 721983,
 						  "MILO.EXE", "4035595e298631d18e23dd377fa469c0", 704645, 400),
+	WINGAME1("milo", "v2.02", "milo/milo.exe", "ade4937def30cb38c60f3ac737036577", 704645, 404),
 
 	MACGAME1("mirage", "", "Mirage", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486954, 400),
 	WINGAME1("mirage", "", "MIRAGE.EXE", "2291ea234c14f1ccb8f2e67ae09bbfa3", 696867, 400),
