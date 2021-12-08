@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-06 10:28+0000\n"
-"PO-Revision-Date: 2021-11-19 21:50+0000\n"
+"PO-Revision-Date: 2021-12-08 11:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4258,6 +4258,7 @@ msgstr "Переключитися на Ольмека"
 msgid ""
 "Attempt to load saved game from a previous version: Version %s / Build %d"
 msgstr ""
+"Спроба завантажити збереження гри з попередньої версії: Версія %s / Білд %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
 msgid "Load anyway"
@@ -5061,20 +5062,21 @@ msgstr "Програвати відео з підвищенною швидкіс
 
 #: engines/groovie/detection.cpp:398
 msgid "Easier AI"
-msgstr ""
+msgstr "Полегшений AI"
 
 #: engines/groovie/detection.cpp:399
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Знижує складність AI-головоломок"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Поновлена кінцева музика"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Програвати пісню The Final Hour під час кінцевих титрів замість MIDI-музики"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
