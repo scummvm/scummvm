@@ -18148,6 +18148,34 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 
 #endif
 
+// ===========================================================================
+// Space Quest 3
+
+// In an early version of SQ3, the end credits get stuck before the last three
+//  screens of text. The credits script is missing state 16 and never advances
+//  to state 17. We fix this by incrementing the state property.
+//
+// Responsible method: endScript:changeState
+// Applies to: English PC 1.0P
+static const uint16 sq3EndCreditsSignature[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x0f,                         // ldi 0f [ state 15 ]
+	0x1a,                               // eq?
+	SIG_ADDTOOFFSET(+21),
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x11,                         // ldi 11 [ state 17 ]
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 sq3EndCreditsPatch[] = {
+	PATCH_ADDTOOFFSET(+25),
+	0x6a, PATCH_UINT16(0x000a),         // ipToa state [ state = 16 ]
+	PATCH_END
+};
+
 // Space Quest 3 has some strings hard coded in the scripts file
 // We need to patch them for the Hebrew translation
 
@@ -18175,10 +18203,11 @@ static const uint16 sq3HebrewStatusBarNamePatch[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                                      patch
+//         script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq3Signatures[] = {
-	{  false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
-	{  false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
+	{ false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
+	{  true, 117, "Fix end credits",                       1, sq3EndCreditsSignature,                              sq3EndCreditsPatch },
+	{ false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
