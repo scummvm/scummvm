@@ -41,9 +41,6 @@
 
 #include "engines/util.h"
 
-#include "graphics/tinygl/zgl.h"
-#include "graphics/tinygl/zblit.h"
-
 namespace ICB {
 
 #define FIRST_CLIENT_SURFACE 2
