@@ -273,7 +273,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C8D5 = false;
 	_word2D0BC = false;
 	_word2C8D2 = false;
-	_word2D0BE = 0;
+	_menuDepth = 0;
 	_word2D0BA = 0;
 
 
@@ -1565,7 +1565,7 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
 	return false;
 }
 
-void EfhEngine::drawString(char *str, int16 startX, int16 startY, uint16 unkFl) {
+void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 unkFl) {
 	uint8 *curPtr = (uint8 *)str;
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
 	_unk_sub26437_flag = unkFl & 0x3FFF;
@@ -1602,7 +1602,7 @@ void EfhEngine::drawString(char *str, int16 startX, int16 startY, uint16 unkFl) 
 	
 }
 
-void EfhEngine::displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY) {
+void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY) {
 	uint16 length = getStringWidth(str);
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
 	drawString(str, startCenteredDisplayX, posY, _textColor);
@@ -1665,7 +1665,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 	uint16 curLine = 0;
 	int16 numbLines = (1 + maxY - posY) / 9;
 	int16 width = maxX - posX;
-	int16 var_114 = getStringWidth((char *)stringToDisplay);
+	int16 var_114 = getStringWidth(stringToDisplay);
 	uint8 *buffer = stringBuffer;
 	char var_EC[80];
 	char dest[150];
@@ -2206,7 +2206,7 @@ void EfhEngine::setTextColorRed() {
 		_textColor = 0xC;
 }
 
-void EfhEngine::setTextColor_08h() {
+void EfhEngine::setTextColorGrey() {
 	if (_videoMode == 8) // CGA
 		_textColor = 0x1;
 	else
@@ -2455,7 +2455,7 @@ void EfhEngine::setNextCharacterPos() {
 		_textPosY = 0;
 }
 
-void EfhEngine::displayStringAtTextPos(char *message) {
+void EfhEngine::displayStringAtTextPos(const char *message) {
 	drawString(message, _textPosX, _textPosY, _textColor);
 	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
@@ -2995,21 +2995,21 @@ void EfhEngine::displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, 
 	memset(buffer, 0, 20);
 
 	if (menuBoxId == thisBoxId) {
-		if (_word2D0BE == 0)
+		if (_menuDepth == 0)
 			setTextColorWhite();
 		else
-			setTextColor_08h();
+			setTextColorGrey();
 
 		sprintf(buffer, "> %s <", str);
 		displayCenteredString(buffer, minX, maxX, minY);
 		setTextColorRed();
 	} else {
-		if (_word2D0BE == 0)
+		if (_menuDepth == 0)
 			setTextColorRed();
 		else
-			setTextColor_08h();
+			setTextColorGrey();
 
-		displayCenteredString((char *)str, minX, maxX, minY);
+		displayCenteredString(str, minX, maxX, minY);
 	}
 }
 
@@ -3018,8 +3018,8 @@ void EfhEngine::displayStatusMenu(int16 windowId) {
 		drawColoredRect(80, 39 + 14 * counter, 134, 47 + 14 * counter, 0);
 	}
 
-	if (_word2D0BE != 0)
-		setTextColor_08h();
+	if (_menuDepth != 0)
+		setTextColorGrey();
 
 	displayMenuItemString(windowId, 0, 80, 134, 39, "EQUIP");
 	displayMenuItemString(windowId, 1, 80, 134, 53, "USE");
@@ -3048,44 +3048,44 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 npc
 
 void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId) {
 	drawColoredRect(144, 15, 310, 184, 0);
-	displayCenteredString((char *)"(ESCape Aborts)", 144, 310, 175);
+	displayCenteredString("(ESCape Aborts)", 144, 310, 175);
 	_textColor = 0x0E;
 	switch (menuId) {
 	case 0:
-		displayCenteredString((char *)"Select Item to Equip", 144, 310, 15);
+		displayCenteredString("Select Item to Equip", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case 1:
-		displayCenteredString((char *)"Select Item to Use", 144, 310, 15);
+		displayCenteredString("Select Item to Use", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case 2:
-		displayCenteredString((char *)"Select Item to Give", 144, 310, 15);
+		displayCenteredString("Select Item to Give", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case 3:
-		displayCenteredString((char *)"Select Item to Trade", 144, 310, 15);
+		displayCenteredString("Select Item to Trade", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case 4:
-		displayCenteredString((char *)"Select Item to Drop", 144, 310, 15);
+		displayCenteredString("Select Item to Drop", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case 5:
-		displayCenteredString((char *)"Character Information", 144, 310, 15);
+		displayCenteredString("Character Information", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case 6:
-		displayCenteredString((char *)"Passive Skills", 144, 310, 15);
+		displayCenteredString("Passive Skills", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case 7:
-		displayCenteredString((char *)"Active Skills", 144, 310, 15);
+		displayCenteredString("Active Skills", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case 8:
 	case 9:
-		displayCenteredString((char *)"Character Summary", 144, 310, 15);
+		displayCenteredString("Character Summary", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	}
@@ -3124,7 +3124,7 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 	}
 }
 
-int16 EfhEngine::_guess_displayString_3(const char *str, int16 arg2, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
 	int16 var2 = 0;
 	
 	for (int16 counter = 0; counter < 2; ++counter) {
@@ -3139,9 +3139,11 @@ int16 EfhEngine::_guess_displayString_3(const char *str, int16 arg2, int16 charI
 		}
 	}
 
-	getLastCharAfterAnimCount(_guessAnimationAmount);
-	sub18E80(charId, windowId, menuId, curMenuLine);
-
+	if (animFl) {
+		getLastCharAfterAnimCount(_guessAnimationAmount);
+		sub18E80(charId, windowId, menuId, curMenuLine);
+	}
+	
 	return var2;
 }
 
@@ -3188,7 +3190,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	saveAnimImageSetId();
 
 	_word2C8D2 = true;
-	_word2D0BE = 0;
+	_menuDepth = 0;
 
 	sub18E80(charId, windowId, menuId, curMenuLine);
 
@@ -3200,10 +3202,10 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 		do {
 			Common::KeyCode var19 = handleAndMapInput(false);
-			if (_word2D0BE == 0) {
+			if (_menuDepth == 0) {
 				switch (var19) {
 				case Common::KEYCODE_ESCAPE:
-					if (_word2D0BE == 0) { // ?? Useless case ?
+					if (_menuDepth == 0) { // ?? Useless case ?
 						windowId = 8;
 						var19 = Common::KEYCODE_RETURN;
 					}
@@ -3249,7 +3251,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					warning("handleStatusMenu - unhandled keys 0xBA, 0xBB, 0xBC");
 					break;
 				}
-			} else if (_word2D0BE == 1) {
+			} else if (_menuDepth == 1) {
 				if (var19 >= Common::KEYCODE_a && var19 <= Common::KEYCODE_z) {
 					int16 var8 = var19 - Common::KEYCODE_a;
 					if (var8 < _word2D0BA) {
@@ -3263,17 +3265,17 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			switch (var19) {
 			case Common::KEYCODE_RETURN:
 			// case 0xFA: Joystick button 1
-				if (_word2D0BE == 0) {
+				if (_menuDepth == 0) {
 					menuId = windowId;
 					if (menuId > 7)
 						var10 = -1;
 					else {
-						_word2D0BE = 1;
+						_menuDepth = 1;
 						curMenuLine = 0;
 					}
-				} else if (_word2D0BE == 1) {
+				} else if (_menuDepth == 1) {
 					if (_word2D0BA == 0) {
-						_word2D0BE = 0;
+						_menuDepth = 0;
 						curMenuLine = -1;
 						menuId = 9;
 						unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
@@ -3284,18 +3286,23 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 				break;
 			case Common::KEYCODE_ESCAPE:
-				_word2D0BE = 0;
+				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = 9;
 				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 				break;
 			case Common::KEYCODE_2:
 			case Common::KEYCODE_6:
-			// case 0xCC, 0xCF
-				if (_word2D0BE == 0) {
-					if (++windowId == 8)
+			// Added for ScummVM
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP2:
+			case Common::KEYCODE_KP6:
+				// Original checks joystick axis: case 0xCC, 0xCF
+				if (_menuDepth == 0) {
+					if (++windowId > 8)
 						windowId = 0;
-				} else if (_word2D0BE == 1) {
+				} else if (_menuDepth == 1) {
 					if (_word2D0BA != 0) {
 						++curMenuLine;
 						if (curMenuLine > _word2D0BA - 1)
@@ -3305,11 +3312,16 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				break;
 			case Common::KEYCODE_4:
 			case Common::KEYCODE_8:
-			// case 0xC7, 0xCA
-				if (_word2D0BE == 0) {
+			// Added for ScummVM
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP4:
+			case Common::KEYCODE_KP8:
+			// Original checks joystick axis: case 0xC7, 0xCA
+				if (_menuDepth == 0) {
 					if (--windowId < 0)
 						windowId = 8;
-				} else if (_word2D0BE == 1) {
+				} else if (_menuDepth == 1) {
 					if (_word2D0BA != 0) {
 						--curMenuLine;
 						if (curMenuLine < 0)
@@ -3353,7 +3365,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					_word2C8D2 = false;
 					return -1;
 				} else {
-					int16 var8 = sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
+					sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
 				}
 			}
 			break;
@@ -3361,16 +3373,16 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _word3273A[var16];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else if (hasObjectEquipped(charId, objectId)){
-				_guess_displayString_3("Item is Equipped!  Give anyway?", 0, charId, windowId, menuId, curMenuLine);
+				displayString_3("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				sub18E80(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
 					if (gameMode == 2) {
-						_guess_displayString_3("Not a Combat Option !", -1, charId, windowId, menuId, curMenuLine);
+						displayString_3("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
 					} else {
 						removeObject(charId, objectId);
 						int16 var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1);
@@ -3387,9 +3399,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _word3273A[var16];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else if (hasObjectEquipped(charId, objectId)) {
-				_guess_displayString_3("Item is Equipped!  Trade anyway?", 0, charId, windowId, menuId, curMenuLine);
+				displayString_3("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				sub18E80(charId, windowId, menuId, curMenuLine);
@@ -3399,7 +3411,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					int16 var8;
 					do {
 						if (_teamCharId[2] != -1) {
-							var8 = _guess_displayString_3("Who will you give the item to?", 0, charId, windowId, menuId, curMenuLine);
+							var8 = displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
 							var2 = 0;
 						} else if (_teamCharId[1]) {
 							var8 = 0x1A;
@@ -3415,13 +3427,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						if (var8 != 0x1A && var8 != 0x1B) {
 							var6 = giveItemTo(_teamCharId[var8], objectId, charId);
 							if (var6 == 0) {
-								_guess_displayString_3("That character cannot carry anymore!", 0, charId, windowId, menuId, curMenuLine);
-								Common::KeyCode var4 = getLastCharAfterAnimCount(_guessAnimationAmount);
+								displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
+								getLastCharAfterAnimCount(_guessAnimationAmount);
 							}
 						} else {
 							if (var8 == 0x1A) {
-								_guess_displayString_3("No one to trade with!", 0, charId, windowId, menuId, curMenuLine);
-								Common::KeyCode var4 = getLastCharAfterAnimCount(_guessAnimationAmount);
+								displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
+								getLastCharAfterAnimCount(_guessAnimationAmount);
 								var8 = 0x1B;
 							}
 							var6 = 0;
@@ -3445,9 +3457,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _word3273A[var16];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else if (hasObjectEquipped(charId, objectId)) {
-				_guess_displayString_3("Item Is Equipped!  Drop Anyway?", 0, charId, windowId, menuId, curMenuLine);
+				displayString_3("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				sub18E80(charId, windowId, menuId, curMenuLine);
@@ -3471,7 +3483,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case 5:
 			objectId = _word3273A[var16];
 			if (gameMode == 2) {
-				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
@@ -3483,7 +3495,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case 6: // Identical to case 5?
 			objectId = _word3273A[var16];
 			if (gameMode == 2) {
-				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
@@ -3495,7 +3507,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case 7: // Identical to case 5?
 			objectId = _word3273A[var16];
 			if (gameMode == 2) {
-				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
@@ -3508,7 +3520,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 		if (menuId != 8) {
 			var10 = 0;
-			_word2D0BE = 0;
+			_menuDepth = 0;
 			menuId = 9;
 			var16 = -1;
 			curMenuLine = -1;
@@ -3577,30 +3589,30 @@ bool EfhEngine::sub16E14() {
 
 				unkFct_displayMenuBox_2(0);
 				_textColor = 0xE;
-				displayCenteredString((char *)"Interaction", 24, 296, 152);
+				displayCenteredString("Interaction", 24, 296, 152);
 				displayCenteredString(buffer, 24, 296, 161);
 				setTextPos(24, 169);
 				setTextColorWhite();
-				displayStringAtTextPos((char *)"T");
+				displayStringAtTextPos("T");
 				setTextColorRed();
 				sprintf(buffer, "alk to the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(24, 178);
 				setTextColorWhite();
-				displayStringAtTextPos((char *)"A");
+				displayStringAtTextPos("A");
 				setTextColorRed();
 				sprintf(buffer, "ttack the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(198, 169);
 				setTextColorWhite();
-				displayStringAtTextPos((char *)"S");
+				displayStringAtTextPos("S");
 				setTextColorRed();
-				displayStringAtTextPos((char *)"tatus");
+				displayStringAtTextPos("tatus");
 				setTextPos(198, 178);
 				setTextColorWhite();
-				displayStringAtTextPos((char *)"L");
+				displayStringAtTextPos("L");
 				setTextColorRed();
-				displayStringAtTextPos((char *)"eave");
+				displayStringAtTextPos("eave");
 				if (var6C == 0)
 					displayFctFullScreen();
 			}
@@ -3933,7 +3945,7 @@ void EfhEngine::writeTechAndMapFiles() {
 	warning("STUB - writeTechAndMapFiles");
 }
 
-uint16 EfhEngine::getStringWidth(char *buffer) {
+uint16 EfhEngine::getStringWidth(const char *buffer) {
 	uint16 retVal = 0;
 
 	for (;;) {
