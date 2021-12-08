@@ -39,11 +39,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash when loading savegames from Humongous Entertainment games.
 
  Sherlock:
-    - Fix crash using matches on lab table.
-    - Fix character animation in Rose Tattoo.
-    - Fix glitch opening map in Rose Tattoo.
-    - Fix bell pull sound in Serrated Scalpel.
-	- Fix inventory not updating in Serrated Scalpel after examining watch.
+   - Fix crash using matches on lab table.
+   - Fix character animation in Rose Tattoo.
+   - Fix glitch opening map in Rose Tattoo.
+   - Fix bell pull sound in Serrated Scalpel.
+   - Fix inventory not updating in Serrated Scalpel after examining watch.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
