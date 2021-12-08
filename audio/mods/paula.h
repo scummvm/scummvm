@@ -112,12 +112,15 @@ protected:
 		Offset offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
 		int dmaCount;
+		bool interrupt;
 	};
 
 	bool _end;
 	Common::Mutex &_mutex;
 
 	virtual void interrupt() = 0;
+
+	virtual void interruptChannel(byte channel) { }
 
 	void startPaula() {
 		_playing = true;
@@ -147,6 +150,11 @@ protected:
 		// actually first 2 bytes are dropped?
 		ch.offset = Offset(0);
 		// ch.period = ch.periodRepeat;
+	}
+
+	void setChannelInterrupt(byte channel, bool enable) {
+		assert(channel < NUM_VOICES);
+		_voice[channel].interrupt = enable;
 	}
 
 	void setChannelPeriod(byte channel, int16 period) {
