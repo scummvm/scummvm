@@ -26,10 +26,7 @@
  * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputc
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#include "common/streamdebug.h"
 
 #include "graphics/tinygl/zgl.h"
 
@@ -100,9 +97,10 @@ static GLList *alloc_list(GLContext *c, int list) {
 	return l;
 }
 
-static void gl_print_op(FILE *f, GLParam *p) {
+static void gl_print_op(GLParam *p) {
 	int op;
 	const char *s;
+	Common::StreamDebug debug = streamDbg();
 
 	op = p[0].op;
 	p++;
@@ -112,19 +110,19 @@ static void gl_print_op(FILE *f, GLParam *p) {
 			s++;
 			switch (*s++) {
 			case 'f':
-				fprintf(f, "%g", p[0].f);
+				debug << p[0].f;
 				break;
 			default:
-				fprintf(f, "%d", p[0].i);
+				debug << p[0].i;
 				break;
 			}
 			p++;
 		} else {
-			fputc(*s, f);
+			debug << *s;
 			s++;
 		}
 	}
-	fprintf(f, "\n");
+	debug << "\n";
 }
 
 void GLContext::gl_compile_op(GLParam *p) {
@@ -171,7 +169,7 @@ void GLContext::gl_add_op(GLParam *p) {
 		gl_compile_op(p);
 	}
 	if (print_flag) {
-		gl_print_op(stderr, p);
+		gl_print_op(p);
 	}
 }
 
