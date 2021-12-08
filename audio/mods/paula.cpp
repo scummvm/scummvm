@@ -81,6 +81,7 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].volume = 0;
 	_voice[voice].offset = Offset(0);
 	_voice[voice].dmaCount = 0;
+	_voice[voice].interrupt = false;
 }
 
 int Paula::readBuffer(int16 *buffer, const int numSamples) {
@@ -239,6 +240,15 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 				ch.data = ch.dataRepeat;
 				ch.length = ch.lengthRepeat;
+
+				// The Paula chip can generate an interrupt after it copies a channel's
+				// location and length values to its internal registers, signaling that
+				// it's safe to modify them. Some sound engines use this feature in order
+				// to control sound looping.
+				// NOTE: the real Paula would also do this during enableChannel() and in
+				// the middle of setChannelData(); for simplicity, we only do it here.
+				if (ch.interrupt)
+					interruptChannel(voice);
 			}
 
 			// If we have not yet generated enough samples, and looping is active: loop!
