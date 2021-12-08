@@ -272,6 +272,14 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C8D9 = false;
 	_word2C8D5 = false;
 	_word2D0BC = false;
+	_word2C8D2 = false;
+	_word2D0BE = 0;
+	_word2D0BA = 0;
+
+
+	for (int i = 0; i < 15; ++i) {
+		_word3273A[i] = 0;
+	}
 
 	memset(_messageToBePrinted, 0, 400);
 }
@@ -802,29 +810,6 @@ void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 		readFileToBuffer(fileName, _imp2);
 
 	decryptImpFile(techMapFl);
-}
-
-Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
-	if (delay == 0)
-		return Common::KEYCODE_INVALID;
-
-	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
-	
-	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 200) {
-			lastMs = newMs;
-			--delay;
-			unkFct_anim();
-		}
-
-		lastChar = handleAndMapInput(false);
-	} 
-	
-	return lastChar;
 }
 
 void EfhEngine::playIntro() {
@@ -1493,32 +1478,6 @@ bool EfhEngine::isTPK() {
 	}
 
 	return zeroedChar == _teamSize;
-}
-
-Common::KeyCode EfhEngine::getInput(int16 delay) {
-	if (delay == 0)
-		return Common::KEYCODE_INVALID;
-
-	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-
-	uint32 lastMs = _system->getMillis();
-	while (delay > 0) {
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 200) {
-			lastMs = newMs;
-			--delay;
-			unkFct_anim();
-		}
-
-		lastChar = handleAndMapInput(false);
-		if (lastChar != Common::KEYCODE_INVALID)
-			retVal = lastChar;
-	}
-
-	return retVal;
 }
 
 void EfhEngine::handleWinSequence() {
@@ -2423,7 +2382,7 @@ void EfhEngine::setNumLock() {
 }
 
 void EfhEngine::computeMapAnimation() {
-	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+	const int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
 	int16 minMapX = _mapPosX - 5;
 	int16 minMapY = _mapPosY - 4;
@@ -2446,7 +2405,7 @@ void EfhEngine::computeMapAnimation() {
 			if (_largeMapFlag) {
 				if (_currentTileBankImageSetId[0] != 0)
 					continue;
-				int16 var4 = _mapGameMapPtr[counterX * 64 + counterY];
+				uint8 var4 = _mapGameMapPtr[counterX * 64 + counterY];
 				if (var4 >= 1 && var4 <= 0xF) {
 					if (getRandom(100) < 50)
 						_mapGameMapPtr[counterX * 64 + counterY] += 0xC5;
@@ -2457,7 +2416,7 @@ void EfhEngine::computeMapAnimation() {
 			} else {
 				if (_currentTileBankImageSetId[0] != 0)
 					continue;
-				int16 var4 = _curPlace[counterX * 24 + counterY];
+				uint8 var4 = _curPlace[counterX * 24 + counterY];
 				if (var4 >= 1 && var4 <= 0xF) {
 					if (getRandom(100) < 50)
 						_curPlace[counterX * 24 + counterY] += 0xC5;
@@ -2908,8 +2867,89 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
-bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 _arg6, int16 arg8, int16 imageSetId) {
-	warning("STUB - sub22293");
+void EfhEngine::sub22AA8(uint16 arg0) {
+	warning("STUB - sub22AA8");
+}
+
+bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, int16 arg8, int16 imageSetId) {
+	int16 var8 = sub151FD(mapPosX, mapPosY);
+
+	if (var8 == -1) {
+		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
+			sub221FA(_imp2PtrArray[imageSetId], true);
+	} else if (var8 == 0) {
+		if (_mapUnknownPtr[var8 * 9 + 3] == 0xFF) {
+			sub22AA8(_mapUnknownPtr[var8 * 9 + 5]); // word!
+			return true;
+		} else if (_mapUnknownPtr[var8 * 9 + 3] == 0xFE) {
+			for (int16 counter = 0; counter < _teamSize; ++counter) {
+				if (_teamCharId[counter] == -1)
+					continue;
+				if (_teamCharId[counter] == _mapUnknownPtr[var8 * 9 + 4]) {
+					sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+					return true;
+				}
+			}
+		} else if (_mapUnknownPtr[var8 * 9 + 3] == 0xFD) {
+			for (int16 counter = 0; counter < _teamSize; ++counter) {
+				if (_teamCharId[counter] == -1)
+					continue;
+
+				for (int16 var2 = 0; var2 < 10; ++var2) {
+					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknownPtr[var8 * 9 + 4]) {
+						sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+						return true;
+					}
+				}
+			}
+		// original makes a useless check on (_mapUnknownPtr[var8 * 9 + 3] > 0x7F)
+		} else if (_mapUnknownPtr[var8 * 9 + 3] <= 0x77) {
+			int16 var6 = _mapUnknownPtr[var8 * 9 + 3];
+			for (int counter = 0; counter < _teamSize; ++counter) {
+				if (_teamCharId[counter] == -1)
+					continue;
+
+				for (int16 var2 = 0; var2 < 39; ++var2) {
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var2] >= _mapUnknownPtr[var8 * 9 + 4]) {
+						sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+						return true;
+					}
+				}
+			}
+		}
+	} else {
+		if ((_mapUnknownPtr[var8 * 9 + 3] == 0xFA && arg8 == 1)
+		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFC && arg8 == 2)
+		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFB && arg8 == 3)) {
+			if (_mapUnknownPtr[var8 * 9 + 4] == arg6) {
+				sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+				return true;
+			}
+		} else if (arg8 == 4) {
+			int16 var6 = _mapUnknownPtr[var8 * 9 + 3];
+			if (var6 >= 0x7B && var6 <= 0xEF) {
+				var6 -= 0x78;
+				if (var6 >= 0 && var6 <= 0x8B && var6 == arg6 && _mapUnknownPtr[var8 * 9 + 4] <= _npcBuf[arg4]._activeScore[arg6]) {
+					sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+					return true;
+				}
+			}		
+		}
+	}
+
+	for (int16 counter = 0; counter < 64; ++counter) {
+		if (!sub21820(counter, arg8, arg6))
+			return true;
+	}
+
+	if ((arg8 == 4 && _mapUnknownPtr[var8 * 9 + 3] < 0xFA) || arg8 != 4) {
+		if (_mapUnknownPtr[var8 * 9 + 7] > 0xFE) // word!!
+			return false;
+		sub22AA8(_mapUnknownPtr[var8 * 9 + 7]);
+		return true;		
+	} else
+		return false;
+
 	return false;
 }
 
@@ -2950,19 +2990,538 @@ bool EfhEngine::handleFight(int16 monsterId) {
 	return false;
 }
 
+void EfhEngine::displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str) {
+	char buffer[20];
+	memset(buffer, 0, 20);
+
+	if (menuBoxId == thisBoxId) {
+		if (_word2D0BE == 0)
+			setTextColorWhite();
+		else
+			setTextColor_08h();
+
+		sprintf(buffer, "> %s <", str);
+		displayCenteredString(buffer, minX, maxX, minY);
+		setTextColorRed();
+	} else {
+		if (_word2D0BE == 0)
+			setTextColorRed();
+		else
+			setTextColor_08h();
+
+		displayCenteredString((char *)str, minX, maxX, minY);
+	}
+}
+
+void EfhEngine::displayStatusMenu(int16 windowId) {
+	for (int16 counter = 0; counter < 9; ++counter) {
+		drawColoredRect(80, 39 + 14 * counter, 134, 47 + 14 * counter, 0);
+	}
+
+	if (_word2D0BE != 0)
+		setTextColor_08h();
+
+	displayMenuItemString(windowId, 0, 80, 134, 39, "EQUIP");
+	displayMenuItemString(windowId, 1, 80, 134, 53, "USE");
+	displayMenuItemString(windowId, 2, 80, 134, 67, "GIVE");
+	displayMenuItemString(windowId, 3, 80, 134, 81, "TRADE");
+	displayMenuItemString(windowId, 4, 80, 134, 95, "DROP");
+	displayMenuItemString(windowId, 5, 80, 134, 109, "INFO.");
+	displayMenuItemString(windowId, 6, 80, 134, 123, "PASSIVE");
+	displayMenuItemString(windowId, 7, 80, 134, 137, "ACTIVE");
+	displayMenuItemString(windowId, 8, 80, 134, 151, "LEAVE");
+
+	setTextColorRed();
+}
+
+void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
+	warning("STUB: countRightWindowItems");
+}
+
+void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
+	warning("STUB: displayCharacterSummary");
+}
+
+void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId) {
+	warning("STUB: displayCharacterInformationOrSkills");
+}
+
+void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId) {
+	drawColoredRect(144, 15, 310, 184, 0);
+	displayCenteredString((char *)"(ESCape Aborts)", 144, 310, 175);
+	_textColor = 0x0E;
+	switch (menuId) {
+	case 0:
+		displayCenteredString((char *)"Select Item to Equip", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	case 1:
+		displayCenteredString((char *)"Select Item to Use", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	case 2:
+		displayCenteredString((char *)"Select Item to Give", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	case 3:
+		displayCenteredString((char *)"Select Item to Trade", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	case 4:
+		displayCenteredString((char *)"Select Item to Drop", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	case 5:
+		displayCenteredString((char *)"Character Information", 144, 310, 15);
+		displayCharacterInformationOrSkills(curMenuLine, npcId);
+		break;
+	case 6:
+		displayCenteredString((char *)"Passive Skills", 144, 310, 15);
+		displayCharacterInformationOrSkills(curMenuLine, npcId);
+		break;
+	case 7:
+		displayCenteredString((char *)"Active Skills", 144, 310, 15);
+		displayCharacterInformationOrSkills(curMenuLine, npcId);
+		break;
+	case 8:
+	case 9:
+		displayCenteredString((char *)"Character Summary", 144, 310, 15);
+		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	}
+}
+
+void EfhEngine::unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl) {
+	displayStatusMenu(windowId);
+
+	countRightWindowItems(menuId, charId);
+	displayStatusMenuActions(menuId, curMenuLine, charId);
+
+	if (refreshFl)
+		displayFctFullScreen();
+}
+
+void EfhEngine::displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest) {
+	if (buffer == nullptr) {
+		warning("Target Buffer Not Defined...DCImage!"); // That's the original message... And yes, it's wrong: it's checking the source buffer :)
+		return;
+	}
+
+	// Only MCGA handled, the rest is skipped
+	uncompressBuffer(buffer, dest);
+	displayRawDataAtPos(dest, posX, posY);
+	displayFctFullScreen();
+	displayRawDataAtPos(dest, posX, posY);
+}
+
+void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	for (int counter = 0; counter < 2; ++counter) {
+		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);
+		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+}
+
+int16 EfhEngine::_guess_displayString_3(const char *str, int16 arg2, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	int16 var2 = 0;
+	
+	for (int16 counter = 0; counter < 2; ++counter) {
+		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
+
+		if (counter == 0) {
+			script_parse((uint8 *)str, 28, 122, 105, 166, 0);
+			displayFctFullScreen();
+		} else {
+			var2 = script_parse((uint8 *)str, 28, 122, 105, 166, -1);
+		}
+	}
+
+	getLastCharAfterAnimCount(_guessAnimationAmount);
+	sub18E80(charId, windowId, menuId, curMenuLine);
+
+	return var2;
+}
+
+bool EfhEngine::isItemCursed(int16 itemId) {
+	if (_items[itemId].field_16 == 21 || _items[itemId].field_16 == 22 || _items[itemId].field_16 == 23)
+		return true;
+
+	return false;
+}
+
+bool EfhEngine::hasObjectEquipped(int16 charId, int16 _objectId) {
+	if ((_npcBuf[charId]._inventory[_objectId]._stat1 & 0x80) == 0)
+		return false;
+
+	return true;
+}
+
+void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	warning("STUB: sub191FF");
+}
+
+int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
+	warning("STUB: sub19E2E");
+
+	return -1;
+}
+
+bool EfhEngine::getValidationFromUser() {
+	Common::KeyCode input = handleAndMapInput(true);
+	if (input == Common::KEYCODE_y) // or if joystick button 1
+		return true;
+
+	return false;
+}
+
 int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
-	warning("STUB - handleStatusMenu");
+	int16 menuId = 9;
+	int16 var16 = -1;
+	int16 windowId = -1;
+	int16 curMenuLine = -1;
+	int16 var10 = 0;
+	int16 var2 = 0;
+
+	saveAnimImageSetId();
+
+	_word2C8D2 = true;
+	_word2D0BE = 0;
+
+	sub18E80(charId, windowId, menuId, curMenuLine);
+
+	for (;;) {
+		if (windowId != -1)
+			unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+		else
+			windowId = 0;
+
+		do {
+			Common::KeyCode var19 = handleAndMapInput(false);
+			if (_word2D0BE == 0) {
+				switch (var19) {
+				case Common::KEYCODE_ESCAPE:
+					if (_word2D0BE == 0) { // ?? Useless case ?
+						windowId = 8;
+						var19 = Common::KEYCODE_RETURN;
+					}
+					break;
+				case Common::KEYCODE_a:
+					windowId = 7;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_d:
+					windowId = 4;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_e:
+					windowId = 0;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_g:
+					windowId = 2;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_i:
+					windowId = 5;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_l:
+					windowId = 8;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_p:
+					windowId = 6;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_t:
+					windowId = 3;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_u:
+					windowId = 1;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				// case 0xFB: Joystick button 2
+				default:
+					warning("handleStatusMenu - unhandled keys 0xBA, 0xBB, 0xBC");
+					break;
+				}
+			} else if (_word2D0BE == 1) {
+				if (var19 >= Common::KEYCODE_a && var19 <= Common::KEYCODE_z) {
+					int16 var8 = var19 - Common::KEYCODE_a;
+					if (var8 < _word2D0BA) {
+						curMenuLine = var8;
+						var19 = Common::KEYCODE_RETURN;
+					}
+				}
+
+			}
+
+			switch (var19) {
+			case Common::KEYCODE_RETURN:
+			// case 0xFA: Joystick button 1
+				if (_word2D0BE == 0) {
+					menuId = windowId;
+					if (menuId > 7)
+						var10 = -1;
+					else {
+						_word2D0BE = 1;
+						curMenuLine = 0;
+					}
+				} else if (_word2D0BE == 1) {
+					if (_word2D0BA == 0) {
+						_word2D0BE = 0;
+						curMenuLine = -1;
+						menuId = 9;
+						unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+					} else {
+						var16 = curMenuLine;
+						var10 = -1;
+					}
+				}
+				break;
+			case Common::KEYCODE_ESCAPE:
+				_word2D0BE = 0;
+				curMenuLine = -1;
+				menuId = 9;
+				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+				break;
+			case Common::KEYCODE_2:
+			case Common::KEYCODE_6:
+			// case 0xCC, 0xCF
+				if (_word2D0BE == 0) {
+					if (++windowId == 8)
+						windowId = 0;
+				} else if (_word2D0BE == 1) {
+					if (_word2D0BA != 0) {
+						++curMenuLine;
+						if (curMenuLine > _word2D0BA - 1)
+							curMenuLine = 0;
+					}
+				}
+				break;
+			case Common::KEYCODE_4:
+			case Common::KEYCODE_8:
+			// case 0xC7, 0xCA
+				if (_word2D0BE == 0) {
+					if (--windowId < 0)
+						windowId = 8;
+				} else if (_word2D0BE == 1) {
+					if (_word2D0BA != 0) {
+						--curMenuLine;
+						if (curMenuLine < 0)
+							curMenuLine = _word2D0BA - 1;
+					}
+				}
+				break;
+			}
+
+			if (curMenuLine == -1)
+				unk_StatusMenu(windowId, menuId, curMenuLine, charId, false, true);
+			else
+				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+
+		} while (var10 == 0);
+
+		bool validationFl = true;
+
+		int16 objectId;
+		int16 itemId;
+		switch (menuId) {
+		case 0:
+			objectId = _word3273A[var16];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			sub191FF(charId, objectId, windowId, menuId, curMenuLine);
+			if (gameMode == 2) {
+				restoreAnimImageSetId();
+				_word2C8D2 = false;
+				return 0x7D00;
+			}
+			break;
+		case 1:
+			objectId = _word3273A[var16];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (gameMode == 2) {
+				restoreAnimImageSetId();
+				_word2C8D2 = false;
+				return objectId;
+			} else {
+				if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
+					_word2C8D2 = false;
+					return -1;
+				} else {
+					int16 var8 = sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
+				}
+			}
+			break;
+		case 2:
+			objectId = _word3273A[var16];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)){
+				_guess_displayString_3("Item is Equipped!  Give anyway?", 0, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					if (gameMode == 2) {
+						_guess_displayString_3("Not a Combat Option !", -1, charId, windowId, menuId, curMenuLine);
+					} else {
+						removeObject(charId, objectId);
+						int16 var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1);
+						if (var8 != 0) {
+							_word2C8D2 = false;
+							return -1;
+						}
+					}
+				}
+			}
+
+			break;
+		case 3:
+			objectId = _word3273A[var16];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)) {
+				_guess_displayString_3("Item is Equipped!  Trade anyway?", 0, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					int16 var6;
+					int16 var8;
+					do {
+						if (_teamCharId[2] != -1) {
+							var8 = _guess_displayString_3("Who will you give the item to?", 0, charId, windowId, menuId, curMenuLine);
+							var2 = 0;
+						} else if (_teamCharId[1]) {
+							var8 = 0x1A;
+							var2 = 0;
+						} else {
+							var2 = -1;
+							if (_teamCharId[0] == charId)
+								var8 = 1;
+							else
+								var8 = 0;
+						}
+
+						if (var8 != 0x1A && var8 != 0x1B) {
+							var6 = giveItemTo(_teamCharId[var8], objectId, charId);
+							if (var6 == 0) {
+								_guess_displayString_3("That character cannot carry anymore!", 0, charId, windowId, menuId, curMenuLine);
+								Common::KeyCode var4 = getLastCharAfterAnimCount(_guessAnimationAmount);
+							}
+						} else {
+							if (var8 == 0x1A) {
+								_guess_displayString_3("No one to trade with!", 0, charId, windowId, menuId, curMenuLine);
+								Common::KeyCode var4 = getLastCharAfterAnimCount(_guessAnimationAmount);
+								var8 = 0x1B;
+							}
+							var6 = 0;
+						}
+					} while (var6 == 0 && var2 == 0 && var8 != 0x1B);
+
+					if (var6) {
+						removeObject(charId, objectId);
+						if (gameMode == 2) {
+							restoreAnimImageSetId();
+							_word2C8D2 = false;
+							return 0x7D00;
+						}
+					}
+
+					sub18E80(charId, windowId, menuId, curMenuLine);
+				}
+			}
+			break;
+		case 4:
+			objectId = _word3273A[var16];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				_guess_displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", -1, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)) {
+				_guess_displayString_3("Item Is Equipped!  Drop Anyway?", 0, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					removeObject(charId, objectId);
+					if (gameMode == 2) {
+						restoreAnimImageSetId();
+						_word2C8D2 = false;
+						return 0x7D00;
+					}
+
+					bool var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1);
+					if (var8) {
+						_word2C8D2 = false;
+						return -1;
+					}
+				}
+			}
+			break;
+		case 5:
+			objectId = _word3273A[var16];
+			if (gameMode == 2) {
+				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_word2C8D2 = false;
+					return 0xFFFF;
+				}
+			}
+			break;
+		case 6: // Identical to case 5?
+			objectId = _word3273A[var16];
+			if (gameMode == 2) {
+				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_word2C8D2 = false;
+					return 0xFFFF;
+				}
+			}
+			break;
+		case 7: // Identical to case 5?
+			objectId = _word3273A[var16];
+			if (gameMode == 2) {
+				_guess_displayString_3("Not a Combat Option!", 0xFFFF, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_word2C8D2 = false;
+					return -1;
+				}
+			}
+			break;
+		}
+
+		if (menuId != 8) {
+			var10 = 0;
+			_word2D0BE = 0;
+			menuId = 9;
+			var16 = -1;
+			curMenuLine = -1;
+		}
+
+		if (menuId == 8) {
+			restoreAnimImageSetId();
+			_word2C8D2 = false;
+			return 0x7FFF;
+		}
+	}
+
 	return 0;
-}
-
-Common::KeyCode EfhEngine::waitForKey() {
-	warning("STUB - waitForKey");
-	return Common::KEYCODE_INVALID;
-}
-
-Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
-	warning("STUB - mapInputCode");
-	return Common::KEYCODE_INVALID;
 }
 
 bool EfhEngine::sub16E14() {
@@ -3278,6 +3837,88 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	if (animFl) {
 		warning("STUB - handleAndMapInput - animFl");
 	}
+	return retVal;
+}
+
+Common::KeyCode EfhEngine::waitForKey() {
+	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+	Common::Event event;
+
+	uint32 lastMs = _system->getMillis();
+	while (retVal == Common::KEYCODE_INVALID) { // TODO: Check shouldquit()
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			unkFct_anim();
+		}
+
+		_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			retVal = event.kbd.keycode;
+		} 	
+	}
+
+	return retVal;
+}
+
+Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
+	// Original is doing:
+	// if input < a or > z : return input
+	// else return (input + 0xE0)
+	// ex: 'a' = 0x61 + 0xE0 = 0x0141, but it's a uint8 so it's 0x41 which is 'A'.
+	// So basically the original works with uppercase letters and do not alter the other inputs.
+	// => no implementation needed.
+	return input;
+}
+
+Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
+	if (delay == 0)
+		return Common::KEYCODE_INVALID;
+
+	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
+
+	uint32 lastMs = _system->getMillis();
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			--delay;
+			unkFct_anim();
+		}
+
+		lastChar = handleAndMapInput(false);
+	}
+
+	return lastChar;
+}
+
+Common::KeyCode EfhEngine::getInput(int16 delay) {
+	if (delay == 0)
+		return Common::KEYCODE_INVALID;
+
+	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
+	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+
+	uint32 lastMs = _system->getMillis();
+	while (delay > 0) {
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 200) {
+			lastMs = newMs;
+			--delay;
+			unkFct_anim();
+		}
+
+		lastChar = handleAndMapInput(false);
+		if (lastChar != Common::KEYCODE_INVALID)
+			retVal = lastChar;
+	}
+
 	return retVal;
 }
 

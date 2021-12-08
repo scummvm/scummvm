@@ -310,8 +310,8 @@ private:
 	Common::KeyCode getInput(int16 delay);
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
-	void drawString(char * str, int16 startX, int16 startY, uint16 unkFl);
-	void displayCenteredString(char * str, int16 minX, int16 maxX, int16 posY);
+	void drawString(char *str, int16 startX, int16 startY, uint16 unkFl);
+	void displayCenteredString(char *str, int16 minX, int16 maxX, int16 posY);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	void drawMapWindow();
@@ -364,9 +364,25 @@ private:
 	bool checkPictureRefAvailability(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 arg4);
 	void sub221D2(int16 monsterId);
-	bool sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 _arg6, int16 arg8, int16 imageSetId);
+	void sub22AA8(uint16 arg0);
+	bool sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
 	bool handleFight(int16 monsterId);
+	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
+	void displayStatusMenu(int16 windowId);
+	void countRightWindowItems(int16 menuId, int16 charId);
+	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
+	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
+	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
+	void unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
+	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
+	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 _guess_displayString_3(const char * str, int16 arg2, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	bool isItemCursed(int16 itemId);
+	bool hasObjectEquipped(int16 charId, int16 _objectId);
+	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
+	bool getValidationFromUser();
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	Common::KeyCode waitForKey();
 	Common::KeyCode mapInputCode(Common::KeyCode input);
@@ -464,6 +480,11 @@ private:
 	bool _word2C8D9;
 	bool _word2C8D5; // CHECKME: always 0?
 	bool _word2D0BC;
+	bool _word2C8D2;
+	int16 _word2D0BE;
+	int16 _word2D0BA;
+
+	int16 _word3273A[15];
 };
 
 } // End of namespace Efh
