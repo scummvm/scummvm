@@ -73,6 +73,7 @@ void movclass::goto_xy(GotoPkt *gp) {
 	ziel_feld = get_feld_nr(gpkt->Dx, gpkt->Dy);
 	tmp = ziel_feld;
 	anz = calc_go(start_feld, &ziel_feld);
+
 	if (tmp != ziel_feld) {
 		get_mov_line();
 		if (gml.MLineFeld != -1) {
@@ -101,6 +102,7 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 	int16 ok;
 	int16 ret;
 	ret = -1;
+
 	if (agv.AutoGo == true) {
 		speicher = gpkt->Mem;
 		speicher += (gpkt->Breite * gpkt->Hoehe) * gpkt->AkMovEbene;
@@ -189,6 +191,7 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 			}
 		}
 	}
+
 	return ret;
 }
 
@@ -218,18 +221,21 @@ void movclass::calc_xy() {
 	int16 xvector = 0;
 	int16 yvector = 0;
 	int16 tmp_feld;
+
 	if (!ged->ged_idx(gpkt->Dx, gpkt->Dy, gpkt->Breite, gpkt->Mem)) {
 		ende = 0;
 		count = 0;
 		min_x = -1;
 		min_y = -1;
-		while (!ende) {
 
+		while (!ende) {
 			min_steps = 30000;
 			x = gpkt->Dx - (count + 1) * 8;
 			y = gpkt->Dy - (count + 1) * 8;
+
 			for (seite = 0; seite < 4; seite++) {
 				anz = 2 + (count * 2);
+
 				switch (seite) {
 				case S_OBEN:
 					xvector = 8;
@@ -239,22 +245,22 @@ void movclass::calc_xy() {
 				case S_RECHTS:
 					xvector = 0;
 					yvector = 8;
-
 					break;
 
 				case S_UNTEN:
 					xvector = -8;
 					yvector = 0;
-
 					break;
 
 				case S_LINKS:
 					xvector = 0;
 					yvector = -8;
-
 					break;
 
+				default:
+					break;
 				}
+
 				for (i = 0; i < anz; i++) {
 					if (x >= 0 && x < gpkt->Breite * 8 &&
 					        y >= 0 && y < gpkt->Hoehe * 8) {
@@ -272,6 +278,7 @@ void movclass::calc_xy() {
 					y += yvector;
 				}
 			}
+
 			++count;
 			if (min_steps != 30000) {
 				ende = 1;
@@ -307,9 +314,9 @@ short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
 	mov_ok = 0;
 	steps = 0;
 	abbruch = 0;
+
 	while (!ende && !abbruch) {
 		if (om.Count > 0) {
-
 			--om.Count;
 			tmpx = om.Xyvo[0];
 			tmpy = om.Xyvo[1];
