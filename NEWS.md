@@ -23,7 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added text to speech for dialogs and object descriptions.
 
  Kyra:
-   - Added support for the Traditional Chinese versions of Legend of Kyrandia 1 and 3.
+   - Added support for the Traditional Chinese versions of Legend of Kyrandia 1 - 3.
    - Added sound support for the Macintosh version of Legend of Kyrandia.
    - Added support for playing the the Macintosh non-talkie version of Legend
      of Kyrandia 1 directly from the files on the CD. This means you no longer
