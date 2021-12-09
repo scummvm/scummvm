@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-09 13:12+0000\n"
+"PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3490,8 +3490,8 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
-"Error al arrencar el servidor web local.\n"
-"Comprova que el port seleccionat  no estigui en ús per una altre aplicació i "
+"No s'ha pogut iniciar el servidor web local.\n"
+"Comproveu que el port seleccionat no estigui en ús per una altra aplicació i "
 "torneu-ho a provar."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
@@ -3509,9 +3509,8 @@ msgid "No file was passed!"
 msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "El DVD s'ha muntat satisfactòriament"
+msgstr "S'ha pujat correctament!"
 
 #: backends/platform/3ds/options-dialog.cpp:45 engines/scumm/dialogs.cpp:279
 msgid "~C~lose"
@@ -3527,25 +3526,23 @@ msgstr "Enganxa a les vores"
 
 #: backends/platform/3ds/options-dialog.cpp:54
 msgid "Stretch to fit"
-msgstr ""
+msgstr "Amplia per ajustar"
 
 #: backends/platform/3ds/options-dialog.cpp:57
-#, fuzzy
 msgid "Use Screen:"
-msgstr "Velocitat:"
+msgstr "Utilitza la pantalla:"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "Superior"
 
 #: backends/platform/3ds/options-dialog.cpp:60
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "Inferior"
 
 #: backends/platform/3ds/options-dialog.cpp:61
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Ambdós"
@@ -3554,84 +3551,80 @@ msgstr "Ambdós"
 #: backends/platform/ds/osystem_ds.cpp:145
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/ds/osystem_ds.cpp:148
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:45
 #: backends/platform/sdl/psp2/psp2.cpp:48
-#, fuzzy
 msgid "Select"
-msgstr "Acció/Selecció"
+msgstr "Select"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/psp2/psp2.cpp:49
-#, fuzzy
 msgid "Start"
-msgstr "~I~nicia"
+msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:151
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/ds/osystem_ds.cpp:152
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 #: backends/platform/ds/osystem_ds.cpp:165
 msgid "Touch"
-msgstr ""
+msgstr "Toca"
 
 #: backends/platform/3ds/osystem-events.cpp:312
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Mode ràpid"
+msgstr "Commuta el mode d'arrossegament"
 
 #: backends/platform/3ds/osystem-events.cpp:317
-#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr "Mode ràpid"
+msgstr "Commuta el mode d'ampliació"
 
 #: backends/platform/3ds/osystem-events.cpp:322
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Obre la configuració 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:360
 msgid ""
@@ -3692,7 +3685,7 @@ msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:257
 msgid "Unscaled"
-msgstr ""
+msgstr "Sense escalat"
 
 #: backends/platform/ds/ds-graphics.cpp:258
 msgid "Hardware scale (fast, but low quality)"
@@ -3753,98 +3746,97 @@ msgstr "Minimitza"
 #: backends/platform/sdl/macosx/appmenu_osx.mm:238
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
-msgstr ""
+msgstr "Ajuda"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:243
-#, fuzzy
 msgid "User Manual"
-msgstr "Cancel·lat per l'usuari"
+msgstr "Manual d'usuari"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "General Information"
-msgstr ""
+msgstr "Informació general"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Què hi ha de nou en ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Credits"
-msgstr ""
+msgstr "Crèdits"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "GPL License"
-msgstr ""
+msgstr "Llicència GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "LGPL License"
-msgstr ""
+msgstr "Llicència LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "Freefont License"
-msgstr ""
+msgstr "Llicència Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "OFL License"
-msgstr ""
+msgstr "Llicència OFL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "BSD License"
-msgstr ""
+msgstr "Llicència BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:203
 msgid "Cross"
-msgstr ""
+msgstr "Creu"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:197
 msgid "Circle"
-msgstr ""
+msgstr "Cercle"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/dragons/metaengine.cpp:185
 msgid "Square"
-msgstr ""
+msgstr "Quadrat"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 msgid "Minus"
-msgstr ""
+msgstr "Menys"
 
 #: backends/platform/sdl/switch/switch.cpp:43
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "Plus"
-msgstr ""
+msgstr "Més"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -3855,6 +3847,7 @@ msgid "Current video mode:"
 msgstr "Mode de vídeo actual:"
 
 #: backends/platform/wii/options.cpp:56
+#, fuzzy
 msgid "Double-strike"
 msgstr "Double-strike"
 
@@ -3977,7 +3970,7 @@ msgstr "Llançador"
 
 #: backends/updates/macosx/macosx-updates.mm:74
 msgid "Check for Updates..."
-msgstr "Comprova les actualitzacions..."
+msgstr "Comprova si hi ha actualitzacions..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:934
 #: engines/hugo/hugo.cpp:425 engines/lure/lure.cpp:57
@@ -3986,7 +3979,7 @@ msgstr "Comprova les actualitzacions..."
 #: engines/tony/tony.cpp:188 engines/toon/toon.cpp:5000
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "No s'ha pogut localitzar el fitxer de dades del motor '%s'."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:950
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:66
@@ -3994,7 +3987,7 @@ msgstr ""
 #: engines/tony/tony.cpp:201 engines/toon/toon.cpp:5013
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "El fitxer de dades del motor '%s' està malmès."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:961
 #: engines/hugo/hugo.cpp:447 engines/lure/lure.cpp:69
@@ -4005,41 +3998,40 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"S'ha trobat una versió incorrecta del fitxer de dades del motor '%s'. "
+"S'esperava %d.%d però s'ha trobat %d.%d."
 
 #: engines/adl/detection.cpp:54
-#, fuzzy
 msgid "TV emulation"
-msgstr "Emulador de MT-32"
+msgstr "Emulació de TV"
 
 #: engines/adl/detection.cpp:55
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Emula la sortida de components a un TV NTSC"
 
 #: engines/adl/detection.cpp:64 engines/adl/detection.cpp:74
-#, fuzzy
 msgid "Color graphics"
-msgstr "Filtres de gràfics"
+msgstr "Gràfics de color"
 
 #: engines/adl/detection.cpp:65 engines/adl/detection.cpp:75
 msgid "Use color graphics instead of monochrome"
-msgstr ""
+msgstr "Usa gràfics de color en lloc de monocrom"
 
 #: engines/adl/detection.cpp:84
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Mostra les etiquetes dels objectes"
+msgstr "Mostra les línies d'escaneig"
 
 #: engines/adl/detection.cpp:85
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Enfosqueix qualsevol altre escaneig per imitar l'aspecte d'un CRT"
 
 #: engines/adl/detection.cpp:94
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Usa sempre el text monocrom nítid"
 
 #: engines/adl/detection.cpp:95
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "No s'ha d'emular els artefactes NTSC per al text"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
@@ -4056,26 +4048,25 @@ msgstr "Utilitza les pantalles originals de desat/càrrega"
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/trecision/detection.cpp:221 engines/ultima/detection.cpp:57
 #: engines/ultima/detection.cpp:108 engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Utilitza les pantalles originals de desat/càrrega, en lloc de les de ScummVM"
+"Utilitza les pantalles originals de desat/càrrega en lloc de les de ScummVM"
 
 #: engines/agi/detection.cpp:97
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)"
+msgstr "Utilitza una paleta alternativa"
 
 #: engines/agi/detection.cpp:98
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Utilitza una paleta alternativa, comuna per a tots els jocs d'Amiga. Aquest "
+"era el comportament anterior"
 
 #: engines/agi/detection.cpp:107
-#, fuzzy
 msgid "Mouse support"
-msgstr "Suport per saltar text i escenes"
+msgstr "Compatibilitat amb ratolí"
 
 #: engines/agi/detection.cpp:108
 msgid ""
