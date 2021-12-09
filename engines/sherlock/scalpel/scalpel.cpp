@@ -1308,7 +1308,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 	// If we're to show the movie at half-size, we'll need a temporary intermediate surface
 	if (halfSize)
-		tempSurface.create(width / 2, height / 2);
+		tempSurface.create(width / 2, height / 2, videoDecoder->getPixelFormat());
 
 	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
