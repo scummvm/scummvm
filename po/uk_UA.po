@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-08 11:14+0000\n"
+"PO-Revision-Date: 2021-12-09 22:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4255,14 +4255,13 @@ msgstr "Переключитися на Ольмека"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:201
-#, fuzzy, c-format
-#| msgid ""
-#| "Attempt to load saved game from a previous version: Version %s / Build %d"
+#, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
-"Спроба завантажити збереження гри з попередньої версії: Версія %s / Білд %d"
+"УВАГА: Спроба завантажити збереження гри з попередньої версії: Версія %s / "
+"Білд %d"
 
 #: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
