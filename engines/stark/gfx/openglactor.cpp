@@ -291,22 +291,14 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		if (!_gfx->computeLightsEnabled())
 			glDisable(GL_LIGHTING);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(projectionMatrix.getData());
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(mvp.getData());
-
 		glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
 
 		for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
-			auto vertexIndices = _faceEBO[*face];
-
 			glEnableClientState(GL_VERTEX_ARRAY);
 
 			glVertexPointer(3, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].sx);
 
-			glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, vertexIndices);
+			glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, _faceEBO[*face]);
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 		}
