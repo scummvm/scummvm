@@ -216,6 +216,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	for (int i = 0; i < 20; ++i) {
 		_portraitSubFilesArray[i] = nullptr;
 		_ennemyNamePt2[i] = 0;
+		_characterNamePt2[i] = 0;
 		_nameBuffer[i] = 0;
 	}
 
@@ -538,7 +539,6 @@ void EfhEngine::loadNewPortrait() {
 }
 
 void EfhEngine::loadAnimImageSet() {
-	warning("STUB - loadAnimImageSet");
 	if (_currentAnimImageSetId == _animImageSetId || _animImageSetId == 0xFF)
 		return;
 
@@ -602,8 +602,8 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 	copyCurrentPlaceToBuffer(_fullPlaceId / 20);
 }
 
-void EfhEngine::drawUnknownMenuBox() {
-	warning("STUB - drawUnknownMenuBox");
+void EfhEngine::drawLeftCenterBox() {
+	drawColoredRect(16, 8, 111, 135, 0);
 }
 
 void EfhEngine::displayAnimFrame() {
@@ -640,7 +640,7 @@ void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
 		return;
 	
 	for (int i = 0; i < 2; ++i) {
-		drawUnknownMenuBox();
+		drawLeftCenterBox();
 		displayAnimFrame();
 
 		if (i == 0)
@@ -1065,7 +1065,7 @@ void EfhEngine::loadMapMonsters() {
 		_mapMonsters[i]._field_9 = _mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = _mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
-			_mapMonsters[i]._pictureRef[j] = READ_LE_UINT16(&_mapMonstersPtr[29 * i + 11 + j * 2]);
+			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&_mapMonstersPtr[29 * i + 11 + j * 2]);
 	}
 }
 
@@ -2855,9 +2855,196 @@ bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
 	return false;
 }
 
-bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 arg4) {
-	warning("STUB - sub21820");
-	return false;
+void EfhEngine::displayMonsterAnim(int16 monsterId) {
+	int16 animId = kEncounters[_mapMonsters[monsterId]._MonsterRef]._animId;
+	displayAnimFrames(animId, true);
+}
+
+int16 EfhEngine::countPictureRef(int16 id, bool teamMemberFl) {
+	int16 count = 0;
+	int16 monsterId;
+
+	if (teamMemberFl)
+		monsterId = _teamMonsterIdArray[id];
+	else
+		monsterId = id;
+
+	for (int16 counter = 0; counter < 9; ++counter) {
+		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
+			++count;
+	}
+
+	return count;
+}
+
+bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
+	if (computeMonsterGroupDistance(monsterId) > 1)
+		return false;
+
+	return true;
+}
+
+bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
+	char buffer[80];
+	memset(buffer, 0, 80);
+
+	int8 var51 = _mapMonsters[monsterId]._possessivePronounSHL6;
+	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+		return false;
+
+	if (countPictureRef(monsterId, false) < 1)
+		return false;
+
+	if (!checkIfMonsterOnSameLargelMapPlace(monsterId))
+		return false;
+
+	if (!checkMonsterGroupDistance1OrLess(monsterId))
+		return false;
+
+	if (var51 != 0x3F) {
+		if (_mapMonsters[monsterId]._field_9 == 0xFF || arg2 != 5) {
+			return false;
+		}
+		displayMonsterAnim(monsterId);
+		sub22AA8(_mapMonsters[monsterId]._field_9);
+		displayAnimFrames(0xFE, true);
+		return true;
+	}
+
+	if (isCharacterATeamMember(_mapMonsters[monsterId]._field_1))
+		return false;
+
+	int16 var58 = isCharacterATeamMember(_mapMonsters[monsterId]._field_1);
+	switch (_npcBuf[var58].field_10 - 0xEE) {
+	case 0:
+		if (arg2 == 4 && _npcBuf[var58].field_11 == itemId) {
+			displayMonsterAnim(monsterId);
+			sub22AA8(_npcBuf[var58].field_14);
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+		break;
+	case 1:
+		if (arg2 == 2 && _npcBuf[var58].field_11 == itemId) {
+			displayMonsterAnim(monsterId);
+			sub22AA8(_npcBuf[var58].field_14);
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+		break;
+	case 2:
+		if (arg2 == 1 && _npcBuf[var58].field_11 == itemId) {
+			displayMonsterAnim(monsterId);
+			sub22AA8(_npcBuf[var58].field_14);
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+		break;
+	case 3:
+		if (_history[_npcBuf[var58].field_11] != 0) {
+			displayMonsterAnim(monsterId);
+			sub22AA8(_npcBuf[var58].field_14);
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+		break;
+	case 4:
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			for (int16 charId = 0; charId < 10; ++charId) {
+				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
+					removeObject(_teamCharId[counter], charId);
+					displayMonsterAnim(monsterId);
+					sub22AA8(_npcBuf[var58].field_14);
+					displayAnimFrames(0xFE, true);
+					return true;
+				}
+			}
+		}
+		break;
+	case 5:
+		if (arg2 == 2 && _npcBuf[var58].field_11 == itemId) {
+			displayMonsterAnim(monsterId);
+			sub22AA8(_npcBuf[var58].field_14);
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+		break;
+	case 6:
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			for (int16 charId = 0; charId < 10; ++charId) {
+				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
+					displayMonsterAnim(monsterId);
+					sub22AA8(_npcBuf[var58].field_14);
+					displayAnimFrames(0xFE, true);
+					return true;
+				}
+			}
+		}
+		break;
+	case 7:
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
+				removeCharacterFromTeam(counter);
+				displayMonsterAnim(monsterId);
+				sub22AA8(_npcBuf[var58].field_14);
+				displayAnimFrames(0xFE, true);
+				return true;
+			}
+		}
+		break;
+	case 8:
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
+				displayMonsterAnim(monsterId);
+				copyString(_npcBuf[var58]._name, _ennemyNamePt2);
+				copyString(_npcBuf[_teamCharId[counter]]._name, _characterNamePt2);
+				sprintf(buffer, "%s asks that %s leave your party.", _ennemyNamePt2, _characterNamePt2);
+				for (int16 i = 0; i < 2; ++i) {
+					unkFct_displayMenuBox_2(0);
+					_textColor = 0xE;
+					displayCenteredString(buffer, 24, 296, 161);
+					setTextPos(24, 169);
+					displayStringAtTextPos("Will you do this?");
+					if (i == 0)
+						displayFctFullScreen();
+				}
+				setTextColorRed();
+				Common::KeyCode input = mapInputCode(waitForKey());
+				if (input == Common::KEYCODE_y) {
+					removeCharacterFromTeam(counter);
+					sub22AA8(_npcBuf[var58].field_14);
+				}
+				displayAnimFrames(0xFE, true);
+				return true;
+			}
+		}
+		break;
+	case 9:
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
+				displayMonsterAnim(monsterId);
+				sub22AA8(_npcBuf[var58].field_14);
+				displayAnimFrames(0xFE, true);
+				return true;
+			}
+		}
+		break;
+	case 16:
+		displayMonsterAnim(monsterId);
+		sub22AA8(_npcBuf[var58].field_14);
+		displayAnimFrames(0xFE, true);
+		return true;
+	default:
+		break;
+	}
+
+	if (_npcBuf[var58].field_12 == 0x7FFF || arg2 != 5)
+		return false;
+
+	displayMonsterAnim(monsterId);
+	sub22AA8(_npcBuf[var58].field_12);
+	displayAnimFrames(0xFE, true);
+	return true;
 }
 
 void EfhEngine::sub221D2(int16 monsterId) {
@@ -2867,11 +3054,11 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
-void EfhEngine::sub22AA8(uint16 arg0) {
-	warning("STUB - sub22AA8");
+void EfhEngine::sub22AA8(int16 arg0) {
+	warning("STUB: sub22AA8");
 }
 
-bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, int16 arg8, int16 imageSetId) {
+bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
 	int16 var8 = sub151FD(mapPosX, mapPosY);
 
 	if (var8 == -1) {
@@ -2921,7 +3108,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, i
 		if ((_mapUnknownPtr[var8 * 9 + 3] == 0xFA && arg8 == 1)
 		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFC && arg8 == 2)
 		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFB && arg8 == 3)) {
-			if (_mapUnknownPtr[var8 * 9 + 4] == arg6) {
+			if (_mapUnknownPtr[var8 * 9 + 4] == itemId) {
 				sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
 				return true;
 			}
@@ -2929,7 +3116,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, i
 			int16 var6 = _mapUnknownPtr[var8 * 9 + 3];
 			if (var6 >= 0x7B && var6 <= 0xEF) {
 				var6 -= 0x78;
-				if (var6 >= 0 && var6 <= 0x8B && var6 == arg6 && _mapUnknownPtr[var8 * 9 + 4] <= _npcBuf[arg4]._activeScore[arg6]) {
+				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapUnknownPtr[var8 * 9 + 4] <= _npcBuf[charId]._activeScore[itemId]) {
 					sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
 					return true;
 				}
@@ -2938,7 +3125,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, i
 	}
 
 	for (int16 counter = 0; counter < 64; ++counter) {
-		if (!sub21820(counter, arg8, arg6))
+		if (!sub21820(counter, arg8, itemId))
 			return true;
 	}
 
@@ -3035,15 +3222,92 @@ void EfhEngine::displayStatusMenu(int16 windowId) {
 }
 
 void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
-	warning("STUB: countRightWindowItems");
+	int16 var2 = 0;
+	int16 var4 = 0;
+	_word2D0BA = 0;
+
+	switch (menuId) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 9:
+		var4 = -1;
+		break;
+	case 5:
+		var4 = 26;
+		var2 = 36;
+		break;
+	case 6:
+		var4 = 15;
+		var2 = 25;
+		break;
+	case 7:
+		var4 = 0;
+		var2 = 14;
+		break;
+	default: // Case 8 + Default
+		var4 = -1;
+		_word2D0BA = 0;
+		break;
+	}
+
+	if (var4 == -1) {
+		for (int16 counter = 0; counter < 10; ++counter) {
+			if (_npcBuf[charId]._inventory[counter]._ref != 0x7FFF) {
+				_word3273A[_word2D0BA++] = counter;
+			}
+		}
+	} else {
+		for (int16 counter = var4; counter < var2; ++counter) {
+			if (_npcBuf[charId]._activeScore[counter] != 0) {
+				_word3273A[_word2D0BA++] = counter;
+			}
+		}
+	}
 }
 
 void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	warning("STUB: displayCharacterSummary");
 }
 
-void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId) {
-	warning("STUB: displayCharacterInformationOrSkills");
+void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 charId) {
+	char buffer[40];
+	memset(buffer, 0, 40);
+
+	setTextColorRed();
+	copyString(_npcBuf[charId]._name, buffer);
+	setTextPos(146, 27);
+	displayStringAtTextPos("Name: ");
+	displayStringAtTextPos(buffer);
+	if (_word2D0BA <= 0) {
+		if (curMenuLine != -1)
+			setTextColorWhite();
+		displayCenteredString("No Skills To Select", 144, 310, 96);
+		setTextColorRed();
+		return;
+	}
+
+	for (int16 counter = 0; counter < _word2D0BA; ++counter) {
+		if (counter == curMenuLine)
+			setTextColorWhite();
+		int16 textPosY = 38 + counter * 9;
+		setTextPos(146, textPosY);
+		if (counter == curMenuLine) {
+			sprintf(buffer, "%c>", 'A' + counter);
+		} else {
+			sprintf(buffer, "%c)", 'A' + counter);
+		}
+
+		displayStringAtTextPos(buffer);
+		setTextPos(163, textPosY);
+		displayStringAtTextPos(kSkillArray[_word3273A[counter]]);
+		sprintf(buffer, "%d", _npcBuf[charId]._activeScore[_word3273A[counter]]);
+		setTextPos(278, textPosY);
+		displayStringAtTextPos(buffer);
+		setTextColorRed();
+	}
 }
 
 void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId) {
@@ -3488,7 +3752,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
 					_word2C8D2 = false;
-					return 0xFFFF;
+					return -1;
 				}
 			}
 			break;
@@ -3500,7 +3764,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
 					_word2C8D2 = false;
-					return 0xFFFF;
+					return -1;
 				}
 			}
 			break;

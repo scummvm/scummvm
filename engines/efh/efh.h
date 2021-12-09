@@ -199,7 +199,7 @@ struct MapMonster {
 	uint8 _field_8;
 	uint8 _field_9;
 	uint8 _groupSize;
-	uint16 _pictureRef[9];
+	int16 _pictureRef[9];
 };
 
 class EfhEngine : public Engine {
@@ -250,7 +250,7 @@ private:
 	void loadHistory();
 	void loadTechMapImp(int16 fileId);
 	void loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl);
-	void drawUnknownMenuBox();
+	void drawLeftCenterBox();
 	void displayAnimFrame();
 	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
 	void readTileFact();
@@ -362,10 +362,13 @@ private:
 	bool checkMonsterWeaponRange(int16 monsterId);
 	void sub174A0();
 	bool checkPictureRefAvailability(int16 monsterId);
-	bool sub21820(int16 monsterId, int16 arg2, int16 arg4);
+	void displayMonsterAnim(int16 monsterId);
+	int16 countPictureRef(int16 id, bool teamMemberFl);
+	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
+	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
 	void sub221D2(int16 monsterId);
-	void sub22AA8(uint16 arg0);
-	bool sub22293(int16 mapPosX, int16 mapPosY, int16 arg4, int16 arg6, int16 arg8, int16 imageSetId);
+	void sub22AA8(int16 arg0);
+	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
 	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
@@ -414,6 +417,7 @@ private:
 	uint8 _history[256];
 	uint8 _techData[4096];
 	char _ennemyNamePt2[20];
+	char _characterNamePt2[20];
 	char _nameBuffer[20];
 	uint8 _messageToBePrinted[400];
 	

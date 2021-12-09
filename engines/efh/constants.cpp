@@ -344,4 +344,44 @@ const Encounter kEncounters[] {
 	{ "XXXXXXXXXXXXX", 0xFF, 0xFFFF, 0xFFFF, {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF}, 0, 0 }
 };
 
+const char kSkillArray[37][20] = {
+	"Flying",
+	"Swimming",
+	"Electrical",
+	"Mechanical",
+	"Hacking",
+	"Bluffing",
+	"Boatman",
+	"Pilot",
+	"Bureaucracy",
+	"Find Trap",
+	"Parachuting",
+	"Pick Lock",
+	"Explosives",
+	"Chemistry",
+	"Steal",
+	"Dueling",
+	"Marksmanship",
+	"Fist Fighting",
+	"Martial Arts",
+	"Acrobatics",
+	"Melee Weapon",
+	"Pistol Combat",
+	"Rifle Combat",
+	"Automatic/SMG",
+	"Archery",
+	"Rocket Lncher",
+	"Strength",
+	"Intelligence",
+	"Piety",
+	"Agility",
+	"Stamina",
+	"Stealth",
+	"Evasion",
+	"Comprehension",
+	"Perception",
+	"Psychic Force",
+	"Alignment"
+};
+
 } // End of namespace Efh
