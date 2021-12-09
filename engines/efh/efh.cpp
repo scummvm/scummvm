@@ -3268,8 +3268,132 @@ void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
 	}
 }
 
+int16 EfhEngine::getXPLevel(int32 xp) {
+	int16 level = 0;
+	int16 var6 = 1500;
+
+	int32 wrkXp = xp;
+
+	while (wrkXp > 0) {
+		wrkXp -= var6;
+		if (wrkXp >= 0)
+			++level;
+
+		var6 += 1500;
+		if (var6 > 15000)
+			var6 = 15000;
+	}
+
+	return level;
+}
+
+void EfhEngine::displayChar(char character) {
+	char buffer[2];
+	buffer[0] = character;
+	buffer[1] = 0;
+
+	drawString(buffer, _textPosX, _textPosY, _textColor);
+	_textPosX += getStringWidth(buffer) + 1;
+	setNextCharacterPos();
+}
+
 void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
-	warning("STUB: displayCharacterSummary");
+	char buffer1[40];
+	char buffer2[40];
+	memset(buffer1, 0, 40);
+	memset(buffer2, 0, 40);
+	
+	setTextColorRed();
+	copyString(_npcBuf[npcId]._name, buffer1);
+	setTextPos(146, 27);
+	displayStringAtTextPos("Name: ");
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "Level: %d", getXPLevel(_npcBuf[npcId]._xp));
+	setTextPos(146, 36);
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "XP: %lu", _npcBuf[npcId]._xp);
+	setTextPos(227, 36);
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "Speed: %d", _npcBuf[npcId]._speed);
+	setTextPos(146, 45);
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "Defense: %d", getEquipmentDefense(npcId, false));
+	setTextPos(146, 54);
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "Hit Points: %d", _npcBuf[npcId]._hitPoints);
+	setTextPos(146, 63);
+	displayStringAtTextPos(buffer1);
+	sprintf(buffer1, "Max HP: %d", _npcBuf[npcId]._maxHP);
+	setTextPos(227, 63);
+	displayStringAtTextPos(buffer1);
+	displayCenteredString("Inventory", 144, 310, 72);
+
+	if (_word2D0BA == 0) {
+		if (curMenuLine != -1)
+			setTextColorWhite();
+
+		displayCenteredString("Nothing Carried", 144, 310, 117);
+		setTextColorRed();
+		return;
+	}
+
+	for (int16 counter = 0; counter < _word2D0BA; ++counter) {
+		if (_menuDepth == 0)
+			setTextColorGrey();
+		else {
+			if (counter == curMenuLine)
+				setTextColorWhite();
+		}
+		int16 textPosY = 81 + counter * 9;
+		int16 itemId = _npcBuf[npcId]._inventory[_word3273A[counter]]._ref;
+		if (itemId != 0x7FFF) {
+			if (_npcBuf[npcId]._inventory[_word3273A[counter]]._stat1 & 0x80) {
+				setTextPos(146, textPosY);
+				displayChar('E');
+			}
+		}
+
+		setTextPos(152, textPosY);
+		if (counter == curMenuLine) {
+			sprintf(buffer1, "%c>", 'A' + counter);
+		} else {
+			sprintf(buffer1, "%c)", 'A' + counter);
+		}
+		displayStringAtTextPos(buffer1);
+
+		if (itemId != 0x7FFF) {
+			setTextPos(168, textPosY);
+			copyString(_items[itemId]._name, buffer2);
+			sprintf(buffer1, "  %s", buffer2);
+			displayStringAtTextPos(buffer1);
+			setTextPos(262, textPosY);
+
+			if (_items[itemId]._defense > 0) {
+				int16 var54 = _npcBuf[npcId]._inventory[_word3273A[counter]]._stat2;
+				if (var54 == 0xFF) {
+					// useless?
+					var54 = _items[_npcBuf[npcId]._inventory[_word3273A[counter]]._ref]._defense;
+				} else {
+					sprintf(buffer1, "%d", 1 + var54 / 8);
+					displayStringAtTextPos(buffer1);
+					setTextPos(286, textPosY);
+					displayStringAtTextPos("Def");
+				}
+			} else if (_items[itemId]._uses != 0x7F) {
+				int16 var52 = _npcBuf[npcId]._inventory[_word3273A[counter]]._stat1;
+				if (var52 != 0x7F) {
+					sprintf(buffer1, "%d", var52);
+					displayStringAtTextPos(buffer1);
+					setTextPos(286, textPosY);
+					if (var52 == 1)
+						displayStringAtTextPos("Use");
+					else
+						displayStringAtTextPos("Uses");
+				}
+			}
+		}
+		setTextColorRed();
+	}
 }
 
 void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 charId) {
@@ -3425,8 +3549,33 @@ bool EfhEngine::hasObjectEquipped(int16 charId, int16 _objectId) {
 	return true;
 }
 
+void EfhEngine::equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+
+	if (isItemCursed(itemId)) {
+		_npcBuf[charId]._inventory[objectId]._stat1 &= 0x7F;
+	} else {
+		displayString_3("Cursed Item Already Equipped!", true, charId, windowId, menuId, curMenuLine);
+	}
+	
+}
+
 void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	warning("STUB: sub191FF");
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+
+	if (hasObjectEquipped(charId, objectId)) {
+		equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+	} else {
+		int16 var2 = _items[itemId].field_18;
+		if (var2 != 4) {
+			for (int16 counter = 0; counter < 10; ++counter) {
+				if (var2 != _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
+					equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+			}
+		}
+
+		_npcBuf[charId]._inventory[objectId]._stat1 |= 0x80;
+	}
 }
 
 int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
@@ -3512,7 +3661,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					break;
 				// case 0xFB: Joystick button 2
 				default:
-					warning("handleStatusMenu - unhandled keys 0xBA, 0xBB, 0xBC");
+				//	warning("handleStatusMenu - unhandled keys (or joystick event?) 0xBA, 0xBB, 0xBC");
 					break;
 				}
 			} else if (_menuDepth == 1) {
