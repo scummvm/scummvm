@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-09 13:08+0000\n"
+"PO-Revision-Date: 2021-12-09 13:11+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3485,7 +3485,7 @@ msgstr "El camí no és un fitxer"
 
 #: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Tornar al gestor fitxers"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
