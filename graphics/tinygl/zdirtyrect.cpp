@@ -111,7 +111,7 @@ static inline void _appendDirtyRectangle(const DrawCall &call, Common::List<Dirt
 		rectangles.push_back(DirtyRectangle(dirty_region, r, g, b));
 }
 
-void GLContext::presentBufferDirtyRects() {
+void GLContext::presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas) {
 	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
 	typedef Common::List<DirtyRectangle>::iterator RectangleIterator;
 
@@ -186,6 +186,10 @@ void GLContext::presentBufferDirtyRects() {
 	}
 
 	if (!rectangles.empty()) {
+		for (RectangleIterator itRect = rectangles.begin(); itRect != rectangles.end(); ++itRect) {
+			dirtyAreas.push_back((*itRect).rectangle);
+		}
+
 		// Execute draw calls.
 		for (DrawCallIterator it = _drawCallsQueue.begin(); it != _drawCallsQueue.end(); ++it) {
 			Common::Rect drawCallRegion = (*it)->getDirtyRegion();
@@ -229,8 +233,10 @@ void GLContext::presentBufferDirtyRects() {
 	_drawCallAllocator[_currentAllocatorIndex].reset();
 }
 
-void GLContext::presentBufferSimple() {
+void GLContext::presentBufferSimple(Common::List<Common::Rect> &dirtyAreas) {
 	typedef Common::List<DrawCall *>::const_iterator DrawCallIterator;
+
+	dirtyAreas.push_back(Common::Rect(fb->getPixelBufferWidth(), fb->getPixelBufferHeight()));
 
 	for (DrawCallIterator it = _drawCallsQueue.begin(); it != _drawCallsQueue.end(); ++it) {
 		(*it)->execute(true);
@@ -244,13 +250,18 @@ void GLContext::presentBufferSimple() {
 	_drawCallAllocator[_currentAllocatorIndex].reset();
 }
 
-void presentBuffer() {
+void presentBuffer(Common::List<Common::Rect> &dirtyAreas) {
 	GLContext *c = gl_get_context();
 	if (c->_enableDirtyRectangles) {
-		c->presentBufferDirtyRects();
+		c->presentBufferDirtyRects(dirtyAreas);
 	} else {
-		c->presentBufferSimple();
+		c->presentBufferSimple(dirtyAreas);
 	}
+}
+
+void presentBuffer() {
+	Common::List<Common::Rect> dirtyAreas;
+	presentBuffer(dirtyAreas);
 }
 
 bool DrawCall::operator==(const DrawCall &other) const {
