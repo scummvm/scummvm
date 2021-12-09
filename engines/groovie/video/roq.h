@@ -99,6 +99,7 @@ private:
 	bool _flagMasked; //!< Clear the video instead of play it, used in pente
 
 	// Buffers
+	void redrawRestoreArea(int screenOffset);
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;

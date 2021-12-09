@@ -2083,7 +2083,7 @@ void Script::o2_videofromref() {
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
-		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d via 0x09", _currentInstruction-5, fileref);
+		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d via 0x09 (o2_videofromref)", _currentInstruction-5, fileref);
 	}
 
 	// Clear bit 1
@@ -2102,7 +2102,7 @@ void Script::o2_vdxtransition() {
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VDX transition fileref = 0x%08X", fileref);
-		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d with transition via 0x1C", _currentInstruction-5, fileref);
+		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d with transition via 0x1C (o2_vdxtransition)", _currentInstruction-5, fileref);
 	}
 
 	// Set bit 1

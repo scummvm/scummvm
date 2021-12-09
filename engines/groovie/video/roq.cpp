@@ -133,14 +133,14 @@ void ROQPlayer::stopAudioStream() {
 uint16 ROQPlayer::loadInternal() {
 	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		int8 i;
-		debugN(1, "Groovie::ROQ: Loading video. New ROQ: bitflags are ");
+		debugCN(1, kDebugVideo, "Groovie::ROQ: Loading video. New ROQ: bitflags are ");
 		for (i = 15; i >= 0; i--) {
-			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
+			debugCN(1, kDebugVideo, "%d", _flags & (1 << i) ? 1 : 0);
 			if (i % 4 == 0) {
-				debugN(1, " ");
+				debugCN(1, kDebugVideo, " ");
 			}
 		}
-		debug(1, " <- 0 ");
+		debugC(1, kDebugVideo, " <- 0 ");
 	}
 
 	// Flags:
@@ -168,8 +168,8 @@ uint16 ROQPlayer::loadInternal() {
 
 	// Clear the dirty flag and restore area
 	_dirty = false;
-	_restoreArea->top = 0;
-	_restoreArea->left = 0;
+	_restoreArea->top = 9999;
+	_restoreArea->left = 9999;
 	_restoreArea->bottom = 0;
 	_restoreArea->right = 0;
 
@@ -211,6 +211,45 @@ void ROQPlayer::calcStartStop(int &start, int &stop, int origin, int length) {
 	}
 }
 
+void ROQPlayer::redrawRestoreArea(int screenOffset) {
+	// Restore the background by data from the foreground. Only restore the area which was overwritten during the last frame
+	// Therefore we have the _restoreArea which reduces the area for restoring. We also use the _prevBuf to only overwrite the
+	// Pixels which have been written during the last frame. This means _restoreArea is just an optimization.
+	if (!_alpha)
+		return;
+	if (_restoreArea->isEmpty())
+		return;
+
+	int width = _restoreArea->right - _restoreArea->left;
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	assert(screen->format == _bg->format);
+	assert(screen->format.bytesPerPixel == 4);
+	for (int line = _restoreArea->top; line < _restoreArea->bottom; line++) {
+		byte *dst = (byte *)screen->getBasePtr(_restoreArea->left, line + screenOffset);
+		byte *src = (byte *)_bg->getBasePtr(_restoreArea->left, line);
+		byte *prv = (byte *)_prevBuf->getBasePtr((_restoreArea->left - _origX) / _scaleX, (line - _origY) / _scaleY);
+		byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
+
+		for (int i = 0; i < width; i++) {
+			if (prv[kAIndex] != 0) {
+				copyPixel(dst, src);
+				copyPixelWithA(dst, ovr);
+			}
+			src += _bg->format.bytesPerPixel;
+			dst += _bg->format.bytesPerPixel;
+			prv += _bg->format.bytesPerPixel;
+			ovr += _bg->format.bytesPerPixel;
+		}
+	}
+	_vm->_system->unlockScreen();
+
+	// Reset _restoreArea for the next frame
+	_restoreArea->top = 9999;
+	_restoreArea->left = 9999;
+	_restoreArea->bottom = 0;
+	_restoreArea->right = 0;
+}
+
 void ROQPlayer::buildShowBuf() {
 	// Calculate screen offset for normal / fullscreen videos and images
 	int screenOffset = 0;
@@ -218,40 +257,8 @@ void ROQPlayer::buildShowBuf() {
 		screenOffset = 80;
 	}
 
-	// Restore the background by data from the foreground. Only restore the area which was overwritten during the last frame
-	// Therefore we have the _restoreArea which reduces the area for restoring. We also use the _prevBuf to only overwrite the
-	// Pixels which have been written during the last frame. This means _restoreArea is just an optimization.
 	if (_alpha) {
-		if (!_restoreArea->isEmpty()) {
-			int width = _restoreArea->right - _restoreArea->left;
-			Graphics::Surface *screen = _vm->_system->lockScreen();
-			assert(screen->format == _bg->format);
-			assert(screen->format.bytesPerPixel == 4);
-			for (int line = _restoreArea->top; line < _restoreArea->bottom; line++) {
-				byte *dst = (byte *)screen->getBasePtr(_restoreArea->left, line + screenOffset);
-				byte *src = (byte *)_bg->getBasePtr(_restoreArea->left, line);
-				byte *prv = (byte *)_prevBuf->getBasePtr((_restoreArea->left - _origX) / _scaleX, (line - _origY) / _scaleY);
-				byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
-
-				for (int i = 0; i < width; i++) {
-					if (prv[kAIndex] != 0) {
-						copyPixel(dst, src);
-						copyPixelWithA(dst, ovr);
-					}
-					src += _bg->format.bytesPerPixel;
-					dst += _bg->format.bytesPerPixel;
-					prv += _bg->format.bytesPerPixel;
-					ovr += _bg->format.bytesPerPixel;
-				}
-			}
-			_vm->_system->unlockScreen();
-		}
-
-		// Reset _restoreArea for the next frame
-		_restoreArea->top = 0;
-		_restoreArea->left = 0;
-		_restoreArea->bottom = 0;
-		_restoreArea->right = 0;
+		redrawRestoreArea(screenOffset);
 	}
 
 
