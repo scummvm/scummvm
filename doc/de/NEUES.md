@@ -37,11 +37,21 @@ Programmcodes finden Sie auf Englisch unter:
    - Neue Digital iMUSE-Engine hinzugefügt.
    - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
      Versionen von Loom und Indiana Jones and the Last Crusade.
+   - Absturz beim Laden von Spielständen von Humongous Entertainment-Spielen behoben.
+
+ Sherlock:
+   - Absturz behoben, der auftritt, wenn die Streichhölzer mit dem Labor-Tisch benutzt werden.
+   - Fehlerhafte Charakter-Animation in Rose Tattoo behoben.
+   - Fehler beim Öffnen der Karte in Rose Tattoo behoben.
+   - Der Klang der Klingelschnur in Serrated Scalpel wird nun korrekt abgespielt.
+   - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
+   - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
+   - Mehrere Fehlerkorrekturen im Zusammenhang mit der Audio-Wiedergabe.
 
  macOS-Port:
    - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
