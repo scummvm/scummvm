@@ -39,6 +39,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix glitch opening map in Rose Tattoo.
    - Fix bell pull sound in Serrated Scalpel.
    - Fix inventory not updating in Serrated Scalpel after examining watch.
+   - Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
