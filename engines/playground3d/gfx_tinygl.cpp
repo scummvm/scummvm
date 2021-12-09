@@ -229,10 +229,18 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 }
 
 void TinyGLRenderer::flipBuffer() {
-	TinyGL::presentBuffer();
+	Common::List<Common::Rect> dirtyAreas;
+	TinyGL::presentBuffer(dirtyAreas);
+
 	Graphics::Surface glBuffer;
 	TinyGL::getSurfaceRef(glBuffer);
-	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch, 0, 0, glBuffer.w, glBuffer.h);
+
+	if (!dirtyAreas.empty()) {
+		for (Common::List<Common::Rect>::iterator itRect = dirtyAreas.begin(); itRect != dirtyAreas.end(); ++itRect) {
+			g_system->copyRectToScreen(glBuffer.getBasePtr((*itRect).left, (*itRect).top), glBuffer.pitch,
+			                           (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
+		}
+	}
 }
 
 void TinyGLRenderer::dimRegionInOut(float fade) {
