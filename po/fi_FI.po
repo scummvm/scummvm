@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-07 20:26+0000\n"
+"PO-Revision-Date: 2021-12-09 22:21+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4241,13 +4241,11 @@ msgstr "Vaihda Olmeciin"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:201
-#, fuzzy, c-format
-#| msgid ""
-#| "Attempt to load saved game from a previous version: Version %s / Build %d"
+#, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
-msgstr "Pelitallennus on aiemmasta versiosta: Versio %s / Build %d"
+msgstr "VAROITUS: Pelitallennus on aiemmasta versiosta: Versio %s / Build %d"
 
 #: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
