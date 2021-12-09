@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-07 00:26+0000\n"
+"PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4211,13 +4211,11 @@ msgstr "Olmecへ切り替え"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:201
-#, fuzzy, c-format
-#| msgid ""
-#| "Attempt to load saved game from a previous version: Version %s / Build %d"
+#, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
-msgstr "旧バージョンのセーブをロードしようとしています: Ver%s/ビルド%d"
+msgstr "警告: 旧バージョンのセーブをロードしようとしています: Ver%s/ビルド%d"
 
 #: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
