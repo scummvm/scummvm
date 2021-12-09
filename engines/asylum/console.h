@@ -95,6 +95,7 @@ private:
 
 	bool cmdSetPalette(int argc, const char **argv);
 	bool cmdViewResource(int argc, const char **argv);
+	bool cmdDrawActionArea(int argc, const char **argv);
 
 	bool cmdToggleFlag(int argc, const char **argv);
 };

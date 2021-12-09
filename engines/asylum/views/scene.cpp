@@ -53,6 +53,7 @@ namespace Asylum {
 int g_debugActors;
 int g_debugObjects;
 int g_debugPolygons;
+int g_debugPolygonIndex;
 int g_debugSceneRects;
 int g_debugScrolling;
 
@@ -74,6 +75,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	g_debugActors = 0;
 	g_debugObjects  = 0;
 	g_debugPolygons  = 0;
+	g_debugPolygonIndex = 0;
 	g_debugSceneRects = 0;
 	g_debugScrolling = 0;
 }
@@ -2450,6 +2452,8 @@ bool Scene::drawScene() {
 		debugShowActors();
 	if (g_debugPolygons)
 		debugShowPolygons();
+	if (g_debugPolygonIndex)
+		debugHighlightPolygon(g_debugPolygonIndex);
 	if (g_debugObjects)
 		debugShowObjects();
 	if (g_debugSceneRects)

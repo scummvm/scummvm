@@ -52,6 +52,7 @@ extern int g_debugActors;
 extern int g_debugDrawRects;
 extern int g_debugObjects;
 extern int g_debugPolygons;
+extern int g_debugPolygonIndex;
 extern int g_debugSceneRects;
 extern int g_debugScrolling;
 
@@ -289,6 +290,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine), _insertDisc(engine), _resV
 
 	registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
 	registerCmd("view",           WRAP_METHOD(Console, cmdViewResource));
+	registerCmd("draw_area",      WRAP_METHOD(Console, cmdDrawActionArea));
 
 	registerCmd("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
@@ -352,6 +354,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf("\n");
 	debugPrintf(" palette     - set the screen palette\n");
 	debugPrintf(" view        - view game resources\n");
+	debugPrintf(" draw_area   - draw action area\n");
 	debugPrintf("\n");
 	debugPrintf(" toggle_flag - toggle a flag\n");
 	debugPrintf("\n");
@@ -1087,6 +1090,30 @@ bool Console::cmdViewResource(int argc, const char **argv) {
 		debugPrintf("[Error] Could not load resource 0x%X\n", resourceId);
 		return true;
 	}
+}
+
+bool Console::cmdDrawActionArea(int argc, const char **argv) {
+	if (argc == 1) {
+		if (g_debugPolygonIndex) {
+			g_debugPolygonIndex = 0;
+			return false;
+		} else {
+			debugPrintf("Syntax: %s (<area_index>)\n", argv[0]);
+			return true;
+		}
+	}
+
+	int areaIndex = getWorld()->getActionAreaIndexById(atoi(argv[1]));
+	if (areaIndex == -1) {
+		debugPrintf("No such area\n");
+		return true;
+	}
+
+	ActionArea *area = getWorld()->actions[areaIndex];
+	if (area->polygonIndex)
+		g_debugPolygonIndex = area->polygonIndex;
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
