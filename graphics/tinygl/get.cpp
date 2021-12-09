@@ -62,6 +62,12 @@ void tglGetIntegerv(int pname, int *params) {
 	case TGL_ALPHA_TEST:
 		*params = c->alpha_test_enabled;
 		break;
+	case TGL_DEPTH_TEST:
+		*params = c->depth_test_enabled;
+		break;
+	case TGL_STENCIL_TEST:
+		*params = c->stencil_test_enabled;
+		break;
 	default:
 		error("tglGet: option not implemented");
 		break;

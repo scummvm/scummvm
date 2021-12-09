@@ -55,19 +55,18 @@ void GLContext::endSharedState() {
 	gl_free(s->texture_hash_table);
 }
 
-void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
+void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable) {
 	assert(gl_ctx == nullptr);
-	GLContext *c = new GLContext();
-	gl_ctx = c;
-	c->init(screenW, screenH, pixelFormat, textureSize, dirtyRectsEnable);
+	gl_ctx = new GLContext();
+	gl_ctx->init(screenW, screenH, pixelFormat, textureSize, enableStencilBuffer, dirtyRectsEnable);
 }
 
-void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable) {
+void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable) {
 	GLViewport *v;
 
 	_enableDirtyRectangles = dirtyRectsEnable;
 
-	fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat);
+	fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat, enableStencilBuffer);
 	renderRect = Common::Rect(0, 0, screenW, screenH);
 
 	if ((textureSize & (textureSize - 1)))
@@ -169,20 +168,37 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	// clear
 	clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 	clear_depth = 1.0f;
+	clear_stencil = 0;
 
 	// selection
 	render_mode = TGL_RENDER;
-	select_buffer = NULL;
+	select_buffer = nullptr;
 	name_stack_size = 0;
 
 	// blending
 	blending_enabled = false;
+	source_blending_factor = TGL_ONE;
+	destination_blending_factor = TGL_ZERO;
 
 	// alpha test
 	alpha_test_enabled = false;
+	alpha_test_func = TGL_ALWAYS;
+	alpha_test_ref_val = 0;
 
 	// depth test
-	depth_test = false;
+	depth_test_enabled = false;
+	depth_func = TGL_LESS;
+	depth_write_mask = true;
+
+	// stencil
+	stencil_test_enabled = false;
+	stencil_test_func = TGL_ALWAYS;
+	stencil_ref_val = 0;
+	stencil_mask = 0xff;
+	stencil_write_mask = 0xff;
+	stencil_sfail = TGL_KEEP;
+	stencil_dpfail = TGL_KEEP;
+	stencil_dppass = TGL_KEEP;
 
 	// matrix
 	matrix_mode = 0;
@@ -203,12 +219,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
-	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-
-	tglAlphaFunc(TGL_ALWAYS, 0.f);
-
-	tglDepthFunc(TGL_LESS);
-
 	matrix_model_projection_updated = 1;
 
 	// opengl 1.1 arrays
@@ -223,10 +233,10 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	shadow_mode = 0;
 
 	// clear the resize callback function pointer
-	gl_resize_viewport = NULL;
+	gl_resize_viewport = nullptr;
 
 	// specular buffer
-	specbuf_first = NULL;
+	specbuf_first = nullptr;
 	specbuf_used_counter = 0;
 	specbuf_num_buffers = 0;
 
@@ -237,7 +247,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	_currentAllocatorIndex = 0;
 	_drawCallAllocator[0].initialize(kDrawCallMemory);
 	_drawCallAllocator[1].initialize(kDrawCallMemory);
-	_enableDirtyRectangles = true;
 	_debugRectsEnabled = false;
 
 	TinyGL::Internal::tglBlitResetScissorRect();

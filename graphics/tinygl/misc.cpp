@@ -86,10 +86,13 @@ void GLContext::glopEnableDisable(GLParam *p) {
 		normalize_enabled = v;
 		break;
 	case TGL_DEPTH_TEST:
-		depth_test = v;
+		depth_test_enabled = v;
 		break;
 	case TGL_ALPHA_TEST:
 		alpha_test_enabled = v;
+		break;
+	case TGL_STENCIL_TEST:
+		stencil_test_enabled = v;
 		break;
 	case TGL_BLEND:
 		blending_enabled = v;
@@ -148,6 +151,27 @@ void GLContext::glopDepthFunc(GLParam *p) {
 	depth_func = p[1].i;
 }
 
+void GLContext::glopStencilFunc(GLParam *p) {
+	TGLenum func = p[1].i;
+	TGLint ref = p[2].i;
+	TGLuint mask = p[3].i;
+	if (func < TGL_NEVER || func > TGL_ALWAYS)
+		return;
+	if (ref < 0)
+		ref = 0;
+	else if (ref > 255)
+		ref = 255;
+	stencil_test_func = func;
+	stencil_ref_val = ref;
+	stencil_mask = mask;
+}
+
+void GLContext::glopStencilOp(GLParam *p) {
+	stencil_sfail = p[1].i;
+	stencil_dpfail = p[2].i;
+	stencil_dppass = p[3].i;
+}
+
 void GLContext::glopShadeModel(GLParam *p) {
 	int code = p[1].i;
 	current_shade_model = code;
@@ -197,7 +221,11 @@ void GLContext::glopColorMask(GLParam *p) {
 }
 
 void GLContext::glopDepthMask(GLParam *p) {
-	depth_write = p[1].i;
+	depth_write_mask = p[1].i;
+}
+
+void GLContext::glopStencilMask(TinyGL::GLParam *p) {
+	stencil_write_mask = p[1].i;
 }
 
 } // end of namespace TinyGL

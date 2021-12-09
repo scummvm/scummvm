@@ -423,21 +423,36 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() const {
 	RasterizationState state;
 	GLContext *c = gl_get_context();
-	state.alphaTest = c->alpha_test_enabled;
+	state.enableBlending = c->blending_enabled;
 	state.sfactor = c->source_blending_factor;
 	state.dfactor = c->destination_blending_factor;
-	state.enableBlending = c->blending_enabled;
+	state.alphaTestEnabled = c->alpha_test_enabled;
 	state.alphaFunc = c->alpha_test_func;
 	state.alphaRefValue = c->alpha_test_ref_val;
+	state.depthTestEnabled = c->depth_test_enabled;
+	state.depthFunction = c->depth_func;
+	state.depthWriteMask = c->depth_write_mask;
+	state.stencilTestEnabled = c->stencil_test_enabled;
+	state.stencilTestFunc = c->stencil_test_func;
+	state.stencilValue = c->stencil_ref_val;
+	state.stencilMask = c->stencil_mask;
+	state.stencilWriteMask = c->stencil_write_mask;
+	state.stencilSfail = c->stencil_sfail;
+	state.stencilDpfail = c->stencil_dpfail;
+	state.stencilDppass = c->stencil_dppass;
+	state.offsetStates = c->offset_states;
+	state.offsetFactor = c->offset_factor;
+	state.offsetUnits = c->offset_units;
+	state.shadowMaskBuf = c->shadow_mask_buf;
+	state.shadowColorR = c->shadow_color_r;
+	state.shadowColorG = c->shadow_color_g;
+	state.shadowColorB = c->shadow_color_b;
+
 	state.cullFaceEnabled = c->cull_face_enabled;
 	state.beginType = c->begin_type;
 	state.colorMask = c->color_mask;
 	state.currentFrontFace = c->current_front_face;
 	state.currentShadeModel = c->current_shade_model;
-	state.depthTest = c->depth_test;
-	state.offsetStates = c->offset_states;
-	state.offsetFactor = c->offset_factor;
-	state.offsetUnits = c->offset_units;
 	state.polygonModeBack = c->polygon_mode_back;
 	state.polygonModeFront = c->polygon_mode_front;
 	state.shadowMode = c->shadow_mode;
@@ -445,14 +460,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.texture = c->current_texture;
 	state.wrapS = c->texture_wrap_s;
 	state.wrapT = c->texture_wrap_t;
-	state.shadowMaskBuf = c->shadow_mask_buf;
-	state.shadowColorR = c->shadow_color_r;
-	state.shadowColorG = c->shadow_color_g;
-	state.shadowColorB = c->shadow_color_b;
-	state.depthFunction = c->depth_func;
-	state.depthWrite = c->depth_write;
 	state.lightingEnabled = c->lighting_enabled;
-	state.depthTestEnabled = c->depth_test;
 	if (c->current_texture != nullptr)
 		state.textureVersion = c->current_texture->versionNumber;
 
@@ -466,11 +474,15 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	GLContext *c = gl_get_context();
 	c->fb->enableBlending(state.enableBlending);
 	c->fb->setBlendingFactors(state.sfactor, state.dfactor);
-	c->fb->enableAlphaTest(state.alphaTest);
+	c->fb->enableAlphaTest(state.alphaTestEnabled);
 	c->fb->setAlphaTestFunc(state.alphaFunc, state.alphaRefValue);
 	c->fb->setDepthFunc(state.depthFunction);
-	c->fb->enableDepthWrite(state.depthWrite);
+	c->fb->enableDepthWrite(state.depthWriteMask);
 	c->fb->enableDepthTest(state.depthTestEnabled);
+	c->fb->enableStencilTest(state.stencilTestEnabled);
+	c->fb->setStencilWriteMask(state.stencilWriteMask);
+	c->fb->setStencilTestFunc(state.stencilTestFunc, state.stencilValue, state.stencilMask);
+	c->fb->setStencilOp(state.stencilSfail, state.stencilDpfail, state.stencilDppass);
 	c->fb->setOffsetStates(state.offsetStates);
 	c->fb->setOffsetFactor(state.offsetFactor);
 	c->fb->setOffsetUnits(state.offsetUnits);
@@ -480,12 +492,20 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->blending_enabled = state.enableBlending;
 	c->source_blending_factor = state.sfactor;
 	c->destination_blending_factor = state.dfactor;
-	c->alpha_test_enabled = state.alphaTest;
+	c->alpha_test_enabled = state.alphaTestEnabled;
 	c->alpha_test_func = state.alphaFunc;
 	c->alpha_test_ref_val = state.alphaRefValue;
-	c->depth_test = state.depthTest;
+	c->depth_test_enabled = state.depthTestEnabled;
 	c->depth_func = state.depthFunction;
-	c->depth_write = state.depthWrite;
+	c->depth_write_mask = state.depthWriteMask;
+	c->stencil_test_enabled = state.stencilTestEnabled;
+	c->stencil_test_func = state.stencilTestFunc;
+	c->stencil_ref_val = state.stencilValue;
+	c->stencil_mask = state.stencilMask;
+	c->stencil_write_mask = state.stencilWriteMask;
+	c->stencil_sfail = state.stencilSfail;
+	c->stencil_dpfail = state.stencilDpfail;
+	c->stencil_dppass = state.stencilDppass;
 	c->offset_states = state.offsetStates;
 	c->offset_factor = state.offsetFactor;
 	c->offset_units = state.offsetUnits;
@@ -591,7 +611,7 @@ BlittingDrawCall::BlittingState BlittingDrawCall::captureState() const {
 	state.alphaTest = c->alpha_test_enabled;
 	state.alphaFunc = c->alpha_test_func;
 	state.alphaRefValue = c->alpha_test_ref_val;
-	state.depthTestEnabled = c->depth_test;
+	state.depthTestEnabled = c->depth_test_enabled;
 	return state;
 }
 
@@ -609,7 +629,7 @@ void BlittingDrawCall::applyState(const BlittingState &state) const {
 	c->alpha_test_enabled = state.alphaTest;
 	c->alpha_test_func = state.alphaFunc;
 	c->alpha_test_ref_val = state.alphaRefValue;
-	c->depth_test = state.depthTestEnabled;
+	c->depth_test_enabled = state.depthTestEnabled;
 }
 
 void BlittingDrawCall::computeDirtyRegion() {
@@ -643,16 +663,21 @@ void BlittingDrawCall::computeDirtyRegion() {
 }
 
 bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
-	return	_mode == other._mode &&
-			_image == other._image &&
-			_transform == other._transform &&
-			_blitState == other._blitState &&
-			_imageVersion == tglGetBlitImageVersion(other._image);
+	return
+		_mode == other._mode &&
+		_image == other._image &&
+		_transform == other._transform &&
+		_blitState == other._blitState &&
+		_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
 
-ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue)
-	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
+ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue,
+	                                 bool clearColorBuffer, int rValue, int gValue, int bValue,
+	                                 bool clearStencilBuffer, int stencilValue)
+	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue),
+	  _rValue(rValue), _gValue(gValue), _bValue(bValue), _clearStencilBuffer(clearStencilBuffer),
+	  _stencilValue(stencilValue), DrawCall(DrawCall_Clear) {
 	TinyGL::GLContext *c = gl_get_context();
 	if (c->_enableDirtyRectangles) {
 		_dirtyRegion = c->renderRect;
@@ -661,58 +686,71 @@ ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool cle
 
 void ClearBufferDrawCall::execute(bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
-	c->fb->clear(_clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
+	c->fb->clear(_clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue, _clearStencilBuffer, _stencilValue);
 }
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = gl_get_context();
 	Common::Rect clearRect = clippingRectangle.findIntersectingRect(getDirtyRegion());
-	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
+	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(),
+	                   _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue,
+	                   _clearStencilBuffer, _stencilValue);
 }
 
 bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
-	return	_clearZBuffer == other._clearZBuffer &&
-			_clearColorBuffer == other._clearColorBuffer &&
-			_rValue == other._rValue &&
-			_gValue == other._gValue &&
-			_bValue == other._bValue &&
-			_zValue == other._zValue;
+	return
+		_clearZBuffer == other._clearZBuffer &&
+		_clearColorBuffer == other._clearColorBuffer &&
+		_clearStencilBuffer == other._clearStencilBuffer &&
+		_rValue == other._rValue &&
+		_gValue == other._gValue &&
+		_bValue == other._bValue &&
+		_zValue == other._zValue &&
+		_stencilValue == other._stencilValue;
 }
 
 
 bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationState &other) const {
-	return	beginType == other.beginType &&
-			currentFrontFace == other.currentFrontFace &&
-			cullFaceEnabled == other.cullFaceEnabled &&
-			colorMask == other.colorMask &&
-			depthTest == other.depthTest &&
-			offsetStates == other.offsetStates &&
-			offsetFactor == other.offsetFactor &&
-			offsetUnits == other.offsetUnits &&
-			depthFunction == other.depthFunction &&
-			depthWrite == other.depthWrite &&
-			shadowMode == other.shadowMode &&
-			texture2DEnabled == other.texture2DEnabled &&
-			currentShadeModel == other.currentShadeModel &&
-			polygonModeBack == other.polygonModeBack &&
-			polygonModeFront == other.polygonModeFront &&
-			lightingEnabled == other.lightingEnabled &&
-			enableBlending == other.enableBlending &&
-			sfactor == other.sfactor &&
-			dfactor == other.dfactor &&
-			alphaTest == other.alphaTest &&
-			alphaFunc == other.alphaFunc &&
-			alphaRefValue == other.alphaRefValue &&
-			depthTestEnabled == other.depthTestEnabled &&
-			texture == other.texture &&
-			textureVersion == texture->versionNumber &&
-			shadowMaskBuf == other.shadowMaskBuf &&
-			viewportTranslation[0] == other.viewportTranslation[0] &&
-			viewportTranslation[1] == other.viewportTranslation[1] &&
-			viewportTranslation[2] == other.viewportTranslation[2] &&
-			viewportScaling[0] == other.viewportScaling[0] &&
-			viewportScaling[1] == other.viewportScaling[1] &&
-			viewportScaling[2] == other.viewportScaling[2];
+	return
+		enableBlending == other.enableBlending &&
+		sfactor == other.sfactor &&
+		dfactor == other.dfactor &&
+		alphaTestEnabled == other.alphaTestEnabled &&
+		alphaFunc == other.alphaFunc &&
+		alphaRefValue == other.alphaRefValue &&
+		depthTestEnabled == other.depthTestEnabled &&
+		depthFunction == other.depthFunction &&
+		depthWriteMask == other.depthWriteMask &&
+		stencilTestEnabled == other.stencilTestEnabled &&
+		stencilTestFunc == other.stencilTestFunc &&
+		stencilValue == other.stencilValue &&
+		stencilMask == other.stencilMask &&
+		stencilWriteMask == other.stencilWriteMask &&
+		stencilSfail == other.stencilSfail &&
+		stencilDpfail == other.stencilDpfail &&
+		stencilDppass == other.stencilDppass &&
+		offsetStates == other.offsetStates &&
+		offsetFactor == other.offsetFactor &&
+		offsetUnits == other.offsetUnits &&
+		shadowMaskBuf == other.shadowMaskBuf &&
+		lightingEnabled == other.lightingEnabled &&
+		cullFaceEnabled == other.cullFaceEnabled &&
+		beginType == other.beginType &&
+		colorMask == other.colorMask &&
+		currentFrontFace == other.currentFrontFace &&
+		currentShadeModel == other.currentShadeModel &&
+		polygonModeBack == other.polygonModeBack &&
+		polygonModeFront == other.polygonModeFront &&
+		shadowMode == other.shadowMode &&
+		texture2DEnabled == other.texture2DEnabled &&
+		texture == other.texture &&
+		textureVersion == texture->versionNumber &&
+		viewportTranslation[0] == other.viewportTranslation[0] &&
+		viewportTranslation[1] == other.viewportTranslation[1] &&
+		viewportTranslation[2] == other.viewportTranslation[2] &&
+		viewportScaling[0] == other.viewportScaling[0] &&
+		viewportScaling[1] == other.viewportScaling[1] &&
+		viewportScaling[2] == other.viewportScaling[2];
 }
 
 void *Internal::allocateFrame(int size) {

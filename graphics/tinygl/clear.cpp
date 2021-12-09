@@ -39,14 +39,21 @@ void GLContext::glopClearDepth(GLParam *p) {
 	clear_depth = p[1].f;
 }
 
+void GLContext::glopClearStencil(GLParam *p) {
+	clear_stencil = p[1].i & 0xFF;
+}
+
 void GLContext::glopClear(GLParam *p) {
 	int mask = p[1].i;
 	int z = (int)(clear_depth * ((1 << ZB_Z_BITS) - 1));
 	int r = (int)(clear_color.X * 255);
 	int g = (int)(clear_color.Y * 255);
 	int b = (int)(clear_color.Z * 255);
+	int s = (int)(clear_stencil);
 
-	issueDrawCall(new ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
+	issueDrawCall(new ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z,
+										  mask & TGL_COLOR_BUFFER_BIT, r, g, b,
+										  mask & TGL_STENCIL_BUFFER_BIT, s));
 }
 
 } // end of namespace TinyGL

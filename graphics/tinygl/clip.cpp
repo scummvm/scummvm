@@ -141,7 +141,7 @@ void GLContext::gl_draw_line(GLVertex *p1, GLVertex *p2) {
 		if (render_mode == TGL_SELECT) {
 			gl_add_select1(p1->zp.z, p2->zp.z, p2->zp.z);
 		} else {
-			if (depth_test)
+			if (depth_test_enabled)
 				fb->fillLineZ(&p1->zp, &p2->zp);
 			else
 				fb->fillLine(&p1->zp, &p2->zp);
@@ -171,7 +171,7 @@ void GLContext::gl_draw_line(GLVertex *p1, GLVertex *p2) {
 			gl_transform_to_viewport(&q1);
 			gl_transform_to_viewport(&q2);
 
-			if (depth_test)
+			if (depth_test_enabled)
 				fb->fillLineZ(&q1.zp, &q2.zp);
 			else
 				fb->fillLine(&q1.zp, &q2.zp);
@@ -425,7 +425,7 @@ void GLContext::gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, 
 // Render a clipped triangle in line mode
 
 void GLContext::gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
-	if (c->depth_test) {
+	if (c->depth_test_enabled) {
 		if (p0->edge_flag)
 			c->fb->fillLineZ(&p0->zp, &p1->zp);
 		if (p1->edge_flag)

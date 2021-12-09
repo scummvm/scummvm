@@ -23,6 +23,7 @@
 #ifndef GRAPHICS_TINYGL_ZRECT_H
 #define GRAPHICS_TINYGL_ZRECT_H
 
+#include "common/types.h"
 #include "common/rect.h"
 #include "common/array.h"
 
@@ -65,7 +66,7 @@ private:
 
 class ClearBufferDrawCall : public DrawCall {
 public:
-	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue);
+	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue, bool clearStencilBuffer, int stencilValue);
 	virtual ~ClearBufferDrawCall() { }
 	bool operator==(const ClearBufferDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
@@ -77,8 +78,8 @@ public:
 
 	void operator delete(void *p) { }
 private:
-	bool _clearZBuffer, _clearColorBuffer;
-	int _rValue, _gValue, _bValue, _zValue;
+	bool _clearZBuffer, _clearColorBuffer, _clearStencilBuffer;
+	int _rValue, _gValue, _bValue, _zValue, _stencilValue;
 };
 
 // Encapsulate a rasterization call: it might execute either a triangle or line rasterization.
@@ -107,32 +108,41 @@ private:
 		int currentFrontFace;
 		int cullFaceEnabled;
 		int colorMask;
-		int depthTest;
+		bool depthTestEnabled;
 		int depthFunction;
-		int depthWrite;
+		int depthWriteMask;
 		int shadowMode;
 		int shadowColorR;
 		int shadowColorG;
 		int shadowColorB;
-		int texture2DEnabled;
+		bool texture2DEnabled;
 		int currentShadeModel;
 		int polygonModeBack;
 		int polygonModeFront;
 		int lightingEnabled;
 		bool enableBlending;
-		int sfactor, dfactor;
+		int sfactor;
+		int dfactor;
 		int textureVersion;
-		int depthTestEnabled;
 		int offsetStates;
 		float offsetFactor;
 		float offsetUnits;
 		float viewportTranslation[3];
 		float viewportScaling[3];
-		bool alphaTest;
-		int alphaFunc, alphaRefValue;
+		bool alphaTestEnabled;
+		int alphaFunc;
+		int alphaRefValue;
+		bool stencilTestEnabled;
+		int stencilTestFunc;
+		int stencilValue;
+		uint stencilMask;
+		uint stencilWriteMask;
+		int stencilSfail;
+		int stencilDpfail;
+		int stencilDppass;
 		TinyGL::GLTexture *texture;
-		unsigned int wrapS, wrapT;
-		unsigned char *shadowMaskBuf;
+		uint wrapS, wrapT;
+		byte *shadowMaskBuf;
 
 		bool operator==(const RasterizationState &other) const;
 	};
@@ -181,13 +191,14 @@ private:
 		int depthTestEnabled;
 
 		bool operator==(const BlittingState &other) const {
-			return	enableBlending == other.enableBlending &&
-					sfactor == other.sfactor &&
-					dfactor == other.dfactor &&
-					alphaTest == other.alphaTest &&
-					alphaFunc == other.alphaFunc &&
-					alphaRefValue == other.alphaRefValue &&
-					depthTestEnabled == other.depthTestEnabled;
+			return
+				enableBlending == other.enableBlending &&
+				sfactor == other.sfactor &&
+				dfactor == other.dfactor &&
+				alphaTest == other.alphaTest &&
+				alphaFunc == other.alphaFunc &&
+				alphaRefValue == other.alphaRefValue &&
+				depthTestEnabled == other.depthTestEnabled;
 		}
 	};
 

@@ -328,6 +328,8 @@ enum {
 	TGL_REPLACE                     = 0x1E01,
 	TGL_INCR                        = 0x1E02,
 	TGL_DECR                        = 0x1E03,
+	TGL_INCR_WRAP                   = 0x8507,
+	TGL_DECR_WRAP                   = 0x8508,
 
 	// Buffers, Pixel Drawing/Reading
 	TGL_NONE                        = 0,
@@ -790,6 +792,12 @@ void tglCallList(unsigned int list);
 void tglClear(int mask);
 void tglClearColor(float r, float g, float b, float a);
 void tglClearDepth(double depth);
+void tglClearStencil(TGLint s);
+
+// stencil buffer
+void tglStencilFunc(TGLenum func, TGLint ref, TGLuint mask);
+void tglStencilOp(TGLenum sfail, TGLenum dpfail, TGLenum dppass);
+void tglStencilMask(TGLuint mask);
 
 // selection
 int tglRenderMode(int mode);

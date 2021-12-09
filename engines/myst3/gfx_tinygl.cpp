@@ -62,7 +62,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, false, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

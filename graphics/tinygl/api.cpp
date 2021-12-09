@@ -199,6 +199,15 @@ void tglDepthMask(int enableWrite) {
 	c->gl_add_op(p);
 }
 
+void tglStencilMask(TGLuint mask) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_StencilMask;
+	p[1].i = mask;
+
+	c->gl_add_op(p);
+}
+
 void tglBlendFunc(TGLenum sfactor, TGLenum dfactor) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[3];
@@ -226,6 +235,28 @@ void tglDepthFunc(TGLenum func) {
 	TinyGL::GLParam p[2];
 	p[0].op = TinyGL::OP_DepthFunc;
 	p[1].i = func;
+
+	c->gl_add_op(p);
+}
+
+void tglStencilFunc(TGLenum func, TGLint ref, TGLuint mask) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[4];
+	p[0].op = TinyGL::OP_StencilFunc;
+	p[1].i = func;
+	p[2].i = ref;
+	p[3].i = mask;
+
+	c->gl_add_op(p);
+}
+
+void tglStencilOp(TGLenum sfail, TGLenum dpfail, TGLenum dppass) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[4];
+	p[0].op = TinyGL::OP_StencilOp;
+	p[1].i = sfail;
+	p[2].i = dpfail;
+	p[3].i = dppass;
 
 	c->gl_add_op(p);
 }
@@ -565,6 +596,16 @@ void tglClearDepth(double depth) {
 
 	p[0].op = TinyGL::OP_ClearDepth;
 	p[1].f = (float)depth;
+
+	c->gl_add_op(p);
+}
+
+void tglClearStencil(TGLint s) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_ClearStencil;
+	p[1].i = s;
 
 	c->gl_add_op(p);
 }

@@ -80,17 +80,20 @@ static void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format) {
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format, bool enableStencilBuffer) {
 	_pbufWidth = width;
 	_pbufHeight = height;
 	_pbufFormat = format;
 	_pbufBpp = _pbufFormat.bytesPerPixel;
 	_pbufPitch = (_pbufWidth * _pbufBpp + 3) & ~3;
 
-	_offscreenBuffer.zbuf = _zbuf = (uint *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(uint));
-
 	_pbuf.set(_pbufFormat, new byte[_pbufHeight * _pbufPitch]);
+	_zbuf = (uint *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(uint));
+	if (enableStencilBuffer)
+		_sbuf = (byte *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(byte));
+
 	_offscreenBuffer.pbuf = _pbuf.getRawBuffer();
+	_offscreenBuffer.zbuf = _zbuf;
 
 	_currentTexture = nullptr;
 }
@@ -98,12 +101,14 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 FrameBuffer::~FrameBuffer() {
 	_pbuf.free();
 	gl_free(_zbuf);
+	if (_sbuf)
+		gl_free(_sbuf);
 }
 
 Buffer *FrameBuffer::genOffscreenBuffer() {
 	Buffer *buf = (Buffer *)gl_malloc(sizeof(Buffer));
-	buf->pbuf = (byte *)gl_malloc(_pbufHeight * _pbufPitch);
-	buf->zbuf = (unsigned int *)gl_malloc(_pbufWidth * _pbufHeight * sizeof(uint));
+	buf->pbuf = (byte *)gl_zalloc(_pbufHeight * _pbufPitch);
+	buf->zbuf = (uint *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(uint));
 	return buf;
 }
 
@@ -113,7 +118,8 @@ void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 	gl_free(buf);
 }
 
-void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) {
+void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
+                        bool clearStencil, int stencilValue) {
 	if (clearZ) {
 		const uint8 *zc = (const uint8 *)&z;
 		unsigned int i;
@@ -149,9 +155,13 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b) 
 			}
 		}
 	}
+	if (_sbuf && clearStencil) {
+		memset(_sbuf, stencilValue, _pbufWidth * _pbufHeight);
+	}
 }
 
-void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int clearColor, int r, int g, int b) {
+void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
+                              bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue) {
 	if (clearZ) {
 		int height = h;
 		unsigned int *zbuf = _zbuf + (y * _pbufWidth);
@@ -200,6 +210,13 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, int clearZ, int z, int
 				}
 				pp += _pbufPitch;
 			}
+		}
+	}
+	if (_sbuf && clearStencil) {
+		byte *pp = _sbuf + y * _pbufWidth + x;
+		for (int i = y; i < y + h; i++) {
+			memset(pp, stencilValue, w);
+			pp += _pbufWidth;
 		}
 	}
 }

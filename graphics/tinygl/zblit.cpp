@@ -200,7 +200,7 @@ public:
 		int fbWidth = c->fb->getPixelBufferWidth();
 
 		Graphics::PixelBuffer srcBuf(_surface.format, (byte *)const_cast<void *>(_surface.getPixels())); // Blit image buffer
-		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)c->fb->getZBuffer()); // TinyGL z buffer
+		Graphics::PixelBuffer dstBuf(_surface.format, (byte *)const_cast<uint *>(c->fb->getZBuffer())); // TinyGL z buffer
 
 		srcBuf.shiftBy(srcY * _surface.w);
 

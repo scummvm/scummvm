@@ -256,7 +256,7 @@ void TinyGLActorRenderer::render(const Math::Vector3d &position, float direction
 
 	if (drawShadow) {
 		tglEnable(TGL_BLEND);
-		//tglEnable(TGL_STENCIL_TEST);
+		tglEnable(TGL_STENCIL_TEST);
 		tglDisable(TGL_TEXTURE_2D);
 
 		tglColor4f(0.0f, 0.0f, 0.0f, 0.5f);
@@ -273,7 +273,7 @@ void TinyGLActorRenderer::render(const Math::Vector3d &position, float direction
 
 		tglEnable(TGL_TEXTURE_2D);
 		tglDisable(TGL_BLEND);
-		//tglDisable(TGL_STENCIL_TEST);
+		tglDisable(TGL_STENCIL_TEST);
 	}
 }
 

@@ -359,6 +359,7 @@ struct GLContext {
 	// clear
 	float clear_depth;
 	Vector4 clear_color;
+	int clear_stencil;
 
 	// current vertex state
 	Vector4 current_color;
@@ -410,9 +411,19 @@ struct GLContext {
 	int (*gl_resize_viewport)(int *xsize, int *ysize);
 
 	// depth test
-	bool depth_test;
+	bool depth_test_enabled;
 	int depth_func;
-	bool depth_write;
+	bool depth_write_mask;
+
+	// stencil
+	bool stencil_test_enabled;
+	int stencil_test_func;
+	int stencil_ref_val;
+	uint stencil_mask;
+	uint stencil_write_mask;
+	int stencil_sfail;
+	int stencil_dpfail;
+	int stencil_dppass;
 
 	int color_mask;
 
@@ -479,7 +490,7 @@ public:
 	void initSharedState();
 	void endSharedState();
 
-	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
+	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable = true);
 	void deinit();
 };
 

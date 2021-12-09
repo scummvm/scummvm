@@ -51,7 +51,7 @@ TinyGLDriver::~TinyGLDriver() {
 void TinyGLDriver::init() {
 	computeScreenViewport();
 
-	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -89,7 +89,7 @@ void TinyGLDriver::setViewport(const Common::Rect &rect) {
 }
 
 void TinyGLDriver::clearScreen() {
-	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT | TGL_STENCIL_BUFFER_BIT);
 }
 
 void TinyGLDriver::flipBuffer() {
@@ -159,8 +159,8 @@ void TinyGLDriver::set3DMode() {
 
 	// Stencil test are only used in rendering shadows
 	// They are manually enabled and disabled there
-	//tglStencilFunc(TGL_EQUAL, 0, 0xFF);
-	//tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_INCR);
+	tglStencilFunc(TGL_EQUAL, 0, 0xFF);
+	tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_INCR);
 }
 
 bool TinyGLDriver::computeLightsEnabled() {

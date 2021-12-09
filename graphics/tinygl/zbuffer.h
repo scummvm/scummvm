@@ -78,7 +78,7 @@ static const int DRAW_SHADOW = 4;
 
 struct Buffer {
 	byte *pbuf;
-	unsigned int *zbuf;
+	uint *zbuf;
 	bool used;
 };
 
@@ -103,7 +103,7 @@ struct ZBufferPoint {
 };
 
 struct FrameBuffer {
-	FrameBuffer(int xsize, int ysize, const Graphics::PixelFormat &format);
+	FrameBuffer(int width, int height, const Graphics::PixelFormat &format, bool enableStencilBuffer);
 	~FrameBuffer();
 
 	Graphics::PixelFormat getPixelFormat() {
@@ -212,6 +212,72 @@ private:
 		return false;
 	}
 
+	FORCEINLINE bool stencilTest(byte sSrc) {
+		switch (_stencilTestFunc) {
+		case TGL_NEVER:
+			break;
+		case TGL_LESS:
+			if ((_stencilRefVal & _stencilMask) < (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_LEQUAL:
+			if ((_stencilRefVal & _stencilMask) <= (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_GREATER:
+			if ((_stencilRefVal & _stencilMask) > (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_GEQUAL:
+			if ((_stencilRefVal & _stencilMask) >= (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_EQUAL:
+			if ((_stencilRefVal & _stencilMask) == (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_NOTEQUAL:
+			if ((_stencilRefVal & _stencilMask) != (sSrc & _stencilMask))
+				return true;
+			break;
+		case TGL_ALWAYS:
+			return true;
+		}
+		return false;
+	}
+
+	FORCEINLINE void stencilOp(bool stencilTestResult, bool depthTestResult, byte *sDst) {
+		int op = !stencilTestResult ? _stencilSfail : !depthTestResult ? _stencilDpfail : _stencilDppass;
+		byte value = *sDst;
+		switch (op) {
+		case TGL_KEEP:
+			return;
+		case TGL_ZERO:
+			value = 0;
+			break;
+		case TGL_REPLACE:
+			value = _stencilRefVal;
+			break;
+		case TGL_INCR:
+			if (value < 255)
+				value++;
+			break;
+		case TGL_INCR_WRAP:
+			value++;
+			break;
+		case TGL_DECR:
+			if (value > 0)
+				value--;
+			break;
+		case TGL_DECR_WRAP:
+			value--;
+			break;
+		case TGL_INVERT:
+			value = ~value;
+		}
+		*sDst = value & _stencilWriteMask;
+	}
+
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
 	FORCEINLINE void writePixel(int pixel, int value) {
 		writePixel<kEnableAlphaTest, kBlendingEnabled, false>(pixel, value, 0);
@@ -240,25 +306,25 @@ private:
 		}
 	}
 
-	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-	FORCEINLINE void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
+	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
+	FORCEINLINE void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a,
 								  int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a, int &dzdx);
 
-	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-	FORCEINLINE void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
+	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
+	FORCEINLINE void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a,
 									int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
 									int &dzdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx);
 
-	template <bool kDepthWrite, bool kEnableScissor>
-	FORCEINLINE void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, int &dzdx);
+	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled>
+	FORCEINLINE void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a, int x, int y, unsigned int &z, int &dzdx);
 
 	template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
 	FORCEINLINE void putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z,
 									unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
+	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
 	FORCEINLINE void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf, const Graphics::TexelBuffer *texture,
-													   unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, int _a,
+													   unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, byte *ps, int _a,
 													   int x, int y, unsigned int &z, int &t, int &s,
 													   unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
 													   int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx);
@@ -420,8 +486,10 @@ private:
 
 public:
 
-	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
-	void clearRegion(int x, int y, int w, int h,int clear_z, int z, int clear_color, int r, int g, int b);
+	void clear(int clear_z, int z, int clear_color, int r, int g, int b,
+	           bool clearStencil, int stencilValue);
+	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
+					 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
 	FORCEINLINE void setScissorRectangle(const Common::Rect &rect) {
 		_clipRectangle = rect;
@@ -472,6 +540,26 @@ public:
 		_depthWrite = enable;
 	}
 
+	FORCEINLINE void enableStencilTest(bool enable) {
+		_stencilTestEnabled = enable;
+	}
+
+	FORCEINLINE void setStencilWriteMask(uint stencilWriteMask) {
+		_stencilWriteMask = stencilWriteMask;
+	}
+
+	FORCEINLINE void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
+		_stencilTestFunc = stencilFunc;
+		_stencilRefVal = stencilValue;
+		_stencilMask = stencilMask;
+	}
+
+	FORCEINLINE void setStencilOp(int stencilSfail, int stencilDpfail, int stencilDppass) {
+		_stencilSfail = stencilSfail;
+		_stencilDpfail = stencilDpfail;
+		_stencilDppass = stencilDppass;
+	}
+	
 	FORCEINLINE void setOffsetStates(int offsetStates) {
 		_offsetStates = offsetStates;
 	}
@@ -508,7 +596,10 @@ private:
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled, bool kStencilEnabled>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor>
@@ -560,9 +651,6 @@ private:
 	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	Buffer _offscreenBuffer;
-
-	unsigned int *_zbuf;
-
 	Graphics::PixelBuffer _pbuf;
 	int _pbufWidth;
 	int _pbufHeight;
@@ -570,6 +658,10 @@ private:
 	Graphics::PixelFormat _pbufFormat;
 	int _pbufBpp;
 
+	uint *_zbuf;
+	byte *_sbuf;
+
+	bool _enableStencil;
 	int _textureSize;
 	int _textureSizeMask;
 
@@ -590,6 +682,14 @@ private:
 	int _alphaTestRefVal;
 	bool _depthTestEnabled;
 	bool _depthWrite;
+	bool _stencilTestEnabled;
+	int _stencilTestFunc;
+	int _stencilRefVal;
+	uint _stencilMask;
+	uint _stencilWriteMask;
+	int _stencilSfail;
+	int _stencilDpfail;
+	int _stencilDppass;
 	int _depthFunc;
 	int _offsetStates;
 	float _offsetFactor;
