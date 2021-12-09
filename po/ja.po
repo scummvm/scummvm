@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-06 10:28+0000\n"
+"POT-Creation-Date: 2021-12-09 10:20+0000\n"
 "PO-Revision-Date: 2021-12-07 00:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -67,7 +67,7 @@ msgstr "上へ"
 #: engines/engine.cpp:715 backends/dialogs/gtk/gtk-dialogs.cpp:64
 #: backends/events/default/default-events.cpp:195
 #: backends/events/default/default-events.cpp:219
-#: backends/platform/wii/options.cpp:48 engines/asylum/asylum.cpp:201
+#: backends/platform/wii/options.cpp:48 engines/asylum/asylum.cpp:202
 #: engines/cine/saveload.cpp:864 engines/drascula/saveload.cpp:49
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -4209,13 +4209,17 @@ msgstr "Grimwallへ切り替え"
 msgid "Switch to Olmec"
 msgstr "Olmecへ切り替え"
 
-#: engines/asylum/asylum.cpp:200
-#, c-format
+#. I18N: Warn user about loading potentially incompatible saved game
+#: engines/asylum/asylum.cpp:201
+#, fuzzy, c-format
+#| msgid ""
+#| "Attempt to load saved game from a previous version: Version %s / Build %d"
 msgid ""
-"Attempt to load saved game from a previous version: Version %s / Build %d"
+"WARNING: Attempt to load saved game from a previous version: Version %s / "
+"Build %d"
 msgstr "旧バージョンのセーブをロードしようとしています: Ver%s/ビルド%d"
 
-#: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:864
+#: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
 msgstr "とにかくロードする"
 
