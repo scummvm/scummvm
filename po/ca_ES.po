@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
 "PO-Revision-Date: 2021-12-09 13:11+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -3463,25 +3463,23 @@ msgstr "ScummVM no ha pogut llistar el directori especificat."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr ""
+msgstr "Índex de"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Aquesta és una pàgina d'inici del servidor web local."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 msgid "Open Files manager"
-msgstr ""
+msgstr "Obre el gestor de fitxers"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
-#, fuzzy
 msgid "The parent directory doesn't exist!"
-msgstr "El camí no existeix"
+msgstr "El directori superior no existeix!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "El camí no és un fitxer"
+msgstr "No es pot pujar a un fitxer!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
