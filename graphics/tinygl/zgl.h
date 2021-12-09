@@ -428,6 +428,7 @@ struct GLContext {
 	Common::List<DrawCall *> _previousFrameDrawCallsQueue;
 	int _currentAllocatorIndex;
 	LinearAllocator _drawCallAllocator[2];
+	bool _debugRectsEnabled;
 
 public:
 	// The glob* functions exposed to public, however they are only for internal use.

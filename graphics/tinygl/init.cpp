@@ -238,6 +238,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	_drawCallAllocator[0].initialize(kDrawCallMemory);
 	_drawCallAllocator[1].initialize(kDrawCallMemory);
 	_enableDirtyRectangles = true;
+	_debugRectsEnabled = false;
 
 	TinyGL::Internal::tglBlitResetScissorRect();
 }

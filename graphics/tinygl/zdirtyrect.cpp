@@ -35,7 +35,6 @@ void GLContext::issueDrawCall(DrawCall *drawCall) {
 	_drawCallsQueue.push_back(drawCall);
 }
 
-#if TGL_DIRTY_RECT_SHOW
 static void debugDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	GLContext *c = gl_get_context();
 	int fbWidth = c->fb->getPixelBufferWidth();
@@ -58,7 +57,6 @@ static void debugDrawRectangle(Common::Rect rect, int r, int g, int b) {
 		c->fb->writePixel(y * fbWidth + rect.right - 1, 255, r, g, b);
 	}
 }
-#endif
 
 struct DirtyRectangle {
 	Common::Rect rectangle;
@@ -92,7 +90,7 @@ void GLContext::disposeResources() {
 
 	} while (allDisposed == false);
 
-	TinyGL::Internal::tglCleanupImages();
+	Internal::tglCleanupImages();
 }
 
 void GLContext::disposeDrawCallLists() {
@@ -198,22 +196,23 @@ void GLContext::presentBufferDirtyRects() {
 				}
 			}
 		}
-#if TGL_DIRTY_RECT_SHOW
-		// Draw debug rectangles.
-		// Note: white rectangles are rectangle that contained other rectangles
-		// blue rectangles are rectangle merged from other rectangles
-		// red rectangles are original dirty rects
 
-		fb->enableBlending(false);
-		fb->enableAlphaTest(false);
+		if (_debugRectsEnabled) {
+			// Draw debug rectangles.
+			// Note: white rectangles are rectangle that contained other rectangles
+			// blue rectangles are rectangle merged from other rectangles
+			// red rectangles are original dirty rects
 
-		for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-			debugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+			fb->enableBlending(false);
+			fb->enableAlphaTest(false);
+
+			for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
+				debugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+			}
+
+			fb->enableBlending(blending_enabled);
+			fb->enableAlphaTest(alpha_test_enabled);
 		}
-
-		fb->enableBlending(blending_enabled);
-		fb->enableAlphaTest(alpha_test_enabled);
-#endif
 	}
 
 	// Dispose not necessary draw calls.
