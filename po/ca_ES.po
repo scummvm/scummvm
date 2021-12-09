@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-09 10:12+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"PO-Revision-Date: 2021-12-09 13:05+0000\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -2328,46 +2328,46 @@ msgstr "Error desconegut"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules color verd"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules color ambre"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 colors)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 colors)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:48
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh b/n"
 
 #: common/rendermode.cpp:76
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules color verd"
 
 #: common/rendermode.cpp:77
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules color ambre"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Diàriament"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Setmanalment"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Mensualment"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
@@ -2378,34 +2378,32 @@ msgstr "<Valor incorrecte>"
 #: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:190
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:195
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:201
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:207
 msgid "TB"
-msgstr ""
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Intèrpret per a nombrosos jocs d'aventura i jocs de rol"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2437,6 +2435,8 @@ msgstr ""
 #: engines/advancedDetector.cpp:242
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"S'ha detectat una còpia de joc il·legítima. No oferim cap suport en aquests "
+"casos"
 
 #: engines/dialogs.cpp:69
 msgid "~R~esume"
@@ -2524,12 +2524,12 @@ msgstr ""
 "la informació bàsica i les instruccions sobre com obtenir més assistència."
 
 #: engines/dialogs.cpp:213 engines/pegasus/pegasus.cpp:414
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"No s'ha pogut desar la partida (%s)! Consulteu el fitxer README per a la "
+"No s'ha pogut desar la partida (%s). Consulteu el fitxer README per a la "
 "informació bàsica i les instruccions sobre com obtenir més assistència."
 
 #: engines/dialogs.cpp:356
@@ -2572,12 +2572,10 @@ msgid "Could not apply filtering setting."
 msgstr "No s'ha pogut aplicar la configuració de filtratge."
 
 #: engines/engine.cpp:444
-#, fuzzy
 msgid "Error"
-msgstr "Cap error"
+msgstr "Error"
 
 #: engines/engine.cpp:522
-#, fuzzy
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2588,11 +2586,10 @@ msgstr ""
 "Sembla que esteu jugant a aquest joc\n"
 "directament des del CD. Això causa\n"
 "problemes i es recomana que copieu\n"
-"els fitxers de dades al disc dur.\n"
-"Consulteu el fitxer README per a més detalls."
+"els fitxers de dades al vostre disc dur.\n"
+"Consulteu la documentació (àudio CD) per a més detalls."
 
 #: engines/engine.cpp:546
-#, fuzzy
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2600,20 +2597,19 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Aquest joc té pistes d'àudio al disc. Aquestes\n"
-"pistes s'han d'extreure del disc utilitzant una\n"
-"eina d'extracció d'àudio de CD apropiada per\n"
-"tal de poder sentir la música del joc.\n"
-"Consulteu el fitxer README per a més detalls."
+"Aquest joc té pistes d'àudio en el CD. Aquestes\n"
+"pistes s'han d'extreure del CD utilitzant una\n"
+"eina d'extracció d'àudio de CD per tal de\n"
+"poder escoltar la música del joc.\n"
+"Consulteu la documentació (àudio CD) per a més detalls."
 
 #: engines/engine.cpp:573
 msgid "Overwrite"
-msgstr ""
+msgstr "Sobreescriu"
 
 #: engines/engine.cpp:574
-#, fuzzy
 msgid "Cancel autosave"
-msgstr "Partida sense nom"
+msgstr "Cancel·la el desament automàtic"
 
 #: engines/engine.cpp:576
 #, c-format
@@ -2622,40 +2618,42 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"ADVERTÈNCIA: La ranura de desament automàtic té una partida anomenada %S. "
+"Podeu moure el partida existent a una ranura nova, sobreescriure-la, o "
+"cancel·lar el desament automàtic (no es tornarà a preguntar fins que es "
+"reiniciï)"
 
 #: engines/engine.cpp:584
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ERROR: No s'ha pogut copiar la partida desada a una ranura nova"
 
 #: engines/engine.cpp:610 engines/metaengine.cpp:367 engines/savestate.cpp:99
 #: backends/platform/ios7/ios7_osys_main.cpp:249 engines/sky/metaengine.cpp:186
 #: engines/xeen/saves.cpp:290
-#, fuzzy
 msgid "Autosave"
-msgstr "Desat automàtic:"
+msgstr "Desament automàtic"
 
 #: engines/engine.cpp:618
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Error al executar el joc:"
+msgstr "S'ha produït un error en desar automàticament"
 
 #: engines/engine.cpp:693
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"No s'ha pogut carregar la partida (%s)! Consulteu el fitxer README per a la "
-"informació bàsica i les instruccions sobre com obtenir més assistència."
+"No s'ha pogut carregar la partida desada (%s). Consulteu el fitxer README "
+"per a la informació bàsica i les instruccions sobre com obtenir més "
+"assistència."
 
 #: engines/engine.cpp:711
 msgid "WARNING: "
-msgstr ""
+msgstr "ADVERTÈNCIA: "
 
 #: engines/engine.cpp:711
-#, fuzzy
 msgid " Shall we still run the game?"
-msgstr "Títol complet del joc"
+msgstr " Encara s'ha d'executar el joc?"
 
 #: engines/engine.cpp:712
 msgid ""
@@ -2672,24 +2670,24 @@ msgid "Start anyway"
 msgstr "Inicia de totes maneres"
 
 #: engines/engine.cpp:722
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Identificador de joc no suportat"
+msgstr "Aquest joc no és compatible."
 
 #: engines/engine.cpp:722
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Aquest joc no suporta la càrrega de partides des del llançador."
+msgstr ""
+"Aquest joc no és compatible per la següent raó:\n"
+"\n"
 
 #: engines/engine.cpp:861
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Actualment no es pot carregar la partida"
 
 #: engines/engine.cpp:890
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Actualment no es pot desar la partida"
 
 #: engines/game.cpp:185
 #, c-format
@@ -2699,15 +2697,19 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"El joc en '%s' sembla una variant de joc desconeguda.\n"
+"\n"
+"Si us plau, informeu de les següents dades a l'equip ScummVM a %s juntament "
+"amb el nom del joc que intenteu afegir i la seva versió, idioma, etc.:"
 
 #: engines/game.cpp:189
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "IDs de joc disponibles per al motor %s:"
 
 #: engines/metaengine.cpp:57
 msgid "Default game keymap"
-msgstr ""
+msgstr "Assignació de tecles per defecte"
 
 #: engines/metaengine.cpp:61 backends/platform/maemo/maemo.cpp:162
 #: engines/hdb/metaengine.cpp:188 engines/parallaction/metaengine.cpp:115
@@ -2736,7 +2738,6 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:140
-#, fuzzy
 msgid "Game menu"
 msgstr "Menú del joc"
 
@@ -2757,13 +2758,13 @@ msgstr "Salta la línia"
 
 #: engines/metaengine.cpp:101
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Diàleg d'entrada predictiu"
 
 #: engines/metaengine.cpp:105 engines/griffon/metaengine.cpp:90
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:604
 #: engines/sky/metaengine.cpp:98 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
-msgstr ""
+msgstr "Confirma"
 
 #: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:175
 msgid "OpenGL"
@@ -2771,17 +2772,16 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL amb shaders"
 
 #: graphics/renderer.cpp:42
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL amb shaders"
 
 #: audio/adlib.cpp:2295
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "Emulador AdLib:"
+msgstr "Emulador AdLib"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
@@ -2797,7 +2797,7 @@ msgstr "Emulador OPL de Nuked"
 
 #: audio/fmopl.cpp:80
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:83
 msgid "OPL2LPT"
@@ -2805,7 +2805,7 @@ msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:84
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/mididrv.cpp:220
 #, c-format
@@ -2850,89 +2850,86 @@ msgstr ""
 
 #: audio/mididrv.cpp:454
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "S'està iniciant el bolcat MIDI"
 
 #: audio/mods/paula.cpp:304
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Emulador d'àudio Amiga"
+msgstr "Emulador d'Amiga Audio"
 
 #: audio/null.h:44
 msgid "No music"
 msgstr "Sense música"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Emulador d'Apple II GS (NO IMPLEMENTAT)"
 
 #: audio/softsynth/cms.cpp:351
 msgid "Creative Music System emulator"
-msgstr ""
+msgstr "Emulador de Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:236
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"FluidSynth requereix un paràmetre de 'soundfont'. Si us plau especifiqueu-ho "
+"a la interfície ScummVM a la pestanya MIDI. La música està desactivada."
 
 #: audio/softsynth/fluidsynth.cpp:368
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
+"FluidSynth: No s'ha pogut carregar el SoundFont personalitzat '%s'. La "
+"música està desactivada."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "Àudio FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:57
 msgid "PC-98 Audio"
 msgstr "PC-98 Àudio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:82
-#, fuzzy
 msgid "SegaCD Audio"
-msgstr "Utilitza l'àudio del CD"
+msgstr "Àudio SegaCD"
 
 #: audio/softsynth/mt32.cpp:170
 msgid "Initializing MT-32 Emulator"
 msgstr "Iniciant l'Emulador de MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
 msgstr "Emulador de MT-32"
 
 #: audio/softsynth/pcspk.cpp:204
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "Emulador Altaveu PC"
+msgstr "Emulador d'altaveu de PC"
 
 #: audio/softsynth/pcspk.cpp:223
-#, fuzzy
 msgid "IBM PCjr emulator"
 msgstr "Emulador d'IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio emulator"
-msgstr "Emulador d'àudio C64"
+msgstr "Emulador de C64 Audio"
 
 #: backends/cloud/cloudmanager.cpp:156
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Connecta"
+msgstr "<s'està sincronitzant...>"
 
 #: backends/cloud/storage.cpp:242
-#, fuzzy
 msgid "Saved games sync was cancelled."
-msgstr "Sincronització dels jocs desats completada."
+msgstr "S'ha cancel·lat la sincronització de les partides desades."
 
 #: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"La sincronització de les partides desades ha fallat.\n"
+"Comprova la connexió a Internet."
 
 #: backends/cloud/storage.cpp:348
 #, c-format
@@ -2940,6 +2937,8 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"La baixada s'ha completat.\n"
+"No s'han pogut descarregar %u fitxers."
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
@@ -2950,18 +2949,20 @@ msgid "Download failed."
 msgstr "La descàrrega ha fallat."
 
 #: backends/events/default/default-events.cpp:195
-#, fuzzy
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
-msgstr "   Esteu segur de voler sortir?   "
+msgstr ""
+"Segur que voleu tornar al llançador?\n"
+"Es perdrà qualsevol progrés sense desar."
 
 #: backends/events/default/default-events.cpp:219
-#, fuzzy
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
-msgstr "   Esteu segur de voler sortir?   "
+msgstr ""
+"Segur que voleu sortir?\n"
+"Es perdrà qualsevol progrés sense desar."
 
 #: backends/events/default/default-events.cpp:219
 #: backends/events/default/default-events.cpp:360
@@ -2974,29 +2975,25 @@ msgid "Quit"
 msgstr "Surt"
 
 #: backends/events/default/default-events.cpp:334
-#, fuzzy
 msgid "Global"
-msgstr " (Global)"
+msgstr "Global"
 
 #: backends/events/default/default-events.cpp:337
 #: engines/twine/metaengine.cpp:219
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Menú global"
+msgstr "Menú principal global"
 
 #: backends/events/default/default-events.cpp:347
 msgid "Display keyboard"
 msgstr "Mostra el teclat"
 
 #: backends/events/default/default-events.cpp:354
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Commuta la captura del ratolí"
+msgstr "Commuta el silenci"
 
 #: backends/events/default/default-events.cpp:382
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Depurador"
+msgstr "Obre el depurador"
 
 #: backends/events/gph/gph-events.cpp:412
 #: backends/events/gph/gph-events.cpp:455
@@ -3047,38 +3044,37 @@ msgstr "'Mode Toc' de pantalla tàctil - Flotant (Clics de DPad)"
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:229
-#, fuzzy
 msgid "Center"
-msgstr "Intro"
+msgstr "Centra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Escalat pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 msgid "Even pixels scaling"
-msgstr ""
+msgstr "Escalat de píxels parells"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
-msgstr ""
+msgstr "Ajusta a la finestra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
-msgstr ""
+msgstr "Amplia a la finestra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Ajusta a la finestra (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Resolució: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
@@ -3102,27 +3098,25 @@ msgstr "Filtratge desactivat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
-#, fuzzy
 msgid "Stretch mode"
-msgstr "Mode heli"
+msgstr "Mode d'ajustament"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:67
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Surface"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2422
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:365
-#, fuzzy, c-format
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Desplaçament suau"
+msgstr "Captura de pantalla desada '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:374
-#, fuzzy
 msgid "Could not save screenshot"
-msgstr "Desplaçament suau"
+msgstr "No s'ha pogut desar la captura de pantalla"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
@@ -3147,242 +3141,209 @@ msgstr "Commuta la captura del ratolí"
 #: engines/wintermute/keymapper_tables.h:1768
 #: engines/wintermute/keymapper_tables.h:1786
 #: engines/wintermute/keymapper_tables.h:1819
-#, fuzzy
 msgid "Save screenshot"
-msgstr "Desplaçament suau"
+msgstr "Desa la captura de pantalla"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:448
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Commuta la correcció de la relació d'aspecte"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:455
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Utilitza filtratge lineal quan s'escalin els gràfics"
+msgstr "Commuta l'escalat de filtratge lineal"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:462
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "Desplaceu-vos pels modes d'ajustament"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:468
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Augmenta / Disminueix el factor d'escala"
+msgstr "Augmenta el factor d'escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:474
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Augmenta / Disminueix el factor d'escala"
+msgstr "Disminueix el factor d'escala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:480
-#, fuzzy
 msgid "Switch to the next scaler"
-msgstr "Tornar al joc"
+msgstr "Canvia al següent filtre d'escalada"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:485
 msgid "Switch to the previous scaler"
-msgstr ""
+msgstr "Canvia a l'anterior filtre d'escalada"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó esquerre del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó dret del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó del mig del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Roda del ratolí amunt"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Roda del ratolí avall"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó X1 del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó X2 del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:256
-#, fuzzy
 msgid "Joy A"
-msgstr "Mou enrere"
+msgstr "Botó A"
 
 #: backends/keymapper/hardware-input.cpp:257
-#, fuzzy
 msgid "Joy B"
-msgstr "Mou enrere"
+msgstr "Botó B"
 
 #: backends/keymapper/hardware-input.cpp:258
-#, fuzzy
 msgid "Joy X"
-msgstr "Mou enrere"
+msgstr "Botó X"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
 msgid "Joy Y"
-msgstr "Mou enrere"
+msgstr "Botó Y"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Mou enrere"
+msgstr "Botó Back"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Botó Guide"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "~I~nicia"
+msgstr "Botó Start"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Clic esquerre"
+msgstr "Stick esquerre"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Clic dret"
+msgstr "Stick dret"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:209
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Botó superior esquerre"
 
 #: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:215
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Botó superior dret"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:52
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
-#, fuzzy
 msgid "D-pad Up"
-msgstr "Mou a l'esquerra"
+msgstr "D-pad amunt"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/ds/osystem_ds.cpp:154 backends/platform/sdl/ps3/ps3.cpp:53
 #: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
-#, fuzzy
 msgid "D-pad Down"
-msgstr "Avall"
+msgstr "D-pad avall"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/ds/osystem_ds.cpp:155 backends/platform/sdl/ps3/ps3.cpp:54
 #: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Mou a l'esquerra"
+msgstr "D-pad esquerra"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/ds/osystem_ds.cpp:156 backends/platform/sdl/ps3/ps3.cpp:55
 #: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:52
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Mou a la dreta"
+msgstr "D-pad dreta"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Gallet esquerre"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Gallet dret"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Clic esquerre"
+msgstr "Stick esquerre X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Clic esquerre"
+msgstr "Stick esquerre Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Clic dret"
+msgstr "Stick dret X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:63
 #: backends/platform/sdl/switch/switch.cpp:62
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Clic dret"
+msgstr "Stick dret Y"
 
 #: backends/keymapper/remap-widget.cpp:290
 #: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Reinicia als valors predeterminats"
 
 #: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
-msgstr ""
+msgstr "Esborra l'assignació"
 
 #: backends/keymapper/virtual-mouse.cpp:157
-#, fuzzy
 msgid "Virtual mouse up"
-msgstr "Cancel·lar descàrrega"
+msgstr "Ratolí virtual amunt"
 
 #: backends/keymapper/virtual-mouse.cpp:162
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Cancel·lar descàrrega"
+msgstr "Ratolí virtual avall"
 
 #: backends/keymapper/virtual-mouse.cpp:167
-#, fuzzy
 msgid "Virtual mouse left"
-msgstr "Mou a la dreta"
+msgstr "Ratolí virtual esquerra"
 
 #: backends/keymapper/virtual-mouse.cpp:172
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Mou a la dreta"
+msgstr "Ratolí virtual dreta"
 
 #: backends/keymapper/virtual-mouse.cpp:177
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Alenteix el ratolí virtual"
 
 #: backends/midi/windows.cpp:169
 msgid "Windows MIDI"
 msgstr "MIDI de Windows"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "El camí no és un directori"
+msgstr "Aquí no es pot crear el directori!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -3397,54 +3358,46 @@ msgstr "El camí no és un directori"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
 msgid "Invalid path!"
-msgstr ""
+msgstr "Camí no vàlid!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "El camí no existeix"
+msgstr "El directori superior no existeix!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
-#, fuzzy
 msgid "Can't create a directory within a file!"
-msgstr "El camí no és un directori"
+msgstr "No es pot crear un directori dins d'un fitxer!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Ja hi ha un fitxer amb aquest nom al directori superior!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr "No s'ha pogut crear el directori!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "El DVD s'ha muntat satisfactòriament"
+msgstr "El directori s'ha creat correctament!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "El camí no és un directori"
+msgstr "Torna al directori superior"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "El camí no existeix"
+msgstr "El fitxer no existeix!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "El camí no és un directori"
+msgstr "No es pot descarregar un directori!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr "No s'ha pogut llegir el fitxer!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
@@ -3456,39 +3409,34 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "El camí no és un directori"
+msgstr "Crea un directori"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Carrega partida:"
+msgstr "Puja fitxers"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
-#, fuzzy
 msgid "Type new directory name:"
-msgstr "El camí no és un directori"
+msgstr "Escriu un nom de directori nou:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Seleccioneu una partida per CARREGAR"
+msgstr "Seleccioneu un fitxer a pujar:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Seleccioneu el directori dels temes"
+msgstr "O seleccioneu un directori (només funciona amb Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "Índex de "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 #, fuzzy
