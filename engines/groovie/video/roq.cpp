@@ -146,8 +146,8 @@ uint16 ROQPlayer::loadInternal() {
 	// Flags:
 	// - 2 For overlay videos, show the whole video
 	// - 14 Manual flag indication alternate motion copy decoder
-	_flagOne = ((_flags & (1 << 1)) != 0);
-	_flagTwo = ((_flags & (1 << 2)) != 0);
+	_flagNoPlay = ((_flags & (1 << 1)) != 0);
+	_flagOverlay = ((_flags & (1 << 2)) != 0);
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
 
@@ -168,8 +168,8 @@ uint16 ROQPlayer::loadInternal() {
 
 	// Clear the dirty flag and restore area
 	_dirty = false;
-	_restoreArea->top = 480;
-	_restoreArea->left = 640;
+	_restoreArea->top = 0;
+	_restoreArea->left = 0;
 	_restoreArea->bottom = 0;
 	_restoreArea->right = 0;
 
@@ -248,8 +248,8 @@ void ROQPlayer::buildShowBuf() {
 		}
 
 		// Reset _restoreArea for the next frame
-		_restoreArea->top = 480;
-		_restoreArea->left = 640;
+		_restoreArea->top = 0;
+		_restoreArea->left = 0;
 		_restoreArea->bottom = 0;
 		_restoreArea->right = 0;
 	}
@@ -264,8 +264,8 @@ void ROQPlayer::buildShowBuf() {
 		srcBuf = _bg;
 		maskBuf = _currBuf;
 	}
-	if (_flagOne) {
-		if (_flagTwo) {
+	if (_flagNoPlay) {
+		if (_flagOverlay) {
 			destBuf = _overBuf;
 		} else {
 			destBuf = _bg;
@@ -322,7 +322,7 @@ void ROQPlayer::buildShowBuf() {
 		}
 	}
 
-	if (!_flagOne) {
+	if (!_flagNoPlay) {
 		_vm->_system->unlockScreen();
 		_vm->_system->updateScreen();
 	}
@@ -364,7 +364,7 @@ bool ROQPlayer::playFrameInternal() {
 		_syst->updateScreen();
 
 		// TODO: For overlay videos, set the background buffer when the video ends
-		if (_alpha && (!_flagTwo || _file->eos())) {
+		if (_alpha && (!_flagOverlay || _file->eos())) {
 			//_bg->copyFrom(*_fg);
 		}
 

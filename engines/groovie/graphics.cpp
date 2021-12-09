@@ -77,15 +77,19 @@ void GraphicsMan::update() {
 }
 
 void GraphicsMan::switchToFullScreen(bool fullScreen) {
+	// retain the image we currently have, Samantha's moves depend on this
+	_background.copyFrom(_foreground);
 	_foreground.free();
-	_background.free();
 
 	if (fullScreen) {
 		_foreground.create(640, 480, _vm->_pixelFormat);
+		_foreground.copyRectToSurface(_background, 0, 80, Common::Rect(0, 0, 640, 320));
+		_background.free();
 		_background.create(640, 480, _vm->_pixelFormat);
 	} else {
-		// _vm->_system->fillScreen(0);
 		_foreground.create(640, 320, _vm->_pixelFormat);
+		_foreground.copyRectToSurface(_background, 0, 0, Common::Rect(0, 80, 640, 400));
+		_background.free();
 		_background.create(640, 320, _vm->_pixelFormat);
 	}
 
