@@ -36,25 +36,26 @@ void GLContext::issueDrawCall(DrawCall *drawCall) {
 }
 
 #if TGL_DIRTY_RECT_SHOW
-static void DebugDrawRectangle(Common::Rect rect, int r, int g, int b) {
+static void debugDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	GLContext *c = gl_get_context();
+	int fbWidth = c->fb->getPixelBufferWidth();
 
 	if (rect.left < 0)
 		rect.left = 0;
-	if (rect.right >= c->fb->xsize)
-		rect.right = c->fb->xsize - 1;
+	if (rect.right >= fbWidth)
+		rect.right = fbWidth - 1;
 	if (rect.top < 0)
 		rect.top = 0;
-	if (rect.bottom >= c->fb->ysize)
-		rect.bottom = c->fb->ysize - 1;
+	if (rect.bottom >= c->fb->getPixelBufferHeight())
+		rect.bottom = c->fb->getPixelBufferHeight() - 1;
 
-	for(int x = rect.left; x < rect.right; x++) {
-		c->fb->writePixel(rect.top * c->fb->xsize + x, 255, r, g, b);
-		c->fb->writePixel((rect.bottom - 1) * c->fb->xsize + x, 255, r, g, b);
+	for (int x = rect.left; x < rect.right; x++) {
+		c->fb->writePixel(rect.top * fbWidth + x, 255, r, g, b);
+		c->fb->writePixel((rect.bottom - 1) * fbWidth + x, 255, r, g, b);
 	}
-	for(int y = rect.top; y < rect.bottom; y++) {
-		c->fb->writePixel(y * c->fb->xsize + rect.left, 255, r, g, b);
-		c->fb->writePixel(y * c->fb->xsize + rect.right - 1, 255, r, g, b);
+	for (int y = rect.top; y < rect.bottom; y++) {
+		c->fb->writePixel(y * fbWidth + rect.left, 255, r, g, b);
+		c->fb->writePixel(y * fbWidth + rect.right - 1, 255, r, g, b);
 	}
 }
 #endif
@@ -203,17 +204,15 @@ void GLContext::presentBufferDirtyRects() {
 		// blue rectangles are rectangle merged from other rectangles
 		// red rectangles are original dirty rects
 
-		bool blendingEnabled = fb->isBlendingEnabled();
-		bool alphaTestEnabled = fb->isAlphaTestEnabled();
 		fb->enableBlending(false);
 		fb->enableAlphaTest(false);
 
 		for (RectangleIterator it = rectangles.begin(); it != rectangles.end(); ++it) {
-			DebugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
+			debugDrawRectangle((*it).rectangle, (*it).r, (*it).g, (*it).b);
 		}
 
-		fb->enableBlending(blendingEnabled);
-		fb->enableAlphaTest(alphaTestEnabled);
+		fb->enableBlending(blending_enabled);
+		fb->enableAlphaTest(alpha_test_enabled);
 #endif
 	}
 
@@ -224,7 +223,6 @@ void GLContext::presentBufferDirtyRects() {
 
 	_previousFrameDrawCallsQueue = _drawCallsQueue;
 	_drawCallsQueue.clear();
-
 
 	disposeResources();
 
@@ -283,7 +281,7 @@ RasterizationDrawCall::RasterizationDrawCall() : DrawCall(DrawCall_Rasterization
 	_vertex = (GLVertex *) Internal::allocateFrame(_vertexCount * sizeof(GLVertex));
 	_drawTriangleFront = c->draw_triangle_front;
 	_drawTriangleBack = c->draw_triangle_back;
-	memcpy(_vertex, c->vertex, sizeof(TinyGL::GLVertex) * _vertexCount);
+	memcpy(_vertex, c->vertex, sizeof(GLVertex) * _vertexCount);
 	_state = captureState();
 	if (c->_enableDirtyRectangles) {
 		computeDirtyRegion();
@@ -303,7 +301,7 @@ void RasterizationDrawCall::computeDirtyRegion() {
 		int ymax = c->fb->getPixelBufferHeight() - 1;
 		int left = xmax, right = 0, top = ymax, bottom = 0;
 		for (int i = 0; i < _vertexCount; i++) {
-			TinyGL::GLVertex *v = &_vertex[i];
+			GLVertex *v = &_vertex[i];
 			if (v->clip_code)
 				c->gl_transform_to_viewport(v);
 			left =   MIN(left,   v->clip_code & 0x1 ?    0 : v->zp.x);
