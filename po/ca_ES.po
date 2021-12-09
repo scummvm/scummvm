@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
 "PO-Revision-Date: 2021-12-09 13:12+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -3483,7 +3483,7 @@ msgstr "No es pot pujar a un fitxer!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
-msgstr "Tornar al gestor fitxers"
+msgstr "Torna al gestor de fitxers"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
