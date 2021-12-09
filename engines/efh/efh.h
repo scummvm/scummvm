@@ -374,6 +374,8 @@ private:
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
 	void displayStatusMenu(int16 windowId);
 	void countRightWindowItems(int16 menuId, int16 charId);
+	int16 getXPLevel(int32 xp);
+	void displayChar(char character);
 	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
 	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
@@ -383,6 +385,7 @@ private:
 	int16 displayString_3(const char * str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 _objectId);
+	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	bool getValidationFromUser();
