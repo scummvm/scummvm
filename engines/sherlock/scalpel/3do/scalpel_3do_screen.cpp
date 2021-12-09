@@ -36,7 +36,7 @@ void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src) {
 }
 
 void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos) {
-	SHblitFrom(src, Common::Point(0, 0), Common::Rect(0, 0, src.w, src.h));
+	SHblitFrom(src, destPos, Common::Rect(0, 0, src.w, src.h));
 }
 
 void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {

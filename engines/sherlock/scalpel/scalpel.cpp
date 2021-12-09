@@ -1275,7 +1275,6 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	Video::ThreeDOMovieDecoder *videoDecoder = new Video::ThreeDOMovieDecoder();
 	Graphics::ManagedSurface tempSurface;
 
-	Common::Point framePos(pos.x, pos.y);
 	ImageFile3DO *frameImageFile = nullptr;
 	ImageFrame *frameImage = nullptr;
 	bool frameShown = false;
@@ -1285,17 +1284,30 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 		return false;
 	}
 
+	Common::Point moviePos(pos.x, pos.y);
+	int frameWidth = 8;
+
 	bool halfSize = isPortrait && !_isScreenDoubled;
+
 	if (isPortrait) {
-		// only for portrait videos, not for EA intro logo and such
-		if ((framePos.x >= 8) && (framePos.y >= 8)) { // safety check
-			framePos.x -= 8;
-			framePos.y -= 8; // frame is 8 pixels on left + top, and 7 pixels on right + bottom
+		if (!halfSize) {
+			moviePos.x *= 2;
+			moviePos.y *= 2;
+			frameWidth *= 2;
 		}
+
+		// Safety check. Only for portrait videos, not for EA intro logo and such
+		if (moviePos.x < frameWidth)
+			moviePos.x = frameWidth;
+		if (moviePos.y < frameWidth)
+			moviePos.y = frameWidth;
 
 		frameImageFile = new ImageFile3DO("vidframe.cel", kImageFile3DOType_Cel);
 		frameImage = &(*frameImageFile)[0];
 	}
+
+	 // frame is 8 pixels on left + top, and 7 pixels on right + bottom
+	Common::Point framePos(moviePos.x - frameWidth, moviePos.y - frameWidth);
 
 	bool skipVideo = false;
 	//byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
@@ -1382,9 +1394,9 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 				}
 
 				if (isPortrait && !halfSize) {
-					screen.rawBlitFrom(*frame, Common::Point(pos.x * 2, pos.y * 2));
+					screen.rawBlitFrom(*frame, moviePos);
 				} else {
-					_screen->SHblitFrom(*frame, pos);
+					_screen->SHblitFrom(*frame, moviePos);
 				}
 
 				_screen->update();
