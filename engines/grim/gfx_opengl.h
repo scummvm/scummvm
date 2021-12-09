@@ -27,14 +27,7 @@
 
 #ifdef USE_OPENGL_GAME
 
-#ifdef USE_GLEW
-#include <GL/glew.h>
-#elif defined (SDL_BACKEND) && !defined(__amigaos4__)
-#include <SDL_opengl.h>
-#undef ARRAYSIZE
-#else
-#include <GL/gl.h>
-#endif
+#include "graphics/opengl/system_headers.h"
 
 namespace Grim {
 
