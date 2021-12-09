@@ -6,6 +6,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - Das ResidualVM GUI-Theme wurde remastered.
    - Fehler im Punycode-Handling wurde korrigiert.
+   - Prüfung, ob ein Spielstand im Autosave-Slot überschrieben werden soll, korrigiert.
+   - In den meisten Engines werden funktioniert das Verschieben eines Spielstands in einen neuen Slot nun korrekt.
 
  AGOS:
    - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
@@ -29,8 +31,17 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Versionen von Loom und Indiana Jones and the Last Crusade.
    - Verbesserung der OPL3-Sound-Emulation für Sam&Max.
    - Fehler bei der Musikwiedergabe in The Dig behoben.
+   - Absturz beim Laden von Spielständen von Humongous Entertainment-Spielen behoben.
 
-TwinE:
+ Sherlock:
+   - Absturz behoben, der auftritt, wenn die Streichhölzer mit dem Labor-Tisch benutzt werden.
+   - Fehlerhafte Charakter-Animation in Rose Tattoo behoben.
+   - Fehler beim Öffnen der Karte in Rose Tattoo behoben.
+   - Der Klang der Klingelschnur in Serrated Scalpel wird nun korrekt abgespielt.
+   - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
+   - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
+
+ TwinE:
    - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
 
  Stark:
@@ -41,6 +52,7 @@ TwinE:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
+   - Mehrere Fehlerkorrekturen im Zusammenhang mit der Audio-Wiedergabe.
 
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
