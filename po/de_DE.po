@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-09 10:20+0000\n"
-"PO-Revision-Date: 2021-12-04 17:39+0000\n"
+"PO-Revision-Date: 2021-12-09 13:08+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4270,15 +4270,13 @@ msgstr "Zu Olmec wechseln"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:201
-#, fuzzy, c-format
-#| msgid ""
-#| "Attempt to load saved game from a previous version: Version %s / Build %d"
+#, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
-"Versuche, den Spielstand einer vorherigen Version zu laden: Version %s / "
-"Build %d"
+"WARNUNG: Versuche, den Spielstand einer vorherigen Version zu laden: Version "
+"%s / Build %d"
 
 #: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
@@ -5110,12 +5108,14 @@ msgstr "Reduziere den Schwierigkeitsgrad der KI-Puzzle"
 
 #: engines/groovie/detection.cpp:408
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Aktualisierte Musik im Abspann"
 
 #: engines/groovie/detection.cpp:409
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Spiele den Song \"The Final Hour\" während des Abspanns anstelle der MIDI-"
+"Songs"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
