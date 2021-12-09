@@ -470,8 +470,8 @@ public:
 	void disposeResources();
 	void disposeDrawCallLists();
 
-	void presentBufferDirtyRects();
-	void presentBufferSimple();
+	void presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas);
+	void presentBufferSimple(Common::List<Common::Rect> &dirtyAreas);
 	
 	GLSpecBuf *specbuf_get_buffer(const int shininess_i, const float shininess);
 	void specbuf_cleanup();

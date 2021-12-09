@@ -33,6 +33,7 @@ namespace TinyGL {
 void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool dirtyRectsEnable = true);
 void destroyContext();
 void presentBuffer();
+void presentBuffer(Common::List<Common::Rect> &dirtyAreas);
 void getSurfaceRef(Graphics::Surface &surface);
 Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat);
 
