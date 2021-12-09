@@ -111,7 +111,7 @@ bool Savegame::quickLoad() {
 		return false;
 
 	_index = SAVEGAME_QUICKSLOT;
-	_vm->startGame(getScenePack(), AsylumEngine::kStartGameLoad);
+	(void)_vm->startGame(getScenePack(), AsylumEngine::kStartGameLoad);
 
 	return true;
 }

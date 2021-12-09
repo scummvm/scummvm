@@ -1658,7 +1658,7 @@ void Menu::clickLoadGame() {
 			 && cursor.y >= 273 && cursor.y <= (273 + 24))
 				_dword_455C80 = false;
 		} else {
-			_vm->startGame(getSaveLoad()->getScenePack(), AsylumEngine::kStartGameLoad);
+			(void)_vm->startGame(getSaveLoad()->getScenePack(), AsylumEngine::kStartGameLoad);
 		}
 		return;
 	}

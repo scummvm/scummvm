@@ -192,17 +192,18 @@ Common::Error AsylumEngine::run() {
 	return Common::kNoError;
 }
 
-void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
+bool AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	if (!_cursor || !_screen || !_savegame)
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
 	if (type == kStartGameLoad && !_savegame->isCompatible()) {
-		Common::U32String message = _("Attempt to load saved game from a previous version: Version %s / Build %d");
+		// I18N: Warn user about loading potentially incompatible saved game
+		Common::U32String message = _("WARNING: Attempt to load saved game from a previous version: Version %s / Build %d");
 		GUI::MessageDialog dialog(Common::U32String::format(message, _savegame->getVersion(), _savegame->getBuild()), _("Load anyway"), _("Cancel"));
 
 		if (dialog.runModal() != GUI::kMessageOK) {
 			_menu->setDword455C80(false);
-			return;
+			return false;
 		}
 	}
 
@@ -279,6 +280,7 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	}
 
 	_cursor->show();
+	return true;
 }
 
 void AsylumEngine::restart() {
@@ -304,7 +306,7 @@ void AsylumEngine::restart() {
 	_screen->clear();
 	_sound->playMusic(kResourceNone, 0);
 
-	startGame(kResourcePackTowerCells, kStartGamePlayIntro);
+	(void)startGame(kResourcePackTowerCells, kStartGamePlayIntro);
 }
 
 void AsylumEngine::reset() {
@@ -688,11 +690,9 @@ Common::Error AsylumEngine::loadGameState(int slot) {
 	savegame()->loadList();
 	savegame()->setIndex(slot);
 	if (savegame()->hasSavegame(slot))
-		startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad);
+		return startGame(savegame()->getScenePack(), AsylumEngine::kStartGameLoad) ? Common::kNoError : Common::kReadingFailed;
 	else
 		return Common::kReadingFailed;
-
-	return Common::kNoError;
 }
 
 Common::Error AsylumEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {

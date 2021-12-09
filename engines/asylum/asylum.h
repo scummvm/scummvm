@@ -87,7 +87,7 @@ public:
 	/**
 	 * Start a new the game
 	 */
-	void startGame(ResourcePackId sceneId, StartGameType type);
+	bool startGame(ResourcePackId sceneId, StartGameType type);
 
 	/**
 	 * Restarts the game
@@ -104,7 +104,7 @@ public:
 	 *
 	 * @param sceneId ResourcePack for the scene
 	 */
-	void switchScene(ResourcePackId sceneId) { startGame(sceneId, kStartGameScene); }
+	void switchScene(ResourcePackId sceneId) { (void)startGame(sceneId, kStartGameScene); }
 
 	/**
 	 * Get the number of engine ticks
