@@ -4259,8 +4259,8 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
-"ВНИМАНИЕ: Попытка загрузить сохранение игры из предыдущей версии: Версия %s /"
-" Билд %d"
+"ВНИМАНИЕ: Попытка загрузить сохранение игры из предыдущей версии: Версия "
+"%s / Билд %d"
 
 #: engines/asylum/asylum.cpp:202 engines/cine/saveload.cpp:864
 msgid "Load anyway"
