@@ -122,7 +122,7 @@ void Room::load_taf(const char *filename, byte **speicher, byte *palette, int16 
 		imagesize[sprnr] = 0l;
 		mem->file->imsize(filename, imagesize);
 		if (!modul) {
-			*speicher = (byte *)calloc((imagesize[sprnr]) + 4l, 1);
+			*speicher = (byte *)malloc((imagesize[sprnr]) + 4l);
 			if (!modul) {
 				mem->file->load_tafmcga(filename, *speicher, sprnr);
 			}
@@ -301,9 +301,9 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 void Room::init_ablage() {
 	int16 i;
 	LastAblageSave = 0;
-	Ablage[0] = (byte *)calloc(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l), 1);
-	AblagePal[0] = (byte *)calloc(MAX_ABLAGE * 768l, 1);
-	GedMem[0] = (byte *)calloc(MAX_ABLAGE * GED_BLOCK_SIZE, 1);
+	Ablage[0] = (byte *)malloc(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
+	AblagePal[0] = (byte *)malloc(MAX_ABLAGE * 768l);
+	GedMem[0] = (byte *)malloc(MAX_ABLAGE * GED_BLOCK_SIZE);
 	if (!modul) {
 		AkAblage = 0;
 		for (i = 0; i < MAX_ABLAGE; i++) {
