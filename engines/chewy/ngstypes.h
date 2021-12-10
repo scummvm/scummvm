@@ -280,7 +280,7 @@ struct tmf_header {
 	byte *ipos[31] = { nullptr };
 
 	bool load(Common::SeekableReadStream *src);
-	static const int SIZE() { return 0x284; }
+	static int SIZE() { return 0x284; }
 };
 
 struct musik_info {

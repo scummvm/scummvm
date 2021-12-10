@@ -133,9 +133,9 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer s(nullptr, stream);
-	int16 spr_nr;
+	//int16 spr_nr;
 	int16 i;
-	spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
+	//spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 	for (i = 0; i < MAX_PERSON; i++) {
 		_G(spieler).X[i] = spieler_vector[i].Xypos[0];
 		_G(spieler).Y[i] = spieler_vector[i].Xypos[1];

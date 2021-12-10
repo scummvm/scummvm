@@ -66,7 +66,6 @@ void Room::close_handle(int16 mode) {
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	char tmp_str[MAXPATH];
 	room_detail_info *Rdi_;
-	int16 ret;
 	modul = 0;
 	fcode = 0;
 
@@ -91,7 +90,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		if (!modul) {
 			obj->calc_all_static_detail();
 			ERROR
-			ret = load_tgp(room_info->BildNr, Rb, EPISODE1_TGP, GED_LOAD);
+			load_tgp(room_info->BildNr, Rb, EPISODE1_TGP, GED_LOAD);
 			ERROR
 
 			set_pal(AblagePal[Rb->AkAblage], Rb->LowPalMem);
@@ -329,8 +328,8 @@ void Room::free_ablage() {
 }
 
 byte *Room::get_ablage(int16 nr) {
-	byte *ret;
-	ret = false;
+	byte *ret = nullptr;
+
 	if (nr < MAX_ABLAGE && AkAblage != -1) {
 		ret = Ablage[nr];
 	}
@@ -338,8 +337,8 @@ byte *Room::get_ablage(int16 nr) {
 }
 
 byte **Room::get_ablage() {
-	byte **ret;
-	ret = false;
+	byte **ret = nullptr;
+
 	if (AkAblage != -1) {
 		ret = &Ablage[0];
 	}
@@ -347,8 +346,8 @@ byte **Room::get_ablage() {
 }
 
 byte **Room::get_ged_mem() {
-	byte **ret;
-	ret = false;
+	byte **ret = nullptr;
+
 	if (AkAblage != -1) {
 		ret = &GedMem[0];
 	}

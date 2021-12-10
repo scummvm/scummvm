@@ -29,6 +29,9 @@
 
 namespace Chewy {
 
+static int16(*custom_user)(int16) = 0;
+static int16(*flic_user)(int16) = 0;
+
 void decode_flc(byte *vscr, const byte *dbuf) {
 	Common::MemoryReadStream src(dbuf, 0xffffffff);
 	int h = src.readUint16LE();

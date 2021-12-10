@@ -79,7 +79,7 @@ atdsys::atdsys() {
 	for (i = 0; i < AAD_MAX_PERSON; i++)
 		ssi[i] = init_ssi;
 	inv_block_nr = -1;
-	inv_use_mem = false;
+	inv_use_mem = nullptr;
 	inzeig = in->get_in_zeiger();
 	for (i = 0; i < MAX_HANDLE; i++) {
 		atdshandle[i] = 0;
@@ -898,7 +898,6 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 }
 
 int16 atdsys::start_aad(int16 dia_nr) {
-	int16 *pos;
 	int16 txt_len;
 
 	if (aadv.Dialog)
@@ -908,8 +907,7 @@ int16 atdsys::start_aad(int16 dia_nr) {
 		aadv.Ptr = atdsmem[AAD_HANDLE];
 		aad_search_dia(dia_nr, &aadv.Ptr);
 		if (aadv.Ptr) {
-			pos = (int16 *)aadv.Ptr;
-			aadv.Person = (AadInfo *) aadv.Ptr;
+			aadv.Person = (AadInfo *)aadv.Ptr;
 			aadv.Ptr += aadv.TxtHeader->PerAnz * sizeof(AadInfo);
 			aadv.Dialog = true;
 			aadv.StrNr = 0;
@@ -938,7 +936,6 @@ void atdsys::stop_aad() {
 }
 
 void atdsys::print_aad(int16 scrx, int16 scry) {
-	int16 *pos;
 	int16 i;
 	int16 txt_len;
 	int16 tmp_person;
@@ -1062,7 +1059,6 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 
 						tmp_person = aadv.StrHeader->AkPerson;
 						tmp_str_nr = aadv.StrNr;
-						pos = (int16 *)aadv.Ptr;
 						aadv.StrHeader = (AadStrHeader *)aadv.Ptr;
 						aadv.Ptr += sizeof(AadStrHeader);
 						if (atdsv.aad_str != 0) {

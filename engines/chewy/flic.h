@@ -76,9 +76,6 @@ enum CustomTypes {
 extern void decode_flc(byte *vscr, const byte *dbuf);
 extern void decode_rle(byte *vscr, const byte *dbuf, int br, int h);
 
-static int16(*custom_user)(int16) = 0;
-static int16(*flic_user)(int16) = 0;
-
 class flic {
 public:
 	flic();

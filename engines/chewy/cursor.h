@@ -48,19 +48,19 @@ public:
 	void wait_taste_los(int16 maus_plot);
 	void wait_taste(int16 maus_plot);
 
-	mcga_grafik *out;
-	maus *in;
-	maus_info *minfo;
-	in_zeiger *inzeig;
-	cur_blk *curblk;
-	cur_ani *ani;
-	int scr_width;
-	int16 cur_x_old;
-	int16 cur_y_old;
-	int16 cur_aufruf;
-	int16 ani_count;
-	uint8 maus_da;
-	bool sichtbar;
+	mcga_grafik *out = nullptr;
+	maus *in = nullptr;
+	maus_info *minfo = nullptr;
+	in_zeiger *inzeig = nullptr;
+	cur_blk *curblk = nullptr;
+	cur_ani *ani = nullptr;
+	int scr_width = 0;
+	int16 cur_x_old = 0;
+	int16 cur_y_old = 0;
+	int16 cur_aufruf = 0;
+	int16 ani_count = 0;
+	uint8 maus_da = 0;
+	bool sichtbar = false;
 };
 
 } // namespace Chewy

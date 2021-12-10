@@ -26,9 +26,6 @@
 
 namespace Chewy {
 
-#define false false
-#define true true
-
 cursor::cursor(mcga_grafik *iout, maus *iin, cur_blk *curblkp) {
 	out = iout;
 	in = iin;
@@ -41,7 +38,7 @@ cursor::cursor(mcga_grafik *iout, maus *iin, cur_blk *curblkp) {
 		maus_da = true;
 		minfo = inzeig->minfo;
 		sichtbar = false;
-		ani = false;
+		ani = nullptr;
 		cur_aufruf = false;
 		ani_count = false;
 	}

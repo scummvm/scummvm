@@ -315,9 +315,9 @@ void get_rect(char *spr1, int16 x1, int16 y1, char *spr2, int16 x2, int16 y2) {
 			}
 		}
 		maus_rect_first = false;
-		out->printxy(0, 0, 255, 0, 0, "X = %d Y = %d mit scroll
-		              Offset\0", minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
-		              out->printxy(0, 10, 255, 0, 0, "X = %d Y = %d ohne scroll Offset\0", minfo.x, minfo.y);
+		out->printxy(0, 0, 255, 0, 0, "X = %d Y = %d mit scroll Offset",
+			minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
+		out->printxy(0, 10, 255, 0, 0, "X = %d Y = %d ohne scroll Offset", minfo.x, minfo.y);
 		              plot_maus();
 		              out->setze_zeiger(screen0);
 		              out->back2screen(workpage);
@@ -620,16 +620,15 @@ void get_auto_mov() {
 			                detmov.Xzoom, detmov.Yzoom, 0);
 		}
 		if (info_flag) {
-			out->printxy(0, 0, 255, 300, scr_width, "MIT OFFSET x = %3d y =
-			              % 3d\0", spieler_vector[P_CHEWY].Xypos[0] + CH_HOT_MOV_X, spieler_vector[P_CHEWY].Xypos[1] + CH
-			              _HOT_MOV_Y);
-			out->printxy(0, 10, 255, 300, scr_width, "NORMAL x = %3d y =
-			              % 3d\0", spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
-			              out->printxy(0, 20, 255, 300, scr_width, "AUTOPUNKT x = %3d y =
-			                            % 3d\0", Rdi->AutoMov[auto_nr].X, Rdi->AutoMov[auto_nr].Y);
-			                            out->printxy(0, 30, 255, 300, scr_width, "DETAIL NUMMER %d\0", detail_nr);
+			out->printxy(0, 0, 255, 300, scr_width, "MIT OFFSET x = %3d y = %3d",
+				spieler_vector[P_CHEWY].Xypos[0] + CH_HOT_MOV_X, spieler_vector[P_CHEWY].Xypos[1] + CH
+			    _HOT_MOV_Y);
+			out->printxy(0, 10, 255, 300, scr_width, "NORMAL x = %3d y = %3d",
+				spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+			out->printxy(0, 20, 255, 300, scr_width, "AUTOPUNKT x = %3d y = %3d", Rdi->AutoMov[auto_nr].X, Rdi->AutoMov[auto_nr].Y);
+			out->printxy(0, 30, 255, 300, scr_width, "DETAIL NUMMER %d", detail_nr);
 		}
-		              cur->plot_cur();
+		cur->plot_cur();
 		out->back2screen(workpage);
 	}
 	if (save_flag == false) {
@@ -1036,15 +1035,14 @@ void set_z_ebene() {
 		out->set_vorschub(fvorx6x8, fvory6x8);
 		out->linie(lx, ly - _G(spieler).scrolly, lx + 320, ly - _G(spieler).scrolly, 255);
 		if (info_flag) {
-			out->printxy(0, 0, 255, 300, scr_width, "CHEWY Z_EBENE %d LINIE Z_EBENE
-			              % d\0", spieler_vector[P_CHEWY].Xypos[1] + CH_HOT_MOV_Y - abs(spieler_vector[P_CHEWY].Yzoom), l
-			              y);
+			out->printxy(0, 0, 255, 300, scr_width, "CHEWY Z_EBENE %d LINIE Z_EBENE %d",
+				spieler_vector[P_CHEWY].Xypos[1] + CH_HOT_MOV_Y - abs(spieler_vector[P_CHEWY].Yzoom), l y);
 			if (detail_flag == ANI_DETAIL)
-				out->printxy(0, 10, 255, 300, scr_width, "ANI DETAIL NUMMER %d\0", detail_nr);
+				out->printxy(0, 10, 255, 300, scr_width, "ANI DETAIL NUMMER %d", detail_nr);
 			if (detail_flag == STATIC_DETAIL)
-				out->printxy(0, 10, 255, 300, scr_width, "STATIC DETAIL NUMMER %d\0", detail_nr);
+				out->printxy(0, 10, 255, 300, scr_width, "STATIC DETAIL NUMMER %d", detail_nr);
 			if (detail_flag == INVENT_DETAIL)
-				out->printxy(0, 10, 255, 300, scr_width, "INVENTAR NUMMER %d\0", detail_nr);
+				out->printxy(0, 10, 255, 300, scr_width, "INVENTAR NUMMER %d", detail_nr);
 		}
 		cur->plot_cur();
 		out->back2screen(workpage);
@@ -1063,7 +1061,6 @@ void set_z_ebene() {
 			out->printxy(0, 190, 0, 255, scr_width, " Save ...\0");
 		}
 	}
-
 }
 
 int16 ja_nein() {
