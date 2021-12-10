@@ -532,7 +532,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		ende = 1;
 	while (!ende) {
 
-		rect = in->maus_vector(minfo.x, minfo.y, (int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
+		rect = in->maus_vector(minfo.x, minfo.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 		if (minfo.button) {
 			if (minfo.button == 2) {
 				if (!maus_flag)
@@ -642,16 +642,15 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 }
 
 void look_invent_screen(int16 txt_mode, int16 txt_nr) {
-	char *str_adr;
+	//char *str_adr;
 	int16 ok;
 	int16 m_mode = 0;
-	int16 action_flag;
+	//int16 action_flag;
 	if (!flags.AtsAction) {
-		str_adr = 0;
+		//str_adr = 0;
 		if (txt_nr != -1) {
 
 			switch (txt_mode) {
-
 			case INVENTAR_NORMAL:
 			case INVENTAR_STATIC:
 				ok = true;
@@ -679,10 +678,10 @@ void look_invent_screen(int16 txt_mode, int16 txt_nr) {
 
 				}
 
-				action_flag = 0 ;
+				//action_flag = 0;
 				if (atds->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI)) {
 					ats_action(txt_nr, m_mode, ATS_ACTION_VOR);
-					action_flag = 1;
+					//action_flag = 1;
 				}
 				if (ok) {
 					start_ats_wait(txt_nr, m_mode, 14, ATS_DATEI);
@@ -692,9 +691,10 @@ void look_invent_screen(int16 txt_mode, int16 txt_nr) {
 					ats_action(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (menu_item == CUR_USE)
 					flags.StaticUseTxt = true;
-
 				break;
 
+			default:
+				break;
 			}
 		}
 	}
