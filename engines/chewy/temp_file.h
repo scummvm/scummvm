@@ -26,6 +26,7 @@
 #include "common/archive.h"
 #include "common/list.h"
 #include "common/memstream.h"
+#include "common/path.h"
 #include "common/str.h"
 
 namespace Chewy {

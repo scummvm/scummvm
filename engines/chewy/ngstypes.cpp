@@ -284,7 +284,7 @@ bool FlicHead::load(Common::SeekableReadStream *src) {
 	src->read(reserved3, 40);
 
 	return true;
-};
+}
 
 bool FrameHead::load(Common::SeekableReadStream *src) {
 	size = src->readUint32LE();

@@ -677,7 +677,7 @@ void enter_room(int16 eib_nr) {
 
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
-	SetUpScreenFunc = false;
+	SetUpScreenFunc = nullptr;
 	HowardMov = false;
 	_G(cur_hide_flag) = false;
 
@@ -1807,7 +1807,7 @@ void flic_cut(int16 nr, int16 mode) {
 			}
 
 		case 1117:
-			if (mem->file->select_pool_item(Ci.Handle, 117) != -1) {
+			if (mem->file->select_pool_item(Ci.Handle, 117) != (uint16)-1) {
 				mem->file->select_pool_item(Ci.Handle, 119);
 				fx->border(workpage, 100, 0, 0);
 				flc->custom_play(&Ci);
