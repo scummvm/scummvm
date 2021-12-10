@@ -59,7 +59,7 @@ movclass::~movclass() {
 void movclass::goto_xy(GotoPkt *gp) {
 	int16 start_feld;
 	int16 ziel_feld;
-	int16 anz;
+	//int16 anz;
 	int16 tmp;
 	gpkt = gp;
 	agv.AutoGo = false;
@@ -72,7 +72,7 @@ void movclass::goto_xy(GotoPkt *gp) {
 	start_feld = get_feld_nr(gpkt->Sx, gpkt->Sy);
 	ziel_feld = get_feld_nr(gpkt->Dx, gpkt->Dy);
 	tmp = ziel_feld;
-	anz = calc_go(start_feld, &ziel_feld);
+	/*anz = */calc_go(start_feld, &ziel_feld);
 
 	if (tmp != ziel_feld) {
 		get_mov_line();
@@ -528,7 +528,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 
 	int16 ok;
 	int16 k;
-	int16 found_min;
+	//int16 found_min;
 	int16 TmpKnPkt[MAX_KNOTEN_PKT];
 	int16 min_step_unerreicht;
 	int16 dir_unerreicht = 0;
@@ -561,7 +561,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 		tbl_ptr = 0;
 		knoten_flag = 0;
 
-		found_min = 0;
+		//found_min = 0;
 		dir = 30000;
 		while (!found) {
 			tmp_feld = ziel_feld;
@@ -672,7 +672,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 					tbl_dir = -1;
 					tbl_ptr = 3;
 					dir = 30000;
-					found_min = 0;
+					//found_min = 0;
 					calc_feld = start_feld;
 					last_feld = start_feld;
 				} else {

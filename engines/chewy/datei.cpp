@@ -431,7 +431,7 @@ void datei::load_korrektur(const char *fname, int16 *sp) {
 				id = get_id(header->id);
 				if ((id == TAFDATEI) && (header->korrekt > 0)) {
 					f.seek(-((int)(header->count * sizeof(int16) * 2) * header->korrekt), SEEK_END);
-					if ((f.size() - f.pos() / 2) < (header->count * sizeof(int16) * 2)) {
+					if ((f.size() - f.pos() / 2) < (int16)(header->count * sizeof(int16) * 2)) {
 						fcode = READFEHLER;
 						modul = DATEI;
 					} else {

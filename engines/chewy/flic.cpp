@@ -124,7 +124,7 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	size_t tmp_size;
 	char key;
 	float start, ende;
-	bool trace_mode;
+	//bool trace_mode;
 
 	load_puffer = load_p;
 	virt_screen = vscreen + 4;
@@ -132,7 +132,7 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 		if (flic_header.type == FLC) {
 
 			key = 0;
-			trace_mode = false;
+			//trace_mode = false;
 			fade_flag = false;
 			fade_delay = 0;
 			cls_flag = false;
@@ -398,7 +398,8 @@ void flic::delta_chunk_byte(byte *tmp) {
 }
 
 int flic::custom_play(CustomInfo *ci) {
-	uint16 i, ret = 0;
+	uint16 i;
+	int16 ret = 0;
 	char key;
 	uint32 start, ende;
 	bool trace_mode;

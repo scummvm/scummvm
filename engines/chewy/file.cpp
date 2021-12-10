@@ -413,7 +413,7 @@ void option_menue(taf_info *ti) {
 	int16 tdisp_count;
 	int16 rect;
 	long akt_clock = 0, stop_clock = 0;
-	int16 TmpFrame;
+	//int16 TmpFrame;
 	int16 delay_count;
 	short bar_off;
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0);
@@ -441,7 +441,7 @@ void option_menue(taf_info *ti) {
 		++FrameSpeed;
 		warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
-			TmpFrame = FrameSpeed;
+			//TmpFrame = FrameSpeed;
 			_G(spieler).DelaySpeed = (FrameSpeed >> 1) / _G(spieler).FramesPerSecond;
 
 			FrameSpeed = 0;

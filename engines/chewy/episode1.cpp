@@ -1104,7 +1104,7 @@ void r3_sonde_aufnahme() {
 	int16 i;
 	int16 spr_nr;
 	int16 anistart;
-	room_detail_info *rdi;
+//	room_detail_info *rdi;
 
 	MovLine sonde_mpkt1[2] = {
 		{ { 237,  52, 160 }, 0, 2 },
@@ -1125,7 +1125,7 @@ void r3_sonde_aufnahme() {
 	};
 	flags.AniUserAction = false;
 	hide_cur();
-	rdi = det->get_room_detail_info();
+	/*rdi = */(void)det->get_room_detail_info();
 	tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	anistart = false;
