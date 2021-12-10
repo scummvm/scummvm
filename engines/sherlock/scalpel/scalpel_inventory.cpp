@@ -251,7 +251,7 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 	// Iterate through displaying up to 6 objects at a time
 	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < (int)_invShapes.size(); ++idx) {
 		int itemNum = idx - _invIndex;
-		Surface &bb = slamIt == SLAM_SECONDARY_BUFFER ? screen._backBuffer2 : screen._backBuffer1;
+		Surface &bb = (slamIt == SLAM_SECONDARY_BUFFER) ? screen._backBuffer2 : *screen.getBackBuffer();
 		Common::Rect r(8 + itemNum * 52, 165, 51 + itemNum * 52, 194);
 
 		// Draw the background
