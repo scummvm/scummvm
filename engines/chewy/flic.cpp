@@ -402,7 +402,7 @@ int flic::custom_play(CustomInfo *ci) {
 	int16 ret = 0;
 	char key;
 	uint32 start, ende;
-	bool trace_mode;
+	//bool trace_mode;
 
 	Cinfo = ci;
 	load_puffer = ci->TempArea;
@@ -419,7 +419,7 @@ int flic::custom_play(CustomInfo *ci) {
 		if (custom_header.load(rs)) {
 			if (!scumm_strnicmp(custom_header.id, "CFO\0", 4)) {
 				key = 0;
-				trace_mode = false;
+				//trace_mode = false;
 
 				cls_flag = false;
 				fade_flag = false;
