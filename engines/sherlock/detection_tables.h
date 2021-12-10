@@ -143,7 +143,22 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Case of the Serrated Scalpel - Italian fan translation
+		// Case of the Serrated Scalpel - Italian fan translation (v1.0a)
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "1a15e358c0ac7bd81c0b86276f2cd1a2", 247606),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Italian fan translation (v2.0)
 		{
 			"scalpel",
 			0,
