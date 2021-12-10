@@ -81,6 +81,7 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 	Audio::AudioStream *sound = af.getAudioStream(false, false, DisposeAfterUse::YES);
 
 	cancelFade(soundChannel);
+	stopSound(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, getChannelVolume(soundChannel));
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
