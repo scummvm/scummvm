@@ -45,6 +45,7 @@ extern const uint8 kFontExtraLinesArray[96];
 extern const Font kFontData[96];
 extern const Encounter kEncounters[];
 extern const char kSkillArray[37][20];
+extern const uint8 kByte2C7D0[60];
 
 } // End of namespace Efh
 

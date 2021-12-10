@@ -325,7 +325,7 @@ private:
 	void drawBottomBorders();
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl);
+	int16 sub1C219(char *str, int menuType, int arg4, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	void drawChar(uint8 curChar, int16 posX, int posY);
 	void setTextColorWhite();

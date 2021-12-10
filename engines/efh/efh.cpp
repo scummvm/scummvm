@@ -1446,7 +1446,22 @@ int16 EfhEngine::getRandom(int16 maxVal) {
 }
 
 void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
-	warning("STUB - removeCharacterFromTeam");
+	int16 charId = _teamCharId[teamMemberId];
+	_npcBuf[charId].field_12 = _npcBuf[charId].field_B;
+	_npcBuf[charId].field_14 = _npcBuf[charId].field_E;
+	_npcBuf[charId].field_10 = _npcBuf[charId].field_C;
+	_npcBuf[charId].field_11 = _npcBuf[charId].field_D;
+
+	_teamCharId[teamMemberId] = -1;
+	_teamCharStatus[teamMemberId]._status = 0;
+	_teamCharStatus[teamMemberId]._duration = 0;
+
+	for (int16 var4 = teamMemberId; var4 < 2; ++var4) {
+		_teamCharId[var4] = _teamCharId[var4 + 1];
+		_teamCharId[var4 + 1] = -1;
+	}
+
+	refreshTeamSize();
 }
 
 void EfhEngine::emptyFunction(int i) {
@@ -1560,7 +1575,22 @@ void EfhEngine::handleWinSequence() {
 }
 
 bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
-	warning("STUB - giveItemTo");
+	for (int16 newObjectId = 0; newObjectId < 10; ++newObjectId) {
+		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
+			continue;
+
+		if (altCharId == 0xFF) {
+			_npcBuf[charId]._inventory[newObjectId]._ref = objectId;
+			_npcBuf[charId]._inventory[newObjectId]._stat2 = _items[objectId]._defense;
+			_npcBuf[charId]._inventory[newObjectId]._stat1 = _items[objectId]._uses;
+		} else {
+			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[altCharId]._inventory[newObjectId]._ref;
+			_npcBuf[charId]._inventory[newObjectId]._stat2 = _npcBuf[altCharId]._inventory[newObjectId]._stat2;
+			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[altCharId]._inventory[newObjectId]._stat1 & 0x7F;
+		}
+
+		return true;
+	}
 
 	return false;
 }
@@ -1990,7 +2020,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219("Nothing...", 1, 2, 0xFFFF);
+					var110 = sub1C219((char *)"Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
 					copyString(_npcBuf[_teamCharId[counter]]._name, _ennemyNamePt2);
@@ -1999,7 +2029,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219(dest, 1, 2, 0xFFFF);
+					var110 = sub1C219(dest, 1, 2, true);
 					displayFctFullScreen();
 				}
 
@@ -2161,17 +2191,106 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 	warning("STUB: sub15A28");
 }
 
-void EfhEngine::sub2455E(int16 arg0, int16 arg1, int16 arg2) {
-	warning("STUB: sub2455E");
+void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
+	warning("TODO: sub2455E - check behavior");
+	uint8 varD = kByte2C7D0[arg0];
+	int16 varC = arg2 - 11;
+	int16 varA = arg4 - 11;
+
+	if (varC < 0)
+		varC = 0;
+
+	if (varA < 0)
+		varA = 0;
+
+	int16 var8 = varC + 23;
+	int16 var6 = varA + 23;
+
+	for (int16 var4 = varC; var4 <= var8; ++var4) {
+		for (int16 var2 = varA; var2 <= var6; ++var2) {
+			_techData[var2 + var4 * 64] = varD;
+		}
+	}
 }
 
-int16 EfhEngine::sub1C219(const char *str, int menuType, int arg4, int displayTeamWindowFl) {
-	warning("STUB: sub1C219");
-	return -1;
+int16 EfhEngine::sub1C219(char *str, int menuType, int arg4, bool displayTeamWindowFl) {
+	int16 varA = 0xFF;
+	int16 minX, maxX, minY, maxY;
+	
+	switch (menuType) {
+	case 0:
+		minX = 129;
+		minY = 9;
+		maxX = 302;
+		maxY = 18;
+		break;
+	case 1:
+		minX = 129;
+		minY = 9;
+		maxX = 302;
+		maxY = 110;
+		break;
+	case 2:
+		minX = 129;
+		minY = 112;
+		maxX = 302;
+		maxY = 132;
+		break;
+	case 3:
+		minX = 129;
+		minY = 79;
+		maxX = 303;
+		maxY = 107;
+		break;
+	default:
+		minX = minY = 0;
+		maxX = 320;
+		maxY = 200;
+		break;
+	}
+
+	drawColoredRect(minX, maxX, minY, maxY, 0);
+	if (str)
+		varA = script_parse((uint8 *)str, minX, minY, maxX, maxY, -1);
+
+	if (displayTeamWindowFl)
+		displayLowStatusScreen(false);
+
+	if (arg4 != 0) {
+		displayFctFullScreen();
+		if (_word2C87A != 0)
+			_word2C87A = 0;
+		else {
+			drawColoredRect(minX, maxX, minY, maxY, 0);
+			if (str)
+				int16 varC = script_parse((uint8 *)str, minX, minY, maxX, maxY, -1);
+		}
+
+		if (displayTeamWindowFl)
+			displayLowStatusScreen(false);
+
+		if (arg4 >= 2)
+			int16 varC = getLastCharAfterAnimCount(_guessAnimationAmount);
+
+		if (arg4 == 3)
+			drawColoredRect(minX, maxX, minY, maxY, 0);
+	}
+
+	return varA;
 }
 
 int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
-	warning("STUB: sub151FD");
+	if (_largeMapFlag) {
+		for (int16 counter = 0; counter < 100; ++counter) {
+			if (_mapUnknownPtr[counter * 9 + 1] == posX && _mapUnknownPtr[counter * 9 + 2] == posY && _mapUnknownPtr[counter * 9] == 0xFE)
+				return counter;
+		}
+	} else {
+		for (int16 counter = 0; counter < 100; ++counter) {
+			if (_mapUnknownPtr[counter * 9 + 1] == posX && _mapUnknownPtr[counter * 9 + 2] == posY && _mapUnknownPtr[counter * 9] == _fullPlaceId)
+				return counter;
+		}
+	}
 	return -1;
 }
 
