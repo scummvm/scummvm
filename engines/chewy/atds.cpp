@@ -337,7 +337,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else {
-					inv_use_mem = (char *)calloc(Ch.size + 3l, 1);
+					inv_use_mem = (char *)malloc(Ch.size + 3l);
 					if (!modul) {
 						if (Ch.size) {
 							if (!rs->read(inv_use_mem, Ch.size)) {
@@ -378,7 +378,7 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 				break;
 
 			case INV_IDX_DATEI:
-				atdsmem[INV_IDX_HANDLE] = (char *)calloc(INV_STRC_ANZ * sizeof(InvUse), 1);
+				atdsmem[INV_IDX_HANDLE] = (char *)malloc(INV_STRC_ANZ * sizeof(InvUse));
 				break;
 
 			default:
@@ -414,7 +414,7 @@ char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 	tmp_adr = NULL;
 	size = mem->file->get_poolsize(fname_, chunk_start, chunk_anz);
 	if (size) {
-		tmp_adr = (char *)calloc(size + 3l, 1);
+		tmp_adr = (char *)malloc(size + 3l);
 	}
 
 	return tmp_adr;
