@@ -1266,12 +1266,13 @@ void ScalpelUserInterface::doLookControl() {
 	_keyboardInput = (_keyPress != '\0');
 
 	if (events._released || events._rightReleased || _keyboardInput) {
+		// Is there any remaining text to display?
+		if (!_descStr.empty()) {
+			printObjectDesc(_descStr, false);
+		}
 		// Is an inventory object being looked at?
-		if (!_invLookFlag) {
-			// Is there any remaining text to display?
-			if (!_descStr.empty()) {
-				printObjectDesc(_descStr, false);
-			} else if (!_lookHelp) {
+		else if (!_invLookFlag) {
+			if (!_lookHelp) {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
