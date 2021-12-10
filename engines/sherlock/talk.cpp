@@ -275,13 +275,13 @@ void Talk::talkTo(const Common::String filename) {
 			break;
 
 		case FILES_MODE:
-			ui.banishWindow(true);
+			ui.banishWindow();
 			ui._windowBounds.top = CONTROLS_Y1;
 			abortFlag = true;
 			break;
 
 		case SETUP_MODE:
-			ui.banishWindow(true);
+			ui.banishWindow();
 			ui._windowBounds.top = CONTROLS_Y1;
 			ui._temp = ui._oldTemp = ui._lookHelp = ui._invLookFlag = false;
 			ui._menuMode = STD_MODE;
