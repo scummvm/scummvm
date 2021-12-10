@@ -182,10 +182,13 @@ void tglFrontFace(int mode) {
 
 void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[2];
+	TinyGL::GLParam p[5];
 
 	p[0].op = TinyGL::OP_ColorMask;
-	p[1].i = (r << 24) | (g << 16) | (b << 8) | (a << 0);
+	p[1].i = r;
+	p[2].i = g;
+	p[3].i = b;
+	p[4].i = a;
 
 	c->gl_add_op(p);
 }
@@ -767,16 +770,4 @@ void tglHint(int target, int mode) {
 void tglDebug(int mode) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	c->print_flag = mode;
-}
-
-void tglSetShadowMaskBuf(unsigned char *buf) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->shadow_mask_buf = buf;
-}
-
-void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->shadow_color_r = r << 8;
-	c->shadow_color_g = g << 8;
-	c->shadow_color_b = b << 8;
 }

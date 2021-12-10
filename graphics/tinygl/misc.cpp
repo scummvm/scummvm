@@ -115,18 +115,6 @@ void GLContext::glopEnableDisable(GLParam *p) {
 		else
 			offset_states &= ~TGL_OFFSET_LINE;
 		break;
-	case TGL_SHADOW_MASK_MODE:
-		if (v)
-			shadow_mode |= 1;
-		else
-			shadow_mode &= ~1;
-		break;
-	case TGL_SHADOW_MODE:
-		if (v)
-			shadow_mode |= 2;
-		else
-			shadow_mode &= ~2;
-		break;
 	default:
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
 			gl_enable_disable_light(code - TGL_LIGHT0, v);
@@ -217,7 +205,10 @@ void GLContext::glopPolygonOffset(GLParam *p) {
 }
 
 void GLContext::glopColorMask(GLParam *p) {
-	color_mask = p[1].i;
+	color_mask_red = p[1].i == TGL_TRUE;
+	color_mask_green = p[2].i == TGL_TRUE;
+	color_mask_blue = p[3].i == TGL_TRUE;
+	color_mask_alpha = p[4].i == TGL_TRUE;
 }
 
 void GLContext::glopDepthMask(GLParam *p) {

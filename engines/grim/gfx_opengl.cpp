@@ -297,7 +297,7 @@ bool GfxOpenGL::supportsShaders() {
 	return false;
 }
 
-static void glShadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
+static void shadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -562,23 +562,18 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 	}
 
 	if (_currentShadowArray) {
-		// TODO find out why shadowMask at device in woods is null
-		if (!_currentShadowArray->shadowMask) {
-			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
-			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
-		}
 		Sector *shadowSector = _currentShadowArray->planeList.front().sector;
 		glDepthMask(GL_FALSE);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-// 		glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
+		// glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
 			glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
 			glColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
 		}
-		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
 	const float alpha = actor->getEffectiveAlpha();

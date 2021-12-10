@@ -229,9 +229,6 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	offset_factor = 0.0f;
 	offset_units = 0.0f;
 
-	// shadow mode
-	shadow_mode = 0;
-
 	// clear the resize callback function pointer
 	gl_resize_viewport = nullptr;
 
@@ -240,7 +237,8 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	specbuf_used_counter = 0;
 	specbuf_num_buffers = 0;
 
-	color_mask = (1 << 24) | (1 << 16) | (1 << 8) | (1 << 0);
+	// color mask
+	color_mask_red = color_mask_green = color_mask_blue = color_mask_alpha = true;
 
 	const int kDrawCallMemory = 5 * 1024 * 1024;
 

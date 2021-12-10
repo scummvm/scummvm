@@ -85,7 +85,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 
 	_pixelFormat = g_system->getScreenFormat();
 	debug("INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
-	TinyGL::createContext(screenW, screenH, _pixelFormat, 256, g_grim->getGameType() == GType_GRIM, ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(screenW, screenH, _pixelFormat, 256, true, ConfMan.getBool("dirtyrects"));
 
 	_storedDisplay = new Graphics::Surface;
 	_storedDisplay->create(_gameWidth, _gameHeight, _pixelFormat);
@@ -96,6 +96,10 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 	TGLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
+	
+	tglClearStencil(0xff);
+	tglStencilFunc(TGL_ALWAYS, 1, 0xff);
+	tglStencilOp(TGL_REPLACE, TGL_REPLACE, TGL_REPLACE);
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
@@ -161,7 +165,7 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 }
 
 void GfxTinyGL::clearScreen() {
-	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT | TGL_STENCIL_BUFFER_BIT);
 }
 
 void GfxTinyGL::clearDepthBuffer() {
@@ -193,7 +197,7 @@ bool GfxTinyGL::supportsShaders() {
 	return false;
 }
 
-static void tglShadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
+static void shadowProjection(const Math::Vector3d &light, const Math::Vector3d &plane, const Math::Vector3d &normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -449,6 +453,7 @@ void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 void GfxTinyGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	tglEnable(TGL_TEXTURE_2D);
+	tglEnable(TGL_LIGHTING);
 	tglMatrixMode(TGL_PROJECTION);
 	tglPushMatrix();
 	tglMatrixMode(TGL_MODELVIEW);
@@ -461,23 +466,18 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	}
 
 	if (_currentShadowArray) {
+		Sector *shadowSector = _currentShadowArray->planeList.front().sector;
 		tglDepthMask(TGL_FALSE);
-		// TODO find out why shadowMask at device in woods is null
-		if (!_currentShadowArray->shadowMask) {
-			_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
-			_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
-		}
-		assert(_currentShadowArray->shadowMask);
-		//tglSetShadowColor(255, 255, 255);
+		tglEnable(TGL_POLYGON_OFFSET_FILL);
+		tglDisable(TGL_LIGHTING);
+		tglDisable(TGL_TEXTURE_2D);
+		// tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
-			tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+			tglColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
-			tglSetShadowColor(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+			tglColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
 		}
-		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
-		SectorListType::iterator i = _currentShadowArray->planeList.begin();
-		Sector *shadowSector = i->sector;
-		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
 	const float alpha = actor->getEffectiveAlpha();
@@ -537,19 +537,19 @@ void GfxTinyGL::finishActorDraw() {
 	}
 
 	if (_currentShadowArray) {
-		tglSetShadowMaskBuf(nullptr);
+		tglEnable(TGL_LIGHTING);
+		tglColor3f(1.0f, 1.0f, 1.0f);
+		tglDisable(TGL_POLYGON_OFFSET_FILL);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		tglDisable(TGL_CULL_FACE);
 	}
 
-	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 	_currentActor = nullptr;
 }
 
 void GfxTinyGL::drawShadowPlanes() {
-	tglEnable(TGL_SHADOW_MASK_MODE);
 	tglDepthMask(TGL_FALSE);
 	tglPushMatrix();
 
@@ -559,13 +559,14 @@ void GfxTinyGL::drawShadowPlanes() {
 		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 	}
 
-	if (!_currentShadowArray->shadowMask) {
-		_currentShadowArray->shadowMask = new byte[_gameWidth * _gameHeight];
-		_currentShadowArray->shadowMaskSize = _gameWidth * _gameHeight;
-	}
-	memset(_currentShadowArray->shadowMask, 0, _gameWidth * _gameHeight);
+	tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
+	tglDepthMask(TGL_FALSE);
 
-	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
+	tglEnable(TGL_STENCIL_TEST);
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_TEXTURE_2D);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
@@ -575,21 +576,20 @@ void GfxTinyGL::drawShadowPlanes() {
 		}
 		tglEnd();
 	}
-	tglSetShadowMaskBuf(nullptr);
-	tglDisable(TGL_SHADOW_MASK_MODE);
-	tglDepthMask(TGL_TRUE);
+
+	tglDisable(TGL_STENCIL_TEST);
+	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 
 	tglPopMatrix();
 }
 
 void GfxTinyGL::setShadowMode() {
 	GfxBase::setShadowMode();
-	tglEnable(TGL_SHADOW_MODE);
 }
 
 void GfxTinyGL::clearShadowMode() {
 	GfxBase::clearShadowMode();
-	tglDisable(TGL_SHADOW_MODE);
+
 	tglDepthMask(TGL_TRUE);
 }
 

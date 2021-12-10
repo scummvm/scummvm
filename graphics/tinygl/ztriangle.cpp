@@ -98,17 +98,12 @@ FORCEINLINE void FrameBuffer::putPixelDepth(FrameBuffer *buffer, int buf, unsign
 			return;
 		}
 	}
-	if (kDepthWrite && buffer->compareDepth(z, pz[_a])) {
-		pz[_a] = z;
+	bool depthTestResult = buffer->compareDepth(z, pz[_a]);
+	if (kStencilEnabled) {
+		stencilOp(true, depthTestResult, ps + _a);
 	}
-	z += dzdx;
-}
-
-template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
-FORCEINLINE void FrameBuffer::putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z,
-	                                     unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm) {
-	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a]) && pm[_a]) {
-		buffer->writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + _a, 255, r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
+	if (kDepthWrite && depthTestResult) {
+		pz[_a] = z;
 	}
 	z += dzdx;
 }
@@ -167,7 +162,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
 	uint *pz1 = nullptr;
-	byte *pm1 = nullptr;
 	byte *ps1 = nullptr;
 	int part, update_left = 1, update_right = 1;
 
@@ -299,15 +293,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 
 	switch (kDrawLogic) {
-	case DRAW_SHADOW_MASK:
-		pm1 = _shadowMaskBuf + p0->y * _pbufWidth;
-		break;
-	case DRAW_SHADOW:
-		pm1 = _shadowMaskBuf + p0->y * _pbufWidth;
-		r1 = _shadowColorR;
-		g1 = _shadowColorG;
-		b1 = _shadowColorB;
-		break;
 	case DRAW_DEPTH_ONLY:
 		break;
 	case DRAW_FLAT:
@@ -424,8 +409,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		while (nb_lines > 0) {
 			int x = x1;
 			{
-				if (kDrawLogic == DRAW_DEPTH_ONLY ||
-						(kDrawLogic == DRAW_FLAT && !(kInterpST || kInterpSTZ))) {
+				if (kDrawLogic == DRAW_DEPTH_ONLY || (kDrawLogic == DRAW_FLAT && !(kInterpST || kInterpSTZ))) {
 					int pp;
 					int n;
 					unsigned int *pz;
@@ -486,62 +470,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							ps += 1;
 						}
 						pp += 1;
-						n -= 1;
-						x += 1;
-					}
-				} else if (kDrawLogic == DRAW_SHADOW_MASK) {
-					unsigned char *pm;
-					int n;
-
-					n = (x2 >> 16) - x1;
-					pm = pm1 + x1;
-					while (n >= 3) {
-						pm[0] = 0xff;
-						pm[1] = 0xff;
-						pm[2] = 0xff;
-						pm[3] = 0xff;
-						pm += 4;
-						n -= 4;
-						x += 4;
-					}
-					while (n >= 0) {
-						pm[0] = 0xff;
-						pm += 1;
-						n -= 1;
-						x += 1;
-					}
-				} else if (kDrawLogic == DRAW_SHADOW) {
-					unsigned char *pm;
-					int n;
-					unsigned int *pz;
-					unsigned int z;
-					unsigned int r = r1;
-					unsigned int g = g1;
-					unsigned int b = b1;
-
-					n = (x2 >> 16) - x1;
-
-					int buf = pp1 + x1;
-
-					pm = pm1 + x1;
-					pz = pz1 + x1;
-					z = z1;
-					while (n >= 3) {
-						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, x, y, z, r, g, b, dzdx, pm);
-						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 1, x, y, z, r, g, b, dzdx, pm);
-						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 2, x, y, z, r, g, b, dzdx, pm);
-						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 3, x, y, z, r, g, b, dzdx, pm);
-						pz += 4;
-						pm += 4;
-						buf += 4;
-						n -= 4;
-						x += 4;
-					}
-					while (n >= 0) {
-						putPixelShadow<kDepthWrite, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, pz, 0, x, y, z, r, g, b, dzdx, pm);
-						pz += 1;
-						pm += 1;
-						buf += 1;
 						n -= 1;
 						x += 1;
 					}
@@ -708,8 +636,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				ps1 += _pbufWidth;
 			}
 
-			if (kDrawLogic == DRAW_SHADOW || kDrawLogic == DRAW_SHADOW_MASK)
-				pm1 += _pbufWidth;
 			nb_lines--;
 			y++;
 		}
@@ -815,28 +741,6 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZB
 		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, true>(p0, p1, p2);
 	else
 		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_FLAT, false>(p0, p1, p2);
-}
-
-void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	const bool interpZ = true;
-	const bool interpRGB = false;
-	const bool interpST = false;
-	const bool interpSTZ = false;
-	if (_depthWrite && _depthTestEnabled)
-		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, true>(p0, p1, p2);
-	else
-		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW_MASK, false>(p0, p1, p2);
-}
-
-void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	const bool interpZ = true;
-	const bool interpRGB = false;
-	const bool interpST = false;
-	const bool interpSTZ = false;
-	if (_depthWrite && _depthTestEnabled)
-		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, true>(p0, p1, p2);
-	else
-		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_SHADOW, false>(p0, p1, p2);
 }
 
 } // end of namespace TinyGL

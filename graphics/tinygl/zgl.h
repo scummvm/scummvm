@@ -277,12 +277,6 @@ struct GLContext {
 	int alpha_test_func;
 	int alpha_test_ref_val;
 
-	// shadow
-	unsigned char *shadow_mask_buf;
-	int shadow_color_r;
-	int shadow_color_g;
-	int shadow_color_b;
-
 	// Internal texture size
 	int _textureSize;
 
@@ -397,8 +391,6 @@ struct GLContext {
 	float offset_units;
 	int offset_states;
 
-	int shadow_mode;
-
 	// specular buffer. could probably be shared between contexts,
 	// but that wouldn't be 100% thread safe
 	GLSpecBuf *specbuf_first;
@@ -425,7 +417,10 @@ struct GLContext {
 	int stencil_dpfail;
 	int stencil_dppass;
 
-	int color_mask;
+	bool color_mask_red;
+	bool color_mask_green;
+	bool color_mask_blue;
+	bool color_mask_alpha;
 
 	Common::Rect _scissorRect;
 

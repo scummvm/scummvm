@@ -395,16 +395,8 @@ void GLContext::gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, 
 	}
 #endif
 
-	if (c->color_mask == 0) {
-		// FIXME: Accept more than just 0 or 1.
+	if (!c->color_mask_red && !c->color_mask_green && !c->color_mask_blue && !c->color_mask_alpha) {
 		c->fb->fillTriangleDepthOnly(&p0->zp, &p1->zp, &p2->zp);
-	}
-	if (c->shadow_mode & 1) {
-		assert(c->shadow_mask_buf);
-		c->fb->fillTriangleFlatShadowMask(&p0->zp, &p1->zp, &p2->zp);
-	} else if (c->shadow_mode & 2) {
-		assert(c->shadow_mask_buf);
-		c->fb->fillTriangleFlatShadow(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->texture_2d_enabled && c->current_texture && c->current_texture->images[0].pixmap) {
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;

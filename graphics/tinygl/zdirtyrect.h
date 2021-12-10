@@ -107,14 +107,13 @@ private:
 		int beginType;
 		int currentFrontFace;
 		int cullFaceEnabled;
-		int colorMask;
+		bool colorMaskRed;
+		bool colorMaskGreen;
+		bool colorMaskBlue;
+		bool colorMaskAlpha;
 		bool depthTestEnabled;
 		int depthFunction;
 		int depthWriteMask;
-		int shadowMode;
-		int shadowColorR;
-		int shadowColorG;
-		int shadowColorB;
 		bool texture2DEnabled;
 		int currentShadeModel;
 		int polygonModeBack;
@@ -142,7 +141,6 @@ private:
 		int stencilDppass;
 		TinyGL::GLTexture *texture;
 		uint wrapS, wrapT;
-		byte *shadowMaskBuf;
 
 		bool operator==(const RasterizationState &other) const;
 	};

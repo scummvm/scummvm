@@ -454,19 +454,17 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.offsetStates = c->offset_states;
 	state.offsetFactor = c->offset_factor;
 	state.offsetUnits = c->offset_units;
-	state.shadowMaskBuf = c->shadow_mask_buf;
-	state.shadowColorR = c->shadow_color_r;
-	state.shadowColorG = c->shadow_color_g;
-	state.shadowColorB = c->shadow_color_b;
 
 	state.cullFaceEnabled = c->cull_face_enabled;
 	state.beginType = c->begin_type;
-	state.colorMask = c->color_mask;
+	state.colorMaskRed = c->color_mask_red;
+	state.colorMaskGreen = c->color_mask_green;
+	state.colorMaskBlue = c->color_mask_blue;
+	state.colorMaskAlpha = c->color_mask_alpha;
 	state.currentFrontFace = c->current_front_face;
 	state.currentShadeModel = c->current_shade_model;
 	state.polygonModeBack = c->polygon_mode_back;
 	state.polygonModeFront = c->polygon_mode_front;
-	state.shadowMode = c->shadow_mode;
 	state.texture2DEnabled = c->texture_2d_enabled;
 	state.texture = c->current_texture;
 	state.wrapS = c->texture_wrap_s;
@@ -497,8 +495,6 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setOffsetStates(state.offsetStates);
 	c->fb->setOffsetFactor(state.offsetFactor);
 	c->fb->setOffsetUnits(state.offsetUnits);
-	c->fb->setShadowMaskBuf(state.shadowMaskBuf);
-	c->fb->setShadowRGB(state.shadowColorB, state.shadowColorG, state.shadowColorB);
 
 	c->blending_enabled = state.enableBlending;
 	c->source_blending_factor = state.sfactor;
@@ -520,20 +516,18 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->offset_states = state.offsetStates;
 	c->offset_factor = state.offsetFactor;
 	c->offset_units = state.offsetUnits;
-	c->shadow_mask_buf = state.shadowMaskBuf;
-	c->shadow_color_r = state.shadowColorR;
-	c->shadow_color_g = state.shadowColorG;
-	c->shadow_color_b = state.shadowColorB;
 
 	c->lighting_enabled = state.lightingEnabled;
 	c->cull_face_enabled = state.cullFaceEnabled;
 	c->begin_type = state.beginType;
-	c->color_mask = state.colorMask;
+	c->color_mask_red = state.colorMaskRed;
+	c->color_mask_green = state.colorMaskGreen;
+	c->color_mask_blue = state.colorMaskBlue;
+	c->color_mask_alpha = state.colorMaskAlpha;
 	c->current_front_face = state.currentFrontFace;
 	c->current_shade_model = state.currentShadeModel;
 	c->polygon_mode_back = state.polygonModeBack;
 	c->polygon_mode_front = state.polygonModeFront;
-	c->shadow_mode = state.shadowMode;
 	c->texture_2d_enabled = state.texture2DEnabled;
 	c->current_texture = state.texture;
 	c->texture_wrap_s = state.wrapS;
@@ -743,16 +737,17 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 		offsetStates == other.offsetStates &&
 		offsetFactor == other.offsetFactor &&
 		offsetUnits == other.offsetUnits &&
-		shadowMaskBuf == other.shadowMaskBuf &&
 		lightingEnabled == other.lightingEnabled &&
 		cullFaceEnabled == other.cullFaceEnabled &&
 		beginType == other.beginType &&
-		colorMask == other.colorMask &&
+		colorMaskRed == other.colorMaskRed &&
+		colorMaskGreen == other.colorMaskGreen &&
+		colorMaskBlue == other.colorMaskBlue &&
+		colorMaskAlpha == other.colorMaskAlpha &&
 		currentFrontFace == other.currentFrontFace &&
 		currentShadeModel == other.currentShadeModel &&
 		polygonModeBack == other.polygonModeBack &&
 		polygonModeFront == other.polygonModeFront &&
-		shadowMode == other.shadowMode &&
 		texture2DEnabled == other.texture2DEnabled &&
 		texture == other.texture &&
 		textureVersion == texture->versionNumber &&

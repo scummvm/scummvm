@@ -58,8 +58,6 @@ struct Shadow {
 	Common::String name;
 	Math::Vector3d pos;
 	SectorListType planeList;
-	byte *shadowMask;
-	int shadowMaskSize;
 	bool active;
 	bool dontNegate;
 	Color color;

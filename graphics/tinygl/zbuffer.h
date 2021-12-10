@@ -73,8 +73,6 @@ namespace TinyGL {
 static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
-static const int DRAW_SHADOW_MASK = 3;
-static const int DRAW_SHADOW = 4;
 
 struct Buffer {
 	byte *pbuf;
@@ -318,10 +316,6 @@ private:
 	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled>
 	FORCEINLINE void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a, int x, int y, unsigned int &z, int &dzdx);
 
-	template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
-	FORCEINLINE void putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z,
-									unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm);
-
 	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
 	FORCEINLINE void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf, const Graphics::TexelBuffer *texture,
 													   unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, byte *ps, int _a,
@@ -500,16 +494,6 @@ public:
 		_enableScissor = false;
 	}
 
-	FORCEINLINE void setShadowMaskBuf(byte *shadowBuffer) {
-		_shadowMaskBuf = shadowBuffer;
-	}
-
-	FORCEINLINE void setShadowRGB(int r, int g, int b) {
-		_shadowColorR = r;
-		_shadowColorG = g;
-		_shadowColorB = b;
-	}
-
 	FORCEINLINE void enableBlending(bool enable) {
 		_blendingEnabled = enable;
 	}
@@ -621,8 +605,6 @@ public:
 	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
-	void fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	void plot(ZBufferPoint *p);
 	void fillLine(ZBufferPoint *p1, ZBufferPoint *p2);
@@ -670,10 +652,6 @@ private:
 
 	const Graphics::TexelBuffer *_currentTexture;
 	unsigned int _wrapS, _wrapT;
-	byte *_shadowMaskBuf;
-	int _shadowColorR;
-	int _shadowColorG;
-	int _shadowColorB;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;

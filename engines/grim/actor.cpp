@@ -48,7 +48,7 @@
 namespace Grim {
 
 Shadow::Shadow() :
-		shadowMask(nullptr), shadowMaskSize(0), active(false), dontNegate(false), userData(nullptr) {
+		active(false), dontNegate(false), userData(nullptr) {
 }
 
 static int animTurn(float turnAmt, const Math::Angle &dest, Math::Angle *cur) {
@@ -222,8 +222,7 @@ void Actor::saveState(SaveGame *savedState) const {
 			savedState->writeString(p.sector->getName());
 		}
 
-		savedState->writeLESint32(shadow.shadowMaskSize);
-		savedState->write(shadow.shadowMask, shadow.shadowMaskSize);
+		savedState->writeLESint32(0);
 		savedState->writeBool(shadow.active);
 		savedState->writeBool(shadow.dontNegate);
 	}
@@ -406,13 +405,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 			}
 		}
 
-		shadow.shadowMaskSize = savedState->readLESint32();
-		delete[] shadow.shadowMask;
-		if (shadow.shadowMaskSize > 0) {
-			shadow.shadowMask = new byte[shadow.shadowMaskSize];
-			savedState->read(shadow.shadowMask, shadow.shadowMaskSize);
-		} else {
-			shadow.shadowMask = nullptr;
+		int shadowMaskSize = savedState->readLESint32();
+		for (int s = 0; s < shadowMaskSize; s++) {
+			savedState->readByte();
 		}
 		shadow.active = savedState->readBool();
 		shadow.dontNegate = savedState->readBool();
@@ -1746,16 +1741,6 @@ bool Actor::updateTalk(uint frameTime) {
 }
 
 void Actor::draw() {
-	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {
-		for (int l = 0; l < MAX_SHADOWS; l++) {
-			if (!_shadowArray[l].active)
-				continue;
-			g_driver->setShadow(&_shadowArray[l]);
-			g_driver->drawShadowPlanes();
-			g_driver->setShadow(nullptr);
-		}
-	}
-
 	// FIXME: if isAttached(), factor in the joint rotation as well.
 	const Math::Vector3d &absPos = getWorldPos();
 	if (!_costumeStack.empty()) {
@@ -1810,8 +1795,7 @@ void Actor::drawCostume(Costume *costume) {
 			continue;
 		g_driver->setShadow(&_shadowArray[l]);
 		g_driver->setShadowMode();
-		if (g_driver->isHardwareAccelerated())
-			g_driver->drawShadowPlanes();
+		g_driver->drawShadowPlanes();
 		g_driver->startActorDraw(this);
 		costume->draw();
 		g_driver->finishActorDraw();
@@ -1923,9 +1907,6 @@ void Actor::clearShadowPlane(int i) {
 		delete shadow->planeList.back().sector;
 		shadow->planeList.pop_back();
 	}
-	delete[] shadow->shadowMask;
-	shadow->shadowMaskSize = 0;
-	shadow->shadowMask = nullptr;
 	shadow->active = false;
 	shadow->dontNegate = false;
 
