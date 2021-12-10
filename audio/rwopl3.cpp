@@ -88,18 +88,22 @@ bool OPL::init() {
 	_rwMutex->lock();
 
 	if (bus == "serial") {
+		if (port.empty()) {
+			warning("RWOPL3: Missing port specification.");
+		} else {
 #if defined(__linux__) || defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-		char buf[128];
-		snprintf(buf, sizeof(buf) - 1, "/dev/%s", port.c_str());
+			char buf[128];
+			snprintf(buf, sizeof(buf) - 1, "/dev/%s", port.c_str());
 
-		rc = retrowave_init_posix_serialport(&_retrowaveGlobalContext, buf);
-		_connType = RWCONNTYPE_POSIX_SERIAL;
+			rc = retrowave_init_posix_serialport(&_retrowaveGlobalContext, buf);
+			_connType = RWCONNTYPE_POSIX_SERIAL;
 #endif
 
 #ifdef WIN32
-		rc = retrowave_init_win32_serialport(&_retrowaveGlobalContext, port.c_str());
-		_connType = RWCONNTYPE_WIN32_SERIAL;
+			rc = retrowave_init_win32_serialport(&_retrowaveGlobalContext, port.c_str());
+			_connType = RWCONNTYPE_WIN32_SERIAL;
 #endif
+		}
 	} else if (bus == "spi") {
 #if defined(__linux__)
 		Common::StringTokenizer *st = new Common::StringTokenizer(spiCs, ",");
@@ -121,6 +125,8 @@ bool OPL::init() {
 #else
 		warning("RWOPL3: SPI is not supported on your platform.");
 #endif
+	} else {
+		warning("RWOPL3: Bad bus specification. Valid values are \"serial\" and \"spi\".");
 	}
 
 	if (rc < 0) {
