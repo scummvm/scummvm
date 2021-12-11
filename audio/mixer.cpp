@@ -181,7 +181,6 @@ MixerImpl::MixerImpl(uint sampleRate, uint outBufSize)
 	: _mutex(), _sampleRate(sampleRate), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
-	assert(outBufSize >= 0);
 
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = nullptr;
