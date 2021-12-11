@@ -71,7 +71,7 @@ void IMuseDigital::tracksResume() {
 }
 
 void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	dispatchSaveLoad(ser);
 
 	for (int l = 0; l < _trackCount; l++) {
@@ -150,8 +150,6 @@ void IMuseDigital::tracksCallback() {
 		_tracksPauseTimer = 3;
 	}
 
-	Common::StackLock lock(_mutex);
-
 	// If we leave the number of queued streams unbounded, we fill the queue with streams faster than
 	// we can play them: this leads to a very noticeable audio latency and desync with the graphics.
 	if ((int)_internalMixer->_stream->numQueuedStreams() < _maxQueuedStreams) {
@@ -228,9 +226,9 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 		return -1;
 	}
 
-	Common::StackLock lock(_mutex);
+	_mutex->lock();
 	addTrackToList(&_trackList, allocatedTrack);
-	Common::StackLock unlock(_mutex);
+	_mutex->unlock();
 
 	return 0;
 }
@@ -254,7 +252,7 @@ int IMuseDigital::tracksStopSound(int soundId) {
 }
 
 int IMuseDigital::tracksStopAllSounds() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	IMuseDigiTrack *nextTrack = _trackList;
 	IMuseDigiTrack *curTrack;
 

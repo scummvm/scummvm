@@ -87,7 +87,7 @@ int IMuseDigital::waveOutDeinit() {
 }
 
 void IMuseDigital::waveOutCallback() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksCallback();
 }
 
