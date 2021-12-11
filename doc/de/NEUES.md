@@ -1,5 +1,4 @@
-Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
-Programmcodes finden Sie auf Englisch unter:
+Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2.6.0 (DD.MM.YYYY)
