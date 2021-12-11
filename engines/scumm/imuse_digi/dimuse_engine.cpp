@@ -41,8 +41,8 @@ void IMuseDigital::timer_handler(void *refCon) {
 	diMUSE->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer) {
+IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::Mutex *mutex)
+	: _vm(scumm), _mixer(mixer), _mutex(mutex) {
 	assert(_vm);
 	assert(mixer);
 
@@ -269,7 +269,7 @@ static void skipLegacyTrackEntry(Common::Serializer &s) {
 }
 
 void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
-	Common::StackLock lock(_mutex, "IMuseDigital::saveLoadEarly()");
+	Common::StackLock lock(*_mutex, "IMuseDigital::saveLoadEarly()");
 
 	if (s.isLoading()) {
 		diMUSEStopAllSounds();

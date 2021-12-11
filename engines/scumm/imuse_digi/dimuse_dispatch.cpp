@@ -812,7 +812,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 }
 
 void IMuseDigital::dispatchPredictFirstStream() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 
 	for (int i = 0; i < _trackCount; i++) {
 		if (_dispatches[i].trackPtr->soundId && _dispatches[i].streamPtr && _dispatches[i].streamZoneList)
