@@ -136,6 +136,8 @@ Common::Error HypnoEngine::run() {
 
 	// Main event loop
 	loadAssets();
+	//resetSceneState();
+
 	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {
 		debug("nextLevel: %s", _nextLevel.c_str());
@@ -180,7 +182,6 @@ void HypnoEngine::runLevel(Common::String &name) {
 		runCode((Code *) _levels[name]);
 	} else if (_levels[name]->type == SceneLevel) {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s with next level: %s", name.c_str(), _levels[name]->levelIfWin.c_str());
-		resetSceneState();
 		changeScreenMode("640x480");
 		runScene((Scene *) _levels[name]);
 	} else {

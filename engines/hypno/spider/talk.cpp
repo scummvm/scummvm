@@ -166,6 +166,13 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
 	}
+
+	if (_sceneState["GS_LEVELCOMPLETE"]) {
+		debugC(1, kHypnoDebugScene, "Level is complete, cleaning variables");
+		resetSceneState();
+		_sceneState["GS_LEVELCOMPLETE"] = 1;
+	}
+
 	if (videos.size() > 0)
 		runIntros(videos);
 }

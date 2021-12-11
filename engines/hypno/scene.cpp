@@ -400,6 +400,12 @@ void HypnoEngine::runScene(Scene *scene) {
 				_videosPlaying.empty() && 
 				_nextSequentialVideoToPlay.empty() && 
 				_nextParallelVideoToPlay.empty()) {
+				if (checkLevelWon()) {
+					debugC(1, kHypnoDebugScene, "Resetting level variables");
+					resetSceneState();
+				}
+				_sceneState["GS_LEVELCOMPLETE"] = 0;
+
 				debugC(1, kHypnoDebugScene, "Wining level and jumping to %s", scene->levelIfWin.c_str());
 				if (_nextLevel.empty()) {
 					assert(!scene->levelIfWin.empty());

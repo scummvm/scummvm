@@ -74,7 +74,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[1].actions.push_back(cl);
 
 	loadSceneLevel("options.mi_", "", prefix);
-	loadSceneLevel("levels.mi_", "", prefix);
+	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
@@ -152,8 +152,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("c4"); // depens on the difficulty
 	sc->hots[4].actions.push_back(cl);
 
-	loadSceneLevel("int_roof.mi_", "", prefix);
+	loadSceneLevel("int_roof.mi_", "recept.mi_", prefix);
 	sc = (Scene *) _levels["int_roof.mi_"];
+	sc->intros.push_back("cine/leapup.smk");
 	Overlay *over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\ROOFB1.SMK"; // seems to be a bug?
 
@@ -161,6 +162,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	
 	Transition *boil_selector = new Transition("boiler.mi_", "boilhard.mi_");
 	_levels["<boil_selector>"] = boil_selector;
+	_levels["<boil_selector>"]->intros.push_back("spider/cine/leapdown.smk");
 
 	loadSceneLevel("boiler.mi_", "", prefix);
 	sc = (Scene *) _levels["boiler.mi_"];
@@ -179,13 +181,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[2].actions.push_back(cl);
 
 	loadSceneLevel("alverofh.mi_", "", prefix);
-	loadSceneLevel("recept.mi_", "", prefix);
+	loadSceneLevel("alveroff.mi_", "", prefix);
+	Transition *alveroff_selector = new Transition("alveroff.mi_", "alverofh.mi_");
+	_levels["<alveroff_selector>"] = alveroff_selector;
 
+	loadSceneLevel("recept.mi_", "", prefix);
 	sc = (Scene *) _levels["recept.mi_"];
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\rec0B1.SMK"; // seems to be a bug?
 
-	loadSceneLevel("alveroff.mi_", "", prefix);
 
 	loadArcadeLevel("c4.mi_", "c2", prefix);
 	loadArcadeLevel("c2.mi_", "decide4.mi_", prefix);
@@ -274,8 +278,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[3].actions.push_back(cl);
 	sc->hots[4].actions.push_back(cl);
 
-	cl = new ChangeLevel("mv0t.mi_");
-	sc->hots[5].actions.push_back(cl);
+	Global *gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[5].actions.push_back(gl);
 	cl = new ChangeLevel("mainmenu.mi_");
 	sc->hots[6].actions.push_back(cl);
 
