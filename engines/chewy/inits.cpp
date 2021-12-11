@@ -68,6 +68,10 @@ void standard_init() {
 	curblk.xsize = 16;
 	curblk.ysize = 16;
 
+	// WORKAROUND: Moved from init_load because the original
+	// uses curtaf->image below before curtaf was initialized
+	curtaf = mem->taf_adr(CURSOR);
+
 	curblk.sprite = curtaf->image;
 	curblk.cur_back = cur_back;
 	curblk.no_back = true;
@@ -344,9 +348,6 @@ void init_load() {
 	spz_akt_id = -1;
 	spz_tinfo = 0;
 	set_spz_delay(3);
-
-	curtaf = mem->taf_adr(CURSOR);
-	ERROR
 
 	menutaf = mem->taf_adr(MENUTAF);
 	ERROR
