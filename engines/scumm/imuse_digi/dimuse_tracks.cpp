@@ -155,7 +155,7 @@ void IMuseDigital::tracksCallback() {
 
 	// If we leave the number of queued streams unbounded, we fill the queue with streams faster than
 	// we can play them: this leads to a very noticeable audio latency and desync with the graphics.
-	if (_internalMixer->_stream->numQueuedStreams() < _maxQueuedStreams) {
+	if ((int)_internalMixer->_stream->numQueuedStreams() < _maxQueuedStreams) {
 		if (!_isEarlyDiMUSE)
 			dispatchPredictFirstStream();
 
