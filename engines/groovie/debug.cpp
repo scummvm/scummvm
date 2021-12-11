@@ -43,6 +43,7 @@ Debugger::Debugger(GroovieEngine *vm) :
 	registerCmd("fg", WRAP_METHOD(Debugger, cmd_fg));
 	registerCmd("bg", WRAP_METHOD(Debugger, cmd_bg));
 	registerCmd("mem", WRAP_METHOD(Debugger, cmd_mem));
+	registerCmd("var", WRAP_METHOD(Debugger, cmd_mem));	// alias
 	registerCmd("load", WRAP_METHOD(Debugger, cmd_loadgame));
 	registerCmd("save", WRAP_METHOD(Debugger, cmd_savegame));
 	registerCmd("playref", WRAP_METHOD(Debugger, cmd_playref));
@@ -98,9 +99,9 @@ bool Debugger::cmd_mem(int argc, const char **argv) {
 			// Get
 			val = _script->_variables[pos];
 		}
-		debugPrintf("mem[0x%04X] = 0x%02X\n", pos, val);
+		debugPrintf("%s[0x%04X] = 0x%02X\n", argv[0], pos, val);
 	} else {
-		debugPrintf("Syntax: mem <addr> [<val>]\n");
+		debugPrintf("Syntax: %s <addr> [<val>]\n", argv[0]);
 	}
 	return true;
 }
