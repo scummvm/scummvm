@@ -45,6 +45,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix bell pull sound in Serrated Scalpel.
    - Fix inventory not updating in Serrated Scalpel after examining watch.
    - Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
+   - Fix graphic issues in Serrated Scalpel looking at items whilst inventory is open.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
