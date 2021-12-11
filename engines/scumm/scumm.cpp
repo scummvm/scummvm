@@ -1487,8 +1487,12 @@ Common::Error ScummEngine::init() {
 	resetScumm();
 	resetScummVars();
 
-	if (_game.version >= 5 && _game.version <= 7)
+	if (_game.version >= 5 && _game.version <= 7) {
 		_sound->setupSound();
+		// In case of talkie edition without sfx file, enable subtitles
+		if (!_sound->hasSfxFile() && !ConfMan.getBool("subtitles"))
+			ConfMan.setBool("subtitles", true);
+	}
 
 	syncSoundSettings();
 

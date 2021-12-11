@@ -121,6 +121,7 @@ public:
 	virtual void setupSound();
 	void pauseSounds(bool pause);
 	bool isSfxFileCompressed();
+	bool hasSfxFile() const;
 	ScummFile *restoreDiMUSESpeechFile(const char *fileName);
 
 	void startCDTimer();
