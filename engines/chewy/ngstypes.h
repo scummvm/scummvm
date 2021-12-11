@@ -93,13 +93,13 @@ struct taf_info {
 	int16 anzahl = 0;
 	byte *palette = nullptr;
 	int16 *korrektur = nullptr;
-	byte *image[1];		// variable size
+	byte **image = nullptr;
 };
 
 struct taf_seq_info {
 	int16 anzahl = 0;
 	int16 *korrektur = nullptr;
-	byte *image[1];		// variable size
+	byte **image = nullptr;
 };
 
 struct NewPhead {
