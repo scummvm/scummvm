@@ -1384,12 +1384,19 @@ void PrivateEngine::drawScreen() {
 		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);	
 	} else {
 		const byte *cPalette = (const byte *) _compositeSurface->getPalette();
-		for (int c = 0; c < 256; c++)
-			g_system->getPaletteManager()->setPalette(cPalette + 4*c, c, 1);
-		byte newPalette[3 * 256];
-		g_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
-		
+
+		byte newPalette[768];
+		for (int c = 0; c < 256; c++) { // This avoids any endianness issues
+				newPalette[c * 3 + 0] = cPalette[c * 4 + 0];
+				newPalette[c * 3 + 1] = cPalette[c * 4 + 1];
+				newPalette[c * 3 + 2] = cPalette[c * 4 + 2];
+		}
+
+		g_system->getPaletteManager()->setPalette(newPalette, 0, 256);
+
 		if (_mode == 1) {
+			// We can reuse newPalette
+			g_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
 			drawScreenFrame((byte *) &newPalette);
 		}
 
