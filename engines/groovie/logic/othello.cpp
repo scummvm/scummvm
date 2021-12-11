@@ -372,7 +372,7 @@ byte OthelloGame::aiDoBestMove(Freeboard *pBoard) {
 		_isAiTurn = !_isAiTurn; // flip before recursing
 		int depth = _depths[_counter];
 		if (_easierAi)
-			depth = 0;
+			depth = 1;
 		int score = aiRecurse(&possibleMoves[move], depth, parentScore, 100);
 		if (bestScore < score) {
 			parentScore = score;
