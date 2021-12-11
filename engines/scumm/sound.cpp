@@ -1002,6 +1002,11 @@ bool Sound::isSfxFileCompressed() {
 	return !(_soundMode == kVOCMode);
 }
 
+bool Sound::hasSfxFile() const
+{
+	return !_sfxFilename.empty();
+}
+
 ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
 	Common::ScopedPtr<ScummFile> file;
 	file.reset(new ScummFile());
