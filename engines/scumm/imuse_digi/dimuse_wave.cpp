@@ -116,9 +116,9 @@ int IMuseDigital::waveProcessStreams() {
 	return streamerProcessStreams();
 }
 
-void IMuseDigital::waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+int IMuseDigital::waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
 	Common::StackLock lock(_mutex);
-	tracksQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+	return tracksQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
 }
 
 int IMuseDigital::waveFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
