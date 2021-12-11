@@ -273,20 +273,22 @@ void detail::load_taf_tbl(taf_info *fti) {
 taf_info *detail::init_taf_tbl(const char *fname_) {
 	taf_dateiheader *tafheader;
 	taf_info *Tt;
-	char *tmp;
+	byte *tmp;
 	int16 anz;
-	int16 i;
 
 	Tt = 0;
 
 	mem->file->get_tafinfo(fname_, &tafheader);
 	if (!modul) {
 		anz = tafheader->count;
-		tmp = (char *)MALLOC((int32)anz * 4l + sizeof(taf_info));
+		tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(taf_info));
+
 		if (!modul) {
 			Tt = (taf_info *)tmp;
 			Tt->anzahl = anz;
 			Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 4l);
+			Tt->image = (byte **)(tmp + sizeof(taf_info));
+
 			if (!modul) {
 				mem->file->load_korrektur(fname_, Tt->korrektur);
 				Tt->palette = 0;
@@ -297,8 +299,6 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 					modul = DATEI;
 					fcode = OPENFEHLER;
 				}
-				for (i = 0; i < Tt->anzahl; i++)
-					Tt->image[i] = 0;
 			}
 		}
 	}

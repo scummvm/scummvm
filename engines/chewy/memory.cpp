@@ -51,9 +51,10 @@ taf_info *memory::taf_adr(const char *filename) {
 		anz_image = tafheader->count;
 		kgroesse = ((uint32)anz_image) * sizeof(byte *);
 
-		tmp1 = (byte *)MALLOC(size + 768l + kgroesse);
+		tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
 		if (!modul) {
 			tinfo = (taf_info *)tmp1;
+			tinfo->image = (byte **)(tmp1 + sizeof(taf_info));
 			tinfo->palette = tmp1 + size;
 			tinfo->anzahl = anz_image;
 			file->load_palette(filename, tinfo->palette, TAFDATEI);
@@ -110,13 +111,15 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 					}
 				}
 				if (!modul) {
-					size += image_anz * 4l;
+					size += image_anz * sizeof(byte *);
 					size += image_anz * sizeof(char *);
 					size += ((uint32)sizeof(taf_seq_info));
-					tmp1 = (byte *)MALLOC(size + image_anz * 4l);
+					tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
+
 					if (!modul) {
 						ts_info = (taf_seq_info *)tmp1;
 						ts_info->anzahl = image_anz;
+						ts_info->image = (byte **)(tmp1 + sizeof(taf_seq_info));
 						ts_info->korrektur = (int16 *)(tmp1 + size);
 						rs->seek(ptr, SEEK_SET);
 						sp_ptr = tmp1 + (((uint32)sizeof(taf_seq_info))
