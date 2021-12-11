@@ -63,7 +63,7 @@ void Settings::drawInterface(bool flag) {
 			SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 		screen._backBuffer1.hLine(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 1, BORDER_COLOR);
 		screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y1 + 1, SHERLOCK_SCREEN_WIDTH - 2,
-			SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+			SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 	}
 
 	tempStr = FIXED(Settings_Exit);
