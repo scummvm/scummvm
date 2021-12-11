@@ -257,7 +257,7 @@ void new_game() {
 	obj->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 	ERROR
 
-	tmp = (byte *)malloc(ROOM_ATS_MAX);
+	tmp = (byte *)MALLOC(ROOM_ATS_MAX);
 	ERROR
 
 	Common::File f;
@@ -278,7 +278,7 @@ void new_game() {
 		_G(spieler).Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
-	tmp = (byte *)malloc(MAX_MOV_OBJ);
+	tmp = (byte *)MALLOC(MAX_MOV_OBJ);
 	ERROR
 
 	if (f.open(INV_ATS_STEUER)) {

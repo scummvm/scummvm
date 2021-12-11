@@ -21,6 +21,7 @@
  */
 
 #include "chewy/types.h"
+#include "common/algorithm.h"
 
 namespace Chewy {
 
@@ -154,6 +155,12 @@ bool Spieler::synchronize(Common::Serializer &s) {
 	s.syncAsByte(DisplayText);
 
 	return true;
+}
+
+void *MALLOC(size_t size) {
+	void *ret = malloc(size);
+	Common::fill((byte *)ret, (byte *)ret + size, 0);
+	return ret;
 }
 
 } // namespace Chewy

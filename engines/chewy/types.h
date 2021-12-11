@@ -573,6 +573,8 @@ struct Flags {
 	uint16 CursorStatus : 1;
 };
 
+extern void *MALLOC(size_t size);
+
 } // namespace Chewy
 
 #endif
