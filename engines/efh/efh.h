@@ -79,6 +79,18 @@ struct InvObject {
 	void init();
 };
 
+struct UnkMapStruct {
+	uint8 _field0;
+	uint8 _field1;
+	uint8 _field2;
+	uint8 _field3;
+	uint8 _field4;
+	uint16 _field5;
+	uint16 _field7;
+
+	void init();
+};
+
 struct UnkAnimStruct {
 	uint8 field0;
 	uint8 field1;
@@ -325,7 +337,7 @@ private:
 	void drawBottomBorders();
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub1C219(char *str, int menuType, int arg4, bool displayTeamWindowFl);
+	int16 sub1C219(uint8 *str, int menuType, int arg4, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	void drawChar(uint8 curChar, int16 posX, int posY);
 	void setTextColorWhite();
@@ -367,6 +379,7 @@ private:
 	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
 	void sub221D2(int16 monsterId);
+	Common::KeyCode getInputBlocking();
 	void sub22AA8(int16 arg0);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
@@ -425,8 +438,7 @@ private:
 	uint8 _messageToBePrinted[400];
 	
 	uint8 *_mapBitmapRef;
-	uint8 *_mapUnknownPtr;
-	uint8 *_mapMonstersPtr;
+	UnkMapStruct _mapUnknown[100];
 	MapMonster _mapMonsters[64];
 	uint8 *_mapGameMapPtr;
 

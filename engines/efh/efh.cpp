@@ -65,6 +65,11 @@ void InvObject::init() {
 	_stat2 = 0;
 }
 
+void UnkMapStruct::init() {
+	_field0 = _field1 = _field2 = _field3 = _field4 = 0;
+	_field5 = _field7 = 0;
+}
+
 void UnkAnimStruct::init() {
 	field0 = field1 = field2 = field3 = 0;
 }
@@ -178,8 +183,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
 	_mapBitmapRef = nullptr;
-	_mapUnknownPtr = nullptr;
-	_mapMonstersPtr = nullptr;
 	_mapGameMapPtr = nullptr;
 
 	_defaultBoxColor = 0;
@@ -220,8 +223,10 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_nameBuffer[i] = 0;
 	}
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 100; ++i) {
 		_imp1PtrArray[i] = nullptr;
+		_mapUnknown[i].init();
+	}
 
 	for (int i = 0; i < 432; ++i)
 		_imp2PtrArray[i] = nullptr;
@@ -928,7 +933,6 @@ void EfhEngine::initEngine() {
 	memset(_techData, 0, sizeof(_techData));
 
 	_mapBitmapRef = &_map[0];
-	_mapUnknownPtr = &_map[2];
 
 	// Replaces _mapMonstersPtr which was equal to &_map[902];
 	for (int i = 0; i < 64; ++i) {
@@ -1050,22 +1054,34 @@ void EfhEngine::initMapMonsters() {
 }
 
 void EfhEngine::loadMapMonsters() {
-	_mapMonstersPtr = &_map[902];
+	uint8 *_mapUnknownPtr = &_map[2];
+
+	for (int i = 0; i < 100; ++i) {
+		_mapUnknown[i]._field0 = _mapUnknownPtr[9 * i];
+		_mapUnknown[i]._field1 = _mapUnknownPtr[9 * i + 1];
+		_mapUnknown[i]._field2 = _mapUnknownPtr[9 * i + 2];
+		_mapUnknown[i]._field3 = _mapUnknownPtr[9 * i + 3];
+		_mapUnknown[i]._field4 = _mapUnknownPtr[9 * i + 4];
+		_mapUnknown[i]._field5 = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 5]);
+		_mapUnknown[i]._field7 = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 7]);
+	}
+	
+	uint8 *mapMonstersPtr = &_map[902];
 
 	for (int i = 0; i < 64; ++i) {
-		_mapMonsters[i]._possessivePronounSHL6 = _mapMonstersPtr[29 * i];
-		_mapMonsters[i]._field_1 = _mapMonstersPtr[29 * i + 1];
-		_mapMonsters[i]._guess_fullPlaceId = _mapMonstersPtr[29 * i + 2];
-		_mapMonsters[i]._posX = _mapMonstersPtr[29 * i + 3];
-		_mapMonsters[i]._posY = _mapMonstersPtr[29 * i + 4];
-		_mapMonsters[i]._itemId_Weapon = _mapMonstersPtr[29 * i + 5];
-		_mapMonsters[i]._field_6 = _mapMonstersPtr[29 * i + 6];
-		_mapMonsters[i]._MonsterRef = _mapMonstersPtr[29 * i + 7];
-		_mapMonsters[i]._field_8 = _mapMonstersPtr[29 * i + 8];
-		_mapMonsters[i]._field_9 = _mapMonstersPtr[29 * i + 9];
-		_mapMonsters[i]._groupSize = _mapMonstersPtr[29 * i + 10];
+		_mapMonsters[i]._possessivePronounSHL6 = mapMonstersPtr[29 * i];
+		_mapMonsters[i]._field_1 = mapMonstersPtr[29 * i + 1];
+		_mapMonsters[i]._guess_fullPlaceId = mapMonstersPtr[29 * i + 2];
+		_mapMonsters[i]._posX = mapMonstersPtr[29 * i + 3];
+		_mapMonsters[i]._posY = mapMonstersPtr[29 * i + 4];
+		_mapMonsters[i]._itemId_Weapon = mapMonstersPtr[29 * i + 5];
+		_mapMonsters[i]._field_6 = mapMonstersPtr[29 * i + 6];
+		_mapMonsters[i]._MonsterRef = mapMonstersPtr[29 * i + 7];
+		_mapMonsters[i]._field_8 = mapMonstersPtr[29 * i + 8];
+		_mapMonsters[i]._field_9 = mapMonstersPtr[29 * i + 9];
+		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
-			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&_mapMonstersPtr[29 * i + 11 + j * 2]);
+			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
 	}
 }
 
@@ -1949,7 +1965,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 			if (argC != 0) {
 				int16 var110 = sub151FD(_mapPosX, _mapPosY);
 				if (var110 != -1)
-					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+					_mapUnknown[var110]._field1 = 0xFF;
 			}
 			break;
 		case 0x13:
@@ -2020,7 +2036,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219((char *)"Nothing...", 1, 2, true);
+					var110 = sub1C219((uint8 *)"Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
 					copyString(_npcBuf[_teamCharId[counter]]._name, _ennemyNamePt2);
@@ -2029,13 +2045,13 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219(dest, 1, 2, true);
+					var110 = sub1C219((uint8 *)dest, 1, 2, true);
 					displayFctFullScreen();
 				}
 
 				var110 = sub151FD(_mapPosX, _mapPosY);
 				if (var110 != -1) {
-					_mapUnknownPtr[var110 * 9 + 1] = 0xFF;
+					_mapUnknown[var110]._field1 = 0xFF;
 				}
 				_redrawNeededFl = true;
 			}
@@ -2055,7 +2071,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 			if (argC != 0) {
 				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
 				if (var110 != -1) {
-					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+					_mapUnknown[var110]._field1 = 0xFF;
 				}
 			}
 			break;
@@ -2064,10 +2080,10 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 			if (argC != 0) {
 				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
 				if (var110 != -1) {
-					_mapUnknownPtr[9 * var110 + 1] = 0xFF;
+					_mapUnknown[var110]._field1 = 0xFF;
 				}
-				_mapUnknownPtr[9 * scriptNumberArray[2] + 1] = scriptNumberArray[0];
-				_mapUnknownPtr[9 * scriptNumberArray[2] + 2] = scriptNumberArray[1];
+				_mapUnknown[scriptNumberArray[2]]._field1 = scriptNumberArray[0];
+				_mapUnknown[scriptNumberArray[2]]._field2 = scriptNumberArray[1];
 			}
 			break;
 		case 0x1C:
@@ -2213,7 +2229,7 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 	}
 }
 
-int16 EfhEngine::sub1C219(char *str, int menuType, int arg4, bool displayTeamWindowFl) {
+int16 EfhEngine::sub1C219(uint8 *str, int menuType, int arg4, bool displayTeamWindowFl) {
 	int16 varA = 0xFF;
 	int16 minX, maxX, minY, maxY;
 	
@@ -2251,7 +2267,7 @@ int16 EfhEngine::sub1C219(char *str, int menuType, int arg4, bool displayTeamWin
 
 	drawColoredRect(minX, maxX, minY, maxY, 0);
 	if (str)
-		varA = script_parse((uint8 *)str, minX, minY, maxX, maxY, -1);
+		varA = script_parse(str, minX, minY, maxX, maxY, -1);
 
 	if (displayTeamWindowFl)
 		displayLowStatusScreen(false);
@@ -2263,7 +2279,7 @@ int16 EfhEngine::sub1C219(char *str, int menuType, int arg4, bool displayTeamWin
 		else {
 			drawColoredRect(minX, maxX, minY, maxY, 0);
 			if (str)
-				int16 varC = script_parse((uint8 *)str, minX, minY, maxX, maxY, -1);
+				int16 varC = script_parse(str, minX, minY, maxX, maxY, -1);
 		}
 
 		if (displayTeamWindowFl)
@@ -2282,12 +2298,12 @@ int16 EfhEngine::sub1C219(char *str, int menuType, int arg4, bool displayTeamWin
 int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 	if (_largeMapFlag) {
 		for (int16 counter = 0; counter < 100; ++counter) {
-			if (_mapUnknownPtr[counter * 9 + 1] == posX && _mapUnknownPtr[counter * 9 + 2] == posY && _mapUnknownPtr[counter * 9] == 0xFE)
+			if (_mapUnknown[counter]._field1 == posX && _mapUnknown[counter]._field2 == posY && _mapUnknown[counter]._field0 == 0xFE)
 				return counter;
 		}
 	} else {
 		for (int16 counter = 0; counter < 100; ++counter) {
-			if (_mapUnknownPtr[counter * 9 + 1] == posX && _mapUnknownPtr[counter * 9 + 2] == posY && _mapUnknownPtr[counter * 9] == _fullPlaceId)
+			if (_mapUnknown[counter]._field1 == posX && _mapUnknown[counter]._field2 == posY && _mapUnknown[counter]._field0 == _fullPlaceId)
 				return counter;
 		}
 	}
@@ -3173,8 +3189,130 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
+Common::KeyCode EfhEngine::getInputBlocking() {
+	// The original checks for the joystick input
+	Common::Event event;
+	_system->getEventManager()->pollEvent(event);
+	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+
+	uint32 lastMs = _system->getMillis();
+	while (retVal == Common::KEYCODE_INVALID) {
+		if (event.type == Common::EVENT_KEYUP) {
+			retVal = event.kbd.keycode;
+		}
+
+		_system->delayMillis(20);
+		uint32 newMs = _system->getMillis();
+
+		if (newMs - lastMs >= 220) {
+			lastMs = newMs;
+			unkFct_anim();
+		}
+	}
+	return retVal;
+}
+
 void EfhEngine::sub22AA8(int16 arg0) {
-	warning("STUB: sub22AA8");
+	int16 var8, varA, varC, varE;
+	var8 = varA = varC = varE = 0;
+
+	if (arg0 <= 0xFE) {
+		if (_dword2C856) {
+			_dword2C856 = nullptr;
+			sub221FA(_dword2C856, true);
+		}
+		if (_word2C8D2)
+			sub15150(true);
+
+		int16 var4 = arg0;
+
+		for (;;) {
+			uint8 *var12 = nullptr;
+			if (var4 >= 0 && var4 <= 0xFE) {
+				var12 = _imp1PtrArray[var4];
+			}
+
+			var4 = 0xFF;
+			if (var12 == nullptr)
+				break;
+
+			do {
+				if (varE == 0)
+					memset(_messageToBePrinted, 0, 400);
+				switch (*var12) {
+				case 0x00:
+				case 0x0A:					
+					break;
+				case 0x0D:
+				case 0x20:
+					_messageToBePrinted[varE++] = 0x20;
+					if (++varC >= 350) {
+						_messageToBePrinted[varE] = 0;
+						var8 = -1;
+					}
+					break;
+				case 0x40:
+				case 0x60:
+					varA = -1;
+					break;
+				case 0x7C:
+					_messageToBePrinted[varE++] = 0x7C;
+					varC += 20;
+					if (varC >= 350) {
+						_messageToBePrinted[varE] = 0;
+						var8 = -1;
+					}
+					break;
+				case 0x7E:
+					var8 = -1;
+					break;
+				default:
+				break;
+				}
+				var12 += 1;
+				int16 var2;
+				if (var8 != 0 || varA != 0) {
+					var8 = 0;
+					_messageToBePrinted[varE] = 0;
+					varE = 0;
+					varC = 0;
+					if (*_messageToBePrinted == 0x5E || *_messageToBePrinted == 0) {
+						if (*_messageToBePrinted == 0x5E) {
+							var2 = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
+							_word2C87A = false;
+						}
+					} else {
+						for (int16 counter = 0; counter < 2; ++counter) {
+							drawMapWindow();
+							if (counter == 0)
+								displayFctFullScreen();
+						}
+
+						var2 = sub1C219(_messageToBePrinted, 1, 1, true);
+						if (var2 != 0xFF)
+							var4 = var2;
+						
+						if (var4 != 0xFFFF) {
+							for (int16 counter = 0; counter < 2; ++counter) {
+								if (varA) {
+									displayCenteredString("[DONE]", 128, 303, 117);
+								} else {
+									displayCenteredString("[MORE]", 128, 303, 117);
+								}
+								if (counter == 0)
+									displayFctFullScreen();
+							}
+							getInputBlocking();
+						}
+					}
+					if (var2 != 0xFF)
+						var4 = var2;
+				}
+			} while (var4 != -1 && var4 != 0xFF);
+		}
+	}
+
+	displayAnimFrames(0xFE, true);
 }
 
 bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
@@ -3184,59 +3322,57 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
 			sub221FA(_imp2PtrArray[imageSetId], true);
 	} else if (var8 == 0) {
-		if (_mapUnknownPtr[var8 * 9 + 3] == 0xFF) {
-			sub22AA8(_mapUnknownPtr[var8 * 9 + 5]); // word!
+		if (_mapUnknown[var8]._field3 == 0xFF) {
+			sub22AA8(_mapUnknown[var8]._field5); // word!
 			return true;
-		} else if (_mapUnknownPtr[var8 * 9 + 3] == 0xFE) {
+		} else if (_mapUnknown[var8]._field3 == 0xFE) {
 			for (int16 counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
-				if (_teamCharId[counter] == _mapUnknownPtr[var8 * 9 + 4]) {
-					sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+				if (_teamCharId[counter] == _mapUnknown[var8]._field4) {
+					sub22AA8(_mapUnknown[var8]._field5);
 					return true;
 				}
 			}
-		} else if (_mapUnknownPtr[var8 * 9 + 3] == 0xFD) {
+		} else if (_mapUnknown[var8]._field3 == 0xFD) {
 			for (int16 counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
 				for (int16 var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknownPtr[var8 * 9 + 4]) {
-						sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknown[var8]._field4) {
+						sub22AA8(_mapUnknown[var8]._field5);
 						return true;
 					}
 				}
 			}
 		// original makes a useless check on (_mapUnknownPtr[var8 * 9 + 3] > 0x7F)
-		} else if (_mapUnknownPtr[var8 * 9 + 3] <= 0x77) {
-			int16 var6 = _mapUnknownPtr[var8 * 9 + 3];
+		} else if (_mapUnknown[var8]._field3 <= 0x77) {
+			int16 var6 = _mapUnknown[var8]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
 				for (int16 var2 = 0; var2 < 39; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var2] >= _mapUnknownPtr[var8 * 9 + 4]) {
-						sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var2] >= _mapUnknown[var8]._field4) {
+						sub22AA8(_mapUnknown[var8]._field5);
 						return true;
 					}
 				}
 			}
 		}
 	} else {
-		if ((_mapUnknownPtr[var8 * 9 + 3] == 0xFA && arg8 == 1)
-		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFC && arg8 == 2)
-		||  (_mapUnknownPtr[var8 * 9 + 3] == 0xFB && arg8 == 3)) {
-			if (_mapUnknownPtr[var8 * 9 + 4] == itemId) {
-				sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+		if ((_mapUnknown[var8]._field3 == 0xFA && arg8 == 1) || (_mapUnknown[var8]._field3 == 0xFC && arg8 == 2) || (_mapUnknown[var8]._field3 == 0xFB && arg8 == 3)) {
+			if (_mapUnknown[var8]._field4 == itemId) {
+				sub22AA8(_mapUnknown[var8]._field5);
 				return true;
 			}
 		} else if (arg8 == 4) {
-			int16 var6 = _mapUnknownPtr[var8 * 9 + 3];
+			int16 var6 = _mapUnknown[var8]._field3;
 			if (var6 >= 0x7B && var6 <= 0xEF) {
 				var6 -= 0x78;
-				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapUnknownPtr[var8 * 9 + 4] <= _npcBuf[charId]._activeScore[itemId]) {
-					sub22AA8(_mapUnknownPtr[var8 * 9 + 5]);
+				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapUnknown[var8]._field4 <= _npcBuf[charId]._activeScore[itemId]) {
+					sub22AA8(_mapUnknown[var8]._field5);
 					return true;
 				}
 			}		
@@ -3248,13 +3384,12 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			return true;
 	}
 
-	if ((arg8 == 4 && _mapUnknownPtr[var8 * 9 + 3] < 0xFA) || arg8 != 4) {
-		if (_mapUnknownPtr[var8 * 9 + 7] > 0xFE) // word!!
+	if ((arg8 == 4 && _mapUnknown[var8]._field3 < 0xFA) || arg8 != 4) {
+		if (_mapUnknown[var8]._field7 > 0xFE)
 			return false;
-		sub22AA8(_mapUnknownPtr[var8 * 9 + 7]);
+		sub22AA8(_mapUnknown[var8]._field7);
 		return true;		
-	} else
-		return false;
+	}
 
 	return false;
 }
