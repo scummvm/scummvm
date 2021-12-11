@@ -697,7 +697,7 @@ void ScalpelTalk::drawInterface() {
 	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 2,
 		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
-		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+		SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
 	if (_talkTo != -1) {
 		Common::String fixedText_Exit = FIXED(Window_Exit);

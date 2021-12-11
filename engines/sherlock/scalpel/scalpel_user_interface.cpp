@@ -514,7 +514,7 @@ void ScalpelUserInterface::clearInfo() {
 void ScalpelUserInterface::clearWindow() {
 	if (_windowOpen) {
 		_vm->_screen->vgaBar(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
-			SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+			SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 	}
 }
 
@@ -1991,7 +1991,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 
 	// Clear background
 	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
-		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+		SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
 	_windowBounds.top = CONTROLS_Y;
 	events.clearEvents();
