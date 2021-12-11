@@ -8,6 +8,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler im Punycode-Handling wurde korrigiert.
    - Prüfung, ob ein Spielstand im Autosave-Slot überschrieben werden soll, korrigiert.
    - In den meisten Engines werden funktioniert das Verschieben eines Spielstands in einen neuen Slot nun korrekt.
+   - Scaler werden jetzt auch im OpenGL-Grafikmodus unterstützt.
 
  AGOS:
    - Fehler in der AdLib-Musikwiedergabe von Waxworks AdLib behoben.
@@ -40,6 +41,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Klang der Klingelschnur in Serrated Scalpel wird nun korrekt abgespielt.
    - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
    - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
+   - Grafikfehler in Serrated Scalpel behoben, der auftritt, wenn Gegenstände untersucht werden, während das Inventar geöffnet ist.
 
  TwinE:
    - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
