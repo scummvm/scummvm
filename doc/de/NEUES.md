@@ -24,7 +24,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
  Kyra:
-   - Unterstützung für die chinesischen Versionen von Legend of Kyrandia 1 und 3 hinzugefügt.
+   - Unterstützung für die chinesischen Versionen von Legend of Kyrandia 1 - 3 hinzugefügt.
    - Unterstützung für Audio-Ausgabe in der Macintosh-Version von Legend of Kyrandia hinzugefügt.
    - Die Macintosh-Version (ohne Sprachausgabe) von Legend of Kyrandia 1 kann nun direkt von
      den Dateien auf der CD gespielt werden. Das bedeutet, dass Du nicht mehr den Installer
@@ -46,6 +46,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Der Klang der Klingelschnur in Serrated Scalpel wird nun korrekt abgespielt.
    - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
    - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
+   - Grafikfehler in Serrated Scalpel behoben, der auftritt, wenn Gegenstände untersucht werden, während das Inventar geöffnet ist.
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
