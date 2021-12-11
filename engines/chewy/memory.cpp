@@ -22,6 +22,7 @@
 
 #include "common/memstream.h"
 #include "chewy/memory.h"
+#include "chewy/types.h"
 
 namespace Chewy {
 
@@ -50,7 +51,7 @@ taf_info *memory::taf_adr(const char *filename) {
 		anz_image = tafheader->count;
 		kgroesse = ((uint32)anz_image) * sizeof(byte *);
 
-		tmp1 = (byte *)calloc(size + 768l + kgroesse, 1);
+		tmp1 = (byte *)MALLOC(size + 768l + kgroesse);
 		if (!modul) {
 			tinfo = (taf_info *)tmp1;
 			tinfo->palette = tmp1 + size;
@@ -112,7 +113,7 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 					size += image_anz * 4l;
 					size += image_anz * sizeof(char *);
 					size += ((uint32)sizeof(taf_seq_info));
-					tmp1 = (byte *)malloc(size + image_anz * 4l);
+					tmp1 = (byte *)MALLOC(size + image_anz * 4l);
 					if (!modul) {
 						ts_info = (taf_seq_info *)tmp1;
 						ts_info->anzahl = image_anz;
@@ -176,7 +177,7 @@ void memory::tff_adr(const char *filename, byte **speicher) {
 	uint32 size;
 	size = file->size(filename, TFFDATEI);
 	if (!modul) {
-		*speicher = (byte *)malloc(size);
+		*speicher = (byte *)MALLOC(size);
 		if (*speicher) {
 			file->load_tff(filename, *speicher);
 			if (modul) {
@@ -196,7 +197,7 @@ byte *memory::void_adr(const char *filename) {
 	size = file->size(filename, 200);
 
 	if (!modul) {
-		ptr = (byte *)malloc(size * sizeof(uint32));
+		ptr = (byte *)MALLOC(size * sizeof(uint32));
 		if (!modul) {
 			*(uint32 *)ptr = size;
 			file->void_load(filename, ptr + sizeof(uint32), size);

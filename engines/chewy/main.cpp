@@ -98,24 +98,24 @@ void game_main() {
 }
 
 void alloc_buffers() {
-	workpage = (byte *)malloc(64004l);
+	workpage = (byte *)MALLOC(64004l);
 	ERROR
-	pal = (byte *)malloc(768l);
+	pal = (byte *)MALLOC(768l);
 	ERROR
-	cur_back = (byte *)malloc(16 * 16 + 4);
+	cur_back = (byte *)MALLOC(16 * 16 + 4);
 	ERROR;
 	Ci.VirtScreen = workpage;
-	Ci.TempArea = (byte *)malloc(64004l);
+	Ci.TempArea = (byte *)MALLOC(64004l);
 	ERROR;
 	det->set_taf_ani_mem(Ci.TempArea);
-	Ci.MusicSlot = (byte *)malloc(MUSIC_SLOT_SIZE);
+	Ci.MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);
 	Ci.MaxMusicSize = MUSIC_SLOT_SIZE;
 	ERROR;
-	Ci.SoundSlot = (byte *)malloc(SOUND_SLOT_SIZE);
+	Ci.SoundSlot = (byte *)MALLOC(SOUND_SLOT_SIZE);
 	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
 	ERROR;
 	Ci.Fname = fname;
-	SpeechBuf[0] = (byte *)malloc(SPEECH_HALF_BUF * 2);
+	SpeechBuf[0] = (byte *)MALLOC(SPEECH_HALF_BUF * 2);
 	ERROR
 	SpeechBuf[1] = SpeechBuf[0] + SPEECH_HALF_BUF;
 }

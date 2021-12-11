@@ -282,11 +282,11 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 	mem->file->get_tafinfo(fname_, &tafheader);
 	if (!modul) {
 		anz = tafheader->count;
-		tmp = (char *)malloc((int32)anz * 4l + sizeof(taf_info));
+		tmp = (char *)MALLOC((int32)anz * 4l + sizeof(taf_info));
 		if (!modul) {
 			Tt = (taf_info *)tmp;
 			Tt->anzahl = anz;
-			Tt->korrektur = (int16 *)malloc((int32)Tt->anzahl * 4l);
+			Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 4l);
 			if (!modul) {
 				mem->file->load_korrektur(fname_, Tt->korrektur);
 				Tt->palette = 0;
@@ -355,7 +355,7 @@ void detail::load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz, taf_info 
 		if (iheader.load(rs)) {
 			if (!Tt->image[spr_nr + i]) {
 				size = iheader.width * iheader.height ;
-				Tt->image[spr_nr + i] = (byte *)malloc(size + 4l);
+				Tt->image[spr_nr + i] = (byte *)MALLOC(size + 4l);
 				((int16 *)Tt->image[spr_nr + i])[0] = iheader.width;
 				((int16 *)Tt->image[spr_nr + i])[1] = iheader.height;
 

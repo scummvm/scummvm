@@ -37,7 +37,7 @@ void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher,
 	int16 *rnd_zeiger;
 	int16 i, x, y;
 	byte *sp;
-	sp = (byte *)malloc(8 * 8 + 4);
+	sp = (byte *)MALLOC(8 * 8 + 4);
 	if (!modul) {
 		rnd_zeiger = (int16 *)rnd_speicher;
 		if (col < 256) {
@@ -74,7 +74,7 @@ void effect::blende1(byte *sram_speicher, byte *screen,
 	int16 i;
 	int16 x, y, x1, y1;
 	byte *sp;
-	sp = (byte *)malloc(8 * 8 + 4);
+	sp = (byte *)MALLOC(8 * 8 + 4);
 	if (!modul) {
 		i = 0;
 		if (col < 256) {

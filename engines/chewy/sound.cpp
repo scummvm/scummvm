@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
+#include "chewy/types.h"
 
 namespace Chewy {
 
@@ -42,7 +43,7 @@ Sound::~Sound() {
 
 void Sound::playSound(int num, bool loop, uint channel) {
 	SoundChunk *sound = _soundRes->getSound(num);
-	uint8 *data = (uint8 *)malloc(sound->size);
+	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);
 
 	playSound(data, sound->size, loop, channel);
@@ -112,7 +113,7 @@ void Sound::playMusic(uint8 *data, uint32 size, bool loop, DisposeAfterUse::Flag
 
 	warning("The current music playing implementation is wrong");
 	modSize = size;
-	modData = (uint8 *)malloc(modSize);
+	modData = (uint8 *)MALLOC(modSize);
 	memcpy(modData, data, size);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
@@ -146,7 +147,7 @@ void Sound::setMusicVolume(uint volume) {
 
 void Sound::playSpeech(int num) {
 	SoundChunk *sound = _speechRes->getSound(num);
-	uint8 *data = (uint8 *)malloc(sound->size);
+	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
@@ -190,7 +191,7 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 	const int maxInstruments = 31;
 
 	modSize = tmfSize + 20 + maxInstruments * 22 + 4;
-	modData = (uint8 *)malloc(modSize);
+	modData = (uint8 *)MALLOC(modSize);
 	uint8 *tmfPtr = tmfData;
 	uint8 *modPtr = modData;
 
