@@ -61,6 +61,18 @@ public:
 	void stopSoundEffect(int id);
 	void stopAllSoundEffects();
 
+	enum HSCommands {
+		kSongPlayOnce			= 0,
+		kSongPlayLoop			= 1,
+		kSongAbort				= 2,
+		kSongIsPlaying			= 3,
+		kSongFadeOut			= 10,
+		kSongFadeIn				= 11,
+		kSongFadeGetState		= 12,
+		kSongFadeReset			= 13,
+		kSetRateAndIntrplMode	= 14
+	};
+
 	int doCommand(int cmd, ...);
 
 	void setMusicVolume(int volume);

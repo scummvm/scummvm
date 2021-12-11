@@ -90,6 +90,7 @@ bool SoundMacRes::init() {
 }
 
 Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
+	Common::StackLock lock(_mutex);
 	Common::SeekableReadStream *res = nullptr;
 
 	for (int i = 0; i < 2; ++i) {
@@ -101,6 +102,7 @@ Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 }
 
 bool SoundMacRes::setQuality(bool hi) {
+	Common::StackLock lock(_mutex);
 	Common::String s[2];
 	s[0] = hi ? "HQ_Music.res" : "LQ_Music.res";
 	s[1] = _kyraMacExe;
@@ -138,6 +140,9 @@ Sound::kType SoundMac::getMusicType() const {
 }
 
 bool SoundMac::init(bool hiQuality) {
+	if (_ready)
+		return true;
+
 	_res = new SoundMacRes(_vm);
 	if (!(_res && _res->init()))
 		return false;
@@ -149,7 +154,10 @@ bool SoundMac::init(bool hiQuality) {
 
 	setQuality(hiQuality);
 
-	return (_ready = true);
+	_ready = true;
+	updateVolumeSettings();
+
+	return true;
 }
 
 void SoundMac::selectAudioResourceSet(int set) {
@@ -179,10 +187,10 @@ void SoundMac::playTrack(uint8 track) {
 		beginFadeOut();
 		return;
 	} else if (_currentResourceSet == kMusicFinale && track == 2) {
-		_driver->doCommand(1, 0x12c);
+		_driver->doCommand(HalestormDriver::kSongPlayLoop, 0x12c);
 		return;
 	} else if (_currentResourceSet == kMusicFinale && track == 4) {
-		_driver->doCommand(1, 0x12d);
+		_driver->doCommand(HalestormDriver::kSongPlayLoop, 0x12d);
 		return;
 	} else {
 		track -= 11;
@@ -190,12 +198,12 @@ void SoundMac::playTrack(uint8 track) {
 		loop = _musicLoopTable[track];
 	}
 
-	_driver->doCommand(loop, _resIDMusic[track]);
+	_driver->doCommand(loop ? HalestormDriver::kSongPlayLoop : HalestormDriver::kSongPlayOnce, _resIDMusic[track]);
 }
 
 void SoundMac::haltTrack() {
 	if (_ready)
-		_driver->doCommand(2);
+		_driver->doCommand(HalestormDriver::kSongAbort);
 }
 
 void SoundMac::playSoundEffect(uint16 track, uint8) {
@@ -213,23 +221,18 @@ void SoundMac::playSoundEffect(uint16 track, uint8) {
 }
 
 bool SoundMac::isPlaying() const {
-	return _ready && _driver->doCommand(3);
+	return _ready && _driver->doCommand(HalestormDriver::kSongIsPlaying);
 }
 
 void SoundMac::beginFadeOut() {
 	if (!_ready)
 		return;
 
-	if (_currentResourceSet == kMusicIngame) {
-		haltTrack();
-		return;
-	}
-
-	_driver->doCommand(10, 30);
-	while (_driver->doCommand(12) >= 16)
+	_driver->doCommand(HalestormDriver::kSongFadeOut, 30);
+	while (_driver->doCommand(HalestormDriver::kSongFadeGetState) >= 16)
 		_vm->delay(8);
-	_driver->doCommand(2);
-	_driver->doCommand(11, 30);
+	_driver->doCommand(HalestormDriver::kSongAbort);
+	_driver->doCommand(HalestormDriver::kSongFadeReset, 256);
 }
 
 void SoundMac::updateVolumeSettings() {
@@ -252,7 +255,7 @@ void SoundMac::setQuality(bool hi) {
 	if (!(_driver && _res))
 		return;
 
-	_driver->doCommand(2);
+	_driver->doCommand(HalestormDriver::kSongAbort);
 	_driver->stopAllSoundEffects();
 	_driver->releaseSamples();
 
@@ -260,10 +263,10 @@ void SoundMac::setQuality(bool hi) {
 
 	if (hi) {
 		_driver->changeSystemVoices(7, 4, 1);
-		_driver->doCommand(14, 3);
+		_driver->doCommand(HalestormDriver::kSetRateAndIntrplMode, 3);
 	} else {
 		_driver->changeSystemVoices(4, 3, 1);
-		_driver->doCommand(14, 2);
+		_driver->doCommand(HalestormDriver::kSetRateAndIntrplMode, 2);
 	}
 
 	_driver->registerSamples(resIds, true);

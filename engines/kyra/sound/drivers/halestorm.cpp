@@ -43,8 +43,7 @@ public:
 	void setVblCallback(CallbackProc *proc);
 	void clearBuffer();
 
-	void setMusicVolume(uint16 vol);
-	void setSoundEffectVolume(uint16 vol);
+	void setMasterVolume(Audio::Mixer::SoundType type, uint16 vol);
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples) override;
@@ -53,8 +52,8 @@ public:
 	bool endOfData() const override { return false; }
 
 private:
-	template<typename T> void generateData(T *dst, uint32 len);
-	void runVblTasl();
+	template<typename T> void generateData(T *dst, uint32 len, Audio::Mixer::SoundType);
+	void runVblTask();
 
 	HSLowLevelDriver *_drv;
 
@@ -63,14 +62,15 @@ private:
 	uint32 _vblCountDown;
 	uint32 _vblCountDownRem;
 
-	uint32 _volMusic;
-	uint32 _volSfx;
-
 	CallbackProc *_vblCbProc;
 
-	void *_buffStart;
-	const void *_buffEnd;
-	void *_buffPos;
+	struct SmpBuffer {
+		SmpBuffer() : start(0), pos(0), end(0), volume(0x10000) {}
+		void *start;
+		void *pos;
+		const void *end;
+		uint32 volume;
+	} _buffers[2];
 
 	const uint32 _intRate;
 	const uint32 _outputRate;
@@ -244,7 +244,7 @@ public:
 	HSAudioStream *init(uint32 scummVMOutputrate, bool output16bit);
 	int send(int cmd, ...);
 
-	template<typename T> void generateData(T *dst, uint32 len);
+	template<typename T> void generateData(T *dst, uint32 len, Audio::Mixer::SoundType type);
 
 private:
 	typedef Common::Functor1Mem<va_list&, int, HSLowLevelDriver> HSOpcode;
@@ -317,7 +317,7 @@ private:
 	HSSoundChannel *_chan;
 
 	void createTables();
-	void pcmNextTick();
+	void pcmNextTick(int chanFirst, int chanLast);
 	void pcmUpdateChannel(HSSoundChannel &chan);
 	template<typename T> void fillBuffer(T *dst);
 
@@ -525,21 +525,23 @@ private:
 
 HSAudioStream::HSAudioStream(HSLowLevelDriver *drv, uint32 scummVMOutputrate, uint32 deviceRate, uint32 feedBufferSize, bool output16Bit) : Audio::AudioStream(), _drv(drv),
 _outputRate(scummVMOutputrate), _intRate(deviceRate), _buffSize(feedBufferSize), _outputByteSize(output16Bit ? 2 : 1), _isStereo(false), _vblSmpQty(0), _vblSmpQtyRem(0),
-_vblCountDown(0), _vblCountDownRem(0), _buffPos(nullptr), _buffStart(nullptr), _buffEnd(nullptr), _rateConvCnt(0), _volMusic(0x10000), _volSfx(0x10000),
-_vblCbProc(nullptr) {
+_vblCountDown(0), _vblCountDownRem(0), _rateConvCnt(0), _vblCbProc(nullptr) {
 	assert(drv);
 	_vblSmpQty = scummVMOutputrate / 60;
 	_vblSmpQtyRem = scummVMOutputrate % 60;
 	_vblCountDown = _vblSmpQty;
 	_vblCountDownRem = 0;
 
-	_buffStart = new uint8[_buffSize * _outputByteSize];
-	_buffEnd = (uint8*)_buffStart + _buffSize * _outputByteSize;
+	for (int i = 0; i < 2; ++i) {
+		_buffers[i].start = new uint8[_buffSize * _outputByteSize];
+		_buffers[i].end = (uint8*)_buffers[i].start + _buffSize * _outputByteSize;
+	}
 	clearBuffer();
 }
 
 HSAudioStream::~HSAudioStream() {
-	delete[] (uint8*)_buffStart;
+	for (int i = 0; i < 2; ++i)
+		delete[] (uint8*)_buffers[i].start;
 }
 
 void HSAudioStream::setVblCallback(CallbackProc *proc) {
@@ -547,38 +549,50 @@ void HSAudioStream::setVblCallback(CallbackProc *proc) {
 }
 
 void HSAudioStream::clearBuffer() {
-	memset(_buffStart, _outputByteSize == 2 ? 0 : 0x80, _buffSize * _outputByteSize);
-	_buffPos = _buffStart;
+	for (int i = 0; i < 2; ++i) {
+		memset(_buffers[i].start, _outputByteSize == 2 ? 0 : 0x80, _buffSize * _outputByteSize);
+		_buffers[i].pos = _buffers[i].start;
+	}
 }
 
-void HSAudioStream::setMusicVolume(uint16 vol) {
-	_volMusic = vol * vol;
-}
-
-void HSAudioStream::setSoundEffectVolume(uint16 vol) {
-	_volSfx = vol * vol;
+void HSAudioStream::setMasterVolume(Audio::Mixer::SoundType type, uint16 vol) {
+	if (type == Audio::Mixer::kMusicSoundType || type == Audio::Mixer::kPlainSoundType)
+		_buffers[0].volume = vol * vol;
+	if (type == Audio::Mixer::kSFXSoundType || type == Audio::Mixer::kPlainSoundType)
+		_buffers[1].volume = vol * vol;
 }
 
 int HSAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	static const Audio::Mixer::SoundType stype[2] = {
+		Audio::Mixer::kMusicSoundType,
+		Audio::Mixer::kSFXSoundType
+	};
+
 	for (int i = _isStereo ? numSamples >> 1 : numSamples; i; --i) {
 		if (!--_vblCountDown) {
 			_vblCountDownRem += _vblSmpQtyRem;
 			_vblCountDown = _vblSmpQty + _vblCountDownRem / _vblSmpQty;
 			_vblCountDownRem %= _vblSmpQty;
-			runVblTasl();
+			runVblTask();
 		}
 
-		int32 smp = (int32)(((_outputByteSize == 2) ? *(int16*)_buffPos : *(uint8*)_buffPos - 0x80) * _volSfx);
+		int32 smp = 0;
+		for (int ii = 0; ii < 2; ++ii)
+			smp += (int32)(((_outputByteSize == 2) ? *(int16*)_buffers[ii].pos : *(uint8*)_buffers[ii].pos - 0x80) * _buffers[ii].volume);
+
 		_rateConvCnt += _intRate;
 		if (_rateConvCnt >= _outputRate) {
 			_rateConvCnt -= _outputRate;
-			_buffPos = (uint8*)_buffPos + _outputByteSize;
-			if (_buffPos == _buffEnd) {
-				_buffPos = _buffStart;
-				if (_outputByteSize == 2)
-					generateData<int16>((int16*)_buffPos, _buffSize);
-				else
-					generateData<uint8>((uint8*)_buffPos, _buffSize);
+
+			for (int ii = 0; ii < 2; ++ii) {
+				_buffers[ii].pos = (uint8*)_buffers[ii].pos + _outputByteSize;
+				if (_buffers[ii].pos == _buffers[ii].end) {
+					_buffers[ii].pos = _buffers[ii].start;
+					if (_outputByteSize == 2)
+						generateData<int16>((int16*)_buffers[ii].pos, _buffSize, stype[ii]);
+					else
+						generateData<uint8>((uint8*)_buffers[ii].pos, _buffSize, stype[ii]);
+				}
 			}
 		}
 
@@ -590,12 +604,12 @@ int HSAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
-template<typename T> void HSAudioStream::generateData(T *dst, uint32 len) {
+template<typename T> void HSAudioStream::generateData(T *dst, uint32 len, Audio::Mixer::SoundType type) {
 	if (_drv)
-		_drv->generateData<T>(dst, len);
+		_drv->generateData<T>(dst, len, type);
 }
 
-void HSAudioStream::runVblTasl() {
+void HSAudioStream::runVblTask() {
 	if (_vblCbProc && _vblCbProc->isValid())
 		(*_vblCbProc)();
 }
@@ -948,9 +962,20 @@ int HSLowLevelDriver::send(int cmd, ...) {
 	return res;
 }
 
-template<typename T> void HSLowLevelDriver::generateData(T *dst, uint32 len) {
-	pcmNextTick();
-	songNextTick();
+template<typename T> void HSLowLevelDriver::generateData(T *dst, uint32 len, Audio::Mixer::SoundType type) {
+	int first = 0;
+	int last = _song._numChanMusic + _song._numChanSfx;
+
+	if (type == Audio::Mixer::kMusicSoundType)
+		last = _song._numChanMusic;
+	else if (type == Audio::Mixer::kSFXSoundType)
+		first = _song._numChanMusic;
+	else if (type == Audio::Mixer::kSpeechSoundType)
+		error("HSLowLevelDriver::generateData(): Unsupported sound type 'kSpeechSoundType'");
+
+	pcmNextTick(first, last);
+	if (type != Audio::Mixer::kSFXSoundType)
+		songNextTick();
 	fillBuffer<T>(dst);
 }
 
@@ -1342,12 +1367,12 @@ void HSLowLevelDriver::createTables() {
 	}
 }
 
-void HSLowLevelDriver::pcmNextTick() {
+void HSLowLevelDriver::pcmNextTick(int chanFirst, int chanLast) {
 	int16 cnt = 0;
 	uint16 val = 0;
 	for (int i = 0; i < _song._numChanMusic + _song._numChanSfx; ++i) {
 		++cnt;
-		if (_chan[i].status >= 0)
+		if (i >= chanFirst && i < chanLast && _chan[i].status >= 0)
 			continue;
 		--cnt;
 		val += 0x80;
@@ -1362,7 +1387,7 @@ void HSLowLevelDriver::pcmNextTick() {
 		return;
 
 	for (int i = 0; i < _song._numChanMusic + _song._numChanSfx; ++i) {
-		if (_chan[i].status < 0)
+		if (i < chanFirst || i >= chanLast || _chan[i].status < 0)
 			continue;
 		pcmUpdateChannel(_chan[i]);
 	}
@@ -2040,8 +2065,8 @@ bool HSSoundSystem::init(bool hiQuality, uint8 interpolationMode, bool output16b
 	_voicestr = _driver->init(_mixer->getOutputRate(), output16bit);
 	if (!_voicestr)
 		return false;
-	_voicestr->setMusicVolume(_volumeMusic);
-	_voicestr->setSoundEffectVolume(_volumeSfx);
+	_voicestr->setMasterVolume(Audio::Mixer::kMusicSoundType, _volumeMusic);
+	_voicestr->setMasterVolume(Audio::Mixer::kSFXSoundType, _volumeSfx);
 
 	Common::StackLock lock(_mutex);
 	_vblTask = new HSAudioStream::CallbackProc(this, &HSSoundSystem::vblTaskProc);
@@ -2105,13 +2130,14 @@ int HSSoundSystem::changeSystemVoices(int numChanMusicTotal, int numChanMusicPol
 }
 
 void HSSoundSystem::startSoundEffect(int id, int rate) {
-	Common::StackLock lock(_mutex);
 	if (!_ready)
 		return;
 
 	SampleSlot *slot = findSampleSlot(id);
 	if (!slot)
 		return;
+
+	Common::StackLock lock(_mutex);
 
 	if (slot->reverse) {
 		reverseSamples(slot);
@@ -2122,13 +2148,14 @@ void HSSoundSystem::startSoundEffect(int id, int rate) {
 }
 
 void HSSoundSystem::enqueueSoundEffect(int id, int rate, int note) {
-	Common::StackLock lock(_mutex);
 	if (!_ready || !id || !rate || !note)
 		return;
 
 	SampleSlot *s = findSampleSlot(id);
 	if (!s)
 		return;
+
+	Common::StackLock lock(_mutex);
 
 	assert(note > 21 && note < 80);
 	_sfxQueue.push(SfxQueueEntry(id, (s->rate >> 8) * _noteFreq[note - 22], rate * 60 / 1000));
@@ -2242,6 +2269,10 @@ int HSSoundSystem::doCommand(int cmd, va_list &arg) {
 		_driver->send(18, va_arg(arg, const HSSoundEffectVoice*));
 		break;
 
+	case 102:
+		res = _driver->send(20, va_arg(arg, const HSSoundEffectVoice*));
+		break;
+
 	case 103:
 		_isFading = false;
 		_driver->send(22);
@@ -2259,7 +2290,7 @@ void HSSoundSystem::setMusicVolume(int volume) {
 	Common::StackLock lock(_mutex);
 	if (!_ready)
 		return;
-	_voicestr->setMusicVolume(volume);
+	_voicestr->setMasterVolume(Audio::Mixer::kMusicSoundType, volume);
 }
 
 void HSSoundSystem::setSoundEffectVolume(int volume) {
@@ -2267,7 +2298,7 @@ void HSSoundSystem::setSoundEffectVolume(int volume) {
 	Common::StackLock lock(_mutex);
 	if (!_ready)
 		return;
-	_voicestr->setSoundEffectVolume(volume);
+	_voicestr->setMasterVolume(Audio::Mixer::kSFXSoundType, volume);
 }
 
 void HSSoundSystem::vblTaskProc() {

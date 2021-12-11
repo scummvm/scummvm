@@ -44,6 +44,7 @@ private:
 	Common::String _kyraMacExe;
 	Common::MacResManager *_resMan;
 	Common::Archive *_stuffItArchive;
+	Common::Mutex _mutex;
 };
 
 } // End of namespace Kyra
