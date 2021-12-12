@@ -32,6 +32,7 @@
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 #include "twine/twine.h"
+#include "twine/audio/music.h"
 
 namespace TwinE {
 
@@ -42,6 +43,8 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("give_gas", WRAP_METHOD(TwinEConsole, doGiveGas));
 	registerCmd("give_kashes", WRAP_METHOD(TwinEConsole, doGiveKashes));
 	registerCmd("play_video", WRAP_METHOD(TwinEConsole, doPlayVideo));
+	registerCmd("play_midi", WRAP_METHOD(TwinEConsole, doPlayMidi));
+	registerCmd("play_music", WRAP_METHOD(TwinEConsole, doPlayMusic));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
@@ -347,6 +350,26 @@ bool TwinEConsole::doPlayVideo(int argc, const char **argv) {
 		return true;
 	}
 	_engine->queueMovie(argv[1]);
+	return true;
+}
+
+bool TwinEConsole::doPlayMidi(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a midi id as first parameter\n");
+		return true;
+	}
+	int newMidiIndex = atoi(argv[1]);
+	_engine->_music->playMidiMusic(newMidiIndex);
+	return true;
+}
+
+bool TwinEConsole::doPlayMusic(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a music track id as first parameter\n");
+		return true;
+	}
+	int newMusicTrackIndex = atoi(argv[1]);
+	_engine->_music->playTrackMusic(newMusicTrackIndex);
 	return true;
 }
 
