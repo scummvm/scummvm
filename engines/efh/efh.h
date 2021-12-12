@@ -367,7 +367,7 @@ private:
 	bool sub1BA9B(int16 groupId, int16 id);
 	int16 sub15538(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
-	Common::KeyCode selectOtherCharFromTeam();
+	int16 selectOtherCharFromTeam();
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	bool sub16E14();

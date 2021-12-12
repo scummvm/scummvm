@@ -3478,7 +3478,7 @@ void EfhEngine::setCharacterObjectToBroken(int16 charId, int16 objectId) {
 	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
 }
 
-Common::KeyCode EfhEngine::selectOtherCharFromTeam() {
+int16 EfhEngine::selectOtherCharFromTeam() {
 	Common::KeyCode maxVal = (Common::KeyCode) (Common::KEYCODE_0 + _teamSize);
 	Common::KeyCode input = Common::KEYCODE_INVALID; 
 	for (;;) {
@@ -3487,7 +3487,10 @@ Common::KeyCode EfhEngine::selectOtherCharFromTeam() {
 			break;
 	}
 
-	return input;
+	if (input == Common::KEYCODE_ESCAPE)
+		return 0x1B;
+
+	return (int16)input - (int16)Common::KEYCODE_0;
 }
 
 int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
