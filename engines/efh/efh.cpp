@@ -3384,7 +3384,7 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 }
 
 int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	int16 var2 = 0;
+	int16 retVal = 0;
 	
 	for (int16 counter = 0; counter < 2; ++counter) {
 		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
@@ -3394,7 +3394,7 @@ int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int
 			script_parse((uint8 *)str, 28, 122, 105, 166, 0);
 			displayFctFullScreen();
 		} else {
-			var2 = script_parse((uint8 *)str, 28, 122, 105, 166, -1);
+			retVal = script_parse((uint8 *)str, 28, 122, 105, 166, -1);
 		}
 	}
 
@@ -3403,7 +3403,7 @@ int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int
 		sub18E80(charId, windowId, menuId, curMenuLine);
 	}
 	
-	return var2;
+	return retVal;
 }
 
 bool EfhEngine::isItemCursed(int16 itemId) {
@@ -3497,8 +3497,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	char buffer1[80];
 	char buffer2[80];
 
-	int16 varA6 = 0;
-	int16 varA4 = 0;
+	bool varA6 = false;
+	bool retVal = false;
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 	switch (_items[itemId].field_16 - 1) {
@@ -3506,51 +3506,51 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			int16 varAE = 0;
+			int16 victims = 0;
 			strcat((char *)_messageToBePrinted, "  The item emits a low droning hum...");
 			if (getRandom(100) < 50) {
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					if (sub1BA9B(windowId, varA8)) {
-						++varAE;
-						_stru32686[windowId]._field0[varA8] = 1;
-						_stru32686[windowId]._field2[varA8] = getRandom(8);
+				for (int16 counter = 0; counter < 9; ++counter) {
+					if (sub1BA9B(windowId, counter)) {
+						++victims;
+						_stru32686[windowId]._field0[counter] = 1;
+						_stru32686[windowId]._field2[counter] = getRandom(8);
 					}
 				}
 			} else {
-				int16 varAC = getRandom(9);
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					if (varAC == 0)
+				int16 NumberOfTargets = getRandom(9);
+				for (int16 counter = 0; counter < 9; ++counter) {
+					if (NumberOfTargets == 0)
 						break;
 
-					if (sub1BA9B(windowId, varA8)) {
-						++varAE;
-						--varAC;
-						_stru32686[windowId]._field0[varA8] = 1;
-						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					if (sub1BA9B(windowId, counter)) {
+						++victims;
+						--NumberOfTargets;
+						_stru32686[windowId]._field0[counter] = 1;
+						_stru32686[windowId]._field2[counter] = getRandom(8);
 					}
 				}
 			}
 			// The original was duplicating this code in each branch of the previous random check. 
-			if (varAE > 1) {
-				sprintf(buffer1, "%d %ss fall asleep!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			if (victims > 1) {
+				sprintf(buffer1, "%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
 			} else {
-				sprintf(buffer1, "%d %s falls asleep!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+				sprintf(buffer1, "%d %s falls asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
 			}
 			strcat((char *)_messageToBePrinted, buffer1);
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 1:
 		if (argA == 2) {
 			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			strcat((char *)_messageToBePrinted, "  The item emits a blue beam...");
-			int16 varAE = 0;
+			int16 victim = 0;
 			if (getRandom(100) < 50) {
 				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
 					if (sub1BA9B(windowId, varA8)) {
-						++varAE;
+						++victim;
 						_stru32686[windowId]._field0[varA8] = 2;
 						_stru32686[windowId]._field2[varA8] = getRandom(8);
 					}
@@ -3562,7 +3562,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 						break;
 
 					if (sub1BA9B(windowId, varA8)) {
-						++varAE;
+						++victim;
 						--varAC;
 						_stru32686[windowId]._field0[varA8] = 2;
 						_stru32686[windowId]._field2[varA8] = getRandom(8);
@@ -3571,16 +3571,16 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			}
 			// <CHECKME>: This part is only present in the original in the case < 50, but for me
 			// it's missing in the other case as there's an effect (frozen enemies) but no feedback to the player
-			if (varAE > 1) {
-				sprintf(buffer1, "%d %ss are frozen in place!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			if (victim > 1) {
+				sprintf(buffer1, "%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
 			} else {
-				sprintf(buffer1, "%d %s is frozen in place!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+				sprintf(buffer1, "%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
 			}
 			strcat((char *)_messageToBePrinted, buffer1);
 			// </CHECKME>
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 2:
 		if (argA == 2) {
@@ -3590,7 +3590,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			_unkArray2C8AA[0] = 0;
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 4:
 		if (argA == 2) {
@@ -3598,23 +3598,23 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		} else {
 			strcat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!");
 			if (getRandom(100) < 50) {
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+				for (int16 counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
-						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 					}
 				}
 			} else {
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					if (sub1BA9B(windowId, varA8)) {
+				for (int16 counter = 0; counter < 9; ++counter) {
+					if (sub1BA9B(windowId, counter)) {
 						if (getRandom(100) < 50) {
-							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 						}
 						break;
 					}
 				}				
 			}
 		}
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 5:
 		if (argA == 2) {
@@ -3622,20 +3622,20 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		} else {
 			if (getRandom(100) < 50) {
 				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!");
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+				for (int16 counter = 0; counter < 9; ++counter) {
+					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 				}
 			} else {
 				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!");
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					if (sub1BA9B(windowId, varA8)) {
-						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+				for (int16 counter = 0; counter < 9; ++counter) {
+					if (sub1BA9B(windowId, counter)) {
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 					}
 				}				
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 12:
 		if (argA == 2) {
@@ -3644,7 +3644,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			strcat((char *)_messageToBePrinted, "  The magic sparkles brilliant hues in the air!");
 			sub1E028(windowId, _items[itemId].field17_attackTypeDefense, true);
 		}
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 14: {
 		int16 varAA;
@@ -3667,19 +3667,19 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_word32482[varAA] = 0;
 		}
 		
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 15: {
-		int16 varAA;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else {
-			varAA = windowId;
+			teamCharId = windowId;
 		}
 
-		if (varAA != 0x1B) {
+		if (teamCharId != 0x1B) {
 			strcpy(buffer1, "  The magic makes the user invisible!");
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine); 
@@ -3687,12 +3687,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				strcat((char *)_messageToBePrinted, buffer1);
 			}
 
-			_word32680[varAA] -= 50;
-			if (_word32680[varAA] < 0)
-				_word32680[varAA] = 0;
+			_word32680[teamCharId] -= 50;
+			if (_word32680[teamCharId] < 0)
+				_word32680[teamCharId] = 0;
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 16: {
@@ -3709,7 +3709,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				strcat((char *)_messageToBePrinted, buffer1);
-				varA4 = -1;
+				retVal = true;
 			}
 			// emptyFunction(2);
 		} else {
@@ -3719,7 +3719,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					strcat((char *)_messageToBePrinted, buffer1);
-					varA4 = -1;
+					retVal = true;
 				}
 			} else {
 				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
@@ -3727,12 +3727,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					strcat((char *)_messageToBePrinted, buffer1);
-					varA4 = -1;
+					retVal = true;
 				}
 			}
 		}
 
-		varA6 = -1;		
+		varA6 = true;		
 		}
 		break;
 	case 17: {
@@ -3746,7 +3746,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				strcat((char *)_messageToBePrinted, buffer1);
-				varA4 = -1;
+				retVal = true;
 			}
 			// emptyFunction(2);
 		} else {
@@ -3756,7 +3756,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					strcat((char *)_messageToBePrinted, buffer1);
-					varA4 = -1;
+					retVal = true;
 				}
 			} else {
 				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
@@ -3764,31 +3764,31 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					strcat((char *)_messageToBePrinted, buffer1);
-					varA4 = -1;
+					retVal = true;
 				}
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 18:
 		if (argA == 2) {
 			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			int16 varAA = windowId;
-			if (varAA != 0x1B) {
-				if (_teamCharStatus[varAA]._status == 2) { // frozen
+			int16 teamCharId = windowId;
+			if (teamCharId != 0x1B) {
+				if (_teamCharStatus[teamCharId]._status == 2) { // frozen
 					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
-					_teamCharStatus[varAA]._status = 0;
-					_teamCharStatus[varAA]._duration = 0;
+					_teamCharStatus[teamCharId]._status = 0;
+					_teamCharStatus[teamCharId]._duration = 0;
 				} else {
 					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
 				}
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 19:
 		strcpy(buffer1, "  * The item breaks!");
@@ -3798,7 +3798,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			strcat((char *)_messageToBePrinted, buffer1);
 		}
 		setCharacterObjectToBroken(charId, objectId);
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 23:
 		copyString(_items[itemId]._name, buffer2);
@@ -3833,28 +3833,28 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			strcat((char *)_messageToBePrinted, buffer1);
-			varA4 = -1;
+			retVal = true;
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 24: {
-		int16 varAA;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else
-			varAA = windowId;
+			teamCharId = windowId;
 
-		if (varAA != 0x1B) {
+		if (teamCharId != 0x1B) {
 			uint8 varAE = _items[itemId].field17_attackTypeDefense;
-			uint8 varAC = getRandom(_items[itemId].field_19);
-			_npcBuf[_teamCharId[varAA]]._activeScore[varAE] += varAC;
-			if (_npcBuf[_teamCharId[varAA]]._activeScore[varAE] > 20) {
-				_npcBuf[_teamCharId[varAA]]._activeScore[varAE] = 20;
+			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] += effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20) {
+				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 20;
 			}
-			if (varAC > 1)
-				sprintf(buffer1, "%s increased %d points!", kSkillArray[varAE], varAC);
+			if (effectPoints > 1)
+				sprintf(buffer1, "%s increased %d points!", kSkillArray[varAE], effectPoints);
 			else
 				sprintf(buffer1, "%s increased 1 point!", kSkillArray[varAE]);
 
@@ -3862,30 +3862,30 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				strcat((char *)_messageToBePrinted, buffer1);
-				varA4 = -1;
+				retVal = true;
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 25: {
-			int16 varAA;
+			int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else
-			varAA = windowId;
+			teamCharId = windowId;
 
-		if (varAA != 0x1B) {
+		if (teamCharId != 0x1B) {
 			uint8 varAE = _items[itemId].field17_attackTypeDefense;
-			uint8 varAC = getRandom(_items[itemId].field_19);
-			_npcBuf[_teamCharId[varAA]]._activeScore[varAE] -= varAC;
-			if (_npcBuf[_teamCharId[varAA]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[varAA]]._activeScore[varAE] < 0) {
-				_npcBuf[_teamCharId[varAA]]._activeScore[varAE] = 1;
+			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] -= effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] < 0) {
+				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 1;
 			}
-			if (varAC > 1)
-				sprintf(buffer1, "%s lowered %d points!", kSkillArray[varAE], varAC);
+			if (effectPoints > 1)
+				sprintf(buffer1, "%s lowered %d points!", kSkillArray[varAE], effectPoints);
 			else
 				sprintf(buffer1, "%s lowered 1 point!", kSkillArray[varAE]);
 
@@ -3893,11 +3893,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				strcat((char *)_messageToBePrinted, buffer1);
-				varA4 = -1;
+				retVal = true;
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 26:
@@ -3906,71 +3906,71 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			strcat((char *)_messageToBePrinted, buffer1);
-			varA4 = -1;
+			retVal = true;
 		}
 		totalPartyKill();
 		// emptyFunction(2);
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 27: {
-		int16 varAA;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else {
-			varAA = windowId;
+			teamCharId = windowId;
 		}
 
-		if (varAA != 0x1B) {
-			_npcBuf[_teamCharId[varAA]]._hitPoints = 0;
-			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+		if (teamCharId != 0x1B) {
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
+			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
 			sprintf(buffer1, "%s collapses, dead!!!", buffer2);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				strcat((char *)_messageToBePrinted, buffer1);
-				varA4 = -1;
+				retVal = true;
 			}
 			// emptyFunction(2);
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 28:
 		if (argA == 2) {
 			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			int16 varAA = windowId;
-			if (varAA != 0x1B) {
-				if (_teamCharStatus[varAA]._status == 0) {
+			int16 teamCharId = windowId;
+			if (teamCharId != 0x1B) {
+				if (_teamCharStatus[teamCharId]._status == 0) {
 					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
-					_teamCharStatus[varAA]._status = 0;
-					_teamCharStatus[varAA]._duration = 0; 
+					_teamCharStatus[teamCharId]._status = 0;
+					_teamCharStatus[teamCharId]._duration = 0; 
 				} else {
 					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
 				}
 			}
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		break;
 	case 29: {
-		int16 varAA;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else {
-			varAA = windowId;
+			teamCharId = windowId;
 		}
 		
-		if (varAA != 0x1B) {
+		if (teamCharId != 0x1B) {
 			int16 varAE = getRandom(_items[itemId].field17_attackTypeDefense);
-			_npcBuf[_teamCharId[varA4]]._hitPoints += varAE;
-			if (_npcBuf[_teamCharId[varA4]]._hitPoints > _npcBuf[_teamCharId[varA4]]._maxHP)
-				_npcBuf[_teamCharId[varA4]]._hitPoints = _npcBuf[_teamCharId[varA4]]._maxHP;
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints += varAE;
+			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints > _npcBuf[_teamCharId[teamCharId]]._maxHP)
+				_npcBuf[_teamCharId[teamCharId]]._hitPoints = _npcBuf[_teamCharId[teamCharId]]._maxHP;
 
-			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
 			if (varAE > 1)
 				sprintf(buffer1, "%s is healed %d points!", buffer2, varAE);
 			else
@@ -3981,28 +3981,28 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			strcat((char *)_messageToBePrinted, buffer1);
-			varA4 = -1;
+			retVal = true;
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		}
 		break;
 	case 30: {
-		int16 varAA;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
-			varAA = selectOtherCharFromTeam();
+			teamCharId = selectOtherCharFromTeam();
 		} else {
-			varAA = windowId;
+			teamCharId = windowId;
 		}
 
-		if (varAA != 0x1B) {
+		if (teamCharId != 0x1B) {
 			int16 varAE = getRandom(_items[itemId].field17_attackTypeDefense);
-			_npcBuf[_teamCharId[varA4]]._hitPoints -= varAE;
-			if (_npcBuf[_teamCharId[varA4]]._hitPoints < 0)
-				_npcBuf[_teamCharId[varA4]]._hitPoints = 0;
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints -= varAE;
+			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints < 0)
+				_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
 
-			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
 			if (varAE > 1)
 				sprintf(buffer1, "%s is harmed for %d points!", buffer2, varAE);
 			else
@@ -4013,10 +4013,10 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			strcat((char *)_messageToBePrinted, buffer1);
-			varA4 = -1;
+			retVal = true;
 		}
 
-		varA6 = -1;
+		varA6 = true;
 		
 		}
 		break;
@@ -4035,7 +4035,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		break;
 	}
 
-	if (varA6 != 0) {
+	if (varA6) {
 		if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) != 0x7F) {
 			int8 varA1 = (_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) - 1;
 			if (varA1 <= 0) {
@@ -4059,7 +4059,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 	}
 
-	return varA4;
+	return retVal;
 }
 
 int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
@@ -4067,8 +4067,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	int16 var16 = -1;
 	int16 windowId = -1;
 	int16 curMenuLine = -1;
-	int16 var10 = 0;
-	int16 var2 = 0;
+	bool var10 = false;
+	bool var2 = false;
 
 	saveAnimImageSetId();
 
@@ -4151,7 +4151,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				if (_menuDepth == 0) {
 					menuId = windowId;
 					if (menuId > 7)
-						var10 = -1;
+						var10 = true;
 					else {
 						_menuDepth = 1;
 						curMenuLine = 0;
@@ -4164,7 +4164,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 					} else {
 						var16 = curMenuLine;
-						var10 = -1;
+						var10 = true;
 					}
 				}
 				break;
@@ -4212,6 +4212,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					}
 				}
 				break;
+			default:
+				break;
 			}
 
 			if (curMenuLine == -1)
@@ -4219,7 +4221,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			else
 				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 
-		} while (var10 == 0);
+		} while (!var10);
 
 		bool validationFl = true;
 
@@ -4290,17 +4292,17 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				sub18E80(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
-					int16 var6;
+					bool var6;
 					int16 var8;
 					do {
 						if (_teamCharId[2] != -1) {
 							var8 = displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
-							var2 = 0;
+							var2 = false;
 						} else if (_teamCharId[1]) {
 							var8 = 0x1A;
-							var2 = 0;
+							var2 = false;
 						} else {
-							var2 = -1;
+							var2 = true;
 							if (_teamCharId[0] == charId)
 								var8 = 1;
 							else
@@ -4309,7 +4311,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 						if (var8 != 0x1A && var8 != 0x1B) {
 							var6 = giveItemTo(_teamCharId[var8], objectId, charId);
-							if (var6 == 0) {
+							if (!var6) {
 								displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
 								getLastCharAfterAnimCount(_guessAnimationAmount);
 							}
@@ -4319,9 +4321,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 								getLastCharAfterAnimCount(_guessAnimationAmount);
 								var8 = 0x1B;
 							}
-							var6 = 0;
+							var6 = false;
 						}
-					} while (var6 == 0 && var2 == 0 && var8 != 0x1B);
+					} while (!var6 && !var2 && var8 != 0x1B);
 
 					if (var6) {
 						removeObject(charId, objectId);
@@ -4399,10 +4401,12 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 
 		if (menuId != 8) {
-			var10 = 0;
+			var10 = false;
 			_menuDepth = 0;
 			menuId = 9;
 			var16 = -1;
@@ -4465,7 +4469,7 @@ bool EfhEngine::sub16E14() {
 					sprintf(buffer, "with %d %s", var6A, dest);
 				} else if (var1 == 0x3E) {
 					strcpy(buffer, "(NOT DEFINED)");
-				} else if (var1 == 0x3F) { // Useless if, it's the last possible value
+				} else if (var1 == 0x3F) { // Useless check, it's the last possible value
 					copyString(_npcBuf[_mapMonsters[monsterId]._MonsterRef]._name, dest);
 					sprintf(buffer, "with %s", dest);
 				}
