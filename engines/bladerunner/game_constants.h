@@ -2842,6 +2842,7 @@ enum AffectionTowards {
 enum GoalMcCoy {
 	kGoalMcCoyDefault              =   0,
 	kGoalMcCoyDodge                =   1,
+	kGoalMcCoyLeanOverAndSearch    =   2, // unused, McCoy searching dumpster is done by Actor_Change_Animation_Mode(kActorMcCoy, 38);
 	kGoalMcCoyBB11GetUp            = 100,
 	kGoalMcCoyBB11PrepareToRunAway = 101,
 	kGoalMcCoyBB11RunAway          = 102,

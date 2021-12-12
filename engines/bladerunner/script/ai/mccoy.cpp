@@ -371,7 +371,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		dodge();
 		return true;
 
-	case 2:
+	case kGoalMcCoyLeanOverAndSearch:
 		_animationFrame = 0;
 		_animationState = 47;
 		return true;
@@ -535,7 +535,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		return true;
 
-	case 400:
+	case kGoalMcCoyStartChapter5:
 		Actor_Set_Health(kActorMcCoy, 50, 50);
 		Game_Flag_Set(kFlagKP02Available);
 		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
