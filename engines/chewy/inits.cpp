@@ -206,6 +206,15 @@ void init_room() {
 void init_atds() {
 	int16 i;
 
+	// Close any prior handles
+	atds->close_handle(AAD_DATEI);
+	atds->close_handle(ATS_DATEI);
+	atds->close_handle(ADS_DATEI);
+	atds->close_handle(INV_USE_DATEI);
+	atds->close_handle(INV_ATS_DATEI);
+	atds->close_handle(ATDS_HANDLE);
+
+	// New set up
 	Stream *handle = atds->pool_handle(ATDS_TXT, "rb");
 	ERROR
 	atds->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
