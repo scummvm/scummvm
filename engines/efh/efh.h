@@ -214,6 +214,13 @@ struct MapMonster {
 	int16 _pictureRef[9];
 };
 
+struct Stru32686 {
+	int16 _field0[9];
+	int16 _field2[9];
+
+	void init();
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const EfhGameDescription *gd);
@@ -252,9 +259,7 @@ private:
 	GameType _gameType;
 	Common::Platform _platform;
 
-	void initPalette();
 	void initialize();
-	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
 	void readAnimInfo();
 	void findMapFile(int16 mapId);
 	void loadNewPortrait();
@@ -262,17 +267,11 @@ private:
 	void loadHistory();
 	void loadTechMapImp(int16 fileId);
 	void loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl);
-	void drawLeftCenterBox();
-	void displayAnimFrame();
-	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
 	void readTileFact();
 	void readItems();
 	void loadNPCS();
-	void setDefaultNoteDuration();
 	Common::KeyCode playSong(uint8 *buffer);
-	void decryptImpFile(bool techMapFl);
 	void readImpFile(int16 id, bool techMapFl);
-	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
 	void playIntro();
 	void initEngine();
 	void initMapMonsters();
@@ -281,68 +280,40 @@ private:
 	int16 getEquipmentDefense(int16 charId, bool flag);
 	uint16 sub1C80A(int16 charId, int field18, bool flag);
 	void displayLowStatusScreen(bool flag);
-	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
-	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
-	void displayFctFullScreen();
-	void copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY);
-	void copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
 	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
 	void restoreAnimImageSetId();
 	void checkProtection();
 	void loadGame();
-	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	void copyCurrentPlaceToBuffer(int id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
-	void drawRect(int minX, int minY, int maxX, int maxY);
-	void drawColoredRect(int minX, int minY, int maxX, int maxY, int color);
-	void clearScreen(int color);
-	Common::KeyCode handleAndMapInput(bool animFl);
 	void displayNextAnimFrame();
 	void writeTechAndMapFiles();
 	uint16 getStringWidth(const char *buffer);
 	void setTextPos(int16 textPosX, int16 textPosY);
-
 	void sub15150(bool flag);
 	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSize, bool drawHeroFl, bool drawMonstersFl);
 	void displaySmallMap(int16 posX, int16 posY);
 	void displayLargeMap(int16 posX, int16 posY);
 	void redrawScreen();
-	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
-	void displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY);
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
 	void removeObject(int16 charId, int16 objectId);
 	void totalPartyKill();
-	int16 getRandom(int16 maxVal);
 	void removeCharacterFromTeam(int16 teamMemberId);
-	void emptyFunction(int i);
 	void refreshTeamSize();
 	bool isCharacterATeamMember(int16 id);
 	bool isTPK();
-	Common::KeyCode getInput(int16 delay);
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
-	void drawString(const char *str, int16 startX, int16 startY, uint16 unkFl);
-	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
-	void drawMapWindow();
-	void copyString(char *srcStr, char *destStr);
 	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
 	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
-	void displayGameScreen();
 	void sub221FA(uint8 *impArray, bool flag);
-	void drawUpperLeftBorders();
-	void drawUpperRightBorders();
-	void drawBottomBorders();
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub1C219(uint8 *str, int menuType, int arg4, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
-	void drawChar(uint8 curChar, int16 posX, int posY);
-	void setTextColorWhite();
-	void setTextColorRed();
-	void setTextColorGrey();
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
 	void goNorth();
@@ -354,13 +325,8 @@ private:
 	void goSouthWest();
 	void handleNewRoundEffects();
 	bool handleDeathMenu();
-
-	void setNumLock();
 	void computeMapAnimation();
 	void unkFct_anim();
-	void setNextCharacterPos();
-	void displayStringAtTextPos(const char *message);
-	void unkFct_displayMenuBox_2(int16 color);
 	int8 sub16B08(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
@@ -379,7 +345,6 @@ private:
 	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
 	void sub221D2(int16 monsterId);
-	Common::KeyCode getInputBlocking();
 	void sub22AA8(int16 arg0);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
@@ -388,24 +353,73 @@ private:
 	void displayStatusMenu(int16 windowId);
 	void countRightWindowItems(int16 menuId, int16 charId);
 	int16 getXPLevel(int32 xp);
-	void displayChar(char character);
 	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
 	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
 	void unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
-	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 displayString_3(const char * str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 _objectId);
 	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	void sub1E028(int16 id, uint8 mask, int16 groupFl);
+	bool sub1BA9B(int16 groupId, int16 id);
+	int16 sub15538(int16 mapPosX, int16 mapPosY);
+	void setCharacterObjectToBroken(int16 charId, int16 objectId);
+	Common::KeyCode selectOtherCharFromTeam();
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
-	bool getValidationFromUser();
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
+	bool sub16E14();
+
+	// Graphics
+	void initPalette();
+	void drawLeftCenterBox();
+	void displayAnimFrame();
+	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
+	void displayFctFullScreen();
+	void copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY);
+	void copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y);
+	void displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY);
+	void drawRect(int minX, int minY, int maxX, int maxY);
+	void drawColoredRect(int minX, int minY, int maxX, int maxY, int color);
+	void clearScreen(int color);
+	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
+	void drawString(const char *str, int16 startX, int16 startY, uint16 unkFl);
+	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
+	void drawMapWindow();
+	void displayGameScreen();
+	void drawUpperLeftBorders();
+	void drawUpperRightBorders();
+	void drawBottomBorders();
+	void drawChar(uint8 curChar, int16 posX, int posY);
+	void setTextColorWhite();
+	void setTextColorRed();
+	void setTextColorGrey();
+	void displayStringAtTextPos(const char *message);
+	void unkFct_displayMenuBox_2(int16 color);
+	void setNextCharacterPos();
+	void displayChar(char character);
+	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
+
+	// Utils
+	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
+	void setDefaultNoteDuration();
+	void decryptImpFile(bool techMapFl);
+	void loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
+	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);	
+	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
+	int16 getRandom(int16 maxVal);
+	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
+	Common::KeyCode getInput(int16 delay);
 	Common::KeyCode waitForKey();
 	Common::KeyCode mapInputCode(Common::KeyCode input);
-	bool sub16E14();
+	Common::KeyCode handleAndMapInput(bool animFl);
+	Common::KeyCode getInputBlocking();
+	void setNumLock();
+	void copyString(char *srcStr, char *destStr);
+	bool getValidationFromUser();
+
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -502,8 +516,11 @@ private:
 	bool _word2C8D2;
 	int16 _menuDepth;
 	int16 _word2D0BA;
+	int16 _word32680[3];
+	int16 _word32482[3];
 
 	int16 _word3273A[15];
+	Stru32686 _stru32686[5];
 };
 
 } // End of namespace Efh
