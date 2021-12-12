@@ -195,10 +195,6 @@ void Events::pollEvents() {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		_mousePos = event.mouse;
-		if (_vm->_isScreenDoubled)
-			_mousePos = Common::Point(_mousePos.x / 2, _mousePos.y / 2);
-
 		// Handle events
 		switch (event.type) {
 		case Common::EVENT_QUIT:
@@ -226,6 +222,10 @@ void Events::pollEvents() {
  			break;
 		}
 	}
+
+	_mousePos = g_system->getEventManager()->getMousePos();
+	if (_vm->_isScreenDoubled)
+		_mousePos = Common::Point(_mousePos.x / 2, _mousePos.y / 2);
 }
 
 void Events::pollEventsAndWait() {
