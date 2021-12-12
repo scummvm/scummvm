@@ -122,7 +122,7 @@ void Darts::playDarts() {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "%s Wins!", _opponent.c_str());
 				}
 
-				screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 4), DART_COL_FORE, "Press a key");
+				screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 40), DART_COL_FORE, "Press a key");
 
 				idx = 10;
 				done = true;
