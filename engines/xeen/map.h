@@ -38,6 +38,7 @@ namespace Xeen {
 #define MAP_HEIGHT 16
 #define TOTAL_SURFACES 16
 #define INVALID_CELL 0x8888
+#define ITEM_DROP_MAX 7
 
 class XeenEngine;
 

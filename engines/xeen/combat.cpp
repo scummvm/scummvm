@@ -102,7 +102,7 @@ static const int POW_WEAPON_VOCS[35] = {
 	5, 5, 5, 1, 3, 2, 5, 1, 1, 1, 0, 0, 0, 2, 2
 };
 
-static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
+static const int MONSTER_ITEM_RANGES[ITEM_DROP_MAX + 1] = { 10, 20, 50, 100, 100, 100, 100, 100 };
 
 #define monsterSavingThrow(MONINDEX) (_vm->getRandomNumber(1, 50 + (MONINDEX)) <= (MONINDEX))
 
