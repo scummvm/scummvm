@@ -325,7 +325,7 @@ void mcga_grafik::abblenden(int16 startcol, int16 anz, int16 stufen, int16 frame
 	}
 }
 
-void mcga_grafik::set_teilpalette(byte *palette, int16 startcol, int16 anz) {
+void mcga_grafik::set_teilpalette(const byte *palette, int16 startcol, int16 anz) {
 	int16 i;
 	int16 k, endcol;
 	k = startcol * 3;
