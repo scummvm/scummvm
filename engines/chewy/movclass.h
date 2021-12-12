@@ -35,77 +35,76 @@ namespace Chewy {
 #define MLE_LEFT 3
 
 struct MovInfo {
-	int16 XyzStart[3];
-	int16 XyzEnd[3];
+	int16 XyzStart[3] = { 0 };
+	int16 XyzEnd[3] = { 0 };
 
-	int16 HotX;
-	int16 HotY;
-	int16 HotMovX;
-	int16 HotMovY;
-	int16 Vorschub;
-	int16 Delay;
-	uint8 Id;
+	int16 HotX = 0;
+	int16 HotY = 0;
+	int16 HotMovX = 0;
+	int16 HotMovY = 0;
+	int16 Vorschub = 0;
+	int16 Delay = 0;
+	uint8 Id = 0;
 
-	uint8 Mode;
+	uint8 Mode = 0;
 };
 
 struct ObjMov {
-	int16 Xypos[3];
-	int16 Xyvo [3];
-	int16 Xyna [3][2];
-	int16 Count;
+	int16 Xypos[3] = { 0 };
+	int16 Xyvo [3] = { 0 };
+	int16 Xyna [3][2] = { 0 };
+	int16 Count = 0;
 
-	int16 Delay;
+	int16 Delay = 0;
 
-	int16 DelayCount;
+	int16 DelayCount = 0;
 
-	int16 Phase;
-	int16 PhNr;
-	int16 PhAnz;
-	int16 Xzoom;
-	int16 Yzoom;
-	int16 StNr;
+	int16 Phase = 0;
+	int16 PhNr = 0;
+	int16 PhAnz = 0;
+	int16 Xzoom = 0;
+	int16 Yzoom = 0;
+	int16 StNr = 0;
 };
 
 struct GotoPkt {
-	int16 Sx;
-	int16 Sy;
-	int16 Dx;
-	int16 Dy;
-	byte *Mem;
-	int16 Breite;
-	int16 Hoehe;
-	int16 Ebenen;
-	int16 AkMovEbene;
-	int16 Vorschub;
+	int16 Sx = 0;
+	int16 Sy = 0;
+	int16 Dx = 0;
+	int16 Dy = 0;
+	byte *Mem = nullptr;
+	int16 Breite = 0;
+	int16 Hoehe = 0;
+	int16 Ebenen = 0;
+	int16 AkMovEbene = 0;
+	int16 Vorschub = 0;
 };
 
 struct GotoMovLine {
-	int16 GotoFeld;
-
-	int16 MLineFeld;
+	int16 GotoFeld = 0;
+	int16 MLineFeld = 0;
 };
 
 struct MovLineExit {
-	int16 Steps;
-	int16 Direction;
-	int16 FNr;
-	int16 KnPkt[MAX_KNOTEN_PKT];
+	int16 Steps = 0;
+	int16 Direction = 0;
+	int16 FNr = 0;
+	int16 KnPkt[MAX_KNOTEN_PKT] = { 0 };
 };
 
 struct AutoGoVar {
-	bool AutoGo;
-	bool Continue;
+	bool AutoGo = false;
+	bool Continue = false;
 
-	int16 PktAnz;
+	int16 PktAnz = 0;
 
-	int16 Start;
-	int16 X_End;
-	int16 Y_End;
-	int16 LastFeld;
+	int16 Start = 0;
+	int16 X_End = 0;
+	int16 Y_End = 0;
+	int16 LastFeld = 0;
 
-	int16 AkFeld;
-	int16 AkKnoten;
+	int16 AkFeld = 0;
+	int16 AkKnoten = 0;
 };
 
 class movclass {
@@ -127,12 +126,13 @@ private:
 	int16 calc_go(int16 src_feld, int16 *dst_feld);
 	void get_mov_line();
 	void calc_mov_line_xit(int16 start_feld);
-	int16 feld1knoten;
-	int16 plot_delay;
+
+	int16 feld1knoten = 0;
+	int16 plot_delay = 0;
 	AutoGoVar agv;
 	MovLineExit mle;
 	GotoMovLine gml;
-	GotoPkt *gpkt;
+	GotoPkt *gpkt = nullptr;
 };
 
 } // namespace Chewy

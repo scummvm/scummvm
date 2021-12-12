@@ -641,7 +641,7 @@ void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
 }
 
 void ailclass::serve_db_samples() {
-	warning("STUB: ailclass::serve_db_samples()");
+	debug(1, "STUB: ailclass::serve_db_samples()");
 
 #if 0
 	int16 i;

@@ -286,7 +286,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 		if (!modul) {
 			Tt = (taf_info *)tmp;
 			Tt->anzahl = anz;
-			Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 4l);
+			Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
 			Tt->image = (byte **)(tmp + sizeof(taf_info));
 
 			if (!modul) {

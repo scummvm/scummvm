@@ -718,6 +718,7 @@ void movclass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 	int16 tmp;
 	int16 absx, absy, absz;
 	int16 x, y, z, x1, y1, z1;
+
 	if (vorschub > 0) {
 		x = xyz[0];
 		y = xyz[1];
