@@ -36,6 +36,8 @@ private:
 
 	bool doToggleSceneryView(int argc, const char **argv);
 	bool doPlayVideo(int argc, const char **argv);
+	bool doPlayMidi(int argc, const char **argv);
+	bool doPlayMusic(int argc, const char **argv);
 	bool doPrintGameFlag(int argc, const char **argv);
 	bool doPrintInventoryFlag(int argc, const char **argv);
 	bool doPrintHolomapFlag(int argc, const char **argv);
