@@ -337,7 +337,9 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else {
+					free(inv_use_mem);
 					inv_use_mem = (char *)MALLOC(Ch.size + 3l);
+
 					if (!modul) {
 						if (Ch.size) {
 							if (!rs->read(inv_use_mem, Ch.size)) {

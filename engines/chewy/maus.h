@@ -81,10 +81,11 @@ public:
 
 	in_zeiger *get_in_zeiger();
 	int16 get_switch_code();
-	int16 hot_key;
+
+	int16 hot_key = 0;
 private:
-	maus_info *maus_info_blk;
-	kb_info *kb_info_blk;
+	maus_info *maus_info_blk = nullptr;
+	kb_info *kb_info_blk = nullptr;
 	in_zeiger inzeig;
 };
 
