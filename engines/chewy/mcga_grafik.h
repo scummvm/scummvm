@@ -88,7 +88,7 @@ public:
 	               int16 frames);
 	void ausblenden(int16 frames);
 	void abblenden(int16 startcol, int16 anz, int16 stufen, int16 frames);
-	void set_teilpalette(byte *palette, int16 startcol, int16 anz);
+	void set_teilpalette(const byte *palette, int16 startcol, int16 anz);
 
 	void cls();
 	void punkt(int16 xpos, int16 ypos, int16 farbn);

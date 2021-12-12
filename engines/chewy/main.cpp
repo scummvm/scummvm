@@ -1152,7 +1152,7 @@ void swap_if_l(int16 *x1, int16 *x2) {
 	}
 }
 
-void palcopy(byte *dipal, byte *sipal, int16 distart,
+void palcopy(byte *dipal, const byte *sipal, int16 distart,
              int16 sistart, int16 anz) {
 	int16 i, j;
 	j = sistart;
@@ -1165,7 +1165,7 @@ void palcopy(byte *dipal, byte *sipal, int16 distart,
 }
 
 void check_shad(int16 g_idx, int16 mode) {
-	static uint8 pal_0[] = {
+	static const uint8 PAL_0[] = {
 		0, 0, 0,
 		39, 0, 26,
 		43, 0, 29,
@@ -1179,7 +1179,7 @@ void check_shad(int16 g_idx, int16 mode) {
 		63, 12, 46,
 		63, 24, 50
 	};
-	static uint8 pal_1[] = {
+	static const uint8 PAL_1[] = {
 		0, 0, 0,
 		34, 0, 21,
 		38, 0, 24,
@@ -1195,7 +1195,7 @@ void check_shad(int16 g_idx, int16 mode) {
 		58, 7, 41,
 		58, 19, 45
 	};
-	static uint8 pal_2[] = {
+	static const uint8 PAL_2[] = {
 		0, 0, 0,
 		26, 0, 13,
 		30, 0, 16,
@@ -1211,7 +1211,7 @@ void check_shad(int16 g_idx, int16 mode) {
 		50, 0, 33,
 		50, 11, 37
 	};
-	static uint8 pal_3[] = {
+	static const uint8 PAL_3[] = {
 		0, 0, 0,
 		21, 3, 8,
 		25, 3, 11,
@@ -1232,26 +1232,26 @@ void check_shad(int16 g_idx, int16 mode) {
 		switch (g_idx) {
 		case 4:
 			if (mode)
-				out->set_teilpalette((byte *)pal_0, 1, 11);
-			palcopy(pal, (byte *)pal_0, 0, 0, 12);
+				out->set_teilpalette(PAL_0, 1, 11);
+			palcopy(pal, PAL_0, 0, 0, 12);
 			break;
 
 		case 1:
 			if (mode)
-				out->set_teilpalette((byte *)pal_1, 1, 11);
-			palcopy(pal, (byte *)pal_1, 0, 0, 12);
+				out->set_teilpalette(PAL_1, 1, 11);
+			palcopy(pal, PAL_1, 0, 0, 12);
 			break;
 
 		case 2:
 			if (mode)
-				out->set_teilpalette((byte *)pal_2, 1, 11);
-			palcopy(pal, (byte *)pal_2, 0, 0, 12);
+				out->set_teilpalette(PAL_2, 1, 11);
+			palcopy(pal, PAL_2, 0, 0, 12);
 			break;
 
 		case 3:
 			if (mode)
-				out->set_teilpalette((byte *)pal_3, 1, 11);
-			palcopy(pal, (byte *)pal_3, 0, 0, 12);
+				out->set_teilpalette(PAL_3, 1, 11);
+			palcopy(pal, PAL_3, 0, 0, 12);
 			break;
 
 		}

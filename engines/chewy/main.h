@@ -39,7 +39,7 @@ void free_buffers();
 void plot_main_menu();
 void test_menu();
 void shading(int16 new_shad_nr);
-void palcopy(char *dipal, char *sipal, int16 distart,
+void palcopy(byte *dipal, const byte *sipal, int16 distart,
              int16 sistart, int16 anz);
 short calc_maus_txt(int16 x, int16 y, int16 mode);
 void calc_ani_timer();
