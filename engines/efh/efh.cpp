@@ -26,7 +26,6 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 
 #include "efh/efh.h"
 #include "efh/constants.h"
@@ -159,6 +158,13 @@ void NPCStruct::init() {
 	field_85 = 0;
 }
 
+void Stru32686::init() {
+	for (int i = 0; i < 9; ++i) {
+		_field0[i] = 0;
+		_field2[i] = 0;
+	}
+}
+
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -247,11 +253,15 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_teamCharStatus[i]._status = 0;
 		_teamCharStatus[i]._duration = 0;
 		_unkArray2C8AA[i] = 0;
+		_word32680[i] = 0;
+		_word32482[i] = 0;
 	}
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 5; ++i) {
 		_teamMonsterIdArray[i] = -1;
-
+		_stru32686[i].init();
+	}
+	
 	_unkArray2C8AA[2] = 1;
 	_teamSize = 1;
 	_word2C872 = 0;
@@ -311,30 +321,6 @@ GameType EfhEngine::getGameType() const {
 
 Common::Platform EfhEngine::getPlatform() const {
 	return _platform;
-}
-
-void EfhEngine::initPalette() {
-	const uint8 pal[3 * 16] = {
-		0, 0, 0,
-		0, 0, 170,
-		0, 170, 0,
-		0, 170, 170,
-		170, 0, 0,
-		170, 0, 170,
-		170, 85, 0,
-		170, 170, 170,
-		85, 85, 85,
-		85, 85, 255,
-		1, 1, 1,
-		85, 255, 255,
-		255, 85, 85,
-		255, 85, 255,
-		255, 255, 85,
-		255, 255, 255
-	};
-	
-	_system->getPaletteManager()->setPalette(pal, 0, 16);
-	_system->updateScreen();
 }
 
 Common::Error EfhEngine::run() {
@@ -482,16 +468,6 @@ void EfhEngine::initialize() {
 	_shouldQuit = false;
 }
 
-int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
-	Common::File f;
-	if (!f.open(filename))
-		error("Unable to find file %s", filename.c_str());
-
-	int size = f.size();
-	
-	return f.read(destBuffer, size);
-}
-
 void EfhEngine::readAnimInfo() {
 	Common::String fileName = "animinfo";
 	uint8 animInfoBuf[9000];
@@ -607,52 +583,6 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 	copyCurrentPlaceToBuffer(_fullPlaceId / 20);
 }
 
-void EfhEngine::drawLeftCenterBox() {
-	drawColoredRect(16, 8, 111, 135, 0);
-}
-
-void EfhEngine::displayAnimFrame() {
-	// The original had a parameter. As it was always equal to zero, it was removed in ScummVM
-
-	if (_animImageSetId == 0xFF)
-		return;
-
-	if (_animImageSetId == 0xFE) {
-		displayRawDataAtPos(_portraitSubFilesArray[0], 16, 8);
-		return;
-	}
-
-	displayRawDataAtPos(_portraitSubFilesArray[0], 16, 8);
-	for (int i = 0; i < 4; ++i) {
-		int16 var2 = _animInfo[_animImageSetId]._unkAnimArray[_unkAnimRelatedIndex].field0;
-		if (var2 == 0xFF)
-			continue;
-		displayRawDataAtPos(_portraitSubFilesArray[var2 + 1], _animInfo[_animImageSetId]._field46_startX[var2] + 16, _animInfo[_animImageSetId]._field3C_startY[var2] + 8);
-	}
-}
-
-void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
-	if (animId == 0xFF)
-		return;
-
-	_animImageSetId = animId;
-	if (_animImageSetId == 0xFE)
-		loadNewPortrait();
-	else
-		loadAnimImageSet();
-
-	if (!displayMenuBoxFl)
-		return;
-	
-	for (int i = 0; i < 2; ++i) {
-		drawLeftCenterBox();
-		displayAnimFrame();
-
-		if (i == 0)
-			displayFctFullScreen();
-	}
-}
-
 void EfhEngine::readTileFact() {
 	Common::String fileName = "tilefact";
 	readFileToBuffer(fileName, _tileFact);
@@ -754,56 +684,11 @@ void EfhEngine::loadNPCS() {
 	}
 }
 
-void EfhEngine::setDefaultNoteDuration() {
-	// Original implementation is based on the int1C, which is triggered at 18.2065Hz.
-	// Every 4 times, it sets a flag (thus, approx every 220ms)
-	// The function was checking the keyboard in a loop, incrementing a counter and setting the last character read
-	// The "_defaultNoteDuration" was then set to 7 times this counter
-	//
-	// No implementation required in ScummVM
-}
-
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	warning("STUB: playSong");
 	_system->delayMillis(1000);
 	
 	return Common::KEYCODE_INVALID;
-}
-
-void EfhEngine::decryptImpFile(bool techMapFl) {
-	uint16 counter = 0;
-	uint16 target;
-	uint8 *curPtr;
-
-	if (!techMapFl) {
-		_imp2PtrArray[counter++] = curPtr = _imp2;
-		target = 431;
-	} else {
-		_imp2PtrArray[counter++] = curPtr = _imp1;
-		target = 99;
-	}
-
-	do {
-		*curPtr = (*curPtr - 3) ^ 0xD7;
-		if (*curPtr == 0x40) {
-			curPtr += 3;
-			if (!techMapFl)
-				_imp2PtrArray[counter++] = curPtr;
-			else
-				_imp1PtrArray[counter++] = curPtr;
-		} else
-			++curPtr;
-	} while (*curPtr != 0x60 && counter <= target);
-
-	Common::DumpFile dump;
-	if (!techMapFl) {
-		dump.open("imp2_unc.dump");
-		dump.write(_imp2, curPtr - _imp2);
-	} else {
-		dump.open("imp1_unc.dump");
-		dump.write(_imp1, curPtr - _imp1);
-	}
-	dump.close();
 }
 
 void EfhEngine::readImpFile(int16 id, bool techMapFl) {
@@ -1354,70 +1239,6 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 	}
 }
 
-void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
-	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
-	rImageFile(fileName, buffer, subFilesArray, destBuffer);
-}
-
-void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
-	readFileToBuffer(filename, packedBuffer);
-	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
-	// TODO: Keep this dump for debug purposes only
-	Common::DumpFile dump;
-	dump.open(filename + ".dump");
-	dump.write(targetBuffer, size);
-	// End of dump	
-	
-	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (4 Bpp)
-	// => Write a class to handle that more properly
-	uint8 *ptr = targetBuffer;
-	uint16 counter = 0;
-	while (READ_LE_INT16(ptr) != 0) {
-		subFilesArray[counter] = ptr;
-		++counter;
-		int16 imageWidth = READ_LE_INT16(ptr);
-		ptr += 2;
-		int16 imageHeight = READ_LE_INT16(ptr);
-		ptr += 2;
-		ptr += (imageWidth * imageHeight);
-	}
-}
-
-void EfhEngine::displayFctFullScreen() {
-	// CHECKME: 319 is in the original but looks suspicious.
-	// copyDirtyRect(0, 0, 319, 200);
-
-	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
-	_system->updateScreen();
-}
-
-void EfhEngine::copyDirtyRect(int16 minX, int16 minY, int16 maxX, int16 maxY) {
-	_graphicsStruct->copy(_vgaGraphicsStruct2);
-	_initRect = Common::Rect(minX, minY, maxX, maxY);
-	copyGraphicBufferFromTo(_vgaGraphicsStruct2, _vgaGraphicsStruct1, _initRect, minX, minY);
-}
-
-void EfhEngine::copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, EfhGraphicsStruct *efh_graphics_struct1, const Common::Rect &rect, int16 min_x, int16 min_y) {
-	warning("STUB - copyGraphicBufferFromTo");
-}
-
-void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY) {
-	// TODO: Quick code to display stuff, may require to really reverse the actual function
-	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
-	// warning("%d %d - startX %d startY %d width %d height %d lineDataSize %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_lineDataSize, bufferBM->_fieldD);
-	int counter = 0;
-	for (int line = 0; line < bufferBM->_height; ++line) {
-		for (int col = 0; col < bufferBM->_lineDataSize; ++col) { // _lineDataSize = _width / 2
-			destPtr[320 * line + 2 * col] = bufferBM->_dataPtr[counter] >> 4;
-			destPtr[320 * line + 2 * col + 1] = bufferBM->_dataPtr[counter] & 0xF;
-			++counter;
-		}
-	}
-
-//	_system->copyRectToScreen((uint8 *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
-//	_system->updateScreen();
-}
-
 uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
 	uint8 *buffer = srcBuffer;
 
@@ -1454,13 +1275,6 @@ void EfhEngine::totalPartyKill() {
 	}
 }
 
-int16 EfhEngine::getRandom(int16 maxVal) {
-	if (maxVal == 0)
-		return 0;
-
-	return 1 + _rnd->getRandomNumber(maxVal - 1);
-}
-
 void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	int16 charId = _teamCharId[teamMemberId];
 	_npcBuf[charId].field_12 = _npcBuf[charId].field_B;
@@ -1478,10 +1292,6 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	}
 
 	refreshTeamSize();
-}
-
-void EfhEngine::emptyFunction(int i) {
-	// TODO: Eventually remove this useless function
 }
 
 void EfhEngine::refreshTeamSize() {
@@ -1611,49 +1421,6 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
 	return false;
 }
 
-void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 unkFl) {
-	uint8 *curPtr = (uint8 *)str;
-	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
-	_unk_sub26437_flag = unkFl & 0x3FFF;
-	int16 minX = startX;
-	int16 minY = startY;                                 // Used in case 0x8000
-	int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
-
-	if (unkFl & 0x8000) {
-		warning("STUB - drawString - 0x8000");
-	}
-
-	for (uint8 curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
-		if (curChar == 0x0A) {
-			startX = minX;
-			startY += lineHeight;
-			continue;
-		}
-
-		if (curChar < 0x20)
-			continue;
-
-		uint16 characterId = (curChar + 0xE0) & 0xFF;
-		uint8 charWidth = _fontDescr._widthArray[characterId];
-
-		if (startX + charWidth >= 319) {
-			startX = minX;
-			startY += lineHeight;
-		}
-
-		uint8 varC = _fontDescr._extraLines[characterId];
-		drawChar(curChar, startX, startY + varC);
-		startX += charWidth + _fontDescr._extraHorizontalSpace;
-	}
-	
-}
-
-void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY) {
-	uint16 length = getStringWidth(str);
-	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
-	drawString(str, startCenteredDisplayX, posY, _textColor);
-}
-
 int16 EfhEngine::chooseCharacterToReplace() {
 	warning("STUB - chooseCharacterToReplace");
 	return 0x1B;
@@ -1686,20 +1453,6 @@ int16 EfhEngine::handleCharacterJoining() {
 
 	removeCharacterFromTeam(charId);
 	return 2;
-}
-
-void EfhEngine::drawMapWindow() {
-	drawColoredRect(128, 8, 303, 135, 0);
-}
-
-void EfhEngine::copyString(char *srcStr, char *destStr) {
-	char lastChar = 1;
-	int16 idx = 0;
-
-	while (lastChar != 0) {
-		lastChar = destStr[idx] = srcStr[idx];
-		++idx;
-	}
 }
 
 int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX, int maxY, int argC) {	
@@ -1853,7 +1606,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 		case 0x07:
 			if (argC != 0) {
 				totalPartyKill();
-				emptyFunction(2);
+				// emptyFunction(2);
 			}
 			break;
 		case 0x08:
@@ -2163,15 +1916,6 @@ void EfhEngine::sub133E5(uint8 *srcPtr, int posX, int posY, int maxX, int maxY, 
 	script_parse(_messageToBePrinted, posX, posY, maxX, maxY, argC);
 }
 
-void EfhEngine::displayGameScreen() {
-	clearScreen(0);
-	drawUpperLeftBorders();
-	drawUpperRightBorders();
-	drawBottomBorders();
-	displayAnimFrame();
-	displayLowStatusScreen(false);
-}
-
 void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 	for (uint8 counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -2183,24 +1927,6 @@ void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 			}
 		}
 	}
-}
-
-void EfhEngine::drawUpperLeftBorders() {
-	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
-	displayRawDataAtPos(_circleImageSubFileArray[1], 112, 0);
-	displayRawDataAtPos(_circleImageSubFileArray[3], 16, 0);
-}
-
-void EfhEngine::drawUpperRightBorders() {
-	displayRawDataAtPos(_circleImageSubFileArray[2], 304, 0);
-	displayRawDataAtPos(_circleImageSubFileArray[4], 128, 0);
-}
-
-void EfhEngine::drawBottomBorders() {
-	displayRawDataAtPos(_circleImageSubFileArray[7], 16, 136);
-	displayRawDataAtPos(_circleImageSubFileArray[8], 16, 192);
-	displayRawDataAtPos(_circleImageSubFileArray[5], 0, 136);
-	displayRawDataAtPos(_circleImageSubFileArray[6], 304, 136);
 }
 
 void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
@@ -2308,44 +2034,6 @@ int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 		}
 	}
 	return -1;
-}
-
-void EfhEngine::drawChar(uint8 curChar, int16 posX, int posY) {
-	// Quick hacked display, may require rework
-	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
-
-	int16 charId = curChar - 0x20;
-	uint8 width = _fontDescr._widthArray[charId];
-
-	for (int16 line = 0; line < 8; ++line) {
-		int16 x = 0;
-		for (int i = 7; i >= 7 - width; --i) {
-			if (_fontDescr._fontData[charId]._lines[line] & (1 << i))
-				destPtr[320 * line + x] = _textColor;
-			++x;
-		}
-	}	
-}
-
-void EfhEngine::setTextColorWhite() {
-	if (_videoMode == 8) // CGA
-		_textColor = 0x3;
-	else
-		_textColor = 0xF;
-}
-
-void EfhEngine::setTextColorRed() {
-	if (_videoMode == 8) // CGA
-		_textColor = 0x2;
-	else
-		_textColor = 0xC;
-}
-
-void EfhEngine::setTextColorGrey() {
-	if (_videoMode == 8) // CGA
-		_textColor = 0x1;
-	else
-		_textColor = 0x8;
 }
 
 bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
@@ -2512,10 +2200,6 @@ bool EfhEngine::handleDeathMenu() {
 	return false;
 }
 
-void EfhEngine::setNumLock() {
-	// No implementation in ScummVM
-}
-
 void EfhEngine::computeMapAnimation() {
 	const int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
@@ -2577,27 +2261,6 @@ void EfhEngine::unkFct_anim() {
 	}
 
 	computeMapAnimation();
-}
-
-void EfhEngine::setNextCharacterPos() {
-	if (_textPosX <= 311)
-		return;
-
-	_textPosX = 0;
-	_textPosY += 8;
-
-	if (_textPosY > 191)
-		_textPosY = 0;
-}
-
-void EfhEngine::displayStringAtTextPos(const char *message) {
-	drawString(message, _textPosX, _textPosY, _textColor);
-	_textPosX += getStringWidth(message) + 1;
-	setNextCharacterPos();
-}
-
-void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
-	drawColoredRect(16, 152, 302, 189, color);
 }
 
 int8 EfhEngine::sub16B08(int16 monsterId) {
@@ -3189,29 +2852,6 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
-Common::KeyCode EfhEngine::getInputBlocking() {
-	// The original checks for the joystick input
-	Common::Event event;
-	_system->getEventManager()->pollEvent(event);
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-
-	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID) {
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = event.kbd.keycode;
-		}
-
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 220) {
-			lastMs = newMs;
-			unkFct_anim();
-		}
-	}
-	return retVal;
-}
-
 void EfhEngine::sub22AA8(int16 arg0) {
 	int16 var8, varA, varC, varE;
 	var8 = varA = varC = varE = 0;
@@ -3541,16 +3181,6 @@ int16 EfhEngine::getXPLevel(int32 xp) {
 	return level;
 }
 
-void EfhEngine::displayChar(char character) {
-	char buffer[2];
-	buffer[0] = character;
-	buffer[1] = 0;
-
-	drawString(buffer, _textPosX, _textPosY, _textColor);
-	_textPosX += getStringWidth(buffer) + 1;
-	setNextCharacterPos();
-}
-
 void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	char buffer1[40];
 	char buffer2[40];
@@ -3743,19 +3373,6 @@ void EfhEngine::unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, 
 		displayFctFullScreen();
 }
 
-void EfhEngine::displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest) {
-	if (buffer == nullptr) {
-		warning("Target Buffer Not Defined...DCImage!"); // That's the original message... And yes, it's wrong: it's checking the source buffer :)
-		return;
-	}
-
-	// Only MCGA handled, the rest is skipped
-	uncompressBuffer(buffer, dest);
-	displayRawDataAtPos(dest, posX, posY);
-	displayFctFullScreen();
-	displayRawDataAtPos(dest, posX, posY);
-}
-
 void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
 	for (int counter = 0; counter < 2; ++counter) {
 		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);
@@ -3832,18 +3449,614 @@ void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 men
 	}
 }
 
-int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
-	warning("STUB: sub19E2E");
+void EfhEngine::sub1E028(int16 id, uint8 mask, int16 groupFl) {
+	int16 monsterId;
+	if (groupFl) {
+		monsterId = _teamMonsterIdArray[id];
+	} else {
+		monsterId = id;
+	}
 
-	return -1;
+	_mapMonsters[monsterId]._field_8 &= 0xF0;
+	_mapMonsters[monsterId]._field_8 |= mask;
 }
 
-bool EfhEngine::getValidationFromUser() {
-	Common::KeyCode input = handleAndMapInput(true);
-	if (input == Common::KEYCODE_y) // or if joystick button 1
+bool EfhEngine::sub1BA9B(int16 groupId, int16 id) {
+	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _stru32686[groupId]._field0[id] == 0)
 		return true;
-
 	return false;
+}
+
+int16 EfhEngine::sub15538(int16 mapPosX, int16 mapPosY) {
+	int16 mapTileInfo = getMapTileInfo(mapPosX, mapPosY);
+	int16 imageSetId = mapTileInfo / 72;
+
+	return (_currentTileBankImageSetId[imageSetId] * 72) + (mapTileInfo % 72);
+}
+
+void EfhEngine::setCharacterObjectToBroken(int16 charId, int16 objectId) {
+	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
+}
+
+Common::KeyCode EfhEngine::selectOtherCharFromTeam() {
+	Common::KeyCode maxVal = (Common::KeyCode) (Common::KEYCODE_0 + _teamSize);
+	Common::KeyCode input = Common::KEYCODE_INVALID; 
+	for (;;) {
+		input = waitForKey();
+		if (input == Common::KEYCODE_ESCAPE || (input >= Common::KEYCODE_0 && input <= maxVal))
+			break;
+	}
+
+	return input;
+}
+
+int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
+	char buffer1[80];
+	char buffer2[80];
+
+	int16 varA6 = 0;
+	int16 varA4 = 0;
+
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+	switch (_items[itemId].field_16 - 1) {
+	case 0:
+		if (argA == 2) {
+			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 varAE = 0;
+			strcat((char *)_messageToBePrinted, "  The item emits a low droning hum...");
+			if (getRandom(100) < 50) {
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (sub1BA9B(windowId, varA8)) {
+						++varAE;
+						_stru32686[windowId]._field0[varA8] = 1;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			} else {
+				int16 varAC = getRandom(9);
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (varAC == 0)
+						break;
+
+					if (sub1BA9B(windowId, varA8)) {
+						++varAE;
+						--varAC;
+						_stru32686[windowId]._field0[varA8] = 1;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			}
+			// The original was duplicating this code in each branch of the previous random check. 
+			if (varAE > 1) {
+				sprintf(buffer1, "%d %ss fall asleep!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			} else {
+				sprintf(buffer1, "%d %s falls asleep!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			}
+			strcat((char *)_messageToBePrinted, buffer1);
+		}
+
+		varA6 = -1;
+		break;
+	case 1:
+		if (argA == 2) {
+			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, "  The item emits a blue beam...");
+			int16 varAE = 0;
+			if (getRandom(100) < 50) {
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (sub1BA9B(windowId, varA8)) {
+						++varAE;
+						_stru32686[windowId]._field0[varA8] = 2;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			} else {
+				int16 varAC = getRandom(9);
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (varAC == 0)
+						break;
+
+					if (sub1BA9B(windowId, varA8)) {
+						++varAE;
+						--varAC;
+						_stru32686[windowId]._field0[varA8] = 2;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			}
+			// <CHECKME>: This part is only present in the original in the case < 50, but for me
+			// it's missing in the other case as there's an effect (frozen enemies) but no feedback to the player
+			if (varAE > 1) {
+				sprintf(buffer1, "%d %ss are frozen in place!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			} else {
+				sprintf(buffer1, "%d %s is frozen in place!", varAE, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._MonsterRef]._name);
+			}
+			strcat((char *)_messageToBePrinted, buffer1);
+			// </CHECKME>
+		}
+
+		varA6 = -1;
+		break;
+	case 2:
+		if (argA == 2) {
+			displayString_3("A serene feeling passes through the air...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, "  The combat pauses...as there is a moment of forgiveness...");
+			_unkArray2C8AA[0] = 0;
+		}
+
+		varA6 = -1;
+		break;
+	case 4:
+		if (argA == 2) {
+			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!");
+			if (getRandom(100) < 50) {
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (getRandom(100) < 50) {
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+					}
+				}
+			} else {
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (sub1BA9B(windowId, varA8)) {
+						if (getRandom(100) < 50) {
+							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+						}
+						break;
+					}
+				}				
+			}
+		}
+		varA6 = -1;
+		break;
+	case 5:
+		if (argA == 2) {
+			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			if (getRandom(100) < 50) {
+				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!");
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+				}
+			} else {
+				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!");
+				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+					if (sub1BA9B(windowId, varA8)) {
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[varA8] = 0;
+					}
+				}				
+			}
+		}
+
+		varA6 = -1;
+		break;
+	case 12:
+		if (argA == 2) {
+			displayString_3("There is no apparent affect!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, "  The magic sparkles brilliant hues in the air!");
+			sub1E028(windowId, _items[itemId].field17_attackTypeDefense, true);
+		}
+		varA6 = -1;
+		break;
+	case 14: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+
+		if (varAA != 0x1B) {
+			strcpy(buffer1, "  The magic makes the user as quick and agile as a bird!");
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+			}
+			_word32482[varAA] -= 50;
+			if (_word32482[varAA] < 0)
+				_word32482[varAA] = 0;
+		}
+		
+		varA6 = -1;
+		}
+		break;
+	case 15: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+
+		if (varAA != 0x1B) {
+			strcpy(buffer1, "  The magic makes the user invisible!");
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine); 
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+			}
+
+			_word32680[varAA] -= 50;
+			if (_word32680[varAA] < 0)
+				_word32680[varAA] = 0;
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 16: {
+		int16 varAC = _mapPosX;
+		int16 varAA = _mapPosY;
+		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
+		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
+		int16 varAE = sub15538(_mapPosX, _mapPosY);
+
+		if (_tileFact[2 * varAE] == 0) {
+			totalPartyKill();
+			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+				varA4 = -1;
+			}
+			// emptyFunction(2);
+		} else {
+			if (varAE == 0 || varAE == 0x48) {
+				strcpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!");
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					strcat((char *)_messageToBePrinted, buffer1);
+					varA4 = -1;
+				}
+			} else {
+				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					strcat((char *)_messageToBePrinted, buffer1);
+					varA4 = -1;
+				}
+			}
+		}
+
+		varA6 = -1;		
+		}
+		break;
+	case 17: {
+		_mapPosX = _items[itemId].field_19;
+		_mapPosY = _items[itemId].field_1A;
+		int16 varAE = sub15538(_mapPosX, _mapPosY);
+		if (_tileFact[2 * varAE] == 0) {
+			totalPartyKill();
+			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+				varA4 = -1;
+			}
+			// emptyFunction(2);
+		} else {
+			if (varAE == 0 || varAE == 0x48) {
+				strcpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!");
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					strcat((char *)_messageToBePrinted, buffer1);
+					varA4 = -1;
+				}
+			} else {
+				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					strcat((char *)_messageToBePrinted, buffer1);
+					varA4 = -1;
+				}
+			}
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 18:
+		if (argA == 2) {
+			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 varAA = windowId;
+			if (varAA != 0x1B) {
+				if (_teamCharStatus[varAA]._status == 2) { // frozen
+					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
+					_teamCharStatus[varAA]._status = 0;
+					_teamCharStatus[varAA]._duration = 0;
+				} else {
+					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
+				}
+			}
+		}
+
+		varA6 = -1;
+		break;
+	case 19:
+		strcpy(buffer1, "  * The item breaks!");
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, buffer1);
+		}
+		setCharacterObjectToBroken(charId, objectId);
+		varA6 = -1;
+		break;
+	case 23:
+		copyString(_items[itemId]._name, buffer2);
+		sprintf(buffer1, "The %s says, '", buffer2);
+		if (_items[itemId].field_19 < _mapPosX) {
+			if (_items[itemId].field_1A < _mapPosY) {
+				strcat(buffer1, "North West!");
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				strcat(buffer1, "South West!");
+			} else {
+				strcat(buffer1, "West!");
+			}
+		} else if (_items[itemId].field_19 > _mapPosX) {
+			if (_items[itemId].field_1A < _mapPosY) {
+				strcat(buffer1, "North East!");
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				strcat(buffer1, "South East!");
+			} else {
+				strcat(buffer1, "East!");
+			}
+		} else { // equals _mapPosX
+			if (_items[itemId].field_1A < _mapPosY) {
+				strcat(buffer1, "North!");
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				strcat(buffer1, "South!");
+			} else {
+				strcat(buffer1, "Here!!!");
+			}
+		}
+		strcat(buffer1, "'");
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, buffer1);
+			varA4 = -1;
+		}
+
+		varA6 = -1;
+		break;
+	case 24: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else
+			varAA = windowId;
+
+		if (varAA != 0x1B) {
+			uint8 varAE = _items[itemId].field17_attackTypeDefense;
+			uint8 varAC = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[varAA]]._activeScore[varAE] += varAC;
+			if (_npcBuf[_teamCharId[varAA]]._activeScore[varAE] > 20) {
+				_npcBuf[_teamCharId[varAA]]._activeScore[varAE] = 20;
+			}
+			if (varAC > 1)
+				sprintf(buffer1, "%s increased %d points!", kSkillArray[varAE], varAC);
+			else
+				sprintf(buffer1, "%s increased 1 point!", kSkillArray[varAE]);
+
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+				varA4 = -1;
+			}
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 25: {
+			int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else
+			varAA = windowId;
+
+		if (varAA != 0x1B) {
+			uint8 varAE = _items[itemId].field17_attackTypeDefense;
+			uint8 varAC = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[varAA]]._activeScore[varAE] -= varAC;
+			if (_npcBuf[_teamCharId[varAA]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[varAA]]._activeScore[varAE] < 0) {
+				_npcBuf[_teamCharId[varAA]]._activeScore[varAE] = 1;
+			}
+			if (varAC > 1)
+				sprintf(buffer1, "%s lowered %d points!", kSkillArray[varAE], varAC);
+			else
+				sprintf(buffer1, "%s lowered 1 point!", kSkillArray[varAE]);
+
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+				varA4 = -1;
+			}
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 26:
+		strcpy(buffer1, "The entire party collapses, dead!!!");
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, buffer1);
+			varA4 = -1;
+		}
+		totalPartyKill();
+		// emptyFunction(2);
+		varA6 = -1;
+		break;
+	case 27: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+
+		if (varAA != 0x1B) {
+			_npcBuf[_teamCharId[varAA]]._hitPoints = 0;
+			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+			sprintf(buffer1, "%s collapses, dead!!!", buffer2);
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				strcat((char *)_messageToBePrinted, buffer1);
+				varA4 = -1;
+			}
+			// emptyFunction(2);
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 28:
+		if (argA == 2) {
+			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 varAA = windowId;
+			if (varAA != 0x1B) {
+				if (_teamCharStatus[varAA]._status == 0) {
+					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
+					_teamCharStatus[varAA]._status = 0;
+					_teamCharStatus[varAA]._duration = 0; 
+				} else {
+					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
+				}
+			}
+		}
+
+		varA6 = -1;
+		break;
+	case 29: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+		
+		if (varAA != 0x1B) {
+			int16 varAE = getRandom(_items[itemId].field17_attackTypeDefense);
+			_npcBuf[_teamCharId[varA4]]._hitPoints += varAE;
+			if (_npcBuf[_teamCharId[varA4]]._hitPoints > _npcBuf[_teamCharId[varA4]]._maxHP)
+				_npcBuf[_teamCharId[varA4]]._hitPoints = _npcBuf[_teamCharId[varA4]]._maxHP;
+
+			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+			if (varAE > 1)
+				sprintf(buffer1, "%s is healed %d points!", buffer2, varAE);
+			else
+				sprintf(buffer1, "%s is healed 1 point!", buffer2);
+		}
+
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, buffer1);
+			varA4 = -1;
+		}
+
+		varA6 = -1;
+		}
+		break;
+	case 30: {
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+
+		if (varAA != 0x1B) {
+			int16 varAE = getRandom(_items[itemId].field17_attackTypeDefense);
+			_npcBuf[_teamCharId[varA4]]._hitPoints -= varAE;
+			if (_npcBuf[_teamCharId[varA4]]._hitPoints < 0)
+				_npcBuf[_teamCharId[varA4]]._hitPoints = 0;
+
+			copyString(_npcBuf[_teamCharId[varAA]]._name, buffer2);
+			if (varAE > 1)
+				sprintf(buffer1, "%s is harmed for %d points!", buffer2, varAE);
+			else
+				sprintf(buffer1, "%s is harmed for 1 point!", buffer2);
+		}
+
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			strcat((char *)_messageToBePrinted, buffer1);
+			varA4 = -1;
+		}
+
+		varA6 = -1;
+		
+		}
+		break;
+	case 3:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 13:
+	case 20:
+	case 21:
+	case 22:
+	default:
+		break;
+	}
+
+	if (varA6 != 0) {
+		if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) != 0x7F) {
+			int8 varA1 = (_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) - 1;
+			if (varA1 <= 0) {
+				strcpy(buffer1, "  * The item breaks!");
+				if (argA == 2) {
+					Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					strcat((char *)_messageToBePrinted, buffer1);
+				}
+				setCharacterObjectToBroken(charId, objectId);
+			} else {
+				_npcBuf[charId]._inventory[objectId]._stat1 &= 0x80;
+				_npcBuf[charId]._inventory[objectId]._stat1 |= 0xA1;
+			}
+		}
+
+		if (argA == 2) {
+			Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
+			sub18E80(charId, windowId, menuId, curMenuLine);
+		}
+	}
+
+	return varA4;
 }
 
 int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
@@ -4403,202 +4616,10 @@ void EfhEngine::loadGame() {
 	loadPlacesFile(_fullPlaceId, true);
 }
 
-uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
-	if (compressedBuf == nullptr || destBuf == nullptr)
-		error("uncompressBuffer - Invalid pointer used in parameter list");
-
-	uint8 *curPtrDest = destBuf;
-
-	uint16 compSize = READ_LE_UINT16(compressedBuf) + 1;	
-	uint8 *curPtrCompressed = compressedBuf + 2;
-
-	// Not in the original. This has been added for debug purposes (the original function doesn't return a value)
-	uint32 decompSize = 0;
-
-	for (;;) {
-		uint8 next = *curPtrCompressed++;
-		if (--compSize <= 0)
-			break;
-
-		if (next != 0xC3) {
-			*curPtrDest++ = next;
-			++decompSize;
-			continue;
-		}
-
-		next = *curPtrCompressed++;
-		if (--compSize <= 0)
-			break;
-
-		if (next == 0) {
-			*curPtrDest++ = 0xC3;
-			++decompSize;
-			continue;
-		}
-			
-		uint8 loopVal = next;
-		next = *curPtrCompressed++;
-
-		for (int i = 0; i < loopVal; ++i) {
-			*curPtrDest++ = next;
-			++decompSize;
-		}
-		
-		--compSize;
-		if (compSize == 0)
-			break;
-	}
-
-	curPtrDest[0] = curPtrDest[1] = 0;
-	decompSize += 2;
-
-	return decompSize;
-}
-
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
-	int size = _largeMapFlag ? 32 : 24;
+	int size = _largeMapFlag ? 64 : 24;
 
 	return _mapGameMapPtr[mapPosX * size + mapPosY];
-}
-
-void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
-	if (minY > maxY)
-		SWAP(minY, maxY);
-
-	if (minX > maxX)
-		SWAP(minX, maxX);
-	
-	// warning("drawRect - _graphicsStruct x %d -> %d, y %d -> %d", _graphicsStruct->_area.left, _graphicsStruct->_area.right, _graphicsStruct->_area.top, _graphicsStruct->_area.bottom);
-
-	minX = CLIP(minX, 0, 319);
-	maxX = CLIP(maxX, 0, 319);
-	minY = CLIP(minY, 0, 199);
-	maxY = CLIP(maxY, 0, 199);
-	
-	int deltaY = 1 + maxY - minY;
-	int deltaX = 1 + maxX - minX;
-
-	uint8 color = _defaultBoxColor & 0xF;
-	bool xorColor = (_defaultBoxColor & 0x40) != 0;
-	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(minX, minY);
-	
-	for (int line = 0; line < deltaY; ++line) {
-		for (int col = 0; col < deltaX; ++col) {
-			if (xorColor)
-				destPtr[320 * line + col] ^= color;
-			else
-				destPtr[320 * line + col] = color;
-		}
-	}
-	
-}
-
-void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int color) {
-	uint8 oldValue = _defaultBoxColor;
-	_defaultBoxColor = color;
-	drawRect(minX, minY, maxX, maxY);
-	_defaultBoxColor = oldValue;
-}
-
-void EfhEngine::clearScreen(int color) {
-	drawColoredRect(0, 0, 320, 200, color);
-}
-
-Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
-	// The original checks for the joystick input
-	Common::Event event;
-	_system->getEventManager()->pollEvent(event);
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-	if (event.type == Common::EVENT_KEYUP) {
-		retVal = event.kbd.keycode;
-	} 	
-
-	if (animFl) {
-		warning("STUB - handleAndMapInput - animFl");
-	}
-	return retVal;
-}
-
-Common::KeyCode EfhEngine::waitForKey() {
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-	Common::Event event;
-
-	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID) { // TODO: Check shouldquit()
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 200) {
-			lastMs = newMs;
-			unkFct_anim();
-		}
-
-		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = event.kbd.keycode;
-		} 	
-	}
-
-	return retVal;
-}
-
-Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
-	// Original is doing:
-	// if input < a or > z : return input
-	// else return (input + 0xE0)
-	// ex: 'a' = 0x61 + 0xE0 = 0x0141, but it's a uint8 so it's 0x41 which is 'A'.
-	// So basically the original works with uppercase letters and do not alter the other inputs.
-	// => no implementation needed.
-	return input;
-}
-
-Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
-	if (delay == 0)
-		return Common::KEYCODE_INVALID;
-
-	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
-
-	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 200) {
-			lastMs = newMs;
-			--delay;
-			unkFct_anim();
-		}
-
-		lastChar = handleAndMapInput(false);
-	}
-
-	return lastChar;
-}
-
-Common::KeyCode EfhEngine::getInput(int16 delay) {
-	if (delay == 0)
-		return Common::KEYCODE_INVALID;
-
-	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
-	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-
-	uint32 lastMs = _system->getMillis();
-	while (delay > 0) {
-		_system->delayMillis(20);
-		uint32 newMs = _system->getMillis();
-
-		if (newMs - lastMs >= 200) {
-			lastMs = newMs;
-			--delay;
-			unkFct_anim();
-		}
-
-		lastChar = handleAndMapInput(false);
-		if (lastChar != Common::KEYCODE_INVALID)
-			retVal = lastChar;
-	}
-
-	return retVal;
 }
 
 void EfhEngine::displayNextAnimFrame() {
@@ -4643,17 +4664,4 @@ void EfhEngine::copyCurrentPlaceToBuffer(int id) {
 	memcpy(_curPlace, placesPtr, 24 * 24);
 }
 
-void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
-	uint16 height = READ_LE_INT16(imagePtr);
-	uint16 width = READ_LE_INT16(imagePtr + 2);
-	uint8 *imageData = imagePtr + 4;
-
-	_imageDataPtr._lineDataSize = width;
-	_imageDataPtr._dataPtr = imageData;
-	_imageDataPtr._height = height;
-	_imageDataPtr._width = width * 2; // 2 pixels per byte
-	_imageDataPtr._startX = _imageDataPtr._startY = 0;
-	
-	displayBufferBmAtPos(&_imageDataPtr, posX, posY);
-}
 } // End of namespace Efh
