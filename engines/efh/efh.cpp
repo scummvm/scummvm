@@ -400,7 +400,30 @@ Common::Error EfhEngine::run() {
 			goNorthWest();
 			_imageSetSubFilesIdx = 147;
 			break;
-
+		case Common::KEYCODE_F1:
+			if (_teamCharId[0] != -1) {
+				handleStatusMenu(1, _teamCharId[0]);
+				_dword2C856 = nullptr;
+				sub15150(true);
+				_redrawNeededFl = true;
+			}
+			break;
+		case Common::KEYCODE_F2:
+			if (_teamCharId[1] != -1) {
+				handleStatusMenu(1, _teamCharId[1]);
+				_dword2C856 = nullptr;
+				sub15150(true);
+				_redrawNeededFl = true;
+			}
+			break;
+		case Common::KEYCODE_F3:
+			if (_teamCharId[2] != -1) {
+				handleStatusMenu(1, _teamCharId[2]);
+				_dword2C856 = nullptr;
+				sub15150(true);
+				_redrawNeededFl = true;
+			}
+			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
 				warning("Main Loop: Unhandled input %d", retVal);
