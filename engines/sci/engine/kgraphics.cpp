@@ -331,38 +331,38 @@ reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
-	int16 textWidth, textHeight;
-	Common::String text = s->_segMan->getString(argv[1]);
 	reg_t *dest = s->_segMan->derefRegPtr(argv[0], 4);
-	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
-	int font_nr = argv[2].toUint16();
+	Common::String text = s->_segMan->getString(argv[1]);
+	int font = argv[2].toUint16();
+	int maxWidth = (argc > 3) ? argv[3].toUint16() : 0;
 
 	if (!dest) {
 		debugC(kDebugLevelStrings, "GetTextSize: Empty destination");
 		return s->r_acc;
 	}
 
-	Common::String sep_str;
-	const char *sep = nullptr;
+	const char *separator = nullptr;
 	if ((argc > 4) && (argv[4].getSegment())) {
-		sep_str = s->_segMan->getString(argv[4]);
-		sep = sep_str.c_str();
+		Common::String separatorString = s->_segMan->getString(argv[4]);
+		separator = separatorString.c_str();
 	}
 
-	dest[0] = dest[1] = NULL_REG;
+	dest[0] = NULL_REG;
+	dest[1] = NULL_REG;
 
 	if (text.empty()) { // Empty text
-		dest[2] = dest[3] = make_reg(0, 0);
+		dest[2] = NULL_REG;
+		dest[3] = NULL_REG;
 		debugC(kDebugLevelStrings, "GetTextSize: Empty string");
 		return s->r_acc;
 	}
 
-	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-
 	uint16 languageSplitter = 0;
-	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, sep);
+	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, separator);
 
-	g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
+	int16 textWidth;
+	int16 textHeight;
+	g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
 
 	// One of the game texts in LB2 German contains loads of spaces in
 	// its end. We trim the text here, otherwise the graphics code will
@@ -378,7 +378,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 			// Copy over the trimmed string...
 			s->_segMan->strcpy(argv[1], text.c_str());
 			// ...and recalculate bounding box dimensions
-			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
+			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
 		}
 	}
 
