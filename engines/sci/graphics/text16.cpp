@@ -202,6 +202,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	uint16 curWidth = 0, tempWidth = 0;
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
+	bool escapedNewLine = false;
 
 	GetFont();
 	if (!_font)
@@ -212,6 +213,14 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)(textPtr + 1)) << 8;
 		}
+		if (escapedNewLine) {
+			escapedNewLine = false;
+			curChar = 0x0D;
+		} else if (isJapaneseNewLine(curChar, *(textPtr + 1))) {
+			escapedNewLine = true;
+			curChar = ' ';
+		}
+
 		switch (curChar) {
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
@@ -373,6 +382,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	int16 previousPenColor = _ports->_curPort->penClr;
 
 	textWidth = 0; textHeight = 0;
+	bool escapedNewLine = false;
 
 	GetFont();
 	if (_font) {
@@ -383,6 +393,14 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 				curChar |= (*(const byte *)text++) << 8;
 				len--;
 			}
+			if (escapedNewLine) {
+				escapedNewLine = false;
+				curChar = 0x0D;
+			} else if (isJapaneseNewLine(curChar, *text)) {
+				escapedNewLine = true;
+				curChar = ' ';
+			}
+
 			switch (curChar) {
 			case 0x0A:
 			case 0x0D:
@@ -490,12 +508,21 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 	rect.top = _ports->_curPort->curTop;
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	text += from;
+	bool escapedNewLine = false;
 	while (len--) {
 		curChar = (*(const byte *)text++);
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)text++) << 8;
 			len--;
 		}
+		if (escapedNewLine) {
+			escapedNewLine = false;
+			curChar = 0x0D;
+		} else if (isJapaneseNewLine(curChar, *text)) {
+			escapedNewLine = true;
+			curChar = ' ';
+		}
+
 		switch (curChar) {
 		case 0x0A:
 		case 0x0D:
@@ -733,6 +760,17 @@ bool GfxText16::SwitchToFont900OnSjis(const char *text, uint16 languageSplitter)
 		}
 	}
 	return false;
+}
+
+// In PC-9801 SSCI, "\n", "\N", "\r" and "\R" were overwritten with SPACE + 0x0D
+// inside GetLongest() (text16). This was a bit of a hack since it meant this
+// version altered the input that it's normally only supposed to be measuring.
+// Instead, we detect the newline sequences during string processing loops and
+// apply the substitute characters on the fly. PQ2 is the only game known to use
+// this feature. "\n" appears in most of its Japanese strings.
+bool GfxText16::isJapaneseNewLine(int16 curChar, int16 nextChar) {
+	return g_sci->getLanguage() == Common::JA_JPN &&
+		curChar == '\\' && (nextChar == 'n' || nextChar == 'N' || nextChar == 'r' || nextChar == 'R');
 }
 
 reg_t GfxText16::allocAndFillReferenceRectArray() {

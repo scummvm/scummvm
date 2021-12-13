@@ -80,6 +80,7 @@ private:
 	void init();
 	bool SwitchToFont1001OnKorean(const char *text, uint16 languageSplitter);
 	bool SwitchToFont900OnSjis(const char *text, uint16 languageSplitter);
+	static bool isJapaneseNewLine(int16 curChar, int16 nextChar);
 
 	GfxCache *_cache;
 	GfxPorts *_ports;
