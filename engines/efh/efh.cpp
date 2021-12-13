@@ -1937,6 +1937,8 @@ void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 				_dword2C856 = impArray;
 				sub133E5(impArray, 17, 115, 110, 133, 0);
 			}
+			if (counter == 0 && flag)
+				displayFctFullScreen();
 		}
 	}
 }
