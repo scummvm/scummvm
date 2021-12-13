@@ -611,6 +611,8 @@ void EfhEngine::readItems() {
 		_items[i].field_18 = *curPtr++;
 		_items[i].field_19 = *curPtr++;
 		_items[i].field_1A = *curPtr++;
+
+		warning("%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i].field_16, _items[i].field17_attackTypeDefense, _items[i].field_18, _items[i].field_19, _items[i].field_1A);
 	}
 }
 
@@ -1422,8 +1424,18 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
 }
 
 int16 EfhEngine::chooseCharacterToReplace() {
-	warning("STUB - chooseCharacterToReplace");
-	return 0x1B;
+	Common::KeyCode maxVal = (Common::KeyCode)(Common::KEYCODE_0 + _teamSize);
+	Common::KeyCode input = Common::KEYCODE_INVALID;
+	for (;;) {
+		input = waitForKey();
+		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input <= maxVal))
+			break;
+	}
+
+	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
+		return 0x1B;
+
+	return (int16)input - (int16)Common::KEYCODE_1;
 }
 
 int16 EfhEngine::handleCharacterJoining() {
@@ -3487,10 +3499,10 @@ int16 EfhEngine::selectOtherCharFromTeam() {
 			break;
 	}
 
-	if (input == Common::KEYCODE_ESCAPE)
+	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
 		return 0x1B;
 
-	return (int16)input - (int16)Common::KEYCODE_0;
+	return (int16)input - (int16)Common::KEYCODE_1;
 }
 
 int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
