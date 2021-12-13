@@ -261,24 +261,6 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 				switch (curChar) {
 				case 0: // Terminator NUL
 					return fullWidth;
-				case '\\':
-					// "\n", "\N", "\r" and "\R" were overwritten with SPACE + 0x0D in PC-9801 SSCI
-					//  inside GetLongest() (text16). We do it here, because it's much cleaner and
-					//  we have to process the text here anyway.
-					//  Occurs for example in Police Quest 2 intro
-					curChar2 = *(textPtr + 1);
-					switch (curChar2) {
-					case 'n':
-					case 'N':
-					case 'r':
-					case 'R':
-						fullWidth += ' ';
-						fullWidth += 0x0D; // CR
-						textPtr += 2;
-						continue;
-					default:
-						break;
-					}
 				default:
 					break;
 				}
