@@ -429,7 +429,7 @@ void Talk::talkTo(const Common::String filename) {
 
 				if (IS_SERRATED_SCALPEL) {
 					if (!ui._lookScriptFlag) {
-						ui.drawInterface(2);
+						ui.banishWindow();
 						ui._menuMode = STD_MODE;
 						ui._windowBounds.top = CONTROLS_Y1;
 					}
