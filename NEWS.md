@@ -37,6 +37,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for the high-resolution text in the 16-color Macintosh
      versions of Loom and Indiana Jones and the Last Crusade.
    - Fixed crash when loading savegames from Humongous Entertainment games.
+   - Rewrote music player for Amiga versions of Indy3 and Loom in accordance
+     to the original code.
 
  Sherlock:
    - Fix crash using matches on lab table.
