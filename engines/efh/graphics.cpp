@@ -320,7 +320,7 @@ void EfhEngine::setNextCharacterPos() {
 		_textPosY = 0;
 }
 
-void EfhEngine::displayChar(char character) {
+void EfhEngine::displayCharAtTextPos(char character) {
 	char buffer[2];
 	buffer[0] = character;
 	buffer[1] = 0;

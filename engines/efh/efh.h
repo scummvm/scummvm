@@ -399,7 +399,7 @@ private:
 	void displayStringAtTextPos(const char *message);
 	void unkFct_displayMenuBox_2(int16 color);
 	void setNextCharacterPos();
-	void displayChar(char character);
+	void displayCharAtTextPos(char character);
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 
 	// Utils
