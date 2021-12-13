@@ -419,7 +419,7 @@ int Darts::dartHit() {
 	Events &events = *_vm->_events;
 
 	// Process pending events
-	events.pollEventsAndWait();
+	events.pollEvents();
 
 	if (events.kbHit()) {
 		// Key was pressed, so return it
