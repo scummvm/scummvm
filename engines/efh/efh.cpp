@@ -1942,7 +1942,35 @@ void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
 }
 
 void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
-	warning("STUB: sub15A28");
+	_drawHeroOnMapFl = false;
+	int16 varE = arg0 - 11;
+	int16 varC = arg2 - 11;
+
+	if (varE < 0)
+		varE = 0;
+	if (varC < 0)
+		varC = 0;
+
+	for (int16 counter = 0; counter <= 23; counter += 2) {
+		for (int16 var8 = 0; var8 <= 23; ++var8) {
+			int16 var4 = counter + varE;
+			int16 var2 = var8 + varC;
+			_mapGameMapPtr[var2 + 64 * var4] = _curPlace[var8 + counter * 24];
+		}
+		redrawScreen();
+	}
+
+	for (int16 counter = 1; counter <= 23; counter += 2) {
+		for (int16 var8 = 0; var8 <= 23; ++var8) {
+			int16 var4 = counter + varE;
+			int16 var2 = var8 + varC;
+			_mapGameMapPtr[var2 + 64 * var4] = _curPlace[var8 + counter * 24];
+		}
+		redrawScreen();
+	}
+
+	getLastCharAfterAnimCount(3);
+	_drawHeroOnMapFl = true;
 }
 
 void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
@@ -2208,7 +2236,63 @@ void EfhEngine::handleNewRoundEffects() {
 }
 
 bool EfhEngine::handleDeathMenu() {
-	warning("STUB: handleDeathMenu");
+	displayAnimFrames(20, true);
+	_imageSetSubFilesIdx = 213;
+	redrawScreen();
+
+	for (int16 counter = 0; counter < 2; ++counter) {
+		unkFct_displayMenuBox_2(0);
+		displayCenteredString("Darkness Prevails...Death Has Taken You!", 24, 296, 153);
+		setTextPos(100, 162);
+		setTextColorWhite();
+		displayCharAtTextPos('L');
+		setTextColorRed();
+		displayStringAtTextPos("oad last saved game");
+		setTextPos(100, 171);
+		setTextColorWhite();
+		displayCharAtTextPos('R');
+		setTextColorRed();
+		displayStringAtTextPos("estart from beginning");
+		setTextPos(100, 180);
+		setTextColorWhite();
+		displayCharAtTextPos('Q');
+		setTextColorRed();
+		displayStringAtTextPos("uit for now");
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+
+	bool found;
+	for (found = false; !found;) {
+		Common::KeyCode input = waitForKey();
+		switch (input) {
+		case Common::KEYCODE_l:
+			loadGame();
+			found = true;
+			break;
+		case Common::KEYCODE_q:
+			return true;
+			break;
+		case Common::KEYCODE_r:
+			loadGame();
+			loadTechMapImp(0);
+			_largeMapFlag = true;
+			_oldMapPosX = _mapPosX = 31;
+			_oldMapPosY = _mapPosY = 31;
+			_unkRelatedToAnimImageSetId = 0;
+			*_unkArray2C8AA = 0;
+			found = true;
+			break;
+		case Common::KEYCODE_x:
+			if (!_word2C8D7)
+				found = true;
+			break;
+		default:
+			break;
+		}
+	}
+
+	displayAnimFrames(0xFE, true);
 	return false;
 }
 
@@ -3245,7 +3329,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 		if (itemId != 0x7FFF) {
 			if (_npcBuf[npcId]._inventory[_word3273A[counter]]._stat1 & 0x80) {
 				setTextPos(146, textPosY);
-				displayChar('E');
+				displayCharAtTextPos('E');
 			}
 		}
 
@@ -4636,9 +4720,10 @@ void EfhEngine::loadGame() {
 }
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
-	int size = _largeMapFlag ? 64 : 24;
+	if (_largeMapFlag)
+		return _mapGameMapPtr[mapPosX * 64 + mapPosY];
 
-	return _mapGameMapPtr[mapPosX * size + mapPosY];
+	return _curPlace[mapPosX * 24 + mapPosY];
 }
 
 void EfhEngine::displayNextAnimFrame() {
