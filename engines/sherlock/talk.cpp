@@ -407,7 +407,11 @@ void Talk::talkTo(const Common::String filename) {
 				// If the new conversion is a reply first, then we don't need
 				// to display any choices, since the reply needs to be shown
 				if (!newStatement._statement.hasPrefix("*") && !newStatement._statement.hasPrefix("^")) {
+					clearSequences();
+					pushSequence(_talkTo);
+					people.setListenSequence(_talkTo, 129);
 					_talkIndex = select;
+					ui._selector = ui._oldSelector = -1;
 					showTalk();
 
 					// Break out of loop now that we're waiting for player input
@@ -549,6 +553,7 @@ void Talk::initTalk(int objNum) {
 				}
 			} else {
 				_talkIndex = select;
+				ui._selector = ui._oldSelector = -1;
 				showTalk();
 
 				// Break out of loop now that we're waiting for player input

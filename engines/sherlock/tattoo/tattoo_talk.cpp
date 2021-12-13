@@ -232,10 +232,7 @@ void TattooTalk::nothingToSay() {
 }
 
 void TattooTalk::showTalk() {
-	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	people.setListenSequence(_talkTo, 129);
 
 	_talkWidget.load();
 	_talkWidget.summonWindow();
