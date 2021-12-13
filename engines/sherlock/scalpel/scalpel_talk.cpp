@@ -891,16 +891,9 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 }
 
 void ScalpelTalk::showTalk() {
-	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
 	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
-
-	clearSequences();
-	pushSequence(_talkTo);
-	people.setListenSequence(_talkTo);
-
-	ui._selector = ui._oldSelector = -1;
 
 	if (!ui._windowOpen) {
 		// Draw the talk interface on the back buffer
