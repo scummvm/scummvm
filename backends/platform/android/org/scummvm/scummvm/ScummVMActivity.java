@@ -1007,7 +1007,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//                            so app's internal space (which would be deleted on uninstall) was set as WORLD_READABLE which is no longer supported in newer versions of Android API
 		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but this makes the files inaccessible to other apps
 
-		_scummvm = new MyScummVM(_main_surface.getHolder(), new MyScummVMDestroyedCallback() {
+		SurfaceHolder main_surface_holder = _main_surface.getHolder();
+
+		// By default Android selects RGB_565 for backward compatibility, use the best one by querying the display
+		// It's deprecated on API level >= 17 and will always return RGBA_8888
+		// but on older versions it could return RGB_565 which could be more efficient for the GPU
+		main_surface_holder.setFormat(getDisplayPixelFormat());
+
+		_scummvm = new MyScummVM(main_surface_holder, new MyScummVMDestroyedCallback() {
 		                                                        @Override
 		                                                        public void handle(int exitResult) {
 		                                                        	Log.d(ScummVM.LOG_TAG, "Via callback: ScummVM native terminated with code: " + exitResult);
@@ -1383,6 +1390,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onVisibilityChanged(boolean visible) {
 //		Toast.makeText(HomeActivity.this, visible ? "Keyboard is active" : "Keyboard is Inactive", Toast.LENGTH_SHORT).show();
 		hideSystemUI();
+	}
+
+	@SuppressWarnings("deprecation")
+	private int getDisplayPixelFormat() {
+		// Since API level 17 this always returns PixelFormat.RGBA_8888
+		// so if we target more recent API levels, we could remove this function
+		return getWindowManager().getDefaultDisplay().getPixelFormat();
 	}
 
 	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
