@@ -71,7 +71,6 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_texture_palette(0),
 	_mouse_texture_rgb(0),
 	_mouse_hotspot(),
-	_mouse_keycolor(0),
 	_mouse_dont_scale(false),
 	_show_mouse(false) {
 	_game_texture = new GLESFakePalette565Texture();
@@ -434,9 +433,7 @@ void AndroidGraphics3dManager::showOverlay() {
 			_overlay_background->allocBuffer(_overlay_texture->width(), _overlay_texture->height());
 			_overlay_background->setDrawRect(0, 0,
 			                                 JNI::egl_surface_width, JNI::egl_surface_height);
-			Graphics::Surface *background = _overlay_background->surface();
-			GLCALL(glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-			             background->getPixels()));
+			_overlay_background->readPixels();
 
 			// Restore game viewport
 			GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
@@ -683,17 +680,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 
 	if (_mouse_texture == _mouse_texture_palette) {
 		assert(keycolor < 256);
-
-		const Graphics::PixelFormat &pf = _mouse_texture_palette->getPalettePixelFormat();
-		// _mouse_texture_palette is a GLESFakePalette565Texture so it's 16bits colors
-		assert(pf.bpp() == sizeof(uint16) * 8);
-		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
-		WRITE_UINT16(p, READ_UINT16(p) | 1);
-
-		_mouse_keycolor = keycolor;
-
-		p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
+		_mouse_texture->setKeycolor(keycolor);
 	}
 
 	if (w == 0 || h == 0) {
@@ -747,23 +734,8 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
 	_mouse_dont_scale = dontScale;
+
 	updateCursorScaling();
-}
-
-void AndroidGraphics3dManager::setCursorPaletteInternal(const byte *colors,
-        uint start, uint num) {
-	// _mouse_texture_palette is a GLESFakePalette565Texture so it's 16bits colors
-	const Graphics::PixelFormat &pf =
-		_mouse_texture_palette->getPalettePixelFormat();
-	assert(pf.bpp() == sizeof(uint16) * 8);
-	byte *p = _mouse_texture_palette->palette() + start * sizeof(uint16);
-
-	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
-		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
-	}
-
-	p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
-	WRITE_UINT16(p, READ_UINT16(p) & ~1);
 }
 
 void AndroidGraphics3dManager::setCursorPalette(const byte *colors,
@@ -781,7 +753,7 @@ void AndroidGraphics3dManager::setCursorPalette(const byte *colors,
 		_mouse_texture_rgb = 0;
 	}
 
-	setCursorPaletteInternal(colors, start, num);
+	_mouse_texture->setPalette(colors, start, num);
 }
 
 bool AndroidGraphics3dManager::lockMouse(bool lock) {
