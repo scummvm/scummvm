@@ -132,7 +132,6 @@ protected:
 
 private:
 	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
-	void disableCursorPalette();
 	void initOverlay();
 
 	enum FixupType {
@@ -154,6 +153,11 @@ private:
 	GLESBaseTexture *_game_texture;
 	OpenGL::FrameBuffer *_frame_buffer;
 
+#ifdef USE_RGB_COLOR
+	// Backup of the previous pixel format to pass it back when we leave 3d
+	Graphics::PixelFormat _2d_pixel_format;
+#endif
+
 	/**
 	 * The position of the mouse cursor, in window coordinates.
 	 */
@@ -172,7 +176,6 @@ private:
 	uint32 _mouse_keycolor;
 	int _mouse_targetscale;
 	bool _show_mouse;
-	bool _use_mouse_palette;
 };
 
 #endif
