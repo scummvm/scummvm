@@ -2106,6 +2106,8 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 		}
 	}
 
+	events.clearEvents();
+
 	// Final display of the entire window
 	screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
 		Common::Rect(0, 0, bgSurface.width(), bgSurface.height()));
@@ -2188,6 +2190,8 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}
+
+		events.clearEvents();
 
 		_infoFlag = false;
 		_windowOpen = false;
