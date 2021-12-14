@@ -82,6 +82,11 @@ public:
 	 * Given a specified savegame slot, returns extended information for the save
 	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	/**
+	 * Disable autosave. It conflicts with built-in save dialog, which doesn't block the slot.
+	 */
+	int getAutosaveSlot() const override { return -1; }
 };
 
 Common::Error SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

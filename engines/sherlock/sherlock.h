@@ -166,6 +166,11 @@ public:
 	void syncSoundSettings() override;
 
 	/**
+	 * Disable autosave
+	 */
+	int getAutosaveSlot() const override { return -1; }
+
+	/**
 	 * Saves game configuration information
 	 */
 	virtual void saveConfig();
