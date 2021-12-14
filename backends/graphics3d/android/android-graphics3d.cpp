@@ -72,8 +72,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_texture_rgb(0),
 	_mouse_hotspot(),
 	_mouse_keycolor(0),
-	_show_mouse(false),
-	_use_mouse_palette(false) {
+	_show_mouse(false) {
 	_game_texture = new GLESFakePalette565Texture();
 	_overlay_texture = new GLES5551Texture();
 	_overlay_background = new GLES5551Texture();
@@ -388,12 +387,6 @@ bool AndroidGraphics3dManager::hasFeature(OSystem::Feature f) const {
 
 void AndroidGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-	case OSystem::kFeatureCursorPalette:
-		_use_mouse_palette = enable;
-		if (!enable) {
-			disableCursorPalette();
-		}
-		break;
 	case OSystem::kFeatureFullscreenMode:
 		_fullscreen = enable;
 		updateScreenRect();
@@ -410,7 +403,7 @@ void AndroidGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable) 
 bool AndroidGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureCursorPalette:
-		return _use_mouse_palette;
+		return true;
 	case OSystem::kFeatureFullscreenMode:
 		return _fullscreen;
 	case OSystem::kFeatureAspectRatioCorrection:
@@ -539,81 +532,36 @@ int16 AndroidGraphics3dManager::getWidth() const {
 }
 
 void AndroidGraphics3dManager::setPalette(const byte *colors, uint start, uint num) {
-	ENTER("%p, %u, %u", colors, start, num);
-
-#ifdef USE_RGB_COLOR
-	assert(_game_texture->hasPalette());
-#endif
-
-	GLTHREADCHECK;
-
-	if (!_use_mouse_palette) {
-		setCursorPaletteInternal(colors, start, num);
-	}
-
-	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
-	// _game_texture is a GLESFakePalette565Texture so it's 16bits colors
-	assert(pf.bpp() == sizeof(uint16) * 8);
-	byte *p = _game_texture->palette() + start * sizeof(uint16);
-
-	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
-		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
-	}
+	// We should never end up here in 3D
+	assert(false);
 }
 
 void AndroidGraphics3dManager::grabPalette(byte *colors, uint start, uint num) const {
-	ENTER("%p, %u, %u", colors, start, num);
-
-#ifdef USE_RGB_COLOR
-	assert(_game_texture->hasPalette());
-#endif
-
-	GLTHREADCHECK;
-
-	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
-	// _game_texture is a GLESFakePalette565Texture so it's 16bits colors
-	assert(pf.bpp() == sizeof(uint16) * 8);
-	const byte *p = _game_texture->palette_const() + start * sizeof(uint16);
-
-	for (uint i = 0; i < num; ++i, colors += 3, p += sizeof(uint16)) {
-		pf.colorToRGB(READ_UINT16(p), colors[0], colors[1], colors[2]);
-	}
+	// We should never end up here in 3D
+	assert(false);
 }
 
 Graphics::Surface *AndroidGraphics3dManager::lockScreen() {
-	ENTER();
+	// We should never end up here in 3D
+	assert(false);
 
-	GLTHREADCHECK;
-
-	Graphics::Surface *surface = _game_texture->surface();
-	assert(surface->getPixels());
-
-	return surface;
+	return nullptr;
 }
 
 void AndroidGraphics3dManager::unlockScreen() {
-	ENTER();
-
-	GLTHREADCHECK;
-
-	assert(_game_texture->dirty());
+	// We should never end up here in 3D
+	assert(false);
 }
 
 void AndroidGraphics3dManager::fillScreen(uint32 col) {
-	ENTER("%u", col);
-
-	GLTHREADCHECK;
-
-	_game_texture->fillBuffer(col);
+	// We should never end up here in 3D
+	assert(false);
 }
 
 void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
         int x, int y, int w, int h) {
-	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
-
-	GLTHREADCHECK;
-
-	_game_texture->updateBuffer(x, y, w, h, buf, pitch);
+	// We should never end up here in 3D
+	assert(false);
 }
 
 void AndroidGraphics3dManager::initSize(uint width, uint height,
@@ -817,34 +765,6 @@ void AndroidGraphics3dManager::setCursorPalette(const byte *colors,
 	}
 
 	setCursorPaletteInternal(colors, start, num);
-	_use_mouse_palette = true;
-}
-
-void AndroidGraphics3dManager::disableCursorPalette() {
-	// when disabling the cursor palette, and we're running a clut8 game,
-	// it expects the game palette to be used for the cursor
-	if (_game_texture->hasPalette()) {
-		// _game_texture and _mouse_texture_palette are GLESFakePalette565Texture so it's 16bits colors
-		const Graphics::PixelFormat &pf_src =
-		    _game_texture->getPalettePixelFormat();
-		const Graphics::PixelFormat &pf_dst =
-		    _mouse_texture_palette->getPalettePixelFormat();
-		assert(pf_src.bpp() == sizeof(uint16) * 8);
-		assert(pf_dst.bpp() == sizeof(uint16) * 8);
-
-		const byte *src = _game_texture->palette_const();
-		byte *dst = _mouse_texture_palette->palette();
-
-		uint8 r, g, b;
-
-		for (uint i = 0; i < 256; ++i, src += sizeof(uint16), dst += sizeof(uint16)) {
-			pf_src.colorToRGB(READ_UINT16(src), r, g, b);
-			WRITE_UINT16(dst, pf_dst.RGBToColor(r, g, b));
-		}
-
-		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * sizeof(uint16);
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
-	}
 }
 
 bool AndroidGraphics3dManager::lockMouse(bool lock) {
@@ -866,10 +786,8 @@ Graphics::PixelFormat AndroidGraphics3dManager::getScreenFormat() const {
 
 Common::List<Graphics::PixelFormat> AndroidGraphics3dManager::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> res;
-	res.push_back(GLES565Texture::pixelFormat());
-	res.push_back(GLES5551Texture::pixelFormat());
-	res.push_back(GLES4444Texture::pixelFormat());
-	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	// empty list
 
 	return res;
 }
@@ -990,14 +908,17 @@ AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {
 	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 #ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
+	state.pixelFormat   = _2d_pixel_format;
 #endif
 	return state;
 }
 
 bool AndroidGraphics3dManager::setState(const AndroidCommonGraphics::State &state) {
-	// In 3d we don't have a pixel format so we ignore it
+	// In 3d we don't have a pixel format so we ignore it but store it for when leaving 3d mode
 	initSize(state.screenWidth, state.screenHeight, nullptr);
+#ifdef USE_RGB_COLOR
+	_2d_pixel_format = state.pixelFormat;
+#endif
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
