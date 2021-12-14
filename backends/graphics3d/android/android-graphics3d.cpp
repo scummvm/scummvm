@@ -73,10 +73,20 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_hotspot(),
 	_mouse_dont_scale(false),
 	_show_mouse(false) {
-	_game_texture = new GLESFakePalette565Texture();
-	_overlay_texture = new GLES5551Texture();
-	_overlay_background = new GLES5551Texture();
-	_mouse_texture_palette = new GLESFakePalette5551Texture();
+
+	if (JNI::egl_bits_per_pixel == 16) {
+		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
+		_game_texture = new GLES565Texture();
+		_overlay_texture = new GLES5551Texture();
+		_overlay_background = new GLES565Texture();
+		_mouse_texture_palette = new GLESFakePalette5551Texture();
+	} else {
+		// If not 16, this must be 24 or 32 bpp so make use of them
+		_game_texture = new GLES888Texture();
+		_overlay_texture = new GLES8888Texture();
+		_overlay_background = new GLES888Texture();
+		_mouse_texture_palette = new GLESFakePalette8888Texture();
+	}
 	_mouse_texture = _mouse_texture_palette;
 
 	initSurface();
@@ -374,6 +384,9 @@ bool AndroidGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	        f == OSystem::kFeatureAspectRatioCorrection) {
 		return true;
 	}
+	if (f == OSystem::kFeatureOverlaySupportsAlpha) {
+		return _overlay_texture->getPixelFormat().aBits() > 3;
+	}
 	return false;
 }
 
@@ -483,13 +496,12 @@ void AndroidGraphics3dManager::grabOverlay(Graphics::Surface &surface) const {
 
 	assert(surface.w >= overlaySurface->w);
 	assert(surface.h >= overlaySurface->h);
-	assert(surface.format.bytesPerPixel == sizeof(uint16));
-	assert(overlaySurface->format.bytesPerPixel == sizeof(uint16));
+	assert(surface.format.bytesPerPixel == overlaySurface->format.bytesPerPixel);
 
 	const byte *src = (const byte *)overlaySurface->getPixels();
 	byte *dst = (byte *)surface.getPixels();
 	Graphics::copyBlit(dst, src, surface.pitch, overlaySurface->pitch,
-	                   overlaySurface->w, overlaySurface->h, sizeof(uint16));
+	                   overlaySurface->w, overlaySurface->h, overlaySurface->format.bytesPerPixel);
 }
 
 void AndroidGraphics3dManager::copyRectToOverlay(const void *buf, int pitch,
@@ -659,7 +671,11 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 			LOGD("switching to rgb mouse cursor");
 
 			assert(!_mouse_texture_rgb);
-			_mouse_texture_rgb = new GLES5551Texture();
+			if (JNI::egl_bits_per_pixel == 16) {
+				_mouse_texture_rgb = new GLES5551Texture();
+			} else {
+				_mouse_texture_rgb = new GLES8888Texture();
+			}
 			_mouse_texture_rgb->setLinearFilter(_graphicsMode == 1);
 		}
 
@@ -691,6 +707,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 		_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
 	} else {
 		uint16 pitch = _mouse_texture->pitch();
+		uint16 bpp = _mouse_texture->getPixelFormat().bytesPerPixel;
 
 		byte *tmp = new byte[pitch * h];
 
@@ -709,19 +726,19 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 
 		if (format->bytesPerPixel == 2) {
 			const uint16 *s = (const uint16 *)buf;
-			uint16 *d = (uint16 *)tmp;
+			byte *d = tmp;
 			for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
 				for (uint16 x = 0; x < w; ++x, d++)
 					if (*s++ == (keycolor & 0xffff)) {
-						*d = 0;
+						memset(d, 0, bpp);
 					}
 		} else if (format->bytesPerPixel == 4) {
 			const uint32 *s = (const uint32 *)buf;
-			uint16 *d = (uint16 *)tmp;
+			byte *d = tmp;
 			for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
 				for (uint16 x = 0; x < w; ++x, d++)
-					if (*s++ == (keycolor & 0xffff)) {
-						*d = 0;
+					if (*s++ == (keycolor & 0xffffffff)) {
+						memset(d, 0, bpp);
 					}
 		} else {
 			error("AndroidGraphics3dManager::setMouseCursor: invalid bytesPerPixel %d", format->bytesPerPixel);

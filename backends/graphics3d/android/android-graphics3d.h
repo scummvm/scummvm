@@ -150,7 +150,7 @@ private:
 	bool _force_redraw;
 
 	// Game layer
-	GLESBaseTexture *_game_texture;
+	GLESTexture *_game_texture;
 	OpenGL::FrameBuffer *_frame_buffer;
 
 #ifdef USE_RGB_COLOR
@@ -164,14 +164,14 @@ private:
 	int _cursorX, _cursorY;
 
 	// Overlay layer
-	GLES5551Texture *_overlay_background;
-	GLES5551Texture *_overlay_texture;
+	GLESTexture *_overlay_background;
+	GLESTexture *_overlay_texture;
 	bool _show_overlay;
 
 	// Mouse layer
 	GLESBaseTexture *_mouse_texture;
-	GLESBaseTexture *_mouse_texture_palette;
-	GLES5551Texture *_mouse_texture_rgb;
+	GLESFakePaletteTexture *_mouse_texture_palette;
+	GLESTexture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	Common::Point _mouse_hotspot_scaled;
 	int _mouse_width_scaled, _mouse_height_scaled;

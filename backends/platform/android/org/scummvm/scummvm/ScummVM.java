@@ -2,6 +2,7 @@ package org.scummvm.scummvm;
 
 import androidx.annotation.NonNull;
 import android.content.res.AssetManager;
+import android.graphics.PixelFormat;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -33,6 +34,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	private EGLSurface _egl_surface = EGL10.EGL_NO_SURFACE;
 
 	private SurfaceHolder _surface_holder;
+	private int bitsPerPixel;
 	private AudioTrack _audio_track;
 	private int _sample_rate = 0;
 	private int _buffer_size = 0;
@@ -46,7 +48,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 							   int sample_rate,
 							   int buffer_size);
 	private native void destroy();
-	private native void setSurface(int width, int height);
+	private native void setSurface(int width, int height, int bpp);
 	private native int main(String[] args);
 
 	// pause the engine and all native threads
@@ -109,13 +111,17 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			return;
 		}
 
-		Log.d(LOG_TAG, String.format(Locale.ROOT, "surfaceChanged: %dx%d (%d)",
-										width, height, format));
+		PixelFormat pixelFormat = new PixelFormat();
+		PixelFormat.getPixelFormatInfo(format, pixelFormat);
+		bitsPerPixel = pixelFormat.bitsPerPixel;
+
+		Log.d(LOG_TAG, String.format(Locale.ROOT, "surfaceChanged: %dx%d (%d: %dbpp)",
+										width, height, format, bitsPerPixel));
 
 		// store values for the native code
 		// make sure to do it before notifying the lock
 		// as it leads to a race condition otherwise
-		setSurface(width, height);
+		setSurface(width, height, bitsPerPixel);
 
 		synchronized(_sem_surface) {
 			_surface_holder = holder;
@@ -133,7 +139,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		}
 
 		// clear values for the native code
-		setSurface(0, 0);
+		setSurface(0, 0, 0);
 	}
 
 	final public void setArgs(String[] args) {
@@ -142,14 +148,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 	final public void run() {
 		try {
-			initAudio();
-			initEGL();
-
 			// wait for the surfaceChanged callback
 			synchronized(_sem_surface) {
 				while (_surface_holder == null)
 					_sem_surface.wait();
 			}
+
+			initAudio();
+			initEGL();
 		} catch (Exception e) {
 			deinitEGL();
 			deinitAudio();
@@ -477,15 +483,24 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		for (EGLConfig config : configs) {
 			if (config != null) {
+				boolean good = true;
+
 				EglAttribs attr = new EglAttribs(config);
 
 				// must have
 				if ((attr.get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) == 0)
-					continue;
+					good = false;
+
+				if (attr.get(EGL10.EGL_BUFFER_SIZE) < bitsPerPixel)
+					good = false;
 
 				int score = attr.weight();
 
-				Log.d(LOG_TAG, String.format(Locale.ROOT, "%s (%d)", attr.toString(), score));
+				Log.d(LOG_TAG, String.format(Locale.ROOT, "%s (%d, %s)", attr.toString(), score, good ? "OK" : "NOK"));
+
+				if (!good) {
+					continue;
+				}
 
 				if (score > bestScore) {
 					res = config;

@@ -72,6 +72,7 @@ sem_t JNI::pause_sem = { 0 };
 int JNI::surface_changeid = 0;
 int JNI::egl_surface_width = 0;
 int JNI::egl_surface_height = 0;
+int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
 
 jmethodID JNI::_MID_getDPI = 0;
@@ -113,7 +114,7 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::create },
 	{ "destroy", "()V",
 		(void *)JNI::destroy },
-	{ "setSurface", "(II)V",
+	{ "setSurface", "(III)V",
 		(void *)JNI::setSurface },
 	{ "main", "([Ljava/lang/String;)I",
 		(void *)JNI::main },
@@ -647,9 +648,10 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	JNI::getEnv()->DeleteGlobalRef(_jobj);
 }
 
-void JNI::setSurface(JNIEnv *env, jobject self, jint width, jint height) {
+void JNI::setSurface(JNIEnv *env, jobject self, jint width, jint height, jint bpp) {
 	egl_surface_width = width;
 	egl_surface_height = height;
+	egl_bits_per_pixel = bpp;
 	surface_changeid++;
 }
 

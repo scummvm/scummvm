@@ -67,9 +67,17 @@ void AndroidGraphicsManager::initSurface() {
 	// Notify the OpenGL code about our context.
 	setContextType(OpenGL::kContextGLES2);
 
-	// We default to RGB565 and RGBA5551 which is closest to the actual output
-	// mode we setup.
-	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	if (JNI::egl_bits_per_pixel == 16) {
+		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
+		notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	} else {
+		// If not 16, this must be 24 or 32 bpp so make use of them
+#ifdef SCUMM_BIG_ENDIAN
+		notifyContextCreate(Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		notifyContextCreate(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+	}
 
 	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
 }

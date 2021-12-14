@@ -48,6 +48,7 @@ public:
 	static int surface_changeid;
 	static int egl_surface_width;
 	static int egl_surface_height;
+	static int egl_bits_per_pixel;
 
 	static jint onLoad(JavaVM *vm);
 
@@ -146,7 +147,7 @@ private:
 						jint audio_buffer_size);
 	static void destroy(JNIEnv *env, jobject self);
 
-	static void setSurface(JNIEnv *env, jobject self, jint width, jint height);
+	static void setSurface(JNIEnv *env, jobject self, jint width, jint height, jint bpp);
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
 
 	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
