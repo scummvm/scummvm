@@ -132,7 +132,6 @@ protected:
 	void *getProcAddress(const char *name) const;
 
 private:
-	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 	void initOverlay();
 
 	enum FixupType {
@@ -174,7 +173,6 @@ private:
 	GLESBaseTexture *_mouse_texture_palette;
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
-	uint32 _mouse_keycolor;
 	Common::Point _mouse_hotspot_scaled;
 	int _mouse_width_scaled, _mouse_height_scaled;
 	bool _mouse_dont_scale;

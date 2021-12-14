@@ -181,6 +181,28 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 
 void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
                                   const Common::Rect &clip) {
+	if (_all_dirty) {
+		_dirty_rect.top = 0;
+		_dirty_rect.left = 0;
+		_dirty_rect.bottom = _surface.h;
+		_dirty_rect.right = _surface.w;
+
+		_all_dirty = false;
+	}
+
+	if (!_dirty_rect.isEmpty()) {
+		void *tex = prepareTextureBuffer(_dirty_rect);
+
+		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
+		GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+
+		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0,
+		                       _dirty_rect.left, _dirty_rect.top,
+		                       _dirty_rect.width(), _dirty_rect.height(),
+				       _glFormat, _glType, tex));
+	}
+
+
 //	LOGD("*** Texture %p: Drawing %dx%d rect to (%d,%d)", this, w, h, x, y);
 
 	assert(_box_shader);
@@ -277,98 +299,44 @@ void GLESTexture::fillBuffer(uint32 color) {
 	setDirty();
 }
 
-void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
-                              const Common::Rect &clip) {
-	if (_all_dirty) {
-		_dirty_rect.top = 0;
-		_dirty_rect.left = 0;
-		_dirty_rect.bottom = _surface.h;
-		_dirty_rect.right = _surface.w;
+void *GLESTexture::prepareTextureBuffer(const Common::Rect &rect) {
+	if (rect.width() == _surface.w) {
+		return _pixels + rect.top * _surface.pitch;
+	} else {
+		byte *tex = _buf;
 
-		_all_dirty = false;
-	}
+		byte *src = _pixels + rect.top * _surface.pitch +
+			    rect.left * _surface.format.bytesPerPixel;
+		byte *dst = _buf;
 
-	if (!_dirty_rect.isEmpty()) {
-		byte *_tex;
+		uint16 l = rect.width() * _surface.format.bytesPerPixel;
 
-		int16 dwidth = _dirty_rect.width();
-		int16 dheight = _dirty_rect.height();
-
-		if (dwidth == _surface.w) {
-			_tex = _pixels + _dirty_rect.top * _surface.pitch;
-		} else {
-			_tex = _buf;
-
-			byte *src = _pixels + _dirty_rect.top * _surface.pitch +
-			            _dirty_rect.left * _surface.format.bytesPerPixel;
-			byte *dst = _buf;
-
-			uint16 l = dwidth * _surface.format.bytesPerPixel;
-
-			for (uint16 i = 0; i < dheight; ++i) {
-				memcpy(dst, src, l);
-				src += _surface.pitch;
-				dst += l;
-			}
+		for (uint16 i = rect.height(); i > 0; --i) {
+			memcpy(dst, src, l);
+			src += _surface.pitch;
+			dst += l;
 		}
 
-		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
-		GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-
-		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0,
-		                       _dirty_rect.left, _dirty_rect.top,
-		                       dwidth, dheight, _glFormat, _glType, _tex));
+		return tex;
 	}
-
-	GLESBaseTexture::drawTexture(x, y, w, h, clip);
 }
 
-GLES4444Texture::GLES4444Texture() :
-	GLESTexture(GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, pixelFormat()) {
-}
-
-GLES4444Texture::~GLES4444Texture() {
-}
-
-GLES8888Texture::GLES8888Texture() :
-	GLESTexture(GL_RGBA, GL_UNSIGNED_BYTE, pixelFormat()) {
-}
-
-GLES8888Texture::~GLES8888Texture() {
-}
-
-GLES5551Texture::GLES5551Texture() :
-	GLESTexture(GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, pixelFormat()) {
-}
-
-GLES5551Texture::~GLES5551Texture() {
-}
-
-GLES565Texture::GLES565Texture() :
-	GLESTexture(GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixelFormat()) {
-}
-
-GLES565Texture::~GLES565Texture() {
+void GLESTexture::readPixels() {
+	GLCALL(glReadPixels(0, 0, _surface.w, _surface.h, _glFormat, _glType,
+			    _pixels));
+	setDirty();
 }
 
 GLESFakePaletteTexture::GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
         Graphics::PixelFormat pixelFormat) :
 	GLESBaseTexture(glFormat, glType, pixelFormat),
-	_palette(nullptr),
-	_pixels(nullptr),
-	_buf(nullptr) {
+	_pixels(nullptr) {
 	_palettePixelFormat = pixelFormat;
 	_fake_format = Graphics::PixelFormat::createFormatCLUT8();
-
-	_palette = new uint16[256];
-
-	memset(_palette, 0, 256 * 2);
 }
 
 GLESFakePaletteTexture::~GLESFakePaletteTexture() {
-	delete[] _buf;
 	delete[] _pixels;
-	delete[] _palette;
 }
 
 void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
@@ -385,8 +353,8 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 		return;
 	}
 
-	delete[] _buf;
 	delete[] _pixels;
+	_pixels = nullptr;
 
 	_pixels = new byte[w * h];
 
@@ -394,8 +362,6 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.setPixels(_pixels);
 
 	fillBuffer(0);
-
-	_buf = new uint16[w * h];
 }
 
 void GLESFakePaletteTexture::fillBuffer(uint32 color) {
@@ -418,59 +384,209 @@ void GLESFakePaletteTexture::updateBuffer(GLuint x, GLuint y,
 	} while (--h);
 }
 
-void GLESFakePaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
-        const Common::Rect &clip) {
-	if (_all_dirty) {
-		_dirty_rect.top = 0;
-		_dirty_rect.left = 0;
-		_dirty_rect.bottom = _surface.h;
-		_dirty_rect.right = _surface.w;
-
-		_all_dirty = false;
-	}
-
-	if (!_dirty_rect.isEmpty()) {
-		int16 dwidth = _dirty_rect.width();
-		int16 dheight = _dirty_rect.height();
-
-		byte *src = _pixels + _dirty_rect.top * _surface.pitch +
-		            _dirty_rect.left;
-		uint16 *dst = _buf;
-		uint pitch_delta = _surface.pitch - dwidth;
-
-		for (uint16 j = 0; j < dheight; ++j) {
-			for (uint16 i = 0; i < dwidth; ++i) {
-				*dst++ = _palette[*src++];
-			}
-			src += pitch_delta;
-		}
-
-		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
-
-		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0,
-		                       _dirty_rect.left, _dirty_rect.top,
-		                       dwidth, dheight, _glFormat, _glType, _buf));
-	}
-
-	GLESBaseTexture::drawTexture(x, y, w, h, clip);
+GLESFakePalette16Texture::GLESFakePalette16Texture(GLenum glFormat, GLenum glType,
+        Graphics::PixelFormat pixelFormat) :
+	GLESFakePaletteTexture(glFormat, glType, pixelFormat),
+	_palette(nullptr),
+	_buf(nullptr) {
+	_palette = new uint16[256];
+	memset(_palette, 0, sizeof(*_palette) * 256);
 }
 
-const Graphics::PixelFormat &GLESFakePaletteTexture::getPixelFormat() const {
-	return _fake_format;
+GLESFakePalette16Texture::~GLESFakePalette16Texture() {
+	delete[] _buf;
+	delete[] _palette;
+}
+
+void GLESFakePalette16Texture::allocBuffer(GLuint w, GLuint h) {
+	delete[] _buf;
+	_buf = nullptr;
+
+	GLESFakePaletteTexture::allocBuffer(w, h);
+
+	_buf = new uint16[w * h];
+}
+
+void *GLESFakePalette16Texture::prepareTextureBuffer(const Common::Rect &rect) {
+	int16 w = rect.width();
+
+	byte *src = _pixels + rect.top * _surface.pitch +
+		    rect.left;
+	uint16 *dst = _buf;
+	uint pitch_delta = _surface.pitch - w;
+
+	for (uint16 j = rect.height(); j > 0; --j) {
+		for (uint16 i = 0; i < w; ++i) {
+			*dst++ = _palette[*src++];
+		}
+		src += pitch_delta;
+	}
+
+	return _buf;
+}
+
+void GLESFakePalette16Texture::setPalette(const byte *colors, uint start, uint num) {
+	uint16 *p = _palette + start;
+
+	for (uint i = 0; i < num; ++i, colors += 3, ++p) {
+		*p = _palettePixelFormat.RGBToColor(colors[0], colors[1], colors[2]);
+	}
+}
+
+void GLESFakePalette16Texture::grabPalette(byte *colors, uint start, uint num) const {
+        const uint16 *p = _palette + start;
+
+        for (uint i = 0; i < num; ++i, colors += 3, ++p) {
+                _palettePixelFormat.colorToRGB(*p, colors[0], colors[1], colors[2]);
+        }
 }
 
 GLESFakePalette565Texture::GLESFakePalette565Texture() :
-	GLESFakePaletteTexture(GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-	                       GLES565Texture::pixelFormat()) {
-}
-
-GLESFakePalette565Texture::~GLESFakePalette565Texture() {
+	GLESFakePalette16Texture(GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+	                         GLES565Texture::pixelFormat()) {
 }
 
 GLESFakePalette5551Texture::GLESFakePalette5551Texture() :
-	GLESFakePaletteTexture(GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-	                       GLES5551Texture::pixelFormat()) {
+	GLESFakePalette16Texture(GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+	                         GLES5551Texture::pixelFormat()),
+	_keycolor(0) {
 }
 
-GLESFakePalette5551Texture::~GLESFakePalette5551Texture() {
+void GLESFakePalette5551Texture::setKeycolor(byte color) {
+	uint16 *p = _palette + _keycolor;
+	*p |= 1;
+
+	_keycolor = color;
+
+	p = _palette + _keycolor;
+	*p &= ~1;
+}
+
+GLESFakePalette888Texture::GLESFakePalette888Texture() :
+	GLESFakePaletteTexture(GL_RGB, GL_UNSIGNED_BYTE,
+	                       GLES888Texture::pixelFormat()),
+	_palette(nullptr),
+	_buf(nullptr) {
+	_palette = new byte[256 * 3];
+	memset(_palette, 0, 256 * 3);
+}
+
+GLESFakePalette888Texture::~GLESFakePalette888Texture() {
+	delete[] _buf;
+	delete[] _palette;
+}
+
+void GLESFakePalette888Texture::allocBuffer(GLuint w, GLuint h) {
+	delete[] _buf;
+	_buf = nullptr;
+
+	GLESFakePaletteTexture::allocBuffer(w, h);
+
+	_buf = new byte[w * h * 3];
+}
+
+void *GLESFakePalette888Texture::prepareTextureBuffer(const Common::Rect &rect) {
+	int16 w = rect.width();
+
+	byte *src = _pixels + rect.top * _surface.pitch +
+		    rect.left;
+	byte *dst = _buf;
+	uint pitch_delta = _surface.pitch - w;
+
+	for (uint16 j = rect.height(); j > 0; --j) {
+		for (uint16 i = 0; i < w; ++i) {
+			byte c = *src++;
+			byte *p = _palette + c * 3;
+			*dst++ = *p++;
+			*dst++ = *p++;
+			*dst++ = *p++;
+		}
+		src += pitch_delta;
+	}
+
+	return _buf;
+}
+
+void GLESFakePalette888Texture::setPalette(const byte *colors, uint start, uint num) {
+	memcpy(_palette + start * 3, colors, num * 3);
+}
+
+void GLESFakePalette888Texture::grabPalette(byte *colors, uint start, uint num) const {
+	memcpy(colors, _palette + start * 3, num * 3);
+}
+
+GLESFakePalette8888Texture::GLESFakePalette8888Texture() :
+	GLESFakePaletteTexture(GL_RGBA, GL_UNSIGNED_BYTE,
+	                       GLES8888Texture::pixelFormat()),
+	_palette(nullptr),
+	_buf(nullptr),
+	_keycolor(0) {
+	_palette = new uint32[256];
+	memset(_palette, 0, sizeof(*_palette) * 256);
+}
+
+GLESFakePalette8888Texture::~GLESFakePalette8888Texture() {
+	delete[] _buf;
+	delete[] _palette;
+}
+
+void GLESFakePalette8888Texture::allocBuffer(GLuint w, GLuint h) {
+	delete[] _buf;
+	_buf = nullptr;
+
+	GLESFakePaletteTexture::allocBuffer(w, h);
+
+	_buf = new uint32[w * h];
+}
+
+void *GLESFakePalette8888Texture::prepareTextureBuffer(const Common::Rect &rect) {
+	int16 w = rect.width();
+
+	byte *src = _pixels + rect.top * _surface.pitch +
+		    rect.left;
+	uint32 *dst = _buf;
+	uint pitch_delta = _surface.pitch - w;
+
+	for (uint16 j = rect.height(); j > 0; --j) {
+		for (uint16 i = 0; i < w; ++i) {
+			*dst++ = _palette[*src++];
+		}
+		src += pitch_delta;
+	}
+
+	return _buf;
+}
+
+void GLESFakePalette8888Texture::setPalette(const byte *colors, uint start, uint num) {
+	// We use _palette as a uint32 to ensure proper alignment but we store bytes in a endian independent fashion
+	// because GL_UNSIGNED_BYTE is endian neutral
+	byte *p = (byte *)(_palette + start);
+
+	for (uint i = 0; i < num; ++i, colors += 3, p += 4) {
+		p[0] = colors[0];
+		p[1] = colors[1];
+		p[2] = colors[2];
+		p[3] = 255;
+	}
+}
+
+void GLESFakePalette8888Texture::setKeycolor(byte color) {
+	// _palette is endian neutral even though it's an uint32
+	byte *p = (byte *)(_palette + _keycolor);
+	p[3] = 255;
+
+	_keycolor = color;
+
+	p = (byte *)(_palette + _keycolor);
+	p[3] = 0;
+}
+
+void GLESFakePalette8888Texture::grabPalette(byte *colors, uint start, uint num) const {
+	const byte *p = (byte *)(_palette + start);
+
+        for (uint i = 0; i < num; ++i, colors += 3, p += 4) {
+		colors[0] = p[0];
+		colors[1] = p[1];
+		colors[2] = p[2];
+        }
 }
