@@ -55,6 +55,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix spell selection aborting when characters were switched.
    - Fixed some bad memory accesses.
    - Various sound fixes.
+   - Fix the monster item drop probabilities.
 
  macOS port:
    - Added support for displaying OSD messages on the Touch Bar.
