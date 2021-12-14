@@ -230,6 +230,12 @@ void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, i
 	drawString(str, startCenteredDisplayX, posY, _textColor);
 }
 
+void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int posY) {
+	displayCenteredString(str, minX, maxX, posY);
+	displayFctFullScreen();
+	displayCenteredString(str, minX, maxX, posY);
+}
+
 void EfhEngine::drawMapWindow() {
 	drawColoredRect(128, 8, 303, 135, 0);
 }
@@ -341,6 +347,16 @@ void EfhEngine::displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest
 	displayRawDataAtPos(dest, posX, posY);
 	displayFctFullScreen();
 	displayRawDataAtPos(dest, posX, posY);
+}
+
+void EfhEngine::displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color) {
+	drawColoredRect(minX, minY, maxX, maxY, color);
+	displayFctFullScreen();
+	drawColoredRect(minX, minY, maxX, maxY, color);
+}
+
+void EfhEngine::unkFct_displayBox(int16 color) {
+	displayColoredMenuBox(16, 152, 302, 189, color);
 }
 
 } // End of namespace Efh

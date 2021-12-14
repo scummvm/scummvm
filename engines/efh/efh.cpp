@@ -424,6 +424,51 @@ Common::Error EfhEngine::run() {
 				_redrawNeededFl = true;
 			}
 			break;
+		case Common::KEYCODE_F5: { // Original is using CTRL-S
+			for (int16 counter = 0; counter < 2; ++counter) {
+				unkFct_displayMenuBox_2(0);
+				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
+				if (counter == 0)
+					displayFctFullScreen();
+			}
+			Common::KeyCode input = waitForKey();
+			if (input = Common::KEYCODE_y) {
+				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+				getInput(2);
+				saveEfhGame();
+				unkFct_displayBox(0);
+				displayLowStatusScreen(true);
+			} else {
+				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+				getInput(2);
+				unkFct_displayBox(0);
+				displayLowStatusScreen(true);
+			}
+			
+			}			
+			break;
+		case Common::KEYCODE_F7: { // Original is using CTRL-S
+			for (int16 counter = 0; counter < 2; ++counter) {
+				unkFct_displayMenuBox_2(0);
+				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
+				if (counter == 0)
+					displayFctFullScreen();
+			}
+			Common::KeyCode input = waitForKey();
+			if (input = Common::KEYCODE_y) {
+				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+				getInput(2);
+				loadEfhGame();
+				unkFct_displayBox(0);
+				displayLowStatusScreen(true);
+			} else {
+				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+				getInput(2);
+				unkFct_displayBox(0);
+				displayLowStatusScreen(true);
+			}
+
+		} break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
 				warning("Main Loop: Unhandled input %d", retVal);
@@ -588,7 +633,6 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 }
 
 void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
-	//TODO : Remove unused parameter when all the calls are implemented
 	if (fullPlaceId == 0xFF)
 		return;
 
@@ -930,7 +974,7 @@ void EfhEngine::initEngine() {
 	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure
 
 	checkProtection();
-	loadGame();
+	loadEfhGame();
 	_engineInitPending = false;
 }
 
@@ -2292,14 +2336,14 @@ bool EfhEngine::handleDeathMenu() {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
-			loadGame();
+			loadEfhGame();
 			found = true;
 			break;
 		case Common::KEYCODE_q:
 			return true;
 			break;
 		case Common::KEYCODE_r:
-			loadGame();
+			loadEfhGame();
 			loadTechMapImp(0);
 			_largeMapFlag = true;
 			_oldMapPosX = _mapPosX = 31;
@@ -3189,6 +3233,7 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 
 bool EfhEngine::handleFight(int16 monsterId) {
 	warning("STUB - handleFight");
+	
 	return false;
 }
 
@@ -4691,7 +4736,7 @@ void EfhEngine::checkProtection() {
 	sub15150(true);	
 }
 
-void EfhEngine::loadGame() {
+void EfhEngine::loadEfhGame() {
 	// The original used a loop to check for the presence of the savegame on the current floppy.
 	// When the savegame wasn't found, it was displaying a screen asking for Disk 1 and was setting a flag used
 	// to call a function after loading right before returning.
@@ -4742,6 +4787,10 @@ void EfhEngine::loadGame() {
 
 	_lastMainPlaceId = 0xFFFF;
 	loadPlacesFile(_fullPlaceId, true);
+}
+
+void EfhEngine::saveEfhGame() {
+	warning("STUB - saveEfhGame");
 }
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
