@@ -1128,7 +1128,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
 			if (_game.id == GID_INDY4)
 				buf[0] = 32;
-			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
+			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(1, buf);
 		}
 	}
 
@@ -1173,7 +1173,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
-					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(1, buf + i);
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
