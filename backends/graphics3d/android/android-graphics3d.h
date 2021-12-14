@@ -119,6 +119,7 @@ public:
 
 protected:
 	void updateScreenRect();
+	void updateCursorScaling();
 	const GLESBaseTexture *getActiveTexture() const;
 	void clipMouse(Common::Point &p) const;
 
@@ -174,7 +175,9 @@ private:
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	uint32 _mouse_keycolor;
-	int _mouse_targetscale;
+	Common::Point _mouse_hotspot_scaled;
+	int _mouse_width_scaled, _mouse_height_scaled;
+	bool _mouse_dont_scale;
 	bool _show_mouse;
 };
 

@@ -72,6 +72,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_texture_rgb(0),
 	_mouse_hotspot(),
 	_mouse_keycolor(0),
+	_mouse_dont_scale(false),
 	_show_mouse(false) {
 	_game_texture = new GLESFakePalette565Texture();
 	_overlay_texture = new GLES5551Texture();
@@ -281,23 +282,15 @@ void AndroidGraphics3dManager::updateScreen() {
 		dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 	}
 
-	int cs = _mouse_targetscale;
-
 	if (_show_overlay) {
-		// ugly, but the modern theme sets a wacko factor, only god knows why
-		cs = 1;
-
 		if (_overlay_background && _overlay_background->getTextureName() != 0) {
 			GLCALL(_overlay_background->drawTextureRect());
 		}
 		GLCALL(_overlay_texture->drawTextureRect());
-	}
 
-	if (_show_mouse && !_mouse_texture->isEmpty()) {
-		const Common::Point &mouse = g_system->getEventManager()->getMousePos();
-		if (_show_overlay) {
-			_mouse_texture->drawTexture(mouse.x * cs, mouse.y * cs,
-			                            _mouse_texture->width(), _mouse_texture->height());
+		if (_show_mouse && !_mouse_texture->isEmpty()) {
+			_mouse_texture->drawTexture(_cursorX - _mouse_hotspot_scaled.x, _cursorY - _mouse_hotspot_scaled.y,
+						    _mouse_width_scaled, _mouse_width_scaled);
 		}
 	}
 
@@ -589,13 +582,13 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	                                        _game_texture->texWidth(), _game_texture->texHeight());
 	_frame_buffer->attach();
 
-	updateScreenRect();
-
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
 	_mouse_texture_palette->allocBuffer(20, 20);
+
+	updateScreenRect();
 
 	clearScreen(kClear);
 
@@ -628,6 +621,30 @@ void AndroidGraphics3dManager::warpMouse(int x, int y) {
 	setMousePosition(e.mouse.x, e.mouse.y);
 
 	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(e);
+}
+
+void AndroidGraphics3dManager::updateCursorScaling() {
+	// By default we use the unscaled versions.
+	_mouse_hotspot_scaled = _mouse_hotspot;
+	_mouse_width_scaled = _mouse_texture->width();
+	_mouse_height_scaled = _mouse_texture->height();
+
+	// In case scaling is actually enabled we will scale the cursor according
+	// to the game screen.
+	uint16 w = _game_texture->width();
+	uint16 h = _game_texture->height();
+
+	if (!_mouse_dont_scale && w && h) {
+		const frac_t screen_scale_factor_x = intToFrac(_game_texture->getDrawRect().width()) / w;
+		const frac_t screen_scale_factor_y = intToFrac(_game_texture->getDrawRect().height()) / h;
+
+		_mouse_hotspot_scaled = Common::Point(
+			fracToInt(_mouse_hotspot_scaled.x * screen_scale_factor_x),
+			fracToInt(_mouse_hotspot_scaled.y * screen_scale_factor_y));
+
+		_mouse_width_scaled  = fracToInt(_mouse_width_scaled * screen_scale_factor_x);
+		_mouse_height_scaled = fracToInt(_mouse_height_scaled * screen_scale_factor_y);
+	}
 }
 
 void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
@@ -729,8 +746,8 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 	}
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
-	// TODO: Adapt to the new "do not scale" cursor logic.
-	_mouse_targetscale = 1;
+	_mouse_dont_scale = dontScale;
+	updateCursorScaling();
 }
 
 void AndroidGraphics3dManager::setCursorPaletteInternal(const byte *colors,
@@ -830,6 +847,8 @@ void AndroidGraphics3dManager::updateScreenRect() {
 	}
 
 	_game_texture->setDrawRect(rect);
+
+	updateCursorScaling();
 }
 
 const GLESBaseTexture *AndroidGraphics3dManager::getActiveTexture() const {
