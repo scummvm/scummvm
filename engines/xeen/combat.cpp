@@ -102,7 +102,7 @@ static const int POW_WEAPON_VOCS[35] = {
 	5, 5, 5, 1, 3, 2, 5, 1, 1, 1, 0, 0, 0, 2, 2
 };
 
-static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
+static const int MONSTER_ITEM_RANGES[7] = { 10, 20, 50, 100, 100, 100, 0 };
 
 #define monsterSavingThrow(MONINDEX) (_vm->getRandomNumber(1, 50 + (MONINDEX)) <= (MONINDEX))
 
@@ -1526,7 +1526,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 
 			int itemDrop = monsterData._itemDrop;
 			if (itemDrop) {
-				if (MONSTER_ITEM_RANGES[itemDrop] >= _vm->getRandomNumber(1, 100)) {
+				if (MONSTER_ITEM_RANGES[itemDrop - 1] >= _vm->getRandomNumber(1, 100)) {
 					Character tempChar;
 					int category = tempChar.makeItem(itemDrop, 0, 0);
 
