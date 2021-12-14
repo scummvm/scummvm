@@ -118,7 +118,7 @@ void rastercol(int16 color, int16 r, int16 g, int16 b) {
 }
 
 void set_palpart(const byte *palette, int16 startcol, int16 anz) {
-	setScummVMPalette(palette, startcol, anz);
+	setScummVMPalette(palette + startcol * 3, startcol, anz);
 }
 
 void clear_mcga() {
