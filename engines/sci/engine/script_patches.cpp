@@ -11434,6 +11434,35 @@ static const uint16 pq3PatchHouseFireRepeats[] = {
 	PATCH_END
 };
 
+// Showing a second piece of evidence to the judge while having the locket in
+//  inventory locks up the game. The hands-off script givenTwo doesn't set a cue
+//  in state 5, preventing the script from ever advancing and the player from
+//  regaining control.
+//
+// We fix this by setting a 10 second delay as Sierra did in later versions.
+//
+// Applies to: English PC VGA Floppy
+// Responsible method: givenTwo:changeState(5)
+static const uint16 pq3SignatureJudgeEvidenceLockup[] = {
+	0x72, SIG_ADDTOOFFSET(+2),           // lofsa ijudge
+	0x36,                                // push
+	0x39, 0x2c,                          // pushi 2c
+	0x39, 0x10,                          // pushi 10
+	0x45, 0x10, SIG_MAGICDWORD, 0x06,    // callb proc0_16
+	0x32, SIG_UINT16(0x0022),            // jmp 0022 [ end of method ]
+	SIG_END
+};
+
+static const uint16 pq3PatchJudgeEvidenceLockup[] = {
+	0x74, PATCH_ADDTOOFFSET(+2),         // lofss ijudge
+	0x39, 0x2c,                          // pushi 2c
+	0x39, 0x10,                          // pushi 10
+	0x45, 0x10, 0x06,                    // callb proc0_16
+	0x35, 0x0a,                          // ldi 0a
+	0x65, 0x12,                          // aTop seconds [ seconds = 10 ]
+	PATCH_END
+};
+
 // When driving at high speeds, road signs don't always update. The scripts
 //  implicitly depend on the sign being already hidden before showing it, as
 //  they don't redraw the view. roadSignScript sets a three second timer before
@@ -11492,13 +11521,14 @@ static const uint16 pq3PatchNrsSpeedThrottle[] = {
 	PATCH_END
 };
 
-//          script, description,                                 signature                     patch
+//          script, description,                                 signature                          patch
 static const SciScriptPatcherEntry pq3Signatures[] = {
-	{  true,    25, "fix road sign updates",                  1, pq3SignatureRoadSignUpdates,  pq3PatchRoadSignUpdates },
-	{  true,    33, "prevent house fire repeating",           1, pq3SignatureHouseFireRepeats, pq3PatchHouseFireRepeats },
-	{  true,    36, "give locket missing points",             1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
-	{  true,    36, "doctor mouth speed",                     1, pq3SignatureDoctorMouthSpeed, pq3PatchDoctorMouthSpeed },
-	{  true,   994, "NRS: remove speed throttle",             1, pq3SignatureNrsSpeedThrottle, pq3PatchNrsSpeedThrottle },
+	{  true,    25, "fix road sign updates",                  1, pq3SignatureRoadSignUpdates,       pq3PatchRoadSignUpdates },
+	{  true,    33, "prevent house fire repeating",           1, pq3SignatureHouseFireRepeats,      pq3PatchHouseFireRepeats },
+	{  true,    36, "give locket missing points",             1, pq3SignatureGiveLocketPoints,      pq3PatchGiveLocketPoints },
+	{  true,    36, "doctor mouth speed",                     1, pq3SignatureDoctorMouthSpeed,      pq3PatchDoctorMouthSpeed },
+	{  true,    44, "fix judge evidence lockup",              1, pq3SignatureJudgeEvidenceLockup,   pq3PatchJudgeEvidenceLockup },
+	{  true,   994, "NRS: remove speed throttle",             1, pq3SignatureNrsSpeedThrottle,      pq3PatchNrsSpeedThrottle },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
