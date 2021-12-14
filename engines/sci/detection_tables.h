@@ -1983,7 +1983,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
 		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO4(GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GUIO_MIDITOWNS, GAMEOPTION_RGB_RENDERING) },
+		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO_STD16_HIRES },
 
 	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #5384)
 	{"kq5", "", {
@@ -4456,7 +4456,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1136968},
 		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 769897},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_RGB_RENDERING)	},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO7(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING) },
 
 	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes English language)
 	// Executable scanning reports "S.old.201"
@@ -4466,7 +4466,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1147121},
 		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 777575},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_RGB_RENDERING)	},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO7(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING) },
 
 	// Quest for Glory 1 - English Amiga
 	// Executable scanning reports "1.002.020"
@@ -5429,16 +5429,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_STD16_HIRES	},
-
-	// Space Quest 4 - Japanese PC-98 5.25" Floppy (also includes english language)
-	// SCI interpreter version 1.000.1068
-	{"sq4", "", {
-		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
-		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
-		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
-		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_STD16_HIRES	},
 
 	// Space Quest 4 - English DOS CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
