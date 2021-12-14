@@ -249,6 +249,7 @@ public:
 protected:
 	Common::EventManager *_eventMan;
 	int _lastTime;
+	void saveGame();
 	// Engine APIs
 	Common::Error run() override;
 	void handleMenu();
@@ -283,7 +284,8 @@ private:
 	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
 	void restoreAnimImageSetId();
 	void checkProtection();
-	void loadGame();
+	void loadEfhGame();
+	void saveEfhGame();
 	void copyCurrentPlaceToBuffer(int id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
 	void displayNextAnimFrame();
@@ -387,6 +389,7 @@ private:
 	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
 	void drawString(const char *str, int16 startX, int16 startY, uint16 unkFl);
 	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
+	void displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int posY);
 	void drawMapWindow();
 	void displayGameScreen();
 	void drawUpperLeftBorders();
@@ -401,6 +404,8 @@ private:
 	void setNextCharacterPos();
 	void displayCharAtTextPos(char character);
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
+	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
+	void unkFct_displayBox(int16 color);
 
 	// Utils
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
