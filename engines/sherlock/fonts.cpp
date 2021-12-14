@@ -131,8 +131,8 @@ void Fonts::setFont(int fontNum) {
 	// Iterate through the frames to find the widest and tallest font characters
 	_fontHeight = _widestChar = 0;
 	for (uint idx = 0; idx < MIN<uint>(_charCount, 128 - 32); ++idx) {
-		_fontHeight = MAX((int16)_fontHeight, (*_font)[idx]._frame.h);
-		_widestChar = MAX((int16)_widestChar, (*_font)[idx]._frame.w);
+		_fontHeight = MAX(_fontHeight, (*_font)[idx]._frame.h + (*_font)[idx]._offset.y);
+		_widestChar = MAX(_widestChar, (*_font)[idx]._frame.w + (*_font)[idx]._offset.x);
 	}
 
 	// Initialize the Y offset table for the extended character set
