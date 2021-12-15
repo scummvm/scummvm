@@ -68,7 +68,7 @@ int tglRenderMode(int mode) {
 	return result;
 }
 
-void tglSelectBuffer(int size, unsigned int *buf) {
+void tglSelectBuffer(int size, uint *buf) {
 	GLContext *c = gl_get_context();
 
 	assert(c->render_mode != TGL_SELECT);
@@ -108,8 +108,8 @@ void GLContext::glopLoadName(GLParam *p) {
 	}
 }
 
-void GLContext::gl_add_select(unsigned int zmin, unsigned int zmax) {
-	unsigned int *ptr;
+void GLContext::gl_add_select(uint zmin, uint zmax) {
+	uint *ptr;
 	int n;
 
 	if (!select_overflow) {

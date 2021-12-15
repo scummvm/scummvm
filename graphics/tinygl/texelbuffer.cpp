@@ -25,12 +25,12 @@
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/texelbuffer.h"
 
-namespace Graphics {
+namespace TinyGL {
 
 #define ZB_POINT_ST_UNIT (1 << ZB_POINT_ST_FRAC_BITS)
 #define ZB_POINT_ST_FRAC_MASK (ZB_POINT_ST_UNIT - 1)
 
-TexelBuffer::TexelBuffer(unsigned int width, unsigned int height, unsigned int textureSize) {
+TexelBuffer::TexelBuffer(uint width, uint height, uint textureSize) {
 	assert(width);
 	assert(height);
 	assert(textureSize);
@@ -43,7 +43,7 @@ TexelBuffer::TexelBuffer(unsigned int width, unsigned int height, unsigned int t
 	_heightRatio = (float) height / textureSize;
 }
 
-static inline unsigned int wrap(unsigned int wrap_mode, int coord, unsigned int _fracTextureUnit, unsigned int _fracTextureMask) {
+static inline uint wrap(uint wrap_mode, int coord, uint _fracTextureUnit, uint _fracTextureMask) {
 	switch (wrap_mode) {
 	case TGL_MIRRORED_REPEAT:
 		if (coord & _fracTextureUnit)
@@ -52,7 +52,7 @@ static inline unsigned int wrap(unsigned int wrap_mode, int coord, unsigned int 
 	case TGL_CLAMP_TO_EDGE:
 		if (coord < 0)
 			return 0;
-		if ((unsigned int) coord > _fracTextureMask)
+		if ((uint) coord > _fracTextureMask)
 			return _fracTextureMask;
 		return coord;
 	default:
@@ -63,11 +63,11 @@ static inline unsigned int wrap(unsigned int wrap_mode, int coord, unsigned int 
 }
 
 void TexelBuffer::getARGBAt(
-	unsigned int wrap_s, unsigned int wrap_t,
+	uint wrap_s, uint wrap_t,
 	int s, int t,
 	uint8 &a, uint8 &r, uint8 &g, uint8 &b
 ) const {
-	unsigned int x, y;
+	uint x, y;
 	x = wrap(wrap_s, s, _fracTextureUnit, _fracTextureMask) * _widthRatio;
 	y = wrap(wrap_t, t, _fracTextureUnit, _fracTextureMask) * _heightRatio;
 	getARGBAt(
@@ -78,9 +78,9 @@ void TexelBuffer::getARGBAt(
 }
 
 // Nearest: store texture in original size.
-NearestTexelBuffer::NearestTexelBuffer(const PixelBuffer &buf, unsigned int width, unsigned int height, unsigned int textureSize) : TexelBuffer(width, height, textureSize) {
-	unsigned int pixel_count = _width * _height;
-	_buf = PixelBuffer(buf.getFormat(), pixel_count, DisposeAfterUse::NO);
+NearestTexelBuffer::NearestTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
+	uint pixel_count = _width * _height;
+	_buf = Graphics::PixelBuffer(buf.getFormat(), pixel_count, DisposeAfterUse::NO);
 	_buf.copyBuffer(0, pixel_count, buf);
 }
 
@@ -89,8 +89,8 @@ NearestTexelBuffer::~NearestTexelBuffer() {
 }
 
 void NearestTexelBuffer::getARGBAt(
-	unsigned int pixel,
-	unsigned int, unsigned int,
+	uint pixel,
+	uint, uint,
 	uint8 &a, uint8 &r, uint8 &g, uint8 &b
 ) const {
 	_buf.getARGBAt(pixel, a, r, g, b);
@@ -112,14 +112,14 @@ void NearestTexelBuffer::getARGBAt(
 #define P11_OFFSET 3
 #define PIXEL_PER_TEXEL_SHIFT 2
 
-BilinearTexelBuffer::BilinearTexelBuffer(const PixelBuffer &buf, unsigned int width, unsigned int height, unsigned int textureSize) : TexelBuffer(width, height, textureSize) {
-	unsigned int pixel00_offset = 0, pixel11_offset, pixel01_offset, pixel10_offset;
+BilinearTexelBuffer::BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
+	uint pixel00_offset = 0, pixel11_offset, pixel01_offset, pixel10_offset;
 	uint8 *texel8;
 	uint32 *texel32;
 
 	texel32 = _texels = new uint32[_width * _height << PIXEL_PER_TEXEL_SHIFT];
-	for (unsigned int y = 0; y < _height; y++) {
-		for (unsigned int x = 0; x < _width; x++) {
+	for (uint y = 0; y < _height; y++) {
+		for (uint x = 0; x < _width; x++) {
 			texel8 = (uint8 *)texel32;
 			pixel11_offset = pixel00_offset + _width + 1;
 			buf.getARGBAt(
@@ -175,11 +175,11 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 }
 
 void BilinearTexelBuffer::getARGBAt(
-	unsigned int pixel,
-	unsigned int ds, unsigned int dt,
+	uint pixel,
+	uint ds, uint dt,
 	uint8 &a, uint8 &r, uint8 &g, uint8 &b
 ) const {
-	unsigned int p00_offset, p01_offset, p10_offset;
+	uint p00_offset, p01_offset, p10_offset;
 	uint8 *texel = (uint8 *)(_texels + (pixel << PIXEL_PER_TEXEL_SHIFT));
 	if ((ds + dt) > ZB_POINT_ST_UNIT) {
 		p00_offset = P11_OFFSET;
@@ -222,4 +222,4 @@ void BilinearTexelBuffer::getARGBAt(
 	);
 }
 
-}
+} // end of namespace TinyGL

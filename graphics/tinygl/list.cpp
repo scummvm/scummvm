@@ -58,7 +58,7 @@ GLContext *gl_get_context() {
 	return gl_ctx;
 }
 
-static GLList *find_list(GLContext *c, unsigned int list) {
+static GLList *find_list(GLContext *c, uint list) {
 	return c->shared_state.lists[list];
 }
 
@@ -206,7 +206,7 @@ void GLContext::glopCallList(GLParam *p) {
 	}
 }
 
-void tglNewList(unsigned int list, int mode) {
+void tglNewList(uint list, int mode) {
 	GLList *l;
 	GLContext *c = gl_get_context();
 
@@ -239,7 +239,7 @@ void tglEndList() {
 	c->exec_flag = 1;
 }
 
-int tglIsList(unsigned int list) {
+int tglIsList(uint list) {
 	GLContext *c = gl_get_context();
 	GLList *l = find_list(c, list);
 

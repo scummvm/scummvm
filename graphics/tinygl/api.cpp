@@ -698,7 +698,7 @@ void tglInitNames() {
 	c->gl_add_op(p);
 }
 
-void tglPushName(unsigned int name) {
+void tglPushName(uint name) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 
@@ -717,7 +717,7 @@ void tglPopName() {
 	c->gl_add_op(p);
 }
 
-void tglLoadName(unsigned int name) {
+void tglLoadName(uint name) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 
@@ -740,7 +740,7 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units) {
 
 // Special Functions
 
-void tglCallList(unsigned int list) {
+void tglCallList(uint list) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 

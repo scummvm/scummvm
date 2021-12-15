@@ -88,15 +88,16 @@ struct ZBufferPoint {
 	float sz, tz;  // temporary coordinates for mapping
 
 	bool operator==(const ZBufferPoint &other) const {
-		return	x == other.x &&
-				y == other.y &&
-				z == other.z &&
-				s == other.s &&
-				t == other.t &&
-				r == other.r &&
-				g == other.g &&
-				b == other.b &&
-				a == other.a;
+		return
+			x == other.x &&
+			y == other.y &&
+			z == other.z &&
+			s == other.s &&
+			t == other.t &&
+			r == other.r &&
+			g == other.g &&
+			b == other.b &&
+			a == other.a;
 	}
 };
 
@@ -282,7 +283,7 @@ private:
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
-	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
+	FORCEINLINE void writePixel(int pixel, int value, uint z) {
 		if (kBlendingEnabled == false) {
 			_pbuf.setPixelAt(pixel, value);
 			if (kDepthWrite) {
@@ -310,10 +311,10 @@ private:
 	                                   int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
 
 	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-	FORCEINLINE void putPixelTexture(int fbOffset, const Graphics::TexelBuffer *texture,
+	FORCEINLINE void putPixelTexture(int fbOffset, const TexelBuffer *texture,
 	                                 uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
 	                                 int x, int y, uint &z, int &t, int &s,
-									 uint &r, uint &g, uint &b, uint &a,
+	                                 uint &r, uint &g, uint &b, uint &a,
 	                                 int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
 
 	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
@@ -364,7 +365,7 @@ private:
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
-	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, unsigned int z) {
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, uint z) {
 		if (kEnableAlphaTest) {
 			if (!checkAlphaTest(aSrc))
 				return;
@@ -464,13 +465,18 @@ private:
 			default:
 				break;
 			}
-			int finalR, finalG, finalB;
-			finalR = rDst + rSrc;
-			finalG = gDst + gSrc;
-			finalB = bDst + bSrc;
-			if (finalR > 255) { finalR = 255; }
-			if (finalG > 255) { finalG = 255; }
-			if (finalB > 255) { finalB = 255; }
+			int finalR = rDst + rSrc;
+			int finalG = gDst + gSrc;
+			int finalB = bDst + bSrc;
+			if (finalR > 255) {
+				finalR = 255;
+			}
+			if (finalG > 255) {
+				finalG = 255;
+			}
+			if (finalB > 255) {
+				finalB = 255;
+			}
 			_pbuf.setPixelAt(pixel, 255, finalR, finalG, finalB);
 		}
 	}
@@ -553,7 +559,7 @@ public:
 		_offsetUnits = offsetUnits;
 	}
 
-	FORCEINLINE void setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt) {
+	FORCEINLINE void setTexture(const TexelBuffer *texture, uint wraps, uint wrapt) {
 		_currentTexture = texture;
 		_wrapS = wraps;
 		_wrapT = wrapt;
@@ -578,13 +584,13 @@ private:
 	void clearOffscreenBuffer(Buffer *buffer);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
-			  bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
-			  bool kStencilEnabled, bool kDepthTestEnabled>
+	          bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
+	          bool kStencilEnabled, bool kDepthTestEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
-			  bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
-			  bool kStencilEnabled>
+	          bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
+	          bool kStencilEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
@@ -622,13 +628,13 @@ private:
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kDepthWrite>
-	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
+	FORCEINLINE void putPixel(uint pixelOffset, int color, int x, int y, uint z);
 
 	template <bool kDepthWrite, bool kEnableScissor>
-	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z);
+	FORCEINLINE void putPixel(uint pixelOffset, int color, int x, int y, uint z);
 
 	template <bool kEnableScissor>
-	FORCEINLINE void putPixel(unsigned int pixelOffset, int color, int x, int y);
+	FORCEINLINE void putPixel(uint pixelOffset, int color, int x, int y);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
 	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
@@ -654,8 +660,8 @@ private:
 	Common::Rect _clipRectangle;
 	bool _enableScissor;
 
-	const Graphics::TexelBuffer *_currentTexture;
-	unsigned int _wrapS, _wrapT;
+	const TexelBuffer *_currentTexture;
+	uint _wrapS, _wrapT;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;

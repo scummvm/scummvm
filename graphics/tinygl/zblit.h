@@ -53,8 +53,9 @@ namespace Internal {
 	@brief Sets up a scissor rectangle for blit calls: every blit call is affected by this rectangle.
 	*/
 	void tglBlitSetScissorRect(const Common::Rect &rect);
-	void tglBlitResetScissorRect(void);
+	void tglBlitResetScissorRect();
 } // end of namespace Internal
+
 } // end of namespace TinyGL
 
 #endif // GRAPHICS_TINYGL_ZBLIT_H_

@@ -31,7 +31,7 @@
 namespace TinyGL {
 
 template <bool kDepthWrite>
-FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
+FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y, uint z) {
 	if (_enableScissor)
 		putPixel<kDepthWrite, true>(pixelOffset, color, x, y, z);
 	else
@@ -39,18 +39,18 @@ FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int 
 }
 
 template <bool kDepthWrite, bool kEnableScissor>
-FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y, unsigned int z) {
+FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y, uint z) {
 	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
 	}
-	unsigned int *pz = _zbuf + pixelOffset;
+	uint *pz = _zbuf + pixelOffset;
 	if (compareDepth(z, *pz)) {
 		writePixel<true, true, kDepthWrite>(pixelOffset, color, z);
 	}
 }
 
 template <bool kEnableScissor>
-FORCEINLINE void FrameBuffer::putPixel(unsigned int pixelOffset, int color, int x, int y) {
+FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y) {
 	if (kEnableScissor && scissorPixel(x, y)) {
 		return;
 	}
@@ -142,9 +142,9 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 }
 
 void FrameBuffer::plot(ZBufferPoint *p) {
-	const unsigned int pixelOffset = p->y * _pbufWidth + p->x;
+	const uint pixelOffset = p->y * _pbufWidth + p->x;
 	const int col = RGB_TO_PIXEL(p->r, p->g, p->b);
-	const unsigned int z = p->z;
+	const uint z = p->z;
 	if (_depthWrite && _depthTestEnabled)
 		putPixel<true>(pixelOffset, col, p->x, p->y, z);
 	else

@@ -114,7 +114,6 @@ struct GLMaterial {
 	Vector4 specular;
 	bool has_specular;
 	float shininess;
-
 	// computed values
 	int shininess_i;
 	int do_specular;
@@ -132,7 +131,7 @@ union GLParam {
 	int op;
 	float f;
 	int i;
-	unsigned int ui;
+	uint ui;
 	void *p;
 };
 
@@ -177,7 +176,7 @@ struct GLVertex {
 };
 
 struct GLImage {
-	Graphics::TexelBuffer *pixmap;
+	TexelBuffer *pixmap;
 	int xsize, ysize;
 };
 
@@ -187,7 +186,7 @@ struct GLImage {
 
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
-	unsigned int handle;
+	uint handle;
 	int versionNumber;
 	struct GLTexture *next, *prev;
 	bool disposed;
@@ -244,7 +243,7 @@ public:
 		}
 		size_t returnPos = _memoryPosition;
 		_memoryPosition += size;
-		return ((char *)_memoryBuffer) + returnPos;
+		return ((byte *)_memoryBuffer) + returnPos;
 	}
 
 	void reset() {
@@ -300,8 +299,8 @@ struct GLContext {
 	int texture_2d_enabled;
 	int texture_mag_filter;
 	int texture_min_filter;
-	unsigned int texture_wrap_s;
-	unsigned int texture_wrap_t;
+	uint texture_wrap_s;
+	uint texture_wrap_t;
 	Common::Array<struct tglColorAssociation> colorAssociationList;
 
 	// shared state
@@ -340,14 +339,14 @@ struct GLContext {
 
 	// selection
 	int render_mode;
-	unsigned int *select_buffer;
+	uint *select_buffer;
 	int select_size;
-	unsigned int *select_ptr, *select_hit;
+	uint *select_ptr, *select_hit;
 	int select_overflow;
 	int select_hits;
 
 	// names
-	unsigned int name_stack[MAX_NAME_STACK_DEPTH];
+	uint name_stack[MAX_NAME_STACK_DEPTH];
 	int name_stack_size;
 
 	// clear
@@ -457,7 +456,7 @@ public:
 	static void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2);
 	void gl_draw_triangle_clip(GLVertex *p0, GLVertex *p1, GLVertex *p2, int clip_bit);
 
-	void gl_add_select(unsigned int zmin, unsigned int zmax);
+	void gl_add_select(uint zmin, uint zmax);
 	void gl_add_select1(int z1, int z2, int z3);
 	void gl_enable_disable_light(int light, int v);
 	void gl_shade_vertex(GLVertex *v);

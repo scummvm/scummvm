@@ -37,8 +37,8 @@ static const int NB_INTERP = 8;
 
 template <bool kDepthWrite, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 FORCEINLINE void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
-	                                            int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
-	                                            int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx) {
+	                                        int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
+	                                        int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		return;
 	}
@@ -71,11 +71,11 @@ FORCEINLINE void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps
 }
 
 template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-FORCEINLINE void FrameBuffer::putPixelTexture(int fbOffset, const Graphics::TexelBuffer *texture,
-											  uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
-											  int x, int y, uint &z, int &t, int &s,
-											  uint &r, uint &g, uint &b, uint &a,
-										      int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx) {
+FORCEINLINE void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
+	                                      uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
+	                                      int x, int y, uint &z, int &t, int &s,
+	                                      uint &r, uint &g, uint &b, uint &a,
+	                                      int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		return;
 	}
@@ -152,7 +152,7 @@ template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int k
           bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
           bool kStencilEnabled, bool kDepthTestEnabled>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	const Graphics::TexelBuffer *texture;
+	const TexelBuffer *texture;
 	float fdzdx = 0, fndzdx = 0, ndszdx = 0, ndtzdx = 0;
 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
@@ -520,7 +520,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 					for (int _a = 0; _a < NB_INTERP; _a++) {
 						putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
-						                                  (pp, texture, _wrapS, _wrapT, pz, ps, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
+						               (pp, texture, _wrapS, _wrapT, pz, ps, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
 					}
 					pp += NB_INTERP;
 					if (kInterpZ) {
@@ -547,7 +547,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 				while (n >= 0) {
 					putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
-					                                  (pp, texture, _wrapS, _wrapT, pz, ps, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
+					               (pp, texture, _wrapS, _wrapT, pz, ps, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
 					pp += 1;
 					if (kInterpZ) {
 						pz += 1;

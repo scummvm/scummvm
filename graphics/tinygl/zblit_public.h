@@ -31,8 +31,8 @@ namespace TinyGL {
 
 struct BlitTransform {
 	BlitTransform(int dstX, int dstY) : _rotation(0), _originX(0), _originY(0), _aTint(1.0f),
-				_rTint(1.0f), _gTint(1.0f), _bTint(1.0), _flipHorizontally(false),
-				_flipVertically(false) {
+	                                    _rTint(1.0f), _gTint(1.0f), _bTint(1.0), _flipHorizontally(false),
+	                                    _flipVertically(false) {
 		_destinationRectangle.translate(dstX, dstY);
 	}
 
@@ -67,7 +67,8 @@ struct BlitTransform {
 	}
 
 	bool operator==(const BlitTransform &other) const {
-		return _sourceRectangle == other._sourceRectangle && _destinationRectangle == other._destinationRectangle &&
+		return
+			_sourceRectangle == other._sourceRectangle && _destinationRectangle == other._destinationRectangle &&
 			_rotation == other._rotation && _originX == other._originX && _originY == other._originY &&
 			_aTint == other._aTint && _rTint == other._rTint && _gTint == other._gTint && _bTint == other._bTint &&
 			_flipHorizontally == other._flipHorizontally && _flipVertically == other._flipVertically;

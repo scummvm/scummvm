@@ -103,8 +103,9 @@ public:
 		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
 		Line() : _x(0), _y(0), _length(0), _pixels(nullptr) { }
-		Line(int x, int y, int length, byte *pixels, const Graphics::PixelFormat &textureFormat) : _buf(gl_get_context()->fb->getPixelFormat(), length, DisposeAfterUse::NO),
-					_x(x), _y(y), _length(length) {
+		Line(int x, int y, int length, byte *pixels, const Graphics::PixelFormat &textureFormat) :
+				_buf(gl_get_context()->fb->getPixelFormat(), length, DisposeAfterUse::NO),
+				_x(x), _y(y), _length(length) {
 			// Performing texture to screen conversion.
 			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
 			_buf.copyBuffer(0, 0, length, srcBuf);
@@ -223,7 +224,7 @@ public:
 
 	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 	FORCEINLINE void tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-		int originX, int originY, float aTint, float rTint, float gTint, float bTint);
+	                                  int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function that calls the correct blitting function.
 	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
@@ -362,7 +363,6 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 							c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * fbWidth, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 						}
 					}
-
 				}
 			}
 			lineIndex++;
@@ -458,7 +458,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 // filter to scale the blit image before copying it to the screen.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
-					 float aTint, float rTint, float gTint, float bTint) {
+	                                 float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -548,7 +548,7 @@ systems.
 
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
 FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-							 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
+	                                     int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;

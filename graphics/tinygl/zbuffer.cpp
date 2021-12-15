@@ -39,10 +39,10 @@ namespace TinyGL {
 // adr must be aligned on an 'int'
 static void memset_s(void *adr, int val, int count) {
 	int n, v;
-	unsigned int *p;
+	uint *p;
 	unsigned short *q;
 
-	p = (unsigned int *)adr;
+	p = (uint *)adr;
 	v = val | (val << 16);
 
 	n = count >> 3;
@@ -62,9 +62,9 @@ static void memset_s(void *adr, int val, int count) {
 
 static void memset_l(void *adr, int val, int count) {
 	int n, v;
-	unsigned int *p;
+	uint *p;
 
-	p = (unsigned int *)adr;
+	p = (uint *)adr;
 	v = val;
 	n = count >> 2;
 	for (int i = 0; i < n; i++) {
@@ -122,7 +122,7 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
                         bool clearStencil, int stencilValue) {
 	if (clearZ) {
 		const uint8 *zc = (const uint8 *)&z;
-		unsigned int i;
+		uint i;
 		for (i = 1; i < sizeof(z) && zc[0] == zc[i]; i++) { ; }
 		if (i == sizeof(z)) {
 			// All "z" bytes are identical, use memset (fast)
@@ -136,7 +136,7 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 		byte *pp = _pbuf.getRawBuffer();
 		uint32 color = _pbufFormat.RGBToColor(r, g, b);
 		const uint8 *colorc = (uint8 *)&color;
-		unsigned int i;
+		uint i;
 		for (i = 1; i < sizeof(color) && colorc[0] == colorc[i]; i++) { ; }
 		if (i == sizeof(color)) {
 			// All "color" bytes are identical, use memset (fast)
@@ -164,9 +164,9 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
                               bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue) {
 	if (clearZ) {
 		int height = h;
-		unsigned int *zbuf = _zbuf + (y * _pbufWidth);
+		uint *zbuf = _zbuf + (y * _pbufWidth);
 		const uint8 *zc = (const uint8 *)&z;
-		unsigned int i;
+		uint i;
 		for (i = 1; i < sizeof(z) && zc[0] == zc[i]; i++) { ; }
 		if (i == sizeof(z)) {
 			// All "z" bytes are identical, use memset (fast)
@@ -187,7 +187,7 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 		byte *pp = _pbuf.getRawBuffer() + y * _pbufPitch + x * _pbufBpp;
 		uint32 color = _pbufFormat.RGBToColor(r, g, b);
 		const uint8 *colorc = (uint8 *)&color;
-		unsigned int i;
+		uint i;
 		for (i = 1; i < sizeof(color) && colorc[0] == colorc[i]; i++) { ; }
 		if (i == sizeof(color)) {
 			// All "color" bytes are identical, use memset (fast)
@@ -221,8 +221,8 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	}
 }
 
-inline static void blitPixel(uint8 offset, unsigned int *from_z, unsigned int *to_z, unsigned int z_length, byte *from_color, byte *to_color, unsigned int color_length) {
-	const unsigned int d = from_z[offset];
+inline static void blitPixel(uint8 offset, uint *from_z, uint *to_z, uint z_length, byte *from_color, byte *to_color, uint color_length) {
+	const uint d = from_z[offset];
 	if (d > to_z[offset]) {
 		memcpy(to_color + offset, from_color + offset, color_length);
 		memcpy(to_z + offset, &d, z_length);
@@ -237,8 +237,8 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 		const int unrolled_pixel_bytes = pixel_bytes * UNROLL_COUNT;
 		byte *to = _pbuf.getRawBuffer();
 		byte *from = buf->pbuf;
-		unsigned int *to_z = _zbuf;
-		unsigned int *from_z = buf->zbuf;
+		uint *to_z = _zbuf;
+		uint *from_z = buf->zbuf;
 		int count = _pbufWidth * _pbufHeight;
 		while (count >= UNROLL_COUNT) {
 			blitPixel(0x0, from_z, to_z, sizeof(int), from, to, pixel_bytes);

@@ -159,7 +159,7 @@ void GLContext::glopTexImage2D(GLParam *p) {
 		im->pixmap = nullptr;
 	}
 	if (pixels != NULL) {
-		unsigned int filter;
+		uint filter;
 		Graphics::PixelFormat pf;
 		bool found = false;
 		Common::Array<struct tglColorAssociation>::const_iterator it = colorAssociationList.begin();
@@ -196,14 +196,14 @@ void GLContext::glopTexImage2D(GLParam *p) {
 		case TGL_LINEAR_MIPMAP_NEAREST:
 		case TGL_LINEAR_MIPMAP_LINEAR:
 		case TGL_LINEAR:
-			im->pixmap = new Graphics::BilinearTexelBuffer(
+			im->pixmap = new BilinearTexelBuffer(
 				srcInternal,
 				width, height,
 				_textureSize
 			);
 			break;
 		default:
-			im->pixmap = new Graphics::NearestTexelBuffer(
+			im->pixmap = new NearestTexelBuffer(
 				srcInternal,
 				width, height,
 				_textureSize
@@ -289,7 +289,7 @@ void GLContext::glopPixelStore(GLParam *p) {
 
 } // end of namespace TinyGL
 
-void tglGenTextures(int n, unsigned int *textures) {
+void tglGenTextures(int n, uint *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	for (int i = 0; i < n; i++) {
@@ -298,7 +298,7 @@ void tglGenTextures(int n, unsigned int *textures) {
 	c->maxTextureName += n;
 }
 
-void tglDeleteTextures(int n, const unsigned int *textures) {
+void tglDeleteTextures(int n, const uint *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLTexture *t;
 

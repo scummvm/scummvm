@@ -52,8 +52,8 @@ void GLContext::glopClear(GLParam *p) {
 	int s = (int)(clear_stencil);
 
 	issueDrawCall(new ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z,
-										  mask & TGL_COLOR_BUFFER_BIT, r, g, b,
-										  mask & TGL_STENCIL_BUFFER_BIT, s));
+	                                      mask & TGL_COLOR_BUFFER_BIT, r, g, b,
+	                                      mask & TGL_STENCIL_BUFFER_BIT, s));
 }
 
 } // end of namespace TinyGL
