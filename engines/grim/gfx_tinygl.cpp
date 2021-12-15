@@ -91,6 +91,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	_storedDisplay->create(_gameWidth, _gameHeight, _pixelFormat);
 
 	_currentShadowArray = nullptr;
+	tglViewport(0, 0, _screenWidth, _screenHeight);
 
 	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
@@ -98,8 +99,10 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
 	
 	tglClearStencil(0xff);
-	tglStencilFunc(TGL_ALWAYS, 1, 0xff);
-	tglStencilOp(TGL_REPLACE, TGL_REPLACE, TGL_REPLACE);
+
+	if (g_grim->getGameType() == GType_GRIM) {
+		tglPolygonOffset(-6.0, -6.0);
+	}
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
@@ -131,7 +134,7 @@ void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 }
 
 void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) {
-	tglScalef(1.0, 1.0, -1.0);
+	tglScalef(1.0f, 1.0f, -1.0f);
 	_currentPos = pos;
 	_currentRot = rot;
 }
@@ -165,7 +168,7 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 }
 
 void GfxTinyGL::clearScreen() {
-	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT | TGL_STENCIL_BUFFER_BIT);
+	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
 void GfxTinyGL::clearDepthBuffer() {
@@ -343,7 +346,6 @@ void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
 			uint16 index = indices[j];
-
 			Math::Vector3d obj = model->_drawVertices[index];
 			Math::Vector3d win;
 			Math::gluMathProject<TGLfloat, TGLint>(obj, modelView, projection, viewPort, win);
@@ -395,7 +397,7 @@ void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 	Math::Matrix4 m = actor->getFinalMatrix();
 	bboxPos = bboxPos + actor->getWorldPos();
 
-	// Set up the coordinate system
+	// Set up the camera coordinate system
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
 
@@ -448,7 +450,6 @@ void GfxTinyGL::getActorScreenBBox(const Actor *actor, Common::Point &p1, Common
 	// Restore the state
 	tglPopMatrix();
 }
-
 
 void GfxTinyGL::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
@@ -550,7 +551,6 @@ void GfxTinyGL::finishActorDraw() {
 }
 
 void GfxTinyGL::drawShadowPlanes() {
-	tglDepthMask(TGL_FALSE);
 	tglPushMatrix();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -562,12 +562,14 @@ void GfxTinyGL::drawShadowPlanes() {
 	tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
 	tglDepthMask(TGL_FALSE);
 
+	tglClear(TGL_STENCIL_BUFFER_BIT);
 	tglEnable(TGL_STENCIL_TEST);
+	tglStencilFunc(TGL_ALWAYS, 1, 0xff);
+	tglStencilOp(TGL_REPLACE, TGL_REPLACE, TGL_REPLACE);
+
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
 	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
 		tglBegin(TGL_POLYGON);
@@ -576,11 +578,16 @@ void GfxTinyGL::drawShadowPlanes() {
 		}
 		tglEnd();
 	}
-
-	tglDisable(TGL_STENCIL_TEST);
 	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 
+	tglStencilFunc(TGL_EQUAL, 1, 0xff);
+	tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_KEEP);
+
 	tglPopMatrix();
+}
+
+void GfxTinyGL::setShadow(Shadow *shadow) {
+	_currentShadowArray = shadow;
 }
 
 void GfxTinyGL::setShadowMode() {
@@ -590,21 +597,8 @@ void GfxTinyGL::setShadowMode() {
 void GfxTinyGL::clearShadowMode() {
 	GfxBase::clearShadowMode();
 
+	tglDisable(TGL_STENCIL_TEST);
 	tglDepthMask(TGL_TRUE);
-}
-
-void GfxTinyGL::set3DMode() {
-	tglMatrixMode(TGL_MODELVIEW);
-	tglEnable(TGL_DEPTH_TEST);
-	tglDepthFunc(_depthFunc);
-}
-
-void GfxTinyGL::setShadow(Shadow *shadow) {
-	_currentShadowArray = shadow;
-	if (shadow)
-		tglDisable(TGL_LIGHTING);
-	else if (g_grim->getGameType() == GType_GRIM)
-		tglEnable(TGL_LIGHTING);
 }
 
 void GfxTinyGL::setShadowColor(byte r, byte g, byte b) {
@@ -617,6 +611,12 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 	*r = _shadowColorR;
 	*g = _shadowColorG;
 	*b = _shadowColorB;
+}
+
+void GfxTinyGL::set3DMode() {
+	tglMatrixMode(TGL_MODELVIEW);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthFunc(_depthFunc);
 }
 
 void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
@@ -649,7 +649,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 			byte r = (byte)(model->_colorMap[index].r * lighting.x());
 			byte g = (byte)(model->_colorMap[index].g * lighting.y());
 			byte b = (byte)(model->_colorMap[index].b * lighting.z());
-			byte a = (int)(model->_colorMap[index].a * alpha * _currentActor->getLocalAlpha(index));
+			byte a = (int)(alpha * (model->_meshAlphaMode == Actor::AlphaReplace ? model->_colorMap[index].a * _currentActor->getLocalAlpha(index) : 255.f));
 			tglColor4ub(r, g, b, a);
 		}
 
@@ -762,7 +762,6 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 
 		float halfWidth = sprite->_width / 2;
 		float halfHeight = sprite->_height / 2;
-
 		float vertexX[] = { -1.0f, 1.0f, 1.0f, -1.0f };
 		float vertexY[] = { 1.0f, 1.0f, -1.0f, -1.0f };
 
@@ -1383,6 +1382,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 		tglVertex2f(x1, y2 + 1);
 		tglEnd();
 	} else {
+		// tglLineWidth(_scaleW); // Not implemented in TinyGL
 		tglBegin(TGL_LINE_LOOP);
 		tglVertex2f(x1, y1);
 		tglVertex2f(x2 + 1, y1);
@@ -1437,7 +1437,7 @@ void GfxTinyGL::drawDimPlane() {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-
+	tglOrtho(0, 1.0, 1.0, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
