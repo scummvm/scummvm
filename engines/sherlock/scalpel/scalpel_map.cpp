@@ -404,6 +404,7 @@ void ScalpelMap::showPlaceName(int idx, bool highlighted) {
 	int width = screen.stringWidth(name);
 
 	if (!_cursorIndex) {
+		restoreIcon();
 		saveIcon(people[HOLMES]._imageFrame, _lDrawnPos);
 
 		bool flipped = people[HOLMES]._sequenceNumber == MAP_DOWNLEFT || people[HOLMES]._sequenceNumber == MAP_LEFT
