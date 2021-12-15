@@ -76,6 +76,7 @@ void TinyGLRenderer::init() {
 }
 
 void TinyGLRenderer::clear() {
+	tglClearColor(0.f, 0.f, 0.f, 1.f); // Solid black
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 	tglColor3f(1.0f, 1.0f, 1.0f);
 }
@@ -129,7 +130,7 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
 	tglDisable(TGL_TEXTURE_2D);
-	tglColor4f(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+	tglColor4ub(r, g, b, a);
 
 	if (a != 255) {
 		tglEnable(TGL_BLEND);

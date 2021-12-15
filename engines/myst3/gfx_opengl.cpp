@@ -126,7 +126,7 @@ void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 
 void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
 	glDisable(GL_TEXTURE_2D);
-	glColor4f(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+	glColor4ub(r, g, b, a);
 
 	if (a != 255) {
 		glEnable(GL_BLEND);
