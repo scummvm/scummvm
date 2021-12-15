@@ -342,7 +342,8 @@ void Talk::talkTo(const Common::String filename) {
 
 		// Handle replies until there's no further linked file,
 		// or the link file isn't a reply first cnversation
-		while (!_vm->shouldQuit()) {
+		bool done = false;
+		while (!done && !_vm->shouldQuit()) {
 			clearSequences();
 			_scriptSelect = select;
 			_speaker = _talkTo;
@@ -412,7 +413,7 @@ void Talk::talkTo(const Common::String filename) {
 
 					// Break out of loop now that we're waiting for player input
 					events.setCursor(ARROW);
-					break;
+					done = true;
 				} else {
 					// Add the statement into the journal and talk history
 					if (_talkTo != -1 && !_talkHistory[_converseNum][select])
@@ -438,7 +439,7 @@ void Talk::talkTo(const Common::String filename) {
 					ui.banishWindow();
 				}
 
-				break;
+				done = true;
 			}
 		}
 	}
