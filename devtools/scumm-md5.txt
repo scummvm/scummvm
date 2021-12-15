@@ -367,6 +367,7 @@ samnmax	Sam &amp; Max Hit the Road
 	d9d0dd93d16ab4dec55cabc2b86bbd17	6478	en	DOS	-	Demo	non-interactive	Fingolfin
 	cc8ba2b0df2f9c450bcf055fe2711979	7485	de	DOS	Floppy	Demo	-	Simon Krumrein, sev, Fingolfin
 	0425954a9db5c340861672892c3e678d	-1	en	All	-	Demo	-	Kirben
+	b9fce749c3e9da0d41c78213c179631b	7505	en	DOS	CD	Demo	-	eientei
 	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
 
 ft	Full Throttle
