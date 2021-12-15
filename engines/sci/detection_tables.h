@@ -193,8 +193,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
-	// Castle of Dr. Brain aka Dr. Brain Puzzle no Shiro - Japanese PC-98 Floppy (from m_kiewitz)
-	// includes both Japanese and English text
+	// Castle of Dr. Brain aka Dr. Brain Puzzle no Shiro - Japanese PC-98 Floppy (from m_kiewitz) (also includes English language)
 	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000"
 	{"castlebrain", "", {
 		{"resource.map", 0, "ff9674d5d0215a7ebae25ee38d5a72af", 2631},
@@ -1978,6 +1977,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
 
 	// King's Quest 5 - FM-Towns (supplied by abevi in bug report #5114)
+	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000.000"
 	{"kq5", "", {
 		{"resource.map", 0, "20c7cd248ff1a349ed354568eebd972b", 12733},
 		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
@@ -1986,6 +1986,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO_STD16_HIRES },
 
 	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #5384)
+	// Executable scanning reports "1.000.1025", VERSION file reports "0.000.015"
+	// 4x5.25" (label: INT#10.7.91)
 	{"kq5", "", {
 		{"resource.map", 0, "3bca188108ec5b6ad91612483a6cbc27", 7875},
 		{"resource.000", 0, "70d6a2ec17fd49a63217992fc4347cd9", 493681},
@@ -3572,6 +3574,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_STD16	},
 
 	// Mixed-Up Mother Goose - FM-Towns (supplied by abevi in bug report #5114)
+	// Executable scanning reports "x.yyy.zzz", no VERSION file
 	{"mothergoose256", "", {
 		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
 		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
@@ -4070,8 +4073,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16_UNDITHER	},
 
 	// Police Quest 2 - Japanese PC-98 (also includes english language)
-	// Executable scanning reports "x.yyy.zzz"
-	// SCI interpreter version unknown
+	// Executable scanning reports "x.yyy.zzz", game version "1.000.052"
 	{"pq2", "", {
 		{"resource.map", 0, "883804c616dca1d82373bf9fda3a71d2", 4656},
 		{"resource.001", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 669319},
@@ -4449,7 +4451,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
 	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes English language)
-	// Executable scanning reports "S.old.201"
+	// Executable scanning reports "S.old.201", VERSION file reports "1.000.006"
+	// READ.ME file says version "1.100"
 	{"qfg1", "8 Colors", {
 		{"resource.map", 0, "5cbeb95dd2a4b7cb242b415cc6ec1c47", 6444},
 		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 859959},
@@ -4459,7 +4462,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO7(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING) },
 
 	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes English language)
-	// Executable scanning reports "S.old.201"
+	// Executable scanning reports "S.old.201", VERSION file reports "1.000.006"
+	// READ.ME file says version "1.100"
 	{"qfg1", "16 Colors", {
 		{"resource.map", 0, "3ecaba33bf77cb434067a0b8aee15097", 6444},
 		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 864754},
@@ -5421,7 +5425,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::IT_ITA, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
 	// Space Quest 4 - Japanese PC-98 5.25" Floppy (also includes english language)
-	// SCI interpreter version 1.000.1068
+	// SCI interpreter version "1.000.1068", VERSION file reports "1.000"
+	// 3x5.25" (label: INT#12.16.91)
 	{"sq4", "", {
 		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
 		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
