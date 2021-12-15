@@ -212,7 +212,7 @@ void GLContext::glopColorMask(GLParam *p) {
 }
 
 void GLContext::glopDepthMask(GLParam *p) {
-	depth_write_mask = p[1].i;
+	depth_write_mask = p[1].i == TGL_TRUE;
 }
 
 void GLContext::glopStencilMask(TinyGL::GLParam *p) {
