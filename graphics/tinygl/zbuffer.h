@@ -304,24 +304,21 @@ private:
 		}
 	}
 
-	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
-	FORCEINLINE void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a,
-								  int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a, int &dzdx);
+	template <bool kDepthWrite, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	FORCEINLINE void putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
+	                                   int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
+	                                   int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
 
-	template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
-	FORCEINLINE void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a,
-									int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
-									int &dzdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx);
+	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	FORCEINLINE void putPixelTexture(int fbOffset, const Graphics::TexelBuffer *texture,
+	                                 uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
+	                                 int x, int y, uint &z, int &t, int &s,
+									 uint &r, uint &g, uint &b, uint &a,
+	                                 int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
 
-	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled>
-	FORCEINLINE void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int *pz, byte *ps, int _a, int x, int y, unsigned int &z, int &dzdx);
+	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
+	FORCEINLINE void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
-	FORCEINLINE void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf, const Graphics::TexelBuffer *texture,
-													   unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, byte *ps, int _a,
-													   int x, int y, unsigned int &z, int &t, int &s,
-													   unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
-													   int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx);
 
 	template <bool kEnableAlphaTest>
 	FORCEINLINE void writePixel(int pixel, int value) {
@@ -580,7 +577,14 @@ private:
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled, bool kStencilEnabled>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
+			  bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
+			  bool kStencilEnabled, bool kDepthTestEnabled>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
+			  bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
+			  bool kStencilEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
