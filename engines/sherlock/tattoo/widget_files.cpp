@@ -266,7 +266,7 @@ bool WidgetFiles::getFilename() {
 
 	if (isSlotEmpty(_selector)) {
 		index = 0;
-		_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+		_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 		filename = "";
 	} else {
 		index = filename.size();
@@ -324,7 +324,7 @@ bool WidgetFiles::getFilename() {
 				filename.setChar(' ', index);
 			}
 
-			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 			_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 
 		} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
@@ -374,7 +374,7 @@ bool WidgetFiles::getFilename() {
 		} else if (keyState.keycode == Common::KEYCODE_DELETE) {
 			filename.deleteChar(index);
 
-			_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+			_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 			_surface.writeString(filename + index, pt, COMMAND_HIGHLIGHTED);
 
 		} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
@@ -394,7 +394,7 @@ bool WidgetFiles::getFilename() {
 					filename.setChar(keyState.ascii, index);
 
 				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9,
-					pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+					pt.y + _surface.fontHeight()), TRANSPARENCY);
 				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 				pt.x += _surface.charWidth(keyState.ascii);
 				++index;
