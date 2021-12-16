@@ -328,7 +328,7 @@ bool WidgetFiles::getFilename() {
 			_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 
 		} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
-				|| (keyState.keycode == Common::KEYCODE_RIGHT && index < 49 && pt.x < (_bounds.right - BUTTON_SIZE - 20))
+				|| (keyState.keycode == Common::KEYCODE_RIGHT && index < (int)filename.size() && pt.x < (_bounds.right - BUTTON_SIZE - 20))
 				|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
 				|| (keyState.keycode == Common::KEYCODE_END)) {
 			_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
