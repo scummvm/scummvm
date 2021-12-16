@@ -373,7 +373,8 @@ Common::String SciEngine::strSplitLanguage(const char *str, uint16 *languageSpli
 		return retval;
 
 	// Add subtitle, unless the subtitle language doesn't match the languages in the string
-	if ((subtitleLanguage == K_LANG_ENGLISH) || (subtitleLanguage == foundLanguage)) {
+	// Confirmed to work for Amiga SQ3 German/English, QFG1 Japanese/English, PQ2 Japanese/English
+	if ((activeLanguage == foundLanguage) || (subtitleLanguage == foundLanguage)) {
 		retval += sep;
 		retval += getSciLanguageString(str, subtitleLanguage);
 	}
