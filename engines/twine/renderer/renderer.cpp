@@ -1045,9 +1045,9 @@ bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 		return false;
 	}
 	int16 left = (int16)(x - radius);
-	int16 right = (int16)(y - radius);
-	int16 bottom = (int16)(x + radius);
-	int16 top = (int16)(y + radius);
+	int16 right = (int16)(x + radius);
+	int16 bottom = (int16)(y + radius);
+	int16 top = (int16)(y - radius);
 	const Common::Rect &clip = _engine->_interface->_clip;
 	int16 cleft = clip.left;
 	int16 cright = clip.right;
@@ -1058,14 +1058,14 @@ bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 		if (left < cleft) {
 			left = cleft;
 		}
-		if (bottom > cright) {
-			bottom = cright;
+		if (bottom > cbottom) {
+			bottom = cbottom;
 		}
-		if (right < ctop) {
-			right = ctop;
+		if (right > cright) {
+			right = cright;
 		}
-		if (top > cbottom) {
-			top = cbottom;
+		if (top < ctop) {
+			top = ctop;
 		}
 
 		int32 r = 0;
