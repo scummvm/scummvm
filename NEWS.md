@@ -43,6 +43,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
    - Fix graphic issues in Serrated Scalpel looking at items whilst inventory is open.
    - Make Serrated Scalpel darts closer in speed to the original.
+   - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
