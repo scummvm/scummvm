@@ -852,7 +852,7 @@ int TattooJournal::getFindName(bool printError) {
 				blinkFlag = !blinkFlag;
 				if (blinkFlag) {
 					// Draw cursor
-					screen._backBuffer1.fillRect(Common::Rect(cursorX, cursorY, cursorX + 7, cursorY + 8), COMMAND_HIGHLIGHTED);
+					screen._backBuffer1.fillRect(Common::Rect(cursorX, cursorY, cursorX + 7, cursorY + 9), COMMAND_HIGHLIGHTED);
 					screen.slamArea(cursorX, cursorY, 8, 9);
 				}
 				else {
