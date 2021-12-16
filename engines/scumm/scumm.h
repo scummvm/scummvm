@@ -1131,6 +1131,7 @@ protected:
 
 	bool _keepText;
 	byte _msgCount;
+	bool _replayText;
 
 	int _nextLeft, _nextTop;
 

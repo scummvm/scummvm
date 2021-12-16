@@ -1515,6 +1515,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	//
 	if (s.getVersion() >= VER(73)) {
 		_charset->saveLoadWithSerializer(s);
+		if (s.isLoading())
+			_replayText = true;
 	} else if (s.isLoading()) {
 		if (s.getVersion() == VER(72)) {
 			byte curId;

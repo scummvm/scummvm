@@ -322,6 +322,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_NES_lastTalkingActor = 0;
 	_NES_talkColor = 0;
 	_keepText = false;
+	_replayText = false;
 	_msgCount = 0;
 	_costumeLoader = nullptr;
 	_costumeRenderer = nullptr;
@@ -1904,6 +1905,7 @@ void ScummEngine::resetScumm() {
 	_defaultTalkDelay = 3;
 	_talkDelay = 0;
 	_keepText = false;
+	_replayText = false;
 	_nextLeft = 0;
 	_nextTop = 0;
 

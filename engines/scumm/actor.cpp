@@ -2897,6 +2897,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	}
 
 	_charsetBufPos = 0;
+	_replayText = false;
 	_talkDelay = 0;
 	_haveMsg = 1;
 	if (_game.id == GID_FT)
@@ -2986,6 +2987,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 		_charsetColor = a->_talkColor;
 	}
 	_charsetBufPos = 0;
+	_replayText = false;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
 	VAR(VAR_HAVE_MSG) = 0xFF;

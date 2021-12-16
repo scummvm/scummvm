@@ -702,32 +702,45 @@ void ScummEngine::CHARSET_1() {
 		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
 #endif
 
-	if (_talkDelay)
-		return;
-
-	if ((_game.version <= 6 && _haveMsg == 1) ||
-	    (_game.version == 7 && _haveMsg != 1)) {
-
-		if (_game.heversion >= 60) {
-			if (_sound->isSoundRunning(1) == 0)
-				stopTalk();
-		} else {
-			if ((_sound->_sfxMode & 2) == 0)
-				stopTalk();
+	if (_replayText) {
+		if (_charsetBufPos > 2) {
+			for (_charsetBufPos -= 2; _charsetBufPos > 0; --_charsetBufPos) {
+				const byte c = _charsetBuffer[_charsetBufPos];
+				if (c == 0 || c == 0xff) {
+					_charsetBufPos += 2;
+					break;
+				}
+			}
 		}
-		return;
-	}
+		_replayText = false;
+	} else {
+		if (_talkDelay)
+			return;
 
-	// The second check is from LOOM DOS EGA disasm. It prevents weird speech animations
-	// with empty strings (bug #990). The same code is present in actorTalk(). The FM-Towns
-	// versions don't have such code, but I do not get the weird speech animations either.
-	// So apparently it is not needed there.
-	if (a && !_string[0].no_talk_anim && !(_game.id == GID_LOOM && _game.platform != Common::kPlatformFMTowns && !_charsetBuffer[_charsetBufPos])) {
-		a->runActorTalkScript(a->_talkStartFrame);
-		_useTalkAnims = true;
-	}
+		if ((_game.version <= 6 && _haveMsg == 1) ||
+			(_game.version == 7 && _haveMsg != 1)) {
 
-	_talkDelay = (VAR_DEFAULT_TALK_DELAY != 0xFF) ? VAR(VAR_DEFAULT_TALK_DELAY) : 60;
+			if (_game.heversion >= 60) {
+				if (_sound->isSoundRunning(1) == 0)
+					stopTalk();
+			} else {
+				if ((_sound->_sfxMode & 2) == 0)
+					stopTalk();
+			}
+			return;
+		}
+
+		// The second check is from LOOM DOS EGA disasm. It prevents weird speech animations
+		// with empty strings (bug #990). The same code is present in actorTalk(). The FM-Towns
+		// versions don't have such code, but I do not get the weird speech animations either.
+		// So apparently it is not needed there.
+		if (a && !_string[0].no_talk_anim && !(_game.id == GID_LOOM && _game.platform != Common::kPlatformFMTowns && !_charsetBuffer[_charsetBufPos])) {
+			a->runActorTalkScript(a->_talkStartFrame);
+			_useTalkAnims = true;
+		}
+
+		_talkDelay = (VAR_DEFAULT_TALK_DELAY != 0xFF) ? VAR(VAR_DEFAULT_TALK_DELAY) : 60;
+	}
 
 	if (!_keepText) {
 		if (_game.version >= 7) {
