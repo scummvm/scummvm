@@ -1903,6 +1903,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
+	// King's Quest 5 - German DOS Floppy, 9 x 5.25" disks, v0.000.149
+	// VERSION file reports "1.000", SCI interpreter version 1.000.784
+	{"kq5", "", {
+		{"resource.map", 0, "dacbaf066987387b4ec2e8985dad70d5", 8169},
+		{"resource.000", 0, "d7ed18ec4a5de02a9a57830aa65a600d", 336826},
+		{"resource.001", 0, "edfd1c9f57fcdc8a7b364661016dd2ef", 1181515},
+		{"resource.002", 0, "38da6dd12d0b4174a4750718b5a1af46", 1103150},
+		{"resource.003", 0, "fecdec847e3bd8e3b0f9827900aa95fd", 966071},
+		{"resource.004", 0, "aa30443410b2e69a74a37c92b0876bb0", 1118012},
+		{"resource.005", 0, "0bc161f1d592ea5f3b3a485e1c0916a3", 1203072},
+		{"resource.006", 0, "d1a75fdc01840664d00366cff6919366", 1142213},
+		{"resource.007", 0, "afe76a71a45bb0678a705bd12568649f", 1145863},
+		{"resource.008", 0, "119bd916bd00fc5b4a0bc424af39b98f", 1026205},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
 	// King's Quest 5 - French DOS Floppy (from the King's Quest Collector's Edition 1994, also includes english language)
 	// Supplied by aroenai in bug report #4378
 	// VERSION file reports "1.000", SCI interpreter version 1.000.784
