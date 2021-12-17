@@ -91,15 +91,15 @@ void GLContext::gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int 
 				} else
 					point2_offset = point_offset;
 			}
-			src.getARGBAt(point1_offset, r00, g00, b00, a00);
-			src.getARGBAt(point2_offset, r01, g01, b01, a01);
-			src.getARGBAt(point3_offset, r10, g10, b10, a10);
+			src.getARGBAt(point1_offset, a00, r00, g00, b00);
+			src.getARGBAt(point2_offset, a01, r01, g01, b01);
+			src.getARGBAt(point3_offset, a10, r10, g10, b10);
 			dest.setPixelAt(
 				dest_offset++,
+				interpolate(a00, a01, a10, xf, curr_yf),
 				interpolate(r00, r01, r10, xf, curr_yf),
 				interpolate(g00, g01, g10, xf, curr_yf),
-				interpolate(b00, b01, b10, xf, curr_yf),
-				interpolate(a00, a01, a10, xf, curr_yf)
+				interpolate(b00, b01, b10, xf, curr_yf)
 			);
 			x1 += x1inc;
 		}
@@ -125,8 +125,8 @@ void GLContext::gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsi
 		yi = (y1 >> FRAC_BITS) * xsize_src;
 		x1 = 0;
 		for (int x = 0; x < xsize_dest; x++) {
-			src.getARGBAt(yi + (x1 >> FRAC_BITS), r, g, b, a);
-			dest.setPixelAt(dest_offset++, r, g, b, a);
+			src.getARGBAt(yi + (x1 >> FRAC_BITS), a, r, g, b);
+			dest.setPixelAt(dest_offset++, a, r, g, b);
 			x1 += x1inc;
 		}
 		y1 += y1inc;
