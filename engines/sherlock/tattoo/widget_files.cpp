@@ -370,11 +370,11 @@ bool WidgetFiles::getFilename() {
 					cursorColor = 192;
 				else
 					cursorColor = 200;
-			} else if (keyState.keycode == Common::KEYCODE_DELETE) {
+			} else if (keyState.keycode == Common::KEYCODE_DELETE && index < (int)filename.size()) {
 				filename.deleteChar(index);
 
 				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
-				_surface.writeString(filename + index, pt, COMMAND_HIGHLIGHTED);
+				_surface.writeString(Common::String(filename.c_str() + index), pt, COMMAND_HIGHLIGHTED);
 			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
 			} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
