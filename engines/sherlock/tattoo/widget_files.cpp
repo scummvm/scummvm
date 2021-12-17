@@ -397,6 +397,10 @@ bool WidgetFiles::getFilename() {
 					++index;
 				}
 			}
+
+			currentChar = (index == (int)filename.size()) ? ' ' : filename[index];
+			charString = Common::String::format("%c", currentChar);
+			width = screen.charWidth(currentChar);
 		}
 	} while (!done && !_vm->shouldQuit());
 
