@@ -44,6 +44,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix graphic issues in Serrated Scalpel looking at items whilst inventory is open.
    - Make Serrated Scalpel darts closer in speed to the original.
    - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
+   - Process pending key presses in the order they were made, not the most
+     recent first.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
