@@ -52,6 +52,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
    - Process pending key presses in the order they were made, not the most
      recent first.
+   - Fix crash when using Delete key in Rose Tatto save dialog.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
