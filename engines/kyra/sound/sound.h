@@ -227,7 +227,7 @@ public:
 	*/
 	virtual void pause(bool paused) {}
 
-	void enableMusic(int enable) { _musicEnabled = enable; }
+	virtual void enableMusic(int enable) { _musicEnabled = enable; }
 	int musicEnabled() const { return _musicEnabled; }
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }

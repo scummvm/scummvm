@@ -178,7 +178,8 @@ private:
 	const char *_textSpeedString;
 	const char *_onString;
 	const char *_offString;
-	const char *_onCDString;
+	const char *_confMusicMenuStrings[3];
+	uint8 _confMusicMenuMod;
 };
 
 } // End of namespace Kyra

@@ -140,6 +140,7 @@ public:
 	void beginFadeOut() override;
 
 	void updateVolumeSettings() override;
+	void enableMusic(int enable) override;
 
 private:
 	bool loadInstruments();
@@ -363,7 +364,7 @@ public:
 
 	kType getMusicType() const override;
 
-	bool init() override { return init(true); }
+	bool init() override { return init(musicEnabled() == 1); }
 	bool init(bool hiQuality);
 	void initAudioResourceInfo(int, void*) override {}
 	void selectAudioResourceSet(int set) override;
@@ -376,6 +377,7 @@ public:
 	bool isPlaying() const override;
 	void beginFadeOut() override;
 	void updateVolumeSettings() override;
+	void enableMusic(int enable) override;
 
 private:
 	void setQuality(bool hi);

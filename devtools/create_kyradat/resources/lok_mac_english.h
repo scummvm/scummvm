@@ -333,6 +333,14 @@ static const char *const k1ConfigStringsMacEnglish[9] = {
 
 static const StringListProvider k1ConfigStringsMacEnglishProvider = { ARRAYSIZE(k1ConfigStringsMacEnglish), k1ConfigStringsMacEnglish };
 
+static const char *const k1ConfigStrings2MacEnglish[3] = {
+	"None",
+	"High Quality",
+	"Low Impact"
+};
+
+static const StringListProvider k1ConfigStrings2MacEnglishProvider = { ARRAYSIZE(k1ConfigStrings2MacEnglish), k1ConfigStrings2MacEnglish };
+
 static const uint8 k1CreditsStringsMacEnglish[] = {
 	0x0a, 0x02, 0x54, 0x48, 0x45, 0x20, 0x45, 0x4e,
 	0x44, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,

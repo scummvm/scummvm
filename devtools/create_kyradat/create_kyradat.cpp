@@ -39,7 +39,7 @@
 
 
 enum {
-	kKyraDatVersion = 115
+	kKyraDatVersion = 116
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -89,6 +89,7 @@ const ExtractFilename extractFilenames[] = {
 	// GUI strings table
 	{ k1GUIStrings, kStringList, true },
 	{ k1ConfigStrings, kStringList, true },
+	{ k1ConfigStrings2, kStringList, true },
 
 	// ROOM table/filenames
 	{ k1RoomList, kRoomList, false },

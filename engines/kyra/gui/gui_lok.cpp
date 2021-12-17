@@ -26,6 +26,7 @@
 #include "kyra/text/text.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/resource/resource.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -186,6 +187,7 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), 
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
 	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN) ? 4 : 5;
+	_confMusicMenuMod = (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformMacintosh) ? 3 : 2;
 }
 
 GUI_LoK::~GUI_LoK() {
@@ -454,7 +456,17 @@ void GUI_LoK::setGUILabels() {
 	_textSpeedString = _vm->_guiStrings[25 + offsetOptions];
 	_onString =  _vm->_guiStrings[20 + offsetOn];
 	_offString =  _vm->_guiStrings[21 + offset];
-	_onCDString = _vm->_guiStrings[21];
+
+	if (_vm->gameFlags().platform == Common::kPlatformMacintosh) {
+		int temp;
+		const char *const *musicMenuStr = _vm->staticres()->loadStrings(k1ConfigStrings2, temp);
+		for (int i = 0; i < temp; ++i)
+			_confMusicMenuStrings[i] = musicMenuStr[i];
+	} else {
+		_confMusicMenuStrings[0] = _offString;
+		_confMusicMenuStrings[1] = _onString;
+		_confMusicMenuStrings[2] = _vm->_guiStrings[21]; // FM-Towns: "On +CD"
+	}
 }
 
 int GUI_LoK::buttonMenuCallback(Button *caller) {
@@ -899,6 +911,8 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
+	int confMus = _vm->_configMusic;
+
 	while (_displaySubMenu && !_vm->shouldQuit()) {
 		processHighlights(_menu[5]);
 		getInput();
@@ -911,19 +925,23 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 		initMenu(_menu[_toplevelMenu]);
 		updateAllMenuButtons();
 	}
+
+	if (_vm->_configMusic && _vm->_configMusic != confMus && _vm->_lastMusicCommand != -1)
+		_vm->snd_playWanderScoreViaMap(_vm->_lastMusicCommand, 1);
+
 	return 0;
 }
 
 void GUI_LoK::setupControls(Menu &menu) {
 	switch (_vm->_configMusic) {
 	case 0:
-		menu.item[0].itemString = _offString; //"Off"
+		menu.item[0].itemString = _confMusicMenuStrings[0]; //"Off" (Mac: "None")
 		break;
 	case 1:
-		menu.item[0].itemString = _onString; //"On"
+		menu.item[0].itemString = _confMusicMenuStrings[1]; //"On" (Mac: "High Quality")
 		break;
 	case 2:
-		menu.item[0].itemString = _onCDString; //"On + CD"
+		menu.item[0].itemString = _confMusicMenuStrings[2]; //"On + CD" (Mac: "Low Impact")
 		break;
 	default:
 		break;
@@ -933,7 +951,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 		menu.item[1].itemString = _onString; //"On"
 	else
 		menu.item[1].itemString = _offString; //"Off"
-
 
 	switch (_vm->_configWalkspeed) {
 	case 0:
@@ -1017,7 +1034,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 int GUI_LoK::controlsChangeMusic(Button *button) {
 	updateMenuButton(button);
 
-	_vm->_configMusic = (_vm->_configMusic + 1) % ((_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 3 : 2);
+	_vm->_configMusic = (_vm->_configMusic + 1) % _confMusicMenuMod;
 	setupControls(_menu[5]);
 	return 0;
 }

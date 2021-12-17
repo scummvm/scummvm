@@ -217,6 +217,7 @@ enum KyraResources {
 
 	k1GUIStrings,
 	k1ConfigStrings,
+	k1ConfigStrings2,
 
 	k1AudioTracks,
 	k1AudioTracksIntro,

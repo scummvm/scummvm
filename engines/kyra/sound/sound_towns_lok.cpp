@@ -244,6 +244,12 @@ void SoundTowns_LoK::updateVolumeSettings() {
 	_player->driver()->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
 }
 
+void SoundTowns_LoK::enableMusic(int enable) {
+	if (enable && enable != _musicEnabled && _lastTrack != -1)
+		haltTrack();
+	_musicEnabled = enable;
+}
+
 void SoundTowns_LoK::stopAllSoundEffects() {
 	_player->driver()->channelVolume(0x46, 0);
 	_player->driver()->channelVolume(0x47, 0);

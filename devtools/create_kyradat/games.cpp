@@ -794,6 +794,7 @@ const int kyra1MacNeed[] = {
 	k1GUIStrings,
 	k1NewGameString,
 	k1ConfigStrings,
+	k1ConfigStrings2,
 	k1CreditsStrings,
 	-1
 };

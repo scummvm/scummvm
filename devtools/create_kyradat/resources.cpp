@@ -1038,6 +1038,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1GUIStrings, kKyra1, kPlatformMacintosh, kNoSpecial, EN_ANY, &k1GUIStringsMacEnglishProvider },
 	{ k1NewGameString, kKyra1, kPlatformMacintosh, kNoSpecial, EN_ANY, &k1NewGameStringMacEnglishProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformMacintosh, kNoSpecial, EN_ANY, &k1ConfigStringsMacEnglishProvider },
+	{ k1ConfigStrings2, kKyra1, kPlatformMacintosh, kNoSpecial, EN_ANY, &k1ConfigStrings2MacEnglishProvider },
 	{ k1CreditsStrings, kKyra1, kPlatformMacintosh, kNoSpecial, EN_ANY, &k1CreditsStringsMacEnglishProvider },
 
 	{ k2SeqplayPakFiles, kKyra2, kPlatformDOS, kDemoVersion, UNK_LANG, &k2SeqplayPakFilesDOSDemoProvider },

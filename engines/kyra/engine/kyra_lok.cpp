@@ -196,8 +196,8 @@ Common::Error KyraEngine_LoK::init() {
 		_trackMap = _amigaTrackMap;
 		_trackMapSize = _amigaTrackMapSize;
 	} else if (_flags.platform == Common::kPlatformMacintosh) {
-		_trackMap = _macHQTrackMap;
-		_trackMapSize = _macHQTrackMapSize;
+		_trackMap = (_configMusic == 1) ? _macHQTrackMap : _macLQTrackMap;
+		_trackMapSize = (_configMusic == 1) ? _macHQTrackMapSize : _macLQTrackMapSize;
 	} else {
 		_trackMap = _dosTrackMap;
 		_trackMapSize = _dosTrackMapSize;
@@ -976,6 +976,11 @@ void KyraEngine_LoK::readSettings() {
 		_configTextspeed = 2;   // Fast
 
 	KyraEngine_v1::readSettings();
+
+	if (_flags.platform == Common::kPlatformMacintosh) {
+		_trackMap = (_configMusic == 1) ? _macHQTrackMap : _macLQTrackMap;
+		_trackMapSize = (_configMusic == 1) ? _macHQTrackMapSize : _macLQTrackMapSize;
+	}
 }
 
 void KyraEngine_LoK::writeSettings() {
@@ -996,6 +1001,11 @@ void KyraEngine_LoK::writeSettings() {
 	}
 
 	ConfMan.setInt("talkspeed", talkspeed);
+
+	if (_flags.platform == Common::kPlatformMacintosh) {
+		_trackMap = (_configMusic == 1) ? _macHQTrackMap : _macLQTrackMap;
+		_trackMapSize = (_configMusic == 1) ? _macHQTrackMapSize : _macLQTrackMapSize;
+	}
 
 	KyraEngine_v1::writeSettings();
 }

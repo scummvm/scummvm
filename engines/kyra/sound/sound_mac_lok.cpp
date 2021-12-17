@@ -244,6 +244,12 @@ void SoundMac::updateVolumeSettings() {
 	_driver->setSoundEffectVolume(CLIP<int>(mute ? 0 : ConfMan.getInt("sfx_volume"), 0, Audio::Mixer::kMaxMixerVolume));
 }
 
+void SoundMac::enableMusic(int enable) {
+	if (enable && enable != _musicEnabled)
+		setQuality(enable == 1);
+	_musicEnabled = enable;
+}
+
 void SoundMac::setQuality(bool hi) {
 	static const uint16 resIds[] = {
 		0x1b5b, 0x1b5c, 0x1b5e, 0x1b62, 0x1b63, 0x1b6b, 0x1b6c, 0x1b6d,
