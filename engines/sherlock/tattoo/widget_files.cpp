@@ -313,91 +313,89 @@ bool WidgetFiles::getFilename() {
 				return false;
 		}
 
-		Common::KeyState keyState = events.getKey();
-		if (keyState.keycode == Common::KEYCODE_BACKSPACE && index > 0) {
-			pt.x -= _surface.charWidth(filename[index - 1]);
-			--index;
-
-			if (insert) {
-				filename.deleteChar(index);
-			} else {
-				filename.setChar(' ', index);
-			}
-
-			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
-			_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
-
-		} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
-				|| (keyState.keycode == Common::KEYCODE_RIGHT && index < (int)filename.size() && pt.x < (_bounds.right - BUTTON_SIZE - 20))
-				|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
-				|| (keyState.keycode == Common::KEYCODE_END)) {
-			_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
-			if (currentChar)
-				_surface.writeString(charString, pt, COMMAND_HIGHLIGHTED);
-
-			switch (keyState.keycode) {
-			case Common::KEYCODE_LEFT:
+		while (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+			if (keyState.keycode == Common::KEYCODE_BACKSPACE && index > 0) {
 				pt.x -= _surface.charWidth(filename[index - 1]);
 				--index;
-				break;
 
-			case Common::KEYCODE_RIGHT:
-				pt.x += _surface.charWidth(filename[index]);
-				++index;
-				break;
+				if (insert) {
+					filename.deleteChar(index);
+				} else {
+					filename.setChar(' ', index);
+				}
 
-			case Common::KEYCODE_HOME:
-				pt.x = _surface.stringWidth("00.") + _surface.widestChar() + 5;
-				index = 0;
-				break;
+				_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
+				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
+			} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
+					|| (keyState.keycode == Common::KEYCODE_RIGHT && index < (int)filename.size() && pt.x < (_bounds.right - BUTTON_SIZE - 20))
+					|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
+					|| (keyState.keycode == Common::KEYCODE_END)) {
+				_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
+				if (currentChar)
+					_surface.writeString(charString, pt, COMMAND_HIGHLIGHTED);
 
-			case Common::KEYCODE_END:
-				pt.x = _surface.stringWidth("00.") + _surface.stringWidth(filename) + _surface.widestChar() + 5;
-				index = filename.size();
-
-				while (filename[index - 1] == ' ' && index > 0) {
+				switch (keyState.keycode) {
+				case Common::KEYCODE_LEFT:
 					pt.x -= _surface.charWidth(filename[index - 1]);
 					--index;
+					break;
+
+				case Common::KEYCODE_RIGHT:
+					pt.x += _surface.charWidth(filename[index]);
+					++index;
+					break;
+
+				case Common::KEYCODE_HOME:
+					pt.x = _surface.stringWidth("00.") + _surface.widestChar() + 5;
+					index = 0;
+					break;
+
+				case Common::KEYCODE_END:
+					pt.x = _surface.stringWidth("00.") + _surface.stringWidth(filename) + _surface.widestChar() + 5;
+					index = filename.size();
+
+					while (filename[index - 1] == ' ' && index > 0) {
+						pt.x -= _surface.charWidth(filename[index - 1]);
+						--index;
+					}
+					break;
+
+				default:
+					break;
 				}
-				break;
-
-			default:
-				break;
-			}
-		} else if (keyState.keycode == Common::KEYCODE_INSERT) {
-			insert = !insert;
-			if (insert)
-				cursorColor = 192;
-			else
-				cursorColor = 200;
-
-		} else if (keyState.keycode == Common::KEYCODE_DELETE) {
-			filename.deleteChar(index);
-
-			_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
-			_surface.writeString(filename + index, pt, COMMAND_HIGHLIGHTED);
-
-		} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
-			done = 1;
-
-		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-			_selector = -1;
-			render(RENDER_NAMES_AND_SCROLLBAR);
-			done = -1;
-		}
-
-		if ((keyState.ascii >= ' ') && (keyState.ascii <= 'z') && (index < 50)) {
-			if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w - BUTTON_SIZE - 20) {
+			} else if (keyState.keycode == Common::KEYCODE_INSERT) {
+				insert = !insert;
 				if (insert)
-					filename.insertChar(keyState.ascii, index);
+					cursorColor = 192;
 				else
-					filename.setChar(keyState.ascii, index);
+					cursorColor = 200;
+			} else if (keyState.keycode == Common::KEYCODE_DELETE) {
+				filename.deleteChar(index);
 
-				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9,
-					pt.y + _surface.fontHeight()), TRANSPARENCY);
-				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
-				pt.x += _surface.charWidth(keyState.ascii);
-				++index;
+				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
+				_surface.writeString(filename + index, pt, COMMAND_HIGHLIGHTED);
+			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
+				done = 1;
+			} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+				_selector = -1;
+				render(RENDER_NAMES_AND_SCROLLBAR);
+				done = -1;
+			}
+
+			if ((keyState.ascii >= ' ') && (keyState.ascii <= 'z') && (index < 50)) {
+				if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w - BUTTON_SIZE - 20) {
+					if (insert)
+						filename.insertChar(keyState.ascii, index);
+					else
+						filename.setChar(keyState.ascii, index);
+
+					_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9,
+						pt.y + _surface.fontHeight()), TRANSPARENCY);
+					_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
+					pt.x += _surface.charWidth(keyState.ascii);
+					++index;
+				}
 			}
 		}
 	} while (!done && !_vm->shouldQuit());
