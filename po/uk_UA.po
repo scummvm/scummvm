@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-16 04:31+0000\n"
+"POT-Creation-Date: 2021-12-17 17:12+0000\n"
 "PO-Revision-Date: 2021-12-09 22:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4367,7 +4367,7 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
 #: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187
 #: engines/saga/detection_tables.h:1220 engines/saga/detection_tables.h:1279
-#: engines/sci/detection_tables.h:4955 engines/sci/detection_tables.h:4963
+#: engines/sci/detection_tables.h:4975 engines/sci/detection_tables.h:4983
 #: engines/sherlock/detection_tables.h:224 engines/stark/detection.cpp:320
 #: engines/teenagent/detection.cpp:118 engines/trecision/detection.cpp:200
 #: engines/zvision/detection_tables.h:191
@@ -6216,7 +6216,7 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr "Помилка читання файлу ресурсів гри."
 
-#: engines/sci/detection_tables.h:4303
+#: engines/sci/detection_tables.h:4321
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
