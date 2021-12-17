@@ -195,7 +195,7 @@ void WidgetBase::makeInfoArea(Surface &s) {
 	s.SHtransBlitFrom(images[0], Common::Point(0, 0));
 	s.SHtransBlitFrom(images[1], Common::Point(s.width() - images[1]._width, 0));
 	s.SHtransBlitFrom(images[2], Common::Point(0, s.height() - images[2]._height));
-	s.SHtransBlitFrom(images[3], Common::Point(s.width() - images[3]._width, s.height()));
+	s.SHtransBlitFrom(images[3], Common::Point(s.width() - images[3]._width, s.height() - images[3]._height));
 
 	// Draw the top of the Info Box
 	s.hLine(images[0]._width, 0, s.width() - images[1]._width, INFO_TOP);
