@@ -3471,6 +3471,23 @@ void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
 	}
 }
 
+bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
+	int16 itemId = _mapMonsters[monsterId]._itemId_Weapon;
+	
+	if (_items[itemId].field_16 != 0)
+		return false;
+
+	return _items[itemId].field17_attackTypeDefense == attackType;
+}
+
+void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
+	warning("STUB - getDeathTypeDescription");
+}
+
+void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2, int16 monsterId) {
+	warning("STUB - getXPAndSearchCorpse");
+}
+
 void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -3532,7 +3549,24 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var64 = _items[unk_monsterField5_itemId]._attacks *_npcBuf[_teamCharId[teamCharId]]._speed;
 
 					warning("STUB: handleFight - Action A - Loop var84");
-
+					// Action A - Loop var84 - Start
+					for (int16 var84 = 0; var84 < var64; ++var84) {
+						if (getRandom(100) < charScore) {
+							++var62;
+							if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[unk_monsterField5_itemId]._attackType)) {
+								int16 var7C = getRandom(_items[unk_monsterField5_itemId]._damage);
+								varInt = var7C - var76;
+								if (varInt > 0) {
+									originalDamage += varInt;
+									damagePointsAbsorbed += var76;
+								} else {
+									damagePointsAbsorbed += var7C;
+								}
+							}
+						}
+					}
+					// Action A - Loop var84 - End
+					
 					if (originalDamage < 0)
 						originalDamage = 0;
 
@@ -3567,7 +3601,29 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
 					copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
 					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
-						warning("STUB: handleFight - Action A - Check degats");
+						// Action A - Check damages - Start
+						if (var62 == 0) {
+							sprintf((char *)_messageToBePrinted, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+						} else if (hitPoints <= 0){
+							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+						} else if (hitPoints == 1) {
+							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
+								getDeathTypeDescription(groupId, teamCharId + 1000);
+								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
+							} else {
+								strcat((char *)_messageToBePrinted, "!");
+							}
+						} else {
+							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
+								getDeathTypeDescription(groupId, teamCharId + 1000);
+								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
+							} else {
+								strcat((char *)_messageToBePrinted, "!");
+							}
+						}
+						// Action A - Check damages - End
 						warning("STUB: handleFight - Action A - Shitload of checks in cascade");
 						warning("STUB: handleFight - Action A - Second Shitload of checks in cascade");
 						if (var5C)
@@ -3576,7 +3632,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						warning("STUB: handleFight - Action A - Check if item broke");
 						warning("STUB: handleFight - Action A - Check effect");						
 					} else {
-						sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn',27h,'t work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+						sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 					}
 
 					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
