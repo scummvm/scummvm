@@ -375,6 +375,9 @@ private:
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
+	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
+	void getDeathTypeDescription(int16 attackerId, int16 victimId);
+	void getXPAndSearchCorpse(int16 charId, char* namePt1, char* namePt2, int16 monsterId);
 	void handleFight_lastAction_A(int16 teamCharId);
 	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
