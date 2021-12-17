@@ -51,7 +51,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Make Serrated Scalpel darts closer in speed to the original.
    - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
    - Process pending key presses in the order they were made, not the most
-     recently first.
+     recent first.
 
  Xeen:
    - Fix crash on startup loading constants from xeen.ccs.
