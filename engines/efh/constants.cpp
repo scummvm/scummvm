@@ -393,4 +393,6 @@ const uint8 kByte2C7D0[60] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+const char kPossessive[3][4] = { 'his', 'her', 'its'};
+
 } // End of namespace Efh

@@ -46,6 +46,7 @@ extern const Font kFontData[96];
 extern const Encounter kEncounters[];
 extern const char kSkillArray[37][20];
 extern const uint8 kByte2C7D0[60];
+extern const char kPossessive[3][4];
 
 } // End of namespace Efh
 
