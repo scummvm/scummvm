@@ -165,6 +165,11 @@ void Stru32686::init() {
 	}
 }
 
+void Stru3244C::init() {
+	_field0 = 0;
+	_field2 = 0;
+}
+
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -224,10 +229,14 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	for (int i = 0; i < 20; ++i) {
 		_portraitSubFilesArray[i] = nullptr;
-		_ennemyNamePt2[i] = 0;
-		_characterNamePt2[i] = 0;
-		_nameBuffer[i] = 0;
 	}
+
+	memset(_characterNamePt1, 0, 5);
+	memset(_characterNamePt2, 0, 20);
+	memset(_enemyNamePt1, 0, 5);
+	memset(_enemyNamePt2, 0, 20);
+	memset(_nameBuffer, 0, 20);
+	memset(_attackBuffer, 0, 20);
 
 	for (int i = 0; i < 100; ++i) {
 		_imp1PtrArray[i] = nullptr;
@@ -255,6 +264,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_unkArray2C8AA[i] = 0;
 		_word32680[i] = 0;
 		_word32482[i] = 0;
+		_word3267A[i] = -1;
+		_teamLastAction[i] = 0;
 	}
 
 	for (int i = 0; i < 5; ++i) {
@@ -298,6 +309,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	}
 
 	memset(_messageToBePrinted, 0, 400);
+	for (int i = 0; i < 8; ++i)
+		_stru3244C[i].init();
 }
 
 EfhEngine::~EfhEngine() {
@@ -1871,9 +1884,9 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int posX, int posY, int maxX,
 					var110 = sub1C219((uint8 *)"Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
-					copyString(_npcBuf[_teamCharId[counter]]._name, _ennemyNamePt2);
+					copyString(_npcBuf[_teamCharId[counter]]._name, _enemyNamePt2);
 					copyString(_items[var110]._name, _nameBuffer);
-					sprintf(dest, "%s finds a %s!", _ennemyNamePt2, _nameBuffer);
+					sprintf(dest, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
@@ -2959,9 +2972,9 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		for (int16 counter = 0; counter < _teamSize; ++counter) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				displayMonsterAnim(monsterId);
-				copyString(_npcBuf[var58]._name, _ennemyNamePt2);
+				copyString(_npcBuf[var58]._name, _enemyNamePt2);
 				copyString(_npcBuf[_teamCharId[counter]]._name, _characterNamePt2);
-				sprintf(buffer, "%s asks that %s leave your party.", _ennemyNamePt2, _characterNamePt2);
+				sprintf(buffer, "%s asks that %s leave your party.", _enemyNamePt2, _characterNamePt2);
 				for (int16 i = 0; i < 2; ++i) {
 					unkFct_displayMenuBox_2(0);
 					_textColor = 0xE;
@@ -3231,10 +3244,442 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	return _tileFact[imageSetId * 2];
 }
 
+void EfhEngine::sub1BCA7(int16 monsterId) {
+	warning("STUB: sub1BE89");
+}
+
+void EfhEngine::reset_stru32686() {
+	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
+		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+			_stru32686[counter1]._field0[counter2] = 0;
+			_stru32686[counter1]._field2[counter2] = 0;
+		}
+	}
+}
+
+void EfhEngine::sub1BE89(int16 monsterId) {
+	sub1BCA7(monsterId);
+	reset_stru32686();
+}
+
+void EfhEngine::resetTeamMonsterIdArray() {
+	for (int i = 0; i < 5; ++i) {
+		_teamMonsterIdArray[i] = -1;
+	}
+}
+
+bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
+	if (_npcBuf[_teamCharId[teamMemberId]]._hitPoints > 0 && _teamCharStatus[teamMemberId]._status == 0)
+		return true;
+
+	return false;
+}
+
+void EfhEngine::sub1CDFA() {
+	warning("STUB: sub1CDFA");
+}
+
+bool EfhEngine::sub1CB27() {
+	warning("STUB: sub1CB27");
+
+	return false;
+}
+
+void EfhEngine::sub1BE9A(int16 monsterId) {
+	warning("STUB sub1BE9A");
+}
+
+int16 EfhEngine::getTeamMonsterAnimId() {
+	int16 retVal = 0xFF;
+	for (int16 counter = 0; counter < 5; ++counter) {
+		int16 monsterGroupId = _teamMonsterIdArray[counter];
+		if (monsterGroupId == -1)
+			continue;
+
+		if (!unkFct_checkMonsterField8(monsterGroupId, false))
+			continue;
+
+		retVal = kEncounters[_mapMonsters[monsterGroupId]._MonsterRef]._animId;
+		break;
+	}
+
+	if (retVal == 0xFF)
+		retVal = kEncounters[_mapMonsters[_teamMonsterIdArray[0]]._MonsterRef]._animId;
+
+	return retVal;
+}
+
+void EfhEngine::sub1C4CA(bool WhiteFl) {
+	warning("STUB: sub1C4CA");
+}
+
+void EfhEngine::displayCombatMenu(int16 charId) {
+	char buffer[80];
+	copyString(_npcBuf[charId]._name, buffer);
+	strcat(buffer, ":");
+	setTextColorWhite();
+	setTextPos(144, 7);
+	displayStringAtTextPos(buffer);
+	setTextPos(152, 79);
+	displayStringAtTextPos("A");
+	setTextColorRed();
+	displayStringAtTextPos("ttack");
+	setTextPos(195, 79);
+	setTextColorWhite();
+	displayStringAtTextPos("H");
+	setTextColorRed();
+	displayStringAtTextPos("ide");
+	setTextPos(152, 88);
+	setTextColorWhite();
+	displayStringAtTextPos("D");
+	setTextColorRed();
+	displayStringAtTextPos("efend");
+	setTextPos(195, 88);
+	setTextColorWhite();
+	displayStringAtTextPos("R");
+	setTextColorRed();
+	displayStringAtTextPos("un");
+	setTextPos(152, 97);
+	setTextColorWhite();
+	displayStringAtTextPos("S");
+	setTextColorRed();
+	displayStringAtTextPos("tatus");
+}
+
+void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
+	for (int16 counter = 0; counter < 2; ++counter) {
+		if (counter == 0 || forceDrawFl) {
+			drawMapWindow();
+			displayCenteredString("Combat", 128, 303, 9);
+			drawColoredRect(200, 112, 278, 132, 0);
+			displayCenteredString("'T' for Terrain", 128, 303, 117);
+			sub1C219(nullptr, 1, 0, false);
+			sub1C4CA(whiteFl);
+			displayCombatMenu(charId);
+			displayLowStatusScreen(false);
+		}
+
+		if (counter == 0 && forceDrawFl)
+			displayFctFullScreen();
+	}
+}
+
+void EfhEngine::handleFight_checkEndEffect(int16 charId) {
+	// In the original, this function is part of handleFight.
+	// It has been split for readability purposes.
+	if (_teamCharStatus[charId]._status == 0)
+		return;
+	if (--_teamCharStatus[charId]._duration != 0)
+		return;
+
+	// At this point : The status is different to 0 (normal) and the effect duration is finally 0 (end of effect)
+	copyString(_npcBuf[_teamCharId[charId]]._name, _enemyNamePt2);
+	if ((_npcBuf[_teamCharId[charId]]._possessivePronounSHL6 >> 6) == 2) {
+		strcpy(_enemyNamePt1, "The ");
+	} else {
+		_enemyNamePt1[0] = 0;
+	}
+
+	// End of effect message depends on the type of effect
+	switch (_teamCharStatus[charId]._status) {
+	case 1:
+		sprintf((char *)_messageToBePrinted, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
+		break;
+	case 2:
+		sprintf((char *)_messageToBePrinted, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
+		break;
+	default:
+		sprintf((char *)_messageToBePrinted, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
+		break;
+	}
+
+	// The character status is back to normal
+	_teamCharStatus[charId]._status = 0;
+
+	// Finally, display the message
+	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
+int16 EfhEngine::sub1DEC8(int16 groupNumber) {
+	warning("STUB: sub1DEC8");
+	return -1;
+}
+
+int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
+	warning("STUB - getCharacterScore");
+	return 90;
+}
+
+bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
+	switch(_techData[_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
+	case 1:
+		if ((itemId < 0x58 || itemId > 0x68) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x74 || itemId > 0x76) && (itemId != 0x8C))
+			return true;
+		return false;
+	case 2:
+		if ((itemId < 0x61 || itemId > 0x63) && (itemId < 0x74 || itemId > 0x76) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x5B || itemId > 0x5E) && (itemId < 0x66 || itemId > 0x68) && (itemId != 0x8C))
+			return true;
+		return false;
+	default:
+		return true;
+	}
+}
+
+void EfhEngine::generateSound(int16 soundType) {
+	warning("STUB: generateSound");
+}
+
+void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
+	if (repeatCount <= 0)
+		return;
+
+	switch (soundType) {
+	case 0:
+	case 1:
+	case 2:
+		generateSound(5);
+		break;
+	case 3:
+	case 4:
+	case 6:
+		generateSound(9);
+		break;
+	case 5:
+	case 7:
+		generateSound(13);
+		break;
+	case 8:
+	case 9:
+	case 10:
+		generateSound(10);
+		generateSound(9);
+		break;
+	case 14:
+		generateSound(14);
+		break;
+	case 11:
+	case 12:
+	case 13:
+		for (int16 counter = 0; counter < repeatCount; ++counter) {
+			generateSound(17);
+		}
+		break;
+	case 15:
+		generateSound(16);
+	default:
+		break;
+	}
+}
+
+void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
+	// In the original, this function is part of handleFight.
+	// It has been split for readability purposes.
+
+	int16 unk_monsterField5_itemId = sub1C80A(_teamCharId[teamCharId], 9, true);
+	if (unk_monsterField5_itemId == 0x7FFF)
+		unk_monsterField5_itemId = 0x3F;
+	int16 monsterGroupNumber = _word3267A[teamCharId];
+	if (monsterGroupNumber == 0x64)
+		monsterGroupNumber = 0;
+
+	if (monsterGroupNumber == -1)
+		return;
+	int16 var58;
+	if (_items[unk_monsterField5_itemId]._range == 4)
+		var58 = 5;
+	else
+		var58 = monsterGroupNumber + 1;
+
+	int16 var54;
+	int16 teamMemberId;
+	if (_items[unk_monsterField5_itemId]._range < 3) {
+		teamMemberId = sub1DEC8(monsterGroupNumber);
+		var54 = teamMemberId + 1;
+	} else {
+		teamMemberId = 0;
+		var54 = 9;
+	}
+
+	if (teamMemberId != -1) {
+		bool var6E = true;
+		for (int16 groupId = monsterGroupNumber; groupId < var58; ++groupId) {
+			if (_teamMonsterIdArray[groupId] == -1)
+				continue;
+
+			for (int16 var7E = teamMemberId; var7E < var54; ++var7E) {
+				if (sub1BA9B(groupId, var7E) && var6E) {
+					int16 var5C;
+					if (unkFct_checkMonsterField8(groupId, true)) {
+						sub1E028(groupId, 9, true);
+						*_unkArray2C8AA += 500;
+						var5C = -1;
+					} else
+						var5C = 0;
+
+					int16 var76 = getRandom(_mapMonsters[_teamMonsterIdArray[groupId]]._field_6);
+					int16 varInt = _teamCharId[teamCharId];
+					int16 var51 = _npcBuf[varInt]._possessivePronounSHL6;
+					var51 >>= 6;
+					int16 var70 = var51;
+					varInt = _teamMonsterIdArray[groupId];
+					int16 var5E = kEncounters[_mapMonsters[varInt]._MonsterRef]._nameArticle;
+					int16 charScore = getCharacterScore(_teamCharId[teamCharId], unk_monsterField5_itemId);
+					int16 var80 = _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E];
+					int16 var62 = 0;
+					int16 hitPoints = 0;
+					int16 originalDamage = 0;
+					int16 damagePointsAbsorbed = 0;
+					int16 var64 = _items[unk_monsterField5_itemId]._attacks *_npcBuf[_teamCharId[teamCharId]]._speed;
+
+					warning("STUB: handleFight - Action A - Loop var84");
+
+					if (originalDamage < 0)
+						originalDamage = 0;
+
+					hitPoints = originalDamage + damagePointsAbsorbed;
+					
+					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
+						var62 = 0;
+
+					if (var62 > 0) {
+						_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] -= originalDamage;
+						if (var62 > 1) {
+							sprintf(_attackBuffer, "%d times ", var62);
+						} else {
+							*_attackBuffer = 0;
+						}
+					}
+					int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
+					int16 var6A = getRandom(3) - 1;
+					if (var5E == 2) {
+						strcpy(_characterNamePt1, "The ");
+					} else {
+						*_characterNamePt1 = 0;
+					}
+
+					if (var70 == 2) {
+						strcpy(_enemyNamePt1, "The ");
+					} else {
+						*_enemyNamePt1 = 0;
+					}
+
+					strcpy(_characterNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._MonsterRef]._name);
+					copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
+					copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
+						warning("STUB: handleFight - Action A - Check degats");
+						warning("STUB: handleFight - Action A - Shitload of checks in cascade");
+						warning("STUB: handleFight - Action A - Second Shitload of checks in cascade");
+						if (var5C)
+							strcat((char *)_messageToBePrinted, "  Your actions do not go un-noticed...");
+
+						warning("STUB: handleFight - Action A - Check if item broke");
+						warning("STUB: handleFight - Action A - Check effect");						
+					} else {
+						sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn',27h,'t work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+					}
+
+					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
+					sub1C219(_messageToBePrinted, 1, 2, true);
+				}
+			}
+		}
+	}
+}
+
 bool EfhEngine::handleFight(int16 monsterId) {
 	warning("STUB - handleFight");
-	
-	return false;
+
+	int16 var8C = 0;
+
+	sub1BE89(monsterId);
+
+	if (_teamMonsterIdArray[0] == -1) {
+		resetTeamMonsterIdArray();
+		_word2D0BC = false;
+		displayAnimFrames(0xFE, true);
+		return true;
+	}
+
+	drawCombatScreen(0, false, true);
+
+	for (bool mainLoopCond = false; !mainLoopCond;) {
+		if (isTPK()) {
+			resetTeamMonsterIdArray();
+			_word2D0BC = false;
+			displayAnimFrames(0xFE, true);
+			return false;
+		}
+
+		if (_teamMonsterIdArray[0] == -1) {
+			resetTeamMonsterIdArray();
+			_word2D0BC = false;
+			displayAnimFrames(0xFE, true);
+			return true;
+		}
+
+		int16 varInt = getTeamMonsterAnimId();
+		displayAnimFrames(varInt, true);
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			_word32680[counter] = 100;
+			_word32482[counter] = 65;
+		}
+
+		if (!sub1CB27()) {
+			resetTeamMonsterIdArray();
+			_word2D0BC = false;
+			totalPartyKill();
+			displayAnimFrames(0xFE, true);
+			return false;
+		}
+
+		for (int16 counter = 0; counter < _teamSize; ++counter) {
+			if (_teamLastAction[counter] == 0x52)
+				mainLoopCond = true;
+		}
+
+		sub1CDFA();
+		sub1C219(nullptr, 2, 1, false);
+
+		for (int16 counter = 0; counter < 8; ++counter) {
+			int16 monsterGroupIdOrMonsterId = _stru3244C[counter]._field0;
+			if (monsterGroupIdOrMonsterId == -1)
+				continue;
+			if (monsterGroupIdOrMonsterId > 999) {
+				monsterGroupIdOrMonsterId -= 1000;
+				if (!isTeamMemberStatusNormal(monsterGroupIdOrMonsterId)) {
+					handleFight_checkEndEffect(monsterGroupIdOrMonsterId);
+				} else {
+					switch (_teamLastAction[monsterGroupIdOrMonsterId]) {
+					case 0x41:// 'A'ttack
+						handleFight_lastAction_A(monsterGroupIdOrMonsterId);
+						break;
+					case 0x44: // 'D'efend
+						warning("STUB: handlefight - last action == 44h");
+						break;
+					case 0x48: // 'H'ide
+						warning("STUB: handlefight - last action == 48h");
+						break;
+					case 0x55: // 'U'
+						warning("STUB: handlefight - last action == 55h");
+						break;
+					default:
+						break;
+					}
+				}
+			} else if (unkFct_checkMonsterField8(monsterGroupIdOrMonsterId, true)) {
+				warning("STUB - handleFight - loop var86");
+			}
+		}
+
+		sub174A0();
+		sub1BE9A(monsterId);
+	}
+
+	resetTeamMonsterIdArray();
+	_word2D0BC = false;
+	displayAnimFrames(0xFE, true);
+	return true;
 }
 
 void EfhEngine::displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str) {

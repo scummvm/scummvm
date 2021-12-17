@@ -221,6 +221,13 @@ struct Stru32686 {
 	void init();
 };
 
+struct Stru3244C {
+	int16 _field0;
+	int16 _field2;
+
+	void init();
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const EfhGameDescription *gd);
@@ -350,6 +357,25 @@ private:
 	void sub22AA8(int16 arg0);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
+	void sub1BCA7(int16 monsterId);
+	void reset_stru32686();
+	void sub1BE89(int16 monsterId);
+	void resetTeamMonsterIdArray();
+	bool isTeamMemberStatusNormal(int16 id);
+	void sub1CDFA();
+	bool sub1CB27();
+	void sub1BE9A(int16 monsterId);
+	int16 getTeamMonsterAnimId();
+	void sub1C4CA(bool WhiteFl);
+	void displayCombatMenu(int16 charId);
+	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
+	void handleFight_checkEndEffect(int16 charId);
+	int16 sub1DEC8(int16 groupNumber);
+	int16 getCharacterScore(int16 charId, int16 itemId);
+	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
+	void generateSound(int16 soundType);
+	void genericGenerateSound(int16 soundType, int16 repeatCount);
+	void handleFight_lastAction_A(int16 teamCharId);
 	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
 	void displayStatusMenu(int16 windowId);
@@ -451,9 +477,12 @@ private:
 	AnimInfo _animInfo[100];
 	uint8 _history[256];
 	uint8 _techData[4096];
-	char _ennemyNamePt2[20];
+	char _enemyNamePt1[5];
+	char _enemyNamePt2[20];
+	char _characterNamePt1[5];
 	char _characterNamePt2[20];
 	char _nameBuffer[20];
+	char _attackBuffer[20];
 	uint8 _messageToBePrinted[400];
 	
 	uint8 *_mapBitmapRef;
@@ -495,6 +524,7 @@ private:
 	int16 _teamMonsterIdArray[5];
 	CharStatus _teamCharStatus[3];
 	int16 _unkArray2C8AA[3];
+	int16 _teamLastAction[3];
 	int16 _teamSize;
 	int16 _word2C872;
 	bool _word2C880;
@@ -523,9 +553,11 @@ private:
 	int16 _word2D0BA;
 	int16 _word32680[3];
 	int16 _word32482[3];
+	int16 _word3267A[3];
 
 	int16 _word3273A[15];
 	Stru32686 _stru32686[5];
+	Stru3244C _stru3244C[8];
 };
 
 } // End of namespace Efh
