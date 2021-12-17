@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
-#include "common/stack.h"
+#include "common/queue.h"
 #include "sherlock/image_file.h"
 
 namespace Sherlock {
@@ -61,7 +61,7 @@ public:
 	bool _oldButtons;
 	bool _oldRightButton;
 	bool _firstPress;
-	Common::Stack<Common::KeyState> _pendingKeys;
+	Common::Queue<Common::KeyState> _pendingKeys;
 	Common::Point _hotspotPos;
 public:
 	Events(SherlockEngine *vm);
