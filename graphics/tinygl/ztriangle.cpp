@@ -703,7 +703,7 @@ void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffer
 	if (_depthWrite && _depthTestEnabled)
 		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
 	else
-		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
