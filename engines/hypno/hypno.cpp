@@ -136,7 +136,6 @@ Common::Error HypnoEngine::run() {
 
 	// Main event loop
 	loadAssets();
-	//resetSceneState();
 
 	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {

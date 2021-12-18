@@ -152,13 +152,25 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("c4"); // depens on the difficulty
 	sc->hots[4].actions.push_back(cl);
 
-	loadSceneLevel("int_roof.mi_", "recept.mi_", prefix);
+	loadSceneLevel("int_roof.mi_", "", prefix);
 	sc = (Scene *) _levels["int_roof.mi_"];
-	sc->intros.push_back("cine/leapup.smk");
+	cl = new ChangeLevel("recept.mi_");
+	sc->hots[1].actions.push_back(cl);
+	cl = new ChangeLevel("<boil_selector>");
+	sc->hots[2].actions.push_back(cl);
 	Overlay *over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\ROOFB1.SMK"; // seems to be a bug?
 
 	loadSceneLevel("alofintr.mi_", "<boil_selector>", prefix);
+	sc = (Scene *) _levels["alofintr.mi_"];
+	sc->intros.push_back("cine/swc002as.smk");
+	// This is necessary, for some reason
+	Global *gl = new Global("GS_SWITCH1", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+	gl = new Global("GS_SWITCH4", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+	gl = new Global("GS_SWITCH5", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 	
 	Transition *boil_selector = new Transition("boiler.mi_", "boilhard.mi_");
 	_levels["<boil_selector>"] = boil_selector;
@@ -168,9 +180,21 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["boiler.mi_"];
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
+
+	Code *fuse_panel = new Code();
+	fuse_panel->name = "<fuse_panel>";
+	fuse_panel->levelIfWin = "boiler.mi_";
+	_levels["<fuse_panel>"] = fuse_panel;
 	
-	cl = new ChangeLevel("int_roof.mi_");
+	cl = new ChangeLevel("<back_roof_1>");
 	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<fuse_panel>");
+	sc->hots[3].actions.push_back(cl);
+
+	Transition *back_roof_1 = new Transition("int_roof.mi_");
+	_levels["<back_roof_1>"] = back_roof_1;
+	_levels["<back_roof_1>"]->intros.push_back("spider/cine/leapup.smk");
 
 	loadSceneLevel("boilhard.mi_", "", prefix);
 	sc = (Scene *) _levels["boilhard.mi_"];
@@ -187,9 +211,16 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("recept.mi_", "", prefix);
 	sc = (Scene *) _levels["recept.mi_"];
+	sc->intros.push_back("cine/recpinto.smk");
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\rec0B1.SMK"; // seems to be a bug?
 
+	cl = new ChangeLevel("<back_roof_2>");
+	sc->hots[2].actions.push_back(cl);
+
+	Transition *back_roof_2 = new Transition("int_roof.mi_");
+	_levels["<back_roof_2>"] = back_roof_2;
+	_levels["<back_roof_2>"]->intros.push_back("spider/cine/recpout.smk");
 
 	loadArcadeLevel("c4.mi_", "c2", prefix);
 	loadArcadeLevel("c2.mi_", "decide4.mi_", prefix);
@@ -278,7 +309,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[3].actions.push_back(cl);
 	sc->hots[4].actions.push_back(cl);
 
-	Global *gl = new Global("GS_LEVELWON", "TURNON");
+	gl = new Global("GS_LEVELWON", "TURNON");
 	sc->hots[5].actions.push_back(gl);
 	cl = new ChangeLevel("mainmenu.mi_");
 	sc->hots[6].actions.push_back(cl);
@@ -333,7 +364,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *over_apt_1 = new Transition("tryagain.mi_");
 	over_apt_1->intros.push_back("spider/cine/apts01as.smk");
 	_levels["<over_apt_1>"] = over_apt_1;
-	_nextLevel = "<start>";
+	_nextLevel = "recept.mi_";
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -410,6 +441,8 @@ void SpiderEngine::runCode(Code *code) {
 		runMatrix(code);
 	else if (code->name == "<note>")
 		runNote(code);
+	else if (code->name == "<fuse_panel>")
+		runFusePanel(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -693,6 +726,60 @@ void SpiderEngine::runNote(Code *code) {
 		g_system->delayMillis(10);
 	}
 }
+
+
+void SpiderEngine::runFusePanel(Code *code) {
+	changeScreenMode("640x480");
+	Common::Point mousePos;
+	Common::Event event;
+
+	defaultCursor();
+	Common::Rect fuses(363, 52, 598, 408);
+	Common::Rect back(0, 446, 640, 480);
+
+	//MVideo *v;
+	loadImage("spider/int_alof/fuse.smk", 0, 0, false);
+
+	//playVideo(*v);
+	while (!shouldQuit()) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (fuses.contains(mousePos)) {
+				    int x = (mousePos.x - 364) / (235 / 2.);
+				    int y = (mousePos.y - 54) / (355 / 10.);
+					int s = 10* x + y + 1;
+
+					if (s == 1) {
+						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"]; 
+					} else if (s == 2) {
+
+					}
+
+				} else if (back.contains(mousePos)) {
+					_nextLevel = code->levelIfWin;
+					return;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
+
 
 void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");

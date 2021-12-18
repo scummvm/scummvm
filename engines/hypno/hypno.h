@@ -298,6 +298,7 @@ public:
 private:
 	void runMatrix(Code *code);
 	void runNote(Code *code);
+	void runFusePanel(Code *code);
 };
 
 class BoyzEngine : public HypnoEngine {

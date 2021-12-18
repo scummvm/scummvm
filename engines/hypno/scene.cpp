@@ -249,6 +249,10 @@ void HypnoEngine::runScene(Scene *scene) {
 	Common::List<uint32> videosToRemove;
 	bool enableLoopingVideos = true;
 
+	// These variables are always resetted
+	_sceneState["GS_LEVELCOMPLETE"] = 0;
+	_sceneState["GS_LEVELWON"] = 0;
+
 	stack.clear();
 	_nextHotsToAdd = &scene->hots;
 	defaultCursor();
