@@ -33,6 +33,8 @@ void SpiderEngine::runCode(Code *code) {
 		runNote(code);
 	else if (code->name == "<fuse_panel>")
 		runFusePanel(code);
+	else if (code->name == "<recept>")
+		runRecept(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -175,38 +177,38 @@ void SpiderEngine::runNote(Code *code) {
 	Common::String secondSolution;
 
 	switch (_language) {
-		case Common::EN_USA:
-			alpha = alphaEN;
-			if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-				firstSentence = (char*) &placeEasyEN;
-				secondSentence = (char*) &placeEasy2;
-				firstSolution = solEasyEN1;
-				secondSolution = solEasyEN2;
-			} else { // hard 
-				firstSentence = (char*) &placeHardEN;
-				secondSentence = (char*) &placeHardEN2;
-				firstSolution = solHardEN1;
-				secondSolution = solHardEN2;
-			}
-		break;
+	case Common::EN_USA:
+		alpha = alphaEN;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyEN;
+			secondSentence = (char*) &placeEasy2;
+			firstSolution = solEasyEN1;
+			secondSolution = solEasyEN2;
+		} else { // hard 
+			firstSentence = (char*) &placeHardEN;
+			secondSentence = (char*) &placeHardEN2;
+			firstSolution = solHardEN1;
+			secondSolution = solHardEN2;
+		}
+	break;
 	
-		case Common::ES_ESP:
-			alpha = alphaES;
-			if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-				firstSentence = (char*) &placeEasyES;
-				secondSentence = (char*) &placeEasy2;
-				firstSolution = solEasyES1; 
-				secondSolution = solEasyES2;
-			} else { // hard 
-				firstSentence = (char*) &placeHardES;
-				secondSentence = (char*) &placeHardES2;
-				firstSolution = solHardES1;
-				secondSolution = solHardES2;
-			}
-		break;
-		default:
-			error("Unsupported language");
-		break;
+	case Common::ES_ESP:
+		alpha = alphaES;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyES;
+			secondSentence = (char*) &placeEasy2;
+			firstSolution = solEasyES1; 
+			secondSolution = solEasyES2;
+		} else { // hard 
+			firstSentence = (char*) &placeHardES;
+			secondSentence = (char*) &placeHardES2;
+			firstSolution = solHardES1;
+			secondSolution = solHardES2;
+		}
+	break;
+	default:
+		error("Unsupported language");
+	break;
 	}
 
 	float firstSentenceLength = strlen(firstSentence);
@@ -317,6 +319,24 @@ void SpiderEngine::runNote(Code *code) {
 	}
 }
 
+void SpiderEngine::runRecept(Code *code) {
+
+	if (!_sceneState["GS_SWITCH3"]) { // lights off
+		MVideo v("spider/cine/recdark.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		_nextLevel = "int_roof.mi_";
+		return;
+	}
+	
+	if (_sceneState["GS_SWITCH2"]) { // camera on
+		MVideo v("spider/cine/iobs001s.smk", Common::Point(0, 0), false, true, false);
+		runIntro(v);
+		_nextLevel = "<over_apt_5>";
+		return;
+	}
+
+	_nextLevel = "recept.mi_";
+}
 
 void SpiderEngine::runFusePanel(Code *code) {
 	changeScreenMode("640x480");
@@ -351,7 +371,11 @@ void SpiderEngine::runFusePanel(Code *code) {
 					if (s == 1) {
 						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"]; 
 					} else if (s == 2) {
-
+						_sceneState["GS_SWITCH2"] = !_sceneState["GS_SWITCH2"];
+					} else if (s == 12) {
+						_sceneState["GS_SWITCH4"] = !_sceneState["GS_SWITCH4"];
+					} else if (s == 13) {
+						_sceneState["GS_SWITCH5"] = !_sceneState["GS_SWITCH5"];
 					}
 
 				} else if (back.contains(mousePos)) {

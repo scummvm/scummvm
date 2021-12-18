@@ -154,7 +154,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("int_roof.mi_", "", prefix);
 	sc = (Scene *) _levels["int_roof.mi_"];
-	cl = new ChangeLevel("recept.mi_");
+	cl = new ChangeLevel("<recept>");
 	sc->hots[1].actions.push_back(cl);
 	cl = new ChangeLevel("<boil_selector>");
 	sc->hots[2].actions.push_back(cl);
@@ -165,11 +165,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["alofintr.mi_"];
 	sc->intros.push_back("cine/swc002as.smk");
 	// This is necessary, for some reason
-	Global *gl = new Global("GS_SWITCH1", "TURNON");
+	Global *gl = new Global("GS_SWITCH1", "TURNON");	// alarm system
 	sc->hots[2].actions.push_back(gl);
-	gl = new Global("GS_SWITCH4", "TURNON");
+	gl = new Global("GS_SWITCH2", "TURNON");			// camera
 	sc->hots[2].actions.push_back(gl);
-	gl = new Global("GS_SWITCH5", "TURNON");
+	gl = new Global("GS_SWITCH3", "TURNON");			// lights recept
+	sc->hots[2].actions.push_back(gl);
+	gl = new Global("GS_SWITCH4", "TURNON");			// Side A door
+	sc->hots[2].actions.push_back(gl);
+	gl = new Global("GS_SWITCH5", "TURNON");			// Side B door
 	sc->hots[2].actions.push_back(gl);
 	
 	Transition *boil_selector = new Transition("boiler.mi_", "boilhard.mi_");
@@ -208,6 +212,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("alveroff.mi_", "", prefix);
 	Transition *alveroff_selector = new Transition("alveroff.mi_", "alverofh.mi_");
 	_levels["<alveroff_selector>"] = alveroff_selector;
+
+	Code *recept = new Code();
+	recept->name = "<recept>";
+	_levels["<recept>"] = recept;
 
 	loadSceneLevel("recept.mi_", "", prefix);
 	sc = (Scene *) _levels["recept.mi_"];
@@ -364,7 +372,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *over_apt_1 = new Transition("tryagain.mi_");
 	over_apt_1->intros.push_back("spider/cine/apts01as.smk");
 	_levels["<over_apt_1>"] = over_apt_1;
-	_nextLevel = "<start>";
+
+	Transition *over_apt_5 = new Transition("tryagain.mi_");
+	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
+	_levels["<over_apt_5>"] = over_apt_5;
+
+	_nextLevel = "decide3.mi_";
 }
 
 void SpiderEngine::loadAssetsDemo() {
