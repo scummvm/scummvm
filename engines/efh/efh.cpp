@@ -265,6 +265,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_word32680[i] = 0;
 		_word32482[i] = 0;
 		_word3267A[i] = -1;
+		_word31780[i] = 0;
 		_teamLastAction[i] = 0;
 	}
 
@@ -3830,6 +3831,51 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	}
 }
 
+void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
+	_word32482[teamCharId] -= 40;
+	copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
+	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
+
+	if (var70 == 2)
+		strcpy(_enemyNamePt1, "The ");
+	else
+		*_enemyNamePt1 = 0;
+
+	sprintf((char *)_messageToBePrinted, "%s%s prepares to defend %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
+	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
+void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
+	// In the original, this function is part of handleFight.
+	// It has been split for readability purposes.
+
+	_word32680[teamCharId] -= 50;
+	copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
+	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
+
+	if (var70 == 2)
+		strcpy(_enemyNamePt1, "The ");
+	else
+		*_enemyNamePt1 = 0;
+
+	sprintf((char *)_messageToBePrinted, "%s%s attempts to hide %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
+	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
+void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
+	int16 unk_monsterField5_itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
+	copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
+	copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
+	if (var70 == 2)
+		strcpy(_enemyNamePt1, "The ");
+	else
+		*_enemyNamePt1 = 0;
+
+	sprintf((char *)_messageToBePrinted, "%s%s uses %s %s!  ", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
 bool EfhEngine::handleFight(int16 monsterId) {
 	warning("STUB - handleFight");
 
@@ -3877,7 +3923,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		}
 
 		for (int16 counter = 0; counter < _teamSize; ++counter) {
-			if (_teamLastAction[counter] == 0x52)
+			if (_teamLastAction[counter] == 0x52) // 'R'
 				mainLoopCond = true;
 		}
 
@@ -3898,13 +3944,13 @@ bool EfhEngine::handleFight(int16 monsterId) {
 						handleFight_lastAction_A(monsterGroupIdOrMonsterId);
 						break;
 					case 0x44: // 'D'efend
-						warning("STUB: handlefight - last action == 44h");
+						handleFight_lastAction_D(monsterGroupIdOrMonsterId);
 						break;
 					case 0x48: // 'H'ide
-						warning("STUB: handlefight - last action == 48h");
+						handleFight_lastAction_H(monsterGroupIdOrMonsterId);
 						break;
-					case 0x55: // 'U'
-						warning("STUB: handlefight - last action == 55h");
+					case 0x55: // 'U'se
+						handleFight_lastAction_U(monsterGroupIdOrMonsterId);
 						break;
 					default:
 						break;
