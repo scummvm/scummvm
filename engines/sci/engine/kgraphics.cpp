@@ -341,9 +341,10 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
+	Common::String separatorString;
 	const char *separator = nullptr;
 	if ((argc > 4) && (argv[4].getSegment())) {
-		Common::String separatorString = s->_segMan->getString(argv[4]);
+		separatorString = s->_segMan->getString(argv[4]);
 		separator = separatorString.c_str();
 	}
 
