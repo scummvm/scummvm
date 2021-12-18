@@ -3780,8 +3780,44 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						if (var5C)
 							strcat((char *)_messageToBePrinted, "  Your actions do not go un-noticed...");
 
-						warning("STUB: handleFight - Action A - Check if item broke");
-						warning("STUB: handleFight - Action A - Check effect");						
+						// Action A - Check item durability - Start
+						varInt = _teamCharId[teamCharId];
+						var64 = sub1C80A(varInt, 9, false);
+						if (var64 != 0x7FFF && (_npcBuf[varInt]._inventory[var64]._stat1 & 0x7F) != 0x7F) {
+							var51 = _npcBuf[varInt]._inventory[var64]._stat1 & 0x7F;
+							--var51;
+							if (var51 <= 0) {
+								char buffer[80];
+								memset(buffer, 0, 80);
+								sprintf(buffer, "  * %s%s's %s breaks!", _enemyNamePt1, _enemyNamePt2, _nameBuffer);
+								strcat((char *)_messageToBePrinted, buffer);
+								setCharacterObjectToBroken(varInt, var64);
+								var6E = false;
+							} else {
+								_npcBuf[varInt]._inventory[var64]._stat1 = (_npcBuf[varInt]._inventory[var64]._stat1 & 80) + var51;
+							}
+						}
+						// Action A - Check item durability - End
+
+						// Action A - Check effect - Start
+						if (_items[unk_monsterField5_itemId].field_16 == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+							if (getRandom(100) < 35) {
+								_stru32686[var7E]._field0[groupId] = 1;
+								_stru32686[var7E]._field2[groupId] = getRandom(10);
+								char buffer[80];
+								memset(buffer, 0, 80);
+								sprintf(buffer, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
+								strcat((char *)_messageToBePrinted, buffer);
+							}
+						} else if (_items[unk_monsterField5_itemId].field_16 == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+							_stru32686[var7E]._field0[groupId] = 2;
+							_stru32686[var7E]._field2[groupId] = getRandom(10);
+							char buffer[80];
+							memset(buffer, 0, 80);
+							sprintf(buffer, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
+							strcat((char *)_messageToBePrinted, buffer);
+						}
+						// Action A - Check effect - End
 					} else {
 						sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 					}
