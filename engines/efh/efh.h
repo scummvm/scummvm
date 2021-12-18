@@ -380,6 +380,9 @@ private:
 	void getXPAndSearchCorpse(int16 charId, char* namePt1, char* namePt2, int16 monsterId);
 	void addReactionText(int16 id);
 	void handleFight_lastAction_A(int16 teamCharId);
+	void handleFight_lastAction_D(int16 teamCharId);
+	void handleFight_lastAction_H(int16 teamCharId);
+	void handleFight_lastAction_U(int16 teamCharId);
 	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
 	void displayStatusMenu(int16 windowId);
@@ -558,6 +561,7 @@ private:
 	int16 _word32680[3];
 	int16 _word32482[3];
 	int16 _word3267A[3];
+	int16 _word31780[3];
 
 	int16 _word3273A[15];
 	Stru32686 _stru32686[5];

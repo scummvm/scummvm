@@ -47,6 +47,7 @@ extern const Encounter kEncounters[];
 extern const char kSkillArray[37][20];
 extern const uint8 kByte2C7D0[60];
 extern const char kPossessive[3][4];
+extern const char kPersonal[3][4];
 extern const char kAttackVerbs[51][20];
 
 } // End of namespace Efh

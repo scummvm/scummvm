@@ -394,6 +394,7 @@ const uint8 kByte2C7D0[60] = {
 };
 
 const char kPossessive[3][4] = { "his", "her", "its"};
+const char kPersonal[3][4] = {"him", "her", "it"};
 
 const char kAttackVerbs[51][20] = {
 	"hits",
