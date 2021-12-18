@@ -45,11 +45,13 @@ public:
 	void setSamplingFilter(SamplingFilter filter) override;
 	void setLevelCount(uint32 count) override;
 	void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) override;
+	uint32 getTexture1x1Color() { return _texture1x1Color; }
 
 protected:
 	void updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr);
 
 	TinyGL::BlitImage *_blitImage;
+	uint32 _texture1x1Color;
 };
 
 } // End of namespace Gfx

@@ -52,6 +52,11 @@ void TinyGlBitmap::updateLevel(uint32 level, const Graphics::Surface *surface, c
 		delete convertedSurface;
 	} else {
 		assert(surface->format == Driver::getRGBAPixelFormat());
+		// W/A for 1x1 size texture
+		// store pixel color used later fo creating scalled texture
+		if (_width == 1 && _height == 1) {
+			_texture1x1Color = surface->getPixel(0, 0);
+		}
 		tglUploadBlitImage(_blitImage, *surface, 0, false);
 	}
 }

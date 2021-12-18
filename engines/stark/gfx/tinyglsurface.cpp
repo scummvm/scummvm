@@ -62,13 +62,25 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	int posY = viewport.getY() * verOffsetXY.getY() + nativeViewport.top;
 	TinyGL::BlitTransform transform(posX, posY);
 
-	// WA for not clipped textues in prompt dialog
+	// W/A for not clipped textures in prompt dialog
 	if (width == 256 && height == 256) {
 		blitTextureHeight = viewport.getY() - dest.y;
 		blitTextureWidth = viewport.getX() - dest.x;
 	}
 
 	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+
+	// W/A for 1x1 dimension texture
+	// it needs new filled and scalled texture based on one pixel color
+	if (blitTextureWidth == 1 && blitTextureHeight == 1) {
+		auto pixelColor = ((TinyGlBitmap *)const_cast<Texture *>(texture))->getTexture1x1Color();
+		Graphics::Surface surface;
+		surface.create(width, height, Driver::getRGBAPixelFormat());
+		surface.fillRect(Common::Rect(0, 0, width, height), pixelColor);
+		tglUploadBlitImage(blitImage, surface, 0, false);
+		surface.free();
+	}
+
 	transform.tint(1.0, 1.0 - _fadeLevel, 1.0 - _fadeLevel, 1.0 - _fadeLevel);
 	tglBlit(blitImage, transform);
 
