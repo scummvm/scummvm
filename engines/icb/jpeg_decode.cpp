@@ -442,7 +442,7 @@ static void njDecodeBlock(nj_component_t *c, byte *out) {
 		coef += (code >> 4) + 1;
 		if (coef > 63)
 			njThrow(NJ_SYNTAX_ERROR);
-		nj.block[njZZ[coef]] = value * nj.qtab[c->qtsel][coef];
+		nj.block[(int)njZZ[coef]] = value * nj.qtab[c->qtsel][coef];
 	} while (coef < 63);
 	for (coef = 0;  coef < 64;  coef += 8)
 		njRowIDCT(&nj.block[coef]);
