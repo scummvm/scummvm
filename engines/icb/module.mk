@@ -54,6 +54,7 @@ MODULE_OBJS := \
 	icon_list_manager.o \
 	icon_menu.o \
 	icon_menu_pc.o \
+	jpeg_decode.o \
 	keyboard.o \
 	light_pc.o \
 	line_of_sight.o \
