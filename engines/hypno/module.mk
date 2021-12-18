@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	scene.o \
 	spider/arcade.o \
+	spider/hard.o \
 	spider/spider.o \
 	spider/talk.o \
 	video.o \
