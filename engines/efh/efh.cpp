@@ -3488,6 +3488,124 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2,
 	warning("STUB - getXPAndSearchCorpse");
 }
 
+void EfhEngine::addReactionText(int16 id) {
+	int16 rand3 = getRandom(3);
+	char buffer[80];
+	memset(buffer, 0, 80);
+
+	switch (id) {
+	case 0:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s looks dazed!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s wails terribly!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s is staggering!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 3:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 4:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s screams!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s bellows!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s shrills!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 5:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s chortles!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s seems amused!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s looks concerned!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 6:
+		switch (rand3) {
+		case 1:
+			sprintf(buffer, "  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 2:
+			sprintf(buffer, "  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2);
+			break;
+		case 3:
+			sprintf(buffer, "  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2);
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	strcat((char *)_messageToBePrinted, buffer);
+}
+
 void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -3624,8 +3742,41 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							}
 						}
 						// Action A - Check damages - End
-						warning("STUB: handleFight - Action A - Shitload of checks in cascade");
-						warning("STUB: handleFight - Action A - Second Shitload of checks in cascade");
+
+						// Action A - Add reaction text - Start
+						if (var62 != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] - 5 <= originalDamage) {
+								addReactionText(0);
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 8) {
+								addReactionText(1);
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 4) {
+								addReactionText(2);
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 2) {
+								addReactionText(3);
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 3) {
+								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
+								addReactionText(4);
+							} else if (var80 / 8 >= originalDamage) {
+								addReactionText(5);
+							} else if (originalDamage == 0 && getRandom(100) < 35) {
+								addReactionText(6);
+							}
+						}
+						// Action A - Add reaction text - End
+
+						// Action A - Add armor absorb text - Start
+						if (var76 && var62 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+							char buffer[80];
+							memset(buffer, 0, 80);
+							if (damagePointsAbsorbed <= 1)
+								sprintf(buffer, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
+							else
+								sprintf(buffer, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
+
+							strcat((char *)_messageToBePrinted, buffer);
+						}
+						// Action A - Add armor absorb text - End
+
 						if (var5C)
 							strcat((char *)_messageToBePrinted, "  Your actions do not go un-noticed...");
 
