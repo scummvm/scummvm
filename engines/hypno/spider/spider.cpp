@@ -156,12 +156,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["int_roof.mi_"];
 	cl = new ChangeLevel("<recept>");
 	sc->hots[1].actions.push_back(cl);
-	cl = new ChangeLevel("<boil_selector>");
+	cl = new ChangeLevel("<boil_selector_1>");
 	sc->hots[2].actions.push_back(cl);
 	Overlay *over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\ROOFB1.SMK"; // seems to be a bug?
 
-	loadSceneLevel("alofintr.mi_", "<boil_selector>", prefix);
+	loadSceneLevel("alofintr.mi_", "<boil_selector_1>", prefix);
 	sc = (Scene *) _levels["alofintr.mi_"];
 	sc->intros.push_back("cine/swc002as.smk");
 	// This is necessary, for some reason
@@ -175,10 +175,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[2].actions.push_back(gl);
 	gl = new Global("GS_SWITCH5", "TURNON");			// Side B door
 	sc->hots[2].actions.push_back(gl);
-	
-	Transition *boil_selector = new Transition("boiler.mi_", "boilhard.mi_");
-	_levels["<boil_selector>"] = boil_selector;
-	_levels["<boil_selector>"]->intros.push_back("spider/cine/leapdown.smk");
+	gl = new Global("GS_SWITCH6", "TURNON");			// Office light
+	sc->hots[2].actions.push_back(gl);
+
+	Transition *boil_selector_1 = new Transition("boiler.mi_", "boilhard.mi_");
+	_levels["<boil_selector_1>"] = boil_selector_1;
+	_levels["<boil_selector_1>"]->intros.push_back("spider/cine/leapdown.smk");
+
+	Transition *boil_selector_2 = new Transition("boiler.mi_", "boilhard.mi_");
+	_levels["<boil_selector_2>"] = boil_selector_2;
 
 	loadSceneLevel("boiler.mi_", "", prefix);
 	sc = (Scene *) _levels["boiler.mi_"];
@@ -187,8 +192,12 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Code *fuse_panel = new Code();
 	fuse_panel->name = "<fuse_panel>";
-	fuse_panel->levelIfWin = "boiler.mi_";
+	fuse_panel->levelIfWin = "<boil_selector_2>";
 	_levels["<fuse_panel>"] = fuse_panel;
+
+	Code *office = new Code();
+	office->name = "<office>";
+	_levels["<office>"] = office;
 	
 	cl = new ChangeLevel("<back_roof_1>");
 	sc->hots[2].actions.push_back(cl);
@@ -205,8 +214,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
 
-	cl = new ChangeLevel("int_roof.mi_");
+	cl = new ChangeLevel("<back_roof_1>");
 	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<fuse_panel>");
+	sc->hots[3].actions.push_back(cl);
 
 	loadSceneLevel("alverofh.mi_", "", prefix);
 	loadSceneLevel("alveroff.mi_", "", prefix);
@@ -225,6 +237,16 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("<back_roof_2>");
 	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<door_a>");
+	sc->hots[3].actions.push_back(cl);
+
+	cl = new ChangeLevel("<office>");
+	sc->hots[4].actions.push_back(cl);
+
+	Transition *door_a = new Transition("<over_apt_5>");
+	door_a->intros.push_back("spider/cine/iobs002s.smk");
+	_levels["<door_a>"] = door_a;
 
 	Transition *back_roof_2 = new Transition("int_roof.mi_");
 	_levels["<back_roof_2>"] = back_roof_2;
@@ -261,16 +283,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c3h.mi_", "", prefix);
 
 	loadSceneLevel("movie2.mi_", "", prefix);
-	//_levels["buspuz.mi_"]->intros.push_back("cine/ppv001s.smk");
-
-	// Transition *bus_transition = new Transition("buspuz.mi_");
-	// bankEasy->intros.push_back("spider/cine/dia002s.smk");
-	// _levels["<bus_transition>"] = bankEasy;
-
-	// Transition *bankHard = new Transition();
-	// bankHard->level = "buspuz.mi_";
-	// bankHard->intros.push_back("spider/cine/bals003s.smk");
-	// _levels["<bank_hard>"] = bankHard;
 
 	// Easy arcade levels
 
@@ -376,8 +388,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *over_apt_5 = new Transition("tryagain.mi_");
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
-
-	_nextLevel = "decide3.mi_";
+	
+	_nextLevel = "<start>";
 }
 
 void SpiderEngine::loadAssetsDemo() {

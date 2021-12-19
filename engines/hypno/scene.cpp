@@ -90,6 +90,7 @@ void HypnoEngine::resetSceneState() {
 			_sceneState[sceneVariables[i]] = 0;
 		i++;
 	}
+	_intros.clear();
 }
 
 bool HypnoEngine::checkSceneCompleted() {
@@ -472,7 +473,6 @@ void HypnoEngine::runScene(Scene *scene) {
 	_nextParallelVideoToPlay.clear();
 	_nextSequentialVideoToPlay.clear();
 	_escapeSequentialVideoToPlay.clear();
-	_intros.clear();
 }
 
 void HypnoEngine::showConversation() { error("Not implemented"); }

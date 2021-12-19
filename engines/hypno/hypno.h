@@ -300,6 +300,10 @@ private:
 	void runNote(Code *code);
 	void runFusePanel(Code *code);
 	void runRecept(Code *code);
+	void runOffice(Code *code);
+
+	bool isFuseRust = true;
+	bool isFuseUnreadable = false;
 };
 
 class BoyzEngine : public HypnoEngine {

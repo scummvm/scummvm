@@ -35,6 +35,8 @@ void SpiderEngine::runCode(Code *code) {
 		runFusePanel(code);
 	else if (code->name == "<recept>")
 		runRecept(code);
+	else if (code->name == "<office>")
+		runOffice(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -338,6 +340,17 @@ void SpiderEngine::runRecept(Code *code) {
 	_nextLevel = "recept.mi_";
 }
 
+void SpiderEngine::runOffice(Code *code) {
+
+	if (!_sceneState["GS_SWITCH6"]) { // lights off
+		MVideo v("spider/cine/toodark.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		_nextLevel = "recept.mi_";
+		return;
+	}
+	_nextLevel = "<alveroff_selector>";
+}
+
 void SpiderEngine::runFusePanel(Code *code) {
 	changeScreenMode("640x480");
 	Common::Point mousePos;
@@ -347,10 +360,27 @@ void SpiderEngine::runFusePanel(Code *code) {
 	Common::Rect fuses(363, 52, 598, 408);
 	Common::Rect back(0, 446, 640, 480);
 
-	//MVideo *v;
-	loadImage("spider/int_alof/fuse.smk", 0, 0, false);
+	if (_sceneState["GS_PUZZLELEVEL"]) { // hard
+		if (isFuseRust) {
+			Common::String intro = "spider/cine/spv029s.smk"; 
+			if (!_intros.contains(intro)) {
+				MVideo v(intro, Common::Point(0, 0), false, false, false);
+				runIntro(v);
+				_intros[intro] = true;
+			}
 
-	//playVideo(*v);
+			loadImage("spider/int_alof/fuserust.smk", 0, 0, false);
+		} else if (isFuseUnreadable)
+			loadImage("spider/int_alof/fuseclea.smk", 0, 0, false);
+		else
+			loadImage("spider/int_alof/fuseread.smk", 0, 0, false);
+
+	} else {
+		isFuseRust = false;
+		isFuseUnreadable = false;
+		loadImage("spider/int_alof/fuse.smk", 0, 0, false);
+	}
+
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -363,6 +393,28 @@ void SpiderEngine::runFusePanel(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
+				if (back.contains(mousePos)) {
+					_nextLevel = code->levelIfWin;
+					return;
+				}
+
+				if (isFuseRust && _sceneState["GS_SWITCH8"]) {
+					MVideo v("spider/cine/spv031s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(v);
+					isFuseRust = false;
+					isFuseUnreadable = true;
+					loadImage("spider/int_alof/fuseclea.smk", 0, 0, false);
+				} else if (isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
+					MVideo v("spider/cine/spv032s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(v);
+					isFuseRust = false;
+					isFuseUnreadable = false;
+					loadImage("spider/int_alof/fuseread.smk", 0, 0, false);
+				}
+
+				if (isFuseRust || isFuseUnreadable)
+					break;
+
 				if (fuses.contains(mousePos)) {
 				    int x = (mousePos.x - 364) / (235 / 2.);
 				    int y = (mousePos.y - 54) / (355 / 10.);
@@ -372,15 +424,16 @@ void SpiderEngine::runFusePanel(Code *code) {
 						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"]; 
 					} else if (s == 2) {
 						_sceneState["GS_SWITCH2"] = !_sceneState["GS_SWITCH2"];
+					} else if (s == 18) {
+						_sceneState["GS_SWITCH3"] = !_sceneState["GS_SWITCH3"];
 					} else if (s == 12) {
 						_sceneState["GS_SWITCH4"] = !_sceneState["GS_SWITCH4"];
 					} else if (s == 13) {
 						_sceneState["GS_SWITCH5"] = !_sceneState["GS_SWITCH5"];
+					} else if (s == 10) {
+						_sceneState["GS_SWITCH6"] = !_sceneState["GS_SWITCH6"];
 					}
 
-				} else if (back.contains(mousePos)) {
-					_nextLevel = code->levelIfWin;
-					return;
 				}
 				break;
 
