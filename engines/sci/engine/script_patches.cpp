@@ -7073,9 +7073,58 @@ static const uint16 lighthouseMemoryCountPatch[] = {
 	PATCH_END
 };
 
+// In Lighthouse version 2.0, entering the submarine while the compass is out
+//  causes a message to be sent to a non-object. The PanelProps ppCompass and
+//  ppCompassFace are missing initialization code. Room 212 disposes of compass
+//  objects, but since they weren't correctly initialized, Feature:dispose
+//  attempts to remove them from a nonexistent Set in global 105.
+//
+// We fix this by patching the init methods of both compass objects to jump to
+//  ppOptions:init where there is a copy of the missing initialization code.
+//  This is effectively what Sierra did in their LITE2FIX patch.
+//
+// Applies to: Version 2.0
+// Responsible methods: ppCompass:init, ppCompassFace:init
+static const uint16 lighthouseCompassSignature[] = {
+	// ppCompass:init
+	0x4a, SIG_MAGICDWORD,               // send 10
+	      SIG_UINT16(0x0010),
+	0x48,                               // ret
+	0x00, 0x00,                         // unused padding
+	SIG_ADDTOOFFSET(+0x00fa),
+	// ppCompassFace:init
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x57, 0x81, SIG_UINT16(0x0004),     // super 04 [ PanelProp init: 1 &rest ]
+	0x48,                               // ret
+	SIG_ADDTOOFFSET(+0x0b84),
+	// ppOptions:init
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x57, 0x81, SIG_UINT16(0x0004),     // super 04 [ PanelProp init: 1 &rest ]
+	0x62, SIG_UINT16(0x01b6),           // pToa approachX
+	0x31, 0x16,                         // bnt 16
+	SIG_ADDTOOFFSET(+0x11),
+	0x35, 0x00,                         // ldi 00
+	0x64, SIG_UINT16(0x01b6),           // aTop approachX
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 lighthouseCompassPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x32, PATCH_UINT16(0x0c91),         // jmp 0c91 [ ppCompass:init => ppOptions:init ]
+	PATCH_ADDTOOFFSET(+0x00fa),
+	0x32, PATCH_UINT16(0x0b8b),         // jmp 0b8b [ ppCompassFace:init => ppOptions:init ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry lighthouseSignatures[] = {
 	{  true,     5, "fix bad globals clear after credits",         1, lighthouseFlagResetSignature,     lighthouseFlagResetPatch },
+	{  true,     9, "fix compass in submarine",                    1, lighthouseCompassSignature,       lighthouseCompassPatch },
 	{  true,   360, "fix slow computer memory counter",            1, lighthouseMemoryCountSignature,   lighthouseMemoryCountPatch },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
