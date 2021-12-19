@@ -638,8 +638,7 @@ void set_up_screen(SetupScreenMode mode) {
 						spieler_mi[P_CHEWY].XyzStart[1] = spieler_vector[P_CHEWY].Xypos[1];
 						spieler_mi[P_CHEWY].XyzEnd[0] = gpkt.Dx - spieler_mi[P_CHEWY].HotX;
 						spieler_mi[P_CHEWY].XyzEnd[1] = gpkt.Dy - spieler_mi[P_CHEWY].HotY;
-						mov->get_mov_vector((int16
-						                     *)spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub, &spieler_vector[P_CHEWY]);
+						mov->get_mov_vector((int16 *)spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub, &spieler_vector[P_CHEWY]);
 						get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
 						spieler_vector[P_CHEWY].DelayCount = 0;
 						_G(auto_p_nr) = P_CHEWY;
@@ -696,8 +695,9 @@ void set_up_screen(SetupScreenMode mode) {
 					++_G(pfeil_ani);
 				else
 					_G(pfeil_ani) = 0;
-			} else
+			} else {
 				--_G(pfeil_delay);
+			}
 		}
 	}
 
@@ -1230,12 +1230,6 @@ void check_shad(int16 g_idx, int16 mode) {
 
 	if (flags.NoShad == false) {
 		switch (g_idx) {
-		case 4:
-			if (mode)
-				out->set_teilpalette(PAL_0, 1, 11);
-			palcopy(pal, PAL_0, 0, 0, 12);
-			break;
-
 		case 1:
 			if (mode)
 				out->set_teilpalette(PAL_1, 1, 11);
@@ -1254,6 +1248,14 @@ void check_shad(int16 g_idx, int16 mode) {
 			palcopy(pal, PAL_3, 0, 0, 12);
 			break;
 
+		case 4:
+			if (mode)
+				out->set_teilpalette(PAL_0, 1, 11);
+			palcopy(pal, PAL_0, 0, 0, 12);
+			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -2044,26 +2046,6 @@ void set_person_rnr() {
 	}
 }
 
-//FIXME - custom random
-#if 0
-int16 random(int16 start, int16 end) {
-	int16 r_val;
-	int16 step;
-	int16 anz;
-	++end;
-	anz = abs(start - end);
-	step = 32762 / anz;
-	r_val = rand();
-	r_val /= step;
-	if (start > end)
-		r_val += end;
-	else
-		r_val += start;
-
-	return r_val;
-}
-#endif
-
 int16 is_chewy_busy() {
 	int16 ret;
 	ret = true;
@@ -2082,6 +2064,7 @@ int16 is_chewy_busy() {
 			}
 		}
 	}
+
 	return ret;
 }
 
