@@ -3481,6 +3481,23 @@ bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
 	return _items[itemId].field17_attackTypeDefense == attackType;
 }
 
+bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
+	int16 itemId = _npcBuf[charId]._unkItemId;
+
+	if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+		return true;
+
+	for (int16 counter = 0; counter < 10; ++counter) {
+		if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF || _npcBuf[charId]._inventory[counter]._stat1 == 0x80)
+			continue;
+
+		itemId = _npcBuf[charId]._inventory[counter]._ref;
+		if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+			return true;
+	}
+	return false;
+}
+
 void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	warning("STUB - getDeathTypeDescription");
 }
@@ -3995,8 +4012,27 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 originalDamage = 0;
 								int16 damagePointsAbsorbed = 0;
 								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._field_1 * _items[unk_monsterField5_itemId]._attacks;
-								for (int16 var84 = 0; var84 < var64; ++var84)
-									warning("STUB: handleFight - Loop on var64");
+								for (int16 var84 = 0; var84 < var64; ++var84) {
+									// handleFight - Loop var84 on var64 (objectId) - Start
+									if (getRandom(100) > _word32482[var7E])
+										continue;
+
+									++var62;
+
+									if (hasAdequateDefense_2(_teamCharId[var7E], _items[unk_monsterField5_itemId]._attackType))
+										continue;
+
+									int16 var7C = getRandom(_items[unk_monsterField5_itemId]._damage);
+									varInt = var7C - var76;
+
+									if (varInt > 0) {
+										damagePointsAbsorbed += var76;
+										originalDamage += varInt;
+									} else {
+										damagePointsAbsorbed += var7C;
+									}
+									// handleFight - Loop var84 on var64 (objectId) - End
+								}
 
 								if (originalDamage < 0)
 									originalDamage = 0;
@@ -4029,8 +4065,47 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								copyString(_npcBuf[_teamCharId[var7E]]._name, _characterNamePt2);
 								copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
 								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
-									warning("STUB: handleFight - check Damages");
-									warning("STUB: handleFight - Cascade of checks");
+									// handleFight - check damages - Start
+									if (var62 == 0) {
+										sprintf((char *)_messageToBePrinted, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+									} else if (hitPoints <= 0) {
+										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+									} else if (hitPoints == 1) {
+										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
+											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
+										else
+											strcat((char *)_messageToBePrinted, "!");
+									} else {
+										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
+											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
+										else
+											strcat((char *)_messageToBePrinted, "!");
+									}
+									// handleFight - check damages - End
+
+									// handleFight - Add reaction text - start
+									if (var62 != 0 && originalDamage > 0 && getRandom(100) <= 35 && _npcBuf[_teamCharId[var7E]]._hitPoints > 0) {
+										if (_npcBuf[_teamCharId[var7E]]._hitPoints - 5 <= originalDamage) {
+											addReactionText(0);
+										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 8) {
+											addReactionText(1);
+										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 4) {
+											addReactionText(2);
+										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 2) {
+											addReactionText(3);
+										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 3) {
+											// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
+											addReactionText(4);
+										} else if (_npcBuf[_teamCharId[var7E]]._maxHP / 8 >= originalDamage) {
+											addReactionText(5);
+										} else if (originalDamage == 0 && getRandom(100) < 35) {
+											addReactionText(6);
+										}
+									}
+									// handleFight - Add reaction text - end
+
 									warning("STUB: handleFight - check armor");
 									warning("STUB: handleFight - check effect");
 								} else {

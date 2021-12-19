@@ -376,6 +376,7 @@ private:
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
+	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
 	void getXPAndSearchCorpse(int16 charId, char* namePt1, char* namePt2, int16 monsterId);
 	void addReactionText(int16 id);
