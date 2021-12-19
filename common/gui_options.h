@@ -85,6 +85,22 @@
 #define GUIO_GAMEOPTIONS14   "\x3d"
 #define GUIO_GAMEOPTIONS15   "\x3e"
 #define GUIO_GAMEOPTIONS16   "\x3f"
+#define GUIO_GAMEOPTIONS17   "\x40"
+#define GUIO_GAMEOPTIONS18   "\x41"
+#define GUIO_GAMEOPTIONS19   "\x42"
+#define GUIO_GAMEOPTIONS20   "\x43"
+#define GUIO_GAMEOPTIONS21   "\x44"
+#define GUIO_GAMEOPTIONS22   "\x45"
+#define GUIO_GAMEOPTIONS23   "\x46"
+#define GUIO_GAMEOPTIONS24   "\x47"
+#define GUIO_GAMEOPTIONS25   "\x48"
+#define GUIO_GAMEOPTIONS26   "\x49"
+#define GUIO_GAMEOPTIONS27   "\x4a"
+#define GUIO_GAMEOPTIONS28   "\x4b"
+#define GUIO_GAMEOPTIONS29   "\x4c"
+#define GUIO_GAMEOPTIONS30   "\x4d"
+#define GUIO_GAMEOPTIONS31   "\x4e"
+#define GUIO_GAMEOPTIONS32   "\x4f"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)

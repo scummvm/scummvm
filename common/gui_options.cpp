@@ -93,6 +93,22 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS14, "gameOptionE" },
 	{ GUIO_GAMEOPTIONS15, "gameOptionF" },
 	{ GUIO_GAMEOPTIONS16, "gameOptionG" },
+	{ GUIO_GAMEOPTIONS17, "gameOptionH" },
+	{ GUIO_GAMEOPTIONS18, "gameOptionI" },
+	{ GUIO_GAMEOPTIONS19, "gameOptionJ" },
+	{ GUIO_GAMEOPTIONS20, "gameOptionK" },
+	{ GUIO_GAMEOPTIONS21, "gameOptionL" },
+	{ GUIO_GAMEOPTIONS22, "gameOptionM" },
+	{ GUIO_GAMEOPTIONS23, "gameOptionN" },
+	{ GUIO_GAMEOPTIONS24, "gameOptionO" },
+	{ GUIO_GAMEOPTIONS25, "gameOptionP" },
+	{ GUIO_GAMEOPTIONS26, "gameOptionQ" },
+	{ GUIO_GAMEOPTIONS27, "gameOptionR" },
+	{ GUIO_GAMEOPTIONS28, "gameOptionS" },
+	{ GUIO_GAMEOPTIONS29, "gameOptionT" },
+	{ GUIO_GAMEOPTIONS30, "gameOptionU" },
+	{ GUIO_GAMEOPTIONS31, "gameOptionV" },
+	{ GUIO_GAMEOPTIONS32, "gameOptionW" },
 
 	{ GUIO_NONE, nullptr }
 };
