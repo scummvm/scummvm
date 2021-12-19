@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	engine/segment.o \
 	engine/state.o \
 	engine/static_selectors.o \
+	engine/tts.o \
 	engine/vm.o \
 	engine/vm_types.o \
 	engine/workarounds.o \

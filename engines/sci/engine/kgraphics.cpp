@@ -37,6 +37,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/tts.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
@@ -1178,6 +1179,8 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 		reanimate = true;
 
 	g_sci->_gfxPorts->kernelDisposeWindow(windowId, reanimate);
+	g_sci->_tts->stop();
+
 	return s->r_acc;
 }
 

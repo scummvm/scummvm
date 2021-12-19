@@ -31,6 +31,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/tts.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
@@ -312,6 +313,8 @@ int GfxControls16::getPicNotValid() {
 }
 
 void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, int16 style, bool hilite) {
+	g_sci->_tts->button(text);
+
 	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
@@ -350,6 +353,8 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 }
 
 void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
+	g_sci->_tts->text(text);
+
 	if (!hilite) {
 		rect.grow(1);
 		_paint16->eraseRect(rect);
