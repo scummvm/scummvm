@@ -3895,6 +3895,68 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
+char EfhEngine::getFightMessageLastCharacter(char *message) {
+	char *ptr = message;
+
+	if (ptr == nullptr || *ptr == 0)
+		return 0;
+
+	char lastChar = *ptr;
+	while (*ptr != 0) {
+		lastChar = *ptr++;
+	}
+
+	return lastChar;
+}
+
+void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
+	int16 var42 = 0;
+	int16 var40 = _npcBuf[charId]._possessivePronounSHL6 / 64;
+	char buffer[40];
+	char buffer2[20];
+
+	if (var40 > 2) {
+		var40 = 2;
+	}
+
+	if (damage > 50)
+		damage = 50;
+
+	for (int16 objectId = 0; objectId < 10; ++objectId) {
+		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || (_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0 && _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
+			continue;
+
+		int16 var44 = damage - _npcBuf[charId]._inventory[objectId]._stat2;
+		_npcBuf[charId]._inventory[objectId]._stat2 -= damage;
+
+		if (_npcBuf[charId]._inventory[objectId]._stat2 <= 0) {
+			copyString(_items[_npcBuf[charId]._inventory[objectId]._ref]._name, buffer2);
+			removeObject(charId, objectId);
+
+			if (var42 == 0) {
+				var42 = 1;
+				sprintf(buffer, ", but %s %s", kPossessive[var40], buffer2);
+				strcat((char *)_messageToBePrinted, buffer);
+			} else {
+				++var42;
+				sprintf(buffer, ", %s", buffer2);
+				strcat((char *)_messageToBePrinted, buffer);
+			}
+		}
+
+		if (var44 > 0)
+			damage = var44;
+	}
+
+	if (var42 == 0) {
+		strcat((char *)_messageToBePrinted, "!");
+	} else if (var42 > 1 || getFightMessageLastCharacter((char *)_messageToBePrinted) == 's' || getFightMessageLastCharacter((char *)_messageToBePrinted) == 'S') {
+		strcat((char *)_messageToBePrinted, " are destroyed!");
+	} else {
+		strcat((char *)_messageToBePrinted, " is destroyed!");
+	}
+}
+
 bool EfhEngine::handleFight(int16 monsterId) {
 	int16 var8C = 0;
 
@@ -4106,8 +4168,53 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									}
 									// handleFight - Add reaction text - end
 
-									warning("STUB: handleFight - check armor");
-									warning("STUB: handleFight - check effect");
+									// handleFight - Check armor - start
+									if (var76 != 0 && var62 != 0 && _npcBuf[_teamCharId[var7E]]._hitPoints > 0) {
+										char buffer[80];
+										memset(buffer, 0, 80);
+										if (damagePointsAbsorbed <= 1)
+											sprintf(buffer, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
+										else
+											sprintf(buffer, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
+
+										strcat((char *)_messageToBePrinted, buffer);
+										varInt = (originalDamage + damagePointsAbsorbed) / 10;
+										sub1D8C2(_teamCharId[var7E], varInt);
+									}
+									// handleFight - Check armor - end
+
+									// handleFight - Check effect - start
+									char buffer[80];
+									memset(buffer, 0, 80);
+									switch (_items[unk_monsterField5_itemId].field_16) {
+									case 1:
+										if (getRandom(100) < 20) {
+											_teamCharStatus[var7E]._status = 1;
+											_teamCharStatus[var7E]._duration = getRandom(10);
+											sprintf(buffer, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
+											strcat((char *)_messageToBePrinted, buffer);
+										}
+										break;
+									case 2:
+										if (getRandom(100) < 20) {
+											_teamCharStatus[var7E]._status = 2;
+											_teamCharStatus[var7E]._duration = getRandom(10);
+											sprintf(buffer, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
+											strcat((char *)_messageToBePrinted, buffer);
+										}
+										break;
+									case 5:
+									case 6:
+										if (getRandom(100) < 20) {
+											sprintf(buffer, "  %s%s's life energy is gone!", _characterNamePt1, _characterNamePt2);
+											strcat((char *)_messageToBePrinted, buffer);
+											_npcBuf[_teamCharId[var7E]]._hitPoints = 0;
+										}
+										break;
+									default:
+										break;
+									} 
+									// handleFight - Check effect - end
 								} else {
 									sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 								}
