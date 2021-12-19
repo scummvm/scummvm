@@ -304,9 +304,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				AudioTrack.MODE_STREAM,
 				AudioManager.AUDIO_SESSION_ID_GENERATE);
 
-			// Keep track of the actual obtained audio buffer size, if supported
+			// Keep track of the actual obtained audio buffer size, if supported.
+			// We just requested 16 bit PCM stereo pcm so there are 4 bytes per frame.
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-				_buffer_size = _audio_track.getBufferSizeInFrames();
+				_buffer_size = _audio_track.getBufferSizeInFrames() * 4;
 		} else {
 			//support for Android KitKat or lower
 			_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
