@@ -73,15 +73,11 @@ void TinyGLDriver::setScreenViewport(bool noScaling) {
 }
 
 void TinyGLDriver::setViewport(const Common::Rect &rect) {
-	_viewport = Common::Rect(
-			_screenViewport.width() * rect.width() / kOriginalWidth,
-			_screenViewport.height() * rect.height() / kOriginalHeight
-			);
+	_viewport = Common::Rect(_screenViewport.width() * rect.width() / kOriginalWidth,
+	                         _screenViewport.height() * rect.height() / kOriginalHeight);
 
-	_viewport.translate(
-			_screenViewport.left + _screenViewport.width() * rect.left / kOriginalWidth,
-			_screenViewport.top + _screenViewport.height() * rect.top / kOriginalHeight
-			);
+	_viewport.translate(_screenViewport.left + _screenViewport.width() * rect.left / kOriginalWidth,
+	                    _screenViewport.top + _screenViewport.height() * rect.top / kOriginalHeight);
 
 	_unscaledViewport = rect;
 

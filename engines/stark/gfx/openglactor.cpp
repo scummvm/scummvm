@@ -58,9 +58,9 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	_model->updateBoundingBox();
 
 	bool drawShadow = false;
-	if (_castsShadow
-			&& StarkScene->shouldRenderShadows()
-			&& StarkSettings->getBoolSetting(Settings::kShadow)) {
+	if (_castsShadow &&
+	    StarkScene->shouldRenderShadows() &&
+	    StarkSettings->getBoolSetting(Settings::kShadow)) {
 		drawShadow = true;
 	}
 	Math::Vector3d lightDirection;
@@ -142,19 +142,19 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			Math::Vector3d position1 = Math::Vector3d(vertex.pos1x, vertex.pos1y, vertex.pos1z);
 			Math::Vector3d position2 = Math::Vector3d(vertex.pos2x, vertex.pos2y, vertex.pos2z);
 			Math::Vector3d bone1Position = Math::Vector3d(bones[bone1]->_animPos.x(),
-														  bones[bone1]->_animPos.y(),
-														  bones[bone1]->_animPos.z());
+			                                              bones[bone1]->_animPos.y(),
+			                                              bones[bone1]->_animPos.z());
 			Math::Vector3d bone2Position = Math::Vector3d(bones[bone2]->_animPos.x(),
-														  bones[bone2]->_animPos.y(),
-														  bones[bone2]->_animPos.z());
+			                                              bones[bone2]->_animPos.y(),
+			                                              bones[bone2]->_animPos.z());
 			Math::Quaternion bone1Rotation = Math::Quaternion(bones[bone1]->_animRot.x(),
-														  bones[bone1]->_animRot.y(),
-														  bones[bone1]->_animRot.z(),
-														  bones[bone1]->_animRot.w());
+			                                                  bones[bone1]->_animRot.y(),
+			                                                  bones[bone1]->_animRot.z(),
+			                                                  bones[bone1]->_animRot.w());
 			Math::Quaternion bone2Rotation = Math::Quaternion(bones[bone2]->_animRot.x(),
-														  bones[bone2]->_animRot.y(),
-														  bones[bone2]->_animRot.z(),
-														  bones[bone2]->_animRot.w());
+			                                                  bones[bone2]->_animRot.y(),
+			                                                  bones[bone2]->_animRot.z(),
+			                                                  bones[bone2]->_animRot.w());
 			float boneWeight = vertex.boneWeight;
 			Math::Vector3d normal = Math::Vector3d(vertex.normalx, vertex.normaly, vertex.normalz);
 
@@ -170,9 +170,9 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			Math::Vector4d modelEyePosition;
 			if (_gfx->computeLightsEnabled()) {
 				modelEyePosition = modelViewMatrix * Math::Vector4d(modelPosition.x(),
-																		       modelPosition.y(),
-																		       modelPosition.z(),
-																		       1.0);
+				                                                    modelPosition.y(),
+				                                                    modelPosition.z(),
+				                                                    1.0);
 			}
 			// Compute the vertex normal in eye-space
 			Math::Vector3d n1 = normal;
@@ -365,8 +365,8 @@ uint32 *OpenGLActorRenderer::createFaceEBO(const Face *face) {
 	return indices;
 }
 
-Math::Vector3d OpenGLActorRenderer::getShadowLightDirection(const LightEntryArray &lights,
-		const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot) {
+Math::Vector3d OpenGLActorRenderer::getShadowLightDirection(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
+                                                            Math::Matrix3 worldToModelRot) {
 	Math::Vector3d sumDirection;
 	bool hasLight = false;
 
@@ -420,8 +420,8 @@ Math::Vector3d OpenGLActorRenderer::getShadowLightDirection(const LightEntryArra
 	return worldToModelRot * sumDirection;
 }
 
-bool OpenGLActorRenderer::getPointLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction, float weight) {
+bool OpenGLActorRenderer::getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+                                                    Math::Vector3d &direction, float weight) {
 	float distance = light->position.getDistanceTo(actorPosition);
 
 	if (distance > light->falloffFar) {
@@ -466,14 +466,14 @@ bool OpenGLActorRenderer::getDirectionalLightContribution(LightEntry *light, Mat
 	return true;
 }
 
-bool OpenGLActorRenderer::getSpotLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+bool OpenGLActorRenderer::getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+                                                   Math::Vector3d &direction) {
 	Math::Vector3d lightToActor = actorPosition - light->position;
 	lightToActor.normalize();
 
 	float cosAngle = MAX(0.0f, lightToActor.dotProduct(light->direction));
 	float cone = (cosAngle - light->innerConeAngle.getCosine()) /
-			MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
+	             MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
 	cone = CLIP(cone, 0.0f, 1.0f);
 
 	if (cone <= 0) {
