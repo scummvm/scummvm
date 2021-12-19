@@ -3863,6 +3863,8 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 }
 
 void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
+	// In the original, this function is part of handleFight.
+	// It has been split for readability purposes.
 	int16 unk_monsterField5_itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
 	copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
 	copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
@@ -3877,8 +3879,6 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 }
 
 bool EfhEngine::handleFight(int16 monsterId) {
-	warning("STUB - handleFight");
-
 	int16 var8C = 0;
 
 	sub1BE89(monsterId);
@@ -3957,7 +3957,117 @@ bool EfhEngine::handleFight(int16 monsterId) {
 					}
 				}
 			} else if (unkFct_checkMonsterField8(monsterGroupIdOrMonsterId, true)) {
-				warning("STUB - handleFight - loop var86");
+				// handleFight - Loop on var86 - Start
+				for (int16 var86 = 0; var86 < 9; ++var86) {
+					if (sub1BA9B(monsterGroupIdOrMonsterId, var86)) {
+						int16 unk_monsterField5_itemId = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._itemId_Weapon;
+						if (unk_monsterField5_itemId == 0xFF)
+							unk_monsterField5_itemId = 0x3F;
+						int16 teamMemberId = -1;
+						int16 var54;
+						if (_items[unk_monsterField5_itemId]._range < 3) {
+							for (int16 var84 = 0; var84 < 10; ++var84) {
+								teamMemberId = getRandom(_teamSize) - 1;
+								if (checkWeaponRange(_teamMonsterIdArray[monsterGroupIdOrMonsterId], unk_monsterField5_itemId) && isTeamMemberStatusNormal(teamMemberId) && getRandom(100) < _word32680[teamMemberId]) {
+									break;
+								}
+								teamMemberId = -1;
+							}
+							var54 = teamMemberId + 1;
+						} else {
+							teamMemberId = 0;
+							var54 = _teamSize;
+						}
+						if (teamMemberId != -1) {
+							// handleFight - Loop on var7E - Start
+							for (int16 var7E = teamMemberId; var7E < var54; ++var7E) {
+								if (_teamCharId[var7E] == -1 || !isTeamMemberStatusNormal(var7E))
+									continue;
+
+								int16 var76 = getRandom(getEquipmentDefense(_teamCharId[var7E], false));
+								varInt = _teamMonsterIdArray[monsterGroupIdOrMonsterId];
+								int16 var70 = kEncounters[_mapMonsters[varInt]._MonsterRef]._nameArticle;
+								int16 var5E = _npcBuf[_teamCharId[var7E]]._possessivePronounSHL6 >> 6;
+								varInt = _items[unk_monsterField5_itemId].field_13;
+								_word32482[var7E] += (varInt * 5);
+								int16 var62 = 0;
+								int16 hitPoints = 0;
+								int16 originalDamage = 0;
+								int16 damagePointsAbsorbed = 0;
+								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._field_1 * _items[unk_monsterField5_itemId]._attacks;
+								for (int16 var84 = 0; var84 < var64; ++var84)
+									warning("STUB: handleFight - Loop on var64");
+
+								if (originalDamage < 0)
+									originalDamage = 0;
+
+								hitPoints = originalDamage + damagePointsAbsorbed;
+								if (!checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
+									var62 = 0;
+
+								if (var62 > 0) {
+									_npcBuf[_teamCharId[var7E]]._hitPoints -= originalDamage;
+									if (var62 > 1)
+										sprintf(_attackBuffer, "%d times ", var62);
+									else
+										*_attackBuffer = 0;
+								}
+
+								int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
+								int16 var6A = getRandom(3);
+								if (var5E == 2)
+									sprintf(_characterNamePt1, "The ");
+								else
+									*_characterNamePt1 = 0;
+
+								if (var7E == 2)
+									sprintf(_enemyNamePt1, "The ");
+								else
+									*_enemyNamePt1 = 0;
+
+								strcpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._MonsterRef]._name);
+								copyString(_npcBuf[_teamCharId[var7E]]._name, _characterNamePt2);
+								copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
+									warning("STUB: handleFight - check Damages");
+									warning("STUB: handleFight - Cascade of checks");
+									warning("STUB: handleFight - check armor");
+									warning("STUB: handleFight - check effect");
+								} else {
+									sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+								}
+								genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
+								sub1C219(_messageToBePrinted, 1, 2, true);
+							}
+							// handleFight - Loop on var7E - End
+						}
+					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._pictureRef[var86] > 0 && _stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
+						--_stru32686[monsterGroupIdOrMonsterId]._field2[var86];
+						if (_stru32686[monsterGroupIdOrMonsterId]._field2[var86] <= 0) {
+							strcpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._MonsterRef]._name);
+							int16 var70 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._MonsterRef]._nameArticle;
+							if (var70 == 2)
+								strcpy(_enemyNamePt1, "The ");
+							else
+								*_enemyNamePt1 = 0;
+
+							switch (_stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
+							case 1:
+								sprintf((char *)_messageToBePrinted, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
+								break;
+							case 2:
+								sprintf((char *)_messageToBePrinted, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
+								break;
+							default:
+								sprintf((char *)_messageToBePrinted, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
+								break;
+							}
+							_stru32686[monsterGroupIdOrMonsterId]._field0[var86] = 0;
+							sub1C219(_messageToBePrinted, 1, 2, true);
+						}
+					}
+				}
+				// handleFight - Loop on var86 - End
 			}
 		}
 
