@@ -384,6 +384,8 @@ private:
 	void handleFight_lastAction_D(int16 teamCharId);
 	void handleFight_lastAction_H(int16 teamCharId);
 	void handleFight_lastAction_U(int16 teamCharId);
+	char getFightMessageLastCharacter(char *message);
+	void sub1D8C2(int16 charId, int16 damage);
 	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int thisBoxId, int minX, int maxX, int minY, const char *str);
 	void displayStatusMenu(int16 windowId);
