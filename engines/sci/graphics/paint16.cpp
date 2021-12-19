@@ -24,6 +24,7 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/tts.h"
 #include "sci/engine/workarounds.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
@@ -494,6 +495,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 	// Make a "backup" of the port settings (required for some SCI0LATE and
 	// SCI01+ only)
 	Port oldPort = *_ports->getPort();
+
+	g_sci->_tts->display(text);
 
 	// setting defaults
 	_ports->penMode(0);

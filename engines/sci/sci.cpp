@@ -43,6 +43,7 @@
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/scriptdebug.h"
+#include "sci/engine/tts.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -254,12 +255,15 @@ SciEngine::~SciEngine() {
 
 	delete _scriptPatcher;
 	delete _resMan;	// should be deleted last
+	delete _tts;
 	g_sci = nullptr;
 }
 
 extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 Common::Error SciEngine::run() {
+	_tts = new SciTTS();
+
 	_resMan = new ResourceManager();
 	_resMan->addAppropriateSources();
 	_resMan->init();

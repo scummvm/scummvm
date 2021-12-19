@@ -80,6 +80,7 @@ class GfxScreen;
 class GfxText16;
 class GfxText32;
 class GfxTransitions;
+class SciTTS;
 
 #ifdef ENABLE_SCI32
 class GfxFrameout;
@@ -256,6 +257,7 @@ public:
 	GfxText16 *_gfxText16;
 	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
+	SciTTS *_tts;
 
 #ifdef ENABLE_SCI32
 	GfxControls32 *_gfxControls32; // Controls for 32-bit gfx
