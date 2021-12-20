@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-SciTTS::SciTTS() : _lastText("") {
+SciTTS::SciTTS() : _lastText(""), _message("") {
 	_ttsMan = ConfMan.getBool("tts_enabled") ? g_system->getTextToSpeechManager() : nullptr;
 	if (_ttsMan != nullptr)
 		_ttsMan->setLanguage(ConfMan.get("language"));
@@ -36,17 +36,17 @@ SciTTS::SciTTS() : _lastText("") {
 
 void SciTTS::button(const Common::String &text) {
 	if (_ttsMan != nullptr)
-		_ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 }
 
 void SciTTS::text(const Common::String &text) {
 	if (_ttsMan != nullptr)
-		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::INTERRUPT);
 }
 
 void SciTTS::display(const Common::String &text) {
 	if (_ttsMan != nullptr && text != _lastText) {
-		_ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 		_lastText = text;
 	}
 }
@@ -54,6 +54,22 @@ void SciTTS::display(const Common::String &text) {
 void SciTTS::stop() {
 	if (_ttsMan != nullptr)
 		_ttsMan->stop();
+}
+
+void SciTTS::setMessage(const Common::String &text) {
+	if (text.size() > 0)
+		_message = text;
+}
+
+Common::String SciTTS::getMessage(const Common::String &text) {
+	// If the current message contains a substring of the text to be displayed,
+	// minus the first letter, prefer the message instead. The first letter is
+	// chopped off in messages in games such as KQ6 and is replaced with tabs in
+	// KQ6 or spaces in KQ5, so that a calligraphic first letter is drawn instead.
+	if (_message.size() > 0 && text.size() > 0 && text.hasSuffix(_message.substr(1)))
+		return _message;
+	else
+		return text;
 }
 
 } // End of namespace Sci
