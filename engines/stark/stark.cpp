@@ -56,6 +56,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/renderer.h"
+#include "gui/error.h"
 #include "gui/message.h"
 
 namespace Stark {
@@ -101,6 +102,10 @@ Common::Error StarkEngine::run() {
 	if (gfx == nullptr)
 		return Common::kNoError;
 	gfx->init();
+
+	if (StarkSettings->isAssetsModEnabled() && !gfx->supportsModdedAssets()) {
+		GUI::displayErrorDialog(_("Software renderer does not support modded assets"));
+	}
 
 	checkRecommendedDatafiles();
 

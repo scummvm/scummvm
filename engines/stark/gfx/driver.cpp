@@ -80,10 +80,6 @@ Driver *Driver::create() {
 #endif
 #if defined(USE_TINYGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		if (StarkSettings->isAssetsModEnabled()) {
-			GUI::displayErrorDialog(Common::U32String::format(_("Software renderer does not support modded assets")));
-			return nullptr;
-		}
 		driver = new TinyGLDriver();
 	}
 #endif
