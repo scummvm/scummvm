@@ -406,7 +406,7 @@ GetNextPropVal:
 				{
 					if (set_value==title_caption)
 					{
-						strncpy(game_title, GetWord(newp), MAX_GAME_TITLE);
+						Common::strlcpy(game_title, GetWord(newp), MAX_GAME_TITLE);
 						hugo_setgametitle(game_title);
 					}
 					else if (set_value==needs_repaint)
