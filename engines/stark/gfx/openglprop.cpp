@@ -86,6 +86,13 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		const Material &material = materials[face->materialId];
 		Math::Vector3d color;
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
+		if (tex) {
+			tex->bind();
+			glEnable(GL_TEXTURE_2D);
+		} else {
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+		}
 		auto vertexIndices = _faceEBO[face];
 		auto numVertexIndices = (face)->vertexIndices.size();
 		if (!_gfx->computeLightsEnabled()) {
@@ -98,7 +105,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];
 			if (tex) {
-				tex->bind();
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
@@ -111,7 +117,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 					vertex.texT = 1.0f - vertex.stexT;
 				}
 			} else {
-				glBindTexture(GL_TEXTURE_2D, 0);
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material.r, material.g, material.b);
 				else

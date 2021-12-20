@@ -118,9 +118,9 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 	_shader->unbind();
 
-	if (_castsShadow
-	        && StarkScene->shouldRenderShadows()
-	        && StarkSettings->getBoolSetting(Settings::kShadow)) {
+	if (_castsShadow &&
+	    StarkScene->shouldRenderShadows() &&
+	    StarkSettings->getBoolSetting(Settings::kShadow)) {
 		glEnable(GL_BLEND);
 		glEnable(GL_STENCIL_TEST);
 
@@ -307,8 +307,8 @@ void OpenGLSActorRenderer::setLightArrayUniform(const LightEntryArray &lights) {
 	}
 }
 
-void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights,
-		const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot) {
+void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
+                                            Math::Matrix3 worldToModelRot) {
 	Math::Vector3d sumDirection;
 	bool hasLight = false;
 
@@ -363,8 +363,8 @@ void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights,
 	_shadowShader->setUniform("lightDirection", sumDirection);
 }
 
-bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction, float weight) {
+bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+                                                     Math::Vector3d &direction, float weight) {
 	float distance = light->position.getDistanceTo(actorPosition);
 
 	if (distance > light->falloffFar) {
@@ -409,14 +409,14 @@ bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light, Ma
 	return true;
 }
 
-bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+                                                    Math::Vector3d &direction) {
 	Math::Vector3d lightToActor = actorPosition - light->position;
 	lightToActor.normalize();
 
 	float cosAngle = MAX(0.0f, lightToActor.dotProduct(light->direction));
 	float cone = (cosAngle - light->innerConeAngle.getCosine()) /
-			MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
+	             MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
 	cone = CLIP(cone, 0.0f, 1.0f);
 
 	if (cone <= 0) {
