@@ -345,7 +345,7 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 
 	// At least Phant2 requires use of strncpy, since it creates save game
 	// names of exactly kMaxSaveNameLength
-	strncpy(desc.name, nameString.c_str(), kMaxSaveNameLength);
+	Common::strlcpy(desc.name, nameString.c_str(), kMaxSaveNameLength);
 
 	return true;
 }
