@@ -176,6 +176,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
 
+	// LSL5 uses the name "bonus" for the patch directory on disk 1.
+	// The installer would copy these patches to the root game directory.
+	if (_gameId == GID_LSL5) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "bonus"); // resource patches
+	}
+
 	switch (desc->language) {
 	case Common::DE_DEU:
 		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
