@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 17:42+0000\n"
+"POT-Creation-Date: 2021-12-20 18:22+0000\n"
 "PO-Revision-Date: 2021-12-09 22:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7316,11 +7316,11 @@ msgstr "Ввімкнути згладжування шрифтів"
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Якщо згладжування увімкнено, текст стає гладкішим."
 
-#: engines/stark/stark.cpp:286
+#: engines/stark/stark.cpp:287
 msgid "You are missing recommended data files:"
 msgstr "У вас відсутні насупні рекомендовані файли даних:"
 
-#: engines/stark/stark.cpp:300
+#: engines/stark/stark.cpp:301
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7330,7 +7330,7 @@ msgstr ""
 "задумано. У релізі Steam вона відсутня. Ви можете взяти шрифти з демо-версії "
 "цієї гри."
 
-#: engines/stark/stark.cpp:307
+#: engines/stark/stark.cpp:308
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7338,13 +7338,13 @@ msgstr ""
 "Файл 'gui.ini' рекомендований, щоб отримати правильні налаштування шрифтів у "
 "локалізованій версії гри."
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:314
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "Файл 'language.ini' рекомендований, щоб отрімати перекладені версії "
 "діалогових вікон."
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:320
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "Файл 'game.exe' рекомендований, щоби отримати стилізовані діалогові вікна."

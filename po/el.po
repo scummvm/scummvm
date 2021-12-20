@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 17:42+0000\n"
+"POT-Creation-Date: 2021-12-20 18:22+0000\n"
 "PO-Revision-Date: 2021-12-20 12:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7474,11 +7474,11 @@ msgstr ""
 "Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
 "το κείμενο απεικονίζεται με λιγότερο τραχύ περίγραμμα."
 
-#: engines/stark/stark.cpp:286
+#: engines/stark/stark.cpp:287
 msgid "You are missing recommended data files:"
 msgstr "Λείπουν τα ακόλουθα συνιστώμενα αρχεία δεδομένων:"
 
-#: engines/stark/stark.cpp:300
+#: engines/stark/stark.cpp:301
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7488,7 +7488,7 @@ msgstr ""
 "είχε σχεδιαστεί. Είναι γνωστό πως η έκδοση από το Steam δεν τον περιέχει. "
 "Μπορείτε να βρείτε τις γραμματοσειρές από την έκδοση demo του παιχνιδιού."
 
-#: engines/stark/stark.cpp:307
+#: engines/stark/stark.cpp:308
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7497,13 +7497,13 @@ msgstr ""
 "γραμματοσειράς για τις μεταφράσεις του παιχνιδιού σε άλλες γλώσσες "
 "(localization)."
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:314
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "Το 'language.ini' προτείνεται για να μπορείτε να έχετε τα παράθυρα με "
 "διαλόγους επιβεβαίωσης και σε άλλες γλώσσες."
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:320
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "Το 'game.exe' προτείνεται για να έχουν ξεχωριστό στιλ τα παράθυρα με "

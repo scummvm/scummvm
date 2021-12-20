@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 17:42+0000\n"
+"POT-Creation-Date: 2021-12-20 18:22+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7291,11 +7291,11 @@ msgstr "폰트 안티 앨리어싱 활성화"
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 
-#: engines/stark/stark.cpp:286
+#: engines/stark/stark.cpp:287
 msgid "You are missing recommended data files:"
 msgstr "권장 데이터 파일이 빠져 있습니다:"
 
-#: engines/stark/stark.cpp:300
+#: engines/stark/stark.cpp:301
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7304,18 +7304,18 @@ msgstr ""
 "텍스트를 의도된 스타일대로 표시하기 위해서는 'fonts' 폴더가 필요합니다. "
 "Steam 판에는 이 폴더가 존재하지 않지만, 데모 버전에서 가져올 수 있습니다."
 
-#: engines/stark/stark.cpp:307
+#: engines/stark/stark.cpp:308
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
 "게임 현지화에 필요한 글꼴 설정을 얻어오기 위해서 'gui.ini'가 필요합니다."
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:314
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr "현지화된 확인 창을 사용하기 위해서 'language.ini'가 필요합니다."
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:320
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "스타일이 적용된 확인창을 사용하기 위해서 'game.exe'가 필요합니다."
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 17:42+0000\n"
+"POT-Creation-Date: 2021-12-20 18:22+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7412,11 +7412,11 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Wanneer font anti-aliasing is ingeschakeld, ziet de tekst er gladder uit."
 
-#: engines/stark/stark.cpp:286
+#: engines/stark/stark.cpp:287
 msgid "You are missing recommended data files:"
 msgstr "U mist aangeraden data bestanden:"
 
-#: engines/stark/stark.cpp:300
+#: engines/stark/stark.cpp:301
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7426,7 +7426,7 @@ msgstr ""
 "De Steam versie mist deze map. U kunt de lettertypes uit een demo versie van "
 "het spel halen."
 
-#: engines/stark/stark.cpp:307
+#: engines/stark/stark.cpp:308
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7434,13 +7434,13 @@ msgstr ""
 "'gui.ini' wordt aangeraden om de juiste instellingen voor lettertypes te "
 "krijgen voor vertaling in het spel."
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:314
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "'language.ini' wordt aangeraden om bevestigingsdialoogvensters vertaald te "
 "zien."
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:320
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "'game.exe' wordt aangeraden om opgemaakte bevestigingsdialoogvensters te "

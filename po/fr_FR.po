@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 17:42+0000\n"
+"POT-Creation-Date: 2021-12-20 18:22+0000\n"
 "PO-Revision-Date: 2021-12-10 12:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7407,11 +7407,11 @@ msgstr ""
 "Quand l'anti-crénelage des polices est activé, les textes affichés sont plus "
 "lisses."
 
-#: engines/stark/stark.cpp:286
+#: engines/stark/stark.cpp:287
 msgid "You are missing recommended data files:"
 msgstr "Il vous manque des fichiers de données recommandés :"
 
-#: engines/stark/stark.cpp:300
+#: engines/stark/stark.cpp:301
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7421,7 +7421,7 @@ msgstr ""
 "conforme à sa conception. La version Steam est connue pour ne pas comporter "
 "ce dossier. Vous pouvez récupérer les polices depuis la version démo du jeu."
 
-#: engines/stark/stark.cpp:307
+#: engines/stark/stark.cpp:308
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7429,13 +7429,13 @@ msgstr ""
 "'gui.ini' est recommandé pour obtenir les paramètres de police appropriés à "
 "la traduction du jeu."
 
-#: engines/stark/stark.cpp:313
+#: engines/stark/stark.cpp:314
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "'language.ini' est recommandé pour obtenir des boites de dialogues de "
 "confirmation traduites."
 
-#: engines/stark/stark.cpp:319
+#: engines/stark/stark.cpp:320
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "'game.exe' est recommandé pour obtenir des boites de dialogues de "
