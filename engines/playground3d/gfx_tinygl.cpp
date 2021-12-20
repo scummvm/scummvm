@@ -76,7 +76,12 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-		Renderer(system) {
+		Renderer(system),
+		_blitImageRgba(nullptr),
+		_blitImageRgb(nullptr),
+		_blitImageRgb565(nullptr),
+		_blitImageRgba5551(nullptr),
+		_blitImageRgba4444(nullptr) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {

@@ -64,6 +64,7 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		_currentViewport(kOriginalWidth, kOriginalHeight),
 		_cubeShader(nullptr),
 		_fadeShader(nullptr),
+		_bitmapShader(nullptr),
 		_cubeVBO(0),
 		_fadeVBO(0),
 		_bitmapVBO(0) {
