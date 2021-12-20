@@ -1883,7 +1883,7 @@ void drawFTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *
 				} else {
 					// No light source calculation
 					// So just set base colour
-					setRGB0(poly, rgbIn.r, rgbIn.b, rgbIn.b);
+					setRGB0(poly, rgbIn.r, rgbIn.g, rgbIn.b);
 				}
 				if (selFace == i) {
 					setRGB0(poly, selPRed, selPGreen, selPBlue);
