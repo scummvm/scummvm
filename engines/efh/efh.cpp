@@ -3620,7 +3620,227 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 }
 
 void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
-	warning("STUB - getDeathTypeDescription");
+	int16 charId;
+	int16 possessivePronoun;
+
+	if (attackerId > 999) {
+		charId = _teamCharId[attackerId - 1000];
+		possessivePronoun = _npcBuf[charId]._possessivePronounSHL6 >> 6;
+	} else {
+		charId = _teamMonsterIdArray[attackerId];
+		possessivePronoun = _mapMonsters[attackerId]._possessivePronounSHL6 >> 6;
+	}
+
+	if (possessivePronoun > 2)
+		possessivePronoun = 2;
+
+	int16 deathType;
+	if (getRandom(100) < 20) {
+		deathType = 0;
+	} else {
+		if (victimId >= 1000) {
+			charId = _teamCharId[victimId - 1000];
+			if (charId == -1)
+				deathType = 0;
+			else {
+				int16 var6 = sub1C80A(charId, 9, true);
+				if (var6 == 0x7FFF)
+					deathType = 0;
+				else
+					deathType = _items[var6]._attackType + 1;
+			}
+		} else if (_teamMonsterIdArray[victimId] == -1)
+			deathType = 0;
+		else {
+			charId = _mapMonsters[_teamMonsterIdArray[victimId]]._itemId_Weapon;
+			deathType = _items[charId]._attackType;
+		}
+	}
+
+	int16 rndDescrForDeathType = getRandom((3)) - 1;
+	char buffer[80];
+	memset(buffer, 0, 80);
+	sprintf(buffer, "DUDE IS TOAST!");
+	switch (deathType) {
+	case 0:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", killing %s!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", slaughtering %s!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", annihilating %s!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 1:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", cutting %s in two!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", dicing %s into small cubes!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 2:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", popping %s like a zit!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 3:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 4:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", totally incinerating %s!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", leaving a blistered mass of flesh behind!");
+			break;
+		}
+		break;
+	case 5:
+		switch (rndDescrForDeathType) {
+		case 0:
+			// The original has a typo: popscicle
+			sprintf(buffer, ", turning %s into a popsicle!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", shattering %s into shards!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 6:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", leaving pudding for brains");
+			break;
+		case 1:
+			sprintf(buffer, ", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 7:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 8:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", sucking %s into eternity!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 9:
+	case 10:
+	case 11:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", completely disintegrating %s!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 12:
+	case 13:
+	case 14:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", blowing %s brains out!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", exploding %s entire chest!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 15:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", choking %s to death!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", melting %s lungs!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	case 16:
+		switch (rndDescrForDeathType) {
+		case 0:
+			sprintf(buffer, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			break;
+		case 1:
+			sprintf(buffer, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			break;
+		case 2:
+			sprintf(buffer, ", impaling %s brain!", kPersonal[possessivePronoun]);
+			break;
+		}
+		break;
+	default:
+		break;
+	}	
+
+	strcat((char *)_messageToBePrinted, buffer);
 }
 
 void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2, int16 monsterId) {
