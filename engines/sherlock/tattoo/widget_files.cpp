@@ -266,7 +266,7 @@ bool WidgetFiles::getFilename() {
 
 	if (isSlotEmpty(_selector)) {
 		index = 0;
-		_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
+		_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 		filename = "";
 	} else {
 		index = filename.size();
@@ -373,7 +373,7 @@ bool WidgetFiles::getFilename() {
 			} else if (keyState.keycode == Common::KEYCODE_DELETE && index < (int)filename.size()) {
 				filename.deleteChar(index);
 
-				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 				_surface.writeString(Common::String(filename.c_str() + index), pt, COMMAND_HIGHLIGHTED);
 			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
