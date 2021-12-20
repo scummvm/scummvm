@@ -37,6 +37,8 @@ void SpiderEngine::runCode(Code *code) {
 		runRecept(code);
 	else if (code->name == "<office>")
 		runOffice(code);
+	else if (code->name == "<file_cabinet>") 
+		runFileCabinet(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -416,8 +418,8 @@ void SpiderEngine::runFusePanel(Code *code) {
 					break;
 
 				if (fuses.contains(mousePos)) {
-				    int x = (mousePos.x - 364) / (235 / 2.);
-				    int y = (mousePos.y - 54) / (355 / 10.);
+					int x = (mousePos.x - 364) / (235 / 2.);
+					int y = (mousePos.y - 54) / (355 / 10.);
 					int s = 10* x + y + 1;
 
 					if (s == 1) {
@@ -447,6 +449,100 @@ void SpiderEngine::runFusePanel(Code *code) {
 	}
 }
 
+void SpiderEngine::runFileCabinet(Code *code) {
+	changeScreenMode("640x480");
+	Common::Point mousePos;
+	Common::Event event;
+
+	uint32 comb[6] = {};
+	Common::Rect sel[6];
+
+	sel[0] = Common::Rect(16, 176, 91, 301);
+	sel[1] = Common::Rect(108, 176, 183, 301);
+
+	sel[2] = Common::Rect(232, 176, 306, 301);
+	sel[3] = Common::Rect(324, 176, 400, 301);
+
+	sel[4] = Common::Rect(453, 176, 526, 301);
+	sel[5] = Common::Rect(545, 176, 618, 301);
+
+	Common::String intro = "spider/cine/spv040s.smk"; 
+	if (!_intros.contains(intro)) {
+		MVideo v(intro, Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		_intros[intro] = true;
+	}
+
+	Frames nums = decodeFrames("spider/int_alof/combo.smk");
+	if (nums.size() != 10)
+		error("Invalid number of digits: %d", nums.size());
+
+	defaultCursor();
+	Common::Rect back(0, 446, 640, 480);
+	loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+	for (int i = 0; i < 6; i++) {
+		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
+	}
+
+	while (!shouldQuit()) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (back.contains(mousePos)) {
+					if (comb[0] == 3 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 0 && comb[5] == 1) {
+						MVideo v("spider/cine/file0000.smk", Common::Point(0, 0), false, false, false);
+						runIntro(v);
+						_sceneState["GS_SWITCH0"] = 1;
+					}
+
+					_nextLevel = code->levelIfWin;
+					return;
+				}
+
+				for (int i = 0; i < 6; i++) {
+					if (sel[i].contains(mousePos))
+						comb[i] = (comb[i] + 1) % 10;
+				}
+
+				loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+				for (int i = 0; i < 6; i++) {
+					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
+				}
+				break;
+
+			case Common::EVENT_RBUTTONDOWN:
+				for (int i = 0; i < 6; i++)
+					if (sel[i].contains(mousePos)) {
+						if (comb[i] == 0)
+							comb[i] = 9;
+						else
+							comb[i] = comb[i] - 1;
+					}
+
+				loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+				for (int i = 0; i < 6; i++) {
+					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
+				}
+				break;
+
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
 
 void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");

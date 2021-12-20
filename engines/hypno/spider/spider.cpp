@@ -220,8 +220,25 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("<fuse_panel>");
 	sc->hots[3].actions.push_back(cl);
 
+	Code *file_cabinet = new Code();
+	file_cabinet->name = "<file_cabinet>";
+	file_cabinet->levelIfWin = "<alveroff_selector>";
+	_levels["<file_cabinet>"] = file_cabinet;
+
 	loadSceneLevel("alverofh.mi_", "", prefix);
 	loadSceneLevel("alveroff.mi_", "", prefix);
+	sc = (Scene *) _levels["alveroff.mi_"];
+
+	cl = new ChangeLevel("<tape>");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<file_cabinet>");
+	sc->hots[3].actions.push_back(cl);
+
+	Transition *tape = new Transition("decide4.mi_");
+	_levels["<tape>"] = tape;
+	_levels["<tape>"]->intros.push_back("spider/cine/iaos001s.smk");
+
 	Transition *alveroff_selector = new Transition("alveroff.mi_", "alverofh.mi_");
 	_levels["<alveroff_selector>"] = alveroff_selector;
 
@@ -259,13 +276,20 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("decide4.mi_", "", prefix);
 	sc = (Scene *) _levels["decide4.mi_"];
+	sc->intros.push_back("cine/apts006s.smk");
 	cl = new ChangeLevel("ball1.mi_");
 	sc->hots[2].actions.push_back(cl);
 	cl = new ChangeLevel("c5"); // depens on the difficulty
 	sc->hots[4].actions.push_back(cl);
 
-	loadArcadeLevel("c5.mi_", "factory1.mi_", prefix);
-	loadArcadeLevel("c5h.mi_", "factory1.mi_", prefix);
+	loadArcadeLevel("c5.mi_", "<trans_apt_6>", prefix);
+	_levels["c5.mi_"]->intros.push_back("cine/ctss001s.smk");
+	loadArcadeLevel("c5h.mi_", "<trans_apt_6>", prefix);
+	_levels["c5h.mi_"]->intros.push_back("cine/ctss001s.smk");
+
+	Transition *trans_apt_6 = new Transition("factory1.mi_");
+	trans_apt_6->intros.push_back("spider/cine/apts06as.smk");
+	_levels["<trans_apt_6>"] = trans_apt_6;
 
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
 	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
@@ -277,9 +301,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<note>"] = note;
 
 	loadSceneLevel("factory1.mi_", "intercom.mi_", prefix);
+	_levels["factory1.mi_"]->intros.push_back("cine/swc003s.smk");
 	loadSceneLevel("intercom.mi_", "c3", prefix);
 
 	loadArcadeLevel("c3.mi_", "", prefix);
+	_levels["c3.mi_"]->intros.push_back("cine/ctss001s.smk");
+
 	loadArcadeLevel("c3h.mi_", "", prefix);
 
 	loadSceneLevel("movie2.mi_", "", prefix);
