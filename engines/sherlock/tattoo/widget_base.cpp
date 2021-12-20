@@ -125,11 +125,11 @@ void WidgetBase::drawBackground() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	Common::Rect bounds = _bounds;
+	bounds.grow(-3);
 
 	if (vm._transparentMenus) {
 		ui.makeBGArea(bounds);
 	} else {
-		bounds.grow(-3);
 		screen._backBuffer1.fillRect(bounds, MENU_BACKGROUND);
 	}
 }
