@@ -55,6 +55,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "graphics/renderer.h"
 #include "gui/message.h"
 
 namespace Stark {
@@ -328,10 +329,16 @@ void StarkEngine::checkRecommendedDatafiles() {
 }
 
 bool StarkEngine::hasFeature(EngineFeature f) const {
+	// The TinyGL renderer does not support arbitrary resolutions for now
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
+
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsArbitraryResolutions) ||
+		(f == kSupportsArbitraryResolutions && !softRenderer) ||
 		(f == kSupportsReturnToLauncher);
 }
 
@@ -386,7 +393,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	}
 
 	if (stream.err()) {
-		warning("An error occured when reading '%s'", filename.c_str());
+		warning("An error occurred when reading '%s'", filename.c_str());
 		return Common::kReadingFailed;
 	}
 
@@ -455,7 +462,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 	}
 
 	if (save->err()) {
-		warning("An error occured when writing '%s'", filename.c_str());
+		warning("An error occurred when writing '%s'", filename.c_str());
 		delete save;
 		return Common::kWritingFailed;
 	}

@@ -125,6 +125,17 @@ MODULE_OBJS := \
 	visual/smacker.o \
 	visual/text.o
 
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	gfx/tinygl.o \
+	gfx/tinyglactor.o \
+	gfx/tinyglbitmap.o \
+	gfx/tinyglfade.o \
+	gfx/tinyglprop.o \
+	gfx/tinyglsurface.o \
+	gfx/tinygltexture.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_STARK), DYNAMIC_PLUGIN)
 PLUGIN := 1

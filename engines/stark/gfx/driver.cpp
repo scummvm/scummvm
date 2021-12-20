@@ -23,6 +23,9 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengl.h"
 #include "engines/stark/gfx/opengls.h"
+#include "engines/stark/gfx/tinygl.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -75,10 +78,17 @@ Driver *Driver::create() {
 		driver = new OpenGLDriver();
 	}
 #endif
-
+#if defined(USE_TINYGL)
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		if (StarkSettings->isAssetsModEnabled()) {
+			GUI::displayErrorDialog(Common::U32String::format(_("Software renderer does not support modded assets")));
+			return nullptr;
+		}
+		driver = new TinyGLDriver();
+	}
+#endif
 	if (driver)
 		return driver;
-
 	warning("No renderers have been found for this game");
 	GUI::displayErrorDialog(Common::U32String::format(_("No renderers have been found for this game")));
 	return driver;
