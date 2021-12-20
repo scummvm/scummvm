@@ -431,7 +431,7 @@ bool MenuOptions::saveGameMenu() {
 		enterText(TextId::kEnterYourNewName, buf, sizeof(buf));
 		// may not be empty
 		if (buf[0] == '\0') {
-			strncpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
+			Common::strlcpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
 		}
 		Common::Error state = _engine->saveGameState(slot, buf, false);
 		if (state.getCode() != Common::kNoError) {
