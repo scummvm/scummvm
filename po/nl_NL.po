@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-17 17:12+0000\n"
+"POT-Creation-Date: 2021-12-20 17:42+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6363,7 +6363,7 @@ msgstr ""
 "features zullen mogelijk niet goed werken. Controleer a.u.b. de console voor "
 "meer informatie, en verifieer dat uw spel bestanden juist zijn."
 
-#: engines/sci/sci.cpp:377
+#: engines/sci/sci.cpp:383
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6378,7 +6378,7 @@ msgstr ""
 "worden of overeenkomen met de spraak van het spel. Dit is geen ScummVM fout, "
 "maar een probleem met de speldata."
 
-#: engines/sci/sci.cpp:401
+#: engines/sci/sci.cpp:407
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6400,7 +6400,7 @@ msgstr ""
 "hernoemen naar 4.PAT en deze dan in de spelmap plaatsen. Zonder deze patch "
 "zal General MIDI muziek sterk verminkt klinken."
 
-#: engines/sci/sci.cpp:420
+#: engines/sci/sci.cpp:426
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6414,11 +6414,11 @@ msgstr ""
 "ScummVM, het wordt dus aangeraden de patch te verwijderen uit uw spelmap om "
 "onverwachtse fouten en/of issues later te voorkomen."
 
-#: engines/sci/sci.cpp:499
+#: engines/sci/sci.cpp:505
 msgid "Download patch"
 msgstr "Download patch"
 
-#: engines/sci/sci.cpp:500
+#: engines/sci/sci.cpp:506
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -6426,7 +6426,7 @@ msgstr ""
 "(of click 'Download patch' knop. Let op, het wordt alleen gedownload, u moet "
 "van zelf verder gaan)\n"
 
-#: engines/sci/sci.cpp:507
+#: engines/sci/sci.cpp:513
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6442,7 +6442,7 @@ msgstr ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:838
+#: engines/sci/sci.cpp:844
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
