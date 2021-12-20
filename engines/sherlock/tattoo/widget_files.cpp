@@ -416,8 +416,8 @@ bool WidgetFiles::getFilename() {
 }
 
 Common::Rect WidgetFiles::getScrollBarBounds() const {
-	Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
-	scrollRect.moveTo(_bounds.width() - BUTTON_SIZE - 3, _surface.fontHeight() + 13);
+	Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 13);
+	scrollRect.moveTo(_bounds.width() - BUTTON_SIZE - 3, _surface.fontHeight() + 10);
 
 	return scrollRect;
 }
