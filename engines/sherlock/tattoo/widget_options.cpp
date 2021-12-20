@@ -314,9 +314,9 @@ void WidgetOptions::render(OptionRenderMode mode) {
 					_midiSliderX + 4, sliderY - (num - 6) / 2 + num));
 
 				if (_midiSliderX - 4 > _surface.widestChar())
-					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 4, sliderY + 4), INFO_BOTTOM);
+					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 3, sliderY + 4), INFO_BOTTOM);
 				if (_midiSliderX + 4 < _surface.width() - _surface.widestChar())
-					_surface.fillRect(Common::Rect(_midiSliderX + 4, sliderY, _midiSliderX + 4, sliderY + 4), INFO_BOTTOM);
+					_surface.fillRect(Common::Rect(_midiSliderX + 4, sliderY, _midiSliderX + 5, sliderY + 4), INFO_BOTTOM);
 				break;
 			}
 
@@ -344,9 +344,9 @@ void WidgetOptions::render(OptionRenderMode mode) {
 					_digiSliderX + 4, sliderY - (num - 6) / 2 + num));
 
 				if (_digiSliderX - 4 > _surface.widestChar())
-					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
+					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 3, sliderY + 4), INFO_BOTTOM);
 				if (_digiSliderX + 4 < _surface.width() - _surface.widestChar())
-					_surface.fillRect(Common::Rect(_digiSliderX + 4, sliderY, _digiSliderX + 4, sliderY + 4), INFO_BOTTOM);
+					_surface.fillRect(Common::Rect(_digiSliderX + 4, sliderY, _digiSliderX + 5, sliderY + 4), INFO_BOTTOM);
 				break;
 			}
 
