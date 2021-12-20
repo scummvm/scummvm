@@ -24,10 +24,11 @@
 
 #include "sci/resource/resource.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/message.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/message.h"
+#include "sci/engine/state.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/tts.h"
 
 namespace Sci {
 
@@ -101,6 +102,8 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 	uint16 offset = argv[1].toUint16();
 	if (argc > 2)
 		newvalue = argv[2].toSint16();
+
+	g_sci->_tts->setMessage(s->_segMan->getString(argv[0]));
 
 	// in kq5 this here gets called with offset 0xFFFF
 	//  (in the desert wheng getting the staff)
@@ -440,6 +443,8 @@ reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 	const Common::String text = g_sci->getKernel()->lookupText(make_reg(0, argv[0].toUint16()), argv[1].toUint16());
+
+	g_sci->_tts->setMessage(text);
 
 	// If the third argument is NULL, allocate memory for the destination. This
 	// occurs in SCI1 Mac games. The memory will later be freed by the game's

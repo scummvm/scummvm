@@ -25,6 +25,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
+#include "sci/engine/tts.h"
 #include "sci/engine/workarounds.h"
 #include "sci/util.h"
 
@@ -314,6 +315,7 @@ int MessageState::nextMessage(reg_t buf) {
 			_lastReturned = record.tuple;
 			_lastReturnedModule = _cursorStack.getModule();
 			_cursorStack.top().seq++;
+			g_sci->_tts->setMessage(record.string);
 			return record.talker;
 		} else {
 			MessageTuple &t = _cursorStack.top();
@@ -323,9 +325,10 @@ int MessageState::nextMessage(reg_t buf) {
 	} else {
 		CursorStack stack = _cursorStack;
 
-		if (getRecord(stack, true, record))
+		if (getRecord(stack, true, record)) {
+			g_sci->_tts->setMessage(record.string);
 			return record.talker;
-		else
+		} else
 			return 0;
 	}
 }
@@ -348,6 +351,7 @@ bool MessageState::messageRef(int module, const MessageTuple &t, MessageTuple &r
 	stack.init(module, t);
 	if (getRecord(stack, false, record)) {
 		ref = record.refTuple;
+		g_sci->_tts->setMessage(record.string);
 		return true;
 	}
 
