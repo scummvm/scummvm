@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 18:22+0000\n"
+"POT-Creation-Date: 2021-12-20 22:18+0000\n"
 "PO-Revision-Date: 2021-12-09 13:08+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7300,11 +7300,17 @@ msgstr "Font anti-aliasing engedélyezése"
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Ha a font anti-aliasing engedélyezve van, a szöveg simább."
 
-#: engines/stark/stark.cpp:287
+#: engines/stark/stark.cpp:107
+#, fuzzy
+#| msgid "Engine plugin does not support saved games"
+msgid "Software renderer does not support modded assets"
+msgstr "A motor plugin nem támogatja a játékállás mentését"
+
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "Hiányoznak az ajánlott adatfájlok:"
 
-#: engines/stark/stark.cpp:301
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7314,7 +7320,7 @@ msgstr ""
 "A Steam kiadásból ez köztudottan hiányzik. A betűtípusokat a játék demó "
 "verziójából szerezheted be."
 
-#: engines/stark/stark.cpp:308
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7322,13 +7328,13 @@ msgstr ""
 "A 'gui.ini' használata a játék fordítás szükséges betűtípus-beállítások "
 "megadásához ajánlott."
 
-#: engines/stark/stark.cpp:314
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "A 'language.ini' használata ajánlott a lokalizált megerősítő "
 "párbeszédpanelekhez."
 
-#: engines/stark/stark.cpp:320
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "A 'game.exe' használata ajánlott a megerősítő párbeszédpanelekhez."
 

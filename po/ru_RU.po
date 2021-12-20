@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 18:22+0000\n"
+"POT-Creation-Date: 2021-12-20 22:18+0000\n"
 "PO-Revision-Date: 2021-12-09 22:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7316,11 +7316,17 @@ msgstr "Включить сглаживание шрифтов"
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Если сглаживание шрифтов включено, шрифты рисуются без зубцов."
 
-#: engines/stark/stark.cpp:287
+#: engines/stark/stark.cpp:107
+#, fuzzy
+#| msgid "Engine plugin does not support saved games"
+msgid "Software renderer does not support modded assets"
+msgstr "Движок не поддерживает сохранение игр"
+
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "Не хватает следующих файлов данных игры:"
 
-#: engines/stark/stark.cpp:301
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7329,7 +7335,7 @@ msgstr ""
 "Папка 'fonts' необходима для отрисовки стилей текста. Однако, она "
 "отсутствует в релизе игры на Steam. Вы можете взять её из демо-версии игры."
 
-#: engines/stark/stark.cpp:308
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7337,13 +7343,13 @@ msgstr ""
 "Файл 'gui.ini' рекомендован, чтобы правильно отрисовывать шрифты в "
 "локализациях."
 
-#: engines/stark/stark.cpp:314
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "Файл 'language.ini' рекомендован, чтобы получить переведённые диалоги "
 "подтверждения."
 
-#: engines/stark/stark.cpp:320
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "Файл 'game.exe' рекомендован, чтобы получить стили диалогов подтверждения."

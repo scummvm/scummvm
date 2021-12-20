@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 18:22+0000\n"
+"POT-Creation-Date: 2021-12-20 22:18+0000\n"
 "PO-Revision-Date: 2021-12-15 11:11+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -7344,11 +7344,17 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Når kantutjevning for font er aktivert, vil tekst fremstå med jevnere kanter."
 
-#: engines/stark/stark.cpp:287
+#: engines/stark/stark.cpp:107
+#, fuzzy
+#| msgid "Engine plugin does not support saved games"
+msgid "Software renderer does not support modded assets"
+msgstr "Spillmotor-plugin støtter ikke lagrede spill"
+
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "Du mangler anbefalte datafiler:"
 
-#: engines/stark/stark.cpp:301
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -7358,7 +7364,7 @@ msgstr ""
 "teksten i spillet. Det er et kjent problem at Steam-utgivelsen mangler denne "
 "mappen. Hvis du trenger de, kan du finne fontene i demoversjonen av spillet."
 
-#: engines/stark/stark.cpp:308
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -7366,11 +7372,11 @@ msgstr ""
 "'gui.ini' er anbefalt for å få riktig fontinnstillinger i lokaliseringen til "
 "spillet."
 
-#: engines/stark/stark.cpp:314
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr "'language.ini' er anbefalt for å få lokaliserte bekreftelsesdialoger."
 
-#: engines/stark/stark.cpp:320
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "'game.exe' er anbefalt for å få stiliserte bekreftelsesdialoger."
 

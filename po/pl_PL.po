@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 18:22+0000\n"
+"POT-Creation-Date: 2021-12-20 22:18+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -7288,29 +7288,35 @@ msgstr "Włącz pływające kursory"
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
-#: engines/stark/stark.cpp:287
+#: engines/stark/stark.cpp:107
+#, fuzzy
+#| msgid "Engine plugin does not support saved games"
+msgid "Software renderer does not support modded assets"
+msgstr "Silnik nie wspiera zapisywania stanu gry"
+
+#: engines/stark/stark.cpp:292
 #, fuzzy
 msgid "You are missing recommended data files:"
 msgstr "Brakuje ci następujących, wymaganych plików gry Riven:\n"
 
-#: engines/stark/stark.cpp:301
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
 
-#: engines/stark/stark.cpp:308
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
 
-#: engines/stark/stark.cpp:314
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 
-#: engines/stark/stark.cpp:320
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 
