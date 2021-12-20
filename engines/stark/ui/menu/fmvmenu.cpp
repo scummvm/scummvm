@@ -32,7 +32,9 @@ namespace Stark {
 
 FMVMenuScreen::FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryFMV", Screen::kScreenFMVMenu),
-		_fmvWidgets() {
+		_fmvWidgets(),
+		_page(0),
+		_maxPage(0) {
 	_formatRectPos = Common::Point(202, 61);
 	_fontHeight = 16;
 	_fmvPerPage = 18;

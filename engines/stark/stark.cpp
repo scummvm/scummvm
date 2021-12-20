@@ -266,7 +266,8 @@ void StarkEngine::addModsToSearchPath() const {
 	const Common::FSNode modsDir = gameDataDir.getChild("mods");
 	if (modsDir.exists()) {
 		Common::FSList list;
-		modsDir.getChildren(list);
+		if (!modsDir.getChildren(list))
+			return;
 
 		Common::sort(list.begin(), list.end(), modsCompare);
 

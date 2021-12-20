@@ -83,7 +83,7 @@ static Common::String readString(Common::SeekableReadStream *stream) {
 
 Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	Common::String codec;
-	uint16 blockSize, channels, freq;
+	uint16 blockSize, channels, freq = 44100;
 	uint32 size;
 	byte flags;
 
@@ -107,7 +107,9 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		// ?
 
 		codec = readString(stream);
-		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
+		int val = strtol(codec.c_str(), 0, 10);
+		if (val)
+			freq /= val;
 
 		skipString(stream);
 
@@ -132,7 +134,9 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		// ?
 
 		codec = readString(stream);
-		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
+		int val = strtol(codec.c_str(), 0, 10);
+		if (val)
+			freq /= val;
 
 		skipString(stream);
 

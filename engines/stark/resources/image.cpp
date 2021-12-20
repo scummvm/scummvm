@@ -277,7 +277,7 @@ void ImageText::readData(Formats::XRCReadStream *stream) {
 	_color.r = stream->readByte();
 	_color.g = stream->readByte();
 	_color.b = stream->readByte();
-	_color.a = stream->readByte() | 0xFF;
+	_color.a = 0xFF; stream->readByte();
 	_font = stream->readUint32LE();
 
 	// WORKAROUND: Give more space to text in the Archives' computer

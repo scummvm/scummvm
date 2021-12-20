@@ -29,7 +29,8 @@ namespace Stark {
 namespace Gfx {
 
 TinyGlBitmap::TinyGlBitmap() :
-	Texture() {
+		Texture(),
+		 _texture1x1Color(0) {
 	_blitImage = tglGenBlitImage();
 }
 
