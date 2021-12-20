@@ -88,7 +88,8 @@ private:
 	MidiPlaybackSlot _midiSlots[NUM_MIDI_SLOTS]; // 0 is for music; 1-7 are for sfx
 	Common::List<MidiPlaybackSlot *> _midiSlotList; // Sorts midi slots by most recently used
 
-	byte *loadedSoundData;
+	byte *_loadedSoundData;
+	int _loadedSoundDataSize;
 	uint32 _midiDevice;
 
 	// VOC-related variables

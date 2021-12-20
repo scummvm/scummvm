@@ -63,7 +63,8 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	}
 
 	_soundHandle = new Audio::SoundHandle();
-	loadedSoundData = nullptr;
+	_loadedSoundData = nullptr;
+	_loadedSoundDataSize = 0;
 
 	for (int i = 1; i < NUM_MIDI_SLOTS; i++) {
 		_midiSlotList.push_back(&_midiSlots[i]);
@@ -84,7 +85,7 @@ Sound::~Sound() {
 		delete _midiSlots[i].midiParser;
 	delete _midiDriver;
 	delete _soundHandle;
-	delete[] loadedSoundData;
+	delete[] _loadedSoundData;
 }
 
 
@@ -102,13 +103,13 @@ void Sound::playMidiTrack(int track) {
 	if (_vm->getFeatures() & GF_DEMO)
 		return;
 
-	assert(loadedSoundData != nullptr);
+	assert(_loadedSoundData != nullptr);
 
 	// Check if a midi slot for this track exists already
 	for (int i = 1; i < NUM_MIDI_SLOTS; i++) {
 		if (_midiSlots[i].track == track) {
 			debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, i);
-			_midiSlots[i].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
+			_midiSlots[i].midiParser->loadMusic(_loadedSoundData, _loadedSoundDataSize);
 			_midiSlots[i].midiParser->setTrack(track);
 
 			// Shift this to the back (most recently used)
@@ -126,14 +127,14 @@ void Sound::playMidiTrack(int track) {
 }
 
 void Sound::playMidiTrackInSlot(int slot, int track) {
-	assert(loadedSoundData != nullptr);
+	assert(_loadedSoundData != nullptr);
 	debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, slot);
 
 	clearMidiSlot(slot);
 
 	if (track != -1) {
 		_midiSlots[slot].track = track;
-		_midiSlots[slot].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
+		_midiSlots[slot].midiParser->loadMusic(_loadedSoundData, _loadedSoundDataSize);
 		_midiSlots[slot].midiParser->setTrack(track);
 	}
 }
@@ -419,13 +420,14 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
 	Common::MemoryReadStreamEndian *soundStream = _vm->_resource->loadFile(soundName.c_str());
 
-	if (loadedSoundData != nullptr)
-		delete[] loadedSoundData;
-	loadedSoundData = new byte[soundStream->size()];
-	soundStream->read(loadedSoundData, soundStream->size());
+	if (_loadedSoundData != nullptr)
+		delete[] _loadedSoundData;
+	_loadedSoundDataSize = soundStream->size();
+	_loadedSoundData = new byte[_loadedSoundDataSize];
+	soundStream->read(_loadedSoundData, _loadedSoundDataSize);
 
 	// FIXME: should music start playing when this is called?
-	//_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
+	//_midiSlots[0].midiParser->loadMusic(_loadedSoundData, soundStream->size());
 
 	delete soundStream;
 }
