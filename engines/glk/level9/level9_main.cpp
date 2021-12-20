@@ -1196,7 +1196,8 @@ void ramsave(int i) {
 	printf("driver - ramsave %d", i);
 #endif
 
-	memmove(ramsavearea + i, workspace.vartable, sizeof(SaveStruct));
+	memmove(ramsavearea[i].vartable, workspace.vartable, sizeof(workspace.vartable));
+	memmove(ramsavearea[i].listarea, workspace.listarea, sizeof(workspace.listarea));
 }
 
 void ramload(int i) {
@@ -1204,7 +1205,8 @@ void ramload(int i) {
 	printf("driver - ramload %d", i);
 #endif
 
-	memmove(workspace.vartable, ramsavearea + i, sizeof(SaveStruct));
+	memmove(workspace.vartable, ramsavearea[i].vartable, sizeof(workspace.vartable));
+	memmove(workspace.listarea, ramsavearea[i].listarea, sizeof(workspace.listarea));
 }
 
 void calldriver() {
