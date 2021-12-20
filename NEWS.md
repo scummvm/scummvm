@@ -52,6 +52,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Resume animations in Serrated Scalpel after conversations. This fixes the
      bug where Jock Mahoney or Nobby Charleton would get stuck indefinitely,
      refusing to talk to you.
+   - Fix various user interface glitches in both games.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
