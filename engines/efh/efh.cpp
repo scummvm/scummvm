@@ -3620,15 +3620,14 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 }
 
 void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
-	int16 charId;
 	int16 possessivePronoun;
 
 	if (attackerId > 999) {
-		charId = _teamCharId[attackerId - 1000];
+		int16 charId = _teamCharId[attackerId - 1000];
 		possessivePronoun = _npcBuf[charId]._possessivePronounSHL6 >> 6;
 	} else {
-		charId = _teamMonsterIdArray[attackerId];
-		possessivePronoun = _mapMonsters[attackerId]._possessivePronounSHL6 >> 6;
+		int16 charId = _teamMonsterIdArray[attackerId];
+		possessivePronoun = _mapMonsters[charId]._possessivePronounSHL6 >> 6;
 	}
 
 	if (possessivePronoun > 2)
@@ -3639,7 +3638,7 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		deathType = 0;
 	} else {
 		if (victimId >= 1000) {
-			charId = _teamCharId[victimId - 1000];
+			int16 charId = _teamCharId[victimId - 1000];
 			if (charId == -1)
 				deathType = 0;
 			else {
@@ -3652,8 +3651,8 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		} else if (_teamMonsterIdArray[victimId] == -1)
 			deathType = 0;
 		else {
-			charId = _mapMonsters[_teamMonsterIdArray[victimId]]._itemId_Weapon;
-			deathType = _items[charId]._attackType;
+			int16 itemId = _mapMonsters[_teamMonsterIdArray[victimId]]._itemId_Weapon;
+			deathType = _items[itemId]._attackType;
 		}
 	}
 
