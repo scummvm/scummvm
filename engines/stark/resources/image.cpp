@@ -27,6 +27,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/settings.h"
@@ -216,7 +217,7 @@ void ImageStill::initVisual() {
 
 	VisualImageXMG *visual = new VisualImageXMG(StarkGfx);
 
-	if (StarkSettings->isAssetsModEnabled() && loadPNGOverride(visual)) {
+	if (StarkSettings->isAssetsModEnabled() && StarkGfx->supportsModdedAssets() && loadPNGOverride(visual)) {
 		visual->readOriginalSize(xmgStream);
 	} else {
 		visual->load(xmgStream);
