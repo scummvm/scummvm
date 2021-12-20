@@ -2660,7 +2660,7 @@ void pop_stack() {
 	/* RESTORE THE CONTENTS OF called_name */
 	//for (counter = 0; counter < 256; counter++)
 	//called_name[counter] = backup[stack].called_name[counter];
-	strncpy(called_name, backup[stack].called_name, 1024);
+	strncpy(called_name, backup[stack].called_name, 1023);
 
 	/* RESTORE THE CONTENTS OF scope_criterion */
 	//for (counter = 0; counter < 21; counter++)
@@ -2746,7 +2746,7 @@ void push_stack(int32 file_pointer) {
 			backup[stack].text_buffer[counter] = text_buffer[counter];
 
 		/* MAKE A COPY OF THE CURRENT CONTENTS OF called_name */
-		strncpy(backup[stack].called_name, called_name, 1024);
+		strncpy(backup[stack].called_name, called_name, 1023);
 
 		// MAKE A COPY OF THE CURRENT CONTENTS OF scope_criterion
 		strncpy(backup[stack].scope_criterion, scope_criterion, 20);
