@@ -824,7 +824,7 @@ void build_verblist(void) {
 
 	verblist = (words *)rmalloc(sizeof(words) * TOTAL_VERB);
 	for (i = 0; i < TOTAL_VERB; i++)
-		strncpy(verblist[i], dict[syntbl[auxsyn[i]]], sizeof(words));
+		Common::strlcpy(verblist[i], dict[syntbl[auxsyn[i]]], sizeof(words));
 #ifdef DUMP_VLIST
 	{
 		int j;
