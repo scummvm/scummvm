@@ -328,7 +328,7 @@ void AnimVideo::onAllLoaded() {
 
 		Common::SeekableReadStream *overrideStreamBink = nullptr;
 		Common::SeekableReadStream *overrideStreamSmacker = nullptr;
-		if (StarkSettings->isAssetsModEnabled()) {
+		if (StarkSettings->isAssetsModEnabled() && StarkGfx->supportsModdedAssets()) {
 			overrideStreamBink = openOverrideFile(".bik");
 			if (!overrideStreamBink) {
 				overrideStreamSmacker = openOverrideFile(".smk");

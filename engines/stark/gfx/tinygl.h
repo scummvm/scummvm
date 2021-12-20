@@ -66,6 +66,8 @@ public:
 
 	Graphics::Surface *getViewportScreenshot() const override;
 
+	bool supportsModdedAssets() const override { return false; }
+
 private:
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;

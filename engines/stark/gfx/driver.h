@@ -141,6 +141,8 @@ public:
 	virtual void set3DMode() = 0;
 	virtual bool computeLightsEnabled() = 0;
 
+	virtual bool supportsModdedAssets() const { return true; }
+
 	static const int32 kOriginalWidth = 640;
 	static const int32 kOriginalHeight = 480;
 
