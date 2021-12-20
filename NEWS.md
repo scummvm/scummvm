@@ -46,6 +46,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
    - Process pending key presses in the order they were made, not the most
      recent first.
+   - Fix crash when using Delete key in Rose Tattoo save dialog.
+   - Fix rare conversation bug in Serrated Scalpel that would happen when Lord
+     Brumwell started talking to you while the inventory window was open.
+   - Resume animations in Serrated Scalpel after conversations. This fixes the
+     bug where Jock Mahoney or Nobby Charleton would get stuck indefinitely,
+     refusing to talk to you.
 
  TwinE:
    - Numerous bugfixes and stability improvements.
