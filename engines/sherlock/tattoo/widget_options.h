@@ -47,6 +47,11 @@ private:
 	 * Render the contents of the dialog onto the widget's surface
 	 */
 	void render(OptionRenderMode mode = OP_ALL);
+
+	/**
+	 * Draw a slider on the widget's surface
+	 */
+	void drawSlider(int yp, int sliderX);
 public:
 	WidgetOptions(SherlockEngine *vm);
 	~WidgetOptions() override {}
