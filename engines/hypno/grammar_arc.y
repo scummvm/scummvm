@@ -60,7 +60,7 @@ using namespace Hypno;
 %token<i> NUM
 // header
 %token COMMENT CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK JTOK ZTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK ONTOK NTOK RTOK R0TOK ITOK JTOK ZTOK
 
 // body
 %token FNTOK NONETOK A0TOK P0TOK WTOK
@@ -91,7 +91,7 @@ hline: 	CTOK NUM {
 	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| OTOK NUM NUM { debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); }
-	| O1TOK NUM NUM { debugC(1, kHypnoDebugParser, "O1 %d %d", $2, $3); }
+	| ONTOK NUM NUM { debugC(1, kHypnoDebugParser, "ON %d %d", $2, $3); }
 	| TPTOK FILENAME NUM FILENAME {
 		g_parsedArc->transitionVideo = $2;
 		g_parsedArc->transitionTime = $3;
@@ -242,6 +242,7 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "A0 %d %d", $2, $3); 
 	}
 	| RTOK NUM NUM  { debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); }
+	| R0TOK NUM NUM  { debugC(1, kHypnoDebugParser, "R0 %d %d", $2, $3); }
 	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
 	| KNTOK NUM NUM { 
 		//if (Common::String("K0") == $1)

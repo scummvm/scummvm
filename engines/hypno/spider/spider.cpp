@@ -304,16 +304,19 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["factory1.mi_"]->intros.push_back("cine/swc003s.smk");
 	loadSceneLevel("intercom.mi_", "c3", prefix);
 
-	loadArcadeLevel("c3.mi_", "", prefix);
-	_levels["c3.mi_"]->intros.push_back("cine/ctss001s.smk");
+	loadArcadeLevel("c3.mi_", "c6", prefix);
+	_levels["c3.mi_"]->intros.push_back("cine/vrfs001s.smk");
 
-	loadArcadeLevel("c3h.mi_", "", prefix);
+	loadArcadeLevel("c3h.mi_", "c6", prefix);
+	_levels["c3h.mi_"]->intros.push_back("cine/vrfs001s.smk");
 
 	loadSceneLevel("movie2.mi_", "", prefix);
 
 	// Easy arcade levels
 
-	//loadArcadeLevel("c6.mi_", "", "spider");
+	loadArcadeLevel("c6.mi_", "", "spider");
+	_levels["c6.mi_"]->intros.push_back("cine/vrfs002s.smk");
+	_levels["c6.mi_"]->intros.push_back("cine/dia007s.smk");
 	// No c7 level?
 	loadArcadeLevel("c8.mi_", "", prefix);
 	loadArcadeLevel("c9.mi_", "", prefix);
@@ -324,7 +327,10 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// // Hard arcade levels
 
-	//loadArcadeLevel("c6h.mi_", "", "spider");
+	loadArcadeLevel("c6h.mi_", "", "spider");
+	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
+	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
+
 	// No c7h level?
 	loadArcadeLevel("c8h.mi_", "", prefix);
 	loadArcadeLevel("c9h.mi_", "", prefix);

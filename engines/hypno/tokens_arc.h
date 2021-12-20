@@ -75,20 +75,21 @@ extern int HYPNO_ARC_debug;
     ATOK = 277,
     VTOK = 278,
     OTOK = 279,
-    O1TOK = 280,
+    ONTOK = 280,
     NTOK = 281,
     RTOK = 282,
-    ITOK = 283,
-    JTOK = 284,
-    ZTOK = 285,
-    FNTOK = 286,
-    NONETOK = 287,
-    A0TOK = 288,
-    P0TOK = 289,
-    WTOK = 290,
-    XTOK = 291,
-    CB3TOK = 292,
-    C02TOK = 293
+    R0TOK = 283,
+    ITOK = 284,
+    JTOK = 285,
+    ZTOK = 286,
+    FNTOK = 287,
+    NONETOK = 288,
+    A0TOK = 289,
+    P0TOK = 290,
+    WTOK = 291,
+    XTOK = 292,
+    CB3TOK = 293,
+    C02TOK = 294
   };
 #endif
 
@@ -102,7 +103,7 @@ union HYPNO_ARC_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 106 "engines/hypno/tokens_arc.h" /* yacc.c:1909  */
+#line 107 "engines/hypno/tokens_arc.h" /* yacc.c:1909  */
 };
 
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;

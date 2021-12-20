@@ -40,7 +40,7 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 
 	if (_arcadeMode == "YC" || _arcadeMode == "YD") {
 		return; // Nothing to shoot
-	} else if (_arcadeMode == "YE") { 
+	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") { 
 		ox = _screenW/2;
 		oy = _screenH - _playerFrames[0]->h/2;
 	} else if (_arcadeMode == "YB") {
@@ -138,7 +138,7 @@ void SpiderEngine::drawPlayer() {
 			_playerFrameIdx++;
 			_lastPlayerPosition = _currentPlayerPosition;
 		}
-	} else if (_arcadeMode == "YE") {
+	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		uint32 idx = mousePos.x / (_screenW / 5);
 		_playerFrameIdx = oIndexYE[idx];
