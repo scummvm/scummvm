@@ -3246,7 +3246,7 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 }
 
 void EfhEngine::sub1BCA7(int16 monsterId) {
-	warning("STUB: sub1BE89");
+	warning("STUB: sub1BCA7");
 }
 
 void EfhEngine::reset_stru32686() {
@@ -3280,10 +3280,131 @@ void EfhEngine::sub1CDFA() {
 	warning("STUB: sub1CDFA");
 }
 
-bool EfhEngine::sub1CB27() {
-	warning("STUB: sub1CB27");
+void EfhEngine::sub1CAFD() {
+	for (int16 counter = 0; counter < 2; ++counter) {
+		redrawScreen();
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+}
 
-	return false;
+int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, int16 arg4) {
+	warning("STUB: sub1C956");
+	return 0;
+}
+
+void EfhEngine::sub1CAB6(int16 charId) {
+	for (int16 counter = 0; counter < 2; ++counter) {
+		sub15150(false);
+		displayLowStatusScreen(false);
+		drawCombatScreen(charId, false, false);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
+}
+
+bool EfhEngine::sub1CB27() {
+	int16 var4 = false;
+	for (int16 counter1 = 0; counter1 < _teamSize; ++counter1) {
+		_teamLastAction[counter1] = 0;
+		if (!isTeamMemberStatusNormal(counter1))
+			continue;
+
+		var4 = true;
+		do {
+			drawCombatScreen(_teamCharId[counter1], false, true);
+			Common::KeyCode var1 = handleAndMapInput(true);
+			switch (var1) {
+			case Common::KEYCODE_a:
+				_teamLastAction[counter1] = 'A';
+				_word3267A[counter1] = sub1C956(_teamCharId[counter1], 9, true);
+				if (_word3267A[counter1] == -1)
+					_teamLastAction[counter1] = 0;
+				break;
+			case Common::KEYCODE_d:
+				_teamLastAction[counter1] = 'D';
+				break;
+			case Common::KEYCODE_h:
+				_teamLastAction[counter1] = 'H';
+				break;
+			case Common::KEYCODE_r:
+				for (int16 counter2 = 0; counter2 < _teamSize; ++counter2) {
+					_teamLastAction[counter2] = 'R';
+				}
+				return true;
+			case Common::KEYCODE_s: {
+				int16 var8 = handleStatusMenu(2, _teamCharId[counter1]);
+				sub1CAB6(_teamCharId[counter1]);
+				if (var8 > 999) {
+					if (var8 == 0x7D00)
+						_teamLastAction[counter1] = 'S';
+				} else {
+					_teamLastAction[counter1] = 'U';
+					_word31780[counter1] = var8;
+					int16 var6 = _npcBuf[_teamCharId[counter1]]._inventory[var8]._ref;
+					switch (var6 - 1) {
+					case 0:
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+					case 6:
+					case 7:
+					case 8:
+					case 10:
+					case 12:
+					case 13:
+						_word3267A[counter1] = sub1C956(_teamCharId[counter1], 9, false);
+						break;
+
+					case 9:
+					case 11:
+					case 14:
+					case 15:
+					case 18:
+					case 24:
+					case 25:
+					case 27:
+					case 28:
+					case 29:
+					case 30:
+						sub1C219((uint8 *)"Select Character:", 3, 1, false);
+						_word3267A[counter1] = selectOtherCharFromTeam();
+						break;
+
+					case 16:
+					case 17:
+					case 26:
+						_word3267A[counter1] = 0xC8;
+						break;
+						
+					case 19:
+					case 20:
+					case 21:
+					case 22:
+					case 23:
+					default:
+						break;
+					}
+					
+				}
+				
+				}
+				break;
+			case Common::KEYCODE_t:
+				sub1CAFD();
+				getInputBlocking();
+				drawCombatScreen(_teamCharId[counter1], false, true);
+				break;
+			default:
+				break;
+			}
+		} while (_teamLastAction[counter1] == 0);
+
+	}
+
+	return var4;
 }
 
 void EfhEngine::sub1BE9A(int16 monsterId) {
