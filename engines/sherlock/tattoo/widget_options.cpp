@@ -305,11 +305,11 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
 				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2,
-					_surface.width() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
+					_surface.width() - _surface.widestChar() - 1, sliderY + 4), INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
 
 				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2,
-					_midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
+					_midiSliderX + 2, sliderY - (num - 6) / 2 + num - 2), INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2,
 					_midiSliderX + 4, sliderY - (num - 6) / 2 + num));
 
@@ -334,13 +334,15 @@ void WidgetOptions::render(OptionRenderMode mode) {
 
 				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
-				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.width() - _surface.widestChar() - 1,
-					sliderY + 3), INFO_MIDDLE);
+				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2,
+					_surface.width() - _surface.widestChar() - 1, sliderY + 4), INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
-				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1,
-					sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, _digiSliderX + 4,
-					sliderY - (num - 6) / 2 + num));
+
+				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2,
+					_digiSliderX + 2, sliderY - (num - 6) / 2 + num - 2), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2,
+					_digiSliderX + 4, sliderY - (num - 6) / 2 + num));
+
 				if (_digiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
 				if (_digiSliderX + 4 < _surface.width() - _surface.widestChar())
