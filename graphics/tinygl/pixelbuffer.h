@@ -106,7 +106,7 @@ public:
 	 *
 	 * @param length The length of the buffer, in pixels.
 	 */
-	void clear(int length);
+	void clear(uint length);
 
 	/**
 	 * Set the value of the pixel at index 'pixel' to 'value',

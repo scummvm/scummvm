@@ -82,7 +82,7 @@ void PixelBuffer::free() {
 	_buffer = NULL;
 }
 
-void PixelBuffer::clear(int length) {
+void PixelBuffer::clear(uint length) {
 	memset(_buffer, 0, length * _format.bytesPerPixel);
 }
 

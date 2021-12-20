@@ -62,7 +62,11 @@ struct DirtyRectangle {
 	Common::Rect rectangle;
 	int r, g, b;
 
-	DirtyRectangle() { }
+	DirtyRectangle() {
+		r = 0;
+		g = 0;
+		b = 0;
+	}
 	DirtyRectangle(Common::Rect rect, int red, int green, int blue) {
 		rectangle = rect;
 		r = red;
@@ -472,6 +476,8 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.lightingEnabled = c->lighting_enabled;
 	if (c->current_texture != nullptr)
 		state.textureVersion = c->current_texture->versionNumber;
+	else
+		state.textureVersion = 0;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
