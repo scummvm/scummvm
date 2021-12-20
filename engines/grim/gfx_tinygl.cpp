@@ -1512,7 +1512,6 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 	Graphics::Surface glBuffer;
 	TinyGL::getSurfaceRef(glBuffer);
 	uint8 r, g, b;
-	int pos = x + y * _screenWidth;
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
 			if ((j + x) >= _screenWidth || (i + y) >= _screenHeight) {
@@ -1527,7 +1526,6 @@ void GfxTinyGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
 			buffer[3] = 255;
 			buffer += 4;
 		}
-		pos += _screenWidth;
 	}
 }
 
