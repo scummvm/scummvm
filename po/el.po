@@ -7477,8 +7477,8 @@ msgstr ""
 #: engines/stark/stark.cpp:107
 msgid "Software renderer does not support modded assets"
 msgstr ""
-"Η απόδοση εικόνας μέσω λογισμικού δεν υποστηρίζει τροποποιημένα στοιχεία ("
-"modded assets)"
+"Η απόδοση εικόνας μέσω λογισμικού δεν υποστηρίζει τροποποιημένα στοιχεία "
+"(modded assets)"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
