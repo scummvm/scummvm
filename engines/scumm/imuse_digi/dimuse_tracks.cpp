@@ -72,7 +72,7 @@ void IMuseDigital::tracksResume() {
 }
 
 void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	dispatchSaveLoad(ser);
 
 	for (int l = 0; l < _trackCount; l++) {
@@ -223,9 +223,9 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 		return -1;
 	}
 
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	addTrackToList(&_trackList, allocatedTrack);
-	Common::StackLock unlock(_mutex);
+	Common::StackLock unlock(*_mutex);
 
 	return 0;
 }
@@ -250,7 +250,7 @@ int IMuseDigital::tracksStopSound(int soundId) {
 }
 
 int IMuseDigital::tracksStopAllSounds() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	IMuseDigiTrack *nextTrack = _trackList;
 	IMuseDigiTrack *curTrack;
 

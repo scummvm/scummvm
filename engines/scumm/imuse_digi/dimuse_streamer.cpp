@@ -337,9 +337,9 @@ int IMuseDigital::streamerFetchData(IMuseDigiStream *streamPtr) {
 
 		_streamerBailFlag = 0;
 
-		Common::StackLock lock(_mutex);
+		Common::StackLock lock(*_mutex);
 		actualAmount = _filesHandler->read(streamPtr->soundId, &streamPtr->buf[streamPtr->loadIndex], requestedAmount, streamPtr->bufId);
-		Common::StackLock unlock(_mutex);
+		Common::StackLock unlock(*_mutex);
 
 		// FT has no bailFlag
 		if (!_isEarlyDiMUSE && _streamerBailFlag)

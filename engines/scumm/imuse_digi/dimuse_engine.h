@@ -64,7 +64,7 @@ struct IMuseDigiStreamZone;
 
 class IMuseDigital : public MusicEngine {
 private:
-	Common::Mutex _mutex;
+	Common::Mutex *_mutex;
 	ScummEngine_v7 *_vm;
 	Audio::Mixer *_mixer;
 
@@ -298,7 +298,7 @@ private:
 	byte waveOutGetStreamFlags();
 
 public:
-	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer);
+	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::Mutex *mutex);
 	~IMuseDigital() override;
 
 	// Wrapper functions used by the main engine
