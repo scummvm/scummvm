@@ -5,6 +5,7 @@ COPYING.LGPL.txt
 COPYING.txt
 COPYRIGHT.txt
 drascula.dat
+hadesch_translations.dat
 hugo.dat
 kyra.dat
 lure.dat
