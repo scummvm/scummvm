@@ -167,7 +167,7 @@ void IMuseDigiTriggersHandler::processTriggers(int soundId, char *marker) {
 		return;
 	}
 
-	Common::strlcpy(_textBuffer, marker, strlen(marker));
+	Common::strlcpy(_textBuffer, marker, sizeof(textBuffer));
 	_midProcessing++;
 	for (int l = 0; l < DIMUSE_MAX_TRIGGERS; l++) {
 		if (!_trigs[l].sound || _trigs[l].sound != soundId || (_trigs[l].text[0] && strcmp(_textBuffer, _trigs[l].text))) {
