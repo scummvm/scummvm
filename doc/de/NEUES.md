@@ -42,6 +42,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
    - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
    - Grafikfehler in Serrated Scalpel behoben, der auftritt, wenn Gegenstände untersucht werden, während das Inventar geöffnet ist.
+   - Die Geschwindigkeit des Darts-Spiel in Serrated Scalpel ist nun näher am Original-Spiel.
+   - Absturz behoben, der auftritt, wenn der Cursor an das Ende einer Zeichenkette im Speichern-Dialog von Rose Tattoo bewegt wird.
+   - Ausstehende Tastenanschläge werden nun in der korrekten Reihenfolge behandelt.
+   - Absturz behoben, der auftritt, wenn die Entfernen-Taste im Speichern-Dialog von Rose Tattoo genutzt wird.
+   - Dialog-Fehler behoben, der auftritt, wenn Lord Brumwell zu sprechen beginnt, während das Inventar-Fenster geöffnet ist.
+   - Animationen werden am Ende einer Unterhaltung korrekt fortgesetzt. Dies behebt einen Fehler,
+     der dafür sorgt, dass Jock Mahoney oder Nobby Charleton sich nicht mehr bewegen können und
+     nicht mehr mit dir sprechen möchten.
+   - Mehrere Fehler in der Benutzeroberfläche in beiden Spielen korrigiert.
 
  TwinE:
    - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
@@ -55,7 +64,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
    - Mehrere Fehlerkorrekturen im Zusammenhang mit der Audio-Wiedergabe.
-
+   - Die Wahrscheinlichkeit, dass ein Monster einen Gegenstand fallen lässt, wurde korrigiert.
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
