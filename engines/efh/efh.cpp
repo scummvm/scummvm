@@ -1483,7 +1483,7 @@ void EfhEngine::handleWinSequence() {
 	free(winSeqBuf4);
 }
 
-bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int altCharId) {
+bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 altCharId) {
 	for (int16 newObjectId = 0; newObjectId < 10; ++newObjectId) {
 		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
 			continue;
@@ -3842,8 +3842,47 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	strcat((char *)_messageToBePrinted, buffer);
 }
 
+bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
+	int16 rndVal = getRandom(100);
+	if (kEncounters[_mapMonsters[monsterId]._MonsterRef]._dropOccurrencePct < rndVal)
+		return false;
+
+	rndVal = getRandom(5) - 1;
+	int16 itemId = kEncounters[_mapMonsters[monsterId]._MonsterRef]._dropItemId[rndVal];
+	if (itemId == -1)
+		return false;
+
+	if (!giveItemTo(charId, itemId, 0xFF))
+		return false;
+
+	char tmpString[20];
+	copyString(_items[itemId]._name, tmpString);
+	char buffer[80];
+	sprintf(buffer, " and finds a %s!", tmpString);
+	strcat((char *)_messageToBePrinted, buffer);
+	return true;
+}
+
 void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2, int16 monsterId) {
-	warning("STUB - getXPAndSearchCorpse");
+	int16 xpLevel = getXPLevel(_npcBuf[charId]._xp);
+	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._MonsterRef]._xpGiven;
+	char buffer[80];
+	sprintf(buffer, "  %s%s gains %d experience", namePt1, namePt2, kEncounters[_mapMonsters[monsterId]._MonsterRef]._xpGiven);
+	if (getXPLevel(_npcBuf[charId]._xp) > xpLevel) {
+		generateSound(15);
+		int16 var2 = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
+		_npcBuf[charId]._hitPoints += var2;
+		_npcBuf[charId]._maxHP += var2;
+		_npcBuf[charId]._infoScore[0] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[1] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[2] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[3] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[4] += getRandom(3) - 1;
+	}
+	strcat((char *)_messageToBePrinted, buffer);
+	if (!characterSearchesMonsterCorpse(charId, monsterId))
+		strcat((char *)_messageToBePrinted, "!");
+	
 }
 
 void EfhEngine::addReactionText(int16 id) {
