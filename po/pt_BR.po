@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-20 22:18+0000\n"
-"PO-Revision-Date: 2021-12-10 12:26+0000\n"
+"PO-Revision-Date: 2021-12-21 08:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -7360,10 +7360,8 @@ msgstr ""
 "Quando a suavização de borda de fonte está ativada, o texto fica mais suave."
 
 #: engines/stark/stark.cpp:107
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "O plugin da engine não suporta jogos salvos"
+msgstr "O renderizador de software não suporta conteúdos modificados"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
