@@ -343,9 +343,7 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 		nameString = nameU32String.encode(Common::kWindows1255);
 	}
 
-	// At least Phant2 requires use of strncpy, since it creates save game
-	// names of exactly kMaxSaveNameLength
-	Common::strlcpy(desc.name, nameString.c_str(), kMaxSaveNameLength);
+	Common::strlcpy(desc.name, nameString.c_str(), sizeof(desc.name));
 
 	return true;
 }

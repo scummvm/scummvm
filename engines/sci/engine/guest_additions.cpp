@@ -625,7 +625,7 @@ reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *arg
 					// actually save into the new save
 					resetCatalogFile = true;
 				}
-			} else if (strncmp(saveGameName.c_str(), saves[saveIndex].name, kMaxSaveNameLength) != 0) {
+			} else if (strcmp(saveGameName.c_str(), saves[saveIndex].name) != 0) {
 				// The game doesn't let the save game name change for the same
 				// slot, but ScummVM's GUI does, so force the new name into the
 				// save file metadata if it has changed so it actually makes it

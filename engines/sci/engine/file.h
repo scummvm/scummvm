@@ -36,7 +36,7 @@ enum kFileOpenMode {
 };
 
 enum {
-	kMaxSaveNameLength = 36, ///< Maximum length of a savegame name (including optional terminator character).
+	kMaxSaveNameLength = 36, ///< Maximum length of a savegame name (excluding terminator character)
 	kMaxNumSaveGames = 20 ///< Maximum number of savegames
 };
 
@@ -66,7 +66,11 @@ struct SavegameDesc {
 	int date;
 	int time;
 	int version;
-	char name[kMaxSaveNameLength];
+	// name is a null-terminated 36 character array in SCI16,
+	// but in SCI32 the 36th character can be used for text.
+	// At least Phant2 makes use of this. We add an element
+	// so that this string is always terminated internally.
+	char name[kMaxSaveNameLength + 1];
 	Common::String gameVersion;
 	uint32 script0Size;
 	uint32 gameObjectOffset;
