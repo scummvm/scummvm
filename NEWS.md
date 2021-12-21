@@ -5,13 +5,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Sanitarium.
-   - Added support for Hades Challenge
+   - Added support for Hades Challenge.
 
  General:
    - Now ScummVM requires C++11 for building.
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
-   - Implemented Icon view in GUI [GSoC task]
+   - Implemented Icon view in GUI (GSoC task).
    - Scalers are now supported with the OpenGL graphics mode.
 
  AGOS:
