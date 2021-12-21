@@ -59,15 +59,24 @@ void TinyGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, 
 
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
-		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
+		Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette);
 
 		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, convertedSurface->w, convertedSurface->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, (char *)(convertedSurface->getPixels()));
 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		// Convert the surface to texture format
-		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, surface->w, surface->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, const_cast<void *>(surface->getPixels()));
+		if (surface->format != Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) {
+			// Convert the surface to texture format
+			Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+			tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, convertedSurface->w, convertedSurface->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, (char *)(convertedSurface->getPixels()));
+
+			convertedSurface->free();
+			delete convertedSurface;
+		} else {
+			tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, surface->w, surface->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, const_cast<void *>(surface->getPixels()));
+		}
 	}
 }
 
