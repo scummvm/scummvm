@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Sanitarium.
+   - Added support for Hades' Challenge
 
  General:
    - Now ScummVM requires C++11 for building.
