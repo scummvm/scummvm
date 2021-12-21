@@ -51,7 +51,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz behoben, der auftritt, wenn der Cursor an das Ende einer Zeichenkette im Speichern-Dialog von Rose Tattoo bewegt wird.
    - Ausstehende Tastenanschläge werden nun in der korrekten Reihenfolge behandelt.
    - Absturz behoben, der auftritt, wenn die Entfernen-Taste im Speichern-Dialog von Rose Tattoo genutzt wird.
-   - Dialog-Fehler behoben, der auftritt, wenn Lord Brumwell beginnt zu sprechen, während das Inventar-Fenster geöffnet ist.
+   - Dialog-Fehler behoben, der auftritt, wenn Lord Brumwell zu sprechen beginnt, während das Inventar-Fenster geöffnet ist.
    - Animationen werden am Ende einer Unterhaltung korrekt fortgesetzt. Dies behebt einen Fehler,
      der dafür sorgt, dass Jock Mahoney oder Nobby Charleton sich nicht mehr bewegen können und
      nicht mehr mit dir sprechen möchten.
