@@ -540,8 +540,8 @@ Groovie
    * - Jordi Vilalta Prat
      -
 
-Hades' Challenge
-^^^^^^^^^^^^^^^^
+Hades Challenge
+^^^^^^^^^^^^^^^
 
 .. list-table::
    :widths: 35 65
@@ -1338,6 +1338,8 @@ Xeen
    :widths: 35 65
 
    * - Paul Gilbert
+     -
+   * - Benoit Pierre
      -
    * - David Goldsmith
      - (analysis)
