@@ -26,6 +26,8 @@
 #include "hadesch/ambient.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
+
 namespace Hadesch {
 
 static const char *kDamagedWall = "t1010ob0";
@@ -500,9 +502,12 @@ public:
 		case 10065:
 			room->playAnim("t1350bb0", 501, PlayAnimParams::loop().partial(8, 11));
 			break;
-		case 10066:
+		case 10066: {
+		        GUI::MessageDialog dialog(_("The Troy minigame is not supported yet. Skipping"));
+			dialog.runModal();
 			g_vm->moveToRoom(kQuiz);
 			break;
+		}
 		case 10069:
 			// TODO: check this
 			room->playVideo("T1270BA0", 0, 10070, Common::Point(0, 216));

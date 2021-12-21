@@ -26,6 +26,8 @@
 #include "hadesch/ambient.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
+
 namespace Hadesch {
 
 static const char *kStoneAnim = "g0110ob0";
@@ -642,8 +644,11 @@ TODO (medusa quest):
 			// TODO: arcade sequence
 			if (0) {
 				g_vm->moveToRoom(kMedusaPuzzle);
-			} else
+			} else {
+			        GUI::MessageDialog dialog(_("The Medusa minigame is not supported yet. Skipping"));
+			        dialog.runModal();
 				g_vm->moveToRoom(kQuiz);
+			}
 			break;
 		case 11024:
 			renderPerseus();

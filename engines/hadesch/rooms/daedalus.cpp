@@ -26,6 +26,8 @@
 #include "hadesch/ambient.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
+
 namespace Hadesch {
 
 static const char *kDaedalusStillFrame = "daedalus still frame";
@@ -204,13 +206,16 @@ public:
 		case 13007:
 			room->enableMouse();
 			break;
-		case 13008:
+		case 13008: {
 			room->enableMouse();
 			room->selectFrame("daedalus exclaims still", kDaedalusZ,0);
 			// TODO: for now we skip arcade sequence until it's implemented
 			//			g_vm->moveToRoom(kMinotaurPuzzle);
+			GUI::MessageDialog dialog(_("The Minotaur minigame is not supported yet. Skipping"));
+			dialog.runModal();
 			g_vm->moveToRoom(kQuiz);
 			break;
+		}
 		case 13011: {
 			// TODO: use right algorithm
 			int roarNum = g_vm->getRnd().getRandomNumberRng(1, 5);
