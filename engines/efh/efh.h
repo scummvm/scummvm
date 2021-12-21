@@ -313,7 +313,7 @@ private:
 	bool isCharacterATeamMember(int16 id);
 	bool isTPK();
 	void handleWinSequence();
-	bool giveItemTo(int16 charId, int16 objectId, int altCharId);
+	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
@@ -381,6 +381,7 @@ private:
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
+	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void getXPAndSearchCorpse(int16 charId, char* namePt1, char* namePt2, int16 monsterId);
 	void addReactionText(int16 id);
 	void handleFight_lastAction_A(int16 teamCharId);
