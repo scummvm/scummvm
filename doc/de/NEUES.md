@@ -37,6 +37,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserte Unterstützung für hochauflösenden Text in den 16-Farben-Macintosh-
      Versionen von Loom und Indiana Jones and the Last Crusade.
    - Absturz beim Laden von Spielständen von Humongous Entertainment-Spielen behoben.
+   - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
 
  Sherlock:
    - Absturz behoben, der auftritt, wenn die Streichhölzer mit dem Labor-Tisch benutzt werden.
@@ -46,12 +47,22 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
    - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
    - Grafikfehler in Serrated Scalpel behoben, der auftritt, wenn Gegenstände untersucht werden, während das Inventar geöffnet ist.
+   - Die Geschwindigkeit des Darts-Spiel in Serrated Scalpel ist nun näher am Original-Spiel.
+   - Absturz behoben, der auftritt, wenn der Cursor an das Ende einer Zeichenkette im Speichern-Dialog von Rose Tattoo bewegt wird.
+   - Ausstehende Tastenanschläge werden nun in der korrekten Reihenfolge behandelt.
+   - Absturz behoben, der auftritt, wenn die Entfernen-Taste im Speichern-Dialog von Rose Tattoo genutzt wird.
+   - Dialog-Fehler behoben, der auftritt, wenn Lord Brumwell beginnt zu sprechen, während das Inventar-Fenster geöffnet ist.
+   - Animationen werden am Ende einer Unterhaltung korrekt fortgesetzt. Dies behebt einen Fehler,
+     der dafür sorgt, dass Jock Mahoney oder Nobby Charleton sich nicht mehr bewegen können und
+     nicht mehr mit dir sprechen möchten.
+   - Mehrere Fehler in der Benutzeroberfläche in beiden Spielen korrigiert.
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
    - Abbruch der Zauberspruch-Auswahl beim Wechsel der Charaktere korrigiert.
    - Korrektur einiger fehlerhafter Speicher-Zugriffe.
    - Mehrere Fehlerkorrekturen im Zusammenhang mit der Audio-Wiedergabe.
+   - Die Wahrscheinlichkeit, dass ein Monster einen Gegenstand fallen lässt, wurde korrigiert.
 
  macOS-Port:
    - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
@@ -60,7 +71,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - "Portabler Modus" hinzugefügt, der die von ScummVM erstellten Dateien (Spielstände, Screenshots...)
      nicht wie üblich im Benutzerprofil-Ordner, sondern in dem Verzeichnis ablegt, in welchem sich
      die ScummVM-Programmdatei befindet, sofern dort eine scummvm.ini-Datei existiert.
-
 
 #### 2.5.0 "Vor genau zwanzig Jahren..." (09.10.2021)
 
