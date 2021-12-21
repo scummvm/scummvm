@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-20 22:18+0000\n"
-"PO-Revision-Date: 2021-12-09 13:08+0000\n"
+"PO-Revision-Date: 2021-12-21 19:59+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7397,10 +7397,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Wenn Anti-Aliasing aktiv ist, wird der Text weicher dargestellt."
 
 #: engines/stark/stark.cpp:107
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "Engine-Plugin unterstützt keine Spielstände"
+msgstr "Der Software-Renderer unterstützt keine modifizierten Assets"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
