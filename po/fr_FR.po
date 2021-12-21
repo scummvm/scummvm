@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-20 22:18+0000\n"
-"PO-Revision-Date: 2021-12-10 12:26+0000\n"
+"PO-Revision-Date: 2021-12-21 11:11+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7408,10 +7408,9 @@ msgstr ""
 "lisses."
 
 #: engines/stark/stark.cpp:107
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "Ce moteur de jeu ne supporte pas les sauvegardes"
+msgstr ""
+"Le moteur de rendu logiciel ne prend pas en charge les ressources modifiées"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
