@@ -408,12 +408,12 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				break;
 			case 0x7C:
+				// pipe character is a control character in SCI1.1, otherwise treat as normal
 				if (getSciVersion() >= SCI_VERSION_1_1) {
 					len -= CodeProcessing(text, orgFontId, 0, false);
 					break;
 				}
 				// fall through
-				// FIXME: fall through intended?
 			default:
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
@@ -530,12 +530,12 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 		case 0x9781: // this one is used by SQ4/japanese as line break as well
 			break;
 		case 0x7C:
+			// pipe character is a control character in SCI1.1, otherwise treat as normal
 			if (getSciVersion() >= SCI_VERSION_1_1) {
 				len -= CodeProcessing(text, orgFontId, orgPenColor, true);
 				break;
 			}
 			// fall through
-			// FIXME: fall through intended?
 		default:
 			charWidth = _font->getCharWidth(curChar);
 			// clear char
