@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-SciTTS::SciTTS() : _message("") {
+SciTTS::SciTTS() : _curMessage("") {
 	_ttsMan = ConfMan.getBool("tts_enabled") ? g_system->getTextToSpeechManager() : nullptr;
 	if (_ttsMan != nullptr)
 		_ttsMan->setLanguage(ConfMan.get("language"));
@@ -51,18 +51,49 @@ void SciTTS::stop() {
 
 void SciTTS::setMessage(const Common::String &text) {
 	if (text.size() > 0)
-		_message = text;
+		_curMessage = text;
 }
 
 Common::String SciTTS::getMessage(const Common::String &text) {
+	Common::String message = text;
+
 	// If the current message contains a substring of the text to be displayed,
 	// minus the first letter, prefer the message instead. The first letter is
 	// chopped off in messages in games such as KQ6 and is replaced with tabs in
 	// KQ6 or spaces in KQ5, so that a calligraphic first letter is drawn instead.
-	if (_message.size() > 0 && text.size() > 0 && text.hasSuffix(_message.substr(1)))
-		return _message;
+	if (_curMessage.size() > 0 && text.size() > 0 && text.hasSuffix(_curMessage.substr(1)))
+		message = _curMessage;
 	else
-		return text;
+		message = text;
+
+	// Strip color code characters in SCI1.1 or newer
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		int32 index = message.find('|');
+
+		while (index >= 0) {
+			do {
+				message.deleteChar(index);
+			} while (message.size() > 0 && message[index] != '|');
+
+			if (message.size() > 0)
+				message.deleteChar(index);
+
+			index = message.find('|');
+		}
+	}
+
+	// Check if it's an actual message, by checking for the
+	// existence of any vowel.
+	// For example, when talking to the alien in SQ5 room 500, a
+	// series of symbols is shown, as part of a joke.
+	if (message.contains('a') ||
+		message.contains('e') ||
+		message.contains('i') ||
+		message.contains('o') ||
+		message.contains('u'))
+		return message;
+	else
+		return "";
 }
 
 } // End of namespace Sci
