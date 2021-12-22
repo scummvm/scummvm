@@ -805,10 +805,13 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("darksummer", "",
 		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
+	// Dead City (Czech) (25.06.2004)
+	WME_WINENTRY("deadcity", "v1.0.1",
+		WME_ENTRY1s("data.dcp", "6860a4aa55576cbee1a0f2a04f2c8810", 9132626), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
+
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
-		WME_ENTRY2s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205,
-					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_4_1),
+		WME_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_4_1),
 
 	// Dead City (English)
 	WME_WINENTRY("deadcity", "",
