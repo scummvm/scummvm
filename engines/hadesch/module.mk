@@ -59,14 +59,17 @@ HADESCH_RULES_INCLUDED := 1
 HADESCH_POTFILE := $(srcdir)/engines/hadesch/po/hadesch.pot
 HADESCH_POFILES := $(wildcard $(srcdir)/engines/hadesch/po/*.po)
 
+hadesch-makepotfiles:
+	find $(srcdir)/engines/hadesch -type f \( -iname '*.cpp' -or -iname '*.h' \) | sed s@^$(srcdir)/@@ > $(srcdir)/engines/hadesch/po/POTFILES_hadesch
+
 hadesch-updatepot:
 	cat $(srcdir)/engines/hadesch/po/POTFILES_hadesch | \
-	xgettext -f - -D $(srcdir) -d hadesch --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c -kTranscribedSound:2 --add-comments=I18N\
-		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(HADESCH_POTFILE) \
+	xgettext -f - -D $(srcdir) -d hadesch --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c -kmake:2 --add-comments=I18N\
+		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c \
 		--copyright-holder="ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.scummvm.org -o $(HADESCH_POTFILE)_
 
-	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for ScummVM/' \
+	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for Hadesch transcriptions in ScummVM/' \
 		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/ScummVM/' $(HADESCH_POTFILE)_ > $(HADESCH_POTFILE).new
 
 	rm $(HADESCH_POTFILE)_
@@ -97,8 +100,6 @@ hadesch-translations-dat: devtools/create_translations
 	mv hadesch_translations.dat $(srcdir)/dists/engine-data/hadesch_translations.dat
 
 update-hadesch-translations: hadesch-updatepot $(HADESCH_POFILES) hadesch-translations-dat
-
-update-hadesch-translations: hadesch-updatepot $(HADESCH_POFILES)
 	@$(foreach file, $(HADESCH_POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
 
