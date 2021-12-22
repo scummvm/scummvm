@@ -1166,6 +1166,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_UNDITHER },
 
+	// Hoyle 1 - English DOS Non-Interactive Demo
+	// Game version v1.000.114, SCI interpreter version 0.000.530
+	{"hoyle1", "Demo", {
+		{"resource.map", 0, "debe9c04c5bcf1d97274d4a7a3e1a9f9", 1008},
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 243616},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER },
+
 	// Hoyle 2 - English DOS
 	// SCI interpreter version 0.000.572
 	{"hoyle2", "", {
