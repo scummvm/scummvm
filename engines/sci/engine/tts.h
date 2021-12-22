@@ -36,7 +36,7 @@ public:
 
 private:
 	Common::TextToSpeechManager *_ttsMan;
-	Common::String _message;
+	Common::String _curMessage;
 
 	Common::String getMessage(const Common::String &text);
 };
