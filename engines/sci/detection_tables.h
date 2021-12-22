@@ -809,8 +809,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
-#define GUIO_GK1_FLOPPY GUIO2(GUIO_NOSPEECH, \
-							  GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_GK1_FLOPPY GUIO3(GUIO_NOSPEECH, \
+							  GAMEOPTION_ORIGINAL_SAVELOAD, \
+							  GAMEOPTION_TTS)
 #define GUIO_GK1_CD_DOS GUIO4(GUIO_LINKSPEECHTOSFX, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
@@ -818,7 +819,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_GK1_CD_WIN GUIO3(GUIO_LINKSPEECHTOSFX, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_HQ_VIDEO)
-#define GUIO_GK1_MAC    GUIO1(GUIO_NOSPEECH)
+#define GUIO_GK1_MAC    GUIO2(GUIO_NOSPEECH, \
+							  GAMEOPTION_TTS)
 
 	// Gabriel Knight - English DOS Floppy
 	// SCI interpreter version 2.000.000
@@ -4191,8 +4193,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-#define GUIO_PQ4_FLOPPY GUIO2(GUIO_NOSPEECH, \
-							  GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_PQ4_FLOPPY GUIO3(GUIO_NOSPEECH, \
+							  GAMEOPTION_ORIGINAL_SAVELOAD, \
+							  GAMEOPTION_TTS)
 #define GUIO_PQ4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
 							  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD)
@@ -4736,8 +4739,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16 },
 
-#define GUIO_QFG4_FLOPPY GUIO2(GUIO_NOSPEECH, \
-							   GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_QFG4_FLOPPY GUIO3(GUIO_NOSPEECH, \
+							   GAMEOPTION_ORIGINAL_SAVELOAD, \
+							   GAMEOPTION_TTS)
 #define GUIO_QFG4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
 							   GAMEOPTION_ORIGINAL_SAVELOAD, \
 							   GAMEOPTION_HQ_VIDEO)
