@@ -31,13 +31,11 @@ public:
 
 	void button(const Common::String &text);
 	void text(const Common::String &text);
-	void display(const Common::String &text);
 	void stop();
 	void setMessage(const Common::String &text);
 
 private:
 	Common::TextToSpeechManager *_ttsMan;
-	Common::String _lastText;
 	Common::String _message;
 
 	Common::String getMessage(const Common::String &text);
