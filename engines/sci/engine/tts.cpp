@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-SciTTS::SciTTS() : _lastText(""), _message("") {
+SciTTS::SciTTS() : _message("") {
 	_ttsMan = ConfMan.getBool("tts_enabled") ? g_system->getTextToSpeechManager() : nullptr;
 	if (_ttsMan != nullptr)
 		_ttsMan->setLanguage(ConfMan.get("language"));
@@ -42,13 +42,6 @@ void SciTTS::button(const Common::String &text) {
 void SciTTS::text(const Common::String &text) {
 	if (_ttsMan != nullptr)
 		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::INTERRUPT);
-}
-
-void SciTTS::display(const Common::String &text) {
-	if (_ttsMan != nullptr && text != _lastText) {
-		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-		_lastText = text;
-	}
 }
 
 void SciTTS::stop() {
