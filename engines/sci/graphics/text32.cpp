@@ -29,6 +29,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
+#include "sci/engine/tts.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/compare.h"
@@ -325,6 +326,8 @@ void GfxText32::drawTextBox() {
 	if (_text.size() == 0) {
 		return;
 	}
+
+	g_sci->_tts->text(_text);
 
 	const char *text = _text.c_str();
 	const char *sourceText = text;
