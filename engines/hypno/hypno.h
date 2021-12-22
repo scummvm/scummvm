@@ -302,6 +302,7 @@ private:
 	void runRecept(Code *code);
 	void runOffice(Code *code);
 	void runFileCabinet(Code *code);
+	void runLock(Code *code);
 
 	bool isFuseRust = true;
 	bool isFuseUnreadable = false;

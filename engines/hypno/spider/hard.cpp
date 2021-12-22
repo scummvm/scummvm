@@ -39,6 +39,8 @@ void SpiderEngine::runCode(Code *code) {
 		runOffice(code);
 	else if (code->name == "<file_cabinet>") 
 		runFileCabinet(code);
+	else if (code->name == "<lock>") 
+		runLock(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -543,6 +545,79 @@ void SpiderEngine::runFileCabinet(Code *code) {
 		g_system->delayMillis(10);
 	}
 }
+
+void SpiderEngine::runLock(Code *code) {
+	changeScreenMode("640x480");
+	Common::Point mousePos;
+	Common::Event event;
+
+	uint32 comb[5] = {};
+	Common::Rect sel[5];
+
+	sel[0] = Common::Rect(276, 57, 324, 134);
+	sel[1] = Common::Rect(348, 57, 396, 134);
+	sel[2] = Common::Rect(416, 57, 464, 134);
+	sel[3] = Common::Rect(484, 57, 532, 134);
+	sel[4] = Common::Rect(552, 57, 601, 134);
+	Common::Rect act(345, 337, 537, 404);
+
+	Common::String intro = "spider/cine/spv051s.smk"; 
+	if (!_intros.contains(intro)) {
+		MVideo v(intro, Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		_intros[intro] = true;
+	}
+
+	Frames nums = decodeFrames("spider/factory/button.smk");
+	if (nums.size() != 5)
+		error("Invalid number of colors: %d", nums.size());
+
+	defaultCursor();
+	loadImage("spider/factory/elockbg.smk", 0, 0, false);
+	for (int i = 0; i < 5; i++) {
+		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
+	}
+
+	while (!shouldQuit()) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (act.contains(mousePos)) {
+					if (comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
+					 	_nextLevel = code->levelIfWin;
+					 	return;
+					}
+				}
+
+				for (int i = 0; i < 5; i++) {
+					if (sel[i].contains(mousePos))
+						comb[i] = (comb[i] + 1) % 5;
+				}
+
+				loadImage("spider/factory/elockbg.smk", 0, 0, false);
+				for (int i = 0; i < 5; i++) {
+					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
+
 
 void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");

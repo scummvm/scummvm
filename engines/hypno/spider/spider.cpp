@@ -310,13 +310,29 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c3h.mi_", "c6", prefix);
 	_levels["c3h.mi_"]->intros.push_back("cine/vrfs001s.smk");
 
-	loadSceneLevel("movie2.mi_", "", prefix);
-
 	// Easy arcade levels
 
-	loadArcadeLevel("c6.mi_", "", "spider");
+	loadArcadeLevel("c6.mi_", "<lock>", "spider");
 	_levels["c6.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6.mi_"]->intros.push_back("cine/dia007s.smk");
+
+	Code *lock = new Code();
+	lock->name = "<lock>";
+	lock->levelIfWin = "movie2.mi_";
+	_levels["<lock>"] = lock;
+
+	loadSceneLevel("movie2.mi_", "decide5.mi_", prefix);
+	_levels["movie2.mi_"]->intros.push_back("cine/vrfs003s.smk");
+	loadSceneLevel("decide5.mi_", "", prefix);
+	sc = (Scene *) _levels["decide5.mi_"];
+
+	cl = new ChangeLevel("movie3.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	loadSceneLevel("movie3.mi_", "movie4.mi_", prefix);
+	loadSceneLevel("movie4.mi_", "", prefix);
+
+
 	// No c7 level?
 	loadArcadeLevel("c8.mi_", "", prefix);
 	loadArcadeLevel("c9.mi_", "", prefix);
@@ -327,7 +343,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// // Hard arcade levels
 
-	loadArcadeLevel("c6h.mi_", "", "spider");
+	loadArcadeLevel("c6h.mi_", "<lock>", "spider");
 	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 
@@ -422,7 +438,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
 	
-	_nextLevel = "<start>";
+	_nextLevel = "decide5.mi_";
 }
 
 void SpiderEngine::loadAssetsDemo() {
