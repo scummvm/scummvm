@@ -307,7 +307,7 @@ void IMuseDigital::callback() {
 void IMuseDigital::diMUSEHeartbeat() {
 	// This is what happens:
 	// - Usual audio stuff like fetching and playing sound (and everything
-	//   within waveapi_callback()) happens at a base 50Hz rate;
+	//   within waveOutCallback()) happens at a base 50Hz rate;
 	// - Triggers and fades handling happens at a (somewhat hacky) 60Hz rate;
 	// - Music gain reduction happens at a 10Hz rate.
 
