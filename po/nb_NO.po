@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-20 22:18+0000\n"
+"POT-Creation-Date: 2021-12-22 19:58+0000\n"
 "PO-Revision-Date: 2021-12-22 19:04+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4363,7 +4363,7 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
 #: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187
 #: engines/saga/detection_tables.h:1220 engines/saga/detection_tables.h:1279
-#: engines/sci/detection_tables.h:4975 engines/sci/detection_tables.h:4983
+#: engines/sci/detection_tables.h:4983 engines/sci/detection_tables.h:4991
 #: engines/sherlock/detection_tables.h:224 engines/stark/detection.cpp:320
 #: engines/teenagent/detection.cpp:118 engines/trecision/detection.cpp:200
 #: engines/zvision/detection_tables.h:191
@@ -6228,7 +6228,7 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr "Feil under lasting av spillressurser."
 
-#: engines/sci/detection_tables.h:4321
+#: engines/sci/detection_tables.h:4329
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Ufullstendig spill oppdaget. Du må kopiere spilldata fra alle CD-ene til "
