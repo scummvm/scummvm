@@ -380,8 +380,10 @@ void HeroBelt::handleClick(Common::Point mousePos) {
 		if (q == inventoryName(i)) {
 			if (_holdingItem != kNone) {
 				if (persistent->_inventory[i] != kNone &&
-				    _holdingSlot != i)
+				    _holdingSlot != i) {
+					g_vm->fallbackClick();
 					return;
+				}
 				persistent->_inventory[_holdingSlot] = kNone;
 				persistent->_inventory[i] = _holdingItem;
 				_holdingItem = kNone;

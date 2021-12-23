@@ -178,6 +178,7 @@ public:
 	uint32 getSubtitleDelayPerChar() const;
 	void wrapSubtitles(const Common::U32String &str, Common::Array<Common::U32String> &lines);
 	Common::U32String translate(const Common::String &str);
+	void fallbackClick();
 
 private:
 	void addTimer(EventHandlerWrapper event, int32 start_time, int period,
@@ -226,6 +227,7 @@ private:
   	bool _isQuitting;
 	int _subtitleID;
 	int _subtitleDelayPerChar;
+	int _lastFallbackSound;
 
 #ifdef USE_TRANSLATION
 	Common::TranslationManager *_transMan;

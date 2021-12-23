@@ -528,6 +528,7 @@ Common::Error HadeschEngine::run() {
 	_heroBelt = Common::SharedPtr<HeroBelt>(new HeroBelt());
 	_gfxContext = Common::SharedPtr<GfxContext8Bit>(new GfxContext8Bit(2 * kVideoWidth + 10, kVideoHeight + 50));
 	_isInOptions = false;
+	_lastFallbackSound = -1;
 
 	ConfMan.registerDefault("subtitles", "false");
 	ConfMan.registerDefault("sfx_volume", 192);
@@ -585,9 +586,11 @@ Common::Error HadeschEngine::run() {
 				}
 				const Common::String &q = getVideoRoom()->mapClick(event.mouse);
 				debug("handling click on <%s>", q.c_str());
-				if (getVideoRoom()->isHeroBeltEnabled() && _heroBelt->isHoldingItem())
-					getCurrentHandler()->handleClickWithItem(q, _heroBelt->getHoldingItem());
-				else {
+				if (getVideoRoom()->isHeroBeltEnabled() && _heroBelt->isHoldingItem()) {
+					if (!getCurrentHandler()->handleClickWithItem(q, _heroBelt->getHoldingItem())) {
+						fallbackClick();
+					}
+				} else {
 					getCurrentHandler()->handleAbsoluteClick(event.mouse);
 					getCurrentHandler()->handleClick(q);
 				}
@@ -708,6 +711,34 @@ bool HadeschEngine::hasFeature(EngineFeature f) const {
 		f == kSupportsLoadingDuringRuntime ||
 		f == kSupportsSavingDuringRuntime ||
 		f == kSupportsChangingOptionsDuringRuntime;
+}
+
+static const TranscribedSound fallbackSounds[] = {
+	{"G0080nA0", _s("Ho, not there")},
+	{"G0080nB0", _s("Nope")},
+	{"G0080nC0", _s("Time out, kid. That doesn't work there")},
+	{"G0080nD0", _s("How about something else?")},
+	{"G0080nE0", _s("Eh-Eh")},
+	{"G0080nF0", _s("Not that one")},
+	{"G0080nG0", _s("Are you kidding? Try something else")},
+	{"G0080nH0", _s("Enough already. Give something else a try")},
+	{"G0080nI0", _s("Something else might work better")},
+	{"G0080nJ0", _s("You can come up with a better answer than that")},
+};
+
+void HadeschEngine::fallbackClick() {
+	int soundId = -1;
+	if (_lastFallbackSound < 0)
+		soundId = getRnd().getRandomNumberRng(0, ARRAYSIZE(fallbackSounds) - 1);
+	else {
+		soundId = getRnd().getRandomNumberRng(0, ARRAYSIZE(fallbackSounds) - 2);
+		if (soundId >= _lastFallbackSound)
+			soundId++;
+	}
+
+	_lastFallbackSound = soundId;
+	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
+	room->playSpeech(fallbackSounds[soundId]);
 }
 
 Common::Error HadeschEngine::loadGameStream(Common::SeekableReadStream *stream) {
