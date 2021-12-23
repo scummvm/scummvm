@@ -131,6 +131,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_eventMan(nullptr),
 	_gameObjectAddress(),
 	_console(nullptr),
+	_tts(nullptr),
 	_rng("sci"),
 	_forceHiresGraphics(false) {
 
@@ -254,8 +255,8 @@ SciEngine::~SciEngine() {
 	delete[] _opcode_formats;
 
 	delete _scriptPatcher;
-	delete _resMan;	// should be deleted last
 	delete _tts;
+	delete _resMan;	// should be deleted last
 	g_sci = nullptr;
 }
 
