@@ -3355,7 +3355,7 @@ void EfhEngine::sub1CDFA() {
 	}
 }
 
-void EfhEngine::sub1CAFD() {
+void EfhEngine::redrawScreenForced() {
 	for (int16 counter = 0; counter < 2; ++counter) {
 		redrawScreen();
 		if (counter == 0)
@@ -3363,9 +3363,85 @@ void EfhEngine::sub1CAFD() {
 	}
 }
 
+int16 EfhEngine::selectMonsterGroup() {
+	int16 retVal = -1;
+
+	while (retVal == -1) {
+		Common::KeyCode input = handleAndMapInput(true);
+		switch (input) {
+		case Common::KEYCODE_ESCAPE:
+			retVal = 27;
+			break;
+		case Common::KEYCODE_a:
+		case Common::KEYCODE_b:
+		case Common::KEYCODE_c:
+		case Common::KEYCODE_d:
+		case Common::KEYCODE_e:
+			retVal = input - Common::KEYCODE_a;
+			if (_teamMonsterIdArray[retVal] == -1)
+				retVal = -1;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return retVal;
+}
+
 int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, int16 arg4) {
-	warning("STUB: sub1C956");
-	return 0;
+	int16 varE = -1;
+	
+	int16 var6 = sub1C80A(charId, unkFied18Val, true);
+	int16 range = 0;
+	if (var6 != 0x7FFF)
+		range = _items[var6]._range;
+
+	switch (range) {
+	case 3:
+	case 2:
+		++range;
+	case 1:
+		++range;
+	case 0:
+		++range;
+		break;
+	case 4:
+		return 100;
+	default:
+		return varE;
+	}
+
+	do {
+		for (int16 counter = 0; counter < 2; ++counter) {
+			drawCombatScreen(charId, true, false);
+			if (_teamMonsterIdArray[1] != -1)
+				sub1C219((uint8 *)"Select Monster Group:", 3, 0, false);
+
+			if (counter == 0)
+				displayFctFullScreen();
+		}
+
+		if (_teamMonsterIdArray[1] == -1)
+			varE = 0;
+		else
+			varE = selectMonsterGroup();
+
+		if (arg4 == 0) {
+			if (varE == 27)
+				varE = 0;
+		} else if (varE != 27) {
+			int16 monsterGroupDistance = computeMonsterGroupDistance(_teamMonsterIdArray[varE]);
+			if (monsterGroupDistance > range) {
+				varE = 27;
+			}
+		}
+	} while (varE != -1);
+
+	if (varE == 27)
+		varE = -1;
+	
+	return varE;
 }
 
 void EfhEngine::sub1CAB6(int16 charId) {
@@ -3468,7 +3544,7 @@ bool EfhEngine::sub1CB27() {
 				}
 				break;
 			case Common::KEYCODE_t:
-				sub1CAFD();
+				redrawScreenForced();
 				getInputBlocking();
 				drawCombatScreen(_teamCharId[counter1], false, true);
 				break;
