@@ -360,8 +360,7 @@ Common::Error EfhEngine::run() {
 		return Common::kNoError;
 
 	uint32 lastMs = _system->getMillis();
-	warning("STUB - Main loop");
-	for (;;) {
+	while(!_shouldQuit) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -536,9 +535,7 @@ Common::Error EfhEngine::run() {
 			if (handleDeathMenu())
 				_shouldQuit = true;
 		}
-		
-		warning("Main loop - missing implementation");
-		
+
 		displayFctFullScreen();
 	}
 	return Common::kNoError;
@@ -3245,8 +3242,58 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	return _tileFact[imageSetId * 2];
 }
 
-void EfhEngine::sub1BCA7(int16 monsterId) {
-	warning("STUB: sub1BCA7");
+bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
+	for (int16 counter = 0; counter < teamMonsterId; ++counter) {
+		if (_teamMonsterIdArray[counter] == monsterId)
+			return true;
+	}
+	return false;
+}
+
+void EfhEngine::sub1BCA7(int16 monsterTeamId) {
+	int16 counter = 0;
+	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false)) {
+		counter = 1;
+		_teamMonsterIdArray[0] = monsterTeamId;
+	}
+
+	for (int16 counter2 = 1; counter2 <= 3; ++counter2) {
+		if (counter >= 5)
+			break;
+
+		for (int16 monsterId = 0; monsterId < 64; ++monsterId) {
+			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+				continue;
+
+			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
+				continue;
+
+			if (!checkIfMonsterOnSameLargelMapPlace(monsterId))
+				continue;
+
+			bool var6 = false;
+			for (int16 counter3 = 0; counter3 < 9; ++counter3) {
+				if (_mapMonsters[monsterId]._pictureRef[counter3] > 0) {
+					var6 = true;
+					break;
+				}
+			}
+
+			if (var6) {
+				if (computeMonsterGroupDistance(monsterId) <= counter2 && !sub1BC74(monsterId, counter)) {
+					_teamMonsterIdArray[counter] = monsterId;
+					if (++counter >= 5)
+						break;
+				}
+			}
+		}
+	}
+
+	if (counter > 4)
+		return;
+
+	for (int16 id = counter; id < 5; ++id)
+		_teamMonsterIdArray[id] = -1;
 }
 
 void EfhEngine::reset_stru32686() {
@@ -3277,7 +3324,35 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 }
 
 void EfhEngine::sub1CDFA() {
-	warning("STUB: sub1CDFA");
+	for (int16 counter = 0; counter < 3; ++counter) {
+		if (_teamCharId[counter] != -1 && counter < _teamSize) {
+			_stru3244C[counter]._field0 = counter + 1000;
+			_stru3244C[counter]._field2 = _npcBuf[_teamCharId[counter]]._infoScore[3];
+		} else {
+			_stru3244C[counter]._field0 = -1;
+			_stru3244C[counter]._field2 = -1;
+		}
+	}
+
+	for (int16 counter = 0; counter < 5; ++counter) {
+		if (_teamMonsterIdArray[counter] == -1) {
+			_stru3244C[counter + 3]._field0 = -1;
+			_stru3244C[counter + 3]._field2 = -1;
+		} else {
+			_stru3244C[counter + 3]._field0 = counter;
+			_stru3244C[counter + 3]._field2 = _mapMonsters[_teamMonsterIdArray[counter]]._field_1 + getRandom(20);
+		}
+	}
+
+	for (int16 counter = 0; counter < 8; ++counter) {
+		for (int16 counter2 = 0; counter2 < 8; ++counter2) {
+			if (_stru3244C[counter]._field2 >= _stru3244C[counter2]._field2)
+				continue;
+
+			SWAP(_stru3244C[counter]._field0, _stru3244C[counter2]._field0);
+			SWAP(_stru3244C[counter]._field2, _stru3244C[counter2]._field2);			
+		}
+	}
 }
 
 void EfhEngine::sub1CAFD() {
@@ -3431,8 +3506,75 @@ int16 EfhEngine::getTeamMonsterAnimId() {
 	return retVal;
 }
 
-void EfhEngine::sub1C4CA(bool WhiteFl) {
-	warning("STUB: sub1C4CA");
+int16 EfhEngine::sub1BAF9(int16 monsterGroup) {
+	int16 var2 = 0;
+	for (int16 counter = 0; counter < 9; ++counter) {
+		if (sub1BA9B(monsterGroup, counter))
+			++var2;
+	}
+
+	return var2;
+}
+
+void EfhEngine::sub1C4CA(bool whiteFl) {
+	int16 textPosY = 20;
+	for (int16 counter = 0; counter < 5; ++counter) {
+		if (_teamMonsterIdArray[counter] == -1)
+			continue;
+
+		int16 var6C = computeMonsterGroupDistance(_teamMonsterIdArray[counter]);
+		int16 var6E = sub1BAF9(counter);
+		if (whiteFl)
+			setTextColorWhite();
+		else
+			setTextColorGrey();
+
+		setTextPos(129, textPosY);
+		char buffer[80];
+		sprintf(buffer, "%c)", 'A' + counter);
+		displayStringAtTextPos(buffer);
+		setTextColorRed();
+		int16 var1 = _mapMonsters[_teamMonsterIdArray[counter]]._possessivePronounSHL6 & 0x3F;
+		if (var1 <= 0x3D) {
+			sprintf(buffer, "%d %s", var6E, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._MonsterRef]._name);
+			displayStringAtTextPos(buffer);
+			if (var6E > 1)
+				displayStringAtTextPos("s");
+		} else if (var1 == 0x3E) {
+			displayStringAtTextPos("(NOT DEFINED)");
+		} else if (var1 == 0x3F) {
+			char stringToDisplay[20];
+			copyString(_npcBuf[_mapMonsters[_teamMonsterIdArray[counter]]._field_1]._name, stringToDisplay);
+			displayStringAtTextPos(stringToDisplay);
+		}
+
+		setTextPos(228, textPosY);
+		if (unkFct_checkMonsterField8(counter, true)) {
+			_textColor = 0xE;
+			displayStringAtTextPos("Hostile");
+		} else {
+			_textColor = 2;
+			displayStringAtTextPos("Friendly");
+		}
+
+		setTextColorRed();
+		switch (var6C) {
+		case 1:
+			displayCenteredString("S", 290, 302, textPosY);
+			break;
+		case 2:
+			displayCenteredString("M", 290, 302, textPosY);
+			break;
+		case 3:
+			displayCenteredString("L", 290, 302, textPosY);
+			break;
+		default:
+			displayCenteredString("?", 290, 302, textPosY);
+			break;
+		}
+
+		textPosY += 9;
+	}
 }
 
 void EfhEngine::displayCombatMenu(int16 charId) {
@@ -4063,7 +4205,6 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 damagePointsAbsorbed = 0;
 					int16 var64 = _items[unk_monsterField5_itemId]._attacks *_npcBuf[_teamCharId[teamCharId]]._speed;
 
-					warning("STUB: handleFight - Action A - Loop var84");
 					// Action A - Loop var84 - Start
 					for (int16 var84 = 0; var84 < var64; ++var84) {
 						if (getRandom(100) < charScore) {
@@ -6097,7 +6238,7 @@ bool EfhEngine::sub16E14() {
 				var68 = true;
 				break;
 			default:
-				warning("STUB: sub16E14 - Missing mapping ?");
+//				warning("STUB: sub16E14 - Missing mapping ?");
 				break;
 			}
 		} while (!var68);
