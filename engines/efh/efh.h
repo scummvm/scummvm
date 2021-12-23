@@ -364,7 +364,8 @@ private:
 	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
 	void sub1CDFA();
-	void sub1CAFD();
+	void redrawScreenForced();
+	int16 selectMonsterGroup();
 	int16 sub1C956(int16 charId, int16 unkFied18Val, int16 arg4);
 	void sub1CAB6(int16 charId);
 	bool sub1CB27();
