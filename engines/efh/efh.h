@@ -357,7 +357,8 @@ private:
 	void sub22AA8(int16 arg0);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
-	void sub1BCA7(int16 monsterId);
+	bool sub1BC74(int16 monsterId, int16 teamMonsterId);
+	void sub1BCA7(int16 monsterTeamId);
 	void reset_stru32686();
 	void sub1BE89(int16 monsterId);
 	void resetTeamMonsterIdArray();
@@ -369,6 +370,7 @@ private:
 	bool sub1CB27();
 	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
+	int16 sub1BAF9(int16 monsterGroup);
 	void sub1C4CA(bool WhiteFl);
 	void displayCombatMenu(int16 charId);
 	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
