@@ -66,8 +66,8 @@ Common::String SciTTS::getMessage(const Common::String &text) {
 	else
 		message = text;
 
-	// Strip color code characters in SCI1.1 or newer
-	if (getSciVersion() >= SCI_VERSION_1_1) {
+	// Strip color code characters in SCI1.1
+	if (getSciVersion() == SCI_VERSION_1_1) {
 		int32 index = message.find('|');
 
 		while (index >= 0) {
