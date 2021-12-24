@@ -45,31 +45,31 @@ For a more comprehensive changelog of the latest experimental code, see:
      to the original code.
 
  Sherlock:
-   - Fix crash using matches on lab table.
-   - Fix character animation in Rose Tattoo.
-   - Fix glitch opening map in Rose Tattoo.
-   - Fix bell pull and fog horn sounds in Serrated Scalpel.
-   - Fix inventory not updating in Serrated Scalpel after examining watch.
-   - Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
-   - Fix graphic issues in Serrated Scalpel looking at items whilst inventory is open.
-   - Make Serrated Scalpel darts closer in speed to the original.
-   - Fix crash when moving cursor past end of string in Rose Tattoo save dialog.
+   - Fixed crash using matches on lab table.
+   - Fixed character animation in Rose Tattoo.
+   - Fixed glitch opening map in Rose Tattoo.
+   - Fixed bell pull and fog horn sounds in Serrated Scalpel.
+   - Fixed inventory not updating in Serrated Scalpel after examining watch.
+   - Fixed fog overlay at Cleopatra's Needle in Rose Tattoo.
+   - Fixed graphic issues in Serrated Scalpel looking at items whilst inventory is open.
+   - Made Serrated Scalpel darts closer in speed to the original.
+   - Fixed crash when moving cursor past end of string in Rose Tattoo save dialog.
    - Process pending key presses in the order they were made, not the most
      recent first.
-   - Fix crash when using Delete key in Rose Tattoo save dialog.
-   - Fix rare conversation bug in Serrated Scalpel that would happen when Lord
+   - Fixed crash when using Delete key in Rose Tattoo save dialog.
+   - Fixed rare conversation bug in Serrated Scalpel that would happen when Lord
      Brumwell started talking to you while the inventory window was open.
    - Resume animations in Serrated Scalpel after conversations. This fixes the
      bug where Jock Mahoney or Nobby Charleton would get stuck indefinitely,
      refusing to talk to you.
-   - Fix various user interface glitches in both games.
+   - Fixed various user interface glitches in both games.
 
  Xeen:
-   - Fix crash on startup loading constants from xeen.ccs.
-   - Fix spell selection aborting when characters were switched.
+   - Fixed crash on startup loading constants from xeen.ccs.
+   - Fixed spell selection aborting when characters were switched.
    - Fixed some bad memory accesses.
    - Various sound fixes.
-   - Fix the monster item drop probabilities.
+   - Fixed the monster item drop probabilities.
 
  macOS port:
    - Added support for displaying OSD messages on the Touch Bar.
