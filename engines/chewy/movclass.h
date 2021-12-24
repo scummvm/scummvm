@@ -133,6 +133,7 @@ private:
 	MovLineExit mle;
 	GotoMovLine gml;
 	GotoPkt *gpkt = nullptr;
+	int16 vec_tbl[4];
 };
 
 } // namespace Chewy

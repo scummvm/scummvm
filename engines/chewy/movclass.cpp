@@ -49,10 +49,13 @@ namespace Chewy {
 #define MOV_X 1
 #define MOV_Y 2
 
-int16 vec_tbl[4] = { -40, 1, 40, -1};
-
 movclass::movclass() {
+	vec_tbl[0] = -40;
+	vec_tbl[1] = 1;
+	vec_tbl[2] = 40;
+	vec_tbl[3] = -1;
 }
+
 movclass::~movclass() {
 }
 
