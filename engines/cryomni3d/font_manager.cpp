@@ -245,7 +245,6 @@ bool FontManager::displayBlockText(const Common::U32String &text,
 			bool has_cr;
 			calculateWordWrap(text, &ptr, &finalPos, &has_cr, words);
 			uint spacesWidth = (words.size() - 1) * _spaceWidth;
-			uint remainingSpace = (_blockRect.right - finalPos);
 			uint spaceConsumed = 0;
 			double spaceWidthPerWord;
 			if (words.size() == 1) {
@@ -263,7 +262,6 @@ bool FontManager::displayBlockText(const Common::U32String &text,
 					double sp = (word_i + 1) * spaceWidthPerWord - spaceConsumed;
 					_blockPos.x += int16(sp);
 					spaceConsumed += uint(sp);
-					remainingSpace -= uint(sp);
 				}
 			}
 			if (_blockPos.y + _lineHeight + getFontMaxHeight() >= _blockRect.bottom) {
