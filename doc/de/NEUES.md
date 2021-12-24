@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.5.1 (DD.MM.YYYY)
+#### 2.5.1 (02.01.2022)
 
  Allgemein:
    - Das ResidualVM GUI-Theme wurde remastered.
