@@ -79,7 +79,10 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	Common::Point point;
 	ExCommand *ex;
 
+#if 0
 	int i = 0;
+#endif
+
 	do {
 		subidx = startidx + endidx * _items[idx].statics.size();
 
@@ -124,7 +127,9 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 		else
 			step = _items[idx].subItems[subidx].movement->_dynamicPhases.size();
 
+#if 0
 		i += step;
+#endif
 	} while (startidx != endidx);
 
 	return mq;
