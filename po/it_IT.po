@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-24 20:46+0000\n"
+"POT-Creation-Date: 2021-12-24 21:17+0000\n"
 "PO-Revision-Date: 2021-12-24 17:26+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -5145,86 +5145,7 @@ msgstr "Desideri salvare o caricare il gioco?"
 msgid "The Minotaur minigame is not supported yet. Skipping"
 msgstr "Questo gioco non è supportato."
 
-#: engines/hadesch/rooms/medisle.cpp:74
-msgid ""
-"If Perseus looks directly at Medusa he will be turned to stone. Using the "
-"shield from my temple, he can look at her reflection instead"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:75
-msgid "The sword from my temple will cut off Medusa's head"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:76
-msgid "Medusa's head must be brough back inside this magic bag"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:77
-msgid "When Perseus wears the dark helmet, he will be invisible"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:78
-msgid ""
-"Putting on the winged sandals will allow you to fly above and move quickly"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:90
-msgid "Thanks. The shield is just what I needed"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:91
-msgid "Yeah. The sword oughta do the trick"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:92
-msgid "Alright. You've got the bag. Excellent"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:93
-msgid "Yes, the helmet. You're doing great"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:94
-msgid "Ok, you've found the sandals. I owe you big time"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:98
-msgid "No, no. Where did he go?"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:99
-msgid "Feel around here. It's got to be near"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:100
-msgid "If it's lost I'd cry but I don't have an eye"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:193
-msgid ""
-"I can foretell the future. You know, I always knew I was going to say that"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:198
-msgid "Give me the eye or I'll punch you in the eye"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:203
-msgid "Oh yeah? Then you'll be punching your own eye"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:208
-msgid "I'll take the eye you can have one of my ears"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:213
-msgid ""
-"Medusa once was quite the beauty. Also vain and very snoody. Treated Athena "
-"awful bad and mad the goddess awfully mad. To snab the god is all it takes "
-"and now her hair is made of snakes"
-msgstr ""
-
-#: engines/hadesch/rooms/medisle.cpp:648
+#: engines/hadesch/rooms/medisle.cpp:650
 #, fuzzy
 #| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
