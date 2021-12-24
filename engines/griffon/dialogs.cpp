@@ -628,8 +628,6 @@ void GriffonEngine::saveLoadNew() {
 		"new game", "", "load", "return",
 	};
 
-	float y = 0.0;
-
 	_cloudAngle = 0;
 
 	int curRow = 0;
@@ -658,8 +656,6 @@ void GriffonEngine::saveLoadNew() {
 	// Main menu loop
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
-
-		y += 1 * _fpsr;
 
 		rcDest.left = 256 + 256 * cos(PI / 180 * _cloudAngle * 40);
 		rcDest.top = 192 + 192 * sin(PI / 180 * _cloudAngle * 40);
