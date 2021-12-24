@@ -54,12 +54,13 @@ For a more comprehensive changelog of the latest experimental code, see:
      refusing to talk to you.
    - Fixed various user interface glitches in both games.
 
- TwinE:
-   - Numerous bugfixes and stability improvements.
-
  Stark:
    - Added OpenGL renderer (without shaders).
+   - Added TinyGL renderer.
    - Fixed autosave handling.
+
+ TwinE:
+   - Numerous bugfixes and stability improvements.
 
  Xeen:
    - Fixed crash on startup loading constants from xeen.ccs.
