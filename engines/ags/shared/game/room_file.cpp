@@ -474,7 +474,7 @@ public:
 		char *buf = nullptr;
 		err = ReadScriptBlock(buf, _in, _dataVer);
 		script = buf;
-		delete buf;
+		delete[] buf;
 		return err;
 	}
 
@@ -642,7 +642,7 @@ HError ExtractScriptTextReader(Stream *in, int block_id,
 		HError err = ReadScriptBlock(buf, in, reader_ver);
 		if (err) {
 			*reader_script = buf;
-			delete buf;
+			delete[] buf;
 		}
 		return err;
 	}
