@@ -142,7 +142,7 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 Marquee::~Marquee() {
 	if (_screen->_vm->_MSPart == 2) {
 		_screen->_vm->_system->getPaletteManager()->setPalette(_oldColor, kColorPurple, 1);
-		delete _oldColor;
+		delete[] _oldColor;
 	}
 }
 
