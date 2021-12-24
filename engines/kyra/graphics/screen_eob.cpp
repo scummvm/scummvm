@@ -1887,7 +1887,6 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 
 	pitch *= bpp;
 	const uint8 *src = &_data[_bitmapOffsets[c]];
-	uint8 *dst2 = dst + pitch;
 
 	int w = (_width - 1) >> 3;
 	pitch -= _width * bpp;
@@ -1976,7 +1975,6 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 		}
 
 		dst += pitch;
-		dst2 += pitch;
 	}
 }
 
