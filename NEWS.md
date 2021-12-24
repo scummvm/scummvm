@@ -12,13 +12,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
-   - Scalers are now supported with the OpenGL graphics mode.
-
- AGOS:
-   - Fixed old Waxworks AdLib music regression.
-
- AGS:
-   - Detection list updates.
 
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
@@ -38,11 +31,49 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - New Digital iMUSE engine.
-   - Improved support for the high-resolution text in the 16-color Macintosh
-     versions of Loom and Indiana Jones and the Last Crusade.
-   - Fixed crash when loading savegames from Humongous Entertainment games.
    - Rewrote music player for Amiga versions of Indy3 and Loom in accordance
      to the original code.
+
+ macOS port:
+   - Added support for displaying OSD messages on the Touch Bar.
+
+ Windows port:
+   - Added "Portable Mode" in which the executable's directory is used to store
+     application files if a scummvm.ini file is present, instead of the user's
+     profile directory.
+
+#### 2.5.1 (2022-01-02)
+
+ General:
+   - Ported ResidualVM GUI theme to remastered version.
+   - Fixed edge case for Punycode.
+   - Fixed checking for savegame overwrite in autosave slot.
+   - Fixed moving savegame to new slot for most engines.
+   - Scalers are now supported with the OpenGL graphics mode.
+
+ AGOS:
+   - Fixed old Waxworks AdLib music regression.
+
+ AGS:
+   - Detection list updates.
+
+ Grim:
+   - Fixed default "Talk Speed" option value.
+   - Fixed black screen while entering save game name.
+   - OpenGL without shaders is preferred as default for Grim Fandango.
+
+ Kyra:
+   - Fixed graphical glitch in Legend of Kyrandia 3.
+
+ SAGA:
+   - Fixed digitized music not looping in Inherit the Earth.
+
+ SCUMM:
+   - Improved support for the high-resolution text in the 16-color Macintosh
+     versions of Loom and Indiana Jones and the Last Crusade.
+   - Improved OPL3 sound emulation for Sam&Max.
+   - Fixed music not looping in The Dig.
+   - Fixed crash when loading savegames from Humongous Entertainment games.
 
  Sherlock:
    - Fixed crash using matches on lab table.
@@ -64,20 +95,20 @@ For a more comprehensive changelog of the latest experimental code, see:
      refusing to talk to you.
    - Fixed various user interface glitches in both games.
 
+ Stark:
+   - Added OpenGL renderer (without shaders).
+   - Added TinyGL renderer.
+   - Fixed autosave handling.
+
+ TwinE:
+   - Numerous bugfixes and stability improvements.
+
  Xeen:
    - Fixed crash on startup loading constants from xeen.ccs.
    - Fixed spell selection aborting when characters were switched.
    - Fixed some bad memory accesses.
    - Various sound fixes.
    - Fixed the monster item drop probabilities.
-
- macOS port:
-   - Added support for displaying OSD messages on the Touch Bar.
-
- Windows port:
-   - Added "Portable Mode" in which the executable's directory is used to store
-     application files if a scummvm.ini file is present, instead of the user's
-     profile directory.
 
 #### 2.5.0 "Twenty years ago today..." (2021-10-09)
 
