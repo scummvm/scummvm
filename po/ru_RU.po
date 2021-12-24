@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-24 21:17+0000\n"
-"PO-Revision-Date: 2021-12-09 22:21+0000\n"
+"PO-Revision-Date: 2021-12-24 21:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5092,22 +5092,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Вы хотите сохранить либо загрузить игру?"
 
 #: engines/hadesch/rooms/daedalus.cpp:214
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Эта игра не поддерживается."
+msgstr "Мини-игра Minotaur ещё не поддерживается. Пропускаю"
 
 #: engines/hadesch/rooms/medisle.cpp:650
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Эта игра не поддерживается."
+msgstr "Мини-игра Medusa ещё не поддерживается. Пропускаю"
 
 #: engines/hadesch/rooms/troy.cpp:506
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Эта игра не поддерживается."
+msgstr "Мини-игра Troy ещё не поддерживается. Пропускаю"
 
 #: engines/hdb/detection.cpp:124
 msgid "Enable cheat mode"
@@ -7335,10 +7329,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Если сглаживание шрифтов включено, шрифты рисуются без зубцов."
 
 #: engines/stark/stark.cpp:107
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "Движок не поддерживает сохранение игр"
+msgstr "Программный рендерер не поддерживает моды игры (game mods)"
 
 #: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
