@@ -39,6 +39,7 @@ private:
 	Common::String _curMessage;
 
 	Common::String getMessage(const Common::String &text);
+	bool shouldPerformTTS(const Common::String &message) const;
 };
 
 } // End of namespace Sci
