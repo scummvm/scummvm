@@ -327,7 +327,6 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 	int h;
 	int wc;
 	int w_total;
-	int len_total;
 	Common::Point textPoint;
 
 	textLength = getStringLength(text);
@@ -344,7 +343,6 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 
 	// String won't fit on one line
 	w_total = 0;
-	len_total = 0;
 	wc = 0;
 
 	measurePointer = text;
@@ -376,13 +374,11 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 				return textPoint.y + h;
 			}
 			w_total = 0;
-			len_total = 0;
 			wc = 0;
 			measurePointer = searchPointer;
 		} else {
 			// Word will fit ok
 			w_total += w;
-			len_total += len;
 			wc++;
 			if (foundPointer == nullptr) {
 				// Since word hit NULL but fit, we are done
