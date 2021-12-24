@@ -553,11 +553,11 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 	setFont(fontNum);
 
 	int textWidth = _font->getTextWidth(text);
-	int textHeight = _font->getHeight();
+	//int textHeight = _font->getHeight();
 
 	if (outlineColor != -1) {
 		textWidth += 2;
-		textHeight += 2;
+		//textHeight += 2;
 		x--;
 		y--;
 	}
