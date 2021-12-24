@@ -52,12 +52,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      nicht mehr mit dir sprechen möchten.
    - Mehrere Fehler in der Benutzeroberfläche in beiden Spielen korrigiert.
 
- TwinE:
-   - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
-
  Stark:
    - OpenGL-Renderer (ohne Shader) hinzugefügt.
+   - Unterstützung für den TinyGL-Renderer hinzugefügt.
    - Behandlung der automatischen Speicherung von Spielständen korrigiert.
+
+ TwinE:
+   - Zahlreiche Fehlerkorrekturen und Verbesserung der Stabilität.
 
  Xeen:
    - Absturz beim Laden von Kostanten aus xeen.ccs behoben.
