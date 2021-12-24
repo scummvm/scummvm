@@ -3585,7 +3585,7 @@ int16 EfhEngine::getTeamMonsterAnimId() {
 int16 EfhEngine::sub1BAF9(int16 monsterGroup) {
 	int16 var2 = 0;
 	for (int16 counter = 0; counter < 9; ++counter) {
-		if (sub1BA9B(monsterGroup, counter))
+		if (isMonsterActive(monsterGroup, counter))
 			++var2;
 	}
 
@@ -3741,13 +3741,114 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 }
 
 int16 EfhEngine::sub1DEC8(int16 groupNumber) {
-	warning("STUB: sub1DEC8");
-	return -1;
+	int16 var4 = -1;
+	int16 monsterId = _teamMonsterIdArray[groupNumber];
+
+	if (monsterId == -1)
+		return -1;
+
+	for (int16 counter = 0; counter < 9; ++counter) {
+		if (isMonsterActive(groupNumber, counter)) {
+			var4 = counter;
+			break;
+		}
+	}
+
+	for (int16 counter = var4 + 1; counter < 9; ++counter) {
+		if (!isMonsterActive(groupNumber, counter))
+			continue;
+
+		if (_mapMonsters[monsterId]._pictureRef[var4] > _mapMonsters[monsterId]._pictureRef[counter])
+			var4 = counter;
+	}
+
+	if (_mapMonsters[monsterId]._pictureRef[var4] <= 0)
+		return -1;
+
+	return var4;
 }
 
 int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
-	warning("STUB - getCharacterScore");
-	return 90;
+	int16 totalScore = 0;
+	switch (_items[itemId]._range) {
+	case 0:
+		totalScore = _npcBuf[charId]._passiveScore[5] + _npcBuf[charId]._passiveScore[3] + _npcBuf[charId]._passiveScore[4];
+		totalScore += _npcBuf[charId]._infoScore[0] / 5;
+		totalScore += _npcBuf[charId]._infoScore[2] * 2,
+		totalScore += _npcBuf[charId]._infoScore[6] / 5;
+		totalScore += 2 * _npcBuf[charId]._infoScore[5] / 5;
+		break;
+	case 1:
+		totalScore = _npcBuf[charId]._passiveScore[3] + _npcBuf[charId]._passiveScore[4];
+		totalScore += _npcBuf[charId]._infoScore[2] * 2;
+		totalScore += _npcBuf[charId]._infoScore[1] / 5;
+		totalScore += _npcBuf[charId]._infoScore[3] / 5;
+		break;
+	case 2:
+	case 3:
+	case 4:
+		totalScore = _npcBuf[charId]._passiveScore[1];
+		totalScore += _npcBuf[charId]._infoScore[2] * 2;
+		totalScore += _npcBuf[charId]._infoScore[1] / 5;
+		totalScore += _npcBuf[charId]._infoScore[3] / 5;
+		totalScore += _npcBuf[charId]._infoScore[8] / 5;
+	default:
+		break;
+	}
+
+	int16 extraScore = 0;
+	switch (_items[itemId]._attackType) {
+	case 0:
+	case 1:
+	case 2:
+		if (itemId == 0x3F)
+			extraScore = _npcBuf[charId]._passiveScore[2];
+		else if (itemId == 0x41 || itemId == 0x42 || itemId == 0x6A || itemId == 0x6C || itemId == 0x6D)
+			extraScore = _npcBuf[charId]._passiveScore[0];
+		break;
+	case 3:
+	case 4:
+	case 6:
+		extraScore = _npcBuf[charId]._infoScore[7];
+		break;
+	case 5:
+	case 7:
+		extraScore = _npcBuf[charId]._infoScore[9];
+		break;
+	case 8:
+	case 9:
+		extraScore = _npcBuf[charId]._activeScore[12];
+		break;
+	case 10:
+		extraScore = _npcBuf[charId]._passiveScore[10];
+		break;
+	case 11:
+		extraScore = _npcBuf[charId]._passiveScore[6];
+		break;
+	case 12:
+		extraScore = _npcBuf[charId]._passiveScore[7];
+		break;
+	case 13:
+		extraScore = _npcBuf[charId]._passiveScore[8];
+		break;
+	case 14:
+		extraScore = _npcBuf[charId]._activeScore[13];
+		break;
+	case 15:
+		extraScore = _npcBuf[charId]._passiveScore[9];
+		break;
+	default:
+		break;
+	}
+
+	extraScore += _items[itemId].field_13;
+
+	int16 grandTotalScore = totalScore + extraScore;
+	if (grandTotalScore > 60)
+		grandTotalScore = 60;
+
+	int16 retVal = CLIP(grandTotalScore + 30, 5, 90);
+	return retVal;
 }
 
 bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
@@ -4257,7 +4358,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 				continue;
 
 			for (int16 var7E = teamMemberId; var7E < var54; ++var7E) {
-				if (sub1BA9B(groupId, var7E) && var6E) {
+				if (isMonsterActive(groupId, var7E) && var6E) {
 					int16 var5C;
 					if (unkFct_checkMonsterField8(groupId, true)) {
 						sub1E028(groupId, 9, true);
@@ -4634,7 +4735,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			} else if (unkFct_checkMonsterField8(monsterGroupIdOrMonsterId, true)) {
 				// handleFight - Loop on var86 - Start
 				for (int16 var86 = 0; var86 < 9; ++var86) {
-					if (sub1BA9B(monsterGroupIdOrMonsterId, var86)) {
+					if (isMonsterActive(monsterGroupIdOrMonsterId, var86)) {
 						int16 unk_monsterField5_itemId = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._itemId_Weapon;
 						if (unk_monsterField5_itemId == 0xFF)
 							unk_monsterField5_itemId = 0x3F;
@@ -5249,7 +5350,7 @@ void EfhEngine::sub1E028(int16 id, uint8 mask, int16 groupFl) {
 	_mapMonsters[monsterId]._field_8 |= mask;
 }
 
-bool EfhEngine::sub1BA9B(int16 groupId, int16 id) {
+bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _stru32686[groupId]._field0[id] == 0)
 		return true;
 	return false;
@@ -5298,7 +5399,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			strcat((char *)_messageToBePrinted, "  The item emits a low droning hum...");
 			if (getRandom(100) < 50) {
 				for (int16 counter = 0; counter < 9; ++counter) {
-					if (sub1BA9B(windowId, counter)) {
+					if (isMonsterActive(windowId, counter)) {
 						++victims;
 						_stru32686[windowId]._field0[counter] = 1;
 						_stru32686[windowId]._field2[counter] = getRandom(8);
@@ -5310,7 +5411,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					if (NumberOfTargets == 0)
 						break;
 
-					if (sub1BA9B(windowId, counter)) {
+					if (isMonsterActive(windowId, counter)) {
 						++victims;
 						--NumberOfTargets;
 						_stru32686[windowId]._field0[counter] = 1;
@@ -5337,7 +5438,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 victim = 0;
 			if (getRandom(100) < 50) {
 				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
-					if (sub1BA9B(windowId, varA8)) {
+					if (isMonsterActive(windowId, varA8)) {
 						++victim;
 						_stru32686[windowId]._field0[varA8] = 2;
 						_stru32686[windowId]._field2[varA8] = getRandom(8);
@@ -5349,7 +5450,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					if (varAC == 0)
 						break;
 
-					if (sub1BA9B(windowId, varA8)) {
+					if (isMonsterActive(windowId, varA8)) {
 						++victim;
 						--varAC;
 						_stru32686[windowId]._field0[varA8] = 2;
@@ -5393,7 +5494,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				}
 			} else {
 				for (int16 counter = 0; counter < 9; ++counter) {
-					if (sub1BA9B(windowId, counter)) {
+					if (isMonsterActive(windowId, counter)) {
 						if (getRandom(100) < 50) {
 							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 						}
@@ -5416,7 +5517,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			} else {
 				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!");
 				for (int16 counter = 0; counter < 9; ++counter) {
-					if (sub1BA9B(windowId, counter)) {
+					if (isMonsterActive(windowId, counter)) {
 						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 					}
 				}				

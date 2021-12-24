@@ -409,7 +409,7 @@ private:
 	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub1E028(int16 id, uint8 mask, int16 groupFl);
-	bool sub1BA9B(int16 groupId, int16 id);
+	bool isMonsterActive(int16 groupId, int16 id);
 	int16 sub15538(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
 	int16 selectOtherCharFromTeam();
