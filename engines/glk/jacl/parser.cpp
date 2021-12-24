@@ -1616,13 +1616,14 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 	/* AN AMBIGUOUS REFERENCE WAS MADE. ATTEMPT TO CALL ALL THE disambiguate
 	 * FUNCTIONS TO SEE IF ANY OF THE OBJECT WANTS TO TAKE PREFERENCE IN
 	 * THIS CIRCUMSTANCE */
+
+	/*
 	int situation = noun_number;
 
 	if (finding_from) {
 		situation += 4;
 	}
 
-	/*
 	for (index = 1; index <= objects; index++) {
 	    if (confidence[index] != FALSE) {
 	        strcpy(function_name, "disambiguate");
