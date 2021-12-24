@@ -33,6 +33,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
+ SCI:
+   - Added support for Text To Speech in SCI floppy games.
+
  SCUMM:
    - New Digital iMUSE engine.
    - Improved support for the high-resolution text in the 16-color Macintosh
