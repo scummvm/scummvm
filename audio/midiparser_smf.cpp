@@ -166,7 +166,6 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 	uint32 len;
 	byte midiType;
-	uint32 totalSize;
 	bool isGMF;
 
 	unloadMusic();
@@ -217,7 +216,6 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 		return false;
 	}
 
-	totalSize = 0;
 	int tracksRead = 0;
 	while (tracksRead < _numTracks) {
 		if (memcmp(pos, "MTrk", 4) && !isGMF) {
@@ -231,7 +229,6 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 		if (!isGMF) {
 			pos += 4;
 			len = read4high(pos);
-			totalSize += len;
 			pos += len;
 		} else {
 			// An SMF End of Track meta event must be placed
