@@ -21,6 +21,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/state.h"
 #include "sci/engine/tts.h"
 #include "common/system.h"
 #include "common/text-to-speech.h"
@@ -35,12 +36,12 @@ SciTTS::SciTTS() : _curMessage("") {
 }
 
 void SciTTS::button(const Common::String &text) {
-	if (_ttsMan != nullptr)
+	if (_ttsMan != nullptr && shouldPerformTTS(text))
 		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 }
 
 void SciTTS::text(const Common::String &text) {
-	if (_ttsMan != nullptr)
+	if (_ttsMan != nullptr && shouldPerformTTS(text))
 		_ttsMan->say(getMessage(text), Common::TextToSpeechManager::INTERRUPT);
 }
 
@@ -82,18 +83,29 @@ Common::String SciTTS::getMessage(const Common::String &text) {
 		}
 	}
 
+	return message;
+}
+
+bool SciTTS::shouldPerformTTS(const Common::String &message) const {
+	SciGameId gameId = g_sci->getGameId();
+	uint16 roomNumber = g_sci->getEngineState()->currentRoomNumber();
+
 	// Check if it's an actual message, by checking for the
 	// existence of any vowel.
 	// For example, when talking to the alien in SQ5 room 500, a
 	// series of symbols is shown, as part of a joke.
-	if (message.contains('a') ||
-		message.contains('e') ||
-		message.contains('i') ||
-		message.contains('o') ||
-		message.contains('u'))
-		return message;
-	else
-		return "";
+	if (!message.contains('a') &&
+		!message.contains('e') &&
+		!message.contains('i') &&
+		!message.contains('o') &&
+		!message.contains('u'))
+		return false;
+
+	// Skip TTS for QFG4 room 140 (character creation screen).
+	if (gameId == GID_QFG4 && roomNumber == 140)
+		return false;
+
+	return true;
 }
 
 } // End of namespace Sci
