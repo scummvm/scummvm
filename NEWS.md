@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.5.1 (2021-XX-XX)
+#### 2.5.1 (2022-01-02)
 
  General:
    - Ported ResidualVM GUI theme to remastered version.
