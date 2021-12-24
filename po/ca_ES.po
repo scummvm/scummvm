@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-22 19:58+0000\n"
+"POT-Creation-Date: 2021-12-24 00:57+0000\n"
 "PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -170,7 +170,7 @@ msgstr ""
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:606
 #: engines/parallaction/saveload.cpp:271 engines/saga/music.cpp:100
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:925
+#: engines/sci/engine/kgraphics.cpp:76 engines/sci/graphics/controls32.cpp:925
 #: engines/scumm/dialogs.cpp:181 engines/scumm/scumm.cpp:1353
 #: engines/scumm/scumm.cpp:1379 engines/scumm/scumm.cpp:1401
 #: engines/scumm/scumm.cpp:1669 engines/scumm/scumm.cpp:2139
@@ -4349,7 +4349,7 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:1110 engines/myst3/detection.cpp:143
 #: engines/neverhood/detection.cpp:121 engines/saga/detection_tables.h:187
 #: engines/saga/detection_tables.h:1220 engines/saga/detection_tables.h:1279
-#: engines/sci/detection_tables.h:4983 engines/sci/detection_tables.h:4991
+#: engines/sci/detection_tables.h:4988 engines/sci/detection_tables.h:4996
 #: engines/sherlock/detection_tables.h:224 engines/stark/detection.cpp:320
 #: engines/teenagent/detection.cpp:118 engines/trecision/detection.cpp:200
 #: engines/zvision/detection_tables.h:191
@@ -6180,7 +6180,7 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr "Error al executar el joc:"
 
-#: engines/sci/detection_tables.h:4329
+#: engines/sci/detection_tables.h:4333
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
@@ -6189,7 +6189,7 @@ msgstr ""
 msgid "(Autosave)"
 msgstr "Desat automàtic:"
 
-#: engines/sci/engine/kgraphics32.cpp:358
+#: engines/sci/engine/kgraphics32.cpp:362
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
@@ -6234,7 +6234,7 @@ msgid ""
 "that your game files are valid."
 msgstr ""
 
-#: engines/sci/sci.cpp:383
+#: engines/sci/sci.cpp:388
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6243,7 +6243,7 @@ msgid ""
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
 
-#: engines/sci/sci.cpp:407
+#: engines/sci/sci.cpp:412
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6256,7 +6256,7 @@ msgid ""
 "game will sound badly distorted."
 msgstr ""
 
-#: engines/sci/sci.cpp:426
+#: engines/sci/sci.cpp:431
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6265,18 +6265,18 @@ msgid ""
 "errors and/or issues later on."
 msgstr ""
 
-#: engines/sci/sci.cpp:505
+#: engines/sci/sci.cpp:510
 #, fuzzy
 msgid "Download patch"
 msgstr "Baixa"
 
-#: engines/sci/sci.cpp:506
+#: engines/sci/sci.cpp:511
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:513
+#: engines/sci/sci.cpp:518
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6286,7 +6286,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:844
+#: engines/sci/sci.cpp:849
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
