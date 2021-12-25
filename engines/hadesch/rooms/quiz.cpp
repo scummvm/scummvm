@@ -146,7 +146,7 @@ public:
 			room->playSFXLoop("FlameSnd");
 			room->playMusicLoop("AmbientQuestionMusic");
 			smallAnim();
-			playHadesVideo(hadesIntroVideos[g_vm->getRnd().getRandomNumberRng(0, 5)],
+			playHadesVideo(hadesIntroVideos[g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(hadesIntroVideos) - 1)],
 					kFirstQuestion);
 			break;
 		case kNextQuestion:
