@@ -24,7 +24,14 @@
 
 #include "common/events.h"
 
-#include "backends/graphics3d/android/texture.h"
+class TouchControlsDrawer {
+public:
+	virtual void touchControlNotifyChanged() = 0;
+	virtual void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) = 0;
+
+protected:
+	~TouchControlsDrawer() {}
+};
 
 class TouchControls {
 public:
@@ -37,13 +44,14 @@ public:
 	};
 
 	TouchControls();
-	~TouchControls();
 
-	void init(int width, int height);
+	void init(TouchControlsDrawer *drawer, int width, int height);
 	void draw();
 	void update(Action action, int ptr, int x, int y);
 
 private:
+	TouchControlsDrawer *_drawer;
+
 	int _screen_width, _screen_height;
 
 	enum Function {
@@ -95,7 +103,6 @@ private:
 
 	FunctionState _functionStates[kFunctionMax + 1];
 
-	GLESTexture *_arrows_texture;
 	void buttonDown(Common::JoystickButton jb);
 	void buttonUp(Common::JoystickButton jb);
 	void buttonPress(Common::JoystickButton jb);
@@ -112,8 +119,6 @@ private:
 	static void touchToJoystickState(int dX, int dY, FunctionState &state);
 	static void touchToCenterState(int dX, int dY, FunctionState &state);
 	static void touchToRightState(int dX, int dY, FunctionState &state);
-
-
 };
 
 #endif

@@ -53,6 +53,26 @@
 #define CONTEXT_RESET_ENABLE(gl_param) if (!(saved ## gl_param)) { GLCALL(glDisable(gl_param)); }
 #define CONTEXT_RESET_DISABLE(gl_param) if (saved ## gl_param) { GLCALL(glEnable(gl_param)); }
 
+static GLES8888Texture *loadBuiltinTexture(JNI::BitmapResources resource) {
+	const Graphics::Surface *src = JNI::getBitmapResource(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
+	if (!src) {
+		error("Failed to fetch touch arrows bitmap");
+	}
+
+	GLES8888Texture *ret = new GLES8888Texture();
+	ret->allocBuffer(src->w, src->h);
+	Graphics::Surface *dst = ret->surface();
+
+	Graphics::crossBlit(
+			(byte *)dst->getPixels(), (const byte *)src->getPixels(),
+			dst->pitch, src->pitch,
+			src->w, src->h,
+			src->format, dst->format);
+
+	delete src;
+	return ret;
+}
+
 AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_screenChangeID(0),
 	_graphicsMode(0),
@@ -66,12 +86,13 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_overlay_texture(0),
 	_overlay_background(nullptr),
 	_show_overlay(false),
-	_mouse_texture(0),
-	_mouse_texture_palette(0),
-	_mouse_texture_rgb(0),
+	_mouse_texture(nullptr),
+	_mouse_texture_palette(nullptr),
+	_mouse_texture_rgb(nullptr),
 	_mouse_hotspot(),
 	_mouse_dont_scale(false),
-	_show_mouse(false) {
+	_show_mouse(false),
+	_touchcontrols_texture(nullptr) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -88,6 +109,8 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	}
 	_mouse_texture = _mouse_texture_palette;
 
+	_touchcontrols_texture = loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
+
 	initSurface();
 	JNI::setTouch3DMode(true);
 }
@@ -100,6 +123,8 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glUseProgram(0);
 
+	JNI::setTouch3DMode(false);
+
 	deinitSurface();
 
 	delete _frame_buffer;
@@ -108,8 +133,7 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	delete _overlay_background;
 	delete _mouse_texture_palette;
 	delete _mouse_texture_rgb;
-
-	JNI::setTouch3DMode(false);
+	delete _touchcontrols_texture;
 }
 
 static void logExtensions() {
@@ -176,12 +200,15 @@ void AndroidGraphics3dManager::initSurface() {
 		_mouse_texture->reinit();
 	}
 
+	if (_touchcontrols_texture) {
+		_touchcontrols_texture->reinit();
+	}
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
 	updateScreenRect();
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);
-
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
-	    JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
 void AndroidGraphics3dManager::deinitSurface() {
@@ -208,6 +235,12 @@ void AndroidGraphics3dManager::deinitSurface() {
 
 	if (_mouse_texture) {
 		_mouse_texture->release();
+	}
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    nullptr, 0, 0);
+	if (_touchcontrols_texture) {
+		_touchcontrols_texture->release();
 	}
 
 	OpenGL::ContextGL::destroy();
@@ -286,9 +319,6 @@ void AndroidGraphics3dManager::updateScreen() {
 	clearScreen(kClear);
 
 	_game_texture->drawTextureRect();
-	if (!_show_overlay) {
-		dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
-	}
 
 	if (_show_overlay) {
 		if (_overlay_background && _overlay_background->getTextureName() != 0) {
@@ -301,6 +331,8 @@ void AndroidGraphics3dManager::updateScreen() {
 						    _mouse_width_scaled, _mouse_width_scaled);
 		}
 	}
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 
 	if (!JNI::swapBuffers()) {
 		LOGW("swapBuffers failed: 0x%x", glGetError());
@@ -931,4 +963,13 @@ bool AndroidGraphics3dManager::setState(const AndroidCommonGraphics::State &stat
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 
 	return true;
+}
+
+void AndroidGraphics3dManager::touchControlNotifyChanged() {
+	// Make sure we redraw the screen
+	_force_redraw = true;
+}
+
+void AndroidGraphics3dManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
+	_touchcontrols_texture->drawTexture(x, y, w, h, clip);
 }
