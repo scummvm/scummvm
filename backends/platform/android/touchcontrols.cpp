@@ -37,13 +37,11 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/fs.h"
-#include "common/stream.h"
-#include "common/archive.h"
-#include "image/tga.h"
+#include "graphics/conversion.h"
 
 #include "backends/graphics3d/android/texture.h"
 #include "backends/platform/android/android.h"
+#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/touchcontrols.h"
 
 TouchControls::TouchControls() :
@@ -156,26 +154,28 @@ TouchControls::FunctionBehavior TouchControls::functionBehaviors[TouchControls::
 	{ touchToRightState,    true,  .8f, .5f }
 };
 
-static GLES8888Texture *loadBuiltinTexture(const char *filename) {
-	Common::ArchiveMemberPtr member = SearchMan.getMember(filename);
-	Common::SeekableReadStream *str = member->createReadStream();
-	Image::TGADecoder dec;
-	dec.loadStream(*str);
-	const void *pixels = dec.getSurface()->getPixels();
+static GLES8888Texture *loadBuiltinTexture(JNI::BitmapResources resource) {
+	const Graphics::Surface *src = JNI::getBitmapResource(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
+	if (!src) {
+		error("Failed to fetch touch arrows bitmap");
+	}
 
 	GLES8888Texture *ret = new GLES8888Texture();
-	uint16 w = dec.getSurface()->w;
-	uint16 h = dec.getSurface()->h;
-	uint16 pitch = dec.getSurface()->pitch;
-	ret->allocBuffer(w, h);
-	ret->updateBuffer(0, 0, w, h, pixels, pitch);
+	ret->allocBuffer(src->w, src->h);
+	Graphics::Surface *dst = ret->surface();
 
-	delete str;
+	Graphics::crossBlit(
+			(byte *)dst->getPixels(), (const byte *)src->getPixels(),
+			dst->pitch, src->pitch,
+			src->w, src->h,
+			src->format, dst->format);
+
+	delete src;
 	return ret;
 }
 
 void TouchControls::init(int width, int height) {
-	_arrows_texture = loadBuiltinTexture("arrows.tga");
+	_arrows_texture = loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
 	_screen_width = width;
 	_screen_height = height;
 }

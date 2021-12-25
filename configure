@@ -6097,7 +6097,7 @@ case $_host_os in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv2"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lGLESv2"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
