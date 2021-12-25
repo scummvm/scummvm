@@ -180,6 +180,9 @@ OSystem_Android::~OSystem_Android() {
 
 	delete _savefileManager;
 	_savefileManager = 0;
+
+	// Uninitialize surface now to avoid it to be done later when touch controls are destroyed
+	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->deinitSurface();
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
