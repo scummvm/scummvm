@@ -35,7 +35,7 @@ public:
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 

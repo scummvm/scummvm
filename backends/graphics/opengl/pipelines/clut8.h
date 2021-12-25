@@ -33,7 +33,7 @@ public:
 
 	void setPaletteTexture(const GLTexture *paletteTexture) { _paletteTexture = paletteTexture; }
 
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
 
 private:
 	const GLTexture *_paletteTexture;
