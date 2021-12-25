@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-24 21:17+0000\n"
-"PO-Revision-Date: 2021-12-21 11:11+0000\n"
+"PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5135,22 +5135,20 @@ msgid "Would you like to save or restore a game?"
 msgstr "Voulez-vous sauver ou restaurer une partie ?"
 
 #: engines/hadesch/rooms/daedalus.cpp:214
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Ce jeu n'est pas supporté."
+msgstr ""
+"Le mini-jeu Minotaure n'est pas encore supporté et sera ignoré pour le "
+"moment."
 
 #: engines/hadesch/rooms/medisle.cpp:650
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Ce jeu n'est pas supporté."
+msgstr ""
+"Le mini-jeu Méduse n'est pas encore supporté et sera ignoré pour le moment."
 
 #: engines/hadesch/rooms/troy.cpp:506
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Ce jeu n'est pas supporté."
+msgstr ""
+"Le mini-jeu Troie n'est pas encore supporté et sera ignoré pour le moment."
 
 #: engines/hdb/detection.cpp:124
 msgid "Enable cheat mode"
