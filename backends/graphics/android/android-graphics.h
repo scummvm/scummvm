@@ -91,6 +91,10 @@ protected:
 	void setSystemMousePosition(const int x, const int y) override {}
 	bool showMouse(bool visible) override;
 
+	void showOverlay() override;
+	void hideOverlay() override;
+
+
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
 	void refreshScreen() override;
@@ -99,6 +103,7 @@ protected:
 
 private:
 	OpenGL::Surface *_touchcontrols;
+	bool _old_touch_3d_mode;
 };
 
 #endif

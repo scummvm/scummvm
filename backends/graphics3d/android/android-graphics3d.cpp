@@ -92,7 +92,8 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_hotspot(),
 	_mouse_dont_scale(false),
 	_show_mouse(false),
-	_touchcontrols_texture(nullptr) {
+	_touchcontrols_texture(nullptr),
+	_old_touch_3d_mode(false) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -456,6 +457,7 @@ void AndroidGraphics3dManager::showOverlay() {
 		return;
 	}
 
+	_old_touch_3d_mode = JNI::getTouch3DMode();
 	JNI::setTouch3DMode(false);
 
 	_show_overlay = true;
@@ -502,7 +504,7 @@ void AndroidGraphics3dManager::hideOverlay() {
 
 	_overlay_background->release();
 
-	JNI::setTouch3DMode(true);
+	JNI::setTouch3DMode(_old_touch_3d_mode);
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
