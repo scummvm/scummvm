@@ -161,6 +161,25 @@ bool AndroidGraphicsManager::showMouse(bool visible) {
 	return last;
 }
 
+void AndroidGraphicsManager::showOverlay() {
+	if (_overlayVisible)
+		return;
+
+	_old_touch_3d_mode = JNI::getTouch3DMode();
+	JNI::setTouch3DMode(false);
+
+	OpenGL::OpenGLGraphicsManager::showOverlay();
+}
+
+void AndroidGraphicsManager::hideOverlay() {
+	if (!_overlayVisible)
+		return;
+
+	JNI::setTouch3DMode(_old_touch_3d_mode);
+
+	OpenGL::OpenGLGraphicsManager::hideOverlay();
+}
+
 float AndroidGraphicsManager::getHiDPIScreenFactor() const {
 	// TODO: Use JNI to get DisplayMetrics.density, which according to the documentation
 	// seems to be what we want.

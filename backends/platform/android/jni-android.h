@@ -78,6 +78,7 @@ public:
 	static void showKeyboardControl(bool enable);
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouch3DMode(bool touch3DMode);
+	static bool getTouch3DMode();
 	static void showSAFRevokePermsControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
@@ -126,6 +127,7 @@ private:
 	static jmethodID _MID_showKeyboardControl;
 	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouch3DMode;
+	static jmethodID _MID_getTouch3DMode;
 	static jmethodID _MID_showSAFRevokePermsControl;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;

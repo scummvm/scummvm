@@ -89,6 +89,7 @@ jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouch3DMode = 0;
+jmethodID JNI::_MID_getTouch3DMode = 0;
 jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
@@ -464,11 +465,26 @@ void JNI::setTouch3DMode(bool touch3DMode) {
 	env->CallVoidMethod(_jobj, _MID_setTouch3DMode, touch3DMode);
 
 	if (env->ExceptionCheck()) {
-		LOGE("Error trying to show virtual keyboard control");
+		LOGE("Error trying to set touch controls mode");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+}
+
+bool JNI::getTouch3DMode() {
+	JNIEnv *env = JNI::getEnv();
+
+	bool enabled = env->CallBooleanMethod(_jobj, _MID_getTouch3DMode);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error trying to get touch controls status");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	return enabled;
 }
 
 void JNI::showSAFRevokePermsControl(bool enable) {
@@ -658,6 +674,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouch3DMode, "(Z)V");
+	FIND_METHOD(, getTouch3DMode, "()Z");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
