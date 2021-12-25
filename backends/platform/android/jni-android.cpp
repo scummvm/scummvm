@@ -39,12 +39,15 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <android/bitmap.h>
+
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "engines/engine.h"
+#include "graphics/surface.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/asset-archive.h"
@@ -84,6 +87,7 @@ jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
+jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouch3DMode = 0;
 jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
@@ -389,6 +393,71 @@ void JNI::showKeyboardControl(bool enable) {
 	}
 }
 
+Graphics::Surface *JNI::getBitmapResource(BitmapResources resource) {
+	JNIEnv *env = JNI::getEnv();
+
+	jobject bitmap = env->CallObjectMethod(_jobj, _MID_getBitmapResource, (int) resource);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Can't get bitmap resource");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return nullptr;
+	}
+
+	if (bitmap == nullptr) {
+		LOGE("Bitmap resource was not found");
+		return nullptr;
+	}
+
+	AndroidBitmapInfo bitmap_info;
+	if (AndroidBitmap_getInfo(env, bitmap, &bitmap_info) != ANDROID_BITMAP_RESULT_SUCCESS) {
+		LOGE("Error reading bitmap info");
+		env->DeleteLocalRef(bitmap);
+		return nullptr;
+	}
+
+	Graphics::PixelFormat fmt;
+	switch(bitmap_info.format) {
+		case ANDROID_BITMAP_FORMAT_RGBA_8888:
+#ifdef SCUMM_BIG_ENDIAN
+			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+			break;
+		case ANDROID_BITMAP_FORMAT_RGBA_4444:
+			fmt = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
+			break;
+		case ANDROID_BITMAP_FORMAT_RGB_565:
+			fmt = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+			break;
+		default:
+			LOGE("Bitmap has unsupported format");
+			env->DeleteLocalRef(bitmap);
+			return nullptr;
+	}
+
+	void *src_pixels = nullptr;
+	if (AndroidBitmap_lockPixels(env, bitmap, &src_pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
+		LOGE("Error locking bitmap pixels");
+		env->DeleteLocalRef(bitmap);
+		return nullptr;
+	}
+
+	Graphics::Surface *ret = new Graphics::Surface();
+	ret->create(bitmap_info.width, bitmap_info.height, fmt);
+	ret->copyRectToSurface(src_pixels, bitmap_info.stride,
+			0, 0, bitmap_info.width, bitmap_info.height);
+
+	AndroidBitmap_unlockPixels(env, bitmap);
+	env->DeleteLocalRef(bitmap);
+
+	return ret;
+}
+
 void JNI::setTouch3DMode(bool touch3DMode) {
 	JNIEnv *env = JNI::getEnv();
 
@@ -587,6 +656,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
+	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouch3DMode, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");

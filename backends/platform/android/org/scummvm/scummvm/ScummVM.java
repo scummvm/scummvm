@@ -2,6 +2,7 @@ package org.scummvm.scummvm;
 
 import androidx.annotation.NonNull;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
@@ -72,6 +73,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
+	abstract protected Bitmap getBitmapResource(int resource);
 	abstract protected void setTouch3DMode(boolean touch3DMode);
 	abstract protected void showSAFRevokePermsControl(boolean enable);
 	abstract protected String[] getSysArchives();

@@ -33,6 +33,10 @@
 #include "common/ustr.h"
 #include "engines/engine.h"
 
+namespace Graphics {
+	struct Surface;
+}
+
 class OSystem_Android;
 
 class JNI {
@@ -41,6 +45,10 @@ private:
 	virtual ~JNI();
 
 public:
+	enum struct BitmapResources {
+		TOUCH_ARROWS_BITMAP = 0
+	};
+
 	static bool pause;
 	static sem_t pause_sem;
 
@@ -68,6 +76,7 @@ public:
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
+	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouch3DMode(bool touch3DMode);
 	static void showSAFRevokePermsControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
@@ -115,6 +124,7 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showKeyboardControl;
+	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouch3DMode;
 	static jmethodID _MID_showSAFRevokePermsControl;
 	static jmethodID _MID_getSysArchives;
