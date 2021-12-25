@@ -36,19 +36,48 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "graphics/conversion.h"
+
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+
 #include "backends/graphics/android/android-graphics.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
 
+static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *surf) {
+	const Graphics::Surface *src = JNI::getBitmapResource(resource);
+	if (!src) {
+		error("Failed to fetch touch arrows bitmap");
+	}
+
+	surf->allocate(src->w, src->h);
+	Graphics::Surface *dst = surf->getSurface();
+
+	Graphics::crossBlit(
+			(byte *)dst->getPixels(), (const byte *)src->getPixels(),
+			dst->pitch, src->pitch,
+			src->w, src->h,
+			src->format, dst->format);
+
+	delete src;
+}
+
 //
 // AndroidGraphicsManager
 //
-AndroidGraphicsManager::AndroidGraphicsManager() {
+AndroidGraphicsManager::AndroidGraphicsManager() :
+	_touchcontrols(nullptr) {
 	ENTER();
 
 	// Initialize our OpenGL ES context.
 	initSurface();
 
+	_touchcontrols = createSurface(_defaultFormatAlpha);
+	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
+	_touchcontrols->updateGLTexture();
+
+	// In 2D we always fallback to standard 2D mode
+	JNI::setTouch3DMode(false);
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {
@@ -78,6 +107,13 @@ void AndroidGraphicsManager::initSurface() {
 #endif
 	}
 
+	if (_touchcontrols) {
+		_touchcontrols->recreate();
+		_touchcontrols->updateGLTexture();
+	}
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
 	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
@@ -86,6 +122,13 @@ void AndroidGraphicsManager::deinitSurface() {
 		return;
 
 	LOGD("deinitializing 2D surface");
+
+	// Deregister us from touch control
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    nullptr, 0, 0);
+	if (_touchcontrols) {
+		_touchcontrols->destroy();
+	}
 
 	notifyContextDestroy();
 
@@ -105,6 +148,17 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	ENTER("%s", msg.encode().c_str());
 
 	JNI::displayMessageOnOSD(msg);
+}
+
+bool AndroidGraphicsManager::showMouse(bool visible) {
+	bool last = OpenGL::OpenGLGraphicsManager::showMouse(visible);
+
+	if (visible && last != visible) {
+		// We just displayed a mouse cursor, disable the 3D mode if user enabled it
+		JNI::setTouch3DMode(false);
+	}
+
+	return last;
 }
 
 float AndroidGraphicsManager::getHiDPIScreenFactor() const {
@@ -130,7 +184,21 @@ bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHe
 void AndroidGraphicsManager::refreshScreen() {
 	//ENTER();
 
+	// Last minute draw of touch controls
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
+
 	JNI::swapBuffers();
+}
+
+void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
+	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
+	OpenGL::g_context.getActivePipeline()->drawTexture(_touchcontrols->getGLTexture(),
+		                                           x, y, w, h, clip);
+}
+
+void AndroidGraphicsManager::touchControlNotifyChanged() {
+	// Make sure we redraw the screen
+	_forceRedraw = true;
 }
 
 void *AndroidGraphicsManager::getProcAddress(const char *name) const {

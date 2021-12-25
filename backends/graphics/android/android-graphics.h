@@ -25,6 +25,8 @@
 #include "common/scummsys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 
+#include "backends/platform/android/touchcontrols.h"
+
 class AndroidCommonGraphics {
 public:
 	virtual ~AndroidCommonGraphics() {}
@@ -61,7 +63,8 @@ public:
 	virtual bool setState(const State &state) = 0;
 };
 
-class AndroidGraphicsManager : public OpenGL::OpenGLGraphicsManager, public AndroidCommonGraphics {
+class AndroidGraphicsManager :
+	public OpenGL::OpenGLGraphicsManager, public AndroidCommonGraphics, public TouchControlsDrawer {
 public:
 	AndroidGraphicsManager();
 	virtual ~AndroidGraphicsManager();
@@ -81,8 +84,12 @@ public:
 
 	float getHiDPIScreenFactor() const override;
 
+	void touchControlNotifyChanged() override;
+	void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
+
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}
+	bool showMouse(bool visible) override;
 
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
@@ -90,6 +97,8 @@ protected:
 
 	void *getProcAddress(const char *name) const override;
 
+private:
+	OpenGL::Surface *_touchcontrols;
 };
 
 #endif
