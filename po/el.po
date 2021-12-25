@@ -5189,7 +5189,8 @@ msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε έ
 
 #: engines/hadesch/rooms/daedalus.cpp:214
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Το μίνι παιχνίδι με το Μινώταυρο δεν υποστηρίζεται ακόμα. Θα παραληφθεί"
+msgstr ""
+"Το μίνι παιχνίδι με το Μινώταυρο δεν υποστηρίζεται ακόμα. Θα παραληφθεί"
 
 #: engines/hadesch/rooms/medisle.cpp:650
 msgid "The Medusa minigame is not supported yet. Skipping"
