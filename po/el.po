@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-24 21:17+0000\n"
-"PO-Revision-Date: 2021-12-21 11:11+0000\n"
+"PO-Revision-Date: 2021-12-25 17:37+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5188,22 +5188,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι?"
 
 #: engines/hadesch/rooms/daedalus.cpp:214
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
+msgstr "Το μίνι παιχνίδι με το Μινώταυρο δεν υποστηρίζεται ακόμα. Θα παραληφθεί"
 
 #: engines/hadesch/rooms/medisle.cpp:650
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
+msgstr "Το μίνι παιχνίδι με τη Μέδουσα δεν υποστηρίζεται ακόμα. Θα παραληφθεί"
 
 #: engines/hadesch/rooms/troy.cpp:506
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
+msgstr "Το μίνι παιχνίδι της Τροίας δεν υποστηρίζεται ακόμα. Θα παραληφθεί"
 
 #: engines/hdb/detection.cpp:124
 msgid "Enable cheat mode"
