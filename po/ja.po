@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-24 21:17+0000\n"
-"PO-Revision-Date: 2021-12-21 08:26+0000\n"
+"PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5036,22 +5036,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "ゲームをセーブまたは復元してもよろしいですか?"
 
 #: engines/hadesch/rooms/daedalus.cpp:214
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "未対応のゲームID。"
+msgstr "The Minotaurのミニゲームは未サポートです。スキップします"
 
 #: engines/hadesch/rooms/medisle.cpp:650
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "未対応のゲームID。"
+msgstr "The Medusaのミニゲームは未サポートです。スキップします"
 
 #: engines/hadesch/rooms/troy.cpp:506
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "未対応のゲームID。"
+msgstr "The Troyのミニゲームは未サポートです。スキップします"
 
 #: engines/hdb/detection.cpp:124
 msgid "Enable cheat mode"
