@@ -330,8 +330,21 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[2].actions.push_back(cl);
 
 	loadSceneLevel("movie3.mi_", "movie4.mi_", prefix);
-	loadSceneLevel("movie4.mi_", "", prefix);
+	_levels["movie3.mi_"]->intros.push_back("cine/imss001s.smk");
+	loadSceneLevel("movie4.mi_", "<fuse_box>", prefix);
+	_levels["movie4.mi_"]->intros.push_back("cine/imss002s.smk");
+	Code *fuse_box = new Code();
+	fuse_box->name = "<fuse_box>";
+	fuse_box->levelIfWin = "<trans_fuse_box>";
+	_levels["<fuse_box>"] = fuse_box;
 
+	Transition *trans_fuse_box = new Transition("decide6.mi_");
+	trans_fuse_box->intros.push_back("spider/cine/dia009s.smk");
+	trans_fuse_box->intros.push_back("spider/cine/imss003s.smk");
+	_levels["<trans_fuse_box>"] = trans_fuse_box;
+
+	loadSceneLevel("decide6.mi_", "", prefix);
+	loadSceneLevel("decide10.mi_", "", prefix);
 
 	// No c7 level?
 	loadArcadeLevel("c8.mi_", "", prefix);
@@ -438,7 +451,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
 	
-	_nextLevel = "decide5.mi_";
+	_nextLevel = "<start>";
 }
 
 void SpiderEngine::loadAssetsDemo() {

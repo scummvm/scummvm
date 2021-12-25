@@ -41,6 +41,8 @@ void SpiderEngine::runCode(Code *code) {
 		runFileCabinet(code);
 	else if (code->name == "<lock>") 
 		runLock(code);
+	else if (code->name == "<fuse_box>")
+		runFuseBox(code);
 	else if (code->name == "<credits>")
 		showCredits();
 	else
@@ -618,6 +620,160 @@ void SpiderEngine::runLock(Code *code) {
 	}
 }
 
+
+void SpiderEngine::runFuseBox(Code *code) {
+	changeScreenMode("640x480");
+	Common::Point mousePos;
+	Common::Event event;
+
+	defaultCursor();
+
+	bool hdata[8][9] = {};
+	bool vdata[9][8] = {};
+
+	bool vsol[9][8] = {
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 1, 1, 1, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 1, 1, 0},
+		{0, 1, 1, 1, 1, 1, 1, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 1, 1, 1, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0},
+	};
+
+	bool hsol[8][9] = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 1, 0, 0, 1, 0, 0, 1, 0},
+		{0, 1, 0, 0, 1, 0, 0, 1, 0},
+		{0, 1, 0, 0, 1, 0, 0, 1, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 1, 0, 0, 1, 0, 0, 0, 0},
+		{0, 1, 0, 0, 1, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	};
+
+	Common::Rect matrix(289, 89, 551, 351);
+	Common::Point fuse(292, 87);
+	Common::Point vz(289, 89);
+	Common::Point hz(289, 89);
+
+	uint32 dxVert = 412 - 380;
+	uint32 dyVert = 120 - 88;
+
+	uint32 dxHoriz = 359 - 327;
+	uint32 dyHoriz = 146 - 114;
+
+	Common::Rect vcell(0, 0, 8, 32);
+	Common::Rect hcell(0, 0, 32, 8);
+
+	loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+	Frames fuses = decodeFrames("spider/movie2/onoffuse.smk");
+	//drawImage(*fuses[1], matrix.left, matrix.top, true);
+
+	while (!shouldQuit()) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (matrix.contains(mousePos)) {
+					loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+
+					//drawImage(*fuses[1], matrix.left, matrix.top, true);
+					//bool found = false;
+					debug("\nvdata:");
+					for (int i = 0; i < 9; i++) {
+						for (int j = 0; j < 8; j++) {
+							vcell.moveTo(vz.x + i*dxVert, vz.y + j*dyVert);
+							if (vcell.contains(mousePos.x, mousePos.y)) {
+								vdata[i][j] = !vdata[i][j];
+							}
+							debugN("%d, ", vdata[i][j]);
+						}
+						debugN("\n");
+					}
+
+					debug("\nhdata:");
+					for (int i = 0; i < 8; i++) {
+						for (int j = 0; j < 9; j++) {
+							hcell.moveTo(hz.x + i*dxHoriz, hz.y + j*dyHoriz);
+							if (hcell.contains(mousePos.x, mousePos.y)) {
+								hdata[i][j] = !hdata[i][j];
+							}
+							debugN("%d, ", hdata[i][j]);
+						}
+						debugN("\n");
+					}
+
+					for (int i = 0; i < 9; i++) {
+						for (int j = 0; j < 8; j++) {
+							if (vdata[i][j]) {
+								vcell.moveTo(i*dxVert, j*dyVert);
+								Graphics::Surface sub = fuses[0]->getSubArea(vcell);
+								drawImage(sub, vz.x + i*dxVert, vz.y + j*dyVert, true);
+							}
+						}
+					}
+
+					for (int i = 0; i < 8; i++) {
+						for (int j = 0; j < 9; j++) {	
+							if (hdata[i][j]) {
+								hcell.moveTo(i*dxHoriz, j*dyHoriz);
+								Graphics::Surface sub = fuses[0]->getSubArea(hcell);
+								drawImage(sub, hz.x + i*dxHoriz, hz.y + j*dyHoriz, true);
+								//debug("Found horizontal fuse between %d, %d and %d, %d", i, j, i + 1, j);
+							}
+						}
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		bool hfound = true;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (hdata[i][j] != hsol[i][j]) {
+					hfound = false;
+					break;
+				}
+			}
+			if (!hfound)
+				break;
+		}
+
+		bool vfound = true;
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (vdata[i][j] != vsol[i][j]) {
+					vfound = false;
+					break;
+				}
+			}
+			if (!vfound)
+				break;
+		}
+
+		if (hfound && vfound) {
+			_nextLevel = code->levelIfWin;
+			return;
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
 
 void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");
