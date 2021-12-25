@@ -49,7 +49,6 @@ public:
 
 	void release();
 	void reinit();
-	void initSize();
 
 	void setLinearFilter(bool value);
 
@@ -63,8 +62,6 @@ public:
 		drawTexture(x, y, w, h, Common::Rect(0, 0, width(), height()));
 	}
 	void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip);
-
-	virtual void *prepareTextureBuffer(const Common::Rect &rect) = 0;
 
 	inline void setDrawRect(const Common::Rect &rect) {
 		_draw_rect = rect;
@@ -151,6 +148,10 @@ public:
 	}
 
 protected:
+	void initSize();
+
+	virtual void *prepareTextureBuffer(const Common::Rect &rect) = 0;
+
 	inline void setDirty() {
 		_all_dirty = true;
 	}
@@ -206,21 +207,21 @@ protected:
 public:
 	virtual ~GLESTexture();
 
-	virtual void allocBuffer(GLuint w, GLuint h);
+	void allocBuffer(GLuint w, GLuint h) override;
 
-	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-	                          const void *buf, int pitch_buf);
-	virtual void fillBuffer(uint32 color);
+	void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
+	                          const void *buf, int pitch_buf) override;
+	void fillBuffer(uint32 color) override;
 
-	virtual void *prepareTextureBuffer(const Common::Rect &rect) override;
-
-	virtual void setPalette(const byte *colors, uint start, uint num) override {}
-	virtual void setKeycolor(byte color) override {};
-	virtual void grabPalette(byte *colors, uint start, uint num) const override {}
+	void setPalette(const byte *colors, uint start, uint num) override {}
+	void setKeycolor(byte color) override {};
+	void grabPalette(byte *colors, uint start, uint num) const override {}
 
 	void readPixels();
 
 protected:
+	void *prepareTextureBuffer(const Common::Rect &rect) override;
+
 	byte *_pixels;
 	byte *_buf;
 };
@@ -294,12 +295,12 @@ protected:
 public:
 	virtual ~GLESFakePaletteTexture();
 
-	virtual void allocBuffer(GLuint w, GLuint h) override;
-	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
+	void allocBuffer(GLuint w, GLuint h) override;
+	void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 	                          const void *buf, int pitch_buf) override;
-	virtual void fillBuffer(uint32 color) override;
+	void fillBuffer(uint32 color) override;
 
-	virtual const Graphics::PixelFormat &getPixelFormat() const override {
+	const Graphics::PixelFormat &getPixelFormat() const override {
 		return _fake_format;
 	}
 
@@ -315,13 +316,14 @@ protected:
 public:
 	virtual ~GLESFakePalette16Texture();
 
-	virtual void allocBuffer(GLuint w, GLuint h) override;
-	virtual void *prepareTextureBuffer(const Common::Rect &rect) override;
+	void allocBuffer(GLuint w, GLuint h) override;
 
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
+	void *prepareTextureBuffer(const Common::Rect &rect) override;
+
 	uint16 *_palette;
 	uint16 *_buf;
 };
@@ -331,7 +333,7 @@ public:
 	GLESFakePalette565Texture();
 	virtual ~GLESFakePalette565Texture() {}
 
-	virtual void setKeycolor(byte color) override {};
+	void setKeycolor(byte color) override {};
 };
 
 class GLESFakePalette5551Texture : public GLESFakePalette16Texture {
@@ -339,7 +341,7 @@ public:
 	GLESFakePalette5551Texture();
 	virtual ~GLESFakePalette5551Texture() {}
 
-	virtual void setKeycolor(byte color) override;
+	void setKeycolor(byte color) override;
 
 protected:
 	byte _keycolor;
@@ -350,14 +352,15 @@ public:
 	GLESFakePalette888Texture();
 	virtual ~GLESFakePalette888Texture();
 
-	virtual void allocBuffer(GLuint w, GLuint h) override;
-	virtual void *prepareTextureBuffer(const Common::Rect &rect) override;
+	void allocBuffer(GLuint w, GLuint h) override;
 
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void setKeycolor(byte color) override {};
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void setKeycolor(byte color) override {};
+	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
+	void *prepareTextureBuffer(const Common::Rect &rect) override;
+
 	byte *_palette;
 	byte *_buf;
 };
@@ -367,14 +370,15 @@ public:
 	GLESFakePalette8888Texture();
 	virtual ~GLESFakePalette8888Texture();
 
-	virtual void allocBuffer(GLuint w, GLuint h) override;
-	virtual void *prepareTextureBuffer(const Common::Rect &rect) override;
+	void allocBuffer(GLuint w, GLuint h) override;
 
-	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void setKeycolor(byte color) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) const override;
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void setKeycolor(byte color) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
+	void *prepareTextureBuffer(const Common::Rect &rect) override;
+
 	uint32 *_palette;
 	uint32 *_buf;
 	byte _keycolor;
