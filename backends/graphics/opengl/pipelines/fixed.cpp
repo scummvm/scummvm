@@ -45,10 +45,10 @@ void FixedPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	GL_CALL(glColor4f(r, g, b, a));
 }
 
-void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	texture.bind();
 
-	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texture.getTexCoords()));
+	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
 	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, coordinates));
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
