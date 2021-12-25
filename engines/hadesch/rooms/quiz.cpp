@@ -80,11 +80,11 @@ static const char *hadesIntroVideos[] = {
 };
 
 static const TranscribedSound h0090_names[] = {
-	{ "H0090wF0", _s("Congratulations. You've shown Mr Sour Grapes") },
-	{ "H0090wA0", _s("The enveloppe, please. And the winner is ... you. Hey, good job. That's showing him") },
-	{ "H0090wB0", _s("Way to go") },
+	{ "H0090wF0", _hs("Congratulations. You've shown Mr Sour Grapes") },
+	{ "H0090wA0", _hs("The enveloppe, please. And the winner is ... you. Hey, good job. That's showing him") },
+	{ "H0090wB0", _hs("Way to go") },
 	// Difficult to hear. Please someone check after me
-	{ "H0090wE0", _s("You're amazing. Or Hades is hard under the gollar") }
+	{ "H0090wE0", _hs("You're amazing. Or Hades is hard under the gollar") }
 };
 
 static const int kNumQuestions = 4;

@@ -40,16 +40,16 @@ static const int kHeroBeltMaxY = 471;
 
 static const TranscribedSound powerSounds[3][2] = {
 	{
-	    { "g0280nc0", _s("That's where hero power of strength will be stored when you earn it") },
-	    { "g0280ng0", _s("The power of strength will let you overcome obstacles but you'll need a complete set of hero powers to use it") }
+	    { "g0280nc0", _hs("That's where hero power of strength will be stored when you earn it") },
+	    { "g0280ng0", _hs("The power of strength will let you overcome obstacles but you'll need a complete set of hero powers to use it") }
 	},
 	{
-	    { "g0280nb0", _s("That's where hero power of stealth will be stored when you earn it") },
-	    { "g0280nf0", _s("The power of stealth allows you to sneak past things but you'll need a complete set of hero powers to use it") }
+	    { "g0280nb0", _hs("That's where hero power of stealth will be stored when you earn it") },
+	    { "g0280nf0", _hs("The power of stealth allows you to sneak past things but you'll need a complete set of hero powers to use it") }
 	},
 	{
-	    { "g0280ne0", _s("That's where hero power of wisdom will be stored when you earn it") },
-	    { "g0280nh0", _s("The power of wisdom will let you outwit and avoid deception but you'll need a complete set of hero powers to use it") }
+	    { "g0280ne0", _hs("That's where hero power of wisdom will be stored when you earn it") },
+	    { "g0280nh0", _hs("The power of wisdom will let you outwit and avoid deception but you'll need a complete set of hero powers to use it") }
 	},
 };
 

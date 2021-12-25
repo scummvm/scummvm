@@ -44,18 +44,18 @@ static const char *questHovelNames[] = {
 
 // TODO: fill this
 static const TranscribedSound seClickTranscript[] = {
-	{"c7320wb0", _s("You know, you've got to say one thing for that Oedipus: he loved his mother")},
-	{"c7320wc0", _s("Did you ever wonder: if Atlas is holding up the world, what's the heck is he standing on?") },
-	{"c7320wd0", _s("Do you know ho many narcisses it takes to screw in an oil lamp? One. He holds the lamp and the world revolves around him") },
-	{"c7320we0", _s("My dear, these hovels are small. Even the mice are crammed") },
-	{"c7320wf0", _s("Happiness is seeing king Polydectes' picture on the side of a milk bucket") },
-	{"c7330xa0", _s("You know what would look really good on king Polydectes? A pitbull")}, // unclear: I'm unable to hear beginning of the utterance
-	{"c7330xc0", _s("That Perseus kid: brave, strong, steady as rock. And if he takes one look at Medusa and it's where he's gonna be. Yeah, well, keep your fingers crossed, he's all over in snakes right now.")},
-	{"c7340xa0", _s("Did you hear Daedalus is building a huge labyrinth to catch Minotaur? Works great except now he can't find his way out. I heard he's building some wings made of wax. He-he. Good luch getting that idea off the ground")},
-	{"c7340xc0", _s("Boy our king is mean. Did you know that when Oedipus went blind the king rearranged the furniture? But at least we're not as bad off as the Crete: they have a rotten king, the dangerous Minotaur and lousy parking. Good luck finding a place for your chariot")},
-	{"c7350xa0", _s("That beautiful Helen is still being held captive in Troy. How awful for her. They've got such a lousy shopping there. When is this trojan war going to be over? Then maybe we'll start peloponesean war.")},
-	{"c7350xc0", _s("Gee, Odysseus failed to get into the city. Helen is still a prisonner and morale is low. What else can go wrong? He's just found out his chariot needs new shocks. That's gonna be expensive")},
-	{"c7360xa0", _s("Oh, it's a good thing Perseus killed Medusa otherwise Polydectes would still be king. Perseus is a much better king than Polydectes was. Now that I think of it, my dog would be a much better king than Polydectes was")},
+	{"c7320wb0", _hs("You know, you've got to say one thing for that Oedipus: he loved his mother")},
+	{"c7320wc0", _hs("Did you ever wonder: if Atlas is holding up the world, what's the heck is he standing on?") },
+	{"c7320wd0", _hs("Do you know ho many narcisses it takes to screw in an oil lamp? One. He holds the lamp and the world revolves around him") },
+	{"c7320we0", _hs("My dear, these hovels are small. Even the mice are crammed") },
+	{"c7320wf0", _hs("Happiness is seeing king Polydectes' picture on the side of a milk bucket") },
+	{"c7330xa0", _hs("You know what would look really good on king Polydectes? A pitbull")}, // unclear: I'm unable to hear beginning of the utterance
+	{"c7330xc0", _hs("That Perseus kid: brave, strong, steady as rock. And if he takes one look at Medusa and it's where he's gonna be. Yeah, well, keep your fingers crossed, he's all over in snakes right now.")},
+	{"c7340xa0", _hs("Did you hear Daedalus is building a huge labyrinth to catch Minotaur? Works great except now he can't find his way out. I heard he's building some wings made of wax. He-he. Good luch getting that idea off the ground")},
+	{"c7340xc0", _hs("Boy our king is mean. Did you know that when Oedipus went blind the king rearranged the furniture? But at least we're not as bad off as the Crete: they have a rotten king, the dangerous Minotaur and lousy parking. Good luck finding a place for your chariot")},
+	{"c7350xa0", _hs("That beautiful Helen is still being held captive in Troy. How awful for her. They've got such a lousy shopping there. When is this trojan war going to be over? Then maybe we'll start peloponesean war.")},
+	{"c7350xc0", _hs("Gee, Odysseus failed to get into the city. Helen is still a prisonner and morale is low. What else can go wrong? He's just found out his chariot needs new shocks. That's gonna be expensive")},
+	{"c7360xa0", _hs("Oh, it's a good thing Perseus killed Medusa otherwise Polydectes would still be king. Perseus is a much better king than Polydectes was. Now that I think of it, my dog would be a much better king than Polydectes was")},
 //	"c7360wc0"
 //	"c7360wd0"
 //	"c7310xc0"

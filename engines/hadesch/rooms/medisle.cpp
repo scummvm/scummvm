@@ -28,8 +28,6 @@
 
 #include "gui/message.h"
 
-#define _hs(x) _s(x)
-
 namespace Hadesch {
 
 static const char *kStoneAnim = "g0110ob0";

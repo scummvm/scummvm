@@ -714,16 +714,16 @@ bool HadeschEngine::hasFeature(EngineFeature f) const {
 }
 
 static const TranscribedSound fallbackSounds[] = {
-	{"G0080nA0", _s("Ho, not there")},
-	{"G0080nB0", _s("Nope")},
-	{"G0080nC0", _s("Time out, kid. That doesn't work there")},
-	{"G0080nD0", _s("How about something else?")},
-	{"G0080nE0", _s("Eh-Eh")},
-	{"G0080nF0", _s("Not that one")},
-	{"G0080nG0", _s("Are you kidding? Try something else")},
-	{"G0080nH0", _s("Enough already. Give something else a try")},
-	{"G0080nI0", _s("Something else might work better")},
-	{"G0080nJ0", _s("You can come up with a better answer than that")},
+	{"G0080nA0", _hs("Ho, not there")},
+	{"G0080nB0", _hs("Nope")},
+	{"G0080nC0", _hs("Time out, kid. That doesn't work there")},
+	{"G0080nD0", _hs("How about something else?")},
+	{"G0080nE0", _hs("Eh-Eh")},
+	{"G0080nF0", _hs("Not that one")},
+	{"G0080nG0", _hs("Are you kidding? Try something else")},
+	{"G0080nH0", _hs("Enough already. Give something else a try")},
+	{"G0080nI0", _hs("Something else might work better")},
+	{"G0080nJ0", _hs("You can come up with a better answer than that")},
 };
 
 void HadeschEngine::fallbackClick() {

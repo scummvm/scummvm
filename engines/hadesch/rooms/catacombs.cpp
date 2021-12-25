@@ -59,21 +59,21 @@ static const char *musicNames[] = {
 };
 
 static const TranscribedSound painSounds[] = {
-	{"SndPainBedtime", _s("It's bed time")},
-	{"SndPanicBoneHead", _s("Hey there, bonehead")},
-	{"SndPainRecognize", _s("Recognize the jewel?")} // Unclear
+	{"SndPainBedtime", _hs("It's bed time")},
+	{"SndPanicBoneHead", _hs("Hey there, bonehead")},
+	{"SndPainRecognize", _hs("Recognize the jewel?")} // Unclear
 };
 
 static const TranscribedSound painSounds2[] = {
-	{"SndPanicLightsOut", _s("He-he. Lights out") },
-	{"SndPainByeBye", _s("Bye-Bye")},
-	{"SndPanicMaybeHit", _s("Maybe it will hit ya")}
+	{"SndPanicLightsOut", _hs("He-he. Lights out") },
+	{"SndPainByeBye", _hs("Bye-Bye")},
+	{"SndPanicMaybeHit", _hs("Maybe it will hit ya")}
 };
 
 static const TranscribedSound guardSpeeches[] = {
-	{"T3220wA0", _s("Do you think we were going to let you just walk into Troy?")},
-	{"T3220wB0", _s("So sorry, noone is allowed in. So beat it")},
-	{"T3220wC0", _s("Hey, Troy is closed to all visitors. Take a hike")}
+	{"T3220wA0", _hs("Do you think we were going to let you just walk into Troy?")},
+	{"T3220wB0", _hs("So sorry, noone is allowed in. So beat it")},
+	{"T3220wC0", _hs("Hey, Troy is closed to all visitors. Take a hike")}
 };
 
 enum {

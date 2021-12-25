@@ -42,6 +42,8 @@
 #include "hadesch/persistent.h"
 #include "common/translation.h"
 
+#define _hs(x) (x)
+
 struct ADGameDescription;
 
 namespace Common {

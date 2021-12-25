@@ -49,11 +49,11 @@ struct BirdInfo {
 };
 
 static const TranscribedSound fakePhilReplics[] = {
-	{"v7220xb0", _s("unclear utterance")}, // unclear
-	{"v7220xc0", _s("Hey, this was close, buddy")},
-	{"v7220xd0", _s("Get hold of thunderbolts")}, // unclear
-	{"v7220xe0", _s("Keep going, kid. You're doing great job")},
-	{"v7220xf0", _s("unclear utterance")} // unclear
+	{"v7220xb0", _hs("unclear utterance")}, // unclear
+	{"v7220xc0", _hs("Hey, this was close, buddy")},
+	{"v7220xd0", _hs("Get hold of thunderbolts")}, // unclear
+	{"v7220xe0", _hs("Keep going, kid. You're doing great job")},
+	{"v7220xf0", _hs("unclear utterance")} // unclear
 };
 
 static const BirdInfo birdInfo[] = {

@@ -50,31 +50,31 @@ static const struct island {
 	RoomId roomId;
 	int zValue;
 } islands[] = {
-	{"Phils", "a1030bh0", {"a1030nf0", _s("Phil's") }, "a1030ef0", kWallOfFameRoom, 901},
-	{"Medusa", "a1030bf0", {"a1030nc0", _s("Medusa Isle")}, "a1030ed0", kMedIsleRoom, 901},
-	{"Troy", "a1030bd0", {"a1030na0", _s("Troy")}, "a1030eb0", kTroyRoom, 901},
-	{"Seriphos", "a1030be0", {"a1030nd0", _s("Seriphos")}, "a1030ec0", kSeriphosRoom, 801},
-	{"Crete", "a1030bc0", {"a1030nb0", _s("Crete")}, "a1030ea0", kCreteRoom, 801},
-	{"Volcano", "a1030bg0", {"a1030ne0", _s("Volcano island")}, "a1030ee0", kVolcanoRoom, 801},
+	{"Phils", "a1030bh0", {"a1030nf0", _hs("Phil's") }, "a1030ef0", kWallOfFameRoom, 901},
+	{"Medusa", "a1030bf0", {"a1030nc0", _hs("Medusa Isle")}, "a1030ed0", kMedIsleRoom, 901},
+	{"Troy", "a1030bd0", {"a1030na0", _hs("Troy")}, "a1030eb0", kTroyRoom, 901},
+	{"Seriphos", "a1030be0", {"a1030nd0", _hs("Seriphos")}, "a1030ec0", kSeriphosRoom, 801},
+	{"Crete", "a1030bc0", {"a1030nb0", _hs("Crete")}, "a1030ea0", kCreteRoom, 801},
+	{"Volcano", "a1030bg0", {"a1030ne0", _hs("Volcano island")}, "a1030ee0", kVolcanoRoom, 801},
 };
 
 static const int nislands = ARRAYSIZE(islands);
 
 static const TranscribedSound intros[] = {
-	{ "a1150na0", _s("Aye, welcome onboard ladie") },
-	{ "a1150nb0", _s("So, are you hero yet?") },
-	{ "a1150nc0", _s("So, are you heroine yet?") },
-	{ "a1150nd0", _s("So, made it back, you did? Frankly, I'm surprised") },
-	{ "a1150ne0", _s("Glad I'm, you're still alive. I hate sailing alone") },
-	{ "a1150nf0", _s("So where will we be headed now?") }
+	{ "a1150na0", _hs("Aye, welcome onboard ladie") },
+	{ "a1150nb0", _hs("So, are you hero yet?") },
+	{ "a1150nc0", _hs("So, are you heroine yet?") },
+	{ "a1150nd0", _hs("So, made it back, you did? Frankly, I'm surprised") },
+	{ "a1150ne0", _hs("Glad I'm, you're still alive. I hate sailing alone") },
+	{ "a1150nf0", _hs("So where will we be headed now?") }
 };
 
 static const TranscribedSound defaultOutros[] = {
-	{ "a1170na0", _s("Heave anchor") },
-	{ "a1170nb0", _s("Hurry, hoist the main") },
-	{ "a1170nc0", _s("All hands on deck. Man the sails") },
-	{ "a1170nd0", _s("Pull her to starboard and bring her around") },
-	{ "a1170ne0", _s("Pull back on that rudder. Hold her steady") }
+	{ "a1170na0", _hs("Heave anchor") },
+	{ "a1170nb0", _hs("Hurry, hoist the main") },
+	{ "a1170nc0", _hs("All hands on deck. Man the sails") },
+	{ "a1170nd0", _hs("Pull her to starboard and bring her around") },
+	{ "a1170ne0", _hs("Pull back on that rudder. Hold her steady") }
 };
 
 enum {

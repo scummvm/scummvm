@@ -64,7 +64,7 @@ hadesch-makepotfiles:
 
 hadesch-updatepot:
 	cat $(srcdir)/engines/hadesch/po/POTFILES_hadesch | \
-	xgettext -f - -D $(srcdir) -d hadesch --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c -kmake:2 --add-comments=I18N\
+	xgettext -f - -D $(srcdir) -d hadesch --c++ -k_hs -kmake:2 --add-comments=I18N\
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c \
 		--copyright-holder="ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.scummvm.org -o $(HADESCH_POTFILE)_
