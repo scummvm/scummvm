@@ -248,7 +248,7 @@ void EMIModel::prepareForRender() {
 		const Math::Matrix4 &bindPose = _skeleton->_joints[jointIndex]._absMatrix;
 
 		Math::Vector3d vert = _vertices[boneVert];
-		bindPose.inverseTranslate(&vert);
+		vert -= bindPose.getPosition();
 		bindPose.inverseRotate(&vert);
 		jointMatrix.transform(&vert, true);
 		_drawVertices[boneVert] += vert * _boneInfos[i]._weight;
