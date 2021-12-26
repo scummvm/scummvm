@@ -64,6 +64,18 @@ public:
 	Angle unitCircleAngle() const;
 
 	/**
+	 * Multiply vector XYZ with Matrix 3x3
+	 *
+	 * @return	The result of multiplication
+	 */
+	inline Vector3d operator*(const MatrixType<3, 3> &m) const {
+		const float *d = m.getData();
+		return Vector3d(x() * d[0] + y() * d[3] + z() * d[6],
+				x() * d[1] + y() * d[4] + z() * d[7],
+				x() * d[2] + y() * d[5] + z() * d[8]);
+	}
+
+	/**
 	 * Find the cross product between two vectors
 	 * @param v1	The first vector
 	 * @param v2	The second vector
