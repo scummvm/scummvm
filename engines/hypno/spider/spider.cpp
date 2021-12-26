@@ -344,29 +344,95 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_fuse_box>"] = trans_fuse_box;
 
 	loadSceneLevel("decide6.mi_", "", prefix);
+	sc = (Scene *) _levels["decide6.mi_"];
+
+	cl = new ChangeLevel("shoctalk.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("decide10.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	loadSceneLevel("shoctalk.mi_", "decide7.mi_", prefix);
+	_levels["shoctalk.mi_"]->intros.push_back("cine/vrfs004s.smk");
+
+	loadSceneLevel("decide7.mi_", "", prefix);
+	sc = (Scene *) _levels["decide7.mi_"];
+
+	cl = new ChangeLevel("decide8.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	loadSceneLevel("decide8.mi_", "", prefix);
+	sc = (Scene *) _levels["decide8.mi_"];
+
+	cl = new ChangeLevel("c8");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("c9"); // TODO
+	sc->hots[4].actions.push_back(cl);
+
+	loadArcadeLevel("c8.mi_", "<after_c8>", prefix);
+	_levels["c8.mi_"]->intros.push_back("cine/utns001s.smk");
+	loadArcadeLevel("c8h.mi_", "<after_c8>", prefix);
+	_levels["c8.mi_"]->intros.push_back("cine/utns001s.smk");
+
+	Transition *after_c8 = new Transition("c10");
+	after_c8->intros.push_back("spider/cine/utns002s");
+	_levels["<after_c8>"] = after_c8;
+
+	loadArcadeLevel("c9.mi_", "<after_c9>", prefix);
+	_levels["c9.mi_"]->intros.push_back("cine/vrfs005s.smk");
+	loadArcadeLevel("c9h.mi_", "<after_c9>", prefix);
+	_levels["c9h.mi_"]->intros.push_back("cine/vrfs005s.smk");
+
+	Transition *after_c9 = new Transition("c10");
+	after_c9->intros.push_back("spider/cine/utns006s.smk");
+	_levels["<after_c9>"] = after_c9;
+
+	loadArcadeLevel("c10.mi_", "", prefix);
+	_levels["c10.mi_"]->intros.push_back("cine/utns003s.smk");
+	loadArcadeLevel("c10h.mi_", "", prefix);
+	_levels["c10h.mi_"]->intros.push_back("cine/utns003s.smk");
+
+	Transition *after_c10 = new Transition("docoffic.mi_");
+	after_c10->intros.push_back("spider/cine/utns004s.smk");
+	_levels["<after_c10>"] = after_c10;
+
+	loadSceneLevel("docoffic.mi_", "decide9.mi_", prefix);
+	//_levels["docoffic.mi_"]->intros.push_back("cine/????.smk");
+
+	loadSceneLevel("decide9.mi_", "", prefix);
+
 	loadSceneLevel("decide10.mi_", "", prefix);
+	sc = (Scene *) _levels["decide10.mi_"];
+	sc->intros.push_back("cine/dia012s.smk");
+
+	cl = new ChangeLevel("docoffi1.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<dont_believe_mason>");
+	sc->hots[4].actions.push_back(cl);
+
+	loadSceneLevel("docoffi1.mi_", "c12", prefix);
+	_levels["docoffi1.mi_"]->intros.push_back("cine/doocin2s.smk");
+
+	loadArcadeLevel("c12.mi_", "", prefix);
+	loadArcadeLevel("c12h.mi_", "", prefix);
 
 	// No c7 level?
-	loadArcadeLevel("c8.mi_", "", prefix);
-	loadArcadeLevel("c9.mi_", "", prefix);
-	loadArcadeLevel("c10.mi_", "", prefix);
 	loadArcadeLevel("c11.mi_", "", prefix);
-	loadArcadeLevel("c12.mi_", "", prefix);
 	loadArcadeLevel("c13.mi_", "", prefix);
 
 	// // Hard arcade levels
 
-	loadArcadeLevel("c6h.mi_", "<lock>", "spider");
+	loadArcadeLevel("c6h.mi_", "<lock>", prefix);
 	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 
 	// No c7h level?
-	loadArcadeLevel("c8h.mi_", "", prefix);
-	loadArcadeLevel("c9h.mi_", "", prefix);
-	loadArcadeLevel("c10h.mi_", "", prefix);
 	loadArcadeLevel("c11h.mi_", "", prefix);
-	loadArcadeLevel("c12h.mi_", "", prefix);
 	loadArcadeLevel("c13h.mi_", "", prefix);
+
+	loadSceneLevel("decide11.mi_", "", prefix);
 
 	// start level
 	Transition *start = new Transition("mainmenu.mi_");
@@ -377,7 +443,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["mainmenu.mi_"];
 	cl = new ChangeLevel("levels.mi_");
 	sc->hots[1].actions.push_back(cl);
-	
+
 	cl = new ChangeLevel("options.mi_");
 	sc->hots[4].actions.push_back(cl);
 
@@ -450,6 +516,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *over_apt_5 = new Transition("tryagain.mi_");
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
+
+	Transition *dont_believe_mason = new Transition("<credits>");
+	dont_believe_mason->intros.push_back("spider/cine/doos004s.smk");
+	_levels["<dont_believe_mason>"] = dont_believe_mason;
 	
 	_nextLevel = "<start>";
 }

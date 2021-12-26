@@ -668,9 +668,17 @@ void SpiderEngine::runFuseBox(Code *code) {
 	Common::Rect vcell(0, 0, 8, 32);
 	Common::Rect hcell(0, 0, 32, 8);
 
-	loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+		MVideo v("spider/cine/ppv011es.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+	} else { // hard
+		MVideo v("spider/cine/ppv011hs.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+	}
+
 	Frames fuses = decodeFrames("spider/movie2/onoffuse.smk");
-	//drawImage(*fuses[1], matrix.left, matrix.top, true);
 
 	while (!shouldQuit()) {
 
@@ -685,10 +693,12 @@ void SpiderEngine::runFuseBox(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (matrix.contains(mousePos)) {
-					loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+					if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+						loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+					} else { // hard
+						loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+					}
 
-					//drawImage(*fuses[1], matrix.left, matrix.top, true);
-					//bool found = false;
 					debug("\nvdata:");
 					for (int i = 0; i < 9; i++) {
 						for (int j = 0; j < 8; j++) {
