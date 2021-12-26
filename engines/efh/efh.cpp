@@ -3558,9 +3558,102 @@ bool EfhEngine::sub1CB27() {
 	return var4;
 }
 
+// The parameter isn't used in the original
 void EfhEngine::sub1BE9A(int16 monsterId) {
-	warning("STUB sub1BE9A");
-}
+	int16 var4 = 1;
+
+	// sub1BE9A - 1rst loop counter1_monsterId - Start
+	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
+		if (sub1BAF9(counter1))
+			continue;
+
+		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+			_mapMonsters[_teamMonsterIdArray[counter1]]._pictureRef[counter2] = 0;
+			_stru32686[counter1]._field0[counter2] = 0;
+			_stru32686[counter1]._field2[counter2] = 0;
+		}
+
+		_teamMonsterIdArray[counter1] = -1;
+		for (int16 counter2 = counter1 + 1; counter2 < 5; ++counter2) {
+			for (int16 var8 = 0; var8 < 9; ++var8) {
+				_stru32686[counter1]._field0[var8] = _stru32686[counter2]._field0[var8];
+				_stru32686[counter1]._field2[var8] = _stru32686[counter2]._field2[var8];
+			}
+			_teamMonsterIdArray[counter1] = _teamMonsterIdArray[counter2];
+		}
+		
+	}
+	// sub1BE9A - 1rst loop counter1_monsterId - End
+
+	var4 = -1;
+	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
+		if (_teamMonsterIdArray[counter1] == -1) {
+			var4 = counter1;
+			break;
+		}
+	}
+
+	if (var4 != -1) {
+		// sub1BE9A - loop var2 - Start
+		for (int16 var2 = 1; var2 < 3; ++var2) {
+			if (var4 >= 5)
+				break;
+
+			for (int16 counter1 = 0; counter1 < 64; ++counter1) {
+				if (_mapMonsters[counter1]._guess_fullPlaceId == 0xFF)
+					continue;
+				
+				if (((_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) == 0x3F && !isCharacterATeamMember(_mapMonsters[counter1]._field_1)) || (_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
+					if (checkIfMonsterOnSameLargelMapPlace(counter1)) {
+						bool var6 = false;
+						for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+							if (_mapMonsters[counter1]._pictureRef[counter2] > 0) {
+								var6 = true;
+								break;
+							}
+						}
+
+						if (!var6)
+							continue;
+
+						if (var2 > computeMonsterGroupDistance(counter1))
+							continue;
+
+						if (sub1BC74(counter1, var4))
+							continue;
+
+						_teamMonsterIdArray[var4] = counter1;
+
+						// The original at this point was doing a loop on counter1, which is not a good idea as
+						// it was resetting the counter1 to 9 whatever its value before the loop.
+						// Furthermore, it was accessing _stru32686[counter1]._field0[counter1] which doesn't make
+						// sense...
+						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
+						for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+							_stru32686[counter1]._field0[counter2] = 0;
+						}
+						
+						if (++var4 >= 5)
+							break;
+					}
+				}
+			}			
+		}
+		// sub1BE9A - loop var2 - End
+	}
+
+	if (var4 == -1 || var4 > 4)
+		return;
+
+	// sub1BE9A - last loop counter1_monsterId - Start
+	for (int16 counter1 = var4; counter1 < 5; ++counter1) {
+		_teamMonsterIdArray[counter1] = -1;
+		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+			_stru32686[counter1]._field0[counter2] = 0x8000;
+		}
+	}
+	// sub1BE9A - last loop counter1_monsterId - End
+	}
 
 int16 EfhEngine::getTeamMonsterAnimId() {
 	int16 retVal = 0xFF;
