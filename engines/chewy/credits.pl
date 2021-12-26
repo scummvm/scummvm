@@ -1,3 +1,3 @@
 begin_section("Chewy");
-	add_person("Filippos Karapetis", "bluegr", "");
+	add_person("Paul Gilbert", "dreammaster", "");
 end_section();
