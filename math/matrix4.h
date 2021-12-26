@@ -39,7 +39,6 @@ public:
 	Matrix(const Angle &first, const Angle &second, const Angle &third, EulerOrder order) { buildFromEuler(first, second, third, order); }
 
 	void transform(Vector3d *v, bool translate) const;
-	void inverseRotate(Vector3d *v) const;
 
 	Vector3d getPosition() const;
 	void setPosition(const Vector3d &v);

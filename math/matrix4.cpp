@@ -19,19 +19,6 @@
  *
  */
 
-/*
- * The following function: inverseRotate
- * are adapted from Portalib3d, which is no longer available on the net.
- * But is available through archive.org, for reference:
- * http://web.archive.org/web/20050205215104/http://rsn.gamedev.net/pl3d/changelog.html
- *
- * This code was originally made available under the LGPL license (no version specified).
- * Copyright (C)2000, 2001, Brett Porter. All Rights Reserved.
- *
- * This code (and our modifications) is made available here under the GPLv2 (or later).
- *
- */
-
 #include "math/matrix4.h"
 #include "math/vector4d.h"
 #include "math/squarematrix.h"
@@ -126,16 +113,6 @@ void Matrix<4, 4>::invertAffineOrthonormal() {
 	rotation.transformVector(&position);
 	setRotation(rotation);
 	setPosition(position);
-}
-
-void Matrix<4, 4>::inverseRotate(Vector3d *v) const {
-	Vector3d temp;
-
-	temp.x() = v->x() * getValue(0, 0) + v->y() * getValue(1, 0) + v->z() * getValue(2, 0);
-	temp.y() = v->x() * getValue(0, 1) + v->y() * getValue(1, 1) + v->z() * getValue(2, 1);
-	temp.z() = v->x() * getValue(0, 2) + v->y() * getValue(1, 2) + v->z() * getValue(2, 2);
-
-	*v = temp;
 }
 
 void swap (float &a, float &b);
