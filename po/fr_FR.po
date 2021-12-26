@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-24 21:17+0000\n"
+"POT-Creation-Date: 2021-12-25 23:53+0000\n"
 "PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5140,7 +5140,7 @@ msgstr ""
 "Le mini-jeu Minotaure n'est pas encore supporté et sera ignoré pour le "
 "moment."
 
-#: engines/hadesch/rooms/medisle.cpp:650
+#: engines/hadesch/rooms/medisle.cpp:648
 msgid "The Medusa minigame is not supported yet. Skipping"
 msgstr ""
 "Le mini-jeu Méduse n'est pas encore supporté et sera ignoré pour le moment."

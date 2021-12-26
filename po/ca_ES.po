@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-24 21:17+0000\n"
+"POT-Creation-Date: 2021-12-25 23:53+0000\n"
 "PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5075,7 +5075,7 @@ msgstr "Voleu carregar o desar el joc?"
 msgid "The Minotaur minigame is not supported yet. Skipping"
 msgstr "Aquest joc no és compatible."
 
-#: engines/hadesch/rooms/medisle.cpp:650
+#: engines/hadesch/rooms/medisle.cpp:648
 #, fuzzy
 #| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"

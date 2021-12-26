@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-24 21:17+0000\n"
+"POT-Creation-Date: 2021-12-25 23:53+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -5103,7 +5103,7 @@ msgstr "Ці вы хочаце захаваць або загрузіць гул
 msgid "The Minotaur minigame is not supported yet. Skipping"
 msgstr "Game id не падтрымваецца"
 
-#: engines/hadesch/rooms/medisle.cpp:650
+#: engines/hadesch/rooms/medisle.cpp:648
 #, fuzzy
 msgid "The Medusa minigame is not supported yet. Skipping"
 msgstr "Game id не падтрымваецца"

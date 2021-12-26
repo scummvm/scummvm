@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-24 21:17+0000\n"
+"POT-Creation-Date: 2021-12-25 23:53+0000\n"
 "PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5079,7 +5079,7 @@ msgstr "Szeretne menteni vagy visszaállítani egy játékot?"
 msgid "The Minotaur minigame is not supported yet. Skipping"
 msgstr "A Minotaurusz minijáték még nem támogatott. Kihagyás"
 
-#: engines/hadesch/rooms/medisle.cpp:650
+#: engines/hadesch/rooms/medisle.cpp:648
 msgid "The Medusa minigame is not supported yet. Skipping"
 msgstr "A Medúza minijáték még nem támogatott. Kihagyás"
 
