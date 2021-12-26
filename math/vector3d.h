@@ -25,8 +25,9 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 
-#include "math/vector.h"
 #include "math/angle.h"
+#include "math/squarematrix.h"
+#include "math/vector.h"
 
 namespace Math {
 
