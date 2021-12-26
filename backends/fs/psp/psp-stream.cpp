@@ -200,12 +200,13 @@ uint32 PspIoStream::read(void *ptr, uint32 len) {
 		PSP_DEBUG_PRINT_FUNC("suspended\n");
 
 	// check if we need to seek
-	if (_pos != _physicalPos)
+	if (_pos != _physicalPos) {
 		PSP_DEBUG_PRINT("seeking from %x to %x\n", _physicalPos, _pos);
 		if (!physicalSeekFromCur(_pos - _physicalPos)) {
 			_error = true;
 			return 0;
 		}
+	}
 
 	int ret = sceIoRead(_handle, ptr, len);
 

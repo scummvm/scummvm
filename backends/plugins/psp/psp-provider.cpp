@@ -19,6 +19,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(__PSP__)
