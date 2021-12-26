@@ -82,7 +82,7 @@ void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *st
 int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
 	int16 result = 0;
 	if (_gedUserFunc)
-		result = _gedUserFunc(speicher[((x / 8) * x_anz) + (y / 8)]);
+		result = _gedUserFunc(speicher[((y / 8) * x_anz) + (x / 8)]);
 
 	return result;
 }
