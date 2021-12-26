@@ -628,11 +628,12 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.mouse.x = (arg3 - _touch_pt_scroll.x) * 100 / _touchpad_scale;
 			e.mouse.y = (arg4 - _touch_pt_scroll.y) * 100 / _touchpad_scale;
 			e.mouse += _touch_pt_down;
-
 		} else {
 			e.mouse.x = arg3;
 			e.mouse.y = arg4;
 		}
+		e.relMouse.x = arg5;
+		e.relMouse.y = arg6;
 
 		pushEvent(e);
 
@@ -695,6 +696,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			}
 
 			if (!_touchpad_mode) {
+				// In this case the mouse move is done in "direct mode"
+				// ie. the cursor jumps to where the tap occured
+				// so we don't have relMouse coordinates to set for the event
 				_event_queue.push(e);
 			}
 

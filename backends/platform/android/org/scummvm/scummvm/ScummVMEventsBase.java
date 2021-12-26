@@ -550,8 +550,11 @@ public class ScummVMEventsBase implements
 									float distanceX, float distanceY) {
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
 		if (!_touch3DMode) {
+			// typical use:
+			// - move mouse cursor around (most traditional point and click games)
+			// - mouse look (eg. Myst 3)
 			_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
-							(int)e2.getX(), (int)e2.getY(), 0, 0);
+							(int)e2.getX(), (int)e2.getY(), (int)distanceX, (int)distanceY);
 		}
 		return true;
 	}
