@@ -25,6 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
+#include "chewy/rooms/rooms.h"
 #include "chewy/episode1.h"
 #include "chewy/episode2.h"
 #include "chewy/episode3.h"
@@ -150,7 +151,7 @@ void timer_action(int16 t_nr) {
 							start_aad_wait(43, -1);
 					}
 
-					Room0::auge_ani();
+ 					Room0::eyeAnim();
 				} else if (!_G(spieler).R0KissenWurf) {
 					start_aad_wait(42, -1);
 					start_spz(2, 255, false, 0);
