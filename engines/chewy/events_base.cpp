@@ -89,11 +89,9 @@ void EventsBase::processEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
 			MOUSE_MOVE;
 			handleEvent(e);
-			break;
-
-		case Common::EVENT_KEYUP:
 			break;
 
 		default:

@@ -40,6 +40,8 @@ namespace Chewy {
 #define SCREEN_HEIGHT 200
 
 #define SHOULD_QUIT g_engine->shouldQuit()
+#define SHOULD_QUIT_RETURN if (g_engine->shouldQuit()) return
+#define SHOULD_QUIT_RETURN0 if (g_engine->shouldQuit()) return 0
 
 struct ChewyGameDescription;
 class EventsManager;
