@@ -56,7 +56,8 @@ void EventsManager::handleEvent(const Common::Event &event) {
 	if (event.type >= Common::EVENT_MOUSEMOVE &&
 		event.type <= Common::EVENT_MBUTTONUP)
 		handleMouseEvent(event);
-	else if (event.type == Common::EVENT_KEYDOWN)
+	else if (event.type == Common::EVENT_KEYDOWN ||
+			event.type == Common::EVENT_KEYUP)
 		handleKbdEvent(event);
 }
 
@@ -124,8 +125,9 @@ void EventsManager::handleKbdEvent(const Common::Event &event) {
 			_kbInfo->scan_code = event.kbd.keycode;
 			if (event.kbd.flags & Common::KBD_ALT)
 				_kbInfo->scan_code |= ALT;
-		} else {
-			_kbInfo->key_code = '\0';
+		} else if (event.type == Common::EVENT_KEYUP) {
+			if (event.kbd.ascii == _kbInfo->key_code)
+				_kbInfo->key_code = '\0';
 		}
 	}
 }

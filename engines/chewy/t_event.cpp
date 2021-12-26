@@ -22,6 +22,7 @@
 
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/episode1.h"
 #include "chewy/episode2.h"
@@ -2081,9 +2082,14 @@ void calc_inv_use_txt(int16 test_nr) {
 		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		out->back2screen(workpage);
 
-		::error("TODO: Proper ScummVM loops below");
-		while (in->get_switch_code() != ESC);
-		while (in->get_switch_code() != 0);
+		while (in->get_switch_code() != ESC) {
+			g_events->update();
+			SHOULD_QUIT_RETURN;
+		}
+		while (in->get_switch_code() != 0) {
+			g_events->update();
+			SHOULD_QUIT_RETURN;
+		}
 
 		room->open_handle(EPISODE1, "rb", R_TGPDATEI);
 		ERROR
