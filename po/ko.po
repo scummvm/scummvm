@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 17:52+0000\n"
+"POT-Creation-Date: 2021-12-26 20:19+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4995,7 +4995,7 @@ msgstr ""
 "시간이 조금 걸립니다. 기다려 주세요.\n"
 "다음 실행시에는 다시 검사하지 않을 것입니다."
 
-#: engines/grim/metaengine.cpp:62
+#: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr "원숭이섬 탈출 지원이 컴파일 되지 않음"
 

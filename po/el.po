@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 17:52+0000\n"
+"POT-Creation-Date: 2021-12-26 20:19+0000\n"
 "PO-Revision-Date: 2021-12-25 17:37+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5091,7 +5091,7 @@ msgstr ""
 "Η διαδικασία μπορεί να κρατήσει για λίγο, παρακαλούμε περιμένετε.\n"
 "Στις επόμενες εκτελέσεις δεν θα επαναληφθεί αυτός ο έλεγχος."
 
-#: engines/grim/metaengine.cpp:62
+#: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr ""
 "Η υποστήριξη του Escape from Monkey Island δεν έχει ενσωματωθεί στο "

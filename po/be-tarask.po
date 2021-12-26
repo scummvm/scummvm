@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 17:52+0000\n"
+"POT-Creation-Date: 2021-12-26 20:19+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4809,7 +4809,7 @@ msgid ""
 "Successive runs will not check them again."
 msgstr ""
 
-#: engines/grim/metaengine.cpp:62
+#: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr ""
 

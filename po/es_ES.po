@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 17:52+0000\n"
+"POT-Creation-Date: 2021-12-26 20:19+0000\n"
 "PO-Revision-Date: 2021-12-24 22:02+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5040,7 +5040,7 @@ msgstr ""
 "La próxima vez que ejecutes el juego, no se llevarán a cabo más "
 "comprobaciones."
 
-#: engines/grim/metaengine.cpp:62
+#: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr ""
 "No se ha incluido el soporte para Escape from/La fuga de Monkey Island."
