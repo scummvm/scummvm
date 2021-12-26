@@ -66,6 +66,8 @@ extern EventsManager *g_events;
 
 extern void delay(size_t time);
 
+#define EVENTS_UPDATE g_events->update()
+
 } // namespace Chewy
 
 #endif

@@ -138,7 +138,7 @@ void timer_action(int16 t_nr) {
 					timer_action_ctr = 2;
 
 				flags.AutoAniPlay = true;
-				if (!_G(spieler).R0SchleimWurf) {
+				if (!_G(spieler).R0SlimeUsed) {
 					start_aad_wait(42, -1);
 					auto_move(5, 0);
 					set_person_spr(0, 0);
