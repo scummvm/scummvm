@@ -49,7 +49,8 @@ MODULE_OBJS = \
 	text.o \
 	timer.o \
 	types.o \
-	video/cfo_decoder.o
+	video/cfo_decoder.o \
+	rooms/room0.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)

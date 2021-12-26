@@ -27,39 +27,6 @@ namespace Chewy {
 
 void switch_room(int16 nr);
 
-class Room0 {
-private:
-	static void auge_start(int16 mode);
-
-	static void auge_wait();
-
-	static void auge_shoot();
-
-	static void auge_schleim_back();
-
-	static void ch_schleim_auge();
-
-	static void fuetter_start(int16 mode);
-
-	static void ch_fuetter();
-	static void ch_kissen();
-
-	static void kissen_wurf();
-
-	static void ani_klappe_delay();
-
-	static void calc_auge_click(int16 ani_nr);
-
-	static void calc_kissen_click(int16 ani_nr);
-public:
-	static void entry();
-
-	static void auge_ani();
-	static void fuett_ani();
-	static bool getPillow();
-	static bool pullSlime();
-};
-
 void r2_jump_out_r1(int16 nr);
 
 void r3_terminal();
