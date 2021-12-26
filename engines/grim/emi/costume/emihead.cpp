@@ -69,8 +69,8 @@ void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, con
 		Math::Vector3d modelFront(0, 0, 1);
 		Math::Vector3d modelUp(0, 1, 0);
 
-		joint->_absMatrix.inverseRotate(&modelFront);
-		joint->_absMatrix.inverseRotate(&modelUp);
+		modelFront = modelFront * joint->_absMatrix.getRotation();
+		modelUp = modelUp * joint->_absMatrix.getRotation();
 
 		// Generate a world-space look at matrix.
 		Math::Matrix4 lookAtTM;

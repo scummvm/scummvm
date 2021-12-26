@@ -94,7 +94,7 @@ void SoundTrack::updatePosition() {
 	Math::Matrix4 worldRot = setup->_rot;
 	Math::Vector3d relPos = (_pos - setup->_pos);
 	Math::Vector3d p(relPos);
-	worldRot.inverseRotate(&p);
+	p = p * worldRot.getRotation();
 	float angle = atan2(p.x(), p.z());
 	float pan = sin(angle);
 	_balance = (int)(pan * 127.0f);

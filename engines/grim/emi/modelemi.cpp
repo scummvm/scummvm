@@ -249,12 +249,12 @@ void EMIModel::prepareForRender() {
 
 		Math::Vector3d vert = _vertices[boneVert];
 		vert -= bindPose.getPosition();
-		bindPose.inverseRotate(&vert);
+		vert = vert * bindPose.getRotation();
 		jointMatrix.transform(&vert, true);
 		_drawVertices[boneVert] += vert * _boneInfos[i]._weight;
 
 		Math::Vector3d normal = _normals[boneVert];
-		bindPose.inverseRotate(&normal);
+		normal = normal * bindPose.getRotation();
 		jointMatrix.transform(&normal, false);
 		_drawNormals[boneVert] += normal * _boneInfos[i]._weight;
 	}
