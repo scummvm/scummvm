@@ -21,7 +21,7 @@
  */
 
 /*
- * The following functions: inverseTranslate, inverseRotate, transpose
+ * The following function: inverseRotate
  * are adapted from Portalib3d, which is no longer available on the net.
  * But is available through archive.org, for reference:
  * http://web.archive.org/web/20050205215104/http://rsn.gamedev.net/pl3d/changelog.html
@@ -127,12 +127,6 @@ void Matrix<4, 4>::invertAffineOrthonormal() {
 	rotation.transformVector(&position);
 	setRotation(rotation);
 	setPosition(position);
-}
-
-void Matrix<4, 4>::inverseTranslate(Vector3d *v) const {
-	v->x() = v->x() - getValue(0, 3);
-	v->y() = v->y() - getValue(1, 3);
-	v->z() = v->z() - getValue(2, 3);
 }
 
 void Matrix<4, 4>::inverseRotate(Vector3d *v) const {
