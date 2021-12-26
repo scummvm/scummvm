@@ -33,11 +33,21 @@ namespace Rooms {
  */
 class Room0 {
 private:
-	static void eyeStart(int16 mode);
+	/**
+	 * Do the basic eye animation.
+	 */
+	enum EyeMode { EYE_START = 0, EYE_END = 1 };
+	static void eyeStart(EyeMode mode);
 
-	static void auge_wait();
+	/**
+	 * Pause after the eye arrives
+	 */
+	static void eyeWait();
 
-	static void auge_shoot();
+	/**
+	 * Do the eye shooting animation
+	 */
+	static void eyeShoot();
 
 	static void auge_schleim_back();
 

@@ -114,24 +114,24 @@ bool Room0::pullSlime() {
 	return false;
 }
 
-void Room0::eyeStart(int16 mode) {
+void Room0::eyeStart(EyeMode mode) {
 	ani_detail_info *adi;
 	int16 ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
-	if (!mode)
+	if (mode == EYE_START)
 		adi->ani_count = adi->start_ani;
 	else
 		adi->ani_count = 38;
 
-	if (!mode) {
+	if (mode == EYE_START) {
 		ani_klappe_delay();
 	}
 
 	ende = 0;
 	flags.AniUserAction = true;
 
-	if (!mode) {
+	if (mode == EYE_START) {
 		det->enable_sound(KLAPPE_DETAIL, 0);
 		det->disable_sound(KLAPPE_DETAIL, 1);
 		det->enable_sound(SCHLAUCH_DETAIL, 0);
@@ -163,12 +163,14 @@ void Room0::eyeStart(int16 mode) {
 		cur->plot_cur();
 		calc_auge_click(3);
 		out->back2screen(workpage);
+		EVENTS_UPDATE;
+		SHOULD_QUIT_RETURN;
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
 			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
-			if (!mode) {
+			if (mode == EYE_START) {
 				++adi->ani_count;
 				if (adi->ani_count > 38)
 					ende = 1;
@@ -183,14 +185,17 @@ void Room0::eyeStart(int16 mode) {
 	clear_prog_ani();
 	flags.AniUserAction = false;
 
-	if (mode) {
+	if (mode == EYE_END) {
 		det->start_detail(KLAPPE_DETAIL, 1, RUECK);
-		while (det->get_ani_status(KLAPPE_DETAIL))
+		while (det->get_ani_status(KLAPPE_DETAIL)) {
 			set_ani_screen();
+			EVENTS_UPDATE;
+			SHOULD_QUIT_RETURN;
+		}
 	}
 }
 
-void Room0::auge_wait() {
+void Room0::eyeWait() {
 	ani_detail_info *adi;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
@@ -219,6 +224,9 @@ void Room0::auge_wait() {
 			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
 			++adi->ani_count;
 		}
+
+		EVENTS_UPDATE;
+		SHOULD_QUIT_RETURN;
 	}
 
 	flags.AniUserAction = false;
@@ -245,7 +253,7 @@ void Room0::calc_auge_click(int16 ani_nr) {
 		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 			if (is_cur_inventar(SCHLEIM_INV)) {
 				del_inventar(_G(spieler).AkInvent);
-				_G(spieler).R0SchleimWurf = 1;
+				_G(spieler).R0SlimeUsed = true;
 			} else if (is_cur_inventar(KISSEN_INV)) {
 
 				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATEI);
@@ -254,7 +262,7 @@ void Room0::calc_auge_click(int16 ani_nr) {
 	}
 }
 
-void Room0::auge_shoot() {
+void Room0::eyeShoot() {
 	ani_detail_info *adi;
 	int16 ende;
 
@@ -410,7 +418,7 @@ void Room0::fuetter_start(int16 mode) {
 	}
 
 	ende = 0;
-	if (_G(spieler).R0SchleimWurf)
+	if (_G(spieler).R0SlimeUsed)
 		flags.AniUserAction = true;
 
 	while (!ende) {
@@ -489,7 +497,7 @@ void Room0::calc_kissen_click(int16 ani_nr) {
 					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 			}
 		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
-			if (is_cur_inventar(KISSEN_INV) && _G(spieler).R0SchleimWurf) {
+			if (is_cur_inventar(KISSEN_INV) && _G(spieler).R0SlimeUsed) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0KissenWurf = 1;
 			} else if (is_cur_inventar(SCHLEIM_INV)) {
@@ -510,7 +518,7 @@ void Room0::ch_fuetter() {
 	i = 152;
 	ende = 0;
 
-	if (_G(spieler).R0SchleimWurf)
+	if (_G(spieler).R0SlimeUsed)
 		flags.AniUserAction = true;
 	while (!ende) {
 		clear_prog_ani();
@@ -518,7 +526,7 @@ void Room0::ch_fuetter() {
 		spr_info[0].ZEbene = 190;
 		if (adi->ani_count == 136) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			if (!_G(spieler).R0SchleimWurf)
+			if (!_G(spieler).R0SlimeUsed)
 				det->stop_detail(16);
 		}
 		if (adi->ani_count > 138) {
@@ -653,20 +661,22 @@ void Room0::ani_klappe_delay() {
 }
 
 void Room0::eyeAnim() {
-	if (!_G(spieler).R0SchleimWurf) {
-		eyeStart(0);
-		if (!_G(spieler).R0SchleimWurf)
-			auge_wait();
-		if (_G(spieler).R0SchleimWurf) {
+	if (!_G(spieler).R0SlimeUsed) {
+		// Start the eye animation
+		eyeStart(EYE_START);
+		if (!_G(spieler).R0SlimeUsed)
+			eyeWait();
+
+		if (_G(spieler).R0SlimeUsed) {
 			start_aad(124);
 			ch_schleim_auge();
 			auge_schleim_back();
 			auto_move(FUETTER_POS, P_CHEWY);
 			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		} else {
-			auge_shoot();
+			eyeShoot();
 			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-			eyeStart(1);
+			eyeStart(EYE_END);
 		}
 	}
 }
@@ -676,7 +686,7 @@ void Room0::fuett_ani() {
 	action = false;
 	fuetter_start(0);
 
-	if (_G(spieler).R0SchleimWurf) {
+	if (_G(spieler).R0SlimeUsed) {
 		kissen_wurf();
 		if (_G(spieler).R0KissenWurf) {
 			ch_kissen();
