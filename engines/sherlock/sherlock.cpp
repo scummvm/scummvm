@@ -137,8 +137,12 @@ Common::Error SherlockEngine::run() {
 			showOpening();
 		} while (!shouldQuit() && !_interactiveFl);
 
-		// Signal startup autosave
-		_startupAutosave = true;
+		// Signal startup autosave, if there isn't already a save in
+		// that slot.
+		SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
+			_targetName.c_str(), getAutosaveSlot());
+		if (!desc.isValid())
+			_startupAutosave = true;
 	}
 
 	while (!shouldQuit()) {
