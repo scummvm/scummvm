@@ -44,7 +44,14 @@ void GLContext::glopArrayElement(GLParam *param) {
 		int size = color_array_size;
 		offset = idx * color_array_stride;
 		switch (color_array_type) {
-		case TGL_UNSIGNED_BYTE:
+		case TGL_UNSIGNED_BYTE: {
+				TGLubyte *array = (TGLubyte *)color_array + offset;
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
 		case TGL_BYTE: {
 				TGLbyte *array = (TGLbyte *)color_array + offset;
 				p[1].f = array[0];
@@ -53,7 +60,14 @@ void GLContext::glopArrayElement(GLParam *param) {
 				p[4].f = size > 3 ? array[3] : 1.0f;
 				break;
 			}
-		case TGL_UNSIGNED_INT:
+		case TGL_UNSIGNED_INT: {
+				TGLuint *array = (TGLuint *)((TGLbyte *)color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
 		case TGL_INT: {
 				TGLint *array = (TGLint *)((TGLbyte *)color_array + offset);
 				p[1].f = array[0];
@@ -62,7 +76,14 @@ void GLContext::glopArrayElement(GLParam *param) {
 				p[4].f = size > 3 ? array[3] : 1.0f;
 				break;
 			}
-		case TGL_UNSIGNED_SHORT:
+		case TGL_UNSIGNED_SHORT: {
+				TGLushort *array = (TGLushort *)((TGLbyte *)color_array + offset);
+				p[1].f = array[0];
+				p[2].f = array[1];
+				p[3].f = array[2];
+				p[4].f = size > 3 ? array[3] : 1.0f;
+				break;
+			}
 		case TGL_SHORT: {
 				TGLshort *array = (TGLshort *)((TGLbyte *)color_array + offset);
 				p[1].f = array[0];
