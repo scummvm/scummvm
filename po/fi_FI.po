@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-26 20:19+0000\n"
-"PO-Revision-Date: 2021-12-22 03:26+0000\n"
+"PO-Revision-Date: 2021-12-27 23:26+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5081,22 +5081,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Haluatko tallentaa vai ladata pelin?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Minotaur-minipeli ohitetaan, koska sille ei ole vielä tukea"
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Medusa-minipeli ohitetaan, koska sille ei ole vielä tukea"
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Troy-minipeli ohitetaan, koska sille ei ole vielä tukea"
 
 #: engines/hdb/detection.cpp:123
 msgid "Enable cheat mode"
