@@ -171,7 +171,8 @@ IVec3 Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
 IVec3 Renderer::translateGroup(int32 x, int32 y, int32 z) {
 	const int32 vx = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
 	const int32 vy = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	return IVec3(vx, vy, vy);
+	const int32 vz = (_shadeMatrix.row3.x * x + _shadeMatrix.row3.y * y + _shadeMatrix.row3.z * z) / SCENE_SIZE_HALF;
+	return IVec3(vx, vy, vz);
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -372,10 +373,10 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	/*_cameraAngleX = angleX;
 	_cameraAngleY = angleY;
 	_cameraAngleZ = angleZ;*/
-
+	const int32 normalUnit = 64;
 	const IVec3 renderAngle(angleX, angleY, angleZ);
 	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
-	_lightPos = translateGroup(0, 0, 59);
+	_lightNorm = translateGroup(0, 0, normalUnit - 5);
 }
 
 static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1493,7 +1494,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 			if (numOfShades) {
 				int32 numShades = numOfShades;
 
-				_shadeMatrix = *lightMatrix * _lightPos;
+				_shadeMatrix = *lightMatrix * _lightNorm;
 
 				do { // for each normal
 					const BodyShade &shadePtr = bodyData.getShade(shadeIndex);

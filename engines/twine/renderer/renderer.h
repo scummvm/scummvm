@@ -161,7 +161,7 @@ private:
 	IMatrix3x3 _baseMatrix;
 	IMatrix3x3 _matricesTable[30 + 1];
 	IMatrix3x3 _shadeMatrix;
-	IVec3 _lightPos;
+	IVec3 _lightNorm;
 	IVec3 _baseRotPos;
 
 	RenderCommand _renderCmds[1000];

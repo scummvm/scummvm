@@ -172,8 +172,8 @@ public:
 	int32 _holomapTrajectory = -1;
 
 	TextBankId _sceneTextBank = TextBankId::None;
-	int32 _alphaLight = ANGLE_0;
-	int32 _betaLight = ANGLE_0;
+	int32 _alphaLight = ANGLE_315;
+	int32 _betaLight = ANGLE_334;
 
 	IVec3 _newHeroPos;
 
