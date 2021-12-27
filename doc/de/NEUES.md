@@ -8,6 +8,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Hades Challenge hinzugefügt.
 
  Allgemein:
+   - Die Lizenz des Projektes wurde auf GPLv3+ aktualisiert.
    - ScummVM benötigt nun C++11, um gebaut werden zu können.
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
