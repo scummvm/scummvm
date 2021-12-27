@@ -2577,8 +2577,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("bemtoybox", "", "xn--ToyBox-hu4e9b90a", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484323, Common::JA_JPN, 404),
 
 	// Original filename is 'BD-J/Demo'
+	// Developed by ART Sector ONE / Richard M. Coombs
+	// ベターデッド ーラティフィケーションー published by NEC Interchannel, Minato, Tokyo (1995)
+	MACGAME1("betterd", "", "Better Dead 12 megs", "17efee018a660458fae80de4364021ac", 486717, 404),
 	MACDEMO1_l("betterd", "Demo", "xn--BD-JDemo-na47b", "17efee018a660458fae80de4364021ac", 487275, Common::JA_JPN, 404),
-	MACGAME1_l("betterd", "", "Better Dead 12 megs", "17efee018a660458fae80de4364021ac", 486717, Common::JA_JPN, 404),
 	WINGAME1_l("betterd", "", "BETTERD.EXE", "e484d23ce2b6750d9e7e4a7b32632f47", 696877, Common::JA_JPN, 404),
 
 	// Demo is from covermount of PC Guide (UK) Feb 1997
