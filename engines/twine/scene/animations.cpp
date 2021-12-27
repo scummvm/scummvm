@@ -288,7 +288,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		case ActionType::ACTION_THROW_EXTRA_BONUS:
 			if (action.animFrame == actor->_animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
+				_engine->_extra->addExtraThrow(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, actor->_angle + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_THROW_MAGIC_BALL:
