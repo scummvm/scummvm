@@ -212,10 +212,14 @@ Name: {group}\Spielst�nde\Spielst�nde (alter Standard); Filename: {app}; Wor
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not german
 Name: {group}\Mitwirkende; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: german
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
-Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
-Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
-Name: {group}\Copying.OFL; Filename: {app}\COPYING.OFL.txt; WorkingDir: {app}; Comment: COPYING.OFL; Flags: createonlyiffileexists
-Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
+Name: {group}\Copying.BSD; Filename: {app}\LICENSES\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
+Name: {group}\Copying.LGPL; Filename: {app}\LICENSES\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
+Name: {group}\Copying.FREEFONT; Filename: {app}\LICENSES\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
+Name: {group}\Copying.OFL; Filename: {app}\LICENSES\COPYING.OFL.txt; WorkingDir: {app}; Comment: COPYING.OFL; Flags: createonlyiffileexists
+Name: {group}\Copying.ISC; Filename: {app}\LICENSES\COPYING.ISC.txt; WorkingDir: {app}; Comment: COPYING.ISC; Flags: createonlyiffileexists
+Name: {group}\Copying.LUA; Filename: {app}\LICENSES\COPYING.LUA.txt; WorkingDir: {app}; Comment: COPYING.LUA; Flags: createonlyiffileexists
+Name: {group}\Copying.MIT; Filename: {app}\LICENSES\COPYING.MIT.txt; WorkingDir: {app}; Comment: COPYING.MIT; Flags: createonlyiffileexists
+Name: {group}\Copying.TINYGL; Filename: {app}\LICENSES\COPYING.TINYGL.txt; WorkingDir: {app}; Comment: COPYING.TINYGL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 
 ; NEWS

@@ -1638,14 +1638,14 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			// Various text files
 			in.push_back(setup.srcDir + "/AUTHORS");
 			in.push_back(setup.srcDir + "/COPYING");
-			in.push_back(setup.srcDir + "/COPYING.BSD");
-			in.push_back(setup.srcDir + "/COPYING.FREEFONT");
-			in.push_back(setup.srcDir + "/COPYING.ISC");
-			in.push_back(setup.srcDir + "/COPYING.LGPL");
-			in.push_back(setup.srcDir + "/COPYING.LUA");
-			in.push_back(setup.srcDir + "/COPYING.MIT");
-			in.push_back(setup.srcDir + "/COPYING.OFL");
-			in.push_back(setup.srcDir + "/COPYING.TINYGL");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.BSD");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.LGPL");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.FREEFONT");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.OFL");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.ISC");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.LUA");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.MIT");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.TINYGL");
 			in.push_back(setup.srcDir + "/COPYRIGHT");
 			in.push_back(setup.srcDir + "/NEWS.md");
 			in.push_back(setup.srcDir + "/README.md");

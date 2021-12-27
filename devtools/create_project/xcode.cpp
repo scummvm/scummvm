@@ -863,12 +863,16 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("icons/scummvm.icns");
 		files.push_back("AUTHORS");
 		files.push_back("COPYING");
-		files.push_back("COPYING.LGPL");
-		files.push_back("COPYING.BSD");
-		files.push_back("COPYING.FREEFONT");
-		files.push_back("COPYING.OFL");
-		files.push_back("NEWS");
-		files.push_back("README");
+		files.push_back("LICENSES/COPYING.BSD");
+		files.push_back("LICENSES/COPYING.LGPL");
+		files.push_back("LICENSES/COPYING.FREEFONT");
+		files.push_back("LICENSES/COPYING.OFL");
+		files.push_back("LICENSES/COPYING.ISC");
+		files.push_back("LICENSES/COPYING.LUA");
+		files.push_back("LICENSES/COPYING.MIT");
+		files.push_back("LICENSES/COPYING.TINYGL");
+		files.push_back("NEWS.md");
+		files.push_back("README.md");
 	}
 	return files;
 }

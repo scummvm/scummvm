@@ -13,8 +13,8 @@ Copyright:
  This program is free software; you can redistribute it and/or modify it
  under the terms of the GNU General Public License as published by the
  Free Software Foundation; either version 3, or (at your option) any
- later version. In addition, some parts are also licensed under LGPL and 
- BSD licenses. See COPYING.BSD and COPYING.LGPL.
+ later version. In addition, some parts are also licensed under LGPL and
+ BSD licenses. See LICENSES/COPYING.BSD and LICENSES/COPYING.LGPL.
 
  On Debian GNU/Linux systems, the complete text of the GNU General
  Public License can be found in `/usr/share/common-licenses/GPL'.
