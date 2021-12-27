@@ -121,13 +121,35 @@ void tglTexCoord4f(float s, float t, float r, float q) {
 	c->gl_add_op(p);
 }
 
+void tglTexCoord3f(float s, float t, float q) {
+	tglTexCoord4f(s, t, q, 1);
+}
+
 void tglTexCoord2f(float s, float t) {
 	tglTexCoord4f(s, t, 0, 1);
+}
+
+void tglTexCoord1f(float s) {
+	tglTexCoord4f(s, 0, 0, 1);
+}
+
+void tglTexCoord4fv(const float *v) {
+	tglTexCoord4f(v[0], v[1], v[2], v[3]);
+}
+
+void tglTexCoord3fv(const float *v) {
+	tglTexCoord4f(v[0], v[1], v[2], 1);
 }
 
 void tglTexCoord2fv(const float *v) {
 	tglTexCoord4f(v[0], v[1], 0, 1);
 }
+
+void tglTexCoord1fv(const float *v) {
+	tglTexCoord4f(v[0], 0, 0, 1);
+}
+
+// misc
 
 void tglEdgeFlag(int flag) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -138,8 +160,6 @@ void tglEdgeFlag(int flag) {
 
 	c->gl_add_op(p);
 }
-
-// misc
 
 void tglShadeModel(int mode) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
