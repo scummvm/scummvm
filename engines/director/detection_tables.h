@@ -38,6 +38,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "1stcdtoddler",		"My First CD-ROM: Toddler School" },
 	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
 	{ "abclunch",		    "My Alphabet Lunch" },
+	{ "abcpacovska",		"Alphabet: Play with the ABCs"},
 	{ "abcpalsafety",		"Safety Scavenger Hunt" }, // Alphabet Pals
 	{ "abductthis",			"Abduct This!" },
 	{ "afiles",				"The A-Files" },
@@ -433,7 +434,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "alice2ocean",		"From Alice to Ocean: Alone Across the Outback" },
 	{ "amhha",				"All My Hummingbirds Have Alibis" },
 	{ "amnesty",			"Amnesty Interactive" },
-	{ "artintact",			"artintact komplett" },
+	{ "artintact",			"the complete artintact komplett" },
 	{ "aruba",				"Aruba Interactive" },
 	{ "athletics",			"International Athletics" },
 	{ "babylon5int",		"Babylon 5 Interactive" },
@@ -446,7 +447,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blam",				"BLAM!" },
 	{ "blam2",				"BLAM! 2" },
 	{ "blam3",				"BLAM! 3" },
-	{ "blindrom",			"BlindRom 0.9" },
+	{ "blindrom",			"BlindRom 0.9: The Prototype" },
 	{ "bowie",				"JUMP: The David Bowie Interactive CD-ROM" },
 	{ "browser",			"Browser: Artopolis 97" },
 	{ "bugbook",			"The Multimedia Bug Book" },
@@ -545,6 +546,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "universe",			"Invisible Universe" },
 	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
 	{ "ushistory",			"The History of the United States for Young People" },
+	{ "venetiandeer",		"Venetian Deer" },
 	{ "vote",				"Vote America: Your Field Guide to Electing a President" },
 	{ "vtarot",				"Virtual Tarot" },
 	{ "vusic",				"Vusic: The Screen Raver" },
@@ -672,9 +674,8 @@ static const PlainGameDescriptor directorGames[] = {
 	// French titles
 	{ "1contre100",			"1 contre 100" },
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
-	{ "alphabet_pacovska",	"Alphabet, d'après de livre de Kvēta Pacovskã"},
 	{ "boulebill",			"Boule et Bill: Au Voleur!" },
-	{ "boitearire",			"La boite a rire" },
+	{ "boitearire",			"La boîte à rire" },
 	{ "fg25ans",			"25 Ans! Le CD-ROM de Fluide Glacial" },
 	{ "forestiajr",			"Forestia Révoltozoo" },
 	{ "guignols1",			"Les Guignols de l'Info ... LE JEU!" },
@@ -715,7 +716,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ravensburger",		"Ravensburger Interactive Demo-Sampler" },
 	{ "raveshuttle",		"Rave Shuttle: The Cosmic Challenge" },
 	{ "tkkgkit",			"TKKG: Identikit" },
-	{ "venetiandeer",		"Venetian Deer" },
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
 	// Italian titles
@@ -734,7 +734,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ankh2",				"アンク 2 ツタンカーメンの謎" },
 	{ "ankh3",				"アンク 3" },
 	{ "apeodyssey",			"Ape Odyssey 2001" },
-	{ "aramata",			"Aramata's Visual Wonderland" },
+	{ "aramata",			"Aramata's Visual Wonderland: Magic of Perspective" },
 	{ "atmarktown",			"Atmark Town" },
 	{ "banddamashii",		"バンド魂" }, // Band Damashii
 	{ "bem",				"妖怪人間ベム 新たなる魂の迷宮" },					// Yokai Ningen Bemu
@@ -2516,8 +2516,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("aquazone", "Demo (Version 1.5)", "AZ demo", "97474208c44c78f26bef8b2011d341aa", 487303, Common::JA_JPN, 404),
 	WINDEMO1t_l("aquazone", "Demo", "AZDEMO.EXE", "4644e6e5015ed2c7e4a30619c5efc464", 4011337, Common::JA_JPN, 404),
 
-	MACGAME1_l("aramata", "", "START", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, Common::JA_JPN, 404),
-	WINGAME1t_l("aramata", "", "START.EXE", "bb031b7d7a57557636530e80b4c061b3", 747081, Common::JA_JPN, 404),
+	MACGAME2_l("aramata", "", "START", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484095,
+		"SRC/MACLOBBY.Dxr", "2332900b20b0d33e0617e5e7505923e8", 290058,
+		Common::JA_JPN, 404),
+	WINGAME2t_l("aramata", "", "START.EXE", "bb031b7d7a57557636530e80b4c061b3", 747081,
+		"SRC/WINLOBBY.Dxr", "f53af0b58070d2450a3672847434b609", 5282042,
+		Common::JA_JPN, 404),
 
 	MACGAME1("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295426, 400),
 	MACDEMO1("arcofdoom", "Demo", "ArcDemo", "cdb27c916044ae4dceb4b7326063fa03", 301925, 400),
@@ -2824,8 +2828,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("dreidel", "", "dreidel", "77f4098988d5386794d1530065f514cd", 304189, 400),
 
-	MACGAME1_l("dropcity", "", "Mac_Hi", "17efee018a660458fae80de4364021ac", 481803, Common::JA_JPN, 404),
-	WINGAME1t_l("dropcity", "", "WIN.EXE", "9680a67c57977e5d4a679455f722c240", 1298847, Common::JA_JPN, 404),
+	MACGAME2_l("dropcity", "", "Mac_Hi", "17efee018a660458fae80de4364021ac", 481803,
+		"MAIN.Mov", "24a0bed30cef7fc9a83410f14cc51adc", 108648,
+		Common::JA_JPN, 404),
+	WINGAME2t_l("dropcity", "", "WIN.EXE", "9680a67c57977e5d4a679455f722c240", 1298847,
+		"MAIN.MOV", "69989b3693715e55366abdcb8cc77a2c", 90280972,
+		Common::JA_JPN, 404),
 
 	MACGAME1_l("earthtia", "", "LATHUR'S LEGEND", "b267d7e5f42c170a4f5dbb50a0f4e064", 289818, Common::JA_JPN, 402),
 
@@ -3571,8 +3579,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("nmm", "",		"Adam Player.ppc", "df028c9e22b2dec8f7ffeee28ca7b991", 57726, 404),
 	MACDEMO1("nmm", "Demo", "NMM Demo",		   "17efee018a660458fae80de4364021ac", 481482, 404),
 
-	MACDEMO1_l("noahsark", "Demo", "GO", "97474208c44c78f26bef8b2011d341aa", 484067, Common::JA_JPN, 404),
-	WINDEMO1t_l("noahsark", "Demo", "GO.EXE", "bf8926c2275b8e83f237812a18964dbd", 747005, Common::JA_JPN, 404),
+	MACDEMO2_l("noahsark", "Demo", "GO", "97474208c44c78f26bef8b2011d341aa", 484067,
+		"NOADATA/NOAm16h.dxr", "5ff168be3f36b3c7c1a27e0ba92af80a", 4313024,
+		Common::JA_JPN, 404),
+	WINDEMO2t_l("noahsark", "Demo", "GO.EXE", "bf8926c2275b8e83f237812a18964dbd", 747005,
+		"NOADATA/NOAW08H.DXR", "c66f86fe178c6a0bb9c5165202c0f8c3", 2991026,
+		Common::JA_JPN, 404),
 
 	WINGAME1("noddytoytown", "", "NODDY.EXE", "d16d57c823205e32759e1771bfdbb330", 4505770, 404),
 
@@ -5459,8 +5471,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("shrmess", "Demo", "MATH ESSENTIALS DEMO", "b0b0e36586489ca6070d20feeff52fa5", 1028001, 606),
 
 	// German/English bilingual
-	MACGAME1("smallfish", "", "Small_Fish", "7a36d53490a07ddc212b65cad9ed11f3", 115767, 600),
-	WINGAME1t("smallfish", "", "START.EXE", "5b9294e4836af8dc30a7e8a8fc799bb2", 1527107, 602),
+	MACGAME2("smallfish", "", "Small_Fish", "7a36d53490a07ddc212b65cad9ed11f3", 115767,
+		"data/casts/scripts.cxt", "b56dd8f86edc9b21f88c6363109ab219", 191362,
+		600),
+	WINGAME2t("smallfish", "", "START.EXE", "5b9294e4836af8dc30a7e8a8fc799bb2", 1527107,
+		"data/casts/scripts.cxt", "54978ce7d55a5a2c58d7234fddc961b2", 191362,
+		602),
 
 	WINGAME1("ss007", "", "007.exe", "d62438566e44826960fc16c5c23dbe43", 4971852, 650),
 
@@ -5600,8 +5616,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("allthelunar", "Luna no Chakushin Melody Maker", "xn--2bkuay9hyfd4f3fb5910fxrwe", "f670d62dfbf3f42c475b4f09c68f1888", 5839096, Common::JA_JPN, 701),
 	WINGAME1t_l("allthelunar", "Luna no Chakushin Melody Maker", "melody.exe", "f670d62dfbf3f42c475b4f09c68f1888", 5839096, Common::JA_JPN, 701),
 
-	MACGAME1_l("alphabet_pacovska", "", "30Mo", "0944b962ebb00f4b5d5149d220f8449b", 115966, Common::FR_FRA, 702),
-	WINGAME1t_l("alphabet_pacovska", "", "Alphabet.exe", "c14f54671c5274accf32d2558510cdbb", 1812440, Common::FR_FRA, 702),
+	MACGAME1_l("abcpacovska", "", "30Mo", "0944b962ebb00f4b5d5149d220f8449b", 115966, Common::FR_FRA, 702),
+	WINGAME1t_l("abcpacovska", "", "Alphabet.exe", "c14f54671c5274accf32d2558510cdbb", 1812440, Common::FR_FRA, 702),
 
 	WINDEMO1("artus1", "Demo", "artus.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2595828, 702),
 
@@ -5936,8 +5952,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("anasheed", "", "Anasheed.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 3595486, Common::AR_ARB, 800),
 
-	MACGAME1("artintact", "", "Start_Mac", "4ea5fc09f79eee6dded94dc40f303779", 214865, 800),
-	WINGAME1t("artintact", "", "start.exe", "e35fd9cafa74db33dca37e7e7cd63e43", 146931, 800),
+	MACGAME2("artintact", "", "Start_Mac", "4ea5fc09f79eee6dded94dc40f303779", 214865,
+		"DATA/intro.dxr", "e2ae1092a0bbe433cdc33d82bcc8adb7", 997164,
+		800),
+	WINGAME2t("artintact", "", "start.exe", "e35fd9cafa74db33dca37e7e7cd63e43", 146931,
+		"DATA/intro.dxr", "a8fe1c32a4c4d40ed00393d8602b979e", 997164,
+		800),
 
 	MACGAME2("avrilletgo", "ECD", "Projector",	   "4ea5fc09f79eee6dded94dc40f303779", 194863,
 								  "movie.dxr",	   "6d0c0712fdd32cf1de489b4c152b2460", 50908119, 800),
