@@ -64,8 +64,8 @@ void Renderer::init(int32 w, int32 h) {
 
 IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (_isUsingOrthoProjection) {
-		_projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + _orthoProjPos.x;
-		_projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + _orthoProjPos.y;
+		_projPos.x = ((cX - cZ) * 24) / ISO_SCALE + _orthoProjPos.x;
+		_projPos.y = (((cX + cZ) * 12) - cY * 30) / ISO_SCALE + _orthoProjPos.y;
 		_projPos.z = cZ - cY - cX;
 		return _projPos;
 	}
@@ -1184,7 +1184,7 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 	const int16 maxWidth = _engine->width() - 1;
 
 	for (const BodyPolygon &polygon : polygons) {
-		const uint8 renderType = polygon.renderType;
+		const uint8 materialType = polygon.materialType;
 		const uint8 numVertices = polygon.indices.size();
 		assert(numVertices <= 16);
 		const int16 colorIndex = polygon.color;
@@ -1203,9 +1203,8 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 
 		Vertex *vertex = vertices;
 
-		// TODO: RECHECK coordinates axis
-		if (renderType >= POLYGONTYPE_UNKNOWN) {
-			destinationPolygon->renderType = polygon.renderType - 2;
+		if (materialType >= MAT_GOURAUD) {
+			destinationPolygon->renderType = polygon.materialType - (MAT_GOURAUD - POLYGONTYPE_GOURAUD);
 			destinationPolygon->colorIndex = polygon.color;
 
 			for (int16 idx = 0; idx < numVertices; ++idx) {
@@ -1223,15 +1222,15 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				++vertex;
 			}
 		} else {
-			if (renderType >= POLYGONTYPE_GOURAUD) {
+			if (materialType >= MAT_FLAT) {
 				// only 1 shade value is used
-				destinationPolygon->renderType = renderType - POLYGONTYPE_GOURAUD;
+				destinationPolygon->renderType = materialType - MAT_FLAT;
 				const int16 shadeEntry = polygon.intensities[0];
 				const int16 shadeValue = colorIndex + modelData->shadeTable[shadeEntry];
 				destinationPolygon->colorIndex = shadeValue;
 			} else {
 				// no shade is used
-				destinationPolygon->renderType = renderType;
+				destinationPolygon->renderType = materialType;
 				destinationPolygon->colorIndex = colorIndex;
 			}
 
@@ -1304,7 +1303,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			if (_isUsingOrthoProjection) {
 				// * sqrt(sx+sy) / 512 (isometric scale)
-				radius = (radius * 34) / 512;
+				radius = (radius * 34) / ISO_SCALE;
 			} else {
 				int32 delta = _cameraDepthOffset + sphere->z;
 				if (delta == 0) {
@@ -1393,8 +1392,8 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 			const int32 coZ = -(pointPtr->z + renderPos.z);
 
 			// TODO: use projectPositionOnScreen()
-			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + _orthoProjPos.x;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + _orthoProjPos.y;
+			pointPtrDest->x = (coX + coZ) * 24 / ISO_SCALE + _orthoProjPos.x;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _orthoProjPos.y;
 			pointPtrDest->z = coZ - coX - coY;
 
 			if (pointPtrDest->x < modelRect.left) {

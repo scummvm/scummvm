@@ -38,7 +38,19 @@
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
-#define POLYGONTYPE_UNKNOWN 9
+#define POLYGONTYPE_OUTLINE 9
+
+#define MAT_TRISTE 0
+#define MAT_PIERRE 1
+#define MAT_COPPER 2
+#define MAT_BOPPER 3
+#define MAT_MARBRE 4
+#define MAT_TRANS 5
+#define MAT_TRAME 6
+#define MAT_FLAT 7
+#define MAT_GRANIT 8
+#define MAT_GOURAUD 9
+#define MAT_DITHER 10
 
 namespace TwinE {
 

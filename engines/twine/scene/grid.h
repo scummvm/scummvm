@@ -74,6 +74,7 @@ struct BrickEntry {
 /** Grip Z size */
 #define GRID_SIZE_Z GRID_SIZE_X
 
+#define ISO_SCALE 512
 #define BRICK_SIZE 512
 #define BRICK_HEIGHT 256
 

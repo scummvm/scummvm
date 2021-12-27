@@ -115,19 +115,19 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 	_polygons.reserve(numPolygons);
 	for (uint16 i = 0; i < numPolygons; ++i) {
 		BodyPolygon poly;
-		poly.renderType = stream.readByte();
+		poly.materialType = stream.readByte();
 		const uint8 numVertices = stream.readByte();
 
 		poly.color = stream.readSint16LE();
 		int16 intensity = -1;
-		if (poly.renderType == POLYGONTYPE_GOURAUD || poly.renderType == POLYGONTYPE_DITHER) {
+		if (poly.materialType == MAT_FLAT || poly.materialType == MAT_GRANIT) {
 			intensity = stream.readSint16LE();
 		}
 
 		poly.indices.reserve(numVertices);
 		poly.intensities.reserve(numVertices);
 		for (int k = 0; k < numVertices; ++k) {
-			if (poly.renderType >= POLYGONTYPE_UNKNOWN) {
+			if (poly.materialType >= MAT_GOURAUD) {
 				intensity = stream.readSint16LE();
 			}
 			const uint16 vertexIndex = stream.readUint16LE() / 6;
