@@ -66,6 +66,7 @@ private:
 	static void calc_kissen_click(int16 ani_nr);
 public:
 	static void entry();
+	static bool timer(int16 t_nr, int16 ani_nr);
 
 	static void eyeAnim();
 	static void fuett_ani();

@@ -117,67 +117,15 @@ void play_scene_ani(int16 nr, int16 mode) {
 }
 
 void timer_action(int16 t_nr) {
-	int16 default_flag;
-	int16 ani_nr;
-	default_flag = false;
-	ani_nr = t_nr - room->room_timer.TimerStart;
+	int16 ani_nr = t_nr - room->room_timer.TimerStart;
+	bool default_flag = false;
 
 	if (ailsnd->isSpeechActive())
 		return;
 
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	case 0:
-		switch (ani_nr) {
-		case 1:
-			if (timer_action_ctr > 0) {
-				uhr->reset_timer(t_nr, 0);
-				--timer_action_ctr;
-			} else if (!is_chewy_busy()) {
-				if (!_G(spieler).R0FueterLab)
-					timer_action_ctr = 2;
-
-				flags.AutoAniPlay = true;
-				if (!_G(spieler).R0SlimeUsed) {
-					start_aad_wait(42, -1);
-					auto_move(5, 0);
-					set_person_spr(0, 0);
-
-					if (_G(spieler).R0FueterLab < 3) {
-						start_spz(2, 255, false, 0);
-						if (_G(spieler).R0FueterLab)
-							start_aad_wait(618, -1);
-						else
-							start_aad_wait(43, -1);
-					}
-
- 					Room0::eyeAnim();
-				} else if (!_G(spieler).R0KissenWurf) {
-					start_aad_wait(42, -1);
-					start_spz(2, 255, false, 0);
-
-					if (_G(spieler).R0FueterLab < 3) {
-						start_aad_wait(43, -1);
-						++_G(spieler).R0FueterLab;
-					}
-
-					auto_move(3, 0);
-					set_person_pos(191, 120, P_CHEWY, P_LEFT);
-				}
-
-				if (!_G(spieler).R0KissenWurf)
-					Room0::fuett_ani();
-
-				uhr->reset_timer(t_nr, 0);
-				flags.AutoAniPlay = false;
-			}
-			break;
-
-		case 3:
-			break;
-
-		default:
-			break;
-		}
+		Room0::timer(t_nr, ani_nr);
 		break;
 
 	case 11:
