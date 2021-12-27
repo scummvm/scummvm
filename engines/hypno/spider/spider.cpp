@@ -360,6 +360,19 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("decide8.mi_");
 	sc->hots[2].actions.push_back(cl);
 
+	cl = new ChangeLevel("c13.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	loadArcadeLevel("c13.mi_", "<after_c13>", prefix);
+	_levels["c13.mi_"]->intros.push_back("cine/spf007bs.smk");
+
+	loadArcadeLevel("c13h.mi_", "<after_c13>", prefix);
+	_levels["c13h.mi_"]->intros.push_back("cine/spf007bs.smk");
+
+	Transition *after_c13 = new Transition("c12");
+	after_c13->intros.push_back("spider/cine/vrfs06bs.smk");
+	_levels["<after_c13>"] = after_c13;
+
 	loadSceneLevel("decide8.mi_", "", prefix);
 	sc = (Scene *) _levels["decide8.mi_"];
 
@@ -419,7 +432,6 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// No c7 level?
 	loadArcadeLevel("c11.mi_", "", prefix);
-	loadArcadeLevel("c13.mi_", "", prefix);
 
 	// // Hard arcade levels
 
@@ -429,7 +441,6 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// No c7h level?
 	loadArcadeLevel("c11h.mi_", "", prefix);
-	loadArcadeLevel("c13h.mi_", "", prefix);
 
 	loadSceneLevel("decide11.mi_", "", prefix);
 

@@ -562,11 +562,14 @@ void SpiderEngine::runLock(Code *code) {
 	sel[4] = Common::Rect(552, 57, 601, 134);
 	Common::Rect act(345, 337, 537, 404);
 
-	Common::String intro = "spider/cine/spv051s.smk"; 
-	if (!_intros.contains(intro)) {
-		MVideo v(intro, Common::Point(0, 0), false, false, false);
+	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+		MVideo v("spider/cine/spv051s.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		_intros[intro] = true;
+		loadImage("spider/factory/elockbg.smk", 0, 0, false);
+	} else {
+		MVideo v("spider/cine/spv051as.smk", Common::Point(0, 0), false, false, false);
+		runIntro(v);
+		loadImage("spider/factory/hlockbg.smk", 0, 0, false);
 	}
 
 	Frames nums = decodeFrames("spider/factory/button.smk");
@@ -574,7 +577,6 @@ void SpiderEngine::runLock(Code *code) {
 		error("Invalid number of colors: %d", nums.size());
 
 	defaultCursor();
-	loadImage("spider/factory/elockbg.smk", 0, 0, false);
 	for (int i = 0; i < 5; i++) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
@@ -603,7 +605,11 @@ void SpiderEngine::runLock(Code *code) {
 						comb[i] = (comb[i] + 1) % 5;
 				}
 
-				loadImage("spider/factory/elockbg.smk", 0, 0, false);
+				if (_sceneState["GS_PUZZLELEVEL"] == 0) // easy
+					loadImage("spider/factory/elockbg.smk", 0, 0, false);
+				else 
+					loadImage("spider/factory/hlockbg.smk", 0, 0, false);
+
 				for (int i = 0; i < 5; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
@@ -670,7 +676,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 		MVideo v("spider/cine/ppv011es.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+		loadImage("spider/movie2/efusebg.smk", 0, 0, false);
 	} else { // hard
 		MVideo v("spider/cine/ppv011hs.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
@@ -693,7 +699,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 			case Common::EVENT_LBUTTONDOWN:
 				if (matrix.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-						loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+						loadImage("spider/movie2/efusebg.smk", 0, 0, false);
 					} else { // hard
 						loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
 					}
