@@ -51,6 +51,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_showOriginalSavesDialog = false;
 	_interactiveFl = true;
 	_isScreenDoubled = false;
+	_startupAutosave = false;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -135,6 +136,9 @@ Common::Error SherlockEngine::run() {
 		do {
 			showOpening();
 		} while (!shouldQuit() && !_interactiveFl);
+
+		// Signal startup autosave
+		_startupAutosave = true;
 	}
 
 	while (!shouldQuit()) {
@@ -178,6 +182,15 @@ void SherlockEngine::sceneLoop() {
 		if (_people->_savedPos.x == -1) {
 			_canLoadSave = true;
 			_scene->doBgAnim();
+
+			if (_startupAutosave) {
+				// When the game is first started, create an autosave.
+				// This helps with the save dialog to prevent users
+				// accidentally saving in the autosave slot
+				_startupAutosave = false;
+				saveAutosaveIfEnabled();
+			}
+
 			_canLoadSave = false;
 		}
 	}
