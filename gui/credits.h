@@ -451,6 +451,8 @@ static const char *credits[] = {
 "",
 "C1""SCUMM",
 "C0""Torbj\303\266rn Andersson",
+"C0""Andrea Boscarino",
+"C2""Digital iMUSE, various fixes",
 "C0""James Brown",
 "C2""(retired)",
 "C0""Jonathan Gray",
