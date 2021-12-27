@@ -288,7 +288,7 @@ void GLContext::glopPixelStore(GLParam *p) {
 
 } // end of namespace TinyGL
 
-void tglGenTextures(int n, uint *textures) {
+void tglGenTextures(TGLsizei n, TGLuint *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	for (int i = 0; i < n; i++) {
@@ -297,7 +297,7 @@ void tglGenTextures(int n, uint *textures) {
 	c->maxTextureName += n;
 }
 
-void tglDeleteTextures(int n, const uint *textures) {
+void tglDeleteTextures(TGLsizei n, const TGLuint *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLTexture *t;
 

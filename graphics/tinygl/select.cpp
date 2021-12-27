@@ -29,7 +29,7 @@
 
 namespace TinyGL {
 
-int tglRenderMode(int mode) {
+TGLint tglRenderMode(TGLenum mode) {
 	GLContext *c = gl_get_context();
 	int result = 0;
 
@@ -67,12 +67,12 @@ int tglRenderMode(int mode) {
 	return result;
 }
 
-void tglSelectBuffer(int size, uint *buf) {
+void tglSelectBuffer(TGLsizei size, TGLuint *buffer) {
 	GLContext *c = gl_get_context();
 
 	assert(c->render_mode != TGL_SELECT);
 
-	c->select_buffer = buf;
+	c->select_buffer = buffer;
 	c->select_size = size;
 }
 

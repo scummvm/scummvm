@@ -205,7 +205,7 @@ void GLContext::glopCallList(GLParam *p) {
 	}
 }
 
-void tglNewList(uint list, int mode) {
+void tglNewList(TGLuint list, TGLenum mode) {
 	GLList *l;
 	GLContext *c = gl_get_context();
 
@@ -238,14 +238,14 @@ void tglEndList() {
 	c->exec_flag = 1;
 }
 
-int tglIsList(uint list) {
+TGLboolean tglIsList(TGLuint list) {
 	GLContext *c = gl_get_context();
 	GLList *l = find_list(c, list);
 
-	return (l != NULL);
+	return (l != nullptr);
 }
 
-unsigned int tglGenLists(int range) {
+TGLuint tglGenLists(TGLsizei range) {
 	GLContext *c = gl_get_context();
 	int count, list;
 	GLList **lists;

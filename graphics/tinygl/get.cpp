@@ -30,42 +30,42 @@
 
 #include "graphics/tinygl/zgl.h"
 
-void tglGetIntegerv(int pname, int *params) {
+void tglGetIntegerv(TGLenum pname, TGLint *data) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	switch (pname) {
 	case TGL_VIEWPORT:
-		params[0] = c->viewport.xmin;
-		params[1] = c->viewport.ymin;
-		params[2] = c->viewport.xsize;
-		params[3] = c->viewport.ysize;
+		data[0] = c->viewport.xmin;
+		data[1] = c->viewport.ymin;
+		data[2] = c->viewport.xsize;
+		data[3] = c->viewport.ysize;
 		break;
 	case TGL_MAX_MODELVIEW_STACK_DEPTH:
-		*params = MAX_MODELVIEW_STACK_DEPTH;
+		*data = MAX_MODELVIEW_STACK_DEPTH;
 		break;
 	case TGL_MAX_PROJECTION_STACK_DEPTH:
-		*params = MAX_PROJECTION_STACK_DEPTH;
+		*data = MAX_PROJECTION_STACK_DEPTH;
 		break;
 	case TGL_MAX_LIGHTS:
-		*params = T_MAX_LIGHTS;
+		*data = T_MAX_LIGHTS;
 		break;
 	case TGL_MAX_TEXTURE_SIZE:
-		*params = c->_textureSize;
+		*data = c->_textureSize;
 		break;
 	case TGL_MAX_TEXTURE_STACK_DEPTH:
-		*params = MAX_TEXTURE_STACK_DEPTH;
+		*data = MAX_TEXTURE_STACK_DEPTH;
 		break;
 	case TGL_BLEND:
-		*params = c->blending_enabled;
+		*data = c->blending_enabled;
 		break;
 	case TGL_ALPHA_TEST:
-		*params = c->alpha_test_enabled;
+		*data = c->alpha_test_enabled;
 		break;
 	case TGL_DEPTH_TEST:
-		*params = c->depth_test_enabled;
+		*data = c->depth_test_enabled;
 		break;
 	case TGL_STENCIL_TEST:
-		*params = c->stencil_test_enabled;
+		*data = c->stencil_test_enabled;
 		break;
 	default:
 		error("tglGet: option not implemented");
@@ -73,9 +73,8 @@ void tglGetIntegerv(int pname, int *params) {
 	}
 }
 
-void tglGetFloatv(int pname, float *v) {
-	int i;
-	int mnr = 0; // just a trick to return the correct matrix
+void tglGetFloatv(TGLenum pname, TGLfloat *data) {
+	int i, mnr = 0; // just a trick to return the correct matrix
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	switch (pname) {
 	case TGL_TEXTURE_MATRIX:
@@ -87,25 +86,25 @@ void tglGetFloatv(int pname, float *v) {
 	case TGL_MODELVIEW_MATRIX: {
 		float *p = &c->matrix_stack_ptr[mnr]->_m[0][0];
 		for (i = 0; i < 4; i++) {
-			*v++ = p[0];
-			*v++ = p[4];
-			*v++ = p[8];
-			*v++ = p[12];
+			*data++ = p[0];
+			*data++ = p[4];
+			*data++ = p[8];
+			*data++ = p[12];
 			p++;
 		}
 	}
 	break;
 	case TGL_LINE_WIDTH:
-		*v = 1.0f;
+		*data = 1.0f;
 		break;
 	case TGL_LINE_WIDTH_RANGE:
-		v[0] = v[1] = 1.0f;
+		data[0] = data[1] = 1.0f;
 		break;
 	case TGL_POINT_SIZE:
-		*v = 1.0f;
+		*data = 1.0f;
 		break;
 	case TGL_POINT_SIZE_RANGE:
-		v[0] = v[1] = 1.0f;
+		data[0] = data[1] = 1.0f;
 		break;
 	default:
 		fprintf(stderr, "warning: unknown pname in glGetFloatv()\n");
