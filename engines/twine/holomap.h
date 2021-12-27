@@ -53,7 +53,9 @@ private:
 	bool isTriangleVisible(const Vertex *vertices) const;
 
 	struct Location {
-		IVec3 angle;
+		int16 angleX;
+		int16 angleY;
+		int16 size;
 		TextId textIndex = TextId::kNone;
 		char name[30] = "";
 	};
