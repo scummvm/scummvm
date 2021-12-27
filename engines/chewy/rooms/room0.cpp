@@ -72,6 +72,59 @@ void Room0::entry() {
 	}
 }
 
+bool Room0::timer(int16 t_nr, int16 ani_nr) {
+	switch (ani_nr) {
+	case 1:
+		if (timer_action_ctr > 0) {
+			uhr->reset_timer(t_nr, 0);
+			--timer_action_ctr;
+		} else if (!is_chewy_busy()) {
+			if (!_G(spieler).R0FueterLab)
+				timer_action_ctr = 2;
+
+			flags.AutoAniPlay = true;
+			if (!_G(spieler).R0SlimeUsed) {
+				start_aad_wait(42, -1);
+				auto_move(5, 0);
+				set_person_spr(0, 0);
+
+				if (_G(spieler).R0FueterLab < 3) {
+					start_spz(2, 255, false, 0);
+					if (_G(spieler).R0FueterLab)
+						start_aad_wait(618, -1);
+					else
+						start_aad_wait(43, -1);
+				}
+
+				eyeAnim();
+			} else if (!_G(spieler).R0KissenWurf) {
+				start_aad_wait(42, -1);
+				start_spz(2, 255, false, 0);
+
+				if (_G(spieler).R0FueterLab < 3) {
+					start_aad_wait(43, -1);
+					++_G(spieler).R0FueterLab;
+				}
+
+				auto_move(3, 0);
+				set_person_pos(191, 120, P_CHEWY, P_LEFT);
+			}
+
+			if (!_G(spieler).R0KissenWurf)
+				fuett_ani();
+
+			uhr->reset_timer(t_nr, 0);
+			flags.AutoAniPlay = false;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
 bool Room0::getPillow() {
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
@@ -111,6 +164,27 @@ bool Room0::pullSlime() {
 	}
 
 	return false;
+}
+
+void Room0::eyeAnim() {
+	if (!_G(spieler).R0SlimeUsed) {
+		// Start the eye animation
+		eyeStart(EYE_START);
+		if (!_G(spieler).R0SlimeUsed)
+			eyeWait();
+
+		if (_G(spieler).R0SlimeUsed) {
+			start_aad(124);
+			ch_schleim_auge();
+			auge_schleim_back();
+			auto_move(FUETTER_POS, P_CHEWY);
+			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+		} else {
+			eyeShoot();
+			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+			eyeStart(EYE_END);
+		}
+	}
 }
 
 void Room0::eyeStart(EyeMode mode) {
@@ -657,27 +731,6 @@ void Room0::ani_klappe_delay() {
 
 	flags.AniUserAction = false;
 	clear_prog_ani();
-}
-
-void Room0::eyeAnim() {
-	if (!_G(spieler).R0SlimeUsed) {
-		// Start the eye animation
-		eyeStart(EYE_START);
-		if (!_G(spieler).R0SlimeUsed)
-			eyeWait();
-
-		if (_G(spieler).R0SlimeUsed) {
-			start_aad(124);
-			ch_schleim_auge();
-			auge_schleim_back();
-			auto_move(FUETTER_POS, P_CHEWY);
-			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-		} else {
-			eyeShoot();
-			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-			eyeStart(EYE_END);
-		}
-	}
 }
 
 void Room0::fuett_ani() {
