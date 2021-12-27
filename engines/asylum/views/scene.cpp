@@ -337,7 +337,7 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
-		return clickDown(evt);
+		return getCursor()->isHidden() ? false : clickDown(evt);
 	}
 
 	return false;
