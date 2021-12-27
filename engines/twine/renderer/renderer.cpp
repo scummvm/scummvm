@@ -524,7 +524,7 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
 				color += sens;
 			}
 		}
-		pDest += screenWidth;
+		out += screenWidth;
 	}
 }
 
