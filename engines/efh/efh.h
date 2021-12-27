@@ -55,6 +55,12 @@ namespace Efh {
 
 static const int kSavegameVersion = 1;
 
+enum AccessDebugChannels {
+	kDebugEngine = 1 << 0,
+	kDebugUtils = 1 << 1,
+	kDebugGraphics = 1 << 2
+};
+
 struct EfhGameDescription;
 
 class EfhGraphicsStruct {
@@ -443,12 +449,12 @@ private:
 	void setTextColorRed();
 	void setTextColorGrey();
 	void displayStringAtTextPos(const char *message);
-	void unkFct_displayMenuBox_2(int16 color);
+	void clearBottomTextZone(int16 color);
+	void clearBottomTextZone_2(int16 color);
 	void setNextCharacterPos();
 	void displayCharAtTextPos(char character);
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
-	void unkFct_displayBox(int16 color);
 
 	// Utils
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);

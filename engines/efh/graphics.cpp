@@ -28,7 +28,7 @@ namespace Efh {
 
 void EfhEngine::initPalette() {
 	// Strangerke - values from a tool I wrote in 2008. I can't remember if it's guess work or not.
-	const uint8 pal[3 * 16] = {
+	static const uint8 pal[3 * 16] = {
 		0, 0, 0,
 		0, 0, 170,
 		0, 170, 0,
@@ -47,15 +47,18 @@ void EfhEngine::initPalette() {
 		255, 255, 255
 	};
 
+	debugC(1, kDebugGraphics, "initPalette");
 	_system->getPaletteManager()->setPalette(pal, 0, 16);
 	_system->updateScreen();
 }
 
 void EfhEngine::drawLeftCenterBox() {
+	debugC(1, kDebugGraphics, "drawLeftCenterBox");
 	drawColoredRect(16, 8, 111, 135, 0);
 }
 
 void EfhEngine::displayAnimFrame() {
+	debugC(1, kDebugGraphics, "displayAnimFrame");
 	// The original had a parameter. As it was always equal to zero, it was removed in ScummVM
 
 	if (_animImageSetId == 0xFF)
@@ -76,6 +79,7 @@ void EfhEngine::displayAnimFrame() {
 }
 
 void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
+	debugC(1, kDebugGraphics, "displayAnimFrames %d %s", animId, displayMenuBoxFl ? "True" : "False");
 	if (animId == 0xFF)
 		return;
 
@@ -98,6 +102,8 @@ void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
 }
 
 void EfhEngine::displayFctFullScreen() {
+	debugC(1, kDebugGraphics, "displayFctFullScreen");
+	
 	// CHECKME: 319 is in the original but looks suspicious.
 	// copyDirtyRect(0, 0, 319, 200);
 
@@ -116,9 +122,9 @@ void EfhEngine::copyGraphicBufferFromTo(EfhGraphicsStruct *efh_graphics_struct, 
 }
 
 void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY) {
-	// TODO: Quick code to display stuff, may require to really reverse the actual function
+	debugC(1, kDebugGraphics, "displayBufferBmAtPos %d %d", posX, posY);
+	// CHECKME: Quick code to display stuff, may require to really reverse the actual function
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
-	// warning("%d %d - startX %d startY %d width %d height %d lineDataSize %d fieldD %d", posX, posY, bufferBM->_startX, bufferBM->_startY, bufferBM->_width, bufferBM->_height, bufferBM->_lineDataSize, bufferBM->_fieldD);
 	int counter = 0;
 	for (int line = 0; line < bufferBM->_height; ++line) {
 		for (int col = 0; col < bufferBM->_lineDataSize; ++col) { // _lineDataSize = _width / 2
@@ -133,13 +139,13 @@ void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY)
 }
 
 void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
+	debugC(1, kDebugGraphics, "drawRect %d %d %d %d", minX, minY, maxX, maxY);
+
 	if (minY > maxY)
 		SWAP(minY, maxY);
 
 	if (minX > maxX)
 		SWAP(minX, maxX);
-
-	// warning("drawRect - _graphicsStruct x %d -> %d, y %d -> %d", _graphicsStruct->_area.left, _graphicsStruct->_area.right, _graphicsStruct->_area.top, _graphicsStruct->_area.bottom);
 
 	minX = CLIP(minX, 0, 319);
 	maxX = CLIP(maxX, 0, 319);
@@ -164,6 +170,8 @@ void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
 }
 
 void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int color) {
+	debugC(1, kDebugGraphics, "drawColoredRect %d %d %d %d %d", minX, minY, maxX, maxY, color);
+
 	uint8 oldValue = _defaultBoxColor;
 	_defaultBoxColor = color;
 	drawRect(minX, minY, maxX, maxY);
@@ -171,10 +179,12 @@ void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int colo
 }
 
 void EfhEngine::clearScreen(int color) {
+	debugC(1, kDebugGraphics, "clearScreen %d", color);
 	drawColoredRect(0, 0, 320, 200, color);
 }
 
 void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
+	debugC(1, kDebugGraphics, "displayRawDataAtPos %d %d", posX, posY);
 	uint16 height = READ_LE_INT16(imagePtr);
 	uint16 width = READ_LE_INT16(imagePtr + 2);
 	uint8 *imageData = imagePtr + 4;
@@ -189,6 +199,7 @@ void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
 }
 
 void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 unkFl) {
+	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str, startX, startY, unkFl);
 	uint8 *curPtr = (uint8 *)str;
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
 	_unk_sub26437_flag = unkFl & 0x3FFF;
@@ -225,22 +236,26 @@ void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 u
 }
 
 void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY) {
+	debugC(1, kDebugGraphics, "displayCenteredString %s %d-%d %d", str, minX, maxX, posY);
 	uint16 length = getStringWidth(str);
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
 	drawString(str, startCenteredDisplayX, posY, _textColor);
 }
 
 void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int posY) {
+	debugC(1, kDebugGraphics, "displayMenuAnswerString %s %d-%d %d", str, minX, maxX, posY);
 	displayCenteredString(str, minX, maxX, posY);
 	displayFctFullScreen();
 	displayCenteredString(str, minX, maxX, posY);
 }
 
 void EfhEngine::drawMapWindow() {
+	debugC(1, kDebugGraphics, "drawMapWindow");
 	drawColoredRect(128, 8, 303, 135, 0);
 }
 
 void EfhEngine::displayGameScreen() {
+	debugC(1, kDebugGraphics, "displayGameScreen");
 	clearScreen(0);
 	drawUpperLeftBorders();
 	drawUpperRightBorders();
@@ -250,17 +265,20 @@ void EfhEngine::displayGameScreen() {
 }
 
 void EfhEngine::drawUpperLeftBorders() {
+	debugC(1, kDebugGraphics, "drawUpperLeftBorders");
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 	displayRawDataAtPos(_circleImageSubFileArray[1], 112, 0);
 	displayRawDataAtPos(_circleImageSubFileArray[3], 16, 0);
 }
 
 void EfhEngine::drawUpperRightBorders() {
+	debugC(1, kDebugGraphics, "drawUpperRightBorders");
 	displayRawDataAtPos(_circleImageSubFileArray[2], 304, 0);
 	displayRawDataAtPos(_circleImageSubFileArray[4], 128, 0);
 }
 
 void EfhEngine::drawBottomBorders() {
+	debugC(1, kDebugGraphics, "drawBottomBorders");
 	displayRawDataAtPos(_circleImageSubFileArray[7], 16, 136);
 	displayRawDataAtPos(_circleImageSubFileArray[8], 16, 192);
 	displayRawDataAtPos(_circleImageSubFileArray[5], 0, 136);
@@ -268,7 +286,9 @@ void EfhEngine::drawBottomBorders() {
 }
 
 void EfhEngine::drawChar(uint8 curChar, int16 posX, int posY) {
-	// Quick hacked display, may require rework
+	debugC(1, kDebugGraphics, "drawChar %c %d %d", curChar, posX, posY);
+
+	// CHECKME: Quick hacked display, may require rework
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
 
 	int16 charId = curChar - 0x20;
@@ -285,6 +305,8 @@ void EfhEngine::drawChar(uint8 curChar, int16 posX, int posY) {
 }
 
 void EfhEngine::setTextColorWhite() {
+	debugC(1, kDebugGraphics, "setTextColorWhite");
+
 	if (_videoMode == 8) // CGA
 		_textColor = 0x3;
 	else
@@ -292,6 +314,8 @@ void EfhEngine::setTextColorWhite() {
 }
 
 void EfhEngine::setTextColorRed() {
+	debugC(1, kDebugGraphics, "setTextColorRed");
+
 	if (_videoMode == 8) // CGA
 		_textColor = 0x2;
 	else
@@ -299,6 +323,8 @@ void EfhEngine::setTextColorRed() {
 }
 
 void EfhEngine::setTextColorGrey() {
+	debugC(1, kDebugGraphics, "setTextColorGrey");
+
 	if (_videoMode == 8) // CGA
 		_textColor = 0x1;
 	else
@@ -306,16 +332,28 @@ void EfhEngine::setTextColorGrey() {
 }
 
 void EfhEngine::displayStringAtTextPos(const char *message) {
+	debugC(1, kDebugGraphics, "displayStringAtTextPos %s", message);
+
 	drawString(message, _textPosX, _textPosY, _textColor);
 	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
 }
 
-void EfhEngine::unkFct_displayMenuBox_2(int16 color) {
+void EfhEngine::clearBottomTextZone(int16 color) {
+	debugC(1, kDebugGraphics, "clearBottomTextZone %d", color);
+
 	drawColoredRect(16, 152, 302, 189, color);
 }
 
+void EfhEngine::clearBottomTextZone_2(int16 color) {
+	debugC(1, kDebugGraphics, "clearBottomTextZone_2 %d", color);
+
+	displayColoredMenuBox(16, 152, 302, 189, color);
+}
+
 void EfhEngine::setNextCharacterPos() {
+	debugC(1, kDebugGraphics, "setNextCharacterPos");
+
 	if (_textPosX <= 311)
 		return;
 
@@ -327,6 +365,8 @@ void EfhEngine::setNextCharacterPos() {
 }
 
 void EfhEngine::displayCharAtTextPos(char character) {
+	debugC(1, kDebugGraphics, "displayCharAtTextPos %c", character);
+
 	char buffer[2];
 	buffer[0] = character;
 	buffer[1] = 0;
@@ -337,6 +377,8 @@ void EfhEngine::displayCharAtTextPos(char character) {
 }
 
 void EfhEngine::displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest) {
+	debugC(1, kDebugGraphics, "displayWindow %d %d", posX, posY);
+
 	if (buffer == nullptr) {
 		warning("Target Buffer Not Defined...DCImage!"); // That's the original message... And yes, it's wrong: it's checking the source buffer :)
 		return;
@@ -350,13 +392,11 @@ void EfhEngine::displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest
 }
 
 void EfhEngine::displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color) {
+	debugC(1, kDebugGraphics, "displayColoredMenuBox %d %d -> %d %d %d", minX, minY, maxX, maxY, color);
+
 	drawColoredRect(minX, minY, maxX, maxY, color);
 	displayFctFullScreen();
 	drawColoredRect(minX, minY, maxX, maxY, color);
-}
-
-void EfhEngine::unkFct_displayBox(int16 color) {
-	displayColoredMenuBox(16, 152, 302, 189, color);
 }
 
 } // End of namespace Efh

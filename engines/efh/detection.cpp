@@ -25,6 +25,7 @@
 #include "common/textconsole.h"
 
 #include "efh/detection.h"
+#include "efh/efh.h"
 
 namespace Efh {
 
@@ -56,6 +57,12 @@ static const EfhGameDescription gameDescriptions[] = {
 		kGameTypeEfh},
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
+
+static const DebugChannelDef debugFlagList[] = {
+	{Efh::kDebugEngine, "engine", "Engine debug level"},
+	{Efh::kDebugUtils, "utils", "Utils debug level"},
+	{Efh::kDebugGraphics, "graphics", "Graphics debug level"},
+	DEBUG_CHANNEL_END};
 
 class EfhMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:

@@ -312,6 +312,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_messageToBePrinted, 0, 400);
 	for (int i = 0; i < 8; ++i)
 		_stru3244C[i].init();
+
 }
 
 EfhEngine::~EfhEngine() {
@@ -351,6 +352,7 @@ Common::Error EfhEngine::run() {
 	syncSoundSettings();
 	_soundHandler->init();
 */
+
 	initEngine();
 	sub15150(true);
 	redrawScreen();
@@ -439,7 +441,7 @@ Common::Error EfhEngine::run() {
 			break;
 		case Common::KEYCODE_F5: { // Original is using CTRL-S
 			for (int16 counter = 0; counter < 2; ++counter) {
-				unkFct_displayMenuBox_2(0);
+				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
 				if (counter == 0)
 					displayFctFullScreen();
@@ -449,12 +451,12 @@ Common::Error EfhEngine::run() {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
 				saveEfhGame();
-				unkFct_displayBox(0);
+				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			} else {
 				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
 				getInput(2);
-				unkFct_displayBox(0);
+				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			}
 			
@@ -462,7 +464,7 @@ Common::Error EfhEngine::run() {
 			break;
 		case Common::KEYCODE_F7: { // Original is using CTRL-S
 			for (int16 counter = 0; counter < 2; ++counter) {
-				unkFct_displayMenuBox_2(0);
+				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
 				if (counter == 0)
 					displayFctFullScreen();
@@ -472,12 +474,12 @@ Common::Error EfhEngine::run() {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
 				loadEfhGame();
-				unkFct_displayBox(0);
+				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			} else {
 				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
 				getInput(2);
-				unkFct_displayBox(0);
+				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			}
 
@@ -1261,7 +1263,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 	
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
-			unkFct_displayMenuBox_2(0);
+			clearBottomTextZone(0);
 			setTextColorWhite();
 			displayCenteredString(strName, 16, 88, 152);
 			displayCenteredString(strDef, 104, 128, 152);
@@ -2321,7 +2323,7 @@ bool EfhEngine::handleDeathMenu() {
 	redrawScreen();
 
 	for (int16 counter = 0; counter < 2; ++counter) {
-		unkFct_displayMenuBox_2(0);
+		clearBottomTextZone(0);
 		displayCenteredString("Darkness Prevails...Death Has Taken You!", 24, 296, 153);
 		setTextPos(100, 162);
 		setTextColorWhite();
@@ -2974,7 +2976,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 				copyString(_npcBuf[_teamCharId[counter]]._name, _characterNamePt2);
 				sprintf(buffer, "%s asks that %s leave your party.", _enemyNamePt2, _characterNamePt2);
 				for (int16 i = 0; i < 2; ++i) {
-					unkFct_displayMenuBox_2(0);
+					clearBottomTextZone(0);
 					_textColor = 0xE;
 					displayCenteredString(buffer, 24, 296, 161);
 					setTextPos(24, 169);
@@ -6456,7 +6458,7 @@ bool EfhEngine::sub16E14() {
 					sprintf(buffer, "with %s", dest);
 				}
 
-				unkFct_displayMenuBox_2(0);
+				clearBottomTextZone(0);
 				_textColor = 0xE;
 				displayCenteredString("Interaction", 24, 296, 152);
 				displayCenteredString(buffer, 24, 296, 161);

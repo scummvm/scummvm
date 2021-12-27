@@ -27,6 +27,7 @@
 namespace Efh {
 
 int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
+	debugC(1, kDebugUtils, "readFileToBuffer %s", filename.c_str());
 	Common::File f;
 	if (!f.open(filename))
 		error("Unable to find file %s", filename.c_str());
@@ -46,6 +47,7 @@ void EfhEngine::setDefaultNoteDuration() {
 }
 
 void EfhEngine::decryptImpFile(bool techMapFl) {
+	debugC(1, kDebugUtils, "decryptImpFile %s", techMapFl ? "True" : "False");
 	uint16 counter = 0;
 	uint16 target;
 	uint8 *curPtr;
@@ -84,11 +86,13 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 }
 
 void EfhEngine::loadImageSet(int imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
+	debugC(1, kDebugUtils, "loadImageSet %d", imageSetId);
 	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
 	rImageFile(fileName, buffer, subFilesArray, destBuffer);
 }
 
 void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
+	debugC(1, kDebugUtils, "rImageFile %s", filename.c_str());
 	readFileToBuffer(filename, packedBuffer);
 	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 	// TODO: Keep this dump for debug purposes only
@@ -115,6 +119,7 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 }
 
 uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
+	debugC(1, kDebugUtils, "uncompressBuffer");
 	if (compressedBuf == nullptr || destBuf == nullptr)
 		error("uncompressBuffer - Invalid pointer used in parameter list");
 
@@ -167,6 +172,7 @@ uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 }
 
 int16 EfhEngine::getRandom(int16 maxVal) {
+	debugC(1, kDebugUtils, "getRandom %d", maxVal);
 	if (maxVal == 0)
 		return 0;
 
@@ -174,6 +180,7 @@ int16 EfhEngine::getRandom(int16 maxVal) {
 }
 
 Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
+	debugC(1, kDebugUtils, "getLastCharAfterAnimCount %d", delay);
 	if (delay == 0)
 		return Common::KEYCODE_INVALID;
 
@@ -197,6 +204,7 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 }
 
 Common::KeyCode EfhEngine::getInput(int16 delay) {
+	debugC(1, kDebugUtils, "getInput %d", delay);
 	if (delay == 0)
 		return Common::KEYCODE_INVALID;
 
@@ -223,6 +231,7 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 }
 
 Common::KeyCode EfhEngine::waitForKey() {
+	debugC(1, kDebugUtils, "waitForKey");
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 	Common::Event event;
 
@@ -256,6 +265,7 @@ Common::KeyCode EfhEngine::mapInputCode(Common::KeyCode input) {
 }
 
 Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
+	debugC(1, kDebugUtils, "handleAndMapInput %s", animFl ? "True" : "False");
 	// The original checks for the joystick input
 	Common::Event event;
 	_system->getEventManager()->pollEvent(event);
@@ -271,6 +281,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 }
 
 Common::KeyCode EfhEngine::getInputBlocking() {
+	debugC(1, kDebugUtils, "getInputBlocking");
 	// The original checks for the joystick input
 	Common::Event event;
 	_system->getEventManager()->pollEvent(event);
@@ -298,6 +309,7 @@ void EfhEngine::setNumLock() {
 }
 
 void EfhEngine::copyString(char *srcStr, char *destStr) {
+	debugC(1, kDebugUtils, "copyString %s", srcStr);
 	char lastChar = 1;
 	int16 idx = 0;
 
@@ -308,6 +320,7 @@ void EfhEngine::copyString(char *srcStr, char *destStr) {
 }
 
 bool EfhEngine::getValidationFromUser() {
+	debugC(1, kDebugUtils, "getValidationFromUser");
 	Common::KeyCode input = handleAndMapInput(true);
 	if (input == Common::KEYCODE_y) // or if joystick button 1
 		return true;
