@@ -3499,8 +3499,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_nuked_opl=no
 			_curl=no
-			_cloud=no
-			_sdlnet=no
 			_optimization_level=-O3
 			_backend="opendingux"
 			_port_mk="backends/platform/sdl/opendingux/opendingux.mk"
