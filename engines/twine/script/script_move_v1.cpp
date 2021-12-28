@@ -237,7 +237,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
+	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos, sp);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_angle = newAngle;
