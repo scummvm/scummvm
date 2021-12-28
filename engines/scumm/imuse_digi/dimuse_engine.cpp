@@ -800,4 +800,97 @@ int IMuseDigital::diMUSESetAttribute(int attrIndex, int attrVal) {
 	return scriptParse(8, attrIndex, attrVal);
 }
 
+// Debugger utility functions
+
+void IMuseDigital::listStates() {
+	_vm->getDebugger()->debugPrintf("+---------------------------------+\n");
+	_vm->getDebugger()->debugPrintf("| stateId |         name          |\n");
+	_vm->getDebugger()->debugPrintf("+---------+-----------------------+\n");
+	if (_vm->_game.id == GID_CMI) {
+		if (_vm->_game.features & GF_DEMO) {
+			for (int i = 0; _comiDemoStateMusicTable[i].soundId != -1; i++) {
+				_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _comiDemoStateMusicTable[i].soundId, _comiDemoStateMusicTable[i].name);
+			}
+		} else {
+			for (int i = 0; _comiStateMusicTable[i].soundId != -1; i++) {
+				_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _comiStateMusicTable[i].soundId, _comiStateMusicTable[i].name);
+			}
+		}
+	} else if (_vm->_game.id == GID_DIG) {
+		for (int i = 0; _digStateMusicTable[i].soundId != -1; i++) {
+			_vm->getDebugger()->debugPrintf("|  %4d   | %20s  |\n", _digStateMusicTable[i].soundId, _digStateMusicTable[i].name);
+		}
+	} else if (_vm->_game.id == GID_FT) {
+		for (int i = 0; _ftStateMusicTable[i].name[0]; i++) {
+			_vm->getDebugger()->debugPrintf("|  %4d   | %21s |\n", i, _ftStateMusicTable[i].name);
+		}
+	}
+	_vm->getDebugger()->debugPrintf("+---------+-----------------------+\n\n");
+}
+
+void IMuseDigital::listSeqs() {
+	_vm->getDebugger()->debugPrintf("+--------------------------------+\n");
+	_vm->getDebugger()->debugPrintf("|  seqId  |         name         |\n");
+	_vm->getDebugger()->debugPrintf("+---------+----------------------+\n");
+	if (_vm->_game.id == GID_CMI) {
+		for (int i = 0; _comiSeqMusicTable[i].soundId != -1; i++) {
+			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", _comiSeqMusicTable[i].soundId, _comiSeqMusicTable[i].name);
+		}
+	} else if (_vm->_game.id == GID_DIG) {
+		for (int i = 0; _digSeqMusicTable[i].soundId != -1; i++) {
+			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", _digSeqMusicTable[i].soundId, _digSeqMusicTable[i].name);
+		}
+	} else if (_vm->_game.id == GID_FT) {
+		for (int i = 0; _ftSeqNames[i].name[0]; i++) {
+			_vm->getDebugger()->debugPrintf("|  %4d   | %20s |\n", i, _ftSeqNames[i].name);
+		}
+	}
+	_vm->getDebugger()->debugPrintf("+---------+----------------------+\n\n");
+}
+
+void IMuseDigital::listCues() {
+	int curId = -1;
+	if (_curMusicSeq) {
+		_vm->getDebugger()->debugPrintf("Available cues for current sequence:\n");
+		_vm->getDebugger()->debugPrintf("+---------------------------------------+\n");
+		_vm->getDebugger()->debugPrintf("|   cueName   | transitionType | volume |\n");
+		_vm->getDebugger()->debugPrintf("+-------------+----------------+--------+\n");
+		for (int i = 0; i < 4; i++) {
+			curId = ((_curMusicSeq - 1) * 4) + i;
+			_vm->getDebugger()->debugPrintf("|  %9s  |        %d       |  %3d   |\n",
+				_ftSeqMusicTable[curId].audioName, (int)_ftSeqMusicTable[curId].transitionType, (int)_ftSeqMusicTable[curId].volume);
+		}
+		_vm->getDebugger()->debugPrintf("+-------------+----------------+--------+\n\n");
+	} else {
+		_vm->getDebugger()->debugPrintf("Current sequence is NULL, no cues available.\n\n");
+	}
+}
+
+void IMuseDigital::listTracks() {
+	_vm->getDebugger()->debugPrintf("Virtual audio tracks currently playing:\n");
+	_vm->getDebugger()->debugPrintf("+-------------------------------------------------------------------------+\n");
+	_vm->getDebugger()->debugPrintf("| # | soundId | group | hasStream | vol/effVol/pan  | priority | jumpHook |\n");
+	_vm->getDebugger()->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n");
+
+	for (int i = 0; i < _trackCount; i++) {
+		IMuseDigiTrack curTrack = _tracks[i];
+		if (curTrack.soundId != 0) {
+			_vm->getDebugger()->debugPrintf("| %1d |  %5d  |   %d   |     %d     |   %3d/%3d/%3d   |   %3d    |   %3d    |\n",
+				i, curTrack.soundId, curTrack.group, diMUSEGetParam(curTrack.soundId, DIMUSE_P_SND_HAS_STREAM),
+				curTrack.vol, curTrack.effVol, curTrack.pan, curTrack.priority, curTrack.jumpHook);
+		} else {
+			_vm->getDebugger()->debugPrintf("| %1d |   ---   |  ---  |    ---    |   ---/---/---   |   ---    |   ---    |\n", i);
+		}
+	}
+	_vm->getDebugger()->debugPrintf("+---+---------+-------+-----------+-----------------+----------+----------+\n\n");
+}
+
+void IMuseDigital::listGroups() {
+	_vm->getDebugger()->debugPrintf("Volume groups:\n");
+	_vm->getDebugger()->debugPrintf("\tSFX:      %3d\n", _groupsHandler->getGroupVol(DIMUSE_GROUP_SFX));
+	_vm->getDebugger()->debugPrintf("\tSPEECH:   %3d\n", _groupsHandler->getGroupVol(DIMUSE_GROUP_SPEECH));
+	_vm->getDebugger()->debugPrintf("\tMUSIC:    %3d\n", _groupsHandler->getGroupVol(DIMUSE_GROUP_MUSIC));
+	_vm->getDebugger()->debugPrintf("\tMUSICEFF: %3d\n\n", _groupsHandler->getGroupVol(DIMUSE_GROUP_MUSICEFF));
+}
+
 } // End of namespace Scumm

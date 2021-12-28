@@ -32,6 +32,7 @@
 #include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/file.h"
+#include "scumm/debugger.h"
 
 #include "scumm/imuse_digi/dimuse_defs.h"
 #include "scumm/imuse_digi/dimuse_internalmixer.h"
@@ -389,6 +390,13 @@ public:
 
 	// Script
 	int scriptTriggerCallback(char *marker);
+
+	// Debugger utility functions
+	void listStates();
+	void listSeqs();
+	void listCues();
+	void listTracks();
+	void listGroups();
 };
 
 } // End of namespace Scumm
