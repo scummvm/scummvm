@@ -1097,12 +1097,12 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
 		engine->initSceneryView();
 		engine->_screens->setBackPal();
-		engine->_screens->_lockPalette = true;
+		engine->_screens->_fadePalette = true;
 	} else if (!zoomScreen && engine->_redraw->_inSceneryView) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
 		engine->exitSceneryView();
 		engine->_screens->setBackPal();
-		engine->_screens->_lockPalette = true;
+		engine->_screens->_fadePalette = true;
 		engine->_redraw->_reqBgRedraw = true;
 	}
 
@@ -1542,15 +1542,15 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Set a dark palette.
+ * Set a dark palette (in the museum).
  * @note Opcode @c 0x5C
  */
 static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	// TODO: allocation in the game frame... cache it in Resource class
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
-	if (!engine->_screens->_lockPalette) {
-		engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	if (!engine->_screens->_fadePalette) {
+		// set the palette hard if it should not get faded
 		engine->setPalette(engine->_screens->_paletteRGBA);
 	}
 	engine->_screens->_useAlternatePalette = true;
@@ -1563,7 +1563,8 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->_useAlternatePalette = false;
-	if (!engine->_screens->_lockPalette) {
+	if (!engine->_screens->_fadePalette) {
+		// reset the palette hard if it should not get faded
 		engine->setPalette(engine->_screens->_mainPaletteRGBA);
 	}
 	return 0;

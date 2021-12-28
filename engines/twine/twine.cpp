@@ -595,8 +595,9 @@ void TwinEEngine::processBookOfBu() {
 	_text->initSceneTextBank();
 	_screens->fadeToBlack(_screens->_paletteRGBACustom);
 	_screens->clearScreen();
+	// TODO: the palette handling here looks wrong
 	setPalette(_screens->_paletteRGBA);
-	_screens->_lockPalette = true;
+	_screens->_fadePalette = true;
 }
 
 void TwinEEngine::processBonusList() {
@@ -619,7 +620,7 @@ void TwinEEngine::processInventoryAction() {
 	switch (_loopInventoryItem) {
 	case kiHolomap:
 		_holomap->processHolomap();
-		_screens->_lockPalette = true;
+		_screens->_fadePalette = true;
 		break;
 	case kiMagicBall:
 		if (_gameState->_usingSabre) {
@@ -826,7 +827,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			_holomap->processHolomap();
-			_screens->_lockPalette = true;
+			_screens->_fadePalette = true;
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -964,7 +965,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						_scene->_sceneHero->setLife(kActorMaxLife);
 						_redraw->_reqBgRedraw = true;
-						_screens->_lockPalette = true;
+						_screens->_fadePalette = true;
 						_gameState->addLeafs(-1);
 						_actor->_cropBottomScreen = 0;
 					} else { // game over
@@ -1021,7 +1022,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->_reqBgRedraw = true;
-	_screens->_lockPalette = true;
+	_screens->_fadePalette = true;
 	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
 	while (_quitGame == -1) {

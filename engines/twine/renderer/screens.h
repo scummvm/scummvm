@@ -60,7 +60,7 @@ public:
 	bool _palResetted = false;
 
 	/** flag to check if the main flag is locked */
-	bool _lockPalette = false;
+	bool _fadePalette = false;
 
 	/** flag to check if we are using a different palette than the main one */
 	bool _useAlternatePalette = false;

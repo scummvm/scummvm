@@ -698,13 +698,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		flipRedrawAreas();
 	}
 
-	if (_engine->_screens->_lockPalette) {
+	if (_engine->_screens->_fadePalette) {
 		if (_engine->_screens->_useAlternatePalette) {
 			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBA);
 		} else {
 			_engine->_screens->fadeToPal(_engine->_screens->_mainPaletteRGBA);
 		}
-		_engine->_screens->_lockPalette = false;
+		_engine->_screens->_fadePalette = false;
 	}
 
 	if (_inSceneryView) {

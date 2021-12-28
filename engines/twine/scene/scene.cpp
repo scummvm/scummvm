@@ -570,7 +570,7 @@ void Scene::changeScene() {
 	_engine->_movements->_lastJoyFlag = true;
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
-	_engine->_screens->_lockPalette = false;
+	_engine->_screens->_fadePalette = false;
 
 	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_enableGridTileRendering = true;
