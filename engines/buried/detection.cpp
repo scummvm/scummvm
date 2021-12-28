@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "buried/buried.h"
 
@@ -44,12 +45,29 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ALLOW_SKIP,
+		{
+			// I18N: This option allows the user to skip cutscenes.
+			_s("Skip support"),
+			_s("Allow cutscenes to be skipped"),
+			"skip_support",
+			true
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 } // End of namespace Buried
 
 
 class BuriedMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	BuriedMetaEngineDetection() : AdvancedMetaEngineDetection(Buried::gameDescriptions, sizeof(ADGameDescription), buriedGames) {
+	BuriedMetaEngineDetection() : AdvancedMetaEngineDetection(
+		Buried::gameDescriptions,
+		sizeof(ADGameDescription),
+		buriedGames,
+		Buried::optionsList) {
 		_flags = kADFlagUseExtraAsHint;
 		_maxScanDepth = 3;
 		_directoryGlobs = Buried::directoryGlobs;

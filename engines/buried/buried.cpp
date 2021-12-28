@@ -60,6 +60,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_captureWindow = nullptr;
 	_pauseStartTime = 0;
 	_yielding = false;
+	_allowVideoSkip = true;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2); // v1.05 era
@@ -83,6 +84,9 @@ BuriedEngine::~BuriedEngine() {
 
 Common::Error BuriedEngine::run() {
 	setDebugger(new BuriedConsole(this));
+
+	ConfMan.registerDefault("skip_support", true);
+	_allowVideoSkip = ConfMan.getBool("skip_support");
 
 	if (isTrueColor()) {
 		initGraphics(640, 480, nullptr);
@@ -310,6 +314,36 @@ void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
 	_messageQueue.push_back(msg);
 }
 
+void BuriedEngine::processVideoSkipMessages() {
+	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
+		MessageType messageType = it->message->getMessageType();
+
+		if (messageType == kMessageTypeKeyUp) {
+			Common::KeyState keyState = ((KeyUpMessage *)it->message)->getKeyState();
+
+			// Send any skip video keyup events to the video player
+			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+				for (VideoList::iterator it2 = _videos.begin(); it2 != _videos.end(); ++it2) {
+					(*it2)->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
+				}
+				delete it->message;
+				it = _messageQueue.erase(it);
+			}
+		} else if (messageType == kMessageTypeKeyDown) {
+			Common::KeyState keyState = ((KeyDownMessage *)it->message)->getKeyState();
+
+			// Erase any skip video keydown events from the queue, to avoid
+			// interpreting them as game quit events after the video ends
+			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+				delete it->message;
+				it = _messageQueue.erase(it);
+			}
+		} else {
+			++it;
+		}
+	}
+}
+
 void BuriedEngine::sendAllMessages() {
 	while (!shouldQuit() && !_messageQueue.empty()) {
 		MessageInfo msg = _messageQueue.front();
@@ -397,8 +431,10 @@ void BuriedEngine::yield() {
 
 	pollForEvents();
 
-	// We don't send messages any messages from here. Otherwise, this is the same
+	// We only send video skipping messages from here. Otherwise, this is the same
 	// as our main loop.
+	if (_allowVideoSkip)
+		processVideoSkipMessages();
 
 	_gfx->updateScreen();
 	_system->delayMillis(10);

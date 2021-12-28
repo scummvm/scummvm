@@ -19,6 +19,8 @@
  *
  */
 
+#define GAMEOPTION_ALLOW_SKIP	GUIO_GAMEOPTIONS1
+
 namespace Buried {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -33,7 +35,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 24BPP
@@ -47,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 8BPP
@@ -61,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 24BPP
@@ -75,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Japanese Windows 3.11 8BPP
@@ -89,7 +91,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::JA_JPN,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Japanese Windows 3.11 24BPP
@@ -103,7 +105,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::JA_JPN,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 8BPP
@@ -117,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_COMPRESSED,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 24BPP
@@ -131,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_COMPRESSED | GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 8BPP
@@ -145,7 +147,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_COMPRESSED,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 24BPP
@@ -159,7 +161,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_COMPRESSED | GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 8BPP
@@ -173,7 +175,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 24BPP
@@ -187,7 +189,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// German Windows 3.11 8BPP
@@ -201,7 +203,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// German Windows 3.11 24BPP
@@ -215,7 +217,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// French Windows 3.11 8BPP
@@ -229,7 +231,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// French Windows 3.11 24BPP
@@ -243,7 +245,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Italian Windows 3.11 8BPP
@@ -257,7 +259,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Italian Windows 3.11 24BPP
@@ -271,7 +273,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Spanish Windows 3.11 8BPP
@@ -285,7 +287,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// Spanish Windows 3.11 24BPP
@@ -299,7 +301,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 95 8BPP
@@ -312,7 +314,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_WIN95,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 95 24BPP
@@ -325,7 +327,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR | GF_WIN95,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows Demo 8BPP
@@ -404,7 +406,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_TRIAL,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	// English Windows 3.11 Trial 24BPP
@@ -417,7 +419,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_TRUECOLOR | GF_TRIAL,
-		GUIO0()
+		GUIO1(GAMEOPTION_ALLOW_SKIP)
 	},
 
 	AD_TABLE_END_MARKER

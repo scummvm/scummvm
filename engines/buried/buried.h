@@ -124,6 +124,7 @@ public:
 	// Messaging
 	void postMessageToWindow(Window *dest, Message *message);
 	void sendAllMessages();
+	void processVideoSkipMessages();
 	void removeKeyboardMessages(Window *window);
 	void removeMouseMessages(Window *window);
 	void removeAllMessages(Window *window);
@@ -167,6 +168,7 @@ private:
 	VideoList _videos;
 
 	bool _yielding;
+	bool _allowVideoSkip;
 
 	struct MessageInfo { // I did think about calling this "Envelope"
 		Window *dest;

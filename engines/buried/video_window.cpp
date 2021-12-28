@@ -24,6 +24,7 @@
 #include "buried/video_window.h"
 
 #include "common/system.h"
+#include "common/keyboard.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
@@ -189,6 +190,11 @@ void VideoWindow::onPaint() {
 		else
 			_vm->_gfx->crossBlit(_vm->_gfx->getScreen(), absoluteRect.left + _dstRect.left, absoluteRect.top + _dstRect.top, _dstRect.width(), _dstRect.height(), _lastFrame, _srcRect.left, _srcRect.top);
 	}
+}
+
+void VideoWindow::onKeyUp(const Common::KeyState &key, uint flags) {
+	if (key.keycode == Common::KEYCODE_ESCAPE)
+		stopVideo();
 }
 
 void VideoWindow::setSourceRect(const Common::Rect &srcRect) {

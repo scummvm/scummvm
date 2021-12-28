@@ -71,6 +71,7 @@ public:
 
 	// Window interface
 	void onPaint();
+	void onKeyUp(const Common::KeyState &key, uint flags);
 
 private:
 	Video::VideoDecoder *_video;
