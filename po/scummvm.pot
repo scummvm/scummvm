@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 20:19+0000\n"
+"POT-Creation-Date: 2021-12-28 12:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4887,6 +4887,14 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
+#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+msgid "Enable cheats"
+msgstr ""
+
+#: engines/hypno/detection.cpp:170
+msgid "Allow cheats using the C key."
+msgstr ""
+
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
@@ -7292,10 +7300,6 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:73
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
-#: engines/ultima/detection.cpp:78
-msgid "Enable cheats"
 msgstr ""
 
 #: engines/ultima/detection.cpp:79
