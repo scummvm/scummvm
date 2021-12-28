@@ -399,7 +399,7 @@ static int32 mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	ctx.actor->_angle = beta;
 
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
 		engine->_movements->clearRealAngle(ctx.actor);
 	}
 
