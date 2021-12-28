@@ -392,41 +392,41 @@ bool Scene::loadSceneLBA1() {
 	}
 
 	if (_useScenePatches) {
-#if 0
-		// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
-			assert(_sceneNumActors >= 22);
-			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 0x1b00;
-			_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 0x300;
+			if (_sceneNumActors >= 22) {
+				_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
+				_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 768;
+			}
 			break;
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
-			assert(sceneNumActors >= 30);
-			_sceneActors[29].pos.z = _sceneActors[29].collisionPos.z = 0x703;
-			assert(sceneNumZones >= 23);
-			// each scene zone entry has 24 bytes
-			sceneZones[15].mins.y = 0x450; // [zone:15] 362 (mod:2) offset relative to sceneNumZones
-			sceneZones[15].type = 0x2ce0; // [zone:15] 372 (mod:12) offset relative to sceneNumZones
-			sceneZones[16].mins.y = 0x5270; // [zone:16] 386 (mod:2) offset relative to sceneNumZones
-			sceneZones[16].type = 0x1f90; // [zone:16] 396 (mod:12) offset relative to sceneNumZones
-			sceneZones[22].mins.y = 0x1800; // [zone:22] 530 (mod:2) offset relative to sceneNumZones
-			sceneZones[15].maxs.x = 0x10f0;
-			sceneZones[15].maxs.y = 0x2100; // [zone:15] 366 (mod:6) offset relative to sceneNumZones (4 bytes)
-			sceneZones[16].maxs.x = 0x5d10;
-			sceneZones[16].maxs.y = 0x1200; // [zone:16] 390 (mod:6) offset relative to sceneNumZones (4 bytes)
-			sceneZones[22].maxs.x = 0x22a1;
-			sceneZones[22].maxs.y = 0x1800; // [zone:22] 534 (mod:6) offset relative to sceneNumZones (4 bytes)
-			sceneZones[22].type = 0x1ae1; // [zone:22] 540 (mod:12) offset relative to sceneNumZones
+			if (_sceneNumActors >= 30) {
+				_sceneActors[29]._pos.z = _sceneActors[29]._collisionPos.z = 1795;
+			}
+#if 0
+			if (sceneNumZones >= 23) {
+				_sceneZones[15].mins.x = 1104;
+				_sceneZones[15].mins.z = 8448;
+				_sceneZones[15].maxs.x = 4336;
+				_sceneZones[15].maxs.z = 11488;
+				_sceneZones[16].mins.x = 21104;
+				_sceneZones[16].mins.z = 4608;
+				_sceneZones[16].maxs.x = 23824;
+				_sceneZones[16].maxs.z = 8080;
+				_sceneZones[22].mins.x = 6144;
+				_sceneZones[22].mins.z = 6144;
+				_sceneZones[22].maxs.x = 8865;
+				_sceneZones[22].maxs.z = 6881;
+			}
+#endif
 			break;
 		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
-			// puVar4 is the position of sceneNumZones
-			//(ushort*)puVar4[78] = 0xe20;
+			_sceneZones[6].maxs.z = 3616;
 			break;
 		case LBA1SceneId::Principal_Island_inside_the_fortress:
-			//(ushort*)puVar4[140] = 0x32;
+			_sceneZones[11].type = (ZoneType)50;
 			break;
 		}
-#endif
 	}
 
 	return true;
@@ -469,15 +469,17 @@ void Scene::reloadCurrentScene() {
 void Scene::changeScene() {
 	if (_engine->isLBA1()) {
 		if (_useScenePatches) {
-			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor && _sceneNumZones > 14) {
-				const ZoneStruct *zone = &_sceneZones[15];
-				const IVec3 &track = _sceneTracks[8];
-				IVec3 &pos = _zoneHeroPos;
-				pos.x = zone->infoData.ChangeScene.x - zone->mins.x + track.x;
-				pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
-				pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
-				_engine->_scene->_heroPositionType = ScenePositionType::kZone;
-				debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
+				if (_sceneNumZones >= 15) {
+					const ZoneStruct *zone = &_sceneZones[15];
+					const IVec3 &track = _sceneTracks[8];
+					IVec3 &pos = _zoneHeroPos;
+					pos.x = zone->infoData.ChangeScene.x - zone->mins.x + track.x;
+					pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
+					pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
+					_engine->_scene->_heroPositionType = ScenePositionType::kZone;
+					debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+				}
 			}
 		}
 

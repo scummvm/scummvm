@@ -1115,6 +1115,15 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 trackIdx = ctx.stream.readByte();
+	if (engine->_scene->_useScenePatches) {
+		if (IS_HERO(ctx.actorIdx) && engine->_scene->_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
+			ctx.stream.rewind(2);
+			ctx.stream.writeByte(0x34); // CHANGE_CUBE
+			ctx.stream.writeByte(LBA1SceneId::Principal_Island_Harbor);
+			ctx.stream.rewind(2);
+			return 0;
+		}
+	}
 	ctx.actor->_pos = engine->_scene->_sceneTracks[trackIdx];
 	return 0;
 }
