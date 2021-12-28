@@ -118,7 +118,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<puz_matr>"] = matrix;
 
 	// Transitions
-	Transition *trans_apt_1 = new Transition("busintro.mi_");
+	Transition *trans_apt_1 = new Transition("busint.mi_");
 	trans_apt_1->frameImage = "spider/cine/blcs00.smk";
 	trans_apt_1->frameNumber = 0;
 	trans_apt_1->intros.push_back("spider/cine/ross004s.smk");
@@ -140,15 +140,27 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<bus_selector>"] = bus_selector;
 
 	loadSceneLevel("bushard1.mi_", "bushard1.mi_", prefix);
-	loadSceneLevel("bushard2.mi_", "decide3.mi_", prefix);
+	loadSceneLevel("bushard2.mi_", "<after_bus_selector>", prefix);
 
-	loadSceneLevel("buspuz.mi_", "decide3.mi_", prefix);
+	loadSceneLevel("buspuz.mi_", "<after_bus_selector>", prefix);
+
+	Transition *after_bus_selector = new Transition("<after_bus_easy>", "<after_bus_hard>");
+	_levels["<after_bus_selector>"] = after_bus_selector;
+
+	Transition *after_bus_easy = new Transition("decide3.mi_");
+	after_bus_easy->intros.push_back("spider/cine/blcs003s.smk");
+	_levels["<after_bus_easy>"] = after_bus_easy;
+
+	Transition *after_bus_hard = new Transition("decide3.mi_");
+	after_bus_hard->intros.push_back("spider/cine/blcs004s.smk");
+	_levels["<after_bus_hard>"] = after_bus_hard;
+
 	loadSceneLevel("decide3.mi_", "", prefix);
 
 	sc = (Scene *) _levels["decide3.mi_"];
 	cl = new ChangeLevel("alofintr.mi_");
 	sc->hots[2].actions.push_back(cl);
-	cl = new ChangeLevel("c4"); // depens on the difficulty
+	cl = new ChangeLevel("c4");
 	sc->hots[4].actions.push_back(cl);
 
 	loadSceneLevel("int_roof.mi_", "", prefix);
@@ -269,9 +281,20 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<back_roof_2>"]->intros.push_back("spider/cine/recpout.smk");
 
 	loadArcadeLevel("c4.mi_", "c2", prefix);
-	loadArcadeLevel("c2.mi_", "decide4.mi_", prefix);
+	_levels["c4.mi_"]->intros.push_back("cine/dals001s.smk");
+
+	loadArcadeLevel("c2.mi_", "<after_c2>", prefix);
+	_levels["c2.mi_"]->intros.push_back("cine/dals002s.smk");
+
 	loadArcadeLevel("c4h.mi_", "c2", prefix);
-	loadArcadeLevel("c2h.mi_", "decide4.mi_", prefix);
+	_levels["c4h.mi_"]->intros.push_back("cine/dals001s.smk");
+
+	loadArcadeLevel("c2h.mi_", "<after_c2>", prefix);
+	_levels["c2h.mi_"]->intros.push_back("cine/dals002s.smk");
+
+	Transition *after_c2 = new Transition("decide4.mi_");
+	after_c2->intros.push_back("spider/cine/dals003s.smk");
+	_levels["<after_c2>"] = after_c2;
 
 	loadSceneLevel("decide4.mi_", "", prefix);
 	sc = (Scene *) _levels["decide4.mi_"];
@@ -308,8 +331,6 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadArcadeLevel("c3h.mi_", "c6", prefix);
 	_levels["c3h.mi_"]->intros.push_back("cine/vrfs001s.smk");
-
-	// Easy arcade levels
 
 	loadArcadeLevel("c6.mi_", "<lock>", "spider");
 	_levels["c6.mi_"]->intros.push_back("cine/vrfs002s.smk");
@@ -400,9 +421,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	after_c9->intros.push_back("spider/cine/utns006s.smk");
 	_levels["<after_c9>"] = after_c9;
 
-	loadArcadeLevel("c10.mi_", "", prefix);
+	loadArcadeLevel("c10.mi_", "<after_c10>", prefix);
 	_levels["c10.mi_"]->intros.push_back("cine/utns003s.smk");
-	loadArcadeLevel("c10h.mi_", "", prefix);
+	loadArcadeLevel("c10h.mi_", "<after_c10>", prefix);
 	_levels["c10h.mi_"]->intros.push_back("cine/utns003s.smk");
 
 	Transition *after_c10 = new Transition("docoffic.mi_");
@@ -411,6 +432,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("docoffic.mi_", "decide9.mi_", prefix);
 	//_levels["docoffic.mi_"]->intros.push_back("cine/????.smk");
+	_levels["decide9_0.mi_"] = _levels["decide9"];
 
 	loadSceneLevel("decide9.mi_", "", prefix);
 
@@ -424,23 +446,20 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("<dont_believe_mason>");
 	sc->hots[4].actions.push_back(cl);
 
-	loadSceneLevel("docoffi1.mi_", "c12", prefix);
+	loadSceneLevel("docoffi1.mi_", "decide9.mi_", prefix);
 	_levels["docoffi1.mi_"]->intros.push_back("cine/doocin2s.smk");
+	_levels["decide9_1.mi_"] = _levels["decide9"];
 
 	loadArcadeLevel("c12.mi_", "", prefix);
 	loadArcadeLevel("c12h.mi_", "", prefix);
 
-	// No c7 level?
+	// No c7/c7h level?
 	loadArcadeLevel("c11.mi_", "", prefix);
-
-	// // Hard arcade levels
+	loadArcadeLevel("c11h.mi_", "", prefix);
 
 	loadArcadeLevel("c6h.mi_", "<lock>", prefix);
 	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
-
-	// No c7h level?
-	loadArcadeLevel("c11h.mi_", "", prefix);
 
 	loadSceneLevel("decide11.mi_", "", prefix);
 
@@ -527,10 +546,19 @@ void SpiderEngine::loadAssetsFullGame() {
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
 
+	Transition *over_bus = new Transition("tryagain.mi_");
+	over_bus->intros.push_back("spider/cine/blcs002s.smk");
+	over_bus->intros.push_back("spider/cine/apt04as.smk");
+	_levels["<over_bus>"] = over_bus;
+
 	Transition *dont_believe_mason = new Transition("<credits>");
 	dont_believe_mason->intros.push_back("spider/cine/doos004s.smk");
 	_levels["<dont_believe_mason>"] = dont_believe_mason;
-	
+
+	Transition *over_apt_7 = new Transition("<credits>");
+	over_apt_7->intros.push_back("spider/cine/apts007s.smk");
+	_levels["<over_apt_7>"] = over_apt_7;
+
 	_nextLevel = "<start>";
 }
 

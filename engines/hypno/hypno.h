@@ -213,7 +213,8 @@ public:
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual void shoot(const Common::Point &mousePos);
 	virtual void hitPlayer();
-	Common::String _difficulty; 
+	Common::String _difficulty;
+	bool _skipLevel;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();

@@ -791,6 +791,11 @@ void SpiderEngine::runFuseBox(Code *code) {
 }
 
 void SpiderEngine::showCredits() {
+	if (!_arcadeMode.empty()) {
+		_skipLevel = true;
+		return;
+	}
+
 	changeScreenMode("640x480");
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
 	runIntro(video);

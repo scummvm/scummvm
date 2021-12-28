@@ -96,7 +96,8 @@ void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::
 	parseArcadeShooting("", arclevel, arc);
 	ArcadeShooting *arcade = (ArcadeShooting *) _levels[arclevel]; 
 	arcade->shootSequence = parseShootList(arclevel, list);
-	arcade->prefix = prefix.c_str();
+	arcade->prefix = prefix;
+	arcade->levelIfWin = next;
 }
 
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -137,6 +138,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	// Only used in spider
 	_currentPlayerPosition = PlayerLeft;
 	_lastPlayerPosition = PlayerLeft;
+	_skipLevel = false;
 
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
 		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
@@ -245,7 +247,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			skipVideo(background);
 		}
 
-		if (!background.decoder || background.decoder->endOfVideo()) {
+		if (!background.decoder || background.decoder->endOfVideo() || _skipLevel) {
 			skipVideo(background);
 			if (!arc->nextLevelVideo.empty()) {
 				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, false, false);
@@ -253,6 +255,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 			assert(!arc->levelIfWin.empty());
 			_nextLevel = arc->levelIfWin;
+			_arcadeMode = "";
+			_skipLevel = false;
 			debugC(1, kHypnoDebugArcade, "Wining level and jumping to %s", _nextLevel.c_str());
 			break;
 		}
