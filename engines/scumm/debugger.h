@@ -38,6 +38,7 @@ private:
 
 	void preEnter() override;
 	void postEnter() override;
+	void onFrame() override;
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);
@@ -65,6 +66,7 @@ private:
 	bool Cmd_Hide(int argc, const char **argv);
 
 	bool Cmd_IMuse(int argc, const char **argv);
+	bool Cmd_DiMuse(int argc, const char **argv);
 
 	bool Cmd_ResetCursors(int argc, const char **argv);
 
