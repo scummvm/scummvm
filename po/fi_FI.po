@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-28 13:02+0000\n"
-"PO-Revision-Date: 2021-12-27 23:26+0000\n"
+"PO-Revision-Date: 2021-12-29 11:26+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5147,7 +5147,7 @@ msgstr "Salli huijaus"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Salli huijaukset käyttämällä C-näppäintä."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
