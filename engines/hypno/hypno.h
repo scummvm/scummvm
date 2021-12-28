@@ -81,6 +81,7 @@ public:
 	Common::Language _language;
 	Common::Platform _platform;
 	Common::String _variant;
+	bool _cheatsEnabled;
 
 	Audio::SoundHandle _soundHandle;
 	Common::InstallShieldV3 _installerArchive;

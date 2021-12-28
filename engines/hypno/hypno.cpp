@@ -118,6 +118,8 @@ void HypnoEngine::loadAssets() { error("Function \"%s\" not implemented", __FUNC
 Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
+	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
+		error("Failed to parse bool from cheats options");
 
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(640, 480));

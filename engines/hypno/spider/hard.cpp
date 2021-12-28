@@ -791,7 +791,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 }
 
 void SpiderEngine::showCredits() {
-	if (!_arcadeMode.empty()) {
+	if (_cheatsEnabled && !_arcadeMode.empty()) {
 		_skipLevel = true;
 		return;
 	}

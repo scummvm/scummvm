@@ -165,9 +165,17 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
+static const ExtraGuiOption hypnoExtraGuiOption = {
+	_s("Enable cheats"),
+	_s("Allow cheats using the C key."),
+	"cheats",
+	false
+};
+
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -188,7 +196,15 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
+
+const ExtraGuiOptions HypnoMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(hypnoExtraGuiOption);
+	return options;
+}
 
 REGISTER_PLUGIN_STATIC(HYPNO_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, HypnoMetaEngineDetection);
 
