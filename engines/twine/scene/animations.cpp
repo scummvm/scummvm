@@ -589,6 +589,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 			if (keyFramePassed) {
 				actor->_animPosition++;
+				actor->_dynamicFlags.bAnimFrameReached = 1;
 
 				// if actor have animation actions to process
 				processAnimActions(actorIdx);
