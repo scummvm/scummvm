@@ -25,8 +25,6 @@
 
 #include "common/system.h"
 
-#define SEQOP(n, x) { n, &SeqPlayer::x, #x }
-
 namespace Kyra {
 
 SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
@@ -417,16 +415,22 @@ void SeqPlayer::s1_playEffect() {
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
 
-	if (msg == 0 && (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().platform == Common::kPlatformMacintosh)) {
+	if (_vm->gameFlags().platform != Common::kPlatformMacintosh && _vm->gameFlags().platform != Common::kPlatformAmiga)
+		_vm->delay(3 * _vm->tickLength());
+
+	if (msg == 0 && (_vm->gameFlags().platform != Common::kPlatformDOS && _vm->gameFlags().platform != Common::kPlatformAmiga)) {
 		_sound->haltTrack();
 	} else if (msg == 1) {
 		_sound->beginFadeOut();
 	} else {
 		_sound->haltTrack();
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-			msg += 2;
-		_sound->playTrack(msg);
+		if (_vm->gameFlags().platform != Common::kPlatformMacintosh && _vm->gameFlags().platform != Common::kPlatformAmiga)
+			_vm->delay(3 * _vm->tickLength());
+		_sound->playTrack(_vm->gameFlags().platform == Common::kPlatformFMTowns ? msg + 2 : msg);
 	}
+
+	if (msg < 2 && (_vm->gameFlags().platform != Common::kPlatformMacintosh && _vm->gameFlags().platform != Common::kPlatformAmiga))
+		_vm->delay(3 * _vm->tickLength());
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
@@ -472,6 +476,8 @@ void SeqPlayer::s1_prefetchVocFile() {
 	_seqData++;
 	// we do not have to prefetch the vocfiles on modern systems
 }
+
+#define SEQOP(n, x) { n, &SeqPlayer::x, #x }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	assert(seqData);
@@ -607,6 +613,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	memset(revBuffer, 0, sizeof(revBuffer));
 	int charIdx = 0;
 	while (!_seqQuitFlag && !_vm->shouldQuit()) {
+		uint32 startFrameCt = _vm->_system->getMillis();
 		if (skipSeq && _vm->seq_skipSequence()) {
 			while (1) {
 				uint8 code = *_seqData;
@@ -667,7 +674,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 			error("Invalid sequence opcode %d called from 0x%.04X", seqCode, (uint16)(_seqData - 1 - seqData));
 		}
 
-		_screen->updateScreen();
+		int extraDelay = _screen->updateScreen();
+		uint32 ct = _system->getMillis();
+		_vm->delayUntil(startFrameCt + extraDelay > ct ? startFrameCt + extraDelay : ct + 8);
 	}
 	delete[] _specialBuffer;
 	_specialBuffer = nullptr;
@@ -679,5 +688,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	return seqSkippedFlag;
 }
 
+#undef SEQOP
+#undef KYRA_SEQ_SCREENFRAMEDELAY_MIN
 
 } // End of namespace Kyra

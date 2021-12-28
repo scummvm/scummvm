@@ -213,7 +213,7 @@ bool KyraEngine_LoK::seq_introLogos() {
 			uint32 now = _system->getMillis();
 
 			// The smallest y2 we ever draw the screen for is 65.
-			int distance = (now - start) / _tickLength;
+			int distance = (now - start) / (_tickLength << 1);
 			if (distance > 112) {
 				distance = 112;
 				doneFlag = true;
@@ -232,7 +232,7 @@ bool KyraEngine_LoK::seq_introLogos() {
 			}
 
 			oldDistance = distance;
-			delay(10);
+			delay(8);
 		} while (!doneFlag && !shouldQuit() && !_abortIntroFlag);
 	}
 
@@ -297,6 +297,8 @@ bool KyraEngine_LoK::seq_introStory() {
 
 	_screen->updateScreen();
 	delay(360 * _tickLength);
+
+	_sound->beginFadeOut();
 
 	return _abortIntroFlag;
 }

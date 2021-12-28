@@ -346,7 +346,17 @@ void Screen::enableHiColorMode(bool enabled) {
 	resetPagePtrsAndBuffers(_isSegaCD ? SCREEN_W * _screenHeight : SCREEN_PAGE_SIZE * _bytesPerPixel);
 }
 
-void Screen::updateScreen() {
+int Screen::updateScreen() {
+	int res = 0;
+	if (_forceFullUpdate) {
+		res = SCREEN_W * SCREEN_H;
+	} else if (!_dirtyRects.empty()) {
+		for (Common::List<Common::Rect>::const_iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
+			res += (i->width() * i->height());
+		// Due to overlapping the value might be larger than the actual vga video memory size.
+		res = MIN<int>(res, SCREEN_W * SCREEN_H);
+	}
+
 	bool needRealUpdate = _forceFullUpdate || !_dirtyRects.empty() || _paletteChanged;
 	_paletteChanged = false;
 
@@ -368,6 +378,10 @@ void Screen::updateScreen() {
 
 	if (needRealUpdate)
 		updateBackendScreen(true);
+
+	// I've determined this value for the estimated screen update time on legacy hardware experimentally
+	// with a side-by-side comparison with DOSBox. This was as close as I got...
+	return res / 4000;
 }
 
 #ifdef KYRA_SCREEN_IDLE_REFRESH

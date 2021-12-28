@@ -556,7 +556,7 @@ public:
 	virtual void enableHiColorMode(bool enabled);
 
 	// refresh
-	void updateScreen();
+	int updateScreen();
 	void updateBackendScreen(bool force);
 
 	uint32 _idleUpdateTimer;
