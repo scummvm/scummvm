@@ -22,6 +22,8 @@
 #ifndef KYRA_SOUND_HALESTORM_H
 #define KYRA_SOUND_HALESTORM_H
 
+#include "common/scummsys.h"
+
 namespace Audio {
 	class Mixer;
 }

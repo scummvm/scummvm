@@ -22,14 +22,19 @@
 #ifndef KYRA_SOUND_MACRES_H
 #define KYRA_SOUND_MACRES_H
 
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/mutex.h"
+
 namespace Common {
 	class Archive;
 	class MacResManager;
-	class String;
-	template<class T> class Array;
+	class SeekableReadStream;
 }
 
 namespace Kyra {
+
+class KyraEngine_v1;
 
 class SoundMacRes {
 public:
