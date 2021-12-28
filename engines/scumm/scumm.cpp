@@ -2879,11 +2879,7 @@ void ScummEngine_v7::scummLoop_handleSound() {
 	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
-		// In CoMI and the Dig the full (non-demo) version invoke refreshScripts()
-		if (!(_game.id == GID_FT) && !(_game.id == GID_DIG && _game.features & GF_DEMO))
-			_imuseDigital->refreshScripts();
-		else
-			_imuseDigital->diMUSEProcessStreams();
+		_imuseDigital->refreshScripts();
 	}
 
 	if (_smixer) {

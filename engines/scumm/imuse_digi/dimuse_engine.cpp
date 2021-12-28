@@ -276,7 +276,9 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 }
 
 void IMuseDigital::refreshScripts() {
-	if (!_vm->isSmushActive()) {
+	if (isFTSoundEngine()) {
+		diMUSEProcessStreams();
+	} else if (!_vm->isSmushActive()) {
 		diMUSEProcessStreams();
 		diMUSERefreshScript();
 	}
@@ -780,7 +782,6 @@ int IMuseDigital::diMUSEInitializeScript() {
 }
 
 void IMuseDigital::diMUSERefreshScript() {
-	diMUSEProcessStreams();
 	scriptParse(4, -1, -1);
 }
 
