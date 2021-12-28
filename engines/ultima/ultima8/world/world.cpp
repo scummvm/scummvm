@@ -72,8 +72,7 @@ void World::clear() {
 	}
 	_maps.clear();
 
-	while (!_ethereal.empty())
-		_ethereal.pop_front();
+	_ethereal.clear();
 
 	if (_currentMap)
 		delete _currentMap;
