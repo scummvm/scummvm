@@ -78,6 +78,7 @@ void SceneScriptCT11::SceneLoaded() {
 			// For the first case, a CrazyLegs advertisement (plus note) is placed in Dektora's room (nr07, kClueCrazysInvolvement)
 			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 641.21f, 26.0f, 472.0f, 304, 12, 12, false, true, false, true);
 			Scene_2D_Region_Add(2, 505, 321, 519, 332);
+			Game_Flag_Set(kFlagCT11GrigorianNotePlaced);
 		}
 
 		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
@@ -200,6 +201,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(kItemNote);
+			Game_Flag_Reset(kFlagCT11GrigorianNotePlaced);
 			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansNote, false, -1);
 			Item_Pickup_Spin_Effect(kModelAnimationGrigoriansNote, 512, 326);
 			Actor_Voice_Over(8840, kActorMcCoy);
