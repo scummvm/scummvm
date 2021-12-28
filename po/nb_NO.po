@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 20:19+0000\n"
+"POT-Creation-Date: 2021-12-28 12:51+0000\n"
 "PO-Revision-Date: 2021-12-22 19:04+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5168,6 +5168,14 @@ msgstr "Gørrmodus"
 msgid "Enable Gore Mode when available"
 msgstr "Aktiver gørrmodus når tilgjengelig"
 
+#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+msgid "Enable cheats"
+msgstr "Aktiver juksefunksjoner"
+
+#: engines/hypno/detection.cpp:170
+msgid "Allow cheats using the C key."
+msgstr ""
+
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
@@ -7827,10 +7835,6 @@ msgstr "Aktiver begrensning av bildefrekvens"
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Begrenser hastigheten på spillet for å forhindre at det kjører for fort."
-
-#: engines/ultima/detection.cpp:78
-msgid "Enable cheats"
-msgstr "Aktiver juksefunksjoner"
 
 #: engines/ultima/detection.cpp:79
 msgid "Allow cheats by commands and a menu when player is clicked."

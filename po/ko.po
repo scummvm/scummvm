@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 20:19+0000\n"
+"POT-Creation-Date: 2021-12-28 12:51+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5148,6 +5148,14 @@ msgstr "고어 모드"
 msgid "Enable Gore Mode when available"
 msgstr "가능한 경우 고어 모드를 활성화합니다"
 
+#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+msgid "Enable cheats"
+msgstr "치트 활성화"
+
+#: engines/hypno/detection.cpp:170
+msgid "Allow cheats using the C key."
+msgstr ""
+
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
@@ -7767,10 +7775,6 @@ msgstr "프레임 제한 활성화"
 #: engines/ultima/detection.cpp:73
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "게임 속도를 제한해 너무 빨라지지 않게 합니다."
-
-#: engines/ultima/detection.cpp:78
-msgid "Enable cheats"
-msgstr "치트 활성화"
 
 #: engines/ultima/detection.cpp:79
 msgid "Allow cheats by commands and a menu when player is clicked."

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 20:19+0000\n"
+"POT-Creation-Date: 2021-12-28 12:51+0000\n"
 "PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5136,6 +5136,14 @@ msgstr "Gore Mód"
 msgid "Enable Gore Mode when available"
 msgstr "Gore mód engedélyezés ha elérhetõ"
 
+#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+msgid "Enable cheats"
+msgstr "Csalás engedélyezése"
+
+#: engines/hypno/detection.cpp:170
+msgid "Allow cheats using the C key."
+msgstr ""
+
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
@@ -7776,10 +7784,6 @@ msgstr "Képkocka limitálás engedélyezése"
 #: engines/ultima/detection.cpp:73
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Korlátozza a játék sebességét, hogy megakadályozza a túl gyors futást."
-
-#: engines/ultima/detection.cpp:78
-msgid "Enable cheats"
-msgstr "Csalás engedélyezése"
 
 #: engines/ultima/detection.cpp:79
 msgid "Allow cheats by commands and a menu when player is clicked."

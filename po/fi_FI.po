@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-26 20:19+0000\n"
+"POT-Creation-Date: 2021-12-28 12:51+0000\n"
 "PO-Revision-Date: 2021-12-27 23:26+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5141,6 +5141,14 @@ msgstr "Hurmemoodi"
 msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
+#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+msgid "Enable cheats"
+msgstr "Salli huijaus"
+
+#: engines/hypno/detection.cpp:170
+msgid "Allow cheats using the C key."
+msgstr ""
+
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
@@ -7783,10 +7791,6 @@ msgstr "Rajoita ruudun päivitystä"
 #: engines/ultima/detection.cpp:73
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Rajoitaa pelin nopeutta jottei se olisi liian nopea."
-
-#: engines/ultima/detection.cpp:78
-msgid "Enable cheats"
-msgstr "Salli huijaus"
 
 #: engines/ultima/detection.cpp:79
 msgid "Allow cheats by commands and a menu when player is clicked."
