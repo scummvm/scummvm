@@ -575,6 +575,7 @@ const imuseFtNames _ftSeqNames[] = {
 	{"seqNestolusAtRanch" },
 	{"seqRipLimo"         },
 	{"seqGorgeTurn"       },
+	{"seqStealRamp"       },
 	{"seqCavefishTalk"    },
 	{"seqArriveCorville"  },
 	{"seqSingleBunny"     },
