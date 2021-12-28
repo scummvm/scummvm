@@ -132,9 +132,7 @@ struct ItemStruct {
 };
 
 struct NPCStruct {
-	char _name[9];
-	uint8 field_9;
-	uint8 field_A;
+	char _name[11];
 	uint8 field_B;
 	uint8 field_C;
 	uint8 field_D;
@@ -213,7 +211,7 @@ struct MapMonster {
 	uint8 _posY;
 	uint8 _itemId_Weapon;
 	uint8 _field_6;
-	uint8 _MonsterRef;
+	uint8 _monsterRef;
 	uint8 _field_8;
 	uint8 _field_9;
 	uint8 _groupSize;
@@ -322,8 +320,8 @@ private:
 	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
-	int16 script_parse(uint8 *str, int posX, int posY, int maxX, int maxY, int argC);
-	void sub133E5(uint8 *impPtr, int posX, int posY, int maxX, int maxY, int argC);
+	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
+	void sub133E5(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 	void sub221FA(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
