@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-28 12:51+0000\n"
+"POT-Creation-Date: 2021-12-28 13:02+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr "Bağlantınız kısıtlı gibi görünüyor. Yine de indirmek istiyor mu
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:529
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:565
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -142,7 +142,7 @@ msgstr "Evet"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:529 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:565 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4361,7 +4361,7 @@ msgstr ""
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr ""
 
-#: engines/buried/buried.cpp:529
+#: engines/buried/buried.cpp:565
 #, fuzzy
 msgid "Are you sure you want to quit?"
 msgstr "Kaydedilmiş oyunu yüklemek istiyor musunuz?"
