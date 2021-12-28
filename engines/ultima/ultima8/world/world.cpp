@@ -142,12 +142,17 @@ bool World::switchMap(uint32 newmap) {
 		if (desktop) desktop->CloseItemDependents();
 	}
 
-	// get rid of any remaining _ethereal items
+	// get rid of any remaining ethereal items
 	while (!_ethereal.empty()) {
 		uint16 eth = _ethereal.front();
 		_ethereal.pop_front();
 		Item *i = getItem(eth);
-		if (i) i->destroy();
+		if (i) {
+			if (i->getFlags() & Item::FLG_ETHEREAL)
+				i->destroy();
+			else
+				warning("Not destroying ethereal item %d - it doesn't think it's ethereal!", eth);
+		}
 	}
 
 	uint32 oldmap = _currentMap->getNum();
