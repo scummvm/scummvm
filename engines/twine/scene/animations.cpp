@@ -499,16 +499,17 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 				_engine->_movements->setActorAngle(ANGLE_0, actor->_speed, ANGLE_17, &actor->_move);
 
+				// AUTO_STOP_DOOR
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
 					if (actor->_doorStatus) { // open door
 						if (getDistance2D(processActor.x, processActor.z, actor->_lastPos.x, actor->_lastPos.z) >= actor->_doorStatus) {
-							if (actor->_angle == ANGLE_0) {
+							if (actor->_angle == ANGLE_0) { // down
 								processActor.z = actor->_lastPos.z + actor->_doorStatus;
-							} else if (actor->_angle == ANGLE_90) {
+							} else if (actor->_angle == ANGLE_90) { // right
 								processActor.x = actor->_lastPos.x + actor->_doorStatus;
-							} else if (actor->_angle == ANGLE_180) {
+							} else if (actor->_angle == ANGLE_180) { // up
 								processActor.z = actor->_lastPos.z - actor->_doorStatus;
-							} else if (actor->_angle == ANGLE_270) {
+							} else if (actor->_angle == ANGLE_270) { // left
 								processActor.x = actor->_lastPos.x - actor->_doorStatus;
 							}
 
@@ -518,19 +519,19 @@ void Animations::processActorAnimations(int32 actorIdx) {
 					} else { // close door
 						bool updatePos = false;
 
-						if (actor->_angle == ANGLE_0) {
+						if (actor->_angle == ANGLE_0) { // down
 							if (processActor.z <= actor->_lastPos.z) {
 								updatePos = true;
 							}
-						} else if (actor->_angle == ANGLE_90) {
+						} else if (actor->_angle == ANGLE_90) { // right
 							if (processActor.x <= actor->_lastPos.x) {
 								updatePos = true;
 							}
-						} else if (actor->_angle == ANGLE_180) {
+						} else if (actor->_angle == ANGLE_180) { // up
 							if (processActor.z >= actor->_lastPos.z) {
 								updatePos = true;
 							}
-						} else if (actor->_angle == ANGLE_270) {
+						} else if (actor->_angle == ANGLE_270) { // left
 							if (processActor.x >= actor->_lastPos.x) {
 								updatePos = true;
 							}
@@ -550,8 +551,8 @@ void Animations::processActorAnimations(int32 actorIdx) {
 				processActor += actor->_lastPos;
 
 				if (actor->_staticFlags.bUseMiniZv) {
-					processActor.x = ((processActor.x / 128) * 128);
-					processActor.z = ((processActor.z / 128) * 128);
+					processActor.x = ((processActor.x / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
+					processActor.z = ((processActor.z / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
 				}
 
 				actor->_lastPos = IVec3();
