@@ -731,6 +731,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 						} else {
 							processActor.x = previousActor.x;
 						}
+					} else {
 						processActor.z = previousActor.z;
 					}
 				}
