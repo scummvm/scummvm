@@ -1983,7 +1983,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 		     << ")." << Std::endl;
 	}
 
-	Actor *av = getMainActor();
+	const Actor *av = getMainActor();
 	newactor->setMapNum(av->getMapNum());
 	newactor->setNpcNum(objID);
 	newactor->setFlag(FLG_ETHEREAL);
@@ -1995,7 +1995,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 void Actor::dumpInfo() const {
 	Container::dumpInfo();
 
-	pout << "hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength
+	pout << "  Actor hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength
 	     << ", dex: " << _dexterity << ", int: " << _intelligence
 	     << ", ac: " << getArmourClass() << ", defense: " << ConsoleStream::hex
 	     << getDefenseType() << " align: " << getAlignment() << " enemy: "

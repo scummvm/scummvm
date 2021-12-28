@@ -328,8 +328,9 @@ void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 fa
 void Container::dumpInfo() const {
 	Item::dumpInfo();
 
-	pout << "Volume: " << getContentVolume() << "/" << getCapacity()
-	     << ", total weight: " << getTotalWeight() << Std::endl;
+	pout << "  Container vol: " << getContentVolume() << "/" << getCapacity()
+	     << ", total weight: " << getTotalWeight()
+		 << ", items: " << _contents.size() << Std::endl;
 }
 
 void Container::saveData(Common::WriteStream *ws) {
