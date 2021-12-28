@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-28 12:51+0000\n"
-"PO-Revision-Date: 2021-11-07 02:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2021-12-28 14:22+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -202,37 +202,27 @@ msgid "Download speed: %s %S"
 msgstr "Download snelheid: %s %S"
 
 #: gui/downloadiconsdialog.cpp:81 gui/downloadiconsdialog.cpp:135
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Opgeslagen spellen downloaden..."
+msgstr "Downloaden van iconen lijst..."
 
 #: gui/downloadiconsdialog.cpp:145
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Opgeslagen spellen downloaden..."
+msgstr "Downloaden van iconen lijst... %d stuks"
 
 #: gui/downloadiconsdialog.cpp:155
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%d nieuwe pakketten gevonden, %s %S"
 
 #: gui/downloadiconsdialog.cpp:157
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "Download patch"
+msgstr "Download"
 
 #: gui/downloadiconsdialog.cpp:180
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Download klaar.\n"
-"%u bestanden konden niet gedownload worden."
+msgstr "Download klaar, %d packs gedownload, %s-%S"
 
 #: gui/downloadiconsdialog.cpp:186 gui/downloadiconsdialog.cpp:303
 #: gui/gui-manager.cpp:219 gui/unknown-game-dialog.cpp:53
@@ -245,15 +235,15 @@ msgstr "Sluiten"
 #: gui/downloadiconsdialog.cpp:308
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "FOUT %d:%s"
 
 #: gui/downloadiconsdialog.cpp:325
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "ERROR: Geen iconen pad geconfigureerd"
 
 #: gui/downloadiconsdialog.cpp:355
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Geen nieuwe iconen pack beschikbaar"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
 msgid "Game"
@@ -736,11 +726,11 @@ msgstr "???"
 
 #: gui/launcher.cpp:192
 msgid "Select Group by"
-msgstr ""
+msgstr "Selecteer Groeperen met"
 
 #: gui/launcher.cpp:197
 msgid "Group by: "
-msgstr ""
+msgstr "Groeperen met: "
 
 #: gui/launcher.cpp:199
 msgid "Select a criteria to group the entries"
@@ -748,42 +738,34 @@ msgstr ""
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:201
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "Geen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:203
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "Eerste pagina"
+msgstr "Eerste letter"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:207
 msgid "Series"
-msgstr ""
+msgstr "Series"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:209
 msgid "Publisher"
-msgstr ""
+msgstr "Uitgever"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:211
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Taal:"
+msgstr "Taal"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:213
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Platform:"
+msgstr "Platform"
 
 #: gui/launcher.cpp:229 engines/dialogs.cpp:94
 msgid "~Q~uit"
@@ -913,7 +895,7 @@ msgstr "Kies het spel:"
 
 #: gui/launcher.cpp:777
 msgid "Group by:"
-msgstr ""
+msgstr "Groepeer op:"
 
 #: gui/launcher.cpp:817 gui/saveload-dialog.cpp:367
 msgid "List view"
@@ -959,42 +941,36 @@ msgstr "~B~ewerken..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1109 gui/launcher.cpp:1296
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Onbekende variant"
+msgstr "Onbekende Engine"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1127 gui/launcher.cpp:1328
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "Onbekende Auteur"
+msgstr "Onbekende Uitgever"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1145 gui/launcher.cpp:1314
 msgid "No Series"
-msgstr ""
+msgstr "Geen Serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1160 gui/launcher.cpp:1347
 msgid "Language not detected"
-msgstr ""
+msgstr "Taal niet gedetecteerd"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1175 gui/launcher.cpp:1362
 msgid "Platform not detected"
-msgstr ""
+msgstr "Platform niet gedetecteerd"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1373 gui/widgets/groupedlist.cpp:122
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "Alles"
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
@@ -1204,7 +1180,7 @@ msgstr "Volledig-scherm modus"
 
 #: gui/options.cpp:1473
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1473
 #, fuzzy
@@ -1652,10 +1628,8 @@ msgid "Check now"
 msgstr "Controleer nu"
 
 #: gui/options.cpp:2427
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Update controle:"
+msgstr "Bijwerken Iconen"
 
 #: gui/options.cpp:2435
 msgid "Active storage:"
@@ -4590,7 +4564,7 @@ msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
 #: engines/dreamweb/detection.cpp:75
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr "Zet spreek tekst uit voor Objecten, Opties en Bijbel quote's aan."
+msgstr "Zet spreek tekst aan voor Objecten, Opties en Bijbel Citaat"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
@@ -5156,22 +5130,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Wilt u een spel laden of opslaan?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Dit spel wordt niet ondersteund."
+msgstr "Het Minotaur mini spel wordt nog niet ondersteund. Overgeslagen"
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Dit spel wordt niet ondersteund."
+msgstr "Het Medusa mini spel wordt nog niet ondersteund. Overgeslagen"
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Dit spel wordt niet ondersteund."
+msgstr "Het Troy mini spel wordt nog niet ondersteund. Overgeslagen"
 
 #: engines/hdb/detection.cpp:123
 msgid "Enable cheat mode"
