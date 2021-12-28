@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-28 13:02+0000\n"
-"PO-Revision-Date: 2021-12-25 17:26+0000\n"
+"PO-Revision-Date: 2021-12-28 20:08+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5198,7 +5198,7 @@ msgstr "Cheats aktivieren"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Erlaube Cheats mithilfe der C-Taste."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
