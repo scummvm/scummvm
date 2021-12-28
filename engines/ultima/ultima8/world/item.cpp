@@ -3459,61 +3459,90 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
-	ARG_CONTAINER_FROM_ID(container);
-
-	if (!container) {
-		perr << "Trying to pop item to invalid container (" << id_container << ")." << Std::endl;
-		return 0;
-	}
+	ARG_ITEM_FROM_ID(citem);
 
 	World *w = World::get_instance();
 
 	if (w->etherealEmpty())
 		return 0; // no items left on stack
 
-	uint16 _objId = w->etherealPeek();
-	Item *item = getItem(_objId);
+	uint16 objId = w->etherealPeek();
+	Item *item = getItem(objId);
 	if (!item) {
-		w->etherealRemove(_objId);
+		w->etherealRemove(objId);
 		return 0; // top item was invalid
 	}
 
-	item->moveToContainer(container);
+	Container *container = dynamic_cast<Container *>(citem);
+	if (container) {
+		item->moveToContainer(container);
+	} else if (citem) {
+		Point3 pt;
+		citem->getLocation(pt);
+		item->move(pt);
+	} else {
+		perr << "Trying to popToContainer to invalid container (" << id_citem << ")" << Std::endl;
+		item->dumpInfo();
+		// This object now has no home, destroy it - unless it doesn't think it's
+		// ethereal, in that case it is somehow there by mistake?
+		if (item->getFlags() & FLG_ETHEREAL) {
+			perr << "Destroying orphaned ethereal object (" << objId << ")" << Std::endl;
+			item->destroy();
+		} else {
+			perr << "Leaving orphaned ethereal object (" << objId << ")" << Std::endl;
+			w->etherealRemove(objId);
+		}
+	}
 
 	//! Anything else?
 
-	return _objId;
+	return objId;
 }
 
 uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
-	ARG_CONTAINER_FROM_ID(container);
-
-	if (!container) {
-		perr << "Trying to pop item to invalid container (" << id_container << ")." << Std::endl;
-		return 0;
-	}
+	ARG_ITEM_FROM_ID(citem);
 
 	World *w = World::get_instance();
 
 	if (w->etherealEmpty())
 		return 0; // no items left on stack
 
-	uint16 _objId = w->etherealPeek();
-	Item *item = getItem(_objId);
+	uint16 objId = w->etherealPeek();
+	Item *item = getItem(objId);
 	if (!item) {
-		w->etherealRemove(_objId);
+		w->etherealRemove(objId);
 		return 0; // top item was invalid
 	}
 
-	item->moveToContainer(container);
+	// TODO: This should also pop to container if citem is type 7 in Crusader
+	Container *container = dynamic_cast<Container *>(citem);
+	if (container) {
+		item->moveToContainer(container);
+	} else if (citem) {
+		Point3 pt;
+		citem->getLocation(pt);
+		item->move(pt);
+	} else {
+		perr << "Trying to popToEnd to invalid container (" << id_citem << ")" << Std::endl;
+		item->dumpInfo();
+		// This object now has no home, destroy it - unless it doesn't think it's
+		// ethereal, in that case it is somehow there by mistake?
+		if (item->getFlags() & FLG_ETHEREAL) {
+			perr << "Destroying orphaned ethereal object (" << objId << ")" << Std::endl;
+			item->destroy();
+		} else {
+			perr << "Leaving orphaned ethereal object (" << objId << ")" << Std::endl;
+			w->etherealRemove(objId);
+		}
+	}
 
 	//! Anything else?
 
 	//! This should probably be different from I_popToContainer, but
 	//! how exactly?
 
-	return _objId;
+	return objId;
 }
 
 uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
