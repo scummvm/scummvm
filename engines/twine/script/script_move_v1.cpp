@@ -700,6 +700,7 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 		const byte scriptOpcode = ctx.stream.readByte();
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, ctx);
+			debug(3, "move script %s for actor %i (%i)", function_map[scriptOpcode].name, actorIdx, end);
 		} else {
 			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}

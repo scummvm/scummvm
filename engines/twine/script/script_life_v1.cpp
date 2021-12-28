@@ -683,8 +683,7 @@ static int32 lSET_DIRMODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 controlMode = ctx.stream.readByte();
 
 	ctx.actor->_controlMode = (ControlMode)controlMode;
-	// TODO: should ControlMode::kSameXZ be taken into account, too - see processSameXZAction
-	if (ctx.actor->_controlMode == ControlMode::kFollow || ctx.actor->_controlMode == ControlMode::kFollow2) {
+	if (ctx.actor->_controlMode == ControlMode::kFollow) {
 		ctx.actor->_followedActor = ctx.stream.readByte();
 	}
 
@@ -1865,6 +1864,7 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 		const byte scriptOpcode = ctx.stream.readByte();
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, ctx);
+			debug(3, "life script %s for actor %i (%i)", function_map[scriptOpcode].name, actorIdx, end);
 		} else {
 			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}
