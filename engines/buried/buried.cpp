@@ -314,7 +314,9 @@ void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
 	_messageQueue.push_back(msg);
 }
 
-void BuriedEngine::processVideoSkipMessages() {
+void BuriedEngine::processVideoSkipMessages(VideoWindow *video) {
+	assert(video);
+
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		MessageType messageType = it->message->getMessageType();
 
@@ -323,9 +325,7 @@ void BuriedEngine::processVideoSkipMessages() {
 
 			// Send any skip video keyup events to the video player
 			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-				for (VideoList::iterator it2 = _videos.begin(); it2 != _videos.end(); ++it2) {
-					(*it2)->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
-				}
+				video->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
 				delete it->message;
 				it = _messageQueue.erase(it);
 			}
@@ -420,7 +420,7 @@ bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) 
 	return false;
 }
 
-void BuriedEngine::yield() {
+void BuriedEngine::yield(VideoWindow *video) {
 	// A cut down version of the Win16 yield function. Win32 handles this
 	// asynchronously, which we don't want. Only needed for internal event loops.
 
@@ -433,8 +433,8 @@ void BuriedEngine::yield() {
 
 	// We only send video skipping messages from here. Otherwise, this is the same
 	// as our main loop.
-	if (_allowVideoSkip)
-		processVideoSkipMessages();
+	if (video && _allowVideoSkip)
+		processVideoSkipMessages(video);
 
 	_gfx->updateScreen();
 	_system->delayMillis(10);

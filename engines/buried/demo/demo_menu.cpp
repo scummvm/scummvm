@@ -87,7 +87,7 @@ void DemoMainMenuWindow::showWithSplash() {
 
 	uint32 startTime = g_system->getMillis();
 	while (g_system->getMillis() < (startTime + 6000) && !_vm->hasMessage(this, kMessageTypeLButtonUp, kMessageTypeLButtonUp) && !_vm->shouldQuit())
-		_vm->yield();
+		_vm->yield(nullptr);
 
 	_background->free();
 	delete _background;

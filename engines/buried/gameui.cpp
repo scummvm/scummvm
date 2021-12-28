@@ -95,7 +95,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	video->playVideo();
 
 	while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped)
-		_vm->yield();
+		_vm->yield(video);
 
 	delete video;
 
@@ -173,7 +173,7 @@ bool GameUIWindow::flashWarningLight() {
 
 	uint32 startTime = g_system->getMillis();
 	while (!_vm->shouldQuit() && (startTime + 200) > g_system->getMillis()) {
-		_vm->yield();
+		_vm->yield(nullptr);
 		_vm->_sound->timerCallback();
 	}
 
@@ -188,7 +188,7 @@ bool GameUIWindow::flashWarningLight() {
 
 	startTime = g_system->getMillis();
 	while (!_vm->shouldQuit() && (startTime + 250) > g_system->getMillis()) {
-		_vm->yield();
+		_vm->yield(nullptr);
 		_vm->_sound->timerCallback();
 	}
 
@@ -201,7 +201,7 @@ bool GameUIWindow::flashWarningLight() {
 
 	startTime = g_system->getMillis();
 	while (!_vm->shouldQuit() && (startTime + 250) > g_system->getMillis()) {
-		_vm->yield();
+		_vm->yield(nullptr);
 		_vm->_sound->timerCallback();
 	}
 

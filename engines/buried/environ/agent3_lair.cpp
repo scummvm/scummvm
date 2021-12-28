@@ -133,7 +133,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 		}
 
 		_vm->_sound->timerCallback();
-		_vm->yield();
+		_vm->yield(nullptr);
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -162,7 +162,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 		}
 
 		_vm->_sound->timerCallback();
-		_vm->yield();
+		_vm->yield(nullptr);
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -336,7 +336,7 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 					timerCallback(viewWindow);
 
 				_vm->_sound->timerCallback();
-				_vm->yield();
+				_vm->yield(nullptr);
 			}
 
 			_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -577,7 +577,7 @@ int TransporterControls::onCharacter(Window *viewWindow, const Common::KeyState 
 					// Wait two seconds
 					uint32 startTime = g_system->getMillis();
 					while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
-						_vm->yield();
+						_vm->yield(nullptr);
 
 					// Move to a different depth to enter the transporter
 					DestinationScene newScene;
@@ -629,7 +629,7 @@ int TransporterControls::onCharacter(Window *viewWindow, const Common::KeyState 
 			// Wait two seconds
 			uint32 startTime = g_system->getMillis();
 			while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
-				_vm->yield();
+				_vm->yield(nullptr);
 
 			// Move to a different depth to enter the transporter
 			DestinationScene newScene;

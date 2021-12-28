@@ -210,7 +210,7 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 					memcpy(_preBuffer->getBasePtr(0, j), newFrame->getBasePtr(0, _preBuffer->h - (i + offset) + j), newFrame->w * newFrame->format.bytesPerPixel);
 
 				invalidateWindow(false);
-				_vm->yield();
+				_vm->yield(nullptr);
 			}
 
 			newFrame->free();
@@ -240,7 +240,7 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 					memcpy(_preBuffer->getBasePtr(0, newFrame->h - offset + j), newFrame->getBasePtr(0, i + j), newFrame->w * newFrame->format.bytesPerPixel);
 
 				invalidateWindow(false);
-				_vm->yield();
+				_vm->yield(nullptr);
 			}
 
 			newFrame->free();
