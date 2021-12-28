@@ -255,15 +255,12 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 					if (actor->_dynamicFlags.bIsFalling || standingOnActor(actorIdx, a)) {
 						processActor.y = maxsTest.y - actor->_boundingBox.mins.y + 1;
 						actor->_carryBy = a;
-					} else {
-						handlePushing(minsTest, maxsTest, actor, actorTest);
+						continue;
 					}
-				} else {
-					if (standingOnActor(actorIdx, a)) {
-						_engine->_actor->hitActor(actorIdx, a, 1, -1);
-					}
-					handlePushing(minsTest, maxsTest, actor, actorTest);
+				} else if (standingOnActor(actorIdx, a)) {
+					_engine->_actor->hitActor(actorIdx, a, 1, -1);
 				}
+				handlePushing(minsTest, maxsTest, actor, actorTest);
 			}
 		}
 	}
