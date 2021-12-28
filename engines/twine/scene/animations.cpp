@@ -668,7 +668,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 		_engine->_collision->_causeActorDamage = 0;
 
-		_engine->_collision->_processCollision = processActor;
+		const IVec3 processActorSave = processActor;
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
@@ -683,6 +683,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.maxs.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 4);
 			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.mins.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 8);
 		}
+		processActor = processActorSave;
 
 		// process wall hit while running
 		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
