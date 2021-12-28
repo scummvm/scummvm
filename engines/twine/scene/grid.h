@@ -75,7 +75,9 @@ struct BrickEntry {
 #define GRID_SIZE_Z GRID_SIZE_X
 
 #define ISO_SCALE 512
+// xz
 #define BRICK_SIZE 512
+// y
 #define BRICK_HEIGHT 256
 
 // short max 32767 0x7FFF
