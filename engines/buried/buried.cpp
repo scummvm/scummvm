@@ -333,6 +333,8 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 
 				delete it->message;
 				it = _messageQueue.erase(it);
+			} else {
+				++it;
 			}
 		} else if (messageType == kMessageTypeKeyDown) {
 			Common::KeyState keyState = ((KeyDownMessage *)it->message)->getKeyState();
@@ -342,6 +344,8 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 				delete it->message;
 				it = _messageQueue.erase(it);
+			} else {
+				++it;
 			}
 		} else {
 			++it;
