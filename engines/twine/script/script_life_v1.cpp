@@ -1546,14 +1546,7 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5C
  */
 static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
-	if (!engine->_screens->_fadePalette) {
-		// set the palette hard if it should not get faded
-		engine->setPalette(engine->_screens->_paletteRGBA);
-	}
-	engine->_screens->_useAlternatePalette = true;
+	engine->_screens->setDarkPal();
 	return 0;
 }
 
@@ -1562,11 +1555,7 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5D
  */
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_screens->_useAlternatePalette = false;
-	if (!engine->_screens->_fadePalette) {
-		// reset the palette hard if it should not get faded
-		engine->setPalette(engine->_screens->_mainPaletteRGBA);
-	}
+	engine->_screens->setNormalPal();
 	return 0;
 }
 

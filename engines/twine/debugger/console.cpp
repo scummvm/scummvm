@@ -29,6 +29,7 @@
 #include "twine/resources/hqr.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
+#include "twine/renderer/screens.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 #include "twine/audio/music.h"
@@ -50,6 +51,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
+	registerCmd("toggle_darkpal", WRAP_METHOD(TwinEConsole, doToggleDarkPal));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
 	registerCmd("toggle_godmode", WRAP_METHOD(TwinEConsole, doToggleGodMode));
@@ -300,6 +302,17 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 		amount = atoi(argv[1]);
 	}
 	_engine->_gameState->addKashes(amount);
+	return true;
+}
+
+bool TwinEConsole::doToggleDarkPal(int argc, const char **argv) {
+	if (_engine->_screens->_useAlternatePalette) {
+		debugPrintf("Disabling dark palette\n");
+		_engine->_screens->setNormalPal();
+	} else {
+		debugPrintf("Enabling dark palette\n");
+		_engine->_screens->setDarkPal();
+	}
 	return true;
 }
 

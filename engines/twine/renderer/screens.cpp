@@ -217,6 +217,25 @@ void Screens::blackToWhite() {
 	}
 }
 
+void Screens::setDarkPal() {
+	ScopedEngineFreeze scoped(_engine);
+	HQR::getEntry(_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
+	convertPalToRGBA(_palette, _paletteRGBA);
+	if (!_fadePalette) {
+		// set the palette hard if it should not get faded
+		_engine->setPalette(_paletteRGBA);
+	}
+	_useAlternatePalette = true;
+}
+
+void Screens::setNormalPal() {
+	_useAlternatePalette = false;
+	if (!_fadePalette) {
+		// reset the palette hard if it should not get faded
+		_engine->setPalette(_mainPaletteRGBA);
+	}
+}
+
 void Screens::setBackPal() {
 	memset(_palette, 0, sizeof(_palette));
 	memset(_paletteRGBA, 0, sizeof(_paletteRGBA));
