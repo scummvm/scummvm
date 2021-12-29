@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 20:28+0000\n"
+"POT-Creation-Date: 2021-12-29 20:53+0000\n"
 "PO-Revision-Date: 2021-12-29 11:26+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4361,7 +4361,7 @@ msgstr "Hiányzik a játék kódja"
 msgid "Are you sure you want to quit?"
 msgstr "Biztosan ki szeretnél lépni?"
 
-#: engines/buried/buried.cpp:592
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "A játékod most szünetel.  A folytatáshoz kattints az OK gombra."
 

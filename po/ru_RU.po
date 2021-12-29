@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 20:28+0000\n"
+"POT-Creation-Date: 2021-12-29 20:53+0000\n"
 "PO-Revision-Date: 2021-12-24 21:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4380,7 +4380,7 @@ msgstr "Отсутствует код для игры"
 msgid "Are you sure you want to quit?"
 msgstr "Вы уверены, что хотите выйти?"
 
-#: engines/buried/buried.cpp:592
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Игра приостановлена. Для продолжения нажмите ОК."
 

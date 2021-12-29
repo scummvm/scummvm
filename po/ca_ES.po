@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 20:28+0000\n"
+"POT-Creation-Date: 2021-12-29 20:53+0000\n"
 "PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4363,7 +4363,7 @@ msgstr "Controls principals del joc:"
 msgid "Are you sure you want to quit?"
 msgstr "   Esteu segur de voler sortir?   "
 
-#: engines/buried/buried.cpp:592
+#: engines/buried/buried.cpp:590
 #, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Joc pausat.  Premeu ESPAI per continuar."

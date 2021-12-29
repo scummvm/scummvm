@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 20:28+0000\n"
+"POT-Creation-Date: 2021-12-29 20:53+0000\n"
 "PO-Revision-Date: 2021-12-29 11:26+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4365,7 +4365,7 @@ msgstr "Pelimoottori puuttuu"
 msgid "Are you sure you want to quit?"
 msgstr "Haluatko varmasti lopettaa?"
 
-#: engines/buried/buried.cpp:592
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Pelisi on nyt pausetettu. Paina OK jatkaaksesi."
 
