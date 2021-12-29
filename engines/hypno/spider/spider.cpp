@@ -64,6 +64,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Scene *sc;
 	ChangeLevel *cl;
+	Global *gl;
 
 	loadSceneLevel("mainmenu.mi_", "", prefix);
 	loadSceneLevel("tryagain.mi_", "", prefix);
@@ -75,6 +76,129 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
+
+	// start level
+	Transition *start = new Transition("mainmenu.mi_");
+	start->intros.push_back("spider/cine/dcine1.smk");
+	start->intros.push_back("spider/cine/dcine2.smk");
+	_levels["<start>"] = start;
+
+	sc = (Scene *) _levels["mainmenu.mi_"];
+	cl = new ChangeLevel("levels.mi_");
+	sc->hots[1].actions.push_back(cl);
+	sc->music = "sound.lib/menu_mus.raw";
+
+	cl = new ChangeLevel("options.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel("<quit>");
+	sc->hots[5].actions.push_back(cl);
+
+	sc = (Scene *) _levels["levels.mi_"];
+	cl = new ChangeLevel("levels.mi_");
+	sc->hots[1].actions.push_back(cl);
+	sc->hots[2].actions.push_back(cl);
+	sc->hots[3].actions.push_back(cl);
+	sc->hots[4].actions.push_back(cl);
+
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[5].actions.push_back(gl);
+	cl = new ChangeLevel("mainmenu.mi_");
+	sc->hots[6].actions.push_back(cl);
+
+	sc = (Scene *) _levels["options.mi_"]; 
+
+	cl = new ChangeLevel("combmenu.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	cl = new ChangeLevel("mainmenu.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	cl = new ChangeLevel("<credits>");
+	sc->hots[5].actions.push_back(cl);
+
+	sc = (Scene *) _levels["combmenu.mi_"]; 
+
+	cl = new ChangeLevel("options.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	Transition *practice_win = new Transition("combmenu.mi_");
+	practice_win->intros.push_back("spider/cine/practwin.smk");
+	_levels["<practice_win>"] = practice_win;
+
+	Transition *practice_lose = new Transition("combmenu.mi_");
+	practice_lose->intros.push_back("spider/cine/praclose.smk");
+	_levels["<practice_lose>"] = practice_lose;
+
+	loadArcadeLevel("c1h.mi_", "<practice_win>", prefix);
+	_levels["c1h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c1h_solo.mi_"] = _levels["c1h.mi_"];
+
+	cl = new ChangeLevel("c1h_solo.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	loadArcadeLevel("c2h.mi_", "<practice_win>", prefix);
+	_levels["c2h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c2h_solo.mi_"] = _levels["c2h.mi_"];
+
+	cl = new ChangeLevel("c2h_solo.mi_");
+	sc->hots[3].actions.push_back(cl);
+
+	loadArcadeLevel("c3h.mi_", "<practice_win>", prefix);
+	_levels["c3h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c3h_solo.mi_"] = _levels["c3h.mi_"];
+
+	cl = new ChangeLevel("c3h_solo.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	loadArcadeLevel("c4h.mi_", "<practice_win>", prefix);
+	_levels["c4h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c4h_solo.mi_"] = _levels["c4h.mi_"];
+
+	cl = new ChangeLevel("c4h_solo.mi_");
+	sc->hots[5].actions.push_back(cl);
+
+	loadArcadeLevel("c5h.mi_", "<practice_win>", prefix);
+	_levels["c5h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c5h_solo.mi_"] = _levels["c5h.mi_"];
+
+	cl = new ChangeLevel("c5h_solo.mi_");
+	sc->hots[6].actions.push_back(cl);
+
+	loadArcadeLevel("c8h.mi_", "<practice_win>", prefix);
+	_levels["c8h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c8h_solo.mi_"] = _levels["c8h.mi_"];
+
+	cl = new ChangeLevel("c8h_solo.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	loadArcadeLevel("c9h.mi_", "<practice_win>", prefix);
+	_levels["c9h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c9h_solo.mi_"] = _levels["c9h.mi_"];
+
+	cl = new ChangeLevel("c9h_solo.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	loadArcadeLevel("c10h.mi_", "<practice_win>", prefix);
+	_levels["c10h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c10h_solo.mi_"] = _levels["c10h.mi_"];
+
+	cl = new ChangeLevel("c10h_solo.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	loadArcadeLevel("c11h.mi_", "<practice_win>", prefix);
+	_levels["c11h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c11h_solo.mi_"] = _levels["c11h.mi_"];
+
+	cl = new ChangeLevel("c11h_solo.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	loadArcadeLevel("c12h.mi_", "<practice_win>", prefix);
+	_levels["c12h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c12h_solo.mi_"] = _levels["c12h.mi_"];
+
+	cl = new ChangeLevel("c12h_solo.mi_");
+	sc->hots[11].actions.push_back(cl);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
 	_levels["mv0t.mi_"]->intros.push_back("cine/ints001s.smk");
@@ -176,7 +300,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["alofintr.mi_"];
 	sc->intros.push_back("cine/swc002as.smk");
 	// This is necessary, for some reason
-	Global *gl = new Global("GS_SWITCH1", "TURNON");	// alarm system
+	gl = new Global("GS_SWITCH1", "TURNON");			// alarm system
 	sc->hots[2].actions.push_back(gl);
 	gl = new Global("GS_SWITCH2", "TURNON");			// camera
 	sc->hots[2].actions.push_back(gl);
@@ -301,7 +425,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->intros.push_back("cine/apts006s.smk");
 	cl = new ChangeLevel("ball1.mi_");
 	sc->hots[2].actions.push_back(cl);
-	cl = new ChangeLevel("c5"); // depens on the difficulty
+	cl = new ChangeLevel("c5");
 	sc->hots[4].actions.push_back(cl);
 
 	loadArcadeLevel("c5.mi_", "<trans_apt_6>", prefix);
@@ -316,6 +440,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
 	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
 	loadSceneLevel("balcony.mi_", "factory1.mi_", prefix);
+	// This scene seems to correspond with the dance ones, but I don't know how to trigger them
+	loadSceneLevel("coat.mi_", "???", prefix);
 
 	Code *note = new Code();
 	note->name = "<note>";
@@ -462,80 +588,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 
 	loadSceneLevel("decide11.mi_", "", prefix);
-
-	// start level
-	Transition *start = new Transition("mainmenu.mi_");
-	start->intros.push_back("spider/cine/dcine1.smk");
-	start->intros.push_back("spider/cine/dcine2.smk");
-	_levels["<start>"] = start;
-
-	sc = (Scene *) _levels["mainmenu.mi_"];
-	cl = new ChangeLevel("levels.mi_");
-	sc->hots[1].actions.push_back(cl);
-
-	cl = new ChangeLevel("options.mi_");
-	sc->hots[4].actions.push_back(cl);
-
-	cl = new ChangeLevel("<quit>");
-	sc->hots[5].actions.push_back(cl);
-
-	sc = (Scene *) _levels["levels.mi_"];
-	cl = new ChangeLevel("levels.mi_");
-	sc->hots[1].actions.push_back(cl);
-	sc->hots[2].actions.push_back(cl);
-	sc->hots[3].actions.push_back(cl);
-	sc->hots[4].actions.push_back(cl);
-
-	gl = new Global("GS_LEVELWON", "TURNON");
-	sc->hots[5].actions.push_back(gl);
-	cl = new ChangeLevel("mainmenu.mi_");
-	sc->hots[6].actions.push_back(cl);
-
-	sc = (Scene *) _levels["options.mi_"]; 
-
-	cl = new ChangeLevel("combmenu.mi_");
-	sc->hots[1].actions.push_back(cl);
-
-	cl = new ChangeLevel("mainmenu.mi_");
-	sc->hots[4].actions.push_back(cl);
-
-	cl = new ChangeLevel("<credits>");
-	sc->hots[5].actions.push_back(cl);
-
-	sc = (Scene *) _levels["combmenu.mi_"]; 
-
-	cl = new ChangeLevel("options.mi_");
-	sc->hots[1].actions.push_back(cl);
-
-	cl = new ChangeLevel("c1h.mi_");
-	sc->hots[2].actions.push_back(cl);
-
-	cl = new ChangeLevel("c2h.mi_");
-	sc->hots[3].actions.push_back(cl);
-
-	cl = new ChangeLevel("c3h.mi_");
-	sc->hots[4].actions.push_back(cl);
-
-	cl = new ChangeLevel("c4h.mi_");
-	sc->hots[5].actions.push_back(cl);
-
-	cl = new ChangeLevel("c5h.mi_");
-	sc->hots[6].actions.push_back(cl);
-
-	cl = new ChangeLevel("c8h.mi_");
-	sc->hots[7].actions.push_back(cl);
-	
-	cl = new ChangeLevel("c9h.mi_");
-	sc->hots[8].actions.push_back(cl);
-
-	cl = new ChangeLevel("c10h.mi_");
-	sc->hots[9].actions.push_back(cl);
-
-	cl = new ChangeLevel("c11h.mi_");
-	sc->hots[10].actions.push_back(cl);
-
-	cl = new ChangeLevel("c12h.mi_");
-	sc->hots[11].actions.push_back(cl);
 
 	// Game overs
 	Transition *over_apt_1 = new Transition("tryagain.mi_");

@@ -799,6 +799,7 @@ void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
 	runIntro(video);
+	_nextLevel = "mainmenu.mi_";
 }
 
 } // End of namespace Hypno
