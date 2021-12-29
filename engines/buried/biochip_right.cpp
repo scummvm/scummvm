@@ -223,6 +223,18 @@ void BioChipRightWindow::onPaint() {
 	}
 }
 
+void BioChipRightWindow::toggleBioChip() {
+	if (_status == 0) {
+		_status = 1;
+		showBioChipMainView();
+		invalidateWindow(false);
+	} else {
+		_status = 0;
+		destroyBioChipViewWindow();
+		invalidateWindow(false);
+	}
+}
+
 void BioChipRightWindow::onEnable(bool enable) {
 	if (enable)
 		_vm->removeMouseMessages(this);
@@ -341,42 +353,14 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		}
 		break;
 	case kItemBioChipFiles:
-		if (upperButton.contains(point)) {
-			if (_status == 0) {
-				_status = 1;
-				showBioChipMainView();
-				invalidateWindow(false);
-			} else {
-				_status = 0;
-				destroyBioChipViewWindow();
-				invalidateWindow(false);
-			}
-		}
-		break;
 	case kItemBioChipInterface:
 		if (upperButton.contains(point)) {
-			if (_status == 0) {
-				_status = 1;
-				showBioChipMainView();
-				invalidateWindow(false);
-			} else {
-				_status = 0;
-				destroyBioChipViewWindow();
-				invalidateWindow(false);
-			}
+			toggleBioChip();
 		}
 		break;
 	case kItemBioChipJump:
 		if (upperButton.contains(point)) {
-			if (_status == 0) {
-				_status = 1;
-				showBioChipMainView();
-				invalidateWindow(false);
-			} else {
-				_status = 0;
-				destroyBioChipViewWindow();
-				invalidateWindow(false);
-			}
+			toggleBioChip();
 		} else if (lowerButton.contains(point)) {
 			Location currentLocation;
 			if (((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation)) {

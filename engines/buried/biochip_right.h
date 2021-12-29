@@ -56,6 +56,7 @@ public:
 	void disableEvidenceCapture();
 	void jumpInitiated(bool redraw);
 	void jumpEnded(bool redraw);
+	void toggleBioChip();
 
 	void onPaint();
 	void onEnable(bool enable);
