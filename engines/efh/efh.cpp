@@ -633,8 +633,8 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	readFileToBuffer(fileName, _hiResImageBuf);
 	uncompressBuffer(_hiResImageBuf, _map);
 	// This is not present in the original.
-	// The purpose is to properly load the mapMonster data in an array of struct in order to use it without being a pain afterwards
-	loadMapMonsters();
+	// The purpose is to properly load the misc map data in arrays in order to use them without being a pain afterwards
+	loadMapArrays();
 
 	loadImageSetToTileBank(1, _mapBitmapRef[0] + 1);
 	loadImageSetToTileBank(2, _mapBitmapRef[1] + 1);
@@ -926,7 +926,7 @@ void EfhEngine::initEngine() {
 	uint8 *_mapPtr = &_map[2758];
 	for (int i = 0; i < 64; ++i)
 		for (int j = 0; j < 64; ++j)
-			_mapGameMap[i][j] = *_mapPtr++;
+			_mapGameMap[i][j] = 0;
 
 	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
 	_vgaGraphicsStruct2->_shiftValue = 0x2000;
@@ -1028,7 +1028,7 @@ void EfhEngine::initMapMonsters() {
 	}
 }
 
-void EfhEngine::loadMapMonsters() {
+void EfhEngine::loadMapArrays() {
 	uint8 *_mapUnknownPtr = &_map[2];
 
 	for (int i = 0; i < 100; ++i) {
@@ -1057,6 +1057,12 @@ void EfhEngine::loadMapMonsters() {
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
 			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
+	}
+
+	uint8 *mapPtr = &_map[2758];
+	for (int i = 0; i < 64; ++i) {
+		for (int j = 0; j < 64; ++j)
+			_mapGameMap[i][j] = *mapPtr++;
 	}
 }
 
