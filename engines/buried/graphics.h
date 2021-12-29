@@ -81,6 +81,7 @@ public:
 	byte *getDefaultPalette() const { return _palette; }
 	Graphics::Font *createFont(int size, bool bold = false) const;
 	Cursor setCursor(Cursor newCursor);
+	void toggleCursor(bool show);
 	Graphics::Surface *getBitmap(uint32 bitmapID);
 	Graphics::Surface *getBitmap(const Common::String &fileName);
 	uint32 getColor(byte r, byte g, byte b);

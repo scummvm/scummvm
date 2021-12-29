@@ -48,6 +48,7 @@ bool VideoWindow::playVideo() {
 	if (_video->isPlaying())
 		return true;
 
+	_vm->_gfx->toggleCursor(false);
 	_video->start();
 	_mode = kModePlaying;
 	return true;
@@ -62,6 +63,9 @@ bool VideoWindow::playToFrame(int frame) {
 	if (_video->isPlaying())
 		return true;
 
+	// We do not hide the mouse cursor here, as this
+	// is used to play background or asynchronous
+	// animations
 	_video->start();
 	_mode = kModePlaying;
 	return true;
@@ -76,6 +80,7 @@ bool VideoWindow::seekToFrame(int frame) {
 
 void VideoWindow::stopVideo() {
 	if (_video) {
+		_vm->_gfx->toggleCursor(true);
 		_video->stop();
 		_mode = kModeStopped;
 	}
@@ -127,6 +132,7 @@ void VideoWindow::closeVideo() {
 	if (_video) {
 		delete _video;
 		_video = nullptr;
+		_vm->_gfx->toggleCursor(true);
 		_mode = kModeClosed;
 		_lastFrame = nullptr;
 
@@ -176,6 +182,7 @@ void VideoWindow::updateVideo() {
 
 		if (_video->isPlaying() && _video->endOfVideo()) {
 			_video->stop();
+			_vm->_gfx->toggleCursor(true);
 			_mode = kModeStopped;
 		}
 	}

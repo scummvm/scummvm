@@ -132,6 +132,10 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	return font;
 }
 
+void GraphicsManager::toggleCursor(bool show) {
+	CursorMan.showMouse(show);
+}
+
 Cursor GraphicsManager::setCursor(Cursor newCursor) {
 	// Don't set the cursor again
 	if (newCursor == _curCursor)
