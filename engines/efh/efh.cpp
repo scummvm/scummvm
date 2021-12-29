@@ -164,8 +164,11 @@ void Stru32686::init() {
 }
 
 void Stru3244C::init() {
-	_field0 = 0;
-	_field2 = 0;
+	_field0 = _field2 = 0;
+}
+
+void TileFactStruct::init() {
+	_field0 = _field1 = 0;
 }
 
 EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
@@ -662,7 +665,13 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 
 void EfhEngine::readTileFact() {
 	Common::String fileName = "tilefact";
-	readFileToBuffer(fileName, _tileFact);
+	uint8 tileFactBuff[864];
+	readFileToBuffer(fileName, tileFactBuff);
+	uint8 *curPtr = tileFactBuff;
+	for (int i = 0; i < 432; ++i) {
+		_tileFact[i]._field0 = *curPtr++;
+		_tileFact[i]._field1 = *curPtr++;
+	}
 }
 
 void EfhEngine::readItems() {
@@ -3225,22 +3234,22 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 		_word2C880 = false;
 		return -1;
 	}
-	if (_tileFact[imageSetId * 2 + 1] != 0xFF && !_word2C8D5) {
+	if (_tileFact[imageSetId]._field1 != 0xFF && !_word2C8D5) {
 		if ((arg4 == 1 && _word2C8D7) || (arg4 == 0 && _word2C8D7 && imageSetId != 128 && imageSetId != 121)) {
 			if (_largeMapFlag) {
-				_mapGameMap[mapPosX][mapPosY] = _tileFact[imageSetId * 2 + 1];
+				_mapGameMap[mapPosX][mapPosY] = _tileFact[imageSetId]._field1;
 			} else {
-				_curPlace[mapPosX][mapPosY] = _tileFact[imageSetId * 2 + 1];
+				_curPlace[mapPosX][mapPosY] = _tileFact[imageSetId]._field1;
 			}
 
 			_redrawNeededFl = true;
-			if (_tileFact[imageSetId * 2] == 0)
+			if (_tileFact[imageSetId]._field0 == 0)
 				return 2;
 			return 1;
 		}
 	}
 
-	return _tileFact[imageSetId * 2];
+	return _tileFact[imageSetId]._field0;
 }
 
 bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
@@ -5485,7 +5494,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 	switch (_items[itemId].field_16 - 1) {
-	case 0:
+	case 0: // "Demonic Powers", "MindDomination", "Guilt Trip", "Sleep Grenade", "SleepGrenader"
 		if (argA == 2) {
 			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5524,7 +5533,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		varA6 = true;
 		break;
-	case 1:
+	case 1: // "Chilling Touch", "Guilt", "Petrify Rod", "Elmer's Gun"
 		if (argA == 2) {
 			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5575,7 +5584,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		varA6 = true;
 		break;
-	case 4:
+	case 4: // "Unholy Sinwave", "Holy Water"
 		if (argA == 2) {
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5599,7 +5608,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		varA6 = true;
 		break;
-	case 5:
+	case 5: // "Lucifer'sTouch", "Book of Death", "Holy Cross"
 		if (argA == 2) {
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5620,7 +5629,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		varA6 = true;
 		break;
-	case 12:
+	case 12: // "Terror Gaze", "Servitude Rod", "Despair Ankh", "ConfusionPrism", "Pipe of Peace", "Red Cape", "Peace Symbol", "Hell Badge"
 		if (argA == 2) {
 			displayString_3("There is no apparent affect!", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5629,7 +5638,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		varA6 = true;
 		break;
-	case 14: {
+	case 14: { // "Feathered Cap"
 		int16 varAA;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
@@ -5653,7 +5662,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;
 		}
 		break;
-	case 15: {
+	case 15: { // "Regal Crown"
 		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
@@ -5678,14 +5687,14 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;
 		}
 		break;
-	case 16: {
+	case 16: { // Fairy Dust
 		int16 varAC = _mapPosX;
 		int16 varAA = _mapPosY;
 		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
 		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
 		int16 varAE = sub15538(_mapPosX, _mapPosY);
 
-		if (_tileFact[2 * varAE] == 0) {
+		if (_tileFact[varAE]._field0 == 0) {
 			totalPartyKill();
 			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
 			if (argA == 2) {
@@ -5718,11 +5727,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;		
 		}
 		break;
-	case 17: {
+	case 17: { // "Devil Dust"
 		_mapPosX = _items[itemId].field_19;
 		_mapPosY = _items[itemId].field_1A;
 		int16 varAE = sub15538(_mapPosX, _mapPosY);
-		if (_tileFact[2 * varAE] == 0) {
+		if (_tileFact[varAE]._field0 == 0) {
 			totalPartyKill();
 			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
 			if (argA == 2) {
@@ -5773,7 +5782,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		varA6 = true;
 		break;
-	case 19:
+	case 19: // "Junk"
 		strcpy(buffer1, "  * The item breaks!");
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
@@ -5783,7 +5792,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		setCharacterObjectToBroken(charId, objectId);
 		varA6 = true;
 		break;
-	case 23:
+	case 23: // "Divining Rod"
 		copyString(_items[itemId]._name, buffer2);
 		sprintf(buffer1, "The %s says, '", buffer2);
 		if (_items[itemId].field_19 < _mapPosX) {
@@ -5883,7 +5892,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;
 		}
 		break;
-	case 26:
+	case 26: // "Black Sphere"
 		strcpy(buffer1, "The entire party collapses, dead!!!");
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
@@ -5895,7 +5904,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		// emptyFunction(2);
 		varA6 = true;
 		break;
-	case 27: {
+	case 27: { // "Magic Pyramid", "Razor Blade"
 		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
@@ -5920,7 +5929,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;
 		}
 		break;
-	case 28:
+	case 28: // "Bugle"
 		if (argA == 2) {
 			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
 		} else {
@@ -5938,7 +5947,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		varA6 = true;
 		break;
-	case 29: {
+	case 29: { // "Healing Spray", "Healing Elixir", "Curing Potion", "Magic Potion"
 		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
