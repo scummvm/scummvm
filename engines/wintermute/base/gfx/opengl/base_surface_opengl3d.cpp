@@ -289,9 +289,9 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 		return false;
 	}
 
-	//TODO: Check for endianness issues
-	uint8 alpha = reinterpret_cast<uint8 *>(_imageData->getPixels())[y * _width * 4 + x * 4 + 3];
-	return alpha == 0;
+	uint8 a, r, g, b;
+	_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
+	return a == 0;
 }
 
 void BaseSurfaceOpenGL3D::setTexture() {
