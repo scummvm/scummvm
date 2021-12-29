@@ -67,6 +67,8 @@ LairEntry::LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 }
 
 int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	const int effectsIndexBase = 2;	// same as kEffectsIndexBase in SoundManager
+
 	// Force enable frame cycling
 	((SceneViewWindow *)viewWindow)->forceEnableCycling(true);
 
@@ -133,7 +135,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 		}
 
 		_vm->_sound->timerCallback();
-		_vm->yield(nullptr);
+		_vm->yield(nullptr, effectsIndexBase + _currentSoundID);
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -162,7 +164,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 		}
 
 		_vm->_sound->timerCallback();
-		_vm->yield(nullptr);
+		_vm->yield(nullptr, effectsIndexBase + _currentSoundID);
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -281,6 +283,8 @@ int LairEntry::timerCallback(Window *viewWindow) {
 }
 
 int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character) {
+	const int effectsIndexBase = 2; // same as kEffectsIndexBase in SoundManager
+
 	// Only accept input if we are beyond first voiceover
 	if (_passwordIndex <= 0)
 		return SC_TRUE;
@@ -336,7 +340,7 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 					timerCallback(viewWindow);
 
 				_vm->_sound->timerCallback();
-				_vm->yield(nullptr);
+				_vm->yield(nullptr, effectsIndexBase + _currentSoundID);
 			}
 
 			_vm->_sound->stopSoundEffect(_currentSoundID);
@@ -577,7 +581,7 @@ int TransporterControls::onCharacter(Window *viewWindow, const Common::KeyState 
 					// Wait two seconds
 					uint32 startTime = g_system->getMillis();
 					while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
-						_vm->yield(nullptr);
+						_vm->yield(nullptr, -1);
 
 					// Move to a different depth to enter the transporter
 					DestinationScene newScene;
@@ -629,7 +633,7 @@ int TransporterControls::onCharacter(Window *viewWindow, const Common::KeyState 
 			// Wait two seconds
 			uint32 startTime = g_system->getMillis();
 			while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
-				_vm->yield(nullptr);
+				_vm->yield(nullptr, -1);
 
 			// Move to a different depth to enter the transporter
 			DestinationScene newScene;

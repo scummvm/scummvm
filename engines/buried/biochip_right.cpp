@@ -260,7 +260,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				video->playToFrame(23);
 
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
-					_vm->yield(video);
+					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
 				}
 
@@ -297,7 +297,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				video->playToFrame(47);
 
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
-					_vm->yield(video);
+					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
 				}
 

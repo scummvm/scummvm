@@ -124,7 +124,7 @@ public:
 	// Messaging
 	void postMessageToWindow(Window *dest, Message *message);
 	void sendAllMessages();
-	void processVideoSkipMessages(VideoWindow *video);
+	void processAudioVideoSkipMessages(VideoWindow *video, int soundId);
 	void removeKeyboardMessages(Window *window);
 	void removeMouseMessages(Window *window);
 	void removeAllMessages(Window *window);
@@ -132,7 +132,7 @@ public:
 	bool hasMessage(Window *window, int messageBegin, int messageEnd) const;
 
 	// Miscellaneous
-	void yield(VideoWindow *video);
+	void yield(VideoWindow *video, int soundId);
 	int getTransitionSpeed();
 	void setTransitionSpeed(int newSpeed);
 	void releaseCapture() { _captureWindow = 0; }

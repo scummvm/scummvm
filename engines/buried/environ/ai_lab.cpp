@@ -1850,7 +1850,7 @@ int CapacitanceToHabitatDoorClosed::mouseUp(Window *viewWindow, const Common::Po
 			uint32 startTime = g_system->getMillis();
 
 			while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
-				_vm->yield(nullptr);
+				_vm->yield(nullptr, -1);
 				_vm->_sound->timerCallback();
 			}
 
@@ -1874,7 +1874,7 @@ int CapacitanceToHabitatDoorClosed::mouseUp(Window *viewWindow, const Common::Po
 				uint32 startTime = g_system->getMillis();
 
 				while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
-					_vm->yield(nullptr);
+					_vm->yield(nullptr, -1);
 					_vm->_sound->timerCallback();
 				}
 
@@ -2455,7 +2455,7 @@ int CapacitanceDockingBayDoor::mouseUp(Window *viewWindow, const Common::Point &
 			// Wait a second?
 			uint32 startTime = g_system->getMillis();
 			while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
-				_vm->yield(nullptr);
+				_vm->yield(nullptr, -1);
 				_vm->_sound->timerCallback();
 			}
 

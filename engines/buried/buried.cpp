@@ -314,8 +314,8 @@ void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
 	_messageQueue.push_back(msg);
 }
 
-void BuriedEngine::processVideoSkipMessages(VideoWindow *video) {
-	assert(video);
+void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId) {
+	assert(video || soundId >= 0);
 
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		MessageType messageType = it->message->getMessageType();
@@ -323,9 +323,14 @@ void BuriedEngine::processVideoSkipMessages(VideoWindow *video) {
 		if (messageType == kMessageTypeKeyUp) {
 			Common::KeyState keyState = ((KeyUpMessage *)it->message)->getKeyState();
 
-			// Send any skip video keyup events to the video player
+			// Send any skip keyup events to the audio/video players
 			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-				video->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
+				if (video)
+					video->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
+
+				if (soundId >= 0)
+					_sound->stopSound(soundId);
+
 				delete it->message;
 				it = _messageQueue.erase(it);
 			}
@@ -420,7 +425,7 @@ bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) 
 	return false;
 }
 
-void BuriedEngine::yield(VideoWindow *video) {
+void BuriedEngine::yield(VideoWindow *video, int soundId) {
 	// A cut down version of the Win16 yield function. Win32 handles this
 	// asynchronously, which we don't want. Only needed for internal event loops.
 
@@ -431,10 +436,10 @@ void BuriedEngine::yield(VideoWindow *video) {
 
 	pollForEvents();
 
-	// We only send video skipping messages from here. Otherwise, this is the same
+	// We only send audio/video skipping messages from here. Otherwise, this is the same
 	// as our main loop.
-	if (video && _allowVideoSkip)
-		processVideoSkipMessages(video);
+	if ((video || soundId >= 0) && _allowVideoSkip)
+		processAudioVideoSkipMessages(video, soundId);
 
 	_gfx->updateScreen();
 	_system->delayMillis(10);

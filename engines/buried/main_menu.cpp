@@ -213,7 +213,7 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 					video->playVideo();
 
 					while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped)
-						_vm->yield(video);
+						_vm->yield(video, -1);
 
 					_vm->_sound->restart();
 				}

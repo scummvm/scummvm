@@ -49,7 +49,6 @@ public:
 	// AMBIENT SOUND CHANNEL FUNCTIONS
 	bool setAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
-	uint32 getAmbientPosition();
 	bool isAmbientSoundPlaying();
 
 	bool setSecondaryAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
@@ -84,6 +83,7 @@ public:
 	// pause() is used for implementing pauseEngineIntern(). Since stop()/restart()
 	// are not re-entrant, they're not suitable for that purpose.
 	bool stop();
+	void stopSound(int soundId);
 	bool restart();
 	void pause(bool shouldPause);
 

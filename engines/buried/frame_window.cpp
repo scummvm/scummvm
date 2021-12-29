@@ -95,7 +95,7 @@ bool FrameWindow::showTitleSequence() {
 
 	uint32 startTime = g_system->getMillis();
 	while (g_system->getMillis() < (startTime + 7000) && !_vm->hasMessage(this, kMessageTypeLButtonDown, kMessageTypeLButtonDown) && !_vm->shouldQuit())
-		_vm->yield(nullptr);
+		_vm->yield(nullptr, -1);
 
 	_vm->_sound->stopInterfaceSound();
 	invalidateWindow();
@@ -117,7 +117,7 @@ bool FrameWindow::showTitleSequence() {
 	_vm->removeMouseMessages(video);
 
 	while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped && !_vm->hasMessage(this, kMessageTypeLButtonDown, kMessageTypeLButtonDown))
-		_vm->yield(video);
+		_vm->yield(video, -1);
 
 	delete video;
 

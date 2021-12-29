@@ -1307,7 +1307,7 @@ int TrialRecallScene::postEnterRoom(Window *viewWindow, const Location &priorLoc
 	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 	uint32 start = g_system->getMillis();
 	while (g_system->getMillis() - start < 10000)
-		_vm->yield(nullptr);
+		_vm->yield(nullptr, -1);
 	_vm->_gfx->setCursor(oldCursor);
 
 	// Force a recall
