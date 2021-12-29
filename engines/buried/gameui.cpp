@@ -292,6 +292,9 @@ void GameUIWindow::onEnable(bool enable) {
 }
 
 void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
+	const bool cloakingDisabled = _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1;
+	const bool interfaceMenuActive = (_bioChipRightWindow->getCurrentBioChip() == kItemBioChipInterface);
+
 	switch (key.keycode) {
 	case Common::KEYCODE_KP4:
 	case Common::KEYCODE_LEFT:
@@ -306,25 +309,20 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			_navArrowWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_s:
-		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
-			_vm->runSaveDialog();
+		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
+			_vm->handleSaveDialog();
 		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_o:
 	case Common::KEYCODE_l:
-		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
-			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
-			_bioChipRightWindow->invalidateWindow(false);
-			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
-
-			if (_vm->runLoadDialog().getCode() == Common::kUnknownError)
-				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
+		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
+			_vm->handleRestoreDialog();
 		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_p:
-		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1)
+		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive)
 			_vm->pauseGame();
 		else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));

@@ -43,7 +43,6 @@
 namespace Buried {
 
 BioChipMainViewWindow::BioChipMainViewWindow(BuriedEngine *vm, Window *parent, int currentBioChipID) : Window(vm, parent) {
-	_currentBioChipID = -1;
 	_rect = Common::Rect(0, 0, 432, 189);
 	_bioChipDisplayWindow = createBioChipSpecificViewWindow(currentBioChipID);
 	_currentBioChipID = currentBioChipID;
@@ -588,25 +587,10 @@ void InterfaceBioChipViewWindow::onLButtonDown(const Common::Point &point, uint 
 void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	switch (_curRegion) {
 	case REGION_SAVE:
-		if (!_vm->isDemo()) {
-			_vm->runSaveDialog();
-			((GameUIWindow *)getParent()->getParent()->getParent())->_bioChipRightWindow->destroyBioChipViewWindow();
-		}
+		_vm->handleSaveDialog();
 		break;
 	case REGION_RESTORE:
-		if (!_vm->isDemo()) {
-			FrameWindow *frameWindow = (FrameWindow *)_vm->_mainWindow;
-			Common::Error result = _vm->runLoadDialog();
-
-			if (result.getCode() == Common::kUnknownError) {
-				// Try to get us back to the main menu at this point
-				frameWindow->showMainMenu();
-				return;
-			} else if (result.getCode() == Common::kNoError) {
-				// Loaded successfully
-				return;
-			}
-		}
+		_vm->handleRestoreDialog();
 		break;
 	case REGION_QUIT:
 		if (_vm->runQuitDialog()) {

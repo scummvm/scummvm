@@ -150,6 +150,8 @@ public:
 	bool saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
 	Common::Error runSaveDialog();
 	Common::Error runLoadDialog();
+	void handleSaveDialog();
+	void handleRestoreDialog();
 
 private:
 	Common::WinResources *_mainEXE, *_library;

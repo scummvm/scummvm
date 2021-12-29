@@ -57,6 +57,7 @@ public:
 	void jumpInitiated(bool redraw);
 	void jumpEnded(bool redraw);
 	void toggleBioChip();
+	int getCurrentBioChip() const;
 
 	void onPaint();
 	void onEnable(bool enable);

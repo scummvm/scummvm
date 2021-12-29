@@ -37,6 +37,7 @@
 #include "graphics/wincursor.h"
 #include "gui/message.h"
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/console.h"
 #include "buried/frame_window.h"
@@ -582,19 +583,51 @@ bool BuriedEngine::isControlDown() const {
 }
 
 void BuriedEngine::pauseGame() {
-	FrameWindow *frameWindow = (FrameWindow *)_mainWindow;
-	SceneViewWindow *sceneView = ((GameUIWindow *)frameWindow->getMainChildWindow())->_sceneViewWindow;
-
 	if (isDemo())
 		return;
 
-	sceneView->_paused = true;
+	pauseEngineIntern(true);
 
 	// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
 	GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
 	dialog.runModal();
 
-	sceneView->_paused = false;
+	pauseEngineIntern(false);
+}
+
+void BuriedEngine::handleSaveDialog() {
+	FrameWindow *frameWindow = (FrameWindow *)_mainWindow;
+	BioChipRightWindow *bioChipWindow = ((GameUIWindow *)frameWindow->getMainChildWindow())->_bioChipRightWindow;
+
+	if (isDemo())
+		return;
+
+	pauseEngineIntern(true);
+
+	runSaveDialog();
+	bioChipWindow->destroyBioChipViewWindow();
+
+	pauseEngineIntern(false);
+}
+
+void BuriedEngine::handleRestoreDialog() {
+	FrameWindow *frameWindow = (FrameWindow *)_mainWindow;
+	BioChipRightWindow *bioChipWindow = ((GameUIWindow *)frameWindow->getMainChildWindow())->_bioChipRightWindow;
+
+	if (isDemo())
+		return;
+
+	pauseEngineIntern(true);
+
+	Common::Error result = runLoadDialog();
+	bioChipWindow->destroyBioChipViewWindow();
+
+	pauseEngineIntern(false);
+
+	if (result.getCode() == Common::kUnknownError) {
+		// Try to get us back to the main menu at this point
+		frameWindow->showMainMenu();
+	}
 }
 
 } // End of namespace Buried
