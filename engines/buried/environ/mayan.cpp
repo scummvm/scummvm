@@ -2151,8 +2151,10 @@ SetVolumeAndFlag::SetVolumeAndFlag(BuriedEngine *vm, Window *viewWindow, const L
 }
 
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
+	GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
+
 	if (environment == -1) {
-		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
+		InventoryWindow *inventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow;
 
 		flags.myTPCodeWheelStatus = flags.generalWalkthroughMode;
 		flags.myTPCodeWheelLeftIndex = flags.generalWalkthroughMode == 1 ? 8 : 0;
@@ -2176,15 +2178,15 @@ bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, 
 		flags.myAGHeadCOpenedTime = 0;
 		flags.myAGHeadDOpenedTime = 0;
 
-		flags.myPickedUpCeramicBowl = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemCeramicBowl) ? 1 : 0;
-		flags.myMCPickedUpSkull = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) ? 1 : 0;
-		flags.myWGRetrievedJadeBlock = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemJadeBlock) ? 1 : 0;
-		flags.myWTRetrievedLimestoneBlock = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemLimestoneBlock) ? 1 : 0;
-		flags.myAGRetrievedEntrySkull = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) ? 1 : 0;
-		flags.myAGRetrievedSpearSkull = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull) ? 1 : 0;
-		flags.myAGRetrievedCopperMedal = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemCopperMedallion) ? 1 : 0;
-		flags.myAGRetrievedObsidianBlock = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemObsidianBlock) ? 1 : 0;
-		flags.takenEnvironCart = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemEnvironCart) ? 1 : 0;
+		flags.myPickedUpCeramicBowl = inventoryWindow->isItemInInventory(kItemCeramicBowl) ? 1 : 0;
+		flags.myMCPickedUpSkull = inventoryWindow->isItemInInventory(kItemCavernSkull) ? 1 : 0;
+		flags.myWGRetrievedJadeBlock = inventoryWindow->isItemInInventory(kItemJadeBlock) ? 1 : 0;
+		flags.myWTRetrievedLimestoneBlock = inventoryWindow->isItemInInventory(kItemLimestoneBlock) ? 1 : 0;
+		flags.myAGRetrievedEntrySkull = inventoryWindow->isItemInInventory(kItemEntrySkull) ? 1 : 0;
+		flags.myAGRetrievedSpearSkull = inventoryWindow->isItemInInventory(kItemSpearSkull) ? 1 : 0;
+		flags.myAGRetrievedCopperMedal = inventoryWindow->isItemInInventory(kItemCopperMedallion) ? 1 : 0;
+		flags.myAGRetrievedObsidianBlock = inventoryWindow->isItemInInventory(kItemObsidianBlock) ? 1 : 0;
+		flags.takenEnvironCart = inventoryWindow->isItemInInventory(kItemEnvironCart) ? 1 : 0;
 
 		if (flags.generalWalkthroughMode == 1) {
 			flags.myMCPickedUpSkull = 1;
@@ -2192,20 +2194,20 @@ bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, 
 			flags.myAGRetrievedCopperMedal = 1;
 		}
 	} else if (environment == 2) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreEnteredMainCavern = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedMainCavern = 1;
+		flags.scoreEnteredMainCavern = 1;
+		flags.myVisitedMainCavern = 1;
 	} else if (environment == 3) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedWealthGod = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedSpecRooms = 1;
+		flags.myVisitedWealthGod = 1;
+		flags.myVisitedSpecRooms = 1;
 	} else if (environment == 4) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedWaterGod = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedSpecRooms = 1;
+		flags.myVisitedWaterGod = 1;
+		flags.myVisitedSpecRooms = 1;
 	} else if (environment == 5) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedArrowGod = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedSpecRooms = 1;
+		flags.myVisitedArrowGod = 1;
+		flags.myVisitedSpecRooms = 1;
 	} else if (environment == 6) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedDeathGod = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().myVisitedSpecRooms = 1;
+		flags.myVisitedDeathGod = 1;
+		flags.myVisitedSpecRooms = 1;
 	}
 
 	return true;
