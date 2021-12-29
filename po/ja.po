@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 16:09+0000\n"
+"POT-Creation-Date: 2021-12-29 16:48+0000\n"
 "PO-Revision-Date: 2021-12-25 17:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:574
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:576
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -142,7 +142,7 @@ msgstr "はい"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:574 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:576 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4324,13 +4324,13 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 msgid "Missing game code"
 msgstr "ゲームコードがありません"
 
-#: engines/buried/biochip_view.cpp:622
-msgid "Your game is now Paused.  Click OK to continue."
-msgstr "ゲームが一時停止しました。OKをクリックして続行してください。"
-
-#: engines/buried/buried.cpp:574
+#: engines/buried/buried.cpp:576
 msgid "Are you sure you want to quit?"
 msgstr "終了してもよろしいですか?"
+
+#: engines/buried/buried.cpp:594
+msgid "Your game is now Paused.  Click OK to continue."
+msgstr "ゲームが一時停止しました。OKをクリックして続行してください。"
 
 #: engines/buried/saveload.cpp:107
 msgid "Invalid save file name"

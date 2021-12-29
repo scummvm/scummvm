@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 16:09+0000\n"
+"POT-Creation-Date: 2021-12-29 16:48+0000\n"
 "PO-Revision-Date: 2021-12-09 15:18+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -132,7 +132,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:574
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:576
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -144,7 +144,7 @@ msgstr "Sí"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:574 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:576 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4358,15 +4358,15 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Controls principals del joc:"
 
-#: engines/buried/biochip_view.cpp:622
-#, fuzzy
-msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Joc pausat.  Premeu ESPAI per continuar."
-
-#: engines/buried/buried.cpp:574
+#: engines/buried/buried.cpp:576
 #, fuzzy
 msgid "Are you sure you want to quit?"
 msgstr "   Esteu segur de voler sortir?   "
+
+#: engines/buried/buried.cpp:594
+#, fuzzy
+msgid "Your game is now Paused.  Click OK to continue."
+msgstr "Joc pausat.  Premeu ESPAI per continuar."
 
 #: engines/buried/saveload.cpp:107
 #, fuzzy

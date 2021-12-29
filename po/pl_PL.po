@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 16:09+0000\n"
+"POT-Creation-Date: 2021-12-29 16:48+0000\n"
 "PO-Revision-Date: 2021-10-03 07:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -137,7 +137,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:574
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:576
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -149,7 +149,7 @@ msgstr "Tak"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:574 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:576 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4392,15 +4392,15 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Główne sterowanie gry:"
 
-#: engines/buried/biochip_view.cpp:622
-#, fuzzy
-msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Gra wstrzymana. Naciśnij spację, aby wznowić."
-
-#: engines/buried/buried.cpp:574
+#: engines/buried/buried.cpp:576
 #, fuzzy
 msgid "Are you sure you want to quit?"
 msgstr "   Na pewno chcesz wyjść?   "
+
+#: engines/buried/buried.cpp:594
+#, fuzzy
+msgid "Your game is now Paused.  Click OK to continue."
+msgstr "Gra wstrzymana. Naciśnij spację, aby wznowić."
 
 #: engines/buried/saveload.cpp:107
 msgid "Invalid save file name"
