@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 16:48+0000\n"
+"POT-Creation-Date: 2021-12-29 20:28+0000\n"
 "PO-Revision-Date: 2021-12-28 14:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -131,7 +131,7 @@ msgstr "Uw verbinding lijkt beperkt. Wilt u echt bestanden ermee downloaden?"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:576
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:577
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -143,7 +143,7 @@ msgstr "Ja"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:576 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:577 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4406,11 +4406,11 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
-#: engines/buried/buried.cpp:576
+#: engines/buried/buried.cpp:577
 msgid "Are you sure you want to quit?"
 msgstr "Weet u zeker dat u wilt stoppen?"
 
-#: engines/buried/buried.cpp:594
+#: engines/buried/buried.cpp:592
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spel is gepauzeerd. Klik OK om verder te gaan."
 
