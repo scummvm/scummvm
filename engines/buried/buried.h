@@ -138,6 +138,7 @@ public:
 	void releaseCapture() { _captureWindow = 0; }
 	bool runQuitDialog();
 	bool isControlDown() const;
+	void pauseGame();
 
 	// Save/Load
 	bool canLoadGameStateCurrently();

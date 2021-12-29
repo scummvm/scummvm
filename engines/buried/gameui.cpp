@@ -311,9 +311,9 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			_bioChipRightWindow->invalidateWindow(false);
 			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
 			_vm->runSaveDialog();
-			return;
-		}
-		// Fall through
+		} else if (_sceneViewWindow)
+			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		break;
 	case Common::KEYCODE_o:
 	case Common::KEYCODE_l:
 		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
@@ -323,9 +323,15 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 
 			if (_vm->runLoadDialog().getCode() == Common::kUnknownError)
 				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
-			return;
-		}
-		// Fall through
+		} else if (_sceneViewWindow)
+			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		break;
+	case Common::KEYCODE_p:
+		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1)
+			_vm->pauseGame();
+		else if (_sceneViewWindow)
+			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		break;
 	default:
 		if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));

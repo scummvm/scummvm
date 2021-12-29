@@ -40,9 +40,11 @@
 #include "buried/buried.h"
 #include "buried/console.h"
 #include "buried/frame_window.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/message.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
 #include "buried/window.h"
@@ -577,6 +579,22 @@ bool BuriedEngine::runQuitDialog() {
 
 bool BuriedEngine::isControlDown() const {
 	return _mainWindow && ((FrameWindow *)_mainWindow)->_controlDown;
+}
+
+void BuriedEngine::pauseGame() {
+	FrameWindow *frameWindow = (FrameWindow *)_mainWindow;
+	SceneViewWindow *sceneView = ((GameUIWindow *)frameWindow->getMainChildWindow())->_sceneViewWindow;
+
+	if (isDemo())
+		return;
+
+	sceneView->_paused = true;
+
+	// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
+	GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
+	dialog.runModal();
+
+	sceneView->_paused = false;
 }
 
 } // End of namespace Buried
