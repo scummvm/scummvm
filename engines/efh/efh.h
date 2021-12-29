@@ -488,7 +488,7 @@ private:
 	uint8 _windowWithBorderBuf[1500];
 	uint8 _map[7000];
 	uint8 _places[12000];
-	uint8 _curPlace[600];
+	uint8 _curPlace[24][24];
 	NPCStruct _npcBuf[100];
 	uint8 _imp1[13000];
 	uint8 _imp2[10000];
@@ -509,7 +509,7 @@ private:
 	uint8 *_mapBitmapRef;
 	UnkMapStruct _mapUnknown[100];
 	MapMonster _mapMonsters[64];
-	uint8 *_mapGameMapPtr;
+	uint8 _mapGameMap[64][64];
 
 	uint8 _defaultBoxColor;
 	FontDescr _fontDescr;

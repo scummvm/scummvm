@@ -192,7 +192,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
 	_mapBitmapRef = nullptr;
-	_mapGameMapPtr = nullptr;
 
 	_defaultBoxColor = 0;
 
@@ -881,6 +880,7 @@ void EfhEngine::initEngine() {
 	memset(_map, 0, sizeof(_map));
 	memset(_places, 0, sizeof(_places));
 	memset(_curPlace, 0, sizeof(_curPlace));
+	memset(_mapGameMap, 0, sizeof(_mapGameMap));
 	memset(_npcBuf, 0, sizeof(_npcBuf));
 	memset(_imp1, 0, sizeof(_imp1));
 	memset(_imp2, 0, sizeof(_imp2));
@@ -914,7 +914,10 @@ void EfhEngine::initEngine() {
 			_mapMonsters[i]._pictureRef[j] = 0;
 	}
 	
-	_mapGameMapPtr = &_map[2758];
+	uint8 *_mapPtr = &_map[2758];
+	for (int i = 0; i < 64; ++i)
+		for (int j = 0; j < 64; ++j)
+			_mapGameMap[i][j] = *_mapPtr++;
 
 	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
 	_vgaGraphicsStruct2->_shiftValue = 0x2000;
@@ -1163,10 +1166,10 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int mapSi
 		int16 var12 = 128;
 		for (int16 var16 = minX; var16 <= maxX; ++var16) {
 			if (largeMapFl) {
-				int16 idx = _mapGameMapPtr[(var16 * 64) + counterY]; // 64 = large map size (square)
+				int16 idx = _mapGameMap[var16][counterY];
 				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
 			} else {
-				int16 idx = _curPlace[(var16 * 24) + counterY]; // 24 = small map size (square)
+				int16 idx = _curPlace[var16][counterY];
 				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
 			}
 			var12 += 16;
@@ -1901,9 +1904,9 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
 				if (_largeMapFlag) {
-					_mapGameMapPtr[scriptNumberArray[0] * 6 + scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
+					_mapGameMap[scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
 				} else {
-					_curPlace[scriptNumberArray[0] * 24 + scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
+					_curPlace[scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
 				}
 			}
 			break;
@@ -2033,7 +2036,7 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 		for (int16 var8 = 0; var8 <= 23; ++var8) {
 			int16 var4 = counter + varE;
 			int16 var2 = var8 + varC;
-			_mapGameMapPtr[var2 + 64 * var4] = _curPlace[var8 + counter * 24];
+			_mapGameMap[var4][var2] = _curPlace[counter][var8];
 		}
 		redrawScreen();
 	}
@@ -2042,7 +2045,7 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 		for (int16 var8 = 0; var8 <= 23; ++var8) {
 			int16 var4 = counter + varE;
 			int16 var2 = var8 + varC;
-			_mapGameMapPtr[var2 + 64 * var4] = _curPlace[var8 + counter * 24];
+			_mapGameMap[var4][var2] = _curPlace[counter][var8];
 		}
 		redrawScreen();
 	}
@@ -2398,24 +2401,24 @@ void EfhEngine::computeMapAnimation() {
 			if (_largeMapFlag) {
 				if (_currentTileBankImageSetId[0] != 0)
 					continue;
-				uint8 var4 = _mapGameMapPtr[counterX * 64 + counterY];
+				uint8 var4 = _mapGameMap[counterX][counterY];
 				if (var4 >= 1 && var4 <= 0xF) {
 					if (getRandom(100) < 50)
-						_mapGameMapPtr[counterX * 64 + counterY] += 0xC5;
+						_mapGameMap[counterX][counterY] += 0xC5;
 				} else if (var4 >= 0xC6 && var4 <= 0xD5) {
 					if (getRandom(100) < 50)
-						_mapGameMapPtr[counterX * 64 + counterY] -= 0xC5;
+						_mapGameMap[counterX][counterY] -= 0xC5;
 				}
 			} else {
 				if (_currentTileBankImageSetId[0] != 0)
 					continue;
-				uint8 var4 = _curPlace[counterX * 24 + counterY];
+				uint8 var4 = _curPlace[counterX][counterY];
 				if (var4 >= 1 && var4 <= 0xF) {
 					if (getRandom(100) < 50)
-						_curPlace[counterX * 24 + counterY] += 0xC5;
+						_curPlace[counterX][counterY] += 0xC5;
 				} else if (var4 >= 0xC6 && var4 <= 0xD5) {
 					if (getRandom(100) < 50)
-						_curPlace[counterX * 24 + counterY] -= 0xC5;
+						_curPlace[counterX][counterY] -= 0xC5;
 				}
 			}
 		}
@@ -3106,7 +3109,7 @@ void EfhEngine::sub22AA8(int16 arg0) {
 						if (var2 != 0xFF)
 							var4 = var2;
 						
-						if (var4 != 0xFFFF) {
+						if (var4 != -1) {
 							for (int16 counter = 0; counter < 2; ++counter) {
 								if (varA) {
 									displayCenteredString("[DONE]", 128, 303, 117);
@@ -3225,9 +3228,9 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	if (_tileFact[imageSetId * 2 + 1] != 0xFF && !_word2C8D5) {
 		if ((arg4 == 1 && _word2C8D7) || (arg4 == 0 && _word2C8D7 && imageSetId != 128 && imageSetId != 121)) {
 			if (_largeMapFlag) {
-				_mapGameMapPtr[mapPosX * 64 + mapPosY] = _tileFact[imageSetId * 2 + 1];
+				_mapGameMap[mapPosX][mapPosY] = _tileFact[imageSetId * 2 + 1];
 			} else {
-				_curPlace[mapPosX * 24 + mapPosY] = _tileFact[imageSetId * 2 + 1];
+				_curPlace[mapPosX][mapPosY] = _tileFact[imageSetId * 2 + 1];
 			}
 
 			_redrawNeededFl = true;
@@ -6609,9 +6612,9 @@ void EfhEngine::saveEfhGame() {
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
 	if (_largeMapFlag)
-		return _mapGameMapPtr[mapPosX * 64 + mapPosY];
+		return _mapGameMap[mapPosX][mapPosY];
 
-	return _curPlace[mapPosX * 24 + mapPosY];
+	return _curPlace[mapPosX][mapPosY];
 }
 
 void EfhEngine::displayNextAnimFrame() {
@@ -6650,10 +6653,14 @@ void EfhEngine::setTextPos(int16 textPosX, int16 textPosY) {
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int id) {
+	// Note that 576 = 24 * 24
 	uint8 *placesPtr = &_places[576 * id];
 
-	// Note that 576 = 24 * 24
-	memcpy(_curPlace, placesPtr, 24 * 24);
+	for (int16 i = 0; i < 24; ++i) {
+		for (int16 j = 0; j < 24; ++j) {
+			_curPlace[i][j] = placesPtr[i * 24 + j];
+		}
+	}
 }
 
 } // End of namespace Efh
