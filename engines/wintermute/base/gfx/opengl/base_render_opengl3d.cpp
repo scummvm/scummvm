@@ -36,12 +36,6 @@
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
-// We need SDL.h for SDL_GL_GetProcAddress.
-#include "backends/platform/sdl/sdl-sys.h"
-PFNGLACTIVETEXTUREPROC glActiveTexturePtr;
-#endif
-
 namespace Wintermute {
 BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
@@ -54,19 +48,6 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 	_lightPositions.resize(maximumLightsCount());
 	_lightDirections.resize(maximumLightsCount());
 	(void)_spriteBatchMode; // silence warning
-
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
-	union {
-		void *obj_ptr;
-		void (APIENTRY *func_ptr)();
-	} u;
-	// We're casting from an object pointer to a function pointer, the
-	// sizes need to be the same for this to work.
-	assert(sizeof(u.obj_ptr) == sizeof(u.func_ptr));
-	u.obj_ptr = SDL_GL_GetProcAddress("glActiveTexture");
-	glActiveTexturePtr = (PFNGLACTIVETEXTUREPROC)u.func_ptr;
-	assert(glActiveTexturePtr);
-#endif
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -474,38 +455,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glAlphaFunc(GL_GEQUAL, 0.0f);
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
-		glActiveTexturePtr(GL_TEXTURE0);
-#elif defined(__MORPHOS__)
-		glActiveTextureARB(GL_TEXTURE0);
-#else
-		glActiveTexture(GL_TEXTURE0);
-#endif
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_TEXTURE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_TEXTURE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR);
-
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
-		glActiveTexturePtr(GL_TEXTURE1);
-#elif defined(__MORPHOS__)
-		glActiveTextureARB(GL_TEXTURE1);
-#else
-		glActiveTexture(GL_TEXTURE1);
-#endif
-		glDisable(GL_TEXTURE_2D);
-
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
-		glActiveTexturePtr(GL_TEXTURE0);
-#elif defined(__MORPHOS__)
-		glActiveTextureARB(GL_TEXTURE0);
-#else
-		glActiveTexture(GL_TEXTURE0);
-#endif
 
 		glViewport(0, 0, _width, _height);
 		setProjection2D();
