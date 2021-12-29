@@ -82,9 +82,6 @@ bool BioChipRightWindow::showBioChipMainView() {
 	if (_bioChipViewWindow)
 		return false;
 
-	if (_curBioChip == kItemBioChipInterface)
-		_vm->pauseEngineIntern(true);
-
 	((GameUIWindow *)_parent)->_sceneViewWindow->bioChipWindowDisplayed(true);
 	_vm->_sound->timerCallback();
 
@@ -102,9 +99,6 @@ bool BioChipRightWindow::showBioChipMainView() {
 bool BioChipRightWindow::destroyBioChipViewWindow() {
 	if (!_bioChipViewWindow)
 		return false;
-
-	if (_curBioChip == kItemBioChipInterface)
-		_vm->pauseEngineIntern(false);
 
 	_vm->_sound->timerCallback();
 	delete _bioChipViewWindow;

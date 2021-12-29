@@ -517,9 +517,11 @@ private:
 	Graphics::Surface *_background;
 	Graphics::Surface *_cycleCheck;
 	Graphics::Surface *_caret;
+	PauseToken _pauseToken;
 };
 
 InterfaceBioChipViewWindow::InterfaceBioChipViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
+	_pauseToken = _vm->pauseEngine();
 	_save = Common::Rect(192, 37, 300, 74);
 	_pause = Common::Rect(192, 84, 300, 121);
 	_restore = Common::Rect(313, 37, 421, 74);

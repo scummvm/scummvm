@@ -586,13 +586,9 @@ void BuriedEngine::pauseGame() {
 	if (isDemo())
 		return;
 
-	pauseEngineIntern(true);
-
 	// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
 	GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
-	dialog.runModal();
-
-	pauseEngineIntern(false);
+	runDialog(dialog);
 }
 
 void BuriedEngine::handleSaveDialog() {
@@ -602,12 +598,9 @@ void BuriedEngine::handleSaveDialog() {
 	if (isDemo())
 		return;
 
-	pauseEngineIntern(true);
-
+	PauseToken pt = pauseEngine();
 	runSaveDialog();
 	bioChipWindow->destroyBioChipViewWindow();
-
-	pauseEngineIntern(false);
 }
 
 void BuriedEngine::handleRestoreDialog() {
@@ -617,12 +610,9 @@ void BuriedEngine::handleRestoreDialog() {
 	if (isDemo())
 		return;
 
-	pauseEngineIntern(true);
-
+	PauseToken pt = pauseEngine();
 	Common::Error result = runLoadDialog();
 	bioChipWindow->destroyBioChipViewWindow();
-
-	pauseEngineIntern(false);
 
 	if (result.getCode() == Common::kUnknownError) {
 		// Try to get us back to the main menu at this point
