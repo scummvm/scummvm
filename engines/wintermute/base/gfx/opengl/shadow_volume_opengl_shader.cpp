@@ -36,14 +36,10 @@
 
 namespace Wintermute {
 
-#include "common/pack-start.h"
-
 struct ShadowVertexShader {
 	float x;
 	float y;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 //////////////////////////////////////////////////////////////////////////
 ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *volumeShader, OpenGL::ShaderGL *maskShader)

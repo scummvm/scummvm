@@ -545,21 +545,17 @@ BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
 	return new BaseSurfaceOpenGL3D(_gameRef, this);
 }
 
-#include "common/pack-start.h"
-
 struct SpriteVertex {
 	float u;
 	float v;
+	float x;
+	float y;
+	float z;
 	uint8 r;
 	uint8 g;
 	uint8 b;
 	uint8 a;
-	float x;
-	float y;
-	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
 									  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,

@@ -40,8 +40,6 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3DShader(inGame);
 }
 
-#include "common/pack-start.h"
-
 struct SpriteVertexShader {
 	float x;
 	float y;
@@ -51,9 +49,7 @@ struct SpriteVertexShader {
 	float g;
 	float b;
 	float a;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
 	: BaseRenderer3D(inGame), _spriteBatchMode(false), _flatShadowMaskShader(nullptr) {
