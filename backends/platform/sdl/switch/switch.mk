@@ -1,7 +1,7 @@
 scummvm.nro: $(EXECUTABLE)
 	mkdir -p ./switch_release/scummvm/data
 	mkdir -p ./switch_release/scummvm/doc
-	nacptool --create "ScummVM" "Cpasjuste" "$(VERSION)" ./switch_release/scummvm.nacp
+	nacptool --create "ScummVM" "ScummVM Team" "$(VERSION)" ./switch_release/scummvm.nacp
 	elf2nro $(EXECUTABLE) ./switch_release/scummvm/scummvm.nro --icon=$(srcdir)/dists/switch/icon.jpg --nacp=./switch_release/scummvm.nacp
 
 switch_release: scummvm.nro
