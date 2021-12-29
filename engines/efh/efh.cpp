@@ -273,7 +273,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_teamMonsterIdArray[i] = -1;
 		_stru32686[i].init();
 	}
-	
+
 	_unkArray2C8AA[2] = 1;
 	_teamSize = 1;
 	_word2C872 = 0;
@@ -304,7 +304,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_menuDepth = 0;
 	_word2D0BA = 0;
 
-
 	for (int i = 0; i < 15; ++i) {
 		_word3273A[i] = 0;
 	}
@@ -313,6 +312,31 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	for (int i = 0; i < 8; ++i)
 		_stru3244C[i].init();
 
+	memset(_bufferCharBM, 0, ARRAYSIZE(_bufferCharBM));
+	for (int i = 0; i < 3; ++i)
+		memset(_tileBank[i], 0, ARRAYSIZE(_tileBank[i]));
+	memset(_circleImageBuf, 0, ARRAYSIZE(_circleImageBuf));
+	memset(_portraitBuf, 0, ARRAYSIZE(_portraitBuf));
+	memset(_hiResImageBuf, 0, ARRAYSIZE(_hiResImageBuf));
+	memset(_loResImageBuf, 0, ARRAYSIZE(_loResImageBuf));
+	memset(_menuBuf, 0, ARRAYSIZE(_menuBuf));
+	memset(_windowWithBorderBuf, 0, ARRAYSIZE(_windowWithBorderBuf));
+	memset(_map, 0, ARRAYSIZE(_map));
+	memset(_places, 0, ARRAYSIZE(_places));
+	for (int i = 0; i < 24; ++i)
+		memset(_curPlace[i], 0, ARRAYSIZE(_curPlace[i]));
+	memset(_npcBuf, 0, ARRAYSIZE(_npcBuf));
+	memset(_imp1, 0, ARRAYSIZE(_imp1));
+	memset(_imp2, 0, ARRAYSIZE(_imp2));
+	memset(_titleSong, 0, ARRAYSIZE(_titleSong));
+	memset(_items, 0, ARRAYSIZE(_items));
+	memset(_tileFact, 0, ARRAYSIZE(_tileFact));
+	memset(_animInfo, 0, ARRAYSIZE(_animInfo));
+	memset(_history, 0, ARRAYSIZE(_history));
+	memset(_techData, 0, ARRAYSIZE(_techData));
+	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
+	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
+	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
 }
 
 EfhEngine::~EfhEngine() {
@@ -872,61 +896,10 @@ Common::String EfhEngine::getSavegameFilename(int slot) {
 
 void EfhEngine::initEngine() {
 	_videoMode = 2; // In the original, 2 = VGA/MCGA, EGA = 4, Tandy = 6, cga = 8.
-	memset(_bufferCharBM, 0, sizeof(_bufferCharBM));
 	_graphicsStruct = new EfhGraphicsStruct;
 	_graphicsStruct->copy(_vgaGraphicsStruct1);
 
-	for (int i = 0; i < 3; ++i) {
-		memset(_tileBank[i], 0, sizeof(_tileBank[i]));
-	}
-
-	memset(_circleImageBuf, 0, sizeof(_circleImageBuf));
-	memset(_portraitBuf, 0, sizeof(_portraitBuf));
-	memset(_hiResImageBuf, 0, sizeof(_hiResImageBuf));
-	memset(_loResImageBuf, 0, sizeof(_loResImageBuf));
-	memset(_menuBuf, 0, sizeof(_menuBuf));
-	memset(_windowWithBorderBuf, 0, sizeof(_windowWithBorderBuf));
-	memset(_map, 0, sizeof(_map));
-	memset(_places, 0, sizeof(_places));
-	memset(_curPlace, 0, sizeof(_curPlace));
-	memset(_mapGameMap, 0, sizeof(_mapGameMap));
-	memset(_npcBuf, 0, sizeof(_npcBuf));
-	memset(_imp1, 0, sizeof(_imp1));
-	memset(_imp2, 0, sizeof(_imp2));
-	memset(_titleSong, 0, sizeof(_titleSong));
-	for (int i = 0; i < 300; ++i)
-		_items[i].init();
-	memset(_tileFact, 0, sizeof(_tileFact));
-
-	for (int i = 0; i < 100; ++i)
-		_animInfo[i].init();
-
-	memset(_history, 0, sizeof(_history));
-	memset(_techData, 0, sizeof(_techData));
-
 	_mapBitmapRef = &_map[0];
-
-	// Replaces _mapMonstersPtr which was equal to &_map[902];
-	for (int i = 0; i < 64; ++i) {
-		_mapMonsters[i]._possessivePronounSHL6 = 0;
-		_mapMonsters[i]._field_1 = 0;
-		_mapMonsters[i]._guess_fullPlaceId = 0xFF;
-		_mapMonsters[i]._posX = 0;
-		_mapMonsters[i]._posY = 0;
-		_mapMonsters[i]._itemId_Weapon = 0;
-		_mapMonsters[i]._field_6 = 0;
-		_mapMonsters[i]._monsterRef = 0;
-		_mapMonsters[i]._field_8 = 0;
-		_mapMonsters[i]._field_9 = 0;
-		_mapMonsters[i]._groupSize = 0;
-		for (int j = 0; j < 9; ++j)
-			_mapMonsters[i]._pictureRef[j] = 0;
-	}
-	
-	uint8 *_mapPtr = &_map[2758];
-	for (int i = 0; i < 64; ++i)
-		for (int j = 0; j < 64; ++j)
-			_mapGameMap[i][j] = 0;
 
 	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
 	_vgaGraphicsStruct2->_shiftValue = 0x2000;
