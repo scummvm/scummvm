@@ -394,30 +394,24 @@ bool Scene::loadSceneLBA1() {
 	if (_useScenePatches) {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
-			if (_sceneNumActors >= 22) {
-				_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
-				_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 768;
-			}
+			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
+			_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 768;
 			break;
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
-			if (_sceneNumActors >= 30) {
-				_sceneActors[29]._pos.z = _sceneActors[29]._collisionPos.z = 1795;
-			}
+			_sceneActors[29]._pos.z = _sceneActors[29]._collisionPos.z = 1795;
 #if 0
-			if (sceneNumZones >= 23) {
-				_sceneZones[15].mins.x = 1104;
-				_sceneZones[15].mins.z = 8448;
-				_sceneZones[15].maxs.x = 4336;
-				_sceneZones[15].maxs.z = 11488;
-				_sceneZones[16].mins.x = 21104;
-				_sceneZones[16].mins.z = 4608;
-				_sceneZones[16].maxs.x = 23824;
-				_sceneZones[16].maxs.z = 8080;
-				_sceneZones[22].mins.x = 6144;
-				_sceneZones[22].mins.z = 6144;
-				_sceneZones[22].maxs.x = 8865;
-				_sceneZones[22].maxs.z = 6881;
-			}
+			_sceneZones[15].mins.x = 1104;
+			_sceneZones[15].mins.z = 8448;
+			_sceneZones[15].maxs.x = 4336;
+			_sceneZones[15].maxs.z = 11488;
+			_sceneZones[16].mins.x = 21104;
+			_sceneZones[16].mins.z = 4608;
+			_sceneZones[16].maxs.x = 23824;
+			_sceneZones[16].maxs.z = 8080;
+			_sceneZones[22].mins.x = 6144;
+			_sceneZones[22].mins.z = 6144;
+			_sceneZones[22].maxs.x = 8865;
+			_sceneZones[22].maxs.z = 6881;
 #endif
 			break;
 		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
@@ -470,7 +464,7 @@ void Scene::changeScene() {
 	if (_engine->isLBA1()) {
 		if (_useScenePatches) {
 			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
-				if (_sceneNumZones >= 15) {
+				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];
 					const IVec3 &track = _sceneTracks[8];
 					IVec3 &pos = _zoneHeroPos;
