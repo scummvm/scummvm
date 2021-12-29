@@ -259,7 +259,7 @@ bool ScummDebugger::Cmd_DiMuse(int argc, const char **argv) {
 			return true;
 		} else if (!strcmp(argv[1], "hook")) {
 			if (argc > 3 && atoi(argv[3]) != 0) {
-				debugPrintf("Attempting to play set hookId %d for sound %d...\n", atoi(argv[2]), atoi(argv[3]));
+				debugPrintf("Attempting to set hookId %d for sound %d...\n", atoi(argv[2]), atoi(argv[3]));
 				_vm->_imuseDigital->diMUSESetHook(atoi(argv[3]), atoi(argv[2]));
 			} else {
 				debugPrintf("Specify a hookId and a soundId;\nuse \"list\" to get a list of currently playing sounds.\n");
