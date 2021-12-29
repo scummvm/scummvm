@@ -307,9 +307,6 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		break;
 	case Common::KEYCODE_s:
 		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
-			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
-			_bioChipRightWindow->invalidateWindow(false);
-			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
 			_vm->runSaveDialog();
 		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));

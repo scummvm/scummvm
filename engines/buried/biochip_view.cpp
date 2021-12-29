@@ -588,8 +588,10 @@ void InterfaceBioChipViewWindow::onLButtonDown(const Common::Point &point, uint 
 void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	switch (_curRegion) {
 	case REGION_SAVE:
-		if (!_vm->isDemo())
+		if (!_vm->isDemo()) {
 			_vm->runSaveDialog();
+			((GameUIWindow *)getParent()->getParent()->getParent())->_bioChipRightWindow->destroyBioChipViewWindow();
+		}
 		break;
 	case REGION_RESTORE:
 		if (!_vm->isDemo()) {
