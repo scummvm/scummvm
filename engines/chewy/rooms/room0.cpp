@@ -189,7 +189,7 @@ void Room0::eyeAnim() {
 
 void Room0::eyeStart(EyeMode mode) {
 	ani_detail_info *adi;
-	int16 ende;
+	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
 	if (mode == EYE_START)
@@ -201,7 +201,7 @@ void Room0::eyeStart(EyeMode mode) {
 		ani_klappe_delay();
 	}
 
-	ende = 0;
+	ende = false;
 	flags.AniUserAction = true;
 
 	if (mode == EYE_START) {
@@ -246,11 +246,11 @@ void Room0::eyeStart(EyeMode mode) {
 			if (mode == EYE_START) {
 				++adi->ani_count;
 				if (adi->ani_count > 38)
-					ende = 1;
+					ende = true;
 			} else {
 				--adi->ani_count;
 				if (adi->ani_count == adi->start_ani - 1)
-					ende = 1;
+					ende = true;
 			}
 		}
 	}
@@ -337,12 +337,12 @@ void Room0::calc_auge_click(int16 ani_nr) {
 
 void Room0::eyeShoot() {
 	ani_detail_info *adi;
-	int16 ende;
+	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 47;
 
-	ende = 0;
+	ende = false;
 	det->start_detail(CH_BLITZ, 1, VOR);
 
 	while (!ende) {
@@ -360,7 +360,7 @@ void Room0::eyeShoot() {
 			spr_info[2] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, 47, ANI_HIDE);
 			spr_info[2].ZEbene = 192;
 			if (!det->get_ani_status(CH_BLITZ))
-				ende = 1;
+				ende = true;
 		}
 
 		set_up_screen(DO_SETUP);
@@ -389,12 +389,12 @@ void Room0::eyeShoot() {
 
 void Room0::auge_schleim_back() {
 	ani_detail_info *adi;
-	int16 ende;
+	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 53;
 
-	ende = 0;
+	ende = false;
 	flags.AniUserAction = true;
 
 	while (!ende) {
@@ -420,7 +420,7 @@ void Room0::auge_schleim_back() {
 			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
 			++adi->ani_count;
 			if (adi->ani_count == 77)
-				ende = 1;
+				ende = true;
 		}
 	}
 
@@ -468,7 +468,7 @@ void Room0::ch_schleim_auge() {
 
 void Room0::fuetter_start(int16 mode) {
 	ani_detail_info *adi;
-	int16 ende;
+	bool ende;
 
 	adi = det->get_ani_detail(FUETTER_SCHLAUCH);
 	if (!mode)
@@ -490,7 +490,7 @@ void Room0::fuetter_start(int16 mode) {
 		det->enable_sound(FUETTER_SCHLAUCH, 2);
 	}
 
-	ende = 0;
+	ende = false;
 	if (_G(spieler).R0SlimeUsed)
 		flags.AniUserAction = true;
 
@@ -515,11 +515,11 @@ void Room0::fuetter_start(int16 mode) {
 			if (!mode) {
 				++adi->ani_count;
 				if (adi->ani_count > 135)
-					ende = 1;
+					ende = true;
 			} else {
 				--adi->ani_count;
 				if (adi->ani_count == adi->start_ani - 1)
-					ende = 1;
+					ende = true;
 			}
 		}
 	}
@@ -583,13 +583,13 @@ void Room0::calc_kissen_click(int16 ani_nr) {
 void Room0::ch_fuetter() {
 	ani_detail_info *adi;
 	int16 i;
-	int16 ende;
+	bool ende;
 
 	adi = det->get_ani_detail(FUETTER_SCHLAUCH);
 	adi->ani_count = 136;
 
 	i = 152;
-	ende = 0;
+	ende = false;
 
 	if (_G(spieler).R0SlimeUsed)
 		flags.AniUserAction = true;
@@ -627,13 +627,13 @@ void Room0::ch_fuetter() {
 				++i;
 			++adi->ani_count;
 			if (adi->ani_count == 152)
-				ende = 1;
+				ende = true;
 		}
 	}
 
 	adi->ani_count = 138;
 
-	ende = 0;
+	ende = false;
 	det->start_detail(CH_NACH_FUETTERN, 2, VOR);
 	while (!ende) {
 		clear_prog_ani();
@@ -654,7 +654,7 @@ void Room0::ch_fuetter() {
 		set_ani_screen();
 
 		if (!det->get_ani_status(CH_NACH_FUETTERN))
-			ende = 1;
+			ende = true;
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -671,12 +671,12 @@ void Room0::ch_fuetter() {
 
 void Room0::ch_kissen() {
 	ani_detail_info *adi;
-	int16 ende, mode;
+	bool ende, mode;
 
 	adi = det->get_ani_detail(FUETTER_SCHLAUCH);
 	adi->ani_count = 161;
 
-	ende = 0;
+	ende = false;
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	det->start_detail(CH_WIRFT_KISSEN, 1, VOR);
 	mode = 0;
@@ -706,7 +706,7 @@ void Room0::ch_kissen() {
 				adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
 				--adi->ani_count;
 				if (adi->ani_count == 151)
-					ende = 1;
+					ende = true;
 			}
 		}
 	}
