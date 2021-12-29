@@ -598,9 +598,8 @@ void BuriedEngine::handleSaveDialog() {
 	if (isDemo())
 		return;
 
-	PauseToken pt = pauseEngine();
-	runSaveDialog();
-	bioChipWindow->destroyBioChipViewWindow();
+	if (saveGameDialog())
+		bioChipWindow->destroyBioChipViewWindow();
 }
 
 void BuriedEngine::handleRestoreDialog() {
@@ -610,14 +609,8 @@ void BuriedEngine::handleRestoreDialog() {
 	if (isDemo())
 		return;
 
-	PauseToken pt = pauseEngine();
-	Common::Error result = runLoadDialog();
-	bioChipWindow->destroyBioChipViewWindow();
-
-	if (result.getCode() == Common::kUnknownError) {
-		// Try to get us back to the main menu at this point
-		frameWindow->showMainMenu();
-	}
+	if (loadGameDialog())
+		bioChipWindow->destroyBioChipViewWindow();
 }
 
 } // End of namespace Buried

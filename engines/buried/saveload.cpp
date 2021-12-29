@@ -510,42 +510,4 @@ bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	return s.bytesSynced() - startBytes == 1024;
 }
 
-Common::Error BuriedEngine::runLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
-
-	int slot = slc.runModalWithCurrentTarget();
-
-	Common::Error result;
-
-	if (slot >= 0) {
-		if (loadGameState(slot).getCode() == Common::kNoError)
-			result = Common::kNoError;
-		else
-			result = Common::kUnknownError;
-	} else {
-		result = Common::kUserCanceled;
-	}
-
-	return result;
-}
-
-Common::Error BuriedEngine::runSaveDialog() {
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
-
-	int slot = slc.runModalWithCurrentTarget();
-
-	Common::Error result;
-
-	if (slot >= 0) {
-		if (saveGameState(slot, slc.getResultString(), false).getCode() == Common::kNoError)
-			result = Common::kNoError;
-		else
-			result = Common::kUnknownError;
-	} else {
-		result = Common::kUserCanceled;
-	}
-
-	return result;
-}
-
 } // End of namespace Buried

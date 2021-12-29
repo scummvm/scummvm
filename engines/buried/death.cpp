@@ -444,18 +444,8 @@ void DeathWindow::onLButtonUp(const Common::Point &point, uint flags) {
 					return;
 				}
 			} else {
-				// Show restore game window
-				FrameWindow *frameWindow = (FrameWindow *)_parent;
-				Common::Error result = _vm->runLoadDialog();
-
-				if (result.getCode() == Common::kUnknownError) {
-					// Try to get us back to the main menu at this point
-					frameWindow->showMainMenu();
+				if (_vm->loadGameDialog())
 					return;
-				} else if (result.getCode() == Common::kNoError) {
-					// Loaded successfully
-					return;
-				}
 			}
 		}
 		break;

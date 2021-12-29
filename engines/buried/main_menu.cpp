@@ -229,21 +229,9 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				((FrameWindow *)_parent)->startNewGame(_walkthrough, _showIntro);
 			}
 			return;
-		case BUTTON_RESTORE_GAME: {
-			FrameWindow *frameWindow = (FrameWindow *)_parent;
-			Common::Error result = _vm->runLoadDialog();
-
-			if (result.getCode() == Common::kUnknownError) {
-				// Try to get us back to the main menu at this point
-				frameWindow->showMainMenu();
-				return;
-			} else if (result.getCode() == Common::kNoError) {
-				// Loaded successfully
-				return;
-			}
-
-			break;
-		}
+		case BUTTON_RESTORE_GAME:
+			_vm->loadGameDialog();
+			return;
 		case BUTTON_CREDITS:
 			((FrameWindow *)_parent)->showCredits();
 			return;
