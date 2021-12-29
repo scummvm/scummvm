@@ -294,7 +294,7 @@ private:
 	void playIntro();
 	void initEngine();
 	void initMapMonsters();
-	void loadMapMonsters();
+	void loadMapArrays();
 	void saveAnimImageSetId();
 	int16 getEquipmentDefense(int16 charId, bool flag);
 	uint16 sub1C80A(int16 charId, int field18, bool flag);
