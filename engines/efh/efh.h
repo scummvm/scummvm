@@ -119,7 +119,7 @@ struct ItemStruct {
 	uint8 _defense;
 	uint8 _attacks;
 	uint8 _uses;
-	uint8 field_13;
+	int8 field_13; // data contains values from -8 to +8
 	uint8 _range;
 	uint8 _attackType;
 	uint8 field_16;
@@ -228,6 +228,13 @@ struct Stru32686 {
 struct Stru3244C {
 	int16 _field0;
 	int16 _field2;
+
+	void init();
+};
+
+struct TileFactStruct {
+	uint8 _field0;
+	uint8 _field1;
 
 	void init();
 };
@@ -494,7 +501,7 @@ private:
 	uint8 _imp2[10000];
 	uint8 _titleSong[1024];
 	ItemStruct _items[300];
-	uint8 _tileFact[864];
+	TileFactStruct _tileFact[432];
 	AnimInfo _animInfo[100];
 	uint8 _history[256];
 	uint8 _techData[4096];
