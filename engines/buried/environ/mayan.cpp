@@ -2119,11 +2119,6 @@ int DeathGodPuzzleBox::specifyCursor(Window *viewWindow, const Common::Point &po
 }
 
 bool DeathGodPuzzleBox::isPuzzleSolved() const {
-	// TODO: Ask players for solutions for other languages
-	// clone2727 has the English, French, and Japanese source.
-	// clone2727 has the Italian and Spanish versions and solved the puzzle
-	// manually for those.
-
 	switch (_vm->getLanguage()) {
 	case Common::DE_DEU:
 	case Common::ES_ESP:

@@ -140,7 +140,7 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 	((GameUIWindow *)_parent)->_inventoryWindow->destroyInfoWindow();
 	((GameUIWindow *)_parent)->_inventoryWindow->destroyBurnedLetterWindow();
 
-	// clone2727: This logic was broken in the original. retVal wasn't initialized.
+	// This logic was broken in the original. retVal wasn't initialized.
 	bool retVal = false;
 
 	// Did we click anywhere near the forward button?
