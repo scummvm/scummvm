@@ -518,7 +518,7 @@ void InventoryWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	}
 
 	if (_textSelected >= 0) {
-		const uint16 curItem = getCurItem();
+		curItem = getCurItem();
 
 		for (int i = 0; i < 5; i++) {
 			if (inventoryText[i].contains(point) && (curItem + i - 2) >= 0 && (curItem + i - 2) < (int)_itemArray.size() && i == _textSelected) {
