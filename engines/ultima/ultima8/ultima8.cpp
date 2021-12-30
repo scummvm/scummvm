@@ -726,17 +726,21 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
-	Gump *gump = _desktopGump->FindGump<ModalGump>();
-	if (gump) {
+	// Handle the fact that we can get 2 modals stacking.
+	// We want the focussed one preferrably.
+	Gump *modal = dynamic_cast<ModalGump *>(_desktopGump->GetFocusChild());
+	if (!modal)
+		modal = _desktopGump->FindGump<ModalGump>();
+	if (modal) {
 		_avatarMoverProcess->resetMovementFlags();
 	}
 
 	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
-	keymapper->setEnabledKeymapType(gump ? Common::Keymap::kKeymapTypeGui : Common::Keymap::kKeymapTypeGame);
+	keymapper->setEnabledKeymapType(modal ? Common::Keymap::kKeymapTypeGui : Common::Keymap::kKeymapTypeGame);
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		if (gump) {
+		if (modal) {
 			// Paste from Clip-Board on Ctrl-V - Note this should be a flag of some sort
 			if (event.kbd.keycode == Common::KEYCODE_v && (event.kbd.flags & Common::KBD_CTRL)) {
 				if (!g_system->hasTextInClipboard())
@@ -746,7 +750,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 				// Only read the first line of text
 				while (!text.empty() && text.firstChar() >= ' ')
-					gump->OnTextInput(text.firstChar());
+					modal->OnTextInput(text.firstChar());
 
 				return;
 			}
@@ -755,15 +759,15 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 				event.kbd.ascii <= 255 &&
 				!(event.kbd.ascii >= 0x7F && // control chars
 					event.kbd.ascii <= 0x9F)) {
-				gump->OnTextInput(event.kbd.ascii);
+				modal->OnTextInput(event.kbd.ascii);
 			}
 
-			gump->OnKeyDown(event.kbd.keycode, event.kbd.flags);
+			modal->OnKeyDown(event.kbd.keycode, event.kbd.flags);
 		}
 		break;
 	case Common::EVENT_KEYUP:
-		if (gump) {
-			gump->OnKeyUp(event.kbd.keycode);
+		if (modal) {
+			modal->OnKeyUp(event.kbd.keycode);
 		}
 		break;
 

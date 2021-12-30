@@ -1862,6 +1862,12 @@ bool Debugger::cmdShowMenu(int argc, const char **argv) {
 		debugPrintf("Not opening menu: cruStasis\n");
 		return false;
 	}
+	Gump *gump = Ultima8Engine::get_instance()->getDesktopGump()->FindGump<ModalGump>();
+	if (gump) {
+		// ensure any modal gump gets the message to close before we open the menu.
+		gump->Close();
+		return false;
+	}
 	MenuGump::showMenu();
 	return false;
 }
