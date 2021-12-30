@@ -47,12 +47,12 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, _vertices.data());
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	return true;
 }
@@ -62,6 +62,8 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	// Disable z-buffer writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -72,8 +74,6 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
 
 	glShadeModel(GL_FLAT);
-	glDisable(GL_LIGHTING);
-
 	// Make sure that no pixels get drawn to the frame buffer
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ZERO, GL_ONE);
@@ -125,14 +125,15 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
 
 	// Draw a big, gray square
 	glVertexPointer(3, GL_FLOAT, sizeof(ShadowVertex), &_shadowMask[0].x);
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ShadowVertex), &_shadowMask[0].r);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	// Restore render states
 	glEnable(GL_DEPTH_TEST);

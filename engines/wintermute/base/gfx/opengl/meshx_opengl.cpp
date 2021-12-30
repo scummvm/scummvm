@@ -57,7 +57,9 @@ bool MeshXOpenGL::render(ModelX *model) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[materialIndex]->_emissive.data);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[materialIndex]->_shininess);
 
+		bool textureEnable = false;
 		if (_materials[materialIndex]->getSurface()) {
+			textureEnable = true;
 			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(_materials[materialIndex]->getSurface())->setTexture();
 		} else {
@@ -67,13 +69,19 @@ bool MeshXOpenGL::render(ModelX *model) {
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		if (textureEnable)
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glVertexPointer(3, GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kPositionOffset);
 		glNormalPointer(GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kNormalOffset);
-		glTexCoordPointer(2, GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kTextureCoordOffset);
+		if (textureEnable)
+			glTexCoordPointer(2, GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kTextureCoordOffset);
 
 		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData.data() + _indexRanges[i]);
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);

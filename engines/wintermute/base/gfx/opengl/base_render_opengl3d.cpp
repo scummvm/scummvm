@@ -189,7 +189,7 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 
 	glLoadMatrixf(worldTransformation.getData());
 
-	glDepthMask(false);
+	glDepthMask(GL_FALSE);
 	glEnable(GL_TEXTURE_2D);
 	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
 
@@ -203,7 +203,11 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	glDepthMask(true);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glDepthMask(GL_TRUE);
 	glLoadMatrixf(_lastViewMatrix.getData());
 }
 
@@ -267,6 +271,7 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -275,6 +280,9 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, vertices);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 
 	setup2D(true);
 }
@@ -298,9 +306,9 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 	byte b = RGBCOLGetB(color);
 
 	glBegin(GL_LINES);
-	glColor4b(r, g, b, a);
-	glVertex3f(x1, y1, 0.9f);
-	glVertex3f(x2, y2, 0.9f);
+		glColor4ub(r, g, b, a);
+		glVertex3f(x1, y1, 0.9f);
+		glVertex3f(x2, y2, 0.9f);
 	glEnd();
 
 	return true;
@@ -444,9 +452,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
-		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_FOG);
-		glLightModeli(GL_LIGHT_MODEL_AMBIENT, 0);
 
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CCW);
@@ -535,6 +541,7 @@ bool BaseRenderOpenGL3D::setupLines() {
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
+		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -673,6 +680,10 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	if (alphaDisable) {
 		glEnable(GL_ALPHA_TEST);
 	}
@@ -690,10 +701,10 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	glDisable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDisableClientState(GL_COLOR_ARRAY);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
+	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render walk planes
@@ -757,6 +768,7 @@ void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &pl
 	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glFrontFace(GL_CCW);
+	glDisable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render walk planes
