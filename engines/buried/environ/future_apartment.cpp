@@ -489,9 +489,6 @@ int KitchenUnitShopNet::onCharacter(Window *viewWindow, const Common::KeyState &
 
 		if (character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE) {
 			if (!_shopNetCode.empty()) {
-				// clone2727 asks why the sound effect is being played again
-				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9));
-
 				if (_shopNetCode.size() == 6 || _shopNetCode.size() == 11) {
 					_shopNetCode.deleteLastChar();
 					_shopNetCode.deleteLastChar();
