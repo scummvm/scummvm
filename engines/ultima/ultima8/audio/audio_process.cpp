@@ -339,6 +339,23 @@ void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 	}
 }
 
+void AudioProcess::setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume) {
+	AudioMixer *mixer = AudioMixer::get_instance();
+
+	Std::list<SampleInfo>::iterator it;
+	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
+		if (it->_sfxNum == sfxNum && it->_sfxNum != -1 && objId == it->_objId) {
+			it->_volume = volume;
+
+			int lVol = 256, _rVol = 256;
+			// TODO: does the original recalculate relative volume or just set abosolute?
+			calculateSoundVolume(it->_objId, it->_lVol, it->_rVol);
+			mixer->setVolume(it->_channel, (lVol * it->_volume) / 256, (_rVol * it->_volume) / 256);
+		}
+	}
+}
+
+
 //
 // Speech
 //
@@ -592,6 +609,25 @@ uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/)
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->setVolumeSFX(sfxNum, volume);
 	else perr << "Error: No AudioProcess" << Std::endl;
+
+	return 0;
+}
+
+uint32 AudioProcess::I_setVolumeForObjectSFX(const uint8 *args, unsigned int /*argsize*/) {
+	// Sets volume for last played instances of sfxNum on object
+	ARG_ITEM_FROM_PTR(item);
+	ARG_SINT16(sfxNum);
+	ARG_UINT8(volume);
+
+	if (!item) {
+		warning("I_setVolumeForObjectSFX: Couldn't get item");
+	} else {
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			ap->setVolumeForObjectSFX(item->getObjId(), sfxNum, volume);
+		else
+			warning("I_setVolumeForObjectSFX: No AudioProcess");
+	}
 
 	return 0;
 }

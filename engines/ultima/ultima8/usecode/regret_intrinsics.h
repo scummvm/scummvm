@@ -85,7 +85,7 @@ Intrinsic RegretIntrinsics[] = {
 	MainActor::I_getMana, // Intrinsic030()
 	Item::I_getFamily, // Intrinsic031()
 	Actor::I_destroyContents, // Intrinsic032()
-	0, // Intrinsic033() AudioProcess::I_setVolumeForItemSFX
+	AudioProcess::I_setVolumeForObjectSFX, // Intrinsic033()
 	Item::I_getDirToItem, // Intrinsic034()
 	AudioProcess::I_isSFXPlayingForObject, // Intrinsic035()
 	Item::I_getRangeIfVisible, // Intrinsic036()
@@ -389,7 +389,7 @@ Intrinsic RegretIntrinsics[] = {
 	Egg::I_getEggXRange, // Intrinsic14F()
 	// 0150
 	Actor::I_clrInCombat, // Intrinsic150()
-	PaletteFaderProcess::I_jumpToAllGivenColor, // Intrinsic151() PaletteFaderProcess::I_jumpToColor
+	PaletteFaderProcess::I_jumpToAllGivenColor, // Intrinsic151()
 	Item::I_setFrame, // Intrinsic152()
 	UCMachine::I_numToStr, // Intrinsic153()
 	Actor::I_getDir, // Intrinsic154()
@@ -465,7 +465,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	MainActor::I_getMana,           // Intrinsic030 10f8:3b4a
 	Item::I_getFamily,              // Intrinsic031 10b0:1036
 	Actor::I_destroyContents,       // Intrinsic032 10b0:14f3
-	0, // AudioProcess::I_setVolumeForItemSFX, // Intrinsic033 10b0:3a33
+	AudioProcess::I_setVolumeForObjectSFX, // Intrinsic033 10b0:3a33
 	Item::I_getDirToItem,           // Intrinsic034 10b0:1ab8
 	AudioProcess::I_isSFXPlayingForObject, // Intrinsic035 10b0:3a0b
 	Item::I_touch,                  // Intrinsic036 10b0:2558
@@ -839,7 +839,7 @@ Intrinsic RegretDeIntrinsics[] = {
 	MainActor::I_getMana,           // Intrinsic030 10f8:3b4a
 	Item::I_getFamily,              // Intrinsic031 10b0:1036
 	Actor::I_destroyContents,       // Intrinsic032 10b0:14f3
-	0, // AudioProcess::I_setVolumeForItemSFX,  // Intrinsic033 10b0:3a33
+	AudioProcess::I_setVolumeForObjectSFX,  // Intrinsic033 10b0:3a33
 	Item::I_getDirToItem,           // Intrinsic034 10b0:1ab8
 	AudioProcess::I_isSFXPlayingForObject, // Intrinsic035 10b0:3a0b
 	Item::I_getRangeIfVisible,      // Intrinsic036 1140:258e

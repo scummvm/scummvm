@@ -83,6 +83,7 @@ public:
 	INTRINSIC(I_isSFXPlaying);
 	INTRINSIC(I_isSFXPlayingForObject);
 	INTRINSIC(I_setVolumeSFX);
+	INTRINSIC(I_setVolumeForObjectSFX);
 	INTRINSIC(I_stopSFX);
 	INTRINSIC(I_stopSFXCru);
 	INTRINSIC(I_stopAllSFX);
@@ -105,6 +106,7 @@ public:
 	bool isSFXPlaying(int sfxNum);
 	bool isSFXPlayingForObject(int sfxNum, ObjId objId);
 	void setVolumeSFX(int sfxNum, uint8 volume);
+	void setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume);
 
 	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
 					uint32 pitchShift = PITCH_SHIFT_NONE, uint16 volume = 255);
