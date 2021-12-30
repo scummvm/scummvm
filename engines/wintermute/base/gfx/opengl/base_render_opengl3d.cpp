@@ -280,7 +280,7 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 }
 
 bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
-	glClearColor(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, 1.0f);
+	glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	return true;
 }
@@ -317,10 +317,10 @@ bool BaseRenderOpenGL3D::setProjection() {
 	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
 
 	float verticalViewAngle = _fov;
-	float aspectRatio = float(viewportWidth) / float(viewportHeight);
+	float aspectRatio = viewportWidth / viewportHeight;
 	float top = _nearPlane * tanf(verticalViewAngle * 0.5f);
 
-	float scaleMod = static_cast<float>(_height) / static_cast<float>(viewportHeight);
+	float scaleMod = _height / viewportHeight;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
