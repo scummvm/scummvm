@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-29 22:25+0000\n"
-"PO-Revision-Date: 2021-12-25 17:26+0000\n"
+"PO-Revision-Date: 2021-12-30 10:52+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5100,7 +5100,7 @@ msgstr "チートを有効化"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Cキーでチートが使えます。"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
