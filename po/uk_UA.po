@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 22:25+0000\n"
+"POT-Creation-Date: 2021-12-30 11:28+0000\n"
 "PO-Revision-Date: 2021-12-24 21:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -70,8 +70,8 @@ msgstr "Вгору"
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
-#: engines/cine/saveload.cpp:863 engines/drascula/saveload.cpp:48
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
+#: engines/drascula/saveload.cpp:48 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -134,7 +134,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:577
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:579
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -146,7 +146,7 @@ msgstr "Так"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:577 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:579 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -170,18 +170,19 @@ msgstr ""
 #: gui/massadd.cpp:88 gui/options.cpp:2140 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
-#: engines/drascula/saveload.cpp:48 engines/groovie/script.cpp:605
-#: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1352
-#: engines/scumm/scumm.cpp:1378 engines/scumm/scumm.cpp:1400
-#: engines/scumm/scumm.cpp:1668 engines/scumm/scumm.cpp:2138
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
-#: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
-#: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
-#: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:428
-#: engines/sword2/animation.cpp:448 engines/sword2/animation.cpp:464
-#: engines/sword2/animation.cpp:474 engines/zvision/file/save_manager.cpp:225
+#: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
+#: engines/groovie/script.cpp:605 engines/parallaction/saveload.cpp:270
+#: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
+#: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
+#: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
+#: engines/scumm/scumm.cpp:1400 engines/scumm/scumm.cpp:1668
+#: engines/scumm/scumm.cpp:2138 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
+#: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
+#: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
+#: engines/sword2/animation.cpp:428 engines/sword2/animation.cpp:448
+#: engines/sword2/animation.cpp:464 engines/sword2/animation.cpp:474
+#: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
 
@@ -4373,17 +4374,49 @@ msgstr "Автор перекладу проти того, щоб його пе�
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
-#: engines/buried/buried.cpp:577
+#: engines/buried/buried.cpp:579
 msgid "Are you sure you want to quit?"
 msgstr "Ви упевнені, що хочете вийти?"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:592
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Ігру призупинено. Натисніть OK для продовження."
 
-#: engines/buried/saveload.cpp:107
-msgid "Invalid save file name"
-msgstr "Неправильна назва файлу збереження стану"
+#: engines/buried/saveload.cpp:66
+#, fuzzy
+#| msgid ""
+#| "ScummVM found that you have old saved games for Drascula that should be "
+#| "converted.\n"
+#| "The old saved game format is no longer supported, so you will not be able "
+#| "to load your games if you don't convert them.\n"
+#| "\n"
+#| "Press OK to convert them now, otherwise you will be asked again the next "
+#| "time you start the game.\n"
+msgid ""
+"ScummVM found that you have saved games that should be converted from the "
+"original saved game format.\n"
+"The original saved game format is no longer supported directly, so you will "
+"not be able to load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"ScummVM знайшов, що ви маєте старі збережені ігри для Drascula.\n"
+"Збережені у старому форматі ігри не підтримуються, і ви не зможете їх "
+"завантажити, якщо не переведете у новий формат.\n"
+"\n"
+"Натисніть ОК, щоб перевести їх зараз, інакше це повідомлення з'явиться при "
+"наступному запуску гри.\n"
+
+#: engines/buried/saveload.cpp:165
+#, fuzzy
+#| msgid ""
+#| "This saved game was created with a different version of the game, unable "
+#| "to load it"
+msgid "Saved game was created with a newer version of ScummVM. Unable to load."
+msgstr ""
+"Цей файл зі збереженою грою було створено у іншій версії гри, не можу його "
+"прочитати"
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -8631,6 +8664,9 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Invalid save file name"
+#~ msgstr "Неправильна назва файлу збереження стану"
 
 #~ msgid "Enable cross fade"
 #~ msgstr "Ввімкнути плавне вицвітання"

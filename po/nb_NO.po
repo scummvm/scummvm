@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 22:25+0000\n"
+"POT-Creation-Date: 2021-12-30 11:28+0000\n"
 "PO-Revision-Date: 2021-12-22 19:04+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -69,8 +69,8 @@ msgstr "Oppover"
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
-#: engines/cine/saveload.cpp:863 engines/drascula/saveload.cpp:48
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
+#: engines/drascula/saveload.cpp:48 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -133,7 +133,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:577
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:579
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -145,7 +145,7 @@ msgstr "Ja"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:577 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:579 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -169,18 +169,19 @@ msgstr ""
 #: gui/massadd.cpp:88 gui/options.cpp:2140 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
-#: engines/drascula/saveload.cpp:48 engines/groovie/script.cpp:605
-#: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1352
-#: engines/scumm/scumm.cpp:1378 engines/scumm/scumm.cpp:1400
-#: engines/scumm/scumm.cpp:1668 engines/scumm/scumm.cpp:2138
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
-#: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
-#: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
-#: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:428
-#: engines/sword2/animation.cpp:448 engines/sword2/animation.cpp:464
-#: engines/sword2/animation.cpp:474 engines/zvision/file/save_manager.cpp:225
+#: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
+#: engines/groovie/script.cpp:605 engines/parallaction/saveload.cpp:270
+#: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
+#: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
+#: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
+#: engines/scumm/scumm.cpp:1400 engines/scumm/scumm.cpp:1668
+#: engines/scumm/scumm.cpp:2138 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
+#: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
+#: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
+#: engines/sword2/animation.cpp:428 engines/sword2/animation.cpp:448
+#: engines/sword2/animation.cpp:464 engines/sword2/animation.cpp:474
+#: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
 
@@ -4369,17 +4370,57 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Mangler spillkode"
 
-#: engines/buried/buried.cpp:577
+#: engines/buried/buried.cpp:579
 msgid "Are you sure you want to quit?"
 msgstr "Er du sikker på at du vil avslutte?"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:592
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spillet er satt på pause. Trykk på OK for å fortsette."
 
-#: engines/buried/saveload.cpp:107
-msgid "Invalid save file name"
-msgstr "Ugyldig navn for lagret spill"
+#: engines/buried/saveload.cpp:66
+#, fuzzy
+#| msgid ""
+#| "ScummVM found that you have old saved games for Drascula that should be "
+#| "converted.\n"
+#| "The old saved game format is no longer supported, so you will not be able "
+#| "to load your games if you don't convert them.\n"
+#| "\n"
+#| "Press OK to convert them now, otherwise you will be asked again the next "
+#| "time you start the game.\n"
+msgid ""
+"ScummVM found that you have saved games that should be converted from the "
+"original saved game format.\n"
+"The original saved game format is no longer supported directly, so you will "
+"not be able to load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"ScummVM har oppdaget at du har eldre lagrede spill for Drascula som burde "
+"bli konvertert.\n"
+"Det gamle formatet for lagrede spill støttes ikke lengre, så du vil ikke "
+"kunne laste inn eksisterende lagrede spillene om du ikke konverterer dem "
+"først.\n"
+"\n"
+"Trykk på OK for å konvertere dem nå, ellers vil du bli spurt igjen neste "
+"gang du starter spillet.\n"
+"\n"
+"Det gamle formatet for lagrede spill støttes ikke lengre, så du vil ikke "
+"være i stand til å laste de lagrede spillene,\n"
+"med mindre du konverterer dem.\n"
+"Trykk OK for å konvertere dem nå, ellers vil du bli spurt igjen neste gang "
+"du starter spillet.\n"
+
+#: engines/buried/saveload.cpp:165
+#, fuzzy
+#| msgid ""
+#| "This saved game was created with a different version of the game, unable "
+#| "to load it"
+msgid "Saved game was created with a newer version of ScummVM. Unable to load."
+msgstr ""
+"Det lagrede spillet ble opprettet med en annen versjon av spillet, og det "
+"lagrede spillet kan ikke bli lastet inn."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -8676,6 +8717,9 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "Invalid save file name"
+#~ msgstr "Ugyldig navn for lagret spill"
 
 #~ msgid "Enable cross fade"
 #~ msgstr "Aktiver lydovergang"

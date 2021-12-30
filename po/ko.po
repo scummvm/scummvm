@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-29 22:25+0000\n"
+"POT-Creation-Date: 2021-12-30 11:28+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -68,8 +68,8 @@ msgstr "위로"
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
-#: engines/cine/saveload.cpp:863 engines/drascula/saveload.cpp:48
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
+#: engines/drascula/saveload.cpp:48 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -130,7 +130,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:577
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:579
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -142,7 +142,7 @@ msgstr "예"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:577 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:579 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -166,18 +166,19 @@ msgstr ""
 #: gui/massadd.cpp:88 gui/options.cpp:2140 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
-#: engines/drascula/saveload.cpp:48 engines/groovie/script.cpp:605
-#: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1352
-#: engines/scumm/scumm.cpp:1378 engines/scumm/scumm.cpp:1400
-#: engines/scumm/scumm.cpp:1668 engines/scumm/scumm.cpp:2138
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
-#: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
-#: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
-#: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:428
-#: engines/sword2/animation.cpp:448 engines/sword2/animation.cpp:464
-#: engines/sword2/animation.cpp:474 engines/zvision/file/save_manager.cpp:225
+#: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
+#: engines/groovie/script.cpp:605 engines/parallaction/saveload.cpp:270
+#: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
+#: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
+#: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
+#: engines/scumm/scumm.cpp:1400 engines/scumm/scumm.cpp:1668
+#: engines/scumm/scumm.cpp:2138 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
+#: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
+#: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
+#: engines/sword2/animation.cpp:428 engines/sword2/animation.cpp:448
+#: engines/sword2/animation.cpp:464 engines/sword2/animation.cpp:474
+#: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "확인"
 
@@ -4369,17 +4370,47 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 msgid "Missing game code"
 msgstr "게임 코드 없음"
 
-#: engines/buried/buried.cpp:577
+#: engines/buried/buried.cpp:579
 msgid "Are you sure you want to quit?"
 msgstr "정말로 종료하겠습니까?"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:592
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "게임이 일시 중지되었습니다. OK를 눌러 다시 시작합니다."
 
-#: engines/buried/saveload.cpp:107
-msgid "Invalid save file name"
-msgstr "잘못된 저장 파일명"
+#: engines/buried/saveload.cpp:66
+#, fuzzy
+#| msgid ""
+#| "ScummVM found that you have old saved games for Drascula that should be "
+#| "converted.\n"
+#| "The old saved game format is no longer supported, so you will not be able "
+#| "to load your games if you don't convert them.\n"
+#| "\n"
+#| "Press OK to convert them now, otherwise you will be asked again the next "
+#| "time you start the game.\n"
+msgid ""
+"ScummVM found that you have saved games that should be converted from the "
+"original saved game format.\n"
+"The original saved game format is no longer supported directly, so you will "
+"not be able to load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"변환이 필요한 이전 Drascula 게임 저장 파일을 사용을 감지했습니다.\n"
+"이전 게임 저장 파일은 더 이상 지원되지 않으며 변환 작업을 거쳐야 불러올 수 있"
+"습니다\n"
+"\n"
+"확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다"
+"시 이 창이 표시됩니다.\n"
+
+#: engines/buried/saveload.cpp:165
+#, fuzzy
+#| msgid ""
+#| "This saved game was created with a different version of the game, unable "
+#| "to load it"
+msgid "Saved game was created with a newer version of ScummVM. Unable to load."
+msgstr "이 저장 파일은 다른 버전의 게임으로부터 생성되어 로드할 수 없습니다"
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -8602,6 +8633,9 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#~ msgid "Invalid save file name"
+#~ msgstr "잘못된 저장 파일명"
 
 #~ msgid "Enable cross fade"
 #~ msgstr "크로스페이드 활성화"
