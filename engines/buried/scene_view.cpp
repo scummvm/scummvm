@@ -1436,12 +1436,6 @@ bool SceneViewWindow::closeCycleFrameMovie() {
 	return true;
 }
 
-int SceneViewWindow::getGlobalFlag(int offset) {
-	// TODO: Verify the offset
-	const byte *data = (const byte *)&_globalFlags;
-	return READ_UINT16(data + offset);
-}
-
 byte SceneViewWindow::getGlobalFlagByte(int offset) {
 	// TODO: Verify the offset
 
@@ -1450,14 +1444,6 @@ byte SceneViewWindow::getGlobalFlagByte(int offset) {
 
 	const byte *data = (const byte *)&_globalFlags;
 	return data[offset];
-}
-
-bool SceneViewWindow::setGlobalFlag(int offset, int value) {
-	// TODO: Verify the offset
-
-	byte *data = (byte *)&_globalFlags;
-	WRITE_UINT16(data + offset, value);
-	return true;
 }
 
 bool SceneViewWindow::setGlobalFlagByte(int offset, byte value) {

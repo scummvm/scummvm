@@ -98,9 +98,7 @@ public:
 	bool isCyclingEnabled() const { return _cycleEnabled || _forceCycleEnabled; }
 	bool closeCycleFrameMovie();
 
-	int getGlobalFlag(int offset);
 	byte getGlobalFlagByte(int offset);
-	bool setGlobalFlag(int offset, int value);
 	bool setGlobalFlagByte(int offset, byte value);
 	bool setGlobalFlagDWord(int offset, uint32 value);
 	uint32 getGlobalFlagDWord(int offset);
