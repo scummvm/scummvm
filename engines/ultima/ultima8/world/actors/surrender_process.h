@@ -43,6 +43,15 @@ public:
 
 protected:
 	bool _playedSound;
+
+	uint32 _soundDelayTicks; // Time between playing a sound
+	uint32 _soundTimestamp;  // Last timestamp when a sound was played
+
+private:
+	int16 checkRandomSoundRemorse();
+	int16 checkRandomSoundRegret();
+	bool readyForNextSoundRegret();
+
 };
 
 } // End of namespace Ultima8

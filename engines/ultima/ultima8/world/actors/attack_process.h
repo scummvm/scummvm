@@ -76,6 +76,11 @@ public:
 		_target = target;
 	}
 
+	/** Get the right "attack" sound for No Regret for the
+	 given actor.  This is actually used for surrender sounds too, hence
+	 being public static so it can be used from SurrenderProcess. */
+	static int16 getRandomAttackSoundRegret(const Actor *actor);
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
@@ -106,7 +111,7 @@ private:
 	void sleep(int ticks);
 
 	/// Check the sound timer and return if we are ready for a new sound
-	bool readyForNextSound(int now);
+	bool readyForNextSound(uint32 now);
 
 	bool checkTimer2PlusDelayElapsed(int now);
 	void pathfindToItemInNPCData();
@@ -160,7 +165,8 @@ private:
 	int32 _timer4; // 0x6f/0x71 in orig
 	int32 _timer5; // 0x8a/0x8c in orig
 
-	int32 _soundTimestamp; /// 0x84/0x86 in orig - time a sound was last played
+	uint32 _soundTimestamp; /// 0x84/0x86 in orig - time a sound was last played
+	uint32 _soundDelayTicks; /// Delay between playing sounds, always 480 in No Remorse - Not saved.
 	int32 _fireTimestamp; /// 0x90/0x92 in orig - time NPC last fired
 
 	// Used in No Regret only, to avoid replaying the same sfx for attack twice in a row.

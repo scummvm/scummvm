@@ -90,9 +90,14 @@ _tacticDatReadStream(nullptr), _tacticDatStartOffset(0), _soundNo(-1), _playedSt
 _npcInitialDir(dir_invalid), _field57(0), _field59(0), _field7f(false), _field96(false), _field97(false),
 _isActivity9orB(false), _isActivityAorB(false), _timer3set(false), _timer2set(false),
 _doubleDelay(false), _wpnField8(1), _wpnBasedTimeout(0), _difficultyBasedTimeout(0), _timer2(0),
-_timer3(0), _timer4(0), _timer5(0), _soundTimestamp(0), _fireTimestamp(0) {
+_timer3(0), _timer4(0), _timer5(0), _soundTimestamp(0), _soundDelayTicks(480), _fireTimestamp(0) {
 	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
 		_dataArray[i] = 0;
+	}
+	if (GAME_IS_REGRET) {
+		_soundDelayTicks = (10 + randomOf(15)) * 60;
+		if (randomOf(3) == 0)
+			_soundTimestamp = Kernel::get_instance()->getTickNum();
 	}
 }
 
@@ -101,7 +106,7 @@ _tacticDatReadStream(nullptr), _tacticDatStartOffset(0), _soundNo(-1), _playedSt
 _field57(0), _field59(0), _field7f(false), _field96(false), _field97(false), _isActivity9orB(false),
 _isActivityAorB(false), _timer3set(false), _timer2set(false), _doubleDelay(false), _wpnField8(1),
 _wpnBasedTimeout(0), _difficultyBasedTimeout(0), _timer2(0), _timer3(0), _timer4(0), _timer5(0),
-_soundTimestamp(0), _fireTimestamp(0) {
+_soundTimestamp(0), _soundDelayTicks(480), _fireTimestamp(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_npcInitialDir = actor->getDir();
@@ -111,6 +116,12 @@ _soundTimestamp(0), _fireTimestamp(0) {
 	// coverity etc happy clear it anyway.
 	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
 		_dataArray[i] = 0;
+	}
+
+	if (GAME_IS_REGRET) {
+		_soundDelayTicks = (10 + randomOf(15)) * 60;
+		if (randomOf(3) == 0)
+			_soundTimestamp = Kernel::get_instance()->getTickNum();
 	}
 
 	actor->setAttackAimFlag(false);
@@ -778,18 +789,33 @@ void AttackProcess::genericAttack() {
 }
 
 void AttackProcess::checkRandomAttackSoundRegret(const Actor *actor) {
+	if (!readyForNextSound(Kernel::get_instance()->getTickNum()))
+		return;
+
 	AudioProcess *audio = AudioProcess::get_instance();
-
-	if (World::get_instance()->getControlledNPCNum() != 1)
-		return;
-
-	if (actor->isDead())
-		return;
-
 	if (audio->isSFXPlayingForObject(-1, actor->getObjId()))
 		return;
 
+	int16 sndno = getRandomAttackSoundRegret(actor);
+
+	if (sndno != -1 && _lastAttackSound != sndno && _lastLastAttackSound != sndno) {
+		_lastLastAttackSound = _lastAttackSound;
+		_lastAttackSound = sndno;
+		_soundNo = sndno;
+		audio->playSFX(sndno, 0x80, actor->getObjId(), 1);
+	}
+}
+
+/* static */
+int16 AttackProcess::getRandomAttackSoundRegret(const Actor *actor) {
+	if (World::get_instance()->getControlledNPCNum() != 1)
+		return -1;
+
+	if (actor->isDead())
+		return -1;
+
 	uint32 shapeno = actor->getShape();
+
 	int16 sndno = -1;
 	// The order here is pretty random, how it comes out of the disasm.
 	switch (shapeno) {
@@ -849,12 +875,7 @@ void AttackProcess::checkRandomAttackSoundRegret(const Actor *actor) {
 		  break;
 	}
 
-	if (sndno != -1 && _lastAttackSound != sndno && _lastLastAttackSound != sndno) {
-		_lastLastAttackSound = _lastAttackSound;
-		_lastAttackSound = sndno;
-		_soundNo = sndno;
-		audio->playSFX(sndno, 0x80, actor->getObjId(), 1);
-	}
+	return sndno;
 }
 
 void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
@@ -904,8 +925,8 @@ void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
 	}
 }
 
-bool AttackProcess::readyForNextSound(int now) {
-	if (_soundTimestamp == 0 || _soundTimestamp - now >= 480) {
+bool AttackProcess::readyForNextSound(uint32 now) {
+	if (_soundTimestamp == 0 || now - _soundTimestamp >= _soundDelayTicks) {
 		_soundTimestamp = now;
 		return true;
 	}
@@ -1077,7 +1098,10 @@ void AttackProcess::saveData(Common::WriteStream *ws) {
 	ws->writeSint32LE(_timer3);
 	ws->writeSint32LE(_timer4);
 	ws->writeSint32LE(_timer5);
-	ws->writeSint32LE(_soundTimestamp);
+	ws->writeSint32LE(_soundTimestamp); // bug: this should ideally be unsigned, probably won't make any difference.
+	// Don't write the sound delay because it only affects
+	// No Regret, adding it now would need a version bump, and
+	// and it doesn't make much difference to re-randomize it.
 	ws->writeSint32LE(_fireTimestamp);
 }
 
