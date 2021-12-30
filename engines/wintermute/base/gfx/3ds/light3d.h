@@ -29,8 +29,10 @@
 #define WINTERMUTE_LIGHT3D_H
 
 #include "common/memstream.h"
+
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/base_scriptable.h"
+
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 

@@ -30,6 +30,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/stream.h"

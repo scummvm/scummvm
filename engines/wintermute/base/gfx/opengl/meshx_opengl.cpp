@@ -26,6 +26,7 @@
  */
 
 #include "engines/wintermute/base/gfx/x/material.h"
+
 #include "graphics/opengl/system_headers.h"
 
 #if defined(USE_OPENGL_GAME)

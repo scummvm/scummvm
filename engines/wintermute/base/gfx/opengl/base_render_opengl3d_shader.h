@@ -26,9 +26,11 @@
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
+
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"
+
 #include "math/matrix4.h"
 #include "math/ray.h"
 

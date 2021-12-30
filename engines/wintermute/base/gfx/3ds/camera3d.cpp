@@ -28,6 +28,7 @@
 #include "engines/wintermute/base/gfx/3ds/camera3d.h"
 #include "engines/wintermute/base/gfx/3ds/loader3ds.h"
 #include "engines/wintermute/math/math_util.h"
+
 #include "math/angle.h"
 #include "math/glmath.h"
 #include "math/quat.h"
@@ -40,9 +41,9 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame),
-									   _position(0.0f, 0.0f, 0.0f), _target(0.0f, 0.0f, 0.0f), _bank(0.0f),
-									   _fov(Math::Angle(45.0f).getRadians()), _originalFOV(Math::Angle(45.0f).getRadians()),
-									   _nearClipPlane(-1.0f), _farClipPlane(-1.0f) {
+                                       _position(0.0f, 0.0f, 0.0f), _target(0.0f, 0.0f, 0.0f), _bank(0.0f),
+                                       _fov(Math::Angle(45.0f).getRadians()), _originalFOV(Math::Angle(45.0f).getRadians()),
+                                       _nearClipPlane(-1.0f), _farClipPlane(-1.0f) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +94,6 @@ bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 		rotZ.buildAroundZ(Math::Angle(_bank).getRadians());
 		rotZ.transform(&up, false);
 	}
-
 
 	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
 	return true;

@@ -30,6 +30,7 @@
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
+
 #include "common/rect.h"
 #include "common/array.h"
 
@@ -88,8 +89,8 @@ public:
 	 */
 	virtual void fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); // Unused outside indicator-display
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); // Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
 	~BaseRenderer() override;
 	virtual bool setProjection() {

@@ -29,9 +29,11 @@
 #define WINTERMUTE_BASE_RENDERER_SDL_H
 
 #include "engines/wintermute/base/gfx/base_renderer.h"
+
 #include "common/rect.h"
-#include "graphics/surface.h"
 #include "common/list.h"
+
+#include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {

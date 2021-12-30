@@ -28,6 +28,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
 #include "graphics/transform_struct.h"
+
 #include "math/matrix4.h"
 #include "math/ray.h"
 
@@ -64,7 +65,8 @@ public:
 	virtual int maximumLightsCount() = 0;
 	virtual void enableLight(int index) = 0;
 	virtual void disableLight(int index) = 0;
-	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) = 0;
+	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction,
+	                                const Math::Vector4d &diffuse, bool spotlight) = 0;
 
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
 
@@ -98,7 +100,7 @@ public:
 	virtual ShadowVolume *createShadowVolume() = 0;
 
 	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 

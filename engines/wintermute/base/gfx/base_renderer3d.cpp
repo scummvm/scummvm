@@ -20,6 +20,7 @@
  */
 
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
+
 #include "math/glmath.h"
 
 namespace Wintermute {
@@ -75,8 +76,8 @@ void BaseRenderer3D::initLoop() {
 
 Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
 	Math::Vector3d direction((((2.0f * x) / _viewport3dRect.width()) - 1) / _projectionMatrix3d(0, 0),
-							 -(((2.0f * y) / _viewport3dRect.height()) - 1) / _projectionMatrix3d(1, 1),
-							 -1.0f);
+	                        -(((2.0f * y) / _viewport3dRect.height()) - 1) / _projectionMatrix3d(1, 1),
+	                        -1.0f);
 
 	Math::Matrix4 m = _lastViewMatrix;
 	m.inverse();
@@ -88,9 +89,9 @@ Math::Ray BaseRenderer3D::rayIntoScene(int x, int y) {
 }
 
 bool BaseRenderer3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-								float zoomX, float zoomY, const Wintermute::Vector2 &pos,
-								uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-								bool mirrorX, bool mirrorY) {
+	                        float zoomX, float zoomY, const Wintermute::Vector2 &pos,
+	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+	                        bool mirrorX, bool mirrorY) {
 	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }

@@ -29,6 +29,7 @@
 #define WINTERMUTE_SHADOW_VOLUME_OPENGL_SHADER_H
 
 #include "engines/wintermute/base/gfx/shadow_volume.h"
+
 #include "graphics/opengl/system_headers.h"
 
 #if defined(USE_OPENGL_SHADERS)

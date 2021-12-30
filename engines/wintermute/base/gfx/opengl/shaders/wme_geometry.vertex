@@ -7,8 +7,7 @@ uniform vec4 color;
 
 out vec4 Color;
 
-void main()
-{
+void main() {
 	gl_Position = projMatrix * viewMatrix * vec4(position, 1.0);
 	Color = color;
 }

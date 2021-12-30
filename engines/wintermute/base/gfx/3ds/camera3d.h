@@ -29,7 +29,9 @@
 #define WINTERMUTE_CAMERA3D_H
 
 #include "common/memstream.h"
+
 #include "engines/wintermute/base/base_named_object.h"
+
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 

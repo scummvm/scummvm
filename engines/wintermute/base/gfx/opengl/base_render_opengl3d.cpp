@@ -25,7 +25,9 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/3ds/camera3d.h"
 #include "engines/wintermute/base/gfx/3ds/light3d.h"
+
 #include "graphics/opengl/system_headers.h"
+
 #include "math/glmath.h"
 
 #if defined(USE_OPENGL_GAME)
@@ -41,8 +43,8 @@ BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }
 
-BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
-	: BaseRenderer3D(inGame), _spriteBatchMode(false)  {
+BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame),
+                                                           _spriteBatchMode(false) {
 	setDefaultAmbientLightColor();
 
 	_lightPositions.resize(maximumLightsCount());
@@ -519,7 +521,10 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			glFogf(GL_FOG_END, fogParameters._end);
 
 			uint32 fogColor = fogParameters._color;
-			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f, RGBCOLGetG(fogColor) / 255.0f, RGBCOLGetB(fogColor) / 255.0f, RGBCOLGetA(fogColor) / 255.0f };
+			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f,
+			                     RGBCOLGetG(fogColor) / 255.0f,
+			                     RGBCOLGetB(fogColor) / 255.0f,
+			                     RGBCOLGetA(fogColor) / 255.0f };
 			glFogfv(GL_FOG_COLOR, color);
 		} else {
 			glDisable(GL_FOG);
@@ -565,9 +570,9 @@ struct SpriteVertex {
 };
 
 bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-									  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
-									  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-									  bool mirrorX, bool mirrorY) {
+	                              const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
+	                              float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+	                              bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
 	if (_forceAlphaColor != 0) {
@@ -692,7 +697,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 }
 
 void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-											 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
+	                                     const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	_gameRef->_renderer3D->setup3D(camera, true);
@@ -759,7 +764,9 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes,
+                                              const BaseArray<AdBlock *> &blocks,
+                                              const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	setup3D(camera, true);

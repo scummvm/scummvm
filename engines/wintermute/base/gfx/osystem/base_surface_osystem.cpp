@@ -32,10 +32,12 @@
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
+
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+
 #include "common/stream.h"
 #include "common/system.h"
 
@@ -352,13 +354,11 @@ bool BaseSurfaceOSystem::endPixelOp() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY,  mirrorX, mirrorY));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
@@ -371,7 +371,6 @@ bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct((int32)zoomX, (int32)zoomY, blendMode, TS_COLOR(alpha), mirrorX, mirrorY));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
@@ -398,7 +397,6 @@ bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, 
 	Graphics::TransformStruct transform(numTimesX, numTimesY);
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transform) {

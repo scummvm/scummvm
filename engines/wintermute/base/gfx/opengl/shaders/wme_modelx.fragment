@@ -6,8 +6,7 @@ uniform float alphaRef;
 
 OUTPUT
 
-void main()
-{
+void main() {
 	vec4 texColor = texture(tex, Texcoord);
 	outColor.rgba = texColor.rgba * Color.rgba;
 

@@ -33,6 +33,7 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/video/video_theora_player.h"
+
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 #include "math/vector4d.h"

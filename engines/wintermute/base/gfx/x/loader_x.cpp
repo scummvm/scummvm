@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+
 #include "engines/wintermute/base/gfx/x/loader_x.h"
 
 namespace Wintermute {

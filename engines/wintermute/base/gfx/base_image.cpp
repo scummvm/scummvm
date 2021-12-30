@@ -27,11 +27,14 @@
 
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_file_manager.h"
+
 #include "graphics/surface.h"
+
 #include "image/png.h"
 #include "image/jpeg.h"
 #include "image/bmp.h"
 #include "image/tga.h"
+
 #include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/system.h"

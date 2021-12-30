@@ -4,8 +4,7 @@ uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 
-void main()
-{
+void main() {
 	vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
 	gl_Position = projMatrix * viewCoords;
 }

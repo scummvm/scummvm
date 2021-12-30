@@ -20,13 +20,13 @@
  */
 
 #include "common/file.h"
+
 #include "engines/wintermute/base/gfx/3ds/loader3ds.h"
 #include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 
 namespace Wintermute {
 
 Mesh3DS::Mesh3DS() : _vertexData(nullptr), _vertexCount(0), _indexData(nullptr), _indexCount(0) {
-
 }
 
 Mesh3DS::~Mesh3DS() {

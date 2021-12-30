@@ -23,6 +23,7 @@
 #define WINTERMUTE_BASE_SURFACE_OPENGL3D_H
 
 #include "engines/wintermute/base/gfx/base_surface.h"
+
 #include "graphics/opengl/texture.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)

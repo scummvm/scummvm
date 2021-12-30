@@ -26,6 +26,7 @@
  */
 
 #include "common/zlib.h"
+
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -149,9 +150,9 @@ IMPLEMENT_PERSISTENT(ModelX, false)
 
 //////////////////////////////////////////////////////////////////////////
 ModelX::ModelX(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame),
-													  _owner(owner), _lastOffsetX(0), _lastOffsetY(0),
-													  _BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
-													  _rootFrame(nullptr) {
+	                                              _owner(owner), _lastOffsetX(0), _lastOffsetY(0),
+	                                              _BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
+	                                              _rootFrame(nullptr) {
 	_drawingViewport.setEmpty();
 	_lastWorldMat.setToIdentity();
 	_lastViewMat.setToIdentity();

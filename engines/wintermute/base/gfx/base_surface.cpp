@@ -50,7 +50,6 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 	_valid = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
 	if (_pixelOpReady) {
@@ -78,7 +77,6 @@ bool BaseSurface::create(int width, int height) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::startPixelOp() {
 	return STATUS_FAILED;
@@ -89,37 +87,30 @@ bool BaseSurface::endPixelOp() {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
 	return false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSurface::isTransparentAtLite(int x, int y) {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::invalidate() {
 	return STATUS_FAILED;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::prepareToDraw() {

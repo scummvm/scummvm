@@ -9,8 +9,7 @@ uniform highp mat4 lightViewMatrix;
 
 out vec3 Texcoord;
 
-void main()
-{
+void main() {
 	vec4 worldCoords = worldMatrix * vec4(position, 1.0);
 
 	vec4 textureCoords = lightProjMatrix * lightViewMatrix * worldCoords;

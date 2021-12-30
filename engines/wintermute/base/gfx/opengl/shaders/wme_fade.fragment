@@ -2,7 +2,6 @@ in vec4 Color;
 
 OUTPUT
 
-void main()
-{
+void main() {
 	outColor = Color;
 }

@@ -75,14 +75,12 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_drawOffsetX = _drawOffsetY = 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
 	delete _saveLoadImage;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::initLoop() {
@@ -236,7 +234,6 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	return (BaseObject *)nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
 	for (uint32 i = 0; i < _rectList.size(); i++) {
@@ -250,17 +247,14 @@ bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::onWindowChange() {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::windowedBlt() {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setup2D(bool Force) {
@@ -274,7 +268,6 @@ bool BaseRenderer::setup3D(Camera3D* camera, bool force) {
 }
 #endif
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setupLines() {
 	return STATUS_FAILED;
@@ -284,7 +277,6 @@ bool BaseRenderer::setupLines() {
 bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
@@ -298,7 +290,6 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
@@ -310,7 +301,6 @@ bool BaseRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
@@ -318,7 +308,6 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 	                   rect->right + _drawOffsetX,
 	                   rect->bottom + _drawOffsetY);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::clipCursor() {

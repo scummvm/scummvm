@@ -20,7 +20,9 @@
  */
 
 #include "common/algorithm.h"
+
 #include "graphics/transform_tools.h"
+
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 

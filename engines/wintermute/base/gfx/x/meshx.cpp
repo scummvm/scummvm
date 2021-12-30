@@ -279,7 +279,7 @@ bool MeshX::update(FrameNode *parentFrame) {
 			}
 		}
 
-//		updateNormals();
+	//updateNormals();
 	} else { // update static
 		for (uint32 i = 0; i < _vertexCount; ++i) {
 			Math::Vector3d pos(_vertexPositionData + 3 * i);

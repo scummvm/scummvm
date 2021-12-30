@@ -24,7 +24,9 @@
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/3ds/camera3d.h"
+
 #include "graphics/opengl/system_headers.h"
+
 #include "math/glmath.h"
 
 #if defined(USE_OPENGL_SHADERS)
@@ -36,8 +38,10 @@
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
 
 namespace Wintermute {
+
 BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3DShader(inGame);
+
 }
 
 struct SpriteVertexShader {
@@ -124,7 +128,9 @@ void BaseRenderOpenGL3DShader::disableLight(int index) {
 	_modelXShader->setUniform1f(uniform.c_str(), -1.0f);
 }
 
-void BaseRenderOpenGL3DShader::setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) {
+void BaseRenderOpenGL3DShader::setLightParameters(int index, const Math::Vector3d &position,
+                                                  const Math::Vector3d &direction,
+                                                  const Math::Vector4d &diffuse, bool spotlight) {
 	Math::Vector4d position4d;
 	position4d.x() = position.x();
 	position4d.y() = position.y();
@@ -682,9 +688,10 @@ BaseSurface *Wintermute::BaseRenderOpenGL3DShader::createSurface() {
 }
 
 bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-											const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
-											float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-											bool mirrorX, bool mirrorY) {
+	                                    const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
+	                                    const Wintermute::Vector2 &scale, float angle, uint32 color,
+	                                    bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+	                                    bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
 	if (_forceAlphaColor != 0) {
@@ -786,11 +793,12 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 }
 
 void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-												   const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
+	                                           const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	// don't render scene geometry, as OpenGL ES 2 has no wireframe rendering and we don't have a shader alternative yet
 }
 
-void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
+void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
+                                                    const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
 	setup3D(camera, true);
 
 	// disable color write

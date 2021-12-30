@@ -20,6 +20,7 @@
  */
 
 #include "engines/wintermute/wintypes.h"
+
 #include "graphics/opengl/system_headers.h"
 
 #if defined(USE_OPENGL_GAME)

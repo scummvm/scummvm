@@ -29,19 +29,22 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+
 #include "graphics/transform_tools.h"
 #include "graphics/transparent_surface.h"
+
 #include "common/textconsole.h"
 
 namespace Wintermute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
-	_owner(owner),
-	_srcRect(*srcRect),
-	_dstRect(*dstRect),
-	_isValid(true),
-	_wantsDraw(true),
-	_transform(transform) {
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf,
+                           Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
+	        _owner(owner),
+	        _srcRect(*srcRect),
+	        _dstRect(*dstRect),
+	        _isValid(true),
+	        _wantsDraw(true),
+	        _transform(transform) {
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);

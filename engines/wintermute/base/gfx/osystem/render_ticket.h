@@ -29,6 +29,7 @@
 #define WINTERMUTE_RENDER_TICKET_H
 
 #include "graphics/surface.h"
+
 #include "common/rect.h"
 
 namespace Wintermute {
