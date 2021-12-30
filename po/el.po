@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-29 22:25+0000\n"
-"PO-Revision-Date: 2021-12-25 17:37+0000\n"
+"PO-Revision-Date: 2021-12-30 10:52+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -833,7 +833,7 @@ msgstr "Μαζική Προσθήκη..."
 #: gui/launcher.cpp:249
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν"
+msgstr "~Α~φαίρ. Παιχν..."
 
 #: gui/launcher.cpp:257
 msgid "Search in game list"
@@ -875,7 +875,7 @@ msgstr ""
 
 #: gui/launcher.cpp:421
 msgid "Do you really want to remove this game configuration?"
-msgstr "Θέλετε σίγουρα να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
+msgstr "Θέλετε σίγουρα να σβήσετε τη ρύθμιση για αυτό το παιχνίδι;"
 
 #: gui/launcher.cpp:463
 msgid "Do you want to load saved game?"
@@ -888,13 +888,11 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτω�
 #: gui/launcher.cpp:524
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"Το ScummVM δε μπόρεσε να βρεί κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο "
-"παιχνίδι!"
+"Το ScummVM δεν βρήκε κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο παιχνίδι!"
 
 #: gui/launcher.cpp:580
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr ""
-"Το ScummVM δεν μπόρεσε να βρει κάποιο παιχνίδι στον συγκεκριμένο φάκελο!"
+msgstr "Το ScummVM δεν βρήκε κάποιο παιχνίδι στον συγκεκριμένο φάκελο!"
 
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:596
@@ -911,11 +909,11 @@ msgstr "Κριτήριο ομαδοποίησης:"
 
 #: gui/launcher.cpp:817 gui/saveload-dialog.cpp:367
 msgid "List view"
-msgstr "Προβολή λίστας"
+msgstr "Προβολή ως λίστα"
 
 #: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
 msgid "Grid view"
-msgstr "Προβολή πλέγματος"
+msgstr "Προβολή ως πλέγμα"
 
 #: gui/launcher.cpp:972
 msgid "~S~tart"
@@ -939,7 +937,7 @@ msgstr "Εγγραφή..."
 
 #: gui/launcher.cpp:984
 msgid "~E~dit Game..."
-msgstr "~Δ~ιόρθωση Παιχνιδιού..."
+msgstr "~Ρ~ύθμιση Παιχνιδιού..."
 
 #: gui/launcher.cpp:984 gui/launcher.cpp:987
 msgid "Change game options"
@@ -948,7 +946,7 @@ msgstr "Αλλαγή επιλογών παιχνιδιού"
 #: gui/launcher.cpp:987
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "~Δ~ιόρθ. Παιχν..."
+msgstr "~Ρ~ύθμ. Παιχνιδ..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1021,7 +1019,7 @@ msgstr "Στοπ"
 
 #: gui/onscreendialog.cpp:105
 msgid "Edit record description"
-msgstr "Διόρθωση περιγραφής εγγραφής"
+msgstr "Αλλαγή περιγραφής εγγραφής"
 
 #: gui/onscreendialog.cpp:107
 msgid "Switch to Game"
@@ -1091,7 +1089,7 @@ msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργία
 
 #: gui/options.cpp:779
 msgid "the aspect ratio setting could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της διόρθωσης αναλογίας διαστάσεων"
+msgstr "αδυναμία αλλαγής της ρύθμισης αναλογίας διαστάσεων"
 
 #: gui/options.cpp:785
 msgid "the fullscreen setting could not be changed"
@@ -2610,8 +2608,7 @@ msgstr "Αδυναμία αλλαγής σε λειτουργία επέκτασ
 
 #: engines/engine.cpp:375
 msgid "Could not apply aspect ratio setting."
-msgstr ""
-"Δεν ήταν δυνατή η εφαρμογή ρύθμισης διόρθωσης αναλογίας διαστάσεων εικόνας."
+msgstr "Αδυναμία εφαρμογής της ρύθμισης αναλογίας διαστάσεων εικόνας."
 
 #: engines/engine.cpp:380
 msgid "Could not apply fullscreen setting."
@@ -3132,12 +3129,12 @@ msgstr "Ανάλυση: %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2455
 msgid "Enabled aspect ratio correction"
-msgstr "Ενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
+msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
 msgid "Disabled aspect ratio correction"
-msgstr "Απενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
+msgstr "Απενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
@@ -5253,7 +5250,7 @@ msgstr "Ενεργοποίηση cheats"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Να επιτρέπονται τα cheats με χρήση του πλήκτρου C."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -6456,16 +6453,17 @@ msgid ""
 msgstr ""
 "Επιλέξατε το General MIDI ως συσκευή ήχου. Η Sierra έχει προσθέσει "
 "υποστήριξη (μετά την κυκλοφορία του παιχνιδιού) για General MIDI με το "
-"βοηθητικό πρόγραμμα \"General MIDI Utility\". Εφαρμόστε την διόρθωση (patch) "
-"ώστε να απολαύσετε μουσική MIDI με αυτό το παιχνίδι. Μόλις προμηθευτείτε το "
-"βοηθητικό πρόγραμμα, μπορείτε να αποσυμπιέσετε όλα τα συμπεριλαμβανόμενα "
-"αρχεία τύπου *.PAT στον φάκελο extras (πρόσθετα) του ScummVM και το ScummVM "
-"θα προσθέσει αυτόματα την κατάλληλη διόρθωση (patch). Εναλλακτικά, μπορείτε "
-"να ακολουθήσετε τις οδηγίες του αρχείου READ.ME το οποίο συμπεριλαμβάνεται "
-"στα αρχεία της διόρθωσης (patch). Εν συντομία, θα πρέπει να πάρετε το "
-"σχετικό αρχείο *.PAT, να το μετονομάσετε σε 4.PAT και ύστερα να το "
-"τοποθετήσετε στον φάκελο του παιχνιδιού. Χωρίς αυτήν τη διόρθωση (patch) η "
-"μουσική με General MIDI για αυτό το παιχνίδι θα ακούγεται πολύ παραμορφωμένη."
+"βοηθητικό πρόγραμμα \"General MIDI Utility\". Εφαρμόστε αυτή τη διόρθωση "
+"(patch) ώστε να απολαύσετε μουσική MIDI με αυτό το παιχνίδι. Μόλις "
+"προμηθευτείτε το βοηθητικό πρόγραμμα, μπορείτε να αποσυμπιέσετε όλα τα "
+"συμπεριλαμβανόμενα αρχεία τύπου *.PAT στον φάκελο extras (πρόσθετα) του "
+"ScummVM και το ScummVM θα προσθέσει αυτόματα την κατάλληλη διόρθωση (patch). "
+"Εναλλακτικά, μπορείτε να ακολουθήσετε τις οδηγίες του αρχείου READ.ME το "
+"οποίο συμπεριλαμβάνεται στα αρχεία της διόρθωσης (patch). Εν συντομία, θα "
+"πρέπει να πάρετε το σχετικό αρχείο *.PAT, να το μετονομάσετε σε 4.PAT και "
+"ύστερα να το τοποθετήσετε στον φάκελο του παιχνιδιού. Χωρίς αυτή τη διόρθωση "
+"(patch) η μουσική με General MIDI για αυτό το παιχνίδι θα ακούγεται πολύ "
+"παραμορφωμένη."
 
 #: engines/sci/sci.cpp:430
 msgid ""
@@ -6475,13 +6473,14 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
-"Το παιχνίδι σας έχει εφαρμοσμένη διόρθωση (patch) η οποία είναι δημιουργία "
-"θαυμαστών του παιχνιδιού (fan made). Έχει αναφερθεί πως τέτοιες διορθώσεις "
-"μπορεί να δημιουργούν προβλήματα καθώς τροποποιούν τις δέσμες ενέργειας του "
-"παιχνιδιού σημαντικά. Τα προβλήματα τα οποιά αυτές οι διορθώσεις (patches) "
-"επιλύνουν, δεν υφίστανται στο ScummVM. Για αυτό το λόγο σας προτείνουμε να "
-"αφαιρέσετε τις διορθώσεις (patches) από τον φάκελο των αρχείων του "
-"παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα σφάλματα στην συνέχεια."
+"Το παιχνίδι σας έχει εφαρμοσμένη διόρθωση (patch) η οποία είναι fan made ("
+"δημιουργία θαυμαστών του παιχνιδιού). Έχει αναφερθεί πως τέτοιες διορθώσεις "
+"μπορεί να δημιουργούν προβλήματα καθώς τροποποιούν σημαντικά τις δέσμες "
+"ενέργειας του παιχνιδιού. Τα προβλήματα τα οποιά αυτές οι διορθώσεις "
+"(patches) επιλύνουν, δεν υφίστανται στο ScummVM. Για αυτό το λόγο σας "
+"προτείνουμε να αφαιρέσετε αυτή τη διόρθωση (patch) από τον φάκελο των "
+"αρχείων του παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα σφάλματα στην "
+"συνέχεια."
 
 #: engines/sci/sci.cpp:509
 msgid "Download patch"
@@ -7300,7 +7299,7 @@ msgstr ""
 "ανάλυση παιχνιδιών FM-TOWNS είναι 320x240, που δεν επίτρέπει τη διόρθωση "
 "αναλογίας διαστάσεων.\n"
 "Η διόρθωση αναλογίας διαστάσεων μπορεί να επιτευχθεί αν επιλέξετε την "
-"περικοπή της ανάλυσης σε 320x200 από την καρτέλα (tab) 'μηχανή'."
+"περικοπή της ανάλυσης σε 320x200 από την καρτέλα 'μηχανή'."
 
 #: engines/scumm/scumm.cpp:1351
 msgid ""
