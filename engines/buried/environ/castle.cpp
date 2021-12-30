@@ -96,6 +96,9 @@ TowerStairsGuardEncounter::TowerStairsGuardEncounter(BuriedEngine *vm, Window *v
 }
 
 int TowerStairsGuardEncounter::timerCallback(Window *viewWindow) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_frameCycleCount < 0 || _busy)
 		return SC_FALSE;
 
@@ -103,7 +106,7 @@ int TowerStairsGuardEncounter::timerCallback(Window *viewWindow) {
 		_frameCycleCount++;
 		viewWindow->invalidateWindow(false);
 	} else {
-		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 0) {
+		if (globalFlags.bcCloakingEnabled == 0) {
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
 			_busy = true;
 			((SceneViewWindow *)viewWindow)->showDeathScene(0);
@@ -790,7 +793,7 @@ class StorageRoomDoor : public SceneBase {
 public:
 	StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int timeZone = -1, int environment = -1, int node = -1,
-			int facing = -1, int orientation = -1, int depth = -1, int flagOffset = 0, int data = -1, int startFrame = -1,
+			int facing = -1, int orientation = -1, int depth = -1, int data = -1, int startFrame = -1,
 			int length = -1, int animDB = -1);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
@@ -799,19 +802,20 @@ public:
 private:
 	bool _clicked;
 	Common::Rect _clickable;
-	int _flagOffset;
 	DestinationScene _destData;
 	int _agent3VideoID;
 };
 
 StorageRoomDoor::StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int left, int top, int right, int bottom, int timeZone, int environment, int node,
-		int facing, int orientation, int depth, int flagOffset, int data, int startFrame,
+		int facing, int orientation, int depth, int data, int startFrame,
 		int length, int animDB) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	_agent3VideoID = animDB;
 	_clicked = false;
-	_flagOffset = flagOffset;
 	_clickable = Common::Rect(left, top, right, bottom);
 
 	_destData.destinationScene.timeZone = timeZone;
@@ -821,7 +825,7 @@ StorageRoomDoor::StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const Loc
 	_destData.destinationScene.orientation = orientation;
 	_destData.destinationScene.depth = depth;
 
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) != 0) {
+	if (globalFlags.cgStorageRoomVisit != 0) {
 		_destData.transitionType = 2; // constant?
 		_destData.transitionData = data;
 		_destData.transitionStartFrame = startFrame;
@@ -843,22 +847,22 @@ int StorageRoomDoor::mouseDown(Window *viewWindow, const Common::Point &pointLoc
 
 int StorageRoomDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clicked) {
+		SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+		GlobalFlags &globalFlags = sceneView->getGlobalFlags();
 		BuriedEngine *vm = _vm;
-		int flagOffset = _flagOffset;
-
 		if (_clickable.contains(pointLocation)) {
 			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
 		} else {
 			_clicked = false;
 		}
 
-		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) == 0) {
+		if (globalFlags.cgStorageRoomVisit == 0) {
 			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_AGENT3))
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
 
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, 1);
+			globalFlags.cgStorageRoomVisit = 1;
 		}
 	}
 
@@ -875,7 +879,7 @@ int StorageRoomDoor::specifyCursor(Window *viewWindow, const Common::Point &poin
 class StorageRoomCheckUnlock : public SceneBase {
 public:
 	StorageRoomCheckUnlock(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = 0, int itemID = 0, int filledFrameIndex = 0, int animID = 0, int depthA = 0, int depthB = 0,
+			int itemID = 0, int filledFrameIndex = 0, int animID = 0, int depthA = 0, int depthB = 0,
 			int left = 0, int top = 0, int right = 0, int bottom = 0);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
 	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
@@ -883,7 +887,6 @@ public:
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 
 private:
-	int _flagOffset;
 	int _itemID;
 	int _filledFrameIndex;
 	int _animID;
@@ -894,10 +897,9 @@ private:
 };
 
 StorageRoomCheckUnlock::StorageRoomCheckUnlock(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int itemID, int filledFrameIndex, int animID, int depthA, int depthB,
+		int itemID, int filledFrameIndex, int animID, int depthA, int depthB,
 		int left, int top, int right, int bottom) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	_flagOffset = flagOffset;
 	_itemID = itemID;
 	_filledFrameIndex = filledFrameIndex;
 	_depthA = depthA;
@@ -930,13 +932,16 @@ int StorageRoomCheckUnlock::draggingItem(Window *viewWindow, int itemID, const C
 }
 
 int StorageRoomCheckUnlock::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_dropRegion.contains(pointLocation) && _itemID == itemID) {
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
 		_staticData.navFrameIndex = _filledFrameIndex;
 
 		Location newDest = _staticData.location;
 
-		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) != 0)
+		if (globalFlags.cgTapestryFlag != 0)
 			newDest.depth = _depthB;
 		else
 			newDest.depth = _depthA;
@@ -1025,34 +1030,34 @@ int KingsChamberGuardEncounter::timerCallback(Window *viewWindow) {
 bool SceneViewWindow::initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	// If we passed -1, initialize time zone, otherwise the environment
 	if (environment == -1) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgWallExploded = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgHookPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemGrapplingHook) ? 1 : 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgArrowPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow) ? 1 : 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgHammerPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemHammer) ? 1 : 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyGuard = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgBaileyOneWayGuard = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgBaileyTwoWayGuards = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTapestryFlag = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgStorageRoomVisit = 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgBurnedLetterPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBurnedLetter) ? 1 : 0;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgGoldCoinsPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemGoldCoins) ? 1 : 0;
+		_globalFlags.cgWallExploded = 0;
+		_globalFlags.cgHookPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemGrapplingHook) ? 1 : 0;
+		_globalFlags.cgArrowPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow) ? 1 : 0;
+		_globalFlags.cgHammerPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemHammer) ? 1 : 0;
+		_globalFlags.cgSmithyStatus = 0;
+		_globalFlags.cgSmithyGuard = 0;
+		_globalFlags.cgBaileyOneWayGuard = 0;
+		_globalFlags.cgBaileyTwoWayGuards = 0;
+		_globalFlags.cgTapestryFlag = 0;
+		_globalFlags.cgStorageRoomVisit = 0;
+		_globalFlags.cgBurnedLetterPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBurnedLetter) ? 1 : 0;
+		_globalFlags.cgGoldCoinsPresent = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemGoldCoins) ? 1 : 0;
 
-		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) {
-			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = 6;
-			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTapestryFlag = 1;
+		if (_globalFlags.generalWalkthroughMode == 1) {
+			_globalFlags.cgSmithyStatus = 6;
+			_globalFlags.cgTapestryFlag = 1;
 		}
 	}
 
 	// Environment-specific
 	if (environment == 4) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreEnteredKeep = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMBVisited = 1;
+		_globalFlags.scoreEnteredKeep = 1;
+		_globalFlags.cgMBVisited = 1;
 	} else if (environment == 6) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgKCVisited = 1;
+		_globalFlags.cgKCVisited = 1;
 	} else if (environment == 10) {
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreEnteredTreasureRoom = 1;
-		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTRVisited = 1;
+		_globalFlags.scoreEnteredTreasureRoom = 1;
+		_globalFlags.cgTRVisited = 1;
 	}
 
 	return true;
@@ -1226,7 +1231,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 33:
 		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 2 : 6, offsetof(GlobalFlags, cgBaileyOneWayGuard), IDS_HUMAN_PRESENCE_10METERS);
 	case 34:
-		return new CycleEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 5 : 7, _vm->isDemo() ? 6 : 8, offsetof(GlobalFlags, cgBaileyTwoWayGuards), IDS_HUMAN_PRESENCE_10METERS);
+		return new CycleEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 5 : 7, _vm->isDemo() ? 6 : 8, IDS_HUMAN_PRESENCE_10METERS);
 	case 35:
 		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 3, kCursorFinger, offsetof(GlobalFlags, cgTapestryFlag), 0, 0, 330, 189);
 	case 36:
@@ -1234,9 +1239,9 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 37:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
 	case 38:
-		return new StorageRoomCheckUnlock(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTapestryFlag), kItemCopperKey, 51, 1, 2, 1, 258, 100, 320, 185);
+		return new StorageRoomCheckUnlock(_vm, viewWindow, sceneStaticData, priorLocation, kItemCopperKey, 51, 1, 2, 1, 258, 100, 320, 185);
 	case 39:
-		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
+		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, 11, 130, 12, 0);
 	case 41:
 		return new OpenFirstItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 138, 32, 288, 107, 175, 65, 226, 90, 2, 1, kItemGoldCoins, 34, 35, offsetof(GlobalFlags, cgGoldCoinsPresent));
 	case 42:
@@ -1254,7 +1259,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 48:
 		return new KingsChamberGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 50:
-		return new ClickPlaySoundSynchronous(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorA), 14, kCursorFinger, 72, 0, 372, 189);
+		return new ClickPlaySoundSynchronous(_vm, viewWindow, sceneStaticData, priorLocation, 14, kCursorFinger, 72, 0, 372, 189);
 	case 51:
 		return new ClickZoom(_vm, viewWindow, sceneStaticData, priorLocation, 5, 36, 6, 12, kCursorMagnifyingGlass, 0, 0, 432, 189);
 	case 52:

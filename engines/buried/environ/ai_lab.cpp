@@ -3636,28 +3636,29 @@ int MachineRoomEntry::timerCallback(Window *viewWindow) {
 class DockingBayPlaySoundEntering : public SceneBase {
 public:
 	DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int soundFileNameID = -1, int flagOffset = -1);
+			int soundFileNameID = -1);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _soundFileNameID;
-	int _flagOffset;
 };
 
 DockingBayPlaySoundEntering::DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int soundFileNameID, int flagOffset) :
+		int soundFileNameID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_soundFileNameID = soundFileNameID;
-	_flagOffset = flagOffset;
 
 	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
 		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
 }
 
 int DockingBayPlaySoundEntering::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (_flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
+	if (globalFlags.aiDBPlayedMomComment == 0) {
 		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID));
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		globalFlags.aiDBPlayedMomComment = 1;
 	}
 
 	return SC_TRUE;
@@ -3825,7 +3826,7 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 33:
 		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 185, 42, 253, 110, 167, -1, 1, TRANSITION_VIDEO, 1, -1, -1, -1, 0);
 	case 35:
-		return new DockingBayPlaySoundEntering(_vm, viewWindow, sceneStaticData, priorLocation, 4, offsetof(GlobalFlags, aiDBPlayedMomComment));
+		return new DockingBayPlaySoundEntering(_vm, viewWindow, sceneStaticData, priorLocation, 4);
 	case 36:
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 6, offsetof(GlobalFlags, aiDBPlayedSecondArthur));
 	case 37:

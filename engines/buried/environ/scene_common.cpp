@@ -833,23 +833,25 @@ DisableForwardMovement::DisableForwardMovement(BuriedEngine *vm, Window *viewWin
 }
 
 CycleEntryVideoWarning::CycleEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int animIDA, int animIDB, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int animIDA, int animIDB, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_animIDA = animIDA;
 	_animIDB = animIDB;
-	_flagOffset = flagOffset;
 	_warningMessageID = warningMessageID;
 }
 
 int CycleEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_warningMessageID >= 0)
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_warningMessageID));
 
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+	if (globalFlags.cgBaileyTwoWayGuards == 0) {
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animIDA);
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		globalFlags.cgBaileyTwoWayGuards = 1;
 	} else {
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animIDB);
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 0);
+		globalFlags.cgBaileyTwoWayGuards = 0;
 	}
 
 	return SC_TRUE;
@@ -1253,20 +1255,21 @@ int BrowseBook::textTranslated(Window *viewWindow) {
 }
 
 ClickPlaySoundSynchronous::ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int soundID, int cursorID, int left, int top, int right, int bottom) :
+		int soundID, int cursorID, int left, int top, int right, int bottom) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_cursorID = cursorID;
 	_soundID = soundID;
 	_clickRegion = Common::Rect(left, top, right, bottom);
-	_flagOffset = flagOffset;
 }
 
 int ClickPlaySoundSynchronous::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_clickRegion.contains(pointLocation)) {
 		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundID), 127);
 
-		if (_flagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		globalFlags.cgTSTriedDoorA = 1;
 
 		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
 			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);

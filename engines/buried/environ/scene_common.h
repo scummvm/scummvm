@@ -283,13 +283,12 @@ public:
 class CycleEntryVideoWarning : public SceneBase {
 public:
 	CycleEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int animIDA = 0, int animIDB = 0, int flagOffset = 0, int warningMessageID = -1);
+			int animIDA = 0, int animIDB = 0, int warningMessageID = -1);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
 
 private:
 	int _animIDA;
 	int _animIDB;
-	int _flagOffset;
 	int _warningMessageID;
 };
 
@@ -396,7 +395,7 @@ private:
 class ClickPlaySoundSynchronous : public SceneBase {
 public:
 	ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, int soundID = 0, int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+			int soundID = 0, int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
@@ -404,7 +403,6 @@ private:
 	int _cursorID;
 	int _soundID;
 	Common::Rect _clickRegion;
-	int _flagOffset;
 };
 
 class TrialRecallScene : public SceneBase {
