@@ -42,15 +42,16 @@ namespace Buried {
 
 class SwapStillOnFlag : public SceneBase {
 public:
-	SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, int flagValue = -1);
+	SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
-SwapStillOnFlag::SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int flagValue) :
+SwapStillOnFlag::SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) >= flagValue) {
-		int curStillFrame = _staticData.navFrameIndex;
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
+	if (globalFlags.dsPTElevatorPresent >= 1) {
+			int curStillFrame = _staticData.navFrameIndex;
 		_staticData.navFrameIndex = _staticData.miscFrameIndex;
 		_staticData.miscFrameIndex = curStillFrame;
 	}
@@ -473,7 +474,7 @@ int PaintingTowerInsideDoor::specifyCursor(Window *viewWindow, const Common::Poi
 class WheelAssemblyItemAcquire : public SceneBase {
 public:
 	WheelAssemblyItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int left = 0, int top = 0, int right = 0, int bottom = 0, int itemID = 0, int clearStillFrame = 0, int itemFlagOffset = 0);
+			int left = 0, int top = 0, int right = 0, int bottom = 0, int itemID = 0, int clearStillFrame = 0);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
 	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) override;
@@ -485,35 +486,38 @@ private:
 	int _fullFrameIndex;
 	int _clearFrameIndex;
 	int _itemID;
-	int _itemFlagOffset;
 	Common::Rect _zoomUpRegion;
 };
 
 WheelAssemblyItemAcquire::WheelAssemblyItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int left, int top, int right, int bottom, int itemID, int clearStillFrame, int itemFlagOffset) :
+		int left, int top, int right, int bottom, int itemID, int clearStillFrame) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	_itemPresent = true;
 	_itemID = itemID;
 	_acquireRegion = Common::Rect(left, top, right, bottom);
 	_fullFrameIndex = _staticData.navFrameIndex;
 	_clearFrameIndex = clearStillFrame;
-	_itemFlagOffset = itemFlagOffset;
 	_zoomUpRegion = Common::Rect(134, 168, 200, 189);
 
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) != 0) {
+	if (globalFlags.dsWSPickedUpWheelAssembly != 0) {
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
 	}
 }
 
 int WheelAssemblyItemAcquire::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_itemPresent && _acquireRegion.contains(pointLocation)) {
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
 		viewWindow->invalidateWindow(false);
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+		globalFlags.dsWSPickedUpWheelAssembly = 1;
 
 		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
 		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
@@ -539,6 +543,9 @@ int WheelAssemblyItemAcquire::mouseUp(Window *viewWindow, const Common::Point &p
 }
 
 int WheelAssemblyItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (pointLocation.x == -1 && pointLocation.y == -1)
 		return SIC_REJECT;
 
@@ -546,8 +553,7 @@ int WheelAssemblyItemAcquire::droppedItem(Window *viewWindow, int itemID, const 
 		_itemPresent = true;
 		_staticData.navFrameIndex = _fullFrameIndex;
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+		globalFlags.dsWSPickedUpWheelAssembly = 0;
 
 		viewWindow->invalidateWindow(false);
 		return SIC_ACCEPT;
@@ -1069,7 +1075,6 @@ private:
 	int _fullFrameIndex;
 	int _clearFrameIndex;
 	int _itemID;
-	int _itemFlagOffset;
 	Common::Rect _eyeRegion;
 };
 
@@ -1080,7 +1085,6 @@ CodexTowerGrabHeart::CodexTowerGrabHeart(BuriedEngine *vm, Window *viewWindow, c
 	_acquireRegion = Common::Rect(214, 118, 270, 189);
 	_fullFrameIndex = _staticData.navFrameIndex;
 	_clearFrameIndex = 162;
-	_itemFlagOffset = offsetof(GlobalFlags, dsCTTakenHeart);
 	_eyeRegion = Common::Rect(248, 116, 286, 180);
 
 	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTTakenHeart != 0) {
@@ -1097,12 +1101,14 @@ int CodexTowerGrabHeart::postExitRoom(Window *viewWindow, const Location &newLoc
 }
 
 int CodexTowerGrabHeart::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (_acquireRegion.contains(pointLocation) && _itemPresent) {
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+		globalFlags.dsCTTakenHeart = 1;
 
 		// Call inventory drag start function
 		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
@@ -1129,6 +1135,9 @@ int CodexTowerGrabHeart::mouseUp(Window *viewWindow, const Common::Point &pointL
 }
 
 int CodexTowerGrabHeart::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	if (pointLocation.x == -1 && pointLocation.y == -1)
 		return SIC_REJECT;
 
@@ -1137,8 +1146,7 @@ int CodexTowerGrabHeart::droppedItem(Window *viewWindow, int itemID, const Commo
 		_itemPresent = true;
 		_staticData.navFrameIndex = _fullFrameIndex;
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+		globalFlags.dsCTTakenHeart = 0;
 
 		viewWindow->invalidateWindow();
 
@@ -2593,7 +2601,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		// Default scene
 		break;
 	case 1:
-		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsPTElevatorPresent), 1);
+		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 2:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, DAVINCI_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
 	case 3:
@@ -2659,7 +2667,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 33:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 164, 126, 276, 160, kItemWoodenPegs, 96, offsetof(GlobalFlags, dsWSPickedUpPegs));
 	case 34:
-		return new WheelAssemblyItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 150, 150, 276, 189, kItemWheelAssembly, 100, offsetof(GlobalFlags, dsWSPickedUpWheelAssembly));
+		return new WheelAssemblyItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 150, 150, 276, 189, kItemWheelAssembly, 100);
 	case 35:
 		return new ViewSiegeCyclePlans(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 36:

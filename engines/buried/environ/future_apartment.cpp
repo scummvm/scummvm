@@ -1079,13 +1079,16 @@ int EnvironGenoVideo::specifyCursor(Window *viewWindow, const Common::Point &poi
 class FlagChangeBackground : public SceneBase {
 public:
 	FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, byte minFlagValue = 1, int newStillFrame = 0);
+			byte minFlagValue = 1, int newStillFrame = 0);
 };
 
 FlagChangeBackground::FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, byte minFlagValue, int newStillFrame) :
+		byte minFlagValue, int newStillFrame) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	if (flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) >= minFlagValue)
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	
+	if (globalFlags.faERTakenRemoteControl >= minFlagValue)
 		_staticData.navFrameIndex = newStillFrame;
 }
 
@@ -2004,11 +2007,11 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	case 23:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, offsetof(GlobalFlags, faERTakenRemoteControl));
 	case 24:
-		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 33);
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, 1, 33);
 	case 25:
-		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 21);
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, 1, 21);
 	case 26:
-		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 9);
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, 1, 9);
 	case 30:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
 	case 31:

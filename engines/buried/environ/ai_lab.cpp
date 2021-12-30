@@ -180,8 +180,7 @@ class SpaceDoorTimer : public BaseOxygenTimer {
 public:
 	SpaceDoorTimer(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
-			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
-			int doorFlag = -1, int doorFlagValue = 0);
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
@@ -192,20 +191,15 @@ private:
 	DestinationScene _destData;
 	int _openFrame;
 	int _closedFrame;
-	int _doorFlag;
-	int _doorFlagValue;
 };
 
 SpaceDoorTimer::SpaceDoorTimer(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int left, int top, int right, int bottom, int openFrame, int closedFrame, int depth,
-		int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
-		int doorFlag, int doorFlagValue) :
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
 		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
 	_clicked = false;
 	_openFrame = openFrame;
 	_closedFrame = closedFrame;
-	_doorFlag = doorFlag;
-	_doorFlagValue = doorFlagValue;
 	_clickable = Common::Rect(left, top, right, bottom);
 	_destData.destinationScene = _staticData.location;
 	_destData.destinationScene.depth = depth;
@@ -248,29 +242,14 @@ int SpaceDoorTimer::mouseUp(Window *viewWindow, const Common::Point &pointLocati
 			return SC_TRUE;
 		}
 
-		if (_doorFlag < 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_doorFlag) == _doorFlagValue) {
-			// Change the still frame to the new one
-			if (_openFrame >= 0) {
-				_staticData.navFrameIndex = _openFrame;
-				viewWindow->invalidateWindow(false);
-				_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA"); // Broken in 1.01
-			}
-
-			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
-		} else {
-			// Display the closed frame
-			if (_closedFrame >= 0) {
-				int oldFrame = _staticData.navFrameIndex;
-				_staticData.navFrameIndex = _closedFrame;
-				viewWindow->invalidateWindow(false);
-
-				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
-				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
-
-				_staticData.navFrameIndex = oldFrame;
-				viewWindow->invalidateWindow(false);
-			}
+		// Change the still frame to the new one
+		if (_openFrame >= 0) {
+			_staticData.navFrameIndex = _openFrame;
+			viewWindow->invalidateWindow(false);
+			_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA"); // Broken in 1.01
 		}
+
+		((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
 
 		_clicked = false;
 		return SC_TRUE;
@@ -364,14 +343,12 @@ int UseCheeseGirlPropellant::droppedItem(Window *viewWindow, int itemID, const C
 class PlayArthurOffsetTimed : public BaseOxygenTimer {
 public:
 	PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1,
+			int stingerVolume = 127, int firstStingerFileID = -1,
 			int lastStingerFileID = -1, int stingerDelay = 1);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _stingerVolume;
-	int _lastStingerFlagOffset;
-	int _effectIDFlagOffset;
 	int _firstStingerFileID;
 	int _lastStingerFileID;
 	int _stingerDelay;
@@ -379,23 +356,24 @@ private:
 };
 
 PlayArthurOffsetTimed::PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID,
+		int stingerVolume, int firstStingerFileID,
 		int lastStingerFileID, int stingerDelay) :
 		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
 	_stingerVolume = stingerVolume;
-	_lastStingerFlagOffset = lastStingerFlagOffset;
-	_effectIDFlagOffset = effectIDFlagOffset;
 	_firstStingerFileID = firstStingerFileID;
 	_lastStingerFileID = lastStingerFileID;
 	_stingerDelay = stingerDelay;
 }
 
 int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (_effectIDFlagOffset >= 0 && (priorLocation.node != _staticData.location.node || priorLocation.environment != _staticData.location.environment)) {
-		byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_effectIDFlagOffset);
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
+	if ((priorLocation.node != _staticData.location.node || priorLocation.environment != _staticData.location.environment)) {
+		byte effectID = globalFlags.aiHWStingerChannelID;
 
 		if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
-			int lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_lastStingerFlagOffset) + 1;
+			int lastStinger = globalFlags.aiHWStingerID + 1;
 
 			if ((lastStinger % _stingerDelay) == 0) {
 				if (lastStinger <= (_lastStingerFileID - _firstStingerFileID) * _stingerDelay) {
@@ -414,12 +392,12 @@ int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &pri
 						newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
 					}
 
-					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
-					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+					globalFlags.aiHWStingerChannelID = newStingerID;
+					globalFlags.aiHWStingerID = lastStinger;
 				}
 			} else {
-				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, 0xFF);
-				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+				globalFlags.aiHWStingerChannelID = 0xFF;
+				globalFlags.aiHWStingerID = lastStinger;
 			}
 		}
 	}
@@ -3491,8 +3469,7 @@ class SpaceDoor : public SceneBase {
 public:
 	SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
-			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
-			int doorFlag = -1, int doorFlagValue = 0);
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
@@ -3503,20 +3480,15 @@ private:
 	DestinationScene _destData;
 	int _openFrame;
 	int _closedFrame;
-	int _doorFlag;
-	int _doorFlagValue;
 };
 
 SpaceDoor::SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int left, int top, int right, int bottom, int openFrame, int closedFrame, int depth,
-		int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
-		int doorFlag, int doorFlagValue) :
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_clicked = false;
 	_openFrame = openFrame;
 	_closedFrame = closedFrame;
-	_doorFlag = doorFlag;
-	_doorFlagValue = doorFlagValue;
 	_clickable = Common::Rect(left, top, right, bottom);
 	_destData.destinationScene = _staticData.location;
 	_destData.destinationScene.depth = depth;
@@ -3547,22 +3519,14 @@ int SpaceDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 			return SC_TRUE;
 		}
 
-		if (_doorFlag < 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_doorFlag) == _doorFlagValue) {
-			// Change the still frame to the new one
-			if (_openFrame >= 0) {
-				_staticData.navFrameIndex = _openFrame;
-				viewWindow->invalidateWindow(false);
-				_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA");
-			}
-
-			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
-		} else {
-			// Display the closed frame
-			if (_closedFrame >= 0) {
-				_staticData.navFrameIndex = _closedFrame;
-				viewWindow->invalidateWindow(false);
-			}
+		// Change the still frame to the new one
+		if (_openFrame >= 0) {
+			_staticData.navFrameIndex = _openFrame;
+			viewWindow->invalidateWindow(false);
+			_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA");
 		}
+
+		((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
 
 		_clicked = false;
 		return SC_TRUE;
@@ -3782,11 +3746,11 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 1:
 		return new UseCheeseGirlPropellant(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 3:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 172, 46, 262, 136, 87, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 172, 46, 262, 136, 87, -1, 1, TRANSITION_VIDEO, 2, -1, -1);
 	case 4:
-		return new PlayArthurOffsetTimed(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiHWStingerID), offsetof(GlobalFlags, aiHWStingerChannelID), 4, 10, 1); // 1.01 uses a delay of 2, clone2727 likes that better
+		return new PlayArthurOffsetTimed(_vm, viewWindow, sceneStaticData, priorLocation, 127, 4, 10, 1); // 1.01 uses a delay of 2, clone2727 likes that better
 	case 5:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 144, 30, 268, 152, 88, -1, 1, TRANSITION_VIDEO, 4, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 144, 30, 268, 152, 88, -1, 1, TRANSITION_VIDEO, 4, -1, -1);
 	case 6:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 7:
@@ -3820,11 +3784,11 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 30:
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 5, offsetof(GlobalFlags, aiDBPlayedFirstArthur));
 	case 31:
-		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 174, 70, 256, 152, 166, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, 0);
+		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 174, 70, 256, 152, 166, -1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 32:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 33:
-		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 185, 42, 253, 110, 167, -1, 1, TRANSITION_VIDEO, 1, -1, -1, -1, 0);
+		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 185, 42, 253, 110, 167, -1, 1, TRANSITION_VIDEO, 1, -1, -1);
 	case 35:
 		return new DockingBayPlaySoundEntering(_vm, viewWindow, sceneStaticData, priorLocation, 4);
 	case 36:
@@ -3860,9 +3824,9 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 51:
 		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 3, 6, 6, 0, 0, 1, 0);
 	case 52:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 53:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 2, -1, -1);
 	case 54:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 55:
@@ -3886,9 +3850,9 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 64:
 		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 15, 6, 6, 4, 0, 1, 0);
 	case 65:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 13, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 13, -1, -1);
 	case 66:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 16, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 16, -1, -1);
 	case 67:
 		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
@@ -3896,7 +3860,7 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 69:
 		return new PlaySoundExitingForward(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
-		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 71:
 		return new ScienceWingZoomIntoPanel(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 72:
