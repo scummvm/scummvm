@@ -35,19 +35,15 @@
 
 namespace Wintermute {
 
-#include "common/pack-start.h"
-
 struct ShadowVertex {
+	float x;
+	float y;
+	float z;
 	uint8 r;
 	uint8 g;
 	uint8 b;
 	uint8 a;
-	float x;
-	float y;
-	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 class ShadowVolume : public BaseClass {
 public:

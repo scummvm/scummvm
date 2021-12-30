@@ -27,15 +27,11 @@
 
 namespace Wintermute {
 
-#include "common/pack-start.h"
-
 struct GeometryVertex {
 	float x;
 	float y;
 	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 class Mesh3DS {
 public:
