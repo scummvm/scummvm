@@ -14,6 +14,20 @@ For a more comprehensive changelog of the latest experimental code, see:
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
 
+ Buried:
+   - Added support for skipping synchronous audio and video.
+   - The mouse pointer is now hidden during cutscenes.
+   - Implemented game pausing via Control-P.
+   - After saving, the player returns back to the game instead of the Biochip
+     menu.
+   - The game is now always paused when the Biochip menu or the save/restore
+     dialogs are open.
+   - Added metadata to saved games, including thumbnails, creation date and
+     play time.
+   - Saved games are now sorted by slot, like in other engines, instead of
+     being sorted alphabetically.
+   - The currently selected item is now stored in saved games.
+
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
