@@ -52,7 +52,6 @@ public:
 	bool removeItem(int itemID);
 
 	bool startDraggingNewItem(int itemID, const Common::Point &pointStart);
-	int getCurrentItemID() { return _itemArray[_curItem]; }
 	bool isItemInInventory(int itemID);
 	InventoryElement getItemStaticData(int itemID);
 	int getItemCount() { return _itemArray.size(); }
@@ -75,11 +74,13 @@ public:
 	void onTimer(uint timer);
 
 private:
+	void setCurItem(uint16 itemId);
+	uint16 getCurItem() const;
+
 	Graphics::Font *_textFont;
 	int _fontHeight;
 	Graphics::Surface *_background;
 	Common::Array<int> _itemArray;
-	int _curItem;
 
 	bool _magSelected;
 	bool _upSelected;

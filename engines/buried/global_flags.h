@@ -93,7 +93,8 @@ struct GlobalFlags {
 	byte myMCStingerChannelID;          // 54
 	byte faStingerID;                   // 55
 	byte faStingerChannelID;            // 56
-	byte unused0[3];                    // 57-59
+	uint16 curItem;                     // ScummVM enhancement, originally unused bytes 57-58
+	byte unused0;                       // 59
 	uint32 cgMWCatapultData;            // 60-63
 	uint32 cgMWCatapultOffset;          // 64-67
 	byte cgTSTriedDoor;                 // 68

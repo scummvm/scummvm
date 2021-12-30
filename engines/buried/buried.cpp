@@ -132,6 +132,8 @@ Common::Error BuriedEngine::run() {
 	_mainWindow = new FrameWindow(this);
 	_mainWindow->showWindow(Window::kWindowShow);
 
+	checkForOriginalSavedGames();
+
 	if (isDemo()) {
 		((FrameWindow *)_mainWindow)->showTitleSequence();
 		((FrameWindow *)_mainWindow)->showMainMenu();

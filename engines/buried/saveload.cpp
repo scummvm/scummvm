@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
@@ -32,21 +33,19 @@
 #include "gui/message.h"
 #include "gui/saveload.h"
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/global_flags.h"
+#include "buried/graphics.h"
 #include "buried/inventory_window.h"
 #include "buried/navdata.h"
 #include "buried/scene_view.h"
 
 namespace Buried {
 
-Common::StringArray BuriedEngine::listSaveFiles() {
-	Common::StringArray fileNames = g_system->getSavefileManager()->listSavefiles("buried-*.sav");
-	Common::sort(fileNames.begin(), fileNames.end());
-	return fileNames;
-}
+#define SAVEGAME_CURRENT_VERSION 1
 
 bool BuriedEngine::canLoadGameStateCurrently() {
 	return !isDemo() && _mainWindow && !_yielding;
@@ -56,75 +55,36 @@ bool BuriedEngine::canSaveGameStateCurrently() {
 	return !isDemo() && _mainWindow && !_yielding && ((FrameWindow *)_mainWindow)->isGameInProgress();
 }
 
-Common::Error BuriedEngine::loadGameState(int slot) {
-	Common::StringArray fileNames = listSaveFiles();
-	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(fileNames[slot]);
-	if (!loadFile)
-		return Common::kUnknownError;
+void BuriedEngine::checkForOriginalSavedGames() {
+	Common::StringArray fileNames = _saveFileMan->listSavefiles("buried-*.sav");
+	Common::StringArray newFileNames = _saveFileMan->listSavefiles("buried.###");
+	Common::sort(newFileNames.begin(), newFileNames.end());
+	if (fileNames.size() == 0)
+		return;
 
-	Location location;
-	GlobalFlags flags;
-	Common::Array<int> inventoryItems;
-	if (!loadState(loadFile, location, flags, inventoryItems)) {
-		delete loadFile;
-		return Common::kUnknownError;
+	GUI::MessageDialog dialog(
+		_("ScummVM found that you have saved games that should be converted from the original saved game format.\n"
+		  "The original saved game format is no longer supported directly, so you will not be able to load your games if you don't convert them.\n\n"
+		  "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"),
+		_("OK"), _("Cancel"));
+
+	int choice = dialog.runModal();
+	if (choice != GUI::kMessageOK)
+		return;
+
+	// Convert every save slot we find with the original naming scheme
+	for (Common::StringArray::const_iterator file = fileNames.begin(); file != fileNames.end(); ++file) {
+		int slotNum = 1;
+		if (newFileNames.size() > 0) {
+			Common::String lastFile = newFileNames.back();
+			const char *slotStr = lastFile.c_str() + lastFile.size() - 3;
+			slotNum = atoi(slotStr) + 1;
+		}
+
+		Common::String newFile = getMetaEngine()->getSavegameFile(slotNum);
+		convertSavedGame(*file, newFile);
+		newFileNames.push_back(newFile);
 	}
-
-	// Done with the file
-	delete loadFile;
-
-	if (isTrial() && location.timeZone != 4) {
-		// Display a message preventing the user from loading a non-apartment
-		// saved game in the trial version
-		GUI::MessageDialog dialog("ERROR: The location in this saved game is not included in this version of Buried in Time");
-		dialog.runModal();
-
-		// Don't return an error. It's an "error" that we can't load,
-		// but we're still in a valid state. The message above will
-		// be displayed instead of the usual GUI load error.
-		return Common::kNoError;
-	}
-
-	((FrameWindow *)_mainWindow)->loadFromState(location, flags, inventoryItems);
-	return Common::kNoError;
-}
-
-static bool isValidSaveFileChar(char c) {
-	// Limit it to letters, digits, and a few other characters that should be safe
-	return Common::isAlnum(c) || c == ' ' || c == '_' || c == '+' || c == '-' || c == '.';
-}
-
-static bool isValidSaveFileName(const Common::String &desc) {
-	for (uint32 i = 0; i < desc.size(); i++)
-		if (!isValidSaveFileChar(desc[i]))
-			return false;
-
-	return true;
-}
-
-Common::Error BuriedEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	if (!isValidSaveFileName(desc))
-		return Common::Error(Common::kCreatingFileFailed, _("Invalid save file name"));
-
-	Common::String output = Common::String::format("buried-%s.sav", desc.c_str());
-	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output, false);
-	if (!saveFile)
-		return Common::kUnknownError;
-
-	GameUIWindow *gameUI = (GameUIWindow *)((FrameWindow *)_mainWindow)->getMainChildWindow();
-
-	Location location;
-	gameUI->_sceneViewWindow->getCurrentSceneLocation(location);
-	GlobalFlags &flags = gameUI->_sceneViewWindow->getGlobalFlags();
-	Common::Array<int> &inventoryItems = gameUI->_inventoryWindow->getItemArray();
-
-	if (!saveState(saveFile, location, flags, inventoryItems)) {
-		delete saveFile;
-		return Common::kUnknownError;
-	}
-
-	delete saveFile;
-	return Common::kNoError;
 }
 
 enum {
@@ -132,65 +92,181 @@ enum {
 	kSavedGameHeaderSizeAlt = 7
 };
 
-static const byte s_savedGameHeader[kSavedGameHeaderSize] = { 'B', 'I', 'T', 'M', 'P', 'C', 0, 5, 0 };
-
-bool BuriedEngine::loadState(Common::SeekableReadStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems) {
+void BuriedEngine::convertSavedGame(Common::String oldFile, Common::String newFile) {
+	static const byte s_savedGameHeader[kSavedGameHeaderSize] = {'B', 'I', 'T', 'M', 'P', 'C', 0, 5, 0};
+	Location location;
+	GlobalFlags flags;
+	Common::Array<int> inventoryItems;
 	byte header[9];
-	saveFile->read(header, kSavedGameHeaderSize);
+
+	debug("Converting %s to %s", oldFile.c_str(), newFile.c_str());
+
+	// Read original/old saved game
+	// Isolate the description from the file name
+	Common::String desc = oldFile.c_str() + 7;
+	for (int j = 0; j < 4; j++)
+		desc.deleteLastChar();
+
+	Common::InSaveFile *inFile = _saveFileMan->openForLoading(oldFile);
+	inFile->read(header, kSavedGameHeaderSize);
 
 	// Only compare the first 6 bytes
 	// Win95 version of the game output garbage as the last two bytes
-	if (saveFile->eos() || memcmp(header, s_savedGameHeader, kSavedGameHeaderSizeAlt) != 0)
-		return false;
+	if (inFile->eos() || memcmp(header, s_savedGameHeader, kSavedGameHeaderSizeAlt) != 0) {
+		delete inFile;
+		warning("Saved game %s is using an unsupported format, skipping", oldFile.c_str());
+		return;
+	}
+	
+	// Set necessary properties from the old save
+	Common::Serializer inS(inFile, nullptr);
+	Common::Error res = syncSaveData(inS, location, flags, inventoryItems);
+	delete inFile;
+	if (res.getCode() != Common::kNoError) {
+		warning("Error reading data from saved game %s, skipping", oldFile.c_str());
+		return;
+	}
 
-	Common::Serializer s(saveFile, nullptr);
+	flags.curItem = 0;	// did not persist in the original format, so set it here
 
-	if (!syncLocation(s, location))
-		return false;
+	// Write the new saved format
+	Common::OutSaveFile *outFile = _saveFileMan->openForSaving(newFile);
+	if (!outFile) {
+		warning("Error creating new save file %s", newFile.c_str());
+		return;
+	}
 
-	if (saveFile->eos())
-		return false;
+	const byte version = SAVEGAME_CURRENT_VERSION;
+	Common::Serializer outS(nullptr, outFile);
+	outS.setVersion(version);
+	outFile->writeByte(version);
 
-	if (!syncGlobalFlags(s, flags))
-		return false;
+	if (syncSaveData(outS, location, flags, inventoryItems).getCode() == Common::kNoError) {
+		getMetaEngine()->appendExtendedSave(outFile, getTotalPlayTime() / 1000, desc, false);
 
-	if (saveFile->eos())
-		return false;
+		outFile->finalize();
+		delete outFile;
 
-	uint16 itemCount = saveFile->readUint16LE();
+		// Delete the old saved game
+		_saveFileMan->removeSavefile(oldFile);
+	} else {
+		delete outFile;
 
-	if (saveFile->eos())
-		return false;
+		warning("Error writing data to saved game %s, skipping", newFile.c_str());
 
-	inventoryItems.clear();
-	for (uint16 i = 0; i < itemCount; i++)
-		inventoryItems.push_back(saveFile->readUint16LE());
-
-	return !saveFile->eos();
+		// The newly created saved game is corrupted, delete it
+		_saveFileMan->removeSavefile(newFile);
+	}
 }
 
-bool BuriedEngine::saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems) {
-	saveFile->write(s_savedGameHeader, kSavedGameHeaderSize);
+Common::Error BuriedEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	const byte version = stream->readByte();
+	if (version > SAVEGAME_CURRENT_VERSION) {
+		GUI::MessageDialog dialog(_s("Saved game was created with a newer version of ScummVM. Unable to load."));
+		dialog.runModal();
+		return Common::kUnknownError;
+	}
 
-	Common::Serializer s(nullptr, saveFile);
+	Common::Serializer ser(stream, nullptr);
+	ser.setVersion(version);
 
-	if (!syncLocation(s, location))
-		return false;
+	return syncSaveData(ser);
+}
 
-	if (!syncGlobalFlags(s, flags))
-		return false;
+Common::Error BuriedEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	const byte version = SAVEGAME_CURRENT_VERSION;
+	Common::Serializer ser(nullptr, stream);
+	ser.setVersion(version);
+	stream->writeByte(version);
 
-	saveFile->writeUint16LE(inventoryItems.size());
+	GameUIWindow *gameUI = (GameUIWindow *)((FrameWindow *)_mainWindow)->getMainChildWindow();
+	gameUI->_bioChipRightWindow->destroyBioChipViewWindow();	// to capture a game screenshot
+	_gfx->updateScreen();
 
-	for (uint16 i = 0; i < inventoryItems.size(); i++)
-		saveFile->writeUint16LE(inventoryItems[i]);
+	return syncSaveData(ser);
+}
 
-	// Fill in remaining items with all zeroes
-	uint16 fillItems = 50 - inventoryItems.size();
-	while (fillItems--)
-		saveFile->writeUint16LE(0);
+Common::Error BuriedEngine::syncSaveData(Common::Serializer &ser) {
+	Common::Error result;
 
-	return true;
+	if (ser.isLoading()) {
+		Location location;
+		GlobalFlags flags;
+		Common::Array<int> inventoryItems;
+
+		result = syncSaveData(ser, location, flags, inventoryItems);
+
+		if (isTrial() && location.timeZone != 4) {
+			// Display a message preventing the user from loading a non-apartment
+			// saved game in the trial version
+			GUI::MessageDialog dialog("ERROR: The location in this saved game is not included in this version of Buried in Time");
+			dialog.runModal();
+		} else {
+			((FrameWindow *)_mainWindow)->loadFromState(location, flags, inventoryItems);
+		}
+	} else {
+		Location location;
+		GameUIWindow *gameUI = (GameUIWindow *)((FrameWindow *)_mainWindow)->getMainChildWindow();
+		gameUI->_sceneViewWindow->getCurrentSceneLocation(location);
+		GlobalFlags &flags = gameUI->_sceneViewWindow->getGlobalFlags();
+		Common::Array<int> &inventoryItems = gameUI->_inventoryWindow->getItemArray();
+
+		result = syncSaveData(ser, location, flags, inventoryItems);
+	}
+
+	return result;
+}
+
+Common::Error BuriedEngine::syncSaveData(Common::Serializer &ser, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems) {
+	if (!syncLocation(ser, location)) {
+		warning("Error while synchronizing location data");
+		return Common::kUnknownError;
+	}
+
+	if (!syncGlobalFlags(ser, flags)) {
+		warning("Error while synchronizing global flag data");
+		return Common::kUnknownError;
+	}
+
+	if (ser.err()) {
+		warning("Error while synchronizing data");
+		return Common::kUnknownError;
+	}
+
+	uint16 itemCount = inventoryItems.size();
+	ser.syncAsUint16LE(itemCount);
+
+	if (ser.isLoading()) {
+		inventoryItems.clear();
+		inventoryItems.reserve(itemCount);
+	}
+
+	for (uint16 i = 0; i < itemCount; i++) {
+		uint16 itemId = 0;
+
+		if (ser.isLoading()) {
+			ser.syncAsUint16LE(itemId);
+			inventoryItems.push_back(itemId);
+		} else {
+			itemId = inventoryItems[i];
+			ser.syncAsUint16LE(itemId);
+		}
+	}
+
+	if (ser.isSaving()) {
+		// Fill in remaining items with all zeroes
+		uint16 fillItems = 50 - itemCount;
+		uint16 filler = 0;
+		while (fillItems--)
+			ser.syncAsUint16LE(filler);
+	}
+
+	if (ser.err()) {
+		warning("Error while synchronizing inventory data");
+		return Common::kUnknownError;
+	}
+
+	return Common::kNoError;
 }
 
 // Since we can't take the address of a uint16 or uint32 from
@@ -288,7 +364,8 @@ bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	s.syncAsByte(flags.myMCStingerChannelID);
 	s.syncAsByte(flags.faStingerID);
 	s.syncAsByte(flags.faStingerChannelID);
-	s.syncBytes(flags.unused0, sizeof(flags.unused0));
+	SYNC_FLAG_UINT16(curItem);
+	s.syncAsByte(flags.unused0);
 	SYNC_FLAG_UINT32(cgMWCatapultData);
 	SYNC_FLAG_UINT32(cgMWCatapultOffset);
 	s.syncAsByte(flags.cgTSTriedDoor);

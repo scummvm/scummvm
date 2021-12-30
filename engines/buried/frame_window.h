@@ -48,7 +48,6 @@ public:
 	bool showCompletionScene(GlobalFlags &globalFlags);
 	bool showCredits();
 	bool showOverview();
-	bool notifyUserOfFrameCycling();
 	bool setTimerPause(bool pause);
 
 	bool onEraseBackground();

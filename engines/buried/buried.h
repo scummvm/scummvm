@@ -143,11 +143,11 @@ public:
 	// Save/Load
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
-	static Common::StringArray listSaveFiles();
-	bool loadState(Common::SeekableReadStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
-	bool saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
+	Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("buried.%03d", slot);
+	}
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void handleSaveDialog();
 	void handleRestoreDialog();
 
@@ -184,6 +184,10 @@ private:
 	// Saves
 	bool syncLocation(Common::Serializer &s, Location &location);
 	bool syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags);
+	Common::Error syncSaveData(Common::Serializer &ser);
+	Common::Error syncSaveData(Common::Serializer &ser, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
+	void checkForOriginalSavedGames();
+	void convertSavedGame(Common::String oldFile, Common::String newFile);
 };
 
 // Macro for creating a version field

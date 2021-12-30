@@ -80,49 +80,24 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
-		if (!target)
-			target = getEngineId();
-		if (saveGameIdx == kSavegameFilePattern)
-			return Common::String::format("buried-*.sav");
-		else
-			return Common::String::format("buried-%s.sav", target);
+		// We set a standard target because saves are compatible among all versions
+		return AdvancedMetaEngine::getSavegameFile(saveGameIdx, "buried");
 	}
 };
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves)
-		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave);
-}
-
-SaveStateList BuriedMetaEngine::listSaves(const char *target) const {
-	// The original had no pattern, so the user must rename theirs
-	// Note that we ignore the target because saves are compatible between
-	// all versions
-	Common::StringArray fileNames = Buried::BuriedEngine::listSaveFiles();
-
-	SaveStateList saveList;
-	for (uint32 i = 0; i < fileNames.size(); i++) {
-		// Isolate the description from the file name
-		Common::String desc = fileNames[i].c_str() + 7;
-		for (int j = 0; j < 4; j++)
-			desc.deleteLastChar();
-
-		saveList.push_back(SaveStateDescriptor(this, i, desc));
-	}
-
-	return saveList;
-}
-
-void BuriedMetaEngine::removeSaveState(const char *target, int slot) const {
-	// See listSaves() for info on the pattern
-	const Common::StringArray &fileNames = Buried::BuriedEngine::listSaveFiles();
-	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+		f == kSupportsListSaves ||
+		f == kSupportsLoadingDuringStartup ||
+		f == kSupportsDeleteSave ||
+		f == kSavesSupportMetaInfo ||
+		f == kSavesSupportThumbnail ||
+		f == kSavesSupportCreationDate ||
+		f == kSavesSupportPlayTime ||
+		f == kSimpleSavesNames ||
+		f == kSavesUseExtendedFormat;
 }
 
 Common::Error BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
