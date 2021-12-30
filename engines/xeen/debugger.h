@@ -83,6 +83,12 @@ private:
 	 * Flags whether to make the party invincible
 	 */
 	bool cmdIntangible(int argc, const char **argv);
+
+	/**
+	 * Tries to load an original savegame
+	 */
+	bool cmdLoadOriginal(int argc, const char **argv);
+
 public:
 	bool _invincible;
 	bool _intangible;
