@@ -586,9 +586,6 @@ bool BuriedEngine::isControlDown() const {
 }
 
 void BuriedEngine::pauseGame() {
-	if (isDemo())
-		return;
-
 	// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
 	GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
 	runDialog(dialog);
