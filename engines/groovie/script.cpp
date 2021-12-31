@@ -1892,6 +1892,10 @@ void Script::o_returnscript() {
 
 	_vm->_videoPlayer->resetFlags();
 	_vm->_videoPlayer->setOrigin(0, 0);
+
+	if (canDirectSave()) {
+		_vm->saveAutosaveIfEnabled();
+	}
 }
 
 void Script::o_sethotspotright() {
