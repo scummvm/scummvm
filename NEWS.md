@@ -29,6 +29,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - The currently selected item is now stored in saved games.
    - Comments from Arthur that play in the background can now be stopped with
      the space key (the same key that replays Arthur's last comment).
+   - The agent evaluation (current points) can now be shown with Control-D.
+   - Fixed global flag corruption in death screens.
 
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
