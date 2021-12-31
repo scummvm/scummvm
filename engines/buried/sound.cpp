@@ -387,6 +387,12 @@ bool SoundManager::isAsynchronousAICommentPlaying() {
 	return _soundData[kAIVoiceIndex]->isPlaying();
 }
 
+void SoundManager::stopAsynchronousAIComment() {
+	if (isAsynchronousAICommentPlaying()) {
+		_soundData[kAIVoiceIndex]->stop();
+	}
+}
+
 int SoundManager::playSoundEffect(const Common::String &fileName, int volume, bool loop, bool oneShot) {
 	if (fileName.empty())
 		return -1;

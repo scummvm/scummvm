@@ -60,6 +60,7 @@ public:
 	bool playSynchronousAIComment(const Common::String &fileName);
 	bool playAsynchronousAIComment(const Common::String &fileName);
 	bool isAsynchronousAICommentPlaying();
+	void stopAsynchronousAIComment();
 
 	// SOUND EFFECTS FUNCTIONS
 	int playSoundEffect(const Common::String &fileName, int volume = 127, bool loop = false, bool oneShot = true);

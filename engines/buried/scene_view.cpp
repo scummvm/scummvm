@@ -2477,10 +2477,15 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		break;
 	case Common::KEYCODE_SPACE:
 		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipAI) && _globalFlags.bcCloakingEnabled != 1) {
-			if (!_lastAICommentFileName.empty() && !_vm->_sound->isAsynchronousAICommentPlaying()) {
-				TempCursorChange cursorChange(kCursorWait);
-				_vm->_sound->playAsynchronousAIComment(_lastAICommentFileName);
+			if (!_lastAICommentFileName.empty()) {
+				if (!_vm->_sound->isAsynchronousAICommentPlaying()) {
+					TempCursorChange cursorChange(kCursorWait);
+					_vm->_sound->playAsynchronousAIComment(_lastAICommentFileName);
+				} else {
+					_vm->_sound->stopAsynchronousAIComment();
+				}
 			}
+
 			return;
 		}
 		break;
