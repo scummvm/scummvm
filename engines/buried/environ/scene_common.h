@@ -277,7 +277,7 @@ private:
 class DisableForwardMovement : public SceneBase {
 public:
 	DisableForwardMovement(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, int flagValue = 1);
+			int flagValue = 1);
 };
 
 class CycleEntryVideoWarning : public SceneBase {

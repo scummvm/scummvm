@@ -826,9 +826,11 @@ int OneShotEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &
 }
 
 DisableForwardMovement::DisableForwardMovement(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int flagValue) :
+		int flagValue) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	if (flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) == flagValue)
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	if (globalFlags.generalWalkthroughMode == flagValue)
 		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
 }
 
