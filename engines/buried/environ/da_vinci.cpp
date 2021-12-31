@@ -2592,6 +2592,9 @@ bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &co
 }
 
 SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	// Special scene for the trial version
 	if (_vm->isTrial())
 		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -2751,7 +2754,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 75:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsCYTriedElevator), 13, kCursorFinger, 140, 130, 432, 189);
 	case 76:
-		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, offsetof(GlobalFlags, dsCTPlayedBallistaFalling));
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, globalFlags.dsCTPlayedBallistaFalling);
 	case 77:
 		return new CodexFormulaeNotify(_vm, viewWindow, sceneStaticData, priorLocation);
 	default:

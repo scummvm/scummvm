@@ -208,16 +208,15 @@ int PlaySoundExitingFromSceneDeux::postExitRoom(Window *viewWindow, const Locati
 }
 
 PlaySoundEnteringScene::PlaySoundEnteringScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int soundFileNameID, int flagOffset) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int soundFileNameID, byte &flag) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_soundFileNameID = soundFileNameID;
-	_flagOffset = flagOffset;
 }
 
 int PlaySoundEnteringScene::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (_flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+	if (_flag == 0) {
 		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID));
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		_flag = 1;
 	}
 
 	return SC_TRUE;

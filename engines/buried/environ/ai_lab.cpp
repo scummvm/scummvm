@@ -3735,6 +3735,9 @@ bool SceneViewWindow::checkCustomSpaceStationAICommentDependencies(const Locatio
 }
 
 SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	// Special scene for the trial version
 	if (_vm->isTrial())
 		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -3782,7 +3785,7 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 28:
 		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, 4, 11, 1, 66, 241, 25);
 	case 30:
-		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 5, offsetof(GlobalFlags, aiDBPlayedFirstArthur));
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 5, globalFlags.aiDBPlayedFirstArthur);
 	case 31:
 		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 174, 70, 256, 152, 166, -1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 32:
@@ -3792,11 +3795,11 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 35:
 		return new DockingBayPlaySoundEntering(_vm, viewWindow, sceneStaticData, priorLocation, 4);
 	case 36:
-		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 6, offsetof(GlobalFlags, aiDBPlayedSecondArthur));
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 6, globalFlags.aiDBPlayedSecondArthur);
 	case 37:
-		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 7, offsetof(GlobalFlags, aiDBPlayedThirdArthur));
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 7, globalFlags.aiDBPlayedThirdArthur);
 	case 38:
-		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 8, offsetof(GlobalFlags, aiDBPlayedFourthArthur));
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 8, globalFlags.aiDBPlayedFourthArthur);
 	case 39:
 		return new DisableForwardMovement(_vm, viewWindow, sceneStaticData, priorLocation, 1);
 	case 40:

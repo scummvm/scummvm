@@ -95,12 +95,12 @@ private:
 class PlaySoundEnteringScene : public SceneBase {
 public:
 	PlaySoundEnteringScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int soundFileNameID = -1, int flagOffset = -1);
+			int soundFileNameID, byte &flag);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
 
 private:
 	int _soundFileNameID;
-	int _flagOffset;
+	byte &_flag;
 };
 
 class ClickChangeScene : public SceneBase {
