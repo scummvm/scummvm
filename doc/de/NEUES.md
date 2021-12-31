@@ -14,6 +14,19 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
 
+ Buried:
+   - Gleichzeitige Wiedergabe von Audio und Video kann nun übersprungen werden.
+   - Der Mauszeiger wird nun während Zwischensequenzen versteckt.
+   - Das Spiel kann nun über Strg/Cmd+P pausiert werden.
+   - Nach dem Speichern kehrt der Spieler zum Spiel zurück und nicht zum Biochip-Menü.
+   - Das Spiel wird nun immer pausiert, wenn das Biochip-Menü oder der Speichern/Laden-Dialog geöffnet wird.
+   - Metadaten zu Spielständen hinzugefügt, einschließlich Thumbnails, Erstelldatum und Spieldauer.
+   - Gespeicherte Spiele werden nun wie in anderen Spielen nach Speicher-Slot anstatt alphabetisch sortiert.
+   - Der aktuell ausgewählte Gegenstand wird nun in Spielständen gespeichert.
+   - Hintergrund-Kommentare von Arthur können mit der Leertaste angehalten werden (die selbe Taste, die Arthurs letzten Kommentar wiederholt).
+   - Die Agenten-Überprüfung (aktueller Punktestand) kann nun mit Strg/Cmd+D angezeigt werden.
+   - Status-Fehler in Todes-Szenen behoben.
+
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
@@ -33,6 +46,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SCUMM:
    - Neue Digital iMUSE-Engine hinzugefügt.
    - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
+
+ TwinE:
+   - Fehler in der Kollisionserkennung behoben, der dazu führt, dass das Spiel nicht beendet werden kann,
+     da sich der Panzer in Szene 63 nicht mehr bewegen kann.
+   - Rendering-Artefakte aufgrund fehlerhafter Berechnung des Lichteinfalls in einigen Szenen korrigiert.
+   - Fehler in der Polygon-Darstellung in einigen Szenen korrigiert.
+   - Falsche Schussrichtung einiger Charaktere korrigiert.
 
  macOS-Port:
    - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
