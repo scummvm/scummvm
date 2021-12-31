@@ -442,10 +442,9 @@ int PlaySoundEnteringFromScene::postEnterRoom(Window *viewWindow, const Location
 }
 
 SetFlagOnEntry::SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, byte flagNewValue) :
+		byte &flag, byte flagNewValue) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	if (flagOffset >= 0)
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, flagNewValue);
+	flag = flagNewValue;
 }
 
 InteractiveNewsNetwork::InteractiveNewsNetwork(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,

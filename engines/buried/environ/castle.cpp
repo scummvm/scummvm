@@ -1153,6 +1153,9 @@ bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &com
 }
 
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	// Special scene for the trial version
 	if (_vm->isTrial())
 		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -1278,7 +1281,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 60:
 		return new MainWallCatapultService(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 61:
-		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgMBCrossedMoat), 1);
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgMBCrossedMoat, 1);
 	case 62:
 		return new MiddleBaileyFootprintCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 63:
@@ -1289,7 +1292,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new TreasureRoomSwordCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 66:
 		// Original incremented the flag each time, but it's expected that the code will never go above 1
-		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgViewedKeepPlans), 1);
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgViewedKeepPlans, 1);
 	case 67:
 		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorPutDown, 1, 6, 5, 1, 0, 0, TRANSITION_VIDEO, 5, -1, -1, offsetof(GlobalFlags, cgFoundChestPanel));
 	case 70:
@@ -1305,7 +1308,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 75:
 		return new DeliverLightMessage(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 76:
-		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgSROpenedChest), 1);
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgSROpenedChest, 1);
 	case 77:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorB), 14, kCursorFinger, 72, 0, 372, 189);
 	default:
