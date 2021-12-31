@@ -27,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Saved games are now sorted by slot, like in other engines, instead of
      being sorted alphabetically.
    - The currently selected item is now stored in saved games.
+   - Comments from Arthur that play in the background can now be stopped with
+     the space key (the same key that replays Arthur's last comment).
 
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
