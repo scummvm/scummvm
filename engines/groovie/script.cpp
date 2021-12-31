@@ -1100,8 +1100,12 @@ void Script::o_inputloopend() {
 
 	// Nothing to do
 	if (_inputLoopAddress) {
-		if (_newCursorStyle != _vm->_grvCursorMan->getStyle()) {
-			_vm->_grvCursorMan->setStyle(_newCursorStyle);
+		uint16 newCursor = _newCursorStyle;
+		if (_variables[0x91] == 1) {
+			newCursor |= 0x8000;
+		}
+		if (newCursor != _vm->_grvCursorMan->getStyle()) {
+			_vm->_grvCursorMan->setStyle(newCursor);
 		}
 		_vm->_grvCursorMan->show(true);
 

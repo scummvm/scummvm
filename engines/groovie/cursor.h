@@ -53,8 +53,8 @@ public:
 
 	virtual void show(bool visible);
 	virtual void animate();
-	virtual void setStyle(uint8 newStyle);
-	virtual uint8 getStyle();
+	virtual void setStyle(uint16 newStyle);
+	virtual uint16 getStyle();
 
 protected:
 	OSystem *_syst;
@@ -65,7 +65,7 @@ protected:
 
 	// Styles
 	Common::Array<Cursor *> _cursors;
-	uint8 _current;
+	uint16 _current;
 	Cursor *_cursor;
 };
 
@@ -93,7 +93,12 @@ public:
 	GrvCursorMan_v2(OSystem *system);
 	~GrvCursorMan_v2() override;
 
-	void setStyle(uint8 newStyle) override;
+	void animate() override;
+	void setStyle(uint16 newStyle) override;
+
+private:
+	Cursor *_cursor2;
+	uint8 _lastFrame2;
 };
 
 } // End of Groovie namespace

@@ -50,18 +50,18 @@ void GrvCursorMan::show(bool visible) {
 	CursorMan.showMouse(visible);
 }
 
-uint8 GrvCursorMan::getStyle() {
+uint16 GrvCursorMan::getStyle() {
 	return _current;
 }
 
-void GrvCursorMan::setStyle(uint8 newStyle) {
+void GrvCursorMan::setStyle(uint16 newStyle) {
 	// Reset the animation
 	_lastFrame = 254;
 	_lastTime = 1;
 
 	// Save the new cursor
 	_current = newStyle;
-	_cursor = _cursors[newStyle];
+	_cursor = _cursors[newStyle & 0xFF];
 
 	// Show the first frame
 	_cursor->enable();
@@ -240,6 +240,8 @@ public:
 
 	void enable() override;
 	void showFrame(uint16 frame) override;
+	void blendCursor(uint32 *dst, int frame, int w, int h);
+	static void show2Cursors(Cursor_v2 *c1, uint16 frame1, Cursor_v2 *c2, uint16 frame2);
 
 private:
 	// Currently locked to 16bit
@@ -374,11 +376,66 @@ void Cursor_v2::showFrame(uint16 frame) {
 	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, 0, false, &_format);
 }
 
+void blendCursorPixel(uint32 &d, uint32 &s) {
+#ifdef SCUMM_LITTLE_ENDIAN
+	static const int kAIndex = 0;
+	static const int kBIndex = 1;
+	static const int kGIndex = 2;
+	static const int kRIndex = 3;
+
+#else
+	static const int kAIndex = 3;
+	static const int kBIndex = 2;
+	static const int kGIndex = 1;
+	static const int kRIndex = 0;
+#endif
+
+	byte *dst = (byte *)&d;
+	byte *src = (byte *)&s;
+
+	if (src[kAIndex] == 255) {
+		d = s;
+	} else if (src[kAIndex] > 0) {
+		dst[kAIndex] = MAX(src[kAIndex], dst[kAIndex]);
+		dst[kRIndex] = ((src[kRIndex] * src[kAIndex]) + dst[kRIndex] * (255 - src[kAIndex])) >> 8;
+		dst[kGIndex] = ((src[kGIndex] * src[kAIndex]) + dst[kGIndex] * (255 - src[kAIndex])) >> 8;
+		dst[kBIndex] = ((src[kBIndex] * src[kAIndex]) + dst[kBIndex] * (255 - src[kAIndex])) >> 8;
+	}
+	// In case of alpha == 0 just do nothing
+}
+
+void Cursor_v2::blendCursor(uint32 *dst, int frame, int w, int h) {
+	uint32 *src = (uint32 *)_img;
+	src += _width * _height * frame;
+
+	int offX = (w - _width) / 2;
+	int offY = (h - _height) / 2;
+
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width; x++) {
+			blendCursorPixel(dst[x + offX + (y + offY) * w], src[x + y * _width]);
+		}
+	}
+}
+
+void Cursor_v2::show2Cursors(Cursor_v2 *c1, uint16 frame1, Cursor_v2 *c2, uint16 frame2) {
+	int width = MAX(c1->_width, c2->_width);
+	int height = MAX(c1->_height, c2->_height);
+	uint32 *img = new uint32[width * height]();
+
+	c2->blendCursor(img, frame2, width, height);
+	c1->blendCursor(img, frame1, width, height);
+
+	// replaceCursor copies the buffer, so we're ok to delete it
+	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, 0, false, &c1->_format);
+	delete[] img;
+}
+
 
 // v2 Cursor Manager
 
 GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
-	GrvCursorMan(system) {
+	GrvCursorMan(system), _cursor2(nullptr), _lastFrame2(0) {
 
 	// Open the icons file
 	Common::File iconsFile;
@@ -407,10 +464,42 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 GrvCursorMan_v2::~GrvCursorMan_v2() {
 }
 
-void GrvCursorMan_v2::setStyle(uint8 newStyle) {
-	// Cursor 4 is actually cursor 3, but with some changes to alpha blending
+
+void GrvCursorMan_v2::animate() {
+	if (_lastTime) {
+		int newTime = _syst->getMillis();
+		if (newTime - _lastTime >= 66) {
+			_lastFrame++;
+			_lastFrame %= _cursor->getFrames();
+			if (_cursor2) {
+				_lastFrame2++;
+				_lastFrame2 %= _cursor2->getFrames();
+				Cursor_v2::show2Cursors((Cursor_v2 *)_cursor, _lastFrame, (Cursor_v2 *)_cursor2, _lastFrame2);
+			} else {
+				_cursor->showFrame(_lastFrame);
+			}
+			_lastTime = _syst->getMillis();
+		}
+	}
+}
+
+
+void GrvCursorMan_v2::setStyle(uint16 newStyle) {
+	// HACK: Cursor 4 is actually cursor 3, but with some changes to alpha blending
 	// (which is currently not handled)
-	GrvCursorMan::setStyle(newStyle == 4 ? 3 : newStyle);
+	uint8 newStyleLow = newStyle & 0xFF;
+	GrvCursorMan::setStyle(newStyleLow == 4 ? 3 : newStyle);
+
+	if (newStyle & 0x8000) {
+		_cursor2 = _cursors.back();
+		_lastFrame2 = 254;
+	} else {
+		_cursor2 = nullptr;
+	}
+
+	// fix _current back to cursor 4 so that getStyle returns the proper number
+	if (newStyleLow == 4)
+		_current++;
 }
 
 } // End of Groovie namespace
