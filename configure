@@ -5619,7 +5619,7 @@ if test "$_have_x86" = yes ; then
 				;;
 				*)
 					append_var NASMFLAGS "-f elf"
-					if $LD $LDFLAGS -Wl,--version | grep 'GNU gold'; then
+					if $LD $LDFLAGS -Wl,--version 2>/dev/null | grep -q -e 'GNU gold'; then
 						# gold throws an internal error when nasm uses dwarf, force older stabs in this case
 						append_var NASMFLAGS "-F stabs"
 					fi
