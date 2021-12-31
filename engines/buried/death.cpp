@@ -192,7 +192,7 @@ enum {
 	BUTTON_MAIN_MENU = 3
 };
 
-DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags &globalFlags, Common::Array<int> itemArray)
+DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray)
 		: Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags), _itemArray(itemArray) {
 	_curButton = 0;
 	_deathFrameIndex = -1;
