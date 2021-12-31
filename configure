@@ -1935,6 +1935,7 @@ if test "$_host_os" = android; then
 	# These values can get overriden below by environments variables
 	_ar="$_android_toolchain/bin/$_ar"
 	_as="$_android_toolchain/bin/$_as"
+	_dwp="$_android_toolchain/bin/$_dwp"
 	_ranlib="$_android_toolchain/bin/$_ranlib"
 	_strip="$_android_toolchain/bin/$_strip"
 	if test -z "$STRINGS"; then
