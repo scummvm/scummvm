@@ -619,6 +619,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chaquico1000",		"Craig Chaquico: A Thousand Pictures" },
 	{ "concentration",		"Solitudes: Natural Concentration" },
 	{ "girlsaloudbox",		"Girls Aloud: The Singles Box Set" },
+	{ "ebntelebreakdown",	"EBN: Telecommunication Breakdown" },
 	{ "imesceneryfish",		"I Mother Earth: Scenery and Fish" },
 	{ "princerave",			"Prince: Rave Un2 the Joy Fantastic" },
 	{ "relaxation",			"Solitudes: Natural Relaxation" },
@@ -2853,6 +2854,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("easyitalian", "", "Easy Cooking Italian", "a8e65a2268226bd59f12ebdc58a221f3", 483746, 404),
 	WINGAME1("easyitalian", "", "ITALIAN.EXE", "acec057095e38421040129da764e0e16", 698291, 404),
+
+	MACGAME1("ebntelebreakdown", "", "EBNTBeCD.MAC", "51f11d985a921c2cfcf2b763b7b9c2e3", 499512, 404),
+	WINGAME1t("ebntelebreakdown", "", "EBNTBCDW.EXE", "77399581d91215a1149dcf08411d2f63", 2631477, 404),
 
 	MACGAME1("edh", "", "Executive Diet Helper CD", "7e1e1bad51542c9a3b484b1dacdf47fc", 635872, 404),
 	WINGAME1("edh", "", "EDHCD.EXE", "fdeadce56c6654312bf280eb21f36692", 9841489, 404),
