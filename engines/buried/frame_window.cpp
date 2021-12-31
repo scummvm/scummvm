@@ -268,7 +268,7 @@ bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags &globalFlags, 
 
 	_vm->removeMouseMessages(this);
 
-	// Pass globalFlags by value to DeathWindowhere, as they will be destroyed
+	// Pass globalFlags by value to DeathWindow here, as they will be destroyed
 	// together with _mainChildWindow (a GameUIWindow, which contains the scene
 	// window, which holds the instance of the global flags)
 	DeathWindow *deathWindow = new DeathWindow(_vm, this, deathSceneIndex, globalFlags, itemArray);
