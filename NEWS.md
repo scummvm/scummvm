@@ -49,6 +49,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote music player for Amiga versions of Indy3 and Loom in accordance
      to the original code.
 
+ TwinE:
+   - Fixed a bug in the collision code that made the game unfinishable due to the
+     tank not moving any further in scene 63.
+   - Fixed light angle calculation which produced rendering artifacts in a few
+     scenes.
+   - Fixed polygon rendering method for the boat windows.
+   - Fixed wrong shooting direction for some actors.
+
  macOS port:
    - Added support for displaying OSD messages on the Touch Bar.
 
