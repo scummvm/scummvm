@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-31 04:23+0000\n"
+"POT-Creation-Date: 2021-12-31 17:12+0000\n"
 "PO-Revision-Date: 2021-12-24 21:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -134,7 +134,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:579
+#: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/grim/grim.cpp:356 engines/kyra/gui/saveload_eob.cpp:595
 #: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
@@ -146,7 +146,7 @@ msgstr "Так"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
 #: gui/options.cpp:3096 gui/options.cpp:3134 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:579 engines/grim/grim.cpp:356
+#: engines/buried/buried.cpp:580 engines/grim/grim.cpp:356
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
@@ -4374,11 +4374,11 @@ msgstr "Автор перекладу проти того, щоб його пе�
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
-#: engines/buried/buried.cpp:579
+#: engines/buried/buried.cpp:580
 msgid "Are you sure you want to quit?"
 msgstr "Ви упевнені, що хочете вийти?"
 
-#: engines/buried/buried.cpp:592
+#: engines/buried/buried.cpp:593
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Ігру призупинено. Натисніть OK для продовження."
 
