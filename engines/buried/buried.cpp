@@ -40,6 +40,7 @@
 #include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/console.h"
+#include "buried/death.h"
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -591,6 +592,25 @@ void BuriedEngine::pauseGame() {
 	// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
 	GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
 	runDialog(dialog);
+}
+
+void BuriedEngine::showPoints() {
+	if (isDemo())
+		return;
+
+	FrameWindow *frameWindow = (FrameWindow *)_mainWindow;
+	SceneViewWindow *sceneView = ((GameUIWindow *)frameWindow->getMainChildWindow())->_sceneViewWindow;
+	AgentEvaluation *agentEvaluation = new AgentEvaluation(this, sceneView->getGlobalFlags(), -1);
+
+	GUI::MessageDialog dialog(
+		agentEvaluation->_scoringTextDescriptionsWithScores,
+		"OK",
+		Common::U32String(),
+		Graphics::kTextAlignLeft
+	);
+	runDialog(dialog);
+
+	delete agentEvaluation;
 }
 
 void BuriedEngine::handleSaveDialog() {

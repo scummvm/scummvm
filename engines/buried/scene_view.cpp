@@ -2461,17 +2461,19 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			return;
 		}
 		break;
-	case Common::KEYCODE_p:
-		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Pause game
-			return;
-		}
-		break;
 	case Common::KEYCODE_q:
 		if (key.flags & Common::KBD_CTRL) {
 			// Return to main menu
 			if (_vm->runQuitDialog())
 				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
+			return;
+		}
+		break;
+	case Common::KEYCODE_d:
+		if (key.flags & Common::KBD_CTRL) {
+			// Current points (ScummVM enhancement - Agent evaluation
+			// from death screens)
+			_vm->showPoints();
 			return;
 		}
 		break;

@@ -39,12 +39,6 @@
 
 namespace Buried {
 
-enum {
-	BUTTON_QUIT = 1,
-	BUTTON_RESTORE_GAME = 2,
-	BUTTON_MAIN_MENU = 3
-};
-
 #define CHECK_PUZZLE_FLAG(flag) \
 	if (_globalFlags.flag != 0) \
 		puzzlesSolved++
@@ -61,63 +55,8 @@ enum {
 	if (_globalFlags.evcapBaseID[i] == flag) \
 		supportingEvidence++
 
-DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags &globalFlags, Common::Array<int> itemArray)
-		: Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags), _itemArray(itemArray) {
-	_curButton = 0;
-	_deathFrameIndex = -1;
-	_lightOn = false;
-	_walkthroughMode = false;
-
-	_rect = Common::Rect(0, 0, 640, 480);
-	_quit = Common::Rect(27, 422, 100, 460);
-	_restoreGame = Common::Rect(112, 422, 185, 460);
-	_mainMenu = Common::Rect(198, 422, 271, 460);
-
-	_timer = setTimer(400);
-
-	if (deathSceneIndex < 10) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_CASTLE_FILENAME));
-	} else if (deathSceneIndex < 20) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_MAYAN_FILENAME));
-	} else if (deathSceneIndex < 30) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_AGENTLAIR_FILENAME));
-	} else if (deathSceneIndex < 40) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_DAVINCI_FILENAME));
-	} else if (deathSceneIndex < 50) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_AILAB_FILENAME));
-	} else if (deathSceneIndex < 60) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_ALIEN_FILENAME));
-	} else if (deathSceneIndex < 70) {
-		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_FINALE_FILENAME));
-	} else {
-		error("Bad death scene index %d", deathSceneIndex);
-	}
-
-	// Set the frame index
-	switch (deathSceneIndex) {
-	case 15:
-		_deathFrameIndex = 4;
-		break;
-	case 52:
-	case 53:
-		_deathFrameIndex = 1;
-		break;
-	case 54:
-	case 55:
-		_deathFrameIndex = 0;
-		break;
-	default:
-		_deathFrameIndex = deathSceneIndex % 10;
-		break;
-	}
-
-	_fontHeightA = (_vm->getLanguage() == Common::JA_JPN) ? 12 : 14;
-	_textFontA = _vm->_gfx->createFont(_fontHeightA);
-
-	_fontHeightB = 20;
-	_textFontB = _vm->_gfx->createFont(_fontHeightB, true);
-
-	_walkthroughMode = _globalFlags.generalWalkthroughMode != 0;
+AgentEvaluation::AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int deathSceneIndex) :
+	_globalFlags(globalFlags) {
 
 	int puzzlesSolved = 0;
 	CHECK_PUZZLE_FLAG(scoreGotTranslateBioChip);
@@ -185,57 +124,134 @@ DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, 
 	int totalScore = finalCriticalEvidenceScore + finalSupportingEvidenceScore + finalPuzzleScore + finalResearchScore + completionScore;
 
 	// Build the string buffers
-	if (_walkthroughMode) {
-		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
+	if (_globalFlags.generalWalkthroughMode != 0) {
+		if (vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
 			// HACK HACK HACK: More horridness.
-			Common::String stringResource = _vm->getString(IDS_DEATH_WALK_SCORE_DESC_TEMPL);
+			Common::String stringResource = vm->getString(IDS_DEATH_WALK_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
-			stringResource = _vm->getString(IDS_DEATH_WALK_SCORE_AMT_TEMPL);
+			stringResource = vm->getString(IDS_DEATH_WALK_SCORE_AMT_TEMPL);
 			_scoringTextScores = Common::String::format(stringResource.c_str(), finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore);
 		} else {
 			if (deathSceneIndex == 60) {
 				_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 19 x 200\nResearch Bonus: %d / 15 x 100\nCompletion Bonus:",
-						criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
+																  criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
 				_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore);
 			} else {
 				_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 19 x 200\nResearch Bonus: %d / 15 x 100",
-						criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
+																  criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
 				_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore);
 			}
 		}
+
+		_scoringTextDescriptionsWithScores = Common::String::format("Current Points:\n\nCritical Evidence: %d / 4 x 1000: %d\nSupporting Evidence: %d / 7 x 500: %d\nPuzzles Solved: %d / 19 x 200: %d\nResearch Bonus: %d / 15 x 100: %d\nCompletion Bonus: %d\n\nTotal Score: %d\n",
+																	criticalEvidence, finalCriticalEvidenceScore,
+																	supportingEvidence, finalSupportingEvidenceScore,
+																	puzzlesSolved, finalPuzzleScore,
+																	researchBonusRaw, finalResearchScore,
+																	completionScore, totalScore);
 	} else {
 		totalScore -= hintsScore;
 
-		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
+		if (vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
 			// HACK HACK HACK: Did I mention this was terrible?
-			Common::String stringResource = _vm->getString(IDS_DEATH_SCORE_DESC_TEMPL);
+			Common::String stringResource = vm->getString(IDS_DEATH_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
-			stringResource = _vm->getString(IDS_DEATH_SCORE_AMT_TEMPL);
+			stringResource = vm->getString(IDS_DEATH_SCORE_AMT_TEMPL);
 			_scoringTextScores = Common::String::format(stringResource.c_str(), finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore, -hintsScore);
 		} else {
 			if (deathSceneIndex == 60) {
 				_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 20 x 200\nResearch Bonus: %d / 15 x 100\nCompletion Bonus:\n\nHints: %d @ -50 ea.",
-						criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
+																  criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
 				_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d\n%d\n\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, completionScore, -hintsScore);
 			} else {
 				_scoringTextDescriptions = Common::String::format("Critical Evidence: %d / 4 x 1000\nSupporting Evidence: %d / 7 x 500\nPuzzles Solved: %d / 20 x 200\nResearch Bonus: %d / 15 x 100\n\n\nHints: %d @ -50 ea.",
-						criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
+																  criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
 				_scoringTextScores = Common::String::format("%d\n%d\n%d\n%d\n\n\n%d", finalCriticalEvidenceScore, finalSupportingEvidenceScore, finalPuzzleScore, finalResearchScore, -hintsScore);
 			}
 		}
+
+		_scoringTextDescriptionsWithScores = Common::String::format("Current Points:\n\nCritical Evidence: %d / 4 x 1000: %d\nSupporting Evidence: %d / 7 x 500: %d\nPuzzles Solved: %d / 20 x 200: %d\nResearch Bonus: %d / 15 x 100: %d\nCompletion Bonus: %d\n\nHints: %d @ -50 ea.\n\nTotal Score: %d\n",
+																	criticalEvidence, finalCriticalEvidenceScore,
+																	supportingEvidence, finalSupportingEvidenceScore,
+																	puzzlesSolved, finalPuzzleScore,
+																	researchBonusRaw, finalResearchScore,
+																	completionScore, -hintsScore, totalScore);
 	}
 
-	// This would be a hack, but since it's just printing one number, I'm not
-	// loading that damned string too.
 	_scoringTextFinalScore = Common::String::format("%d", totalScore);
-
-	_vm->_sound->setAmbientSound();
 }
 
 #undef CHECK_PUZZLE_FLAG
 #undef CHECK_RESEARCH_FLAG
 #undef CHECK_CRITICAL_EVIDENCE
 #undef CHECK_SUPPORTING_EVIDENCE
+
+enum {
+	BUTTON_QUIT = 1,
+	BUTTON_RESTORE_GAME = 2,
+	BUTTON_MAIN_MENU = 3
+};
+
+DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags &globalFlags, Common::Array<int> itemArray)
+		: Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags), _itemArray(itemArray) {
+	_curButton = 0;
+	_deathFrameIndex = -1;
+	_lightOn = false;
+	_walkthroughMode = false;
+
+	_rect = Common::Rect(0, 0, 640, 480);
+	_quit = Common::Rect(27, 422, 100, 460);
+	_restoreGame = Common::Rect(112, 422, 185, 460);
+	_mainMenu = Common::Rect(198, 422, 271, 460);
+	_agentEvaluation = new AgentEvaluation(vm, globalFlags, deathSceneIndex);
+	_timer = setTimer(400);
+
+	if (deathSceneIndex < 10) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_CASTLE_FILENAME));
+	} else if (deathSceneIndex < 20) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_MAYAN_FILENAME));
+	} else if (deathSceneIndex < 30) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_AGENTLAIR_FILENAME));
+	} else if (deathSceneIndex < 40) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_DAVINCI_FILENAME));
+	} else if (deathSceneIndex < 50) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_AILAB_FILENAME));
+	} else if (deathSceneIndex < 60) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_ALIEN_FILENAME));
+	} else if (deathSceneIndex < 70) {
+		_deathSceneFrames = new AVIFrames(_vm->getFilePath(IDS_DEATH_FINALE_FILENAME));
+	} else {
+		error("Bad death scene index %d", deathSceneIndex);
+	}
+
+	// Set the frame index
+	switch (deathSceneIndex) {
+	case 15:
+		_deathFrameIndex = 4;
+		break;
+	case 52:
+	case 53:
+		_deathFrameIndex = 1;
+		break;
+	case 54:
+	case 55:
+		_deathFrameIndex = 0;
+		break;
+	default:
+		_deathFrameIndex = deathSceneIndex % 10;
+		break;
+	}
+
+	_fontHeightA = (_vm->getLanguage() == Common::JA_JPN) ? 12 : 14;
+	_textFontA = _vm->_gfx->createFont(_fontHeightA);
+
+	_fontHeightB = 20;
+	_textFontB = _vm->_gfx->createFont(_fontHeightB, true);
+
+	_walkthroughMode = _globalFlags.generalWalkthroughMode != 0;
+
+	_vm->_sound->setAmbientSound();
+}
 
 DeathWindow::~DeathWindow() {
 	killTimer(_timer);
@@ -244,6 +260,7 @@ DeathWindow::~DeathWindow() {
 
 	delete _textFontA;
 	delete _textFontB;
+	delete _agentEvaluation;
 }
 
 void DeathWindow::onPaint() {
@@ -287,14 +304,14 @@ void DeathWindow::onPaint() {
 	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlock, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), secondBlockRect.height(), textColor, _fontHeightA);
 
 	Common::Rect scoringDescRect(10, 248, 283, 378);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _agentEvaluation->_scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA);
 
 	textColor = _vm->_gfx->getColor(212, 109, 0);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA, kTextAlignRight);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _agentEvaluation->_scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA, kTextAlignRight);
 
 	// CHECKME: This does center vertical alignment, so check the y coordinates
 	Common::Rect finalTextScoreRect(122, 386, 283, 401);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), finalTextScoreRect.height(), textColor, _fontHeightB, kTextAlignRight);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _agentEvaluation->_scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), finalTextScoreRect.height(), textColor, _fontHeightB, kTextAlignRight);
 }
 
 bool DeathWindow::onEraseBackground() {

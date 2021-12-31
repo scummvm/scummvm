@@ -139,6 +139,7 @@ public:
 	bool runQuitDialog();
 	bool isControlDown() const;
 	void pauseGame();
+	void showPoints();
 
 	// Save/Load
 	bool canLoadGameStateCurrently();

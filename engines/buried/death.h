@@ -37,6 +37,19 @@ namespace Buried {
 
 class AVIFrames;
 
+class AgentEvaluation {
+public:
+	AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int deathSceneIndex);
+
+	Common::String _scoringTextDescriptions;
+	Common::String _scoringTextScores;
+	Common::String _scoringTextFinalScore;
+	Common::String _scoringTextDescriptionsWithScores;
+
+private:
+	GlobalFlags _globalFlags;
+};
+
 class DeathWindow : public Window {
 public:
 	DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags &globalFlags, Common::Array<int> itemArray);
@@ -65,10 +78,7 @@ private:
 	Graphics::Font *_textFontB;
 	int _fontHeightA, _fontHeightB;
 	bool _walkthroughMode;
-
-	Common::String _scoringTextDescriptions;
-	Common::String _scoringTextScores;
-	Common::String _scoringTextFinalScore;
+	AgentEvaluation *_agentEvaluation;
 };
 
 } // End of namespace Buried
