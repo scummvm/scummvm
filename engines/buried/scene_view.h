@@ -209,6 +209,8 @@ private:
 	Common::Array<AnimEvent> getAnimationDatabase(int timeZone, int environment);
 	Common::Array<AIComment> getAICommentDatabase(int timeZone, int environment);
 
+	bool moveToDestination(const DestinationScene &destinationData, int navFrame);
+
 	// AI Lab
 	bool initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startAILabAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);

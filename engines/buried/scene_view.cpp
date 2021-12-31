@@ -913,24 +913,28 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	return true;
 }
 
+bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData, int navFrame) {
+	if (navFrame >= 0) {
+		LocationStaticData destinationStaticData;
+		if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
+			return false;
+
+		changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
+
+		Graphics::Surface *newBackground = getStillFrameCopy(navFrame);
+		_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
+		newBackground->free();
+		delete newBackground;
+	}
+	return true;
+}
+
 bool SceneViewWindow::playTransition(const DestinationScene &destinationData, int navFrame) {
 	// Call the appropriate function for the transition type
 	switch (destinationData.transitionType) {
 	case TRANSITION_PUSH:
 		if (_vm->isControlDown()) {
-			if (navFrame >= 0) {
-				LocationStaticData destinationStaticData;
-				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
-					return false;
-
-				changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
-
-				Graphics::Surface *newBackground = getStillFrameCopy(navFrame);
-				_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
-				newBackground->free();
-				delete newBackground;
-			}
-			return true;
+			return moveToDestination(destinationData, navFrame);
 		} else {
 			LocationStaticData destinationStaticData;
 			if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
@@ -951,19 +955,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 		}
 	case TRANSITION_WALK:
 		if (_vm->isControlDown()) {
-			if (navFrame >= 0) {
-				LocationStaticData destinationStaticData;
-				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
-					return false;
-
-				changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
-
-				Graphics::Surface *newBackground = getStillFrameCopy(navFrame);
-				_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
-				newBackground->free();
-				delete newBackground;
-			}
-			return true;
+			return moveToDestination(destinationData, navFrame);
 		} else {
 			// The demo has a hardcoded door open sound
 			// This, and the code below the walkTransition call, are glue around the
@@ -998,19 +990,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 		}
 	case TRANSITION_VIDEO:
 		if (_vm->isControlDown() && false) { // TODO: debug mode check (maybe?)
-			if (navFrame >= 0) {
-				LocationStaticData destinationStaticData;
-				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
-					return false;
-
-				changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
-
-				Graphics::Surface *newBackground = getStillFrameCopy(navFrame);
-				_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
-				newBackground->free();
-				delete newBackground;
-			}
-			return true;
+			return moveToDestination(destinationData, navFrame);
 		} else {
 			return videoTransition(_currentScene->_staticData.location, destinationData, navFrame);
 		}
