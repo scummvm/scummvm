@@ -2,7 +2,7 @@
  ScummVM - ScummVM ported to EPOC/SymbianOS
 
 
- Copyright (C) 2008-2021 ScummVM Team
+ Copyright (C) 2008-2022 ScummVM Team
  Copyright (C) 2013-2021 Fiodar Stryzhniou aka zanac
  Copyright (C) 2003-2013 Lars 'AnotherGuest' Persson
  Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
@@ -114,7 +114,7 @@ Building ScummVM
 
 	- GCC 5.x and above for best perfomance(UIQ 3 and S60v3). Build it by yourself.
 	  https://github.com/fedor4ever/GCC-4-Symbian/tree/master
-	  
+
 	- UIQ 3.x SDK (To build for UIQ3 devices)(Build scripts in SDK need tweaking in order to build scummvm since Symbian OS GCCE never builds as large projects as ScummVM before)
 	- UIQ 2.1 SDK (To build for UIQ2 devices);
 	  http://www.symbian.com/developer/sdks_uiq.asp

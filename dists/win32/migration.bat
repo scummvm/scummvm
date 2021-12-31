@@ -4,7 +4,7 @@
 :: This script will copy any saved games located in the
 :: old default location, to the new default location.
 ::
-:: (c) 2012-2021 ScummVM Team
+:: (c) 2012-2022 ScummVM Team
 ::
 
 @echo off
