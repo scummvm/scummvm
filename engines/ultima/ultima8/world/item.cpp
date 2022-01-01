@@ -31,6 +31,7 @@
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/fire_type.h"
@@ -612,11 +613,15 @@ bool Item::isOnScreen() const {
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
 	game_map->GetDims(game_map_dims);
-	int32 xd, yd, zd;
-	getFootpadWorld(xd, yd, zd);
+	const Shape *shape = getShapeObject();
+	if (!shape)
+		return false;
+	const ShapeFrame *frame = shape->getFrame(getFrame());
+	if (!frame)
+		return false;
 
-	if (game_map_dims.contains(screenx, screeny) &&
-	    game_map_dims.contains(screenx + xd, screeny + yd)) {
+	if (game_map_dims.contains(screenx - frame->_xoff, screeny - frame->_yoff) &&
+	    game_map_dims.contains(screenx + frame->_width, screeny + frame->_height)) {
 		return true;
 	}
 
@@ -634,11 +639,15 @@ bool Item::isPartlyOnScreen() const {
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
 	game_map->GetDims(game_map_dims);
-	int32 xd, yd, zd;
-	getFootpadWorld(xd, yd, zd);
+	const Shape *shape = getShapeObject();
+	if (!shape)
+		return false;
+	const ShapeFrame *frame = shape->getFrame(getFrame());
+	if (!frame)
+		return false;
 
-	if (game_map_dims.contains(screenx, screeny) ||
-		game_map_dims.contains(screenx + xd, screeny + yd)) {
+	if (game_map_dims.contains(screenx - frame->_xoff, screeny - frame->_yoff) ||
+		game_map_dims.contains(screenx + frame->_width, screeny + frame->_height)) {
 		return true;
 	}
 
