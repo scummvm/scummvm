@@ -23,31 +23,6 @@
 #include "graphics/scaler/intern.h"
 
 // RGB-to-YUV lookup table
-extern "C" {
-
-#ifdef USE_NASM
-// NOTE: if your compiler uses different mangled names, add another
-//       condition here
-
-#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
-#define RGBtoYUV _RGBtoYUV
-#define hqx_highbits _hqx_highbits
-#define hqx_lowbits _hqx_lowbits
-#define hqx_low2bits _hqx_low2bits
-#define hqx_low3bits _hqx_low3bits
-#define hqx_greenMask _hqx_greenMask
-#define hqx_redBlueMask _hqx_redBlueMask
-#define hqx_green_redBlue_Mask _hqx_green_redBlue_Mask
-#endif
-
-uint32 hqx_highbits = 0xF7DEF7DE;
-uint32 hqx_lowbits = 0x0821;
-uint32 hqx_low2bits = 0x0C63;
-uint32 hqx_low3bits = 0x1CE7;
-uint32 hqx_greenMask = 0;
-uint32 hqx_redBlueMask = 0;
-uint32 hqx_green_redBlue_Mask = 0;
-#endif
 
 /**
  * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
@@ -70,8 +45,24 @@ uint32 hqx_green_redBlue_Mask = 0;
  * differences are likely to vary a lot between different architectures and
  * CPUs.
  */
-uint32 *RGBtoYUV = 0;
-}
+static uint32 *RGBtoYUV = 0;
+
+#ifdef USE_NASM
+// NOTE: if your compiler uses different mangled names, add another
+//       condition here
+typedef struct {
+	uint32 *RGBtoYUV;
+	uint32 highbits;
+	uint32 lowbits;
+	uint32 low2bits;
+	uint32 low3bits;
+	uint32 greenMask;
+	uint32 redBlueMask;
+	uint32 green_redBlue_Mask;
+} hqx_parameters;
+
+static hqx_parameters hqx_params;
+#endif
 
 void InitLUT(Graphics::PixelFormat format) {
 	uint8 r, g, b;
@@ -95,18 +86,20 @@ void InitLUT(Graphics::PixelFormat format) {
 	}
 
 #ifdef USE_NASM
-	hqx_lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
-	hqx_low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
-	hqx_low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
+	hqx_params.lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
+	hqx_params.low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
+	hqx_params.low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
 
-	hqx_highbits = format.RGBToColor(255,255,255) ^ hqx_lowbits;
+	hqx_params.highbits = format.RGBToColor(255,255,255) ^ hqx_params.lowbits;
 
 	// FIXME: The following code only does the right thing
 	// if the color order is RGB or BGR, i.e., green is in the middle.
-	hqx_greenMask = format.RGBToColor(0,255,0);
-	hqx_redBlueMask = format.RGBToColor(255,0,255);
+	hqx_params.greenMask = format.RGBToColor(0,255,0);
+	hqx_params.redBlueMask = format.RGBToColor(255,0,255);
 
-	hqx_green_redBlue_Mask = (hqx_greenMask << 16) | hqx_redBlueMask;
+	hqx_params.green_redBlue_Mask = (hqx_params.greenMask << 16) | hqx_params.redBlueMask;
+
+	hqx_params.RGBtoYUV = RGBtoYUV;
 #endif
 }
 
@@ -119,12 +112,12 @@ extern "C" {
 #define hq2x_16 _hq2x_16
 #endif
 
-void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
+void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32, hqx_parameters *);
 
 }
 
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
+	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, &hqx_params);
 }
 
 #endif
@@ -192,7 +185,6 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL11_90	*(q+1+nextlineDst) = interpolate_2_3_3(w5, w6, w8);
 #define PIXEL11_100	*(q+1+nextlineDst) = interpolate_14_1_1(w5, w6, w8);
 
-extern "C" uint32   *RGBtoYUV;
 #define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x))
 
 /**
@@ -2086,12 +2078,12 @@ extern "C" {
 #endif
 
 
-void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
+void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32, hqx_parameters *);
 
 }
 
 void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch);
+	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, &hqx_params);
 }
 
 #endif
