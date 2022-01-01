@@ -1829,8 +1829,8 @@ public:
 			"\n\n\n\n\n\n\n"
 			"Congratulations Adventurers!\n\n"
 			"Let the unification ceremony begin!",
-				"And so the call went out to the people throughout the lands of Xeen"
-				" that the prophecy was nearing completion.",
+				("And so the call went out to the people throughout the lands of Xeen"
+				" that the prophecy was nearing completion."),
 				"They came in great numbers to witness the momentous occasion.",
 				"\v026The Dragon Pharoah presided over the ceremony.",
 				"\v026Queen Kalindra presented the Cube of Power.",
