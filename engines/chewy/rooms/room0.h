@@ -59,7 +59,8 @@ private:
 
 	static void kissen_wurf();
 
-	static void ani_klappe_delay();
+	static void trapDoorOpen();
+	static void trapDoorClose();
 
 	static void calc_auge_click(int16 ani_nr);
 
