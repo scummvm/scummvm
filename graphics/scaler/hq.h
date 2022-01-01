@@ -23,6 +23,10 @@
 
 #include "graphics/scalerplugin.h"
 
+#ifdef USE_NASM
+struct hqx_parameters;
+#endif
+
 class HQScaler : public Scaler {
 public:
 	HQScaler(const Graphics::PixelFormat &format);
@@ -32,6 +36,16 @@ public:
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
+
+	void initLUT(Graphics::PixelFormat format);
+	inline void HQ2x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+	inline void HQ3x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
+	uint32 *_RGBtoYUV;
+#ifdef USE_NASM
+	hqx_parameters *_hqx_params;
+#endif
+
 };
 
 
