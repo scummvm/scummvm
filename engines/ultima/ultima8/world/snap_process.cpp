@@ -34,7 +34,7 @@ SnapProcess *SnapProcess::_instance = nullptr;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SnapProcess)
 
-SnapProcess::SnapProcess() : Process(), _currentSnapEgg() {
+SnapProcess::SnapProcess() : Process(), _currentSnapEgg(0) {
 	_instance = this;
 	_type = 1; // persistent
 }
