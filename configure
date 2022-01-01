@@ -859,6 +859,7 @@ Optional Features:
   --enable-static          build a static binary instead of using shared objects
   --enable-detection-static  build detection features into executable (default)
   --enable-detection-dynamic build detection features into a library
+  --disable-detection-full add detection only for the engines which were enabled
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
