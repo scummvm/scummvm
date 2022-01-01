@@ -4342,13 +4342,16 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "オリジナルの形式から変換する必要があるセーブデータを発見しました。\n"
-"この形式は直接にはサポートされなくなったため、変換しなければ使用できません。\n"
+"この形式は直接にはサポートされなくなったため、変換しなければ使用できませ"
+"ん。\n"
 "\n"
-"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねられます。\n"
+"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねら"
+"れます。\n"
 
 #: engines/buried/saveload.cpp:165
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
-msgstr "現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
+msgstr ""
+"現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
