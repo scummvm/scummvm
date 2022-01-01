@@ -24,12 +24,38 @@
 
 // RGB-to-YUV lookup table
 
+#ifdef USE_NASM
+// NOTE: if your compiler uses different mangled names, add another
+//       condition here
+struct hqx_parameters {
+	uint32 *RGBtoYUV;
+	uint32 highbits;
+	uint32 lowbits;
+	uint32 low2bits;
+	uint32 low3bits;
+	uint32 greenMask;
+	uint32 redBlueMask;
+	uint32 green_redBlue_Mask;
+};
+
+// Assembly versions of HQ2x and HQ3x
+
+extern "C" {
+
+#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
+#define hq2x_16 _hq2x_16
+#define hq3x_16 _hq3x_16
+#endif
+
+void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32, struct hqx_parameters *);
+void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32, struct hqx_parameters *);
+
+}
+#endif
+
 /**
  * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
  * Used by the hq scaler family.
- *
- * FIXME/TODO: The RGBtoYUV table sucks up 256 KB. This is bad.
- * In addition we never free it...
  *
  * Note: a memory lookup table is *not* necessarily faster than computing
  * these things on the fly, because of its size. The table together with
@@ -45,82 +71,44 @@
  * differences are likely to vary a lot between different architectures and
  * CPUs.
  */
-static uint32 *RGBtoYUV = 0;
-
-#ifdef USE_NASM
-// NOTE: if your compiler uses different mangled names, add another
-//       condition here
-typedef struct {
-	uint32 *RGBtoYUV;
-	uint32 highbits;
-	uint32 lowbits;
-	uint32 low2bits;
-	uint32 low3bits;
-	uint32 greenMask;
-	uint32 redBlueMask;
-	uint32 green_redBlue_Mask;
-} hqx_parameters;
-
-static hqx_parameters hqx_params;
-#endif
-
-void InitLUT(Graphics::PixelFormat format) {
+void HQScaler::initLUT(Graphics::PixelFormat format) {
 	uint8 r, g, b;
 	int Y, u, v;
 
 	assert(format.bytesPerPixel == 2);
 
 	// Allocate the YUV/LUT buffers on the fly if needed.
-	if (RGBtoYUV == 0)
-		RGBtoYUV = (uint32 *)malloc(65536 * sizeof(uint32));
-
-	if (!RGBtoYUV)
-		error("[InitLUT] Cannot allocate memory for YUV/LUT buffers");
-
+	if (!_RGBtoYUV) {
+		_RGBtoYUV = new uint32[65536];
+	}
 	for (int color = 0; color < 65536; ++color) {
 		format.colorToRGB(color, r, g, b);
 		Y = (r + g + b) >> 2;
 		u = 128 + ((r - b) >> 2);
 		v = 128 + ((-r + 2 * g - b) >> 3);
-		RGBtoYUV[color] = (Y << 16) | (u << 8) | v;
+		_RGBtoYUV[color] = (Y << 16) | (u << 8) | v;
 	}
 
 #ifdef USE_NASM
-	hqx_params.lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
-	hqx_params.low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
-	hqx_params.low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
+	if (!_hqx_params) {
+		_hqx_params = new hqx_parameters;
+	}
+	_hqx_params->lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
+	_hqx_params->low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
+	_hqx_params->low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
 
-	hqx_params.highbits = format.RGBToColor(255,255,255) ^ hqx_params.lowbits;
+	_hqx_params->highbits = format.RGBToColor(255,255,255) ^ _hqx_params->lowbits;
 
 	// FIXME: The following code only does the right thing
 	// if the color order is RGB or BGR, i.e., green is in the middle.
-	hqx_params.greenMask = format.RGBToColor(0,255,0);
-	hqx_params.redBlueMask = format.RGBToColor(255,0,255);
+	_hqx_params->greenMask = format.RGBToColor(0,255,0);
+	_hqx_params->redBlueMask = format.RGBToColor(255,0,255);
 
-	hqx_params.green_redBlue_Mask = (hqx_params.greenMask << 16) | hqx_params.redBlueMask;
+	_hqx_params->green_redBlue_Mask = (_hqx_params->greenMask << 16) | _hqx_params->redBlueMask;
 
-	hqx_params.RGBtoYUV = RGBtoYUV;
+	_hqx_params->RGBtoYUV = _RGBtoYUV;
 #endif
 }
-
-#ifdef USE_NASM
-// Assembly version of HQ2x
-
-extern "C" {
-
-#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
-#define hq2x_16 _hq2x_16
-#endif
-
-void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32, hqx_parameters *);
-
-}
-
-void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, &hqx_params);
-}
-
-#endif
 
 #define interpolate_1_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_1_1<ColorMask>(a,b) : interpolate32_1_1<ColorMask>(a,b))
 #define interpolate_3_1(a,b)         (ColorMask::kBytesPerPixel == 2 ? interpolate16_3_1<ColorMask>(a,b) : interpolate32_3_1<ColorMask>(a,b))
@@ -185,13 +173,13 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL11_90	*(q+1+nextlineDst) = interpolate_2_3_3(w5, w6, w8);
 #define PIXEL11_100	*(q+1+nextlineDst) = interpolate_14_1_1(w5, w6, w8);
 
-#define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x))
+#define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x, RGBtoYUV))
 
 /**
  * Convert 32 bit RGB values to Yuv
  */
 template<typename ColorMask>
-static inline uint32 ConvertYUV(uint32 x) {
+static inline uint32 ConvertYUV(uint32 x, const uint32 *RGBtoYUV) {
 	int r, g, b;
 
 	r = (ColorMask::kRedMask & (ColorMask::kRedMask << (8 - Graphics::ColorMasks<565>::kRedBits)) & x)
@@ -211,7 +199,7 @@ static inline uint32 ConvertYUV(uint32 x) {
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
 template<typename ColorMask>
-static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, const uint32 *RGBtoYUV) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	int w1, w2, w3, w4, w5, w6, w7, w8, w9;
@@ -2068,26 +2056,6 @@ static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 	}
 }
 
-#ifdef USE_NASM
-// Assembly version of HQ3x
-
-extern "C" {
-
-#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
-#define hq3x_16 _hq3x_16
-#endif
-
-
-void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32, hqx_parameters *);
-
-}
-
-void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, &hqx_params);
-}
-
-#endif
-
 #define PIXEL00_1M  *(q) = interpolate_3_1(w5, w1);
 #define PIXEL00_1U  *(q) = interpolate_3_1(w5, w2);
 #define PIXEL00_1L  *(q) = interpolate_3_1(w5, w4);
@@ -2148,7 +2116,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
 template<typename ColorMask>
-static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, const uint32 *RGBtoYUV) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
@@ -4979,72 +4947,90 @@ static void HQ3x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 	}
 }
 
-HQScaler::HQScaler(const Graphics::PixelFormat &format) : Scaler(format) {
+HQScaler::HQScaler(const Graphics::PixelFormat &format) : Scaler(format),
+#ifdef USE_NASM
+	_hqx_params(nullptr),
+#endif
+	_RGBtoYUV(nullptr) {
 	_factor = 2;
 
 	if (format.bytesPerPixel == 2) {
-		InitLUT(format);
+		initLUT(format);
 	} else {
 		// Pass a 16 bit 565 format to InitLut
 		Graphics::PixelFormat format16(2,
 		                               5, 6, 5, 0,
 		                               11, 5, 0, 0);
-		InitLUT(format16);
+		initLUT(format16);
 	}
 }
 
 HQScaler::~HQScaler() {
-	free(RGBtoYUV);
-	RGBtoYUV = 0;
+	delete[] _RGBtoYUV;
+	_RGBtoYUV = nullptr;
+
+#ifdef USE_NASM
+	delete _hqx_params;
+	_hqx_params = nullptr;
+#endif
 }
+
+#ifdef USE_NASM
+void HQScaler::HQ2x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	hq2x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, _hqx_params);
+}
+
+void HQScaler::HQ3x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	hq3x_16(srcPtr, dstPtr, width, height, srcPitch, dstPitch, _hqx_params);
+}
+#else
+void HQScaler::HQ2x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (_format.gLoss == 2)
+		HQ2x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+	else
+		HQ2x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+}
+
+void HQScaler::HQ3x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (_format.gLoss == 2)
+		HQ3x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+	else
+		HQ3x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+}
+#endif
 
 void HQScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		switch (_factor) {
-#ifdef USE_NASM
 		case 2:
-			HQ2x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			HQ2x16(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
 		case 3:
-			HQ3x(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			HQ3x16(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
-#else
-		case 2:
-			if (_format.gLoss == 2)
-				HQ2x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-			else
-				HQ2x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-			break;
-		case 3:
-			if (_format.gLoss == 2)
-				HQ3x_implementation<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-			else
-				HQ3x_implementation<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
-			break;
-#endif
 		}
 	} else {
 		switch (_factor) {
 		case 2:
 			if (_format.aLoss == 0)
 				HQ2x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
+						dstPitch, width, height, _RGBtoYUV);
 			else
 				HQ2x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
+						dstPitch, width, height, _RGBtoYUV);
 			break;
 		case 3:
 			if (_format.aLoss == 0)
 				HQ3x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
+						dstPitch, width, height, _RGBtoYUV);
 			else
 				HQ3x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height);
+						dstPitch, width, height, _RGBtoYUV);
 			break;
 		}
 	}
