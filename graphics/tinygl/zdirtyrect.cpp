@@ -473,10 +473,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.wrapS = c->texture_wrap_s;
 	state.wrapT = c->texture_wrap_t;
 	state.lightingEnabled = c->lighting_enabled;
-	if (c->current_texture != nullptr)
-		state.textureVersion = c->current_texture->versionNumber;
-	else
-		state.textureVersion = 0;
+	state.textureVersion = c->current_texture->versionNumber;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
