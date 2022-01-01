@@ -1073,7 +1073,7 @@ const Feature s_features[] = {
 	{       "png",         "USE_PNG", true, true,  "libpng support" },
 	{       "gif",         "USE_GIF", true, false, "libgif support" },
 	{      "faad",        "USE_FAAD", true, false, "AAC support" },
-	{     "mpeg2",       "USE_MPEG2", true, false, "MPEG-2 support" },
+	{     "mpeg2",       "USE_MPEG2", true, true,  "MPEG-2 support" },
 	{    "theora",   "USE_THEORADEC", true, true,  "Theora decoding support" },
 	{  "freetype",   "USE_FREETYPE2", true, true,  "FreeType support" },
 	{      "jpeg",        "USE_JPEG", true, true,  "libjpeg support" },
