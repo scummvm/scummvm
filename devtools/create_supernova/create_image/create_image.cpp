@@ -5,10 +5,10 @@
 #include <iomanip>
 #include <cstdlib>
 
-std::string filenumber;
+std::string *filenumber;
 
 int writePalette(std::ofstream &output) {
-	std::string filename = filenumber + "/palette";
+	std::string filename = *filenumber + "/palette";
 	std::ifstream palette(filename.c_str());
 	if (!palette.is_open()) {
 		std::cerr << "Couldn't open palette file" << std::endl;
@@ -26,7 +26,7 @@ int writePalette(std::ofstream &output) {
 }
 
 int writeSections(std::ofstream &output) {
-	std::string filename = filenumber + "/section_info";
+	std::string filename = *filenumber + "/section_info";
 	std::ifstream sectionInfo(filename.c_str());
 	if (!sectionInfo.is_open()) {
 		std::cerr << "Couldn't open section_info file" << std::endl;
@@ -69,7 +69,7 @@ int writeSections(std::ofstream &output) {
 }
 
 int writeClickFields(std::ofstream &output) {
-	std::string filename = filenumber + "/clickfield_info";
+	std::string filename = *filenumber + "/clickfield_info";
 	std::ifstream clickFieldInfo(filename.c_str());
 	if (!clickFieldInfo.is_open()) {
 		std::cerr << "Couldn't open clickfield_info file" << std::endl;
@@ -106,7 +106,7 @@ int writeClickFields(std::ofstream &output) {
 
 int writePixelData(std::ofstream &output, int imageNum, int skip) {
 	std::ostringstream fileName;
-	fileName << filenumber << "/image" << imageNum << ".bmp";
+	fileName << *filenumber << "/image" << imageNum << ".bmp";
 	std::ifstream image(fileName.str().c_str(), std::ios::binary);
 	if (!image.is_open()) {
 		std::cerr << "Couldn't open " << fileName.str() << " file" << std::endl;
@@ -145,11 +145,11 @@ int main(int argc, char *argv[]) {
 	}
 	std::ostringstream oss;
 	oss << std::setfill('0') << std::setw(3) << argv[2];
-	filenumber = oss.str();
+	*filenumber = oss.str();
 	char *ptr;
 	int bytesSkip = strtol(argv[3], &ptr, 10);
 	std::string oFileName = argv[1];
-	oFileName += "." + filenumber;
+	oFileName += "." + *filenumber;
 	std::ofstream output(oFileName.c_str(), std::ios::binary);
 	if (!output.is_open()) {
 		std::cerr << "Couldn't open output file" << std::endl;
