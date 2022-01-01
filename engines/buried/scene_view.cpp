@@ -1434,20 +1434,6 @@ bool SceneViewWindow::setGlobalFlagByte(int offset, byte value) {
 	return true;
 }
 
-uint32 SceneViewWindow::getGlobalFlagDWord(int offset) {
-	// TODO: Verify the offset
-	const byte *data = (const byte *)&_globalFlags;
-	return READ_UINT32(data + offset);
-}
-
-bool SceneViewWindow::setGlobalFlagDWord(int offset, uint32 value) {
-	// TODO: Verify the offset
-
-	byte *data = (byte *)&_globalFlags;
-	WRITE_UINT32(data + offset, value);
-	return true;
-}
-
 bool SceneViewWindow::addNumberToGlobalFlagTable(int tableOffset, int curItemCountOffset, int maxItems, byte numberToAdd) {
 	// TODO: Rewrite this
 	byte *data = (byte *)&_globalFlags;

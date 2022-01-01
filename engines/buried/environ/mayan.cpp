@@ -1183,13 +1183,18 @@ private:
 	int _stillFrames[4];
 	int _soundID;
 	int _headAnimations[4];
+	GlobalFlags &_globalFlags;
+
+	uint32 getHeadOpenedTime(byte headId) const;
+	void setHeadOpenedTime(byte headId, uint32 value);
 };
 
 ArrowGodHead::ArrowGodHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int headID, int clickLeft, int clickTop, int clickRight, int clickBottom,
 		int emptyClosedStill, int emptyOpenStill, int fullClosedStill, int fullOpenStill,
 		int emptyClosedAnim, int emptyOpenAnim, int fullClosedAnim, int fullOpenAnim) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation),
+		_globalFlags(((SceneViewWindow *)viewWindow)->getGlobalFlags()) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 
 	_soundID = -1;
@@ -1255,6 +1260,40 @@ int ArrowGodHead::mouseDown(Window *viewWindow, const Common::Point &pointLocati
 	}
 
 	return SC_FALSE;
+}
+
+uint32 ArrowGodHead::getHeadOpenedTime(byte headId) const {
+	switch (headId) {
+	case 0:
+		return _globalFlags.myAGHeadAOpenedTime;
+	case 1:
+		return _globalFlags.myAGHeadBOpenedTime;
+	case 2:
+		return _globalFlags.myAGHeadCOpenedTime;
+	case 3:
+		return _globalFlags.myAGHeadDOpenedTime;
+	default:
+		return 0;
+	}
+}
+
+void ArrowGodHead::setHeadOpenedTime(byte headId, uint32 value) {
+	switch (headId) {
+	case 0:
+		_globalFlags.myAGHeadAOpenedTime = value;
+		break;
+	case 1:
+		_globalFlags.myAGHeadBOpenedTime = value;
+		break;
+	case 2:
+		_globalFlags.myAGHeadCOpenedTime = value;
+		break;
+	case 3:
+		_globalFlags.myAGHeadDOpenedTime = value;
+		break;
+	default:
+		break;
+	}
 }
 
 int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
@@ -1324,7 +1363,7 @@ int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation
 			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
 
 		if (headStatus & 1)
-			sceneView->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + _headID * 4, g_system->getMillis());
+			setHeadOpenedTime(_headID, g_system->getMillis());
 
 		bioChipRightWindow->sceneChanged();
 		return SC_TRUE;
@@ -1418,10 +1457,10 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 	BioChipRightWindow *bioChipRightWindow = ((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow;
 
 	for (int i = 0; i < 4; i++) {
-		uint32 lastStartedTimer = sceneView->getGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4);
+		uint32 lastStartedTimer = getHeadOpenedTime(i);
 
 		if (lastStartedTimer > 0 && g_system->getMillis() > (lastStartedTimer + WAR_GOD_HEAD_TIMER_VALUE)) {
-			sceneView->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
+			setHeadOpenedTime(i, 0);
 
 			TempCursorChange cursorChange(kCursorWait);
 
@@ -1529,12 +1568,16 @@ public:
 private:
 	bool _scheduledDepthChange;
 	int _soundID;
+	GlobalFlags &_globalFlags;
 
 	bool adjustSpearVolume(Window *viewWindow);
+	uint32 getHeadOpenedTime(byte headId) const;
+	void setHeadOpenedTime(byte headId, uint32 value);
 };
 
 ArrowGodDepthChange::ArrowGodDepthChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation),
+		_globalFlags(((SceneViewWindow *)viewWindow)->getGlobalFlags()) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
 
@@ -1662,6 +1705,40 @@ int ArrowGodDepthChange::postExitRoom(Window *viewWindow, const Location &newLoc
 	return SC_TRUE;
 }
 
+uint32 ArrowGodDepthChange::getHeadOpenedTime(byte headId) const {
+	switch (headId) {
+	case 0:
+		return _globalFlags.myAGHeadAOpenedTime;
+	case 1:
+		return _globalFlags.myAGHeadBOpenedTime;
+	case 2:
+		return _globalFlags.myAGHeadCOpenedTime;
+	case 3:
+		return _globalFlags.myAGHeadDOpenedTime;
+	default:
+		return 0;
+	}
+}
+
+void ArrowGodDepthChange::setHeadOpenedTime(byte headId, uint32 value) {
+	switch (headId) {
+	case 0:
+		_globalFlags.myAGHeadAOpenedTime = value;
+		break;
+	case 1:
+		_globalFlags.myAGHeadBOpenedTime = value;
+		break;
+	case 2:
+		_globalFlags.myAGHeadCOpenedTime = value;
+		break;
+	case 3:
+		_globalFlags.myAGHeadDOpenedTime = value;
+		break;
+	default:
+		break;
+	}
+}
+
 int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
@@ -1696,13 +1773,13 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 
 	// Loop through the four heads
 	for (int i = 0; i < 4; i++) {
-		uint32 lastStartedTimer = sceneView->getGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4);
+		uint32 lastStartedTimer = getHeadOpenedTime(i);
 
 		// Check if there is a timer going for this head
 		if (lastStartedTimer > 0 && (g_system->getMillis() > (lastStartedTimer + WAR_GOD_HEAD_TIMER_VALUE) ||
 				i == 0 || (globalFlags.generalWalkthroughMode == 1 && i == 1) ||
 				(sceneView->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i) == 2 && i == 3))) {
-			sceneView->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
+			setHeadOpenedTime(i, 0);
 			TempCursorChange cursorChange(kCursorWait);
 			byte status = sceneView->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
 

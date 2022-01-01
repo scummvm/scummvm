@@ -100,8 +100,6 @@ public:
 
 	byte getGlobalFlagByte(int offset);
 	bool setGlobalFlagByte(int offset, byte value);
-	bool setGlobalFlagDWord(int offset, uint32 value);
-	uint32 getGlobalFlagDWord(int offset);
 	bool addNumberToGlobalFlagTable(int offset, int curItemCountOffset, int maxItems, byte numberToAdd);
 	byte getNumberFromGlobalFlagTable(int offset, int tableIndex);
 	bool isNumberInGlobalFlagTable(int offset, int curItemCountOffset, byte numberToCheck);
