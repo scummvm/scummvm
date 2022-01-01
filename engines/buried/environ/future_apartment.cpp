@@ -636,12 +636,17 @@ private:
 	Common::Rect _replicateButton;
 	Graphics::Font *_textFont;
 	int _lineHeight;
+	GlobalFlags &_globalFlags;
 
 	void changeBackgroundBitmap();
+	byte *postBoxSlot(byte slot);
+	byte getPostBoxSlot(byte slot);
+	void setPostBoxSlot(byte slot, byte value);
 };
 
 KitchenUnitPostBox::KitchenUnitPostBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation),
+		_globalFlags(((SceneViewWindow *)viewWindow)->getGlobalFlags()) {
 	_packageCount = 0;
 	_selectedPackage = -1;
 	_menuButton = Common::Rect(49, 96, 121, 118);
@@ -673,6 +678,30 @@ void KitchenUnitPostBox::preDestructor() {
 	_textFont = nullptr;
 }
 
+byte *KitchenUnitPostBox::postBoxSlot(byte slot) {
+	switch (slot) {
+	case 0:
+		return &_globalFlags.faKIPostBoxSlotA;
+	case 1:
+		return &_globalFlags.faKIPostBoxSlotB;
+	case 2:
+		return &_globalFlags.faKIPostBoxSlotC;
+	default:
+		return nullptr;
+	}
+}
+
+byte KitchenUnitPostBox::getPostBoxSlot(byte slot) {
+	byte *s = postBoxSlot(slot);
+	return s ? *s : 0;
+}
+
+void KitchenUnitPostBox::setPostBoxSlot(byte slot, byte value) {
+	byte *s = postBoxSlot(slot);
+	if (s)
+		*s = value;
+}
+
 int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_menuButton.contains(pointLocation)) {
 		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
@@ -698,7 +727,7 @@ int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLo
 		newScene.transitionStartFrame = -1;
 		newScene.transitionLength = -1;
 
-		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + _selectedPackage)) {
+		switch (getPostBoxSlot(_selectedPackage)) {
 		case 2:
 			newScene.destinationScene.depth = 6;
 			newScene.transitionData = 9;
@@ -715,12 +744,12 @@ int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLo
 
 		// Remove the item from the post box
 		for (int i = _selectedPackage; i < _packageCount - 1; i++) {
-			byte nextPackage = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i + 1);
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i, nextPackage);
+			byte nextPackage = getPostBoxSlot(i + 1);
+			setPostBoxSlot(i, nextPackage);
 		}
 
 		// Reset the last entry to 0
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + _packageCount - 1, 0);
+		setPostBoxSlot(_packageCount - 1, 0);
 
 		// Move to the destination scene
 		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
@@ -747,7 +776,7 @@ int KitchenUnitPostBox::gdiPaint(Window *viewWindow) {
 	for (int i = 0; i < _packageCount; i++) {
 		Common::String text;
 
-		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i)) {
+		switch (getPostBoxSlot(i)) {
 		case 2:
 			text = _vm->getString(IDFAKI_SN_TRANSLATE_CHIP_CODE_TITLE);
 			break;
