@@ -321,8 +321,8 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 			item->dumpInfo();
 
 #if 1
-			Actor *avatar = getControlledActor();
-			PathfinderProcess *pfp = new PathfinderProcess(avatar, xv, yv, zv);
+			Actor *avatarControlled = getControlledActor();
+			PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, xv, yv, zv);
 			Kernel::get_instance()->addProcess(pfp);
 #elif 0
 			if (dynamic_cast<Actor *>(item)) {
