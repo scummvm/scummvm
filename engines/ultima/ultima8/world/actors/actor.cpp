@@ -1999,7 +1999,7 @@ void Actor::dumpInfo() const {
 	     << ", dex: " << _dexterity << ", int: " << _intelligence
 	     << ", ac: " << getArmourClass() << ", defense: " << ConsoleStream::hex
 	     << getDefenseType() << " align: " << getAlignment() << " enemy: "
-	     << getEnemyAlignment() << ", flags: " << _actorFlags
+	     << getEnemyAlignment() << ", flags: " << _actorFlags << ", activity: " << _currentActivityNo
 	     << ConsoleStream::dec << Std::endl;
 }
 
@@ -2597,7 +2597,8 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	UCMachine::get_instance()->assignPointer(ptr, buf, 2);
 
 #if 0
-	perr << "I_createActor: created actor #" << objID << " with shape " << shape << Std::endl;
+	perr << "I_createActor: created actor #" << objID << " shape "
+		 << shape << " frame " << frame << Std::endl;
 #endif
 
 	return objID;
@@ -2647,7 +2648,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	newactor->setDir(Direction_FromUsecodeDir(dir));
+	newactor->setDir(static_cast<Direction>(dir * 2));
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
