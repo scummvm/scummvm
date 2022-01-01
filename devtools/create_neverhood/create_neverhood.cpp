@@ -519,20 +519,22 @@ public:
 
 };
 
-StaticDataListVector<HitRectList> hitRectLists;
-StaticDataListVector<RectList> rectLists;
-StaticDataListVector<MessageList> messageLists;
-StaticDataListVector<NavigationList> navigationLists;
-StaticDataVector<SceneInfo140Item> sceneInfo140Items;
-StaticDataVector<SceneInfo2700Item> sceneInfo2700Items;
+StaticDataListVector<MessageList> *messageLists;
 
 void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 	MessageList *messageList = new MessageList();
 	messageList->loadList(messageListCount, messageListOffset);
-	messageLists.add(messageList);
+	messageLists->add(messageList);
 }
 
 int main(int argc, char *argv[]) {
+	StaticDataListVector<HitRectList> hitRectLists;
+	StaticDataListVector<RectList> rectLists;
+	StaticDataListVector<NavigationList> navigationLists;
+	StaticDataVector<SceneInfo140Item> sceneInfo140Items;
+	StaticDataVector<SceneInfo2700Item> sceneInfo2700Items;
+
+	messageLists = new StaticDataListVector<MessageList>;
 
 	if (!loadExe("nhc.exe") ||
 		!validateMd5())
@@ -542,7 +544,7 @@ int main(int argc, char *argv[]) {
 
 	hitRectLists.loadListVector(hitRectListOffsets);
 	rectLists.loadListVector(rectListOffsets);
-	messageLists.loadListVector(messageListOffsets);
+	messageLists->loadListVector(messageListOffsets);
 	navigationLists.loadListVector(navigationListOffsets);
 	sceneInfo140Items.loadVector(sceneInfo140Offsets);
 	sceneInfo2700Items.loadVector(sceneInfo2700Offsets);
@@ -552,13 +554,14 @@ int main(int argc, char *argv[]) {
 	writeUint32LE(datFile, 0x11223344); // Some magic
 	writeUint32LE(datFile, DAT_VERSION);
 
-	messageLists.saveListVector(datFile);
+	messageLists->saveListVector(datFile);
 	rectLists.saveListVector(datFile);
 	hitRectLists.saveListVector(datFile);
 	navigationLists.saveListVector(datFile);
 	sceneInfo140Items.saveVector(datFile);
 	sceneInfo2700Items.saveVector(datFile);
 
+	delete messageLists;
 	fclose(datFile);
 
 	printf("Done.\n");
