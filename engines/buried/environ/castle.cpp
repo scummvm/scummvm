@@ -1203,13 +1203,13 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 21:
 		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHookPresent), 0, 1, 0, 0, 0);
 	case 22:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 163, 83, 236, 162, kItemGrapplingHook, 75, offsetof(GlobalFlags, cgHookPresent));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 163, 83, 236, 162, kItemGrapplingHook, 75, globalFlags.cgHookPresent);
 	case 23:
 		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgArrowPresent), 0, 0, 1, 0, 0);
 	case 24:
 		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgArrowPresent), 0, 1, 0, 0, 0);
 	case 25:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 241, 7, 284, 92, kItemBloodyArrow, 57, offsetof(GlobalFlags, cgArrowPresent));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 241, 7, 284, 92, kItemBloodyArrow, 57, globalFlags.cgArrowPresent);
 	case 26:
 		if (_vm->isDemo())
 			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHammerPresent), 0, 0, 1, 0, 0);
@@ -1220,7 +1220,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		else
 			return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 28:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 184, 111, 237, 189, kItemHammer, 3, offsetof(GlobalFlags, cgHammerPresent));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 184, 111, 237, 189, kItemHammer, 3, globalFlags.cgHammerPresent);
 	case 29:
 		if (_vm->isDemo())
 			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHammerPresent), 0, 0, 0, 1, 0);
@@ -1240,7 +1240,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 36:
 		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, offsetof(GlobalFlags, cgTapestryFlag), 0, 0, 330, 189);
 	case 37:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, globalFlags.cgBurnedLetterPresent);
 	case 38:
 		return new StorageRoomCheckUnlock(_vm, viewWindow, sceneStaticData, priorLocation, kItemCopperKey, 51, 1, 2, 1, 258, 100, 320, 185);
 	case 39:

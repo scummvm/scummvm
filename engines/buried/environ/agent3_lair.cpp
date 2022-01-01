@@ -970,12 +970,15 @@ bool SceneViewWindow::startAgent3LairAmbient(int oldTimeZone, int oldEnvironment
 }
 
 SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
 		break;
 	case 1:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 177, 96, 231, 184, kItemGeneratorCore, 15, offsetof(GlobalFlags, alRDTakenLiveCore));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 177, 96, 231, 184, kItemGeneratorCore, 15, globalFlags.alRDTakenLiveCore);
 	case 2:
 		return new GeneratorCoreZoom(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 3:

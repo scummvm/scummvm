@@ -991,7 +991,7 @@ public:
 };
 
 CodexTowerGrabLens::CodexTowerGrabLens(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
-		GenericItemAcquire(vm, viewWindow, sceneStaticData, priorLocation, 200, 78, 262, 123, kItemLensFilter, 169, offsetof(GlobalFlags, dsCTRetrievedLens)) {
+		GenericItemAcquire(vm, viewWindow, sceneStaticData, priorLocation, 200, 78, 262, 123, kItemLensFilter, 169, ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTRetrievedLens) {
 }
 
 int CodexTowerGrabLens::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
@@ -2666,9 +2666,9 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 31:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 7, 3, 1, 0, TRANSITION_VIDEO, 12, -1, -1);
 	case 32:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 90, 328, 162, kItemDriveAssembly, 145, offsetof(GlobalFlags, dsWSPickedUpGearAssembly));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 90, 328, 162, kItemDriveAssembly, 145, globalFlags.dsWSPickedUpGearAssembly);
 	case 33:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 164, 126, 276, 160, kItemWoodenPegs, 96, offsetof(GlobalFlags, dsWSPickedUpPegs));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 164, 126, 276, 160, kItemWoodenPegs, 96, globalFlags.dsWSPickedUpPegs);
 	case 34:
 		return new WheelAssemblyItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 150, 150, 276, 189, kItemWheelAssembly, 100);
 	case 35:
@@ -2678,7 +2678,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 37:
 		return new SiegeCycleTopView(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 38:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 130, 74, 182, 120, kItemCoilOfRope, 48, offsetof(GlobalFlags, dsGDTakenCoilOfRope));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 130, 74, 182, 120, kItemCoilOfRope, 48, globalFlags.dsGDTakenCoilOfRope);
 	case 39:
 		return new UnlockCodexTowerDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 40:

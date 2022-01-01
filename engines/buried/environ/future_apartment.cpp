@@ -1958,6 +1958,9 @@ bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnviro
 }
 
 SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
@@ -1983,11 +1986,11 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	case 10:
 		return new KitchenUnitAutoChef(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 11:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 83, 230, 116, kItemBioChipTranslate, 61, offsetof(GlobalFlags, faKITakenPostboxItem));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 83, 230, 116, kItemBioChipTranslate, 61, globalFlags.faKITakenPostboxItem);
 	case 12:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 202, 80, 227, 155, kItemCheeseGirl, 59, offsetof(GlobalFlags, faKITakenPostboxItem));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 202, 80, 227, 155, kItemCheeseGirl, 59, globalFlags.faKITakenPostboxItem);
 	case 13:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 203, 111, 225, 129, kItemGenoSingleCart, 63, offsetof(GlobalFlags, faKITakenPostboxItem));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 203, 111, 225, 129, kItemGenoSingleCart, 63, globalFlags.faKITakenPostboxItem);
 	case 15:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 134, 0, 300, 189, kCursorFinger, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 16:
@@ -2005,7 +2008,7 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	case 22:
 		return new InteractiveNewsNetwork(_vm, viewWindow, sceneStaticData, priorLocation, -1, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 4, -1, -1);
 	case 23:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, offsetof(GlobalFlags, faERTakenRemoteControl));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, globalFlags.faERTakenRemoteControl);
 	case 24:
 		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, 1, 33);
 	case 25:

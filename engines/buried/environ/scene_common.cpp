@@ -114,16 +114,15 @@ TurnDepthPreChange::TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, con
 }
 
 GenericItemAcquire::GenericItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int left, int top, int right, int bottom, int itemID, int clearStillFrame, int itemFlagOffset) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int left, int top, int right, int bottom, int itemID, int clearStillFrame, byte &itemFlag) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _itemFlag(itemFlag) {
 	_itemPresent = true;
 	_itemID = itemID;
 	_acquireRegion = Common::Rect(left, top, right, bottom);
 	_fullFrameIndex = sceneStaticData.navFrameIndex;
 	_clearFrameIndex = clearStillFrame;
-	_itemFlagOffset = itemFlagOffset;
 
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) != 0) {
+	if (_itemFlag != 0) {
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
 	}
@@ -134,8 +133,7 @@ int GenericItemAcquire::mouseDown(Window *viewWindow, const Common::Point &point
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+		_itemFlag = 1;
 
 		// Call inventory drag start function
 		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
@@ -160,8 +158,7 @@ int GenericItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common
 		_itemPresent = true;
 		_staticData.navFrameIndex = _fullFrameIndex;
 
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+		_itemFlag = 0;
 
 		viewWindow->invalidateWindow();
 

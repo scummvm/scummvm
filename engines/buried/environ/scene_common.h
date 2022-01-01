@@ -58,7 +58,7 @@ public:
 class GenericItemAcquire : public SceneBase {
 public:
 	GenericItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int left = 0, int top = 0, int right = 0, int bottom = 0, int itemID = 0, int clearStillFrame = 0, int itemFlagOffset = 0);
+			int left, int top, int right, int bottom, int itemID, int clearStillFrame, byte &itemFlag);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
 	virtual int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
@@ -69,7 +69,7 @@ protected:
 	int _fullFrameIndex;
 	int _clearFrameIndex;
 	int _itemID;
-	int _itemFlagOffset;
+	byte &_itemFlag;
 };
 
 class PlaySoundExitingFromScene : public SceneBase {

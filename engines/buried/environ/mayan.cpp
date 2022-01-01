@@ -2507,6 +2507,9 @@ bool SceneViewWindow::checkCustomMayanAICommentDependencies(const Location &comm
 }
 
 SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	// Special scene for the trial version
 	if (_vm->isTrial())
 		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -2518,7 +2521,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 1:
 		return new VideoDeath(_vm, viewWindow, sceneStaticData, priorLocation, 10, IDS_HUMAN_PRESENCE_500METERS);
 	case 2:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 60, 134, 118, 180, kItemCeramicBowl, 96, offsetof(GlobalFlags, myPickedUpCeramicBowl));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 60, 134, 118, 180, kItemCeramicBowl, 96, globalFlags.myPickedUpCeramicBowl);
 	case 3:
 		return new PlaceCeramicBowl(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 4:
@@ -2540,7 +2543,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 12:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_NORTH_TRANS_TEXT, 6, 38, 428, 76, offsetof(GlobalFlags, myTPTextTranslated));
 	case 13:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, offsetof(GlobalFlags, myMCPickedUpSkull));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, globalFlags.myMCPickedUpSkull);
 	case 14:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 15:
@@ -2576,11 +2579,11 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 30:
 		return new WealthGodRopeDrop(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 31:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 194, 106, 278, 126, kItemJadeBlock, 105, offsetof(GlobalFlags, myWGRetrievedJadeBlock));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 194, 106, 278, 126, kItemJadeBlock, 105, globalFlags.myWGRetrievedJadeBlock);
 	case 32:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 140, 22, 306, 189, 2, 3, 0, 3, 1, 1, TRANSITION_WALK, -1, 264, 14, 14);
 	case 33:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 88, 288, 116, kItemLimestoneBlock, 84, offsetof(GlobalFlags, myWTRetrievedLimestoneBlock));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 88, 288, 116, kItemLimestoneBlock, 84, globalFlags.myWTRetrievedLimestoneBlock);
 	case 34:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 80, 0, 332, 189, 2, 4, 0, 2, 1, 1, TRANSITION_WALK, -1, 401, 14, 14);
 	case 35:
@@ -2612,13 +2615,13 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 50:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation,106, 0, 294, 189, 2, 5, 0, 1, 1, 1, TRANSITION_WALK, -1, 427, 13, 11);
 	case 51:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 235, 144, 285, 181, kItemEntrySkull, 3, offsetof(GlobalFlags, myAGRetrievedEntrySkull));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 235, 144, 285, 181, kItemEntrySkull, 3, globalFlags.myAGRetrievedEntrySkull);
 	case 52:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 138, 231, 185, kItemSpearSkull, 46, offsetof(GlobalFlags, myAGRetrievedSpearSkull));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 138, 231, 185, kItemSpearSkull, 46, globalFlags.myAGRetrievedSpearSkull);
 	case 53:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 201, 4, 235, 22, kItemCopperMedallion, 45, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 201, 4, 235, 22, kItemCopperMedallion, 45, globalFlags.myAGRetrievedCopperMedal);
 	case 54:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 110, 280, 142, kItemObsidianBlock, 72, offsetof(GlobalFlags, myAGRetrievedObsidianBlock));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 110, 280, 142, kItemObsidianBlock, 72, globalFlags.myAGRetrievedObsidianBlock);
 	case 55:
 		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 0,  182, 87, 242, 189, 4, 75, 83, 79, 0, 2, 1, 3);
 	case 56:
@@ -2638,7 +2641,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 67:
 		return new DeathGodPuzzleBox(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 76, 246, 116, kItemEnvironCart, 53, offsetof(GlobalFlags, takenEnvironCart));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 76, 246, 116, kItemEnvironCart, 53, globalFlags.takenEnvironCart);
 	case 69:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 10);
 	case 70:
@@ -2696,7 +2699,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 121:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 125:
-		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 226, 90, 256, 104, kItemCopperMedallion, 15, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 226, 90, 256, 104, kItemCopperMedallion, 15, globalFlags.myAGRetrievedCopperMedal);
 	case 126:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_AG_ALTAR_TEXT, 120, 44, 330, 72, -1, -1, offsetof(GlobalFlags, myAGVisitedAltar));
 	case 127:
