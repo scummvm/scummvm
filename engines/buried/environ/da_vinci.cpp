@@ -2594,6 +2594,7 @@ bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &co
 SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	byte dummyFlag = 0; // a dummy flag, used as a placeholder for writing (but not reading)
 
 	// Special scene for the trial version
 	if (_vm->isTrial())
@@ -2632,11 +2633,11 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 14:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 208, 0, 306, 189, 5, 3, 0, 2, 1, 1, TRANSITION_WALK, 11, 740, 23);
 	case 15:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 0, 0, 384, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, dummyFlag, 13, kCursorFinger, 0, 0, 384, 189);
 	case 16:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 17:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsGDClickedOnCodexDoor), 13, kCursorFinger, 222, 0, 318, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.dsGDClickedOnCodexDoor, 13, kCursorFinger, 222, 0, 318, 189);
 	case 18:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 216, 0, 324, 189, 5, 3, 2, 0, 1, 1, TRANSITION_WALK, 11, 833, 26);
 	case 19:
@@ -2656,11 +2657,11 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 26:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 44, 232, 189, kCursorMagnifyingGlass, 5, 4, 4, 3, 0, 1, TRANSITION_VIDEO, 7, -1, -1);
 	case 27:
-		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 3, 0, 0, TRANSITION_VIDEO, 8, -1, -1, offsetof(GlobalFlags, dsWSSeenBallistaSketch));
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 3, 0, 0, TRANSITION_VIDEO, 8, -1, -1, globalFlags.dsWSSeenBallistaSketch);
 	case 28:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 112, 52, 380, 189, kCursorMagnifyingGlass, 5, 4, 4, 2, 0, 1, TRANSITION_VIDEO, 9, -1, -1);
 	case 29:
-		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 2, 0, 0, TRANSITION_VIDEO, 10, -1, -1, offsetof(GlobalFlags, dsWSSeenBallistaSketch));
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 2, 0, 0, TRANSITION_VIDEO, 10, -1, -1, globalFlags.dsWSSeenBallistaSketch);
 	case 30:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 96, 130, 222, 164, kCursorMagnifyingGlass, 5, 4, 7, 3, 1, 1, TRANSITION_VIDEO, 11, -1, -1 );
 	case 31:
@@ -2718,7 +2719,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 57:
 		return new CourtyardCannon(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 58:
-		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, dsCYWeebleClicked), 200, 88, 270, 189);
+		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, globalFlags.dsCYWeebleClicked, 200, 88, 270, 189);
 	case 59:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 70, 136, 190, 189);
 	case 60:
@@ -2750,9 +2751,9 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 73:
 		return new LensFilterNotify(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 74:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 140, 0, 432, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, dummyFlag, 13, kCursorFinger, 140, 0, 432, 189);
 	case 75:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsCYTriedElevator), 13, kCursorFinger, 140, 130, 432, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.dsCYTriedElevator, 13, kCursorFinger, 140, 130, 432, 189);
 	case 76:
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, globalFlags.dsCTPlayedBallistaFalling);
 	case 77:

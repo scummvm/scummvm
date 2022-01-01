@@ -52,7 +52,7 @@ public:
 class TurnDepthPreChange : public SceneBase {
 public:
 	TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, int upDepth = -1, int leftDepth = -1, int rightDepth = -1, int downDepth = -1, int forwardDepth = -1);
+			byte &flag, int upDepth = -1, int leftDepth = -1, int rightDepth = -1, int downDepth = -1, int forwardDepth = -1);
 };
 
 class GenericItemAcquire : public SceneBase {
@@ -121,7 +121,7 @@ private:
 class ClickPlayVideoSwitchAI : public SceneBase {
 public:
 	ClickPlayVideoSwitchAI(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int animID = 0, int cursorID = 0, int flagOffset = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+			int animID, int cursorID, byte &flag, int left = 0, int top = 0, int right = 0, int bottom = 0);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
@@ -129,27 +129,27 @@ private:
 	int _cursorID;
 	int _animID;
 	Common::Rect _clickRegion;
-	int _flagOffset;
+	byte &_flag;
 };
 
 class ClickChangeSceneSetFlag : public ClickChangeScene {
 public:
 	ClickChangeSceneSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0,
-			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
-			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1, int flagIndex = -1);
+			int left, int top, int right, int bottom, int cursorID,
+			int timeZone, int environment, int node, int facing, int orientation, int depth,
+			int transitionType, int transitionData, int transitionStartFrame, int transitionLength, byte &flag);
 };
 
 class PlayStingers : public SceneBase {
 public:
 	PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1, int lastStingerFileID = -1);
+			int stingerVolume, byte &lastStingerFlag, byte &effectIDFlag, int firstStingerFileID, int lastStingerFileID);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
 
 private:
 	int _stingerVolume;
-	int _lastStingerFlagOffset;
-	int _effectIDFlagOffset;
+	byte &_lastStingerFlag;
+	byte &_effectIDFlag;
 	int _firstStingerFileID;
 	int _lastStingerFileID;
 };
@@ -157,7 +157,7 @@ private:
 class ClickPlaySound : public SceneBase {
 public:
 	ClickPlaySound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int flagOffset = -1, int soundID = 0, int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+			byte &flag, int soundID, int cursorID, int left, int top, int right, int bottom);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
@@ -165,7 +165,7 @@ private:
 	int _cursorID;
 	int _soundID;
 	Common::Rect _clickRegion;
-	int _flagOffset;
+	byte &_flag;
 };
 
 class ClickZoom : public SceneBase {
@@ -248,7 +248,7 @@ private:
 class ClickPlayLoopingVideoClip : public SceneBase {
 public:
 	ClickPlayLoopingVideoClip(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int cursorID = 0, int animID = -1, int left = 0, int top = 0, int right = 0, int bottom = 0, int flagOffset = -1, int newFlagValue = -1);
+			int cursorID, int animID, int left, int top, int right, int bottom, byte &flag, int newFlagValue);
 	int preExitRoom(Window *viewWindow, const Location &newLocation);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
@@ -257,7 +257,7 @@ private:
 	int _cursorID;
 	int _animID;
 	Common::Rect _clickRegion;
-	int _flagOffset;
+	byte &_flag;
 	int _flagValue;
 	bool _playing;
 };
@@ -265,12 +265,12 @@ private:
 class OneShotEntryVideoWarning : public SceneBase {
 public:
 	OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int animID = 0, int flagOffset = 0, int warningMessageID = -1);
+			int animID, byte &flag, int warningMessageID);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
 
 private:
 	int _animID;
-	int _flagOffset;
+	byte &_flag;
 	int _warningMessageID;
 };
 
@@ -295,7 +295,7 @@ private:
 class ClickPlayVideoSwitch : public SceneBase {
 public:
 	ClickPlayVideoSwitch(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int animID = 0, int cursorID = -1, int flagOffset = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+			int animID, int cursorID, byte &flag, int left = 0, int top = 0, int right = 0, int bottom = 0);
 
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
@@ -304,7 +304,7 @@ private:
 	int _cursorID;
 	int _animID;
 	Common::Rect _clickRegion;
-	int _flagOffset;
+	byte &_flag;
 };
 
 class ClickPlayVideo : public SceneBase {

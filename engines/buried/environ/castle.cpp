@@ -1155,6 +1155,7 @@ bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &com
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	byte dummyFlag = 0; // a dummy flag, used as a placeholder for writing (but not reading)
 
 	// Special scene for the trial version
 	if (_vm->isTrial())
@@ -1175,9 +1176,9 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 6:
 		return new WallSlideDeath(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 7:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgWallExploded), 0, 0, 1, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgWallExploded, 0, 0, 1, 0, 0);
 	case 8:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgWallExploded), 0, 1, 0, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgWallExploded, 0, 1, 0, 0, 0);
 	case 9:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 81, 25, 360, 189, 1, 4, 2, 1, 1, 1, 2, 11, 413, 25);
 	case 10:
@@ -1199,46 +1200,46 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 19:
 		return new KingsStudyGuard(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHookPresent), 0, 0, 1, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHookPresent, 0, 0, 1, 0, 0);
 	case 21:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHookPresent), 0, 1, 0, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHookPresent, 0, 1, 0, 0, 0);
 	case 22:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 163, 83, 236, 162, kItemGrapplingHook, 75, globalFlags.cgHookPresent);
 	case 23:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgArrowPresent), 0, 0, 1, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgArrowPresent, 0, 0, 1, 0, 0);
 	case 24:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgArrowPresent), 0, 1, 0, 0, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgArrowPresent, 0, 1, 0, 0, 0);
 	case 25:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 241, 7, 284, 92, kItemBloodyArrow, 57, globalFlags.cgArrowPresent);
 	case 26:
 		if (_vm->isDemo())
-			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHammerPresent), 0, 0, 1, 0, 0);
+			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHammerPresent, 0, 0, 1, 0, 0);
 		break;
 	case 27:
 		if (_vm->isDemo())
-			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHammerPresent), 0, 1, 0, 0, 0);
+			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHammerPresent, 0, 1, 0, 0, 0);
 		else
 			return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 28:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 184, 111, 237, 189, kItemHammer, 3, globalFlags.cgHammerPresent);
 	case 29:
 		if (_vm->isDemo())
-			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHammerPresent), 0, 0, 0, 1, 0);
+			return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHammerPresent, 0, 0, 0, 1, 0);
 		break;
 	case 30:
-		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHookPresent), 0, 0, 0, 1, 0);
+		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgHookPresent, 0, 0, 0, 1, 0);
 	case 31:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, 51, 25, 149, 149);
 	case 32:
-		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, 0, offsetof(GlobalFlags, cgSmithyGuard), IDS_HUMAN_PRESENCE_10METERS);
+		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, 0, globalFlags.cgSmithyGuard, IDS_HUMAN_PRESENCE_10METERS);
 	case 33:
-		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 2 : 6, offsetof(GlobalFlags, cgBaileyOneWayGuard), IDS_HUMAN_PRESENCE_10METERS);
+		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 2 : 6, globalFlags.cgBaileyOneWayGuard, IDS_HUMAN_PRESENCE_10METERS);
 	case 34:
 		return new CycleEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 5 : 7, _vm->isDemo() ? 6 : 8, IDS_HUMAN_PRESENCE_10METERS);
 	case 35:
-		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 3, kCursorFinger, offsetof(GlobalFlags, cgTapestryFlag), 0, 0, 330, 189);
+		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 3, kCursorFinger, globalFlags.cgTapestryFlag, 0, 0, 330, 189);
 	case 36:
-		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, offsetof(GlobalFlags, cgTapestryFlag), 0, 0, 330, 189);
+		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, globalFlags.cgTapestryFlag, 0, 0, 330, 189);
 	case 37:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, globalFlags.cgBurnedLetterPresent);
 	case 38:
@@ -1294,15 +1295,15 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		// Original incremented the flag each time, but it's expected that the code will never go above 1
 		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgViewedKeepPlans, 1);
 	case 67:
-		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorPutDown, 1, 6, 5, 1, 0, 0, TRANSITION_VIDEO, 5, -1, -1, offsetof(GlobalFlags, cgFoundChestPanel));
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorPutDown, 1, 6, 5, 1, 0, 0, TRANSITION_VIDEO, 5, -1, -1, globalFlags.cgFoundChestPanel);
 	case 70:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12);
 	case 71:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 72:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 12, kCursorFinger, 28, 34, 336, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, dummyFlag, 12, kCursorFinger, 28, 34, 336, 189);
 	case 73:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 0, 0, 270, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, dummyFlag, 13, kCursorFinger, 0, 0, 270, 189);
 	case 74:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 75:
@@ -1310,7 +1311,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 76:
 		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgSROpenedChest, 1);
 	case 77:
-		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorB), 14, kCursorFinger, 72, 0, 372, 189);
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, globalFlags.cgTSTriedDoorB, 14, kCursorFinger, 72, 0, 372, 189);
 	default:
 		warning("Unknown Castle scene object %d", sceneStaticData.classID);
 		break;

@@ -1989,15 +1989,16 @@ bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnviro
 SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	byte dummyFlag = 0; // a dummy flag, used as a placeholder for writing (but not reading)
 
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
 		break;
 	case 1:
-		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 0, kCursorFinger, offsetof(GlobalFlags, faKICoffeeSpilled), 212, 114, 246, 160);
+		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 0, kCursorFinger, globalFlags.faKICoffeeSpilled, 212, 114, 246, 160);
 	case 2:
-		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, faKIBirdsBobbed), 150, 40, 260, 164);
+		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, globalFlags.faKIBirdsBobbed, 150, 40, 260, 164);
 	case 3:
 		return new OvenDoor(_vm, viewWindow, sceneStaticData, priorLocation, 2, 3, 37, 25, 0, 0, 270, 80);
 	case 4:
@@ -2045,7 +2046,7 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	case 26:
 		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, 1, 9);
 	case 30:
-		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
+		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, globalFlags.faStingerID, globalFlags.faStingerChannelID, 10, 14);
 	case 31:
 		return new ClickZoomInTopOfBookshelf(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 32:
@@ -2073,9 +2074,9 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	case 43:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 3, 5, 0, 0, 0, TRANSITION_VIDEO, 29, -1, -1);
 	case 44:
-		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 25, 120, 0, 299, 132, offsetof(GlobalFlags, faMNPongClicked), 1);
+		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 25, 120, 0, 299, 132, globalFlags.faMNPongClicked, 1);
 	case 45:
-		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 27, 0, 0, 432, 189);
+		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 27, 0, 0, 432, 189, dummyFlag, 0);
 	case 46:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 44, 26, 254, 144, kCursorMagnifyingGlass, 4, 3, 0, 2, 0, 1, TRANSITION_VIDEO, 30, -1, -1);
 	case 47:

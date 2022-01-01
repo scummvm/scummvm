@@ -93,9 +93,9 @@ int BasicDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocat
 }
 
 TurnDepthPreChange::TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int upDepth, int leftDepth, int rightDepth, int downDepth, int forwardDepth) :
+		byte &flag, int upDepth, int leftDepth, int rightDepth, int downDepth, int forwardDepth) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset)) {
+	if (flag) {
 		if (upDepth >= 0)
 			_staticData.destUp.destinationScene.depth = upDepth;
 
@@ -255,19 +255,18 @@ int ClickChangeScene::specifyCursor(Window *viewWindow, const Common::Point &poi
 
 
 ClickPlayVideoSwitchAI::ClickPlayVideoSwitchAI(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int animID, int cursorID, int flagOffset, int left, int top, int right, int bottom) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int animID, int cursorID, byte &flag, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_cursorID = cursorID;
 	_animID = animID;
 	_clickRegion = Common::Rect(left, top, right, bottom);
-	_flagOffset = flagOffset;
 }
 
 int ClickPlayVideoSwitchAI::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clickRegion.contains(pointLocation)) {
 		// Play the animation clip
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		_flag = 1;
 
 		// Play any spontaneous AI comments
 		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
@@ -291,61 +290,52 @@ int ClickPlayVideoSwitchAI::specifyCursor(Window *viewWindow, const Common::Poin
 ClickChangeSceneSetFlag::ClickChangeSceneSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int left, int top, int right, int bottom, int cursorID,
 		int timeZone, int environment, int node, int facing, int orientation, int depth,
-		int transitionType, int transitionData, int transitionStartFrame, int transitionLength, int flagIndex) :
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength, byte &flag) :
 		ClickChangeScene(vm, viewWindow, sceneStaticData, priorLocation, left, top, right, bottom, cursorID, timeZone, environment, node, facing, orientation, depth,
 			transitionType, transitionData, transitionStartFrame, transitionLength) {
-	if (flagIndex >= 0)
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagIndex, 1);
+	flag = 1;
 }
 
 PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID, int lastStingerFileID) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int stingerVolume, byte &lastStingerFlag, byte &effectIDFlag, int firstStingerFileID, int lastStingerFileID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation),
+		_lastStingerFlag(lastStingerFlag), _effectIDFlag(effectIDFlag) {
 	_stingerVolume = stingerVolume;
-	_lastStingerFlagOffset = lastStingerFlagOffset;
-	_effectIDFlagOffset = effectIDFlagOffset;
 	_firstStingerFileID = firstStingerFileID;
 	_lastStingerFileID = lastStingerFileID;
 }
 
 int PlayStingers::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (_effectIDFlagOffset >= 0) {
-		// More evil.
-		byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_effectIDFlagOffset);
+	if (!_vm->_sound->isSoundEffectPlaying(_effectIDFlag - 1)) {
+		byte lastStinger = _lastStingerFlag;
+		lastStinger++;
 
-		if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
-			byte lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_lastStingerFlagOffset);
-			lastStinger++;
+		uint32 fileNameIndex = _vm->computeFileNameResourceID(_staticData.location.timeZone, _staticData.location.environment, _firstStingerFileID + lastStinger - 1);
+		byte newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
 
-			uint32 fileNameIndex = _vm->computeFileNameResourceID(_staticData.location.timeZone, _staticData.location.environment, _firstStingerFileID + lastStinger - 1);
-			byte newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
+		if (lastStinger > _lastStingerFileID - _firstStingerFileID)
+			lastStinger = 0;
 
-			if (lastStinger > _lastStingerFileID - _firstStingerFileID)
-				lastStinger = 0;
-
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
-		}
+		_effectIDFlag = newStingerID;
+		_lastStingerFlag = lastStinger;
 	}
 
 	return SC_TRUE;
 }
 
 ClickPlaySound::ClickPlaySound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int flagOffset, int soundID, int cursorID, int left, int top, int right, int bottom) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		byte &flag, int soundID, int cursorID, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_cursorID = cursorID;
 	_soundID = soundID;
 	_clickRegion = Common::Rect(left, top, right, bottom);
-	_flagOffset = flagOffset;
 }
 
 int ClickPlaySound::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clickRegion.contains(pointLocation)) {
 		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundID), 127, false, true);
 
-		if (_flagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		_flag = 1;
 
 		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
 			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
@@ -742,12 +732,11 @@ int DisplayMessageWithEvidenceWhenEnteringNode::postEnterRoom(Window *viewWindow
 }
 
 ClickPlayLoopingVideoClip::ClickPlayLoopingVideoClip(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int cursorID, int animID, int left, int top, int right, int bottom, int flagOffset, int newFlagValue) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int cursorID, int animID, int left, int top, int right, int bottom, byte &flag, int newFlagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_cursorID = cursorID;
 	_animID = animID;
 	_clickRegion = Common::Rect(left, top, right, bottom);
-	_flagOffset = flagOffset;
 	_flagValue = newFlagValue;
 	_playing = false;
 }
@@ -757,9 +746,7 @@ int ClickPlayLoopingVideoClip::preExitRoom(Window *viewWindow, const Location &n
 		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
 		_vm->_sound->restart();
 		_playing = false;
-
-		if (_flagOffset >= 0 && _flagValue >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, _flagValue);
+		_flag = _flagValue;
 	}
 
 	return SC_TRUE;
@@ -774,8 +761,7 @@ int ClickPlayLoopingVideoClip::mouseUp(Window *viewWindow, const Common::Point &
 			_vm->_sound->restart();
 
 			// Change the flag
-			if (_flagOffset >= 0 && _flagValue >= 0)
-				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, _flagValue);
+			_flag = _flagValue;
 
 			// Check for spontaneous AI comments
 			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
@@ -802,19 +788,19 @@ int ClickPlayLoopingVideoClip::specifyCursor(Window *viewWindow, const Common::P
 }
 
 OneShotEntryVideoWarning::OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int animID, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int animID, byte &flag, int warningMessageID) :
+	SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_animID = animID;
-	_flagOffset = flagOffset;
 	_warningMessageID = warningMessageID;
 }
 
 int OneShotEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+	if (_flag == 0) {
 		if (_warningMessageID >= 0)
 			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_warningMessageID));
 
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
-		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		_flag = 1;
 	}
 
 	return SC_TRUE;
@@ -855,26 +841,23 @@ int CycleEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &pr
 }
 
 ClickPlayVideoSwitch::ClickPlayVideoSwitch(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		int animID, int cursorID, int flagOffset, int left, int top, int right, int bottom) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+		int animID, int cursorID, byte &flag, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _flag(flag) {
 	_cursorID = cursorID;
 	_animID = animID;
 	_clickRegion = Common::Rect(left, top, right, bottom);
-	_flagOffset = flagOffset;
 }
 
 int ClickPlayVideoSwitch::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clickRegion.contains(pointLocation)) {
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
 
-		if (_flagOffset >= 0) {
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		_flag = 1;
 
-			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
-				((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
 
-			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
-		}
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
 
 		return SC_TRUE;
 	}

@@ -1173,6 +1173,9 @@ bool SceneViewWindow::startAlienAmbient(int oldTimeZone, int oldEnvironment, int
 }
 
 SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
@@ -1234,7 +1237,7 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 	case 42:
 		return new NerveNavigation(_vm, viewWindow, sceneStaticData, priorLocation, 180, 160, 270, 189);
 	case 50:
-		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
+		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, globalFlags.asRBLastStingerID, globalFlags.asRBStingerID, 10, 14);
 	default:
 		warning("Unknown Alien scene object %d", sceneStaticData.classID);
 		break;
