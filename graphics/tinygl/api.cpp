@@ -632,6 +632,17 @@ void tglClearStencil(TGLint s) {
 	c->gl_add_op(p);
 }
 
+void tglPolygonOffset(TGLfloat factor, TGLfloat units) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[3];
+
+	p[0].op = TinyGL::OP_PolygonOffset;
+	p[1].f = factor;
+	p[2].f = units;
+
+	c->gl_add_op(p);
+}
+
 void tglFlush() {
 	// nothing to do
 }
@@ -774,15 +785,16 @@ void tglLoadName(TGLuint name) {
 	c->gl_add_op(p);
 }
 
-void tglPolygonOffset(TGLfloat factor, TGLfloat units) {
+TGLint tglRenderMode(TGLenum mode) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[3];
 
-	p[0].op = TinyGL::OP_PolygonOffset;
-	p[1].f = factor;
-	p[2].f = units;
+	return c->gl_RenderMode(mode);
+}
 
-	c->gl_add_op(p);
+void tglSelectBuffer(TGLsizei size, TGLuint *buffer) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_SelectBuffer(size, buffer);
 }
 
 // lists

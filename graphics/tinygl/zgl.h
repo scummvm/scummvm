@@ -485,6 +485,9 @@ public:
 	GLSpecBuf *specbuf_get_buffer(const int shininess_i, const float shininess);
 	void specbuf_cleanup();
 
+	TGLint gl_RenderMode(TGLenum mode);
+	void gl_SelectBuffer(TGLsizei size, TGLuint *buffer);
+
 	GLList *alloc_list(int list);
 	GLList *find_list(uint list);
 	void delete_list(int list);

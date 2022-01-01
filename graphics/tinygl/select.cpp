@@ -29,37 +29,36 @@
 
 namespace TinyGL {
 
-TGLint tglRenderMode(TGLenum mode) {
-	GLContext *c = gl_get_context();
+TGLint GLContext::gl_RenderMode(TGLenum mode) {
 	int result = 0;
 
-	switch (c->render_mode) {
+	switch (render_mode) {
 	case TGL_RENDER:
 		break;
 	case TGL_SELECT:
-		if (c->select_overflow) {
-			result = -c->select_hits;
+		if (select_overflow) {
+			result = -select_hits;
 		} else {
-			result = c->select_hits;
+			result = select_hits;
 		}
-		c->select_overflow = 0;
-		c->select_ptr = c->select_buffer;
-		c->name_stack_size = 0;
+		select_overflow = 0;
+		select_ptr = select_buffer;
+		name_stack_size = 0;
 		break;
 	default:
 		assert(0);
 	}
 	switch (mode) {
 	case TGL_RENDER:
-		c->render_mode = TGL_RENDER;
+		render_mode = TGL_RENDER;
 		break;
 	case TGL_SELECT:
-		c->render_mode = TGL_SELECT;
-		assert(c->select_buffer != nullptr);
-		c->select_ptr = c->select_buffer;
-		c->select_hits = 0;
-		c->select_overflow = 0;
-		c->select_hit = nullptr;
+		render_mode = TGL_SELECT;
+		assert(select_buffer != nullptr);
+		select_ptr = select_buffer;
+		select_hits = 0;
+		select_overflow = 0;
+		select_hit = nullptr;
 		break;
 	default:
 		assert(0);
@@ -67,13 +66,11 @@ TGLint tglRenderMode(TGLenum mode) {
 	return result;
 }
 
-void tglSelectBuffer(TGLsizei size, TGLuint *buffer) {
-	GLContext *c = gl_get_context();
+void GLContext::gl_SelectBuffer(TGLsizei size, TGLuint *buffer) {
+	assert(render_mode != TGL_SELECT);
 
-	assert(c->render_mode != TGL_SELECT);
-
-	c->select_buffer = buffer;
-	c->select_size = size;
+	select_buffer = buffer;
+	select_size = size;
 }
 
 void GLContext::glopInitNames(GLParam *) {
