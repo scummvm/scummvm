@@ -53,6 +53,7 @@
 #include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/missile_tracker.h"
 #include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
@@ -1269,15 +1270,34 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	// is clean for both Item and Actor.
 	DirectionMode dirmode = dirmode_8dirs;
 	const Actor *thisactor = dynamic_cast<Actor *>(this);
+	Item *target = nullptr;
 	if (thisactor) {
-		// TODO: Get damage for active inventory item if not a weapon?
 		dirmode = thisactor->animDirMode(thisactor->getLastAnim());
+
+		// In the original code there is logic here deciding whether to get
+		// damage for the active weapon or some other item, but in the end
+		// it always gets random damage for the same firetype, so as far as
+		// I can tell it makes no difference.
+
+		// In No Regret, we get another chance to increase damage.  We also
+		// set target based on the npc attack rather than whatever controlled
+		// actor is.
+		if (GAME_IS_REGRET) {
+			if (damage < 2)
+				damage = firetypedat->getRandomDamage();
+
+			AttackProcess *attackproc = thisactor->getAttackProcess();
+			if (attackproc) {
+				target = getActor(attackproc->getTarget());
+			}
+		}
 	}
 
-	Item *target = nullptr;
 	if (findtarget) {
 		if (this != getControlledActor()) {
-			target = getControlledActor();
+			if (GAME_IS_REMORSE || !thisactor)
+				target = getControlledActor();
+			// else already set above to attackproc target
 		} else {
 			target = currentmap->findBestTargetItem(ix, iy, iz - z, dir, dirmode);
 		}

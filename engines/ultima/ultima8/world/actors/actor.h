@@ -89,8 +89,8 @@ public:
 
 	bool isFalling() const;
 
-	CombatProcess *getCombatProcess(); 	// in U8
-	AttackProcess *getAttackProcess();	// in Crusader
+	CombatProcess *getCombatProcess() const; 	// in U8
+	AttackProcess *getAttackProcess() const;	// in Crusader
 	virtual void setInCombat(int activity);
 	virtual void clearInCombat();
 

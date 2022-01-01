@@ -1764,7 +1764,7 @@ bool Actor::isFalling() const {
 	return (proc && proc->is_active());
 }
 
-CombatProcess *Actor::getCombatProcess() {
+CombatProcess *Actor::getCombatProcess() const {
 	Process *p = Kernel::get_instance()->findProcess(_objId, 0xF2); // CONSTANT!
 	if (!p)
 		return nullptr;
@@ -1774,7 +1774,7 @@ CombatProcess *Actor::getCombatProcess() {
 	return cp;
 }
 
-AttackProcess *Actor::getAttackProcess() {
+AttackProcess *Actor::getAttackProcess() const {
 	Process *p = Kernel::get_instance()->findProcess(_objId, AttackProcess::ATTACK_PROCESS_TYPE);
 	if (!p)
 		return nullptr;
