@@ -69,7 +69,7 @@ static const char *const k2SeqplayStringsDOSCDItalian[104] = {
 	"Frank Klepacki",
 	"Dwight Okahara",
 	"Pat Collins",
-	"Controllo Qualit""\x85",
+	"Controllo Qualit\x85",
 	"Glenn Sperry",
 	"Michael Lightner",
 	"William Foster",

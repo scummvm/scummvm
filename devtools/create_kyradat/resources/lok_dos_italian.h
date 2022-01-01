@@ -338,7 +338,7 @@ static const char *const k1GUIStringsDOSItalian[60] = {
 	"No",
 	"_""\x0F""T+k""\x0F""T+q""\x0F""T+y""\x0F""T+""\x80\x0F""T+""\x8D\x0F""T+""\x99\x0F""T+""\xA1\x0F""T+""\xA8\x0F""T+Velocit""\x85"" di movimento",
 	"Velocit""\x85"" del testo",
-	"Musica ""\x8A",
+	"Musica \x8A",
 	"Suoni sono"
 };
 

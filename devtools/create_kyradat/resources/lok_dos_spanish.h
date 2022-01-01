@@ -229,7 +229,7 @@ static const char *const k1ThePoisonStringsDOSSpanish[4] = {
 	"El veneno...",
 	"No puedo respirar...",
 	"No me siento bien...",
-	"\xAD""Esa serpiente debe ser\rvenenosa!"
+	("\xAD""Esa serpiente debe ser\rvenenosa!")
 };
 
 static const StringListProvider k1ThePoisonStringsDOSSpanishProvider = { ARRAYSIZE(k1ThePoisonStringsDOSSpanish), k1ThePoisonStringsDOSSpanish };
