@@ -65,7 +65,7 @@ class VideoWindow;
 
 class BuriedEngine : public ::Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	BuriedEngine(OSystem *syst, const ADGameDescription *gamedesc);
@@ -82,8 +82,8 @@ public:
 	Common::String getLibraryName() const;
 	Common::Language getLanguage() const;
 
-	bool hasFeature(EngineFeature f) const;
-	void pauseEngineIntern(bool pause);
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
 
 	// Resources
 	Common::String getString(uint32 stringID);
@@ -142,8 +142,8 @@ public:
 	void showPoints();
 
 	// Save/Load
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("buried.%03d", slot);
 	}
