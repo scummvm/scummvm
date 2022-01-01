@@ -161,7 +161,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// eye coordinates needed for lighting
 
 		m = c->matrix_stack_ptr[0];
-		m->transform3x4(v->coord,v->ec);
+		m->transform3x4(v->coord, v->ec);
 
 		// projection coordinates
 		m = c->matrix_stack_ptr[1];

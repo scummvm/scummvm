@@ -24,13 +24,13 @@
 namespace Graphics {
 
 PixelBuffer::PixelBuffer()
-	: _buffer(NULL),
+	: _buffer(nullptr),
 	  _dispose(DisposeAfterUse::NO) {
 
 }
 
 PixelBuffer::PixelBuffer(const PixelFormat &format, int buffersize, DisposeAfterUse::Flag dispose)
-	: _buffer(NULL),
+	: _buffer(nullptr),
 	_dispose(DisposeAfterUse::NO) {
 	create(format, buffersize, dispose);
 }
@@ -78,7 +78,7 @@ void PixelBuffer::set(const Graphics::PixelFormat &format, byte *buffer) {
 
 void PixelBuffer::free() {
 	delete[] _buffer;
-	_buffer = NULL;
+	_buffer = nullptr;
 }
 
 void PixelBuffer::clear(uint length) {

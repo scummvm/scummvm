@@ -184,7 +184,7 @@ void GLContext::gl_enable_disable_light(int light, int v) {
 			if (first_light)
 				first_light->prev = l;
 			first_light = l;
-			l->prev = NULL;
+			l->prev = nullptr;
 		}
 	} else if (!v && l->enabled) {
 		l->enabled = 0;
@@ -215,7 +215,7 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 	B = m->emission.Z + m->ambient.Z * ambient_light_model.Z;
 	A = clampf(m->diffuse.W, 0, 1);
 
-	for (l = first_light; l != NULL; l = l->next) {
+	for (l = first_light; l != nullptr; l = l->next) {
 		float lR, lB, lG;
 
 		// ambient
@@ -236,7 +236,8 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 			d.Y = l->position.Y - v->ec.Y;
 			d.Z = l->position.Z - v->ec.Z;
 			dist = sqrt(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
-			att = 1.0f / (l->attenuation[0] + dist * (l->attenuation[1] +
+			att = 1.0f / (l->attenuation[0] +
+			              dist * (l->attenuation[1] +
 			              dist * l->attenuation[2]));
 		}
 		dot = d.X * n.X + d.Y * n.Y + d.Z * n.Z;
@@ -256,8 +257,8 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 			if (is_spotlight || has_specular) {
 				if (is_spotlight) {
 					dot_spot = -(d.X * l->norm_spot_direction.X +
-								 d.Y * l->norm_spot_direction.Y +
-								 d.Z * l->norm_spot_direction.Z);
+					             d.Y * l->norm_spot_direction.Y +
+					             d.Z * l->norm_spot_direction.Z);
 					if (twoside && dot_spot < 0)
 						dot_spot = -dot_spot;
 					if (dot_spot < l->cos_spot_cutoff) {

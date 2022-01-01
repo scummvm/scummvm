@@ -121,10 +121,10 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 		l->norm_spot_direction = Vector3(0, 0, -1);
 		l->norm_position = Vector3(0, 0, 1);
 		l->enabled = 0;
-		l->next = NULL;
-		l->prev = NULL;
+		l->next = nullptr;
+		l->prev = nullptr;
 	}
-	first_light = NULL;
+	first_light = nullptr;
 	ambient_light_model = Vector4(0.2f, 0.2f, 0.2f, 1);
 	local_light_model = 0;
 	lighting_enabled = 0;

@@ -141,15 +141,18 @@ void GLContext::glopRotate(GLParam *p) {
 		m.identity();
 		break;
 	case 4:
-		if (u[0] < 0) angle = -angle;
+		if (u[0] < 0)
+			angle = -angle;
 		m.rotation(angle, 0);
 		break;
 	case 2:
-		if (u[1] < 0) angle = -angle;
+		if (u[1] < 0)
+			angle = -angle;
 		m.rotation(angle, 1);
 		break;
 	case 1:
-		if (u[2] < 0) angle = -angle;
+		if (u[2] < 0)
+			angle = -angle;
 		m.rotation(angle, 2);
 		break;
 	default: {

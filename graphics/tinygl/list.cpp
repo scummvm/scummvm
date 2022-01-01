@@ -32,9 +32,8 @@
 namespace TinyGL {
 
 #define ADD_OP(aa, bb, ff) \
-static void glop ## aa (GLContext *c, GLParam *p) \
-{                                                 \
-	c->glop ## aa (p);                            \
+static void glop ## aa (GLContext *c, GLParam *p) { \
+        c->glop ## aa (p);                          \
 }
 #include "graphics/tinygl/opinfo.h"
 
@@ -87,7 +86,7 @@ static GLList *alloc_list(GLContext *c, int list) {
 	l = (GLList *)gl_zalloc(sizeof(GLList));
 	ob = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 
-	ob->next = NULL;
+	ob->next = nullptr;
 	l->first_op_buffer = ob;
 
 	ob->ops[0].op = OP_EndList;
@@ -138,7 +137,7 @@ void GLContext::gl_compile_op(GLParam *p) {
 	if ((index + op_size) > (OP_BUFFER_MAX_SIZE - 2)) {
 
 		ob1 = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
-		ob1->next = NULL;
+		ob1->next = nullptr;
 
 		ob->next = ob1;
 		ob->ops[index].op = OP_NextBuffer;

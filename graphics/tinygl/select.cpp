@@ -55,11 +55,11 @@ TGLint tglRenderMode(TGLenum mode) {
 		break;
 	case TGL_SELECT:
 		c->render_mode = TGL_SELECT;
-		assert(c->select_buffer != NULL);
+		assert(c->select_buffer != nullptr);
 		c->select_ptr = c->select_buffer;
 		c->select_hits = 0;
 		c->select_overflow = 0;
-		c->select_hit = NULL;
+		c->select_hit = nullptr;
 		break;
 	default:
 		assert(0);
@@ -79,7 +79,7 @@ void tglSelectBuffer(TGLsizei size, TGLuint *buffer) {
 void GLContext::glopInitNames(GLParam *) {
 	if (render_mode == TGL_SELECT) {
 		name_stack_size = 0;
-		select_hit = NULL;
+		select_hit = nullptr;
 	}
 }
 
@@ -87,7 +87,7 @@ void GLContext::glopPushName(GLParam *p) {
 	if (render_mode == TGL_SELECT) {
 		assert(name_stack_size < MAX_NAME_STACK_DEPTH);
 		name_stack[name_stack_size++] = p[1].i;
-		select_hit = NULL;
+		select_hit = nullptr;
 	}
 }
 
@@ -95,7 +95,7 @@ void GLContext::glopPopName(GLParam *) {
 	if (render_mode == TGL_SELECT) {
 		assert(name_stack_size > 0);
 		name_stack_size--;
-		select_hit = NULL;
+		select_hit = nullptr;
 	}
 }
 
@@ -103,7 +103,7 @@ void GLContext::glopLoadName(GLParam *p) {
 	if (render_mode == TGL_SELECT) {
 		assert(name_stack_size > 0);
 		name_stack[name_stack_size - 1] = p[1].i;
-		select_hit = NULL;
+		select_hit = nullptr;
 	}
 }
 

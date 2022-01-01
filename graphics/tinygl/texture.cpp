@@ -157,7 +157,7 @@ void GLContext::glopTexImage2D(GLParam *p) {
 		delete im->pixmap;
 		im->pixmap = nullptr;
 	}
-	if (pixels != NULL) {
+	if (pixels) {
 		uint filter;
 		Graphics::PixelFormat pf;
 		bool found = false;
