@@ -295,7 +295,7 @@ struct GLContext {
 	// textures
 	GLTexture *current_texture;
 	uint maxTextureName;
-	int texture_2d_enabled;
+	bool texture_2d_enabled;
 	int texture_mag_filter;
 	int texture_min_filter;
 	uint texture_wrap_s;
