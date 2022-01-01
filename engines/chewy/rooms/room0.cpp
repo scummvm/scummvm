@@ -29,12 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
-#define KLAPPE_SPRITE 5
+#define FLAP_SPRITE 5
 #define SCHLEIM_DETAIL 2
 #define CH_ZIEHT_SCHLEIM 3
 #define CH_BLITZ 8
 #define TUER_DETAIL 9
-#define KLAPPE_DETAIL 10
+#define FLAP_DETAIL 10
 #define SCHLAUCH_DETAIL 11
 #define CH_WIRFT_SCHLEIM 12
 #define CH_NACH_FUETTERN 13
@@ -198,27 +198,27 @@ void Room0::eyeStart(EyeMode mode) {
 		adi->ani_count = 38;
 
 	if (mode == EYE_START) {
-		ani_klappe_delay();
+		trapDoorOpen();
 	}
 
 	ende = false;
 	flags.AniUserAction = true;
 
 	if (mode == EYE_START) {
-		det->enable_sound(KLAPPE_DETAIL, 0);
-		det->disable_sound(KLAPPE_DETAIL, 1);
+		det->enable_sound(FLAP_DETAIL, 0);
+		det->disable_sound(FLAP_DETAIL, 1);
 		det->enable_sound(SCHLAUCH_DETAIL, 0);
 		det->disable_sound(SCHLAUCH_DETAIL, 2);
 	} else {
-		det->disable_sound(KLAPPE_DETAIL, 0);
-		det->enable_sound(KLAPPE_DETAIL, 1);
+		det->disable_sound(FLAP_DETAIL, 0);
+		det->enable_sound(FLAP_DETAIL, 1);
 		det->disable_sound(SCHLAUCH_DETAIL, 0);
 		det->enable_sound(SCHLAUCH_DETAIL, 2);
 	}
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		if ((adi->ani_count > 11) && (adi->ani_count < 19)) {
 			spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH1, ANI_HIDE);
@@ -259,12 +259,7 @@ void Room0::eyeStart(EyeMode mode) {
 	flags.AniUserAction = false;
 
 	if (mode == EYE_END) {
-		det->start_detail(KLAPPE_DETAIL, 1, RUECK);
-		while (det->get_ani_status(KLAPPE_DETAIL)) {
-			set_ani_screen();
-			EVENTS_UPDATE;
-			SHOULD_QUIT_RETURN;
-		}
+		trapDoorClose();
 	}
 }
 
@@ -279,7 +274,7 @@ void Room0::eyeWait() {
 	while (adi->ani_count < 46) {
 		clear_prog_ani();
 
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -348,7 +343,7 @@ void Room0::eyeShoot() {
 	while (!ende) {
 		clear_prog_ani();
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -374,7 +369,7 @@ void Room0::eyeShoot() {
 
 	det->start_detail(STERNE_STEHEN, 255, VOR);
 	clear_prog_ani();
-	spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+	spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 	spr_info[0].ZEbene = 190;
 	spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 	spr_info[1].ZEbene = 191;
@@ -399,7 +394,7 @@ void Room0::auge_schleim_back() {
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 
 		if ((adi->ani_count > 52) && (adi->ani_count < 59)) {
@@ -440,7 +435,7 @@ void Room0::ch_schleim_auge() {
 	while (adi->ani_count < adi->end_ani && !SHOULD_QUIT) {
 		clear_prog_ani();
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -477,15 +472,15 @@ void Room0::fuetter_start(int16 mode) {
 		adi->ani_count = 135;
 
 	if (!mode) {
-		ani_klappe_delay();
-		det->enable_sound(KLAPPE_DETAIL, 0);
-		det->disable_sound(KLAPPE_DETAIL, 1);
+		trapDoorOpen();
+		det->enable_sound(FLAP_DETAIL, 0);
+		det->disable_sound(FLAP_DETAIL, 1);
 		det->enable_sound(FUETTER_SCHLAUCH, 0);
 		det->disable_sound(FUETTER_SCHLAUCH, 2);
 	} else {
 
-		det->disable_sound(KLAPPE_DETAIL, 0);
-		det->enable_sound(KLAPPE_DETAIL, 1);
+		det->disable_sound(FLAP_DETAIL, 0);
+		det->enable_sound(FLAP_DETAIL, 1);
 		det->disable_sound(FUETTER_SCHLAUCH, 0);
 		det->enable_sound(FUETTER_SCHLAUCH, 2);
 	}
@@ -496,7 +491,7 @@ void Room0::fuetter_start(int16 mode) {
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -528,8 +523,8 @@ void Room0::fuetter_start(int16 mode) {
 	flags.AniUserAction = false;
 
 	if (mode) {
-		det->start_detail(KLAPPE_DETAIL, 1, RUECK);
-		while (det->get_ani_status(KLAPPE_DETAIL))
+		det->start_detail(FLAP_DETAIL, 1, RUECK);
+		while (det->get_ani_status(FLAP_DETAIL))
 			set_ani_screen();
 
 	}
@@ -538,7 +533,7 @@ void Room0::fuetter_start(int16 mode) {
 void Room0::kissen_wurf() {
 	for (int16 i = 0; i < 30 && !_G(spieler).R0KissenWurf; i++) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 136, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -595,7 +590,7 @@ void Room0::ch_fuetter() {
 		flags.AniUserAction = true;
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		if (adi->ani_count == 136) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -637,7 +632,7 @@ void Room0::ch_fuetter() {
 	det->start_detail(CH_NACH_FUETTERN, 2, VOR);
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 
 		if (adi->ani_count > 138) {
@@ -689,7 +684,7 @@ void Room0::ch_kissen() {
 			set_person_pos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		}
 
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
@@ -714,23 +709,36 @@ void Room0::ch_kissen() {
 	clear_prog_ani();
 }
 
-void Room0::ani_klappe_delay() {
+void Room0::trapDoorOpen() {
 	int16 i;
-	det->start_detail(KLAPPE_DETAIL, 1, VOR);
-	while (det->get_ani_status(KLAPPE_DETAIL) && !SHOULD_QUIT) {
+	det->start_detail(FLAP_DETAIL, 1, VOR);
+	while (det->get_ani_status(FLAP_DETAIL)) {
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
 	}
 
 	flags.AniUserAction = true;
 	for (i = 0; i < 25; i++) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, KLAPPE_DETAIL, KLAPPE_SPRITE, ANI_HIDE);
+		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
+
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
 	}
 
 	flags.AniUserAction = false;
 	clear_prog_ani();
+}
+
+void Room0::trapDoorClose() {
+	det->start_detail(FLAP_DETAIL, 1, RUECK);
+
+	while (det->get_ani_status(FLAP_DETAIL)) {
+		set_ani_screen();
+		EVENTS_UPDATE;
+		SHOULD_QUIT_RETURN;
+	}
 }
 
 void Room0::fuett_ani() {

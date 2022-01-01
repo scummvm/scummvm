@@ -746,7 +746,7 @@ void set_up_screen(SetupScreenMode mode) {
 	g_screen->update();
 
 	g_engine->_canLoadSave = isMainLoop;
-	g_events->update();
+	EVENTS_UPDATE;
 	g_engine->_canLoadSave = false;
 }
 
@@ -1759,7 +1759,7 @@ void get_user_key(int16 mode) {
 void clear_prog_ani() {
 	int16 i;
 	for (i = 0; i < MAX_PROG_ANI; i++) {
-		spr_info[i].Image = 0;
+		spr_info[i].Image = nullptr;
 		spr_info[i].ZEbene = 255;
 	}
 }

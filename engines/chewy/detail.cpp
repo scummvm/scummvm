@@ -751,7 +751,6 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 							adiptr->ani_count = adiptr->start_ani;
 							if ((adiptr->start_flag != 255) && (adiptr->start_flag > 0)) {
 								--adiptr->start_flag;
-
 							}
 						}
 					}

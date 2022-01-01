@@ -223,7 +223,6 @@ void calc_z_ebene() {
 	}
 
 	for (i = 0; i < MAX_PROG_ANI; i++) {
-
 		if (spr_info[i].ZEbene < 200) {
 			z_obj_sort[z_count].ObjArt = ZOBJ_PROGANI;
 			z_obj_sort[z_count].ObjNr = i;

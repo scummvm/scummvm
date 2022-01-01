@@ -67,12 +67,12 @@ struct RaumAutoMov {
 #define MAX_RDI_ROOM 100
 
 struct SprInfo {
-	byte *Image;
-	int16 ZEbene;
-	int16 X;
-	int16 Y;
-	int16 X1;
-	int16 Y1;
+	byte *Image = nullptr;
+	int16 ZEbene = 0;
+	int16 X = 0;
+	int16 Y = 0;
+	int16 X1 = 0;
+	int16 Y1 = 0;
 };
 
 struct sound_def_blk {
