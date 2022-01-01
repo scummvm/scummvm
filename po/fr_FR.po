@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-12-31 17:12+0000\n"
-"PO-Revision-Date: 2021-12-25 17:26+0000\n"
+"PO-Revision-Date: 2022-01-01 17:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4417,15 +4417,6 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Votre jeu est maintenant en pause. Cliquez sur OK pour continuer."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
-#| msgid ""
-#| "ScummVM found that you have old saved games for Drascula that should be "
-#| "converted.\n"
-#| "The old saved game format is no longer supported, so you will not be able "
-#| "to load your games if you don't convert them.\n"
-#| "\n"
-#| "Press OK to convert them now, otherwise you will be asked again the next "
-#| "time you start the game.\n"
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4435,23 +4426,19 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM a trouvé des anciennes sauvegardes pour Drascula qui ont besoin "
-"d'être converties.\n"
-"L'ancien format de sauvegarde n'est plus supporté, vous ne pourrez donc pas "
-"les charger si vous ne les convertissez pas.\n"
+"ScummVM a trouvé des sauvegardes qui ont besoin d'être converties à partir "
+"du format de sauvergarde original.\n"
+"Le format de sauvegarde original n'est plus directement supporté, vous ne "
+"pourrez donc pas charger les sauvegardes si vous ne les convertissez pas.\n"
 "\n"
 "Appuyer sur OK pour les convertir maintenant, sinon le même message "
 "s'affichera la prochaine fois que vous démarrerez le jeu.\n"
 
 #: engines/buried/saveload.cpp:165
-#, fuzzy
-#| msgid ""
-#| "This saved game was created with a different version of the game, unable "
-#| "to load it"
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
-"Cette sauvegarde a été créée par une version différente du jeu et ne peut "
-"être chargée"
+"Sauvegarde créée avec une version plus récente de ScummVM. Chargement "
+"impossible."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -5239,7 +5226,7 @@ msgstr "Activer les tricheries"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Permet les tricheries en utilisant la touche C."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
