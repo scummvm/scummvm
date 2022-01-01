@@ -98,12 +98,12 @@ void PaceProcess::run() {
 
 		// Stand, turn around, and wait for 60.
 		uint16 standprocid = a->doAnim(Animation::stand, a->getDir());
-		uint16 turnprocid = a->turnTowardDir(Direction_Invert(a->getDir()));
-		Process *turnproc = kernel->getProcess(turnprocid);
-		turnproc->waitFor(standprocid);
+		//debug("PaceProcess: actor %d turning from %d to %d", a->getObjId(),
+		//	  a->getDir(), Direction_Invert(a->getDir()));
+		uint16 turnprocid = a->turnTowardDir(Direction_Invert(a->getDir()), standprocid);
 		Process *waitproc = new DelayProcess(60);
 		Kernel::get_instance()->addProcess(waitproc);
-		waitproc->waitFor(turnproc);
+		waitproc->waitFor(turnprocid);
 		waitFor(waitproc);
 	}
 }
