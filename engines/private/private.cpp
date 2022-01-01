@@ -1386,9 +1386,8 @@ void PrivateEngine::drawScreen() {
 
 		byte newPalette[768];
 		for (int c = 0; c < 256; c++) { // This avoids any endianness issues
-				newPalette[c * 3 + 0] = cPalette[c * 4 + 0];
-				newPalette[c * 3 + 1] = cPalette[c * 4 + 1];
-				newPalette[c * 3 + 2] = cPalette[c * 4 + 2];
+				uint32 y = READ_UINT32(&cPalette[c * 4]) & 0x00FFFFFF;
+				WRITE_LE_UINT24(&newPalette[c * 3], y);
 		}
 
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 256);
