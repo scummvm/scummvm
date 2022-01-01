@@ -972,17 +972,15 @@ int ClickChangeDepth::specifyCursor(Window *viewWindow, const Common::Point &poi
 
 OpenFirstItemAcquire::OpenFirstItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int openLeft, int openTop, int openRight, int openBottom, int getLeft, int getTop, int getRight,
-		int getBottom, int animOpenWith, int animOpenWithout, int itemID, int fullStillFrame, int clearStillFrame,
-		int itemFlagOffset):
+		int getBottom, int animOpenWith, int animOpenWithout, int itemID, int fullStillFrame, int clearStillFrame):
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_open = false;
-	_itemPresent = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(itemFlagOffset) == 0;
+	_itemPresent = ((SceneViewWindow *)viewWindow)->getGlobalFlags().cgGoldCoinsPresent == 0;
 	_openClickRegion = Common::Rect(openLeft, openTop, openRight, openBottom);
 	_acquireRegion = Common::Rect(getLeft, getTop, getRight, getBottom);
 	_fullFrameIndex = fullStillFrame;
 	_clearFrameIndex = clearStillFrame;
 	_itemID = itemID;
-	_itemFlagOffset = itemFlagOffset;
 	_animOpenWith = animOpenWith;
 	_animOpenWithout = animOpenWithout;
 }
@@ -991,9 +989,7 @@ int OpenFirstItemAcquire::mouseDown(Window *viewWindow, const Common::Point &poi
 	if (_acquireRegion.contains(pointLocation) && _itemPresent && _open) {
 		_itemPresent = false;
 		_staticData.navFrameIndex = _clearFrameIndex;
-
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgGoldCoinsPresent = 1;
 
 		// Call inventory drag start function
 		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
@@ -1028,9 +1024,7 @@ int OpenFirstItemAcquire::droppedItem(Window *viewWindow, int itemID, const Comm
 	if (_itemID == itemID && !_itemPresent && _open && pointLocation.x != -1 && pointLocation.y != -1) {
 		_itemPresent = true;
 		_staticData.navFrameIndex = _fullFrameIndex;
-
-		if (_itemFlagOffset >= 0)
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgGoldCoinsPresent = 0;
 
 		viewWindow->invalidateWindow(false);
 		return SIC_ACCEPT;

@@ -1246,7 +1246,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 39:
 		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, 11, 130, 12, 0);
 	case 41:
-		return new OpenFirstItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 138, 32, 288, 107, 175, 65, 226, 90, 2, 1, kItemGoldCoins, 34, 35, offsetof(GlobalFlags, cgGoldCoinsPresent));
+		return new OpenFirstItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 138, 32, 288, 107, 175, 65, 226, 90, 2, 1, kItemGoldCoins, 34, 35);
 	case 42:
 		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 43:
