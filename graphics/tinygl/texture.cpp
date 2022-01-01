@@ -53,6 +53,8 @@ void GLContext::free_texture(GLTexture *t) {
 	GLTexture **ht;
 	GLImage *im;
 
+	assert(t);
+
 	if (!t->prev) {
 		ht = &shared_state.texture_hash_table[t->handle % TEXTURE_HASH_TABLE_SIZE];
 		*ht = t->next;
@@ -128,9 +130,8 @@ void GLContext::glopTexImage2D(GLParam *p) {
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
 
-	if (current_texture == nullptr) {
-		return;
-	}
+	assert (current_texture);
+
 	current_texture->versionNumber++;
 	im = &current_texture->images[level];
 	im->xsize = _textureSize;
