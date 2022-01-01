@@ -481,7 +481,9 @@ public:
 
 	void presentBufferDirtyRects(Common::List<Common::Rect> &dirtyAreas);
 	void presentBufferSimple(Common::List<Common::Rect> &dirtyAreas);
-	
+
+	void debugDrawRectangle(Common::Rect rect, int r, int g, int b);
+
 	GLSpecBuf *specbuf_get_buffer(const int shininess_i, const float shininess);
 	void specbuf_cleanup();
 
