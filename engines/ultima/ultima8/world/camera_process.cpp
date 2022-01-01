@@ -81,14 +81,15 @@ void CameraProcess::GetCameraLocation(int32 &x, int32 &y, int32 &z) {
 		World *world = World::get_instance();
 		CurrentMap *map = world->getCurrentMap();
 		int map_num = map->getNum();
-		Actor *av = getActor(1);
+		Actor *av = getControlledActor();
 
 		if (!av || av->getMapNum() != map_num) {
 			x = 8192;
 			y = 8192;
 			z = 64;
-		} else
+		} else {
 			av->getLocation(x, y, z);
+		}
 
 		if (_earthquake) {
 			x += 2 * _eqX + 4 * _eqY;
