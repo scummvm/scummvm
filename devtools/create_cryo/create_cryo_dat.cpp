@@ -36,6 +36,10 @@ static void writeLE(FILE *f, T value) {
 	}
 }
 
+static void writeByte(FILE *f, byte value) {
+	fwrite(&value, 1, 1, f);
+}
+
 struct _icon_t : icon_t {
 	void write(FILE *f) const {
 		writeLE<int16>(f, sx);
@@ -56,18 +60,18 @@ static void emitIcons(FILE *f) {
 
 struct _room_t : room_t {
 	void write(FILE *f) const {
-		writeLE<byte>(f, ff_0);
-		writeLE<byte>(f, exits[0]);
-		writeLE<byte>(f, exits[1]);
-		writeLE<byte>(f, exits[2]);
-		writeLE<byte>(f, exits[3]);
-		writeLE<byte>(f, flags);
+		writeByte(f, ff_0);
+		writeByte(f, exits[0]);
+		writeByte(f, exits[1]);
+		writeByte(f, exits[2]);
+		writeByte(f, exits[3]);
+		writeByte(f, flags);
 		writeLE<uint16>(f, bank);
 		writeLE<uint16>(f, party);
-		writeLE<byte>(f, level);
-		writeLE<byte>(f, video);
-		writeLE<byte>(f, location);
-		writeLE<byte>(f, background);
+		writeByte(f, level);
+		writeByte(f, video);
+		writeByte(f, location);
+		writeByte(f, background);
 	}
 };
 
@@ -94,8 +98,8 @@ static void emitStatic(FILE *f) {
 	const int kNumAreas = 12;
 
 	for (int i = 0; i < kNumFollowers; i++) {
-		writeLE<char>(f, followerList[i]._id);
-		writeLE<char>(f, followerList[i]._spriteNum);
+		writeByte(f, followerList[i]._id);
+		writeByte(f, followerList[i]._spriteNum);
 		writeLE<int16>(f, followerList[i].sx);
 		writeLE<int16>(f, followerList[i].sy);
 		writeLE<int16>(f, followerList[i].ex);
@@ -112,8 +116,8 @@ static void emitStatic(FILE *f) {
 	fwrite(gotos, 5, kNumGotos, f);	// sizeof(Goto)
 
 	for (int i = 0; i < kNumObjects; i++) {
-		writeLE<byte>(f, _objects[i]._id);
-		writeLE<byte>(f, _objects[i]._flags);
+		writeByte(f, _objects[i]._id);
+		writeByte(f, _objects[i]._flags);
 		writeLE<int>(f, _objects[i]._locations);
 		writeLE<uint16>(f, _objects[i]._itemMask);
 		writeLE<uint16>(f, _objects[i]._powerMask);
@@ -128,16 +132,16 @@ static void emitStatic(FILE *f) {
 		writeLE<uint16>(f, kPersons[i]._roomNum);
 		writeLE<uint16>(f, kPersons[i]._actionId);
 		writeLE<uint16>(f, kPersons[i]._partyMask);
-		writeLE<byte>(f, kPersons[i]._id);
-		writeLE<byte>(f, kPersons[i]._flags);
-		writeLE<byte>(f, kPersons[i]._roomBankId);
-		writeLE<byte>(f, kPersons[i]._spriteBank);
+		writeByte(f, kPersons[i]._id);
+		writeByte(f, kPersons[i]._flags);
+		writeByte(f, kPersons[i]._roomBankId);
+		writeByte(f, kPersons[i]._spriteBank);
 		writeLE<uint16>(f, kPersons[i]._items);
 		writeLE<uint16>(f, kPersons[i]._powers);
-		writeLE<byte>(f, kPersons[i]._targetLoc);
-		writeLE<byte>(f, kPersons[i]._lastLoc);
-		writeLE<byte>(f, kPersons[i]._speed);
-		writeLE<byte>(f, kPersons[i]._steps);
+		writeByte(f, kPersons[i]._targetLoc);
+		writeByte(f, kPersons[i]._lastLoc);
+		writeByte(f, kPersons[i]._speed);
+		writeByte(f, kPersons[i]._steps);
 	}
 
 	for (int i = 0; i < kNumCitadel; i++) {
@@ -158,12 +162,12 @@ static void emitStatic(FILE *f) {
 	fwrite(_characterArray, 5, kNumCharacters, f);
 
 	for (int i = 0; i < kNumAreas; i++) {
-		writeLE<byte>(f, kAreasTable[i]._num);
-		writeLE<byte>(f, kAreasTable[i]._type);
+		writeByte(f, kAreasTable[i]._num);
+		writeByte(f, kAreasTable[i]._type);
 		writeLE<uint16>(f, kAreasTable[i]._flags);
 		writeLE<uint16>(f, kAreasTable[i]._firstRoomIdx);
-		writeLE<byte>(f, kAreasTable[i]._citadelLevel);
-		writeLE<byte>(f, kAreasTable[i]._placeNum);
+		writeByte(f, kAreasTable[i]._citadelLevel);
+		writeByte(f, kAreasTable[i]._placeNum);
 		// pointer to _citadelRoomPtr is always initialized to null
 		writeLE<int16>(f, kAreasTable[i]._visitCount);
 	}
