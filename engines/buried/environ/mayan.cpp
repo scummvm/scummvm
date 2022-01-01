@@ -413,8 +413,8 @@ int DateCombinationRead::mouseMove(Window *viewWindow, const Common::Point &poin
 class ViewSingleTranslation : public SceneBase {
 public:
 	ViewSingleTranslation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int translatedTextID = -1, int left = -1, int top = -1, int right = -1, int bottom = -1,
-			int flagAOffset = -1, int flagBOffset = -1, int visitedFlagOffset = -1);
+			int translatedTextID, int left, int top, int right, int bottom,
+			byte &flagA, byte &flagB, byte &visitedFlag);
 	int gdiPaint(Window *viewWindow) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation) override;
 	int mouseMove(Window *viewWindow, const Common::Point &pointLocation) override;
@@ -424,26 +424,19 @@ private:
 	bool _textTranslated;
 	int _textID;
 	Common::Rect _clickableRegion;
-	int _flagAOffset;
-	int _flagBOffset;
-	int _visitedFlagOffset;
+	byte &_flagA;
+	byte &_flagB;
 };
 
 ViewSingleTranslation::ViewSingleTranslation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int translatedTextID, int left, int top, int right, int bottom,
-		int flagAOffset, int flagBOffset, int visitedFlagOffset) :
-		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
-
+		byte &flagA, byte &flagB, byte &visitedFlag) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation),
+		_flagA(flagA), _flagB(flagB) {
 	_textTranslated = false;
 	_textID = translatedTextID;
 	_clickableRegion = Common::Rect(left, top, right, bottom);
-	_flagAOffset = flagAOffset;
-	_flagBOffset = flagBOffset;
-	_visitedFlagOffset = visitedFlagOffset;
-
-	if (_visitedFlagOffset >= 0)
-		sceneView->setGlobalFlagByte(_visitedFlagOffset, 1);
+	visitedFlag = 1;
 }
 
 int ViewSingleTranslation::gdiPaint(Window *viewWindow) {
@@ -481,10 +474,8 @@ int ViewSingleTranslation::mouseMove(Window *viewWindow, const Common::Point &po
 		if (_clickableRegion.contains(pointLocation)) {
 			// Make sure we didn't already render the text
 			if (!_textTranslated) {
-				if (_flagAOffset >= 0)
-					sceneView->setGlobalFlagByte(_flagAOffset, 1);
-				if (_flagBOffset >= 0)
-					sceneView->setGlobalFlagByte(_flagBOffset, 1);
+				_flagA = 1;
+				_flagB = 1;
 
 				// Load and display the text
 				sceneView->displayTranslationText(_vm->getString(_textID));
@@ -2464,18 +2455,14 @@ int WalkDualAmbientVolumeChange::preExitRoom(Window *viewWindow, const Location 
 class SetVolumeAndFlag : public SceneBase {
 public:
 	SetVolumeAndFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			byte newVolume = 64, int flagOffset = -1, byte flagValue = 255);
+			byte newVolume, byte &flag, byte flagValue = 255);
 };
 
 SetVolumeAndFlag::SetVolumeAndFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-		byte newVolume, int flagOffset, byte flagValue) :
+		byte newVolume, byte &flag, byte flagValue) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
-
 	_vm->_sound->adjustAmbientSoundVolume(newVolume, false, 0, 0);
-
-	if (flagOffset >= 0)
-		sceneView->setGlobalFlagByte(flagOffset, flagValue);
+	flag = flagValue;
 }
 
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
@@ -2675,6 +2662,7 @@ bool SceneViewWindow::checkCustomMayanAICommentDependencies(const Location &comm
 SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	byte dummyFlag = 0;	// a dummy flag, used as a placeholder for writing (but not reading)
 
 	// Special scene for the trial version
 	if (_vm->isTrial())
@@ -2697,49 +2685,49 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 6:
 		return new DateCombinationRead(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 7:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_DOOR_TRANS_TEXT, 16, 6, 402, 110, offsetof(GlobalFlags, myTPTextTranslated), offsetof(GlobalFlags, myTPTransBreathOfItzamna));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_DOOR_TRANS_TEXT, 16, 6, 402, 110, globalFlags.myTPTextTranslated, globalFlags.myTPTransBreathOfItzamna, dummyFlag);
 	case 8:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_LEFT_TRANS_TEXT, 1, 6, 431, 98, offsetof(GlobalFlags, myTPTextTranslated));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_LEFT_TRANS_TEXT, 1, 6, 431, 98, globalFlags.myTPTextTranslated, dummyFlag, dummyFlag);
 	case 9:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_MIDDLE_TRANS_TEXT, 16, 8, 430, 114, offsetof(GlobalFlags, myTPTextTranslated), offsetof(GlobalFlags, myTPCalendarTopTranslated));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_MIDDLE_TRANS_TEXT, 16, 8, 430, 114, globalFlags.myTPTextTranslated, globalFlags.myTPCalendarTopTranslated, dummyFlag);
 	case 10:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_SOUTHLEFT_TRANS_TEXT, 4, 55, 426, 95, offsetof(GlobalFlags, myTPTextTranslated));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_SOUTHLEFT_TRANS_TEXT, 4, 55, 426, 95, globalFlags.myTPTextTranslated, dummyFlag, dummyFlag);
 	case 11:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_WEST_TRANS_TEXT, 4, 72, 420, 108, offsetof(GlobalFlags, myTPTextTranslated));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_WEST_TRANS_TEXT, 4, 72, 420, 108, globalFlags.myTPTextTranslated, dummyFlag, dummyFlag);
 	case 12:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_NORTH_TRANS_TEXT, 6, 38, 428, 76, offsetof(GlobalFlags, myTPTextTranslated));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_NORTH_TRANS_TEXT, 6, 38, 428, 76, globalFlags.myTPTextTranslated, dummyFlag, dummyFlag);
 	case 13:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, globalFlags.myMCPickedUpSkull);
 	case 14:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 15:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myWGTransDoorTop));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, globalFlags.myMCTransDoor, globalFlags.myWGTransDoorTop, dummyFlag);
 	case 16:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWGOffering));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, globalFlags.myMCTransDoor, globalFlags.myMCTransWGOffering, dummyFlag);
 	case 17:
 		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemGoldCoins, 4, TRANSITION_WALK, -1, 1082, 13);
 	case 18:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 19:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, globalFlags.myMCTransDoor, dummyFlag, dummyFlag);
 	case 20:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWTOffering));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, globalFlags.myMCTransDoor, globalFlags.myMCTransWTOffering, dummyFlag);
 	case 21:
 		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemWaterCanFull, 4, TRANSITION_WALK, -1, 1125, 13);
 	case 22:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 23:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, globalFlags.myMCTransDoor, dummyFlag, dummyFlag);
 	case 24:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransAGOffering));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, globalFlags.myMCTransDoor, globalFlags.myMCTransAGOffering, dummyFlag);
 	case 25:
 		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemBloodyArrow, 4, TRANSITION_WALK, -1, 1010, 12);
 	case 26:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 27:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, globalFlags.myMCTransDoor, dummyFlag, dummyFlag);
 	case 28:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransDGOffering));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, globalFlags.myMCTransDoor, globalFlags.myMCTransDGOffering, dummyFlag);
 	case 29:
 		return new DeathGodCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, 4, TRANSITION_WALK, -1, 1045, 13);
 	case 30:
@@ -2839,11 +2827,11 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 85:
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 255, 0, -1, 10); // First param has to be wrong
 	case 86:
-		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, offsetof(GlobalFlags, myWGSeenLowerPassage));
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, globalFlags.myWGSeenLowerPassage);
 	case 87:
-		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, offsetof(GlobalFlags, myWGCrossedRopeBridge));
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, globalFlags.myWGCrossedRopeBridge);
 	case 88:
-		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64);
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, dummyFlag);
 	case 90:
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 3160, 12, 14);
 	case 91:
@@ -2867,11 +2855,11 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 125:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 226, 90, 256, 104, kItemCopperMedallion, 15, globalFlags.myAGRetrievedCopperMedal);
 	case 126:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_AG_ALTAR_TEXT, 120, 44, 330, 72, -1, -1, offsetof(GlobalFlags, myAGVisitedAltar));
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_AG_ALTAR_TEXT, 120, 44, 330, 72, dummyFlag, dummyFlag, globalFlags.myAGVisitedAltar);
 	case 127:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WG_ALTAR_TEXT, 118, 14, 338, 44);
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WG_ALTAR_TEXT, 118, 14, 338, 44, dummyFlag, dummyFlag, dummyFlag);
 	case 128:
-		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WT_ALTAR_TEXT, 106, 128, 344, 162);
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WT_ALTAR_TEXT, 106, 128, 344, 162, dummyFlag, dummyFlag, dummyFlag);
 	default:
 		warning("Unknown Mayan scene object %d", sceneStaticData.classID);
 		break;
