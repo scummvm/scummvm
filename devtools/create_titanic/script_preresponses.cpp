@@ -235,14 +235,14 @@ static const PreResponse BELLBOT_PRERESPONSES_DE[] = {
 };
 
 void writeScriptPreResponses(const char *name, const PreResponse *states) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (; states->_src; ++states) {
-		outputFile.writeLong(states->_src);
-		outputFile.writeLong(states->_dest);
+		outputFile->writeLong(states->_src);
+		outputFile->writeLong(states->_dest);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }

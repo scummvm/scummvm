@@ -52,8 +52,8 @@
 #define VERSION_NUMBER 5
 #define HEADER_SIZE 0x1700
 
-Common::File inputFile, outputFile;
-Common::PEResources resEng, resGer;
+Common::File *inputFile, *outputFile;
+Common::PEResources *resEng, *resGer;
 uint headerOffset = 6;
 uint dataOffset = HEADER_SIZE;
 
@@ -1046,11 +1046,11 @@ void NORETURN_PRE error(const char *s, ...) {
 
 void writeEntryHeader(const char *name, uint offset, uint size, uint flags) {
 	assert(headerOffset < HEADER_SIZE);
-	outputFile.seek(headerOffset);
-	outputFile.writeLong(offset);
-	outputFile.writeLong(size);
-	outputFile.writeWord(flags);
-	outputFile.writeString(name);
+	outputFile->seek(headerOffset);
+	outputFile->writeLong(offset);
+	outputFile->writeLong(size);
+	outputFile->writeWord(flags);
+	outputFile->writeString(name);
 
 	headerOffset += 10 + strlen(name) + 1;
 }
@@ -1066,9 +1066,9 @@ void writeEntryHeader(const char *name, uint offset, uint size, bool isCompresse
 
 void writeFinalEntryHeader() {
 	assert(headerOffset <= (HEADER_SIZE - 8));
-	outputFile.seek(headerOffset);
-	outputFile.writeLong(0);
-	outputFile.writeLong(0);
+	outputFile->seek(headerOffset);
+	outputFile->writeLong(0);
+	outputFile->writeLong(0);
 }
 
 void writeCompressedRes(Common::File *src) {
@@ -1076,24 +1076,24 @@ void writeCompressedRes(Common::File *src) {
 }
 
 void writeStringArray(const char *name, uint offset, int count) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
-	inputFile.seek(offset - FILE_DIFF[_version]);
+	inputFile->seek(offset - FILE_DIFF[_version]);
 	uint *offsets = new uint[count];
 	for (int idx = 0; idx < count; ++idx)
-		offsets[idx] = inputFile.readLong();
+		offsets[idx] = inputFile->readLong();
 
 	// Iterate through reading each string
 	for (int idx = 0; idx < count; ++idx) {
 		if (offsets[idx]) {
-			inputFile.seek(offsets[idx] - FILE_DIFF[_version]);
-			outputFile.writeString(inputFile);
+			inputFile->seek(offsets[idx] - FILE_DIFF[_version]);
+			outputFile->writeString(*inputFile);
 		} else {
-			outputFile.writeString("");
+			outputFile->writeString("");
 		}
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 
@@ -1101,14 +1101,14 @@ void writeStringArray(const char *name, uint offset, int count) {
 }
 
 void writeStringArray(const char *name, const char *const *strings, int count) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	// Iterate through writing each string
 	for (int idx = 0; idx < count; ++idx) {
-		outputFile.writeString(strings[idx]);
+		outputFile->writeString(strings[idx]);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
@@ -1125,8 +1125,8 @@ Common::WinResourceID getResId(const char *id) {
 }
 
 void writeResource(const char *name, Common::File *file) {
-	outputFile.seek(dataOffset);
-	outputFile.write(*file, file->size());
+	outputFile->seek(dataOffset);
+	outputFile->write(*file, file->size());
 
 	writeEntryHeader(name, dataOffset, file->size());
 	dataOffset += file->size();
@@ -1134,8 +1134,8 @@ void writeResource(const char *name, Common::File *file) {
 }
 
 void writeResource(const char *resName, const char *sectionStr, uint32 resId, bool isEnglish = true) {
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr), resId);
+	Common::PEResources *res = isEnglish ? resEng : resGer;
+	Common::File *file = res->getResource(getResId(sectionStr), resId);
 	assert(file);
 	writeResource(resName, file);
 }
@@ -1150,8 +1150,8 @@ void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) 
 }
 
 void writeResource(const char *resName, const char *sectionStr, const char *resId, bool isEnglish = true) {
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr),
+	Common::PEResources *res = isEnglish ? resEng : resGer;
+	Common::File *file = res->getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeResource(resName, file);
@@ -1167,7 +1167,7 @@ void writeResource(const char *sectionStr, const char *resId, bool isEnglish = t
 }
 
 void writeBitmap(const char *name, Common::File *file) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	// Set up a memory stream for the compressed data, and wrap
 	// it with a zlib compressor
@@ -1192,7 +1192,7 @@ void writeBitmap(const char *name, Common::File *file) {
 	zlib->finalize();
 
 	// Write out the compressed data
-	outputFile.write(compressedData->getData(), compressedData->size());
+	outputFile->write(compressedData->getData(), compressedData->size());
 
 	writeEntryHeader(name, dataOffset, compressedData->size() + 14, true);
 	dataOffset += compressedData->size() + 14;
@@ -1206,8 +1206,8 @@ void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = tru
 	sprintf(nameBuffer, "%s/%s%s", sectionStr, resId,
 		isEnglish ? "" : "/DE");
 
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr),
+	Common::PEResources *res = isEnglish ? resEng : resGer;
+	Common::File *file = res->getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeBitmap(nameBuffer, file);
@@ -1218,125 +1218,125 @@ void writeBitmap(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	sprintf(nameBuffer, "%s/%u%s", sectionStr, resId,
 		isEnglish ? "" : "/DE");
 
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr),
+	Common::PEResources *res = isEnglish ? resEng : resGer;
+	Common::File *file = res->getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeBitmap(nameBuffer, file);
 }
 
 void writeNumbers() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	// Iterate through writing each string
 	for (int idx = 0; idx < 76; ++idx) {
-		outputFile.writeString(NUMBERS[idx]._text);
-		outputFile.writeLong(NUMBERS[idx]._value);
-		outputFile.writeLong(NUMBERS[idx]._flags);
+		outputFile->writeString(NUMBERS[idx]._text);
+		outputFile->writeLong(NUMBERS[idx]._value);
+		outputFile->writeLong(NUMBERS[idx]._flags);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("TEXT/NUMBERS", dataOffset, size);
 	dataOffset += size;
 }
 
 void writeString(uint offset) {
 	if (offset == 0) {
-		outputFile.writeByte(0);
+		outputFile->writeByte(0);
 	} else {
-		inputFile.seek(offset - FILE_DIFF[_version]);
+		inputFile->seek(offset - FILE_DIFF[_version]);
 		char c;
 		do {
-			c = inputFile.readByte();
-			outputFile.writeByte(c);
+			c = inputFile->readByte();
+			outputFile->writeByte(c);
 		} while (c);
 	}
 }
 
 void writeResponseTree() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	const uint OFFSETS[3] = { 0x619520, 0x618340, 0x617380 };
 	for (int idx = 0; idx < 1022; ++idx) {
-		inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version] + idx * 8);
-		uint id = inputFile.readLong();
-		uint offset = inputFile.readLong();
+		inputFile->seek(OFFSETS[_version] - FILE_DIFF[_version] + idx * 8);
+		uint id = inputFile->readLong();
+		uint offset = inputFile->readLong();
 
-		outputFile.writeLong(id);
+		outputFile->writeLong(id);
 		if (!id) {
 			// An end of list id
 		} else if (offset >= OFFSETS[_version] && offset <= (OFFSETS[_version] + 0x1FF0)) {
 			// Offset to another table
-			outputFile.writeByte(0);
-			outputFile.writeLong((offset - OFFSETS[_version]) / 8);
+			outputFile->writeByte(0);
+			outputFile->writeLong((offset - OFFSETS[_version]) / 8);
 		} else {
 			// Offset to ASCIIZ string
-			outputFile.writeByte(1);
+			outputFile->writeByte(1);
 			writeString(offset);
 		}
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("TEXT/TREE", dataOffset, size);
 	dataOffset += size;
 }
 
 void writeSentenceEntries(const char *name, uint tableOffset) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	uint v1, category, v4, v9, v11, v12, v13;
 	uint offset3, offset5, offset6, offset7, offset8, offset10;
 
 	for (uint idx = 0; ; ++idx) {
-		inputFile.seek(tableOffset - FILE_DIFF[_version] + idx * 0x34);
-		v1 = inputFile.readLong();
+		inputFile->seek(tableOffset - FILE_DIFF[_version] + idx * 0x34);
+		v1 = inputFile->readLong();
 		if (!v1)
 			// Reached end of list
 			break;
 
 		// Read data fields
-		category = inputFile.readLong();
-		offset3 = inputFile.readLong();
-		v4 = inputFile.readLong();
-		offset5 = inputFile.readLong();
-		offset6 = inputFile.readLong();
-		offset7 = inputFile.readLong();
-		offset8 = inputFile.readLong();
-		v9 = inputFile.readLong();
-		offset10 = inputFile.readLong();
-		v11 = inputFile.readLong();
-		v12 = inputFile.readLong();
-		v13 = inputFile.readLong();
+		category = inputFile->readLong();
+		offset3 = inputFile->readLong();
+		v4 = inputFile->readLong();
+		offset5 = inputFile->readLong();
+		offset6 = inputFile->readLong();
+		offset7 = inputFile->readLong();
+		offset8 = inputFile->readLong();
+		v9 = inputFile->readLong();
+		offset10 = inputFile->readLong();
+		v11 = inputFile->readLong();
+		v12 = inputFile->readLong();
+		v13 = inputFile->readLong();
 
-		outputFile.writeLong(v1);
-		outputFile.writeLong(category);
+		outputFile->writeLong(v1);
+		outputFile->writeLong(category);
 		writeString(offset3);
-		outputFile.writeLong(v4);
+		outputFile->writeLong(v4);
 		writeString(offset5);
 		writeString(offset6);
 		writeString(offset7);
 		writeString(offset8);
-		outputFile.writeLong(v9);
+		outputFile->writeLong(v9);
 		writeString(offset10);
-		outputFile.writeLong(v11);
-		outputFile.writeLong(v12);
-		outputFile.writeLong(v13);
+		outputFile->writeLong(v11);
+		outputFile->writeLong(v12);
+		outputFile->writeLong(v13);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
 void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 	int recordSize = recordCount * 4;
 
 	uint val, strOffset;
 	for (uint idx = 0; ; ++idx) {
-		inputFile.seek(tableOffset - FILE_DIFF[_version] + idx * recordSize);
-		val = inputFile.readLong();
-		strOffset = inputFile.readLong();
+		inputFile->seek(tableOffset - FILE_DIFF[_version] + idx * recordSize);
+		val = inputFile->readLong();
+		strOffset = inputFile->readLong();
 
 		if (!val) {
 			// Reached end of list
@@ -1344,99 +1344,99 @@ void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
 			break;
 		}
 
-		outputFile.writeLong(val);
+		outputFile->writeLong(val);
 		writeString(strOffset);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
 void writeSentenceMappings(const char *name, uint offset, int numValues) {
-	inputFile.seek(offset - FILE_DIFF[_version]);
-	outputFile.seek(dataOffset);
+	inputFile->seek(offset - FILE_DIFF[_version]);
+	outputFile->seek(dataOffset);
 
 	uint id;
-	while ((id = inputFile.readLong()) != 0) {
-		outputFile.writeLong(id);
+	while ((id = inputFile->readLong()) != 0) {
+		outputFile->writeLong(id);
 
 		for (int ctr = 0; ctr < numValues; ++ctr)
-			outputFile.writeLong(inputFile.readLong());
+			outputFile->writeLong(inputFile->readLong());
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
 void writeStarfieldPoints() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	const int OFFSETS[3] = { 0x59DE4C, 0x59DBEC, 0x59CC1C };
-	inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version]);
+	inputFile->seek(OFFSETS[_version] - FILE_DIFF[_version]);
 	uint size = 876 * 12;
 
-	outputFile.write(inputFile, size);
+	outputFile->write(inputFile, size);
 	writeEntryHeader("STARFIELD/POINTS", dataOffset, size);
 	dataOffset += size;
 }
 
 void writeStarfieldPoints2() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	const int OFFSETS[3] = { 0x5A2F28, 0x5A2CC8, 0x5A1CF8 };
 	for (int rootCtr = 0; rootCtr < 80; ++rootCtr) {
-		inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version] + rootCtr * 8);
-		uint offset = inputFile.readUint32LE();
-		uint count = inputFile.readUint32LE();
+		inputFile->seek(OFFSETS[_version] - FILE_DIFF[_version] + rootCtr * 8);
+		uint offset = inputFile->readUint32LE();
+		uint count = inputFile->readUint32LE();
 
-		outputFile.writeLong(count);
-		inputFile.seek(offset - FILE_DIFF[_version]);
-		outputFile.write(inputFile, count * 4 * 4);
+		outputFile->writeLong(count);
+		inputFile->seek(offset - FILE_DIFF[_version]);
+		outputFile->write(inputFile, count * 4 * 4);
 	}
 
-	uint size = outputFile.size() - dataOffset;
-	outputFile.write(inputFile, size);
+	uint size = outputFile->size() - dataOffset;
+	outputFile->write(inputFile, size);
 	writeEntryHeader("STARFIELD/POINTS2", dataOffset, size);
 	dataOffset += size;
 }
 
 void writePhrases(const char *name, const CommonPhrase *phrases) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (uint idx = 0; phrases->_str; ++idx, ++phrases) {
-		outputFile.writeString(phrases->_str);
-		outputFile.writeLong(phrases->_dialogueId);
-		outputFile.writeLong(phrases->_roomNum);
-		outputFile.writeLong(phrases->_val1);
+		outputFile->writeString(phrases->_str);
+		outputFile->writeLong(phrases->_dialogueId);
+		outputFile->writeLong(phrases->_roomNum);
+		outputFile->writeLong(phrases->_val1);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("Phrases/Bellbot", dataOffset, size);
 	dataOffset += size;
 }
 
 void writeBarbotFrameRanges() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int idx = 0; idx < 60; ++idx) {
-		outputFile.writeLong(BARBOT_FRAME_RANGES[idx]._startFrame);
-		outputFile.writeLong(BARBOT_FRAME_RANGES[idx]._endFrame);
+		outputFile->writeLong(BARBOT_FRAME_RANGES[idx]._startFrame);
+		outputFile->writeLong(BARBOT_FRAME_RANGES[idx]._endFrame);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("FRAMES/BARBOT", dataOffset, size);
 	dataOffset += size;
 }
 
 void writeMissiveOMatMessages() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int idx = 0; idx < 3; ++idx)
-		outputFile.writeString(MISSIVEOMAT_MESSAGES[idx]);
+		outputFile->writeString(MISSIVEOMAT_MESSAGES[idx]);
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("TEXT/MISSIVEOMAT/WELCOME", dataOffset, size);
 	dataOffset += size;
 
@@ -1449,12 +1449,12 @@ void writeMissiveOMatMessages() {
 }
 
 void writeMissiveOMatMessagesDE() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int idx = 0; idx < 3; ++idx)
-		outputFile.writeString(MISSIVEOMAT_MESSAGES_DE[idx]);
+		outputFile->writeString(MISSIVEOMAT_MESSAGES_DE[idx]);
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("TEXT/MISSIVEOMAT/WELCOME/DE", dataOffset, size);
 	dataOffset += size;
 
@@ -1465,17 +1465,17 @@ void writeMissiveOMatMessagesDE() {
 
 void writeBedheadGroup(const BedheadEntry *data, int count) {
 	for (int idx = 0; idx < count; ++idx, ++data) {
-		outputFile.writeString(data->_name1);
-		outputFile.writeString(data->_name2);
-		outputFile.writeString(data->_name3);
-		outputFile.writeString(data->_name4);
-		outputFile.writeLong(data->_startFrame);
-		outputFile.writeLong(data->_endFrame);
+		outputFile->writeString(data->_name1);
+		outputFile->writeString(data->_name2);
+		outputFile->writeString(data->_name3);
+		outputFile->writeString(data->_name4);
+		outputFile->writeLong(data->_startFrame);
+		outputFile->writeLong(data->_endFrame);
 	}
 }
 
 void writeBedheadData() {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	writeBedheadGroup(ON_CLOSED, 4);
 	writeBedheadGroup(ON_RESTING_TV, 2);
@@ -1488,7 +1488,7 @@ void writeBedheadData() {
 	writeBedheadGroup(OFF_OPEN_WRONG, 1);
 	writeBedheadGroup(OFF_RESTING_D_WRONG, 1);
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("DATA/BEDHEAD", dataOffset, size);
 	dataOffset += size;
 }
@@ -1500,27 +1500,27 @@ void writeParrotLobbyLinkUpdaterEntries() {
 	uint recordOffset = OFFSETS[_version], linkOffset;
 	byte vals[8];
 
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int groupNum = 0; groupNum < 4; ++groupNum) {
 		for (int entryNum = 0; entryNum < COUNTS[groupNum];
 				++entryNum, recordOffset += 36) {
-			inputFile.seek(recordOffset - FILE_DIFF[_version]);
-			linkOffset = inputFile.readUint32LE();
+			inputFile->seek(recordOffset - FILE_DIFF[_version]);
+			linkOffset = inputFile->readUint32LE();
 			for (int idx = 0; idx < 8; ++idx)
-				vals[idx] = inputFile.readUint32LE();
+				vals[idx] = inputFile->readUint32LE();
 
 			// Write out the entry
-			inputFile.seek(linkOffset - FILE_DIFF[_version]);
-			outputFile.writeString(inputFile);
-			outputFile.write(vals, 8);
+			inputFile->seek(linkOffset - FILE_DIFF[_version]);
+			outputFile->writeString(*inputFile);
+			outputFile->write(vals, 8);
 		}
 
 		// Skip space between groups
 		recordOffset += SKIP[groupNum];
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader("DATA/PARROT_LOBBY_LINK_UPDATOR", dataOffset, size);
 	dataOffset += size;
 }
@@ -1528,14 +1528,14 @@ void writeParrotLobbyLinkUpdaterEntries() {
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
-	outputFile.write(MAGIC_STR, 4);
+	outputFile->write(MAGIC_STR, 4);
 
 	// Write out version number
-	outputFile.writeWord(VERSION_NUMBER);
+	outputFile->writeWord(VERSION_NUMBER);
 }
 
 void writeData() {
-	for (int idx = 0; idx < (resGer.empty() ? 1 : 2); ++idx) {
+	for (int idx = 0; idx < (resGer->empty() ? 1 : 2); ++idx) {
 		bool isEnglish = idx == 0;
 
 		writeBitmap("Bitmap", "BACKDROP", isEnglish);
@@ -1809,22 +1809,26 @@ int main(int argc, char *argv[]) {
 		exit(0);
 	}
 
-	if (!inputFile.open(argv[1])) {
+	inputFile = new Common::File;
+	outputFile = new Common::File;
+	if (!inputFile->open(argv[1])) {
 		error("Could not open input file");
 	}
-	resEng.loadFromEXE(argv[1]);
+	resEng = new Common::PEResources;
+	resEng->loadFromEXE(argv[1]);
 
+	resGer = new Common::PEResources;
 	if (argc == 4) {
-		resGer.loadFromEXE(argv[2]);
+		resGer->loadFromEXE(argv[2]);
 	}
 
-	if (inputFile.size() == ENGLISH_10042C_FILESIZE)
+	if (inputFile->size() == ENGLISH_10042C_FILESIZE)
 		_version = ENGLISH_10042C;
-	else if (inputFile.size() == ENGLISH_10042B_FILESIZE)
+	else if (inputFile->size() == ENGLISH_10042B_FILESIZE)
 		_version = ENGLISH_10042B;
-	else if (inputFile.size() == ENGLISH_10042_FILESIZE)
+	else if (inputFile->size() == ENGLISH_10042_FILESIZE)
 		_version = ENGLISH_10042;
-	else if (inputFile.size() == GERMAN_10042D_FILESIZE) {
+	else if (inputFile->size() == GERMAN_10042D_FILESIZE) {
 		printf("German version detected. You must use an English versoin "
 			"for the primary input file\n");
 		exit(0);
@@ -1833,7 +1837,7 @@ int main(int argc, char *argv[]) {
 		exit(0);
 	}
 
-	if (!outputFile.open(argc == 4 ? argv[3] : "titanic.dat", Common::kFileWriteMode)) {
+	if (!outputFile->open(argc == 4 ? argv[3] : "titanic.dat", Common::kFileWriteMode)) {
 		printf("Could not open output file\n");
 		exit(0);
 	}
@@ -1842,12 +1846,16 @@ int main(int argc, char *argv[]) {
 	writeData();
 
 	if (argc == 4) {
-		inputFile.open(argv[2]);
+		inputFile->open(argv[2]);
 		_version = GERMAN;
 		writeGermanData();
 	}
 	writeFinalEntryHeader();
-	inputFile.close();
-	outputFile.close();
+	inputFile->close();
+	outputFile->close();
+	delete inputFile;
+	delete outputFile;
+	delete resEng;
+	delete resGer;
 	return 0;
 }

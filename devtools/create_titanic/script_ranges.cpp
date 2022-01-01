@@ -1767,20 +1767,20 @@ const ScriptRange SUCCUBUS_RANGES[19] = {
 };
 
 void writeScriptRange(const char *name, const ScriptRange *ranges, int count) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int idx = 0; idx < count; ++idx) {
-		outputFile.writeLong(ranges[idx]._id);
-		outputFile.writeByte(ranges[idx]._isRandom);
-		outputFile.writeByte(ranges[idx]._isSequential);
+		outputFile->writeLong(ranges[idx]._id);
+		outputFile->writeByte(ranges[idx]._isRandom);
+		outputFile->writeByte(ranges[idx]._isSequential);
 
 		const uint *v = ranges[idx]._array;
 		do {
-			outputFile.writeLong(*v);
+			outputFile->writeLong(*v);
 		} while (*v++ != 0);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }

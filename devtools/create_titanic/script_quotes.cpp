@@ -446,18 +446,18 @@ static const ScriptQuote MAITRED_QUOTES[] = {
 
 void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
 		uint rangeStart, uint rangeEnd, uint incr) {
-	outputFile.seek(dataOffset);
-	outputFile.writeLong(rangeStart);
-	outputFile.writeLong(rangeEnd);
-	outputFile.writeLong(incr);
+	outputFile->seek(dataOffset);
+	outputFile->writeLong(rangeStart);
+	outputFile->writeLong(rangeEnd);
+	outputFile->writeLong(incr);
 
 	for (; quotes->_index; ++quotes) {
-		outputFile.writeLong(quotes->_tag1);
-		outputFile.writeLong(quotes->_tag2);
-		outputFile.writeLong(quotes->_index);
+		outputFile->writeLong(quotes->_tag1);
+		outputFile->writeLong(quotes->_tag2);
+		outputFile->writeLong(quotes->_index);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }

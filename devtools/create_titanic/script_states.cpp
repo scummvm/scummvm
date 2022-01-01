@@ -504,28 +504,28 @@ static const UpdateState8 MAITRED_STATES[] = {
 };
 
 void writeUpdateStates(const char *name, const UpdateState8 *states) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (; states->_src; ++states) {
-		outputFile.writeLong(states->_src);
-		outputFile.writeLong(states->_dest);
+		outputFile->writeLong(states->_src);
+		outputFile->writeLong(states->_dest);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
 
 void writeUpdateStates(const char *name, const UpdateState12 *states) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (; states->_newId; ++states) {
-		outputFile.writeLong(states->_newId);
-		outputFile.writeLong(states->_newValue);
-		outputFile.writeLong(states->_idMatch);
+		outputFile->writeLong(states->_newId);
+		outputFile->writeLong(states->_newValue);
+		outputFile->writeLong(states->_idMatch);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }

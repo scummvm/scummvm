@@ -209,6 +209,6 @@ public:
 
 }
 
-extern Common::File inputFile, outputFile;
+extern Common::File *inputFile, *outputFile;
 
 #endif

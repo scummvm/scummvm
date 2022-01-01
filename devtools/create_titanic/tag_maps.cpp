@@ -686,14 +686,14 @@ static const TagMapping MAITRED_MAP_DE[105] = {
 };
 
 void writeTagMappings(const char *name, const TagMapping *map, int count) {
-	outputFile.seek(dataOffset);
+	outputFile->seek(dataOffset);
 
 	for (int idx = 0; idx < count; ++idx, ++map) {
-		outputFile.writeLong(map->_src);
-		outputFile.writeLong(map->_dest);
+		outputFile->writeLong(map->_src);
+		outputFile->writeLong(map->_dest);
 	}
 
-	uint size = outputFile.size() - dataOffset;
+	uint size = outputFile->size() - dataOffset;
 	writeEntryHeader(name, dataOffset, size);
 	dataOffset += size;
 }
