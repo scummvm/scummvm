@@ -25,20 +25,17 @@
  * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-
 #include "graphics/tinygl/zgl.h"
 
-void tglGetIntegerv(TGLenum pname, TGLint *data) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+namespace TinyGL {
 
+void GLContext::gl_GetIntegerv(TGLenum pname, TGLint *data) {
 	switch (pname) {
 	case TGL_VIEWPORT:
-		data[0] = c->viewport.xmin;
-		data[1] = c->viewport.ymin;
-		data[2] = c->viewport.xsize;
-		data[3] = c->viewport.ysize;
+		data[0] = viewport.xmin;
+		data[1] = viewport.ymin;
+		data[2] = viewport.xsize;
+		data[3] = viewport.ysize;
 		break;
 	case TGL_MAX_MODELVIEW_STACK_DEPTH:
 		*data = MAX_MODELVIEW_STACK_DEPTH;
@@ -50,22 +47,22 @@ void tglGetIntegerv(TGLenum pname, TGLint *data) {
 		*data = T_MAX_LIGHTS;
 		break;
 	case TGL_MAX_TEXTURE_SIZE:
-		*data = c->_textureSize;
+		*data = _textureSize;
 		break;
 	case TGL_MAX_TEXTURE_STACK_DEPTH:
 		*data = MAX_TEXTURE_STACK_DEPTH;
 		break;
 	case TGL_BLEND:
-		*data = c->blending_enabled;
+		*data = blending_enabled;
 		break;
 	case TGL_ALPHA_TEST:
-		*data = c->alpha_test_enabled;
+		*data = alpha_test_enabled;
 		break;
 	case TGL_DEPTH_TEST:
-		*data = c->depth_test_enabled;
+		*data = depth_test_enabled;
 		break;
 	case TGL_STENCIL_TEST:
-		*data = c->stencil_test_enabled;
+		*data = stencil_test_enabled;
 		break;
 	default:
 		error("tglGet: option not implemented");
@@ -73,9 +70,9 @@ void tglGetIntegerv(TGLenum pname, TGLint *data) {
 	}
 }
 
-void tglGetFloatv(TGLenum pname, TGLfloat *data) {
-	int i, mnr = 0; // just a trick to return the correct matrix
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
+void GLContext::gl_GetFloatv(TGLenum pname, TGLfloat *data) {
+	int mnr = 0; // just a trick to return the correct matrix
+
 	switch (pname) {
 	case TGL_TEXTURE_MATRIX:
 		mnr++;
@@ -84,16 +81,16 @@ void tglGetFloatv(TGLenum pname, TGLfloat *data) {
 		mnr++;
 		// fall through
 	case TGL_MODELVIEW_MATRIX: {
-		float *p = &c->matrix_stack_ptr[mnr]->_m[0][0];
-		for (i = 0; i < 4; i++) {
-			*data++ = p[0];
-			*data++ = p[4];
-			*data++ = p[8];
-			*data++ = p[12];
-			p++;
+			float *p = &matrix_stack_ptr[mnr]->_m[0][0];
+			for (int i = 0; i < 4; i++) {
+				*data++ = p[0];
+				*data++ = p[4];
+				*data++ = p[8];
+				*data++ = p[12];
+				p++;
+			}
 		}
-	}
-	break;
+		break;
 	case TGL_LINE_WIDTH:
 		*data = 1.0f;
 		break;
@@ -107,7 +104,9 @@ void tglGetFloatv(TGLenum pname, TGLfloat *data) {
 		data[0] = data[1] = 1.0f;
 		break;
 	default:
-		fprintf(stderr, "warning: unknown pname in glGetFloatv()\n");
+		warning("gl_GetFloatv: unknown pname");
 		break;
 	}
 }
+
+} // end of namespace TinyGL

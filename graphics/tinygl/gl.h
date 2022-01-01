@@ -821,19 +821,19 @@ void tglTexEnvi(TGLenum target, TGLenum pname, TGLint param);
 void tglTexParameteri(TGLenum target, TGLenum pname, TGLint param);
 void tglPixelStorei(TGLenum pname, TGLint param);
 
-// lighting
-
+// material
 void tglMaterialfv(TGLenum mode, TGLenum type, const TGLfloat *v);
 void tglMaterialf(TGLenum mode, TGLenum type, TGLfloat v);
 void tglColorMaterial(TGLenum mode, TGLenum type);
 
+// lighting
 void tglLightfv(TGLenum light, TGLenum type, const TGLfloat *v);
 void tglLightf(TGLenum light, TGLenum type, const TGLfloat v);
 void tglLightModeli(TGLenum pname, TGLint param);
 void tglLightModelfv(TGLenum pname, const TGLfloat *param);
 
-// misc
 
+// misc
 void tglFlush();
 void tglHint(TGLenum target, TGLenum mode);
 void tglGetIntegerv(TGLenum pname, TGLint *data);
@@ -858,8 +858,5 @@ void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoi
 
 // polygon offset
 void tglPolygonOffset(TGLfloat factor, TGLfloat units);
-
-// custom extensions
-void tglDebug(TGLenum mode);
 
 #endif

@@ -166,15 +166,6 @@ void GLContext::glopLightModel(GLParam *p) {
 	}
 }
 
-static inline float clampf(float a, float min, float max) {
-	if (a < min)
-		return min;
-	else if (a > max)
-		return max;
-	else
-		return a;
-}
-
 void GLContext::gl_enable_disable_light(int light, int v) {
 	GLLight *l = &lights[light];
 	if (v && !l->enabled) {

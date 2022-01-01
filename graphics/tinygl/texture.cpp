@@ -33,10 +33,10 @@
 
 namespace TinyGL {
 
-static GLTexture *find_texture(GLContext *c, uint h) {
+GLTexture *GLContext::find_texture(uint h) {
 	GLTexture *t;
 
-	t = c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
+	t = shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
 	while (t) {
 		if (t->handle == h)
 			return t;
@@ -46,7 +46,7 @@ static GLTexture *find_texture(GLContext *c, uint h) {
 }
 
 void GLContext::free_texture(uint h) {
-	free_texture(find_texture(this, h));
+	free_texture(find_texture(h));
 }
 
 void GLContext::free_texture(GLTexture *t) {
@@ -93,24 +93,6 @@ GLTexture *GLContext::alloc_texture(uint h) {
 	return t;
 }
 
-void GLContext::glInitTextures() {
-	texture_2d_enabled = 0;
-	current_texture = find_texture(this, 0);
-	maxTextureName = 0;
-	texture_mag_filter = TGL_LINEAR;
-	texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
-#if defined(SCUMM_LITTLE_ENDIAN)
-	colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
-#else
-	colorAssociationList.push_back({Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE});
-	colorAssociationList.push_back({Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE});
-#endif
-	colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5});
-	colorAssociationList.push_back({Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1});
-	colorAssociationList.push_back({Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4});
-}
-
 void GLContext::glopBindTexture(GLParam *p) {
 	int target = p[1].i;
 	int texture = p[2].i;
@@ -118,7 +100,7 @@ void GLContext::glopBindTexture(GLParam *p) {
 
 	assert(target == TGL_TEXTURE_2D && texture >= 0);
 
-	t = find_texture(this, texture);
+	t = find_texture(texture);
 	if (!t) {
 		t = alloc_texture(texture);
 	}
@@ -286,28 +268,24 @@ void GLContext::glopPixelStore(GLParam *p) {
 	}
 }
 
-} // end of namespace TinyGL
-
-void tglGenTextures(TGLsizei n, TGLuint *textures) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-
+void GLContext::gl_GenTextures(TGLsizei n, TGLuint *textures) {
 	for (int i = 0; i < n; i++) {
-		textures[i] = c->maxTextureName + i + 1;
+		textures[i] = maxTextureName + i + 1;
 	}
-	c->maxTextureName += n;
+	maxTextureName += n;
 }
 
-void tglDeleteTextures(TGLsizei n, const TGLuint *textures) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLTexture *t;
-
+void GLContext::gl_DeleteTextures(TGLsizei n, const TGLuint *textures) {
 	for (int i = 0; i < n; i++) {
-		t = TinyGL::find_texture(c, textures[i]);
+		TinyGL::GLTexture *t = find_texture(textures[i]);
 		if (t) {
-			if (t == c->current_texture) {
-				tglBindTexture(TGL_TEXTURE_2D, 0);
+			if (t == current_texture) {
+				current_texture = find_texture(0);
 			}
 			t->disposed = true;
 		}
 	}
 }
+
+} // end of namespace TinyGL
+

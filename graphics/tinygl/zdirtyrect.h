@@ -138,7 +138,7 @@ private:
 		int stencilSfail;
 		int stencilDpfail;
 		int stencilDppass;
-		TinyGL::GLTexture *texture;
+		GLTexture *texture;
 		uint wrapS, wrapT;
 
 		bool operator==(const RasterizationState &other) const;

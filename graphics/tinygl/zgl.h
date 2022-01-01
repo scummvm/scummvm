@@ -460,14 +460,18 @@ public:
 	void gl_enable_disable_light(int light, int v);
 	void gl_shade_vertex(GLVertex *v);
 
-	void glInitTextures();
-	void glEndTextures();
+	void gl_GetIntegerv(TGLenum pname, TGLint *data);
+	void gl_GetFloatv(TGLenum pname, TGLfloat *data);
+
 	GLTexture *alloc_texture(uint h);
+	GLTexture *find_texture(uint h);
 	void free_texture(uint h);
 	void free_texture(GLTexture *t);
+	void gl_GenTextures(TGLsizei n, TGLuint *textures);
+	void gl_DeleteTextures(TGLsizei n, const TGLuint *textures);
 
 	void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
-				const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+	                    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
 	void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest, const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
 
 	void issueDrawCall(DrawCall *drawCall);
@@ -480,24 +484,33 @@ public:
 	GLSpecBuf *specbuf_get_buffer(const int shininess_i, const float shininess);
 	void specbuf_cleanup();
 
+	GLList *alloc_list(int list);
+	GLList *find_list(uint list);
+	void delete_list(int list);
+	void gl_NewList(TGLuint list, TGLenum mode);
+	void gl_EndList();
+	TGLboolean gl_IsList(TGLuint list);
+	TGLuint gl_GenLists(TGLsizei range);
+
 	void initSharedState();
 	void endSharedState();
 
 	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable = true);
 	void deinit();
+
+	void gl_print_matrix(const float *m);
+	void gl_debug(int mode) {
+		print_flag = mode;
+	}
 };
 
 extern GLContext *gl_ctx;
 GLContext *gl_get_context();
 
-// matrix.c
-void gl_print_matrix(const float *m);
-
-#ifdef DEBUG
-#define dprintf fprintf
-#else
-#define dprintf
-#endif
+#define VERTEX_ARRAY    0x0001
+#define COLOR_ARRAY     0x0002
+#define NORMAL_ARRAY    0x0004
+#define TEXCOORD_ARRAY  0x0008
 
 // this clip epsilon is needed to avoid some rounding errors after
 // several clipping stages
@@ -509,6 +522,15 @@ static inline int gl_clipcode(float x, float y, float z, float w1) {
 
 	w = (float)(w1 * (1.0 + CLIP_EPSILON));
 	return (x < -w) | ((x > w) << 1) | ((y < -w) << 2) | ((y > w) << 3) | ((z < -w) << 4) | ((z > w) << 5);
+}
+
+static inline float clampf(float a, float min, float max) {
+	if (a < min)
+		return min;
+	if (a > max)
+		return max;
+	else
+		return a;
 }
 
 } // end of namespace TinyGL

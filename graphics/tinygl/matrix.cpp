@@ -32,7 +32,7 @@
 
 namespace TinyGL {
 
-void gl_print_matrix(const float *m) {
+void GLContext::gl_print_matrix(const float *m) {
 	for (int i = 0; i < 4; i++) {
 		fprintf(stderr, "%f %f %f %f\n", m[i], m[4 + i], m[8 + i], m[12 + i]);
 	}
@@ -99,7 +99,6 @@ void GLContext::glopMultMatrix(GLParam *p) {
 
 	gl_matrix_update(this);
 }
-
 
 void GLContext::glopPushMatrix(GLParam *) {
 	int n = matrix_mode;

@@ -632,6 +632,21 @@ void tglClearStencil(TGLint s) {
 	c->gl_add_op(p);
 }
 
+void tglFlush() {
+	// nothing to do
+}
+
+void tglHint(TGLenum target, TGLenum mode) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[3];
+
+	p[0].op = TinyGL::OP_Hint;
+	p[1].i = target;
+	p[2].i = mode;
+
+	c->gl_add_op(p);
+}
+
 // textures
 
 void tglTexImage2D(TGLenum target, TGLint level, TGLint internalformat, TGLsizei width,
@@ -696,6 +711,18 @@ void tglTexParameteri(TGLenum target, TGLenum pname, TGLint param) {
 	c->gl_add_op(p);
 }
 
+void tglGenTextures(TGLsizei n, TGLuint *textures) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_GenTextures(n, textures);
+}
+
+void tglDeleteTextures(TGLsizei n, const TGLuint *textures) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_DeleteTextures(n, textures);
+}
+
 void tglPixelStorei(TGLenum pname, TGLint param) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[3];
@@ -758,7 +785,7 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units) {
 	c->gl_add_op(p);
 }
 
-// Special Functions
+// lists
 
 void tglCallList(TGLuint list) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -770,24 +797,183 @@ void tglCallList(TGLuint list) {
 	c->gl_add_op(p);
 }
 
-void tglFlush() {
-	// nothing to do
+void tglNewList(TGLuint list, TGLenum mode) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_NewList(list, mode);
 }
 
-void tglHint(TGLenum target, TGLenum mode) {
+void tglEndList() {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[3];
 
-	p[0].op = TinyGL::OP_Hint;
-	p[1].i = target;
-	p[2].i = mode;
+	c->gl_EndList();
+}
+
+TGLboolean tglIsList(TGLuint list) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	TinyGL::GLList *l = c->find_list(list);
+	return (l != nullptr);
+}
+
+TGLuint tglGenLists(TGLsizei range) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	return c->gl_GenLists(range);
+}
+
+// arrays
+
+void tglArrayElement(TGLint i) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_ArrayElement;
+	p[1].i = i;
 
 	c->gl_add_op(p);
 }
 
-// Non standard functions
-
-void tglDebug(TGLenum mode) {
+void tglDrawArrays(TGLenum mode, TGLint first, TGLsizei count) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->print_flag = mode;
+	TinyGL::GLParam p[4];
+
+	p[0].op = TinyGL::OP_DrawArrays;
+	p[1].i = mode;
+	p[2].i = first;
+	p[3].i = count;
+
+	c->gl_add_op(p);
+}
+
+void tglDrawElements(TGLenum mode, TGLsizei count, TGLenum type, const TGLvoid *indices) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[5];
+
+	p[0].op = TinyGL::OP_DrawElements;
+	p[1].i = mode;
+	p[2].i = count;
+	p[3].i = type;
+	p[4].p = const_cast<void *>(indices);
+
+	c->gl_add_op(p);
+}
+
+void tglEnableClientState(TGLenum array) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_EnableClientState;
+
+	switch (array) {
+	case TGL_VERTEX_ARRAY:
+		p[1].i = VERTEX_ARRAY;
+		break;
+	case TGL_NORMAL_ARRAY:
+		p[1].i = NORMAL_ARRAY;
+		break;
+	case TGL_COLOR_ARRAY:
+		p[1].i = COLOR_ARRAY;
+		break;
+	case TGL_TEXTURE_COORD_ARRAY:
+		p[1].i = TEXCOORD_ARRAY;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	c->gl_add_op(p);
+}
+
+void tglDisableClientState(TGLenum array) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_DisableClientState;
+
+	switch (array) {
+	case TGL_VERTEX_ARRAY:
+		p[1].i = ~VERTEX_ARRAY;
+		break;
+	case TGL_NORMAL_ARRAY:
+		p[1].i = ~NORMAL_ARRAY;
+		break;
+	case TGL_COLOR_ARRAY:
+		p[1].i = ~COLOR_ARRAY;
+		break;
+	case TGL_TEXTURE_COORD_ARRAY:
+		p[1].i = ~TEXCOORD_ARRAY;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	c->gl_add_op(p);
+}
+
+void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[5];
+
+	p[0].op = TinyGL::OP_VertexPointer;
+	p[1].i = size;
+	p[2].i = type;
+	p[3].i = stride;
+	p[4].p = const_cast<void *>(pointer);
+
+	c->gl_add_op(p);
+}
+
+void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[5];
+
+	p[0].op = TinyGL::OP_ColorPointer;
+	p[1].i = size;
+	p[2].i = type;
+	p[3].i = stride;
+	p[4].p = const_cast<void *>(pointer);
+
+	c->gl_add_op(p);
+}
+
+void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[4];
+
+	p[0].op = TinyGL::OP_NormalPointer;
+	p[1].i = type;
+	p[2].i = stride;
+	p[3].p = const_cast<void *>(pointer);
+
+	c->gl_add_op(p);
+}
+
+void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[5];
+
+	p[0].op = TinyGL::OP_TexCoordPointer;
+	p[1].i = size;
+	p[2].i = type;
+	p[3].i = stride;
+	p[4].p = const_cast<void *>(pointer);
+
+	c->gl_add_op(p);
+}
+
+// gets
+
+void tglGetIntegerv(TGLenum pname, TGLint *data) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_GetIntegerv(pname, data);
+}
+
+void tglGetFloatv(TGLenum pname, TGLfloat *data) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+
+	c->gl_GetFloatv(pname, data);
 }
