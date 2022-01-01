@@ -551,11 +551,12 @@ GenericCavernDoorMainView::GenericCavernDoorMainView(BuriedEngine *vm, Window *v
 
 int GenericCavernDoorMainView::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	Location &loc = _staticData.location;
 
-	if (_staticData.location.node == 7 && (_staticData.location.timeZone != priorLocation.timeZone ||
-			_staticData.location.environment != priorLocation.environment || _staticData.location.node != priorLocation.node ||
-			_staticData.location.facing != priorLocation.facing || _staticData.location.orientation != priorLocation.orientation ||
-			_staticData.location.depth != priorLocation.depth) && !sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
+	if (loc.node == 7 && (loc.timeZone != priorLocation.timeZone ||
+			loc.environment != priorLocation.environment || loc.node != priorLocation.node ||
+			loc.facing != priorLocation.facing || loc.orientation != priorLocation.orientation ||
+			loc.depth != priorLocation.depth) && !sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
 		sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 	return SC_TRUE;
 }
@@ -1300,6 +1301,7 @@ int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
 	BioChipRightWindow *bioChipRightWindow = ((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow;
+	Location &loc = _staticData.location;
 
 	// For walkthrough mode, don't allow input
 	if (globalFlags.generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
@@ -1320,15 +1322,15 @@ int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation
 		// Play the proper movie
 		int currentSoundID = -1;
 		if (headStatus == 2)
-			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 14), 128, false, true);
 		else
-			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 13), 128, false, true);
 
 		if ((_headID == 1 || _headID == 2) && headStatus == 0) {
-			if (_staticData.location.node == 0)
-				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+			if (loc.node == 0)
+				_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 127);
 			else
-				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+				_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 96);
 		}
 
 		sceneView->playSynchronousAnimation(_headAnimations[headStatus]);
@@ -1341,14 +1343,14 @@ int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation
 		byte headCStatus = globalFlags.myAGHeadCStatus;
 		byte headDStatus = globalFlags.myAGHeadDStatus;
 
-		if (_staticData.location.node == 0) {
+		if (loc.node == 0) {
 			if (headAStatus == 0)
 				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 			else if (headDStatus == 0)
 				_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
 			else
 				_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
-		} else if (_staticData.location.node == 2) {
+		} else if (loc.node == 2) {
 			if (headAStatus == 0 || headDStatus == 0)
 				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 			else
@@ -1357,10 +1359,10 @@ int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation
 
 		_vm->_sound->stopSoundEffect(currentSoundID);
 
-		if (_staticData.location.node == 0 && (headBStatus < 3 && headCStatus < 3))
-			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
-		else if (_staticData.location.node == 2 && (headBStatus < 3 && headCStatus < 3))
-			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+		if (loc.node == 0 && (headBStatus < 3 && headCStatus < 3))
+			_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 127);
+		else if (loc.node == 2 && (headBStatus < 3 && headCStatus < 3))
+			_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 96);
 
 		if (headStatus & 1)
 			setHeadOpenedTime(_headID, g_system->getMillis());
@@ -1455,6 +1457,7 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
 	BioChipRightWindow *bioChipRightWindow = ((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow;
+	Location &loc = _staticData.location;
 
 	for (int i = 0; i < 4; i++) {
 		uint32 lastStartedTimer = getHeadOpenedTime(i);
@@ -1473,9 +1476,9 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 
 					int currentSoundID = -1;
 					if (status == 2)
-						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 14), 128, false, true);
 					else
-						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 13), 128, false, true);
 
 					sceneView->playSynchronousAnimation(_headAnimations[status]);
 
@@ -1489,14 +1492,14 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 					byte headCStatus = globalFlags.myAGHeadCStatus;
 					byte headDStatus = globalFlags.myAGHeadDStatus;
 
-					if (_staticData.location.node == 0) {
+					if (loc.node == 0) {
 						if (headAStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 						else if (headDStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
 						else
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
-					} else if (_staticData.location.node == 2) {
+					} else if (loc.node == 2) {
 						if (headAStatus == 0 || headDStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 						else
@@ -1505,10 +1508,10 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 
 					// Play the door closing sound, if applicable
 					if (i == 1 || i == 2) {
-						if (_staticData.location.node == 0 && (headBStatus == 0 || headCStatus == 0))
-							_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
-						else if (_staticData.location.node == 2 && (headBStatus == 0 || headCStatus == 0))
-							_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+						if (loc.node == 0 && (headBStatus == 0 || headCStatus == 0))
+							_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 127);
+						else if (loc.node == 2 && (headBStatus == 0 || headCStatus == 0))
+							_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 96);
 					}
 				}
 
@@ -1521,21 +1524,21 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 					sceneView->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i, status);
 
 					if (status == 2)
-						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128);
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 14), 128);
 					else
-						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 13), 128);
 
 					byte headAStatus = globalFlags.myAGHeadAStatus;
 					byte headDStatus = globalFlags.myAGHeadDStatus;
 
-					if (_staticData.location.node == 0) {
+					if (loc.node == 0) {
 						if (headAStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 						else if (headDStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
 						else
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
-					} else if (_staticData.location.node == 2) {
+					} else if (loc.node == 2) {
 						if (headAStatus == 0 || headDStatus == 0)
 							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
 						else
@@ -1546,10 +1549,10 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 				bioChipRightWindow->sceneChanged();
 
 				if (_headID == 1 || _headID == 2) {
-					if (_staticData.location.node == 0)
-						_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
-					else if (_staticData.location.node == 2)
-						_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+					if (loc.node == 0)
+						_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 127);
+					else if (loc.node == 2)
+						_vm->_sound->playSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, 11), 96);
 				}
 			}
 		}
@@ -1689,13 +1692,14 @@ int ArrowGodDepthChange::postEnterRoom(Window *viewWindow, const Location &prior
 
 int ArrowGodDepthChange::postExitRoom(Window *viewWindow, const Location &newLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
+	Location &loc = _staticData.location;
 
-	if (_staticData.location.timeZone == newLocation.timeZone &&
-			_staticData.location.environment == newLocation.environment &&
-			_staticData.location.node == newLocation.node &&
-			_staticData.location.facing == newLocation.facing &&
-			_staticData.location.orientation == newLocation.orientation &&
-			_staticData.location.depth == newLocation.depth &&
+	if (loc.timeZone == newLocation.timeZone &&
+			loc.environment == newLocation.environment &&
+			loc.node == newLocation.node &&
+			loc.facing == newLocation.facing &&
+			loc.orientation == newLocation.orientation &&
+			loc.depth == newLocation.depth &&
 			!_scheduledDepthChange) {
 		// Notify the player of his gruesome death
 		sceneView->showDeathScene(13);
@@ -1743,29 +1747,28 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
 	BioChipRightWindow *bioChipRightWindow = ((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow;
+	Location &loc = _staticData.location;
 
 	SceneBase::timerCallback(viewWindow);
 
 	// Check to see if we moved into a death scene
-	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 5 &&
-			_staticData.location.node == 1 && _staticData.location.facing == 3 &&
-			_staticData.location.orientation == 1 && (_staticData.location.depth == 1 ||
-			_staticData.location.depth == 3 || _staticData.location.depth == 11 ||
-			_staticData.location.depth == 7 || _staticData.location.depth == 5 ||
-			_staticData.location.depth == 9)) {
-		if (_staticData.location.depth == 1)
+	if (loc.timeZone == 2 && loc.environment == 5 &&
+			loc.node == 1 && loc.facing == 3 &&
+			loc.orientation == 1 && (
+			loc.depth == 1 || loc.depth == 3 || loc.depth == 11 ||
+			loc.depth == 7 || loc.depth == 5 || loc.depth == 9)) {
+		if (loc.depth == 1)
 			sceneView->playSynchronousAnimation(19);
 
 		sceneView->showDeathScene(13);
 		return SC_DEATH;
 	}
 
-	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 5 &&
-			_staticData.location.node == 3 && _staticData.location.facing == 3 &&
-			_staticData.location.orientation == 1 && (_staticData.location.depth == 2 ||
-			_staticData.location.depth == 3 || _staticData.location.depth == 11 ||
-			_staticData.location.depth == 10 || _staticData.location.depth == 6 ||
-			_staticData.location.depth == 7)) {
+	if (loc.timeZone == 2 && loc.environment == 5 &&
+			loc.node == 3 && loc.facing == 3 &&
+			loc.orientation == 1 && (
+			loc.depth == 2  || loc.depth == 3 || loc.depth == 11 ||
+			loc.depth == 10 || loc.depth == 6 || loc.depth == 7)) {
 		sceneView->playSynchronousAnimation(17);
 		sceneView->showDeathScene(13);
 		return SC_DEATH;
@@ -1786,7 +1789,7 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 			if (status & 1) {
 				status--;
 				sceneView->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i, status);
-				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, (status == 2) ? 14 : 13), 128);
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(loc.timeZone, loc.environment, (status == 2) ? 14 : 13), 128);
 				_scheduledDepthChange = true;
 				adjustSpearVolume(viewWindow);
 			}
@@ -1797,8 +1800,7 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 
 	if (_scheduledDepthChange) {
 		_scheduledDepthChange = false;
-		Location location = _staticData.location;
-		sceneView->jumpToScene(location);
+		sceneView->jumpToScene(loc);
 	}
 
 	return SC_TRUE;
@@ -1855,6 +1857,7 @@ DeathGodAltar::DeathGodAltar(BuriedEngine *vm, Window *viewWindow, const Locatio
 int DeathGodAltar::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	Location &loc = _staticData.location;
 
 	if (globalFlags.myDGOfferedHeart == 1) {
 		if (!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART)) {
@@ -1862,15 +1865,15 @@ int DeathGodAltar::postEnterRoom(Window *viewWindow, const Location &priorLocati
 			_staticData.navFrameIndex = 51;
 			viewWindow->invalidateWindow(false);
 
-			if ((_staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment ||
-					_staticData.location.node != priorLocation.node || _staticData.location.facing != priorLocation.facing ||
-					_staticData.location.orientation != priorLocation.orientation || _staticData.location.depth != priorLocation.depth) &&
+			if ((loc.timeZone != priorLocation.timeZone || loc.environment != priorLocation.environment ||
+					loc.node != priorLocation.node || loc.facing != priorLocation.facing ||
+					loc.orientation != priorLocation.orientation || loc.depth != priorLocation.depth) &&
 					!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART))
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 		}
-	} else if ((_staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment ||
-			_staticData.location.node != priorLocation.node || _staticData.location.facing != priorLocation.facing ||
-			_staticData.location.orientation != priorLocation.orientation || _staticData.location.depth != priorLocation.depth) &&
+	} else if ((loc.timeZone != priorLocation.timeZone || loc.environment != priorLocation.environment ||
+			loc.node != priorLocation.node || loc.facing != priorLocation.facing ||
+			loc.orientation != priorLocation.orientation || loc.depth != priorLocation.depth) &&
 			!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_PHONY_BLOOD)) {
 		sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 	}
@@ -2001,6 +2004,7 @@ private:
 
 DeathGodPuzzleBox::DeathGodPuzzleBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	Location &loc = _staticData.location;
 	_translateText = false;
 	_puzzleIndexes[0] = _puzzleIndexes[1] = _puzzleIndexes[2] = _puzzleIndexes[3] = 0;
 	_clickableRegions[0] = Common::Rect(30, 0, 111, 189);
@@ -2010,10 +2014,10 @@ DeathGodPuzzleBox::DeathGodPuzzleBox(BuriedEngine *vm, Window *viewWindow, const
 	_puzzleRightHandle = Common::Rect(380, 0, 432, 189);
 
 	// Load the spinner movies
-	_puzzleFrames[0].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 4));
-	_puzzleFrames[1].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 5));
-	_puzzleFrames[2].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 6));
-	_puzzleFrames[3].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7));
+	_puzzleFrames[0].open(_vm->getFilePath(loc.timeZone, loc.environment, 4));
+	_puzzleFrames[1].open(_vm->getFilePath(loc.timeZone, loc.environment, 5));
+	_puzzleFrames[2].open(_vm->getFilePath(loc.timeZone, loc.environment, 6));
+	_puzzleFrames[3].open(_vm->getFilePath(loc.timeZone, loc.environment, 7));
 }
 
 DeathGodPuzzleBox::~DeathGodPuzzleBox() {
@@ -2350,6 +2354,7 @@ WalkDualAmbientVolumeChange::WalkDualAmbientVolumeChange(BuriedEngine *vm, Windo
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	SceneViewWindow *sceneView = ((SceneViewWindow *)viewWindow);
 	GlobalFlags &globalFlags = sceneView->getGlobalFlags();
+	Location &loc = _staticData.location;
 
 	_newVolume = newVolume;
 	_volumeChangeTime = volumeChangeTime;
@@ -2357,9 +2362,9 @@ WalkDualAmbientVolumeChange::WalkDualAmbientVolumeChange(BuriedEngine *vm, Windo
 	_secondVolume = secondVolume;
 
 	// If we have stepped on the far ledge, set the flag
-	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 4 &&
-			_staticData.location.node == 5 && _staticData.location.facing == 0 &&
-			_staticData.location.orientation == 1 && _staticData.location.depth == 0)
+	if (loc.timeZone == 2 && loc.environment == 4 &&
+			loc.node == 5 && loc.facing == 0 &&
+			loc.orientation == 1 && loc.depth == 0)
 		globalFlags.myWTSteppedOnFarLedge = 1;
 }
 
