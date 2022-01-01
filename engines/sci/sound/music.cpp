@@ -935,6 +935,8 @@ MusicEntry::MusicEntry() {
 	soundRes = nullptr;
 	resourceId = 0;
 
+	time = 0;
+
 	dataInc = 0;
 	ticker = 0;
 	signal = 0;
