@@ -98,10 +98,7 @@ struct UnkMapStruct {
 };
 
 struct UnkAnimStruct {
-	uint8 field0;
-	uint8 field1;
-	uint8 field2;
-	uint8 field3;
+	int8 _field[4];
 
 	void init();
 };
