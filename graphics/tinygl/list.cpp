@@ -57,16 +57,13 @@ GLList *GLContext::find_list(uint list) {
 }
 
 void GLContext::delete_list(int list) {
-	GLParamBuffer *pb, *pb1;
-	GLList *l;
-
-	l = find_list(list);
+	GLList *l = find_list(list);
 	assert(l);
 
 	// free param buffer
-	pb = l->first_op_buffer;
+	GLParamBuffer *pb = l->first_op_buffer;
 	while (pb) {
-		pb1 = pb->next;
+		GLParamBuffer *pb1 = pb->next;
 		gl_free(pb);
 		pb = pb1;
 	}
@@ -76,11 +73,8 @@ void GLContext::delete_list(int list) {
 }
 
 GLList *GLContext::alloc_list(int list) {
-	GLList *l;
-	GLParamBuffer *ob;
-
-	l = (GLList *)gl_zalloc(sizeof(GLList));
-	ob = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
+	GLList *l = (GLList *)gl_zalloc(sizeof(GLList));
+	GLParamBuffer *ob = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 
 	ob->next = nullptr;
 	l->first_op_buffer = ob;
@@ -92,13 +86,11 @@ GLList *GLContext::alloc_list(int list) {
 }
 
 static void gl_print_op(GLParam *p) {
-	int op;
-	const char *s;
 	Common::StreamDebug debug = streamDbg();
+	int op = p[0].op;
 
-	op = p[0].op;
 	p++;
-	s = op_table_str[op];
+	const char *s = op_table_str[op];
 	while (*s != 0) {
 		if (*s == '%') {
 			s++;
@@ -120,19 +112,15 @@ static void gl_print_op(GLParam *p) {
 }
 
 void GLContext::gl_compile_op(GLParam *p) {
-	int op, op_size;
-	GLParamBuffer *ob, *ob1;
-	int index;
-
-	op = p[0].op;
-	op_size = op_table_size[op];
-	index = current_op_buffer_index;
-	ob = current_op_buffer;
+	int op = p[0].op;
+	int op_size = op_table_size[op];
+	int index = current_op_buffer_index;
+	GLParamBuffer *ob = current_op_buffer;
 
 	// we should be able to add a NextBuffer opcode
 	if ((index + op_size) > (OP_BUFFER_MAX_SIZE - 2)) {
 
-		ob1 = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
+		GLParamBuffer *ob1 = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 		ob1->next = nullptr;
 
 		ob->next = ob1;
@@ -153,9 +141,8 @@ void GLContext::gl_compile_op(GLParam *p) {
 
 void GLContext::gl_add_op(GLParam *p) {
 	GLContext *c = gl_get_context();
-	int op;
 
-	op = p[0].op;
+	int op = p[0].op;
 	if (exec_flag) {
 		op_table_func[op](c, p);
 	}
@@ -178,17 +165,15 @@ void GLContext::glopNextBuffer(GLParam *) {
 }
 
 void GLContext::glopCallList(GLParam *p) {
-	GLList *l;
-	int list, op;
+	uint list = p[1].ui;
+	GLList *l = find_list(list);
 
-	list = p[1].ui;
-	l = find_list(list);
 	if (!l)
 		error("list %d not defined", list);
 	p = l->first_op_buffer->ops;
 
 	while (1) {
-		op = p[0].op;
+		int op = p[0].op;
 		if (op == OP_EndList)
 			break;
 		if (op == OP_NextBuffer) {
