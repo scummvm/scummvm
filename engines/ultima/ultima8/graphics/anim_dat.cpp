@@ -136,8 +136,8 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return 0;
 		case Animation::jump:
 			return Animation::quickJumpCru;
-		case Animation::startRunLargeWeapon:
-			return (smallwpn ? Animation::startRunSmallWeapon : Animation::startRunLargeWeapon);
+		//case Animation::startRunLargeWeapon:
+		//	return (smallwpn ? Animation::startRunSmallWeapon : Animation::startRunLargeWeapon); // FIXME: overlaps with kneel
 		case Animation::stopRunningAndDrawSmallWeapon:
 			return (smallwpn ? Animation::stopRunningAndDrawSmallWeapon : Animation::stopRunningAndDrawLargeWeapon);
 		default:
