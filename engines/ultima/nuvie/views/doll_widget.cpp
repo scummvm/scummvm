@@ -476,12 +476,12 @@ bool DollWidget::drag_accept_drop(int x, int y, int message, void *data) {
 	return false;
 }
 
-void DollWidget::drag_perform_drop(int x, int y, int message, void *data) {
+void DollWidget::drag_perform_drop(int /*x*/, int /*y*/, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "DollWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.left;
-	y -= area.top;
+	//x -= area.left;
+	//y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Ready item.\n");

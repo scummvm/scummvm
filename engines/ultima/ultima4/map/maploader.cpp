@@ -117,6 +117,8 @@ bool MapLoader::loadData(Map *map, Common::SeekableReadStream &f) {
 		}
 	}
 
+	debug(10, "MapLoader::loadData translation took %d ms", total);
+
 	return true;
 }
 

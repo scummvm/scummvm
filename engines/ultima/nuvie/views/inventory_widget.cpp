@@ -562,12 +562,12 @@ bool InventoryWidget::drag_accept_drop(int x, int y, int message, void *data) {
 	return false;
 }
 
-void InventoryWidget::drag_perform_drop(int x, int y, int message, void *data) {
+void InventoryWidget::drag_perform_drop(int /*x*/, int /*y*/, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "InventoryWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.left;
-	y -= area.top;
+	//x -= area.left;
+	//y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Drop into inventory.\n");

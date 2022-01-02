@@ -257,10 +257,10 @@ Obj *ContainerWidget::get_obj_at_location(int x, int y) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status ContainerWidget::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseUp(int /*x*/, int /*y*/, Shared::MouseButton button) {
 	if (button == USE_BUTTON) {
-		x -= area.left;
-		y -= area.top;
+		//x -= area.left;
+		//y -= area.top;
 
 		if (selected_obj) {
 			// only act now if objects can't be used with DoubleClick
@@ -421,12 +421,12 @@ bool ContainerWidget::drag_accept_drop(int x, int y, int message, void *data) {
 	return false;
 }
 
-void ContainerWidget::drag_perform_drop(int x, int y, int message, void *data) {
+void ContainerWidget::drag_perform_drop(int /*x*/, int /*y*/, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "ContainerWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.left;
-	y -= area.top;
+	//x -= area.left;
+	//y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Drop into inventory.\n");
