@@ -94,6 +94,8 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/meta_engine.h"
 
+//#define PAINT_TIMING 1
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -597,24 +599,28 @@ bool Ultima8Engine::runGame() {
 
 // Paint the _screen
 void Ultima8Engine::paint() {
+#ifdef PAINT_TIMING
 	static long prev = 0;
 	static long t = 0;
 	static long tdiff = 0;
 	static long tpaint = 0;
 	long now = g_system->getMillis();
 
-	if (!_screen) // need to worry if the graphics system has been started. Need nicer way.
-		return;
-
 	if (prev != 0)
 		tdiff += now - prev;
 	prev = now;
 	++t;
+#endif
+
+	if (!_screen) // need to worry if the graphics system has been started. Need nicer way.
+		return;
 
 	// Begin _painting
 	_screen->BeginPainting();
 
+#ifdef PAINT_TIMING
 	tpaint -= g_system->getMillis();
+#endif
 
 	Rect r;
 	_screen->GetSurfaceDims(r);
@@ -627,7 +633,13 @@ void Ultima8Engine::paint() {
 #endif
 
 	_desktopGump->Paint(_screen, _lerpFactor, false);
+#ifdef PAINT_TIMING
 	tpaint += g_system->getMillis();
+
+	if (t % 150 == 0) { // every ~5 seconds
+		debug("Ultima8Engine: Paint average %.03f millis", (float)tpaint / t);
+	}
+#endif
 
 	// Draw the mouse
 	_mouse->paint();
