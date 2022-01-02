@@ -138,8 +138,8 @@ void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY)
 	//	_system->updateScreen();
 }
 
-void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
-	debugC(1, kDebugGraphics, "drawRect %d %d %d %d", minX, minY, maxX, maxY);
+void EfhEngine::drawRect(int16 minX, int16 minY, int16 maxX, int16 maxY) {
+	debugC(1, kDebugGraphics, "drawRect %d-%d %d-%d", minX, minY, maxX, maxY);
 
 	if (minY > maxY)
 		SWAP(minY, maxY);
@@ -147,10 +147,10 @@ void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
 	if (minX > maxX)
 		SWAP(minX, maxX);
 
-	minX = CLIP(minX, 0, 319);
-	maxX = CLIP(maxX, 0, 319);
-	minY = CLIP(minY, 0, 199);
-	maxY = CLIP(maxY, 0, 199);
+	minX = CLIP<int16>(minX, 0, 319);
+	maxX = CLIP<int16>(maxX, 0, 319);
+	minY = CLIP<int16>(minY, 0, 199);
+	maxY = CLIP<int16>(maxY, 0, 199);
 
 	int deltaY = 1 + maxY - minY;
 	int deltaX = 1 + maxX - minX;
@@ -169,8 +169,8 @@ void EfhEngine::drawRect(int minX, int minY, int maxX, int maxY) {
 	}
 }
 
-void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int color) {
-	debugC(1, kDebugGraphics, "drawColoredRect %d %d %d %d %d", minX, minY, maxX, maxY, color);
+void EfhEngine::drawColoredRect(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color) {
+	debugC(1, kDebugGraphics, "drawColoredRect %d-%d %d-%d %d", minX, minY, maxX, maxY, color);
 
 	uint8 oldValue = _defaultBoxColor;
 	_defaultBoxColor = color;
@@ -178,7 +178,7 @@ void EfhEngine::drawColoredRect(int minX, int minY, int maxX, int maxY, int colo
 	_defaultBoxColor = oldValue;
 }
 
-void EfhEngine::clearScreen(int color) {
+void EfhEngine::clearScreen(int16 color) {
 	debugC(1, kDebugGraphics, "clearScreen %d", color);
 	drawColoredRect(0, 0, 320, 200, color);
 }
@@ -242,7 +242,7 @@ void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, i
 	drawString(str, startCenteredDisplayX, posY, _textColor);
 }
 
-void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int posY) {
+void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int16 posY) {
 	debugC(1, kDebugGraphics, "displayMenuAnswerString %s %d-%d %d", str, minX, maxX, posY);
 	displayCenteredString(str, minX, maxX, posY);
 	displayFctFullScreen();
@@ -285,7 +285,7 @@ void EfhEngine::drawBottomBorders() {
 	displayRawDataAtPos(_circleImageSubFileArray[6], 304, 136);
 }
 
-void EfhEngine::drawChar(uint8 curChar, int16 posX, int posY) {
+void EfhEngine::drawChar(uint8 curChar, int16 posX, int16 posY) {
 	debugC(1, kDebugGraphics, "drawChar %c %d %d", curChar, posX, posY);
 
 	// CHECKME: Quick hacked display, may require rework
