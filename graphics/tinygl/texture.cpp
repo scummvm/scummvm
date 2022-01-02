@@ -97,10 +97,10 @@ GLTexture *GLContext::alloc_texture(uint h) {
 
 void GLContext::glopBindTexture(GLParam *p) {
 	int target = p[1].i;
-	int texture = p[2].i;
+	uint texture = p[2].ui;
 	GLTexture *t;
 
-	assert(target == TGL_TEXTURE_2D && texture >= 0);
+	assert(target == TGL_TEXTURE_2D);
 
 	t = find_texture(texture);
 	if (!t) {

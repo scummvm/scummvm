@@ -141,7 +141,7 @@ void GLContext::glopDepthFunc(GLParam *p) {
 void GLContext::glopStencilFunc(GLParam *p) {
 	TGLenum func = p[1].i;
 	TGLint ref = p[2].i;
-	TGLuint mask = p[3].i;
+	TGLuint mask = p[3].ui;
 	if (func < TGL_NEVER || func > TGL_ALWAYS)
 		return;
 	if (ref < 0)
@@ -215,7 +215,7 @@ void GLContext::glopDepthMask(GLParam *p) {
 }
 
 void GLContext::glopStencilMask(TinyGL::GLParam *p) {
-	stencil_write_mask = p[1].i;
+	stencil_write_mask = p[1].ui;
 }
 
 } // end of namespace TinyGL

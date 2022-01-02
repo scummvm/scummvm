@@ -225,7 +225,7 @@ void tglStencilMask(TGLuint mask) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 	p[0].op = TinyGL::OP_StencilMask;
-	p[1].i = mask;
+	p[1].ui = mask;
 
 	c->gl_add_op(p);
 }
@@ -267,7 +267,7 @@ void tglStencilFunc(TGLenum func, TGLint ref, TGLuint mask) {
 	p[0].op = TinyGL::OP_StencilFunc;
 	p[1].i = func;
 	p[2].i = ref;
-	p[3].i = mask;
+	p[3].ui = mask;
 
 	c->gl_add_op(p);
 }
@@ -685,7 +685,7 @@ void tglBindTexture(TGLenum target, TGLuint texture) {
 
 	p[0].op = TinyGL::OP_BindTexture;
 	p[1].i = target;
-	p[2].i = texture;
+	p[2].ui = texture;
 
 	c->gl_add_op(p);
 }
@@ -804,7 +804,7 @@ void tglCallList(TGLuint list) {
 	TinyGL::GLParam p[2];
 
 	p[0].op = TinyGL::OP_CallList;
-	p[1].i = list;
+	p[1].ui = list;
 
 	c->gl_add_op(p);
 }
