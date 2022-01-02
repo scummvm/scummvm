@@ -547,7 +547,7 @@ int GenericCavernDoorMainView::postEnterRoom(Window *viewWindow, const Location 
 	if (loc.node == 7 && (loc.timeZone != priorLocation.timeZone ||
 			loc.environment != priorLocation.environment || loc.node != priorLocation.node ||
 			loc.facing != priorLocation.facing || loc.orientation != priorLocation.orientation ||
-			loc.depth != priorLocation.depth) && !sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
+			loc.depth != priorLocation.depth) && !sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
 		sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 	return SC_TRUE;
 }
@@ -1935,7 +1935,7 @@ int DeathGodAltar::postEnterRoom(Window *viewWindow, const Location &priorLocati
 	Location &loc = _staticData.location;
 
 	if (globalFlags.myDGOfferedHeart == 1) {
-		if (!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART)) {
+		if (!sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_ENVIRON_CART)) {
 			sceneView->playSynchronousAnimation(3);
 			_staticData.navFrameIndex = 51;
 			viewWindow->invalidateWindow(false);
@@ -1943,13 +1943,13 @@ int DeathGodAltar::postEnterRoom(Window *viewWindow, const Location &priorLocati
 			if ((loc.timeZone != priorLocation.timeZone || loc.environment != priorLocation.environment ||
 					loc.node != priorLocation.node || loc.facing != priorLocation.facing ||
 					loc.orientation != priorLocation.orientation || loc.depth != priorLocation.depth) &&
-					!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART))
+					!sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_ENVIRON_CART))
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 		}
 	} else if ((loc.timeZone != priorLocation.timeZone || loc.environment != priorLocation.environment ||
 			loc.node != priorLocation.node || loc.facing != priorLocation.facing ||
 			loc.orientation != priorLocation.orientation || loc.depth != priorLocation.depth) &&
-			!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_PHONY_BLOOD)) {
+			!sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_PHONY_BLOOD)) {
 		sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 	}
 
@@ -1992,7 +1992,7 @@ int DeathGodAltar::droppedItem(Window *viewWindow, int itemID, const Common::Poi
 		sceneView->playSynchronousAnimation(3);
 		_staticData.navFrameIndex = 51;
 
-		if (!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART))
+		if (!sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_ENVIRON_CART))
 			sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 
 		return SIC_ACCEPT;
@@ -2031,7 +2031,7 @@ int DeathGodAltar::locateAttempted(Window *viewWindow, const Common::Point &poin
 	if (globalFlags.bcLocateEnabled == 1 &&
 			globalFlags.takenEnvironCart == 0 &&
 			_puzzleBox.contains(pointLocation) && _staticData.navFrameIndex == 51 &&
-			!sceneView->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART)) {
+			!sceneView->isNumberInGlobalFlagTable(MAYAN_EVIDENCE_ENVIRON_CART)) {
 		sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED)); // All will be reveaaaaaaaaled (Yes, I used this joke twice now)
 		return SC_TRUE;
 	}
@@ -2041,7 +2041,7 @@ int DeathGodAltar::locateAttempted(Window *viewWindow, const Common::Point &poin
 			sceneView->playSynchronousAnimation(6);
 
 			// Attempt to add it to the biochip
-			if (sceneView->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_PHONY_BLOOD))
+			if (sceneView->addNumberToGlobalFlagTable(MAYAN_EVIDENCE_PHONY_BLOOD))
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -2197,7 +2197,7 @@ int DeathGodPuzzleBox::mouseUp(Window *viewWindow, const Common::Point &pointLoc
 			sceneView->playSynchronousAnimation(7);
 
 			// Attempt to add it to the biochip
-			if (sceneView->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_ENVIRON_CART))
+			if (sceneView->addNumberToGlobalFlagTable(MAYAN_EVIDENCE_ENVIRON_CART))
 				sceneView->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
 			else
 				sceneView->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -2321,7 +2321,7 @@ int MainCavernGlassCapture::locateAttempted(Window *viewWindow, const Common::Po
 			sceneView->playSynchronousAnimation(22);
 
 			// Attempt to add it to the biochip
-			if (sceneView->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
+			if (sceneView->addNumberToGlobalFlagTable(MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				sceneView->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));

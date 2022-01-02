@@ -702,7 +702,7 @@ int MiddleBaileyFootprintCapture::locateAttempted(Window *viewWindow, const Comm
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
 
 			// Add it to the list
-			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_FOOTPRINT))
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(CASTLE_EVIDENCE_FOOTPRINT))
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -757,7 +757,7 @@ int TreasureRoomSwordCapture::locateAttempted(Window *viewWindow, const Common::
 			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTRFoundSword = 1;
 
 			// Attempt to add it to the biochip
-			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_SWORD))
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(CASTLE_EVIDENCE_SWORD))
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -857,7 +857,7 @@ int StorageRoomDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocat
 		}
 
 		if (globalFlags.cgStorageRoomVisit == 0) {
-			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_AGENT3))
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(CASTLE_EVIDENCE_AGENT3))
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));

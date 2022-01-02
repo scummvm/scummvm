@@ -3149,7 +3149,7 @@ int MachineRoomTamperedSculpture::mouseUp(Window *viewWindow, const Common::Poin
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
 
 			// Attempt to add it to the biochip
-			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, AI_EVIDENCE_SCULPTURE))
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(AI_EVIDENCE_SCULPTURE))
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -3178,7 +3178,7 @@ int MachineRoomTamperedSculpture::mouseUp(Window *viewWindow, const Common::Poin
 
 int MachineRoomTamperedSculpture::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 	// If we have not yet captured it, set the anachronism message
-	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), AI_EVIDENCE_SCULPTURE))
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(AI_EVIDENCE_SCULPTURE))
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 
 	return SC_TRUE;
@@ -3186,7 +3186,7 @@ int MachineRoomTamperedSculpture::postEnterRoom(Window *viewWindow, const Locati
 
 int MachineRoomTamperedSculpture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
 	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _clickable.contains(pointLocation) &&
-			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), AI_EVIDENCE_SCULPTURE)) {
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(AI_EVIDENCE_SCULPTURE)) {
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED)); // All will be reveaaaaaled
 		return SC_TRUE;
 	}

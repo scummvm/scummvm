@@ -1416,38 +1416,26 @@ bool SceneViewWindow::closeCycleFrameMovie() {
 	return true;
 }
 
-bool SceneViewWindow::addNumberToGlobalFlagTable(int tableOffset, int curItemCountOffset, int maxItems, byte numberToAdd) {
-	// TODO: Rewrite this
-	byte *data = (byte *)&_globalFlags;
-	byte *itemCountPtr = data + curItemCountOffset;
-	int itemCount = *itemCountPtr;
-
-	if (itemCount >= maxItems)
+bool SceneViewWindow::addNumberToGlobalFlagTable(byte numberToAdd) {
+	if (_globalFlags.evcapNumCaptured >= 12)
 		return false;
 
-	byte *tableEntries = data + tableOffset;
-	for (int i = 0; i < itemCount; i++)
-		if (tableEntries[i] == numberToAdd)
+	for (int i = 0; i < _globalFlags.evcapNumCaptured; i++)
+		if (_globalFlags.evcapBaseID[i] == numberToAdd)
 			return false;
 
-	tableEntries[itemCount] = numberToAdd;
-	*itemCountPtr = itemCount + 1;
+	_globalFlags.evcapBaseID[_globalFlags.evcapNumCaptured] = numberToAdd;
+	_globalFlags.evcapNumCaptured++;
 	return true;
 }
 
-byte SceneViewWindow::getNumberFromGlobalFlagTable(int tableOffset, int tableIndex) {
-	const byte *data = (const byte *)&_globalFlags;
-	return data[tableOffset + tableIndex];
+byte SceneViewWindow::getNumberFromGlobalFlagTable(int tableIndex) {
+	return _globalFlags.evcapBaseID[tableIndex];
 }
 
-bool SceneViewWindow::isNumberInGlobalFlagTable(int tableOffset, int curItemCountOffset, byte numberToCheck) {
-	const byte *data = (const byte *)&_globalFlags;
-	int itemCount = *(data + curItemCountOffset);
-
-	const byte *tableEntries = data + tableOffset;
-
-	for (int i = 0; i < itemCount; i++)
-		if (tableEntries[i] == numberToCheck)
+bool SceneViewWindow::isNumberInGlobalFlagTable(byte numberToCheck) {
+	for (int i = 0; i < _globalFlags.evcapNumCaptured; i++)
+		if (_globalFlags.evcapBaseID[i] == numberToCheck)
 			return true;
 
 	return false;
@@ -2082,9 +2070,6 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 
 	if (playedSuccessfully) {
 		_lastAICommentFileName = commentFileName;
-
-		// This is pure evil. Ugh.
-		// The [g|s]etGlobalFlagByte nonsense, anyway.
 
 		byte flagValue = 0;
 		if (commentData.commentFlags & AI_STATUS_FLAG_NON_BASE_DERIVED)

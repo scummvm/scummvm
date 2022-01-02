@@ -429,7 +429,7 @@ void EvidenceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint fla
 		// Loop through the evidence piece regions, determining if we have another page to go to
 		for (int i = 0; i < 6; i++) {
 			if (_evidence[i].contains(point) && (_pageIndex * 6 + i) < itemCount) {
-				_status = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), _pageIndex * 6 + i);
+				_status = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(_pageIndex * 6 + i);
 				invalidateWindow(false);
 				((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_EC_DESC_TEXT_A + _status - 1), false);
 
@@ -470,7 +470,7 @@ bool EvidenceBioChipViewWindow::rebuildMainPrebuffer() {
 
 	for (int i = 0; i < 6; i++) {
 		if ((_pageIndex * 6 + i) < itemCount) {
-			frameIndex = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), _pageIndex * 6 + i) - 1;
+			frameIndex = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(_pageIndex * 6 + i) - 1;
 			frame = _evidenceFrames.getFrame(frameIndex);
 
 			if (frame) {

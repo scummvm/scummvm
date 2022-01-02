@@ -724,7 +724,7 @@ int DisplayMessageWithEvidenceWhenEnteringNode::postEnterRoom(Window *viewWindow
 			_staticData.location.facing != priorLocation.facing ||
 			_staticData.location.orientation != priorLocation.orientation ||
 			_staticData.location.depth != priorLocation.depth) &&
-			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), _evidenceID)) {
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(_evidenceID)) {
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_messageBoxTextID));
 	}
 

@@ -88,7 +88,7 @@ int CapturePaintingTowerFootprint::locateAttempted(Window *viewWindow, const Com
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
 
 		// Attempt to add it to the biochip
-		if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_FOOTPRINT))
+		if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(DAVINCI_EVIDENCE_FOOTPRINT))
 			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 		else
 			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -955,7 +955,7 @@ int CodexTowerLensEvidenceCapture::locateAttempted(Window *viewWindow, const Com
 			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
 
 			// Add it to the list
-			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_LENS_FILTER))
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(DAVINCI_EVIDENCE_LENS_FILTER))
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
 				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -1192,7 +1192,7 @@ ZoomInOnCodexes::ZoomInOnCodexes(BuriedEngine *vm, Window *viewWindow, const Loc
 
 int ZoomInOnCodexes::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 	// If we have not yet captured the codex evidence, display a message
-	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_CODEX))
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 
 	((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYFoundCodexes = 1;
@@ -1236,7 +1236,7 @@ int ZoomInOnCodexes::mouseUp(Window *viewWindow, const Common::Point &pointLocat
 }
 
 int ZoomInOnCodexes::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _middleCodex.contains(pointLocation) && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX)) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _middleCodex.contains(pointLocation) && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_CODEX)) {
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED));
 		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
 		return SC_TRUE;
@@ -1432,7 +1432,7 @@ int BrowseCodex::timerCallback(Window *viewWindow) {
 				((SceneViewWindow *)viewWindow)->playSynchronousAnimation(24);
 
 				// Attempt to add it to your evidence biochip
-				if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_CODEX))
+				if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(DAVINCI_EVIDENCE_CODEX))
 					((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
 				else
 					((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
@@ -1453,7 +1453,7 @@ int BrowseCodex::timerCallback(Window *viewWindow) {
 }
 
 int BrowseCodex::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
-	if (_lensStartFrame >= 0 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX)) {
+	if (_lensStartFrame >= 0 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_CODEX)) {
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED));
 		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
 		return SC_TRUE;
@@ -1463,7 +1463,7 @@ int BrowseCodex::locateAttempted(Window *viewWindow, const Common::Point &pointL
 }
 
 int BrowseCodex::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
-	if (_lensStartFrame >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+	if (_lensStartFrame >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_CODEX))
 		return -2;
 
 	if (_top.contains(pointLocation) && (_curPage % 2) != 0)
@@ -1916,12 +1916,12 @@ PaintingTowerCapAgent::PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindo
 int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 	((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTBeenOnBalcony = 1;
 
-	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_AGENT3)) {
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_AGENT3)) {
 		// Play animation of capturing the evidence
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
 
 		// Attempt to add the evidence to the biochip
-		((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_AGENT3);
+		((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(DAVINCI_EVIDENCE_AGENT3);
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 
 		// Turn off evidence capture
@@ -2354,7 +2354,7 @@ LensFilterNotify::LensFilterNotify(BuriedEngine *vm, Window *viewWindow, const L
 }
 
 int LensFilterNotify::postEnterRoom(Window *viewWindow, const Location &newLocation) {
-	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_LENS_FILTER))
+	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_LENS_FILTER))
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 
 	return SC_TRUE;
@@ -2371,7 +2371,7 @@ CodexFormulaeNotify::CodexFormulaeNotify(BuriedEngine *vm, Window *viewWindow, c
 }
 
 int CodexFormulaeNotify::postEnterRoom(Window *viewWindow, const Location &newLocation) {
-	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(DAVINCI_EVIDENCE_CODEX))
 		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
 
 	return SC_TRUE;
