@@ -149,6 +149,7 @@ private:
 	// Avatar mover
 	bool cmdStartJump(int argc, const char **argv);
 	bool cmdStopJump(int argc, const char **argv);
+	bool cmdShortJump(int argc, const char **argv);
 	bool cmdStartTurnLeft(int argc, const char **argv);
 	bool cmdStartTurnRight(int argc, const char **argv);
 	bool cmdStartMoveForward(int argc, const char **argv);

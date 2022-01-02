@@ -160,7 +160,11 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	if (stasis)
 		return;
 
-	if (hasMovementFlags(MOVE_FORWARD)) {
+	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
+		clearMovementFlag(MOVE_SHORT_JUMP);
+		avatar->doAnim(Animation::jumpForward, direction);
+		return;
+	} else if (hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim;
 		if (hasMovementFlags(MOVE_STEP)) {
 			nextanim = avatar->isKneeling() ?
@@ -318,6 +322,12 @@ void CruAvatarMoverProcess::handleNormalMode() {
 	if (avatar->isInCombat()) {
 		if (mainactor)
 			mainactor->toggleInCombat();
+	}
+
+	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
+		clearMovementFlag(MOVE_SHORT_JUMP);
+		avatar->doAnim(Animation::jumpForward, direction);
+		return;
 	}
 
 	if (!hasMovementFlags(MOVE_ANY_DIRECTION) && lastanim == Animation::run) {

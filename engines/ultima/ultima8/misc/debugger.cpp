@@ -89,6 +89,7 @@ Debugger::Debugger() : Shared::Debugger() {
 
 	registerCmd("AvatarMoverProcess::startJump", WRAP_METHOD(Debugger, cmdStartJump));
 	registerCmd("AvatarMoverProcess::stopJump", WRAP_METHOD(Debugger, cmdStopJump));
+	registerCmd("AvatarMoverProcess::shortJump", WRAP_METHOD(Debugger, cmdShortJump));
 	registerCmd("AvatarMoverProcess::startTurnLeft", WRAP_METHOD(Debugger, cmdStartTurnLeft));
 	registerCmd("AvatarMoverProcess::startTurnRight", WRAP_METHOD(Debugger, cmdStartTurnRight));
 	registerCmd("AvatarMoverProcess::startMoveForward", WRAP_METHOD(Debugger, cmdStartMoveForward));
@@ -1262,6 +1263,17 @@ bool Debugger::cmdStopJump(int argc, const char **argv) {
 	}
 	return false;
 }
+
+bool Debugger::cmdShortJump(int argc, const char **argv) {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_SHORT_JUMP);
+	}
+	return false;
+}
+
 
 bool Debugger::cmdStartTurnLeft(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();

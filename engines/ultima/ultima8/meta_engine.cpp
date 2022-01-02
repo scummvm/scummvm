@@ -45,8 +45,8 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_LOAD, "LOAD", "Load Game", "GUIApp::loadGame", nullptr, "F7", nullptr },
 	{ ACTION_COMBAT, "COMBAT", "Combat", "MainActor::toggleCombat", nullptr, "c", "JOY_X" },
 	{ ACTION_MENU, "MENU", "Game Menu", "MenuGump::showMenu", nullptr, "ESCAPE", "JOY_Y" },
-	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Show Highlight Items", "GameMapGump::startHighlightItems", "GameMapGump::stopHighlightItems", "TAB", nullptr },
-	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "h", nullptr },
+	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Show Highlight Items", "GameMapGump::startHighlightItems", "GameMapGump::stopHighlightItems", "h", nullptr },
+	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "C+h", nullptr },
 	{ ACTION_TURN_LEFT, "TURN_LEFT", "Turn Left", "AvatarMoverProcess::startTurnLeft", "AvatarMoverProcess::stopTurnLeft", "LEFT", "KP4" },
 	{ ACTION_TURN_RIGHT, "TURN_RIGHT", "Turn Right", "AvatarMoverProcess::startTurnRight", "AvatarMoverProcess::stopTurnRight", "RIGHT", "KP6" },
 	{ ACTION_MOVE_FORWARD, "MOVE_FORWARD", "Move Forward", "AvatarMoverProcess::startMoveForward", "AvatarMoverProcess::stopMoveForward", "UP", "KP8" },
@@ -89,6 +89,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::startAttack", "AvatarMoverProcess::stopAttack", "SPACE", "KP0" },
 	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr },
 	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "LCTRL", nullptr },
+	{ ACTION_SHORT_JUMP, "SHORT_JUMP", "Short Jump", "AvatarMoverProcess::shortJump", nullptr, "TAB", nullptr },
 	// TODO: MOVE_STEP should also be mapped to KP_DIVIDE?? Actually original key was advance, slightly different
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER" },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
