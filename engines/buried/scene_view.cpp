@@ -2037,152 +2037,15 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 
 	Common::String commentFileName = "BITDATA/";
 
-	switch (commentData.location.timeZone) {
-	case 1: // Castle
-		commentFileName += "CASTLE/";
-
-		switch (commentData.location.environment) {
-		case 1:
-			commentFileName += "CGTT";
+	for (const AICommentInfo *info = s_aiCommentInfo; info->timeZone; ++info) {
+		if (info->timeZone == commentData.location.timeZone && info->environment == commentData.location.environment) {
+			commentFileName += info->filePath;
 			break;
-		case 2:
-			commentFileName += "CGTS";
-			break;
-		case 3:
-			commentFileName += "CGMW";
-			break;
-		case 4:
-			commentFileName += "CGMB";
-			break;
-		case 5:
-			commentFileName += "CGBS";
-			break;
-		case 6:
-			commentFileName += "CGKC";
-			break;
-		case 7:
-			commentFileName += "CGST";
-			break;
-		case 8:
-			commentFileName += "CGKS";
-			break;
-		case 9:
-			commentFileName += "CGSR";
-			break;
-		case 10:
-			commentFileName += "CGTR";
-			break;
-		default:
-			return false;
 		}
-		break;
-	case 2: // Mayan
-		commentFileName += "MAYAN/";
-
-		switch (commentData.location.environment) {
-		case 1:
-			commentFileName += "MYTP";
-			break;
-		case 2:
-			commentFileName += "MYMC";
-			break;
-		case 3:
-			commentFileName += "MYWG";
-			break;
-		case 4:
-			commentFileName += "MYWT";
-			break;
-		case 5:
-			commentFileName += "MYAG";
-			break;
-		case 6:
-			commentFileName += "MYDG";
-			break;
-		default:
-			return false;
-		}
-		break;
-	case 4: // Future Apartment
-		commentFileName += "FUTAPT/";
-
-		switch (commentData.location.environment) {
-		case 1:
-			commentFileName += "FAKI";
-			break;
-		case 2:
-			commentFileName += "FAER";
-			break;
-		case 3:
-			commentFileName += "FAMN";
-			break;
-		default:
-			return false;
-		}
-		break;
-	case 5: // Da Vinci
-		commentFileName += "DAVINCI/";
-
-		switch (commentData.location.environment) {
-		case 1:
-			commentFileName += "DSPT";
-			break;
-		case 2:
-			commentFileName += "DSCT";
-			break;
-		case 3:
-			commentFileName += "DSGD";
-			break;
-		case 4:
-			commentFileName += "DSWS";
-			break;
-		case 5:
-			commentFileName += "DSCY";
-			break;
-		default:
-			return false;
-		}
-		break;
-	case 6: // Space Station
-		commentFileName += "AILAB/";
-
-		switch (commentData.location.environment) {
-		case 1:
-			commentFileName += "AIHW";
-			break;
-		case 2:
-			commentFileName += "AICR";
-			break;
-		case 3:
-			commentFileName += "AIDB";
-			break;
-		case 4:
-			commentFileName += "AISC";
-			break;
-		case 5:
-			commentFileName += "AINX";
-			break;
-		case 6:
-			commentFileName += "AIIC";
-			break;
-		case 7:
-			commentFileName += "AISW";
-			break;
-		case 8:
-			commentFileName += "AIMR";
-			break;
-		case 9:
-			// There is no 9.
-			return false;
-		case 10:
-			commentFileName += "AIHW";
-			break;
-		default:
-			return false;
-		}
-		break;
-	default:
-		return false;
 	}
+
+	if (commentFileName == "BITDATA/")
+		return false;
 
 	commentFileName += "_";
 
