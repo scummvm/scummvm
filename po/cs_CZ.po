@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-31 17:12+0000\n"
+"POT-Creation-Date: 2022-01-02 10:26+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4429,7 +4429,7 @@ msgstr "Hlavní ovládací prvky:"
 msgid "Are you sure you want to quit?"
 msgstr "Jste si jisti, že chcete odejít?  (A/N)A"
 
-#: engines/buried/buried.cpp:593
+#: engines/buried/buried.cpp:590
 #, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Hra je pozastavena. Pro pokračovaní stiskněte libovolnou klávesu."

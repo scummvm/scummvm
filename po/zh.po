@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-31 17:12+0000\n"
+"POT-Creation-Date: 2022-01-02 10:26+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4228,7 +4228,7 @@ msgstr ""
 msgid "Are you sure you want to quit?"
 msgstr ""
 
-#: engines/buried/buried.cpp:593
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr ""
 

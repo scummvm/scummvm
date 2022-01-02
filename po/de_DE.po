@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-31 17:12+0000\n"
+"POT-Creation-Date: 2022-01-02 10:26+0000\n"
 "PO-Revision-Date: 2021-12-30 19:27+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4400,7 +4400,7 @@ msgstr "Fehlender Spiel-Code"
 msgid "Are you sure you want to quit?"
 msgstr "Bist du sicher, dass du das Spiel verlassen möchtest?"
 
-#: engines/buried/buried.cpp:593
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Dein Spiel ist pausiert.  Klicke OK, um weiterzuspielen."
 

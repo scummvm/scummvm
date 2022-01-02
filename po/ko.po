@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-12-31 17:12+0000\n"
+"POT-Creation-Date: 2022-01-02 10:26+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4374,7 +4374,7 @@ msgstr "게임 코드 없음"
 msgid "Are you sure you want to quit?"
 msgstr "정말로 종료하겠습니까?"
 
-#: engines/buried/buried.cpp:593
+#: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "게임이 일시 중지되었습니다. OK를 눌러 다시 시작합니다."
 
