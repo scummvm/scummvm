@@ -117,12 +117,12 @@ enum Sequence {
 	kneelAndFire = 26,
 	slideLeft = 28,
 	slideRight = 29,
-	unknownAnim30 = 30,
-	startRunLargeWeapon = 31,
+	lookLeftCru = 30,
+	lookRightCru = 31,
 	teleportIn = 32,
 	teleportOut = 33,
 	startRunSmallWeapon = 34,
-	startRunLargeWeapon2 = 35,
+	startRunLargeWeapon = 35,
 	advanceSmallWeapon = 36,
 	combatStandLargeWeapon = 37,
 	startRun = 38,
@@ -152,10 +152,16 @@ enum Sequence {
 	combatRollRight = 62,
 	finishFiring = 63,
 
-	crusaderAbsoluteAnimFlag = 0x1000, //!< Bit mask magic to say we want an exact number, don't do mapping from U8 animation numbers
-	teleportInReplacement = crusaderAbsoluteAnimFlag | teleportIn,	//!< See notes in Actor::receiveHitCru
-	teleportOutReplacement = crusaderAbsoluteAnimFlag | teleportOut	//!< See notes in Actor::receiveHitCru
+	/// A flag to say we want an exact number, don't do mapping from U8 animation
+	/// numbers.  This is a bit of a hack because for most code we want to do
+	/// translations from U8 nums, but sometimes we have exact animation numbers
+	/// provided by usecode or from some translated code.
+	crusaderAbsoluteAnimFlag = 0x1000,
 };
+
+static inline Animation::Sequence absAnim(Animation::Sequence seq) {
+	return static_cast<Animation::Sequence>(seq | crusaderAbsoluteAnimFlag);
+}
 
 enum Result {
 	FAILURE = 0,

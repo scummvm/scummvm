@@ -137,8 +137,9 @@ static bool _isAnimRunningJumping(Animation::Sequence anim) {
 }
 
 static bool _isAnimStartRunning(Animation::Sequence anim) {
-	return (anim == Animation::startRun || anim == Animation::startRunSmallWeapon ||
-			anim == Animation::startRunLargeWeapon);
+	return (anim == Animation::startRun || anim == Animation::startRunSmallWeapon /*||
+			// don't test this as it overlaps with kneel :(
+			anim == Animation::startRunLargeWeapon*/);
 }
 
 void CruAvatarMoverProcess::handleCombatMode() {

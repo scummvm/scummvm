@@ -62,7 +62,7 @@ void GuardProcess::run() {
 			Kernel::get_instance()->addProcess(dp);
 			waitFor(dp);
 		} else {
-			Animation::Sequence anim = (getRandom() % 2 ? Animation::unknownAnim30 : Animation::startRunLargeWeapon);
+			Animation::Sequence anim = Animation::absAnim(getRandom() % 2 ? Animation::lookLeftCru : Animation::lookRightCru);
 			uint16 animproc = a->doAnim(anim, dir_current);
 			a->doAnimAfter(Animation::stand, dir_current, animproc);
 		}

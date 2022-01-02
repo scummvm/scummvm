@@ -352,8 +352,8 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 		 lastanim != Animation::kneelCombatRollRight &&
 		 lastanim != Animation::run &&
 		 lastanim != Animation::jumpForward &&
-		 lastanim != Animation::unknownAnim30 &&
-		 lastanim != Animation::brightKneelAndFireLargeWeapon)) {
+		 lastanim != Animation::combatRunSmallWeapon &&
+		 lastanim != Animation::combatRunLargeWeapon)) {
 		// play land animation, overriding other animations
 		kernel->killProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, false); // CONSTANT!
 		ProcId lpid = actor->doAnim(Animation::jumpLanding, dir_current);

@@ -943,13 +943,15 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		if (isBusy()) {
 			ActorAnimProcess *proc = dynamic_cast<ActorAnimProcess *>(Kernel::get_instance()->findProcess(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE));
 			Animation::Sequence action = proc->getAction();
-			if (action == Animation::teleportIn || action == Animation::teleportOut || action == Animation::teleportInReplacement || action == Animation::teleportOutReplacement)
+			if (action == Animation::teleportIn || action == Animation::teleportOut ||
+				action == Animation::absAnim(Animation::teleportIn) ||
+				action == Animation::absAnim(Animation::teleportOut))
 				return;
 			currentanim = proc->getPid();
 		}
 
-		ProcId teleout = doAnimAfter(Animation::teleportOutReplacement, dir_current, currentanim);
-		doAnimAfter(Animation::teleportInReplacement, dir_current, teleout);
+		ProcId teleout = doAnimAfter(Animation::absAnim(Animation::teleportOut), dir_current, currentanim);
+		doAnimAfter(Animation::absAnim(Animation::teleportIn), dir_current, teleout);
 		int newval = MAX(0, static_cast<int>(world->getVargasShield()) - damage);
 		world->setVargasShield(static_cast<uint32>(newval));
 		return;
@@ -1070,7 +1072,7 @@ void Actor::tookHitCru() {
 	if (!audio)
 		return;
 
-	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) {
+	if (lastanim == Animation::lookLeftCru || lastanim == Animation::lookRightCru) {
 		if (canSeeControlledActor(true)) {
 			if (getRandom() % 4)
 				setActivity(5);
@@ -1879,27 +1881,26 @@ bool Actor::canSeeControlledActor(bool forcombat) {
 	Direction dirtocontrolled = getDirToItemCentre(*controlled);
 	Direction curdir = getDir();
 
-	/* TODO: There are extra checks in here in the original
 	if (forcombat) {
-		 Animation::Sequence lastanim = getLastAnim();
-		((lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) && currentAnimFrame > 1)) {
-		 bool left;
-		 if (lastanim == Animation::unknownAnim30) {
-			left = false;
-			if (((currentdir != 8) && (currentdir != 10)) && (currentdir != 0xc))
-				left = true;
-		 } else {
-			left = true;
-			if (((currentdir != 8) && (currentdir != 10)) && (currentdir != 0xc)) {
+		Animation::Sequence lastanim = getLastAnim();
+		if ((lastanim == Animation::lookLeftCru || lastanim == Animation::lookRightCru) && _animFrame > 1) {
+			bool left;
+			if (lastanim == Animation::lookLeftCru) {
 				left = false;
-		 }
-		 if (leftflag) {
-			currentdir = Direction_TurnByDelta(curdir, -4, dirmode_16dirs);
-		 } else {
-			currentdir = Direction_TurnByDelta(curdir, 4, dirmode_16dirs);
-		 }
+				if (((curdir != 8) && (curdir != 10)) && (curdir != 0xc))
+					left = true;
+			} else {
+				left = true;
+				if (((curdir != 8) && (curdir != 10)) && (curdir != 0xc))
+					left = false;
+			}
+			if (left) {
+				curdir = Direction_TurnByDelta(curdir, -4, dirmode_16dirs);
+			} else {
+				curdir = Direction_TurnByDelta(curdir, 4, dirmode_16dirs);
+			}
+		}
 	}
-	*/
 
 	if (dirtocontrolled == curdir ||
 		dirtocontrolled == Direction_OneLeft(curdir, dirmode_16dirs) ||
