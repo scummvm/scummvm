@@ -1416,24 +1416,6 @@ bool SceneViewWindow::closeCycleFrameMovie() {
 	return true;
 }
 
-byte SceneViewWindow::getGlobalFlagByte(int offset) {
-	// TODO: Verify the offset
-
-	if (offset < 0)
-		return 0;
-
-	const byte *data = (const byte *)&_globalFlags;
-	return data[offset];
-}
-
-bool SceneViewWindow::setGlobalFlagByte(int offset, byte value) {
-	// TODO: Verify the offset
-
-	byte *data = (byte *)&_globalFlags;
-	data[offset] = value;
-	return true;
-}
-
 bool SceneViewWindow::addNumberToGlobalFlagTable(int tableOffset, int curItemCountOffset, int maxItems, byte numberToAdd) {
 	// TODO: Rewrite this
 	byte *data = (byte *)&_globalFlags;
@@ -1993,6 +1975,40 @@ bool SceneViewWindow::retrieveAICommentEntry(const Location &commentLocation, in
 	return entryFound;
 }
 
+byte* SceneViewWindow::aiFlag(uint16 offset) {
+	switch (offset) {
+	case 93:
+		return &_globalFlags.faMNTazClicked;
+	case 94:
+		return &_globalFlags.faMNPongClicked;
+	case 95:
+		return &_globalFlags.faKIBirdsBobbed;
+	case 96:
+		return &_globalFlags.faKICoffeeSpilled;
+	default:
+		return nullptr;
+	}
+}
+
+byte SceneViewWindow::getAIFlag(uint16 offset) {
+	byte *flag = aiFlag(offset);
+	if (flag) {
+		return *flag;
+	} else {
+		warning("Unable to get AI flag with offset %d", offset);
+		return 0;
+	}
+}
+
+void SceneViewWindow::setAIFlag(uint16 offset, byte value) {
+	byte *flag = aiFlag(offset);
+	if (flag) {
+		*flag = value;
+	} else {
+		warning("Unable to set AI flag with offset %d", offset);
+	}
+}
+
 bool SceneViewWindow::checkAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
 	// Ignore comments designed for solely adventure mode in walkthrough mode
 	if (_globalFlags.generalWalkthroughMode == 1 && commentData.commentFlags & AI_COMMENT_DISABLE_IN_WALKTHROUGH)
@@ -2000,7 +2016,7 @@ bool SceneViewWindow::checkAICommentDependencies(const Location &commentLocation
 
 	byte flagValueA = 0;
 	if (commentData.commentFlags & AI_DEPENDENCY_FLAG_NON_BASE_DERIVED_A)
-		flagValueA = getGlobalFlagByte(commentData.dependencyFlagOffsetA);
+		flagValueA = getAIFlag(commentData.dependencyFlagOffsetA);
 	else
 		flagValueA = _globalFlags.aiData[commentData.dependencyFlagOffsetA];
 
@@ -2018,7 +2034,7 @@ bool SceneViewWindow::checkAICommentDependencies(const Location &commentLocation
 
 	byte flagValueB = 0;
 	if (commentData.commentFlags & AI_DEPENDENCY_FLAG_NON_BASE_DERIVED_B)
-		flagValueB = getGlobalFlagByte(commentData.dependencyFlagOffsetB);
+		flagValueB = getAIFlag(commentData.dependencyFlagOffsetB);
 	else
 		flagValueB = _globalFlags.aiData[commentData.dependencyFlagOffsetB];
 
@@ -2072,14 +2088,14 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 
 		byte flagValue = 0;
 		if (commentData.commentFlags & AI_STATUS_FLAG_NON_BASE_DERIVED)
-			flagValue = getGlobalFlagByte(commentData.statusFlagOffset);
+			flagValue = getAIFlag(commentData.statusFlagOffset);
 		else
 			flagValue = _globalFlags.aiData[commentData.statusFlagOffset];
 
 		flagValue++;
 
 		if (commentData.commentFlags & AI_STATUS_FLAG_NON_BASE_DERIVED)
-			setGlobalFlagByte(commentData.statusFlagOffset, flagValue);
+			setAIFlag(commentData.statusFlagOffset, flagValue);
 		else
 			_globalFlags.aiData[commentData.statusFlagOffset] = flagValue;
 

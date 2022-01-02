@@ -98,8 +98,6 @@ public:
 	bool isCyclingEnabled() const { return _cycleEnabled || _forceCycleEnabled; }
 	bool closeCycleFrameMovie();
 
-	byte getGlobalFlagByte(int offset);
-	bool setGlobalFlagByte(int offset, byte value);
 	bool addNumberToGlobalFlagTable(int offset, int curItemCountOffset, int maxItems, byte numberToAdd);
 	byte getNumberFromGlobalFlagTable(int offset, int tableIndex);
 	bool isNumberInGlobalFlagTable(int offset, int curItemCountOffset, byte numberToCheck);
@@ -247,6 +245,10 @@ private:
 	bool initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startAlienAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructAlienSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
+	byte *aiFlag(uint16 offset);
+	byte getAIFlag(uint16 offset);
+	void setAIFlag(uint16 offset, byte value);
 };
 
 struct AICommentInfo {
