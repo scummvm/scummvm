@@ -118,7 +118,6 @@ struct GLMaterial {
 	int do_specular;
 };
 
-
 struct GLViewport {
 	int xmin, ymin, xsize, ysize;
 	Vector3 scale;
@@ -434,6 +433,8 @@ struct GLContext {
 	int _currentAllocatorIndex;
 	LinearAllocator _drawCallAllocator[2];
 	bool _debugRectsEnabled;
+
+	void gl_vertex_transform(GLVertex *v);
 
 public:
 	// The glob* functions exposed to public, however they are only for internal use.

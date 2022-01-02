@@ -154,33 +154,31 @@ void GLContext::glopBegin(GLParam *p) {
 
 // coords, tranformation, clip code and projection
 // TODO : handle all cases
-static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
+void GLContext::gl_vertex_transform(GLVertex *v) {
 	Matrix4 *m;
 
-	if (c->lighting_enabled) {
+	if (lighting_enabled) {
 		// eye coordinates needed for lighting
-
-		m = c->matrix_stack_ptr[0];
+		m = matrix_stack_ptr[0];
 		m->transform3x4(v->coord, v->ec);
 
 		// projection coordinates
-		m = c->matrix_stack_ptr[1];
+		m = matrix_stack_ptr[1];
 		m->transform(v->ec, v->pc);
 
-		m = &c->matrix_model_view_inv;
+		m = &matrix_model_view_inv;
+		m->transform3x3(current_normal, v->normal);
 
-		m->transform3x3(c->current_normal, v->normal);
-
-		if (c->normalize_enabled) {
+		if (normalize_enabled) {
 			v->normal.normalize();
 		}
 	} else {
 		// no eye coordinates needed, no normal
 		// NOTE: W = 1 is assumed
-		m = &c->matrix_model_projection;
-
+		m = &matrix_model_projection;
 		m->transform3x4(v->coord, v->pc);
-		if (c->matrix_model_projection_no_w_transform) {
+
+		if (matrix_model_projection_no_w_transform) {
 			v->pc.W = (m->_m[3][3]);
 		}
 		v->normal.X = v->normal.Y = v->normal.Z = 0;
@@ -222,7 +220,7 @@ void GLContext::glopVertex(GLParam *p) {
 	v->coord.Z = p[3].f;
 	v->coord.W = p[4].f;
 
-	gl_vertex_transform(this, v);
+	gl_vertex_transform(v);
 
 	// color
 
