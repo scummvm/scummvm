@@ -137,7 +137,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::jump:
 			return Animation::quickJumpCru;
 		case Animation::startRunLargeWeapon:
-			return (smallwpn ? Animation::startRunSmallWeapon : Animation::startRunLargeWeapon2);
+			return (smallwpn ? Animation::startRunSmallWeapon : Animation::startRunLargeWeapon);
 		case Animation::stopRunningAndDrawSmallWeapon:
 			return (smallwpn ? Animation::stopRunningAndDrawSmallWeapon : Animation::stopRunningAndDrawLargeWeapon);
 		default:
