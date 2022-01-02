@@ -793,7 +793,7 @@ uint16 Actor::setActivityCru(int activity) {
 		0x255, // PaceProcess
 		0x257, // LoiterProcess
 		// 0x258, // Stand Process (we don't have a process for this)
-		AttackProcess::ATTACK_PROCESS_TYPE,
+		AttackProcess::ATTACK_PROC_TYPE,
 		0x25e, // GuardProcess
 		0x25f  // SurrenderProcess
 	};
@@ -1047,7 +1047,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 				if (!(getRandom() % 3)) {
 					// Randomly stun the NPC for these damage types.
 					// CHECK ME: is this time accurate?
-					Process *attack = kernel->findProcess(_objId, AttackProcess::ATTACK_PROCESS_TYPE);
+					Process *attack = kernel->findProcess(_objId, AttackProcess::ATTACK_PROC_TYPE);
 					uint stun = ((getRandom() % 10) + 8) * 60;
 					if (attack && stun) {
 						Process *delay = new DelayProcess(stun);
@@ -1775,7 +1775,7 @@ CombatProcess *Actor::getCombatProcess() const {
 }
 
 AttackProcess *Actor::getAttackProcess() const {
-	Process *p = Kernel::get_instance()->findProcess(_objId, AttackProcess::ATTACK_PROCESS_TYPE);
+	Process *p = Kernel::get_instance()->findProcess(_objId, AttackProcess::ATTACK_PROC_TYPE);
 	if (!p)
 		return nullptr;
 	AttackProcess *ap = dynamic_cast<AttackProcess *>(p);

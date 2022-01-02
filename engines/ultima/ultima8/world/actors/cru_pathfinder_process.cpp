@@ -250,7 +250,7 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 	bool is_controlled = World::get_instance()->getControlledNPCNum() == _itemNum;
 	if (npc->isInCombat() && !is_controlled) {
 		AttackProcess *attackproc = dynamic_cast<AttackProcess *>
-				(Kernel::get_instance()->findProcess(_itemNum, AttackProcess::ATTACK_PROCESS_TYPE));
+				(Kernel::get_instance()->findProcess(_itemNum, AttackProcess::ATTACK_PROC_TYPE));
 		if (attackproc) {
 			const Actor *target = getActor(attackproc->getTarget());
 			if (target && npc->isOnScreen() && npc->fireDistance(target, dirtotarget, 0, 0, 0)) {
