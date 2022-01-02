@@ -549,6 +549,11 @@ void ResourcePatcher::scanSource(ResourceManager *resMan) {
 void ResourcePatcher::patchResource(Resource &resource, const GameResourcePatch &patch) const {
 	const byte *oldData;
 	const byte *source = resource.data();
+	if (!source) {
+		ResourceId resourceId(patch.resourceType, patch.resourceNumber);
+		warning("Unable to apply patch %s: source data is null", resourceId.toString().c_str());
+		return;
+	}
 	byte *target;
 
 	// New resources that came from ResourcePatcher need to get allocated or
