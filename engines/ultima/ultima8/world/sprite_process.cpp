@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -105,7 +106,7 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	ARG_SINT16(lastFrame);
 
 	if (argsize == 18) {
-		ARG_SINT16(unknown);
+		ARG_NULL16(); // unknown
 		ARG_SINT16(repeats_count);
 		repeats = repeats_count;
 	}
@@ -115,10 +116,7 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(y);
 	ARG_UINT8(z);
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	Process *p = new SpriteProcess(shape, frame, lastFrame, repeats, delay, x, y, z);
 	return Kernel::get_instance()->addProcess(p);

@@ -23,6 +23,7 @@
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -219,10 +220,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 		int32 y = static_cast<int32>(rs->readUint16LE());
 		int32 z = static_cast<int32>(rs->readByte());
 
-		if (GAME_IS_CRUSADER) {
-			x *= 2;
-			y *= 2;
-		}
+		World_FromUsecodeXY(x, y);
 
 		uint32 shape = rs->readUint16LE();
 		uint32 frame = rs->readByte();

@@ -48,6 +48,7 @@
 #include "ultima/ultima8/world/bobo_boomer_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/item_selection_process.h"
@@ -2121,10 +2122,7 @@ uint32 Actor::I_teleport(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(newmap);
 	if (!actor) return 0;
 
-	if (GAME_IS_CRUSADER) {
-		newx *= 2;
-		newy *= 2;
-	}
+	World_FromUsecodeXY(newx, newy);
 
 	actor->teleport(newmap, newx, newy, newz);
 	return 0;
@@ -2134,8 +2132,8 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	ARG_UINT16(anim);
 	ARG_UINT16(dir); // seems to be 0-8
-	ARG_UINT16(unk1); // this is almost always 10000 in U8.Maybe speed-related?
-	ARG_UINT16(unk2); // appears to be 0 or 1. Some flag?
+	ARG_NULL16(); // uint16? almost always 10000 in U8. Seems to be "priority" or something?
+	ARG_NULL16(); // uint16? appears to be 0 or 1. Some flag?
 
 	if (!actor) return 0;
 
@@ -2548,10 +2546,7 @@ uint32 Actor::I_pathfindToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL16(); // unknown. Only one instance of this in U8, values are 5,1.
 	if (!actor) return 0;
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	return Kernel::get_instance()->addProcess(
 	           new PathfinderProcess(actor, x, y, z));

@@ -819,7 +819,7 @@ uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int argsize) {
 	}
 
 	ARG_UINT16(teleport_id);
-	ARG_UINT16(put_in_stasis); // 0/1
+	ARG_NULL16(); // TODO: put_in_stasis, 0/1
 
 	return Kernel::get_instance()->addProcess(
 	           new TeleportToEggProcess(mapnum, teleport_id));

@@ -34,6 +34,7 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
@@ -2637,8 +2638,8 @@ bool Item::loadData(Common::ReadStream *rs, uint32 version) {
 }
 
 
-uint32 Item::I_touch(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item);
+uint32 Item::I_touch(const uint8 */*args*/, unsigned int /*argsize*/) {
+	//ARG_NULL32(); // ARG_ITEM_FROM_PTR(item);
 
 	// Guess: this is used to make sure an item is painted in the original.
 	// Our renderer is different, making this intrinsic unnecessary.
@@ -2652,10 +2653,7 @@ uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
-	if (GAME_IS_CRUSADER)
-		return x / 2;
-	else
-		return x;
+	return World_ToUsecodeCoord(x);
 }
 
 uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
@@ -2664,10 +2662,7 @@ uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
-	if (GAME_IS_CRUSADER)
-		return y / 2;
-	else
-		return y;
+	return World_ToUsecodeCoord(y);
 }
 
 uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
@@ -2686,16 +2681,10 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = 16;
-	if (GAME_IS_CRUSADER) {
-		x /= 2;
-		mul /= 2;
-	}
-
 	if (item->_flags & FLG_FLIPPED)
-		return x - item->getShapeInfo()->_y * mul;
+		return World_ToUsecodeCoord(x - item->getShapeInfo()->_y * 16);
 	else
-		return x - item->getShapeInfo()->_x * mul;
+		return World_ToUsecodeCoord(x - item->getShapeInfo()->_x * 16);
 }
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
@@ -2705,16 +2694,10 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = 16;
-	if (GAME_IS_CRUSADER) {
-		y /= 2;
-		mul /= 2;
-	}
-
 	if (item->_flags & FLG_FLIPPED)
-		return y - item->getShapeInfo()->_x * mul;
+		return World_ToUsecodeCoord(y - item->getShapeInfo()->_x * 16);
 	else
-		return y - item->getShapeInfo()->_y * mul;
+		return World_ToUsecodeCoord(y - item->getShapeInfo()->_y * 16);
 }
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
@@ -2735,10 +2718,7 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	if (GAME_IS_CRUSADER) {
-		x /= 2;
-		y /= 2;
-	}
+	World_ToUsecodeXY(x, y);
 
 	WorldPoint point;
 	point.setX(x);
@@ -3154,10 +3134,7 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 	int32 y = point.getY();
 	int32 z = point.getZ();
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
@@ -3190,10 +3167,7 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 	ARG_UINT16(y);
 	ARG_UINT8(z);
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
@@ -3224,7 +3198,7 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(shape);
 	ARG_UINT16(frame);
 	ARG_CONTAINER_FROM_ID(container);
-	ARG_UINT16(unknown); // ?
+	ARG_NULL16(); // unknown
 
 	uint8 buf[2];
 	buf[0] = 0;
@@ -3465,9 +3439,8 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 		return 0; // top item was invalid
 	}
 
+	World_FromUsecodeXY(x, y);
 	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
 		// HACK!!  DEATHFL::ordinal20 has a hack to add 1 to z for the death
 		// animation (falling into acid), but then our animation tracker
 		// detects a fall and stops animating.  Fight hacks with hacks..
@@ -3583,10 +3556,7 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	//! What should this do to ethereal items?
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	#if 0
 		perr << "Moving item: " << item->getShape() << "," << item->getFrame() << " to (" << x << "," << y << "," << z << ")" << Std::endl;
@@ -3600,16 +3570,13 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
 	ARG_UINT16(move_if_blocked); // 0/1
-	ARG_UINT16(unknown2); // always 0
+	ARG_NULL16(); // always 0
 
 	int32 x = point.getX();
 	int32 y = point.getY();
 	int32 z = point.getZ();
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	if (!item)
 		return 0;
@@ -3646,7 +3613,7 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_CONTAINER_FROM_PTR(container);
-	ARG_UINT16(unknown); // always 0
+	ARG_NULL16(); // always 0
 	if (!item || !container) return 0; // shouldn't happen?
 
 	// try to move item to container checking weight and volume
@@ -3700,10 +3667,7 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(y);
 	if (!item) return 0;
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -3717,10 +3681,7 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(y);
 	if (!item) return 0;
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -4054,7 +4015,9 @@ uint32 Item::I_fireWeapon(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!item) return 0;
 
-	return item->fireWeapon(x * 2, y * 2, z, Direction_FromUsecodeDir(dir), firetype, findtarget != 0);
+	World_FromUsecodeXY(x, y);
+
+	return item->fireWeapon(x, y, z, Direction_FromUsecodeDir(dir), firetype, findtarget != 0);
 }
 
 uint32 Item::I_fireDistance(const uint8 *args, unsigned int /*argsize*/) {
@@ -4069,7 +4032,8 @@ uint32 Item::I_fireDistance(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!item || !otheritem) return 0;
 
-	return item->fireDistance(otheritem, Direction_FromUsecodeDir(dir), xoff * 2, yoff * 2, zoff);
+	World_FromUsecodeXY(xoff, yoff);
+	return item->fireDistance(otheritem, Direction_FromUsecodeDir(dir), xoff, yoff, zoff);
 }
 
 } // End of namespace Ultima8

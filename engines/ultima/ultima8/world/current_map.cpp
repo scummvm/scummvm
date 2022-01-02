@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/world_point.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/teleport_egg.h"
@@ -1354,15 +1355,12 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 	ARG_UINT8(z);
 	if (argsize > 8) {
 		//!! TODO: figure these out
-		ARG_UINT16(unk1); // is either 1 or 4
-		ARG_UINT16(unk2); // looks like it could be an objid
-		ARG_UINT16(unk3); // always zero
+		ARG_NULL16(); // is either 1 or 4. moves?
+		ARG_NULL16(); // some objid?
+		ARG_NULL16(); // always zero
 	}
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	//
 	// TODO: The crusader version of this function actually checks by
@@ -1380,8 +1378,8 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 }
 
 uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_UINT16(unk1);
-	ARG_UINT16(unk2);
+	ARG_NULL16(); // unknown
+	ARG_NULL16(); // unknown
 	ARG_UINT16(shape);
 	ARG_WORLDPOINT(pt);
 
@@ -1392,10 +1390,7 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	int32 y = pt.getY();
 	int32 z = pt.getZ();
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);

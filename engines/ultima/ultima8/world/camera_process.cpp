@@ -22,6 +22,7 @@
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
@@ -337,13 +338,10 @@ uint32 CameraProcess::I_moveTo(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(y);
 	ARG_UINT8(z);
 	if (argsize > 6) {
-		ARG_SINT16(unk);
+		ARG_NULL16(); // sint16? what is this?
 	}
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
+	World_FromUsecodeXY(x, y);
 	CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	return 0;
 }
@@ -360,13 +358,9 @@ uint32 CameraProcess::I_scrollTo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT8(z);
-	ARG_SINT16(unk);
+	ARG_NULL16(); // some uint16?
 
-	if (GAME_IS_CRUSADER) {
-		x *= 2;
-		y *= 2;
-	}
-
+	World_FromUsecodeXY(x, y);
 	return CameraProcess::SetCameraProcess(new CameraProcess(x, y, z, 25));
 }
 
@@ -387,14 +381,14 @@ uint32 CameraProcess::I_getCameraX(const uint8 *args, unsigned int argsize) {
 	int32 x, y, z;
 	assert(GAME_IS_CRUSADER);
 	GetCameraLocation(x, y, z);
-	return x / 2;
+	return World_ToUsecodeCoord(x);
 }
 
 uint32 CameraProcess::I_getCameraY(const uint8 *args, unsigned int argsize) {
 	int32 x, y, z;
 	assert(GAME_IS_CRUSADER);
 	GetCameraLocation(x, y, z);
-	return y / 2;
+	return World_ToUsecodeCoord(y);
 }
 
 uint32 CameraProcess::I_getCameraZ(const uint8 *args, unsigned int argsize) {
