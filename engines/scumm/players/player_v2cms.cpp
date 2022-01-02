@@ -98,6 +98,7 @@ void Player_V2CMS::stopAllSounds() {
 	}
 	_next_nr = _current_nr = 0;
 	_next_data = _current_data = nullptr;
+	_loadedMidiSong = 0;
 	_midiData = nullptr;
 	_midiSongBegin = nullptr;
 	_midiDelay = 0;
@@ -121,6 +122,7 @@ void Player_V2CMS::stopSound(int nr) {
 		chainNextSound();
 	}
 	if (_loadedMidiSong == nr) {
+		_loadedMidiSong = 0;
 		_midiData = nullptr;
 		_midiSongBegin = nullptr;
 		_midiDelay = 0;
