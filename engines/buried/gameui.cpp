@@ -85,7 +85,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 
 	VideoWindow *video = new VideoWindow(_vm, this);
 
-	if (!video->openVideo(_vm->getFilePath(19972))) // FIXME: Why is this not a constant?
+	if (!video->openVideo(_vm->getFilePath(IDS_INTRO_FILENAME)))
 		error("Failed to load intro video");
 
 	video->setWindowPos(nullptr, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
