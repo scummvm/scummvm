@@ -22,46 +22,27 @@
  *
  */
 
-#ifndef BURIED_COMPLETE_H
-#define BURIED_COMPLETE_H
+#ifndef BURIED_AGENT_EVALUATION_H
+#define BURIED_AGENT_EVALUATION_H
 
 #include "buried/global_flags.h"
-#include "buried/window.h"
-
-namespace Graphics {
-class Font;
-struct Surface;
-}
+#include "common/str.h"
 
 namespace Buried {
 
-class VideoWindow;
-class AgentEvaluation;
+class BuriedEngine;
 
-class CompletionWindow : public Window {
+class AgentEvaluation {
 public:
-	CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags globalFlags);
-	~CompletionWindow();
+	AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int deathSceneIndex);
 
-	void onPaint();
-	bool onEraseBackground();
-	void onTimer(uint timer);
-	void onLButtonUp(const Common::Point &point, uint flags);
+	Common::String _scoringTextDescriptions;
+	Common::String _scoringTextScores;
+	Common::String _scoringTextFinalScore;
+	Common::String _scoringTextDescriptionsWithScores;
 
 private:
-	int _status;
-	uint _timer;
-	Graphics::Surface *_background;
-	int _currentSoundEffectID;
-
 	GlobalFlags _globalFlags;
-	Graphics::Font *_textFontA;
-	Graphics::Font *_textFontB;
-	int _fontHeightA, _fontHeightB;
-	bool _walkthroughMode;
-	AgentEvaluation *_agentEvaluation;
-
-	VideoWindow *_gageVideo;
 };
 
 } // End of namespace Buried

@@ -36,19 +36,7 @@ struct Surface;
 namespace Buried {
 
 class AVIFrames;
-
-class AgentEvaluation {
-public:
-	AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int deathSceneIndex);
-
-	Common::String _scoringTextDescriptions;
-	Common::String _scoringTextScores;
-	Common::String _scoringTextFinalScore;
-	Common::String _scoringTextDescriptionsWithScores;
-
-private:
-	GlobalFlags _globalFlags;
-};
+class AgentEvaluation;
 
 class DeathWindow : public Window {
 public:
