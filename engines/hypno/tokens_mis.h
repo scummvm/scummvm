@@ -109,7 +109,7 @@ extern int HYPNO_MIS_debug;
 
 union HYPNO_MIS_STYPE
 {
-#line 57 "engines/hypno/grammar_mis.y" /* yacc.c:1909  */
+#line 56 "engines/hypno/grammar_mis.y" /* yacc.c:1909  */
 
 	char *s; /* string value */
 	int i;	 /* integer value */

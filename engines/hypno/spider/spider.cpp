@@ -243,33 +243,119 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// Transitions
 	Transition *trans_apt_1 = new Transition("busint.mi_");
-	trans_apt_1->frameImage = "spider/cine/blcs00.smk";
-	trans_apt_1->frameNumber = 0;
 	trans_apt_1->intros.push_back("spider/cine/ross004s.smk");
 	trans_apt_1->intros.push_back("spider/cine/apts002s.smk");
+	trans_apt_1->intros.push_back("spider/cine/blcs00.smk");
 	_levels["<trans_apt_1>"] = trans_apt_1;
 
 	Transition *trans_apt_2 = new Transition("busint.mi_");
-	trans_apt_2->frameImage = "spider/cine/blcs00.smk";
-	trans_apt_2->frameNumber = 0;
 	trans_apt_2->intros.push_back("spider/cine/dia002s.smk");
 	trans_apt_2->intros.push_back("spider/cine/apts004s.smk");
+	trans_apt_1->intros.push_back("spider/cine/blcs00.smk");
 	_levels["<trans_apt_2>"] = trans_apt_2;
 
-	loadSceneLevel("busint.mi_", "busintro.mi_", prefix);
-	loadSceneLevel("busintro.mi_", "<bus_selector>", prefix);
+	loadSceneLevel("busint.mi_", "<bus_selector>", prefix);
+	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
+	_levels["busintro.mi_"]->intros.push_back("cine/blcs00a.smk");
 	_levels["busintro.mi_"]->intros.push_back("cine/blcs001s.smk");
 
-	Transition *bus_selector = new Transition("buspuz.mi_", "bushard1.mi_");
+	Transition *bus_selector = new Transition("busintro.mi_", "<bus_hard_intro>");
 	_levels["<bus_selector>"] = bus_selector;
 
-	loadSceneLevel("bushard1.mi_", "bushard1.mi_", prefix);
-	loadSceneLevel("bushard2.mi_", "<after_bus_selector>", prefix);
+	Transition *bus_hard_intro = new Transition("bushard2.mi_");
+	bus_hard_intro->intros.push_back("spider/cine/blcs00a.smk");
+	bus_hard_intro->intros.push_back("spider/cine/blcs001s.smk");
+	bus_hard_intro->intros.push_back("spider/cine/ppv001s.smk");
+	_levels["<bus_hard_intro>"] = bus_hard_intro;
 
-	loadSceneLevel("buspuz.mi_", "<after_bus_selector>", prefix);
+	Code *add_ingredient = new Code();
+	add_ingredient->name = "<add_ingredient>";
+	_levels["<add_ingredient>"] = add_ingredient;
 
-	Transition *after_bus_selector = new Transition("<after_bus_easy>", "<after_bus_hard>");
-	_levels["<after_bus_selector>"] = after_bus_selector;
+	Code *check_mixture = new Code();
+	check_mixture->name = "<check_mixture>";
+	_levels["<check_mixture>"] = check_mixture;
+
+	loadSceneLevel("bushard2.mi_", "", prefix);
+	sc = (Scene *) _levels["bushard2.mi_"];
+	Escape *escape = new Escape();
+
+	Hotspots *hs = sc->hots[1].smenu;
+	(*hs)[1].actions.push_back(escape);
+
+	cl = new ChangeLevel("<check_mixture>");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<add_ingredient>");
+	sc->hots[3].actions.push_back(cl);
+
+	gl = new Global("", "CLEAR"); 
+	sc->hots[4].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH1", "TURNON"); // hairspray
+	sc->hots[4].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[5].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH2", "TURNON"); // spot remover
+	sc->hots[5].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[6].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH3", "TURNON"); // rubbing alcohol
+	sc->hots[6].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[7].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH4", "TURNON"); // turpentine
+	sc->hots[7].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[8].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH5", "TURNON"); // spray paint
+	sc->hots[8].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[9].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	sc->hots[9].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[10].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	sc->hots[10].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[11].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	sc->hots[11].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[12].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH6", "TURNON"); // fingernail polish
+	sc->hots[12].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[13].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	sc->hots[13].actions.push_back(gl);
+
+	gl = new Global("", "CLEAR");
+	sc->hots[14].actions.push_back(gl);
+
+	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	sc->hots[14].actions.push_back(gl);
+
+	loadSceneLevel("buspuz.mi_", "<after_bus_easy>", prefix);
 
 	Transition *after_bus_easy = new Transition("decide3.mi_");
 	after_bus_easy->intros.push_back("spider/cine/blcs003s.smk");

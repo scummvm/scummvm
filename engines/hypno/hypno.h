@@ -247,10 +247,10 @@ public:
 };
 
 struct chapterEntry {
-        int id;
-        int energyPos[2];
-		int scorePos[2];
-		int objectivesPos[2];
+	int id;
+	int energyPos[2];
+	int scorePos[2];
+	int objectivesPos[2];
 };
 
 class WetEngine : public HypnoEngine {
@@ -298,6 +298,8 @@ public:
 
 private:
 	void runMatrix(Code *code);
+	void addIngredient(Code *code);
+	void checkMixture(Code *code);
 	void runNote(Code *code);
 	void runFusePanel(Code *code);
 	void runRecept(Code *code);
@@ -308,6 +310,7 @@ private:
 
 	bool isFuseRust = true;
 	bool isFuseUnreadable = false;
+	bool ingredients[7] = {};
 };
 
 class BoyzEngine : public HypnoEngine {

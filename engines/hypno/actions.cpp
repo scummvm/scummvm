@@ -106,7 +106,7 @@ void HypnoEngine::runCutscene(Cutscene *a) {
 }
 
 bool HypnoEngine::runGlobal(Global *a) {
-	debugC(1, kHypnoDebugScene, "Runing global with command %s and variable %s", a->command.c_str(), a->variable.c_str());
+	debugC(1, kHypnoDebugScene, "Runing global with command '%s' and variable '%s'", a->command.c_str(), a->variable.c_str());
 	if (a->command == "TURNON")
 		_sceneState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
@@ -121,6 +121,9 @@ bool HypnoEngine::runGlobal(Global *a) {
 		if (_sceneState[a->variable]) // Clear any video to play
 			_nextSequentialVideoToPlay.clear();
 		return !_sceneState[a->variable];
+	} else if (a->command == "CLEAR") {
+		resetSceneState();
+		return true;
 	} else
 		error("Invalid command %s", a->command.c_str());
 	return true;

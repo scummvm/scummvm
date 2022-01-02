@@ -116,7 +116,7 @@ line: MENUTOK mflag mflag mflag {
 		smenu_idx->push_back(-1);
 		hot->smenu = new Hotspots();
 		stack->push_back(hot->smenu);
-		debugC(1, kHypnoDebugParser, "SUBMENU"); 
+		debugC(1, kHypnoDebugParser, "SUBMENU");
 	}
 	|  ESCPTOK  {
 		Escape *a = new Escape();

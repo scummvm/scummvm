@@ -28,6 +28,10 @@ namespace Hypno {
 void SpiderEngine::runCode(Code *code) {
 	if (code->name == "<puz_matr>")
 		runMatrix(code);
+	else if (code->name == "<add_ingredient>")
+		addIngredient(code);
+	else if (code->name == "<check_mixture>")
+		checkMixture(code);
 	else if (code->name == "<note>")
 		runNote(code);
 	else if (code->name == "<fuse_panel>")
@@ -146,6 +150,56 @@ void SpiderEngine::runMatrix(Code *code) {
 		g_system->delayMillis(10);
 	}
 }
+
+void SpiderEngine::addIngredient(Code *code) {
+	if (_sceneState["GS_SWITCH0"]) { // wrong ingredient
+		ingredients[0] = true;
+	} else if (_sceneState["GS_SWITCH1"]) {
+		ingredients[1] = true;
+	} else if (_sceneState["GS_SWITCH2"]) {
+		ingredients[2] = true;
+	} else if (_sceneState["GS_SWITCH3"]) {
+		ingredients[3] = true;
+	} else if (_sceneState["GS_SWITCH4"]) {
+		ingredients[4] = true;
+	} else if (_sceneState["GS_SWITCH5"]) {
+		ingredients[5] = true;
+	} else if (_sceneState["GS_SWITCH6"]) {
+		ingredients[6] = true;
+	}
+	resetSceneState();
+	_nextLevel = "bushard2.mi_";
+}
+
+void SpiderEngine::checkMixture(Code *code) {
+	_nextLevel = "bushard2.mi_";
+	if (ingredients[0]) {
+		MVideo video("spider/cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
+		runIntro(video);
+		memset(ingredients, 0, 7);
+		return;
+	}
+
+	bool nothing = true;
+	for (int i = 1; i < 7; i++) {
+		if (ingredients[i])
+			nothing = false;
+	}
+
+	if (nothing)
+		return;
+
+	for (int i = 1; i < 7; i++) {
+		if (!ingredients[i]) {
+			MVideo video("spider/cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
+			runIntro(video);
+			memset(ingredients, 0, 7);
+			return;
+		}
+	}
+	_nextLevel = "<after_bus_hard>";
+}
+
 
 void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
