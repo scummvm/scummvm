@@ -70,7 +70,7 @@ void UnkMapStruct::init() {
 }
 
 void UnkAnimStruct::init() {
-	field0 = field1 = field2 = field3 = 0;
+	memset(_field, 0, 4);
 }
 
 void AnimInfo::init() {
@@ -206,7 +206,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	_word31E9E = false;
 	_oldAnimImageSetId = -1;
-	_animImageSetId = 254;
+	_animImageSetId = 0xFE;
 	_paletteTransformationConstant = 10;
 
 	for (int i = 0; i < 12; ++i)
@@ -585,29 +585,39 @@ void EfhEngine::initialize() {
 }
 
 void EfhEngine::readAnimInfo() {
-	debug("readAnimInfo");
+	debugC(6, kDebugEngine, "readAnimInfo");
 	
 	Common::String fileName = "animinfo";
 	uint8 animInfoBuf[9000];
 	memset(animInfoBuf, 0, 9000);
 	uint8 *curPtr = animInfoBuf;
-	
+
 	readFileToBuffer(fileName, animInfoBuf);
 	for (int i = 0; i < 100; ++i) {
 		for (int id = 0; id < 15; ++id) {
-			_animInfo[i]._unkAnimArray[id].field0 = *curPtr++;
-			_animInfo[i]._unkAnimArray[id].field1 = *curPtr++;
-			_animInfo[i]._unkAnimArray[id].field2 = *curPtr++;
-			_animInfo[i]._unkAnimArray[id].field3 = *curPtr++;
+			_animInfo[i]._unkAnimArray[id]._field[0] = *curPtr++;
+			_animInfo[i]._unkAnimArray[id]._field[1] = *curPtr++;
+			_animInfo[i]._unkAnimArray[id]._field[2] = *curPtr++;
+			_animInfo[i]._unkAnimArray[id]._field[3] = *curPtr++;
+
+			debugC(6, kDebugEngine, "%d %d %d %d", _animInfo[i]._unkAnimArray[id]._field[0], _animInfo[i]._unkAnimArray[id]._field[1], _animInfo[i]._unkAnimArray[id]._field[2], _animInfo[i]._unkAnimArray[id]._field[3]);
 		}
 
-		for (int id = 0; id < 10; ++id)
+		Common::String debugStr = "";
+		for (int id = 0; id < 10; ++id) {
 			_animInfo[i]._field3C_startY[id] = *curPtr++;
+			debugStr += Common::String::format("%d ", _animInfo[i]._field3C_startY[id]);
+		}
+		debugC(6, kDebugEngine, "%s", debugStr.c_str());
 
+		debugStr = "";
 		for (int id = 0; id < 10; ++id) {
 			_animInfo[i]._field46_startX[id] = READ_LE_INT16(curPtr);
 			curPtr += 2;
+			debugStr += Common::String::format("%d ", _animInfo[i]._field46_startX[id]);
 		}
+		debugC(6, kDebugEngine, "%s", debugStr.c_str());
+		debugC(6, kDebugEngine, "---------");
 	}
 }
 
@@ -1069,10 +1079,10 @@ void EfhEngine::loadMapArrays() {
 }
 
 void EfhEngine::saveAnimImageSetId() {
-	debug("saveAnimImageSetId");
+	debugC(6, kDebugEngine, "saveAnimImageSetId");
 
 	_oldAnimImageSetId = _animImageSetId;
-	_animImageSetId = 255;
+	_animImageSetId = 0xFF;
 }
 
 int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
@@ -6765,7 +6775,7 @@ bool EfhEngine::sub16E14() {
 }
 
 void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
-	debug("loadImageSetToTileBank %d %d", tileBankId, imageSetId);
+	debugC(3, kDebugEngine, "loadImageSetToTileBank %d %d", tileBankId, imageSetId);
 
 	// TODO: all the values of titleBankId and imageSetId are hardcoded. When all the calls are implemented, fix the values to avoid to have to decrease them
 	int16 bankId = tileBankId - 1;

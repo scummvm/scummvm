@@ -71,8 +71,8 @@ void EfhEngine::displayAnimFrame() {
 
 	displayRawDataAtPos(_portraitSubFilesArray[0], 16, 8);
 	for (int i = 0; i < 4; ++i) {
-		int16 var2 = _animInfo[_animImageSetId]._unkAnimArray[_unkAnimRelatedIndex].field0;
-		if (var2 == 0xFF)
+		int8 var2 = _animInfo[_animImageSetId]._unkAnimArray[_unkAnimRelatedIndex]._field[i];
+		if (var2 == -1)
 			continue;
 		displayRawDataAtPos(_portraitSubFilesArray[var2 + 1], _animInfo[_animImageSetId]._field46_startX[var2] + 16, _animInfo[_animImageSetId]._field3C_startY[var2] + 8);
 	}
