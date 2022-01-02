@@ -40,6 +40,7 @@ BuriedConsole::BuriedConsole(BuriedEngine *vm) : _vm(vm) {
 		registerCmd("jumpentry", WRAP_METHOD(BuriedConsole, cmdJumpEntry));
 
 	registerCmd("curloc", WRAP_METHOD(BuriedConsole, cmdCurLocation));
+	registerCmd("aicommentinfo", WRAP_METHOD(BuriedConsole, cmdAiCommentInfo));
 }
 
 BuriedConsole::~BuriedConsole() {
@@ -151,6 +152,83 @@ bool BuriedConsole::cmdCurLocation(int argc, const char **argv) {
 	debugPrintf("Orientation: %d\n", staticData.location.orientation);
 	debugPrintf("Depth: %d\n", staticData.location.depth);
 	debugPrintf("Class: %d\n", staticData.classID);
+
+	return true;
+}
+
+bool BuriedConsole::cmdAiCommentInfo(int argc, const char **argv) {
+	loadJumpEntryList();
+
+	if (argc < 2) {
+		debugPrintf("Usage: %s <index>\n\nEntries:\n", argv[0]);
+		debugPrintf("# |Time Zone       |Environment            \n");
+		debugPrintf("--|----------------|-----------------------\n");
+
+		for (uint32 i = 0; i < _jumpEntryList.size(); i++) {
+			const JumpEntry &entry = _jumpEntryList[i];
+			debugPrintf("%2d|%-16s|%-23s\n", i + 1, entry.timeZoneName.c_str(), entry.locationName.c_str());
+		}
+
+		return true;
+	}
+
+	// Bail if not playing
+	if (!isPlaying())
+		return true;
+
+	int entry = atoi(argv[1]) - 1;
+	if (entry < 0 || entry >= (int)_jumpEntryList.size()) {
+		debugPrintf("Invalid entry!\n");
+		return true;
+	}
+
+	FrameWindow *frameWindow = getFrameWindow();
+	if (!frameWindow)
+		return true;
+
+	SceneViewWindow *sceneView = ((GameUIWindow *)frameWindow->getMainChildWindow())->_sceneViewWindow;
+	if (!sceneView) {
+		debugPrintf("No scene view!\n");
+		return true;
+	}
+
+	// Check if the location has AI comment data
+	Location &loc = _jumpEntryList[entry].location;
+	bool found = false;
+
+	for (const AICommentInfo *info = s_aiCommentInfo; info->timeZone; ++info) {
+		if (info->timeZone == loc.timeZone && info->environment == loc.environment) {
+			found = true;
+			break;
+		}
+	}
+
+	if (found) {
+		Common::Array<AIComment> commentDatabase = sceneView->getAICommentDatabase(loc.timeZone, loc.environment);
+
+		if (!commentDatabase.empty()) {
+			debugPrintf("ID  |Flags |DFlagA |non-base |DValA |DFlagB |non-base |DValB |SFlag |non-base\n");
+			debugPrintf("----|------|-------|---------|------|-------|---------|------|------|--------\n");
+			for (uint32 i = 0; i < commentDatabase.size(); i++) {
+				const AIComment &comment = commentDatabase[i];
+				debugPrintf("%4d|%-6d|%-7d|%-9d|%-6d|%-7d|%-9d|%-6d|%-6d|%-8d\n",
+							comment.commentID, comment.commentFlags,
+							comment.dependencyFlagOffsetA,
+							comment.commentFlags & AI_DEPENDENCY_FLAG_NON_BASE_DERIVED_A,
+							comment.dependencyValueA,
+							comment.dependencyFlagOffsetB,
+							comment.commentFlags & AI_DEPENDENCY_FLAG_NON_BASE_DERIVED_B,
+							comment.dependencyValueB,
+							comment.statusFlagOffset,
+							comment.commentFlags & AI_STATUS_FLAG_NON_BASE_DERIVED);
+			}
+
+		} else {
+			debugPrintf("Location has no AI comment data");
+		}
+	} else {
+		debugPrintf("Location has no AI comment data");
+	}
 
 	return true;
 }

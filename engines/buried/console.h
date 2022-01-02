@@ -40,6 +40,7 @@ public:
 	bool cmdRemoveItem(int argc, const char **argv);
 	bool cmdJumpEntry(int argc, const char **argv);
 	bool cmdCurLocation(int argc, const char **argv);
+	bool cmdAiCommentInfo(int argc, const char **argv);
 
 protected:
 	void postEnter();
