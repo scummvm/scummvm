@@ -6,19 +6,19 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 2.5.0</title>
+			<title>Version 2.5.1</title>
 			<sparkle:releaseNotesLink>
-				https://www.scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
+				https://www.scummvm.org/frs/scummvm/2.5.1/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Sat, 09 Oct 2021 18:00:00 +0000</pubDate>
+			<pubDate>Sun, 02 Jan 2022 18:00:00 +0000</pubDate>
 			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.5.0/scummvm-2.5.0-macosx.dmg"
 						sparkle:version="2.5.0" length="95623191" type="application/octet-stream"
 						sparkle:dsaSignature="MC4CFQDYqBr8WsLRsbk60nrP1Y//lwF3CgIVAOCS0u4eKbYt3zae5rqoOTNNPTjj"/>
 
 			<enclosure sparkle:os="windows"
-						url="https://downloads.scummvm.org/frs/scummvm/2.5.0/scummvm-2.5.0-win32.exe"
-						sparkle:version="2.5.0" length="89033208" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFQCtCsfTeuUgI4Oir5K0XJcQguEyTQIUJxa1OxkDwvm3MlOaBfWZBmkgqIk="/>
+						url="https://downloads.scummvm.org/frs/scummvm/2.5.1/scummvm-2.5.1-win32.exe"
+						sparkle:version="2.5.1" length="89123520" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFAaYHjFvfY7dYIVp56YQ4cUj4e2oAhRqo2Aq85ZzNPsiA0Ld9iWRCy8nVA=="/>
 		</item>
 	</channel>
 </rss>
