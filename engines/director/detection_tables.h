@@ -3950,6 +3950,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("trektech", "", "STNG Technical Manual (PowerPC)", "a9bd9f3a82fcde6e4d151868e256aec7", 525946, 400),
 	MACDEMO1("trektech", "Demo", "TrekForMac", "68ed73866232194a9a5609040dc1f242", 289696, 403),
 	WINGAME1("trektech", "", "NCC1701D.EXE", "02aec408cee26413a096aec9b1cb1878", 720249, 400),
+	WINGAME1_l("trektech", "", "NCC1701D.EXE", "dc960a161de1883867030b3612313f06", 726723, Common::DE_DEU, 400),
 
 	// Bilingual English/Spanish
 	MACGAME1("truthsfictions", "", "Truths & Fictions", "4577dd3eadc467a986ab172d90871b22", 534968, 404),
