@@ -138,9 +138,10 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags
 	int totalScore = finalCriticalEvidenceScore + finalSupportingEvidenceScore + finalPuzzleScore + finalResearchScore + completionScore;
 
 	// Build the string buffers
+	// Newer versions include these strings as resources in the main executable.
+	// For earlier versions, we hardcode them here.
 	if (_walkthroughMode) {
 		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
-			// HACK HACK HACK: Oh god. This is horrid.
 			Common::String stringResource = _vm->getString(IDS_COMPL_WALK_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
 			stringResource = _vm->getString(IDS_COMPL_WALK_SCORE_AMT_TEMPL);
@@ -154,7 +155,6 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags
 		totalScore -= hintsScore;
 
 		if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
-			// HACK HACK HACK: Again, horrid.
 			Common::String stringResource = _vm->getString(IDS_COMPL_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
 			stringResource = _vm->getString(IDS_COMPL_SCORE_AMT_TEMPL);
@@ -166,8 +166,6 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags
 		}
 	}
 
-	// This would be a hack, but since it's just printing one number, I'm not
-	// loading that damned string too.
 	_scoringTextFinalScore = Common::String::format("%d", totalScore);
 
 	_vm->_sound->setAmbientSound();

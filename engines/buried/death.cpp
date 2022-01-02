@@ -124,9 +124,10 @@ AgentEvaluation::AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int
 	int totalScore = finalCriticalEvidenceScore + finalSupportingEvidenceScore + finalPuzzleScore + finalResearchScore + completionScore;
 
 	// Build the string buffers
+	// Newer versions include these strings as resources in the main executable.
+	// For earlier versions, we hardcode them here.
 	if (_globalFlags.generalWalkthroughMode != 0) {
 		if (vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
-			// HACK HACK HACK: More horridness.
 			Common::String stringResource = vm->getString(IDS_DEATH_WALK_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw);
 			stringResource = vm->getString(IDS_DEATH_WALK_SCORE_AMT_TEMPL);
@@ -153,7 +154,6 @@ AgentEvaluation::AgentEvaluation(BuriedEngine *vm, GlobalFlags &globalFlags, int
 		totalScore -= hintsScore;
 
 		if (vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) {
-			// HACK HACK HACK: Did I mention this was terrible?
 			Common::String stringResource = vm->getString(IDS_DEATH_SCORE_DESC_TEMPL);
 			_scoringTextDescriptions = Common::String::format(stringResource.c_str(), criticalEvidence, supportingEvidence, puzzlesSolved, researchBonusRaw, hints);
 			stringResource = vm->getString(IDS_DEATH_SCORE_AMT_TEMPL);
