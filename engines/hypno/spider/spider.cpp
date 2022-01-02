@@ -550,9 +550,14 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c6.mi_"]->intros.push_back("cine/dia007s.smk");
 	_levels["c6.mi_"]->intros.push_back("cine/rdss001s.smk");
 
+	loadArcadeLevel("c6h.mi_", "<lock>", prefix);
+	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
+	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
+	_levels["c6h.mi_"]->intros.push_back("cine/rdss001s.smk");
+
 	Code *lock = new Code();
 	lock->name = "<lock>";
-	lock->intros.push_back("cine/rdss003s.smk");
+	lock->intros.push_back("spider/cine/rdss003s.smk");
 	lock->levelIfWin = "movie2.mi_";
 	_levels["<lock>"] = lock;
 
@@ -734,10 +739,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c12h.mi_"]->levelIfLose = "<vr_death>";
 	_levels["c12h.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12mh.mi_"] = _levels["c12h.mi_"];
-
-	loadArcadeLevel("c6h.mi_", "<lock>", prefix);
-	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
-	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 
 	loadSceneLevel("decide11.mi_", "", prefix);
 
