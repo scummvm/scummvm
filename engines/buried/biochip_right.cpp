@@ -115,6 +115,13 @@ bool BioChipRightWindow::destroyBioChipViewWindow() {
 	return true;
 }
 
+void BioChipRightWindow::swapAIBioChipIfActive() {
+	if (_curBioChip == kItemBioChipAI) {
+		_curBioChip = kItemBioChipBlank;
+		invalidateWindow(false);
+	}
+}
+
 void BioChipRightWindow::sceneChanged() {
 	if (_curBioChip == kItemBioChipAI)
 		invalidateWindow(false);

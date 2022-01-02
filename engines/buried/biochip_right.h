@@ -52,6 +52,7 @@ public:
 	bool changeCurrentBioChip(int bioChipID);
 	bool showBioChipMainView();
 	bool destroyBioChipViewWindow();
+	void swapAIBioChipIfActive();
 	void sceneChanged();
 	void disableEvidenceCapture();
 	void jumpInitiated(bool redraw);

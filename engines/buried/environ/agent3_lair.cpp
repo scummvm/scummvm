@@ -346,7 +346,7 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 			_vm->_sound->stopSoundEffect(_currentSoundID);
 			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->removeItem(kItemBioChipAI);
 			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemBioChipBlank);
-			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipBlank);
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->swapAIBioChipIfActive();
 
 			_vm->_sound->setAmbientSound(_vm->getFilePath(3, 2, SF_AMBIENT), false, 64);
 			_passwordIndex = 5;
