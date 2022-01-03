@@ -114,7 +114,7 @@ struct ArchiveMemberListBackComparator {
 	}
 };
 void GuiManager::initIconsSet() {
-	Common::Archive *dat = nullptr;
+	Common::Archive *dat;
 
 	_iconsSet.clear();
 
@@ -138,35 +138,37 @@ void GuiManager::initIconsSet() {
 		delete iconDir;
 	}
 
+	dat = nullptr;
+
 	const char fname[] = "gui-icons.dat";
-	Common::File *file = new Common::File;
 
 	if (ConfMan.hasKey("themepath")) {
 		Common::FSNode *fs = new Common::FSNode(normalizePath(ConfMan.get("themepath") + "/" + fname, '/'));
-
-		if (!fs->exists()) {
-			delete fs;
-		} else {
+		if (fs->exists()) {
 			dat = Common::makeZipArchive(*fs);
+		}
+		delete fs;
+	}
+
+	if (!dat) {
+		Common::File *file = new Common::File;
+		if (ConfMan.hasKey("iconspath"))
+			file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
+
+		if (!file->isOpen())
+			file->open(fname);
+
+		if (file->isOpen())
+			dat = Common::makeZipArchive(file);
+
+		if (!dat) {
+			warning("GUI: Could not find '%s'", fname);
+			delete file;
+			return;
 		}
 	}
 
-	if (!dat && !file->isOpen() && ConfMan.hasKey("iconspath"))
-		file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
-
-	if (!dat && !file->isOpen())
-		file->open(fname);
-
-	if (!dat && file->isOpen())
-		dat = Common::makeZipArchive(file);
-
-	if (!dat) {
-		warning("GUI: Could not find '%s'", fname);
-		delete file;
-		return;
-	}
-
-	_iconsSet.add(fname, dat, 0, false); // Do not autofree
+	_iconsSet.add(fname, dat);
 
 	debug(2, "GUI: Loaded icon file: %s", fname);
 }

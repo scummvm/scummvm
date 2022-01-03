@@ -317,6 +317,9 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
 			Graphics::SVGBitmap *image = nullptr;
 			image = new Graphics::SVGBitmap(stream);
+
+			delete stream;
+
 			surf = new Graphics::ManagedSurface(renderWidth, renderHeight, *image->getPixelFormat());
 			image->render(*surf, renderWidth, renderHeight);
 			delete image;
