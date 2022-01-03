@@ -167,7 +167,7 @@ bool CruAvatarMoverProcess::checkOneShotMove(Direction direction) {
 				// TODO: check what should advance/retreat do here?
 				if (anim == Animation::combatRollLeft)
 					avatar->doAnim(Animation::kneelCombatRollLeft, direction);
-				else if (anim == Animation::combatRollLeft)
+				else if (anim == Animation::combatRollRight)
 					avatar->doAnim(Animation::kneelCombatRollRight, direction);
 				else if (anim == Animation::advance)
 					step(Animation::kneelingAdvance, direction);
