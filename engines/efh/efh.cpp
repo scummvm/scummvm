@@ -401,7 +401,7 @@ Common::Error EfhEngine::run() {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
-		if (newMs - lastMs >= 200) {
+		if (newMs - lastMs >= 220) {
 			lastMs = newMs;
 			unkFct_anim();
 		}
@@ -527,7 +527,7 @@ Common::Error EfhEngine::run() {
 
 		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
 			int16 var4 = sub16E14();
-			if (!_word2C8D5 || var4 != 0) {
+			if (_word2C8D5 != 0 || var4 != 0) {
 				_oldMapPosX = _mapPosX;
 				_oldMapPosY = _mapPosY;
 				_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
