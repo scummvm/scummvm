@@ -160,7 +160,7 @@ bool Fx::exist(int ref, int sub) {
 
 DataCk *Fx::load(int ref, int sub) {
 	Common::String filename = name(ref, sub);
-	EncryptedStream file(_vm, filename.c_str());
+	EncryptedStream file(_vm->_resman, filename.c_str());
 	clear();
 	return (_current = loadWave(&file));
 }
@@ -222,7 +222,7 @@ void MusicPlayer::loadMidi(int ref) {
 	killMidi();
 
 	// Read in the data for the file
-	EncryptedStream mid(_vm, filename.c_str());
+	EncryptedStream mid(_vm->_resman, filename.c_str());
 	_dataSize = mid.size();
 	_data = (byte *)malloc(_dataSize);
 	mid.read(_data, _dataSize);

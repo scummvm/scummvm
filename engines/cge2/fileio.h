@@ -31,8 +31,6 @@
 
 namespace CGE2 {
 
-class CGE2Engine;
-
 #define kBtSize       2048
 #define kBtKeySize    13
 #define kBtLevel      2
@@ -106,12 +104,11 @@ public:
 
 class EncryptedStream {
 private:
-	CGE2Engine *_vm;
 	Common::SeekableReadStream *_readStream;
 	int _lineCount;
 	bool _error;
 public:
-	EncryptedStream(CGE2Engine *vm, const char *name);
+	EncryptedStream(ResourceManager *resman, const char *name);
 	~EncryptedStream();
 	bool err();
 	bool eos();

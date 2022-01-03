@@ -246,7 +246,7 @@ int Sprite::labVal(Action snq, int lab) {
 		_vm->mergeExt(tmpStr, _file, kSprExt);
 
 		if (_vm->_resman->exist(tmpStr)) { // sprite description file exist
-			EncryptedStream sprf(_vm, tmpStr);
+			EncryptedStream sprf(_vm->_resman, tmpStr);
 			if (sprf.err())
 				error("Bad SPR [%s]", tmpStr);
 
@@ -336,7 +336,7 @@ Sprite *Sprite::expand() {
 		curSeq = new Seq[_seqCnt];
 
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
-		EncryptedStream sprf(_vm, fname);
+		EncryptedStream sprf(_vm->_resman, fname);
 		if (sprf.err())
 			error("Bad SPR [%s]", fname);
 

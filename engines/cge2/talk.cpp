@@ -65,7 +65,7 @@ void Font::load() {
 	if (!_vm->_resman->exist(path))
 		error("Missing Font file! %s", path);
 
-	EncryptedStream fontFile(_vm, path);
+	EncryptedStream fontFile(_vm->_resman, path);
 	assert(!fontFile.err());
 
 	fontFile.read(_widthArr, kWidSize);
@@ -83,7 +83,7 @@ void Font::load() {
 		error("Missing Color file! %s", path);
 
 	// Reading in _colorSet:
-	EncryptedStream colorFile(_vm, path);
+	EncryptedStream colorFile(_vm->_resman, path);
 	assert(!colorFile.err());
 
 	char tmpStr[kLineMax + 1];
