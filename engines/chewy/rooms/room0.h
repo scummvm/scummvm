@@ -57,7 +57,7 @@ private:
 	static void checkFeed();
 	static void checkPillow();
 
-	static void pillowThrow();
+	static void feederExtend();
 
 	static void trapDoorOpen();
 	static void trapDoorClose();
