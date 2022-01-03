@@ -89,16 +89,21 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::startAttack", "AvatarMoverProcess::stopAttack", "SPACE", "KP0" },
 	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr },
 	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "LCTRL", nullptr },
-	{ ACTION_SHORT_JUMP, "SHORT_JUMP", "Short Jump", "AvatarMoverProcess::shortJump", nullptr, "TAB", nullptr },
-	// TODO: MOVE_STEP should also be mapped to KP_DIVIDE?? Actually original key was advance, slightly different
+	{ ACTION_SHORT_JUMP, "SHORT_JUMP", "Short Jump", "AvatarMoverProcess::shortJump", nullptr, "TAB", "j" },
+	{ ACTION_STEP_LEFT, "STEP_LEFT", "Sidestep Left", "AvatarMoverProcess::stepLeft", nullptr, "DELETE", "KP7" },
+	{ ACTION_STEP_RIGHT, "STEP_RIGHT", "Sidestep Rgiht", "AvatarMoverProcess::stepRight", nullptr, "PAGEDOWN", "KP9" },
+	{ ACTION_STEP_FORWARD, "STEP_FORWARD", "Step Forward", "AvatarMoverProcess::stepForward", nullptr, "HOME", "KP_DIVIDE" },
+	{ ACTION_STEP_BACK, "STEP_BACK", "Step Back", "AvatarMoverProcess::stepBack", nullptr, "END", "KP2" },
+	{ ACTION_ROLL_LEFT, "ROLL_LEFT", "Roll Left", "AvatarMoverProcess::rollLeft", nullptr, "INSERT", "KP1" },
+	{ ACTION_ROLL_RIGHT, "ROLL_RIGHT", "Roll Right", "AvatarMoverProcess::rollRight", nullptr, "PAGEUP", "KP3" },
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER" },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ ACTION_CLIPPING, "CLIPPING", "Toggle Clipping", "QuickAvatarMoverProcess::toggleClipping", nullptr, "INSERT", nullptr },
-	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", "Ascend", "QuickAvatarMoverProcess::startAscend", "QuickAvatarMoverProcess::stopAscend", "HOME", nullptr },
-	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", "Descend", "QuickAvatarMoverProcess::startDescend", "QuickAvatarMoverProcess::stopDescend", "END", nullptr },
+	{ ACTION_CLIPPING, "CLIPPING", "Toggle Clipping", "QuickAvatarMoverProcess::toggleClipping", nullptr, "M+INSERT", nullptr },
+	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", "Ascend", "QuickAvatarMoverProcess::startAscend", "QuickAvatarMoverProcess::stopAscend", "M+HOME", nullptr },
+	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", "Descend", "QuickAvatarMoverProcess::startDescend", "QuickAvatarMoverProcess::stopDescend", "M+END", nullptr },
 	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", "Move Up", "QuickAvatarMoverProcess::startMoveUp", "QuickAvatarMoverProcess::stopMoveUp", "M+UP", nullptr },
 	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", "Move Down", "QuickAvatarMoverProcess::startMoveDown", "QuickAvatarMoverProcess::stopMoveDown", "M+DOWN", nullptr },
 	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", "Move Left", "QuickAvatarMoverProcess::startMoveLeft", "QuickAvatarMoverProcess::stopMoveLeft", "M+LEFT", nullptr },

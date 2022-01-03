@@ -142,6 +142,50 @@ static bool _isAnimStartRunning(Animation::Sequence anim) {
 			anim == Animation::startRunLargeWeapon*/);
 }
 
+bool CruAvatarMoverProcess::checkOneShotMove(Direction direction) {
+	Actor *avatar = getControlledActor();
+
+	static const MovementFlags oneShotFlags[] = {
+		MOVE_ROLL_LEFT, MOVE_ROLL_RIGHT,
+		MOVE_STEP_LEFT, MOVE_STEP_RIGHT,
+		MOVE_STEP_FORWARD, MOVE_STEP_BACK,
+		MOVE_SHORT_JUMP
+	};
+
+	static const Animation::Sequence oneShotAnims[] = {
+		Animation::combatRollLeft, Animation::combatRollRight,
+		Animation::slideLeft, Animation::slideRight,
+		Animation::advance, Animation::retreat,
+		Animation::jumpForward
+	};
+
+	for (int i = 0; i < ARRAYSIZE(oneShotFlags); i++) {
+		if (hasMovementFlags(oneShotFlags[i])) {
+			clearMovementFlag(oneShotFlags[i]);
+			Animation::Sequence anim = oneShotAnims[i];
+			if (avatar->isKneeling()) {
+				// TODO: check what should advance/retreat do here?
+				if (anim == Animation::combatRollLeft)
+					avatar->doAnim(Animation::kneelCombatRollLeft, direction);
+				else if (anim == Animation::combatRollLeft)
+					avatar->doAnim(Animation::kneelCombatRollRight, direction);
+				else if (anim == Animation::advance)
+					step(Animation::kneelingAdvance, direction);
+				else if (anim == Animation::retreat)
+					step(Animation::kneelingRetreat, direction);
+			} else {
+				if (anim == Animation::advance || anim == Animation::retreat)
+					step(anim, direction);
+				else
+					avatar->doAnim(anim, direction);
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CruAvatarMoverProcess::handleCombatMode() {
 	Actor *avatar = getControlledActor();
 	MainActor *mainactor = dynamic_cast<MainActor *>(avatar);
@@ -161,11 +205,10 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	if (stasis)
 		return;
 
-	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
-		clearMovementFlag(MOVE_SHORT_JUMP);
-		avatar->doAnim(Animation::jumpForward, direction);
+	if (checkOneShotMove(direction))
 		return;
-	} else if (hasMovementFlags(MOVE_FORWARD)) {
+
+	if (hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim;
 		if (hasMovementFlags(MOVE_STEP)) {
 			nextanim = avatar->isKneeling() ?
@@ -325,12 +368,6 @@ void CruAvatarMoverProcess::handleNormalMode() {
 			mainactor->toggleInCombat();
 	}
 
-	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
-		clearMovementFlag(MOVE_SHORT_JUMP);
-		avatar->doAnim(Animation::jumpForward, direction);
-		return;
-	}
-
 	if (!hasMovementFlags(MOVE_ANY_DIRECTION) && lastanim == Animation::run) {
 		// if we were running, slow to a walk before stopping
 		// (even in stasis)
@@ -350,6 +387,9 @@ void CruAvatarMoverProcess::handleNormalMode() {
 
 	// can't do any new actions if in stasis
 	if (stasis)
+		return;
+
+	if (checkOneShotMove(direction))
 		return;
 
 	bool moving = (lastanim == Animation::step || lastanim == Animation::run || lastanim == Animation::walk);
