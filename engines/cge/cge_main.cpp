@@ -197,7 +197,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
-		EncryptedStream file = EncryptedStream(this, kSavegame0Name);
+		EncryptedStream file = EncryptedStream(_resman, kSavegame0Name);
 		int size = file.size();
 		byte *dataBuffer = (byte *)malloc(size);
 		file.read(dataBuffer, size);
@@ -487,7 +487,7 @@ void CGEEngine::tooFar() {
 void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
-	EncryptedStream cf(this, "CGE.HXY");
+	EncryptedStream cf(_resman, "CGE.HXY");
 	uint16 x, y;
 
 	for (uint i = 0; i < ARRAYSIZE(_heroXY); i++) {
@@ -510,7 +510,7 @@ void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= kSceneMax) {
-		EncryptedStream cf(this, "CGE.TAB");
+		EncryptedStream cf(_resman, "CGE.TAB");
 		if (!cf.err()) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
@@ -1044,7 +1044,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) {      // sprite description file exist
-		EncryptedStream sprf(this, tmpStr);
+		EncryptedStream sprf(_resman, tmpStr);
 		if (sprf.err())
 			error("Bad SPR [%s]", tmpStr);
 
@@ -1151,7 +1151,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 }
 
 void CGEEngine::loadScript(const char *fname) {
-	EncryptedStream scrf(this, fname);
+	EncryptedStream scrf(_resman, fname);
 
 	if (scrf.err())
 		return;
