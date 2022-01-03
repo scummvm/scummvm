@@ -205,7 +205,7 @@ Sprite *Sprite::expand() {
 	CommandHandler::Command *takeList = nullptr;
 	_vm->mergeExt(fname, _file, kSprExt);
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
-		EncryptedStream sprf(_vm, fname);
+		EncryptedStream sprf(_vm->_resman, fname);
 		if (sprf.err())
 			error("Bad SPR [%s]", fname);
 		Common::String line;
