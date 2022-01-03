@@ -498,11 +498,13 @@ void Room0::feederStart(int16 mode) {
 		spr_info[0].ZEbene = 190;
 		spr_info[1] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[1].ZEbene = 191;
+
 		if (flags.AniUserAction)
 			get_user_key(NO_SETUP);
-		set_up_screen(NO_SETUP);
+		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 
+		set_up_screen(NO_SETUP);
 		cur->plot_cur();
 		if (!mode)
 			calcPillowClick(1);
