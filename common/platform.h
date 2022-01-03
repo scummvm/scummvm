@@ -52,6 +52,7 @@ enum Platform {
 	kPlatformWindows,
 	kPlatformNES,
 	kPlatformC64,
+	kPlatformCoCo,
 	kPlatformCoCo3,
 	kPlatformLinux,
 	kPlatformAcorn,
