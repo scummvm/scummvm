@@ -20,6 +20,8 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/cru_music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
@@ -119,7 +121,7 @@ void CruMusicProcess::playMusic(int track) {
 		// Regret has a Christmas music easter egg.
 		TimeDate t;
 		g_system->getTimeAndDate(t);
-		if (t.tm_mon == 11 && t.tm_mday >= 24) {
+		if ((t.tm_mon == 11 && t.tm_mday >= 24) || ConfMan.getBool("always_christmas")) {
 			track = 22;
 		}
 	}
