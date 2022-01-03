@@ -196,13 +196,13 @@ uint16 ResourceManager::catRead(byte *buf, uint16 length) {
 /*-----------------------------------------------------------------------
  * EncryptedStream
  *-----------------------------------------------------------------------*/
-EncryptedStream::EncryptedStream(CGE2Engine *vm, const char *name) : _vm(vm), _lineCount(0) {
+EncryptedStream::EncryptedStream(ResourceManager *resman, const char *name) : _lineCount(0) {
 	_error = false;
-	BtKeypack *kp = _vm->_resman->find(name);
+	BtKeypack *kp = resman->find(name);
 	if (scumm_stricmp(kp->_key, name) != 0)
 		_error = true;
 
-	_vm->_resman->seek(kp->_pos);
+	resman->seek(kp->_pos);
 	byte *dataBuffer;
 	int bufSize;
 
@@ -212,7 +212,7 @@ EncryptedStream::EncryptedStream(CGE2Engine *vm, const char *name) : _vm(vm), _l
 		// Therefore, we remove this ending 0x1A and add extra new lines.
 		// This fixes bug #6060
 		dataBuffer = (byte *)malloc(kp->_size + 2);
-		_vm->_resman->read(dataBuffer, kp->_size);
+		resman->read(dataBuffer, kp->_size);
 		if (dataBuffer[kp->_size - 1] == 0x1A)
 			dataBuffer[kp->_size - 1] = '\n';
 		dataBuffer[kp->_size] = '\n';
@@ -220,7 +220,7 @@ EncryptedStream::EncryptedStream(CGE2Engine *vm, const char *name) : _vm(vm), _l
 		bufSize = kp->_size + 2;
 	} else {
 		dataBuffer = (byte *)malloc(kp->_size);
-		_vm->_resman->read(dataBuffer, kp->_size);
+		resman->read(dataBuffer, kp->_size);
 		bufSize = kp->_size;
 	}
 

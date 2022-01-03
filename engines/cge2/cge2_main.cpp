@@ -172,7 +172,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) { // sprite description file exist
-		EncryptedStream sprf(this, tmpStr);
+		EncryptedStream sprf(_resman, tmpStr);
 		if (sprf.err())
 			error("Bad SPR [%s]", tmpStr);
 
@@ -309,7 +309,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 }
 
 void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
-	EncryptedStream scrf(this, fname);
+	EncryptedStream scrf(_resman, fname);
 
 	if (scrf.err())
 		return;
@@ -698,7 +698,7 @@ void CGE2Engine::loadPos() {
 		for (int cav = 0; cav < kSceneMax; cav++)
 			_heroTab[1]->_posTab[cav] = new V2D(this, 180, 10);
 
-		EncryptedStream file(this, "CGE.HXY");
+		EncryptedStream file(_resman, "CGE.HXY");
 
 		for (int cav = 0; cav < kSceneMax; cav++) {
 			_heroTab[0]->_posTab[cav] = new V2D(this);
@@ -720,7 +720,7 @@ void CGE2Engine::loadTab() {
 		*(_eyeTab[i]) = *_eye;
 
 	if  (_resman->exist(kTabName)) {
-		EncryptedStream f(this, kTabName);
+		EncryptedStream f(_resman, kTabName);
 
 		for (int i = 0; i < kSceneMax; i++) {
 			uint32 v = f.readUint32LE();

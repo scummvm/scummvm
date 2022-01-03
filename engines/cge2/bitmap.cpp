@@ -56,7 +56,7 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _w(0), _h(0), _v(nullptr), _
 	path = setExtension(path, ".VBM");
 
 	if (_vm->_resman->exist(path.c_str())) {
-		EncryptedStream file(_vm, path.c_str());
+		EncryptedStream file(_vm->_resman, path.c_str());
 		if (file.err())
 			error("Unable to find VBM [%s]", fname);
 		if (!loadVBM(&file))
