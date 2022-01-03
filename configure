@@ -193,6 +193,7 @@ _build_aspect=yes
 _enable_prof=no
 _enable_asan=no
 _enable_tsan=no
+_enable_ubsan=no
 _global_constructors=no
 _no_undefined_var_template=no
 _no_pragma_pack=no
@@ -869,6 +870,7 @@ Optional Features:
   --enable-optimizations   enable optimizations
   --enable-asan            enable Address Sanitizer for memory-related debugging
   --enable-tsan            enable Thread Sanitizer for thread-related debugging
+  --enable-ubsan           enable Undefined Behavior Sanitizer for undefined-behavior-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1379,6 +1381,9 @@ for ac_option in $@; do
 		;;
 	--enable-tsan)
 		_enable_tsan=yes
+		;;
+	--enable-ubsan)
+		_enable_ubsan=yes
 		;;
 	--no-builtin-resources)
 		_builtin_resources=no
@@ -5975,6 +5980,14 @@ if test "$_enable_tsan" = yes ; then
 	append_var LDFLAGS "-fsanitize=thread"
 fi
 echo "$_enable_tsan"
+
+echo_n "Enabling Undefined Behavior Sanitizer... "
+
+if test "$_enable_ubsan" = yes ; then
+	append_var CXXFLAGS "-fsanitize=undefined"
+	append_var LDFLAGS "-fsanitize=undefined"
+fi
+echo "$_enable_ubsan"
 
 echo_n "Backend... "
 echo_n "$_backend"
