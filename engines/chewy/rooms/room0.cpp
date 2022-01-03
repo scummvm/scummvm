@@ -233,11 +233,11 @@ void Room0::eyeStart(EyeMode mode) {
 		spr_info[3].ZEbene = 193;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
+		SHOULD_QUIT_RETURN;
+
 		cur->plot_cur();
 		calcEyeClick(3);
 		out->back2screen(workpage);
-		EVENTS_UPDATE;
-		SHOULD_QUIT_RETURN;
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -359,6 +359,8 @@ void Room0::eyeShoot() {
 		}
 
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
+
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -409,6 +411,8 @@ void Room0::eyeSlimeBack() {
 		spr_info[3] = det->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
+
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -497,6 +501,8 @@ void Room0::feederStart(int16 mode) {
 		if (flags.AniUserAction)
 			get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
+		SHOULD_QUIT_RETURN;
+
 		cur->plot_cur();
 		if (!mode)
 			calcPillowClick(1);
@@ -529,7 +535,7 @@ void Room0::feederStart(int16 mode) {
 	}
 }
 
-void Room0::pillowThrow() {
+void Room0::feederExtend() {
 	for (int16 i = 0; i < 30 && !_G(spieler).R0PillowThrow; i++) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
@@ -612,6 +618,7 @@ void Room0::checkFeed() {
 		spr_info[4] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[4].ZEbene = 194;
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -646,6 +653,7 @@ void Room0::checkFeed() {
 		spr_info[3] = det->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		spr_info[3].ZEbene = 193;
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
 
 		if (!det->get_ani_status(CH_NACH_FUETTERN))
 			ende = true;
@@ -692,6 +700,7 @@ void Room0::checkPillow() {
 			spr_info[2].ZEbene = 192;
 		}
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
 
 		if (mode) {
 			if (adi->delay_count > 0)
@@ -746,7 +755,7 @@ void Room0::feederAni() {
 	feederStart(0);
 
 	if (_G(spieler).R0SlimeUsed) {
-		pillowThrow();
+		feederExtend();
 		if (_G(spieler).R0PillowThrow) {
 			checkPillow();
 			feederStart(1);
