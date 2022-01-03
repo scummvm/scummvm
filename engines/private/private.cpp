@@ -220,13 +220,15 @@ Common::Error PrivateEngine::run() {
 	_frameImage = decodeImage(_framePath, nullptr);
 	_mframeImage = decodeImage(_framePath, &palette); 
 
-	byte *initialPalette;
-	decodeImage("inface/general/inface1.bmp", &initialPalette);
-	_compositeSurface->setPalette(initialPalette, 0, 256);
-	free(initialPalette);
-
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
+
+	byte *initialPalette;
+	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette);
+	_compositeSurface->setPalette(initialPalette, 0, 256);
+	surf->free();
+	delete surf;
+	_image->destroy();
 
 	// Main event loop
 	Common::Event event;
