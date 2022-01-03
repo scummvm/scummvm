@@ -817,7 +817,6 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	}
 
 	uint8 *dst = (uint8 *)glyph.image.getPixels();
-	memset(dst, 0, glyph.image.h * glyph.image.pitch);
 
 	switch (bitmap->pixel_mode) {
 	case FT_PIXEL_MODE_MONO:
