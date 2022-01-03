@@ -181,6 +181,7 @@ private:
 	bool cmdStepBack(int argc, const char **argv);
 	bool cmdRollLeft(int argc, const char **argv);
 	bool cmdRollRight(int argc, const char **argv);
+	bool cmdToggleCrouch(int argc, const char **argv);
 
 	bool cmdCameraOnAvatar(int argc, const char **argv);
 

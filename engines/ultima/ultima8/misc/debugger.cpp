@@ -121,6 +121,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::stepBack", WRAP_METHOD(Debugger, cmdStepBack));
 	registerCmd("AvatarMoverProcess::rollLeft", WRAP_METHOD(Debugger, cmdRollLeft));
 	registerCmd("AvatarMoverProcess::rollRight", WRAP_METHOD(Debugger, cmdRollRight));
+	registerCmd("AvatarMoverProcess::toggleCrouch", WRAP_METHOD(Debugger, cmdToggleCrouch));
 
 	registerCmd("CameraProcess::moveToAvatar", WRAP_METHOD(Debugger, cmdCameraOnAvatar));
 
@@ -1372,6 +1373,10 @@ bool Debugger::cmdRollLeft(int argc, const char **argv) {
 
 bool Debugger::cmdRollRight(int argc, const char **argv) {
 	return _avatarMoveKey(AvatarMoverProcess::MOVE_ROLL_RIGHT, "roll right");
+}
+
+bool Debugger::cmdToggleCrouch(int argc, const char **argv) {
+	return _avatarMoveKey(AvatarMoverProcess::MOVE_TOGGLE_CROUCH, "toggle crouch");
 }
 
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {

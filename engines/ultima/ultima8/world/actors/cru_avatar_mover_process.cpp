@@ -144,40 +144,50 @@ static bool _isAnimStartRunning(Animation::Sequence anim) {
 
 bool CruAvatarMoverProcess::checkOneShotMove(Direction direction) {
 	Actor *avatar = getControlledActor();
+	MainActor *mainactor = dynamic_cast<MainActor *>(avatar);
 
 	static const MovementFlags oneShotFlags[] = {
 		MOVE_ROLL_LEFT, MOVE_ROLL_RIGHT,
 		MOVE_STEP_LEFT, MOVE_STEP_RIGHT,
 		MOVE_STEP_FORWARD, MOVE_STEP_BACK,
-		MOVE_SHORT_JUMP
+		MOVE_SHORT_JUMP, MOVE_TOGGLE_CROUCH
 	};
 
 	static const Animation::Sequence oneShotAnims[] = {
 		Animation::combatRollLeft, Animation::combatRollRight,
 		Animation::slideLeft, Animation::slideRight,
 		Animation::advance, Animation::retreat,
-		Animation::jumpForward
+		Animation::jumpForward, Animation::kneelStartCru
+	};
+
+	static const Animation::Sequence oneShotKneelingAnims[] = {
+		Animation::kneelCombatRollLeft, Animation::kneelCombatRollRight,
+		Animation::slideLeft, Animation::slideRight,
+		Animation::kneelingAdvance, Animation::kneelingRetreat,
+		Animation::jumpForward, Animation::kneelEndCru
 	};
 
 	for (int i = 0; i < ARRAYSIZE(oneShotFlags); i++) {
 		if (hasMovementFlags(oneShotFlags[i])) {
+			Animation::Sequence anim = (avatar->isKneeling() ?
+							oneShotKneelingAnims[i] : oneShotAnims[i]);
+
+			// All the animations should finish with gun drawn, *except*
+			// jump which should finish with gun stowed.  For other cases we should
+			// toggle.
+			bool incombat = avatar->isInCombat();
+			bool isjump = (anim == Animation::jumpForward);
+			if (mainactor && (incombat == isjump)) {
+				mainactor->toggleInCombat();
+			}
+
 			clearMovementFlag(oneShotFlags[i]);
-			Animation::Sequence anim = oneShotAnims[i];
-			if (avatar->isKneeling()) {
-				// TODO: check what should advance/retreat do here?
-				if (anim == Animation::combatRollLeft)
-					avatar->doAnim(Animation::kneelCombatRollLeft, direction);
-				else if (anim == Animation::combatRollRight)
-					avatar->doAnim(Animation::kneelCombatRollRight, direction);
-				else if (anim == Animation::advance)
-					step(Animation::kneelingAdvance, direction);
-				else if (anim == Animation::retreat)
-					step(Animation::kneelingRetreat, direction);
+
+			if (anim == Animation::advance || anim == Animation::retreat ||
+				anim == Animation::kneelingAdvance || anim == Animation::kneelingRetreat) {
+				step(anim, direction);
 			} else {
-				if (anim == Animation::advance || anim == Animation::retreat)
-					step(anim, direction);
-				else
-					avatar->doAnim(anim, direction);
+				avatar->doAnim(anim, direction);
 			}
 			return true;
 		}

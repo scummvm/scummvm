@@ -96,6 +96,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_STEP_BACK, "STEP_BACK", "Step Back", "AvatarMoverProcess::stepBack", nullptr, "END", "KP2" },
 	{ ACTION_ROLL_LEFT, "ROLL_LEFT", "Roll Left", "AvatarMoverProcess::rollLeft", nullptr, "INSERT", "KP1" },
 	{ ACTION_ROLL_RIGHT, "ROLL_RIGHT", "Roll Right", "AvatarMoverProcess::rollRight", nullptr, "PAGEUP", "KP3" },
+	{ ACTION_TOGGLE_CROUCH, "TOGGLE_CROUCH", "Toggle Crouch", "AvatarMoverProcess::toggleCrouch", nullptr, "KP5", nullptr },
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER" },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
