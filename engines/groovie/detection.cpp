@@ -62,11 +62,24 @@ static const PlainGameDescriptor groovieGames[] = {
 static const GroovieGameDescription gameDescriptions[] = {
 	// groovie.cpp requires the first file to be the main .grv file for v2 games, might as well stick to that convention for v1 games from now on too
 
+	// The 7th Guest 25th Anniversary
+	{
+		{
+			"t7g", "25th Anniversary Edition",
+			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
+						"AT.gjd", "bbaa95ce6e600a8ba5b2902326cd11f8", 28827446),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI)
+		},
+		kGroovieT7G
+	},
+
 	// The 7th Guest DOS English
 	{
 		{
 			"t7g", "",
-			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
+			AD_ENTRY2s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659,
+						"AT.gjd", "bbaa95ce6e600a8ba5b2902326cd11f8", 45171574),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS,
 			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI)
 		},
