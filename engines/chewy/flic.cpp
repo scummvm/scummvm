@@ -253,28 +253,30 @@ void flic::decode_frame() {
 }
 
 void flic::col256_chunk(byte *tmp) {
-	short int i;
-	short int packets;
-	short int count;
-	char anz, col;
-	char r, g, b;
-	packets = *(short int *)tmp;
+	int i;
+	int packets;
+	int count;
+	byte anz, col;
+	byte r, g, b;
+	packets = *(int16 *)tmp;
 	tmp += 2;
+
 	out->vsync_start();
 	if (cls_flag == true)
 		out->cls();
 	else
 		cls_flag = true;
+
 	if (tmp[1] == 0) {
 		tmp += 2;
-		for (i = 0; i < 768; i++)
+		for (i = 0; i < PALETTE_SIZE; i++)
 			tmp[i] >>= 2;
 		if (fade_flag == false)
 			out->set_palette(tmp);
 		else {
-			memset(fade_pal, 0, 768);
+			memset(fade_pal, 0, PALETTE_SIZE);
 			out->set_palette(fade_pal);
-			memcpy(fade_pal, tmp, 768);
+			memcpy(fade_pal, tmp, PALETTE_SIZE);
 		}
 	} else {
 		col = 0;
@@ -293,25 +295,27 @@ void flic::col256_chunk(byte *tmp) {
 }
 
 void flic::col64_chunk(byte *tmp) {
-	short int i;
-	short int packets;
-	short int count;
-	char anz, col;
-	char r, g, b;
-	packets = *((short int *)tmp);
+	int i;
+	int packets;
+	int count;
+	byte anz, col;
+	byte r, g, b;
+	packets = *((int16 *)tmp);
 	tmp += 2;
+
 	out->vsync_start();
 	if (cls_flag == true)
 		out->cls();
 	else
 		cls_flag = true;
+
 	if (!tmp[1]) {
 		if (fade_flag == false)
 			out->set_palette(tmp + 2);
 		else {
-			memset(fade_pal, 0, 768);
+			memset(fade_pal, 0, PALETTE_SIZE);
 			out->set_palette(fade_pal);
-			memcpy(fade_pal, tmp + 2, 768);
+			memcpy(fade_pal, tmp + 2, PALETTE_SIZE);
 		}
 	} else {
 		col = 0;
