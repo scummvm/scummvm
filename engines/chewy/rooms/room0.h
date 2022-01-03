@@ -48,29 +48,29 @@ private:
 	 */
 	static void eyeShoot();
 
-	static void auge_schleim_back();
+	static void eyeSlimeBack();
 
-	static void ch_schleim_auge();
+	static void checkSlimeEye();
 
-	static void fuetter_start(int16 mode);
+	static void feederStart(int16 mode);
 
-	static void ch_fuetter();
-	static void ch_kissen();
+	static void checkFeed();
+	static void checkPillow();
 
-	static void kissen_wurf();
+	static void pillowThrow();
 
 	static void trapDoorOpen();
 	static void trapDoorClose();
 
-	static void calc_auge_click(int16 ani_nr);
+	static void calcEyeClick(int16 ani_nr);
 
-	static void calc_kissen_click(int16 ani_nr);
+	static void calcPillowClick(int16 ani_nr);
 public:
 	static void entry();
 	static bool timer(int16 t_nr, int16 ani_nr);
 
 	static void eyeAnim();
-	static void fuett_ani();
+	static void feederAni();
 	static bool getPillow();
 	static bool pullSlime();
 };

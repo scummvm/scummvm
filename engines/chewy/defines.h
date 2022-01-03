@@ -287,8 +287,8 @@ enum SetupScreenMode {
 #define BLITZ_POS 5
 #define VERSTECK_POS 6
 
-#define KISSEN_INV 0
-#define SCHLEIM_INV 1
+#define PILLOW_INV 0
+#define SLIME_INV 1
 #define RED_CARD_INV 2
 #define KABEL_INV 3
 #define MONOKEL_INV 4

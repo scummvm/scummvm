@@ -51,7 +51,7 @@ namespace Rooms {
 #define KOPF3 48
 
 void Room0::entry() {
-	if (is_cur_inventar(0) || _G(spieler).R0KissenWurf ||
+	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow ||
 			obj->check_inventar(0))
 		det->hide_static_spr(6);
 
@@ -97,7 +97,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 				}
 
 				eyeAnim();
-			} else if (!_G(spieler).R0KissenWurf) {
+			} else if (!_G(spieler).R0PillowThrow) {
 				start_aad_wait(42, -1);
 				start_spz(2, 255, false, 0);
 
@@ -110,8 +110,8 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 				set_person_pos(191, 120, P_CHEWY, P_LEFT);
 			}
 
-			if (!_G(spieler).R0KissenWurf)
-				fuett_ani();
+			if (!_G(spieler).R0PillowThrow)
+				feederAni();
 
 			uhr->reset_timer(t_nr, 0);
 			flags.AutoAniPlay = false;
@@ -175,8 +175,8 @@ void Room0::eyeAnim() {
 
 		if (_G(spieler).R0SlimeUsed) {
 			start_aad(124);
-			ch_schleim_auge();
-			auge_schleim_back();
+			checkSlimeEye();
+			eyeSlimeBack();
 			auto_move(FUETTER_POS, P_CHEWY);
 			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		} else {
@@ -234,7 +234,7 @@ void Room0::eyeStart(EyeMode mode) {
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		calc_auge_click(3);
+		calcEyeClick(3);
 		out->back2screen(workpage);
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
@@ -283,7 +283,7 @@ void Room0::eyeWait() {
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		calc_auge_click(2);
+		calcEyeClick(2);
 		out->back2screen(workpage);
 
 		if (adi->delay_count > 0) {
@@ -301,7 +301,7 @@ void Room0::eyeWait() {
 	clear_prog_ani();
 }
 
-void Room0::calc_auge_click(int16 ani_nr) {
+void Room0::calcEyeClick(int16 ani_nr) {
 	int16 anz;
 	int16 x, y;
 	int16 i;
@@ -319,10 +319,10 @@ void Room0::calc_auge_click(int16 ani_nr) {
 					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 			}
 		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
-			if (is_cur_inventar(SCHLEIM_INV)) {
+			if (is_cur_inventar(SLIME_INV)) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
-			} else if (is_cur_inventar(KISSEN_INV)) {
+			} else if (is_cur_inventar(PILLOW_INV)) {
 
 				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATEI);
 			}
@@ -382,7 +382,7 @@ void Room0::eyeShoot() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 }
 
-void Room0::auge_schleim_back() {
+void Room0::eyeSlimeBack() {
 	ani_detail_info *adi;
 	bool ende;
 
@@ -423,7 +423,7 @@ void Room0::auge_schleim_back() {
 	clear_prog_ani();
 }
 
-void Room0::ch_schleim_auge() {
+void Room0::checkSlimeEye() {
 	ani_detail_info *adi;
 
 	adi = det->get_ani_detail(CH_WIRFT_SCHLEIM);
@@ -461,7 +461,7 @@ void Room0::ch_schleim_auge() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 }
 
-void Room0::fuetter_start(int16 mode) {
+void Room0::feederStart(int16 mode) {
 	ani_detail_info *adi;
 	bool ende;
 
@@ -478,7 +478,6 @@ void Room0::fuetter_start(int16 mode) {
 		det->enable_sound(FUETTER_SCHLAUCH, 0);
 		det->disable_sound(FUETTER_SCHLAUCH, 2);
 	} else {
-
 		det->disable_sound(FLAP_DETAIL, 0);
 		det->enable_sound(FLAP_DETAIL, 1);
 		det->disable_sound(FUETTER_SCHLAUCH, 0);
@@ -500,7 +499,7 @@ void Room0::fuetter_start(int16 mode) {
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
 		if (!mode)
-			calc_kissen_click(1);
+			calcPillowClick(1);
 
 		out->back2screen(workpage);
 		if (adi->delay_count > 0)
@@ -530,8 +529,8 @@ void Room0::fuetter_start(int16 mode) {
 	}
 }
 
-void Room0::kissen_wurf() {
-	for (int16 i = 0; i < 30 && !_G(spieler).R0KissenWurf; i++) {
+void Room0::pillowThrow() {
+	for (int16 i = 0; i < 30 && !_G(spieler).R0PillowThrow; i++) {
 		clear_prog_ani();
 		spr_info[0] = det->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		spr_info[0].ZEbene = 190;
@@ -540,14 +539,14 @@ void Room0::kissen_wurf() {
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		cur->plot_cur();
-		calc_kissen_click(1);
+		calcPillowClick(1);
 		out->back2screen(workpage);
 	}
 
 	clear_prog_ani();
 }
 
-void Room0::calc_kissen_click(int16 ani_nr) {
+void Room0::calcPillowClick(int16 ani_nr) {
 	int16 anz;
 	int16 x, y;
 	int16 i;
@@ -565,17 +564,17 @@ void Room0::calc_kissen_click(int16 ani_nr) {
 					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 			}
 		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
-			if (is_cur_inventar(KISSEN_INV) && _G(spieler).R0SlimeUsed) {
+			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
 				del_inventar(_G(spieler).AkInvent);
-				_G(spieler).R0KissenWurf = 1;
-			} else if (is_cur_inventar(SCHLEIM_INV)) {
+				_G(spieler).R0PillowThrow = true;
+			} else if (is_cur_inventar(SLIME_INV)) {
 				start_ats_wait(173, TXT_MARK_WALK, 14, ATS_DATEI);
 			}
 		}
 	}
 }
 
-void Room0::ch_fuetter() {
+void Room0::checkFeed() {
 	ani_detail_info *adi;
 	int16 i;
 	bool ende;
@@ -664,7 +663,7 @@ void Room0::ch_fuetter() {
 	clear_prog_ani();
 }
 
-void Room0::ch_kissen() {
+void Room0::checkPillow() {
 	ani_detail_info *adi;
 	bool ende, mode;
 
@@ -741,16 +740,16 @@ void Room0::trapDoorClose() {
 	}
 }
 
-void Room0::fuett_ani() {
+void Room0::feederAni() {
 	int16 action;
 	action = false;
-	fuetter_start(0);
+	feederStart(0);
 
 	if (_G(spieler).R0SlimeUsed) {
-		kissen_wurf();
-		if (_G(spieler).R0KissenWurf) {
-			ch_kissen();
-			fuetter_start(1);
+		pillowThrow();
+		if (_G(spieler).R0PillowThrow) {
+			checkPillow();
+			feederStart(1);
 			auto_move(VERSTECK_POS, P_CHEWY);
 			set_up_screen(DO_SETUP);
 			out->cls();
@@ -777,10 +776,10 @@ void Room0::fuett_ani() {
 	}
 
 	if (action) {
-		ch_fuetter();
+		checkFeed();
 		start_spz(CH_EKEL, 3, ANI_VOR, P_CHEWY);
 		start_aad(55);
-		fuetter_start(1);
+		feederStart(1);
 	}
 }
 
