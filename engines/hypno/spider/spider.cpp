@@ -28,6 +28,8 @@
 
 namespace Hypno {
 
+extern char *sceneVariables[];
+
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void SpiderEngine::loadAssets() {
@@ -87,6 +89,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("levels.mi_");
 	sc->hots[1].actions.push_back(cl);
 	sc->music = "sound.lib/menu_mus.raw";
+
+	Load *ld = new Load();
+	sc->hots[2].actions.push_back(ld);
+
+	//Save *sv = new Save();
+	//sc->hots[3].actions.push_back(sv);
 
 	cl = new ChangeLevel("options.mi_");
 	sc->hots[4].actions.push_back(cl);
@@ -880,6 +888,31 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 
 	return trans->nextLevel;
 }
+
+Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	// We don't want to continue with any sound from a previous game
+	//stopSound(true);
+	_nextLevel = stream->readString();
+
+	return Common::kNoError;
+}
+
+Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	//debugC(1, kDebugFunction, "saveGameStream(%d)", isAutosave);
+	if (isAutosave)
+		return Common::kNoError;
+
+	stream->writeString(_currentLevel);
+	stream->writeByte(0);
+
+	uint32 i = 0;
+	while (sceneVariables[i]) {
+		stream->writeUint32LE(_sceneState[sceneVariables[i]]);
+		i++;
+	}
+	return Common::kNoError;
+}
+
 
 Common::String SpiderEngine::findNextLevel(const Common::String &level) {
 	if (Common::matchString(level.c_str(), "c#") || Common::matchString(level.c_str(), "c##") || Common::matchString(level.c_str(), "c##?"))

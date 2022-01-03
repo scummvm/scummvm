@@ -123,9 +123,9 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 
-	bool canLoadGameStateCurrently() override { return false; }
+	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveAutosaveCurrently() override { return false; }
-	bool canSaveGameStateCurrently() override { return false; }
+	bool canSaveGameStateCurrently() override { return true; }
 
 	void syncGameStream(Common::Serializer &s);
 
@@ -153,6 +153,8 @@ public:
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);
 	void runEscape();
+	void runSave(Save *a);
+	void runLoad(Load *a);
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
 	void runPlay(Play *a);
@@ -271,6 +273,9 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
+	//virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) = 0;
+	//virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) = 0;
+
 
 private:
 	void runMainMenu(Code *code);
@@ -295,6 +300,12 @@ public:
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
+
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool hasFeature(EngineFeature f) const {
+		return (f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime);
+	}
 
 private:
 	void runMatrix(Code *code);

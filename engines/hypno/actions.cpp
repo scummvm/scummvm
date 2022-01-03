@@ -167,6 +167,14 @@ void HypnoEngine::runWalN(WalN *a) {
 		error("Invalid WALN command: %s", a->wn.c_str());
 }
 
+void HypnoEngine::runSave(Save *a) {
+	saveGameDialog();
+}
+
+void HypnoEngine::runLoad(Load *a) {
+	loadGameDialog();
+}
+
 void HypnoEngine::runQuit(Quit *a) {
 	quitGame();
 }

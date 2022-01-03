@@ -53,6 +53,8 @@ enum ActionType {
 	BackgroundAction,
 	OverlayAction,
 	EscapeAction,
+	SaveAction,
+	LoadAction,
 	QuitAction,
 	CutsceneAction,
 	PlayAction,
@@ -163,6 +165,21 @@ public:
 		type = EscapeAction;
 	}
 };
+
+class Save : public Action {
+public:
+	Save() {
+		type = SaveAction;
+	}
+};
+
+class Load : public Action {
+public:
+	Load() {
+		type = LoadAction;
+	}
+};
+
 
 class Quit : public Action {
 public:

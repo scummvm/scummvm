@@ -28,7 +28,7 @@ namespace Hypno {
 
 extern int parse_mis(const char *);
 
-const static char *sceneVariables[] = {
+const char *sceneVariables[] = {
 	"GS_NONE",
 	"GS_SCTEXT",
 	"GS_AMBIENT",
@@ -165,6 +165,13 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 
 			case TalkAction:
 				runTalk((Talk *)action);
+			break;
+
+			case SaveAction:
+				runSave((Save *)action);
+			break;
+			case LoadAction:
+				runLoad((Load *)action);
 			break;
 
 			case QuitAction:

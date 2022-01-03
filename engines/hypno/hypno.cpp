@@ -138,6 +138,11 @@ Common::Error HypnoEngine::run() {
 	// Main event loop
 	loadAssets();
 
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) { // load the savegame
+		loadGameState(saveSlot);
+	}
+
 	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {
 		debug("nextLevel: %s", _nextLevel.c_str());
