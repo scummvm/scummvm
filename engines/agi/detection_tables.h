@@ -114,6 +114,22 @@ namespace Agi {
 		ver \
 	}
 
+#define GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions) { \
+		{ \
+			id, \
+			extra, \
+			AD_ENTRY2s(fname_1,md5_1,size_1,fname_2,md5_2,size_2), \
+			lang, \
+			platform, \
+			ADGF_UNSUPPORTED, \
+			guioptions \
+		}, \
+		gid, \
+		interp, \
+		features, \
+		ver \
+	}
+
 #define BOOTER1_U(id,msg,fname,md5,size,ver,gid) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
 #define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
@@ -138,6 +154,7 @@ namespace Agi {
 #define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
 
 #define GAMEpre_P(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
 #define GAMEpre_PO(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform,guioptions) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,guioptions)
 #define GAMEpre_PS(id,extra,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
 #define GAMEpre_PSU(id,msg,fname,md5,size,ver,gid,platform) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
@@ -289,6 +306,23 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Donald Duck's Playground (ST) 1.0A 8/8/86
 	// Menus not tested
 	GAME("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP),
+
+	{
+		// Donald Duck's Playground (CoCo)
+		{
+			"ddp",
+			_s("Early AGI games for Tandy Color Computer are not yet supported."),
+			AD_ENTRY1s("ITEM.DAT", "6cc7d630c2771ade7058460a765e0cb9", 4290),
+			Common::EN_ANY,
+			Common::kPlatformCoCo,
+			ADGF_UNSUPPORTED,
+			GAMEOPTIONS_DEFAULT
+		},
+		GID_DDP,
+		GType_V1,
+		0,
+		0x2001 // unknown
+	},
 
 	// reported by Filippos (thebluegr) in bugreport #3048
 	// Menus not tested
@@ -450,6 +484,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("kq2", "fixed", "fb33ac2768a94a89117a270771db465c", 768, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
+	// King's Quest 2 (CoCo3 720k)
+	GAME_PS("kq2", "", "bdb10876cd4cb20eabd88778c40b4075", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
+
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -523,6 +560,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 4 (CoCo3 360k/720k) [AGI 2.072]
 	GAME_PS("kq4", "updated", "1959ca10739edb34069bb504dbd74805", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
+
+	// King's Quest 4 (CoCo3 360k/720k) update by Guillaume Major (2021)
+	GAME_PS("kq4", "", "ef1c0d2d14fe643929a092621c7459cc", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
 
 	// Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 	GAME("lsl1", "1.00 1987-06-01 5.25\"/3.5\"", "1fe764e66857e7f305a5f03ca3f4971d", 0x2440, GID_LSL1),
@@ -777,6 +817,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAMEpre_P("winnie", "", "title.pic",  "45e06010a3c61d78f4661103c901ae11", 8190,
 							"room62.obj", "d0711928e7a3ccfa4850fade052c6761", 1313, 0x0000, GID_WINNIE, Common::kPlatformApple2),
 
+	// Winnie the Pooh in the Hundred Acre Wood (CoCo)
+	GAMEpre_PU("winnie", "Early AGI games for Tandy Color Computer are not yet supported.",
+		"wintitle.pic", "cc8d2ae52e18700843f466a23d62c773", 6144,
+		"room62",		"813de04fd57063a402272c603be1188a", 1338, 0x0000, GID_WINNIE, Common::kPlatformCoCo),
+
 	// Xmas Card 1986 (PC) [AGI 2.272]
 	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
 
@@ -917,6 +962,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Nick's Quest - In Pursuit of QuakeMovie (v2.1 Gold)", "e29cbf9222551aee40397fabc83eeca0"),
 	FANMADE_FO("Open Mic Night (v0.1)", "70000a2f67aac27d1133d019df70246d", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Operation: Recon", "0679ce8405411866ccffc8a6743370d0"),
+	FANMADE_SVP("Operation: Recon (Demo)", "c52cc1ab8450a153e9d1474ce7636a13", 642, 0x2440, Common::kPlatformCoCo3),
 	FANMADE("Patrick's Quest (Demo v1.0)", "f254f5b894b98fec5f92acc07fb62841"),
 	FANMADE("Phantasmagoria", "87d20c1c11aee99a4baad3797b63146b"),
 	FANMADE("Pharaoh Quest (v0.0)", "51c630899d076cf799e573dadaa2276d"),
