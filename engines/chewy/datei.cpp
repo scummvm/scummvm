@@ -434,7 +434,7 @@ void datei::load_korrektur(const char *fname, int16 *sp) {
 						fcode = READFEHLER;
 						modul = DATEI;
 					} else {
-						for (int i = 0; i < header->count; ++i)
+						for (int i = 0; i < header->count * 2; ++i)
 							*sp++ = f.readSint16LE();
 					}
 				} else {
