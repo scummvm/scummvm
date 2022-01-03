@@ -468,7 +468,7 @@ void Script::readScriptString(Common::String &str) {
 		}
 		// Append the current character at the end of the string
 		str += c;
-	}
+ 	}
 
 	debugC(5, kDebugScript, "readScriptString orig: %s, ret: %s", orig.c_str(), str.c_str());
 }
@@ -637,12 +637,12 @@ void Script::printString(Graphics::Surface *surface, const char *str) {
 		message[i] = str[i];
 	}
 	Common::rtrim(message);
-
+	
 	// Draw the string
 	if (_version == kGroovieT7G) {
 		_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
 	} else {
-		_vm->_font->drawString(surface, message, 190, 190, 640, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A), Graphics::kTextAlignLeft);
+		_vm->_videoPlayer->drawString(Common::String(message), 190, 190, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A));
 	}
 }
 
@@ -2006,10 +2006,7 @@ void Script::o2_printstring() {
 	readScriptString(text);
 	debugC(1, kDebugScript, "Groovie::Script: PRINTSTRING (%d, %d): %s", posx, posy, text.c_str());
 
-	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
-	_vm->_font->drawString(gamescreen, text.c_str(), posx, posy, 640, col, Graphics::kTextAlignLeft);
-	_vm->_system->unlockScreen();
-	_vm->_graphicsMan->change();	// Force Update screen after step
+	_vm->_videoPlayer->drawString(text, posx, posy, col);
 }
 
 void Script::o2_playsong() {

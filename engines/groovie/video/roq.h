@@ -45,6 +45,8 @@ public:
 		return _soundHandle;
 	}
 
+	void drawString(const Common::String text, int posx, int posy, uint32 color) override;
+
 protected:
 	uint16 loadInternal() override;
 	bool playFrameInternal() override;
