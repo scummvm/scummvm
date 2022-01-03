@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-03 05:22+0000\n"
+"POT-Creation-Date: 2022-01-03 10:17+0000\n"
 "PO-Revision-Date: 2022-01-01 08:26+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -5316,13 +5316,13 @@ msgstr "O suporte a Eye of Beholder não está compilado"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:453
 #: engines/ultima/ultima4/meta_engine.cpp:224
-#: engines/ultima/ultima8/meta_engine.cpp:136
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Interact via Left Click"
 msgstr "Interagir com Clique do Botão Esquerdo"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:230
-#: engines/ultima/ultima8/meta_engine.cpp:142
+#: engines/ultima/ultima8/meta_engine.cpp:147
 msgid "Interact via Right Click"
 msgstr "Interagir com Clique do Botão Direito"
 
@@ -7947,19 +7947,19 @@ msgstr "Salvamento Original"
 msgid "Transfer Character"
 msgstr "Transferir Personagem"
 
-#: engines/ultima/ultima8/meta_engine.cpp:129
+#: engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:129
+#: engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:172
+#: engines/ultima/ultima8/meta_engine.cpp:177
 msgid "Ultima VIII Cheats"
 msgstr "Trapaças para Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:187
+#: engines/ultima/ultima8/meta_engine.cpp:192
 msgid "Ultima VIII Debug"
 msgstr "Depurador para Ultima VIII"
 
