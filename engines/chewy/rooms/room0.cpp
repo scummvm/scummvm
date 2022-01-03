@@ -64,10 +64,10 @@ void Room0::entry() {
 		while (!ani_timer[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
-#ifdef TODO_REENABLE
+
 		start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(2, -1);
-#endif
+
 		show_cur();
 	}
 }
