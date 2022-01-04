@@ -858,6 +858,7 @@ void kb_mov(int16 mode) {
 			ende = 1;
 		else
 			set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
 	}
 }
 
@@ -1339,6 +1340,7 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 						ende = 1;
 					}
 					set_up_screen(DO_SETUP);
+					SHOULD_QUIT_RETURN0;
 				}
 			}
 			_G(auto_p_nr) = P_CHEWY;
@@ -1387,6 +1389,7 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 					ende = 1;
 				}
 				set_up_screen(DO_SETUP);
+				SHOULD_QUIT_RETURN;
 			}
 		}
 
@@ -1959,7 +1962,7 @@ void auto_scroll(int16 scrx, int16 scry) {
 	_G(spieler).scrolly >>= 1;
 	_G(spieler).scrolly <<= 1;
 	ende = false;
-	while (!ende && !SHOULD_QUIT) {
+	while (!ende) {
 		if (scrx < _G(spieler).scrollx)
 			_G(spieler).scrollx -= _G(spieler).ScrollxStep;
 		else if (scrx > _G(spieler).scrollx)
@@ -1971,6 +1974,7 @@ void auto_scroll(int16 scrx, int16 scry) {
 		if (scrx == _G(spieler).scrollx && scry == _G(spieler).scrolly)
 			ende = true;
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
 	}
 	_G(maus_links_click) = tmp_maus_click;
 }

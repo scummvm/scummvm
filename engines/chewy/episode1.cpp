@@ -177,6 +177,7 @@ int16 r4_sonde_comp() {
 			minfo.y = 123;
 		}
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN0;
 	}
 	g_events->delay(500);
 
@@ -371,6 +372,7 @@ void r3_sonde_knarre() {
 			ende = 1;
 		}
 		set_ani_screen();
+		SHOULD_QUIT_RETURN;
 	}
 
 	clear_prog_ani();
@@ -826,9 +828,10 @@ void r8_start_verbrennen() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ablock12);
 		ende = 0;
-		while (!ende && det->get_ani_status(9) && !SHOULD_QUIT) {
-
+		while (!ende && det->get_ani_status(9)) {
 			set_up_screen(DO_SETUP);
+			SHOULD_QUIT_RETURN;
+
 			if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 				if (minfo.x > 146 && minfo.x < 208 &&
 				        minfo.y > 107 && minfo.y < 155)
