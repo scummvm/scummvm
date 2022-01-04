@@ -159,10 +159,8 @@ _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
 _opengl_mode=auto
-_opengl_game=auto
 _opengl_game_classic=auto
 _opengl_game_shaders=auto
-_opengl_game_es2=no
 _tinygl=yes
 _readline=auto
 _freetype2=auto
@@ -950,8 +948,8 @@ Optional Libraries:
 
   --with-opengl-prefix=DIR      prefix where OpenGL (ES) is installed (optional)
   --disable-opengl-game         disable OpenGL (ES) support in game [autodetect]
-  --disable-opengl-game-shaders disable use of modern OpenGL with shaders
-  --force-opengl-game-es2       only detect OpenGL ES2
+  --disable-opengl-game-classic disable OpenGL classic support in game
+  --disable-opengl-game-shaders disable use of modern OpenGL with shaders in game
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1165,19 +1163,21 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
-	--disable-opengl-game)        _opengl_game=no        ;;
+	--opengl-mode=*)
+		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--disable-opengl-game)
+		_opengl_game_classic=no
+		_opengl_game_shaders=no
+		;;
 	--disable-opengl-game-classic) _opengl_game_classic=no ;;
 	--disable-opengl-game-shaders) _opengl_game_shaders=no ;;
-	--force-opengl-game-es2)      _opengl_game_es2=yes   ;;
 	--enable-tinygl)              _tinygl=yes            ;;
 	--disable-tinygl)             _tinygl=no             ;;
 	--enable-bink)                _bink=yes              ;;
 	--disable-bink)               _bink=no               ;;
 	--enable-discord)             _discord=yes           ;;
 	--disable-discord)            _discord=no            ;;
-	--opengl-mode=*)
-		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
-		;;
 	--enable-verbose-build)      _verbose_build=yes      ;;
 	--enable-plugins)            _dynamic_modules=yes    ;;
 	--default-dynamic)           _plugins_default=dynamic;;
@@ -3077,6 +3077,7 @@ EOF
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
+		# RiscOS has no OpenGL support at all even though it's SDL based
 		_opengl_mode=none
 		;;
 	solaris*)
@@ -3253,8 +3254,6 @@ if test -n "$_host"; then
 			HOSTEXEEXT=.html
 			_ar="emar cr"
 			_ranlib="emranlib"
-			_opengl_mode=gles2
-			_opengl_game_es2=yes
 			;;
 		raspberrypi)
 			_libcurlpath=$RPI_ROOT/usr/bin
@@ -3590,8 +3589,6 @@ if test -n "$_host"; then
 			# graphics. But OpenGL works when it is enabled from the start.
 			# This might be related to a known crash on OpenGL de-init due
 			# to the OpenGL implementation on this platform.
-			_opengl_mode=gles2
-			_opengl_game_es2=yes
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
@@ -5330,26 +5327,27 @@ define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 #
 echocheck "OpenGL"
 
-case $_backend in
-	openpandora)
-		# Only enable OpenGL ES on the OpanPandora if --opengl-mode=gles is passed in explicitly.
-		if test "$_opengl_mode" = "gles" ; then
-			append_var LIBS "-lGLES_CM -lEGL -lX11"
-			append_var LIBS_3D "-lGLES_CM -lEGL -lX11"
-		else
-			_opengl_mode=none
-		fi
-		;;
-esac
+_opengl_glad=no
 
-if test "$_opengl_mode" = auto ; then
+if test "$_opengl_mode" != none ; then
 	case $_backend in
 		android)
 			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
 			_opengl_mode=gles2
-			_opengl_game_es2=yes
+			;;
+		android3d)
+			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
+			_opengl_mode=gles2
+			;;
+		openpandora)
+			# Enable GLES only if user explicitely requested it
+			# Backend is SDL based so GLAD is supported
+			test "$_opengl_mode" != "gles" && _opengl_mode=none
+			test "$_opengl_mode" != "none" && _opengl_glad=yes
 			;;
 		sdl)
+			# This case is for pure SDL backend. Many platforms overload it and create a new backend
+			# They still make use of SDL but it's handled below in the default case
 			case $_sdlversion in
 				1.2.*)
 					# Stock SDL 1.2 only supports OpenGL contexts.
@@ -5366,17 +5364,112 @@ if test "$_opengl_mode" = auto ; then
 							;;
 
 						*)
-							_opengl_mode=any
+							# As SDL2 supports everything, let the user choose if he wants to
+							test "$_opengl_mode" = "auto" && _opengl_mode=any
 							;;
 					esac
 					;;
 			esac
+			_opengl_glad=yes
 			;;
-
+		switch)
+			_opengl_mode=gles2
+			_opengl_glad=yes
+			;;
+		wasm*-emscripten)
+			_opengl_mode=gles2
+			;;
 		*)
-			_opengl_mode=none
+			# On all other platforms, by default don't enable OpenGL
+			test "$_opengl_mode" = "auto" && _opengl_mode=none
+			# We only support OpenGL on SDL based backends and Android (already handled)
+			test "$_sdl" = "no" && _opengl_mode=none
+			# If it's a SDL based backend and OpenGL is really enabled, use GLAD
+			test "$_opengl_mode" != "none" && test "$_sdl" != "no" && _opengl_glad=yes
 			;;
 	esac
+fi
+
+if test "$_opengl_glad" = "no" -a "$_opengl_mode" != "none"; then
+	# Try different header filenames
+	# 1) GL/gl.h         This is usually used on POSIX and Windows systems
+	# 2) OpenGL/gl.h     This is used on Mac OS X
+	# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
+	_opengl_can_compile=no
+	for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h"; do
+		# Test the current header for OpenGL
+		if test "$_opengl_mode" = "gl" -o "$_opengl_mode" = "any" ; then
+			cat > $TMPC << EOF
+#include <$i>
+#include <stdio.h>
+int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_can_compile=yes && break
+			# Desktop often has multiple implementations GL/GLES/GLES2
+		fi
+
+		# Test the current header for OpenGL ES2
+		if test "$_opengl_mode" = "gles2" -o "$_opengl_mode" = "any" ; then
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_ES_VERSION_2_0; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_can_compile=yes && _opengl_mode=gles2 && break
+		fi
+
+		# Test the current header for OpenGL ES
+		if test "$_opengl_mode" = "gles" -o "$_opengl_mode" = "any" ; then
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_VERSION_ES_CM_1_0; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_can_compile=yes && _opengl_mode=gles && break
+		fi
+	done
+
+	if test "$_opengl_can_compile" = yes; then
+		# Our simple test case
+		cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+		_opengl_can_compile=no
+		# Try different library names
+		if test "$_opengl_mode" = "gles2" ; then
+			# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
+			# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
+			for lib in "-lGLESv2" "-logles2"; do
+				if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib; then
+					append_var OPENGL_LIBS "$lib"
+					_opengl_can_compile=yes
+					break
+				fi
+			done
+		else
+			case $_host_os in
+			darwin*)
+				OPENGL_LIBS="-framework OpenGL"
+				;;
+			mingw*)
+				OPENGL_LIBS="-lopengl32"
+				;;
+			*)
+				OPENGL_LIBS="-lGL"
+				;;
+			esac
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS; then
+				_opengl_can_compile=yes
+			fi
+		fi
+	fi
+
+	if test "$_opengl_can_compile" = yes ; then
+		append_var INCLUDES "$OPENGL_CFLAGS"
+		append_var LIBS "$OPENGL_LIBS"
+		append_var LIBS_3D "$OPENGL_LIBS"
+	fi
+	cc_check_clean
+elif test "$_opengl_glad" = "yes"; then
+	_opengl_can_compile=yes
 fi
 
 _opengl=yes
@@ -5424,110 +5517,45 @@ esac
 #
 echocheck "OpenGL for game"
 
-if test "$_opengl_game" = auto ; then
-	_opengl_game=no
-	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android" || test "$_backend" = "android3d" \
-		|| test "$_backend" = "switch"; then
-		# Try different header filenames
-		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
-		# 2) OpenGL/gl.h     This is used on Mac OS X
-		# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
-		for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h"; do
-			# Test the current header for OpenGL
-			if test "$_opengl_game_es2" = no ; then
-				cat > $TMPC << EOF
-#include <$i>
-#include <stdio.h>
-int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
-EOF
-				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && break
-			fi
-
-			# Test the current header for OpenGL ES2
-			cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_ES_VERSION_2_0; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl_game=yes && _opengl_game_es2=yes && break
-		done
-	fi
-fi
-
-if test "$_opengl_game" = yes ; then
-	# Our simple test case
-	cat > $TMPC << EOF
-int main(void) { return 0; }
-EOF
-	_opengl_game=no
-	# Try different library names
-	if test "$_opengl_game_es2" = yes ; then
-		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-		# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
-		_opengl_game_es2=no
-		for lib in "-lGLESv2" "-logles2"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl_game_es2=yes
-				append_var OPENGL_LIBS "$lib"
-				break
-			fi
-		done
-	else
-		case $_host_os in
-		darwin*)
-			OPENGL_LIBS="-framework OpenGL"
-			;;
-		mingw*)
-			OPENGL_LIBS="-lopengl32"
-			;;
-		*)
-			OPENGL_LIBS="-lGL"
-			;;
-		esac
-		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
-			then
-			_opengl_game=yes
-		fi
-	fi
-
-	if test "$_opengl_game" = yes ; then
-		append_var INCLUDES "$OPENGL_CFLAGS"
-		append_var LIBS "$OPENGL_LIBS"
-		append_var LIBS_3D "$OPENGL_LIBS"
-		if test "$_opengl_game_classic" = auto ; then
-			_opengl_game_classic=yes
-		fi
-		if test "$_opengl_game_shaders" = auto; then
-			_opengl_game_shaders=yes
-		fi
-	elif test "$_opengl_game_es2" = "yes" ; then
-		append_var INCLUDES "$OPENGL_CFLAGS"
-		append_var LIBS "$OPENGL_LIBS"
-		append_var LIBS_3D "$OPENGL_LIBS"
-		_opengl_game_classic=no
-		if test "$_opengl_game_shaders" = auto ; then
-			_opengl_game_shaders=yes
-		fi
-	else
+if test "$_opengl_can_compile" = "yes"; then
+	if test "$_opengl_mode" = "gles"; then
+		# GLES 1.x is not supported for 3D games
 		_opengl_game_classic=no
 		_opengl_game_shaders=no
+	elif test "$_opengl_mode" = "gles2"; then
+		# GLES2 doesn't support GL classic
+		_opengl_game_classic=no
+		if test "$_opengl_game_shaders" != "no"; then
+			_opengl_game_shaders=yes
+		fi
+	else
+		# We can compile GL desktop
+		if test "$_opengl_game_classic" != "no"; then
+			_opengl_game_classic=yes
+		fi
+		if test "$_opengl_game_shaders" != "no"; then
+			_opengl_game_shaders=yes
+		fi
 	fi
-	cc_check_clean
+else
+	_opengl_game_classic=no
+	_opengl_game_shaders=no
 fi
 
-if test "$_opengl_game_es2" = "yes" ; then
-	echo "yes (OpenGL ES2)"
-else
-	if test "$_opengl_game_shaders" = "yes" ; then
-		echo "yes (shaders enabled)"
-	elif test "$_opengl_game_classic" = "yes" ; then
-		echo "yes (shaders disabled)"
+if test "$_opengl_game_shaders" = "yes" ; then
+	if test "$_opengl_mode" = "gles2" ; then
+		echo "yes (OpenGL ES2)"
 	else
-		echo "no"
+		echo "yes (shaders enabled)"
 	fi
+elif test "$_opengl_game_classic" = "yes" ; then
+	echo "yes (shaders disabled)"
+else
+	echo "no"
 fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
+define_in_config_if_yes "$_opengl_glad" "USE_GLAD"
 define_in_config_if_yes "$_opengl_game_classic" "USE_OPENGL_GAME"
 define_in_config_if_yes "$_opengl_game_shaders" "USE_OPENGL_SHADERS"
 
