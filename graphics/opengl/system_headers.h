@@ -52,7 +52,13 @@
 	#define USE_FORCED_GLES2 0
 #endif
 
-#if USE_FORCED_GLES2
+// Don't include any OpenGL stuff if we didn't enable it
+#ifdef USE_OPENGL
+#ifdef USE_GLAD
+
+	#include "graphics/opengl/glad.h"
+
+#elif USE_FORCED_GLES2
 
 	#define GL_GLEXT_PROTOTYPES
 	#if defined(IPHONE)
@@ -78,11 +84,7 @@
 		#define GL_MAX_SAMPLES 0x8D57
 	#endif
 
-#else
-
-	#define USE_GLAD
-	#include "graphics/opengl/glad.h"
-
+#endif
 #endif
 
 #endif
