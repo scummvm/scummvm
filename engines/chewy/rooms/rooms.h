@@ -31,9 +31,6 @@
 #include "chewy/episode4.h"
 #include "chewy/episode5.h"
 
-#define ANI_HIDE 0
-#define ANI_SHOW 1
-
 namespace Chewy {
 
 using Chewy::Rooms::Room0;
