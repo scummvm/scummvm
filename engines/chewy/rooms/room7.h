@@ -19,13 +19,22 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#ifndef CHEWY_ROOMS_ROOM7_H
+#define CHEWY_ROOMS_ROOM7_H
+
+#include "chewy/ngsdefs.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+class Room7 {
+public:
+	static void entry();
+	static void haken(int16 sib_nr);
+	static void klingel();
+};
 
+} // namespace Rooms
 } // namespace Chewy
 
 #endif

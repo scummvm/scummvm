@@ -19,13 +19,40 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#include "chewy/defines.h"
+#include "chewy/events.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room16.h"
+#include "chewy/rooms/room23.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+void Room16::entry() {
+	_G(zoom_horizont) = 140;
+	if (!_G(spieler).R16F5Exit) {
+		det->show_static_spr(4);
+		_G(spieler).room_e_obj[32].Attribut = 255;
+		atds->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+	} else {
+		det->hide_static_spr(4);
+		_G(spieler).room_e_obj[32].Attribut = AUSGANG_LINKS;
+		atds->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+}
 
+int16 Room16::use_gleiter() {
+	int16 action_flag = false;
+	if (!_G(spieler).inv_cur) {
+		action_flag = true;
+		auto_move(6, P_CHEWY);
+		_G(spieler).R23GleiterExit = 16;
+		Room23::cockpit();
+	}
+	return action_flag;
+}
+
+} // namespace Rooms
 } // namespace Chewy
-
-#endif

@@ -26,9 +26,6 @@
 
 namespace Chewy {
 
-#define ANI_HIDE 0
-#define ANI_SHOW 1
-
 #define MAX_ABLAGE 4
 
 #define ABLAGE_BLOCK_SIZE 64000l

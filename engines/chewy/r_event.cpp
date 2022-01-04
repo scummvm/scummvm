@@ -106,7 +106,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 
 	case ROOM_9_4:
-		r9_gtuer();
+		Room9::gtuer();
 		break;
 
 	default:
@@ -130,13 +130,13 @@ void timer_action(int16 t_nr) {
 
 	case 11:
 		if (t_nr == _G(timer_nr)[0])
-			r11_bork_zwinkert();
+			Room11::bork_zwinkert();
 		break;
 
 	case 12:
 		if (t_nr == _G(timer_nr)[0]) {
 			if (!is_chewy_busy())
-				r12_init_bork();
+				Room12::init_bork();
 		} else if (t_nr == _G(timer_nr)[1]) {
 			if (_G(spieler).R12TransOn) {
 				_G(spieler).R12TransOn = false;
@@ -148,7 +148,7 @@ void timer_action(int16 t_nr) {
 	case 14:
 		switch (ani_nr) {
 		case 0:
-			r14_eremit_feuer(t_nr, ani_nr);
+			Room14::eremit_feuer(t_nr, ani_nr);
 			break;
 		default:
 			break;
@@ -166,19 +166,19 @@ void timer_action(int16 t_nr) {
 		break;
 
 	case 18:
-		r18_timer_action(t_nr);
+		Room18::timer_action(t_nr);
 		break;
 
 	case 21:
 		if (t_nr == _G(timer_nr)[0]) {
-			r21_restart_spinne2();
+			Room21::restart_spinne2();
 		} else if (t_nr == _G(timer_nr)[2])
-			r21_chewy_kolli();
+			Room21::chewy_kolli();
 		break;
 
 	case 22:
 		if (!ani_nr && !flags.ExitMov) {
-			r22_bork(t_nr);
+			Room22::bork(t_nr);
 		}
 		break;
 
@@ -321,7 +321,7 @@ void check_ged_action(int16 index) {
 			switch (index) {
 			case 0:
 				if (!_G(spieler).R9Surimy)
-					r9_surimy();
+					Room9::surimy();
 				break;
 
 			}
@@ -330,7 +330,7 @@ void check_ged_action(int16 index) {
 		case 11:
 			switch (index) {
 			case 0:
-				r11_chewy_bo_use();
+				Room11::chewy_bo_use();
 				break;
 
 			default:
@@ -343,7 +343,7 @@ void check_ged_action(int16 index) {
 			case 2:
 				if (_G(spieler).R12ChewyBork) {
 					stop_person(P_CHEWY);
-					r13_talk_bork();
+					Room13::talk_bork();
 				}
 				break;
 
@@ -355,11 +355,11 @@ void check_ged_action(int16 index) {
 		case 17:
 			switch (index) {
 			case 0:
-				r17_door_kommando(0);
+				Room17::door_kommando(0);
 				break;
 
 			case 1:
-				r17_door_kommando(1);
+				Room17::door_kommando(1);
 				break;
 
 			default:
@@ -629,51 +629,35 @@ void enter_room(int16 eib_nr) {
 	HowardMov = false;
 	_G(cur_hide_flag) = false;
 
+#define ENTRY(NUM) case NUM: Room##NUM::entry(); break
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-	case 0:
-		Room0::entry();
-		break;
-
-	case 2:
-		Room2::entry();
-		break;
-
-	case 3:
-		Room3::init_sonde();
-		break;
-
-	case 5:
-		if (_G(spieler).R5Terminal)
-			det->start_detail(6, 255, 0);
-		break;
-
-	case 6: r6_entry(); break;
-
-	case 7:
-		_G(spieler).ScrollxStep = 2;
-		break;
-
-	case 8: r8_entry(); break;
-	case 9: r9_entry(); break;
-	case 10: r10_entry(); break;
-	case 11: r11_entry(); break;
-	case 12: r12_entry(); break;
-	case 13: r13_entry(); break;
-	case 14: r14_entry(); break;
-	case 16: r16_entry();break;
+	ENTRY(0);
+	ENTRY(2);
+	case 3: Room3::init_sonde(); break;
+	ENTRY(5);
+	ENTRY(6);
+	ENTRY(7);
+	ENTRY(8);
+	ENTRY(9);
+	ENTRY(10);
+	ENTRY(11);
+	ENTRY(12);
+	ENTRY(13);
+	ENTRY(14);
+	ENTRY(16);
 
 	case 17:
-		r17_entry();
+		Room17::entry();
 		if (_G(spieler).SoundSwitch) {
 			if (!_G(spieler).R17EnergieOut)
 				det->play_sound(15, 0);
 		}
 		break;
 
-	case 18: r18_entry(); break;
-	case 19: r19_entry(); break;
-	case 21: r21_entry(); break;
-	case 22: r22_entry(); break;
+	ENTRY(18);
+	ENTRY(19);
+	ENTRY(21);
+	ENTRY(22);
 
 	case 23:
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -681,7 +665,7 @@ void enter_room(int16 eib_nr) {
 		break;
 
 	case 24:
-		r24_entry();
+		Room24::entry();
 		if (_G(spieler).SoundSwitch)
 			det->play_sound(17, 0);
 		break;
@@ -765,6 +749,7 @@ void enter_room(int16 eib_nr) {
 	default:
 		break;
 	}
+#undef ENTRY
 
 	flags.LoadGame = false;
 }
@@ -831,7 +816,7 @@ void exit_room(int16 eib_nr) {
 		_G(maus_links_click) = false;
 		break;
 
-	case 24: r24_exit(); break;
+	case 24: Room24::xit(); break;
 	case 27: r27_exit(eib_nr); break;
 	case 28: r28_exit(eib_nr); break;
 	case 29: r29_exit(); break;
@@ -1872,7 +1857,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_KNOPF_R5:
-		r5_knopf();
+		Room5::knopf();
 		break;
 
 	case SIB_SEIL:
@@ -1884,7 +1869,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
-		r6_bola_knopf();
+		Room6::bola_knopf();
 		break;
 
 	case SIB_TKNOPF1_R7:
@@ -1905,7 +1890,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_KLINGEL_R7:
-		r7_klingel();
+		Room7::klingel();
 		break;
 
 	case SIB_GIPS_R7:
@@ -1943,7 +1928,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_FOLTER_R8:
-		r8_stop_folter();
+		Room8::stop_folter();
 		break;
 
 	case SIB_TUER_R8:
@@ -1957,7 +1942,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SCHLITZ_R11:
-		r11_get_card();
+		Room11::get_card();
 		break;
 
 	case SIB_BANDKNOPF_R13:
@@ -1977,7 +1962,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CARTRIDGE_R23:
-		r23_get_cartridge();
+		Room23::get_cartridge();
 		break;
 
 	case SIB_FLUXO_R23:
@@ -2005,21 +1990,21 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_SCHALTER1_R21:
 		det->start_detail(0, 1, _G(spieler).R21Hebel1);
 		_G(spieler).R21Hebel1 ^= 1;
-		r21_calc_laser();
+		Room21::calc_laser();
 		atds->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER2_R21:
 		det->start_detail(1, 1, _G(spieler).R21Hebel2);
 		_G(spieler).R21Hebel2 ^= 1;
-		r21_calc_laser();
+		Room21::calc_laser();
 		atds->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER3_R21:
 		det->start_detail(2, 1, _G(spieler).R21Hebel3);
 		_G(spieler).R21Hebel3 ^= 1;
-		r21_calc_laser();
+		Room21::calc_laser();
 		atds->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATEI);
 		break;
 
@@ -2028,7 +2013,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER1_R21:
-		r21_use_gitter_energie();
+		Room21::use_gitter_energie();
 		break;
 
 	case SIB_CART1_R18:
@@ -2203,11 +2188,11 @@ void sib_event_inv(int16 sib_nr) {
 		start_spz(5, 255, 0, 0);
 		start_aad_wait(115, 0);
 		if (_G(spieler).R12TransOn)
-			r12_use_linke_rohr();
+			Room12::use_linke_rohr();
 		break;
 
 	case SIB_LHAKEN_R7:
-		r14_feuer();
+		Room14::feuer();
 		break;
 
 	case SIB_RHAKEN_R7:
@@ -2222,7 +2207,7 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SURIMY_R10:
-		r23_use_cartridge();
+		Room23::use_cartridge();
 		break;
 
 	case SIB_PAINT_R22:
@@ -2245,26 +2230,26 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TKNOPF2_R11:
-		r11_put_card();
+		Room11::put_card();
 		break;
 
 	case SIB_TKNOPF3_R11:
 		disable_timer();
-		r22_malen();
+		Room22::malen();
 		enable_timer();
 		break;
 
 	case SIB_CARTRIDGE_R23:
-		r10_get_surimy();
+		Room10::get_surimy();
 		break;
 
 	case SIB_FLUXO_R23:
-		r8_open_gdoor();
+		Room8::open_gdoor();
 		break;
 
 	case SIB_FEUER_R14:
 	case SIB_TALISMAN_R12:
-		r7_haken(sib_nr);
+		Room7::haken(sib_nr);
 		break;
 
 	case SIB_ROEHRE_R12:
