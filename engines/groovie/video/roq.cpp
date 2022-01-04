@@ -996,7 +996,9 @@ ROQSoundPlayer::~ROQSoundPlayer() {
 
 void ROQSoundPlayer::createAudioStream(bool stereo) {
 	_audioStream = Audio::makeQueuingAudioStream(22050, stereo);
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	Audio::Mixer *mixer = g_system->getMixer();
+	mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	mixer->setChannelVolume(_soundHandle, 100);
 }
 
 } // End of Groovie namespace
