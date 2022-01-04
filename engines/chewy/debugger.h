@@ -29,6 +29,7 @@ namespace Chewy {
 class Debugger : public GUI::Debugger {
 protected:
 	bool Cmd_GotoRoom(int argc, const char **argv);
+	bool Cmd_Item(int argc, const char **argv);
 public:
 	Debugger();
 	~Debugger() override;
