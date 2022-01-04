@@ -38,6 +38,15 @@
 static GLADapiproc loadFunc(void *userptr, const char *name) {
 	return (GLADapiproc)SDL_GL_GetProcAddress(name);
 }
+
+#elif defined(__ANDROID__)
+// To keep includes light, don't include EGL here and don't include Android headers
+void *androidGLgetProcAddress(const char *name);
+
+static GLADapiproc loadFunc(void *userptr, const char *name) {
+	return (GLADapiproc)androidGLgetProcAddress(name);
+}
+
 #else
 #error Not implemented
 #endif
