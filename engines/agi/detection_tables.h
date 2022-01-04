@@ -117,7 +117,7 @@ namespace Agi {
 #define GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
-			extra, \
+			msg, \
 			AD_ENTRY2s(fname_1,md5_1,size_1,fname_2,md5_2,size_2), \
 			lang, \
 			platform, \
