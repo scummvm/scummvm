@@ -150,6 +150,10 @@ uint16 ROQPlayer::loadInternal() {
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
 
+	if (!_flagOverlay && _flagNoPlay) {
+		clearOverlay();
+	}
+
 	// Read the file header
 	ROQBlockHeader blockHeader;
 	if (!readBlockHeader(blockHeader)) {
@@ -197,6 +201,12 @@ uint16 ROQPlayer::loadInternal() {
 	}
 }
 
+void ROQPlayer::clearOverlay() {
+	debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
+	if (_overBuf->w) {
+		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
+	}
+}
 
 // Calculate the overlapping area for the rendered frame to the visible frame. The game can use an origin to
 // place the rendered image at different places.
@@ -376,11 +386,6 @@ bool ROQPlayer::playFrameInternal() {
 
 		// Clear the dirty flag
 		_dirty = false;
-	}
-
-	if (_file->eos()) {
-		debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
-		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
 	}
 
 	// Report the end of the video if we reached the end of the file or if we
