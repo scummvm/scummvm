@@ -143,6 +143,7 @@ namespace Agi {
 #define GAME_FPO(id,extra,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,guioptions)
 #define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformDOS)
 #define GAME_FO(id,extra,md5,ver,flags,gid,guioptions) GAME_FPO(id,extra,md5,ver,flags,gid,Common::kPlatformDOS,guioptions)
+#define GAME_FSO(id,extra,fname,md5,size,ver,flags,gid,guioptions) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,Common::kPlatformDOS,GType_V2,guioptions)
 
 #define GAME_PS(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 
@@ -179,6 +180,8 @@ namespace Agi {
 #define FANMADE_L(name,md5,lang) FANMADE_LF(name,md5,lang,0)
 #define FANMADE_I(id,name,md5) FANMADE_IF(id,name,md5,0)
 #define FANMADE_O(name,md5,guioptions) FANMADE_FO(name,md5,0,guioptions)
+#define FANMADE_P(name,md5,platform) FANMADE_SVP(name,md5,-1,0x2917,platform)
+#define FANMADE_S(name,fname,md5,size) GAME_LVFPNF("agi-fanmade",name,fname,md5,size,Common::EN_ANY,0x2917,GF_FANMADE,GID_FANMADE,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 
 #define FANMADE(name,md5) FANMADE_F(name,md5,0)
 
@@ -880,8 +883,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Corby's Murder Mystery (v1.0)", "4ebe62ac24c5a8c7b7898c8eb070efe5"),
 	FANMADE_FO("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE_LFO("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA, GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
-	FANMADE("DG: The Adventure Game (English v1.1)", "0d6376d493fa7a21ec4da1a063e12b25"),
-	FANMADE_L("DG: The Adventure Game (French v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23", Common::FR_FRA),
+	FANMADE("DG: The Adventure Game (v1.1)", "0d6376d493fa7a21ec4da1a063e12b25"),
+	FANMADE_L("DG: The Adventure Game (v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23", Common::FR_FRA),
 	FANMADE("Dashiki (16 Colors)", "9b2c7b9b0283ab9f12bedc0cb6770a07"),
 	FANMADE_FO("Dashiki (256 Colors)", "c68052bb209e23b39b55ff3d759958e6", GF_AGIMOUSE|GF_AGI256, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Date Quest 1 (v1.0)", "ba3dcb2600645be53a13170aa1a12e69"),
@@ -901,19 +904,20 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Escape Quest (v0.0.3)", "2346b65619b1da0298b715b06d1a45a1"),
 	FANMADE("Escape from the Desert (beta 1)", "dfdc634d340854bd6ece28024010758d"),
 	FANMADE("Escape from the Salesman", "e723ca4fe0f6f56affe039fbb4dbeb6c"),
-	FANMADE("Fu$k Quest 1 (final)", "1cd0587422313f6ca77d6a95988e88ed"),
-	FANMADE("Fu$k Quest 1", "1cd0587422313f6ca77d6a95988e88ed"),
+	FANMADE_S("Fu$k Quest 1", "vol.0", "e62f1de7732b354fa4ff813d3a8dda65", 96856),
+	FANMADE_S("Fu$k Quest 1 (final)", "vol.0", "e62f1de7732b354fa4ff813d3a8dda65", 97127),
 	FANMADE("Fu$k Quest 2 - Romancing the Bone (Teaser)", "d288355d71d9bb1639260ccaa3b2fbfe"),
 	FANMADE("Fu$k Quest 2 - Romancing the Bone", "294beeb7765c7ea6b05ed7b9bf7bff4f"),
 	FANMADE("Gennadi Tahab Autot - Mission Pack 1 - Kuressaare", "bfa5fe71978e6ccf3d4eedd430124015"),
-	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
-	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
-
-	GAME_LVFPNF("agi-fanmade", "Groza (russian) [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
-	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1,
 	            Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
+	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
+	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
+
+	GAME_LVFPNF("agi-fanmade", "Groza [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
+	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT), // Гроза
 
 	FANMADE_FO("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),
@@ -937,7 +941,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
-	FANMADE("J\xf5ulumaa (v0.05) (Estonian)", "53982ecbfb907e41392b3961ad1c3475"),
+	FANMADE_L("Jõulumaa (v0.05)", "53982ecbfb907e41392b3961ad1c3475", Common::ET_EST),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Mar 26)", "a25d7379d281b1b296d4785df90a8e78"),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Aug 16)", "6b4f796d0421d2e12e501b511962e03a"),
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
@@ -969,7 +973,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Phil's Quest - the Search for Tolbaga", "5e7ca45c360e03164b8358e49900c588"),
 	FANMADE("Pinkun Maze Quest (v0.1)", "148ff0843af389928b3939f463bfd20d"),
 	FANMADE("Pirate Quest", "bb612a919ed2b9ea23bbf03ce69fed42"),
-	FANMADE("Pothead (v0.1)", "d181101385d3a45082f418cd4b3c5b01"),
+	FANMADE("Pothead Quest (v0.1)", "d181101385d3a45082f418cd4b3c5b01"),
 	FANMADE("President's Quest", "4937d0e8ecadb7888faeb347799b0388"),
 	FANMADE("Prince Quest", "266248d75c3130c8ccc9c9bf2ad30a0d"),
 	FANMADE("Professor (English) - The Professor is Missing (Mar 17)", "6232de31cc204affdf2e92dfe3dc0e4d"),
@@ -982,9 +986,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Quest for Piracy 1 - Enter the Silver Pirate (v0.15)", "d23f5c2a26f6dc60c686f8a2436ea4a6"),
 	FANMADE("Quest for a Record Deal", "f4fbd7abf056d2d3204f790da5ac89ab"),
 	FANMADE("Ralph's Quest (v0.1)", "5cf56378aa01a26ec30f25295f0750ca"),
-	FANMADE("Residence 44 Quest (Dutch v0.99)", "7c5cc64200660c70240053b33d379d7d"),
-	FANMADE("Residence 44 Quest (English v0.99)", "fe507851fddc863d540f2bec67cc67fd"),
-	FANMADE("Residence 44 Quest (English v1.0a)", "f99e3f69dc8c77a45399da9472ef5801"),
+	FANMADE_L("Residence 44 Quest (v0.99)", "7c5cc64200660c70240053b33d379d7d", Common::NL_NLD),
+	FANMADE("Residence 44 Quest (v0.99)", "fe507851fddc863d540f2bec67cc67fd"),
+	FANMADE("Residence 44 Quest (v1.0a)", "f99e3f69dc8c77a45399da9472ef5801"),
 	FANMADE("SQ2Eye (v0.3)", "2be2519401d38ad9ce8f43b948d093a3"),
 	//FANMADE("SQ2Eye (v0.4)", "2be2519401d38ad9ce8f43b948d093a3"),
 	FANMADE("SQ2Eye (v0.41)", "f0e82c55f10eb3542d7cd96c107ae113"),
@@ -1007,9 +1011,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
 	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
 	GAME_FO("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
-	// FIXME: The following two entries have identical MD5 checksums?
-	GAME_FO("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
-	GAME_FO("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	GAME_FSO("serguei1", "v1.1 2002 Sep 5", "vol.0", "c518cc64fb731de406cb96f95534a388", 209980, 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	GAME_FSO("serguei1", "v1.1 2003 Apr 10", "vol.0", "c518cc64fb731de406cb96f95534a388", 211301, 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	GAME_FO("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
 	GAME_FO("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
@@ -1022,12 +1025,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("sq0", "", "e1a8e4efcce86e1efcaa14633b9eb986", 762, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
 	GAME_FO("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1", 0x2917, GF_FANMADE, GID_FANMADE, GAMEOPTIONS_DEFAULT),
 	GAME_FO("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910", 0x2917, GF_FANMADE, GID_FANMADE, GAMEOPTIONS_DEFAULT),
-	GAME_PS("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
+	GAME_PS("sqx", "v10.0", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
 	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a"),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
 	FANMADE("Speeder Bike Challenge (v1.0)", "2deb25bab379285ca955df398d96c1e7"),
 	FANMADE("Star Commander 1 - The Escape (v1.0)", "a7806f01e6fa14ebc029faa58f263750"),
+	FANMADE_SVP("Star Commander 1 - The Escape (v1.0)", "a7806f01e6fa14ebc029faa58f263750", 768, 0x2440, Common::kPlatformCoCo3),
 	FANMADE("Star Pilot: Bigger Fish", "8cb26f8e1c045b75c6576c839d4a0172"),
 	FANMADE("Street Quest (Demo)", "cf2aa94a7eb78dce6892c37f03e310d6"),	// AGIPAL
 	FANMADE("Tales of the Tiki", "8103c9c87e3964690a14a3d0d83f7ddc"),
@@ -1038,6 +1042,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("The 13th Disciple (v1.01)", "58e3ec1b9ac1a79901c472aaa59db832"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),
 	FANMADE("The Gourd of the Beans", "246f4d94946afb547482d44a53616d06"),
+	FANMADE_P("The Gourd of the Beans: An Unplanned Adventure", "5fe4b1fdcccd6b6a7c87d852a67c7f1e", Common::kPlatformWindows), // NAGI
 	FANMADE("The Grateful Dead", "c2146631afacf8cb455ce24f3d2d46e7"),
 	FANMADE("The Legend of Shay-Larah 1 - The Lost Prince", "04e720c8e30c9cf12db22ea14a24a3dd"),
 	FANMADE("The Legend of Zelda: The Fungus of Time (Demo v1.00)", "dcaf8166ceb62a3d9b9aea7f3b197c09"),

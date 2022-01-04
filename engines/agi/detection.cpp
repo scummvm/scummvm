@@ -68,7 +68,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"sq0", "Space Quest 0: Replicated"},
 	{"sq1", "Space Quest I: The Sarien Encounter"},
 	{"sq2", "Space Quest II: Vohaul's Revenge"},
-	{"sqx", "Space Quest X: The Lost Chapter"},
+	{"sqx", "Space Quest: The Lost Chapter"},
 	{"tetris", "AGI Tetris"},
 	{"troll", "Troll\'s Tale"},
 	{"winnie", "Winnie the Pooh in the Hundred Acre Wood"},
