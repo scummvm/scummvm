@@ -114,6 +114,22 @@ namespace Agi {
 		ver \
 	}
 
+#define GAME_LVFPNSt(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
+		{ \
+			id, \
+			extra, \
+			AD_ENTRY1s(fname,md5,size), \
+			lang, \
+			platform, \
+			ADGF_UNSTABLE, \
+			guioptions \
+		}, \
+		gid, \
+		interp, \
+		features, \
+		ver \
+	}
+
 #define GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
@@ -138,6 +154,7 @@ namespace Agi {
 
 #define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
+#define GAME_PSt(id,extra,md5,ver,gid,platform) GAME_LVFPNSt(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 
 #define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME_FPO(id,extra,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,guioptions)
@@ -153,6 +170,8 @@ namespace Agi {
 
 #define GAME3_P(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
 #define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
+#define GAME3_PU(id,msg,fname,md5,ver,flags,gid,platform) GAME_LVFPNU(id,msg,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
+#define GAME3_PSt(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPNSt(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
 
 #define GAMEpre_P(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
 #define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
@@ -355,7 +374,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
 
 	{
-		// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
+		// Gold Rush! (Mac) 2.01 12/22/88 [AGI 3.002.149]
 		{
 			"goldrush",
 			"2.01 1988-12-22",
@@ -371,7 +390,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		GF_MACGOLDRUSH,
 		0x3149
 	},
-
 
 	// Gold Rush! (CoCo3 720k) [AGI 2.023]
 	GAME_PS("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
@@ -391,8 +409,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME_PO("kq1", "1.0S 1988-02-23", "f4277aa34b43d37382bc424c81627617", 0x2272, GID_KQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
-	// King's Quest 1 (Mac) 2.0C
-	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
+	// King's Quest 1 (Mac) 2.0C 3/26/87
+	GAME_PSt("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
 
 	// King's Quest 1 (IBM PCjr) 1.00 1502265 5/10/84
 	BOOTER1_U("kq1", "Early King\'s Quest releases are not currently supported.",
@@ -423,8 +441,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (Amiga) 2.0J
 	GAME_PO("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// King's Quest 2 (Mac) 2.0R
-	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
+	// King's Quest 2 (Mac) 2.0R 3/23/88
+	GAME_PSt("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
 
 	{
 		// King's Quest 2 (PC booter) 1.0W
@@ -499,7 +517,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GID_KQ3, Common::kPlatformAtariST),
 
 	// King's Quest 3 (Mac) 2.14 3/15/88
-	GAME_P("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
+	GAME_PSt("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
 
 	// King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
 	GAME_PO("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -524,14 +542,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Bugreport #10646
 	GAME("kq3", "2.00 1987-05-25 5.25\"", "b46dc63d6272fb6ed24a004ad580a033", 0x2440, GID_KQ3),
 
-	// King's Quest 3 (Mac) 2.14 3/15/88
-	// Menus not tested
-	GAME_P("kq3", "2.14 1988-03-15 5.25\"", "7650e659c7bc0f1e9f8a410b7a2e9de6", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
-
 	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
 	GAME("kq3", "2.14 1988-03-15 3.5\"", "d3d17b77b3b3cd13246749231d9473cd", 0x2936, GID_KQ3),
 
-	// King's Quest 3 (CoCo3 158k/360k) [AGI 2.023]
+	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
 	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
@@ -600,9 +614,24 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter NY (Amiga) 1.06 3/18/89
 	GAME3_PO("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, GF_OLDAMIGAV20, GID_MH1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// reported by Filippos (thebluegr) in bugreport #3048
-	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
-	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
+	{
+		// reported by Filippos (thebluegr) in bugreport #3048
+		// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
+		{
+			"mh1",
+			"1.22 1988-08-31",
+			AD_ENTRY2s("mhdir",	"0c7b86f05fe02c2e26cff1b07450b82a", 2123,
+					   "mhvol.0", "338d7053d8cf08b517edebad2807975d", 115078),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GAMEOPTIONS_DEFAULT
+		},
+		GID_MH1,
+		GType_V3,
+		0,
+		0x3149
+	},
 
 	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
 	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
@@ -613,17 +642,76 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter NY (CoCo3 360k/720k) [AGI 2.072]
 	GAME_PS("mh1", "updated", "d47da950c62289f8d4ccf36af73365f2", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
 
+	// Manhunter NY (Mac) 1.22 7/21/89 [AGI 1.77]
+	GAME3_PSt("mh1", "1.22 1989-07-21",	"mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformMacintosh),
+
+	{
+		// Manhunter NY (Mac) 1.22 7.21/89 [AGI x.xxx.xxx]
+		{
+			"mh1",
+			"1.22 1989-07-21",
+			AD_ENTRY2s("mhdir",	"0c7b86f05fe02c2e26cff1b07450b82a", 2123,
+					   "vol.0", "338d7053d8cf08b517edebad2807975d", 115078),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GAMEOPTIONS_DEFAULT
+		},
+		GID_MH1,
+		GType_V3,
+		0,
+		0x3149
+	},
+
 	// Manhunter SF (ST) 1.0 7/29/89
 	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
 	// Manhunter SF (Amiga) 3.06 8/17/89        # 2.333
 	GAME3_PSO("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3086, GF_OLDAMIGAV20, GID_MH2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
-	GAME3("mh2", "3.03 1989-08-17 5.25\"", "mh2dir", "b90e4795413c43de469a715fb3c1fa93", 0x3149, GID_MH2),
+	{
+		// Manhunter SF (Mac) 1.81 10/23/89 [AGI x.xxx.xxx]
+		{
+			"mh2",
+			"1.81 1989-10-23",
+			AD_ENTRY2s("mh2dir", "b90e4795413c43de469a715fb3c1fa93", 2588,
+					   "vol.0", "b174bcf485bc348eae77782f9da4143e", 115338),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GAMEOPTIONS_DEFAULT
+		},
+		GID_MH1,
+		GType_V3,
+		0,
+		0x3149
+	},
+
+
+
+	// Manhunter SF (PC 5.25") 3.02 5.25\"" [AGI 3.002.149]
+	GAME3("mh2", "3.02 1989-07-26 5.25\"", "mh2dir", "bbb2c2f88d5740f7437fb7aa6f080b7b", 0x3149, GID_MH2),
 
 	// Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
 	GAME3("mh2", "3.02 1989-07-26 3.5\"", "mh2dir", "6fb6f0ee2437704c409cf17e081ba152", 0x3149, GID_MH2),
+
+	{
+		// Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
+		{
+			"mh2",
+			"3.03 1989-08-17 5.25\"",
+			AD_ENTRY2s("mh2dir", "b90e4795413c43de469a715fb3c1fa93", 2588,
+					   "mh2vol.0", "b174bcf485bc348eae77782f9da4143e", 115338),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GAMEOPTIONS_DEFAULT
+		},
+		GID_MH2,
+		GType_V3,
+		0,
+		0x3149
+	},
 
 	// Manhunter SF (CoCo3 720k) [AGI 2.023]
 	GAME_PS("mh2", "", "acaaa577e10d1753c5a74f6ae1d858d4", 591, 0x2440, GID_MH2, Common::kPlatformCoCo3),
@@ -704,7 +792,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Space Quest 1 (Mac) 1.5D
-	GAME_P("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
+	GAME_PSt("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
 
 	// Space Quest 1 (IIgs) 2.2
 	GAME_PO("sq1", "2.2 1987", "64b9b3d04c1066d36e6a6e56187a83f7", 0x2917, GID_SQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -759,9 +847,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2936
 	},
 
-
-	// Space Quest 2 (Mac) 2.0D
-	GAME_P("sq2", "2.0D 1988-04-04", "bfbebe0b59d83f931f2e1c62ce9484a7", 0x2936, GID_SQ2, Common::kPlatformMacintosh),
+	// Space Quest 2 (Mac) 2.0D 4/4/88
+	GAME_PSt("sq2", "2.0D 1988-04-04", "bfbebe0b59d83f931f2e1c62ce9484a7", 0x2936, GID_SQ2, Common::kPlatformMacintosh),
 
 	// reported by Filippos (thebluegr) in bugreport #3048
 	// Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
