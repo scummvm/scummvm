@@ -114,7 +114,7 @@ xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
 #endif
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 #if PLUGIN_ENABLED_STATIC(GRIM)
 shaders/grim_dim.fragment            FILE    "engines/grim/shaders/grim_dim.fragment"
 shaders/grim_dim.vertex              FILE    "engines/grim/shaders/grim_dim.vertex"

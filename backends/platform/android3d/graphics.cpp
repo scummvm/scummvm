@@ -464,7 +464,7 @@ void AndroidGraphicsManager::initSizeIntern(uint width, uint height,
 #else
 	_game_texture->allocBuffer(width, height);
 #endif
-#ifdef USE_GLES2
+#if USE_FORCED_GLES2
 	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
 	_frame_buffer->attach();
 #endif

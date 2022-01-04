@@ -102,7 +102,7 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 	_levelCount = count;
 
 	if (count >= 1) {
-#if !defined(USE_GLES2)
+#if !USE_FORCED_GLES2
 		// GLES2 does not allow setting the max provided mipmap level.
 		// It expects all the levels to be provided, which is not the case in TLJ.
 		// FIXME: Enable mipmapping on GLES2
