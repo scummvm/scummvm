@@ -356,15 +356,16 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 		}
 
 		// Watch out, some curse words in here
-		Common::String vulgarLangA = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_A) : "FUCKER";
-		Common::String vulgarLangB = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_B) : "SHITHEAD";
-		Common::String vulgarLangC = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_C) : "BITCH";
-		Common::String vulgarLangD = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_D) : "CUNT";
-		Common::String vulgarLangE = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_E) : "WHORE";
-		Common::String vulgarLangF = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_F) : "ASSHOLE";
-		Common::String vulgarLangG = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_G) : "TWAT";
-		Common::String vulgarLangH = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_H) : "FUCK";
-		Common::String vulgarLangI = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_VULGAR_LANG_I) : "SHIT";
+		bool newVersion = (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0));
+		Common::String vulgarLangA = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_A) : "FUCKER";
+		Common::String vulgarLangB = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_B) : "SHITHEAD";
+		Common::String vulgarLangC = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_C) : "BITCH";
+		Common::String vulgarLangD = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_D) : "CUNT";
+		Common::String vulgarLangE = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_E) : "WHORE";
+		Common::String vulgarLangF = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_F) : "ASSHOLE";
+		Common::String vulgarLangG = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_G) : "TWAT";
+		Common::String vulgarLangH = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_H) : "FUCK";
+		Common::String vulgarLangI = newVersion ? _vm->getString(IDS_AL_VULGAR_LANG_I) : "SHIT";
 
 		if (_passwordEntered == vulgarLangA || _passwordEntered == vulgarLangB || _passwordEntered == vulgarLangC ||
 				_passwordEntered == vulgarLangD || _passwordEntered == vulgarLangE || _passwordEntered == vulgarLangF ||
@@ -372,7 +373,7 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 			liveText = _vm->getString(IDS_AGENT3_VIRUS_TEXT_A);
 			liveText += _passwordEntered;
 			liveText += _vm->getString(IDS_AGENT3_VIRUS_CURSOR);
-			liveText += (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0)) ? _vm->getString(IDS_AL_CASTRATION_TEXT) : "\nVULGAR LANGUAGE UNACCEPTABLE. CASTRATION TOOL ACTIVATED.";
+			liveText += newVersion ? _vm->getString(IDS_AL_CASTRATION_TEXT) : "\nVULGAR LANGUAGE UNACCEPTABLE. CASTRATION TOOL ACTIVATED.";
 			((SceneViewWindow  *)viewWindow)->displayLiveText(liveText, false);
 			_passwordIndex = 4;
 			_timerStart = 0;
