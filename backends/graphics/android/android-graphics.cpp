@@ -223,8 +223,7 @@ void AndroidGraphicsManager::touchControlNotifyChanged() {
 void *AndroidGraphicsManager::getProcAddress(const char *name) const {
 	ENTER("%s", name);
 
-	// TODO: Support dynamically loaded OpenGL
-	return nullptr;
+	return androidGLgetProcAddress(name);
 }
 
 bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {

@@ -5334,10 +5334,12 @@ if test "$_opengl_mode" != none ; then
 		android)
 			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
 			_opengl_mode=gles2
+			_opengl_glad=yes
 			;;
 		android3d)
 			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
 			_opengl_mode=gles2
+			_opengl_glad=yes
 			;;
 		openpandora)
 			# Enable GLES only if user explicitely requested it
@@ -6125,7 +6127,7 @@ case $_host_os in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm|-ldl|-lGLESv2)
+			-lz|-lm|-ldl)
 				system_libs="$system_libs $lib"
 				;;
 			*)
@@ -6137,7 +6139,7 @@ case $_host_os in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lGLESv2"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lEGL"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks

@@ -40,6 +40,7 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <EGL/egl.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
@@ -119,6 +120,11 @@ void checkGlError(const char *expr, const char *file, int line) {
 		LOGE("GL ERROR: %s on %s (%s:%d)", getGlErrStr(error), expr, file, line);
 }
 #endif
+
+void *androidGLgetProcAddress(const char *name) {
+	// This exists since Android 2.3 (API Level 9)
+	return (void *)eglGetProcAddress(name);
+}
 
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),

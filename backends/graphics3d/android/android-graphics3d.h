@@ -134,8 +134,6 @@ protected:
 
 	void refreshScreen();
 
-	void *getProcAddress(const char *name) const;
-
 private:
 	void initOverlay();
 

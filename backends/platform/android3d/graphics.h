@@ -114,8 +114,6 @@ protected:
 
 	void refreshScreen();
 
-	void *getProcAddress(const char *name) const;
-
 private:
 	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 	void disableCursorPalette();

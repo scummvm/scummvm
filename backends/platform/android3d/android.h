@@ -100,6 +100,8 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
+void *androidGLgetProcAddress(const char *name);
+
 class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
