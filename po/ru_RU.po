@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-03 10:17+0000\n"
+"POT-Creation-Date: 2022-01-04 09:04+0000\n"
 "PO-Revision-Date: 2021-12-31 18:57+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -5304,13 +5304,13 @@ msgstr "Поддержка для Eye of Beholder не скомпилирова�
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:453
 #: engines/ultima/ultima4/meta_engine.cpp:224
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Управление через левый щелчок"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:230
-#: engines/ultima/ultima8/meta_engine.cpp:147
+#: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Взаимодействовать через правый щелчок"
 
@@ -7852,16 +7852,24 @@ msgid "Replaces game fonts with rendered fonts"
 msgstr "Заменяет шрифты игры на шрифты лучшего качества"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:128
 msgid "Camera moves with Silencer"
 msgstr "Камера перемещается вместе с Сайленсером"
 
-#: engines/ultima/detection.cpp:130
+#: engines/ultima/detection.cpp:129
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Камера отслеживает перемещения игрока, а не прыгает по фиксированным "
 "позициям."
+
+#: engines/ultima/detection.cpp:142
+msgid "Always enable Christmas easter-egg"
+msgstr ""
+
+#: engines/ultima/detection.cpp:143
+msgid "Enable the Christmas music at any time of year."
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
@@ -7895,19 +7903,19 @@ msgstr "Оригинальное сохранение"
 msgid "Transfer Character"
 msgstr "Перенести героя"
 
-#: engines/ultima/ultima8/meta_engine.cpp:134
+#: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:134
+#: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:192
+#: engines/ultima/ultima8/meta_engine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Отладка"
 
