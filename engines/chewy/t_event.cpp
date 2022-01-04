@@ -824,7 +824,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						auto_move(3, P_CHEWY);
 						det->stop_detail(5);
 						det->start_detail(6, 2, ANI_VOR);
-						r2_jump_out_r1(9);
+						Room2::jump_out_r1(9);
 						break;
 
 					case 62:

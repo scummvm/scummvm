@@ -289,7 +289,7 @@ void check_ged_action(int16 index) {
 				} else {
 					start_ani_block(2, ablock4);
 				}
-				r2_jump_out_r1(9);
+				Room2::jump_out_r1(9);
 				break;
 
 			default:
@@ -635,8 +635,7 @@ void enter_room(int16 eib_nr) {
 		break;
 
 	case 2:
-		if (!_G(spieler).R2KabelBork)
-			det->start_detail(5, 255, 0);
+		Room2::entry();
 		break;
 
 	case 3:
