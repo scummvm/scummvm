@@ -298,7 +298,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_word2C87A = false;
 	_unk_sub26437_flag = 0;
 	_word2C8D9 = false;
-	_word2C8D5 = false;
+	_dbgForceMonsterBlock = false;
 	_word2D0BC = false;
 	_word2C8D2 = false;
 	_menuDepth = 0;
@@ -526,8 +526,8 @@ Common::Error EfhEngine::run() {
 		}
 
 		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
-			int16 var4 = sub16E14();
-			if (_word2C8D5 != 0 || var4 != 0) {
+			bool collisionFl = checkMonsterCollision();
+			if (_dbgForceMonsterBlock || collisionFl) {
 				_oldMapPosX = _mapPosX;
 				_oldMapPosY = _mapPosY;
 				_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
@@ -3365,7 +3365,7 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 		_word2C880 = false;
 		return -1;
 	}
-	if (_tileFact[imageSetId]._field1 != 0xFF && !_word2C8D5) {
+	if (_tileFact[imageSetId]._field1 != 0xFF && !_dbgForceMonsterBlock) {
 		if ((arg4 == 1 && _word2C8D7) || (arg4 == 0 && _word2C8D7 && imageSetId != 128 && imageSetId != 121)) {
 			if (_largeMapFlag) {
 				_mapGameMap[mapPosX][mapPosY] = _tileFact[imageSetId]._field1;
@@ -6655,8 +6655,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	return 0;
 }
 
-bool EfhEngine::sub16E14() {
-	debug("sub16E14");
+bool EfhEngine::checkMonsterCollision() {
+	debug("checkMonsterCollision");
 
 	int16 var68 = 0;
 	char dest[20];
@@ -6760,7 +6760,7 @@ bool EfhEngine::sub16E14() {
 				var68 = true;
 				break;
 			default:
-//				warning("STUB: sub16E14 - Missing mapping ?");
+//				warning("STUB: checkMonsterCollision - Missing mapping ?");
 				break;
 			}
 		} while (!var68);

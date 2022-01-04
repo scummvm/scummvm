@@ -423,7 +423,7 @@ private:
 	int16 selectOtherCharFromTeam();
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
-	bool sub16E14();
+	bool checkMonsterCollision();
 
 	// Graphics
 	void initPalette();
@@ -571,7 +571,7 @@ private:
 	uint16 _word2C86E;
 	uint8 *_dword2C856;
 	bool _word2C8D9;
-	bool _word2C8D5; // CHECKME: always 0?
+	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 	bool _word2D0BC;
 	bool _word2C8D2;
 	int16 _menuDepth;
