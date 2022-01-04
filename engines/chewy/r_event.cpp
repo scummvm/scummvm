@@ -102,7 +102,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 
 	case ROOM_3_1:
-		r3_terminal();
+		Room3::terminal();
 		break;
 
 	case ROOM_9_4:
@@ -639,7 +639,7 @@ void enter_room(int16 eib_nr) {
 		break;
 
 	case 3:
-		r3_init_sonde();
+		Room3::init_sonde();
 		break;
 
 	case 5:
