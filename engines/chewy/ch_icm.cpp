@@ -320,6 +320,7 @@ void get_rect(char *spr1, int16 x1, int16 y1, char *spr2, int16 x2, int16 y2) {
 		              plot_maus();
 		              out->setze_zeiger(screen0);
 		              out->back2screen(workpage);
+		SHOULD_QUIT_RETURN;
 	}
 }
 
@@ -629,6 +630,7 @@ void get_auto_mov() {
 		}
 		cur->plot_cur();
 		out->back2screen(workpage);
+		SHOULD_QUIT_RETURN;
 	}
 	if (save_flag == false) {
 		x = 160;
@@ -1045,6 +1047,7 @@ void set_z_ebene() {
 		}
 		cur->plot_cur();
 		out->back2screen(workpage);
+		SHOULD_QUIT_RETURN;
 	}
 	if (save_flag == false) {
 		x = 160;
@@ -1084,7 +1087,10 @@ int16 ja_nein() {
 			ende = 1;
 			break;
 
+		default:
+			break;
 		}
+		SHOULD_QUIT_RETURN;
 	}
 	return ret;
 }
@@ -1311,6 +1317,7 @@ void set_person() {
 		}
 		cur->plot_cur();
 		out->back2screen(workpage);
+		SHOULD_QUIT_RETURN;
 	}
 	SetUpScreenFunc = TmpSetUpScreenFunc;
 }

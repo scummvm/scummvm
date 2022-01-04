@@ -46,8 +46,9 @@ void look_debug_action(int16 key_nr) {
 			case ALT + ENTER:
 //				look_icm_action();
 				break;
-
 			}
+
+			SHOULD_QUIT_RETURN;
 		}
 		break;
 
@@ -111,6 +112,8 @@ void test_load(void *handle, taf_info *Tt, int16 anz) {
 		out->printxy(0, 0, 255, 0, 0, "F1 Bereich laden\0");
 		out->printxy(0, 10, 255, 0, 0, "F2 Sprites anzeigen\0");
 		out->printxy(0, 20, 255, 0, 0, "F3 Bereich löschen\0");
+		SHOULD_QUIT_RETURN;
+
 		switch (in->get_switch_code()) {
 		case ESC :
 			ende = 1;
@@ -146,6 +149,8 @@ void test_load(void *handle, taf_info *Tt, int16 anz) {
 			abfrage = out->scanxy(x + 96, y, 14, 60, 6, scr_width, "%[0-9]3d\0", &spr);
 			in ->neuer_kb_handler(&kbinfo);
 			out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+			SHOULD_QUIT_RETURN;
+
 			if (abfrage != 27) {
 				ende1 = 0;
 				action = 1;
@@ -205,7 +210,6 @@ void test_load(void *handle, taf_info *Tt, int16 anz) {
 			out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 			in ->neuer_kb_handler(&kbinfo);
 			break;
-
 		}
 	}
 #endif

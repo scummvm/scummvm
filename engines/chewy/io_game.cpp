@@ -345,6 +345,8 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				kbinfo->scan_code = Common::KEYCODE_INVALID;
 				while (!ende) {
 					cur->plot_cur();
+					SHOULD_QUIT_RETURN0;
+
 					switch_code = in->get_switch_code();
 					if ((kbinfo->scan_code == 36) ||
 					        (kbinfo->scan_code == 44) ||

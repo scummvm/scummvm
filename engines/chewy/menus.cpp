@@ -529,8 +529,8 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 	else
 		ende = 1;
-	while (!ende) {
 
+	while (!ende) {
 		rect = in->maus_vector(minfo.x, minfo.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 		if (minfo.button) {
 			if (minfo.button == 2) {
@@ -630,13 +630,17 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		cur->plot_cur();
 
 		out->back2screen(workpage);
+		SHOULD_QUIT_RETURN0;
 	}
+
 	while (in->get_switch_code() == ESC) {
 		set_up_screen(NO_SETUP);
 		plot_inventar_menu();
 		cur->plot_cur();
 		out->back2screen(workpage);
+		SHOULD_QUIT_RETURN0;
 	}
+
 	return ret;
 }
 
