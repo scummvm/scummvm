@@ -240,7 +240,7 @@ void r3_terminal() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 		} else if (!_G(spieler).R2FussSchleim) {
 			start_ani_block(2, ablock2);
-			r2_jump_out_r1(9);
+			Room2::jump_out_r1(9);
 			start_aad_wait(45, -1);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -549,18 +549,6 @@ void r3_sonde_aufnahme() {
 	flags.AniUserAction = false;
 	_G(zoom_horizont) = tmp;
 	_G(auto_obj) = 0;
-}
-
-void r2_jump_out_r1(int16 nr) {
-	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(nr, 1, ANI_VOR);
-	set_up_screen(DO_SETUP);
-	det->stop_detail(6);
-	set_person_pos(32, 127, P_CHEWY, P_LEFT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
-	clear_prog_ani();
-	switch_room(1);
-	check_shad(2, 1);
 }
 
 void r5_knopf() {

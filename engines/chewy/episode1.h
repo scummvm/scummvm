@@ -26,8 +26,6 @@ namespace Chewy {
 
 void switch_room(int16 nr);
 
-void r2_jump_out_r1(int16 nr);
-
 void r3_terminal();
 
 void r3_init_sonde();

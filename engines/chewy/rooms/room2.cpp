@@ -19,24 +19,32 @@
  *
  */
 
-#ifndef CHEWY_ROOMS_ROOMS_H
-#define CHEWY_ROOMS_ROOMS_H
-
-#include "chewy/rooms/room0.h"
+#include "chewy/defines.h"
+#include "chewy/events.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/room.h"
 #include "chewy/rooms/room2.h"
 
-// TODO: Remove one room classes implemented and split up
-#include "chewy/episode1.h"
-#include "chewy/episode2.h"
-#include "chewy/episode3.h"
-#include "chewy/episode4.h"
-#include "chewy/episode5.h"
-
 namespace Chewy {
+namespace Rooms {
 
-using Chewy::Rooms::Room0;
-using Chewy::Rooms::Room2;
+void Room2::entry() {
+	if (!_G(spieler).R2KabelBork)
+		det->start_detail(5, 255, 0);
+}
 
+void Room2::jump_out_r1(int16 nr) {
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	start_detail_wait(nr, 1, ANI_VOR);
+	set_up_screen(DO_SETUP);
+	det->stop_detail(6);
+	set_person_pos(32, 127, P_CHEWY, P_LEFT);
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	clear_prog_ani();
+	switch_room(1);
+	check_shad(2, 1);
+}
+
+} // namespace Rooms
 } // namespace Chewy
-
-#endif
