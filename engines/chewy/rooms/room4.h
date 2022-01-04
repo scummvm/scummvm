@@ -19,28 +19,18 @@
  *
  */
 
-#ifndef CHEWY_ROOMS_ROOMS_H
-#define CHEWY_ROOMS_ROOMS_H
-
-#include "chewy/rooms/room0.h"
-#include "chewy/rooms/room2.h"
-#include "chewy/rooms/room3.h"
-#include "chewy/rooms/room4.h"
-
-// TODO: Remove one room classes implemented and split up
-#include "chewy/episode1.h"
-#include "chewy/episode2.h"
-#include "chewy/episode3.h"
-#include "chewy/episode4.h"
-#include "chewy/episode5.h"
+#ifndef CHEWY_ROOMS_ROOM4_H
+#define CHEWY_ROOMS_ROOM4_H
 
 namespace Chewy {
+namespace Rooms {
 
-using Chewy::Rooms::Room0;
-using Chewy::Rooms::Room2;
-using Chewy::Rooms::Room3;
-using Chewy::Rooms::Room4;
+class Room4 {
+public:
+	static int16 sonde_comp();
+};
 
+} // namespace Rooms
 } // namespace Chewy
 
 #endif
