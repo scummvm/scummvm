@@ -46,6 +46,7 @@ public:
 	}
 
 	void drawString(const Common::String text, int posx, int posy, uint32 color) override;
+	void copyfgtobg(uint8 arg) override;
 
 protected:
 	uint16 loadInternal() override;
@@ -102,7 +103,7 @@ private:
 	bool _flagMasked; //!< Clear the video instead of play it, used in pente
 
 	// Buffers
-	void redrawRestoreArea(int screenOffset);
+	void redrawRestoreArea(int screenOffset, bool force);
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;

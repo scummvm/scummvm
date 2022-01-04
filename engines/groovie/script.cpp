@@ -2230,10 +2230,8 @@ void Script::o2_copyfgtobg() {
 	uint8 arg = readScript8bits();
 	debugC(1, kDebugScript, "Groovie::Script: o2_copyfgtobg (0x%02X)", arg);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: o2_copyfgtobg (0x%02X)", _currentInstruction-2, arg);
-	// return;
-
-	_vm->_graphicsMan->_background.copyFrom(_vm->_graphicsMan->_foreground);
-	_vm->_graphicsMan->updateScreen(&_vm->_graphicsMan->_background);
+	
+	_vm->_videoPlayer->copyfgtobg(arg);
 }
 
 void Script::o2_setscriptend() {

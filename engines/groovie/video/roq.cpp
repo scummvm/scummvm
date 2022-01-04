@@ -227,12 +227,16 @@ void ROQPlayer::calcStartStop(int &start, int &stop, int origin, int length) {
 	}
 }
 
-void ROQPlayer::redrawRestoreArea(int screenOffset) {
+void ROQPlayer::redrawRestoreArea(int screenOffset, bool force) {
 	// Restore the background by data from the foreground. Only restore the area which was overwritten during the last frame
 	// Therefore we have the _restoreArea which reduces the area for restoring. We also use the _prevBuf to only overwrite the
 	// Pixels which have been written during the last frame. This means _restoreArea is just an optimization.
-	if (!_alpha)
-		return;
+	if (force) {
+		_restoreArea->top = 0;
+		_restoreArea->left = 0;
+		_restoreArea->bottom = _screen->h;
+		_restoreArea->right = _screen->w;
+	}
 	if (_restoreArea->isEmpty())
 		return;
 
@@ -247,7 +251,7 @@ void ROQPlayer::redrawRestoreArea(int screenOffset) {
 		byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
 
 		for (int i = 0; i < width; i++) {
-			if (prv[kAIndex] != 0) {
+			if (prv[kAIndex] != 0 || force) {
 				copyPixel(dst, src);
 				copyPixelWithA(dst, ovr);
 			}
@@ -314,7 +318,7 @@ void ROQPlayer::buildShowBuf() {
 	}
 
 	if (_alpha) {
-		redrawRestoreArea(screenOffset);
+		redrawRestoreArea(screenOffset, false);
 	}
 
 
@@ -969,6 +973,15 @@ void ROQPlayer::drawString(const Common::String text, int posx, int posy, uint32
 	_vm->_font->drawString(gamescreen, text.c_str(), posx, posy, _overBuf->w, color, Graphics::kTextAlignLeft);
 	_vm->_system->unlockScreen();
 	_vm->_graphicsMan->change(); // Force Update screen after step
+}
+
+void ROQPlayer::copyfgtobg(uint8 arg) {
+	// TODO: the arg isn't handled yet
+	// but since we're doing a full redraw of all layers we might not need to care about the arg
+	debugC(2, kDebugVideo, "Groovie::ROQ: copyfgtobg (0x%02X)", arg);
+	
+	redrawRestoreArea(_screen->h == 480 ? 0 : 80, true);
+	_vm->_system->updateScreen();
 }
 
 ROQSoundPlayer::ROQSoundPlayer(GroovieEngine *vm) : ROQPlayer(vm) {
