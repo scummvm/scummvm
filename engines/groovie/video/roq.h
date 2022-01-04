@@ -72,6 +72,7 @@ private:
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
 	bool playFirstFrame() { return _flagNoPlay; }; // _alpha && !_flagOverlay; }
 	void clearOverlay();
+	void dumpAllSurfaces();
 
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);

@@ -43,6 +43,13 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+#include <common/file.h>
+#ifdef USE_PNG
+#include "image/png.h"
+#else
+#include "image/bmp.h"
+#endif
+
 /* copied from transparent_surface.cpp */
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
@@ -259,6 +266,46 @@ void ROQPlayer::redrawRestoreArea(int screenOffset) {
 	_restoreArea->right = 0;
 }
 
+void writeImage(const Common::String filename, Graphics::Surface &surface) {
+	Common::String tname = "img/" + filename;
+#ifdef USE_PNG
+	tname += ".png";
+#else
+	tname += ".bmp";
+#endif
+
+	Common::DumpFile out;
+	if (!out.open(tname)) {
+		error("failed to open %s", tname.c_str());
+	}
+
+#ifdef USE_PNG
+	Image::writePNG(out, surface);
+#else
+	Image::writeBMP(out, surface);
+#endif
+}
+
+void ROQPlayer::dumpAllSurfaces() {
+	TimeDate date;
+	int curMonth;
+	g_system->getTimeAndDate(date, true);
+	curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
+	uint millis = g_system->getMillis();
+	Common::String timestamp = Common::String::format("%d-%02d-%02d %02d-%02d-%02d %08u",
+													  date.tm_year + 1900, curMonth, date.tm_mday,
+													  date.tm_hour, date.tm_min, date.tm_sec, millis);
+
+	writeImage("lockScreen " + timestamp, *_vm->_system->lockScreen());
+	_vm->_system->unlockScreen();
+	writeImage("_bg " + timestamp, *_bg);
+	writeImage("_currBuf " + timestamp, *_currBuf);
+	writeImage("_overBuf " + timestamp, *_overBuf);
+	writeImage("_prevBuf " + timestamp, *_prevBuf);
+	writeImage("_screen " + timestamp, *_screen);
+	g_system->delayMillis(15); // make sure we get a new timestamp every time
+}
+
 void ROQPlayer::buildShowBuf() {
 	// Calculate screen offset for normal / fullscreen videos and images
 	int screenOffset = 0;
@@ -336,6 +383,10 @@ void ROQPlayer::buildShowBuf() {
 			if (mask)
 				mask += _screen->format.bytesPerPixel;
 		}
+	}
+
+	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		dumpAllSurfaces();
 	}
 
 	if (!_flagNoPlay) {
