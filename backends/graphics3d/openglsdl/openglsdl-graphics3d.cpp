@@ -83,7 +83,7 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 		DEFAULT_GLES2_MINOR = 0
 	};
 
-#ifdef USE_GLES2
+#if USE_FORCED_GLES2
 	_glContextType = OpenGL::kOGLContextGLES2;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES2_MAJOR;
@@ -581,7 +581,7 @@ void OpenGLSdlGraphics3dManager::drawOverlay() {
 
 #if !defined(__amigaos4__) && !defined(__MORPHOS__)
 OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
-#if !defined(USE_GLES2)
+#if !USE_FORCED_GLES2
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
 	} else

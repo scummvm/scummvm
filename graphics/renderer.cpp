@@ -29,7 +29,7 @@ static const RendererTypeDescription rendererTypes[] = {
 #if defined(USE_OPENGL_GAME)
 	{ "opengl", _s("OpenGL"), kRendererTypeOpenGL },
 #endif
-#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS)
 	{ "opengl_shaders", _s("OpenGL with shaders"), kRendererTypeOpenGLShaders },
 #endif
 #ifdef USE_TINYGL
@@ -73,19 +73,19 @@ RendererType getBestMatchingAvailableRendererType(RendererType desired) {
 		desired = kRendererTypeOpenGLShaders;
 	}
 
-#if !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2)
+#if !defined(USE_OPENGL_SHADERS)
 	if (desired == kRendererTypeOpenGLShaders) {
 		desired = kRendererTypeOpenGL;
 	}
 #endif
 
-#if (!defined(USE_OPENGL_GAME) && defined(USE_OPENGL_SHADERS)) || defined(USE_GLES2)
+#if (!defined(USE_OPENGL_GAME) && defined(USE_OPENGL_SHADERS))
 	if (desired == kRendererTypeOpenGL) {
 		desired = kRendererTypeOpenGLShaders;
 	}
 #endif
 
-#if !defined(USE_OPENGL_GAME) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS)
 	if (desired == kRendererTypeOpenGL || desired == kRendererTypeOpenGLShaders) {
 		desired = kRendererTypeTinyGL;
 	}

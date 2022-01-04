@@ -5530,7 +5530,6 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengl_game_classic" "USE_OPENGL_GAME"
 define_in_config_if_yes "$_opengl_game_shaders" "USE_OPENGL_SHADERS"
-define_in_config_if_yes "$_opengl_game_es2" "USE_GLES2"
 
 if test "$_dynamic_modules" = yes ; then
 	case $_host_os in

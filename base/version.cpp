@@ -199,7 +199,13 @@ const char gScummVMFeatures[] = ""
 	"(with shaders) "
 #endif
 #endif
-#ifdef USE_GLES2
-	"OpenGL ES 2 "
+#ifdef USE_GLES_MODE
+#if USE_GLES_MODE == 0
+	"OpenGL desktop only "
+#elif USE_GLES_MODE == 1
+	"OpenGL ES 1 only "
+#elif USE_GLES_MODE == 2
+	"OpenGL ES 2 only "
+#endif
 #endif
 	;

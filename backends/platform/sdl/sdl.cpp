@@ -50,7 +50,7 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
 #endif
@@ -208,7 +208,7 @@ void OSystem_SDL::initBackend() {
 #endif
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	detectFramebufferSupport();
 	detectAntiAliasingSupport();
 #endif
@@ -305,10 +305,10 @@ void OSystem_SDL::initBackend() {
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 void OSystem_SDL::detectFramebufferSupport() {
 	_supportsFrameBuffer = false;
-#if defined(USE_GLES2)
+#if USE_FORCED_GLES2
 	// Framebuffers are always available with GLES2
 	_supportsFrameBuffer = true;
 #elif !defined(AMIGAOS) && !defined(__MORPHOS__)
@@ -476,7 +476,7 @@ void OSystem_SDL::setWindowCaption(const Common::U32String &caption) {
 	_window->setWindowCaption(cap);
 }
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _antiAliasLevels;
 }
@@ -772,7 +772,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	if (render3d && !supports3D) {
 		debug(1, "switching to OpenGL 3D graphics");
 		sdlGraphicsManager->deactivateManager();

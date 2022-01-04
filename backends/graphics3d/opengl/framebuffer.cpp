@@ -28,8 +28,10 @@
 
 #include "graphics/opengl/context.h"
 
-#ifdef USE_GLES2
+#if !defined(GL_DEPTH24_STENCIL8)
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+#endif
+#if !defined(GL_DEPTH_COMPONENT24)
 #define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT24_OES
 #endif
 
@@ -122,7 +124,7 @@ void FrameBuffer::detach() {
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
-#if !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
 MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height, int samples)
 		: FrameBuffer(width,height) {
 	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
@@ -184,7 +186,7 @@ void MultiSampleFrameBuffer::detach() {
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
-#endif // !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#endif // !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
 } // End of namespace OpenGL
 

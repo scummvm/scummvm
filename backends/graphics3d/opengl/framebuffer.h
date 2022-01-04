@@ -56,7 +56,7 @@ private:
 	GLint _prevStateViewport[4];
 };
 
-#if !defined(USE_GLES2) && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
 class MultiSampleFrameBuffer : public FrameBuffer {
 public:
 	MultiSampleFrameBuffer(uint width, uint height, int samples);

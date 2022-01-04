@@ -2178,7 +2178,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glDeleteFramebuffers(1, &frameBuffer);
-#ifndef USE_GLES2
+#if !USE_FORCED_GLES2
 		} else {
 			glBindTexture(GL_TEXTURE_2D, _storedDisplay);
 			char *buffer = new char[_screenWidth * _screenHeight * 4];
