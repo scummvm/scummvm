@@ -31,6 +31,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	// English Games
 	{ "3monkeys", "Three Monkeys, One Cage" },
+	{ "adventurestrikes", "Adventure Strikes When You Least Expect It" },
 	{ "akron", "Akron" },
 	{ "albridgemanor", "Albridge Manor" },
 	{ "ascot", "The Ascot" },
@@ -264,6 +265,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "iadcprivateeye", "Private Eye" },
 	{ "iadcblood", "Fire in the Blood" },
 
+	// ADRIFT Hourglass Comp 2006
+	{ "ahc3minutes", "3 Minutes to Live" },
+
 	{ nullptr, nullptr }
 };
 
@@ -300,6 +304,7 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// English Games
 	DT_ENTRY0("3monkeys", "dec34c282511b1eadfe231dbbb49f625", 79286),
+	DT_ENTRY0("adventurestrikes", "f5e18081fd6ec4955ed0665aee8580de", 3770),
 	DT_ENTRY0("akron", "2461ceeef3ef1eac15a2051a549b4402", 22258),
 	DT_ENTRY0("albridgemanor", "268003e454c4ade042d593af8397a490", 31353),
 	DT_ENTRY0("ascot", "01ed200d7aec907aa84ad4007c5b296b", 24494),
@@ -579,6 +584,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("iadchub", "c3224b3d6c55997056ea195ba4ebb60a", 24610),
 	DT_ENTRY0("iadcprivateeye", "3076b9f11acf2b1e377a31cd1a11c323", 236323),
 	DT_ENTRY0("iadcblood", "775404faa0d7973c1df537bd423a45d3", 100201),
+
+	// ADRIFT Hourglass Comp 2006
+	DT_ENTRY0("ahc3minutes", "0313370bb74005525ec96580f146d286", 13232),
 
 	DT_END_MARKER
 };
