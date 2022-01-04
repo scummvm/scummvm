@@ -19,13 +19,39 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#include "chewy/defines.h"
+#include "chewy/events.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room5.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+void Room5::entry() {
+	if (_G(spieler).R5Terminal)
+		det->start_detail(6, 255, 0);
+}
 
+void Room5::knopf() {
+	int16 str_nr;
+	if (_G(spieler).R5Terminal) {
+		if (_G(spieler).R5Tuer == false) {
+			start_detail_wait(9, 1, ANI_VOR);
+			_G(spieler).room_e_obj[6].Attribut = AUSGANG_OBEN;
+			str_nr = 1;
+		} else {
+			start_detail_wait(9, 1, ANI_RUECK);
+			_G(spieler).room_e_obj[6].Attribut = 255;
+			str_nr = 0;
+		}
+		atds->set_ats_str(29, str_nr, ATS_DATEI);
+		_G(spieler).R5Tuer ^= 1;
+		obj->calc_rsi_flip_flop(SIB_TUERE_R5);
+	} else
+		start_aad_wait(1, -1);
+}
+
+} // namespace Rooms
 } // namespace Chewy
-
-#endif

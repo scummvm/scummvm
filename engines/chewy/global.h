@@ -91,6 +91,7 @@ public:
 	Common::String _calc_inv_text_str1, _calc_inv_text_str2;
 	bool _calc_inv_text_set = false;
 	bool _stopAutoMove[3] = { false };
+	bool _e_streifen = false;
 };
 
 extern Globals *g_globals;

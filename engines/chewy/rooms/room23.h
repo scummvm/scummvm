@@ -19,13 +19,21 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#ifndef CHEWY_ROOMS_ROOM23_H
+#define CHEWY_ROOMS_ROOM23_H
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+class Room23 {
+public:
+	static void cockpit();
+	static void get_cartridge();
+	static void use_cartridge();
+	static int16 start_gleiter();
+};
 
+} // namespace Rooms
 } // namespace Chewy
 
 #endif

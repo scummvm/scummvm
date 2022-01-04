@@ -19,13 +19,22 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#include "chewy/defines.h"
+#include "chewy/events.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room19.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+void Room19::entry() {
+	_G(zoom_horizont) = 250;
+	flags.NoScroll = true;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 24;
+}
 
+} // namespace Rooms
 } // namespace Chewy
-
-#endif

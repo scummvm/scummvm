@@ -132,14 +132,14 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 67:
-						action_ret = r8_gips_wurf();
+						action_ret = Room8::gips_wurf();
 						break;
 
 					case 71:
 						if (is_cur_inventar(ZANGE_INV))
-							r8_hole_kohle();
+							Room8::hole_kohle();
 						else if (!_G(spieler).inv_cur)
-							r8_start_verbrennen();
+							Room8::start_verbrennen();
 						break;
 
 					case 73:
@@ -156,7 +156,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 77:
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
 							auto_move(3, P_CHEWY);
-							flc->set_custom_user_function(r6_cut_serv1);
+							flc->set_custom_user_function(Room6::cut_serv1);
 							flic_cut(FCUT_005, CFO_MODE);
 							flc->remove_custom_user_function();
 						} else {
@@ -165,7 +165,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 79:
-						action_ret = r22_chewy_amboss();
+						action_ret = Room22::chewy_amboss();
 						break;
 
 					case 80:
@@ -174,19 +174,19 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 81:
-						r22_get_bork();
+						Room22::get_bork();
 						break;
 
 					case 82:
-						action_ret = r22_malen();
+						action_ret = Room22::malen();
 						break;
 
 					case 84:
-						action_ret = r11_scanner();
+						action_ret = Room11::scanner();
 						break;
 
 					case 92:
-						action_ret = r13_monitor_knopf();
+						action_ret = Room13::monitor_knopf();
 						break;
 
 					case 104:
@@ -199,19 +199,19 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 107:
-						action_ret = r14_use_gleiter();
+						action_ret = Room14::use_gleiter();
 						break;
 
 					case 108:
-						action_ret = r14_use_schrott();
+						action_ret = Room14::use_schrott();
 						break;
 
 					case 109:
-						action_ret = r14_use_schleim();
+						action_ret = Room14::use_schleim();
 						break;
 
 					case 110:
-						action_ret = r23_start_gleiter();
+						action_ret = Room23::start_gleiter();
 						break;
 
 					case 114:
@@ -219,66 +219,66 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 117:
-						action_ret = r12_chewy_trans();
+						action_ret = Room12::chewy_trans();
 						break;
 
 					case 118:
-						action_ret = r12_proc1();
+						action_ret = Room12::proc1();
 						break;
 
 					case 119:
-						action_ret = r12_use_terminal();
+						action_ret = Room12::use_terminal();
 						break;
 
 					case 123:
-						action_ret = r16_use_gleiter();
+						action_ret = Room16::use_gleiter();
 						break;
 
 					case 133:
-						action_ret = r21_use_fenster();
+						action_ret = Room21::use_fenster();
 						break;
 
 					case 134:
-						r21_salto();
+						Room21::salto();
 						break;
 
 					case 137:
-						action_ret = r17_use_seil();
+						action_ret = Room17::use_seil();
 						break;
 
 					case 139:
-						r17_calc_seil();
+						Room17::calc_seil();
 						break;
 
 					case 142:
-						action_ret = r17_energie_hebel();
+						action_ret = Room17::energie_hebel();
 						break;
 
 					case 146:
-						action_ret = r17_get_oel();
+						action_ret = Room17::get_oel();
 						break;
 
 					case 149:
 					case 153:
-						action_ret = r18_calc_surimy();
+						action_ret = Room18::calc_surimy();
 						break;
 
 					case 154:
-						action_ret = r18_use_cart_moni();
+						action_ret = Room18::use_cart_moni();
 						break;
 
 					case 158:
-						action_ret = r18_go_cyberspace();
+						action_ret = Room18::go_cyberspace();
 						break;
 
 					case 159:
-						action_ret = r18_calc_schalter();
+						action_ret = Room18::calc_schalter();
 						break;
 
 					case 161:
 					case 162:
 					case 163:
-						r24_use_hebel(txt_nr);
+						Room24::use_hebel(txt_nr);
 						break;
 
 					case 165:
@@ -299,7 +299,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 179:
-						action_ret = r18_sonden_moni();
+						action_ret = Room18::sonden_moni();
 						break;
 
 					case 187:
@@ -769,7 +769,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_WALK:
 					switch (txt_nr) {
 					case 94:
-						r13_jmp_band();
+						Room13::jmp_band();
 						break;
 
 					case 95:
@@ -778,7 +778,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 100:
-						r13_jmp_boden();
+						Room13::jmp_boden();
 						break;
 
 					case 114:
@@ -832,17 +832,17 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 67:
-						r8_talk_nimoy();
+						Room8::talk_nimoy();
 						break;
 
 					case 121:
-						r11_talk_debug();
+						Room11::talk_debug();
 						break;
 
 					case 122:
 						if (!_G(spieler).R13BorkOk) {
 							auto_move(10, P_CHEWY);
-							r13_talk_bork();
+							Room13::talk_bork();
 						}
 						break;
 
@@ -1094,11 +1094,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_TALK:
 					switch (txt_nr) {
 					case 104:
-						r14_talk_eremit();
+						Room14::talk_eremit();
 						break;
 
 					case 120:
-						r12_talk_bork();
+						Room12::talk_bork();
 						break;
 
 					case 263:

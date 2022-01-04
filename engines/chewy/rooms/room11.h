@@ -19,13 +19,26 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#ifndef CHEWY_ROOMS_ROOM11_H
+#define CHEWY_ROOMS_ROOM11_H
+
+#include "chewy/ngsdefs.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+class Room11 {
+public:
+	static void entry();
+	static void get_card();
+	static void put_card();
+	static int16 scanner();
+	static void bork_zwinkert();
+	static void chewy_bo_use();
+	static void talk_debug();
+};
 
+} // namespace Rooms
 } // namespace Chewy
 
 #endif

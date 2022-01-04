@@ -19,13 +19,28 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#ifndef CHEWY_ROOMS_ROOM18_H
+#define CHEWY_ROOMS_ROOM18_H
 
 namespace Chewy {
+namespace Rooms {
 
-void switch_room(int16 nr);
+class Room18 {
+private:
+	static void init_borks();
+	static void monitor();
 
+public:
+	static void entry();
+	static void timer_action(int16 t_nr);
+	static int16 calc_surimy();
+	static int16 calc_schalter();
+	static short use_cart_moni();
+	static int16 go_cyberspace();
+	static int16 sonden_moni();
+};
+
+} // namespace Rooms
 } // namespace Chewy
 
 #endif

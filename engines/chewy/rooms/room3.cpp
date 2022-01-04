@@ -23,7 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/room.h"
+#include "chewy/rooms/roomdefs.h"
 #include "chewy/rooms/room2.h"
 #include "chewy/rooms/room3.h"
 #include "chewy/rooms/room4.h"
@@ -43,12 +43,12 @@ namespace Rooms {
 #define SONDE_SPR_R 118
 #define SONDE_SPR_L 120
 
-MovLine SONDE_MPKT[3] = {
+static MovLine SONDE_MPKT[3] = {
 	{ {  13, 45,  75 }, 1, 2 },
 	{ { 237, 52, 160 }, 1, 2 },
 	{ {   4, 83, 180 }, 0, 2 }
 };
-int16 SONDE_PHASEN[4][2] = {
+static int16 SONDE_PHASEN[4][2] = {
 	{ 120, 120 },
 	{ 118, 118 },
 	{ 141, 141 },

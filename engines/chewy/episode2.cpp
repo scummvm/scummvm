@@ -23,6 +23,7 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/episode2.h"
+#include "chewy/rooms/rooms.h"
 
 namespace Chewy {
 
@@ -109,7 +110,7 @@ int16 r25_use_gleiter() {
 		action_flag = true;
 		auto_move(3, P_CHEWY);
 		_G(spieler).R23GleiterExit = 25;
-		r23_cockpit();
+		Room23::cockpit();
 	}
 	return action_flag;
 }

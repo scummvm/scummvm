@@ -25,7 +25,6 @@
 namespace Chewy {
 
 void switch_room(int16 nr);
-void r23_cockpit();
 
 void r25_entry();
 

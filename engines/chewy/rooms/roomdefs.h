@@ -19,12 +19,15 @@
  *
  */
 
-#ifndef CHEWY_EPISODE1_H
-#define CHEWY_EPISODE1_H
+#ifndef CHEWY_ROOMS_ROOMDEFS_H
+#define CHEWY_ROOMS_ROOMDEFS_H
 
 namespace Chewy {
 
-void switch_room(int16 nr);
+#define ANI_HIDE 0
+#define ANI_SHOW 1
+
+#define SURIMY_OBJ 0
 
 } // namespace Chewy
 
