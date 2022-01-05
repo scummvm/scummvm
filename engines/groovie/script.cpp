@@ -129,8 +129,11 @@ Script::~Script() {
 }
 
 void Script::setVariable(uint16 variablenum, byte value) {
+	if (variablenum == 191) {
+		warning("changing var 0x0BF from %d to %d", (int)_variables[variablenum], (int)value);
+	}
+	debugC(1, kDebugScriptvars, "script variable[0x%03X] = %d (0x%04X), was %d (0x%04X)", variablenum, value, value, _variables[variablenum], _variables[variablenum]);
 	_variables[variablenum] = value;
-	debugC(1, kDebugScriptvars, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
 }
 
 void Script::setBitFlag(int bitnum, bool value) {
@@ -251,11 +254,13 @@ void Script::directGameLoad(int slot) {
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
+	debugC(0, kDebugScript, "directGameLoad %d", slot);
 
 	// Return to the main script if required
 	if (_savedCode) {
 		// Returning the correct spot, dealing with _savedVariables, etc
 		// is not needed as game state is getting nuked anyway
+		error("wtf");
 		delete[] _code;
 		_code = _savedCode;
 		_codeSize = _savedCodeSize;
@@ -480,7 +485,7 @@ uint32 Script::getVideoRefString(Common::String &resName) {
 	// Add a trailing dot
 	resName += '.';
 
-	debugCN(0, kDebugScript, "%s", resName.c_str());
+	debugCN(1, kDebugScript, "%s", resName.c_str());
 
 	// Get the fileref of the resource
 	return _vm->_resMan->getRef(resName);
@@ -532,6 +537,8 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
+	debugC(0, kDebugScript, "loadgame %d", slot);
+
 	// The 11th Hour uses slot 0 for the Open House savegame. It loads this
 	// savegame before showing the load/restart dialog during the intro. The
 	// music should not be stopped in this case.
@@ -585,6 +592,7 @@ bool Script::canDirectSave() const {
 }
 
 void Script::directGameSave(int slot, const Common::String &desc) {
+	debugC(0, kDebugScript, "directGameSave %d %s", slot, desc.c_str());
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
@@ -598,6 +606,7 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 void Script::savegame(uint slot) {
 	char save[15];
 	char newchar;
+	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
 
 	if (!file) {
@@ -607,9 +616,23 @@ void Script::savegame(uint slot) {
 		return;
 	}
 
+	// HACK: intermittent bug, I think 0x0BF is supposed to be for open house mode, only in save slot 0
+	bool fixed = false;
+	if (slot != 0 && _variables[191] == 1 && _version == kGroovieT11H) {
+		warning("fixing variable 0x0BF");
+		_variables[191] = 0;
+		fixed = true;
+	}
+
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
 	delete file;
+
+	// HACK: hopefully this will help us track it down
+	if (fixed) {
+		g_system->messageBox(LogMessageType::kWarning, "fixed invalid save, please share your log file with us");
+		g_system->displayLogFile();
+	}
 
 	// Cache the saved name
 	for (int i = 0; i < 15; i++) {
@@ -1381,7 +1404,7 @@ void Script::o_videofromstring1() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugC(0, kDebugScript, "Groovie::Script: VIDEOFROMSTRING1 %d ('%s')", fileref, vidName.c_str());
+		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMSTRING1 %d ('%s')", fileref, vidName.c_str());
 		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d ('%s') via 0x26 (VideoFromString1)", instStart-1, fileref, vidName.c_str());
 	}
 
@@ -1404,7 +1427,7 @@ void Script::o_videofromstring2() {
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
-		debugC(0, kDebugScript, "Groovie::Script: VIDEOFROMSTRING2 %d ('%s')", fileref, vidName.c_str());
+		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMSTRING2 %d ('%s')", fileref, vidName.c_str());
 		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d ('%s') via 0x27 (VideoFromString2)", instStart-1, fileref, vidName.c_str());
 	}
 
@@ -1428,7 +1451,7 @@ void Script::o_stopmidi() {
 }
 
 void Script::o_endscript() {
-	debugC(1, kDebugScript, "Groovie::Script: END OF SCRIPT");
+	debugC(0, kDebugScript, "Groovie::Script: END OF SCRIPT");
 	_vm->quitGame();
 }
 
@@ -1456,7 +1479,7 @@ void Script::o_loadgame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
 
-	debugC(1, kDebugScript, "Groovie::Script: LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
+	debugC(0, kDebugScript, "Groovie::Script: LOADGAME var[0x%04X] -> slot=%d", varnum, slot);
 
 	loadgame(slot);
 	if (_version == kGroovieT7G) {
@@ -1468,7 +1491,7 @@ void Script::o_savegame() {
 	uint16 varnum = readScript8or16bits();
 	uint8 slot = _variables[varnum];
 
-	debugC(1, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
+	debugC(0, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d", varnum, slot);
 
 	savegame(slot);
 }
@@ -1757,10 +1780,12 @@ void Script::o_hotspot_slot() {
 // checks for 10 save games.
 void Script::o_checkvalidsaves() {
 	debugC(1, kDebugScript, "Groovie::Script: CHECKVALIDSAVES");
+	const int maxSaves = 10; // max number of saves that the original games expect
 
 	// Reset the array of valid saves and the savegame names cache
 	for (int i = 0; i < MAX_SAVES; i++) {
-		setVariable(i, 0);
+		if (i < maxSaves)
+			setVariable(i, 0);
 		_saveNames[i] = "E M P T Y";
 	}
 
@@ -1776,11 +1801,13 @@ void Script::o_checkvalidsaves() {
 			debugC(2, kDebugScript, "Groovie::Script:  Found valid savegame: %s", it->getDescription().encode().c_str());
 
 			// Mark this slot as used
-			setVariable(slot, 1);
+			if (slot < maxSaves) {
+				setVariable(slot, 1);
+				count++;
+			}
 
 			// Cache this slot's description
 			_saveNames[slot] = it->getDescription();
-			count++;
 		}
 		it++;
 	}
@@ -1791,7 +1818,7 @@ void Script::o_checkvalidsaves() {
 }
 
 void Script::o_resetvars() {
-	debugC(1, kDebugScript, "RESETVARS");
+	debugC(0, kDebugScript, "RESETVARS");
 	for (int i = 0; i < 0x100; i++) {
 		setVariable(i, 0);
 	}
@@ -1813,7 +1840,7 @@ void Script::o_loadscript() {
 	while ((c = readScript8bits())) {
 		filename += c;
 	}
-	debugC(1, kDebugScript, "Groovie::Script: LOADSCRIPT %s", filename.c_str());
+	debugC(0, kDebugScript, "Groovie::Script: LOADSCRIPT %s", filename.c_str());
 
 	// Just 1 level of sub-scripts are allowed
 	if (_savedCode) {
@@ -1864,7 +1891,7 @@ void Script::o_sub() {
 void Script::o_returnscript() {
 	uint8 val = readScript8bits();
 
-	debugC(1, kDebugScript, "Groovie::Script: RETURNSCRIPT @0x%02X", val);
+	debugC(0, kDebugScript, "Groovie::Script: RETURNSCRIPT @0x%02X %s @ 0x%04X", val, _savedScriptFile.c_str(), _savedInstruction);
 
 	// Are we returning from a sub-script?
 	if (!_savedCode) {
@@ -2236,7 +2263,8 @@ void Script::o2_copyfgtobg() {
 
 void Script::o2_setscriptend() {
 	uint16 arg = readScript16bits();
-	debugC(1, kDebugScript, "Groovie::Script: SetScriptEnd (0x%04X)", arg);
+	debugC(0, kDebugScript, "Groovie::Script: SetScriptEnd (0x%04X)", arg);
+	// TODO: seems to write arg as a uint32 to var 0x38 to 0x3B?
 }
 
 void Script::o2_playsound() {
