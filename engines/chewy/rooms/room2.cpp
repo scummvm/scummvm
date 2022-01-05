@@ -29,8 +29,11 @@
 namespace Chewy {
 namespace Rooms {
 
+#define ANI_5 5
+#define GITTER_BLITZEN 7
+
 void Room2::entry() {
-	if (!_G(spieler).R2KabelBork)
+	if (!_G(spieler).R2ElectrocutedBork)
 		det->start_detail(5, 255, 0);
 }
 
@@ -44,6 +47,29 @@ void Room2::jump_out_r1(int16 nr) {
 	clear_prog_ani();
 	switch_room(1);
 	check_shad(2, 1);
+}
+
+void Room2::electrifyWalkway1() {
+	det->start_detail(ANI_5, 255, ANI_VOR);
+	start_spz(ANI_5, 255, 0, ANI_VOR);
+	start_aad_wait(49, -1);
+	det->stop_detail(ANI_5);
+
+	det->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
+	_G(spieler).R2ElectrocutedBork = true;
+	del_inventar(_G(spieler).AkInvent);
+
+	atds->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
+	atds->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
+	atds->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
+	atds->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
+	atds->set_ats_str(11, 1, ATS_DATEI);
+}
+
+void Room2::electrifyWalkway2() {
+	start_spz(16, 255, 0, P_CHEWY);
+	start_aad_wait(47, -1);
 }
 
 } // namespace Rooms

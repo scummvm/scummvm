@@ -35,8 +35,6 @@ namespace Chewy {
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
-#define ANI_5 5
-#define GITTER_BLITZEN 7
 
 static int16 flic_val1, flic_val2;
 
@@ -55,21 +53,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	switch (r_nr) {
 	case ROOM_2_3:
-		det->start_detail(ANI_5, 255, ANI_VOR);
-		start_spz(ANI_5, 255, 0, ANI_VOR);
-		start_aad_wait(49, -1);
-		det->stop_detail(ANI_5);
-
-		det->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
-		_G(spieler).R2KabelBork = 1;
-		del_inventar(_G(spieler).AkInvent);
-
-		atds->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
-		atds->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
-		atds->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
-		atds->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
-		atds->set_ats_str(11, 1, ATS_DATEI);
+		Room2::electrifyWalkway1();
 		break;
 
 	case ROOM_8_17:
@@ -89,8 +73,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	switch (r_nr) {
 	case ROOM_2_3:
-		start_spz(16, 255, 0, P_CHEWY);
-		start_aad_wait(47, -1);
+		Room2::electrifyWalkway2();
 		break;
 
 	case ROOM_1_1:
@@ -256,7 +239,7 @@ void check_ged_action(int16 index) {
 		case 1:
 			switch (index) {
 			case 0:
-				if (!_G(spieler).R2KabelBork) {
+				if (!_G(spieler).R2ElectrocutedBork) {
 					if (_G(spieler).AkInvent == KABEL_INV) {
 						flag = 1;
 						del_inventar(_G(spieler).AkInvent);
@@ -284,7 +267,7 @@ void check_ged_action(int16 index) {
 			switch (index) {
 			case 0:
 				det->stop_detail(5);
-				if (!_G(spieler).R2KabelBork) {
+				if (!_G(spieler).R2ElectrocutedBork) {
 					det->start_detail(6, 2, ANI_VOR);
 				} else {
 					start_ani_block(2, ablock4);
