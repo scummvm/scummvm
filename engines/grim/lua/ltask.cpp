@@ -173,16 +173,15 @@ void find_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = paramObj == LUA_NOOBJECT ? LUA_T_NIL : ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK)) {
-		if (g_grim->getGameType() == GType_GRIM) {
-			lua_error("Bad argument to find_script");
-		} else {
-			ttype(lua_state->stack.top) = LUA_T_TASK;
-			nvalue(lua_state->stack.top) = lua_state->id;
-			incr_top;
-			lua_pushnumber(1.0f);
-			return;
-		}
+	if (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK && type != LUA_T_NIL)
+		lua_error("Bad argument to find_script");
+
+	if (type == LUA_T_NIL) {
+		ttype(lua_state->stack.top) = LUA_T_TASK;
+		nvalue(lua_state->stack.top) = lua_state->id;
+		incr_top;
+		lua_pushnumber(1.0f);
+		return;
 	}
 
 	if (type == LUA_T_TASK) {
@@ -344,7 +343,7 @@ void runtasks(LState *const rootState) {
 		LState *nextState = nullptr;
 		bool stillRunning;
 		if (!lua_state->all_paused && !lua_state->updated && !lua_state->paused) {
-			jmp_buf	errorJmp;
+			jmp_buf errorJmp;
 			lua_state->errorJmp = &errorJmp;
 			if (setjmp(errorJmp)) {
 				lua_Task *t, *m;
