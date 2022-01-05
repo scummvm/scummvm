@@ -23,6 +23,7 @@
 #define CHEWY_ROOMS_ROOMS_H
 
 #include "chewy/rooms/room0.h"
+#include "chewy/rooms/room1.h"
 #include "chewy/rooms/room2.h"
 #include "chewy/rooms/room3.h"
 #include "chewy/rooms/room4.h"
@@ -55,6 +56,7 @@
 namespace Chewy {
 
 using Chewy::Rooms::Room0;
+using Chewy::Rooms::Room1;
 using Chewy::Rooms::Room2;
 using Chewy::Rooms::Room3;
 using Chewy::Rooms::Room4;

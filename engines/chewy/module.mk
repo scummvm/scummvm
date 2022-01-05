@@ -51,6 +51,7 @@ MODULE_OBJS = \
 	types.o \
 	video/cfo_decoder.o \
 	rooms/room0.o \
+	rooms/room1.o \
 	rooms/room2.o \
 	rooms/room3.o \
 	rooms/room4.o \

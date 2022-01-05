@@ -47,9 +47,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 #define ROOM_8_17 817
 #define ROOM_9_4 904
 #define ROOM_18_20 1820
-	int16 r_nr;
-	int16 tmp;
-	r_nr = _G(spieler).PersonRoomNr[P_CHEWY] * 100 + nr;
+	int16 r_nr = _G(spieler).PersonRoomNr[P_CHEWY] * 100 + nr;
 
 	switch (r_nr) {
 	case ROOM_2_3:
@@ -72,16 +70,12 @@ void play_scene_ani(int16 nr, int16 mode) {
 	start_detail_wait(nr, 1, mode);
 
 	switch (r_nr) {
-	case ROOM_2_3:
-		Room2::electrifyWalkway2();
+	case ROOM_1_1:
+		Room1::gottenCard();
 		break;
 
-	case ROOM_1_1:
-		det->hide_static_spr(2);
-		start_detail_wait(4, 1, ANI_VOR);
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		atds->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
-		atds->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
+	case ROOM_2_3:
+		Room2::electrifyWalkway2();
 		break;
 
 	case ROOM_3_1:
