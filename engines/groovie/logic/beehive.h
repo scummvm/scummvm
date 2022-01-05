@@ -82,6 +82,7 @@ private:
 	Common::Array<int> overrideMoves;
 	uint overrideIndex;
 	bool _easierAi;
+	int8 _maxDepth;
 };
 
 } // End of Groovie namespace
