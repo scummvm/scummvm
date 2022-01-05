@@ -31,14 +31,14 @@ namespace Rooms {
 
 #define R12_BORK_OBJ 0
 
-int16 r12_bork_phasen[4][2] = {
+static const int16 R12_BORK_PHASEN[4][2] = {
 	{ 74, 79 },
 	{ 80, 85 },
 	{ 62, 67 },
 	{ 68, 73 }
 };
 
-MovLine r12_bork_mpkt[5] = {
+static const MovLine R12_BORK_MPKT[5] = {
 	{ { 207, 220, 199 }, 2, 6 },
 	{ { 207, 145, 199 }, 2, 6 },
 	{ {  30, 145, 199 }, 0, 6 },
@@ -46,12 +46,12 @@ MovLine r12_bork_mpkt[5] = {
 	{ { 207, 220, 199 }, 3, 6 }
 };
 
-MovLine r12_bork_mpkt1[2] = {
+static const MovLine R12_BORK_MPKT1[2] = {
 	{ { 207, 220, 199 }, 0, 6 },
 	{ { 170, 145, 199 }, 0, 6 }
 };
 
-MovLine r12_bork_mpkt2[3] = {
+static const MovLine R12_BORK_MPKT2[3] = {
 	{ { 170, 145, 199 }, 1, 8 },
 	{ { 180, 145, 120 }, 1, 8 },
 	{ { 300,  80, 120 }, 1, 8 }
@@ -100,8 +100,8 @@ void Room12::init_bork() {
 			auto_mov_obj[R12_BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 			auto_mov_obj[R12_BORK_OBJ].Mode = 1;
-			init_auto_obj(R12_BORK_OBJ, &r12_bork_phasen[0][0], mov_phasen[R12_BORK_OBJ].Lines, (MovLine
-				*)r12_bork_mpkt);
+			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
+				(const MovLine *)R12_BORK_MPKT);
 			if (!_G(spieler).R12TalismanOk) {
 				hide_cur();
 				auto_mov_vector[R12_BORK_OBJ].DelayCount = 1000;
@@ -141,8 +141,8 @@ void Room12::bork_ok() {
 	_G(spieler).R12BorkTalk = true;
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 2;
-	init_auto_obj(R12_BORK_OBJ, &r12_bork_phasen[0][0], mov_phasen[R12_BORK_OBJ].Lines, (MovLine
-		*)r12_bork_mpkt1);
+	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
+		(const MovLine *)R12_BORK_MPKT1);
 	wait_auto_obj(R12_BORK_OBJ);
 	_G(spieler).R12BorkInRohr = true;
 	det->set_detail_pos(3, 170, 145);
@@ -151,8 +151,8 @@ void Room12::bork_ok() {
 	det->stop_detail(3);
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 3;
-	init_auto_obj(R12_BORK_OBJ, &r12_bork_phasen[0][0], mov_phasen[R12_BORK_OBJ].Lines, (MovLine
-		*)r12_bork_mpkt2);
+	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
+		(const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
 	det->hide_static_spr(10);
 	start_detail_wait(4, 1, ANI_VOR);

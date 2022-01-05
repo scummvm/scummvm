@@ -483,8 +483,8 @@ void stop_auto_obj(int16 nr);
 void continue_auto_obj(int16 nr, int16 repeat);
 
 void new_auto_line(int16 nr);
-void init_auto_obj(int16 auto_nr, int16 *phasen, int16 lines,
-                   MovLine *pkt);
+void init_auto_obj(int16 auto_nr, const int16 *phasen, int16 lines,
+                   const MovLine *pkt);
 
 int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff);
 

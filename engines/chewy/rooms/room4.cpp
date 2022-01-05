@@ -40,14 +40,15 @@ int16 Room4::sonde_comp() {
 	int16 spr_nr;
 	int16 cur_x;
 
-	int16 cur_pos[3][2] = { {  83, 106 },
-							{ 136, 103 },
-							{ 188, 101 }
+	static const int16 CUR_POS[3][2] = {
+		{  83, 106 },
+		{ 136, 103 },
+		{ 188, 101 }
 	};
-
-	int16 console[3][4] = { {  82, 158, 143, 199 },
-							{ 150, 159, 194, 193 },
-							{ 201, 154, 262, 193 }
+	static const int16 CONSOLE[3][4] = {
+		{  82, 158, 143, 199 },
+		{ 150, 159, 194, 193 },
+		{ 201, 154, 262, 193 }
 	};
 
 	cur_2_inventory();
@@ -65,7 +66,7 @@ int16 Room4::sonde_comp() {
 	while (!ende) {
 		maus_action();
 		if (_G(maus_links_click)) {
-			switch (in->maus_vector(minfo.x + 17, minfo.y + 7, (int16 *)console, 3)) {
+			switch (in->maus_vector(minfo.x + 17, minfo.y + 7, (int16 *)CONSOLE, 3)) {
 			case 0:
 				if (cur_x > 0)
 					--cur_x;
@@ -93,8 +94,8 @@ int16 Room4::sonde_comp() {
 		spr_info[0].Image = room_blk.DetImage[spr_nr];
 
 		spr_info[0].ZEbene = 0;
-		spr_info[0].X = cur_pos[cur_x][0];
-		spr_info[0].Y = cur_pos[cur_x][1];
+		spr_info[0].X = CUR_POS[cur_x][0];
+		spr_info[0].Y = CUR_POS[cur_x][1];
 		if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 			curani.ani_anf = HAND_CLICK;
 			curani.ani_end = HAND_CLICK;

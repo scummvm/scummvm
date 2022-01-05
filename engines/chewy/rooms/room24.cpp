@@ -29,9 +29,10 @@
 namespace Chewy {
 namespace Rooms {
 
-uint8 kristall_spr[3][3] = { {14, 20, 13},
-	{20, 13, 14},
-	{13, 14, 20},
+static const uint8 KRISTALL_SPR[3][3] = {
+	{ 14, 20, 13 },
+	{ 20, 13, 14 },
+	{ 13, 14, 20 },
 };
 
 void Room24::entry() {
@@ -53,7 +54,7 @@ void Room24::entry() {
 	calc_hebel_spr();
 	calc_animation(255);
 	for (i = 0; i < 3; i++) {
-		if (kristall_spr[i][_G(spieler).R24Hebel[i]] == 20)
+		if (KRISTALL_SPR[i][_G(spieler).R24Hebel[i]] == 20)
 			det->start_detail(5 + i * 4, 255, ANI_RUECK);
 	}
 }
@@ -127,7 +128,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 	if (kristall_nr != 255) {
 		hide_cur();
 
-		if (kristall_spr[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 20) {
+		if (KRISTALL_SPR[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 20) {
 			if (_G(spieler).R24KristallLast[kristall_nr] == 13) {
 				ani_nr = 7;
 			} else {
@@ -143,7 +144,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 
 		else if (_G(spieler).R24KristallLast[kristall_nr] == 20) {
 
-			if (kristall_spr[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 13) {
+			if (KRISTALL_SPR[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 13) {
 				ani_nr = 7;
 			} else {
 				ani_nr = 8;
@@ -160,8 +161,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 	for (i = 0; i < 6; i++)
 		det->hide_static_spr(13 + i);
 	for (i = 0; i < 3; i++) {
-		det->show_static_spr(kristall_spr[i][_G(spieler).R24Hebel[i]] + i * 2);
-		_G(spieler).R24KristallLast[i] = kristall_spr[i][_G(spieler).R24Hebel[i]];
+		det->show_static_spr(KRISTALL_SPR[i][_G(spieler).R24Hebel[i]] + i * 2);
+		_G(spieler).R24KristallLast[i] = KRISTALL_SPR[i][_G(spieler).R24Hebel[i]];
 	}
 }
 

@@ -33,25 +33,25 @@ namespace Rooms {
 #define SPINNE2_OBJ 1
 #define ENERGIE_OBJ 2
 
-static int16 spinne_phasen[4][2] = {
+static const int16 SPINNE_PHASEN[4][2] = {
 	{ 58, 65 },
 	{ 50, 57 },
 	{ 42, 49 },
 	{ 66, 89 }
 };
 
-static MovLine spinne_mpkt[3] = {
+static const MovLine SPINNE_MPKT[3] = {
 	{ { 550, 275, 0 }, 0, 2 },
 	{ { 396, 275, 0 }, 0, 2 },
 	{ { 530, 275, 0 }, 1, 2 }
 };
 
-static MovLine spinne_mpkt1[2] = {
+static const MovLine SPINNE_MPKT1[2] = {
 	{ { 104,  50, 0 }, 3, 3 },
 	{ { 104, 430, 0 }, 3, 3 }
 };
 
-static MovLine energie_mpkt[2] = {
+static const MovLine SPINNE_MPKT2[2] = {
 	{ { 115, 140, 0 }, 2, 1 },
 	{ { 115, 190, 0 }, 2, 1 }
 };
@@ -106,7 +106,7 @@ void Room21::init_spinne() {
 	auto_mov_obj[SPINNE1_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SPINNE1_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SPINNE1_OBJ].Mode = 1;
-	init_auto_obj(SPINNE1_OBJ, &spinne_phasen[0][0], mov_phasen[SPINNE1_OBJ].Lines, (MovLine *)spinne_mpkt);
+	init_auto_obj(SPINNE1_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE1_OBJ].Lines, (const MovLine *)SPINNE_MPKT);
 
 	mov_phasen[SPINNE2_OBJ].AtsText = 130;
 	mov_phasen[SPINNE2_OBJ].Lines = 2;
@@ -115,17 +115,16 @@ void Room21::init_spinne() {
 	auto_mov_obj[SPINNE2_OBJ].Id = AUTO_OBJ1;
 	auto_mov_vector[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SPINNE2_OBJ].Mode = 1;
-	init_auto_obj(SPINNE2_OBJ, &spinne_phasen[0][0], mov_phasen[SPINNE2_OBJ].Lines, (MovLine *)spinne_mpkt1);
+	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
 	_G(timer_nr)[0] = room->set_timer(255, 21);
 	_G(e_streifen) = false;
 }
 
 void Room21::restart_spinne2() {
 	mov_phasen[SPINNE2_OBJ].Repeat = 1;
-	init_auto_obj(SPINNE2_OBJ, &spinne_phasen[0][0], mov_phasen[SPINNE2_OBJ].Lines, (MovLine *)spinne_mpkt1);
+	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 	_G(e_streifen) = false;
-
 }
 
 void Room21::e_streifen() {
@@ -137,8 +136,7 @@ void Room21::e_streifen() {
 	auto_mov_obj[ENERGIE_OBJ].Id = AUTO_OBJ2;
 	auto_mov_vector[ENERGIE_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[ENERGIE_OBJ].Mode = 1;
-	init_auto_obj(ENERGIE_OBJ, &spinne_phasen[0][0], mov_phasen[ENERGIE_OBJ].Lines, (MovLine *)energie_mpkt);
-
+	init_auto_obj(ENERGIE_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[ENERGIE_OBJ].Lines, (const MovLine *)SPINNE_MPKT2);
 }
 
 void Room21::r21setup_func() {

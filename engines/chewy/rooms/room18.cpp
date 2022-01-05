@@ -29,32 +29,32 @@
 namespace Chewy {
 namespace Rooms {
 
-static int16 bork_spr[5] = { 15, 16, 17, 24, 25 };
-static int16 bork_spr1[4] = { 20, 21, 18, 19 };
+static const int16 BORK_SPR[5] = { 15, 16, 17, 24, 25 };
+static const int16 BORK_SPR1[4] = { 20, 21, 18, 19 };
 
-static int16 surimy_phasen[4][2] = {
+static const int16 SURIMY_PHASEN[4][2] = {
 	{ 245, 252 },
 	{ 0, 0 },
 	{ 0, 0 },
 	{ 0, 0 }
 };
 
-static MovLine surimy_mpkt[2] = {
+static const MovLine SURIMY_MPKT[2] = {
 	{ { 453, 170, 190 }, 0, 6 },
 	{ { 392, 170, 190 }, 0, 6 }
 };
 
-static MovLine surimy_mpkt1[2] = {
+static const MovLine SURIMY_MPKT1[2] = {
 	{ { 392, 170, 190 }, 0, 6 },
 	{ { 143, 170, 190 }, 0, 6 }
 };
 
-static MovLine surimy_mpkt2[2] = {
+static const MovLine SURIMY_MPKT2[2] = {
 	{ { 143, 170, 190 }, 0, 6 },
 	{ {   0, 170, 190 }, 0, 6 }
 };
 
-static MovLine surimy_mpkt3[2] = {
+static const MovLine SURIMY_MPKT3[2] = {
 	{ { 500, 100, 190 }, 0, 12 },
 	{ { 392, 170, 190 }, 0, 12 }
 };
@@ -71,9 +71,9 @@ void Room18::entry() {
 		init_borks();
 	else {
 		for (i = 0; i < 5; i++)
-			det->hide_static_spr(bork_spr[i]);
+			det->hide_static_spr(BORK_SPR[i]);
 		for (i = 0; i < (4 - _G(spieler).R18Krone); i++)
-			det->show_static_spr(bork_spr1[i]);
+			det->show_static_spr(BORK_SPR1[i]);
 	}
 	if (_G(spieler).R16F5Exit)
 		det->hide_static_spr(19);
@@ -92,9 +92,9 @@ void Room18::entry() {
 void Room18::init_borks() {
 	int16 i;
 	for (i = 0; i < 5; i++)
-		det->show_static_spr(bork_spr[i]);
+		det->show_static_spr(BORK_SPR[i]);
 	for (i = 0; i < 4; i++)
-		det->hide_static_spr(bork_spr1[i]);
+		det->hide_static_spr(BORK_SPR1[i]);
 	_G(timer_nr)[0] = room->set_timer(255, 10);
 	_G(timer_nr)[1] = room->set_timer(255, 15);
 	_G(spieler).scrollx = 276;
@@ -194,8 +194,8 @@ int16 Room18::calc_surimy() {
 		if (spieler_vector[P_CHEWY].Xypos[1] < 150) {
 			start_detail_frame(18, 1, ANI_VOR, 8);
 
-			init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-				*)surimy_mpkt3);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+				(const MovLine *)SURIMY_MPKT3);
 			wait_detail(18);
 		} else {
 			auto_move(1, P_CHEWY);
@@ -204,8 +204,8 @@ int16 Room18::calc_surimy() {
 			start_detail_frame(17, 1, ANI_VOR, 12);
 			_G(maus_links_click) = false;
 
-			init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-				*)surimy_mpkt);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+				(const MovLine *)SURIMY_MPKT);
 			wait_detail(17);
 		}
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -232,8 +232,8 @@ int16 Room18::calc_surimy() {
 		det->hide_static_spr(26);
 		flags.NoScroll = true;
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-			*)surimy_mpkt1);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+			(const MovLine *)SURIMY_MPKT1);
 		auto_scroll(70, 0);
 		wait_auto_obj(SURIMY_OBJ);
 
@@ -251,8 +251,8 @@ int16 Room18::calc_surimy() {
 
 		det->hide_static_spr(26);
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-			*)surimy_mpkt2);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+			(const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
 		wait_auto_obj(SURIMY_OBJ);
 		_G(spieler).ScrollxStep = 6;

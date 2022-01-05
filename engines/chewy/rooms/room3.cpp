@@ -43,12 +43,12 @@ namespace Rooms {
 #define SONDE_SPR_R 118
 #define SONDE_SPR_L 120
 
-static MovLine SONDE_MPKT[3] = {
+static const MovLine SONDE_MPKT[3] = {
 	{ {  13, 45,  75 }, 1, 2 },
 	{ { 237, 52, 160 }, 1, 2 },
 	{ {   4, 83, 180 }, 0, 2 }
 };
-static int16 SONDE_PHASEN[4][2] = {
+static const int16 SONDE_PHASEN[4][2] = {
 	{ 120, 120 },
 	{ 118, 118 },
 	{ 141, 141 },
@@ -130,7 +130,7 @@ void Room3::init_sonde() {
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SONDE_OBJ].Mode = 1;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine *)SONDE_MPKT);
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT);
 }
 
 void Room3::sonde_knarre() {
