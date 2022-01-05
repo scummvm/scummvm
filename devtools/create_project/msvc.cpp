@@ -56,7 +56,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		// Libraries
 		{       "sdl", "SDL.lib",                   "SDLd.lib",      "winmm.lib imm32.lib version.lib setupapi.lib",    nullptr },
 		{      "sdl2", "SDL2.lib",                  "SDL2d.lib",     "winmm.lib imm32.lib version.lib setupapi.lib",    nullptr },
-		{      "libz", "zlib.lib",                  "zlibd.lib",     nullptr,                                           nullptr },
+		{      "zlib", "zlib.lib",                  "zlibd.lib",     nullptr,                                           nullptr },
 		{       "mad", "mad.lib",                   nullptr,         nullptr,                                           "libmad.lib" },
 		{   "fribidi", "fribidi.lib",               nullptr,         nullptr,                                           nullptr },
 		{       "ogg", "ogg.lib",                   nullptr,         nullptr,                                           "libogg_static.lib" },
