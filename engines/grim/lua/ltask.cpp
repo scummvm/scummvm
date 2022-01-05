@@ -38,17 +38,7 @@ void start_script() {
 	lua_Type type = paramObj == LUA_NOOBJECT ? LUA_T_NIL : ttype(Address(paramObj));
 
 	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO)) {
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			/* In the discussion with meathook (dlg_meathook2.lua),
-			 * start_script is called as start_script(meathook:shake_head(...)).
-			 * But start_script expects start_script(meathook.shake_head, shake_head, ...). */
-			warning("Bad argument to start_script, ignoring");
-			lua_pushnil();
-			return;
-		} else {
-			lua_error("Bad argument to start_script");
-			return;
-		}
+		return;
 	}
 
 	LState *state = luaM_new(LState);
