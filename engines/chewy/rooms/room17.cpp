@@ -29,21 +29,22 @@
 namespace Chewy {
 namespace Rooms {
 
+#undef CHEWY_OBJ
 #define CHEWY_OBJ 0
 
-static int16 chewy_phasen[4][2] = {
+static const int16 CHEWY_PHASEN[4][2] = {
 	{ 0, 0 },
 	{ 0, 0 },
 	{ 141, 144 },
 	{ 177, 177 }
 };
 
-static MovLine chewy_mpkt[2] = {
+static const MovLine CHEWY_MPKT[2] = {
 	{ { 241, 150, 0 }, 3, 8 },
 	{ { 241, 350, 0 }, 3, 8 }
 };
 
-static MovLine chewy_mpkt1[2] = {
+static const MovLine CHEWY_MPKT1[2] = {
 	{ { 243, 334, 0 }, 2, 6 },
 	{ { 243, 150, 0 }, 2, 6 }
 };
@@ -135,8 +136,8 @@ void Room17::kletter_down() {
 	room->set_zoom(32);
 	_G(zoom_horizont) = 399;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &chewy_phasen[0][0], mov_phasen[CHEWY_OBJ].Lines, (MovLine
-		*)chewy_mpkt);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines,
+		(const MovLine *)CHEWY_MPKT);
 	set_person_pos(242, 350, P_CHEWY, P_LEFT);
 }
 
@@ -151,8 +152,8 @@ void Room17::kletter_up() {
 	room->set_zoom(25);
 	_G(zoom_horizont) = 0;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &chewy_phasen[0][0], mov_phasen[CHEWY_OBJ].Lines, (MovLine
-		*)chewy_mpkt1);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines,
+		(const MovLine *)CHEWY_MPKT1);
 	set_person_pos(243, 146, P_CHEWY, P_LEFT);
 }
 

@@ -31,24 +31,24 @@ namespace Rooms {
 
 #define BORK_OBJ 0
 
-static int16 bork_phasen[4][2] = {
+static const int16 BORK_PHASEN[4][2] = {
 	{ 51, 56 },
 	{ 36, 41 },
 	{ 36, 41 },
 	{ 36, 41 }
 };
 
-static MovLine bork_mpkt[2] = {
-	{ {-30, 125, 170} , 1, 6 },
+static const MovLine BORK_MPKT[2] = {
+	{ { -30, 125, 170} , 1, 6 },
 	{ { 155, 125, 170 }, 1, 6 },
 };
 
-static MovLine bork_mpkt1[2] = {
+static const MovLine BORK_MPKT1[2] = {
 	{ { 155, 125, 170}, 2, 6 },
 	{ { -30, 125, 170}, 0, 6 }
 };
 
-static MovLine bork_mpkt2[2] = {
+static const MovLine BORK_MPKT2[2] = {
 	{ { -30, 125, 170 }, 1, 6 },
 	{ {  90, 125, 170 }, 1, 6 }
 };
@@ -110,21 +110,21 @@ void Room22::bork(int16 t_nr) {
 }
 
 void Room22::bork_walk1() {
-	init_auto_obj(BORK_OBJ, &bork_phasen[0][0], mov_phasen[BORK_OBJ].Lines, (MovLine
-		*)bork_mpkt);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
+		(const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
 	start_detail_wait(2, 1, ANI_VOR);
 
 	mov_phasen[BORK_OBJ].Repeat = 1;
-	init_auto_obj(BORK_OBJ, &bork_phasen[0][0], mov_phasen[BORK_OBJ].Lines, (MovLine
-		*)bork_mpkt1);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
+		(const MovLine *)BORK_MPKT1);
 	wait_auto_obj(BORK_OBJ);
 }
 
 void Room22::bork_walk2() {
-	init_auto_obj(BORK_OBJ, &bork_phasen[0][0], mov_phasen[BORK_OBJ].Lines, (MovLine
-		*)bork_mpkt2);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
+		(const MovLine *)BORK_MPKT2);
 	wait_auto_obj(BORK_OBJ);
 
 	flic_cut(FCUT_009, CFO_MODE);

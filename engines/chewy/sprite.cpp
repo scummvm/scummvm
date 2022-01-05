@@ -537,10 +537,11 @@ void continue_auto_obj(int16 nr, int16 repeat) {
 	}
 }
 
-void init_auto_obj(int16 auto_nr, int16 *phasen, int16 lines, MovLine *mline) {
+void init_auto_obj(int16 auto_nr, const int16 *phasen, int16 lines, const MovLine *mline) {
 	int16 i;
 	int16 *tmp;
-	MovLine *tmp1, *tmp2;
+	MovLine *tmp1;
+	const MovLine *tmp2;
 	tmp2 = mline;
 	tmp = (int16 *)mov_phasen[auto_nr].Phase;
 	for (i = 0; i < 8; i++)

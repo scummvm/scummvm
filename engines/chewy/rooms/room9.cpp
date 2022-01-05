@@ -31,19 +31,19 @@ namespace Rooms {
 
 #define SURIMY_OBJ 0
 
-static int16 surimy_phasen[4][2] = {
+static const int16 SURIMY_PHASEN[4][2] = {
 	{ 91, 98 },
 	{ 91, 98 },
 	{ 91, 98 },
 	{ 91, 98 }
 };
 
-static MovLine surimy_mpkt[2] = {
+static const MovLine SURIMY_MPKT[2] = {
 	{ {  80, 170, 199 }, 2, 6 },
 	{ { 210, 162, 199 }, 2, 6 }
 };
 
-static MovLine surimy_mpkt1[2] = {
+static const MovLine SURIMY_MPKT1[2] = {
 	{ { 224, 158, 199 }, 2, 6 },
 	{ { 330, 162, 199 }, 2, 6 }
 };
@@ -99,8 +99,8 @@ void Room9::surimy_ani() {
 	auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SURIMY_OBJ].Mode = 1;
-	init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-		*)surimy_mpkt);
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+		(const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
 	start_detail_frame(0, 1, ANI_VOR, 15);
 	det->start_detail(2, 1, ANI_VOR);
@@ -109,8 +109,8 @@ void Room9::surimy_ani() {
 	start_spz(CH_EKEL, 2, ANI_VOR, P_CHEWY);
 	det->hide_static_spr(4);
 	mov_phasen[SURIMY_OBJ].Repeat = 1;
-	init_auto_obj(SURIMY_OBJ, &surimy_phasen[0][0], mov_phasen[SURIMY_OBJ].Lines, (MovLine
-		*)surimy_mpkt1);
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
+		(const MovLine *)SURIMY_MPKT1);
 	wait_auto_obj(SURIMY_OBJ);
 	det->del_taf_tbl(91, 8, 0);
 }

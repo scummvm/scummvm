@@ -29,14 +29,14 @@
 namespace Chewy {
 namespace Rooms {
 
-static int16 R6_ROBO_PHASEN[4][2] = {
+static const int16 R6_ROBO_PHASEN[4][2] = {
 	{ 86, 86 },
 	{ 86, 86 },
 	{ 86, 86 },
 	{ 86, 86 }
 };
 
-static MovLine R6_ROBO_MPKT[3] = {
+static const MovLine R6_ROBO_MPKT[3] = {
 	{ { 168,  71, 180 }, 1,  1 },
 	{ { 180,  71, 100 }, 1,  2 },
 	{ {  60, 210, 110 }, 1, 16 }
@@ -75,8 +75,8 @@ void Room6::init_robo() {
 	auto_mov_obj[ROBO_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[ROBO_OBJ].Mode = 1;
-	init_auto_obj(ROBO_OBJ, &R6_ROBO_PHASEN[0][0], mov_phasen[ROBO_OBJ].Lines, (MovLine
-		*)R6_ROBO_MPKT);
+	init_auto_obj(ROBO_OBJ, &R6_ROBO_PHASEN[0][0], mov_phasen[ROBO_OBJ].Lines,
+		(const MovLine *)R6_ROBO_MPKT);
 }
 
 void Room6::bola_knopf() {

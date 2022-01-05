@@ -31,14 +31,14 @@ namespace Rooms {
 
 #define R13_BORK_OBJ 0
 
-int16 r13_bork_phasen[4][2] = {
+static const int16 R13_BORK_PHASEN[4][2] = {
 	{ 92, 97 },
 	{ 86, 91 },
 	{ 86, 91 },
 	{ 68, 73 }
 };
 
-MovLine r13_bork_mpkt[3] = {
+static const MovLine R13_BORK_MPKT[3] = {
 	{ { 168, 140, 162 }, 0, 6 },
 	{ {  50, 140, 162 }, 0, 6 },
 	{ {  50, 107, 130 }, 2, 6 }
@@ -99,7 +99,8 @@ void Room13::talk_bork() {
 		auto_mov_obj[R13_BORK_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 		auto_mov_obj[R13_BORK_OBJ].Mode = 1;
-		init_auto_obj(R13_BORK_OBJ, &r13_bork_phasen[0][0], mov_phasen[R13_BORK_OBJ].Lines, (MovLine *)r13_bork_mpkt);
+		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], mov_phasen[R13_BORK_OBJ].Lines,
+			(const MovLine *)R13_BORK_MPKT);
 		auto_move(9, P_CHEWY);
 		wait_auto_obj(R13_BORK_OBJ);
 		auto_move(11, P_CHEWY);
