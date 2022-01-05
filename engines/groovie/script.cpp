@@ -260,7 +260,6 @@ void Script::directGameLoad(int slot) {
 	if (_savedCode) {
 		// Returning the correct spot, dealing with _savedVariables, etc
 		// is not needed as game state is getting nuked anyway
-		error("wtf");
 		delete[] _code;
 		_code = _savedCode;
 		_codeSize = _savedCodeSize;
