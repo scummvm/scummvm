@@ -31,6 +31,8 @@ class Room2 {
 public:
 	static void entry();
 	static void jump_out_r1(int16 nr);
+	static void electrifyWalkway1();
+	static void electrifyWalkway2();
 };
 
 } // namespace Rooms

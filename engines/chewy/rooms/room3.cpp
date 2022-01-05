@@ -66,7 +66,7 @@ void Room3::terminal() {
 		spr_info[0].Y = 2;
 		spr_info[0].ZEbene = 0;
 
-		if (!_G(spieler).R2KabelBork) {
+		if (!_G(spieler).R2ElectrocutedBork) {
 			det->stop_detail(5);
 			start_ani_block(2, ablock3);
 			if (_G(spieler).R2FussSchleim) {
