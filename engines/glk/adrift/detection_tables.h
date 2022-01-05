@@ -41,7 +41,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "barneysproblem", "Barney's Problem" },
 	{ "beanstalk", "Beanstalk the and Jack" },
 	{ "beerisntenough", "When Beer Isn't Enough" },
-	{ "caveofwonders", "Cave of Wondors" },
+	{ "caveofwonders", "Cave of Wonders" },
 	{ "circusmenagerie", "Menagerie!" },
 	{ "cityInfear", "City In Fear" },
 	{ "coloromcadrift", "Color of Milk Coffee" },
