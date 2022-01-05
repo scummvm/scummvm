@@ -161,7 +161,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 int CineMetaEngine::getMaximumSaveSlot() const { return MAX_SAVEGAMES - 1; }
 
 Common::String CineMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	return Common::String::format("%s.%d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	return Common::String::format("%s.%d", target == nullptr ? getName() : target, saveGameIdx);
 }
 
 SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

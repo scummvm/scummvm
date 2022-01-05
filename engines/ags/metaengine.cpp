@@ -91,10 +91,10 @@ bool AGSMetaEngine::hasFeature(MetaEngineFeature f) const {
 Common::String AGSMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (saveGameIdx == kSavegameFilePattern) {
 		// Pattern requested
-		return Common::String::format("%s.###", target == nullptr ? getEngineId() : target);
+		return Common::String::format("%s.###", target == nullptr ? getName() : target);
 	} else {
 		// Specific filename requested
-		return Common::String::format("%s.%03d", target == nullptr ? getEngineId() : target, saveGameIdx);
+		return Common::String::format("%s.%03d", target == nullptr ? getName() : target, saveGameIdx);
 	}
 }
 

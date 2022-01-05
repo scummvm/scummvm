@@ -57,7 +57,7 @@ const char *Plugin::getName() const {
 
 const char *Plugin::getEngineId() const {
 	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
-		return _pluginObject->getEngineId();
+		return get<MetaEngineDetection>().getEngineId();
 	}
 
 	return nullptr;

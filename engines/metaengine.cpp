@@ -38,7 +38,7 @@
 
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
-		target = getEngineId();
+		target = getName();
 	if (saveGameIdx == kSavegameFilePattern) {
 		// Pattern requested
 		const char *pattern = hasFeature(kSimpleSavesNames) ? "%s.###" : "%s.s##";
