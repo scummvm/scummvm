@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-05 02:41+0000\n"
-"PO-Revision-Date: 2022-01-01 01:26+0000\n"
+"PO-Revision-Date: 2022-01-05 12:52+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7769,11 +7769,11 @@ msgstr "カメラの位置は固定されず、プレイヤーに連動します
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Christmas easter-eggを常時有効化"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Christmas musicを通年で有効化します。"
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
