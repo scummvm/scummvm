@@ -335,7 +335,6 @@ int main(int argc, char *argv[]) {
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game", setup.features, false);
 		setFeatureBuildState("opengl_shaders", setup.features, false);
-		setFeatureBuildState("opengles2", setup.features, false);
 	}
 
 	// Disable engines for which we are missing dependencies
@@ -440,6 +439,10 @@ int main(int argc, char *argv[]) {
 
 	if (setup.useStaticDetection) {
 		setup.defines.push_back("DETECTION_STATIC");
+	}
+
+	if (getFeatureBuildState("opengl", setup.features)) {
+		setup.defines.push_back("USE_GLAD");
 	}
 
 	// List of global warnings and map of project-specific warnings
@@ -1098,9 +1101,8 @@ const Feature s_features[] = {
 	{             "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{           "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{           "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
-	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support in 3d games" },
+	{      "opengl_game",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
 	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
-	{        "opengles2",                     "USE_GLES2", false, false, "forced OpenGL ES2 mode in 3d games" },
 	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
