@@ -26,54 +26,35 @@
 
 namespace Chewy {
 
-int16 action_obj_tbl[] = {
-
-	30000, 5, 8, 13, 38,
-
-	30001, 28, 29,
-
-	30002, 31, 35, 56,
-
-	30003, 38, 39, 11, 15, 13, 41, 42,
-
-	30004, 43, 61,
-
-	30005, 67, 5040,
-
-	30006, 77,
-	32000,
+static const int16 ACTION_OBJ_TBL[] = {
+	30000,    5,    8,   13,   38,   41,
+	30001,   28,   29,
+	30002,   31,   35,   56, 5088,
+	30003,   38,   39,   11,   15,   13,   41,   42,
+	30004,   43,   61,
+	30005,   67, 5040, 5088,
+	30006,   77,
+	30007,    4,
+	30008, 5004,
+	32000
 };
 
-int16 sib_zustand_tbl[] = {
-
-	30000, 46, 0,
-
-	30001, 6,
-
-	30002, 7,
-
-	30003, 8,
-
-	30004, 12, 13,
-
-	30005, 2, 3,
-
-	30006, 1, 40, 41, 42, 43, 44,
-
-	30007, 41, 45, 46, 47, 48,
-
-	30008, 7, 60, 23,
-
-	30009, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-
-	30010, 4, 5,
-
-	30011, 8, 9,
-
-	30012, 7, 10,
-
-	30013, 3, 5, 6,
-	32000,
+static const int16 SIB_ZUSTAND_TBL[] = {
+	30000,   46,    0,
+	30001,    6,
+	30002,    7,
+	30003,    8,
+	30004,   12,   13,
+	30005,    2,    3,
+	30006,    1,
+	30007,   41,   45,   46,   47,   48,
+	30008,    7,   60,   23,
+	30009,   40,   41,   42,   43,   44,   45,   46,   47,   48,
+	30010,    4,    5,
+	30011,    8,    9,
+	30012,    7,   10,
+	30013,    3,    5,    6,
+	32000
 };
 
 objekt::objekt(Spieler *sp) {
@@ -276,27 +257,28 @@ int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 	tmp1 = maus_obj_nr;
 	tmp2 = test_obj_nr;
 	action_flag = 0;
+
 	for (j = 0; j < 2 && !action_flag; j++) {
 		if (j) {
 			tmp1 = test_obj_nr;
 			tmp2 = maus_obj_nr;
 		}
-		if (Rmo[tmp1].ActionObj != -1) {
 
+		if (Rmo[tmp1].ActionObj != -1) {
 			if (Rmo[tmp1].ActionObj < 30000 &&
 			        Rmo[tmp1].ActionObj == tmp2) {
 				action_flag = 1;
 			} else if (Rmo[tmp1].ActionObj >= 30000) {
 				i = 0;
-				while (action_obj_tbl[i] != Rmo[tmp1].ActionObj &&
-				        action_obj_tbl[i] != 32000) {
+				while (ACTION_OBJ_TBL[i] != Rmo[tmp1].ActionObj &&
+				        ACTION_OBJ_TBL[i] != 32000) {
 					++i;
 				}
-				if (action_obj_tbl[i] != 32000) {
+				if (ACTION_OBJ_TBL[i] != 32000) {
 					++i;
 					ok = 0;
-					while (action_obj_tbl[i] < 30000 && !ok) {
-						if (action_obj_tbl[i] == tmp2 + 5000) {
+					while (ACTION_OBJ_TBL[i] < 30000 && !ok) {
+						if (ACTION_OBJ_TBL[i] == tmp2 + 5000) {
 							ok = 1;
 							action_flag = 1;
 						}
@@ -306,8 +288,8 @@ int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 			}
 		}
 	}
-	if (action_flag == 1) {
 
+	if (action_flag == 1) {
 		if (!calc_rmo_flip_flop(tmp2)) {
 			action_flag = NO_ACTION;
 		} else {
@@ -317,32 +299,31 @@ int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 				ret = OBJEKT_1;
 		}
 	}
+
 	return ret;
 }
 
 int16 objekt::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
-
 	int16 action_flag;
-
 	int16 i;
 	int16 ok;
 	action_flag = NO_ACTION;
-	if (Rmo[maus_obj_nr].ActionObj != -1) {
 
+	if (Rmo[maus_obj_nr].ActionObj != -1) {
 		if (Rmo[maus_obj_nr].ActionObj < 30000 &&
 		        Rmo[maus_obj_nr].ActionObj == test_obj_nr) {
 			action_flag = OBJEKT_2;
 		} else if (Rmo[maus_obj_nr].ActionObj >= 30000) {
 			i = 0;
-			while (action_obj_tbl[i] != Rmo[maus_obj_nr].ActionObj &&
-			        action_obj_tbl[i] != 32000) {
+			while (ACTION_OBJ_TBL[i] != Rmo[maus_obj_nr].ActionObj &&
+			        ACTION_OBJ_TBL[i] != 32000) {
 				++i;
 			}
-			if (action_obj_tbl[i] != 32000) {
+			if (ACTION_OBJ_TBL[i] != 32000) {
 				++i;
 				ok = 0;
-				while (action_obj_tbl[i] < 30000 && !ok) {
-					if (action_obj_tbl[i] == test_obj_nr) {
+				while (ACTION_OBJ_TBL[i] < 30000 && !ok) {
+					if (ACTION_OBJ_TBL[i] == test_obj_nr) {
 						ok = 1;
 						action_flag = OBJEKT_2;
 					}
@@ -383,19 +364,19 @@ void objekt::calc_static_detail(int16 det_nr) {
 	int16 i;
 	int16 n;
 	ani_detail_info *adi;
-	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[0]) {
 
+	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[0]) {
 		nr = Rsi[det_nr].StaticAk;
 		if (nr != -1) {
 			if (nr >= 30000) {
 				i = 0;
-				while (sib_zustand_tbl[i] != nr && sib_zustand_tbl[i] != 32000) {
+				while (SIB_ZUSTAND_TBL[i] != nr && SIB_ZUSTAND_TBL[i] != 32000) {
 					++i;
 				}
-				if (sib_zustand_tbl[i] != 32000) {
+				if (SIB_ZUSTAND_TBL[i] != 32000) {
 					++i;
-					while (sib_zustand_tbl[i] < 30000) {
-						nr = sib_zustand_tbl[i];
+					while (SIB_ZUSTAND_TBL[i] < 30000) {
+						nr = SIB_ZUSTAND_TBL[i];
 
 						if (nr >= 40) {
 							n = nr - 40;
@@ -424,13 +405,13 @@ void objekt::calc_static_detail(int16 det_nr) {
 		if (nr != -1) {
 			if (nr >= 30000) {
 				i = 0;
-				while (sib_zustand_tbl[i] != nr && sib_zustand_tbl[i] != 32000) {
+				while (SIB_ZUSTAND_TBL[i] != nr && SIB_ZUSTAND_TBL[i] != 32000) {
 					++i;
 				}
-				if (sib_zustand_tbl[i] != 32000) {
+				if (SIB_ZUSTAND_TBL[i] != 32000) {
 					++i;
-					while (sib_zustand_tbl[i] < 30000) {
-						nr = sib_zustand_tbl[i];
+					while (SIB_ZUSTAND_TBL[i] < 30000) {
+						nr = SIB_ZUSTAND_TBL[i];
 
 						if (nr >= 40)
 							det->stop_detail(nr - 40);
