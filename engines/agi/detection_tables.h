@@ -368,7 +368,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		},
 		GID_GOLDRUSH,
 		GType_V3,
-		GF_MACGOLDRUSH,
+		0,
 		0x3149
 	},
 
@@ -609,10 +609,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("mh1", "updated", "d47da950c62289f8d4ccf36af73365f2", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
 
 	{
-		// Manhunter NY (Mac) 1.22 7.21/89 [AGI 2.917]
+		// Manhunter NY (Mac) 1.22 8/31/88
 		{
 			"mh1",
-			"1.22 1989-07-21",
+			"1.22 1988-08-31",
 			AD_ENTRY2s("mhdir",	"0c7b86f05fe02c2e26cff1b07450b82a", 2123,
 					   "vol.0", "338d7053d8cf08b517edebad2807975d", 115078),
 			Common::EN_ANY,
@@ -621,9 +621,9 @@ static const AGIGameDescription gameDescriptions[] = {
 			GAMEOPTIONS_DEFAULT
 		},
 		GID_MH1,
-		GType_V2,
+		GType_V3,
 		0,
-		0x2917
+		0x3149
 	},
 
 	// Manhunter SF (ST) 1.0 7/29/89
@@ -642,10 +642,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("mh2", "3.03 1989-08-17 5.25\"", "mh2dir", "b90e4795413c43de469a715fb3c1fa93", 0x3149, GID_MH2),
 
 	{
-		// Manhunter SF (Mac) 1.81 10/23/89 [AGI 2.917]
+		// Manhunter SF (Mac) 3.03 10/23/89
 		{
 			"mh2",
-			"1.81 1989-10-23",
+			"3.03 1989-10-23",
 			AD_ENTRY2s("mh2dir", "b90e4795413c43de469a715fb3c1fa93", 2588,
 					   "vol.0", "b174bcf485bc348eae77782f9da4143e", 115338),
 			Common::EN_ANY,
@@ -654,9 +654,9 @@ static const AGIGameDescription gameDescriptions[] = {
 			GAMEOPTIONS_DEFAULT
 		},
 		GID_MH1,
-		GType_V2,
+		GType_V3,
 		0,
-		0x2917
+		0x3149
 	},
 
 	// Manhunter SF (CoCo3 720k) [AGI 2.023]

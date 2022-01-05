@@ -46,9 +46,9 @@ int AgiLoader_v3::detectGame() {
 		Common::String f = file->getName();
 		f.toLowercase();
 
-		if (f.hasSuffix("vol.0")) {
+		if (f.hasSuffix("dir")) {
 			memset(_vm->_game.name, 0, 8);
-			strncpy(_vm->_game.name, f.c_str(), MIN((uint)8, f.size() > 5 ? f.size() - 5 : f.size()));
+			strncpy(_vm->_game.name, f.c_str(), MIN((uint)6, f.size() > 3 ? f.size() - 3 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
 
 			ec = errOK;
@@ -110,9 +110,6 @@ int AgiLoader_v3::init() {
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		path = Common::String("dirs");
-		_vm->_game.name[0] = 0; // Empty prefix
-	} else if (_vm->getFeatures() & GF_MACGOLDRUSH) {
-		path = "grdir";
 		_vm->_game.name[0] = 0; // Empty prefix
 	} else {
 		path = Common::String(_vm->_game.name) + DIR_;
@@ -206,7 +203,11 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	Common::String path;
 
 	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
-	path = Common::String::format("%svol.%i", _vm->_game.name, agid->volume);
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		path = Common::String::format("vol.%i", agid->volume);
+	} else {
+		path = Common::String::format("%svol.%i", _vm->_game.name, agid->volume);
+	}
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		fp.seek(agid->offset, SEEK_SET);
