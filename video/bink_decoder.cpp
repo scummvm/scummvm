@@ -1233,7 +1233,7 @@ void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int32 *block,
 	coefList[listEnd] = 3;  modeList[listEnd++] = 3;
 
 	int bits = video.bits->getBits(4) - 1;
-	for (int mask = 1 << bits; bits >= 0; mask >>= 1, bits--) {
+	for (int mask = bits >= 0 ? 1 << bits : 0; bits >= 0; mask >>= 1, bits--) {
 		int listPos = listStart;
 
 		while (listPos < listEnd) {
