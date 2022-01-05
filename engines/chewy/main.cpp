@@ -966,6 +966,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	tmp = _G(spieler).AkInvent;
 	ret = NO_ACTION;
 	action_flag = false;
+
 	switch (mode) {
 	case INVENTAR_NORMAL:
 		ret = obj->action_iib_iib(_G(spieler).AkInvent, test_nr);
