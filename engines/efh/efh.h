@@ -325,8 +325,8 @@ private:
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
-	void sub133E5(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
-	void sub221FA(uint8 *impArray, bool flag);
+	void drawText(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
+	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTeamWindowFl);
@@ -568,8 +568,8 @@ private:
 	int16 _techDataId_MapPosX, _techDataId_MapPosY;
 	uint16 _lastMainPlaceId;
 
-	uint16 _word2C86E;
-	uint8 *_dword2C856;
+	uint16 _tempTextDelay;
+	uint8 *_tempTextPtr;
 	bool _word2C8D9;
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 	bool _word2D0BC;
