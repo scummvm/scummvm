@@ -23,10 +23,10 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/menus.h"
+#include "chewy/rooms/room44.h"
 
 namespace Chewy {
 
-void r44_look_news();
 void r58_look_cut_mag(int16 r_nr);
 
 static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
@@ -710,7 +710,7 @@ int16 calc_use_invent(int16 inv_nr) {
 	if (menu_item == CUR_LOOK) {
 		switch (inv_nr) {
 		case ZEITUNG_INV:
-			r44_look_news();
+			Rooms::Room44::look_news();
 			break;
 
 		case CUTMAG_INV:
@@ -727,8 +727,7 @@ int16 calc_use_invent(int16 inv_nr) {
 			break;
 
 		}
-	}
-	else if (menu_item == CUR_USE) {
+	} else if (menu_item == CUR_USE) {
 		switch (inv_nr) {
 		case GBUCH_INV:
 			ret = del_invent_slot(GBUCH_INV);

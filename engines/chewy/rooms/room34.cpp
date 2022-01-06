@@ -20,24 +20,44 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/episode2.h"
-#include "chewy/rooms/rooms.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room34.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void calc_person_look() {
-	int16 i;
-	for (i = 1; i < MAX_PERSON; i++) {
-		if (spieler_mi[i].Id != NO_MOV_OBJ) {
+bool Room34::use_kuehlschrank() {
+	bool result = false;
 
-			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])
-				person_end_phase[i] = P_LEFT;
-			else
-				person_end_phase[i] = P_RIGHT;
+	if (!_G(spieler).inv_cur) {
+		result = true;
+
+		if (!flags.LoadGame) {
+			auto_move(3, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		}
+
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		flags.ChewyDontGo = true;
+		if (!flags.LoadGame) {
+			switch_room(34);
+		}
+		set_person_pos(160, 70, P_CHEWY, -1);
 	}
+
+	return result;
 }
 
+void Room34::xit_kuehlschrank() {
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	set_person_pos(54, 111, P_CHEWY, -1);
+	switch_room(33);
+	flags.ChewyDontGo = false;
+	_G(maus_links_click) = false;
+}
+
+} // namespace Rooms
 } // namespace Chewy

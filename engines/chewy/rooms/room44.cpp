@@ -20,24 +20,35 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/episode2.h"
-#include "chewy/rooms/rooms.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room44.h"
 
 namespace Chewy {
+namespace Rooms {
 
-void calc_person_look() {
-	int16 i;
-	for (i = 1; i < MAX_PERSON; i++) {
-		if (spieler_mi[i].Id != NO_MOV_OBJ) {
+void Room44::look_news() {
+	int16 tmpsx, tmpsy;
+	int16 tmproom;
+	tmproom = _G(spieler).PersonRoomNr[P_CHEWY];
+	tmpsx = _G(spieler).scrollx;
+	tmpsy = _G(spieler).scrolly;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
+	hide_person();
+	fx_blend = BLEND1;
+	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
+	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	ERROR
+		start_aad_wait(172, -1);
+	_G(spieler).scrollx = tmpsx;
+	_G(spieler).scrolly = tmpsy;
+	switch_room(tmproom);
 
-			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])
-				person_end_phase[i] = P_LEFT;
-			else
-				person_end_phase[i] = P_RIGHT;
-		}
-	}
+	show_person();
 }
 
+} // namespace Rooms
 } // namespace Chewy

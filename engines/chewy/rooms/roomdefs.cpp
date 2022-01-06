@@ -19,25 +19,15 @@
  *
  */
 
-#include "chewy/defines.h"
-#include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/episode2.h"
-#include "chewy/rooms/rooms.h"
+#include "chewy/rooms/roomdefs.h"
 
 namespace Chewy {
 
-void calc_person_look() {
-	int16 i;
-	for (i = 1; i < MAX_PERSON; i++) {
-		if (spieler_mi[i].Id != NO_MOV_OBJ) {
-
-			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])
-				person_end_phase[i] = P_LEFT;
-			else
-				person_end_phase[i] = P_RIGHT;
-		}
-	}
-}
+const int16 SURIMY_TAF19_PHASEN[4][2] = {
+	{ 0, 0 },
+	{ 39, 46 },
+	{ 0, 0 },
+	{ 0, 0 }
+};
 
 } // namespace Chewy

@@ -356,12 +356,12 @@ void check_ged_action(int16 index) {
 
 		case 28:
 			if (!index)
-				r28_get_pump();
+				Room28::get_pump();
 			break;
 
 		case 37:
 			if (!index) {
-				r37_dog_bell();
+				Room37::dog_bell();
 			} else if (index == 1) {
 				if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
 					stop_person(P_CHEWY);
@@ -374,7 +374,7 @@ void check_ged_action(int16 index) {
 
 		case 42:
 			if (!index)
-				r42_calc_xit();
+				Room42::calc_xit();
 			break;
 
 		case 45:
@@ -607,6 +607,8 @@ void enter_room(int16 eib_nr) {
 	_G(cur_hide_flag) = false;
 
 #define ENTRY(NUM) case NUM: Room##NUM::entry(); break
+#define ENTRY_NR(NUM) case NUM: Room##NUM::entry(eib_nr); break
+
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	ENTRY(0);
 	ENTRY(2);
@@ -647,26 +649,26 @@ void enter_room(int16 eib_nr) {
 			det->play_sound(17, 0);
 		break;
 
-	case 25: r25_entry(); break;
-	case 26: r26_entry(); break;
-	case 27: r27_entry(); break;
-	case 28: r28_entry(eib_nr); break;
-	case 29: r29_entry(); break;
-	case 31: r31_entry(); break;
-	case 32: r32_entry(); break;
-	case 33: r33_entry(); break;
+	ENTRY(25);
+	ENTRY(26);
+	ENTRY(27);
+	ENTRY_NR(28);
+	ENTRY(29);
+	ENTRY(31);
+	ENTRY(32);
+	ENTRY(33);
 
 	case 34:
 		if (flags.LoadGame)
-			r34_use_kuehlschrank();
+			Room34::use_kuehlschrank();
 		break;
 
-	case 35: r35_entry(); break;
-	case 37: r37_entry(); break;
-	case 39: r39_entry(); break;
-	case 40: r40_entry(eib_nr); break;
-	case 41: r41_entry(); break;
-	case 42: r42_entry(); break;
+	ENTRY(35);
+	ENTRY(37);
+	ENTRY(39);
+	ENTRY_NR(40);
+	ENTRY(41);
+	ENTRY(42);
 	case 45: r45_entry(eib_nr); break;
 	case 46: r46_entry(eib_nr); break;
 	case 47: r47_entry(); break;
@@ -794,16 +796,16 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 24: Room24::xit(); break;
-	case 27: r27_exit(eib_nr); break;
-	case 28: r28_exit(eib_nr); break;
-	case 29: r29_exit(); break;
+	case 27: Room27::xit(eib_nr); break;
+	case 28: Room28::xit(eib_nr); break;
+	case 29: Room29::xit(); break;
 
 	case 34:
 		flags.ChewyDontGo = false;
 		break;
 
-	case 41: r41_exit(); break;
-	case 42: r42_calc_xit(); break;
+	case 41: Room41::xit(); break;
+	case 42: Room42::calc_xit(); break;
 
 	case 45: r45_exit(eib_nr); break;
 	case 46: r46_exit(); break;
@@ -1015,7 +1017,7 @@ void exit_room(int16 eib_nr) {
 	if (no_exit) {
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		case 40:
-			r40_exit(eib_nr);
+			Room40::xit(eib_nr);
 			break;
 
 		case 42:
@@ -2059,7 +2061,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SURIMY_R27:
-		r27_get_surimy();
+		Room27::get_surimy();
 		break;
 
 	case SIB_MUENZE_R40:
@@ -2124,11 +2126,11 @@ void sib_event_inv(int16 sib_nr) {
 
 	switch (sib_nr) {
 	case SIB_TERMINAL_R5:
-		r28_use_surimy();
+		Room28::use_surimy();
 		break;
 
 	case SIB_TKNOPF1_R6:
-		r29_schlitz_sitz();
+		Room29::schlitz_sitz();
 		break;
 
 	case SIB_TKNOPF2_R6:
