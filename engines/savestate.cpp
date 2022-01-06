@@ -98,8 +98,6 @@ bool SaveStateDescriptor::hasAutosaveName() const
 	Common::U32String autosave = _("Autosave");
 	if (_description.size() >= autosave.size())
 		return _description.contains(autosave);
-	if (autosave.size() < 14)
-		return autosave == _description;
 	if (_description.size() < 14)
 		return false;
 	return autosave.substr(0, _description.size()) == _description;
