@@ -296,11 +296,6 @@ private:
 	void initializeGLContext();
 
 	/**
-	 * Render back buffer.
-	 */
-	Backbuffer _backBuffer;
-
-	/**
 	 * OpenGL pipeline used for rendering.
 	 */
 	Pipeline *_pipeline;
@@ -341,6 +336,11 @@ protected:
 	 * The default pixel format with an alpha channel.
 	 */
 	Graphics::PixelFormat _defaultFormatAlpha;
+
+	/**
+	 * Render back buffer.
+	 */
+	Backbuffer _backBuffer;
 
 	/**
 	 * The rendering surface for the virtual game screen.

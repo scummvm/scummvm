@@ -1063,7 +1063,7 @@ namespace {
 // clang-format off
 const Feature s_features[] = {
 	// Libraries (must be added in generators)
-	{      "libz",        "USE_ZLIB", true, true,  "zlib (compression) support" },
+	{      "zlib",        "USE_ZLIB", true, true,  "zlib (compression) support" },
 	{       "mad",         "USE_MAD", true, true,  "libmad (MP3) support" },
 	{   "fribidi",     "USE_FRIBIDI", true, true,  "BiDi support" },
 	{       "ogg",         "USE_OGG", true, true,  "Ogg support" },

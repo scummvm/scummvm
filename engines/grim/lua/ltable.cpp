@@ -15,50 +15,50 @@
 
 namespace Grim {
 
-#define gcsize(n)		(1 + (n / 16))
-#define nuse(t)			((t)->nuse)
-#define nodevector(t)	((t)->node)
-#define REHASH_LIMIT	0.70    // avoid more than this % full
-#define TagDefault		LUA_T_ARRAY;
+#define gcsize(n)               (1 + (n / 16))
+#define nuse(t)                 ((t)->nuse)
+#define nodevector(t)           ((t)->node)
+#define REHASH_LIMIT            0.70    // avoid more than this % full
+#define TagDefault              LUA_T_ARRAY;
 
-static uintptr hashindex(TObject *ref) {
-	uintptr h;
+static intptr hashindex(TObject *ref) {
+	intptr h;
 
 	switch (ttype(ref)) {
 	case LUA_T_NUMBER:
-		h = (uintptr)nvalue(ref);
+		h = (intptr)nvalue(ref);
 		break;
 	case LUA_T_USERDATA:
-		h = (uintptr)ref->value.ud.id;
+		h = (intptr)ref->value.ud.id;
 		break;
 	case LUA_T_STRING:
-		h = (uintptr)tsvalue(ref);
+		h = (intptr)tsvalue(ref);
 		break;
 	case LUA_T_ARRAY:
-		h = (uintptr)avalue(ref);
+		h = (intptr)avalue(ref);
 		break;
 	case LUA_T_PROTO:
-		h = (uintptr)tfvalue(ref);
+		h = (intptr)tfvalue(ref);
 		break;
 	case LUA_T_CPROTO:
-		h = (uintptr)fvalue(ref);
+		h = (intptr)fvalue(ref);
 		break;
 	case LUA_T_CLOSURE:
-		h = (uintptr)clvalue(ref);
+		h = (intptr)clvalue(ref);
 		break;
 	case LUA_T_TASK:
-		h = (uintptr)nvalue(ref);
+		h = (intptr)nvalue(ref);
 		break;
 	default:
 		lua_error("unexpected type to index table");
 		h = 0;  // to avoid warnings
 	}
-	return h;
+	return (h >= 0 ? h : -(h + 1));
 }
 
 int32 present(Hash *t, TObject *key) {
 	int32 tsize = nhash(t);
-	uintptr h = hashindex(key);
+	intptr h = hashindex(key);
 	int32 h1 = int32(h % tsize);
 	TObject *rf = ref(node(t, h1));
 	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {

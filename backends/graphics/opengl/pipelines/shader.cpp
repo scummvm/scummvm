@@ -77,10 +77,10 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	}
 }
 
-void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	texture.bind();
 
-	GL_CALL(glVertexAttribPointer(_texCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texture.getTexCoords()));
+	GL_CALL(glVertexAttribPointer(_texCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords));
 	GL_CALL(glVertexAttribPointer(_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, coordinates));
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }

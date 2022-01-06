@@ -12,10 +12,8 @@
 
 namespace Grim {
 
-#define gcsizeproto(p)	5  /* approximate "weight" for a prototype */
+#define gcsizeproto(p)   5  /* approximate "weight" for a prototype */
 #define gcsizeclosure(c) 1  /* approximate "weight" for a closure */
-
-
 
 Closure *luaF_newclosure(int32 nelems) {
 	Closure *c = (Closure *)luaM_malloc(sizeof(Closure) + nelems * sizeof(TObject));
@@ -54,7 +52,6 @@ void luaF_freeproto(TProtoFunc *l) {
 	}
 }
 
-
 void luaF_freeclosure(Closure *l) {
 	while (l) {
 		Closure *next = (Closure *)l->head.next;
@@ -63,7 +60,6 @@ void luaF_freeclosure(Closure *l) {
 		l = next;
 	}
 }
-
 
 /*
 ** Look for n-th local variable at line "line" in function "func".

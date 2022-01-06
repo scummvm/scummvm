@@ -666,7 +666,7 @@ void ResourcePatcher::patchResource(Resource &resource, const GameResourcePatch 
 		}
 	}
 
-	if (target != source) {
+	if (source && target != source) {
 		memcpy(target, source, resource._size - (target - resource._data));
 	}
 

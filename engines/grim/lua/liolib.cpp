@@ -28,13 +28,13 @@
 
 namespace Grim {
 
-#define CLOSEDTAG	2
-#define IOTAG		1
+#define CLOSEDTAG       2
+#define IOTAG           1
 
-#define FIRSTARG      3  // 1st and 2nd are upvalues
+#define FIRSTARG        3  // 1st and 2nd are upvalues
 
-#define FINPUT		"_INPUT"
-#define FOUTPUT		"_OUTPUT"
+#define FINPUT          "_INPUT"
+#define FOUTPUT         "_OUTPUT"
 
 LuaFile *g_stderr;
 
@@ -399,24 +399,23 @@ static void errorfb() {
 }
 
 static struct luaL_reg iolib[] = {
-	{ "date",			io_date },
-	{ "exit",			io_exit },
-	{ "print_stack",	errorfb }
+	{ "date",        io_date },
+	{ "exit",        io_exit },
+	{ "print_stack", errorfb }
 };
 
 static struct luaL_reg iolibtag[] = {
-	{ "readfrom",	io_readfrom },
-	{ "writeto",	io_writeto },
-	{ "appendto",	io_appendto },
-	{ "read",		io_read },
-	{ "write",		io_write }
+	{ "readfrom",    io_readfrom },
+	{ "writeto",     io_writeto },
+	{ "appendto",    io_appendto },
+	{ "read",        io_read },
+	{ "write",       io_write }
 };
 
 static void openwithtags() {
 	int32 iotag = lua_newtag();
 	int32 closedtag = lua_newtag();
-	uint32 i;
-	for (i = 0; i < sizeof(iolibtag) / sizeof(iolibtag[0]); i++) {
+	for (uint32 i = 0; i < sizeof(iolibtag) / sizeof(iolibtag[0]); i++) {
 		// put both tags as upvalues for these functions
 		lua_pushnumber(iotag);
 		lua_pushnumber(closedtag);

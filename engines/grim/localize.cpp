@@ -107,11 +107,7 @@ Localizer::Localizer() {
 	char *nextline = data;
 	Common::String last_entry;
 	//Read file till end
-	for (char *line = data + 4; line - data <= filesize; line = nextline + 1) {
-		if (line == nullptr || nextline == nullptr) {
-			break;
-		}
-
+	for (char *line = data + 4; nextline != nullptr && (line - data <= filesize); nextline != nullptr && (line = nextline + 1)) {
 		nextline = strchr(line, '\n');
 		//if there is no next line we arrived the last one
 		if (nextline == nullptr) {

@@ -44,6 +44,8 @@ public:
 	virtual void stopAudioStream() = 0;
 	void fastForward();
 	bool isFastForwarding();
+	virtual void drawString(const Common::String text, int posx, int posy, uint32 color) {}
+	virtual void copyfgtobg(uint8 arg) {}
 
 protected:
 	// To be implemented by subclasses

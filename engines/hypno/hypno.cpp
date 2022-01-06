@@ -70,6 +70,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	g_hypno = this;
 	g_parsedArc = new ArcadeShooting();
 	_defaultCursor = "";
+	_checkpoint = "";
 	// Add quit level
 	Hotspot q(MakeMenu, "");
 	Action *a = new Quit();
@@ -137,6 +138,11 @@ Common::Error HypnoEngine::run() {
 
 	// Main event loop
 	loadAssets();
+
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) { // load the savegame
+		loadGameState(saveSlot);
+	}
 
 	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {

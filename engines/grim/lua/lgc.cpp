@@ -103,8 +103,7 @@ static int32 ismarked(TObject *o) {
 }
 
 static void invalidaterefs() {
-	int32 i;
-	for (i = 0; i < refSize; i++)
+	for (int32 i = 0; i < refSize; i++)
 		if (refArray[i].status == HOLD && !ismarked(&refArray[i].o))
 			refArray[i].status = COLLECTED;
 }
@@ -153,11 +152,10 @@ static void strmark(TaggedString *s) {
 static void protomark(TProtoFunc *f) {
 	if (!f->head.marked) {
 		LocVar *v = f->locvars;
-		int32 i;
 		f->head.marked = 1;
 		if (f->fileName)
 			strmark(f->fileName);
-		for (i = 0; i < f->nconsts; i++)
+		for (int32 i = 0; i < f->nconsts; i++)
 			markobject(&f->consts[i]);
 		if (v) {
 			for (; v->line != -1; v++) {
@@ -170,18 +168,16 @@ static void protomark(TProtoFunc *f) {
 
 static void closuremark(Closure *f) {
 	if (!f->head.marked) {
-		int32 i;
 		f->head.marked = 1;
-		for (i = f->nelems; i >= 0; i--)
+		for (int32 i = f->nelems; i >= 0; i--)
 			markobject(&f->consts[i]);
 	}
 }
 
 static void hashmark(Hash *h) {
 	if (!h->head.marked) {
-		int32 i;
 		h->head.marked = 1;
-		for (i = 0; i < nhash(h); i++) {
+		for (int32 i = 0; i < nhash(h); i++) {
 			Node *n = node(h, i);
 			if (ttype(ref(n)) != LUA_T_NIL) {
 				markobject(&n->ref);

@@ -25,8 +25,7 @@ struct luaL_libList {
 
 extern luaL_libList *list_of_libs;
 
-#define luaL_arg_check(cond, numarg, extramsg) if (!(cond)) \
-	luaL_argerror(numarg,extramsg)
+#define luaL_arg_check(cond, numarg, extramsg) if (!(cond)) luaL_argerror(numarg,extramsg)
 
 void luaL_openlib(luaL_reg *l, int32 n);
 void luaL_addlibtolist(luaL_reg *l, int32 n);

@@ -223,6 +223,13 @@ Common::Error PrivateEngine::run() {
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
 
+	byte *initialPalette;
+	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette);
+	_compositeSurface->setPalette(initialPalette, 0, 256);
+	surf->free();
+	delete surf;
+	_image->destroy();
+
 	// Main event loop
 	Common::Event event;
 	Common::Point mousePos;
@@ -1246,7 +1253,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 	byte *currentPalette;
 
 	uint16 ncolors = _image->getPaletteColorCount();
-	if (ncolors < 256) { // For some reason, requires color remapping
+	if (ncolors < 256 || path.hasPrefix("intro")) { // For some reason, requires color remapping
 		currentPalette = (byte *) malloc(3*256);
 		drawScreen();
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);

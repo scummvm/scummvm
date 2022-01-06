@@ -29,8 +29,7 @@ static int32 dimensions[] = {
 };
 
 int32 luaO_redimension(int32 oldsize) {
-	int32 i;
-	for (i = 0; dimensions[i] < MAX_INT; i++) {
+	for (int32 i = 0; dimensions[i] < MAX_INT; i++) {
 		if (dimensions[i] > oldsize)
 			return dimensions[i];
 	}
@@ -69,9 +68,7 @@ int32 luaO_equalObj(TObject *t1, TObject *t2) {
 }
 
 int luaO_findstring(const char *name, const char *list[]) {
-	int i;
-
-	for (i = 0; list[i]; i++)
+	for (int i = 0; list[i]; i++)
 		if (strcmp(list[i], name) == 0)
 			return i;
 	return -1;  // name not found

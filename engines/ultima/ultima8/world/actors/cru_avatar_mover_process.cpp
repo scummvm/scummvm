@@ -142,6 +142,60 @@ static bool _isAnimStartRunning(Animation::Sequence anim) {
 			anim == Animation::startRunLargeWeapon*/);
 }
 
+bool CruAvatarMoverProcess::checkOneShotMove(Direction direction) {
+	Actor *avatar = getControlledActor();
+	MainActor *mainactor = dynamic_cast<MainActor *>(avatar);
+
+	static const MovementFlags oneShotFlags[] = {
+		MOVE_ROLL_LEFT, MOVE_ROLL_RIGHT,
+		MOVE_STEP_LEFT, MOVE_STEP_RIGHT,
+		MOVE_STEP_FORWARD, MOVE_STEP_BACK,
+		MOVE_SHORT_JUMP, MOVE_TOGGLE_CROUCH
+	};
+
+	static const Animation::Sequence oneShotAnims[] = {
+		Animation::combatRollLeft, Animation::combatRollRight,
+		Animation::slideLeft, Animation::slideRight,
+		Animation::advance, Animation::retreat,
+		Animation::jumpForward, Animation::kneelStartCru
+	};
+
+	static const Animation::Sequence oneShotKneelingAnims[] = {
+		Animation::kneelCombatRollLeft, Animation::kneelCombatRollRight,
+		Animation::slideLeft, Animation::slideRight,
+		Animation::kneelingAdvance, Animation::kneelingRetreat,
+		Animation::jumpForward, Animation::kneelEndCru
+	};
+
+	for (int i = 0; i < ARRAYSIZE(oneShotFlags); i++) {
+		if (hasMovementFlags(oneShotFlags[i])) {
+			Animation::Sequence anim = (avatar->isKneeling() ?
+							oneShotKneelingAnims[i] : oneShotAnims[i]);
+
+			// All the animations should finish with gun drawn, *except*
+			// jump which should finish with gun stowed.  For other cases we should
+			// toggle.
+			bool incombat = avatar->isInCombat();
+			bool isjump = (anim == Animation::jumpForward);
+			if (mainactor && (incombat == isjump)) {
+				mainactor->toggleInCombat();
+			}
+
+			clearMovementFlag(oneShotFlags[i]);
+
+			if (anim == Animation::advance || anim == Animation::retreat ||
+				anim == Animation::kneelingAdvance || anim == Animation::kneelingRetreat) {
+				step(anim, direction);
+			} else {
+				avatar->doAnim(anim, direction);
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CruAvatarMoverProcess::handleCombatMode() {
 	Actor *avatar = getControlledActor();
 	MainActor *mainactor = dynamic_cast<MainActor *>(avatar);
@@ -161,11 +215,10 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	if (stasis)
 		return;
 
-	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
-		clearMovementFlag(MOVE_SHORT_JUMP);
-		avatar->doAnim(Animation::jumpForward, direction);
+	if (checkOneShotMove(direction))
 		return;
-	} else if (hasMovementFlags(MOVE_FORWARD)) {
+
+	if (hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim;
 		if (hasMovementFlags(MOVE_STEP)) {
 			nextanim = avatar->isKneeling() ?
@@ -325,12 +378,6 @@ void CruAvatarMoverProcess::handleNormalMode() {
 			mainactor->toggleInCombat();
 	}
 
-	if (hasMovementFlags(MOVE_SHORT_JUMP)) {
-		clearMovementFlag(MOVE_SHORT_JUMP);
-		avatar->doAnim(Animation::jumpForward, direction);
-		return;
-	}
-
 	if (!hasMovementFlags(MOVE_ANY_DIRECTION) && lastanim == Animation::run) {
 		// if we were running, slow to a walk before stopping
 		// (even in stasis)
@@ -350,6 +397,9 @@ void CruAvatarMoverProcess::handleNormalMode() {
 
 	// can't do any new actions if in stasis
 	if (stasis)
+		return;
+
+	if (checkOneShotMove(direction))
 		return;
 
 	bool moving = (lastanim == Animation::step || lastanim == Animation::run || lastanim == Animation::walk);

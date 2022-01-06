@@ -28,7 +28,7 @@ namespace Hypno {
 
 extern int parse_mis(const char *);
 
-const static char *sceneVariables[] = {
+const char *sceneVariables[] = {
 	"GS_NONE",
 	"GS_SCTEXT",
 	"GS_AMBIENT",
@@ -165,6 +165,18 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 
 			case TalkAction:
 				runTalk((Talk *)action);
+			break;
+
+			case SaveAction:
+				runSave((Save *)action);
+			break;
+
+			case LoadAction:
+				runLoad((Load *)action);
+			break;
+
+			case LoadCheckpointAction:
+				runLoadCheckpoint((LoadCheckpoint *)action);
 			break;
 
 			case QuitAction:
@@ -404,17 +416,20 @@ void HypnoEngine::runScene(Scene *scene) {
 				_videosPlaying.empty() && 
 				_nextSequentialVideoToPlay.empty() && 
 				_nextParallelVideoToPlay.empty()) {
-				if (checkLevelWon()) {
-					debugC(1, kHypnoDebugScene, "Resetting level variables");
-					resetSceneState();
-				}
-				_sceneState["GS_LEVELCOMPLETE"] = 0;
 
-				debugC(1, kHypnoDebugScene, "Wining level and jumping to %s", scene->levelIfWin.c_str());
 				if (_nextLevel.empty()) {
 					assert(!scene->levelIfWin.empty());
 					_nextLevel = scene->levelIfWin;
 				}
+
+				if (checkLevelWon()) {
+					debugC(1, kHypnoDebugScene, "Resetting level variables");
+					resetSceneState();
+					_checkpoint = _nextLevel;
+				}
+				_sceneState["GS_LEVELCOMPLETE"] = 0;
+
+				debugC(1, kHypnoDebugScene, "Finishing level and jumping to %s", _nextLevel.c_str());
 				continue;
 			}
 		}

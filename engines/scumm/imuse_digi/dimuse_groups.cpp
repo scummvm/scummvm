@@ -60,7 +60,7 @@ int IMuseDigiGroupsHandler::setGroupVol(int id, int volume) {
 		_vols[0] = volume;
 
 		for (l = 1; l < DIMUSE_MAX_GROUPS; l++) {
-			_effVols[l] = (volume * (_vols[id] + 1)) / 128;
+			_effVols[l] = (volume * (_vols[l] + 1)) / 128;
 		}
 	}
 

@@ -56,7 +56,7 @@ Text::~Text() {
 }
 
 int16 Text::count() {
-	EncryptedStream tf(_vm, _fileName);
+	EncryptedStream tf(_vm->_resman, _fileName);
 	if (tf.err())
 		return -1;
 
@@ -90,7 +90,7 @@ void Text::clear() {
 }
 
 void Text::load() {
-	EncryptedStream tf(_vm, _fileName);
+	EncryptedStream tf(_vm->_resman, _fileName);
 	assert(!tf.err());
 
 	Common::String line;

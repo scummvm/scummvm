@@ -167,6 +167,21 @@ void HypnoEngine::runWalN(WalN *a) {
 		error("Invalid WALN command: %s", a->wn.c_str());
 }
 
+void HypnoEngine::runSave(Save *a) {
+	saveGameDialog();
+}
+
+void HypnoEngine::runLoad(Load *a) {
+	loadGameDialog();
+}
+
+void HypnoEngine::runLoadCheckpoint(LoadCheckpoint *a) {
+	// TODO: this depends on the game
+	if (_checkpoint.empty())
+		error("Invalid checkpoint!");
+	_nextLevel = _checkpoint;
+}
+
 void HypnoEngine::runQuit(Quit *a) {
 	quitGame();
 }

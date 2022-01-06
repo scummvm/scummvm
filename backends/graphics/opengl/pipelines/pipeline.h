@@ -79,7 +79,11 @@ public:
 	 * @param texture     Texture to use for drawing.
 	 * @param coordinates x1, y1, x2, y2 coordinates where to draw the texture.
 	 */
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates) = 0;
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
+
+	void drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+		drawTexture(texture, coordinates, texture.getTexCoords());
+	}
 
 	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		const GLfloat coordinates[4*2] = {
@@ -88,7 +92,33 @@ public:
 			x,     y + h,
 			x + w, y + h
 		};
-		drawTexture(texture, coordinates);
+		drawTexture(texture, coordinates, texture.getTexCoords());
+	}
+
+	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h, const Common::Rect &clip) {
+		const GLfloat coordinates[4*2] = {
+			x,     y,
+			x + w, y,
+			x,     y + h,
+			x + w, y + h
+		};
+
+		const uint tw = texture.getWidth(),
+			  th = texture.getHeight();
+
+		if (tw == 0 || th == 0) {
+			// Nothing to display
+			return;
+		}
+
+		const GLfloat texcoords[4*2] = {
+			(float)clip.left  / tw, (float)clip.top    / th,
+			(float)clip.right / tw, (float)clip.top    / th,
+			(float)clip.left  / tw, (float)clip.bottom / th,
+			(float)clip.right / tw, (float)clip.bottom / th
+		};
+
+		drawTexture(texture, coordinates, texcoords);
 	}
 
 	/**

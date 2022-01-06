@@ -127,7 +127,7 @@ void CakeGame::run(byte *scriptVariables) {
 
 	int depth = 4 + (_hasCheated == false);
 	if (_easierAi)
-		depth = 0;
+		depth = 2;
 
 	lastMove = aiGetBestMove(depth);
 	placeBonBon(lastMove);

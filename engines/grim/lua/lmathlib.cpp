@@ -112,27 +112,27 @@ static void math_randomseed() {
 }
 
 static struct luaL_reg mathlib[] = {
-	{ "abs",	math_abs},
-	{ "sin",	math_sin},
-	{ "cos",	math_cos},
-	{ "tan",	math_tan},
-	{ "asin",	math_asin},
-	{ "acos",	math_acos},
-	{ "atan",	math_atan},
-	{ "ceil",	math_ceil},
-	{ "floor",	math_floor},
-	{ "mod",	math_mod},
-	{ "sqrt",	math_sqrt},
-	{ "min",	math_min},
-	{ "max",	math_max},
-	{ "deg",	math_deg},
-	{ "rad",	math_rad},
-	{ "random",		math_random},
-	{ "randomseed",	math_randomseed}
+	{ "abs",        math_abs},
+	{ "sin",        math_sin},
+	{ "cos",        math_cos},
+	{ "tan",        math_tan},
+	{ "asin",       math_asin},
+	{ "acos",       math_acos},
+	{ "atan",       math_atan},
+	{ "ceil",       math_ceil},
+	{ "floor",      math_floor},
+	{ "mod",        math_mod},
+	{ "sqrt",       math_sqrt},
+	{ "min",        math_min},
+	{ "max",        math_max},
+	{ "deg",        math_deg},
+	{ "rad",        math_rad},
+	{ "random",     math_random},
+	{ "randomseed", math_randomseed}
 };
 
 static luaL_reg powFunc[] = {
-	{ "math_pow",	math_pow }
+	{ "math_pow",   math_pow }
 };
 
 /*

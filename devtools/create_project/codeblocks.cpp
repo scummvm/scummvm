@@ -58,8 +58,10 @@ StringList getFeatureLibraries(const BuildSetup &setup) {
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable && i->library) {
 			std::string libname;
-			if (!std::strcmp(i->name, "libz") || !std::strcmp(i->name, "libcurl")) {
+			if (!std::strcmp(i->name, "libcurl")) {
 				libname = i->name;
+			} else if (!std::strcmp(i->name, "zlib")) {
+				libname = "libz";
 			} else if (!std::strcmp(i->name, "vorbis")) {
 				libname = "libvorbis";
 				libraries.push_back("libvorbisfile");

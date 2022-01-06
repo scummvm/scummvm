@@ -16,7 +16,7 @@ namespace Grim {
 **  Auxiliary buffer
 -------------------------------------------------------*/
 
-#define BUFF_STEP	32
+#define BUFF_STEP        32
 
 #define openspace(size)  if (Mbuffnext + (size) > Mbuffsize) Openspace(size)
 

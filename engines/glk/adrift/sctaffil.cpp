@@ -483,7 +483,7 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 
 		if (version == TAF_VERSION_500 || version == TAF_VERSION_390 ||
 				version == TAF_VERSION_380) {
-			taf->version = TAF_VERSION_500;
+			taf->version = version;
 
 		} else if (version == TAF_VERSION_400) {
 			/* Read in the version 4.0 header extension. */

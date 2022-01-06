@@ -87,6 +87,7 @@ private:
 
 	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
 
+	bool checkOneShotMove(Direction direction);
 };
 
 } // End of namespace Ultima8

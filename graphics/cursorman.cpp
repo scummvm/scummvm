@@ -248,7 +248,8 @@ CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, in
 	 else
 		_format = *format;
 	_size = w * h * _format.bytesPerPixel;
-	_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);
+	const uint32 keycolor_mask = (((uint32) -1) >> (sizeof(uint32) * 8 - _format.bytesPerPixel * 8));
+	_keycolor = keycolor & keycolor_mask;
 #else
 	_format = Graphics::PixelFormat::createFormatCLUT8();
 	_size = w * h;

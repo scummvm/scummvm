@@ -142,6 +142,10 @@ public class ScummVMEventsBase implements
 		}
 	}
 
+	final public boolean getTouch3DMode() {
+		return _touch3DMode;
+	}
+
 	final public void setTouch3DMode(boolean touch3DMode) {
 		if (_touch3DMode != touch3DMode && !touch3DMode) {
 			_scummvm.updateTouch(JACTION_CANCEL, 0, 0, 0);

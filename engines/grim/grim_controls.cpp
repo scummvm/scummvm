@@ -291,6 +291,10 @@ void GrimEngine::handleChars(Common::EventType operation, const Common::KeyState
 
 void GrimEngine::handleControls(Common::EventType operation, const Common::KeyState &key) {
 	// If we're not supposed to handle the key then don't
+	if ((int)key.keycode >= KEYCODE_EXTRA_LAST) {
+		warning("keycode: %d not enabled", key.keycode);
+		return;
+	}
 	if (!_controlsEnabled[key.keycode])
 		return;
 

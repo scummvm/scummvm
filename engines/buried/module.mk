@@ -1,6 +1,7 @@
 MODULE := engines/buried
 
 MODULE_OBJS = \
+	agent_evaluation.o \
 	avi_frames.o \
 	biochip_right.o \
 	biochip_view.o \

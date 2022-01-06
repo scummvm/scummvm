@@ -77,6 +77,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 
 	switch (op) {
 	case 0:	// Init board's hexagons
+		_maxDepth = _easierAi ? 1 : 4;
 		memset(_beehiveState, 0, HEXCOUNT);
 		_beehiveState[0] = kBeehiveColorYellow;
 		_beehiveState[4] = kBeehiveColorRed;
@@ -332,9 +333,7 @@ void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 	int8 params[4];
 
 	*a4 = 0;
-	int8 depth = 4;
-	if (_easierAi)
-		depth = 1;
+	int8 depth = _maxDepth;
 
 	if (calcMove(_beehiveState, 125, 1, depth, 0, params) == -125
 			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, depth, 1, params) == -125)) {
@@ -565,7 +564,7 @@ int8 BeehiveGame::calcMove(int8 *beehiveState, int8 a2, int8 a3, int8 depth, int
 		} while (sub11(beehiveState, &v15, &v14, &v13, a3, a5, params2));
 	}
 
-	if (depth < 4 && -125 * a3 == v7)
+	if (depth < _maxDepth && -125 * a3 == v7)
 		return getTotal(beehiveState);
 	else
 		return v7;
@@ -740,30 +739,16 @@ void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
 
 	int8 &hexDifference = ((int8 *)vars)[13];
 	byte &op = vars[14];// can't do the -1 with a reference
+	byte &counter = vars[16];
 
 	op = 1;
 	run(vars);
 	op = 2;
 	run(vars);
-	// TODO: idk how many times to loop this or if I need to set any scriptVariables
-	op = 6;
-	run(vars);
-	op = 6;
-	run(vars);
-	op = 6;
-	run(vars);
-	op = 6;
-	run(vars);
 
-	for (uint i = 0; i < moves.size(); i+=2) {
-		/*if (hexDifference > 2 || hexDifference < -2)
-			error("%u: early end", i);*/
-
+	for (uint i = 0; i < moves.size(); i += 2) {
 		int from = moves[i];
 		int to = moves[i + 1];
-
-		op = 2;
-		run(vars);
 
 		op = 3;
 		vars[0] = from / 10;
@@ -777,32 +762,50 @@ void BeehiveGame::testGame(Common::Array<int> moves, bool playerWin) {
 		vars[3] = to % 10;
 		run(vars);
 
+		while (counter) {
+			op = 6;
+			run(vars);
+		}
 		op = 6;
 		run(vars);
 
-		if ((i + 2 == moves.size()) && ((hexDifference > 2) || (hexDifference < -2)))
-			error("%u: early end", i);
-		else if (hexDifference > 2)
-			break;
+		if (i + 2 < moves.size() && hexDifference == 6) {
+			error("early Stauf win");
+		} else if (i + 2 < moves.size() && hexDifference == 5) {
+			error("early player win");
+		}
 
 		op = 5;
 		run(vars);
 
+		while (counter) {
+			op = 6;
+			run(vars);
+		}
 		op = 6;
 		run(vars);
+
+		op = 2;
+		run(vars);
+
+		if (i + 2 < moves.size() && hexDifference == 6) {
+			error("early Stauf win");
+		} else if (i + 2 < moves.size() && hexDifference == 5) {
+			error("early player win");
+		}
 	}
 
-	if (playerWin && hexDifference < 3)
+	if (playerWin && hexDifference != 5)
 		error("player didn't win");
-	if (playerWin == false && hexDifference > -3)
+	if (playerWin == false && hexDifference != 6)
 		error("Stauf didn't win");
 }
 
 void BeehiveGame::tests() {
-	// tests are broken right now, but you might still want to use the overrideMoves
-#if 0
+	warning("starting BeehiveGame::tests()");
 	// 8 moves per line, in from and to pairs
-	// this winning test should work on every seed, it always works in the speedrun
+	
+	// speedrun strat
 	testGame({
 		/**/ 34, 42, /**/ 56, 50, /**/ 50, 35, /**/ 42, 55, /**/ 34, 42, /**/ 42, 49, /**/ 35, 43, /**/ 43, 50,
 		/**/ 50, 51, /**/ 51, 52, /**/ 52, 53, /**/ 53, 54, /**/ 52, 57, /**/ 52, 46, /**/ 34, 25, /**/ 34, 24,
@@ -810,8 +813,7 @@ void BeehiveGame::tests() {
 		/**/ 31, 40, /**/ 39, 47, /**/ 20, 19, /**/ 29, 37, /**/ 57, 58, /**/ 53, 46, /**/ 53, 52
 	}, true);
 
-	// this losing test might need to specify a seed
-	// luckily it's really easy to come up with a losing set of moves :)
+	// losing game
 	testGame({
 		/**/ 34, 25, /**/ 25, 10, /**/ 34, 17, /**/ 0, 2, /**/ 56, 57, /**/ 57, 51, /**/ 51, 50, /**/ 51, 52,
 		/**/ 51, 44, /**/ 50, 43, /**/ 50, 35, /**/ 36, 38, /**/ 35, 37, /**/ 38, 39, /**/ 38, 29, /**/ 45, 58,
@@ -819,15 +821,21 @@ void BeehiveGame::tests() {
 		/**/ 39, 23
 	}, false);
 
-#endif
-	// trim the array short to choose your own ending moves
-	overrideMoves = {
-		/**/ 34, 42, /**/ 56, 50, /**/ 50, 35, /**/ 42, 55, /**/ 34, 42, /**/ 42, 49, /**/ 35, 43, /**/ 43, 50,
-		/**/ 50, 51, /**/ 51, 52, /**/ 52, 53, /**/ 53, 54, /**/ 52, 57, /**/ 52, 46, /**/ 34, 25, /**/ 34, 24,
-		/**/ 25, 23, /**/ 46, 31, /**/ 31, 30, /**/ 52, 38, /**/ 29, 12, /**/ 31, 39, /**/ 35, 28, /**/ 49, 32,
-		/**/ 31, 40, /**/ 39, 47, /**/ 20, 19, /**/ 29, 37, /**/ 57, 58, /**/ 53, 46, /**/ 53, 52
-	};
+	// easier AI, early elimination win from darkshoxx
+	_easierAi = true;
+	testGame({/**/ 34, 42, /**/ 34, 41, /**/ 56, 50, /**/ 50, 35, /**/ 35, 43, /**/ 35, 27, /**/ 27, 19, /**/ 27, 20,
+			  /**/ 20, 28, /**/ 56, 44, /**/ 20, 5, /**/ 12, 20, /**/ 43, 50, /**/ 43, 37, /**/ 37, 45, /**/ 28, 20,
+			  /**/ 12, 13, /**/ 51, 38, /**/ 20, 21, /**/ 13, 7, /**/ 7, 1, /**/ 13, 14, /**/ 21, 22, /**/ 41, 23,
+			  /**/ 6, 8, /**/ 42, 24, /**/ 15, 9, /**/ 30, 39, /**/ 39, 53, /**/ 46, 51, /**/ 30, 39, /**/ 30, 31,
+			  /**/ 23, 32, /**/ 3, 1, /**/ 44, 52, /**/ 58, 57, /**/ 24, 33, /**/ 24, 34, /**/ 42, 48, /**/ 49, 55,
+			  /**/ 49, 42},
+			 true);
+
+	// copy the moveset from one of the tests to play it out yourself
+	overrideMoves = {};
 	overrideIndex = 0;
+
+	warning("finished BeehiveGame::tests()");
 }
 
 } // End of Groovie namespace

@@ -12,7 +12,7 @@
 
 namespace Grim {
 
-#define MAX_C_BLOCKS 10
+#define MAX_C_BLOCKS  10
 #define GARBAGE_BLOCK 150
 
 /* The pause status for the scripts is stored in one byte in the savegame.

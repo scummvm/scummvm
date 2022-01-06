@@ -172,8 +172,8 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 		}
 		if (_metadataParser.parse() == false) {
 			warning("Failed to parse XML file '%s'", (*md)->getDisplayName().encode().c_str());
-			_metadataParser.close();
 		}
+		_metadataParser.close();
 	}
 }
 

@@ -85,13 +85,11 @@ struct Capture {
 	} capture[MAX_CAPT];
 };
 
-#define ESC	'%'
+#define ESC       '%'
 #define SPECIALS  "^$*?.([%-"
 
 static void push_captures(Capture *cap) {
-	int i;
-
-	for (i = 0; i < cap->level; i++) {
+	for (int i = 0; i < cap->level; i++) {
 		int l = cap->capture[i].len;
 		char *buff = luaL_openspace(l+1);
 		if (l == -1)

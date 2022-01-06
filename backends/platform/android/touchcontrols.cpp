@@ -37,29 +37,21 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/fs.h"
-#include "common/stream.h"
-#include "common/archive.h"
-#include "image/tga.h"
-
-#include "backends/graphics3d/android/texture.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/touchcontrols.h"
 
 TouchControls::TouchControls() :
-	_arrows_texture(nullptr),
+	_drawer(nullptr),
 	_screen_width(0),
 	_screen_height(0) {
 }
 
-TouchControls::~TouchControls() {
-	if (_arrows_texture) {
-		delete _arrows_texture;
-		_arrows_texture = 0;
-	}
-}
-
 TouchControls::Function TouchControls::getFunction(int x, int y) {
+	if (_screen_width == 0) {
+		// Avoid divide by 0 error
+		return kFunctionNone;
+	}
+
 	float xPercent = float(x) / _screen_width;
 
 	if (xPercent < 0.3) {
@@ -156,26 +148,8 @@ TouchControls::FunctionBehavior TouchControls::functionBehaviors[TouchControls::
 	{ touchToRightState,    true,  .8f, .5f }
 };
 
-static GLES8888Texture *loadBuiltinTexture(const char *filename) {
-	Common::ArchiveMemberPtr member = SearchMan.getMember(filename);
-	Common::SeekableReadStream *str = member->createReadStream();
-	Image::TGADecoder dec;
-	dec.loadStream(*str);
-	const void *pixels = dec.getSurface()->getPixels();
-
-	GLES8888Texture *ret = new GLES8888Texture();
-	uint16 w = dec.getSurface()->w;
-	uint16 h = dec.getSurface()->h;
-	uint16 pitch = dec.getSurface()->pitch;
-	ret->allocBuffer(w, h);
-	ret->updateBuffer(0, 0, w, h, pixels, pitch);
-
-	delete str;
-	return ret;
-}
-
-void TouchControls::init(int width, int height) {
-	_arrows_texture = loadBuiltinTexture("arrows.tga");
+void TouchControls::init(TouchControlsDrawer *drawer, int width, int height) {
+	_drawer = drawer;
 	_screen_width = width;
 	_screen_height = height;
 }
@@ -214,6 +188,8 @@ TouchControls::Pointer *TouchControls::findPointerFromFunction(Function function
 }
 
 void TouchControls::draw() {
+	assert(_drawer != nullptr);
+
 	for (uint i = 0; i < kFunctionMax + 1; i++) {
 		FunctionState &state = _functionStates[i];
 		FunctionBehavior behavior = functionBehaviors[i];
@@ -221,7 +197,7 @@ void TouchControls::draw() {
 		if (state.clip.isEmpty()) {
 			continue;
 		}
-		_arrows_texture->drawTexture(_screen_width * behavior.xRatio, _screen_height * behavior.yRatio,
+		_drawer->touchControlDraw(_screen_width * behavior.xRatio, _screen_height * behavior.yRatio,
 		                             64, 64, state.clip);
 
 	}
@@ -238,6 +214,10 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 		// ptrId is active no matter what
 		ptr->active = true;
 
+		if (function == kFunctionNone) {
+			// No function for this finger
+			return;
+		}
 		if (findPointerFromFunction(function)) {
 			// Some finger is already using this function: don't do anything
 			return;
@@ -280,6 +260,9 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 			}
 		}
 		oldState = newState;
+		if (_drawer) {
+			_drawer->touchControlNotifyChanged();
+		}
 	} else if (action == JACTION_UP) {
 		Pointer *ptr = getPointerFromId(ptrId, false);
 		if (!ptr || ptr->function == kFunctionNone) {
@@ -307,6 +290,9 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 
 		functionState.reset();
 		ptr->active = false;
+		if (_drawer) {
+			_drawer->touchControlNotifyChanged();
+		}
 	} else if (action == JACTION_CANCEL) {
 		for (uint i = 0; i < kNumPointers; i++) {
 			Pointer &ptr = _pointers[i];
@@ -324,6 +310,9 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 			}
 
 			functionState.reset();
+		}
+		if (_drawer) {
+			_drawer->touchControlNotifyChanged();
 		}
 	}
 }

@@ -28,6 +28,8 @@
 
 namespace Hypno {
 
+extern const char *sceneVariables[];
+
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void SpiderEngine::loadAssets() {
@@ -73,6 +75,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["tryagain.mi_"];
 	sc->hots[1].actions.push_back(cl);
 
+	LoadCheckpoint *lc = new LoadCheckpoint();
+	sc->hots[2].actions.push_back(lc);
+
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
@@ -87,6 +92,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("levels.mi_");
 	sc->hots[1].actions.push_back(cl);
 	sc->music = "sound.lib/menu_mus.raw";
+
+	Load *ld = new Load();
+	sc->hots[2].actions.push_back(ld);
+
+	//Save *sv = new Save();
+	//sc->hots[3].actions.push_back(sv);
 
 	cl = new ChangeLevel("options.mi_");
 	sc->hots[4].actions.push_back(cl);
@@ -212,8 +223,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["decide1.mi_"];
 	cl = new ChangeLevel("bank.mi_");
 	sc->hots[2].actions.push_back(cl);
+
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+
 	cl = new ChangeLevel("c1");
 	sc->hots[4].actions.push_back(cl);
+
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("bank.mi_", "", prefix);
 	_levels["bank.mi_"]->intros.push_back("cine/swcs001s.smk");
@@ -491,15 +509,19 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<back_roof_2>"]->intros.push_back("spider/cine/recpout.smk");
 
 	loadArcadeLevel("c4.mi_", "c2", prefix);
+	_levels["c4.mi_"]->levelIfLose = "<over_hob_vul>";
 	_levels["c4.mi_"]->intros.push_back("cine/dals001s.smk");
 
 	loadArcadeLevel("c2.mi_", "<after_c2>", prefix);
+	_levels["c2.mi_"]->levelIfLose = "<over_hob_vul>";
 	_levels["c2.mi_"]->intros.push_back("cine/dals002s.smk");
 
 	loadArcadeLevel("c4h.mi_", "c2", prefix);
+	_levels["c4h.mi_"]->levelIfLose = "<over_hob_vul>";
 	_levels["c4h.mi_"]->intros.push_back("cine/dals001s.smk");
 
 	loadArcadeLevel("c2h.mi_", "<after_c2>", prefix);
+	_levels["c2h.mi_"]->levelIfLose = "<over_hob_vul>";
 	_levels["c2h.mi_"]->intros.push_back("cine/dals002s.smk");
 
 	Transition *after_c2 = new Transition("decide4.mi_");
@@ -515,10 +537,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(cl);
 
 	loadArcadeLevel("c5.mi_", "<trans_apt_6>", prefix);
+	_levels["c5.mi_"]->levelIfLose = "<over_hob2>";
 	_levels["c5.mi_"]->intros.push_back("cine/ctss001s.smk");
 	loadArcadeLevel("c5h.mi_", "<trans_apt_6>", prefix);
+	_levels["c5h.mi_"]->levelIfLose = "<over_hob2>";
 	_levels["c5h.mi_"]->intros.push_back("cine/ctss001s.smk");
-
 	Transition *trans_apt_6 = new Transition("factory1.mi_");
 	trans_apt_6->intros.push_back("spider/cine/apts06as.smk");
 	_levels["<trans_apt_6>"] = trans_apt_6;
@@ -540,17 +563,21 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("intercom.mi_", "c3", prefix);
 
 	loadArcadeLevel("c3.mi_", "c6", prefix);
+	_levels["c3.mi_"]->levelIfLose = "<over_octo1>";
 	_levels["c3.mi_"]->intros.push_back("cine/vrfs001s.smk");
 
 	loadArcadeLevel("c3h.mi_", "c6", prefix);
+	_levels["c3h.mi_"]->levelIfLose = "<over_octo1>";
 	_levels["c3h.mi_"]->intros.push_back("cine/vrfs001s.smk");
 
 	loadArcadeLevel("c6.mi_", "<lock>", "spider");
+	_levels["c6.mi_"]->levelIfLose = "<over_gas>";
 	_levels["c6.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6.mi_"]->intros.push_back("cine/dia007s.smk");
 	_levels["c6.mi_"]->intros.push_back("cine/rdss001s.smk");
 
 	loadArcadeLevel("c6h.mi_", "<lock>", prefix);
+	_levels["c6h.mi_"]->levelIfLose = "<over_gas>";
 	_levels["c6h.mi_"]->intros.push_back("cine/vrfs002s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/rdss001s.smk");
@@ -605,9 +632,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(cl);
 
 	loadArcadeLevel("c13.mi_", "<after_c13>", prefix);
+	_levels["c13.mi_"]->levelIfLose = "<over_shock>";
 	_levels["c13.mi_"]->intros.push_back("cine/spf007bs.smk");
 
 	loadArcadeLevel("c13h.mi_", "<after_c13>", prefix);
+	_levels["c13h.mi_"]->levelIfLose = "<over_shock>";
 	_levels["c13h.mi_"]->intros.push_back("cine/spf007bs.smk");
 
 	Transition *after_c13 = new Transition("docoffi2.mi_");
@@ -639,8 +668,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(cl);
 
 	loadArcadeLevel("c8.mi_", "<after_c8>", prefix);
+	_levels["c8.mi_"]->levelIfLose = "<over_myst2>";
 	_levels["c8.mi_"]->intros.push_back("cine/utns001s.smk");
 	loadArcadeLevel("c8h.mi_", "<after_c8>", prefix);
+	_levels["c8h.mi_"]->levelIfLose = "<over_myst2>";
 	_levels["c8h.mi_"]->intros.push_back("cine/utns001s.smk");
 
 	Transition *after_c8 = new Transition("c10");
@@ -648,8 +679,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_c8>"] = after_c8;
 
 	loadArcadeLevel("c9.mi_", "<after_c9>", prefix);
+	_levels["c9.mi_"]->levelIfLose = "<over_vul2>";
 	_levels["c9.mi_"]->intros.push_back("cine/vrfs005s.smk");
 	loadArcadeLevel("c9h.mi_", "<after_c9>", prefix);
+	_levels["c9h.mi_"]->levelIfLose = "<over_vul2>";
 	_levels["c9h.mi_"]->intros.push_back("cine/vrfs005s.smk");
 
 	Transition *after_c9 = new Transition("c10");
@@ -657,8 +690,10 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_c9>"] = after_c9;
 
 	loadArcadeLevel("c10.mi_", "<after_c10>", prefix);
+	_levels["c10.mi_"]->levelIfLose = "<over_cam>";
 	_levels["c10.mi_"]->intros.push_back("cine/utns003s.smk");
 	loadArcadeLevel("c10h.mi_", "<after_c10>", prefix);
+	_levels["c10h.mi_"]->levelIfLose = "<over_cam>";
 	_levels["c10h.mi_"]->intros.push_back("cine/utns003s.smk");
 
 	Transition *after_c10 = new Transition("docoffic.mi_");
@@ -678,10 +713,10 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// Octopus fight without Mason
 	loadArcadeLevel("c11.mi_", "<chip_dies_with_shocker>", prefix);
-	_levels["c11.mi_"]->levelIfLose = "????";
+	_levels["c11.mi_"]->levelIfLose = "<over_octo2>";
 	_levels["c11s.mi_"] = _levels["c11.mi_"];
 	loadArcadeLevel("c11h.mi_", "<chip_dies_with_shocker>", prefix);
-	_levels["c11h.mi_"]->levelIfLose = "????";
+	_levels["c11h.mi_"]->levelIfLose = "<over_octo2>";
 	_levels["c11sh.mi_"] = _levels["c11h.mi_"];
 
 	loadArcadeLevel("c12.mi_", "<chip_lives_with_shocker>", prefix);
@@ -744,6 +779,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// Game overs
 	Transition *over_apt_1 = new Transition("tryagain.mi_");
+	over_apt_1->intros.push_back("spider/cine/ross003s.smk");
 	over_apt_1->intros.push_back("spider/cine/apts01as.smk");
 	_levels["<over_apt_1>"] = over_apt_1;
 
@@ -751,17 +787,53 @@ void SpiderEngine::loadAssetsFullGame() {
 	over_apt_5->intros.push_back("spider/cine/apts05as.smk");
 	_levels["<over_apt_5>"] = over_apt_5;
 
+	Transition *over_alley = new Transition("tryagain.mi_");
+	over_alley->intros.push_back("spider/cine/bals002s.smk");
+	_levels["<over_alley>"] = over_alley;
+
 	Transition *over_bus = new Transition("tryagain.mi_");
 	over_bus->intros.push_back("spider/cine/blcs002s.smk");
 	over_bus->intros.push_back("spider/cine/apt04as.smk");
 	_levels["<over_bus>"] = over_bus;
 
-	Transition *over_octo = new Transition("tryagain.mi_");
-	over_octo->intros.push_back("spider/cine/???.smk");
-	_levels["<over_octo>"] = over_octo;
+	Transition *over_octo1 = new Transition("tryagain.mi_");
+	over_octo1->intros.push_back("spider/cine/doos001a.smk");
+	_levels["<over_octo>"] = over_octo1;
+
+	Transition *over_hob_vul = new Transition("tryagain.mi_");
+	over_hob_vul->intros.push_back("spider/cine/dals001a.smk");
+	_levels["<over_hob_vul>"] = over_hob_vul;
+
+	Transition *over_hob2 = new Transition("tryagain.mi_");
+	over_hob2->intros.push_back("spider/cine/ctss01as.smk");
+	_levels["<over_hob2>"] = over_hob2;
+
+	Transition *over_gas = new Transition("tryagain.mi_");
+	over_gas->intros.push_back("spider/cine/rdss002s.smk");
+	_levels["<over_gas>"] = over_gas;
+
+	Transition *over_myst2 = new Transition("tryagain.mi_");
+	over_myst2->intros.push_back("spider/cine/utns01as.smk");
+	_levels["<over_myst2>"] = over_myst2;
+
+	Transition *over_cam = new Transition("tryagain.mi_");
+	over_cam->intros.push_back("spider/cine/utns04as.smk");
+	_levels["<over_cam>"] = over_cam;
+
+	Transition *over_octo2 = new Transition("tryagain.mi_");
+	over_octo2->intros.push_back("spider/cine/vrfs01as.smk");
+	_levels["<over_octo2>"] = over_octo2;
+
+	Transition *over_vul2 = new Transition("tryagain.mi_");
+	over_vul2->intros.push_back("spider/cine/vrfs05as.smk");
+	_levels["<over_vul2>"] = over_vul2;
+
+	Transition *over_shock = new Transition("tryagain.mi_");
+	over_shock->intros.push_back("spider/cine/vrfs06as.smk");
+	_levels["<over_shock>"] = over_shock;
 
 	Transition *over_vr = new Transition("tryagain.mi_");
-	over_vr->intros.push_back("spider/cine/cybs001s.smk");
+	over_vr->intros.push_back("spider/cine/cybs002s.smk");
 	_levels["<over_vr>"] = over_vr;
 
 	// Endings
@@ -880,6 +952,28 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 
 	return trans->nextLevel;
 }
+
+Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	// We don't want to continue with any sound from a previous game
+	//stopSound(true);
+	_nextLevel = stream->readString();
+
+	return Common::kNoError;
+}
+
+Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	//debugC(1, kDebugFunction, "saveGameStream(%d)", isAutosave);
+	if (isAutosave)
+		return Common::kNoError;
+
+	if (_checkpoint.empty())
+		error("Invalid checkpoint!");
+
+	stream->writeString(_checkpoint);
+	stream->writeByte(0);
+	return Common::kNoError;
+}
+
 
 Common::String SpiderEngine::findNextLevel(const Common::String &level) {
 	if (Common::matchString(level.c_str(), "c#") || Common::matchString(level.c_str(), "c##") || Common::matchString(level.c_str(), "c##?"))

@@ -123,12 +123,25 @@ static const ExtraGuiOption U8_OPTIONS[] = {
 	{ nullptr, nullptr, nullptr, false }
 };
 
-static const ExtraGuiOption CRUSADER_OPTIONS[] = {
+static const ExtraGuiOption CAMERA_WITH_SILENCER = {
+	// I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+	_s("Camera moves with Silencer"),
+	_s("Camera tracks the player movement rather than snapping to defined positions."),
+	"camera_on_player",
+	true
+};
+
+static const ExtraGuiOption REMORSE_OPTIONS[] = {
+	CAMERA_WITH_SILENCER,
+	{ nullptr, nullptr, nullptr, false }
+};
+
+static const ExtraGuiOption REGRET_OPTIONS[] = {
+	CAMERA_WITH_SILENCER,
 	{
-		// I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-		_s("Camera moves with Silencer"),
-		_s("Camera tracks the player movement rather than snapping to defined positions."),
-		"camera_on_player",
+		_s("Always enable Christmas easter-egg"),
+		_s("Enable the Christmas music at any time of year."),
+		"always_christmas",
 		true
 	},
 	{ nullptr, nullptr, nullptr, false }
@@ -167,7 +180,14 @@ const ExtraGuiOptions UltimaMetaEngineDetection::getExtraGuiOptions(const Common
 		}
 
 		// Game specific options
-		const ExtraGuiOption *game_options = (target.equals("ultima8") ? Ultima::U8_OPTIONS : Ultima::CRUSADER_OPTIONS);
+		const ExtraGuiOption *game_options;
+		if (gameId == "ultima8")
+			game_options = Ultima::U8_OPTIONS;
+		else if (gameId == "remorse")
+			game_options = Ultima::REMORSE_OPTIONS;
+		else
+			game_options = Ultima::REGRET_OPTIONS;
+
 		for (const ExtraGuiOption *o = game_options; o->configOption; ++o) {
 			options.push_back(*o);
 		}

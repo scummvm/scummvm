@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-02 10:46+0000\n"
+"POT-Creation-Date: 2022-01-06 17:36+0000\n"
 "PO-Revision-Date: 2021-12-28 14:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -168,7 +168,7 @@ msgstr ""
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
-#: engines/groovie/script.cpp:605 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:613 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
 #: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
@@ -226,7 +226,7 @@ msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Download klaar, %d packs gedownload, %s-%S"
 
 #: gui/downloadiconsdialog.cpp:186 gui/downloadiconsdialog.cpp:303
-#: gui/gui-manager.cpp:219 gui/unknown-game-dialog.cpp:53
+#: gui/gui-manager.cpp:221 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
@@ -648,16 +648,16 @@ msgstr ""
 "Wilt u echt alle FluidSynth instellingen terugzetten naar de standaard "
 "waarden?"
 
-#: gui/gui-manager.cpp:210
+#: gui/gui-manager.cpp:212
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:214 engines/mohawk/myst.cpp:573
+#: gui/gui-manager.cpp:216 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr "Interactie"
 
-#: gui/gui-manager.cpp:225 engines/metaengine.cpp:109
+#: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
 #: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:454
 #: engines/grim/grim.cpp:531 engines/twine/metaengine.cpp:329
@@ -668,7 +668,7 @@ msgstr "Interactie"
 msgid "Up"
 msgstr "Omhoog"
 
-#: gui/gui-manager.cpp:230 engines/metaengine.cpp:114
+#: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
 #: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:459
 #: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:336
@@ -679,7 +679,7 @@ msgstr "Omhoog"
 msgid "Down"
 msgstr "Omlaag"
 
-#: gui/gui-manager.cpp:235 engines/metaengine.cpp:119
+#: gui/gui-manager.cpp:237 engines/metaengine.cpp:119
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
 #: engines/grim/grim.cpp:464 engines/grim/grim.cpp:541
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
@@ -691,7 +691,7 @@ msgstr "Omlaag"
 msgid "Left"
 msgstr "Links"
 
-#: gui/gui-manager.cpp:240 engines/metaengine.cpp:124
+#: gui/gui-manager.cpp:242 engines/metaengine.cpp:124
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
 #: engines/grim/grim.cpp:469 engines/grim/grim.cpp:546
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
@@ -703,7 +703,7 @@ msgstr "Links"
 msgid "Right"
 msgstr "Rechts"
 
-#: gui/gui-manager.cpp:245 engines/pegasus/pegasus.cpp:2814
+#: gui/gui-manager.cpp:247 engines/pegasus/pegasus.cpp:2814
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -2499,8 +2499,8 @@ msgstr "S~t~artmenu"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:781
-#: engines/groovie/script.cpp:2077 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:803
+#: engines/groovie/script.cpp:2102 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/pegasus/pegasus.cpp:402
@@ -2518,8 +2518,8 @@ msgstr "Spel opslaan:"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:776
-#: engines/groovie/script.cpp:781 engines/groovie/script.cpp:2077
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:798
+#: engines/groovie/script.cpp:803 engines/groovie/script.cpp:2102
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4068,7 +4068,7 @@ msgstr "Emuleer geen NTSC artefacten voor tekst"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:387 engines/neverhood/detection.cpp:134
+#: engines/groovie/detection.cpp:400 engines/neverhood/detection.cpp:134
 #: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
 #: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
@@ -4077,7 +4077,7 @@ msgstr "Gebruik originele opslaan/laad schermen"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:388 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:401 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -4152,8 +4152,8 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:758
-#: engines/groovie/script.cpp:793 engines/groovie/script.cpp:2064
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
+#: engines/groovie/script.cpp:815 engines/groovie/script.cpp:2089
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4170,9 +4170,9 @@ msgstr "Laad opgeslagen spel:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:758
-#: engines/groovie/script.cpp:776 engines/groovie/script.cpp:793
-#: engines/groovie/script.cpp:2064 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
+#: engines/groovie/script.cpp:798 engines/groovie/script.cpp:815
+#: engines/groovie/script.cpp:2089 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -5124,27 +5124,27 @@ msgstr ""
 "De versies van dit spel op Steam en GOG hebben een gecombineerde "
 "FullMonkeyMap.imt"
 
-#: engines/groovie/detection.cpp:377
+#: engines/groovie/detection.cpp:390
 msgid "Fast movie speed"
 msgstr "Film snel afspelen"
 
-#: engines/groovie/detection.cpp:378
+#: engines/groovie/detection.cpp:391
 msgid "Play movies at an increased speed"
 msgstr "Speel films sneller af"
 
-#: engines/groovie/detection.cpp:397
+#: engines/groovie/detection.cpp:410
 msgid "Easier AI"
 msgstr ""
 
-#: engines/groovie/detection.cpp:398
+#: engines/groovie/detection.cpp:411
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
 
-#: engines/groovie/detection.cpp:407
+#: engines/groovie/detection.cpp:420
 msgid "Updated Credits Music"
 msgstr ""
 
-#: engines/groovie/detection.cpp:408
+#: engines/groovie/detection.cpp:421
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
@@ -5153,11 +5153,11 @@ msgstr ""
 msgid "GroovieV2 support is not compiled in"
 msgstr "Ondersteuning voor GroovieV2 is niet meegecompileerd"
 
-#: engines/groovie/script.cpp:605
+#: engines/groovie/script.cpp:613
 msgid "Failed to save game"
 msgstr "Opslaan van spel mislukt"
 
-#: engines/groovie/script.cpp:776 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:798 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr "Wilt u een spel laden of opslaan?"
 
@@ -5354,13 +5354,13 @@ msgstr "Ondersteuning voor Eye of the Beholder is niet meegecompileerd"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:453
 #: engines/ultima/ultima4/meta_engine.cpp:224
-#: engines/ultima/ultima8/meta_engine.cpp:136
+#: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Bestuur met Linker Klik"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:230
-#: engines/ultima/ultima8/meta_engine.cpp:142
+#: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Bestuur met Rechter Klik"
 
@@ -7938,16 +7938,24 @@ msgid "Replaces game fonts with rendered fonts"
 msgstr "Vervangt spel lettertypes met gerenderde lettertypes"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:128
 msgid "Camera moves with Silencer"
 msgstr "Camera beweegt met Silencer mee"
 
-#: engines/ultima/detection.cpp:130
+#: engines/ultima/detection.cpp:129
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Camera volgt de bewegingen van de speler in plaats van springen naar "
 "voorgedefenieerde posities."
+
+#: engines/ultima/detection.cpp:142
+msgid "Always enable Christmas easter-egg"
+msgstr ""
+
+#: engines/ultima/detection.cpp:143
+msgid "Enable the Christmas music at any time of year."
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
@@ -7981,19 +7989,19 @@ msgstr "Origineel opgeslagen spel"
 msgid "Transfer Character"
 msgstr "Zet personage over"
 
-#: engines/ultima/ultima8/meta_engine.cpp:129
+#: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:129
+#: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:172
+#: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:187
+#: engines/ultima/ultima8/meta_engine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Foutopsporen"
 

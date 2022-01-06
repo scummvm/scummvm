@@ -23,7 +23,7 @@ namespace Grim {
 
 int32 lua_debug = 0;
 
-#define next(LS)			(LS->current = zgetc(LS->lex_z))
+#define next(LS)         (LS->current = zgetc(LS->lex_z))
 
 static struct {
 	const char *name;
@@ -71,7 +71,7 @@ void luaX_setinput(ZIO *z) {
 ** =======================================================
 */
 
-#define PRAGMASIZE	20
+#define PRAGMASIZE      20
 
 static void skipspace(LexState *LS) {
 	while (LS->current == ' ' || LS->current == '\t' || LS->current == '\r')
@@ -184,8 +184,8 @@ static void inclinenumber (LexState *LS) {
 ** =======================================================
 */
 
-#define save(c)				luaL_addchar(c)
-#define save_and_next(LS)	(save(LS->current), next(LS))
+#define save(c)                 luaL_addchar(c)
+#define save_and_next(LS)       (save(LS->current), next(LS))
 
 
 char *luaX_lasttoken() {

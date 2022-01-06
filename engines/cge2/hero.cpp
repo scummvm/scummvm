@@ -89,7 +89,7 @@ Sprite *Hero::expand() {
 		curSeq = new Seq[_seqCnt];
 
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
-		EncryptedStream sprf(_vm, fname);
+		EncryptedStream sprf(_vm->_resman, fname);
 		if (sprf.err())
 			error("Bad SPR [%s]", fname);
 

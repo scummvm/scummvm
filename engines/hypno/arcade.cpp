@@ -184,6 +184,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					showCredits();
 					changeScreenMode("320x200");
 					background.decoder->pauseVideo(false);
+				} else if (event.kbd.keycode == Common::KEYCODE_k) { // Added for testing
+					_health = 0;
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					_lastPlayerPosition = _currentPlayerPosition; 
 					_currentPlayerPosition = PlayerLeft;
@@ -255,6 +257,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 			assert(!arc->levelIfWin.empty());
 			_nextLevel = arc->levelIfWin;
+			_checkpoint = _nextLevel;
 			_arcadeMode = "";
 			_skipLevel = false;
 			debugC(1, kHypnoDebugArcade, "Wining level and jumping to %s", _nextLevel.c_str());

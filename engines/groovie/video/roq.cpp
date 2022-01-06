@@ -43,6 +43,13 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+#include <common/file.h>
+#ifdef USE_PNG
+#include "image/png.h"
+#else
+#include "image/bmp.h"
+#endif
+
 /* copied from transparent_surface.cpp */
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
@@ -150,6 +157,10 @@ uint16 ROQPlayer::loadInternal() {
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
 
+	if (!_flagOverlay && _flagNoPlay) {
+		clearOverlay();
+	}
+
 	// Read the file header
 	ROQBlockHeader blockHeader;
 	if (!readBlockHeader(blockHeader)) {
@@ -197,6 +208,12 @@ uint16 ROQPlayer::loadInternal() {
 	}
 }
 
+void ROQPlayer::clearOverlay() {
+	debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
+	if (_overBuf->w) {
+		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
+	}
+}
 
 // Calculate the overlapping area for the rendered frame to the visible frame. The game can use an origin to
 // place the rendered image at different places.
@@ -210,12 +227,16 @@ void ROQPlayer::calcStartStop(int &start, int &stop, int origin, int length) {
 	}
 }
 
-void ROQPlayer::redrawRestoreArea(int screenOffset) {
+void ROQPlayer::redrawRestoreArea(int screenOffset, bool force) {
 	// Restore the background by data from the foreground. Only restore the area which was overwritten during the last frame
 	// Therefore we have the _restoreArea which reduces the area for restoring. We also use the _prevBuf to only overwrite the
 	// Pixels which have been written during the last frame. This means _restoreArea is just an optimization.
-	if (!_alpha)
-		return;
+	if (force) {
+		_restoreArea->top = 0;
+		_restoreArea->left = 0;
+		_restoreArea->bottom = _screen->h;
+		_restoreArea->right = _screen->w;
+	}
 	if (_restoreArea->isEmpty())
 		return;
 
@@ -230,7 +251,7 @@ void ROQPlayer::redrawRestoreArea(int screenOffset) {
 		byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
 
 		for (int i = 0; i < width; i++) {
-			if (prv[kAIndex] != 0) {
+			if (prv[kAIndex] != 0 || force) {
 				copyPixel(dst, src);
 				copyPixelWithA(dst, ovr);
 			}
@@ -249,6 +270,46 @@ void ROQPlayer::redrawRestoreArea(int screenOffset) {
 	_restoreArea->right = 0;
 }
 
+void writeImage(const Common::String filename, Graphics::Surface &surface) {
+	Common::String tname = "img/" + filename;
+#ifdef USE_PNG
+	tname += ".png";
+#else
+	tname += ".bmp";
+#endif
+
+	Common::DumpFile out;
+	if (!out.open(tname)) {
+		error("failed to open %s", tname.c_str());
+	}
+
+#ifdef USE_PNG
+	Image::writePNG(out, surface);
+#else
+	Image::writeBMP(out, surface);
+#endif
+}
+
+void ROQPlayer::dumpAllSurfaces() {
+	TimeDate date;
+	int curMonth;
+	g_system->getTimeAndDate(date, true);
+	curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
+	uint millis = g_system->getMillis();
+	Common::String timestamp = Common::String::format("%d-%02d-%02d %02d-%02d-%02d %08u",
+													  date.tm_year + 1900, curMonth, date.tm_mday,
+													  date.tm_hour, date.tm_min, date.tm_sec, millis);
+
+	writeImage("lockScreen " + timestamp, *_vm->_system->lockScreen());
+	_vm->_system->unlockScreen();
+	writeImage("_bg " + timestamp, *_bg);
+	writeImage("_currBuf " + timestamp, *_currBuf);
+	writeImage("_overBuf " + timestamp, *_overBuf);
+	writeImage("_prevBuf " + timestamp, *_prevBuf);
+	writeImage("_screen " + timestamp, *_screen);
+	g_system->delayMillis(15); // make sure we get a new timestamp every time
+}
+
 void ROQPlayer::buildShowBuf() {
 	// Calculate screen offset for normal / fullscreen videos and images
 	int screenOffset = 0;
@@ -257,7 +318,7 @@ void ROQPlayer::buildShowBuf() {
 	}
 
 	if (_alpha) {
-		redrawRestoreArea(screenOffset);
+		redrawRestoreArea(screenOffset, false);
 	}
 
 
@@ -328,6 +389,10 @@ void ROQPlayer::buildShowBuf() {
 		}
 	}
 
+	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		dumpAllSurfaces();
+	}
+
 	if (!_flagNoPlay) {
 		_vm->_system->unlockScreen();
 		_vm->_system->updateScreen();
@@ -376,11 +441,6 @@ bool ROQPlayer::playFrameInternal() {
 
 		// Clear the dirty flag
 		_dirty = false;
-	}
-
-	if (_file->eos()) {
-		debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
-		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
 	}
 
 	// Report the end of the video if we reached the end of the file or if we
@@ -895,6 +955,35 @@ void ROQPlayer::createAudioStream(bool stereo) {
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 }
 
+void ROQPlayer::drawString(const Common::String text, int posx, int posy, uint32 color) {
+	// TODO: fix redraw
+#if 0
+	int screenOffset = 0;
+	if (_screen->h != 480) {
+		screenOffset = 80;
+	}
+
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+	Common::Rect rect(posx, posy - screenOffset, posx + _vm->_font->getMaxCharWidth()*15, posy + _vm->_font->getFontHeight()*2 - screenOffset);
+	gamescreen->copyRectToSurface(*_bg, posx, posy, rect);
+#else
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+#endif
+
+	_vm->_font->drawString(gamescreen, text.c_str(), posx, posy, _overBuf->w, color, Graphics::kTextAlignLeft);
+	_vm->_system->unlockScreen();
+	_vm->_graphicsMan->change(); // Force Update screen after step
+}
+
+void ROQPlayer::copyfgtobg(uint8 arg) {
+	// TODO: the arg isn't handled yet
+	// but since we're doing a full redraw of all layers we might not need to care about the arg
+	debugC(2, kDebugVideo, "Groovie::ROQ: copyfgtobg (0x%02X)", arg);
+	
+	redrawRestoreArea(_screen->h == 480 ? 0 : 80, true);
+	_vm->_system->updateScreen();
+}
+
 ROQSoundPlayer::ROQSoundPlayer(GroovieEngine *vm) : ROQPlayer(vm) {
 	// HACK: we set the pixel format here to prevent a crash because this never plays any videos
 	// maybe we should just pre-create these buffers no matter what
@@ -907,7 +996,9 @@ ROQSoundPlayer::~ROQSoundPlayer() {
 
 void ROQSoundPlayer::createAudioStream(bool stereo) {
 	_audioStream = Audio::makeQueuingAudioStream(22050, stereo);
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	Audio::Mixer *mixer = g_system->getMixer();
+	mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	mixer->setChannelVolume(_soundHandle, 100);
 }
 
 } // End of Groovie namespace

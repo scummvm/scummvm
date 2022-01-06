@@ -114,8 +114,8 @@ void SpiderEngine::showConversation() {
 			Hotspots *hots = stack.back();
 			if (hots->size() == 2) {
 				debugC(1, kHypnoDebugScene, "Level should end here, since there is nothing else to do");
-				Common::String variable = "GS_LEVELCOMPLETE";
-				_sceneState[variable] = 1;
+				_sceneState["GS_LEVELCOMPLETE"] = true;
+				_sceneState["GS_LEVELWON"] = true;
 			}
 
 		}
@@ -153,9 +153,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 					_sceneState[it->variable] = 1;
 					_refreshConversation = true;
 				} else if (it->command == "L") {
-					Common::String variable = "GS_LEVELCOMPLETE";
-					debugC(1, kHypnoDebugScene, "Enabling variable %s", variable.c_str());
-					_sceneState[variable] = 1;
+					_sceneState["GS_LEVELCOMPLETE"] = true;
 					_refreshConversation = true;
 				}
 
@@ -167,9 +165,10 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 	}
 
 	if (_sceneState["GS_LEVELCOMPLETE"]) {
-		debugC(1, kHypnoDebugScene, "Level is complete, cleaning variables");
+		debugC(1, kHypnoDebugScene, "Level is complete, clearing variables");
 		resetSceneState();
-		_sceneState["GS_LEVELCOMPLETE"] = 1;
+		_sceneState["GS_LEVELCOMPLETE"] = true;
+		_sceneState["GS_LEVELWON"] = true;
 	}
 
 	if (videos.size() > 0)

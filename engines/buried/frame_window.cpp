@@ -287,8 +287,13 @@ bool FrameWindow::showCompletionScene(GlobalFlags &globalFlags) {
 
 	_vm->removeMouseMessages(this);
 
+	// Pass globalFlags by value to CompletionWindow here, as they will be destroyed
+	// together with _mainChildWindow (a GameUIWindow, which contains the scene
+	// window, which holds the instance of the global flags)
+	CompletionWindow *completionWindow = new CompletionWindow(_vm, this, globalFlags);
+
 	delete _mainChildWindow;
-	_mainChildWindow = new CompletionWindow(_vm, this, globalFlags);
+	_mainChildWindow = completionWindow;
 	_mainChildWindow->showWindow(kWindowShow);
 	_mainChildWindow->invalidateWindow(false);
 

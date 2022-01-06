@@ -37,10 +37,10 @@
 #include "graphics/wincursor.h"
 #include "gui/message.h"
 
+#include "buried/agent_evaluation.h"
 #include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/console.h"
-#include "buried/death.h"
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"

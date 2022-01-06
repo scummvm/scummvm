@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -116,6 +118,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	FrameLayout _videoLayout = null;
 
 	private EditableSurfaceView _main_surface = null;
+	private ImageView _toggleGamepadBtnIcon = null;
 	private ImageView _toggleKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
 	private ImageView _revokeSafPermissionsBtnIcon = null;
@@ -567,6 +570,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// ---------------------------------------------------------------------------------------------------------------------------
 	//
 
+	public final View.OnClickListener gamepadBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					boolean touch3DMode = !_events.getTouch3DMode();
+					_events.setTouch3DMode(touch3DMode);
+					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
+				}
+			});
+		}
+	};
+
 	public final View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -706,12 +722,38 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected Bitmap getBitmapResource(int resource) {
+			int id;
+			switch(resource) {
+				case 0: // TOUCH_ARROWS_BITMAP
+					id = R.drawable.touch_arrows;
+					break;
+				default:
+					return null;
+			}
+
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inScaled = false;
+
+			return BitmapFactory.decodeResource(getResources(), id, opts);
+		}
+
+		@Override
 		protected void setTouch3DMode(final boolean touch3DMode) {
+			if (_events.getTouch3DMode() == touch3DMode) {
+				return;
+			}
 			runOnUiThread(new Runnable() {
 				public void run() {
 					_events.setTouch3DMode(touch3DMode);
+					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
 				}
 			});
+		}
+
+		@Override
+		protected boolean getTouch3DMode() {
+			return _events.getTouch3DMode();
 		}
 
 		@Override
@@ -967,6 +1009,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout.addView(buttonLayout, buttonLayoutParams);
 		_videoLayout.bringChildToFront(buttonLayout);
 
+		_toggleGamepadBtnIcon = new ImageView(this);
+		_toggleGamepadBtnIcon.setImageResource(R.drawable.ic_action_gamepad);
+		buttonLayout.addView(_toggleGamepadBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+		buttonLayout.bringChildToFront(_toggleGamepadBtnIcon);
+
 		_toggleKeyboardBtnIcon = new ImageView(this);
 		_toggleKeyboardBtnIcon.setImageResource(R.drawable.ic_action_keyboard);
 		buttonLayout.addView(_toggleKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
@@ -1076,6 +1123,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 			// On screen button listener
 			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
+			_toggleGamepadBtnIcon.setOnClickListener(gamepadBtnOnClickListener);
 			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
@@ -1340,11 +1388,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		if (_openMenuBtnIcon != null ) {
-			if (show) {
-				_openMenuBtnIcon.setVisibility(View.VISIBLE);
-			} else {
-				_openMenuBtnIcon.setVisibility(View.GONE);
-			}
+			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+		}
+
+		if (_toggleGamepadBtnIcon != null ) {
+			_toggleGamepadBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 	}
 

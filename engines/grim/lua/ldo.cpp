@@ -39,7 +39,7 @@ namespace Grim {
 #endif
 
 // Extra stack size to run a function: LUA_T_LINE(1), TM calls(2), ...
-#define	EXTRA_STACK	5
+#define EXTRA_STACK     5
 
 /*
 ** Error messages
@@ -49,10 +49,10 @@ void stderrorim() {
 	fprintf(stderr, "lua error: %s\n", lua_getstring(lua_getparam(1)));
 }
 
-#define STACK_UNIT	256
+#define STACK_UNIT      256
 
 // Initial size for CallInfo array
-#define BASIC_CI_SIZE	8
+#define BASIC_CI_SIZE  8
 
 void luaD_init() {
 	ttype(&errorim) = LUA_T_CPROTO;
@@ -80,7 +80,7 @@ void luaD_checkstack(int32 n) {
 ** Adjust stack. Set top to the given value, pushing NILs if needed.
 */
 void luaD_adjusttop(StkId newtop) {
-	int32 diff = newtop-(lua_state->stack.top-lua_state->stack.stack);
+	int32 diff = newtop - (lua_state->stack.top - lua_state->stack.stack);
 	if (diff <= 0)
 		lua_state->stack.top += diff;
 	else {
@@ -238,20 +238,8 @@ int32 luaD_call(StkId base, int32 nResults) {
 			firstResult = callC(fvalue(funcObj), base);
 		} else {
 			TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
-			if (ttype(im) == LUA_T_NIL) {
-				// NOTE: Originally this throwed the lua_error. Anyway it is commented here because
-				// when in year 4 bi.exit() calls bi.book.act:free(). But bi.book.act is nil,
-				// hence it enters this branch and the error blocks the game.
-				// Now we try instead to survive and go on with the function.
-				lua_Task *t = lua_state->task;
-				lua_state->task = t->next;
-				lua_state->some_task = tmpTask;
-				luaM_free(t);
-
-				warning("Lua: call expression not a function");
-				return 1;
-// 				lua_error("call expression not a function");
-			}
+			if (ttype(im) == LUA_T_NIL)
+				lua_error("call expression not a function");
 			luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
 			continue;
 		}
@@ -297,8 +285,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 }
 
 static void travstack(struct Stack *S, int32 (*fn)(TObject *)) {
-	StkId i;
-	for (i = (S->top - 1) - S->stack; i >= 0; i--)
+	for (StkId i = (S->top - 1) - S->stack; i >= 0; i--)
 		fn(S->stack + i);
 }
 
@@ -306,8 +293,7 @@ static void travstack(struct Stack *S, int32 (*fn)(TObject *)) {
 ** Traverse all objects on lua_state->stack.stack, and all other active stacks
 */
 void luaD_travstack(int32(*fn)(TObject *)) {
-	LState *t;
-	for (t = lua_rootState; t != nullptr; t = t->next) {
+	for (LState *t = lua_rootState; t != nullptr; t = t->next) {
 		travstack(&t->stack, fn);
 	}
 }
@@ -456,14 +442,13 @@ int32 lua_dostring(const char *str) {
 int32 lua_dobuffer(const char *buff, int32 size, const char *name) {
 	char newname[SIZE_PREF + 25];
 	ZIO z;
-	int32 status;
 
 	if (!name) {
 		build_name(buff, newname);
 		name = newname;
 	}
 	luaZ_mopen(&z, buff, size, name);
-	status = do_main(&z, buff[0] == ID_CHUNK);
+	int32 status = do_main(&z, buff[0] == ID_CHUNK);
 	return status;
 }
 

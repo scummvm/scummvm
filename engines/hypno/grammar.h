@@ -53,6 +53,9 @@ enum ActionType {
 	BackgroundAction,
 	OverlayAction,
 	EscapeAction,
+	SaveAction,
+	LoadAction,
+	LoadCheckpointAction,
 	QuitAction,
 	CutsceneAction,
 	PlayAction,
@@ -161,6 +164,27 @@ class Escape : public Action {
 public:
 	Escape() {
 		type = EscapeAction;
+	}
+};
+
+class Save : public Action {
+public:
+	Save() {
+		type = SaveAction;
+	}
+};
+
+class Load : public Action {
+public:
+	Load() {
+		type = LoadAction;
+	}
+};
+
+class LoadCheckpoint : public Action {
+public:
+	LoadCheckpoint() {
+		type = LoadCheckpointAction;
 	}
 };
 

@@ -70,7 +70,7 @@ static void lua_openthr() {
 	Mbuffer = nullptr;
 }
 
-#define STACK_UNIT	256
+#define STACK_UNIT      256
 
 void lua_stateinit(LState *state) {
 	state->prev = nullptr;

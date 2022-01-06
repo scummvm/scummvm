@@ -46,7 +46,7 @@ void Map::load(int scene) {
 	if (!_vm->_resman->exist(fileName.c_str()))
 		return;
 
-	EncryptedStream file(_vm, fileName.c_str());
+	EncryptedStream file(_vm->_resman, fileName.c_str());
 
 	Common::String line;
 	for (line = file.readLine(); !file.eos(); line = file.readLine()) {

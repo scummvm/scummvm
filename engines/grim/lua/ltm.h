@@ -6,7 +6,6 @@
 #ifndef GRIM_LTM_H
 #define GRIM_LTM_H
 
-
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lstate.h"
 
@@ -44,9 +43,8 @@ struct IM {
 	TObject int_method[IM_N];
 };
 
-
-#define luaT_getim(tag, event)	(&IMtable[-(tag)].int_method[event])
-#define luaT_getimbyObj(o, e)	(luaT_getim(luaT_efectivetag(o), (e)))
+#define luaT_getim(tag, event)  (&IMtable[-(tag)].int_method[event])
+#define luaT_getimbyObj(o, e)   (luaT_getim(luaT_efectivetag(o), (e)))
 
 extern const char *luaT_eventname[];
 

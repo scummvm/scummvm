@@ -27,8 +27,6 @@ namespace Grim {
 char lua_ident[] = "$Lua: " LUA_VERSION " " LUA_COPYRIGHT " $\n"
 "$Autores:  " LUA_AUTHORS " $";
 
-
-
 TObject *luaA_Address(lua_Object o) {
 	return Address(o);
 }
@@ -307,7 +305,6 @@ void lua_pushobject(lua_Object o) {
 	}
 }
 
-
 int32 lua_tag(lua_Object lo) {
 	if (lo == LUA_NOOBJECT)
 		return LUA_T_NIL;
@@ -323,7 +320,9 @@ int32 lua_tag(lua_Object lo) {
 			return LUA_T_PROTO;
 		case LUA_T_CMARK:
 			return LUA_T_CPROTO;
-		case LUA_T_CLOSURE: case LUA_T_CLMARK:
+		case LUA_T_CLOSURE:
+			// fall through
+		case LUA_T_CLMARK:
 			return o->value.cl->consts[0].ttype;
 #ifdef LUA_DEBUG
 		case LUA_T_LINE:
@@ -435,7 +434,7 @@ static int32 checkfunc (TObject *o) {
 
 const char *lua_getobjname (lua_Object o, const char **name) {
 	// try to find a name for given function
-	set_normalized(lua_state->stack.top, Address(o)); // to be accessed by "checkfunc
+	set_normalized(lua_state->stack.top, Address(o)); // to be accessed by "checkfunc"
 	*name = luaT_travtagmethods(checkfunc);
 	if (*name)
 		return "tag-method";
@@ -477,7 +476,6 @@ lua_Object lua_getref(int32 r) {
 	TObject *o = luaC_getref(r);
 	return (o ? put_luaObject(o) : LUA_NOOBJECT);
 }
-
 
 #ifdef LUA_COMPAT2_5
 /*

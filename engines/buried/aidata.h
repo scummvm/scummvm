@@ -62,6 +62,35 @@ struct AIComment {
 	uint16 statusFlagOffset;
 };
 
+
+struct AICommentInfo {
+	byte timeZone;
+	byte environment;
+	const char *filePath;
+};
+
+// timeZone, environment, filePath
+static const AICommentInfo s_aiCommentInfo[] {
+	// Castle
+	{ 1,  1, "CASTLE/CGTT"  }, { 1,  2, "CASTLE/CGTS"  }, { 1,  3, "CASTLE/CGMW"  },
+	{ 1,  4, "CASTLE/CGMB"  }, { 1,  5, "CASTLE/CGBS"  }, { 1,  6, "CASTLE/CGKC"  },
+	{ 1,  7, "CASTLE/CGST"  }, { 1,  8, "CASTLE/CGKS"  }, { 1,  9, "CASTLE/CGSR"  },
+	{ 1, 10, "CASTLE/CGTR"  },
+	// Mayan
+	{ 2,  1, "MAYAN/MYTP"   }, { 2,  2, "MAYAN/MYMC"   }, { 2,  3, "MAYAN/MYWG"   },
+	{ 2,  4, "MAYAN/MYWT"   }, { 2,  5, "MAYAN/MYAG"   }, { 2,  6, "MAYAN/MYDG"   },
+	// Future Apartment
+	{ 4,  1, "FUTAPT/FAKI"  }, { 4,  2, "FUTAPT/FAER"  }, { 4,  3, "FUTAPT/FAMN"  },
+	// Da Vinci
+	{ 5,  1, "DAVINCI/DSPT" }, { 5,  2, "DAVINCI/DSCT" }, { 5,  3, "DAVINCI/DSGD" },
+	{ 5,  4, "DAVINCI/DSWS" }, { 5,  5, "DAVINCI/DSCY" },
+	// Space Station
+	{ 6,  1, "AILAB/AIHW"   }, { 6,  2, "AILAB/AICR"   }, { 6,  3, "AILAB/AIDB"   },
+	{ 6,  4, "AILAB/AISC"   }, { 6,  5, "AILAB/AINX"   }, { 6,  6, "AILAB/AIIC"   },
+	{ 6,  7, "AILAB/AISW"   }, { 6,  8, "AILAB/AIMR"   }, { 6, 10, "AILAB/AIHW"   },	// there is no 9
+	{ 0,  0, "" }
+};
+
 } // End of namespace Buried
 
 #endif
