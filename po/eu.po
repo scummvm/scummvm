@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-05 22:45+0000\n"
+"POT-Creation-Date: 2022-01-06 17:36+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -231,7 +231,7 @@ msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 
 #: gui/downloadiconsdialog.cpp:186 gui/downloadiconsdialog.cpp:303
-#: gui/gui-manager.cpp:219 gui/unknown-game-dialog.cpp:53
+#: gui/gui-manager.cpp:221 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
@@ -652,16 +652,16 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth-en ezarpen guztiak berrezarri balio lehenetsietara?"
 
-#: gui/gui-manager.cpp:210
+#: gui/gui-manager.cpp:212
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:214 engines/mohawk/myst.cpp:573
+#: gui/gui-manager.cpp:216 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr "Elkarreragin"
 
-#: gui/gui-manager.cpp:225 engines/metaengine.cpp:109
+#: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
 #: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:454
 #: engines/grim/grim.cpp:531 engines/twine/metaengine.cpp:329
@@ -672,7 +672,7 @@ msgstr "Elkarreragin"
 msgid "Up"
 msgstr "Gora"
 
-#: gui/gui-manager.cpp:230 engines/metaengine.cpp:114
+#: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
 #: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:459
 #: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:336
@@ -683,7 +683,7 @@ msgstr "Gora"
 msgid "Down"
 msgstr "Behera"
 
-#: gui/gui-manager.cpp:235 engines/metaengine.cpp:119
+#: gui/gui-manager.cpp:237 engines/metaengine.cpp:119
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
 #: engines/grim/grim.cpp:464 engines/grim/grim.cpp:541
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
@@ -695,7 +695,7 @@ msgstr "Behera"
 msgid "Left"
 msgstr "Ezker"
 
-#: gui/gui-manager.cpp:240 engines/metaengine.cpp:124
+#: gui/gui-manager.cpp:242 engines/metaengine.cpp:124
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
 #: engines/grim/grim.cpp:469 engines/grim/grim.cpp:546
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
@@ -707,7 +707,7 @@ msgstr "Ezker"
 msgid "Right"
 msgstr "Eskuin"
 
-#: gui/gui-manager.cpp:245 engines/pegasus/pegasus.cpp:2814
+#: gui/gui-manager.cpp:247 engines/pegasus/pegasus.cpp:2814
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
