@@ -15,11 +15,11 @@
 
 namespace Grim {
 
-#define gcsize(n)		(1 + (n / 16))
-#define nuse(t)			((t)->nuse)
-#define nodevector(t)	((t)->node)
-#define REHASH_LIMIT	0.70    // avoid more than this % full
-#define TagDefault		LUA_T_ARRAY;
+#define gcsize(n)               (1 + (n / 16))
+#define nuse(t)                 ((t)->nuse)
+#define nodevector(t)           ((t)->node)
+#define REHASH_LIMIT            0.70    // avoid more than this % full
+#define TagDefault              LUA_T_ARRAY;
 
 static intptr hashindex(TObject *ref) {
 	intptr h;

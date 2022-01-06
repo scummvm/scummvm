@@ -85,7 +85,7 @@ static void LoadLocals(TProtoFunc *tf, ZIO *Z) {
 		tf->locvars[i].line = LoadWord(Z);
 		tf->locvars[i].varname = LoadTString(Z);
 	}
-	tf->locvars[i].line = -1;		// flag end of vector
+	tf->locvars[i].line = -1; // flag end of vector
 	tf->locvars[i].varname = nullptr;
 }
 
@@ -155,9 +155,9 @@ static void LoadHeader(ZIO *Z) {
 	version = ezgetc(Z);
 	if (version > VERSION)
 		luaL_verror("%s too new: version=0x%02x; expected at most 0x%02x", zname(Z), version, VERSION);
-	if (version < VERSION)			// check last major change
+	if (version < VERSION) // check last major change
 		luaL_verror("%s too old: version=0x%02x; expected at least 0x%02x", zname(Z), version, VERSION);
-	sizeofR = ezgetc(Z);			// test number representation
+	sizeofR = ezgetc(Z); // test number representation
 	if (sizeofR != sizeof(float))
 		luaL_verror("number expected float in %s", zname(Z));
 	ezgetc(Z);

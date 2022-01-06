@@ -171,9 +171,9 @@ typedef enum {
 	POP1			//	-		-				-				TOP-=2
 } OpCode;
 
-#define RFIELDS_PER_FLUSH 32	// records (SETMAP)
+#define RFIELDS_PER_FLUSH 32    // records (SETMAP)
 #define LFIELDS_PER_FLUSH 64    // lists (SETLIST)
-#define ZEROVARARG	64
+#define ZEROVARARG        64
 
 } // end of namespace Grim
 

@@ -1,10 +1,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
-#ifdef _MSC_VER
-#pragma warning(disable:4611)
-#endif
-
 #include "engines/grim/lua/ltask.h"
 #include "engines/grim/lua/lapi.h"
 #include "engines/grim/lua/lauxlib.h"
@@ -238,7 +234,6 @@ void pause_scripts() {
 	bool p = false;
 	if (!lua_isnil(boolObj))
 		p = true;
-
 
 	for (t = lua_rootState->next; t != nullptr; t = t->next) {
 		if (lua_state != t) {

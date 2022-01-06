@@ -124,7 +124,6 @@ void lua_Save(SaveGame *savedState) {
 	int32 countElements = 0;
 	int32 maxStringLength = 0;
 
-
 	// Check for max length for strings and count them
 	for (i = 0; i < NUM_HASHS; i++) {
 		stringtable *tempStringTable = &string_root[i];
@@ -142,7 +141,6 @@ void lua_Save(SaveGame *savedState) {
 	}
 	// save number of strings
 	savedState->writeLESint32(countElements);
-
 
 	// save number of closures
 	countElements = 0;

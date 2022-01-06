@@ -21,9 +21,9 @@ namespace Common {
 
 namespace Grim {
 
-#define LUA_VERSION		"Lua 3.1 (alpha)"
-#define LUA_COPYRIGHT	"Copyright (C) 1994-1998 TeCGraf, PUC-Rio"
-#define LUA_AUTHORS 	"W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
+#define LUA_VERSION     "Lua 3.1 (alpha)"
+#define LUA_COPYRIGHT   "Copyright (C) 1994-1998 TeCGraf, PUC-Rio"
+#define LUA_AUTHORS     "W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
 
 #define LUA_NOOBJECT  0
 
@@ -87,8 +87,8 @@ void lua_endblock();
 
 lua_Object lua_lua2C(int32 number);
 
-#define lua_getparam(_)		lua_lua2C(_)
-#define	lua_getresult(_)	lua_lua2C(_)
+#define lua_getparam(_)         lua_lua2C(_)
+#define lua_getresult(_)        lua_lua2C(_)
 
 int32 lua_isnil                (lua_Object object);
 int32 lua_istable              (lua_Object object);
@@ -98,10 +98,10 @@ int32 lua_isnumber             (lua_Object object);
 int32 lua_isstring             (lua_Object object);
 int32 lua_isfunction           (lua_Object object);
 
-float lua_getnumber 		(lua_Object object);
-const char *lua_getstring 		(lua_Object object);
-lua_CFunction lua_getcfunction 	(lua_Object object);
-int32 lua_getuserdata		(lua_Object object);
+float lua_getnumber            (lua_Object object);
+const char *lua_getstring      (lua_Object object);
+lua_CFunction lua_getcfunction (lua_Object object);
+int32 lua_getuserdata          (lua_Object object);
 
 void lua_pushnil();
 void lua_pushnumber(float n);
@@ -135,19 +135,19 @@ void current_script();
 
 /* some useful macros/derived functions */
 
-#define lua_call(name)		lua_callfunction(lua_getglobal(name))
+#define lua_call(name)          lua_callfunction(lua_getglobal(name))
 
-#define lua_pushref(ref)	lua_pushobject(lua_getref(ref))
+#define lua_pushref(ref)        lua_pushobject(lua_getref(ref))
 
-#define lua_refobject(o,l)	(lua_pushobject(o), lua_ref(l))
+#define lua_refobject(o,l)      (lua_pushobject(o), lua_ref(l))
 
-#define lua_register(n, f)	(lua_pushcfunction(f), lua_setglobal(n))
+#define lua_register(n, f)      (lua_pushcfunction(f), lua_setglobal(n))
 
-#define lua_pushuserdata(u)	lua_pushusertag(u, 0)
+#define lua_pushuserdata(u)     lua_pushusertag(u, 0)
 
-#define lua_pushcfunction(f)	lua_pushCclosure(f, 0)
+#define lua_pushcfunction(f)    lua_pushCclosure(f, 0)
 
-#define lua_clonetag(t)		lua_copytagmethods(lua_newtag(), (t))
+#define lua_clonetag(t)         lua_copytagmethods(lua_newtag(), (t))
 
 /* ==========================================================================
 ** for compatibility with old versions. Avoid using these macros/functions
@@ -159,20 +159,20 @@ void current_script();
 
 lua_Object lua_setfallback(const char *event, lua_CFunction fallback);
 
-#define lua_storeglobal		lua_setglobal
-#define lua_type			lua_tag
+#define lua_storeglobal         lua_setglobal
+#define lua_type                lua_tag
 
-#define lua_lockobject(o)	lua_refobject(o,1)
-#define	lua_lock()			lua_ref(1)
-#define lua_getlocked		lua_getref
-#define	lua_pushlocked		lua_pushref
-#define	lua_unlock			lua_unref
-#define lua_pushliteral(o)  lua_pushstring(o)
-#define lua_getindexed(o, n) (lua_pushobject(o), lua_pushnumber(n), lua_gettable())
-#define lua_getfield(o, f)  (lua_pushobject(o), lua_pushstring(f), lua_gettable())
-#define lua_copystring(o)	(strdup(lua_getstring(o)))
-#define lua_getsubscript	lua_gettable
-#define lua_storesubscript  lua_settable
+#define lua_lockobject(o)       lua_refobject(o,1)
+#define lua_lock()              lua_ref(1)
+#define lua_getlocked           lua_getref
+#define lua_pushlocked          lua_pushref
+#define lua_unlock              lua_unref
+#define lua_pushliteral(o)      lua_pushstring(o)
+#define lua_getindexed(o, n)    (lua_pushobject(o), lua_pushnumber(n), lua_gettable())
+#define lua_getfield(o, f)      (lua_pushobject(o), lua_pushstring(f), lua_gettable())
+#define lua_copystring(o)       (strdup(lua_getstring(o)))
+#define lua_getsubscript        lua_gettable
+#define lua_storesubscript      lua_settable
 
 #endif
 

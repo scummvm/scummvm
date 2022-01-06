@@ -12,15 +12,15 @@ namespace Grim {
 
 #ifdef LUA_DEBUG
 #include "engines/grim/lua/lauxlib.h"
-#define LUA_INTERNALERROR(s)	luaL_verror("INTERNAL ERROR - %s [%s:%d]", (s), __FILE__, __LINE__)
-#define LUA_ASSERT(c, s)			{ if (!(c)) LUA_INTERNALERROR(s); }
+#define LUA_INTERNALERROR(s)    luaL_verror("INTERNAL ERROR - %s [%s:%d]", (s), __FILE__, __LINE__)
+#define LUA_ASSERT(c, s)        { if (!(c)) LUA_INTERNALERROR(s); }
 #else
-#define LUA_INTERNALERROR(s)	// empty
-#define LUA_ASSERT(c, s)			// empty
+#define LUA_INTERNALERROR(s)    // empty
+#define LUA_ASSERT(c, s)        // empty
 #endif
 
-#define MAX_INT			(2147483647 - 2)  // maximum value of an int (-2 for safety)
-#define MAX_WORD		(65534U)
+#define MAX_INT                 (2147483647 - 2)  // maximum value of an int (-2 for safety)
+#define MAX_WORD                (65534U)
 
 /*
 ** Lua TYPES
@@ -113,9 +113,8 @@ typedef struct LocVar {
 #define clvalue(o)      ((o)->value.cl)
 #define avalue(o)       ((o)->value.a)
 #define fvalue(o)       ((o)->value.f)
-#define tfvalue(o)		((o)->value.tf)
-#define protovalue(o)	((o)->value.cl->consts)
-
+#define tfvalue(o)      ((o)->value.tf)
+#define protovalue(o)   ((o)->value.cl->consts)
 
 /*
 ** Closures
@@ -147,8 +146,8 @@ int32 luaO_redimension(int32 oldsize);
 int luaO_findstring(const char *name, const char *list[]);
 void luaO_insertlist(GCnode *root, GCnode *node);
 
-#define luaO_memup(d, s, n)		memmove(d, s, n)
-#define luaO_memdown(d, s, n)	memmove(d, s, n)
+#define luaO_memup(d, s, n)     memmove(d, s, n)
+#define luaO_memdown(d, s, n)   memmove(d, s, n)
 
 } // end of namespace Grim
 

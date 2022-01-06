@@ -49,19 +49,17 @@ static int32 validevent(int32 t, int32 e) { // ORDER LUA_T
 }
 
 static void init_entry(int32 tag) {
-	int32 i;
-	for (i = 0; i < IM_N; i++)
+	for (int32 i = 0; i < IM_N; i++)
 		ttype(luaT_getim(tag, i)) = LUA_T_NIL;
 }
 
 static bool tmFBAdded = false;
 
 void luaT_init() {
-	int32 t;
 	IMtable_size = NUM_TAGS * 2;
 	last_tag = -(NUM_TAGS - 1);
 	IMtable = luaM_newvector(IMtable_size, struct IM);
-	for (t = -(IMtable_size - 1); t <= 0; t++)
+	for (int32 t = -(IMtable_size - 1); t <= 0; t++)
 		init_entry(t);
 
 	tmFBAdded = false;
@@ -135,7 +133,7 @@ void luaT_settagmethod(int32 t, const char *event, TObject *func) {
 	checktag(t);
 	if (!validevent(t, e))
 		luaL_verror("settagmethod: cannot change tag method `%.20s' for tag %d",
-		luaT_eventname[e], t);
+	luaT_eventname[e], t);
 	*func = *luaT_getim(t,e);
 	*luaT_getim(t, e) = temp;
 }

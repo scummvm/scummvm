@@ -22,11 +22,11 @@
 
 namespace Grim {
 
-#define skip_word(pc)	(pc += 2)
-#define get_word(pc)	((*((pc) + 1) << 8)|(*(pc)))
+#define skip_word(pc)   (pc += 2)
+#define get_word(pc)    ((*((pc) + 1) << 8)|(*(pc)))
 #define next_word(pc)   (pc += 2, get_word(pc - 2))
 
-#define	EXTRA_STACK	5
+#define EXTRA_STACK     5
 
 static TaggedString *strconc(char *l, char *r) {
 	size_t nl = strlen(l);

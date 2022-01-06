@@ -148,7 +148,7 @@ static void recreateObj(TObject *obj) {
 			assert(obj->value.f);
 		}
 	} else if (obj->ttype == LUA_T_NIL || obj->ttype == LUA_T_LINE || obj->ttype == LUA_T_NUMBER ||
-			obj->ttype == LUA_T_TASK || obj->ttype == LUA_T_USERDATA) {
+		   obj->ttype == LUA_T_TASK || obj->ttype == LUA_T_USERDATA) {
 		return;
 	} else {
 		if (obj->value.i == 0)
@@ -405,7 +405,7 @@ void lua_Restore(SaveGame *savedState) {
 		ptr.id = savedState->readLEUint64();
 		tempObj.value.ts = (TaggedString *)makePointerFromId(ptr);
 		recreateObj(&tempObj);
- 		tempString = (TaggedString *)tempObj.value.ts;
+		tempString = (TaggedString *)tempObj.value.ts;
 		assert(tempString);
 		tempListString->head.next = (GCnode *)tempString;
 		tempListString = tempString;
@@ -448,8 +448,7 @@ void lua_Restore(SaveGame *savedState) {
 	Mbuffsize = savedState->readLESint32();
 	Mbuffer = (char *)luaM_malloc(Mbuffsize);
 	savedState->read(Mbuffer, Mbuffsize);
-	int32 MbaseOffset;
-	MbaseOffset = savedState->readLESint32();
+	int32 MbaseOffset = savedState->readLESint32();
 	Mbuffbase = MbaseOffset + Mbuffer;
 	Mbuffnext = savedState->readLESint32();
 
