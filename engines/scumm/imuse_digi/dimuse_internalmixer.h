@@ -19,8 +19,8 @@
  *
  */
 
-#if !defined(SCUMM_IMUSE_DIGI_V2_MIXER_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_IMUSE_DIGI_V2_MIXER_H
+#if !defined(SCUMM_IMUSE_DIGI_MIXER_H) && defined(ENABLE_SCUMM_7_8)
+#define SCUMM_IMUSE_DIGI_MIXER_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
