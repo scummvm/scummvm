@@ -288,8 +288,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_textPosY = 0;
 
 	_lastMainPlaceId = 0;
-	_word2C86E = 0;
-	_dword2C856 = nullptr;
+	_tempTextDelay = 0;
+	_tempTextPtr = nullptr;
 	_word2C880 = false;
 	_redrawNeededFl = false;
 	_word2C8D7 = true;
@@ -453,7 +453,7 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_F1:
 			if (_teamCharId[0] != -1) {
 				handleStatusMenu(1, _teamCharId[0]);
-				_dword2C856 = nullptr;
+				_tempTextPtr = nullptr;
 				sub15150(true);
 				_redrawNeededFl = true;
 			}
@@ -461,7 +461,7 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_F2:
 			if (_teamCharId[1] != -1) {
 				handleStatusMenu(1, _teamCharId[1]);
-				_dword2C856 = nullptr;
+				_tempTextPtr = nullptr;
 				sub15150(true);
 				_redrawNeededFl = true;
 			}
@@ -469,7 +469,7 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_F3:
 			if (_teamCharId[2] != -1) {
 				handleStatusMenu(1, _teamCharId[2]);
-				_dword2C856 = nullptr;
+				_tempTextPtr = nullptr;
 				sub15150(true);
 				_redrawNeededFl = true;
 			}
@@ -558,9 +558,9 @@ Common::Error EfhEngine::run() {
 		if (!_shouldQuit) {
 			handleNewRoundEffects();
 
-			if (_word2C86E > 0) {
-				if (--_word2C86E == 0) {
-					sub221FA(nullptr, true);
+			if (_tempTextDelay > 0) {
+				if (--_tempTextDelay == 0) {
+					displayMiddleLeftTempText(nullptr, true);
 				}
 			}
 		}
@@ -871,10 +871,10 @@ void EfhEngine::playIntro() {
 
 	// With GF on the bed
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[0], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[0], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[0], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
@@ -882,11 +882,11 @@ void EfhEngine::playIntro() {
 	// Poof
 	displayRawDataAtPos(_circleImageSubFileArray[1], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[1], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[1], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[1], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[1], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
@@ -894,38 +894,38 @@ void EfhEngine::playIntro() {
 	// On the phone
 	displayRawDataAtPos(_circleImageSubFileArray[2], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[2], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[2], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[2], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[2], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[3], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[3], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[3], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[4], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[4], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[4], 6, 150, 268, 186, false);
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[5], 6, 150, 268, 186, false);
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
-	sub133E5(_imp2PtrArray[5], 6, 150, 268, 186, false);
+	drawText(_imp2PtrArray[5], 6, 150, 268, 186, false);
 	getLastCharAfterAnimCount(80);
 }
 
@@ -1147,12 +1147,12 @@ void EfhEngine::sub15150(bool flag) {
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
 			displayGameScreen();
-			// TODO: _word2C86E is some kind of counter
-			if (_word2C86E != 0) {
-				// TODO: _dword2C856 is most likely an "Imp" Array
+			// Redraw temp text if one is displayed currently
+			// _tempTextDelay determines whether a temp text is displayed in the middle-left zone
+			if (_tempTextDelay != 0) {
 				// Note: the original was doing the check in the opposite order, which looks really suspicious
-				if ((_dword2C856 != nullptr) && (_dword2C856[0] != 0x30)) {
-					sub221FA(_dword2C856, false);
+				if ((_tempTextPtr != nullptr) && (_tempTextPtr[0] != 0x30)) {
+					displayMiddleLeftTempText(_tempTextPtr, false);
 				}
 			}
 		}
@@ -2050,8 +2050,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 	return var_F0;
 }
 
-void EfhEngine::sub133E5(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
-	debug("sub133E5 %d-%d %d-%d %d", posX, posY, maxX, maxY, flag ? "True" : "False");
+void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
+	debug("drawText %d-%d %d-%d %d", posX, posY, maxX, maxY, flag ? "True" : "False");
 
 	uint16 stringIdx = 0;
 	uint8 *impPtr = srcPtr;
@@ -2077,16 +2077,17 @@ void EfhEngine::sub133E5(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 	script_parse(_messageToBePrinted, posX, posY, maxX, maxY, flag);
 }
 
-void EfhEngine::sub221FA(uint8 *impArray, bool flag) {
-	debug("sub221FA %s %s", (char *)impArray, flag ? "True" : "False");
+void EfhEngine::displayMiddleLeftTempText(uint8 *impArray, bool flag) {
+	debugC(3, kDebugEngine, "displayMiddleLeftTempText %s %s", (char *)impArray, flag ? "True" : "False");
 	
 	for (uint8 counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
+			// clear middle-left text area
 			drawColoredRect(16, 115, 111, 133, 0);
 			if (impArray != nullptr) {
-				_word2C86E = 4;
-				_dword2C856 = impArray;
-				sub133E5(impArray, 17, 115, 110, 133, false);
+				_tempTextDelay = 4;
+				_tempTextPtr = impArray;
+				drawText(impArray, 17, 115, 110, 133, false);
 			}
 			if (counter == 0 && flag)
 				displayFctFullScreen();
@@ -3158,7 +3159,7 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	debug("sub221D2 %d", monsterId);
 
 	if (monsterId != -1) {
-		_dword2C856 = nullptr;
+		_tempTextPtr = nullptr;
 		sub21820(monsterId, 5, -1);
 	}
 }
@@ -3170,9 +3171,9 @@ void EfhEngine::sub22AA8(int16 arg0) {
 	var8 = varA = varC = varE = 0;
 
 	if (arg0 <= 0xFE) {
-		if (_dword2C856) {
-			_dword2C856 = nullptr;
-			sub221FA(_dword2C856, true);
+		if (_tempTextPtr) {
+			_tempTextPtr = nullptr;
+			displayMiddleLeftTempText(_tempTextPtr, true);
 		}
 		if (_word2C8D2)
 			sub15150(true);
@@ -3275,7 +3276,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 
 	if (var8 == -1) {
 		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
-			sub221FA(_imp2PtrArray[imageSetId], true);
+			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (var8 == 0) {
 		if (_mapUnknown[var8]._field3 == 0xFF) {
 			sub22AA8(_mapUnknown[var8]._field5); // word!
@@ -6752,7 +6753,7 @@ bool EfhEngine::checkMonsterCollision() {
 			case Common::KEYCODE_s: // Status
 				var6A = handleStatusMenu(1, _teamCharId[0]);
 				var68 = true;
-				_dword2C856 = nullptr;
+				_tempTextPtr = nullptr;
 				sub15150(true);
 				break;
 			case Common::KEYCODE_t: // Talk
