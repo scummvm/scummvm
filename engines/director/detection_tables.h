@@ -542,6 +542,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trekomni",			"Star Trek Omnipedia" },
 	{ "trekpedia98",		"Star Trek Encyclopedia 1998" },
 	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual" },
+	{ "trekchair",          "Star Trek: Captain's Chair"},
+	{ "trekshipcreate",     "Star Trek: Starship Creator"},
 	{ "truthsfictions",		"Truths & Fictions: A Journey from Documentary to Digital Photography" },
 	{ "universe",			"Invisible Universe" },
 	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
@@ -4857,6 +4859,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on Revolutionary War Picture CD from Holiday Digital Pictures
 	MACGAME1("ssrevwar", "", "Revolutionary War Screen Saver", "43234754a346ed7ac25b581f6d106866", 218094, 500),
 
+	WINGAME1("trekchair", "", "Cap_win.exe", "a28313a078c0cd3cebdf505af1d63d88", 1399089, 400),
+
 	// Mac version requires installation
 	// Preview is from X-Fools disc
 	// Win/Mac previews from Microshaft Winblows are D6
@@ -5562,6 +5566,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
 	WINGAME1("trekpedia98", "", "ENCY98.EXE", "35f1550747fcf691283b0f2486144e2b", 1707566, 600),
+
+    WINGAME1("trekshipcreate", "", "sscreate.exe", "47bc209c111f45781336fb582354f2f2", 1910562, 400),
 
 	// Overview of Tutti's Magical Stories series
 	WINGAME1_l("tutti", "", "TUTTI.EXE", "a593079aecf5bd938ce75264cac24b2d", 14715583, Common::RU_RUS, 600),
