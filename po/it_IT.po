@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-05 22:45+0000\n"
-"PO-Revision-Date: 2022-01-02 10:55+0000\n"
+"PO-Revision-Date: 2022-01-06 13:06+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7963,11 +7963,11 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Easter egg di Natale sempre attivo"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Riproduce sempre la musica natalizia, indipendentemente dalla data."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
