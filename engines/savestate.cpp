@@ -95,7 +95,12 @@ bool SaveStateDescriptor::isAutosave() const {
 
 bool SaveStateDescriptor::hasAutosaveName() const
 {
-	return _description.contains(_("Autosave"));
+	Common::U32String autosave = _("Autosave");
+	if (autosave.size() < 14)
+		return autosave == _description;
+	if (_description.size() < 14)
+		return false;
+	return autosave.substr(0, _description.size()) == _description;
 }
 
 bool SaveStateDescriptor::isValid() const
