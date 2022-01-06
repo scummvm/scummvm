@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	timer.o \
 	types.o \
 	video/cfo_decoder.o \
+	rooms/roomdefs.o \
 	rooms/room0.o \
 	rooms/room1.o \
 	rooms/room2.o \
@@ -72,7 +73,25 @@ MODULE_OBJS = \
 	rooms/room21.o \
 	rooms/room22.o \
 	rooms/room23.o \
-	rooms/room24.o
+	rooms/room24.o \
+	rooms/room25.o \
+	rooms/room26.o \
+	rooms/room27.o \
+	rooms/room28.o \
+	rooms/room29.o \
+	rooms/room30.o \
+	rooms/room31.o \
+	rooms/room32.o \
+	rooms/room33.o \
+	rooms/room34.o \
+	rooms/room35.o \
+	rooms/room37.o \
+	rooms/room39.o \
+	rooms/room40.o \
+	rooms/room41.o \
+	rooms/room42.o \
+	rooms/room43.o \
+	rooms/room44.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)

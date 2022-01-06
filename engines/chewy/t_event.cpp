@@ -77,7 +77,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					switch (txt_nr) {
 					case 229:
 						auto_move(2, P_CHEWY);
-						r39_look_tv(1);
+						Room39::look_tv(1);
 						break;
 
 					case 268:
@@ -128,7 +128,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_USE:
 					switch (txt_nr) {
 					case 62:
-						action_ret = r39_use_howard();
+						action_ret = Room39::use_howard();
 						break;
 
 					case 67:
@@ -303,131 +303,131 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 187:
-						action_ret = r25_use_gleiter();
+						action_ret = Room25::use_gleiter();
 						break;
 
 					case 203:
-						action_ret = r32_get_script();
+						action_ret = Room32::get_script();
 						break;
 
 					case 206:
-						action_ret = r28_use_breifkasten();
+						action_ret = Room28::use_breifkasten();
 						break;
 
 					case 210:
-						action_ret = r33_use_schublade();
+						action_ret = Room33::use_schublade();
 						break;
 
 					case 212:
-						action_ret = r29_zaun_sprung();
+						action_ret = Room29::zaun_sprung();
 						break;
 
 					case 215:
-						action_ret = r29_use_schlauch();
+						action_ret = Room29::use_schlauch();
 						break;
 
 					case 216:
-						action_ret = r29_use_pumpe();
+						action_ret = Room29::use_pumpe();
 						break;
 
 					case 218:
-						action_ret = r29_get_schlauch();
+						action_ret = Room29::get_schlauch();
 						break;
 
 					case 219:
-						action_ret = r25_gleiter_loesch();
+						action_ret = Room25::gleiter_loesch();
 						break;
 
 					case 220:
-						action_ret = r34_use_kuehlschrank();
+						action_ret = Room34::use_kuehlschrank();
 						break;
 
 					case 221:
-						r33_use_maschine();
+						Room33::use_maschine();
 						break;
 
 					case 227:
-						r34_xit_kuehlschrank();
+						Room34::xit_kuehlschrank();
 						break;
 
 					case 229:
-						action_ret = r39_use_tv();
+						action_ret = Room39::use_tv();
 						break;
 
 					case 230:
-						action_ret = r32_use_howard();
+						action_ret = Room32::use_howard();
 						break;
 
 					case 231:
-						r32_use_schreibmaschine();
+						Room32::use_schreibmaschine();
 						break;
 
 					case 234:
-						action_ret = r35_schublade();
+						action_ret = Room35::schublade();
 						break;
 
 					case 235:
-						action_ret = r35_use_cat();
+						action_ret = Room35::use_cat();
 						break;
 
 					case 242:
-						action_ret = r31_use_topf();
+						action_ret = Room31::use_topf();
 						break;
 
 					case 244:
-						r31_open_luke();
+						Room31::open_luke();
 						break;
 
 					case 245:
-						r31_close_luke();
+						Room31::close_luke();
 						break;
 
 					case 249:
-						action_ret = r37_use_wippe();
+						action_ret = Room37::use_wippe();
 						break;
 
 					case 251:
-						r37_use_hahn();
+						Room37::use_hahn();
 						break;
 
 					case 256:
-						action_ret = r37_use_glas();
+						action_ret = Room37::use_glas();
 						break;
 
 					case 263:
-						action_ret = r42_use_beamter();
+						action_ret = Room42::use_beamter();
 						break;
 
 					case 264:
-						action_ret = r42_use_psack();
+						action_ret = Room42::use_psack();
 						break;
 
 					case 266:
-						action_ret = r41_use_brief();
+						action_ret = Room41::use_brief();
 						break;
 
 					case 267:
-						action_ret = r41_use_lola();
+						action_ret = Room41::use_lola();
 						break;
 
 					case 269:
-						action_ret = r41_use_kasse();
+						action_ret = Room41::use_kasse();
 						break;
 
 					case 275:
-						action_ret = r40_use_police();
+						action_ret = Room40::use_police();
 						break;
 
 					case 276:
-						action_ret = r40_use_tele();
+						action_ret = Room40::use_tele();
 						break;
 
 					case 278:
-						action_ret = r40_use_mr_pumpkin();
+						action_ret = Room40::use_mr_pumpkin();
 						break;
 
 					case 284:
-						action_ret = r40_use_bmeister();
+						action_ret = Room40::use_bmeister();
 						break;
 
 					case 286:
@@ -786,7 +786,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 227:
-						r34_xit_kuehlschrank();
+						Room34::xit_kuehlschrank();
 						break;
 
 					case 294:
@@ -828,7 +828,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 62:
-						r39_talk_howard();
+						Room39::talk_howard();
 						break;
 
 					case 67:
@@ -847,31 +847,31 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 235:
-						r35_talk_cat();
+						Room35::talk_cat();
 						break;
 
 					case 251:
-						r37_talk_hahn();
+						Room37::talk_hahn();
 						break;
 
 					case 265:
-						r41_talk_hoggy1();
+						Room41::talk_hoggy1();
 						break;
 
 					case 266:
-						r41_talk_hoggy2();
+						Room41::talk_hoggy2();
 						break;
 
 					case 274:
-						r27_talk_howard();
+						Room27::talk_howard();
 						break;
 
 					case 275:
-						r40_talk_police();
+						Room40::talk_police();
 						break;
 
 					case 283:
-						r40_talk_handler();
+						Room40::talk_handler();
 						break;
 
 					case 295:
@@ -1023,7 +1023,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_LOOK:
 					switch (txt_nr) {
 					case 210:
-						r33_look_schublade();
+						Room33::look_schublade();
 						break;
 
 					case 389:
@@ -1064,7 +1064,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 225:
-						action_ret = r33_get_munter();
+						action_ret = Room33::get_munter();
 						break;
 
 					case 267:
@@ -1073,7 +1073,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 283:
-						action_ret = r40_use_haendler();
+						action_ret = Room40::use_haendler();
 						break;
 
 					case 423:
@@ -1083,7 +1083,6 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					default:
 						action_ret = false;
 						break;
-
 					}
 					break;
 
@@ -1102,7 +1101,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 263:
-						r42_talk_beamter();
+						Room42::talk_beamter();
 						break;
 
 					default:
@@ -1148,12 +1147,12 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			break;
 
 		case 10:
-			r42_dia_beamter(str_end_nr);
+			Room42::dia_beamter(str_end_nr);
 			break;
 
 		case 11:
 			if (blk_nr == 3) {
-				r41_sub_dia();
+				Room41::sub_dia();
 			} else if (blk_nr == 0 && str_end_nr == 3) {
 				_G(spieler).R41RepairInfo = true;
 				stop_ads_dialog();
@@ -2383,7 +2382,7 @@ int16 calc_person_click(int16 p_nr) {
 	case P_CHEWY:
 		switch (_G(spieler).AkInvent) {
 		case K_MASKE_INV:
-			r28_set_pump();
+			Room28::set_pump();
 			action_ret = true;
 			break;
 

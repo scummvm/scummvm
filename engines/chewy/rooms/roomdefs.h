@@ -22,12 +22,16 @@
 #ifndef CHEWY_ROOMS_ROOMDEFS_H
 #define CHEWY_ROOMS_ROOMDEFS_H
 
+#include "common/scummsys.h"
+
 namespace Chewy {
 
 #define ANI_HIDE 0
 #define ANI_SHOW 1
 
 #define SURIMY_OBJ 0
+
+extern const int16 SURIMY_TAF19_PHASEN[4][2];
 
 } // namespace Chewy
 

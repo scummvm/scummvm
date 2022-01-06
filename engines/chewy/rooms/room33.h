@@ -19,25 +19,26 @@
  *
  */
 
-#include "chewy/defines.h"
-#include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/episode2.h"
-#include "chewy/rooms/rooms.h"
+#ifndef CHEWY_ROOMS_ROOM33_H
+#define CHEWY_ROOMS_ROOM33_H
 
 namespace Chewy {
+namespace Rooms {
 
-void calc_person_look() {
-	int16 i;
-	for (i = 1; i < MAX_PERSON; i++) {
-		if (spieler_mi[i].Id != NO_MOV_OBJ) {
+class Room33 {
+private:
+	static void surimy_go();
+	static int16 calc_muntermacher();
 
-			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])
-				person_end_phase[i] = P_LEFT;
-			else
-				person_end_phase[i] = P_RIGHT;
-		}
-	}
-}
+public:
+	static void entry();
+	static void look_schublade();
+	static int16 use_schublade();
+	static void use_maschine();
+	static int16 get_munter();
+};
 
+} // namespace Rooms
 } // namespace Chewy
+
+#endif
