@@ -75,6 +75,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["tryagain.mi_"];
 	sc->hots[1].actions.push_back(cl);
 
+	LoadCheckpoint *lc = new LoadCheckpoint();
+	sc->hots[2].actions.push_back(lc);
+
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
 	loadSceneLevel("combmenu.mi_", "", prefix);
@@ -220,8 +223,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["decide1.mi_"];
 	cl = new ChangeLevel("bank.mi_");
 	sc->hots[2].actions.push_back(cl);
+
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+
 	cl = new ChangeLevel("c1");
 	sc->hots[4].actions.push_back(cl);
+
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("bank.mi_", "", prefix);
 	_levels["bank.mi_"]->intros.push_back("cine/swcs001s.smk");
@@ -956,14 +966,11 @@ Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isA
 	if (isAutosave)
 		return Common::kNoError;
 
-	stream->writeString(_currentLevel);
-	stream->writeByte(0);
+	if (_checkpoint.empty())
+		error("Invalid checkpoint!");
 
-	uint32 i = 0;
-	while (sceneVariables[i]) {
-		stream->writeUint32LE(_sceneState[sceneVariables[i]]);
-		i++;
-	}
+	stream->writeString(_checkpoint);
+	stream->writeByte(0);
 	return Common::kNoError;
 }
 

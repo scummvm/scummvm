@@ -126,8 +126,7 @@ public:
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently() override { return true; }
-
-	void syncGameStream(Common::Serializer &s);
+	Common::String _checkpoint;
 
 	Common::String _prefixDir;
 	Common::String convertPath(const Common::String &);
@@ -155,6 +154,7 @@ public:
 	void runEscape();
 	void runSave(Save *a);
 	void runLoad(Load *a);
+	void runLoadCheckpoint(LoadCheckpoint *a);
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
 	void runPlay(Play *a);

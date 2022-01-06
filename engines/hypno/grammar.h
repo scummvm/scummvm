@@ -55,6 +55,7 @@ enum ActionType {
 	EscapeAction,
 	SaveAction,
 	LoadAction,
+	LoadCheckpointAction,
 	QuitAction,
 	CutsceneAction,
 	PlayAction,
@@ -180,6 +181,12 @@ public:
 	}
 };
 
+class LoadCheckpoint : public Action {
+public:
+	LoadCheckpoint() {
+		type = LoadCheckpointAction;
+	}
+};
 
 class Quit : public Action {
 public:

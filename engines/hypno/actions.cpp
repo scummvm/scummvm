@@ -175,6 +175,13 @@ void HypnoEngine::runLoad(Load *a) {
 	loadGameDialog();
 }
 
+void HypnoEngine::runLoadCheckpoint(LoadCheckpoint *a) {
+	// TODO: this depends on the game
+	if (_checkpoint.empty())
+		error("Invalid checkpoint!");
+	_nextLevel = _checkpoint;
+}
+
 void HypnoEngine::runQuit(Quit *a) {
 	quitGame();
 }
