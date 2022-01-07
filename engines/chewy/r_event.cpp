@@ -411,26 +411,26 @@ void check_ged_action(int16 index) {
 		case 97:
 			switch (index) {
 			case 50:
-				r97_proc2();
+				Room97::proc2();
 				break;
 			case 51:
-				r97_proc3();
+				Room97::proc3();
 				break;
 			case 52:
-				r97_proc13();
+				Room97::proc13();
 				break;
 			case 53:
-				r97_proc12();
+				Room97::proc12();
 				break;
 			case 54:
-				r97_proc4();
+				Room97::proc4();
 				break;
 			case 55:
 				if (_G(spieler).flags36_20)
 					auto_scroll(268, 0);
 				break;
 			case 56:
-				r97_proc15();
+				Room97::proc15();
 				break;
 			default:
 				break;
@@ -697,35 +697,35 @@ void enter_room(int16 eib_nr) {
 	ENTRY(67);
 	ENTRY(68);
 	ENTRY_NR(69);
+	ENTRY(70);
+	ENTRY(71);
+	ENTRY(72);
+	ENTRY(73);
+	ENTRY(74);
+	ENTRY(75);
+	ENTRY(76);
+	ENTRY(77);
+	ENTRY(78);
+	ENTRY(79);
+	ENTRY(80);
+	ENTRY(81);
+	ENTRY(82);
+	ENTRY(83);
+	ENTRY(84);
+	ENTRY_NR(85);
+	ENTRY_NR(86);
+	ENTRY(87);
+	ENTRY(88);
+	ENTRY(89);
+	ENTRY_NR(90);
+	ENTRY(91);
+	ENTRY(92);
+	ENTRY(93);
+	ENTRY(94);
+	ENTRY_NR(95);
+	ENTRY(96);
+	ENTRY(97);
 
-	case 70: r70_entry(); break;
-	case 71: r71_entry(); break;
-	case 72: r72_entry(); break;
-	case 73: r73_entry(); break;
-	case 74: r74_entry(); break;
-	case 75: r75_entry(); break;
-	case 76: r76_entry(); break;
-	case 77: r77_entry(); break;
-	case 78: r78_entry(); break;
-	case 79: r79_entry(); break;
-	case 80: r80_entry(); break;
-	case 81: r81_entry(); break;
-	case 82: r82_entry(); break;
-	case 83: r83_entry(); break;
-	case 84: r84_entry(); break;
-	case 85: r85_entry(eib_nr); break;
-	case 86: r86_entry(eib_nr); break;
-	case 87: r87_entry(); break;
-	case 88: r88_entry(); break;
-	case 89: r89_entry(); break;
-	case 90: r90_entry(eib_nr); break;
-	case 91: r91_entry(); break;
-	case 92: r92_entry(); break;
-	case 93: r93_entry(); break;
-	case 94: r94_entry(); break;
-	case 95: r95_entry(eib_nr); break;
-	case 96: r96_entry(); break;
-	case 97: r97_entry(); break;
 	default:
 		break;
 	}
@@ -822,11 +822,11 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 65: Room65::xit(); break;
-	case 76: r76_exit(); break;
-	case 77: r77_exit(); break;
-	case 78: r78_exit(); break;
-	case 79: r79_exit(); break;
-	case 88: r88_exit(); break;
+	case 76: Room76::xit(); break;
+	case 77: Room77::xit(); break;
+	case 78: Room78::xit(); break;
+	case 79: Room79::xit(); break;
+	case 88: Room88::xit(); break;
 
 	default:
 		no_exit = true;
@@ -1028,26 +1028,26 @@ void exit_room(int16 eib_nr) {
 		case 67: Room67::xit(); break;
 		case 68: Room68::xit(); break;
 		case 69: Room69::xit(eib_nr); break;
-		case 70: r70_exit(eib_nr); break;
-		case 71: r71_exit(eib_nr); break;
-		case 72: r72_exit(eib_nr); break;
-		case 73: r73_exit(eib_nr); break;
-		case 74: r74_exit(eib_nr); break;
-		case 75: r75_exit(eib_nr); break;
-		case 81: r81_exit(eib_nr); break;
-		case 82: r82_exit(eib_nr); break;
-		case 84: r84_exit(eib_nr); break;
-		case 85: r85_exit(eib_nr); break;
-		case 86: r86_exit(eib_nr); break;
-		case 87: r87_exit(eib_nr); break;
-		case 89: r89_exit(); break;
-		case 90: r90_exit(eib_nr); break;
-		case 91: r91_exit(eib_nr); break;
-		case 93: r93_exit(); break;
-		case 94: r94_exit(); break;
-		case 95: r95_exit(eib_nr); break;
-		case 96: r96_exit(eib_nr); break;
-		case 97: r97_exit(); break;
+		case 70: Room70::xit(eib_nr); break;
+		case 71: Room71::xit(eib_nr); break;
+		case 72: Room72::xit(eib_nr); break;
+		case 73: Room73::xit(eib_nr); break;
+		case 74: Room74::xit(eib_nr); break;
+		case 75: Room75::xit(eib_nr); break;
+		case 81: Room81::xit(eib_nr); break;
+		case 82: Room82::xit(eib_nr); break;
+		case 84: Room84::xit(eib_nr); break;
+		case 85: Room85::xit(eib_nr); break;
+		case 86: Room86::xit(eib_nr); break;
+		case 87: Room87::xit(eib_nr); break;
+		case 89: Room89::xit(); break;
+		case 90: Room90::xit(eib_nr); break;
+		case 91: Room91::xit(eib_nr); break;
+		case 93: Room93::xit(); break;
+		case 94: Room94::xit(); break;
+		case 95: Room95::xit(eib_nr); break;
+		case 96: Room96::xit(eib_nr); break;
+		case 97: Room97::xit(); break;
 		default: break;
 		}
 	}

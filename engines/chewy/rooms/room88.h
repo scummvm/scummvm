@@ -19,11 +19,22 @@
  *
  */
 
-#include "chewy/defines.h"
-#include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/episode5.h"
+#ifndef CHEWY_ROOMS_ROOM88_H
+#define CHEWY_ROOMS_ROOM88_H
 
 namespace Chewy {
+namespace Rooms {
 
+class Room88 {
+public:
+	static void entry();
+	static void xit();
+	static int proc1();
+	static int proc2();
+	static int proc3();
+};
+
+} // namespace Rooms
 } // namespace Chewy
+
+#endif

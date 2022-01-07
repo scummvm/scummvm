@@ -20,10 +20,70 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/episode5.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room97.h"
 
 namespace Chewy {
+namespace Rooms {
 
+void Room97::entry() {
+}
+
+void Room97::xit() {
+}
+
+void Room97::proc2() {
+}
+
+void Room97::proc3() {
+}
+
+void Room97::proc4() {
+}
+
+int Room97::proc5() {
+	return 0;
+}
+
+int Room97::proc6() {
+	return 0;
+}
+
+int Room97::proc7() {
+	return 0;
+}
+
+int Room97::proc8() {
+	return 0;
+}
+
+int Room97::proc9() {
+	return 0;
+}
+
+int Room97::proc10() {
+	return 0;
+}
+
+int Room97::proc11() {
+	return 0;
+}
+
+void Room97::proc12() {
+}
+
+void Room97::proc13() {
+}
+
+int Room97::proc14() {
+	return 0;
+}
+
+void Room97::proc15() {
+}
+
+} // namespace Rooms
 } // namespace Chewy
