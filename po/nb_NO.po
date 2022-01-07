@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-06 17:36+0000\n"
-"PO-Revision-Date: 2021-12-22 19:04+0000\n"
+"PO-Revision-Date: 2022-01-07 18:12+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4379,15 +4379,6 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spillet er satt på pause. Trykk på OK for å fortsette."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
-#| msgid ""
-#| "ScummVM found that you have old saved games for Drascula that should be "
-#| "converted.\n"
-#| "The old saved game format is no longer supported, so you will not be able "
-#| "to load your games if you don't convert them.\n"
-#| "\n"
-#| "Press OK to convert them now, otherwise you will be asked again the next "
-#| "time you start the game.\n"
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4397,30 +4388,20 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM har oppdaget at du har eldre lagrede spill for Drascula som burde "
-"bli konvertert.\n"
-"Det gamle formatet for lagrede spill støttes ikke lengre, så du vil ikke "
-"kunne laste inn eksisterende lagrede spillene om du ikke konverterer dem "
-"først.\n"
+"ScummVM har oppdaget at du har lagrede spill som burde bli konvertert fra "
+"sitt opprinnelige lagringsformat.\n"
+"Det opprinnelige lagringsformatet har ikke lengre direkte støtte, så du vil "
+"ikke kunne laste inn eksisterende lagrede spillene om du ikke konverterer "
+"dem først.\n"
 "\n"
 "Trykk på OK for å konvertere dem nå, ellers vil du bli spurt igjen neste "
 "gang du starter spillet.\n"
-"\n"
-"Det gamle formatet for lagrede spill støttes ikke lengre, så du vil ikke "
-"være i stand til å laste de lagrede spillene,\n"
-"med mindre du konverterer dem.\n"
-"Trykk OK for å konvertere dem nå, ellers vil du bli spurt igjen neste gang "
-"du starter spillet.\n"
 
 #: engines/buried/saveload.cpp:165
-#, fuzzy
-#| msgid ""
-#| "This saved game was created with a different version of the game, unable "
-#| "to load it"
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
-"Det lagrede spillet ble opprettet med en annen versjon av spillet, og det "
-"lagrede spillet kan ikke bli lastet inn."
+"Lagret spill ble opprettet med en nyere versjon av ScummVM. Kan ikke laste "
+"inn."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -5141,22 +5122,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Ønsker du å lagre eller gjenopprette et spill?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Dette spillet støttes ikke."
+msgstr "Minotaur-minispillet støttes ikke ennå. Hopper over minispillet."
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Dette spillet støttes ikke."
+msgstr "Medusa-minispillet støttes ikke ennå. Hopper over minispillet."
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Dette spillet støttes ikke."
+msgstr "Troja-minispillet støttes ikke ennå. Hopper over minispillet."
 
 #: engines/hdb/detection.cpp:123
 msgid "Enable cheat mode"
@@ -5213,7 +5188,7 @@ msgstr "Aktiver juksefunksjoner"
 
 #: engines/hypno/detection.cpp:170
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Tillat juksefunksjoner med C-tasten."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -7922,11 +7897,11 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Juleinnhold alltid aktivert"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Aktiver julemusikken til enhver tid på året."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
