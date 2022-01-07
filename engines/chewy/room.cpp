@@ -26,6 +26,13 @@
 
 namespace Chewy {
 
+const int16 SURIMY_TAF19_PHASEN[4][2] = {
+	{ 0, 0 },
+	{ 39, 46 },
+	{ 0, 0 },
+	{ 0, 0 }
+};
+
 Room::Room() {
 	int16 i;
 	room_timer.TimerAnz = 0;
