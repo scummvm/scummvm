@@ -251,7 +251,6 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 		int stateSoundId = 0;
 		int seqSoundId = 0;
 
-		// TODO: Check if FT actually works here
 		if (_vm->_game.id == GID_DIG) {
 			stateSoundId = _digStateMusicTable[_curMusicState].soundId;
 			seqSoundId = _digSeqMusicTable[_curMusicSeq].soundId;

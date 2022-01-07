@@ -188,6 +188,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		int[] version = new int[2];
 		_egl.eglInitialize(_egl_display, version);
+		Log.d(LOG_TAG, String.format(Locale.ROOT, "EGL version %d.%d initialized", version[0], version[1]));
 
 		int[] num_config = new int[1];
 		_egl.eglGetConfigs(_egl_display, null, 0, num_config);
@@ -202,7 +203,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		// Android's eglChooseConfig is busted in several versions and
 		// devices so we have to filter/rank the configs ourselves.
-		_egl_config = chooseEglConfig(configs);
+		_egl_config = chooseEglConfig(configs, version);
 
 		int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 		int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -359,8 +360,11 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		EGL10.EGL_TRANSPARENT_TYPE,
 		EGL10.EGL_TRANSPARENT_RED_VALUE,
 		EGL10.EGL_TRANSPARENT_GREEN_VALUE,
-		EGL10.EGL_TRANSPARENT_BLUE_VALUE
+		EGL10.EGL_TRANSPARENT_BLUE_VALUE,
+		EGL10.EGL_RENDERABLE_TYPE
 	};
+	final private static int EGL_OPENGL_ES_BIT = 1;
+	final private static int EGL_OPENGL_ES2_BIT = 4;
 
 	final private class EglAttribs  {
 
@@ -402,6 +406,11 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 			if (get(EGL10.EGL_CONFIG_CAVEAT) != EGL10.EGL_NONE)
 				score -= 1000;
+
+			// If there is a config with EGL_OPENGL_ES2_BIT it must be favored
+			// This attribute can only be checked with EGL 1.3 but it may be present on older versions
+			if ((get(EGL10.EGL_RENDERABLE_TYPE) & EGL_OPENGL_ES2_BIT) > 0)
+				score += 5000;
 
 			// less MSAA is better
 			score -= get(EGL10.EGL_SAMPLES) * 100;
@@ -451,6 +460,12 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			if ((get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_PIXMAP_BIT) > 0)
 				s += " X";
 
+			if ((get(EGL10.EGL_RENDERABLE_TYPE) & EGL_OPENGL_ES_BIT) > 0)
+				s += " ES";
+			if ((get(EGL10.EGL_RENDERABLE_TYPE) & EGL_OPENGL_ES2_BIT) > 0)
+				s += " ES2";
+
+
 			switch (get(EGL10.EGL_CONFIG_CAVEAT)) {
 			case EGL10.EGL_NONE:
 				break;
@@ -479,7 +494,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		}
 	}
 
-	private EGLConfig chooseEglConfig(EGLConfig[] configs) {
+	private EGLConfig chooseEglConfig(EGLConfig[] configs, int[] version) {
 		EGLConfig res = configs[0];
 		int bestScore = -1;
 
@@ -495,6 +510,12 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				if ((attr.get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) == 0)
 					good = false;
 
+				if (version[0] >= 2 ||
+					(version[0] == 1 && version[1] >= 3)) {
+					// EGL_OPENGL_ES2_BIT is only supported since EGL 1.3
+					if ((attr.get(EGL10.EGL_RENDERABLE_TYPE) & EGL_OPENGL_ES2_BIT) == 0)
+						good = false;
+				}
 				if (attr.get(EGL10.EGL_BUFFER_SIZE) < bitsPerPixel)
 					good = false;
 
