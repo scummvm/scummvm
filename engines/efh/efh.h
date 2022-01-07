@@ -307,11 +307,11 @@ private:
 	void writeTechAndMapFiles();
 	uint16 getStringWidth(const char *buffer);
 	void setTextPos(int16 textPosX, int16 textPosY);
-	void sub15150(bool flag);
+	void drawGameScreenAndTempText(bool flag);
 	void drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 mapSize, bool drawHeroFl, bool drawMonstersFl);
 	void displaySmallMap(int16 posX, int16 posY);
 	void displayLargeMap(int16 posX, int16 posY);
-	void redrawScreen();
+	void drawScreen();
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
 	void removeObject(int16 charId, int16 objectId);
@@ -554,7 +554,6 @@ private:
 	int16 _word2C872;
 	bool _word2C880;
 	bool _redrawNeededFl;
-	bool _word2C8D7;
 	bool _drawHeroOnMapFl;
 	bool _drawMonstersOnMapFl;
 	bool _word2C87A;
@@ -570,10 +569,11 @@ private:
 
 	uint16 _tempTextDelay;
 	uint8 *_tempTextPtr;
-	bool _word2C8D9;
+	bool _dbgForceDisplayUpperRightBorder; // Original debug flag? Always false.
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
+	bool _word2C8D7; // Original debug flag? Always true.
 	bool _word2D0BC;
-	bool _word2C8D2;
+	bool _statusMenuActive;
 	int16 _menuDepth;
 	int16 _word2D0BA;
 	int16 _word32680[3];

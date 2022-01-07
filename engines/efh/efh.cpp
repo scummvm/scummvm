@@ -297,10 +297,10 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_drawMonstersOnMapFl = true;
 	_word2C87A = false;
 	_unk_sub26437_flag = 0;
-	_word2C8D9 = false;
+	_dbgForceDisplayUpperRightBorder = false;
 	_dbgForceMonsterBlock = false;
 	_word2D0BC = false;
-	_word2C8D2 = false;
+	_statusMenuActive = false;
 	_menuDepth = 0;
 	_word2D0BA = 0;
 
@@ -389,8 +389,8 @@ Common::Error EfhEngine::run() {
 */
 
 	initEngine();
-	sub15150(true);
-	redrawScreen();
+	drawGameScreenAndTempText(true);
+	drawScreen();
 	displayLowStatusScreen(true);
 
 	if (!_protectionPassed)
@@ -454,7 +454,7 @@ Common::Error EfhEngine::run() {
 			if (_teamCharId[0] != -1) {
 				handleStatusMenu(1, _teamCharId[0]);
 				_tempTextPtr = nullptr;
-				sub15150(true);
+				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
 			break;
@@ -462,7 +462,7 @@ Common::Error EfhEngine::run() {
 			if (_teamCharId[1] != -1) {
 				handleStatusMenu(1, _teamCharId[1]);
 				_tempTextPtr = nullptr;
-				sub15150(true);
+				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
 			break;
@@ -470,7 +470,7 @@ Common::Error EfhEngine::run() {
 			if (_teamCharId[2] != -1) {
 				handleStatusMenu(1, _teamCharId[2]);
 				_tempTextPtr = nullptr;
-				sub15150(true);
+				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
 			break;
@@ -551,7 +551,7 @@ Common::Error EfhEngine::run() {
 		}
 
 		if (_redrawNeededFl && !_shouldQuit) {
-			redrawScreen();
+			drawScreen();
 			displayLowStatusScreen(true);
 		}
 
@@ -1135,14 +1135,16 @@ uint16 EfhEngine::sub1C80A(int16 charId, int16 field18, bool flag) {
 	return 0x7FFF;
 }
 
-void EfhEngine::sub15150(bool flag) {
-	debug("sub15150 %s", flag ? "True" : "False");
+void EfhEngine::drawGameScreenAndTempText(bool flag) {
+	debugC(2, kDebugEngine, "drawGameScreenAndTempText %s", flag ? "True" : "False");
 
+	#if 0
+	// This code is present in the original, but looks strictly useless.
 	uint8 mapTileInfo = getMapTileInfo(_mapPosX, _mapPosY);
 	int16 imageSetId = _currentTileBankImageSetId[mapTileInfo / 72];
 
 	int16 mapImageSetId = (imageSetId * 72) + (mapTileInfo % 72);
-	// CHECKME : Why do we compute this Id if we don't use it?
+	#endif
 	
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -1267,8 +1269,8 @@ void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
 	drawMap(true, posX, posY, 63, _drawHeroOnMapFl, _drawMonstersOnMapFl);
 }
 
-void EfhEngine::redrawScreen() {
-	debug("redrawScreen");
+void EfhEngine::drawScreen() {
+	debug("drawScreen");
 	
 	for (int16 counter = 0; counter < 2; ++counter) {
 		_redrawNeededFl = false;
@@ -1276,13 +1278,13 @@ void EfhEngine::redrawScreen() {
 			if (_fullPlaceId != 0xFF)
 				displaySmallMap(_mapPosX, _mapPosY);
 
-			if (_word2C8D9)
+			if (_dbgForceDisplayUpperRightBorder)
 				drawUpperRightBorders();
 		} else {
 			if (_techId != 0xFF)
 				displayLargeMap(_mapPosX, _mapPosY);
 			
-			if (_word2C8D9)
+			if (_dbgForceDisplayUpperRightBorder)
 				drawUpperRightBorders();
 		}
 		if (counter == 0)
@@ -2113,7 +2115,7 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 			int16 var2 = var8 + varC;
 			_mapGameMap[var4][var2] = _curPlace[counter][var8];
 		}
-		redrawScreen();
+		drawScreen();
 	}
 
 	for (int16 counter = 1; counter <= 23; counter += 2) {
@@ -2122,7 +2124,7 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 			int16 var2 = var8 + varC;
 			_mapGameMap[var4][var2] = _curPlace[counter][var8];
 		}
-		redrawScreen();
+		drawScreen();
 	}
 
 	getLastCharAfterAnimCount(3);
@@ -2415,7 +2417,7 @@ bool EfhEngine::handleDeathMenu() {
 
 	displayAnimFrames(20, true);
 	_imageSetSubFilesIdx = 213;
-	redrawScreen();
+	drawScreen();
 
 	for (int16 counter = 0; counter < 2; ++counter) {
 		clearBottomTextZone(0);
@@ -3175,8 +3177,8 @@ void EfhEngine::sub22AA8(int16 arg0) {
 			_tempTextPtr = nullptr;
 			displayMiddleLeftTempText(_tempTextPtr, true);
 		}
-		if (_word2C8D2)
-			sub15150(true);
+		if (_statusMenuActive)
+			drawGameScreenAndTempText(true);
 
 		int16 var4 = arg0;
 
@@ -3513,7 +3515,7 @@ void EfhEngine::redrawScreenForced() {
 	debug("redrawScreenForced");
 	
 	for (int16 counter = 0; counter < 2; ++counter) {
-		redrawScreen();
+		drawScreen();
 		if (counter == 0)
 			displayFctFullScreen();
 	}
@@ -3608,7 +3610,7 @@ void EfhEngine::sub1CAB6(int16 charId) {
 	debug("sub1CAB6 %d", charId);
 
 	for (int16 counter = 0; counter < 2; ++counter) {
-		sub15150(false);
+		drawGameScreenAndTempText(false);
 		displayLowStatusScreen(false);
 		drawCombatScreen(charId, false, false);
 		if (counter == 0)
@@ -6305,7 +6307,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 	saveAnimImageSetId();
 
-	_word2C8D2 = true;
+	_statusMenuActive = true;
 	_menuDepth = 0;
 
 	sub18E80(charId, windowId, menuId, curMenuLine);
@@ -6467,7 +6469,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			sub191FF(charId, objectId, windowId, menuId, curMenuLine);
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
-				_word2C8D2 = false;
+				_statusMenuActive = false;
 				return 0x7D00;
 			}
 			break;
@@ -6476,11 +6478,11 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
-				_word2C8D2 = false;
+				_statusMenuActive = false;
 				return objectId;
 			} else {
 				if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
-					_word2C8D2 = false;
+					_statusMenuActive = false;
 					return -1;
 				} else {
 					sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
@@ -6505,7 +6507,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						removeObject(charId, objectId);
 						int16 var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1);
 						if (var8 != 0) {
-							_word2C8D2 = false;
+							_statusMenuActive = false;
 							return -1;
 						}
 					}
@@ -6562,7 +6564,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						removeObject(charId, objectId);
 						if (gameMode == 2) {
 							restoreAnimImageSetId();
-							_word2C8D2 = false;
+							_statusMenuActive = false;
 							return 0x7D00;
 						}
 					}
@@ -6586,13 +6588,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					removeObject(charId, objectId);
 					if (gameMode == 2) {
 						restoreAnimImageSetId();
-						_word2C8D2 = false;
+						_statusMenuActive = false;
 						return 0x7D00;
 					}
 
 					bool var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1);
 					if (var8) {
-						_word2C8D2 = false;
+						_statusMenuActive = false;
 						return -1;
 					}
 				}
@@ -6605,7 +6607,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
-					_word2C8D2 = false;
+					_statusMenuActive = false;
 					return -1;
 				}
 			}
@@ -6617,7 +6619,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
-					_word2C8D2 = false;
+					_statusMenuActive = false;
 					return -1;
 				}
 			}
@@ -6629,7 +6631,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			} else {
 				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
 				if (var8) {
-					_word2C8D2 = false;
+					_statusMenuActive = false;
 					return -1;
 				}
 			}
@@ -6648,7 +6650,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 		if (menuId == 8) {
 			restoreAnimImageSetId();
-			_word2C8D2 = false;
+			_statusMenuActive = false;
 			return 0x7FFF;
 		}
 	}
@@ -6754,7 +6756,7 @@ bool EfhEngine::checkMonsterCollision() {
 				var6A = handleStatusMenu(1, _teamCharId[0]);
 				var68 = true;
 				_tempTextPtr = nullptr;
-				sub15150(true);
+				drawGameScreenAndTempText(true);
 				break;
 			case Common::KEYCODE_t: // Talk
 				sub221D2(monsterId);
@@ -6804,7 +6806,7 @@ void EfhEngine::checkProtection() {
 	//CHECKME : Well, yeah, some code may be missing there. Who knows.
 	
 	_protectionPassed = true;
-	sub15150(true);	
+	drawGameScreenAndTempText(true);	
 }
 
 void EfhEngine::loadEfhGame() {
@@ -6867,7 +6869,7 @@ void EfhEngine::saveEfhGame() {
 }
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
-	debug("getMapTileInfo %d-%d", mapPosX, mapPosY);
+	debugC(3, kDebugEngine, "getMapTileInfo %d-%d", mapPosX, mapPosY);
 
 	if (_largeMapFlag)
 		return _mapGameMap[mapPosX][mapPosY];
