@@ -4961,6 +4961,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 	debug("handleFight %d", monsterId);
 
 	int16 var8C = 0;
+	_word2D0BC = true;
 
 	sub1BE89(monsterId);
 
