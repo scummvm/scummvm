@@ -944,6 +944,7 @@ void SpiderEngine::loadAssetsDemo() {
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["<puz_matr>"] = matrix;
 	_soundPath = "c_misc/sound.lib/";
+	_defaultCursor = "mouse/cursor1.smk";
 	_nextLevel = "<start>";
 }
 

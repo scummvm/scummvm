@@ -513,7 +513,6 @@ static void alarmCallback(void *refCon) {
 
 static void countdownCallback(void *refCon) {
 	g_hypno->_countdown = g_hypno->_countdown - 1;
-	debug("countdown: %d", g_hypno->_countdown);
 }
 
 bool HypnoEngine::startAlarm(uint32 delay, Common::String *ns) {

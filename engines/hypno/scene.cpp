@@ -262,7 +262,7 @@ void HypnoEngine::runScene(Scene *scene) {
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
 	bool enableLoopingVideos = true;
-
+	int32 lastCountdown = 0;
 	// These variables are always resetted
 	_sceneState["GS_LEVELCOMPLETE"] = 0;
 	_sceneState["GS_LEVELWON"] = 0;
@@ -274,7 +274,9 @@ void HypnoEngine::runScene(Scene *scene) {
 	while (!shouldQuit() && _nextLevel.empty()) {
 		
 		if (_timerStarted && _videosPlaying.empty() && !_nextHotsToRemove) {
-			if (_countdown > 0) {
+
+			if (lastCountdown == _countdown) {}
+			else if (_countdown > 0) {
 				uint32 c = _pixelFormat.RGBToColor(255, 0, 0);
 				runMenu(*stack.back());
 				uint32 minutes = _countdown / 60;
@@ -288,6 +290,7 @@ void HypnoEngine::runScene(Scene *scene) {
 				resetSceneState();
 				continue; 
 			}
+			lastCountdown = _countdown;
 		}
 
 		while (g_system->getEventManager()->pollEvent(event)) {
