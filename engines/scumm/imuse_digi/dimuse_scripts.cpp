@@ -861,7 +861,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 					default:
 						diMUSESwitchStream(oldSoundId, table->soundId, fadeDelay, 0, 0);
 						diMUSESetParam(table->soundId, DIMUSE_P_VOLUME, 127);
-						diMUSESetParam(table->soundId, DIMUSE_P_GROUP, 4);
+						diMUSESetParam(table->soundId, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSICEFF);
 						diMUSESetHook(table->soundId, hookId);
 						diMUSEProcessStreams();
 						break;
