@@ -20,10 +20,24 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/episode5.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room74.h"
 
 namespace Chewy {
+namespace Rooms {
 
+void Room74::entry() {
+}
+
+void Room74::xit(int16 eib_nr) {
+}
+
+int Room74::proc1() {
+	return 0;
+}
+
+} // namespace Rooms
 } // namespace Chewy

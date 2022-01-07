@@ -604,159 +604,159 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 430:
-						action_ret = r73_proc1();
+						action_ret = Room73::proc1();
 						break;
 
 					case 433:
-						action_ret = r73_proc2();
+						action_ret = Room73::proc2();
 						break;
 
 					case 435:
-						action_ret = r74_proc1();
+						action_ret = Room74::proc1();
 						break;
 
 					case 442:
-						action_ret = r77_proc1();
+						action_ret = Room77::proc1();
 						break;
 
 					case 443:
-						action_ret = r71_proc6();
+						action_ret = Room71::proc6();
 						break;
 
 					case 450:
-						action_ret = r76_proc6();
+						action_ret = Room76::proc6();
 						break;
 
 					case 452:
-						action_ret = r76_proc7();
+						action_ret = Room76::proc7();
 						break;
 
 					case 463:
-						action_ret = r77_proc1();
+						action_ret = Room77::proc1();
 						break;
 
 					case 464:
-						action_ret = r77_proc2();
+						action_ret = Room77::proc2();
 						break;
 
 					case 467:
 					case 473:
-						action_ret = r82_proc9();
+						action_ret = Room82::proc9();
 						break;
 
 					case 468:
-						action_ret = r82_proc6();
+						action_ret = Room82::proc6();
 						break;
 
 					case 471:
-						action_ret = r82_proc3();
+						action_ret = Room82::proc3();
 						break;
 
 
 					case 481:
 					case 482:
-						action_ret = r84_proc4();
+						action_ret = Room84::proc4();
 						break;
 
 					case 487:
-						r81_proc1();
+						Room81::proc1();
 						break;
 
 					case 490:
-						action_ret = r81_proc2();
+						action_ret = Room81::proc2();
 						break;
 
 					case 492:
-						action_ret = r88_proc2();
+						action_ret = Room88::proc2();
 						break;
 
 					case 493:
-						action_ret = r88_proc3();
+						action_ret = Room88::proc3();
 						break;
 
 					case 494:
-						action_ret = r88_proc1();
+						action_ret = Room88::proc1();
 						break;
 
 					case 495:
-						action_ret = r88_proc2();
+						action_ret = Room88::proc2();
 						break;
 
 					case 497:
-						action_ret = r86_proc2();
+						action_ret = Room86::proc2();
 						break;
 
 					case 501:
 					case 503:
-						action_ret = r87_proc2();
+						action_ret = Room87::proc2();
 						break;
 
 					case 502:
-						action_ret = r87_proc4();
+						action_ret = Room87::proc4();
 						break;
 
 					case 508:
-						action_ret = r89_proc2();
+						action_ret = Room89::proc2();
 						break;
 
 					case 509:
-						action_ret = r89_proc5();
+						action_ret = Room89::proc5();
 						break;
 
 					case 514:
-						action_ret = r89_proc4();
+						action_ret = Room89::proc4();
 						break;
 
 					case 517:
-						action_ret = r90_proc3();
+						action_ret = Room90::proc3();
 						break;
 
 					case 519:
-						action_ret = r90_proc4();
+						action_ret = Room90::proc4();
 						break;
 
 					case 520:
-						action_ret = r90_proc6();
+						action_ret = Room90::proc6();
 						break;
 
 					case 522:
-						action_ret = r94_proc3();
+						action_ret = Room94::proc3();
 						break;
 
 					case 525:
-						action_ret = r95_proc2();
+						action_ret = Room95::proc2();
 						break;
 
 					case 530:
-						action_ret = r97_proc8();
+						action_ret = Room97::proc8();
 						break;
 
 					case 531:
-						action_ret = r97_proc6();
+						action_ret = Room97::proc6();
 						break;
 
 					case 535:
-						action_ret = r97_proc11();
+						action_ret = Room97::proc11();
 						break;
 
 					case 538:
-						action_ret = r97_proc7();
+						action_ret = Room97::proc7();
 						break;
 
 					case 539:
-						action_ret = r97_proc9();
+						action_ret = Room97::proc9();
 						break;
 
 					case 541:
-						action_ret = r97_proc14();
+						action_ret = Room97::proc14();
 						break;
 
 					case 542:
-						action_ret = r97_proc5();
+						action_ret = Room97::proc5();
 						break;
 
 					case 543:
-						action_ret = r97_proc10();
+						action_ret = Room97::proc10();
 						break;
 
 					default:
@@ -808,7 +808,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 487:
 					case 489:
-						r81_proc1();
+						Room81::proc1();
 						break;
 						
 					default:
@@ -965,31 +965,31 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 447:
 					case 448:
-						r76_talk1();
+						Room76::talk1();
 						break;
 
 					case 458:
-						r76_talk2();
+						Room76::talk2();
 						break;
 
 					case 468:
-						r82_talk1();
+						Room82::talk1();
 						break;
 
 					case 469:
-						r82_talk2();
+						Room82::talk2();
 						break;
 
 					case 471:
-						r82_talk3();
+						Room82::talk3();
 						break;
 
 					case 478:
-						r84_talk1();
+						Room84::talk1();
 						break;
 
 					case 504:
-						r84_talk2();
+						Room84::talk2();
 						break;
 
 					case 505:
@@ -1001,11 +1001,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 512:
-						r89_talk1();
+						Room89::talk1();
 						break;
 
 					case 522:
-						r94_talk1();
+						Room94::talk1();
 						break;
 
 					default:
@@ -2393,7 +2393,7 @@ int16 calc_person_click(int16 p_nr) {
 			break;
 
 		case 112:
-			r90_proc2();
+			Room90::proc2();
 			action_ret = true;
 			break;
 
@@ -2530,7 +2530,7 @@ void calc_person_dia(int16 p_nr) {
 			else if (_G(spieler).flags30_10)
 				_G(spieler).PersonDia[p_nr] = 533;
 			else
-				r82_proc8();
+				Room82::proc8();
 			break;
 
 		case 53:
@@ -2571,7 +2571,7 @@ void calc_person_dia(int16 p_nr) {
 		case 59:
 			if (p_nr == P_NICHELLE) {
 				if (!_G(spieler).flags28_4) {
-					r71_proc7();
+					Room71::proc7();
 					_G(spieler).PersonDia[p_nr] = -1;
 				}
 			} else if (!_G(spieler).flags28_4) {

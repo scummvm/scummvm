@@ -85,13 +85,34 @@
 #include "chewy/rooms/room67.h"
 #include "chewy/rooms/room68.h"
 #include "chewy/rooms/room69.h"
-
-// TODO: Remove one room classes implemented and split up
-#include "chewy/episode1.h"
-#include "chewy/episode2.h"
-#include "chewy/episode3.h"
-#include "chewy/episode4.h"
-#include "chewy/episode5.h"
+#include "chewy/rooms/room70.h"
+#include "chewy/rooms/room71.h"
+#include "chewy/rooms/room72.h"
+#include "chewy/rooms/room73.h"
+#include "chewy/rooms/room74.h"
+#include "chewy/rooms/room75.h"
+#include "chewy/rooms/room76.h"
+#include "chewy/rooms/room77.h"
+#include "chewy/rooms/room78.h"
+#include "chewy/rooms/room79.h"
+#include "chewy/rooms/room80.h"
+#include "chewy/rooms/room81.h"
+#include "chewy/rooms/room82.h"
+#include "chewy/rooms/room83.h"
+#include "chewy/rooms/room84.h"
+#include "chewy/rooms/room85.h"
+#include "chewy/rooms/room86.h"
+#include "chewy/rooms/room87.h"
+#include "chewy/rooms/room88.h"
+#include "chewy/rooms/room89.h"
+#include "chewy/rooms/room90.h"
+#include "chewy/rooms/room91.h"
+#include "chewy/rooms/room92.h"
+#include "chewy/rooms/room93.h"
+#include "chewy/rooms/room94.h"
+#include "chewy/rooms/room95.h"
+#include "chewy/rooms/room96.h"
+#include "chewy/rooms/room97.h"
 
 namespace Chewy {
 
@@ -158,6 +179,34 @@ using Chewy::Rooms::Room66;
 using Chewy::Rooms::Room67;
 using Chewy::Rooms::Room68;
 using Chewy::Rooms::Room69;
+using Chewy::Rooms::Room70;
+using Chewy::Rooms::Room71;
+using Chewy::Rooms::Room72;
+using Chewy::Rooms::Room73;
+using Chewy::Rooms::Room74;
+using Chewy::Rooms::Room75;
+using Chewy::Rooms::Room76;
+using Chewy::Rooms::Room77;
+using Chewy::Rooms::Room78;
+using Chewy::Rooms::Room79;
+using Chewy::Rooms::Room80;
+using Chewy::Rooms::Room81;
+using Chewy::Rooms::Room82;
+using Chewy::Rooms::Room83;
+using Chewy::Rooms::Room84;
+using Chewy::Rooms::Room85;
+using Chewy::Rooms::Room86;
+using Chewy::Rooms::Room87;
+using Chewy::Rooms::Room88;
+using Chewy::Rooms::Room89;
+using Chewy::Rooms::Room90;
+using Chewy::Rooms::Room91;
+using Chewy::Rooms::Room92;
+using Chewy::Rooms::Room93;
+using Chewy::Rooms::Room94;
+using Chewy::Rooms::Room95;
+using Chewy::Rooms::Room96;
+using Chewy::Rooms::Room97;
 
 } // namespace Chewy
 

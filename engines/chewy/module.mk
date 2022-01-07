@@ -114,7 +114,35 @@ MODULE_OBJS = \
 	rooms/room66.o \
 	rooms/room67.o \
 	rooms/room68.o \
-	rooms/room69.o
+	rooms/room69.o \
+	rooms/room70.o \
+	rooms/room71.o \
+	rooms/room72.o \
+	rooms/room73.o \
+	rooms/room74.o \
+	rooms/room75.o \
+	rooms/room76.o \
+	rooms/room77.o \
+	rooms/room78.o \
+	rooms/room79.o \
+	rooms/room80.o \
+	rooms/room81.o \
+	rooms/room82.o \
+	rooms/room83.o \
+	rooms/room84.o \
+	rooms/room85.o \
+	rooms/room86.o \
+	rooms/room87.o \
+	rooms/room88.o \
+	rooms/room89.o \
+	rooms/room90.o \
+	rooms/room91.o \
+	rooms/room92.o \
+	rooms/room93.o \
+	rooms/room94.o \
+	rooms/room95.o \
+	rooms/room96.o \
+	rooms/room97.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)
