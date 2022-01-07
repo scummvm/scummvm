@@ -25,11 +25,6 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/rooms.h"
-#include "chewy/episode1.h"
-#include "chewy/episode2.h"
-#include "chewy/episode3.h"
-#include "chewy/episode4.h"
-#include "chewy/episode5.h"
 
 namespace Chewy {
 
