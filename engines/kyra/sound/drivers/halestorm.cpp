@@ -163,7 +163,7 @@ public:
 class HSSong {
 public:
 	HSSong() : _data(), _flags(0), _amplitudeScaleFlags(0), _interpolateType(0), _transpose(0), _tickLen(0), _tempo(0), _ticksPerSecond(0), _internalTempo(0),
-		_numChanMusic(0), _numChanSfx(0), _convertUnitSize(0), _midiResId(0), _fastForward(false), _loop(false), _busy(false) {}
+		_numChanMusic(0), _numChanSfx(0), _convertUnitSize(0), _midiResId(0), _scan(false), _loop(false), _ready(false) {}
 	void load(const ShStBuffer &data);
 	void reset();
 	void release();
@@ -186,10 +186,10 @@ public:
 	uint16 _tickLen;
 
 	bool _loop;
-	bool _busy;
+	bool _ready;
 
 	Common::Array<uint16> _programMappings;
-	bool _fastForward;
+	bool _scan;
 
 private:
 	void updateTempo();
@@ -368,7 +368,7 @@ private:
 	};
 
 	struct InstrumentEntry {
-		InstrumentEntry() : status(0), transpose(0), flags(0), flags2(0), refinst(0), sndRes(), pmData(), _noteRangeSubsets() {}
+		InstrumentEntry() : status(0), transpose(0), flags(0), flags2(0), refinst(0), sndRes(), pmData(), noteRangeSubsets() {}
 		enum {
 			kUnusable = -1,
 			kRequestLoad = 0,
@@ -381,7 +381,7 @@ private:
 		uint16 refinst;
 		ShStBuffer sndRes;
 		ShStBuffer pmData;
-		Common::Array<NoteRangeSubset> _noteRangeSubsets;
+		Common::Array<NoteRangeSubset> noteRangeSubsets;
 	};
 
 	InstrumentEntry *_instruments;
@@ -665,7 +665,7 @@ void HSSong::setTicksPerSecond(uint32 tps) {
 }
 
 void HSSong::updateTempo() {
-	_internalTempo = _fastForward ? 32767 : ((_ticksPerSecond << 6) / _tempo);
+	_internalTempo = _scan ? 32767 : ((_ticksPerSecond << 6) / _tempo);
 }
 
 HSMidiParser::HSMidiParser(HSLowLevelDriver *driver) : _driver(driver), _trackState(nullptr), _tracks(), _data(), _curCmd(0) {
@@ -997,7 +997,7 @@ int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 	for (int i = 0; i < 128; ++i)
 		_instruments[i].status = InstrumentEntry::kUnusable;
 
-	_song._fastForward = true;
+	_song._scan = true;
 	_midi->stopResource(-1);
 	if (!songStart())
 		error("HSLowLevelDriver::cmd_startSong(): Error reading song data.");
@@ -1005,16 +1005,16 @@ int HSLowLevelDriver::cmd_startSong(va_list &arg) {
 	// Fast-forward through the whole song to check which instruments need to be loaded
 	bool loop = _song._loop;
 	_song._loop = false;
-	_song._busy = true;
+	_song._ready = true;
 	for (bool lp = true; lp; lp = songIsPlaying())
 		songNextTick();
 
 	_song._loop = loop;
-	_song._busy = _song._fastForward = false;
+	_song._ready = _song._scan = false;
 	for (int i = 0; i < 128; ++i)
 		loadInstrument(i);
 
-	_song._busy = true;
+	_song._ready = true;
 	_midi->stopResource(-1);
 	if (!songStart())
 		error("HSLowLevelDriver::cmd_startSong(): Error reading song data.");
@@ -1055,7 +1055,7 @@ int HSLowLevelDriver::smd_stopSong3(va_list &arg) {
 }
 
 int HSLowLevelDriver::cmd_releaseSongData(va_list &arg) {
-	_song._busy = false;
+	_song._ready = false;
 	for (int i = 0; i < _song._numChanMusic; ++i)
 		_chan[i].status = -1;
 
@@ -1066,7 +1066,7 @@ int HSLowLevelDriver::cmd_releaseSongData(va_list &arg) {
 	for (int i = 0; i < 128; ++i) {
 		_instruments[i].pmData = ShStBuffer();
 		_instruments[i].sndRes = ShStBuffer();
-		_instruments[i]._noteRangeSubsets.clear();
+		_instruments[i].noteRangeSubsets.clear();
 	}
 
 	return 0;
@@ -1680,17 +1680,15 @@ void HSLowLevelDriver::songStopAllChannels() {
 }
 
 void HSLowLevelDriver::songNextTick() {
-	if (!_song._busy)
+	if (!_song._ready)
 		return;
 
-	bool active = _midi->nextTick(_song);
-
-	if (!active && _song._loop)
+	if (!_midi->nextTick(_song) && _song._loop)
 		songInit();
 }
 
 bool HSLowLevelDriver::songIsPlaying() {
-	if (!_song._busy)
+	if (!_song._ready)
 		return false;
 	if (_song._loop)
 		return true;
@@ -1699,7 +1697,7 @@ bool HSLowLevelDriver::songIsPlaying() {
 }
 
 void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uint16 ticker, const void *handle) {
-	if (_song._fastForward) {
+	if (_song._scan) {
 		_instruments[prg].status = InstrumentEntry::kRequestLoad;
 		return;
 	}
@@ -1719,7 +1717,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		if (_instruments[prg].transpose)
 			note2 = note2 + 60 - _instruments[prg].transpose;
 
-		if (!_instruments[prg]._noteRangeSubsets.size())
+		if (!_instruments[prg].noteRangeSubsets.size())
 			break;
 
 		uint8 ntier = 0;
@@ -1732,19 +1730,19 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 			if (flags2 & 1)
 				ntier = velo;
 
-			int num = _instruments[prg]._noteRangeSubsets.size();
+			int num = _instruments[prg].noteRangeSubsets.size();
 			nrTranspose = 0;
 
 			for (int ii = 0; ii < num && !nrs; ++ii) {
-				uint8 liml = _instruments[prg]._noteRangeSubsets[ii].rmin;
-				uint8 limu = _instruments[prg]._noteRangeSubsets[ii].rmax;
+				uint8 liml = _instruments[prg].noteRangeSubsets[ii].rmin;
+				uint8 limu = _instruments[prg].noteRangeSubsets[ii].rmax;
 
 				if (liml && liml > ntier) {
 					nrTranspose = 12;
 				} else if (limu < 127 && limu < ntier) {
 					nrTranspose = -12;
 				} else {
-					nrs = &_instruments[prg]._noteRangeSubsets[ii];
+					nrs = &_instruments[prg].noteRangeSubsets[ii];
 					break;
 				}
 			}
@@ -1922,7 +1920,7 @@ void HSLowLevelDriver::loadInstrument(int id) {
 		return;
 	}
 
-	_instruments[id]._noteRangeSubsets.clear();
+	_instruments[id].noteRangeSubsets.clear();
 	for (int num = inst->readUint16BE(); num; --num) {
 		uint8 liml = inst->readByte();
 		uint8 limu = inst->readByte();
@@ -1935,7 +1933,7 @@ void HSLowLevelDriver::loadInstrument(int id) {
 		tmp = loadInstrumentSamples(sndId, !((_instruments[id].flags & 0x1000) && smodPara1));
 		if ((_instruments[id].flags & 0x1000) && smodPara1)
 			tmp = processWithEffect(tmp, smodId, smodPara1, smodPara2);
-		_instruments[id]._noteRangeSubsets.push_back(NoteRangeSubset(liml, limu, tmp));
+		_instruments[id].noteRangeSubsets.push_back(NoteRangeSubset(liml, limu, tmp));
 	}
 
 	inst->skip(2);
