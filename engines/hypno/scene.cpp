@@ -246,15 +246,17 @@ void HypnoEngine::runTransition(Transition *trans) {
 		sframe->free();
 		delete sframe;
 		Common::String *ptr = new Common::String(nextLevel);
-		if (!installTimer(2 * 1000000, ptr)) // 2 seconds
-			error("Failed to install timer");
+		if (!startAlarm(2 * 1000000, ptr)) // 2 seconds
+			error("Failed to install alarm");
 	} else
 		_nextLevel = nextLevel;
 }
 
 
 void HypnoEngine::runScene(Scene *scene) {
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	_refreshConversation = false;
+	_timerStarted = false;
 	_conversation.clear();
 	Common::Event event;
 	Common::Point mousePos;
@@ -270,6 +272,23 @@ void HypnoEngine::runScene(Scene *scene) {
 	defaultCursor();
 
 	while (!shouldQuit() && _nextLevel.empty()) {
+		
+		if (_timerStarted && _videosPlaying.empty() && !_nextHotsToRemove) {
+			if (_countdown > 0) {
+				uint32 c = _pixelFormat.RGBToColor(255, 0, 0);
+				runMenu(*stack.back());
+				uint32 minutes = _countdown / 60;
+				uint32 seconds = _countdown % 60;
+			 	_font->drawString(_compositeSurface, Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
+				drawScreen();
+			} else {
+				assert(!scene->levelIfLose.empty());
+				_nextLevel = scene->levelIfLose;
+				debugC(1, kHypnoDebugScene, "Finishing level and jumping to %s", _nextLevel.c_str());
+				resetSceneState();
+				continue; 
+			}
+		}
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();

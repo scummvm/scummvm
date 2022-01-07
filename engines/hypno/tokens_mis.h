@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -29,6 +30,10 @@
 
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
+
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_HYPNO_MIS_ENGINES_HYPNO_TOKENS_MIS_H_INCLUDED
 # define YY_HYPNO_MIS_ENGINES_HYPNO_TOKENS_MIS_H_INCLUDED
@@ -48,75 +53,79 @@
 extern int HYPNO_MIS_debug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef HYPNO_MIS_TOKENTYPE
 # define HYPNO_MIS_TOKENTYPE
   enum HYPNO_MIS_tokentype
   {
-    NAME = 258,
-    FILENAME = 259,
-    FLAG = 260,
-    COMMENT = 261,
-    GSSWITCH = 262,
-    COMMAND = 263,
-    WALNTOK = 264,
-    NUM = 265,
-    HOTSTOK = 266,
-    CUTSTOK = 267,
-    BACKTOK = 268,
-    INTRTOK = 269,
-    RETTOK = 270,
-    TIMETOK = 271,
-    PALETOK = 272,
-    BBOXTOK = 273,
-    OVERTOK = 274,
-    MICETOK = 275,
-    PLAYTOK = 276,
-    ENDTOK = 277,
-    MENUTOK = 278,
-    SMENTOK = 279,
-    ESCPTOK = 280,
-    NRTOK = 281,
-    AMBITOK = 282,
-    SWPTTOK = 283,
-    MPTRTOK = 284,
-    GLOBTOK = 285,
-    TONTOK = 286,
-    TOFFTOK = 287,
-    TALKTOK = 288,
-    INACTOK = 289,
-    FDTOK = 290,
-    BOXXTOK = 291,
-    ESCAPETOK = 292,
-    SECONDTOK = 293,
-    INTROTOK = 294,
-    DEFAULTTOK = 295,
-    PG = 296,
-    PA = 297,
-    PD = 298,
-    PH = 299,
-    PF = 300,
-    PE = 301,
-    PP = 302,
-    PI = 303,
-    PL = 304,
-    PS = 305
+    HYPNO_MIS_EMPTY = -2,
+    HYPNO_MIS_EOF = 0,             /* "end of file"  */
+    HYPNO_MIS_error = 256,         /* error  */
+    HYPNO_MIS_UNDEF = 257,         /* "invalid token"  */
+    NAME = 258,                    /* NAME  */
+    FILENAME = 259,                /* FILENAME  */
+    FLAG = 260,                    /* FLAG  */
+    COMMENT = 261,                 /* COMMENT  */
+    GSSWITCH = 262,                /* GSSWITCH  */
+    COMMAND = 263,                 /* COMMAND  */
+    WALNTOK = 264,                 /* WALNTOK  */
+    NUM = 265,                     /* NUM  */
+    HOTSTOK = 266,                 /* HOTSTOK  */
+    CUTSTOK = 267,                 /* CUTSTOK  */
+    BACKTOK = 268,                 /* BACKTOK  */
+    INTRTOK = 269,                 /* INTRTOK  */
+    RETTOK = 270,                  /* RETTOK  */
+    TIMETOK = 271,                 /* TIMETOK  */
+    PALETOK = 272,                 /* PALETOK  */
+    BBOXTOK = 273,                 /* BBOXTOK  */
+    OVERTOK = 274,                 /* OVERTOK  */
+    MICETOK = 275,                 /* MICETOK  */
+    PLAYTOK = 276,                 /* PLAYTOK  */
+    ENDTOK = 277,                  /* ENDTOK  */
+    MENUTOK = 278,                 /* MENUTOK  */
+    SMENTOK = 279,                 /* SMENTOK  */
+    ESCPTOK = 280,                 /* ESCPTOK  */
+    NRTOK = 281,                   /* NRTOK  */
+    AMBITOK = 282,                 /* AMBITOK  */
+    SWPTTOK = 283,                 /* SWPTTOK  */
+    MPTRTOK = 284,                 /* MPTRTOK  */
+    GLOBTOK = 285,                 /* GLOBTOK  */
+    TONTOK = 286,                  /* TONTOK  */
+    TOFFTOK = 287,                 /* TOFFTOK  */
+    TALKTOK = 288,                 /* TALKTOK  */
+    INACTOK = 289,                 /* INACTOK  */
+    FDTOK = 290,                   /* FDTOK  */
+    BOXXTOK = 291,                 /* BOXXTOK  */
+    ESCAPETOK = 292,               /* ESCAPETOK  */
+    SECONDTOK = 293,               /* SECONDTOK  */
+    INTROTOK = 294,                /* INTROTOK  */
+    DEFAULTTOK = 295,              /* DEFAULTTOK  */
+    PG = 296,                      /* PG  */
+    PA = 297,                      /* PA  */
+    PD = 298,                      /* PD  */
+    PH = 299,                      /* PH  */
+    PF = 300,                      /* PF  */
+    PE = 301,                      /* PE  */
+    PP = 302,                      /* PP  */
+    PI = 303,                      /* PI  */
+    PL = 304,                      /* PL  */
+    PS = 305                       /* PS  */
   };
+  typedef enum HYPNO_MIS_tokentype HYPNO_MIS_token_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined HYPNO_MIS_STYPE && ! defined HYPNO_MIS_STYPE_IS_DECLARED
-
 union HYPNO_MIS_STYPE
 {
-#line 56 "engines/hypno/grammar_mis.y" /* yacc.c:1909  */
+#line 56 "engines/hypno/grammar_mis.y"
 
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 118 "engines/hypno/tokens_mis.h" /* yacc.c:1909  */
-};
+#line 127 "engines/hypno/tokens_mis.h"
 
+};
 typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;
 # define HYPNO_MIS_STYPE_IS_TRIVIAL 1
 # define HYPNO_MIS_STYPE_IS_DECLARED 1
@@ -125,6 +134,8 @@ typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;
 
 extern HYPNO_MIS_STYPE HYPNO_MIS_lval;
 
+
 int HYPNO_MIS_parse (void);
+
 
 #endif /* !YY_HYPNO_MIS_ENGINES_HYPNO_TOKENS_MIS_H_INCLUDED  */

@@ -885,24 +885,25 @@ void SpiderEngine::loadAssetsDemo() {
 	SearchMan.add("DATA.Z", (Common::Archive *) &_installerArchive, 0, false);
 
 	Common::ArchiveMemberList files;
-	LibFile *missions = loadLib("", "sixdemo/c_misc/missions.lib", true);
+	LibFile *missions = loadLib("", "c_misc/missions.lib", true);
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
 	// start level
 	Transition *start = new Transition("sixdemo/mis/demo.mis");
-	start->intros.push_back("sixdemo/demo/dcine1.smk");
-	start->intros.push_back("sixdemo/demo/dcine2.smk");
+	start->intros.push_back("demo/dcine1.smk");
+	start->intros.push_back("demo/dcine2.smk");
 	_levels["<start>"] = start;
 
-	loadArcadeLevel("c1.mi_", "sixdemo/mis/demo.mis", "sixdemo");
+	loadArcadeLevel("c1.mi_", "mis/demo.mis", "");
+	_levels["c1.mi_"]->levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadLib("", "sixdemo/c_misc/fonts.lib", true);
-	loadLib("sixdemo/c_misc/sound.lib/", "sixdemo/c_misc/sound.lib", true);
-	loadLib("sixdemo/demo/sound.lib/", "sixdemo/demo/sound.lib", true);
+	loadLib("", "c_misc/fonts.lib", true);
+	loadLib("c_misc/sound.lib/", "c_misc/sound.lib", true);
+	loadLib("demo/sound.lib/", "demo/sound.lib", true);
 
 	// Read assets from mis files
-	loadSceneLevel("sixdemo/mis/demo.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/demo.mis", "", "");
 	ChangeLevel *cl = new ChangeLevel("c1.mi_");
 
 	Scene *sc = (Scene *) _levels["sixdemo/mis/demo.mis"];
@@ -921,12 +922,12 @@ void SpiderEngine::loadAssetsDemo() {
 	sc->hots[5].actions.push_back(cl);
 	sc->music = "demo/sound.lib/menu_mus.raw";
 
-	loadSceneLevel("sixdemo/mis/order.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/order.mis", "", "");
 	sc = (Scene *) _levels["sixdemo/mis/order.mis"];
 	cl = new ChangeLevel("<quit>");
 	sc->hots[1].actions.push_back(cl);
 
-	loadSceneLevel("sixdemo/mis/alley.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/alley.mis", "", "");
 	sc = (Scene *) _levels["sixdemo/mis/alley.mis"];
 
 	sc->intros.push_back("demo/aleyc01s.smk");
@@ -934,7 +935,7 @@ void SpiderEngine::loadAssetsDemo() {
 	sc->levelIfWin = "sixdemo/mis/demo.mis";
 	sc->levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "sixdemo");
+	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", "");
 
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";

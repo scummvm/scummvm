@@ -504,19 +504,33 @@ Common::String HypnoEngine::convertPath(const Common::String &name) {
 }
 
 // Timers
-static void timerCallback(void *refCon) {
-	g_hypno->removeTimer();
+static void alarmCallback(void *refCon) {
+	g_system->getTimerManager()->removeTimerProc(&alarmCallback);
 	Common::String *level = (Common::String *)refCon;
 	g_hypno->_nextLevel = *level;
 	delete level;
 }
 
-bool HypnoEngine::installTimer(uint32 delay, Common::String *ns) {
-	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void *)ns, "timerCallback");
+static void countdownCallback(void *refCon) {
+	g_hypno->_countdown = g_hypno->_countdown - 1;
+	debug("countdown: %d", g_hypno->_countdown);
 }
 
-void HypnoEngine::removeTimer() {
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
+bool HypnoEngine::startAlarm(uint32 delay, Common::String *ns) {
+	return g_system->getTimerManager()->installTimerProc(&alarmCallback, delay, (void *)ns, "alarm");
+}
+
+bool HypnoEngine::startCountdown(uint32 delay) {
+	_countdown = delay;
+	_timerStarted = true;
+	uint32 oneSecond = 1000000;
+	return g_system->getTimerManager()->installTimerProc(&countdownCallback, oneSecond, 0x0, "countdown");
+}
+
+void HypnoEngine::removeTimers() {
+	_timerStarted = false;
+	g_system->getTimerManager()->removeTimerProc(&alarmCallback);
+	g_system->getTimerManager()->removeTimerProc(&countdownCallback);
 }
 
 } // End of namespace Hypno

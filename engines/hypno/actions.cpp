@@ -38,6 +38,9 @@ void HypnoEngine::runMenu(Hotspots hs) {
 			case QuitAction:
 				runQuit((Quit *)action);
 			break;
+			case TimerAction:
+				runTimer((Timer *)action);
+			break;
 			case BackgroundAction:
 				runBackground((Background *)action);
 			break;
@@ -82,6 +85,17 @@ void HypnoEngine::runBackground(Background *a) {
 	}
 
 	loadImage(a->path, a->origin.x, a->origin.y, false);
+}
+
+void HypnoEngine::runTimer(Timer *a) {
+	if (_timerStarted)
+		return; // Do not start another timer
+
+	uint32 delay = a->delay/1000;
+	debugC(1, kHypnoDebugScene, "Starting timer with %d secons", delay);
+
+	if (delay == 0 || !startCountdown(delay))
+		error("Failed to start countdown");
 }
 
 void HypnoEngine::runOverlay(Overlay *a) {

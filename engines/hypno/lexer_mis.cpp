@@ -1,6 +1,6 @@
-#line 2 "engines/hypno/lexer_mis.cpp"
+#line 1 "engines/hypno/lexer_mis.cpp"
 
-#line 4 "engines/hypno/lexer_mis.cpp"
+#line 3 "engines/hypno/lexer_mis.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -881,8 +881,8 @@ char *yytext;
 #include "hypno/grammar.h"
 #include "hypno/tokens_mis.h"
 
+#line 884 "engines/hypno/lexer_mis.cpp"
 #line 885 "engines/hypno/lexer_mis.cpp"
-#line 886 "engines/hypno/lexer_mis.cpp"
 
 #define INITIAL 0
 
@@ -1099,7 +1099,7 @@ YY_DECL
 	{
 #line 41 "engines/hypno/lexer_mis.l"
 
-#line 1103 "engines/hypno/lexer_mis.cpp"
+#line 1102 "engines/hypno/lexer_mis.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1403,7 +1403,7 @@ YY_RULE_SETUP
 #line 89 "engines/hypno/lexer_mis.l"
 ECHO;
 	YY_BREAK
-#line 1407 "engines/hypno/lexer_mis.cpp"
+#line 1406 "engines/hypno/lexer_mis.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

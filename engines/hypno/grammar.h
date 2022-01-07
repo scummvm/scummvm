@@ -49,6 +49,7 @@ enum HotspotType {
 
 enum ActionType {
 	MiceAction,
+	TimerAction,	
 	PaletteAction,
 	BackgroundAction,
 	OverlayAction,
@@ -119,6 +120,15 @@ public:
 	}
 	Filename path;
 	uint32 index;
+};
+
+class Timer : public Action {
+public:
+	Timer(uint32 delay_) {
+		type = TimerAction;
+		delay = delay_;
+	}
+	uint32 delay;
 };
 
 class Palette : public Action {

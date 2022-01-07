@@ -155,6 +155,7 @@ public:
 	void runSave(Save *a);
 	void runLoad(Load *a);
 	void runLoadCheckpoint(LoadCheckpoint *a);
+	void runTimer(Timer *a);
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
 	void runPlay(Play *a);
@@ -244,8 +245,11 @@ public:
 	virtual void showCredits();
 
 	// Timers
-	bool installTimer(uint32, Common::String *);
-	void removeTimer();
+	int32 _countdown;
+	bool _timerStarted;
+	bool startAlarm(uint32, Common::String *);
+	bool startCountdown(uint32);
+	void removeTimers();
 };
 
 struct chapterEntry {
