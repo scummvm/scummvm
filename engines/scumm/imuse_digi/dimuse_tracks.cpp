@@ -238,11 +238,7 @@ int IMuseDigital::tracksStopSound(int soundId) {
 	IMuseDigiTrack *track = _trackList;
 	do {
 		if (track->soundId == soundId) {
-			removeTrackFromList(&_trackList, track);
-			dispatchRelease(track);
-			_fadesHandler->clearFadeStatus(track->soundId, -1);
-			_triggersHandler->clearTrigger(track->soundId, _emptyMarker, -1);
-			track->soundId = 0;
+			tracksClear(track);
 		}
 		track = track->next;
 	} while (track);
@@ -349,7 +345,7 @@ void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
 	_fadesHandler->clearFadeStatus(trackPtr->soundId, -1);
 	_triggersHandler->clearTrigger(trackPtr->soundId, _emptyMarker, -1);
 
-	// Unlock the sound, if it's a SFX
+	// Unlock the sound, if it's loaded as a resource
 	if (trackPtr->soundId < 1000 && trackPtr->soundId) {
 		_vm->_res->unlock(rtSound, trackPtr->soundId);
 	}
