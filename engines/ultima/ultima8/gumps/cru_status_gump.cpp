@@ -98,6 +98,10 @@ void CruStatusGump::createStatusItems() {
 }
 
 void CruStatusGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+	if (_children.empty()) {
+		// children deliberately aren't saved, recreate them if needed.
+		createStatusItems();
+	}
 	Gump::PaintThis(surf, lerp_factor, scaled);
 
 	// All the painting logic is in the children.
@@ -113,7 +117,7 @@ bool CruStatusGump::loadData(Common::ReadStream *rs, uint32 version) {
 
 	if (_instance && _instance != this)
 		delete _instance;
-	createStatusItems();
+
 	_instance = this;
 	return true;
 }
