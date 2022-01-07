@@ -81,6 +81,10 @@
 #include "chewy/rooms/room63.h"
 #include "chewy/rooms/room64.h"
 #include "chewy/rooms/room65.h"
+#include "chewy/rooms/room66.h"
+#include "chewy/rooms/room67.h"
+#include "chewy/rooms/room68.h"
+#include "chewy/rooms/room69.h"
 
 // TODO: Remove one room classes implemented and split up
 #include "chewy/episode1.h"
@@ -150,6 +154,10 @@ using Chewy::Rooms::Room62;
 using Chewy::Rooms::Room63;
 using Chewy::Rooms::Room64;
 using Chewy::Rooms::Room65;
+using Chewy::Rooms::Room66;
+using Chewy::Rooms::Room67;
+using Chewy::Rooms::Room68;
+using Chewy::Rooms::Room69;
 
 } // namespace Chewy
 

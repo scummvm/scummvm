@@ -111,11 +111,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 402:
-						r69_look_schild();
+						Room69::look_schild();
 						break;
 
 					case 416:
-						r68_look_kaktus();
+						Room68::look_kaktus();
 						break;
 
 					default:
@@ -567,40 +567,40 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 394:
-						action_ret = r67_talk_papagei();
+						action_ret = Room67::talk_papagei();
 						break;
 
 					case 399:
-						action_ret = r67_use_grammo();
+						action_ret = Room67::use_grammo();
 						break;
 
 					case 400:
-						action_ret = r67_use_kommode();
+						action_ret = Room67::use_kommode();
 						break;
 
 					case 403:
 					case 405:
-						action_ret = r69_use_bruecke();
+						action_ret = Room69::use_bruecke();
 						break;
 
 					case 406:
-						action_ret = r68_use_papagei();
+						action_ret = Room68::use_papagei();
 						break;
 
 					case 407:
-						action_ret = r68_use_diva();
+						action_ret = Room68::use_diva();
 						break;
 
 					case 410:
-						action_ret = r68_use_keeper();
+						action_ret = Room68::use_keeper();
 						break;
 
 					case 414:
-						action_ret = r68_use_indigo();
+						action_ret = Room68::use_indigo();
 						break;
 
 					case 425:
-						action_ret = r66_proc7();
+						action_ret = Room66::proc7();
 						break;
 
 					case 430:
@@ -803,7 +803,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 403:
 					case 405:
-						action_ret = r69_use_bruecke();
+						action_ret = Room69::use_bruecke();
 						break;
 
 					case 487:
@@ -932,35 +932,35 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 394:
-						action_ret = r67_talk_papagei();
+						action_ret = Room67::talk_papagei();
 						break;
 
 					case 408:
-						r68_talk_papagei();
+						Room68::talk_papagei();
 						break;
 
 					case 410:
-						r68_talk_keeper();
+						Room68::talk_keeper();
 						break;
 
 					case 414:
-						r68_talk_indigo();
+						Room68::talk_indigo();
 						break;
 
 					case 419:
-						r66_talk1();
+						Room66::talk1();
 						break;
 
 					case 420:
-						r66_talk2();
+						Room66::talk2();
 						break;
 
 					case 421:
-						r66_talk3();
+						Room66::talk3();
 						break;
 
 					case 425:
-						r66_talk4();
+						Room66::talk4();
 						break;
 
 					case 447:
@@ -1027,7 +1027,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 389:
-						r67_look_brief();
+						Room67::look_brief();
 						break;
 
 					case 391:
@@ -1077,7 +1077,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 423:
-						action_ret = r66_proc2();
+						action_ret = Room66::proc2();
 						break;
 
 					default:
@@ -1699,7 +1699,6 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case R63_GIRL_DIA:
 	case R67_PAPA1_DIA:
 	case R67_PAPA2_DIA:
-
 		switch (person_nr) {
 		case 2:
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
@@ -2409,7 +2408,7 @@ int16 calc_person_click(int16 p_nr) {
 		switch (_G(spieler).AkInvent) {
 		case GALA_INV:
 			if (_G(spieler).PersonRoomNr[P_CHEWY] == 67) {
-				r67_kostuem_aad(378);
+				Room67::kostuem_aad(378);
 				action_ret = true;
 			}
 			break;
@@ -2424,10 +2423,10 @@ int16 calc_person_click(int16 p_nr) {
 		switch (_G(spieler).AkInvent) {
 		case GALA_INV:
 			if (_G(spieler).PersonRoomNr[P_CHEWY] == 67) {
-				r67_kostuem_aad(377);
+				Room67::kostuem_aad(377);
 				action_ret = true;
 			} else if (_G(spieler).PersonRoomNr[P_CHEWY] == 68) {
-				r68_kostuem_aad(387);
+				Room68::kostuem_aad(387);
 				action_ret = true;
 			}
 			break;
