@@ -12,11 +12,6 @@ MODULE_OBJS = \
 	debugger.o \
 	detail.o \
 	effect.o \
-	episode1.o \
-	episode2.o \
-	episode3.o \
-	episode4.o \
-	episode5.o \
 	events.o \
 	events_base.o \
 	fehler.o \

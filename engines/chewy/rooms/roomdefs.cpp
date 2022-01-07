@@ -20,6 +20,10 @@
  */
 
 #include "chewy/rooms/roomdefs.h"
+#include "chewy/defines.h"
+#include "chewy/events.h"
+#include "chewy/global.h"
+#include "chewy/ani_dat.h"
 
 namespace Chewy {
 

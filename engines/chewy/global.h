@@ -421,9 +421,6 @@ void ads_menu();
 
 void stop_ads_dialog();
 
-void calc_person_look();
-void switch_room(int16 nr);
-
 void play_scene_ani(int16 nr, int16 mode);
 
 void timer_action(int16 t_nr);
