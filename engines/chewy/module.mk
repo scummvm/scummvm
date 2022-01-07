@@ -45,7 +45,6 @@ MODULE_OBJS = \
 	timer.o \
 	types.o \
 	video/cfo_decoder.o \
-	rooms/roomdefs.o \
 	rooms/room0.o \
 	rooms/room1.o \
 	rooms/room2.o \
