@@ -19,11 +19,27 @@
  *
  */
 
-#include "chewy/defines.h"
-#include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/episode3.h"
+#ifndef CHEWY_ROOMS_ROOM56_H
+#define CHEWY_ROOMS_ROOM56_H
 
 namespace Chewy {
+namespace Rooms {
 
+class Room56 {
+private:
+	static void setup_func();
+
+public:
+	static void entry();
+	static void xit();
+	static int16 use_taxi();
+	static void talk_man();
+	static int16 use_man();
+	static int16 use_kneipe();
+	static void start_flug();
+};
+
+} // namespace Rooms
 } // namespace Chewy
+
+#endif

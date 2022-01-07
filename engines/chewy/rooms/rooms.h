@@ -62,6 +62,25 @@
 #include "chewy/rooms/room42.h"
 #include "chewy/rooms/room43.h"
 #include "chewy/rooms/room44.h"
+#include "chewy/rooms/room45.h"
+#include "chewy/rooms/room46.h"
+#include "chewy/rooms/room47.h"
+#include "chewy/rooms/room48.h"
+#include "chewy/rooms/room49.h"
+#include "chewy/rooms/room50.h"
+#include "chewy/rooms/room51.h"
+#include "chewy/rooms/room52.h"
+#include "chewy/rooms/room53.h"
+#include "chewy/rooms/room54.h"
+#include "chewy/rooms/room55.h"
+#include "chewy/rooms/room56.h"
+#include "chewy/rooms/room57.h"
+#include "chewy/rooms/room58.h"
+#include "chewy/rooms/room59.h"
+#include "chewy/rooms/room62.h"
+#include "chewy/rooms/room63.h"
+#include "chewy/rooms/room64.h"
+#include "chewy/rooms/room65.h"
 
 // TODO: Remove one room classes implemented and split up
 #include "chewy/episode1.h"
@@ -112,6 +131,25 @@ using Chewy::Rooms::Room41;
 using Chewy::Rooms::Room42;
 using Chewy::Rooms::Room43;
 using Chewy::Rooms::Room44;
+using Chewy::Rooms::Room45;
+using Chewy::Rooms::Room46;
+using Chewy::Rooms::Room47;
+using Chewy::Rooms::Room48;
+using Chewy::Rooms::Room49;
+using Chewy::Rooms::Room50;
+using Chewy::Rooms::Room51;
+using Chewy::Rooms::Room52;
+using Chewy::Rooms::Room53;
+using Chewy::Rooms::Room54;
+using Chewy::Rooms::Room55;
+using Chewy::Rooms::Room56;
+using Chewy::Rooms::Room57;
+using Chewy::Rooms::Room58;
+using Chewy::Rooms::Room59;
+using Chewy::Rooms::Room62;
+using Chewy::Rooms::Room63;
+using Chewy::Rooms::Room64;
+using Chewy::Rooms::Room65;
 
 } // namespace Chewy
 

@@ -20,10 +20,25 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/episode3.h"
+#include "chewy/room.h"
+#include "chewy/rooms/room59.h"
 
 namespace Chewy {
+namespace Rooms {
 
+void Room59::look_poster() {
+	if (!_G(spieler).R59PosterWeg) {
+
+		atds->set_ats_str(302, 1, ATS_DATEI);
+		atds->set_ats_str(301, 1, ATS_DATEI);
+		_G(spieler).R59PosterWeg = true;
+		invent_2_slot(SPARK_INV);
+		switch_room(60);
+	}
+}
+
+} // namespace Rooms
 } // namespace Chewy

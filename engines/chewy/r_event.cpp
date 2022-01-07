@@ -168,32 +168,32 @@ void timer_action(int16 t_nr) {
 
 	case 48:
 		if (t_nr == _G(timer_nr)[0])
-			r48_frage();
+			Room48::frage();
 		else
 			default_flag = true;
 		break;
 
 	case 49:
 		if (t_nr == _G(timer_nr)[0])
-			r49_calc_boy_ani();
+			Room49::calc_boy_ani();
 		break;
 
 	case 50:
 		if (t_nr == _G(timer_nr)[0])
-			r50_calc_wasser();
+			Room50::calc_wasser();
 		default_flag = true;
 		break;
 
 	case 51:
 		if (_G(spieler).flags32_10)
-			r51_timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
+			Room51::timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
 		else
 			default_flag = true;
 		break;
 
 	case 56:
 		if (t_nr == _G(timer_nr)[0])
-			r56_start_flug();
+			Room56::start_flug();
 		else
 			default_flag = true;
 		break;
@@ -385,22 +385,22 @@ void check_ged_action(int16 index) {
 
 		case 49:
 			if (!index)
-				r49_calc_boy();
+				Room49::calc_boy();
 			break;
 
 		case 50:
 			if (!index)
-				r50_calc_treppe();
+				Room50::calc_treppe();
 			break;
 
 		case 52:
 			if (index == 1)
-				r52_kaker_platt();
+				Room52::kaker_platt();
 			break;
 
 		case 55:
 			if (!index)
-				r55_talk_line();
+				Room55::talk_line();
 			break;
 
 		case 94:
@@ -669,30 +669,31 @@ void enter_room(int16 eib_nr) {
 	ENTRY_NR(40);
 	ENTRY(41);
 	ENTRY(42);
-	case 45: r45_entry(eib_nr); break;
-	case 46: r46_entry(eib_nr); break;
-	case 47: r47_entry(); break;
-	case 48: r48_entry(); break;
-	case 49: r49_entry(eib_nr); break;
-	case 50: r50_entry(eib_nr); break;
-	case 51: r51_entry(); break;
-	case 52: r52_entry(); break;
-	case 53: r53_entry(); break;
-	case 54: r54_entry(eib_nr); break;
-	case 55: r55_entry(); break;
-	case 56: r56_entry(); break;
-	case 57: r57_entry(); break;
+	ENTRY_NR(45);
+	ENTRY_NR(46);
+	ENTRY(47);
+	ENTRY(48);
+	ENTRY_NR(49);
+	ENTRY_NR(50);
+	ENTRY(51);
+	ENTRY(52);
+	ENTRY(53);
+	ENTRY_NR(54);
+	ENTRY(55);
+	ENTRY(56);
+	ENTRY(57);
 
 	case 58:
 	case 59:
 	case 60:
-		r58_entry();
+		Room58::entry();
 		break;
 
-	case 62: r62_entry(); break;
-	case 63: r63_entry(); break;
-	case 64: r64_entry(); break;
-	case 65: r65_entry(); break;
+	ENTRY(62);
+	ENTRY(63);
+	ENTRY(64);
+	ENTRY(65);
+
 	case 66: r66_entry(eib_nr); break;
 	case 67: r67_entry(); break;
 	case 68: r68_entry(); break;
@@ -806,26 +807,21 @@ void exit_room(int16 eib_nr) {
 
 	case 41: Room41::xit(); break;
 	case 42: Room42::calc_xit(); break;
-
-	case 45: r45_exit(eib_nr); break;
-	case 46: r46_exit(); break;
-	case 47: r47_exit(); break;
-
-	case 49: r49_exit(eib_nr); break;
-
-	case 52: r52_exit(); break;
-	case 54: r54_exit(eib_nr); break;
-
-	case 56: r56_exit(); break;
-	case 57: r57_exit(eib_nr); break;
+	case 45: Room45::xit(eib_nr); break;
+	case 46: Room46::xit(); break;
+	case 47: Room47::xit(); break;
+	case 49: Room49::xit(eib_nr); break;
+	case 52: Room52::xit(); break;
+	case 54: Room54::xit(eib_nr); break;
+	case 56: Room56::xit(); break;
+	case 57: Room57::xit(eib_nr); break;
 
 	case 64:
 		if (_G(spieler).R64Moni1Ani == 5)
 			_G(spieler).R64Moni1Ani = 3;
 		break;
 
-	case 65: r65_exit(); break;
-
+	case 65: Room65::xit(); break;
 	case 76: r76_exit(); break;
 	case 77: r77_exit(); break;
 	case 78: r78_exit(); break;
@@ -1025,9 +1021,9 @@ void exit_room(int16 eib_nr) {
 				_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 			break;
 
-		case 50: r50_exit(eib_nr); break;
-		case 51: r51_exit(eib_nr); break;
-		case 55: r55_exit(eib_nr); break;
+		case 50: Room50::xit(eib_nr); break;
+		case 51: Room51::xit(eib_nr); break;
+		case 55: Room55::xit(eib_nr); break;
 		case 66: r66_exit(eib_nr); break;
 		case 67: r67_exit(); break;
 		case 68: r68_exit(); break;
@@ -1368,7 +1364,7 @@ void flic_cut(int16 nr, int16 mode) {
 			CurrentSong = -1;
 			load_room_music(256);
 			ailsnd->set_loopmode(1);
-			r46_kloppe();
+			Room46::kloppe();
 			ailsnd->set_loopmode(_G(spieler).soundLoopMode);
 			CurrentSong = -1;
 			break;
@@ -2079,7 +2075,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CIGAR_R50:
-		r50_stop_cigar();
+		Room50::stop_cigar();
 		break;
 
 	case SIB_LAMPE_R52:
@@ -2096,7 +2092,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_ASCHE_R64:
 		det->stop_detail(0);
 		obj->hide_sib(sib_nr);
-		r64_talk_man(351);
+		Room64::talk_man(351);
 		break;
 
 	case 94:
