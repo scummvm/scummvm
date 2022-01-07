@@ -24,10 +24,9 @@
 #include "chewy/global.h"
 #include "chewy/menus.h"
 #include "chewy/rooms/room44.h"
+#include "chewy/rooms/room58.h"
 
 namespace Chewy {
-
-void r58_look_cut_mag(int16 r_nr);
 
 static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
 
@@ -716,14 +715,14 @@ int16 calc_use_invent(int16 inv_nr) {
 		case CUTMAG_INV:
 			show_invent_menu = 2;
 			benutzt = true;
-			r58_look_cut_mag(58);
+			Rooms::Room58::look_cut_mag(58);
 			break;
 
 		case SPARK_INV:
 			show_invent_menu = 2;
 			benutzt = true;
 			save_person_rnr();
-			r58_look_cut_mag(60);
+			Rooms::Room58::look_cut_mag(60);
 			break;
 
 		}

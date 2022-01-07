@@ -93,21 +93,21 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 302:
-						r59_look_poster();
+						Room59::look_poster();
 						break;
 
 					case 298:
 					case 307:
 					case 308:
-						r58_exit();
+						Room58::xit();
 						break;
 
 					case 316:
-						r49_look_hotel();
+						Room49::look_hotel();
 						break;
 
 					case 362:
-						r56_use_kneipe();
+						Room56::use_kneipe();
 						break;
 
 					case 402:
@@ -434,11 +434,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 289:
 					case 290:
 					case 291:
-						r47_use_knopf(txt_nr);
+						Room47::use_knopf(txt_nr);
 						break;
 
 					case 288:
-						action_ret = r46_use_schloss();
+						action_ret = Room46::use_schloss();
 						break;
 
 					case 294:
@@ -447,27 +447,27 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 295:
 					case 297:
-						action_ret = r45_use_boy();
+						action_ret = Room45::use_boy();
 						break;
 
 					case 315:
-						action_ret = r49_use_taxi();
+						action_ret = Room49::use_taxi();
 						break;
 
 					case 318:
-						action_ret = r49_use_boy();
+						action_ret = Room49::use_boy();
 						break;
 
 					case 319:
-						action_ret = r53_use_man();
+						action_ret = Room53::use_man();
 						break;
 
 					case 323:
-						action_ret = r50_use_gutschein();
+						action_ret = Room50::use_gutschein();
 						break;
 
 					case 327:
-						action_ret = r50_use_gum();
+						action_ret = Room50::use_gum();
 						break;
 
 					case 329:
@@ -476,94 +476,94 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 332:
 					case 333:
 					case 334:
-						action_ret = r51_use_door(txt_nr);
+						action_ret = Room51::use_door(txt_nr);
 						break;
 
 					case 340:
-						r55_strasse(0);
+						Room55::strasse(0);
 						break;
 
 					case 341:
-						action_ret = r52_use_hot_dog();
+						action_ret = Room52::use_hot_dog();
 						break;
 
 					case 343:
-						action_ret = r54_use_zelle();
+						action_ret = Room54::use_zelle();
 						break;
 
 					case 344:
-						action_ret = r57_use_pfoertner();
+						action_ret = Room57::use_pfoertner();
 						break;
 
 					case 345:
-						action_ret = r54_use_azug();
+						action_ret = Room54::use_azug();
 						break;
 
 					case 346:
-						action_ret = r54_use_schalter();
+						action_ret = Room54::use_schalter();
 						break;
 
 					case 347:
 					case 387:
-						action_ret = r54_use_taxi();
+						action_ret = Room54::use_taxi();
 						break;
 
 					case 351:
 					case 352:
-						action_ret = r55_use_kammeraus();
+						action_ret = Room55::use_kammeraus();
 						break;
 
 					case 354:
-						action_ret = r55_use_stapel1();
+						action_ret = Room55::use_stapel1();
 						break;
 
 					case 355:
-						action_ret = r55_use_stapel2();
+						action_ret = Room55::use_stapel2();
 						break;
 
 					case 357:
-						action_ret = r55_use_telefon();
+						action_ret = Room55::use_telefon();
 						break;
 
 					case 360:
 					case 388:
-						action_ret = r57_use_taxi();
+						action_ret = Room57::use_taxi();
 						break;
 
 					case 362:
-						r56_use_kneipe();
+						Room56::use_kneipe();
 						break;
 
 					case 366:
-						action_ret = r56_use_man();
+						action_ret = Room56::use_man();
 						break;
 
 					case 367:
-						action_ret = r56_use_taxi();
+						action_ret = Room56::use_taxi();
 						break;
 
 					case 371:
-						action_ret = r62_use_laura();
+						action_ret = Room62::use_laura();
 						break;
 
 					case 375:
-						action_ret = r64_use_tasche();
+						action_ret = Room64::use_tasche();
 						break;
 
 					case 380:
-						action_ret = r63_use_girl();
+						action_ret = Room63::use_girl();
 						break;
 
 					case 383:
-						action_ret = r63_use_aschenbecher();
+						action_ret = Room63::use_aschenbecher();
 						break;
 
 					case 384:
-						action_ret = r63_use_fx_man();
+						action_ret = Room63::use_fx_man();
 						break;
 
 					case 385:
-						action_ret = r63_use_schalter();
+						action_ret = Room63::use_schalter();
 						break;
 
 					case 394:
@@ -794,11 +794,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 340:
-						r55_strasse(0);
+						Room55::strasse(0);
 						break;
 
 					case 362:
-						action_ret = r56_use_kneipe();
+						action_ret = Room56::use_kneipe();
 						break;
 
 					case 403:
@@ -875,60 +875,60 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 295:
-						r45_use_taxi();
+						Room45::use_taxi();
 						break;
 
 					case 297:
-						r45_talk_boy();
+						Room45::talk_boy();
 						break;
 
 					case 318:
-						r49_talk_boy();
+						Room49::talk_boy();
 						break;
 
 					case 319:
-						r53_talk_man();
+						Room53::talk_man();
 						break;
 
 					case 323:
-						r50_talk_page();
+						Room50::talk_page();
 						break;
 
 					case 344:
-						r57_talk_pfoertner();
+						Room57::talk_pfoertner();
 						break;
 
 					case 348:
-						r54_talk_verkauf();
+						Room54::talk_verkauf();
 						break;
 
 					case 352:
 					case 358:
-						r55_talk_line();
+						Room55::talk_line();
 						break;
 
 					case 366:
-						r56_talk_man();
+						Room56::talk_man();
 						break;
 
 					case 376:
-						r64_talk_man();
+						Room64::talk_man();
 						break;
 
 					case 380:
-						r63_talk_girl();
+						Room63::talk_girl();
 						break;
 
 					case 381:
-						r63_talk_hunter();
+						Room63::talk_hunter();
 						break;
 
 					case 382:
-						r63_talk_regie();
+						Room63::talk_regie();
 						break;
 
 					case 384:
-						r63_talk_fx_man();
+						Room63::talk_fx_man();
 						break;
 
 					case 394:
@@ -2388,7 +2388,7 @@ int16 calc_person_click(int16 p_nr) {
 
 		case CIGAR_INV:
 			if (_G(spieler).PersonRoomNr[P_CHEWY] == 49) {
-				r49_use_boy_cigar();
+				Room49::use_boy_cigar();
 				action_ret = true;
 			}
 			break;
@@ -2647,7 +2647,7 @@ void calc_person_dia(int16 p_nr) {
 			room_nr = _G(spieler).PersonDiaRoom[p_nr];
 		}
 
-		atds->set_string_end_func(&r65_atds_string_start);
+		atds->set_string_end_func(&Room65::atds_string_start);
 
 		if (!room_nr) {
 			if (_G(spieler).DiaAMov != -1)

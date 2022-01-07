@@ -123,6 +123,20 @@ Globals *g_globals = nullptr;
 
 Globals::Globals() {
 	g_globals = this;
+
+	static const int16 R45_PINFO[R45_MAX_PERSON][4] = {
+		{ 0, 4, 1490, 1500 },
+		{ 0, 1, 180, 190 },
+		{ 0, 1, 40, 60 },
+		{ 0, 1, 40, 150 },
+		{ 0, 1, 40, 230 },
+		{ 0, 1, 40, 340 },
+		{ 0, 1, 49, 50 },
+		{ 0, 1, 5, 90 },
+		{ 0, 1, 7, 190 }
+	};
+	Common::copy(&R45_PINFO[0][0], &R45_PINFO[0][0] + R45_MAX_PERSON * 4,
+		&_r45_pinfo[0][0]);
 }
 
 Globals::~Globals() {

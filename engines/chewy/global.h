@@ -38,6 +38,7 @@
 namespace Chewy {
 
 #define MAX_RAND_NO_USE 6
+#define R45_MAX_PERSON 9
 
 extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
 extern const int16 ANI_INVENT_END[3];
@@ -92,6 +93,22 @@ public:
 	bool _calc_inv_text_set = false;
 	bool _stopAutoMove[3] = { false };
 	bool _e_streifen = false;
+	int16 _r45_delay = 0;
+	int16 _r45_pinfo[R45_MAX_PERSON][4];
+	bool _r50Wasser = false;
+	int16 _r56koch_flug = 0;
+	int16 _r62Delay = 0;
+	int16 _r62TalkAni = 0;
+	int16 _r64TalkAni = 0;
+	int16 _r63ChewyAni = 0;
+	int16 _r63Schalter = 0;
+	int16 _r63RunDia = 0;
+	int16 _r65tmp_scrollx = 0;
+	int16 _r65tmp_scrolly = 0;
+	int16 _r65tmp_ch_x = 0;
+	int16 _r65tmp_ch_y = 0;
+	int16 _r65tmp_ho_x = 0;
+	int16 _r65tmp_ho_y = 0;
 };
 
 extern Globals *g_globals;
