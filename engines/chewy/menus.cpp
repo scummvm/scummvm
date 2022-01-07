@@ -29,22 +29,14 @@
 namespace Chewy {
 
 static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
-
 	{WIN_INF_X + 6, WIN_INF_Y + 10, WIN_INF_X + 6 + 30, WIN_INF_Y + 10 + 14},
-
 	{WIN_INF_X + 6 + 32, WIN_INF_Y + 10, WIN_INF_X + 6 + 62, WIN_INF_Y + 10 + 14},
-
 	{ -1, -1, -1, -1},
-
 	{WIN_INF_X + 198, WIN_INF_Y + 10, WIN_INF_X + 198 + 30, WIN_INF_Y + 10 + 14},
-
 	{WIN_INF_X + 198 + 40, WIN_INF_Y + 10, WIN_INF_X + 198 + 70, WIN_INF_Y + 10 + 14},
-
 	{WIN_INF_X + 6, WIN_INF_Y + 4 + 26, WIN_INF_X + 268, WIN_INF_Y + 4 + 26 + 90},
-
 	{WIN_INF_X + 242, WIN_INF_Y + 136, WIN_INF_X + 292, WIN_INF_Y + 136 + 14},
-
-	{WIN_INF_X + 242, WIN_INF_Y + 156, WIN_INF_X + 292, WIN_INF_Y + 156 + 14},
+	{WIN_INF_X + 242, WIN_INF_Y + 156, WIN_INF_X + 292, WIN_INF_Y + 156 + 14}
 };
 
 char m_flip = 0;

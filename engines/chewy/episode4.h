@@ -24,69 +24,6 @@
 
 namespace Chewy {
 
-void switch_room(int16 nr);
-
-void r66_entry(int16 eib_nr);
-void r66_exit(int16 eib_nr);
-void r66_talk1();
-void r66_talk2();
-void r66_talk3();
-void r66_talk4();
-int r66_proc2();
-int r66_proc7();
-
-void r67_entry();
-
-void r67_exit();
-
-void r67_setup_func();
-
-int16 r67_use_grammo();
-
-void r67_look_brief();
-
-int16 r67_use_kommode();
-
-void r67_kostuem_aad(int16 aad_nr);
-
-int16 r67_talk_papagei();
-
-void r68_entry();
-
-void r68_exit();
-void r68_setup_func();
-
-void r68_look_kaktus();
-
-void r68_talk_indigo();
-
-void r68_talk_indigo(int16 aad_nr);
-
-int16 r68_use_indigo();
-
-void r68_talk_keeper();
-
-int16 r68_use_papagei();
-
-void r68_calc_diva();
-
-int16 r68_use_keeper();
-
-int16 r68_use_diva();
-
-void r68_kostuem_aad(int16 aad_nr);
-
-void r68_talk_papagei();
-
-void r69_entry(int16 eib_nr);
-
-void r69_exit(int16 eib_nr);
-void r69_setup_func();
-
-void r69_look_schild();
-
-int16 r69_use_bruecke();
-
 } // namespace Chewy
 
 #endif

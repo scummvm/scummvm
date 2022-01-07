@@ -200,7 +200,7 @@ void timer_action(int16 t_nr) {
 
 	case 68:
 		if (t_nr == _G(timer_nr)[0])
-			r68_calc_diva();
+			Room68::calc_diva();
 		else
 			default_flag = true;
 		break;
@@ -693,11 +693,11 @@ void enter_room(int16 eib_nr) {
 	ENTRY(63);
 	ENTRY(64);
 	ENTRY(65);
+	ENTRY_NR(66);
+	ENTRY(67);
+	ENTRY(68);
+	ENTRY_NR(69);
 
-	case 66: r66_entry(eib_nr); break;
-	case 67: r67_entry(); break;
-	case 68: r68_entry(); break;
-	case 69: r69_entry(eib_nr); break;
 	case 70: r70_entry(); break;
 	case 71: r71_entry(); break;
 	case 72: r72_entry(); break;
@@ -1024,10 +1024,10 @@ void exit_room(int16 eib_nr) {
 		case 50: Room50::xit(eib_nr); break;
 		case 51: Room51::xit(eib_nr); break;
 		case 55: Room55::xit(eib_nr); break;
-		case 66: r66_exit(eib_nr); break;
-		case 67: r67_exit(); break;
-		case 68: r68_exit(); break;
-		case 69: r69_exit(eib_nr); break;
+		case 66: Room66::xit(eib_nr); break;
+		case 67: Room67::xit(); break;
+		case 68: Room68::xit(); break;
+		case 69: Room69::xit(eib_nr); break;
 		case 70: r70_exit(eib_nr); break;
 		case 71: r71_exit(eib_nr); break;
 		case 72: r72_exit(eib_nr); break;
