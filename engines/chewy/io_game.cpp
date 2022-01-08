@@ -38,7 +38,7 @@ io_game::io_game(mcga_grafik *iout, maus *iin, cursor *curp) {
 io_game::~io_game() {
 }
 
-char file_find_g [20][USER_NAME + 4];
+char file_find_g[20][USER_NAME + 4];
 
 short file_xy_g[7][4] = {
 	{140, 6, 156, 51},
@@ -62,7 +62,7 @@ char auf_tbl_g[3][3] = { {FSTRING8 },
 	{FSTRING9 },
 	{FSTRING10},
 };
-char ab_tbl_g [4][3] = { {FSTRING11},
+char ab_tbl_g[4][3] = { {FSTRING11},
 	{FSTRING12},
 	{FSTRING13},
 	{FSTRING14},

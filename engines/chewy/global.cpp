@@ -256,7 +256,7 @@ movclass *mov;
 
 char background[] = { EPISODE1 };
 char backged[] = { EPISODE1_GEP };
-char fname [80] = {0};
+char fname[80] = {0};
 
 AutoMov auto_mov[MAX_AUTO_MOV];
 

@@ -342,7 +342,7 @@ private:
 	SplitStringInit ats_ssi;
 
 	char *split_ptr[MAX_STR_SPLIT];
-	int16 split_x [MAX_STR_SPLIT];
+	int16 split_x[MAX_STR_SPLIT];
 	int16 inv_block_nr;
 	char *inv_use_mem;
 	int16 tmp_delay;
