@@ -32,6 +32,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #include "hypno/grammar.h"
 #include "hypno/libfile.h"
@@ -159,6 +160,7 @@ public:
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
 	void runPlay(Play *a);
+	void runPalette(Palette *a);
 	void runAmbient(Ambient *a);
 	void runWalN(WalN *a);
 	bool runGlobal(Global *a);

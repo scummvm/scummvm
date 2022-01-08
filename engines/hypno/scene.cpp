@@ -186,7 +186,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 				runAmbient((Ambient *)action);
 			break;
 			case PaletteAction:
-				debugC(1, kHypnoDebugScene, "runPalette unimplemented");
+				runPalette((Palette *)action);
 			break;
 
 			default:

@@ -58,6 +58,9 @@ void HypnoEngine::runMenu(Hotspots hs) {
 				_intros[cutscene->path] = true;
 			}
 			break;
+			case PaletteAction:
+				runPalette((Palette *)action);
+			break;
 
 			default:
 			break;
@@ -108,6 +111,22 @@ void HypnoEngine::runOverlay(Overlay *a) {
 
 void HypnoEngine::runMice(Mice *a) {
 	changeCursor(a->path, a->index);
+}
+
+void HypnoEngine::runPalette(Palette *a) {
+	return; // remove when palette are working
+	Common::File *file = new Common::File();
+	Common::String path = convertPath(a->path);
+	if (!_prefixDir.empty())
+		path = _prefixDir + "/" + path;
+
+	if (!file->open(path))
+		error("unable to find video file %s", path.c_str());
+
+	debugC(1, kHypnoDebugScene, "Loading palette from %s", path.c_str());
+	byte *videoPalette = (byte*) malloc(file->size());
+	file->read(videoPalette, file->size());
+	g_system->getPaletteManager()->setPalette(videoPalette+8, 0, 256);
 }
 
 void HypnoEngine::runEscape() {
