@@ -238,8 +238,8 @@ extern movclass *mov;
 extern ailclass *ailsnd;
 
 extern char background[];
-extern char backged [];
-extern char fname [80];
+extern char backged[];
+extern char fname[80];
 extern AutoMov auto_mov[MAX_AUTO_MOV];
 extern int16 HowardMov;
 

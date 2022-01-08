@@ -52,7 +52,7 @@ Debugger::~Debugger() {
 
 bool Debugger::Cmd_GotoRoom(int argc, const char **argv) {
 	if (argc == 1) {
-		debugPrintf("%s [roomNum]\n", argv[0]);
+		debugPrintf("%s <roomNum>\n", argv[0]);
 		return true;
 	} else {
 		int roomNum = strToInt(argv[1]);
@@ -68,7 +68,7 @@ bool Debugger::Cmd_GotoRoom(int argc, const char **argv) {
 
 bool Debugger::Cmd_Item(int argc, const char **argv) {
 	if (argc == 1) {
-		debugPrintf("%s [itemNum]\n", argv[0]);
+		debugPrintf("%s <itemNum>\n", argv[0]);
 	} else {
 		int itemNum = strToInt(argv[1]);
 		invent_2_slot(itemNum);

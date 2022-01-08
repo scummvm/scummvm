@@ -88,9 +88,9 @@ void standard_init() {
 	strcpy(ioptr.save_path, SAVEDIR);
 	ioptr.delay = 8;
 	alloc_buffers();
-	pal [765] = 63;
-	pal [766] = 63;
-	pal [767] = 63;
+	pal[765] = 63;
+	pal[766] = 63;
+	pal[767] = 63;
 	out->einblenden(pal, 0);
 	room->set_timer_start(1);
 	font_load();
@@ -103,9 +103,9 @@ void standard_init() {
 	ged_mem = room->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
-	pal [765] = 63;
-	pal [766] = 63;
-	pal [767] = 63;
+	pal[765] = 63;
+	pal[766] = 63;
+	pal[767] = 63;
 	out->einblenden(pal, 0);
 	out->cls();
 	uhr->set_new_timer(0, 5, SEC_10_MODE);

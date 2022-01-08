@@ -180,7 +180,7 @@ int16 file_menue() {
 		}
 		for (i = 0; i < 8; i++)
 			mode[i] = 0;
-		mode [8] = 1;
+		mode[8] = 1;
 		text_off = 0;
 		active_slot = 0;
 		while (key != ESC) {
@@ -194,7 +194,7 @@ int16 file_menue() {
 					                76 + ti->korrektur[(i << 1) + 1], 0);
 			}
 			key = in->get_switch_code();
-			if (mode[2] || mode [3] || mode[8]) {
+			if (mode[2] || mode[3] || mode[8]) {
 				tmp = fnames + (text_off * 40);
 				for (i = 0; i < 6; i++) {
 					if (tmp != 0) {
@@ -285,36 +285,37 @@ int16 file_menue() {
 				}
 				minfo.button = 0;
 			}
+
 			switch (key) {
 			case F1_KEY:
-				mode [2] = 1;
-				mode [3] = 0;
-				mode [8] = 0;
+				mode[2] = 1;
+				mode[3] = 0;
+				mode[8] = 0;
 
 				break;
 
 			case F2_KEY:
-				mode [2] = 0;
-				mode [3] = 1;
-				mode [8] = 0;
+				mode[2] = 0;
+				mode[3] = 1;
+				mode[8] = 0;
 
 				break;
 
 			case F3_KEY:
-				mode [4] = 10;
+				mode[4] = 10;
 				break;
 
 			case F4_KEY:
-				mode [5] = 10;
+				mode[5] = 10;
 				break;
 
 			case F5_KEY:
-				mode [6] = 10;
+				mode[6] = 10;
 				break;
 
 			case CURSOR_UP+ALT:
 				WAIT_TASTE_LOS
-				if (mode [2] || mode [3]) {
+				if (mode[2] || mode[3]) {
 					mode[0] = 10;
 					if (active_slot > 0)
 						--active_slot;
@@ -324,7 +325,7 @@ int16 file_menue() {
 				break;
 
 			case CURSOR_DOWN+ALT:
-				if (mode [2] || mode [3]) {
+				if (mode[2] || mode[3]) {
 					mode[1] = 10;
 					if (active_slot < 5)
 						++active_slot;

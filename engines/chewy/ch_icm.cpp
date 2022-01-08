@@ -723,8 +723,8 @@ void set_z_ebene() {
 			spieler_mi[P_CHEWY].XyzEnd[0] = minfo.x - CH_HOT_MOV_X + _G(spieler).scrollx;
 			spieler_mi[P_CHEWY].XyzEnd[1] = minfo.y - CH_HOT_MOV_Y + _G(spieler).scrolly;
 			mov->
-			get_mov_vector(spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub, &spieler_vector
-			               [P_CHEWY]);
+			get_mov_vector(spieler_mi[P_CHEWY].XyzStart, spieler_mi[P_CHEWY].Vorschub,
+				&spieler_vector[P_CHEWY]);
 			get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
 			spieler_vector[P_CHEWY].DelayCount = 0;
 		}
@@ -1338,7 +1338,7 @@ void get_inv() {
 	tmp = 0;
 	for (i = 0; i < 2; i++)
 		out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c, i));
-	abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, " % [0 - 9]3d\0", &tmp);
+	abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, " %[0 - 9]3d\0", &tmp);
 	if (abfrage != 27)
 	{
 		invent_2_slot(tmp);
@@ -1362,7 +1362,7 @@ void del_inv() {
 	tmp = 0;
 	for (i = 0; i < 2; i++)
 		out->printxy(x, y + i * 10, 14, 300, scr_width, txt->str_pos(c, i));
-	abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, " % [0 - 9]3d\0", &tmp);
+	abfrage = out->scanxy(x + 72, y + 10, 14, 60, 6, scr_width, " %[0 - 9]3d\0", &tmp);
 	if (abfrage != 27)
 	{
 		del_invent_slot(tmp);

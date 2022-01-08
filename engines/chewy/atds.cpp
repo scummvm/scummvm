@@ -1222,7 +1222,7 @@ char **atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 					tmp_adr += sizeof(AadStrHeader);
 					if (ads_block[block_nr].Show[(int16)nr] == true) {
 						e_ptr[*anzahl] = tmp_adr;
-						e_nr [*anzahl] = (int16)nr;
+						e_nr[*anzahl] = (int16)nr;
 						++(*anzahl);
 					}
 				}

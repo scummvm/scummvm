@@ -150,8 +150,8 @@ int16 FineSpeedV;
 int16 FineSpeedN;
 int16 FineSpeedS;
 tmf_inst Instrument[4] = {{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }};
-uint16 InsFreq [4] = {0};
-char *Sample [4] = {0};
+uint16 InsFreq[4] = {0};
+char *Sample[4] = {0};
 
 tmf_header *ActiveSong;
 int16 SeqPointer;
@@ -159,12 +159,12 @@ int16 PatPointer;
 int16 PatLine;
 char *Patterns[128];
 char *CurrentLine;
-int16 StereoPos [8] = {63};
+int16 StereoPos[8] = {63};
 
-byte *Dbuffer [8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
-uint32 DbufferLen [8] = {0};
-uint32 DbSampleLen [8] = {0};
-Stream *DbufferHandles [8] = {0};
+byte *Dbuffer[8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
+uint32 DbufferLen[8] = {0};
+uint32 DbSampleLen[8] = {0};
+Stream *DbufferHandles[8] = {0};
 
 ailScummVM::ailScummVM() {
 	_mixer = g_engine->_mixer;

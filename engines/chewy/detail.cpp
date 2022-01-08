@@ -509,22 +509,22 @@ void detail::konvert_format(room_detail_info *rdi_a,
 
 	for (i = 0; i < MAXDETAILS * MAX_SOUNDS; i++) {
 		rdi_n->tvp_index[i] = rdi_a->tvp_index[i];
-		rdi_n->sample [i] = rdi_a->sample [i];
+		rdi_n->sample[i] = rdi_a->sample[i];
 		for (j = 0; j < MAX_SOUNDS; j++) {
 			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.sound_enable[j] =
 			    rdi_a->Ainfo[i / 3].sfx.sound_enable[j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.sound_index [j] =
-			    rdi_a->Ainfo[i / 3].sfx.sound_index [j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.sound_start [j] =
-			    rdi_a->Ainfo[i / 3].sfx.sound_start [j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.kanal [j] =
-			    rdi_a->Ainfo[i / 3].sfx.kanal [j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.volume [j] =
-			    rdi_a->Ainfo[i / 3].sfx.volume [j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.repeats [j] =
-			    rdi_a->Ainfo[i / 3].sfx.repeats [j];
-			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.stereo [j] =
-			    rdi_a->Ainfo[i / 3].sfx.stereo [j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.sound_index[j] =
+			    rdi_a->Ainfo[i / 3].sfx.sound_index[j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.sound_start[j] =
+			    rdi_a->Ainfo[i / 3].sfx.sound_start[j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.kanal[j] =
+			    rdi_a->Ainfo[i / 3].sfx.kanal[j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.volume[j] =
+			    rdi_a->Ainfo[i / 3].sfx.volume[j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.repeats[j] =
+			    rdi_a->Ainfo[i / 3].sfx.repeats[j];
+			rdi_n->Ainfo[i / MAX_SOUNDS].sfx.stereo[j] =
+			    rdi_a->Ainfo[i / 3].sfx.stereo[j];
 		}
 	}
 
@@ -1103,12 +1103,12 @@ void detail::clear_detail_sound(int16 nr) {
 	sdb = &rdi.Ainfo[nr].sfx;
 	for (i = 0; i < MAX_SOUNDS; i++) {
 		sdb->sound_enable[i] = 0;
-		sdb->sound_index [i] = -1;
-		sdb->sound_start [i] = 0;
-		sdb->kanal [i] = 0;
-		sdb->volume [i] = 0;
-		sdb->repeats [i] = 0;
-		sdb->stereo [i] = 0;
+		sdb->sound_index[i] = -1;
+		sdb->sound_start[i] = 0;
+		sdb->kanal[i] = 0;
+		sdb->volume[i] = 0;
+		sdb->repeats[i] = 0;
+		sdb->stereo[i] = 0;
 	}
 	remove_unused_samples();
 }
@@ -1133,17 +1133,17 @@ void detail::clear_room_sound() {
 		sdb = &rdi.Ainfo[j].sfx;
 		for (i = 0; i < MAX_SOUNDS; i++) {
 			sdb->sound_enable[i] = 0;
-			sdb->sound_index [i] = -1;
-			sdb->sound_start [i] = 0;
-			sdb->kanal [i] = 0;
-			sdb->volume [i] = 0;
-			sdb->repeats [i] = 0;
-			sdb->stereo [i] = 0;
+			sdb->sound_index[i] = -1;
+			sdb->sound_start[i] = 0;
+			sdb->kanal[i] = 0;
+			sdb->volume[i] = 0;
+			sdb->repeats[i] = 0;
+			sdb->stereo[i] = 0;
 		}
 	}
 	for (i = 0; i < MAXDETAILS * MAX_SOUNDS; i++) {
 		rdi.tvp_index[i] = -1;
-		rdi.sample [i] = NULL;
+		rdi.sample[i] = NULL;
 	}
 }
 #ifdef DETEDIT

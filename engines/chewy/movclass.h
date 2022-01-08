@@ -50,8 +50,8 @@ struct MovInfo {
 
 struct ObjMov {
 	int16 Xypos[3] = { 0 };
-	int16 Xyvo [3] = { 0 };
-	int16 Xyna [3][2] = { 0 };
+	int16 Xyvo[3] = { 0 };
+	int16 Xyna[3][2] = { 0 };
 	int16 Count = 0;
 
 	int16 Delay = 0;

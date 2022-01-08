@@ -192,12 +192,12 @@ void Room::set_zoom(int16 zoom) {
 
 void Room::set_pal(const byte *src_pal, byte *dest_pal) {
 	memcpy(dest_pal, src_pal, 768l);
-	dest_pal [767] = 63;
-	dest_pal [766] = 63;
-	dest_pal [765] = 63;
-	dest_pal [0] = 0;
-	dest_pal [1] = 0;
-	dest_pal [2] = 0;
+	dest_pal[767] = 63;
+	dest_pal[766] = 63;
+	dest_pal[765] = 63;
+	dest_pal[0] = 0;
+	dest_pal[1] = 0;
+	dest_pal[2] = 0;
 }
 
 void Room::set_ak_pal(RaumBlk *Rb) {
