@@ -150,7 +150,7 @@ void SdlWindow::grabMouse(bool grab) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_window) {
 		SDL_SetWindowGrab(_window, grab ? SDL_TRUE : SDL_FALSE);
-#if SDL_VERSION_ATLEAST(2, 0, 17)
+#if SDL_VERSION_ATLEAST(2, 0, 18)
 		SDL_SetWindowMouseRect(_window, grab ? &grabRect : NULL);
 #endif
 	}
@@ -173,7 +173,7 @@ void SdlWindow::setMouseRect(const Common::Rect &rect) {
 	grabRect.w = rect.width();
 	grabRect.h = rect.height();
 
-#if SDL_VERSION_ATLEAST(2, 0, 17)
+#if SDL_VERSION_ATLEAST(2, 0, 18)
 	if (_inputGrabState || _lastFlags & fullscreenMask) {
 		SDL_SetWindowMouseRect(_window, &grabRect);
 	}
@@ -413,7 +413,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 
 	const bool shouldGrab = (flags & SDL_WINDOW_INPUT_GRABBED) || fullscreenFlags;
 	SDL_SetWindowGrab(_window, shouldGrab ? SDL_TRUE : SDL_FALSE);
-#if SDL_VERSION_ATLEAST(2, 0, 17)
+#if SDL_VERSION_ATLEAST(2, 0, 18)
 	SDL_SetWindowMouseRect(_window, shouldGrab ? &grabRect : NULL);
 #endif
 
