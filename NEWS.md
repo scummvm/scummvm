@@ -1,6 +1,12 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.5.2 (XXXX-XX-XX)
+
+ Sherlock:
+   - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
+     installation.
+
 #### 2.5.1 (2022-01-02)
 
  General:
