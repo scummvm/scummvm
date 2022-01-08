@@ -159,4 +159,35 @@ void delay(size_t time) {
 	g_events->delay(time);
 }
 
+bool kbhit() {
+	return g_events->_kbInfo && g_events->_kbInfo->key_code != 0;
+}
+
+char getch() {
+	if (g_events->_kbInfo && g_events->_kbInfo->key_code) {
+		char c = g_events->_kbInfo->key_code;
+		g_events->_kbInfo->key_code = 0;
+		g_events->_kbInfo->scan_code = 0;
+
+		return c;
+	}
+
+	Common::Event e;
+	while (!SHOULD_QUIT) {
+		g_system->delayMillis(10);
+		g_events->update();
+
+		while (!g_system->getEventManager()->pollEvent(e) && !SHOULD_QUIT) {
+			if (e.type == Common::EVENT_KEYDOWN)
+				return e.kbd.ascii;
+		}
+	}
+
+	return 0;
+}
+
+void putch(char c) {
+	warning("STUB: putch()");
+}
+
 } // namespace Chewy

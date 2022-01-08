@@ -362,23 +362,6 @@ void init_svga(VesaInfo *vi_, byte *virt_screen) {
 	warning("STUB - init_svga");
 }
 
-bool kbhit() {
-	warning("STUB: kbhit()");
-
-	return false;
-}
-
-char getch() {
-	warning("STUB: getch()");
-
-	return ' ';
-}
-
-void putch(char c) {
-	warning("STUB: putch()");
-}
-
-
 namespace Zoom {
 
 static int spriteHeight;

@@ -30,8 +30,6 @@ struct kb_info;
 
 class EventsManager : public EventsBase {
 private:
-	kb_info *_kbInfo = nullptr;
-
 	void init_timer_handler();
 	static void timer_handler();
 
@@ -40,6 +38,7 @@ private:
 protected:
 	void handleEvent(const Common::Event &event) override;
 public:
+	kb_info *_kbInfo = nullptr;
 	Common::Point _mousePos;
 	bool _flag1 = false;
 	bool _flag2 = false;
@@ -64,6 +63,10 @@ public:
 extern EventsManager *g_events;
 
 extern void delay(size_t time);
+
+extern bool kbhit();
+extern char getch();
+extern void putch(char c);
 
 #define EVENTS_UPDATE g_events->update()
 

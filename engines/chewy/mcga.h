@@ -85,10 +85,6 @@ uint8 joystick();
 void init_svga(VesaInfo *vi, byte *virt_screen);
 void upd_scr();
 
-bool kbhit();
-char getch();
-void putch(char c);
-
 } // namespace Chewy
 
 #endif
