@@ -20,20 +20,50 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
 
 namespace Chewy {
 
-int16 file_icons[8 * 4] = { 14, 73, 32, 94,
-                            14, 96, 32, 118,
-                            36, 64, 310, 128,
-                            16, 143, 76, 193,
-                            78, 143, 130, 193,
-                            132, 143, 178, 193,
-                            180, 143, 228, 193,
-                            232, 143, 310, 193
-                          };
+#define SURIMY_START 0
+#define SURIMY_END 7
+#define SCHNULLER 8
+#define SCHNULL_BAND 22
+#define MUND_START 9
+#define MUND_END 11
+#define SCHNULL_OFF 23
+#define TDISP_START 12
+#define TDISP_END 19
+#define TDISP_EIN 20
+#define TDISP_AUS 21
+#define MUSIC_OFF 24
+#define MUSIC_ON1 25
+#define MUSIC_ON2 26
+#define EXIT 27
+
+const int16 OPTION_ICONS[9 * 4] = {
+	 18,   61,   40,   76,
+	112,   61,  130,   76,
+	 82,  104,  144,  139,
+	164,   93,  194,  115,
+	198,   80,  206,  115,
+	210,   55,  302,  138,
+	126,  146,  210,  198,
+	 22,   92,   44,  136,
+	 50,   92,   72,  136
+};
+
+static const int16 FILE_ICONS[8 * 4] = {
+	14, 73, 32, 94,
+	14, 96, 32, 118,
+	36, 64, 310, 128,
+	16, 143, 76, 193,
+	78, 143, 130, 193,
+	132, 143, 178, 193,
+	180, 143, 228, 193,
+	232, 143, 310, 193
+};
 
 Common::File *File::open(const char *name) {
 	Common::File *f = new Common::File();
@@ -167,8 +197,7 @@ int16 file_menue() {
 			if (mode[2] || mode [3] || mode[8]) {
 				tmp = fnames + (text_off * 40);
 				for (i = 0; i < 6; i++) {
-					if (tmp != 0)
-					{
+					if (tmp != 0) {
 						if (i != active_slot) {
 							out->printxy(40, 68 + (i * 10), 14, 300, 0, "%2d.", text_off + i);
 							out->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
@@ -219,7 +248,7 @@ int16 file_menue() {
 			}
 			if ((minfo.button == 1) || (key == ENTER)) {
 				WAIT_TASTE_LOS
-				rect = in->maus_vector(minfo.x, minfo.y, file_icons, 8);
+				rect = in->maus_vector(minfo.x, minfo.y, FILE_ICONS, 8);
 				key = 0;
 				switch (rect) {
 				case 0:
@@ -355,9 +384,12 @@ int16 file_menue() {
 			}
 			cur->plot_cur();
 			out->back2screen(workpage);
+
+			EVENTS_UPDATE;
+			SHOULD_QUIT_RETURN0;
 		}
 	}
-	free((char *)ti);
+	free(ti);
 
 	room->open_handle(&background[0], "rb", R_TGPDATEI);
 	ERROR
@@ -374,33 +406,6 @@ int16 file_menue() {
 	return ret;
 }
 
-const int16 OPTION_ICONS[9 * 4] = {
-	 18,   61,   40,   76,
-	112,   61,  130,   76,
-	 82,  104,  144,  139,
-	164,   93,  194,  115,
-	198,   80,  206,  115,
-	210,   55,  302,  138,
-	126,  146,  210,  198,
-	 22,   92,   44,  136,
-	 50,   92,   72,  136
-};
-
-#define SURIMY_START 0
-#define SURIMY_END 7
-#define SCHNULLER 8
-#define SCHNULL_BAND 22
-#define MUND_START 9
-#define MUND_END 11
-#define SCHNULL_OFF 23
-#define TDISP_START 12
-#define TDISP_END 19
-#define TDISP_EIN 20
-#define TDISP_AUS 21
-#define MUSIC_OFF 24
-#define MUSIC_ON1 25
-#define MUSIC_ON2 26
-#define EXIT 27
 void option_menue(taf_info *ti) {
 	int16 key;
 	int16 surimy_ani;
@@ -588,6 +593,8 @@ void option_menue(taf_info *ti) {
 
 		cur->plot_cur();
 		out->back2screen(workpage);
+		EVENTS_UPDATE;
+		SHOULD_QUIT_RETURN;
 
 		if (!delay_count) {
 			if (surimy_ani < SURIMY_END)
@@ -616,6 +623,7 @@ void option_menue(taf_info *ti) {
 		} else
 			--delay_count;
 	}
+
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
 	ERROR;
 	out->setze_zeiger(workptr);
