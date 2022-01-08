@@ -47,6 +47,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Neue Digital iMUSE-Engine hinzugefügt.
    - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
 
+ Sherlock:
+   - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
+     wenn die Spieldateien über eine minimale Installation bereitgestellt werden.
+
  TwinE:
    - Fehler in der Kollisionserkennung behoben, der dazu führt, dass das Spiel nicht beendet werden kann,
      da sich der Panzer in Szene 63 nicht mehr bewegen kann.
