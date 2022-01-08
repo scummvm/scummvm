@@ -560,14 +560,367 @@ void HNMDecoder::HNM5VideoTrack::decodeChunk(Common::SeekableReadStream *stream,
 	}
 }
 
+static inline byte *HNM5_getSourcePtr(Common::SeekableReadStream *stream, uint32 &size,
+                                      byte *previous, byte *current, int16 pitch, byte currentMode) {
+	int32 offset;
+	byte offb;
+
+#define HNM5_DECODE_OFFSET_CST(src, constant_off) \
+    offset = constant_off + stream->readUint16LE(); \
+    size -= 2; \
+    return (src + offset)
+#define HNM5_DECODE_OFFSET(src, xbits, xbase, ybase) \
+    offb = stream->readByte(); \
+    size -= 1; \
+    offset = ((offb >> xbits) + ybase) * pitch + \
+        (offb & ((1 << xbits) - 1)) + xbase; \
+    return (src + offset)
+
+	switch (currentMode) {
+	case  2:
+		HNM5_DECODE_OFFSET_CST(previous, -32768);
+	case  3:
+		HNM5_DECODE_OFFSET_CST(previous, -32768);
+	case  4:
+		HNM5_DECODE_OFFSET_CST(previous, -32768);
+	case  5:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -8);
+	case  6:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -8);
+	case  7:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -8);
+	case  8:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -8);
+	case  9:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -8);
+	case 10:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -2);
+	case 11:
+		HNM5_DECODE_OFFSET(previous, 4,  -8, -14);
+	case 12:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -2);
+	case 13:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -2);
+	case 14:
+		HNM5_DECODE_OFFSET(previous, 4,  -2, -14);
+	case 15:
+		HNM5_DECODE_OFFSET(previous, 4, -14, -14);
+	case 16:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -8);
+	case 17:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -8);
+	case 18:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -2);
+	case 19:
+		HNM5_DECODE_OFFSET(previous, 4,  -8, -14);
+	case 20:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -2);
+	case 21:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -2);
+	case 22:
+		HNM5_DECODE_OFFSET(previous, 4,  -2, -14);
+	case 23:
+		HNM5_DECODE_OFFSET(previous, 4, -14, -14);
+	case 24:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -8);
+	case 25:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -8);
+	case 26:
+		HNM5_DECODE_OFFSET(previous, 4,  -8,  -2);
+	case 27:
+		HNM5_DECODE_OFFSET(previous, 4,  -8, -14);
+	case 28:
+		HNM5_DECODE_OFFSET(previous, 4,  -2,  -2);
+	case 29:
+		HNM5_DECODE_OFFSET(previous, 4, -14,  -2);
+	case 30:
+		HNM5_DECODE_OFFSET(previous, 4,  -2, -14);
+	case 31:
+		HNM5_DECODE_OFFSET(previous, 4, -14, -14);
+	case 32:
+		HNM5_DECODE_OFFSET_CST(current, -65536);
+	case 33:
+		HNM5_DECODE_OFFSET(current, 5, -16,  -8);
+	case 34:
+		HNM5_DECODE_OFFSET(current, 4,  -8, -16);
+	case 35:
+		HNM5_DECODE_OFFSET(current, 4, -24, -16);
+	case 36:
+		HNM5_DECODE_OFFSET(current, 4,   8, -16);
+	case 37:
+		HNM5_DECODE_OFFSET(current, 3,  -4, -32);
+	case 38:
+		HNM5_DECODE_OFFSET(current, 3, -12, -32);
+	case 39:
+		HNM5_DECODE_OFFSET(current, 3,   4, -32);
+	case 40:
+		HNM5_DECODE_OFFSET_CST(current, -65536);
+	case 41:
+		HNM5_DECODE_OFFSET(current, 5, -16,  -8);
+	case 42:
+		HNM5_DECODE_OFFSET(current, 4,  -8, -16);
+	case 43:
+		HNM5_DECODE_OFFSET(current, 4, -24, -16);
+	case 44:
+		HNM5_DECODE_OFFSET(current, 4,   8, -16);
+	case 45:
+		HNM5_DECODE_OFFSET(current, 3,  -4, -32);
+	case 46:
+		HNM5_DECODE_OFFSET(current, 3, -12, -32);
+	case 47:
+		HNM5_DECODE_OFFSET(current, 3,   4, -32);
+	default:
+		error("BUG: Invalid offset mode");
+	}
+
+#undef HNM5_DECODE_OFFSET_CST
+#undef HNM5_DECODE_OFFSET
+}
+
+static inline void HNM5_copy(byte *dst, byte *src, int16 pitch,
+                             byte copyMode, byte width, byte height) {
+	switch (copyMode) {
+	case 0:
+		// Copy
+		for (byte row = 0; row < height; row++) {
+			memcpy(&dst[row * pitch],
+			       &src[row * pitch], width);
+		}
+		break;
+	case 1:
+		// Horizontal reverse
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[row * pitch];
+			byte *sp = &src[row * pitch];
+			for (byte col = 0; col < width; col++, dp++, sp--) {
+				*dp = *sp;
+			}
+		}
+		break;
+	case 2:
+		// Vertical reverse
+		for (byte row = 0; row < height; row++) {
+			memcpy(&dst[ row * pitch],
+			       &src[-row * pitch], width);
+		}
+		break;
+	case 3:
+		// Horiz-Vert reverse
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[ row * pitch];
+			byte *sp = &src[-row * pitch];
+			for (byte col = 0; col < width; col++, dp++, sp--) {
+				*dp = *sp;
+			}
+		}
+		break;
+	case 4:
+		// Swap
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[row * pitch];
+			byte *sp = &src[row * 1];
+			for (byte col = 0; col < width; col++, dp++, sp += pitch) {
+				*dp = *sp;
+			}
+		}
+		break;
+	case 5:
+		// Swap Horiz-Reverse
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[row * pitch];
+			byte *sp = &src[row * 1];
+			for (byte col = 0; col < width; col++, dp++, sp -= pitch) {
+				*dp = *sp;
+			}
+		}
+		break;
+	case 6:
+		// Swap Vert-Reverse
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[ row * pitch];
+			byte *sp = &src[-row * 1];
+			for (byte col = 0; col < width; col++, dp++, sp += pitch) {
+				*dp = *sp;
+			}
+		}
+		break;
+	case 7:
+		// Swap Vert-Reverse
+		for (byte row = 0; row < height; row++) {
+			byte *dp = &dst[ row * pitch];
+			byte *sp = &src[-row * 1];
+			for (byte col = 0; col < width; col++, dp++, sp -= pitch) {
+				*dp = *sp;
+			}
+		}
+		break;
+	default:
+		error("BUG: Invalid copy mode");
+		return;
+	}
+}
+
+static const byte HNM5_WIDTHS[3][32] = {
+	{
+		 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+		18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 44, 48, 52, 56
+	}, /* 2 */
+	{
+		 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+		17, 18, 19, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44
+	}, /* 3 */
+	{
+		 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+		17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 30, 32, 34, 36, 38
+	}, /* 4 */
+};
+
 void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
-	// TODO: Implement this
+	uint16 pitch = _surface.pitch;
+	bool eop = false;
+
+	byte height = (byte)-1;
+	byte currentMode = (byte)-1;
+	uint32 currentPos = 0;
+
+	while (!eop) {
+		if (size < 1) {
+			warning("Not enough data in chunk for frame block");
+			break;
+		}
+		byte opcode = stream->readByte();
+		size -= 1;
+
+		if (opcode == 0x20) {
+			assert(height != (byte)-1);
+			if (size < 1) {
+				error("Not enough data for opcode 0x20");
+			}
+			uint width = stream->readByte();
+			size -= 1;
+			width++;
+			for (byte row = 0; row < height; row++) {
+				memcpy(&_frameBufferC[currentPos + row * pitch], &_frameBufferP[currentPos + row * pitch], width);
+			}
+			currentPos += width;
+		} else if (opcode == 0x60) {
+			// Maximal pixels height is 4
+			assert(height != (byte)-1 && height <= 4);
+			if (size < height) {
+				error("Not enough data for opcode 0x60");
+			}
+			assert(stream->read(_workingPixels, height) == height);
+			size -= height;
+			for (byte row = 0; row < height; row++) {
+				_frameBufferC[currentPos + row * pitch] = _workingPixels[row];
+			}
+			currentPos += 1;
+		} else if (opcode == 0xA0) {
+			assert(height != (byte)-1);
+			if (size < 1) {
+				error("Not enough data for opcode 0x20");
+			}
+			uint width = stream->readByte();
+			size -= 1;
+			width += 2;
+
+			if (size < height * width) {
+				error("Not enough data for opcode 0xA0");
+			}
+			assert(stream->read(_workingPixels, height * width) == height * width);
+			size -= height * width;
+
+			for (byte row = 0; row < height; row++) {
+				for (uint col = 0; col < width; col++) {
+					_frameBufferC[currentPos + row * pitch + col] = _workingPixels[height * col + row];
+				}
+			}
+			currentPos += width;
+		} else if (opcode == 0xE0) {
+			if (size < 1) {
+				error("Not enough data for opcode 0xE0");
+			}
+			byte subop = stream->readByte();
+			size -= 1;
+
+			if (subop == 0x00) {
+				assert(height != (byte)-1);
+				if (size < 2) {
+					error("Not enough data for opcode 0xE0 0x00");
+				}
+				uint width = stream->readByte();
+				byte px = stream->readByte();
+				size -= 2;
+
+				width += 1;
+
+				for (byte row = 0; row < height; row++) {
+					memset(&_frameBufferC[currentPos + row * pitch], px, width);
+				}
+				currentPos += width;
+			} else if (subop == 0x01) {
+				if (height != (byte)-1) {
+					currentPos += (height - 1) * pitch;
+				}
+
+				eop = true;
+			} else {
+				// Reconfigure decoder at line start
+				assert((currentPos % pitch) == 0);
+				assert(subop < 48);
+
+				if (height != (byte)-1) {
+					currentPos += (height - 1) * pitch;
+				}
+
+				currentMode = subop;
+
+				if        (( 8 <= subop && subop <= 15) ||
+				           (32 <= subop && subop <= 39) ||
+				           (subop == 2) || (subop == 5)) {
+					height = 2;
+				} else if ((16 <= subop && subop <= 23) ||
+				           (40 <= subop && subop <= 47) ||
+				           (subop == 3) || (subop == 6)) {
+					height = 3;
+				} else if ((24 <= subop && subop <= 31) ||
+				           (subop == 4) || (subop == 7)) {
+					height = 4;
+				}
+
+			}
+		} else {
+			assert(height != (byte)-1);
+			assert(2 <= height && height <= 4);
+			byte index = opcode & 0x1f;
+			byte copyMode = (opcode >> 5) & 0x7;
+			byte width = HNM5_WIDTHS[height - 2][index];
+
+			// HNM5_getSourcePtr can consume 1 byte but the stream can not end like this so check for maximum
+			if (size < 2) {
+				error("Not enough data for opcode 0x%02X", opcode);
+			}
+			byte *src = HNM5_getSourcePtr(stream, size, _frameBufferP, _frameBufferC, pitch, currentMode);
+
+			HNM5_copy(_frameBufferC + currentPos, src + currentPos, pitch, copyMode, width, height);
+			currentPos += width;
+		}
+	}
 
 	if (size > 0) {
 		stream->skip(size);
 	}
+
+	_surface.setPixels(_frameBufferC);
+
+	// Frame done
+	_curFrame++;
+	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
+	_nextFrameDelay = _nextNextFrameDelay;
+	_nextNextFrameDelay = uint32(-1);
+
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,

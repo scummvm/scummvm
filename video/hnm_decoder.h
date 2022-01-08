@@ -137,6 +137,9 @@ private:
 	protected:
 		/** Really decode */
 		void decodeFrame(Common::SeekableReadStream *stream, uint32 size);
+
+		// Some space to speed things out
+		byte _workingPixels[257 * 4];
 	};
 
 	class DPCMAudioTrack : public AudioTrack {
