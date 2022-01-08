@@ -95,6 +95,8 @@ public:
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 
+	SaveStateList listSaves();
+
 	uint getRandomNumber(uint max) {
 		return _rnd.getRandomNumber(max);
 	}
