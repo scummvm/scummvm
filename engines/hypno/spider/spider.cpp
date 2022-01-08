@@ -388,8 +388,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["decide3.mi_"];
 	cl = new ChangeLevel("alofintr.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+
 	cl = new ChangeLevel("c4");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("int_roof.mi_", "", prefix);
 	sc = (Scene *) _levels["int_roof.mi_"];
@@ -533,8 +538,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->intros.push_back("cine/apts006s.smk");
 	cl = new ChangeLevel("ball1.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+
 	cl = new ChangeLevel("c5");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadArcadeLevel("c5.mi_", "<trans_apt_6>", prefix);
 	_levels["c5.mi_"]->levelIfLose = "<over_hob2>";
@@ -595,6 +605,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("movie3.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+
+	cl = new ChangeLevel("decide6.mi_");
+	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("movie3.mi_", "movie4.mi_", prefix);
 	_levels["movie3.mi_"]->intros.push_back("cine/imss001s.smk");
@@ -615,9 +632,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("shoctalk.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("decide10.mi_");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("shoctalk.mi_", "decide7.mi_", prefix);
 	_levels["shoctalk.mi_"]->intros.push_back("cine/vrfs004s.smk");
@@ -627,9 +648,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("decide8.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("c13.mi_");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadArcadeLevel("c13.mi_", "<after_c13>", prefix);
 	_levels["c13.mi_"]->levelIfLose = "<over_shock>";
@@ -663,9 +688,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("c8");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("c9");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadArcadeLevel("c8.mi_", "<after_c8>", prefix);
 	_levels["c8.mi_"]->levelIfLose = "<over_myst2>";
@@ -707,9 +736,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("c11s");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("c12s");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	// Octopus fight without Mason
 	loadArcadeLevel("c11.mi_", "<chip_dies_with_shocker>", prefix);
@@ -738,9 +771,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("docoffi1.mi_");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("<dont_believe_mason>");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("docoffi1.mi_", "decide11.mi_", prefix);
 	_levels["docoffi1.mi_"]->intros.push_back("cine/doos002s.smk");
@@ -752,9 +789,13 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	cl = new ChangeLevel("c11m");
 	sc->hots[2].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[2].actions.push_back(gl);
 
 	cl = new ChangeLevel("c12m");
 	sc->hots[4].actions.push_back(cl);
+	gl = new Global("GS_LEVELWON", "TURNON");
+	sc->hots[4].actions.push_back(gl);
 
 	// No c7/c7h level?
 	// Octopus fight with Mason
@@ -774,8 +815,6 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c12h.mi_"]->levelIfLose = "<vr_death>";
 	_levels["c12h.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12mh.mi_"] = _levels["c12h.mi_"];
-
-	loadSceneLevel("decide11.mi_", "", prefix);
 
 	// Game overs
 	Transition *over_apt_1 = new Transition("tryagain.mi_");
