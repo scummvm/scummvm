@@ -104,7 +104,7 @@ bool HypnoEngine::checkLevelWon() {
 
 void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 	Hotspots *hots = stack.back();
-	Hotspot selected(MakeHotspot, "");
+	Hotspot selected(MakeHotspot);
 	bool found = false;
 	int rs = 100000000;
 	int cs = 0;
@@ -197,7 +197,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 
 bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	Hotspots *hots = stack.back();
-	Hotspot selected(MakeHotspot, "");
+	Hotspot selected(MakeHotspot);
 	bool found = false;
 	int rs = 100000000;
 	for (Hotspots::const_iterator it = hots->begin(); it != hots->end(); ++it) {
@@ -509,6 +509,8 @@ void HypnoEngine::runScene(Scene *scene) {
 	_nextParallelVideoToPlay.clear();
 	_nextSequentialVideoToPlay.clear();
 	_escapeSequentialVideoToPlay.clear();
+
+	removeTimers();
 }
 
 void HypnoEngine::showConversation() { error("Not implemented"); }

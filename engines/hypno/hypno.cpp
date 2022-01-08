@@ -72,7 +72,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	_defaultCursor = "";
 	_checkpoint = "";
 	// Add quit level
-	Hotspot q(MakeMenu, "");
+	Hotspot q(MakeMenu);
 	Action *a = new Quit();
 	q.actions.push_back(a);
 	Scene *quit = new Scene();

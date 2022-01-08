@@ -69,8 +69,12 @@ void HypnoEngine::runMenu(Hotspots hs) {
 
 	//if (h.stype == "SINGLE_RUN")
 	//	loadImage("int_main/mainbutt.smk", 0, 0);
-	if (h.stype == "AUTO_BUTTONS" && _conversation.empty())
-		loadImage("int_main/resume.smk", 0, 0, true);
+	if (_conversation.empty()) {
+		if (h.flags[0] == "HINTS" || h.flags[1] == "HINTS" || h.flags[2] == "HINTS")
+			loadImage("int_main/hint1.smk", 0, 0, true);
+		else if (h.flags[0] == "AUTO_BUTTONS")
+			loadImage("int_main/resume.smk", 0, 0, true);
+	}
 }
 
 void HypnoEngine::runBackground(Background *a) {	

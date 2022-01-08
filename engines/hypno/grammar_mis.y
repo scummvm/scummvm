@@ -86,8 +86,12 @@ lines: line lines
 
 
 line: MENUTOK mflag mflag mflag {
-		Hotspot *hot = new Hotspot(MakeMenu, $2); 
+		Hotspot *hot = new Hotspot(MakeMenu); 
 		debugC(1, kHypnoDebugParser, "MENU %s %s", $2, $3);
+		hot->flags[0] = $2;
+		hot->flags[1] = $3;
+		hot->flags[2] = $4;
+
 		Hotspots *cur = stack->back();
 		cur->push_back(*hot);
 
@@ -98,7 +102,7 @@ line: MENUTOK mflag mflag mflag {
 		smenu_idx->push_back(idx);
 	}
 	| HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
-		Hotspot *hot = new Hotspot(MakeHotspot, "", Common::Rect($3, $4, $5, $6)); 
+		Hotspot *hot = new Hotspot(MakeHotspot, Common::Rect($3, $4, $5, $6)); 
 		debugC(1, kHypnoDebugParser, "HOTS %d.", hot->type);
 		Hotspots *cur = stack->back();
 		cur->push_back(*hot); 
