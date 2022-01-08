@@ -291,7 +291,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 	uint16 width = _surface.w;
 	bool eop = false;
 
-	uint currentPos = 0;
+	uint32 currentPos = 0;
 
 	while (!eop) {
 		if (size < 1) {
@@ -412,7 +412,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 	uint16 width = _surface.w;
 	bool eop = false;
 
-	uint currentPos = 0;
+	uint32 currentPos = 0;
 
 	while (!eop) {
 		if (size < 1) {
@@ -500,7 +500,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 
 void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size) {
 	Image::HLZDecoder::decodeFrameInPlace(*stream, size, _frameBufferC);
-	memcpy(_frameBufferP, _frameBufferC, (uint)_surface.w * (uint)_surface.h);
+	memcpy(_frameBufferP, _frameBufferC, (uint32)_surface.w * (uint32)_surface.h);
 }
 
 void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
