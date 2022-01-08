@@ -233,7 +233,8 @@ int16 file_menue() {
 #endif
 				out->back2screen(workpage);
 				in->alter_kb_handler();
-				warning("FIXME: key = getch();");
+
+				key = getch();
 				if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
 					ret = 1;
 					key = ESC;
