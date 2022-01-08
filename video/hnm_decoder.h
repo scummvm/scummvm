@@ -152,7 +152,8 @@ private:
 		Audio::QueuingAudioStream *_audioStream;
 		bool _gotLUT;
 		uint16 _lut[256];
-		uint16 _lastSample;
+		uint16 _lastSampleL;
+		uint16 _lastSampleR;
 		uint _sampleRate;
 		bool _stereo;
 	};

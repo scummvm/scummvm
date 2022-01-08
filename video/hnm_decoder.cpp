@@ -572,7 +572,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
         Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
-	_gotLUT(false), _lastSample(0), _sampleRate(sampleRate), _stereo(stereo) {
+	_gotLUT(false), _lastSampleL(0), _lastSampleR(0), _sampleRate(sampleRate), _stereo(stereo) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
 	}
@@ -603,28 +603,45 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 		_gotLUT = true;
 	}
 
-	if (size > 0) {
-		uint16 *out = (uint16 *)malloc(size * sizeof(*out));
-		uint16 *p = out;
-		uint16 sample = _lastSample;
+	if (size == 0) {
+		return Audio::Timestamp(0, 0, _sampleRate);
+	}
+
+	uint16 *out = (uint16 *)malloc(size * sizeof(*out));
+	uint16 *p = out;
+
+	byte flags = Audio::FLAG_16BITS;
+#ifdef SCUMM_LITTLE_ENDIAN
+	flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+	if (_audioStream->isStereo()) {
+		uint16 sampleL = _lastSampleL;
+		uint16 sampleR = _lastSampleR;
+		byte deltaId;
+		for (uint32 i = 0; i < size / 2; i++, p += 2) {
+			deltaId = stream->readByte();
+			sampleL += _lut[deltaId];
+			deltaId = stream->readByte();
+			sampleR += _lut[deltaId];
+			p[0] = sampleL;
+			p[1] = sampleR;
+		}
+		_lastSampleL = sampleL;
+		_lastSampleR = sampleR;
+
+		flags |= Audio::FLAG_STEREO;
+	} else {
+		uint16 sample = _lastSampleL;
+		byte deltaId;
 		for (uint32 i = 0; i < size; i++, p++) {
-			byte deltaId = stream->readByte();
+			deltaId = stream->readByte();
 			sample += _lut[deltaId];
 			*p = sample;
 		}
-		_lastSample = sample;
-
-		byte flags = Audio::FLAG_16BITS;
-
-		if (_audioStream->isStereo())
-			flags |= Audio::FLAG_STEREO;
-
-#ifdef SCUMM_LITTLE_ENDIAN
-		flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-
-		_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
+		_lastSampleL = sample;
 	}
+
+	_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
 	return Audio::Timestamp(0, _audioStream->isStereo() ? size / 2 : size, _sampleRate);
 }
 
