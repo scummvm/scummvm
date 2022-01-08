@@ -83,6 +83,7 @@ private:
 	static SherlockEngine *_vm;
 	Common::Array<ImageFrame> _frames;
 	Common::String _name;
+	Common::SeekableReadStream *_stream;
 
 	/**
 	 * Load the data of the sprite

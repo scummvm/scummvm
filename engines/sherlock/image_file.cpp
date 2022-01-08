@@ -35,19 +35,26 @@ void ImageFile::setVm(SherlockEngine *vm) {
 }
 
 ImageFile::ImageFile() {
+	_stream = nullptr;
 }
 
 ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
+	// When we have a filename, the ImageFile class is responsible for
+	// decoding frames on demand, not all at once. But we don't want to
+	// recreate the stream every time since in the case where resources
+	// files are compressed that will decompress the entire resource file
+	// for each call. This makes the Serrated Scalpel intro very slow, even
+	// on decent hardware.
+
 	_name = name;
-	Common::SeekableReadStream *stream = _vm->_res->load(name);
+	_stream = _vm->_res->load(name);
 
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
-	load(*stream, skipPal, animImages);
-
-	delete stream;
+	load(*_stream, skipPal, animImages);
 }
 
 ImageFile::ImageFile(Common::SeekableReadStream &stream, bool skipPal) {
+	_stream = nullptr;
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
 	load(stream, skipPal, false);
 }
@@ -57,6 +64,7 @@ ImageFile::~ImageFile() {
 		if (_frames[idx]._decoded)
 			_frames[idx]._frame.free();
 	}
+	delete _stream;
 }
 
 ImageFrame& ImageFile::operator[](uint index) {
@@ -76,14 +84,12 @@ void ImageFile::push_back(const ImageFrame &frame) {
 }
 
 void ImageFile::decodeFrame(ImageFrame &frame) {
-	Common::SeekableReadStream *stream = _vm->_res->load(_name);
-	stream->seek(frame._pos);
+	_stream->seek(frame._pos);
 	byte *data = new byte[frame._size + 4];
-	stream->read(data, frame._size);
+	_stream->read(data, frame._size);
 	Common::fill(data + frame._size, data + frame._size + 4, 0);
 	frame.decompressFrame(data, IS_ROSE_TATTOO);
 	delete[] data;
-	delete stream;
 }
 
 void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
