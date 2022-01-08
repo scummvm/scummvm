@@ -146,4 +146,8 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 		Common::kWritingFailed;
 }
 
+SaveStateList ChewyEngine::listSaves() {
+	return getMetaEngine()->listSaves(_targetName.c_str());
+}
+
 } // End of namespace Chewy

@@ -118,7 +118,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 	switch ((int16)io->key_nr) {
 	case 0:
 		cur->hide_cur();
-		get_files(io->save_path);
+		get_savegame_files();
 		i = 0;
 		cur_y = io->popy + 8;
 		scroll_flag = 0;
@@ -298,7 +298,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				out->pop_box(io->popx + 163, io->popy + 6, io->popx + 241, io->popy + 18, io->m_col[1], io->m_col[0], io->m_col[3]);
 				out->printxy(io->popx + 167, io->popy + 9, io->m_col[2], 300, scr_width, FSTRING1);
 
-				get_files(io->save_path);
+				get_savegame_files();
 				i = 0;
 				cur_y = io->popy + 8;
 				scroll_flag = 0;
@@ -317,7 +317,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				out->pop_box(io->popx + 163, io->popy + 6 + 1 * 16, io->popx + 241, io->popy + 18 + 1 * 16, io->m_col[1], io->m_col[0], io->m_col[3]);
 				out->printxy(io->popx + 167, io->popy + 25, io->m_col[2], 300, scr_width, FSTRING2);
 
-				get_files(io->save_path);
+				get_savegame_files();
 				i = 0;
 				cur_y = io->popy + 8;
 				scroll_flag = 0;
@@ -382,7 +382,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 					io_flag = 0;
 					save(cur_y, i, io->save_path);
 					cur->hide_cur();
-					get_files(io->save_path);
+					get_savegame_files();
 					mark_eintrag(cur_y, i);
 					schalter_aus();
 
@@ -565,47 +565,25 @@ void io_game::itoa(int N, char *str, int base) {
 	sprintf(str, "%d", N);
 }
 
-int16 io_game::get_files(char *fname) {
-	warning("STUB: io_game::get_files()");
+int16 io_game::get_savegame_files() {
+	SaveStateList saveList = g_engine->listSaves();
+	int ret = 0;
 
-#if 0
-	struct find_t f_info;
-	int16 f_ok;
-	int16 i, j;
-	int16 ret = 0;
-	char path[80];
-	char str[4];
-	Stream *handle;
-	char name[USER_NAME + 3];
-	char tmp_id[9];
-	for (i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++) {
 		file_find_g[i][0] = 0;
-		if (i + 1 < 10)
-			j = 2;
-		else
-			j = 1;
-		strcpy(str, "000\0");
-		itoa(i + 1, str + j, 10);
-		strcpy(path, fname);
-		strcat(path, str);
-		f_ok = _dos_findfirst(path, _A_NORMAL, &f_info);
-		if (!f_ok) {
-			file_find_g[i][0] = 1;
-			handle = chewy_fopen(path, "rb");
-			if (handle) {
-				chewy_fread(&tmp_id, 4, 1, handle);
-				if (!strncmp(tmp_id, io->id, 3)) {
-					++ret;
-					chewy_fread(name, USER_NAME + 2, 1, handle);
-					strcpy(&file_find_g[i][1], name);
-				}
-				chewy_fclose(handle);
+
+		for (int j = 0; j < saveList.size(); ++j) {
+			if (saveList[j].getSaveSlot() == i) {
+				Common::String name = saveList[j].getDescription();
+				strncpy(&file_find_g[i][1], name.c_str(), USER_NAME + 3);
+				file_find_g[i][USER_NAME + 3] = '\0';
+				++ret;
+				break;
 			}
 		}
 	}
+
 	return ret;
-#endif
-	return 0;
 }
 
 void io_game::save(int16 y, int16 slotNum, char *fname) {
@@ -636,7 +614,7 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 }
 
 void io_game::load(int16 slotNum, char *fname) {
-	get_files(io->save_path);
+	get_savegame_files();
 
 	cur->hide_cur();
 	if (file_find_g[slotNum][0] == 1) {
@@ -657,7 +635,7 @@ char *io_game::io_init(iog_init *iostruc) {
 	io = iostruc;
 	for (i = 0; i < 20; i++)
 		file_find_g[i][0] = 0;
-	get_files(io->save_path);
+	get_savegame_files();
 
 	return &file_find_g[0][0];
 }

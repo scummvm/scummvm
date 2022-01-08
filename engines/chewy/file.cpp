@@ -237,7 +237,7 @@ int16 file_menue() {
 				key = getch();
 				if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
 					ret = 1;
-					key = ESC;
+ 					key = ESC;
 				} else
 					key = 0;
 				in->neuer_kb_handler(&kbinfo);

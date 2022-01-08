@@ -95,7 +95,7 @@ private:
 	void unmark_eintrag(int16 y, int16 nr);
 	void plot_dir_liste(int16 cur_y, int16 start);
 	void schalter_aus();
-	int16 get_files(char *fname);
+	int16 get_savegame_files();
 	void get_switch_code();
 
 	void itoa(int N, char *str, int base);
