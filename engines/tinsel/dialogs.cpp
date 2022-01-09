@@ -886,7 +886,6 @@ bool Dialogs::LanguageChange() {
  */
 void Dialogs::PrimeSceneHopper() {
 	Common::File f;
-	char *pBuffer;
 	uint32 vSize;
 
 	// Open the file (it's on the CD)
@@ -902,32 +901,49 @@ void Dialogs::PrimeSceneHopper() {
 	// allocate a buffer for it all
 	assert(_pHopper == NULL);
 	uint32 size = f.size() - 8;
-
-	// make sure memory allocated
-	pBuffer = (char *)malloc(size);
-	if (pBuffer == NULL)
-		// cannot alloc buffer for index
-		error(NO_MEM, "Scene hopper data");
-
-	// load data
-	if (f.read(pBuffer, size) != size)
-		// file must be corrupt if we get to here
-		error(FILE_IS_CORRUPT, HOPPER_FILENAME);
-
-	// Set data pointers
-	_pHopper = (PHOPPER)pBuffer;
-	_pEntries = (PHOPENTRY)(pBuffer + vSize);
 	_numScenes = vSize / sizeof(HOPPER);
+
+	_pHopper = new HOPPER[_numScenes];
+
+	for (int i = 0; i < _numScenes; i++) {
+		_pHopper[i].hScene = FROM_32(f.readUint32LE());
+		_pHopper[i].hSceneDesc = FROM_32(f.readUint32LE());
+		_pHopper[i].numEntries = FROM_32(f.readUint32LE());
+		_pHopper[i].entryIndex = FROM_32(f.readUint32LE());
+
+		if (f.err()) {
+			// file must be corrupt if we get to here
+			error(FILE_IS_CORRUPT, HOPPER_FILENAME);
+		}
+	}
+
+	_pEntries = new HOPENTRY[_numScenes];
+
+	for (int i = 0; i < _numScenes; i++) {
+		_pEntries[i].eNumber = FROM_32(f.readUint32LE());
+		_pEntries[i].hDesc = FROM_32(f.readUint32LE());
+		_pEntries[i].flags = FROM_32(f.readUint32LE());
+
+		if (f.err()) {
+			// file must be corrupt if we get to here
+			error(FILE_IS_CORRUPT, HOPPER_FILENAME);
+		}
+	}
 
 	// close the file
 	f.close();
 }
 
 /**
- * Free the scene hopper data file
+ * Free the scene hopper data
  */
 void Dialogs::FreeSceneHopper() {
-	free(_pHopper);
+	delete[] _pEntries;
+	_pEntries = nullptr;
+
+	_pChosenScene = nullptr;
+
+	delete[] _pHopper;
 	_pHopper = nullptr;
 }
 
@@ -951,7 +967,7 @@ void Dialogs::FirstScene(int first) {
 	// Fill in the rest
 	for (i = 0; i < NUM_RGROUP_BOXES && i + first < _numScenes; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_32(_pHopper[i + first].hSceneDesc);
+		cd.box[i].ixText = _pHopper[i + first].hSceneDesc;
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -974,10 +990,10 @@ void Dialogs::SetChosenScene() {
 void Dialogs::FirstEntry(int first) {
 	int i;
 
-	_invD[INV_MENU].hInvTitle = FROM_32(_pChosenScene->hSceneDesc);
+	_invD[INV_MENU].hInvTitle = _pChosenScene->hSceneDesc;
 
 	// get number of entrances
-	_numEntries = FROM_32(_pChosenScene->numEntries);
+	_numEntries = _pChosenScene->numEntries;
 
 	// Force first to a sensible value
 	if (first > _numEntries - NUM_RGROUP_BOXES)
@@ -987,7 +1003,7 @@ void Dialogs::FirstEntry(int first) {
 
 	for (i = 0; i < NUM_RGROUP_BOXES && i < _numEntries; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_32(_pEntries[FROM_32(_pChosenScene->entryIndex) + i + first].hDesc);
+		cd.box[i].ixText = _pEntries[_pChosenScene->entryIndex + i + first].hDesc;
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -999,16 +1015,16 @@ void Dialogs::FirstEntry(int first) {
 }
 
 void Dialogs::HopAction() {
-	PHOPENTRY pEntry = _pEntries + FROM_32(_pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
+	HOPENTRY *pEntry = _pEntries + _pChosenScene->entryIndex + cd.selBox + cd.extraBase;
 
-	uint32 hScene = FROM_32(_pChosenScene->hScene);
-	uint32 eNumber = FROM_32(pEntry->eNumber);
+	uint32 hScene = _pChosenScene->hScene;
+	uint32 eNumber = pEntry->eNumber;
 	debugC(DEBUG_BASIC, kTinselDebugAnimations, "Scene hopper chose scene %xh,%d\n", hScene, eNumber);
 
-	if (FROM_32(pEntry->flags) & fCall) {
+	if (pEntry->flags & fCall) {
 		SaveScene(Common::nullContext);
 		NewScene(Common::nullContext, _pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
-	} else if (FROM_32(pEntry->flags) & fHook)
+	} else if (pEntry->flags & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
 		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
