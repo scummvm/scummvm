@@ -55,6 +55,10 @@ static const int16 SONDE_PHASEN[4][2] = {
 	{ 119, 119 }
 };
 
+void Room3::entry() {
+	init_sonde();
+}
+
 void Room3::terminal() {
 	show_cur();
 	_G(auto_obj) = 0;

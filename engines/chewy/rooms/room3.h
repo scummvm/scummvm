@@ -29,8 +29,9 @@ class Room3 {
 private:
 	static void sonde_knarre();
 	static void probeTransfer();
-public:
 	static void init_sonde();
+public:
+	static void entry();
 	static void terminal();
 };
 

@@ -607,7 +607,7 @@ void enter_room(int16 eib_nr) {
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	ENTRY(0);
 	ENTRY(2);
-	case 3: Room3::init_sonde(); break;
+	ENTRY(3);
 	ENTRY(5);
 	ENTRY(6);
 	ENTRY(7);
@@ -632,11 +632,7 @@ void enter_room(int16 eib_nr) {
 	ENTRY(19);
 	ENTRY(21);
 	ENTRY(22);
-
-	case 23:
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		set_person_pos(135, 69, P_CHEWY, -1);
-		break;
+	ENTRY(23);
 
 	case 24:
 		Room24::entry();
@@ -652,12 +648,7 @@ void enter_room(int16 eib_nr) {
 	ENTRY(31);
 	ENTRY(32);
 	ENTRY(33);
-
-	case 34:
-		if (flags.LoadGame)
-			Room34::use_kuehlschrank();
-		break;
-
+	ENTRY(34);
 	ENTRY(35);
 	ENTRY(37);
 	ENTRY(39);
