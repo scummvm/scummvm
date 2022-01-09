@@ -95,116 +95,29 @@ void timer_action(int16 t_nr) {
 	if (ailsnd->isSpeechActive())
 		return;
 
+#define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr)
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-	case 0:
-		Room0::timer(t_nr, ani_nr);
-		break;
-
-	case 11:
-		if (t_nr == _G(timer_nr)[0])
-			Room11::bork_zwinkert();
-		break;
-
-	case 12:
-		if (t_nr == _G(timer_nr)[0]) {
-			if (!is_chewy_busy())
-				Room12::init_bork();
-		} else if (t_nr == _G(timer_nr)[1]) {
-			if (_G(spieler).R12TransOn) {
-				_G(spieler).R12TransOn = false;
-				start_aad_wait(30, -1);
-			}
-		}
-		break;
-
-	case 14:
-		switch (ani_nr) {
-		case 0:
-			Room14::eremit_feuer(t_nr, ani_nr);
-			break;
-		default:
-			break;
-		}
-		break;
-
-	case 17:
-		if (room->room_timer.ObjNr[ani_nr] == 2 ||
-				room->room_timer.ObjNr[ani_nr] == 3) {
-			if (_G(spieler).R17EnergieOut)
-				uhr->reset_timer(t_nr, 0);
-			else
-				default_flag = true;
-		}
-		break;
-
-	case 18:
-		Room18::timer_action(t_nr);
-		break;
-
-	case 21:
-		if (t_nr == _G(timer_nr)[0]) {
-			Room21::restart_spinne2();
-		} else if (t_nr == _G(timer_nr)[2])
-			Room21::chewy_kolli();
-		break;
-
-	case 22:
-		if (!ani_nr && !flags.ExitMov) {
-			Room22::bork(t_nr);
-		}
-		break;
-
-	case 40:
-		if (t_nr == _G(timer_nr)[0])
-			_G(spieler).R40PoliceStart = true;
-		else
-			default_flag = true;
-		break;
-
-	case 48:
-		if (t_nr == _G(timer_nr)[0])
-			Room48::frage();
-		else
-			default_flag = true;
-		break;
-
-	case 49:
-		if (t_nr == _G(timer_nr)[0])
-			Room49::calc_boy_ani();
-		break;
-
-	case 50:
-		if (t_nr == _G(timer_nr)[0])
-			Room50::calc_wasser();
-		default_flag = true;
-		break;
-
-	case 51:
-		if (_G(spieler).flags32_10)
-			Room51::timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
-		else
-			default_flag = true;
-		break;
-
-	case 56:
-		if (t_nr == _G(timer_nr)[0])
-			Room56::start_flug();
-		else
-			default_flag = true;
-		break;
-
-	case 68:
-		if (t_nr == _G(timer_nr)[0])
-			Room68::calc_diva();
-		else
-			default_flag = true;
-		break;
+	TIMER(0);
+	TIMER(11);
+	TIMER(12);
+	TIMER(14);
+	TIMER(17);
+	TIMER(18);
+	TIMER(21);
+	TIMER(22);
+	TIMER(40);
+	TIMER(48);
+	TIMER(49);
+	TIMER(50);
+	TIMER(51);
+	TIMER(56);
+	TIMER(68);
 
 	default:
 		default_flag = true;
 		break;
-
 	}
+	#undef TIMER
 
 	if (default_flag && flags.AutoAniPlay == false) {
 		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, 0);

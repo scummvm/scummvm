@@ -63,6 +63,13 @@ void Room11::entry() {
 	}
 }
 
+bool Room11::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		bork_zwinkert();
+
+	return false;
+}
+
 void Room11::bork_zwinkert() {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;

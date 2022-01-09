@@ -58,6 +58,15 @@ void Room68::xit() {
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
 }
 
+bool Room68::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		Room68::calc_diva();
+	else
+		return true;
+
+	return false;
+}
+
 void Room68::setup_func() {
 	int16 ho_x, ho_y;
 	int16 ni_x, ni_y;

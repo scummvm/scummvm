@@ -94,6 +94,18 @@ void Room17::xit() {
 	_G(spieler).room_e_obj[38].Attribut = AUSGANG_OBEN;
 }
 
+bool Room17::timer(int16 t_nr, int16 ani_nr) {
+	if (room->room_timer.ObjNr[ani_nr] == 2 ||
+		room->room_timer.ObjNr[ani_nr] == 3) {
+		if (_G(spieler).R17EnergieOut)
+			uhr->reset_timer(t_nr, 0);
+		else
+			return true;
+	}
+
+	return false;
+}
+
 int16 Room17::use_seil() {
 	int16 action_flag = false;
 	if (!flags.AutoAniPlay) {

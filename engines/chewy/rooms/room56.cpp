@@ -100,6 +100,15 @@ void Room56::xit() {
 	_G(spieler).ScrollxStep = 1;
 }
 
+bool Room56::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		start_flug();
+	else
+		return true;
+
+	return false;
+}
+
 int16 Room56::use_taxi() {
 	int16 action_ret = false;
 	if (!_G(spieler).inv_cur) {

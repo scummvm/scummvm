@@ -89,20 +89,7 @@ void Room18::entry() {
 	}
 }
 
-void Room18::init_borks() {
-	int16 i;
-	for (i = 0; i < 5; i++)
-		det->show_static_spr(BORK_SPR[i]);
-	for (i = 0; i < 4; i++)
-		det->hide_static_spr(BORK_SPR1[i]);
-	_G(timer_nr)[0] = room->set_timer(255, 10);
-	_G(timer_nr)[1] = room->set_timer(255, 15);
-	_G(spieler).scrollx = 276;
-	_G(spieler).scrolly = 0;
-	flags.NoScroll = true;
-}
-
-void Room18::timer_action(int16 t_nr) {
+bool Room18::timer(int16 t_nr, int16 ani_nr) {
 	if (!_G(spieler).R18SurimyWurf) {
 		if (!flags.AutoAniPlay) {
 			flags.AutoAniPlay = true;
@@ -134,6 +121,21 @@ void Room18::timer_action(int16 t_nr) {
 			flags.AutoAniPlay = false;
 		}
 	}
+
+	return false;
+}
+
+void Room18::init_borks() {
+	int16 i;
+	for (i = 0; i < 5; i++)
+		det->show_static_spr(BORK_SPR[i]);
+	for (i = 0; i < 4; i++)
+		det->hide_static_spr(BORK_SPR1[i]);
+	_G(timer_nr)[0] = room->set_timer(255, 10);
+	_G(timer_nr)[1] = room->set_timer(255, 15);
+	_G(spieler).scrollx = 276;
+	_G(spieler).scrolly = 0;
+	flags.NoScroll = true;
 }
 
 void Room18::monitor() {

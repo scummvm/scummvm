@@ -73,6 +73,13 @@ void Room49::xit(int16 eib_nr) {
 	}
 }
 
+bool Room49::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		calc_boy_ani();
+
+	return false;
+}
+
 void Room49::calc_boy_ani() {
 	if (!_G(spieler).R49BoyAniCount) {
 		_G(spieler).R49BoyAniCount = 3;

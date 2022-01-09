@@ -85,6 +85,20 @@ void Room12::entry() {
 	}
 }
 
+bool Room12::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0]) {
+		if (!is_chewy_busy())
+			init_bork();
+	} else if (t_nr == _G(timer_nr)[1]) {
+		if (_G(spieler).R12TransOn) {
+			_G(spieler).R12TransOn = false;
+			start_aad_wait(30, -1);
+		}
+	}
+
+	return false;
+}
+
 void Room12::init_bork() {
 	if (!auto_obj_status(R12_BORK_OBJ) &&
 		!_G(spieler).R12BorkTalk) {
