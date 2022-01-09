@@ -134,9 +134,9 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	assert(imgHandle);
 
 	// get height of capital W for offset to next line
-	const IMAGE *pImg = _vm->_handle->GetImage(imgHandle);
-	yOffset = pImg->imgHeight & ~C16_FLAG_MASK;
-	delete pImg;
+	const IMAGE *pImgCapitalW = _vm->_handle->GetImage(imgHandle);
+	yOffset = pImgCapitalW->imgHeight & ~C16_FLAG_MASK;
+	delete pImgCapitalW;
 
 	while (*szStr) {
 		// x justify the text according to the mode flags
