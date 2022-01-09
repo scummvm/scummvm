@@ -2687,8 +2687,9 @@ void ResourceManager::detectSciVersion() {
 		// Distinguish between SCI1.1 and SCI32 games here. SCI32 games will
 		// always include script 64920 (the Array class). Note that there are
 		// no Mac SCI2 games. Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
-
-		// TODO: Decide between SCI2.1 and SCI3
+		// There are also no SCI3 Mac games, the final Mac games are Late SCI2.1
+		// versions of SCI3 PC games. That is, the Mac scripts are compiled as
+		// separate script and hunk resources instead of the SCI3 script format.
 		if (res) {
 			s_sciVersion = SCI_VERSION_2_1_EARLY; // we check for SCI2.1 specifics a bit later
 		} else {
