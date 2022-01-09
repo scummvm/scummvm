@@ -101,6 +101,7 @@ void EventsBase::processEvents() {
 			} else {
 				MOUSE_MOVE;
 				handleEvent(e);
+				return;
 			}
 			break;
 		}
