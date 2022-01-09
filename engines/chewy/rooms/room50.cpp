@@ -63,6 +63,13 @@ void Room50::xit(int16 eib_nr) {
 	}
 }
 
+bool Room50::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		calc_wasser();
+
+	return true;
+}
+
 void Room50::stop_cigar() {
 	room->set_timer_status(0, TIMER_STOP);
 	det->del_static_ani(0);

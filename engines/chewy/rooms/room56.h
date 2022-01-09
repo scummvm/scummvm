@@ -28,15 +28,17 @@ namespace Rooms {
 class Room56 {
 private:
 	static void setup_func();
+	static void start_flug();
 
 public:
 	static void entry();
 	static void xit();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static int16 use_taxi();
 	static void talk_man();
 	static int16 use_man();
 	static int16 use_kneipe();
-	static void start_flug();
 };
 
 } // namespace Rooms

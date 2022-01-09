@@ -28,13 +28,17 @@ namespace Chewy {
 namespace Rooms {
 
 class Room14 {
+private:
+	static void eremit_feuer(int16 t_nr, int16 ani_nr);
+
 public:
 	static void entry();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void feuer();
 	static int16 use_schrott();
 	static int16 use_gleiter();
 	static int16 use_schleim();
-	static void eremit_feuer(int16 t_nr, int16 ani_nr);
 	static void talk_eremit();
 };
 

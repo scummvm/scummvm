@@ -61,6 +61,14 @@ void Room22::entry() {
 		det->show_static_spr(4);
 }
 
+bool Room22::timer(int16 t_nr, int16 ani_nr) {
+	if (!ani_nr && !flags.ExitMov) {
+		bork(t_nr);
+	}
+
+	return false;
+}
+
 int16 Room22::chewy_amboss() {
 	int16 action_flag = false;
 	if (!_G(spieler).R22ChewyPlatt && !_G(spieler).inv_cur && !flags.AutoAniPlay) {

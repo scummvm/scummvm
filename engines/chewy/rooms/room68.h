@@ -33,6 +33,8 @@ private:
 public:
 	static void entry();
 	static void xit();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void look_kaktus();
 	static int16 use_indigo();
 	static void talk_keeper();

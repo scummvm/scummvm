@@ -29,11 +29,13 @@ class Room49 {
 private:
 	static void talk_boy(int16 aad_nr);
 	static void setup_func();
+	static void calc_boy_ani();
 
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
-	static void calc_boy_ani();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void calc_boy();
 	static int16 use_boy();
 	static void use_boy_cigar();

@@ -119,6 +119,15 @@ void Room40::xit(int16 eib_nr) {
 	show_cur();
 }
 
+bool Room40::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		_G(spieler).R40PoliceStart = true;
+	else
+		return true;
+
+	return false;
+}
+
 void Room40::move_train(int16 mode) {
 	int16 lx, ax;
 	int16 delay;

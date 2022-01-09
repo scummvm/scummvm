@@ -65,6 +65,15 @@ void Room21::entry() {
 	SetUpScreenFunc = r21setup_func;
 }
 
+bool Room21::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0]) {
+		restart_spinne2();
+	} else if (t_nr == _G(timer_nr)[2])
+		chewy_kolli();
+
+	return false;
+}
+
 void Room21::calc_laser() {
 	if (_G(spieler).R21Hebel1 && !_G(spieler).R21Hebel2 && _G(spieler).R21Hebel3) {
 		_G(spieler).R21Laser1Weg = true;

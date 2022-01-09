@@ -29,13 +29,15 @@ class Room22 {
 private:
 	static void bork_walk1();
 	static void bork_walk2();
+	static void bork(int16 t_nr);
 
 public:
 	static void entry();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static int16 chewy_amboss();
 	static int16 malen();
 	static void get_bork();
-	static void bork(int16 t_nr);
 };
 
 } // namespace Rooms

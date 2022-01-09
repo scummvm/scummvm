@@ -40,6 +40,15 @@ void Room48::entry() {
 
 }
 
+bool Room48::timer(int16 t_nr, int16 ani_nr) {
+	if (t_nr == _G(timer_nr)[0])
+		Room48::frage();
+	else
+		return true;
+
+	return false;
+}
+
 void Room48::calc_pic() {
 	int16 i;
 	for (i = 0; i < 2; i++) {

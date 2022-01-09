@@ -28,15 +28,17 @@ namespace Rooms {
 class Room12 {
 private:
 	static void bork_ok();
+	static void init_bork();
 
 public:
 	static void entry();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static int16 cut_serv(int16 frame);
 	static int16 use_linke_rohr();
 	static int16 chewy_trans();
 	static int16 proc1();
 	static int16 use_terminal();
-	static void init_bork();
 	static void talk_bork();
 };
 

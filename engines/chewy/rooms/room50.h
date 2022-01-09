@@ -31,11 +31,13 @@ private:
 	static void go_page();
 	static void aad_page(int16 aad_nr, int16 ani_nr);
 	static void setup_func();
+	static void calc_wasser();
 
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
-	static void calc_wasser();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void calc_treppe();
 	static int16 use_gutschein();
 	static int16 use_gum();

@@ -30,11 +30,13 @@ private:
 	static void init_spinne();
 	static void e_streifen();
 	static void r21setup_func();
+	static void chewy_kolli();
+	static void restart_spinne2();
 
 public:
 	static void entry();
-	static void chewy_kolli();
-	static void restart_spinne2();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void calc_laser();
 	static void use_gitter_energie();
 	static int16 use_fenster();

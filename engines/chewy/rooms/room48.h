@@ -31,6 +31,8 @@ private:
 	static void setup_func();
 public:
 	static void entry();
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static void frage();
 };
 

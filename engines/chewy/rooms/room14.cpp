@@ -46,6 +46,18 @@ void Room14::entry() {
 	}
 }
 
+bool Room14::timer(int16 t_nr, int16 ani_nr) {
+	switch (ani_nr) {
+	case 0:
+		eremit_feuer(t_nr, ani_nr);
+		break;
+	default:
+		break;
+	}
+
+	return false;
+}
+
 void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!flags.AutoAniPlay && !_G(spieler).R14Feuer) {
 		flags.AutoAniPlay = true;

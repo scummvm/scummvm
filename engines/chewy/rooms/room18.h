@@ -32,7 +32,8 @@ private:
 
 public:
 	static void entry();
-	static void timer_action(int16 t_nr);
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static int16 calc_surimy();
 	static int16 calc_schalter();
 	static short use_cart_moni();

@@ -29,12 +29,14 @@ class Room51 {
 private:
 	static void setup_func();
 	static int16 cut_serv(int16 frame);
+	static void timer_action(int16 t_nr, int16 obj_nr);
 
 public:
 	static void entry();
 	static void xit(int16 eib_nr);
+	static bool timer(int16 t_nr, int16 ani_nr);
+
 	static int16 use_door(int16 txt_nr);
-	static void timer_action(int16 t_nr, int16 obj_nr);
 };
 
 } // namespace Rooms
