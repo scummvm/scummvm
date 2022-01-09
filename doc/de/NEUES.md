@@ -1,6 +1,12 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.5.2 (XX.XX.XXXX)
+
+ Sherlock:
+   - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
+     wenn die Spieldateien über eine minimale Installation bereitgestellt werden.
+
 #### 2.5.1 (02.01.2022)
 
  Allgemein:
