@@ -432,7 +432,21 @@ public:
 		 * MILES_VERSION_3: behavior matches Miles Sound System version 3 and
 		 * higher. GM devices are initialized according to the GM standard.
 		 */
-		PROP_MILES_VERSION = 9
+		PROP_MILES_VERSION = 9,
+		/**
+		 * Set this property to make the OPL driver ignore note off events for
+		 * rhythm instruments when rhythm mode is activated.
+		 * MIDI data should contain a note off for each note on. For rhythm
+		 * instruments, a note off typically has no effect, because the note
+		 * plays for a fixed amount of time. For the OPL rhythm instruments a
+		 * note off will cut off the note. With this option, this behavior can
+		 * be prevented.
+		 * Currently only the AdLib multisource driver supports this option.
+		 *
+		 * False: note offs for OPL rhythm mode instruments are processed.
+		 * True: note offs for OPL rhythm mode instruments are ignored.
+		 */
+		PROP_OPL_RHYTHM_MODE_IGNORE_NOTE_OFF = 10
 	};
 
 	/**
