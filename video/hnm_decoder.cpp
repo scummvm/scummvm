@@ -36,7 +36,7 @@ namespace Video {
 // When no sound display a frame every 80ms
 HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelay(80),
 	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr),
-	_loop(loop), _initialPalette(initialPalette) {
+	_loop(loop), _initialPalette(initialPalette), _dataBuffer(nullptr) {
 }
 
 HNMDecoder::~HNMDecoder() {
