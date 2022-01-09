@@ -28,7 +28,7 @@ namespace Rooms {
 class Room5 {
 public:
 	static void entry();
-	static void knopf();
+	static void pushButton();
 };
 
 } // namespace Rooms
