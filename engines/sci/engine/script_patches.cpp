@@ -11945,9 +11945,81 @@ static const uint16 qfg1egaPatchThrowRockAtNest[] = {
 	PATCH_END
 };
 
+// Picking the safe three times in room 321 ends the game but displays the wrong
+//  death message. bustedScript in script 289 handles two deaths: knocking over
+//  the vase and picking the safe. To determine which message to display it
+//  tests a local variable to see how many times the safe has been picked, but
+//  this local variable is always zero because the real safe counter is the
+//  local variable with the same index in the room script. bustedScript appears
+//  to have originally been in script 321 and later moved to a supporting script
+//  without updating its local variable usage. Sierra moved bustedScript back to
+//  script 321 in the Japanese PC-9801 version, fixing this bug.
+//
+// We fix this by setting bustedScript:register when the picking the safe three
+//  times and testing that instead of the unused local variable.
+//
+// Applies to: English PC, Amiga, and Atari ST versions
+// Responsible methods: bustedScript:changState(3), rm321:handleEvent
+static const uint16 qfg1egaSignaturePickSafeMessage1[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x01,                         // lsl 01 [ always zero ]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 qfg1egaPatchPickSafeMessage1[] = {
+	0x39, SIG_SELECTOR8(register),     // pushi register
+	0x76,                              // push0
+	0x54, 0x04,                        // self 04 [ self register? ]
+	PATCH_END
+};
+
+static const uint16 qfg1egaSignaturePickSafeMessage2[] = {
+	0x8b, 0x01,                         // lsl 01
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0013),           // bnt 0013
+	0x39, SIG_SELECTOR8(setScript),     // pushi setScript
+	0x78,                               // push1
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0121),           // pushi 0121
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ bustedScript ]
+	0x36,                               // push
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x06,                         // send 06 [ ego setScript: bustedScript ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 qfg1egaPatchPickSafeMessage2[] = {
+	0x83, 0x01,                         // lal 01
+	0x7a,                               // push2
+	0x1a,                               // eq?
+	0x31, 0x15,                         // bnt 15
+	0x39, PATCH_SELECTOR8(setScript),   // pushi setScript
+	0x39, 0x03,                         // pushi 03
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x0121),         // pushi 0121
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ bustedScript ]
+	0x36,                               // push
+	0x76,                               // push0 [ caller ]
+	0x78,                               // push1 [ register ]
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x0a,                         // send 0a [ ego setScript: bustedScript 0 1 ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1egaSignatures[] = {
 	{  true,    54, "throw rock at nest while running",            1, qfg1egaSignatureThrowRockAtNest,     qfg1egaPatchThrowRockAtNest },
+	{  true,   289, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage1,    qfg1egaPatchPickSafeMessage1 },
+	{  true,   321, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage2,    qfg1egaPatchPickSafeMessage2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
