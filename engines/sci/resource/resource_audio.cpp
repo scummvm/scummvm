@@ -796,7 +796,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 	if (!_resource)
 		return;
 
-	Channel *channel, *sampleChannel;
+	Channel *channel;
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// SCI0 only has a header of 0x11/0x21 byte length and the actual midi track follows afterwards
@@ -819,9 +819,6 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			channel->data = _resource->subspan(0x21);
 		}
 		if (_tracks->channelCount == 2) {
-			// Digital sample data included
-			_tracks->digitalChannelNr = 1;
-			sampleChannel = &_tracks->channels[1];
 			// we need to find 0xFC (channel terminator) within the data
 			SciSpan<const byte>::const_iterator it = channel->data.cbegin();
 			while (it != channel->data.cend() && *it != 0xfc)
@@ -829,16 +826,27 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			// Skip any following 0xFCs as well
 			while (it != channel->data.cend() && *it == 0xfc)
 				it++;
-			// Now adjust channels accordingly
-			sampleChannel->data = channel->data.subspan(it - channel->data.cbegin());
-			channel->data = channel->data.subspan(0, it - channel->data.cbegin());
-			// Read sample header information
-			//Offset 14 in the header contains the frequency as a short integer. Offset 32 contains the sample length, also as a short integer.
-			_tracks->digitalSampleRate = sampleChannel->data.getUint16LEAt(14);
-			_tracks->digitalSampleSize = sampleChannel->data.getUint16LEAt(32);
-			_tracks->digitalSampleStart = 0;
-			_tracks->digitalSampleEnd = 0;
-			sampleChannel->data += 44; // Skip over header
+			// Verify that there is data after the channel terminator
+			if (it != channel->data.cend()) {
+				// Digital sample data included
+				_tracks->digitalChannelNr = 1;
+				// Now adjust channels accordingly
+				Channel *sampleChannel = &_tracks->channels[1];
+				sampleChannel->data = channel->data.subspan(it - channel->data.cbegin());
+				channel->data = channel->data.subspan(0, it - channel->data.cbegin());
+				// Read sample header information
+				//Offset 14 in the header contains the frequency as a short integer. Offset 32 contains the sample length, also as a short integer.
+				_tracks->digitalSampleRate = sampleChannel->data.getUint16LEAt(14);
+				_tracks->digitalSampleSize = sampleChannel->data.getUint16LEAt(32);
+				_tracks->digitalSampleStart = 0;
+				_tracks->digitalSampleEnd = 0;
+				sampleChannel->data += 44; // Skip over header
+			} else {
+				// Early versions of SQ3 have the digital sample flag set in
+				// sound 35 even though there is no digital sample. Bug #13206
+				warning("No digital sample data in sound resource %d", resourceNr);
+				_tracks->channelCount--; // ignore the digital sample flag
+			}
 		}
 	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
 		SciSpan<const byte> data = *_resource;
