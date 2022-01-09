@@ -66,7 +66,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{       "gif", "gif.lib",                   nullptr,         nullptr,                                           nullptr },
 		{      "faad", "faad.lib",                  nullptr,         nullptr,                                           "libfaad.lib" },
 		{     "mpeg2", "mpeg2.lib",                 nullptr,         nullptr,                                           "libmpeg2.lib" },
-		{    "theora", "theora.lib",                nullptr,         nullptr,                                           "libtheora_static.lib" },
+		{ "theoradec", "theora.lib",                nullptr,         nullptr,                                           "libtheora_static.lib" },
 		{ "freetype2", "freetype.lib",              "freetyped.lib", nullptr,                                           nullptr },
 		{      "jpeg", "jpeg.lib",                  nullptr,         nullptr,                                           "jpeg-static.lib" },
 		{"fluidsynth", "fluidsynth.lib",            nullptr,         nullptr,                                           "libfluidsynth.lib" },

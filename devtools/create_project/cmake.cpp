@@ -47,7 +47,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "ogg",        "ogg",               kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "ogg"        },
 		{ "vorbis",     "vorbisfile vorbis", kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "vorbisfile vorbis" },
 		{ "tremor",     "vorbisidec",        kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "vorbisidec" },
-		{ "theora",     "theoradec",         kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "theoradec"  },
+		{ "theoradec",  "theoradec",         kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "theoradec"  },
 		{ "fluidsynth", "fluidsynth",        kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "fluidsynth" },
 		{ "faad",       "faad2",             kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "faad"       },
 		{ "fribidi",    "fribidi",           kSDLVersionAny, nullptr,        nullptr,    nullptr,                 nullptr,               "fribidi"    },
