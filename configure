@@ -6370,6 +6370,9 @@ EOF
 			mingw*)
 				OPENGL_LIBS="-lopengl32"
 				;;
+			serenity*)
+				OPENGL_LIBS="-lgl"
+				;;
 			*)
 				OPENGL_LIBS="-lGL"
 				;;
