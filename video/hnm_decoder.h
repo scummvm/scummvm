@@ -65,7 +65,7 @@ private:
 		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
 		void setFrameDelay(uint32 frameDelay);
 
-		virtual void decodeChunk(Common::SeekableReadStream *stream, uint32 size,
+		virtual void decodeChunk(byte *data, uint32 size,
 		                         uint16 chunkType, uint16 flags) = 0;
 
 	protected:
@@ -94,7 +94,7 @@ private:
 		~HNM45VideoTrack() override;
 
 		/** Decode a video chunk. */
-		void decodePalette(Common::SeekableReadStream *stream, uint32 size);
+		void decodePalette(byte *data, uint32 size);
 
 		Graphics::Surface _surface;
 
@@ -112,14 +112,14 @@ private:
 		~HNM4VideoTrack() override;
 
 		/** Decode a video chunk. */
-		void decodeChunk(Common::SeekableReadStream *stream, uint32 size,
+		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
 
 	protected:
 		/* Really decode */
-		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
-		void decodeInterframeA(Common::SeekableReadStream *stream, uint32 size);
-		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
+		void decodeInterframe(byte *data, uint32 size);
+		void decodeInterframeA(byte *data, uint32 size);
+		void decodeIntraframe(byte *data, uint32 size);
 		void presentFrame(uint16 flags);
 
 		byte *_frameBufferF;
@@ -131,15 +131,12 @@ private:
 		               uint32 regularFrameDelay, const byte *initialPalette = nullptr) :
 			HNM45VideoTrack(width, height, frameSize, frameCount, regularFrameDelay, initialPalette) {}
 		/** Decode a video chunk. */
-		void decodeChunk(Common::SeekableReadStream *stream, uint32 size,
+		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
 
 	protected:
 		/** Really decode */
-		void decodeFrame(Common::SeekableReadStream *stream, uint32 size);
-
-		// Some space to speed things out
-		byte _workingPixels[257 * 4];
+		void decodeFrame(byte *data, uint32 size);
 	};
 
 	class DPCMAudioTrack : public AudioTrack {
@@ -148,7 +145,7 @@ private:
 		               Audio::Mixer::SoundType soundType);
 		~DPCMAudioTrack() override;
 
-		Audio::Timestamp decodeSound(Common::SeekableReadStream *stream, uint32 size);
+		Audio::Timestamp decodeSound(byte *data, uint32 size);
 	protected:
 		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
 	private:
@@ -170,6 +167,8 @@ private:
 	DPCMAudioTrack *_audioTrack;
 
 	Common::SeekableReadStream *_stream;
+	byte *_dataBuffer;
+	uint32 _dataBufferAlloc;
 };
 
 } // End of namespace Video

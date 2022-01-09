@@ -22,7 +22,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/system.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 
@@ -123,6 +123,10 @@ void HNMDecoder::close() {
 
 	delete _stream;
 	_stream = nullptr;
+
+	delete[] _dataBuffer;
+	_dataBuffer = nullptr;
+	_dataBufferAlloc = 0;
 }
 
 void HNMDecoder::readNextPacket() {
@@ -139,25 +143,50 @@ void HNMDecoder::readNextPacket() {
 			superchunkRemaining = _stream->readUint32LE();
 		}
 	}
-	superchunkRemaining = (superchunkRemaining & 0x00ffffff) - 4;
+	superchunkRemaining = superchunkRemaining & 0x00ffffff;
+	if (superchunkRemaining < 4) {
+		error("Invalid superchunk header");
+	}
+	superchunkRemaining -= 4;
 
-	while (superchunkRemaining) {
-		uint32 chunkSize = _stream->readUint32LE();
-		uint16 chunkType = _stream->readUint16BE();
-		uint16 flags     = _stream->readUint16LE();
+	if (_dataBufferAlloc < superchunkRemaining) {
+		delete[] _dataBuffer;
+		_dataBuffer = new byte[superchunkRemaining];
+		_dataBufferAlloc = superchunkRemaining;
+	}
+	if (_stream->read(_dataBuffer, superchunkRemaining) != superchunkRemaining) {
+		error("Not enough data in file");
+	}
+
+	byte *data_p = _dataBuffer;
+	while (superchunkRemaining > 0) {
+		if (superchunkRemaining < 8) {
+			error("Not enough data in superchunk");
+		}
+
+		uint32 chunkSize = READ_LE_UINT32(data_p);
+		data_p += sizeof(uint32);
+		uint16 chunkType = READ_BE_UINT16(data_p);
+		data_p += sizeof(uint16);
+		uint16 flags     = READ_LE_UINT16(data_p);
+		data_p += sizeof(uint16);
+
+		if (superchunkRemaining < chunkSize) {
+			error("Chunk has a bogus size");
+		}
 
 		if (chunkType == MKTAG16('S', 'D')) {
 			if (_audioTrack) {
-				Audio::Timestamp duration = _audioTrack->decodeSound(_stream, chunkSize - 8);
+				Audio::Timestamp duration = _audioTrack->decodeSound(data_p, chunkSize - 8);
 				_videoTrack->setFrameDelay(duration.msecs());
 			} else {
 				warning("Got audio data without an audio track");
-				_stream->skip(chunkSize - 8);
 			}
 		} else {
-			_videoTrack->decodeChunk(_stream, chunkSize - 8, chunkType, flags);
+			_videoTrack->decodeChunk(data_p, chunkSize - 8, chunkType, flags);
 		}
 
+		data_p += (chunkSize - 8);
 		superchunkRemaining -= chunkSize;
 	}
 }
@@ -210,13 +239,13 @@ HNMDecoder::HNM45VideoTrack::~HNM45VideoTrack() {
 	_frameBufferP = nullptr;
 }
 
-void HNMDecoder::HNM45VideoTrack::decodePalette(Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM45VideoTrack::decodePalette(byte *data, uint32 size) {
 	while (true) {
 		if (size < 2) {
 			break;
 		}
-		uint start = stream->readByte();
-		uint count = stream->readByte();
+		uint start = *(data++);
+		uint count = *(data++);
 		size -= 2;
 
 		if (start == 255 && count == 255) {
@@ -233,22 +262,22 @@ void HNMDecoder::HNM45VideoTrack::decodePalette(Common::SeekableReadStream *stre
 			error("Invalid palette start/count values");
 		}
 
-		size -= count * 3;
+		if (size < count * 3) {
+			error("Not enough data for palette");
+		}
+
 		byte *palette_ptr = &_palette[start * 3];
 		for (; count > 0; count--) {
-			byte r = stream->readByte();
-			byte g = stream->readByte();
-			byte b = stream->readByte();
+			byte r = *(data++);
+			byte g = *(data++);
+			byte b = *(data++);
 			*(palette_ptr++) = r * 4;
 			*(palette_ptr++) = g * 4;
 			*(palette_ptr++) = b * 4;
 		}
+		size -= count * 3;
 	}
 	_dirtyPalette = true;
-
-	if (size > 0) {
-		stream->skip(size);
-	}
 }
 
 HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize,
@@ -264,19 +293,21 @@ HNMDecoder::HNM4VideoTrack::~HNM4VideoTrack() {
 	_frameBufferF = nullptr;
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeChunk(Common::SeekableReadStream *stream, uint32 size,
+void HNMDecoder::HNM4VideoTrack::decodeChunk(byte *data, uint32 size,
         uint16 chunkType, uint16 flags) {
 	if (chunkType == MKTAG16('P', 'L')) {
-		decodePalette(stream, size);
+		decodePalette(data, size);
 	} else if (chunkType == MKTAG16('I', 'Z')) {
-		stream->skip(4);
-		decodeIntraframe(stream, size - 4);
+		if (size < 4) {
+			error("Not enough data for IZ");
+		}
+		decodeIntraframe(data + 4, size - 4);
 		presentFrame(flags);
 	} else if (chunkType == MKTAG16('I', 'U')) {
 		if ((flags & 1) == 1) {
-			decodeInterframeA(stream, size);
+			decodeInterframeA(data, size);
 		} else {
-			decodeInterframe(stream, size);
+			decodeInterframe(data, size);
 		}
 		presentFrame(flags);
 	} else {
@@ -284,8 +315,7 @@ void HNMDecoder::HNM4VideoTrack::decodeChunk(Common::SeekableReadStream *stream,
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeInterframe(
-    Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM4VideoTrack::decodeInterframe(byte *data, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 width = _surface.w;
@@ -298,7 +328,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 			warning("Not enough data in chunk for interframe block");
 			break;
 		}
-		byte countFlgs = stream->readByte();
+		byte countFlgs = *(data++);
 		size -= 1;
 		byte count = countFlgs & 0x1f;
 		byte flgs = (countFlgs >> 5) & 0x7;
@@ -311,9 +341,9 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 					error("Not enough data for case 0");
 				}
 				// Copy next two bytes of input to the output
-				c = stream->readByte();
+				c = *(data++);
 				_frameBufferC[currentPos++] = c;
-				c = stream->readByte();
+				c = *(data++);
 				_frameBufferC[currentPos++] = c;
 				size -= 2;
 				break;
@@ -322,7 +352,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 					error("Not enough data for case 1");
 				}
 				// Skip (next byte of input) * 2 bytes of output
-				c = stream->readByte() * 2;
+				c = *(data++) * 2;
 				currentPos += c;
 				size -= 1;
 				break;
@@ -331,7 +361,8 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 					error("Not enough data for case 2");
 				}
 				// Skip (next word of input) * 2 bytes of output
-				c = stream->readUint16LE() * 2;
+				c = READ_LE_UINT16(data) * 2;
+				data += 2;
 				currentPos += c;
 				size -= 2;
 				break;
@@ -340,8 +371,8 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 					error("Not enough data for case 3");
 				}
 				// Fill (next byte of input) * 2 of output with (next byte of input)
-				c = stream->readByte() * 2;
-				fill = stream->readByte();
+				c = *(data++) * 2;
+				fill = *(data++);
 				memset(&_frameBufferC[currentPos], fill, c);
 				currentPos += c;
 				size -= 2;
@@ -359,9 +390,10 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 			bool backward = (flgs & 0x4) != 0;
 			bool backline = (flgs & 0x2) != 0;
 			bool previous = (flgs & 0x1) != 0;
-			int offset = stream->readUint16LE();
-			bool swap = (offset & 0x1) != 0;
+			int offset = READ_LE_UINT16(data);
+			data += 2;
 			size -= 2;
+			bool swap = (offset & 0x1) != 0;
 
 			offset = currentPos + (offset & 0xFFFE) - 0x8000;
 			if (offset < 0) {
@@ -400,13 +432,9 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(
 			}
 		}
 	}
-	if (size > 0) {
-		stream->skip(size);
-	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
-    Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM4VideoTrack::decodeInterframeA(byte *data, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 width = _surface.w;
@@ -419,7 +447,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 			warning("Not enough data in chunk for interframe block");
 			break;
 		}
-		byte countFlgs = stream->readByte();
+		byte countFlgs = *(data++);
 		size -= 1;
 		byte count = countFlgs & 0x3f;
 		byte flgs = (countFlgs >> 6) & 0x3;
@@ -432,18 +460,18 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 					error("Not enough data for case 0");
 				}
 				// Move in image
-				c = stream->readByte();
+				c = *(data++);
 				currentPos += c;
 				size -= 1;
 				break;
 			case 1:
-				if (size < 1) {
+				if (size < 2) {
 					error("Not enough data for case 1");
 				}
 				// New pixels
-				c = stream->readByte();
+				c = *(data++);
 				_frameBufferC[currentPos] = c;
-				c = stream->readByte();
+				c = *(data++);
 				_frameBufferC[currentPos + width] = c;
 				currentPos++;
 				size -= 2;
@@ -467,7 +495,8 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 
 			bool negative = (flgs & 0x2) != 0;
 			bool previous = (flgs & 0x1) != 0;
-			int offset = stream->readUint16LE();
+			int offset = READ_LE_UINT16(data);
+			data += 2;
 			size -= 2;
 
 			if (negative) {
@@ -492,14 +521,11 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(
 			}
 		}
 	}
-
-	if (size > 0) {
-		stream->skip(size);
-	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size) {
-	Image::HLZDecoder::decodeFrameInPlace(*stream, size, _frameBufferC);
+void HNMDecoder::HNM4VideoTrack::decodeIntraframe(byte *data, uint32 size) {
+	Common::MemoryReadStream stream(data, size);
+	Image::HLZDecoder::decodeFrameInPlace(stream, size, _frameBufferC);
 	memcpy(_frameBufferP, _frameBufferC, (uint32)_surface.w * (uint32)_surface.h);
 }
 
@@ -549,28 +575,29 @@ void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
 	_nextNextFrameDelay = uint32(-1);
 }
 
-void HNMDecoder::HNM5VideoTrack::decodeChunk(Common::SeekableReadStream *stream, uint32 size,
+void HNMDecoder::HNM5VideoTrack::decodeChunk(byte *data, uint32 size,
         uint16 chunkType, uint16 flags) {
 	if (chunkType == MKTAG16('P', 'L')) {
-		decodePalette(stream, size);
+		decodePalette(data, size);
 	} else if (chunkType == MKTAG16('I', 'V')) {
-		decodeFrame(stream, size);
+		decodeFrame(data, size);
 	} else {
 		error("HNM5: Got %d chunk: size %d", chunkType, size);
 	}
 }
 
-static inline byte *HNM5_getSourcePtr(Common::SeekableReadStream *stream, uint32 &size,
+static inline byte *HNM5_getSourcePtr(byte *&data, uint32 &size,
                                       byte *previous, byte *current, int16 pitch, byte currentMode) {
 	int32 offset;
 	byte offb;
 
 #define HNM5_DECODE_OFFSET_CST(src, constant_off) \
-    offset = constant_off + stream->readUint16LE(); \
+    offset = constant_off + READ_LE_UINT16(data); \
+    data += 2; \
     size -= 2; \
     return (src + offset)
 #define HNM5_DECODE_OFFSET(src, xbits, xbase, ybase) \
-    offb = stream->readByte(); \
+    offb = *(data++); \
     size -= 1; \
     offset = ((offb >> xbits) + ybase) * pitch + \
         (offb & ((1 << xbits) - 1)) + xbase; \
@@ -775,7 +802,7 @@ static const byte HNM5_WIDTHS[3][32] = {
 	}, /* 4 */
 };
 
-void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 pitch = _surface.pitch;
@@ -790,7 +817,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 			warning("Not enough data in chunk for frame block");
 			break;
 		}
-		byte opcode = stream->readByte();
+		byte opcode = *(data++);
 		size -= 1;
 
 		if (opcode == 0x20) {
@@ -798,7 +825,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 			if (size < 1) {
 				error("Not enough data for opcode 0x20");
 			}
-			uint width = stream->readByte();
+			uint width = *(data++);
 			size -= 1;
 			width++;
 			for (byte row = 0; row < height; row++) {
@@ -811,38 +838,35 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 			if (size < height) {
 				error("Not enough data for opcode 0x60");
 			}
-			assert(stream->read(_workingPixels, height) == height);
-			size -= height;
 			for (byte row = 0; row < height; row++) {
-				_frameBufferC[currentPos + row * pitch] = _workingPixels[row];
+				_frameBufferC[currentPos + row * pitch] = *(data++);
 			}
+			size -= height;
 			currentPos += 1;
 		} else if (opcode == 0xA0) {
 			assert(height != (byte)-1);
 			if (size < 1) {
 				error("Not enough data for opcode 0x20");
 			}
-			uint width = stream->readByte();
+			uint width = *(data++);
 			size -= 1;
 			width += 2;
 
 			if (size < height * width) {
 				error("Not enough data for opcode 0xA0");
 			}
-			assert(stream->read(_workingPixels, height * width) == height * width);
-			size -= height * width;
-
-			for (byte row = 0; row < height; row++) {
-				for (uint col = 0; col < width; col++) {
-					_frameBufferC[currentPos + row * pitch + col] = _workingPixels[height * col + row];
+			for (uint col = 0; col < width; col++) {
+				for (byte row = 0; row < height; row++) {
+					_frameBufferC[currentPos + row * pitch + col] = *(data++);
 				}
 			}
+			size -= height * width;
 			currentPos += width;
 		} else if (opcode == 0xE0) {
 			if (size < 1) {
 				error("Not enough data for opcode 0xE0");
 			}
-			byte subop = stream->readByte();
+			byte subop = *(data++);
 			size -= 1;
 
 			if (subop == 0x00) {
@@ -850,8 +874,8 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 				if (size < 2) {
 					error("Not enough data for opcode 0xE0 0x00");
 				}
-				uint width = stream->readByte();
-				byte px = stream->readByte();
+				uint width = *(data++);
+				byte px = *(data++);
 				size -= 2;
 
 				width += 1;
@@ -898,19 +922,15 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(Common::SeekableReadStream *stream,
 			byte copyMode = (opcode >> 5) & 0x7;
 			byte width = HNM5_WIDTHS[height - 2][index];
 
-			// HNM5_getSourcePtr can consume 1 byte but the stream can not end like this so check for maximum
+			// HNM5_getSourcePtr can consume 1 byte but the data can not end like this so check for maximum
 			if (size < 2) {
 				error("Not enough data for opcode 0x%02X", opcode);
 			}
-			byte *src = HNM5_getSourcePtr(stream, size, _frameBufferP, _frameBufferC, pitch, currentMode);
+			byte *src = HNM5_getSourcePtr(data, size, _frameBufferP, _frameBufferC, pitch, currentMode);
 
 			HNM5_copy(_frameBufferC + currentPos, src + currentPos, pitch, copyMode, width, height);
 			currentPos += width;
 		}
-	}
-
-	if (size > 0) {
-		stream->skip(size);
 	}
 
 	_surface.setPixels(_frameBufferC);
@@ -941,12 +961,13 @@ HNMDecoder::DPCMAudioTrack::~DPCMAudioTrack() {
 }
 
 Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
-    Common::SeekableReadStream *stream, uint32 size) {
+    byte *data, uint32 size) {
 	if (!_gotLUT) {
 		if (size < 256 * sizeof(*_lut)) {
 			error("Invalid first sound chunk");
 		}
-		stream->read(_lut, 256 * sizeof(*_lut));
+		memcpy(_lut, data, 256 * sizeof(*_lut));
+		data += 256 * sizeof(*_lut);
 		size -= 256 * sizeof(*_lut);
 #ifndef SCUMM_LITTLE_ENDIAN
 		for (uint i = 0; i < 256; i++) {
@@ -972,9 +993,9 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 		uint16 sampleR = _lastSampleR;
 		byte deltaId;
 		for (uint32 i = 0; i < size / 2; i++, p += 2) {
-			deltaId = stream->readByte();
+			deltaId = *(data++);
 			sampleL += _lut[deltaId];
-			deltaId = stream->readByte();
+			deltaId = *(data++);
 			sampleR += _lut[deltaId];
 			p[0] = sampleL;
 			p[1] = sampleR;
@@ -987,7 +1008,7 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 		uint16 sample = _lastSampleL;
 		byte deltaId;
 		for (uint32 i = 0; i < size; i++, p++) {
-			deltaId = stream->readByte();
+			deltaId = *(data++);
 			sample += _lut[deltaId];
 			*p = sample;
 		}
