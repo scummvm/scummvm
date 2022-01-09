@@ -343,7 +343,9 @@ int main(int argc, char *argv[]) {
 		if (i->enable) {
 			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
 				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
-				if (feature != setup.features.end() && !feature->enable) {
+				if (feature == setup.features.end()) {
+					std::cerr << "WARNING: Missing feature " << *ef << " from engine " << i->name << '\n';
+				} else if (!feature->enable) {
 					setEngineBuildState(i->name, setup.engines, false);
 					break;
 				}
