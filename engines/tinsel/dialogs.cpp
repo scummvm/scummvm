@@ -900,8 +900,7 @@ void Dialogs::PrimeSceneHopper() {
 
 	// allocate a buffer for it all
 	assert(_pHopper == NULL);
-	// FIXME: validate vSize against size?
-	//uint32 size = f.size() - 8;
+
 	_numScenes = vSize / sizeof(HOPPER);
 
 	_pHopper = new HOPPER[_numScenes];
