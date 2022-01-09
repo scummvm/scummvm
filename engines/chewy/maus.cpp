@@ -135,7 +135,7 @@ int16 maus::get_switch_code() {
 
 	if (maus_info_blk) {
 		if (maus_info_blk->button == 2) {
-			switch_code = 1;
+			switch_code = ESC;
 		} else if (maus_info_blk->button == 1)
 			switch_code = 255;
 		else if (maus_info_blk->button == 4)

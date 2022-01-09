@@ -29,6 +29,11 @@
 namespace Chewy {
 namespace Rooms {
 
+void Room23::entry() {
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	set_person_pos(135, 69, P_CHEWY, -1);
+}
+
 void Room23::cockpit() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;

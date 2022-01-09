@@ -27,6 +27,7 @@ namespace Rooms {
 
 class Room23 {
 public:
+	static void entry();
 	static void cockpit();
 	static void get_cartridge();
 	static void use_cartridge();

@@ -29,6 +29,11 @@
 namespace Chewy {
 namespace Rooms {
 
+void Room34::entry() {
+	if (flags.LoadGame)
+		use_kuehlschrank();
+}
+
 bool Room34::use_kuehlschrank() {
 	bool result = false;
 

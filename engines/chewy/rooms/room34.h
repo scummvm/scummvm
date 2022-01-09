@@ -27,6 +27,7 @@ namespace Rooms {
 
 class Room34 {
 public:
+	static void entry();
 	static bool use_kuehlschrank();
 	static void xit_kuehlschrank();
 };
