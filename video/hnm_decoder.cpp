@@ -706,76 +706,98 @@ static inline void HNM5_copy(byte *dst, byte *src, int16 pitch,
 	switch (copyMode) {
 	case 0:
 		// Copy
-		for (byte row = 0; row < height; row++) {
-			memcpy(&dst[row * pitch],
-			       &src[row * pitch], width);
+		for (; height > 0; height--) {
+			memcpy(dst, src, width);
+			dst += pitch;
+			src += pitch;
 		}
 		break;
 	case 1:
 		// Horizontal reverse
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[row * pitch];
-			byte *sp = &src[row * pitch];
-			for (byte col = 0; col < width; col++, dp++, sp--) {
-				*dp = *sp;
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
+				*(dp++) = *(sp--);
 			}
+			dst += pitch;
+			src += pitch;
 		}
 		break;
 	case 2:
 		// Vertical reverse
-		for (byte row = 0; row < height; row++) {
-			memcpy(&dst[ row * pitch],
-			       &src[-row * pitch], width);
+		for (; height > 0; height--) {
+			memcpy(dst, src, width);
+			dst += pitch;
+			src -= pitch;
 		}
 		break;
 	case 3:
 		// Horiz-Vert reverse
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[ row * pitch];
-			byte *sp = &src[-row * pitch];
-			for (byte col = 0; col < width; col++, dp++, sp--) {
-				*dp = *sp;
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
+				*(dp++) = *(sp--);
 			}
+			dst += pitch;
+			src -= pitch;
 		}
 		break;
 	case 4:
 		// Swap
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[row * pitch];
-			byte *sp = &src[row * 1];
-			for (byte col = 0; col < width; col++, dp++, sp += pitch) {
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
 				*dp = *sp;
+				dp++;
+				sp += pitch;
 			}
+			dst += pitch;
+			src += 1;
 		}
 		break;
 	case 5:
 		// Swap Horiz-Reverse
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[row * pitch];
-			byte *sp = &src[row * 1];
-			for (byte col = 0; col < width; col++, dp++, sp -= pitch) {
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
 				*dp = *sp;
+				dp++;
+				sp -= pitch;
 			}
+			dst += pitch;
+			src += 1;
 		}
 		break;
 	case 6:
 		// Swap Vert-Reverse
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[ row * pitch];
-			byte *sp = &src[-row * 1];
-			for (byte col = 0; col < width; col++, dp++, sp += pitch) {
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
 				*dp = *sp;
+				dp++;
+				sp += pitch;
 			}
+			dst += pitch;
+			src -= 1;
 		}
 		break;
 	case 7:
 		// Swap Vert-Reverse
-		for (byte row = 0; row < height; row++) {
-			byte *dp = &dst[ row * pitch];
-			byte *sp = &src[-row * 1];
-			for (byte col = 0; col < width; col++, dp++, sp -= pitch) {
+		for (; height > 0; height--) {
+			byte *dp = dst;
+			byte *sp = src;
+			for (byte col = width; col > 0; col--) {
 				*dp = *sp;
+				dp++;
+				sp -= pitch;
 			}
+			dst += pitch;
+			src -= 1;
 		}
 		break;
 	default:
