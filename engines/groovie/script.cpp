@@ -2077,13 +2077,15 @@ void Script::o2_setbackgroundsong() {
 void Script::o2_videofromref() {
 	uint32 fileref = readScript32bits();
 
+	// the fileref differs between languages, but the instruction pointers and script sizes are the same
+
 	// Skip the 11th Hour intro videos on right mouse click, instead of
 	// fast-forwarding them. This has the same effect as pressing 'p' twice in
 	// the skulls screen after the Groovie logo
-	if (_version == kGroovieT11H && fileref == 4926 && fileref != _videoRef)
+	if (_version == kGroovieT11H && _currentInstruction == 0x0560 && fileref != _videoRef)
 		_videoSkipAddress = 1417;
 
-	if (_version == kGroovieT11H && fileref == 4337 && !ConfMan.getBool("originalsaveload")) {
+	if (_version == kGroovieT11H && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
 		if (_currentInstruction == 0xE50A) {
 			// Load from the main menu
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);

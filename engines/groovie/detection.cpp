@@ -145,6 +145,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
+	// The 11th Hour DOS/Windows German
+	{
+		{
+			"11h", "",
+			AD_ENTRY2s("script.grv", "560e90b47054639668e44a8b365fbe26", 62447,
+						"introd1.gjd", nullptr, -1),
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
+		},
+		kGroovieT11H
+	},
+
 	// The 11th Hour Mac English
 	{
 		{
@@ -337,11 +349,23 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC English (DVD-ROM)
+	// Tender Loving Care PC English (DVD-ROM) (eriktorbjorn's copy)
 	{
 		{
 			"tlc", "DVD",
 			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
+						"tlcnav.gjd", nullptr, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC English (DVD-ROM) (Liron's copy)
+	{
+		{
+			"tlc", "DVD",
+			AD_ENTRY2s("tlcmain.grv", "8a591c47d24dde38615e6ea2e79b51a5", 17375,
 						"tlcnav.gjd", nullptr, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
