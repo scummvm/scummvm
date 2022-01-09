@@ -117,7 +117,7 @@ void timer_action(int16 t_nr) {
 		default_flag = true;
 		break;
 	}
-	#undef TIMER
+#undef TIMER
 
 	if (default_flag && flags.AutoAniPlay == false) {
 		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, 0);
@@ -629,6 +629,7 @@ void enter_room(int16 eib_nr) {
 		break;
 	}
 #undef ENTRY
+#undef ENTRY_NR
 
 	flags.LoadGame = false;
 }
@@ -1731,7 +1732,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_KNOPF_R5:
-		Room5::knopf();
+		Room5::pushButton();
 		break;
 
 	case SIB_SEIL:
@@ -2021,7 +2022,15 @@ void sib_event_inv(int16 sib_nr) {
 
 	switch (sib_nr) {
 	case SIB_TERMINAL_R5:
-		Room28::use_surimy();
+		if (!_G(spieler).R5Terminal) {
+			_G(spieler).R5Terminal = true;
+			cur_2_inventory();
+			del_inventar(RED_CARD_INV);
+			start_aad(103, -1);
+			det->start_detail(6, 255, 0);
+			atds->set_ats_str(27, 1, 1);
+			atds->set_ats_str(30, 1, 1);
+		}
 		break;
 
 	case SIB_TKNOPF1_R6:
@@ -2151,6 +2160,10 @@ void sib_event_inv(int16 sib_nr) {
 		ret = exit_flip_flop(4, 8, -1, 33, -1, -1, 1, -1,
 			(int16)_G(spieler).R6DoorLeftF);
 		_G(spieler).R6DoorLeftF = ret & 1;
+		break;
+
+	case SIB_AUTO_R28:
+		Room28::use_surimy();
 		break;
 
 	default:

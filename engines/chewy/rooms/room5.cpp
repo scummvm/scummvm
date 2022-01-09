@@ -34,7 +34,7 @@ void Room5::entry() {
 		det->start_detail(6, 255, 0);
 }
 
-void Room5::knopf() {
+void Room5::pushButton() {
 	int16 str_nr;
 	if (_G(spieler).R5Terminal) {
 		if (_G(spieler).R5Tuer == false) {
@@ -49,8 +49,9 @@ void Room5::knopf() {
 		atds->set_ats_str(29, str_nr, ATS_DATEI);
 		_G(spieler).R5Tuer ^= 1;
 		obj->calc_rsi_flip_flop(SIB_TUERE_R5);
-	} else
+	} else {
 		start_aad_wait(1, -1);
+	}
 }
 
 } // namespace Rooms
