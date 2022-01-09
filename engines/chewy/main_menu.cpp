@@ -70,7 +70,7 @@ void MainMenu::execute() {
 		fx->border(workpage, 100, 0, 0);
 
 		out->set_palette(pal);
-		_G(spieler).PersonHide[0] = 1;
+		_G(spieler).PersonHide[0] = true;
 		show_cur();
 
 		// Wait for a selection to be made on the main menu

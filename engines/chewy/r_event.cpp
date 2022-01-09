@@ -2065,6 +2065,7 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
+		// Used Out of Order sign on vending machine
 		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(118, 1, 1);
