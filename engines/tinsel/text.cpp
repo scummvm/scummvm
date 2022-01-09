@@ -54,10 +54,12 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 
 		if (hImg) {
 			// there is a IMAGE for this character
-			const IMAGE *pChar = (const IMAGE *)_vm->_handle->LockMem(hImg);
+			const IMAGE *pChar = _vm->_handle->GetImage(hImg);
 
 			// add width of font bitmap
-			strLen += FROM_16(pChar->imgWidth);
+			strLen += pChar->imgWidth;
+
+			delete pChar;
 		} else
 			// use width of space character
 			strLen += pFont->spaceSize;
@@ -116,7 +118,6 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	OBJECT *pChar = 0;	// object ptr for the character
 	byte c;
 	SCNHANDLE hImg;
-	const IMAGE *pImg;
 
 	// make sure there is a linked list to add text to
 	assert(pList);
@@ -131,10 +132,11 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	// get image for capital W
 	SCNHANDLE imgHandle = pFont->fontDef[(int)'W'];
 	assert(imgHandle);
-	pImg = (const IMAGE *)_vm->_handle->LockMem(imgHandle);
 
 	// get height of capital W for offset to next line
-	yOffset = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
+	const IMAGE *pImg = _vm->_handle->GetImage(imgHandle);
+	yOffset = pImg->imgHeight & ~C16_FLAG_MASK;
+	delete pImg;
 
 	while (*szStr) {
 		// x justify the text according to the mode flags
@@ -166,13 +168,13 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					pChar = pChar->pSlave = InitObject(pFontInit);
 
 				// convert image handle to pointer
-				pImg = (const IMAGE *)_vm->_handle->LockMem(hImg);
+				const IMAGE *pImg = _vm->_handle->GetImage(hImg);
 
 				// fill in character object
 				pChar->hImg   = hImg;			// image def
-				pChar->width  = FROM_16(pImg->imgWidth);		// width of chars bitmap
-				pChar->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;	// height of chars bitmap
-				pChar->hBits  = FROM_32(pImg->hImgBits);		// bitmap
+				pChar->width  = pImg->imgWidth;		// width of chars bitmap
+				pChar->height = pImg->imgHeight & ~C16_FLAG_MASK;	// height of chars bitmap
+				pChar->hBits  = pImg->hImgBits;		// bitmap
 
 				// check for absolute positioning
 				if (mode & TXT_ABSOLUTE)
@@ -233,7 +235,9 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					pChar = pChar->pSlave;
 
 				// add character spacing
-				xJustify += FROM_16(pImg->imgWidth);
+				xJustify += pImg->imgWidth;
+
+				delete pImg;
 			}
 
 			// finally add the inter-character spacing

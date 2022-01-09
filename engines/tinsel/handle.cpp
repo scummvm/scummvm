@@ -26,6 +26,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
+#include "tinsel/background.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
 #include "tinsel/handle.h"
@@ -305,28 +306,28 @@ void Handle::LoadFile(MEMHANDLE *pH) {
  * @return FONT structure
 */
 FONT *Handle::GetFont(SCNHANDLE offset) {
-	byte *fontData = LockMem(offset);
+	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
 	const uint32 size = (TinselV3 ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
-	Common::MemoryReadStreamEndian *fontStream = new Common::MemoryReadStreamEndian(fontData, size, isBE);
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
 	FONT *font = new FONT();
-	font->xSpacing = fontStream->readSint32();
-	font->ySpacing = fontStream->readSint32();
-	font->xShadow = fontStream->readSint32();
-	font->yShadow = fontStream->readSint32();
-	font->spaceSize = fontStream->readSint32();
-	font->baseColor = TinselV3 ? fontStream->readSint32() : 0;
-	font->fontInit.hObjImg = fontStream->readUint32();
-	font->fontInit.objFlags = fontStream->readSint32();
-	font->fontInit.objID = fontStream->readSint32();
-	font->fontInit.objX = fontStream->readSint32();
-	font->fontInit.objY = fontStream->readSint32();
-	font->fontInit.objZ = fontStream->readSint32();
+	font->xSpacing = stream->readSint32();
+	font->ySpacing = stream->readSint32();
+	font->xShadow = stream->readSint32();
+	font->yShadow = stream->readSint32();
+	font->spaceSize = stream->readSint32();
+	font->baseColor = TinselV3 ? stream->readSint32() : 0;
+	font->fontInit.hObjImg = stream->readUint32();
+	font->fontInit.objFlags = stream->readSint32();
+	font->fontInit.objID = stream->readSint32();
+	font->fontInit.objX = stream->readSint32();
+	font->fontInit.objY = stream->readSint32();
+	font->fontInit.objZ = stream->readSint32();
 	for (int i = 0; i < 300; i++)
-		font->fontDef[i] = fontStream->readUint32();
+		font->fontDef[i] = stream->readUint32();
 
-	delete fontStream;
+	delete stream;
 
 	return font;
 }
@@ -338,16 +339,16 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
  * @return PALETTE structure
 */
 PALETTE *Handle::GetPalette(SCNHANDLE offset) {
-	byte *palData = LockMem(offset);
+	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
 	const uint32 size = 4 + 256 * 4;	// numColors + 256 COLORREF (max)
-	Common::MemoryReadStreamEndian *palStream = new Common::MemoryReadStreamEndian(palData, size, isBE);
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
 	PALETTE *pal = new PALETTE();
 
-	pal->numColors = palStream->readSint32();
+	pal->numColors = stream->readSint32();
 	for (int32 i = 0; i < pal->numColors; i++) {
-		pal->palRGB[i] = palStream->readUint32();
+		pal->palRGB[i] = stream->readUint32();
 
 		// get the RGB color model values
 		pal->palette[i * 3] = (byte)(pal->palRGB[i] & 0xFF);
@@ -355,9 +356,47 @@ PALETTE *Handle::GetPalette(SCNHANDLE offset) {
 		pal->palette[i * 3 + 2] = (byte)((pal->palRGB[i] >> 16) & 0xFF);
 	}
 
-	delete palStream;
+	delete stream;
 
 	return pal;
+}
+
+/**
+ * Return an image specified by a SCNHANDLE
+ * Handles endianess internally
+ * @param offset			Handle and offset to data
+ * @return IMAGE structure
+*/
+const IMAGE *Handle::GetImage(SCNHANDLE offset) {
+	byte *data = LockMem(offset);
+	const bool isBE = TinselV1Mac || TinselV1Saturn;
+	const uint32 size = 16; // IMAGE struct size
+
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
+
+	IMAGE *img = new IMAGE();
+
+	img->imgWidth = stream->readSint16();
+	img->imgHeight = stream->readUint16();
+	img->anioffX = stream->readSint16();
+	img->anioffY = stream->readSint16();
+	img->hImgBits = stream->readUint32();
+
+	if (!TinselV3) {
+		img->hImgPal = stream->readUint32();
+	} else {
+		img->isRLE = stream->readSint16();
+		img->colorFlags = stream->readSint16();
+	}
+
+	delete stream;
+
+	return img;
+}
+
+void Handle::SetImagePalette(SCNHANDLE offset, SCNHANDLE palHandle) {
+	byte *img = LockMem(offset);
+	WRITE_32(img + 12, palHandle); // hImgPal
 }
 
 SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {

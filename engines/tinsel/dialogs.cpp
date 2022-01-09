@@ -2153,21 +2153,17 @@ void Dialogs::AdjustTop() {
  * Insert an inventory icon object onto the display list.
  */
 OBJECT *Dialogs::AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
-	INV_OBJECT *invObj;    // Icon data
-	const MULTI_INIT *pmi; // Its INIT structure - from the reel
-	IMAGE *pim;            // ... you get the picture
-	OBJECT *pPlayObj;      // The object we insert
+	INV_OBJECT *invObj = GetInvObject(num);
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->hIconFilm);
+	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	OBJECT *pPlayObj; // The object we insert
 
-	invObj = GetInvObject(num);
+	*pfreel = pfr;
+	*pfilm = pFilm;
+	PokeInPalette(pmi);
+	pPlayObj = MultiInitObject(pmi);	// Needs to be initialized after the palette is set
 
-	// Get pointer to image
-	pim = _vm->_cursor->GetImageFromFilm(invObj->hIconFilm, 0, pfreel, &pmi, pfilm);
-
-	// Poke in the background palette
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());
-
-	// Set up the multi-object
-	pPlayObj = MultiInitObject(pmi);
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pPlayObj);
 
 	return pPlayObj;
@@ -2285,26 +2281,27 @@ void Dialogs::AddTitle(POBJECT *title, int extraH) {
  * Insert a part of the inventory window frame onto the display list.
  */
 OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
-	const MULTI_INIT *pmi; // Get the MULTI_INIT structure
-	IMAGE *pim;
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfreel->mobj));
+	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+	const IMAGE *pim;
 	OBJECT *pPlayObj;
 
-	// Get pointer to image
-	pim = _vm->_cursor->GetImageFromReel(pfreel, &pmi);
+	PokeInPalette(pmi);
 
-	// Poke in the background palette
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());
+	pim = _vm->_handle->GetImage(READ_32(pFrame));
 
 	// Horrible bodge involving global variables to save
 	// width and/or height of some window frame components
 	if (num == _TL) {
-		_TLwidth = FROM_16(pim->imgWidth);
-		_TLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		_TLwidth = pim->imgWidth;
+		_TLheight = pim->imgHeight & ~C16_FLAG_MASK;
 	} else if (num == _TR) {
-		_TRwidth = FROM_16(pim->imgWidth);
+		_TRwidth = pim->imgWidth;
 	} else if (num == _BL) {
-		_BLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		_BLheight = pim->imgHeight & ~C16_FLAG_MASK;
 	}
+
+	delete pim;
 
 	// Set up and insert the multi-object
 	pPlayObj = MultiInitObject(pmi);
@@ -2990,16 +2987,13 @@ bool Dialogs::RePosition() {
  * and customise the cursor.
  */
 void Dialogs::AlterCursor(int num) {
-	const FREEL *pfreel;
-	IMAGE *pim;
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
+	const FREEL *pfr = (const FREEL *)&pFilm->reels[num];
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
-	// Get pointer to image
-	pim = _vm->_cursor->GetImageFromFilm(_hWinParts, num, &pfreel);
+	PokeInPalette(pmi);
 
-	// Poke in the background palette
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());
-
-	_vm->_cursor->SetTempCursor(FROM_32(pfreel->script));
+	_vm->_cursor->SetTempCursor(FROM_32(pfr->script));
 }
 
 /**

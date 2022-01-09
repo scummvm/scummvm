@@ -718,11 +718,9 @@ static void InitialPathChecks(PMOVER pMover, int xpos, int ypos) {
 }
 
 static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
-	const FILM *pfilm;
-	const MULTI_INIT *pmi;
-	const FRAME *pFrame;
-	IMAGE *pim;
-
+	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(pMover->walkReels[0][FORWARD]);
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfilm->reels[0].mobj));
+	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 
 	assert(_vm->_bg->BgPal()); // Can't start actor without a background palette
 	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
@@ -730,19 +728,11 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	InitMover(pMover);
 	InitialPathChecks(pMover, X, Y);
 
-	pfilm = (const FILM *)_vm->_handle->LockMem(pMover->walkReels[0][FORWARD]);
-	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfilm->reels[0].mobj));
+	PokeInPalette(pmi);
 
-//---
-	pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
-
-	// get pointer to image
-	pim = (IMAGE *)_vm->_handle->LockMem(READ_32(pFrame)); // handle to image
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());
-//---
 	pMover->actorObj = MultiInitObject(pmi);
 
-/**/	assert(pMover->actorID == id);
+	assert(pMover->actorID == id);
 	pMover->actorID = id;
 
 	// add it to display list

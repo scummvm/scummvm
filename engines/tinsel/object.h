@@ -55,33 +55,19 @@ enum {
 };
 
 /** structure for image */
-#include "common/pack-start.h"	// START STRUCT PACKING
 struct IMAGE {
-	short imgWidth;		///< image width
-	unsigned short imgHeight;	///< image height
-	short anioffX;		///< image x animation offset
-	short anioffY;		///< image y animation offset
-	SCNHANDLE hImgBits;	///< image bitmap handle
-	SCNHANDLE hImgPal;	///< image palette handle
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-/** structure for image in Tinsel 3 */
-#include "common/pack-start.h"	// START STRUCT PACKING
-struct IMAGE_T3 {
-	short imgWidth;		///< image width
-	unsigned short imgHeight;	///< image height
-	short anioffX;		///< image x animation offset
-	short anioffY;		///< image y animation offset
-	SCNHANDLE hImgBits;	///< image bitmap handle
-	short isRLE;		///< if image is using run-length encoding
-	short colorFlags;	///< type of blending
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+	short imgWidth;           ///< image width
+	unsigned short imgHeight; ///< image height
+	short anioffX;            ///< image x animation offset
+	short anioffY;            ///< image y animation offset
+	SCNHANDLE hImgBits;       ///< image bitmap handle
+	SCNHANDLE hImgPal;        ///< image palette handle (Tinsel V1/V2)
+	short isRLE;              ///< if image is using run-length encoding (Tinsel V3)
+	short colorFlags;         ///< type of blending (Tinsel V3)
+};
 
 /** a multi-object animation frame is a list of multi-image handles */
 typedef uint32 FRAME;
-
 
 // object structure
 struct OBJECT {

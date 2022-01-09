@@ -164,18 +164,20 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	CORO_BEGIN_CODE(_ctx);
-
-	const FILM *pfilm;
-	IMAGE *pim;
-
-	_hBackground = hFilm;		// Save handle in case of Save_Scene()
-
-	pim = _vm->_cursor->GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
+	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	const FREEL *pfr = &pfilm->reels[0];
 
 	if (!TinselV3) {
-		SetBackPal(FROM_32(pim->hImgPal));
+		const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+		const IMAGE *pim = _vm->_handle->GetImage(READ_32(pFrame));
+		SetBackPal(pim->hImgPal);
+		delete pim;
 	}
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_hBackground = hFilm; // Save handle in case of Save_Scene()
 
 	// Extract the film speed
 	_BGspeed = ONE_SECOND / FROM_32(pfilm->frate);

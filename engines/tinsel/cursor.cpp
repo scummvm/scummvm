@@ -84,22 +84,18 @@ Cursor::Cursor() {
  * it. Also initialize its animation script.
  */
 void Cursor::InitCurTrailObj(int i, int x, int y) {
-	const FREEL *pfr;		// pointer to reel
-	IMAGE *pim;		// pointer to image
-	const MULTI_INIT *pmi;		// MULTI_INIT structure
-
-	const FILM *pfilm;
-
 	if (!_numTrails)
 		return;
+
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
+	const FREEL *pfr = (const FREEL *)&pFilm->reels[i + 1];
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+
+	PokeInPalette(pmi);
 
 	// Get rid of old object
 	if (_trailData[i].trailObj != NULL)
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-
-	pim = GetImageFromFilm(_cursorFilm, i+1, &pfr, &pmi, &pfilm);// Get pointer to image
-	assert(_vm->_bg->BgPal()); // No background palette
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());
 
 	// Initialize and insert the object, set its Z-pos, and hide it
 	_trailData[i].trailObj = MultiInitObject(pmi);
@@ -108,7 +104,7 @@ void Cursor::InitCurTrailObj(int i, int x, int y) {
 	MultiSetAniXY(_trailData[i].trailObj, x, y);
 
 	// Initialize the animation script
-	InitStepAnimScript(&_trailData[i].trailAnim, _trailData[i].trailObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
+	InitStepAnimScript(&_trailData[i].trailAnim, _trailData[i].trailObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pFilm->frate));
 	StepAnimScript(&_trailData[i].trailAnim);
 }
 
@@ -302,41 +298,6 @@ void Cursor::UnHideCursorTrails() {
 }
 
 /**
- * Get pointer to image from a film reel. And the rest.
- */
-IMAGE *Cursor::GetImageFromReel(const FREEL *pfr, const MULTI_INIT **ppmi) {
-	const MULTI_INIT *pmi;
-	const FRAME *pFrame;
-
-	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
-	if (ppmi)
-		*ppmi = pmi;
-
-	pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
-
-	// get pointer to image
-	return (IMAGE *)_vm->_handle->LockMem(READ_32(pFrame));
-}
-
-/**
- * Get pointer to image from a film. And the rest.
- */
-IMAGE *Cursor::GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr, const MULTI_INIT **ppmi, const FILM **ppfilm) {
-	const FILM *pfilm;
-	const FREEL *pfr;
-
-	pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
-	if (ppfilm)
-		*ppfilm = pfilm;
-
-	pfr = &pfilm->reels[reel];
-	if (ppfr)
-		*ppfr = pfr;
-
-	return GetImageFromReel(pfr, ppmi);
-}
-
-/**
  * Delete auxillary cursor. Restore animation offsets in the image.
  */
 void Cursor::DelAuxCursor() {
@@ -351,10 +312,11 @@ void Cursor::DelAuxCursor() {
  * Save animation offsets from the image if required.
  */
 void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
-	IMAGE *pim;		// Pointer to auxillary cursor's image
-	const FREEL *pfr;
-	const MULTI_INIT *pmi;
-	const FILM *pfilm;
+	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	const FREEL *pfr = &pfilm->reels[0];
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+	const IMAGE *pim;
 	int	x, y;		// Cursor position
 
 	DelAuxCursor();		// Get rid of previous
@@ -365,13 +327,14 @@ void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 
 	GetCursorXY(&x, &y, false);	// Note: also waits for cursor to appear
 
-	pim = GetImageFromFilm(hFilm, 0, &pfr, &pmi, &pfilm);// Get pointer to image
+	pim = _vm->_handle->GetImage(READ_32(pFrame)); // Get pointer to auxillary cursor's image
 	assert(_vm->_bg->BgPal()); // no background palette
-	pim->hImgPal = TO_32(_vm->_bg->BgPal());			// Poke in the background palette
+	PokeInPalette(pmi);
 
-	_auxCursorOffsetX = (short)(FROM_16(pim->imgWidth)/2 - ((int16) FROM_16(pim->anioffX)));
-	_auxCursorOffsetY = (short)((FROM_16(pim->imgHeight) & ~C16_FLAG_MASK)/2 -
-		((int16) FROM_16(pim->anioffY)));
+	_auxCursorOffsetX = (short)(pim->imgWidth / 2 - ((int16) pim->anioffX));
+	_auxCursorOffsetY = (short)((pim->imgHeight & ~C16_FLAG_MASK) / 2 -
+		((int16) pim->anioffY));
+	delete pim;
 
 	// Initialize and insert the auxillary cursor object
 	_auxCursor = MultiInitObject(pmi);
@@ -461,27 +424,16 @@ void Cursor::DoCursorMove() {
  * Initialize cursor object.
  */
 void Cursor::InitCurObj() {
-	const FILM *pFilm;
-	const FREEL *pfr;
-	const MULTI_INIT *pmi;
-	IMAGE *pim;
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
+	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
-	if (TinselV2 || TinselV3) {
-		pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
-		pfr = (const FREEL *)&pFilm->reels[0];
-		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
-
-		if (!TinselV3) {
-			PokeInPalette(pmi);
-		}
-	} else {
-		assert(_vm->_bg->BgPal()); // no background palette
-
-		pim = GetImageFromFilm(_cursorFilm, 0, &pfr, &pmi, &pFilm);// Get pointer to image
-		pim->hImgPal = TO_32(_vm->_bg->BgPal());
-
-		_auxCursor = nullptr;		// No auxillary cursor
+	if (!TinselV3) {
+		PokeInPalette(pmi);
 	}
+
+	if (!TinselV2)
+		_auxCursor = nullptr; // No auxillary cursor
 
 	_mainCursor = MultiInitObject(pmi);
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _mainCursor);

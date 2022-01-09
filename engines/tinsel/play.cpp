@@ -88,17 +88,10 @@ void ResetVarsPlay() {
  * Poke the background palette into an image.
  */
 static void PokeInPalette(SCNHANDLE hMulFrame) {
-	const FRAME *pFrame;		// Pointer to frame
-	IMAGE *pim;		// Pointer to image
-
 	// Could be an empty column
 	if (hMulFrame) {
-		pFrame = (const FRAME *)_vm->_handle->LockMem(hMulFrame);
-
-		// get pointer to image
-		pim = (IMAGE *)_vm->_handle->LockMem(READ_32(pFrame)); // handle to image
-
-		pim->hImgPal = TO_32(_vm->_bg->BgPal());
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(hMulFrame);
+		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
 	}
 }
 
@@ -106,17 +99,10 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
  * Poke the background palette into an image.
  */
 void PokeInPalette(const MULTI_INIT *pmi) {
-	FRAME	*pFrame;		// Pointer to frame
-	IMAGE	*pim;			// Pointer to image
-
 	// Could be an empty column
 	if (pmi->hMulFrame) {
-		pFrame = (FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
-
-		// get pointer to image
-		pim = (IMAGE *)_vm->_handle->LockMem(READ_32(pFrame)); // handle to image
-
-		pim->hImgPal = TO_32(_vm->_bg->BgPal());
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
 	}
 }
 

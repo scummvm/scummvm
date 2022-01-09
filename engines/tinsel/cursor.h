@@ -69,8 +69,6 @@ public:
 	void InitCurObj();
 	void InitCurPos();
 	void DoCursorMove();
-	IMAGE *GetImageFromReel(const FREEL *pfr, const MULTI_INIT **ppmi = nullptr);
-	IMAGE *GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr = nullptr, const MULTI_INIT **ppmi = nullptr, const FILM **ppfilm = nullptr);
 
 	bool CursorIsFrozen() { return _frozenCursor; }
 	int NumTrails() { return _numTrails; }
