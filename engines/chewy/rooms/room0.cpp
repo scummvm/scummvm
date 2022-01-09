@@ -149,10 +149,10 @@ bool Room0::pullSlime() {
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
 		auto_move(2, 0);
-		_G(spieler).PersonHide[0] = 1;
+		_G(spieler).PersonHide[0] = true;
 		start_detail_wait(3, 1, 0);
 		set_person_pos(222, 106, 0, 0);
-		_G(spieler).PersonHide[0] = 0;
+		_G(spieler).PersonHide[0] = false;
 		invent_2_slot(1);
 		menu_item = 0;
 		cursor_wahl(0);
