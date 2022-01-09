@@ -572,7 +572,7 @@ int16 io_game::get_savegame_files() {
 	for (int i = 0; i < 20; i++) {
 		file_find_g[i][0] = 0;
 
-		for (int j = 0; j < saveList.size(); ++j) {
+		for (uint j = 0; j < saveList.size(); ++j) {
 			if (saveList[j].getSaveSlot() == i) {
 				Common::String name = saveList[j].getDescription();
 				file_find_g[i][0] = 1;
