@@ -689,6 +689,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "2f231d31af172ea72ed533fd112f971b", 133458},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16	},
+	
+	// Eco Quest 2 - Korean DOS Floppy (from swkim01)
+    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+    {"ecoquest2", "Floppy", {
+        {"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
+        {"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
+        {"resource.msg", 0, "a0fbf7c183ea64f4bc224f71f2862aa0", 219798},
+        AD_LISTEND},
+        Common::KO_KOR, Common::kPlatformDOS, 0, GUIO_STD16 },
 
 	// Freddy Pharkas - English DOS demo (from FRG)
 	// SCI interpreter version 1.001.069
@@ -974,6 +983,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+	
+	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
+    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+    {"gk2", "", {
+        {"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
+        {"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
+        {"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
+        AD_LISTEND},
+        Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
