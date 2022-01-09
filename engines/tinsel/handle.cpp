@@ -26,6 +26,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
+#include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
@@ -405,6 +406,40 @@ SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {
 	delete font;
 
 	return handle;
+}
+
+/**
+ * Return an actor's data specified by a SCNHANDLE
+ * Handles endianess internally
+ * @param offset			Handle and offset to data
+ * @return IMAGE structure
+*/
+const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, int numActors) {
+	byte *data = LockMem(offset);
+	const bool isBE = TinselV1Mac || TinselV1Saturn;
+	const uint32 size = TinselV2 ? 20 : 12; // ACTORDATA struct size
+
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size * numActors, isBE);
+
+	ACTORDATA *actorData = new ACTORDATA[numActors];
+
+	for (int i = 0; i < numActors; i++) {
+		if (!TinselV2) {
+			actorData[i].masking = stream->readSint32();
+			actorData[i].hActorId = stream->readUint32();
+			actorData[i].hActorCode = stream->readUint32();
+		} else {
+			actorData[i].hActorId = stream->readUint32();
+			actorData[i].hTagText = stream->readUint32();
+			actorData[i].tagPortionV = stream->readSint32();
+			actorData[i].tagPortionH = stream->readSint32();
+			actorData[i].hActorCode = stream->readUint32();
+		}
+	}
+
+	delete stream;
+
+	return actorData;
 }
 
 /**

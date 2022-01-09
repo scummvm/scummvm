@@ -45,25 +45,6 @@
 
 namespace Tinsel {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-/** actor struct - one per actor */
-struct T1_ACTOR_STRUC {
-	int32 masking;			///< type of actor masking
-	SCNHANDLE hActorId;		///< handle actor ID string index
-	SCNHANDLE hActorCode;	///< handle to actor script
-} PACKED_STRUCT;
-
-struct T2_ACTOR_STRUC {
-	SCNHANDLE hActorId;	// handle actor ID string index
-	SCNHANDLE hTagText;	// tag
-	int32 tagPortionV;	// defines tag area
-	int32 tagPortionH;	// defines tag area
-	SCNHANDLE hActorCode;	// handle to actor script
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 #define RANGE_CHECK(num)	assert(num > 0 && num <= _numActors);
 
 struct ACTORINFO {
@@ -213,8 +194,8 @@ int Actor::TaggedActorIndex(int actor) {
  * @param as			Actor structure
  * @param bRunScript	Flag for whether to run actor's script for the scene
  */
-void Actor::StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
-	SCNHANDLE hActorId = FROM_32(as->hActorId);
+void Actor::StartActor(const ACTORDATA *ad, bool bRunScript) {
+	SCNHANDLE hActorId = ad->hActorId;
 
 	// Zero-out many things
 	_actorInfo[hActorId - 1].bHidden = false;
@@ -226,15 +207,15 @@ void Actor::StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
 	_actorInfo[hActorId - 1].presObj = nullptr;
 
 	// Store current scene's parameters for this actor
-	_actorInfo[hActorId - 1].mtype = FROM_32(as->masking);
-	_actorInfo[hActorId - 1].actorCode = FROM_32(as->hActorCode);
+	_actorInfo[hActorId - 1].mtype = ad->masking;
+	_actorInfo[hActorId - 1].actorCode = ad->hActorCode;
 
 	// Run actor's script for this scene
 	if (bRunScript) {
 		if (_actorsOn)
 			_actorInfo[hActorId - 1].bAlive = true;
 
-		if (_actorInfo[hActorId - 1].bAlive && FROM_32(as->hActorCode))
+		if (_actorInfo[hActorId - 1].bAlive && ad->hActorCode)
 			ActorEvent(hActorId, STARTUP, PLR_NOEVENT);
 	}
 }
@@ -246,38 +227,41 @@ void Actor::StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
  * @param bRunScript	Flag for whether to run actor scene scripts
  */
 void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
-	int	i;
+	if (!TinselV2) {
+		// Tinsel 1 load variation
 
-	if (TinselV2) {
-		// Clear it all out for a fresh start
-		memset(_taggedActors, 0, sizeof(_taggedActors));
-		_numTaggedActors = numActors;
-	} else {
 		// Only actors with code blocks got (x, y) re-initialized, so...
-		for (i = 0; i < _numActors; i++) {
+		for (int i = 0; i < _numActors; i++) {
 			_actorInfo[i].x = _actorInfo[i].y = 0;
 			_actorInfo[i].mtype = 0;
 		}
-	}
 
-	if (!TinselV2) {
-		// Tinsel 1 load variation
-		const T1_ACTOR_STRUC *as = (const T1_ACTOR_STRUC *)_vm->_handle->LockMem(ah);
-		for (i = 0; i < numActors; i++, as++) {
-			StartActor(as, bRunScript);
+		const ACTORDATA *ad = _vm->_handle->GetActorData(ah, numActors);
+		for (int i = 0; i < numActors; i++) {
+			StartActor(&ad[i], bRunScript);
 		}
-	} else if (numActors > 0) {
+		delete[] ad;
+	} else {
 		// Tinsel 2 load variation
-		const T2_ACTOR_STRUC *as = (T2_ACTOR_STRUC *)_vm->_handle->LockMem(ah);
-		for (i = 0; i < numActors; i++, as++) {
-			assert(as->hActorCode);
+
+		// Clear it all out for a fresh start
+		memset(_taggedActors, 0, sizeof(_taggedActors));
+		_numTaggedActors = numActors;
+
+		if (numActors == 0)
+			return;
+
+		const ACTORDATA *ad = _vm->_handle->GetActorData(ah, numActors);
+
+		for (int i = 0; i < numActors; i++) {
+			assert(ad[i].hActorCode);
 
 			// Store current scene's parameters for this tagged actor
-			_taggedActors[i].id			= FROM_32(as->hActorId);
-			_taggedActors[i].hTagText	= FROM_32(as->hTagText);
-			_taggedActors[i].tagPortionV	= FROM_32(as->tagPortionV);
-			_taggedActors[i].tagPortionH	= FROM_32(as->tagPortionH);
-			_taggedActors[i].hActorCode	= FROM_32(as->hActorCode);
+			_taggedActors[i].id          = ad[i].hActorId;
+			_taggedActors[i].hTagText    = ad[i].hTagText;
+			_taggedActors[i].tagPortionV = ad[i].tagPortionV;
+			_taggedActors[i].tagPortionH = ad[i].tagPortionH;
+			_taggedActors[i].hActorCode  = ad[i].hActorCode;
 
 			// Run actor's script for this scene
 			if (bRunScript) {
@@ -286,6 +270,8 @@ void Actor::StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 				ActorEvent(_taggedActors[i].id, STARTUP, false, 0);
 			}
 		}
+
+		delete[] ad;
 	}
 }
 
