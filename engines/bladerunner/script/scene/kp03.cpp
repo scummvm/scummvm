@@ -198,38 +198,51 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 		int bombTriggeredByActor = -1;
 
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if ((Game_Flag_Query(kFlagKP01toKP03)
-			&& -130.0f < x
-			)
-			|| (Game_Flag_Query(kFlagKP05toKP03)
-			&& -130.0f > x
-			)
+		if ((Game_Flag_Query(kFlagKP01toKP03) && -130.0f < x )
+		    || (Game_Flag_Query(kFlagKP05toKP03) && -130.0f > x)
 		) {
 			bombTriggeredByActor = kActorMcCoy;
 		}
 
 		Actor_Query_XYZ(kActorSteele, &x, &y, &z);
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-		 && Actor_Query_Which_Set_In(kActorSteele) == kSetKP03
+		    && Actor_Query_Which_Set_In(kActorSteele) == kSetKP03
 		) {
-			if ((Game_Flag_Query(kFlagKP01toKP03)
-			  && -130.0f > x
-			 )
-			 || (Game_Flag_Query(kFlagKP05toKP03)
-			  && -130.0f < x
-			 )
+			if ((Game_Flag_Query(kFlagKP01toKP03) && -130.0f > x)
+			    || (Game_Flag_Query(kFlagKP05toKP03) && -130.0f < x)
 			) {
 				bombTriggeredByActor = kActorSteele;
 			}
-		} else if ((Game_Flag_Query(kFlagKP01toKP03)
-		         && -130.0f < x
-		        )
-		        || (Game_Flag_Query(kFlagKP05toKP03)
-		         && -130.0f > x
-		        )
+		} else if ((Game_Flag_Query(kFlagKP01toKP03) && -130.0f < x)
+		            || (Game_Flag_Query(kFlagKP05toKP03) && -130.0f > x)
 		) {
 			bombTriggeredByActor = kActorSteele;
 		}
+#else
+		// In both cases we're concerned about Steele's position within the current set
+		// So the check for her being in KP03 should cover both cases,
+		// even though, the first (when McCoy is helping Replicants) 
+		// is untriggered in the vanilla game and thus Steele won't be in this set then.
+		// (She would be in KP05 with exits disabled)
+		// The code that gets triggered (McCoy is NOT helping Replicants) 
+		// would not check for Steele's current set, and so while it did work, it was prone to errors
+		// since wherever Steele is, if she's moving or if she's teleported by some piece of code
+		// her x position (in the other set where she's in) could trigger the bomb.
+		if (Actor_Query_Which_Set_In(kActorSteele) == kSetKP03) {
+			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+				if ((Game_Flag_Query(kFlagKP01toKP03) && -130.0f > x)
+					|| (Game_Flag_Query(kFlagKP05toKP03) && -130.0f < x)
+				) {
+					bombTriggeredByActor = kActorSteele;
+				}
+			} else if ((Game_Flag_Query(kFlagKP01toKP03) && -130.0f < x)
+			           || (Game_Flag_Query(kFlagKP05toKP03) && -130.0f > x)
+			) {
+				bombTriggeredByActor = kActorSteele;
+			}
+		}
+#endif
 
 		if (bombTriggeredByActor != -1) {
 			Scene_Loop_Set_Default(kKP03MainLoopBombExploded);
