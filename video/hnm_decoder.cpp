@@ -513,12 +513,9 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(byte *data, uint32 size) {
 			} else {
 				ptr = _frameBufferC;
 			}
-			for (; count > 0; count--) {
-				_frameBufferC[currentPos] = ptr[offset];
-				_frameBufferC[currentPos + width] = ptr[offset + width];
-				currentPos++;
-				offset++;
-			}
+			memcpy(&_frameBufferC[currentPos], &ptr[offset], count);
+			memcpy(&_frameBufferC[currentPos + width], &ptr[offset + width], count);
+			currentPos += count;
 		}
 	}
 }
