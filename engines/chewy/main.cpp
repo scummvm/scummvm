@@ -1727,6 +1727,7 @@ void get_user_key(int16 mode) {
 	flags.StopAutoObj = true;
 	maus_action();
 	_G(maus_links_click) = false;
+
 	if (!inv_disp_ok) {
 		switch (in->get_switch_code()) {
 		case F5_KEY:
@@ -1755,8 +1756,11 @@ void get_user_key(int16 mode) {
 			kbinfo.key_code = '\0';
 			break;
 
+		default:
+			break;
 		}
 	}
+
 	flags.StopAutoObj = false;
 }
 

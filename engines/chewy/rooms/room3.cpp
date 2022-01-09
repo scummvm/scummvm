@@ -60,7 +60,7 @@ void Room3::terminal() {
 	_G(auto_obj) = 0;
 	switch (Room4::sonde_comp()) {
 	case 0:
-		sonde_aufnahme();
+		probeTransfer();
 		spr_info[0].Image = room_blk.DetImage[120];
 		spr_info[0].X = 250;
 		spr_info[0].Y = 2;
@@ -236,18 +236,17 @@ void Room3::sonde_knarre() {
 	show_cur();
 }
 
-void Room3::sonde_aufnahme() {
+void Room3::probeTransfer() {
 	int16 tmp;
 	int16 i;
 	int16 spr_nr;
 	int16 anistart;
-	//	room_detail_info *rdi;
 
-	MovLine sonde_mpkt1[2] = {
+	static const MovLine SONDE_MPKT1[2] = {
 		{ { 237,  52, 160 }, 0, 2 },
 		{ { 144, 100, 180 }, 0, 2 }
 	};
-	MovLine sonde_mpkt_[4][2] = {
+	static const MovLine SONDE_MPKT_[4][2] = {
 		{ { { 144, 100, 180 }, 0, 2 },
 		  { { 110, 100, 180 }, 0, 2 } },
 
@@ -260,6 +259,7 @@ void Room3::sonde_aufnahme() {
 		{ { { 310,   2, 180 }, 0, 3 },
 		  { { 250,   2, 180 }, 0, 3 } }
 	};
+
 	flags.AniUserAction = false;
 	hide_cur();
 	/*rdi = */(void)det->get_room_detail_info();
@@ -273,7 +273,8 @@ void Room3::sonde_aufnahme() {
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SONDE_OBJ].Mode = 1;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine *)sonde_mpkt1);
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines,
+		(const MovLine *)SONDE_MPKT1);
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
@@ -283,34 +284,35 @@ void Room3::sonde_aufnahme() {
 		spr_info[0] = det->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);
 		spr_info[0].ZEbene = 146;
 		set_ani_screen();
+
+		SHOULD_QUIT_RETURN;
 	}
 
 	clear_prog_ani();
 	_G(auto_obj) = 2;
 
 	spr_nr = 140;
-	for (i = 0; i < 4; i++) {
-
+	for (i = 0; i < 4 && !SHOULD_QUIT; i++) {
 		mov_phasen[SONDE_OBJ].Lines = 2;
 		mov_phasen[SONDE_OBJ].Repeat = 1;
 		mov_phasen[SONDE_OBJ].ZoomFak = 0;
 		auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 		auto_mov_obj[SONDE_OBJ].Mode = 1;
 		auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, sonde_mpkt_[i]);
+		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, SONDE_MPKT_[i]);
 		mov_phasen[SONDE_OBJ1].Lines = 2;
 		mov_phasen[SONDE_OBJ1].Repeat = 1;
 		mov_phasen[SONDE_OBJ1].ZoomFak = 0;
 		auto_mov_obj[SONDE_OBJ1].Id = AUTO_OBJ1;
 		auto_mov_obj[SONDE_OBJ1].Mode = 1;
 		auto_mov_vector[SONDE_OBJ1].Delay = _G(spieler).DelaySpeed;
-		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ1].Lines, sonde_mpkt_[i]);
+		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ1].Lines, SONDE_MPKT_[i]);
 		mov_phasen[SONDE_OBJ1].Phase[0][0] = spr_nr;
 		mov_phasen[SONDE_OBJ1].Phase[0][1] = spr_nr;
 		while (mov_phasen[SONDE_OBJ].Repeat != -1) {
+			SHOULD_QUIT_RETURN;
 
 			if (i == 2 || i == 1) {
-
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
 					if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 						if (is_cur_inventar(SPINAT_INV)) {
@@ -333,6 +335,7 @@ void Room3::sonde_aufnahme() {
 				}
 			}
 			set_ani_screen();
+
 			if (anistart) {
 				if (auto_mov_vector[SONDE_OBJ1].PhNr == 7) {
 					anistart = false;
@@ -344,6 +347,7 @@ void Room3::sonde_aufnahme() {
 				}
 			}
 		}
+
 		switch (i) {
 		case 0:
 			show_cur();
@@ -364,8 +368,11 @@ void Room3::sonde_aufnahme() {
 			switch_room(2);
 			break;
 
+		default:
+			break;
 		}
 	}
+
 	flags.AniUserAction = false;
 	_G(zoom_horizont) = tmp;
 	_G(auto_obj) = 0;
