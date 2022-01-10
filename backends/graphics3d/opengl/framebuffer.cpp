@@ -24,7 +24,8 @@
 
 #if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
-#include "graphics/opengl/framebuffer.h"
+#include "backends/graphics3d/opengl/framebuffer.h"
+
 #include "graphics/opengl/context.h"
 
 #ifdef USE_GLES2

@@ -19,11 +19,12 @@
  *
  */
 
-#ifndef GRAPHICS_OPENGL_FRAMEBUFFER_H
-#define GRAPHICS_OPENGL_FRAMEBUFFER_H
+#ifndef BACKENDS_GRAPHICS3D_OPENGL_FRAMEBUFFER_H
+#define BACKENDS_GRAPHICS3D_OPENGL_FRAMEBUFFER_H
 
 #include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/texture.h"
+
+#include "backends/graphics3d/opengl/texture.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 

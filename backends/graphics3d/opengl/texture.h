@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GRAPHICS_OPENGL_TEXTURE_H
-#define GRAPHICS_OPENGL_TEXTURE_H
+#ifndef BACKENDS_GRAPHICS3D_OPENGL_TEXTURE_H
+#define BACKENDS_GRAPHICS3D_OPENGL_TEXTURE_H
 
 #include "graphics/opengl/system_headers.h"
 

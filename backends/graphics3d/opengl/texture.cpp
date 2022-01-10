@@ -23,7 +23,8 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
-#include "graphics/opengl/texture.h"
+#include "backends/graphics3d/opengl/texture.h"
+
 #include "graphics/opengl/context.h"
 
 namespace OpenGL {

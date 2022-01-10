@@ -27,6 +27,7 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/dcgf.h"
+
 #include "graphics/opengl/system_headers.h"
 
 #if defined(USE_OPENGL_GAME)

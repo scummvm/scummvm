@@ -23,10 +23,10 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
-#include "graphics/opengl/surfacerenderer.h"
+#include "backends/graphics3d/opengl/surfacerenderer.h"
+#include "backends/graphics3d/opengl/texture.h"
 
 #include "graphics/opengl/context.h"
-#include "graphics/opengl/texture.h"
 
 #if defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/shader.h"

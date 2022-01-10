@@ -174,7 +174,11 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		delete _imageData;
 	}
 
-	_imageData = img.getSurface()->convertTo(OpenGL::TextureGL::getRGBAPixelFormat(), img.getPalette());
+#ifdef SCUMM_BIG_ENDIAN
+	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), img.getPalette());
+#else
+	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), img.getPalette());
+#endif
 
 	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
 		// WME 1.x always use colorkey, even for images with transparency

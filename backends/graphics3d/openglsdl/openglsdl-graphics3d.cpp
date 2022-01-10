@@ -24,18 +24,20 @@
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
-
+#include "backends/graphics3d/opengl/surfacerenderer.h"
+#include "backends/graphics3d/opengl/tiledsurface.h"
+#include "backends/graphics3d/opengl/texture.h"
+#include "backends/graphics3d/opengl/framebuffer.h"
 #include "backends/events/sdl/sdl-events.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
+
 #include "engines/engine.h"
+
 #include "graphics/conversion.h"
 #include "graphics/opengl/context.h"
-#include "graphics/opengl/framebuffer.h"
-#include "graphics/opengl/surfacerenderer.h"
 #include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/texture.h"
-#include "graphics/opengl/tiledsurface.h"
 
 #ifdef USE_PNG
 #include "image/png.h"

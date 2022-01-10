@@ -23,10 +23,9 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
-#include "graphics/opengl/tiledsurface.h"
-
-#include "graphics/opengl/surfacerenderer.h"
-#include "graphics/opengl/texture.h"
+#include "backends/graphics3d/opengl/tiledsurface.h"
+#include "backends/graphics3d/opengl/surfacerenderer.h"
+#include "backends/graphics3d/opengl/texture.h"
 
 namespace OpenGL {
 

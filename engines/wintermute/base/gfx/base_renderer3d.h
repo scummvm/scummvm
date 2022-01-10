@@ -35,7 +35,6 @@
 #if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/texture.h"
 
 #endif
 

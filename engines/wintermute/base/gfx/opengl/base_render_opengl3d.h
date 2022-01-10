@@ -35,7 +35,6 @@
 #if defined(USE_OPENGL_GAME)
 
 #include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/texture.h"
 
 namespace Wintermute {
 

@@ -29,6 +29,8 @@ MODULE_OBJS := \
 	macgui/macwindowmanager.o \
 	managed_surface.o \
 	nine_patch.o \
+	opengl/context.o \
+	opengl/shader.o \
 	pixelformat.o \
 	primitives.o \
 	renderer.o \
@@ -46,16 +48,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
-	yuv_to_rgb.o \
-	opengl/context.o \
-	opengl/framebuffer.o \
-	opengl/texture.o \
-	opengl/tiledsurface.o \
-	opengl/shader.o \
-	opengl/surfacerenderer.o \
-	opengl/box_shaders.o \
-	opengl/control_shaders.o \
-	opengl/compat_shaders.o
+	yuv_to_rgb.o
 
 ifdef USE_TINYGL
 MODULE_OBJS += \
