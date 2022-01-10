@@ -255,8 +255,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	// Hardcoded levels
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";
-	matrix->intros.push_back("spider/cine/aleyc01s.smk");
+	matrix->intros.push_back("cine/aleyc01s.smk");
 	matrix->levelIfWin = "<trans_apt_2>";
+	matrix->prefix = "spider";
 	_levels["<puz_matr>"] = matrix;
 
 	// Transitions

@@ -82,8 +82,8 @@ void SpiderEngine::runMatrix(Code *code) {
 		loadImage("puz_matr/matrixbg.smk", 0, 0, false, true);
 		v = new MVideo("puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
 	} else {
-		loadImage("spider/puz_ally/matrixbg.smk", 0, 0, false, true);
-		v = new MVideo("spider/puz_ally/matintro.smk", Common::Point(0, 0), false, false, false);
+		loadImage("puz_ally/matrixbg.smk", 0, 0, false, true);
+		v = new MVideo("puz_ally/matintro.smk", Common::Point(0, 0), false, false, false);
 	}
 
 	playVideo(*v);
@@ -102,7 +102,7 @@ void SpiderEngine::runMatrix(Code *code) {
 				if (isDemo())
 					playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
 				else
-					playSound("spider/sound.lib/matrix.raw", 1);
+					playSound("sound.lib/matrix.raw", 1);
 
 				if (matrix.contains(mousePos)) {
 					int x = (mousePos.x - 175) / 29;
@@ -134,7 +134,7 @@ void SpiderEngine::runMatrix(Code *code) {
 			if (isDemo())
 				playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
 			else {
-				MVideo video("spider/cine/shv001s.smk", Common::Point(0, 0), false, false, false);
+				MVideo video("cine/shv001s.smk", Common::Point(0, 0), false, false, false);
 				runIntro(video);
 			}
 
