@@ -34,13 +34,28 @@
 
 namespace Hypno {
 
+typedef Common::String Filename;
+typedef Common::List<Filename> Filenames;
+
 class HypnoSmackerDecoder : public Video::SmackerDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
 };
 
-typedef Common::String Filename;
-typedef Common::List<Filename> Filenames;
+class MVideo {
+public:
+	MVideo(Filename, Common::Point, bool, bool, bool);
+	Filename path;
+	Common::Point position;
+	bool scaled;
+	bool transparent;
+	bool loop;
+	bool palette;
+	HypnoSmackerDecoder *decoder;
+	const Graphics::Surface *currentFrame;
+};
+
+typedef Common::Array<MVideo> Videos;
 
 enum HotspotType {
 	MakeMenu,
@@ -79,20 +94,6 @@ class Hotspot;
 
 typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
-
-class MVideo {
-public:
-	MVideo(Filename, Common::Point, bool, bool, bool);
-	Filename path;
-	Common::Point position;
-	bool scaled;
-	bool transparent;
-	bool loop;
-	HypnoSmackerDecoder *decoder;
-	const Graphics::Surface *currentFrame;
-};
-
-typedef Common::Array<MVideo> Videos;
 
 class Hotspot {
 public:
@@ -352,6 +353,10 @@ public:
 	uint32 pointsToShoot;
 	uint32 attackWeight;
 
+	// Palette
+	uint32 paletteOffset;
+	uint32 paletteSize;
+
 	// Sounds
 	Filename deathSound;
 	Filename hitSound;
@@ -392,6 +397,7 @@ public:
 
 	Filename background;
 	Filename player;
+	Filename palette;
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;

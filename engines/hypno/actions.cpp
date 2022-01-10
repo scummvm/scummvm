@@ -70,13 +70,16 @@ void HypnoEngine::runMenu(Hotspots hs) {
 		//	runMice(h, (Mice*) action);
 	}
 
-	//if (h.stype == "SINGLE_RUN")
-	//	loadImage("int_main/mainbutt.smk", 0, 0);
 	if (_conversation.empty()) {
 		if (h.flags[0] == "HINTS" || h.flags[1] == "HINTS" || h.flags[2] == "HINTS")
 			loadImage("int_main/hint1.smk", 0, 0, true);
-		else if (h.flags[0] == "AUTO_BUTTONS")
-			loadImage("int_main/resume.smk", 0, 0, true);
+		else if (h.flags[0] == "AUTO_BUTTONS") {
+			if (isDemo())
+				loadImage("int_main/resume.smk", 0, 0, true, false, 0);
+			else
+				loadImage("int_main/menu.smk", 0, 0, true, false, 0);
+		}
+
 	}
 }
 
@@ -114,19 +117,8 @@ void HypnoEngine::runMice(Mice *a) {
 }
 
 void HypnoEngine::runPalette(Palette *a) {
-	return; // remove when palette are working
-	Common::File *file = new Common::File();
-	Common::String path = convertPath(a->path);
-	if (!_prefixDir.empty())
-		path = _prefixDir + "/" + path;
-
-	if (!file->open(path))
-		error("unable to find video file %s", path.c_str());
-
-	debugC(1, kHypnoDebugScene, "Loading palette from %s", path.c_str());
-	byte *videoPalette = (byte*) malloc(file->size());
-	file->read(videoPalette, file->size());
-	g_system->getPaletteManager()->setPalette(videoPalette+8, 0, 256);
+	//return; // remove when palette are working
+	loadPalette(a->path);
 }
 
 void HypnoEngine::runEscape() {
@@ -179,7 +171,7 @@ void HypnoEngine::runPlay(Play *a) {
 
 void HypnoEngine::runAmbient(Ambient *a) {
 	if (a->flag == "/BITMAP") {
-		Graphics::Surface *frame = decodeFrame(a->path, a->frameNumber, true);
+		Graphics::Surface *frame = decodeFrame(a->path, a->frameNumber);
 		Graphics::Surface *sframe;
 		if (a->fullscreen)
 			sframe = frame->scale(_screenW, _screenH);

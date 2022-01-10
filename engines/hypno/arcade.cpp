@@ -109,13 +109,12 @@ void HypnoEngine::hitPlayer() {
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	} else {
-		uint32 red = _pixelFormat.ARGBToColor(1, 255, 0, 0);
-		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), red);
+		uint32 c = 251; // red
+		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
 		drawScreen();
 	}
 	//if (!_hitSound.empty())
 	//	playSound(_soundPath + _hitSound, 1);
-
 }
 
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
@@ -141,10 +140,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_skipLevel = false;
 
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
-		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 255, 255))
-			break; 
-		if ((*it)->getPixel(0, 0) == _pixelFormat.RGBToColor(0, 0, 255))
-			break; 
+		if ((*it)->getPixel(0, 0) == 255)
+			break;
 
 		_playerFrameSep++;
 	}
@@ -161,6 +158,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	changeCursor("arcade");
 	playVideo(background);
+	loadPalette(arc->palette);
 	background.decoder->setRate(1.5);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
@@ -282,6 +280,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							s.video = new MVideo(it->animation, it->position, true, false, false);
 							playVideo(*s.video);
 							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
+							loadPalette(s.video->decoder->getPalette(), s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
 							playSound(_soundPath + arc->enemySound, 1);
 						}

@@ -106,7 +106,9 @@ hline: 	CTOK NUM {
 		g_parsedArc->background = $2; 
 		debugC(1, kHypnoDebugParser, "N %s", $2); 
 	}
-	| RTOK FILENAME  { debugC(1, kHypnoDebugParser, "R %s", $2); }
+	| RTOK FILENAME  {
+		g_parsedArc->palette = $2; 
+		debugC(1, kHypnoDebugParser, "R %s", $2); }
 	| ITOK FILENAME { 
 		g_parsedArc->player = $2; 
 		debugC(1, kHypnoDebugParser, "I %s", $2); 
@@ -248,7 +250,10 @@ bline: FNTOK FILENAME {
 		shoot->explosionFrame = $3;
 		debugC(1, kHypnoDebugParser, "KN %d %d", $2, $3);
 	}
-	| P0TOK NUM NUM { debugC(1, kHypnoDebugParser, "P0 %d %d", $2, $3); }
+	| P0TOK NUM NUM { 
+		shoot->paletteSize = $2;
+		shoot->paletteOffset = $3;
+		debugC(1, kHypnoDebugParser, "P0 %d %d", $2, $3); }
 	| OTOK NUM NUM { 
 		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); 
 	}

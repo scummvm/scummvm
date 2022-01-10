@@ -978,7 +978,7 @@ void SpiderEngine::loadAssetsDemo() {
 
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";
-	matrix->intros.push_back("sixdemo/demo/aleyc01s.smk");
+	matrix->intros.push_back("demo/aleyc01s.smk");
 	matrix->levelIfWin = "sixdemo/mis/demo.mis";
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";
 	_levels["<puz_matr>"] = matrix;

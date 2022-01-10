@@ -73,16 +73,16 @@ void SpiderEngine::runMatrix(Code *code) {
 	};
 	Common::Rect matrix(175, 96, 461, 385);
 	Common::Rect cell(0, 0, 27, 27);
-	uint32 activeColor = _pixelFormat.RGBToColor(0, 130, 0);
-	uint32 deactiveColor = _pixelFormat.RGBToColor(0, 0, 0);
+	uint32 activeColor = 2;
+	uint32 deactiveColor = 0;
 
 	MVideo *v;
 
 	if (isDemo()) {
-		loadImage("sixdemo/puz_matr/matrixbg.smk", 0, 0, false);
-		v = new MVideo("sixdemo/puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
+		loadImage("puz_matr/matrixbg.smk", 0, 0, false, true);
+		v = new MVideo("puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
 	} else {
-		loadImage("spider/puz_ally/matrixbg.smk", 0, 0, false);
+		loadImage("spider/puz_ally/matrixbg.smk", 0, 0, false, true);
 		v = new MVideo("spider/puz_ally/matintro.smk", Common::Point(0, 0), false, false, false);
 	}
 
@@ -284,11 +284,11 @@ void SpiderEngine::runNote(Code *code) {
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 		MVideo v("spider/int_ball/ppv007es.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/int_ball/enote.smk", 0, 0, false);
+		loadImage("spider/int_ball/enote.smk", 0, 0, false, true);
 	} else { // hard
 		MVideo v("spider/int_ball/ppv007hs.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/int_ball/hnote.smk", 0, 0, false);
+		loadImage("spider/int_ball/hnote.smk", 0, 0, false, true);
 	}
 	
 	while (!shouldQuit()) {
@@ -428,16 +428,16 @@ void SpiderEngine::runFusePanel(Code *code) {
 				_intros[intro] = true;
 			}
 
-			loadImage("spider/int_alof/fuserust.smk", 0, 0, false);
+			loadImage("spider/int_alof/fuserust.smk", 0, 0, false, true);
 		} else if (isFuseUnreadable)
-			loadImage("spider/int_alof/fuseclea.smk", 0, 0, false);
+			loadImage("spider/int_alof/fuseclea.smk", 0, 0, false, true);
 		else
-			loadImage("spider/int_alof/fuseread.smk", 0, 0, false);
+			loadImage("spider/int_alof/fuseread.smk", 0, 0, false, true);
 
 	} else {
 		isFuseRust = false;
 		isFuseUnreadable = false;
-		loadImage("spider/int_alof/fuse.smk", 0, 0, false);
+		loadImage("spider/int_alof/fuse.smk", 0, 0, false, true);
 	}
 
 	while (!shouldQuit()) {
@@ -462,13 +462,13 @@ void SpiderEngine::runFusePanel(Code *code) {
 					runIntro(v);
 					isFuseRust = false;
 					isFuseUnreadable = true;
-					loadImage("spider/int_alof/fuseclea.smk", 0, 0, false);
+					loadImage("spider/int_alof/fuseclea.smk", 0, 0, false, true);
 				} else if (isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
 					MVideo v("spider/cine/spv032s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
 					isFuseRust = false;
 					isFuseUnreadable = false;
-					loadImage("spider/int_alof/fuseread.smk", 0, 0, false);
+					loadImage("spider/int_alof/fuseread.smk", 0, 0, false, true);
 				}
 
 				if (isFuseRust || isFuseUnreadable)
@@ -536,7 +536,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 
 	defaultCursor();
 	Common::Rect back(0, 446, 640, 480);
-	loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+	loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
 	for (int i = 0; i < 6; i++) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
@@ -569,7 +569,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 						comb[i] = (comb[i] + 1) % 10;
 				}
 
-				loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+				loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
@@ -584,7 +584,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 							comb[i] = comb[i] - 1;
 					}
 
-				loadImage("spider/int_alof/combobg.smk", 0, 0, false);
+				loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
@@ -619,11 +619,11 @@ void SpiderEngine::runLock(Code *code) {
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 		MVideo v("spider/cine/spv051s.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/factory/elockbg.smk", 0, 0, false);
+		loadImage("spider/factory/elockbg.smk", 0, 0, false, true);
 	} else {
 		MVideo v("spider/cine/spv051as.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/factory/hlockbg.smk", 0, 0, false);
+		loadImage("spider/factory/hlockbg.smk", 0, 0, false, true);
 	}
 
 	Frames nums = decodeFrames("spider/factory/button.smk");
@@ -660,9 +660,9 @@ void SpiderEngine::runLock(Code *code) {
 				}
 
 				if (_sceneState["GS_PUZZLELEVEL"] == 0) // easy
-					loadImage("spider/factory/elockbg.smk", 0, 0, false);
+					loadImage("spider/factory/elockbg.smk", 0, 0, false, true);
 				else 
-					loadImage("spider/factory/hlockbg.smk", 0, 0, false);
+					loadImage("spider/factory/hlockbg.smk", 0, 0, false, true);
 
 				for (int i = 0; i < 5; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
@@ -730,11 +730,11 @@ void SpiderEngine::runFuseBox(Code *code) {
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 		MVideo v("spider/cine/ppv011es.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/movie2/efusebg.smk", 0, 0, false);
+		loadImage("spider/movie2/efusebg.smk", 0, 0, false, true);
 	} else { // hard
 		MVideo v("spider/cine/ppv011hs.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
-		loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+		loadImage("spider/movie2/hfusebg.smk", 0, 0, false, true);
 	}
 
 	Frames fuses = decodeFrames("spider/movie2/onoffuse.smk");
@@ -753,9 +753,9 @@ void SpiderEngine::runFuseBox(Code *code) {
 			case Common::EVENT_LBUTTONDOWN:
 				if (matrix.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-						loadImage("spider/movie2/efusebg.smk", 0, 0, false);
+						loadImage("spider/movie2/efusebg.smk", 0, 0, false, true);
 					} else { // hard
-						loadImage("spider/movie2/hfusebg.smk", 0, 0, false);
+						loadImage("spider/movie2/hfusebg.smk", 0, 0, false, true);
 					}
 
 					debug("\nvdata:");
@@ -850,10 +850,12 @@ void SpiderEngine::showCredits() {
 		return;
 	}
 
-	changeScreenMode("640x480");
-	MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
-	runIntro(video);
-	_nextLevel = "mainmenu.mi_";
+	if (!isDemo()) { // No credits in demo
+		changeScreenMode("640x480");
+		MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
+		runIntro(video);
+		_nextLevel = "mainmenu.mi_";
+	}
 }
 
 } // End of namespace Hypno

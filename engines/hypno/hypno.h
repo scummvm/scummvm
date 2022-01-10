@@ -135,10 +135,12 @@ public:
 	void skipVideo(MVideo &video);
 
 	Common::File *fixSmackerHeader(Common::File *file);
-	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
+	Graphics::Surface *decodeFrame(const Common::String &name, int frame, byte **palette = nullptr);
 	Frames decodeFrames(const Common::String &name);
-	void loadImage(const Common::String &file, int x, int y, bool transparent, int frameNumber = 0);
+	void loadImage(const Common::String &file, int x, int y, bool transparent, bool palette = false, int frameNumber = 0);
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
+	void loadPalette(const Common::String &fname);
+	void loadPalette(const byte *palette, uint32 offset, uint32 size);
 
 	// Cursors
 	Common::String _defaultCursor;

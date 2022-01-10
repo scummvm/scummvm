@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -33,6 +34,10 @@
 /* C LALR(1) parser skeleton written by Richard Stallman, by
    simplifying the original so-called "semantic" parser.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 /* All symbols defined below should begin with yy or YY, to avoid
    infringing on user name space.  This should be done even for local
    variables, as they might otherwise be expanded by user macros.
@@ -40,11 +45,11 @@
    define necessary library symbols; they are noted "INFRINGES ON
    USER NAME SPACE" below.  */
 
-/* Identify Bison output.  */
-#define YYBISON 1
+/* Identify Bison output, and Bison version.  */
+#define YYBISON 30802
 
-/* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+/* Bison version string.  */
+#define YYBISON_VERSION "3.8.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -66,12 +71,11 @@
 #define yyerror         HYPNO_ARC_error
 #define yydebug         HYPNO_ARC_debug
 #define yynerrs         HYPNO_ARC_nerrs
-
 #define yylval          HYPNO_ARC_lval
 #define yychar          HYPNO_ARC_char
 
-/* Copy the first part of user declarations.  */
-#line 28 "engines/hypno/grammar_arc.y" /* yacc.c:339  */
+/* First part of user prologue.  */
+#line 27 "engines/hypno/grammar_arc.y"
 
 
 #include "common/array.h"
@@ -97,144 +101,173 @@ int HYPNO_ARC_wrap() {
 using namespace Hypno;
 
 
-#line 101 "engines/hypno/grammar_arc.cpp" /* yacc.c:339  */
+#line 105 "engines/hypno/grammar_arc.cpp"
 
-# ifndef YY_NULLPTR
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULLPTR nullptr
+# ifndef YY_CAST
+#  ifdef __cplusplus
+#   define YY_CAST(Type, Val) static_cast<Type> (Val)
+#   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
 #  else
-#   define YY_NULLPTR 0
+#   define YY_CAST(Type, Val) ((Type) (Val))
+#   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
+#  endif
+# endif
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
 #  endif
 # endif
 
-/* Enabling verbose error messages.  */
-#ifdef YYERROR_VERBOSE
-# undef YYERROR_VERBOSE
-# define YYERROR_VERBOSE 1
-#else
-# define YYERROR_VERBOSE 0
-#endif
-
-/* In a future release of Bison, this section will be replaced
-   by #include "tokens_arc.h".  */
-#ifndef YY_HYPNO_ARC_ENGINES_HYPNO_TOKENS_ARC_H_INCLUDED
-# define YY_HYPNO_ARC_ENGINES_HYPNO_TOKENS_ARC_H_INCLUDED
-/* Debug traces.  */
-#ifndef HYPNO_ARC_DEBUG
-# if defined YYDEBUG
-#if YYDEBUG
-#   define HYPNO_ARC_DEBUG 1
-#  else
-#   define HYPNO_ARC_DEBUG 0
-#  endif
-# else /* ! defined YYDEBUG */
-#  define HYPNO_ARC_DEBUG 0
-# endif /* ! defined YYDEBUG */
-#endif  /* ! defined HYPNO_ARC_DEBUG */
-#if HYPNO_ARC_DEBUG
-extern int HYPNO_ARC_debug;
-#endif
-
-/* Token type.  */
-#ifndef HYPNO_ARC_TOKENTYPE
-# define HYPNO_ARC_TOKENTYPE
-  enum HYPNO_ARC_tokentype
-  {
-    NAME = 258,
-    FILENAME = 259,
-    BNTOK = 260,
-    SNTOK = 261,
-    KNTOK = 262,
-    YXTOK = 263,
-    NUM = 264,
-    COMMENT = 265,
-    CTOK = 266,
-    DTOK = 267,
-    HTOK = 268,
-    HETOK = 269,
-    RETTOK = 270,
-    QTOK = 271,
-    ENCTOK = 272,
-    PTOK = 273,
-    FTOK = 274,
-    TTOK = 275,
-    TPTOK = 276,
-    ATOK = 277,
-    VTOK = 278,
-    OTOK = 279,
-    ONTOK = 280,
-    NTOK = 281,
-    RTOK = 282,
-    R0TOK = 283,
-    ITOK = 284,
-    JTOK = 285,
-    ZTOK = 286,
-    FNTOK = 287,
-    NONETOK = 288,
-    A0TOK = 289,
-    P0TOK = 290,
-    WTOK = 291,
-    XTOK = 292,
-    CB3TOK = 293,
-    C02TOK = 294
-  };
-#endif
-
-/* Value type.  */
-#if ! defined HYPNO_ARC_STYPE && ! defined HYPNO_ARC_STYPE_IS_DECLARED
-
-union HYPNO_ARC_STYPE
+#include "tokens_arc.h"
+/* Symbol kind.  */
+enum yysymbol_kind_t
 {
-#line 54 "engines/hypno/grammar_arc.y" /* yacc.c:355  */
-
-	char *s; /* string value */
-	int i;	 /* integer value */
-
-#line 194 "engines/hypno/grammar_arc.cpp" /* yacc.c:355  */
+  YYSYMBOL_YYEMPTY = -2,
+  YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
+  YYSYMBOL_YYerror = 1,                    /* error  */
+  YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
+  YYSYMBOL_NAME = 3,                       /* NAME  */
+  YYSYMBOL_FILENAME = 4,                   /* FILENAME  */
+  YYSYMBOL_BNTOK = 5,                      /* BNTOK  */
+  YYSYMBOL_SNTOK = 6,                      /* SNTOK  */
+  YYSYMBOL_KNTOK = 7,                      /* KNTOK  */
+  YYSYMBOL_YXTOK = 8,                      /* YXTOK  */
+  YYSYMBOL_NUM = 9,                        /* NUM  */
+  YYSYMBOL_COMMENT = 10,                   /* COMMENT  */
+  YYSYMBOL_CTOK = 11,                      /* CTOK  */
+  YYSYMBOL_DTOK = 12,                      /* DTOK  */
+  YYSYMBOL_HTOK = 13,                      /* HTOK  */
+  YYSYMBOL_HETOK = 14,                     /* HETOK  */
+  YYSYMBOL_RETTOK = 15,                    /* RETTOK  */
+  YYSYMBOL_QTOK = 16,                      /* QTOK  */
+  YYSYMBOL_ENCTOK = 17,                    /* ENCTOK  */
+  YYSYMBOL_PTOK = 18,                      /* PTOK  */
+  YYSYMBOL_FTOK = 19,                      /* FTOK  */
+  YYSYMBOL_TTOK = 20,                      /* TTOK  */
+  YYSYMBOL_TPTOK = 21,                     /* TPTOK  */
+  YYSYMBOL_ATOK = 22,                      /* ATOK  */
+  YYSYMBOL_VTOK = 23,                      /* VTOK  */
+  YYSYMBOL_OTOK = 24,                      /* OTOK  */
+  YYSYMBOL_ONTOK = 25,                     /* ONTOK  */
+  YYSYMBOL_NTOK = 26,                      /* NTOK  */
+  YYSYMBOL_RTOK = 27,                      /* RTOK  */
+  YYSYMBOL_R0TOK = 28,                     /* R0TOK  */
+  YYSYMBOL_ITOK = 29,                      /* ITOK  */
+  YYSYMBOL_JTOK = 30,                      /* JTOK  */
+  YYSYMBOL_ZTOK = 31,                      /* ZTOK  */
+  YYSYMBOL_FNTOK = 32,                     /* FNTOK  */
+  YYSYMBOL_NONETOK = 33,                   /* NONETOK  */
+  YYSYMBOL_A0TOK = 34,                     /* A0TOK  */
+  YYSYMBOL_P0TOK = 35,                     /* P0TOK  */
+  YYSYMBOL_WTOK = 36,                      /* WTOK  */
+  YYSYMBOL_XTOK = 37,                      /* XTOK  */
+  YYSYMBOL_CB3TOK = 38,                    /* CB3TOK  */
+  YYSYMBOL_C02TOK = 39,                    /* C02TOK  */
+  YYSYMBOL_YYACCEPT = 40,                  /* $accept  */
+  YYSYMBOL_start = 41,                     /* start  */
+  YYSYMBOL_42_1 = 42,                      /* $@1  */
+  YYSYMBOL_header = 43,                    /* header  */
+  YYSYMBOL_hline = 44,                     /* hline  */
+  YYSYMBOL_enc = 45,                       /* enc  */
+  YYSYMBOL_body = 46,                      /* body  */
+  YYSYMBOL_bline = 47                      /* bline  */
 };
-
-typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;
-# define HYPNO_ARC_STYPE_IS_TRIVIAL 1
-# define HYPNO_ARC_STYPE_IS_DECLARED 1
-#endif
+typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
-extern HYPNO_ARC_STYPE HYPNO_ARC_lval;
 
-int HYPNO_ARC_parse (void);
-
-#endif /* !YY_HYPNO_ARC_ENGINES_HYPNO_TOKENS_ARC_H_INCLUDED  */
-
-/* Copy the second part of user declarations.  */
-
-#line 211 "engines/hypno/grammar_arc.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
 #endif
 
-#ifdef YYTYPE_UINT8
-typedef YYTYPE_UINT8 yytype_uint8;
-#else
-typedef unsigned char yytype_uint8;
+/* On compilers that do not define __PTRDIFF_MAX__ etc., make sure
+   <limits.h> and (if available) <stdint.h> are included
+   so that the code can choose integer types of a good width.  */
+
+#ifndef __PTRDIFF_MAX__
+# include <limits.h> /* INFRINGES ON USER NAME SPACE */
+# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+#  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
+#  define YY_STDINT_H
+# endif
 #endif
 
-#ifdef YYTYPE_INT8
-typedef YYTYPE_INT8 yytype_int8;
+/* Narrow types that promote to a signed type and that can represent a
+   signed or unsigned integer of at least N bits.  In tables they can
+   save space and decrease cache pressure.  Promoting to a signed type
+   helps avoid bugs in integer arithmetic.  */
+
+#ifdef __INT_LEAST8_MAX__
+typedef __INT_LEAST8_TYPE__ yytype_int8;
+#elif defined YY_STDINT_H
+typedef int_least8_t yytype_int8;
 #else
 typedef signed char yytype_int8;
 #endif
 
-#ifdef YYTYPE_UINT16
-typedef YYTYPE_UINT16 yytype_uint16;
+#ifdef __INT_LEAST16_MAX__
+typedef __INT_LEAST16_TYPE__ yytype_int16;
+#elif defined YY_STDINT_H
+typedef int_least16_t yytype_int16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef short yytype_int16;
 #endif
 
-#ifdef YYTYPE_INT16
-typedef YYTYPE_INT16 yytype_int16;
+/* Work around bug in HP-UX 11.23, which defines these macros
+   incorrectly for preprocessor constants.  This workaround can likely
+   be removed in 2023, as HPE has promised support for HP-UX 11.23
+   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
+   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
+#ifdef __hpux
+# undef UINT_LEAST8_MAX
+# undef UINT_LEAST16_MAX
+# define UINT_LEAST8_MAX 255
+# define UINT_LEAST16_MAX 65535
+#endif
+
+#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST8_TYPE__ yytype_uint8;
+#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST8_MAX <= INT_MAX)
+typedef uint_least8_t yytype_uint8;
+#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
+typedef unsigned char yytype_uint8;
 #else
-typedef short int yytype_int16;
+typedef short yytype_uint8;
+#endif
+
+#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST16_TYPE__ yytype_uint16;
+#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST16_MAX <= INT_MAX)
+typedef uint_least16_t yytype_uint16;
+#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
+typedef unsigned short yytype_uint16;
+#else
+typedef int yytype_uint16;
+#endif
+
+#ifndef YYPTRDIFF_T
+# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+#  define YYPTRDIFF_T __PTRDIFF_TYPE__
+#  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
+# elif defined PTRDIFF_MAX
+#  ifndef ptrdiff_t
+#   include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  endif
+#  define YYPTRDIFF_T ptrdiff_t
+#  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
+# else
+#  define YYPTRDIFF_T long
+#  define YYPTRDIFF_MAXIMUM LONG_MAX
+# endif
 #endif
 
 #ifndef YYSIZE_T
@@ -242,15 +275,28 @@ typedef short int yytype_int16;
 #  define YYSIZE_T __SIZE_TYPE__
 # elif defined size_t
 #  define YYSIZE_T size_t
-# elif ! defined YYSIZE_T
+# elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
 # else
-#  define YYSIZE_T unsigned int
+#  define YYSIZE_T unsigned
 # endif
 #endif
 
-#define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
+#define YYSIZE_MAXIMUM                                  \
+  YY_CAST (YYPTRDIFF_T,                                 \
+           (YYPTRDIFF_MAXIMUM < YY_CAST (YYSIZE_T, -1)  \
+            ? YYPTRDIFF_MAXIMUM                         \
+            : YY_CAST (YYSIZE_T, -1)))
+
+#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+
+
+/* Stored state numbers (used for stacks). */
+typedef yytype_uint8 yy_state_t;
+
+/* State numbers in computations.  */
+typedef int yy_state_fast_t;
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
@@ -264,47 +310,43 @@ typedef short int yytype_int16;
 # endif
 #endif
 
-#ifndef YY_ATTRIBUTE
-# if (defined __GNUC__                                               \
-      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
-     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
-#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
+
+#ifndef YY_ATTRIBUTE_PURE
+# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
 # else
-#  define YY_ATTRIBUTE(Spec) /* empty */
+#  define YY_ATTRIBUTE_PURE
 # endif
 #endif
 
-#ifndef YY_ATTRIBUTE_PURE
-# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
-#endif
-
 #ifndef YY_ATTRIBUTE_UNUSED
-# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
-#endif
-
-#if !defined _Noreturn \
-     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
-# if defined _MSC_VER && 1200 <= _MSC_VER
-#  define _Noreturn __declspec (noreturn)
+# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
 # else
-#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
+#  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(E) ((void) (E))
+# define YY_USE(E) ((void) (E))
 #else
-# define YYUSE(E) /* empty */
+# define YY_USE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
-    _Pragma ("GCC diagnostic push") \
-    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")\
+#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
+# else
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
     _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END \
+# endif
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
 #else
 # define YY_INITIAL_VALUE(Value) Value
@@ -317,8 +359,22 @@ typedef short int yytype_int16;
 # define YY_INITIAL_VALUE(Value) /* Nothing. */
 #endif
 
+#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+# define YY_IGNORE_USELESS_CAST_BEGIN                          \
+    _Pragma ("GCC diagnostic push")                            \
+    _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
+# define YY_IGNORE_USELESS_CAST_END            \
+    _Pragma ("GCC diagnostic pop")
+#endif
+#ifndef YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_END
+#endif
 
-#if ! defined yyoverflow || YYERROR_VERBOSE
+
+#define YY_ASSERT(E) ((void) (0 && (E)))
+
+#if !defined yyoverflow
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
@@ -383,8 +439,7 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
-#endif /* ! defined yyoverflow || YYERROR_VERBOSE */
-
+#endif /* !defined yyoverflow */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
@@ -393,17 +448,17 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
-  yytype_int16 yyss_alloc;
+  yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
+# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE)) \
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
       + YYSTACK_GAP_MAXIMUM)
 
 # define YYCOPY_NEEDED 1
@@ -416,11 +471,11 @@ union yyalloc
 # define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
     do                                                                  \
       {                                                                 \
-        YYSIZE_T yynewbytes;                                            \
+        YYPTRDIFF_T yynewbytes;                                         \
         YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
         Stack = &yyptr->Stack_alloc;                                    \
-        yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-        yyptr += yynewbytes / sizeof (*yyptr);                          \
+        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
       }                                                                 \
     while (0)
 
@@ -432,12 +487,12 @@ union yyalloc
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
 #   define YYCOPY(Dst, Src, Count) \
-      __builtin_memcpy (Dst, Src, (Count) * sizeof (*(Src)))
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
 #  else
 #   define YYCOPY(Dst, Src, Count)              \
       do                                        \
         {                                       \
-          YYSIZE_T yyi;                         \
+          YYPTRDIFF_T yyi;                      \
           for (yyi = 0; yyi < (Count); yyi++)   \
             (Dst)[yyi] = (Src)[yyi];            \
         }                                       \
@@ -460,17 +515,20 @@ union yyalloc
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  134
 
-/* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
-   by yylex, with out-of-bounds checking.  */
-#define YYUNDEFTOK  2
+/* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   294
 
-#define YYTRANSLATE(YYX)                                                \
-  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+
+/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex, with out-of-bounds checking.  */
+#define YYTRANSLATE(YYX)                                \
+  (0 <= (YYX) && (YYX) <= YYMAXUTOK                     \
+   ? YY_CAST (yysymbol_kind_t, yytranslate[YYX])        \
+   : YYSYMBOL_YYUNDEF)
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
-   as returned by yylex, without out-of-bounds checking.  */
-static const yytype_uint8 yytranslate[] =
+   as returned by yylex.  */
+static const yytype_int8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -505,57 +563,59 @@ static const yytype_uint8 yytranslate[] =
 };
 
 #if HYPNO_ARC_DEBUG
-  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+/* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+static const yytype_int16 yyrline[] =
 {
-       0,    76,    76,    76,    77,    80,    81,    82,    85,    88,
-      89,    90,    91,    92,    93,    94,    95,   100,   105,   106,
-     110,   111,   115,   116,   130,   142,   143,   144,   149,   150,
-     153,   154,   155,   158,   163,   168,   173,   177,   181,   185,
-     189,   193,   197,   201,   205,   209,   213,   217,   221,   225,
-     229,   233,   237,   240,   244,   245,   246,   247,   252,   253,
-     256,   257,   260,   263,   267,   274,   275
+       0,    75,    75,    75,    76,    79,    80,    81,    84,    87,
+      88,    89,    90,    91,    92,    93,    94,    99,   104,   105,
+     109,   112,   116,   117,   131,   143,   144,   145,   150,   151,
+     154,   155,   156,   159,   164,   169,   174,   178,   182,   186,
+     190,   194,   198,   202,   206,   210,   214,   218,   222,   226,
+     230,   234,   238,   241,   245,   246,   247,   248,   253,   257,
+     260,   261,   264,   267,   271,   278,   279
 };
 #endif
 
-#if HYPNO_ARC_DEBUG || YYERROR_VERBOSE || 0
+/** Accessing symbol of state STATE.  */
+#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+
+#if HYPNO_ARC_DEBUG || 0
+/* The user-facing name of the symbol whose (internal) number is
+   YYSYMBOL.  No bounds checking.  */
+static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
+
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NAME", "FILENAME", "BNTOK", "SNTOK",
-  "KNTOK", "YXTOK", "NUM", "COMMENT", "CTOK", "DTOK", "HTOK", "HETOK",
-  "RETTOK", "QTOK", "ENCTOK", "PTOK", "FTOK", "TTOK", "TPTOK", "ATOK",
-  "VTOK", "OTOK", "ONTOK", "NTOK", "RTOK", "R0TOK", "ITOK", "JTOK", "ZTOK",
-  "FNTOK", "NONETOK", "A0TOK", "P0TOK", "WTOK", "XTOK", "CB3TOK", "C02TOK",
-  "$accept", "start", "$@1", "header", "hline", "enc", "body", "bline", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "NAME", "FILENAME",
+  "BNTOK", "SNTOK", "KNTOK", "YXTOK", "NUM", "COMMENT", "CTOK", "DTOK",
+  "HTOK", "HETOK", "RETTOK", "QTOK", "ENCTOK", "PTOK", "FTOK", "TTOK",
+  "TPTOK", "ATOK", "VTOK", "OTOK", "ONTOK", "NTOK", "RTOK", "R0TOK",
+  "ITOK", "JTOK", "ZTOK", "FNTOK", "NONETOK", "A0TOK", "P0TOK", "WTOK",
+  "XTOK", "CB3TOK", "C02TOK", "$accept", "start", "$@1", "header", "hline",
+  "enc", "body", "bline", YY_NULLPTR
 };
+
+static const char *
+yysymbol_name (yysymbol_kind_t yysymbol)
+{
+  return yytname[yysymbol];
+}
 #endif
 
-# ifdef YYPRINT
-/* YYTOKNUM[NUM] -- (External) token number corresponding to the
-   (internal) symbol number NUM (which must be that of a token).  */
-static const yytype_uint16 yytoknum[] =
-{
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288,   289,   290,   291,   292,   293,   294
-};
-# endif
+#define YYPACT_NINF (-37)
 
-#define YYPACT_NINF -37
+#define yypact_value_is_default(Yyn) \
+  ((Yyn) == YYPACT_NINF)
 
-#define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-37)))
+#define YYTABLE_NINF (-1)
 
-#define YYTABLE_NINF -1
-
-#define yytable_value_is_error(Yytable_value) \
+#define yytable_value_is_error(Yyn) \
   0
 
-  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-     STATE-NUM.  */
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
       -3,   -37,    -3,     9,    57,   -37,   -37,     7,    13,     4,
@@ -574,10 +634,10 @@ static const yytype_int8 yypact[] =
      -37,   -37,   -37,   -37
 };
 
-  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
-     Performed when YYTABLE does not specify something else to do.  Zero
-     means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+/* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+   Performed when YYTABLE does not specify something else to do.  Zero
+   means the default is an error.  */
+static const yytype_int8 yydefact[] =
 {
        0,     2,     0,     0,     7,     4,     1,     0,     0,     0,
        0,     0,     0,     7,     0,     0,     0,     0,     0,     0,
@@ -595,21 +655,21 @@ static const yytype_uint8 yydefact[] =
       54,    55,    53,    58
 };
 
-  /* YYPGOTO[NTERM-NUM].  */
+/* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -37,   122,   -37,    25,   -37,    33,   -36,   -37
 };
 
-  /* YYDEFGOTO[NTERM-NUM].  */
+/* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,    26,    27,    52,    89,    90
+       0,     3,     4,    26,    27,    52,    89,    90
 };
 
-  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
-     positive, shift that token.  If negative, reduce the rule whose
-     number is the opposite.  If YYTABLE_NINF, syntax error.  */
+/* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule whose
+   number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
       70,    71,    72,    39,   119,     1,    73,    74,    75,     6,
@@ -627,7 +687,7 @@ static const yytype_uint8 yytable[] =
      130,   131,   132,   133,     5,   127
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
        5,     6,     7,     4,     4,     8,    11,    12,    13,     0,
       15,     4,    15,     9,    19,    38,    39,     4,    38,    24,
@@ -644,9 +704,9 @@ static const yytype_uint8 yycheck[] =
        9,     9,     9,     9,     2,    92
 };
 
-  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-     symbol of state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+   state STATE-NUM.  */
+static const yytype_int8 yystos[] =
 {
        0,     8,    15,    41,    42,    41,     0,     5,     6,    11,
       12,    13,    14,    15,    16,    18,    19,    20,    21,    22,
@@ -664,8 +724,8 @@ static const yytype_uint8 yystos[] =
        9,     9,     9,     9
 };
 
-  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
+/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
+static const yytype_int8 yyr1[] =
 {
        0,    40,    42,    41,    41,    43,    43,    43,    44,    44,
       44,    44,    44,    44,    44,    44,    44,    44,    44,    44,
@@ -676,8 +736,8 @@ static const yytype_uint8 yyr1[] =
       47,    47,    47,    47,    47,    47,    47
 };
 
-  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
+/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
+static const yytype_int8 yyr2[] =
 {
        0,     2,     0,     7,     2,     2,     2,     0,     2,     2,
        2,     3,     3,     3,     3,     3,     4,     3,     3,     2,
@@ -689,39 +749,39 @@ static const yytype_uint8 yyr2[] =
 };
 
 
+enum { YYENOMEM = -2 };
+
 #define yyerrok         (yyerrstatus = 0)
-#define yyclearin       (yychar = YYEMPTY)
-#define YYEMPTY         (-2)
-#define YYEOF           0
+#define yyclearin       (yychar = HYPNO_ARC_EMPTY)
 
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
 #define YYERROR         goto yyerrorlab
+#define YYNOMEM         goto yyexhaustedlab
 
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                  \
-do                                                              \
-  if (yychar == YYEMPTY)                                        \
-    {                                                           \
-      yychar = (Token);                                         \
-      yylval = (Value);                                         \
-      YYPOPSTACK (yylen);                                       \
-      yystate = *yyssp;                                         \
-      goto yybackup;                                            \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      yyerror (YY_("syntax error: cannot back up")); \
-      YYERROR;                                                  \
-    }                                                           \
-while (0)
+#define YYBACKUP(Token, Value)                                    \
+  do                                                              \
+    if (yychar == HYPNO_ARC_EMPTY)                                        \
+      {                                                           \
+        yychar = (Token);                                         \
+        yylval = (Value);                                         \
+        YYPOPSTACK (yylen);                                       \
+        yystate = *yyssp;                                         \
+        goto yybackup;                                            \
+      }                                                           \
+    else                                                          \
+      {                                                           \
+        yyerror (YY_("syntax error: cannot back up")); \
+        YYERROR;                                                  \
+      }                                                           \
+  while (0)
 
-/* Error token number */
-#define YYTERROR        1
-#define YYERRCODE       256
-
+/* Backward compatibility with an undocumented macro.
+   Use HYPNO_ARC_error or HYPNO_ARC_UNDEF. */
+#define YYERRCODE HYPNO_ARC_UNDEF
 
 
 /* Enable debugging if requested.  */
@@ -738,55 +798,52 @@ do {                                            \
     YYFPRINTF Args;                             \
 } while (0)
 
-/* This macro is provided for backward compatibility. */
-#ifndef YY_LOCATION_PRINT
-# define YY_LOCATION_PRINT(File, Loc) ((void) 0)
-#endif
 
 
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)                    \
+
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
 do {                                                                      \
   if (yydebug)                                                            \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Type, Value); \
+                  Kind, Value); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
 
 
-/*----------------------------------------.
-| Print this symbol's value on YYOUTPUT.  |
-`----------------------------------------*/
+/*-----------------------------------.
+| Print this symbol's value on YYO.  |
+`-----------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_value_print (FILE *yyo,
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
-  FILE *yyo = yyoutput;
-  YYUSE (yyo);
+  FILE *yyoutput = yyo;
+  YY_USE (yyoutput);
   if (!yyvaluep)
     return;
-# ifdef YYPRINT
-  if (yytype < YYNTOKENS)
-    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
-# endif
-  YYUSE (yytype);
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YY_USE (yykind);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
+/*---------------------------.
+| Print this symbol on YYO.  |
+`---------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_print (FILE *yyo,
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
-  YYFPRINTF (yyoutput, "%s %s (",
-             yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
+  YYFPRINTF (yyo, "%s %s (",
+             yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
-  YYFPRINTF (yyoutput, ")");
+  yy_symbol_value_print (yyo, yykind, yyvaluep);
+  YYFPRINTF (yyo, ")");
 }
 
 /*------------------------------------------------------------------.
@@ -795,7 +852,7 @@ yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
 `------------------------------------------------------------------*/
 
 static void
-yy_stack_print (yytype_int16 *yybottom, yytype_int16 *yytop)
+yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
   for (; yybottom <= yytop; yybottom++)
@@ -818,21 +875,21 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
+                 int yyrule)
 {
-  unsigned long int yylno = yyrline[yyrule];
+  int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
   int yyi;
-  YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
              yyrule - 1, yylno);
   /* The symbols being reduced.  */
   for (yyi = 0; yyi < yynrhs; yyi++)
     {
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
-                       yystos[yyssp[yyi + 1 - yynrhs]],
-                       &(yyvsp[(yyi + 1) - (yynrhs)])
-                                              );
+                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+                       &yyvsp[(yyi + 1) - (yynrhs)]);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -847,8 +904,8 @@ do {                                    \
    multiple parsers can coexist.  */
 int yydebug;
 #else /* !HYPNO_ARC_DEBUG */
-# define YYDPRINTF(Args)
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
+# define YYDPRINTF(Args) ((void) 0)
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
 # define YY_REDUCE_PRINT(Rule)
 #endif /* !HYPNO_ARC_DEBUG */
@@ -871,255 +928,38 @@ int yydebug;
 #endif
 
 
-#if YYERROR_VERBOSE
 
-# ifndef yystrlen
-#  if defined __GLIBC__ && defined _STRING_H
-#   define yystrlen strlen
-#  else
-/* Return the length of YYSTR.  */
-static YYSIZE_T
-yystrlen (const char *yystr)
-{
-  YYSIZE_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
-    continue;
-  return yylen;
-}
-#  endif
-# endif
 
-# ifndef yystpcpy
-#  if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
-#   define yystpcpy stpcpy
-#  else
-/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
-   YYDEST.  */
-static char *
-yystpcpy (char *yydest, const char *yysrc)
-{
-  char *yyd = yydest;
-  const char *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
-    continue;
-
-  return yyd - 1;
-}
-#  endif
-# endif
-
-# ifndef yytnamerr
-/* Copy to YYRES the contents of YYSTR after stripping away unnecessary
-   quotes and backslashes, so that it's suitable for yyerror.  The
-   heuristic is that double-quoting is unnecessary unless the string
-   contains an apostrophe, a comma, or backslash (other than
-   backslash-backslash).  YYSTR is taken from yytname.  If YYRES is
-   null, do not copy; instead, return the length of what the result
-   would have been.  */
-static YYSIZE_T
-yytnamerr (char *yyres, const char *yystr)
-{
-  if (*yystr == '"')
-    {
-      YYSIZE_T yyn = 0;
-      char const *yyp = yystr;
-
-      for (;;)
-        switch (*++yyp)
-          {
-          case '\'':
-          case ',':
-            goto do_not_strip_quotes;
-
-          case '\\':
-            if (*++yyp != '\\')
-              goto do_not_strip_quotes;
-            /* Fall through.  */
-          default:
-            if (yyres)
-              yyres[yyn] = *yyp;
-            yyn++;
-            break;
-
-          case '"':
-            if (yyres)
-              yyres[yyn] = '\0';
-            return yyn;
-          }
-    do_not_strip_quotes: ;
-    }
-
-  if (! yyres)
-    return yystrlen (yystr);
-
-  return yystpcpy (yyres, yystr) - yyres;
-}
-# endif
-
-/* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
-   about the unexpected token YYTOKEN for the state stack whose top is
-   YYSSP.
-
-   Return 0 if *YYMSG was successfully written.  Return 1 if *YYMSG is
-   not large enough to hold the message.  In that case, also set
-   *YYMSG_ALLOC to the required number of bytes.  Return 2 if the
-   required number of bytes is too large to store.  */
-static int
-yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
-                yytype_int16 *yyssp, int yytoken)
-{
-  YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
-  YYSIZE_T yysize = yysize0;
-  enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-  /* Internationalized format string. */
-  const char *yyformat = YY_NULLPTR;
-  /* Arguments of yyformat. */
-  char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-  /* Number of reported tokens (one for the "unexpected", one per
-     "expected"). */
-  int yycount = 0;
-
-  /* There are many possibilities here to consider:
-     - If this state is a consistent state with a default action, then
-       the only way this function was invoked is if the default action
-       is an error action.  In that case, don't check for expected
-       tokens because there are none.
-     - The only way there can be no lookahead present (in yychar) is if
-       this state is a consistent state with a default action.  Thus,
-       detecting the absence of a lookahead is sufficient to determine
-       that there is no unexpected or expected token to report.  In that
-       case, just report a simple "syntax error".
-     - Don't assume there isn't a lookahead just because this state is a
-       consistent state with a default action.  There might have been a
-       previous inconsistent state, consistent state with a non-default
-       action, or user semantic action that manipulated yychar.
-     - Of course, the expected token list depends on states to have
-       correct lookahead information, and it depends on the parser not
-       to perform extra reductions after fetching a lookahead from the
-       scanner and before detecting a syntax error.  Thus, state merging
-       (from LALR or IELR) and default reductions corrupt the expected
-       token list.  However, the list is correct for canonical LR with
-       one exception: it will still contain any token that will not be
-       accepted due to an error action in a later state.
-  */
-  if (yytoken != YYEMPTY)
-    {
-      int yyn = yypact[*yyssp];
-      yyarg[yycount++] = yytname[yytoken];
-      if (!yypact_value_is_default (yyn))
-        {
-          /* Start YYX at -YYN if negative to avoid negative indexes in
-             YYCHECK.  In other words, skip the first -YYN actions for
-             this state because they are default actions.  */
-          int yyxbegin = yyn < 0 ? -yyn : 0;
-          /* Stay within bounds of both yycheck and yytname.  */
-          int yychecklim = YYLAST - yyn + 1;
-          int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-          int yyx;
-
-          for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR
-                && !yytable_value_is_error (yytable[yyx + yyn]))
-              {
-                if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-                  {
-                    yycount = 1;
-                    yysize = yysize0;
-                    break;
-                  }
-                yyarg[yycount++] = yytname[yyx];
-                {
-                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
-                  if (! (yysize <= yysize1
-                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-                    return 2;
-                  yysize = yysize1;
-                }
-              }
-        }
-    }
-
-  switch (yycount)
-    {
-# define YYCASE_(N, S)                      \
-      case N:                               \
-        yyformat = S;                       \
-      break
-      YYCASE_(0, YY_("syntax error"));
-      YYCASE_(1, YY_("syntax error, unexpected %s"));
-      YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-      YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-      YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-      YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
-# undef YYCASE_
-    }
-
-  {
-    YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
-    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-      return 2;
-    yysize = yysize1;
-  }
-
-  if (*yymsg_alloc < yysize)
-    {
-      *yymsg_alloc = 2 * yysize;
-      if (! (yysize <= *yymsg_alloc
-             && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
-        *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
-      return 1;
-    }
-
-  /* Avoid sprintf, as that infringes on the user's name space.
-     Don't have undefined behavior even if the translation
-     produced a string with the wrong number of "%s"s.  */
-  {
-    char *yyp = *yymsg;
-    int yyi = 0;
-    while ((*yyp = *yyformat) != '\0')
-      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
-        {
-          yyp += yytnamerr (yyp, yyarg[yyi++]);
-          yyformat += 2;
-        }
-      else
-        {
-          yyp++;
-          yyformat++;
-        }
-  }
-  return 0;
-}
-#endif /* YYERROR_VERBOSE */
 
 /*-----------------------------------------------.
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
+yydestruct (const char *yymsg,
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep)
 {
-  YYUSE (yyvaluep);
+  YY_USE (yyvaluep);
   if (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yytype);
+  YY_USE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-
-
-/* The lookahead symbol.  */
+/* Lookahead token kind.  */
 int yychar;
 
 /* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
 /* Number of syntax errors so far.  */
 int yynerrs;
+
+
 
 
 /*----------.
@@ -1129,43 +969,36 @@ int yynerrs;
 int
 yyparse (void)
 {
-    int yystate;
+    yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
-    int yyerrstatus;
+    int yyerrstatus = 0;
 
-    /* The stacks and their tools:
-       'yyss': related to states.
-       'yyvs': related to semantic values.
-
-       Refer to the stacks through separate pointers, to allow yyoverflow
+    /* Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
 
-    /* The state stack.  */
-    yytype_int16 yyssa[YYINITDEPTH];
-    yytype_int16 *yyss;
-    yytype_int16 *yyssp;
+    /* Their size.  */
+    YYPTRDIFF_T yystacksize = YYINITDEPTH;
 
-    /* The semantic value stack.  */
+    /* The state stack: array, bottom, top.  */
+    yy_state_t yyssa[YYINITDEPTH];
+    yy_state_t *yyss = yyssa;
+    yy_state_t *yyssp = yyss;
+
+    /* The semantic value stack: array, bottom, top.  */
     YYSTYPE yyvsa[YYINITDEPTH];
-    YYSTYPE *yyvs;
-    YYSTYPE *yyvsp;
-
-    YYSIZE_T yystacksize;
+    YYSTYPE *yyvs = yyvsa;
+    YYSTYPE *yyvsp = yyvs;
 
   int yyn;
+  /* The return value of yyparse.  */
   int yyresult;
-  /* Lookahead token as an internal (translated) token number.  */
-  int yytoken = 0;
+  /* Lookahead symbol kind.  */
+  yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
 
-#if YYERROR_VERBOSE
-  /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
-#endif
+
 
 #define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
@@ -1173,71 +1006,75 @@ yyparse (void)
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
 
-  yyssp = yyss = yyssa;
-  yyvsp = yyvs = yyvsa;
-  yystacksize = YYINITDEPTH;
-
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yystate = 0;
-  yyerrstatus = 0;
-  yynerrs = 0;
-  yychar = YYEMPTY; /* Cause a token to be read.  */
+  yychar = HYPNO_ARC_EMPTY; /* Cause a token to be read.  */
+
   goto yysetstate;
 
+
 /*------------------------------------------------------------.
-| yynewstate -- Push a new state, which is found in yystate.  |
+| yynewstate -- push a new state, which is found in yystate.  |
 `------------------------------------------------------------*/
- yynewstate:
+yynewstate:
   /* In all cases, when you get here, the value and location stacks
      have just been pushed.  So pushing a state here evens the stacks.  */
   yyssp++;
 
- yysetstate:
-  *yyssp = yystate;
+
+/*--------------------------------------------------------------------.
+| yysetstate -- set current state (the top of the stack) to yystate.  |
+`--------------------------------------------------------------------*/
+yysetstate:
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+  YY_ASSERT (0 <= yystate && yystate < YYNSTATES);
+  YY_IGNORE_USELESS_CAST_BEGIN
+  *yyssp = YY_CAST (yy_state_t, yystate);
+  YY_IGNORE_USELESS_CAST_END
+  YY_STACK_PRINT (yyss, yyssp);
 
   if (yyss + yystacksize - 1 <= yyssp)
+#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+    YYNOMEM;
+#else
     {
       /* Get the current used size of the three stacks, in elements.  */
-      YYSIZE_T yysize = yyssp - yyss + 1;
+      YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-#ifdef yyoverflow
+# if defined yyoverflow
       {
         /* Give user a chance to reallocate the stack.  Use copies of
            these so that the &'s don't force the real ones into
            memory.  */
+        yy_state_t *yyss1 = yyss;
         YYSTYPE *yyvs1 = yyvs;
-        yytype_int16 *yyss1 = yyss;
 
         /* Each stack pointer address is followed by the size of the
            data in use in that stack, in bytes.  This used to be a
            conditional around just the two extra args, but that might
            be undefined if yyoverflow is a macro.  */
         yyoverflow (YY_("memory exhausted"),
-                    &yyss1, yysize * sizeof (*yyssp),
-                    &yyvs1, yysize * sizeof (*yyvsp),
+                    &yyss1, yysize * YYSIZEOF (*yyssp),
+                    &yyvs1, yysize * YYSIZEOF (*yyvsp),
                     &yystacksize);
-
         yyss = yyss1;
         yyvs = yyvs1;
       }
-#else /* no yyoverflow */
-# ifndef YYSTACK_RELOCATE
-      goto yyexhaustedlab;
-# else
+# else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-        goto yyexhaustedlab;
+        YYNOMEM;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
 
       {
-        yytype_int16 *yyss1 = yyss;
+        yy_state_t *yyss1 = yyss;
         union yyalloc *yyptr =
-          (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+          YY_CAST (union yyalloc *,
+                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
         if (! yyptr)
-          goto yyexhaustedlab;
+          YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
@@ -1245,30 +1082,31 @@ yyparse (void)
           YYSTACK_FREE (yyss1);
       }
 # endif
-#endif /* no yyoverflow */
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
 
-      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-                  (unsigned long int) yystacksize));
+      YY_IGNORE_USELESS_CAST_BEGIN
+      YYDPRINTF ((stderr, "Stack size increased to %ld\n",
+                  YY_CAST (long, yystacksize)));
+      YY_IGNORE_USELESS_CAST_END
 
       if (yyss + yystacksize - 1 <= yyssp)
         YYABORT;
     }
+#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
-  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
 
   if (yystate == YYFINAL)
     YYACCEPT;
 
   goto yybackup;
 
+
 /*-----------.
 | yybackup.  |
 `-----------*/
 yybackup:
-
   /* Do appropriate processing given the current state.  Read a
      lookahead token if we need one and don't already have one.  */
 
@@ -1279,17 +1117,28 @@ yybackup:
 
   /* Not known => get a lookahead token if don't already have one.  */
 
-  /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
-  if (yychar == YYEMPTY)
+  /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
+  if (yychar == HYPNO_ARC_EMPTY)
     {
-      YYDPRINTF ((stderr, "Reading a token: "));
+      YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex ();
     }
 
-  if (yychar <= YYEOF)
+  if (yychar <= HYPNO_ARC_EOF)
     {
-      yychar = yytoken = YYEOF;
+      yychar = HYPNO_ARC_EOF;
+      yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
+    }
+  else if (yychar == HYPNO_ARC_error)
+    {
+      /* The scanner already issued an error message, process directly
+         to error recovery.  But do not keep the error token as
+         lookahead, it is too special and may lead us to an endless
+         loop in error recovery. */
+      yychar = HYPNO_ARC_UNDEF;
+      yytoken = YYSYMBOL_YYerror;
+      goto yyerrlab1;
     }
   else
     {
@@ -1318,15 +1167,13 @@ yybackup:
 
   /* Shift the lookahead token.  */
   YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
-
-  /* Discard the shifted token.  */
-  yychar = YYEMPTY;
-
   yystate = yyn;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 
+  /* Discard the shifted token.  */
+  yychar = HYPNO_ARC_EMPTY;
   goto yynewstate;
 
 
@@ -1341,7 +1188,7 @@ yydefault:
 
 
 /*-----------------------------.
-| yyreduce -- Do a reduction.  |
+| yyreduce -- do a reduction.  |
 `-----------------------------*/
 yyreduce:
   /* yyn is the number of a rule to reduce with.  */
@@ -1361,121 +1208,123 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 76 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { g_parsedArc->mode = (yyvsp[0].s); }
-#line 1368 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 2: /* $@1: %empty  */
+#line 75 "engines/hypno/grammar_arc.y"
+             { g_parsedArc->mode = (yyvsp[0].s); }
+#line 1215 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 8:
-#line 85 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 8: /* hline: CTOK NUM  */
+#line 84 "engines/hypno/grammar_arc.y"
+                 {
 		g_parsedArc->id = (yyvsp[0].i); 
 		debugC(1, kHypnoDebugParser, "C %d", (yyvsp[0].i)); }
-#line 1376 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1223 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 9:
-#line 88 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "F %d", (yyvsp[0].i)); }
-#line 1382 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 9: /* hline: FTOK NUM  */
+#line 87 "engines/hypno/grammar_arc.y"
+                   { debugC(1, kHypnoDebugParser, "F %d", (yyvsp[0].i)); }
+#line 1229 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 10:
-#line 89 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "D %d", (yyvsp[0].i)); }
-#line 1388 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 10: /* hline: DTOK NUM  */
+#line 88 "engines/hypno/grammar_arc.y"
+                    { debugC(1, kHypnoDebugParser, "D %d", (yyvsp[0].i)); }
+#line 1235 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 11:
-#line 90 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "P %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1394 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 11: /* hline: PTOK NUM NUM  */
+#line 89 "engines/hypno/grammar_arc.y"
+                       { debugC(1, kHypnoDebugParser, "P %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1241 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 12:
-#line 91 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "A %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1400 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 12: /* hline: ATOK NUM NUM  */
+#line 90 "engines/hypno/grammar_arc.y"
+                       { debugC(1, kHypnoDebugParser, "A %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1247 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 13:
-#line 92 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "V %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1406 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 13: /* hline: VTOK NUM NUM  */
+#line 91 "engines/hypno/grammar_arc.y"
+                       { debugC(1, kHypnoDebugParser, "V %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1253 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 14:
-#line 93 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "O %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1412 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 14: /* hline: OTOK NUM NUM  */
+#line 92 "engines/hypno/grammar_arc.y"
+                       { debugC(1, kHypnoDebugParser, "O %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1259 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 15:
-#line 94 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "ON %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1418 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 15: /* hline: ONTOK NUM NUM  */
+#line 93 "engines/hypno/grammar_arc.y"
+                        { debugC(1, kHypnoDebugParser, "ON %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1265 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 16:
-#line 95 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 16: /* hline: TPTOK FILENAME NUM FILENAME  */
+#line 94 "engines/hypno/grammar_arc.y"
+                                      {
 		g_parsedArc->transitionVideo = (yyvsp[-2].s);
 		g_parsedArc->transitionTime = (yyvsp[-1].i);
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].s)); 
 	}
-#line 1428 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1275 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 17:
-#line 100 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 17: /* hline: TTOK FILENAME NUM  */
+#line 99 "engines/hypno/grammar_arc.y"
+                            { 
 		g_parsedArc->transitionVideo = (yyvsp[-1].s);
 		g_parsedArc->transitionTime = (yyvsp[0].i);
 		debugC(1, kHypnoDebugParser, "T %s %d", (yyvsp[-1].s), (yyvsp[0].i)); 
 	}
-#line 1438 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1285 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 18:
-#line 105 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "T NONE %d", (yyvsp[0].i)); }
-#line 1444 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 18: /* hline: TTOK NONETOK NUM  */
+#line 104 "engines/hypno/grammar_arc.y"
+                           { debugC(1, kHypnoDebugParser, "T NONE %d", (yyvsp[0].i)); }
+#line 1291 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 19:
-#line 106 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 19: /* hline: NTOK FILENAME  */
+#line 105 "engines/hypno/grammar_arc.y"
+                         { 
 		g_parsedArc->background = (yyvsp[0].s); 
 		debugC(1, kHypnoDebugParser, "N %s", (yyvsp[0].s)); 
 	}
-#line 1453 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1300 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 20:
-#line 110 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "R %s", (yyvsp[0].s)); }
-#line 1459 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 20: /* hline: RTOK FILENAME  */
+#line 109 "engines/hypno/grammar_arc.y"
+                         {
+		g_parsedArc->palette = (yyvsp[0].s); 
+		debugC(1, kHypnoDebugParser, "R %s", (yyvsp[0].s)); }
+#line 1308 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 21:
-#line 111 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 21: /* hline: ITOK FILENAME  */
+#line 112 "engines/hypno/grammar_arc.y"
+                        { 
 		g_parsedArc->player = (yyvsp[0].s); 
 		debugC(1, kHypnoDebugParser, "I %s", (yyvsp[0].s)); 
 		}
-#line 1468 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1317 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 22:
-#line 115 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "Q %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1474 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 22: /* hline: QTOK NUM NUM  */
+#line 116 "engines/hypno/grammar_arc.y"
+                       { debugC(1, kHypnoDebugParser, "Q %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1323 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 23:
-#line 116 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 23: /* hline: BNTOK FILENAME  */
+#line 117 "engines/hypno/grammar_arc.y"
+                         {
 		if (Common::String("B0") == (yyvsp[-1].s))
 			g_parsedArc->intros.push_back((yyvsp[0].s));
 		//else if (Common::String("B1") == $1) 
@@ -1489,12 +1338,12 @@ yyreduce:
 
 		debugC(1, kHypnoDebugParser, "BN %s", (yyvsp[0].s)); 
 	}
-#line 1493 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1342 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 24:
-#line 130 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 24: /* hline: SNTOK FILENAME enc  */
+#line 131 "engines/hypno/grammar_arc.y"
+                             {
 		if (Common::String("S0") == (yyvsp[-2].s))
 			g_parsedArc->music = (yyvsp[-1].s);
 		else if (Common::String("S1") == (yyvsp[-2].s))
@@ -1506,324 +1355,328 @@ yyreduce:
 
 		debugC(1, kHypnoDebugParser, "SN %s", (yyvsp[-1].s)); 
 	}
-#line 1510 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1359 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 25:
-#line 142 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "HE %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1516 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 25: /* hline: HETOK C02TOK NUM NUM  */
+#line 143 "engines/hypno/grammar_arc.y"
+                               { debugC(1, kHypnoDebugParser, "HE %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1365 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 26:
-#line 143 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "HE %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1522 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 26: /* hline: HETOK CB3TOK NUM NUM  */
+#line 144 "engines/hypno/grammar_arc.y"
+                               { debugC(1, kHypnoDebugParser, "HE %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1371 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 27:
-#line 144 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 27: /* hline: HTOK CB3TOK NUM NUM  */
+#line 145 "engines/hypno/grammar_arc.y"
+                              {
 		debugC(1, kHypnoDebugParser, "H %d %d", (yyvsp[-1].i), (yyvsp[0].i)); 
 	}
-#line 1530 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1379 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 33:
-#line 158 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 33: /* bline: FNTOK FILENAME  */
+#line 159 "engines/hypno/grammar_arc.y"
+                      { 
 		shoot = new Shoot();
 		shoot->animation = (yyvsp[0].s);
 		debugC(1, kHypnoDebugParser, "FN %s", (yyvsp[0].s)); 
 	}
-#line 1540 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1389 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 34:
-#line 163 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 34: /* bline: FNTOK NONETOK  */
+#line 164 "engines/hypno/grammar_arc.y"
+                        { 
 		shoot = new Shoot();
 		shoot->animation = "NONE";
 		debugC(1, kHypnoDebugParser, "FN NONE"); 
 	}
-#line 1550 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1399 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 35:
-#line 168 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 35: /* bline: FTOK FILENAME  */
+#line 169 "engines/hypno/grammar_arc.y"
+                        { 
 		shoot = new Shoot();
 		shoot->animation = (yyvsp[0].s);
 		debugC(1, kHypnoDebugParser, "FN %s", (yyvsp[0].s)); 
 	}
-#line 1560 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1409 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 36:
-#line 173 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 36: /* bline: ITOK NAME  */
+#line 174 "engines/hypno/grammar_arc.y"
+                     { 
 		shoot->name = (yyvsp[0].s);
 		debugC(1, kHypnoDebugParser, "I %s", (yyvsp[0].s)); 
 	}
-#line 1569 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1418 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 37:
-#line 177 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {  // Workaround for NAME == B1
+  case 37: /* bline: ITOK BNTOK  */
+#line 178 "engines/hypno/grammar_arc.y"
+                      {  // Workaround for NAME == B1
 		shoot->name = (yyvsp[0].s);
 		debugC(1, kHypnoDebugParser, "I %s", (yyvsp[0].s)); 
 	}
-#line 1578 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1427 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 38:
-#line 181 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == A
+  case 38: /* bline: ITOK ATOK  */
+#line 182 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == A
 		shoot->name = "A";
 		debugC(1, kHypnoDebugParser, "I A"); 
 	}
-#line 1587 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1436 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 39:
-#line 185 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == C
+  case 39: /* bline: ITOK CTOK  */
+#line 186 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == C
 		shoot->name = "C";
 		debugC(1, kHypnoDebugParser, "I C"); 
 	}
-#line 1596 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1445 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 40:
-#line 189 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == D
+  case 40: /* bline: ITOK DTOK  */
+#line 190 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == D
 		shoot->name = "D";
 		debugC(1, kHypnoDebugParser, "I D"); 
 	}
-#line 1605 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1454 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 41:
-#line 193 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == F
+  case 41: /* bline: ITOK FTOK  */
+#line 194 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == F
 		shoot->name = "F";
 		debugC(1, kHypnoDebugParser, "I F"); 
 	}
-#line 1614 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1463 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 42:
-#line 197 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == H
+  case 42: /* bline: ITOK HTOK  */
+#line 198 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == H
 		shoot->name = "H";
 		debugC(1, kHypnoDebugParser, "I H"); 
 	}
-#line 1623 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1472 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 43:
-#line 201 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == I
+  case 43: /* bline: ITOK ITOK  */
+#line 202 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == I
 		shoot->name = "I";
 		debugC(1, kHypnoDebugParser, "I I"); 
 	}
-#line 1632 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1481 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 44:
-#line 205 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == I
+  case 44: /* bline: ITOK JTOK  */
+#line 206 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == I
 		shoot->name = "J";
 		debugC(1, kHypnoDebugParser, "I J"); 
 	}
-#line 1641 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1490 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 45:
-#line 209 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == N
+  case 45: /* bline: ITOK NTOK  */
+#line 210 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == N
 		shoot->name = "N";
 		debugC(1, kHypnoDebugParser, "I N"); 
 	}
-#line 1650 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1499 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 46:
-#line 213 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == O
+  case 46: /* bline: ITOK OTOK  */
+#line 214 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == O
 		shoot->name = "O";
 		debugC(1, kHypnoDebugParser, "I O"); 
 	}
-#line 1659 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1508 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 47:
-#line 217 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == P
+  case 47: /* bline: ITOK PTOK  */
+#line 218 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == P
 		shoot->name = "P";
 		debugC(1, kHypnoDebugParser, "I P"); 
 	}
-#line 1668 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1517 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 48:
-#line 221 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == Q
+  case 48: /* bline: ITOK QTOK  */
+#line 222 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == Q
 		shoot->name = "Q";
 		debugC(1, kHypnoDebugParser, "I Q"); 
 	}
-#line 1677 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1526 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 49:
-#line 225 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == R
+  case 49: /* bline: ITOK RTOK  */
+#line 226 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == R
 		shoot->name = "R";
 		debugC(1, kHypnoDebugParser, "I R"); 
 	}
-#line 1686 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1535 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 50:
-#line 229 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {  // Workaround for NAME == S1
+  case 50: /* bline: ITOK SNTOK  */
+#line 230 "engines/hypno/grammar_arc.y"
+                      {  // Workaround for NAME == S1
 		shoot->name = (yyvsp[0].s);
 		debugC(1, kHypnoDebugParser, "I %s", (yyvsp[0].s)); 
 	}
-#line 1695 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1544 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 51:
-#line 233 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { // Workaround for NAME == T
+  case 51: /* bline: ITOK TTOK  */
+#line 234 "engines/hypno/grammar_arc.y"
+                     { // Workaround for NAME == T
 		shoot->name = "T";
 		debugC(1, kHypnoDebugParser, "I T"); 
 	}
-#line 1704 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1553 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 52:
-#line 237 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 52: /* bline: JTOK NUM  */
+#line 238 "engines/hypno/grammar_arc.y"
+                    {
 		debugC(1, kHypnoDebugParser, "J %d", (yyvsp[0].i)); 
 	}
-#line 1712 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1561 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 53:
-#line 240 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 53: /* bline: A0TOK NUM NUM  */
+#line 241 "engines/hypno/grammar_arc.y"
+                        { 
 		shoot->position = Common::Point((yyvsp[-1].i), (yyvsp[0].i));
 		debugC(1, kHypnoDebugParser, "A0 %d %d", (yyvsp[-1].i), (yyvsp[0].i)); 
 	}
-#line 1721 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1570 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 54:
-#line 244 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "R %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1727 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 54: /* bline: RTOK NUM NUM  */
+#line 245 "engines/hypno/grammar_arc.y"
+                        { debugC(1, kHypnoDebugParser, "R %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1576 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 55:
-#line 245 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "R0 %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1733 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 55: /* bline: R0TOK NUM NUM  */
+#line 246 "engines/hypno/grammar_arc.y"
+                         { debugC(1, kHypnoDebugParser, "R0 %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1582 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 56:
-#line 246 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "BN %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1739 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 56: /* bline: BNTOK NUM NUM  */
+#line 247 "engines/hypno/grammar_arc.y"
+                        { debugC(1, kHypnoDebugParser, "BN %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1588 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 57:
-#line 247 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 57: /* bline: KNTOK NUM NUM  */
+#line 248 "engines/hypno/grammar_arc.y"
+                        { 
 		//if (Common::String("K0") == $1)
 		shoot->explosionFrame = (yyvsp[0].i);
 		debugC(1, kHypnoDebugParser, "KN %d %d", (yyvsp[-1].i), (yyvsp[0].i));
 	}
-#line 1749 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1598 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 58:
-#line 252 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "P0 %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1755 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 58: /* bline: P0TOK NUM NUM  */
+#line 253 "engines/hypno/grammar_arc.y"
+                        { 
+		shoot->paletteSize = (yyvsp[-1].i);
+		shoot->paletteOffset = (yyvsp[0].i);
+		debugC(1, kHypnoDebugParser, "P0 %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
+#line 1607 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 59:
-#line 253 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 59: /* bline: OTOK NUM NUM  */
+#line 257 "engines/hypno/grammar_arc.y"
+                       { 
 		debugC(1, kHypnoDebugParser, "O %d %d", (yyvsp[-1].i), (yyvsp[0].i)); 
 	}
-#line 1763 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1615 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 60:
-#line 256 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "C %d", (yyvsp[0].i)); }
-#line 1769 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 60: /* bline: CTOK NUM  */
+#line 260 "engines/hypno/grammar_arc.y"
+                    { debugC(1, kHypnoDebugParser, "C %d", (yyvsp[0].i)); }
+#line 1621 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 61:
-#line 257 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 61: /* bline: HTOK NUM  */
+#line 261 "engines/hypno/grammar_arc.y"
+                    {
 		shoot->attackFrame = (yyvsp[0].i); 
 		debugC(1, kHypnoDebugParser, "H %d", (yyvsp[0].i)); }
-#line 1777 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1629 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 62:
-#line 260 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 62: /* bline: WTOK NUM  */
+#line 264 "engines/hypno/grammar_arc.y"
+                    {
 		shoot->attackWeight = (yyvsp[0].i);  
 		debugC(1, kHypnoDebugParser, "W %d", (yyvsp[0].i)); }
-#line 1785 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1637 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 63:
-#line 263 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 63: /* bline: DTOK NUM  */
+#line 267 "engines/hypno/grammar_arc.y"
+                    {
 		shoot->pointsToShoot = (yyvsp[0].i);  
 		debugC(1, kHypnoDebugParser, "D %d", (yyvsp[0].i)); 
 	}
-#line 1794 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1646 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 64:
-#line 267 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { 
+  case 64: /* bline: SNTOK FILENAME enc  */
+#line 271 "engines/hypno/grammar_arc.y"
+                             { 
 		if (Common::String("S1") == (yyvsp[-2].s))
 			shoot->deathSound = (yyvsp[-1].s);
 		else if (Common::String("S2") == (yyvsp[-2].s))
 			shoot->hitSound = (yyvsp[-1].s);
 		 
 		debugC(1, kHypnoDebugParser, "SN %s", (yyvsp[-1].s)); }
-#line 1806 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1658 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 65:
-#line 274 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    { debugC(1, kHypnoDebugParser, "N"); }
-#line 1812 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+  case 65: /* bline: NTOK  */
+#line 278 "engines/hypno/grammar_arc.y"
+               { debugC(1, kHypnoDebugParser, "N"); }
+#line 1664 "engines/hypno/grammar_arc.cpp"
     break;
 
-  case 66:
-#line 275 "engines/hypno/grammar_arc.y" /* yacc.c:1646  */
-    {
+  case 66: /* bline: ZTOK  */
+#line 279 "engines/hypno/grammar_arc.y"
+               {
 		g_parsedArc->shoots.push_back(*shoot); 
 		//delete shoot; 
 		//shoot = nullptr;
 		debugC(1, kHypnoDebugParser, "Z"); 
 	}
-#line 1823 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1675 "engines/hypno/grammar_arc.cpp"
     break;
 
 
-#line 1827 "engines/hypno/grammar_arc.cpp" /* yacc.c:1646  */
+#line 1679 "engines/hypno/grammar_arc.cpp"
+
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1837,25 +1690,23 @@ yyreduce:
      case of YYERROR or YYBACKUP, subsequent parser actions might lead
      to an incorrect destructor call or verbose syntax error message
      before the lookahead is translated.  */
-  YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
+  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
 
   /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
-
-  yyn = yyr1[yyn];
-
-  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
-  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
-    yystate = yytable[yystate];
-  else
-    yystate = yydefgoto[yyn - YYNTOKENS];
+  {
+    const int yylhs = yyr1[yyn] - YYNTOKENS;
+    const int yyi = yypgoto[yylhs] + *yyssp;
+    yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
+               ? yytable[yyi]
+               : yydefgoto[yylhs]);
+  }
 
   goto yynewstate;
 
@@ -1866,66 +1717,30 @@ yyreduce:
 yyerrlab:
   /* Make sure we have latest lookahead translation.  See comments at
      user semantic actions for why this is necessary.  */
-  yytoken = yychar == YYEMPTY ? YYEMPTY : YYTRANSLATE (yychar);
-
+  yytoken = yychar == HYPNO_ARC_EMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
       ++yynerrs;
-#if ! YYERROR_VERBOSE
       yyerror (YY_("syntax error"));
-#else
-# define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
-                                        yyssp, yytoken)
-      {
-        char const *yymsgp = YY_("syntax error");
-        int yysyntax_error_status;
-        yysyntax_error_status = YYSYNTAX_ERROR;
-        if (yysyntax_error_status == 0)
-          yymsgp = yymsg;
-        else if (yysyntax_error_status == 1)
-          {
-            if (yymsg != yymsgbuf)
-              YYSTACK_FREE (yymsg);
-            yymsg = (char *) YYSTACK_ALLOC (yymsg_alloc);
-            if (!yymsg)
-              {
-                yymsg = yymsgbuf;
-                yymsg_alloc = sizeof yymsgbuf;
-                yysyntax_error_status = 2;
-              }
-            else
-              {
-                yysyntax_error_status = YYSYNTAX_ERROR;
-                yymsgp = yymsg;
-              }
-          }
-        yyerror (yymsgp);
-        if (yysyntax_error_status == 2)
-          goto yyexhaustedlab;
-      }
-# undef YYSYNTAX_ERROR
-#endif
     }
-
-
 
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= YYEOF)
+      if (yychar <= HYPNO_ARC_EOF)
         {
           /* Return failure if at end of input.  */
-          if (yychar == YYEOF)
+          if (yychar == HYPNO_ARC_EOF)
             YYABORT;
         }
       else
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval);
-          yychar = YYEMPTY;
+          yychar = HYPNO_ARC_EMPTY;
         }
     }
 
@@ -1938,12 +1753,11 @@ yyerrlab:
 | yyerrorlab -- error raised explicitly by YYERROR.  |
 `---------------------------------------------------*/
 yyerrorlab:
-
-  /* Pacify compilers like GCC when the user code never invokes
-     YYERROR and the label yyerrorlab therefore never appears in user
-     code.  */
-  if (/*CONSTCOND*/ 0)
-     goto yyerrorlab;
+  /* Pacify compilers when the user code never invokes YYERROR and the
+     label yyerrorlab therefore never appears in user code.  */
+  if (0)
+    YYERROR;
+  ++yynerrs;
 
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
@@ -1960,13 +1774,14 @@ yyerrorlab:
 yyerrlab1:
   yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
+  /* Pop stack until we find a state that shifts the error token.  */
   for (;;)
     {
       yyn = yypact[yystate];
       if (!yypact_value_is_default (yyn))
         {
-          yyn += YYTERROR;
-          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+          yyn += YYSYMBOL_YYerror;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
             {
               yyn = yytable[yyn];
               if (0 < yyn)
@@ -1980,7 +1795,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  yystos[yystate], yyvsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1992,7 +1807,7 @@ yyerrlab1:
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
+  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
@@ -2003,27 +1818,31 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturn;
+  goto yyreturnlab;
+
 
 /*-----------------------------------.
 | yyabortlab -- YYABORT comes here.  |
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturn;
+  goto yyreturnlab;
 
-#if !defined yyoverflow || YYERROR_VERBOSE
-/*-------------------------------------------------.
-| yyexhaustedlab -- memory exhaustion comes here.  |
-`-------------------------------------------------*/
+
+/*-----------------------------------------------------------.
+| yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
+`-----------------------------------------------------------*/
 yyexhaustedlab:
   yyerror (YY_("memory exhausted"));
   yyresult = 2;
-  /* Fall through.  */
-#endif
+  goto yyreturnlab;
 
-yyreturn:
-  if (yychar != YYEMPTY)
+
+/*----------------------------------------------------------.
+| yyreturnlab -- parsing is finished, clean up and return.  |
+`----------------------------------------------------------*/
+yyreturnlab:
+  if (yychar != HYPNO_ARC_EMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */
@@ -2038,16 +1857,14 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  yystos[*yyssp], yyvsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
   if (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
-#if YYERROR_VERBOSE
-  if (yymsg != yymsgbuf)
-    YYSTACK_FREE (yymsg);
-#endif
+
   return yyresult;
 }
+

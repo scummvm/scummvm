@@ -24,6 +24,16 @@
 
 namespace Hypno {
 
+MVideo::MVideo(Common::String path_, Common::Point position_, bool transparent_, bool scaled_, bool loop_) {
+	decoder = nullptr;
+	currentFrame = nullptr;
+	path = path_;
+	position = position_;
+	scaled = scaled_;
+	transparent = transparent_;
+	loop = loop_;
+}
+
 bool HypnoSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (!SmackerDecoder::loadStream(stream))
 		return false;

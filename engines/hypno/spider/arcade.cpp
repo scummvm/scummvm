@@ -34,7 +34,7 @@ static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
-	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
+	uint32 c = 248; // white
 	uint32 ox = 0;
 	uint32 oy = 0;
 
@@ -180,14 +180,14 @@ void SpiderEngine::drawHealth() {
 
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
-		c = _pixelFormat.RGBToColor(255, 0, 0);
+		c = 250; // green
 	else
-		c = _pixelFormat.RGBToColor(32, 208, 32);
+		c = 251; // red
 
 	_compositeSurface->fillRect(r, c);
 
 	r = Common::Rect(256, 152, 272, 174);
-	c = _pixelFormat.RGBToColor(0, 0, 255);
+	c = 252;  // blue
 	_compositeSurface->frameRect(r, c);
 
 	_font->drawString(_compositeSurface, "ENERGY", 248, 180, 38, c);

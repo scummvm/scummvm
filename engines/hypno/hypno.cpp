@@ -46,16 +46,6 @@ Hotspots *g_parsedHots;
 ArcadeShooting *g_parsedArc;
 HypnoEngine *g_hypno;
 
-MVideo::MVideo(Common::String path_, Common::Point position_, bool transparent_, bool scaled_, bool loop_) {
-	decoder = nullptr;
-	currentFrame = nullptr;
-	path = path_;
-	position = position_;
-	scaled = scaled_;
-	transparent = transparent_;
-	loop = loop_;
-}
-
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0),
@@ -128,10 +118,8 @@ Common::Error HypnoEngine::run() {
 	initGraphicsModes(modes);
 
 	// Initialize graphics
-	initGraphics(_screenW, _screenH, nullptr);
-	_pixelFormat = g_system->getScreenFormat();
-	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
-		return Common::kUnsupportedColorMode;
+	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(_screenW, _screenH, &_pixelFormat);
 
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
@@ -258,9 +246,17 @@ void HypnoEngine::runIntro(MVideo &video) {
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
-void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, int frameNumber) {
+void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, bool palette, int frameNumber) {
+
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d, %d)", __FUNCTION__, name.c_str(), x, y, transparent);
-	Graphics::Surface *surf = decodeFrame(name, frameNumber);
+	Graphics::Surface *surf;
+	if (palette) {
+		byte *array;
+		surf = decodeFrame(name, frameNumber, &array);
+		loadPalette(array, 0, 256);
+	} else 
+		surf = decodeFrame(name, frameNumber);
+	
 	drawImage(*surf, x, y, transparent);
 }
 
@@ -296,7 +292,7 @@ Common::File *HypnoEngine::fixSmackerHeader(Common::File *file) {
 	return file;
 }
 
-Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
+Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, byte **palette) {
 	Common::File *file = new Common::File();
 	Common::String path = convertPath(name);
 	if (!_prefixDir.empty())
@@ -315,13 +311,11 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 		vd.decodeNextFrame();
 
 	const Graphics::Surface *frame = vd.decodeNextFrame();
-	Graphics::Surface *rframe;
-	if (convert) {
-		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
-	} else {
-		rframe = frame->convertTo(frame->format, vd.getPalette());
-		//rframe->create(frame->w, frame->h, frame->format);
-		//rframe->copyRectToSurface(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+	Graphics::Surface *rframe = frame->convertTo(frame->format, vd.getPalette());
+	if (palette != nullptr) {
+		byte *newPalette = (byte*) malloc(3*256); 
+		memcpy(newPalette, vd.getPalette(), 3*256);
+		*palette = newPalette;
 	}
 
 	return rframe;
@@ -360,7 +354,7 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_screenW = 640;
 		_screenH = 480;
 
-		initGraphics(_screenW, _screenH, nullptr);
+		initGraphics(_screenW, _screenH, &_pixelFormat);
 
 		_compositeSurface->free();
 		delete _compositeSurface;
@@ -375,7 +369,7 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_screenW = 320;
 		_screenH = 200;
 
-		initGraphics(_screenW, _screenH, nullptr);
+		initGraphics(_screenW, _screenH, &_pixelFormat);
 
 		_compositeSurface->free();
 		delete _compositeSurface;
@@ -383,10 +377,30 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface = new Graphics::ManagedSurface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
-		_transparentColor = _pixelFormat.RGBToColor(0, 0, 0);
+		_transparentColor = 0; //_pixelFormat.RGBToColor(0, 0, 0);
 		_compositeSurface->setTransparentColor(_transparentColor);
 	} else
 		error("Unknown screen mode %s", mode.c_str());
+}
+
+void HypnoEngine::loadPalette(const Common::String &fname) {
+	Common::File *file = new Common::File();
+	Common::String path = convertPath(fname);
+	if (!_prefixDir.empty())
+		path = _prefixDir + "/" + path;
+
+	if (!file->open(path))
+		error("unable to find palette file %s", path.c_str());
+
+	debugC(1, kHypnoDebugMedia, "Loading palette from %s", path.c_str());
+	byte *videoPalette = (byte*) malloc(file->size());
+	file->read(videoPalette, file->size());
+	g_system->getPaletteManager()->setPalette(videoPalette+8, 0, 256);
+}
+
+void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
+	debugC(1, kHypnoDebugMedia, "Loading palette from byte array with offset %d and size %d", offset, size);
+	g_system->getPaletteManager()->setPalette(palette + 3*offset, offset, size);	
 }
 
 void HypnoEngine::updateScreen(MVideo &video) {
@@ -395,26 +409,30 @@ void HypnoEngine::updateScreen(MVideo &video) {
 	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
 		return;
 
-	Graphics::Surface *sframe, *cframe;
+	bool dirtyPalette = video.decoder->hasDirtyPalette();
+	const byte *videoPalette = nullptr;
+	//bool fullscreen = video.scaled || (frame->h == _screenH && frame->w == _screenW);
+	if (video.scaled && (dirtyPalette || video.decoder->getCurFrame() <= 1)) {
+		videoPalette = video.decoder->getPalette();
+		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+	}
+
+	Graphics::Surface *sframe;
 
 	if (video.scaled) {
 		sframe = frame->scale(_screenW, _screenH);
-		cframe = sframe->convertTo(_pixelFormat, video.decoder->getPalette());
 	} else
-		cframe = frame->convertTo(_pixelFormat, video.decoder->getPalette());
+		sframe = (Graphics::Surface*) frame;
 
 	if (video.transparent)
-		_compositeSurface->transBlitFrom(*cframe, video.position, _transparentColor);
+		_compositeSurface->transBlitFrom(*sframe, video.position, _transparentColor);
 	else
-		_compositeSurface->blitFrom(*cframe, video.position);
+		_compositeSurface->blitFrom(*sframe, video.position);
 
 	if (video.scaled) {
 		sframe->free();
 		delete sframe;
 	}
-
-	cframe->free();
-	delete cframe;
 }
 
 void HypnoEngine::drawScreen() {
