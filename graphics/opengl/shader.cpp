@@ -30,6 +30,40 @@
 
 namespace OpenGL {
 
+static const char *compatVertex =
+	"#if defined(GL_ES)\n"
+		"#define ROUND(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#define in attribute\n"
+		"#define out varying\n"
+	"#elif __VERSION__ < 130\n"
+		"#define ROUND(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#define highp\n"
+		"#define in attribute\n"
+		"#define out varying\n"
+	"#else\n"
+		"#define ROUND(x) round(x)\n"
+	"#endif\n";
+
+static const char *compatFragment =
+	"#if defined(GL_ES)\n"
+		"#define in varying\n"
+		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+			"precision highp float;\n"
+		"#else\n"
+			"precision mediump float;\n"
+		"#endif\n"
+		"#define OUTPUT\n"
+		"#define outColor gl_FragColor\n"
+		"#define texture texture2D\n"
+	"#elif __VERSION__ < 130\n"
+		"#define in varying\n"
+		"#define OUTPUT\n"
+		"#define outColor gl_FragColor\n"
+		"#define texture texture2D\n"
+	"#else\n"
+		"#define OUTPUT out vec4 outColor;\n"
+	"#endif\n";
+
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
 
@@ -83,7 +117,7 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
 	const GLchar *versionSource = OpenGLContext.type == kOGLContextGLES2 ? "#version 100\n" : "#version 120\n";
 	const GLchar *compatSource =
-			shaderType == GL_VERTEX_SHADER ? OpenGL::BuiltinShaders::compatVertex : OpenGL::BuiltinShaders::compatFragment;
+			shaderType == GL_VERTEX_SHADER ? compatVertex : compatFragment;
 	const GLchar *shaderSources[] = {
 		versionSource,
 		compatSource,
@@ -166,7 +200,6 @@ ShaderGL *ShaderGL::fromStrings(const Common::String &name, const char *vertex, 
 	GLuint fragmentShader = createDirectShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment");
 	return new ShaderGL(name, vertexShader, fragmentShader, attributes);
 }
-
 
 ShaderGL *ShaderGL::fromFiles(const char *vertex, const char *fragment, const char **attributes) {
 	GLuint vertexShader = loadShaderFromFile(vertex, "vertex", GL_VERTEX_SHADER);

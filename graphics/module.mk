@@ -29,10 +29,7 @@ MODULE_OBJS := \
 	macgui/macwindowmanager.o \
 	managed_surface.o \
 	nine_patch.o \
-	opengl/box_shaders.o \
 	opengl/context.o \
-	opengl/control_shaders.o \
-	opengl/compat_shaders.o \
 	opengl/shader.o \
 	pixelformat.o \
 	primitives.o \

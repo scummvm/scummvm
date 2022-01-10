@@ -36,12 +36,6 @@
 
 namespace OpenGL {
 
-namespace BuiltinShaders {
-	extern const char *boxVertex, *boxFragment;
-	extern const char *compatVertex, *compatFragment;
-	extern const char *controlVertex, *controlFragment;
-}
-
 struct VertexAttrib {
 	VertexAttrib(uint32 idx, const char *name) :
 		_enabled(false), _idx(idx), _name(name), _vbo(0), _size(0),
@@ -111,7 +105,6 @@ public:
 		if (pos != -1)
 			glUniform1f(pos, f);
 	}
-
 
 	GLint getUniformLocation(const char *uniform) const {
 		UniformsMap::iterator kv = _uniforms->find(uniform);

@@ -172,6 +172,38 @@ void FixedSurfaceRenderer::restorePreviousState() {
 
 #if defined(USE_OPENGL_SHADERS)
 
+static const char *boxVertex =
+	"attribute vec2 position;\n"
+	"attribute vec2 texcoord;\n"
+	"uniform vec2 offsetXY;\n"
+	"uniform vec2 sizeWH;\n"
+	"uniform vec2 texcrop;\n"
+	"uniform bool flipY;\n"
+	"varying vec2 Texcoord;\n"
+	"void main() {\n"
+		"Texcoord = texcoord * texcrop;\n"
+		"vec2 pos = offsetXY + position * sizeWH;\n"
+		"pos.x = pos.x * 2.0 - 1.0;\n"
+		"pos.y = pos.y * 2.0 - 1.0;\n"
+		"if (flipY)\n"
+			"pos.y *= -1.0;\n"
+		"gl_Position = vec4(pos, 0.0, 1.0);\n"
+	"}\n";
+
+static const char *boxFragment =
+	"#ifdef GL_ES\n"
+		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+			"precision highp float;\n"
+		"#else\n"
+			"precision mediump float;\n"
+		"#endif\n"
+	"#endif\n"
+	"varying vec2 Texcoord;\n"
+	"uniform sampler2D tex;\n"
+	"void main() {\n"
+		"gl_FragColor = texture2D(tex, Texcoord);\n"
+	"}\n";
+
 ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 	const GLfloat vertices[] = {
 		0.0, 0.0,
@@ -182,7 +214,7 @@ ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 
 	// Setup the box shader used to render the overlay
 	const char *attributes[] = { "position", "texcoord", nullptr };
-	_boxShader = ShaderGL::fromStrings("box", BuiltinShaders::boxVertex, BuiltinShaders::boxFragment, attributes);
+	_boxShader = ShaderGL::fromStrings("box", boxVertex, boxFragment, attributes);
 	_boxVerticesVBO = ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);

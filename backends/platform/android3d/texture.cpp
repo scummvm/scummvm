@@ -76,11 +76,43 @@ const GLfloat vertices[] = {
 	1.0, 1.0,
 };
 
+static const char *controlVertex =
+	"#version 100\n"
+	"attribute vec2 position;\n"
+	"attribute vec2 texcoord;\n"
+	"uniform vec2 offsetXY;\n"
+	"uniform vec2 sizeWH;\n"
+	"uniform vec4 clip;\n"
+	"uniform bool flipY;\n"
+	"varying vec2 Texcoord;\n"
+	"void main() {\n"
+		"Texcoord = clip.xy + texcoord * (clip.zw - clip.xy);\n"
+		"vec2 pos = offsetXY + position * sizeWH;\n"
+		"pos.x = pos.x * 2.0 - 1.0;\n"
+		"pos.y = pos.y * 2.0 - 1.0;\n"
+		"if (flipY)\n"
+			"pos.y *= -1.0;\n"
+		"gl_Position = vec4(pos, 0.0, 1.0);\n"
+	"}\n";
+
+static const char *controlFragment =
+	"#version 100\n"
+	"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+		"precision highp float;\n"
+	"#else\n"
+		"precision mediump float;\n"
+	"#endif\n"
+	"varying vec2 Texcoord;\n"
+	"uniform sampler2D tex;\n"
+	"void main() {\n"
+		"gl_FragColor = texture2D(tex, Texcoord);\n"
+	"}\n";
+
 void GLESBaseTexture::initGL() {
 	npot_supported = OpenGLContext.NPOTSupported;
 
 	const char* attributes[] = { "position", "texcoord", NULL };
-	g_box_shader = OpenGL::ShaderGL::fromStrings("control", OpenGL::BuiltinShaders::controlVertex, OpenGL::BuiltinShaders::controlFragment, attributes);
+	g_box_shader = OpenGL::ShaderGL::fromStrings("control", controlVertex, controlFragment, attributes);
 	g_verticesVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
