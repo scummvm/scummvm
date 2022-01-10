@@ -130,7 +130,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_score = 0;
 	_health = arc->health;
 	_maxHealth = _health;
-	_defaultCursor = "arcade";
+	changeCursor("arcade");
 	_shoots.clear();
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
