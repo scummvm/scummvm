@@ -159,9 +159,6 @@ endif
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o \
-	graphics3d/opengl/box_shaders.o \
-	graphics3d/opengl/control_shaders.o \
-	graphics3d/opengl/compat_shaders.o \
 	graphics3d/opengl/framebuffer.o \
 	graphics3d/opengl/surfacerenderer.o \
 	graphics3d/opengl/texture.o \
