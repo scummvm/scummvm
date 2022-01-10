@@ -4,3 +4,6 @@
 *.cpp text eol=lf
 *.h text eol=lf
 *.hpp text eol=lf
+*.sh text eol=lf
+/config* text eol=lf
+configure.engine text eol=lf
