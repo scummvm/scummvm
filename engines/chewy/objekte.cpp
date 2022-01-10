@@ -397,8 +397,9 @@ void objekt::calc_static_detail(int16 det_nr) {
 					det->start_detail(n, 0, ANI_VOR);
 				else
 					det->start_detail(n, 1, 0);
-			} else
+			} else {
 				det->show_static_spr(nr);
+			}
 		}
 
 		nr = Rsi[det_nr].StaticOff;
@@ -471,8 +472,10 @@ int16 objekt::calc_rsi_flip_flop(int16 nr) {
 		if (Rsi[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
 			--Rsi[nr].ZustandFlipFlop;
 		}
-	} else
+	} else {
 		ret = false;
+	}
+
 	return ret;
 }
 
