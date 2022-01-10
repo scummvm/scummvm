@@ -109,6 +109,7 @@ static const char *const selectorNameTable[] = {
 	"put",          // Police Quest 1 VGA
 	"approachVerbs", // Police Quest 1 VGA, QFG4
 	"newRoom",      // Police Quest 3, GK1
+	"register",     // Quest For Glory 1 EGA, QFG4
 	"changeState",  // Quest For Glory 1 VGA, QFG4
 	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
@@ -196,7 +197,6 @@ static const char *const selectorNameTable[] = {
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
-	"register",     // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
@@ -238,6 +238,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_put,
 	SELECTOR_approachVerbs,
 	SELECTOR_newRoom,
+	SELECTOR_register,
 	SELECTOR_changeState,
 	SELECTOR_hide,
 	SELECTOR_say,
@@ -326,7 +327,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
-	SELECTOR_register,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
