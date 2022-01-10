@@ -48,6 +48,13 @@ SurfaceRenderer *createBestSurfaceRenderer() {
 #endif
 }
 
+struct SurfaceVertex {
+	float x;
+	float y;
+	float u;
+	float v;
+};
+
 SurfaceRenderer::SurfaceRenderer() :
 		_flipY(false),
 		_alphaBlending(false) {
@@ -111,19 +118,38 @@ void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest
 	float sizeX   = fabsf(dest.getWidth());
 	float sizeY   = fabsf(dest.getHeight());
 
+	SurfaceVertex vertices[4];
+	vertices[0].x = offsetX;
+	vertices[0].y = offsetY;
+	vertices[0].u = 0.0f;
+	vertices[0].v = texTop;
+	vertices[1].x = offsetX + sizeX;
+	vertices[1].y = offsetY;
+	vertices[1].u = texcropX;
+	vertices[1].v = texTop;
+	vertices[2].x = offsetX + sizeX;
+	vertices[2].y = offsetY + sizeY;
+	vertices[2].u = texcropX;
+	vertices[2].v = texBottom;
+	vertices[3].x = offsetX;
+	vertices[3].y = offsetY + sizeY;
+	vertices[3].u = 0.0f;
+	vertices[3].v = texBottom;
+
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
-	glBegin(GL_QUADS);
-		glTexCoord2f(0, texTop);
-		glVertex2f(offsetX, offsetY);
-		glTexCoord2f(texcropX, texTop);
-		glVertex2f(offsetX + sizeX, offsetY);
-		glTexCoord2f(texcropX, texBottom);
-		glVertex2f(offsetX + sizeX, offsetY + sizeY);
-		glTexCoord2f(0.0, texBottom);
-		glVertex2f(offsetX, offsetY + sizeY);
-	glEnd();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].x);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].u);
+
+	glDrawArrays(GL_QUADS, 0, 4);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void FixedSurfaceRenderer::restorePreviousState() {
@@ -148,10 +174,10 @@ void FixedSurfaceRenderer::restorePreviousState() {
 
 ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 	const GLfloat vertices[] = {
-			0.0, 0.0,
-			1.0, 0.0,
-			0.0, 1.0,
-			1.0, 1.0,
+		0.0, 0.0,
+		1.0, 0.0,
+		0.0, 1.0,
+		1.0, 1.0,
 	};
 
 	// Setup the box shader used to render the overlay
