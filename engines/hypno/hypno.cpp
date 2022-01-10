@@ -140,6 +140,7 @@ Common::Error HypnoEngine::run() {
 		if (!_nextLevel.empty()) {
 			_currentLevel = findNextLevel(_nextLevel);
 			_nextLevel = "";
+			_arcadeMode = "";
 			runLevel(_currentLevel);
 		}
 	}

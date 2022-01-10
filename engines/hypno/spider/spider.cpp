@@ -58,6 +58,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	//loadLib("", "c_misc/fonts.lib", true);
 	loadLib("spider/sound.lib/", "spider/c_misc/sound.lib", true);
 
+	_levels["<quit>"]->prefix = "spider";
+
 	Code *credits = new Code();
 	credits->name = "<credits>";
 	credits->prefix = prefix;

@@ -852,7 +852,7 @@ void SpiderEngine::showCredits() {
 
 	if (!isDemo()) { // No credits in demo
 		changeScreenMode("640x480");
-		MVideo video("cine/credits.smk", Common::Point(0, 0), false, false, false);
+		MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		_nextLevel = "mainmenu.mi_";
 	}
