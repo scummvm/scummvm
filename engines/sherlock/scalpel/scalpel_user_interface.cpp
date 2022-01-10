@@ -533,6 +533,13 @@ void ScalpelUserInterface::examine() {
 	Talk &talk = *_vm->_talk;
 	Common::Point pt = events.mousePos();
 
+	if (_invLookFlag) {
+		// Don't close the inventory window when starting an examine display, since its
+		// window will slide up to replace the inventory display
+		_windowOpen = false;
+		_menuMode = LOOK_MODE;
+	}
+
 	if (pt.y < (CONTROLS_Y + 9)) {
 		Object &obj = scene._bgShapes[_bgFound];
 
@@ -558,13 +565,6 @@ void ScalpelUserInterface::examine() {
 		_cAnimStr = inv[_selector]._examine;
 		if (inv[_selector]._lookFlag)
 			_vm->setFlags(inv[_selector]._lookFlag);
-	}
-
-	if (_invLookFlag) {
-		// Don't close the inventory window when starting an examine display, since its
-		// window will slide up to replace the inventory display
-		_windowOpen = false;
-		_menuMode = LOOK_MODE;
 	}
 
 	if (!talk._talkToAbort) {
