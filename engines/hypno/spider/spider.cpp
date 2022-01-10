@@ -996,20 +996,22 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 
 Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	// We don't want to continue with any sound from a previous game
-	//stopSound(true);
+	stopSound();
+	_sceneState["GS_PUZZLELEVEL"] = stream->readUint32LE();
+	_sceneState["GS_COMBATLEVEL"] = stream->readUint32LE();
 	_nextLevel = stream->readString();
-
 	return Common::kNoError;
 }
 
 Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	//debugC(1, kDebugFunction, "saveGameStream(%d)", isAutosave);
 	if (isAutosave)
 		return Common::kNoError;
 
 	if (_checkpoint.empty())
 		error("Invalid checkpoint!");
 
+	stream->writeUint32LE(_sceneState["GS_PUZZLELEVEL"]);
+	stream->writeUint32LE(_sceneState["GS_COMBATLEVEL"]);
 	stream->writeString(_checkpoint);
 	stream->writeByte(0);
 	return Common::kNoError;
