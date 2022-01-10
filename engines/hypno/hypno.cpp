@@ -135,7 +135,6 @@ Common::Error HypnoEngine::run() {
 	assert(!_nextLevel.empty());
 	while (!shouldQuit()) {
 		debug("nextLevel: %s", _nextLevel.c_str());
-		_defaultCursor = "";
 		_prefixDir = "";
 		_videosPlaying.clear();
 		if (!_nextLevel.empty()) {

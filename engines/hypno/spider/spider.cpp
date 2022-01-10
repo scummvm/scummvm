@@ -912,7 +912,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	chip_lives_with_spiderman->intros.push_back("spider/cine/vrja003s.smk");
 	chip_lives_with_spiderman->intros.push_back("spider/cine/wins001s.smk");
 	_levels["<chip_lives_with_spiderman>"] = chip_lives_with_spiderman;
-
+	_defaultCursor = "mouse/cursor1.smk";
 	_nextLevel = "<start>";
 }
 
