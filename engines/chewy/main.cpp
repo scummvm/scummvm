@@ -1018,6 +1018,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 			menu_item_vorwahl = CUR_WALK;
 			show_cur();
 			sib_event_inv(test_nr);
+
 			if (!_G(spieler).inv_cur) {
 				menu_item = menu_item_vorwahl;
 				cursor_wahl(menu_item);

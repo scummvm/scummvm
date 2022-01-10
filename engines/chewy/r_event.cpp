@@ -2034,45 +2034,27 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_TKNOPF1_R6:
-		Room29::schlitz_sitz();
+		_G(spieler).R6DoorLeftF = exit_flip_flop(4, 8, -1, 33, -1, -1,
+			AUSGANG_LINKS, -1, _G(spieler).R6DoorLeftF);
 		break;
 
 	case SIB_TKNOPF2_R6:
-		_G(cur_hide_flag) = false;
-		hide_cur();
-		start_spz_wait(13, 1, 0, 0);
-		_G(spieler).R18CartFach = true;
-		del_inventar(_G(spieler).AkInvent);
-		det->show_static_spr(7);
-		atds->set_ats_str(157, 1, 1);
-
-		if (_G(spieler).R18CartTerminal) {
-			start_aad_wait(121, -1);
-		} else {
-			_G(spieler).R18CartTerminal = true;
-			atds->set_ats_str(26, 1, 6);
-			start_aad_wait(120, -1);
-		}
-
-		show_cur();
+		_G(spieler).R6DoorLeftB = exit_flip_flop(5, 9, 12, 35, 49, SIB_TKNOPF1_R7,
+			AUSGANG_LINKS, AUSGANG_OBEN, _G(spieler).R6DoorLeftB);
 		break;
 
 	case SIB_TKNOPF3_R6:
-		ret = exit_flip_flop(-1, 46, 27, 132, 90, -1, 2, 2,
-			_G(spieler).R6BolaSchild ? 1 : 0);
-		_G(spieler).R21GitterMuell = ret & 1;
-		atds->set_ats_str(90, 2, 2);
+		_G(spieler).R6DoorRightB = exit_flip_flop(6, 11, 20, 37, 99, SIB_TKNOPF3_R11,
+			AUSGANG_RECHTS, AUSGANG_LINKS, _G(spieler).R6DoorRightB);
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
-		// Used Out of Order sign on vending machine
-		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(118, 1, 1);
-		start_spz(5, 255, 0, 0);
-		start_aad_wait(115, 0);
-		if (_G(spieler).R12TransOn)
-			Room12::use_linke_rohr();
+		_G(spieler).R6BolaSchild = true;
+		det->show_static_spr(2);
+		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
+		obj->hide_sib(SIB_BOLA_KNOPF_R6);
+		obj->show_sib(SIB_BOLA_R6);
 		break;
 
 	case SIB_LHAKEN_R7:
