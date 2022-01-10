@@ -8,6 +8,10 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
+	graphics3d/opengl/framebuffer.o \
+	graphics3d/opengl/surfacerenderer.o \
+	graphics3d/opengl/texture.o \
+	graphics3d/opengl/tiledsurface.o \
 	keymapper/action.o \
 	keymapper/hardware-input.o \
 	keymapper/input-watcher.o \
@@ -158,11 +162,7 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/openglsdl/openglsdl-graphics.o \
-	graphics3d/opengl/framebuffer.o \
-	graphics3d/opengl/surfacerenderer.o \
-	graphics3d/opengl/texture.o \
-	graphics3d/opengl/tiledsurface.o
+	graphics/openglsdl/openglsdl-graphics.o
 endif
 
 ifdef USE_DISCORD
