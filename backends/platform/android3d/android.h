@@ -33,7 +33,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/framebuffer.h"
+#include "backends/graphics3d/opengl/framebuffer.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"

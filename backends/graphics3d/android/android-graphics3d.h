@@ -23,10 +23,10 @@
 #define BACKENDS_GRAPHICS3D_ANDROID_ANDROID_GRAPHICS3D_H
 
 #include "common/scummsys.h"
-#include "graphics/opengl/framebuffer.h"
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/android/android-graphics.h"
+#include "backends/graphics3d/opengl/framebuffer.h"
 #include "backends/graphics3d/android/texture.h"
 
 #include "backends/platform/android/touchcontrols.h"
