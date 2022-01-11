@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK25[3] = {
+	{ 1, 1, ANI_VOR, ANI_WAIT, 0},
+	{ 5, 255, ANI_VOR, ANI_GO, 0},
+	{ 4, 1, ANI_VOR, ANI_WAIT, 0},
+};
+
 void Room7::entry() {
 	_G(spieler).ScrollxStep = 2;
 }
@@ -62,7 +68,7 @@ void Room7::klingel() {
 		(_G(spieler).R7BellCount >= 2 && _G(spieler).R7SeilLeft != 0 && !_G(spieler).R7SeilOk)) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(5, 0);
-		start_ani_block(3, ablock25);
+		start_ani_block(3, ABLOCK25);
 
 		det->show_static_spr(7);
 		start_detail_wait(12, 1, ANI_VOR);
@@ -74,7 +80,7 @@ void Room7::klingel() {
 	} else if (_G(spieler).R7BellCount == 1) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(6, 0);
-		start_ani_block(3, ablock25);
+		start_ani_block(3, ABLOCK25);
 		det->show_static_spr(7);
 		start_detail_wait(10, 1, ANI_VOR);
 		det->start_detail(13, 1, ANI_VOR);
@@ -104,7 +110,7 @@ void Room7::klingel() {
 	} else if (!_G(spieler).R7SeilOk) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(7, 0);
-		start_ani_block(3, ablock25);
+		start_ani_block(3, ABLOCK25);
 		det->show_static_spr(7);
 		det->load_taf_seq(192, 74, 0);
 		det->start_detail(14, 1, ANI_VOR);

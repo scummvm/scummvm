@@ -466,7 +466,7 @@ void sprite_engine();
 
 void calc_z_ebene();
 
-void start_ani_block(int16 anz, AniBlock *ab);
+void start_ani_block(int16 anz, const AniBlock *ab);
 
 void start_detail_wait(int16 ani_nr, int16 rep, int16 mode);
 
