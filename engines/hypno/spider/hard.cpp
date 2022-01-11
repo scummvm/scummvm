@@ -647,8 +647,8 @@ void SpiderEngine::runLock(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (act.contains(mousePos)) {
-					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
-					 	_nextLevel = code->levelIfWin;
+					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 4 && comb[1] == 0 && comb[2] == 3 && comb[3] == 1 && comb[4] == 2) {
+						_nextLevel = code->levelIfWin;
 					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
 					 	_nextLevel = code->levelIfWin;
 					}
