@@ -2053,7 +2053,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 }
 
 void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
-	debug("drawText %d-%d %d-%d %d", posX, posY, maxX, maxY, flag ? "True" : "False");
+	debug("drawText %d-%d %d-%d %s", posX, posY, maxX, maxY, flag ? "True" : "False");
 
 	uint16 stringIdx = 0;
 	uint8 *impPtr = srcPtr;
