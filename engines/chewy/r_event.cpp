@@ -2058,91 +2058,97 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LHAKEN_R7:
-		Room14::feuer();
-		break;
-
 	case SIB_RHAKEN_R7:
-		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(113, 0, 1);
+		Room7::haken(sib_nr);
 		break;
 
 	case SIB_GTUER:
-		_G(spieler).R23FluxoFlex = true;
-		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(112, 1, 1);
+		Room8::open_gdoor();
 		break;
 
 	case SIB_SURIMY_R10:
-		Room23::use_cartridge();
+		Room10::get_surimy();
 		break;
 
 	case SIB_PAINT_R22:
-		ret = exit_flip_flop(6, 20, 11, 99, 37, 15, 1, 2,
-			(int16)_G(spieler).R6DoorRightB);
-		_G(spieler).R6DoorRightB = ret & 1;
-		break;
-
-	case SIB_SCHLITZ_R11:
-		ret = exit_flip_flop(5, 22, -1, 98, -1, -1,
-			AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
-		_G(spieler).R11DoorRightB = ret & 1;
-		break;
-
-	case SIB_TKNOPF1_R11:
-		ret = exit_flip_flop(1, 23, -1, 87, -1, -1,
-			AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightF);
-		_G(spieler).R11DoorRightB = false;
-		_G(spieler).R11TerminalOk |= ret & 1;
-		break;
-
-	case SIB_TKNOPF2_R11:
-		Room11::put_card();
-		break;
-
-	case SIB_TKNOPF3_R11:
 		disable_timer();
 		Room22::malen();
 		enable_timer();
 		break;
 
+	case SIB_SCHLITZ_R11:
+		Room11::put_card();
+		break;
+
+	case SIB_TKNOPF1_R11:
+		_G(spieler).R11DoorRightF = exit_flip_flop(1, 23, -1, 87, -1, -1,
+			AUSGANG_OBEN, -1, _G(spieler).R11DoorRightF);
+		break;
+
+	case SIB_TKNOPF2_R11:
+		_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
+			AUSGANG_OBEN, -1, _G(spieler).R11DoorRightB);
+		break;
+
+	case SIB_TKNOPF3_R11:
+		_G(spieler).R6DoorRightB = exit_flip_flop(6, 20, 11, 99, 37, SIB_TKNOPF3_R6,
+			AUSGANG_LINKS, AUSGANG_RECHTS, _G(spieler).R6DoorRightB);
+		break;
+
 	case SIB_CARTRIDGE_R23:
-		Room10::get_surimy();
+		Room23::use_cartridge();
+		menu_item_vorwahl = CUR_USE;
 		break;
 
 	case SIB_FLUXO_R23:
-		Room8::open_gdoor();
+		_G(spieler).R23FluxoFlex = true;
+		del_inventar(_G(spieler).AkInvent);
+		atds->set_ats_str(112, 1, ATS_DATEI);
+		menu_item_vorwahl = CUR_USE;
+		break;
+
+	case SIB_TRANSLATOR_23:
+		del_inventar(_G(spieler).AkInvent);
+		atds->set_ats_str(113, 0, ATS_DATEI);
+		menu_item_vorwahl = CUR_USE;
 		break;
 
 	case SIB_FEUER_R14:
-	case SIB_TALISMAN_R12:
-		Room7::haken(sib_nr);
+		Room14::feuer();
 		break;
 
 	case SIB_ROEHRE_R12:
+		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
-		_G(spieler).R6BolaSchild = true;
-		det->show_static_spr(2);
-		obj->calc_rsi_flip_flop(18);
-		obj->hide_sib(18);
-		obj->show_sib(21);
+		atds->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
+		start_aad(115, 0);
 		break;
 
-	case SIB_SEIL_R21:
-		ret = exit_flip_flop(6, 11, 20, 37, 99, 42, 2, 1,
-			(int16)_G(spieler).R6DoorRightB);
-		_G(spieler).R6DoorRightB = ret & 1;
+	case SIB_GITTER2_R21:
+		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
+			AUSGANG_RECHTS, AUSGANG_RECHTS, _G(spieler).R21GitterMuell);
+		atds->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
 		break;
 
 	case SIB_CART_FACH_R18:
-		ret = exit_flip_flop(5, 9, 12, 35, 49, 22, 1, 3,
-			(int16)_G(spieler).R6DoorLeftB);
-		_G(spieler).R6DoorLeftB = ret & 1;
+		_G(cur_hide_flag) = false;
+		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		_G(spieler).R18CartFach = 1;
+		del_inventar(_G(spieler).AkInvent);
+		det->show_static_spr(7);
+		atds->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
+
+		if (_G(spieler).R18CartTerminal) {
+			_G(spieler).R18CartSave = true;
+			atds->set_ats_str(26, 1, 6);
+			start_aad_wait(120, -1);
+		} else {
+			start_aad_wait(121, -1);
+		}
 		break;
 
 	case SIB_AUTO_SITZ:
-		ret = exit_flip_flop(4, 8, -1, 33, -1, -1, 1, -1,
-			(int16)_G(spieler).R6DoorLeftF);
-		_G(spieler).R6DoorLeftF = ret & 1;
+		Room29::schlitz_sitz();
 		break;
 
 	case SIB_AUTO_R28:
