@@ -321,7 +321,7 @@ Common::Error GroovieEngine::run() {
 
 				// Wait a little bit between increments.  While mouse is moving, this triggers
 				// only negligably slower.
-				if (tmr >= 1000) {
+				if (tmr >= 500) {
 					_script->timerTick();
 					tmr = 0;
 				}
