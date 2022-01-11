@@ -46,13 +46,16 @@ void Room6::entry() {
 	_G(zoom_horizont) = 80;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
+
 	if (_G(spieler).R6BolaSchild) {
-		if (_G(spieler).R6RaumBetreten < 3) {
+		if (_G(spieler).R6RaumBetreten < 2) {
 			det->start_detail(7, 255, ANI_VOR);
 			atds->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
 			if (!flags.LoadGame)
 				++_G(spieler).R6RaumBetreten;
-			if (_G(spieler).R6RaumBetreten == 3) {
+
+			if (_G(spieler).R6RaumBetreten == 2) {
+				hide_cur();
 				det->stop_detail(7);
 				init_robo();
 				wait_auto_obj(0);
@@ -60,6 +63,7 @@ void Room6::entry() {
 				obj->show_sib(SIB_BOLA_KNOPF_R6);
 				obj->hide_sib(SIB_BOLA_R6);
 				atds->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
+				show_cur();
 			}
 		}
 	}
