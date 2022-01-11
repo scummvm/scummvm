@@ -405,14 +405,15 @@ void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
 
 void HypnoEngine::updateScreen(MVideo &video) {
 	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
+	bool dirtyPalette = video.decoder->hasDirtyPalette();
+
 	video.currentFrame = frame;
 	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
 		return;
 
-	bool dirtyPalette = video.decoder->hasDirtyPalette();
 	const byte *videoPalette = nullptr;
-	//bool fullscreen = video.scaled || (frame->h == _screenH && frame->w == _screenW);
-	if (video.scaled && (dirtyPalette || video.decoder->getCurFrame() <= 1)) {
+	if (video.scaled && dirtyPalette) {
+		debugC(1, kHypnoDebugMedia, "Updating palette at frame %d", video.decoder->getCurFrame());
 		videoPalette = video.decoder->getPalette();
 		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 	}

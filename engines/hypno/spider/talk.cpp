@@ -26,6 +26,7 @@ namespace Hypno {
 
 void SpiderEngine::showConversation() {
 	debugC(1, kHypnoDebugScene, "Showing conversation");
+	defaultCursor();
 	uint32 x = 0;
 	uint32 y = 0;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);

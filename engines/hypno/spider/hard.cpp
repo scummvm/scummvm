@@ -200,7 +200,6 @@ void SpiderEngine::checkMixture(Code *code) {
 	_nextLevel = "<after_bus_hard>";
 }
 
-
 void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
 	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
@@ -383,14 +382,14 @@ void SpiderEngine::runNote(Code *code) {
 void SpiderEngine::runRecept(Code *code) {
 
 	if (!_sceneState["GS_SWITCH3"]) { // lights off
-		MVideo v("spider/cine/recdark.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/recdark.smk", Common::Point(0, 0), false, false, false);
 		runIntro(v);
 		_nextLevel = "int_roof.mi_";
 		return;
 	}
 	
 	if (_sceneState["GS_SWITCH2"]) { // camera on
-		MVideo v("spider/cine/iobs001s.smk", Common::Point(0, 0), false, true, false);
+		MVideo v("cine/iobs001s.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
 		_nextLevel = "<over_apt_5>";
 		return;
@@ -617,16 +616,16 @@ void SpiderEngine::runLock(Code *code) {
 	Common::Rect act(345, 337, 537, 404);
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		MVideo v("spider/cine/spv051s.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/spv051s.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/factory/elockbg.smk", 0, 0, false, true);
+		loadImage("factory/elockbg.smk", 0, 0, false, true);
 	} else {
-		MVideo v("spider/cine/spv051as.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/spv051as.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/factory/hlockbg.smk", 0, 0, false, true);
+		loadImage("factory/hlockbg.smk", 0, 0, false, true);
 	}
 
-	Frames nums = decodeFrames("spider/factory/button.smk");
+	Frames nums = decodeFrames("factory/button.smk");
 	if (nums.size() != 5)
 		error("Invalid number of colors: %d", nums.size());
 
@@ -635,7 +634,7 @@ void SpiderEngine::runLock(Code *code) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -648,9 +647,10 @@ void SpiderEngine::runLock(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (act.contains(mousePos)) {
-					if (comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
 					 	_nextLevel = code->levelIfWin;
-					 	return;
+					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
+					 	_nextLevel = code->levelIfWin;
 					}
 				}
 
@@ -660,9 +660,9 @@ void SpiderEngine::runLock(Code *code) {
 				}
 
 				if (_sceneState["GS_PUZZLELEVEL"] == 0) // easy
-					loadImage("spider/factory/elockbg.smk", 0, 0, false, true);
+					loadImage("factory/elockbg.smk", 0, 0, false, true);
 				else 
-					loadImage("spider/factory/hlockbg.smk", 0, 0, false, true);
+					loadImage("factory/hlockbg.smk", 0, 0, false, true);
 
 				for (int i = 0; i < 5; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
@@ -728,18 +728,18 @@ void SpiderEngine::runFuseBox(Code *code) {
 	Common::Rect hcell(0, 0, 32, 8);
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		MVideo v("spider/cine/ppv011es.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/ppv011es.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/movie2/efusebg.smk", 0, 0, false, true);
+		loadImage("movie2/efusebg.smk", 0, 0, false, true);
 	} else { // hard
-		MVideo v("spider/cine/ppv011hs.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/ppv011hs.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/movie2/hfusebg.smk", 0, 0, false, true);
+		loadImage("movie2/hfusebg.smk", 0, 0, false, true);
 	}
 
-	Frames fuses = decodeFrames("spider/movie2/onoffuse.smk");
+	Frames fuses = decodeFrames("movie2/onoffuse.smk");
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -753,9 +753,9 @@ void SpiderEngine::runFuseBox(Code *code) {
 			case Common::EVENT_LBUTTONDOWN:
 				if (matrix.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-						loadImage("spider/movie2/efusebg.smk", 0, 0, false, true);
+						loadImage("movie2/efusebg.smk", 0, 0, false, true);
 					} else { // hard
-						loadImage("spider/movie2/hfusebg.smk", 0, 0, false, true);
+						loadImage("movie2/hfusebg.smk", 0, 0, false, true);
 					}
 
 					debug("\nvdata:");
