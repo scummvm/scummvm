@@ -71,12 +71,6 @@ AniBlock ablock7[2] = {
 	{ 2, 1, ANI_VOR, ANI_GO, 0},
 };
 
-AniBlock ablock25[3] = {
-	{ 1, 1, ANI_VOR, ANI_WAIT, 0},
-	{ 5, 255, ANI_VOR, ANI_GO, 0},
-	{ 4, 1, ANI_VOR, ANI_WAIT, 0},
-};
-
 AniBlock ablock8[3] = {
 	{ 10, 1, ANI_VOR, ANI_WAIT, 0},
 	{ 12, 1, ANI_VOR, ANI_WAIT, 0},

@@ -127,8 +127,6 @@ extern AniBlock ablock6[3];
 
 extern AniBlock ablock7[2];
 
-extern AniBlock ablock25[3];
-
 extern AniBlock ablock8[3];
 
 extern AniBlock ablock9[3];

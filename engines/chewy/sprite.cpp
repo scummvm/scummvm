@@ -395,7 +395,7 @@ void wait_show_screen(int16 frames) {
 	_G(maus_links_click) = tmp_maus_links;
 }
 
-void start_ani_block(int16 anz, AniBlock *ab) {
+void start_ani_block(int16 anz, const AniBlock *ab) {
 	int16 i;
 	tmp_maus_links = _G(maus_links_click);
 	_G(maus_links_click) = false;
