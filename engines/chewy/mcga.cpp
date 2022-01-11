@@ -484,7 +484,9 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 
 			for (int xc = spriteDeltaX2, countX = spriteXVal2; xc > 0; --xc) {
 				if (*source)
-					*scrP++ = *source;
+					*scrP = *source;
+
+				++scrP;
 				source += spriteXVal1;
 				countX += spriteXVal2;
 				while (countX > 1000) {
