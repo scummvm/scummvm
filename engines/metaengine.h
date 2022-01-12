@@ -562,7 +562,7 @@ public:
 	/**
 	 * Read the extended savegame header from the given savegame file.
 	 */
-	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);
 };
 
 /**
