@@ -29,6 +29,16 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK12[2] = {
+	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 9, 2, ANI_VOR, ANI_GO, 0 },
+};
+
+static const AniBlock ABLOCK13[2] = {
+	{10, 1, ANI_VOR, ANI_WAIT, 0},
+	{11, 255, ANI_VOR, ANI_GO, 0},
+};
+
 void Room8::entry() {
 	_G(spieler).R7ChewyFlug = true;
 	if (!_G(spieler).R8Folter)
@@ -40,9 +50,7 @@ void Room8::entry() {
 
 void Room8::start_folter() {
 	atds->set_ats_str(67, 1, ATS_DATEI);
-
 	det->stop_detail(19);
-
 	det->start_detail(13, 255, ANI_VOR);
 }
 
@@ -57,7 +65,9 @@ void Room8::stop_folter() {
 }
 
 void Room8::hole_kohle() {
-	if (!_G(spieler).R8Kohle) {
+	if (_G(spieler).R8Kohle) {
+		start_aad_wait(604, -1);
+	} else {
 		hide_cur();
 		_G(spieler).R8Kohle = true;
 		auto_move(4, P_CHEWY);
@@ -71,43 +81,47 @@ void Room8::hole_kohle() {
 }
 
 void Room8::start_verbrennen() {
-	int16 ende;
 	hide_cur();
+
 	if (!_G(spieler).inv_cur) {
 		auto_move(3, P_CHEWY);
 		start_aad(102, 0);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_ani_block(2, ablock12);
-		ende = 0;
-		while (!ende && det->get_ani_status(9)) {
+		start_ani_block(2, ABLOCK12);
+
+		while (det->get_ani_status(9)) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
 			if (minfo.button == 1 || kbinfo.key_code == ENTER) {
 				if (minfo.x > 146 && minfo.x < 208 &&
 					minfo.y > 107 && minfo.y < 155)
-					ende = 1;
+					break;
 			}
 		}
+
 		det->stop_detail(9);
 		set_person_pos(129, 246, P_CHEWY, P_RIGHT);
-		start_ani_block(2, ablock13);
+		start_ani_block(2, ABLOCK13);
 		atds->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
+
 	show_cur();
 }
 
 bool Room8::gips_wurf() {
-	if (!is_cur_inventar(11)) {
+	if (!is_cur_inventar(GIPS_EIMER_INV)) {
 		hide_cur();
 		det->load_taf_seq(116, 30, 0);
 		auto_move(2, P_CHEWY);
 		_G(maus_links_click) = 0;
+
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		del_inventar(GIPS_EIMER_INV);
 		start_detail_wait(4, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+
 		start_detail_frame(5, 1, ANI_VOR, 16);
 		start_detail_wait(6, 1, ANI_VOR);
 		obj->show_sib(33);

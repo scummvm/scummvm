@@ -133,10 +133,6 @@ extern AniBlock ablock9[3];
 
 extern AniBlock ablock10[4];
 
-extern AniBlock ablock12[2];
-
-extern AniBlock ablock13[2];
-
 extern AniBlock ablock17[2];
 
 extern AniBlock ablock18[2];
