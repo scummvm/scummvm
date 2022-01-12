@@ -124,9 +124,9 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 
-	bool canLoadGameStateCurrently() override { return true; }
+	bool canLoadGameStateCurrently() override { return (isDemo() ? false : true); }
 	bool canSaveAutosaveCurrently() override { return false; }
-	bool canSaveGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return (isDemo() ? false : true); }
 	Common::String _checkpoint;
 
 	Common::String _prefixDir;
