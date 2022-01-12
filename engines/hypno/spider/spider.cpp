@@ -1013,6 +1013,17 @@ Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_sceneState["GS_PUZZLELEVEL"] = stream->readUint32LE();
 	_sceneState["GS_COMBATLEVEL"] = stream->readUint32LE();
 	_nextLevel = stream->readString();
+
+	// Reset state variables from puzzles
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 10; j++)
+			_fuseState[i][j] = 0;
+
+	_isFuseRust = true;
+	_isFuseUnreadable = false;
+	for (int i = 0; i < 7; i++)
+		ingredients[i] = 0;
+
 	return Common::kNoError;
 }
 

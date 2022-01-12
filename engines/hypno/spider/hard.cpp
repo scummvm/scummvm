@@ -525,7 +525,6 @@ void SpiderEngine::runFusePanel(Code *code) {
 				else
 					defaultCursor();
 
-
 			default:
 				break;
 			}
