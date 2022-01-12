@@ -636,14 +636,11 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 }
 
 void look_invent_screen(int16 txt_mode, int16 txt_nr) {
-	//char *str_adr;
 	int16 ok;
 	int16 m_mode = 0;
-	//int16 action_flag;
-	if (!flags.AtsAction) {
-		//str_adr = 0;
-		if (txt_nr != -1) {
 
+	if (!flags.AtsAction) {
+		if (txt_nr != -1) {
 			switch (txt_mode) {
 			case INVENTAR_NORMAL:
 			case INVENTAR_STATIC:
@@ -672,10 +669,8 @@ void look_invent_screen(int16 txt_mode, int16 txt_nr) {
 
 				}
 
-				//action_flag = 0;
 				if (atds->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI)) {
 					ats_action(txt_nr, m_mode, ATS_ACTION_VOR);
-					//action_flag = 1;
 				}
 				if (ok) {
 					start_ats_wait(txt_nr, m_mode, 14, ATS_DATEI);
