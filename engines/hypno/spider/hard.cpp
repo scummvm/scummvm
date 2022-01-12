@@ -87,7 +87,7 @@ void SpiderEngine::runMatrix(Code *code) {
 	}
 
 	playVideo(*v);
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -290,7 +290,7 @@ void SpiderEngine::runNote(Code *code) {
 		loadImage("spider/int_ball/hnote.smk", 0, 0, false, true);
 	}
 	
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -454,7 +454,7 @@ void SpiderEngine::runFusePanel(Code *code) {
 		}
 	}
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -571,7 +571,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
