@@ -65,7 +65,7 @@ void cursor::plot_cur() {
 		}
 
 		cur_aufruf -= 1;
-		if ((cur_aufruf <= 0) && (ani != false)) {
+		if ((cur_aufruf <= 0) && (ani != nullptr)) {
 			cur_aufruf = ani->delay;
 			++ani_count;
 			if (ani_count > ani->ani_end)
