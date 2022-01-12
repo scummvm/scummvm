@@ -393,15 +393,17 @@ void HypnoEngine::runScene(Scene *scene) {
 						it->decoder->rewind();
 						it->decoder->start();
 					} else {
+						if (it->scaled || 
+						   (  it->currentFrame->w == _screenW 
+						   && it->currentFrame->h == _screenH 
+						   && it->decoder->getCurFrame() > 0)) {
+							runMenu(*stack.back());
+							drawScreen();
+						}
 						it->decoder->close();
 						delete it->decoder;
 						it->decoder = nullptr;
 						videosToRemove.push_back(i);
-						if (it->scaled) {
-							runMenu(*stack.back());
-							drawScreen();
-						}
-
 					}
 
 				} else if (it->decoder->needsUpdate()) {
