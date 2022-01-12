@@ -199,7 +199,8 @@ void nsvgDelete(NSVGimage* image);
 #define NSVG_ALIGN_MEET 1
 #define NSVG_ALIGN_SLICE 2
 
-#define NSVG_NOTUSED(v) do { (void)(1 ? (void)0 : ( (void)(v) ) ); } while(0)
+//#define NSVG_NOTUSED(v) do { (void)(1 ? (void)0 : ( (void)(v) ) ); } while(0)
+#define NSVG_NOTUSED(v) do { (void)(v); } while(0)
 #define NSVG_RGB(r, g, b) (((unsigned int)r) | ((unsigned int)g << 8) | ((unsigned int)b << 16))
 
 #ifdef _MSC_VER
