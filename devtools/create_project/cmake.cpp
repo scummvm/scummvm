@@ -294,6 +294,12 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "endif()\n";
 		project << "\n";
 
+		if (getFeatureBuildState("tts", setup.features)) {
+			project << "if (WIN32)\n";
+			project << "\ttarget_link_libraries(" << name << " sapi ole32)\n";
+			project << "endif()\n";
+		}
+
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD 11)\n";
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD_REQUIRED ON)\n";
 	}
