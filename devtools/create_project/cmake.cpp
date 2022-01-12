@@ -76,7 +76,7 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	if (!workspace || !workspace.is_open())
 		error("Could not open \"" + filename + "\" for writing");
 
-	workspace << "cmake_minimum_required(VERSION 3.2)\n";
+	workspace << "cmake_minimum_required(VERSION 3.13)\n";
 	workspace << "project(" << setup.projectDescription << ")\n\n";
 
 	workspace << "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n";
