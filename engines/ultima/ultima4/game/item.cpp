@@ -671,14 +671,12 @@ void Items::putReagentInInventory(int reag) {
 }
 
 bool Items::itemConditionsMet(byte conditions) {
-	int i;
-
 	if ((conditions & SC_NEWMOONS) &&
 	        !(g_ultima->_saveGame->_trammelPhase == 0 && g_ultima->_saveGame->_feluccaPhase == 0))
 		return false;
 
 	if (conditions & SC_FULLAVATAR) {
-		for (i = 0; i < VIRT_MAX; i++) {
+		for (int i = 0; i < VIRT_MAX; i++) {
 			if (g_ultima->_saveGame->_karma[i] != 0)
 				return false;
 		}
@@ -692,8 +690,7 @@ bool Items::itemConditionsMet(byte conditions) {
 }
 
 const ItemLocation *Items::itemAtLocation(const Map *map, const Coords &coords) {
-	uint i;
-	for (i = 0; i < N_ITEMS; i++) {
+	for (uint i = 0; i < N_ITEMS; i++) {
 		if (!ITEMS[i]._locationLabel)
 			continue;
 		if (map->getLabel(ITEMS[i]._locationLabel) == coords &&
@@ -704,10 +701,9 @@ const ItemLocation *Items::itemAtLocation(const Map *map, const Coords &coords) 
 }
 
 void Items::itemUse(const Common::String &shortName) {
-	uint i;
 	const ItemLocation *item = nullptr;
 
-	for (i = 0; i < N_ITEMS; i++) {
+	for (uint i = 0; i < N_ITEMS; i++) {
 		if (ITEMS[i]._shortName &&
 		        scumm_stricmp(ITEMS[i]._shortName, shortName.c_str()) == 0) {
 
