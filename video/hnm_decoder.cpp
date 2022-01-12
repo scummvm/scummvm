@@ -843,8 +843,8 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	uint16 pitch = _surface.pitch;
 	bool eop = false;
 
-	byte height = (byte)-1;
-	byte currentMode = (byte)-1;
+	byte height = -1;
+	byte currentMode = -1;
 	uint32 currentPos = 0;
 
 	while (!eop) {
@@ -856,7 +856,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 		size -= 1;
 
 		if (opcode == 0x20) {
-			assert(height != (byte)-1);
+			assert(height != byte(-1));
 			if (size < 1) {
 				error("Not enough data for opcode 0x20");
 			}
@@ -869,7 +869,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 			currentPos += width;
 		} else if (opcode == 0x60) {
 			// Maximal pixels height is 4
-			assert(height != (byte)-1 && height <= 4);
+			assert(height != byte(-1) && height <= 4);
 			if (size < height) {
 				error("Not enough data for opcode 0x60");
 			}
@@ -879,7 +879,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 			size -= height;
 			currentPos += 1;
 		} else if (opcode == 0xA0) {
-			assert(height != (byte)-1);
+			assert(height != byte(-1));
 			if (size < 1) {
 				error("Not enough data for opcode 0x20");
 			}
@@ -905,7 +905,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 			size -= 1;
 
 			if (subop == 0x00) {
-				assert(height != (byte)-1);
+				assert(height != byte(-1));
 				if (size < 2) {
 					error("Not enough data for opcode 0xE0 0x00");
 				}
@@ -920,7 +920,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 				}
 				currentPos += width;
 			} else if (subop == 0x01) {
-				if (height != (byte)-1) {
+				if (height != byte(-1)) {
 					currentPos += (height - 1) * pitch;
 				}
 
@@ -930,7 +930,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 				assert((currentPos % pitch) == 0);
 				assert(subop < 48);
 
-				if (height != (byte)-1) {
+				if (height != byte(-1)) {
 					currentPos += (height - 1) * pitch;
 				}
 
@@ -951,7 +951,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 
 			}
 		} else {
-			assert(height != (byte)-1);
+			assert(height != byte(-1));
 			assert(2 <= height && height <= 4);
 			byte index = opcode & 0x1f;
 			byte copyMode = (opcode >> 5) & 0x7;
