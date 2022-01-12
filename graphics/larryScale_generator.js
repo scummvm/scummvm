@@ -22,6 +22,10 @@
 // This file re-generates 'larryScale_generated.cpp'.
 // To run it, install Node 8.0+, then run 'node larryScale_generator.js'.
 
+process.on("unhandledRejection", (err) => {
+   console.error(err);
+});
+
 const fs = require('fs');
 
 // Compass directions
@@ -360,7 +364,11 @@ function generateScalePixelFunction(width, height, pixelRecords) {
 		case PixelType.INDETERMINATE:
 			const lineUpscaleCode = generatePixelUpscaleCode(matrix, getLineUpscaleFlags(matrix), pixelRecords, { generateBreak: false });
 			const fillUpscaleCode = generatePixelUpscaleCode(matrix, getFillUpscaleFlags(matrix), pixelRecords, { generateBreak: false });
-			return `if (linePixels.get(x, y)) {\n${indent(lineUpscaleCode)}\n} else {\n${indent(fillUpscaleCode)}\n}\nbreak;`;
+			if (lineUpscaleCode === fillUpscaleCode) {
+				return `${lineUpscaleCode}\nbreak;`;
+			} else {
+				return `if (linePixels.get(x, y)) {\n${indent(lineUpscaleCode)}\n} else {\n${indent(fillUpscaleCode)}\n}\nbreak;`;
+			}
 		}
 	});
 	return `${header} {\n${indent(prefix)}\n\n${indent(switchBlock)}\n}`;
