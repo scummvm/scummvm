@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:00+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -524,9 +524,9 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"La característica de sincronització de jocs salvats no funciona amb "
-"directoris que no siguin per defecte. Si vols sincronitzar els teus jocs "
-"salvats, utilitza un directori per defecte"
+"La característica de sincronització de partides desades no funciona amb "
+"directoris que no siguin per defecte. Si voleu sincronitzar les vostres "
+"partides desades, utilitzeu un directori per defecte."
 
 #: gui/editgamedialog.cpp:657
 msgid "This game ID is already taken. Please choose another one."
@@ -825,7 +825,7 @@ msgstr "~A~fegeix Joc..."
 #: gui/launcher.cpp:245
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Afegeix Jocs"
+msgstr "Afegeix en massa..."
 
 #: gui/launcher.cpp:249
 msgctxt "lowres"
@@ -1128,7 +1128,7 @@ msgstr "Zona morta de joystick analògic"
 #: gui/options.cpp:1273
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "Zona morta del Joystick"
+msgstr "Zona morta del Joystick:"
 
 #: gui/options.cpp:1345
 #, c-format
@@ -1163,7 +1163,7 @@ msgstr "Mode gràfic:"
 
 #: gui/options.cpp:1433
 msgid "Render mode:"
-msgstr "Mode de dibuixat."
+msgstr "Mode de renderització:"
 
 #: gui/options.cpp:1433 gui/options.cpp:1434
 msgid "Special dithering modes supported by some games"
@@ -1966,7 +1966,7 @@ msgstr "S'està connectant..."
 
 #: gui/options.cpp:3134
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Aquest Emmagatzematge està actiu ara. Voleu interrompre'l?"
+msgstr "Aquest Emmagatzematge està funcionant ara. Voleu interrompre'l?"
 
 #: gui/options.cpp:3337 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
@@ -2089,7 +2089,7 @@ msgid ""
 "Are you sure you want to overwrite it?"
 msgstr ""
 "ALERTA: La partida desada té una durada de joc més llarga que l'actual. "
-"Segur que voleu sobreescriure-la?"
+"Esteu segur que voleu sobreescriure-la?"
 
 #: gui/saveload-dialog.cpp:413 gui/saveload-dialog.cpp:593
 msgid "No date saved"
@@ -3845,9 +3845,8 @@ msgid "Current video mode:"
 msgstr "Mode de vídeo actual:"
 
 #: backends/platform/wii/options.cpp:55
-#, fuzzy
 msgid "Double-strike"
-msgstr "Double-strike"
+msgstr "Doble refresc"
 
 #: backends/platform/wii/options.cpp:59
 msgid "Horizontal underscan:"
@@ -4258,9 +4257,8 @@ msgid "Load anyway"
 msgstr "Inicia de totes maneres"
 
 #: engines/bladerunner/bladerunner.cpp:356
-#, fuzzy
 msgid "Failed to initialize resources"
-msgstr "Fallada al canviar l'emmagatzematge en línia!"
+msgstr "No s'han pogut inicialitzar els recursos"
 
 #: engines/bladerunner/bladerunner.cpp:1057
 msgid "A required game resource was not found"
@@ -4358,9 +4356,8 @@ msgid "Missing game code"
 msgstr "Controls principals del joc:"
 
 #: engines/buried/buried.cpp:580
-#, fuzzy
 msgid "Are you sure you want to quit?"
-msgstr "   Esteu segur de voler sortir?   "
+msgstr "Esteu segur que voleu sortir?"
 
 #: engines/buried/buried.cpp:590
 #, fuzzy
@@ -4498,9 +4495,8 @@ msgid "Debug Graphics"
 msgstr "Gràfics"
 
 #: engines/dragons/metaengine.cpp:225
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Joc)"
+msgstr "Surt del joc"
 
 #: engines/drascula/saveload.cpp:46
 #, fuzzy
@@ -4575,9 +4571,8 @@ msgid "Untitled Savegame"
 msgstr "Partida sense nom"
 
 #: engines/glk/adrift/os_glk.cpp:2813
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Carregant la partida..."
+msgstr "S'està carregant el joc...\n"
 
 #: engines/glk/advsys/advsys.cpp:34
 #, fuzzy
@@ -4669,9 +4664,8 @@ msgid "Light runs out in "
 msgstr "Simula el botó dret del ratolí"
 
 #: engines/glk/scott/scott.cpp:131
-#, fuzzy
 msgid " turns. "
-msgstr "engega"
+msgstr " torns "
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
@@ -4735,9 +4729,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:550
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Desa"
+msgstr "Desat.\n"
 
 #: engines/glk/scott/scott.cpp:643
 msgid "You use word(s) I don't know! "
@@ -4753,18 +4746,16 @@ msgid "I've too much to carry! "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:806
-#, fuzzy
 msgid "You are dead.\n"
-msgstr "Restaura"
+msgstr "Estàs mort.\n"
 
 #: engines/glk/scott/scott.cpp:808
 msgid "I am dead.\n"
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:820
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "La partida NO s'ha desat"
+msgstr "El joc s'ha acabat.\n"
 
 #: engines/glk/scott/scott.cpp:835
 #, fuzzy
@@ -4866,9 +4857,8 @@ msgid "It's beyond my power to do that.\n"
 msgstr ""
 
 #: engines/glk/zcode/zcode.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Error al executar el joc:"
+msgstr "S'ha produït un error en desar la partida\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
@@ -5650,9 +5640,8 @@ msgid "CSTime support not compiled in"
 msgstr "Característiques compilades:"
 
 #: engines/mohawk/mohawk.cpp:51
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Joc pausat.  Premeu ESPAI per continuar."
+msgstr "El joc està en pausa. Premeu qualsevol tecla per continuar."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:819
 #, fuzzy
@@ -5691,11 +5680,12 @@ msgstr "~M~ostra el mapa"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
-#, fuzzy
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr "   Esteu segur de voler sortir?   "
+msgstr ""
+"Esteu segur que voleu carregar una partida desada? Es perdrà tot el progrés "
+"no desat."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -5706,10 +5696,11 @@ msgstr "Carrega partida:"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
-#, fuzzy
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr "   Esteu segur de voler sortir?   "
+msgstr ""
+"Esteu segur que voleu començar una partida nova? Es perdrà tot el progrés no "
+"desat."
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -5719,9 +5710,8 @@ msgstr "Nova partida desada"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Esteu segur de voler sortir?   "
+msgstr "Esteu segur que voleu sortir? Es perdrà tot el progrés no desat."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
@@ -6250,9 +6240,9 @@ msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1436
-#, fuzzy, c-format
+#, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "Identificador de joc %d no suportat, el màxim admès és %0d"
+msgstr "La versió de la partida desada és %d, el màxim admès és %0d"
 
 #: engines/sci/engine/savegame.cpp:1447
 msgid ""
@@ -6441,15 +6431,13 @@ msgstr "Joc pausat.  Premeu ESPAI per continuar."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:170
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Esteu segur de voler reiniciar?  (S/N)S"
+msgstr "Esteu segur que voleu reiniciar?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:172
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Esteu segur de voler sortir?  (S/N)S"
+msgstr "Esteu segur que voleu sortir?    (S/N)S"
 
 #: engines/scumm/dialogs.cpp:181
 msgid "Insert save/load game disk"
@@ -6514,7 +6502,7 @@ msgstr "Només subtítols"
 #: engines/scumm/dialogs.cpp:624
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Veus i sub."
+msgstr "Veus i subtítols"
 
 #: engines/scumm/dialogs.cpp:670
 msgid "Select a Proficiency Level."
@@ -7449,26 +7437,24 @@ msgid "Saved game in slot #%d "
 msgstr "No s'ha pogut desar a l'espai %d "
 
 #: engines/toon/toon.cpp:219
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "Voleu carregar o desar el joc?"
+msgstr "No s'ha pogut desar ràpidament a l'espai #%d"
 
 #: engines/toon/toon.cpp:232
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"No s'ha pogut desar a l'espai %i\n"
-"\n"
+msgstr "La partida desada #%d s'ha carregat ràpidament"
 
 #: engines/toon/toon.cpp:236
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Voleu carregar o desar el joc?"
+msgstr "No s'ha pogut carregar ràpidament la partida desada #%d"
 
 #: engines/toon/toon.cpp:1563
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr "No s'ha pogut localitzar el fitxer de dades '%s'."
 
 #: engines/twine/detection.cpp:253
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -7808,9 +7794,9 @@ msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
 #: engines/ultima/shared/engine/data_archive.cpp:80
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Voleu carregar o desar el joc?"
+msgstr "No s'han pogut localitzar les dades del motor %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:98
 #, c-format
@@ -7823,9 +7809,9 @@ msgid "loading quick save %d"
 msgstr ""
 
 #: engines/ultima/nuvie/nuvie.cpp:392
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Mode clic"
+msgstr "s'està desant el desament ràpid %d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:38
 msgid "Original Save"
@@ -8535,7 +8521,7 @@ msgstr "Temps de joc: "
 
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "Player 2: Down"
-msgstr "Temps de joc:"
+msgstr "Jugador 2: abaix"
 
 #: engines/wintermute/keymapper_tables.h:2001
 #, fuzzy
