@@ -418,21 +418,23 @@ void HypnoEngine::updateScreen(MVideo &video) {
 		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 	}
 
-	Graphics::Surface *sframe;
-
 	if (video.scaled) {
-		sframe = frame->scale(_screenW, _screenH);
-	} else
-		sframe = (Graphics::Surface*) frame;
+		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
 
-	if (video.transparent)
-		_compositeSurface->transBlitFrom(*sframe, video.position, _transparentColor);
-	else
-		_compositeSurface->blitFrom(*sframe, video.position);
+		if (video.transparent) {
+			_compositeSurface->transBlitFrom(*sframe, video.position, _transparentColor);
+		} else {
+			_compositeSurface->blitFrom(*sframe, video.position);
+		}
 
-	if (video.scaled) {
 		sframe->free();
 		delete sframe;
+	} else {
+		if (video.transparent) {
+			_compositeSurface->transBlitFrom(*frame, video.position, _transparentColor);
+		} else {
+			_compositeSurface->blitFrom(*frame, video.position);
+		}
 	}
 }
 
