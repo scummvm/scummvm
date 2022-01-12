@@ -79,39 +79,41 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "cmake_minimum_required(VERSION 3.13)\n";
 	workspace << "project(" << setup.projectDescription << ")\n\n";
 
-	workspace << "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n";
-	workspace << "find_package(PkgConfig QUIET)\n";
-	workspace << "include(CMakeParseArguments)\n";
-	workspace << "\n";
-	workspace << "set(SCUMMVM_LIBS)\n";
-	workspace << "\n";
+	workspace << R"(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+find_package(PkgConfig QUIET)
+include(CMakeParseArguments)
 
-	workspace << "macro(find_feature)\n";
-	workspace << "\tset(_OPTIONS_ARGS)\n";
-	workspace << "\tset(_ONE_VALUE_ARGS name findpackage_name include_dirs_var libraries_var)\n";
-	workspace << "\tset(_MULTI_VALUE_ARGS pkgconfig_name libraries)\n";
-	workspace << "\tcmake_parse_arguments(_feature \"${_OPTIONS_ARGS}\" \"${_ONE_VALUE_ARGS}\" \"${_MULTI_VALUE_ARGS}\" ${ARGN})\n";
-	workspace << "\n";
-	workspace << "\tif (_feature_pkgconfig_name AND PKG_CONFIG_FOUND)\n";
-	workspace << "\t\tpkg_check_modules(${_feature_name} REQUIRED ${_feature_pkgconfig_name})\n";
-	workspace << "\t\tinclude_directories(${${_feature_name}_INCLUDE_DIRS})\n";
-	workspace << "\t\tlist(APPEND SCUMMVM_LIBS ${${_feature_name}_LIBRARIES})\n";
-	workspace << "\tendif()\n\n";
-	workspace << "\tif (NOT ${_feature_name}_FOUND)\n";
-	workspace << "\t\tif (_feature_findpackage_name)\n";
-	workspace << "\t\t\tfind_package(${_feature_findpackage_name} REQUIRED)\n";
-	workspace << "\t\tendif()\n";
-	workspace << "\t\tif (_feature_include_dirs_var)\n";
-	workspace << "\t\t\tinclude_directories(${${_feature_include_dirs_var}} REQUIRED)\n";
-	workspace << "\t\tendif()\n";
-	workspace << "\t\tif (_feature_libraries_var)\n";
-	workspace << "\t\t\tlist(APPEND SCUMMVM_LIBS ${${_feature_libraries_var}})\n";
-	workspace << "\t\tendif()\n";
-	workspace << "\t\tif (_feature_libraries)\n";
-	workspace << "\t\t\tlist(APPEND SCUMMVM_LIBS ${_feature_libraries})\n";
-	workspace << "\t\tendif()\n";
-	workspace << "\tendif()\n";
-	workspace << "endmacro()\n\n";
+set(SCUMMVM_LIBS)
+
+macro(find_feature)
+	set(_OPTIONS_ARGS)
+	set(_ONE_VALUE_ARGS name findpackage_name include_dirs_var libraries_var)
+	set(_MULTI_VALUE_ARGS pkgconfig_name libraries)
+	cmake_parse_arguments(_feature "${_OPTIONS_ARGS}" "${_ONE_VALUE_ARGS}" "${_MULTI_VALUE_ARGS}" ${ARGN})
+
+	if (_feature_pkgconfig_name AND PKG_CONFIG_FOUND)
+		pkg_check_modules(${_feature_name} REQUIRED ${_feature_pkgconfig_name})
+		include_directories(${${_feature_name}_INCLUDE_DIRS})
+		list(APPEND SCUMMVM_LIBS ${${_feature_name}_LIBRARIES})
+	endif()
+
+	if (NOT ${_feature_name}_FOUND)
+		if (_feature_findpackage_name)
+			find_package(${_feature_findpackage_name} REQUIRED)
+		endif()
+		if (_feature_include_dirs_var)
+			include_directories(${${_feature_include_dirs_var}} REQUIRED)
+		endif()
+		if (_feature_libraries_var)
+			list(APPEND SCUMMVM_LIBS ${${_feature_libraries_var}})
+		endif()
+		if (_feature_libraries)
+			list(APPEND SCUMMVM_LIBS ${_feature_libraries})
+		endif()
+	endif()
+endmacro()
+
+)";
 
 	workspace << "# Define the engines and subengines\n";
 	writeEngines(setup, workspace);
@@ -129,13 +131,15 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
 
-	workspace << "# Depending on how SDL2 was built, there can be either and imported target or flags variables\n";
-	workspace << "# Define the flags variables from the imported target if necessary\n";
-	workspace << "if (TARGET SDL2::SDL2)\n";
-	workspace << "\tget_target_property(SDL2_INCLUDE_DIRS SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)\n";
-	workspace << "\tget_target_property(SDL2_LIBRARIES SDL2::SDL2 LOCATION)\n";
-	workspace << "endif()\n";
-	workspace << "include_directories(${SDL2_INCLUDE_DIRS})\n\n";
+	workspace << R"(# Depending on how SDL2 was built, there can be either and imported target or flags variables
+# Define the flags variables from the imported target if necessary
+if (TARGET SDL2::SDL2)
+	get_target_property(SDL2_INCLUDE_DIRS SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
+	get_target_property(SDL2_LIBRARIES SDL2::SDL2 LOCATION)
+endif()
+include_directories(${SDL2_INCLUDE_DIRS})
+
+)";
 
 	for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
 		if (!i->enable || featureExcluded(i->name)) continue;
