@@ -1090,20 +1090,20 @@ static void flic_proc1() {
 
 
 void flic_cut(int16 nr, int16 mode) {
-	const int16 FLIC_CUT_133[] = {
+	static const int16 FLIC_CUT_133[] = {
 		133, 123, 125, 126, 124, 128, 129, 130, 131,
 		132, 133, 127, 158
 	};
-	const int16 FLIC_CUT_1045[] = {
+	static const int16 FLIC_CUT_1045[] = {
 		30, 47, 41, 34, 45, 52, 53, 57, 64, 63, 62
 	};
-	const int16 FLIC_CUT_1074[] = { 73, 114, 74, 75 };
-	const int16 FLIC_CUT_1080[] = { 80, 78, 77, 81, 82, 79, 76, 116 };
-	const int16 FLIC_CUT_1093[] = {
+	static const int16 FLIC_CUT_1074[] = { 73, 114, 74, 75 };
+	static const int16 FLIC_CUT_1080[] = { 80, 78, 77, 81, 82, 79, 76, 116 };
+	static const int16 FLIC_CUT_1093[] = {
 		93, 94, 95, 96, 97, 98, 99, 100, 92, 90, 91, 89
 	};
-	const int16 FLIC_CUT_1106[] = { 106, 105, 104 };
-	const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
+	static const int16 FLIC_CUT_1106[] = { 106, 105, 104 };
+	static const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
 	int16 i, ret = 0;
 
 	out->setze_zeiger(0);
@@ -1622,8 +1622,10 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		default:
-			switch (mem->file->select_pool_item(Ci.Handle,
-				(nr < 1000) ? nr : nr - 1000)) {
+			mem->file->select_pool_item(Ci.Handle,
+				(nr < 1000) ? nr : nr - 1000);
+
+			switch (mode) {
 			case 0:
 				flc->custom_play(&Ci);
 				break;
@@ -2018,8 +2020,6 @@ int16 sib_event_no_inv(int16 sib_nr) {
 }
 
 void sib_event_inv(int16 sib_nr) {
-	int16 ret;
-
 	switch (sib_nr) {
 	case SIB_TERMINAL_R5:
 		if (!_G(spieler).R5Terminal) {
