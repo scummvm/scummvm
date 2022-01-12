@@ -23,6 +23,7 @@
 #define TOOLS_CREATE_PROJECT_CMAKE_H
 
 #include "create_project.h"
+#include <sstream>
 
 namespace CreateProjectTool {
 
@@ -52,6 +53,8 @@ protected:
 	const char *getProjectExtension() final;
 
 private:
+	std::stringstream enginesStr;
+
 	enum SDLVersion {
 		kSDLVersionAny,
 		kSDLVersion1,
@@ -79,9 +82,7 @@ private:
 	void writeEngines(const BuildSetup &setup, std::ofstream &workspace) const;
 	void writeSubEngines(const BuildSetup &setup, std::ofstream &workspace) const;
 	void writeEngineOptions(std::ofstream &workspace) const;
-	void writeGeneratePluginsTable(std::ofstream &workspace) const;
 	void writeEnginesLibrariesHandling(const BuildSetup &setup, std::ofstream &workspace) const;
-	void writeEngineDefinitions(std::ofstream &workspace) const;
 	void writeFeatureLibSearch(const BuildSetup &setup, std::ofstream &workspace, const char *feature) const;
 	bool featureExcluded(const char *name) const;
 	const EngineDesc &findEngineDesc(const std::string &name, const EngineDescList &engines) const;
