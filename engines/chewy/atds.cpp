@@ -552,8 +552,8 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 			atsv.TxtLen = 0;
 			while (*ptr++ != ATDS_END_TEXT)
 				++atsv.TxtLen;
-			if (*atsv.Ptr == '\xb0') { // FIXME. CHECK THE ACTUAL CODE
-
+			if ((byte)*atsv.Ptr == 248) {
+				// Special code for no message to display
 				atsv.Display = false;
 			} else {
 				atsv.DelayCount = get_delay(atsv.TxtLen);
