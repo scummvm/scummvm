@@ -199,9 +199,9 @@ public:
 	// Movies
 	Videos _nextSequentialVideoToPlay;
 	Videos _nextParallelVideoToPlay;
-	Videos _nextLoopingVideoToPlay;
 	Videos _escapeSequentialVideoToPlay;
 	Videos _videosPlaying;
+	Videos _videosLooping;
 
 	// Sounds
 	Filename _soundPath;

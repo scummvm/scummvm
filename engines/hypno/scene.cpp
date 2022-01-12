@@ -373,39 +373,54 @@ void HypnoEngine::runScene(Scene *scene) {
 		if (!_nextParallelVideoToPlay.empty()) {
 			for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
 				playVideo(*it);
-				_videosPlaying.push_back(*it);
+				if (it->loop)
+					_videosLooping.push_back(*it);
+				else
+					_videosPlaying.push_back(*it);
 			}
 			_nextParallelVideoToPlay.clear();
 		}
 
 		if (!_nextSequentialVideoToPlay.empty() && _videosPlaying.empty()) {
-			playVideo(*_nextSequentialVideoToPlay.begin());
-			_videosPlaying.push_back(*_nextSequentialVideoToPlay.begin());
+			MVideo *it = _nextSequentialVideoToPlay.begin(); 
+			playVideo(*it);
+			if (it->loop)
+				_videosLooping.push_back(*it);
+			else
+				_videosPlaying.push_back(*it);
 			_nextSequentialVideoToPlay.remove_at(0);
 		}
+
+		for (Videos::iterator it = _videosLooping.begin(); it != _videosLooping.end(); ++it) {
+			if (it->decoder && _conversation.empty()) {
+				if (it->decoder->endOfVideo()) {
+					if (it->loop && enableLoopingVideos) {
+						it->decoder->rewind();
+						it->decoder->start();
+					} 
+				} else if (it->decoder->needsUpdate()) {
+					updateScreen(*it);
+				}
+			}
+		}
+
 		uint32 i = 0;
 		videosToRemove.clear();
 		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 
 			if (it->decoder) {
 				if (it->decoder->endOfVideo()) {
-					if (it->loop && enableLoopingVideos) {
-						it->decoder->rewind();
-						it->decoder->start();
-					} else {
-						if (it->scaled || 
-						   (  it->currentFrame->w == _screenW 
-						   && it->currentFrame->h == _screenH 
-						   && it->decoder->getCurFrame() > 0)) {
-							runMenu(*stack.back());
-							drawScreen();
-						}
-						it->decoder->close();
-						delete it->decoder;
-						it->decoder = nullptr;
-						videosToRemove.push_back(i);
+					if (it->scaled || 
+					(  it->currentFrame->w == _screenW 
+					&& it->currentFrame->h == _screenH 
+					&& it->decoder->getCurFrame() > 0)) {
+						runMenu(*stack.back());
+						drawScreen();
 					}
-
+					it->decoder->close();
+					delete it->decoder;
+					it->decoder = nullptr;
+					videosToRemove.push_back(i);
 				} else if (it->decoder->needsUpdate()) {
 					updateScreen(*it);
 				}
@@ -458,7 +473,7 @@ void HypnoEngine::runScene(Scene *scene) {
 			}
 		}
 
-		if (!_videosPlaying.empty() || !_nextSequentialVideoToPlay.empty()) {
+		if (!_videosPlaying.empty() || !_videosLooping.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
 			continue;
 		}
@@ -487,6 +502,11 @@ void HypnoEngine::runScene(Scene *scene) {
 	}
 
 	// Deallocate videos
+	for (Videos::iterator it = _videosLooping.begin(); it != _videosLooping.end(); ++it) {
+		if (it->decoder)
+			skipVideo(*it);
+	}
+
 	for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 		if (it->decoder)
 			skipVideo(*it);
@@ -507,7 +527,6 @@ void HypnoEngine::runScene(Scene *scene) {
 			skipVideo(*it);
 	}
 
-	_nextLoopingVideoToPlay.clear();
 	_nextParallelVideoToPlay.clear();
 	_nextSequentialVideoToPlay.clear();
 	_escapeSequentialVideoToPlay.clear();

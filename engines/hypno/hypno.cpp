@@ -137,6 +137,7 @@ Common::Error HypnoEngine::run() {
 		debug("nextLevel: %s", _nextLevel.c_str());
 		_prefixDir = "";
 		_videosPlaying.clear();
+		_videosLooping.clear();
 		if (!_nextLevel.empty()) {
 			_currentLevel = findNextLevel(_nextLevel);
 			_nextLevel = "";
