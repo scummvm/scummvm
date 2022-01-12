@@ -49,30 +49,29 @@ public:
 	void readNextPacket() override;
 	void close() override;
 
-	void setRegularFrameDelay(uint32 regularFrameDelay) { _regularFrameDelay = regularFrameDelay; }
+	void setRegularFrameDelay(uint32 regularFrameDelay) { _regularFrameDelayMs = regularFrameDelay; }
 
 private:
 	class HNMVideoTrack : public VideoTrack {
 	public:
-		HNMVideoTrack(uint32 frameCount, uint32 regularFrameDelay);
+		HNMVideoTrack(uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate);
 
 		// When _frameCount is 0, it means we are looping
 		bool endOfTrack() const override { return (_frameCount == 0) ? false : VideoTrack::endOfTrack(); }
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
-		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime.msecs(); }
 
-		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
-		void setFrameDelay(uint32 frameDelay);
+		void restart() { _lastFrameDelaySamps = 0; }
+		void newFrame(uint32 frameDelay);
 
 		virtual void decodeChunk(byte *data, uint32 size,
 		                         uint16 chunkType, uint16 flags) = 0;
 
 	protected:
-		uint32 _regularFrameDelay;
-		uint32 _nextFrameDelay;
-		uint32 _nextNextFrameDelay;
-		uint32 _nextFrameStartTime;
+		uint32 _regularFrameDelayMs;
+		uint32 _lastFrameDelaySamps;
+		Audio::Timestamp _nextFrameStartTime;
 
 		uint32 _frameCount;
 		int _curFrame;
@@ -90,7 +89,8 @@ private:
 
 	protected:
 		HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
-		                uint32 regularFrameDelay, const byte *initialPalette = nullptr);
+		                uint32 regularFrameDelayMs, uint32 audioSampleRate,
+		                const byte *initialPalette = nullptr);
 		~HNM45VideoTrack() override;
 
 		/** Decode a video chunk. */
@@ -108,7 +108,8 @@ private:
 	class HNM4VideoTrack : public HNM45VideoTrack {
 	public:
 		HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
-		               uint32 regularFrameDelay, const byte *initialPalette = nullptr);
+		               uint32 regularFrameDelayMs, uint32 audioSampleRate,
+		               const byte *initialPalette = nullptr);
 		~HNM4VideoTrack() override;
 
 		/** Decode a video chunk. */
@@ -128,8 +129,10 @@ private:
 	class HNM5VideoTrack : public HNM45VideoTrack {
 	public:
 		HNM5VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
-		               uint32 regularFrameDelay, const byte *initialPalette = nullptr) :
-			HNM45VideoTrack(width, height, frameSize, frameCount, regularFrameDelay, initialPalette) {}
+		               uint32 regularFrameDelayMs, uint32 audioSampleRate,
+		               const byte *initialPalette = nullptr) :
+			HNM45VideoTrack(width, height, frameSize, frameCount, regularFrameDelayMs, audioSampleRate,
+			                initialPalette) {}
 		/** Decode a video chunk. */
 		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
@@ -145,7 +148,7 @@ private:
 		               Audio::Mixer::SoundType soundType);
 		~DPCMAudioTrack() override;
 
-		Audio::Timestamp decodeSound(byte *data, uint32 size);
+		uint32 decodeSound(byte *data, uint32 size);
 	protected:
 		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
 	private:
@@ -161,7 +164,7 @@ private:
 	bool _loop;
 	byte *_initialPalette;
 
-	uint32 _regularFrameDelay;
+	uint32 _regularFrameDelayMs;
 	// These two pointer are owned by VideoDecoder
 	HNMVideoTrack *_videoTrack;
 	DPCMAudioTrack *_audioTrack;

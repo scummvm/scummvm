@@ -34,7 +34,7 @@
 namespace Video {
 
 // When no sound display a frame every 80ms
-HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelay(80),
+HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelayMs(80),
 	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr),
 	_loop(loop), _initialPalette(initialPalette), _dataBuffer(nullptr), _dataBufferAlloc(0) {
 }
@@ -82,30 +82,35 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		frameCount = 0;
 	}
 
+	// When no audio use a factor of 1 for audio timestamp
+	uint32 audioSampleRate = 1;
+
 	_videoTrack = nullptr;
 	_audioTrack = nullptr;
 	if (tag == MKTAG('H', 'N', 'M', '4')) {
-		_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay,
-		                                 _initialPalette);
 		if (soundFormat == 2 && soundBits != 0) {
 			// HNM4 is Mono 22050Hz
 			_audioTrack = new DPCMAudioTrack(soundFormat, soundBits, 22050, false, getSoundType());
+			audioSampleRate = 22050;
 		}
-	} else if (tag == MKTAG('U', 'B', 'B', '2')) {
-		_videoTrack = new HNM5VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay,
+		_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount,
+		                                 _regularFrameDelayMs, audioSampleRate,
 		                                 _initialPalette);
+	} else if (tag == MKTAG('U', 'B', 'B', '2')) {
 		if (soundFormat == 2 && soundBits == 0) {
 			// UBB2 is Stereo 22050Hz
 			_audioTrack = new DPCMAudioTrack(soundFormat, 16, 22050, true, getSoundType());
+			audioSampleRate = 22050;
 		}
+		_videoTrack = new HNM5VideoTrack(width, height, frameSize, frameCount,
+		                                 _regularFrameDelayMs, audioSampleRate,
+		                                 _initialPalette);
 	} else {
 		// We should never be here
 		close();
 		return false;
 	}
-	if (_videoTrack) {
-		addTrack(_videoTrack);
-	}
+	addTrack(_videoTrack);
 	if (_audioTrack) {
 		addTrack(_audioTrack);
 	}
@@ -158,6 +163,9 @@ void HNMDecoder::readNextPacket() {
 		error("Not enough data in file");
 	}
 
+	// We use -1 here to discrimate a possibly empty sound frame
+	uint32 audioNumSamples = -1;
+
 	byte *data_p = _dataBuffer;
 	while (superchunkRemaining > 0) {
 		if (superchunkRemaining < 8) {
@@ -177,8 +185,7 @@ void HNMDecoder::readNextPacket() {
 
 		if (chunkType == MKTAG16('S', 'D')) {
 			if (_audioTrack) {
-				Audio::Timestamp duration = _audioTrack->decodeSound(data_p, chunkSize - 8);
-				_videoTrack->setFrameDelay(duration.msecs());
+				audioNumSamples = _audioTrack->decodeSound(data_p, chunkSize - 8);
 			} else {
 				warning("Got audio data without an audio track");
 			}
@@ -189,27 +196,40 @@ void HNMDecoder::readNextPacket() {
 		data_p += (chunkSize - 8);
 		superchunkRemaining -= chunkSize;
 	}
+	_videoTrack->newFrame(audioNumSamples);
 }
 
-HNMDecoder::HNMVideoTrack::HNMVideoTrack(uint32 frameCount, uint32 regularFrameDelay) :
-	_frameCount(frameCount), _curFrame(-1),
-	_regularFrameDelay(regularFrameDelay), _nextFrameStartTime(0) {
+HNMDecoder::HNMVideoTrack::HNMVideoTrack(uint32 frameCount,
+        uint32 regularFrameDelayMs, uint32 audioSampleRate) :
+	_frameCount(frameCount), _curFrame(-1), _regularFrameDelayMs(regularFrameDelayMs),
+	_nextFrameStartTime(0, audioSampleRate) {
 	restart();
 }
 
-void HNMDecoder::HNMVideoTrack::setFrameDelay(uint32 frameDelay) {
-	if (_nextFrameDelay == uint32(-1)) {
-		_nextFrameDelay = frameDelay;
-	} else if (_nextNextFrameDelay == uint32(-1)) {
-		_nextNextFrameDelay = frameDelay;
-	} else {
-		_nextNextFrameDelay += frameDelay;
+void HNMDecoder::HNMVideoTrack::newFrame(uint32 frameDelay) {
+	// Frame done
+	_curFrame++;
+
+	// Add frameDelay if we had no sound
+	// We can't rely on a detection in the header as some soundless HNM indicate they have
+	if (frameDelay == uint32(-1)) {
+		_nextFrameStartTime = _nextFrameStartTime.addMsecs(_regularFrameDelayMs);
 	}
+
+	// HNM decoders use sound double buffering to pace the frames
+	// First frame is loaded in first buffer, second frame in second buffer
+	// It's only for third frame that we wait for the first buffer to be free
+	// It's presentation time is then delayed by the number of sound samples in the first frame
+	if (_lastFrameDelaySamps) {
+		_nextFrameStartTime = _nextFrameStartTime.addFrames(_lastFrameDelaySamps);
+	}
+	_lastFrameDelaySamps = frameDelay;
 }
 
 HNMDecoder::HNM45VideoTrack::HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize,
-        uint32 frameCount, uint32 regularFrameDelay, const byte *initialPalette) :
-	HNMVideoTrack(frameCount, regularFrameDelay) {
+        uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate,
+        const byte *initialPalette) :
+	HNMVideoTrack(frameCount, regularFrameDelayMs, audioSampleRate) {
 
 	// Get the currently loaded palette for undefined colors
 	if (initialPalette) {
@@ -281,8 +301,10 @@ void HNMDecoder::HNM45VideoTrack::decodePalette(byte *data, uint32 size) {
 }
 
 HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize,
-        uint32 frameCount, uint32 regularFrameDelay, const byte *initialPalette) :
-	HNM45VideoTrack(width, height, frameSize, frameCount, regularFrameDelay, initialPalette) {
+        uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate,
+        const byte *initialPalette) :
+	HNM45VideoTrack(width, height, frameSize, frameCount,
+	                regularFrameDelayMs, audioSampleRate, initialPalette) {
 
 	_frameBufferF = new byte[frameSize]();
 }
@@ -564,12 +586,6 @@ void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
 	} else {
 		error("HNMDecoder::HNM4VideoTrack::postprocess(%x): Unexpected width: %d", flags, width);
 	}
-
-	// Frame done
-	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
-	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = uint32(-1);
 }
 
 void HNMDecoder::HNM5VideoTrack::decodeChunk(byte *data, uint32 size,
@@ -953,13 +969,6 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	}
 
 	_surface.setPixels(_frameBufferC);
-
-	// Frame done
-	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
-	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = uint32(-1);
-
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
@@ -979,8 +988,7 @@ HNMDecoder::DPCMAudioTrack::~DPCMAudioTrack() {
 	delete _audioStream;
 }
 
-Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
-    byte *data, uint32 size) {
+uint32 HNMDecoder::DPCMAudioTrack::decodeSound(byte *data, uint32 size) {
 	if (!_gotLUT) {
 		if (size < 256 * sizeof(*_lut)) {
 			error("Invalid first sound chunk");
@@ -997,21 +1005,25 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 	}
 
 	if (size == 0) {
-		return Audio::Timestamp(0, 0, _sampleRate);
+		return 0;
 	}
 
 	uint16 *out = (uint16 *)malloc(size * sizeof(*out));
 	uint16 *p = out;
+
+	uint32 numSamples = size;
 
 	byte flags = Audio::FLAG_16BITS;
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
 	if (_audioStream->isStereo()) {
+		numSamples /= 2;
+
 		uint16 sampleL = _lastSampleL;
 		uint16 sampleR = _lastSampleR;
 		byte deltaId;
-		for (uint32 i = 0; i < size / 2; i++, p += 2) {
+		for (uint32 i = 0; i < numSamples; i++, p += 2) {
 			deltaId = *(data++);
 			sampleL += _lut[deltaId];
 			deltaId = *(data++);
@@ -1026,7 +1038,7 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 	} else {
 		uint16 sample = _lastSampleL;
 		byte deltaId;
-		for (uint32 i = 0; i < size; i++, p++) {
+		for (uint32 i = 0; i < numSamples; i++, p++) {
 			deltaId = *(data++);
 			sample += _lut[deltaId];
 			*p = sample;
@@ -1035,7 +1047,7 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(
 	}
 
 	_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
-	return Audio::Timestamp(0, _audioStream->isStereo() ? size / 2 : size, _sampleRate);
+	return numSamples;
 }
 
 } // End of namespace Video
