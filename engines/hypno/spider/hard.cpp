@@ -401,7 +401,7 @@ void SpiderEngine::runRecept(Code *code) {
 void SpiderEngine::runOffice(Code *code) {
 
 	if (!_sceneState["GS_SWITCH6"]) { // lights off
-		MVideo v("spider/cine/toodark.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("cine/toodark.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
 		_nextLevel = "recept.mi_";
 		return;
@@ -416,27 +416,42 @@ void SpiderEngine::runFusePanel(Code *code) {
 
 	defaultCursor();
 	Common::Rect fuses(363, 52, 598, 408);
-	Common::Rect back(0, 446, 640, 480);
+	Common::Rect back(0, 446, 640, 480); 
 
 	if (_sceneState["GS_PUZZLELEVEL"]) { // hard
-		if (isFuseRust) {
-			Common::String intro = "spider/cine/spv029s.smk"; 
+		if (_isFuseRust) {
+			Common::String intro = "cine/spv029s.smk"; 
 			if (!_intros.contains(intro)) {
 				MVideo v(intro, Common::Point(0, 0), false, false, false);
 				runIntro(v);
 				_intros[intro] = true;
 			}
 
-			loadImage("spider/int_alof/fuserust.smk", 0, 0, false, true);
-		} else if (isFuseUnreadable)
-			loadImage("spider/int_alof/fuseclea.smk", 0, 0, false, true);
+			loadImage("int_alof/fuserust.smk", 0, 0, false, true);
+		} else if (_isFuseUnreadable)
+			loadImage("int_alof/fuseclea.smk", 0, 0, false, true);
 		else
-			loadImage("spider/int_alof/fuseread.smk", 0, 0, false, true);
+			loadImage("int_alof/fuseread.smk", 0, 0, false, true);
 
 	} else {
-		isFuseRust = false;
-		isFuseUnreadable = false;
-		loadImage("spider/int_alof/fuse.smk", 0, 0, false, true);
+		_isFuseRust = false;
+		_isFuseUnreadable = false;
+		loadImage("int_alof/fuse.smk", 0, 0, false, true);
+	}
+
+	Frames switches = decodeFrames("int_alof/switches.smk");
+	drawImage(*switches[0], fuses.left, fuses.top, true);
+	float dx = 235 / 2.;
+	float dy = 355 / 10.;
+	Common::Rect cell(0, 0, dx, dy);
+	Common::Point origin(364, 54);
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 10; j++) {
+			cell.moveTo(i*dx, j*dy);
+			Graphics::Surface sub = switches[_fuseState[i][j]]->getSubArea(cell);
+			drawImage(sub, origin.x + i*dx, origin.y + j*dy, true);
+		}
 	}
 
 	while (!shouldQuit()) {
@@ -456,28 +471,37 @@ void SpiderEngine::runFusePanel(Code *code) {
 					return;
 				}
 
-				if (isFuseRust && _sceneState["GS_SWITCH8"]) {
-					MVideo v("spider/cine/spv031s.smk", Common::Point(0, 0), false, false, false);
+				if (_isFuseRust && _sceneState["GS_SWITCH8"]) {
+					MVideo v("cine/spv031s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
-					isFuseRust = false;
-					isFuseUnreadable = true;
-					loadImage("spider/int_alof/fuseclea.smk", 0, 0, false, true);
-				} else if (isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
-					MVideo v("spider/cine/spv032s.smk", Common::Point(0, 0), false, false, false);
+					_isFuseRust = false;
+					_isFuseUnreadable = true;
+					loadImage("int_alof/fuseclea.smk", 0, 0, false, true);
+				} else if (_isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
+					MVideo v("cine/spv032s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
-					isFuseRust = false;
-					isFuseUnreadable = false;
-					loadImage("spider/int_alof/fuseread.smk", 0, 0, false, true);
+					_isFuseRust = false;
+					_isFuseUnreadable = false;
+					loadImage("int_alof/fuseread.smk", 0, 0, false, true);
 				}
 
-				if (isFuseRust || isFuseUnreadable)
+				if (_isFuseRust || _isFuseUnreadable)
 					break;
 
 				if (fuses.contains(mousePos)) {
-					int x = (mousePos.x - 364) / (235 / 2.);
-					int y = (mousePos.y - 54) / (355 / 10.);
-					int s = 10* x + y + 1;
+					int x = (mousePos.x - origin.x) / dx;
+					int y = (mousePos.y - origin.y) / dy;
+					_fuseState[x][y] = !_fuseState[x][y];
 
+					for (int i = 0; i < 2; i++) {
+						for (int j = 0; j < 10; j++) {
+							cell.moveTo(i*dx, j*dy);
+							Graphics::Surface sub = switches[_fuseState[i][j]]->getSubArea(cell);
+							drawImage(sub, origin.x + i*dx, origin.y + j*dy, true);
+						}
+					}
+
+					int s = 10*x + y + 1;
 					if (s == 1) {
 						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"]; 
 					} else if (s == 2) {
@@ -494,6 +518,13 @@ void SpiderEngine::runFusePanel(Code *code) {
 
 				}
 				break;
+
+			case Common::EVENT_MOUSEMOVE:
+				if (back.contains(mousePos))
+					changeCursor(_defaultCursor, 5); // down arrow
+				else
+					defaultCursor();
+
 
 			default:
 				break;

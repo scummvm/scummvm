@@ -327,8 +327,9 @@ private:
 	void runLock(Code *code);
 	void runFuseBox(Code *code);
 
-	bool isFuseRust = true;
-	bool isFuseUnreadable = false;
+	bool _fuseState[2][10] = {};
+	bool _isFuseRust = true;
+	bool _isFuseUnreadable = false;
 	bool ingredients[7] = {};
 };
 
