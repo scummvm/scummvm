@@ -127,9 +127,9 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 
 	load_puffer = load_p;
 	virt_screen = vscreen + 4;
+
 	if (flic_header.load(rs)) {
 		if (flic_header.type == FLC) {
-
 			key = 0;
 			//trace_mode = false;
 			fade_flag = false;
