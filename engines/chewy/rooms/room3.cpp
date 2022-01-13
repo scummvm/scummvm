@@ -133,7 +133,7 @@ void Room3::init_sonde() {
 	mov_phasen[SONDE_OBJ].ZoomFak = 20;
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = 1;
+	auto_mov_obj[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT);
 }
 
@@ -162,7 +162,7 @@ void Room3::sonde_knarre() {
 	mov_phasen[SONDE_OBJ].ZoomFak = 20;
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = 1;
+	auto_mov_obj[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine
 		*)sonde_mpkt1);
 	flags.AniUserAction = false;
@@ -276,7 +276,7 @@ void Room3::probeTransfer() {
 	mov_phasen[SONDE_OBJ].ZoomFak = 20;
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = 1;
+	auto_mov_obj[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines,
 		(const MovLine *)SONDE_MPKT1);
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
@@ -301,14 +301,14 @@ void Room3::probeTransfer() {
 		mov_phasen[SONDE_OBJ].Repeat = 1;
 		mov_phasen[SONDE_OBJ].ZoomFak = 0;
 		auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
-		auto_mov_obj[SONDE_OBJ].Mode = 1;
+		auto_mov_obj[SONDE_OBJ].Mode = true;
 		auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, SONDE_MPKT_[i]);
 		mov_phasen[SONDE_OBJ1].Lines = 2;
 		mov_phasen[SONDE_OBJ1].Repeat = 1;
 		mov_phasen[SONDE_OBJ1].ZoomFak = 0;
 		auto_mov_obj[SONDE_OBJ1].Id = AUTO_OBJ1;
-		auto_mov_obj[SONDE_OBJ1].Mode = 1;
+		auto_mov_obj[SONDE_OBJ1].Mode = true;
 		auto_mov_vector[SONDE_OBJ1].Delay = _G(spieler).DelaySpeed;
 		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ1].Lines, SONDE_MPKT_[i]);
 		mov_phasen[SONDE_OBJ1].Phase[0][0] = spr_nr;

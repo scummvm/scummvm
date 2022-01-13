@@ -61,7 +61,7 @@ void MainMenu::execute() {
 		cursor_wahl(20);
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
-		_G(spieler).PersonRoomNr[0] = 98;
+		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
 		room->load_room(&room_blk, 98, &_G(spieler));
 		ERROR
 
@@ -70,7 +70,7 @@ void MainMenu::execute() {
 		fx->border(workpage, 100, 0, 0);
 
 		out->set_palette(pal);
-		_G(spieler).PersonHide[0] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		show_cur();
 
 		// Wait for a selection to be made on the main menu
@@ -213,7 +213,7 @@ void MainMenu::startGame() {
 	_G(spieler).DisplayText = displayText;
 	_G(spieler).soundLoopMode = sndLoopMode;
 
-	_G(spieler).PersonRoomNr[0] = 0;
+	_G(spieler).PersonRoomNr[P_CHEWY] = 0;
 	room->load_room(&room_blk, 0, &_G(spieler));
 	ERROR
 
@@ -221,7 +221,7 @@ void MainMenu::startGame() {
 	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];
 	set_person_pos(160, 80, 0, 1);
 	fx_blend = BLEND3;
-	_G(spieler).PersonHide[P_CHEWY] = 0;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	menu_item = 0;
 	cursor_wahl(0);
 	enter_room(-1);

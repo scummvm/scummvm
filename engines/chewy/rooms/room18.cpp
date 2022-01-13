@@ -192,7 +192,7 @@ int16 Room18::calc_surimy() {
 		mov_phasen[SURIMY_OBJ].ZoomFak = 0;
 		auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
-		auto_mov_obj[SURIMY_OBJ].Mode = 1;
+		auto_mov_obj[SURIMY_OBJ].Mode = true;
 		if (spieler_vector[P_CHEWY].Xypos[1] < 150) {
 			start_detail_frame(18, 1, ANI_VOR, 8);
 

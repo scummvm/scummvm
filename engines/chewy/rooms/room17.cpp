@@ -182,7 +182,7 @@ void Room17::calc_seil() {
 					mov_phasen[CHEWY_OBJ].ZoomFak = 0;
 					auto_mov_obj[CHEWY_OBJ].Id = AUTO_OBJ0;
 					auto_mov_vector[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
-					auto_mov_obj[CHEWY_OBJ].Mode = 1;
+					auto_mov_obj[CHEWY_OBJ].Mode = true;
 					if (_G(spieler).R17Location == 1) {
 						kletter_down();
 						_G(spieler).R17Location = 3;

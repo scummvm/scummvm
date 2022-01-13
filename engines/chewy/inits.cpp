@@ -160,7 +160,7 @@ void var_init() {
 	for (i = 0; i < MAX_PERSON; i++) {
 		PersonAni[i] = -1;
 		PersonTaf[i] = 0;
-		spieler_mi[i].Mode = 0;
+		spieler_mi[i].Mode = false;
 
 		ani_stand_flag[i] = false;
 		spz_delay[i] = 0;

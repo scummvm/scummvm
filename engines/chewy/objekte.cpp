@@ -190,7 +190,7 @@ void objekt::sort() {
 			if (Rmo[i].RoomNr == 255) {
 				++spieler_invnr[0];
 				spieler_invnr[spieler_invnr[0]] = i;
-			} else if (Rmo[i].RoomNr == Player->PersonRoomNr[0]) {
+			} else if (Rmo[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 				++mov_obj_room[0];
 				mov_obj_room[mov_obj_room[0]] = i;
 			}
@@ -212,7 +212,7 @@ int16 objekt::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 ret;
 	ret = -1;
 	for (i = 0; i < max_static_inventar && ret == -1; i++) {
-		if (Rsi[i].RoomNr == Player->PersonRoomNr[0] && Rsi[i].HideSib == false) {
+		if (Rsi[i].RoomNr == Player->PersonRoomNr[P_CHEWY] && Rsi[i].HideSib == false) {
 			if (mouse_x >= Rsi[i].X &&
 			        mouse_x <= (Rsi[i].X + Rsi[i].XOff) &&
 			        mouse_y >= Rsi[i].Y &&
@@ -365,7 +365,7 @@ void objekt::calc_static_detail(int16 det_nr) {
 	int16 n;
 	ani_detail_info *adi;
 
-	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[0]) {
+	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 		nr = Rsi[det_nr].StaticAk;
 		if (nr != -1) {
 			if (nr >= 30000) {
@@ -540,7 +540,7 @@ void objekt::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
 
 	++mov_obj_room[0];
 	mov_obj_room[mov_obj_room[0]] = nr;
-	Player->room_m_obj[nr].RoomNr = Player->PersonRoomNr[0];
+	Player->room_m_obj[nr].RoomNr = Player->PersonRoomNr[P_CHEWY];
 	Player->room_m_obj[nr].X = x;
 	Player->room_m_obj[nr].Y = y;
 	Player->room_m_obj[nr].AutoMov = automov;
@@ -564,7 +564,7 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 i;
 	ret = -1;
 	for (i = 0; i < max_exit && ret == -1; i++) {
-		if (Re[i].RoomNr == Player->PersonRoomNr[0]) {
+		if (Re[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 			if (mouse_x >= Re[i].X &&
 			        mouse_x <= (Re[i].X + Re[i].XOff) &&
 			        mouse_y >= Re[i].Y &&

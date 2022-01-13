@@ -78,7 +78,7 @@ void Room6::init_robo() {
 	mov_phasen[ROBO_OBJ].ZoomFak = 0;
 	auto_mov_obj[ROBO_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[ROBO_OBJ].Mode = 1;
+	auto_mov_obj[ROBO_OBJ].Mode = true;
 	init_auto_obj(ROBO_OBJ, &R6_ROBO_PHASEN[0][0], mov_phasen[ROBO_OBJ].Lines,
 		(const MovLine *)R6_ROBO_MPKT);
 }

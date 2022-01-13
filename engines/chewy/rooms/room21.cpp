@@ -114,7 +114,7 @@ void Room21::init_spinne() {
 	mov_phasen[SPINNE1_OBJ].ZoomFak = 0;
 	auto_mov_obj[SPINNE1_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SPINNE1_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SPINNE1_OBJ].Mode = 1;
+	auto_mov_obj[SPINNE1_OBJ].Mode = true;
 	init_auto_obj(SPINNE1_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE1_OBJ].Lines, (const MovLine *)SPINNE_MPKT);
 
 	mov_phasen[SPINNE2_OBJ].AtsText = 130;
@@ -123,7 +123,7 @@ void Room21::init_spinne() {
 	mov_phasen[SPINNE2_OBJ].ZoomFak = 0;
 	auto_mov_obj[SPINNE2_OBJ].Id = AUTO_OBJ1;
 	auto_mov_vector[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SPINNE2_OBJ].Mode = 1;
+	auto_mov_obj[SPINNE2_OBJ].Mode = true;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
 	_G(timer_nr)[0] = room->set_timer(255, 21);
 	_G(e_streifen) = false;
@@ -144,7 +144,7 @@ void Room21::e_streifen() {
 	mov_phasen[ENERGIE_OBJ].ZoomFak = 0;
 	auto_mov_obj[ENERGIE_OBJ].Id = AUTO_OBJ2;
 	auto_mov_vector[ENERGIE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[ENERGIE_OBJ].Mode = 1;
+	auto_mov_obj[ENERGIE_OBJ].Mode = true;
 	init_auto_obj(ENERGIE_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[ENERGIE_OBJ].Lines, (const MovLine *)SPINNE_MPKT2);
 }
 

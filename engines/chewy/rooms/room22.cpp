@@ -103,7 +103,7 @@ void Room22::bork(int16 t_nr) {
 			mov_phasen[BORK_OBJ].ZoomFak = 0;
 			auto_mov_obj[BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-			auto_mov_obj[BORK_OBJ].Mode = 1;
+			auto_mov_obj[BORK_OBJ].Mode = true;
 			if (!_G(spieler).R22Paint) {
 				bork_walk1();
 			} else {
