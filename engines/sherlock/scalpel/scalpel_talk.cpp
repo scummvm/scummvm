@@ -187,10 +187,11 @@ void ScalpelTalk::talkTo(const Common::String filename) {
 		// WORKAROUND: Original game bug causes the results of testing the powdery substance
 		// to disappear too quickly. Introduce a delay to allow it to be properly displayed
 		ui._menuCounter = 30;
-	} else if (filename == "Lesl24z.tlk") {
-		// WORKAROUND: Walking to the flower girl the first time triggers
-		// this automatic talk. This should abort any other action, such
-		// as trying to look at her, else the UI gets corrupted
+	} else if (filename == "Lesl24z.tlk" || filename == "Beal40y.tlk") {
+		// WORKAROUND: Walking to the flower girl or housekeeper the
+		// first time triggers this automatic talk. This should abort
+		// any other action, such as trying to look at her, else the UI
+		// gets corrupted
 		_talkToAbort = true;
 	}
 }
