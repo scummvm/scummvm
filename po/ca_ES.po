@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
-"PO-Revision-Date: 2021-12-09 15:18+0000\n"
+"PO-Revision-Date: 2022-01-13 00:00+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4626,7 +4626,7 @@ msgstr ""
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Aquest  és massa curt per a ser un fitxer Glulx vàlid."
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
