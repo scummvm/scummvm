@@ -623,7 +623,7 @@ void Engine::saveAutosaveIfEnabled() {
 	} else {
 		// Set the next autosave interval to be in 5 minutes, rather than whatever
 		// full autosave interval the user has selected
-		_lastAutosaveTime += (5 * 60 * 1000) - _autosaveInterval;
+		_lastAutosaveTime += ((5 * 60 - _autosaveInterval) * 1000);
 	}
 	_autoSaving = false;
 }
