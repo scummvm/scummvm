@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:02+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -4633,7 +4633,7 @@ msgstr "El fitxer Glulx es massa antic per executar-se."
 
 #: engines/glk/glulx/glulx.cpp:97
 msgid "This Glulx file is too new a version to execute."
-msgstr "Aquest fitxer Glulx es una versió massa nova per executar-se."
+msgstr "El fitxer Glulx es una versió massa nova per executar-se."
 
 #: engines/glk/quest/quest.cpp:44
 #, fuzzy
