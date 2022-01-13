@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:08+0000\n"
-"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
+"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -6237,7 +6237,7 @@ msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1434
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "El format d'aquest joc desat és obsolet, no es pot carregar"
 
 #: engines/sci/engine/savegame.cpp:1436
 #, c-format
