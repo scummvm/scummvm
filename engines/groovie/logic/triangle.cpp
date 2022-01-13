@@ -396,7 +396,7 @@ void TriangleGame::sub07(int8 *tempMoves, int8 *triangleCells, int8 *tempTriangl
 
 int8 TriangleGame::sub09(int8 player, int8 *tempTriangle2, int8 *tempTriangle1, int8 *a4, int8 *triangleCells) {
 	int8 movesTable[280];
-
+	
 	int numDir1 = 0;
 	int numDir2 = 0;
 	int numDir3 = 0;
@@ -477,7 +477,8 @@ int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
 	int8 *destPtr;
 	byte mask;
 	int counter;
-	int8 dest[76];
+	int8 dest1[8];
+	int8 dest2[68];
 
 	mask = 0;
 	counter = 0;
@@ -489,14 +490,14 @@ int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
 
 	for (int i = 0; i < 66; ++i) {
 		if (!triangleCells[i] && (mask & (byte)a2[i]) != 0) {
-			copyLogicRow(i, player, dest);
+			copyLogicRow(i, player, dest1);
 
-			destPtr = dest;
+			destPtr = dest1;
 
 			while (*destPtr != 66) {
 				if ((a2[*destPtr] & 0xE) == 0xE) {
+					dest2[counter] = i;
 					counter++;
-					dest[counter + 8] = i;
 					break;
 				}
 
@@ -506,7 +507,7 @@ int8 TriangleGame::sub10(int8 player, int8 *a2, int8 *triangleCells) {
 	}
 
 	if (counter)
-		return dest[_random.getRandomNumber(counter - 1) + 8];
+		return dest2[_random.getRandomNumber(counter - 1)];
 
 	return 66;
 }
@@ -686,8 +687,11 @@ int TriangleGame::sub13(int8 row, int8 *triangleCells, int8 *moves) {
 }
 
 void TriangleGame::setCell(int8 cellnum, int8 val) {
+	assert(cellnum >= 0);
+	assert(cellnum < 66);
 	if (cellnum >= 0 && cellnum < 66) {
 		++_triangleCellCount;
+		assert(_triangleCells[cellnum] == 0);
 		_triangleCells[cellnum] = val;
 	}
 }
@@ -753,7 +757,7 @@ void TriangleGame::collapseLoops(int8 *route, int8 *singleRow) {
 		route[len] = 66;
 }
 
-void TriangleGame::testGame(uint32 seed, Common::Array<uint8> moves, bool playerWin) {
+bool TriangleGame::testGame(uint32 seed, const Common::Array<uint8> moves, bool playerWin) {
 	byte vars[1024];
 	byte &op = vars[3];
 	byte &move10s = vars[0];
@@ -772,8 +776,11 @@ void TriangleGame::testGame(uint32 seed, Common::Array<uint8> moves, bool player
 		if (i % 2) {
 			// check Stauf's move
 			uint8 move = ((uint)move10s * 10) + (uint)move1s;
-			if (move != moves[i])
+			if (move != moves[i]) {
 				error("%u: bad Stauf move: %d", (int)i, (int)move);
+				// return false here is useful for finding the right seed to test
+				return false;
+			}
 			continue;
 		}
 
@@ -794,6 +801,7 @@ void TriangleGame::testGame(uint32 seed, Common::Array<uint8> moves, bool player
 		error("Stauf didn't win, winner: %d", (int)winner);
 
 	warning("finished TriangleGame::testGame(%u, %u, %d)", seed, moves.size(), (int)playerWin);
+	return true;
 }
 
 void TriangleGame::ensureSamanthaWin(uint32 seed) {
@@ -827,21 +835,64 @@ void TriangleGame::ensureSamanthaWin(uint32 seed) {
 	warning("finished TriangleGame::ensureSamanthaWin(%u)", seed);
 }
 
+void TriangleGame::testPlayRandomly(uint32 seed) {
+	byte vars[1024];
+	byte &op = vars[3];
+	byte &move10s = vars[0];
+	byte &move1s = vars[1];
+	byte &winner = vars[3];
+
+	op = 3;
+	run(vars);
+
+	warning("starting TriangleGame::testPlayRandomly(%u)", seed);
+	_random.setSeed(seed);
+
+	for (int i = 0; i < 100; i++) {
+		// Player make random move
+		uint8 move = 0;
+		do {
+			move = _random.getRandomNumber(65);
+		} while (_triangleCells[move]);
+
+		move10s = move / 10;
+		move1s = move % 10;
+		op = 0;
+		run(vars);
+		if (winner)
+			break;
+
+		// Stauf
+		op = 5;
+		run(vars);
+		if (winner)
+			break;
+	}
+
+	if (winner != 1)
+		error("Stauf didn't win, winner: %d", (int)winner);
+
+	warning("finished TriangleGame::testPlayRandomly(%u)", seed);
+}
+
 void TriangleGame::test() {
 	warning("starting TriangleGame::test");
 	uint32 oldSeed = _random.getSeed();
 
 	// Samantha appears to not always win, but she usually does, and she wins these seeds
 	// haven't verified if she always wins in the original game
-	for (int i = 100; i < 105; i++)
+	for (uint32 i = 100; i < 105; i++)
 		ensureSamanthaWin(i);
+
+	// Similar thing here, technically there might be a seed where the player wins, but Stauf should win the vast majority of them
+	for (uint32 i = 200; i < 205; i++)
+		testPlayRandomly(i);
 
 	testGame(1, {24, 32, 30, 42, 37, 53, 45, 39, 19, 47, 20, 56, 55, 59, 36, 49, 29, 46, 23, 38, 18}, true);
 	testGame(1, {24, 32, 30, 42, 37, 53, 19, 39, 45, 47, 46, 59, 56, 49, 38, 48, 31, 40, 25, 50, 20}, true);
 	testGame(2, {24, 31, 33, 38, 43, 46, 16, 41, 54, 52, 64, 61, 53, 37, 42, 51, 32, 40, 23, 60, 15}, true);
 	testGame(2, {24, 31, 33, 38, 43, 46, 16, 41, 53, 52, 64, 61, 54, 37, 34, 50, 25, 36, 17, 0, 10}, true);
-	testGame(3, {24, 32, 17, 42, 23, 53, 16, 39, 11, 29, 10, 44, 6, 33, 7, 63, 12, 28, 18, 31, 13, 204, 8, 204, 4, 38, 3, 43}, false);
-	testGame(3, {6, 32, 10, 42, 11, 53, 7, 23, 3, 15, 12, 22, 18, 43, 13, 33, 8, 35, 4, 31, 1, 204, 17, 204, 16, 204, 19, 63 }, false);
+	testGame(40680, {0, 24, 1, 12, 2, 4, 3, 5, 6, 30, 7, 9, 8, 29, 10, 13, 11, 47, 14, 18, 20, 37, 19, 36, 27, 57, 26, 31}, false);
 
 	_random.setSeed(oldSeed);
 	warning("finished TriangleGame::test");
