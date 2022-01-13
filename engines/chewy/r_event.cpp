@@ -95,7 +95,7 @@ void timer_action(int16 t_nr) {
 	if (ailsnd->isSpeechActive())
 		return;
 
-#define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr)
+#define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr); break;
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	TIMER(0);
 	TIMER(11);
