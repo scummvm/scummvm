@@ -204,13 +204,16 @@ void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
 	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
 
+	Common::Rect letterBoxES(22, 442, 554, 455); 
+	Common::Rect letterBoxEN(22, 442, 535, 455); 
+
 	const char solEasyES1[] = "hable cpn el svtp z talwe a";
 	const char solEasyES2[] = "masz jane";
 	char placeEasyES[] = "????? ??? ?? ???? ? ????? ?";
 
-	const char solEasyEN1[] = "talk with the russian and save";
+	const char solEasyEN1[] = "speak with russian and save";
 	const char solEasyEN2[] = "mary jane";
-	char placeEasyEN[] = "????? ???? ??????? ????? ??? ????";
+	char placeEasyEN[] = "????? ???? ??????? ??? ????";
 
 	char placeEasy2[] = "???? ????";
 
@@ -235,10 +238,12 @@ void SpiderEngine::runNote(Code *code) {
 	char *secondSentence;
 	Common::String firstSolution;
 	Common::String secondSolution;
+	Common::Rect letterBox;
 
 	switch (_language) {
 	case Common::EN_USA:
 		alpha = alphaEN;
+		letterBox = letterBoxEN;
 		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 			firstSentence = (char*) &placeEasyEN;
 			secondSentence = (char*) &placeEasy2;
@@ -254,6 +259,7 @@ void SpiderEngine::runNote(Code *code) {
 	
 	case Common::ES_ESP:
 		alpha = alphaES;
+		letterBox = letterBoxES;
 		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 			firstSentence = (char*) &placeEasyES;
 			secondSentence = (char*) &placeEasy2;
@@ -272,22 +278,21 @@ void SpiderEngine::runNote(Code *code) {
 	}
 
 	float firstSentenceLength = strlen(firstSentence);
-	float secondSentenceLength = strlen(secondSentence);
-	Common::Rect letterBox(22, 442, 554, 455); 
+	float secondSentenceLength = strlen(secondSentence); 
 	Common::Rect firstSentenceBox(21, 140, 560, 162); 
 	Common::Rect secondSentenceBox(21, 140, 196, 201); 
 
-	Frames letters = decodeFrames("spider/int_ball/letters.smk");
+	Frames letters = decodeFrames("int_ball/letters.smk");
 	Common::Point size(letters[0]->w, letters[0]->h); 
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		MVideo v("spider/int_ball/ppv007es.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("int_ball/ppv007es.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/int_ball/enote.smk", 0, 0, false, true);
+		loadImage("int_ball/enote.smk", 0, 0, false, true);
 	} else { // hard
-		MVideo v("spider/int_ball/ppv007hs.smk", Common::Point(0, 0), false, false, false);
+		MVideo v("int_ball/ppv007hs.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
-		loadImage("spider/int_ball/hnote.smk", 0, 0, false, true);
+		loadImage("int_ball/hnote.smk", 0, 0, false, true);
 	}
 	
 	while (!shouldQuit() && _nextLevel.empty()) {
@@ -312,6 +317,7 @@ void SpiderEngine::runNote(Code *code) {
 				if (letterBox.contains(mousePos)) {
 					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
 					selected = alpha[idx];
+					changeCursor("int_ball/letters.smk", idx);
 					//debug("%s", selected.c_str());
 				} else if (firstSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {
@@ -362,11 +368,11 @@ void SpiderEngine::runNote(Code *code) {
 		}
 
 		if (firstSentence == firstSolution && secondSentence == secondSolution) {
-			if (_sceneState["GS_PUZZLELEVEL"] == 0 && Common::File::exists("spider/int_ball/ppv008es.smk")) {
-				MVideo v("spider/int_ball/ppv008es.smk", Common::Point(0, 0), false, false, false);
+			if (_sceneState["GS_PUZZLELEVEL"] == 0) {
+				MVideo v("cine/ppv008es.smk", Common::Point(0, 0), false, false, false);
 				runIntro(v);
-			} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && Common::File::exists("spider/int_ball/ppv008hs.smk")) {
-				MVideo v("spider/int_ball/ppv008hs.smk", Common::Point(0, 0), false, false, false);
+			} else if (_sceneState["GS_PUZZLELEVEL"] == 1) {
+				MVideo v("cine/ppv008hs.smk", Common::Point(0, 0), false, false, false);
 				runIntro(v);
 			}
 

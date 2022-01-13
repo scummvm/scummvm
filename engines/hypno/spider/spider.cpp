@@ -572,6 +572,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	Code *note = new Code();
 	note->name = "<note>";
 	note->levelIfWin = "coat.mi_";
+	note->intros.push_back("cine/dia005s.smk");
 	note->prefix = prefix;
 	_levels["<note>"] = note;
 
@@ -612,6 +613,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("movie2.mi_", "decide5.mi_", prefix);
 	_levels["movie2.mi_"]->intros.push_back("cine/vrfs003s.smk");
+	_levels["movie2.mi_"]->intros.push_back("cine/imsd017s.smk");
 	loadSceneLevel("decide5.mi_", "", prefix);
 	sc = (Scene *) _levels["decide5.mi_"];
 
