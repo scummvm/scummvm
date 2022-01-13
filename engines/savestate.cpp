@@ -95,7 +95,16 @@ bool SaveStateDescriptor::isAutosave() const {
 
 bool SaveStateDescriptor::hasAutosaveName() const
 {
-	return _description.contains(_("Autosave"));
+	const Common::U32String &autosave = _("Autosave");
+
+	// if the save file name is long enough, just check if it starts with "Autosave"
+	if (_description.size() >= autosave.size())
+		return _description.substr(0, autosave.size()) == autosave;
+
+	// if the save name has been trimmed, as long as it isn't too short, use fallback logic
+	if (_description.size() < 14)
+		return false;
+	return autosave.substr(0, _description.size()) == _description;
 }
 
 bool SaveStateDescriptor::isValid() const
