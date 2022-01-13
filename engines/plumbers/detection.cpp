@@ -71,11 +71,11 @@ public:
 	PlumbersMetaEngineDetection() : AdvancedMetaEngineDetection(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "plumbers";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Plumbers Don't Wear Ties";
 	}
 

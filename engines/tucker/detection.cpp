@@ -121,11 +121,11 @@ public:
 		_md5Bytes = 512;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "tucker";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Bud Tucker in Double Trouble";
 	}
 

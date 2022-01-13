@@ -55,14 +55,6 @@ const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
 
-const char *Plugin::getEngineId() const {
-	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
-		return get<MetaEngineDetection>().getEngineId();
-	}
-
-	return nullptr;
-}
-
 StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) {
 	assert(pluginobject);
 	assert(type < PLUGIN_TYPE_MAX);
@@ -297,16 +289,16 @@ const Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	const Plugin *enginePlugin = nullptr;
 
 	// Use the engineID from MetaEngine for comparison.
-	Common::String metaEnginePluginName = plugin->getEngineId();
+	Common::String metaEnginePluginName = plugin->getName();
 
 	enginePlugin = PluginMan.findEnginePlugin(metaEnginePluginName);
 
 	if (enginePlugin) {
-		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
+		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->get<MetaEngineDetection>().getEngineName(), enginePlugin->getFileName());
 		return enginePlugin;
 	}
 
-	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
+	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->get<MetaEngineDetection>().getEngineName());
 	return nullptr;
 }
 
@@ -322,7 +314,7 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	Common::String enginePluginName(plugin->getName());
 
 	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		Common::String metaEngineName = (*itr)->getEngineId();
+		Common::String metaEngineName = (*itr)->getName();
 
 		if (metaEngineName.equalsIgnoreCase(enginePluginName)) {
 			metaEngine = (*itr);
@@ -331,7 +323,7 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	}
 
 	if (metaEngine) {
-		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
+		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->get<MetaEngineDetection>().getEngineName());
 		return metaEngine;
 	}
 
@@ -683,7 +675,7 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
 
 			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 			if (pluginResult.gameId) {
-				results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
+				results.push_back(QualifiedGameDescriptor(engine.getName(), pluginResult));
 			}
 		}
 	} else {
@@ -713,7 +705,7 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 
 		if (pluginResult.gameId) {
-			results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
+			results.push_back(QualifiedGameDescriptor(engine.getName(), pluginResult));
 		}
 	}
 
@@ -815,7 +807,7 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	const PluginList &plugins = getPlugins();
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngineDetection>().getEngineId())
+		if (engineId == (*iter)->get<MetaEngineDetection>().getName())
 			return *iter;
 
 	return nullptr;
@@ -887,7 +879,7 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 	if (plugin)
 		*plugin = foundPlugin;
 
-	return QualifiedGameDescriptor(engine.getEngineId(), desc);
+	return QualifiedGameDescriptor(engine.getName(), desc);
 }
 
 void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const {
@@ -951,7 +943,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
-			        metaEngine.getEngineId(), path.c_str(), target.c_str());
+			        metaEngine.getName(), path.c_str(), target.c_str());
 			return;
 		}
 

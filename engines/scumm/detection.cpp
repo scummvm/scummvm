@@ -69,7 +69,7 @@ using namespace Scumm;
 
 class ScummMetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "scumm";
 	}
 
@@ -77,7 +77,7 @@ public:
 		return debugFlagList;
 	}
 
-	const char *getName() const override;
+	const char *getEngineName() const override;
 	const char *getOriginalCopyright() const override;
 
 	PlainGameList getSupportedGames() const override;
@@ -131,7 +131,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 
-		DetectedGame game = DetectedGame(getEngineId(), x->game.gameid, g->description, x->language, x->game.platform, x->extra);
+		DetectedGame game = DetectedGame(getName(), x->game.gameid, g->description, x->language, x->game.platform, x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
@@ -146,7 +146,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 	return detectedGames;
 }
 
-const char *ScummMetaEngineDetection::getName() const {
+const char *ScummMetaEngineDetection::getEngineName() const {
 	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)

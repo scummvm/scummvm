@@ -962,10 +962,10 @@ static void listGames(const Common::String &engineID) {
 			continue;
 		}
 
-		if (all || (p->getEngineId() == engineID)) {
+		if (all || (p->getName() == engineID)) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -982,10 +982,10 @@ static void listAllGames(const Common::String &engineID) {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		if (any || (metaEngine.getEngineId() == engineID)) {
+		if (any || (metaEngine.getName() == engineID)) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -1004,7 +1004,7 @@ static void listEngines() {
 			continue;
 		}
 
-		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
+		printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
 	}
 }
 
@@ -1016,7 +1016,7 @@ static void listAllEngines() {
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("%-15s %s\n", metaEngine.getName(), metaEngine.getEngineName());
 	}
 }
 
@@ -1070,10 +1070,10 @@ static void listDebugFlags(const Common::String &engineID) {
 		const PluginList &plugins = EngineMan.getPlugins();
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-			if (metaEngine.getEngineId() == engineID) {
+			if (metaEngine.getName() == engineID) {
 				printf("Flag name       Flag description                                           \n");
 				printf("--------------- ------------------------------------------------------\n");
-				printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+				printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 				printDebugFlags(metaEngine.getDebugChannels());
 				return;
 			}
@@ -1090,7 +1090,7 @@ static void listAllEngineDebugFlags() {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("--------------- ------------------------------------------------------\n");
-		printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 		printDebugFlags(metaEngine.getDebugChannels());
 	}
 }

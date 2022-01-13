@@ -46,11 +46,11 @@ public:
 	TSageMetaEngineDetection() : AdvancedMetaEngineDetection(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "tsage";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "TsAGE";
 	}
 

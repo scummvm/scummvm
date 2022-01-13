@@ -75,11 +75,11 @@ public:
 		_directoryGlobs = Buried::directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "buried";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "The Journeyman Project 2: Buried in Time";
 	}
 

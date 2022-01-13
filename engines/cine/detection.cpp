@@ -77,11 +77,11 @@ public:
 		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cine";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Cinematique evo 1";
 	}
 

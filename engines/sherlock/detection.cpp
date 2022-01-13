@@ -148,11 +148,11 @@ public:
 	SherlockMetaEngineDetection() : AdvancedMetaEngineDetection(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sherlock";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Sherlock";
 	}
 
