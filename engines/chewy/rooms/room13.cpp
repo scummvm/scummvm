@@ -98,7 +98,7 @@ void Room13::talk_bork() {
 		mov_phasen[R13_BORK_OBJ].ZoomFak = 0;
 		auto_mov_obj[R13_BORK_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-		auto_mov_obj[R13_BORK_OBJ].Mode = 1;
+		auto_mov_obj[R13_BORK_OBJ].Mode = true;
 		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], mov_phasen[R13_BORK_OBJ].Lines,
 			(const MovLine *)R13_BORK_MPKT);
 		auto_move(9, P_CHEWY);

@@ -505,7 +505,7 @@ void enter_room(int16 eib_nr) {
 
 	flags.ZoomMov = false;
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).ZoomXy[P_CHEWY][ 0] = (int16)room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)room->room_info->ZoomFak;
 	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->room_info->ZoomFak;
 
 	uhr->reset_timer(0, 0);
@@ -2002,7 +2002,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(cur_hide_flag) = false;
 		hide_cur();
 		start_aad_wait(406, -1);
-		if (_G(spieler).PersonRoomNr[1] == 66)
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 66)
 			start_aad_wait(613, -1);
 		break;
 

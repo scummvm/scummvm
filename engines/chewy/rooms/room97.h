@@ -26,9 +26,17 @@ namespace Chewy {
 namespace Rooms {
 
 class Room97 {
+private:
+	static bool r97_bool18DB32;
+	static int r97_word18DB2E;
+	static int r97_word18DB34;
+	static int r97_word18DB36;
+	static int r97_word18DB38;
+
 public:
 	static void entry();
 	static void xit();
+	static void setup_func();
 	static void proc2();
 	static void proc3();
 	static void proc4();

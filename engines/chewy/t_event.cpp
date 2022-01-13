@@ -2121,7 +2121,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			invent_2_slot(K_KERNE_INV);
 		} else if (_G(spieler).AkInvent == 88) {
 			_G(spieler).flags26_10 = true;
-			start_aad_wait(_G(spieler).PersonRoomNr[0] + 350, -1);
+			start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		}
 		break;
 
@@ -2162,7 +2162,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).flags26_10 = true;
 		flags.InventMenu = false;
 		start_spz(5, 255, 0, 0);
-		start_aad_wait(_G(spieler).PersonRoomNr[0] + 350, -1);
+		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		flags.InventMenu = true;
 		atds->set_ats_str(88, 1, 6);
 		break;

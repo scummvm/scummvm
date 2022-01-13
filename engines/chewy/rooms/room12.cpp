@@ -113,7 +113,7 @@ void Room12::init_bork() {
 			mov_phasen[R12_BORK_OBJ].ZoomFak = (int16)room->room_info->ZoomFak + 20;
 			auto_mov_obj[R12_BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-			auto_mov_obj[R12_BORK_OBJ].Mode = 1;
+			auto_mov_obj[R12_BORK_OBJ].Mode = true;
 			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
 				(const MovLine *)R12_BORK_MPKT);
 			if (!_G(spieler).R12TalismanOk) {

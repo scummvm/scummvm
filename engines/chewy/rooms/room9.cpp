@@ -98,7 +98,7 @@ void Room9::surimy_ani() {
 	mov_phasen[SURIMY_OBJ].ZoomFak = 0;
 	auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SURIMY_OBJ].Mode = 1;
+	auto_mov_obj[SURIMY_OBJ].Mode = true;
 	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
 		(const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
