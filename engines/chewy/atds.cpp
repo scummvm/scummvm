@@ -80,12 +80,6 @@ atdsys::atdsys() {
 	inv_block_nr = -1;
 	inv_use_mem = nullptr;
 	inzeig = in->get_in_zeiger();
-
-	for (i = 0; i < MAX_HANDLE; i++) {
-		atdshandle[i] = 0;
-		atdsmem[i] = 0;
-		atdspooloff[i] = 0;
-	}
 }
 
 atdsys::~atdsys() {

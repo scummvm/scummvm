@@ -319,34 +319,34 @@ public:
 private:
 	int16 get_delay(int16 txt_len);
 
-	Stream *atdshandle[MAX_HANDLE];
-	char *atdsmem[MAX_HANDLE];
-	int16 atdspooloff[MAX_HANDLE];
-	char *atsmem;
-	uint8 *ats_sheader;
+	Stream *atdshandle[MAX_HANDLE] = { nullptr };
+	char *atdsmem[MAX_HANDLE] = { nullptr };
+	int16 atdspooloff[MAX_HANDLE] = { 0 };
+	char *atsmem = nullptr;
+	uint8 *ats_sheader = nullptr;
 	uint8 *ats_st_header[4];
-	char *atds_id_ptr;
+	char *atds_id_ptr = nullptr;
 	AadVar aadv;
 	AtsVar atsv;
 	AdsVar adsv;
 	AtdsVar atdsv;
-	char *e_ptr[ADS_MAX_BL_EIN];
-	int16 e_nr[ADS_MAX_BL_EIN];
-	AdsBlock *ads_block;
+	char *e_ptr[ADS_MAX_BL_EIN] = { nullptr };
+	int16 e_nr[ADS_MAX_BL_EIN] = { 0 };
+	AdsBlock *ads_block = nullptr;
 	AdsNextBlk adsnb;
-	uint8 ads_stack[ADS_STACK_SIZE];
+	uint8 ads_stack[ADS_STACK_SIZE] = { 0 };
 	int16 ads_stack_ptr;
 	SplitStringRet ssret;
-	SplitStringRet *ssr;
+	SplitStringRet *ssr = nullptr;
 	SplitStringInit ssi[AAD_MAX_PERSON];
 	SplitStringInit ats_ssi;
 
-	char *split_ptr[MAX_STR_SPLIT];
-	int16 split_x[MAX_STR_SPLIT];
+	char *split_ptr[MAX_STR_SPLIT] = { nullptr };
+	int16 split_x[MAX_STR_SPLIT] = { 0 };
 	int16 inv_block_nr;
-	char *inv_use_mem;
+	char *inv_use_mem = nullptr;
 	int16 tmp_delay;
-	in_zeiger *inzeig;
+	in_zeiger *inzeig = nullptr;
 	bool _hasSpeech = false;
 };
 
