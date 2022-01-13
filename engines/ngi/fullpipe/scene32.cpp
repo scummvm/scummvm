@@ -91,7 +91,14 @@ void scene32_initScene(Scene *sc) {
 
 	g_nmi->initArcadeKeys("SC_32");
 
-	warning("cactus: %d, state: %d", g_nmi->getObjectState(sO_Cactus), g_vars->scene32_cactus->_statics->_staticsId);
+	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
+		g_nmi->_currentScene = sc;
+
+		g_vars->scene32_cactus->changeStatics2(ST_CTS_GROWUP);
+		g_vars->scene32_cactus->_priority = 22;
+
+		g_nmi->_currentScene = oldsc;
+	}
 }
 
 void scene32_setupMusic() {
