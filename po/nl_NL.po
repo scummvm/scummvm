@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
-"PO-Revision-Date: 2021-12-28 14:22+0000\n"
+"PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -4441,14 +4441,10 @@ msgstr ""
 "spel start dit weer gevraagd worden.\n"
 
 #: engines/buried/saveload.cpp:165
-#, fuzzy
-#| msgid ""
-#| "This saved game was created with a different version of the game, unable "
-#| "to load it"
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
-"Dit opgeslagen spel is gemaakt met een andere versie van het spel, het laden "
-"is niet mogelijk"
+"Opgeslagen spel is gemaakt met een nieuwere versie van ScummVM. Laden is "
+"niet mogelijk."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
