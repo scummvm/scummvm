@@ -277,6 +277,20 @@ public:
 	Common::Error loadGameState(int slot) override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	/**
+	* NOTE: Disable support for external autosave (ScummVM's feature).
+	*       Main reason is that it's not easy to properly label this autosave,
+	*       since currently it would translate "Autosave" to the ScummVM GUI language
+	*       which ends up showing as "?????? ??????" on non-latin languages (eg. Greek),
+	*       and in addition is inconsistent with the game's own GUI language.
+	*       Secondary reason is that the game already has an autosaving mechanism,
+	*       albeit only at the start of a new Act.
+	*       And final reason would be to prevent an autosave at an unforeseen moment,
+	*       if we've failed to account for all cases that the game should not save by itself;
+	*       currently those are listed in BladeRunnerEngine::canSaveGameStateCurrently().
+	*/
+	int getAutosaveSlot() const override { return -1; }
+
 	void pauseEngineIntern(bool pause) override;
 
 	Common::Error run() override;

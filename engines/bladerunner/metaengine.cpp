@@ -41,6 +41,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	// Disable autosave (see mirrored method in bladerunner.h for detailed explanation)
+	int getAutosaveSlot() const override { return -1; }
 };
 
 const char *BladeRunnerMetaEngine::getName() const {

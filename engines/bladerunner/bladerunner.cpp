@@ -284,6 +284,8 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 bool BladeRunnerEngine::canSaveGameStateCurrently() {
 	return
 		playerHasControl() &&
+		_gameIsRunning &&
+		!_gameJustLaunched &&
 		!_sceneScript->isInsideScript() &&
 		!_aiScripts->isInsideScript() &&
 		!_kia->isOpen() &&
