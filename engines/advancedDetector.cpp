@@ -186,7 +186,7 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 			title = extraInfo->gameName.c_str();
 	}
 
-	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra, ((desc->flags & (ADGF_UNSUPPORTED | ADGF_WARNING)) != 0));
+	DetectedGame game(getName(), desc->gameId, title, desc->language, desc->platform, extra, ((desc->flags & (ADGF_UNSUPPORTED | ADGF_WARNING)) != 0));
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 
@@ -581,7 +581,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getEngineId(), parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getName(), parent.getPath().c_str());
 
 	preprocessDescriptions();
 
@@ -840,7 +840,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 			if (strchr(fileDesc->fileName, '/')) {
 				if (!(_flags & kADFlagMatchFullPaths))
 					warning("Path component detected in entry for '%s' in engine '%s' but no kADFlagMatchFullPaths is set",
-						g->gameId, getEngineId());
+						g->gameId, getName());
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
 
@@ -858,7 +858,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 		// Check if the detection entry have only files from the blacklist
 		if (isEntryGrayListed(g)) {
 			debug(0, "WARNING: Detection entry for '%s' in engine '%s' contains only blacklisted names. Add more files to the entry (%s)",
-				g->gameId, getEngineId(), g->filesDescriptions[0].md5);
+				g->gameId, getName(), g->filesDescriptions[0].md5);
 		}
 	}
 }

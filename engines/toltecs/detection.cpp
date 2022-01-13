@@ -243,11 +243,11 @@ public:
 	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames, Toltecs::optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "toltecs";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "3 Skulls of the Toltecs";
 	}
 

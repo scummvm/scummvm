@@ -229,11 +229,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "lastexpress";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "The Last Express";
 	}
 

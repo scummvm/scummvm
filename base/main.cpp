@@ -132,8 +132,8 @@ static const Plugin *detectPlugin() {
 	}
 
 	// Query the plugin for the game descriptor
-	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
 	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+	printf("   Looking for a plugin supporting this target... %s\n", metaEngine.getEngineName());
 	DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
@@ -224,7 +224,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		// Print a warning; note that scummvm_main will also
 		// display an error dialog, so we don't have to do this here.
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
-			plugin->getName(),
+			metaEngineDetection.getEngineName(),
 			err.getDesc().c_str(),
 			target.c_str(),
 			dir.getPath().c_str()

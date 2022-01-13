@@ -243,11 +243,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "trecision";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Trecision Adventure Module";
 	}
 

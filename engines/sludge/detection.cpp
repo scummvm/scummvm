@@ -80,11 +80,11 @@ public:
 		_maxScanDepth = 1;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sludge";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Sludge";
 	}
 

@@ -132,7 +132,7 @@ AboutDialog::AboutDialog()
 		}
 
 		str = "C0";
-		str += p->get<MetaEngineDetection>().getName();
+		str += p->get<MetaEngineDetection>().getEngineName();
 		addLine(str);
 		str = "C2";
 		str += p->get<MetaEngineDetection>().getOriginalCopyright();

@@ -72,11 +72,11 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 
 class SwordMetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sword1";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Broken Sword: The Shadow of the Templars";
 	}
 	const char *getOriginalCopyright() const override {
@@ -187,17 +187,17 @@ DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist
 
 	DetectedGame game;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		game = DetectedGame(getEngineId(), sword1DemoSettings);
+		game = DetectedGame(getName(), sword1DemoSettings);
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		game = DetectedGame(getEngineId(), sword1PSXSettings);
+		game = DetectedGame(getName(), sword1PSXSettings);
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		game = DetectedGame(getEngineId(), sword1PSXDemoSettings);
+		game = DetectedGame(getName(), sword1PSXDemoSettings);
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		game = DetectedGame(getEngineId(), sword1FullSettings);
+		game = DetectedGame(getName(), sword1FullSettings);
 	else if (mainFilesFound && macFilesFound)
-		game = DetectedGame(getEngineId(), sword1MacFullSettings);
+		game = DetectedGame(getName(), sword1MacFullSettings);
 	else if (mainFilesFound && macDemoFilesFound)
-		game = DetectedGame(getEngineId(), sword1MacDemoSettings);
+		game = DetectedGame(getName(), sword1MacDemoSettings);
 	else
 		return detectedGames;
 

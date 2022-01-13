@@ -145,11 +145,11 @@ public:
 	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cge2";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "CGE2";
 	}
 

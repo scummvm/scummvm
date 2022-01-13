@@ -83,9 +83,9 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getName() const override { return "In Cold Blood Engine"; }
+	const char *getEngineName() const override { return "In Cold Blood Engine"; }
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "icb";
 	}
 

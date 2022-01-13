@@ -84,11 +84,11 @@ public:
 			_customTarget[customTargetList[i].name] = true;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "director";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Macromedia Director";
 	}
 

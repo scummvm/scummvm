@@ -66,11 +66,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sword25";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Broken Sword 2.5";
 	}
 

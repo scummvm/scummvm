@@ -229,11 +229,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Myst III";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "myst3";
 	}
 

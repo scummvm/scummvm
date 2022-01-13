@@ -129,11 +129,11 @@ public:
 		_flags = kADFlagMatchFullPaths;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "chewy";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Chewy: Esc from F5";
 	}
 

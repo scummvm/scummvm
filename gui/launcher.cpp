@@ -875,7 +875,7 @@ void LauncherChooser::genGameList() {
 
 		PlainGameList list = metaEngine.getSupportedGames();
 		for (auto v = list.begin(); v != list.end(); ++v) {
-			_games[buildQualifiedGameName(metaEngine.getEngineId(), v->gameId)] = v->description;
+			_games[buildQualifiedGameName(metaEngine.getName(), v->gameId)] = v->description;
 		}
 	}
 }

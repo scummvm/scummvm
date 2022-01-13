@@ -1152,11 +1152,11 @@ public:
 		_guiOptions = GUIO12(GAMEOPTION_WALL_COLLISION, GAMEOPTION_DISABLE_SAVE_MENU,  GAMEOPTION_DEBUG, GAMEOPTION_AUDIO_CD, GAMEOPTION_SOUND, GAMEOPTION_VOICES, GAMEOPTION_TEXT, GAMEOPTION_MOVIES, GAMEOPTION_MOUSE, GAMEOPTION_USA_VERSION, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_TEXT_TO_SPEECH);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "twine";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Little Big Adventure";
 	}
 

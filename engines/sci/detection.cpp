@@ -192,11 +192,11 @@ public:
 		return debugFlagList;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sci";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "SCI ["
 #ifdef ENABLE_SCI32
 			"all games"
@@ -226,7 +226,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
 
 	if (metaEnginePlugin) {
 		const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);

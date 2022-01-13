@@ -141,11 +141,11 @@ public:
 		return detectGameFilebased(allFiles, Touche::fileBasedFallback);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "touche";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Touche: The Adventures of the Fifth Musketeer";
 	}
 

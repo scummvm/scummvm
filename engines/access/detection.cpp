@@ -46,11 +46,11 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "access";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Access";
 	}
 

@@ -132,11 +132,11 @@ public:
 	HugoMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "hugo";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Hugo";
 	}
 

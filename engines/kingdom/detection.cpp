@@ -83,11 +83,11 @@ public:
 	KingdomMetaEngineDetection() : AdvancedMetaEngineDetection(Kingdom::gameDescriptions, sizeof(ADGameDescription), kingdomGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "kingdom";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Kingdom: The Far Reaches' Engine";
 	}
 

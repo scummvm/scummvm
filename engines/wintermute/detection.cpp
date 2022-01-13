@@ -109,11 +109,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "wintermute";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Wintermute";
 	}
 
@@ -138,7 +138,7 @@ public:
 			}
 		}
 
-		const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+		const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
 
 		if (metaEnginePlugin) {
 			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);

@@ -148,11 +148,11 @@ public:
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "agos";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "AGOS";
 	}
 

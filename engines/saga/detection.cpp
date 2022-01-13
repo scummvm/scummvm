@@ -42,11 +42,11 @@ public:
 		_directoryGlobs = DIRECTORY_GLOBS;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "saga";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "SAGA ["
 
 #if defined(ENABLE_IHNM)
