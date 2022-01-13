@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:01+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -4625,7 +4625,7 @@ msgstr "És massa curt per a ser un fitxer Glulx vàlid."
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
-msgstr "Aquest no es un fitxer Glulx vàlid."
+msgstr "No es un fitxer Glulx vàlid."
 
 #: engines/glk/glulx/glulx.cpp:93
 msgid "This Glulx file is too old a version to execute."
