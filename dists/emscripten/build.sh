@@ -4,7 +4,7 @@ set -o xtrace
 # exit when any command fails
 set -e
 if [ "$#" -ne 1 ]; then
-  echo "$0: exactly 1 arguments expected: configure, make, data, all"
+  echo "$0: exactly 1 arguments expected: configure, make, data, all, run"
   exit 3
 fi
 
@@ -40,6 +40,10 @@ if [[ ! -d "$DIST_FOLDER/emsdk-$EMSDK_VERSION" ]]; then
   ./emsdk activate ${EMSDK_VERSION}
 fi
 source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
+
+if [ -z "$EMSDK_PYTHON" ]; then
+  EMSDK_PYTHON=python
+fi
 
 # Download + Install Libraries
 mkdir -p "$LIBS_FOLDER"
@@ -202,5 +206,9 @@ if [[ "$1" =~ ^(dist|all)$ ]]; then
   cp dists/emscripten/scummvm-512.png build-emscripten/
   cp dists/emscripten/scummvm-192.png build-emscripten/
   cp dists/emscripten/manifest.json build-emscripten/
+fi
 
+if [[ "$1" =~ ^(run)$ ]]; then
+  cd "${ROOT_FOLDER}/build-emscripten"
+  python -m http.server 8080
 fi

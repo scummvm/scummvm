@@ -21,16 +21,13 @@
 
 #include "common/scummsys.h"
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL) && !defined(NINTENDO_SWITCH) && !defined(EMSCRIPTEN)
-
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/platform/sdl/emscripten/emscripten.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
-
 	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
+	g_system = new OSystem_EMSCRIPTEN();
 	assert(g_system);
 
 	// Pre initialize the backend
@@ -48,5 +45,3 @@ int main(int argc, char *argv[]) {
 
 	return res;
 }
-
-#endif

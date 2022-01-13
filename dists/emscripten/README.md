@@ -48,14 +48,11 @@ Some ideas for possible improvements:
 ### UI Integration
 *   Responsiveness: Adjust the canvas size when resizing the browser. 
 
-*   Bug: Fullscreen mode doesn't work.
-
 *   Build a nice webpage around the canvas.
     *   Allow hiding of console, replace buttons/checkboxes from default emscripten template.
     *   Bonus: Adapt page padding/background color to theme (black when in game)
 
 *   ScummVM shouldn't be able to "close" (there's no concept for that:
-    *   Remove "exit" buttons from all menus.
     *   Change any programmatic "exits" to cause a restart of Scummvm (or refresh of the page).
 
 *   Pass CLI parameters for ScummVM via URL parameters to allow for "deep-linking" to a specific game.
