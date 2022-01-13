@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
-"PO-Revision-Date: 2022-01-13 00:02+0000\n"
+"PO-Revision-Date: 2022-01-13 00:03+0000\n"
 "Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4673,23 +4673,23 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:411
 msgid "North"
-msgstr ""
+msgstr "Nord"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "South"
-msgstr ""
+msgstr "Sud"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "East"
-msgstr ""
+msgstr "Est"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "West"
-msgstr ""
+msgstr "Oest"
 
 #: engines/glk/scott/scott.cpp:423
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "No pots veure. Es massa fosc!\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid "I can't see. It is too dark!\n"
