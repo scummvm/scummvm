@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:04+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -4693,7 +4693,7 @@ msgstr "No pots veure. És massa fosc!\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid "I can't see. It is too dark!\n"
-msgstr "No puc veure. Es massa fosc!\n"
+msgstr "No puc veure. És massa fosc!\n"
 
 #: engines/glk/scott/scott.cpp:435
 #, c-format
