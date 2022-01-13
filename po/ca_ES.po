@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-09 21:52+0000\n"
 "PO-Revision-Date: 2022-01-13 00:08+0000\n"
-"Last-Translator: Sergi Pérez Labernia <rndrnd@gmail.com>\n"
+"Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -6217,7 +6217,7 @@ msgstr "S'ha produït un error al carregar els recursos del joc."
 
 #: engines/sci/detection_tables.h:4350
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr "Joc incomplert detectat. Has de copiar les dades de tots els CDs."
+msgstr "S'ha detectat un joc incomplet. Heu de copiar les dades de tots els CD."
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
