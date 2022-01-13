@@ -483,7 +483,11 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		if (tstr.lastChar() == '.')
 			tstr.deleteLastChar();
 
-		allFiles[tstr] = *file;	// Record the presence of this file
+		if (efname.lastChar() == '.')
+			efname.deleteLastChar();
+
+		allFiles[tstr] = *file;		// Record the presence of this file
+		allFiles[efname] = *file;	// ...and its file name
 	}
 }
 
