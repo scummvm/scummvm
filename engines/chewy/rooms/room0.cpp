@@ -56,7 +56,7 @@ void Room0::entry() {
 		det->hide_static_spr(6);
 
 	if (!flags.LoadGame) {
-		set_person_pos(150, 100, 0, 1);
+		set_person_pos(150, 100, P_CHEWY, P_RIGHT);
 		_G(cur_hide_flag) = 0;
 		hide_cur();
 		_G(timer_nr)[0] = room->set_timer(255, 3);
@@ -150,8 +150,8 @@ bool Room0::pullSlime() {
 		hide_cur();
 		auto_move(2, 0);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(3, 1, 0);
-		set_person_pos(222, 106, 0, 0);
+		start_detail_wait(3, 1, ANI_VOR);
+		set_person_pos(222, 106, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
 		menu_item = 0;
