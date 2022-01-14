@@ -268,7 +268,7 @@ int16 Room12::proc1() {
 			uhr->enable_timer();
 			atds->set_ats_str(117, 1, 0);
 		} else {
-			auto_move(7, 0);
+			auto_move(7, P_CHEWY);
 			start_aad_wait(29, -1);
 		}
 	}

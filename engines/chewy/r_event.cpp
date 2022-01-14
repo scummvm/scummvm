@@ -511,7 +511,7 @@ void enter_room(int16 eib_nr) {
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
 	SetUpScreenFunc = nullptr;
-	HowardMov = false;
+	HowardMov = 0;
 	_G(cur_hide_flag) = false;
 
 #define ENTRY(NUM) case NUM: Room##NUM::entry(); break
