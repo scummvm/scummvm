@@ -343,6 +343,13 @@ public:
 	Shoot() {
 		destroyed = false;
 		video = nullptr;
+		timesToShoot = 0;
+		pointsToShoot = 0;
+		attackWeight = 0;
+		paletteOffset = 0;
+		paletteSize = 0;
+		attackFrame = 0;
+		explosionFrame = 0;
 	}
 	Common::String name;
 	Filename animation;

@@ -159,7 +159,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	changeCursor("arcade");
 	playVideo(background);
 	loadPalette(arc->palette);
-	background.decoder->setRate(1.5);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
 	bool needsUpdate = true;
@@ -268,19 +267,21 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				shootSequence.pop_front();
 				for (Shoots::iterator it = arc->shoots.begin(); it != arc->shoots.end(); ++it) {
 					if (it->name == si.name) {
-
+						Shoot s = *it;
 						if (it->animation == "NONE") {
 							if ((uint32)(it->name[0]) == _currentPlayerPosition) {
 								_health = _health - it->attackWeight;
 								hitPlayer();
 							}
-
+							byte p[3] = {0xff, 0x00, 0x00}; // Always red?
+							assert(s.paletteSize == 1 || s.paletteSize == 0);
+							loadPalette((byte *) &p, s.paletteOffset, s.paletteSize);
+							_shoots.push_back(s);
 						} else {
-							Shoot s = *it;
 							s.video = new MVideo(it->animation, it->position, true, false, false);
 							playVideo(*s.video);
 							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
-							loadPalette(s.video->decoder->getPalette(), s.paletteOffset, s.paletteSize);
+							loadPalette(s.video->decoder->getPalette() + 3*s.paletteOffset, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
 							playSound(_soundPath + arc->enemySound, 1);
 						}
@@ -293,7 +294,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		shootsToRemove.clear();
 
 		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-			if (it->video->decoder) {
+			if (it->video && it->video->decoder) {
 				int frame = it->video->decoder->getCurFrame();
 				if (frame > 0 && frame >= (int)(it->attackFrame) && !it->destroyed) {
 					_health = _health - it->attackWeight;
@@ -341,7 +342,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	// Deallocate shoots
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-		if (it->video->decoder)
+		if (it->video && it->video->decoder)
 			skipVideo(*it->video);
 		delete it->video;
 	}
@@ -353,17 +354,19 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 int HypnoEngine::detectTarget(const Common::Point &mousePos) {
 	int i = -1;
+	int x = mousePos.x;
+	int y = mousePos.y;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 		i++;
-		if (it->destroyed || !it->video->decoder)
+		if (it->destroyed)
 			continue;
-		int x = mousePos.x - it->position.x;
-		int y = mousePos.y - it->position.y;
-		int w = it->video->decoder->getWidth();
-		int h = it->video->decoder->getHeight();
-		if (it->video->decoder && x >= 0 && y >= 0 && x < w && y < h) {
-			if (it->video->currentFrame->getPixel(x, y) > 0)
-				return i;
+
+		if (it->animation != "NONE" && !it->video->decoder)
+			continue;
+
+		uint32 c =  _compositeSurface->getPixel(x, y);
+		if (c >= it->paletteOffset && c < it->paletteOffset + it->paletteSize) {
+			return i;
 		}
 	}
 	return -1;
@@ -386,12 +389,20 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 	if (i >= 0) {
 		playSound(_soundPath + _shoots[i].hitSound, 1);
 		playSound(_soundPath + _shoots[i].deathSound, 1);
-		int w = _shoots[i].video->decoder->getWidth();
-		int h = _shoots[i].video->decoder->getHeight();
 		_score = _score + _shoots[i].pointsToShoot;
 		_shoots[i].destroyed = true;
-		_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
-		_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
+
+		if (_shoots[i].animation != "NONE") {
+			int w = _shoots[i].video->decoder->getWidth();
+			int h = _shoots[i].video->decoder->getHeight();
+			_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+			_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
+		} else {
+			byte p[3] = {}; // Always black?
+			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
+			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
+		}
+
 	}
 }
 

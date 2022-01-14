@@ -144,11 +144,6 @@ void SpiderEngine::drawPlayer() {
 		_playerFrameIdx = oIndexYE[idx];
 		ox = _screenW / 2 - _playerFrames[0]->w / 2;
 		oy = _screenH - _playerFrames[0]->h;
-		if (_arcadeMode == "YF")  { // Remove me later
-			GUI::MessageDialog dialog("The following arcade sequence is not fully implemented yet, so it will be skipped");
-			dialog.runModal();
-			_skipLevel = true;
-		}
 	} else if (_arcadeMode == "YB") {
 		ox = 60;
 		oy = 129;

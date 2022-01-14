@@ -401,7 +401,7 @@ void HypnoEngine::loadPalette(const Common::String &fname) {
 
 void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
 	debugC(1, kHypnoDebugMedia, "Loading palette from byte array with offset %d and size %d", offset, size);
-	g_system->getPaletteManager()->setPalette(palette + 3*offset, offset, size);	
+	g_system->getPaletteManager()->setPalette(palette, offset, size);
 }
 
 void HypnoEngine::updateScreen(MVideo &video) {
