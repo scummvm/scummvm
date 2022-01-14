@@ -56,6 +56,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
      installation.
+   - Fixed UI glitches in Serrated Scalpel.
 
  TwinE:
    - Fixed a bug in the collision code that made the game unfinishable due to the
