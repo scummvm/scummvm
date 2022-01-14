@@ -1015,6 +1015,7 @@ Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_sceneState["GS_PUZZLELEVEL"] = stream->readUint32LE();
 	_sceneState["GS_COMBATLEVEL"] = stream->readUint32LE();
 	_nextLevel = stream->readString();
+	_checkpoint = _nextLevel;
 
 	// Reset state variables from puzzles
 	for (int i = 0; i < 2; i++)

@@ -188,4 +188,24 @@ void SpiderEngine::drawHealth() {
 	_font->drawString(_compositeSurface, "ENERGY", 248, 180, 38, c);
 }
 
+bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background) {
+	if (_skipLevel)
+		return true;
+
+	if (_arcadeMode == "YF") {
+		if (!background.decoder || background.decoder->endOfVideo())
+			_health = 0;
+
+		if (_shoots.size() == 0)
+			return false;
+
+		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it)
+			if (!it->destroyed)
+				return false;
+
+		return true;
+	} 
+	return !background.decoder || background.decoder->endOfVideo();
+}
+
 } // End of namespace Hypno

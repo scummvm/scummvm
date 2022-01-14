@@ -221,6 +221,7 @@ public:
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual void shoot(const Common::Point &mousePos);
 	virtual void hitPlayer();
+	virtual bool checkArcadeLevelCompleted(MVideo &background);
 	Common::String _difficulty;
 	bool _skipLevel;
 
@@ -301,6 +302,8 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
+	bool checkArcadeLevelCompleted(MVideo &background) override;
+
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;

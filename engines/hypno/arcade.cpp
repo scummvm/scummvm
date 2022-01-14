@@ -246,7 +246,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			skipVideo(background);
 		}
 
-		if (!background.decoder || background.decoder->endOfVideo() || _skipLevel) {
+		if (checkArcadeLevelCompleted(background)) {
 			skipVideo(background);
 			if (!arc->nextLevelVideo.empty()) {
 				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, false, false);
@@ -404,6 +404,10 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 		}
 
 	}
+}
+
+bool HypnoEngine::checkArcadeLevelCompleted(MVideo &background) {
+	return !background.decoder || background.decoder->endOfVideo() || _skipLevel;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
