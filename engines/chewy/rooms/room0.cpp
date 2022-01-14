@@ -89,7 +89,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 				set_person_spr(0, 0);
 
 				if (_G(spieler).R0FueterLab < 3) {
-					start_spz(2, 255, false, 0);
+					start_spz(CH_TALK3, 255, false, P_CHEWY);
 					if (_G(spieler).R0FueterLab)
 						start_aad_wait(618, -1);
 					else
@@ -99,7 +99,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 				eyeAnim();
 			} else if (!_G(spieler).R0PillowThrow) {
 				start_aad_wait(42, -1);
-				start_spz(2, 255, false, 0);
+				start_spz(CH_TALK3, 255, false, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
 					start_aad_wait(43, -1);

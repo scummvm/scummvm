@@ -2161,7 +2161,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case 13:
 		_G(spieler).flags26_10 = true;
 		flags.InventMenu = false;
-		start_spz(5, 255, 0, 0);
+		start_spz(5, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		flags.InventMenu = true;
 		atds->set_ats_str(88, 1, 6);
