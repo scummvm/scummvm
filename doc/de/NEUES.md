@@ -6,6 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
      wenn die Spieldateien über eine minimale Installation bereitgestellt werden.
+   - Fehler in der Darstellung der Benutzeroberfläche in Serrated Scalpel behoben.
 
 #### 2.5.1 (02.01.2022)
 
