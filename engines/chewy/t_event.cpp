@@ -1232,7 +1232,7 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 	case 22:
 		if (str_end_nr == 1) {
 			det->del_static_ani(3);
-			start_detail_wait(5, 1, 0);
+			start_detail_wait(5, 1, ANI_VOR);
 			det->set_static_ani(3, -1);
 			start_aad_wait(456, -1);
 		}

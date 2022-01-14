@@ -178,7 +178,7 @@ void Room49::use_boy_cigar() {
 
 	int16 zoom = room->room_info->ZoomFak;
 	room->set_zoom(zoom);
-	go_auto_xy(416, 79, 1, 0);
+	go_auto_xy(416, 79, P_HOWARD, ANI_VOR);
 	set_person_spr(0, 1);
 	flags.NoScroll = true;
 
@@ -187,7 +187,7 @@ void Room49::use_boy_cigar() {
 	test_intro(17);
 	ERROR
 
-		room->set_timer_status(255, 0);
+	room->set_timer_status(255, 0);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 	det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 	det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);

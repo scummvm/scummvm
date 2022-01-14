@@ -103,9 +103,9 @@ void Room97::entry() {
 		switch_room(89);
 	} else {
 		_G(spieler).scrollx = 800;
-		set_person_pos(1067, 98, 0, 0);
-		set_person_pos(1092, 83, 1, 0);
-		set_person_pos(130, 29, 2, 1);
+		set_person_pos(1067, 98, P_CHEWY, P_LEFT);
+		set_person_pos(1092, 83, P_HOWARD, P_LEFT);
+		set_person_pos(130, 29, P_NICHELLE, P_RIGHT);
 	}
 }
 
@@ -149,7 +149,18 @@ void Room97::proc3() {
 	stop_person(P_CHEWY);
 	spieler_mi[P_CHEWY].Mode = true;
 	
-	
+	if (!_G(spieler).flags36_20) {
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
+		start_aad_wait(557, -1);
+		go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
+	} else if (!_G(spieler).flags36_40) {
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
+		start_aad_wait(567, -1);
+		go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
+	} else {
+		
+	}
+	show_cur();
 }
 
 void Room97::proc4() {
