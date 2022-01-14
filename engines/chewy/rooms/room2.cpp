@@ -51,7 +51,7 @@ void Room2::jump_out_r1(int16 nr) {
 
 void Room2::electrifyWalkway1() {
 	det->start_detail(ANI_5, 255, ANI_VOR);
-	start_spz(ANI_5, 255, 0, ANI_VOR);
+	start_spz(ANI_5, 255, false, ANI_VOR);
 	start_aad_wait(49, -1);
 	det->stop_detail(ANI_5);
 
@@ -68,7 +68,7 @@ void Room2::electrifyWalkway1() {
 }
 
 void Room2::electrifyWalkway2() {
-	start_spz(16, 255, 0, P_CHEWY);
+	start_spz(CH_TALK12, 255, 0, P_CHEWY);
 	start_aad_wait(47, -1);
 }
 
