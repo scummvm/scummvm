@@ -174,8 +174,6 @@ protected:
 
 	void handleResizeImpl(const int width, const int height) override;
 
-	int getGraphicsModeScale(int mode) const override;
-
 	virtual void setupHardwareSize();
 
 	void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const;
