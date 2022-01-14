@@ -615,23 +615,16 @@ void Script::savegame(uint slot) {
 		return;
 	}
 
-	// HACK: intermittent bug, I think 0x0BF is supposed to be for open house mode, only in save slot 0
-	bool fixed = false;
+	// HACK: I think 0x0BF is supposed to be for open house mode, should only be in save slot 0
+	// the script for the triangle puzzle, tx.grv, sets _variables[191] == 1
 	if (slot != 0 && _variables[191] == 1 && _version == kGroovieT11H) {
-		warning("fixing variable 0x0BF");
+		warning("savegame slot %u, fixing variable 0x0BF was %u", slot, _variables[191]);
 		_variables[191] = 0;
-		fixed = true;
 	}
 
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
 	delete file;
-
-	// HACK: hopefully this will help us track it down
-	if (fixed) {
-		g_system->messageBox(LogMessageType::kWarning, "fixed invalid save, please share your log file with us");
-		g_system->displayLogFile();
-	}
 
 	// Cache the saved name
 	for (int i = 0; i < 15; i++) {
