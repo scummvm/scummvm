@@ -29,6 +29,12 @@
 
 namespace CreateProjectTool {
 
+static std::string toUpper(const std::string &str) {
+	std::string res;
+	std::transform(str.begin(), str.end(), std::back_inserter(res), toupper);
+	return res;
+}
+
 CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
 	: ProjectProvider(global_warnings, project_warnings, version) {
 }
@@ -122,8 +128,8 @@ endmacro()
 	writeEngineOptions(workspace);
 
 	std::string includeDirsList;
-	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
-		includeDirsList += *i + ' ';
+	for (const std::string &includeDir : setup.includeDirs)
+		includeDirsList += includeDir + ' ';
 
 	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
 			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
@@ -141,11 +147,11 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 )";
 
-	for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
-		if (!i->enable || featureExcluded(i->name)) continue;
+	for (const Feature &feature : setup.features) {
+		if (!feature.enable || featureExcluded(feature.name)) continue;
 
-		writeFeatureLibSearch(setup, workspace, i->name);
-		workspace << "add_definitions(-D" << i->define << ")\n";
+		writeFeatureLibSearch(setup, workspace, feature.name);
+		workspace << "add_definitions(-D" << feature.define << ")\n";
 	}
 	workspace << "\n";
 
@@ -199,39 +205,29 @@ void CMakeProvider::writeFeatureLibSearch(const BuildSetup &setup, std::ofstream
 
 void CMakeProvider::writeEngines(const BuildSetup &setup, std::ofstream &workspace) const {
 	workspace << "set(ENGINES";
-	for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
+	for (const EngineDesc &engine : setup.engines) {
 		// We ignore all sub engines here because they require special handling.
-		if (!i->enable || isSubEngine(i->name, setup.engines)) {
+		if (!engine.enable || isSubEngine(engine.name, setup.engines)) {
 			continue;
 		}
 
-		std::string engineName;
-		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
-
-		workspace << " " << engineName;
+		workspace << " " << toUpper(engine.name);
 	}
 	workspace << ")\n";
 }
 
 void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &workspace) const {
-	for (EngineDescList::const_iterator i = setup.engines.begin(), end = setup.engines.end(); i != end; ++i) {
+	for (const EngineDesc &engine : setup.engines) {
 		// We ignore all sub engines here because they are handled in the inner loop
-		if (!i->enable || isSubEngine(i->name, setup.engines) || i->subEngines.empty()) {
+		if (!engine.enable || isSubEngine(engine.name, setup.engines) || engine.subEngines.empty()) {
 			continue;
 		}
 
-		std::string engineName;
-		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
-
-		workspace << "set(SUB_ENGINES_" << engineName;
-		for (StringList::const_iterator j = i->subEngines.begin(), subEnd = i->subEngines.end(); j != subEnd; ++j) {
-			const EngineDesc &subEngine = findEngineDesc(*j, setup.engines);
+		workspace << "set(SUB_ENGINES_" << toUpper(engine.name);
+		for (const std::string &subEngineName : engine.subEngines) {
+			const EngineDesc &subEngine = findEngineDesc(subEngineName, setup.engines);
 			if (!subEngine.enable) continue;
-
-			std::string subEngineName;
-			std::transform(j->begin(), j->end(), std::back_inserter(subEngineName), toupper);
-
-			workspace << " " << subEngineName;
+			workspace << " " << toUpper(subEngineName);
 		}
 		workspace << ")\n";
 	}
@@ -288,8 +284,8 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "# Libraries\n";
 		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL2);
 		std::string libraryDirsList;
-		for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
-			libraryDirsList += *i + ' ';
+		for (const std::string &libraryDir : setup.libraryDirs)
+			libraryDirsList += libraryDir + ' ';
 		project << "target_link_libraries(" << name << " " << libraryDirsList << "${" << sdlLibrary->librariesVar << "} ${SCUMMVM_LIBS})\n";
 
 		project << "if (WIN32)\n";
@@ -311,8 +307,8 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 
 void CMakeProvider::writeWarnings(std::ofstream &output) const {
 	output << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}";
-	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i) {
-		output << " " << *i;
+	for (const std::string &warning : _globalWarnings) {
+		output << ' ' << warning;
 	}
 	output << "\")\n";
 }
@@ -338,9 +334,7 @@ void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 												const std::string &objPrefix, const std::string &filePrefix) {
 
 	std::string lastName;
-	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
-		const FileNode *node = *i;
-
+	for (const FileNode *node : dir.children) {
 		if (!node->children.empty()) {
 			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
 		} else {
@@ -413,11 +407,9 @@ bool CMakeProvider::featureExcluded(const char *name) const {
 }
 
 const EngineDesc &CMakeProvider::findEngineDesc(const std::string &name, const EngineDescList &engines) const {
-	for (EngineDescList::const_iterator i = engines.begin(), end = engines.end(); i != end; ++i) {
-		if (i->name == name) {
-			return *i;
-		}
-
+	for (const EngineDesc &engine : engines) {
+		if (engine.name == name)
+			return engine;
 	}
 
 	error("Unable to find requested engine");
