@@ -14,10 +14,10 @@
 namespace Grim {
 
 void lua_taskinit(lua_Task *task, lua_Task *next, StkId tbase, int results) {
-	task->some_flag = 0;
+	task->executed = false;
 	task->next = next;
-	task->some_base = tbase;
-	task->some_results = results;
+	task->initBase = tbase;
+	task->initResults = results;
 }
 
 void lua_taskresume(lua_Task *task, Closure *closure, TProtoFunc *protofunc, StkId tbase) {
@@ -341,7 +341,7 @@ void runtasks(LState *const rootState) {
 				lua_state->task = nullptr;
 			} else {
 				if (lua_state->task) {
-					stillRunning = luaD_call(lua_state->task->some_base, lua_state->task->some_results);
+					stillRunning = luaD_call(lua_state->task->initBase, lua_state->task->initResults);
 				} else {
 					StkId base = lua_state->Cstack.base;
 					luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - base);

@@ -15,9 +15,9 @@ struct lua_Task {
 	byte *pc;
 	TObject *consts;
 	int32 aux;
-	bool some_flag;
-	StkId some_base;
-	int32 some_results;
+	bool executed;
+	StkId initBase;
+	int32 initResults;
 };
 
 void lua_taskinit(lua_Task *task, lua_Task *next, StkId tbase, int results);

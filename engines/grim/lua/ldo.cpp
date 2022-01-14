@@ -141,9 +141,9 @@ static StkId callC(lua_CFunction f, StkId base) {
 		TObject *r = lua_state->stack.stack + base - 1;
 		(*lua_callhook)(Ref(r), "(C)", -1);
 	}
-	lua_state->state_counter2++;
+	lua_state->callLevelCounter++;
 	(*f)();  // do the actual call
-	lua_state->state_counter2--;
+	lua_state->callLevelCounter--;
 //	if (lua_callhook)  // func may have changed lua_callhook
 //		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
 	firstResult = CS->base;
@@ -167,21 +167,21 @@ static StkId callCclosure(struct Closure *cl, lua_CFunction f, StkId base) {
 void luaD_callTM(TObject *f, int32 nParams, int32 nResults) {
 	luaD_openstack(nParams);
 	*(lua_state->stack.top - nParams - 1) = *f;
-	lua_state->state_counter1++;
-	lua_state->state_counter2++;
+	lua_state->preventBreakCounter++;
+	lua_state->callLevelCounter++;
 	luaD_call((lua_state->stack.top - lua_state->stack.stack) - nParams, nResults);
-	lua_state->state_counter2--;
-	lua_state->state_counter1--;
+	lua_state->callLevelCounter--;
+	lua_state->preventBreakCounter--;
 }
 
 int32 luaD_call(StkId base, int32 nResults) {
 	lua_Task *tmpTask = lua_state->task;
-	if (!lua_state->task || lua_state->state_counter2) {
+	if (!lua_state->task || lua_state->callLevelCounter) {
 		lua_Task *t = luaM_new(lua_Task);
 		lua_taskinit(t, lua_state->task, base, nResults);
 		lua_state->task = t;
 	} else {
-		tmpTask = lua_state->some_task;
+		tmpTask = lua_state->prevTask;
 	}
 
 	while (1) {
@@ -200,7 +200,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 				firstResult = luaV_execute(lua_state->task);
 			}
 		} else if (ttype(funcObj) == LUA_T_PMARK) {
-			if (!lua_state->task->some_flag) {
+			if (!lua_state->task->executed) {
 				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
 				if (ttype(im) == LUA_T_NIL)
 					lua_error("call expression not a function");
@@ -209,7 +209,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 			}
 			firstResult = luaV_execute(lua_state->task);
 		} else if (ttype(funcObj) == LUA_T_CMARK) {
-			if (!lua_state->task->some_flag) {
+			if (!lua_state->task->executed) {
 				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
 				if (ttype(im) == LUA_T_NIL)
 					lua_error("call expression not a function");
@@ -219,7 +219,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 		} else if (ttype(funcObj) == LUA_T_CLMARK) {
 			Closure *c = clvalue(funcObj);
 			TObject *proto = &(c->consts[0]);
-			if (!lua_state->task->some_flag) {
+			if (!lua_state->task->executed) {
 				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
 				if (ttype(im) == LUA_T_NIL)
 					lua_error("call expression not a function");
@@ -251,8 +251,8 @@ int32 luaD_call(StkId base, int32 nResults) {
 			lua_taskinit(t, lua_state->task, base, nResults);
 			lua_state->task = t;
 		} else {
-			nResults = lua_state->task->some_results;
-			base = lua_state->task->some_base;
+			nResults = lua_state->task->initResults;
+			base = lua_state->task->initBase;
 			if (nResults != 255)
 				luaD_adjusttop(firstResult + nResults);
 			base--;
@@ -265,13 +265,13 @@ int32 luaD_call(StkId base, int32 nResults) {
 			lua_state->task = lua_state->task->next;
 			luaM_free(tmp);
 			if (lua_state->task) {
-				nResults = lua_state->task->some_results;
-				base = lua_state->task->some_base;
+				nResults = lua_state->task->initResults;
+				base = lua_state->task->initBase;
 			}
 
 			if (function == break_here || function == sleep_for) {
-				if (!lua_state->state_counter1)  {
-					lua_state->some_task = tmpTask;
+				if (!lua_state->preventBreakCounter)  {
+					lua_state->prevTask = tmpTask;
 					return 1;
 				}
 			}
@@ -342,7 +342,7 @@ int32 luaD_protectedrun(int32 nResults) {
 	struct C_Lua_Stack oldCLS = lua_state->Cstack;
 	jmp_buf *oldErr = lua_state->errorJmp;
 	lua_state->errorJmp = &myErrorJmp;
-	lua_state->state_counter1++;
+	lua_state->preventBreakCounter++;
 	lua_Task *tmpTask = lua_state->task;
 	if (setjmp(myErrorJmp) == 0) {
 		do_callinc(nResults);
@@ -357,7 +357,7 @@ int32 luaD_protectedrun(int32 nResults) {
 		}
 		status = 1;
 	}
-	lua_state->state_counter1--;
+	lua_state->preventBreakCounter--;
 	lua_state->errorJmp = oldErr;
 	return status;
 }

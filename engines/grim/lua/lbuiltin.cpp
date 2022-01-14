@@ -67,9 +67,9 @@ static void foreachvar() {
 			luaA_pushobject(&f);
 			pushstring(s);
 			luaA_pushobject(&s->globalval);
-			lua_state->state_counter1++;
+			lua_state->preventBreakCounter++;
 			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
-			lua_state->state_counter1--;
+			lua_state->preventBreakCounter--;
 			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
 			lua_state->stack.top--;
@@ -96,9 +96,9 @@ static void foreach() {
 			luaA_pushobject(&f);
 			luaA_pushobject(ref(nd));
 			luaA_pushobject(val(nd));
-			lua_state->state_counter1++;
+			lua_state->preventBreakCounter++;
 			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
-			lua_state->state_counter1--;
+			lua_state->preventBreakCounter--;
 			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
 			lua_state->stack.top--;

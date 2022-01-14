@@ -77,8 +77,8 @@ void lua_stateinit(LState *state) {
 	state->next = nullptr;
 	state->all_paused = 0;
 	state->paused = false;
-	state->state_counter1 = 0;
-	state->state_counter2 = 0;
+	state->preventBreakCounter = 0;
+	state->callLevelCounter = 0;
 	state->updated = false;
 
 	state->numCblocks = 0;
@@ -88,7 +88,7 @@ void lua_stateinit(LState *state) {
 	state->errorJmp = nullptr;
 	state->id = globalTaskSerialId++;
 	state->task = nullptr;
-	state->some_task = nullptr;
+	state->prevTask = nullptr;
 	state->taskFunc.ttype = LUA_T_NIL;
 	state->sleepFor = 0;
 

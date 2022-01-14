@@ -487,9 +487,9 @@ static void do_unprotectedrun(lua_CFunction f, int32 nParams, int32 nResults) {
 	luaD_openstack(nParams);
 	lua_state->stack.stack[base].ttype = LUA_T_CPROTO;
 	lua_state->stack.stack[base].value.f = f;
-	lua_state->state_counter1++;
+	lua_state->preventBreakCounter++;
 	luaD_call(base + 1, nResults);
-	lua_state->state_counter1--;
+	lua_state->preventBreakCounter--;
 }
 
 lua_Object lua_setfallback(const char *name, lua_CFunction fallback) {

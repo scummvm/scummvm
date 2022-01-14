@@ -91,8 +91,8 @@ struct LState {
 	LState *next; // handle to next state in list
 	int all_paused; // counter of often pause_scripts(TRUE) was called
 	bool paused;    // true if this particular script has been paused
-	int32 state_counter1;
-	int32 state_counter2;
+	int32 preventBreakCounter;
+	int32 callLevelCounter;
 	bool updated;
 	Stack stack;  // Lua stack
 	C_Lua_Stack Cstack;  // C2lua struct
@@ -100,9 +100,9 @@ struct LState {
 	struct LexState *lexstate;  // point to local struct in yacc
 	jmp_buf *errorJmp;  // current error recover point
 	lua_Task *task; // handle to task
-	lua_Task *some_task;
+	lua_Task *prevTask;
 	uint32 id; // current id of task
-	TObject	taskFunc;
+	TObject taskFunc;
 	struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
 	int numCblocks; // number of nested Cblocks
 	int sleepFor;
