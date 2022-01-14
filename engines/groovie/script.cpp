@@ -1025,11 +1025,11 @@ void Script::o_keyboardaction() {
 
 	// Check the typed key
 	if (_kbdChar == val) {
-		debugC(5, kDebugScript, "Groovie::Script: Test key == 0x%02X @0x%04X - match", val, address);
+		debugC(1, kDebugScript, "Groovie::Script: Test key == %c (0x%02X) @0x%04X - match", val, val, address);
 
 		executeInputAction(address);
 	} else {
-		debugC(5, kDebugScript, "Groovie::Script: Test key == 0x%02X @0x%04X", val, address);
+		debugC(5, kDebugScript, "Groovie::Script: Test key == %c (0x%02X) @0x%04X", val, val, address);
 	}
 }
 
