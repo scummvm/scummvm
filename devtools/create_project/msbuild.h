@@ -36,7 +36,7 @@ protected:
 
 	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
 
-	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
 	                            const std::string &objPrefix, const std::string &filePrefix) override;
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output) override;

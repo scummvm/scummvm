@@ -506,7 +506,7 @@ void MSBuildProvider::outputNasmCommand(std::ostream &projectFile, const std::st
 	}
 }
 
-void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int,
+void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int,
 											 const std::string &objPrefix, const std::string &filePrefix) {
 	// Reset lists
 	_filters.clear();

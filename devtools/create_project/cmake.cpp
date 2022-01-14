@@ -330,7 +330,7 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	}
 }
 
-void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
 												const std::string &objPrefix, const std::string &filePrefix) {
 
 	std::string lastName;

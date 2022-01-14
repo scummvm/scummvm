@@ -551,7 +551,7 @@ protected:
 	 * @param objPrefix Prefix to use for object files, which would name clash.
 	 * @param filePrefix Generic prefix to all files of the node.
 	 */
-	virtual void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	virtual void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
 	                                    const std::string &objPrefix, const std::string &filePrefix) = 0;
 
 	/**
@@ -575,7 +575,7 @@ protected:
 	 * @param excludeList Files to exclude (must have a relative directory as prefix).
 	 * @param filePrefix Prefix to use for relative path arguments.
 	 */
-	void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
+	void addFilesToProject(const std::string &dir, std::ostream &projectFile,
 	                       const StringList &includeList, const StringList &excludeList,
 	                       const std::string &filePrefix);
 

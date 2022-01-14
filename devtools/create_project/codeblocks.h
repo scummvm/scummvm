@@ -41,7 +41,7 @@ protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 						   const StringList &includeList, const StringList &excludeList) final;
 
-	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
 								const std::string &objPrefix, const std::string &filePrefix) final;
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output) final;

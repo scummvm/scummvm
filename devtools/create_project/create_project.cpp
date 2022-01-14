@@ -1800,7 +1800,7 @@ std::string ProjectProvider::getLastPathComponent(const std::string &path) {
 		return path.substr(pos + 1);
 }
 
-void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,
+void ProjectProvider::addFilesToProject(const std::string &dir, std::ostream &projectFile,
 										const StringList &includeList, const StringList &excludeList,
 										const std::string &filePrefix) {
 	FileNode *files = scanFiles(dir, includeList, excludeList);
