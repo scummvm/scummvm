@@ -50,6 +50,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
      wenn die Spieldateien über eine minimale Installation bereitgestellt werden.
+   - Fehler in der Darstellung der Benutzeroberfläche in Serrated Scalpel behoben.
 
  TwinE:
    - Fehler in der Kollisionserkennung behoben, der dazu führt, dass das Spiel nicht beendet werden kann,
