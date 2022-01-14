@@ -897,8 +897,10 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		textSprites[cnt] = NULL;
 	_firstText = 0;
 
+	Common::String dirtyBufStr;
 	loadDescriptions(saveGameTexts);
 	_selectedGame = 0;
+	dirtyBufStr = saveGameTexts[_selectedGame];
 
 	bool quitPanel = false;
 	bool refreshNames = true;
@@ -918,7 +920,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			for (cnt = 0; cnt < MAX_ON_SCREEN; cnt++)
 				if (textSprites[cnt])
 					free(textSprites[cnt]);
-			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame);
+			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame, dirtyBufStr);
 			showSprites(textSprites, allowSave);
 			refreshNames = false;
 		}
@@ -937,15 +939,17 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			clickRes = handleClick(lookList[0]);
 			if (!_controlPanel) //game state was destroyed
 				return clickRes;
-			if (clickRes == GAME_SAVED)
+			if (clickRes == GAME_SAVED) {
+				saveGameTexts[_selectedGame] = dirtyBufStr;
 				saveDescriptions(saveGameTexts);
+			}
 			else if (clickRes == NO_DISK_SPACE)
 				displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 			quitPanel = true;
 			_mouseClicked = false;
 			_action = kSkyActionNone;
 		} if (allowSave && _keyPressed.keycode) {
-			handleKeyPress(_keyPressed, saveGameTexts[_selectedGame]);
+			handleKeyPress(_keyPressed, dirtyBufStr);
 			refreshNames = true;
 			_keyPressed.reset();
 		}
@@ -958,6 +962,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			_mouseWheel = 0;
 			if (clickRes == SHIFTED) {
 				_selectedGame = _firstText;
+				dirtyBufStr = saveGameTexts[_selectedGame];
 				refreshNames = true;
 			}
 		}
@@ -978,6 +983,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 
 					if (clickRes == SHIFTED) {
 						_selectedGame = _firstText;
+						dirtyBufStr = saveGameTexts[_selectedGame];
 						refreshNames = true;
 					}
 					if (clickRes == NO_DISK_SPACE) {
@@ -988,6 +994,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						quitPanel = true;
 
 					if (clickRes == GAME_SAVED) {
+						saveGameTexts[_selectedGame] = dirtyBufStr;
 						saveDescriptions(saveGameTexts);
 						quitPanel = true;
 					}
@@ -1000,8 +1007,12 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			if ((mouse.x >= GAME_NAME_X) && (mouse.x <= GAME_NAME_X + PAN_LINE_WIDTH) &&
 				(mouse.y >= GAME_NAME_Y) && (mouse.y <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
 
-					_selectedGame = (mouse.y - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
-					refreshNames = true;
+				uint16 newSelectedGame = (mouse.y - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
+				if (_selectedGame != newSelectedGame) {
+					_selectedGame = newSelectedGame;
+					dirtyBufStr = saveGameTexts[_selectedGame];
+				}
+				refreshNames = true;
 			}
 		}
 		if (!haveButton)
@@ -1044,7 +1055,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 	}
 }
 
-void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
+void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, const Common::String &dirtyString) {
 	char cursorChar[2] = "-";
 	DisplayedText textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
@@ -1053,12 +1064,14 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
 		char nameBuf[MAX_TEXT_LEN + 10];
-		sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
 
-		if (firstNum + cnt == selectedGame)
+		if (firstNum + cnt == selectedGame) {
+			sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, dirtyString.c_str());
 			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
-		else
+		} else {
+			sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
 			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
+		}
 		nameSprites[cnt] = (DataFileHeader *)textSpr.textData;
 		if (firstNum + cnt == selectedGame) {
 			nameSprites[cnt]->flag = 1;
