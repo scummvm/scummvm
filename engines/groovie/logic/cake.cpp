@@ -107,7 +107,6 @@ void CakeGame::run(byte *scriptVariables) {
 
 	if (lastMove == 9) {
 		// samantha makes a move
-		// TODO: fix graphical bug when samantha makes a move
 		lastMove = aiGetBestMove(6);
 		_hasCheated = true;
 		return;
@@ -126,7 +125,9 @@ void CakeGame::run(byte *scriptVariables) {
 	}
 
 	int depth = 4 + (_hasCheated == false);
-	if (_easierAi)
+	if (_easierAi && _moveCount > 8)
+		depth = 3;
+	else if (_easierAi)
 		depth = 2;
 
 	lastMove = aiGetBestMove(depth);
@@ -292,10 +293,6 @@ int CakeGame::aiRecurse(int search_depth, int parent_score) {
 	return -best_score;
 }
 
-uint CakeGame::rng() {
-	return _random.getRandomNumber(UINT_MAX);
-}
-
 byte CakeGame::aiGetBestMove(int search_depth) {
 	int best_move = 0xffff;
 	uint counter = 1;
@@ -320,7 +317,7 @@ byte CakeGame::aiGetBestMove(int search_depth) {
 			} else if (best_score == score) {
 				// rng is only used on moves with equal scores
 				counter++;
-				uint r = rng() % 1000000;
+				uint r = _random.getRandomNumber(1000000 - 1);
 				if (r * counter < 1000000) {
 					best_move = move;
 				}

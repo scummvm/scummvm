@@ -69,6 +69,7 @@ private:
 	uint16 aiGetBestMove(byte depth);
 	void test();
 	void testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
+	void testRandomGame(uint32 seed);
 
 	Common::RandomSource _random;
 

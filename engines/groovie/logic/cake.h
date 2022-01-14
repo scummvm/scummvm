@@ -87,7 +87,6 @@ private:
 	bool gameEnded();
 	int getScoreDiff();
 	int aiRecurse(int search_depth, int parent_score);
-	uint rng();
 	byte aiGetBestMove(int search_depth);
 	void testCake();
 	void runCakeTest(uint seed, const char *moves, bool player_win);

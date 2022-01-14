@@ -77,7 +77,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 
 	switch (op) {
 	case 0:	// Init board's hexagons
-		_maxDepth = _easierAi ? 1 : 4;
+		_maxDepth = 4;
 		memset(_beehiveState, 0, HEXCOUNT);
 		_beehiveState[0] = kBeehiveColorYellow;
 		_beehiveState[4] = kBeehiveColorRed;
@@ -126,7 +126,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 	case 4:	// Stauf plays
 		scriptVariables[24] = 1;
 		scriptVariables[4] = 1;
-		sub08(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
+		calcStaufMove(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
 		// Execute method tail
 		break;
 
@@ -154,7 +154,7 @@ void BeehiveGame::run(byte *scriptVariables) {
 	case 6:
 		scriptVariables[24] = 1;
 		scriptVariables[4] = 2;
-		sub07(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
+		calcSamanthaMove(&v24, &v22, hexDifference, &v21, (int8 *)scriptVariables + 16, (int8 *)scriptVariables + 17);
 		// Execute method tail
 		break;
 
@@ -305,16 +305,14 @@ void BeehiveGame::sub04(int8 a1, int8 a2, int8 *scriptVariables) {
 	}
 }
 
-void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+void BeehiveGame::calcSamanthaMove(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
 	int8 params[4];
 
 	*a4 = 0;
-	int8 depth = 4;
-	if (_easierAi)
-		depth = 1;
+	_maxDepth = 5;// in the original game Samantha did 4 like Stauf
 
-	if (calcMove(_beehiveState, -125, -1, depth, 0, params) == 125
-			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, depth, 1, params) == 125)) {
+	if (calcMove(_beehiveState, -125, -1, _maxDepth, 0, params) == 125
+			&& (*a4 = 1, calcMove(_beehiveState, -125, -1, _maxDepth, 1, params) == 125)) {
 		*a1 = -1;
 		*a2 = -1;
 		for (int i = 0; i < HEXCOUNT; ++i) {
@@ -329,14 +327,25 @@ void BeehiveGame::sub07(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *
 	}
 }
 
-void BeehiveGame::sub08(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
+void BeehiveGame::calcStaufMove(int8 *a1, int8 *a2, int8 *a3, int8 *a4, int8 *a5, int8 *a6) {
 	int8 params[4];
 
 	*a4 = 0;
-	int8 depth = _maxDepth;
 
-	if (calcMove(_beehiveState, 125, 1, depth, 0, params) == -125
-			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, depth, 1, params) == -125)) {
+	_maxDepth = 4;
+	if (_easierAi) {
+		int numPieces = 0;
+		for (int i = 0; i < HEXCOUNT; ++i)
+			numPieces += _beehiveState[i] != 0;
+
+		if (numPieces < 16)
+			_maxDepth = 3;
+		else
+			_maxDepth = 1;
+	}
+
+	if (calcMove(_beehiveState, 125, 1, _maxDepth, 0, params) == -125
+			&& (*a4 = 1, calcMove(_beehiveState, 125, 1, _maxDepth, 1, params) == -125)) {
 		*a1 = -1;
 		*a2 = -1;
 		for (int i = 0; i < HEXCOUNT; ++i) {
@@ -820,16 +829,6 @@ void BeehiveGame::tests() {
 		/**/ 58, 59, /**/ 57, 45, /**/ 44, 35, /**/ 35, 26, /**/ 46, 54, /**/ 59, 60, /**/ 59, 55, /**/ 55, 40,
 		/**/ 39, 23
 	}, false);
-
-	// easier AI, early elimination win from darkshoxx
-	_easierAi = true;
-	testGame({/**/ 34, 42, /**/ 34, 41, /**/ 56, 50, /**/ 50, 35, /**/ 35, 43, /**/ 35, 27, /**/ 27, 19, /**/ 27, 20,
-			  /**/ 20, 28, /**/ 56, 44, /**/ 20, 5, /**/ 12, 20, /**/ 43, 50, /**/ 43, 37, /**/ 37, 45, /**/ 28, 20,
-			  /**/ 12, 13, /**/ 51, 38, /**/ 20, 21, /**/ 13, 7, /**/ 7, 1, /**/ 13, 14, /**/ 21, 22, /**/ 41, 23,
-			  /**/ 6, 8, /**/ 42, 24, /**/ 15, 9, /**/ 30, 39, /**/ 39, 53, /**/ 46, 51, /**/ 30, 39, /**/ 30, 31,
-			  /**/ 23, 32, /**/ 3, 1, /**/ 44, 52, /**/ 58, 57, /**/ 24, 33, /**/ 24, 34, /**/ 42, 48, /**/ 49, 55,
-			  /**/ 49, 42},
-			 true);
 
 	// copy the moveset from one of the tests to play it out yourself
 	overrideMoves = {};

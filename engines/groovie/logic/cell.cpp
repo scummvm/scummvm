@@ -757,7 +757,7 @@ void CellGame::calcMove(int8 color, uint16 depth) {
 			int newDepth;
 
 			newDepth = depths[3 * (depth - 2) + _moveCount % 3];
-			if (_easierAi)
+			if (_easierAi && _moveCount > 7)
 				newDepth = 1;
 
 			_flag2 = true;

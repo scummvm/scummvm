@@ -230,6 +230,7 @@ void PenteGame::calcTouchingPieces(byte moveX, byte moveY, bool revert) {
 }
 
 void PenteGame::updateScore(byte x, byte y, bool isStauf) {
+	assert(_table->boardState[x][y] == 0);
 	_table->boardState[x][y] = isStauf ? STAUF : PLAYER;
 	uint16 lines = _table->linesTable[x][y][0];
 
@@ -246,6 +247,7 @@ void PenteGame::updateScore(byte x, byte y, bool isStauf) {
 }
 
 void PenteGame::revertScore(byte x, byte y) {
+	assert(_table->boardState[x][y] != 0);
 	bool stauf_turn = _table->boardState[x][y] == STAUF;
 	_table->boardState[x][y] = 0;
 	_table->moveCounter--;
@@ -762,6 +764,13 @@ void PenteGame::test() {
 			/*x=*/15, /*y=*/11, /*x=*/14, /*y=*/10, /*x=*/17, /*y=*/12, /*x=*/16, /*y=*/10, /*x=*/13, /*y=*/10, /*x=*/18, /*y=*/10
 		}, false);
 
+	for (uint32 i = 0; i < 10; i++)
+		testRandomGame(i);
+
+	_easierAi = true;
+	for (uint32 i = 10; i < 20; i++)
+		testRandomGame(i);
+
 	_random.setSeed(oldSeed);
 	warning("finished PenteGame::test()");
 }
@@ -819,6 +828,57 @@ void PenteGame::testGame(uint32 seed, Common::Array<int> moves, bool playerWin) 
 		error("Stauf didn't win, winner: %d", (int)winner);
 
 	warning("finished PenteGame::testGame(%u, %u, %d)", seed, moves.size(), (int)playerWin);
+}
+
+void PenteGame::testRandomGame(uint32 seed) {
+	byte vars[1024];
+	byte &winner = vars[5];
+	byte &op = vars[4];
+
+	warning("starting PenteGame::testRandomGame(%u)", seed);
+	memset(vars, 0, sizeof(vars));
+	_random.setSeed(seed);
+
+	op = 0;
+	run(vars);
+
+	while (1) {
+		// Player makes a random move
+		int x, y;
+		do {
+			x = _random.getRandomNumber(19);
+			y = _random.getRandomNumber(14);
+		} while (_table != nullptr && _table->boardState[x][y]);
+
+		moveXYToVars(x, y, vars[0], vars[1], vars[2]);
+		op = 1;
+		run(vars);
+
+		do {
+			op = 2;
+			run(vars);
+		} while (winner == 1);
+
+		if (winner)
+			break;
+
+		// Stauf's move
+		op = 3;
+		run(vars);
+
+		do {
+			op = 4;
+			run(vars);
+		} while (winner == 1);
+
+		if (winner)
+			break;
+	}
+
+	if (winner != 2)
+		error("Stauf didn't win, winner: %d", (int)winner);
+
+	warning("finished PenteGame::testRandomGame(%u)", seed);
 }
 
 } // namespace Groovie
