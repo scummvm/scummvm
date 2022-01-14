@@ -181,6 +181,7 @@ static const char *const selectorNameTable[] = {
 	"setHeading",   // KQ7
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
+	"oSpecialSync", // LSL7
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
 	"select",       // PQ4
@@ -311,6 +312,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setHeading,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
+	SELECTOR_oSpecialSync,
 	SELECTOR_readWord,
 	SELECTOR_points,
 	SELECTOR_select,
@@ -8266,9 +8268,50 @@ static const uint16 larry7MessageTypeResetPatch[] = {
 	PATCH_END
 };
 
+// LSL7 Russian by Softclub can crash when Peggy catches Larry in room 551 after
+//  Jamie receives the polyester. This is a script bug that exists in every
+//  version of the game, but the Softclub release happens to have a sync
+//  resource with an internal value that exposes the problem.
+//
+// When talking to Peggy on the deck in room 261, MouthSync:oSpecialSync is set
+//  to coHandleLaugh to handle Peggy's laugh animation, but the script fails to
+//  clear this property. The only other place that uses this feature is room 256
+//  where oSpecialSync is correctly cleared. MouthSync:doit cues oSpecialSync
+//  whenever a sync resource has a cue value >= 8.  After talking to Peggy, any
+//  sync with a cue value of 9 causes coHandleLaugh to draw Peggy laughing in
+//  the wrong room and crash the game due to an invalid plane. In the English
+//  version this never came up because no other syncs contain a 9, but two of
+//  Peggy's Russian syncs in room 551 contain a 9 cue.
+//
+// We fix this by clearing MouthSync:oSpecialSync when exiting room 261. This
+//  also fixes script 261 never unloading. This patch applies to all PC versions
+//  but not Mac, since Mac scripts were compiled without debugging instructions.
+//  There is no need for a Mac patch since that version is only in English.
+//
+// Applies to: All PC versions
+// Responsible method: ro261:dispose
+// Fixes bug: #13209
+static const uint16 larry7PeggySyncHandlerSignature[] = {
+	0x7d, SIG_ADDTOOFFSET(+7),              // file "261.sc"
+	0x7e, SIG_ADDTOOFFSET(+2),              // line
+	0x35, SIG_MAGICDWORD, 0x00,             // ldi 00
+	0xa0, SIG_UINT16(0x0155),               // sag 0155 [ global341 = 0 ]
+	SIG_END
+};
+
+static const uint16 larry7PeggySyncHandlerPatch[] = {
+	0x38, PATCH_SELECTOR16(oSpecialSync),   // pushi oSpecialSync
+	0x39, 0x01,                             // pushi 01
+	0x76,                                   // push0
+	0x51, 0x27,                             // class MouthSync
+	0x4a, PATCH_UINT16(0x0006),             // send 06 [ MouthSync oSpecialSync: 0 ]
+	PATCH_END
+};
+
 //          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
 	{  true,     0, "disable message type reset on startup", 1, larry7MessageTypeResetSignature,    larry7MessageTypeResetPatch },
+	{  true,   261, "fix peggy sync handler",                1, larry7PeggySyncHandlerSignature,    larry7PeggySyncHandlerPatch },
 	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7MakeCheeseCyclerSignature,    larry7MakeCheeseCyclerPatch },
 	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7MakeCheesePrioritySignature,  larry7MakeCheesePriorityPatch },
 	{  true, 64000, "disable volume reset on startup (1/2)", 1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
@@ -11969,9 +12012,9 @@ static const uint16 qfg1egaSignaturePickSafeMessage1[] = {
 };
 
 static const uint16 qfg1egaPatchPickSafeMessage1[] = {
-	0x39, SIG_SELECTOR8(register),     // pushi register
-	0x76,                              // push0
-	0x54, 0x04,                        // self 04 [ self register? ]
+	0x39, PATCH_SELECTOR8(register),    // pushi register
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self register? ]
 	PATCH_END
 };
 
