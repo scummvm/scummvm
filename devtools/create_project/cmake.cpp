@@ -134,9 +134,6 @@ endmacro()
 	foreach(SUB_ENGINE IN LISTS SUB_ENGINES_${_engine_var})
 		add_definitions(-DENABLE_${SUB_ENGINE})
 	endforeach(SUB_ENGINE)
-	file(APPEND "engines/plugins_table.h" "#if PLUGIN_ENABLED_STATIC(${_engine_var})\n")
-	file(APPEND "engines/plugins_table.h" "LINK_PLUGIN(${_engine_var})\n")
-	file(APPEND "engines/plugins_table.h" "#endif\n")
 
 	# Enable C++11
 	set_property(TARGET ${engine_name} PROPERTY CXX_STANDARD 11)
@@ -144,9 +141,14 @@ endmacro()
 
 	# Link against the engine
 	target_link_libraries()EOS" << setup.projectName << R"( ${engine_name})
-endfunction()
 
 )";
+
+	const std::string table_path = setup.isInSource() ? "../" : "engines/";
+	workspace << "\tfile(APPEND \"" << table_path << "plugins_table.h\" \"#if PLUGIN_ENABLED_STATIC(${_engine_var})\\n\")\n";
+	workspace << "\tfile(APPEND \"" << table_path << "plugins_table.h\" \"LINK_PLUGIN(${_engine_var})\\n\")\n";
+	workspace << "\tfile(APPEND \"" << table_path << "plugins_table.h\" \"#endif\\n\")\n";
+	workspace << "endfunction()\n\n";
 
 	workspace << "# Define the engines and subengines\n";
 	writeEngines(setup, workspace);
@@ -277,7 +279,7 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 										   const StringList &includeList, const StringList &excludeList) {
 
 	const std::string projectFile = setup.outputDir + "/CMakeLists.txt";
-	std::ofstream project(projectFile.c_str(), std::ofstream::out | std::ofstream::app);
+	std::ofstream project(projectFile, std::ofstream::out | std::ofstream::app);
 	if (!project)
 		error("Could not open \"" + projectFile + "\" for writing");
 
@@ -287,9 +289,20 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "list(APPEND SCUMMVM_LIBS " << name << ")\n";
 		project << "add_library(" << name << "\n";
 	} else {
-		enginesStr << "add_engine(" << name << "\n";
-		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, {});
-		enginesStr << ")\n\n";
+		std::ofstream engineProject;
+		std::ostream *engine = &enginesStr;
+		std::string prefix;
+		if (setup.isInSource()) {
+			engineProject.open(filePrefix(setup, moduleDir) + "/CMakeLists.txt", std::ofstream::out);
+			engine = &engineProject;
+		} else {
+			prefix = filePrefix(setup, moduleDir);
+		}
+		*engine << "add_engine(" << name << "\n";
+		addFilesToProject(moduleDir, *engine, includeList, excludeList, prefix);
+		*engine << ")\n";
+		if (!setup.isInSource())
+			*engine << '\n';
 		return;
 	}
 
@@ -387,8 +400,16 @@ void CMakeProvider::writeEngineOptions(std::ofstream &workspace) const {
 }
 
 void CMakeProvider::writeEnginesLibrariesHandling(const BuildSetup &setup, std::ofstream &workspace) const {
-	workspace << enginesStr.str();
+	if (setup.isInSource()) {
+		workspace << R"(foreach(ENGINE IN LISTS ENGINES)
+	string(TOLOWER ${ENGINE} ENGINE_DIR)
+	add_subdirectory(engines/${ENGINE_DIR})
+endforeach()
 
+)";
+	} else {
+		workspace << enginesStr.str();
+	}
 }
 
 bool CMakeProvider::featureExcluded(const char *name) const {
