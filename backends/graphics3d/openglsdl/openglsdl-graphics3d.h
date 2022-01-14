@@ -108,7 +108,6 @@ public:
 	void notifyResize(const int width, const int height) override;
 
 	bool gameNeedsAspectRatioCorrection() const override { return false; }
-	int getGraphicsModeScale(int mode) const override { return 1; }
 
 	void transformMouseCoordinates(Common::Point &point);
 	bool notifyMousePosition(Common::Point &mouse) override {

@@ -61,20 +61,6 @@ protected:
 
 	bool saveScreenshot(const Common::String &filename) const override;
 
-	int getGraphicsModeScale(int mode) const override {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		int windowWidth, windowHeight;
-		SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);
-		int realWidth, realHeight;
-		SDL_GL_GetDrawableSize(_window->getSDLWindow(), &realWidth, &realHeight);
-		int scale = realWidth / windowWidth;
-		//debug(9, "window: %dx%d drawable: %dx%d scale: %d", windowWidth, windowHeight, realWidth, realHeight, scale);
-		return scale;
-#else
-		return 1;
-#endif
-	}
-
 private:
 	bool setupMode(uint width, uint height);
 

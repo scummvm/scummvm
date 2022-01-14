@@ -153,10 +153,7 @@ protected:
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	Common::Rect getPreferredFullscreenResolution();
 
-	virtual int getGraphicsModeScale(int mode) const = 0;
-
 	bool defaultGraphicsModeConfig() const;
-	int getGraphicsModeIdByName(const Common::String &name) const;
 
 	/**
 	 * Gets the dimensions of the window directly from SDL instead of from the

@@ -559,11 +559,6 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 }
 #endif
 
-int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
-	// TODO: I'm not 100% sure this is correct...
-	return _videoMode.scaleFactor;
-}
-
 uint SurfaceSdlGraphicsManager::getDefaultScaler() const {
 	return ScalerMan.findScalerPluginIndex("normal");
 }
