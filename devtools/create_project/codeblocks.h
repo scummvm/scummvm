@@ -26,27 +26,27 @@
 
 namespace CreateProjectTool {
 
-class CodeBlocksProvider : public ProjectProvider {
+class CodeBlocksProvider final : public ProjectProvider {
 public:
 	CodeBlocksProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
 
-	void createWorkspace(const BuildSetup &setup);
+	void createWorkspace(const BuildSetup &setup) final;
 
-	void createOtherBuildFiles(const BuildSetup &) {}
+	void createOtherBuildFiles(const BuildSetup &) final {}
 
-	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) final;
 
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-	                       const StringList &includeList, const StringList &excludeList);
+						   const StringList &includeList, const StringList &excludeList) final;
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                            const std::string &objPrefix, const std::string &filePrefix);
+								const std::string &objPrefix, const std::string &filePrefix) final;
 
-	void writeReferences(const BuildSetup &setup, std::ofstream &output);
+	void writeReferences(const BuildSetup &setup, std::ofstream &output) final;
 
-	const char *getProjectExtension();
+	const char *getProjectExtension() final;
 
 private:
 	void writeWarnings(const std::string &name, std::ofstream &output) const;

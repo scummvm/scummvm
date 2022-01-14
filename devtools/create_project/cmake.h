@@ -31,25 +31,25 @@ namespace CreateProjectTool {
  *
  * Generated CMake projects are minimal, and will only work with GCC.
  */
-class CMakeProvider : public ProjectProvider {
+class CMakeProvider final : public ProjectProvider {
 public:
 	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
 
-	void createWorkspace(const BuildSetup &setup);
+	void createWorkspace(const BuildSetup &setup) final;
 
-	void createOtherBuildFiles(const BuildSetup &) {}
+	void createOtherBuildFiles(const BuildSetup &) final {}
 
-	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {}
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) final {}
 
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-	                       const StringList &includeList, const StringList &excludeList);
+						   const StringList &includeList, const StringList &excludeList) final;
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                            const std::string &objPrefix, const std::string &filePrefix);
+								const std::string &objPrefix, const std::string &filePrefix) final;
 
-	const char *getProjectExtension();
+	const char *getProjectExtension() final;
 
 private:
 	enum SDLVersion {

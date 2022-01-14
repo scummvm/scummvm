@@ -26,7 +26,7 @@
 
 namespace CreateProjectTool {
 
-class MSBuildProvider : public MSVCProvider {
+class MSBuildProvider final : public MSVCProvider {
 public:
 	MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc);
 

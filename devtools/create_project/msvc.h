@@ -53,11 +53,11 @@ protected:
 	std::string getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const;
 	std::string outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const;
 
-	void createWorkspace(const BuildSetup &setup);
+	void createWorkspace(const BuildSetup &setup) override;
 
-	void createOtherBuildFiles(const BuildSetup &setup);
+	void createOtherBuildFiles(const BuildSetup &setup) override;
 
-	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) override;
 
 	/**
 	 * Create the global project properties.
