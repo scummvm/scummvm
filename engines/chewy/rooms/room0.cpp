@@ -85,7 +85,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 			flags.AutoAniPlay = true;
 			if (!_G(spieler).R0SlimeUsed) {
 				start_aad_wait(42, -1);
-				auto_move(5, 0);
+				auto_move(5, P_CHEWY);
 				set_person_spr(0, 0);
 
 				if (_G(spieler).R0FueterLab < 3) {
@@ -106,7 +106,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 					++_G(spieler).R0FueterLab;
 				}
 
-				auto_move(3, 0);
+				auto_move(3, P_CHEWY);
 				set_person_pos(191, 120, P_CHEWY, P_LEFT);
 			}
 
@@ -129,7 +129,7 @@ bool Room0::getPillow() {
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
 		flags.AutoAniPlay = true;
-		auto_move(1, 0);
+		auto_move(1, P_CHEWY);
 		start_spz_wait(13, 1, 0, 0);
 		invent_2_slot(0);
 		menu_item = 0;
@@ -148,7 +148,7 @@ bool Room0::getPillow() {
 bool Room0::pullSlime() {
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
-		auto_move(2, 0);
+		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(3, 1, ANI_VOR);
 		set_person_pos(222, 106, P_CHEWY, P_LEFT);

@@ -125,7 +125,7 @@ void Room97::proc2() {
 	stop_person(P_CHEWY);
 	hide_cur();
 	Sdi[6].z_ebene = 6;
-	Sdi[18].z_ebene = 6;
+	Sdi[24].z_ebene = 6;
 	_G(spieler).flags36_1 = false;
 	spieler_mi[P_CHEWY].Mode = true;
 	go_auto_xy(455, 59, P_CHEWY, ANI_VOR);
@@ -158,12 +158,82 @@ void Room97::proc3() {
 		start_aad_wait(567, -1);
 		go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
 	} else {
-		
+		_G(spieler).flags36_1 = true;
+		HowardMov = 1;
+		go_auto_xy(572, 139, P_CHEWY, ANI_VOR);
+		Sdi[6].z_ebene = 6;
+		Sdi[24].z_ebene = 6;
+
+		go_auto_xy(530, 99, P_CHEWY, ANI_VOR);
+		go_auto_xy(496, 99, P_CHEWY, ANI_VOR);
+		go_auto_xy(455, 59, P_CHEWY, ANI_VOR);
+		go_auto_xy(440, 52, P_CHEWY, ANI_VOR);
+		if (!_G(spieler).flags36_80) {
+			go_auto_xy(572, 122, P_HOWARD, ANI_VOR);
+			go_auto_xy(526, 83, P_HOWARD, ANI_VOR);
+			go_auto_xy(500, 83, P_HOWARD, ANI_VOR);
+		}
+
+		auto_move(6, P_CHEWY);
+		if (!_G(spieler).flags36_80) {
+			go_auto_xy(442, 35, P_HOWARD, ANI_VOR);
+			go_auto_xy(497, 31, P_HOWARD, ANI_VOR);
+			start_aad_wait(562, -1);
+		}
+		spieler_mi[P_CHEWY].Mode = false;
+		Sdi[6].z_ebene = 166;
+		Sdi[24].z_ebene = 157;
+		_G(spieler).flags36_80 = true;
 	}
 	show_cur();
+	flags.AutoAniPlay = false;
 }
 
 void Room97::proc4() {
+	if (flags.AutoAniPlay)
+		return;
+
+	if (!_G(spieler).flags35_80) {
+		flags.AutoAniPlay = true;
+		hide_cur();
+		spieler_mi[P_CHEWY].Mode = true;
+		stop_person(P_CHEWY);
+		det->enable_sound(9, 0);
+		det->disable_sound(9, 1);
+		start_detail_wait(9, 1, ANI_VOR);
+		det->show_static_spr(21);
+
+		while (spieler_vector[P_HOWARD].Xypos[0] > 996)
+			set_up_screen(DO_SETUP);
+
+		det->show_static_spr(2);
+		HowardMov = 1;
+		
+		go_auto_xy(967, 111, P_CHEWY, ANI_VOR);
+		go_auto_xy(1008, 93, P_CHEWY, ANI_VOR);
+		go_auto_xy(1037, 99, P_CHEWY, ANI_VOR);
+
+		go_auto_xy(995, 77, P_HOWARD, ANI_VOR);
+		go_auto_xy(1047, 87, P_HOWARD, ANI_VOR);
+
+		start_detail_wait(29, 1, ANI_VOR);
+		det->hide_static_spr(21);
+		det->enable_sound(9, 1);
+		det->disable_sound(9, 0);
+		start_detail_wait(9, 0, ANI_RUECK);
+
+		go_auto_xy(1008, 93, P_CHEWY, ANI_VOR);
+		go_auto_xy(967, 111, P_CHEWY, ANI_VOR);
+		go_auto_xy(995, 82, P_HOWARD, ANI_VOR);
+		det->hide_static_spr(2);
+		spieler_mi[P_CHEWY].Mode = ANI_VOR;
+		start_spz(4, 255, false, P_CHEWY);
+		start_aad_wait(553, -1);
+		HowardMov = 0;
+		show_cur();
+	}
+		
+	flags.AutoAniPlay = false;
 }
 
 int Room97::proc5() {

@@ -174,7 +174,7 @@ void Room49::use_boy_cigar() {
 	del_inventar(_G(spieler).AkInvent);
 	talk_boy(263);
 	SetUpScreenFunc = nullptr;
-	auto_move(5, 0);
+	auto_move(5, P_CHEWY);
 
 	int16 zoom = room->room_info->ZoomFak;
 	room->set_zoom(zoom);
