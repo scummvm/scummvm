@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
      installation.
+   - Fixed UI glitches in Serrated Scalpel.
 
 #### 2.5.1 (2022-01-02)
 
