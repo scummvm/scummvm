@@ -130,6 +130,9 @@ public:
 		#if defined(__amigaos4__) || defined(__MORPHOS__)
 		LINK_PLUGIN(CAMD)
 		#endif
+		#if defined(RISCOS)
+		LINK_PLUGIN(RISCOS)
+		#endif
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
 		LINK_PLUGIN(COREMIDI)
