@@ -450,21 +450,24 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	ChunkHead Ch;
 	if (atdshandle[ADH_HANDLE]) {
 		mem->file->select_pool_item(atdshandle[ADH_HANDLE], dia_nr);
-
 		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
 			atdshandle[ADH_HANDLE]);
+
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 		if (!Ch.load(rs)) {
 			modul = DATEI;
 			fcode = READFEHLER;
 		} else {
-			//chewy_fseek(atdshandle[ADH_HANDLE], 0, SEEK_CUR);
 			if (Ch.size) {
-				if (!chewy_fwrite(atdsmem[ADH_HANDLE], Ch.size, 1, atdshandle[ADH_HANDLE])) {
+				Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
+				ws->seek(rs->pos());
+				if (ws->write(atdsmem[ADH_HANDLE], Ch.size) != Ch.size) {
 					fcode = WRITEFEHLER;
 					modul = DATEI;
 				}
+
+				delete ws;
 			}
 		}
 	} else {

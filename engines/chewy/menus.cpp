@@ -894,8 +894,8 @@ void ads_menu() {
 	int16 cur_y_start;
 	int16 col;
 	AdsNextBlk *an_blk;
-	if (flags.AdsDialog) {
 
+	if (flags.AdsDialog) {
 		flags.ShowAtsInvTxt = false;
 		flags.MainInput = false;
 		if (ads_item_anz > 4)
@@ -927,6 +927,7 @@ void ads_menu() {
 				out->printxy(4, cur_y_start - i * 10, col, 300, 0, ads_item_ptr[i]);
 			}
 		}
+
 		switch (in->get_switch_code()) {
 		case 255:
 		case ENTER:
@@ -960,7 +961,6 @@ void ads_menu() {
 		default:
 			ads_push = false;
 			break;
-
 		}
 	}
 }
