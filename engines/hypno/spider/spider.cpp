@@ -242,7 +242,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *alley_selector = new Transition("alley.mi_", "<puz_matr>");
 	_levels["<alley_selector>"] = alley_selector;
 
-	loadSceneLevel("alley.mi_", "<trans_apt_2>", prefix);
+	loadSceneLevel("alley.mi_", "<after_bank>", prefix);
 	_levels["alley.mi_"]->music = "alleymus.raw";
 	_levels["alley.mi_"]->intros.push_back("cine/aleyc01s.smk");
 
@@ -258,11 +258,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	Code *matrix = new Code();
 	matrix->name = "<puz_matr>";
 	matrix->intros.push_back("cine/aleyc01s.smk");
-	matrix->levelIfWin = "<trans_apt_2>";
+	matrix->levelIfWin = "<after_bank>";
 	matrix->prefix = prefix;
 	_levels["<puz_matr>"] = matrix;
 
 	// Transitions
+	Transition *after_bank = new Transition("<trans_apt_2>");
+	after_bank->intros.push_back("spider/cine/blcs003.smk");
+	_levels["<after_bank>"] = after_bank;
+
 	Transition *trans_apt_1 = new Transition("busint.mi_");
 	trans_apt_1->intros.push_back("spider/cine/ross004s.smk");
 	trans_apt_1->intros.push_back("spider/cine/apts002s.smk");
@@ -843,6 +847,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_alley = new Transition("tryagain.mi_");
 	over_alley->intros.push_back("spider/cine/bals002s.smk");
+	over_alley->intros.push_back("spider/cine/apts01as.smk");
 	_levels["<over_alley>"] = over_alley;
 
 	Transition *over_bus = new Transition("tryagain.mi_");
@@ -856,10 +861,12 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_hob_vul = new Transition("tryagain.mi_");
 	over_hob_vul->intros.push_back("spider/cine/dals001a.smk");
+	over_hob_vul->intros.push_back("spider/cine/apts001a.smk");
 	_levels["<over_hob_vul>"] = over_hob_vul;
 
 	Transition *over_hob2 = new Transition("tryagain.mi_");
 	over_hob2->intros.push_back("spider/cine/ctss01as.smk");
+	over_hob2->intros.push_back("spider/cine/apts001a.smk");
 	_levels["<over_hob2>"] = over_hob2;
 
 	Transition *over_gas = new Transition("tryagain.mi_");
