@@ -237,6 +237,11 @@ void init_atds() {
 
 	atds->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
 	ERROR
+
+	mem->file->fcopy(ADSH_TMP, "txt/diah.adh");
+	atds->open_handle(ADSH_TMP, "rb", 3);
+	ERROR
+
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;

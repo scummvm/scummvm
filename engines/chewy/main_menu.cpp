@@ -185,10 +185,6 @@ int16 MainMenu::creditsFn(int16 key) {
 }
 
 void MainMenu::startGame() {
-	mem->file->fcopy(ADSH_TMP, "txt/diah.adh");
-	atds->open_handle(ADSH_TMP, "rb", 3);
-	ERROR
-
 	hide_cur();
 	animate();
 	exit_room(-1);

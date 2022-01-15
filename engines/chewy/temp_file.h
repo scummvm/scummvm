@@ -33,20 +33,24 @@ namespace Chewy {
 class TempFileArchive : public Common::Archive {
 	struct Entry {
 		Common::String _name;
-		Common::MemoryReadWriteStream _stream;
-		Entry() : _stream(DisposeAfterUse::YES) {}
-		Entry(const Common::String &name) : _name(name),
-			_stream(DisposeAfterUse::YES) {}
+		byte *_data;
+		size_t _size;
+		Entry() : _data(nullptr), _size(0) {}
+		Entry(const Common::String &name);
+		~Entry();
+
+		void allocate(size_t maxSize);
 	};
 	typedef Common::List<Entry> EntryList;
 
 	class FileProxy : public Common::SeekableReadStream,
 		public Common::SeekableWriteStream {
 	private:
-		Common::MemoryReadWriteStream *_src;
+		byte *_ptr;
+		int32 _pos, _size;
 	public:
-		FileProxy(Common::MemoryReadWriteStream *src) : _src(src) {
-		}
+		FileProxy(byte *ptr, size_t ptrSize) :
+			_ptr(ptr), _size(ptrSize), _pos(0) {}
 
 		bool eos() const override;
 		uint32 read(void *dataPtr, uint32 dataSize) override;
@@ -74,8 +78,9 @@ public:
 	/**
 	 * Registers a temporary file by name.
 	 */
-	void add(const Common::String &name) {
+	void add(const Common::String &name, size_t maxSize) {
 		_files.push_back(Entry(name));
+		_files.back().allocate(maxSize);
 	}
 
 	/**

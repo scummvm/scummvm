@@ -69,7 +69,7 @@ void ChewyEngine::initialize() {
 	_globals = new Globals();
 	_sound = new Sound(_mixer);
 
-	_tempFiles.add(ADSH_TMP);
+	_tempFiles.add(ADSH_TMP, 5710);
 	SearchMan.add("temp", &_tempFiles, 99, false);
 	setDebugger(new Debugger());
 }
@@ -86,6 +86,8 @@ Common::Error ChewyEngine::run() {
 	return Common::kNoError;
 }
 
+#define SCUMMVM_TAG MKTAG('S', 'C', 'V', 'M')
+
 Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	exit_room(-1);
 
@@ -96,8 +98,13 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kReadingFailed;
 
 	} else {
+		Common::SeekableWriteStream *adh = _tempFiles.createWriteStreamForMember(ADSH_TMP);
+		if (stream->readUint32BE() != SCUMMVM_TAG ||
+			stream->readUint32LE() != adh->size())
+			return Common::kReadingFailed;
+		adh->writeStream(stream, adh->size());
+
 		flags.LoadGame = true;
-		ERROR
 
 		if (_G(spieler).inv_cur == true && _G(spieler).AkInvent != -1) {
 			menu_item = CUR_USE;
@@ -133,17 +140,22 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer s(nullptr, stream);
-	//int16 spr_nr;
-	int16 i;
-	//spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
-	for (i = 0; i < MAX_PERSON; i++) {
+
+	for (int i = 0; i < MAX_PERSON; i++) {
 		_G(spieler).X[i] = spieler_vector[i].Xypos[0];
 		_G(spieler).Y[i] = spieler_vector[i].Xypos[1];
 		_G(spieler).Phase[i] = person_end_phase[i];
 	}
 
-	return _G(spieler).synchronize(s) ? Common::kNoError :
-		Common::kWritingFailed;
+	if (!_G(spieler).synchronize(s))
+		return Common::kWritingFailed;
+
+	Common::SeekableReadStream *rs = _tempFiles.createReadStreamForMember(ADSH_TMP);
+	stream->writeUint32BE(SCUMMVM_TAG);
+	stream->writeUint32LE(rs->size());
+	stream->writeStream(rs);
+
+	return Common::kNoError;
 }
 
 SaveStateList ChewyEngine::listSaves() {
