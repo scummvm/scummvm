@@ -1024,6 +1024,9 @@ Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_nextLevel = stream->readString();
 	_checkpoint = _nextLevel;
 
+	// Reset played intros
+	_intros.clear();
+
 	// Reset state variables from puzzles
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 10; j++)
