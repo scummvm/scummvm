@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+bool Room97::r97_bool18DB32;
+int Room97::r97_word18DB2E;
+int Room97::r97_word18DB34;
+int Room97::r97_word18DB36;
+int Room97::r97_word18DB38;
+
 void Room97::entry() {
 	det->enable_sound(0, 0);
 	det->play_sound(0, 0);
