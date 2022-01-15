@@ -87,6 +87,7 @@ private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void inputBoxCallback(void *callbackData, void *source);
 
+	static void onButtonHovered(int buttonId, void *callbackData);
 	static void onButtonPressed(int buttonId, void *callbackData);
 
 	void changeState(State state);
