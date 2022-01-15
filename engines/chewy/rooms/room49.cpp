@@ -179,11 +179,11 @@ void Room49::use_boy_cigar() {
 	int16 zoom = room->room_info->ZoomFak;
 	room->set_zoom(zoom);
 	go_auto_xy(416, 79, P_HOWARD, ANI_VOR);
-	set_person_spr(0, 1);
+	set_person_spr(P_LEFT, P_HOWARD);
 	flags.NoScroll = true;
 
 	auto_scroll(164, 0);
-	flic_cut(67, 0);
+	flic_cut(67, CFO_MODE);
 	test_intro(17);
 	ERROR
 
@@ -193,13 +193,13 @@ void Room49::use_boy_cigar() {
 	det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
 	flags.NoScroll = false;
-	set_person_spr(1, 0);
+	set_person_spr(P_RIGHT, P_CHEWY);
 	start_aad_wait(264, -1);
 	room->set_zoom(zoom);
 
 	obj->add_inventar(68, &room_blk);
 	inventory_2_cur(68);
-	atds->set_steuer_bit(318, 1, 1);
+	atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 
 	SetUpScreenFunc = setup_func;
 	_G(spieler).R49BoyWeg = true;

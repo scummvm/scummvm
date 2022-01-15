@@ -226,7 +226,7 @@ void Room97::proc4() {
 		go_auto_xy(967, 111, P_CHEWY, ANI_VOR);
 		go_auto_xy(995, 82, P_HOWARD, ANI_VOR);
 		det->hide_static_spr(2);
-		spieler_mi[P_CHEWY].Mode = ANI_VOR;
+		spieler_mi[P_CHEWY].Mode = false;
 		start_spz(4, 255, false, P_CHEWY);
 		start_aad_wait(553, -1);
 		HowardMov = 0;
@@ -237,11 +237,66 @@ void Room97::proc4() {
 }
 
 int Room97::proc5() {
-	return 0;
+	if (!is_cur_inventar(114))
+		return 0;
+
+	hide_cur();
+	auto_move(0, P_CHEWY);
+	auto_scroll(800, 0);
+	
+	while (spieler_vector[P_HOWARD].Xypos[0] < 1080)
+		set_up_screen(DO_SETUP);
+
+	flic_cut(122, CFO_MODE);
+
+	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
+	start_detail_wait(0, 1, ANI_VOR);
+	det->show_static_spr(13);
+	start_detail_wait(13, 1, ANI_VOR);
+	det->start_detail(14, 255, false);
+	start_aad_wait(555, -1);
+	_G(spieler).flags36_40 = true;
+	atds->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->del_steuer_bit(535, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+	
+	show_cur();
+	return 1;
 }
 
 int Room97::proc6() {
-	return 0;
+	if (_G(spieler).inv_cur)
+		return 0;
+
+	hide_cur();
+	auto_move(1, P_CHEWY);
+	spieler_mi[P_CHEWY].Mode = true;
+	go_auto_xy(298, 120, P_CHEWY, ANI_VOR);
+	set_person_spr(P_LEFT, P_CHEWY);
+	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
+	det->hide_static_spr(15);
+	start_detail_wait(1, 1, ANI_VOR);
+	det->show_static_spr(28);
+	auto_move(1, P_CHEWY);
+	det->hide_static_spr(18);
+	start_detail_wait(15, 1, ANI_VOR);
+	det->show_static_spr(17);
+	start_spz(4, 255, false, P_CHEWY);
+	start_aad_wait(558, -1);
+	det->hide_static_spr(28);
+	det->stop_detail(5);
+	det->show_static_spr(15);
+	_G(spieler).flags36_2 = true;
+	atds->del_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->set_steuer_bit(531, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->set_ats_str(530, 1, ATS_DATEI);
+	atds->set_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATEI);
+	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler).flags36_8 = true;
+
+	show_cur();
+	return 1;
 }
 
 int Room97::proc7() {

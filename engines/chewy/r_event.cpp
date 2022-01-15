@@ -2133,7 +2133,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_CART_FACH_R18:
 		_G(cur_hide_flag) = false;
 		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
-		_G(spieler).R18CartFach = 1;
+		_G(spieler).R18CartFach = true;
 		del_inventar(_G(spieler).AkInvent);
 		det->show_static_spr(7);
 		atds->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
