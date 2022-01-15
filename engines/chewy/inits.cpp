@@ -123,7 +123,7 @@ void var_init() {
 
 	life_handler = false;
 	_G(auto_p_nr) = 0;
-	menu_item = 0;
+	menu_item = CUR_WALK;
 	inventar_nr = 0;
 	_G(ged_mov_ebene) = 1;
 	new_game();

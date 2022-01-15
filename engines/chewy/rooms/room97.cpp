@@ -300,19 +300,132 @@ int Room97::proc6() {
 }
 
 int Room97::proc7() {
-	return 0;
+	if (_G(spieler).inv_cur)
+		return 0;
+
+	hide_cur();
+	auto_move(2, P_CHEWY);
+	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	det->hide_static_spr(17);
+	start_detail_wait(22, 1, ANI_VOR);
+	atds->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->set_ats_str(530, 2, ATS_DATEI);
+	new_invent_2_cur(SLIME_INV);
+	_G(spieler).flags36_4 = true;
+	set_person_pos(304, 102, 0, P_RIGHT);
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	auto_move(1, P_CHEWY);
+	spieler_mi[P_CHEWY].Mode = false;
+
+	show_cur();
+	return 1;
 }
 
 int Room97::proc8() {
-	return 0;
+	if (!is_cur_inventar(94))
+		return 0;
+
+	hide_cur();
+	auto_move(2, P_CHEWY);
+	int diaNr = -1;
+	if (!_G(spieler).flags36_2)
+		diaNr = 559;
+	else if (!_G(spieler).flags36_4)
+		diaNr = 560;
+	else {
+		start_spz_wait(14, 1, false, P_CHEWY);
+		det->start_detail(11, 255, false);
+		del_inventar(_G(spieler).AkInvent);
+		_G(spieler).flags36_10 = true;
+		_G(spieler).flags36_8 = false;
+		det->start_detail(12, 255, false);
+		atds->set_ats_str(530, 3, ATS_DATEI);
+		atds->del_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->set_ats_str(532, 1, ATS_DATEI);
+		det->start_detail(6, 255, false);
+		det->hide_static_spr(14);
+		auto_move(3, P_CHEWY);
+		auto_scroll(406, 0);
+		wait_show_screen(40);
+		det->stop_detail(24);
+		det->enable_sound(26, 0);
+		det->play_sound(26, 0);
+		start_detail_wait(25, 1, ANI_VOR);
+		det->start_detail(26, 255, false);
+		det->stop_detail(23);
+		det->start_detail(27, 255, false);
+		wait_show_screen(80);
+		auto_move(4, P_CHEWY);
+		auto_scroll(646, 0);
+		start_aad_wait(566, -1);
+		wait_show_screen(60);
+		start_aad_wait(567, -1);
+		det->stop_detail(26);
+		det->stop_detail(27);
+		_G(spieler).flags36_20 = true;
+		det->start_detail(28, 255, false);
+		det->set_detail_pos(27, 272, 110);
+		det->start_detail(27, 255, false);
+		atds->set_steuer_bit(533, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->set_steuer_bit(534, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+
+	if (diaNr != -1) {
+		start_spz(4, 255, false, P_CHEWY);
+		start_aad_wait(diaNr, -1);
+	}
+
+	show_cur();
+	return 1;
 }
 
 int Room97::proc9() {
-	return 0;
+	if (_G(spieler).inv_cur)
+		return 0;
+
+	hide_cur();
+	auto_move(5, P_CHEWY);
+	
+	if (!_G(spieler).flags36_20) {
+		start_spz(4, 255, false, P_CHEWY);
+		start_aad_wait(556, -1);
+	} else {
+		start_spz_wait(13, 1, false, P_CHEWY);
+		start_detail_wait(0, 1, ANI_VOR);
+		det->show_static_spr(13);
+		start_detail_wait(13, 1, ANI_VOR);
+		det->start_detail(14, 255, false);
+		start_aad_wait(555, -1);
+		_G(spieler).flags36_40 = true;
+		atds->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->del_steuer_bit(535, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+
+	show_cur();
+	return 1;
 }
 
 int Room97::proc10() {
-	return 0;
+	if (_G(spieler).inv_cur)
+		return 0;
+
+	hide_cur();
+	auto_move(8, P_CHEWY);
+	start_spz_wait(13, 1, false, P_CHEWY);
+	det->enable_sound(7, 0);
+	det->disable_sound(7, 1);
+	start_detail_wait(7, 1, ANI_VOR);
+	det->show_static_spr(19);
+	_G(spieler).flags37_1 = true;
+	atds->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+	menu_item = CUR_WALK;
+	cursor_wahl(CUR_WALK);
+
+	show_cur();
+	return 1;
 }
 
 int Room97::proc11() {

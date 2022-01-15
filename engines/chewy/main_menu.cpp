@@ -58,7 +58,7 @@ void MainMenu::execute() {
 		ailsnd->end_sound();
 		SetUpScreenFunc = screenFunc;
 
-		cursor_wahl(20);
+		cursor_wahl(CUR_ZEIGE);
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
@@ -100,7 +100,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CINEMA:
-			cursor_wahl(4);
+			cursor_wahl(CUR_SAVE);
 			cur->move(152, 92);
 			minfo.x = 152;
 			minfo.y = 92;
@@ -218,8 +218,8 @@ void MainMenu::startGame() {
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	fx_blend = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	menu_item = 0;
-	cursor_wahl(0);
+	menu_item = CUR_WALK;
+	cursor_wahl(CUR_WALK);
 	enter_room(-1);
 	_G(auto_obj) = 0;
 }
@@ -230,7 +230,7 @@ bool MainMenu::loadGame() {
 	out->setze_zeiger(screen0);
 	out->set_fontadr(font6x8);
 	out->set_vorschub(fvorx6x8, fvory6x8);
-	cursor_wahl(4);
+	cursor_wahl(CUR_SAVE);
 	cur->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
@@ -238,7 +238,7 @@ bool MainMenu::loadGame() {
 	int result = file_menue();
 
 	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
-		menu_item == 1) ? 8 : 0);
+		menu_item == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
 	flags.SaveMenu = false;
