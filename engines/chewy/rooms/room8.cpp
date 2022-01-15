@@ -111,7 +111,7 @@ void Room8::start_verbrennen() {
 }
 
 bool Room8::gips_wurf() {
-	if (!is_cur_inventar(GIPS_EIMER_INV)) {
+	if (is_cur_inventar(GIPS_EIMER_INV)) {
 		hide_cur();
 		det->load_taf_seq(116, 30, 0);
 		auto_move(2, P_CHEWY);
