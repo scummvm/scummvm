@@ -132,8 +132,8 @@ bool Room0::getPillow() {
 		auto_move(1, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(0);
-		menu_item = 0;
-		cursor_wahl(0);
+		menu_item = CUR_WALK;
+		cursor_wahl(CUR_WALK);
 		atds->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
 		det->hide_static_spr(6);
 
@@ -154,8 +154,8 @@ bool Room0::pullSlime() {
 		set_person_pos(222, 106, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
-		menu_item = 0;
-		cursor_wahl(0);
+		menu_item = CUR_WALK;
+		cursor_wahl(CUR_WALK);
 		atds->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
 
 		flags.AutoAniPlay = false;

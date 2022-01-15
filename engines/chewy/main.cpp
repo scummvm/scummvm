@@ -869,7 +869,7 @@ void kb_cur_action(int16 key, int16 mode) {
 			if (menu_item < 5)
 				++menu_item;
 			else
-				menu_item = 0;
+				menu_item = CUR_WALK;
 			maus_menu_x = (menu_item) * (MAUS_MENU_MAX_X / 5);
 			cur->move(maus_menu_x, 100);
 		}
@@ -880,7 +880,7 @@ void kb_cur_action(int16 key, int16 mode) {
 			if (menu_item > 0)
 				--menu_item;
 			else
-				menu_item = 5;
+				menu_item = CUR_INVENT;
 			maus_menu_x = (menu_item) * (MAUS_MENU_MAX_X / 5);
 			cur->move(maus_menu_x, 100);
 		}
