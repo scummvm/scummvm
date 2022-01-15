@@ -86,7 +86,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 			if (!_G(spieler).R0SlimeUsed) {
 				start_aad_wait(42, -1);
 				auto_move(5, P_CHEWY);
-				set_person_spr(0, 0);
+				set_person_spr(P_LEFT, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
 					start_spz(CH_TALK3, 255, false, P_CHEWY);
@@ -130,11 +130,11 @@ bool Room0::getPillow() {
 		hide_cur();
 		flags.AutoAniPlay = true;
 		auto_move(1, P_CHEWY);
-		start_spz_wait(13, 1, 0, 0);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(0);
 		menu_item = 0;
 		cursor_wahl(0);
-		atds->set_steuer_bit(174, 1, 1);
+		atds->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
 		det->hide_static_spr(6);
 
 		flags.AutoAniPlay = false;
@@ -156,7 +156,7 @@ bool Room0::pullSlime() {
 		invent_2_slot(1);
 		menu_item = 0;
 		cursor_wahl(0);
-		atds->set_steuer_bit(175, 1, 1);
+		atds->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
 
 		flags.AutoAniPlay = false;
 		show_cur();

@@ -91,7 +91,7 @@ void MainMenu::execute() {
 			fx->border(workpage, 100, 0, 0);
 			out->setze_zeiger(workptr);
 			flags.NoPalAfterFlc = true;
-			flic_cut(135, 0);
+			flic_cut(135, CFO_MODE);
 			break;
 
 		case MM_LOAD_GAME:
@@ -117,7 +117,7 @@ void MainMenu::execute() {
 			fx->border(workpage, 100, 0, 0);
 			flags.NoPalAfterFlc = true;
 			flc->set_custom_user_function(creditsFn);
-			flic_cut(159, 0);
+			flic_cut(159, CFO_MODE);
 			flc->remove_custom_user_function();
 			fx->border(workpage, 100, 0, 0);
 			break;
