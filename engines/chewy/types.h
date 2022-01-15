@@ -498,6 +498,12 @@ struct Spieler : public SpielerFlags {
 	bool SpeechSwitch = false;
 	uint8 FramesPerSecond = 0;
 	bool DisplayText = false;
+
+	bool r97_bool18DB32 = false;
+	int r97_word18DB2E = 0;
+	int r97_word18DB34 = 0;
+	int r97_word18DB36 = 0;
+	int r97_word18DB38 = 0;
 };
 
 struct AutoMov {
