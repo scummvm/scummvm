@@ -29,12 +29,6 @@
 namespace Chewy {
 namespace Rooms {
 
-bool Room97::r97_bool18DB32;
-int Room97::r97_word18DB2E;
-int Room97::r97_word18DB34;
-int Room97::r97_word18DB36;
-int Room97::r97_word18DB38;
-
 void Room97::entry() {
 	det->enable_sound(0, 0);
 	det->play_sound(0, 0);
@@ -48,7 +42,7 @@ void Room97::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 42;
 
-	r97_bool18DB32 = false;
+	_G(spieler).r97_bool18DB32 = false;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 97;
 	_G(zoom_mov_fak) = 0;
 	_G(spieler).ScrollxStep = 2;
@@ -89,10 +83,10 @@ void Room97::entry() {
 	if (_G(spieler).flags37_4)
 		det->show_static_spr(20);
 
-	r97_word18DB2E = 0;
-	r97_word18DB34 = 332;
-	r97_word18DB36 = 110;
-	r97_word18DB38 = 132;
+	_G(spieler).r97_word18DB2E = 0;
+	_G(spieler).r97_word18DB34 = 332;
+	_G(spieler).r97_word18DB36 = 110;
+	_G(spieler).r97_word18DB38 = 132;
 
 	if (!flags.ExitMov) {
 		hide_cur();
