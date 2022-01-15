@@ -20,39 +20,77 @@
  */
 
 #include "chewy/temp_file.h"
+#include "common/file.h"
 
 namespace Chewy {
 
+TempFileArchive::Entry::Entry(const Common::String &name) :
+		_name(name), _data(nullptr), _size(0) {
+}
+
+TempFileArchive::Entry::~Entry() {
+	delete[] _data;
+}
+
+void TempFileArchive::Entry::allocate(size_t maxSize) {
+	_data = new byte[maxSize];
+	_size = maxSize;
+}
+
 bool TempFileArchive::FileProxy::eos() const {
-	return _src->eos();
+	return _pos >= _size;
 }
 
 uint32 TempFileArchive::FileProxy::read(void *dataPtr, uint32 dataSize) {
-	return _src->read(dataPtr, dataSize);
-}
+	int bytesRemaining = MIN(_size - _pos, (int32)dataSize);
+	Common::copy(_ptr + _pos, _ptr + _pos + bytesRemaining, (byte *)dataPtr);
+	_pos += bytesRemaining;
+	assert(_pos >= 0 && _pos <= 0xffff);
 
-int64 TempFileArchive::FileProxy::pos() const {
-	return _src->pos();
-}
-
-int64 TempFileArchive::FileProxy::size() const {
-	return _src->size();
-}
-
-bool TempFileArchive::FileProxy::seek(int64 offset, int whence) {
-	return _src->seek(offset, whence);
+	return bytesRemaining;
 }
 
 uint32 TempFileArchive::FileProxy::write(const void *dataPtr, uint32 dataSize) {
-	return _src->write(dataPtr, dataSize);
+	assert((int32)(_pos + dataSize) <= _size);
+	Common::copy((const byte *)dataPtr, (const byte *)dataPtr + dataSize, _ptr + _pos);
+	_pos += dataSize;
+	assert(_pos >= 0 && _pos <= 0xffff);
+
+	return dataSize;
+}
+
+int64 TempFileArchive::FileProxy::pos() const {
+	return _pos;
+}
+
+int64 TempFileArchive::FileProxy::size() const {
+	return _size;
+}
+
+bool TempFileArchive::FileProxy::seek(int64 offset, int whence) {
+	switch (whence) {
+	case SEEK_END:
+		offset = size() + offset;
+		// Fall through
+	case SEEK_SET:
+		// Fall through
+	default:
+		_pos = offset;
+		break;
+	case SEEK_CUR:
+		_pos += offset;
+		break;
+	}
+
+	assert(_pos >= 0 && _pos <= 0xffff);
+	return true;
 }
 
 bool TempFileArchive::FileProxy::flush() {
-	return _src->flush();
+	return true;
 }
 
 void TempFileArchive::FileProxy::finalize() {
-	_src->finalize();
 }
 
 
@@ -100,10 +138,7 @@ Common::SeekableReadStream *TempFileArchive::createReadStreamForMember(
 	if (!entry)
 		return nullptr;
 
-	Common::MemoryReadWriteStream *stream =
-		const_cast<Common::MemoryReadWriteStream *>(&entry->_stream);
-	stream->seek(0, SEEK_SET);
-	return new FileProxy(stream);
+	return new FileProxy(entry->_data, entry->_size);
 }
 
 Common::SeekableWriteStream *TempFileArchive::createWriteStreamForMember(const Common::Path &path) {
@@ -111,10 +146,7 @@ Common::SeekableWriteStream *TempFileArchive::createWriteStreamForMember(const C
 	if (!entry)
 		return nullptr;
 
-	Common::MemoryReadWriteStream *stream =
-		const_cast<Common::MemoryReadWriteStream *>(&entry->_stream);
-	stream->seek(0, SEEK_SET);
-	return new FileProxy(stream);
+	return new FileProxy(entry->_data, entry->_size);
 }
 
-}
+} // namespace Chewy

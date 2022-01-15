@@ -1748,27 +1748,6 @@ void datei::fcopy(const char *d_fname, const char *s_fname) {
 	} else {
 		error("Could not find - %s", s_fname);
 	}
-
-#if 0
-	Common::File src;
-	Common::OutSaveFile *dest;
-
-	if (src.open(s_fname)) {
-		dest = g_system->getSavefileManager()->openForSaving(d_fname);
-		if (dest) {
-			dest->writeStream(&src);
-			delete dest;
-		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
-		}
-
-		src.close();
-	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
-	}
-#endif
 }
 
 } // namespace Chewy
