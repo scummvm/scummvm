@@ -246,6 +246,9 @@ void HypnoEngine::runIntro(MVideo &video) {
 
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) {
+	error("Function \"%s\" not implemented", __FUNCTION__); 
+}
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, bool palette, int frameNumber) {
 

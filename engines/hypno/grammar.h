@@ -75,6 +75,7 @@ enum ActionType {
 	QuitAction,
 	CutsceneAction,
 	PlayAction,
+	IntroAction,
 	AmbientAction,
 	WalNAction,
 	GlobalAction,
@@ -208,6 +209,15 @@ class Cutscene : public Action {
 public:
 	Cutscene(Filename path_) {
 		type = CutsceneAction;
+		path = path_;
+	}
+	Filename path;
+};
+
+class Intro : public Action {
+public:
+	Intro(Filename path_) {
+		type = IntroAction;
 		path = path_;
 	}
 	Filename path;

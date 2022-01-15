@@ -124,6 +124,7 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 
+	virtual void loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty);
 	bool canLoadGameStateCurrently() override { return (isDemo() ? false : true); }
 	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently() override { return (isDemo() ? false : true); }
@@ -161,6 +162,7 @@ public:
 	void runTimer(Timer *a);
 	void runQuit(Quit *a);
 	void runCutscene(Cutscene *a);
+	void runIntro(Intro *a);
 	void runPlay(Play *a);
 	void runPalette(Palette *a);
 	void runAmbient(Ambient *a);
@@ -312,6 +314,7 @@ public:
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
 
+	void loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool hasFeature(EngineFeature f) const override {

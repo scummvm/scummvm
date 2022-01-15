@@ -175,14 +175,14 @@ line: MENUTOK mflag mflag mflag {
 		debugC(1, kHypnoDebugParser, "PALE");
 	}
 	|  INTRTOK FILENAME NUM NUM { 
-		Cutscene *a = new Cutscene(Common::String("cine/") + $2);
+		Intro *a = new Intro(Common::String("cine/") + $2);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); 
 	}
 	|  INTRTOK FILENAME { 
-		Cutscene *a = new Cutscene(Common::String("cine/") + $2);
+		Intro *a = new Intro(Common::String("cine/") + $2);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);

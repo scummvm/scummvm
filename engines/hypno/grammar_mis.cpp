@@ -1391,7 +1391,7 @@ yyreduce:
   case 18: /* line: INTRTOK FILENAME NUM NUM  */
 #line 177 "engines/hypno/grammar_mis.y"
                                     { 
-		Cutscene *a = new Cutscene(Common::String("cine/") + (yyvsp[-2].s));
+		Intro *a = new Intro(Common::String("cine/") + (yyvsp[-2].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
@@ -1403,7 +1403,7 @@ yyreduce:
   case 19: /* line: INTRTOK FILENAME  */
 #line 184 "engines/hypno/grammar_mis.y"
                             { 
-		Cutscene *a = new Cutscene(Common::String("cine/") + (yyvsp[0].s));
+		Intro *a = new Intro(Common::String("cine/") + (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);

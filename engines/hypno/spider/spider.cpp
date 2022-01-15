@@ -617,7 +617,6 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("movie2.mi_", "decide5.mi_", prefix);
 	_levels["movie2.mi_"]->intros.push_back("cine/vrfs003s.smk");
-	_levels["movie2.mi_"]->intros.push_back("cine/imsd017s.smk");
 	loadSceneLevel("decide5.mi_", "", prefix);
 	sc = (Scene *) _levels["decide5.mi_"];
 
@@ -691,13 +690,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("docoffi2.mi_", "c12a", prefix);
 
 	loadArcadeLevel("c12.mi_", "<chip_lives_with_spiderman>", prefix);
-	_levels["c12.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12.mi_"]->intros.push_back("cine/vrws010s.smk");
 	_levels["c12.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12a.mi_"] = _levels["c12.mi_"];
 
 	loadArcadeLevel("c12h.mi_", "<chip_lives_with_spiderman>", prefix);
-	_levels["c12h.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12h.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12h.mi_"]->intros.push_back("cine/vrws010s.smk");
 	_levels["c12h.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12ah.mi_"] = _levels["c12h.mi_"];
@@ -772,13 +771,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c11sh.mi_"] = _levels["c11h.mi_"];
 
 	loadArcadeLevel("c12.mi_", "<chip_lives_with_shocker>", prefix);
-	_levels["c12.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12.mi_"]->intros.push_back("cine/vrwd001s.smk");
 	_levels["c12.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12s.mi_"] = _levels["c12.mi_"];
 
 	loadArcadeLevel("c12h.mi_", "<chip_lives_with_shocker>", prefix);
-	_levels["c12h.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12h.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12h.mi_"]->intros.push_back("cine/vrwd001s.smk");
 	_levels["c12h.mi_"]->intros.push_back("cine/cybs001s.smk");
 
@@ -826,12 +825,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c11mh.mi_"] = _levels["c11h.mi_"];
 
 	loadArcadeLevel("c12.mi_", "<chip_lives_with_mason>", prefix);
-	_levels["c12.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12m.mi_"] = _levels["c12.mi_"];
 
 	loadArcadeLevel("c12h.mi_", "<chip_lives_with_mason>", prefix);
-	_levels["c12h.mi_"]->levelIfLose = "<vr_death>";
+	_levels["c12h.mi_"]->levelIfLose = "<over_vr>";
 	_levels["c12h.mi_"]->intros.push_back("cine/cybs001s.smk");
 	_levels["c12mh.mi_"] = _levels["c12h.mi_"];
 
@@ -1017,11 +1016,20 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 }
 
 Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	int puzzleDifficulty = stream->readUint32LE();
+	int combatDifficulty = stream->readUint32LE();
+	const Common::String nextLevel = stream->readString();
+	loadGame(nextLevel, puzzleDifficulty, combatDifficulty);
+	return Common::kNoError;
+}
+
+void SpiderEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) {
+
 	// We don't want to continue with any sound from a previous game
 	stopSound();
-	_sceneState["GS_PUZZLELEVEL"] = stream->readUint32LE();
-	_sceneState["GS_COMBATLEVEL"] = stream->readUint32LE();
-	_nextLevel = stream->readString();
+	_sceneState["GS_PUZZLELEVEL"] = puzzleDifficulty;
+	_sceneState["GS_COMBATLEVEL"] = combatDifficulty;
+	_nextLevel = nextLevel;
 	_checkpoint = _nextLevel;
 
 	// Reset played intros
@@ -1036,8 +1044,6 @@ Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_isFuseUnreadable = false;
 	for (int i = 0; i < 7; i++)
 		ingredients[i] = 0;
-
-	return Common::kNoError;
 }
 
 Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {

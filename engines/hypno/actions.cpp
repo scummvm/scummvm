@@ -50,13 +50,11 @@ void HypnoEngine::runMenu(Hotspots hs) {
 			case AmbientAction: 
 				runAmbient((Ambient *)action);
 			break;
-			case CutsceneAction: {
-				// Should not repeat the same
-				Cutscene *cutscene = (Cutscene *) action; 
-				if (!_intros.contains(cutscene->path))
-				 	runCutscene(cutscene);
-				_intros[cutscene->path] = true;
-			}
+			case IntroAction:
+				runIntro((Intro *)action);
+			break;
+			case CutsceneAction:
+				runCutscene((Cutscene *)action);
 			break;
 			case PaletteAction:
 				runPalette((Palette *)action);
@@ -117,7 +115,6 @@ void HypnoEngine::runMice(Mice *a) {
 }
 
 void HypnoEngine::runPalette(Palette *a) {
-	//return; // remove when palette are working
 	loadPalette(a->path);
 }
 
@@ -126,6 +123,17 @@ void HypnoEngine::runEscape() {
 	_nextSequentialVideoToPlay = _escapeSequentialVideoToPlay;
 	_escapeSequentialVideoToPlay.clear();
 }
+
+void HypnoEngine::runIntro(Intro *a) {
+	// Should not repeat the same
+	if (_intros.contains(a->path))
+		return;
+
+	_intros[a->path] = true;
+	MVideo v(a->path, Common::Point(0, 0), false, true, false);
+	runIntro(v);
+}
+
 
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
@@ -178,9 +186,14 @@ void HypnoEngine::runAmbient(Ambient *a) {
 		else
 			sframe = frame;
 		drawImage(*sframe, a->origin.x, a->origin.y, true);
-		//loadImage(a->path, a->origin.x, a->origin.y, false, a->frameNumber);
 	} else {
-		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, a->flag == "/LOOP"));
+		bool loop = a->flag == "/LOOP";
+		if (loop) { // Avoid re-adding the same looping video
+			if (_intros.contains(a->path))
+				return;
+			_intros[a->path] = true;
+		}
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, loop));
 	}
 }
 
@@ -205,10 +218,9 @@ void HypnoEngine::runLoad(Load *a) {
 }
 
 void HypnoEngine::runLoadCheckpoint(LoadCheckpoint *a) {
-	// TODO: this depends on the game
 	if (_checkpoint.empty())
 		error("Invalid checkpoint!");
-	_nextLevel = _checkpoint;
+	loadGame(_checkpoint, _sceneState["GS_PUZZLELEVEL"], _sceneState["GS_COMBATLEVEL"]);
 }
 
 void HypnoEngine::runQuit(Quit *a) {
