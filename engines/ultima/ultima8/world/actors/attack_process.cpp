@@ -40,6 +40,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
+//#define WATCHACTOR 3
+
 DEFINE_RUNTIME_CLASSTYPE_CODE(AttackProcess)
 
 // These sound number arrays are in the order they appear in the original exes
@@ -551,6 +553,11 @@ void AttackProcess::genericAttack() {
 		return;
 	}
 
+#ifdef WATCHACTOR
+	if (_itemNum == WATCHACTOR)
+		debug("Attack: actor %d genericAttack (not busy or pathfinding)", _itemNum);
+#endif
+
 	// This should never be running on the controlled npc.
 	if (_itemNum == World::get_instance()->getControlledNPCNum()) {
 		terminate();
@@ -576,11 +583,20 @@ void AttackProcess::genericAttack() {
 			_target = controlledNPC;
 	}
 
+#ifdef WATCHACTOR
+	if (_itemNum == WATCHACTOR)
+		debug("Attack: genericAttack chose target %d", _target);
+#endif
+
 	Actor *target = getActor(_target);
 	if (!target || !target->isOnScreen() || target->isDead()) {
 		// Walk around randomly in hope of finding target
 		_target = 0;
 		if (!_isActivity9orB) {
+#ifdef WATCHACTOR
+			if (_itemNum == WATCHACTOR)
+				debug("Attack: genericAttack walking around looking for target %d", _target);
+#endif
 			int32 x, y, z;
 			a->getLocation(x, y, z);
 			x += -0x1ff + randomOf(0x400);
@@ -604,9 +620,17 @@ void AttackProcess::genericAttack() {
 		}
 		DirectionMode standDirMode = a->animDirMode(anim);
 		if (_timer3set) {
+#ifdef WATCHACTOR
+			if (_itemNum == WATCHACTOR)
+				debug("Attack: _timer3set");
+#endif
 			if (_timer3 >= ticknow) {
 				if (a->isInCombat()) {
 					if (randomOf(3) != 0) {
+#ifdef WATCHACTOR
+						if (_itemNum == WATCHACTOR)
+							debug("Attack: toggle weapon state");
+#endif
 						const Animation::Sequence lastanim = a->getLastAnim();
 						if ((lastanim != Animation::unreadyWeapon) && (lastanim != Animation::unreadyLargeWeapon))
 							a->doAnim(Animation::unreadyWeapon, dir_current);
@@ -643,6 +667,11 @@ void AttackProcess::genericAttack() {
 					if (_timer4 == 0)
 						_timer4 = ticknow;
 
+#ifdef WATCHACTOR
+					if (_itemNum == WATCHACTOR)
+						debug("Attack: firing weapon at tick %d!", ticknow);
+#endif
+
 					const ProcId animpid = a->doAnim(Animation::attack, dir_current); // fire small weapon.
 					if (animpid == 0) {
 						return;
@@ -672,10 +701,18 @@ void AttackProcess::genericAttack() {
 		const int32 zdiff = abs(a->getZ() - target->getZ());
 		const bool onscreen = a->isPartlyOnScreen(); // note: original uses "isMajorityOnScreen", this is close enough.
 		if ((!_isActivity9orB && !onscreen) || (dist <= zdiff)) {
+#ifdef WATCHACTOR
+			if (_itemNum == WATCHACTOR)
+				debug("Attack: Not 9/B and actor not onscreen or dist %d < zdiff %d, pathfinding", dist, zdiff);
+#endif
 			pathfindToItemInNPCData();
 			return;
 		}
 		if (targetdir == curdir) {
+#ifdef WATCHACTOR
+			if (_itemNum == WATCHACTOR)
+				debug("Attack: targetdir == currentdir");
+#endif
 			const uint16 rnd = randomOf(10);
 			const uint32 frameno = Kernel::get_instance()->getFrameNum();
 			const uint32 timeoutfinish = target->getAttackMoveTimeoutFinishFrame();
@@ -759,6 +796,10 @@ void AttackProcess::genericAttack() {
 				return;
 			}
 		} else {
+#ifdef WATCHACTOR
+			if (_itemNum == WATCHACTOR)
+				debug("Attack: targetdir != currentdir");
+#endif
 			bool ready;
 			if (!timer4and5Update(ticknow) && !_field7f) {
 				if (standDirMode != dirmode_16dirs) {
@@ -956,6 +997,10 @@ uint16 AttackProcess::getAttackData(uint16 off) const {
 }
 
 void AttackProcess::pathfindToItemInNPCData() {
+#ifdef WATCHACTOR
+	if (_itemNum == WATCHACTOR)
+		debug("Attack: pathfindToItemInNPCData");
+#endif
 	_doubleDelay = false;
 	_timer2set = false;
 	_field96 = true;
@@ -978,6 +1023,12 @@ bool AttackProcess::timer4and5Update(int now) {
 	if (_doubleDelay) {
 		delay = 240;
 	}
+
+#ifdef WATCHACTOR
+	if (_itemNum == WATCHACTOR)
+		debug("Attack: timer4and5Update (doubledelay=%d, timer4=%d, timer5=%d)",
+			  _doubleDelay, _timer4, _timer5);
+#endif
 
 	if (_timer4) {
 		_timer5 = _timer4;
@@ -1017,6 +1068,10 @@ void AttackProcess::setTimer3() {
 
 void AttackProcess::sleep(int ticks) {
 	// waiting less than 2 ticks can cause a tight loop
+#ifdef WATCHACTOR
+	if (_itemNum == WATCHACTOR)
+		debug("Attack: sleeping for %d", ticks);
+#endif
 	ticks = MAX(ticks, 2);
 	Process *delayProc = new DelayProcess(ticks);
 	ProcId pid = Kernel::get_instance()->addProcess(delayProc);
