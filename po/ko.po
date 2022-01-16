@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-14 10:41+0000\n"
+"POT-Creation-Date: 2022-01-16 11:22+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgid "Engine"
 msgstr "엔진"
 
 #: gui/editgamedialog.cpp:211 gui/options.cpp:1814 gui/options.cpp:1984
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Graphics"
 msgstr "그래픽"
 
@@ -1189,7 +1189,7 @@ msgstr "확대 모드:"
 msgid "Scaler:"
 msgstr "크기조절:"
 
-#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Fullscreen mode"
 msgstr "전체 화면 모드"
 
@@ -3079,27 +3079,27 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2455
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:765
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:794
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Stretch mode"
 msgstr "확대 모드"
 
@@ -3107,33 +3107,33 @@ msgstr "확대 모드"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2421
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:364
+#: backends/graphics/sdl/sdl-graphics.cpp:349
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "'%s' 스크린샷을 저장했습니다"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:373
+#: backends/graphics/sdl/sdl-graphics.cpp:358
 msgid "Could not save screenshot"
 msgstr "스크린샷 저장에 실패했습니다"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:403
 msgid "Windowed mode"
 msgstr "창 모드"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:414 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
 msgstr "전체화면 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "마우스 캡처 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3146,31 +3146,31 @@ msgstr "마우스 캡처 전환"
 msgid "Save screenshot"
 msgstr "스크린샷 저장"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Toggle aspect ratio correction"
 msgstr "화면 종횡비 보정 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Toggle linear filtered scaling"
 msgstr "선형 필터링 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:446
 msgid "Cycle through stretch modes"
 msgstr "확대 모드간 순환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:452
 msgid "Increase the scale factor"
 msgstr "확대 비율 증가"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Decrease the scale factor"
 msgstr "확대 비율 감소"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:479
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Switch to the next scaler"
 msgstr "다음 크기조절로 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:484
+#: backends/graphics/sdl/sdl-graphics.cpp:469
 msgid "Switch to the previous scaler"
 msgstr "이전 크기조절로 전환"
 

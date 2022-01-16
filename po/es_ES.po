@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-14 10:41+0000\n"
+"POT-Creation-Date: 2022-01-16 11:22+0000\n"
 "PO-Revision-Date: 2022-01-05 22:50+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -324,7 +324,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:211 gui/options.cpp:1814 gui/options.cpp:1984
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Graphics"
 msgstr "Gráficos"
 
@@ -1174,7 +1174,7 @@ msgstr "Modo de ajuste:"
 msgid "Scaler:"
 msgstr "Escalado:"
 
-#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -3091,27 +3091,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resolución: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2455
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
 msgstr "Activar la corrección de aspecto"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
 msgstr "Desactivar la corrección de aspecto"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
 msgstr "Filtrado activado"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:765
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
 msgstr "Filtrado desactivado"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:794
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Stretch mode"
 msgstr "Modo de ajuste"
 
@@ -3119,33 +3119,33 @@ msgstr "Modo de ajuste"
 msgid "SDL Surface"
 msgstr "«SDL Surface»"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2421
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:364
+#: backends/graphics/sdl/sdl-graphics.cpp:349
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Captura de pantalla «%s» guardada"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:373
+#: backends/graphics/sdl/sdl-graphics.cpp:358
 msgid "Could not save screenshot"
 msgstr "No se ha podido guardar la captura de pantalla"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:403
 msgid "Windowed mode"
 msgstr "Modo ventana"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:414 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
 msgstr "Activar/Desactivar pantalla completa"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Activar/Desactivar captura de ratón"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3158,31 +3158,31 @@ msgstr "Activar/Desactivar captura de ratón"
 msgid "Save screenshot"
 msgstr "Guardar captura de pantalla"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Toggle aspect ratio correction"
 msgstr "Corregir relación de aspecto"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Toggle linear filtered scaling"
 msgstr "Escalado con filtro lineal"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:446
 msgid "Cycle through stretch modes"
 msgstr "Cambiar modo de ajuste"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:452
 msgid "Increase the scale factor"
 msgstr "Aumentar factor de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Decrease the scale factor"
 msgstr "Disminuir factor de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:479
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Switch to the next scaler"
 msgstr "Cambiar al siguiente filtro de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:484
+#: backends/graphics/sdl/sdl-graphics.cpp:469
 msgid "Switch to the previous scaler"
 msgstr "Cambiar al filtro de escalado anterior"
 

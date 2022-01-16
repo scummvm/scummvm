@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-14 10:41+0000\n"
+"POT-Creation-Date: 2022-01-16 11:22+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -327,7 +327,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:211 gui/options.cpp:1814 gui/options.cpp:1984
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Graphics"
 msgstr "Grafik Ayarları"
 
@@ -1192,7 +1192,7 @@ msgstr "Çekiştirme modu:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Fullscreen mode"
 msgstr "Tam ekran modu"
 
@@ -3078,29 +3078,29 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2455
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:765
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:794
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Çekiştirme modu:"
@@ -3109,35 +3109,35 @@ msgstr "Çekiştirme modu:"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2421
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:364
+#: backends/graphics/sdl/sdl-graphics.cpp:349
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:373
+#: backends/graphics/sdl/sdl-graphics.cpp:358
 #, fuzzy
 msgid "Could not save screenshot"
 msgstr "Tam ekran ayarı uygulanamadı."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:403
 #, fuzzy
 msgid "Windowed mode"
 msgstr "Render modu:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:414 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3150,34 +3150,34 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:432
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:446
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:452
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:479
+#: backends/graphics/sdl/sdl-graphics.cpp:464
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Oyunu seç"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:484
+#: backends/graphics/sdl/sdl-graphics.cpp:469
 msgid "Switch to the previous scaler"
 msgstr ""
 
