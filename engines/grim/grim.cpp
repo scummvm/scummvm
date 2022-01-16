@@ -520,6 +520,10 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
 
+	act = new Action("PAUSE", _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_PAUSE));
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 
