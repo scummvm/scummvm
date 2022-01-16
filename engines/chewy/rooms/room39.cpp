@@ -39,6 +39,18 @@ static const uint8 TV_FLIC[] = {
 	FCUT_034
 };
 
+static const AniBlock ABLOCK33[2] = {
+	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 3, 255, ANI_VOR, ANI_GO, 0 },
+};
+
+
+static const AniBlock ABLOCK29[2] = {
+	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 9, 4, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room39::entry() {
 	if (!_G(spieler).R41Einbruch) {
 		if (_G(spieler).R39HowardDa) {
@@ -74,7 +86,7 @@ short Room39::use_howard() {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				del_inventar(_G(spieler).AkInvent);
 				det->stop_detail(1);
-				start_ani_block(2, ablock33);
+				start_ani_block(2, ABLOCK33);
 				start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(167, -1);
 				det->stop_detail(3);
@@ -214,7 +226,7 @@ int16 Room39::use_tv() {
 				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(98, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_ani_block(2, ablock29);
+				start_ani_block(2, ABLOCK29);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;

@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK34[2] = {
+	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room49::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
@@ -246,7 +252,7 @@ int16 Room49::use_taxi() {
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
-		start_ani_block(2, ablock34);
+		start_ani_block(2, ABLOCK34);
 		det->show_static_spr(7);
 		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;

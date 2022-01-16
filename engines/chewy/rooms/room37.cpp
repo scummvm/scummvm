@@ -29,6 +29,13 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK31[3] = {
+	{ 0, 1, ANI_VOR, ANI_GO, 0 },
+	{ 1, 2, ANI_VOR, ANI_GO, 0 },
+	{ 5, 1, ANI_RUECK, ANI_WAIT, 0 },
+};
+
+
 void Room37::entry() {
 	_G(zoom_horizont) = 100;
 	flags.ZoomMov = true;
@@ -189,7 +196,7 @@ void Room37::dog_bell() {
 			set_person_pos(326, 85, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			det->show_static_spr(9);
-			start_ani_block(3, ablock31);
+			start_ani_block(3, ABLOCK31);
 			det->set_static_ani(3, -1);
 			enable_timer();
 			dia_nr = 149;

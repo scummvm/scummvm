@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK36[2] = {
+	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room50::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 	if (_G(spieler).R50Zigarre) {
@@ -127,7 +133,7 @@ int16 Room50::use_gutschein() {
 			_G(r50Wasser) = false;
 			stop_page();
 			del_inventar(_G(spieler).AkInvent);
-			start_ani_block(2, ablock36);
+			start_ani_block(2, ABLOCK36);
 			aad_page(274, 8);
 		} else
 			start_aad_wait(276, -1);

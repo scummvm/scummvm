@@ -28,6 +28,22 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK26[4] = {
+	{ 2, 255, ANI_VOR, ANI_GO, 0 },
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+static const AniBlock ABLOCK27[5] = {
+	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
+};
+
+
 void Room29::entry() {
 	if (_G(spieler).R29Schlauch1)
 		det->show_static_spr(7);
@@ -104,7 +120,7 @@ void Room29::schlitz_sitz() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		det->hide_static_spr(4);
 		start_aad(63);
-		start_ani_block(4, ablock26);
+		start_ani_block(4, ABLOCK26);
 		det->show_static_spr(9);
 		while (flags.AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
@@ -124,7 +140,7 @@ int16 Room29::zaun_sprung() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_frame(3, 1, ANI_VOR, 7);
 		det->hide_static_spr(9);
-		start_ani_block(5, ablock27);
+		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
 		switch_room(37);
 		_G(spieler).PersonHide[P_CHEWY] = false;

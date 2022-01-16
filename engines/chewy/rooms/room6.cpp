@@ -42,6 +42,18 @@ static const MovLine R6_ROBO_MPKT[3] = {
 	{ {  60, 210, 110 }, 1, 16 }
 };
 
+static const AniBlock ABLOCK6[3] = {
+	{  3, 1, ANI_VOR, ANI_GO, 0 },
+	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 14, 4, ANI_VOR, ANI_GO, 0 },
+};
+
+static const AniBlock ABLOCK7[2] = {
+	{ 1, 2, ANI_VOR, ANI_WAIT, 0 },
+	{ 2, 1, ANI_VOR, ANI_GO, 0 },
+};
+
+
 void Room6::entry() {
 	_G(zoom_horizont) = 80;
 	flags.ZoomMov = true;
@@ -91,7 +103,7 @@ void Room6::bola_knopf() {
 		if (_G(spieler).R6BolaOk) {
 			_G(spieler).R6BolaBecher = true;
 			det->show_static_spr(0);
-			start_ani_block(2, ablock7);
+			start_ani_block(2, ABLOCK7);
 			obj->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
 			wait_detail(2);
 			obj->calc_rsi_flip_flop(SIB_BOLA_SCHACHT);
@@ -101,7 +113,7 @@ void Room6::bola_knopf() {
 			obj->hide_sib(SIB_BOLA_KNOPF_R6);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(3, ablock6);
+			start_ani_block(3, ABLOCK6);
 			while (det->get_ani_status(3) && !SHOULD_QUIT) {
 				if (!det->get_ani_status(14)) {
 					set_person_pos(220, 89, P_CHEWY, P_LEFT);

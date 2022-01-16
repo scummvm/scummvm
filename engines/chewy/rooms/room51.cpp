@@ -29,6 +29,15 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK37[5] = {
+	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 7, 3, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 5, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 2, 1, ANI_RUECK, ANI_WAIT, 0 },
+};
+
+
 void Room51::entry() {
 	int16 i;
 	_G(zoom_horizont) = 140;
@@ -131,7 +140,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					start_aad_wait(287, -1);
 					auto_move(12, P_CHEWY);
 					det->stop_detail(5);
-					start_ani_block(5, ablock37);
+					start_ani_block(5, ABLOCK37);
 					det->hide_static_spr(1);
 					start_aad_wait(284, -1);
 				} else {

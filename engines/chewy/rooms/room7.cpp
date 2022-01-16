@@ -29,11 +29,19 @@
 namespace Chewy {
 namespace Rooms {
 
-static const AniBlock ABLOCK25[3] = {
-	{ 1, 1, ANI_VOR, ANI_WAIT, 0},
-	{ 5, 255, ANI_VOR, ANI_GO, 0},
-	{ 4, 1, ANI_VOR, ANI_WAIT, 0},
+static const AniBlock ABLOCK10[4] = {
+	{ 15, 2, ANI_VOR, ANI_WAIT, 0 },
+	{ 16, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 17, 2, ANI_VOR, ANI_WAIT, 0 },
+	{ 18, 1, ANI_VOR, ANI_WAIT, 0 },
 };
+
+static const AniBlock ABLOCK25[3] = {
+	{ 1, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 5, 255, ANI_VOR, ANI_GO, 0 },
+	{ 4, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
 
 void Room7::entry() {
 	_G(spieler).ScrollxStep = 2;
@@ -122,7 +130,7 @@ void Room7::klingel() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		det->start_detail(0, 255, ANI_VOR);
 		wait_detail(14);
-		start_ani_block(4, ablock10);
+		start_ani_block(4, ABLOCK10);
 		det->hide_static_spr(7);
 		det->stop_detail(0);
 		set_person_pos(181, 130, P_CHEWY, P_RIGHT);
