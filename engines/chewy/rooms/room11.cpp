@@ -30,6 +30,17 @@
 namespace Chewy {
 namespace Rooms {
 
+AniBlock ABLOCK17[2] = {
+	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 9, 255, ANI_VOR, ANI_GO, 0 },
+};
+
+AniBlock ABLOCK18[2] = {
+	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 7, 1, ANI_RUECK, ANI_WAIT, 0 },
+};
+
+
 void Room11::entry() {
 	_G(zoom_horizont) = 80;
 	flags.ZoomMov = true;
@@ -50,8 +61,9 @@ void Room11::entry() {
 		_G(spieler).room_e_obj[20].Attribut = 255;
 		_G(spieler).room_e_obj[21].Attribut = 255;
 		atds->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
+
 		if (!flags.LoadGame) {
-			start_ani_block(2, ablock17);
+			start_ani_block(2, ABLOCK17);
 			auto_move(8, P_CHEWY);
 			start_aad_wait(31, -1);
 			det->stop_detail(9);
@@ -74,7 +86,7 @@ void Room11::bork_zwinkert() {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
 		det->hide_static_spr(8);
-		start_ani_block(2, ablock18);
+		start_ani_block(2, ABLOCK18);
 		uhr->reset_timer(_G(timer_nr)[0], 0);
 		det->show_static_spr(8);
 		flags.AutoAniPlay = false;
@@ -86,35 +98,45 @@ void Room11::talk_debug() {
 		flags.AutoAniPlay = true;
 		auto_move(8, P_CHEWY);
 		start_ads_wait(5);
-		flags.AutoAniPlay = false;
+		menu_item = CUR_WALK;
+		cursor_wahl(CUR_WALK);
 
+		flags.AutoAniPlay = false;
 	}
 }
 
 void Room11::chewy_bo_use() {
 	if (_G(spieler).R12ChewyBork) {
+		hide_cur();
 		flags.AutoAniPlay = true;
+
 		stop_person(P_CHEWY);
 		det->hide_static_spr(8);
-		start_ani_block(2, ablock17);
+		start_ani_block(2, ABLOCK17);
 		start_aad_wait(32, -1);
 		det->stop_detail(9);
 		det->show_static_spr(8);
 		auto_move(6, P_CHEWY);
+
 		flags.AutoAniPlay = false;
+		show_cur();
 	}
 }
 
 int16 Room11::scanner() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).R12ChewyBork) {
 		auto_move(7, P_CHEWY);
+
 		if (!_G(spieler).R11CardOk) {
 			action_flag = true;
 			start_aad_wait(13, -1);
 		} else {
 			if (is_cur_inventar(BORK_INV)) {
+				hide_cur();
 				action_flag = true;
+
 				flc->set_custom_user_function(Room12::cut_serv);
 				start_aad(105, 0);
 				flic_cut(FCUT_011, CFO_MODE);
@@ -125,12 +147,13 @@ int16 Room11::scanner() {
 				cursor_wahl(menu_item);
 				start_aad_wait(12, -1);
 				load_ads_dia(3);
+				show_cur();
 			} else if (!_G(spieler).inv_cur) {
 				if (!_G(spieler).R11TerminalOk) {
 					action_flag = true;
 					flic_cut(FCUT_010, CFO_MODE);
 					start_aad_wait(20, -1);
-				} else if (_G(spieler).R11TerminalOk) {
+				} else {
 					action_flag = true;
 					start_aad_wait(12, -1);
 					menu_item = CUR_TALK;
@@ -166,6 +189,7 @@ void Room11::put_card() {
 		atds->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATEI);
 		atds->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).R11CardOk = true;
+
 		if (!_G(spieler).R11TerminalOk)
 			start_aad_wait(16, -1);
 	}
