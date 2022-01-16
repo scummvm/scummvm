@@ -35,9 +35,10 @@ enum SciEventType {
 	kSciEventKeyDown      = 1 << 2,
 	kSciEventKeyUp        = 1 << 3,
 	kSciEventKey          = kSciEventKeyDown | kSciEventKeyUp,
-	kSciEventDirection    = 1 << 6,
+	kSciEventDirection16  = 1 << 6, // SCI16
 	kSciEventSaid         = 1 << 7,
 #ifdef ENABLE_SCI32
+	kSciEventDirection32  = 1 << 4, // SCI32
 	kSciEventHotRectangle = 1 << 10,
 #endif
 	kSciEventQuit         = 1 << 11,

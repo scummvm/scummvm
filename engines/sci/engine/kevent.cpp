@@ -295,7 +295,11 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 
 	if (readSelectorValue(segMan, obj, SELECTOR(type)) == kSciEventKeyDown) {
 		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
-		SciEventType eventType = kSciEventDirection;
+#ifdef ENABLE_SCI32
+		SciEventType eventType = (getSciVersion() < SCI_VERSION_2) ? kSciEventDirection16 : kSciEventDirection32;
+#else
+		SciEventType eventType = kSciEventDirection16;
+#endif
 		// It seems with SCI1 Sierra started to add the kSciEventDirection bit instead of setting it directly.
 		// It was done inside the keyboard driver and is required for the PseudoMouse functionality and class
 		// to work (script 933).
