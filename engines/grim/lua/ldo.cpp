@@ -137,15 +137,13 @@ static StkId callC(lua_CFunction f, StkId base) {
 	CS->num = numarg;
 	CS->lua2C = base;
 	CS->base = base + numarg;  // == top - stack
-	if (lua_callhook) {
-		TObject *r = lua_state->stack.stack + base - 1;
-		(*lua_callhook)(Ref(r), "(C)", -1);
-	}
+	if (lua_callhook)
+		luaD_callHook(base, nullptr, 0);
 	lua_state->callLevelCounter++;
 	(*f)();  // do the actual call
 	lua_state->callLevelCounter--;
-//	if (lua_callhook)  // func may have changed lua_callhook
-//		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
+	if (lua_callhook)  // func may have changed lua_callhook
+		luaD_callHook(base, nullptr, 1);
 	firstResult = CS->base;
 	*CS = oldCLS;
 	return firstResult;

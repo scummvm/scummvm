@@ -243,6 +243,8 @@ static void adjust_varargs(StkId first_extra_arg) {
 
 StkId luaV_execute(lua_Task *task) {
 	if (!task->executed) {
+		if (lua_callhook)
+			luaD_callHook(task->base, task->tf, 0);
 		luaD_checkstack((*task->pc++) + EXTRA_STACK);
 		if (*task->pc < ZEROVARARG) {
 			luaD_adjusttop(task->base + *(task->pc++));
@@ -660,6 +662,8 @@ callfunc:
 			task->S->top = task->S->stack + task->base;
 			// fall through
 		case RETCODE:
+			if (lua_callhook)
+				luaD_callHook(task->base, nullptr, 1);
 			lua_state->callLevelCounter--;
 			return (task->base + ((task->aux == RETCODE) ? *task->pc : 0));
 		case SETLINEW:
