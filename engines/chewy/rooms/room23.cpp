@@ -29,6 +29,14 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK15[4] = {
+	{ 0, 2, ANI_VOR, ANI_GO, 0 },
+	{ 1, 255, ANI_VOR, ANI_GO, 0 },
+	{ 2, 255, ANI_VOR, ANI_GO, 0 },
+	{ 3, 255, ANI_VOR, ANI_GO, 0 },
+};
+
+
 void Room23::entry() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	set_person_pos(135, 69, P_CHEWY, -1);
@@ -72,7 +80,7 @@ int16 Room23::start_gleiter() {
 			}
 			if (start_ok) {
 				hide_cur();
-				start_ani_block(4, ablock15);
+				start_ani_block(4, ABLOCK15);
 				wait_show_screen(30);
 				for (i = 0; i < 4; i++)
 					det->stop_detail(i);

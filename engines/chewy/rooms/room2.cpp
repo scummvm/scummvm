@@ -32,6 +32,12 @@ namespace Rooms {
 #define ANI_5 5
 #define GITTER_BLITZEN 7
 
+static const AniBlock ABLOCK4[2] = {
+	{ GITTER_BLITZEN, 3, ANI_VOR, ANI_WAIT, 0 },
+	{ GITTER_BLITZEN, 12, ANI_VOR, ANI_GO, 0 }
+};
+
+
 void Room2::entry() {
 	if (!_G(spieler).R2ElectrocutedBork)
 		det->start_detail(5, 255, 0);
@@ -70,6 +76,23 @@ void Room2::electrifyWalkway1() {
 void Room2::electrifyWalkway2() {
 	start_spz(CH_TALK12, 255, 0, P_CHEWY);
 	start_aad_wait(47, -1);
+}
+
+void Room2::gedAction(int index) {
+	switch (index) {
+	case 0:
+		det->stop_detail(5);
+		if (!_G(spieler).R2ElectrocutedBork) {
+			det->start_detail(6, 2, ANI_VOR);
+		} else {
+			start_ani_block(2, ABLOCK4);
+		}
+		jump_out_r1(9);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms

@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK32[2] = {
+	{ 6, 255, ANI_VOR, ANI_GO, 0 },
+	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room41::entry() {
 	hide_cur();
 
@@ -36,7 +42,7 @@ void Room41::entry() {
 		if (!flags.LoadGame) {
 			room->set_timer_status(0, TIMER_STOP);
 			det->del_static_ani(0);
-			start_ani_block(2, ablock32);
+			start_ani_block(2, ABLOCK32);
 			room->set_timer_status(0, TIMER_START);
 			det->set_static_ani(0, -1);
 			start_aad_wait(127, -1);

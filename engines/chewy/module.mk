@@ -2,7 +2,6 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	ailclass.o \
-	ani_dat.o \
 	atds.o \
 	ch_icm.o \
 	chewy.o \

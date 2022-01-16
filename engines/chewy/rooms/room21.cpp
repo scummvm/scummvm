@@ -56,6 +56,12 @@ static const MovLine SPINNE_MPKT2[2] = {
 	{ { 115, 190, 0 }, 2, 1 }
 };
 
+static const AniBlock ABLOCK19[3] = {
+	{ 12, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 13, 4, ANI_VOR, ANI_WAIT, 0 },
+	{ 14, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
 void Room21::entry() {
 	load_chewy_taf(CHEWY_MINI);
 	calc_laser();
@@ -226,7 +232,7 @@ void Room21::salto() {
 						det->
 						set_detail_pos(12 + i, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]
 						);
-					start_ani_block(3, ablock19);
+					start_ani_block(3, ABLOCK19);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 					start_aad_wait(36, -1);
 					flags.AutoAniPlay = false;

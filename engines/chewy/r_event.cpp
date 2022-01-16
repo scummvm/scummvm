@@ -166,20 +166,7 @@ void check_ged_action(int16 index) {
 			break;
 
 		case 2:
-			switch (index) {
-			case 0:
-				det->stop_detail(5);
-				if (!_G(spieler).R2ElectrocutedBork) {
-					det->start_detail(6, 2, ANI_VOR);
-				} else {
-					start_ani_block(2, ablock4);
-				}
-				Room2::jump_out_r1(9);
-				break;
-
-			default:
-				break;
-			}
+			Room2::gedAction(index);
 			break;
 
 		case 7:

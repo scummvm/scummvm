@@ -29,6 +29,12 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK28[2] = {
+	{ 4, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 5, 3, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room35::entry() {
 	if (_G(spieler).R35Schublade)
 		det->show_static_spr(1);
@@ -50,7 +56,7 @@ int16 Room35::schublade() {
 			auto_move(3, P_CHEWY);
 			_G(spieler).R35Falle = true;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(2, ablock28);
+			start_ani_block(2, ABLOCK28);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			set_person_pos(33, 90, P_CHEWY, P_LEFT);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);

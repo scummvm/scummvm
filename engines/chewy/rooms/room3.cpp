@@ -43,17 +43,49 @@ namespace Rooms {
 #define SONDE_SPR_R 118
 #define SONDE_SPR_L 120
 
+#define GITTER_BLITZEN 7
+
 static const MovLine SONDE_MPKT[3] = {
 	{ {  13, 45,  75 }, 1, 2 },
 	{ { 237, 52, 160 }, 1, 2 },
 	{ {   4, 83, 180 }, 0, 2 }
 };
+
 static const int16 SONDE_PHASEN[4][2] = {
 	{ 120, 120 },
 	{ 118, 118 },
 	{ 141, 141 },
 	{ 119, 119 }
 };
+
+static const AniBlock ABLOCK0[5] = {
+	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 7, 3, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
+static const AniBlock ABLOCK1[2] = {
+	{ 10, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+static const AniBlock ABLOCK2[2] = {
+	{ 12, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ GITTER_BLITZEN, 1, ANI_VOR, ANI_GO, 0 }
+};
+
+static const AniBlock ABLOCK3[2] = {
+	{  4, 2, ANI_VOR, ANI_GO, 0 },
+	{ 11, 255, ANI_VOR, ANI_GO, 0 }
+};
+
+static const AniBlock ablock5[3] = {
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 8, 9, ANI_VOR, ANI_GO, 0 },
+	{ 1, 1, ANI_VOR, ANI_WAIT, 0 },
+
+};
+
 
 void Room3::entry() {
 	init_sonde();
@@ -72,7 +104,7 @@ void Room3::terminal() {
 
 		if (!_G(spieler).R2ElectrocutedBork) {
 			det->stop_detail(5);
-			start_ani_block(2, ablock3);
+			start_ani_block(2, ABLOCK3);
 			if (_G(spieler).R2FussSchleim) {
 				_G(spieler).R2FussSchleim = 0;
 
@@ -84,16 +116,16 @@ void Room3::terminal() {
 			det->stop_detail(6);
 			clear_prog_ani();
 			switch_room(1);
-			start_ani_block(2, ablock0);
+			start_ani_block(2, ABLOCK0);
 			set_person_pos(92, 131, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 		} else if (!_G(spieler).R2FussSchleim) {
-			start_ani_block(2, ablock2);
+			start_ani_block(2, ABLOCK2);
 			Room2::jump_out_r1(9);
 			start_aad_wait(45, -1);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(2, ablock1);
+			start_ani_block(2, ABLOCK1);
 			_G(spieler).PersonRoomNr[P_CHEWY] = 5;
 			clear_prog_ani();
 			_G(auto_obj) = 0;

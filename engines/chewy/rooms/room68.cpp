@@ -29,6 +29,18 @@
 namespace Chewy {
 namespace Rooms {
 
+static const AniBlock ABLOCK38[2] = {
+	{ 5, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+static const AniBlock ABLOCK39[3] = {
+	{ 15, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 17, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 15, 1, ANI_RUECK, ANI_WAIT, 0 },
+};
+
+
 void Room68::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).DiaAMov = 1;
@@ -260,7 +272,7 @@ int16 Room68::use_keeper() {
 		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		room->set_timer_status(20, TIMER_STOP);
 		det->del_static_ani(20);
-		start_ani_block(3, ablock39);
+		start_ani_block(3, ABLOCK39);
 		room->set_timer_status(20, TIMER_START);
 		det->set_static_ani(20, -1);
 		new_invent_2_cur(B_MARY_INV);
@@ -284,7 +296,7 @@ int16 Room68::use_diva() {
 		auto_move(4, P_CHEWY);
 		det->hide_static_spr(3);
 		_G(spieler).R68DivaWeg = true;
-		start_ani_block(2, ablock38);
+		start_ani_block(2, ABLOCK38);
 		flic_cut(FCUT_083, FLC_MODE);
 		flic_cut(FCUT_083, FLC_MODE);
 		det->del_static_ani(18);

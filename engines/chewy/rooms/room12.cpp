@@ -57,6 +57,12 @@ static const MovLine R12_BORK_MPKT2[3] = {
 	{ { 300,  80, 120 }, 1, 8 }
 };
 
+static const AniBlock ABLOCK16[2] = {
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 1, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room12::entry() {
 	int16 i;
 	_G(zoom_horizont) = 150;
@@ -247,7 +253,7 @@ int16 Room12::chewy_trans() {
 			flags.AutoAniPlay = true;
 			auto_move(9, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(2, ablock16);
+			start_ani_block(2, ABLOCK16);
 			set_person_pos(108, 82, P_CHEWY, P_RIGHT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(spieler).R12TransOn = false;

@@ -37,6 +37,13 @@ static const MovLine SURIMY_MPKT[2] = {
 	{ { 273, 220, 150 }, 1, 6 }
 };
 
+static const AniBlock ABLOCK30[3] = {
+	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 1, 4, ANI_VOR, ANI_WAIT, 0 },
+	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
+};
+
+
 void Room31::entry() {
 	calc_luke();
 	surimy_go();
@@ -124,7 +131,7 @@ int16 Room31::use_topf() {
 					_G(spieler).R31Wasser = true;
 					auto_move(1, P_CHEWY);
 					_G(spieler).PersonHide[P_CHEWY] = true;
-					start_ani_block(3, ablock30);
+					start_ani_block(3, ABLOCK30);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 					del_inventar(_G(spieler).AkInvent);
 					obj->add_inventar(MILCH_LEER_INV, &room_blk);

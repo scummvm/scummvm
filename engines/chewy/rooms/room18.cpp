@@ -59,6 +59,34 @@ static const MovLine SURIMY_MPKT3[2] = {
 	{ { 392, 170, 190 }, 0, 12 }
 };
 
+static const AniBlock ABLOCK20[3] = {
+	{ 5, 3, ANI_VOR, ANI_GO, 0 },
+	{ 6, 3, ANI_VOR, ANI_GO, 0 },
+	{ 7, 3, ANI_VOR, ANI_WAIT, 0 }
+};
+
+
+static const AniBlock ABLOCK21[2] = {
+	{  8, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 23, 255, ANI_RUECK, ANI_GO, 0 },
+};
+
+static const AniBlock ABLOCK22[2] = {
+	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 14, 13, ANI_VOR, ANI_GO, 0 },
+};
+
+static const AniBlock ABLOCK23[2] = {
+	{ 11, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 12, 1, ANI_VOR, ANI_GO, 0 },
+};
+
+static const AniBlock ABLOCK24[2] = {
+	{ 15, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 16, 7, ANI_VOR, ANI_GO, 0 },
+};
+
+
 void Room18::entry() {
 	int16 i;
 	_G(spieler).R18MoniSwitch = 0;
@@ -143,7 +171,7 @@ void Room18::monitor() {
 	nr = 0;
 	_G(spieler).R18MoniSwitch ^= 1;
 	if (_G(spieler).R18MoniSwitch) {
-		start_ani_block(2, ablock21);
+		start_ani_block(2, ABLOCK21);
 		if (_G(spieler).R17EnergieOut)
 			nr = 2;
 		else
@@ -164,7 +192,7 @@ int16 Room18::sonden_moni() {
 		auto_move(8, P_CHEWY);
 		start_detail_wait(3, 1, ANI_VOR);
 		det->show_static_spr(10);
-		start_ani_block(3, ablock20);
+		start_ani_block(3, ABLOCK20);
 		for (i = 0; i < 3; i++)
 			det->show_static_spr(i + 12);
 		wait_show_screen(40);
@@ -222,12 +250,12 @@ int16 Room18::calc_surimy() {
 		det->show_static_spr(26);
 
 		det->hide_static_spr(24);
-		start_ani_block(2, ablock22);
+		start_ani_block(2, ABLOCK22);
 		det->show_static_spr(20);
 
 		for (i = 0; i < 3; i++)
 			det->hide_static_spr(i + 15);
-		start_ani_block(2, ablock23);
+		start_ani_block(2, ABLOCK23);
 		det->show_static_spr(18);
 		det->show_static_spr(19);
 
@@ -248,7 +276,7 @@ int16 Room18::calc_surimy() {
 		det->show_static_spr(26);
 
 		det->hide_static_spr(25);
-		start_ani_block(2, ablock24);
+		start_ani_block(2, ABLOCK24);
 		det->show_static_spr(21);
 
 		det->hide_static_spr(26);
