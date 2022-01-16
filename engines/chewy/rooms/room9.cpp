@@ -75,6 +75,7 @@ void Room9::gtuer() {
 
 void Room9::surimy() {
 	int16 tmp;
+	hide_cur();
 	_G(spieler).R9Surimy = true;
 	tmp = spieler_vector[P_CHEWY].Count;
 	stop_person(P_CHEWY);
@@ -82,11 +83,13 @@ void Room9::surimy() {
 	det->hide_static_spr(4);
 	room->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
+	start_spz(15, 255, 0, 0);
 	start_aad_wait(56, -1);
 	_G(spieler).room_e_obj[17].Attribut = AUSGANG_RECHTS;
 	spieler_vector[P_CHEWY].Count = tmp;
 	get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
 	mov->continue_auto_go();
+	show_cur();
 }
 
 void Room9::surimy_ani() {
