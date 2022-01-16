@@ -35,9 +35,9 @@ public:
 	static bool timer(int16 t_nr, int16 ani_nr);
 
 	static int16 cut_serv(int16 frame);
-	static int16 use_linke_rohr();
+	static void use_linke_rohr();
 	static int16 chewy_trans();
-	static int16 proc1();
+	static int16 useTransformerTube();
 	static int16 use_terminal();
 	static void talk_bork();
 };

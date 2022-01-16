@@ -1938,7 +1938,11 @@ void sib_event_inv(int16 sib_nr) {
 		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
-		start_aad(115, 0);
+		start_spz(5, 255, 0, 0);
+		start_aad_wait(115, 0);
+
+		if (_G(spieler).R12TransOn)
+			Room12::use_linke_rohr();
 		break;
 
 	case SIB_GITTER2_R21:
