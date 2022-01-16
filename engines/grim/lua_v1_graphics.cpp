@@ -556,7 +556,7 @@ void Lua_V1::PreRender() {
 }
 
 void Lua_V1::ResetTextures() {
-	warning("Stub function: ResetTextures");
+	// nothing to implement here
 }
 
 } // end of namespace Grim
