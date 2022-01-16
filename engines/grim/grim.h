@@ -95,6 +95,8 @@ public:
 	void setSpeechMode(SpeechMode mode) { _speechMode = mode; }
 	SpeechMode getSpeechMode() { return _speechMode; }
 	SaveGame *savedState() { return _savedState; }
+	bool getJustSaveLoaded() { return _justSaveLoaded; }
+	void setJustSaveLoaded(bool state) { _justSaveLoaded = state; }
 
 	void handleDebugLoadResource();
 	void luaUpdate();
@@ -228,6 +230,7 @@ protected:
 	bool _savegameSaveRequest;
 	Common::String _savegameFileName;
 	SaveGame *_savedState;
+	bool _justSaveLoaded;
 
 	Set *_currSet;
 	EngineMode _mode, _previousMode;

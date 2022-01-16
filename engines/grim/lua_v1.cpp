@@ -699,6 +699,14 @@ void Lua_V1::LockFont() {
 	lua_pushnil();
 }
 
+void Lua_V1::JustLoaded() {
+	if (g_grim->getJustSaveLoaded())
+		lua_pushnumber(1.0f);
+	else
+		lua_pushnil();
+	g_grim->setJustSaveLoaded(false);
+}
+
 void Lua_V1::EnableDebugKeys() {
 }
 
@@ -710,10 +718,6 @@ void Lua_V1::LightMgrSetChange() {
 void Lua_V1::LightMgrStartup() {
 	// nothing to implement
 	// lights manager for game debug purpose only
-}
-
-void Lua_V1::JustLoaded() {
-	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
 void Lua_V1::SetEmergencyFont() {

@@ -152,6 +152,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_fps[0] = 0;
 	_iris = new Iris();
 	_buildActiveActorsList = false;
+	_justSaveLoaded = false;
 
 	Color c(0, 0, 0);
 
@@ -1231,6 +1232,8 @@ void GrimEngine::savegameRestore() {
 	Debug::debug(Debug::Engine, "Lua restored successfully.");
 
 	delete _savedState;
+
+	_justSaveLoaded = true;
 
 	//Re-read the values, since we may have been in some state that changed them when loading the savegame,
 	//e.g. running a cutscene, which sets the sfx volume to 0.
