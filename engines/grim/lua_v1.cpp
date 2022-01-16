@@ -718,33 +718,46 @@ void Lua_V1::SetEmergencyFont() {
 	Debug::error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
-
-// Stub function for builtin functions not yet implemented
-static void stubWarning(const char *funcName) {
-	warning("Stub function: %s", funcName);
+void Lua_V1::NukeResources() {
+	warning("Stub function: NukeResources");
 }
 
-#define STUB_FUNC(name) void name() { stubWarning(#name); }
+void Lua_V1::AttachToResources() {
+	warning("Stub function: AttachToResources");
+}
 
-STUB_FUNC(Lua_V1::SetActorInvClipNode)
-STUB_FUNC(Lua_V1::NukeResources)
-STUB_FUNC(Lua_V1::ResetTextures)
-STUB_FUNC(Lua_V1::AttachToResources)
-STUB_FUNC(Lua_V1::DetachFromResources)
-STUB_FUNC(Lua_V1::SetActorClipPlane)
-STUB_FUNC(Lua_V1::SetActorClipActive)
-STUB_FUNC(Lua_V1::FlushControls)
-STUB_FUNC(Lua_V1::GetCameraLookVector)
+void Lua_V1::DetachFromResources() {
+	warning("Stub function: DetachFromResources");
+}
+
+void Lua_V1::FlushControls() {
+	warning("Stub function: FlushControls");
+}
+
+void Lua_V1::SpewStartup() {
+	warning("Stub function: SpewStartup");
+}
+
+void Lua_V1::GetCameraLookVector() {
+	warning("Stub function: GetCameraLookVector");
+}
+
+void Lua_V1::SetCameraInterest() {
+	warning("Stub function: SetCameraInterest");
+}
+
+void Lua_V1::GetCameraPosition() {
+	warning("Stub function: GetCameraPosition");
+}
+
+void Lua_V1::WorldToScreen() {
+	warning("Stub function: WorldToScreen");
+}
+
+#define STUB_FUNC(name) void name() {}
+
+// Stub functions not used in games
 STUB_FUNC(Lua_V1::SetCameraRoll)
-STUB_FUNC(Lua_V1::SetCameraInterest)
-STUB_FUNC(Lua_V1::GetCameraPosition)
-STUB_FUNC(Lua_V1::SpewStartup)
-STUB_FUNC(Lua_V1::WorldToScreen)
-STUB_FUNC(Lua_V1::SetActorRoll)
-STUB_FUNC(Lua_V1::SetActorFrustrumCull)
-STUB_FUNC(Lua_V1::DriveActorTo)
-STUB_FUNC(Lua_V1::GetTranslationMode)
-STUB_FUNC(Lua_V1::SetTranslationMode)
 STUB_FUNC(Lua_V1::WalkActorToAvoiding)
 STUB_FUNC(Lua_V1::GetActorChores)
 STUB_FUNC(Lua_V1::SetCameraPosition)

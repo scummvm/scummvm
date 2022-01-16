@@ -383,4 +383,12 @@ void Lua_V1::IsMessageGoing() {
 		lua_pushnil();
 }
 
+void Lua_V1::GetTranslationMode() {
+	warning("Stub function: GetTranslationMode");
+}
+
+void Lua_V1::SetTranslationMode() {
+	warning("Stub function: SetTranslationMode");
+}
+
 } // end of namespace Grim

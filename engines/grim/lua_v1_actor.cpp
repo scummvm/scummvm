@@ -1540,4 +1540,28 @@ void Lua_V1::GetActorRect() {
 	lua_pushnumber(1);
 }
 
+void Lua_V1::SetActorInvClipNode() {
+	warning("Stub function: SetActorInvClipNode");
+}
+
+void Lua_V1::SetActorClipPlane() {
+	warning("Stub function: SetActorClipPlane");
+}
+
+void Lua_V1::SetActorClipActive() {
+	warning("Stub function: SetActorClipActive");
+}
+
+void Lua_V1::SetActorRoll() {
+	warning("Stub function: SetActorRoll");
+}
+
+void Lua_V1::SetActorFrustrumCull() {
+	warning("Stub function: SetActorFrustrumCull");
+}
+
+void Lua_V1::DriveActorTo() {
+	warning("Stub function: DriveActorTo");
+}
+
 } // end of namespace Grim

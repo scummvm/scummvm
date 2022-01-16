@@ -764,7 +764,7 @@ void Lua_V2::RenderModeUser() {
 	}
 }
 
-// Monkey specific LUA_OPCODEs
+// Monkey specific LUA_OPCODEs only used for debug
 STUB_FUNC2(Lua_V2::ToggleDebugDraw)
 STUB_FUNC2(Lua_V2::ToggleDrawCameras)
 STUB_FUNC2(Lua_V2::ToggleDrawLights)
