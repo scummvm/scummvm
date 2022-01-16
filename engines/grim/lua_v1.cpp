@@ -719,7 +719,6 @@ void Lua_V1::SetEmergencyFont() {
 }
 
 void Lua_V1::NukeResources() {
-	warning("Stub function: NukeResources");
 }
 
 void Lua_V1::AttachToResources() {
