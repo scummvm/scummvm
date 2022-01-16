@@ -76,6 +76,11 @@ bool Room50::timer(int16 t_nr, int16 ani_nr) {
 	return true;
 }
 
+void Room50::gedAction(int index) {
+	if (!index)
+		calc_treppe();
+}
+
 void Room50::stop_cigar() {
 	room->set_timer_status(0, TIMER_STOP);
 	det->del_static_ani(0);

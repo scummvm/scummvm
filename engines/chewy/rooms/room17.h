@@ -26,17 +26,20 @@ namespace Chewy {
 namespace Rooms {
 
 class Room17 {
+private:
+	static void door_kommando(int16 mode);
+
 public:
 	static void entry();
 	static void xit();
 	static bool timer(int16 t_nr, int16 ani_nr);
+	static void gedAction(int index);
 
 	static int16 use_seil();
 	static void plot_seil();
 	static void kletter_down();
 	static void kletter_up();
 	static void calc_seil();
-	static void door_kommando(int16 mode);
 	static void close_door();
 	static int16 energie_hebel();
 	static int16 get_oel();

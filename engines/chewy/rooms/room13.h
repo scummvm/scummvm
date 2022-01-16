@@ -30,10 +30,12 @@ namespace Rooms {
 class Room13 {
 public:
 	static void entry();
-	static void talk_bork();
+	static void gedAction(int index);
+
 	static int16 monitor_knopf();
 	static void jmp_band();
 	static void jmp_boden();
+	static void talk_bork();
 };
 
 } // namespace Rooms

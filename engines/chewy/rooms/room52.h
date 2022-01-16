@@ -29,12 +29,14 @@ class Room52 {
 private:
 	static void plot_armee(int16 frame);
 	static void setup_func();
+	static void kaker_platt();
 
 public:
 	static void entry();
 	static void xit();
+	static void gedAction(int index);
+
 	static int16 use_hot_dog();
-	static void kaker_platt();
 };
 
 } // namespace Rooms

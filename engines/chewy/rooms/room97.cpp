@@ -112,6 +112,35 @@ void Room97::xit() {
 	_G(spieler).ScrollxStep = 1;
 }
 
+void Room97::gedAction(int index) {
+	switch (index) {
+	case 50:
+		proc2();
+		break;
+	case 51:
+		proc3();
+		break;
+	case 52:
+		proc13();
+		break;
+	case 53:
+		proc12();
+		break;
+	case 54:
+		proc4();
+		break;
+	case 55:
+		if (_G(spieler).flags36_20)
+			auto_scroll(268, 0);
+		break;
+	case 56:
+		proc15();
+		break;
+	default:
+		break;
+	}
+}
+
 void Room97::setup_func() {
 	spieler_mi[P_CHEWY].Vorschub = 4;
 	spieler_mi[P_HOWARD].Vorschub = 6;

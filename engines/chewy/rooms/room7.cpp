@@ -154,5 +154,25 @@ void Room7::klingel() {
 	++_G(spieler).R7BellCount;
 }
 
+void Room7::gedAction(int index) {
+	switch (index) {
+	case 0:
+		if (_G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
+			_G(spieler).PersonHide[P_CHEWY] = true;
+			start_detail_wait(20, 1, ANI_VOR);
+			det->show_static_spr(10);
+			wait_show_screen(20 * _G(spieler).DelaySpeed);
+			det->hide_static_spr(10);
+			set_person_pos(180, 124, P_CHEWY, P_LEFT);
+			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler).R7ChewyFlug = false;
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
 } // namespace Rooms
 } // namespace Chewy

@@ -35,6 +35,11 @@ void Room94::entry() {
 void Room94::xit() {
 }
 
+void Room94::gedAction(int index) {
+	if (!index && !_G(spieler).flags35_10)
+		switch_room(93);
+}
+
 void Room94::talk1() {
 }
 

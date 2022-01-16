@@ -28,6 +28,7 @@ namespace Rooms {
 class Room1 {
 public:
 	static void gottenCard();
+	static void gedAction(int index);
 };
 
 } // namespace Rooms

@@ -141,6 +141,11 @@ void Room28::xit(int16 eib_nr) {
 	show_cur();
 }
 
+void Room28::gedAction(int index) {
+	if (!index)
+		get_pump();
+}
+
 void Room28::haendler() {
 	hide_cur();
 	SetUpScreenFunc = 0;

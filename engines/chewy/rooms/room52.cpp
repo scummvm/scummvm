@@ -55,6 +55,11 @@ void Room52::xit() {
 	}
 }
 
+void Room52::gedAction(int index) {
+	if (index == 1)
+		kaker_platt();
+}
+
 int16 Room52::use_hot_dog() {
 	int16 i;
 	int16 action_ret = false;

@@ -82,6 +82,17 @@ bool Room11::timer(int16 t_nr, int16 ani_nr) {
 	return false;
 }
 
+void Room11::gedAction(int index) {
+	switch (index) {
+	case 0:
+		chewy_bo_use();
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Room11::bork_zwinkert() {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;

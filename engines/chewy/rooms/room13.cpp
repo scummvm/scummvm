@@ -76,6 +76,20 @@ void Room13::entry() {
 	}
 }
 
+void Room13::gedAction(int index) {
+	switch (index) {
+	case 2:
+		if (_G(spieler).R12ChewyBork) {
+			stop_person(P_CHEWY);
+			talk_bork();
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Room13::talk_bork() {
 	if (!_G(spieler).R13BorkOk) {
 		_G(spieler).R13BorkOk = true;

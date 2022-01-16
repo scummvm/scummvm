@@ -37,6 +37,8 @@ private:
 public:
 	static void entry();
 	static void xit(int16 eib_nr);
+	static void gedAction(int index);
+
 	static int16 use_stapel1();
 	static int16 use_stapel2();
 	static int16 use_telefon();
