@@ -53,12 +53,19 @@ static const MovLine BORK_MPKT2[2] = {
 	{ {  90, 125, 170 }, 1, 6 }
 };
 
+AniBlock ABLOCK14[2] = {
+	{0, 1, ANI_VOR, ANI_WAIT, 0},
+	{3, 255, ANI_VOR, ANI_GO, 0},
+};
+
+
 void Room22::entry() {
 	if (!_G(spieler).R22BorkPlatt) {
 		det->load_taf_seq(36, (56 - 36) + 1, 0);
 		room->set_timer(255, 15);
-	} else if (_G(spieler).R22ChewyPlatt && !_G(spieler).R22GetBork)
+	} else if (_G(spieler).R22ChewyPlatt && !_G(spieler).R22GetBork) {
 		det->show_static_spr(4);
+	}
 }
 
 bool Room22::timer(int16 t_nr, int16 ani_nr) {
@@ -74,6 +81,8 @@ int16 Room22::chewy_amboss() {
 	if (!_G(spieler).R22ChewyPlatt && !_G(spieler).inv_cur && !flags.AutoAniPlay) {
 		action_flag = true;
 		flags.AutoAniPlay = true;
+		hide_cur();
+
 		auto_move(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(1, 1, ANI_VOR);
@@ -84,13 +93,16 @@ int16 Room22::chewy_amboss() {
 		_G(spieler).R22ChewyPlatt = true;
 		atds->set_ats_str(79, 1, ATS_DATEI);
 		flags.AutoAniPlay = false;
+
+		show_cur();
 	}
 	return action_flag;
 }
 
 void Room22::bork(int16 t_nr) {
-	if (!flags.AutoAniPlay) {
+	if (!flags.AutoAniPlay && !is_chewy_busy()) {
 		flags.AutoAniPlay = true;
+
 		if (!_G(spieler).R22BorkPlatt) {
 			hide_cur();
 			start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
@@ -104,14 +116,21 @@ void Room22::bork(int16 t_nr) {
 			auto_mov_obj[BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 			auto_mov_obj[BORK_OBJ].Mode = true;
+
 			if (!_G(spieler).R22Paint) {
 				bork_walk1();
 			} else {
-				_G(spieler).R22ChewyPlatt = true;
+				if (!_G(spieler).R22ChewyPlatt) {
+					atds->set_steuer_bit(79, 1, 1);
+					_G(spieler).R22ChewyPlatt = true;
+				}
+
 				bork_walk2();
 			}
+
 			show_cur();
 		}
+
 		uhr->reset_timer(t_nr, 0);
 		flags.AutoAniPlay = false;
 	}
@@ -147,7 +166,7 @@ void Room22::get_bork() {
 		auto_move(4, P_CHEWY);
 		det->hide_static_spr(4);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_ani_block(2, ablock14);
+		start_ani_block(2, ABLOCK14);
 		set_person_pos(171, 120, P_CHEWY, P_LEFT);
 		start_aad_wait(11, -1);
 		det->stop_detail(3);
@@ -163,6 +182,7 @@ void Room22::get_bork() {
 
 int16 Room22::malen() {
 	int16 action_flag = false;
+
 	if (!flags.AutoAniPlay && is_cur_inventar(17)) {
 		action_flag = true;
 		flags.AutoAniPlay = true;
@@ -175,7 +195,13 @@ int16 Room22::malen() {
 		del_inventar(_G(spieler).AkInvent);
 		obj->calc_all_static_detail();
 		flags.AutoAniPlay = false;
+
+		if (!_G(spieler).R22ChewyPlatt) {
+			_G(spieler).R22ChewyPlatt = true;
+			atds->set_steuer_bit(79, 1, 1);
+		}
 	}
+
 	return action_flag;
 }
 

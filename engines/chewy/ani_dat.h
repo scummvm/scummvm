@@ -151,8 +151,6 @@ extern AniBlock ablock24[2];
 
 extern AniBlock ablock19[3];
 
-extern AniBlock ablock14[2];
-
 extern AniBlock ablock15[4];
 
 extern AniBlock ablock26[4];
