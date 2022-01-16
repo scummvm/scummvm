@@ -94,9 +94,6 @@ struct TEXTOUT {
 OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime = 0);
 
-OBJECT *ObjectTextOutIndirect(	// output a string of text
-	TEXTOUT *pText);	// pointer to TextOut struct with all parameters
-
 bool IsCharImage(		// Is there an image for this character in this font?
 	SCNHANDLE hFont,	// which font to use
 	char c);		// character to test
