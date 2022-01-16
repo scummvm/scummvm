@@ -5382,7 +5382,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PLAYSAMPLE:
 		// Common to DW1 / DW2 / Noir
-		if (TinselV2 || TinselV3) {
+		if (TinselV2) {
 			pp -= 3;			// 4 parameters
 			PlaySample(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape);
 			return -4;

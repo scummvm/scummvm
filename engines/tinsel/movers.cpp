@@ -901,7 +901,7 @@ void T3MoverProcess(CORO_PARAM, const void *param) {
  * Creates a handling process for a moving actor
  */
 void MoverProcessCreate(int X, int Y, int id, MOVER *pMover) {
-	if (TinselV2 || TinselV3) {
+	if (TinselV2) {
 		MAINIT iStruct;
 		iStruct.X = X;
 		iStruct.Y = Y;
