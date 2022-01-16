@@ -703,11 +703,13 @@ void Lua_V1::EnableDebugKeys() {
 }
 
 void Lua_V1::LightMgrSetChange() {
-	// that seems only used when some control panel is opened
+	// nothing to implement
+	// lights manager for game debug purpose only
 }
 
 void Lua_V1::LightMgrStartup() {
-	// we will not implement this opcode
+	// nothing to implement
+	// lights manager for game debug purpose only
 }
 
 void Lua_V1::JustLoaded() {
@@ -715,18 +717,23 @@ void Lua_V1::JustLoaded() {
 }
 
 void Lua_V1::SetEmergencyFont() {
-	Debug::error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
+	// nothing to implement
+	// originally this is used only for CD changing which is not supported here
 }
 
 void Lua_V1::NukeResources() {
+	// nothing to implement
+	// originally this is used only for CD changing which is not supported here
 }
 
 void Lua_V1::AttachToResources() {
-	warning("Stub function: AttachToResources");
+	// nothing to implement
+	// originally this is used only for CD changing which is not supported here
 }
 
 void Lua_V1::DetachFromResources() {
-	warning("Stub function: DetachFromResources");
+	// nothing to implement
+	// originally this is used only for CD changing which is not supported here
 }
 
 void Lua_V1::FlushControls() {
