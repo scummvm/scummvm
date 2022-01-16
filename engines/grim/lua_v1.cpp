@@ -711,8 +711,7 @@ void Lua_V1::EnableDebugKeys() {
 }
 
 void Lua_V1::FlushControls() {
-	g_system->getEventManager()->purgeKeyboardEvents();
-	g_system->getEventManager()->purgeMouseEvents();
+	g_grim->clearEventQueue();
 }
 
 void Lua_V1::LightMgrSetChange() {
