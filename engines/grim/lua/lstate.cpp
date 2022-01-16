@@ -169,7 +169,8 @@ void callHook(lua_Function func, const char *filename, int32 line) {
 				} else
 					fprintf(output, "<userdata %d>", lua_getuserdata(lua_getparam(i)));
 			} else if (lua_isfunction(lua_getparam(i))) {
-				fprintf(output, "<function>");
+				lua_getobjname(lua_getparam(i), &name);
+				fprintf(output, "<function %s>", name);
 			} else if (lua_isnumber(lua_getparam(i)))
 				fprintf(output, "%g", lua_getnumber(lua_getparam(i)));
 			else if (lua_isstring(lua_getparam(i)))
