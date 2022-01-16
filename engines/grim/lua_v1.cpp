@@ -746,7 +746,8 @@ void Lua_V1::DetachFromResources() {
 }
 
 void Lua_V1::SpewStartup() {
-	warning("Stub function: SpewStartup");
+	// nothing to implement
+	// originally this opcode launch external library 'spew.dll'
 }
 
 void Lua_V1::GetCameraLookVector() {
