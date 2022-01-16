@@ -1429,30 +1429,27 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 	action_flag = false;
 	ret = -1;
 	inv_no_use_mode = -1;
+
 	if (mode == DO_SETUP) {
 		if (flags.ShowAtsInvTxt) {
 			inv_no_use_mode = AUTO_OBJ;
 			txt_nr = calc_mouse_mov_obj(&idx);
+
 			if (txt_nr == -1) {
 				idx = det->maus_vector(x + _G(spieler).scrollx, y + _G(spieler).scrolly);
 				if (idx != -1) {
 					txt_nr = Rdi->mtxt[idx];
 					inv_no_use_mode = DETEDIT_REC;
-				} else {
-					idx = det->mouse_on_detail(minfo.x, minfo.y, _G(spieler).scrollx, _G(spieler).scrolly);
-					if (idx != -1) {
-						inv_no_use_mode = DETAIL_OBJ;
-						txt_nr = 255;
-					}
 				}
-			} else
-				inv_no_use_mode = AUTO_OBJ;
+			}
 
 			if (txt_nr != -1) {
-				ret = txt_nr;
+				ret = -1;
+
 				if (_G(maus_links_click) && !flags.MausTxt) {
 					ok = true;
 					flags.MausTxt = true;
+
 					switch (menu_item) {
 					case CUR_LOOK:
 						txt_mode = TXT_MARK_LOOK;
@@ -1474,11 +1471,11 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 					case CUR_TALK:
 						txt_mode = TXT_MARK_TALK;
 						break;
-
 					}
+
 					action_ret = 0;
 					if (!atds->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
-						if (menu_item != CUR_WALK) {
+						if (menu_item != CUR_WALK && menu_item != CUR_USE) {
 							if (x + _G(spieler).scrollx > spieler_vector[P_CHEWY].Xypos[0])
 								set_person_spr(P_RIGHT, P_CHEWY);
 							else
@@ -1489,26 +1486,30 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 					if (atds->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI)) {
 						action_ret = ats_action(txt_nr, txt_mode, ATS_ACTION_VOR);
 					}
-
+					
 					if (ok && !atds->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
 						if (start_ats_wait(txt_nr, txt_mode, 14, ATS_DATEI))
 							disp_flag = false;
 					} else {
 						ret = -1;
 					}
-
+					
 					if (atds->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI)) {
 						action_ret = ats_action(txt_nr, txt_mode, ATS_ACTION_NACH);
 						action_flag = true;
+						if (action_ret)
+							ret = 1;
 					}
-
+					
 					if (!ok && !action_ret) {
 						if (inv_no_use_mode != -1 && !atds->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
 							action_flag = calc_inv_no_use(idx + (_G(spieler).PersonRoomNr[P_CHEWY] * 100), inv_no_use_mode);
+							if (action_flag)
+								ret = txt_nr;
 						}
 					}
-
-					if (ok && !action_ret && menu_item == CUR_USE && disp_flag) {
+					
+					if (ok && !action_ret && txt_mode == TXT_MARK_USE && disp_flag) {
 						if (!atds->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
 							if (menu_item != CUR_WALK) {
 								if (x + _G(spieler).scrollx > spieler_vector[P_CHEWY].Xypos[0])
@@ -1518,12 +1519,16 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 							}
 							r_val = g_engine->_rnd.getRandomNumber(MAX_RAND_NO_USE - 1);
 							action_flag = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+							if (action_flag)
+								ret = txt_nr;
 						}
 					}
+
 					flags.MausTxt = false;
 				} else {
 					ret = -1;
 				}
+
 				if (disp_flag && !action_flag) {
 					char *str_ = atds->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATEI);
 					if (str_ != 0) {
@@ -1535,11 +1540,12 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 							print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 					}
 				}
-			}
-			else
+			} else {
 				ret = -1;
+			}
 		}
 	}
+
 	return ret;
 }
 
