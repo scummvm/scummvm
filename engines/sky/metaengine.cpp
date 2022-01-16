@@ -356,11 +356,15 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 }
 
 bool SkyEngine::canLoadGameStateCurrently() {
-	return _systemVars->pastIntro && _skyControl->loadSaveAllowed();
+	return _systemVars->pastIntro
+	    && _skyControl->loadSaveAllowed()
+	    && !_skyControl->isControlPanelOpen();
 }
 
 bool SkyEngine::canSaveGameStateCurrently() {
-	return _systemVars->pastIntro && _skyControl->loadSaveAllowed();
+	return _systemVars->pastIntro
+	    && _skyControl->loadSaveAllowed()
+	    && !_skyControl->isControlPanelOpen();
 }
 
 } // End of namespace Sky
