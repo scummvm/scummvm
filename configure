@@ -3801,9 +3801,9 @@ if test "$_sdl" = auto ; then
 	find_sdlconfig
 	append_var SDL_CFLAGS "`$_sdlconfig --cflags | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
 	if test "$_static_build" = yes ; then
-		append_var SDL_LIBS "`$_sdlconfig --static-libs`"
+		append_var SDL_LIBS "`$_sdlconfig --static-libs | sed 's/[[:space:]]*-Wl,--no-undefined//'`"
 	else
-		append_var SDL_LIBS "`$_sdlconfig --libs`"
+		append_var SDL_LIBS "`$_sdlconfig --libs | sed 's/[[:space:]]*-Wl,--no-undefined//'`"
 	fi
 	_sdlversion=`$_sdlconfig --version`
 
