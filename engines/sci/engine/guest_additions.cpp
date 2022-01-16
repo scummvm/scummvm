@@ -150,6 +150,26 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 	return false;
 }
 
+bool GuestAdditions::userHasControl() {
+	const reg_t user = _segMan->findObjectByName("User");
+	const Object *userObject = _segMan->getObject(user);
+
+	// Selectors input/canInput and controls should be available at all times, except
+	// in games that don't have selector vocab 997 (e.g. some game demos and LB2 floppy)
+	const bool hasInputSelector    = userObject->locateVarSelector(_segMan, SELECTOR(input)) >= 0;
+	const bool hasCanInputSelector = userObject->locateVarSelector(_segMan, SELECTOR(canInput)) >= 0;
+	const bool hasControlsSelector = userObject->locateVarSelector(_segMan, SELECTOR(controls)) >= 0;
+
+	if ((hasInputSelector || hasCanInputSelector) && hasControlsSelector) {
+		const Selector inputSelector = hasInputSelector ? SELECTOR(input) : SELECTOR(canInput);
+		const int16 input = readSelectorValue(_segMan, user, inputSelector);
+		const int16 controls = readSelectorValue(_segMan, user, SELECTOR(controls));
+		return input && controls;
+	} else {
+		return false;
+	}
+}
+
 #pragma mark -
 #pragma mark Hooks
 

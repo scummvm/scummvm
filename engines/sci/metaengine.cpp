@@ -32,6 +32,7 @@
 
 #include "sci/sci.h"
 #include "sci/dialogs.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/script.h"
@@ -329,6 +330,8 @@ bool SciEngine::hasFeature(EngineFeature f) const {
 		//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
 		// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
 		//  and some other times it won't work.
+		// Update: We now have a function that can check if user input is enabled, userHasControl,
+		//  which works, but the music isn't properly resumed after load yet.
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {
@@ -469,6 +472,8 @@ bool SciEngine::canLoadGameStateCurrently() {
 bool SciEngine::canSaveGameStateCurrently() {
 	// see comment about kSupportsSavingDuringRuntime in SciEngine::hasFeature
 	return false;
+	// TODO: This seems to be working, but music isn't resumed properly yet
+	//return !_gamestate->executionStackBase && _guestAdditions->userHasControl();
 }
 
 } // End of namespace Sci

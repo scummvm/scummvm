@@ -139,6 +139,10 @@ struct SelectorCache {
 	Selector curPos; // for LSL6 volume sync
 	Selector update; // for LSL6 volume sync
 
+	Selector canInput; // for Phant2 restore from launcher and checking if user has input
+	Selector input;	// for checking if user has input
+	Selector controls; // for checking if user has input
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
@@ -189,7 +193,6 @@ struct SelectorCache {
 	Selector scratch; // for Phant2 save/load patching
 	Selector num; // for Phant2 restore from launcher
 	Selector reallyRestore; // for Phant2 restore from launcher
-	Selector canInput; // for Phant2 restore from launcher
 	Selector bookMark; // for Phant2 auto-save
 	Selector fileNumber; // for RAMA save/load
 	Selector description; // for RAMA save/load

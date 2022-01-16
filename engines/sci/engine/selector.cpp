@@ -172,6 +172,9 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(owner);
 	FIND_SELECTOR(curPos);
 	FIND_SELECTOR(update);
+	FIND_SELECTOR(canInput);
+	FIND_SELECTOR(input);
+	FIND_SELECTOR(controls);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -231,7 +234,6 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(scratch);
 	FIND_SELECTOR(num);
 	FIND_SELECTOR(reallyRestore);
-	FIND_SELECTOR(canInput);
 	FIND_SELECTOR(bookMark);
 	FIND_SELECTOR(fileNumber);
 	FIND_SELECTOR(description);

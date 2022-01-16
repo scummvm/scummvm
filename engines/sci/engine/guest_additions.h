@@ -121,6 +121,11 @@ public:
 	 */
 	bool kDoSoundMasterVolumeHook(const int volume) const;
 
+	/**
+	 * Determines whether the user has control.
+	*/
+	bool userHasControl();
+
 #ifdef ENABLE_SCI32
 	/**
 	 * Guest additions hook for SciEngine::initGame.
