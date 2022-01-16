@@ -429,20 +429,128 @@ int Room97::proc10() {
 }
 
 int Room97::proc11() {
-	return 0;
+	if (_G(spieler).inv_cur)
+		return 0;
+
+	hide_cur();
+
+	if (!_G(spieler).flags37_2) {
+		start_spz(4, 255, false, P_CHEWY);
+		start_aad_wait(569, -1);
+	} else {
+		auto_move(9, P_CHEWY);
+		start_aad_wait(570, -1);
+		start_spz_wait(13, 1, false, P_CHEWY);
+		auto_move(7, P_CHEWY);
+		start_spz(5, 255, false, P_CHEWY);
+		start_aad_wait(571, -1);
+		det->enable_sound(4, 0);
+		det->play_sound(4, 0);
+		det->start_detail(4, 1, false);
+		auto_move(12, P_CHEWY);
+		start_spz_wait(64, 1, false, P_CHEWY);
+		start_spz(65, 255, false, P_CHEWY);
+		start_aad_wait(561, -1);
+		_G(spieler).SVal1 = 97;
+		_G(spieler).SVal2 = 523;
+		cur_2_inventory();
+		_G(spieler).flags37_8 = true;
+		switch_room(92);
+		show_cur(); // probably useless, but present in the original
+	}
+
+	show_cur();
+	return 1;
 }
 
 void Room97::proc12() {
+	if (!_G(spieler).flags37_1) {
+		stop_person(P_CHEWY);
+		set_person_pos(491, 42, P_CHEWY, P_RIGHT);
+		return;
+	}
+
+	if (flags.AutoAniPlay)
+		return;
+
+	flags.AutoAniPlay = true;
+	hide_cur();
+	stop_person(P_CHEWY);
+	det->show_static_spr(26);
+	go_auto_xy(481, 39, P_CHEWY, ANI_VOR);
+	_G(spieler).PersonHide[0] = true;
+	set_person_pos(327, 42, P_CHEWY, P_LEFT);
+	wait_show_screen(50);
+	set_person_pos(347, 42, P_CHEWY, P_LEFT);
+	_G(spieler).PersonHide[0] = false;
+	det->hide_static_spr(26);
+	spieler_mi[P_CHEWY].Mode = false;
+	show_cur();
+	flags.AutoAniPlay = false;
 }
 
 void Room97::proc13() {
+	if (!_G(spieler).flags37_1 || flags.AutoAniPlay)
+		return;
+
+	flags.AutoAniPlay = true;
+	hide_cur();
+	stop_person(P_CHEWY);
+	spieler_mi[P_CHEWY].Mode = true;
+	det->show_static_spr(26);
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	set_person_pos(508, 41, P_CHEWY, P_LEFT);
+	wait_show_screen(50);
+	set_person_pos(488, 41, P_CHEWY, P_LEFT);
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	auto_move(6, P_CHEWY);
+	det->hide_static_spr(26);
+	spieler_mi[P_CHEWY].Mode = false;
+	show_cur();
+	flags.AutoAniPlay = false;
 }
 
 int Room97::proc14() {
-	return 0;
+	if (!is_cur_inventar(SLIME_INV))
+		return 0;
+
+	_G(spieler).r97_bool18DB30 = true;
+	hide_cur();
+	del_inventar(_G(spieler).AkInvent);
+	menu_item = CUR_USE;
+	cursor_wahl(CUR_USE);
+	
+	return 1;
 }
 
 void Room97::proc15() {
+	if (_G(spieler).flags37_4 || flags.AutoAniPlay)
+		return;
+
+	flags.AutoAniPlay = true;
+	stop_person(P_CHEWY);
+	menu_item = CUR_USE;
+	cursor_wahl(CUR_USE);
+	set_person_pos(294, 42, P_CHEWY, P_LEFT);
+	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
+	
+	mov     edi, 1
+
+	while (true) {
+		if (det->get_ani_detail(16) == nullptr) {
+			start_detail_wait(17, 1, ANI_VOR);
+			det->start_detail(16, 1, true);
+			_G(spieler).PersonHide[P_CHEWY] = true;
+			start_detail_wait(20, 1, false);
+			set_person_pos(318, 42, P_CHEWY, P_LEFT);
+			_G(spieler).PersonHide[P_CHEWY] = false;
+			break;
+		}
+	}
+
+	atds->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
+	show_cur();
+	flags.AutoAniPlay = false;
 }
 
 } // namespace Rooms
