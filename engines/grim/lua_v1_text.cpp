@@ -384,11 +384,22 @@ void Lua_V1::IsMessageGoing() {
 }
 
 void Lua_V1::GetTranslationMode() {
-	warning("Stub function: GetTranslationMode");
+	lua_pushnumber(_translationMode);
 }
 
 void Lua_V1::SetTranslationMode() {
-	warning("Stub function: SetTranslationMode");
+	int mode = 0;
+	lua_Object paramObj = lua_getparam(1);
+
+	if (!lua_isnil(paramObj) && lua_isnumber(paramObj)) {
+		mode = lua_getnumber(paramObj);
+		if (mode < 0)
+			mode = 0;
+		if (mode > 2)
+			mode = 2;
+	}
+
+	_translationMode = mode;
 }
 
 } // end of namespace Grim

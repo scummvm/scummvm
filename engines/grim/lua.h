@@ -152,16 +152,16 @@ protected:
 	Color getcolor(lua_Object obj);
 	PrimitiveObject *getprimitive(lua_Object obj);
 	ObjectState *getobjectstate(lua_Object obj);
+	// 0 - translate from '/msgId/'
+	// 1 - don't translate - message after '/msgId'
+	// 2 - return '/msgId/'
+	int _translationMode;
 
 	DECLARE_LUA_OPCODE(dummyHandler);
 	DECLARE_LUA_OPCODE(typeOverride);
 	DECLARE_LUA_OPCODE(concatFallback);
 
 private:
-	// 0 - translate from '/msgId/'
-	// 1 - don't translate - message after '/msgId'
-	// 2 - return '/msgId/'
-	int _translationMode;
 	unsigned int _frameTimeCollection;
 
 	int refSystemTable;
