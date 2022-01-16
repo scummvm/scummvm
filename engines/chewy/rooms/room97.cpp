@@ -534,7 +534,7 @@ void Room97::proc15() {
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
 	
-	mov     edi, 1
+//	mov     edi, 1
 
 	while (true) {
 		if (det->get_ani_detail(16) == nullptr) {
