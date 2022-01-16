@@ -542,6 +542,9 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 	*voc_nr = -1;
 	set_ats_mem(mode);
 	if (atsmem) {
+		if (atsv.Display)
+			stop_ats();
+
 		atsv.Ptr = ats_get_txt(txt_nr, txt_mode, &txt_anz, mode);
 		if (atsv.Ptr) {
 			atsv.Display = true;
@@ -1424,6 +1427,7 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 				fcode = OPENFEHLER;
 			}
 		}
+
 		iu = (InvUse *)atdsmem[INV_IDX_HANDLE];
 		ok = false;
 		for (i = 0; i < INV_STRC_ANZ && !ok; i++) {
