@@ -114,7 +114,101 @@ void Room97::xit() {
 }
 
 void Room97::setup_func() {
-	warning("STUB Room97::setup_func");
+	spieler_mi[P_CHEWY].Vorschub = 4;
+	spieler_mi[P_HOWARD].Vorschub = 6;
+	spieler_mi[P_NICHELLE].Vorschub = 4;
+
+	if (_G(spieler).flags35_80 && spieler_vector->Xypos[P_CHEWY] > 830)
+		set_person_pos(830, 98, P_CHEWY, P_RIGHT);
+
+	if (_G(spieler).r97_word18DB2E)
+		--_G(spieler).r97_word18DB2E;
+	else {
+		_G(spieler).r97_word18DB2E = _G(spieler).DelaySpeed / 2;
+		if (_G(spieler).r97_word18DB34 != 710)
+			_G(spieler).r97_word18DB34 += 2;
+		else if (_G(spieler).r97_word18DB36 < 200) {
+			_G(spieler).r97_word18DB36 += 2;
+			_G(spieler).r97_word18DB38 += 2;
+		} else {
+			if (!_G(spieler).flags36_8) {
+				_G(spieler).r97_word18DB34 = 332;
+				_G(spieler).r97_word18DB36 = _G(spieler).flags36_10 ? 106 : 110;
+			}
+			_G(spieler).r97_bool18DB3A = true;
+		}
+
+		if (_G(spieler).r97_bool18DB3A) {
+			if (_G(spieler).r97_word18DB38 <= 132)
+				_G(spieler).r97_bool18DB3A = false;
+			else
+				_G(spieler).r97_word18DB38 -= 2;
+		}
+
+		det->set_static_pos(16, 699, _G(spieler).r97_word18DB38, false, false);
+		if (_G(spieler).flags36_10) {
+			det->set_detail_pos(12, _G(spieler).r97_word18DB34, _G(spieler).r97_word18DB36);
+		} else {
+			det->set_static_pos(14, _G(spieler).r97_word18DB34, _G(spieler).r97_word18DB36, false, false);
+		}
+	}
+
+	if (!_G(spieler).flags37_1 && menu_item == CUR_WALK) {
+		if (_G(spieler).scrollx + minfo.x >= 487 && _G(spieler).scrollx + minfo.x <= 522 && minfo.y >= 23 && minfo.y <= 59)
+			cursor_wahl(CUR_AUSGANG_OBEN);
+		else
+			cursor_wahl(CUR_WALK);
+	}
+
+	calc_person_look();
+
+	const int chewyPosX = spieler_vector[P_CHEWY].Xypos[0];
+	if (!_G(spieler).flags36_80) {
+		int destX, destY;
+
+		if (chewyPosX > 980) {
+			destX = 1000;
+			destY = 91;
+		} else if (chewyPosX > 880) {
+			destX = 994;
+			destY = 98;
+		} else if (chewyPosX > 780) {
+			destX = 824;
+			destY = 80;
+		} else if (chewyPosX > 650) {
+			destX = 758;
+			destY = 121;
+		} else if (chewyPosX > 420) {
+			destX = 590;
+			destY = 111;
+		} else {
+			destX = 412;
+			destY = 112;
+		}
+
+		if (HowardMov != 1)
+			go_auto_xy(destX, destY, P_HOWARD, ANI_GO);
+	}
+
+	if (!_G(spieler).r97_bool18DB32)
+		return;
+
+	int destX = -1;
+	int destY = -1;
+	const int nichellePosX = spieler_vector[P_NICHELLE].Xypos[0];
+	if (chewyPosX > 250 && nichellePosX < 232) {
+		destX = 232;
+		destY = 27;
+	} else if (nichellePosX >= 249) {
+		destX = 370;
+		destY = 20;
+	} else if (nichellePosX >= 232) {
+		destX = 249;
+		destY = 20;
+	}	
+	
+	if (destX != -1)
+		go_auto_xy(destX, destY, P_NICHELLE, ANI_GO);
 }
 
 void Room97::proc2() {
@@ -534,18 +628,55 @@ void Room97::proc15() {
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
 	
-//	mov     edi, 1
-
-	while (true) {
-		if (det->get_ani_detail(16) == nullptr) {
-			start_detail_wait(17, 1, ANI_VOR);
-			det->start_detail(16, 1, true);
-			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(20, 1, false);
-			set_person_pos(318, 42, P_CHEWY, P_LEFT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
-			break;
+	while (det->get_ani_detail(16) != nullptr) {
+		get_user_key(NO_SETUP);
+		if (minfo.button == 1 || in->get_switch_code() == 28) {
+			if (_G(spieler).inv_cur != CUR_WALK)
+				_G(maus_links_click) = true;
 		}
+		set_up_screen(DO_SETUP);
+	}
+
+	hide_cur();
+	if (_G(spieler).r97_bool18DB30) {
+		start_detail_wait(17, 1, ANI_VOR);
+		det->start_detail(16, 1, true);
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		start_detail_wait(20, 1, false);
+		set_person_pos(318, 42, P_CHEWY, P_LEFT);
+		_G(spieler).PersonHide[P_CHEWY] = false;
+	} else {
+		_G(spieler).flags37_4 = true;
+		del_inventar(_G(spieler).AkInvent);
+		det->show_static_spr(27);
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		start_detail_wait(21, 1, ANI_VOR);
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		det->hide_static_spr(27);
+		start_detail_wait(18, 1, ANI_VOR);
+		det->enable_sound(8, 0);
+		det->disable_sound(8, 1);
+		start_detail_wait(8, 1, ANI_VOR);
+		det->show_static_spr(20);
+		auto_move(10, P_CHEWY);
+		auto_scroll(60, 0);
+		start_aad_wait(544, -1);
+		_G(spieler).r97_bool18DB32 = true;
+		auto_move(11, P_CHEWY);
+		_G(spieler).r97_bool18DB32 = false;
+		flags.AutoAniPlay = false;
+		proc13();
+		flags.AutoAniPlay = true;
+		auto_move(7, P_CHEWY);
+
+		while (_G(spieler).scrollx < 368)
+			set_up_screen(DO_SETUP);
+
+		det->show_static_spr(26);
+		set_person_pos(482, 24, P_NICHELLE, P_RIGHT);
+		go_auto_xy(477, 29, P_NICHELLE, ANI_VOR);
+		det->hide_static_spr(26);
+		_G(spieler).flags37_2 = true;
 	}
 
 	atds->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
