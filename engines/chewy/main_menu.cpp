@@ -48,7 +48,7 @@ void MainMenu::execute() {
 	cur->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
-	_G(spieler).inv_cur = 0;
+	_G(spieler).inv_cur = false;
 	menu_display = 0;
 	_G(spieler).soundLoopMode = 1;
 

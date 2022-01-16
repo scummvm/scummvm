@@ -985,7 +985,7 @@ void cur_2_inventory() {
 		menu_item = CUR_WALK;
 		cursor_wahl(menu_item);
 	}
-	_G(spieler).inv_cur = 0;
+	_G(spieler).inv_cur = false;
 }
 
 void inventory_2_cur(int16 nr) {
