@@ -1399,7 +1399,7 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
-	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+	//const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
 
 	// Display the restore prompt for Mac games with native dialogs. Passing
 	//  zero for the save number would trigger these, but we can't act solely
@@ -1432,7 +1432,13 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
-	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+	Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+
+	// If the game version is empty, fall back to loading it from the VERSION file
+	if (gameVersion == "") {
+		Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
+		gameVersion = versionFile ? versionFile->readLine() : "";
+	}
 
 	if (gameName == "Autosave" || gameName == "Autosv") {
 		if (saveNo == 1) {
@@ -1457,7 +1463,7 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (save.gameVersion != gameVersion) {
+	if (save.gameVersion != gameVersion && gameVersion != "" && save.gameVersion != "") {
 		warning("Save game was created for game version %s, but the current game version is %s", save.gameVersion.c_str(), gameVersion.c_str());
 		return NULL_REG;
 	}

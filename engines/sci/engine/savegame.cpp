@@ -1236,7 +1236,15 @@ bool gamestate_save(EngineState *s, int saveId, const Common::String &savename, 
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
 	Common::Serializer ser(nullptr, fh);
-	set_savegame_metadata(ser, fh, savename, version);
+	Common::String ver = version;
+
+	// If the game version is empty, fall back to loading it from the VERSION file
+	if (ver == "") {
+		Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
+		ver = versionFile ? versionFile->readLine() : "";
+	}
+
+	set_savegame_metadata(ser, fh, savename, ver);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
