@@ -50,7 +50,7 @@ SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 }
 
 bool SmushPlayer::loadFile(const Common::String &filename) {
-	warning("Play video %s", filename.c_str());
+	debug(2, "Play video %s", filename.c_str());
 	bool success = false;
 	_videoDecoder = _smushDecoder;
 	if (!_demo)
@@ -63,7 +63,7 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 		Common::String theoraFilename = "MoviesHD/" + filename;
 		theoraFilename.erase(theoraFilename.size() - 4);
 		theoraFilename += ".ogv";
-		warning("Trying to open %s", theoraFilename.c_str());
+		debug(2, "Trying to open %s", theoraFilename.c_str());
 		success = _theoraDecoder->loadFile(theoraFilename);
 		_videoDecoder = _theoraDecoder;
 		_currentVideoIsTheora = true;
