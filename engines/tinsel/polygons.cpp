@@ -107,7 +107,6 @@ struct POLYGON {
 	POLYGON *adjpaths[MAXADJ];
 
 };
-typedef POLYGON *PPOLYGON;
 
 #define MAXONROUTE 40
 
@@ -1359,7 +1358,7 @@ static int DistinctCorners(HPOLYGON hp1, HPOLYGON hp2) {
 /**
  * Returns true if the two paths are on the same level
  */
-static bool MatchingLevels(PPOLYGON p1, PPOLYGON p2) {
+static bool MatchingLevels(POLYGON *p1, POLYGON *p2) {
 	byte *pps = _vm->_handle->LockMem(pHandle); // All polygons
 	Poly pp1(pps, p1->pIndex);	// This polygon 1
 	Poly pp2(pps, p2->pIndex);	// This polygon 2
@@ -1381,7 +1380,7 @@ static void SetPathAdjacencies() {
 
 	// Reset them all
 	for (i1 = 0; i1 < noofPolys; i1++)
-		memset(Polys[i1]->adjpaths, 0, MAXADJ * sizeof(PPOLYGON));
+		memset(Polys[i1]->adjpaths, 0, MAXADJ * sizeof(POLYGON *));
 
 	// For each polygon..
 	for (i1 = 0; i1 < MAX_POLY-1; i1++) {
@@ -1618,13 +1617,10 @@ static void FiddlyBit(POLYGON *p) {
 /**
  * Allocate a POLYGON structure and reset it to default values
  */
-static PPOLYGON GetPolyEntry() {
-	int i;		// Loop counter
-	PPOLYGON p;
-
-	for (i = 0; i < MaxPolys; i++) {
+static POLYGON *GetPolyEntry() {
+	for (int i = 0; i < MaxPolys; i++) {
 		if (!Polys[i]) {
-			p = Polys[i] = &Polygons[i];
+			POLYGON *p = Polys[i] = &Polygons[i];
 
 			// What the hell, just clear it all out - it's safer
 			memset(p, 0, sizeof(POLYGON));
@@ -1640,15 +1636,14 @@ static PPOLYGON GetPolyEntry() {
  * Variation of  GetPolyEntry from Tinsel 1 that splits up getting a new
  * polygon structure from initializing it
  */
-static PPOLYGON CommonInits(PTYPE polyType, int pno, const Poly &ptp, bool bRestart) {
-	int i;
+static POLYGON * CommonInits(PTYPE polyType, int pno, const Poly &ptp, bool bRestart) {
 	HPOLYGON hp;
-	PPOLYGON p = GetPolyEntry();	// Obtain a slot
+	POLYGON *p = GetPolyEntry();	// Obtain a slot
 
 	p->polyType = polyType;			// Polygon type
 	p->pIndex = pno;
 
-	for (i = 0; i < 4; i++) {		// Polygon definition
+	for (int i = 0; i < 4; i++) {		// Polygon definition
 		p->cx[i] = (short)FROM_32(ptp.x[i]);
 		p->cy[i] = (short)FROM_32(ptp.y[i]);
 	}
@@ -1712,7 +1707,7 @@ static void InitExit(const Poly &ptp, int pno, bool bRestart) {
  * Initialize a PATH or NPATH polygon.
  */
 static void InitPath(const Poly &ptp, bool NodePath, int pno, bool bRestart) {
-	PPOLYGON p = CommonInits(PATH, pno, ptp, bRestart);
+	POLYGON *p = CommonInits(PATH, pno, ptp, bRestart);
 
 	p->subtype = NodePath ? NODE : NORMAL;
 
@@ -1733,7 +1728,7 @@ static void InitBlock(const Poly &ptp, int pno, bool bRestart) {
  * trying to walk through the actor you first thought of.
  * This is for dynamic blocking.
  */
-HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta) {
+HPOLYGON InitExtraBlock(MOVER *ca, MOVER *ta) {
 	int	caX, caY;	// Calling actor co-ords
 	int	taX, taY;	// Test actor co-ords
 	int	left, right;
@@ -1774,7 +1769,7 @@ static void InitEffect(const Poly &ptp, int pno, bool bRestart) {
  * Initialize a REFER polygon.
  */
 static void InitRefer(const Poly &ptp, int pno, bool bRestart) {
-	PPOLYGON p = CommonInits(REFER, pno, ptp, bRestart);
+	POLYGON *p = CommonInits(REFER, pno, ptp, bRestart);
 
 	p->subtype = FROM_32(ptp.reftype);	// Refer type
 }

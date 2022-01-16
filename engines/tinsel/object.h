@@ -120,7 +120,6 @@ struct OBJECT {
 
 	OBJECT() { reset(); }
 };
-typedef OBJECT *POBJECT;
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 

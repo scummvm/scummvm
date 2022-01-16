@@ -107,7 +107,7 @@ void PokeInPalette(const MULTI_INIT *pmi) {
 }
 
 int32 NoNameFunc(int actorID, bool bNewMover) {
-	PMOVER	pActor;
+	MOVER   *pActor;
 	int32	retval;
 
 	pActor = GetMover(actorID);
@@ -182,7 +182,7 @@ static void DeRegisterSoundReel(SCNHANDLE hFilm, int column) {
 	}
 }
 
-void SaveSoundReels(PSOUNDREELS psr) {
+void SaveSoundReels(SOUNDREELS *psr) {
 	for (int i = 0; i < MAX_SOUNDREELS; i++) {
 		if (_vm->_handle->IsCdPlayHandle(g_soundReels[i].hFilm))
 			g_soundReels[i].hFilm = 0;
@@ -191,11 +191,11 @@ void SaveSoundReels(PSOUNDREELS psr) {
 	memcpy(psr, g_soundReels, sizeof(g_soundReels));
 }
 
-void RestoreSoundReels(PSOUNDREELS psr) {
+void RestoreSoundReels(SOUNDREELS *psr) {
 	memcpy(g_soundReels, psr, sizeof(g_soundReels));
 }
 
-static uint32 GetZfactor(int actorID, PMOVER pMover, bool bNewMover) {
+static uint32 GetZfactor(int actorID, MOVER *pMover, bool bNewMover) {
 	if (pMover != NULL && bNewMover == false) {
 		// If no path, just use first path in the scene
 		if (pMover->hCpath == NOPOLY)
@@ -235,10 +235,10 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 	CORO_BEGIN_CODE(_ctx);
 
 	if (actorCol) {
-		PMULTI_INIT pmi;		// MULTI_INIT structure
+		MULTI_INIT *pmi;		// MULTI_INIT structure
 
 		pReel = GetReel(hFilm, actorCol - 1);
-		pmi = (PMULTI_INIT)_vm->_handle->LockMem(FROM_32(pReel->mobj));
+		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pReel->mobj));
 		_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 	} else
 		_ctx->reelActor = 0;
@@ -431,7 +431,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 		int		stepCount;
 		int		frameCount;
 		int		reelActor;
-		PMOVER	pActor;
+		MOVER   *pActor;
 		int tmpX, tmpY;
 	CORO_END_CONTEXT(_ctx);
 
@@ -683,11 +683,11 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		FREEL		*pFreel;
 		MULTI_INIT	*pmi;	// MULTI_INIT structure
-		POBJECT		pPlayObj;	// Object
+		OBJECT		*pPlayObj;	// Object
 		ANIM		thisAnim;	// Animation structure
 
 		int	reelActor;			// Which actor this reel belongs to
-		PMOVER	pMover;			// set if it's a moving actor
+		MOVER   *pMover;		// set if it's a moving actor
 		bool	bNewMover;		// Gets set if a moving actor that isn't in scene yet
 
 		int	filmNumber;
@@ -1147,7 +1147,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 
 	int i;
 	FREEL *pFreel;
-	PMULTI_INIT	pmi;		// MULTI_INIT structure
+	MULTI_INIT *pmi;		// MULTI_INIT structure
 
 	ppi.hFilm = hFilm;
 	ppi.x = (short)x;
@@ -1160,7 +1160,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	// Search backwards for now as later column will be the one
 	for (i = (int)FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		pFreel = &pFilm->reels[i];
-		pmi = (PMULTI_INIT)_vm->_handle->LockMem(FROM_32(pFreel->mobj));
+		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pFreel->mobj));
 		if ((int32)FROM_32(pmi->mulID) == actor) {
 			ppi.column = (short)i;
 			NewestFilm(hFilm, &pFilm->reels[i]);

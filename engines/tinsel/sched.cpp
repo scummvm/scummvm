@@ -74,7 +74,7 @@ static void RestoredProcessProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// get the stuff copied to process when it was created
-	_ctx->pic = *(const PINT_CONTEXT *)param;
+	_ctx->pic = *(INT_CONTEXT **)param;
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	AttachInterpret(_ctx->pic, CoroScheduler.getCurrentProcess());
@@ -88,7 +88,7 @@ static void RestoredProcessProcess(CORO_PARAM, const void *param) {
  * Process Tinsel Process
  */
 static void ProcessTinselProcess(CORO_PARAM, const void *param) {
-	const PINT_CONTEXT *pPic = (const PINT_CONTEXT *)param;
+	INT_CONTEXT **pPic = (INT_CONTEXT **)param;
 
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
@@ -137,7 +137,7 @@ void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait
 	CORO_BEGIN_CONTEXT;
 		PROCESS_STRUC *pStruc;
 		Common::PPROCESS pProc;
-		PINT_CONTEXT pic;
+		INT_CONTEXT * pic;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -235,7 +235,7 @@ void KillGlobalProcesses() {
  */
 bool GlobalProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT	pic;
+		INT_CONTEXT *pic;
 		Common::PPROCESS	pProc;
 	CORO_END_CONTEXT(_ctx);
 

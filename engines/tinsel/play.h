@@ -36,7 +36,6 @@ struct SOUNDREELS {
 	int	column;		// Column number
 	int	actorCol;
 };
-typedef SOUNDREELS *PSOUNDREELS;
 
 void PlayFilm(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield);
 
@@ -50,8 +49,8 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y);
 void PokeInPalette(const MULTI_INIT *pmi);
 
 void NoSoundReels();
-void SaveSoundReels(PSOUNDREELS psr);
-void RestoreSoundReels(PSOUNDREELS psr);
+void SaveSoundReels(SOUNDREELS *psr);
+void RestoreSoundReels(SOUNDREELS *psr);
 
 int ExtractActor(SCNHANDLE hFilm);
 

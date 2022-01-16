@@ -384,7 +384,7 @@ private:
 	OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm);
 	void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int textFrom);
 	void AddBackground(OBJECT **rect, int extraH, int extraV);
-	void AddTitle(POBJECT *title, int extraH);
+	void AddTitle(OBJECT **title, int extraH);
 	void AddSlider(OBJECT **slide, const FILM *pfilm);
 	void AddBox(int *pi, const int i);
 	void AddEWSlider(OBJECT **slide, const FILM *pfilm);

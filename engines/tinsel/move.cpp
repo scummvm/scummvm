@@ -47,7 +47,7 @@ namespace Tinsel {
 
 // in POLYGONS.C
 // Deliberatley defined here, and not in polygons.h
-HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
+HPOLYGON InitExtraBlock(MOVER *ca, MOVER *ta);
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -91,7 +91,7 @@ static int g_hSlowVar = 0;	// used by MoveActor()
 static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 			int *newx, int *newy, int *s1, int *s2, HPOLYGON *hS2p,
 			bool bOver, bool bBodge,
-			PMOVER pActor, PMOVER *collisionActor = 0);
+			MOVER *pActor, MOVER **collisionActor = 0);
 
 
 #if SLOW_RINCE_DOWN
@@ -485,7 +485,7 @@ DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastree
 /**
  * Haven't moved, look towards the cursor.
  */
-static void GotThereWithoutMoving(PMOVER pActor) {
+static void GotThereWithoutMoving(MOVER *pActor) {
 	int	curX, curY;
 	DIRECTION	reel;
 
@@ -502,7 +502,7 @@ static void GotThereWithoutMoving(PMOVER pActor) {
 /**
  * Arrived at final destination.
  */
-static void GotThere(PMOVER pMover) {
+static void GotThere(MOVER *pMover) {
 	pMover->targetX = pMover->targetY = -1;		// 4/1/95
 	pMover->ItargetX = pMover->ItargetY = -1;
 	pMover->UtargetX = pMover->UtargetY = -1;
@@ -546,7 +546,7 @@ enum cgt { GT_NOTL, GT_NOTB, GT_NOT2, GT_OK, GT_MAY };
 /**
  * Can we get straight there?
  */
-static cgt CanGetThere(PMOVER pActor, int tx, int ty) {
+static cgt CanGetThere(MOVER *pActor, int tx, int ty) {
 	int s1, s2;		// s2 not used here!
 	HPOLYGON hS2p;		// nor is s2p!
 	int nextx, nexty;
@@ -582,7 +582,7 @@ static cgt CanGetThere(PMOVER pActor, int tx, int ty) {
 /**
  * Set final destination.
  */
-static void SetMoverUltDest(PMOVER pActor, int x, int y) {
+static void SetMoverUltDest(MOVER *pActor, int x, int y) {
 	pActor->UtargetX = x;
 	pActor->UtargetY = y;
 	pActor->hUpath = InPolygon(x, y, PATH);
@@ -600,7 +600,7 @@ static void SetMoverUltDest(PMOVER pActor, int x, int y) {
  * Otherwise, head towards the pseudo-center or end node of the first
  * en-route path.
  */
-static void SetMoverIntDest(PMOVER pMover, int x, int y) {
+static void SetMoverIntDest(MOVER *pMover, int x, int y) {
 	HPOLYGON hIpath, hTpath;
 	int	node;
 
@@ -682,7 +682,7 @@ static void SetMoverIntDest(PMOVER pMover, int x, int y) {
 /**
  * Set short-term destination and adopt the appropriate reel.
  */
-static void SetMoverDest(PMOVER pActor, int x, int y) {
+static void SetMoverDest(MOVER *pActor, int x, int y) {
 	int	scale;
 	DIRECTION	reel;
 
@@ -701,7 +701,7 @@ static void SetMoverDest(PMOVER pActor, int x, int y) {
 /**
  * SetNextDest
  */
-static void SetNextDest(PMOVER pMover) {
+static void SetNextDest(MOVER *pMover) {
 	int	targetX, targetY;		// Ultimate destination
 	int	x, y;				// Present position
 	int	nextx, nexty;
@@ -718,7 +718,7 @@ static void SetNextDest(PMOVER pMover) {
 
 	int	ss1, ss2;
 	HPOLYGON shS2p;
-	PMOVER collisionActor;
+	MOVER *collisionActor;
 #if 1
 	int	sTargetX, sTargetY;
 #endif
@@ -1029,11 +1029,11 @@ static void SetNextDest(PMOVER pMover) {
 static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 				int *newx, int *newy, int *s1, int *s2,
 				HPOLYGON *hS2p, bool bOver, bool bBodge,
-				PMOVER pMover, PMOVER *collisionActor) {
+				MOVER *pMover, MOVER **collisionActor) {
 	HPOLYGON hPoly;
 	int sidem, depthm;
 	int sidesteps, depthsteps;
-	PMOVER	ma;
+	MOVER *ma;
 
 	*s1 = *s2 = 0;
 
@@ -1240,7 +1240,7 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 /**
  * SetOffWithinNodePath
  */
-static void SetOffWithinNodePath(PMOVER pMover, HPOLYGON StartPath, HPOLYGON DestPath,
+static void SetOffWithinNodePath(MOVER *pMover, HPOLYGON StartPath, HPOLYGON DestPath,
 								 int targetX, int targetY) {
 	int endnode;
 	HPOLYGON hIpath;
@@ -1314,7 +1314,7 @@ static void SetOffWithinNodePath(PMOVER pMover, HPOLYGON StartPath, HPOLYGON Des
 /**
  * Restore a movement, called from restoreMovement() in ACTORS.CPP
  */
-void SSetActorDest(PMOVER pActor) {
+void SSetActorDest(MOVER *pActor) {
 	if (pActor->UtargetX != -1 && pActor->UtargetY != -1) {
 		Stand(Common::nullContext, pActor->actorID, pActor->objX, pActor->objY, 0);
 
@@ -1330,7 +1330,7 @@ void SSetActorDest(PMOVER pActor) {
 /**
  * Initiate a movement, called from WalkTo_Event()
  */
-int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE hFilm) {
+int SetActorDest(MOVER *pMover, int clickX, int clickY, bool igPath, SCNHANDLE hFilm) {
 	HPOLYGON StartPath, DestPath = 0;
 	int targetX, targetY;
 
@@ -1446,7 +1446,7 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 /**
  * Change scale if appropriate.
  */
-static void CheckScale(PMOVER pActor, HPOLYGON hPath, int ypos) {
+static void CheckScale(MOVER *pActor, HPOLYGON hPath, int ypos) {
 	int scale;
 
 	scale = GetScale(hPath, ypos);
@@ -1458,7 +1458,7 @@ static void CheckScale(PMOVER pActor, HPOLYGON hPath, int ypos) {
 /**
  * Not going anywhere - Kick off again if not at final destination.
  */
-static void NotMoving(PMOVER pActor, int x, int y) {
+static void NotMoving(MOVER *pActor, int x, int y) {
 	pActor->targetX = pActor->targetY = -1;
 
 //	if (x == pActor->UtargetX && y == pActor->UtargetY)
@@ -1479,7 +1479,7 @@ static void NotMoving(PMOVER pActor, int x, int y) {
 /**
  * Does the necessary business when entering a different path polygon.
  */
-static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
+static void EnteringNewPath(MOVER *pMover, HPOLYGON hPath, int x, int y) {
 	int	firstnode;	// First node to go to
 	int	lastnode;	// Last node to go to
 	HPOLYGON hIpath;
@@ -1583,7 +1583,7 @@ static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
 /**
  * Move
  */
-void Move(PMOVER pMover, int newx, int newy, HPOLYGON hPath) {
+void Move(MOVER *pMover, int newx, int newy, HPOLYGON hPath) {
 	pMover->objX = newx;
 	pMover->objY = newy;
 
@@ -1607,13 +1607,13 @@ void Move(PMOVER pMover, int newx, int newy, HPOLYGON hPath) {
  *
  * Moves the actor as appropriate.
  */
-void MoveActor(PMOVER pMover) {
+void MoveActor(MOVER *pMover) {
 	int newx, newy;
 	HPOLYGON hPath;
 	int status, s2;		// s2 not used here!
 	HPOLYGON hS2p;		// nor is s2p!
 	HPOLYGON hEb;
-	PMOVER ma;
+	MOVER *ma;
 	int	sTargetX, sTargetY;
 	bool bNewPath = false;
 
@@ -1739,7 +1739,7 @@ int GetLastLeadYdest() {
 /**
  * DoMoveActor
  */
-void DoMoveActor(PMOVER pActor) {
+void DoMoveActor(MOVER *pActor) {
 	int wasx, wasy;
 	int i;
 

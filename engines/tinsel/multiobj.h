@@ -44,7 +44,6 @@ struct MULTI_INIT {
 	int32 mulZ;				///< multi-objects initial z position
 	uint32 otherFlags;		///< multi-objects Tinsel 2 - other flags
 } PACKED_STRUCT;
-typedef MULTI_INIT *PMULTI_INIT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
@@ -99,10 +98,6 @@ void MultiSetZPosition(		// Sets the z position of a multi-part object
 	OBJECT *pMultiObj,	// multi-part object to be adjusted
 	int newZ);		// new Z order
 
-void MultiMatchAniPoints(	// Matches a multi-parts pos and orientation to be the same as a reference object
-	OBJECT *pMoveObj,	// multi-part object to be moved
-	OBJECT *pRefObj);	// multi-part object to match with
-
 void MultiReshape(		// Reshape a multi-part object
 	OBJECT *pMultiObj);	// multi-part object to re-shape
 
@@ -119,10 +114,10 @@ int MultiLowest(		// Returns the lowest point of a multi-part object
 	OBJECT *pMulti);	// multi-part object
 
 bool MultiHasShape(		// Returns TRUE if the object currently has an image
-	POBJECT pMulti);	// multi-part object
+	OBJECT *pMulti);	// multi-part object
 
 void MultiForceRedraw(
-	POBJECT pMultiObj);	// multi-part object to be forced
+	OBJECT *pMultiObj);	// multi-part object to be forced
 
 } // End of namespace Tinsel
 

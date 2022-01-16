@@ -28,7 +28,7 @@
 #include "tinsel/dialogs.h"	// INV_NOICON
 #include "tinsel/move.h"
 #include "tinsel/multiobj.h"
-#include "tinsel/object.h"	// for POBJECT
+#include "tinsel/object.h"	// for OBJECT *
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
@@ -166,11 +166,10 @@ bool Actor::ActorIsGhost(int actor) {
 }
 
 struct ATP_INIT {
-	int		id;		// Actor number
-	TINSEL_EVENT	event;		// Event
-	PLR_EVENT	bev;		// Causal mouse event
-
-	PINT_CONTEXT	pic;
+	int             id;		// Actor number
+	TINSEL_EVENT    event;		// Event
+	PLR_EVENT       bev;		// Causal mouse event
+	INT_CONTEXT     *pic;
 };
 
 /**
@@ -315,7 +314,7 @@ void Actor::DropActors() {
  * @param ano			Actor Id
  */
 void Actor::DisableActor(int ano) {
-	PMOVER	pActor;
+	MOVER *pActor;
 
 	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
@@ -431,7 +430,7 @@ void Actor::FirstTaggedActor() {
  * or there are no more tagged actors to look at.
  */
 int Actor::NextTaggedActor() {
-	PMOVER	pActor;
+	MOVER *pActor;
 	bool	hid;
 
 	while (ti < _numActors) {
@@ -458,7 +457,7 @@ int Actor::NextTaggedActor() {
  * there are no more tagged actors to look at.
  */
 int Actor::NextTaggedActor(int previous) {
-	PMOVER  pMover;
+	MOVER *pMover;
 
 	// Convert actor number to index
 	if (!previous)
@@ -578,7 +577,7 @@ int Actor::GetLoopCount(int ano) {
 }
 
 void Actor::GetActorPos(int ano, int *x, int *y) {
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // unknown actor
 
@@ -601,7 +600,7 @@ void Actor::GetActorPos(int ano, int *x, int *y) {
  */
 void Actor::GetActorMidTop(int ano, int *x, int *y) {
 	// Not used in JAPAN version
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // unknown actor
 
@@ -652,7 +651,7 @@ int Actor::GetActorLeft(int ano) {
 	}
 
 	// Tinsel 2 version
-	PMOVER pMover = GetMover(ano);
+	MOVER *pMover = GetMover(ano);
 	int i;
 	bool bIsObj;
 	int left = 0;
@@ -694,7 +693,7 @@ int Actor::GetActorRight(int ano) {
 	}
 
 	// Tinsel 2 version
-	PMOVER pMover = GetMover(ano);
+	MOVER *pMover = GetMover(ano);
 	int i;
 	bool bIsObj;
 	int right = 0;
@@ -735,7 +734,7 @@ int Actor::GetActorTop(int ano) {
 	}
 
 	// Tinsel 2 version
-	PMOVER pMover = GetMover(ano);
+	MOVER *pMover = GetMover(ano);
 	int i;
 	bool bIsObj;
 	int top = 0;
@@ -776,7 +775,7 @@ int Actor::GetActorBottom(int ano) {
 	}
 
 	// Tinsel 2 version
-	PMOVER pMover = GetMover(ano);
+	MOVER *pMover = GetMover(ano);
 	int i;
 	bool bIsObj;
 	int bottom = 0;
@@ -816,7 +815,7 @@ bool Actor::ActorHidden(int ano) {
  * @param sf			sf
  */
 bool Actor::HideMovingActor(int ano, int sf) {
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // illegal actor
 
@@ -838,7 +837,7 @@ bool Actor::HideMovingActor(int ano, int sf) {
  * @param ano			Actor Id
  */
 void Actor::unHideMovingActor(int ano) {
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert((ano > 0 && ano <= _numActors) || ano == LEAD_ACTOR); // illegal actor
 
@@ -856,7 +855,7 @@ void Actor::unHideMovingActor(int ano) {
  * actor's walk (if any) from the new co-ordinates.
  */
 void Actor::restoreMovement(int ano) {
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
@@ -880,7 +879,7 @@ void Actor::restoreMovement(int ano) {
  * 'store_actor_reel_and/or_film_and/or_object()'
  */
 void Actor::storeActorReel(int ano, const FREEL *reel, SCNHANDLE hFilm, OBJECT *pobj, int reelnum, int x, int y) {
-	PMOVER pActor;
+	MOVER *pActor;
 
 	assert(ano > 0 && ano <= _numActors); // illegal actor number
 
@@ -1074,7 +1073,7 @@ uint32 Actor::GetActorZfactor(int ano) {
 /**
  * Store relevant information pertaining to currently existing actors.
  */
-int Actor::SaveActors(PSAVED_ACTOR sActorInfo) {
+int Actor::SaveActors(SAVED_ACTOR *sActorInfo) {
 	int	i, j, k;
 
 	for (i = 0, j = 0; i < _numActors; i++) {
@@ -1113,7 +1112,7 @@ int Actor::SaveActors(PSAVED_ACTOR sActorInfo) {
 /**
  * Restore actor data
  */
-void Actor::RestoreActors(int numActors, PSAVED_ACTOR sActorInfo) {
+void Actor::RestoreActors(int numActors, SAVED_ACTOR *sActorInfo) {
 	int	i, aIndex;
 
 	for (i = 0; i < numActors; i++) {
@@ -1622,7 +1621,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
  * Shows the given actor
  */
 void ShowActor(CORO_PARAM, int ano) {
-	PMOVER pMover;
+	MOVER *pMover;
 	assert(ano > 0 && ano <= _vm->_actor->GetCount());
 
 	CORO_BEGIN_CONTEXT;
@@ -1651,7 +1650,7 @@ void ShowActor(CORO_PARAM, int ano) {
  * @param ano			Actor Id
  */
 void HideActor(CORO_PARAM, int ano) {
-	PMOVER pMover;
+	MOVER *pMover;
 	assert((ano > 0 && ano <= _vm->_actor->GetCount()) || ano == LEAD_ACTOR); // illegal actor
 
 	CORO_BEGIN_CONTEXT;

@@ -529,7 +529,7 @@ int MultiLowest(OBJECT *pMulti) {
  * @param pMulti		Multi-part object
  */
 
-bool MultiHasShape(POBJECT pMulti) {
+bool MultiHasShape(OBJECT *pMulti) {
 	return (pMulti->hShape != 0);
 }
 
@@ -538,7 +538,7 @@ bool MultiHasShape(POBJECT pMulti) {
  * @param pMultiObj			Multi-part object to be adjusted
  */
 
-void MultiForceRedraw(POBJECT pMultiObj) {
+void MultiForceRedraw(OBJECT *pMultiObj) {
 	// validate object pointer
 	assert(isValidObject(pMultiObj));
 

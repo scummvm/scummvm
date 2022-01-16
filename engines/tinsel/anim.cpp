@@ -405,7 +405,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
  * About to jump or end
  * @param pAnim			Animation data structure
  */
-bool AboutToJumpOrEnd(PANIM pAnim) {
+bool AboutToJumpOrEnd(ANIM *pAnim) {
 	if (pAnim->aniDelta == 1) {
 		// get a pointer to the script
 		ANI_SCRIPT *pAni = (ANI_SCRIPT *)_vm->_handle->LockMem(pAnim->hScript);

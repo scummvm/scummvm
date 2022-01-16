@@ -44,7 +44,7 @@ namespace Tinsel {
 
 struct EP_INIT {
 	HPOLYGON	hEpoly;
-	PMOVER		pMover;
+	MOVER		*pMover;
 	int		index;
 };
 
@@ -93,7 +93,7 @@ static void EffectProcess(CORO_PARAM, const void *param) {
  * it has just entered one. If it has, a process is started up to run
  * the polygon's Glitter code.
  */
-static void FettleEffectPolys(int x, int y, int index, PMOVER pActor) {
+static void FettleEffectPolys(int x, int y, int index, MOVER *pActor) {
 	HPOLYGON	hPoly;
 	EP_INIT		epi;
 
@@ -123,7 +123,7 @@ void EffectPolyProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 	while (1) {
 		for (int i = 0; i < MAX_MOVERS; i++) {
-			PMOVER pActor = GetLiveMover(i);
+			MOVER *pActor = GetLiveMover(i);
 			if (pActor != NULL) {
 				int	x, y;
 				GetMoverPosition(pActor, &x, &y);

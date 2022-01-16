@@ -79,7 +79,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 			int i;
 			for (i = 0; i < _vm->_bg->_bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT)_vm->_handle->LockMem(FROM_32(pFilm->reels[i].mobj));
+				pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pFilm->reels[i].mobj));
 
 				// Initialize and insert the object, and initialize its script.
 				_vm->_bg->_pBG[i] = MultiInitObject(pmi);

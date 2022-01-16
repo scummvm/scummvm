@@ -98,7 +98,7 @@ class BMVPlayer {
 	int blobsInBuffer;
 
 	struct {
-		POBJECT	pText;
+		OBJECT *pText;
 		int	dieFrame;
 	} texts[2];
 

@@ -392,7 +392,6 @@ struct SCROLL_MONITOR {
 	int	thisScroll;
 	int	myEscape;
 };
-typedef SCROLL_MONITOR *PSCROLL_MONITOR;
 
 /**
  * Monitor a scrolling, allowing Escape to interrupt it
@@ -454,7 +453,7 @@ static int TextTime(char *pTstring) {
 /**
  * KeepOnScreen
  */
-void KeepOnScreen(POBJECT pText, int *pTextX, int *pTextY) {
+void KeepOnScreen(OBJECT * pText, int *pTextX, int *pTextY) {
 	int	shift;
 
 	// Not off the left
@@ -540,7 +539,7 @@ static void ActorAttr(int actor, int r1, int g1, int b1) {
  * Behave as if actor has walked into a polygon with given brughtness.
  */
 void ActorBrightness(int actor, int brightness) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 
 	assert(pMover != NULL);
 	assert(brightness >= 0 && brightness <= 10);
@@ -552,7 +551,7 @@ void ActorBrightness(int actor, int brightness) {
  * Return a moving actor's current direction.
  */
 static int ActorDirection(int actor) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover);
 
 	return (int)GetMoverDirection(pMover);
@@ -562,7 +561,7 @@ static int ActorDirection(int actor) {
  * Set actor's palette details for path brightnesses
  */
 void ActorPalette(int actor, int startColor, int length) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover);
 
 	StoreMoverPalette(pMover, startColor, length);
@@ -586,7 +585,7 @@ static void ActorRGB(int actor, COLORREF color) {
  * Return the actor's scale.
  */
 static int ActorScale(int actor) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover);
 
 	return (int)GetMoverScale(pMover);
@@ -630,7 +629,7 @@ static void AddInv(int invno, int object) {
  * Define an actor's walk and stand reels for an auxilliary scale.
  */
 static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover);
 
 	int j;
@@ -694,7 +693,7 @@ void CdDoChange(CORO_PARAM) {
  * CdEndActor("actor")
  */
 void CdEndActor(int	actor, int	myEscape) {
-	PMOVER	pMover;			// for if it's a moving actor
+	MOVER *pMover;			// for if it's a moving actor
 
 	// Only do it if escaped!
 	if (myEscape && myEscape != GetEscEvents()) {
@@ -998,7 +997,7 @@ static void DeclareLanguage(int languageId, SCNHANDLE hDescription, SCNHANDLE hF
  * @param text		Tag text (v1 only)
  */
 static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
-	PMOVER	pMover;		// Moving actor structure
+	MOVER *pMover;		// Moving actor structure
 
 	if (TinselV2) {
 		// Tinsel 2 only specifies the lead actor Id
@@ -1044,7 +1043,7 @@ static void DecScale(int actor, int scale,
 		SCNHANDLE wkl, SCNHANDLE wkr, SCNHANDLE wkf, SCNHANDLE wka,
 		SCNHANDLE stl, SCNHANDLE str, SCNHANDLE stf, SCNHANDLE sta,
 		SCNHANDLE tal, SCNHANDLE tar, SCNHANDLE taf, SCNHANDLE taa) {
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover);
 
 	SetWalkReels(pMover, scale, wkl, wkr, wkf, wka);
@@ -1118,7 +1117,7 @@ static void EndActor(int actor) {
  * If the actor is at the tag, do a StandTag().
  */
 static void FaceTag(int actor, HPOLYGON hp) {
-	PMOVER	pMover;		// Moving actor structure
+	MOVER *pMover;		// Moving actor structure
 	int	nowx, nowy;
 	int	nodex, nodey;
 
@@ -2905,7 +2904,7 @@ static void SPlay(CORO_PARAM, int sf, SCNHANDLE film, int x, int y, bool complet
  */
 void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 	CORO_BEGIN_CONTEXT;
-		PMOVER pMover;		// Moving actor structure
+		MOVER *pMover;		// Moving actor structure
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -3080,7 +3079,7 @@ void StopSample(int sample) {
  * Kill a moving actor's walk.
  */
 static void StopWalk(int actor) {
-	PMOVER pMover;
+	MOVER *pMover;
 
 	pMover = GetMover(actor);
 	assert(pMover);
@@ -3165,7 +3164,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 		}
 
 		if (TinselV2 && (zOverride != -1)) {
-			PMOVER pMover = GetMover(actor);
+			MOVER *pMover = GetMover(actor);
 			assert(pMover);
 
 			SetMoverZ(pMover, y1, zOverride);
@@ -3222,7 +3221,7 @@ static int TagPos(MASTER_LIB_CODES operand, int tagno, HPOLYGON hp) {
 /**
  * Text goes over actor's head while actor plays the talk reel.
  */
-static void FinishTalkingReel(CORO_PARAM, PMOVER pMover, int actor) {
+static void FinishTalkingReel(CORO_PARAM, MOVER *pMover, int actor) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -3244,7 +3243,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	CORO_BEGIN_CONTEXT;
 		int		Loffset, Toffset;	// Top left of display
 		int		actor;			// The speaking actor
-		PMOVER	pActor;			// For moving actors
+		MOVER  *pActor;			// For moving actors
 		int		myLeftEvent;
 		int		escEvents;
 		int		ticks;
@@ -3903,7 +3902,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 	CORO_END_CONTEXT(_ctx);
 
 	bool bQuick = hold != 0;
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 
 	assert(pMover); // Can't walk a non-moving actor
 
@@ -3991,7 +3990,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 		int	thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
@@ -4052,7 +4051,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
  * Declare a moving actor.
  */
 static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
-	PMOVER	pActor;		// Moving actor structure
+	MOVER *pActor;		// Moving actor structure
 
 	if (TinselVersion == TINSEL_V2) {
 		RegisterMover(id);
@@ -4094,7 +4093,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 	CORO_END_CONTEXT(_ctx);
 
 	assert(hp != NOPOLY); // WalkPoly() may only be called from a polygon code block
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
@@ -4152,7 +4151,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
-	PMOVER pMover = GetMover(actor);
+	MOVER *pMover = GetMover(actor);
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);

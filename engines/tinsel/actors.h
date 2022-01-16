@@ -27,7 +27,7 @@
 #include "tinsel/dw.h"		// for SCNHANDLE
 #include "tinsel/events.h"	// for TINSEL_EVENT
 #include "tinsel/palette.h"	// for COLORREF
-#include "tinsel/movers.h"	// for PMOVER
+#include "tinsel/movers.h"	// for MOVER *
 
 namespace Common {
 class Serializer;
@@ -77,8 +77,6 @@ struct Z_POSITIONS {
 	short column;
 	int z;
 };
-
-typedef SAVED_ACTOR *PSAVED_ACTOR;
 
 struct ACTORDATA {
 	int32 masking;        ///< type of actor masking (Tinsel V1)
@@ -187,8 +185,8 @@ public:
 	void NotPlayingReel(int actor, int filmNumber, int column);
 	bool ActorReelPlaying(int actor, int column);
 
-	int SaveActors(PSAVED_ACTOR sActorInfo);
-	void RestoreActors(int numActors, PSAVED_ACTOR sActorInfo);
+	int SaveActors(SAVED_ACTOR *sActorInfo);
+	void RestoreActors(int numActors, SAVED_ACTOR *sActorInfo);
 
 	void SaveZpositions(void *zpp);
 	void RestoreZpositions(void *zpp);

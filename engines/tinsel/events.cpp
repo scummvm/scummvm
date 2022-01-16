@@ -256,7 +256,7 @@ struct WP_INIT {
 static void WalkProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		PMOVER pMover;
+		MOVER *pMover;
 		int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
@@ -536,14 +536,12 @@ void resetUserEventTime() {
 }
 
 struct PTP_INIT {
-	HPOLYGON	hPoly;		// Polygon
-	TINSEL_EVENT	event;		// Trigerring event
-	PLR_EVENT	bev;		// To allow for double clicks
-	bool		take_control;	// Set if control should be taken
-					// while code is running.
-	int		actor;
-
-	PINT_CONTEXT	pic;
+	HPOLYGON        hPoly;		// Polygon
+	TINSEL_EVENT    event;		// Trigerring event
+	PLR_EVENT       bev;		// To allow for double clicks
+	bool            take_control;	// Set if control should be taken while code is running.
+	int             actor;
+	INT_CONTEXT     *pic;
 };
 
 /**

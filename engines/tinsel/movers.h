@@ -126,70 +126,68 @@ struct MOVER {
 	bool bIsValid;
 
 };
-typedef MOVER *PMOVER;
 
 struct MAINIT {
 	int	X;
 	int	Y;
-	PMOVER	pMover;
+	MOVER *pMover;
 };
-typedef MAINIT *PMAINIT;
 
 //---------------------------------------------------------------------------
 
 
-void MoverProcessCreate(int X, int Y, int id, PMOVER pMover);
+void MoverProcessCreate(int X, int Y, int id, MOVER *pMover);
 
 
 enum AR_FUNCTION { AR_NORMAL, AR_PUSHREEL, AR_POPREEL, AR_WALKREEL };
 
-void StoreMoverPalette(PMOVER pMover, int startColor, int length);
+void StoreMoverPalette(MOVER *pMover, int startColor, int length);
 
-void MoverBrightness(PMOVER pMover, int brightness);
+void MoverBrightness(MOVER *pMover, int brightness);
 
 MOVER *GetMover(int ano);
 MOVER *RegisterMover(int ano);
-void KillMover(PMOVER pMover);
+void KillMover(MOVER *pMover);
 MOVER *GetLiveMover(int index);
 
 bool getMActorState(MOVER *psActor);
-int GetMoverId(PMOVER pMover);
-void SetMoverZ(PMOVER pMover, int y, uint32 zFactor);
-void SetMoverZoverride(PMOVER pMover, uint32 zFactor);
+int GetMoverId(MOVER *pMover);
+void SetMoverZ(MOVER *pMover, int y, uint32 zFactor);
+void SetMoverZoverride(MOVER *pMover, uint32 zFactor);
 
-void HideMover(PMOVER pMover, int sf = 0);
-bool MoverHidden(PMOVER pMover);
-bool MoverIs(PMOVER pMover);
-bool MoverIsSWalking(PMOVER pMover);
-bool MoverMoving(PMOVER pMover);
-int GetWalkNumber(PMOVER pMover);
-void UnHideMover(PMOVER pMover);
+void HideMover(MOVER *pMover, int sf = 0);
+bool MoverHidden(MOVER *pMover);
+bool MoverIs(MOVER *pMover);
+bool MoverIsSWalking(MOVER *pMover);
+bool MoverMoving(MOVER *pMover);
+int GetWalkNumber(MOVER *pMover);
+void UnHideMover(MOVER *pMover);
 void DropMovers();
-void PositionMover(PMOVER pMover, int x, int y);
+void PositionMover(MOVER *pMover, int x, int y);
 
-void GetMoverPosition(PMOVER pMover, int *aniX, int *aniY);
-void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY);
-int GetMoverLeft(PMOVER pMover);
-int GetMoverRight(PMOVER pMover);
-int GetMoverTop(PMOVER pMover);
-int GetMoverBottom(PMOVER pMover);
+void GetMoverPosition(MOVER *pMover, int *aniX, int *aniY);
+void GetMoverMidTop(MOVER *pMover, int *aniX, int *aniY);
+int GetMoverLeft(MOVER *pMover);
+int GetMoverRight(MOVER *pMover);
+int GetMoverTop(MOVER *pMover);
+int GetMoverBottom(MOVER *pMover);
 
-bool MoverIsInPolygon(PMOVER pMover, HPOLYGON hPoly);
-void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn);
-DIRECTION GetMoverDirection(PMOVER pMover);
-int GetMoverScale(PMOVER pMover);
-void SetMoverDirection(PMOVER pMover, DIRECTION dirn);
-void SetMoverStanding(PMOVER pMover);
-void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force);
+bool MoverIsInPolygon(MOVER *pMover, HPOLYGON hPoly);
+void AlterMover(MOVER *pMover, SCNHANDLE film, AR_FUNCTION fn);
+DIRECTION GetMoverDirection(MOVER *pMover);
+int GetMoverScale(MOVER *pMover);
+void SetMoverDirection(MOVER *pMover, DIRECTION dirn);
+void SetMoverStanding(MOVER *pMover);
+void SetMoverWalkReel(MOVER *pMover, DIRECTION reel, int scale, bool force);
 
-PMOVER InMoverBlock(PMOVER pMover, int x, int y);
+MOVER *InMoverBlock(MOVER *pMover, int x, int y);
 
 void RebootMovers();
 
 bool IsMAinEffectPoly(int index);
 void SetMoverInEffect(int index, bool tf);
 
-void StopMover(PMOVER pMover);
+void StopMover(MOVER *pMover);
 
 /*----------------------------------------------------------------------*/
 
@@ -214,7 +212,7 @@ struct SAVED_MOVER {
 void SaveMovers(SAVED_MOVER *sMoverInfo);
 void RestoreAuxScales(SAVED_MOVER *sMoverInfo);
 
-PMOVER NextMover(PMOVER pMover);
+MOVER *NextMover(MOVER *pMover);
 
 /*----------------------------------------------------------------------*/
 

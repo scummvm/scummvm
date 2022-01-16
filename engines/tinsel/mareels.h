@@ -27,16 +27,16 @@
 
 namespace Tinsel {
 
-void SetWalkReels(PMOVER pMover, int scale,
+void SetWalkReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-void SetStandReels(PMOVER pMover, int scale,
+void SetStandReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-void SetTalkReels(PMOVER pMover, int scale,
+void SetTalkReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
-SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn);
+SCNHANDLE GetMoverTalkReel(MOVER *pActor, TFTYPE dirn);
 
 void SetScalingReels(int actor, int scale, int direction,
 		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away);

@@ -148,7 +148,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 	char PositionString[64];	// sprintf() things into here
 
-	PMOVER pActor;		// Lead actor
+	MOVER *pActor;		// Lead actor
 
 	while (1) {
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);

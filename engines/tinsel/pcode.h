@@ -85,7 +85,6 @@ struct INT_CONTEXT {
 
 	void syncWithSerializer(Common::Serializer &s);
 };
-typedef INT_CONTEXT *PINT_CONTEXT;
 
 /*----------------------------------------------------------------------*\
 |*			Interpreter Function Prototypes			*|

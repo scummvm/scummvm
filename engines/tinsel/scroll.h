@@ -84,7 +84,7 @@ private:
 	int _leftScroll, _downScroll; // Number of iterations outstanding
 
 	int _scrollActor;
-	PMOVER _pScrollMover;
+	MOVER *_pScrollMover;
 	int _oldx, _oldy;
 
 	/** Boundaries and numbers of boundaries */

@@ -37,9 +37,6 @@ struct ANIM {
 	uint32 hScript;		///< animation script handle
 	int scriptIndex;	///< current position in animation script
 };
-typedef ANIM *PANIM;
-
-typedef void (*PANI_ADDR)(struct ANIM *);
 
 /** Animation script commands */
 enum {
@@ -61,7 +58,6 @@ enum {
 union ANI_SCRIPT {
 	int32 op;			///< treat as an opcode or operand
 	uint32 hFrame;		///< treat as a animation frame handle
-//	PANI_ADDR pFunc;	///< treat as a animation function call
 };
 
 
@@ -88,7 +84,7 @@ void SkipFrames(		// Skip the specified number of frames
 	ANIM *pAnim,		// animation data structure
 	int numFrames);		// number of frames to skip
 
-bool AboutToJumpOrEnd(PANIM pAnim);
+bool AboutToJumpOrEnd(ANIM *pAnim);
 
 } // End of namespace Tinsel
 

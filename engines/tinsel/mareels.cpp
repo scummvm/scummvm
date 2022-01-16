@@ -53,7 +53,7 @@ static int g_scrEntries = 0;
  * Sets an actor's walk reels
  */
 
-void SetWalkReels(PMOVER pMover, int scale,
+void SetWalkReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
 	assert(scale > 0 && scale <= TOTAL_SCALES);
 
@@ -68,7 +68,7 @@ void SetWalkReels(PMOVER pMover, int scale,
  * Sets an actor's stand reels
  */
 
-void SetStandReels(PMOVER pMover, int scale,
+void SetStandReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
 	assert(scale > 0 && scale <= TOTAL_SCALES);
 
@@ -83,7 +83,7 @@ void SetStandReels(PMOVER pMover, int scale,
  * Sets an actor's talk reels
  */
 
-void SetTalkReels(PMOVER pMover, int scale,
+void SetTalkReels(MOVER *pMover, int scale,
 		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa) {
 	assert(scale > 0 && scale <= TOTAL_SCALES);
 
@@ -96,7 +96,7 @@ void SetTalkReels(PMOVER pMover, int scale,
 /**
  * Return handle to actor's talk reel at present scale and direction.
  */
-SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn) {
+SCNHANDLE GetMoverTalkReel(MOVER *pActor, TFTYPE dirn) {
 	assert(1 <= pActor->scale && pActor->scale <= TOTAL_SCALES);
 	switch (dirn) {
 	case TF_NONE:
@@ -175,10 +175,8 @@ void RebootScalingReels() {
  * Discourage them from being ditched.
  */
 void TouchMoverReels() {
-	PMOVER	pMover;
+	MOVER *pMover = NextMover(NULL);
 	int	scale;
-
-	pMover = NextMover(NULL);
 
 	do {
 		for (scale = 0; scale < TOTAL_SCALES; scale++) {

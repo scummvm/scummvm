@@ -2279,7 +2279,7 @@ void Dialogs::AddBackground(OBJECT **rect, int extraH, int extraV) {
 /**
  * Adds a title for a dialog
  */
-void Dialogs::AddTitle(POBJECT *title, int extraH) {
+void Dialogs::AddTitle(OBJECT **title, int extraH) {
 	int width = _TLwidth + extraH + _TRwidth + NM_BG_SIZ_X;
 
 	// Create text object using title string
@@ -3124,7 +3124,7 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 
 void Dialogs::ConvAction(int index) {
 	assert(_activeInv == INV_CONV); // not conv. window!
-	PMOVER pMover = TinselV2 ? GetMover(_vm->_actor->GetLeadId()) : NULL;
+	MOVER *pMover = TinselV2 ? GetMover(_vm->_actor->GetLeadId()) : NULL;
 
 	switch (index) {
 	case INV_NOICON:

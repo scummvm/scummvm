@@ -285,7 +285,7 @@ static INT_CONTEXT *AllocateInterpretContext(GSORT gsort) {
 	error("Out of interpret contexts");
 }
 
-static void FreeWaitCheck(PINT_CONTEXT pic, bool bVoluntary) {
+static void FreeWaitCheck(INT_CONTEXT * pic, bool bVoluntary) {
 	int i;
 
 	// Is this waiting for something?
@@ -925,7 +925,7 @@ void WaitInterpret(CORO_PARAM, Common::PPROCESS pWaitProc, bool *result) {
 	 */
 
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT picWaiter, picWaitee;
+		INT_CONTEXT *picWaiter, *picWaitee;
 	CORO_END_CONTEXT(_ctx);
 
 

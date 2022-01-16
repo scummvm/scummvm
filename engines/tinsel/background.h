@@ -29,7 +29,7 @@
 #include "common/rect.h"
 #include "tinsel/anim.h"	// for ANIM
 #include "tinsel/dw.h"	// for SCNHANDLE
-#include "tinsel/object.h"	// for POBJECT
+#include "tinsel/object.h"	// for OBJECT *
 #include "tinsel/palette.h"	// palette definitions
 
 namespace Tinsel {
@@ -158,9 +158,9 @@ private:
 	bool _bDoFadeIn;
 
 public:
-	int _bgReels;
-	POBJECT _pBG[MAX_BG];
-	ANIM	_thisAnim[MAX_BG];	// used by BGmainProcess()
+	int     _bgReels;
+	OBJECT  *_pBG[MAX_BG];
+	ANIM    _thisAnim[MAX_BG];	// used by BGmainProcess()
 };
 
 } // End of namespace Tinsel
