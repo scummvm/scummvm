@@ -150,8 +150,21 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 	return false;
 }
 
+static Common::String getUserObject(SciGameId gameId) {
+	switch (gameId) {
+	case GID_TORIN:
+	case GID_LSL7:
+		return "oUser";
+	case GID_PHANTASMAGORIA2:
+		return "p2User";
+	default:
+		return "User";
+	}
+}
+
 bool GuestAdditions::userHasControl() {
-	const reg_t user = _segMan->findObjectByName("User");
+	const SciGameId gameId = g_sci->getGameId();
+	const reg_t user = _segMan->findObjectByName(getUserObject(gameId));
 	const Object *userObject = _segMan->getObject(user);
 
 	// Selectors input/canInput and controls should be available at all times, except
@@ -160,11 +173,25 @@ bool GuestAdditions::userHasControl() {
 	const bool hasCanInputSelector = userObject->locateVarSelector(_segMan, SELECTOR(canInput)) >= 0;
 	const bool hasControlsSelector = userObject->locateVarSelector(_segMan, SELECTOR(controls)) >= 0;
 
-	if ((hasInputSelector || hasCanInputSelector) && hasControlsSelector) {
+	if (hasInputSelector || hasCanInputSelector) {
 		const Selector inputSelector = hasInputSelector ? SELECTOR(input) : SELECTOR(canInput);
 		const int16 input = readSelectorValue(_segMan, user, inputSelector);
-		const int16 controls = readSelectorValue(_segMan, user, SELECTOR(controls));
-		return input && controls;
+
+		if (hasControlsSelector) {
+			const int16 controls = readSelectorValue(_segMan, user, SELECTOR(controls));
+			if (gameId != GID_GK2) {
+				return input && controls;
+			} else {
+				// The GK2 scripts only check the input selector in their HandsOff code in script 0
+				return input;
+			}
+		} else if (gameId == GID_PHANTASMAGORIA2) {
+			// Phantasmagoria 2's canInput function is totally different and checks bit 1 of the state
+			// variable instead
+			return readSelectorValue(_segMan, user, SELECTOR(state)) & 1;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}

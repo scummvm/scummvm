@@ -1238,10 +1238,14 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	Common::Serializer ser(nullptr, fh);
 	Common::String ver = version;
 
-	// If the game version is empty, fall back to loading it from the VERSION file
+	// If the game version is empty, we are probably saving from the GMM, so read it
+	// from global 27 and then the VERSION file
 	if (ver == "") {
-		Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
-		ver = versionFile ? versionFile->readLine() : "";
+		ver = s->_segMan->getString(s->variables[VAR_GLOBAL][kGlobalVarVersion]);
+		if (ver == "") {
+			Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
+			ver = versionFile ? versionFile->readLine() : "";
+		}
 	}
 
 	set_savegame_metadata(ser, fh, savename, ver);
