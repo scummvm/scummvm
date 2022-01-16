@@ -1141,6 +1141,10 @@ bool Control::loadSaveAllowed() {
 	return true;
 }
 
+bool Control::isControlPanelOpen() {
+	return _controlPanel;
+}
+
 int Control::displayMessage(const char *altButton, const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;

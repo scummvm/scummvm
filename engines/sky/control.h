@@ -187,6 +187,7 @@ public:
 	void showGameQuitMsg();
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed();
+	bool isControlPanelOpen();
 
 	SkyEngine *_vm;
 
