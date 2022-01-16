@@ -710,6 +710,11 @@ void Lua_V1::JustLoaded() {
 void Lua_V1::EnableDebugKeys() {
 }
 
+void Lua_V1::FlushControls() {
+	g_system->getEventManager()->purgeKeyboardEvents();
+	g_system->getEventManager()->purgeMouseEvents();
+}
+
 void Lua_V1::LightMgrSetChange() {
 	// nothing to implement
 	// lights manager for game debug purpose only
@@ -738,10 +743,6 @@ void Lua_V1::AttachToResources() {
 void Lua_V1::DetachFromResources() {
 	// nothing to implement
 	// originally this is used only for CD changing which is not supported here
-}
-
-void Lua_V1::FlushControls() {
-	warning("Stub function: FlushControls");
 }
 
 void Lua_V1::SpewStartup() {
