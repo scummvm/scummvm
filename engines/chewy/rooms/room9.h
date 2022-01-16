@@ -30,6 +30,8 @@ private:
 	static void surimy_ani();
 public:
 	static void entry();
+	static void gedAction(int index);
+
 	static void gtuer();
 	static void surimy();
 };

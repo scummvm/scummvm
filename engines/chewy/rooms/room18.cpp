@@ -153,6 +153,14 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 	return false;
 }
 
+void Room18::gedAction(int index) {
+	if (!index && !_G(spieler).R18SurimyWurf) {
+		stop_person(P_CHEWY);
+		auto_move(1, P_CHEWY);
+		start_aad(40, 0);
+	}
+}
+
 void Room18::init_borks() {
 	int16 i;
 	for (i = 0; i < 5; i++)

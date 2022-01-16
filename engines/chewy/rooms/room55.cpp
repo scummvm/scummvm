@@ -106,6 +106,11 @@ void Room55::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 }
 
+void Room55::gedAction(int index) {
+	if (!index)
+		talk_line();
+}
+
 int16 Room55::use_stapel1() {
 	int16 action_ret = false;
 	if (!_G(spieler).inv_cur) {

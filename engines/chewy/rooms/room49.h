@@ -30,13 +30,14 @@ private:
 	static void talk_boy(int16 aad_nr);
 	static void setup_func();
 	static void calc_boy_ani();
+	static void calc_boy();
 
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
 	static bool timer(int16 t_nr, int16 ani_nr);
+	static void gedAction(int index);
 
-	static void calc_boy();
 	static int16 use_boy();
 	static void use_boy_cigar();
 	static void look_hotel();

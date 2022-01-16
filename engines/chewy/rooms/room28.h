@@ -33,13 +33,15 @@ private:
 	static void setup_func();
 	static int16 cut_serv(int16 frame);
 	static int16 cut_serv2(int16 frame);
+	static void get_pump();
 
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
+	static void gedAction(int index);
+
 	static void use_surimy();
 	static void set_pump();
-	static void get_pump();
 	static int16 use_breifkasten();
 };
 

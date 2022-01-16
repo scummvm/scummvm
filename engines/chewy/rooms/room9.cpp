@@ -118,5 +118,17 @@ void Room9::surimy_ani() {
 	det->del_taf_tbl(91, 8, 0);
 }
 
+void Room9::gedAction(int index) {
+	switch (index) {
+	case 0:
+		if (!_G(spieler).R9Surimy)
+			Room9::surimy();
+		break;
+
+	default:
+		break;
+	}
+}
+
 } // namespace Rooms
 } // namespace Chewy

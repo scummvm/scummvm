@@ -62,6 +62,20 @@ void Room37::entry() {
 	}
 }
 
+void Room37::gedAction(int index) {
+	if (!index) {
+		dog_bell();
+
+	} else if (index == 1) {
+		if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
+			stop_person(P_CHEWY);
+			_G(spieler).R37Mes = true;
+			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
+			start_aad_wait(142, -1);
+		}
+	}
+}
+
 void Room37::setup_func() {
 	if (_G(maus_links_click) &&
 		!_G(spieler).R37Kloppe &&

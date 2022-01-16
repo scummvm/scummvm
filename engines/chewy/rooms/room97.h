@@ -26,13 +26,20 @@ namespace Chewy {
 namespace Rooms {
 
 class Room97 {
-public:
-	static void entry();
-	static void xit();
+private:
 	static void setup_func();
 	static void proc2();
 	static void proc3();
 	static void proc4();
+	static void proc12();
+	static void proc13();
+	static void proc15();
+
+public:
+	static void entry();
+	static void xit();
+	static void gedAction(int index);
+
 	static int proc5();
 	static int proc6();
 	static int proc7();
@@ -40,10 +47,7 @@ public:
 	static int proc9();
 	static int proc10();
 	static int proc11();
-	static void proc12();
-	static void proc13();
 	static int proc14();
-	static void proc15();
 };
 
 } // namespace Rooms

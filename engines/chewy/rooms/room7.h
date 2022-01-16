@@ -32,6 +32,7 @@ public:
 	static void entry();
 	static void haken(int16 sib_nr);
 	static void klingel();
+	static void gedAction(int index);
 };
 
 } // namespace Rooms

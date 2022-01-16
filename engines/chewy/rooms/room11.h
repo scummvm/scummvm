@@ -30,14 +30,15 @@ namespace Rooms {
 class Room11 {
 private:
 	static void bork_zwinkert();
+	static void chewy_bo_use();
 public:
 	static void entry();
 	static bool timer(int16 t_nr, int16 ani_nr);
+	static void gedAction(int index);
 
 	static void get_card();
 	static void put_card();
 	static int16 scanner();
-	static void chewy_bo_use();
 	static void talk_debug();
 };
 

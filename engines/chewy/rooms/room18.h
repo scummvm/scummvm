@@ -33,6 +33,7 @@ private:
 public:
 	static void entry();
 	static bool timer(int16 t_nr, int16 ani_nr);
+	static void gedAction(int index);
 
 	static int16 calc_surimy();
 	static int16 calc_schalter();

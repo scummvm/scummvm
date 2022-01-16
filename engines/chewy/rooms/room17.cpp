@@ -106,6 +106,21 @@ bool Room17::timer(int16 t_nr, int16 ani_nr) {
 	return false;
 }
 
+void Room17::gedAction(int index) {
+	switch (index) {
+	case 0:
+		door_kommando(0);
+		break;
+
+	case 1:
+		door_kommando(1);
+		break;
+
+	default:
+		break;
+	}
+}
+
 int16 Room17::use_seil() {
 	int16 action_flag = false;
 	if (!flags.AutoAniPlay) {

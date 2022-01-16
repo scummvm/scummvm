@@ -53,6 +53,11 @@ void Room42::entry() {
 	}
 }
 
+void Room42::gedAction(int index) {
+	if (!index)
+		calc_xit();
+}
+
 void Room42::setup_func() {
 	if (!_G(spieler).R42HoToBeamter)
 		calc_person_look();

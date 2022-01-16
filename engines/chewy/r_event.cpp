@@ -128,149 +128,25 @@ void timer_action(int16 t_nr) {
 }
 
 void check_ged_action(int16 index) {
-#define KABELABDECKUNG 1
-	int16 flag;
 	index -= 50;
 	index /= 4;
 
 	if (!flags.GedAction) {
 		flags.GedAction = true;
-		flag = false;
 
+#define GED_ACTION(NUM) case NUM: Room##NUM::gedAction(NUM); break;
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-		case 1:
-			switch (index) {
-			case 0:
-				if (!_G(spieler).R2ElectrocutedBork) {
-					if (_G(spieler).AkInvent == KABEL_INV) {
-						flag = 1;
-						del_inventar(_G(spieler).AkInvent);
-					} else if (obj->check_inventar(KABEL_INV)) {
-						flag = 1;
-						obj->del_obj_use(KABEL_INV);
-						del_invent_slot(KABEL_INV);
-					}
-					if (flag) {
-						start_aad_wait(54, -1);
-						atds->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
-						_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
-						obj->calc_rsi_flip_flop(KABELABDECKUNG);
-						obj->calc_all_static_detail();
-					}
-				}
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 2:
-			Room2::gedAction(index);
-			break;
-
-		case 7:
-			switch (index) {
-			case 0:
-				if (_G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
-					_G(spieler).PersonHide[P_CHEWY] = true;
-					start_detail_wait(20, 1, ANI_VOR);
-					det->show_static_spr(10);
-					wait_show_screen(20 * _G(spieler).DelaySpeed);
-					det->hide_static_spr(10);
-					set_person_pos(180, 124, P_CHEWY, P_LEFT);
-					_G(spieler).PersonHide[P_CHEWY] = false;
-					_G(spieler).R7ChewyFlug = false;
-				}
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 9:
-			switch (index) {
-			case 0:
-				if (!_G(spieler).R9Surimy)
-					Room9::surimy();
-				break;
-
-			}
-			break;
-
-		case 11:
-			switch (index) {
-			case 0:
-				Room11::chewy_bo_use();
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 13:
-			switch (index) {
-			case 2:
-				if (_G(spieler).R12ChewyBork) {
-					stop_person(P_CHEWY);
-					Room13::talk_bork();
-				}
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 17:
-			switch (index) {
-			case 0:
-				Room17::door_kommando(0);
-				break;
-
-			case 1:
-				Room17::door_kommando(1);
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 18:
-			if (!index) {
-				if (!_G(spieler).R18SurimyWurf) {
-					stop_person(P_CHEWY);
-					auto_move(1, P_CHEWY);
-					start_aad(40, 0);
-				}
-			}
-			break;
-
-		case 28:
-			if (!index)
-				Room28::get_pump();
-			break;
-
-		case 37:
-			if (!index) {
-				Room37::dog_bell();
-			} else if (index == 1) {
-				if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
-					stop_person(P_CHEWY);
-					_G(spieler).R37Mes = true;
-					start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
-					start_aad_wait(142, -1);
-				}
-			}
-			break;
-
-		case 42:
-			if (!index)
-				Room42::calc_xit();
-			break;
+		GED_ACTION(1);
+		GED_ACTION(2);
+		GED_ACTION(7);
+		GED_ACTION(9);
+		GED_ACTION(11);
+		GED_ACTION(13);
+		GED_ACTION(17);
+		GED_ACTION(18);
+		GED_ACTION(28);
+		GED_ACTION(37);
+		GED_ACTION(42);
 
 		case 45:
 		case 46:
@@ -278,63 +154,17 @@ void check_ged_action(int16 index) {
 				HowardMov = 1;
 			break;
 
-		case 49:
-			if (!index)
-				Room49::calc_boy();
-			break;
-
-		case 50:
-			if (!index)
-				Room50::calc_treppe();
-			break;
-
-		case 52:
-			if (index == 1)
-				Room52::kaker_platt();
-			break;
-
-		case 55:
-			if (!index)
-				Room55::talk_line();
-			break;
-
-		case 94:
-			if (!index && !_G(spieler).flags35_10)
-				switch_room(93);
-			break;
-
-		case 97:
-			switch (index) {
-			case 50:
-				Room97::proc2();
-				break;
-			case 51:
-				Room97::proc3();
-				break;
-			case 52:
-				Room97::proc13();
-				break;
-			case 53:
-				Room97::proc12();
-				break;
-			case 54:
-				Room97::proc4();
-				break;
-			case 55:
-				if (_G(spieler).flags36_20)
-					auto_scroll(268, 0);
-				break;
-			case 56:
-				Room97::proc15();
-				break;
-			default:
-				break;
-			}
-			break;
+		GED_ACTION(49);
+		GED_ACTION(50);
+		GED_ACTION(52);
+		GED_ACTION(55);
+		GED_ACTION(94);
+		GED_ACTION(97);
 
 		default:
 			break;
 		}
+#undef GED_ACTION
 
 		flags.GedAction = false;
 	}
