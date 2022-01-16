@@ -30,8 +30,8 @@ namespace Chewy {
 #define ADS_TAP_MAX 500
 #define ATS_TAP_MAX 100
 #define AAD_TAP_MAX 100
-#define INV_TAP_MAX 100
-#define USE_TAP_MAX 100
+#define INV_TAP_MAX 140
+#define USE_TAP_MAX 140
 
 #define ADS_TAP_OFF 0
 #define ATS_TAP_OFF ADS_TAP_MAX
