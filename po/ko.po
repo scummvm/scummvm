@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-16 19:41+0000\n"
+"POT-Creation-Date: 2022-01-16 20:20+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -662,7 +662,7 @@ msgstr "상호작용"
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
 #: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:532 engines/twine/metaengine.cpp:329
+#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
 #: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
@@ -673,7 +673,7 @@ msgstr "위"
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
 #: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
 #: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:537 engines/twine/metaengine.cpp:336
+#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
 #: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
@@ -683,7 +683,7 @@ msgstr "아래"
 
 #: gui/gui-manager.cpp:237 engines/metaengine.cpp:119
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
-#: engines/grim/grim.cpp:465 engines/grim/grim.cpp:542
+#: engines/grim/grim.cpp:465 engines/grim/grim.cpp:546
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1274
@@ -695,7 +695,7 @@ msgstr "왼쪽"
 
 #: gui/gui-manager.cpp:242 engines/metaengine.cpp:124
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
-#: engines/grim/grim.cpp:470 engines/grim/grim.cpp:547
+#: engines/grim/grim.cpp:470 engines/grim/grim.cpp:551
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1280
@@ -2734,10 +2734,10 @@ msgstr "중간 클릭"
 msgid "Right Click"
 msgstr "오른쪽 클릭"
 
-#: engines/metaengine.cpp:77 engines/hdb/metaengine.cpp:238
-#: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:860
-#: engines/sky/metaengine.cpp:122 engines/twine/metaengine.cpp:99
-#: engines/wintermute/keymapper_tables.h:1531
+#: engines/metaengine.cpp:77 engines/grim/grim.cpp:523
+#: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:596
+#: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:122
+#: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1531
 msgid "Pause"
 msgstr "일시정지"
 
@@ -2746,7 +2746,7 @@ msgid "Game menu"
 msgstr "게임 메뉴"
 
 #: engines/metaengine.cpp:88 engines/grim/grim.cpp:506
-#: engines/grim/grim.cpp:598 engines/mohawk/myst.cpp:567
+#: engines/grim/grim.cpp:602 engines/mohawk/myst.cpp:567
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1248
@@ -2765,7 +2765,7 @@ msgid "Predictive input dialog"
 msgstr "예측 입력 창"
 
 #: engines/metaengine.cpp:104 engines/griffon/metaengine.cpp:89
-#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:604
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:608
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "확인"
@@ -4506,7 +4506,7 @@ msgid "Change Command"
 msgstr "변경 명령"
 
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:126
-#: engines/grim/grim.cpp:495 engines/grim/grim.cpp:587
+#: engines/grim/grim.cpp:495 engines/grim/grim.cpp:591
 #: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:145
 #: engines/scumm/help.cpp:224 engines/scumm/help.cpp:233
 #: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
@@ -4939,7 +4939,7 @@ msgstr ""
 "ScummVM을 그대로 실행하면 게임에 버그나 크래시가 발생할 수 있습니다.\n"
 "그래도 '%s' 게임을 실행하시겠습니까?"
 
-#: engines/grim/grim.cpp:475 engines/grim/grim.cpp:562
+#: engines/grim/grim.cpp:475 engines/grim/grim.cpp:566
 msgid "Run"
 msgstr "달리기"
 
@@ -4948,40 +4948,40 @@ msgstr "달리기"
 msgid "Examine"
 msgstr "조사"
 
-#: engines/grim/grim.cpp:485 engines/grim/grim.cpp:577
+#: engines/grim/grim.cpp:485 engines/grim/grim.cpp:581
 msgid "Use/Talk"
 msgstr "사용/대화"
 
-#: engines/grim/grim.cpp:490 engines/grim/grim.cpp:582
+#: engines/grim/grim.cpp:490 engines/grim/grim.cpp:586
 msgid "Pick up/Put away"
 msgstr "줍기/내려놓기"
 
-#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:592
+#: engines/grim/grim.cpp:500 engines/grim/grim.cpp:596
 msgid "Skip dialog lines"
 msgstr "대사 건너뛰기"
 
-#: engines/grim/grim.cpp:518 engines/grim/grim.cpp:610
+#: engines/grim/grim.cpp:518 engines/grim/grim.cpp:614
 #: engines/hdb/metaengine.cpp:244
 msgid "Menu"
 msgstr "메뉴"
 
-#: engines/grim/grim.cpp:552
+#: engines/grim/grim.cpp:556
 msgid "Cycle Objects Up"
 msgstr "개체 위로 전환"
 
-#: engines/grim/grim.cpp:557
+#: engines/grim/grim.cpp:561
 msgid "Cycle Objects Down"
 msgstr "개체 아래로 전환"
 
-#: engines/grim/grim.cpp:567
+#: engines/grim/grim.cpp:571
 msgid "Quick Room Exit"
 msgstr "빠른 방 나가기"
 
-#: engines/grim/grim.cpp:572
+#: engines/grim/grim.cpp:576
 msgid "Examine/Look"
 msgstr "조사하기/보기"
 
-#: engines/grim/grim.cpp:1346
+#: engines/grim/grim.cpp:1350
 msgid "Error: the game could not be saved."
 msgstr "오류: 게임을 저장하지 못함."
 
