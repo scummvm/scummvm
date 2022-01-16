@@ -135,6 +135,12 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._animData = data[5] & 0x0F;
 			si._animSpeed = data[5] >> 4;
 
+			if (si._animType != 0 && si._animSpeed == 0) {
+				// avoid invalid speeds.
+				warning("fixing anim speed 0 for shape %d", i);
+				si._animSpeed = 1;
+			}
+
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRU_SELECTABLE;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRU_PRELOAD;
@@ -449,6 +455,19 @@ void TypeFlags::loadDamageDat(Common::SeekableReadStream *rs) {
 		rs->read(damagedata, 6);
 		if (damagedata[0] == 0)
 			continue;
+
+		if (GAME_IS_REGRET && damagedata[0] == 1 && !damagedata[1] &&
+			!damagedata[2] && !damagedata[3] &&
+			!damagedata[4] && !damagedata[5]) {
+			// WORKAROUND: No Regret has 3 shapes with this data pattern
+			// which doesn't seem to be correct - eg, the elevator buttons
+			// can be destroyed by gunshots which breaks the game.
+			// Just ignore this pattern.
+			// In No Remorse these maybe this pattern should be ignored too,
+			// but there on some shapes that don't break the game.
+			debug("Ignoring weird damage dat, shape %d (1 flag and rest 0s)", i);
+			continue;
+		}
 
 		DamageInfo *di = new DamageInfo(damagedata);
 		_shapeInfo[i]._damageInfo = di;
