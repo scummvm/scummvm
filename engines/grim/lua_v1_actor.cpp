@@ -1561,7 +1561,7 @@ void Lua_V1::SetActorFrustrumCull() {
 }
 
 void Lua_V1::DriveActorTo() {
-	warning("Stub function: DriveActorTo");
+	// nothing to implement
 }
 
 } // end of namespace Grim
