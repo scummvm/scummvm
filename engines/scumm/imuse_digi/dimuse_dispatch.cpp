@@ -178,8 +178,6 @@ int IMuseDigital::dispatchRestoreStreamZones() {
 
 int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 	IMuseDigiDispatch *trackDispatch;
-	IMuseDigiDispatch *dispatchToDeallocate;
-	IMuseDigiStreamZone *streamZoneList;
 	int navigateMapResult;
 	int32 sizeToFeed = _isEarlyDiMUSE ? 0x800 : 0x4000;
 
@@ -215,13 +213,14 @@ int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 	}
 
 	navigateMapResult = dispatchNavigateMap(trackDispatch);
-	if (!navigateMapResult || navigateMapResult == -3)
-		return 0;
+	if (navigateMapResult && navigateMapResult != -3) {
+		// At this point, something went wrong, so let's release the dispatch
+		debug(5, "IMuseDigital::dispatchAllocateSound(): problem starting sound (%d) in dispatch", trackPtr->soundId);
+		dispatchRelease(trackPtr);
+		return -1;
+	}
 
-	// At this point, something went wrong, so let's release the dispatch
-	debug(5, "IMuseDigital::dispatchAllocateSound(): problem starting sound (%d) in dispatch", trackPtr->soundId);
-	dispatchRelease(trackPtr);
-	return -1;
+	return 0;
 }
 
 int IMuseDigital::dispatchRelease(IMuseDigiTrack *trackPtr) {
