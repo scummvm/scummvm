@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-16 11:55+0000\n"
+"POT-Creation-Date: 2022-01-16 16:37+0000\n"
 "PO-Revision-Date: 2022-01-05 12:52+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6184,7 +6184,7 @@ msgstr ""
 "不完全なゲームが検出されました。全てのCDからデータをコピーする必要がありま"
 "す。"
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:374
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
 msgid "(Autosave)"
 msgstr "(自動セーブ)"
 
@@ -6202,16 +6202,16 @@ msgstr ""
 "ポーカーロジックは外部のDLLにハードコーディングされており、未実装です。代わり"
 "に、対戦相手のアクションをランダムに選ぶダミーのロジックが存在します"
 
-#: engines/sci/engine/savegame.cpp:1434
+#: engines/sci/engine/savegame.cpp:1442
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "セーブのフォーマットが古いため、ロードできません"
 
-#: engines/sci/engine/savegame.cpp:1436
+#: engines/sci/engine/savegame.cpp:1444
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "セーブのゲームバージョンは%dですが、サポートされているのは%0dまでです"
 
-#: engines/sci/engine/savegame.cpp:1447
+#: engines/sci/engine/savegame.cpp:1455
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -6223,7 +6223,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr "最大色深度が8bppのシステムで、%dbppの映像を再生する事はできません"
 
-#: engines/sci/metaengine.cpp:297
+#: engines/sci/metaengine.cpp:298
 msgid "SCI32 support not compiled in"
 msgstr "SCI32のサポートはコンパイルされていません"
 

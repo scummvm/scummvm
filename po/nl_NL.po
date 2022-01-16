@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-16 11:55+0000\n"
+"POT-Creation-Date: 2022-01-16 16:37+0000\n"
 "PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6324,7 +6324,7 @@ msgstr "Fout bij laden spel onderdelen."
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Onvolledig spel gevonden. U dient de data te kopiëren van alle CDs."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:374
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
 msgid "(Autosave)"
 msgstr "(Automatisch opslaan)"
 
@@ -6345,17 +6345,17 @@ msgstr ""
 "geimplementeerd. Er is nu wat tijdelijke logica waar de acties van de "
 "tegenstanders willekeurig gekozen worden"
 
-#: engines/sci/engine/savegame.cpp:1434
+#: engines/sci/engine/savegame.cpp:1442
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 "Het formaat van dit opgeslagen spel is verouderd, het laden is niet mogelijk"
 
-#: engines/sci/engine/savegame.cpp:1436
+#: engines/sci/engine/savegame.cpp:1444
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Opgeslagen spel heeft versie %d, maximaal ondersteunde is %0d"
 
-#: engines/sci/engine/savegame.cpp:1447
+#: engines/sci/engine/savegame.cpp:1455
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -6371,7 +6371,7 @@ msgstr ""
 "Kan geen %dbpp video afspelen op een systeem met een maximale kleur diepte "
 "van 8bpp"
 
-#: engines/sci/metaengine.cpp:297
+#: engines/sci/metaengine.cpp:298
 msgid "SCI32 support not compiled in"
 msgstr "Ondersteuning voor SCI32 is niet meegecompileerd"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-16 11:55+0000\n"
+"POT-Creation-Date: 2022-01-16 16:37+0000\n"
 "PO-Revision-Date: 2022-01-05 12:52+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6283,7 +6283,7 @@ msgstr ""
 "Jogo incompleto detectado. Você precisa copiar os arquivos de dados de todos "
 "os CDs."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:374
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
 msgid "(Autosave)"
 msgstr "(Salvamento Automático)"
 
@@ -6304,16 +6304,16 @@ msgstr ""
 "implementada. Por enquanto existe uma lógica simulada, onde as ações do "
 "oponente são escolhidas aleatoriamente"
 
-#: engines/sci/engine/savegame.cpp:1434
+#: engines/sci/engine/savegame.cpp:1442
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "O formato deste jogo salvo é obsoleto, não foi possível carregá-lo"
 
-#: engines/sci/engine/savegame.cpp:1436
+#: engines/sci/engine/savegame.cpp:1444
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "A versão do jogo salvo é %d, o máximo suportado é %0d"
 
-#: engines/sci/engine/savegame.cpp:1447
+#: engines/sci/engine/savegame.cpp:1455
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -6329,7 +6329,7 @@ msgstr ""
 "Não é possível reproduzir vídeo de %dbpp em um sistema com profundidade de "
 "cor máxima de 8bpp"
 
-#: engines/sci/metaengine.cpp:297
+#: engines/sci/metaengine.cpp:298
 msgid "SCI32 support not compiled in"
 msgstr "O suporte a SCI32 não está compilado"
 
