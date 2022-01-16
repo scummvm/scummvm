@@ -186,7 +186,7 @@ int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 	trackDispatch = trackPtr->dispatchPtr;
 	trackDispatch->currentOffset = 0;
 	trackDispatch->audioRemaining = 0;
-	trackDispatch->fadeBuf = 0;
+	trackDispatch->fadeBuf = nullptr;
 
 	if (_isEarlyDiMUSE) {
 		trackDispatch->vocLoopStartingPoint = 0;
@@ -209,7 +209,7 @@ int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 		trackDispatch->streamZoneList = 0;
 		trackDispatch->streamErrFlag = 0;
 	} else {
-		trackDispatch->streamPtr = 0;
+		trackDispatch->streamPtr = nullptr;
 		if (_isEarlyDiMUSE)
 			return dispatchSeekToNextChunk(trackDispatch);
 	}
@@ -218,27 +218,9 @@ int IMuseDigital::dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId) {
 	if (!navigateMapResult || navigateMapResult == -3)
 		return 0;
 
-	// At this point, something went wrong, so deallocate what we have to...
+	// At this point, something went wrong, so let's release the dispatch
 	debug(5, "IMuseDigital::dispatchAllocateSound(): problem starting sound (%d) in dispatch", trackPtr->soundId);
-
-	// Remove streamZones from list
-	dispatchToDeallocate = trackDispatch->trackPtr->dispatchPtr;
-	if (dispatchToDeallocate->streamPtr) {
-		streamZoneList = dispatchToDeallocate->streamZoneList;
-		streamerClearSoundInStream(dispatchToDeallocate->streamPtr);
-		if (dispatchToDeallocate->streamZoneList) {
-			do {
-				streamZoneList->useFlag = 0;
-				removeStreamZoneFromList(&dispatchToDeallocate->streamZoneList, streamZoneList);
-			} while (streamZoneList);
-		}
-	}
-
-	if (!dispatchToDeallocate->fadeBuf)
-		return -1;
-
-	// Mark the fade corresponding to our fadeBuf as unused
-	dispatchDeallocateFade(dispatchToDeallocate, "dispatchAllocateSound");
+	dispatchRelease(trackPtr);
 	return -1;
 }
 
@@ -265,11 +247,10 @@ int IMuseDigital::dispatchRelease(IMuseDigiTrack *trackPtr) {
 		}
 	}
 
-	if (!dispatchToDeallocate->fadeBuf)
-		return 0;
-
 	// Mark the fade corresponding to our fadeBuf as unused
-	dispatchDeallocateFade(dispatchToDeallocate, "dispatchRelease");
+	if (dispatchToDeallocate->fadeBuf)
+		dispatchDeallocateFade(dispatchToDeallocate, "dispatchRelease");
+
 	return 0;
 }
 
