@@ -849,4 +849,44 @@ bool GameFeatures::hasScriptObjectNames() const {
 	}
 }
 
+bool GameFeatures::canSaveFromGMM() const {
+	switch (g_sci->getGameId()) {
+	case GID_ASTROCHICKEN:
+	case GID_CHEST:
+	case GID_CHRISTMAS1988:
+	case GID_CHRISTMAS1990:
+	case GID_CHRISTMAS1992:
+	case GID_CNICK_KQ:
+	case GID_CNICK_LAURABOW:
+	case GID_CNICK_LONGBOW:
+	case GID_CNICK_LSL:
+	case GID_CNICK_SQ:
+	case GID_FUNSEEKER:
+	case GID_GK2:				// different scheme for checking if user has control
+	case GID_HOYLE1:			// different saving scheme
+	case GID_HOYLE2:			// different saving scheme
+	case GID_HOYLE3:			// different saving scheme
+	case GID_HOYLE4:			// different saving scheme
+	case GID_HOYLE5:			// different saving scheme
+	case GID_INNDEMO:
+	case GID_JONES:				// different saving scheme
+	case GID_KQUESTIONS:
+	case GID_MOTHERGOOSE:		// different saving scheme
+	case GID_MOTHERGOOSE256:	// different saving scheme
+	case GID_MOTHERGOOSEHIRES:	// different saving scheme
+	case GID_MSASTROCHICKEN:
+	case GID_LIGHTHOUSE:		// stores an incorrect version ("1.0" instead of "xx.yyy.zzz")
+	case GID_LSL7:				// different scheme for checking if user has control
+	case GID_PHANTASMAGORIA:	// different saving scheme
+	case GID_PHANTASMAGORIA2:	// different scheme for checking if user has control
+	case GID_RAMA:				// different saving scheme
+	case GID_SHIVERS:			// stores an incorrect version ("Shivers" instead of "xx.yyy.zzz")
+	case GID_SLATER:			// different saving scheme
+	case GID_TORIN:				// different scheme for checking if user has control
+		return false;
+	default:
+		return true;
+	}
+}
+
 } // End of namespace Sci

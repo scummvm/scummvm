@@ -275,6 +275,13 @@ public:
 	 */
 	bool hasScriptObjectNames() const;
 
+	/**
+	 * Returns if the game can be saved via the GMM.
+	 * Saving via the GMM doesn't work as expected in
+	 * games which don't follow the normal saving scheme.
+	*/
+	bool canSaveFromGMM() const;
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
