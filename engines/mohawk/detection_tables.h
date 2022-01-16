@@ -2391,7 +2391,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"lilmonster",
 			"",
-			AD_ENTRY1s("lmasf.lb", "fcb665df1713d0411a41515efb20bebc", 4136),
+			AD_ENTRY1s("lmasb.lb", "fcb665df1713d0411a41515efb20bebc", 4136),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
