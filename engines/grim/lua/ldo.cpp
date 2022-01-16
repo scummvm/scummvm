@@ -253,7 +253,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 		} else {
 			nResults = lua_state->task->initResults;
 			base = lua_state->task->initBase;
-			if (nResults != 255)
+			if (nResults != MULT_RET)
 				luaD_adjusttop(firstResult + nResults);
 			base--;
 			nResults = lua_state->stack.top - (lua_state->stack.stack + firstResult);

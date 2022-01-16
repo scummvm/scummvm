@@ -661,7 +661,7 @@ callfunc:
 			// fall through
 		case RETCODE:
 			lua_state->callLevelCounter--;
-			return (task->base + ((task->aux == 123) ? *task->pc : 0));
+			return (task->base + ((task->aux == RETCODE) ? *task->pc : 0));
 		case SETLINEW:
 			task->aux = next_word(task->pc);
 			goto setline;
