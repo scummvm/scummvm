@@ -936,16 +936,19 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
 		} else if (_action == kSkyActionConfirm) { // enter pressed
-			clickRes = handleClick(lookList[0]);
-			if (!_controlPanel) //game state was destroyed
-				return clickRes;
-			if (clickRes == GAME_SAVED) {
-				saveGameTexts[_selectedGame] = dirtyBufStr;
-				saveDescriptions(saveGameTexts);
+			// Note: The original engine code does not allow an empty string for a save name
+			// but it does allow a series of blank spaces as a name.
+			if (dirtyBufStr != "") {
+				clickRes = handleClick(lookList[0]);
+				if (!_controlPanel) //game state was destroyed
+					return clickRes;
+				if (clickRes == GAME_SAVED) {
+					saveGameTexts[_selectedGame] = dirtyBufStr;
+					saveDescriptions(saveGameTexts);
+				} else if (clickRes == NO_DISK_SPACE)
+					displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+				quitPanel = true;
 			}
-			else if (clickRes == NO_DISK_SPACE)
-				displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
-			quitPanel = true;
 			_mouseClicked = false;
 			_action = kSkyActionNone;
 		} if (allowSave && _keyPressed.keycode) {
@@ -977,29 +980,34 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 				if (_mouseClicked && lookList[cnt]->_onClick) {
 					_mouseClicked = false;
 
-					clickRes = handleClick(lookList[cnt]);
-					if (!_controlPanel) //game state was destroyed
-						return clickRes;
+					if (lookList[cnt]->_onClick != SAVE_A_GAME
+					    || (lookList[cnt]->_onClick == SAVE_A_GAME && dirtyBufStr != "")) {
+						// The save button will not animate for an empty string save name
+						// and the save action will be ignored
+						clickRes = handleClick(lookList[cnt]);
+						if (!_controlPanel) //game state was destroyed
+							return clickRes;
 
-					if (clickRes == SHIFTED) {
-						_selectedGame = _firstText;
-						dirtyBufStr = saveGameTexts[_selectedGame];
-						refreshNames = true;
-					}
-					if (clickRes == NO_DISK_SPACE) {
-						displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
-						quitPanel = true;
-					}
-					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
-						quitPanel = true;
+						if (clickRes == SHIFTED) {
+							_selectedGame = _firstText;
+							dirtyBufStr = saveGameTexts[_selectedGame];
+							refreshNames = true;
+						}
+						if (clickRes == NO_DISK_SPACE) {
+							displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+							quitPanel = true;
+						}
+						if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
+							quitPanel = true;
 
-					if (clickRes == GAME_SAVED) {
-						saveGameTexts[_selectedGame] = dirtyBufStr;
-						saveDescriptions(saveGameTexts);
-						quitPanel = true;
+						if (clickRes == GAME_SAVED) {
+							saveGameTexts[_selectedGame] = dirtyBufStr;
+							saveDescriptions(saveGameTexts);
+							quitPanel = true;
+						}
+						if (clickRes == RESTORE_FAILED)
+							refreshAll = true;
 					}
-					if (clickRes == RESTORE_FAILED)
-						refreshAll = true;
 				}
 			}
 
