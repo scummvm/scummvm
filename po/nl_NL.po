@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-16 16:37+0000\n"
+"POT-Creation-Date: 2022-01-16 19:37+0000\n"
 "PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2504,7 +2504,7 @@ msgstr "S~t~artmenu"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/pegasus/pegasus.cpp:402
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:698
+#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:725
 #: engines/sci/engine/kfile.cpp:1079 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3405
@@ -2525,7 +2525,7 @@ msgstr "Spel opslaan:"
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:699
+#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:726
 #: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:175
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -4158,7 +4158,7 @@ msgstr ""
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/neverhood/menumodule.cpp:902 engines/prince/saveload.cpp:63
-#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1206
+#: engines/sci/engine/guest_additions.cpp:728 engines/sci/engine/kfile.cpp:1206
 #: engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
@@ -4177,7 +4177,7 @@ msgstr "Laad opgeslagen spel:"
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/neverhood/menumodule.cpp:902 engines/prince/saveload.cpp:63
-#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1206
+#: engines/sci/engine/guest_additions.cpp:729 engines/sci/engine/kfile.cpp:1206
 #: engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
@@ -6345,17 +6345,17 @@ msgstr ""
 "geimplementeerd. Er is nu wat tijdelijke logica waar de acties van de "
 "tegenstanders willekeurig gekozen worden"
 
-#: engines/sci/engine/savegame.cpp:1442
+#: engines/sci/engine/savegame.cpp:1446
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 "Het formaat van dit opgeslagen spel is verouderd, het laden is niet mogelijk"
 
-#: engines/sci/engine/savegame.cpp:1444
+#: engines/sci/engine/savegame.cpp:1448
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Opgeslagen spel heeft versie %d, maximaal ondersteunde is %0d"
 
-#: engines/sci/engine/savegame.cpp:1455
+#: engines/sci/engine/savegame.cpp:1459
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
