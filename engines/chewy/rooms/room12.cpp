@@ -67,27 +67,34 @@ void Room12::entry() {
 	int16 i;
 	_G(zoom_horizont) = 150;
 	_G(timer_nr)[1] = room->set_timer(255, 20);
+
 	if (!_G(spieler).R12Betreten) {
 		_G(spieler).R12Betreten = true;
+		hide_cur();
+
 		for (i = 7; i < 10; i++)
 			det->show_static_spr(i);
+
 		flags.NoScroll = true;
 		auto_scroll(60, 0);
 		flic_cut(FCUT_016, CFO_MODE);
 		flags.NoScroll = false;
+
 		for (i = 7; i < 10; i++)
 			det->hide_static_spr(i);
+
 		obj->show_sib(SIB_TALISMAN_R12);
 		obj->calc_rsi_flip_flop(SIB_TALISMAN_R12);
 		obj->calc_all_static_detail();
 		auto_move(5, P_CHEWY);
 		start_aad_wait(109, -1);
+		show_cur();
+
 	} else {
 		if (_G(spieler).R12Talisman == true && !_G(spieler).R12BorkInRohr)
 			_G(timer_nr)[0] = room->set_timer(255, 20);
 		else if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk)
 			det->show_static_spr(12);
-
 	}
 }
 
@@ -122,11 +129,13 @@ void Room12::init_bork() {
 			auto_mov_obj[R12_BORK_OBJ].Mode = true;
 			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
 				(const MovLine *)R12_BORK_MPKT);
+
 			if (!_G(spieler).R12TalismanOk) {
 				hide_cur();
 				auto_mov_vector[R12_BORK_OBJ].DelayCount = 1000;
 				auto_move(5, P_CHEWY);
 				auto_mov_vector[R12_BORK_OBJ].DelayCount = 0;
+
 				if (_G(spieler).R12BorkCount < 3) {
 					++_G(spieler).R12BorkCount;
 					uhr->reset_timer(_G(timer_nr)[0], 0);
@@ -134,21 +143,21 @@ void Room12::init_bork() {
 					start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 					start_aad_wait(14, -1);
 				}
+
 				wait_auto_obj(R12_BORK_OBJ);
 				show_cur();
 			} else {
 				bork_ok();
 			}
 		}
+
 		uhr->reset_timer(_G(timer_nr)[0], 0);
 	}
 }
 
 void Room12::talk_bork() {
 	if (!_G(spieler).R12TalismanOk) {
-
 		start_aad_wait(28, -1);
-
 	}
 }
 
@@ -159,16 +168,19 @@ void Room12::bork_ok() {
 	auto_move(5, P_CHEWY);
 	auto_mov_vector[R12_BORK_OBJ].DelayCount = 0;
 	_G(spieler).R12BorkTalk = true;
+
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 2;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
 		(const MovLine *)R12_BORK_MPKT1);
 	wait_auto_obj(R12_BORK_OBJ);
+
 	_G(spieler).R12BorkInRohr = true;
 	det->set_detail_pos(3, 170, 145);
 	det->start_detail(3, 255, ANI_VOR);
 	start_aad_wait(57, -1);
 	det->stop_detail(3);
+
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 3;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
@@ -180,6 +192,7 @@ void Room12::bork_ok() {
 	det->show_static_spr(12);
 	atds->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
 	obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);
+
 	flags.MausLinks = false;
 	show_cur();
 }
@@ -188,10 +201,13 @@ int16 Room12::use_terminal() {
 	int16 action_flag = false;
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
+
 		if (!_G(spieler).R12ChewyBork) {
 			auto_move(6, P_CHEWY);
 			start_aad_wait(110, -1);
+
 			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
+				start_spz(4, 255, 0, 0);
 				start_aad_wait(112, -1);
 				flags.NoScroll = true;
 				auto_scroll(46, 0);
@@ -207,42 +223,34 @@ int16 Room12::use_terminal() {
 				_G(spieler).R12ChewyBork = true;
 				_G(spieler).R12RaumOk = true;
 				auto_move(4, P_CHEWY);
+				start_spz(68, 255, 0, 0);
 				start_aad_wait(113, 0);
+
 			} else if (_G(spieler).R12TalismanOk && !_G(spieler).R12RaumOk) {
-				_G(spieler).R12TalismanOk = false;
-				_G(spieler).R12KetteLinks = true;
-				uhr->disable_timer();
-				obj->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
-				obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);
-				obj->calc_all_static_detail();
-				atds->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
-				atds->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
-				start_aad(111, 0);
+				use_linke_rohr();
+
 			} else {
 				_G(spieler).R12TransOn = true;
 				uhr->reset_timer(_G(timer_nr)[1], 0);
 			}
-		} else
+		} else {
 			start_aad(114, 0);
+		}
 	}
 
 	return action_flag;
 }
 
-int16 Room12::use_linke_rohr() {
-	int16 action_flag = false;
-	if (!_G(spieler).inv_cur) {
-		action_flag = true;
-		if (!_G(spieler).R12KetteLinks) {
-			auto_move(7, P_CHEWY);
-			start_aad_wait(29, -1);
-		} else {
-			_G(spieler).R12KetteLinks = false;
-			uhr->enable_timer();
-			atds->set_ats_str(117, TXT_MARK_LOOK, 0, ATS_DATEI);
-		}
-	}
-	return action_flag;
+void Room12::use_linke_rohr() {
+	_G(spieler).R12TalismanOk = false;
+	_G(spieler).R12KetteLinks = true;
+	uhr->disable_timer();
+	obj->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
+	obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);
+	obj->calc_all_static_detail();
+	atds->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
+	atds->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
+	start_aad(111, 0);
 }
 
 int16 Room12::chewy_trans() {
@@ -263,7 +271,7 @@ int16 Room12::chewy_trans() {
 	return action_flag;
 }
 
-int16 Room12::proc1() {
+int16 Room12::useTransformerTube() {
 	bool result = false;
 
 	if (!_G(spieler).inv_cur) {
