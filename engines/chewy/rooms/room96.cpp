@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room96.h"
 
@@ -30,9 +29,48 @@ namespace Chewy {
 namespace Rooms {
 
 void Room96::entry() {
+	_G(zoom_horizont) = 140;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 1;
+	_G(spieler).ScrollxStep = 2;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 50;
+	spieler_mi[P_HOWARD].Mode = true;
+	SetUpScreenFunc = setup_func;
+	spieler_mi[P_CHEWY].Mode = true;
+
+	if (flags.LoadGame)
+		return;
+
+	hide_cur();
+	set_person_pos(93, 62, P_HOWARD, P_RIGHT);
+	set_person_pos(116, 74, P_CHEWY, P_RIGHT);
+	auto_move(1, P_CHEWY);
+	show_cur();
 }
 
 void Room96::xit(int16 eib_nr) {
+	_G(spieler).ScrollxStep = 1;
+
+	if (eib_nr == 141)
+		_G(spieler).PersonRoomNr[P_HOWARD] = 95;
+}
+
+void Room96::setup_func() {
+	calc_person_look();
+	int destX, destY = 62;
+	
+	if (spieler_vector[P_CHEWY].Xypos[0] >= 120)
+		destX = 121;
+	else
+		destX = 93;
+
+	if (HowardMov == 1) {
+		destX = 49;
+		destY = 60;
+	}
+
+	go_auto_xy(destX, destY, P_HOWARD, ANI_GO);
 }
 
 } // namespace Rooms
