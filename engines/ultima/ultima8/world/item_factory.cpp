@@ -99,7 +99,8 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		if (GAME_IS_CRUSADER) {
 			if (info->_damageInfo && info->_damageInfo->takesDamage()) {
 				item->setDamagePoints(info->_damageInfo->damagePoints());
-			}
+			} // else damage points is default 1 (set in Item constructor)
+
 			if (info->_family == ShapeInfo::SF_CRUWEAPON && info->_weaponInfo &&
 				info->_weaponInfo->_clipSize) {
 				item->setQuality(info->_weaponInfo->_clipSize);
