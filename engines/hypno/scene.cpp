@@ -348,6 +348,10 @@ void HypnoEngine::runScene(Scene *scene) {
 				//changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
+
+				if (!_conversation.empty() && !hoverConversation(mousePos))
+					defaultCursor();
+
 				if (stack.empty() || !_conversation.empty() || !_videosPlaying.empty())
 					break;
 
@@ -537,6 +541,8 @@ void HypnoEngine::runScene(Scene *scene) {
 void HypnoEngine::showConversation() { error("Not implemented"); }
 void HypnoEngine::rightClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
 void HypnoEngine::leftClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
+bool HypnoEngine::hoverConversation(const Common::Point &mousePos) { error("Not implemented"); }
+
 
 } // End of namespace Hypno
 

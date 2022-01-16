@@ -194,4 +194,17 @@ void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
 		runIntros(videos);
 }
 
+bool SpiderEngine::hoverConversation(const Common::Point &mousePos) {
+	Mice mice(_defaultCursor, 1);
+
+	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
+		Talk *a = (Talk *)*itt;
+		if (a->active && a->rect.contains(mousePos)) {
+			runMice(&mice);
+			return true;
+		}
+	}
+	return false;
+}
+
 } // End of namespace Hypno

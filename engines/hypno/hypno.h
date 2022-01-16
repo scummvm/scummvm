@@ -247,7 +247,7 @@ public:
 	virtual void showConversation();
 	virtual void rightClickedConversation(const Common::Point &mousePos);
 	virtual void leftClickedConversation(const Common::Point &mousePos);
-
+	virtual bool hoverConversation(const Common::Point &mousePos);
 	// Credits
 	virtual void showCredits();
 
@@ -313,6 +313,7 @@ public:
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
+	bool hoverConversation(const Common::Point &mousePos) override;
 
 	void loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
