@@ -48,10 +48,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Added support for Text To Speech in SCI floppy games.
    - Allow saving from the ScummVM Global Game Menu in the following games:
-     BRAIN1, BRAIN2, ECOQUEST1, ECOQUEST2, FAIRYTALES, PHARKAS, GK1, ICEMAN,
-     KQ1, KQ4, KQ5, KQ6, KQ7, LB1, LB2, LONGBOW, LSL1, LSL2, LSL3, LSL5, LSL6,
-     LSL6HIRES, PEPPER, PQ1, PQ2, PQ3, PQ4, PQSWAT, QFG1, QFG1VGA, QFG2, QFG3,
-     QFG4, SQ1, SQ3, SQ4, SQ5, SQ6.
+     BRAIN1, BRAIN2, ECOQUEST1, ECOQUEST2, FAIRYTALES, PHARKAS, GK1, GK2, ICEMAN,
+     KQ1, KQ4, KQ5, KQ6, KQ7, LB1, LB2, LIGHTHOUSE, LONGBOW, LSL1, LSL2, LSL3,
+     LSL5, LSL6, LSL6HIRES, LSL7, PEPPER, PHANT2, PQ1, PQ2, PQ3, PQ4, PQSWAT,
+     QFG1, QFG1VGA, QFG2, QFG3, QFG4, SHIVERS, SQ1, SQ3, SQ4, SQ5, SQ6, TORIN.
 
  SCUMM:
    - New Digital iMUSE engine.
