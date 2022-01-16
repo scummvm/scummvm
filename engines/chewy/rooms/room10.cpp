@@ -37,16 +37,22 @@ void Room10::entry() {
 		out->setze_zeiger(0);
 		fx->blende1(workptr, screen0, pal, 150, 0, 0);
 		_G(spieler).R10Surimy = true;
-		flic_cut(FCUT_004, CFO_MODE);
-		start_aad(101, 0);
 		fx_blend = BLEND_NONE;
-		set_person_pos(1, 130, P_CHEWY, P_RIGHT);
+		flic_cut(FCUT_004, CFO_MODE);
+		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
-	} else if (_G(spieler).R10SurimyOk)
+		hide_cur();
+		start_spz(5, 255, 0, 0);
+		start_aad_wait(101, 0);
+		show_cur();
+
+	} else if (_G(spieler).R10SurimyOk) {
 		room->set_timer_status(3, TIMER_STOP);
+	}
 }
 
 void Room10::get_surimy() {
+	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
 	flc->set_custom_user_function(Room6::cut_serv2);
@@ -58,6 +64,7 @@ void Room10::get_surimy() {
 	invent_2_slot(18);
 
 	del_inventar(_G(spieler).AkInvent);
+	show_cur();
 }
 
 } // namespace Rooms
