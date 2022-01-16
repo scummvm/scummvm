@@ -108,9 +108,6 @@ void luaD_lineHook(int32 line) {
 }
 
 void luaD_callHook(StkId base, TProtoFunc *tf, int32 isreturn) {
-	struct C_Lua_Stack oldCLS = lua_state->Cstack;
-	StkId old_top = lua_state->Cstack.lua2C = lua_state->Cstack.base = lua_state->stack.top - lua_state->stack.stack;
-	lua_state->Cstack.num = 0;
 	if (isreturn)
 		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
 	else {
@@ -120,8 +117,6 @@ void luaD_callHook(StkId base, TProtoFunc *tf, int32 isreturn) {
 		else
 			(*lua_callhook)(Ref(f), "(C)", -1);
 	}
-	lua_state->stack.top = lua_state->stack.stack + old_top;
-	lua_state->Cstack = oldCLS;
 }
 
 /*
