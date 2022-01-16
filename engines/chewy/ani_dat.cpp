@@ -138,11 +138,6 @@ AniBlock ablock19[3] = {
 	{14, 1, ANI_VOR, ANI_WAIT, 0},
 };
 
-AniBlock ablock14[2] = {
-	{0, 1, ANI_VOR, ANI_WAIT, 0},
-	{3, 255, ANI_VOR, ANI_GO, 0},
-};
-
 AniBlock ablock15[4] = {
 	{0, 2, ANI_VOR, ANI_GO, 0},
 	{1, 255, ANI_VOR, ANI_GO, 0},
