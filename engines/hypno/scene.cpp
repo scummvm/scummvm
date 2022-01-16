@@ -230,8 +230,8 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	return false;
 }
 
-Common::String HypnoEngine::findNextLevel(const Transition *trans) { error("no code!"); }
-Common::String HypnoEngine::findNextLevel(const Common::String &level) { error("no code!"); }
+Common::String HypnoEngine::findNextLevel(const Transition *trans) { error("Function \"%s\" not implemented", __FUNCTION__); }
+Common::String HypnoEngine::findNextLevel(const Common::String &level) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::runTransition(Transition *trans) {
 	Common::String nextLevel = findNextLevel(trans);
@@ -538,10 +538,10 @@ void HypnoEngine::runScene(Scene *scene) {
 	removeTimers();
 }
 
-void HypnoEngine::showConversation() { error("Not implemented"); }
-void HypnoEngine::rightClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
-void HypnoEngine::leftClickedConversation(const Common::Point &mousePos) { error("Not implemented"); }
-bool HypnoEngine::hoverConversation(const Common::Point &mousePos) { error("Not implemented"); }
+void HypnoEngine::showConversation() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::rightClickedConversation(const Common::Point &mousePos) { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::leftClickedConversation(const Common::Point &mousePos) { error("Function \"%s\" not implemented", __FUNCTION__); }
+bool HypnoEngine::hoverConversation(const Common::Point &mousePos) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 
 } // End of namespace Hypno
