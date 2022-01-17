@@ -46,7 +46,7 @@ namespace Scumm {
 
 SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	:
-	Sound(parent, mixer),
+	Sound(parent, mixer, false),
 	_vm((ScummEngine_v60he *)parent),
 	_overrideFreq(0),
 	_heMusic(nullptr),
