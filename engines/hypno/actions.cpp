@@ -215,7 +215,8 @@ void HypnoEngine::runWalN(WalN *a) {
 }
 
 void HypnoEngine::runSave(Save *a) {
-	saveGameDialog();
+	// TODO: enable this when saving in the main menu is available
+	//saveGameDialog();
 }
 
 void HypnoEngine::runLoad(Load *a) {
