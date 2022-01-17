@@ -550,7 +550,7 @@ public:
 
 	bool flush() override { return flushBuffer(); }
 
-	int64 pos() const override { return _pos; }
+	int64 pos() const override { return _pos + _parentStream->pos(); }
 
 	bool seek(int64 offset, int whence) override {
 		flush();
