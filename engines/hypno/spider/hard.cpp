@@ -87,6 +87,14 @@ void SpiderEngine::runMatrix(Code *code) {
 	}
 
 	playVideo(*v);
+	Graphics::Surface *menu;
+	Common::Rect menuArea(0, 0, 0, 0);
+	if (!isDemo())  { // No hints in demo
+		menu = decodeFrame("int_main/hint1.smk", 0);
+		menuArea = Common::Rect(0, 0, menu->w, menu->h);
+		drawImage(*menu, 0, 0, true);
+	}
+
 	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -99,6 +107,23 @@ void SpiderEngine::runMatrix(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
+				if (_h1Area.contains(mousePos)) {
+					v = new MVideo("hint/p02h03s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h2Area.contains(mousePos)) {
+					v = new MVideo("hint/p02h04s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h3Area.contains(mousePos)) {
+					v = new MVideo("hint/p02h05s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (menuArea.contains(mousePos)) {
+					openMainMenuDialog();
+					break;
+				}
+
 				if (isDemo())
 					playSound("sixdemo/demo/sound.lib/matrix.raw", 1);
 				else
@@ -284,17 +309,22 @@ void SpiderEngine::runNote(Code *code) {
 
 	Frames letters = decodeFrames("int_ball/letters.smk");
 	Common::Point size(letters[0]->w, letters[0]->h); 
+	MVideo *v = nullptr;
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		MVideo v("int_ball/ppv007es.smk", Common::Point(0, 0), false, true, false);
-		runIntro(v);
+		v = new MVideo("int_ball/ppv007es.smk", Common::Point(0, 0), false, true, false);
+		runIntro(*v);
 		loadImage("int_ball/enote.smk", 0, 0, false, true);
 	} else { // hard
-		MVideo v("int_ball/ppv007hs.smk", Common::Point(0, 0), false, true, false);
-		runIntro(v);
+		v = new MVideo("int_ball/ppv007hs.smk", Common::Point(0, 0), false, true, false);
+		runIntro(*v);
 		loadImage("int_ball/hnote.smk", 0, 0, false, true);
 	}
-	
+
+	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
+	Common::Rect menuArea(0, 0, menu->w, menu->h);
+	drawImage(*menu, 0, 0, true);
+
 	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -313,8 +343,31 @@ void SpiderEngine::runNote(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-
-				if (letterBox.contains(mousePos)) {
+				if (_h1Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p10e01s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p11h01s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h2Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p10e02s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p11h03s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h3Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p10e03s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p11h04s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (menuArea.contains(mousePos)) {
+					openMainMenuDialog();
+					break;
+				} else if (letterBox.contains(mousePos)) {
 					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
 					selected = alpha[idx];
 					changeCursor("int_ball/letters.smk", idx);
@@ -359,7 +412,7 @@ void SpiderEngine::runNote(Code *code) {
 					}
 					o2x = o2x + size.x;
 				}
-
+				drawImage(*menu, 0, 0, true);
 				break;
 
 			default:
@@ -369,11 +422,11 @@ void SpiderEngine::runNote(Code *code) {
 
 		if (firstSentence == firstSolution && secondSentence == secondSolution) {
 			if (_sceneState["GS_PUZZLELEVEL"] == 0) {
-				MVideo v("cine/ppv008es.smk", Common::Point(0, 0), false, false, false);
-				runIntro(v);
+				v = new MVideo("cine/ppv008es.smk", Common::Point(0, 0), false, false, false);
+				runIntro(*v);
 			} else if (_sceneState["GS_PUZZLELEVEL"] == 1) {
-				MVideo v("cine/ppv008hs.smk", Common::Point(0, 0), false, false, false);
-				runIntro(v);
+				v = new MVideo("cine/ppv008hs.smk", Common::Point(0, 0), false, false, false);
+				runIntro(*v);
 			}
 
 			_nextLevel = code->levelIfWin;
@@ -558,13 +611,6 @@ void SpiderEngine::runFileCabinet(Code *code) {
 	sel[4] = Common::Rect(453, 176, 526, 301);
 	sel[5] = Common::Rect(545, 176, 618, 301);
 
-	Common::String intro = "cine/spv040s.smk"; 
-	if (!_intros.contains(intro)) {
-		MVideo v(intro, Common::Point(0, 0), false, false, false);
-		runIntro(v);
-		_intros[intro] = true;
-	}
-
 	Frames nums = decodeFrames("int_alof/combo.smk");
 	if (nums.size() != 10)
 		error("Invalid number of digits: %d", nums.size());
@@ -575,6 +621,19 @@ void SpiderEngine::runFileCabinet(Code *code) {
 	for (int i = 0; i < 6; i++) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
+
+	MVideo *v = nullptr;
+	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
+	Common::Rect menuArea(0, 0, menu->w, menu->h);
+
+	Common::String intro = "cine/spv040s.smk"; 
+	if (!_intros.contains(intro)) {
+		v = new MVideo(intro, Common::Point(0, 0), false, false, false);
+		runIntro(*v);
+		_intros[intro] = true;
+	}
+
+	drawImage(*menu, 0, 0, true);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -588,11 +647,36 @@ void SpiderEngine::runFileCabinet(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				if (back.contains(mousePos)) {
+
+				if (_h1Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p08e02s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p09h01s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h2Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p08e03s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p09h03s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h3Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p08e04s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p09h04s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (menuArea.contains(mousePos)) {
+					openMainMenuDialog();
+					break;
+				} else if (back.contains(mousePos)) {
 					if ((_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 3 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 0 && comb[5] == 1) \
 					||  (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 2 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 1 && comb[5] == 6)) {
-						MVideo v("cine/file0000.smk", Common::Point(0, 0), false, false, false);
-						runIntro(v);
+						v = new MVideo("cine/file0000.smk", Common::Point(0, 0), false, false, false);
+						runIntro(*v);
 						_sceneState["GS_SWITCH0"] = 1;
 					}
 
@@ -609,6 +693,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
+				drawImage(*menu, 0, 0, true);
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
@@ -671,6 +756,11 @@ void SpiderEngine::runLock(Code *code) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
 
+	MVideo *v = nullptr;
+	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
+	Common::Rect menuArea(0, 0, menu->w, menu->h);
+	drawImage(*menu, 0, 0, true);
+
 	while (!shouldQuit() && _nextLevel.empty()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -683,7 +773,31 @@ void SpiderEngine::runLock(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				if (act.contains(mousePos)) {
+				if (_h1Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p16e02s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p17h01s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h2Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p16e03s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p17h03s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h3Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p16e04s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p17h04s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (menuArea.contains(mousePos)) {
+					openMainMenuDialog();
+					break;
+				} else if (act.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 4 && comb[1] == 0 && comb[2] == 3 && comb[3] == 1 && comb[4] == 2) {
 						_nextLevel = code->levelIfWin;
 					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 3 && comb[2] == 4 && comb[3] == 2 && comb[4] == 0) {
@@ -704,6 +818,7 @@ void SpiderEngine::runLock(Code *code) {
 				for (int i = 0; i < 5; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
+				drawImage(*menu, 0, 0, true);
 				break;
 
 			default:
@@ -763,18 +878,22 @@ void SpiderEngine::runFuseBox(Code *code) {
 
 	Common::Rect vcell(0, 0, 8, 32);
 	Common::Rect hcell(0, 0, 32, 8);
+	MVideo *v = nullptr;
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		MVideo v("cine/ppv011es.smk", Common::Point(0, 0), false, true, false);
-		runIntro(v);
+		v = new MVideo("cine/ppv011es.smk", Common::Point(0, 0), false, true, false);
+		runIntro(*v);
 		loadImage("movie2/efusebg.smk", 0, 0, false, true);
 	} else { // hard
-		MVideo v("cine/ppv011hs.smk", Common::Point(0, 0), false, true, false);
-		runIntro(v);
+		v = new MVideo("cine/ppv011hs.smk", Common::Point(0, 0), false, true, false);
+		runIntro(*v);
 		loadImage("movie2/hfusebg.smk", 0, 0, false, true);
 	}
 
 	Frames fuses = decodeFrames("movie2/onoffuse.smk");
+	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
+	Common::Rect menuArea(0, 0, menu->w, menu->h);
+	drawImage(*menu, 0, 0, true);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -788,7 +907,31 @@ void SpiderEngine::runFuseBox(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				if (matrix.contains(mousePos)) {
+				if (_h1Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p18e02s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p19h02s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h2Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p18e03s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p19h03s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (_h3Area.contains(mousePos)) {
+					if (_sceneState["GS_PUZZLELEVEL"] == 0)
+						v = new MVideo("hint/p18e04s.smk", Common::Point(0, 0), false, false, false);
+					else
+						v = new MVideo("hint/p19h04s.smk", Common::Point(0, 0), false, false, false);
+					runIntro(*v);
+					break;
+				} else if (menuArea.contains(mousePos)) {
+					openMainMenuDialog();
+					break;
+				} else if (matrix.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 						loadImage("movie2/efusebg.smk", 0, 0, false, true);
 					} else { // hard
@@ -840,6 +983,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 						}
 					}
 				}
+				drawImage(*menu, 0, 0, true);
 				break;
 
 			default:

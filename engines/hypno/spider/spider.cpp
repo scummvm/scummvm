@@ -942,6 +942,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	chip_lives_with_spiderman->intros.push_back("spider/cine/wins001s.smk");
 	_levels["<chip_lives_with_spiderman>"] = chip_lives_with_spiderman;
 	_defaultCursor = "mouse/cursor1.smk";
+
+	// hints areas
+	_h1Area = Common::Rect(9, 45, 28, 60);
+	_h2Area = Common::Rect(37, 45, 56, 60);
+	_h3Area = Common::Rect(64, 45, 83, 60);
 	_nextLevel = "<start>";
 }
 

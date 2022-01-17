@@ -338,6 +338,11 @@ private:
 	bool _isFuseRust = true;
 	bool _isFuseUnreadable = false;
 	bool ingredients[7] = {};
+
+	Common::Rect _h1Area;
+	Common::Rect _h2Area;
+	Common::Rect _h3Area; 
+
 };
 
 class BoyzEngine : public HypnoEngine {

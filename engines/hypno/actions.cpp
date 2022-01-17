@@ -73,7 +73,7 @@ void HypnoEngine::runMenu(Hotspots *hs) {
 		if (h->flags[0] == "HINTS" || h->flags[1] == "HINTS" || h->flags[2] == "HINTS") {
 			menu = decodeFrame("int_main/hint1.smk", 0);
 			h->rect = Common::Rect(0, 0, menu->w, menu->h);
-			drawImage(*menu, 0, 0, true);
+			drawImage(*menu, 0, 0, false);
 		} else if (h->flags[0] == "AUTO_BUTTONS" || h->flags[0] == "SINGLE_RUN") {
 			if (isDemo())
 				loadImage("int_main/resume.smk", 0, 0, true, false, 0);
