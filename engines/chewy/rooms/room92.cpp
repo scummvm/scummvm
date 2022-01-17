@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room92.h"
 
@@ -30,6 +29,63 @@ namespace Chewy {
 namespace Rooms {
 
 void Room92::entry() {
+	const int oldScrollX = _G(spieler.scrollx);
+	_G(spieler).scrollx = 0;
+	cur_2_inventory();
+	hide_cur();
+	hide_person();
+	start_aad_wait(_G(spieler).SVal2, -1);
+	switch (_G(spieler).SVal2) {
+	case 487:
+		out->setze_zeiger(nullptr);
+		out->cls();
+		flags.NoPalAfterFlc = true;
+		flic_cut(103, CFO_MODE);
+		out->setze_zeiger(nullptr);
+		out->cls();
+		_G(spieler).scrollx = oldScrollX;
+		show_person();
+		switch_room(_G(spieler).SVal1);
+		break;
+	case 488:
+		flags.StaticUseTxt = true;
+		flic_cut(106, CFO_MODE);
+		out->setze_zeiger(nullptr);
+		out->cls();
+		flags.NoPalAfterFlc = true;
+		flic_cut(105, CFO_MODE);
+		out->setze_zeiger(nullptr);
+		out->cls();
+		flags.NoPalAfterFlc = true;
+		flic_cut(104, CFO_MODE);
+		test_intro(27);
+		ERROR
+		out->setze_zeiger(nullptr);
+		out->cls();
+		flags.NoPalAfterFlc = true;
+		flic_cut(103, CFO_MODE);
+		out->setze_zeiger(nullptr);
+		out->cls();
+		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
+		_G(spieler).flags33_8 = true;
+		show_person();
+		switch_room(46);
+		break;
+	case 538:
+		flags.StaticUseTxt = true;
+		flic_cut(106, CFO_MODE);
+		show_person();
+		_G(spieler).PersonRoomNr[P_HOWARD] = 94;
+		_G(spieler).flags35_8 = true;
+		switch_room(94);
+		break;
+	default:
+		show_person();
+		_G(spieler).scrollx = oldScrollX;
+		switch_room(_G(spieler).SVal1);
+		break;
+	}
+	_G(spieler).SVal2 = 5000;
 }
 
 } // namespace Rooms
