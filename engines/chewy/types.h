@@ -499,6 +499,9 @@ struct Spieler : public SpielerFlags {
 	uint8 FramesPerSecond = 0;
 	bool DisplayText = false;
 
+	// ---- //
+	int r93_word18DB2C = 0;
+	// ---- //
 	int r97_word18DB2E = 0;
 	bool r97_bool18DB30 = false;
 	bool r97_bool18DB32 = false;

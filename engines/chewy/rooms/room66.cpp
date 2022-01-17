@@ -76,5 +76,8 @@ int Room66::proc7() {
 	return 0;
 }
 
+void Room66::proc8(int eax, int edx, int ebx, int ecx) {
+}
+
 } // namespace Rooms
 } // namespace Chewy

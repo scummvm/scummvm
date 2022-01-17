@@ -30,6 +30,7 @@ public:
 	static void entry();
 	static void xit();
 	static void gedAction(int index);
+	static void setup_func();
 
 	static void talk1();
 	static int proc3();
