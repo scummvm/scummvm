@@ -1036,6 +1036,9 @@ void SpiderEngine::showCredits() {
 		return;
 	}
 
+	if (!_arcadeMode.empty())
+		return; // No credits during arcade sequence
+
 	if (!isDemo()) { // No credits in demo
 		changeScreenMode("640x480");
 		MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
