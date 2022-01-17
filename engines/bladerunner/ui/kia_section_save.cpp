@@ -334,6 +334,7 @@ void KIASectionSave::onButtonPressed(int buttonId, void *callbackData) {
 	} else if (buttonId == 2) {
 		if (self->_state == kStateOverwrite) {
 			self->save();
+			self->changeState(kStateNormal);
 		} else if (self->_state == kStateDelete) {
 			self->deleteSave();
 		}
@@ -341,6 +342,9 @@ void KIASectionSave::onButtonPressed(int buttonId, void *callbackData) {
 }
 
 void KIASectionSave::changeState(State state) {
+	if (_state == state)
+		return;
+
 	_state = state;
 	if (state == kStateNormal) {
 		_buttons->resetImages();
@@ -376,6 +380,13 @@ void KIASectionSave::changeState(State state) {
 
 void KIASectionSave::save() {
 	int slot = -1;
+	// Do not allow empty string for saved game name
+	// Note: We do allow a series of blank spaces for name, though
+	//       (this is the behavior in the original game).
+	Common::String inpBoxTextStr = _inputBox->getText();
+	if (inpBoxTextStr.empty()) {
+		return;
+	}
 
 	if (_selectedLineId < (int)_saveList.size()) {
 		slot = _saveList[_selectedLineId].getSaveSlot();
@@ -403,7 +414,7 @@ void KIASectionSave::save() {
 	}
 
 	BladeRunner::SaveFileHeader header;
-	header._name = Common::U32String(_inputBox->getText()).encode(Common::kUtf8);
+	header._name = Common::U32String(inpBoxTextStr).encode(Common::kUtf8);
 	header._playTime = _vm->getTotalPlayTime();
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
