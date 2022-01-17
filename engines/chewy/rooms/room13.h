@@ -30,6 +30,7 @@ namespace Rooms {
 class Room13 {
 public:
 	static void entry();
+	static void xit();
 	static void gedAction(int index);
 
 	static int16 monitor_knopf();

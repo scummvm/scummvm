@@ -50,6 +50,7 @@ void Room13::entry() {
 		flic_cut(FCUT_013, CFO_MODE);
 		set_person_pos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);
+		start_spz(16, 255, 0, 0);
 		start_aad_wait(27, -1);
 	} else {
 		if (_G(spieler).R13MonitorStatus)
@@ -66,14 +67,21 @@ void Room13::entry() {
 
 			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 		}
-		if (spieler_vector[P_CHEWY].Xypos[0] > 290) {
-			_G(spieler).R13Band = true;
-			atds->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
-			_G(spieler).room_e_obj[25].Attribut = 255;
+
+		if (_G(spieler).R13Band) {
+			_G(spieler).room_e_obj[25].Attribut = 3;
+			atds->set_steuer_bit(100, 1, 1);
 		}
+
 		if (_G(spieler).R21GitterMuell)
 			det->hide_static_spr(6);
 	}
+}
+
+void Room13::xit() {
+	_G(spieler).room_e_obj[25].Attribut = 3;
+	atds->set_steuer_bit(100, 1, 1);
+	_G(spieler).R13Band = false;
 }
 
 void Room13::gedAction(int index) {
@@ -96,9 +104,7 @@ void Room13::talk_bork() {
 		_G(spieler).R12ChewyBork = false;
 		det->show_static_spr(13);
 		det->set_detail_pos(10, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
-		det->
-			set_static_pos(12, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1], 0, true)
-			;
+		det->set_static_pos(12, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1], 0, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);
 		det->stop_detail(9);
@@ -106,6 +112,7 @@ void Room13::talk_bork() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		det->hide_static_spr(12);
 		_G(auto_obj) = 1;
+
 		mov_phasen[R13_BORK_OBJ].AtsText = 122;
 		mov_phasen[R13_BORK_OBJ].Lines = 3;
 		mov_phasen[R13_BORK_OBJ].Repeat = 1;
@@ -120,11 +127,14 @@ void Room13::talk_bork() {
 		auto_move(11, P_CHEWY);
 		flags.NoScroll = true;
 		auto_scroll(41, 0);
+
+		start_spz(68, 255, 0, 0);
 		start_aad_wait(248, -1);
 		flic_cut(FCUT_014, CFO_MODE);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(auto_obj) = 0;
 		flags.NoScroll = false;
+
 		atds->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
 		obj->show_sib(SIB_BANDKNOPF_R13);
@@ -137,6 +147,7 @@ void Room13::talk_bork() {
 		obj->show_sib(SIB_SCHLITZ_R11);
 		obj->show_sib(SIB_TKNOPF2_R11);
 		obj->show_sib(SIB_TKNOPF3_R11);
+
 		if (_G(spieler).R6DoorRightB)
 			_G(spieler).room_e_obj[20].Attribut = AUSGANG_LINKS;
 		_G(spieler).room_e_obj[21].Attribut = AUSGANG_OBEN;
@@ -155,6 +166,7 @@ void Room13::jmp_band() {
 			start_detail_wait(8, 1, ANI_VOR);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			set_person_pos(292, 98, P_CHEWY, P_RIGHT);
+
 		} else {
 			_G(spieler).R13Surf = true;
 			_G(maus_links_click) = false;
@@ -167,15 +179,13 @@ void Room13::jmp_band() {
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
 			_G(spieler).R13Bandlauf = 0;
-
 			atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-
 			atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-
 			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 			obj->calc_rsi_flip_flop(SIB_BANDKNOPF_R13);
 			obj->hide_sib(SIB_BANDKNOPF_R13);
 			switch_room(14);
+
 			flic_cut(FCUT_018, CFO_MODE);
 			_G(spieler).scrollx = 92;
 			_G(spieler).scrolly = 120;
@@ -191,6 +201,7 @@ void Room13::jmp_boden() {
 	if (_G(spieler).R13Band) {
 		if (!_G(spieler).R13Surf)
 			obj->show_sib(SIB_BANDKNOPF_R13);
+
 		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 		atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R13Band = false;
@@ -204,23 +215,32 @@ void Room13::jmp_boden() {
 
 int16 Room13::monitor_knopf() {
 	int16 action_flag = false;
-	if (!_G(spieler).R13Band &&
-		!_G(spieler).R12ChewyBork &&
-		!_G(spieler).inv_cur) {
+
+	if (!_G(spieler).inv_cur) {
 		action_flag = true;
-		auto_move(8, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(6, 1, ANI_VOR);
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		if (_G(spieler).R13MonitorStatus)
-			det->hide_static_spr(11 - _G(spieler).R13MonitorStatus);
-		++_G(spieler).R13MonitorStatus;
-		if (_G(spieler).R13MonitorStatus > 4)
-			_G(spieler).R13MonitorStatus = 0;
-		else
-			det->show_static_spr(11 - _G(spieler).R13MonitorStatus);
-		atds->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
+
+		if (_G(spieler).R13Band) {
+			start_aad_wait(620, -1);
+
+		} else if (!_G(spieler).R12ChewyBork) {
+			auto_move(8, P_CHEWY);
+			_G(spieler).PersonHide[P_CHEWY] = true;
+			start_detail_wait(6, 1, ANI_VOR);
+			_G(spieler).PersonHide[P_CHEWY] = false;
+
+			if (_G(spieler).R13MonitorStatus)
+				det->hide_static_spr(11 - _G(spieler).R13MonitorStatus);
+
+			++_G(spieler).R13MonitorStatus;
+			if (_G(spieler).R13MonitorStatus > 4)
+				_G(spieler).R13MonitorStatus = 0;
+			else
+				det->show_static_spr(11 - _G(spieler).R13MonitorStatus);
+
+			atds->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
+		}
 	}
+
 	return action_flag;
 }
 
