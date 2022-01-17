@@ -208,6 +208,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 	findSpecificSelectors(names);
 
+	// HACK for LB2 floppy, for saving via GMM
+	if (g_sci->getGameId() == GID_LAURABOW2) {
+		names[342] = "input";
+		names[343] = "controls";
+	}
+
 	for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
 		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
 			const uint32 slot = selectorRemap->slot;
