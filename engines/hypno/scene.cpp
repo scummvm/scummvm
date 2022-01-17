@@ -440,7 +440,7 @@ void HypnoEngine::runScene(Scene *scene) {
 				debugC(1, kHypnoDebugScene, "removing %d from %d size", *it, _videosPlaying.size());
 				_videosPlaying.remove_at(*it);
 			}
-			debug("Something to play: %d", _videosPlaying.size());
+			debugC(1, kHypnoDebugScene, "Something to play: %d", _videosPlaying.size());
 			// Nothing else to play
 			if (_videosPlaying.empty() && _nextSequentialVideoToPlay.empty() && !checkSceneCompleted()) {
 				if (!_conversation.empty())
@@ -450,7 +450,7 @@ void HypnoEngine::runScene(Scene *scene) {
 
 		if (checkSceneCompleted() || checkLevelWon()) {
 			if(!checkLevelWon() && stack.size() > 1) {
-				debug("Executing escape instead of ending the scene");
+				debugC(1, kHypnoDebugScene, "Executing escape instead of ending the scene");
 				runEscape();
 				_sceneState["GS_LEVELCOMPLETE"] = 0;
 				continue;
