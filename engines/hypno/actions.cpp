@@ -28,11 +28,11 @@ namespace Hypno {
 
 //Actions
 
-void HypnoEngine::runMenu(Hotspots hs) {
-	const Hotspot h = *hs.begin();
-	assert(h.type == MakeMenu);
-	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h.actions.size());
-	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
+void HypnoEngine::runMenu(Hotspots *hs) {
+	Hotspot *h = hs->begin();
+	assert(h->type == MakeMenu);
+	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h->actions.size());
+	for (Actions::const_iterator itt = h->actions.begin(); itt != h->actions.end(); ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
 			case QuitAction:
@@ -68,14 +68,20 @@ void HypnoEngine::runMenu(Hotspots hs) {
 		//	runMice(h, (Mice*) action);
 	}
 
+	Graphics::Surface *menu = nullptr;
 	if (_conversation.empty()) {
-		if (h.flags[0] == "HINTS" || h.flags[1] == "HINTS" || h.flags[2] == "HINTS")
-			loadImage("int_main/hint1.smk", 0, 0, true);
-		else if (h.flags[0] == "AUTO_BUTTONS" || h.flags[0] == "SINGLE_RUN") {
+		if (h->flags[0] == "HINTS" || h->flags[1] == "HINTS" || h->flags[2] == "HINTS") {
+			menu = decodeFrame("int_main/hint1.smk", 0);
+			h->rect = Common::Rect(0, 0, menu->w, menu->h);
+			drawImage(*menu, 0, 0, true);
+		} else if (h->flags[0] == "AUTO_BUTTONS" || h->flags[0] == "SINGLE_RUN") {
 			if (isDemo())
 				loadImage("int_main/resume.smk", 0, 0, true, false, 0);
-			else
-				loadImage("int_main/menu.smk", 0, 0, true, false, 0);
+			else {
+				menu = decodeFrame("int_main/menu.smk", 0);
+				h->rect = Common::Rect(0, 0, menu->w, menu->h);
+				drawImage(*menu, 0, 0, true);
+			}
 		}
 	}
 }

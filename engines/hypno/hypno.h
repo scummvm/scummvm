@@ -151,7 +151,7 @@ public:
 	void changeCursor(const Common::String &cursor);
 
 	// Actions
-	void runMenu(Hotspots hs);
+	void runMenu(Hotspots *hs);
 	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);

@@ -110,9 +110,6 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 	int cs = 0;
 	for (Hotspots::const_iterator it = hots->begin(); it != hots->end(); ++it) {
 		const Hotspot h = *it;
-		if (h.type != MakeHotspot)
-			continue;
-
 		cs = h.rect.width() * h.rect.height();
 		if (h.rect.contains(mousePos)) {
 			if (cs < rs) {
@@ -122,6 +119,12 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			}
 		}
 	}
+	if (selected.type == MakeMenu) {
+		// TODO: remove when proper escape to main menu is implemented
+		openMainMenuDialog();
+		return;
+	}
+
 	if (!found)
 		return;
 
@@ -278,7 +281,7 @@ void HypnoEngine::runScene(Scene *scene) {
 			if (lastCountdown == _countdown) {}
 			else if (_countdown > 0) {
 				uint32 c = _pixelFormat.RGBToColor(255, 0, 0);
-				runMenu(*stack.back());
+				runMenu(stack.back());
 				uint32 minutes = _countdown / 60;
 				uint32 seconds = _countdown % 60;
 			 	_font->drawString(_compositeSurface, Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
@@ -303,7 +306,7 @@ void HypnoEngine::runScene(Scene *scene) {
 						if (it->decoder) {
 							skipVideo(*it);
 							if (it->scaled) {
-								runMenu(*stack.back());
+								runMenu(stack.back());
 								drawScreen();
 							}
 						}
@@ -418,7 +421,7 @@ void HypnoEngine::runScene(Scene *scene) {
 					(  it->currentFrame->w == _screenW 
 					&& it->currentFrame->h == _screenH 
 					&& it->decoder->getCurFrame() > 0)) {
-						runMenu(*stack.back());
+						runMenu(stack.back());
 						drawScreen();
 					}
 					it->decoder->close();
@@ -485,13 +488,13 @@ void HypnoEngine::runScene(Scene *scene) {
 		if (_nextHotsToRemove) {
 			debugC(1, kHypnoDebugScene, "Removing a hotspot list!");
 			stack.pop_back();
-			runMenu(*stack.back());
+			runMenu(stack.back());
 			_nextHotsToRemove = nullptr;
 			drawScreen();
 		} else if (_nextHotsToAdd) {
 			debugC(1, kHypnoDebugScene, "Adding a hotspot list!");
 			stack.push_back(_nextHotsToAdd);
-			runMenu(*stack.back());
+			runMenu(stack.back());
 			_nextHotsToAdd = nullptr;
 			drawScreen();
 		}
