@@ -468,6 +468,9 @@ void exit_room(int16 eib_nr) {
 		atds->set_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
+	case 13:
+		Room13::xit();
+
 	case 18:
 		if (eib_nr == 40)
 			_G(spieler).R17Location = 2;
