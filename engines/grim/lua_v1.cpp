@@ -749,12 +749,13 @@ void Lua_V1::SpewStartup() {
 	// originally this opcode launch external library 'spew.dll'
 }
 
-void Lua_V1::GetCameraLookVector() {
-	warning("Stub function: GetCameraLookVector");
+void Lua_V1::SetCameraInterest() {
+	// nothing to implement
+	// it's referenced once in Grim dead lua code
 }
 
-void Lua_V1::SetCameraInterest() {
-	warning("Stub function: SetCameraInterest");
+void Lua_V1::GetCameraLookVector() {
+	warning("Stub function: GetCameraLookVector");
 }
 
 void Lua_V1::GetCameraPosition() {
