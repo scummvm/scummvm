@@ -120,8 +120,10 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 		}
 	}
 	if (selected.type == MakeMenu) {
-		// TODO: remove when proper escape to main menu is implemented
-		openMainMenuDialog();
+		if (isDemo())
+			_nextLevel = "sixdemo/mis/demo.mis";
+		else // TODO: remove when proper escape to main menu is implemented
+			openMainMenuDialog();
 		return;
 	}
 

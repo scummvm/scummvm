@@ -266,7 +266,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
 	if (transparent) {
-		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), surf.getPixel(0, 0));
+		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
 	} else
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
@@ -366,7 +366,6 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface = new Graphics::ManagedSurface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
-		_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
 		_compositeSurface->setTransparentColor(_transparentColor);
 
 	} else if (mode == "320x200") {
@@ -381,7 +380,6 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface = new Graphics::ManagedSurface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
-		_transparentColor = 0; //_pixelFormat.RGBToColor(0, 0, 0);
 		_compositeSurface->setTransparentColor(_transparentColor);
 	} else
 		error("Unknown screen mode %s", mode.c_str());

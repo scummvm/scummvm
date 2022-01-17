@@ -89,11 +89,13 @@ void SpiderEngine::runMatrix(Code *code) {
 	playVideo(*v);
 	Graphics::Surface *menu;
 	Common::Rect menuArea(0, 0, 0, 0);
-	if (!isDemo())  { // No hints in demo
+	if (isDemo()) // No hints in demo
+		menu = decodeFrame("int_main/resume.smk", 0);
+	else
 		menu = decodeFrame("int_main/hint1.smk", 0);
-		menuArea = Common::Rect(0, 0, menu->w, menu->h);
-		drawImage(*menu, 0, 0, true);
-	}
+
+	menuArea = Common::Rect(0, 0, menu->w, menu->h);
+	drawImage(*menu, 0, 0, true);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -120,7 +122,10 @@ void SpiderEngine::runMatrix(Code *code) {
 					runIntro(*v);
 					break;
 				} else if (menuArea.contains(mousePos)) {
-					openMainMenuDialog();
+					if (isDemo())
+						_nextLevel = "sixdemo/mis/demo.mis";
+					else
+						openMainMenuDialog();
 					break;
 				}
 
