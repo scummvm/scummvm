@@ -30,9 +30,115 @@ namespace Chewy {
 namespace Rooms {
 
 void Room91::entry() {
+	_G(zoom_horizont) = 110;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+	_G(spieler).ScrollxStep = 2;
+	SetUpScreenFunc = setup_func;
+	_G(spieler).r91_word18DB2A = 0;
+	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
+	spieler_mi[P_HOWARD].Mode = true;
+
+	if (flags.LoadGame)
+		return;
+
+	_G(spieler).scrollx = 320;
+	hide_cur();
+	_G(spieler).scrollx = 320;
+
+	if (_G(spieler).flags34_1) {
+		set_person_pos(499, 106, P_CHEWY, P_RIGHT);
+		set_person_pos(536, 90, P_HOWARD, P_RIGHT);
+		if (!_G(spieler).flags34_2) {
+			_G(spieler).flags34_2 = true;
+			start_aad_wait(503, -1);
+		}
+	} else {
+		flags.MainInput = false;
+		flags.NoScroll = false;
+		flags.NoScroll = true; // CHECKME: clearly, this has to be double checked. Maybe I didn't understand properly the NOT?
+		_G(spieler).flags34_1 = true;
+		set_person_pos(326, 99, P_CHEWY, P_RIGHT);
+		set_person_pos(312, 75, P_HOWARD, P_RIGHT);
+		_G(spieler).SVal3 = 0;
+		_G(spieler).flags34_4 = true;
+		start_aad_wait(502, -1);
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		det->start_detail(0, 255, false);
+
+		for (int i = 0; i < 3; ++i) {
+			_G(timer_nr)[i] = room->set_timer(5 + i, 3 + (2 * i));
+		}
+		det->start_detail(5, 2, false);
+	}
+
+	show_cur();
 }
 
 void Room91::xit(int16 eib_nr) {
+	flags.MainInput = true;
+	_G(spieler).ScrollxStep = 1;
+
+	if (eib_nr == 136)
+		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
+
+	_G(spieler).flags34_4 = false;
+	flags.NoScroll = false;
+}
+
+void Room91::setup_func() {
+	if (!_G(spieler).flags34_4) {
+		calc_person_look();
+		const int xyPos = spieler_vector[0].Xypos[0];
+		if (xyPos < 130)
+			go_auto_xy(40, 97, P_HOWARD, ANI_GO);
+		else if (xyPos < 312)
+			go_auto_xy(221, 94, P_HOWARD, ANI_GO);
+		else if (xyPos < 445)
+			go_auto_xy(342, 93, P_HOWARD, ANI_GO);
+		else
+			go_auto_xy(536, 90, P_HOWARD, ANI_GO);
+	} else {
+		if (menu_display)
+			return;
+		
+		menu_item = CUR_USE;
+		cur_2_inventory();
+		cursor_wahl(CUR_22);
+
+		if (_G(maus_links_click) == 0 || _G(spieler).r91_word18DB2A)
+			return;
+
+		const int old_r91_word18DB2A = _G(spieler).r91_word18DB2A;
+		_G(maus_links_click) = old_r91_word18DB2A;
+		_G(spieler).r91_word18DB2A = 1;
+		const int aniNr = 1 + (minfo.y <= 100 ? 1 : 0);
+		hide_cur();
+		det->stop_detail(0);
+		start_detail_wait(aniNr, 1, ANI_VOR);
+		_G(spieler).r91_word18DB2A = old_r91_word18DB2A;
+		det->start_detail(0, 255, false);
+		det->start_detail(aniNr + 2, 1, false);
+		det->start_detail(7, 1, false);
+		start_spz_wait(62, 1, false, P_HOWARD);
+		_G(spieler).SVal3 += 1;
+		show_cur();
+		if (_G(spieler).SVal3 == 4) {
+			det->stop_detail(0);
+			_G(spieler).PersonHide[P_CHEWY] = false;
+			hide_cur();
+			auto_move(1, P_CHEWY);
+			stop_spz();
+			start_aad_wait(505, -1);
+			_G(spieler).PersonHide[P_HOWARD] = true;
+			start_detail_wait(9, 1, ANI_VOR);
+			_G(spieler).PersonHide[P_HOWARD] = false;
+			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
+			_G(spieler).flags34_4 = false;
+			show_cur();
+			switch_room(50);
+		}
+	}
 }
 
 } // namespace Rooms

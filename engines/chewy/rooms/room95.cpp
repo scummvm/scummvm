@@ -35,7 +35,7 @@ void Room95::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 140;
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
-	spieler_mi[P_HOWARD].Mode = 1;
+	spieler_mi[P_HOWARD].Mode = true;
 
 	if (_G(spieler).flags35_20)
 		det->show_static_spr(10);
