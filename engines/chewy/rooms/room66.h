@@ -33,8 +33,9 @@ public:
 	static void talk2();
 	static void talk3();
 	static void talk4();
-	static int proc7();
 	static int proc2();
+	static int proc7();
+	static void proc8(int eax, int edx, int ebx, int ecx);
 };
 
 } // namespace Rooms
