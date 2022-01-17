@@ -33,6 +33,11 @@ namespace Rooms {
 void Room14::entry() {
 	_G(spieler).R23GleiterExit = 14;
 	_G(zoom_horizont) = 310;
+	_G(spieler).ScrollxStep = 2;
+
+	if (!_G(spieler).R14Feuer)
+		obj->hide_sib(46);
+
 	if (!flags.LoadGame) {
 		if (_G(spieler).R14GleiterAuf) {
 			set_person_pos(381, 264, P_CHEWY, P_LEFT);
@@ -72,6 +77,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 
 int16 Room14::use_schrott() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		auto_move(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -90,9 +96,11 @@ int16 Room14::use_schrott() {
 
 int16 Room14::use_gleiter() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		auto_move(4, P_CHEWY);
+
 		if (!_G(spieler).R14GleiterAuf) {
 			_G(spieler).R14GleiterAuf = true;
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -105,18 +113,23 @@ int16 Room14::use_gleiter() {
 			Room23::cockpit();
 		}
 	}
+
 	return action_flag;
 }
 
-void Room14::talk_eremit() {
+void Room14::talk_eremit()  {
 	if (!_G(spieler).R14Feuer) {
 		auto_move(6, P_CHEWY);
+
 		if (_G(spieler).R14Translator) {
 			flags.AutoAniPlay = true;
 			load_ads_dia(0);
+			obj->show_sib(46);
 		} else {
 			flags.AutoAniPlay = true;
+			hide_cur();
 			start_aad_wait(24, -1);
+			show_cur();
 			flags.AutoAniPlay = false;
 		}
 	}
@@ -124,30 +137,35 @@ void Room14::talk_eremit() {
 
 int16 Room14::use_schleim() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(11, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+
 		if (!_G(spieler).R14Sicherung) {
 			action_flag = true;
 			_G(spieler).R14Sicherung = true;
 			start_aad_wait(22, -1);
 			invent_2_slot(SICHERUNG_INV);
-
 		}
 	}
+
 	return action_flag;
 }
 
 void Room14::feuer() {
 	int16 tmp;
 	int16 waffe;
+
 	waffe = false;
 	tmp = _G(spieler).AkInvent;
 	_G(spieler).R14Feuer = true;
+	_G(cur_hide_flag) = false;
 	flags.AutoAniPlay = true;
 	hide_cur();
+
 	if (is_cur_inventar(BWAFFE_INV)) {
 		auto_move(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -167,11 +185,14 @@ void Room14::feuer() {
 		start_detail_wait(5, 1, ANI_VOR);
 		det->show_static_spr(9);
 	}
+
 	del_inventar(tmp);
 	det->start_detail(6, 255, ANI_VOR);
 	wait_show_screen(40);
+
 	if (waffe)
 		auto_move(7, P_CHEWY);
+
 	start_aad_wait(26, -1);
 	det->hide_static_spr(9);
 	start_detail_wait(3, 1, ANI_VOR);
