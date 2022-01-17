@@ -32,6 +32,7 @@ namespace Rooms {
 
 void Room16::entry() {
 	_G(zoom_horizont) = 140;
+
 	if (!_G(spieler).R16F5Exit) {
 		det->show_static_spr(4);
 		_G(spieler).room_e_obj[32].Attribut = 255;
@@ -45,12 +46,14 @@ void Room16::entry() {
 
 int16 Room16::use_gleiter() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).R23GleiterExit = 16;
 		Room23::cockpit();
 	}
+
 	return action_flag;
 }
 
