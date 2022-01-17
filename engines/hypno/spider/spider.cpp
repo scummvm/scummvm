@@ -264,7 +264,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	// Transitions
 	Transition *after_bank = new Transition("<trans_apt_2>");
-	after_bank->intros.push_back("spider/cine/blcs003.smk");
+	after_bank->intros.push_back("spider/cine/bals003s.smk");
 	_levels["<after_bank>"] = after_bank;
 
 	Transition *trans_apt_1 = new Transition("busint.mi_");
@@ -482,6 +482,14 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<file_cabinet>"] = file_cabinet;
 
 	loadSceneLevel("alverofh.mi_", "", prefix);
+	sc = (Scene *) _levels["alverofh.mi_"];
+
+	cl = new ChangeLevel("<tape>");
+	sc->hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel("<file_cabinet>");
+	sc->hots[3].actions.push_back(cl);
+
 	loadSceneLevel("alveroff.mi_", "", prefix);
 	sc = (Scene *) _levels["alveroff.mi_"];
 

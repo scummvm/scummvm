@@ -71,13 +71,12 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	if (_conversation.empty()) {
 		if (h.flags[0] == "HINTS" || h.flags[1] == "HINTS" || h.flags[2] == "HINTS")
 			loadImage("int_main/hint1.smk", 0, 0, true);
-		else if (h.flags[0] == "AUTO_BUTTONS") {
+		else if (h.flags[0] == "AUTO_BUTTONS" || h.flags[0] == "SINGLE_RUN") {
 			if (isDemo())
 				loadImage("int_main/resume.smk", 0, 0, true, false, 0);
 			else
 				loadImage("int_main/menu.smk", 0, 0, true, false, 0);
 		}
-
 	}
 }
 

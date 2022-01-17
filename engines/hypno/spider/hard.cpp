@@ -174,7 +174,7 @@ void SpiderEngine::addIngredient(Code *code) {
 void SpiderEngine::checkMixture(Code *code) {
 	_nextLevel = "bushard2.mi_";
 	if (ingredients[0]) {
-		MVideo video("spider/cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
+		MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		memset(ingredients, 0, 7);
 		return;
@@ -191,7 +191,7 @@ void SpiderEngine::checkMixture(Code *code) {
 
 	for (int i = 1; i < 7; i++) {
 		if (!ingredients[i]) {
-			MVideo video("spider/cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
+			MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
 			runIntro(video);
 			memset(ingredients, 0, 7);
 			return;
@@ -558,20 +558,20 @@ void SpiderEngine::runFileCabinet(Code *code) {
 	sel[4] = Common::Rect(453, 176, 526, 301);
 	sel[5] = Common::Rect(545, 176, 618, 301);
 
-	Common::String intro = "spider/cine/spv040s.smk"; 
+	Common::String intro = "cine/spv040s.smk"; 
 	if (!_intros.contains(intro)) {
 		MVideo v(intro, Common::Point(0, 0), false, false, false);
 		runIntro(v);
 		_intros[intro] = true;
 	}
 
-	Frames nums = decodeFrames("spider/int_alof/combo.smk");
+	Frames nums = decodeFrames("int_alof/combo.smk");
 	if (nums.size() != 10)
 		error("Invalid number of digits: %d", nums.size());
 
 	defaultCursor();
 	Common::Rect back(0, 446, 640, 480);
-	loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
+	loadImage("int_alof/combobg.smk", 0, 0, false, true);
 	for (int i = 0; i < 6; i++) {
 		drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 	}
@@ -589,8 +589,9 @@ void SpiderEngine::runFileCabinet(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (back.contains(mousePos)) {
-					if (comb[0] == 3 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 0 && comb[5] == 1) {
-						MVideo v("spider/cine/file0000.smk", Common::Point(0, 0), false, false, false);
+					if ((_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 3 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 0 && comb[5] == 1) \
+					||  (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 2 && comb[1] == 2 && comb[2] == 5 && comb[3] == 7 && comb[4] == 1 && comb[5] == 6)) {
+						MVideo v("cine/file0000.smk", Common::Point(0, 0), false, false, false);
 						runIntro(v);
 						_sceneState["GS_SWITCH0"] = 1;
 					}
@@ -604,7 +605,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 						comb[i] = (comb[i] + 1) % 10;
 				}
 
-				loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
+				loadImage("int_alof/combobg.smk", 0, 0, false, true);
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
@@ -619,7 +620,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 							comb[i] = comb[i] - 1;
 					}
 
-				loadImage("spider/int_alof/combobg.smk", 0, 0, false, true);
+				loadImage("int_alof/combobg.smk", 0, 0, false, true);
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
@@ -685,7 +686,7 @@ void SpiderEngine::runLock(Code *code) {
 				if (act.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 4 && comb[1] == 0 && comb[2] == 3 && comb[3] == 1 && comb[4] == 2) {
 						_nextLevel = code->levelIfWin;
-					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 1 && comb[2] == 1 && comb[3] == 1 && comb[4] == 1) {
+					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 3 && comb[2] == 4 && comb[3] == 2 && comb[4] == 0) {
 					 	_nextLevel = code->levelIfWin;
 					}
 				}
