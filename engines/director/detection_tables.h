@@ -28,6 +28,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "director",			"Macromedia Director Game" },
 	{ "directortest",		"Macromedia Director Test Target" },
 	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
+	{ "directorshokai",		"Macromedia Director紹介" }, // Macromedia Director Introduction
 	{ "theapartment",		"The Apartment, Interactive demo" },
 	{ "dirmacromedia",		"Macromedia Director" },
 	{ "dirmacromind",		"MacroMind Director" },
@@ -1369,6 +1370,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gilgameshnite",		"ギルガメッシュ Night Super Deluxe CD-ROM" },		// Gilgamesh
 	{ "immorale",			"Immorale" },
 	{ "isswim98",			"Inside Sports 1998 Swimsuit Issue" },
+	{ "labyrinth",			"Labyrinth" },
 	{ "legs",				"Legs" },
 	{ "macplaymate1",		"MacPlaymate" },
 	{ "macplaymate2",		"MacPlaymate II" },
@@ -1811,6 +1813,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("erikotamuraoz", "", "OZ", "7f443f2e63fd497a9ad85b10dc880a91", 384207, Common::JA_JPN, 313),
 	MACGAME1_l("erikotamuraoz", "Gallery OZ (16)", "Gallery OZ(16)", "7f443f2e63fd497a9ad85b10dc880a91", 384210, Common::JA_JPN, 313),
 	MACGAME1_l("erikotamuraoz", "Gallery OZ (24)", "Gallery OZ(24)", "7f443f2e63fd497a9ad85b10dc880a91", 384207, Common::JA_JPN, 313),
+	MACDEMO1_l("erikotamuraoz", "Demo", "OZ DEMO", "f5277c53bacd27936158dd3867e587e2", 391591, Common::JA_JPN, 311),
 
 	// All four languages on one disc. Original Mac file name is Parents’ Guide FFF
 	MACGAME1("fff",   "", "Friends",      "7f443f2e63fd497a9ad85b10dc880a91", 413963, 313),
@@ -1851,6 +1854,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("garyukeiba", "Demo", "Garyu Keiba Auto Demo", "276bee761e48a6fd709df77d5c2f60dd", 393175, Common::JA_JPN, 313),
 
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 394984, Common::JA_JPN, 311),
+	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 392276, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush2", "Demo", "GOAL RUSH!! DEMO", "276bee761e48a6fd709df77d5c2f60dd", 397408, Common::JA_JPN, 313),
 
 	// Mac also has an 8-bit color binary. Win is limited to 8-bit color in D3.
@@ -1865,6 +1869,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("hellcab", "",   "HELLCAB.EXE", "65d06b5fef155a2473434571aff5bc29", 370006, 310),
 	WINGAME1_l("hellcab", "", "HELLCAB.EXE", "01f98729644d862e15d67ee08ecc302c", 370094, Common::ES_ESP, 310),
 	WINGAME1_l("hellcab", "", "HELLCAB.EXE", "bacbb3b51e553de98f1db77f50450d88", 369982, Common::PT_BRA, 310),
+	MACDEMO1_l("hellcab", "Demo",   "HELLCAB Demo", "f5277c53bacd27936158dd3867e587e2", 389980, Common::JA_JPN, 311),
 
 	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794267, Common::JA_JPN, 311),
 
@@ -2060,11 +2065,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ピーターと狼
 	// One gameplay mode supports General MIDI
 	MACDEMO1_l("mipeterwolf", "Demo", "Peter and the Wolf", "f5277c53bacd27936158dd3867e587e2", 394909, Common::JA_JPN, 311),
+	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9juj9b8hb1942h", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
+	// Decomposed variant of the above filename
+	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9j5ete2cvkb7839i", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
 
 	MACDEMO1("mmmozart", "Sampler", "Mozart Sampler", "67fb0a6c1b3c11367b06e2cf30c9ced9", 1700540, 311),
 	MACDEMO1("mmschubert", "Sampler", "Schubert Sampler", "52890d7211ae1258734c612f636da2c0", 1703468, 311),
 
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391613, Common::JA_JPN, 311),
+	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391334, Common::JA_JPN, 311),
 
 	// Demos from The Computer Buyer Collection Volume 1 - Sep 1995
 	WINDEMO1t("msarcade",	   "Demo",		"ARCADE.EXE",   "a7f83e35541a2952cd4848becee98c1d", 1843614, 310),
@@ -2220,7 +2229,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("schoolworld", "Capture", "CAPTURE",			 "f5277c53bacd27936158dd3867e587e2", 1652464, Common::JA_JPN, 311),
 	MACGAME1_l("schoolworld", "Breed",	 "BREED",			 "f5277c53bacd27936158dd3867e587e2", 545280, Common::JA_JPN, 311),
-	MACDEMO1_l("schoolworld", "Demo",	 "SchoolWorld-DEMO", "f5277c53bacd27936158dd3867e587e2", 4046783, Common::JA_JPN, 311),
+	MACDEMO1_l("schoolworld", "Demo",	 "SchoolWorld-DEMO", "f5277c53bacd27936158dd3867e587e2", 4046527, Common::JA_JPN, 311),
 	WINGAME1_l("schoolworld", "Capture", "CAPTURE.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375279, Common::JA_JPN, 310),
 	WINGAME1_l("schoolworld", "Breed",	 "BREED.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375277, Common::JA_JPN, 310),
 
@@ -2242,6 +2251,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("sculpt4d",   "Using Demo", "UsingSculpt1.0",    "2ce360c9ea2da80a2c6d1040b0ad92dd", 383636, 313),
 
 	MACGAME1("sfk", "", "More SFK Products!", "1ae45c23586b41997ba52e2e7c771c4c", 377923, 310),
+
+	MACGAME1_l("directorshokai", "", "Director Movie", "276bee761e48a6fd709df77d5c2f60dd", 395882, Common::JA_JPN, 313),
 
 	MACGAME1("shiningflower", "", "Shining Flower", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
 	MACGAME1("shiningflower", "Auto", "Shining Flower (Auto)", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
@@ -2329,6 +2340,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("vcb", "", "Virtual Cocktail Bar", "f5277c53bacd27936158dd3867e587e2", 393446, Common::JA_JPN, 311),
 
 	MACDEMO1_l("vcbe", "Demo", "VirtualCocktailBar Exective", "f5277c53bacd27936158dd3867e587e2", 394261, Common::JA_JPN, 311),
+	MACDEMO1_l("vcbe", "Demo", "VirtualCocktailBar Exective", "f5277c53bacd27936158dd3867e587e2", 393996, Common::JA_JPN, 311),
 	MACGAME1_l("vcbe", "", "VirtualCocktailBarExecutive", "f5277c53bacd27936158dd3867e587e2", 394073, Common::JA_JPN, 311),
 
 	// Original filenames are DreamLight® Verttice™ 1.0 and DreamLight® Verttice™ 1.1
@@ -6630,7 +6642,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("immorale", "Demo", "Helmut Newton & Eri Ishida", "f5277c53bacd27936158dd3867e587e2", 390241, Common::JA_JPN, 311),
 	MACGAME1("isswim98", "",	   "Inside Sports Swimsuit 98",	 "4577dd3eadc467a986ab172d90871b22", 304156, 404),
 	WINGAME1("isswim98", "",	   "ISSWIM98.EXE",				 "24de9da2e30d07ba98d2fd6259afd16c", 753801, 404),
+
+	// Photography disc published by The One Corporation
+	MACDEMO1_l("labyrinth",		   "Demonstration Version",		 "Labyrinth_Demo", "276bee761e48a6fd709df77d5c2f60dd", 395949, Common::JA_JPN, 313),
+
 	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 548017, Common::JA_JPN, 311),
+	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 547752, Common::JA_JPN, 311),
 
 	// Touring Engine Ver 1.00. Original filename is MacPlaymate™
 	MACGAME1("macplaymate1", "",  "MacPlaymate",	 "4bdad2173d739dcaca1241afe88c7aef", 33851, 0),
