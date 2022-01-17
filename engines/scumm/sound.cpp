@@ -54,10 +54,11 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 };
 
 
-Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
+Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioTracks)
 	:
 	_vm(parent),
 	_mixer(mixer),
+	_useReplacementAudioTracks(useReplacementAudioTracks),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
 	_sfxFilename(),
@@ -180,12 +181,47 @@ void Sound::processSoundQueues() {
 	_soundQuePos = 0;
 }
 
+bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
+	trackNr = -1;
+	numLoops = -1;
+
+	if (_vm->_game.id == GID_LOOM) {
+		if (soundID >= 25 && soundID <= 32) {
+			// Normal track. There is no Ouverture, so the first
+			// track maps to audio track 2.
+			trackNr = soundID - 23;
+		} else if (soundID >= 56 && soundID <= 64) {
+			// Rolad track. 56 is the Ouverture, which maps to audio
+			// track 1.
+			trackNr = soundID - 55;
+		}
+
+		// The Ouverture and the dragon abduction don't loop
+		if (trackNr == 1 || trackNr == 6)
+			numLoops = 1;
+	}
+
+	if (trackNr != -1 && !_vm->existExtractedCDAudioFiles(trackNr))
+		trackNr = -1;
+
+	return trackNr != -1;
+}
+
 void Sound::playSound(int soundID) {
 	byte *ptr;
 	byte *sound;
 	Audio::AudioStream *stream;
 	int size = -1;
 	int rate;
+
+	if (_useReplacementAudioTracks) {
+		int trackNr, numLoops;
+		if (getReplacementAudioTrack(soundID, trackNr, numLoops)) {
+			_currentCDSound = soundID;
+			g_system->getAudioCDManager()->play(trackNr, numLoops, 0, 0, true);
+			return;
+		}
+	}
 
 	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
 		if (soundID >= 13 && soundID <= 32) {
@@ -1137,6 +1173,9 @@ static void cd_timer_handler(void *refCon) {
 }
 
 void Sound::startCDTimer() {
+	if (_useReplacementAudioTracks)
+		return;
+
 	// This timer interval is based on two scenes: The Monkey Island 1
 	// intro, and the scene in Loom CD where Chaos appears. In both cases
 	// the game plays the scene as two separate sounds, even though both
@@ -1152,6 +1191,9 @@ void Sound::startCDTimer() {
 }
 
 void Sound::stopCDTimer() {
+	if (_useReplacementAudioTracks)
+		return;
+
 	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
 }
 

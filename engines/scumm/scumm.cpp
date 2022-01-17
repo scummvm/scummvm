@@ -1538,11 +1538,21 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_system->getAudioCDManager()->open();
 	}
 
+	bool useReplacementAudioTracks = false;
+
+	if (_game.id == GID_LOOM) {
+		useReplacementAudioTracks = (_game.platform == Common::kPlatformDOS && _game.version == 3) || _game.platform == Common::kPlatformMacintosh;
+	}
+
+	if (useReplacementAudioTracks) {
+		_system->getAudioCDManager()->open();
+	}
+
 	// Create the sound manager
 	if (_game.heversion > 0)
 		_sound = new SoundHE(this, _mixer);
 	else
-		_sound = new Sound(this, _mixer);
+		_sound = new Sound(this, _mixer, useReplacementAudioTracks);
 
 	// Setup the music engine
 	setupMusic(_game.midi, macInstrumentFile);

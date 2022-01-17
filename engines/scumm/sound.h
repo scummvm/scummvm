@@ -91,6 +91,7 @@ protected:
 	Audio::SoundHandle *_loomSteamCDAudioHandle;
 	bool _isLoomSteam;
 	AudioCDManager::Status _loomSteamCD;
+	bool _useReplacementAudioTracks;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -102,7 +103,7 @@ public:
 	MidiDriverFlags _musicType;
 
 public:
-	Sound(ScummEngine *parent, Audio::Mixer *mixer);
+	Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioTracks);
 	~Sound() override;
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
@@ -145,6 +146,8 @@ protected:
 	bool isSoundInQueue(int sound) const;
 
 	virtual void processSoundQueues();
+
+	bool getReplacementAudioTrack(int soundID, int &trackNumber, int &numLoops);
 };
 
 
