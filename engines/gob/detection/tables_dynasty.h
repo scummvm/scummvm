@@ -96,6 +96,34 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{
+	{
+		"dynasty",
+		"",
+		AD_ENTRY1s("intro.stk", "a4a50c70d001b4398b174f1bff1987f6", 2607984),
+		IT_ITA,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeDynasty,
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"dynasty",
+		"",
+		AD_ENTRY1s("intro.stk", "4bfcc878f2fb2f0809d1f257e1180cf1", 2857990),
+		ES_ESP,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeDynasty,
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // -- Demos --
 
