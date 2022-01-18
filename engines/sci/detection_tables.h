@@ -912,7 +912,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO_GK1_CD_WIN },
 
 	// Gabriel Knight - German DOS CD (from Tobis87)
-	// SCI interpreter version 2.000.000
+	// SCI interpreter version 2.000.000, VERSION file reports "1.000.000, April 25, 1994"
 	{"gk1", "CD", {
 		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
