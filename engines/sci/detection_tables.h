@@ -838,7 +838,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK1_FLOPPY },
 
-	// Gabriel Knight - English DOS Floppy (supplied my markcoolio in bug report #4269)
+	// Gabriel Knight - English DOS Floppy (supplied by markcoolio in bug report #4269)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
 		{"resource.map", 0, "65e8c14092e4c9b3b3538b7602c8c5ec", 10783},
@@ -854,7 +854,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK1_FLOPPY },
 
-	// Gabriel Knight - German DOS Floppy (supplied my markcoolio in bug report #4268)
+	// Gabriel Knight - German DOS Floppy (supplied by markcoolio in bug report #4268)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
 		{"resource.map", 0, "ad6508b0296b25c07b1f58828dc33696", 10789},
@@ -862,7 +862,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK1_FLOPPY },
 
-	// Gabriel Knight - French DOS Floppy (supplied my kervala in bug report #6281)
+	// Gabriel Knight - French DOS Floppy (supplied by kervala in bug report #6281)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
 		{"resource.map", 0, "236e36cc847cdeafdd5e5fa8cba916ed", 10801},
