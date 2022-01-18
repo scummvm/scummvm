@@ -50,11 +50,19 @@ static const MovLine CHEWY_MPKT1[2] = {
 };
 
 void Room17::entry() {
+	if (!_G(spieler).R17EnergieOut) {
+		det->start_detail(1, 255, 0);
+		for (int i = 0; i < 3; ++i)
+			det->start_detail(i, 255, 0);
+	}
+
 	plot_seil();
+
 	if (_G(spieler).R17GitterWeg)
 		det->hide_static_spr(5);
 	if (_G(spieler).R17DoorKommand)
 		det->show_static_spr(7);
+
 	if (_G(spieler).R17Location == 1) {
 		flags.ZoomMov = true;
 		_G(zoom_mov_fak) = 3;
@@ -73,6 +81,7 @@ void Room17::entry() {
 		_G(zoom_horizont) = 0;
 		_G(spieler).room_e_obj[36].Attribut = 255;
 		_G(spieler).room_e_obj[38].Attribut = 255;
+
 		if (_G(spieler).R6DoorLeftF)
 			_G(spieler).room_e_obj[39].Attribut = AUSGANG_RECHTS;
 		else
@@ -89,6 +98,7 @@ void Room17::xit() {
 		_G(spieler).room_e_obj[36].Attribut = AUSGANG_OBEN;
 	else
 		_G(spieler).room_e_obj[36].Attribut = 255;
+
 	_G(spieler).room_e_obj[35].Attribut = 255;
 	_G(spieler).room_e_obj[39].Attribut = 255;
 	_G(spieler).room_e_obj[38].Attribut = AUSGANG_OBEN;
@@ -123,10 +133,13 @@ void Room17::gedAction(int index) {
 
 int16 Room17::use_seil() {
 	int16 action_flag = false;
+
 	if (!flags.AutoAniPlay) {
 		if (_G(spieler).R17Location == 1) {
 			if (is_cur_inventar(SEIL_INV)) {
 				action_flag = true;
+				hide_cur();
+
 				del_inventar(_G(spieler).AkInvent);
 				flags.AutoAniPlay = true;
 				auto_move(5, P_CHEWY);
@@ -137,10 +150,14 @@ int16 Room17::use_seil() {
 				plot_seil();
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				flags.AutoAniPlay = false;
-				start_aad(119, -1);
+				start_spz(5, 255, 0, 0);
+				start_aad_wait(119, -1);
+
+				show_cur();
 			}
 		}
 	}
+
 	return action_flag;
 }
 
@@ -161,6 +178,7 @@ void Room17::kletter_down() {
 	_G(zoom_mov_fak) = 1;
 	_G(spieler).ScrollyStep = 2;
 	room->set_zoom(32);
+	spieler_mi->Vorschub = 8;
 	_G(zoom_horizont) = 399;
 	_G(auto_obj) = 1;
 	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines,
@@ -186,36 +204,38 @@ void Room17::kletter_up() {
 
 void Room17::calc_seil() {
 	if (_G(spieler).R17Seil) {
-		if (_G(spieler).R17Location != 2) {
-			if (!flags.AutoAniPlay) {
-				if (!_G(spieler).inv_cur) {
-					close_door();
-					flags.AutoAniPlay = true;
-					mov_phasen[CHEWY_OBJ].AtsText = 0;
-					mov_phasen[CHEWY_OBJ].Lines = 2;
-					mov_phasen[CHEWY_OBJ].Repeat = 1;
-					mov_phasen[CHEWY_OBJ].ZoomFak = 0;
-					auto_mov_obj[CHEWY_OBJ].Id = AUTO_OBJ0;
-					auto_mov_vector[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
-					auto_mov_obj[CHEWY_OBJ].Mode = true;
-					if (_G(spieler).R17Location == 1) {
-						kletter_down();
-						_G(spieler).R17Location = 3;
-					} else if (_G(spieler).R17Location == 3) {
-						kletter_up();
-						_G(spieler).R17Location = 1;
-					}
-					menu_item = CUR_WALK;
-					cursor_wahl(menu_item);
-					wait_auto_obj(CHEWY_OBJ);
-					set_person_spr(P_LEFT, P_CHEWY);
-					_G(spieler).ScrollyStep = 1;
-					_G(spieler).PersonHide[P_CHEWY] = false;
-					flags.AutoAniPlay = false;
-					_G(auto_obj) = 0;
-					xit();
-				}
+		if (_G(spieler).R17Location == 2) {
+			start_aad_wait(619, -1);
+		} else if (!flags.AutoAniPlay && !_G(spieler).inv_cur) {
+			close_door();
+			flags.AutoAniPlay = true;
+			mov_phasen[CHEWY_OBJ].AtsText = 0;
+			mov_phasen[CHEWY_OBJ].Lines = 2;
+			mov_phasen[CHEWY_OBJ].Repeat = 1;
+			mov_phasen[CHEWY_OBJ].ZoomFak = 0;
+			auto_mov_obj[CHEWY_OBJ].Id = AUTO_OBJ0;
+			auto_mov_vector[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
+			auto_mov_obj[CHEWY_OBJ].Mode = true;
+			hide_cur();
+
+			if (_G(spieler).R17Location == 1) {
+				kletter_down();
+				_G(spieler).R17Location = 3;
+			} else if (_G(spieler).R17Location == 3) {
+				kletter_up();
+				_G(spieler).R17Location = 1;
 			}
+
+			menu_item = CUR_WALK;
+			cursor_wahl(menu_item);
+			wait_auto_obj(CHEWY_OBJ);
+			show_cur();
+			set_person_spr(P_LEFT, P_CHEWY);
+			_G(spieler).ScrollyStep = 1;
+			_G(spieler).PersonHide[P_CHEWY] = false;
+			flags.AutoAniPlay = false;
+			_G(auto_obj) = 0;
+			xit();
 		}
 	}
 }
@@ -223,6 +243,7 @@ void Room17::calc_seil() {
 void Room17::door_kommando(int16 mode) {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
+
 		if (!mode) {
 			if (!_G(spieler).R17DoorKommand) {
 				_G(spieler).room_e_obj[36].Attribut = AUSGANG_OBEN;
@@ -234,6 +255,7 @@ void Room17::door_kommando(int16 mode) {
 		} else {
 			close_door();
 		}
+
 		flags.AutoAniPlay = false;
 		atds->set_ats_str(144, _G(spieler).R17DoorKommand, ATS_DATEI);
 	}
@@ -243,45 +265,68 @@ void Room17::close_door() {
 	if (_G(spieler).R17DoorKommand) {
 		_G(spieler).room_e_obj[36].Attribut = 255;
 		_G(spieler).R17DoorKommand = false;
+		atds->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, 1);
 		det->hide_static_spr(7);
 		det->start_detail(4, 1, ANI_RUECK);
 	}
 }
 
 int16 Room17::energie_hebel() {
-	int16 dia_nr;
 	int16 action_flag = false;
+
+	hide_cur();
 	auto_move(7, P_CHEWY);
+
 	if (!_G(spieler).R17HebelOk) {
 		action_flag = true;
+
 		if (is_cur_inventar(BECHER_VOLL_INV)) {
+			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R17HebelOk = true;
-			dia_nr = 38;
-		} else
-			dia_nr = 37;
-		start_aad_wait(dia_nr, -1);
+			start_aad_wait(38, -1);
+		} else {
+			start_aad_wait(37, -1);
+		}
+
 	} else if (!_G(spieler).inv_cur) {
 		action_flag = true;
+
 		obj->calc_rsi_flip_flop(SIB_HEBEL_R17);
 		_G(spieler).R17EnergieOut ^= 1;
 		atds->set_ats_str(142, TXT_MARK_LOOK, _G(spieler).R17EnergieOut, ATS_DATEI);
 		det->play_sound(12, 0);
-		if (_G(spieler).R17EnergieOut)
+
+		if (!_G(spieler).R17EnergieOut) {
+			det->start_detail(1, 255, 0);
+
+			for (int i = 0; i < 3; ++i)
+				det->start_detail(i + 6, 255, 0);
+		}
+
+		atds->set_ats_str(142, 1, _G(spieler).R17EnergieOut ? 1 : 0);
+		atds->set_ats_str(140, 1, _G(spieler).R17EnergieOut ? 1 : 0);
+		det->play_sound(12, 0);
+
+		if (_G(spieler).R17EnergieOut) {
 			det->disable_sound(15, 0);
-		else {
+		} else {
 			det->enable_sound(15, 0);
 			det->play_sound(15, 0);
 		}
 	}
+
+	show_cur();
 	return action_flag;
 }
 
 int16 Room17::get_oel() {
 	int16 action_flag = false;
+	hide_cur();
+
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		auto_move(4, P_CHEWY);
-		start_spz(CH_EKEL, 3, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_EKEL, 3, ANI_VOR, P_CHEWY);
 		start_aad_wait(60, -1);
 	} else if (is_cur_inventar(BECHER_LEER_INV)) {
 		action_flag = true;
@@ -295,6 +340,7 @@ int16 Room17::get_oel() {
 		inventory_2_cur(BECHER_VOLL_INV);
 	}
 
+	show_cur();
 	return action_flag;
 }
 
