@@ -355,7 +355,7 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 void HypnoEngine::changeScreenMode(const Common::String &mode) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, mode.c_str());
 	if (mode == "640x480") {
-		if (_screenH == 640 && _screenH == 480)
+		if (_screenW == 640 && _screenH == 480)
 			return;
 
 		_screenW = 640;
@@ -372,7 +372,7 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface->setTransparentColor(_transparentColor);
 
 	} else if (mode == "320x200") {
-		if (_screenH == 320 && _screenH == 200)
+		if (_screenW == 320 && _screenH == 200)
 			return;
 
 		_screenW = 320;
