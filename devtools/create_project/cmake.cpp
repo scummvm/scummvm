@@ -29,12 +29,6 @@
 
 namespace CreateProjectTool {
 
-static std::string toUpper(const std::string &str) {
-	std::string res;
-	std::transform(str.begin(), str.end(), std::back_inserter(res), toupper);
-	return res;
-}
-
 CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
 	: ProjectProvider(global_warnings, project_warnings, version) {
 }

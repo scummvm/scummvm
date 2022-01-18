@@ -434,6 +434,14 @@ bool producesObjectFile(const std::string &fileName);
 std::string toString(int num);
 
 /**
+* Convert a string to uppercase
+*
+* @param str the source string
+* @return The string transformed to uppercase
+*/
+std::string toUpper(const std::string &str);
+
+/**
  * Returns a list of all files and directories in the specified
  * path.
  *

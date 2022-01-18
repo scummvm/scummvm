@@ -928,11 +928,8 @@ StringList getEngineDefines(const EngineDescList &engines) {
 	StringList result;
 
 	for (EngineDescList::const_iterator i = engines.begin(); i != engines.end(); ++i) {
-		if (i->enable) {
-			std::string define = "ENABLE_" + i->name;
-			std::transform(define.begin(), define.end(), define.begin(), toupper);
-			result.push_back(define);
-		}
+		if (i->enable)
+			result.push_back("ENABLE_" + CreateProjectTool::toUpper(i->name));
 	}
 
 	return result;
@@ -1329,6 +1326,12 @@ std::string toString(int num) {
 	std::ostringstream os;
 	os << num;
 	return os.str();
+}
+
+std::string toUpper(const std::string &str) {
+	std::string res;
+	std::transform(str.begin(), str.end(), std::back_inserter(res), toupper);
+	return res;
 }
 
 /**
@@ -2033,11 +2036,8 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	if (forDetection) {
 		std::string::size_type p = moduleRootDir.find('/');
 		std::string engineName = moduleRootDir.substr(p + 1);
-		std::string engineNameUpper;
+		std::string engineNameUpper = toUpper(engineName);
 
-		for (std::string::const_iterator i = engineName.begin(); i != engineName.end(); ++i) {
-			engineNameUpper += toupper(*i);
-		}
 		for (;;) {
 			std::getline(moduleMk, line);
 
@@ -2152,8 +2152,7 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 		}
 
 		// Make the engine name all uppercase.
-		std::string engineName;
-		std::transform(i->name.begin(), i->name.end(), std::back_inserter(engineName), toupper);
+		const std::string engineName = toUpper(i->name);
 
 		enginePluginsTable << "#if PLUGIN_ENABLED_STATIC(" << engineName << ")\n"
 		                   << "LINK_PLUGIN(" << engineName << ")\n"

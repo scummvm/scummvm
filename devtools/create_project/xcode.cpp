@@ -1304,13 +1304,12 @@ std::string XcodeProvider::md5(std::string key) {
 #endif
 
 std::string XcodeProvider::newHash() const {
-	std::string hash = createUUID();
+	std::string hash = toUpper(createUUID());
 
 	// Remove { and - from UUID and resize to 96-bits uppercase hex string
 	hash.erase(remove_if(hash.begin(), hash.end(), isSeparator), hash.end());
 
 	hash.resize(24);
-	std::transform(hash.begin(), hash.end(), hash.begin(), toupper);
 
 	return hash;
 }
