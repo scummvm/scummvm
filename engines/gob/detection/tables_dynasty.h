@@ -99,13 +99,27 @@
 
 // -- Demos --
 
-{
+{	// Non-interactive
 	{
 		"dynasty",
 		"Demo",
 		AD_ENTRY1s("intro.stk", "464538a17ed39755d7f1ba9c751af1bd", 1847864),
-		EN_USA,
-		kPlatformDOS,
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kGameTypeDynasty,
+	kFeatures640x480,
+	0, 0, 0
+},
+{	// Non-interactive
+	{
+		"dynasty",
+		"Demo",
+		AD_ENTRY1s("intro.stk", "e49340fe5078e38e9f9290dfb75f98a5", 1348),
+		EN_ANY,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -118,7 +132,7 @@
 		"dynasty",
 		"Demo",
 		AD_ENTRY1s("lda1.stk", "0e56a899357cbc0bf503260fd2dd634e", 15032774),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
