@@ -59,6 +59,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_vm(parent),
 	_mixer(mixer),
 	_useReplacementAudioTracks(useReplacementAudioTracks),
+	_scummTicks(0),
+	_musicTimer(0),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
 	_sfxFilename(),
@@ -107,6 +109,21 @@ Sound::~Sound() {
 	free(_offsetTable);
 	delete _loomSteamCDAudioHandle;
 	delete _talkChannelHandle;
+}
+
+void Sound::updateMusicTimer(int ticks) {
+	_scummTicks += ticks;
+
+	// TODO: For now, this is hard-coded for Loom's Overture. When playing
+	// the original song, the timer is apparently based on the MIDI tempo
+	// of it. Therefore, it may be necessary to adjust this in the future.
+
+	// We approximate the length of the Overture to 2.5 minutes, or 9000
+	// SCUMM ticks. (One tick is 1/60th of a second.)
+
+	// At the end of the song, the timer should be about 280.
+
+	_musicTimer = (280 * _scummTicks) / 9000;
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
@@ -187,16 +204,16 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 
 	if (_vm->_game.id == GID_LOOM) {
 		if (soundID >= 25 && soundID <= 32) {
-			// Normal track. There is no Ouverture, so the first
+			// Normal track. There is no Overture, so the first
 			// track maps to audio track 2.
 			trackNr = soundID - 23;
 		} else if (soundID >= 56 && soundID <= 64) {
-			// Rolad track. 56 is the Ouverture, which maps to audio
+			// Rolad track. 56 is the Overture, which maps to audio
 			// track 1.
 			trackNr = soundID - 55;
 		}
 
-		// The Ouverture and the dragon abduction don't loop
+		// The Overture and the dragon abduction don't loop
 		if (trackNr == 1 || trackNr == 6)
 			numLoops = 1;
 	}
@@ -218,6 +235,8 @@ void Sound::playSound(int soundID) {
 		int trackNr, numLoops;
 		if (getReplacementAudioTrack(soundID, trackNr, numLoops)) {
 			_currentCDSound = soundID;
+			_scummTicks = 0;
+			_musicTimer = 0;
 			g_system->getAudioCDManager()->play(trackNr, numLoops, 0, 0, true);
 			return;
 		}
@@ -917,6 +936,8 @@ void Sound::stopSound(int sound) {
 
 	if (sound != 0 && sound == _currentCDSound) {
 		_currentCDSound = 0;
+		_scummTicks = 0;
+		_musicTimer = 0;
 		stopCD();
 		stopCDTimer();
 	}

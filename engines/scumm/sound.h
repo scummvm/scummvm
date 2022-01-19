@@ -92,6 +92,8 @@ protected:
 	bool _isLoomSteam;
 	AudioCDManager::Status _loomSteamCD;
 	bool _useReplacementAudioTracks;
+	int _musicTimer;
+	uint32 _scummTicks;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -135,6 +137,10 @@ public:
 	void updateCD();
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
+
+	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
+	void updateMusicTimer(int ticks);
+	int getMusicTimer() const { return _musicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
