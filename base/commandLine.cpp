@@ -144,6 +144,7 @@ static const char HELP_STRING[] =
 	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
+	"  --screenshots=PATH       Path to where screenshots are saved\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
@@ -279,6 +280,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("cdrom", 0);
 
 	ConfMan.registerDefault("enable_unsupported_game_warning", true);
+
+	ConfMan.registerDefault("screenshotspath", ".");
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
@@ -792,6 +795,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 					usage("Non-existent extra path '%s'", option);
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
+				}
+			END_OPTION
+
+			DO_LONG_OPTION("screenshotspath")
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent screenshots path '%s'", option);
+				} else if (!path.isWritable()) {
+					usage("Non-writable screenshots path '%s'", option);
 				}
 			END_OPTION
 
