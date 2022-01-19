@@ -89,8 +89,8 @@ extern int HYPNO_MIS_lex();
 extern int HYPNO_MIS_parse();
 extern int yylineno;
 
-Common::Array<uint32> *smenu_idx;
-Hypno::HotspotsStack *stack;
+Common::Array<uint32> *smenu_idx = nullptr;
+Hypno::HotspotsStack *stack = nullptr;
 Hypno::Talk *talk_action = nullptr;
 
 void HYPNO_MIS_xerror(const char *str) {
@@ -584,12 +584,12 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    73,    73,    76,    83,    84,    88,   104,   110,   125,
-     131,   137,   138,   145,   152,   158,   164,   170,   177,   184,
-     191,   198,   204,   210,   213,   219,   225,   228,   229,   232,
-     239,   242,   243,   247,   250,   253,   257,   261,   266,   272,
-     273,   279,   285,   291,   298,   305,   311,   316,   317,   320,
-     321,   324,   325,   328,   329
+       0,    73,    73,    76,    87,    88,    92,   108,   114,   129,
+     135,   141,   142,   149,   156,   162,   168,   174,   181,   188,
+     195,   202,   208,   214,   217,   223,   229,   232,   233,   236,
+     243,   246,   247,   251,   254,   257,   261,   265,   270,   276,
+     277,   283,   289,   295,   302,   309,   315,   320,   321,   324,
+     325,   328,   329,   332,   333
 };
 #endif
 
@@ -1231,25 +1231,29 @@ yyreduce:
   case 3: /* init: %empty  */
 #line 76 "engines/hypno/grammar_mis.y"
       { 
+	if (smenu_idx)
+		delete smenu_idx;
 	smenu_idx = new Common::Array<uint32>();
 	smenu_idx->push_back(-1);
+	if (stack)
+		delete stack;
 	stack = new Hypno::HotspotsStack();
 	stack->push_back(new Hotspots());
 }
-#line 1240 "engines/hypno/grammar_mis.cpp"
+#line 1244 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 6: /* line: MENUTOK mflag mflag mflag  */
-#line 88 "engines/hypno/grammar_mis.y"
+#line 92 "engines/hypno/grammar_mis.y"
                                 {
-		Hotspot *hot = new Hotspot(MakeMenu); 
+		Hotspot hot(MakeMenu); 
 		debugC(1, kHypnoDebugParser, "MENU %s %s", (yyvsp[-2].s), (yyvsp[-1].s));
-		hot->flags[0] = (yyvsp[-2].s);
-		hot->flags[1] = (yyvsp[-1].s);
-		hot->flags[2] = (yyvsp[0].s);
+		hot.flags[0] = (yyvsp[-2].s);
+		hot.flags[1] = (yyvsp[-1].s);
+		hot.flags[2] = (yyvsp[0].s);
 
 		Hotspots *cur = stack->back();
-		cur->push_back(*hot);
+		cur->push_back(hot);
 
 		// We don't care about menus, only hotspots
 		int idx = smenu_idx->back();
@@ -1257,22 +1261,22 @@ yyreduce:
 		smenu_idx->pop_back();
 		smenu_idx->push_back(idx);
 	}
-#line 1261 "engines/hypno/grammar_mis.cpp"
+#line 1265 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 7: /* line: HOTSTOK BBOXTOK NUM NUM NUM NUM  */
-#line 104 "engines/hypno/grammar_mis.y"
+#line 108 "engines/hypno/grammar_mis.y"
                                            {  
-		Hotspot *hot = new Hotspot(MakeHotspot, Common::Rect((yyvsp[-3].i), (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i))); 
-		debugC(1, kHypnoDebugParser, "HOTS %d.", hot->type);
+		Hotspot hot(MakeHotspot, Common::Rect((yyvsp[-3].i), (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i))); 
+		debugC(1, kHypnoDebugParser, "HOTS %d.", hot.type);
 		Hotspots *cur = stack->back();
-		cur->push_back(*hot); 
+		cur->push_back(hot); 
 	}
-#line 1272 "engines/hypno/grammar_mis.cpp"
+#line 1276 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 8: /* line: SMENTOK  */
-#line 110 "engines/hypno/grammar_mis.y"
+#line 114 "engines/hypno/grammar_mis.y"
                    { 
 		// This should always point to a hotspot
 		int idx = smenu_idx->back();
@@ -1288,39 +1292,39 @@ yyreduce:
 		stack->push_back(hot->smenu);
 		debugC(1, kHypnoDebugParser, "SUBMENU");
 	}
-#line 1292 "engines/hypno/grammar_mis.cpp"
+#line 1296 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 9: /* line: ESCPTOK  */
-#line 125 "engines/hypno/grammar_mis.y"
+#line 129 "engines/hypno/grammar_mis.y"
                     {
 		Escape *a = new Escape();
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
-#line 1303 "engines/hypno/grammar_mis.cpp"
+#line 1307 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 10: /* line: TIMETOK NUM mflag  */
-#line 131 "engines/hypno/grammar_mis.y"
+#line 135 "engines/hypno/grammar_mis.y"
                               { 
 		Timer *a = new Timer((yyvsp[-1].i));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "TIME %d", (yyvsp[-1].i)); }
-#line 1314 "engines/hypno/grammar_mis.cpp"
+#line 1318 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 11: /* line: SWPTTOK NUM  */
-#line 137 "engines/hypno/grammar_mis.y"
+#line 141 "engines/hypno/grammar_mis.y"
                        { debugC(1, kHypnoDebugParser, "SWPT %d", (yyvsp[0].i)); }
-#line 1320 "engines/hypno/grammar_mis.cpp"
+#line 1324 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 12: /* line: BACKTOK FILENAME NUM NUM gsswitch flag flag  */
-#line 138 "engines/hypno/grammar_mis.y"
+#line 142 "engines/hypno/grammar_mis.y"
                                                        {
 		Background *a = new Background((yyvsp[-5].s), Common::Point((yyvsp[-4].i), (yyvsp[-3].i)), (yyvsp[-2].s), (yyvsp[-1].s), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
@@ -1328,11 +1332,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "BACK");
 	}
-#line 1332 "engines/hypno/grammar_mis.cpp"
+#line 1336 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 13: /* line: GLOBTOK GSSWITCH NAME  */
-#line 145 "engines/hypno/grammar_mis.y"
+#line 149 "engines/hypno/grammar_mis.y"
                                   { 
 		Global *a = new Global((yyvsp[-1].s), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
@@ -1340,44 +1344,44 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "GLOB"); 
 	}
-#line 1344 "engines/hypno/grammar_mis.cpp"
+#line 1348 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 14: /* line: AMBITOK FILENAME NUM NUM flag  */
-#line 152 "engines/hypno/grammar_mis.y"
+#line 156 "engines/hypno/grammar_mis.y"
                                          { 
 		Ambient *a = new Ambient((yyvsp[-3].s), Common::Point((yyvsp[-2].i), (yyvsp[-1].i)), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);			
 		debugC(1, kHypnoDebugParser, "AMBI %d %d", (yyvsp[-2].i), (yyvsp[-1].i)); }
-#line 1355 "engines/hypno/grammar_mis.cpp"
+#line 1359 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 15: /* line: PLAYTOK FILENAME NUM NUM gsswitch flag  */
-#line 158 "engines/hypno/grammar_mis.y"
+#line 162 "engines/hypno/grammar_mis.y"
                                                   { 
 		Play *a = new Play((yyvsp[-4].s), Common::Point((yyvsp[-3].i), (yyvsp[-2].i)), (yyvsp[-1].s), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "PLAY %s.", (yyvsp[-4].s)); }
-#line 1366 "engines/hypno/grammar_mis.cpp"
+#line 1370 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 16: /* line: OVERTOK FILENAME NUM NUM flag  */
-#line 164 "engines/hypno/grammar_mis.y"
+#line 168 "engines/hypno/grammar_mis.y"
                                          { 
 		Overlay *a = new Overlay((yyvsp[-3].s), Common::Point((yyvsp[-2].i), (yyvsp[-1].i)), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
-#line 1377 "engines/hypno/grammar_mis.cpp"
+#line 1381 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 17: /* line: PALETOK FILENAME  */
-#line 170 "engines/hypno/grammar_mis.y"
+#line 174 "engines/hypno/grammar_mis.y"
                             {
 		Palette *a = new Palette((yyvsp[0].s));
 		Hotspots *cur = stack->back();
@@ -1385,11 +1389,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
 	}
-#line 1389 "engines/hypno/grammar_mis.cpp"
+#line 1393 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 18: /* line: INTRTOK FILENAME NUM NUM  */
-#line 177 "engines/hypno/grammar_mis.y"
+#line 181 "engines/hypno/grammar_mis.y"
                                     { 
 		Intro *a = new Intro(Common::String("cine/") + (yyvsp[-2].s));
 		Hotspots *cur = stack->back();
@@ -1397,11 +1401,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); 
 	}
-#line 1401 "engines/hypno/grammar_mis.cpp"
+#line 1405 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 19: /* line: INTRTOK FILENAME  */
-#line 184 "engines/hypno/grammar_mis.y"
+#line 188 "engines/hypno/grammar_mis.y"
                             { 
 		Intro *a = new Intro(Common::String("cine/") + (yyvsp[0].s));
 		Hotspots *cur = stack->back();
@@ -1409,11 +1413,11 @@ yyreduce:
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s", (yyvsp[0].s)); 
 	}
-#line 1413 "engines/hypno/grammar_mis.cpp"
+#line 1417 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 20: /* line: CUTSTOK FILENAME  */
-#line 191 "engines/hypno/grammar_mis.y"
+#line 195 "engines/hypno/grammar_mis.y"
                             { 
 		Cutscene *a = new Cutscene((yyvsp[0].s));
 		Hotspots *cur = stack->back();
@@ -1421,197 +1425,197 @@ yyreduce:
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "CUTS %s", (yyvsp[0].s)); 
 	}
-#line 1425 "engines/hypno/grammar_mis.cpp"
+#line 1429 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 21: /* line: WALNTOK FILENAME NUM NUM gsswitch flag  */
-#line 198 "engines/hypno/grammar_mis.y"
+#line 202 "engines/hypno/grammar_mis.y"
                                                    { 
 		WalN *a = new WalN((yyvsp[-5].s), (yyvsp[-4].s), Common::Point((yyvsp[-3].i), (yyvsp[-2].i)), (yyvsp[-1].s), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);		  
 		debugC(1, kHypnoDebugParser, "WALN %s %d %d", (yyvsp[-4].s), (yyvsp[-3].i), (yyvsp[-2].i)); }
-#line 1436 "engines/hypno/grammar_mis.cpp"
+#line 1440 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 22: /* line: MICETOK FILENAME NUM  */
-#line 204 "engines/hypno/grammar_mis.y"
+#line 208 "engines/hypno/grammar_mis.y"
                                 {
 		Mice *a = new Mice((yyvsp[-1].s), (yyvsp[0].i)-1);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 	}
-#line 1447 "engines/hypno/grammar_mis.cpp"
+#line 1451 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 23: /* line: MPTRTOK FILENAME NUM NUM NUM NUM NUM  */
-#line 210 "engines/hypno/grammar_mis.y"
+#line 214 "engines/hypno/grammar_mis.y"
                                                 {
 		debugC(1, kHypnoDebugParser, "MPTR %s %d %d %d %d %d", (yyvsp[-5].s), (yyvsp[-4].i), (yyvsp[-3].i), (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i));
 	}
-#line 1455 "engines/hypno/grammar_mis.cpp"
+#line 1459 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 24: /* line: TALKTOK alloctalk talk  */
-#line 213 "engines/hypno/grammar_mis.y"
+#line 217 "engines/hypno/grammar_mis.y"
                                   { 
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(talk_action);
 		talk_action = nullptr;
 		debugC(1, kHypnoDebugParser, "TALK"); }
-#line 1466 "engines/hypno/grammar_mis.cpp"
+#line 1470 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 25: /* line: ENDTOK anything RETTOK  */
-#line 219 "engines/hypno/grammar_mis.y"
+#line 223 "engines/hypno/grammar_mis.y"
                                   { 
 		debugC(1, kHypnoDebugParser, "explicit END");
 		g_parsedHots = stack->back();
 		stack->pop_back();
 		smenu_idx->pop_back();
 	}
-#line 1477 "engines/hypno/grammar_mis.cpp"
+#line 1481 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 26: /* line: RETTOK  */
-#line 225 "engines/hypno/grammar_mis.y"
+#line 229 "engines/hypno/grammar_mis.y"
                        { debugC(1, kHypnoDebugParser, "implicit END"); }
-#line 1483 "engines/hypno/grammar_mis.cpp"
+#line 1487 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 29: /* alloctalk: %empty  */
-#line 232 "engines/hypno/grammar_mis.y"
+#line 236 "engines/hypno/grammar_mis.y"
            { 
 	assert(talk_action == nullptr);
 	talk_action = new Talk();
 	talk_action->escape = false;
 	talk_action->active = true; 
 }
-#line 1494 "engines/hypno/grammar_mis.cpp"
+#line 1498 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 30: /* talk: INACTOK talk  */
-#line 239 "engines/hypno/grammar_mis.y"
+#line 243 "engines/hypno/grammar_mis.y"
                    {
 		talk_action->active = false; 
 		debugC(1, kHypnoDebugParser, "inactive"); }
-#line 1502 "engines/hypno/grammar_mis.cpp"
+#line 1506 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 31: /* talk: FDTOK talk  */
-#line 242 "engines/hypno/grammar_mis.y"
+#line 246 "engines/hypno/grammar_mis.y"
                      { debugC(1, kHypnoDebugParser, "inactive"); }
-#line 1508 "engines/hypno/grammar_mis.cpp"
+#line 1512 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 32: /* talk: BACKTOK FILENAME NUM NUM gsswitch flag  */
-#line 243 "engines/hypno/grammar_mis.y"
+#line 247 "engines/hypno/grammar_mis.y"
                                                  { 
 		talk_action->background = (yyvsp[-4].s);
 		talk_action->backgroundPos = Common::Point((yyvsp[-3].i), (yyvsp[-2].i));
 		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
-#line 1517 "engines/hypno/grammar_mis.cpp"
+#line 1521 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 33: /* talk: BOXXTOK NUM NUM  */
-#line 247 "engines/hypno/grammar_mis.y"
+#line 251 "engines/hypno/grammar_mis.y"
                           {
 		talk_action->boxPos = Common::Point((yyvsp[-1].i), (yyvsp[0].i)); 
 		debugC(1, kHypnoDebugParser, "BOXX %d %d", (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1525 "engines/hypno/grammar_mis.cpp"
+#line 1529 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 34: /* talk: ESCAPETOK  */
-#line 250 "engines/hypno/grammar_mis.y"
+#line 254 "engines/hypno/grammar_mis.y"
                     {
 		talk_action->escape = true; 
 		debugC(1, kHypnoDebugParser, "ESCAPE"); }
-#line 1533 "engines/hypno/grammar_mis.cpp"
+#line 1537 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 35: /* talk: SECONDTOK FILENAME NUM NUM flag  */
-#line 253 "engines/hypno/grammar_mis.y"
+#line 257 "engines/hypno/grammar_mis.y"
                                           {
 		talk_action->second = (yyvsp[-3].s);
 		talk_action->secondPos = Common::Point((yyvsp[-2].i), (yyvsp[-1].i)); 
 		debugC(1, kHypnoDebugParser, "SECOND %s %d %d '%s'", (yyvsp[-3].s), (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].s)); }
-#line 1542 "engines/hypno/grammar_mis.cpp"
+#line 1546 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 36: /* talk: INTROTOK FILENAME NUM NUM  */
-#line 257 "engines/hypno/grammar_mis.y"
+#line 261 "engines/hypno/grammar_mis.y"
                                     { 
 		talk_action->intro = (yyvsp[-2].s);
 		talk_action->introPos = Common::Point((yyvsp[-1].i), (yyvsp[0].i));
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1551 "engines/hypno/grammar_mis.cpp"
+#line 1555 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 37: /* talk: DEFAULTTOK FILENAME NUM NUM  */
-#line 261 "engines/hypno/grammar_mis.y"
+#line 265 "engines/hypno/grammar_mis.y"
                                       { 
 		// Unsure how this is different from second
 		talk_action->second = (yyvsp[-2].s);
 		talk_action->secondPos = Common::Point((yyvsp[-1].i), (yyvsp[0].i));
 		debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", (yyvsp[-2].s), (yyvsp[-1].i), (yyvsp[0].i)); }
-#line 1561 "engines/hypno/grammar_mis.cpp"
+#line 1565 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 38: /* talk: PG talk  */
-#line 266 "engines/hypno/grammar_mis.y"
+#line 270 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "G";
 		talk_cmd.path = (yyvsp[-1].s)+2;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1572 "engines/hypno/grammar_mis.cpp"
+#line 1576 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 39: /* talk: PH talk  */
-#line 272 "engines/hypno/grammar_mis.y"
+#line 276 "engines/hypno/grammar_mis.y"
                   { debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1578 "engines/hypno/grammar_mis.cpp"
+#line 1582 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 40: /* talk: PF talk  */
-#line 273 "engines/hypno/grammar_mis.y"
+#line 277 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "F";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1589 "engines/hypno/grammar_mis.cpp"
+#line 1593 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 41: /* talk: PA talk  */
-#line 279 "engines/hypno/grammar_mis.y"
+#line 283 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "A";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "|A%d", talk_cmd.num); }
-#line 1600 "engines/hypno/grammar_mis.cpp"
+#line 1604 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 42: /* talk: PD talk  */
-#line 285 "engines/hypno/grammar_mis.y"
+#line 289 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "D";
 		talk_cmd.num = atoi((yyvsp[-1].s)+2)-1;
 		talk_action->commands.push_back(talk_cmd); 
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1611 "engines/hypno/grammar_mis.cpp"
+#line 1615 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 43: /* talk: PP NUM NUM flag talk  */
-#line 291 "engines/hypno/grammar_mis.y"
+#line 295 "engines/hypno/grammar_mis.y"
                                { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "P";
@@ -1619,11 +1623,11 @@ yyreduce:
 		talk_cmd.position = Common::Point((yyvsp[-3].i), (yyvsp[-2].i));
 		talk_action->commands.push_back(talk_cmd);
 		debugC(1, kHypnoDebugParser, "%s %d %d '%s'", (yyvsp[-4].s), (yyvsp[-3].i), (yyvsp[-2].i), (yyvsp[-1].s)); }
-#line 1623 "engines/hypno/grammar_mis.cpp"
+#line 1627 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 44: /* talk: PI NUM NUM talk  */
-#line 298 "engines/hypno/grammar_mis.y"
+#line 302 "engines/hypno/grammar_mis.y"
                           { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "I";
@@ -1631,74 +1635,74 @@ yyreduce:
 		talk_cmd.position = Common::Point((yyvsp[-2].i), (yyvsp[-1].i));
 		talk_action->commands.push_back(talk_cmd);		  
 		debugC(1, kHypnoDebugParser, "%s %d %d", (yyvsp[-3].s), (yyvsp[-2].i), (yyvsp[-1].i)); }
-#line 1635 "engines/hypno/grammar_mis.cpp"
+#line 1639 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 45: /* talk: PS talk  */
-#line 305 "engines/hypno/grammar_mis.y"
+#line 309 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "S";
 		talk_cmd.variable = (yyvsp[-1].s)+2;
 		talk_action->commands.push_back(talk_cmd);
 		debugC(1, kHypnoDebugParser, "%s", (yyvsp[-1].s)); }
-#line 1646 "engines/hypno/grammar_mis.cpp"
+#line 1650 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 46: /* talk: PL talk  */
-#line 311 "engines/hypno/grammar_mis.y"
+#line 315 "engines/hypno/grammar_mis.y"
                   { 
 		TalkCommand talk_cmd;
 		talk_cmd.command = "L";
 		talk_action->commands.push_back(talk_cmd);
 		debugC(1, kHypnoDebugParser, "|L"); }
-#line 1656 "engines/hypno/grammar_mis.cpp"
+#line 1660 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 47: /* talk: PE  */
-#line 316 "engines/hypno/grammar_mis.y"
+#line 320 "engines/hypno/grammar_mis.y"
              { debugC(1, kHypnoDebugParser, "|E"); }
-#line 1662 "engines/hypno/grammar_mis.cpp"
+#line 1666 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 49: /* mflag: NAME  */
-#line 320 "engines/hypno/grammar_mis.y"
+#line 324 "engines/hypno/grammar_mis.y"
             { (yyval.s) = (yyvsp[0].s); }
-#line 1668 "engines/hypno/grammar_mis.cpp"
+#line 1672 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 50: /* mflag: %empty  */
-#line 321 "engines/hypno/grammar_mis.y"
+#line 325 "engines/hypno/grammar_mis.y"
                         { (yyval.s) = scumm_strdup(""); }
-#line 1674 "engines/hypno/grammar_mis.cpp"
+#line 1678 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 51: /* flag: FLAG  */
-#line 324 "engines/hypno/grammar_mis.y"
+#line 328 "engines/hypno/grammar_mis.y"
                         { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "flag: %s", (yyvsp[0].s)); }
-#line 1680 "engines/hypno/grammar_mis.cpp"
+#line 1684 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 52: /* flag: %empty  */
-#line 325 "engines/hypno/grammar_mis.y"
+#line 329 "engines/hypno/grammar_mis.y"
                         { (yyval.s) = scumm_strdup(""); }
-#line 1686 "engines/hypno/grammar_mis.cpp"
+#line 1690 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 53: /* gsswitch: GSSWITCH  */
-#line 328 "engines/hypno/grammar_mis.y"
+#line 332 "engines/hypno/grammar_mis.y"
                         { (yyval.s) = (yyvsp[0].s); debugC(1, kHypnoDebugParser, "switch %s", (yyvsp[0].s)); }
-#line 1692 "engines/hypno/grammar_mis.cpp"
+#line 1696 "engines/hypno/grammar_mis.cpp"
     break;
 
   case 54: /* gsswitch: %empty  */
-#line 329 "engines/hypno/grammar_mis.y"
+#line 333 "engines/hypno/grammar_mis.y"
                         { (yyval.s) = scumm_strdup(""); }
-#line 1698 "engines/hypno/grammar_mis.cpp"
+#line 1702 "engines/hypno/grammar_mis.cpp"
     break;
 
 
-#line 1702 "engines/hypno/grammar_mis.cpp"
+#line 1706 "engines/hypno/grammar_mis.cpp"
 
       default: break;
     }

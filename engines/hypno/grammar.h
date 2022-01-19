@@ -50,7 +50,6 @@ public:
 	bool scaled;
 	bool transparent;
 	bool loop;
-	bool palette;
 	HypnoSmackerDecoder *decoder;
 	const Graphics::Surface *currentFrame;
 };
@@ -299,6 +298,7 @@ public:
 	Talk()  {
 		type = TalkAction;
 		boxPos = Common::Point(0, 0);
+		escape = false;
 	}
 	TalkCommands commands;
 	bool active;
@@ -401,6 +401,7 @@ public:
 	ArcadeShooting()  {
 		type = ArcadeLevel;
 		health = 100;
+		transitionTime = 0;
 	}
 	uint32 id;
 	Common::String mode;
@@ -434,12 +435,14 @@ public:
 		nextLevel = level;
 		levelEasy = "";
 		levelHard = "";
+		frameNumber = 0;
 	}
 	
 	Transition(Common::String easy, Common::String hard)  {
 		type = TransitionLevel;
 		levelEasy = easy;
 		levelHard = hard;
+		frameNumber = 0;
 	}
 	Common::String nextLevel;
 	Common::String levelEasy;

@@ -37,8 +37,8 @@ extern int HYPNO_MIS_lex();
 extern int HYPNO_MIS_parse();
 extern int yylineno;
 
-Common::Array<uint32> *smenu_idx;
-Hypno::HotspotsStack *stack;
+Common::Array<uint32> *smenu_idx = nullptr;
+Hypno::HotspotsStack *stack = nullptr;
 Hypno::Talk *talk_action = nullptr;
 
 void HYPNO_MIS_xerror(const char *str) {
@@ -74,8 +74,12 @@ start: init lines
 	;
 
 init: { 
+	if (smenu_idx)
+		delete smenu_idx;
 	smenu_idx = new Common::Array<uint32>();
 	smenu_idx->push_back(-1);
+	if (stack)
+		delete stack;
 	stack = new Hypno::HotspotsStack();
 	stack->push_back(new Hotspots());
 }
@@ -86,14 +90,14 @@ lines: line lines
 
 
 line: MENUTOK mflag mflag mflag {
-		Hotspot *hot = new Hotspot(MakeMenu); 
+		Hotspot hot(MakeMenu); 
 		debugC(1, kHypnoDebugParser, "MENU %s %s", $2, $3);
-		hot->flags[0] = $2;
-		hot->flags[1] = $3;
-		hot->flags[2] = $4;
+		hot.flags[0] = $2;
+		hot.flags[1] = $3;
+		hot.flags[2] = $4;
 
 		Hotspots *cur = stack->back();
-		cur->push_back(*hot);
+		cur->push_back(hot);
 
 		// We don't care about menus, only hotspots
 		int idx = smenu_idx->back();
@@ -102,10 +106,10 @@ line: MENUTOK mflag mflag mflag {
 		smenu_idx->push_back(idx);
 	}
 	| HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
-		Hotspot *hot = new Hotspot(MakeHotspot, Common::Rect($3, $4, $5, $6)); 
-		debugC(1, kHypnoDebugParser, "HOTS %d.", hot->type);
+		Hotspot hot(MakeHotspot, Common::Rect($3, $4, $5, $6)); 
+		debugC(1, kHypnoDebugParser, "HOTS %d.", hot.type);
 		Hotspots *cur = stack->back();
-		cur->push_back(*hot); 
+		cur->push_back(hot); 
 	}
 	|  SMENTOK { 
 		// This should always point to a hotspot
