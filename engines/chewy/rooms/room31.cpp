@@ -29,9 +29,6 @@
 namespace Chewy {
 namespace Rooms {
 
-#undef SURIMY_OBJ
-#define SURIMY_OBJ 0
-
 static const MovLine SURIMY_MPKT[2] = {
 	{ {  79, 152, 150 }, 1, 6 },
 	{ { 273, 220, 150 }, 1, 6 }
@@ -50,7 +47,7 @@ void Room31::entry() {
 }
 
 void Room31::surimy_go() {
-	if (!_G(spieler).R39ScriptOk) {
+	if (!_G(spieler).R39ScriptOk && _G(spieler).R25SurimyLauf) {
 		if (_G(spieler).R31SurimyGo >= 3) {
 			hide_cur();
 			_G(spieler).R31SurimyGo = 0;
@@ -70,22 +67,27 @@ void Room31::surimy_go() {
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
 			show_cur();
-		} else
+		} else {
 			++_G(spieler).R31SurimyGo;
+		}
 	}
 }
 
 void Room31::calc_luke() {
 	int16 i;
+
 	if (!_G(spieler).R31KlappeZu) {
 		for (i = 0; i < 3; i++)
 			det->show_static_spr(5 + i);
+
 		atds->set_ats_str(244, 1, ATS_DATEI);
 		atds->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).room_e_obj[75].Attribut = AUSGANG_UNTEN;
+
 	} else {
 		for (i = 0; i < 3; i++)
 			det->hide_static_spr(5 + i);
+
 		atds->set_ats_str(244, 0, ATS_DATEI);
 		atds->set_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).room_e_obj[75].Attribut = 255;
@@ -93,20 +95,26 @@ void Room31::calc_luke() {
 }
 
 void Room31::open_luke() {
-	if (_G(spieler).R31KlappeZu) {
+	if (!_G(spieler).inv_cur && _G(spieler).R31KlappeZu) {
+		hide_cur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
 		_G(spieler).R31KlappeZu = false;
+		det->play_sound(3, 0);
 		calc_luke();
+		show_cur();
 	}
 }
 
-void Room31::close_luke() {
-	if (!_G(spieler).R31KlappeZu) {
+void Room31::proc1() {
+	if (!_G(spieler).inv_cur && !_G(spieler).R31KlappeZu) {
+		hide_cur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
+		det->play_sound(3, 0);
 		calc_luke();
+		show_cur();
 	}
 }
 
@@ -126,6 +134,7 @@ int16 Room31::use_topf() {
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
 				atds->set_ats_str(242, 2, ATS_DATEI);
+
 			} else if (is_cur_inventar(MILCH_WAS_INV)) {
 				if (_G(spieler).R31KoernerDa) {
 					_G(spieler).R31Wasser = true;
@@ -178,8 +187,22 @@ int16 Room31::use_topf() {
 		start_aad_wait(dia_nr, -1);
 		action_flag = true;
 	}
+
 	show_cur();
 	return action_flag;
+}
+
+void Room31::close_luke() {
+	if (!_G(spieler).R31KlappeZu) {
+		hide_cur();
+		auto_move(2, 0);
+		start_spz_wait(13, 1, 0, 0);
+		_G(spieler).R31KlappeZu = true;
+		det->play_sound(3, 0);
+		det->play_sound(3, 1);
+		calc_luke();
+		show_cur();
+	}
 }
 
 } // namespace Rooms
