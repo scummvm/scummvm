@@ -162,7 +162,9 @@ int16 Room11::scanner() {
 			} else if (!_G(spieler).inv_cur) {
 				if (!_G(spieler).R11TerminalOk) {
 					action_flag = true;
+					flc->set_custom_user_function(cut_serv);
 					flic_cut(FCUT_010, CFO_MODE);
+					flc->remove_custom_user_function();
 					start_aad_wait(20, -1);
 				} else {
 					action_flag = true;
@@ -204,6 +206,17 @@ void Room11::put_card() {
 		if (!_G(spieler).R11TerminalOk)
 			start_aad_wait(16, -1);
 	}
+}
+
+int16 Room11::cut_serv(int16 frame) {
+	if (_G(spieler).R11DoorRightF)
+		det->plot_static_details(0, 0, 0, 0);
+	if (_G(spieler).R11DoorRightB)
+		det->plot_static_details(0, 0, 6, 6);
+	if (_G(spieler).R45MagOk)
+		det->plot_static_details(0, 0, 7, 7);
+
+	return 0;
 }
 
 } // namespace Rooms
