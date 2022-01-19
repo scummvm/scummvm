@@ -549,6 +549,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME3_PO("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
+	// King's Quest 4 (IIgs) 2.0H 12/20/88 (CE)
+	GAME3_PO("kq4", "2.0H 1988-12-20", "kq4dir", "c8ccc3964ee405aa56fd20b16c5afd95", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
+
 	// King's Quest 4 demo (PC) [AGI 3.002.102]
 	// Menus not tested
 	GAME3("kq4", "Demo 1988-12-20", "dmdir", "a3332d70170a878469d870b14863d0bf", 0x3149, GID_KQ4),
