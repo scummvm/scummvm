@@ -33,8 +33,10 @@ void Room27::entry() {
 		_G(timer_nr)[0] = room->set_timer(0, 5);
 		det->set_static_ani(0, -1);
 		atds->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
-	} else
+	} else {
 		atds->set_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	_G(spieler).ScrollxStep = 2;
 }
@@ -42,6 +44,7 @@ void Room27::entry() {
 void Room27::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	hide_cur();
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		if (eib_nr == 55) {
 			start_aad_wait(175, -1);
@@ -55,22 +58,29 @@ void Room27::xit(int16 eib_nr) {
 			start_aad_wait(174, -1);
 		}
 	}
+
 	_G(spieler).PersonHide[P_HOWARD] = false;
 	show_cur();
 }
 
 void Room27::get_surimy() {
 	obj->calc_all_static_detail();
+	hide_cur();
 	auto_move(4, P_CHEWY);
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		start_aad_wait(171, -1);
 	}
+
+	show_cur();
 	obj->hide_sib(SIB_SURIMY_R27);
 }
 
 void Room27::talk_howard() {
+	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad_wait(173, -1);
+	show_cur();
 }
 
 void Room27::howard_ged() {
