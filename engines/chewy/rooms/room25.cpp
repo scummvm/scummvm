@@ -45,13 +45,24 @@ static const MovLine SURIMY_MPKT[2] = {
 	{ { -20, 150, 150 }, 0, 6 }
 };
 
+
 void Room25::entry() {
+	if (!_G(spieler).R25GleiteLoesch) {
+		det->enable_sound(0, 0);
+		det->play_sound(0, 0);
+
+		for (int i = 0; i < 9; ++i)
+			det->start_detail(i, 255, 0);
+	}
+
 	if (!_G(spieler).R29Schlauch2) {
 		det->hide_static_spr(0);
 		det->hide_static_spr(1);
 	}
+
 	if (!_G(spieler).R25FirstEntry) {
 		hide_cur();
+
 		if (obj->check_inventar(TRANSLATOR_INV)) {
 			obj->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
 			atds->set_ats_str(113, 0, ATS_DATEI);
@@ -61,30 +72,38 @@ void Room25::entry() {
 			menu_item = CUR_WALK;
 			_G(spieler).AkInvent = -1;
 			cursor_wahl(menu_item);
-			del_invent_slot(TRANSLATOR_INV);
 		}
+
 		_G(spieler).R25FirstEntry = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		flic_cut(FCUT_029, FLC_MODE);
+		det->enable_sound(0, 0);
+		det->play_sound(0, 0);
 		fx_blend = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(64, -1);
 		show_cur();
+
 	} else if (_G(spieler).R25GleiterExit) {
-		set_person_pos(127, 122, P_CHEWY, P_LEFT);
-		if (_G(spieler).R25SurimyGo < 1) {
-			++_G(spieler).R25SurimyGo;
-		} else {
-			_G(spieler).R25GleiterExit = false;
-			xit_gleiter();
+		if (!flags.LoadGame) {
+			set_person_pos(127, 122, 0, 0);
+
+			if (!_G(spieler).R25SurimyGo) {
+				_G(spieler).R25SurimyGo = 1;
+				xit_gleiter();
+			}
 		}
 	}
+
+	_G(spieler).R25GleiterExit = false;
 }
 
 int16 Room25::gleiter_loesch() {
 	int16 action_flag = false;
+	hide_cur();
+
 	if (!_G(spieler).R25GleiteLoesch && _G(spieler).R29Schlauch2) {
 		if (!_G(spieler).inv_cur) {
 			action_flag = true;
@@ -94,26 +113,39 @@ int16 Room25::gleiter_loesch() {
 			obj->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			atds->set_ats_str(219, 1, ATS_DATEI);
 			atds->set_ats_str(187, 1, ATS_DATEI);
+			det->disable_sound(0, 0);
+
+			for (int i = 0; i < 9; ++i)
+				det->stop_detail(i);
 		}
+
 	} else if (_G(spieler).R25GleiteLoesch) {
 		if (is_cur_inventar(MILCH_LEER_INV)) {
 			action_flag = true;
 			auto_move(2, P_CHEWY);
-			start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait((_G(spieler).ChewyAni == 5) ? 28 : 14,
+				1, ANI_VOR, P_CHEWY);
+
 			del_inventar(_G(spieler).AkInvent);
 			obj->add_inventar(MILCH_WAS_INV, &room_blk);
 			inventory_2_cur(MILCH_WAS_INV);
 			start_aad_wait(253, -1);
 		}
 	}
+
+	show_cur();
 	return action_flag;
 }
 
 int16 Room25::use_gleiter() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur && _G(spieler).R25GleiteLoesch) {
 		action_flag = true;
+		hide_cur();
 		auto_move(3, P_CHEWY);
+		show_cur();
+
 		_G(spieler).R23GleiterExit = 25;
 		Room23::cockpit();
 	}
@@ -122,6 +154,7 @@ int16 Room25::use_gleiter() {
 
 void Room25::xit_gleiter() {
 	if (!_G(spieler).R25SurimyLauf) {
+		hide_cur();
 		_G(spieler).R25SurimyLauf = true;
 		det->load_taf_seq(56, 8, 0);
 		_G(auto_obj) = 1;
@@ -136,11 +169,14 @@ void Room25::xit_gleiter() {
 			(const MovLine *)SURIMY_MPKT);
 		fx_blend = BLEND1;
 		set_up_screen(DO_SETUP);
+
 		start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(65, -1);
 		fx_blend = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
 		_G(auto_obj) = 0;
+
+		show_cur();
 	}
 }
 
