@@ -1136,7 +1136,6 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 			// Fill (or rather, swap32) the fields:
 			// - The 4 bytes string 'MAP '
 			// - Size of the map
-			//int dest = READ_BE_UINT32(destMap);
 			*(int32 *)destMap = READ_BE_UINT32(destMap);
 			*((int32 *)destMap + 1) = READ_BE_UINT32(destMap + 4);
 
