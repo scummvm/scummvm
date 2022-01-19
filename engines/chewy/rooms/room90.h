@@ -29,9 +29,11 @@ class Room90 {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
+	static void setup_func();
 	static void proc2();
 	static int proc3();
 	static int proc4();
+	static int16 proc5(int16 key);
 	static int proc6();
 };
 

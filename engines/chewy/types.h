@@ -336,6 +336,7 @@ struct SpielerFlags {
 	bool flags34_20 : 1;
 	bool flags34_40 : 1;
 	bool flags34_80 : 1;
+	bool flags34_100 : 1; // CHECKME : used in room 90 but illogical
 
 	bool flags35_1 : 1;
 	bool flags35_2 : 1;
@@ -484,21 +485,19 @@ struct Spieler : public SpielerFlags {
 	int16 R64Moni1Ani = 0;
 
 	int16 R64Moni2Ani = 0;
-
-	uint8 mi[8] = { 0 };
-	int16 SVal1 = 0;
-	int16 SVal2 = 0;
-	int16 SVal3 = 0;
-	int16 SVal4 = 0;
-	int16 soundLoopMode = 0;
-	bool SoundSwitch = false;
-	uint8 SoundVol = 0;
-	bool MusicSwitch = false;
-	uint8 MusicVol = 0;
-	bool SpeechSwitch = false;
-	uint8 FramesPerSecond = 0;
-	bool DisplayText = false;
-
+	// ---- //
+	int r90_word18DB28 = 0;
+	int r90_Array187030[8][4] = {
+		{0, 1, 180, 190},
+		{0, 1,  60,  60},
+		{0, 1, 140, 150},
+		{0, 1, 140, 230},
+		{0, 1,  40, 340},
+		{0, 1,  49,  50},
+		{0, 1,  88,  90},
+		{0, 1, 170, 190}
+	};
+	
 	// ---- //
 	int r91_word18DB2A = 0;
 	// ---- //
@@ -511,6 +510,21 @@ struct Spieler : public SpielerFlags {
 	int r97_word18DB36 = 0;
 	int r97_word18DB38 = 0;
 	bool r97_bool18DB3A = false;
+	// --- //
+
+	uint8 mi[8] = {0};
+	int16 SVal1 = 0;
+	int16 SVal2 = 0;
+	int16 SVal3 = 0;
+	int16 SVal4 = 0;
+	int16 soundLoopMode = 0;
+	bool SoundSwitch = false;
+	uint8 SoundVol = 0;
+	bool MusicSwitch = false;
+	uint8 MusicVol = 0;
+	bool SpeechSwitch = false;
+	uint8 FramesPerSecond = 0;
+	bool DisplayText = false;
 };
 
 struct AutoMov {
