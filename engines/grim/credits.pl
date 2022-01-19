@@ -1,6 +1,7 @@
 begin_section("Grim");
 	add_person("James Brown", "ender", "Grim (retired)");
 	add_person("Giulio Camuffo", "giucam", "Grim (retired)");
+	add_person("Daniel Schepler", "", "Initial engine contributor");
 	add_person("Dries Harnie", "Botje", "EMI");
 	add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Grim");
 	add_person("Christian Krause", "chkr", "EMI (retired)");
