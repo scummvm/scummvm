@@ -45,14 +45,23 @@ static const AniBlock ABLOCK27[5] = {
 
 
 void Room29::entry() {
-	if (_G(spieler).R29Schlauch1)
+	if (_G(spieler).R29Schlauch1) {
 		det->show_static_spr(7);
-	else if (_G(spieler).R29Schlauch2) {
+	} else if (_G(spieler).R29Schlauch2) {
 		det->show_static_spr(8);
 		det->show_static_spr(10);
 	}
-	if (_G(spieler).R29AutoSitz)
+
+	if (_G(spieler).R29AutoSitz) {
 		det->show_static_spr(9);
+
+		if (_G(spieler).ChewyAni == 5)
+			atds->set_steuer_bit(212, 1, 1);
+		else
+			det->show_static_spr(9);
+	}
+
+	_G(spieler).ScrollxStep = 2;
 }
 
 void Room29::xit() {
@@ -63,8 +72,11 @@ void Room29::xit() {
 
 int16 Room29::use_pumpe() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).R29Pumpe) {
 		action_flag = true;
+		hide_cur();
+
 		if (is_cur_inventar(SCHLAUCH_INV)) {
 			_G(spieler).R29Pumpe = true;
 			_G(spieler).R29Schlauch1 = true;
@@ -73,9 +85,13 @@ int16 Room29::use_pumpe() {
 			det->show_static_spr(7);
 			atds->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(SCHLAUCH_INV);
-		} else if (!_G(spieler).inv_cur)
+		} else if (!_G(spieler).inv_cur) {
 			start_aad_wait(62, -1);
+		}
+
+		show_cur();
 	}
+
 	return action_flag;
 }
 
@@ -95,6 +111,8 @@ bool Room29::use_schlauch() {
 
 	if (is_cur_inventar(PUMPE_INV)) {
 		result = true;
+		hide_cur();
+
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
 		det->hide_static_spr(7);
@@ -104,11 +122,13 @@ bool Room29::use_schlauch() {
 		det->show_static_spr(10);
 		atds->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->set_ats_str(218, 1, ATS_DATEI);
+
 		_G(spieler).R29Schlauch1 = false;
 		_G(spieler).R29Schlauch2 = true;
 		del_inventar(PUMPE_INV);
 		set_person_pos(308, 105, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+		show_cur();
 	}
 
 	return result;
@@ -116,24 +136,30 @@ bool Room29::use_schlauch() {
 
 void Room29::schlitz_sitz() {
 	if (!_G(spieler).R29AutoSitz) {
+		hide_cur();
 		_G(spieler).R29AutoSitz = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		det->hide_static_spr(4);
-		start_aad(63);
+		det->show_static_spr(11);
 		start_ani_block(4, ABLOCK26);
 		det->show_static_spr(9);
-		while (flags.AdsDialog && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
-		}
+		det->hide_static_spr(11);
+		det->start_detail(2, 255, 0);
+		start_aad_wait(63, -1);
+
 		det->stop_detail(2);
 		atds->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(maus_links_click) = false;
 		kbinfo.scan_code = Common::KEYCODE_INVALID;
+
+		show_cur();
 	}
 }
 
 int16 Room29::zaun_sprung() {
 	int16 action_flag = false;
+
 	if (_G(spieler).R29AutoSitz && !_G(spieler).inv_cur) {
 		action_flag = true;
 		auto_move(3, P_CHEWY);
@@ -142,9 +168,11 @@ int16 Room29::zaun_sprung() {
 		det->hide_static_spr(9);
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
+
 		switch_room(37);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
+
 	return action_flag;
 }
 
