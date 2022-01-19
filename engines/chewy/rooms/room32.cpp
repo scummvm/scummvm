@@ -42,12 +42,12 @@ int16 Room32::use_howard() {
 	int16 ani_nr = 0;
 	int16 action_flag = false;
 	hide_cur();
+
 	if (is_cur_inventar(TRICHTER_INV)) {
 		if (_G(spieler).R33MunterGet) {
 			auto_move(1, P_CHEWY);
 			cur_2_inventory();
-			obj->del_inventar(MUNTER_INV, &room_blk);
-			del_invent_slot(MUNTER_INV);
+			remove_inventory(MUNTER_INV);
 			flic_cut(FCUT_043, FLC_MODE);
 			atds->set_steuer_bit(230, ATS_AKTIV_BIT, ATS_DATEI);
 			start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
@@ -58,6 +58,7 @@ int16 Room32::use_howard() {
 			start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(125, -1);
 			wait_show_screen(10);
+
 			det->hide_static_spr(0);
 			start_detail_frame(0, 1, ANI_VOR, 9);
 			start_detail_wait(1, 1, ANI_RUECK);
@@ -71,6 +72,7 @@ int16 Room32::use_howard() {
 			dia_nr = 164;
 			_G(spieler).R32HowardWeg = true;
 			_G(spieler).R39HowardDa = true;
+			remove_inventory(TRICHTER_INV);
 		} else {
 			ani_nr = CH_TALK12;
 			dia_nr = 73;
@@ -79,11 +81,13 @@ int16 Room32::use_howard() {
 		ani_nr = CH_TALK12;
 		dia_nr = 74;
 	}
+
 	if (dia_nr) {
 		start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
 		action_flag = true;
 	}
+
 	show_cur();
 	return action_flag;
 }
@@ -139,6 +143,7 @@ void Room32::use_schreibmaschine() {
 		ani_nr = CH_TALK12;
 		dia_nr = 92;
 	}
+
 	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
 	show_cur();
@@ -146,6 +151,7 @@ void Room32::use_schreibmaschine() {
 
 int16 Room32::get_script() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib) {
 			action_flag = true;
@@ -159,6 +165,7 @@ int16 Room32::get_script() {
 			start_aad_wait(91, -1);
 		}
 	}
+
 	return action_flag;
 }
 
