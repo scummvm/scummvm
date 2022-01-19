@@ -383,7 +383,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 245:
-						Room31::close_luke();
+						Room31::proc1();
 						break;
 
 					case 249:
