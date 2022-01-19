@@ -31,6 +31,8 @@ class Room11 {
 private:
 	static void bork_zwinkert();
 	static void chewy_bo_use();
+	static int16 cut_serv(int16 frame);
+
 public:
 	static void entry();
 	static bool timer(int16 t_nr, int16 ani_nr);

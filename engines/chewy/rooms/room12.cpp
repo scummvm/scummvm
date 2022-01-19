@@ -291,10 +291,19 @@ int16 Room12::useTransformerTube() {
 }
 
 int16 Room12::cut_serv(int16 frame) {
+	if (_G(spieler).R11DoorRightF)
+		det->plot_static_details(0, 0, 0, 0);
+	if (_G(spieler).R11DoorRightB)
+		det->plot_static_details(0, 0, 6, 6);
+	if (_G(spieler).R6DoorRightB)
+		det->plot_static_details(0, 0, 7, 7);
+
 	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+
 	if (frame == 43)
 		start_aad(106, 0);
 
+	serve_speech();
 	return 0;
 }
 
