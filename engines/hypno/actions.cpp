@@ -196,6 +196,12 @@ void HypnoEngine::runAmbient(Ambient *a) {
 		else
 			sframe = frame;
 		drawImage(*sframe, a->origin.x, a->origin.y, true);
+		if (a->fullscreen){
+			frame->free();
+			delete frame;
+		}
+		sframe->free();
+		delete sframe;
 	} else {
 		bool loop = a->flag == "/LOOP";
 		if (loop) { // Avoid re-adding the same looping video

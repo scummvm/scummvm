@@ -262,6 +262,9 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 		surf = decodeFrame(name, frameNumber);
 	
 	drawImage(*surf, x, y, transparent);
+
+	surf->free();
+	delete surf;
 }
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
