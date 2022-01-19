@@ -55,7 +55,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793814),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
@@ -69,7 +69,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793808),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
@@ -83,7 +83,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7815278),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
@@ -97,7 +97,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7805836),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
@@ -195,7 +195,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Star Trek Data", "871fa51c7680c0a43df9622128f1569f", 42617),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
+			ADGF_MACRESFORK | ADGF_DEMO | ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GType_ST25,
