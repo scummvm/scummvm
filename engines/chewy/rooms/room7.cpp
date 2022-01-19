@@ -49,11 +49,12 @@ void Room7::entry() {
 
 void Room7::haken(int16 sib_nr) {
 	int16 dia_nr;
-	del_inventar(8);
 
+	del_inventar(8);
 	_G(spieler).AkInvent = -1;
 	menu_item = CUR_WALK;
 	cursor_wahl(menu_item);
+
 	if (_G(spieler).R7RHaken) {
 		_G(spieler).R7SeilOk = true;
 		if (sib_nr == SIB_LHAKEN_R7) {
@@ -67,8 +68,10 @@ void Room7::haken(int16 sib_nr) {
 		_G(spieler).R7SeilLeft = true;
 		dia_nr = 48;
 	}
+
+	obj->calc_all_static_detail();
 	atds->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
-	start_aad(dia_nr);
+	start_aad_wait(dia_nr, -1);
 }
 
 void Room7::klingel() {
@@ -94,16 +97,20 @@ void Room7::klingel() {
 		det->start_detail(13, 1, ANI_VOR);
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
 		det->stop_detail(5);
+
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
+
 		det->start_detail(0, 255, ANI_VOR);
 		start_detail_wait(13, 1, ANI_VOR);
 		flic_cut(FCUT_002, CFO_MODE);
 		det->stop_detail(0);
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
+		set_person_pos(114, 138, 0, -1);
+
 		start_detail_frame(19, 1, ANI_VOR, 6);
 		start_detail_frame(9, 1, ANI_VOR, 4);
 		det->show_static_spr(9);
@@ -111,10 +118,11 @@ void Room7::klingel() {
 		det->hide_static_spr(9);
 		obj->show_sib(SIB_SCHLOTT_R7);
 		obj->calc_rsi_flip_flop(SIB_SCHLOTT_R7);
-		set_person_pos(114, 138, P_CHEWY, -1);
+
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = false;
 		det->hide_static_spr(7);
+
 	} else if (!_G(spieler).R7SeilOk) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(7, 0);
@@ -125,6 +133,7 @@ void Room7::klingel() {
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
 		det->stop_detail(5);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+
 		flags.NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -137,6 +146,7 @@ void Room7::klingel() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = false;
 		det->del_taf_tbl(192, 74, 0);
+
 	} else if (_G(spieler).R7SeilOk && !_G(spieler).R7BorkFlug) {
 		_G(spieler).R7BorkFlug = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -151,6 +161,7 @@ void Room7::klingel() {
 		_G(spieler).scrolly = 0;
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
+
 	++_G(spieler).R7BellCount;
 }
 

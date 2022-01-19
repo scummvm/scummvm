@@ -155,10 +155,14 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 77:
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
+							hide_cur();
 							auto_move(3, P_CHEWY);
 							flc->set_custom_user_function(Room6::cut_serv1);
 							flic_cut(FCUT_005, CFO_MODE);
 							flc->remove_custom_user_function();
+							start_spz(4, -1, 0, 0);
+							start_aad_wait(108, 0);
+							show_cur();
 						} else {
 							action_ret = false;
 						}
