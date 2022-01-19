@@ -38,6 +38,7 @@ static const MovLine SURIMY_MPKT[2] = {
 	{ { 300, 151, 150 }, 1, 6 }
 };
 
+
 void Room33::entry() {
 	if (_G(spieler).R33MunterGet)
 		det->hide_static_spr(3);
@@ -45,7 +46,7 @@ void Room33::entry() {
 }
 
 void Room33::surimy_go() {
-	if (!_G(spieler).R39ScriptOk) {
+	if (!_G(spieler).R39ScriptOk && _G(spieler).R25SurimyLauf) {
 		if (_G(spieler).R33SurimyGo >= 4) {
 			hide_cur();
 			_G(spieler).R33SurimyGo = 0;
@@ -65,33 +66,41 @@ void Room33::surimy_go() {
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
 			show_cur();
-		} else
+		} else {
 			++_G(spieler).R33SurimyGo;
+		}
 	}
 }
 
 void Room33::look_schublade() {
 	if (!_G(spieler).R33SchubFirst) {
 		_G(spieler).R33SchubFirst = true;
+		hide_cur();
 		auto_move(1, P_CHEWY);
 		atds->set_ats_str(210, TXT_MARK_NAME, 1, ATS_DATEI);
 		atds->set_ats_str(210, TXT_MARK_USE, 1, ATS_DATEI);
+		show_cur();
 	}
 }
 
 int16 Room33::use_schublade() {
 	int16 action_flag = false;
+
 	if (_G(spieler).R33SchubFirst && !_G(spieler).inv_cur) {
 		if (!_G(spieler).R33Messer) {
 			action_flag = true;
 			_G(spieler).R33Messer = true;
+
+			hide_cur();
 			atds->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
 			atds->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
 			atds->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
 			start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 			invent_2_slot(MESSER_INV);
+			show_cur();
 		}
 	}
+
 	return action_flag;
 }
 
@@ -103,8 +112,10 @@ void Room33::use_maschine() {
 	action = true;
 	hocker = false;
 	hide_cur();
+
 	if (!_G(spieler).R33MunterOk) {
 		auto_move(4, P_CHEWY);
+
 		if (_G(spieler).inv_cur) {
 			switch (_G(spieler).AkInvent) {
 			case K_FLEISCH_INV:
@@ -129,6 +140,7 @@ void Room33::use_maschine() {
 				break;
 
 			}
+
 			if (action) {
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				start_detail_wait(0, 1, ANI_VOR);
@@ -138,6 +150,7 @@ void Room33::use_maschine() {
 				hocker = true;
 				del_inventar(_G(spieler).AkInvent);
 				ani_nr = CH_TALK12;
+
 				if (calc_muntermacher()) {
 					_G(spieler).R33MunterOk = true;
 					dia_nr = 69;
@@ -152,8 +165,10 @@ void Room33::use_maschine() {
 			ani_nr = CH_TALK12;
 			dia_nr = 66;
 		}
+
 		start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
+
 		if (_G(spieler).R33MunterOk) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(2, 1, ANI_VOR);
@@ -163,16 +178,18 @@ void Room33::use_maschine() {
 			start_aad_wait(71, -1);
 			atds->del_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
 		}
+
 		if (hocker) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(1, 1, ANI_VOR);
 			set_person_pos(64, 100, P_CHEWY, P_LEFT);
 		}
+
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
-		start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(70, -1);
 	}
+
 	show_cur();
 }
 
@@ -180,18 +197,22 @@ int16 Room33::calc_muntermacher() {
 	int16 ret;
 	int16 i;
 	ret = true;
+
 	for (i = 0; i < 4; i++) {
 		if (_G(spieler).R33Munter[i] == false)
 			ret = false;
 	}
+
 	return ret;
 }
 
 int16 Room33::get_munter() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		if (!_G(spieler).R33MunterGet && _G(spieler).R33MunterOk) {
 			action_flag = true;
+			hide_cur();
 			_G(spieler).R33MunterGet = true;
 			auto_move(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
@@ -200,8 +221,10 @@ int16 Room33::get_munter() {
 			det->hide_static_spr(3);
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(72, -1);
+			show_cur();
 		}
 	}
+
 	return action_flag;
 }
 
