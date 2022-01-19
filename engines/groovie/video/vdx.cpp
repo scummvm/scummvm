@@ -410,7 +410,10 @@ void VDXPlayer::getStill(Common::ReadStream *in) {
 		// Apply the palette
 		if (_flagNine) {
 			// Flag 9 starts a fade in
-			fadeIn(_palBuf);
+			if (!isFastForwarding())
+				fadeIn(_palBuf);
+			else
+				setPalette(_palBuf);
 		} else {
 			if (!_flagOne && !_flagSeven) {
 				// Actually apply the palette

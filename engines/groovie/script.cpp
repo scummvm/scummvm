@@ -118,6 +118,9 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 
 	_oldInstruction = (uint16)-1;
 	_videoSkipAddress = 0;
+	_fastForwarding = false;
+	_eventKbdChar = 0;
+	_eventMouseClicked = 0;
 }
 
 Script::~Script() {
@@ -709,7 +712,8 @@ void Script::o_bf9on() {			// 0x03
 void Script::o_palfadeout() {
 	debugC(1, kDebugScript, "Groovie::Script: PALFADEOUT");
 	debugC(2, kDebugVideo, "Groovie::Script: PALFADEOUT");
-	_vm->_graphicsMan->fadeOut();
+	if (!_fastForwarding)
+		_vm->_graphicsMan->fadeOut();
 }
 
 void Script::o_bf8on() {			// 0x05
@@ -916,9 +920,15 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 		// End the playback
 		return true;
-	} else if (_eventMouseClicked == 2) {
+	} else if (_eventMouseClicked == 2 || _eventKbdChar == Common::KEYCODE_ESCAPE || _eventKbdChar == Common::KEYCODE_SPACE) {
 		_vm->_videoPlayer->fastForward();
-		_eventMouseClicked = 0;
+		_fastForwarding = true;
+		// we don't want to clear a left click here, that would eat the input
+		if (_eventMouseClicked == 2)
+			_eventMouseClicked = 0;
+		_eventKbdChar = 0;
+	} else if (_fastForwarding) {
+		_vm->_videoPlayer->fastForward();
 	}
 
 	// Video available, play one frame
@@ -1129,6 +1139,7 @@ void Script::o_inputloopend() {
 
 		// There's nothing to do until we get some input
 		_vm->waitForInput();
+		_fastForwarding = DebugMan.isDebugChannelEnabled(kDebugFast);
 	}
 }
 
@@ -1206,7 +1217,7 @@ void Script::o_sleep() {
 	uint32 endTime = _vm->_system->getMillis() + time * 3;
 
 	Common::Event ev;
-	while (_vm->_system->getMillis() < endTime) {
+	while (_vm->_system->getMillis() < endTime && !_fastForwarding) {
 		_vm->_system->getEventManager()->pollEvent(ev);
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(10);
