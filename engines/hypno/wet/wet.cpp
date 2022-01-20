@@ -247,10 +247,12 @@ void WetEngine::runCode(Code *code) {
 void WetEngine::runMainMenu(Code *code) {
 	Common::Event event;
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	uint32 c = _pixelFormat.RGBToColor(0, 252, 0);
-	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16);
+	uint32 c = 252; // green
+	byte *palette;
+	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, &palette);
+	loadPalette(palette, 0, 256);
 	Common::String _name = "";
-	drawImage(*frame, 0, 0, false);
+	drawImage(*frame, 0, 0, true);
 	_font->drawString(_compositeSurface, "ENTER NAME :", 48, 50, 100, c);
 	while (!shouldQuit()) {
 

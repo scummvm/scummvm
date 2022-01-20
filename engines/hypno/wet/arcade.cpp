@@ -32,7 +32,7 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 }
 
 void WetEngine::drawShoot(const Common::Point &mousePos) {
-	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
+	uint32 c = 253;
 	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
 	_compositeSurface->drawLine(0, _screenH, mousePos.x - 2, mousePos.y, c);
