@@ -1066,7 +1066,10 @@ void flic_cut(int16 nr, int16 mode) {
 			} else {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_061);
+					start_aad(623, -1);
+					flc->set_custom_user_function(Room43::setup_func);
 					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+					flc->remove_custom_user_function();
 				}
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_062);

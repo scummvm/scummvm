@@ -31,11 +31,13 @@ namespace Rooms {
 
 void Room43::night_small() {
 	int16 i;
+
 	hide_person();
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	switch_room(43);
 	ailsnd->stop_mod();
+	det->play_sound(0, 0);
 	hide_cur();
 	flags.NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
@@ -46,16 +48,18 @@ void Room43::night_small() {
 	start_aad_wait(190, -1);
 	_G(spieler).ScrollxStep = 16;
 	auto_scroll(192, 0);
+
 	for (i = 0; i < 3; i++) {
 		if (i)
 			_G(spieler).ScrollxStep = 16 / i;
 		auto_scroll(128 + i * 16, 0);
 		auto_scroll(192, 0);
 	}
+
 	_G(spieler).scrollx = 194;
 	start_aad_wait(191, -1);
-	load_room_music(255);
 	flic_cut(FCUT_058, FLC_MODE);
+	det->disable_sound(0, 0);
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
@@ -70,21 +74,30 @@ void Room43::catch_pg() {
 	_G(spieler).scrolly = 0;
 	switch_room(43);
 	ailsnd->stop_mod();
+	det->play_sound(0, 0);
 	hide_cur();
 	flags.NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
 	start_aad_wait(234, -1);
 	auto_scroll(194, 0);
 	start_aad_wait(235, -1);
-	load_room_music(255);
 	_G(spieler).R43GetPgLady = true;
 	flic_cut(FCUT_058, FLC_MODE);
+
+	det->disable_sound(0, 0);
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	show_cur();
 	show_person();
+}
+
+int16 Room43::setup_func(int16 frame) {
+	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	serve_speech();
+
+	return 0;
 }
 
 } // namespace Rooms
