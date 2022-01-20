@@ -50,6 +50,7 @@ static const AniBlock ABLOCK29[2] = {
 	{ 9, 4, ANI_VOR, ANI_WAIT, 0 },
 };
 
+bool Room39::_flag;
 
 void Room39::entry() {
 	if (!_G(spieler).R41Einbruch) {
@@ -59,10 +60,13 @@ void Room39::entry() {
 				det->start_detail(1, 255, ANI_VOR);
 			else
 				det->set_static_ani(5, -1);
+
 			atds->del_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
 		}
-	} else
+	} else {
 		atds->set_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+
 	set_tv();
 }
 
@@ -84,6 +88,7 @@ short Room39::use_howard() {
 				det->stop_detail(6);
 				start_detail_wait(7, 1, ANI_VOR);
 				_G(spieler).PersonHide[P_CHEWY] = false;
+
 				del_inventar(_G(spieler).AkInvent);
 				det->stop_detail(1);
 				start_ani_block(2, ABLOCK33);
@@ -95,12 +100,15 @@ short Room39::use_howard() {
 				atds->set_ats_str(62, 1, ATS_DATEI);
 				start_aad_wait(169, -1);
 				show_cur();
+
 				_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
 				_G(spieler).PersonDiaRoom[P_HOWARD] = true;;
 				calc_person_dia(P_HOWARD);
+
 				if (_G(spieler).R41HowardDiaOK) {
 					ok();
 				}
+
 				dia_nr = -1;
 			} else {
 				ani_nr = CH_TALK11;
@@ -110,13 +118,16 @@ short Room39::use_howard() {
 			ani_nr = CH_TALK5;
 			dia_nr = 165;
 		}
+
 		if (dia_nr != -1) {
 			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(dia_nr, -1);
 			action_flag = true;
 		}
+
 		show_cur();
 	}
+
 	return action_flag;
 }
 
@@ -124,8 +135,9 @@ void Room39::talk_howard() {
 	if (_G(spieler).R39HowardWach) {
 		auto_move(3, P_CHEWY);
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
-		_G(spieler).PersonDiaRoom[P_HOWARD] = true;;
+		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 		calc_person_dia(P_HOWARD);
+
 		if (_G(spieler).R41HowardDiaOK) {
 			ok();
 		}
@@ -145,6 +157,7 @@ void Room39::ok() {
 	obj->calc_rsi_flip_flop(SIB_SURIMY_R27);
 	obj->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
 	invent_2_slot(BRIEF_INV);
+
 	switch_room(27);
 	start_aad_wait(192, -1);
 	menu_item = CUR_WALK;
@@ -160,23 +173,28 @@ int16 Room39::use_tv() {
 	auto_move(2, P_CHEWY);
 	cls_flag = false;
 	hide_cur();
+
 	if (is_cur_inventar(ZAPPER_INV)) {
 		_G(spieler).R39TvOn = true;
 		if (_G(spieler).R39TvKanal >= 5)
 			_G(spieler).R39TvKanal = -1;
+
 		flags.NoPalAfterFlc = true;
 		out->setze_zeiger(0);
 		out->cls();
 		flic_cut(FCUT_042, FLC_MODE);
 		++_G(spieler).R39TvKanal;
 		flags.NoPalAfterFlc = true;
+
 		if (_G(spieler).R39TvKanal == 2)
 			flic_cut(FCUT_036, FLC_MODE);
 		else if (_G(spieler).R39TvKanal == 5)
 			flic_cut(FCUT_033, FLC_MODE);
+
 		look_tv(0);
 		set_tv();
 		cls_flag = true;
+
 		if (!_G(spieler).R39TransMensch) {
 			ani_nr = CH_TALK11;
 			dia_nr = 78;
@@ -189,7 +207,7 @@ int16 Room39::use_tv() {
 				ani_nr = -1;
 			}
 		}
-	} else if (is_cur_inventar(TRANSLATOR_INV)) {
+	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != 5) {
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, ANI_VOR, P_CHEWY);
 			_G(spieler).R39TransMensch = true;
@@ -202,6 +220,7 @@ int16 Room39::use_tv() {
 			out->set_palette(pal);
 			flags.NoPalAfterFlc = true;
 			flic_cut(TV_FLIC[0], FLC_MODE);
+
 			out->cls();
 			out->setze_zeiger(0);
 			out->cls();
@@ -216,9 +235,11 @@ int16 Room39::use_tv() {
 			ani_nr = CH_TALK11;
 			dia_nr = 76;
 		}
+
 		set_tv();
+
 	} else if (is_cur_inventar(RECORDER_INV)) {
-		if (_G(spieler).R39TvOn) {
+		if (_G(spieler).R39TvOn && _G(spieler).ChewyAni != 5) {
 			if (!_G(spieler).R39TransMensch) {
 				ani_nr = CH_TALK12;
 				dia_nr = 97;
@@ -238,6 +259,7 @@ int16 Room39::use_tv() {
 			dia_nr = 76;
 		}
 	}
+
 	if (cls_flag) {
 		out->cls();
 		out->setze_zeiger(0);
@@ -245,12 +267,14 @@ int16 Room39::use_tv() {
 		out->set_palette(pal);
 		flags.NoPalAfterFlc = false;
 	}
+
 	if (dia_nr != -1) {
 		if (ani_nr != -1)
 			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
 		action_flag = true;
 	}
+
 	show_cur();
 	return action_flag;
 }
@@ -258,53 +282,113 @@ int16 Room39::use_tv() {
 void Room39::look_tv(int16 cls_mode) {
 	int16 flic_nr;
 	int16 dia_nr;
+
+	_flag = false;
+
 	if (_G(spieler).R39TvOn) {
-		if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
-			flic_nr = FCUT_038;
-			++_G(spieler).R39ClintNews;
-			dia_nr = 79;
-		} else {
-			flic_nr = TV_FLIC[_G(spieler).R39TvKanal];
-			if (!_G(spieler).R39TvKanal)
-				_G(spieler).R39ClintNews = 0;
-			dia_nr = 80 + _G(spieler).R39TvKanal;
+		if (!flags.AutoAniPlay) {
+			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
+				flic_nr = FCUT_038;
+				++_G(spieler).R39ClintNews;
+				dia_nr = 79;
+			} else {
+				flic_nr = TV_FLIC[_G(spieler).R39TvKanal];
+				if (!_G(spieler).R39TvKanal)
+					_G(spieler).R39ClintNews = 0;
+				dia_nr = 80 + _G(spieler).R39TvKanal;
+			}
+
+			if (cls_mode) {
+				out->setze_zeiger(0);
+				out->cls();
+				out->set_palette(pal);
+				flags.NoPalAfterFlc = true;
+			}
+
+			if (_G(spieler).R39TransMensch) {
+				if (dia_nr != 85)
+					start_aad(dia_nr, -1);
+				else
+					_flag = true;
+			}
+
+			flc->set_custom_user_function(setup_func);
+			flic_cut(flic_nr, FLC_MODE);
+			flc->remove_custom_user_function();
+
+			if (cls_mode) {
+				out->cls();
+				out->setze_zeiger(0);
+				out->cls();
+				out->set_palette(pal);
+				flags.NoPalAfterFlc = false;
+
+				if (_G(spieler).R39TransMensch && dia_nr == 85)
+					start_aad_wait(dia_nr, -1);
+			}
 		}
-		if (cls_mode) {
-			out->setze_zeiger(0);
-			out->cls();
-			out->set_palette(pal);
-			flags.NoPalAfterFlc = true;
-		}
-		flic_cut(flic_nr, FLC_MODE);
-		if (cls_mode) {
-			out->cls();
-			out->setze_zeiger(0);
-			out->cls();
-			out->set_palette(pal);
-			flags.NoPalAfterFlc = false;
-			if (_G(spieler).R39TransMensch)
-				start_aad_wait(dia_nr, -1);
-		}
+
+		_G(maus_links_click) = 0;
+		flags.AutoAniPlay = false;
 	}
 }
 
 void Room39::set_tv() {
 	int16 i;
+
 	for (i = 0; i < 6; i++)
 		det->hide_static_spr(i + 4);
+
 	if (_G(spieler).R39TvOn) {
-		if (_G(spieler).R39TvKanal == 2)
+		if (_G(spieler).R39TvKanal == 2) {
 			det->start_detail(0, 255, ANI_VOR);
-		else {
+		} else {
 			det->stop_detail(0);
 			det->show_static_spr(_G(spieler).R39TvKanal + 4);
 		}
+
 		if (_G(spieler).R39TransMensch) {
 			atds->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATEI);
 		} else {
 			atds->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATEI);
 		}
 	}
+}
+
+int16 Room39::setup_func(int16 frame) {
+	int16 action_ret = in->get_switch_code() == 1 ? -1 : 0;
+
+	if (_flag) {
+		if (frame == 121)
+			start_aad(599, -1);
+
+		switch (frame) {
+		case 247:
+			start_aad(600, -1);
+			break;
+		case 267:
+			start_aad(601, 0);
+			break;
+		case 297:
+			in->hot_key = 1;
+			break;
+		case 171:
+		case 266:
+		case 370:
+			atds->stop_aad();
+			break;
+		default:
+			break;
+		}
+	}
+
+	serve_speech();
+	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+
+	if (!_flag && atds->aad_get_status() == -1)
+		action_ret = -1;
+
+	return action_ret;
 }
 
 } // namespace Rooms
