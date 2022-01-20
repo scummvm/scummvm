@@ -383,6 +383,7 @@ void init_room();
 int16 call_fileio(int16 palette, int16 mode);
 int16 file_menue();
 void option_menue(taf_info *ti);
+void gbook();
 
 void look_debug_action(int16 key_nr);
 

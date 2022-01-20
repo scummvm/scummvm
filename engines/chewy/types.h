@@ -336,7 +336,6 @@ struct SpielerFlags {
 	bool flags34_20 : 1;
 	bool flags34_40 : 1;
 	bool flags34_80 : 1;
-	bool flags34_100 : 1; // CHECKME : used in room 90 but illogical
 
 	bool flags35_1 : 1;
 	bool flags35_2 : 1;

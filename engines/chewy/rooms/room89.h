@@ -29,9 +29,9 @@ class Room89 {
 public:
 	static void entry();
 	static void xit();
+	static void setup_func();
 	static void talk1();
 	static int proc2();
-	static int proc3();
 	static int proc4();
 	static int proc5();
 };

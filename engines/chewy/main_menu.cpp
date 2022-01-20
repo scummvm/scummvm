@@ -120,6 +120,7 @@ void MainMenu::execute() {
 			flic_cut(159, CFO_MODE);
 			flc->remove_custom_user_function();
 			fx->border(workpage, 100, 0, 0);
+			gbook();
 			break;
 
 		default:

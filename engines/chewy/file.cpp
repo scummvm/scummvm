@@ -636,4 +636,7 @@ void option_menue(taf_info *ti) {
 	out->setze_zeiger(workptr);
 }
 
+void gbook() {
+	warning("STUB - gbook()");
+}
 } // namespace Chewy

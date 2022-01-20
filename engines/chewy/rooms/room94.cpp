@@ -24,8 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room94.h"
-
-#include "room66.h"
+#include "chewy/rooms/room66.h"
 
 namespace Chewy {
 namespace Rooms {

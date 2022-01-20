@@ -246,7 +246,7 @@ int Room90::proc3() {
 	_G(spieler).mi[1] = 2;
 	start_aad_wait(516, -1);
 	_G(spieler).flags34_40 = true;
-	_G(spieler).flags34_100 = true;
+	_G(spieler).flags35_1 = true;
 	auto_move(4, P_CHEWY);
 	auto_scroll(176, 0);
 	det->set_detail_pos(12, 495, 15);
