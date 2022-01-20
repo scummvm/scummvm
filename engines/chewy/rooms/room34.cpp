@@ -41,15 +41,21 @@ bool Room34::use_kuehlschrank() {
 		result = true;
 
 		if (!flags.LoadGame) {
+			hide_cur();
 			auto_move(3, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			_G(maus_links_click) = false;
+			start_spz_wait((_G(spieler).ChewyAni == 5) ? CH_ROCK_GET2 : CH_LGET_O,
+				1, ANI_VOR, P_CHEWY);
+			hide_cur();
 		}
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		flags.ChewyDontGo = true;
+
 		if (!flags.LoadGame) {
 			switch_room(34);
 		}
+
 		set_person_pos(160, 70, P_CHEWY, -1);
 	}
 
