@@ -30,6 +30,7 @@ private:
 	static void first_talk();
 	static void start_hoggy();
 	static void stop_hoggy();
+	static void setup_func();
 
 public:
 	static void entry();
