@@ -27,6 +27,9 @@ namespace Rooms {
 
 class Room39 {
 private:
+	static bool _flag;
+
+	static int16 setup_func(int16 frame);
 	static void ok();
 	static void set_tv();
 
