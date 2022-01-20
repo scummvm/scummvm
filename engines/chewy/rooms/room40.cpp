@@ -38,28 +38,38 @@ namespace Rooms {
 #define POLICE_FLASCHE 16
 
 void Room40::entry(int16 eib_nr) {
+	_G(spieler).R40HoUse = false;
 	_G(zoom_horizont) = 130;
 	_G(spieler).ScrollxStep = 2;
+
 	if (_G(spieler).R40Geld) {
 		det->del_static_ani(6);
 		room->set_timer_status(6, TIMER_STOP);
 	}
+
 	if (_G(spieler).R40HaendlerOk) {
 		det->del_static_ani(4);
 		room->set_timer_status(4, TIMER_STOP);
 	}
+
 	if (_G(spieler).R40PoliceWeg == false) {
 		_G(timer_nr)[0] = room->set_timer(255, 10);
 		atds->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
 		det->hide_static_spr(15);
 	}
+
 	_G(spieler).R40PoliceAniStatus = 255;
-	_G(spieler).R40PoliceStart = 0;
+	_G(spieler).R40PoliceStart = false;
 	spieler_mi[P_HOWARD].Mode = true;
+
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41)
+		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 40) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
+
 		if (!flags.LoadGame) {
 			switch (eib_nr) {
 			case 69:
@@ -76,6 +86,7 @@ void Room40::entry(int16 eib_nr) {
 			}
 		}
 	}
+
 	SetUpScreenFunc = setup_func;
 	if (_G(spieler).R40TrainMove)
 		move_train(0);
@@ -86,10 +97,12 @@ void Room40::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).R40PoliceAb = false;
 	stop_spz();
-	SetUpScreenFunc = 0;
+	SetUpScreenFunc = nullptr;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 40) {
 		if (eib_nr == 70 || eib_nr == 77) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
+
 		} else if (eib_nr == 72) {
 			if ((obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) &&
 				_G(spieler).R42BriefOk && _G(spieler).R28Manuskript) ||
@@ -98,23 +111,36 @@ void Room40::xit(int16 eib_nr) {
 				_G(spieler).PersonRoomNr[P_HOWARD] = 45;
 				_G(spieler).room_e_obj[72].Exit = 45;
 				obj->hide_sib(SIB_MUENZE_R40);
+
 				uhr->disable_timer();
 				out->ausblenden(0);
 				hide_person();
-
 				set_up_screen(DO_SETUP);
 				out->einblenden(pal, 0);
 				uhr->enable_timer();
+
 				_G(maus_links_click) = false;
 				start_aad_wait(238, -1);
 				move_train(1);
 				flags.NoPalAfterFlc = true;
 				flic_cut(FCUT_073, FLC_MODE);
+
+				if (_G(spieler).ChewyAni != 5)
+					_G(spieler).PersonGlobalDia[1] = 10023;
+
+				cur_2_inventory();
+				remove_inventory(57);
+				_G(spieler).PersonDiaRoom[1] = 1;
 				show_person();
-			} else
+
+			} else {
 				_G(spieler).PersonRoomNr[P_HOWARD] = 42;
+			}
+		} else {
+			_G(spieler).PersonRoomNr[1] = 41;
 		}
 	}
+
 	spieler_mi[P_HOWARD].Mode = false;
 	show_cur();
 }
@@ -131,40 +157,56 @@ bool Room40::timer(int16 t_nr, int16 ani_nr) {
 void Room40::move_train(int16 mode) {
 	int16 lx, ax;
 	int16 delay;
+
 	_G(spieler).R40TrainMove = false;
 	hide_cur();
 	auto_move(9, P_CHEWY);
 	flags.NoScroll = true;
 	auto_scroll(232, 0);
+
 	if (!mode)
 		start_aad_wait(206, -1);
+
 	lx = -40;
 	ax = lx - 190;
+
 	det->start_detail(7, 20, ANI_VOR);
 	det->show_static_spr(11);
+
 	if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
 		det->show_static_spr(12);
+
+	det->enable_sound(7, 0);
 	delay = 0;
+
 	while (ax < 560) {
 		det->set_detail_pos(7, lx, 46);
 		det->set_static_pos(11, ax, 62, false, false);
+
 		if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
 			det->set_static_pos(12, ax, 62, false, true);
+
 		if (!delay) {
 			lx += SPEED;
 			ax += SPEED;
 			delay = _G(spieler).DelaySpeed / 2;
-		} else
+		} else {
 			--delay;
+		}
+
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
 	}
+
 	det->stop_detail(7);
 	det->hide_static_spr(11);
 	det->hide_static_spr(12);
+
 	if (!mode)
 		start_aad_wait(207, -1);
 	if (!mode)
 		auto_scroll(180, 0);
+
 	flags.NoScroll = false;
 	show_cur();
 }
@@ -178,6 +220,7 @@ void Room40::setup_func() {
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = spieler_vector[P_HOWARD].Xypos[1];
 		sp_x = spieler_vector[P_CHEWY].Xypos[0];
+
 		if (sp_x > 170 && sp_x < 255) {
 			x = 248;
 			y = 97;
@@ -191,6 +234,7 @@ void Room40::setup_func() {
 			x = 165;
 			y = 99;
 		}
+
 		go_auto_xy(x, y, P_HOWARD, ANI_GO);
 	}
 
@@ -199,10 +243,12 @@ void Room40::setup_func() {
 			_G(spieler).R40PoliceStart = false;
 			_G(spieler).R40PoliceAniStatus = POLICE_LEFT;
 			room->set_timer_status(255, TIMER_STOP);
+			uhr->reset_timer(_G(timer_nr)[0], 0);
 			det->hide_static_spr(15);
 			det->start_detail(POLICE_LEFT, 1, ANI_VOR);
 			atds->set_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 		}
+
 		switch (_G(spieler).R40PoliceAniStatus) {
 		case POLICE_LEFT:
 			if (det->get_ani_status(POLICE_LEFT) == false) {
@@ -235,10 +281,12 @@ void Room40::setup_func() {
 					start_aad_wait(224, -1);
 					_G(spieler).R40PoliceWeg = true;
 					show_cur();
+
 					flags.MausLinks = false;
 					flags.MainInput = true;
 					_G(spieler).R40HoUse = false;
 					atds->set_steuer_bit(276, ATS_AKTIV_BIT, ATS_DATEI);
+
 				} else {
 					det->start_detail(POLICE_RIGHT, 1, ANI_VOR);
 					_G(spieler).R40PoliceAniStatus = POLICE_RIGHT;
@@ -256,94 +304,119 @@ void Room40::setup_func() {
 			}
 			break;
 
+		default:
+			break;
 		}
 	}
 }
 
 int16 Room40::use_mr_pumpkin() {
 	int16 action_ret = false;
-	hide_cur();
-	if (_G(spieler).inv_cur) {
-		switch (_G(spieler).AkInvent) {
-		case CENT_INV:
-			action_ret = true;
-			auto_move(5, P_CHEWY);
-			del_inventar(_G(spieler).AkInvent);
-			start_detail_wait(15, 1, ANI_VOR);
-			start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
-			start_aad_wait(200, -1);
-			break;
 
-		case CASSETTE_INV:
-			if (_G(spieler).R39TvRecord == 6) {
+	if (menu_item != CUR_HOWARD) {
+		hide_cur();
+
+		if (!_G(spieler).inv_cur) {
+			action_ret = use_schalter(205);
+
+		} else {
+			switch (_G(spieler).AkInvent) {
+			case CENT_INV:
 				action_ret = true;
-				if (_G(spieler).R40PoliceWeg == false)
-					use_schalter(227);
-				else {
-					hide_cur();
-					auto_move(8, P_CHEWY);
-					start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
-					del_inventar(_G(spieler).AkInvent);
-					out->ausblenden(1);
-					Room43::catch_pg();
-					del_invent_slot(LIKOER_INV);
-					obj->add_inventar(LIKOER2_INV, &room_blk);
-					inventory_2_cur(LIKOER2_INV);
-					switch_room(40);
-					start_aad_wait(236, -1);
-				}
-			} else
-				start_aad_wait(228 + _G(spieler).R39TvRecord, -1);
-			break;
+				auto_move(5, P_CHEWY);
+				del_inventar(_G(spieler).AkInvent);
+				start_detail_wait(15, 1, ANI_VOR);
+				start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
+				start_aad_wait(200, -1);
+				break;
 
+			case RECORDER_INV:
+				if (_G(spieler).R39TvRecord == 6) {
+					action_ret = true;
+					if (_G(spieler).R40PoliceWeg == false)
+						use_schalter(227);
+					else {
+						hide_cur();
+						auto_move(8, P_CHEWY);
+						start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
+						del_inventar(_G(spieler).AkInvent);
+						out->ausblenden(1);
+						Room43::catch_pg();
+						remove_inventory(LIKOER_INV);
+						obj->add_inventar(LIKOER2_INV, &room_blk);
+						inventory_2_cur(LIKOER2_INV);
+						switch_room(40);
+						start_aad_wait(236, -1);
+					}
+				} else {
+					start_aad_wait(228 + _G(spieler).R39TvRecord, -1);
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
+
+		show_cur();
 	}
-	show_cur();
 
 	return action_ret;
 }
 
 int16 Room40::use_schalter(int16 aad_nr) {
 	int16 action_flag = false;
-	if (!_G(spieler).inv_cur) {
-		if (_G(spieler).R40PoliceWeg == false) {
-			action_flag = true;
-			hide_cur();
-			auto_move(8, P_CHEWY);
-			if (_G(spieler).R40PoliceAniStatus != 255) {
-				start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
-				start_aad_wait(204, -1);
-				while (_G(spieler).R40PoliceAniStatus != 255 && !SHOULD_QUIT)
-					set_up_screen(DO_SETUP);
-			}
-			room->set_timer_status(255, TIMER_STOP);
-			_G(spieler).R40PoliceStart = false;
-			stop_spz();
-			start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
-			if (_G(spieler).R40PoliceAb) {
-				_G(spieler).R40PoliceAb = false;
+
+	if (menu_item != CUR_HOWARD) {
+		if (!_G(spieler).inv_cur) {
+			if (_G(spieler).R40PoliceWeg == false) {
+				action_flag = true;
+
+				hide_cur();
+				auto_move(8, P_CHEWY);
+
+				if (_G(spieler).R40PoliceAniStatus != 255) {
+					start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
+					start_aad_wait(204, -1);
+
+					while (_G(spieler).R40PoliceAniStatus != 255) {
+						set_up_screen(DO_SETUP);
+						SHOULD_QUIT_RETURN0;
+					}
+				}
+
+				room->set_timer_status(255, TIMER_STOP);
+				_G(spieler).R40PoliceStart = false;
 				stop_spz();
-				go_auto_xy(308, 100, P_HOWARD, ANI_WAIT);
-				_G(spieler).R40HoUse = false;
+				start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
+
+				if (_G(spieler).R40PoliceAb) {
+					_G(spieler).R40PoliceAb = false;
+					stop_spz();
+					go_auto_xy(308, 100, P_HOWARD, ANI_WAIT);
+					_G(spieler).R40HoUse = false;
+				}
+
+				det->hide_static_spr(15);
+				start_detail_wait(12, 1, ANI_VOR);
+				det->set_static_ani(14, -1);
+				start_aad_wait(aad_nr, -1);
+				det->del_static_ani(14);
+				start_detail_wait(13, 1, ANI_VOR);
+				det->show_static_spr(15);
+				room->set_timer_status(255, TIMER_START);
+				uhr->reset_timer(_G(timer_nr)[0], 0);
+				show_cur();
 			}
-			det->hide_static_spr(15);
-			start_detail_wait(12, 1, ANI_VOR);
-			det->set_static_ani(14, -1);
-			start_aad_wait(aad_nr, -1);
-			det->del_static_ani(14);
-			start_detail_wait(13, 1, ANI_VOR);
-			det->show_static_spr(15);
-			room->set_timer_status(255, TIMER_START);
-			uhr->reset_timer(_G(timer_nr)[0], 0);
-			show_cur();
 		}
 	}
+
 	return action_flag;
 }
 
 void Room40::talk_police() {
 	if (_G(spieler).R40PoliceWeg == false &&
-		_G(spieler).R40PoliceAniStatus == 255) {
+			_G(spieler).R40PoliceAniStatus == 255) {
 		hide_cur();
 		_G(spieler).R40PoliceStart = false;
 		room->set_timer_status(255, TIMER_STOP);
@@ -372,6 +445,7 @@ void Room40::talk_handler() {
 
 int16 Room40::use_haendler() {
 	int16 action_flag = false;
+
 	if (menu_item == CUR_HOWARD && !_G(spieler).R40HaendlerOk) {
 		action_flag = true;
 		hide_cur();
@@ -386,6 +460,7 @@ int16 Room40::use_haendler() {
 		start_aad_wait(208, -1);
 		auto_move(6, P_HOWARD);
 		flags.NoScroll = true;
+
 		auto_scroll(270, 0);
 		det->del_static_ani(4);
 		room->set_timer_status(4, TIMER_STOP);
@@ -394,6 +469,7 @@ int16 Room40::use_haendler() {
 		det->del_static_ani(3);
 		det->set_static_ani(5, -1);
 		start_aad_wait(213, -1);
+
 		if (_G(spieler).R28RKuerbis) {
 			det->del_static_ani(5);
 			det->set_static_ani(3, -1);
@@ -409,22 +485,26 @@ int16 Room40::use_haendler() {
 			out->cls();
 			switch_room(28);
 			SetUpScreenFunc = setup_func;
+
 		} else {
 			auto_move(11, P_HOWARD);
 			start_aad_wait(210, -1);
 		}
+
 		menu_item = CUR_WALK;
 		cursor_wahl(menu_item);
 		show_cur();
 		flags.NoScroll = false;
-		_G(spieler).R40HoUse = false;
 		flags.MausLinks = false;
+		_G(spieler).R40HoUse = false;
 	}
+
 	return action_flag;
 }
 
 int16 Room40::use_bmeister() {
 	short action_flag = false;
+
 	if (menu_item == CUR_HOWARD) {
 		action_flag = true;
 		hide_cur();
@@ -439,16 +519,18 @@ int16 Room40::use_bmeister() {
 		menu_item = CUR_WALK;
 		cursor_wahl(menu_item);
 		show_cur();
+
 	} else if (is_cur_inventar(LIKOER2_INV)) {
 		action_flag = true;
 		hide_cur();
 		_G(spieler).R40HoUse = true;
 		new_invent_2_cur(HOTEL_INV);
-
 		bmeister_dia(237);
-
+		_G(spieler).flags37_80 = true;
+		flags.NoScroll = false;
 		show_cur();
 	}
+
 	return action_flag;
 }
 
@@ -462,14 +544,17 @@ void Room40::bmeister_dia(int16 aad_nr) {
 	det->stop_detail(0);
 	start_detail_wait(1, 1, ANI_VOR);
 	det->set_static_ani(2, -1);
+
 	if (aad_nr == 237) {
 		start_aad_wait(aad_nr, -1);
 		flags.NoPalAfterFlc = true;
 		flic_cut(FCUT_062, FLC_MODE);
 		fx_blend = BLEND3;
 		start_aad_wait(375, -1);
-	} else
+	} else {
 		start_aad_wait(aad_nr, -1);
+	}
+
 	flags.NoPalAfterFlc = false;
 	room->set_timer_status(0, TIMER_START);
 	det->set_static_ani(0, -1);
@@ -483,7 +568,7 @@ bool Room40::use_police() {
 
 	if (menu_item == CUR_HOWARD) {
 		if (_G(spieler).R40PoliceWeg == false &&
-			_G(spieler).R40PoliceAniStatus == 255) {
+				_G(spieler).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(spieler).R40PoliceAb = true;
 			hide_cur();
@@ -515,16 +600,20 @@ int16 Room40::use_tele() {
 	int16 dia_nr1 = -1;
 	int16 timer_wert;
 	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).R40PoliceWeg == false) {
 			action_flag = true;
 			hide_cur();
+
 			if (!_G(spieler).R40PoliceAb) {
 				start_aad_wait(219, -1);
 				_G(spieler).R40HoUse = false;
+
 			} else {
 				auto_move(13, P_CHEWY);
 				det->show_static_spr(0);
+
 				if (!_G(spieler).R40DuengerMit) {
 					dia_nr = 220;
 					dia_nr1 = 222;
@@ -532,6 +621,7 @@ int16 Room40::use_tele() {
 					dia_nr = 221;
 					dia_nr1 = 223;
 				}
+
 				start_aad_wait(dia_nr, -1);
 				auto_move(11, P_HOWARD);
 				det->hide_static_spr(0);
@@ -539,6 +629,7 @@ int16 Room40::use_tele() {
 				start_aad_wait(dia_nr1, -1);
 				_G(spieler).R40HoUse = false;
 				timer_wert = 0;
+
 				if (dia_nr1 == 223) {
 					if (is_cur_inventar(DUENGER_INV)) {
 						del_inventar(_G(spieler).AkInvent);
@@ -546,6 +637,7 @@ int16 Room40::use_tele() {
 						obj->del_inventar(DUENGER_INV, &room_blk);
 						del_invent_slot(DUENGER_INV);
 					}
+
 					invent_2_slot(LIKOER_INV);
 					auto_move(1, P_CHEWY);
 					_G(spieler).R40DuengerMit = false;
@@ -554,14 +646,17 @@ int16 Room40::use_tele() {
 					flags.MainInput = false;
 					timer_wert = 3;
 				}
+
 				_G(spieler).R40PoliceAb = false;
 				room->set_timer_status(255, TIMER_START);
 				uhr->reset_timer(_G(timer_nr)[0], timer_wert);
 			}
+
 			if (dia_nr1 != 223)
 				show_cur();
 		}
 	}
+
 	return action_flag;
 }
 
