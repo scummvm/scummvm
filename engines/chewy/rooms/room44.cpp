@@ -32,6 +32,7 @@ namespace Rooms {
 void Room44::look_news() {
 	int16 tmpsx, tmpsy;
 	int16 tmproom;
+
 	tmproom = _G(spieler).PersonRoomNr[P_CHEWY];
 	tmpsx = _G(spieler).scrollx;
 	tmpsy = _G(spieler).scrolly;
@@ -42,11 +43,11 @@ void Room44::look_news() {
 	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	ERROR
-		start_aad_wait(172, -1);
+
+	start_aad_wait(172, -1);
 	_G(spieler).scrollx = tmpsx;
 	_G(spieler).scrolly = tmpsy;
 	switch_room(tmproom);
-
 	show_person();
 }
 
