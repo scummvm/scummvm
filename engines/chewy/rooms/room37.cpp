@@ -41,24 +41,32 @@ void Room37::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	SetUpScreenFunc = setup_func;
+	obj->show_sib(74);
+	obj->show_sib(75);
+
 	if (!flags.LoadGame) {
 		_G(spieler).scrollx = 124;
 		set_person_pos(219, 66, P_CHEWY, P_RIGHT);
 	}
+
 	if (!_G(spieler).R37Kloppe) {
 		_G(timer_nr)[1] = room->set_timer(7, 5);
 		det->set_static_ani(7, -1);
+
 		if (!_G(spieler).R37HundScham) {
 			_G(timer_nr)[0] = room->set_timer(3, 4);
 			det->set_static_ani(3, -1);
 		}
 	}
+
 	if (_G(spieler).R37Gebiss) {
 		det->hide_static_spr(9);
+
 		if (_G(spieler).R37Kloppe) {
 			det->hide_static_spr(8);
-		} else if (_G(spieler).R37HundScham)
+		} else if (_G(spieler).R37HundScham) {
 			det->show_static_spr(0);
+		}
 	}
 }
 
@@ -78,8 +86,8 @@ void Room37::gedAction(int index) {
 
 void Room37::setup_func() {
 	if (_G(maus_links_click) &&
-		!_G(spieler).R37Kloppe &&
-		menu_item == CUR_WALK) {
+			!_G(spieler).R37Kloppe &&
+			menu_item == CUR_WALK) {
 		if ((minfo.x + _G(spieler).scrollx > 380 && minfo.y > 120) ||
 			(minfo.x + _G(spieler).scrollx > 482)) {
 			auto_move(7, P_CHEWY);
@@ -90,8 +98,10 @@ void Room37::setup_func() {
 
 short Room37::use_wippe() {
 	int16 action_flag = false;
+
 	if (_G(spieler).inv_cur) {
 		action_flag = true;
+
 		if (is_cur_inventar(H_FUTTER_INV)) {
 			hide_cur();
 			auto_move(0, P_CHEWY);
@@ -109,17 +119,20 @@ short Room37::use_wippe() {
 			set_person_pos(388, 119, P_CHEWY, P_RIGHT);
 			switch_room(29);
 			_G(maus_links_click) = false;
+
 		} else {
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(160, -1);
 		}
 	}
+
 	return action_flag;
 }
 
 int16 Room37::cut_serv1(int16 frame) {
 	int16 static_nr;
 	int16 static_nr1;
+
 	if (!_G(spieler).R37Kloppe) {
 		if (!_G(spieler).R37Gebiss) {
 			static_nr = 9;
@@ -129,6 +142,7 @@ int16 Room37::cut_serv1(int16 frame) {
 			static_nr = 8;
 			static_nr1 = 0;
 		}
+
 		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr, static_nr);
 		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr1, static_nr1);
 	}
@@ -139,17 +153,20 @@ int16 Room37::cut_serv1(int16 frame) {
 }
 
 int16 Room37::cut_serv2(int16 frame) {
-	int16 static_nr[] = { 7, 14, 12, 10 };
+	static const int16 STATIC_NR[] = { 7, 14, 12, 10 };
 	short i;
+
 	det->show_static_spr(12);
 	det->show_static_spr(10);
 	for (i = 0; i < 4; i++)
-		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr[i], static_nr[i]);
+		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
+
 	return 0;
 }
 
 int16 Room37::use_glas() {
 	int16 action_flag = false;
+
 	if (!_G(spieler).R37Gebiss) {
 		if (is_cur_inventar(ANGEL2_INV)) {
 			action_flag = true;
@@ -176,20 +193,23 @@ int16 Room37::use_glas() {
 			start_aad_wait(146, -1);
 			show_cur();
 			flags.NoScroll = false;
+			det->play_sound(3, 0);
 		} else {
 			auto_move(4, P_CHEWY);
 		}
 	}
+
 	return action_flag;
 }
 
 void Room37::dog_bell() {
 	int16 dia_nr = -1;
 	int16 ani_nr = 0;
-
 	hide_cur();
+
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
+
 		if (!_G(spieler).R37Gebiss) {
 			stop_person(P_CHEWY);
 			flags.ChAutoMov = false;
@@ -212,9 +232,12 @@ void Room37::dog_bell() {
 			det->show_static_spr(9);
 			start_ani_block(3, ABLOCK31);
 			det->set_static_ani(3, -1);
+			det->enable_sound(3, 0);
+			det->play_sound(3, 0);
 			enable_timer();
 			dia_nr = 149;
 			ani_nr = CH_TALK12;
+
 		} else if (!_G(spieler).R37HundScham) {
 			stop_person(P_CHEWY);
 			set_person_spr(P_LEFT, P_CHEWY);
@@ -227,26 +250,35 @@ void Room37::dog_bell() {
 			flic_cut(FCUT_051, FLC_MODE);
 			_G(spieler).scrollx = 104;
 			flic_cut(FCUT_054, FLC_MODE);
-			flic_cut(FCUT_054, FLC_MODE);
 			det->show_static_spr(0);
+
 			_G(spieler).R37HundScham = true;
 			dia_nr = 148;
 			ani_nr = CH_TALK6;
 		}
+
 		flags.AutoAniPlay = false;
+
 		if (dia_nr != -1) {
 			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(dia_nr, -1);
 		}
 	}
+
 	flags.NoScroll = false;
 	show_cur();
 }
 
 void Room37::talk_hahn() {
+	hide_cur();
 	auto_move(7, P_CHEWY);
+	show_cur();
+
 	if (!_G(spieler).R37TransHahn) {
+		_G(cur_hide_flag) = 0;
+		hide_cur();
 		start_aad_wait(145, -1);
+		show_cur();
 	} else {
 		hahn_dia();
 	}
@@ -264,6 +296,7 @@ void Room37::use_hahn() {
 		cursor_wahl(menu_item);
 		show_cur();
 		hahn_dia();
+
 	} else if (_G(spieler).R37TransHahn) {
 		if (is_cur_inventar(GEBISS_INV)) {
 			_G(spieler).R37Kloppe = true;
@@ -278,9 +311,12 @@ void Room37::use_hahn() {
 			del_inventar(GEBISS_INV);
 			flags.NoScroll = true;
 			auto_scroll(177, 0);
-			while (det->get_ani_status(9) && !SHOULD_QUIT) {
+
+			while (det->get_ani_status(9)) {
 				set_up_screen(DO_SETUP);
+				SHOULD_QUIT_RETURN;
 			}
+
 			det->start_detail(4, 1, ANI_VOR);
 			det->hide_static_spr(0);
 			det->start_detail(10, 10, ANI_VOR);
@@ -307,6 +343,7 @@ void Room37::use_hahn() {
 void Room37::hahn_dia() {
 	int16 tmp_scrollx;
 	int16 tmp_scrolly;
+
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	tmp_scrollx = _G(spieler).scrollx;
 	tmp_scrolly = _G(spieler).scrolly;
