@@ -88,16 +88,16 @@ class HashMap {
 public:
 	typedef uint size_type;
 
-private:
-
-	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
-
 	struct Node {
 		Val _value;
 		const Key _key;
 		explicit Node(const Key &key) : _key(key), _value() {}
 		Node() : _key(), _value() {}
 	};
+
+private:
+
+	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
 
 	enum {
 		HASHMAP_PERTURB_SHIFT = 5,
