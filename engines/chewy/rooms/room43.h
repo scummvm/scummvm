@@ -29,6 +29,7 @@ class Room43 {
 public:
 	static void night_small();
 	static void catch_pg();
+	static int16 setup_func(int16 frame);
 };
 
 } // namespace Rooms
