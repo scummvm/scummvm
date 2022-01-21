@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room51.h"
+#include "chewy/rooms/room65.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -37,38 +38,86 @@ static const AniBlock ABLOCK37[5] = {
 	{ 2, 1, ANI_RUECK, ANI_WAIT, 0 },
 };
 
+bool Room51::_flag;
+bool Room51::_arr[2];
+int16 Room51::_tmpx;
+int16 Room51::_tmpy;
+int Room51::_index;
+
 
 void Room51::entry() {
 	int16 i;
 	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
-	for (i = 0; i < 2; i++)
-		det->start_detail(3 + i, 1, ANI_VOR);
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
-		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-		_G(spieler).ZoomXy[P_HOWARD][1] = 30;
-		if (!flags.LoadGame) {
-			set_person_pos(88, 93, P_HOWARD, P_RIGHT);
-		}
-		if (!_G(spieler).R51FirstEntry) {
-			hide_cur();
-			_G(spieler).R51FirstEntry = true;
-			set_person_spr(P_LEFT, P_CHEWY);
-			start_aad_wait(283, -1);
-			show_cur();
-		}
+
+	if (_G(spieler).flags32_10) {
+		atds->set_unknown(0);
+		_G(spieler).PersonHide[P_CHEWY] = 1;
+		_G(spieler).PersonHide[P_HOWARD] = 1;
+		_G(maus_links_click) = 0;
+		_G(spieler).scrollx = 0;
+		set_person_pos(34, 120, 1, 1);
+		set_person_pos(234, 69, 0, 0);
 		SetUpScreenFunc = setup_func;
-		spieler_mi[P_HOWARD].Mode = true;
+		det->show_static_spr(17);
+		hide_cur();
+
+		for (i = 0; i < 2; ++i) {
+			_arr[0] = false;
+			_G(timer_nr)[i] = room->set_timer(i + 9, i * 2 + 6);
+		}
+
+		flags.MainInput = false;
+		_flag = false;
+
+	} else {
+		det->hide_static_spr(17);
+
+		for (i = 0; i < 2; i++)
+			det->start_detail(3 + i, 1, ANI_VOR);
+
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
+			_G(spieler).ZoomXy[P_HOWARD][1] = 30;
+
+			if (!flags.LoadGame) {
+				set_person_pos(88, 93, P_HOWARD, P_RIGHT);
+			}
+
+			if (!_G(spieler).R51FirstEntry) {
+				hide_cur();
+				_G(spieler).R51FirstEntry = true;
+				set_person_spr(P_LEFT, P_CHEWY);
+				start_aad_wait(283, -1);
+				show_cur();
+			}
+
+			SetUpScreenFunc = setup_func;
+			spieler_mi[P_HOWARD].Mode = true;
+		}
 	}
 }
 
 void Room51::xit(int16 eib_nr) {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+	atds->set_unknown(1);
+
+	if (_G(spieler).flags32_10) {
+		flags.MainInput = true;
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler).PersonHide[P_HOWARD] = false;
+		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
+		menu_item = CUR_WALK;
+		cursor_wahl(menu_item);
+		show_cur();
+
+	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		if (eib_nr == 85) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
-		} else
+		} else {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 52;
+		}
+
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -85,11 +134,58 @@ bool Room51::timer(int16 t_nr, int16 ani_nr) {
 void Room51::setup_func() {
 	int16 x, y;
 	int16 ch_y;
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+
+	if (_G(spieler).flags32_10) {
+		_tmpx = minfo.x;
+		_tmpy = minfo.y;
+		if (_tmpx > 215)
+			_tmpx = 215;
+		if (_tmpy < 81)
+			_tmpy = 81;
+
+		det->set_static_pos(17, _tmpx, _tmpy, false, false);
+
+		if ((minfo.button == 1 || in->get_switch_code() == 28) && !_flag) {
+			_flag = true;
+			det->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
+			start_detail_wait(8, 1, 0);
+			_flag = false;
+			++_index;
+
+			switch (_index) {
+			case 2:
+				start_aad_wait(512, -1);
+				_index = 1000;
+				break;
+
+			case 1006:
+				start_aad_wait(513, -1);
+				_index = 2000;
+				break;
+
+			case 2003:
+				start_aad_wait(615, -1);
+				_index = 10000;
+				break;
+
+			case 10012:
+				start_aad_wait(514, -1);
+				wait_show_screen(5);
+				out->setze_zeiger(nullptr);
+				out->cls();
+				flic_cut(115, 0);
+				switch_room(91);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		x = spieler_vector[P_HOWARD].Xypos[0];
-		y = 64;
 		ch_y = spieler_vector[P_CHEWY].Xypos[1];
+
 		if (ch_y < 129) {
 			x = 56;
 			y = 106;
@@ -97,25 +193,30 @@ void Room51::setup_func() {
 			x = 31;
 			y = 118;
 		}
+
 		if (HowardMov && flags.ExitMov) {
-			SetUpScreenFunc = 0;
+			SetUpScreenFunc = nullptr;
 			HowardMov = 0;
 			auto_move(9, P_HOWARD);
-		} else
+		} else {
 			go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		}
 	}
 }
 
 int16 Room51::use_door(int16 txt_nr) {
 	int16 action_ret = false;
+
 	if (is_cur_inventar(KEY_INV)) {
 		hide_cur();
 		action_ret = true;
+
 		switch (txt_nr) {
 		case 329:
 			auto_move(8, P_CHEWY);
-			SetUpScreenFunc = 0;
+			SetUpScreenFunc = nullptr;
 			det->show_static_spr(0);
+
 			if (!_G(spieler).R51HotelRoom) {
 				auto_move(11, P_HOWARD);
 				set_person_spr(P_LEFT, P_HOWARD);
@@ -124,6 +225,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				start_aad_wait(285, -1);
 				atds->set_ats_str(329, 1, ATS_DATEI);
 				SetUpScreenFunc = setup_func;
+
 			} else {
 				show_cur();
 				switch_room(52);
@@ -132,22 +234,28 @@ int16 Room51::use_door(int16 txt_nr) {
 
 		case 330:
 			auto_move(9, P_CHEWY);
+
 			if (!_G(spieler).R51KillerWeg) {
+				det->enable_sound(2, 0);
+				det->play_sound(2, 0);
 				det->show_static_spr(1);
 				start_detail_wait(2, 1, ANI_VOR);
 				det->start_detail(5, 255, ANI_VOR);
+
 				if (!_G(spieler).R52HotDogOk) {
 					start_aad_wait(287, -1);
 					auto_move(12, P_CHEWY);
 					det->stop_detail(5);
 					start_ani_block(5, ABLOCK37);
 					det->hide_static_spr(1);
+					det->disable_sound(2, 0);
 					start_aad_wait(284, -1);
 				} else {
 					_G(spieler).R51KillerWeg = true;
 					start_aad_wait(290, -1);
+					det->disable_sound(2, 0);
 					out->ausblenden(1);
-					out->setze_zeiger(0);
+					out->setze_zeiger(nullptr);
 					out->cls();
 					out->einblenden(pal, 0);
 					flags.NoPalAfterFlc = true;
@@ -155,6 +263,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					det->show_static_spr(16);
 					flic_cut(FCUT_068, FLC_MODE);
 					flc->remove_flic_user_function();
+
 					det->hide_static_spr(16);
 					flags.NoPalAfterFlc = false;
 					det->stop_detail(5);
@@ -166,12 +275,22 @@ int16 Room51::use_door(int16 txt_nr) {
 					set_up_screen(DO_SETUP);
 					start_aad_wait(291, -1);
 				}
-			} else
+			} else {
 				start_aad_wait(401, -1);
+			}
 			break;
 
 		case 331:
-			auto_move(10, P_CHEWY);
+		case 334:
+			auto_move((txt_nr == 331) ? 10 : 7, P_CHEWY);
+			out->setze_zeiger(nullptr);
+			out->cls();
+			flags.NoPalAfterFlc = true;
+			flic_cut(114, 0);
+			set_person_pos(115, 114, 0, 0);
+			fx_blend = BLEND3;
+			set_up_screen(NO_SETUP);
+			start_aad_wait(564, -1);
 			break;
 
 		case 332:
@@ -181,6 +300,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 		case 333:
 			auto_move(4, P_CHEWY);
+
 			switch (_G(spieler).R51DoorCount) {
 			case 0:
 				det->show_static_spr(3);
@@ -213,17 +333,16 @@ int16 Room51::use_door(int16 txt_nr) {
 				if (_G(spieler).PersonRoomNr[P_HOWARD] == 51)
 					start_aad_wait(282, -1);
 				break;
-
 			}
 			break;
 
-		case 334:
-			auto_move(7, P_CHEWY);
+		default:
 			break;
-
 		}
+
 		show_cur();
 	}
+
 	return action_ret;
 }
 
@@ -233,7 +352,18 @@ int16 Room51::cut_serv(int16 frame) {
 }
 
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
-	::error("TODO");
+	if (obj_nr == 9 || obj_nr == 10) {
+		assert(t_nr < 2);
+		if (!Room65::_scrollY[t_nr]) {
+			det->start_detail(t_nr, 1, 0);
+			Room65::_scrollY[t_nr] = 1;
+		} else if (!det->get_ani_status(t_nr)) {
+			det->start_detail(t_nr, 1, 1);
+			det->start_detail(t_nr + 2, 1, 0);
+			uhr->reset_timer(obj_nr, 0);
+			Room65::_scrollY[t_nr] = 0;
+		}
+	}
 }
 
 } // namespace Rooms

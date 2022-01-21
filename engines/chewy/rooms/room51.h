@@ -27,6 +27,11 @@ namespace Rooms {
 
 class Room51 {
 private:
+	static bool _flag;
+	static bool _arr[2];
+	static int16 _tmpx, _tmpy;
+	static int _index;
+
 	static void setup_func();
 	static int16 cut_serv(int16 frame);
 	static void timer_action(int16 t_nr, int16 obj_nr);
