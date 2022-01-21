@@ -29,6 +29,9 @@
 namespace Chewy {
 namespace Rooms {
 
+int16 Room65::_scrollX;
+int16 Room65::_scrollY[2];
+
 void Room65::entry() {
 	hide_person();
 	_G(r65tmp_scrollx) = _G(spieler).scrollx;

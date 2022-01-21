@@ -27,6 +27,10 @@ namespace Rooms {
 
 class Room65 {
 public:
+	static int16 _scrollX;
+	static int16 _scrollY[2];
+
+public:
 	static void entry();
 	static void xit();
 	static void atds_string_start(int16 dia_nr, int16 str_nr,
