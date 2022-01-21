@@ -112,25 +112,38 @@ Sound::~Sound() {
 }
 
 void Sound::updateMusicTimer(int ticks) {
+	bool isLoomOverture = (_vm->_game.id == GID_LOOM && _vm->VAR(_vm->VAR_SOUNDCARD) == 4 && _currentCDSound == 56);
+
 	_scummTicks += ticks;
 
-	// TODO: For now, this is hard-coded for Loom's Overture. When playing
-	// the original song, the timer is apparently based on the MIDI tempo
-	// of it. Therefore, it may be necessary to adjust this in the future.
+	// For now, this is hard-coded for Loom's Overture. When playing the
+	// original song, the timer is apparently based on the MIDI tempo of
+	// it. Therefore, it may be necessary to adjust this in the future.
+	// But at the time of writing, it seems likely that the Overture is
+	// the only track that depends on timing, so that may be ok.
 
 	// We approximate the length of the Overture to 2.5 minutes, or 9000
-	// SCUMM ticks. (One tick is 1/60th of a second.)
+	// SCUMM ticks. (One tick is 1/60th of a second.) It would be nice if
+	// we could get the exact length from the audio CD manager, but at the
+	// time of writing it doesn't provide that information.
 
 	// If the track has already ended, it's still important that the timer
 	// eventually reaches at least 278. If necessary, skip make sure the
 	// timer skips to 198, which is where the next scene begins.
 
-	if (!pollCD()) {
-		if (_scummTicks < 6365)
-			_scummTicks = 6365;
+	if (isLoomOverture && !pollCD()) {
+		uint32 scummTick = (9000 * _musicTimer) / 198;
+		if (_scummTicks < scummTick)
+			_scummTicks = scummTick;
 	}
 
-	_musicTimer = (280 * _scummTicks) / 9000;
+	_musicTimer = (278 * _scummTicks) / 9000;
+
+	// But don't let the timer exceed 278 until the Overture has ended, or
+	// the music will be cut off.
+
+	if (isLoomOverture && pollCD() && _musicTimer >= 278)
+		_musicTimer = 277;
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
