@@ -37,12 +37,11 @@ void Room48::entry() {
 	calc_pic();
 	SetUpScreenFunc = setup_func;
 	_G(timer_nr)[0] = room->set_timer(255, 20);
-
 }
 
 bool Room48::timer(int16 t_nr, int16 ani_nr) {
 	if (t_nr == _G(timer_nr)[0])
-		Room48::frage();
+		frage();
 	else
 		return true;
 
@@ -51,10 +50,12 @@ bool Room48::timer(int16 t_nr, int16 ani_nr) {
 
 void Room48::calc_pic() {
 	int16 i;
+
 	for (i = 0; i < 2; i++) {
 		atds->set_steuer_bit(312 + i, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R48Auswahl[3 + i] = 0;
 	}
+
 	_G(spieler).R48Auswahl[0] = 1;
 	_G(spieler).R48Auswahl[1] = 1;
 	_G(spieler).R48Auswahl[2] = 1;
@@ -64,6 +65,7 @@ void Room48::calc_pic() {
 		atds->del_steuer_bit(312, ATS_AKTIV_BIT, ATS_DATEI);
 		det->show_static_spr(4);
 	}
+
 	if (obj->check_inventar(KAPPE_INV)) {
 		_G(spieler).R48Auswahl[4] = 1;
 		atds->del_steuer_bit(313, ATS_AKTIV_BIT, ATS_DATEI);
@@ -89,19 +91,24 @@ void Room48::setup_func() {
 	int16 idx;
 	int16 r_nr;
 	int16 i;
+
 	for (i = 0; i < 5; i++)
 		det->hide_static_spr(1 + i);
+
 	if (flags.ShowAtsInvTxt) {
 		if (menu_display == 0) {
 			if (menu_item != CUR_USE) {
 				menu_item = CUR_USE;
 			}
+
 			cur_2_inventory();
 			cursor_wahl(CUR_ZEIGE);
 			idx = det->maus_vector(minfo.x, minfo.y);
+
 			if (idx != -1) {
 				if (_G(spieler).R48Auswahl[idx]) {
 					det->show_static_spr(1 + idx);
+
 					if (_G(maus_links_click)) {
 						switch (idx) {
 						case 0:
@@ -127,10 +134,10 @@ void Room48::setup_func() {
 						default:
 							r_nr = -1;
 							break;
-
 						}
+
 						if (r_nr != -1) {
-							SetUpScreenFunc = 0;
+							SetUpScreenFunc = nullptr;
 							det->hide_static_spr(1 + idx);
 							hide_cur();
 							room->set_timer_status(255, TIMER_STOP);
@@ -138,18 +145,21 @@ void Room48::setup_func() {
 							det->stop_detail(0);
 							det->del_static_ani(0);
 							start_detail_wait(2, 1, ANI_VOR);
+							det->disable_sound(2);
 							menu_item = CUR_WALK;
 							cursor_wahl(menu_item);
 							show_cur();
 							_G(spieler).R48TaxiEntry = true;
 							_G(maus_links_click) = false;
 							set_up_screen(DO_SETUP);
+
 							for (i = 0; i < MAX_PERSON; i++) {
 								if (_G(spieler).R48TaxiPerson[i]) {
 									_G(spieler).PersonHide[i] = false;
 									_G(spieler).R48TaxiPerson[i] = false;
 								}
 							}
+
 							if (_G(spieler).PersonRoomNr[P_HOWARD] == 48) {
 								_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
 							}
