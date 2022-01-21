@@ -1205,7 +1205,12 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		ci->name = castInfo.strings[1].readString();
 
 		if (!ci->name.empty()) {
-			_castsNames[ci->name] = id;
+			// Multiple casts can have the same name. In director only the first one is used.
+			if (!_castsNames.contains(ci->name)) {
+				_castsNames[ci->name] = id;
+			} else {
+				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", ci->name.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
+			}
 		}
 		// fallthrough
 	case 1:
