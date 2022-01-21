@@ -95,7 +95,6 @@ public:
 	bool _e_streifen = false;
 	int16 _r45_delay = 0;
 	int16 _r45_pinfo[R45_MAX_PERSON][4];
-	bool _r50Wasser = false;
 	int16 _r56koch_flug = 0;
 	int16 _r62Delay = 0;
 	int16 _r62TalkAni = 0;

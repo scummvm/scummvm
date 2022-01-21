@@ -34,37 +34,64 @@ static const AniBlock ABLOCK36[2] = {
 	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
 };
 
+bool Room50::_wasser;
+
 
 void Room50::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
-	if (_G(spieler).R50Zigarre) {
-		stop_cigar();
-	} else
-		det->start_detail(0, 255, ANI_VOR);
-	if (!_G(spieler).R50KeyOK) {
-		_G(timer_nr)[0] = room->set_timer(1, 8);
-		_G(r50Wasser) = false;
-	} else
-		det->show_static_spr(4);
-	SetUpScreenFunc = setup_func;
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
-		spieler_mi[P_HOWARD].Mode = true;
-		if (!flags.LoadGame) {
-			if (eib_nr == 85)
-				set_person_pos(298, 56, P_HOWARD, P_RIGHT);
-			else
-				set_person_pos(1, 64, P_HOWARD, P_RIGHT);
+
+	if (_G(spieler).flags32_10) {
+		hide_cur();
+		stop_page();
+		_G(maus_links_click) = 0;
+		set_person_pos(0, 64, 0, 1);
+		set_person_pos(92, 123, 0, 0);
+		start_aad_wait(510, -1);
+		out->setze_zeiger(nullptr);
+		out->cls();
+		flags.NoPalAfterFlc = true;
+		flic_cut(108, 0);
+		show_cur();
+		switch_room(51);
+
+	} else {
+		if (_G(spieler).R50Zigarre) {
+			stop_cigar();
+		} else {
+			det->start_detail(0, 255, ANI_VOR);
+		}
+
+		if (!_G(spieler).R50KeyOK) {
+			_G(timer_nr)[0] = room->set_timer(1, 8);
+			_wasser = false;
+		} else {
+			det->show_static_spr(4);
+		}
+
+		SetUpScreenFunc = setup_func;
+
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
+			spieler_mi[P_HOWARD].Mode = true;
+
+			if (!flags.LoadGame) {
+				if (eib_nr == 85)
+					set_person_pos(298, 56, P_HOWARD, P_RIGHT);
+				else
+					set_person_pos(1, 64, P_HOWARD, P_RIGHT);
+			}
 		}
 	}
 }
 
 void Room50::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		if (eib_nr == 83)
 			_G(spieler).PersonRoomNr[P_HOWARD] = 49;
 		else
 			_G(spieler).PersonRoomNr[P_HOWARD] = 51;
+
 		spieler_mi[P_HOWARD].Mode = false;
 	}
 }
@@ -90,10 +117,10 @@ void Room50::stop_cigar() {
 }
 
 void Room50::calc_wasser() {
-	if (!_G(r50Wasser)) {
+	if (!_wasser) {
 		stop_page();
 		det->start_detail(4, 1, ANI_VOR);
-		_G(r50Wasser) = true;
+		_wasser = true;
 	}
 }
 
@@ -112,48 +139,56 @@ void Room50::go_page() {
 void Room50::calc_treppe() {
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
+
 		if (!_G(spieler).R50KeyOK) {
 			hide_cur();
 			stop_person(P_CHEWY);
 			room->set_timer_status(1, TIMER_STOP);
-			_G(r50Wasser) = false;
+			_wasser = false;
+			flags.NoScroll = true;
+			auto_scroll(40, 0);
 			stop_page();
 			det->set_static_ani(5, -1);
 			start_aad_wait(272, -1);
 			auto_move(3, P_CHEWY);
 			aad_page(273, 5);
 		}
+
 		flags.AutoAniPlay = false;
 	}
 }
 
 int16 Room50::use_gutschein() {
 	int16 action_ret = false;
+
 	if (is_cur_inventar(HOTEL_INV)) {
 		action_ret = true;
 		if (!_G(spieler).R50KeyOK) {
 			hide_cur();
 			auto_move(3, P_CHEWY);
 			room->set_timer_status(1, TIMER_STOP);
-			_G(r50Wasser) = false;
+			_wasser = false;
 			stop_page();
 			del_inventar(_G(spieler).AkInvent);
 			start_ani_block(2, ABLOCK36);
 			aad_page(274, 8);
-		} else
+		} else {
 			start_aad_wait(276, -1);
+		}
 	}
+
 	return action_ret;
 }
 
 int16 Room50::use_gum() {
 	int16 action_ret = false;
+
 	if (is_cur_inventar(GUM_INV)) {
 		action_ret = true;
 		hide_cur();
 		_G(spieler).R50KeyOK = true;
 		room->set_timer_status(1, TIMER_STOP);
-		_G(r50Wasser) = false;
+		_wasser = false;
 		stop_page();
 		start_detail_wait(6, 1, ANI_VOR);
 		det->set_static_ani(5, -1);
@@ -162,6 +197,7 @@ int16 Room50::use_gum() {
 		go_auto_xy(75, 92, P_CHEWY, ANI_WAIT);
 		SetUpScreenFunc = 0;
 		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
+
 		set_person_spr(P_LEFT, P_HOWARD);
 		del_inventar(_G(spieler).AkInvent);
 		hide_person();
@@ -181,6 +217,7 @@ int16 Room50::use_gum() {
 		spieler_mi[P_CHEWY].Mode = true;
 		det->del_static_ani(10);
 		go_page();
+
 		obj->add_inventar(KEY_INV, &room_blk);
 		inventory_2_cur(KEY_INV);
 		atds->set_ats_str(323, 1, ATS_DATEI);
@@ -188,6 +225,7 @@ int16 Room50::use_gum() {
 		_G(spieler).room_e_obj[84].Attribut = AUSGANG_OBEN;
 		show_cur();
 	}
+
 	return action_ret;
 }
 
@@ -201,23 +239,28 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	det->del_static_ani(ani_nr);
 	start_detail_wait(6, 1, ANI_RUECK);
 	go_page();
+
 	if (!_G(spieler).R50KeyOK)
 		room->set_timer_status(1, TIMER_START);
+
 	show_cur();
 }
 
 void Room50::setup_func() {
 	int16 x, y;
 	int16 ch_x;
-	if (_G(r50Wasser) && !det->get_ani_status(4)) {
-		_G(r50Wasser) = false;
+
+	if (_wasser && !det->get_ani_status(4)) {
+		_wasser = false;
 		go_page();
 	}
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = 64;
 		ch_x = spieler_vector[P_CHEWY].Xypos[0];
+
 		if (ch_x < 72) {
 			x = 1;
 			y = 64;
@@ -228,12 +271,14 @@ void Room50::setup_func() {
 			x = 162;
 			y = 115;
 		}
+
 		if (HowardMov && flags.ExitMov) {
-			SetUpScreenFunc = 0;
+			SetUpScreenFunc = nullptr;
 			HowardMov = 0;
 			auto_move(4, P_HOWARD);
-		} else
+		} else {
 			go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		}
 	}
 }
 

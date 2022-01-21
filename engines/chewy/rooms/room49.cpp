@@ -272,11 +272,13 @@ int16 Room49::use_taxi() {
 void Room49::setup_func() {
 	int16 x, y;
 	int16 ch_x;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		calc_person_look();
 		x = spieler_vector[P_HOWARD].Xypos[0];
 		y = 64;
 		ch_x = spieler_vector[P_CHEWY].Xypos[0];
+
 		if (ch_x < 130) {
 			x = 40;
 			y = 97;
