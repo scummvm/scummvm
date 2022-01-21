@@ -123,7 +123,7 @@ int16 Room25::gleiter_loesch() {
 		if (is_cur_inventar(MILCH_LEER_INV)) {
 			action_flag = true;
 			auto_move(2, P_CHEWY);
-			start_spz_wait((_G(spieler).ChewyAni == 5) ? 28 : 14,
+			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14,
 				1, ANI_VOR, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);

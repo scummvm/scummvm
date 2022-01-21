@@ -32,6 +32,7 @@ namespace Rooms {
 void Room45::entry(int16 eib_nr) {
 	int16 ch_x, ch_y;
 	int16 ho_x, ho_y;
+
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = setup_func;
 	_G(r45_delay) = 0;
@@ -40,6 +41,7 @@ void Room45::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 4;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 80;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
 		spieler_mi[P_HOWARD].Mode = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 45;
@@ -69,16 +71,18 @@ void Room45::entry(int16 eib_nr) {
 				ho_y = 124;
 			}
 		}
+
 		set_person_pos(ch_x, ch_y, P_CHEWY, P_LEFT);
 		set_person_pos(ho_x, ho_y, P_HOWARD, P_LEFT);
 	}
-
 }
 
 void Room45::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
 		spieler_mi[P_HOWARD].Mode = false;
+
 		if (eib_nr == 87) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 		}
@@ -98,10 +102,12 @@ void Room45::setup_func() {
 	if (menu_display == 0) {
 		if (!_G(r45_delay)) {
 			_G(r45_delay) = _G(spieler).DelaySpeed / 2;
+
 			for (i = 0; i < MAX_PERSON; i++) {
 				if (_G(r45_pinfo)[i][0] == 1) {
 					y = Adi[3 + i].y;
 					x = Adi[3 + i].x;
+
 					if (i < 6) {
 						x -= _G(r45_pinfo)[i][1];
 						if (x < -30) {
@@ -118,6 +124,7 @@ void Room45::setup_func() {
 					det->set_detail_pos(3 + i, x, y);
 				} else {
 					++_G(r45_pinfo)[i][2];
+
 					if (_G(r45_pinfo)[i][2] >= _G(r45_pinfo)[i][3]) {
 						_G(r45_pinfo)[i][2] = 0;
 						_G(r45_pinfo)[i][0] = 1;
@@ -132,13 +139,16 @@ void Room45::setup_func() {
 					}
 				}
 			}
-		} else
+		} else {
 			--_G(r45_delay);
+		}
+
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && HowardMov != 2) {
 			calc_person_look();
 			x = spieler_vector[P_HOWARD].Xypos[0];
 			y = 64;
 			ch_x = spieler_vector[P_CHEWY].Xypos[0];
+
 			if (ch_x < 95) {
 				x = 18;
 				y = 130;
@@ -149,10 +159,12 @@ void Room45::setup_func() {
 				x = 176;
 				y = 130;
 			}
+
 			if (HowardMov && flags.ExitMov) {
 				x = 56;
 				y = 122;
 			}
+
 			go_auto_xy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
@@ -162,6 +174,7 @@ int16 Room45::use_taxi() {
 	int16 action_ret = false;
 	hide_cur();
 	auto_move(1, P_CHEWY);
+
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
@@ -204,19 +217,25 @@ void Room45::taxi_mov() {
 	HowardMov = 2;
 	room->set_timer_status(12, TIMER_STOP);
 	det->del_static_ani(12);
+	det->enable_sound(15, 1);
 	det->show_static_spr(11);
 	auto_move(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
 		go_auto_xy(93, 127, P_HOWARD, ANI_WAIT);
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 	}
-	det->hide_static_spr(11);
-	start_detail_wait(15, 1, ANI_VOR);
 
+	det->hide_static_spr(11);
+	det->enable_sound(15, 2);
+	det->play_sound(15, 2);
+	det->enable_sound(15, 0);
+	start_detail_wait(15, 1, ANI_VOR);
+	det->disable_sound(15, 0);
 	switch_room(48);
 }
 
@@ -224,6 +243,7 @@ int16 Room45::use_boy() {
 	int16 action_ret = false;
 	hide_cur();
 	auto_move(2, P_CHEWY);
+
 	if (!_G(spieler).R45MagOk) {
 		if (is_cur_inventar(DOLLAR175_INV)) {
 			action_ret = true;
@@ -237,8 +257,10 @@ int16 Room45::use_boy() {
 			det->set_static_ani(0, -1);
 			_G(spieler).R45MagOk = true;
 		}
-	} else
+	} else {
 		start_aad_wait(259, -1);
+	}
+
 	show_cur();
 	return action_ret;
 }
@@ -246,15 +268,17 @@ int16 Room45::use_boy() {
 void Room45::talk_boy() {
 	int16 aad_nr;
 	hide_cur();
+
 	if (!_G(spieler).R45MagOk) {
 		auto_move(2, P_CHEWY);
 		aad_nr = 257;
-	} else
+	} else {
 		aad_nr = 259;
+	}
+
 	start_aad_wait(aad_nr, -1);
 	show_cur();
 }
-
 
 } // namespace Rooms
 } // namespace Chewy
