@@ -75,6 +75,7 @@ void Room53::talk_man() {
 
 int16 Room53::use_man() {
 	int16 action_ret = false;
+
 	if (is_cur_inventar(BESTELL_INV)) {
 		action_ret = true;
 		hide_cur();
@@ -90,6 +91,7 @@ int16 Room53::use_man() {
 		atds->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
 	}
+
 	return action_ret;
 }
 
