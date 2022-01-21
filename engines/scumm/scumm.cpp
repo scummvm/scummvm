@@ -2557,7 +2557,7 @@ void ScummEngine::scummLoop(int delta) {
 	if (_game.features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
-		if (_sound->useReplacementAudioTracks() && _sound->pollCD()) {
+		if (_sound->useReplacementAudioTracks() && _sound->getCurrentCDSound()) {
 			_sound->updateMusicTimer(delta);
 			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
