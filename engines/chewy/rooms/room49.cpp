@@ -41,16 +41,20 @@ void Room49::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = setup_func;
-	if (!_G(spieler).R49BoyWeg)
+
+	if (!_G(spieler).R49BoyWeg) {
 		_G(timer_nr)[0] = room->set_timer(255, 2);
-	else {
+	} else {
 		det->del_static_ani(0);
 		det->hide_static_spr(5);
+		det->del_static_ani(0);
+		det->del_static_ani(1);
 	}
 
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	spieler_mi[P_HOWARD].Mode = true;
+
 	if (!flags.LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
 			_G(spieler).R48TaxiEntry = false;
@@ -60,20 +64,21 @@ void Room49::entry(int16 eib_nr) {
 			_G(spieler).scrollx = 320;
 			_G(spieler).scrolly = 0;
 			det->start_detail(5, 1, ANI_VOR);
-		} else if (eib_nr == 83)
+		} else if (eib_nr == 83) {
 			set_person_pos(377, 78, P_HOWARD, P_LEFT);
+		}
 	}
-
 }
 
 void Room49::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
+
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		spieler_mi[P_HOWARD].Mode = false;
-		if (eib_nr == 80)
+		if (eib_nr == 80) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
-		else if (eib_nr == 81) {
-			SetUpScreenFunc = 0;
+		} else if (eib_nr == 81) {
+			SetUpScreenFunc = nullptr;
 			start_aad_wait(268, -1);
 		}
 	}
@@ -94,13 +99,14 @@ void Room49::gedAction(int index) {
 void Room49::calc_boy_ani() {
 	if (!_G(spieler).R49BoyAniCount) {
 		_G(spieler).R49BoyAniCount = 3;
-		_G(spieler).R49BoyAni = 1;
+		_G(spieler).R49BoyAni = true;
 		det->del_static_ani(0);
 	} else {
 		--_G(spieler).R49BoyAniCount;
-		_G(spieler).R49BoyAni = 0;
+		_G(spieler).R49BoyAni = false;
 		det->del_static_ani(1);
 	}
+
 	det->set_static_ani(_G(spieler).R49BoyAni, -1);
 	det->start_detail(_G(spieler).R49BoyAni, 1, ANI_VOR);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
@@ -115,19 +121,26 @@ void Room49::calc_boy() {
 		stop_person(P_HOWARD);
 		person_end_phase[P_CHEWY] = P_LEFT;
 		det->stop_detail(_G(spieler).R49BoyAni);
-
 		det->del_static_ani(_G(spieler).R49BoyAni);
 		det->set_static_ani(2, -1);
-		SetUpScreenFunc = 0;
+
+		SetUpScreenFunc = nullptr;
 		start_aad_wait(262, -1);
+
 		SetUpScreenFunc = setup_func;
-		SetUpScreenFunc = 0;
 		auto_move(3, P_CHEWY);
 		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
 		det->del_static_ani(2);
 		start_detail_wait(3, 1, ANI_VOR);
-		start_detail_wait(4, 1, ANI_RUECK);
+
+		det->show_static_spr(9);
+		_G(spieler).PersonHide[P_HOWARD] = true;
+		start_detail_wait(8, 1, 0);
+		_G(spieler).PersonHide[P_HOWARD] = false;
+		det->hide_static_spr(9);
+		start_detail_wait(4, 1, ANI_GO);
+
 		SetUpScreenFunc = setup_func;
 		det->set_static_ani(_G(spieler).R49BoyAni, -1);
 		room->set_timer_status(255, TIMER_START);
@@ -147,36 +160,12 @@ int16 Room49::use_boy() {
 		_G(spieler).R49WegFrei = true;
 		_G(spieler).room_e_obj[80].Attribut = AUSGANG_OBEN;
 		show_cur();
+
 	} else if (is_cur_inventar(CIGAR_INV)) {
 		action_ret = true;
-		hide_cur();
-		del_inventar(_G(spieler).AkInvent);
-		talk_boy(263);
-		SetUpScreenFunc = 0;
-		auto_move(5, P_CHEWY);
-		tmp = room->room_info->ZoomFak;
-		room->set_zoom(0);
-		go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
-		set_person_spr(P_LEFT, P_HOWARD);
-		flags.NoScroll = true;
-		auto_scroll(164, 0);
-		flic_cut(FCUT_067, FLC_MODE);
-		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->del_static_ani(_G(spieler).R49BoyAni);
-		det->stop_detail(_G(spieler).R49BoyAni);
-		flags.NoScroll = false;
-
-		set_person_spr(P_RIGHT, P_CHEWY);
-		start_aad_wait(264, -1);
-		room->set_zoom(tmp);
-		obj->add_inventar(GUM_INV, &room_blk);
-		inventory_2_cur(GUM_INV);
-		atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
-		SetUpScreenFunc = setup_func;
-		_G(spieler).R49BoyWeg = true;
-		show_cur();
+		use_boy_cigar();
 	}
+
 	return action_ret;
 }
 
@@ -232,7 +221,7 @@ void Room49::talk_boy(int16 aad_nr) {
 
 		det->set_static_ani(_G(spieler).R49BoyAni, -1);
 		det->set_static_ani(2, -1);
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(aad_nr, -1);
 		SetUpScreenFunc = setup_func;
@@ -244,8 +233,7 @@ void Room49::talk_boy(int16 aad_nr) {
 
 void Room49::look_hotel() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
-
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(261, -1);
 		SetUpScreenFunc = setup_func;
@@ -254,6 +242,7 @@ void Room49::look_hotel() {
 
 int16 Room49::use_taxi() {
 	int16 action_ret = false;
+
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hide_cur();
@@ -262,6 +251,7 @@ int16 Room49::use_taxi() {
 		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 			go_auto_xy(507, 74, P_HOWARD, ANI_WAIT);
 			go_auto_xy(490, 58, P_HOWARD, ANI_WAIT);
@@ -269,10 +259,13 @@ int16 Room49::use_taxi() {
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
+
 		det->hide_static_spr(7);
 		start_detail_wait(5, 1, ANI_VOR);
+		det->disable_sound(5, 0);
 		switch_room(48);
 	}
+
 	return action_ret;
 }
 
