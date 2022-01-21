@@ -210,14 +210,14 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 	numLoops = -1;
 
 	if (_vm->_game.id == GID_LOOM) {
-		if (soundID >= 25 && soundID <= 32) {
-			// Normal track. There is no Overture, so the first
-			// track maps to audio track 2.
-			trackNr = soundID - 23;
-		} else if (soundID >= 56 && soundID <= 64) {
+		if (_vm->VAR(_vm->VAR_SOUNDCARD) == 4 && soundID >= 56 && soundID <= 64) {
 			// Rolad track. 56 is the Overture, which maps to audio
 			// track 1.
 			trackNr = soundID - 55;
+		} else if (soundID >= 25 && soundID <= 32) {
+			// Normal track. There is no Overture, so the first
+			// track maps to audio track 2.
+			trackNr = soundID - 23;
 		}
 
 		// The Overture and the dragon abduction don't loop
