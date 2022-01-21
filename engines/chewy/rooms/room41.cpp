@@ -59,7 +59,7 @@ void Room41::entry() {
 		det->show_static_spr(7);
 	}
 
-	if (_G(spieler).ChewyAni == 5) {
+	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
 		atds->set_steuer_bit(269, 1, 1);
 	}
 
