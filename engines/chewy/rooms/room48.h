@@ -29,11 +29,11 @@ class Room48 {
 private:
 	static void calc_pic();
 	static void setup_func();
+	static void frage();
+
 public:
 	static void entry();
 	static bool timer(int16 t_nr, int16 ani_nr);
-
-	static void frage();
 };
 
 } // namespace Rooms
