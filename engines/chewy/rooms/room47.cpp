@@ -33,9 +33,11 @@ void Room47::entry() {
 	hide_person();
 	set_person_pos(40, 170, P_CHEWY, P_RIGHT);
 	SetUpScreenFunc = set_detail;
+	flags.MainInput = false;
 }
 
 void Room47::xit() {
+	flags.MainInput = true;
 	show_person();
 	set_person_pos(114, 102, P_CHEWY, P_LEFT);
 	spieler_mi[P_HOWARD].Mode = true;
@@ -44,8 +46,10 @@ void Room47::xit() {
 int16 Room47::use_knopf(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
+
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
+
 		switch (txt_nr) {
 		case 286:
 			k_nr = 0;
@@ -59,30 +63,40 @@ int16 Room47::use_knopf(int16 txt_nr) {
 			k_nr = 2;
 			break;
 
+		default:
+			break;
 		}
+
+		det->enable_sound(0, 0);
+		det->play_sound(0, 0);
 		++_G(spieler).R47Schloss[k_nr];
+
 		if (_G(spieler).R47Schloss[k_nr] > 9)
 			_G(spieler).R47Schloss[k_nr] = 0;
 
 		if (_G(spieler).R47Schloss[0] == 7 &&
-			_G(spieler).R47Schloss[1] == 6 &&
-			_G(spieler).R47Schloss[2] == 2)
+				_G(spieler).R47Schloss[1] == 6 &&
+				_G(spieler).R47Schloss[2] == 2)
 			_G(spieler).R47SchlossOk = true;
 		else
 			_G(spieler).R47SchlossOk = false;
 	}
+
 	return action_ret;
 }
 
 void Room47::set_detail() {
 	int16 i;
+
 	for (i = 0; i < 10; i++)
 		det->hide_static_spr(i);
+
 	for (i = 0; i < 3; i++) {
 		det->show_static_spr(_G(spieler).R47Schloss[i]);
 		det->set_static_pos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i * 1, false, true);
 		det->plot_static_details(0, 0, _G(spieler).R47Schloss[i], _G(spieler).R47Schloss[i]);
 	}
+
 	for (i = 0; i < 10; i++)
 		det->hide_static_spr(i);
 }
