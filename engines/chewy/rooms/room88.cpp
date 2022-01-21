@@ -113,11 +113,11 @@ int Room88::proc3() {
 		start_aad_wait(466, -1);
 		start_spz_wait(13, 1, false, P_CHEWY);
 
-		int edi = 1 + (_G(spieler).flags31_10 ? 1 : 0);
+		const int aniNr = 1 + (_G(spieler).flags31_10 ? 1 : 0);
 
 		for (int i = 0; i < 3; ++i) {
-			start_detail_wait(edi, 1, ANI_VOR);
-			start_detail_wait(edi, 1, ANI_GO);
+			start_detail_wait(aniNr, 1, ANI_VOR);
+			start_detail_wait(aniNr, 1, ANI_GO);
 		}
 
 		out->setze_zeiger(nullptr);
