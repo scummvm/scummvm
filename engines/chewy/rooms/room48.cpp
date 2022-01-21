@@ -145,7 +145,7 @@ void Room48::setup_func() {
 							det->stop_detail(0);
 							det->del_static_ani(0);
 							start_detail_wait(2, 1, ANI_VOR);
-							det->disable_sound(2);
+							det->disable_sound(2, 0);
 							menu_item = CUR_WALK;
 							cursor_wahl(menu_item);
 							show_cur();

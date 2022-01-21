@@ -27,6 +27,8 @@ namespace Rooms {
 
 class Room50 {
 private:
+	static bool _wasser;
+
 	static void stop_page();
 	static void go_page();
 	static void aad_page(int16 aad_nr, int16 ani_nr);
