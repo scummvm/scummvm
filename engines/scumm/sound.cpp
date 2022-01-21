@@ -121,7 +121,14 @@ void Sound::updateMusicTimer(int ticks) {
 	// We approximate the length of the Overture to 2.5 minutes, or 9000
 	// SCUMM ticks. (One tick is 1/60th of a second.)
 
-	// At the end of the song, the timer should be about 280.
+	// If the track has already ended, it's still important that the timer
+	// eventually reaches at least 278. If necessary, skip make sure the
+	// timer skips to 198, which is where the next scene begins.
+
+	if (!pollCD()) {
+		if (_scummTicks < 6365)
+			_scummTicks = 6365;
+	}
 
 	_musicTimer = (280 * _scummTicks) / 9000;
 }
