@@ -280,7 +280,7 @@ int16 Room12::useTransformerTube() {
 		if (_G(spieler).R12KetteLinks) {
 			_G(spieler).R12KetteLinks = false;
 			uhr->enable_timer();
-			atds->set_ats_str(117, 1, 0);
+			atds->set_ats_str(117, 1, AAD_DATEI);
 		} else {
 			auto_move(7, P_CHEWY);
 			start_aad_wait(29, -1);

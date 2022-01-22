@@ -205,7 +205,7 @@ int Room89::proc4() {
 		det->show_static_spr(5);
 		det->show_static_spr(6);
 		_G(spieler).flags33_4 = true;
-		atds->set_ats_str(514, 1, P_HOWARD);
+		atds->set_ats_str(514, 1, ATS_DATEI);
 	}
 
 	show_cur();
