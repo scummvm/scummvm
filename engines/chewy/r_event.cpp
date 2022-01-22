@@ -1855,8 +1855,8 @@ void sib_event_inv(int16 sib_nr) {
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
 			det->start_detail(6, 255, 0);
-			atds->set_ats_str(27, 1, 1);
-			atds->set_ats_str(30, 1, 1);
+			atds->set_ats_str(27, 1, ATS_DATEI);
+			atds->set_ats_str(30, 1, ATS_DATEI);
 		}
 		break;
 
@@ -1971,7 +1971,7 @@ void sib_event_inv(int16 sib_nr) {
 
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
-			atds->set_ats_str(26, 1, 6);
+			atds->set_ats_str(26, 1, INV_ATS_DATEI);
 			start_aad_wait(120, -1);
 		} else {
 			start_aad_wait(121, -1);

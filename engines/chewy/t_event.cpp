@@ -1073,7 +1073,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 267:
 						if (!_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo)
-							atds->set_ats_str(267, 1, 1);
+							atds->set_ats_str(267, 1, ATS_DATEI);
 						break;
 
 					case 283:
@@ -2168,7 +2168,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		start_spz(5, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		flags.InventMenu = true;
-		atds->set_ats_str(88, 1, 6);
+		atds->set_ats_str(88, 1, INV_ATS_DATEI);
 		break;
 
 	case 102:
