@@ -232,8 +232,10 @@ void WetEngine::loadAssetsFullGame() {
 }
 
 void WetEngine::showCredits() {
-	MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);
-	runIntro(video);
+	if (!isDemo() || _variant == "Demo") {
+		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);
+		runIntro(video);
+	}
 }
 
 void WetEngine::runCode(Code *code) {

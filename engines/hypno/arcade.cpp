@@ -142,6 +142,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
 		if ((*it)->getPixel(0, 0) == 255)
 			break;
+		if ((*it)->getPixel(0, 0) == 252)
+			break;
 
 		_playerFrameSep++;
 	}

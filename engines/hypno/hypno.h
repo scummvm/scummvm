@@ -170,6 +170,7 @@ public:
 	bool runGlobal(Global *a);
 	void runTalk(Talk *a);
 	void runChangeLevel(ChangeLevel *a);
+	virtual void drawBackToMenu(Hotspot *h);
 
 	// Screen
 	int _screenW, _screenH;
@@ -306,6 +307,7 @@ public:
 	void drawHealth() override;
 	bool checkArcadeLevelCompleted(MVideo &background) override;
 
+	void drawBackToMenu(Hotspot *h) override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;

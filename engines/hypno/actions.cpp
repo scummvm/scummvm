@@ -68,28 +68,10 @@ void HypnoEngine::runMenu(Hotspots *hs) {
 		//	runMice(h, (Mice*) action);
 	}
 
-	Graphics::Surface *menu = nullptr;
-	bool transparent = false;
-	if (_conversation.empty()) {
-		if (h->flags[0] == "HINTS" || h->flags[1] == "HINTS" || h->flags[2] == "HINTS") {
-			menu = decodeFrame("int_main/hint1.smk", 0);
-		} else if (h->flags[0] == "AUTO_BUTTONS" || h->flags[0] == "SINGLE_RUN") {
-			if (isDemo()) {
-				if (_currentLevel != "sixdemo/mis/demo.mis" && _currentLevel != "sixdemo/mis/order.mis") {
-					menu = decodeFrame("int_main/resume.smk", 0);
-					transparent = true;
-				}
-			} else {
-				menu = decodeFrame("int_main/menu.smk", 0);
-			}
-		} 
-
-		if (menu) {
-			h->rect = Common::Rect(0, 0, menu->w, menu->h);
-			drawImage(*menu, 0, 0, transparent);
-		}
-	}
+	drawBackToMenu(h);
 }
+
+void HypnoEngine::drawBackToMenu(Hotspot *h) {}
 
 void HypnoEngine::runBackground(Background *a) {	
 	if (a->condition.size() > 0) {
