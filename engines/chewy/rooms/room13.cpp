@@ -69,7 +69,7 @@ void Room13::entry() {
 		}
 
 		if (_G(spieler).R13Band) {
-			_G(spieler).room_e_obj[25].Attribut = 3;
+			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 			atds->set_steuer_bit(100, 1, 1);
 		}
 
@@ -79,7 +79,7 @@ void Room13::entry() {
 }
 
 void Room13::xit() {
-	_G(spieler).room_e_obj[25].Attribut = 3;
+	_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 	atds->set_steuer_bit(100, 1, 1);
 	_G(spieler).R13Band = false;
 }
