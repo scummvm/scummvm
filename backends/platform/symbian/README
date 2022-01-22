@@ -1,202 +1,474 @@
+ScummVM - ScummVM ported to EPOC/SymbianOS
 
- ScummVM - ScummVM ported to EPOC/SymbianOS
+Copyright (C) 2008-2022 ScummVM Team
+Copyright (C) 2013-2022 Fiodar Stryzhniou aka zanac
+Copyright (C) 2003-2013 Lars 'AnotherGuest' Persson
+Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
+Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
 
+Using parts of snprintf.c by Mark Martinec <mark.martinec@ijs.si>,
+April 1999, June 2000 Copyright � 1999,2000,2001,2002 Mark Martinec.
+All rights reserved.
 
- Copyright (C) 2008-2022 ScummVM Team
- Copyright (C) 2013-2021 Fiodar Stryzhniou aka zanac
- Copyright (C) 2003-2013 Lars 'AnotherGuest' Persson
- Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
- Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
-
-Using parts of snprintf.c by
-Mark Martinec <mark.martinec@ijs.si>, April 1999, June 2000
-Copyright � 1999,2000,2001,2002 Mark Martinec. All rights reserved.
-under these conditions:
-"Terms and conditions ...
 This program is free software; it is dual licensed, the terms of the "Frontier Artistic License" or
 the "GNU General Public License" can be chosen at your discretion.
 The chosen license then applies solely and in its entirety.
-Both licenses come with this Kit."
+Both licenses come with this Kit.
 
-About ScummVM.
---------------
-	The original ports (uptil 0.7.1) were made by Andreas Karlsson and Lars Persson.
-	The main transition to 0.8.0CVS and all relevant changes were done by Jurgen Braam.
-	Jurgen and Lars have successfully transfered all needed changes into CVS/SVN, with additional helpful tools for Symbian OS.
-	Current port maintained by Fiodar Stryzhniou.
+ScummVM developers.
+-------------------
+   The original ports (uptil 0.7.1) were made by Andreas Karlsson and Lars Persson.
+   The main transition to 0.8.0 CVS and all relevant changes were done by Jurgen Braam.
+   Jurgen and Lars have successfully transfered all needed changes into CVS/SVN, with additional helpful tools for Symbian OS.
+   Current port maintained by Fiodar Stryzhniou.
 
-Release History:
-	Release version: 2.3.0
-	* Symbian port now split in nine parts, ScummVM 1, ScummVM and so on to keep the exe size amd memory pressure down.
-	  For engines layout see ScummVM in OS help menu.
-	* Git builds (not frequently updated) can be found at https://sourceforge.net/projects/scummvms60git/
+Release History.
+----------------
+   2.5.1 "Californium" (2022-01-02)
+	* Added support for Red Comrades 1: Save the Galaxy.
+	* Added support for Red Comrades 2: For the Great Justice.
+	* Added support for Transylvania.
+	* Added support for The Crimson Crown: Further Adventures in Transylvania.
+	* Added support for OO-Topos.
+	* Added support for Glulx interactive fiction games.
+	* Added support for Lure of the Temptress Konami release.
+	* Added support for Spanish Blue Force.
+	* Added support for Spanish Ringworld.
+	* Added support for Spanish Amazon: Guardians of Eden.
+	* Added support for AGS Games versions 2.5+.
+	* Improved Digital iMUSE accuracy for Full Throttle and The Curse of Monkey Island.
+	* Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island.
 
-	Release version: 2.2.0.1
-	* Symbian port now split in five parts, ScummVM 1, ScummVM and so on to keep the exe size down.
-	  For engines layout see ScummVM in OS help menu.
+   2.2.0.1 "Interactive Fantasy" (2020-10-18)
+	* Added support for Blazing Dragons.
+	* Added support for Griffon Legend.
+	* Added support for Interactive Fiction games based on the following engines: ADRIFT (except for version 5),
+	  AdvSys, AGT, Alan 2 & 3, Archetype, Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
+	  ZCode (except the Infocom graphical version 6 games). Currently, more than 1600 games are detected and supported.
+	* Added support for Operation Stealth.
+	* Added support for Police Quest: SWAT.
+	* Added support for English translation of Prince and the Coward.
+	* Added support for Ultima VIII - Pagan.
+	* Added support for Blade Runner.
+	* Added support for Duckman: The Graphic Adventures of a Private Dick.
+	* Added support for Hoyle Bridge.
+	* Added support for Hoyle Children's Collection.
+	* Added support for Hoyle Classic Games.
+	* Added support for Hoyle Solitaire.
+	* Added support for Hyperspace Delivery Boy!.
+	* Added support for Might and Magic IV - Clouds of Xeen.
+	* Added support for Might and Magic V - Darkside of Xeen.
+	* Added support for Might and Magic - World of Xeen.
+	* Added support for Might and Magic - World of Xeen 2 CD Talkie.
+	* Added support for Might and Magic - Swords of Xeen.
+	* Added support for Mission Supernova Part 1.
+	* Added support for Mission Supernova Part 2.
+	* Added support for Quest for Glory: Shadows of Darkness.
+	* Added support for The Prince and the Coward.
+	* Added support for Versailles 1685.
+	* Added support for Full Pipe.
+	* Added support for Hi-Res Adventure #3: Cranston Manor.
+	* Added support for Hi-Res Adventure #4: Ulysses and the Golden Fleece.
+	* Added support for Hi-Res Adventure #5: Time Zone.
+	* Added support for Hi-Res Adventure #6: The Dark Crystal.
+	* Added support for Riven.
+	* Added support for Starship Titanic English & German.
+	* New Games (Sierra SCI2 - SCI3):
+	   Added support for Gabriel Knight.
+	   Added support for Gabriel Knight 2.
+	   Added support for King's Quest VII.
+	   Added support for King's Questions.
+	   Added support for Leisure Suit Larry 6 (hires).
+	   Added support for Leisure Suit Larry 7.
+	   Added support for Lighthouse.
+	   Added support for Mixed-Up Mother Goose Deluxe.
+	   Added support for Phantasmagoria.
+	   Added support for Phantasmagoria 2.
+	   Added support for Police Quest 4.
+	   Added support for RAMA.
+	   Added support for Shivers.
+	   Added support for Space Quest 6.
+	   Added support for Torin's Passage.
+	* Added support for Myst.
+	* Added support for Myst: Masterpiece Edition.
+	* Added support for U.F.O.s.
+	* Added support for Hi-Res Adventure #0: Mission Asteroid.
+	* Added support for Hi-Res Adventure #1: Mystery House.
+	* Added support for Hi-Res Adventure #2: The Wizard and the Princess.
+	* Added support for the SegaCD version of Eye of the Beholder I.
+	* Added support for the PC-98 version of Eye of the Beholder I.
+	* Fixed a script bug responsible for rare and random lockups in most Sierra games between 1992-1996.
+	* Fixed crash when switching certain languages in GUI.
+	* Added support for Pajama2.
+	* Wintermute: Added several missing game variants and demos to the detection tables.
+	* Added support for the Amiga version of Eye of the Beholder I + II.
+	* Added support for the FM-Towns version of Eye of the Beholder II.
+	* Fixed possible stack overflows in The Dig and Full Throttle.
+	* Fixed multithreading issue that could cause a crash in games using MP3 audio.
+	* Fixed crash in amiga games.
+	* Ultima IV and VI is not supported in Symbian due to a bug that causes build conflicts.
 
-	Release version: 1.7.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
+   1.8.1 "Where Is Your Android?" (2016-06-04)
+	* Added support for Rex Nebular and the Cosmic Gender Bender.
+	* Added support for Sfinx.
+	* Added support for Zork Nemesis: The Forbidden Lands.
+	* Added support for Zork: Grand Inquisitor.
+	* Added support for The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel.
+	* Added support for The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo.
+	* Added support for Beavis and Butthead in Virtual Stupidity.
+	* Added support for Amazon: Guardians of Eden.
+	* Added support for The Labyrinth of Time.
+	* Symbian does not support Broken Sword 2.5 due to the screen resolution.
+	* Only Symbian S60v3 are supported.
+	* Updated Munt MT-32 emulation code to version 1.5.0.
+	* Improved support for Japanese PC-9801 games.
+	* Implemented original Maniac Mansion v0-v1 walking code.
+	* Improved AdLib music support in Discworld 1.
 
-	Release version: 1.6.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
+   1.7.0 "The Neverrelease" (2014-07-21)
+	* Added support for Chivalry is Not Dead.
+	* Added support for Return to Ringworld.
+	* Added support for The Neverhood.
+	* Added support for Mortville Manor.
+	* Added support for Voyeur.
+	* Last version that support Symbian UIQ 3.
+	* Updated Munt MT-32 emulation code to version 1.3.0.
+	* Switched from our custom JPEG and PNG decoders to libjpeg(-turbo) and libpng.
+	* Fixed several script bugs in Camelot, Crazy Nick's, Hoyle 3, QFG1VGA, KQ5, KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4, SQ5.
+	* Changed the saved game naming scheme of HE games to always contain the target name.
+	* Improved AdLib support for Loom and Indiana Jones and the Last Crusade.
 
-	Release version: 1.5.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
+   1.6.0 "+4 to engines" (2013-05-31)
+	* Added support for 3 Skulls of the Toltecs.
+	* Added support for Eye of the Beholder.
+	* Added support for Eye of the Beholder II: The Legend of Darkmoon.
+	* Added support for Hopkins FBI.
+	* Added support for Tony Tough and the Night of Roasted Moths.
+	* Added support for The Journeyman Project: Pegasus Prime.
+	* Added support for the Macintosh version of Discworld 1.
+	* Added support for Backyard Baseball 2003.
+	* Added support for Blue Force.
+	* Added support for Darby the Dragon.
+	* Added support for Dreamweb.
+	* Added support for Geisha.
+	* Added support for Gregory and the Hot Air Balloon.
+	* Added support for Magic Tales: Liam Finds a Story.
+	* Added support for Once Upon A Time: Little Red Riding Hood.
+	* Added support for Sleeping Cub's Test of Courage.
+	* Added support for Soltys.
+	* Added support for The Princess and the Crab.
+	* Rewrote VideoDecoder subsystem.
+	* Updated MT-32 emulation code to latest munt project snapshot.
+	* Major bugfixes in INSANE (the Full Throttle bike fights).
+	* Added custom game and engine options in the AGI, DREAMWEB, KYRA, QUEEN, SKY and SCI engines.
 
-	Release version: 1.4.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
-	* See main readme for general ScummVM improvements, major update.
+   1.4.1 "Subwoofer Release" (2012-01-27)
+	* Added support for Lands of Lore: The Throne of Chaos.
+	* Added support for Blue's Birthday Adventure.
+	* Added support for Ringworld: Revenge Of The Patriarch.
+	* Added support for the Amiga version of Conquests of the Longbow.
+	* Added detection entries for more variants of some Living Books games.
+	* Implemented sound support for the DOS version of Winnie the Pooh in the Hundred Acre Wood.
+	* Fixed the ARM assembly routine for reverse stereo audio.
+	* Fixed a regression that made Discworld uncompletable.
+	* Fixed a regression in Inherit the Earth's dragon walk code which was causing crashes there.
+	* Fixed a regression causing various crashes in I Have No Mouth and I Must Scream.
 
-	Release version: 1.3.1
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
-	* See main readme for general ScummVM improvements, major update.
+   1.3.0 "Runner" (2011-05-28)
+	* Added support for Backyard Baseball.
+	* Added support for Backyard Baseball 2001.
+	* Added support for Urban Runner.
+	* Added support for Playtoons: Bambou le Sauveur de la Jungle.
+	* Added support for Toonstruck.
+	* Added support for Living Books v1 and v2 games.
+	* Added support for Hugo's House of Horrors, Hugo 2: Whodunit? and Hugo 3: Jungle of Doom.
+	* Added support for Amiga SCI games (except Conquests of the Longbow).
+	* Added support for Macintosh SCI1 games.
+	* Improved support for FM-TOWNS versions of games.
 
-	Release version: 1.3.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
-	* See main readme for general ScummVM improvements, major update.
-
-	Release version: 1.2.1
+   1.2.1 "Bork Bork Bork" (2010-12-19)
 	* Symbian port now split in two parts, ScummVM 1 and ScummVM 2 to keep the exe size down.
-	  ScummVM 1 contains the following engines:
-		scumm, queen, groovie, saga, drascula, touche,
-		parallaction, cine, cruise, made, tucker.
-
-	  ScummVM 2 contains the following engines:
+	 + ScummVM1 contains the following engines:
+		scumm, queen, groovie, saga, drascula, touche, parallaction, cine, cruise, made, tucker.
+	 + ScummVM2 contains the following engines:
 		agos, sky, gob, kyra, lure, agi, tinsel, sword1, sword2, draci, sci, teenagent.
-	* See main readme for general ScummVM improvements, minor update.
+	* From now on, ScummVM for Symbian will be split into more parts, as as support for more
+	  engines is added, it will increase in size.
 
-	Release version: 1.2.0
-	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used).
-	* See main readme for general ScummVM improvements, major update.
+   1.2.0 "FaSCInating release" (2010-10-15)
+	* Added support for Fascination.
+	* New Games (Sierra SCI0 - SCI1.1):
+	   Added support for Castle of Dr. Brain (EGA and VGA).
+	   Added support for Codename: ICEMAN.
+	   Added support for Conquests of Camelot.
+	   Added support for Conquests of the Longbow (EGA and VGA).
+	   Added support for EcoQuest: The Search for Cetus.
+	   Added support for EcoQuest 2: Lost Secret of the Rainforest.
+	   Added support for Freddy Pharkas: Frontier Pharmacist.
+	   Added support for Hoyle's Book of Games 1.
+	   Added support for Hoyle's Book of Games 2.
+	   Added support for Hoyle's Book of Games 3 (EGA and VGA).
+	   Added support for Hoyle Classic Card Games.
+	   Added support for Jones in the Fast Lane.
+	   Added support for King's Quest I (SCI remake).
+	   Added support for King's Quest IV (SCI version).
+	   Added support for King's Quest V (EGA and VGA).
+	   Added support for King's Quest VI (low and hi res).
+	   Added support for Laura Bow: The Colonel's Bequest.
+	   Added support for Laura Bow 2: The Dagger of Amon Ra.
+	   Added support for Leisure Suit Larry 1 (SCI remake) (EGA and VGA).
+	   Added support for Leisure Suit Larry 2.
+	   Added support for Leisure Suit Larry 3.
+	   Added support for Leisure Suit Larry 5 (EGA and VGA).
+	   Added support for Leisure Suit Larry 6 (low res).
+	   Added support for Mixed-up Fairy Tales.
+	   Added support for Mixed-up Mother Goose.
+	   Added support for Pepper's Adventures in Time.
+	   Added support for Police Quest I (SCI remake).
+	   Added support for Police Quest II.
+	   Added support for Police Quest III (EGA and VGA).
+	   Added support for Quest for Glory I/Hero's Quest.
+	   Added support for Quest for Glory I VGA remake.
+	   Added support for Quest for Glory II.
+	   Added support for Quest for Glory III.
+	   Added support for Slater & Charlie go camping.
+	   Added support for Space Quest I (SCI remake) (EGA and VGA).
+	   Added support for Space Quest III.
+	   Added support for Space Quest IV (EGA and VGA).
+	   Added support for Space Quest V.
+	   Added support for The Island of Dr. Brain.
+	* Added support for playing Kyrandia 3 with the original CD file layout.
+	* Added support for more original media layouts.
+	* Added support for GUI localization.
 
-	Release version: 1.1.0
-	* Nothing significant in the Symbian port, except SDL improvements.
-	* See main readme for general ScummVM improvements, minor update.
+   1.1.1 "Better version" (2010-05-02)
+	* Fixed several minor bugs here and there.
+	* Fix video playback regression in Discworld 2.
 
-	Release version: 1.0.0
-	* Nothing significant in the Symbian port, except SDL improvements.
-	* See main readme for general ScummVM improvements, minor update.
+   1.1.0 "Beta quadrant" (2010-04-04)
+	* Added support for Blue's Art Time Activities.
+	* Added support for Blue's Reading Time Activities.
+	* Added support for Freddi Fish 5: The Case of the Creature of Coral Cove.
+	* Added support for Pajama Sam: Games to Play on Any Day.
+	* Added support for SPY Fox 3: Operation Ozone.
+	* Added support for Dragon History.
+	* Added support for TeenAgent.
+	* Added support for the PC-Engine version of Loom.
+	* Added support for music and sound effects in the the Amiga version of The Secret of Monkey Island.
 
-	Release version: 0.13.1
-	* Nothing significant in the Symbian port, except SDL improvements.
-	* See main readme for general ScummVM improvements, minor update.
+   1.0.0 "Shiny Logo" (2009-11-15)
+	* Fixed several bugs in GUI.
+	* Updated the project logo and icons.
 
-	Release version: 0.13.1
-	* Nothing significant in the Symbian port, except SDL improvements.
+   1.0.0rc1 "Grog XD" (2009-08-31)
+	* Added support for Discworld.
+	* Added support for Discworld 2 - Missing Presumed...!?.
+	* Added support for Return to Zork.
+	* Added support for Leather Goddesses of Phobos 2.
+	* Added support for The Manhole.
+	* Added support for Rodney's Funscreen.
+	* Added support for Cruise for a Corpse.
+	* Added per-game GUI options.
+	* Increased compatibility for Sierra games.
 
-	Release version: 0.13.0
-	* Nothing significant in the Symbian port, except SDL improvements.
+   0.13.1 "SAGA returns" (2009-04-27)
+	* Added Bluetooth mouse support.
+	* Added support for the Return to Launcher feature.
+	* Fixed a case where memory could be corrupted.
+	* Fixed the small cursor in the modern theme.
 
-	Release version: 0.12.0
-	* This version is only supported on Symbian OS 9 devices due to compiler constraints for older devices. (That means UIQ3 and S60V3 devices)
+   0.13.0 "More Guests" (2009-02-28)
+	* Added support for Blue's 123 Time Activities.
+	* Added support for Blue's ABC Time Activities.
+	* Added support for Bud Tucker in Double Trouble.
+	* Added support for The 7th Guest.
+	* Implemented radio-chatter effect in The Dig.
+	* Added a 'Load' button to the Launcher (not supported by all engines).
+	* Added a new global main menu (GMM) dialog usable from all engines.
+
+   0.12.0 "&nbsp;" (2008-08-31)
+	* Added support for The Legend of Kyrandia: Book Two: Hand of Fate.
+	* Added support for The Legend of Kyrandia: Book Three: Malcolm's Revenge.
+	* Added support for Lost in Time.
+	* Added support for The Bizarre Adventures of Woodruff and the Schnibble.
+	* Added support for the PC version of Waxworks.
+	* Added support for the Macintosh version of I Have no Mouth, and I must Scream.
+	* Added support for Drascula: The Vampire Strikes Back.
 	* Updated to SDL version 1.2.13 (previous version used was 1.2.2).
-	* Information about S60 devices can be found here https://wiki.scummvm.org/index.php/SymbianOS_S60.
-	* Information about UIQ devices can be found here https://wiki.scummvm.org/index.php/SymbianOS_UIQ.
-	* Best source of general information is the ScummVM forum, https://forums.scummvm.org.
-	* SVN builds (not frequently updated) can be found at http://www.anotherguest.se.
 
+   0.11.1 "Fixed exist()nce" (2008-02-29)
+	* Improvements for Digital iMUSE subsystem. This fixes several glitches in The Curse of Monkey Island.
+	* Fixes for cursors in HE games.
 
-Games supported
----------------
-	The Symbian port of ScummVM supports all games. Some games might not run properly due to screenresolution or memory constraints.
-	Minimum free memory requirement is about 12MB to be able to start and run ScummVM, this is enough for most older games,
-	but newer more resource hungry games, might require more.
+   0.11.0 "Your Palindrome" (2008-01-15)
+	* Added support for Elvira: Mistress of the Dark.
+	* Added support for Elvira 2: The Jaws of Cerberus.
+	* Added support for I Have no Mouth, and I Must Scream.
+	* Added support for preAGI game Mickey's Space Adventure.
+	* Added support for preAGI game Troll's Tale.
+	* Added support for preAGI game Winnie the Pooh in the Hundred Acre Wood.
+	* Added support for Amiga version of Waxworks.
+	* Added support for Lure of the Temptress.
+	* Added ARM assembly routines for code in the sound mixer and SCUMM video playback, resulting in some nice speedups on several ports.
+	* Improved the way keyboard input is handled internally, resolving some odd quirks in some game/port combinations.
+	* Improved detection of new game variants and localized versions.
 
-Building ScummVM
----------------------
+   0.X.0 "Tic-tac-toe edition" (2007-06-20)
+	* Added Cinematique evo 1 engine. Currently only Future Wars is supported.
+	* Added Touche: The Adventures of the Fifth Musketeer engine.
+	* Added support for Gobliins 2.
+	* Added support for Simon the Sorcerer's Puzzle Pack.
+	* Added support for Ween: The Prophecy.
+	* Added support for Bargon Attack.
+	* Added Sierra AGI engine.
+	* Added support for Goblins 3.
+	* Added Parallaction engine. Currently only Nippon Safes Inc. is supported.
+	* Only Symbian S60v3 and UIQ 3 are supported.
+	* Improved compression for DXA movies.
+	* Added support for MP3 to S60v3 and UIQ 3 versions.
+	* Switched to SDL 1.2.11 for bug fixes and improvements.
+	* Improved performance for S60v3 and UIQ 3 using ARM target.
+	* Limited support for pre Symbian OS 9 devices due to compiler issues.
+	* Updated key mapping handling.
 
-	Nescessary components
-	---------------------
-	Building ScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
-	Lets just say the framework needs quite some time to set up and takes a while
-	to get used to. If you choose to continue you will need the following items:
+   0.9.1 "PalmOS revived" (2006-10-29)
+	* Last version that supports Symbian S60v1, S60v2, S80, S90 and UIQ 2.
+	* Improved support for international versions of HE games.
+	* Fixed rare actor drawing glitches.
+	* Removed restriction on 27 games per game id when added via launcher.
 
-	- GCC 5.x and above for best perfomance(UIQ 3 and S60v3). Build it by yourself.
-	  https://github.com/fedor4ever/GCC-4-Symbian/tree/master
+   0.9.0 "The OmniBrain loves you" (2006-06-25)
+	* Add support for Symbian S60v3 and UIQ 3.
+	* Added kyra engine (for the Kyrandia series). Currently only the first part of the series is supported.
+	* Added support for The Feeble Files.
+	* Added subtitle configuration controls to the Launcher options dialogs.
+	* GUI was completely redesigned and is now themeable.
+	* Rewrote the detection code, for improved accuracy and better support of fan translations.
 
-	- UIQ 3.x SDK (To build for UIQ3 devices)(Build scripts in SDK need tweaking in order to build scummvm since Symbian OS GCCE never builds as large projects as ScummVM before)
-	- UIQ 2.1 SDK (To build for UIQ2 devices);
-	  http://www.symbian.com/developer/sdks_uiq.asp
+   0.8.2 "Broken Broken Sword 2" (2006-02-08)
+	* Added support for rotating and scaling of sprites in HE games.
 
-	- Nokia S60 1st, 2nd edition,3rd edition SDK (To build for S60 devices)
+   0.8.1 "missing" (2006-01-31)
+	* Add support for Symbian UIQ 2. The support for UIQ is abandoned.
+	* Switched to new improved logo which matches new site design.
+	* More descriptive game titles in all engines.
+	* Added support for sound code, used by songs in HE games.
 
-	- Nokia S80 SDK (To build for S80 devices)
+   0.8.0 (2005-10-30)
+	* First version that adds support for Symbian S60v1, S60v2, S80, S90 and UIQ.
+	* Added SAGA engine (for the games "I Have No Mouth and I Must Scream" and "Inherit the Earth").
+	* Added Gob engine (for the Goblins series). Currently, only the first of the Goblins games is supported.
 
-	- Nokia 7710 SDK (To build for the 7710/S90 device)
+Symbian support.
+----------------
+   + Information about Symbian devices can be found here https://wiki.scummvm.org/index.php?title=SymbianOS.
+   + Best source of general information is the ScummVM forum https://forums.scummvm.org/viewforum.php?f=7.
+   + SVN builds (not frequently updated) can be found at:
+     https://sourceforge.net/projects/scummvms60git/files/
+     https://downloads.scummvm.org/frs/scummvm/
+     http://www.anotherguest.se
 
-	- ECompXL, an EPOC application compression library
-	  http://www.yipton.demon.co.uk/ecompxl/latest/readme.html (To build for UIQ devices)
+Games supported.
+----------------
+   The Symbian port of ScummVM supports all games. Some games might not run properly due to screenresolution or memory constraints.
+   Minimum free memory requirement is about 12MB to be able to start and run ScummVM, this is enough for most older games,
+   but newer more resource hungry games, might require more.
 
-	- Python 2.7
-	  https://www.python.org/downloads/
+Building ScummVM.
+-----------------
+   Nescessary components.
+   ----------------------
+   Building ScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
+   Lets just say the framework needs quite some time to set up and takes a while
+   to get used to. If you choose to continue you will need the following items:
+   + GCC 5.x and above for best perfomance(UIQ 3 and S60v3). Build it by yourself.
+     https://github.com/fedor4ever/GCC-4-Symbian/tree/master
 
-	- required libraries can be found here
-	  https://sourceforge.net/projects/scummvms60git/files/libs/
+   + UIQ 3.x SDK (To build for UIQ3 devices)(Build scripts in SDK need tweaking in order to build scummvm since
+     Symbian OS GCCE never builds as large projects as ScummVM before).
+   + UIQ 2.1 SDK (To build for UIQ2 devices).
+     https://web.archive.org/web/20051214064517/http://www.symbian.com/developer/sdks_uiq.asp
+     https://mrrosset.github.io/Symbian-Archive/SDKs-UIQ&S3.html
+     https://www.25yearsofprogramming.com/java-me/generic-uiq-sdk.html
 
-	- libsdl, Simple Directmedia Layer, a cross-platform multimedia library
-	  http://www.libsdl.org/ (see note about ESDL below)
+   + Nokia S60 1st, 2nd edition,3rd edition SDK (To build for S60 devices).
+   + Nokia S80 SDK (To build for S80 devices).
+   + Nokia 7710 SDK (To build for the 7710/S90 device).
+     https://mrrosset.github.io/Symbian-Archive/SDKs-Series.html
 
-	- libmad, a high-quality MPEG audio decoder
-	  http://www.underbit.com/products/mad/
+   + ECompXL, an EPOC application compression library (To build for UIQ devices).
+     https://web.archive.org/web/20060910231028/http://www.yipton.demon.co.uk:80/ecompxl/latest/readme.html
 
-	- zlib, a massively spiffy yet delicately unobtrusive compression library
-	  http://www.zlib.net/
+   + Python 2.7.
+     https://www.python.org/downloads/
 
-	- libogg, the free media file container format
-	  http://www.xiph.org/ogg/
+   + Required libraries can be found here.
+     https://sourceforge.net/projects/scummvms60git/files/libs/
 
-	- libvorbis, the free audio codec
-	  http://www.vorbis.com/
-	These are probably too heavy-duty for your phone:
+   + libsdl, Simple Directmedia Layer, a cross-platform multimedia library.
+     https://www.libsdl.org/ (see note about ESDL below)
+     https://www.libsdl.org/languages.php
 
-	- flac, the Free Lossless Audio Codec
-	  https://xiph.org/flac/
-	- theora
-	  https://www.theora.org/
-	- mpeg2
-	  https://libmpeg2.sourceforge.io/
+   + libmad, a high-quality MPEG audio decoder.
+     https://www.underbit.com/products/mad/
+     ftp://ftp.mars.org/pub/mpeg/
 
-	Compiling ScummVM
-	-----------------
+   + zlib, a massively spiffy yet delicately unobtrusive compression library.
+     https://www.zlib.net/
 
-	ECompXL (Only needed for UIQ2):
-	this is a tool that will compress your executable with GZIP and glue
-	it to a predefined loader app. The app will uncompress your application at
-	runtime and run it without you even knowing it. A really interesting byproduct
-	of this method is that the general restriction of not having any writeable
-	static data (WSD) for Symbian APP executables no longer applies. This makes
-	the life of an EPOC porter a lot easier! To install this tool you need to add
-	its \bin path to your PATH above the sybmian epocs32\tools path, so that ECompXL's
-	PETRAN.EXE will be the executable that is started.
+   + libogg, the free media file container format.
+     https://www.xiph.org/ogg/
+     https://www.xiph.org/downloads/
 
-	ScummVM:
-	In <DevRoot>\scummvm\backends\platform\symbian\ :
-	run build_me.py
+   + libvorbis, the free audio codec.
+     https://xiph.org/vorbis/
+     https://ftp.osuosl.org/pub/xiph/releases/vorbis/
 
-	Now you should have yourself a nice ScummVM_xxx.sis installer package in the packages folder for use
-	on your phone. Please note that for development it will be a lot faster if you
-	transfer the SCUMMVM.APP/Scummvm.EXE file directly to your !:\system\apps\ScummVM\ dir! (pre Symbian 9 only)
+   These are probably too heavy-duty for your phone:
+   + flac, the Free Lossless Audio Codec.
+     https://xiph.org/flac/
 
-	Platforms can be one of: ARMi, ARM4, THUMB, WINS, WINSCW, GCCE. The SE P900 uses the ARMi platform,
-	which is a combined ARM4/THUMB programming mode. Configurations can be one of:
-	UREL or UDEB.
+   + theora.
+     https://www.theora.org/downloads/
 
+   + mpeg2.
+     https://libmpeg2.sourceforge.io/
 
-Greetz & such
--------------
-	Kudos fly out to:
-	- Sprawl for having the nerve to start & carry this puppy for so long
-	- AnotherGuest for having the nerve to start & carry this puppy for so long
-	- Fingolfin for taking the time to go through 1000 patch versions with me
-	- Myself (SumthinWicked), for writing this entire README and adopting all sources together with Fingolfin :)
-	- the entire ScummVM Dev team for making a kicka$$ program
-	- the folks in #scummvm @ irc.libera.chat for their help, comfort and support
-	- everybody else who wants to give me 'the look' for not including them here :P
+   Compiling ScummVM.
+   ------------------
+   https://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
+   https://wiki.scummvm.org/index.php?title=Symbian-build-system
 
+   ECompXL (Only needed for UIQ2):
+   This is a tool that will compress your executable with GZIP and glue it to a predefined loader app.
+   The app will uncompress your application at runtime and run it without you even knowing it.
+   A really interesting byproduct of this method is that the general restriction of not having any
+   writeable static data (WSD) for Symbian APP executables no longer applies. This makes the life of an
+   EPOC porter a lot easier! To install this tool you need to add its \bin path to your PATH above the
+   Symbian epocs32\tools path, so that ECompXL's PETRAN.EXE will be the executable that is started.
 
-	it's been swell,
-	gotta go now,
+   ScummVM:
+   In <DevRoot>\scummvm\backends\platform\symbian\ :
+   run build_me.py
 
-	greetz,
-	SumthinWicked & Anotherguest
+   Now you should have yourself a nice ScummVM_xxx.sis installer package in the packages folder for use on
+   your phone. Please note that for development it will be a lot faster if you transfer the
+   SCUMMVM.APP/Scummvm.EXE file directly to your !:\system\apps\ScummVM\ dir! (pre Symbian 9 only).
+
+   Platforms can be one of: ARMi, ARM4, THUMB, WINS, WINSCW, GCCE. The SE P900 uses the ARMi platform,
+   which is a combined ARM4/THUMB programming mode. Configurations can be one of:
+   UREL or UDEB.
+
+Greetz & such.
+--------------
+   Kudos fly out to:
+   + Sprawl & AnotherGuest for having the nerve to start & carry this puppy for so long.
+   + Fingolfin for taking the time to go through 1000 patch versions with me.
+   + Myself (SumthinWicked), for writing this entire README and adopting all sources together with Fingolfin :)
+   + The entire ScummVM Dev team for making a kicka$$ program.
+   + The folks in #scummvm @ irc.libera.chat for their help, comfort and support.
+   + Everybody else who wants to give me 'the look' for not including them here :P
+
+It's been swell, gotta go now.
+Greetz!
+SumthinWicked & Anotherguest.
