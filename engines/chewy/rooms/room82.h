@@ -29,10 +29,12 @@ class Room82 {
 public:
 	static void entry();
 	static void xit(int16 eib_nr);
+	static void setup_func();
 	static void talk1();
 	static void talk2();
 	static void talk3();
 	static int proc3();
+	static void proc4();
 	static int proc6();
 	static void proc8();
 	static int proc9();

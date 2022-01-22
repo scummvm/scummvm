@@ -53,8 +53,8 @@ void Room51::entry() {
 
 	if (_G(spieler).flags32_10) {
 		atds->set_unknown(0);
-		_G(spieler).PersonHide[P_CHEWY] = 1;
-		_G(spieler).PersonHide[P_HOWARD] = 1;
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(maus_links_click) = 0;
 		_G(spieler).scrollx = 0;
 		set_person_pos(34, 120, 1, 1);
@@ -148,7 +148,7 @@ void Room51::setup_func() {
 		if ((minfo.button == 1 || in->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			det->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
-			start_detail_wait(8, 1, 0);
+			start_detail_wait(8, 1, ANI_VOR);
 			_flag = false;
 			++_index;
 
