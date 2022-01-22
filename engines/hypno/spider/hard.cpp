@@ -96,7 +96,7 @@ void SpiderEngine::runMatrix(Code *code) {
 		menu = decodeFrame("int_main/hint1.smk", 0);
 
 	menuArea = Common::Rect(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, true);
+	drawImage(*menu, 0, 0, false);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -330,7 +330,7 @@ void SpiderEngine::runNote(Code *code) {
 
 	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
 	Common::Rect menuArea(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, true);
+	drawImage(*menu, 0, 0, false);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -422,7 +422,7 @@ void SpiderEngine::runNote(Code *code) {
 					}
 					o2x = o2x + size.x;
 				}
-				drawImage(*menu, 0, 0, true);
+				drawImage(*menu, 0, 0, false);
 				break;
 
 			default:
@@ -646,7 +646,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 		_intros[intro] = true;
 	}
 
-	drawImage(*menu, 0, 0, true);
+	drawImage(*menu, 0, 0, false);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -710,7 +710,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
-				drawImage(*menu, 0, 0, true);
+				drawImage(*menu, 0, 0, false);
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
@@ -776,7 +776,7 @@ void SpiderEngine::runLock(Code *code) {
 	MVideo *v = nullptr;
 	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
 	Common::Rect menuArea(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, true);
+	drawImage(*menu, 0, 0, false);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -838,7 +838,7 @@ void SpiderEngine::runLock(Code *code) {
 				for (int i = 0; i < 5; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
-				drawImage(*menu, 0, 0, true);
+				drawImage(*menu, 0, 0, false);
 				break;
 
 			default:
@@ -915,7 +915,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 	Frames fuses = decodeFrames("movie2/onoffuse.smk");
 	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
 	Common::Rect menuArea(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, true);
+	drawImage(*menu, 0, 0, false);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -1008,7 +1008,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 						}
 					}
 				}
-				drawImage(*menu, 0, 0, true);
+				drawImage(*menu, 0, 0, false);
 				break;
 
 			default:
