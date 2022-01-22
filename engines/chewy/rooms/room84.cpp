@@ -70,7 +70,7 @@ void Room84::entry() {
 	}
 
 	if (flags.LoadGame) {
-		; // Nothing. It avoids a deeper level of if, and we need the setupfunc at the end
+		; // Nothing. It avoids a deeper level of if, and we need the SetUpScreenFunc at the end
 	} else if (_G(spieler).flags30_1 || _G(spieler).flags31_8) {
 		set_person_pos(569, 135, P_CHEWY, P_LEFT);
 		set_person_pos(489, 113, P_HOWARD, P_RIGHT);
@@ -148,7 +148,7 @@ void Room84::setup_func() {
 		show_cur();
 	}
 
-	int posX = spieler_vector[P_CHEWY].Xypos[0];
+	const int posX = spieler_vector[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	if (posX > 610) {
 		howDestX = nicDestX = 610;
