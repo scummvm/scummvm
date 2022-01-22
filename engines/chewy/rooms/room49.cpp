@@ -136,7 +136,7 @@ void Room49::calc_boy() {
 
 		det->show_static_spr(9);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		start_detail_wait(8, 1, 0);
+		start_detail_wait(8, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		det->hide_static_spr(9);
 		start_detail_wait(4, 1, ANI_GO);
@@ -187,7 +187,7 @@ void Room49::use_boy_cigar() {
 	test_intro(17);
 	ERROR
 
-	room->set_timer_status(255, 0);
+	room->set_timer_status(255, TIMER_STOP);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 	det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 	det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
