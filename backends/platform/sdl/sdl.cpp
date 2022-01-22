@@ -322,20 +322,46 @@ void OSystem_SDL::detectFramebufferSupport() {
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-	if (window) {
-		SDL_GLContext glContext = SDL_GL_CreateContext(window);
-		if (glContext) {
-			OpenGLContext.initialize(OpenGL::kOGLContextGL);
-			_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
-			OpenGLContext.reset();
-			SDL_GL_DeleteContext(glContext);
-		}
-		SDL_DestroyWindow(window);
+	if (!window) {
+		return;
 	}
+
+	int glContextProfileMask, glContextMajor;
+	OpenGL::ContextOGLType glContextType;
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &glContextProfileMask) != 0) {
+		SDL_DestroyWindow(window);
+		return;
+	}
+	if (glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &glContextMajor) != 0) {
+			SDL_DestroyWindow(window);
+			return;
+		}
+		if (glContextMajor == 2) {
+			glContextType = OpenGL::kOGLContextGLES2;
+		} else {
+			SDL_DestroyWindow(window);
+			return;
+		}
+	} else {
+		glContextType = OpenGL::kOGLContextGL;
+	}
+	SDL_GLContext glContext = SDL_GL_CreateContext(window);
+	if (!glContext) {
+		SDL_DestroyWindow(window);
+		return;
+	}
+
+	OpenGLContext.initialize(glContextType);
+	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	OpenGLContext.reset();
+	SDL_GL_DeleteContext(glContext);
+	SDL_DestroyWindow(window);
 #else
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
+	// SDL 1.2 only supports OpenGL
 	OpenGLContext.initialize(OpenGL::kOGLContextGL);
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	OpenGLContext.reset();
