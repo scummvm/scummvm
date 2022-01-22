@@ -19,17 +19,15 @@
  *
  */
 
-#include "chewy/defines.h"
-#include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room83.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room83::entry() {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
 }
 
 } // namespace Rooms
