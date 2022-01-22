@@ -322,7 +322,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 	else if (!_G(spieler).R67LiedOk)
 		start_aad_wait(389, -1);
 	else {
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		del_inventar(_G(spieler).AkInvent);
 		go_auto_xy(150, -13, P_NICHELLE, ANI_WAIT);
 		_G(spieler).PersonHide[P_NICHELLE] = true;

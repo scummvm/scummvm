@@ -187,7 +187,7 @@ int16 Room56::use_kneipe() {
 			hide_cur();
 			action_ret = true;
 			if (!_G(spieler).R56Kneipe) {
-				SetUpScreenFunc = 0;
+				SetUpScreenFunc = nullptr;
 				auto_move(4, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				go_auto_xy(160, 58, P_HOWARD, ANI_WAIT);

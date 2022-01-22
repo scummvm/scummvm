@@ -492,7 +492,7 @@ void exit_room(int16 eib_nr) {
 		if (eib_nr == 47)
 			_G(spieler).R17Location = 1;
 		flags.NoEndPosMovObj = false;
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		load_chewy_taf(CHEWY_NORMAL);
 
 		break;

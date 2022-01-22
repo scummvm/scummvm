@@ -103,7 +103,7 @@ int16 Room62::use_laura() {
 		hide_cur();
 		auto_move(2, P_CHEWY);
 		auto_scroll(0, 0);
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		det->del_static_ani(8);
 		det->stop_detail(8);
 		_G(spieler).PersonHide[P_CHEWY] = true;
