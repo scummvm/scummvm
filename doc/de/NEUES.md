@@ -42,6 +42,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  SCI:
    - Unterstützung für Sprachausgabe in den Diskettenversionen von SCI-Spielen zugefügt.
+   - In den folgenden Spielen kann das Spiel nun über das globale ScummVM-Menü gespeichert werden:
+     BRAIN1, BRAIN2, ECOQUEST1, ECOQUEST2, FAIRYTALES, PHARKAS, GK1, GK2, ICEMAN,
+     KQ1, KQ4, KQ5, KQ6, KQ7, LB1, LB2, LIGHTHOUSE, LONGBOW, LSL1, LSL2, LSL3,
+     LSL5, LSL6, LSL6HIRES, LSL7, PEPPER, PHANT2, PQ1, PQ2, PQ3, PQ4, PQSWAT,
+     QFG1, QFG1VGA, QFG2, QFG3, QFG4, SHIVERS, SQ1, SQ3, SQ4, SQ5, SQ6, TORIN.
 
  SCUMM:
    - Neue Digital iMUSE-Engine hinzugefügt.
