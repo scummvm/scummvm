@@ -217,7 +217,7 @@ int16 Room55::use_telefon() {
 
 				set_person_pos(178, 75, P_CHEWY, P_LEFT);
 				set_person_pos(66, 73, P_HOWARD, P_RIGHT);
-				SetUpScreenFunc = 0;
+				SetUpScreenFunc = nullptr;
 				det->set_static_ani(18, -1);
 				start_aad_wait(334, -1);
 				start_aad_wait(335, -1);

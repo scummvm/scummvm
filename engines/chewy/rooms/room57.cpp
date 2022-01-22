@@ -120,7 +120,7 @@ int16 Room57::use_pfoertner() {
 		start_aad_wait(340, -1);
 	} else if (is_cur_inventar(EINLAD_INV)) {
 		action_ret = true;
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		go_auto_xy(132, 130, P_HOWARD, ANI_WAIT);
 		if (_G(spieler).R56AbfahrtOk) {
 			start_aad_wait(341, -1);

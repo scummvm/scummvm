@@ -29,6 +29,7 @@ class Room84 {
 public:
 	static void entry();
 	static void xit(int16 eib_nr);
+	static void setup_func();
 	static void talk1();
 	static void talk2();
 	static int proc4();

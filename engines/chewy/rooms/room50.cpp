@@ -195,7 +195,7 @@ int16 Room50::use_gum() {
 		auto_move(3, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = true;
 		go_auto_xy(75, 92, P_CHEWY, ANI_WAIT);
-		SetUpScreenFunc = 0;
+		SetUpScreenFunc = nullptr;
 		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
 
 		set_person_spr(P_LEFT, P_HOWARD);
