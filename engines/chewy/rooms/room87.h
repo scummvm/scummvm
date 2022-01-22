@@ -31,7 +31,10 @@ class Room87 {
 public:
 	static void entry();
 	static void xit(int16 eib_nr);
-	static int proc2();
+	static void setup_func();
+	static int proc2(int16 txt_nr);
+	static int16 proc3(int16 key);
+	static int16 proc5(int16 key);
 	static int proc4();
 };
 
