@@ -683,7 +683,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 495:
-						action_ret = Room88::proc2();
+						action_ret = Room85::proc2();
 						break;
 
 					case 497:
