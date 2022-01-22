@@ -28,7 +28,6 @@ namespace Rooms {
 class Room54 {
 private:
 	static void setup_func();
-	static void calc_auto_taxi();
 	static int16 cut_serv(int16 frame);
 	static void aufzug_ab();
 
