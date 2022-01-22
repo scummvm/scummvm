@@ -265,7 +265,7 @@ void Room17::close_door() {
 	if (_G(spieler).R17DoorKommand) {
 		_G(spieler).room_e_obj[36].Attribut = 255;
 		_G(spieler).R17DoorKommand = false;
-		atds->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, 1);
+		atds->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, ATS_DATEI);
 		det->hide_static_spr(7);
 		det->start_detail(4, 1, ANI_RUECK);
 	}
@@ -303,8 +303,8 @@ int16 Room17::energie_hebel() {
 				det->start_detail(i + 6, 255, 0);
 		}
 
-		atds->set_ats_str(142, 1, _G(spieler).R17EnergieOut ? 1 : 0);
-		atds->set_ats_str(140, 1, _G(spieler).R17EnergieOut ? 1 : 0);
+		atds->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
+		atds->set_ats_str(140, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
 		det->play_sound(12, 0);
 
 		if (_G(spieler).R17EnergieOut) {
