@@ -659,7 +659,7 @@ void Room97::proc15() {
 	while (det->get_ani_detail(16) != nullptr) {
 		get_user_key(NO_SETUP);
 		if (minfo.button == 1 || in->get_switch_code() == 28) {
-			if (_G(spieler).inv_cur != CUR_WALK)
+			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}
 		set_up_screen(DO_SETUP);

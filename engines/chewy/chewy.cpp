@@ -106,7 +106,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		flags.LoadGame = true;
 
-		if (_G(spieler).inv_cur == true && _G(spieler).AkInvent != -1) {
+		if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1) {
 			menu_item = CUR_USE;
 		}
 
