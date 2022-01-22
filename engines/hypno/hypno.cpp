@@ -61,6 +61,12 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	g_parsedArc = new ArcadeShooting();
 	_defaultCursor = "";
 	_checkpoint = "";
+
+	_language = Common::parseLanguage(ConfMan.get("language"));
+	_platform = Common::parsePlatform(ConfMan.get("platform"));
+	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
+		error("Failed to parse bool from cheats options");
+
 	// Add quit level
 	Hotspot q(MakeMenu);
 	Action *a = new Quit();
@@ -107,11 +113,6 @@ LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename, 
 void HypnoEngine::loadAssets() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 Common::Error HypnoEngine::run() {
-	_language = Common::parseLanguage(ConfMan.get("language"));
-	_platform = Common::parsePlatform(ConfMan.get("platform"));
-	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
-		error("Failed to parse bool from cheats options");
-
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(640, 480));
 	modes.push_back(Graphics::Mode(320, 200));
@@ -123,6 +124,7 @@ Common::Error HypnoEngine::run() {
 
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+	loadFont(""); // TODO
 
 	// Main event loop
 	loadAssets();
@@ -248,6 +250,21 @@ void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented",
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) {
 	error("Function \"%s\" not implemented", __FUNCTION__); 
+}
+
+void HypnoEngine::loadFont(const Filename &name) {
+	// TODO: properly load some font
+	if (_font)
+		error("Font already loaded");
+
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+}
+
+void HypnoEngine::drawString(const Common::String &str, int x, int y, int w, uint32 c) {
+	if (!_font)
+		error("No font was loaded");
+
+	_font->drawString(_compositeSurface, str, x, y, w, c);
 }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, bool palette, int frameNumber) {

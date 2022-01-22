@@ -122,8 +122,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 	ShootSequence shootSequence = arc->shootSequence;
-
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
 	_hitSound = arc->hitSound;

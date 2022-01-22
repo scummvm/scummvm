@@ -240,6 +240,9 @@ public:
 	Frames _playerFrames;
 	int _playerFrameIdx;
 	int _playerFrameSep;
+
+	void loadFont(const Filename &name);
+	void drawString(const Common::String &str, int x, int y, int w, uint32 c);
 	const Graphics::Font *_font;
 
 	// Conversation

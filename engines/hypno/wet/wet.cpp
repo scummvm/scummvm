@@ -220,6 +220,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c112.mi_", "c20", "");
 	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
+	loadArcadeLevel("c100.mi_", "", "");
+	assert(0);
+
 	loadArcadeLevel("c200.mi_", "???", "");
 	loadArcadeLevel("c201.mi_", "???", "");
 	loadArcadeLevel("c202.mi_", "???", "");
@@ -248,14 +251,13 @@ void WetEngine::runCode(Code *code) {
 
 void WetEngine::runMainMenu(Code *code) {
 	Common::Event event;
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	uint32 c = 252; // green
 	byte *palette;
 	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, &palette);
 	loadPalette(palette, 0, 256);
 	Common::String _name = "";
 	drawImage(*frame, 0, 0, true);
-	_font->drawString(_compositeSurface, "ENTER NAME :", 48, 50, 100, c);
+	drawString("ENTER NAME :", 48, 50, 100, c);
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -278,8 +280,8 @@ void WetEngine::runMainMenu(Code *code) {
 				}
 
 				drawImage(*frame, 0, 0, false);
-				_font->drawString(_compositeSurface, "ENTER NAME :", 48, 50, 100, c);
-				_font->drawString(_compositeSurface, _name, 140, 50, 170, c);
+				drawString("ENTER NAME :", 48, 50, 100, c);
+				drawString(_name, 140, 50, 170, c);
 				break;
 
 

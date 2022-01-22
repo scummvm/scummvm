@@ -47,7 +47,7 @@ void WetEngine::drawPlayer() {
 
 	if (_playerFrameIdx < _playerFrameSep) {
 		// TARGET ACQUIRED frame
-		uint32 c = _pixelFormat.RGBToColor(32, 208, 32);
+		uint32 c = 251;
 		_compositeSurface->drawLine(113, 1, 119, 1, c);
 		_compositeSurface->drawLine(200, 1, 206, 1, c);
 
@@ -61,7 +61,7 @@ void WetEngine::drawPlayer() {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		int i = detectTarget(mousePos);
 		if (i > 0)
-			_font->drawString(_compositeSurface, "TARGET  ACQUIRED", 120, 1, 80, c);
+			drawString("TARGET  ACQUIRED", 120, 1, 80, c);
 
 		_playerFrameIdx++;
 		_playerFrameIdx = _playerFrameIdx % _playerFrameSep;
@@ -75,16 +75,16 @@ void WetEngine::drawPlayer() {
 }
 
 void WetEngine::drawHealth() {
-	uint32 c = _pixelFormat.RGBToColor(252, 252, 0);
+	uint32 c = 253; //_pixelFormat.RGBToColor(252, 252, 0);
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;
 	if (_playerFrameIdx < _playerFrameSep) {
 		const chapterEntry *entry = _chapterTable[_levelId];
 		//uint32 id = _levelId;
-		_font->drawString(_compositeSurface, Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
-		_font->drawString(_compositeSurface, Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
+		drawString(Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
+		drawString(Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
 		// Objectives are always in the zero in the demo
-		//_font->drawString(_compositeSurface, Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
+		//drawString(Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
 	}
 }
 

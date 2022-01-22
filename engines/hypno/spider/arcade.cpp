@@ -185,7 +185,7 @@ void SpiderEngine::drawHealth() {
 	c = 252;  // blue
 	_compositeSurface->frameRect(r, c);
 
-	_font->drawString(_compositeSurface, "ENERGY", 248, 180, 38, c);
+	drawString("ENERGY", 248, 180, 38, c);
 }
 
 bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background) {
