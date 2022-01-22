@@ -156,12 +156,14 @@ SplitStringRet *atdsys::split_string(SplitStringInit *ssi_) {
 	tmp_count = 0;
 	ende = 0;
 	start_adr = str_adr;
+
 	while (!ende) {
 		switch (*str_adr) {
 		case 0:
 			if (str_adr[1] != ATDS_END_TEXT) {
 				str_adr[0] = ' ';
 			}
+			// Fall through
 		case 0x20:
 			if (count < zeichen_anz && *str_adr == 0) {
 

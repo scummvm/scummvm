@@ -72,7 +72,6 @@ MODULE_OBJS = \
 	rooms/room27.o \
 	rooms/room28.o \
 	rooms/room29.o \
-	rooms/room30.o \
 	rooms/room31.o \
 	rooms/room32.o \
 	rooms/room33.o \

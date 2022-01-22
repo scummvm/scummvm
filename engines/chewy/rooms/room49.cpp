@@ -149,8 +149,8 @@ void Room49::calc_boy() {
 }
 
 int16 Room49::use_boy() {
-	int16 tmp;
 	int16 action_ret = false;
+
 	if (is_cur_inventar(SPARK_INV)) {
 		action_ret = true;
 		hide_cur();

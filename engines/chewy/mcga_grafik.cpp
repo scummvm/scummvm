@@ -584,6 +584,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 				switch (zeichen) {
 				case 'd':
 					vorzeichen = '-';
+					// Fall through
 				case 'u':
 					if ((char_anf == 0) && (char_end == 0)) {
 						char_anf = '0';
