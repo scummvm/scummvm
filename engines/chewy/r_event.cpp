@@ -470,6 +470,7 @@ void exit_room(int16 eib_nr) {
 
 	case 13:
 		Room13::xit();
+		break;
 
 	case 18:
 		if (eib_nr == 40)
@@ -1048,6 +1049,7 @@ void flic_cut(int16 nr, int16 mode) {
 			flc->custom_play(&Ci);
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
+			break;
 
 		case FCUT_058:
 			nr = FCUT_058;
@@ -1197,6 +1199,7 @@ void flic_cut(int16 nr, int16 mode) {
 				fx->border(workpage, 100, 0, 0);
 				ret = flc->custom_play(&Ci);
 			}
+			break;
 
 		case 1045:
 			for (i = 0; i < 11 && ret != -1; ++i) {
@@ -1435,6 +1438,7 @@ void flic_cut(int16 nr, int16 mode) {
 				out->cls();
 				ret = flc->custom_play(&Ci);
 			}
+			break;
 
 		case 1117:
 			if (mem->file->select_pool_item(Ci.Handle, 117) != (uint16)-1) {
