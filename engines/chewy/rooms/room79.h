@@ -29,6 +29,7 @@ class Room79 {
 public:
 	static void entry();
 	static void xit();
+	static void setup_func();
 };
 
 } // namespace Rooms

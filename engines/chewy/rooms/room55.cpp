@@ -252,7 +252,7 @@ int16 Room55::use_telefon() {
 				_G(spieler).R55ExitDia = 337;
 				_G(spieler).room_e_obj[89].Attribut = 255;
 				_G(spieler).PersonGlobalDia[P_HOWARD] = 10024;
-				_G(spieler).PersonDiaRoom[P_HOWARD] = 1;
+				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 
 				switch_room(54);
 			} else {

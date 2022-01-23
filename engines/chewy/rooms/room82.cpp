@@ -78,9 +78,9 @@ void Room82::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
 	if (eib_nr == 122) {
-		_G(spieler).R79Val[0] = 1;
-		_G(spieler).R79Val[1] = 1;
-		_G(spieler).R79Val[2] = 1;
+		_G(spieler).R79Val[P_CHEWY] = 1;
+		_G(spieler).R79Val[P_HOWARD] = 1;
+		_G(spieler).R79Val[P_NICHELLE] = 1;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 80;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
 	}
@@ -224,7 +224,7 @@ void Room82::proc8() {
 	start_aad_wait(447, -1);
 	auto_move(6, P_CHEWY);
 
-	while (spieler_vector[2].Count != 0)
+	while (spieler_vector[P_NICHELLE].Count != 0)
 		set_up_screen(DO_SETUP);
 
 	_G(spieler).PersonHide[P_NICHELLE] = true;

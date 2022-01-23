@@ -131,7 +131,7 @@ void Room40::xit(int16 eib_nr) {
 
 				cur_2_inventory();
 				remove_inventory(57);
-				_G(spieler).PersonDiaRoom[1] = 1;
+				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 				show_person();
 
 			} else {
