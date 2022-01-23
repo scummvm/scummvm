@@ -1148,6 +1148,7 @@ void Script::o_random() {
 	uint8 maxnum = readScript8bits();
 
 	byte oldVal = _variables[varnum];
+	uint32 seed = _random.getSeed();
 
 	// TODO: Check if this is really different between the Engines
 	if (_version == kGroovieT7G) {
@@ -1156,7 +1157,7 @@ void Script::o_random() {
 		setVariable(varnum, _random.getRandomNumber(maxnum - 1));
 	}
 
-	debugC(0, kDebugScript, "Groovie::Script: RANDOM: var[0x%04X] = rand(%d), changed from %d to %d", varnum, maxnum, oldVal, _variables[varnum]);
+	debugC(0, kDebugScript, "Groovie::Script: RANDOM: var[0x%04X] = rand(%d), changed from %d to %d, seed was %u", varnum, maxnum, oldVal, _variables[varnum], seed);
 }
 
 void Script::o_jmp() {

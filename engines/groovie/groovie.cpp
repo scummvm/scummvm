@@ -91,6 +91,7 @@ Common::Error GroovieEngine::run() {
 	// TODO: remove this when we figure out the potential intermittent save game bug
 	DebugMan.enableDebugChannel(kDebugScript);
 	DebugMan.enableDebugChannel(kDebugScriptvars);
+	DebugMan.enableDebugChannel(kDebugLogic);
 	if (gDebugLevel < 0)
 		gDebugLevel = 0;
 
