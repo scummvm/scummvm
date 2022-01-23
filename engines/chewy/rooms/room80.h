@@ -28,6 +28,7 @@ namespace Rooms {
 class Room80 {
 public:
 	static void entry();
+	static void setup_func();
 };
 
 } // namespace Rooms

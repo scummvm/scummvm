@@ -298,7 +298,7 @@ void test_menu() {
 	menu_lauflicht = 0;
 	inv_disp_ok = false;
 	_G(spieler).inv_cur = false;
-	menu_display = false;
+	menu_display = 0;
 	_G(cur_display) = true;
 	cur->show_cur();
 	spieler_vector[P_CHEWY].Phase = 6;

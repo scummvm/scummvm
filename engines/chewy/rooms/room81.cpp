@@ -55,10 +55,10 @@ void Room81::entry() {
 }
 
 void Room81::xit(int16 eib_nr) {
-	_G(spieler).R79Val1 = 1;
-	_G(spieler).R79Val2 = 1;
+	_G(spieler).R79Val[P_CHEWY] = 1;
+	_G(spieler).R79Val[P_HOWARD] = 1;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 80;
-	_G(spieler).R79Val3 = 1;
+	_G(spieler).R79Val[P_NICHELLE] = 1;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
 }
 
