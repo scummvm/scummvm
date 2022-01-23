@@ -868,12 +868,12 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_hob_vul = new Transition("tryagain.mi_");
 	over_hob_vul->intros.push_back("spider/cine/dals001a.smk");
-	over_hob_vul->intros.push_back("spider/cine/apts001a.smk");
+	over_hob_vul->intros.push_back("spider/cine/apts001s.smk");
 	_levels["<over_hob_vul>"] = over_hob_vul;
 
 	Transition *over_hob2 = new Transition("tryagain.mi_");
 	over_hob2->intros.push_back("spider/cine/ctss01as.smk");
-	over_hob2->intros.push_back("spider/cine/apts001a.smk");
+	over_hob2->intros.push_back("spider/cine/apts001s.smk");
 	_levels["<over_hob2>"] = over_hob2;
 
 	Transition *over_gas = new Transition("tryagain.mi_");
