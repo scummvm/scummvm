@@ -1580,7 +1580,7 @@ void datei::imsize(const char *fname, uint32 *svekt) {
 					f.seek(next, SEEK_SET);
 					if (iheader.load(&f)) {
 						next = iheader.next;
-						svekt[sprcount] = ((uint32)iheader.width) * ((uint32)iheader.width);
+						svekt[sprcount] = (uint32)iheader.width * (uint32)iheader.height;
 					} else {
 						fcode = READFEHLER;
 						modul = DATEI;
