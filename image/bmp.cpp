@@ -96,12 +96,18 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	/* uint16 planes = */ stream.readUint16LE();
 	uint16 bitsPerPixel = stream.readUint16LE();
 
-	if (bitsPerPixel != 4 && bitsPerPixel != 8 && bitsPerPixel != 24 && bitsPerPixel != 32) {
+	if (bitsPerPixel != 4 && bitsPerPixel != 8 && bitsPerPixel != 16 && bitsPerPixel != 24 && bitsPerPixel != 32) {
 		warning("%dbpp bitmaps not supported", bitsPerPixel);
 		return false;
 	}
 
 	uint32 compression = stream.readUint32BE();
+
+	if (bitsPerPixel == 16 && compression != SWAP_CONSTANT_32(0)) {
+		warning("only RGB555 raw mode supported for %dbpp bitmaps", bitsPerPixel);
+		return false;
+	}
+
 	uint32 imageSize = stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
