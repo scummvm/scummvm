@@ -91,6 +91,20 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			stream.read(dst + (_flip ? i : _height - i - 1) * _width, _width);
 			stream.skip(extraDataLength);
 		}
+	} else if (_bitsPerPixel == 16) {
+		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
+
+		for (int i = 0; i < _height; i++) {
+			for (int j = 0; j < _width; j++) {
+				uint16 color = stream.readUint16LE();
+
+				*(uint16 *)dst = color;
+				dst += format.bytesPerPixel;
+			}
+
+			stream.skip(extraDataLength);
+			dst -= _surface.pitch * 2;
+		}
 	} else if (_bitsPerPixel == 24) {
 		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
 
@@ -144,6 +158,8 @@ Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
 	case 4:
 	case 8:
 		return Graphics::PixelFormat::createFormatCLUT8();
+	case 16:
+		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	case 24:
 	case 32:
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
