@@ -160,7 +160,7 @@ void MainMenu::animate() {
 	kb_mov(1);
 	calc_maus_txt(minfo.x, minfo.y, 1);
 	cur->plot_cur();
-	_G(maus_links_click) = 0;
+	_G(maus_links_click) = false;
 	menu_flag = 0;
 	out->setze_zeiger(nullptr);
 	out->back2screen(workpage);
@@ -257,7 +257,7 @@ void MainMenu::playGame() {
 	inv_disp_ok = false;
 	_G(cur_display) = true;
 	tmp_menu_item = 0;
-	_G(maus_links_click) = 0;
+	_G(maus_links_click) = false;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 
 	flags.main_maus_flag = false;

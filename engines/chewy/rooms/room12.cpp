@@ -207,7 +207,7 @@ int16 Room12::use_terminal() {
 			start_aad_wait(110, -1);
 
 			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
-				start_spz(4, 255, 0, 0);
+				start_spz(4, 255, false, P_CHEWY);
 				start_aad_wait(112, -1);
 				flags.NoScroll = true;
 				auto_scroll(46, 0);
@@ -223,7 +223,7 @@ int16 Room12::use_terminal() {
 				_G(spieler).R12ChewyBork = true;
 				_G(spieler).R12RaumOk = true;
 				auto_move(4, P_CHEWY);
-				start_spz(68, 255, 0, 0);
+				start_spz(68, 255, false, P_CHEWY);
 				start_aad_wait(113, 0);
 
 			} else if (_G(spieler).R12TalismanOk && !_G(spieler).R12RaumOk) {

@@ -141,7 +141,7 @@ void Room3::terminal() {
 
 	case 1:
 		_G(auto_obj) = 1;
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 		minfo.button = 0;
 		stop_person(P_CHEWY);
 		start_aad_wait(51, -1);

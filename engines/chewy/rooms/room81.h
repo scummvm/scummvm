@@ -31,6 +31,7 @@ public:
 	static void xit(int16 eib_nr);
 	static void proc1();
 	static int proc2();
+	static void proc3();
 };
 
 } // namespace Rooms

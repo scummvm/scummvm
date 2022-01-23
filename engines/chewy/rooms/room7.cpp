@@ -109,7 +109,7 @@ void Room7::klingel() {
 		det->stop_detail(0);
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
-		set_person_pos(114, 138, 0, -1);
+		set_person_pos(114, 138, P_CHEWY, -1);
 
 		start_detail_frame(19, 1, ANI_VOR, 6);
 		start_detail_frame(9, 1, ANI_VOR, 4);

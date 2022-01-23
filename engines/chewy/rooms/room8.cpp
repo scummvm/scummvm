@@ -115,7 +115,7 @@ bool Room8::gips_wurf() {
 		hide_cur();
 		det->load_taf_seq(116, 30, 0);
 		auto_move(2, P_CHEWY);
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		del_inventar(GIPS_EIMER_INV);

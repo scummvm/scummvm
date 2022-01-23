@@ -328,7 +328,7 @@ void Room39::look_tv(int16 cls_mode) {
 			}
 		}
 
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 		flags.AutoAniPlay = false;
 	}
 }

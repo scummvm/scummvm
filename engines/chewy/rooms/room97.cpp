@@ -435,7 +435,7 @@ int Room97::proc7() {
 	atds->set_ats_str(530, 2, ATS_DATEI);
 	new_invent_2_cur(SLIME_INV);
 	_G(spieler).flags36_4 = true;
-	set_person_pos(304, 102, 0, P_RIGHT);
+	set_person_pos(304, 102, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	auto_move(1, P_CHEWY);
 	spieler_mi[P_CHEWY].Mode = false;
@@ -600,11 +600,11 @@ void Room97::proc12() {
 	stop_person(P_CHEWY);
 	det->show_static_spr(26);
 	go_auto_xy(481, 39, P_CHEWY, ANI_VOR);
-	_G(spieler).PersonHide[0] = true;
+	_G(spieler).PersonHide[P_CHEWY] = true;
 	set_person_pos(327, 42, P_CHEWY, P_LEFT);
 	wait_show_screen(50);
 	set_person_pos(347, 42, P_CHEWY, P_LEFT);
-	_G(spieler).PersonHide[0] = false;
+	_G(spieler).PersonHide[P_CHEWY] = false;
 	det->hide_static_spr(26);
 	spieler_mi[P_CHEWY].Mode = false;
 	show_cur();
