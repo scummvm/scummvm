@@ -808,10 +808,11 @@ void detail::start_detail(int16 nr, int16 rep, int16 reverse) {
 }
 
 void detail::stop_detail(int16 nr) {
-	ani_detail_info *adiptr;
-	adiptr = &rdi.Ainfo[nr];
-	adiptr->start_flag = 0;
-
+	if (nr >= 0 && nr < 32) {
+		ani_detail_info *adiptr;
+		adiptr = &rdi.Ainfo[nr];
+		adiptr->start_flag = 0;
+	}
 }
 
 void detail::set_ani_delay(int16 nr, int16 del) {
