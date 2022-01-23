@@ -64,8 +64,21 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
-	Common::StringTokenizer tok(data, " ,.\t");
+	// Preparsing
+	Common::String pdata;
+	Common::StringTokenizer lines(data, "\n");
 	Common::String t;
+	while (!lines.empty()) {
+		t = lines.nextToken();
+		if (t[0] == ';')
+			continue;
+		if (t.size() == 0)
+			continue;
+		pdata += "\n" + t;
+	}
+
+	// Parsing
+	Common::StringTokenizer tok(pdata, " ,.\t");
 	Common::String n;
 	ShootInfo si;
 	ShootSequence seq;
@@ -81,6 +94,8 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 		Common::replace(n, "\nZ\n", "");
 		si.name = n;
 		si.timestamp = atoi(t.c_str());
+		if (si.timestamp == 0)
+			error("Error at parsing '%s'", n.c_str());
 		seq.push_back(si);
 		debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
 	}
