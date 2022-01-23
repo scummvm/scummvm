@@ -118,19 +118,7 @@ void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
-
-void HypnoEngine::hitPlayer() {
-	if ( _playerFrameSep < (int)_playerFrames.size()){
-		if (_playerFrameIdx < _playerFrameSep)
-			_playerFrameIdx = _playerFrameSep;
-	} else {
-		uint32 c = 251; // red
-		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
-		drawScreen();
-	}
-	//if (!_hitSound.empty())
-	//	playSound(_soundPath + _hitSound, 1);
-}
+void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;

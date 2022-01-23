@@ -31,6 +31,12 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }
 
+void WetEngine::hitPlayer() {
+	assert( _playerFrameSep < (int)_playerFrames.size());
+	if (_playerFrameIdx < _playerFrameSep)
+		_playerFrameIdx = _playerFrameSep;
+}
+
 void WetEngine::drawShoot(const Common::Point &mousePos) {
 	uint32 c = 253;
 	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);

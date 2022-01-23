@@ -33,6 +33,20 @@ static const int oIndexYE[9] = {4, 3, 2, 1, 0};
 static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
+void SpiderEngine::hitPlayer() {
+	if ( _playerFrameSep < (int)_playerFrames.size()){
+		if (_playerFrameIdx < _playerFrameSep)
+			_playerFrameIdx = _playerFrameSep;
+	} else {
+		uint32 c = 250; // red
+		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
+		drawScreen();
+	}
+	//if (!_hitSound.empty())
+	//	playSound(_soundPath + _hitSound, 1);
+}
+
+
 void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = 248; // white
 	uint32 ox = 0;
@@ -175,9 +189,9 @@ void SpiderEngine::drawHealth() {
 
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
-		c = 250; // green
+		c = 250; // red
 	else
-		c = 251; // red
+		c = 251; // green
 
 	_compositeSurface->fillRect(r, c);
 

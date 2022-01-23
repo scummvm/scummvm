@@ -284,6 +284,7 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
+	void hitPlayer() override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
@@ -308,6 +309,7 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
+	void hitPlayer() override;
 	bool checkArcadeLevelCompleted(MVideo &background) override;
 
 	void drawBackToMenu(Hotspot *h) override;
