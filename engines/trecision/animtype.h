@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TRECISION_ANIM_H
-#define TRECISION_ANIM_H
+#ifndef TRECISION_ANIMTYPE_H
+#define TRECISION_ANIMTYPE_H
 
 #include "trecision/struct.h"
 

@@ -23,7 +23,8 @@
 #include "graphics/scaler.h"
 
 #include "trecision/actor.h"
-#include "trecision/anim.h"
+#include "trecision/animmanager.h"
+#include "trecision/animtype.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"

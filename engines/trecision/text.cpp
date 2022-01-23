@@ -23,6 +23,7 @@
 #include "common/str.h"
 
 #include "trecision/actor.h"
+#include "trecision/animmanager.h"
 #include "trecision/graphics.h"
 #include "trecision/sound.h"
 #include "trecision/trecision.h"

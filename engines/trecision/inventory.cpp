@@ -20,6 +20,7 @@
  */
 
 #include "trecision/actor.h"
+#include "trecision/animmanager.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/logic.h"

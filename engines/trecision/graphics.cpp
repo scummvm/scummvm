@@ -27,7 +27,8 @@
 #include "graphics/surface.h"
 
 #include "trecision/actor.h"
-#include "trecision/anim.h"
+#include "trecision/animmanager.h"
+#include "trecision/animtype.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/pathfinding3d.h"

@@ -20,7 +20,7 @@
  */
 
 #include "trecision/actor.h"
-#include "trecision/anim.h"
+#include "trecision/animtype.h"
 #include "trecision/graphics.h"
 #include "trecision/renderer3d.h"
 #include "trecision/trecision.h"

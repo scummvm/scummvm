@@ -28,7 +28,8 @@
 #include "common/fs.h"
 #include "common/str.h"
 
-#include "trecision/anim.h"
+#include "trecision/animmanager.h"
+#include "trecision/animtype.h"
 #include "trecision/actor.h"
 #include "trecision/console.h"
 #include "trecision/defines.h"

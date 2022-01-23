@@ -19,7 +19,8 @@
  *
  */
 
-#include "trecision/anim.h"
+#include "trecision/animmanager.h"
+#include "trecision/animtype.h"
 #include "trecision/dialog.h"
 #include "trecision/logic.h"
 #include "trecision/pathfinding3d.h"

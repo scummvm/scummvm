@@ -3,7 +3,8 @@ MODULE := engines/trecision
 MODULE_OBJS = \
 	console.o \
 	actor.o \
-	anim.o \
+	animmanager.o \
+	animtype.o \
 	dialog.o \
 	fastfile.o \
 	graphics.o \

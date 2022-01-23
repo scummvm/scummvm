@@ -25,6 +25,7 @@
 #include "common/translation.h"
 
 #include "trecision/actor.h"
+#include "trecision/animmanager.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
 #include "trecision/logic.h"
