@@ -246,9 +246,6 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 }
 
 void Room50::setup_func() {
-	int16 x, y;
-	int16 ch_x;
-
 	if (_wasser && !det->get_ani_status(4)) {
 		_wasser = false;
 		go_page();
@@ -256,10 +253,9 @@ void Room50::setup_func() {
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
-		x = spieler_vector[P_HOWARD].Xypos[0];
-		y = 64;
-		ch_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
+		int16 x, y;
 		if (ch_x < 72) {
 			x = 1;
 			y = 64;

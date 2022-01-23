@@ -117,7 +117,7 @@ void Room12::init_bork() {
 		!_G(spieler).R12BorkTalk) {
 
 		if (!_G(auto_obj))
-			det->load_taf_seq(62, (85 - 62) + 1, 0);
+			det->load_taf_seq(62, (85 - 62) + 1, nullptr);
 		if (!flags.AutoAniPlay && !flags.ChAutoMov) {
 			_G(auto_obj) = 1;
 			mov_phasen[R12_BORK_OBJ].AtsText = 120;
@@ -127,8 +127,7 @@ void Room12::init_bork() {
 			auto_mov_obj[R12_BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 			auto_mov_obj[R12_BORK_OBJ].Mode = true;
-			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
-				(const MovLine *)R12_BORK_MPKT);
+			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines, (const MovLine *)R12_BORK_MPKT);
 
 			if (!_G(spieler).R12TalismanOk) {
 				hide_cur();
@@ -171,8 +170,7 @@ void Room12::bork_ok() {
 
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 2;
-	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines,
-		(const MovLine *)R12_BORK_MPKT1);
+	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], mov_phasen[R12_BORK_OBJ].Lines, (const MovLine *)R12_BORK_MPKT1);
 	wait_auto_obj(R12_BORK_OBJ);
 
 	_G(spieler).R12BorkInRohr = true;

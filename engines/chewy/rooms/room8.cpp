@@ -113,7 +113,7 @@ void Room8::start_verbrennen() {
 bool Room8::gips_wurf() {
 	if (is_cur_inventar(GIPS_EIMER_INV)) {
 		hide_cur();
-		det->load_taf_seq(116, 30, 0);
+		det->load_taf_seq(116, 30, nullptr);
 		auto_move(2, P_CHEWY);
 		_G(maus_links_click) = false;
 
@@ -165,11 +165,11 @@ void Room8::open_gdoor() {
 }
 
 void Room8::talk_nimoy() {
-	int16 tmp;
 	auto_move(9, P_CHEWY);
 	flags.NoScroll = true;
 	auto_scroll(0, 120);
 	if (_G(spieler).R8Folter) {
+		int16 tmp;
 		if (!_G(spieler).R8GipsWurf)
 			tmp = 1;
 		else

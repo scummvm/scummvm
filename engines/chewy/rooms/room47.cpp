@@ -22,8 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room47.h"
 
 namespace Chewy {

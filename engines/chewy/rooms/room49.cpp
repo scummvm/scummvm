@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room49.h"
 
@@ -176,7 +175,7 @@ void Room49::use_boy_cigar() {
 	SetUpScreenFunc = nullptr;
 	auto_move(5, P_CHEWY);
 
-	int16 zoom = room->room_info->ZoomFak;
+	const int16 zoom = room->room_info->ZoomFak;
 	room->set_zoom(zoom);
 	go_auto_xy(416, 79, P_HOWARD, ANI_VOR);
 	set_person_spr(P_LEFT, P_HOWARD);
@@ -270,15 +269,11 @@ int16 Room49::use_taxi() {
 }
 
 void Room49::setup_func() {
-	int16 x, y;
-	int16 ch_x;
-
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		calc_person_look();
-		x = spieler_vector[P_HOWARD].Xypos[0];
-		y = 64;
-		ch_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
+		int16 x, y;
 		if (ch_x < 130) {
 			x = 40;
 			y = 97;

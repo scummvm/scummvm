@@ -71,11 +71,11 @@ void Room39::entry() {
 }
 
 short Room39::use_howard() {
-	int16 dia_nr = -1;
 	int16 ani_nr = 0;
 	int16 action_flag = false;
 
 	if (!_G(spieler).R39HowardWach) {
+		int16 dia_nr;
 		if (_G(spieler).inv_cur) {
 			if (is_cur_inventar(MANUSKRIPT_INV)) {
 				hide_cur();
@@ -165,13 +165,12 @@ void Room39::ok() {
 }
 
 int16 Room39::use_tv() {
-	int16 cls_flag;
 	int16 dia_nr = -1;
 	int16 ani_nr = -1;
 	int16 action_flag = false;
 
 	auto_move(2, P_CHEWY);
-	cls_flag = false;
+	int16 cls_flag = false;
 	hide_cur();
 
 	if (is_cur_inventar(ZAPPER_INV)) {
@@ -180,7 +179,7 @@ int16 Room39::use_tv() {
 			_G(spieler).R39TvKanal = -1;
 
 		flags.NoPalAfterFlc = true;
-		out->setze_zeiger(0);
+		out->setze_zeiger(nullptr);
 		out->cls();
 		flic_cut(FCUT_042, FLC_MODE);
 		++_G(spieler).R39TvKanal;
@@ -215,14 +214,14 @@ int16 Room39::use_tv() {
 			flic_cut(FCUT_041, FLC_MODE);
 			_G(spieler).R39TvKanal = 0;
 			_G(spieler).R39ClintNews = 0;
-			out->setze_zeiger(0);
+			out->setze_zeiger(nullptr);
 			out->cls();
 			out->set_palette(pal);
 			flags.NoPalAfterFlc = true;
 			flic_cut(TV_FLIC[0], FLC_MODE);
 
 			out->cls();
-			out->setze_zeiger(0);
+			out->setze_zeiger(nullptr);
 			out->cls();
 			out->set_palette(pal);
 			set_tv();
@@ -262,7 +261,7 @@ int16 Room39::use_tv() {
 
 	if (cls_flag) {
 		out->cls();
-		out->setze_zeiger(0);
+		out->setze_zeiger(nullptr);
 		out->cls();
 		out->set_palette(pal);
 		flags.NoPalAfterFlc = false;
@@ -280,13 +279,12 @@ int16 Room39::use_tv() {
 }
 
 void Room39::look_tv(int16 cls_mode) {
-	int16 flic_nr;
-	int16 dia_nr;
-
 	_flag = false;
 
 	if (_G(spieler).R39TvOn) {
 		if (!flags.AutoAniPlay) {
+			int16 flic_nr;
+			int16 dia_nr;
 			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
 				flic_nr = FCUT_038;
 				++_G(spieler).R39ClintNews;
@@ -299,7 +297,7 @@ void Room39::look_tv(int16 cls_mode) {
 			}
 
 			if (cls_mode) {
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 				out->cls();
 				out->set_palette(pal);
 				flags.NoPalAfterFlc = true;
@@ -318,7 +316,7 @@ void Room39::look_tv(int16 cls_mode) {
 
 			if (cls_mode) {
 				out->cls();
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 				out->cls();
 				out->set_palette(pal);
 				flags.NoPalAfterFlc = false;
@@ -334,9 +332,7 @@ void Room39::look_tv(int16 cls_mode) {
 }
 
 void Room39::set_tv() {
-	int16 i;
-
-	for (i = 0; i < 6; i++)
+	for (int16 i = 0; i < 6; i++)
 		det->hide_static_spr(i + 4);
 
 	if (_G(spieler).R39TvOn) {

@@ -34,24 +34,21 @@ const int16 SURIMY_TAF19_PHASEN[4][2] = {
 };
 
 Room::Room() {
-	int16 i;
 	room_timer.TimerAnz = 0;
 	room_timer.TimerStart = 0;
 	init_ablage();
-	for (i = 0; i < MAX_ROOM_HANDLE; i++)
+	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		roomhandle[i] = 0;
 }
 Room::~Room() {
-	int16 i;
-	for (i = 0; i < MAX_ROOM_HANDLE; i++)
+	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		if (roomhandle[i])
 			chewy_fclose(roomhandle[i]);
 	free_ablage();
 }
 
 Stream *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
-	Stream *stream;
-	stream = chewy_fopen(fname1, fmode);
+	Stream *stream = chewy_fopen(fname1, fmode);
 	if (stream) {
 		close_handle(mode);
 		roomhandle[mode] = stream;
@@ -70,8 +67,6 @@ void Room::close_handle(int16 mode) {
 }
 
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
-	char tmp_str[MAXPATH];
-	room_detail_info *Rdi_;
 	modul = 0;
 	fcode = 0;
 
@@ -83,9 +78,10 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	if (player->SoundSwitch == false)
 		det->disable_room_sound();
 	if (!modul) {
-		Rdi_ = det->get_room_detail_info();
+		room_detail_info *Rdi_ = det->get_room_detail_info();
 		room_info = &Rdi_->Ri;
 		if (room_info->TafLoad != 255) {
+			char tmp_str[MAXPATH];
 			strcpy(tmp_str, Rb->RoomDir);
 			strcat(tmp_str, room_info->TafName);
 			det->load_rdi_taf(tmp_str, room_info->TafLoad);
@@ -122,7 +118,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 
 void Room::load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr) {
 	uint32 imagesize[MAXSPRITE] = {0};
-	if (palette != 0)
+	if (palette != nullptr)
 		mem->file->load_palette(filename, palette, TAFDATEI);
 	if (!modul) {
 		imagesize[sprnr] = 0l;
@@ -141,11 +137,10 @@ void Room::set_timer_start(int16 timer_start) {
 }
 
 void Room::add_timer_new_room() {
-	ani_detail_info *adi;
 	room_timer.TimerAnz = 0;
 
 	for (int i = 0; i < MAXDETAILS && room_timer.TimerAnz < MAX_ROOM_TIMER; i++) {
-		adi = det->get_ani_detail(i);
+		ani_detail_info *adi = det->get_ani_detail(i);
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
 		} else if (adi->start_flag || adi->repeat) {
@@ -164,11 +159,9 @@ void Room::del_timer_old_room() {
 }
 
 int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
-	int16 timer_nr_;
-	int16 ret;
 
-	timer_nr_ = room_timer.TimerStart + room_timer.TimerAnz;
-	ret = uhr->set_new_timer(timer_nr_, timer_end, SEC_MODE);
+	int16 timer_nr_ = room_timer.TimerStart + room_timer.TimerAnz;
+	int16 ret = uhr->set_new_timer(timer_nr_, timer_end, SEC_MODE);
 	if (ret != -1) {
 		room_timer.ObjNr[room_timer.TimerAnz] = ani_nr;
 		room_timer.TimerNr[room_timer.TimerAnz] = timer_nr_;
@@ -206,53 +199,48 @@ void Room::set_ak_pal(RaumBlk *Rb) {
 
 void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 	byte *tmp_inv_spr[MAX_MOV_OBJ];
-	int16 i;
 
 	if (!modul) {
 		obj->sort();
 		memcpy(tmp_inv_spr, Rb->InvSprAdr, MAX_MOV_OBJ * sizeof(char *));
 		memset(Rb->InvSprAdr, 0, MAX_MOV_OBJ * sizeof(char *));
 
-		for (i = 1; i < obj->mov_obj_room[0] + 1; i++) {
+		for (int16 i = 1; i < obj->mov_obj_room[0] + 1; i++) {
 			if (!tmp_inv_spr[obj->mov_obj_room[i]]) {
 
-				load_taf(Rb->InvFile, &Rb->InvSprAdr[obj->mov_obj_room[i]],
-				         0, (int16)obj->mov_obj_room[i]);
+				load_taf(Rb->InvFile, &Rb->InvSprAdr[obj->mov_obj_room[i]], nullptr, (int16)obj->mov_obj_room[i]);
 			} else {
 				Rb->InvSprAdr[obj->mov_obj_room[i]] = tmp_inv_spr[obj->mov_obj_room[i]];
-				tmp_inv_spr[obj->mov_obj_room[i]] = 0;
+				tmp_inv_spr[obj->mov_obj_room[i]] = nullptr;
 			}
 		}
 
-		for (i = 1; i < obj->spieler_invnr[0] + 1; i++) {
+		for (int16 i = 1; i < obj->spieler_invnr[0] + 1; i++) {
 			if (!tmp_inv_spr[obj->spieler_invnr[i]]) {
 
-				load_taf(Rb->InvFile, &Rb->InvSprAdr[obj->spieler_invnr[i]],
-				         0, (int16)obj->spieler_invnr[i]);
+				load_taf(Rb->InvFile, &Rb->InvSprAdr[obj->spieler_invnr[i]], nullptr, (int16)obj->spieler_invnr[i]);
 			} else {
 				Rb->InvSprAdr[obj->spieler_invnr[i]] = tmp_inv_spr[obj->spieler_invnr[i]];
 				tmp_inv_spr[obj->spieler_invnr[i]] = 0;
 			}
 		}
 
-		for (i = 0; i < MAX_MOV_OBJ; i++)
+		for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
 			if (tmp_inv_spr[i] != 0)
 				free(tmp_inv_spr[i]);
+		}
+
 		if (player->AkInvent != -1) {
-			if (Rb->InvSprAdr[player->AkInvent] == NULL)
-				load_taf(Rb->InvFile, &Rb->InvSprAdr[player->AkInvent],
-				         0, (int16)player->AkInvent);
+			if (Rb->InvSprAdr[player->AkInvent] == nullptr)
+				load_taf(Rb->InvFile, &Rb->InvSprAdr[player->AkInvent], nullptr, (int16)player->AkInvent);
 		}
 	}
 }
 
 int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
-		roomhandle[R_TGPDATEI]);
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(roomhandle[R_TGPDATEI]);
 	tbf_dateiheader tb;
 	bool ret = false;
-	int16 *tmp;
-	ret = false;
 
 	if (rs) {
 		mem->file->select_pool_item(rs, nr);
@@ -282,7 +270,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 						ged->load_ged_pool(gstream, &GedInfo[Rb->AkAblage],
 						                   nr, GedMem[Rb->AkAblage]);
 						if (!modul) {
-							tmp = (int16 *)Ablage[Rb->AkAblage];
+							int16 *tmp = (int16 *)Ablage[Rb->AkAblage];
 							GedXAnz[Rb->AkAblage] = tmp[0] / GedInfo[Rb->AkAblage].X;
 							GedYAnz[Rb->AkAblage] = tmp[1] / GedInfo[Rb->AkAblage].Y;
 						} else {
@@ -305,14 +293,13 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 }
 
 void Room::init_ablage() {
-	int16 i;
 	LastAblageSave = 0;
 	Ablage[0] = (byte *)MALLOC(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
 	AblagePal[0] = (byte *)MALLOC(MAX_ABLAGE * 768l);
 	GedMem[0] = (byte *)MALLOC(MAX_ABLAGE * GED_BLOCK_SIZE);
 	if (!modul) {
 		AkAblage = 0;
-		for (i = 0; i < MAX_ABLAGE; i++) {
+		for (int16 i = 0; i < MAX_ABLAGE; i++) {
 			Ablage[i] = Ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
 			AblageInfo[i][0] = -1;
 			AblageInfo[i][1] = -1;
@@ -361,17 +348,13 @@ byte **Room::get_ged_mem() {
 }
 
 int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
-	int16 ende;
-	uint32 ablage_bedarf;
-	int16 ret;
-	int16 i, j;
-	ret = -1;
-	ablage_bedarf = pic_size / ABLAGE_BLOCK_SIZE;
+	int16 ret = -1;
+	uint32 ablage_bedarf = pic_size / ABLAGE_BLOCK_SIZE;
 	if (pic_size % ABLAGE_BLOCK_SIZE > 4)
 		++ablage_bedarf;
-	ende = 0;
+	int16 ende = 0;
 
-	for (i = 0; i < MAX_ABLAGE && !ende; i++) {
+	for (int16 i = 0; i < MAX_ABLAGE && !ende; i++) {
 		if (AblageInfo[i][0] == pic_nr &&
 		        AblageInfo[i][1] != 255) {
 			ende = 1;
@@ -380,7 +363,7 @@ int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
 	}
 
 	if (!ende) {
-		for (i = 0; i < MAX_ABLAGE && !ende; i++) {
+		for (int16 i = 0; i < MAX_ABLAGE && !ende; i++) {
 			ret = get_ablage_g1((int16)ablage_bedarf, i);
 			ende = 1;
 		}
@@ -399,8 +382,8 @@ int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
 				} else
 					ende = 1;
 			}
-			i = AblageInfo[LastAblageSave][1];
-			for (j = LastAblageSave; j < LastAblageSave + i; j++) {
+			int16 i = AblageInfo[LastAblageSave][1];
+			for (int16 j = LastAblageSave; j < LastAblageSave + i; j++) {
 				AblageInfo[j][0] = -1;
 				AblageInfo[j][1] = -1;
 			}
@@ -410,11 +393,9 @@ int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
 }
 
 int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
-	int16 ende;
 	short ret = 0;
-	int16 count;
-	ende = 0;
-	count = 0;
+	int16 ende = 0;
+	int16 count = 0;
 	LastAblageSave = ak_pos;
 	while (!ende) {
 		if (LastAblageSave >= MAX_ABLAGE)
@@ -422,12 +403,10 @@ int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
 		if (ablage_bedarf == 1) {
 			ende = 1;
 			ret = LastAblageSave;
-		}
-		else if (ablage_bedarf <= MAX_ABLAGE - LastAblageSave) {
+		} else if (ablage_bedarf <= MAX_ABLAGE - LastAblageSave) {
 			ende = 1;
 			ret = LastAblageSave;
-		}
-		else
+		} else
 			++LastAblageSave;
 		++count;
 		if (count > MAX_ABLAGE) {
@@ -439,14 +418,11 @@ int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
 }
 
 void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {
-	uint32 ablage_bedarf;
-	int16 i;
-	int16 j;
-	ablage_bedarf = (pic_size / ABLAGE_BLOCK_SIZE);
+	uint32 ablage_bedarf = (pic_size / ABLAGE_BLOCK_SIZE);
 	if (pic_size % ABLAGE_BLOCK_SIZE > 4)
 		++ablage_bedarf;
-	j = (int16)ablage_bedarf;
-	for (i = ablagenr; i < j + ablagenr; i++) {
+	int16 j = (int16)ablage_bedarf;
+	for (int16 i = ablagenr; i < j + ablagenr; i++) {
 		AblageInfo[i][0] = bildnr;
 		AblageInfo[i][1] = (int16)ablage_bedarf;
 		ablage_bedarf = 255;
@@ -455,7 +431,7 @@ void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {
 }
 
 void Room::load_sound() {
-	if ((!modul) && (flags.InitSound)) {
+	if (!modul && flags.InitSound) {
 		det->load_room_sounds(roomhandle[R_VOCDATEI]);
 	}
 }
@@ -467,14 +443,14 @@ Stream *Room::get_sound_handle() {
 
 
 void load_chewy_taf(int16 taf_nr) {
-	taf_dateiheader *tafheader;
-	const char *fname_;
 	if (AkChewyTaf != taf_nr) {
 		if (chewy) {
 			free((char *)chewy);
 			chewy = nullptr;
 		}
 		spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
+
+		const char *fname_;
 		switch (taf_nr) {
 		case CHEWY_NORMAL:
 			fname_ = CHEWY_TAF;
@@ -524,7 +500,8 @@ void load_chewy_taf(int16 taf_nr) {
 			chewy = mem->taf_adr(fname_);
 			ERROR
 
-				mem->file->get_tafinfo(fname_, &tafheader);
+			taf_dateiheader *tafheader;
+			mem->file->get_tafinfo(fname_, &tafheader);
 			if (!modul) {
 				chewy_kor = chewy->korrektur;
 			} else {
@@ -546,8 +523,7 @@ void switch_room(int16 nr) {
 }
 
 void calc_person_look() {
-	int16 i;
-	for (i = 1; i < MAX_PERSON; i++) {
+	for (int16 i = 1; i < MAX_PERSON; i++) {
 		if (spieler_mi[i].Id != NO_MOV_OBJ) {
 
 			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])

@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room23.h"
 
@@ -55,17 +54,14 @@ void Room23::cockpit() {
 }
 
 int16 Room23::start_gleiter() {
-	int16 i;
-	int16 start_ok;
 	int16 action_flag = false;
 
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
-		start_ok = false;
 		if (!_G(spieler).R23FluxoFlex)
 			start_aad_wait(23, -1);
 		else {
-			start_ok = true;
+			bool start_ok = true;
 
 			if (_G(spieler).R23GleiterExit == 16) {
 				if (!_G(spieler).R16F5Exit) {
@@ -85,11 +81,11 @@ int16 Room23::start_gleiter() {
 				start_ani_block(4, ABLOCK15);
 				wait_show_screen(30);
 
-				for (i = 0; i < 4; i++)
+				for (int16 i = 0; i < 4; i++)
 					det->stop_detail(i);
 
 				if (_G(spieler).R23GleiterExit == 14) {
-					out->setze_zeiger(0);
+					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_012, CFO_MODE);
 					out->cls();
@@ -106,7 +102,7 @@ int16 Room23::start_gleiter() {
 					_G(maus_links_click) = false;
 
 				} else if (_G(spieler).R23GleiterExit == 16) {
-					out->setze_zeiger(0);
+					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_019, CFO_MODE);
 					_G(spieler).R23GleiterExit = 25;

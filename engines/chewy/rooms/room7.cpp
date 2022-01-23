@@ -23,7 +23,6 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room7.h"
 
 namespace Chewy {
@@ -128,7 +127,7 @@ void Room7::klingel() {
 		start_aad(7, 0);
 		start_ani_block(3, ABLOCK25);
 		det->show_static_spr(7);
-		det->load_taf_seq(192, 74, 0);
+		det->load_taf_seq(192, 74, nullptr);
 		det->start_detail(14, 1, ANI_VOR);
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
 		det->stop_detail(5);

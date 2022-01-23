@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room9.h"
 
@@ -74,10 +73,9 @@ void Room9::gtuer() {
 }
 
 void Room9::surimy() {
-	int16 tmp;
 	hide_cur();
 	_G(spieler).R9Surimy = true;
-	tmp = spieler_vector[P_CHEWY].Count;
+	const int16 tmp = spieler_vector[P_CHEWY].Count;
 	stop_person(P_CHEWY);
 	atds->set_steuer_bit(75, ATS_AKTIV_BIT, ATS_DATEI);
 	det->hide_static_spr(4);
@@ -93,7 +91,7 @@ void Room9::surimy() {
 }
 
 void Room9::surimy_ani() {
-	det->load_taf_seq(91, 8, 0);
+	det->load_taf_seq(91, 8, nullptr);
 	_G(auto_obj) = 1;
 	mov_phasen[SURIMY_OBJ].AtsText = 0;
 	mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -102,8 +100,7 @@ void Room9::surimy_ani() {
 	auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SURIMY_OBJ].Mode = true;
-	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
-		(const MovLine *)SURIMY_MPKT);
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
 	start_detail_frame(0, 1, ANI_VOR, 15);
 	det->start_detail(2, 1, ANI_VOR);
@@ -112,8 +109,7 @@ void Room9::surimy_ani() {
 	start_spz(CH_EKEL, 2, ANI_VOR, P_CHEWY);
 	det->hide_static_spr(4);
 	mov_phasen[SURIMY_OBJ].Repeat = 1;
-	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
-		(const MovLine *)SURIMY_MPKT1);
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 	wait_auto_obj(SURIMY_OBJ);
 	det->del_taf_tbl(91, 8, 0);
 }
@@ -122,7 +118,7 @@ void Room9::gedAction(int index) {
 	switch (index) {
 	case 0:
 		if (!_G(spieler).R9Surimy)
-			Room9::surimy();
+			surimy();
 		break;
 
 	default:

@@ -216,7 +216,7 @@ void flic::decode_frame() {
 			case CLS:
 				out->setze_zeiger(virt_screen);
 				out->cls();
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 
 				update_flag = true;
 				break;
@@ -241,7 +241,7 @@ void flic::decode_frame() {
 			if (flic_user) {
 				out->setze_zeiger(virt_screen);
 				flic_user(CurrentFrame);
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 			}
 			out->back2screen(virt_screen - 4);
 			if (fade_flag != false) {
@@ -740,7 +740,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 		case CLEAR_SCREEN:
 			out->setze_zeiger(virt_screen);
 			out->cls();
-			out->setze_zeiger(0);
+			out->setze_zeiger(nullptr);
 			out->cls();
 			break;
 
@@ -792,7 +792,7 @@ void flic::decode_cframe() {
 			case CLS:
 				out->setze_zeiger(virt_screen);
 				out->cls();
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 
 				update_flag = true;
 				break;
@@ -822,7 +822,7 @@ void flic::decode_cframe() {
 				out->back2back(virt_screen, load_puffer);
 				out->setze_zeiger(virt_screen);
 				custom_user(CurrentFrame);
-				out->setze_zeiger(0);
+				out->setze_zeiger(nullptr);
 				out->back2screen(virt_screen - 4);
 				out->back2back(load_puffer, virt_screen);
 			} else

@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room2.h"
 #include "chewy/rooms/room3.h"
@@ -106,7 +105,7 @@ void Room3::terminal() {
 			det->stop_detail(5);
 			start_ani_block(2, ABLOCK3);
 			if (_G(spieler).R2FussSchleim) {
-				_G(spieler).R2FussSchleim = 0;
+				_G(spieler).R2FussSchleim = false;
 
 				_G(spieler).room_s_obj[SIB_SCHLEIM].ZustandFlipFlop = 1;
 			}
@@ -131,7 +130,8 @@ void Room3::terminal() {
 			_G(auto_obj) = 0;
 			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			ERROR
-				fx_blend = BLEND1;
+
+			fx_blend = BLEND1;
 			start_ani_block(3, ablock5);
 			set_person_pos(91, 107, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
@@ -152,6 +152,8 @@ void Room3::terminal() {
 		sonde_knarre();
 		break;
 
+	default:
+		break;
 	}
 }
 
@@ -179,14 +181,11 @@ void Room3::sonde_knarre() {
 		{ {   4, 100, 180 }, 1, 3 },
 		{ {  13,  45,  75 }, 1, 3 }
 	};
-	room_detail_info *rdi;
-	int16 tmp;
-	int16 ende;
 	hide_cur();
-	rdi = det->get_room_detail_info();
+	room_detail_info *rdi = det->get_room_detail_info();
 
-	det->load_taf_seq(162, 17, 0);
-	tmp = _G(zoom_horizont);
+	det->load_taf_seq(162, 17, nullptr);
+	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	_G(auto_obj) = 1;
 	mov_phasen[SONDE_OBJ].Lines = 3;
@@ -195,14 +194,13 @@ void Room3::sonde_knarre() {
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SONDE_OBJ].Mode = true;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine
-		*)sonde_mpkt1);
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt1);
 	flags.AniUserAction = false;
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
 	det->start_detail(SONDE_SHOOT, 1, ANI_VOR);
-	ende = 0;
+	int16 ende = 0;
 	while (!ende) {
 		clear_prog_ani();
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 170) {
@@ -261,8 +259,7 @@ void Room3::sonde_knarre() {
 	mov_phasen[SONDE_OBJ].Lines = 2;
 	mov_phasen[SONDE_OBJ].Repeat = 1;
 	mov_phasen[SONDE_OBJ].ZoomFak = 28;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine
-		*)sonde_mpkt2);
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt2);
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 	det->del_taf_tbl(162, 17, 0);
@@ -273,11 +270,6 @@ void Room3::sonde_knarre() {
 }
 
 void Room3::probeTransfer() {
-	int16 tmp;
-	int16 i;
-	int16 spr_nr;
-	int16 anistart;
-
 	static const MovLine SONDE_MPKT1[2] = {
 		{ { 237,  52, 160 }, 0, 2 },
 		{ { 144, 100, 180 }, 0, 2 }
@@ -299,9 +291,9 @@ void Room3::probeTransfer() {
 	flags.AniUserAction = false;
 	hide_cur();
 	/*rdi = */(void)det->get_room_detail_info();
-	tmp = _G(zoom_horizont);
+	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
-	anistart = false;
+	int16 anistart = false;
 	_G(auto_obj) = 1;
 	mov_phasen[SONDE_OBJ].Lines = 2;
 	mov_phasen[SONDE_OBJ].Repeat = 1;
@@ -309,8 +301,7 @@ void Room3::probeTransfer() {
 	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SONDE_OBJ].Mode = true;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines,
-		(const MovLine *)SONDE_MPKT1);
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT1);
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
@@ -327,8 +318,8 @@ void Room3::probeTransfer() {
 	clear_prog_ani();
 	_G(auto_obj) = 2;
 
-	spr_nr = 140;
-	for (i = 0; i < 4 && !SHOULD_QUIT; i++) {
+	int16 spr_nr = 140;
+	for (int16 i = 0; i < 4 && !SHOULD_QUIT; i++) {
 		mov_phasen[SONDE_OBJ].Lines = 2;
 		mov_phasen[SONDE_OBJ].Repeat = 1;
 		mov_phasen[SONDE_OBJ].ZoomFak = 0;
@@ -391,7 +382,7 @@ void Room3::probeTransfer() {
 			flags.AniUserAction = true;
 			spr_nr = 141;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			det->load_taf_seq(142, 8, 0);
+			det->load_taf_seq(142, 8, nullptr);
 			break;
 
 		case 1:
@@ -399,7 +390,7 @@ void Room3::probeTransfer() {
 			break;
 
 		case 2:
-			det->del_taf_tbl(142, 7, 0);
+			det->del_taf_tbl(142, 7, nullptr);
 			flags.AniUserAction = false;
 			switch_room(2);
 			break;

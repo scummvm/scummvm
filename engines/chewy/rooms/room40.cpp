@@ -82,7 +82,8 @@ void Room40::entry(int16 eib_nr) {
 			case 87:
 				set_person_pos(158, 93, P_HOWARD, P_LEFT);
 				break;
-
+			default:
+				break;
 			}
 		}
 	}
@@ -155,9 +156,6 @@ bool Room40::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room40::move_train(int16 mode) {
-	int16 lx, ax;
-	int16 delay;
-
 	_G(spieler).R40TrainMove = false;
 	hide_cur();
 	auto_move(9, P_CHEWY);
@@ -167,8 +165,8 @@ void Room40::move_train(int16 mode) {
 	if (!mode)
 		start_aad_wait(206, -1);
 
-	lx = -40;
-	ax = lx - 190;
+	int16 lx = -40;
+	int16 ax = lx - 190;
 
 	det->start_detail(7, 20, ANI_VOR);
 	det->show_static_spr(11);
@@ -177,7 +175,7 @@ void Room40::move_train(int16 mode) {
 		det->show_static_spr(12);
 
 	det->enable_sound(7, 0);
-	delay = 0;
+	int16 delay = 0;
 
 	while (ax < 560) {
 		det->set_detail_pos(7, lx, 46);
@@ -212,15 +210,11 @@ void Room40::move_train(int16 mode) {
 }
 
 void Room40::setup_func() {
-	int16 x, y;
-	int16 sp_x;
-
 	if (!_G(spieler).R40HoUse && _G(spieler).PersonRoomNr[P_HOWARD] == 40) {
 		calc_person_look();
-		x = spieler_vector[P_HOWARD].Xypos[0];
-		y = spieler_vector[P_HOWARD].Xypos[1];
-		sp_x = spieler_vector[P_CHEWY].Xypos[0];
 
+		int16 x, y;
+		const int16 sp_x = spieler_vector[P_CHEWY].Xypos[0];
 		if (sp_x > 170 && sp_x < 255) {
 			x = 248;
 			y = 97;
@@ -233,6 +227,9 @@ void Room40::setup_func() {
 		} else if (sp_x < 170) {
 			x = 165;
 			y = 99;
+		} else {
+			x = spieler_vector[P_HOWARD].Xypos[0];
+			y = spieler_vector[P_HOWARD].Xypos[1];
 		}
 
 		go_auto_xy(x, y, P_HOWARD, ANI_GO);
@@ -415,8 +412,7 @@ int16 Room40::use_schalter(int16 aad_nr) {
 }
 
 void Room40::talk_police() {
-	if (_G(spieler).R40PoliceWeg == false &&
-			_G(spieler).R40PoliceAniStatus == 255) {
+	if (_G(spieler).R40PoliceWeg == false && _G(spieler).R40PoliceAniStatus == 255) {
 		hide_cur();
 		_G(spieler).R40PoliceStart = false;
 		room->set_timer_status(255, TIMER_STOP);
@@ -481,7 +477,7 @@ int16 Room40::use_haendler() {
 			_G(spieler).R40Wettbewerb = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 			flags.NoScroll = false;
-			out->setze_zeiger(0);
+			out->setze_zeiger(nullptr);
 			out->cls();
 			switch_room(28);
 			SetUpScreenFunc = setup_func;
@@ -567,8 +563,7 @@ bool Room40::use_police() {
 	bool result = false;
 
 	if (menu_item == CUR_HOWARD) {
-		if (_G(spieler).R40PoliceWeg == false &&
-				_G(spieler).R40PoliceAniStatus == 255) {
+		if (_G(spieler).R40PoliceWeg == false && _G(spieler).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(spieler).R40PoliceAb = true;
 			hide_cur();
@@ -596,9 +591,6 @@ bool Room40::use_police() {
 }
 
 int16 Room40::use_tele() {
-	int16 dia_nr = -1;
-	int16 dia_nr1 = -1;
-	int16 timer_wert;
 	int16 action_flag = false;
 
 	if (!_G(spieler).inv_cur) {
@@ -606,6 +598,7 @@ int16 Room40::use_tele() {
 			action_flag = true;
 			hide_cur();
 
+			int16 dia_nr1 = -1;
 			if (!_G(spieler).R40PoliceAb) {
 				start_aad_wait(219, -1);
 				_G(spieler).R40HoUse = false;
@@ -614,6 +607,7 @@ int16 Room40::use_tele() {
 				auto_move(13, P_CHEWY);
 				det->show_static_spr(0);
 
+				int16 dia_nr;
 				if (!_G(spieler).R40DuengerMit) {
 					dia_nr = 220;
 					dia_nr1 = 222;
@@ -628,7 +622,7 @@ int16 Room40::use_tele() {
 				auto_move(9, P_CHEWY);
 				start_aad_wait(dia_nr1, -1);
 				_G(spieler).R40HoUse = false;
-				timer_wert = 0;
+				int16 timer_wert = 0;
 
 				if (dia_nr1 == 223) {
 					if (is_cur_inventar(DUENGER_INV)) {

@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room45.h"
 
@@ -30,9 +29,6 @@ namespace Chewy {
 namespace Rooms {
 
 void Room45::entry(int16 eib_nr) {
-	int16 ch_x, ch_y;
-	int16 ho_x, ho_y;
-
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = setup_func;
 	_G(r45_delay) = 0;
@@ -49,6 +45,8 @@ void Room45::entry(int16 eib_nr) {
 
 	spieler_mi[P_HOWARD].Mode = true;
 	if (!flags.LoadGame) {
+		int16 ch_x, ch_y;
+		int16 ho_x, ho_y;
 		if (_G(spieler).R48TaxiEntry) {
 			ch_x = 67;
 			ch_y = 146;
@@ -94,16 +92,14 @@ void Room45::xit(int16 eib_nr) {
 }
 
 void Room45::setup_func() {
-	int16 i;
 	int16 x;
 	int16 y;
-	int16 ch_x;
 
 	if (menu_display == 0) {
 		if (!_G(r45_delay)) {
 			_G(r45_delay) = _G(spieler).DelaySpeed / 2;
 
-			for (i = 0; i < MAX_PERSON; i++) {
+			for (int16 i = 0; i < MAX_PERSON; i++) {
 				if (_G(r45_pinfo)[i][0] == 1) {
 					y = Adi[3 + i].y;
 					x = Adi[3 + i].x;
@@ -145,9 +141,7 @@ void Room45::setup_func() {
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && HowardMov != 2) {
 			calc_person_look();
-			x = spieler_vector[P_HOWARD].Xypos[0];
-			y = 64;
-			ch_x = spieler_vector[P_CHEWY].Xypos[0];
+			const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
 			if (ch_x < 95) {
 				x = 18;
