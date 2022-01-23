@@ -185,6 +185,7 @@ _lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
+_build_xbrz_scalers=yes
 _build_aspect=yes
 _enable_prof=no
 _enable_asan=no
@@ -880,6 +881,7 @@ Optional Features:
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers as well)
   --disable-edge-scalers   exclude Edge2x and Edge3x scalers
+  --disable-xbrz-scalers   exclude xBRZ scalers
   --disable-aspect         exclude aspect ratio correction
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
@@ -1089,6 +1091,7 @@ for ac_option in $@; do
 	--disable-scalers)            _build_scalers=no      ;;
 	--disable-hq-scalers)         _build_hq_scalers=no   ;;
 	--disable-edge-scalers)       _build_edge_scalers=no ;;
+	--disable-xbrz-scalers)       _build_xbrz_scalers=no ;;
 	--disable-aspect)             _build_aspect=no       ;;
 	--enable-alsa)                _alsa=yes              ;;
 	--disable-alsa)               _alsa=no               ;;
@@ -4273,6 +4276,7 @@ define_in_config_if_yes "$_savegame_timestamp" 'USE_SAVEGAME_TIMESTAMP'
 if test "$_build_scalers" = no ; then
 	_build_hq_scalers=no
 	_build_edge_scalers=no
+	_build_xbrz_scalers=no
 elif test "$_build_hq_scalers" = no ; then
 	_build_edge_scalers=no
 fi
@@ -4282,6 +4286,8 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
 define_in_config_if_yes "$_build_edge_scalers" 'USE_EDGE_SCALERS'
+
+define_in_config_if_yes "$_build_xbrz_scalers" 'USE_XBRZ_SCALERS'
 
 define_in_config_if_yes "$_build_aspect" 'USE_ASPECT'
 
@@ -6025,6 +6031,9 @@ if test "$_build_scalers" = yes ; then
 		fi
 	else
 		echo_n ", scalers"
+	fi
+	if test "$_build_xbrz_scalers" = yes ; then
+		echo_n ", xBRZ scalers"
 	fi
 fi
 

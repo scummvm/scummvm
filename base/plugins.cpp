@@ -175,6 +175,9 @@ public:
 		LINK_PLUGIN(PM)
 		LINK_PLUGIN(DOTMATRIX)
 		LINK_PLUGIN(TV)
+#ifdef USE_XBRZ_SCALERS
+		LINK_PLUGIN(XBRZ)
+#endif
 #endif
 
 		return pl;

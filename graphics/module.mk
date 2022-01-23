@@ -118,6 +118,12 @@ MODULE_OBJS += \
 	scaler/edge.o
 endif
 
+ifdef USE_XBRZ_SCALERS
+MODULE_OBJS += \
+	scaler/xbrz.o \
+	scaler/xbrz/xbrz.o
+endif
+
 endif
 
 # Include common rules

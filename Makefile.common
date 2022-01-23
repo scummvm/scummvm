@@ -189,6 +189,10 @@ base/version.o: base/version.cpp
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -c $(<) -o $@
 
+graphics/scaler/xbrz/xbrz.o: graphics/scaler/xbrz/xbrz.cpp
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -std=c++17 -c $(<) -o $@
+
 else
 
 # Dumb compile rule, for C++ compilers that don't allow dependency tracking or
@@ -205,6 +209,10 @@ else
 base/version.o: base/version.cpp
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -c $(<) -o $@
+
+graphics/scaler/xbrz/xbrz.o: graphics/scaler/xbrz/xbrz.cpp
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -std=c++17 -c $(<) -o $@
 endif
 
 # Build rule for assembler files
