@@ -239,7 +239,7 @@ int Room90::proc3() {
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(7);
 
-	while (spieler_vector[1].Xypos[0] != 176)
+	while (spieler_vector[P_HOWARD].Xypos[0] != 176)
 		set_up_screen(DO_SETUP);
 
 	start_spz_wait(47, 1, false, P_HOWARD);

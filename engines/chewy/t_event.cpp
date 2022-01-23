@@ -2501,7 +2501,7 @@ void calc_person_dia(int16 p_nr) {
 
 		case 43:
 			if (p_nr == P_HOWARD) {
-				_G(spieler).PersonDiaRoom[1] = 1;
+				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 				_G(spieler).PersonDia[P_HOWARD] = 470;
 			} else {
 				_G(spieler).PersonDia[P_NICHELLE] = 536;
@@ -2659,7 +2659,7 @@ void calc_person_dia(int16 p_nr) {
 			int16 tmp[3];
 			for (i = 0; i < 3; ++i) {
 				tmp[i] = _G(spieler).PersonDiaRoom[i];
-				_G(spieler).PersonDiaRoom[i] = 0;
+				_G(spieler).PersonDiaRoom[i] = false;
 				_G(stopAutoMove)[i] = true;
 			}
 
@@ -2678,16 +2678,16 @@ void calc_person_dia(int16 p_nr) {
 			save_person_rnr();
 
 			if (p_nr == P_HOWARD) {
-				_G(spieler).PersonDiaRoom[0] = 1;
+				_G(spieler).PersonDiaRoom[P_CHEWY] = true;
 				switch_room(65);
-				_G(spieler).PersonDiaRoom[0] = 0;
+				_G(spieler).PersonDiaRoom[P_CHEWY] = false;
 
 			} else if (p_nr == P_NICHELLE) {
 				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hide_cur();
 					start_aad_wait(_G(spieler).PersonDia[P_NICHELLE], -1);
-					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE] != 0;
+					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE];
 					show_cur();
 				} else {
 					start_ads_wait(_G(spieler).PersonDia[P_NICHELLE] - 10000);

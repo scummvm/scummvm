@@ -264,7 +264,7 @@ void MainMenu::playGame() {
 	flags.MainInput = true;
 	flags.ShowAtsInvTxt = true;
 	cur->show_cur();
-	spieler_vector->Count = 0;
+	spieler_vector[P_CHEWY].Count = 0;
 	uhr->reset_timer(0, 0);
 	ailsnd->set_loopmode(_G(spieler).soundLoopMode);
 

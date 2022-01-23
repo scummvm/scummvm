@@ -176,7 +176,7 @@ int Room87::proc4() {
 	flic_cut(99, CFO_MODE);
 	flic_cut(100, CFO_MODE);
 	_G(spieler).PersonGlobalDia[P_HOWARD] = -1;
-	_G(spieler).PersonDiaRoom[P_HOWARD] = 0;
+	_G(spieler).PersonDiaRoom[P_HOWARD] = false;
 	_G(spieler).flags32_10 = true;
 
 	switch_room(86);
