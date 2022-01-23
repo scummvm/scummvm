@@ -108,11 +108,11 @@ struct ScriptPatch {
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
 	// Garbage at end of script
-	{"warlock", "", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
+	{"warlock", "v1.1.3 MPC", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", "", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
+	{"warlock", "v1.1.3 MPC", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
 			3, "Channels 17 to 18", ""},
-	{"warlock", "", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
+	{"warlock", "v1.1.3 MPC", kPlatformWindows, "WRLCKSHP:UpForeECall", kScoreScript, 12, 0,
 			4, "Frames 150 to 160", ""},
 
 	// Missing '&'
