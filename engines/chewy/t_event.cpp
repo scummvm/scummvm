@@ -160,7 +160,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							flc->set_custom_user_function(Room6::cut_serv1);
 							flic_cut(FCUT_005, CFO_MODE);
 							flc->remove_custom_user_function();
-							start_spz(4, -1, 0, 0);
+							start_spz(4, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);
 							show_cur();
 						} else {

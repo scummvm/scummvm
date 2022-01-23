@@ -43,7 +43,7 @@ void Room50::entry(int16 eib_nr) {
 	if (_G(spieler).flags32_10) {
 		hide_cur();
 		stop_page();
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 		set_person_pos(0, 64, 0, 1);
 		set_person_pos(92, 123, 0, 0);
 		start_aad_wait(510, -1);

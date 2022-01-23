@@ -74,7 +74,7 @@ void Room2::electrifyWalkway1() {
 }
 
 void Room2::electrifyWalkway2() {
-	start_spz(CH_TALK12, 255, 0, P_CHEWY);
+	start_spz(CH_TALK12, 255, false, P_CHEWY);
 	start_aad_wait(47, -1);
 }
 

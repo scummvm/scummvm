@@ -195,7 +195,7 @@ int16 Room31::use_topf() {
 void Room31::close_luke() {
 	if (!_G(spieler).R31KlappeZu) {
 		hide_cur();
-		auto_move(2, 0);
+		auto_move(2, P_CHEWY);
 		start_spz_wait(13, 1, 0, 0);
 		_G(spieler).R31KlappeZu = true;
 		det->play_sound(3, 0);

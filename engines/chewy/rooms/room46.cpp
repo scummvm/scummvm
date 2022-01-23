@@ -46,20 +46,20 @@ void Room46::entry(int16 eib_nr) {
 		SetUpScreenFunc = setup_func;
 
 		if (_G(spieler).flags33_8) {
-			_G(maus_links_click) = 0;
+			_G(maus_links_click) = false;
 			hide_cur();
-			set_person_pos(175, 73, 1, 0);
-			set_person_pos(147, 109, 0, 0);
+			set_person_pos(175, 73, P_HOWARD, P_LEFT);
+			set_person_pos(147, 109, P_CHEWY, P_LEFT);
 			_G(spieler).flags33_8 = false;
 			_G(spieler).SVal1 = 46;
 			wait_show_screen(10);
 
-			start_spz_wait(64, 1, 0, 0);
-			start_spz(65, 255, 0, 0);
+			start_spz_wait(64, 1, false, P_CHEWY);
+			start_spz(65, 255, false, P_CHEWY);
 			start_aad_wait(494, -1);
 			_G(spieler).SVal2 = 504;
 			switch_room(92);
-			start_spz(65, 255, 0, 0);
+			start_spz(65, 255, false, P_CHEWY);
 			start_aad_wait(495, -1);
 			_G(spieler).room_e_obj[78].Exit = 90;
 			show_cur();

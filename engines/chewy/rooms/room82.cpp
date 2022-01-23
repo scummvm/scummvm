@@ -70,7 +70,7 @@ void Room82::entry() {
 		proc4();
 	}
 
-	_G(maus_links_click) = 0;
+	_G(maus_links_click) = false;
 	SetUpScreenFunc = setup_func;
 }
 

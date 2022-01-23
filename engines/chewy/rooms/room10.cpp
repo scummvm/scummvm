@@ -42,7 +42,7 @@ void Room10::entry() {
 		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 		hide_cur();
-		start_spz(5, 255, 0, 0);
+		start_spz(5, 255, false, P_CHEWY);
 		start_aad_wait(101, 0);
 		show_cur();
 

@@ -77,7 +77,7 @@ void Room84::entry() {
 		set_person_pos(523, 110, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags30_8 = false;
 		_G(spieler).flags31_1 = false;
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 319;
 		if (_G(spieler).flags32_10) {
 			set_person_pos(347, 130, P_CHEWY, P_RIGHT);

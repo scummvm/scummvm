@@ -974,7 +974,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 			hide_cur();
 			if (flags.InventMenu == false) {
 				if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
-					_G(maus_links_click) = 0;
+					_G(maus_links_click) = false;
 					auto_move(_G(spieler).room_m_obj[test_nr].AutoMov, P_CHEWY);
 				}
 				txt_nr = obj->iib_txt_nr(test_nr);
@@ -992,7 +992,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	case INVENTAR_STATIC:
 		ret = obj->action_iib_sib(_G(spieler).AkInvent, test_nr);
 		if (ret != NO_ACTION) {
-			_G(maus_links_click) = 0;
+			_G(maus_links_click) = false;
 			hide_cur();
 			if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
@@ -1030,7 +1030,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	case STATIC_USE:
 		ret = obj->calc_static_use(test_nr);
 		if (ret == OBJEKT_1) {
-			_G(maus_links_click) = 0;
+			_G(maus_links_click) = false;
 			hide_cur();
 			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
 
@@ -1074,7 +1074,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				}
 			}
 		} else if (ret == SIB_GET_INV) {
-			_G(maus_links_click) = 0;
+			_G(maus_links_click) = false;
 			hide_cur();
 			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);

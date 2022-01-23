@@ -55,10 +55,10 @@ void Room51::entry() {
 		atds->set_unknown(0);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		_G(maus_links_click) = 0;
+		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 0;
-		set_person_pos(34, 120, 1, 1);
-		set_person_pos(234, 69, 0, 0);
+		set_person_pos(34, 120, P_HOWARD, P_HOWARD);
+		set_person_pos(234, 69, P_CHEWY, P_LEFT);
 		SetUpScreenFunc = setup_func;
 		det->show_static_spr(17);
 		hide_cur();
@@ -287,7 +287,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			out->cls();
 			flags.NoPalAfterFlc = true;
 			flic_cut(114, 0);
-			set_person_pos(115, 114, 0, 0);
+			set_person_pos(115, 114, P_CHEWY, P_LEFT);
 			fx_blend = BLEND3;
 			set_up_screen(NO_SETUP);
 			start_aad_wait(564, -1);

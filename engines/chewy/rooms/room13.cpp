@@ -50,7 +50,7 @@ void Room13::entry() {
 		flic_cut(FCUT_013, CFO_MODE);
 		set_person_pos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);
-		start_spz(16, 255, 0, 0);
+		start_spz(16, 255, false, P_CHEWY);
 		start_aad_wait(27, -1);
 	} else {
 		if (_G(spieler).R13MonitorStatus)
@@ -128,7 +128,7 @@ void Room13::talk_bork() {
 		flags.NoScroll = true;
 		auto_scroll(41, 0);
 
-		start_spz(68, 255, 0, 0);
+		start_spz(68, 255, false, P_CHEWY);
 		start_aad_wait(248, -1);
 		flic_cut(FCUT_014, CFO_MODE);
 		load_chewy_taf(CHEWY_NORMAL);

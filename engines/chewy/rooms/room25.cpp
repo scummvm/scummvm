@@ -88,7 +88,7 @@ void Room25::entry() {
 
 	} else if (_G(spieler).R25GleiterExit) {
 		if (!flags.LoadGame) {
-			set_person_pos(127, 122, 0, 0);
+			set_person_pos(127, 122, P_CHEWY, P_LEFT);
 
 			if (!_G(spieler).R25SurimyGo) {
 				_G(spieler).R25SurimyGo = 1;

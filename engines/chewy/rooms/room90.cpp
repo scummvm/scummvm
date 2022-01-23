@@ -323,7 +323,7 @@ int Room90::proc6() {
 	hide_cur();
 	cur_2_inventory();
 	auto_move(6, P_CHEWY);
-	_G(maus_links_click) = 0;
+	_G(maus_links_click) = false;
 	out->setze_zeiger(nullptr);
 	out->cls();
 	flic_cut(109, CFO_MODE);
