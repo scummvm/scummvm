@@ -30,6 +30,113 @@ namespace Chewy {
 namespace Rooms {
 
 void Room80::entry() {
+	_G(maus_links_click) = false;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
+	det->enable_sound(0, 0);
+	det->enable_sound(0, 1);
+	det->enable_sound(0, 2);
+	det->play_sound(0, 0);
+	det->play_sound(0, 1);
+	det->play_sound(0, 2);
+
+	if (_G(spieler).flags31_2) {
+		atds->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+	} else {
+		atds->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+	}
+
+	if (_G(spieler).flags32_1) {
+		_G(spieler).scrollx = 39;
+		return;
+	}
+
+	set_person_pos(37, 10, P_CHEWY, P_RIGHT);
+	set_person_pos(22, -1, P_HOWARD, P_RIGHT);
+	set_person_pos(6, 2, P_NICHELLE, P_RIGHT);
+	_G(spieler).scrollx = 10;
+	flags.NoScroll = true;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 40;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 24;
+	_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
+	_G(zoom_horizont) = 0;
+
+	if (_G(spieler).R88Val1 == 84)
+		det->show_static_spr(3);
+	else
+		det->show_static_spr(4);
+
+	SetUpScreenFunc = setup_func;
+}
+
+void Room80::setup_func() {
+	for (int i = 0; i < 3; ++i)
+		det->hide_static_spr(i);
+
+	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || menu_display)
+		return;
+
+	if (menu_item != CUR_USE)
+		menu_item = CUR_USE;
+
+	cur_2_inventory();
+	cursor_wahl(CUR_ZEIGE);
+	int vec = det->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);
+	if (vec == -1)
+		return;
+
+	if (vec != 0 && vec != 2) {
+		if (vec != 1 || !_G(spieler).flags31_2)
+			return;
+	}
+
+	det->show_static_spr(vec);
+	if (!_G(maus_links_click))
+		return;
+
+	int nextRoom;
+	switch (vec) {
+	case 0:
+		nextRoom = 82;
+		break;
+	case 1:
+		if (_G(spieler).flags31_1)
+			nextRoom = 85;
+		else
+			nextRoom = 84;
+		break;
+	case 2:
+		nextRoom = 82;
+		break;
+	default:
+		nextRoom = -1;
+		break;
+	}
+
+	if (nextRoom == -1)
+		return;
+
+	SetUpScreenFunc = nullptr;
+	det->hide_static_spr(vec);
+	menu_item = CUR_WALK;
+	cursor_wahl(CUR_WALK);
+	_G(spieler).flags30_1 = true;
+	_G(maus_links_click) = false;
+	set_up_screen(DO_SETUP);
+	
+	for (int i = P_CHEWY; i <= P_NICHELLE; ++i) {
+		if (_G(spieler).R79Val[i] != 0) {
+			_G(spieler).PersonHide[i] = false;
+			_G(spieler).R79Val[i] = 0;
+		}
+	}
+
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 80)
+		_G(spieler).PersonRoomNr[P_HOWARD] = nextRoom;
+
+	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 80)
+		_G(spieler).PersonRoomNr[P_NICHELLE] = nextRoom;
 }
 
 } // namespace Rooms

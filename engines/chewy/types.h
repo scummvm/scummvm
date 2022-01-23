@@ -486,9 +486,7 @@ struct Spieler : public SpielerFlags {
 	int16 R64Moni2Ani = 0;
 
 	// ---- //
-	int16 R79Val1 = 0;
-	int16 R79Val2 = 0;
-	int16 R79Val3 = 0;
+	int16 R79Val[3] = {0, 0, 0};
 	// ---- //
 	int16 r84_bool18DB1C = false;
 	// ---- //

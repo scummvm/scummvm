@@ -113,9 +113,9 @@ void Room84::entry() {
 void Room84::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	if (eib_nr == 125) {
-		_G(spieler).R79Val1 = 1;
-		_G(spieler).R79Val2 = 1;
-		_G(spieler).R79Val3 = 1;
+		_G(spieler).R79Val[P_CHEWY] = 1;
+		_G(spieler).R79Val[P_HOWARD] = 1;
+		_G(spieler).R79Val[P_NICHELLE] = 1;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 80;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
 	} else {
