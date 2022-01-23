@@ -3016,6 +3016,8 @@ EOF
 		append_var SDL_NET_LIBS "-lSDL_net -lnet -lsysmodule"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
+		# PS3 has no OpenGL support at all even though it's SDL based
+		_opengl_mode=none
 		;;
 	psp2)
 		_freetypepath="$VITASDK/arm-vita-eabi/bin"
