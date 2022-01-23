@@ -445,7 +445,7 @@ void invent_menu() {
 			}
 			if (menu_flag1 == false)
 				cur->plot_cur();
-			out->setze_zeiger(0);
+			out->setze_zeiger(nullptr);
 			if (menu_flag1 == MENU_EINBLENDEN) {
 				fx->blende1(workptr, screen0, 0, 200, 0, 300);
 			} else if (menu_flag1 == MENU_AUSBLENDEN)

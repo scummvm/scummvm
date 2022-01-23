@@ -147,10 +147,9 @@ void mem2mcga(const byte *ptr) {
 
 void mem2mcga_masked(const byte *ptr, int16 maske) {
 	byte *destP = SCREEN;
-	byte pixel;
 
 	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr, ++destP) {
-		pixel = *ptr;
+		byte pixel = *ptr;
 		if (pixel != maske)
 			*destP = pixel;
 	}
@@ -169,17 +168,15 @@ void mem2mem(const byte *ptr1, byte *ptr2) {
 }
 
 void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
-	byte pixel;
-
 	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr1, ++ptr2) {
-		pixel = *ptr1;
+		byte pixel = *ptr1;
 		if (pixel != maske)
 			*ptr2 = pixel;
 	}
 }
 
 void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
-	int width = *((const int16 *)sptr);
+	const int width = *((const int16 *)sptr);
 	sptr += y * width + x;
 	byte *destP = SCREEN;
 
@@ -189,15 +186,14 @@ void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
 	}
 }
 
-void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
-		int16 height, int16 scrWidth) {
-	int pitch;
-	byte *scrP;
+void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width, int16 height, int16 scrWidth) {
 	*((int16 *)sptr) = width;
 	sptr += 2;
 	*((int16 *)sptr) = height;
 	sptr += 2;
 
+	int pitch;
+	byte *scrP;
 	if (scrWidth == 0) {
 		scrP = SCREEN + y * SCREEN_WIDTH + x;
 		pitch = SCREEN_WIDTH;
@@ -215,14 +211,14 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
 }
 
 void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrWidth) {
-	int pitch;
-	byte *scrP;
-	int width = *((const int16 *)sptr);
+	const int width = *((const int16 *)sptr);
 	sptr += 2;
-	int height = *((const int16 *)sptr);
+	const int height = *((const int16 *)sptr);
 	sptr += 2;
 
 	if (width >= 1 && height >= 1) {
+		int pitch;
+		byte *scrP;
 		if (scrWidth == 0) {
 			scrP = SCREEN + y * SCREEN_WIDTH + x;
 			pitch = SCREEN_WIDTH;

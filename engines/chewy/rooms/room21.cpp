@@ -115,7 +115,7 @@ void Room21::calc_laser() {
 }
 
 void Room21::init_spinne() {
-	det->load_taf_seq(42, (89 - 42) + 1, 0);
+	det->load_taf_seq(42, (89 - 42) + 1, nullptr);
 	_G(auto_obj) = 2;
 
 	mov_phasen[SPINNE1_OBJ].AtsText = 130;
@@ -168,24 +168,14 @@ void Room21::setup_func() {
 }
 
 void Room21::chewy_kolli() {
-	int16 spr_nr;
-	int16 *Cxy;
-	int16 xoff;
-	int16 yoff;
-	int16 *xy;
-	int16 kolli;
-	int16 i;
-	int16 ani_nr;
-	int16 tmp;
-	kolli = false;
+	int16 kolli = false;
 
-	for (i = 0; i < 3 && !kolli; i++) {
-		spr_nr = mov_phasen[i].Phase[auto_mov_vector[i].Phase][0] +
-			auto_mov_vector[i].PhNr;
-		xy = (int16 *)room_blk.DetImage[spr_nr];
-		Cxy = room_blk.DetKorrekt + (spr_nr << 1);
-		xoff = xy[0];
-		yoff = xy[1];
+	for (int16 i = 0; i < 3 && !kolli; i++) {
+		int16 spr_nr = mov_phasen[i].Phase[auto_mov_vector[i].Phase][0] + auto_mov_vector[i].PhNr;
+		int16 *xy = (int16 *)room_blk.DetImage[spr_nr];
+		int16 *Cxy = room_blk.DetKorrekt + (spr_nr << 1);
+		int16 xoff = xy[0];
+		int16 yoff = xy[1];
 		if (i == 2)
 			xoff += 10;
 		xoff += auto_mov_vector[i].Xzoom;
@@ -205,10 +195,11 @@ void Room21::chewy_kolli() {
 
 	if (kolli) {
 		if (!flags.AutoAniPlay) {
-			tmp = spieler_vector[P_CHEWY].Count;
+			const int16 tmp = spieler_vector[P_CHEWY].Count;
 			stop_person(P_CHEWY);
 			flags.AutoAniPlay = true;
 			_G(spieler).PersonHide[P_CHEWY] = true;
+			int16 ani_nr;
 			if (spieler_vector[P_CHEWY].Xyvo[0] < 0)
 				ani_nr = 10;
 			else
@@ -226,8 +217,6 @@ void Room21::chewy_kolli() {
 }
 
 void Room21::salto() {
-	int16 i;
-
 	if (!_G(spieler).inv_cur) {
 		if (atds->get_ats_str(134, TXT_MARK_USE, ATS_DATEI) == 8) {
 			if (!_G(spieler).R21Salto) {
@@ -236,7 +225,7 @@ void Room21::salto() {
 					flags.AutoAniPlay = true;
 					_G(spieler).PersonHide[P_CHEWY] = true;
 
-					for (i = 0; i < 3; i++) {
+					for (int16 i = 0; i < 3; i++) {
 						det->set_detail_pos(12 + i, spieler_vector[P_CHEWY].Xypos[0],
 							spieler_vector[P_CHEWY].Xypos[1]);
 					}

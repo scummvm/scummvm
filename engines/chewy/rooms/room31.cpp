@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room31.h"
 
@@ -51,7 +50,7 @@ void Room31::surimy_go() {
 		if (_G(spieler).R31SurimyGo >= 3) {
 			hide_cur();
 			_G(spieler).R31SurimyGo = 0;
-			det->load_taf_seq(39, 8, 0);
+			det->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -60,8 +59,7 @@ void Room31::surimy_go() {
 			auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			auto_mov_obj[SURIMY_OBJ].Mode = true;
-			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
-				(const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(157, -1);
 			wait_auto_obj(SURIMY_OBJ);
@@ -74,10 +72,8 @@ void Room31::surimy_go() {
 }
 
 void Room31::calc_luke() {
-	int16 i;
-
 	if (!_G(spieler).R31KlappeZu) {
-		for (i = 0; i < 3; i++)
+		for (int16 i = 0; i < 3; i++)
 			det->show_static_spr(5 + i);
 
 		atds->set_ats_str(244, 1, ATS_DATEI);
@@ -85,7 +81,7 @@ void Room31::calc_luke() {
 		_G(spieler).room_e_obj[75].Attribut = AUSGANG_UNTEN;
 
 	} else {
-		for (i = 0; i < 3; i++)
+		for (int16 i = 0; i < 3; i++)
 			det->hide_static_spr(5 + i);
 
 		atds->set_ats_str(244, 0, ATS_DATEI);
@@ -196,7 +192,7 @@ void Room31::close_luke() {
 	if (!_G(spieler).R31KlappeZu) {
 		hide_cur();
 		auto_move(2, P_CHEWY);
-		start_spz_wait(13, 1, 0, 0);
+		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
 		det->play_sound(3, 0);
 		det->play_sound(3, 1);

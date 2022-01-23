@@ -116,7 +116,6 @@ void standard_init() {
 }
 
 void var_init() {
-	int16 i;
 	Rdi = det->get_room_detail_info();
 	Sdi = &Rdi->Sinfo[0];
 	Adi = &Rdi->Ainfo[0];
@@ -157,7 +156,7 @@ void var_init() {
 
 	spieler_mi[P_NICHELLE].Mode = true;
 
-	for (i = 0; i < MAX_PERSON; i++) {
+	for (int16 i = 0; i < MAX_PERSON; i++) {
 		PersonAni[i] = -1;
 		PersonTaf[i] = 0;
 		spieler_mi[i].Mode = false;
@@ -203,8 +202,6 @@ void init_room() {
 }
 
 void init_atds() {
-	int16 i;
-
 	// Close any prior handles
 	atds->close_handle(AAD_DATEI);
 	atds->close_handle(ATS_DATEI);
@@ -246,25 +243,22 @@ void init_atds() {
 	_G(spieler).DelaySpeed = 5;
 	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
 	atds->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
-	for (i = 0; i < AAD_MAX_PERSON; i++)
+	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		atds->set_split_win(i, &ssi[i]);
 	atds->set_string_end_func(&atds_string_start);
 	ERROR
 }
 
 void new_game() {
-	int16 i;
-	byte *tmp;
-
 	_G(spieler).clear();
 
-	for (i = 0; i < MAX_MOV_OBJ; i++) {
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
 		_G(spieler).room_m_obj[i].RoomNr = -1;
 		_G(spieler).InventSlot[i] = -1;
 	}
-	for (i = 0; i < MAX_FEST_OBJ; i++)
+	for (int16 i = 0; i < MAX_FEST_OBJ; i++)
 		_G(spieler).room_s_obj[i].RoomNr = -1;
-	for (i = 0; i < MAX_EXIT; i++)
+	for (int16 i = 0; i < MAX_EXIT; i++)
 		_G(spieler).room_e_obj[i].RoomNr = -1;
 
 	obj->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
@@ -274,7 +268,7 @@ void new_game() {
 	obj->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 	ERROR
 
-	tmp = (byte *)MALLOC(ROOM_ATS_MAX);
+	byte *tmp = (byte *)MALLOC(ROOM_ATS_MAX);
 	ERROR
 
 	Common::File f;
@@ -291,7 +285,7 @@ void new_game() {
 	}
 	ERROR
 
-	for (i = 0; i < ROOM_ATS_MAX; i++)
+	for (int16 i = 0; i < ROOM_ATS_MAX; i++)
 		_G(spieler).Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
@@ -311,12 +305,12 @@ void new_game() {
 	}
 	ERROR
 
-	for (i = 0; i < MAX_MOV_OBJ; i++)
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
 		_G(spieler).InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
 	obj->sort();
-	for (i = 0; i < obj->spieler_invnr[0]; i++)
+	for (int16 i = 0; i < obj->spieler_invnr[0]; i++)
 		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
 
 	AkChewyTaf = 0;
@@ -359,7 +353,7 @@ void init_load() {
 	ERROR
 
 	spz_akt_id = -1;
-	spz_tinfo = 0;
+	spz_tinfo = nullptr;
 	set_spz_delay(3);
 
 	menutaf = mem->taf_adr(MENUTAF);
@@ -376,10 +370,9 @@ void init_load() {
 }
 
 void get_detect(char *fname_) {
-	Stream *handle;
 	modul = 0;
 	fcode = 0;
-	handle = chewy_fopen(fname_, "rb");
+	Stream *handle = chewy_fopen(fname_, "rb");
 	if (handle) {
 		if (!chewy_fread(&detect, sizeof(DetectInfo), 1, handle)) {
 			modul = DATEI;
@@ -471,8 +464,8 @@ void sound_init() {
 		_G(spieler).SoundVol = 63;
 		ailsnd->set_music_mastervol(_G(spieler).MusicVol);
 		ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
-		ailsnd->switch_music(1);
-		ailsnd->switch_sound(1);
+		ailsnd->switch_music(true);
+		ailsnd->switch_sound(true);
 		flags.InitSound = true;
 
 		room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);

@@ -162,16 +162,15 @@ int16 Room17::use_seil() {
 }
 
 void Room17::plot_seil() {
-	int16 i;
 	if (_G(spieler).R17Seil) {
-		for (i = 0; i < 3; i++)
+		for (int16 i = 0; i < 3; i++)
 			det->show_static_spr(8 + i);
 	}
 }
 
 void Room17::kletter_down() {
 	auto_move(5, P_CHEWY);
-	det->load_taf_seq(177, 1, 0);
+	det->load_taf_seq(177, 1, nullptr);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(14, 1, ANI_VOR);
 	flags.ZoomMov = false;
@@ -181,14 +180,13 @@ void Room17::kletter_down() {
 	spieler_mi->Vorschub = 8;
 	_G(zoom_horizont) = 399;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines,
-		(const MovLine *)CHEWY_MPKT);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT);
 	set_person_pos(242, 350, P_CHEWY, P_LEFT);
 }
 
 void Room17::kletter_up() {
 	auto_move(6, P_CHEWY);
-	det->load_taf_seq(141, 4, 0);
+	det->load_taf_seq(141, 4, nullptr);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(11, 1, ANI_VOR);
 	flags.ZoomMov = true;
@@ -197,8 +195,7 @@ void Room17::kletter_up() {
 	room->set_zoom(25);
 	_G(zoom_horizont) = 0;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines,
-		(const MovLine *)CHEWY_MPKT1);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT1);
 	set_person_pos(243, 146, P_CHEWY, P_LEFT);
 }
 

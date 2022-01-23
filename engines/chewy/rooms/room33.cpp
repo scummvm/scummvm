@@ -22,8 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room33.h"
 
@@ -50,7 +48,7 @@ void Room33::surimy_go() {
 		if (_G(spieler).R33SurimyGo >= 4) {
 			hide_cur();
 			_G(spieler).R33SurimyGo = 0;
-			det->load_taf_seq(39, 8, 0);
+			det->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -59,8 +57,7 @@ void Room33::surimy_go() {
 			auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			auto_mov_obj[SURIMY_OBJ].Mode = true;
-			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
-				(const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(158, -1);
 			wait_auto_obj(SURIMY_OBJ);
@@ -105,12 +102,10 @@ int16 Room33::use_schublade() {
 }
 
 void Room33::use_maschine() {
-	int16 action;
 	int16 dia_nr;
 	int16 ani_nr;
-	int16 hocker;
-	action = true;
-	hocker = false;
+	int16 action = true;
+	int16 hocker = false;
 	hide_cur();
 
 	if (!_G(spieler).R33MunterOk) {
@@ -194,11 +189,9 @@ void Room33::use_maschine() {
 }
 
 int16 Room33::calc_muntermacher() {
-	int16 ret;
-	int16 i;
-	ret = true;
+	int16 ret = true;
 
-	for (i = 0; i < 4; i++) {
+	for (int16 i = 0; i < 4; i++) {
 		if (_G(spieler).R33Munter[i] == false)
 			ret = false;
 	}

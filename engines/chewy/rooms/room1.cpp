@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room1.h"
 
@@ -30,22 +29,21 @@ namespace Chewy {
 namespace Rooms {
 
 void Room1::gottenCard() {
-	int16 tmp;
-
 	det->hide_static_spr(2);
 	start_detail_wait(4, 1, ANI_VOR);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	atds->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
+	int16 tmp;
 	atds->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
 }
 
 void Room1::gedAction(int index) {
 	#define KABELABDECKUNG 1
-	bool flag = false;
 
 	switch (index) {
 	case 0:
 		if (!_G(spieler).R2ElectrocutedBork) {
+			bool flag = false;
 			if (_G(spieler).AkInvent == KABEL_INV) {
 				flag = true;
 				del_inventar(_G(spieler).AkInvent);

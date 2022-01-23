@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room68.h"
 
@@ -80,10 +79,6 @@ bool Room68::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room68::setup_func() {
-	int16 ho_x, ho_y;
-	int16 ni_x, ni_y;
-	int16 ch_x;
-
 	switch (_G(r68HohesC)) {
 	case 0:
 		if (det->get_ani_status(_G(r68HohesC)) == false) {
@@ -108,13 +103,15 @@ void Room68::setup_func() {
 		}
 		break;
 
+	default:
+		break;
 	}
 	calc_person_look();
-	ho_x = spieler_vector[P_HOWARD].Xypos[0];
-	ni_x = spieler_vector[P_NICHELLE].Xypos[0];
-	ho_y = 75;
-	ni_y = 75;
-	ch_x = spieler_vector[P_CHEWY].Xypos[0];
+	int16 ho_y = 75;
+	int16 ni_y = 75;
+	int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+	int16 ho_x, ni_x;
+
 	if (ch_x < 130) {
 		ho_x = 223;
 		ni_x = 260;
@@ -282,17 +279,17 @@ int16 Room68::use_keeper() {
 }
 
 int16 Room68::use_diva() {
-	short action_flag = false;
+	int16 action_flag;
 	hide_cur();
 	if (is_cur_inventar(B_MARY_INV)) {
 		del_inventar(_G(spieler).AkInvent);
-		action_flag = true;
+		action_flag = 1;
 		auto_move(4, P_CHEWY);
 		start_detail_wait(4, 1, ANI_VOR);
 		_G(spieler).R68Gutschein = false;
 	} else if (is_cur_inventar(B_MARY2_INV)) {
 		del_inventar(_G(spieler).AkInvent);
-		action_flag = true;
+		action_flag = 1;
 		auto_move(4, P_CHEWY);
 		det->hide_static_spr(3);
 		_G(spieler).R68DivaWeg = true;

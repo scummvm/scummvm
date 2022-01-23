@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room46.h"
 
@@ -77,15 +76,11 @@ void Room46::xit() {
 }
 
 void Room46::setup_func() {
-	int16 x;
-	int16 y;
-	int16 ch_x;
-
 	calc_person_look();
-	x = spieler_vector[P_HOWARD].Xypos[0];
-	y = 64;
-	ch_x = spieler_vector[P_CHEWY].Xypos[0];
+	int16 y = 64;
+	const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
+	int16 x;
 	if (ch_x > 160) {
 		x = 260;
 	} else {
@@ -151,17 +146,14 @@ void Room46::bodo() {
 }
 
 void Room46::kloppe() {
-	int16 i;
-	int16 delay;
-
-	for (i = 0; i < 4; i++) {
+	for (int16 i = 0; i < 4; i++) {
 		mem->file->select_pool_item(Ci.Handle, FCUT_065);
 
 		flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 		out->setze_zeiger(nullptr);
 		out->cls();
 		start_aad(244 + i, -1);
-		delay = _G(spieler).DelaySpeed * 50;
+		int16 delay = _G(spieler).DelaySpeed * 50;
 		atds->print_aad(0, 0);
 
 		while (in->get_switch_code() == 0 && delay) {

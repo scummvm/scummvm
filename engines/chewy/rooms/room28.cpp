@@ -103,7 +103,7 @@ void Room28::entry(int16 eib_nr) {
 			case 77:
 				if (_G(spieler).R28PostCar) {
 					_G(spieler).R28PostCar = false;
-					out->setze_zeiger(0);
+					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_063, FLC_MODE);
 					_G(spieler).R28ChewyPump = false;
@@ -202,10 +202,9 @@ void Room28::haendler() {
 }
 
 void Room28::setup_func() {
-	int16 x;
 	calc_person_look();
 
-	x = (spieler_vector[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
+	int16 x = (spieler_vector[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
 	go_auto_xy(x, 113, P_HOWARD, ANI_GO);
 }
 
@@ -244,7 +243,6 @@ void Room28::use_surimy() {
 }
 
 void Room28::set_pump() {
-	int16 tmp;
 	hide_cur();
 
 	if (_G(spieler).PersonRoomNr[P_CHEWY] == 28) {
@@ -254,7 +252,7 @@ void Room28::set_pump() {
 				auto_move(5, P_CHEWY);
 
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
+			int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			del_inventar(K_MASKE_INV);
 			det->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
 
@@ -299,14 +297,13 @@ void Room28::set_pump() {
 }
 
 void Room28::get_pump() {
-	int16 tmp;
 
 	if (_G(spieler).R28ChewyPump) {
 		hide_cur();
 		stop_person(P_CHEWY);
 		_G(spieler).R28ChewyPump = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
+		int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		det->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
 		start_detail_wait(tmp, 1, ANI_RUECK);
 

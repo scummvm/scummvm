@@ -61,7 +61,7 @@ AniBlock ABLOCK14[2] = {
 
 void Room22::entry() {
 	if (!_G(spieler).R22BorkPlatt) {
-		det->load_taf_seq(36, (56 - 36) + 1, 0);
+		det->load_taf_seq(36, (56 - 36) + 1, nullptr);
 		room->set_timer(255, 15);
 	} else if (_G(spieler).R22ChewyPlatt && !_G(spieler).R22GetBork) {
 		det->show_static_spr(4);
@@ -137,21 +137,18 @@ void Room22::bork(int16 t_nr) {
 }
 
 void Room22::bork_walk1() {
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
-		(const MovLine *)BORK_MPKT);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
 	start_detail_wait(2, 1, ANI_VOR);
 
 	mov_phasen[BORK_OBJ].Repeat = 1;
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
-		(const MovLine *)BORK_MPKT1);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);
 	wait_auto_obj(BORK_OBJ);
 }
 
 void Room22::bork_walk2() {
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines,
-		(const MovLine *)BORK_MPKT2);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT2);
 	wait_auto_obj(BORK_OBJ);
 
 	flic_cut(FCUT_009, CFO_MODE);

@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room4.h"
 
@@ -35,11 +34,6 @@ namespace Rooms {
 #define RAHMEN_GELB 71
 
 int16 Room4::sonde_comp() {
-	int16 ende;
-
-	int16 spr_nr;
-	int16 cur_x;
-
 	static const int16 CUR_POS[3][2] = {
 		{  83, 106 },
 		{ 136, 103 },
@@ -56,10 +50,10 @@ int16 Room4::sonde_comp() {
 	_G(cur_display) = false;
 	switch_room(4);
 	_G(cur_display) = true;
-	ende = 0;
+	int16 ende = 0;
 	curblk.sprite = room_blk.DetImage;
-	cur_x = 1;
-	spr_nr = RAHMEN_ROT;
+	int16 cur_x = 1;
+	int16 spr_nr = RAHMEN_ROT;
 	cur->move(160, 160);
 
 	start_aad(46);
@@ -89,6 +83,8 @@ int16 Room4::sonde_comp() {
 				det->play_sound(0, 2);
 				break;
 
+			default:
+				break;
 			}
 		}
 		spr_info[0].Image = room_blk.DetImage[spr_nr];
@@ -126,7 +122,8 @@ int16 Room4::sonde_comp() {
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	ERROR
-		fx_blend = BLEND1;
+	
+	fx_blend = BLEND1;
 	atds->stop_aad();
 
 	return cur_x;

@@ -927,7 +927,7 @@ void flic_cut(int16 nr, int16 mode) {
 	static const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
 	int16 i, ret = 0;
 
-	out->setze_zeiger(0);
+	out->setze_zeiger(nullptr);
 	det->disable_room_sound();
 	ailsnd->end_sound();
 	g_events->delay(50);

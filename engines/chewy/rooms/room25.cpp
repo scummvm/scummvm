@@ -23,7 +23,6 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room23.h"
 #include "chewy/rooms/room25.h"
 
@@ -156,7 +155,7 @@ void Room25::xit_gleiter() {
 	if (!_G(spieler).R25SurimyLauf) {
 		hide_cur();
 		_G(spieler).R25SurimyLauf = true;
-		det->load_taf_seq(56, 8, 0);
+		det->load_taf_seq(56, 8, nullptr);
 		_G(auto_obj) = 1;
 		mov_phasen[SURIMY_OBJ].AtsText = 0;
 		mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -165,8 +164,7 @@ void Room25::xit_gleiter() {
 		auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 		auto_mov_obj[SURIMY_OBJ].Mode = true;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines,
-			(const MovLine *)SURIMY_MPKT);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 		fx_blend = BLEND1;
 		set_up_screen(DO_SETUP);
 

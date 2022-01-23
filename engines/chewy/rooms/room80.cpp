@@ -22,8 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room80.h"
 
 namespace Chewy {
@@ -77,9 +75,7 @@ void Room80::setup_func() {
 	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || menu_display)
 		return;
 
-	if (menu_item != CUR_USE)
-		menu_item = CUR_USE;
-
+	menu_item = CUR_USE;
 	cur_2_inventory();
 	cursor_wahl(CUR_ZEIGE);
 	int vec = det->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);

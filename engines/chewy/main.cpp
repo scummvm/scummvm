@@ -706,7 +706,7 @@ void set_up_screen(SetupScreenMode mode) {
 	_G(maus_links_click) = false;
 	menu_flag = false;
 	if (mode == DO_SETUP) {
-		out->setze_zeiger(0);
+		out->setze_zeiger(nullptr);
 		switch (fx_blend) {
 		case BLEND1:
 			fx->blende1(workptr, screen0, pal, 150, 0, 0);

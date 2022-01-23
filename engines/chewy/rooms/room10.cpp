@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room6.h"
 #include "chewy/rooms/room10.h"
@@ -34,7 +33,7 @@ void Room10::entry() {
 	if (!_G(spieler).R10Surimy) {
 		out->setze_zeiger(workptr);
 		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
-		out->setze_zeiger(0);
+		out->setze_zeiger(nullptr);
 		fx->blende1(workptr, screen0, pal, 150, 0, 0);
 		_G(spieler).R10Surimy = true;
 		fx_blend = BLEND_NONE;

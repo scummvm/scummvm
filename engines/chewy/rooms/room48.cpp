@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room48.h"
 
@@ -49,9 +48,7 @@ bool Room48::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room48::calc_pic() {
-	int16 i;
-
-	for (i = 0; i < 2; i++) {
+	for (int16 i = 0; i < 2; i++) {
 		atds->set_steuer_bit(312 + i, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R48Auswahl[3 + i] = 0;
 	}
@@ -88,28 +85,22 @@ void Room48::frage() {
 }
 
 void Room48::setup_func() {
-	int16 idx;
-	int16 r_nr;
-	int16 i;
-
-	for (i = 0; i < 5; i++)
+	for (int16 i = 0; i < 5; i++)
 		det->hide_static_spr(1 + i);
 
 	if (flags.ShowAtsInvTxt) {
 		if (menu_display == 0) {
-			if (menu_item != CUR_USE) {
-				menu_item = CUR_USE;
-			}
-
+			menu_item = CUR_USE;
 			cur_2_inventory();
 			cursor_wahl(CUR_ZEIGE);
-			idx = det->maus_vector(minfo.x, minfo.y);
+			const int16 idx = det->maus_vector(minfo.x, minfo.y);
 
 			if (idx != -1) {
 				if (_G(spieler).R48Auswahl[idx]) {
 					det->show_static_spr(1 + idx);
 
 					if (_G(maus_links_click)) {
+						int16 r_nr;
 						switch (idx) {
 						case 0:
 							r_nr = 45;
@@ -153,7 +144,7 @@ void Room48::setup_func() {
 							_G(maus_links_click) = false;
 							set_up_screen(DO_SETUP);
 
-							for (i = 0; i < MAX_PERSON; i++) {
+							for (int16 i = 0; i < MAX_PERSON; i++) {
 								if (_G(spieler).R48TaxiPerson[i]) {
 									_G(spieler).PersonHide[i] = false;
 									_G(spieler).R48TaxiPerson[i] = false;
