@@ -57,6 +57,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - New Digital iMUSE engine.
    - Rewrote music player for Amiga versions of Indy3 and Loom in accordance
      to the original code.
+   - Fix missing cursor in the 16-color Macintosh versions of Loom and Indiana
+     Jones and the Last Crusade after loading a savegame.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
