@@ -487,6 +487,7 @@ struct Spieler : public SpielerFlags {
 
 	// ---- //
 	int16 r76_word18DB1A = 0;
+	int16 r76_word18DB1E = 0;
 	// ---- //
 	int16 R79Val[3] = {0, 0, 0};
 	// ---- //
