@@ -218,27 +218,29 @@ void MidiParser::onTimer() {
 		if (eventTime > endTime)
 			break;
 
-		// Process the next info.
-		if (info.event < 0x80) {
-			warning("Bad command or running status %02X", info.event);
-			_position._playPos = nullptr;
-			return;
-		}
+		if (!info.noop) {
+			// Process the next info.
+			if (info.event < 0x80) {
+				warning("Bad command or running status %02X", info.event);
+				_position._playPos = nullptr;
+				return;
+			}
 
-		if (info.command() == 0x8) {
-			activeNote(info.channel(), info.basic.param1, false);
-		} else if (info.command() == 0x9) {
-			if (info.length > 0)
-				hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
-			else
-				activeNote(info.channel(), info.basic.param1, true);
-		}
+			if (info.command() == 0x8) {
+				activeNote(info.channel(), info.basic.param1, false);
+			} else if (info.command() == 0x9) {
+				if (info.length > 0)
+					hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
+				else
+					activeNote(info.channel(), info.basic.param1, true);
+			}
 
-		// Player::metaEvent() in SCUMM will delete the parser object,
-		// so return immediately if that might have happened.
-		bool ret = processEvent(info);
-		if (!ret)
-			return;
+			// Player::metaEvent() in SCUMM will delete the parser object,
+			// so return immediately if that might have happened.
+			bool ret = processEvent(info);
+			if (!ret)
+				return;
+		}
 
 		loopEvent |= info.loop;
 

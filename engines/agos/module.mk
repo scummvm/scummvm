@@ -23,7 +23,9 @@ MODULE_OBJS := \
 	menus.o \
 	metaengine.o \
 	midi.o \
+	midiparser_gmf.o \
 	midiparser_s1d.o \
+	midiparser_simonwin.o \
 	pn.o \
 	res.o \
 	res_ami.o \
