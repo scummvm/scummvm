@@ -1580,6 +1580,15 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
+	// Reset Mac cursors for Loom and Indy 3, otherwise the cursor will be
+	// invisible after loading.
+
+	if (s.isLoading() && _game.platform == Common::kPlatformMacintosh) {
+		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || (_game.id == GID_INDY3 && _macScreen)) {
+			setBuiltinCursor(0);
+		}
+	}
+
 	// Regenerate 16bit palette after loading.
 	// This avoids color issues when loading savegames that have been saved with a different ScummVM port
 	// that uses a different 16bit color mode than the ScummVM port which is currently used.
