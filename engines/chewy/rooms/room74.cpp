@@ -22,21 +22,95 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
+#include "chewy/rooms/room70.h"
 #include "chewy/rooms/room74.h"
+#include "chewy/rooms/room75.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room74::entry(int16 eib_nr) {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	_G(spieler).ScrollxStep = 2;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
+	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	spieler_mi[P_HOWARD].Mode = true;
+	spieler_mi[P_NICHELLE].Mode = true;
+	_G(zoom_horizont) = 110;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+	SetUpScreenFunc = Room70::setup_func;
+
+	if (_G(spieler).flags29_1)
+		det->start_detail(0, 255, false);
+
+	if (flags.LoadGame)
+		return;
+
+	switch (eib_nr) {
+	case 105:
+		Room70::proc2();
+		break;
+	case 108:
+		_G(spieler).scrollx = 188;
+		Room75::proc1();
+		break;
+	case 109:
+		Room70::proc3();
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void Room74::xit(int16 eib_nr) {
+	_G(spieler).ScrollxStep = 1;
+
+	if (_G(spieler).PersonRoomNr[P_HOWARD] != 74)
+		return;
+
+	switch (eib_nr) {
+	case 112:
+	case 113:
+		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 72;
+		break;
+
+	case 114:
+		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 71;
+		break;
+
+	default:
+		break;
+	}
 }
 
 int Room74::proc1() {
-	return 0;
+	int retVal = 0;
+	hide_cur();
+	if (is_cur_inventar(99)) {
+		retVal = 1;
+		_G(spieler).flags28_80 = true;
+		auto_move(4, P_CHEWY);
+		_G(spieler).PersonHide[P_HOWARD] = true;
+		start_detail_wait(1, 1, ANI_VOR);
+		set_person_pos(272, 116, P_CHEWY, P_RIGHT);
+		_G(spieler).PersonHide[P_CHEWY] = 0;
+		det->start_detail(0, 255, false);
+		_G(spieler).flags29_1 = true;
+		atds->set_ats_str(435, 1, ATS_DATEI);
+	} else if (!_G(spieler).inv_cur && _G(spieler).flags28_80) {
+		atds->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
+		auto_move(5, P_CHEWY);
+		start_spz_wait(13, 1, false, P_CHEWY);
+		new_invent_2_cur(100);
+	}
+
+	show_cur();
+	return retVal;
 }
 
 } // namespace Rooms
