@@ -328,7 +328,7 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_oglType = OpenGL::kOGLContextGLES2;
 	_supportsFrameBuffer = true;
 	_supportsShaders = true;
-#elif !defined(AMIGAOS) && !defined(__MORPHOS__)
+#else
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
