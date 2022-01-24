@@ -130,22 +130,26 @@ void Sound::updateMusicTimer(int ticks) {
 	// But at the time of writing, it seems likely that the Overture is
 	// the only track that depends on timing, so that may be ok.
 
-	// We approximate the length of the Overture to 2.5 minutes, or 9000
-	// SCUMM ticks. (One tick is 1/60th of a second.) It would be nice if
-	// we could get the exact length from the audio CD manager, but at the
-	// time of writing it doesn't provide that information.
+	// The length of the Overture is approximated to 8800 ticks. This
+	// makes it sync up nicely with Act II: No. 10 Scène (Moderato) from
+	// the Seiji Ozawa recording that was apparently used as a tempo
+	// reference for the Loom soundtrack.
+
+	// This isn't necessarily the correct length of the track - not even
+	// for the Ozawa version - and we currently have no way of querying
+	// the actual length of the track.
 
 	// If the track has already ended, it's still important that the timer
 	// eventually reaches at least 278. If necessary, skip make sure the
 	// timer skips to 198, which is where the next scene begins.
 
 	if (isLoomOverture && !pollCD()) {
-		uint32 scummTick = (9000 * _musicTimer) / 198;
+		uint32 scummTick = (8800 * _musicTimer) / 198;
 		if (_scummTicks < scummTick)
 			_scummTicks = scummTick;
 	}
 
-	_musicTimer = (278 * _scummTicks) / 9000;
+	_musicTimer = (278 * _scummTicks) / 8800;
 
 	// But don't let the timer exceed 278 until the Overture has ended, or
 	// the music will be cut off.
@@ -239,6 +243,8 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 			trackNr = soundID - 23;
 		} else if (soundID == 19) {
 			trackNr = 10;
+		} else if (soundID == 21) {
+			trackNr = 11;
 		}
 
 		// The following tracks should not loop:
@@ -246,8 +252,9 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 		//  1. Overture
 		//  6. Dragon abduction
 		// 10. Opening the sky
+		// 11. Unmaking the Loom
 
-		if (trackNr == 1 || trackNr == 6 || trackNr == 10)
+		if (trackNr == 1 || trackNr == 6 || trackNr == 10 || trackNr == 11)
 			numLoops = 1;
 	}
 
