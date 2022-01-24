@@ -111,8 +111,16 @@ Sound::~Sound() {
 	delete _talkChannelHandle;
 }
 
+bool Sound::isRolandLoom() const {
+	return
+		(_vm->_game.id == GID_LOOM) &&
+		(_vm->_game.version == 3) &&
+		(_vm->_game.platform == Common::kPlatformDOS) &&
+		(_vm->VAR(_vm->VAR_SOUNDCARD) == 4);
+}
+
 void Sound::updateMusicTimer(int ticks) {
-	bool isLoomOverture = (_vm->_game.id == GID_LOOM && _vm->VAR(_vm->VAR_SOUNDCARD) == 4 && _currentCDSound == 56);
+	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56);
 
 	_scummTicks += ticks;
 
@@ -223,18 +231,23 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 	numLoops = -1;
 
 	if (_vm->_game.id == GID_LOOM) {
-		if (_vm->VAR(_vm->VAR_SOUNDCARD) == 4 && soundID >= 56 && soundID <= 64) {
-			// Rolad track. 56 is the Overture, which maps to audio
-			// track 1.
-			trackNr = soundID - 55;
-		} else if (soundID >= 25 && soundID <= 32) {
-			// Normal track. There is no Overture, so the first
-			// track maps to audio track 2.
+		if (isRolandLoom())
+			soundID -= 32;
+
+		// The first track, the Overture, only exists as a Roland track.
+		if (soundID >= 24 && soundID <= 32) {
 			trackNr = soundID - 23;
+		} else if (soundID == 19) {
+			trackNr = 10;
 		}
 
-		// The Overture and the dragon abduction don't loop
-		if (trackNr == 1 || trackNr == 6)
+		// The following tracks should not loop:
+		//
+		//  1. Overture
+		//  6. Dragon abduction
+		// 10. Opening the sky
+
+		if (trackNr == 1 || trackNr == 6 || trackNr == 10)
 			numLoops = 1;
 	}
 
@@ -2074,7 +2087,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%d)", idx);
 
-	if ((_game.id == GID_LOOM) && (_game.version == 3) && (_game.platform == Common::kPlatformDOS) && VAR(VAR_SOUNDCARD) == 4) {
+	if (_sound->isRolandLoom()) {
 		// Roland resources in Loom are tagless
 		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;
