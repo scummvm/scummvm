@@ -27,7 +27,7 @@ namespace Rooms {
 
 class Room70 {
 public:
-	static void entry();
+	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
 };
 

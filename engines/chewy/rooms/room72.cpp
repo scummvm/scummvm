@@ -29,7 +29,7 @@
 namespace Chewy {
 namespace Rooms {
 
-void Room72::entry() {
+void Room72::entry(int16 eib_nr) {
 }
 
 void Room72::xit(int16 eib_nr) {
