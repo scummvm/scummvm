@@ -248,6 +248,7 @@ struct SpielerFlags {
 	bool R56Kneipe : 1;
 	bool R56WhiskyMix : 1;
 
+	// flags 25
 	bool R57StudioAuf : 1;
 	bool R59PosterWeg : 1;
 	bool R62Flucht : 1;
