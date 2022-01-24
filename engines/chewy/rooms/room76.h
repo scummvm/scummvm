@@ -29,8 +29,11 @@ class Room76 {
 public:
 	static void entry();
 	static void xit();
+	static void setup_func();
 	static void talk1();
 	static void talk2();
+	static void proc3(int diaNr);
+	static void proc5();
 	static int proc6();
 	static int proc7();
 };
