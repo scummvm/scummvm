@@ -59,6 +59,8 @@ protected:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
+	bool _isRolandLoom;
+
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos;
 
@@ -138,6 +140,7 @@ public:
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
+	bool isRolandLoom() const;
 	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
 	void updateMusicTimer(int ticks);
 	int getMusicTimer() const { return _musicTimer; }
