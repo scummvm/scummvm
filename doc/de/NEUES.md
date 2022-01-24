@@ -51,6 +51,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SCUMM:
    - Neue Digital iMUSE-Engine hinzugefügt.
    - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
+   - Fehlender Cursor nach dem Laden eines gespeicherten Spielstands in der 16-Farben-Version (Macintosh)
+     in Loom und Indiana Jones and the Last Crusade behoben.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
