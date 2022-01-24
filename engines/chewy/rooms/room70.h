@@ -29,6 +29,10 @@ class Room70 {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
+	static void setup_func();
+	static void proc1();
+	static void proc2();
+	static void proc3();
 };
 
 } // namespace Rooms

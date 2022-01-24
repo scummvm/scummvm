@@ -22,17 +22,75 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room75.h"
+#include "chewy/rooms/room70.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room75::entry(int16 eib_nr) {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	_G(spieler).ScrollxStep = 2;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
+	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	spieler_mi[P_HOWARD].Mode = true;
+	spieler_mi[P_NICHELLE].Mode = true;
+	_G(zoom_horizont) = 110;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+	SetUpScreenFunc = Room70::setup_func;
+
+	if (flags.LoadGame)
+		return;
+
+	switch (eib_nr) {
+	case 103:
+		_G(spieler.scrollx = 188);
+		proc1();
+		break;		
+	case 104:
+		Room70::proc3();
+		break;
+	case 111:
+		Room70::proc2();
+		break;
+	default:
+		break;
+	}
 }
 
 void Room75::xit(int16 eib_nr) {
+	_G(spieler).ScrollxStep = 1;
+	
+	if (_G(spieler).PersonRoomNr[P_HOWARD] != 75)
+		return;
+
+	switch (eib_nr) {
+	case 115:
+		_G(spieler).PersonRoomNr[P_HOWARD] = 73;
+		_G(spieler).PersonRoomNr[P_NICHELLE] = 73;
+		break;
+	case 116:
+	case 117:
+		_G(spieler).PersonRoomNr[P_HOWARD] = 70;
+		_G(spieler).PersonRoomNr[P_NICHELLE] = 70;
+		break;
+	default:
+		break;
+	}
+}
+
+void Room75::proc1() {
+	_G(cur_hide_flag) = 0;
+	hide_cur();
+	set_person_pos(363, 110, P_CHEWY, P_LEFT);
+	set_person_pos(322, 85, P_NICHELLE, P_RIGHT);
+	set_person_pos(317, 96, P_HOWARD, P_RIGHT);
+	go_auto_xy(318, 110, P_NICHELLE, ANI_VOR);
+	show_cur();
 }
 
 } // namespace Rooms
