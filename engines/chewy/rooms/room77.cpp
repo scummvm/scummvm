@@ -22,25 +22,100 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room77.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room77::entry() {
+	det->enable_sound(0, 0);
+	det->enable_sound(0, 1);
+	det->play_sound(0, 0);
+	det->play_sound(0, 1);
+	_G(spieler).ScrollxStep = 2;
+	if (_G(spieler).r76_word18DB1A == 1) {
+		_G(spieler).flags29_4 = true;
+		atds->set_ats_str(452, 1, ATS_DATEI);
+	}
+
+	if (_G(spieler).flags29_4) {
+		det->set_static_ani(0, -1);
+
+		for (int i = 0; i < 3; ++i) {
+			det->show_static_spr(2 + i);
+			atds->del_steuer_bit(460 + i, ATS_AKTIV_BIT, ATS_DATEI);
+		}
+	}
+
+	if (_G(spieler).r76_word18DB1A == 1) {
+		_G(spieler).r76_word18DB1A = -1;
+		hide_cur();
+		_G(spieler).scrollx = 62;
+		set_person_pos(158, 127, P_CHEWY, P_RIGHT);
+		start_aad_wait(440, -1);
+		show_cur();
+	}
 }
 
 void Room77::xit() {
+	_G(spieler).ScrollxStep = 1;
 }
 
 int Room77::proc1() {
-	return 0;
+	if (_G(spieler).flags29_4 || !is_cur_inventar(103))
+		return 0;
+
+	hide_cur();
+	auto_move(1, P_CHEWY);
+	int diaNr, aniId;
+	if (_G(spieler).flags29_8) {
+		start_spz_wait(14, 1, false, P_CHEWY);
+		atds->set_ats_str(463, 1, ATS_DATEI);
+		_G(spieler).flags29_10 = true;
+		_G(spieler).flags29_40 = true;
+		diaNr = 441;
+		aniId = 6;
+	} else {
+		diaNr = 439;
+		aniId = 4;
+	}
+
+	cur_2_inventory();
+	start_spz(aniId, 255, false, P_CHEWY);
+	start_aad_wait(diaNr, -1);
+	show_cur();
+	if (_G(spieler).flags29_10)
+		remove_inventory(103);
+
+	return 1;
 }
 
 int Room77::proc2() {
-	return 0;
+	if (_G(spieler).flags29_4 || !is_cur_inventar(100))
+		return 0;
+
+	hide_cur();
+	auto_move(2, P_CHEWY);
+
+	int diaNr, aniId;
+	if (_G(spieler).flags29_8) {
+		start_spz_wait(14, 1, false, P_CHEWY);
+		del_inventar(_G(spieler).AkInvent);
+		atds->set_ats_str(464, 1, 1);
+		_G(spieler).flags29_20 = true;
+		_G(spieler).flags29_40 = true;
+		diaNr = 442;
+		aniId = 6;
+	} else {
+		diaNr = 439;
+		aniId = 4;
+	}
+
+	start_spz(aniId, 255, false, P_CHEWY);
+	start_aad_wait(diaNr, -1);
+
+	show_cur();
+	return 1;
 }
 
 } // namespace Rooms
