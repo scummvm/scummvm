@@ -413,12 +413,12 @@ void enter_room(int16 eib_nr) {
 	ENTRY(67);
 	ENTRY(68);
 	ENTRY_NR(69);
-	ENTRY(70);
-	ENTRY(71);
-	ENTRY(72);
-	ENTRY(73);
-	ENTRY(74);
-	ENTRY(75);
+	ENTRY_NR(70);
+	ENTRY_NR(71);
+	ENTRY_NR(72);
+	ENTRY_NR(73);
+	ENTRY_NR(74);
+	ENTRY_NR(75);
 	ENTRY(76);
 	ENTRY(77);
 	ENTRY(78);
