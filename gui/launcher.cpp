@@ -228,7 +228,10 @@ void LauncherDialog::build() {
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
+	if (g_system->getOverlayWidth() > 440)
+		new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
+	else
+		new ButtonWidget(this, _title + ".OptionsButton", _c("Global ~O~pts...", "lowres"), _("Change global ScummVM options"), kOptionsCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
@@ -979,12 +982,12 @@ void LauncherSimple::build() {
 	_loadButton = loadButton;
 
 	// Add edit button
-	if (g_system->getOverlayWidth() > 320) {
+	if (g_system->getOverlayWidth() > 410) {
 		_editButton =
 			new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options..."), _("Change game options"), kEditGameCmd);
 	} else {
 		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _c("~G~ame Options...", "lowres"), _("Change game options"), kEditGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", _c("~G~ame Opts...", "lowres"), _("Change game options"), kEditGameCmd);
 	}
 
 	// Add list with game titles
