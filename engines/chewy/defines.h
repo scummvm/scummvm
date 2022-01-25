@@ -188,6 +188,7 @@ enum SetupScreenMode {
 #define P_CHEWY 0
 #define P_HOWARD 1
 #define P_NICHELLE 2
+#define P_3 3
 
 #define CHEWY_NORMAL 1
 #define CHEWY_BORK 2
@@ -195,6 +196,7 @@ enum SetupScreenMode {
 #define CHEWY_PUMPKIN 4
 #define CHEWY_ROCKER 5
 #define CHEWY_JMANS 6
+#define CHEWY_ANI7 7
 
 #define P_LEFT 0
 #define P_RIGHT 1
