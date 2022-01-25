@@ -39,160 +39,6 @@
 
 namespace Trecision {
 
-NightlongVideoDecoder::NightlongVideoDecoder(bool isAmiga) {
-	_isAmiga = isAmiga;
-	_smkDecoder = !isAmiga ? new NightlongSmackerDecoder() : nullptr;
-	_mixer = g_system->getMixer();
-}
-
-NightlongVideoDecoder::~NightlongVideoDecoder() {
-	delete _smkDecoder;
-
-	if (_mixer->isSoundHandleActive(_amigaSoundHandle))
-		_mixer->stopHandle(_amigaSoundHandle);
-}
-
-bool NightlongVideoDecoder::loadFile(const Common::Path &filename) {
-	if (!_isAmiga)
-		return _smkDecoder->loadFile(filename);
-	else {
-		// TODO: Amiga video format
-
-		// Load the video's audio track
-		Common::File *stream = new Common::File();
-		Common::String file = filename.toString();
-		stream->open("a" + file);
-
-		if (stream->isOpen()) {
-			Audio::SeekableAudioStream *sound = Audio::makeRawStream(stream, 11025, 0, DisposeAfterUse::YES);
-
-			_mixer->playStream(
-				Audio::Mixer::kSFXSoundType,
-				&_amigaSoundHandle,
-				sound);
-
-			return true;
-		} else {
-			delete stream;
-			return false;
-		}	
-	}
-}
-
-bool NightlongVideoDecoder::loadStream(Common::SeekableReadStream *stream) {
-	if (!_isAmiga)
-		return _smkDecoder->loadStream(stream);
-	else
-		return false;	// TODO: Amiga videos
-}
-
-void NightlongVideoDecoder::muteTrack(uint track, bool mute) {
-	if (!_isAmiga)
-		_smkDecoder->muteTrack(track, mute);
-	// TODO: Amiga videos
-}
-
-void NightlongVideoDecoder::setMute(bool mute) {
-	if (!_isAmiga)
-		_smkDecoder->setMute(mute);
-	// TODO: Amiga videos
-}
-
-bool NightlongVideoDecoder::forceSeekToFrame(uint frame) {
-	if (!_isAmiga)
-		return _smkDecoder->forceSeekToFrame(frame);
-	else
-		return false;	// TODO: Amiga videos
-}
-
-bool NightlongVideoDecoder::endOfFrames() const {
-	if (!_isAmiga)
-		return _smkDecoder->endOfFrames();
-	else
-		return !_mixer->isSoundHandleActive(_amigaSoundHandle);	// HACK, since we only play the audio for now
-}
-
-int NightlongVideoDecoder::getCurFrame() const {
-	if (!_isAmiga)
-		return _smkDecoder->getCurFrame();
-	else
-		return 0;	// TODO: Amiga videos
-}
-
-uint16 NightlongVideoDecoder::getWidth() const {
-	if (!_isAmiga)
-		return _smkDecoder->getWidth();
-	else
-		return 0;	// TODO: Amiga videos
-}
-
-uint16 NightlongVideoDecoder::getHeight() const {
-	if (!_isAmiga)
-		return _smkDecoder->getHeight();
-	else
-		return 0;	// TODO: Amiga videos
-}
-
-const Graphics::Surface *NightlongVideoDecoder::decodeNextFrame() {
-	if (!_isAmiga)
-		return _smkDecoder->decodeNextFrame();
-	else
-		return nullptr;	// TODO: Amiga videos
-}
-
-uint32 NightlongVideoDecoder::getFrameCount() const {
-	if (!_isAmiga)
-		return _smkDecoder->getFrameCount();
-	else
-		return 10;	// TODO: Amiga videos. Anything > 1 to keep playing till the audio is done
-}
-
-const byte *NightlongVideoDecoder::getPalette() {
-	if (!_isAmiga)
-		return _smkDecoder->getPalette();
-	else
-		return nullptr;	// TODO: Amiga videos
-}
-
-void NightlongVideoDecoder::start() {
-	if (!_isAmiga)
-		_smkDecoder->start();
-	// TODO: Amiga videos
-}
-
-void NightlongVideoDecoder::rewind() {
-	if (!_isAmiga)
-		_smkDecoder->rewind();
-	// TODO: Amiga videos
-}
-
-bool NightlongVideoDecoder::needsUpdate() const {
-	if (!_isAmiga)
-		return _smkDecoder->needsUpdate();
-	else
-		return false;	// TODO: Amiga videos
-}
-
-void NightlongVideoDecoder::setEndFrame(uint frame) {
-	if (!_isAmiga)
-		_smkDecoder->setEndFrame(frame);
-	// TODO: Amiga videos
-}
-
-bool NightlongVideoDecoder::endOfVideo() const {
-	if (!_isAmiga)
-		return _smkDecoder->endOfVideo();
-	else
-		return false;	// TODO: Amiga videos
-}
-
-const Common::Rect *NightlongVideoDecoder::getNextDirtyRect() {
-	if (!_isAmiga)
-		return _smkDecoder->getNextDirtyRect();
-	else
-		return nullptr;	// TODO: Amiga videos
-}
-
 bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (!SmackerDecoder::loadStream(stream))
 		return false;
@@ -269,6 +115,109 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 // possibly an audio track bug?
 bool NightlongSmackerDecoder::endOfFrames() const {
 	return getCurFrame() >= (int32)getFrameCount() - 1;
+}
+
+// ----------------------------------------------------------------------------
+
+NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(const Common::String &fileName) {
+	memset(_palette, 0, sizeof(_palette));
+
+	Common::File *stream = new Common::File();
+	stream->open(fileName);
+
+	if (!stream->isOpen())
+		return;
+
+	_curFrame = 0;
+	_frameCount = 10; // TODO: Anything > 1 to keep playing till the audio is done
+
+	// TODO: some videos have more than 256 entries
+	/*uint16 palEntries = stream->readUint16LE();
+	stream->skip(2); // unknown
+	for (uint16 i = 0; i < palEntries; i++) {
+		_palette[i * 3] = stream->readByte();
+		_palette[i * 3 + 1] = stream->readByte();
+		_palette[i * 3 + 2] = stream->readByte();
+		stream->skip(1); // unused alpha channel
+	}*/
+
+	delete stream;
+}
+
+uint16 NightlongAmigaDecoder::AmigaVideoTrack::getWidth() const {
+	// TODO
+	return 0;
+}
+
+uint16 NightlongAmigaDecoder::AmigaVideoTrack::getHeight() const {
+	// TODO
+	return 0;
+}
+
+Graphics::PixelFormat NightlongAmigaDecoder::AmigaVideoTrack::getPixelFormat() const {
+	// TODO
+	return g_system->getScreenFormat();
+}
+
+uint32 NightlongAmigaDecoder::AmigaVideoTrack::getNextFrameStartTime() const {
+	// TODO
+	return 0;
+}
+
+const Graphics::Surface *NightlongAmigaDecoder::AmigaVideoTrack::decodeNextFrame() {
+	// TODO
+	return nullptr;
+}
+
+NightlongAmigaDecoder::AmigaAudioTrack::AmigaAudioTrack(const Common::String &fileName) :
+	AudioTrack(Audio::Mixer::SoundType::kSFXSoundType) {
+	Common::File *stream = new Common::File();
+	stream->open(fileName);
+	_audioStream = Audio::makeRawStream(stream, 11025, 0, DisposeAfterUse::YES);
+}
+
+void NightlongAmigaDecoder::readNextPacket() {
+	AmigaVideoTrack *videoTrack = (AmigaVideoTrack *)getTrack(0);
+
+	if (videoTrack->endOfTrack())
+		return;
+
+	// TODO
+}
+
+bool NightlongAmigaDecoder::loadStream(Common::SeekableReadStream *stream) {
+	Common::File *file = dynamic_cast<Common::File *>(stream);
+	if (!file)
+		return false;
+	Common::String fileName = file->getName();
+	addTrack(new AmigaVideoTrack(fileName));
+	if (Common::File::exists("a" + fileName))
+		addTrack(new AmigaAudioTrack("a" + fileName));
+
+	return true;
+}
+
+void NightlongAmigaDecoder::muteTrack(uint track, bool mute) {
+	// TODO
+}
+
+void NightlongAmigaDecoder::setMute(bool mute) {
+	// TODO
+}
+
+bool NightlongAmigaDecoder::forceSeekToFrame(uint frame) {
+	// TODO
+	return false;
+}
+
+const Common::Rect *NightlongAmigaDecoder::getNextDirtyRect() {
+	// TODO
+	return &_lastDirtyRect;
+}
+
+bool NightlongAmigaDecoder::endOfFrames() const {
+	//return getCurFrame() >= (int32)getFrameCount() - 1;
+	return true;
 }
 
 } // namespace Trecision

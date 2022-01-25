@@ -66,33 +66,38 @@ AnimManager::~AnimManager() {
 }
 
 void AnimManager::playMovie(const Common::String &filename, int startFrame, int endFrame, bool singleChoice) {
-	NightlongVideoDecoder *smkDecoder = new NightlongVideoDecoder(_vm->isAmiga());
+	NightlongVideoDecoder *videoDecoder;
 
-	if (!smkDecoder->loadFile(filename)) {
+	if (!_vm->isAmiga())
+		videoDecoder = new NightlongSmackerDecoder();
+	else
+		videoDecoder = new NightlongAmigaDecoder();
+
+	if (!videoDecoder->loadFile(filename)) {
 		warning("playMovie: File %s not found", filename.c_str());
-		delete smkDecoder;
+		delete videoDecoder;
 		_vm->_dialogMgr->afterChoice();
 		return;
 	}
 
 	Common::Event event;
 	bool skipVideo = false;
-	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
+	uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
 	_vm->_drawText._text.clear();
 
-	smkDecoder->start();
+	videoDecoder->start();
 
 	// WORKAROUND: If the video has a single choice, and it starts from
 	// the beginning, ignore the calculated end frame and play all of it
-	if (singleChoice && startFrame < 10 && endFrame < (int)smkDecoder->getFrameCount() - 1)
-		endFrame = smkDecoder->getFrameCount() - 1;
+	if (singleChoice && startFrame < 10 && endFrame < (int)videoDecoder->getFrameCount() - 1)
+		endFrame = videoDecoder->getFrameCount() - 1;
 
-	setVideoRange(smkDecoder, startFrame, endFrame);
+	setVideoRange(videoDecoder, startFrame, endFrame);
 
-	while (!_vm->shouldQuit() && startFrame != endFrame && !smkDecoder->endOfVideo() && !skipVideo) {
-		if (smkDecoder->needsUpdate()) {
-			drawFrame(smkDecoder, x, y, true);
+	while (!_vm->shouldQuit() && startFrame != endFrame && !videoDecoder->endOfVideo() && !skipVideo) {
+		if (videoDecoder->needsUpdate()) {
+			drawFrame(videoDecoder, x, y, true);
 		}
 
 		while (_vm->getEventManager()->pollEvent(event)) {
@@ -103,7 +108,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 		g_system->delayMillis(10);
 	}
 
-	delete smkDecoder;
+	delete videoDecoder;
 
 	_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
 	_vm->freeKey();
@@ -171,7 +176,10 @@ void AnimManager::openSmkAnim(int slot, const Common::String &name) {
 }
 
 void AnimManager::openSmk(int slot, Common::SeekableReadStream *stream) {
-	_animations[slot] = new NightlongVideoDecoder(_vm->isAmiga());
+	if (!_vm->isAmiga())
+		_animations[slot] = new NightlongSmackerDecoder();
+	else
+		_animations[slot] = new NightlongAmigaDecoder();
 
 	if (!_animations[slot]->loadStream(stream)) {
 		warning("Invalid SMK file");
@@ -409,33 +417,33 @@ bool AnimManager::shouldShowAnim(int animation, Common::Rect curRect) {
 }
 
 void AnimManager::drawSmkBackgroundFrame(int animation) {
-	NightlongVideoDecoder *smkDecoder = _animations[kSmackerBackground];
-	if (smkDecoder == nullptr)
+	NightlongVideoDecoder *videoDecoder = _animations[kSmackerBackground];
+	if (videoDecoder == nullptr)
 		return;
-	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+	const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 	if (!frame)
 		return;
 
-	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
-	const byte *palette = smkDecoder->getPalette();
+	const Common::Rect *lastRect = videoDecoder->getNextDirtyRect();
+	const byte *palette = videoDecoder->getPalette();
 
-	if (smkDecoder->getCurFrame() == 0 && shouldShowAnim(animation, *lastRect) && !_bgAnimRestarted) {
+	if (videoDecoder->getCurFrame() == 0 && shouldShowAnim(animation, *lastRect) && !_bgAnimRestarted) {
 		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
 	} else {
 		while (lastRect) {
-			if (smkDecoder->getCurFrame() > 0 && shouldShowAnim(animation, *lastRect)) {
+			if (videoDecoder->getCurFrame() > 0 && shouldShowAnim(animation, *lastRect)) {
 				Graphics::Surface anim = frame->getSubArea(*lastRect);
 				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
 			}
 
-			lastRect = smkDecoder->getNextDirtyRect();
+			lastRect = videoDecoder->getNextDirtyRect();
 		}
 	}
 }
 
 void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
-	NightlongVideoDecoder *smkDecoder = _animations[kSmackerIcon];
-	if (smkDecoder == nullptr)
+	NightlongVideoDecoder *videoDecoder = _animations[kSmackerIcon];
+	if (videoDecoder == nullptr)
 		return;
 
 	int stx = ICONMARGSX;
@@ -453,11 +461,14 @@ void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 	if (a == ICONSHOWN)
 		return;
 
-	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
-	_vm->_graphicsMgr->copyToScreenBuffer(frame, stx, FIRSTLINE, smkDecoder->getPalette());
+	const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+	if (!frame)
+		return;
 
-	if (smkDecoder->endOfVideo())
-		smkDecoder->rewind();
+	_vm->_graphicsMgr->copyToScreenBuffer(frame, stx, FIRSTLINE, videoDecoder->getPalette());
+
+	if (videoDecoder->endOfVideo())
+		videoDecoder->rewind();
 }
 
 void AnimManager::drawSmkActionFrame() {

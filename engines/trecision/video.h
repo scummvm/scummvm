@@ -32,46 +32,64 @@ namespace Trecision {
 
 class TrecisionEngine;
 
-class NightlongSmackerDecoder : public Video::SmackerDecoder {
+class NightlongVideoDecoder : public Video::SmackerDecoder {
 public:
-	bool loadStream(Common::SeekableReadStream *stream) override;
-	void muteTrack(uint track, bool mute);
-	void setMute(bool mute);
-	bool forceSeekToFrame(uint frame);
-	bool endOfFrames() const;
+	virtual void muteTrack(uint track, bool mute) {}
+	virtual void setMute(bool mute) {}
+	virtual bool forceSeekToFrame(uint frame) { return false; }
+	virtual bool endOfFrames() const { return false; }
 };
 
-class NightlongVideoDecoder {
+class NightlongSmackerDecoder : public NightlongVideoDecoder {
 public:
-	NightlongVideoDecoder(bool isAmiga);
-	~NightlongVideoDecoder();
-	bool loadStream(Common::SeekableReadStream *stream);
-	void muteTrack(uint track, bool mute);
-	void setMute(bool mute);
-	bool forceSeekToFrame(uint frame);
-	bool endOfFrames() const;
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void muteTrack(uint track, bool mute) override;
+	void setMute(bool mute) override;
+	bool forceSeekToFrame(uint frame) override;
+	bool endOfFrames() const override;
+};
 
-	// VideoDecoder functions
-	int getCurFrame() const;
-	uint16 getWidth() const;
-	uint16 getHeight() const;
-	const Graphics::Surface *decodeNextFrame();
-	uint32 getFrameCount() const;
-	const byte *getPalette();
-	void start();
-	void rewind();
-	bool needsUpdate() const;
-	void setEndFrame(uint frame);
-	bool endOfVideo() const;
-
-	bool loadFile(const Common::Path &filename);
-	const Common::Rect *getNextDirtyRect();
+class NightlongAmigaDecoder : public NightlongVideoDecoder {
+public:
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void muteTrack(uint track, bool mute) override;
+	void setMute(bool mute) override;
+	bool forceSeekToFrame(uint frame) override;
+	bool endOfFrames() const override;
+	const Common::Rect *getNextDirtyRect() override;
 
 private:
-	bool _isAmiga;
-	NightlongSmackerDecoder *_smkDecoder;
-	Audio::SoundHandle _amigaSoundHandle;
-	Audio::Mixer *_mixer;
+	Common::Rect _lastDirtyRect;
+
+	void readNextPacket() override;
+
+	class AmigaVideoTrack : public VideoTrack {
+	public:
+		AmigaVideoTrack(const Common::String &fileName);
+
+	private:
+		byte _palette[3 * 256];
+		int _curFrame;
+		uint32 _frameCount;
+
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		uint32 getNextFrameStartTime() const override;
+		const Graphics::Surface *decodeNextFrame() override;
+		int getFrameCount() const override { return _frameCount; }
+		const byte *getPalette() const override { return _palette; }
+		bool hasDirtyPalette() const override { return true; }
+	};
+
+	class AmigaAudioTrack : public AudioTrack {
+	public:
+		AmigaAudioTrack(const Common::String &fileName);
+	private:
+		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
+		Audio::AudioStream *_audioStream;
+	};
 };
 
 } // End of namespace Trecision
