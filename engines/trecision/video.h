@@ -34,8 +34,8 @@ class TrecisionEngine;
 
 class NightlongVideoDecoder : public Video::SmackerDecoder {
 public:
-	virtual void muteTrack(uint track, bool mute) {}
-	virtual void setMute(bool mute) {}
+	void muteTrack(uint track, bool mute);
+	void setMute(bool mute);
 	virtual bool forceSeekToFrame(uint frame) { return false; }
 	virtual bool endOfFrames() const { return false; }
 };
@@ -43,8 +43,6 @@ public:
 class NightlongSmackerDecoder : public NightlongVideoDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
-	void muteTrack(uint track, bool mute) override;
-	void setMute(bool mute) override;
 	bool forceSeekToFrame(uint frame) override;
 	bool endOfFrames() const override;
 };
@@ -52,8 +50,6 @@ public:
 class NightlongAmigaDecoder : public NightlongVideoDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
-	void muteTrack(uint track, bool mute) override;
-	void setMute(bool mute) override;
 	bool forceSeekToFrame(uint frame) override;
 	bool endOfFrames() const override;
 	const Common::Rect *getNextDirtyRect() override;

@@ -39,6 +39,24 @@
 
 namespace Trecision {
 
+void NightlongVideoDecoder::muteTrack(uint track, bool mute) {
+	// FIXME: In the Amiga version, there's only one audio track
+	// for each video, so we silently ignore calls to mute the
+	// second audio track. Is this correct?
+
+	Track *t = getTrack(track);
+	if (t && t->getTrackType() == Track::kTrackTypeAudio) {
+		((AudioTrack *)t)->setMute(mute);
+	}
+}
+
+void NightlongVideoDecoder::setMute(bool mute) {
+	for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); ++it) {
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->setMute(mute);
+	}
+}
+
 bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (!SmackerDecoder::loadStream(stream))
 		return false;
@@ -53,20 +71,6 @@ bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 	}
 	return true;
-}
-
-void NightlongSmackerDecoder::muteTrack(uint track, bool mute) {
-	Track *t = getTrack(track);
-	if (t && t->getTrackType() == Track::kTrackTypeAudio) {
-		((AudioTrack *)t)->setMute(mute);
-	}
-}
-
-void NightlongSmackerDecoder::setMute(bool mute) {
-	for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); ++it) {
-		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
-			((AudioTrack *)*it)->setMute(mute);
-	}
 }
 
 bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
@@ -195,14 +199,6 @@ bool NightlongAmigaDecoder::loadStream(Common::SeekableReadStream *stream) {
 		addTrack(new AmigaAudioTrack("a" + fileName));
 
 	return true;
-}
-
-void NightlongAmigaDecoder::muteTrack(uint track, bool mute) {
-	// TODO
-}
-
-void NightlongAmigaDecoder::setMute(bool mute) {
-	// TODO
 }
 
 bool NightlongAmigaDecoder::forceSeekToFrame(uint frame) {
