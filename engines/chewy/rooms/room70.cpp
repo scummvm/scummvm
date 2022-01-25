@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room70.h"
 
@@ -30,6 +29,35 @@ namespace Chewy {
 namespace Rooms {
 
 void Room70::entry(int16 eib_nr) {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	_G(spieler).ScrollxStep = 2;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
+	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	spieler_mi[P_HOWARD].Mode = true;
+	spieler_mi[P_NICHELLE].Mode = true;
+	_G(zoom_horizont) = 110;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+	SetUpScreenFunc = setup_func;
+
+	if (flags.LoadGame)
+		return;
+
+	switch (eib_nr) {
+	case 116:
+		proc2();
+		break;
+	case 117:
+		proc3();
+		break;
+	default:
+		_G(spieler).scrollx = 62;
+		proc1();
+		break;
+	}
 }
 
 void Room70::xit(int16 eib_nr) {
