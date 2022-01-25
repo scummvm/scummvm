@@ -152,7 +152,7 @@ int16 Room56::use_man() {
 		action_ret = true;
 		hide_cur();
 		auto_move(3, P_CHEWY);
-		start_spz_wait(CH_ROCK_GET2, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 		room->set_timer_status(0, TIMER_STOP);
 		det->del_static_ani(0);
 

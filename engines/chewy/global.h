@@ -271,6 +271,7 @@ extern int16 spz_p_nr;
 extern int16 spz_ani[MAX_PERSON];
 
 extern int16 frequenz;
+extern Stream *voc_handle;
 extern Stream *music_handle;
 extern int16 EndOfPool;
 extern Stream *speech_handle;

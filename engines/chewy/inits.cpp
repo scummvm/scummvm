@@ -468,7 +468,7 @@ void sound_init() {
 		ailsnd->switch_sound(true);
 		flags.InitSound = true;
 
-		room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+		voc_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 		ERROR
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 

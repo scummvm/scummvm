@@ -1005,7 +1005,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
 
 				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, ANI_VOR, P_CHEWY);
+					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;
@@ -1045,7 +1045,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
 
 				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, ANI_VOR, P_CHEWY);
+					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;
@@ -1088,7 +1088,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
 
 				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, ANI_VOR, P_CHEWY);
+					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;

@@ -156,7 +156,7 @@ int16 Room64::use_tasche() {
 		if (_G(spieler).R64ManWeg) {
 			if (!atds->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI)) {
 				auto_move(3, P_CHEWY);
-				start_spz_wait(CH_ROCK_GET1, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 				aad_nr = 353;
 				new_invent_2_cur(GERAET_INV);
 				atds->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI);

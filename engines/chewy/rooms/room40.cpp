@@ -335,7 +335,7 @@ int16 Room40::use_mr_pumpkin() {
 					else {
 						hide_cur();
 						auto_move(8, P_CHEWY);
-						start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
+						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
 						del_inventar(_G(spieler).AkInvent);
 						out->ausblenden(1);
 						Room43::catch_pg();
@@ -385,7 +385,7 @@ int16 Room40::use_schalter(int16 aad_nr) {
 				room->set_timer_status(255, TIMER_STOP);
 				_G(spieler).R40PoliceStart = false;
 				stop_spz();
-				start_spz_wait(CH_PUMP_GET1, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
 
 				if (_G(spieler).R40PoliceAb) {
 					_G(spieler).R40PoliceAb = false;

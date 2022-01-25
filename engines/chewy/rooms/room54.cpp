@@ -138,7 +138,7 @@ int16 Room54::use_schalter() {
 			_G(spieler).R54HowardVorne = 255;
 			go_auto_xy(127, 76, P_HOWARD, ANI_WAIT);
 			go_auto_xy(14, 72, P_HOWARD, ANI_GO);
-			start_spz_wait(CH_ROCK_GET2, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 			det->show_static_spr(0);
 			auto_move(2, P_CHEWY);
 			det->enable_sound(1, 0);

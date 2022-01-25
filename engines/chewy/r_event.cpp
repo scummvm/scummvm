@@ -120,7 +120,7 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && flags.AutoAniPlay == false) {
-		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, 0);
+		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, ANI_VOR);
 		uhr->reset_timer(t_nr, 0);
 	}
 
@@ -1654,7 +1654,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (_G(spieler).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
-				det->start_detail(i, 255, 0);
+				det->start_detail(i, 255, ANI_VOR);
 		} else {
 			for (int i = 0; i < 5; ++i)
 				det->stop_detail(i);
@@ -1744,7 +1744,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART_FACH_R18:
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = 0;
 		cur_2_inventory();
 		atds->set_ats_str(157, 1, AAD_DATEI);
@@ -1854,7 +1854,7 @@ void sib_event_inv(int16 sib_nr) {
 			cur_2_inventory();
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
-			det->start_detail(6, 255, 0);
+			det->start_detail(6, 255, ANI_VOR);
 			atds->set_ats_str(27, 1, ATS_DATEI);
 			atds->set_ats_str(30, 1, ATS_DATEI);
 		}
@@ -1963,7 +1963,7 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		_G(cur_hide_flag) = false;
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = true;
 		del_inventar(_G(spieler).AkInvent);
 		det->show_static_spr(7);

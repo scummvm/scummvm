@@ -51,9 +51,9 @@ static const MovLine CHEWY_MPKT1[2] = {
 
 void Room17::entry() {
 	if (!_G(spieler).R17EnergieOut) {
-		det->start_detail(1, 255, 0);
+		det->start_detail(1, 255, ANI_VOR);
 		for (int i = 0; i < 3; ++i)
-			det->start_detail(i, 255, 0);
+			det->start_detail(i, 255, ANI_VOR);
 	}
 
 	plot_seil();
@@ -294,10 +294,10 @@ int16 Room17::energie_hebel() {
 		det->play_sound(12, 0);
 
 		if (!_G(spieler).R17EnergieOut) {
-			det->start_detail(1, 255, 0);
+			det->start_detail(1, 255, ANI_VOR);
 
 			for (int i = 0; i < 3; ++i)
-				det->start_detail(i + 6, 255, 0);
+				det->start_detail(i + 6, 255, ANI_VOR);
 		}
 
 		atds->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
@@ -323,7 +323,7 @@ int16 Room17::get_oel() {
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		auto_move(4, P_CHEWY);
-		start_spz_wait(CH_EKEL, 3, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
 		start_aad_wait(60, -1);
 	} else if (is_cur_inventar(BECHER_LEER_INV)) {
 		action_flag = true;

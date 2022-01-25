@@ -76,7 +76,7 @@ int16 Room52::use_hot_dog() {
 	if (is_cur_inventar(BURGER_INV)) {
 		action_ret = true;
 		auto_move(3, P_CHEWY);
-		start_spz_wait(CH_ROCK_GET1, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		det->show_static_spr(0);
 		del_inventar(_G(spieler).AkInvent);
 		auto_move(4, P_CHEWY);

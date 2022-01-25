@@ -49,7 +49,7 @@ void Room71::entry(int16 eib_nr) {
 		_G(timer_nr)[0] = room->set_timer(0, 10);
 		det->set_static_ani(0, -1);
 	} else if (_G(spieler).flags28_2) {
-		det->start_detail(2, 255, false);
+		det->start_detail(2, 255, ANI_VOR);
 		det->show_static_spr(8);
 		det->hide_static_spr(2);
 		det->hide_static_spr(3);
@@ -280,7 +280,7 @@ void Room71::proc7() {
 	auto_move(4, P_CHEWY);
 	start_aad_wait(429, -1);
 	SetUpScreenFunc = nullptr;
-	set_person_spr(0, P_CHEWY);
+	set_person_spr(P_LEFT, P_CHEWY);
 	go_auto_xy(323, 28, P_NICHELLE, ANI_WAIT);
 	flags.NoScroll = true;
 	auto_scroll(200, 0);

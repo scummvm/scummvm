@@ -32,7 +32,7 @@ namespace Rooms {
 void Room42::entry() {
 	if (!_G(spieler).R42BeamterWach) {
 		det->play_sound(0, 0);
-		det->start_detail(0, 255, 0);
+		det->start_detail(0, 255, ANI_VOR);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {

@@ -51,7 +51,7 @@ void Room25::entry() {
 		det->play_sound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
-			det->start_detail(i, 255, 0);
+			det->start_detail(i, 255, ANI_VOR);
 	}
 
 	if (!_G(spieler).R29Schlauch2) {
@@ -122,8 +122,7 @@ int16 Room25::gleiter_loesch() {
 		if (is_cur_inventar(MILCH_LEER_INV)) {
 			action_flag = true;
 			auto_move(2, P_CHEWY);
-			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14,
-				1, ANI_VOR, P_CHEWY);
+			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);
 			obj->add_inventar(MILCH_WAS_INV, &room_blk);

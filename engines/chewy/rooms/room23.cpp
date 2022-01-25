@@ -93,7 +93,7 @@ int16 Room23::start_gleiter() {
 					set_person_pos(126, 110, P_CHEWY, P_RIGHT);
 
 					switch_room(_G(spieler).R23GleiterExit);
-					start_spz_wait(CH_WONDER1, 1, ANI_VOR, P_CHEWY);
+					start_spz_wait(CH_WONDER1, 1, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
 
 					_G(spieler).DelaySpeed = 10;

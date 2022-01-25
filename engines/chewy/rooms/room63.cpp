@@ -219,7 +219,7 @@ int16 Room63::use_schalter() {
 			} else {
 				hide_cur();
 				auto_move(1, P_CHEWY);
-				start_spz_wait(CH_ROCK_GET2, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 				det->show_static_spr(2);
 				set_person_spr(P_LEFT, P_CHEWY);
 				start_detail_wait(21, 1, ANI_VOR);
