@@ -227,22 +227,22 @@ void LauncherDialog::build() {
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, _title + ".OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
+	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions"), _("Change global ScummVM options"), kOptionsCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
+			new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game"), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_("Mass Add"), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_removeButton =
 			new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
+			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game", "lowres"), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_c("Mass Add", "lowres"), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_removeButton =
@@ -972,19 +972,19 @@ void LauncherSimple::build() {
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
 	DropdownButtonWidget *loadButton =
-	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
+	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad"), _("Load saved game for selected game"), kLoadGameCmd);
 #ifdef ENABLE_EVENTRECORDER
-	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
+	loadButton->appendEntry(_("Record"), kRecordGameCmd);
 #endif
 	_loadButton = loadButton;
 
 	// Add edit button
 	if (g_system->getOverlayWidth() > 320) {
 		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options"), _("Change game options"), kEditGameCmd);
 	} else {
 		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", _c("~G~ame Options", "lowres"), _("Change game options"), kEditGameCmd);
 	}
 
 	// Add list with game titles
