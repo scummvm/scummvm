@@ -1363,27 +1363,22 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		}
 		break;
 
+	case 61:
+	case R14_EREMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
-		altes_format = true;
-		switch (person_nr) {
-		case 0:
+		if (person_nr <= P_CHEWY) {
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			} else {
 				stop_spz();
 			}
-			break;
-
-		case 1:
+		} else if (person_nr == P_HOWARD) {
 			if (mode == AAD_STR_START) {
-				talk_start_ani = 15;
+				talk_ani = 15;
 			} else {
-				talk_stop_ani = 15;
-				talk_start_ani = -1;
+				det->stop_detail(15);
 			}
-			break;
-
 		}
 		break;
 
@@ -1425,8 +1420,8 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		}
 		break;
 
-	case R14_EREMIT_DIA:
 	case 24:
+	case 26:
 		altes_format = true;
 		switch (person_nr) {
 		case 0:
@@ -2015,8 +2010,6 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		}
 		break;
 
-		break;
-
 	case R68_KEEPER_DIA:
 		switch (person_nr) {
 		case 0:
@@ -2047,7 +2040,11 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		}
 		break;
+
+	default:
+		break;
 	}
+
 	if (altes_format) {
 		det->start_detail(talk_start_ani, 255, ANI_VOR);
 		det->stop_detail(talk_stop_ani);
