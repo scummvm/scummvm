@@ -217,7 +217,7 @@ void Room28::use_surimy() {
 		flags.NoScroll = true;
 		auto_scroll(0, 0);
 		_G(spieler).R28SurimyCar = true;
-		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		flc->set_flic_user_function(cut_serv2);
 		flic_cut(FCUT_055, FLC_MODE);
 		flc->remove_flic_user_function();
@@ -330,7 +330,7 @@ int16 Room28::use_breifkasten() {
 		hide_cur();
 		_G(spieler).R28Briefkasten = false;
 		auto_move(7, P_CHEWY);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		det->hide_static_spr(8);
 		det->hide_static_spr(9);
 		det->show_static_spr(7);

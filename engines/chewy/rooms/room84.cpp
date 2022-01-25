@@ -134,7 +134,7 @@ void Room84::setup_func() {
 		hide_cur();
 		auto_move(4, P_CHEWY);
 		flags.NoScroll = true;
-		set_person_spr(0, P_CHEWY);
+		set_person_spr(P_LEFT, P_CHEWY);
 		auto_scroll(150, 0);
 		det->del_static_ani(3);
 		det->set_static_ani(4, -1);
@@ -170,7 +170,7 @@ void Room84::setup_func() {
 void Room84::talk1() {
 	auto_move(4, P_CHEWY);
 	flags.NoScroll = true;
-	set_person_spr(0, P_CHEWY);
+	set_person_spr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
 	start_ads_wait(22);
 	flags.NoScroll = false;

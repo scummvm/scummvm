@@ -48,7 +48,7 @@ int16 Room35::schublade() {
 		if (!_G(spieler).R35Schublade) {
 			action_flag = true;
 			auto_move(3, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			det->show_static_spr(1);
 			_G(spieler).R35Schublade = true;
 			atds->set_ats_str(234, 1, ATS_DATEI);
@@ -80,7 +80,7 @@ int16 Room35::use_cat() {
 			action_flag = true;
 			auto_move(4, P_CHEWY);
 			_G(spieler).R35TransCat = true;
-			start_spz_wait(CH_TRANS, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			flic_cut(FCUT_045, FLC_MODE);
 			start_spz(CH_TRANS, 1, ANI_VOR, P_CHEWY);
 			start_aad_wait(94, -1);
@@ -89,7 +89,7 @@ int16 Room35::use_cat() {
 			disable_timer();
 			auto_move(4, P_CHEWY);
 			_G(spieler).R35CatEat = true;
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(_G(spieler).AkInvent);
 			det->stop_detail(0);
 			det->del_static_ani(0);

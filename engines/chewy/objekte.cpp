@@ -384,7 +384,7 @@ void objekt::calc_static_detail(int16 det_nr) {
 							if (adi->repeat)
 								det->start_detail(n, 0, ANI_VOR);
 							else
-								det->start_detail(n, 1, 0);
+								det->start_detail(n, 1, ANI_VOR);
 						} else
 							det->show_static_spr(nr);
 						++i;
@@ -396,7 +396,7 @@ void objekt::calc_static_detail(int16 det_nr) {
 				if (adi->repeat)
 					det->start_detail(n, 0, ANI_VOR);
 				else
-					det->start_detail(n, 1, 0);
+					det->start_detail(n, 1, ANI_VOR);
 			} else {
 				det->show_static_spr(nr);
 			}

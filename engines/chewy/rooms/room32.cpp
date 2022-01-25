@@ -103,7 +103,7 @@ void Room32::use_schreibmaschine() {
 			case PAPIER_INV:
 				auto_move(2, P_CHEWY);
 				_G(spieler).R32PapierOk = true;
-				start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				del_inventar(_G(spieler).AkInvent);
 				atds->set_ats_str(231, TXT_MARK_LOOK, 1, ATS_DATEI);
 				ani_nr = CH_TALK3;
@@ -158,7 +158,7 @@ int16 Room32::get_script() {
 			_G(spieler).R32Script = true;
 			auto_move(4, P_CHEWY);
 			invent_2_slot(MANUSKRIPT_INV);
-			start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 			det->hide_static_spr(5);
 			atds->set_ats_str(203, 0, ATS_DATEI);
 			start_spz(CH_TALK3, 1, ANI_VOR, P_CHEWY);

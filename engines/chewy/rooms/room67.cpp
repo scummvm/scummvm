@@ -77,10 +77,10 @@ int16 Room67::use_grammo() {
 		hide_cur();
 		action_flag = true;
 		auto_move(6, P_CHEWY);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		det->start_detail(0, 255, ANI_VOR);
 		start_aad_wait(376, -1);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		det->stop_detail(0);
 		show_cur();
 	}
@@ -102,14 +102,14 @@ int16 Room67::use_kommode() {
 			action_flag = true;
 			_G(spieler).R67KommodeAuf = true;
 			auto_move(6, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			det->show_static_spr(9);
 			atds->set_ats_str(400, 1, ATS_DATEI);
 		} else if (!_G(spieler).R67KostuemWeg) {
 			action_flag = true;
 			_G(spieler).R67KostuemWeg = true;
 			auto_move(6, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			atds->set_ats_str(400, 2, ATS_DATEI);
 			new_invent_2_cur(GALA_INV);
 		}
@@ -158,7 +158,7 @@ int16 Room67::talk_papagei() {
 				hide_cur();
 				action_flag = true;
 				auto_move(4, P_CHEWY);
-				start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				_G(spieler).R67PapageiWeg = true;
 				det->stop_detail(1);
 				det->del_static_ani(1);

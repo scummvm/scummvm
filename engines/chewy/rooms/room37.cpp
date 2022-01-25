@@ -289,7 +289,7 @@ void Room37::use_hahn() {
 		hide_cur();
 		auto_move(7, P_CHEWY);
 		_G(spieler).R37TransHahn = true;
-		start_spz_wait(CH_TRANS, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 		flic_cut(FCUT_052, FLC_MODE);
 		cur_2_inventory();
 		menu_item = CUR_TALK;
@@ -307,7 +307,7 @@ void Room37::use_hahn() {
 			det->stop_detail(7);
 			det->del_static_ani(7);
 			det->start_detail(9, 1, ANI_VOR);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(GEBISS_INV);
 			flags.NoScroll = true;
 			auto_scroll(177, 0);

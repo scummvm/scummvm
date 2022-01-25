@@ -349,7 +349,7 @@ short Room18::use_cart_moni() {
 		hide_cur();
 		auto_move(9, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartTerminal ^= 1;
 
 		if (!_G(spieler).R18CartTerminal) {

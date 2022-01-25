@@ -163,7 +163,7 @@ int Room76::proc6() {
 	} else if (is_cur_inventar(94)) {
 		hide_cur();
 		retVal = 1;
-		set_person_spr(1, P_CHEWY);
+		set_person_spr(P_RIGHT, P_CHEWY);
 		start_aad_wait(436, 1);
 		show_cur();
 	}

@@ -40,7 +40,7 @@ static const AniBlock ABLOCK4[2] = {
 
 void Room2::entry() {
 	if (!_G(spieler).R2ElectrocutedBork)
-		det->start_detail(5, 255, 0);
+		det->start_detail(5, 255, ANI_VOR);
 }
 
 void Room2::jump_out_r1(int16 nr) {

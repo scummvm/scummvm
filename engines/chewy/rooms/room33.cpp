@@ -141,7 +141,7 @@ void Room33::use_maschine() {
 				start_detail_wait(0, 1, ANI_VOR);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				set_person_pos(128, 65, P_CHEWY, P_LEFT);
-				start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				hocker = true;
 				del_inventar(_G(spieler).AkInvent);
 				ani_nr = CH_TALK12;
@@ -208,7 +208,7 @@ int16 Room33::get_munter() {
 			hide_cur();
 			_G(spieler).R33MunterGet = true;
 			auto_move(4, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			invent_2_slot(MUNTER_INV);
 			atds->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
 			det->hide_static_spr(3);

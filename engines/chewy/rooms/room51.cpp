@@ -355,11 +355,11 @@ void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
 		assert(t_nr < 2);
 		if (!Room65::_scrollY[t_nr]) {
-			det->start_detail(t_nr, 1, 0);
+			det->start_detail(t_nr, 1, ANI_VOR);
 			Room65::_scrollY[t_nr] = 1;
 		} else if (!det->get_ani_status(t_nr)) {
-			det->start_detail(t_nr, 1, 1);
-			det->start_detail(t_nr + 2, 1, 0);
+			det->start_detail(t_nr, 1, ANI_GO);
+			det->start_detail(t_nr + 2, 1, ANI_VOR);
 			uhr->reset_timer(obj_nr, 0);
 			Room65::_scrollY[t_nr] = 0;
 		}

@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room5::entry() {
 	if (_G(spieler).R5Terminal)
-		det->start_detail(6, 255, 0);
+		det->start_detail(6, 255, ANI_VOR);
 }
 
 void Room5::pushButton() {

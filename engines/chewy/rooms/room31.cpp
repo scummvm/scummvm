@@ -94,7 +94,7 @@ void Room31::open_luke() {
 	if (!_G(spieler).inv_cur && _G(spieler).R31KlappeZu) {
 		hide_cur();
 		auto_move(2, P_CHEWY);
-		start_spz_wait(CH_LGET_U, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = false;
 		det->play_sound(3, 0);
 		calc_luke();
@@ -106,7 +106,7 @@ void Room31::proc1() {
 	if (!_G(spieler).inv_cur && !_G(spieler).R31KlappeZu) {
 		hide_cur();
 		auto_move(2, P_CHEWY);
-		start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
 		det->play_sound(3, 0);
 		calc_luke();
@@ -125,7 +125,7 @@ int16 Room31::use_topf() {
 			if (is_cur_inventar(K_KERNE_INV)) {
 				_G(spieler).R31KoernerDa = true;
 				auto_move(1, P_CHEWY);
-				start_spz_wait(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				del_inventar(_G(spieler).AkInvent);
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
