@@ -72,7 +72,7 @@ public:
 
 	Common::Rational getFrameRate() const;
 
-	const Common::Rect *getNextDirtyRect();
+	virtual const Common::Rect *getNextDirtyRect();
 
 protected:
 	void readNextPacket();
