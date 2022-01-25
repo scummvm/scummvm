@@ -34,9 +34,9 @@ void Room78::entry() {
 	det->play_sound(0, 1);
 	hide_cur();
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).PersonHide[P_CHEWY] = 1;
-	_G(spieler).PersonHide[P_HOWARD] = 1;
-	_G(spieler).PersonHide[P_NICHELLE] = 1;
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler).PersonHide[P_HOWARD] = true;
+	_G(spieler).PersonHide[P_NICHELLE] = true;
 	_G(spieler).scrollx = 320;
 	set_person_pos(0, 0, P_CHEWY, P_RIGHT);
 
@@ -129,9 +129,9 @@ void Room78::entry() {
 
 void Room78::xit() {
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).PersonHide[P_CHEWY] = 0;
-	_G(spieler).PersonHide[P_HOWARD] = 0;
-	_G(spieler).PersonHide[P_NICHELLE] = 0;
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler).PersonHide[P_HOWARD] = false;
+	_G(spieler).PersonHide[P_NICHELLE] = false;
 }
 
 } // namespace Rooms
