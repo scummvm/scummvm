@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room72.h"
 
@@ -30,9 +29,77 @@ namespace Chewy {
 namespace Rooms {
 
 void Room72::entry(int16 eib_nr) {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	spieler_mi[P_HOWARD].Mode = true;
+	spieler_mi[P_NICHELLE].Mode = true;
+	
+	if (_G(spieler).flags28_10) {
+		_G(zoom_horizont) = 110;
+		det->hide_static_spr(0);
+	} else {
+		_G(spieler).ZoomXy[P_HOWARD][0] = 20;
+		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
+		_G(spieler).ZoomXy[P_NICHELLE][0] = 20;
+		_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
+		_G(zoom_horizont) = 140;
+		spieler_mi[P_CHEWY].Mode = true;
+		hide_cur();
+	}
+
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+
+	if (flags.LoadGame || _G(spieler).flags28_10)
+		return;
+
+	switch (eib_nr) {
+	case 112:
+		set_person_pos(50, 129, P_CHEWY, P_RIGHT);
+		set_person_pos(15, 103, P_HOWARD, P_RIGHT);
+		set_person_pos(-15, 102, P_NICHELLE, P_RIGHT);
+		go_auto_xy(185, 130, P_CHEWY, ANI_GO);
+		go_auto_xy(147, 103, P_HOWARD, ANI_GO);
+		go_auto_xy(120, 104, P_NICHELLE, ANI_VOR);
+		proc1(84);
+		test_intro(23);
+		ERROR
+		break;
+	case 113:
+		set_person_pos(213, 129, P_CHEWY, P_LEFT);
+		set_person_pos(262, 103, P_HOWARD, P_LEFT);
+		set_person_pos(293, 102, P_NICHELLE, P_LEFT);
+		go_auto_xy(120, 130, P_CHEWY, ANI_GO);
+		go_auto_xy(154, 102, P_HOWARD, ANI_GO);
+		go_auto_xy(186, 102, P_NICHELLE, ANI_VOR);
+		proc1(85);
+		test_intro(23);
+		ERROR
+		break;
+	default:
+		break;
+	}
 }
 
 void Room72::xit(int16 eib_nr) {
+	_G(spieler).ScrollxStep = 1;
+}
+
+void Room72::proc1(int16 flicNr) {
+	atds->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(spieler).flags28_10 = true;
+	wait_show_screen(7);
+	start_aad_wait(437, -1);
+	flic_cut(flicNr, CFO_MODE);
+	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
+	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;
+	_G(spieler).PersonHide[P_CHEWY] = true;
+	det->hide_static_spr(0);
+	set_up_screen(DO_SETUP);
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	spieler_mi[P_CHEWY].Mode = false;
+	show_cur();
+	switch_room(76);
 }
 
 } // namespace Rooms
