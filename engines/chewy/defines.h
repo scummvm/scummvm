@@ -189,6 +189,7 @@ enum SetupScreenMode {
 #define P_HOWARD 1
 #define P_NICHELLE 2
 #define P_3 3
+#define P_4 4
 
 #define CHEWY_NORMAL 1
 #define CHEWY_BORK 2

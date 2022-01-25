@@ -1342,6 +1342,14 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				ani_nr = CH_TALK3;
 				break;
 
+			case CHEWY_BORK:
+				ani_nr = 68;
+				break;
+
+			case CHEWY_PUMPKIN:
+				ani_nr = CH_PUMP_TALK;
+				break;
+
 			case CHEWY_ROCKER:
 				ani_nr = CH_ROCK_TALK1;
 				break;
@@ -1350,17 +1358,18 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				ani_nr = CH_JM_TALK;
 				break;
 
-			case CHEWY_PUMPKIN:
-				ani_nr = CH_PUMP_TALK;
+			case CHEWY_ANI7:
+				ani_nr = 46;
 				break;
 
 			default:
 				ani_nr = -1;
 				break;
-
 			}
+
 			if (ani_nr != -1)
 				start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+
 		} else {
 			stop_spz();
 		}
@@ -1539,9 +1548,24 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case 186:
 	case R41_HOOGY_DIA:
 		switch (person_nr) {
-		case 1:
-		case 2:
-		case 4:
+		case P_CHEWY:
+			if (mode == AAD_STR_START) {
+				if (_G(spieler).R28ChewyPump)
+					ani_nr = CH_PUMP_TALK;
+				else if (_G(spieler).ChewyAni == 5)
+					ani_nr = CH_ROCK_TALK1;
+				else
+					ani_nr = CH_TALK3;
+
+				start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+			} else {
+				stop_spz();
+			}
+			break;
+
+		case P_HOWARD:
+		case P_NICHELLE:
+		case P_4:
 			if (person_nr == 4) {
 				anz = 2;
 				tmp = 3;
@@ -1556,18 +1580,6 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					det->stop_detail(tmp);
 				}
 				++tmp;
-			}
-			break;
-
-		case 0:
-			if (mode == AAD_STR_START) {
-				if (_G(spieler).R28ChewyPump)
-					ani_nr = CH_PUMP_TALK;
-				else
-					ani_nr = CH_TALK3;
-				start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
-			} else {
-				stop_spz();
 			}
 			break;
 		}
