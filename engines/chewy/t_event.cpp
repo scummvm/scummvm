@@ -1270,11 +1270,10 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 #define R13_BORK_DIA 33
 
 #define START_STOP_TMP \
-	if (mode == AAD_STR_START) { \
+	if (mode == AAD_STR_START) \
 		talk_ani = tmp; \
-	} else { \
-		det->stop_detail(tmp); \
-	}
+	else \
+		det->stop_detail(tmp)
 
 #define START_STOP(NUM) \
 	if (mode == AAD_STR_START) \
@@ -1886,7 +1885,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 53:
@@ -1911,7 +1910,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 56:
@@ -1934,7 +1933,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 57:
@@ -1956,7 +1955,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 67:
@@ -1990,7 +1989,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 82:
@@ -2016,7 +2015,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 					break;
 				}
 
-				START_STOP_TMP
+				START_STOP_TMP;
 				break;
 
 			case 84:
@@ -2029,7 +2028,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 						stop_ani = 6;
 					}
 				
-					START_STOP_TMP
+					START_STOP_TMP;
 				}
 				break;
 
@@ -2161,6 +2160,9 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		det->stop_detail(stop_ani);
 	}
 }
+
+#undef START_STOP
+#undef START_STOP_TMP
 
 void calc_inv_use_txt(int16 test_nr) {
 	int scrollx, scrolly;
