@@ -78,8 +78,8 @@ public:
 	 */
 	int addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll = true);
 
-	virtual Widget *addChild(Widget *newChild);
-	virtual void removeWidget(Widget *del);
+	virtual Widget *addChild(Widget *newChild) override;
+	virtual void removeWidget(Widget *del) override;
 
 	/**
 	 * Remove the tab with the given tab ID. Disposes all child widgets of that tab.
