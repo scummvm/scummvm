@@ -136,7 +136,7 @@ void TextManager::characterContinueTalk() {
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
 	if (_vm->_flagShowCharacter || _vm->_animMgr->isActionActive())
-		pos = positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], true);
+		pos = positionString(_vm->_actor->_area[0], _vm->_actor->_area[2], _subString[_curSubString], true);
 	else
 		pos = positionString(MAXX / 2, 30, _subString[_curSubString], false);
 
@@ -185,9 +185,9 @@ void TextManager::someoneContinueTalk() {
 
 	Common::Point pos;
 	if (_talkingPersonId)
-		pos = positionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], false);
+		pos = positionString(_vm->_obj[_talkingPersonId]._area.left, _vm->_obj[_talkingPersonId]._area.top, _subString[_curSubString], false);
 	else
-		pos = positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], true);
+		pos = positionString(_vm->_actor->_area[0], _vm->_actor->_area[2], _subString[_curSubString], true);
 
 	clearLastText();
 	if (ConfMan.getBool("subtitles"))
@@ -323,8 +323,8 @@ void TextManager::showObjName(uint16 obj, bool show) {
 		else
 			desc = _vm->_objName[_vm->_obj[obj]._name];
 
-		const uint16 x = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
-		const uint16 y = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
+		const uint16 x = (_vm->_obj[obj]._area.left + _vm->_obj[obj]._area.right) / 2;
+		const uint16 y = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._area.top;
 		Common::Point pos = positionString(x, y, desc.c_str(), false);
 
 		if (_vm->_lastObj)

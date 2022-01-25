@@ -46,7 +46,7 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_theta = 0.0f;
 
 	for (uint8 i = 0; i < 6; ++i)
-		_lim[i] = 0;
+		_area[i] = 0;
 
 	_curFrame = 0;
 	_curAction = 0;
@@ -96,7 +96,7 @@ void Actor::initTextures() {
 }
 
 void Actor::updateStepSound() {
-	_vm->_soundMgr->soundStep((_lim[1] + _lim[0]) / 2, (_lim[5] + _lim[4]) / 2, _curAction, _curFrame);
+	_vm->_soundMgr->soundStep((_area[1] + _area[0]) / 2, (_area[5] + _area[4]) / 2, _curAction, _curFrame);
 }
 
 static const float _vertsCorr[104][3] = {
@@ -471,11 +471,11 @@ float Actor::frameCenter(SVertex *v) {
 }
 
 bool Actor::actorRectIsValid() const {
-	return _lim[0] < _lim[1] && _lim[2] < _lim[3];
+	return _area[0] < _area[1] && _area[2] < _area[3];
 }
 
 Common::Rect Actor::getActorRect() const {
-	return Common::Rect(_lim[0], _lim[2], _lim[1], _lim[3]);
+	return Common::Rect(_area[0], _area[2], _area[1], _area[3]);
 }
 
 } // End of namespace Trecision

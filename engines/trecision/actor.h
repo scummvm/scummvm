@@ -66,7 +66,7 @@ public:
 	float _dx, _dz;
 	float _theta;
 
-	int _lim[6];
+	int _area[6];
 
 	int _curFrame;
 	int _curAction;

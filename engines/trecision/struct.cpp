@@ -54,10 +54,10 @@ void SObject::readRect(Common::SeekableReadStream *stream) {
 }
 
 void SObject::syncGameStream(Common::Serializer &ser) {
-	ser.syncAsUint16LE(_lim.left);
-	ser.syncAsUint16LE(_lim.top);
-	ser.syncAsUint16LE(_lim.right);
-	ser.syncAsUint16LE(_lim.bottom);
+	ser.syncAsUint16LE(_area.left);
+	ser.syncAsUint16LE(_area.top);
+	ser.syncAsUint16LE(_area.right);
+	ser.syncAsUint16LE(_area.bottom);
 	ser.syncAsUint16LE(_name);
 	ser.syncAsUint16LE(_examine);
 	ser.syncAsUint16LE(_action);
@@ -78,10 +78,10 @@ void SObject::loadObj(Common::SeekableReadStreamEndian *stream) {
 	_rect.setWidth(w);
 	_rect.setHeight(h);
 
-	_lim.left = stream->readUint16();
-	_lim.top = stream->readUint16();
-	_lim.right = stream->readUint16();
-	_lim.bottom = stream->readUint16();
+	_area.left = stream->readUint16();
+	_area.top = stream->readUint16();
+	_area.right = stream->readUint16();
+	_area.bottom = stream->readUint16();
 
 	_position = stream->readSByte();
 	stream->readByte(); // Padding

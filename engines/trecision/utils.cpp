@@ -115,7 +115,7 @@ uint32 TrecisionEngine::readTime() {
 bool TrecisionEngine::checkMask(Common::Point pos) {
 	for (int8 i = MAXOBJINROOM - 1; i >= 0; --i) {
 		uint16 checkedObj = _room[_curRoom]._object[i];
-		Common::Rect lim = _obj[checkedObj]._lim;
+		Common::Rect lim = _obj[checkedObj]._area;
 		lim.translate(0, TOP);
 		// Trecision includes the bottom and right coordinates
 		++lim.right;

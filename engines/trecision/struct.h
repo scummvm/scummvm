@@ -52,7 +52,7 @@ private:
 
 struct SObject {
 	Common::Rect _rect;
-	Common::Rect _lim;
+	Common::Rect _area;
 	int8  _position;						// -1 if no position
 	uint16 _name;
 	uint16 _examine;
@@ -131,7 +131,7 @@ struct SAtFrame {
 struct SAnim {
 	char _name[14];
 	uint16 _flag;		// 1- background 2- icon 3- action 4- active  -  4bits per child
-	Common::Rect _lim[MAXAREA];
+	Common::Rect _area[MAXAREA];
 	uint8 _nbox;
 	SAtFrame _atFrame[MAXATFRAME];
 

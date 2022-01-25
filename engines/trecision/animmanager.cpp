@@ -368,8 +368,8 @@ void AnimManager::refreshSmkAnim(uint16 animation) {
 	}
 
 	for (int32 i = 0; i < MAXAREA; i++) {
-		if (_animTab[animation].isAnimAreaShown(i + 1) && _animTab[animation]._lim[i].bottom != 0) {
-			_vm->_graphicsMgr->addDirtyRect(_animTab[animation]._lim[i], true);
+		if (_animTab[animation].isAnimAreaShown(i + 1) && _animTab[animation]._area[i].bottom != 0) {
+			_vm->_graphicsMgr->addDirtyRect(_animTab[animation]._area[i], true);
 		}
 	}
 }
@@ -400,7 +400,7 @@ static bool rectsIntersect(Common::Rect r1, Common::Rect r2) {
 
 bool AnimManager::shouldShowAnim(int animation, Common::Rect curRect) {
 	for (int32 i = 0; i < MAXAREA; i++) {
-		const bool intersect = rectsIntersect(_animTab[animation]._lim[i], curRect);
+		const bool intersect = rectsIntersect(_animTab[animation]._area[i], curRect);
 		if (intersect && !_animTab[animation].isAnimAreaShown(i + 1))
 			return false;
 	}
@@ -495,10 +495,10 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 		ser.syncBytes((byte *)cur->_name, 14);
 		ser.syncAsUint16LE(cur->_flag);
 		for (uint8 j = 0; j < MAXAREA; ++j) {
-			ser.syncAsUint16LE(cur->_lim[j].left);
-			ser.syncAsUint16LE(cur->_lim[j].top);
-			ser.syncAsUint16LE(cur->_lim[j].right);
-			ser.syncAsUint16LE(cur->_lim[j].bottom);
+			ser.syncAsUint16LE(cur->_area[j].left);
+			ser.syncAsUint16LE(cur->_area[j].top);
+			ser.syncAsUint16LE(cur->_area[j].right);
+			ser.syncAsUint16LE(cur->_area[j].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
 		ser.skip(1, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
@@ -520,10 +520,10 @@ void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
 		_animTab[i]._flag = stream->readUint16();
 
 		for (uint8 j = 0; j < MAXAREA; ++j) {
-			_animTab[i]._lim[j].left = stream->readUint16();
-			_animTab[i]._lim[j].top = stream->readUint16();
-			_animTab[i]._lim[j].right = stream->readUint16();
-			_animTab[i]._lim[j].bottom = stream->readUint16();
+			_animTab[i]._area[j].left = stream->readUint16();
+			_animTab[i]._area[j].top = stream->readUint16();
+			_animTab[i]._area[j].right = stream->readUint16();
+			_animTab[i]._area[j].bottom = stream->readUint16();
 		}
 
 		_animTab[i]._nbox = stream->readByte();
@@ -541,8 +541,8 @@ void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
 }
 
 void AnimManager::patchAnimTab() {
-	_animTab[aBKG28]._lim[3].left = 308;  // Patch the brazier animation rect in kRoom28 - bug #12628
-	_animTab[aBKG35]._lim[0].right = 200; // Patch the terrorist animation rect in kRoom35
+	_animTab[aBKG28]._area[3].left = 308;  // Patch the brazier animation rect in kRoom28 - bug #12628
+	_animTab[aBKG35]._area[0].right = 200; // Patch the terrorist animation rect in kRoom35
 }
 
 } // End of namespace Trecision
