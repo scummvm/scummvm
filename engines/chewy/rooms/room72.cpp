@@ -60,7 +60,7 @@ void Room72::entry(int16 eib_nr) {
 		set_person_pos(-15, 102, P_NICHELLE, P_RIGHT);
 		go_auto_xy(185, 130, P_CHEWY, ANI_GO);
 		go_auto_xy(147, 103, P_HOWARD, ANI_GO);
-		go_auto_xy(120, 104, P_NICHELLE, ANI_VOR);
+		go_auto_xy(120, 104, P_NICHELLE, ANI_WAIT);
 		proc1(84);
 		test_intro(23);
 		ERROR
@@ -71,7 +71,7 @@ void Room72::entry(int16 eib_nr) {
 		set_person_pos(293, 102, P_NICHELLE, P_LEFT);
 		go_auto_xy(120, 130, P_CHEWY, ANI_GO);
 		go_auto_xy(154, 102, P_HOWARD, ANI_GO);
-		go_auto_xy(186, 102, P_NICHELLE, ANI_VOR);
+		go_auto_xy(186, 102, P_NICHELLE, ANI_WAIT);
 		proc1(85);
 		test_intro(23);
 		ERROR

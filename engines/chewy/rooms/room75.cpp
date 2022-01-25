@@ -89,7 +89,7 @@ void Room75::proc1() {
 	set_person_pos(363, 110, P_CHEWY, P_LEFT);
 	set_person_pos(322, 85, P_NICHELLE, P_RIGHT);
 	set_person_pos(317, 96, P_HOWARD, P_RIGHT);
-	go_auto_xy(318, 110, P_NICHELLE, ANI_VOR);
+	go_auto_xy(318, 110, P_NICHELLE, ANI_WAIT);
 	show_cur();
 }
 

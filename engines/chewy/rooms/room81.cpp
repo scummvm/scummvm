@@ -72,13 +72,13 @@ void Room81::proc1() {
 		diaNr = 460;
 	else {
 		spieler_mi[P_CHEWY].Mode = true;
-		go_auto_xy(222, 97, P_CHEWY, ANI_VOR);
-		go_auto_xy(100, 96, P_CHEWY, ANI_VOR);
-		go_auto_xy(171, 93, P_CHEWY, ANI_VOR);
-		go_auto_xy(143, 62, P_CHEWY, ANI_VOR);
-		go_auto_xy(112, 60, P_CHEWY, ANI_VOR);
+		go_auto_xy(222, 97, P_CHEWY, ANI_WAIT);
+		go_auto_xy(100, 96, P_CHEWY, ANI_WAIT);
+		go_auto_xy(171, 93, P_CHEWY, ANI_WAIT);
+		go_auto_xy(143, 62, P_CHEWY, ANI_WAIT);
+		go_auto_xy(112, 60, P_CHEWY, ANI_WAIT);
 		start_aad_wait(461, -1);
-		go_auto_xy(143, 62, P_CHEWY, ANI_VOR);
+		go_auto_xy(143, 62, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(0, 1, ANI_VOR);
 		det->start_detail(1, 255, false);
@@ -86,9 +86,9 @@ void Room81::proc1() {
 		det->stop_detail(1);
 		start_detail_wait(0, 1, ANI_GO);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		go_auto_xy(171, 93, P_CHEWY, ANI_VOR);
-		go_auto_xy(100, 96, P_CHEWY, ANI_VOR);
-		go_auto_xy(222, 97, P_CHEWY, ANI_VOR);
+		go_auto_xy(171, 93, P_CHEWY, ANI_WAIT);
+		go_auto_xy(100, 96, P_CHEWY, ANI_WAIT);
+		go_auto_xy(222, 97, P_CHEWY, ANI_WAIT);
 		auto_move(1, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = false;
 		invent_2_slot(109);

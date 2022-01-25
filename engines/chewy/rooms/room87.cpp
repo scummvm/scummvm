@@ -93,9 +93,9 @@ void Room87::xit(int16 eib_nr) {
 	HowardMov = 1;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
-	go_auto_xy(20, 56, P_CHEWY, ANI_VOR);
-	go_auto_xy(31, 56, P_CHEWY, ANI_VOR);
-	go_auto_xy(9, 53, P_CHEWY, ANI_VOR);
+	go_auto_xy(20, 56, P_CHEWY, ANI_WAIT);
+	go_auto_xy(31, 56, P_CHEWY, ANI_WAIT);
+	go_auto_xy(9, 53, P_CHEWY, ANI_WAIT);
 	spieler_mi[P_CHEWY].Mode = false;
 	_G(spieler).ScrollxStep = 1;
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 87)

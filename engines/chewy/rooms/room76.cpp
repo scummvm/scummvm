@@ -135,7 +135,7 @@ void Room76::proc5() {
 	det->hide_static_spr(10);
 	det->start_detail(13, 1, false);
 	spieler_mi[P_CHEWY].Mode = true;
-	go_auto_xy(669, 127, P_CHEWY, ANI_VOR);
+	go_auto_xy(669, 127, P_CHEWY, ANI_WAIT);
 	wait_show_screen(20);
 	spieler_mi[P_CHEWY].Mode = false;
 	show_cur();
