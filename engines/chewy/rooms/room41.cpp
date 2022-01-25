@@ -83,9 +83,9 @@ void Room41::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
 		if (spieler_vector->Xypos[P_HOWARD] == 160) {
-			go_auto_xy(258, 75, 1, 1);
+			go_auto_xy(258, 75, P_HOWARD, ANI_GO);
 		} else {
-			go_auto_xy(246, 120, 1, 1);
+			go_auto_xy(246, 120, P_HOWARD, ANI_GO);
 		}
 	}
 }

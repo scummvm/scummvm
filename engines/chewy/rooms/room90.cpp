@@ -281,7 +281,7 @@ int Room90::proc4() {
 	flags.ZoomMov = false;
 	auto_move(5, P_CHEWY);
 	spieler_mi[P_CHEWY].Mode = true;
-	go_auto_xy(232, 142, P_CHEWY, ANI_VOR);
+	go_auto_xy(232, 142, P_CHEWY, ANI_WAIT);
 	flags.NoScroll = true;
 	auto_scroll(176, 0);
 	start_detail_wait(13, 1, ANI_VOR);

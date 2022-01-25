@@ -250,11 +250,11 @@ void Room97::proc2() {
 	Sdi[24].z_ebene = 6;
 	_G(spieler).flags36_1 = false;
 	spieler_mi[P_CHEWY].Mode = true;
-	go_auto_xy(455, 59, P_CHEWY, ANI_VOR);
-	go_auto_xy(496, 99, P_CHEWY, ANI_VOR);
-	go_auto_xy(530, 99, P_CHEWY, ANI_VOR);
-	go_auto_xy(572, 139, P_CHEWY, ANI_VOR);
-	go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
+	go_auto_xy(455, 59, P_CHEWY, ANI_WAIT);
+	go_auto_xy(496, 99, P_CHEWY, ANI_WAIT);
+	go_auto_xy(530, 99, P_CHEWY, ANI_WAIT);
+	go_auto_xy(572, 139, P_CHEWY, ANI_WAIT);
+	go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	spieler_mi[P_CHEWY].Mode = false;
 	Sdi[6].z_ebene = 166;
 	Sdi[18].z_ebene = 157;
@@ -274,32 +274,32 @@ void Room97::proc3() {
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(557, -1);
-		go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
+		go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	} else if (!_G(spieler).flags36_40) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(567, -1);
-		go_auto_xy(588, 129, P_CHEWY, ANI_VOR);
+		go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	} else {
 		_G(spieler).flags36_1 = true;
 		HowardMov = 1;
-		go_auto_xy(572, 139, P_CHEWY, ANI_VOR);
+		go_auto_xy(572, 139, P_CHEWY, ANI_WAIT);
 		Sdi[6].z_ebene = 6;
 		Sdi[24].z_ebene = 6;
 
-		go_auto_xy(530, 99, P_CHEWY, ANI_VOR);
-		go_auto_xy(496, 99, P_CHEWY, ANI_VOR);
-		go_auto_xy(455, 59, P_CHEWY, ANI_VOR);
-		go_auto_xy(440, 52, P_CHEWY, ANI_VOR);
+		go_auto_xy(530, 99, P_CHEWY, ANI_WAIT);
+		go_auto_xy(496, 99, P_CHEWY, ANI_WAIT);
+		go_auto_xy(455, 59, P_CHEWY, ANI_WAIT);
+		go_auto_xy(440, 52, P_CHEWY, ANI_WAIT);
 		if (!_G(spieler).flags36_80) {
-			go_auto_xy(572, 122, P_HOWARD, ANI_VOR);
-			go_auto_xy(526, 83, P_HOWARD, ANI_VOR);
-			go_auto_xy(500, 83, P_HOWARD, ANI_VOR);
+			go_auto_xy(572, 122, P_HOWARD, ANI_WAIT);
+			go_auto_xy(526, 83, P_HOWARD, ANI_WAIT);
+			go_auto_xy(500, 83, P_HOWARD, ANI_WAIT);
 		}
 
 		auto_move(6, P_CHEWY);
 		if (!_G(spieler).flags36_80) {
-			go_auto_xy(442, 35, P_HOWARD, ANI_VOR);
-			go_auto_xy(497, 31, P_HOWARD, ANI_VOR);
+			go_auto_xy(442, 35, P_HOWARD, ANI_WAIT);
+			go_auto_xy(497, 31, P_HOWARD, ANI_WAIT);
 			start_aad_wait(562, -1);
 		}
 		spieler_mi[P_CHEWY].Mode = false;
@@ -331,12 +331,12 @@ void Room97::proc4() {
 		det->show_static_spr(2);
 		HowardMov = 1;
 		
-		go_auto_xy(967, 111, P_CHEWY, ANI_VOR);
-		go_auto_xy(1008, 93, P_CHEWY, ANI_VOR);
-		go_auto_xy(1037, 99, P_CHEWY, ANI_VOR);
+		go_auto_xy(967, 111, P_CHEWY, ANI_WAIT);
+		go_auto_xy(1008, 93, P_CHEWY, ANI_WAIT);
+		go_auto_xy(1037, 99, P_CHEWY, ANI_WAIT);
 
-		go_auto_xy(995, 77, P_HOWARD, ANI_VOR);
-		go_auto_xy(1047, 87, P_HOWARD, ANI_VOR);
+		go_auto_xy(995, 77, P_HOWARD, ANI_WAIT);
+		go_auto_xy(1047, 87, P_HOWARD, ANI_WAIT);
 
 		start_detail_wait(29, 1, ANI_VOR);
 		det->hide_static_spr(21);
@@ -344,9 +344,9 @@ void Room97::proc4() {
 		det->disable_sound(9, 0);
 		start_detail_wait(9, 0, ANI_RUECK);
 
-		go_auto_xy(1008, 93, P_CHEWY, ANI_VOR);
-		go_auto_xy(967, 111, P_CHEWY, ANI_VOR);
-		go_auto_xy(995, 82, P_HOWARD, ANI_VOR);
+		go_auto_xy(1008, 93, P_CHEWY, ANI_WAIT);
+		go_auto_xy(967, 111, P_CHEWY, ANI_WAIT);
+		go_auto_xy(995, 82, P_HOWARD, ANI_WAIT);
 		det->hide_static_spr(2);
 		spieler_mi[P_CHEWY].Mode = false;
 		start_spz(4, 255, false, P_CHEWY);
@@ -394,7 +394,7 @@ int Room97::proc6() {
 	hide_cur();
 	auto_move(1, P_CHEWY);
 	spieler_mi[P_CHEWY].Mode = true;
-	go_auto_xy(298, 120, P_CHEWY, ANI_VOR);
+	go_auto_xy(298, 120, P_CHEWY, ANI_WAIT);
 	set_person_spr(P_LEFT, P_CHEWY);
 	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 	det->hide_static_spr(15);
@@ -599,7 +599,7 @@ void Room97::proc12() {
 	hide_cur();
 	stop_person(P_CHEWY);
 	det->show_static_spr(26);
-	go_auto_xy(481, 39, P_CHEWY, ANI_VOR);
+	go_auto_xy(481, 39, P_CHEWY, ANI_WAIT);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	set_person_pos(327, 42, P_CHEWY, P_LEFT);
 	wait_show_screen(50);
@@ -702,7 +702,7 @@ void Room97::proc15() {
 
 		det->show_static_spr(26);
 		set_person_pos(482, 24, P_NICHELLE, P_RIGHT);
-		go_auto_xy(477, 29, P_NICHELLE, ANI_VOR);
+		go_auto_xy(477, 29, P_NICHELLE, ANI_WAIT);
 		det->hide_static_spr(26);
 		_G(spieler).flags37_2 = true;
 	}

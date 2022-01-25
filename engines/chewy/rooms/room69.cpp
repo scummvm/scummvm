@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room69.h"
 
@@ -30,18 +29,30 @@ namespace Chewy {
 namespace Rooms {
 
 void Room69::entry(int16 eib_nr) {
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 90;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 46;
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 90;
+	spieler_mi[P_HOWARD].Mode = true;
+	spieler_mi[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	SetUpScreenFunc = setup_func;
 	_G(spieler).DiaAMov = 2;
-	if (!flags.LoadGame) {
-		hide_cur();
+	if (flags.LoadGame)
+		return;
+
+	_G(cur_hide_flag) = false;
+	hide_cur();
+
+	if (eib_nr == 102)
+		proc1();
+	else {
 		set_person_pos(295, 118, P_CHEWY, P_RIGHT);
 		set_person_pos(237, 101, P_NICHELLE, P_RIGHT);
 		set_person_pos(347, 119, P_HOWARD, P_RIGHT);
@@ -52,12 +63,10 @@ void Room69::entry(int16 eib_nr) {
 
 void Room69::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
-	switch (eib_nr) {
-	case 97:
+
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 69 && eib_nr == 97) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
-		break;
-
 	}
 }
 
@@ -85,21 +94,52 @@ int16 Room69::use_bruecke() {
 			spieler_mi[P_CHEWY].Mode = true;
 			go_auto_xy(253, 103, P_CHEWY, ANI_WAIT);
 			go_auto_xy(141, 103, P_CHEWY, ANI_WAIT);
+
+			if (_G(spieler).PersonRoomNr[P_NICHELLE] == 69)
+				go_auto_xy(255, 84, 2, ANI_GO);
+			
 			go_auto_xy(82, 95, P_CHEWY, ANI_WAIT);
 			go_auto_xy(46, 83, P_CHEWY, ANI_WAIT);
-			go_auto_xy(255, 84, P_NICHELLE, ANI_WAIT);
-			go_auto_xy(258, 86, P_HOWARD, ANI_GO);
-			go_auto_xy(147, 84, P_NICHELLE, ANI_WAIT);
-			go_auto_xy(140, 86, P_HOWARD, ANI_GO);
-			go_auto_xy(94, 77, P_NICHELLE, ANI_WAIT);
-			go_auto_xy(94, 82, P_HOWARD, ANI_GO);
-			go_auto_xy(59, 68, P_NICHELLE, ANI_WAIT);
+
+			if (_G(spieler).PersonRoomNr[P_HOWARD] == 69) {
+				go_auto_xy(258, 86, P_HOWARD, ANI_GO);
+				go_auto_xy(147, 84, P_NICHELLE, ANI_WAIT);
+				go_auto_xy(140, 86, P_HOWARD, ANI_GO);
+				go_auto_xy(94, 77, P_NICHELLE, ANI_WAIT);
+				go_auto_xy(94, 82, P_HOWARD, ANI_GO);
+				go_auto_xy(59, 68, P_NICHELLE, ANI_WAIT);
+				_G(spieler).PersonRoomNr[P_HOWARD] = 70;
+				_G(spieler).PersonRoomNr[P_NICHELLE] = 70;
+			}
+
 			spieler_mi[P_CHEWY].Mode = false;
-			switch_room(66);
+			switch_room(70);
 		}
 		show_cur();
 	}
 	return action_flag;
+}
+
+void Room69::proc1() {
+	_G(spieler).scrollx = 0;
+	spieler_mi[P_CHEWY].Mode = true;
+	set_person_pos(46, 83, P_CHEWY, P_RIGHT);
+	set_person_pos(59, 68, P_NICHELLE, P_RIGHT);
+	set_person_pos(94, 82, P_HOWARD, P_RIGHT);
+	go_auto_xy(59, 68, P_NICHELLE, ANI_GO);
+	go_auto_xy(94, 82, P_HOWARD, ANI_WAIT);
+	go_auto_xy(94, 77, P_NICHELLE, ANI_GO);
+	go_auto_xy(140, 86, P_HOWARD, ANI_WAIT);
+	go_auto_xy(82, 95, P_CHEWY, _G(spieler).PersonRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
+	go_auto_xy(147, 84, P_NICHELLE, ANI_GO);
+	go_auto_xy(278, 86, P_HOWARD, ANI_WAIT);
+	go_auto_xy(255, 84, P_NICHELLE, ANI_WAIT);
+	go_auto_xy(237, 101, P_NICHELLE, ANI_GO);
+	go_auto_xy(351, 97, P_HOWARD, ANI_GO);
+	go_auto_xy(141, 109, P_CHEWY, ANI_GO);
+	go_auto_xy(253, 106, P_CHEWY, ANI_WAIT);
+	auto_move(3, P_CHEWY);
+	spieler_mi[P_CHEWY].Mode = false;
 }
 
 } // namespace Rooms

@@ -83,8 +83,8 @@ void Room70::setup_func() {
 		nicDestX = 543;
 	}
 
-	go_auto_xy(howDestX, 111, P_HOWARD, P_RIGHT);
-	go_auto_xy(nicDestX, 110, P_NICHELLE, P_RIGHT);	
+	go_auto_xy(howDestX, 111, P_HOWARD, ANI_GO);
+	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);	
 }
 
 void Room70::proc1() {
@@ -93,7 +93,7 @@ void Room70::proc1() {
 	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
 	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
 	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
-	go_auto_xy(266, 113, P_HOWARD, ANI_VOR);
+	go_auto_xy(266, 113, P_HOWARD, ANI_WAIT);
 	show_cur();
 }
 

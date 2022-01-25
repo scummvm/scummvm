@@ -32,6 +32,7 @@ private:
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
+	static void proc1();
 	static void look_schild();
 	static int16 use_bruecke();
 };

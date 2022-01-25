@@ -177,7 +177,7 @@ void Room49::use_boy_cigar() {
 
 	const int16 zoom = room->room_info->ZoomFak;
 	room->set_zoom(zoom);
-	go_auto_xy(416, 79, P_HOWARD, ANI_VOR);
+	go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
 	set_person_spr(P_LEFT, P_HOWARD);
 	flags.NoScroll = true;
 
