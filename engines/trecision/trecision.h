@@ -232,6 +232,7 @@ public:
 	void setObjectAnim(uint16 objectId, uint16 animId);
 	void redrawRoom();
 	void readLoc();
+	Common::SeekableReadStreamEndian *getLocStream();
 	void tendIn();
 	void readExtraObj2C();
 	void readPositionerSnapshots();

@@ -262,8 +262,11 @@ void GraphicsManager::drawTexturePixel(uint16 textureX, uint16 textureY, uint16 
 	_screenBuffer.setPixel(screenX, screenY, texturePixel);
 }
 
-void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
-	readSurface(stream, &_background, width, height);
+void GraphicsManager::loadBackground(Common::SeekableReadStream *stream) {
+	SObject bgInfo;
+	bgInfo.readRect(stream);
+
+	readSurface(stream, &_background, bgInfo._rect.width(), bgInfo._rect.height());
 	_smkBackground.copyFrom(_background);
 	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * _background.h);
 }

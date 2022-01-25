@@ -77,7 +77,7 @@ public:
 	void copyToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette);
 	void blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg);
 	void paintScreen(bool flag);
-	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
+	void loadBackground(Common::SeekableReadStream *stream);
 	void clearScreenBuffer();
 	void clearScreenBufferTop();
 	void clearScreenBufferInventory();
