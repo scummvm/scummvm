@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room58.h"
 
@@ -34,7 +33,6 @@ void Room58::entry() {
 }
 
 void Room58::xit() {
-	int16 tmp;
 	_G(spieler).scrollx = _G(spieler).R58TmpSx;
 	_G(spieler).scrolly = _G(spieler).R58TmpSy;
 	spieler_vector[P_CHEWY].Xypos[0] = _G(spieler).R58TmpX;
@@ -45,11 +43,10 @@ void Room58::xit() {
 	flags.LoadGame = true;
 	show_person();
 	set_person_rnr();
-	tmp = _G(spieler).R58TmpRoom1;
+	const int16 tmp = _G(spieler).R58TmpRoom1;
 	_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).R58TmpRoom;
 
 	switch_room(tmp);
-
 }
 
 void Room58::look_cut_mag(int16 r_nr) {
