@@ -62,10 +62,10 @@ typedef Common::Array<Graphics::Surface *> Frames;
 // Player positions
 
 enum PlayerPosition {
-	PlayerTop = 'T',
-	PlayerBottom = 'B',
-	PlayerLeft = 'L',
-	PlayerRight = 'R'
+	kPlayerTop = 'T',
+	kPlayerBottom = 'B',
+	kPlayerLeft = 'L',
+	kPlayerRight = 'R'
 };
 
 class HypnoEngine : public Engine {

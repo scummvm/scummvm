@@ -85,63 +85,63 @@ void SpiderEngine::drawPlayer() {
 		else if (_lastPlayerPosition != _currentPlayerPosition && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) {
 
 			switch(_lastPlayerPosition) {
-				case PlayerLeft:
+				case kPlayerLeft:
 					switch(_currentPlayerPosition) {
-						case PlayerTop:
+						case kPlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 1;
 						break;
-						case PlayerBottom:
+						case kPlayerBottom:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 13;
 						break;
-						case PlayerRight:
+						case kPlayerRight:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 45;
 						break;
 					}
 				break;
-				case PlayerRight:
+				case kPlayerRight:
 					switch(_currentPlayerPosition) {
-						case PlayerTop:
+						case kPlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 5;
 						break;
-						case PlayerBottom:
+						case kPlayerBottom:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 17;
 						break;
-						case PlayerLeft:
+						case kPlayerLeft:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 33;
 						break;
 					}
 				break;
-				case PlayerBottom:
+				case kPlayerBottom:
 					switch(_currentPlayerPosition) {
-						case PlayerTop:
+						case kPlayerTop:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 9;
 						break;
-						case PlayerLeft:
+						case kPlayerLeft:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 29;
 						break;
-						case PlayerRight:
+						case kPlayerRight:
 							_lastPlayerPosition = _currentPlayerPosition;
 							_playerFrameIdx = 41;
 						break;
 					}
 				break;
-				case PlayerTop:
+				case kPlayerTop:
 					switch(_currentPlayerPosition) {
-						case PlayerBottom:
+						case kPlayerBottom:
 							_playerFrameIdx = 21;
 						break;
-						case PlayerLeft:
+						case kPlayerLeft:
 							_playerFrameIdx = 25;
 						break;
-						case PlayerRight:
+						case kPlayerRight:
 							_playerFrameIdx = 37;
 						break;
 					}

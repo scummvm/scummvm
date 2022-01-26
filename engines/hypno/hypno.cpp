@@ -54,7 +54,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
 	  _countdown(0), _timerStarted(false),  _score(0),
 	  _defaultCursor(""), _checkpoint(""),
-	  _currentPlayerPosition(PlayerLeft), _lastPlayerPosition(PlayerLeft), 
+	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft), 
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
