@@ -22,8 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room66.h"
 
 namespace Chewy {
@@ -33,10 +31,68 @@ void Room66::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
+	_G(spieler).ZoomXy[P_HOWARD][0] = 50;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 36;
+	_G(spieler).ZoomXy[P_NICHELLE][0] = 50;
+	_G(zoom_horizont) = 130;
+	flags.ZoomMov = true;
+	_G(zoom_mov_fak) = 3;
+	if (!_G(spieler).flags26_4) {
+		det->show_static_spr(4);
+		det->show_static_spr(8);
+		_G(cur_hide_flag) = false;
+		hide_cur();
+		_G(spieler).flags26_4 = true;
+		_G(spieler).scrollx = 476;
+		set_person_pos(598, 101, P_CHEWY, P_RIGHT);
+		set_person_pos(644, 82, P_NICHELLE, P_LEFT);
+		set_person_pos(623, 81, P_HOWARD, P_LEFT);
+		start_aad_wait(413, -1);
+		auto_move(9, P_CHEWY);
+		SetUpScreenFunc = setup_func;
+		start_aad_wait(403, -1);
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		start_detail_wait(0, 1, ANI_VOR);
+		det->show_static_spr(14);
+		wait_show_screen(15);
+		det->hide_static_spr(14);
+		start_detail_wait(1, 1, ANI_VOR);
+		load_chewy_taf(1);
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		start_spz(16, 255, false, P_CHEWY);
+		start_aad_wait(404, -1);
+		start_aad_wait(415, -1);
+		show_cur();
+	} else if (!flags.LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
+		switch (eib_nr) {
+		case 96:
+			set_person_pos(488, 114, P_HOWARD, P_RIGHT);
+			set_person_pos(520, 114, P_NICHELLE, P_RIGHT);
+			break;
+		case 97:
+			set_person_pos(22, 114, P_HOWARD, P_RIGHT);
+			set_person_pos(50, 114, P_NICHELLE, P_RIGHT);
+			break;
+		case 101:
+			set_person_pos(150, 114, P_HOWARD, P_RIGHT);
+			set_person_pos(182, 114, P_NICHELLE, P_RIGHT);
+			break;
+		default:
+			break;
+		}
+		
+	}
+	SetUpScreenFunc = setup_func;
 }
 
 void Room66::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
+	atds->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATEI);
+	atds->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATEI);
+	if (_G(spieler).PersonRoomNr[P_HOWARD] != 66)
+		return;
+
 	switch (eib_nr) {
 	case 98:
 		_G(spieler).PersonRoomNr[P_HOWARD] = 69;
@@ -53,30 +109,112 @@ void Room66::xit(int16 eib_nr) {
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 67;
 		break;
 
+	default:
+		break;
 	}
 }
 
+void Room66::setup_func() {
+	calc_person_look();
+	const int posX = spieler_vector[P_CHEWY].Xypos[0];
+
+	int edx, esi;
+	if (posX < 30) {
+		edx = 57;
+		esi = 97;
+	} else if (posX < 260){
+		edx = 170;
+		esi = 263;
+	} else if (posX < 370) {
+		edx = 314;
+		esi = 398;
+	} else if (posX < 500) {
+		edx = 517;
+		esi = 556;
+	} else {
+		edx = 607;
+		esi = 690;
+	}
+
+	go_auto_xy(edx, 114, P_HOWARD, ANI_GO);
+	go_auto_xy(esi, 114, P_NICHELLE, ANI_GO);
+
+	if (posX >= 500 || _G(spieler).flags26_8)
+		return;
+
+	_G(spieler).flags26_8 = true;
+	det->start_detail(9, 5, false);
+	start_aad_wait(405, -1);
+}
+
 void Room66::talk1() {
+	hide_cur();
+	auto_move(5, P_CHEWY);
+	start_aad_wait(407, -1);
+	show_cur();
 }
 
 void Room66::talk2() {
+	proc8(6, 10, 11, 408);
 }
 
 void Room66::talk3() {
+	proc8(8, 6, 7, 409);
 }
 
 void Room66::talk4() {
+	proc8(7, 2, 3, _G(spieler).flags26_20 ? 414 : 410);
 }
 
 int Room66::proc2() {
+	hide_cur();
+	auto_move(0, P_CHEWY);
+	_G(spieler).flags26_40 = true;
+	_G(spieler).room_e_obj[100].Attribut = 3;
+	atds->set_ats_str(423, 1, ANI_GO);
+	show_cur();
+	
 	return 0;
 }
 
 int Room66::proc7() {
-	return 0;
+	if (!is_cur_inventar(88))
+		return 0;
+
+	hide_cur();
+	auto_move(7, P_CHEWY);
+	if (_G(spieler).flags26_10) {
+		del_inventar(_G(spieler).AkInvent);
+		invent_2_slot(92);
+		invent_2_slot(93);
+		invent_2_slot(94);
+		_G(spieler).flags26_20 = true;
+	}
+
+	proc8(7, 2, 3, 411 + (_G(spieler).R68Papagei ? 1 : 0));
+	_G(cur_hide_flag) = 0;
+	hide_cur();
+	if (_G(spieler).flags26_20)
+		start_detail_wait(4, 1, ANI_VOR);
+	show_cur();
+
+	return 1;
 }
 
-void Room66::proc8(int eax, int edx, int ebx, int ecx) {
+void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, int transitionDiaNr) {
+	hide_cur();
+
+	if (chewyAutoMovNr != -1)
+		auto_move(chewyAutoMovNr, P_CHEWY);
+
+	room->set_timer_status(restartAniNr, TIMER_STOP);
+	det->del_static_ani(restartAniNr);
+	det->set_static_ani(transitionAniNr, -1);
+	start_aad_wait(transitionDiaNr, -1);
+	det->del_static_ani(transitionAniNr);
+	det->set_static_ani(restartAniNr, -1);
+	room->set_timer_status(restartAniNr, TIMER_START);
+	show_cur();
 }
 
 } // namespace Rooms

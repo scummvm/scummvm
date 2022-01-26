@@ -29,13 +29,15 @@ class Room66 {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
+	static void setup_func();
+
 	static void talk1();
 	static void talk2();
 	static void talk3();
 	static void talk4();
 	static int proc2();
 	static int proc7();
-	static void proc8(int eax, int edx, int ebx, int ecx);
+	static void proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, int transitionDiaNr);
 };
 
 } // namespace Rooms
