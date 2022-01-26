@@ -28,8 +28,6 @@
 namespace Chewy {
 namespace Rooms {
 
-#define SURIMY_OBJ 0
-
 static const int16 SURIMY_PHASEN[4][2] = {
 	{ 91, 98 },
 	{ 91, 98 },
