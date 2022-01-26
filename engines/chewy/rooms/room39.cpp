@@ -181,14 +181,14 @@ int16 Room39::use_tv() {
 		flags.NoPalAfterFlc = true;
 		out->setze_zeiger(nullptr);
 		out->cls();
-		flic_cut(FCUT_042, FLC_MODE);
+		flic_cut(FCUT_042, CFO_MODE);
 		++_G(spieler).R39TvKanal;
 		flags.NoPalAfterFlc = true;
 
 		if (_G(spieler).R39TvKanal == 2)
-			flic_cut(FCUT_036, FLC_MODE);
+			flic_cut(FCUT_036, CFO_MODE);
 		else if (_G(spieler).R39TvKanal == 5)
-			flic_cut(FCUT_033, FLC_MODE);
+			flic_cut(FCUT_033, CFO_MODE);
 
 		look_tv(0);
 		set_tv();
@@ -206,6 +206,8 @@ int16 Room39::use_tv() {
 				ani_nr = -1;
 			}
 		}
+
+		action_flag = true;
 	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != 5) {
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
@@ -311,7 +313,7 @@ void Room39::look_tv(int16 cls_mode) {
 			}
 
 			flc->set_custom_user_function(setup_func);
-			flic_cut(flic_nr, FLC_MODE);
+			flic_cut(flic_nr, CFO_MODE);
 			flc->remove_custom_user_function();
 
 			if (cls_mode) {
@@ -352,7 +354,7 @@ void Room39::set_tv() {
 }
 
 int16 Room39::setup_func(int16 frame) {
-	int16 action_ret = in->get_switch_code() == 1 ? -1 : 0;
+	int16 action_ret = in->get_switch_code() == ESC ? -1 : 0;
 
 	if (_flag) {
 		if (frame == 121)

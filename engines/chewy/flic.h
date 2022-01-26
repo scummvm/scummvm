@@ -81,16 +81,16 @@ public:
 	~flic();
 	void play(const char *fname, byte *vscreen, byte *load_p);
 
-	void play(Common::Stream *handle, byte *vscreen, byte *load_p);
+	int16 play(Common::Stream *handle, byte *vscreen, byte *load_p);
 	void set_flic_user_function(int16(*user_funktion)(int16 key));
 	void remove_flic_user_function();
-	int custom_play(CustomInfo *ci);
+	int16 custom_play(CustomInfo *ci);
 	void set_custom_user_function(int16(*user_funktion)(int16 key));
 	void remove_custom_user_function();
 
 private:
-	void decode_frame();
-	void decode_cframe();
+	int16 decode_frame();
+	int16 decode_cframe();
 	void col256_chunk(byte *tmp);
 	void col64_chunk(byte *tmp);
 	void delta_chunk_byte(byte *tmp);
