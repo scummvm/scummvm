@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room63.h"
 
@@ -54,6 +53,7 @@ void Room63::entry() {
 		det->show_static_spr(10);
 		det->show_static_spr(12);
 	} else if (_G(spieler).R62LauraVerwandlung) {
+		atds->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
 		SetUpScreenFunc = setup_func;
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
@@ -66,59 +66,66 @@ void Room63::entry() {
 }
 
 void Room63::setup_func() {
-	if (_G(spieler).R62LauraVerwandlung) {
-		switch (_G(r63ChewyAni)) {
-		case 0:
-			if (det->get_ani_status(0) == false) {
-				if (_G(r63RunDia) < 4)
-					++_G(r63RunDia);
-				start_aad(370 + _G(r63RunDia));
-				det->start_detail(1, 1, ANI_VOR);
-				_G(r63ChewyAni) = 1;
-			}
-			break;
+	if (!_G(spieler).R62LauraVerwandlung)
+		return;
 
-		case 1:
-			if (det->get_ani_status(1) == false) {
-				_G(spieler).ScrollxStep = 4;
-				set_person_pos(0, 0, P_CHEWY, P_RIGHT);
-				det->start_detail(22, 1, ANI_VOR);
-				det->start_detail(2, 1, ANI_VOR);
-				atds->stop_aad();
-				_G(r63ChewyAni) = 2;
-			}
-			break;
-
-		case 2:
-			if (det->get_ani_status(2) == false) {
-				det->start_detail(3, 1, ANI_VOR);
-				_G(r63ChewyAni) = 3;
-			}
-			break;
-
-		case 3:
-			if (det->get_ani_status(3) == false) {
-				if (!flags.AutoAniPlay) {
-					flags.AutoAniPlay = true;
-
-					_G(spieler).ScrollxStep = 16;
-					_G(spieler).scrollx -= _G(spieler).scrollx % 16;
-					flags.NoScroll = true;
-					auto_scroll(176, 0);
-					set_person_pos(424, 78, P_CHEWY, P_LEFT);
-					flags.NoScroll = false;
-					_G(spieler).ScrollxStep = 4;
-					if (!_G(r63Schalter)) {
-						det->start_detail(0, 1, ANI_VOR);
-						_G(r63ChewyAni) = 0;
-					} else
-						bork_platt();
-					flags.AutoAniPlay = false;
-				}
-			}
-			break;
-
+	cur_2_inventory();
+	menu_item = CUR_USE;
+	cursor_wahl(CUR_USE);
+	
+	switch (_G(r63ChewyAni)) {
+	case 0:
+		if (det->get_ani_status(0) == false) {
+			if (_G(r63RunDia) < 4)
+				++_G(r63RunDia);
+			start_aad(370 + _G(r63RunDia));
+			det->start_detail(1, 1, ANI_VOR);
+			_G(r63ChewyAni) = 1;
 		}
+		break;
+
+	case 1:
+		if (det->get_ani_status(1) == false) {
+			_G(spieler).ScrollxStep = 4;
+			set_person_pos(0, 0, P_CHEWY, P_RIGHT);
+			det->start_detail(22, 1, ANI_VOR);
+			det->start_detail(2, 1, ANI_VOR);
+			atds->stop_aad();
+			_G(r63ChewyAni) = 2;
+		}
+		break;
+
+	case 2:
+		if (det->get_ani_status(2) == false) {
+			det->start_detail(3, 1, ANI_VOR);
+			_G(r63ChewyAni) = 3;
+		}
+		break;
+
+	case 3:
+		if (det->get_ani_status(3) == false) {
+			if (!flags.AutoAniPlay) {
+				flags.AutoAniPlay = true;
+				flags.NoScroll = true;
+
+				_G(spieler).ScrollxStep = 16;
+				_G(spieler).scrollx -= _G(spieler).scrollx % 16;
+				auto_scroll(176, 0);
+				set_person_pos(424, 78, P_CHEWY, P_LEFT);
+				flags.NoScroll = false;
+				_G(spieler).ScrollxStep = 4;
+				if (!_G(r63Schalter)) {
+					det->start_detail(0, 1, ANI_VOR);
+					_G(r63ChewyAni) = 0;
+				} else
+					bork_platt();
+				flags.AutoAniPlay = false;
+			}
+		}
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -193,6 +200,7 @@ int16 Room63::use_fx_man() {
 		hide_cur();
 		auto_move(1, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
+		remove_inventory(34);
 		start_aad_wait(359, -1);
 		det->del_static_ani(5);
 		start_detail_wait(6, 1, ANI_VOR);
@@ -227,6 +235,7 @@ int16 Room63::use_schalter() {
 				wait_show_screen(18);
 				det->hide_static_spr(14);
 				start_detail_wait(24, 1, ANI_VOR);
+				det->show_static_spr(1);
 				det->hide_static_spr(2);
 				start_aad_wait(364, -1);
 				atds->set_ats_str(385, 1, ATS_DATEI);
@@ -315,6 +324,7 @@ int16 Room63::use_aschenbecher() {
 				start_aad_wait(369, -1);
 		} else
 			start_aad_wait(366, -1);
+		
 		show_cur();
 	}
 	return action_ret;
