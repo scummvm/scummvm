@@ -134,7 +134,7 @@ void check_ged_action(int16 index) {
 	if (!flags.GedAction) {
 		flags.GedAction = true;
 
-#define GED_ACTION(NUM) case NUM: Room##NUM::gedAction(NUM); break;
+#define GED_ACTION(NUM) case NUM: Room##NUM::gedAction(index); break;
 		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		GED_ACTION(1);
 		GED_ACTION(2);
