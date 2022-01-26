@@ -55,8 +55,7 @@ const char *sceneVariables[] = {
 	"GS_COMBATJSON",
 	"GS_COMBATLEVEL",
 	"GS_PUZZLELEVEL",
-	nullptr
-};
+	nullptr};
 
 void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", current.c_str());
@@ -144,57 +143,59 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 	for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end() && cont; ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
-			case ChangeLevelAction:
-				runChangeLevel((ChangeLevel *)action);
+		case ChangeLevelAction:
+			runChangeLevel((ChangeLevel *)action);
 			break;
 
-			case EscapeAction:
-				runEscape();
+		case EscapeAction:
+			runEscape();
 			break;
 
-			case CutsceneAction:
-				runCutscene((Cutscene *)action);
+		case CutsceneAction:
+			runCutscene((Cutscene *)action);
 			break;
 
-			case PlayAction:
-				runPlay((Play *)action);
+		case PlayAction:
+			runPlay((Play *)action);
 			break;
 
-			case WalNAction:
-				runWalN((WalN *)action);
-			break;
-		
-			case GlobalAction:
-				cont = runGlobal((Global *)action);
+		case WalNAction:
+			runWalN((WalN *)action);
 			break;
 
-			case TalkAction:
-				runTalk((Talk *)action);
+		case GlobalAction:
+			cont = runGlobal((Global *)action);
 			break;
 
-			case SaveAction:
-				runSave((Save *)action);
+		case TalkAction:
+			runTalk((Talk *)action);
 			break;
 
-			case LoadAction:
-				runLoad((Load *)action);
+		case SaveAction:
+			runSave((Save *)action);
 			break;
 
-			case LoadCheckpointAction:
-				runLoadCheckpoint((LoadCheckpoint *)action);
+		case LoadAction:
+			runLoad((Load *)action);
 			break;
 
-			case QuitAction:
-				runQuit((Quit *)action);
-			break;
-			case AmbientAction: 
-				runAmbient((Ambient *)action);
-			break;
-			case PaletteAction:
-				runPalette((Palette *)action);
+		case LoadCheckpointAction:
+			runLoadCheckpoint((LoadCheckpoint *)action);
 			break;
 
-			default:
+		case QuitAction:
+			runQuit((Quit *)action);
+			break;
+
+		case AmbientAction:
+			runAmbient((Ambient *)action);
+			break;
+
+		case PaletteAction:
+			runPalette((Palette *)action);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -223,10 +224,10 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
 			switch (action->type) {
-				case MiceAction:
-					runMice((Mice *)action);
+			case MiceAction:
+				runMice((Mice *)action);
 				break;
-				default:
+			default:
 				break;
 			}
 		}
@@ -257,7 +258,6 @@ void HypnoEngine::runTransition(Transition *trans) {
 		_nextLevel = nextLevel;
 }
 
-
 void HypnoEngine::runScene(Scene *scene) {
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 	_refreshConversation = false;
@@ -277,23 +277,23 @@ void HypnoEngine::runScene(Scene *scene) {
 	defaultCursor();
 
 	while (!shouldQuit() && _nextLevel.empty()) {
-		
+
 		if (_timerStarted && _videosPlaying.empty() && !_nextHotsToRemove) {
 
-			if (lastCountdown == _countdown) {}
-			else if (_countdown > 0) {
+			if (lastCountdown == _countdown) {
+			} else if (_countdown > 0) {
 				uint32 c = _pixelFormat.RGBToColor(255, 0, 0);
 				runMenu(stack.back());
 				uint32 minutes = _countdown / 60;
 				uint32 seconds = _countdown % 60;
-			 	_font->drawString(_compositeSurface, Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
+				_font->drawString(_compositeSurface, Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
 				drawScreen();
 			} else {
 				assert(!scene->levelIfLose.empty());
 				_nextLevel = scene->levelIfLose;
 				debugC(1, kHypnoDebugScene, "Finishing level and jumping to %s", _nextLevel.c_str());
 				resetSceneState();
-				continue; 
+				continue;
 			}
 			lastCountdown = _countdown;
 		}
@@ -312,7 +312,6 @@ void HypnoEngine::runScene(Scene *scene) {
 								drawScreen();
 							}
 						}
-
 					}
 					_videosPlaying.clear();
 
@@ -350,7 +349,7 @@ void HypnoEngine::runScene(Scene *scene) {
 
 			case Common::EVENT_MOUSEMOVE:
 				// Reset cursor to default
-				//changeCursor("default");
+				// changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
 
@@ -369,8 +368,8 @@ void HypnoEngine::runScene(Scene *scene) {
 			}
 		}
 
-		if (_refreshConversation && !_conversation.empty() && 
-			_nextSequentialVideoToPlay.empty() && 
+		if (_refreshConversation && !_conversation.empty() &&
+			_nextSequentialVideoToPlay.empty() &&
 			_nextParallelVideoToPlay.empty() &&
 			_videosPlaying.empty()) {
 			showConversation();
@@ -391,7 +390,7 @@ void HypnoEngine::runScene(Scene *scene) {
 		}
 
 		if (!_nextSequentialVideoToPlay.empty() && _videosPlaying.empty()) {
-			MVideo *it = _nextSequentialVideoToPlay.begin(); 
+			MVideo *it = _nextSequentialVideoToPlay.begin();
 			playVideo(*it);
 			if (it->loop)
 				_videosLooping.push_back(*it);
@@ -406,7 +405,7 @@ void HypnoEngine::runScene(Scene *scene) {
 					if (it->loop && enableLoopingVideos) {
 						it->decoder->rewind();
 						it->decoder->start();
-					} 
+					}
 				} else if (it->decoder->needsUpdate()) {
 					updateScreen(*it);
 				}
@@ -419,7 +418,7 @@ void HypnoEngine::runScene(Scene *scene) {
 
 			if (it->decoder) {
 				if (it->decoder->endOfVideo()) {
-					if (it->scaled || 
+					if (it->scaled ||
 					(  it->currentFrame->w == _screenW 
 					&& it->currentFrame->h == _screenH 
 					&& it->decoder->getCurFrame() > 0)) {
@@ -451,7 +450,7 @@ void HypnoEngine::runScene(Scene *scene) {
 		}
 
 		if (checkSceneCompleted() || checkLevelWon()) {
-			if(!checkLevelWon() && stack.size() > 1) {
+			if (!checkLevelWon() && stack.size() > 1) {
 				debugC(1, kHypnoDebugScene, "Executing escape instead of ending the scene");
 				runEscape();
 				_sceneState["GS_LEVELCOMPLETE"] = 0;
@@ -460,9 +459,9 @@ void HypnoEngine::runScene(Scene *scene) {
 
 			// Make sure all the videos are played before we finish
 			enableLoopingVideos = false;
-			if (_conversation.empty() && 
-				_videosPlaying.empty() && 
-				_nextSequentialVideoToPlay.empty() && 
+			if (_conversation.empty() &&
+				_videosPlaying.empty() &&
+				_nextSequentialVideoToPlay.empty() &&
 				_nextParallelVideoToPlay.empty()) {
 
 				if (_nextLevel.empty()) {
@@ -548,6 +547,4 @@ void HypnoEngine::rightClickedConversation(const Common::Point &mousePos) { erro
 void HypnoEngine::leftClickedConversation(const Common::Point &mousePos) { error("Function \"%s\" not implemented", __FUNCTION__); }
 bool HypnoEngine::hoverConversation(const Common::Point &mousePos) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
-
 } // End of namespace Hypno
-

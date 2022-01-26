@@ -26,7 +26,7 @@
 
 namespace Hypno {
 
-//Actions
+// Actions
 
 void HypnoEngine::runMenu(Hotspots *hs) {
 	Hotspot *h = hs->begin();
@@ -35,36 +35,36 @@ void HypnoEngine::runMenu(Hotspots *hs) {
 	for (Actions::const_iterator itt = h->actions.begin(); itt != h->actions.end(); ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
-			case QuitAction:
-				runQuit((Quit *)action);
+		case QuitAction:
+			runQuit((Quit *)action);
 			break;
-			case TimerAction:
-				runTimer((Timer *)action);
+		case TimerAction:
+			runTimer((Timer *)action);
 			break;
-			case BackgroundAction:
-				runBackground((Background *)action);
+		case BackgroundAction:
+			runBackground((Background *)action);
 			break;
-			case OverlayAction:
-				runOverlay((Overlay *)action);
+		case OverlayAction:
+			runOverlay((Overlay *)action);
 			break;
-			case AmbientAction: 
-				runAmbient((Ambient *)action);
+		case AmbientAction:
+			runAmbient((Ambient *)action);
 			break;
-			case IntroAction:
-				runIntro((Intro *)action);
+		case IntroAction:
+			runIntro((Intro *)action);
 			break;
-			case CutsceneAction:
-				runCutscene((Cutscene *)action);
+		case CutsceneAction:
+			runCutscene((Cutscene *)action);
 			break;
-			case PaletteAction:
-				runPalette((Palette *)action);
+		case PaletteAction:
+			runPalette((Palette *)action);
 			break;
 
-			default:
+		default:
 			break;
 		}
 
-		//else if (typeid(*action) == typeid(Mice))
+		// else if (typeid(*action) == typeid(Mice))
 		//	runMice(h, (Mice*) action);
 	}
 
@@ -73,11 +73,11 @@ void HypnoEngine::runMenu(Hotspots *hs) {
 
 void HypnoEngine::drawBackToMenu(Hotspot *h) {}
 
-void HypnoEngine::runBackground(Background *a) {	
+void HypnoEngine::runBackground(Background *a) {
 	if (a->condition.size() > 0) {
 		bool condition = _sceneState[a->condition];
 
-		if (a->flag1 == "/NSTATE" || a->flag2 == "/NSTATE") 
+		if (a->flag1 == "/NSTATE" || a->flag2 == "/NSTATE")
 			condition = !condition;
 
 		if (!condition)
@@ -91,7 +91,7 @@ void HypnoEngine::runTimer(Timer *a) {
 	if (_timerStarted)
 		return; // Do not start another timer
 
-	uint32 delay = a->delay/1000;
+	uint32 delay = a->delay / 1000;
 	debugC(1, kHypnoDebugScene, "Starting timer with %d secons", delay);
 
 	if (delay == 0 || !startCountdown(delay))
@@ -125,7 +125,6 @@ void HypnoEngine::runIntro(Intro *a) {
 	MVideo v(a->path, Common::Point(0, 0), false, true, false);
 	runIntro(v);
 }
-
 
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
@@ -178,7 +177,7 @@ void HypnoEngine::runAmbient(Ambient *a) {
 		else
 			sframe = frame;
 		drawImage(*sframe, a->origin.x, a->origin.y, true);
-		if (a->fullscreen){
+		if (a->fullscreen) {
 			frame->free();
 			delete frame;
 		}
@@ -209,7 +208,7 @@ void HypnoEngine::runWalN(WalN *a) {
 
 void HypnoEngine::runSave(Save *a) {
 	// TODO: enable this when saving in the main menu is available
-	//saveGameDialog();
+	// saveGameDialog();
 }
 
 void HypnoEngine::runLoad(Load *a) {
@@ -227,7 +226,7 @@ void HypnoEngine::runQuit(Quit *a) {
 }
 
 void HypnoEngine::runChangeLevel(ChangeLevel *a) {
-	debugC(1, kHypnoDebugScene, "Next level is '%s'", a->level.c_str());	
+	debugC(1, kHypnoDebugScene, "Next level is '%s'", a->level.c_str());
 	_nextLevel = a->level;
 }
 
@@ -237,4 +236,3 @@ void HypnoEngine::runTalk(Talk *a) {
 }
 
 } // End of namespace Hypno
-

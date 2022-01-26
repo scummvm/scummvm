@@ -34,7 +34,7 @@ static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
 void SpiderEngine::hitPlayer() {
-	if ( _playerFrameSep < (int)_playerFrames.size()){
+	if (_playerFrameSep < (int)_playerFrames.size()) {
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	} else {
@@ -42,10 +42,9 @@ void SpiderEngine::hitPlayer() {
 		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
 		drawScreen();
 	}
-	//if (!_hitSound.empty())
+	// if (!_hitSound.empty())
 	//	playSound(_soundPath + _hitSound, 1);
 }
-
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
 	uint32 c = 248; // white
@@ -54,12 +53,12 @@ void SpiderEngine::drawShoot(const Common::Point &target) {
 
 	if (_arcadeMode == "YC" || _arcadeMode == "YD") {
 		return; // Nothing to shoot
-	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") { 
-		ox = _screenW/2;
-		oy = _screenH - _playerFrames[0]->h/2;
+	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
+		ox = _screenW / 2;
+		oy = _screenH - _playerFrames[0]->h / 2;
 	} else if (_arcadeMode == "YB") {
 		uint32 idx = MIN(2, target.x / (_screenW / 3)) + 3 * MIN(2, target.y / (_screenH / 3));
-		ox = 60  + shootOriginIndex[idx][0];
+		ox = 60 + shootOriginIndex[idx][0];
 		oy = 129 + shootOriginIndex[idx][1];
 	} else
 		error("Invalid arcade mode %s", _arcadeMode.c_str());
@@ -84,67 +83,67 @@ void SpiderEngine::drawPlayer() {
 			_playerFrameIdx = 0;
 		else if (_lastPlayerPosition != _currentPlayerPosition && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) {
 
-			switch(_lastPlayerPosition) {
-				case kPlayerLeft:
-					switch(_currentPlayerPosition) {
-						case kPlayerTop:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 1;
-						break;
-						case kPlayerBottom:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 13;
-						break;
-						case kPlayerRight:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 45;
-						break;
-					}
-				break;
-				case kPlayerRight:
-					switch(_currentPlayerPosition) {
-						case kPlayerTop:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 5;
-						break;
-						case kPlayerBottom:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 17;
-						break;
-						case kPlayerLeft:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 33;
-						break;
-					}
-				break;
-				case kPlayerBottom:
-					switch(_currentPlayerPosition) {
-						case kPlayerTop:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 9;
-						break;
-						case kPlayerLeft:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 29;
-						break;
-						case kPlayerRight:
-							_lastPlayerPosition = _currentPlayerPosition;
-							_playerFrameIdx = 41;
-						break;
-					}
-				break;
+			switch (_lastPlayerPosition) {
+			case kPlayerLeft:
+				switch (_currentPlayerPosition) {
 				case kPlayerTop:
-					switch(_currentPlayerPosition) {
-						case kPlayerBottom:
-							_playerFrameIdx = 21;
-						break;
-						case kPlayerLeft:
-							_playerFrameIdx = 25;
-						break;
-						case kPlayerRight:
-							_playerFrameIdx = 37;
-						break;
-					}
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 1;
+					break;
+				case kPlayerBottom:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 13;
+					break;
+				case kPlayerRight:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 45;
+					break;
+				}
+				break;
+			case kPlayerRight:
+				switch (_currentPlayerPosition) {
+				case kPlayerTop:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 5;
+					break;
+				case kPlayerBottom:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 17;
+					break;
+				case kPlayerLeft:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 33;
+					break;
+				}
+				break;
+			case kPlayerBottom:
+				switch (_currentPlayerPosition) {
+				case kPlayerTop:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 9;
+					break;
+				case kPlayerLeft:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 29;
+					break;
+				case kPlayerRight:
+					_lastPlayerPosition = _currentPlayerPosition;
+					_playerFrameIdx = 41;
+					break;
+				}
+				break;
+			case kPlayerTop:
+				switch (_currentPlayerPosition) {
+				case kPlayerBottom:
+					_playerFrameIdx = 21;
+					break;
+				case kPlayerLeft:
+					_playerFrameIdx = 25;
+					break;
+				case kPlayerRight:
+					_playerFrameIdx = 37;
+					break;
+				}
 				break;
 			}
 			_lastPlayerPosition = _currentPlayerPosition;
@@ -170,7 +169,7 @@ void SpiderEngine::drawPlayer() {
 			if (_playerFrameIdx >= (int)_playerFrames.size())
 				_playerFrameIdx = 0;
 		}
-	}  else
+	} else
 		error("Invalid arcade mode %s", _arcadeMode.c_str());
 
 	drawImage(*_playerFrames[_playerFrameIdx], ox, oy, true);
@@ -196,7 +195,7 @@ void SpiderEngine::drawHealth() {
 	_compositeSurface->fillRect(r, c);
 
 	r = Common::Rect(256, 152, 272, 174);
-	c = 252;  // blue
+	c = 252; // blue
 	_compositeSurface->frameRect(r, c);
 
 	drawString("ENERGY", 248, 180, 38, c);
@@ -218,7 +217,7 @@ bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background) {
 				return false;
 
 		return true;
-	} 
+	}
 	return !background.decoder || background.decoder->endOfVideo();
 }
 
