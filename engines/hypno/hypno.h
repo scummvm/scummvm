@@ -211,8 +211,6 @@ public:
 	Filename _music;
 	void playSound(const Filename &filename, uint32);
 	void stopSound();
-	bool isSoundActive();
-	bool _noStopSounds;
 
 	// Arcade
 	Common::String _arcadeMode;

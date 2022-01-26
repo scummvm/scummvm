@@ -50,6 +50,11 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0),
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr), _font(nullptr),
+	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0), 
+	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
+	  _countdown(0), _timerStarted(false),  _score(0),
+	  _defaultCursor(""), _checkpoint(""),
+	  _currentPlayerPosition(PlayerLeft), _lastPlayerPosition(PlayerLeft), 
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
@@ -59,9 +64,6 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 		_variant = "FullGame";
 	g_hypno = this;
 	g_parsedArc = new ArcadeShooting();
-	_defaultCursor = "";
-	_checkpoint = "";
-
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
 	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
