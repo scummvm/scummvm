@@ -51,10 +51,12 @@ void Room56::entry() {
 			start_detail_wait(8, 1, ANI_VOR);
 			start_detail_wait(7, 1, ANI_VOR);
 			set_up_screen(DO_SETUP);
+
 			if (!_G(spieler).R56GetTabak) {
-				flic_cut(FCUT_074, FLC_MODE);
+				flic_cut(FCUT_074, CFO_MODE);
 				det->show_static_spr(2);
 			}
+
 			room->set_zoom(23);
 			_G(spieler).ZoomXy[P_HOWARD][0] = 17;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 37;
@@ -85,7 +87,7 @@ void Room56::entry() {
 			_G(maus_links_click) = false;
 			atds->stop_aad();
 			start_aad_wait(306, -1);
-			flic_cut(FCUT_076, FLC_MODE);
+			flic_cut(FCUT_076, CFO_MODE);
 		}
 	}
 	SetUpScreenFunc = setup_func;
@@ -196,7 +198,7 @@ int16 Room56::use_kneipe() {
 				flags.NoScroll = true;
 				auto_scroll(0, 0);
 				start_detail_wait(12, 3, ANI_VOR);
-				flic_cut(FCUT_075, FLC_MODE);
+				flic_cut(FCUT_075, CFO_MODE);
 				det->start_detail(10, 6, ANI_VOR);
 				start_aad_wait(307, -1);
 				det->stop_detail(10);

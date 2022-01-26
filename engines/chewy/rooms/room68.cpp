@@ -317,7 +317,7 @@ int16 Room68::use_diva() {
 		det->hide_static_spr(3);
 		_G(spieler).R68DivaWeg = true;
 		start_ani_block(2, ABLOCK38);
-		flic_cut(FCUT_083, FLC_MODE);
+		flic_cut(FCUT_083, CFO_MODE);
 		det->del_static_ani(18);
 		test_intro(22);
 		ERROR
@@ -338,7 +338,9 @@ void Room68::kostuem_aad(int16 aad_nr) {
 	if (_G(spieler).DiaAMov != -1) {
 		auto_move(_G(spieler).DiaAMov, P_CHEWY);
 	}
+
 	start_aad_wait(aad_nr, -1);
+
 	if (!_G(spieler).R68DivaWeg)
 		start_aad_wait(388, -1);
 	else if (!_G(spieler).R67LiedOk)
@@ -357,11 +359,14 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		start_detail_wait(22, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		det->start_detail(27, 255, ANI_VOR);
+
 		if (_G(spieler).DisplayText)
 			start_detail_wait(23, 3, ANI_VOR);
 		else {
 			det->start_detail(23, 255, ANI_VOR);
 			ailsnd->init_double_buffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
+			::error("TODO: voc_handle");
+#if 0
 			Stream *voc_handle = nullptr; // TODO : should be the voc_handle initialized in sound_init()
 			mem->file->select_pool_item(voc_handle, 109);
 			ERROR
@@ -370,7 +375,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 			while (!ailsnd->isSpeechActive(1))
 				set_up_screen(DO_SETUP);
-
+#endif
 			det->stop_detail(23);
 		}
 

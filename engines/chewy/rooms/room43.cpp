@@ -58,7 +58,7 @@ void Room43::night_small() {
 
 	_G(spieler).scrollx = 194;
 	start_aad_wait(191, -1);
-	flic_cut(FCUT_058, FLC_MODE);
+	flic_cut(FCUT_058, CFO_MODE);
 	det->disable_sound(0, 0);
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
@@ -82,7 +82,7 @@ void Room43::catch_pg() {
 	auto_scroll(194, 0);
 	start_aad_wait(235, -1);
 	_G(spieler).R43GetPgLady = true;
-	flic_cut(FCUT_058, FLC_MODE);
+	flic_cut(FCUT_058, CFO_MODE);
 
 	det->disable_sound(0, 0);
 	flags.NoScroll = false;

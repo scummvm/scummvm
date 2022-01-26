@@ -212,7 +212,7 @@ int16 Room55::use_telefon() {
 				det->hide_static_spr(0);
 				det->hide_static_spr(8);
 				atds->set_ats_str(354, 1, ATS_DATEI);
-				flic_cut(FCUT_071, FLC_MODE);
+				flic_cut(FCUT_071, CFO_MODE);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 
 				set_person_pos(178, 75, P_CHEWY, P_LEFT);
@@ -239,7 +239,7 @@ int16 Room55::use_telefon() {
 					SHOULD_QUIT_RETURN0;
 				}
 
-				flic_cut(FCUT_072, FLC_MODE);
+				flic_cut(FCUT_072, CFO_MODE);
 				flags.NoScroll = false;
 				invent_2_slot(SACKGELD_INV);
 				invent_2_slot(EINLAD_INV);
@@ -364,7 +364,7 @@ int16 Room55::use_kammeraus() {
 					start_detail_wait(5, 1, ANI_VOR);
 					det->show_static_spr(10);
 					flc->set_flic_user_function(cut_serv);
-					flic_cut(FCUT_070, FLC_MODE);
+					flic_cut(FCUT_070, CFO_MODE);
 					flc->remove_flic_user_function();
 
 					room->set_timer_status(19 + (int16)_G(spieler).R55Entry, TIMER_STOP);

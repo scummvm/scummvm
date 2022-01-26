@@ -124,7 +124,7 @@ void Room40::xit(int16 eib_nr) {
 				start_aad_wait(238, -1);
 				move_train(1);
 				flags.NoPalAfterFlc = true;
-				flic_cut(FCUT_073, FLC_MODE);
+				flic_cut(FCUT_073, CFO_MODE);
 
 				if (_G(spieler).ChewyAni != 5)
 					_G(spieler).PersonGlobalDia[1] = 10023;
@@ -544,7 +544,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 	if (aad_nr == 237) {
 		start_aad_wait(aad_nr, -1);
 		flags.NoPalAfterFlc = true;
-		flic_cut(FCUT_062, FLC_MODE);
+		flic_cut(FCUT_062, CFO_MODE);
 		fx_blend = BLEND3;
 		start_aad_wait(375, -1);
 	} else {

@@ -126,8 +126,8 @@ void Room63::bork_platt() {
 	_G(spieler).R62LauraVerwandlung = false;
 	_G(r63Schalter) = false;
 	_G(spieler).room_e_obj[95].Attribut = AUSGANG_OBEN;
-	flic_cut(FCUT_081, FLC_MODE);
-	flic_cut(FCUT_082, FLC_MODE);
+	flic_cut(FCUT_081, CFO_MODE);
+	flic_cut(FCUT_082, CFO_MODE);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	check_shad(4, 1);
 	spieler_mi[P_CHEWY].Mode = true;
@@ -139,7 +139,7 @@ void Room63::bork_platt() {
 	start_aad_wait(361, -1);
 	out->cls();
 	flags.NoPalAfterFlc = true;
-	flic_cut(FCUT_079, FLC_MODE);
+	flic_cut(FCUT_079, CFO_MODE);
 	fx_blend = BLEND3;
 	show_cur();
 	flags.MainInput = true;
@@ -301,7 +301,7 @@ int16 Room63::use_aschenbecher() {
 				det->hide_static_spr(10);
 				det->hide_static_spr(12);
 				start_aad_wait(368, -1);
-				flic_cut(FCUT_080, FLC_MODE);
+				flic_cut(FCUT_080, CFO_MODE);
 				atds->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);
 				atds->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATEI);
 				atds->set_ats_str(383, 1, ATS_DATEI);

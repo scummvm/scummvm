@@ -213,14 +213,14 @@ int16 Room39::use_tv() {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			_G(spieler).R39TransMensch = true;
 			flags.NoPalAfterFlc = true;
-			flic_cut(FCUT_041, FLC_MODE);
+			flic_cut(FCUT_041, CFO_MODE);
 			_G(spieler).R39TvKanal = 0;
 			_G(spieler).R39ClintNews = 0;
 			out->setze_zeiger(nullptr);
 			out->cls();
 			out->set_palette(pal);
 			flags.NoPalAfterFlc = true;
-			flic_cut(TV_FLIC[0], FLC_MODE);
+			flic_cut(TV_FLIC[0], CFO_MODE);
 
 			out->cls();
 			out->setze_zeiger(nullptr);

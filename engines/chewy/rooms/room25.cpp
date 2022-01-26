@@ -72,7 +72,7 @@ void Room25::entry() {
 
 		_G(spieler).R25FirstEntry = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		flic_cut(FCUT_029, FLC_MODE);
+		flic_cut(FCUT_029, CFO_MODE);
 		det->enable_sound(0, 0);
 		det->play_sound(0, 0);
 		fx_blend = BLEND_NONE;

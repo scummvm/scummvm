@@ -157,7 +157,7 @@ int16 Room31::use_topf() {
 						} else {
 							close_luke();
 							auto_move(3, P_CHEWY);
-							flic_cut(FCUT_046, FLC_MODE);
+							flic_cut(FCUT_046, CFO_MODE);
 							_G(spieler).R31SurFurz = true;
 							ani_nr = CH_TALK6;
 							dia_nr = 156;

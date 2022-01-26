@@ -164,7 +164,7 @@ void Room33::use_maschine() {
 		if (_G(spieler).R33MunterOk) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(2, 1, ANI_VOR);
-			flic_cut(FCUT_031, FLC_MODE);
+			flic_cut(FCUT_031, CFO_MODE);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(71, -1);
