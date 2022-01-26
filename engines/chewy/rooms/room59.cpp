@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room59.h"
 
@@ -31,7 +30,6 @@ namespace Rooms {
 
 void Room59::look_poster() {
 	if (!_G(spieler).R59PosterWeg) {
-
 		atds->set_ats_str(302, 1, ATS_DATEI);
 		atds->set_ats_str(301, 1, ATS_DATEI);
 		_G(spieler).R59PosterWeg = true;
