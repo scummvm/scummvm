@@ -413,6 +413,7 @@ public:
 		type = ArcadeLevel;
 		health = 100;
 		transitionTime = 0;
+		id = 0;
 	}
 	uint32 id;
 	Common::String mode;
