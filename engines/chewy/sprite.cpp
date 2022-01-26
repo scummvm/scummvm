@@ -622,11 +622,11 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 		Cxy = room_blk.DetKorrekt + (spr_nr << 1);
 
 		if (!xoff) {
-			xoff = xy[0];
+			xoff = xy ? xy[0] : 0;
 			xoff += auto_mov_vector[nr].Xzoom;
 		}
 		if (!yoff) {
-			yoff = xy[1];
+			yoff = xy ? xy[1] : 0;
 			yoff += auto_mov_vector[nr].Yzoom;
 		}
 		if (minfo.x >= auto_mov_vector[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
