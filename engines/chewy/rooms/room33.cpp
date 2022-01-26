@@ -28,9 +28,6 @@
 namespace Chewy {
 namespace Rooms {
 
-#undef SURIMY_OBJ
-#define SURIMY_OBJ 0
-
 static const MovLine SURIMY_MPKT[2] = {
 	{ {  65, 115, 150 }, 1, 6 },
 	{ { 300, 151, 150 }, 1, 6 }
