@@ -50,11 +50,11 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0),
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr), _font(nullptr),
-	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0), 
+	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0),
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
-	  _countdown(0), _timerStarted(false),  _score(0),
+	  _countdown(0), _timerStarted(false), _score(0),
 	  _defaultCursor(""), _checkpoint(""),
-	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft), 
+	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
@@ -170,19 +170,19 @@ void HypnoEngine::runLevel(Common::String &name) {
 
 	if (_levels[name]->type == TransitionLevel) {
 		debugC(1, kHypnoDebugScene, "Executing transition level %s", name.c_str());
-		runTransition((Transition *) _levels[name]);
+		runTransition((Transition *)_levels[name]);
 	} else if (_levels[name]->type == ArcadeLevel) {
 		debugC(1, kHypnoDebugArcade, "Executing arcade level %s", name.c_str());
 		changeScreenMode("320x200");
-		runArcade((ArcadeShooting *) _levels[name]);
+		runArcade((ArcadeShooting *)_levels[name]);
 	} else if (_levels[name]->type == CodeLevel) {
 		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());
 		// Resolution depends on the game
-		runCode((Code *) _levels[name]);
+		runCode((Code *)_levels[name]);
 	} else if (_levels[name]->type == SceneLevel) {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s with next level: %s", name.c_str(), _levels[name]->levelIfWin.c_str());
 		changeScreenMode("640x480");
-		runScene((Scene *) _levels[name]);
+		runScene((Scene *)_levels[name]);
 	} else {
 		error("Invalid level %s", name.c_str());
 	}
@@ -192,7 +192,7 @@ void HypnoEngine::runIntros(Videos &videos) {
 	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
 	stopSound();
-	//defaultCursor();
+	// defaultCursor();
 
 	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 		playVideo(*it);
@@ -251,7 +251,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) {
-	error("Function \"%s\" not implemented", __FUNCTION__); 
+	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
 void HypnoEngine::loadFont(const Filename &name) {
@@ -277,9 +277,9 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 		byte *array;
 		surf = decodeFrame(name, frameNumber, &array);
 		loadPalette(array, 0, 256);
-	} else 
+	} else
 		surf = decodeFrame(name, frameNumber);
-	
+
 	drawImage(*surf, x, y, transparent);
 
 	surf->free();
@@ -310,8 +310,8 @@ Common::File *HypnoEngine::fixSmackerHeader(Common::File *file) {
 		data[2] = 'K';
 		file->close();
 		delete file;
-		file = (Common::File *) new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
-	} else 
+		file = (Common::File *)new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
+	} else
 		file->seek(0);
 
 	return file;
@@ -338,8 +338,8 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	const Graphics::Surface *frame = vd.decodeNextFrame();
 	Graphics::Surface *rframe = frame->convertTo(frame->format, vd.getPalette());
 	if (palette != nullptr) {
-		byte *newPalette = (byte*) malloc(3*256); 
-		memcpy(newPalette, vd.getPalette(), 3*256);
+		byte *newPalette = (byte *)malloc(3 * 256);
+		memcpy(newPalette, vd.getPalette(), 3 * 256);
 		*palette = newPalette;
 	}
 
@@ -422,9 +422,9 @@ void HypnoEngine::loadPalette(const Common::String &fname) {
 		error("unable to find palette file %s", path.c_str());
 
 	debugC(1, kHypnoDebugMedia, "Loading palette from %s", path.c_str());
-	byte *videoPalette = (byte*) malloc(file->size());
+	byte *videoPalette = (byte *)malloc(file->size());
 	file->read(videoPalette, file->size());
-	g_system->getPaletteManager()->setPalette(videoPalette+8, 0, 256);
+	g_system->getPaletteManager()->setPalette(videoPalette + 8, 0, 256);
 }
 
 void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
@@ -491,14 +491,14 @@ void HypnoEngine::playVideo(MVideo &video) {
 		debugC(1, kHypnoDebugMedia, "Restarting %s!!!!", video.path.c_str());
 		delete video.decoder;
 	}
-	//error("Video %s was not previously closed and deallocated", video.path.c_str());
+	// error("Video %s was not previously closed and deallocated", video.path.c_str());
 
 	video.decoder = new HypnoSmackerDecoder();
 
 	if (!video.decoder->loadStream(file))
 		error("unable to load video %s", path.c_str());
-	
-	debugC(1, kHypnoDebugMedia, "audio track count: %d", video.decoder->getAudioTrackCount()); 
+
+	debugC(1, kHypnoDebugMedia, "audio track count: %d", video.decoder->getAudioTrackCount());
 	video.decoder->start();
 }
 
@@ -583,4 +583,3 @@ void HypnoEngine::removeTimers() {
 }
 
 } // End of namespace Hypno
-
