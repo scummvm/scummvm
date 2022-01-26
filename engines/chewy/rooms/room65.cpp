@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room65.h"
 
@@ -62,18 +61,17 @@ void Room65::entry() {
 void Room65::xit() {
 	_G(spieler).scrollx = _G(r65tmp_scrollx);
 	_G(spieler).scrolly = _G(r65tmp_scrolly);
+	set_person_rnr();
 	set_person_pos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
 	set_person_pos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
 	room_blk.AadLoad = true;
 	room_blk.AtsLoad = true;
 	_G(maus_links_click) = false;
-	set_person_rnr();
 }
 
-void Room65::atds_string_start(int16 dia_nr, int16 str_nr,
-	int16 person_nr, int16 mode) {
-	int16 ani_nr;
+void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {
 	if (!_G(spieler).PersonDiaRoom[person_nr]) {
+		int16 ani_nr;
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
@@ -94,6 +92,10 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr,
 					ani_nr = CH_JM_TALK;
 					break;
 
+				case CHEWY_ANI7:
+					ani_nr = 46;
+					break;
+
 				default:
 					ani_nr = -1;
 					break;
@@ -108,7 +110,17 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr,
 
 		case 1:
 			if (mode == AAD_STR_START) {
-				start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
+				switch (_G(spieler).mi[1]) {
+				case 2:
+					start_spz(50, 255, ANI_VOR, P_HOWARD);
+					break;
+				case 3:
+					start_spz(57, 255, ANI_VOR, P_HOWARD);
+					break;
+				default:
+					start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
+					break;
+				}
 			} else {
 				stop_spz();
 			}
@@ -122,6 +134,8 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr,
 			}
 			break;
 
+		default:
+			break;
 		}
 	} else if (mode == AAD_STR_START) {
 		det->start_detail(person_nr, 255, ANI_VOR);
