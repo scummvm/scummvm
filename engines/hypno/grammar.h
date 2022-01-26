@@ -299,6 +299,7 @@ public:
 		type = TalkAction;
 		boxPos = Common::Point(0, 0);
 		escape = false;
+		active = true;
 	}
 	TalkCommands commands;
 	bool active;
