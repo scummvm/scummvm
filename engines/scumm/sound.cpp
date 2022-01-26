@@ -230,9 +230,8 @@ void Sound::processSoundQueues() {
 	_soundQuePos = 0;
 }
 
-bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
-	trackNr = -1;
-	numLoops = -1;
+int Sound::getReplacementAudioTrack(int soundID) {
+	int trackNr = -1;
 
 	if (_vm->_game.id == GID_LOOM) {
 		if (isRolandLoom())
@@ -246,22 +245,12 @@ bool Sound::getReplacementAudioTrack(int soundID, int &trackNr, int &numLoops) {
 		} else if (soundID == 21) {
 			trackNr = 11;
 		}
-
-		// The following tracks should not loop:
-		//
-		//  1. Overture
-		//  6. Dragon abduction
-		// 10. Opening the sky
-		// 11. Unmaking the Loom
-
-		if (trackNr == 1 || trackNr == 6 || trackNr == 10 || trackNr == 11)
-			numLoops = 1;
 	}
 
 	if (trackNr != -1 && !_vm->existExtractedCDAudioFiles(trackNr))
 		trackNr = -1;
 
-	return trackNr != -1;
+	return trackNr;
 }
 
 void Sound::playSound(int soundID) {
@@ -272,12 +261,21 @@ void Sound::playSound(int soundID) {
 	int rate;
 
 	if (_useReplacementAudioTracks) {
-		int trackNr, numLoops;
-		if (getReplacementAudioTrack(soundID, trackNr, numLoops)) {
+		// Note that music does not loop. Probably because it's likely
+		// to be interrupted by sound effects before it's over anyway.
+		//
+		// In the FM Towns version, music does play continuously (each
+		// track has two versions), probably because CD audio and sound
+		// effects are played independent of each other. Personally I
+		// find the game harder when the music is allowed to drown out
+		// the sound effects.
+
+		int trackNr = getReplacementAudioTrack(soundID);
+		if (trackNr != -1) {
 			_currentCDSound = soundID;
 			_scummTicks = 0;
 			_musicTimer = 0;
-			g_system->getAudioCDManager()->play(trackNr, numLoops, 0, 0, true);
+			g_system->getAudioCDManager()->play(trackNr, 1, 0, 0, true);
 			return;
 		}
 	}

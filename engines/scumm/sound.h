@@ -156,7 +156,7 @@ protected:
 
 	virtual void processSoundQueues();
 
-	bool getReplacementAudioTrack(int soundID, int &trackNumber, int &numLoops);
+	int getReplacementAudioTrack(int soundID);
 };
 
 
