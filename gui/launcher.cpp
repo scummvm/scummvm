@@ -227,7 +227,7 @@ void LauncherDialog::build() {
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
 	new ButtonWidget(this, _title + ".OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
