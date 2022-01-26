@@ -221,7 +221,6 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
 	loadArcadeLevel("c100.mi_", "", "");
-	assert(0);
 
 	loadArcadeLevel("c200.mi_", "???", "");
 	loadArcadeLevel("c201.mi_", "???", "");

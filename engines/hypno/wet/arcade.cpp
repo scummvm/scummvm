@@ -50,6 +50,8 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 }
 
 void WetEngine::drawPlayer() {
+	if (_arcadeMode == "Y1")
+		return;
 
 	if (_playerFrameIdx < _playerFrameSep) {
 		// TARGET ACQUIRED frame
@@ -81,6 +83,9 @@ void WetEngine::drawPlayer() {
 }
 
 void WetEngine::drawHealth() {
+	if (_arcadeMode == "Y1")
+		return;
+
 	uint32 c = 253; //_pixelFormat.RGBToColor(252, 252, 0);
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;

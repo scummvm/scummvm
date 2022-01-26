@@ -56,10 +56,10 @@ using namespace Hypno;
 }
 
 %token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK
-%token<i> NUM
+%token<i> NUM BYTE
 // header
-%token COMMENT CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK ONTOK NTOK RTOK R0TOK ITOK JTOK ZTOK
+%token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK ENCTOK RESTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK ONTOK NTOK NSTOK RTOK R0TOK ITOK JTOK ZTOK
 
 // body
 %token FNTOK NONETOK A0TOK P0TOK WTOK
@@ -89,8 +89,10 @@ hline: 	CTOK NUM {
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
 	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
+	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
 	| OTOK NUM NUM { debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); }
 	| ONTOK NUM NUM { debugC(1, kHypnoDebugParser, "ON %d %d", $2, $3); }
+	| ONTOK NUM { debugC(1, kHypnoDebugParser, "ON %d", $2); }
 	| TPTOK FILENAME NUM FILENAME {
 		g_parsedArc->transitionVideo = $2;
 		g_parsedArc->transitionTime = $3;
@@ -105,6 +107,10 @@ hline: 	CTOK NUM {
 	| NTOK FILENAME  { 
 		g_parsedArc->background = $2; 
 		debugC(1, kHypnoDebugParser, "N %s", $2); 
+	}
+	| NSTOK FILENAME  { 
+		g_parsedArc->background = $2; 
+		debugC(1, kHypnoDebugParser, "N* %s", $2); 
 	}
 	| RTOK FILENAME  {
 		g_parsedArc->palette = $2; 
@@ -140,10 +146,17 @@ hline: 	CTOK NUM {
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
-	| HETOK C02TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
-	| HETOK CB3TOK NUM NUM { debugC(1, kHypnoDebugParser, "HE %d %d", $3, $4); }
-	| HTOK CB3TOK NUM NUM {
-		debugC(1, kHypnoDebugParser, "H %d %d", $3, $4); 
+	| HETOK BYTE NUM NUM { 
+		debugC(1, kHypnoDebugParser, "HE %x %d %d", $2, $3, $4); 
+	}
+	| HLTOK BYTE NUM NUM { 
+		debugC(1, kHypnoDebugParser, "HL %x %d %d", $2, $3, $4); 
+	}
+	| HUTOK BYTE NUM NUM { 
+		debugC(1, kHypnoDebugParser, "HU %x %d %d", $2, $3, $4); 
+	}
+	| HTOK BYTE NUM NUM {
+		debugC(1, kHypnoDebugParser, "H %x %d %d", $2, $3, $4); 
 	}
 	;
 

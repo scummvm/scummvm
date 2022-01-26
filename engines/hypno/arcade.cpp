@@ -45,6 +45,8 @@ void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String
 					break;
 				list += x;
 			}
+			if (list[1] == 'L')
+				list = "";
 			break; // No need to keep parsing
 		}
 	}
@@ -133,7 +135,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_maxHealth = _health;
 	changeCursor("arcade");
 	_shoots.clear();
-	_playerFrames = decodeFrames(arc->player);
+	if (!arc->player.empty())
+		_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
 	// Only used in spider
 	_currentPlayerPosition = PlayerLeft;

@@ -396,6 +396,16 @@ public:
 typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::Array<Common::String> Sounds;
 
+
+class Segment {
+public:
+	byte type;
+	uint32 start;
+	uint32 size;
+};
+
+typedef Common::Array<Segment> Segments;
+
 class ArcadeShooting : public Level {
 public:
 	ArcadeShooting()  {
@@ -406,6 +416,7 @@ public:
 	uint32 id;
 	Common::String mode;
 	uint32 transitionTime;
+	Segments segments; 
 
 	// Videos
 	Filename transitionVideo;

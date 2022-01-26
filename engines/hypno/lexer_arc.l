@@ -44,6 +44,8 @@ NONE						return NONETOK;
 C							return CTOK;
 D							return DTOK;
 HE							return HETOK;
+HL							return HLTOK;
+HU							return HUTOK;
 H							return HTOK;
 P							return PTOK;
 A							return ATOK;
@@ -51,6 +53,7 @@ V							return VTOK;
 O							return OTOK;
 O[0-1]						return ONTOK;
 N							return NTOK;
+N\*							return NSTOK;
 R							return RTOK;
 R0							return R0TOK;
 I							return ITOK;
@@ -75,12 +78,11 @@ Y[A-Z0-9]					HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 [A-Za-z_][A-Za-z_0-9]*		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
 [A-Za-z][A-Za-z_0-9\\\.]+	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
 [0-9][A-Za-z_0-9\\\.]+		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
+320\,200					return RESTOK;
 [\n|\r\n]					return RETTOK;
-\xb3						return CB3TOK;
-\x02						return C02TOK;
 \;.+\r						/* ignore comment */
 [ \t]+						/* ignore whitespace */;
-.							debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
+.							HYPNO_ARC_lval.i = HYPNO_ARC_text[0]; return BYTE;
 %%
 
 namespace Hypno {
