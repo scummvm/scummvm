@@ -81,7 +81,7 @@ int16 Room35::use_cat() {
 			auto_move(4, P_CHEWY);
 			_G(spieler).R35TransCat = true;
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
-			flic_cut(FCUT_045, FLC_MODE);
+			flic_cut(FCUT_045, CFO_MODE);
 			start_spz(CH_TRANS, 1, ANI_VOR, P_CHEWY);
 			start_aad_wait(94, -1);
 		} else if (is_cur_inventar(PUTENKEULE_INV)) {

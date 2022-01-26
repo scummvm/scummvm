@@ -201,7 +201,7 @@ int16 Room41::use_lola() {
 			_G(spieler).R41LolaOk = true;
 			auto_move(4, P_CHEWY);
 			det->disable_sound(6, 0);
-			flic_cut(FCUT_057, FLC_MODE);
+			flic_cut(FCUT_057, CFO_MODE);
 			set_person_pos(127, 112, P_CHEWY, P_LEFT);
 			det->stop_detail(6);
 

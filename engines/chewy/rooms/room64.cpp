@@ -39,7 +39,7 @@ void Room64::entry() {
 		chewy_entry();
 		if (_G(spieler).R63Feuer) {
 			flc->set_flic_user_function(cut_sev);
-			flic_cut(FCUT_078, FLC_MODE);
+			flic_cut(FCUT_078, CFO_MODE);
 			flc->remove_flic_user_function();
 			_G(spieler).R64ManWeg = true;
 			det->del_static_ani(1);

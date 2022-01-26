@@ -261,7 +261,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					flags.NoPalAfterFlc = true;
 					flc->set_flic_user_function(cut_serv);
 					det->show_static_spr(16);
-					flic_cut(FCUT_068, FLC_MODE);
+					flic_cut(FCUT_068, CFO_MODE);
 					flc->remove_flic_user_function();
 
 					det->hide_static_spr(16);

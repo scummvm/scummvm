@@ -111,7 +111,7 @@ short Room37::use_wippe() {
 			start_aad_wait(159, -1);
 			del_inventar(_G(spieler).AkInvent);
 			flc->set_flic_user_function(cut_serv1);
-			flic_cut(FCUT_047, FLC_MODE);
+			flic_cut(FCUT_047, CFO_MODE);
 			flc->remove_flic_user_function();
 			flags.NoScroll = false;
 			show_cur();
@@ -179,9 +179,9 @@ int16 Room37::use_glas() {
 			start_aad_wait(147, -1);
 			del_inventar(_G(spieler).AkInvent);
 			flc->set_flic_user_function(cut_serv2);
-			flic_cut(FCUT_048, FLC_MODE);
+			flic_cut(FCUT_048, CFO_MODE);
 			flc->remove_flic_user_function();
-			flic_cut(FCUT_049, FLC_MODE);
+			flic_cut(FCUT_049, CFO_MODE);
 			invent_2_slot(GEBISS_INV);
 			det->hide_static_spr(9);
 			atds->set_ats_str(250, 1, ATS_DATEI);
@@ -224,7 +224,7 @@ void Room37::dog_bell() {
 			start_detail_wait(6, 1, ANI_VOR);
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			det->start_detail(11, 255, ANI_VOR);
-			flic_cut(FCUT_050, FLC_MODE);
+			flic_cut(FCUT_050, CFO_MODE);
 			start_detail_wait(6, 1, ANI_RUECK);
 			det->stop_detail(11);
 			set_person_pos(326, 85, P_CHEWY, P_LEFT);
@@ -247,9 +247,9 @@ void Room37::dog_bell() {
 			det->del_static_ani(3);
 			det->stop_detail(3);
 			start_detail_wait(4, 1, ANI_VOR);
-			flic_cut(FCUT_051, FLC_MODE);
+			flic_cut(FCUT_051, CFO_MODE);
 			_G(spieler).scrollx = 104;
-			flic_cut(FCUT_054, FLC_MODE);
+			flic_cut(FCUT_054, CFO_MODE);
 			det->show_static_spr(0);
 
 			_G(spieler).R37HundScham = true;
@@ -290,7 +290,7 @@ void Room37::use_hahn() {
 		auto_move(7, P_CHEWY);
 		_G(spieler).R37TransHahn = true;
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
-		flic_cut(FCUT_052, FLC_MODE);
+		flic_cut(FCUT_052, CFO_MODE);
 		cur_2_inventory();
 		menu_item = CUR_TALK;
 		cursor_wahl(menu_item);
@@ -321,7 +321,7 @@ void Room37::use_hahn() {
 			det->hide_static_spr(0);
 			det->start_detail(10, 10, ANI_VOR);
 			auto_move(8, P_CHEWY);
-			flic_cut(FCUT_053, FLC_MODE);
+			flic_cut(FCUT_053, CFO_MODE);
 			det->stop_detail(10);
 			_G(spieler).scrollx = 320;
 			flags.NoScroll = false;

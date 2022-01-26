@@ -85,9 +85,10 @@ void Room45::xit(int16 eib_nr) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 		}
 	}
+
 	if (eib_nr == 87) {
 		flags.NoPalAfterFlc = true;
-		flic_cut(FCUT_073, FLC_MODE);
+		flic_cut(FCUT_073, CFO_MODE);
 	}
 }
 
