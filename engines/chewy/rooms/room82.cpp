@@ -111,23 +111,23 @@ void Room82::talk1() {
 	if (_G(spieler).flags30_40)
 		return;
 
-	int edi, esi; //TODO: Rename those variables when Room66 is reversed
+	int transitionDiaNr, transitionAniNr;
 	if (!_G(spieler).flags30_10) {
-		edi = 446;
-		esi = 8;
+		transitionDiaNr = 446;
+		transitionAniNr = 8;
 	} else if (!_G(spieler).flags30_20) {
-		edi = 454;
-		esi = 7;
+		transitionDiaNr = 454;
+		transitionAniNr = 7;
 	} else {
-		edi = 449;
-		esi = 7;
+		transitionDiaNr = 449;
+		transitionAniNr = 7;
 
 		_G(spieler).flags30_40 = true;
 		atds->set_ats_str(473, 1, ATS_DATEI);
 		atds->set_ats_str(467, 1, ATS_DATEI);		
 	}
 
-	Room66::proc8(2, 7, esi, edi);
+	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);
 }
 
 void Room82::talk2() {
