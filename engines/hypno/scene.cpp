@@ -286,7 +286,7 @@ void HypnoEngine::runScene(Scene *scene) {
 				runMenu(stack.back());
 				uint32 minutes = _countdown / 60;
 				uint32 seconds = _countdown % 60;
-				_font->drawString(_compositeSurface, Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
+				drawString(Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
 				drawScreen();
 			} else {
 				assert(!scene->levelIfLose.empty());
