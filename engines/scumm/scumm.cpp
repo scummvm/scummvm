@@ -1316,6 +1316,13 @@ Common::Error ScummEngine::init() {
 
 	Common::String macResourceFile;
 
+	if (_game.id == GID_LOOM && _game.version == 3 && _game.platform == Common::kPlatformDOS) {
+		// There are several files in the full game that don't exist
+		// in either demo, but we look for just one of them.
+		if (!Common::File::exists("06.LFL"))
+			_game.features |= GF_DEMO;
+	}
+
 	if (_game.platform == Common::kPlatformMacintosh) {
 		Common::MacResManager resource;
 
@@ -2110,11 +2117,9 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 	   &&  (_game.platform == Common::kPlatformDOS) && _sound->_musicType == MDT_MIDI) {
 		Common::String fileName;
 		bool missingFile = false;
-		if (_game.id == GID_LOOM) {
+		if (_game.id == GID_LOOM && !(_game.features & GF_DEMO)) {
 			Common::File f;
-			// The Roland Update does have an 85.LFL, but we don't
-			// test for it since the demo doesn't have it.
-			for (char c = '2'; c <= '4'; c++) {
+			for (char c = '2'; c <= '5'; c++) {
 				fileName = "8";
 				fileName += c;
 				fileName += ".LFL";
