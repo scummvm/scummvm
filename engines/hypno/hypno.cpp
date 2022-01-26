@@ -299,17 +299,16 @@ Common::File *HypnoEngine::fixSmackerHeader(Common::File *file) {
 	magic += file->readByte();
 
 	if (magic == "HYP2") {
-		ByteArray *data = new ByteArray();
-		data->push_back('S');
-		data->push_back('M');
-		data->push_back('K');
-		data->push_back('2');
-		while (!file->eos()) {
-			data->push_back(file->readByte());
-		}
+		uint32 size = file->size();
+		byte *data = (byte *)malloc(size);
+		file->seek(0);
+		file->read(data, size);
+		data[0] = 'S';
+		data[1] = 'M';
+		data[2] = 'K';
 		file->close();
 		delete file;
-		file = (Common::File *) new Common::MemoryReadStream(data->data(), data->size());
+		file = (Common::File *) new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 	} else 
 		file->seek(0);
 
