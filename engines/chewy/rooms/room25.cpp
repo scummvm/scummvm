@@ -105,7 +105,7 @@ int16 Room25::gleiter_loesch() {
 			action_flag = true;
 			_G(spieler).R25GleiteLoesch = true;
 			auto_move(2, P_CHEWY);
-			flic_cut(FCUT_030, FLC_MODE);
+			flic_cut(FCUT_030, CFO_MODE);
 			obj->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			atds->set_ats_str(219, 1, ATS_DATEI);
 			atds->set_ats_str(187, 1, ATS_DATEI);
