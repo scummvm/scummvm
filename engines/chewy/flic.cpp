@@ -117,26 +117,24 @@ void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 	}
 }
 
-void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
+int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	uint16 i;
 	size_t tmp_size;
-	char key;
 	float start, ende;
-	//bool trace_mode;
+	int16 ret = 0;
 
 	load_puffer = load_p;
 	virt_screen = vscreen + 4;
 
 	if (flic_header.load(rs)) {
 		if (flic_header.type == FLC) {
-			key = 0;
 			//trace_mode = false;
 			fade_flag = false;
 			fade_delay = 0;
 			cls_flag = false;
 			CurrentFrame = 0;
-			for (i = 0; (i < flic_header.frames) && (!modul) && (key != 27); i++) {
+			for (i = 0; (i < flic_header.frames) && (!modul) && (ret >= 0); i++) {
 				if (!frame_header.load(rs)) {
 					modul = DATEI;
 					fcode = READFEHLER;
@@ -151,7 +149,7 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 								modul = DATEI;
 								fcode = READFEHLER;
 							} else {
-								decode_frame();
+								ret = decode_frame();
 							}
 						}
 
@@ -167,13 +165,16 @@ void flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 			}
 		}
 	}
+
+	return ret;
 }
 
-void flic::decode_frame() {
+int16 flic::decode_frame() {
 	uint16 i;
 	byte *tmp_buf;
 	bool update_flag;
 	ChunkHead chunk_header;
+	int16 action_ret = 0;
 
 	tmp_buf = load_puffer;
 	update_flag = false;
@@ -240,7 +241,7 @@ void flic::decode_frame() {
 		if (update_flag != false) {
 			if (flic_user) {
 				out->setze_zeiger(virt_screen);
-				flic_user(CurrentFrame);
+				action_ret = flic_user(CurrentFrame);
 				out->setze_zeiger(nullptr);
 			}
 			out->back2screen(virt_screen - 4);
@@ -250,6 +251,8 @@ void flic::decode_frame() {
 			}
 		}
 	}
+
+	return action_ret;
 }
 
 void flic::col256_chunk(byte *tmp) {
@@ -400,12 +403,10 @@ void flic::delta_chunk_byte(byte *tmp) {
 	}
 }
 
-int flic::custom_play(CustomInfo *ci) {
+int16 flic::custom_play(CustomInfo *ci) {
 	uint16 i;
 	int16 ret = 0;
-	char key;
 	uint32 start, ende;
-	//bool trace_mode;
 
 	Cinfo = ci;
 	load_puffer = ci->TempArea;
@@ -421,15 +422,12 @@ int flic::custom_play(CustomInfo *ci) {
 	if (rs) {
 		if (custom_header.load(rs)) {
 			if (!scumm_strnicmp(custom_header.id, "CFO\0", 4)) {
-				key = 0;
-				//trace_mode = false;
-
 				cls_flag = false;
 				fade_flag = false;
 				fade_delay = 0;
 				CurrentFrame = 0;
 
-				for (i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0) && (key != 27); i++) {
+				for (i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0); i++) {
 					if (!custom_frame.load(rs)) {
 						modul = DATEI;
 						fcode = READFEHLER;
@@ -441,8 +439,7 @@ int flic::custom_play(CustomInfo *ci) {
 									modul = DATEI;
 									fcode = READFEHLER;
 								} else {
-									decode_cframe();
-									ret = modul ? -1 : 0;
+									ret = decode_cframe();
 								}
 							}
 
@@ -751,13 +748,14 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	}
 }
 
-void flic::decode_cframe() {
+int16 flic::decode_cframe() {
 	ChunkHead chunk_header;
 	uint16 i;
 	byte *tmp_buf;
 	int16 update_flag;
 	tmp_buf = load_puffer;
 	update_flag = false;
+	int16 action_ret = 0;
 
 	if (custom_frame.chunks != 0) {
 		for (i = 0; i < custom_frame.chunks; i++) {
@@ -821,7 +819,7 @@ void flic::decode_cframe() {
 			if (custom_user) {
 				out->back2back(virt_screen, load_puffer);
 				out->setze_zeiger(virt_screen);
-				custom_user(CurrentFrame);
+				action_ret = custom_user(CurrentFrame);
 				out->setze_zeiger(nullptr);
 				out->back2screen(virt_screen - 4);
 				out->back2back(load_puffer, virt_screen);
@@ -833,6 +831,8 @@ void flic::decode_cframe() {
 			}
 		}
 	}
+
+	return action_ret;
 }
 
 void flic::free_sound(int16 nr) {
