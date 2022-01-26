@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room62.h"
 
@@ -45,7 +44,7 @@ void Room62::entry() {
 		det->stop_detail(6);
 		det->set_static_ani(5, -1);
 		go_auto_xy(199, 59, P_HOWARD, ANI_WAIT);
-		set_person_spr(P_LEFT, P_HOWARD);
+		set_person_spr(0, P_HOWARD);
 		det->del_static_ani(5);
 		det->start_detail(5, 255, ANI_VOR);
 		start_aad_wait(346, -1);
