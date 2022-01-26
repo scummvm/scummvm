@@ -367,7 +367,10 @@ short Room18::use_cart_moni() {
 				start_aad_wait(120, -1);
 			}
 		}
+
+		show_cur();
 	}
+
 	return action_flag;
 }
 
