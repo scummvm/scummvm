@@ -120,7 +120,7 @@ bool Sound::isRolandLoom() const {
 }
 
 void Sound::updateMusicTimer(int ticks) {
-	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56);
+	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56 && !(_vm->_game.features & GF_DEMO));
 
 	_scummTicks += ticks;
 
@@ -234,16 +234,45 @@ int Sound::getReplacementAudioTrack(int soundID) {
 	int trackNr = -1;
 
 	if (_vm->_game.id == GID_LOOM) {
-		if (isRolandLoom())
-			soundID -= 32;
+		if (_vm->_game.features & GF_DEMO) {
+			// If I understand correctly, the shorter demo only
+			// has the Loom intro music. The longer demo has a
+			// couple of tracks that it will cycle through if
+			// you leave the demo running.
 
-		// The first track, the Overture, only exists as a Roland track.
-		if (soundID >= 24 && soundID <= 32) {
-			trackNr = soundID - 23;
-		} else if (soundID == 19) {
-			trackNr = 10;
-		} else if (soundID == 21) {
-			trackNr = 11;
+			if (isRolandLoom())
+				soundID -= 10;
+
+			switch (soundID) {
+			case 19:
+				trackNr = 2;
+				break;
+			case 20:
+				trackNr = 4;
+				break;
+			case 21:
+				trackNr = 7;
+				break;
+			case 23:
+				trackNr = 8;
+				break;
+			case 26:
+				trackNr = 3;
+				break;
+			}
+		} else {
+			if (isRolandLoom())
+				soundID -= 32;
+
+			// The first track, the Overture, only exists as a
+			// Roland track.
+			if (soundID >= 24 && soundID <= 32) {
+				trackNr = soundID - 23;
+			} else if (soundID == 19) {
+				trackNr = 10;
+			} else if (soundID == 21) {
+				trackNr = 11;
+			}
 		}
 	}
 
