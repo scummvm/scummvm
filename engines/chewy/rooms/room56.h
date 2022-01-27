@@ -39,6 +39,8 @@ public:
 	static void talk_man();
 	static int16 use_man();
 	static int16 use_kneipe();
+
+	static int16 proc1(int16 key);
 };
 
 } // namespace Rooms
