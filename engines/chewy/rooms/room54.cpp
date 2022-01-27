@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room54.h"
 
@@ -48,7 +47,7 @@ void Room54::entry(int16 eib_nr) {
 			_G(spieler).R48TaxiEntry = false;
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
-				_G(spieler).R54HowardVorne = false;
+				_G(spieler).R54HowardVorne = 0;
 				set_person_pos(290, 61, P_HOWARD, P_RIGHT);
 			}
 
@@ -62,7 +61,7 @@ void Room54::entry(int16 eib_nr) {
 
 		} else if (eib_nr == 90 || _G(spieler).R55ExitDia) {
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
-				_G(spieler).R54HowardVorne = false;
+				_G(spieler).R54HowardVorne = 0;
 				set_person_pos(212, 61, P_HOWARD, P_RIGHT);
 			}
 
@@ -92,14 +91,12 @@ void Room54::xit(int16 eib_nr) {
 }
 
 void Room54::setup_func() {
-	int16 x, y;
-	int16 ch_x;
-
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 		calc_person_look();
-		ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
 		if (_G(spieler).R54HowardVorne != 255) {
+			const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+			int16 x, y;
 			if (_G(spieler).R54HowardVorne) {
 				if (ch_x < 218) {
 					x = 150;
@@ -126,7 +123,6 @@ void Room54::setup_func() {
 }
 
 int16 Room54::use_schalter() {
-	int16 aad_nr;
 	int16 action_ret = false;
 
 	if (!_G(spieler).inv_cur) {
@@ -151,6 +147,7 @@ int16 Room54::use_schalter() {
 			det->stop_detail(3);
 			++_G(spieler).R54LiftCount;
 
+			int16 aad_nr;
 			if (_G(spieler).R54LiftCount < 3) {
 				start_detail_wait(2, 1, ANI_VOR);
 				det->hide_static_spr(0);
@@ -173,7 +170,7 @@ int16 Room54::use_schalter() {
 			}
 
 			start_aad_wait(aad_nr, -1);
-			_G(spieler).R54HowardVorne = false;
+			_G(spieler).R54HowardVorne = 0;
 
 		} else {
 			start_aad_wait(297, -1);
@@ -189,14 +186,16 @@ void Room54::talk_verkauf() {
 	hide_cur();
 
 	if (!_G(spieler).R54HotDogOk) {
-		if (_G(spieler).AkInvent == DOLLAR175_INV)
-			del_inventar(DOLLAR175_INV);
-		else
-			del_invent_slot(DOLLAR175_INV);
+		if (_G(spieler).R45MagOk) {
+			if (_G(spieler).AkInvent == DOLLAR175_INV)
+				del_inventar(DOLLAR175_INV);
+			else
+				remove_inventory(DOLLAR175_INV);
+		}
 
 		_G(spieler).R54HotDogOk = true;
 		auto_move(3, P_CHEWY);
-		_G(spieler).R54HowardVorne = true;
+		_G(spieler).R54HowardVorne = 1;
 		start_aad_wait(299, -1);
 		room->set_timer_status(6, TIMER_STOP);
 		det->del_static_ani(6);
@@ -217,7 +216,6 @@ void Room54::talk_verkauf() {
 		start_aad(_G(spieler).R45MagOk ? 312 : 578, -1);
 		obj->add_inventar(BURGER_INV, &room_blk);
 		inventory_2_cur(BURGER_INV);
-
 	} else {
 		start_aad_wait(313, -1);
 	}
@@ -237,7 +235,7 @@ int16 Room54::use_zelle() {
 				start_aad_wait(318, -1);
 			} else {
 				auto_move(5, P_CHEWY);
-				_G(spieler).R54HowardVorne = true;
+				_G(spieler).R54HowardVorne = 1;
 				SetUpScreenFunc = nullptr;
 				auto_scroll(176, 0);
 				go_auto_xy(239, 101, P_HOWARD, ANI_WAIT);
@@ -263,7 +261,7 @@ int16 Room54::use_zelle() {
 	} else {
 		action_ret = true;
 		auto_move(6, P_CHEWY);
-		_G(spieler).R54HowardVorne = true;
+		_G(spieler).R54HowardVorne = 1;
 		start_aad_wait(319, -1);
 	}
 
@@ -277,9 +275,6 @@ int16 Room54::cut_serv(int16 frame) {
 }
 
 int16 Room54::use_azug() {
-	int16 ch_y;
-	int16 ay;
-	int16 delay;
 	int16 action_ret = false;
 
 	if (!_G(spieler).inv_cur) {
@@ -289,7 +284,7 @@ int16 Room54::use_azug() {
 		if (!_G(spieler).R54LiftOk) {
 			if (_G(spieler).R54FputzerWeg) {
 				auto_move(8, P_CHEWY);
-				_G(spieler).R54HowardVorne = false;
+				_G(spieler).R54HowardVorne = 0;
 				start_aad_wait(298, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				det->show_static_spr(12);
@@ -299,9 +294,9 @@ int16 Room54::use_azug() {
 				det->enable_sound(1, 0);
 				det->play_sound(1, 0);
 
-				ch_y = 68;
-				ay = 0;
-				delay = 0;
+				int16 ch_y = 68;
+				int16 ay = 0;
+				int16 delay = 0;
 
 				while (ch_y > -48) {
 					det->set_static_pos(12, 125, ch_y, false, false);
@@ -332,10 +327,6 @@ int16 Room54::use_azug() {
 }
 
 void Room54::aufzug_ab() {
-	int16 ch_y;
-	int16 ay;
-	int16 delay;
-
 	set_person_pos(91, 62, P_HOWARD, P_RIGHT);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).scrollx = 0;
@@ -344,9 +335,9 @@ void Room54::aufzug_ab() {
 	det->enable_sound(1, 0);
 	det->play_sound(1, 0);
 
-	ch_y = -40;
-	ay = -108;
-	delay = 0;
+	int16 ch_y = -40;
+	int16 ay = -108;
+	int16 delay = 0;
 
 	while (ch_y < 68) {
 		det->set_static_pos(12, 125, ch_y, false, false);
@@ -384,7 +375,7 @@ short Room54::use_taxi() {
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 			if (_G(spieler).R54HowardVorne) {
-				_G(spieler).R54HowardVorne = false;
+				_G(spieler).R54HowardVorne = 0;
 				go_auto_xy(290, 61, P_HOWARD, ANI_WAIT);
 			}
 
