@@ -314,7 +314,7 @@ void new_game() {
 		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
 
 	AkChewyTaf = 0;
-	load_chewy_taf(1);
+	load_chewy_taf(CHEWY_NORMAL);
 }
 
 static void font_load() {

@@ -1551,7 +1551,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			if (mode == AAD_STR_START) {
 				if (_G(spieler).R28ChewyPump)
 					ani_nr = CH_PUMP_TALK;
-				else if (_G(spieler).ChewyAni == 5)
+				else if (_G(spieler).ChewyAni == CHEWY_ROCKER)
 					ani_nr = CH_ROCK_TALK1;
 				else
 					ani_nr = CH_TALK3;
@@ -2424,7 +2424,7 @@ int16 calc_person_txt(int16 p_nr) {
 		case CUR_USE:
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 40:
-				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != 5) {
+				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 					menu_item = CUR_HOWARD;
 					cursor_wahl(menu_item);
 					txt_nr = 30000;
@@ -2738,7 +2738,7 @@ void calc_person_dia(int16 p_nr) {
 
 		case 69:
 			if (p_nr == P_HOWARD) {
-				if (_G(spieler).ChewyAni != 5)
+				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
 					_G(spieler).PersonDia[p_nr] = 565;
 				else
 					flag = true;

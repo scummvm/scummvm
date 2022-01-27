@@ -208,7 +208,7 @@ int16 Room39::use_tv() {
 		}
 
 		action_flag = true;
-	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != 5) {
+	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			_G(spieler).R39TransMensch = true;

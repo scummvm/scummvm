@@ -126,7 +126,7 @@ void Room40::xit(int16 eib_nr) {
 				flags.NoPalAfterFlc = true;
 				flic_cut(FCUT_073, CFO_MODE);
 
-				if (_G(spieler).ChewyAni != 5)
+				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
 					_G(spieler).PersonGlobalDia[1] = 10023;
 
 				cur_2_inventory();

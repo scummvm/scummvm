@@ -123,7 +123,7 @@ void Room56::entry() {
 					out->cls();
 					flic_cut(113, CFO_MODE);
 					_G(spieler).PersonRoomNr[P_HOWARD] = 89;
-					load_chewy_taf(1);
+					load_chewy_taf(CHEWY_NORMAL);
 					_G(spieler).mi[P_HOWARD] = 0;
 					_G(spieler).SVal2 = 0;
 					_G(spieler).flags35_2 = true;

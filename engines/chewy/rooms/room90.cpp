@@ -213,7 +213,7 @@ void Room90::proc2() {
 
 	if (diaNr != -1) {
 		set_up_screen(DO_SETUP);
-		if (_G(spieler).ChewyAni == 7) {
+		if (_G(spieler).ChewyAni == CHEWY_ANI7) {
 			start_spz_wait(66, 1, false, P_CHEWY);
 			start_spz(67, 255, false, P_CHEWY);
 		} else {
@@ -237,7 +237,7 @@ int Room90::proc3() {
 	start_aad_wait(515, -1);
 	start_spz_wait(14, 1, false, P_CHEWY);
 	start_spz_wait(43, 1, false, P_CHEWY);
-	load_chewy_taf(7);
+	load_chewy_taf(CHEWY_ANI7);
 
 	while (spieler_vector[P_HOWARD].Xypos[0] != 176)
 		set_up_screen(DO_SETUP);
