@@ -14,7 +14,7 @@ This folder contains a script to help build scummvm with Emscripten, it automati
 
 `emscripten/build.sh` needs to be run from the root of the project. 
 ```Shell
-./dists/emscripten/build.sh libs|configure|make|data|dist|all|clean
+./dists/emscripten/build.sh libs|configure|make|data|dist|all|clean|run
 ```
 It accepts a single parameter with 7 valid commands:
 *   `libs`: Download and compile the required 3rd-party libraries required to build certain engines (libmad, a52dec etc)
@@ -24,6 +24,7 @@ It accepts a single parameter with 7 valid commands:
 *   `dist`: Copy all files into a single build-emscripten folder to bring it all together
 *   `all`: Run all of the above commands
 *   `clean`: Remove all object files, built libs, bundled data etc
+*   `run`: Starts and hosts ScummVM on localhost:8080
 
 Independent of the command executed, the script sets up a pre-defined emsdk environment in the subfolder `./dists/emscripten/build.sh`
 
