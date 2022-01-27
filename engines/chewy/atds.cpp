@@ -1135,18 +1135,19 @@ int16 atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
 
 void atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 	char *start_ptr;
-	int16 *pos;
+	uint16 *pos;
 	int16 ende;
 	int16 ende1;
 	start_ptr = *ptr;
 	ende = 0;
+
 	if (start_ptr[0] == (char)BLOCKENDE &&
 	        start_ptr[1] == (char)BLOCKENDE &&
 	        start_ptr[2] == (char)BLOCKENDE) {
 		*ptr = 0;
 	} else {
 		while (!ende) {
-			pos = (int16 *)start_ptr;
+			pos = (uint16 *)start_ptr;
 			if (pos[0] == dia_nr) {
 				ende = 1;
 				aadv.TxtHeader = (AadTxtHeader *)start_ptr;
@@ -1154,18 +1155,22 @@ void atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 			} else {
 				start_ptr += sizeof(AadTxtHeader) + pos[1] * sizeof(AadInfo);
 				ende1 = 0;
-				while (!ende1) {
-					if (*start_ptr == ATDS_END) {
+				for (; !ende1; ++start_ptr) {
+					if (*start_ptr != ATDS_END_TEXT)
+						continue;
+					if (start_ptr[1] == ATDS_END) {
+						++start_ptr;
+
 						if (start_ptr[1] == (char)BLOCKENDE &&
 						        start_ptr[2] == (char)BLOCKENDE &&
 						        start_ptr[3] == (char)BLOCKENDE) {
 							ende = 1;
 							ende1 = 1;
 							*ptr = 0;
-						} else
+						} else {
 							ende1 = 1;
+						}
 					}
-					++start_ptr;
 				}
 			}
 		}
