@@ -685,44 +685,54 @@ bool AGOSEngine::processSpecialKeys() {
 		break;
 	case 'v':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
-			if (_subtitles)
+			if (_subtitles) {
 				_speech = !_speech;
+				syncSoundSettingsIntern();
+			}
 		}
 		break;
 	case '+':
-		if (_midiEnabled) {
-			_midi->setVolume(_midi->getMusicVolume() + 16, _midi->getSFXVolume() + 16);
+		if (_musicMuted) {
+			_musicMuted = false;
+			_musicVolume = 16;
+		} else {
+			_musicVolume = CLIP(_musicVolume + 16, 0, 256);
 		}
-		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
-		syncSoundSettings();
+		syncSoundSettingsIntern();
 		break;
 	case '-':
-		if (_midiEnabled) {
-			_midi->setVolume(_midi->getMusicVolume() - 16, _midi->getSFXVolume() - 16);
+		if (!_musicMuted) {
+			_musicVolume = CLIP(_musicVolume - 16, 0, 256);
+			if (_musicVolume == 0) {
+				_musicMuted = true;
+			}
+			syncSoundSettingsIntern();
 		}
-		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
-		syncSoundSettings();
 		break;
 	case 'm':
-		_musicPaused = !_musicPaused;
-		if (_midiEnabled) {
-			_midi->pause(_musicPaused);
-		}
-		_mixer->pauseHandle(_modHandle, _musicPaused);
-		syncSoundSettings();
+		_musicMuted = !_musicMuted;
+		if (!_musicMuted && _musicVolume == 0)
+			// If last used music volume is 0 when unmuting, use ScummVM
+			// default volume.
+			_musicVolume = 192;
+		syncSoundSettingsIntern();
 		break;
 	case 's':
-		if (getGameId() == GID_SIMON1DOS) {
-			_midi->_enable_sfx = !_midi->_enable_sfx;
-		} else {
-			_effectsPaused = !_effectsPaused;
-			_sound->effectsPause(_effectsPaused);
-		}
+		_effectsMuted = !_effectsMuted;
+		if (!_effectsMuted && _effectsVolume == 0)
+			// If last used SFX volume is 0 when unmuting, use ScummVM
+			// default volume.
+			_effectsVolume = 192;
+		syncSoundSettingsIntern();
 		break;
 	case 'b':
 		if (getGameType() == GType_SIMON2) {
-			_ambientPaused = !_ambientPaused;
-			_sound->ambientPause(_ambientPaused);
+			_ambientMuted = !_ambientMuted;
+			if (!_ambientMuted && _effectsVolume == 0)
+				// If last used SFX volume is 0 when unmuting, use ScummVM
+				// default volume.
+				_effectsVolume = 192;
+			syncSoundSettingsIntern();
 		}
 		break;
 	default:

@@ -199,6 +199,10 @@ class Debugger;
 
 class AGOSEngine : public Engine {
 protected:
+	// List of Simon 1 DOS floppy SFX which use rhythm notes.
+	static const byte SIMON1_RHYTHM_SFX[];
+
+protected:
 	friend class Debugger;
 
 	// Engine APIs
@@ -214,6 +218,9 @@ protected:
 
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
+	// Applies AGOS engine internal sound settings to ConfigManager, digital
+	// sound channels and MIDI.
+	void syncSoundSettingsIntern();
 	void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
@@ -578,9 +585,15 @@ protected:
 
 	Sound *_sound;
 
-	bool _effectsPaused;
-	bool _ambientPaused;
-	bool _musicPaused;
+	bool _effectsMuted;
+	bool _ambientMuted;
+	bool _musicMuted;
+	// The current music volume, or the last used music volume if music is
+	// currently muted.
+	uint16 _musicVolume;
+	// The current SFX and ambient volume, or the last used volume if SFX
+	// and/or ambient sounds are currently muted.
+	uint16 _effectsVolume;
 
 	uint8 _saveGameNameLen;
 	uint16 _saveLoadRowCurPos;
@@ -1811,6 +1824,10 @@ protected:
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
+private:
+	// Simon 1 DOS CD and Acorn CD GMF data sizes.
+	static const int SIMON1_GMF_SIZE[];
+
 public:
 	AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon1();
