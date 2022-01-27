@@ -85,11 +85,12 @@ void Room37::gedAction(int index) {
 }
 
 void Room37::setup_func() {
-	if (_G(maus_links_click) &&
-			!_G(spieler).R37Kloppe &&
+	if (_G(maus_links_click) && !_G(spieler).R37Kloppe &&
 			menu_item == CUR_WALK) {
 		if ((minfo.x + _G(spieler).scrollx > 380 && minfo.y > 120) ||
 			(minfo.x + _G(spieler).scrollx > 482)) {
+			// Don't allow moving into chicken coop area
+			// until the rooster has left
 			auto_move(7, P_CHEWY);
 			_G(maus_links_click) = false;
 		}
@@ -323,6 +324,7 @@ void Room37::use_hahn() {
 			auto_move(8, P_CHEWY);
 			flic_cut(FCUT_053, CFO_MODE);
 			det->stop_detail(10);
+
 			_G(spieler).scrollx = 320;
 			flags.NoScroll = false;
 			atds->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);

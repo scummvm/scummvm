@@ -71,6 +71,7 @@ void movclass::goto_xy(GotoPkt *gp) {
 	plot_delay = 20;
 	calc_xy();
 	plot_delay = 0;
+
 	start_feld = get_feld_nr(gpkt->Sx, gpkt->Sy);
 	ziel_feld = get_feld_nr(gpkt->Dx, gpkt->Dy);
 	tmp = ziel_feld;
