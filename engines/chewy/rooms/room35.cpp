@@ -75,7 +75,7 @@ int16 Room35::use_cat() {
 	int16 action_flag = false;
 	hide_cur();
 
-	if (_G(spieler).ChewyAni != 5) {
+	if (_G(spieler).ChewyAni != CHEWY_ROCKER) {
 		if (is_cur_inventar(TRANSLATOR_INV)) {
 			action_flag = true;
 			auto_move(4, P_CHEWY);
