@@ -66,7 +66,7 @@ void Room53::talk_man() {
 	det->del_static_ani(1);
 	start_detail_wait(2, 1, ANI_VOR);
 	det->set_static_ani(3, -1);
-	start_aad_wait(269 + (int16)_G(spieler).R53Kostuem, -1);
+	start_aad_wait(269 + (_G(spieler).R53Kostuem ? 1 : 0), -1);
 	det->del_static_ani(3);
 	start_detail_wait(4, 1, ANI_VOR);
 	man_go();
