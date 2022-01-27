@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room52.h"
 
@@ -69,7 +68,6 @@ void Room52::gedAction(int index) {
 }
 
 int16 Room52::use_hot_dog() {
-	int16 i;
 	int16 action_ret = false;
 	hide_cur();
 
@@ -98,7 +96,7 @@ int16 Room52::use_hot_dog() {
 		det->play_sound(7, 0);
 		det->start_detail(8, 255, ANI_VOR);
 
-		for (i = 0; i < 5; i++) {
+		for (int16 i = 0; i < 5; i++) {
 			wait_show_screen(20);
 			det->stop_detail(2 + i);
 		}
@@ -120,16 +118,14 @@ int16 Room52::use_hot_dog() {
 }
 
 void Room52::plot_armee(int16 frame) {
-	int16 i;
-	for (i = 0; i < 5; i++) {
+	for (int16 i = 0; i < 5; i++) {
 		wait_show_screen(frame);
 		det->start_detail(2 + i, 255, ANI_VOR);
 	}
 }
 
 void Room52::kaker_platt() {
-	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk &&
-			!_G(spieler).R52KakerWeg && !flags.ExitMov) {
+	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !flags.ExitMov) {
 		_G(spieler).R52KakerJoke = true;
 		stop_person(P_CHEWY);
 		hide_cur();
@@ -139,21 +135,10 @@ void Room52::kaker_platt() {
 }
 
 void Room52::setup_func() {
-	int16 x, y;
-	int16 ch_y;
-
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
-		x = 1;
-		ch_y = spieler_vector[P_CHEWY].Xypos[1];
-
-		if (ch_y < 97) {
-			y = 44;
-		} else {
-			y = 87;
-		}
-
-		go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		const int16 y = (spieler_vector[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
+		go_auto_xy(1, y, P_HOWARD, ANI_GO);
 	}
 }
 
