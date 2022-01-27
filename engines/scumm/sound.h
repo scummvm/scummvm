@@ -59,8 +59,6 @@ protected:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	bool _isRolandLoom;
-
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos;
 
