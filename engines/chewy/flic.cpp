@@ -450,6 +450,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 							do {
 								ende = g_system->getMillis();
 								g_events->update();
+								SHOULD_QUIT_RETURN0;
 							} while (ende <= start);
 							++CurrentFrame;
 
