@@ -228,7 +228,7 @@ void LauncherDialog::build() {
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
-	if (g_system->getOverlayWidth() > 440)
+	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 	else
 		new ButtonWidget(this, _title + ".OptionsButton", _c("Global ~O~pts...", "lowres"), _("Change global ScummVM options"), kOptionsCmd);
@@ -982,7 +982,7 @@ void LauncherSimple::build() {
 	_loadButton = loadButton;
 
 	// Add edit button
-	if (g_system->getOverlayWidth() > 410) {
+	if (g_system->getOverlayWidth() > 320) {
 		_editButton =
 			new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options..."), _("Change game options"), kEditGameCmd);
 	} else {
