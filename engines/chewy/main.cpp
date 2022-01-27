@@ -1297,10 +1297,11 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 			spieler_mi[p_nr].XyzStart[1] = spieler_vector[p_nr].Xypos[1];
 			spieler_mi[p_nr].XyzEnd[0] = gpkt.Dx - spieler_mi[p_nr].HotX;
 			spieler_mi[p_nr].XyzEnd[1] = gpkt.Dy - spieler_mi[p_nr].HotY;
-			mov->get_mov_vector((int16
-			                     *)spieler_mi[p_nr].XyzStart, spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]);
+			mov->get_mov_vector((int16 *)spieler_mi[p_nr].XyzStart,
+				spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]);
 			get_phase(&spieler_vector[p_nr], &spieler_mi[p_nr]);
 			spieler_vector[p_nr].DelayCount = 0;
+
 			if (mov->auto_go_status()) {
 				while (mov->auto_go_status()) {
 					if (SHOULD_QUIT)

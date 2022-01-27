@@ -268,7 +268,7 @@ int16 ged_user_func(int16 idx_nr) {
 			break;
 
 		case 37:
-			if (!_G(spieler).flags37_1)
+			if (!_G(spieler).R37Kloppe)
 				idx_nr = 0;
 			break;
 
@@ -291,7 +291,8 @@ int16 ged_user_func(int16 idx_nr) {
 
 	case 42:
 		if (_G(spieler).PersonRoomNr[P_CHEWY] == 97) {
-
+			if (!_G(spieler).flags37_1)
+				idx_nr = 0;
 		}
 		break;
 
