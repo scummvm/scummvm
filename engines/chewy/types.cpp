@@ -117,15 +117,15 @@ bool Spieler::synchronize(Common::Serializer &s) {
 	s.syncAsByte(R28PumpTxt);
 	s.syncAsByte(R31SurimyGo);
 	s.syncAsByte(R33SurimyGo);
-	s.syncAsByte(R33Munter[4]);
+	syncArray(s, R33Munter, 4);
 	s.syncAsSint16LE(R39TvKanal);
 	s.syncAsByte(R39TvRecord);
 	s.syncAsByte(R39ClintNews);
 	s.syncAsByte(R40PoliceAniStatus);
 	s.syncAsByte(R41TrainCount);
-	s.syncAsByte(R47Schloss[3]);
+	syncArray(s, R47Schloss, 3);
 	syncArray(s, R48TaxiPerson, MAX_PERSON);
-	s.syncAsByte(R48Auswahl[5]);
+	syncArray(s, R48Auswahl, 5);
 	s.syncAsByte(R49BoyAniCount);
 	s.syncAsByte(R51DoorCount);
 	s.syncAsByte(R54LiftCount);
@@ -139,7 +139,7 @@ bool Spieler::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(R58TmpY);
 	s.syncAsSint16LE(R64Moni1Ani);
 	s.syncAsSint16LE(R64Moni2Ani);
-	s.syncAsByte(mi[8]);
+	syncArray(s, mi, 8);
 	s.syncAsSint16LE(SVal1);
 	s.syncAsSint16LE(SVal2);
 	s.syncAsSint16LE(SVal3);
