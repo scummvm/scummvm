@@ -27,10 +27,14 @@
 #include "agos/agos.h"
 #include "agos/midi.h"
 
+#include "agos/midiparser_gmf.h"
+#include "agos/midiparser_simonwin.h"
+
 #include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
 #include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
+#include "agos/drivers/simon1/adlib_win.h"
 // Miles Audio for Simon 2
 #include "audio/miles.h"
 
@@ -39,6 +43,7 @@
 #include "common/translation.h"
 
 #include "gui/message.h"
+#include <engines/agos/intern_detection.h>
 
 namespace AGOS {
 
@@ -48,15 +53,16 @@ namespace AGOS {
 // and just provide a factory function.
 extern MidiParser *MidiParser_createS1D();
 
-MidiPlayer::MidiPlayer() {
+MidiPlayer::MidiPlayer(AGOSEngine *vm) {
 	// Since initialize() is called every time the music changes,
 	// this is where we'll initialize stuff that must persist
 	// between songs.
+	_vm = vm;
 	_driver = nullptr;
+	_driverMsMusic = nullptr;
+	_driverMsSfx = nullptr;
 	_map_mt32_to_gm = false;
 
-	_adLibMusic = false;
-	_enable_sfx = true;
 	_current = nullptr;
 
 	_musicVolume = 255;
@@ -71,19 +77,47 @@ MidiPlayer::MidiPlayer() {
 	_loopQueuedTrack = 0;
 
 	_musicMode = kMusicModeDisabled;
+
+	_parserMusic = nullptr;
+	_parserSfx = nullptr;
+	_musicData = nullptr;
+	_sfxData = nullptr;
 }
 
 MidiPlayer::~MidiPlayer() {
 	stop();
+	stopSfx();
 
-	if (_driver) {
+	if (_driverMsSfx && _driverMsSfx != _driverMsMusic) {
+		_driverMsSfx->setTimerCallback(nullptr, nullptr);
+		_driverMsSfx->close();
+		delete _driverMsSfx;
+		_driverMsSfx = nullptr;
+	}
+	if (_driverMsMusic) {
+		_driverMsMusic->setTimerCallback(nullptr, nullptr);
+		_driverMsMusic->close();
+		delete _driverMsMusic;
+		_driverMsMusic = nullptr;
+	} else if (_driver) {
 		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		delete _driver;
+		_driver = nullptr;
 	}
-	_driver = nullptr;
 
 	Common::StackLock lock(_mutex);
+
+	if (_parserMusic)
+		delete _parserMusic;
+	if (_parserSfx)
+		delete _parserSfx;
+
+	if (_musicData)
+		delete[] _musicData;
+	if (_sfxData)
+		delete[] _sfxData;
+
 	clearConstructs();
 }
 
@@ -92,8 +126,167 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	assert(!_driver);
 
 	Common::String accoladeDriverFilename;
-	musicType = MT_INVALID;
 	int devFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
+
+	if (_vm->getGameType() == GType_SIMON1) {
+		// Check the type of device that the user has configured.
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
+		musicType = MidiDriver::getMusicType(dev);
+		if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
+			musicType = MT_MT32;
+
+		// All versions of Simon 1 that use MIDI have data that targets the
+		// MT-32 (even the Windows and Acorn versions).
+		MusicType dataType = MT_MT32;
+
+		if (dataType == MT_MT32 && musicType == MT_GM) {
+			// Not a real MT32 / no MUNT
+			::GUI::MessageDialog dialog(_(
+				"You appear to be using a General MIDI device,\n"
+				"but your game only supports Roland MT32 MIDI.\n"
+				"We try to map the Roland MT32 instruments to\n"
+				"General MIDI ones. It is still possible that\n"
+				"some tracks sound incorrect."));
+			dialog.runModal();
+		}
+
+		if (_vm->getPlatform() == Common::kPlatformDOS &&
+				(_vm->getFeatures() & GF_DEMO) && !(_vm->getFeatures() & GF_TALKIE)) {
+			// DOS floppy demo uses the older Accolade music drivers.
+			_musicMode = kMusicModeAccolade;
+			accoladeDriverFilename = "MUSIC.DRV";
+
+			switch (musicType) {
+			case MT_ADLIB:
+				_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
+				break;
+			case MT_MT32:
+				_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
+				break;
+			default:
+				_driver = new MidiDriver_NULL_Multisource();
+				break;
+			}
+
+			// Create the MIDI parser for the MUS format used by this version.
+			_parserMusic = MidiParser_createS1D();
+
+			// Open the MIDI driver.
+			int returnCode = _driver->open();
+			if (returnCode != 0)
+				error("MidiPlayer::open - Failed to open MIDI music driver - error code %d.", returnCode);
+
+			// Connect the driver and the parser.
+			_parserMusic->setMidiDriver(_driver);
+			_parserMusic->setTimerRate(_driver->getBaseTempo());
+
+			_driver->setTimerCallback(_parserMusic, &_parserMusic->timerCallback);
+
+			return 0;
+		} else {
+			// Create the correct driver(s) for the device type and platform.
+			switch (musicType) {
+			case MT_ADLIB:
+				if (_vm->getPlatform() == Common::kPlatformDOS) {
+					// DOS versions use a specific AdLib driver implementation
+					// that needs an instrument bank file.
+					_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK");
+					if (!(_vm->getFeatures() & GF_TALKIE)) {
+						// DOS floppy version has MIDI SFX for AdLib.
+						_driverMsSfx = _driverMsMusic;
+					}
+				} else {
+					// Windows and Acorn CD
+					// TODO Acorn does not use an OPL chip, but we don't have
+					// an implementation for the Acorn audio. It has the same
+					// music data has the DOS CD version, but it does not have
+					// the MT_FM.IBK instrument bank, so we use the standard
+					// OPL MIDI driver.
+					_driverMsMusic = new MidiDriver_Simon1_AdLib_Windows();
+				}
+				break;
+			case MT_MT32:
+			case MT_GM:
+				_driverMsMusic = new MidiDriver_MT32GM(dataType);
+				if (_vm->getPlatform() == Common::kPlatformDOS && !(_vm->getFeatures() & GF_TALKIE) &&
+						ConfMan.getBool("multi_midi")) {
+					// DOS floppy version uses AdLib MIDI SFX if mixed MIDI
+					// mode is active.
+					_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK");
+				}
+				break;
+			default:
+				_driverMsMusic = new MidiDriver_NULL_Multisource();
+				break;
+			}
+
+			// Create the MIDI parser(s) for the format used by the platform.
+			if (_vm->getPlatform() == Common::kPlatformWindows) {
+				// Windows version uses a specific SMF variant.
+				_parserMusic = new MidiParser_SimonWin(0);
+			} else {
+				// DOS floppy & CD and Acorn CD use GMF (also an SMF variant).
+				_parserMusic = new MidiParser_GMF(0);
+
+				if (_driverMsSfx) {
+					// DOS floppy needs a second parser for AdLib SFX.
+					_parserSfx = new MidiParser_GMF(1);
+					_parserMusic->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+					_parserSfx->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+				}
+			}
+			_driver = _driverMsMusic;
+
+			// WORKAROUND The Simon 1 MIDI data does not always set a value for
+			// program, volume or panning before it starts playing notes on a
+			// MIDI channel. This can cause settings for these parameters from
+			// a previous track to be used unintentionally. To correct this,
+			// default values for these parameters are set when a new track is
+			// started.
+			_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM);
+			_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_VOLUME);
+			_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PANNING);
+			_driverMsMusic->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+
+			// Open the MIDI driver(s).
+			int returnCode = _driverMsMusic->open();
+			if (returnCode != 0)
+				error("MidiPlayer::open - Failed to open MIDI music driver - error code %d.", returnCode);
+			_driverMsMusic->syncSoundSettings();
+			if (_driverMsSfx && _driverMsMusic != _driverMsSfx) {
+				_driverMsSfx->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+				returnCode = _driverMsSfx->open();
+				if (returnCode != 0)
+					error("MidiPlayer::open - Failed to open MIDI SFX driver - error code %d.", returnCode);
+				_driverMsSfx->syncSoundSettings();
+			}
+
+			// Connect the driver(s) and parser(s).
+			_parserMusic->setMidiDriver(_driverMsMusic);
+			_parserMusic->setTimerRate(_driverMsMusic->getBaseTempo());
+			if (_parserSfx) {
+				_parserSfx->setMidiDriver(_driverMsSfx);
+				_parserSfx->setTimerRate(_driverMsSfx->getBaseTempo());
+			}
+
+			if (_driverMsSfx == _driverMsMusic) {
+				// Use MidiPlayer::onTimer to trigger both parsers from the
+				// single driver (it can only have one timer callback).
+				_driverMsMusic->setTimerCallback(this, &onTimer);
+			} else {
+				// Trigger each parser callback from the corresponding driver.
+				_driverMsMusic->setTimerCallback(_parserMusic, &_parserMusic->timerCallback);
+				if (_driverMsSfx) {
+					_driverMsSfx->setTimerCallback(_parserSfx, &_parserSfx->timerCallback);
+				}
+			}
+
+			return 0;
+		}
+	}
+
+	// TODO Old code below is no longer used for Simon 1.
+	musicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
@@ -251,7 +444,6 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	case kMusicModeSimon1: {
 		// This only handles the original AdLib driver of Simon1.
 		if (musicType == MT_ADLIB) {
-			_adLibMusic = true;
 			_map_mt32_to_gm = false;
 			_nativeMT32 = false;
 
@@ -275,7 +467,6 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	}
 
 	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-	_adLibMusic = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	_driver = MidiDriver::createMidi(dev);
@@ -420,6 +611,11 @@ void MidiPlayer::onTimer(void *data) {
 	MidiPlayer *p = (MidiPlayer *)data;
 	Common::StackLock lock(p->_mutex);
 
+	if (p->_parserMusic)
+		p->_parserMusic->onTimer();
+	if (p->_parserSfx)
+		p->_parserSfx->onTimer();
+
 	if (!p->_paused) {
 		if (p->_music.parser && p->_currentTrack != 255) {
 			p->_current = &p->_music;
@@ -476,6 +672,12 @@ void MidiPlayer::startTrack(int track) {
 void MidiPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
+	if (_parserMusic) {
+		_parserMusic->stopPlaying();
+		if (_driverMsMusic)
+			_driverMsMusic->deinitSource(0);
+	}
+
 	if (_music.parser) {
 		_current = &_music;
 		_music.parser->jumpToTick(0);
@@ -484,12 +686,35 @@ void MidiPlayer::stop() {
 	_currentTrack = 255;
 }
 
+void MidiPlayer::stopSfx() {
+	Common::StackLock lock(_mutex);
+
+	if (_parserSfx) {
+		_parserSfx->stopPlaying();
+		if (_driverMsSfx)
+			_driverMsSfx->deinitSource(1);
+	}
+}
+
 void MidiPlayer::pause(bool b) {
 	if (_paused == b || !_driver)
 		return;
 	_paused = b;
 
 	Common::StackLock lock(_mutex);
+
+	if (_paused) {
+		if (_parserMusic)
+			_parserMusic->pausePlaying();
+		if (_parserSfx)
+			_parserSfx->pausePlaying();
+	} else {
+		if (_parserMusic)
+			_parserMusic->resumePlaying();
+		if (_parserSfx)
+			_parserSfx->resumePlaying();
+	}
+
 	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
 	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
 		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : ConfMan.getInt("music_volume"));
@@ -534,10 +759,32 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 	}
 }
 
+void MidiPlayer::syncSoundSettings() {
+	if (_driverMsMusic)
+		_driverMsMusic->syncSoundSettings();
+	if (_driverMsSfx)
+		_driverMsSfx->syncSoundSettings();
+
+	// Sync code for non-multisource drivers.
+	// TODO Remove when no longer necessary
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+
+	setVolume(mute ? 0 : soundVolumeMusic, mute ? 0 : soundVolumeSFX);
+}
+
 void MidiPlayer::setLoop(bool loop) {
 	Common::StackLock lock(_mutex);
 
 	_loopTrack = loop;
+
+	if (_parserMusic)
+		_parserMusic->property(MidiParser::mpAutoLoop, loop);
 }
 
 void MidiPlayer::queueTrack(int track, bool loop) {
@@ -591,6 +838,63 @@ void MidiPlayer::resetVolumeTable() {
 			_driver->send(((_musicVolume >> 1) << 16) | 0x7B0 | i);
 	}
 }
+
+void MidiPlayer::loadMusic(Common::SeekableReadStream *in, int32 size, bool sfx) {
+	Common::StackLock lock(_mutex);
+
+	MidiParser *parser = sfx ? _parserSfx : _parserMusic;
+
+	if (size < 0) {
+		// Use the parser to determine the size of the MIDI data.
+		int64 startPos = in->pos();
+		size = parser->determineDataSize(in);
+		if (size < 0) {
+			warning("MidiPlayer::loadMusic - Could not determine size of music data");
+			return;
+		}
+		// determineDataSize might move the stream position, so return it to
+		// the original position.
+		in->seek(startPos, SEEK_SET);
+	}
+
+	parser->unloadMusic();
+
+	// Copy the data into _musicData or _sfxData.
+	byte **dataPtr = sfx ? &_sfxData : &_musicData;
+	if (*dataPtr) {
+		delete[] *dataPtr;
+	}
+
+	*dataPtr = new byte[size];
+	in->read(*dataPtr, size);
+
+	// Finally, load the data into the parser.
+	parser->loadMusic(*dataPtr, size);
+}
+
+void MidiPlayer::play(int track, bool sfx, bool sfxUsesRhythm) {
+	MidiParser *parser = sfx ? _parserSfx : _parserMusic;
+
+	if (parser->setTrack(track)) {
+		if (sfx && sfxUsesRhythm) {
+			// This sound effect uses OPL rhythm instruments. Disable music
+			// rhythm notes while this sound effect is playing to prevent
+			// conflicts.
+			// Note that if AdLib music is used, _driverMsMusic and
+			// _driverMsSfx point to the same object. If AdLib music is not
+			// used, the disableMusicRhythmNotes call will do nothing.
+			MidiDriver_Simon1_AdLib *adLibSfxDriver = dynamic_cast<MidiDriver_Simon1_AdLib *>(_driverMsSfx);
+			if (adLibSfxDriver)
+				adLibSfxDriver->disableMusicRhythmNotes();
+		}
+
+		parser->startPlaying();
+	} else {
+		warning("MidiPlayer::play - Could not play %s track %i", sfx ? "SFX" : "music", track);
+	}
+}
+
+// TODO Remove dead code
 
 static const int simon1_gmf_size[] = {
 	8900, 12166, 2848, 3442, 4034, 4508, 7064, 9730, 6014, 4742, 3138,

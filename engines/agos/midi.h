@@ -23,6 +23,7 @@
 #define AGOS_MIDI_H
 
 #include "audio/mididrv.h"
+#include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
 #include "common/mutex.h"
 
@@ -61,14 +62,30 @@ struct MusicInfo {
 
 class MidiPlayer : public MidiDriver_BASE {
 protected:
+	AGOSEngine *_vm;
+
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
+	// Multisource driver used for music. Provides access to multisource
+	// methods without casting. If this is not nullptr, it points to the same
+	// object as _driver.
+	MidiDriver_Multisource *_driverMsMusic;
+	// Multisource driver used for sound effects. Only used for Simon The
+	// Sorcerer DOS floppy AdLib sound effects.
+	// If AdLib is also used for music, this points to the same object as
+	// _driverMsMusic and _driver.
+	MidiDriver_Multisource *_driverMsSfx;
 	bool _map_mt32_to_gm;
 	bool _nativeMT32;
 
 	MusicInfo _music;
 	MusicInfo _sfx;
 	MusicInfo *_current; // Allows us to establish current context for operations.
+
+	MidiParser *_parserMusic;
+	byte *_musicData;
+	MidiParser *_parserSfx;
+	byte *_sfxData;
 
 	// These are maintained for both music and SFX
 	byte _masterVolume;    // 0-255
@@ -89,12 +106,20 @@ protected:
 	void resetVolumeTable();
 
 public:
-	bool _adLibMusic;
-	bool _enable_sfx;
-
-public:
-	MidiPlayer();
+	MidiPlayer(AGOSEngine *vm);
 	~MidiPlayer() override;
+
+	// Loads music data supported by the MidiParser used for the detected
+	// version of the game. Specify sfx to indicate that this is a MIDI sound
+	// effect.
+	void loadMusic(Common::SeekableReadStream *in, int32 size = -1, bool sfx = false);
+	// Plays the currently loaded music data. If the loaded MIDI data has
+	// multiple tracks, specify track to select the track to play. Specify sfx
+	// to indicate that the loaded sound effect data should be used. Specify
+	// sfxUsesRhythm to inidicate that the sound effect uses OPL rhythm
+	// instruments; this will disable music rhythm notes while the sound effect
+	// is playing.
+	void play(int track = 0, bool sfx = false, bool sfxUsesRhythm = false);
 
 	void loadSMF(Common::SeekableReadStream *in, int song, bool sfx = false);
 	void loadMultipleSMF(Common::SeekableReadStream *in, bool sfx = false);
@@ -102,17 +127,20 @@ public:
 	void loadS1D(Common::SeekableReadStream *in, bool sfx = false);
 
 	bool hasNativeMT32() const { return _nativeMT32; }
+	bool hasAdLibSfx() const { return _parserSfx != nullptr; }
 	void setLoop(bool loop);
 	void startTrack(int track);
 	void queueTrack(int track, bool loop);
 	bool isPlaying(bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
 
 	void stop();
+	void stopSfx();
 	void pause(bool b);
 
 	int  getMusicVolume() const { return _musicVolume; }
 	int  getSFXVolume() const { return _sfxVolume; }
 	void setVolume(int musicVol, int sfxVol);
+	void syncSoundSettings();
 
 public:
 	int open(int gameType, Common::Platform platform, bool isDemo);
