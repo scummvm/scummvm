@@ -47,6 +47,25 @@ bool InvUse::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
+bool AadInfo::load(const void *src) {
+	Common::MemoryReadStream rs((const byte *)src, 6);
+
+	X = rs.readSint16LE();
+	Y = rs.readSint16LE();
+	Color = rs.readSint16LE();
+	return true;
+}
+
+bool AadTxtHeader::load(const void *src) {
+	Common::MemoryReadStream rs((const byte *)src, 8);
+
+	DiaNr = rs.readSint16LE();
+	PerAnz = rs.readSint16LE();
+	AMov = rs.readSint16LE();
+	CurNr = rs.readSint16LE();
+	return true;
+}
+
 bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 	VocNr = src->readUint16LE();
 	return true;

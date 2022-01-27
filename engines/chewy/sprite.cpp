@@ -427,7 +427,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 }
 
 void start_aad(int16 dia_nr) {
-
+	ailsnd->waitForSpeechToFinish();
 	set_ssi_xy();
 	atds->start_aad(dia_nr);
 }
