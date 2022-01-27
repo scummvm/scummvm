@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	drivers/accolade/pc98.o \
 	drivers/accolade/mt32.o \
 	drivers/simon1/adlib.o \
+	drivers/simon1/adlib_win.o \
 	agos.o \
 	charset.o \
 	charset-fontdata.o \
