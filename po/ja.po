@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-27 12:10+0000\n"
-"PO-Revision-Date: 2022-01-05 12:52+0000\n"
+"PO-Revision-Date: 2022-01-28 10:27+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -771,10 +771,8 @@ msgid "Quit ScummVM"
 msgstr "ScummVMを終了"
 
 #: gui/launcher.cpp:230
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "ScummVMについて(~b~)..."
+msgstr "ScummVMについて(~b~)"
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
