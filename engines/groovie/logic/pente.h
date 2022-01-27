@@ -53,7 +53,7 @@ private:
 	void buildLookupTable();
 	void penteDeInit();
 	void penteInit(uint width, uint height, uint length);
-	uint &getPlayerTable(bool staufTurn, pentePlayerTable *&pt);
+	int &getPlayerTable(bool staufTurn, pentePlayerTable *&pt);
 	void scoreLine(uint16 lineIndex, bool isStaufTurn, bool revert);
 	void calcTouchingPieces(byte moveX, byte moveY, bool revert);
 	void updateScore(byte x, byte y, bool whose_turn);
@@ -68,7 +68,7 @@ private:
 	int aiRecurse(char depth, int parentScore);
 	uint16 aiGetBestMove(byte depth);
 	void test();
-	void testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
+	bool testGame(uint32 seed, Common::Array<int> moves, bool playerWin);
 	void testRandomGame(uint32 seed);
 
 	Common::RandomSource _random;
