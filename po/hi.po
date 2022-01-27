@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-23 22:24+0000\n"
+"POT-Creation-Date: 2022-01-27 12:10+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -782,7 +782,9 @@ msgid "Quit ScummVM"
 msgstr "ScummVM बंद करें"
 
 #: gui/launcher.cpp:230
-msgid "A~b~out..."
+#, fuzzy
+#| msgid "A~b~out..."
+msgid "A~b~out"
 msgstr "जानकारी(B)..."
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223

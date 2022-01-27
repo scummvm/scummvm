@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-23 22:24+0000\n"
+"POT-Creation-Date: 2022-01-27 12:10+0000\n"
 "PO-Revision-Date: 2022-01-07 18:12+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -777,7 +777,9 @@ msgid "Quit ScummVM"
 msgstr "Avslutt ScummVM"
 
 #: gui/launcher.cpp:230
-msgid "A~b~out..."
+#, fuzzy
+#| msgid "A~b~out..."
+msgid "A~b~out"
 msgstr "~O~m..."
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
