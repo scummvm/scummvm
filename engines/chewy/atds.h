@@ -148,6 +148,9 @@ struct AadInfo {
 	int16 X;
 	int16 Y;
 	int16 Color;
+
+	bool load(const void *src);
+	static constexpr int SIZE() { return 6; }
 };
 
 struct AadTxtHeader {
@@ -155,6 +158,9 @@ struct AadTxtHeader {
 	int16 PerAnz;
 	int16 AMov;
 	int16 CurNr;
+
+	bool load(const void *src);
+	static constexpr int SIZE() { return 8; }
 };
 
 struct AadStrHeader {
