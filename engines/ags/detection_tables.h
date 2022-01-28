@@ -282,6 +282,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "samaritan", "The Samaritan Paradox" },
 	{ "shardlight", "Shardlight" },
 	{ "shivah", "Shivah" },
+	{ "steamedhams", "Steamed Hams: The Graphic Adventure" },
 	{ "strangeland", "Strangeland" },
 	{ "sumatra", "Sumatra: Fate of Yandi" },
 	{ "superjazzman", "Super Jazz Man" },
@@ -5401,6 +5402,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("starshipquasar", "quasar.exe", "8d1c6698abc66509df3dbe57a0a4144b", 11959826), // v1.1
 	GAME_ENTRY_STEAM("starshipquasar", "starship quasar.ags", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415956),
 	GAME_ENTRY("startreknewton", "Anomaly.exe", "721e8a1dce90fc3ee31cade9a50d9e75", 8750111),
+	GAME_ENTRY("steamedhams", "Steamed Hams.exe", "d278eb385f1f7acabdcb6d3b331fea38", 13160830),
 	GAME_ENTRY("stediddyip1employment", "stediddy1.exe", "5872fea5a958bc74c2d9ca7b2d196c42", 27136166),
 	GAME_ENTRY("stickmeni", "stick.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2399329),
 	GAME_ENTRY("stickythestickfigurepart1thecrimsonhouse", "Crimson House Files.exe", "3b095a7872e04769d04ab45e9c1b66eb", 3610653),
