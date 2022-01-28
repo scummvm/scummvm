@@ -104,7 +104,7 @@ void Room68::setup_func() {
 				det->play_sound(_G(r68HohesC), 0);
 				det->start_detail(_G(r68HohesC), 255, ANI_VOR);
 
-				while (ailsnd->get_sample_status(1) == 4)
+				while (ailsnd->getSampleStatus(1) == 4)
 					set_up_screen(DO_SETUP);
 				det->stop_detail(_G(r68HohesC));
 			} else {
@@ -347,7 +347,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		start_aad_wait(389, -1);
 	else {
 		if (_G(spieler).DisplayText == 0)
-			ailsnd->fade_out(5);
+			ailsnd->fadeOut(5);
 		
 		SetUpScreenFunc = nullptr;
 		del_inventar(_G(spieler).AkInvent);
@@ -364,13 +364,13 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			start_detail_wait(23, 3, ANI_VOR);
 		else {
 			det->start_detail(23, 255, ANI_VOR);
-			ailsnd->init_double_buffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
+			ailsnd->initDoubleBuffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
 			::error("TODO: voc_handle");
 #if 0
 			Stream *voc_handle = nullptr; // TODO : should be the voc_handle initialized in sound_init()
 			mem->file->select_pool_item(voc_handle, 109);
 			ERROR
-			ailsnd->start_db_voc(voc_handle, 1, 30);
+			ailsnd->startDbVoc(voc_handle, 1, 30);
 			wait_show_screen(2);
 
 			while (!ailsnd->isSpeechActive(1))
@@ -382,7 +382,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		if (_G(spieler).DisplayText) {
 			mem->file->select_pool_item(voc_handle, 108);
 			ERROR
-			ailsnd->start_db_voc(voc_handle, 1, 30);			
+			ailsnd->startDbVoc(voc_handle, 1, 30);			
 		}
 		
 		det->start_detail(24, 255, ANI_VOR);

@@ -37,10 +37,10 @@ void MainMenu::execute() {
 	mem->file->select_pool_item(music_handle, EndOfPool - 17);
 	mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
 	if (!modul)
-		ailsnd->play_mod((tmf_header *)Ci.MusicSlot);
+		ailsnd->playMod((tmf_header *)Ci.MusicSlot);
 
 	flic_cut(200, 0);
-	ailsnd->stop_mod();
+	ailsnd->stopMod();
 #endif
 
 	show_intro();
@@ -54,8 +54,8 @@ void MainMenu::execute() {
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
-		ailsnd->stop_mod();
-		ailsnd->end_sound();
+		ailsnd->stopMod();
+		ailsnd->endSound();
 		SetUpScreenFunc = screenFunc;
 
 		cursor_wahl(CUR_ZEIGE);
@@ -266,7 +266,7 @@ void MainMenu::playGame() {
 	cur->show_cur();
 	spieler_vector[P_CHEWY].Count = 0;
 	uhr->reset_timer(0, 0);
-	ailsnd->set_loopmode(_G(spieler).soundLoopMode);
+	ailsnd->setLoopMode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !main_loop(1)) {
 	}

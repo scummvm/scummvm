@@ -31,7 +31,6 @@ namespace Chewy {
 extern char *err_str;
 int16 mouse_push;
 int print_delay_count1;
-int print_delay_count2;		// TODO: seems to be unused
 
 bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	TxtNr = src->readUint16LE();
@@ -74,7 +73,7 @@ bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 
 atdsys::atdsys() {
 	int16 i;
-	SplitStringInit init_ssi = { 0, 0, 0, 220, 4, SPLIT_MITTE, 8, 8,};
+	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_MITTE, 8, 8,};
 	aadv.Dialog = false;
 	aadv.StrNr = -1;
 	aadv.SilentCount = false;
@@ -579,7 +578,6 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode,
 			} else {
 				atsv.DelayCount = get_delay(atsv.TxtLen);
 				print_delay_count1 = atsv.DelayCount / 10;
-				print_delay_count2 = atsv.DelayCount;
 				atsv.Color = color;
 				mouse_push = true;
 			}
@@ -678,7 +676,6 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 						++atsv.TxtLen;
 					atsv.DelayCount = get_delay(atsv.TxtLen);
 					print_delay_count1 = atsv.DelayCount / 10;
-					print_delay_count2 = atsv.DelayCount;
 					atsv.SilentCount = atdsv.Silent;
 				}
 			} else
@@ -939,7 +936,6 @@ int16 atdsys::start_aad(int16 dia_nr) {
 			aad_get_zeilen(aadv.Ptr, &txt_len);
 			aadv.DelayCount = get_delay(txt_len);
 			print_delay_count1 = aadv.DelayCount / 10;
-			print_delay_count2 = aadv.DelayCount;
 
 			atdsv.DiaNr = dia_nr;
 			if (atdsv.aad_str != 0)
@@ -1046,9 +1042,9 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 
 							vocx = spieler_vector[aadv.StrHeader->AkPerson].Xypos[0] -
 							       _G(spieler).scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
-							ailsnd->set_stereo_pos(0, get_stereo_pos(vocx));
-							ailsnd->start_db_voc(atdsv.SpeechHandle, 0, 63);
-							ailsnd->set_stereo_pos(0, get_stereo_pos(vocx));
+							ailsnd->setStereoPos(0, get_stereo_pos(vocx));
+							ailsnd->startDbVoc(atdsv.SpeechHandle, 0, 63);
+							ailsnd->setStereoPos(0, get_stereo_pos(vocx));
 							aadv.DelayCount = 1;
 						}
 					} else {
@@ -1094,7 +1090,6 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 					aad_get_zeilen(aadv.Ptr, &txt_len);
 					aadv.DelayCount = get_delay(txt_len);
 					print_delay_count1 = aadv.DelayCount / 10;
-					print_delay_count2 = aadv.DelayCount;
 					aadv.SilentCount = atdsv.Silent;
 				}
 			} else {

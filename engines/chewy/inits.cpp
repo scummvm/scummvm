@@ -459,13 +459,13 @@ void sound_init() {
 	detect.SoundSource = ailsnd->init(frequenz);
 
 	if (detect.SoundSource) {
-		ailsnd->init_mix_mode();
+		ailsnd->initMixMode();
 		_G(spieler).MusicVol = 63;
 		_G(spieler).SoundVol = 63;
-		ailsnd->set_music_mastervol(_G(spieler).MusicVol);
-		ailsnd->set_sound_mastervol(_G(spieler).SoundVol);
-		ailsnd->switch_music(true);
-		ailsnd->switch_sound(true);
+		ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
+		ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
+		ailsnd->switchMusic(true);
+		ailsnd->switchSound(true);
 		flags.InitSound = true;
 
 		voc_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
@@ -493,7 +493,7 @@ void sound_init() {
 			fcode = OPENFEHLER;
 			err->set_user_msg("speech.tvp");
 		} else {
-			ailsnd->init_double_buffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
+			ailsnd->initDoubleBuffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
 			atds->set_speech_handle(speech_handle);
 
 			atds->setHasSpeech(true);
@@ -510,7 +510,7 @@ void sound_init() {
 
 void sound_exit() {
 	if (detect.SoundSource && flags.InitSound) {
-		ailsnd->exit_mix_mode();
+		ailsnd->exitMixMode();
 		ailsnd->exit1();
 		if (speech_handle)
 			chewy_fclose(speech_handle);
