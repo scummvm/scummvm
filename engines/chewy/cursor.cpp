@@ -49,7 +49,7 @@ cursor::~cursor() {
 void cursor::plot_cur() {
 	if (maus_da && sichtbar) {
 		if (cur_move == 1) {
-			mouse_aktiv = 1;
+			mouse_active = 1;
 			cur_move = 0;
 			if (!curblk->no_back) {
 
@@ -74,14 +74,14 @@ void cursor::plot_cur() {
 
 		out->sprite_set(curblk->sprite[ani_count], cur_x_old, cur_y_old,
 		                 scr_width);
-		mouse_aktiv = 0;
+		mouse_active = 0;
 	}
 }
 
 void cursor::show_cur() {
 	if ((maus_da) && (!sichtbar)) {
 		sichtbar = true;
-		mouse_aktiv = 1;
+		mouse_active = 1;
 
 		minfo->x = g_events->_mousePos.x;
 		minfo->y = g_events->_mousePos.y;
@@ -116,7 +116,7 @@ void cursor::set_cur_ani(cur_ani *ani1) {
 
 void cursor::move(int16 x, int16 y) {
 	if (maus_da) {
-		mouse_aktiv = 1;
+		mouse_active = 1;
 
 		minfo->x = x;
 		minfo->y = y;
@@ -127,7 +127,7 @@ void cursor::move(int16 x, int16 y) {
 			cur_move = 1;
 		else
 			cur_move = 0;
-		mouse_aktiv = 0;
+		mouse_active = 0;
 	}
 }
 

@@ -22,7 +22,7 @@
 #ifndef CHEWY_MCGA_H
 #define CHEWY_MCGA_H
 
-#include "chewy/maus.h"
+#include "chewy/mouse.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
