@@ -46,7 +46,6 @@ int Room51::_index;
 
 
 void Room51::entry() {
-	int16 i;
 	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
@@ -57,13 +56,14 @@ void Room51::entry() {
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 0;
-		set_person_pos(34, 120, P_HOWARD, P_HOWARD);
+		set_person_pos(34, 120, P_HOWARD, P_RIGHT);
 		set_person_pos(234, 69, P_CHEWY, P_LEFT);
 		SetUpScreenFunc = setup_func;
 		det->show_static_spr(17);
+		_index = 0;
 		hide_cur();
 
-		for (i = 0; i < 2; ++i) {
+		for (int i = 0; i < 2; ++i) {
 			_arr[0] = false;
 			_G(timer_nr)[i] = room->set_timer(i + 9, i * 2 + 6);
 		}
@@ -74,7 +74,7 @@ void Room51::entry() {
 	} else {
 		det->hide_static_spr(17);
 
-		for (i = 0; i < 2; i++)
+		for (int i = 0; i < 2; i++)
 			det->start_detail(3 + i, 1, ANI_VOR);
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
@@ -132,9 +132,6 @@ bool Room51::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room51::setup_func() {
-	int16 x, y;
-	int16 ch_y;
-
 	if (_G(spieler).flags32_10) {
 		_tmpx = minfo.x;
 		_tmpy = minfo.y;
@@ -171,9 +168,13 @@ void Room51::setup_func() {
 			case 10012:
 				start_aad_wait(514, -1);
 				wait_show_screen(5);
+				flags.NoPalAfterFlc = true;
 				out->setze_zeiger(nullptr);
 				out->cls();
 				flic_cut(115, 0);
+				test_intro(28);
+				ERROR
+				
 				switch_room(91);
 				break;
 
@@ -181,11 +182,11 @@ void Room51::setup_func() {
 				break;
 			}
 		}
-
 	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		ch_y = spieler_vector[P_CHEWY].Xypos[1];
+		const int16 ch_y = spieler_vector[P_CHEWY].Xypos[1];
 
+		int16 x, y;
 		if (ch_y < 129) {
 			x = 56;
 			y = 106;
@@ -287,7 +288,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			out->cls();
 			flags.NoPalAfterFlc = true;
 			flic_cut(114, 0);
-			set_person_pos(115, 114, P_CHEWY, P_LEFT);
+			set_person_pos(115, 144, P_CHEWY, P_LEFT);
 			fx_blend = BLEND3;
 			set_up_screen(NO_SETUP);
 			start_aad_wait(564, -1);
@@ -353,7 +354,7 @@ int16 Room51::cut_serv(int16 frame) {
 
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
-		assert(t_nr < 2);
+		assert(t_nr >= 0 && t_nr < 2);
 		if (!Room65::_scrollY[t_nr]) {
 			det->start_detail(t_nr, 1, ANI_VOR);
 			Room65::_scrollY[t_nr] = 1;
