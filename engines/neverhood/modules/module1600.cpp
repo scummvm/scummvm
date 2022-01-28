@@ -222,6 +222,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	} else if (which == 0) {
 		// Klaymen entering from the left
+		playSound(0, calcHash("fxDoorOpen23"));
 		_vm->gameState().which = 0;
 		setRectList(0x004B47D0);
 		insertKlaymen<KmScene1608>(0, 438);
@@ -426,7 +427,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 			_klaymen->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
-			//sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0); // Play sound?
+			playSound(0, calcHash("fxDoorClose23"));
 			_countdown1 = 28;
 		}
 		break;
