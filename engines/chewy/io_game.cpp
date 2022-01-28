@@ -173,8 +173,8 @@ int16 io_game::io_menu(iog_init *iostruc) {
 					if (y < (max_scroll)) {
 
 						if (y + scroll_flag != i) {
-							mouse_links_los = 0;
-							cur_move = 1;
+							mouse_links_los = false;
+							cur_move = true;
 							cur->hide_cur();
 
 							if (io_flag != 0)
@@ -186,15 +186,13 @@ int16 io_game::io_menu(iog_init *iostruc) {
 							if (io_flag != 0)
 								mark_eintrag(cur_y, i);
 							cur->show_cur();
-						} else {
-							if (mouse_links_los == 1) {
-								mouse_links_los = 0;
-								dklick_end = g_system->getMillis(); //clock();
-								if ((dklick_end - dklick_start) / 1000 < d_klick)
-									kbinfo->key_code = 28;
-								else
-									dklick_start = g_system->getMillis(); //clock();
-							}
+						} else if (mouse_links_los) {
+							mouse_links_los = false;
+							dklick_end = g_system->getMillis(); //clock();
+							if ((dklick_end - dklick_start) / 1000 < d_klick)
+								kbinfo->key_code = 28;
+							else
+								dklick_start = g_system->getMillis(); //clock();
 						}
 					}
 				} else {
