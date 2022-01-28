@@ -709,13 +709,13 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 					if ((adiptr->sfx.sound_start[k] == adiptr->ani_count) &&
 					        (!adiptr->delay_count)) {
 #ifdef AIL
-						ailsnd->set_stereo_pos(adiptr->sfx.kanal[k],
+						ailsnd->setStereoPos(adiptr->sfx.kanal[k],
 						                       adiptr->sfx.stereo[k]);
-						ailsnd->play_voc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
+						ailsnd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
 						                 adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
 #else
 #if 0
-						snd->play_voc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
+						snd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
 						              adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
 #endif
 						warning("STUB: detail::plot_ani_details()");
@@ -885,14 +885,14 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr,
 		        (rdi.sample[sound_effect])) {
 			if (adiptr->sfx.sound_start[k] == spr_nr) {
 #ifdef AIL
-				ailsnd->set_stereo_pos(adiptr->sfx.kanal[k],
+				ailsnd->setStereoPos(adiptr->sfx.kanal[k],
 				                       adiptr->sfx.stereo[k]);
-				ailsnd->play_voc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
+				ailsnd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
 				                 adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
 #else
 				warning("STUB: detail::plot_detail_sprite()");
 #if 0
-				snd->play_voc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
+				snd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
 				              adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
 #endif
 #endif
@@ -1031,7 +1031,7 @@ void detail::disable_sound(int16 nr, int16 sslot) {
 	sound_def_blk *sdb;
 	sdb = &rdi.Ainfo[nr].sfx;
 	sdb->sound_enable[sslot] = 0;
-	ailsnd->end_sample(sdb->kanal[sslot]);
+	ailsnd->endSample(sdb->kanal[sslot]);
 }
 
 void detail::enable_sound(int16 nr, int16 sslot) {
@@ -1048,11 +1048,11 @@ void detail::play_sound(int16 nr, int16 sslot) {
 	if ((sdb->sound_enable[sslot] != FALSE) && (sdb->sound_index[sslot] != -1) &&
 	        (rdi.sample[sdb->sound_index[sslot]])) {
 #ifdef AIL
-		ailsnd->set_stereo_pos(sdb->kanal[sslot], sdb->stereo[sslot]);
-		ailsnd->play_voc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
+		ailsnd->setStereoPos(sdb->kanal[sslot], sdb->stereo[sslot]);
+		ailsnd->playVoc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
 		                 sdb->volume[sslot], sdb->repeats[sslot]);
 #else
-		snd->play_voc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
+		snd->playVoc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
 		              sdb->volume[sslot], sdb->repeats[sslot]);
 #endif
 	}
@@ -1086,11 +1086,11 @@ void detail::play_detail_sound(int16 nr) {
 		if ((sdb->sound_enable[k] != FALSE) && (sdb->sound_index[k] != -1) &&
 		        (rdi.sample[sdb->sound_index[k]])) {
 #ifdef AIL
-			ailsnd->set_stereo_pos(sdb->kanal[k], sdb->stereo[k]);
-			ailsnd->play_voc(rdi.sample[sdb->sound_index[k]], sdb->kanal[k],
+			ailsnd->setStereoPos(sdb->kanal[k], sdb->stereo[k]);
+			ailsnd->playVoc(rdi.sample[sdb->sound_index[k]], sdb->kanal[k],
 			                 sdb->volume[k], sdb->repeats[k]);
 #else
-			snd->play_voc(rdi.sample[sound_effect], sdb->kanal[k],
+			snd->playVoc(rdi.sample[sound_effect], sdb->kanal[k],
 			              sdb->volume[k], sdb->repeats[k]);
 #endif
 		}
@@ -1118,7 +1118,7 @@ void detail::disable_room_sound() {
 	int16 i;
 	for (i = 0; i < MAXDETAILS; i++)
 		disable_detail_sound(i);
-	ailsnd->end_sound();
+	ailsnd->endSound();
 }
 
 void detail::enable_room_sound() {

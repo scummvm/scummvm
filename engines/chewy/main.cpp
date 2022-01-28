@@ -568,7 +568,7 @@ void set_up_screen(SetupScreenMode mode) {
 		mode = DO_SETUP;
 
 	if (flags.InitSound && _G(spieler).SpeechSwitch)
-		ailsnd->serve_db_samples();
+		ailsnd->serveDbSamples();
 	uhr->calc_timer();
 
 	if (ani_timer[0].TimeFlag) {

@@ -28,7 +28,7 @@
 namespace Chewy {
 
 void mod_irq();
-void check_sample_end();
+void checkSampleEnd();
 void DecodePatternLine();
 void DecodeChannel(int16 ch);
 
@@ -73,50 +73,46 @@ public:
 	~ailclass();
 
 	int16 init(uint16 freq);
-	int16 init(char *midi_drv_name);
+	int16 init(char *midiDrvName);
 	void exit1();
 
-	void set_music_mastervol(int16 vol);
-	void set_sound_mastervol(int16 vol);
-	void set_stereo_pos(int16 channel, int16 pos);
-	void set_channelvol(uint8 channel, uint8 vol);
-	void disable_sound();
+	void setMusicMasterVol(int16 vol);
+	void setSoundMasterVol(int16 vol);
+	void setStereoPos(int16 channel, int16 pos);
+	void setChannelVol(uint8 channel, uint8 vol);
+	void disableSound();
 
-	void get_musik_info(musik_info *mi);
-	void get_channel_info(channel_info *mi, int16 kanal);
-	int16 music_playing();
-	int16 get_sample_status(int16 kanal);
+	void getMusicInfo(musik_info *mi);
+	void getChannelInfo(channel_info *mi, int16 channel);
+	int16 musicPlaying();
+	int16 getSampleStatus(int16 channel);
 
-	void init_note_table(uint16 sfreq);
-	void init_mix_mode();
-	void exit_mix_mode();
-	void play_mod(tmf_header *th);
-	void stop_mod();
-	void continue_music();
-	void play_sequence(int16 startpos, int16 endpos);
-	void play_pattern(int16 pattnr);
-	void set_loopmode(int16 mode);
-	void fade_in(uint16 delay);
-	void fade_out(uint16 delay);
+	void initNoteTable(uint16 sfreq);
+	void initMixMode();
+	void exitMixMode();
+	void playMod(tmf_header *th);
+	void stopMod();
+	void continueMusic();
+	void playSequence(int16 startPos, int16 endPos);
+	void playPattern(int16 pattern);
+	void setLoopMode(int16 mode);
+	void fadeIn(uint16 delay);
+	void fadeOut(uint16 delay);
 
-	void play_voc(byte *anf_adr, int16 kanal, int16 vol,
-	              int16 rep);
-	void play_raw(int16 kanal, char *voc, uint32 len,
-	              uint16 freqwert, int16 volume, int16 rep);
-	void end_sound();
-	void stop_sound();
-	void continue_sound();
-	void stop_sample(int16 kanal);
-	void continue_sample(int16 kanal);
-	void end_sample(int16 kanal);
-	void init_double_buffer(byte *b1, byte *b2,
-	                        uint32 len, int16 kanal);
+	void playVoc(byte *anf_adr, int16 channel, int16 vol, int16 rep);
+	void playRaw(int16 channel, char *voc, uint32 len, uint16 frequency, int16 volume, int16 rep);
+	void endSound();
+	void stopSound();
+	void continueSound();
+	void stopSample(int16 channel);
+	void continueSample(int16 channel);
+	void endSample(int16 channel);
+	void initDoubleBuffer(byte *b1, byte *b2, uint32 len, int16 channel);
 
-	void start_db_voc(Stream *voc, int16 kanal, int16 vol);
-	void serve_db_samples();
-	void switch_music(bool onOff);
-	void switch_sound(bool onOff);
-private:
+	void startDbVoc(Stream *voc, int16 channel, int16 vol);
+	void serveDbSamples();
+	void switchMusic(bool onOff);
+	void switchSound(bool onOff);
 };
 
 extern void serve_speech();

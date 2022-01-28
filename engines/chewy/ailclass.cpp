@@ -268,7 +268,7 @@ int16 ailclass::init(uint16 freq) {
 	return SOUNDBLASTER;
 }
 
-int16 ailclass::init(char *midi_drv_name) {
+int16 ailclass::init(char *midiDrvName) {
 	return SoundCard;
 }
 
@@ -278,37 +278,37 @@ void ailclass::exit1() {
 	SoundCard = NONE;
 }
 
-void ailclass::set_music_mastervol(int16 vol) {
+void ailclass::setMusicMasterVol(int16 vol) {
 	vol <<= 1;
 	if (vol > 120)
 		vol = 120;
 	MusicMasterVol = vol;
 }
 
-void ailclass::set_sound_mastervol(int16 vol) {
+void ailclass::setSoundMasterVol(int16 vol) {
 	vol <<= 1;
 	if (vol > 120)
 		vol = 120;
 	SoundMasterVol = vol;
 }
 
-void ailclass::set_channelvol(uint8 channel, uint8 vol) {
+void ailclass::setChannelVol(uint8 channel, uint8 vol) {
 	channel &= 3;
 	channel += 4;
 
-	warning("STUB: ailclass::set_channelvol()");
+	warning("STUB: ailclass::setChannelVol()");
 #if 0
 	if (SoundEnable)
 		AIL_set_sample_volume(smp[channel], vol);
 #endif
 }
 
-void ailclass::set_stereo_pos(int16 channel, int16 pos) {
+void ailclass::setStereoPos(int16 channel, int16 pos) {
 	channel &= 7;
 	channel += 4;
 	pos &= 127;
 
-	warning("STUB: ailclass::set_stereo_pos()");
+	warning("STUB: ailclass::setStereoPos()");
 #if 0
 	if (SoundEnable) {
 		StereoPos[channel] = pos;
@@ -317,15 +317,15 @@ void ailclass::set_stereo_pos(int16 channel, int16 pos) {
 #endif
 }
 
-void ailclass::disable_sound() {
+void ailclass::disableSound() {
 	SoundEnable = false;
 }
 
-void ailclass::init_mix_mode() {
-	warning("STUB: ailclass::init_mix_mode()");
+void ailclass::initMixMode() {
+	warning("STUB: ailclass::initMixMode()");
 
 	if (SoundEnable) {
-		init_note_table(GlobalFrequency);
+		initNoteTable(GlobalFrequency);
 #if 0
 		TimerHandle = AIL_register_timer(mod_irq);
 		if (TimerHandle != -1) {
@@ -334,7 +334,8 @@ void ailclass::init_mix_mode() {
 			TimerEnabled = true;
 		} else
 #endif
-			TimerEnabled = false;
+
+		TimerEnabled = false;
 		StereoPos[0] = 7;
 		StereoPos[1] = 120;
 		StereoPos[2] = 30;
@@ -342,8 +343,8 @@ void ailclass::init_mix_mode() {
 	}
 }
 
-void ailclass::exit_mix_mode() {
-	warning("STUB: ailclass::exit_mix_mode()");
+void ailclass::exitMixMode() {
+	warning("STUB: ailclass::exitMixMode()");
 
 #if 0
 	if (SoundEnable) {
@@ -355,7 +356,7 @@ void ailclass::exit_mix_mode() {
 #endif
 }
 
-void ailclass::play_mod(tmf_header *th) {
+void ailclass::playMod(tmf_header *th) {
 	char *tmp;
 	int16 i;
 	ActiveSong = th;
@@ -380,8 +381,8 @@ void ailclass::play_mod(tmf_header *th) {
 	}
 }
 
-void ailclass::stop_mod() {
-	warning("STUB: ailclass::stop_mod()");
+void ailclass::stopMod() {
+	warning("STUB: ailclass::stopMod()");
 
 #if 0
 	int16 i;
@@ -395,17 +396,17 @@ void ailclass::stop_mod() {
 #endif
 }
 
-void ailclass::continue_music() {
+void ailclass::continueMusic() {
 	if (SoundEnable)
 		if (!strncmp(ActiveSong->id, "TMF", 3))
 			MusicStatus = ON;
 }
 
-void ailclass::play_sequence(int16 startpos, int16 endpos) {
+void ailclass::playSequence(int16 startPos, int16 endPos) {
 	if (SoundEnable) {
 		if (!strncmp(ActiveSong->id, "TMF", 3)) {
-			StartPos = startpos;
-			EndPos = endpos;
+			StartPos = startPos;
+			EndPos = endPos;
 			SeqPointer = StartPos;
 			PatLine = 0;
 			PatPointer = ActiveSong->sequenz[SeqPointer];
@@ -415,27 +416,27 @@ void ailclass::play_sequence(int16 startpos, int16 endpos) {
 	}
 }
 
-void ailclass::play_pattern(int16 pattnr) {
+void ailclass::playPattern(int16 pattern) {
 	if (SoundEnable) {
 		if (!strncmp(ActiveSong->id, "TMF", 3)) {
 			StartPos = 0;
 			EndPos = 0;
 			SeqPointer = 0;
 			PatLine = 0;
-			PatPointer = pattnr;
+			PatPointer = pattern;
 			CurrentLine = Patterns[PatPointer];
 			MusicStatus = ON;
 		}
 	}
 }
 
-void ailclass::set_loopmode(int16 mode) {
+void ailclass::setLoopMode(int16 mode) {
 	mode &= 1;
 	if (SoundEnable)
 		LoopEnable = mode;
 }
 
-void ailclass::fade_in(uint16 delay) {
+void ailclass::fadeIn(uint16 delay) {
 	FadeVol = MusicMasterVol;
 	MusicMasterVol = 0;
 	FadeStart = delay;
@@ -443,14 +444,14 @@ void ailclass::fade_in(uint16 delay) {
 	MusicFade = FADE_IN;
 }
 
-void ailclass::fade_out(uint16 delay) {
+void ailclass::fadeOut(uint16 delay) {
 	FadeStart = delay;
 	FadeCounter = 0;
 	MusicFade = FADE_OUT;
 	FadeVol = MusicMasterVol;
 }
 
-void ailclass::get_musik_info(musik_info *mi) {
+void ailclass::getMusicInfo(musik_info *mi) {
 	mi->musik_playing = MusicStatus;
 	mi->play_mode = 0;
 	mi->pattern_line = PatLine;
@@ -458,38 +459,38 @@ void ailclass::get_musik_info(musik_info *mi) {
 	mi->cur_pattnr = PatPointer;
 }
 
-void ailclass::get_channel_info(channel_info *ch, int16 kanal) {
-	warning("STUB: ailclass::get_channel_info()");
+void ailclass::getChannelInfo(channel_info *ch, int16 channel) {
+	warning("STUB: ailclass::getChannelInfo()");
 
 #if 0
-	ch->finetune = Instrument[kanal].finetune;
-	ch->volume = Instrument[kanal].insvol;
-	ch->repstart = Instrument[kanal].repstart;
-	ch->replen = Instrument[kanal].replen;
-	ch->len = Instrument[kanal].laenge;
-	ch->pointer = (dword)Sample[kanal];
-	ch->pos = AIL_sample_position(smp[kanal]);
+	ch->finetune = Instrument[channel].finetune;
+	ch->volume = Instrument[channel].insvol;
+	ch->repstart = Instrument[channel].repstart;
+	ch->replen = Instrument[channel].replen;
+	ch->len = Instrument[channel].laenge;
+	ch->pointer = (dword)Sample[channel];
+	ch->pos = AIL_sample_position(smp[channel]);
 #endif
 }
 
-int16 ailclass::music_playing() {
+int16 ailclass::musicPlaying() {
 	return MusicStatus;
 }
 
-int16 ailclass::get_sample_status(int16 kanal) {
-	warning("STUB: ailclass::get_sample_status()");
+int16 ailclass::getSampleStatus(int16 channel) {
+	warning("STUB: ailclass::getSampleStatus()");
 
 #if 0
 	int16 ret;
-	kanal &= 3;
-	kanal += 4;
-	ret = AIL_sample_status(smp[kanal]);
+	channel &= 3;
+	channel += 4;
+	ret = AIL_sample_status(smp[channel]);
 	return ret;
 #endif
 	return 0;
 }
 
-void ailclass::init_note_table(uint16 sfreq) {
+void ailclass::initNoteTable(uint16 sfreq) {
 	float TimerFreq;
 	TimerFreq = 7093789.2f;
 	for (int j = 0; j < 16; j++) {
@@ -499,8 +500,8 @@ void ailclass::init_note_table(uint16 sfreq) {
 	}
 }
 
-void ailclass::play_voc(byte *anf_adr, int16 kanal, int16 vol, int16 rep) {
-	warning("STUB: ailclass::play_voc()");
+void ailclass::playVoc(byte *anf_adr, int16 channel, int16 vol, int16 rep) {
+	warning("STUB: ailclass::playVoc()");
 
 #if 0
 	byte *vptr = 0;
@@ -511,8 +512,8 @@ void ailclass::play_voc(byte *anf_adr, int16 kanal, int16 vol, int16 rep) {
 	if (SoundEnable) {
 		vptr = (byte *)anf_adr;
 		vol = (vol << 1) & 127;
-		kanal &= 3;
-		kanal += 4;
+		channel &= 3;
+		channel += 4;
 		while (*vptr != 0) {
 			blockt = *vptr++;
 			if (blockt > 7)
@@ -523,14 +524,14 @@ void ailclass::play_voc(byte *anf_adr, int16 kanal, int16 vol, int16 rep) {
 			if (blockt == 1) {
 				freq = vptr[0];
 				RealFrq = 1000000 / (256 - freq);
-				AIL_init_sample(smp[kanal]);
-				AIL_set_sample_type(smp[kanal], DIG_F_MONO_8, 0);
-				AIL_set_sample_address(smp[kanal], vptr + 2, blocklen);
-				AIL_set_sample_playback_rate(smp[kanal], RealFrq);
-				AIL_set_sample_volume(smp[kanal], vol);
-				AIL_set_sample_loop_count(smp[kanal], rep);
-				AIL_set_sample_pan(smp[kanal], (byte)StereoPos[kanal]);
-				AIL_start_sample(smp[kanal]);
+				AIL_init_sample(smp[channel]);
+				AIL_set_sample_type(smp[channel], DIG_F_MONO_8, 0);
+				AIL_set_sample_address(smp[channel], vptr + 2, blocklen);
+				AIL_set_sample_playback_rate(smp[channel], RealFrq);
+				AIL_set_sample_volume(smp[channel], vol);
+				AIL_set_sample_loop_count(smp[channel], rep);
+				AIL_set_sample_pan(smp[channel], (byte)StereoPos[channel]);
+				AIL_start_sample(smp[channel]);
 			}
 			vptr += blocklen;
 		}
@@ -538,28 +539,27 @@ void ailclass::play_voc(byte *anf_adr, int16 kanal, int16 vol, int16 rep) {
 #endif
 }
 
-void ailclass::play_raw(int16 kanal, char *sp, uint32 len,
-                        uint16 freqwert, int16 volume, int16 rep) {
-	warning("STUB: ailclass::play_raw()");
+void ailclass::playRaw(int16 channel, char *sp, uint32 len, uint16 frequency, int16 volume, int16 rep) {
+	warning("STUB: ailclass::playRaw()");
 
 #if 0
-	kanal &= 3;
-	kanal += 4;
+	channel &= 3;
+	channel += 4;
 	if (SoundEnable) {
-		AIL_init_sample(smp[kanal]);
-		AIL_set_sample_type(smp[kanal], DIG_F_MONO_8, 0);
-		AIL_set_sample_address(smp[kanal], sp, len);
-		AIL_set_sample_playback_rate(smp[kanal], freqwert);
-		AIL_set_sample_volume(smp[kanal], volume);
-		AIL_set_sample_loop_count(smp[kanal], rep);
-		AIL_set_sample_pan(smp[kanal], (byte)StereoPos[kanal]);
-		AIL_start_sample(smp[kanal]);
+		AIL_init_sample(smp[channel]);
+		AIL_set_sample_type(smp[channel], DIG_F_MONO_8, 0);
+		AIL_set_sample_address(smp[channel], sp, len);
+		AIL_set_sample_playback_rate(smp[channel], frequency);
+		AIL_set_sample_volume(smp[channel], volume);
+		AIL_set_sample_loop_count(smp[channel], rep);
+		AIL_set_sample_pan(smp[channel], (byte)StereoPos[channel]);
+		AIL_start_sample(smp[channel]);
 	}
 #endif
 }
 
-void ailclass::stop_sound() {
-	warning("STUB: ailclass::stop_sound()");
+void ailclass::stopSound() {
+	warning("STUB: ailclass::stopSound()");
 
 #if 0
 	int16 i;
@@ -568,8 +568,8 @@ void ailclass::stop_sound() {
 #endif
 }
 
-void ailclass::continue_sound() {
-	warning("STUB: ailclass::continue_sound()");
+void ailclass::continueSound() {
+	warning("STUB: ailclass::continueSound()");
 
 #if 0
 	int16 i;
@@ -578,8 +578,8 @@ void ailclass::continue_sound() {
 #endif
 }
 
-void ailclass::end_sound() {
-	warning("STUB: ailclass::end_sound()");
+void ailclass::endSound() {
+	warning("STUB: ailclass::endSound()");
 
 #if 0
 	int16 i;
@@ -588,45 +588,45 @@ void ailclass::end_sound() {
 #endif
 }
 
-void ailclass::stop_sample(int16 kanal) {
-	warning("STUB: ailclass::stop_sample()");
+void ailclass::stopSample(int16 channel) {
+	warning("STUB: ailclass::stopSample()");
 
 #if 0
-	kanal &= 3;
-	kanal += 4;
-	AIL_stop_sample(smp[kanal]);
+	channel &= 3;
+	channel += 4;
+	AIL_stop_sample(smp[channel]);
 #endif
 }
 
-void ailclass::continue_sample(int16 kanal) {
-	warning("STUB: ailclass::continue_sample()");
+void ailclass::continueSample(int16 channel) {
+	warning("STUB: ailclass::continueSample()");
 
 #if 0
-	kanal &= 3;
-	kanal += 4;
-	AIL_resume_sample(smp[kanal]);
+	channel &= 3;
+	channel += 4;
+	AIL_resume_sample(smp[channel]);
 #endif
 }
 
-void ailclass::end_sample(int16 kanal) {
-	warning("STUB: ailclass::end_sample()");
+void ailclass::endSample(int16 channel) {
+	warning("STUB: ailclass::endSample()");
 
 #if 0
-	kanal &= 3;
-	kanal += 4;
-	AIL_end_sample(smp[kanal]);
+	channel &= 3;
+	channel += 4;
+	AIL_end_sample(smp[channel]);
 #endif
 }
 
-void ailclass::init_double_buffer(byte *b1, byte *b2, uint32 len, int16 kanal) {
-	kanal &= 3;
-	kanal += 4;
-	Dbuffer[kanal][0] = b1;
-	Dbuffer[kanal][1] = b2;
-	DbufferLen[kanal] = len;
+void ailclass::initDoubleBuffer(byte *b1, byte *b2, uint32 len, int16 channel) {
+	channel &= 3;
+	channel += 4;
+	Dbuffer[channel][0] = b1;
+	Dbuffer[channel][1] = b2;
+	DbufferLen[channel] = len;
 }
 
-void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
+void ailclass::startDbVoc(Stream *v, int16 channel, int16 vol) {
 	Common::SeekableReadStream *src = dynamic_cast<Common::SeekableReadStream *>(v);
 	assert(src);
 
@@ -636,11 +636,11 @@ void ailclass::start_db_voc(Stream *v, int16 kanal, int16 vol) {
 		::error("Error loading speech");
 
 	Common::SeekableReadStream *rs = src->readStream(ch.size);
-	playSpeech(kanal, rs);
+	playSpeech(channel, rs);
 }
 
-void ailclass::serve_db_samples() {
-	debug(1, "STUB: ailclass::serve_db_samples()");
+void ailclass::serveDbSamples() {
+	debug(1, "STUB: ailclass::serveDbSamples()");
 
 #if 0
 	int16 i;
@@ -678,7 +678,7 @@ void mod_irq() {
 	if (!InInterrupt) {
 		++InInterrupt;
 		if (MusicSwitch && (MusicStatus == ON)) {
-			check_sample_end();
+			checkSampleEnd();
 			if (PatternCount <= 0) {
 				PatternCount = CurrentTempo;
 				DecodePatternLine();
@@ -718,8 +718,8 @@ void mod_irq() {
 	--InInterrupt;
 }
 
-void check_sample_end() {
-	warning("STUB: ailclass::check_sample_end()");
+void checkSampleEnd() {
+	warning("STUB: ailclass::checkSampleEnd()");
 
 #if 0
 	int16 i;
@@ -893,19 +893,19 @@ void DecodeChannel(int16 ch) {
 #endif
 }
 
-void ailclass::switch_music(bool onOff) {
+void ailclass::switchMusic(bool onOff) {
 	if (SoundEnable)
 		MusicSwitch = onOff;
 }
 
-void ailclass::switch_sound(bool onOff) {
+void ailclass::switchSound(bool onOff) {
 	if (SoundEnable)
 		SoundSwitch = onOff;
 }
 
 void serve_speech() {
 	if (flags.InitSound && _G(spieler).SpeechSwitch)
-		ailsnd->serve_db_samples();
+		ailsnd->serveDbSamples();
 }
 
 } // namespace Chewy
