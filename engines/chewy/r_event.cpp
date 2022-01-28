@@ -1053,30 +1053,31 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case FCUT_058:
+			load_room_music(255);
 			nr = FCUT_058;
 			mem->file->select_pool_item(Ci.Handle, nr);
+			flc->custom_play(&Ci);
 
-			flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 			if (!modul) {
 				mem->file->select_pool_item(Ci.Handle, FCUT_059);
-				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+				flc->custom_play(&Ci);
 			}
 			if (!_G(spieler).R43GetPgLady) {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_060);
-					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+					flc->custom_play(&Ci);
 				}
 			} else {
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_061);
 					start_aad(623, -1);
 					flc->set_custom_user_function(Room43::setup_func);
-					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+					flc->custom_play(&Ci);
 					flc->remove_custom_user_function();
 				}
 				if (!modul) {
 					mem->file->select_pool_item(Ci.Handle, FCUT_062);
-					flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+					flc->custom_play(&Ci);
 				}
 			}
 			ailsnd->fade_out(0);
