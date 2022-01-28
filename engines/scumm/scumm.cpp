@@ -1538,11 +1538,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_system->getAudioCDManager()->open();
 	}
 
-	bool useReplacementAudioTracks = false;
-
-	if (_game.id == GID_LOOM) {
-		useReplacementAudioTracks = (_game.platform == Common::kPlatformDOS && _game.version == 3) || _game.platform == Common::kPlatformMacintosh;
-	}
+	bool useReplacementAudioTracks = (_game.id == GID_LOOM && !(_game.features & GF_AUDIOTRACKS));
 
 	if (useReplacementAudioTracks) {
 		_system->getAudioCDManager()->open();
