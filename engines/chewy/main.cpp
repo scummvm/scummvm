@@ -142,13 +142,9 @@ void free_buffers() {
 }
 
 void cursor_wahl(int16 nr) {
-	int16 ok;
-	int16 *xy;
-	ok = true;
+	int16 ok = true;
 	if (nr != CUR_USER) {
 		curblk.sprite = curtaf->image;
-		mouse_hot_x = 0;
-		mouse_hot_y = 0;
 		curani.delay = (1 + _G(spieler).DelaySpeed) * 5;
 	}
 	switch (nr) {
@@ -263,9 +259,9 @@ void cursor_wahl(int16 nr) {
 	}
 
 	if (ok) {
-		cur_move = 1;
+		cur_move = true;
 		cur->set_cur_ani(&curani);
-		xy = (int16 *)curblk.sprite[curani.ani_anf];
+		int16 *xy = (int16 *)curblk.sprite[curani.ani_anf];
 		_G(spieler).CurBreite = xy[0];
 		_G(spieler).CurHoehe = xy[1];
 		in->rectangle(0, 0, 320 - xy[0], 210 - xy[1]);

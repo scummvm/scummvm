@@ -28,34 +28,12 @@ namespace Chewy {
 
 void set_new_kb_handler(kb_info *key);
 void set_old_kb_handler();
-void del_kb_puffer();
 
 void set_mouse_handler(maus_info *mpos);
 
-extern uint8 new_kb;
-
-extern uint8 mouse_on;
-extern int16 mouse_button;
-extern uint8 mouse_links;
-extern uint8 mouse_links_los;
-extern uint8 mouse_active;
-extern uint8 cur_move;
-extern uint8 mouse_hor;
-extern uint8 mouse_ver;
-extern uint8 mouse_hot_x;
-extern uint8 mouse_hot_y;
-
-extern uint8 jflag;
-extern uint8 joy_code;
-extern uint8 button;
-extern int16 xdiff;
-extern int16 ydiff;
-extern int16 joyx;
-extern int16 joyy;
-extern int16 eck1x;
-extern int16 eck1y;
-extern int16 eck2x;
-extern int16 eck2y;
+extern bool mouse_links_los;
+extern bool mouse_active;
+extern bool cur_move;
 
 extern int16 modul;
 extern int16 fcode;
@@ -71,7 +49,6 @@ public:
 
 	void neuer_kb_handler(kb_info *key);
 	void alter_kb_handler();
-	void flush_kb_puffer();
 
 	void neuer_maushandler(maus_info *mpos);
 	maus_info *maus_info_adr();

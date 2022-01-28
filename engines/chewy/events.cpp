@@ -110,8 +110,8 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	}
 
 	// Set mouse position
-	if (cur_move != 1) {
-		cur_move = 1;
+	if (!cur_move) {
+		cur_move = true;
 		minfo.x = event.mouse.x;
 		minfo.y = event.mouse.y;
 	}

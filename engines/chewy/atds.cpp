@@ -28,7 +28,6 @@
 
 namespace Chewy {
 
-extern char *err_str;
 int16 mouse_push;
 int print_delay_count1;
 

@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "chewy/cursor.h"
 #include "chewy/events.h"
 
@@ -48,9 +47,9 @@ cursor::~cursor() {
 
 void cursor::plot_cur() {
 	if (maus_da && sichtbar) {
-		if (cur_move == 1) {
-			mouse_active = 1;
-			cur_move = 0;
+		if (cur_move) {
+			mouse_active = true;
+			cur_move = false;
 			if (!curblk->no_back) {
 
 				out->blockcopy(curblk->cur_back, cur_x_old, cur_y_old, scr_width);
@@ -74,14 +73,14 @@ void cursor::plot_cur() {
 
 		out->sprite_set(curblk->sprite[ani_count], cur_x_old, cur_y_old,
 		                 scr_width);
-		mouse_active = 0;
+		mouse_active = false;
 	}
 }
 
 void cursor::show_cur() {
 	if ((maus_da) && (!sichtbar)) {
 		sichtbar = true;
-		mouse_active = 1;
+		mouse_active = true;
 
 		minfo->x = g_events->_mousePos.x;
 		minfo->y = g_events->_mousePos.y;
@@ -94,7 +93,7 @@ void cursor::show_cur() {
 
 		cur_x_old = (minfo->x + curblk->page_off_x);
 		cur_y_old = (minfo->y + curblk->page_off_y);
-		cur_move = 1;
+		cur_move = true;
 		plot_cur();
 	}
 }
@@ -116,18 +115,18 @@ void cursor::set_cur_ani(cur_ani *ani1) {
 
 void cursor::move(int16 x, int16 y) {
 	if (maus_da) {
-		mouse_active = 1;
+		mouse_active = true;
 
 		minfo->x = x;
 		minfo->y = y;
 		cur_x_old = (minfo->x + curblk->page_off_x);
 		cur_y_old = (minfo->y + curblk->page_off_y);
 		in->move_mouse(x, y);
-		if (sichtbar == true)
-			cur_move = 1;
+		if (sichtbar)
+			cur_move = true;
 		else
-			cur_move = 0;
-		mouse_active = 0;
+			cur_move = false;
+		mouse_active = false;
 	}
 }
 

@@ -26,21 +26,11 @@
 namespace Chewy {
 
 // FIXME. Externals
-uint8 mouse_links_los;
-uint8 mouse_active;
-
-uint8 jflag;
-int16 xdiff;
-int16 ydiff;
-int16 eck1x;
-int16 eck1y;
-int16 eck2x;
-int16 eck2y;
+bool mouse_links_los;
+bool mouse_active;
 // end of externals
 
-uint8 cur_move;
-uint8 mouse_hot_x;
-uint8 mouse_hot_y;
+bool cur_move;
 
 
 void set_new_kb_handler(kb_info *key) {
@@ -49,10 +39,6 @@ void set_new_kb_handler(kb_info *key) {
 
 void set_old_kb_handler() {
 	g_events->setKbdInfo(nullptr);
-}
-
-void del_kb_puffer() {
-	g_events->clearEvents();
 }
 
 void set_mouse_handler(maus_info *mpos) {
@@ -84,13 +70,10 @@ void maus::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
 	// Mouse clip rectangle isn't supported in ScummVM
 }
 
-int16 maus::maus_vector(int16 x, int16 y, const int16 *tbl,
-                            int16 anz) {
-	int16 i, j;
-	i = -1;
-	for (j = 0; (j < anz * 4) && (i == -1); j += 4) {
-		if ((x >= tbl[j]) && (x <= tbl[j + 2]) &&
-		        (y >= tbl[j + 1]) && (y <= tbl[j + 3]))
+int16 maus::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
+	int16 i = -1;
+	for (int16 j = 0; (j < anz * 4) && (i == -1); j += 4) {
+		if ((x >= tbl[j]) && (x <= tbl[j + 2]) && (y >= tbl[j + 1]) && (y <= tbl[j + 3]))
 			i = j / 4;
 	}
 
@@ -113,10 +96,6 @@ void maus::alter_kb_handler() {
 #endif
 }
 
-void maus::flush_kb_puffer() {
-	del_kb_puffer();
-}
-
 void maus::neuer_maushandler(maus_info *mpos) {
 	set_mouse_handler(mpos);
 	maus_info_blk = mpos;
@@ -130,8 +109,7 @@ in_zeiger *maus::get_in_zeiger() {
 }
 
 int16 maus::get_switch_code() {
-	int16 switch_code;
-	switch_code = 0;
+	int16 switch_code = 0;
 
 	if (maus_info_blk) {
 		if (maus_info_blk->button == 2) {

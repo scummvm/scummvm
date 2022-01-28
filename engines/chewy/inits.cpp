@@ -77,9 +77,7 @@ void standard_init() {
 	curani.ani_anf = 0;
 	curani.ani_end = 0;
 	curani.delay = 0;
-	mouse_hot_x = 0;
-	mouse_hot_y = 0;
-
+	
 	cur = new cursor(out, in, &curblk);
 	cur->set_cur_ani(&curani);
 
