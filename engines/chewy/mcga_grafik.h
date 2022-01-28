@@ -23,7 +23,7 @@
 #define CHEWY_MCGA_GRAFIK_H
 
 #include "graphics/screen.h"
-#include "chewy/maus.h"
+#include "chewy/mouse.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {

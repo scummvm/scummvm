@@ -20,14 +20,14 @@
  */
 
 #include "common/textconsole.h"
-#include "chewy/maus.h"
+#include "chewy/mouse.h"
 #include "chewy/events.h"
 
 namespace Chewy {
 
 // FIXME. Externals
 uint8 mouse_links_los;
-uint8 mouse_aktiv;
+uint8 mouse_active;
 
 uint8 jflag;
 int16 xdiff;

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_MAUS_H
-#define CHEWY_MAUS_H
+#ifndef CHEWY_MOUSE_H
+#define CHEWY_MOUSE_H
 
 #include "chewy/ngstypes.h"
 
@@ -38,7 +38,7 @@ extern uint8 mouse_on;
 extern int16 mouse_button;
 extern uint8 mouse_links;
 extern uint8 mouse_links_los;
-extern uint8 mouse_aktiv;
+extern uint8 mouse_active;
 extern uint8 cur_move;
 extern uint8 mouse_hor;
 extern uint8 mouse_ver;

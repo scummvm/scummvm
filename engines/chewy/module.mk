@@ -22,7 +22,7 @@ MODULE_OBJS = \
 	m_event.o \
 	main.o \
 	main_menu.o \
-	maus.o \
+	mouse.o \
 	mcga.o \
 	mcga_grafik.o \
 	memory.o \

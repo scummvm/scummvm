@@ -25,7 +25,7 @@
 #include "chewy/memory.h"
 #include "chewy/mcga.h"
 #include "chewy/fehler.h"
-#include "chewy/maus.h"
+#include "chewy/mouse.h"
 
 #include "chewy/io_game.h"
 #include "chewy/cursor.h"
