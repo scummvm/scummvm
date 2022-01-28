@@ -462,8 +462,8 @@ struct Spieler : public SpielerFlags {
 	uint8 R39TvRecord = 0;
 	uint8 R39ClintNews = 0;
 
-	uint8 R40PoliceAniStatus;
-	uint8 R41TrainCount;
+	uint8 R40PoliceAniStatus = 0;
+	uint8 R41TrainCount = 0;
 
 	uint8 R47Schloss[3] = { 0 };
 	uint8 R48TaxiPerson[MAX_PERSON] = { 0 };
