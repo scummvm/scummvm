@@ -151,6 +151,7 @@ void Room50::calc_treppe() {
 			start_aad_wait(272, -1);
 			auto_move(3, P_CHEWY);
 			aad_page(273, 5);
+			flags.NoScroll = false;
 		}
 
 		flags.AutoAniPlay = false;
