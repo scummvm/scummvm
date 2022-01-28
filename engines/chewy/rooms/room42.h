@@ -33,6 +33,7 @@ private:
 public:
 	static void entry();
 	static void gedAction(int index);
+	static int16 gedUserFunc(int16 idx_nr);
 
 	static void talk_beamter();
 	static int16 use_psack();
