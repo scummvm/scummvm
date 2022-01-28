@@ -89,10 +89,10 @@ void Room28::entry(int16 eib_nr) {
 					flags.NoScroll = false;
 
 					if (_G(spieler).R40TeilKarte) {
+						haendler();
+					} else {
 						wait_show_screen(50);
 						start_aad_wait(195, -1);
-					} else {
-						haendler();
 					}
 
 					_G(spieler).ScrollxStep = 2;
