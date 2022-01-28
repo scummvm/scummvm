@@ -207,17 +207,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zakagsremake", "Zak McKracken and the Alien Mindbenders AGS Remake" },
 	
 
-	// AGDI games. They get their own grouping because they're just that awesome
-	{ "kq1agdi", "King's Quest I: Quest for the Crown Remake" },
-	{ "kq2agdi", "King's Quest II: Romancing the Stones Remake" },
-	{ "kq3agdi", "King's Quest III Redux: To Heir is Human" },
-	{ "qfg2agdi", "Quest for Glory II: Trial by Fire Remake" },
-
-	// Infamous Adventures games. Likewise
-	{ "sq2fg", "Space Quest for Glory" },
-	{ "sq2vga", "Space Quest II - Vohaul's Revenge VGA Remake" },
-	{ "kq3vga", "King's Quest III: To Heir is Human VGA Remake" },
-
 	// Commercial games
 	{ "3geeks", "3 GEEKS" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
@@ -305,7 +294,18 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	// Commercial Italian games
 	{ "onironauta", "Onironauta" },
 
-	// Post-2.5 games that are likely supported by the AGS engine
+	// AGDI games. They get their own grouping because they're just that awesome
+	{ "kq1agdi", "King's Quest I: Quest for the Crown Remake" },
+	{ "kq2agdi", "King's Quest II: Romancing the Stones Remake" },
+	{ "kq3agdi", "King's Quest III Redux: To Heir is Human" },
+	{ "qfg2agdi", "Quest for Glory II: Trial by Fire Remake" },
+
+	// Infamous Adventures games. Likewise
+	{ "sq2fg", "Space Quest for Glory" },
+	{ "sq2vga", "Space Quest II - Vohaul's Revenge VGA Remake" },
+	{ "kq3vga", "King's Quest III: To Heir is Human VGA Remake" },
+
+	// Free post-2.5 games that are likely supported by the AGS engine
 	{ "10waysfromsunday", "10 Ways from Sunday" },
 	{ "11-11-11", "11-11-11" },
 	{ "1213", "1213 Episode 1" },
@@ -2815,35 +2815,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
-	// AGDI games. They get their own grouping because they're just that awesome
-	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
-	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34922340),  // 2.0
-	GAME_ENTRY("kq1agdi", "kqvga.exe", "888e2976e6659963af15df151b846540", 27083389),  // 3.0
-	GAME_ENTRY("kq1agdi", "kq1vga.exe", "688f1807c9d8df26fc0f174dc756054e", 8278611),  // 4.1c
-	GAME_ENTRY("kq1agdi", "kq1vga.exe", "4e590490776aea10db84db4a92e1c1bb", 8226850),
-	GAME_ENTRY("kq2agdi", "kq2vga.exe", "308d35bc34e9df29d8acce615593e3e7", 64947213),  // 1.0
-	GAME_ENTRY("kq2agdi", "kq2vga.exe", "3ee3a0166357ac37836f8908a371f2dc", 65743584),  // 2.0
-	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
-	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12574643),  // 3.1c
-	GAME_ENTRY("kq2agdi", "kq2vga.exe", "43e6294f8bfbba8a3f754fa742353845", 12507938),
-	GAME_ENTRY("kq2agdi", "Kq2vgaEsp.exe", "f964e5cb4d339432dd0302d67eb11105", 2490368), // Spanish transalation
-	GAME_ENTRY("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
-	GAME_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
-	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
-	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),
-	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),
-	GAME_ENTRY("qfg2agdi", "game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
-
-	// Infamous Adventures games. Likewise
-	GAME_ENTRY("kq3vga", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0 was kq3agdi
-	GAME_ENTRY("kq3vga", "KQ3.exe", "f120690b506dd63cd7d1112ea6af2f77", 5883843),  // current version from the download site
-	GAME_ENTRY("kq3vga", "ac2game.dat", "f120690b506dd63cd7d1112ea6af2f77", 5883843), // current mac version from the download site
-	GAME_ENTRY("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
-	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
-	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
-	GAME_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
-	GAME_ENTRY("sq2vga", "SQ2VGA_V2.ags", "b3026b025c640a5c6164274034a6bab9", 175145932), // Linux
-
 	// Commercial games
 	GAME_ENTRY_STEAM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178),
 	GAME_ENTRY("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
@@ -3063,7 +3034,36 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Commercial Italian games
 	GAME_ENTRY_LANG("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA),
 
-	// Post-2.5 games that are likely supported by the AGS engine
+	// AGDI games. They get their own grouping because they're just that awesome
+	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
+	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34922340),  // 2.0
+	GAME_ENTRY("kq1agdi", "kqvga.exe", "888e2976e6659963af15df151b846540", 27083389),  // 3.0
+	GAME_ENTRY("kq1agdi", "kq1vga.exe", "688f1807c9d8df26fc0f174dc756054e", 8278611),  // 4.1c
+	GAME_ENTRY("kq1agdi", "kq1vga.exe", "4e590490776aea10db84db4a92e1c1bb", 8226850),
+	GAME_ENTRY("kq2agdi", "kq2vga.exe", "308d35bc34e9df29d8acce615593e3e7", 64947213),  // 1.0
+	GAME_ENTRY("kq2agdi", "kq2vga.exe", "3ee3a0166357ac37836f8908a371f2dc", 65743584),  // 2.0
+	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
+	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12574643),  // 3.1c
+	GAME_ENTRY("kq2agdi", "kq2vga.exe", "43e6294f8bfbba8a3f754fa742353845", 12507938),
+	GAME_ENTRY("kq2agdi", "Kq2vgaEsp.exe", "f964e5cb4d339432dd0302d67eb11105", 2490368), // Spanish transalation
+	GAME_ENTRY("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
+	GAME_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
+	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
+	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),
+	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),
+	GAME_ENTRY("qfg2agdi", "game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
+
+	// Infamous Adventures games. Likewise
+	GAME_ENTRY("kq3vga", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0 was kq3agdi
+	GAME_ENTRY("kq3vga", "KQ3.exe", "f120690b506dd63cd7d1112ea6af2f77", 5883843),  // current version from the download site
+	GAME_ENTRY("kq3vga", "ac2game.dat", "f120690b506dd63cd7d1112ea6af2f77", 5883843), // current mac version from the download site
+	GAME_ENTRY("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
+	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
+	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
+	GAME_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
+	GAME_ENTRY("sq2vga", "SQ2VGA_V2.ags", "b3026b025c640a5c6164274034a6bab9", 175145932), // Linux
+
+	// Free post-2.5 games that are likely supported by the AGS engine
 	DEMO_ENTRY("3geeks", "3GEEKS_Demo.exe", "7ddb9e776648faed5a51170d087074e9", 512546851), // itch.io
 	DEMO_ENTRY("aazor", "aazor.exe", "465f972675db2da6040518221af5b0ba", 4956212),
 	DEMO_ENTRY("absurdistan", "Absurdistan - Demo.exe", "4588012d3077d6b6791fce8cd4b15885", 35712363),  // v1.3
