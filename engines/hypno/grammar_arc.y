@@ -96,6 +96,7 @@ hline: 	CTOK NUM {
 	| TPTOK FILENAME NUM FILENAME {
 		g_parsedArc->transitionVideo = $2;
 		g_parsedArc->transitionTime = $3;
+		g_parsedArc->transitionPalette = $4;
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4); 
 	}
 	| TTOK FILENAME NUM { 
@@ -146,7 +147,9 @@ hline: 	CTOK NUM {
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
-	| HETOK BYTE NUM NUM { 
+	| HETOK BYTE NUM NUM {
+		Segment segment($2, $3, $4);
+		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "HE %x %d %d", $2, $3, $4); 
 	}
 	| HLTOK BYTE NUM NUM { 
@@ -156,6 +159,8 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "HU %x %d %d", $2, $3, $4); 
 	}
 	| HTOK BYTE NUM NUM {
+		Segment segment($2, $3, $4);
+		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "H %x %d %d", $2, $3, $4); 
 	}
 	;

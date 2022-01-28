@@ -62,6 +62,7 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->background.clear();
 	g_parsedArc->player.clear();
 	g_parsedArc->shoots.clear();
+	g_parsedArc->intros.clear();
 }
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
@@ -133,6 +134,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_score = 0;
 	_health = arc->health;
 	_maxHealth = _health;
+	Segments segments = arc->segments;
+	uint32 segmentIdx = 0;
 	changeCursor("arcade");
 	_shoots.clear();
 	if (!arc->player.empty())
@@ -235,7 +238,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (_health <= 0) {
 			skipVideo(background);
 			if (!arc->defeatNoEnergyVideo.empty()) {
-				MVideo video(arc->defeatNoEnergyVideo, Common::Point(0, 0), false, false, false);
+				MVideo video(arc->defeatNoEnergyVideo, Common::Point(0, 0), false, true, false);
 				runIntro(video);
 			}
 			assert(!arc->levelIfLose.empty());
@@ -245,17 +248,33 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		}
 
 		if (!arc->transitionVideo.empty() && background.decoder->getCurFrame() >= (int)arc->transitionTime) {
+			const byte *videoPalette = nullptr;
+			videoPalette = background.decoder->getPalette();
+			background.decoder->pauseVideo(true);
+
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc->transitionVideo.c_str());
 			arc->transitionTime = background.decoder->getFrameCount() + 1;
-			MVideo video(arc->transitionVideo, Common::Point(0, 0), false, false, false);
+			loadPalette(arc->transitionPalette);
+			MVideo video(arc->transitionVideo, Common::Point(0, 0), false, true, false);
 			runIntro(video);
-			skipVideo(background);
+
+			background.decoder->pauseVideo(false);
+			g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+			updateScreen(background);
+			drawScreen();
 		}
 
-		if (checkArcadeLevelCompleted(background)) {
+		if (background.decoder && background.decoder->getCurFrame() >= int(segments[segmentIdx].start + segments[segmentIdx].size)) {
+			debugC(1, kHypnoDebugArcade, "Finished segment %d", segmentIdx);
+			segmentIdx++;
+			if (segmentIdx >= segments.size())
+				error("Invalid segment %d", segmentIdx); 
+		}
+
+		if (checkArcadeLevelCompleted(background, segments[segmentIdx])) {
 			skipVideo(background);
 			if (!arc->nextLevelVideo.empty()) {
-				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, false, false);
+				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, true, false);
 				runIntro(video);
 			}
 			assert(!arc->levelIfWin.empty());
@@ -412,8 +431,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 	}
 }
 
-bool HypnoEngine::checkArcadeLevelCompleted(MVideo &background) {
-	return !background.decoder || background.decoder->endOfVideo() || _skipLevel;
+bool HypnoEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {
+	return !background.decoder || background.decoder->endOfVideo() || segment.type == 2 || _skipLevel;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {

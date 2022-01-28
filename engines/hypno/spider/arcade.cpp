@@ -201,7 +201,7 @@ void SpiderEngine::drawHealth() {
 	drawString("ENERGY", 248, 180, 38, c);
 }
 
-bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background) {
+bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {
 	if (_skipLevel)
 		return true;
 

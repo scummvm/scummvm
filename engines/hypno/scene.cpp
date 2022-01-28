@@ -243,14 +243,8 @@ void HypnoEngine::runTransition(Transition *trans) {
 	Common::String nextLevel = findNextLevel(trans);
 	if (!trans->frameImage.empty()) {
 		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans->frameImage.c_str());
-		Graphics::Surface *frame = decodeFrame(trans->frameImage, trans->frameNumber);
-		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
-		drawImage(*sframe, 0, 0, false);
+		loadImage(trans->frameImage, 0, 0, false, true, trans->frameNumber);
 		drawScreen();
-		frame->free();
-		delete frame;
-		sframe->free();
-		delete sframe;
 		Common::String *ptr = new Common::String(nextLevel);
 		if (!startAlarm(2 * 1000000, ptr)) // 2 seconds
 			error("Failed to install alarm");

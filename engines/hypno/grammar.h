@@ -400,6 +400,12 @@ typedef Common::Array<Common::String> Sounds;
 
 class Segment {
 public:
+	Segment(byte type_, uint32 start_, uint32 size_)  {
+		type = type_;
+		start = start_;
+		size = size_;
+	}
+
 	byte type;
 	uint32 start;
 	uint32 size;
@@ -422,6 +428,7 @@ public:
 
 	// Videos
 	Filename transitionVideo;
+	Filename transitionPalette;
 	Filename nextLevelVideo;
 	Filename defeatNoEnergyVideo;
 	Filename defeatMissBossVideo;
@@ -449,6 +456,7 @@ public:
 		levelEasy = "";
 		levelHard = "";
 		frameNumber = 0;
+		frameImage = "";
 	}
 	
 	Transition(Common::String easy, Common::String hard)  {
@@ -456,6 +464,7 @@ public:
 		levelEasy = easy;
 		levelHard = hard;
 		frameNumber = 0;
+		frameImage = "";
 	}
 	Common::String nextLevel;
 	Common::String levelEasy;

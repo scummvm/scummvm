@@ -30,7 +30,10 @@ namespace Hypno {
 
 extern const char *sceneVariables[];
 
-SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
+SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
+	_screenW = 640;
+	_screenH = 480;
+}
 
 void SpiderEngine::loadAssets() {
 	if (!isDemo())
@@ -971,7 +974,7 @@ void SpiderEngine::loadAssetsDemo() {
 	start->intros.push_back("demo/dcine2.smk");
 	_levels["<start>"] = start;
 
-	loadArcadeLevel("c1.mi_", "mis/demo.mis", prefix);
+	loadArcadeLevel("c1.mi_", "sixdemo/mis/demo.mis", prefix);
 	_levels["c1.mi_"]->levelIfLose = "sixdemo/mis/demo.mis";
 
 	loadLib("", "c_misc/fonts.lib", true);

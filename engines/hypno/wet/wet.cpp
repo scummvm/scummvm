@@ -34,6 +34,9 @@ static const chapterEntry rawChapterTable[] = {
 };
 
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
+	_screenW = 320;
+	_screenH = 200;
+ 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
 		_chapterTable[entry->id] = entry;
@@ -156,13 +159,12 @@ void WetEngine::loadAssetsPCW() {
 	intro->intros.push_back("c_misc/nw_logo.smk");
 	intro->intros.push_back("c_misc/h.s");
 	intro->intros.push_back("c_misc/wet.smk");
-	intro->frameImage.clear();
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c11.mis", "<gameover>", "");
+	_levels["c11.mis"]->levelIfLose = "<gameover>";
 
 	Transition *over = new Transition("<quit>");
-	over->intros.push_back("movie/gameover.smk");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "c_misc/sound.lib", false);
@@ -180,13 +182,15 @@ void WetEngine::loadAssetsPCG() {
 	intro->intros.push_back("nw_logo.smk");
 	intro->intros.push_back("h.s");
 	intro->intros.push_back("wet.smk");
-	intro->frameImage.clear();
+	intro->frameImage = "c.s";
+	intro->frameNumber = 0;
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c31.mis", "<gameover>", "");
+	_levels["c31.mis"]->levelIfLose = "<gameover>";
 
 	Transition *over = new Transition("<quit>");
-	over->intros.push_back("gameover.smk");
+	over->intros.push_back("g.s");
 	_levels["<gameover>"] = over;
 
 	loadLib("", "sound.lib", false);
@@ -211,20 +215,22 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<main_menu>"] = menu;
 	_levels["<main_menu>"]->levelIfWin = "c11";
 
-	loadArcadeLevel("c110.mi_", "c20", "");
+	loadArcadeLevel("c110.mi_", "c10", "");
 	_levels["c110.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c111.mi_", "c20", "");
+	loadArcadeLevel("c111.mi_", "c10", "");
 	_levels["c111.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c112.mi_", "c20", "");
-	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
+	 loadArcadeLevel("c112.mi_", "c10", "");
+	 _levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c100.mi_", "", "");
+	loadArcadeLevel("c100.mi_", "c20", "");
+	loadArcadeLevel("c101.mi_", "c20", "");
+	loadArcadeLevel("c102.mi_", "c20", "");
 
-	loadArcadeLevel("c200.mi_", "???", "");
-	loadArcadeLevel("c201.mi_", "???", "");
-	loadArcadeLevel("c202.mi_", "???", "");
+	//loadArcadeLevel("c300.mi_", "???", "");
+	//loadArcadeLevel("c201.mi_", "???", "");
+	//loadArcadeLevel("c202.mi_", "???", "");
 
 	//loadArcadeLevel("c20", "", "");
 
@@ -234,6 +240,11 @@ void WetEngine::loadAssetsFullGame() {
 }
 
 void WetEngine::showCredits() {
+	if (_cheatsEnabled && !_arcadeMode.empty()) {
+		_skipLevel = true;
+		return;
+	}
+
 	if (!isDemo() || _variant == "Demo") {
 		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);
 		runIntro(video);
@@ -255,7 +266,7 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, &palette);
 	loadPalette(palette, 0, 256);
 	Common::String _name = "";
-	drawImage(*frame, 0, 0, true);
+	drawImage(*frame, 0, 0, false);
 	drawString("ENTER NAME :", 48, 50, 100, c);
 	while (!shouldQuit()) {
 

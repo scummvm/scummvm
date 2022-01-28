@@ -222,7 +222,7 @@ public:
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual void shoot(const Common::Point &mousePos);
 	virtual void hitPlayer();
-	virtual bool checkArcadeLevelCompleted(MVideo &background);
+	virtual bool checkArcadeLevelCompleted(MVideo &background, Segment segment);
 	Common::String _difficulty;
 	bool _skipLevel;
 
@@ -308,7 +308,7 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void hitPlayer() override;
-	bool checkArcadeLevelCompleted(MVideo &background) override;
+	bool checkArcadeLevelCompleted(MVideo &background, Segment segment) override;
 
 	void drawBackToMenu(Hotspot *h) override;
 	void runCode(Code *code) override;
