@@ -128,7 +128,7 @@ void Room46::bodo() {
 	start_detail_wait(6, 1, ANI_VOR);
 	det->show_static_spr(3);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(0, 1, ANI_VOR);
+	start_detail_wait(1, 1, ANI_VOR);
 	flic_cut(FCUT_065, CFO_MODE);
 	out->setze_zeiger(nullptr);
 	out->cls();
