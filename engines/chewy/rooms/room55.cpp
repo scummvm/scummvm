@@ -376,13 +376,12 @@ int16 Room55::use_kammeraus() {
 			
 			flc->remove_flic_user_function();
 			const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
-			room->set_timer_status(19 + aniNr, TIMER_STOP);
-			det->stop_detail(19 + aniNr);
-			det->del_static_ani(19 + aniNr);
+			room->set_timer_status(aniNr, TIMER_STOP);
+			det->stop_detail(aniNr);
+			det->del_static_ani(aniNr);
 			det->hide_static_spr(10);
 			_G(spieler).R55ExitDia = 322;
 			_G(spieler).R55SekWeg = true;
-			atds->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
 			atds->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(_G(spieler).AkInvent);
 			atds->set_steuer_bit(345, 1, 1);
@@ -440,9 +439,9 @@ void Room55::talk_line() {
 		aad_nr = 320;
 		_G(spieler).R55ExitDia = 321;
 		const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
-		room->set_timer_status(19 + aniNr, TIMER_STOP);
-		det->stop_detail(19 + aniNr);
-		det->del_static_ani(19 + aniNr);
+		room->set_timer_status(aniNr, TIMER_STOP);
+		det->stop_detail(aniNr);
+		det->del_static_ani(aniNr);
 		start_detail_wait(22, 1, ANI_VOR);
 		det->set_static_ani(21, -1);
 	} else if (!_G(spieler).R55RaumOk) {
