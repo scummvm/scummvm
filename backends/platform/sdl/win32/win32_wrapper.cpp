@@ -78,7 +78,7 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 #endif
 	);
 	if (pSHGetSpecialFolderPath)
-		return pSHGetSpecialFolderPath(hwnd, pszPath, csidl & !CSIDL_FLAG_MASK, csidl & CSIDL_FLAG_CREATE) ? S_OK : E_FAIL;
+		return pSHGetSpecialFolderPath(hwnd, pszPath, csidl & ~CSIDL_FLAG_MASK, csidl & CSIDL_FLAG_CREATE) ? S_OK : E_FAIL;
 
 	return E_NOTIMPL;
 }
