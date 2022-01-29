@@ -78,7 +78,6 @@ extern void decode_rle(byte *vscr, const byte *dbuf, int br, int h);
 class flic {
 public:
 	flic();
-	~flic();
 	void play(const char *fname, byte *vscreen, byte *load_p);
 
 	int16 play(Common::Stream *handle, byte *vscreen, byte *load_p);
