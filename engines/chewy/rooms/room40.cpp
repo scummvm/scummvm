@@ -409,6 +409,8 @@ int16 Room40::use_mr_pumpkin() {
 				break;
 
 			case RECORDER_INV:
+				action_ret = true;
+
 				if (_G(spieler).R39TvRecord == 6) {
 					action_ret = true;
 					if (_G(spieler).R40PoliceWeg == false)
