@@ -51,7 +51,7 @@ void Room51::entry() {
 	_G(zoom_mov_fak) = 4;
 
 	if (_G(spieler).flags32_10) {
-		atds->set_unknown(0);
+		atds->set_unknown(false);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(maus_links_click) = false;
@@ -100,7 +100,7 @@ void Room51::entry() {
 }
 
 void Room51::xit(int16 eib_nr) {
-	atds->set_unknown(1);
+	atds->set_unknown(true);
 
 	if (_G(spieler).flags32_10) {
 		flags.MainInput = true;

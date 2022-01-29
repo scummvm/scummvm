@@ -327,8 +327,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 			atdshandle[mode] = rs;
 			atdsmem[mode] = tmp_adr;
 			atdspooloff[mode] = chunk_start;
-			switch (mode) {
-			case INV_USE_DATEI:
+			if (mode == INV_USE_DATEI) {
 				mem->file->select_pool_item(rs, atdspooloff[mode]);
 				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
@@ -352,8 +351,6 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 						inv_use_mem[Ch.size + 2] = (char)BLOCKENDE;
 					}
 				}
-				break;
-
 			}
 		}
 	} else

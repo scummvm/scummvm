@@ -24,7 +24,6 @@
 
 #include "chewy/file.h"
 #include "chewy/ngshext.h"
-#include "chewy/defines.h"
 
 namespace Chewy {
 
@@ -194,9 +193,6 @@ public:
 
 	void load_rdi_taf(const char *fname, int16 load_flag);
 
-#ifdef ICM
-	void save_detail(char *fname, int16 room_nr);
-#endif
 	void set_static_spr(int16 nr, int16 spr_nr);
 	byte *get_static_image(int16 det_nr);
 
@@ -280,11 +276,6 @@ private:
 	void load_taf_ani_sprite(int16 nr);
 
 	void remove_unused_samples();
-#ifdef KONVERT
-	void konvert_format(room_detail_info *rdi_a,
-	                    room_detail_info_new *rdi_n);
-	room_detail_info_new rdi_new;
-#endif
 	room_detail_info rdi;
 #ifdef DETEDIT
 	room_detail_info rdi_shadow;

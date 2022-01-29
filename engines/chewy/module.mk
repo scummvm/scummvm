@@ -6,7 +6,6 @@ MODULE_OBJS = \
 	chewy.o \
 	cursor.o \
 	datei.o \
-	debug.o \
 	debugger.o \
 	detail.o \
 	effect.o \
