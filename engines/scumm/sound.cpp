@@ -119,6 +119,17 @@ bool Sound::isRolandLoom() const {
 		(_vm->VAR(_vm->VAR_SOUNDCARD) == 4);
 }
 
+// When timing the MT-32 version, it took on average 149.6 seconds for the
+// timer to reach 278. At 60 SCUMM ticks per second, this would be 8976 ticks
+// except... apparently you can't really use SCUMM ticks to this level of
+// accuracy, so the final timing is still off. I've adjusted it so that the
+// transition happens at almost the same point in the music when I use the
+// Ozawa version of No. 10 Scène (Moderato). Good enough for now, but maybe it
+// needs to be configurable to accommodate for different recordings?
+
+#define TICKS_TO_TIMER(x) ((((x) * 278) / 8940) + 1)
+#define TIMER_TO_TICKS(x) ((((x) - 1) * 8940) / 278)
+
 void Sound::updateMusicTimer(int ticks) {
 	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56 && !(_vm->_game.features & GF_DEMO));
 
@@ -126,30 +137,30 @@ void Sound::updateMusicTimer(int ticks) {
 
 	// For now, this is hard-coded for Loom's Overture. When playing the
 	// original song, the timer is apparently based on the MIDI tempo of
-	// it. Therefore, it may be necessary to adjust this in the future.
-	// But at the time of writing, it seems likely that the Overture is
-	// the only track that depends on timing, so that may be ok.
+	// it. But at least for Loom, the Overture seems to be the only piece
+	// of music where timing matters.
 
-	// The length of the Overture is approximated to 8800 ticks. This
-	// makes it sync up nicely with Act II: No. 10 Scène (Moderato) from
-	// the Seiji Ozawa recording that was apparently used as a tempo
-	// reference for the Loom soundtrack.
+	// These are the values the timer will have to reach or exceed for the
+	// Overture to work correctly:
 
-	// This isn't necessarily the correct length of the track - not even
-	// for the Ozawa version - and we currently have no way of querying
-	// the actual length of the track.
+	// 4   - Fade in the "OVERTURE" text
+	// 198 - Fade down the "OVERTURE" text
+	// 204 - Show the LucasFilm logo
+	// 278 - End the Overture
 
-	// If the track has already ended, it's still important that the timer
-	// eventually reaches at least 278. If necessary, skip make sure the
-	// timer skips to 198, which is where the next scene begins.
+	// At the time of writing, we don't have any way to query the CD audio
+	// manager for the exact length of the track, so we just assume the
+	// timer should run at the same rate. If the track ends before the
+	// timer reaches 198, skip ahead. (If the timer didn't even reach 4,
+	// you weren't even trying!)
 
 	if (isLoomOverture && !pollCD()) {
-		uint32 scummTick = (8800 * _musicTimer) / 198;
-		if (_scummTicks < scummTick)
-			_scummTicks = scummTick;
+		uint32 fadeDownTick = TIMER_TO_TICKS(198);
+		if (_scummTicks < fadeDownTick)
+			_scummTicks = fadeDownTick;
 	}
 
-	_musicTimer = (278 * _scummTicks) / 8800;
+	_musicTimer = TICKS_TO_TIMER(_scummTicks);
 
 	// But don't let the timer exceed 278 until the Overture has ended, or
 	// the music will be cut off.
@@ -157,6 +168,9 @@ void Sound::updateMusicTimer(int ticks) {
 	if (isLoomOverture && pollCD() && _musicTimer >= 278)
 		_musicTimer = 277;
 }
+
+#undef TIMER_TO_TICKS
+#undef TICKS_TO_TIMER
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
