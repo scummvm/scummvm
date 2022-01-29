@@ -535,28 +535,28 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 }
 
 Common::String PrivateEngine::getPauseMovieSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kPauseMovie";
 
 	return "k3";
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kGoIntro";
 
 	return "k1";
 }
 
 Common::String PrivateEngine::getAlternateGameVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kAlternateGame";
 
 	return "k2";
 }
 
 Common::String PrivateEngine::getMainDesktopSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kMainDesktop";
 
 	if (isDemo())
@@ -566,42 +566,42 @@ Common::String PrivateEngine::getMainDesktopSetting() {
 }
 
 Common::String PrivateEngine::getPoliceIndexVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kPoliceIndex";
 
 	return "k0";
 }
 
 Common::String PrivateEngine::getPOGoBustMovieSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kPOGoBustMovie";
 
 	return "k7";
 }
 
 Common::String PrivateEngine::getPoliceBustFromMOSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kPoliceBustFromMO";
 
 	return "k6";
 }
 
 Common::String PrivateEngine::getWallSafeValueVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kWallSafeValue";
 
 	return "k3";
 }
 
 Common::String PrivateEngine::getExitCursor() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kExit";
 
 	return "k5";
 }
 
 Common::String PrivateEngine::getInventoryCursor() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kInventory";
 
 	return "k7";
