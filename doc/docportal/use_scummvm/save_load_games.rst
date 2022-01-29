@@ -54,23 +54,7 @@ Default saved game paths are shown below.
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		Windows Vista and later
-		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\Saved games``
-
-		---
-		:column: col-lg-12 mb-2
-
-		Windows 2000/XP
-		^^^^^^^^^^^^^^^
-		``\Documents and Settings\username\Application Data\ScummVM\Saved games\``
-
-		---
-		:column: col-lg-12 mb-2
-
-		Windows NT4
-		^^^^^^^^^^^
-		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Saved games\``
 
 
 .. tabbed:: macOS

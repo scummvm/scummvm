@@ -18,30 +18,10 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		Windows Vista and later
-		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\scummvm.ini``
 
-		---
-		:column: col-lg-12 mb-2
+		For Windows 95/98/ME, the file is at ``C:\WINDOWS\scummvm.ini``
 
-		Windows 2000/XP
-		^^^^^^^^^^^^^^^
-		``\Documents and Settings\username\Application Data\ScummVM\scummvm.ini``
-
-		---
-		:column: col-lg-12 mb-2
-
-		Windows NT4
-		^^^^^^^^^^^
-		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\scummvm.ini``
-
-		---
-		:column: col-lg-12 mb-2
-
-		95/98/ME
-		^^^^^^^^
-		``C:\WINDOWS\scummvm.ini``
 
 .. tabbed:: macOS
 
