@@ -125,8 +125,6 @@ void Room49::calc_boy() {
 
 		SetUpScreenFunc = nullptr;
 		start_aad_wait(262, -1);
-
-		SetUpScreenFunc = setup_func;
 		auto_move(3, P_CHEWY);
 		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
