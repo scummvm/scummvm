@@ -54,8 +54,8 @@ Default saved game paths are shown below.
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		Window Vista/7/8/10
-		^^^^^^^^^^^^^^^^^^^
+		Window Vista and later
+		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\Saved games``
 
 		---
