@@ -22,8 +22,6 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
-#include "chewy/file.h"
-
 namespace Chewy {
 
 #define ATDS_VOC_OFFSET 20
@@ -278,8 +276,7 @@ public:
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
 	void init_ats_mode(int16 mode, uint8 *atsheader);
-	bool start_ats(int16 txt_nr, int16 txt_mode, int16 color,
-	                int16 mode, int16 *voc_nr);
+	bool start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr);
 	void stop_ats();
 	int16 ats_get_status();
 	void print_ats(int16 x, int16 y, int16 scrx, int16 scry);
@@ -289,8 +286,7 @@ public:
 	void set_ats_str(int16 txt_nr, int16 txt_mode, int16 str_nr, int16 mode);
 	void set_ats_str(int16 txt_nr, int16 str_nr, int16 mode);
 	int16 get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode);
-	char *ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz,
-	                  int16 mode);
+	char *ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mode);
 	char *ats_search_block(int16 txt_mode, char *txt_adr);
 	void ats_search_nr(int16 txt_nr, char **str);
 	void ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str);
@@ -299,8 +295,7 @@ public:
 	void stop_aad();
 	void print_aad(int16 scrx, int16 scry);
 	int16 aad_get_status();
-	void set_string_end_func
-	(void (*str_func)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode));
+	void set_string_end_func(void (*str_func)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode));
 	void aad_search_dia(int16 dia_nr, char **ptr);
 	int16 aad_get_zeilen(char *str, int16 *txt_len);
 	bool ads_start(int16 dia_nr);
@@ -318,7 +313,7 @@ public:
 	int16 check_item(int16 block_nr, int16 item_nr);
 	int16 calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode);
 	int16 get_stereo_pos(int16 x);
-	void set_unknown(int16 nr) {
+	void set_unknown(bool nr) {
 		atdsv._field12 = nr;
 	}
 

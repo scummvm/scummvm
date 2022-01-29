@@ -130,10 +130,8 @@ void cursor::move(int16 x, int16 y) {
 	}
 }
 
-void cursor::wait_taste_los(int16 maus_plot) {
-	int16 is_mouse, stay;
-	int16 switch_code;
-	is_mouse = 0;
+void cursor::wait_taste_los(bool maus_plot) {
+	int16 is_mouse = 0;
 	if (maus_da) {
 		g_events->update();
 		is_mouse = minfo->button;
@@ -141,8 +139,8 @@ void cursor::wait_taste_los(int16 maus_plot) {
 
 	if (!is_mouse)
 		in->hot_key = 0;
-	stay = 1;
-	switch_code = 1;
+	int16 stay = 1;
+	int16 switch_code = 1;
 
 	while ((switch_code != 0) && (stay)) {
 		switch_code = in->get_switch_code();
@@ -156,12 +154,6 @@ void cursor::wait_taste_los(int16 maus_plot) {
 		if (maus_plot)
 			plot_cur();
 	}
-}
-
-void cursor::wait_taste(int16 maus_plot) {
-	while (in->get_switch_code() == 0)
-		if (maus_plot != false)
-			plot_cur();
 }
 
 } // namespace Chewy

@@ -44,8 +44,7 @@ public:
 	void set_cur_ani(cur_ani *ani);
 
 	void move(int16 x, int16 y);
-	void wait_taste_los(int16 maus_plot);
-	void wait_taste(int16 maus_plot);
+	void wait_taste_los(bool maus_plot);
 
 	mcga_grafik *out = nullptr;
 	maus *in = nullptr;
