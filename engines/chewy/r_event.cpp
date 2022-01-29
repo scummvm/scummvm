@@ -933,7 +933,6 @@ void flic_cut(int16 nr, int16 mode) {
 	g_events->delay(50);
 	Common::File *f = File::open("cut/cut.tap");
 	Ci.Handle = f;
-	Ci.Fname = 0;
 
 	if (Ci.Handle) {
 		switch (nr) {

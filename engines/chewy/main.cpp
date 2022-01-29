@@ -113,7 +113,6 @@ void alloc_buffers() {
 	Ci.SoundSlot = (byte *)MALLOC(SOUND_SLOT_SIZE);
 	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
 	ERROR;
-	Ci.Fname = fname;
 	SpeechBuf[0] = (byte *)MALLOC(SPEECH_HALF_BUF * 2);
 	ERROR
 	SpeechBuf[1] = SpeechBuf[0] + SPEECH_HALF_BUF;

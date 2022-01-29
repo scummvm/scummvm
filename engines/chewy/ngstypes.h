@@ -536,7 +536,6 @@ struct CustomFrameHead {
 };
 
 struct CustomInfo {
-	char *Fname = nullptr;
 	Stream *Handle = nullptr;
 	byte *VirtScreen = 0;
 	byte *TempArea = 0;

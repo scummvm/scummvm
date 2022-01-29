@@ -99,9 +99,6 @@ flic::flic() {
 	Common::fill(&sounds[0], &sounds[50], (byte *)nullptr);
 }
 
-flic::~flic() {
-}
-
 void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 
 	Stream *lhandle = File::open(fname);
@@ -384,10 +381,6 @@ int16 flic::custom_play(CustomInfo *ci) {
 	Music = ci->MusicSlot;
 	Sound = ci->SoundSlot;
 
-	if (ci->Fname != nullptr) {
-		ci->Handle = File::open(ci->Fname);
-	}
-
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(ci->Handle);
 	if (rs) {
 		if (custom_header.load(rs)) {
@@ -438,8 +431,6 @@ int16 flic::custom_play(CustomInfo *ci) {
 				}
 			}
 		}
-		if (ci->Fname != 0)
-			chewy_fclose(ci->Handle);
 	} else {
 		modul = DATEI;
 		fcode = OPENFEHLER;
