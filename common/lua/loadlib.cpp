@@ -4,7 +4,7 @@
 ** See Copyright Notice in lua.h
 **
 ** This module contains an implementation of loadlib for Unix systems
-** that have dlfcn, an implementation for Darwin (Mac OS X), an
+** that have dlfcn, an implementation for Darwin (macOS), an
 ** implementation for Windows, and a stub for other systems.
 */
 

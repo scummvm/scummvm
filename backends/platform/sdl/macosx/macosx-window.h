@@ -28,7 +28,7 @@
 
 class SdlWindow_MacOSX final : public SdlWindow {
 public:
-	// Use an iconless window on OS X, as we use a nicer external icon there.
+	// Use an iconless window on macOS, as we use a nicer external icon there.
 	void setupIcon() override {}
 	float getDpiScalingFactor() const override;
 };

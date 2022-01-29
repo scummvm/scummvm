@@ -2033,7 +2033,7 @@ byte getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 	// Vertical positions outside the 320x200 screen (e.g. in range 200-232)
 	// are accessed after teleporting Lo'Ann to the future using the pendant
 	// and walking down the slope and out of the screen (This causes a crash
-	// at least on Mac OS X). The original PC version of Future Wars doesn't
+	// at least on macOS). The original PC version of Future Wars doesn't
 	// clip its coordinates in this function or in checkCollision-function
 	// according to reverse engineering but instead just happily reads outside
 	// the 320x200 buffer. Not really knowing how to properly fix this I simply

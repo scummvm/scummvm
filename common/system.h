@@ -1620,7 +1620,7 @@ public:
 
 	/** Add system-specific Common::Archive objects to the given SearchSet.
 	 * For example, on Unix, the directory corresponding to DATA_PATH (if set), or, on
-	 * Mac OS X, the 'Resource' dir in the app bundle.
+	 * macOS, the 'Resource' dir in the app bundle.
 	 *
 	 * @todo Come up with a better name.
 	 *

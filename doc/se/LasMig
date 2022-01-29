@@ -70,7 +70,7 @@ Från början var programmet designat för att köra LucasArts SCUMM-spel, till 
 
 Med tiden har stöd lagts till för många spel som inte använder SCUMM-systemet och ScummVM stöder nu även många av Sierras AGI- och SCI-spel (till exempel King’s Quest 1-6, Space Quest 1-5, ...), Discworld 1 och 2, Simon the Sorcerer 1 och 2, Beneath A Steel Sky, Lure of the Temptress, Broken Sword I och II, Flight of the Amazon Queen, Gobliiins 1-3, Legend of Kyrandia-serien, många av Humongous Entertainments barnspel (inklusive Freddi Fish och Putt Putt-spelen) med flera. Du kan se en fullständig lista med delaljer om vilka äventyr som stöds och hur väl de fungerar på kompatibilitetssidan. ScummVM förbättras konstant, så håll ett öga på listan.
 
-Bland systemen du kan använda för att spela dessa spel räknas vanliga persondatorer (Windows, Linux, Mac OS X, ...) spelkonsoler (Dreamcast, Nintendo DS & Wii, PSP, ...), smartphones (Android, iPhone, Symbian ...) med flera.
+Bland systemen du kan använda för att spela dessa spel räknas vanliga persondatorer (Windows, Linux, macOS, ...) spelkonsoler (Dreamcast, Nintendo DS & Wii, PSP, ...), smartphones (Android, iPhone, Symbian ...) med flera.
 
 Just nu är ScummVM fortfarande under utveckling. Var medveten om att trots att vi försöker se till att många spel kan avklaras utan att stöta på allvarliga buggar finns det ändå risk för krasher, och vi erbjuder inga garantier. Dock har många spel varit stödda av programmet väldigt länge och borde fungera utmärkt i vilken som helst av de senaste stabila versionerna. Du kan få en uppfattning om hur väl varje spel fungerar i ScummVM genom att titta på kompatibilitetssidan. Faktum är att ScummVM används kommersiellt för nyutgåvor av vissa spel på moderna plattformar. Alltså är många företag nöjda med mjukvarans kvalitet och hur väl programmet stöder spelen.
 
@@ -463,7 +463,7 @@ CD-versionerna av Gobliiins-spelen innehåller ett stort ljudspår som du måste
 
 3.11) Notiser om Inherit the Earth: Quest for the Orb:
 ----- ------------------------------------------------
-För att spela nyutgåvan från Wyrmkeep för Mac OS X måste du kopiera datafilerna från CD:n till din hårddisk. Om du är PC-användare, hänvisa sedan till:
+För att spela nyutgåvan från Wyrmkeep för macOS måste du kopiera datafilerna från CD:n till din hårddisk. Om du är PC-användare, hänvisa sedan till:
 
   https://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
@@ -619,7 +619,7 @@ Stödda plattformar inkluderar bl.a. följande:
 
         UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
-        Mac OS X
+        macOS
         AmigaOS
         Android
         BeOS
@@ -867,7 +867,7 @@ ScummVM stöder ett antal kortkommandon medan du spelar. De är olika för SCUMM
 
   Gemensamma:
     Ctrl-F5                - Öppnar menyn
-    Cmd-q                  - Avsluta (Mac OS X)
+    Cmd-q                  - Avsluta (macOS)
     Ctrl-q                 - Avsluta (andra system inklusive Linux)
     Ctrl-z ELLER Alt-x     - Avsluta (andra plattformar)
     Ctrl-u                 - Stäng av allt ljud
@@ -1027,7 +1027,7 @@ Märk att trycka Ctrl-f och Ctrl-g inte rekommenderas: spel kan krasha när de s
 Spardata lagras som standard i den aktiva katalogen på vissa plattformar och i förbestämda kataloger på andra plattformar. Du kan ställa in katalogen i konfigurationsfilen genom att ändra savepath-parametern. Se exempel för konfigurationsfilen senare i detta dokument.
 
 Plattformar som för närvarande har annorlunda standardkataloger:
-    Mac OS X:
+    macOS:
     $HOME/Documents/ScummVM Savegames/
 
     Övriga unix-system:
@@ -1170,8 +1170,8 @@ För de flesta operativsystemen och spelen använder ScummVM som standard MT-32 
                  (fungerar endast i SCUMM FM-TOWNS-spel)
 
     alsa       - Uppspelning med ALSA sequencer-enhet. Se nedan.
-    core       - CoreAudio ljud, för Mac OS X användare.
-    coremidi   - CoreMIDI ljud, för Mac OS X användare. Använd endast om du har
+    core       - CoreAudio ljud, för macOS användare.
+    coremidi   - CoreMIDI ljud, för macOS användare. Använd endast om du har
                  en MIDI-synthesizer i hårdvaruform.
     seq        - Använd /dev/sequencer för MIDI, *nix användare. Se nedan.
     timidity   - Anslut till TiMidity++ MIDI-servern. Se nedan.
@@ -1467,7 +1467,7 @@ Som standard sparas och laddas konfigrationsfilen i:
     Unix:
     ~/.scummvmrc
 
-    Mac OS X:
+    macOS:
     ~/Library/Preferences/ScummVM Preferences
     (här hänvisar ~ till din hemkatalog)
 
@@ -1719,7 +1719,7 @@ Om specialinställningarna inte visas måste spelet köras en gång eller lägga
 För en uppdaterad överblick för hur man kompilerar ScummVM på diverse plattformar var god se vår Wiki, speciellt den här här sidan:
    https://wiki.scummvm.org/index.php/Compiling_ScummVM
 
-Om du kompilerar för Windows, Linux eller Mac OS X behöver du SDL-1.2.2 eller senare (äldre versioner kan fungera, men stöds inte) och ett stött kompileringsprogram. Flera kompileringsprogram inklusive GCC, mingw och senare versioner av Microsoft Visual C++ stöds. Om du vill använda MP3-komprimerade CD-spår eller .SOU-filer måste du installera MAD-biblioteket; på samma sätt behöver du de nödvändiga biblioteken för Ogg Vorbis och FLAC-komprimerat ljud. För komprimerade spardata krävs zlib.
+Om du kompilerar för Windows, Linux eller macOS behöver du SDL-1.2.2 eller senare (äldre versioner kan fungera, men stöds inte) och ett stött kompileringsprogram. Flera kompileringsprogram inklusive GCC, mingw och senare versioner av Microsoft Visual C++ stöds. Om du vill använda MP3-komprimerade CD-spår eller .SOU-filer måste du installera MAD-biblioteket; på samma sätt behöver du de nödvändiga biblioteken för Ogg Vorbis och FLAC-komprimerat ljud. För komprimerade spardata krävs zlib.
 
 Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se https://nasm.us/). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
 
@@ -1744,9 +1744,9 @@ På Windows kan du definiera USE_WINDBG och lägga till WinDbg för att visa deb
     * För mer information se:
       https://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
 
-  Mac OS X:
+  macOS:
     * Se till att du har utvecklingsverktygen istallerade.
-    * SDL-utvecklingspaketet för OS X som finns tillgängligt på SLD:s hemsida
+    * SDL-utvecklingspaketet för macOS som finns tillgängligt på SLD:s hemsida
       är INTE lämpligt. Du behöver istället en unix-artad kompilation av SDL.
       Ett sätt att få tag i en sådan är att installera SDL via Fink
       (http://www.finkproject.org/). Annars kan du kompilera SDL manuellt från källkoden

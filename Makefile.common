@@ -171,7 +171,7 @@ ifdef CXX_UPDATE_DEP_FLAG
 	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@
 
 
-# Build rules for Objective-C and Objective-C++ files. Strictly speaking, this is for OS X only.
+# Build rules for Objective-C and Objective-C++ files. Strictly speaking, this is for macOS only.
 %.o: %.mm
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@

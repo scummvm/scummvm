@@ -744,7 +744,7 @@ static const char *credits[] = {
 "C0""Cpasjuste",
 "C0""rsn8887",
 "",
-"C1""SDL (Win/Linux/OS X/etc.)",
+"C1""SDL (Win/Linux/macOS/etc.)",
 "C0""Max Horn",
 "C2""(retired)",
 "C0""Eugene Sandulenko",

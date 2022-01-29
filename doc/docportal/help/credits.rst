@@ -1534,7 +1534,7 @@ PlayStation Vita
    * - rsn8887
      -
 
-SDL (Win/Linux/OS X/etc.)
+SDL (Win/Linux/macOS/etc.)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table::

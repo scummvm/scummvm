@@ -63,7 +63,7 @@
 // Partially based on SDL's code
 
 /**
- * The Mac OS X audio cd manager. Implements real audio cd playback.
+ * The macOS audio cd manager. Implements real audio cd playback.
  */
 class MacOSXAudioCDManager : public DefaultAudioCDManager {
 public:

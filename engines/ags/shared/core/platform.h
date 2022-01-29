@@ -106,7 +106,7 @@ namespace AGS3 {
 
 
 #if defined(__LP64__)
-// LP64 machine, OS X or Linux
+// LP64 machine, macOS or Linux
 // int 32bit | long 64bit | long long 64bit | void* 64bit
 #define AGS_PLATFORM_64BIT (1)
 #elif defined(_WIN64)
@@ -114,7 +114,7 @@ namespace AGS3 {
 // int 32bit | long 32bit | long long 64bit | void* 64bit
 #define AGS_PLATFORM_64BIT (1)
 #else
-// 32-bit machine, Windows or Linux or OS X
+// 32-bit machine, Windows or Linux or macOS
 // int 32bit | long 32bit | long long 64bit | void* 32bit
 #define AGS_PLATFORM_64BIT (0)
 #endif

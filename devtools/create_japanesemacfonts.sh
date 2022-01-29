@@ -8,7 +8,7 @@ echo_n() {
 }
 
 if test `uname` != "Darwin"; then
-	echo This script is Mac OS X-only
+	echo This script is macOS-only
 	exit
 fi
 
