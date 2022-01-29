@@ -47,7 +47,7 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 	.. panels::
 		:column: col-lg-12 mb-2
 
-	        Window Vista/7/8/10
+		Window Vista and later
 		^^^^^^^^^^^^^^^^^^^^^^
 
                 ``%APPDATA%\ScummVM\Logs\scummvm.log``

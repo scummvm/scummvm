@@ -18,8 +18,8 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		Window Vista/7/8/10
-		^^^^^^^^^^^^^^^^^^^
+		Window Vista and later
+		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\scummvm.ini``
 
 		---
