@@ -54,10 +54,9 @@ Default saved game paths are shown below.
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		Windows NT4
-		^^^^^^^^^^^^
-
-		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Saved games\``
+		Window Vista/7/8/10
+		^^^^^^^^^^^^^^^^^^^
+		``%APPDATA%\ScummVM\Saved games``
 
 		---
 		:column: col-lg-12 mb-2
@@ -69,9 +68,9 @@ Default saved game paths are shown below.
 		---
 		:column: col-lg-12 mb-2
 
-		Window Vista/7/8/10
-		^^^^^^^^^^^^^^^^^^^^^^
-		``%APPDATA%\ScummVM\Saved games``
+		Windows NT4
+		^^^^^^^^^^^^
+		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Saved games\``
 
 
 .. tabbed:: macOS
