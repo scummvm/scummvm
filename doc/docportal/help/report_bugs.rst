@@ -49,7 +49,4 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 
 		Window Vista and later
 		^^^^^^^^^^^^^^^^^^^^^^
-
-                ``%APPDATA%\ScummVM\Logs\scummvm.log``
-
-
+		``%APPDATA%\ScummVM\Logs\scummvm.log``
