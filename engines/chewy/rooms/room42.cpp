@@ -62,9 +62,13 @@ void Room42::entry() {
 	}
 }
 
-void Room42::gedAction(int index) {
-	if (!index)
-		calc_xit();
+void Room42::xit() {
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
+		atds->set_ats_str(264, 1, ATS_DATEI);
+		stop_spz();
+		_G(spieler).R42HoToBeamter = false;
+		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+	}
 }
 
 int16 Room42::gedUserFunc(int16 idx_nr) {
@@ -79,15 +83,6 @@ int16 Room42::gedUserFunc(int16 idx_nr) {
 void Room42::setup_func() {
 	if (!_G(spieler).R42HoToBeamter)
 		calc_person_look();
-}
-
-void Room42::calc_xit() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
-		atds->set_ats_str(264, 1, ATS_DATEI);
-		stop_spz();
-		_G(spieler).R42HoToBeamter = false;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
-	}
 }
 
 void Room42::get_kuerbis(int16 aad_nr) {

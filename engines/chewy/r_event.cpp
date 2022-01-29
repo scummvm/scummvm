@@ -146,7 +146,6 @@ void check_ged_action(int16 index) {
 		GED_ACTION(18);
 		GED_ACTION(28);
 		GED_ACTION(37);
-		GED_ACTION(42);
 
 		case 45:
 		case 46:
@@ -412,7 +411,7 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 41: Room41::xit(); break;
-	case 42: Room42::calc_xit(); break;
+	case 42: Room42::xit(); break;
 	case 45: Room45::xit(eib_nr); break;
 	case 46: Room46::xit(); break;
 	case 47: Room47::xit(); break;
