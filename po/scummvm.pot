@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-29 16:33+0000\n"
+"POT-Creation-Date: 2022-01-29 19:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5829,7 +5829,7 @@ msgstr ""
 msgid "This menu item is not yet implemented"
 msgstr ""
 
-#: engines/private/detection.cpp:183 engines/private/detection.cpp:202
+#: engines/private/detection.cpp:193 engines/private/detection.cpp:212
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
