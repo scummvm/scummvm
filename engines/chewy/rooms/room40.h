@@ -36,7 +36,6 @@ public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
 	static bool timer(int16 t_nr, int16 ani_nr);
-	static int16 gedUserFunc(int16 idx_nr);
 
 	static int16 use_mr_pumpkin();
 	static void talk_police();

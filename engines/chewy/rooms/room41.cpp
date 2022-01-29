@@ -79,44 +79,6 @@ void Room41::xit() {
 	_G(spieler).R41TrainCount--;
 }
 
-int16 Room41::gedUserFunc(int16 idx_nr) {
-	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
-	case 17:
-		if (_G(spieler).R17Location != 2)
-			idx_nr = 0;
-		break;
-
-	case 21:
-		if (!_G(spieler).R21Laser1Weg) {
-			idx_nr = 0;
-		} else
-			idx_nr = 3;
-		break;
-
-	case 37:
-		if (!_G(spieler).R37Kloppe)
-			idx_nr = 0;
-		break;
-
-	case 52:
-		if (!_G(spieler).R52TuerAuf)
-			idx_nr = 2;
-		else
-			idx_nr = 4;
-		break;
-
-	case 97:
-		if (!_G(spieler).flags36_20)
-			idx_nr = 0;
-		break;
-
-	default:
-		break;
-	}
-
-	return idx_nr;
-}
-
 void Room41::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
