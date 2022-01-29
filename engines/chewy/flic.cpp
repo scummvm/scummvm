@@ -28,14 +28,13 @@
 
 namespace Chewy {
 
-static int16(*custom_user)(int16) = 0;
-static int16(*flic_user)(int16) = 0;
+static int16(*custom_user)(int16) = nullptr;
+static int16(*flic_user)(int16) = nullptr;
 
 void decode_flc(byte *vscr, const byte *dbuf) {
 	Common::MemoryReadStream src(dbuf, 0xffffffff);
 	int h = src.readUint16LE();
-	int val, pair;
-	int8 b;
+	int val;
 
 	for (; h > 0; --h, vscr += SCREEN_WIDTH) {
 		// Get value, and handle any line skips if needed
@@ -47,11 +46,11 @@ void decode_flc(byte *vscr, const byte *dbuf) {
 		byte *dest = vscr;
 		for (; val > 0; --val) {
 			dest += src.readByte();
-			b = src.readSByte();
+			int8 b = src.readSByte();
 
 			if (b < 0) {
 				b = -b;
-				pair = src.readUint16LE();
+				int pair = src.readUint16LE();
 				for (; b > 0; --b, dest += 2)
 					WRITE_LE_UINT16(dest, pair);
 
@@ -64,12 +63,11 @@ void decode_flc(byte *vscr, const byte *dbuf) {
 }
 
 void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
-	int x;
-
 	for (; h > 0; --h, vscr += SCREEN_WIDTH) {
 		byte *dest = vscr;
 		++dbuf;		// Skip number of entries in line
 
+		int x;
 		for (x = 0; x < br; ) {
 			int8 len = (int8)*dbuf++;
 			if (len < 0) {
@@ -105,9 +103,8 @@ flic::~flic() {
 }
 
 void flic::play(const char *fname, byte *vscreen, byte *load_p) {
-	Stream *lhandle;
 
-	lhandle = File::open(fname);
+	Stream *lhandle = File::open(fname);
 	if (lhandle) {
 		play(lhandle, vscreen, load_p);
 		delete lhandle;
@@ -119,9 +116,7 @@ void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 
 int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	uint16 i;
-	size_t tmp_size;
-	float start, ende;
+	float ende;
 	int16 ret = 0;
 
 	load_puffer = load_p;
@@ -134,14 +129,14 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 			fade_delay = 0;
 			cls_flag = false;
 			CurrentFrame = 0;
-			for (i = 0; (i < flic_header.frames) && (!modul) && (ret >= 0); i++) {
+			for (uint16 i = 0; (i < flic_header.frames) && (!modul) && (ret >= 0); i++) {
 				if (!frame_header.load(rs)) {
 					modul = DATEI;
 					fcode = READFEHLER;
 				} else {
 					if (frame_header.type != PREFIX) {
-						tmp_size = ((size_t)frame_header.size) - sizeof(FrameHead);
-						start = (float) g_system->getMillis(); // clock()
+						size_t tmp_size = ((size_t)frame_header.size) - sizeof(FrameHead);
+						float start = (float)g_system->getMillis(); // clock()
 						start /= 0.05f;
 						start += flic_header.speed;
 						if (tmp_size) {
@@ -170,17 +165,14 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 }
 
 int16 flic::decode_frame() {
-	uint16 i;
-	byte *tmp_buf;
-	bool update_flag;
 	ChunkHead chunk_header;
 	int16 action_ret = 0;
 
-	tmp_buf = load_puffer;
-	update_flag = false;
+	byte *tmp_buf = load_puffer;
+	bool update_flag = false;
 	if (frame_header.chunks != 0) {
 		fade_flag = false;
-		for (i = 0; i < frame_header.chunks; i++) {
+		for (uint16 i = 0; i < frame_header.chunks; i++) {
 			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
 			chunk_header.load(&rs);
 
@@ -256,12 +248,7 @@ int16 flic::decode_frame() {
 }
 
 void flic::col256_chunk(byte *tmp) {
-	int i;
-	int packets;
-	int count;
-	byte anz, col;
-	byte r, g, b;
-	packets = *(int16 *)tmp;
+	int packets = *(int16 *)tmp;
 	tmp += 2;
 
 	out->vsync_start();
@@ -272,7 +259,7 @@ void flic::col256_chunk(byte *tmp) {
 
 	if (tmp[1] == 0) {
 		tmp += 2;
-		for (i = 0; i < PALETTE_SIZE; i++)
+		for (int i = 0; i < PALETTE_SIZE; i++)
 			tmp[i] >>= 2;
 		if (fade_flag == false)
 			out->set_palette(tmp);
@@ -282,14 +269,14 @@ void flic::col256_chunk(byte *tmp) {
 			memcpy(fade_pal, tmp, PALETTE_SIZE);
 		}
 	} else {
-		col = 0;
-		for (count = 0; count < packets; count++) {
+		byte col = 0;
+		for (int count = 0; count < packets; count++) {
 			col += *tmp++;
-			anz = *tmp++;
-			for (i = 0; i < anz; i++) {
-				r = *tmp++ >> 2;
-				g = *tmp++ >> 2;
-				b = *tmp++ >> 2;
+			byte anz = *tmp++;
+			for (int i = 0; i < anz; i++) {
+				byte r = *tmp++ >> 2;
+				byte g = *tmp++ >> 2;
+				byte b = *tmp++ >> 2;
 				out->raster_col(col, r, g, b);
 				++col;
 			}
@@ -298,12 +285,7 @@ void flic::col256_chunk(byte *tmp) {
 }
 
 void flic::col64_chunk(byte *tmp) {
-	int i;
-	int packets;
-	int count;
-	byte anz, col;
-	byte r, g, b;
-	packets = *((int16 *)tmp);
+	int packets = *((int16 *)tmp);
 	tmp += 2;
 
 	out->vsync_start();
@@ -321,14 +303,14 @@ void flic::col64_chunk(byte *tmp) {
 			memcpy(fade_pal, tmp + 2, PALETTE_SIZE);
 		}
 	} else {
-		col = 0;
-		for (count = 0; count < packets; count++) {
+		byte col = 0;
+		for (int count = 0; count < packets; count++) {
 			col += *tmp++;
-			anz = *tmp++;
-			for (i = 0; i < anz; i++) {
-				r = *tmp++ >> 2;
-				g = *tmp++ >> 2;
-				b = *tmp++ >> 2;
+			byte anz = *tmp++;
+			for (int i = 0; i < anz; i++) {
+				byte r = *tmp++ >> 2;
+				byte g = *tmp++ >> 2;
+				byte b = *tmp++ >> 2;
 				out->raster_col(col, r, g, b);
 				++col;
 			}
@@ -337,25 +319,15 @@ void flic::col64_chunk(byte *tmp) {
 }
 
 void flic::delta_chunk_byte(byte *tmp) {
-	short int *ipo;
-	byte *abl;
-	byte *tabl;
-	short int i, j;
-	short int rest_height;
-	short signed int count;
-	signed char tmp_count;
-	short int data;
-	short int mode_word;
-	short int pcount;
-	byte skip, last_byte = 0;
+	byte last_byte = 0;
 	bool last_flag;
-	abl = virt_screen;
-	ipo = (short int *)tmp;
-	rest_height = *ipo++;
+	byte *abl = virt_screen;
+	short int *ipo = (short int *)tmp;
+	short int rest_height = *ipo++;
 	tmp += 2;
-	for (i = 0; (i < rest_height) && (i < 200); i++) {
-		tabl = abl;
-		mode_word = *ipo++;
+	for (short int i = 0; (i < rest_height) && (i < 200); i++) {
+		byte *tabl = abl;
+		short int mode_word = *ipo++;
 		if (mode_word & 0x4000) {
 			mode_word = -mode_word;
 			abl += (int16)(mode_word * flic_header.width);
@@ -370,12 +342,12 @@ void flic::delta_chunk_byte(byte *tmp) {
 			last_flag = false;
 		tmp = (byte *)ipo;
 		if (mode_word) {
-			pcount = 0;
-			for (j = 0; (pcount < mode_word) && (j <= flic_header.width); ++pcount) {
-				skip = *tmp++;
+			short int pcount = 0;
+			for (short int j = 0; (pcount < mode_word) && (j <= flic_header.width); ++pcount) {
+				byte skip = *tmp++;
 				abl += skip;
-				tmp_count = (signed char) * tmp++;
-				count = (short signed int)tmp_count;
+				signed char tmp_count = (signed char)*tmp++;
+				short signed int count = (short signed int)tmp_count;
 				if (count > 0) {
 					count <<= 1;
 					while ((count) && (j < flic_header.width)) {
@@ -385,7 +357,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 					}
 				} else {
 					count = -count;
-					data = *(short int *)tmp;
+					short int data = *(short int *)tmp;
 					tmp += 2;
 					while ((count > 0) && (j < flic_header.width)) {
 						*((short int *)abl) = data;
@@ -404,9 +376,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 }
 
 int16 flic::custom_play(CustomInfo *ci) {
-	uint16 i;
 	int16 ret = 0;
-	uint32 start, ende;
 
 	Cinfo = ci;
 	load_puffer = ci->TempArea;
@@ -414,7 +384,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 	Music = ci->MusicSlot;
 	Sound = ci->SoundSlot;
 
-	if (ci->Fname != 0) {
+	if (ci->Fname != nullptr) {
 		ci->Handle = File::open(ci->Fname);
 	}
 
@@ -427,13 +397,13 @@ int16 flic::custom_play(CustomInfo *ci) {
 				fade_delay = 0;
 				CurrentFrame = 0;
 
-				for (i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0); i++) {
+				for (uint16 i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0); i++) {
 					if (!custom_frame.load(rs)) {
 						modul = DATEI;
 						fcode = READFEHLER;
 					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
-							start = g_system->getMillis() + custom_header.speed;
+							uint32 start = g_system->getMillis() + custom_header.speed;
 							if (custom_frame.size) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									modul = DATEI;
@@ -447,6 +417,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 							g_screen->update();
 
 							// Loop until the frame time expires
+							uint32 ende;
 							do {
 								ende = g_system->getMillis();
 								g_events->update();
@@ -479,14 +450,10 @@ int16 flic::custom_play(CustomInfo *ci) {
 
 void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
-	ChunkHead chead;
-	uint16 i, j;
-	tmf_header *th;
-	byte *tmp;
-	musik_info mi;
-	th = (tmf_header *)Music;
+	tmf_header *th = (tmf_header *)Music;
 
-	for (i = 0; (i < custom_frame.chunks) && (!modul); i++) {
+	for (uint16 i = 0; (i < custom_frame.chunks) && (!modul); i++) {
+		ChunkHead chead;
 		if (!chead.load(handle)) {
 			modul = DATEI;
 			fcode = READFEHLER;
@@ -517,10 +484,10 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				modul = DATEI;
 				fcode = READFEHLER;
 			} else {
-				tmp = Music;
+				byte *tmp = Music;
 				tmp += sizeof(tmf_header);
 				tmp += ((uint32)th->pattern_anz) * 1024l;
-				for (j = 0; j < 31; j++) {
+				for (uint16 j = 0; j < 31; j++) {
 					if (th->instrument[j].laenge) {
 						th->ipos[j] = tmp;
 						tmp += th->instrument[j].laenge;
@@ -610,7 +577,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 			break;
 
-		case WAIT_MSTOP:
+		case WAIT_MSTOP: {
+			musik_info mi;
 			do {
 #ifndef AIL
 				snd->getMusicInfo(&mi);
@@ -618,6 +586,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				ailsnd->getMusicInfo(&mi);
 #endif
 			} while (mi.musik_playing != 0);
+			}
 			break;
 
 		case SET_MVOL:
@@ -750,17 +719,14 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 }
 
 int16 flic::decode_cframe() {
-	ChunkHead chunk_header;
-	uint16 i;
-	byte *tmp_buf;
-	int16 update_flag;
-	tmp_buf = load_puffer;
-	update_flag = false;
+	byte *tmp_buf = load_puffer;
+	int16 update_flag = false;
 	int16 action_ret = 0;
 
 	if (custom_frame.chunks != 0) {
-		for (i = 0; i < custom_frame.chunks; i++) {
+		for (uint16 i = 0; i < custom_frame.chunks; i++) {
 			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
+			ChunkHead chunk_header;
 			chunk_header.load(&rs);
 
 			tmp_buf += ChunkHead::SIZE();
@@ -837,17 +803,13 @@ int16 flic::decode_cframe() {
 }
 
 void flic::free_sound(int16 nr) {
-	byte *fsound;
-	long fsize;
-	long copysize;
-	int16 i;
-	fsound = sounds[nr];
-	fsize = Ssize[nr];
+	byte *fsound = sounds[nr];
+	long fsize = Ssize[nr];
 	if ((fsound != 0) && (fsize != 0)) {
-		copysize = Cinfo->MaxSoundSize;
+		long copysize = Cinfo->MaxSoundSize;
 		copysize -= (long)(fsound - Cinfo->SoundSlot);
 		memmove(fsound, fsound + fsize, copysize);
-		for (i = 0; i < 50; i++) {
+		for (int16 i = 0; i < 50; i++) {
 			if (sounds[i] == fsound) {
 				sounds[i] = 0;
 				Ssize[i] = 0;
@@ -863,7 +825,7 @@ void flic::set_custom_user_function(int16(*user_funktion)(int16 frame)) {
 }
 
 void flic::remove_custom_user_function() {
-	custom_user = 0;
+	custom_user = nullptr;
 }
 
 void flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
@@ -871,7 +833,7 @@ void flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
 }
 
 void flic::remove_flic_user_function() {
-	flic_user = 0;
+	flic_user = nullptr;
 }
 
 } // namespace Chewy

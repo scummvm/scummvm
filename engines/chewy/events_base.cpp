@@ -26,8 +26,7 @@ namespace Chewy {
 
 EventsBase *g_eventsBase;
 
-EventsBase::EventsBase(Graphics::Screen *screen, uint refreshRate) :
-		_screen(screen) {
+EventsBase::EventsBase(Graphics::Screen *screen, uint refreshRate) : _screen(screen) {
 	g_eventsBase = this;
 	addTimer(updateScreen, refreshRate);
 }

@@ -28,8 +28,7 @@ namespace Chewy {
 
 EventsManager *g_events;
 
-EventsManager::EventsManager(Graphics::Screen *screen) :
-		EventsBase(screen) {
+EventsManager::EventsManager(Graphics::Screen *screen) : EventsBase(screen) {
 	g_events = this;
 	init_timer_handler();
 }
@@ -52,11 +51,9 @@ void EventsManager::timer_handler() {
 }
 
 void EventsManager::handleEvent(const Common::Event &event) {
-	if (event.type >= Common::EVENT_MOUSEMOVE &&
-		event.type <= Common::EVENT_MBUTTONUP)
+	if (event.type >= Common::EVENT_MOUSEMOVE && event.type <= Common::EVENT_MBUTTONUP)
 		handleMouseEvent(event);
-	else if (event.type == Common::EVENT_KEYDOWN ||
-			event.type == Common::EVENT_KEYUP)
+	else if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
 		handleKbdEvent(event);
 }
 
