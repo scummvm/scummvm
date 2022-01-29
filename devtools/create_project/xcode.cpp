@@ -503,6 +503,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		DEF_LOCALLIB_STATIC("libtheoradec");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_RETROWAVE")) {
+		DEF_LOCALLIB_STATIC("libretrowave");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		DEF_SYSTBD("libz");
 	}
@@ -705,6 +708,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		frameworks_osx.push_back("libtheoradec.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_RETROWAVE")) {
+		frameworks_osx.push_back("libretrowave.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
 		frameworks_osx.push_back("libz.tbd");

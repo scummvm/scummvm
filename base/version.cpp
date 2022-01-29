@@ -208,4 +208,7 @@ const char gScummVMFeatures[] = ""
 	"OpenGL ES 2 only "
 #endif
 #endif
+#ifdef USE_RETROWAVE
+	"RetroWave "
+#endif
 	;

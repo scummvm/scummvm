@@ -100,5 +100,10 @@ MODULE_OBJS += \
 	opl2lpt.o
 endif
 
+ifdef USE_RETROWAVE
+MODULE_OBJS += \
+	rwopl3.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk
