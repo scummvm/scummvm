@@ -28,20 +28,6 @@ The ScummVM log file
 To help you report a bug, you can find error messages in the ScummVM log file. The location of this file varies depending on your operating system.
 
 
-.. tabbed:: macOS
-
-	.. panels::
-		:column: col-lg-12 mb-2
-
-		``~/Library/Logs/scummvm.log``
-
-.. tabbed:: Linux
-
-	.. panels::
-		:column: col-lg-12 mb-2
-
-		We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location might vary depending on the value of the ``XDG_CACHE_HOME`` environment variable.
-
 .. tabbed:: Windows
 
 	.. panels::
@@ -64,4 +50,18 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 		Windows NT4
 		^^^^^^^^^^^
 		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Logs\scummvm.log``
+
+.. tabbed:: macOS
+
+	.. panels::
+		:column: col-lg-12 mb-2
+
+		``~/Library/Logs/scummvm.log``
+
+.. tabbed:: Linux
+
+	.. panels::
+		:column: col-lg-12 mb-2
+
+		We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location might vary depending on the value of the ``XDG_CACHE_HOME`` environment variable.
 
