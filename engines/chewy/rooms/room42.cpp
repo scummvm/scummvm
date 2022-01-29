@@ -71,15 +71,6 @@ void Room42::xit() {
 	}
 }
 
-int16 Room42::gedUserFunc(int16 idx_nr) {
-	if (_G(spieler).PersonRoomNr[P_CHEWY] == 97) {
-		if (!_G(spieler).flags37_1)
-			idx_nr = 0;
-	}
-
-	return idx_nr;
-}
-
 void Room42::setup_func() {
 	if (!_G(spieler).R42HoToBeamter)
 		calc_person_look();

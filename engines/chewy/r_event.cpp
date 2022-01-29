@@ -172,16 +172,132 @@ void check_ged_action(int16 index) {
 }
 
 int16 ged_user_func(int16 idx_nr) {
-#define GED_FUNC(NUM) case NUM: idx_nr = Room##NUM::gedUserFunc(idx_nr)
 	switch (idx_nr) {
-	GED_FUNC(40);
-	GED_FUNC(41);
-	GED_FUNC(42);
+	case 40:
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
+		case 8:
+			if (_G(spieler).R8GTuer)
+				idx_nr = 0;
+			break;
+
+		case 9:
+			if (!_G(spieler).R9Gitter)
+				idx_nr = 0;
+			break;
+
+		case 16:
+			if (!_G(spieler).R16F5Exit)
+				idx_nr = 0;
+			break;
+
+		case 17:
+			if (_G(spieler).R17Location != 1)
+				idx_nr = 0;
+			break;
+
+		case 21:
+			if (!_G(spieler).R21Laser2Weg)
+				idx_nr = 0;
+			break;
+
+		case 31:
+			if (!_G(spieler).R31KlappeZu)
+				idx_nr = 0;
+			break;
+
+		case 41:
+			if (!_G(spieler).R41LolaOk)
+				idx_nr = 0;
+			break;
+
+		case 52:
+			if (!_G(spieler).R52LichtAn)
+				idx_nr = 2;
+			else
+				idx_nr = 4;
+			break;
+
+		case 71:
+			if (!_G(spieler).flags28_2 || !_G(spieler).flags29_4)
+				idx_nr = 0;
+			else
+				idx_nr = 4;
+			break;
+
+		case 76:
+			return idx_nr;
+
+		case 84:
+			if (!_G(spieler).flags31_1)
+				_G(spieler).flags31_4 = true;
+			break;
+
+		case 86:
+			if (!_G(spieler).flags32_2)
+				idx_nr = 0;
+			break;
+
+		case 94:
+			if (!_G(spieler).flags35_10)
+				idx_nr = 0;
+			break;
+
+		case 97:
+			if (!_G(spieler).flags35_80)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 41:
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
+		case 17:
+			if (_G(spieler).R17Location != 2)
+				idx_nr = 0;
+			break;
+
+		case 21:
+			if (!_G(spieler).R21Laser1Weg) {
+				idx_nr = 0;
+			} else
+				idx_nr = 3;
+			break;
+
+		case 37:
+			if (!_G(spieler).R37Kloppe)
+				idx_nr = 0;
+			break;
+
+		case 52:
+			if (!_G(spieler).R52TuerAuf)
+				idx_nr = 2;
+			else
+				idx_nr = 4;
+			break;
+
+		case 97:
+			if (!_G(spieler).flags36_20)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 42:
+		if (_G(spieler).PersonRoomNr[P_CHEWY] == 97) {
+			if (!_G(spieler).flags37_1)
+				idx_nr = 0;
+		}
+		break;
 
 	default:
 		break;
 	}
-#undef GED_FUNC
 
 	return idx_nr;
 }

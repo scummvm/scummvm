@@ -33,13 +33,11 @@ private:
 public:
 	static void entry();
 	static void xit();
-	static int16 gedUserFunc(int16 idx_nr);
 
 	static void talk_beamter();
 	static int16 use_psack();
 	static int16 use_beamter();
 	static void dia_beamter(int16 str_end_nr);
-	static void calc_xit();
 };
 
 } // namespace Rooms

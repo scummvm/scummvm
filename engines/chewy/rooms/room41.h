@@ -35,8 +35,6 @@ private:
 public:
 	static void entry();
 	static void xit();
-	static int16 gedUserFunc(int16 idx_nr);
-
 	static int16 use_brief();
 	static int16 use_lola();
 	static int16 use_kasse();
