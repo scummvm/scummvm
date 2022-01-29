@@ -50,3 +50,18 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 		Window Vista and later
 		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\Logs\scummvm.log``
+
+		---
+		:column: col-lg-12 mb-2
+
+		Windows 2000/XP
+		^^^^^^^^^^^^^^^
+		``\Documents and Settings\username\Application Data\ScummVM\Logs\scummvm.log``
+
+		---
+		:column: col-lg-12 mb-2
+
+		Windows NT4
+		^^^^^^^^^^^
+		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Logs\scummvm.log``
+
