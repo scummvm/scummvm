@@ -14,6 +14,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
 
+AGI:
+   - Added support for Macintosh versions of Manhunter 1-2.
+
  Buried:
    - Added support for skipping synchronous audio and video.
    - The mouse pointer is now hidden during cutscenes.
