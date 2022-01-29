@@ -147,13 +147,6 @@ detail::detail() {
 	for (int16 i = 0; i < (MAX_M_ITEMS - 1) << 2; i += 4)
 		rdi.mvect[i] = -1;
 
-#ifdef KONVERT
-	for (int16 i = 0; i < MAXDETAILS; i++) {
-		rdi_new.Sinfo[i].SprNr = -1;
-		rdi_new.Ainfo[i].start_ani = -1;
-	}
-#endif
-
 	global_delay = 0;
 	ani_freezeflag = false;
 	fulltaf = false;
