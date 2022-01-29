@@ -569,6 +569,10 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						action_ret = Room63::use_schalter();
 						break;
 
+					case 386:
+						action_ret = Room45::use_taxi();
+						break;
+
 					case 394:
 						action_ret = Room67::talk_papagei();
 						break;
