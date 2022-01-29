@@ -194,8 +194,8 @@ void Room49::use_boy_cigar() {
 	start_aad_wait(264, -1);
 	room->set_zoom(zoom);
 
-	obj->add_inventar(68, &room_blk);
-	inventory_2_cur(68);
+	obj->add_inventar(GUM_INV, &room_blk);
+	inventory_2_cur(GUM_INV);
 	atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 
 	SetUpScreenFunc = setup_func;
