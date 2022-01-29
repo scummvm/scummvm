@@ -45,7 +45,7 @@ namespace Common {
  * The TaskbarManager allows interaction with the ScummVM application icon:
  *  - in the taskbar on Windows 7 and later
  *  - in the launcher for Unity
- *  - in the dock on Mac OS X
+ *  - in the dock on macOS
  *  - ...
  *
  * This allows GUI code and engines to display a progress bar, an overlay icon and/or count

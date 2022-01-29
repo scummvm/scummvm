@@ -59,7 +59,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 	releaseMovie();
 	_video = new Video::QuickTimeDecoder();
 	if (!_video->loadFile(fileName)) {
-		// Replace any colon with an underscore, since only Mac OS X
+		// Replace any colon with an underscore, since only macOS
 		// supports that. See PegasusEngine::detectOpeningClosingDirectory()
 		// for more info.
 		Common::String newName(fileName);

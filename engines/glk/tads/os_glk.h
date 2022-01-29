@@ -168,7 +168,7 @@ void os_time_ns(os_time_t *seconds, long *nanoseconds);
  *   list of time zone names that can be mapped to zoneinfo names via a
  *   hand-coded list (such a list is maintained in the Unicode CLDR; our
  *   Windows implementation uses the CLDR list to generate the mapping).
- *   MacOS X uses zoneinfo keys directly; /etc/localtime is a link to the
+ *   macOS uses zoneinfo keys directly; /etc/localtime is a link to the
  *   zoneinfo file for the local zone as set via the system preferences.
  *
  *   os_tzset() must be invoked at some point before this routine is called.
@@ -694,7 +694,7 @@ long os_get_sys_clock_ms();
  *   file types are meaningful then maps our abstract type IDs to the
  *   corresponding port-specific type IDs.  In practice, this has never been
  *   used anywhere other than the old Mac OS ports; in fact, it's not even
- *   used in the modern Mac OS (OS X and later), since Apple decided to stop
+ *   used in the modern macOS since Apple decided to stop
  *   fighting the tide and start using filename suffixes for this sort of
  *   tagging, like everyone else always has.
  *

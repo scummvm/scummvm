@@ -978,12 +978,12 @@ Optional Libraries:
   --enable-opl2lpt         enable OPL2LPT support
 
   --with-sparkle-prefix=DIR    prefix where sparkle is installed
-                           (OS X/Windows only - optional)
+                           (macOS/Windows only - optional)
   --disable-sparkle        disable sparkle automatic update support
-                           [OS X/Windows only - autodetect]
+                           [macOS/Windows only - autodetect]
 
   --disable-osx-dock-plugin    disable the NSDockTilePlugin support
-                               [Mac OS X only - autodetect]
+                               [macOS only - autodetect]
 
   --with-sdl-prefix=DIR    prefix where the SDL package is installed (optional)
                            e.g., if sdl-config script is at:
@@ -4993,7 +4993,7 @@ define_in_config_if_yes $_cloud 'USE_CLOUD'
 #
 case $_host_os in
 	darwin*)
-		# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
+		# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older macOS versions.
 		echocheck "DockTilePlugin"
 		if test "$_osxdockplugin" = auto ; then
 			_osxdockplugin=no
@@ -5360,7 +5360,7 @@ if test "$_opengl_mode" != none ; then
 
 				2.0.*)
 					# SDL2 supports both OpenGL + OpenGL ES contexts.
-					# However, Mac OS X only allows OpenGL context creation at
+					# However, macOS only allows OpenGL context creation at
 					# this time, thus we limit us to OpenGL on that platform.
 					case $_host_os in
 						darwin*)
@@ -5397,7 +5397,7 @@ fi
 if test "$_opengl_glad" = "no" -a "$_opengl_mode" != "none"; then
 	# Try different header filenames
 	# 1) GL/gl.h         This is usually used on POSIX and Windows systems
-	# 2) OpenGL/gl.h     This is used on Mac OS X
+	# 2) OpenGL/gl.h     This is used on macOS
 	# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
 	_opengl_can_compile=no
 	for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h"; do

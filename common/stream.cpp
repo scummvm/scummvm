@@ -176,8 +176,8 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize, bool handleCR) {
 
 		// Check for CR or CR/LF
 		// * DOS and Windows use CRLF line breaks
-		// * Unix and OS X use LF line breaks
-		// * Macintosh before OS X used CR line breaks
+		// * Unix and macOS use LF line breaks
+		// * Macintosh before macOS used CR line breaks
 		if (c == CR && handleCR) {
 			// Look at the next char -- is it LF? If not, seek back
 			c = readByte();

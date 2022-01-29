@@ -221,7 +221,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
 	//
 	// These shortcuts go back a long time for command line programs. As
-	// for edit fields in GUIs, they are supported natively on Mac OS X,
+	// for edit fields in GUIs, they are supported natively on macOS,
 	// which is why I enabled these shortcuts there.
 	// On other systems (Windows, Gnome), Ctrl-A by default means
 	// "select all", which is why I didn't enable the shortcuts there

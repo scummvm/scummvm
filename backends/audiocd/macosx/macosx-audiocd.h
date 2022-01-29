@@ -50,7 +50,7 @@
 class AudioCDManager;
 
 /**
- * Create an audio CD manager for Mac OS X
+ * Create an audio CD manager for macOS
  */
 AudioCDManager *createMacOSXAudioCDManager();
 

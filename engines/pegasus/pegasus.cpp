@@ -152,7 +152,7 @@ Common::Error PegasusEngine::run() {
 	if (!isDemo() && !detectOpeningClosingDirectory()) {
 		Common::String message = "Missing intro directory. ";
 
-		// Give Mac OS X a more specific message because we can
+		// Give macOS a more specific message because we can
 #ifdef MACOSX
 		message += "Make sure \"Opening/Closing\" is present.";
 #else
@@ -218,7 +218,7 @@ bool PegasusEngine::canSaveGameStateCurrently() {
 bool PegasusEngine::detectOpeningClosingDirectory() {
 	// We need to detect what our Opening/Closing directory is listed as
 	// On the original disc, it was 'Opening/Closing' but only HFS(+) supports the slash
-	// Mac OS X will display this as 'Opening:Closing' and we can use that directly
+	// macOS will display this as 'Opening:Closing' and we can use that directly
 	// On other systems, users will need to rename to "Opening_Closing"
 
 	Common::FSNode gameDataDir(ConfMan.get("path"));

@@ -5,7 +5,7 @@
 # of the credits in other places from this source. In particular:
 # - The AUTHORS file
 # - The gui/credits.h header file
-# - The Credits.rtf file used by the Mac OS X port
+# - The Credits.rtf file used by the macOS port
 # - The credits.yaml, alternative version for use on the website
 # - The credits.rst file used by the manual
 #
@@ -40,7 +40,7 @@ my @section_count = ( 0, 0, 0 );
 if ($#ARGV >= 0) {
 	$mode = "TEXT" if ($ARGV[0] eq "--text");	# AUTHORS file
 	$mode = "CPP" if ($ARGV[0] eq "--cpp");		# credits.h (for use by about.cpp)
-	$mode = "RTF" if ($ARGV[0] eq "--rtf");		# Credits.rtf (Mac OS X About box)
+	$mode = "RTF" if ($ARGV[0] eq "--rtf");		# Credits.rtf (macOS About box)
 	$mode = "YAML" if ($ARGV[0] eq "--yaml");	# YAML (Simple format, used in the Website)
 	$mode = "RST" if ($ARGV[0] eq "--rst");		# Restructured text (used in the manual)
 }
@@ -624,7 +624,7 @@ begin_credits("Credits");
 				add_person("", "rsn8887", "");
 			end_section();
 
-			begin_section("SDL (Win/Linux/OS X/etc.)");
+			begin_section("SDL (Win/Linux/macOS/etc.)");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "Asm routines, GFX layers");
 			end_section();

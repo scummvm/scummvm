@@ -34,7 +34,7 @@
 #include <winsparkle.h>
 
 /**
- * Sparkle is a software update framework for Mac OS X which uses appcasts for
+ * Sparkle is a software update framework for macOS which uses appcasts for
  * release information. Appcasts are RSS-like XML feeds which contain information
  * about the most current version at the time. If a new version is available, the
  * user is presented the release-notes/changes/fixes and is asked if he wants to
@@ -45,7 +45,7 @@
  *
  * WinSparkle is a heavily (to the point of being its almost-port) inspired by the
  * Sparkle framework originally by Andy Matuschak that became the de facto standard
- * for software updates on OS X.
+ * for software updates on macOS.
  * More detailed information is available at the following address:
  * https://winsparkle.org/
  *

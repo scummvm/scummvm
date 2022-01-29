@@ -929,7 +929,7 @@ Common::String MohawkEngine_LivingBooks::convertMacFileName(const Common::String
 		if (string[i] == ':') // Directory separator
 			filename += '/';
 		else if (string[i] == '/') // Literal slash
-			filename += ':'; // Replace by colon, as used by Mac OS X for slash
+			filename += ':'; // Replace by colon, as used by macOS for slash
 		else
 			filename += string[i];
 	}

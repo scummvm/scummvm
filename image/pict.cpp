@@ -405,7 +405,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	case 4:
 		// We have a planar 32-bit surface
 		// Note that we ignore the alpha channel since it seems to not be correct
-		// Mac OS X does not ignore it, but then displays it incorrectly. Photoshop
+		// macOS does not ignore it, but then displays it incorrectly. Photoshop
 		// does ignore it and displays it correctly.
 		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++) {

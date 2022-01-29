@@ -38,7 +38,7 @@ namespace Common {
 /**
  * The UpdateManager allows configuring of the automatic update checking
  * for systems that support it:
- *  - using Sparkle on Mac OS X
+ *  - using Sparkle on macOS
  *  - using WinSparkle on Windows
  *
  * Most of the update checking is completely automated and this class only

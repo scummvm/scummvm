@@ -123,7 +123,7 @@ schauen Sie öfter einmal vorbei.
 
 Unter den Systemen, mit denen Sie diese Spiele spielen können, befinden sich
 normale Schreibtisch-Computer (mit den Betriebssystemen Windows, Linux,
-Mac OS X, ...), Spielekonsolen (Dreamcast, Nintendo DS & Wii, PSP, ...),
+macOS, ...), Spielekonsolen (Dreamcast, Nintendo DS & Wii, PSP, ...),
 Smartphones (Android, iPhone, Symbian ...) und einige weitere.
 
 Zurzeit befindet sich ScummVM immer noch stark in der Entwicklung. Seien Sie
@@ -907,7 +907,7 @@ Sprachausgabe ist auch in diesem Titel und ihre Lautstärke wird deshalb ebenso
 
 3.12) Hinweise zu Inherit the Earth: Quest for the Orb (Macintosh):
 ----- -------------------------------------------------------------
-Um die Wiederveröffentlichung des Spiels für Mac OS X von Wyrmkeep laufen zu
+Um die Wiederveröffentlichung des Spiels für macOS von Wyrmkeep laufen zu
 lassen, müssen Sie die Daten von der CD auf die Festplatte kopieren. Wenn Sie an
 einem PC arbeiten, lesen Sie hierfür:
 
@@ -1450,7 +1450,7 @@ Die unterstützten Plattformen beinhalten (aber beschränken sich nicht auf):
 
         UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
-        Mac OS X
+        macOS
         AmigaOS
         Android
         BeOS
@@ -1745,7 +1745,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
 
   Allgemein:
     Strg+F5                - Zeigt globales Menü.
-    Cmd+q                  - Beenden (Mac OS X)
+    Cmd+q                  - Beenden (macOS)
     Strg+q                 - Beenden (andere UNIX-Systeme einschließlich Linux)
     Alt+F4                 - Beenden (Windows)
     Strg+z ODER Alt+x      - Beenden (andere Plattformen)
@@ -2012,7 +2012,7 @@ Verzeichnis gespeichert und bei anderen in voreingestellten Verzeichnissen.
 Sehen Sie sich das Beispiel weiter unten in dieser Liesmich-Datei an.
 
 Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
-    Mac OS X:
+    macOS:
     $HOME/Documents/ScummVM Savegames/
 
     Andere UNIX-Systeme:
@@ -2702,7 +2702,7 @@ Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
     das ursprüngliche Standard-Verzeichnis „~/.scummvm“ beibehalten. Dies wird
     daran erkannt, dass der Pfad „~/.scummvm“ vorhanden ist.
 
-    Mac OS X:
+    macOS:
     ~/Library/Preferences/ScummVM Preferences
     (Hierbei bezieht sich ~ auf das Benutzerverzeichnis.)
 
@@ -2768,10 +2768,10 @@ Die folgenden Schlüsselwörter werden erkannt:
     screenshotpath     Text     Verzeichnis für Bildschirmfotos
     iconspath          Text     Verzeichnis, in dem nach Icons gesucht wird,
                                 die für das ScummVM-Icon in der Windows-Taskbar
-                                oder im macOS X-Dock verwendet werden, wenn
+                                oder im macOS-Dock verwendet werden, wenn
                                 ein Spiel läuft. Die Icon-Dateien sollten nach
                                 der Spiele-Kennung benannt werden und sich unter
-                                Windows im .ico-Format und unter macOS X im
+                                Windows im .ico-Format und unter macOS im
                                 .png-Format befinden.
     versioninfo        Text     Die Version von ScummVM, welche diese
                                 Konfigurationsdatei erstellt hat
@@ -3054,7 +3054,7 @@ screenshotpath=/pfad/zu/den/bildschirmfotos/
 Wenn in der Konfigurationsdatei kein Bildschirmfoto-Verzeichnis angegeben ist, hängt
 der Speicherort der Bildschirmfotos vom verwendeten Betriebssystem ab:
   Windows: Im Verzeichnis "Users\Benutzername\Bilder\ScummVM Screenshots"
-  macOS X: Auf dem Desktop.
+  macOS: Auf dem Desktop.
   Alle anderen Betriebssysteme: Im aktuellen Verzeichnis.
 
 
@@ -3065,7 +3065,7 @@ Plattformen kompiliert, schauen Sie bitte in unserem Wiki nach, insbesondere auf
 dieser Seite:
    https://wiki.scummvm.org/index.php/Compiling_ScummVM
 
-Wenn Sie für Windows, Linux oder Mac OS X kompilieren, benötigen Sie SDL-1.2.2
+Wenn Sie für Windows, Linux oder macOS kompilieren, benötigen Sie SDL-1.2.2
 oder höher (ältere Versionen funktionieren möglicherweise, haben aber keinen
 Support) und einen unterstützten Compiler. Mehrere Compiler, einschließlich GCC,
 mingw und neue Versionen von Microsoft Visual C++ werden unterstützt. Wenn Sie
@@ -3123,10 +3123,10 @@ Debug-Nachrichten zu durchsuchen
       Weiterführende Informationen finden Sie unter:
       https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
 
-   Mac OS:
-   * Mac OS X
+   macOS:
+   * macOS
       Weiterführende Informationen finden Sie unter:
-      https://wiki.scummvm.org/index.php/Mac_OS_X
+      https://wiki.scummvm.org/index.php/macOS
     * Mac OS X 10.2.8
       Weiterführende Informationen finden Sie unter:
       https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
