@@ -68,7 +68,19 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 	if (pSHGetFolderPath)
 		return pSHGetFolderPath(hwnd, csidl, hToken, dwFlags, pszPath);
 
-	return SHGetSpecialFolderPath(hwnd, pszPath, csidl & !CSIDL_FLAG_MASK, csidl & CSIDL_FLAG_CREATE) ? S_OK : E_NOTIMPL;
+	typedef BOOL (WINAPI *SHGetSpecialFolderPathFunc)(HWND hwnd, LPTSTR pszPath, int csidl, BOOL fCreate);
+
+	SHGetSpecialFolderPathFunc pSHGetSpecialFolderPath = (SHGetSpecialFolderPathFunc)(void *)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")),
+#ifndef UNICODE
+		"SHGetSpecialFolderPathA"
+#else
+		"SHGetSpecialFolderPathW"
+#endif
+	);
+	if (pSHGetSpecialFolderPath)
+		return pSHGetSpecialFolderPath(hwnd, pszPath, csidl & !CSIDL_FLAG_MASK, csidl & CSIDL_FLAG_CREATE) ? S_OK : E_FAIL;
+
+	return E_NOTIMPL;
 }
 
 namespace Win32 {
