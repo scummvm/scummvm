@@ -27,5 +27,5 @@ Default shortcuts are shown in the table.
         :kbd:`Ctrl+Alt+f` ,Toggles between nearest neighbor and bilinear interpolation (graphics filtering on/off)
         :kbd:`Ctrl+Alt+s` ,Cycles through stretch modes
         :kbd:`Alt+Enter` ,Toggles full screen/windowed mode
-        :kbd:`Alt+s` ,Takes a screenshot
+        :kbd:`Alt+s` ,Takes a :ref:`screenshot <screenshotpath>`
         :kbd:`Ctrl+F7`,"Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel."
