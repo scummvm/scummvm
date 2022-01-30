@@ -131,27 +131,32 @@ void OSystem_SDL_Symbian::addSysArchivesToSearchSet(Common::SearchSet &s, int pr
 	RFs rfs = FsSession();
 	TChar driveLetter;
 	TFileName extraPath;
+	TBuf8<KMaxFileName> extraPath8;
 
 #if !RELEASE_BUILD
 	_LIT(KDefaultBetaExtraPath,"!:\\DATA\\ScummVM\\BETA\\");
+	_LIT8(KDefaultBetaExtraPath8,"!:\\DATA\\ScummVM\\BETA\\");
 	extraPath = KDefaultBetaExtraPath;
+	extraPath8 = KDefaultBetaExtraPath8;
 #else
 	_LIT(KDefaultExtraPath,"!:\\DATA\\ScummVM\\");
+	_LIT8(KDefaultExtraPath8,"!:\\DATA\\ScummVM\\");
 	extraPath = KDefaultExtraPath;
+	extraPath8 = KDefaultExtraPath8;
 	Common::FSNode pluginsNode(Symbian::GetExecutablePath());
 	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
 			s.add("SYMBIAN_DATAFOLDER", new Common::FSDirectory(Symbian::GetExecutablePath()), priority);
 		}
 #endif
 
+	extraPath8.ZeroTerminate();
 	for (TInt i = EDriveA; i <= EDriveZ; i++) {
 		if (rfs.DriveToChar(i, driveLetter) != KErrNone)
 			continue;
 		extraPath[0] = driveLetter;
-		if(BaflUtils::FolderExists(rfs, extraPath)){
-			TBuf8<KMaxFileName> fileName8 = extraPath.Collapse();
-			s.add("SYMBIAN_DATAFOLDER" + driveLetter, new Common::FSDirectory((char *)fileName8.PtrZ()), priority);
-		}
+		extraPath8[0] = driveLetter;
+		if(BaflUtils::FolderExists(rfs, extraPath))
+			s.add("SYMBIAN_DATAFOLDER" + driveLetter, new Common::FSDirectory((char *)extraPath8.Ptr()), priority);
 	}
 }
 
