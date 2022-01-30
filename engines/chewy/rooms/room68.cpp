@@ -365,17 +365,15 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		else {
 			det->start_detail(23, 255, ANI_VOR);
 			ailsnd->initDoubleBuffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
-			::error("TODO: voc_handle");
-#if 0
-			Stream *voc_handle = nullptr; // TODO : should be the voc_handle initialized in sound_init()
 			mem->file->select_pool_item(voc_handle, 109);
 			ERROR
+
 			ailsnd->startDbVoc(voc_handle, 1, 30);
 			wait_show_screen(2);
 
 			while (!ailsnd->isSpeechActive(1))
 				set_up_screen(DO_SETUP);
-#endif
+
 			det->stop_detail(23);
 		}
 
