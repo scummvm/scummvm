@@ -112,9 +112,8 @@ void alloc_buffers() {
 }
 
 void free_buffers() {
-	int16 i;
 	det->del_dptr();
-	for (i = 0; i < MAX_PERSON; i++)
+	for (int16 i = 0; i < MAX_PERSON; i++)
 		free((char *)PersonTaf[i]);
 	free((char *)spz_tinfo);
 	free(font6x8);
@@ -323,9 +322,8 @@ void menu_exit() {
 }
 
 int16 main_loop(int16 mode) {
-	int16 ende;
 	int16 ret;
-	ende = false;
+	int16 ende = false;
 
 	maus_action();
 	if (flags.MainInput) {

@@ -84,18 +84,16 @@ int16 Room47::use_knopf(int16 txt_nr) {
 }
 
 void Room47::set_detail() {
-	int16 i;
-
-	for (i = 0; i < 10; i++)
+	for (int16 i = 0; i < 10; i++)
 		det->hide_static_spr(i);
 
-	for (i = 0; i < 3; i++) {
+	for (int16 i = 0; i < 3; i++) {
 		det->show_static_spr(_G(spieler).R47Schloss[i]);
-		det->set_static_pos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i * 1, false, true);
+		det->set_static_pos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i, false, true);
 		det->plot_static_details(0, 0, _G(spieler).R47Schloss[i], _G(spieler).R47Schloss[i]);
 	}
 
-	for (i = 0; i < 10; i++)
+	for (int16 i = 0; i < 10; i++)
 		det->hide_static_spr(i);
 }
 

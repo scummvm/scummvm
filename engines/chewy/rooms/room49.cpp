@@ -106,8 +106,8 @@ void Room49::calc_boy_ani() {
 		det->del_static_ani(1);
 	}
 
-	det->set_static_ani(_G(spieler).R49BoyAni, -1);
-	det->start_detail(_G(spieler).R49BoyAni, 1, ANI_VOR);
+	det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
+	det->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_VOR);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 }
 
@@ -119,12 +119,13 @@ void Room49::calc_boy() {
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
 		person_end_phase[P_CHEWY] = P_LEFT;
-		det->stop_detail(_G(spieler).R49BoyAni);
-		det->del_static_ani(_G(spieler).R49BoyAni);
+		det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
+		det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 		det->set_static_ani(2, -1);
 
 		SetUpScreenFunc = nullptr;
 		start_aad_wait(262, -1);
+		SetUpScreenFunc = nullptr;
 		auto_move(3, P_CHEWY);
 		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
@@ -139,7 +140,7 @@ void Room49::calc_boy() {
 		start_detail_wait(4, 1, ANI_GO);
 
 		SetUpScreenFunc = setup_func;
-		det->set_static_ani(_G(spieler).R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		room->set_timer_status(255, TIMER_START);
 		show_cur();
 	}
@@ -182,7 +183,7 @@ void Room49::use_boy_cigar() {
 	auto_scroll(164, 0);
 	flic_cut(67, CFO_MODE);
 	test_intro(17);
-
+	
 	room->set_timer_status(255, TIMER_STOP);
 	uhr->reset_timer(_G(timer_nr)[0], 0);
 	det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
@@ -205,7 +206,7 @@ void Room49::use_boy_cigar() {
 void Room49::talk_boy() {
 	if (!_G(spieler).R49BoyWeg) {
 		auto_move(3, P_CHEWY);
-		talk_boy(266 + _G(spieler).R49WegFrei);
+		talk_boy(266 + (_G(spieler).R49WegFrei ? 1 : 0));
 	}
 }
 
@@ -213,16 +214,16 @@ void Room49::talk_boy(int16 aad_nr) {
 	if (!_G(spieler).R49BoyWeg) {
 		room->set_timer_status(255, TIMER_STOP);
 		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->stop_detail(_G(spieler).R49BoyAni);
+		det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
-		det->set_static_ani(_G(spieler).R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		det->set_static_ani(2, -1);
 		SetUpScreenFunc = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(aad_nr, -1);
 		SetUpScreenFunc = setup_func;
 		det->del_static_ani(2);
-		det->set_static_ani(_G(spieler).R49BoyAni, -1);
+		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		room->set_timer_status(255, TIMER_START);
 	}
 }
