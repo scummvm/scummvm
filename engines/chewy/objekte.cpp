@@ -563,6 +563,7 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 ret;
 	int16 i;
 	ret = -1;
+
 	for (i = 0; i < max_exit && ret == -1; i++) {
 		if (Re[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 			if (mouse_x >= Re[i].X &&
@@ -573,6 +574,7 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 			}
 		}
 	}
+
 	return ret;
 }
 

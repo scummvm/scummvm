@@ -1802,13 +1802,15 @@ bool is_cur_inventar(int16 nr) {
 }
 
 void check_mouse_ausgang(int16 x, int16 y) {
-	int16 nr;
+	int16 nr, attr;
+	bool found = true;
 
-	int16 found;
-	found = true;
 	if (menu_item == CUR_WALK) {
 		nr = obj->is_exit(x, y);
-		switch (_G(spieler).room_e_obj[nr].Attribut) {
+		attr = (nr >= 0 && nr < MAX_EXIT) ?
+			_G(spieler).room_e_obj[nr].Attribut : 0;
+
+		switch (attr) {
 		case AUSGANG_LINKS:
 			cur_ausgang_flag = AUSGANG_LINKS;
 			cursor_wahl(CUR_AUSGANG_LINKS);
@@ -1832,8 +1834,8 @@ void check_mouse_ausgang(int16 x, int16 y) {
 		default:
 			found = false;
 			break;
-
 		}
+
 		if (cur_ausgang_flag && !found) {
 			cursor_wahl(menu_item);
 			cur_ausgang_flag = false;
