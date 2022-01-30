@@ -52,12 +52,10 @@ void Room42::entry() {
 			atds->set_ats_str(264, 1, ATS_DATEI);
 		}
 
-		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) &&
-				!_G(spieler).R42BriefOk)
+		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) && !_G(spieler).R42BriefOk)
 			start_aad_wait(302, -1);
 
-		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) &&
-				_G(spieler).R42BriefOk)
+		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) && _G(spieler).R42BriefOk)
 			start_aad_wait(301, -1);
 	}
 }
@@ -94,13 +92,14 @@ void Room42::get_kuerbis(int16 aad_nr) {
 int16 Room42::use_psack() {
 	int16 action_flag = false;
 
+	if (menu_item == CUR_HOWARD)
+		return action_flag;
+
+	hide_cur();
 	if (!_G(spieler).R42BeamterWach && !_G(spieler).inv_cur) {
 		action_flag = true;
 		get_kuerbis(136);
-
-	} else if (_G(spieler).R42HoToBeamter &&
-			!_G(spieler).inv_cur &&
-			!_G(spieler).R42MarkeOk) {
+	} else if (_G(spieler).R42HoToBeamter && !_G(spieler).inv_cur && !_G(spieler).R42MarkeOk) {
 		action_flag = true;
 		auto_move(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -116,7 +115,6 @@ int16 Room42::use_psack() {
 		auto_move(4, P_CHEWY);
 		start_aad_wait(185, -1);
 		_G(spieler).R42HoToBeamter = false;
-
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
 		auto_move(3, P_CHEWY);
@@ -137,6 +135,7 @@ int16 Room42::use_psack() {
 		start_aad_wait(182, -1);
 	}
 
+	show_cur();
 	return action_flag;
 }
 
@@ -194,7 +193,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		case 2:
 			det->play_sound(4, 0);
-			start_detail_wait(4, 4, ANI_VOR);
+			start_detail_wait(4, 13, ANI_VOR);
 			break;
 
 		case 3:
