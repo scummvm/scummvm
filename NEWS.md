@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Sanitarium.
    - Added support for Hades Challenge.
+   - Added support for Marvel Comics Spider-Man: The Sinister Six.
 
  General:
    - The project license has been upgraded to GPLv3+.
