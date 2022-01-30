@@ -22,7 +22,6 @@
 #include "common/file.h"
 #include "chewy/chewy.h"
 #include "chewy/gedclass.h"
-#include "chewy/fehler.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {
@@ -32,9 +31,7 @@ void gedclass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr,
 	if (f.open(fname)) {
 		load_ged_pool(&f, Gh, ch_nr, speicher);
 	} else {
-		modul = 3;
-		fcode = 0;
-		err->set_user_msg("GED POOL");
+		error("load_ged_pool error");
 	}
 }
 
@@ -45,9 +42,7 @@ void gedclass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader 
 			load_ged_chunk(Gh, stream, ch_nr, speicher);
 		}
 	} else {
-		modul = 3;
-		fcode = 0;
-		err->set_user_msg("GED POOL");
+		error("load_ged_pool error");
 	}
 }
 
@@ -72,9 +67,7 @@ void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *st
 			}
 		}
 	} else {
-		modul = 3;
-		fcode = 0;
-		err->set_user_msg("GED FILE");
+		error("load_ged_chunk error");
 	}
 }
 

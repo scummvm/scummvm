@@ -24,7 +24,6 @@
 
 #include "chewy/memory.h"
 #include "chewy/mcga.h"
-#include "chewy/fehler.h"
 #include "chewy/mouse.h"
 
 #include "chewy/io_game.h"
@@ -42,7 +41,6 @@ class sblaster;
 
 extern mcga_grafik *out;
 extern memory *mem;
-extern fehler *err;
 extern maus *in;
 extern sblaster *snd;
 extern io_game *iog;

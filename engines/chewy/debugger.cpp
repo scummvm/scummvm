@@ -38,7 +38,7 @@ static int strToInt(const char *s) {
 	uint tmp = 0;
 	int read = sscanf(s, "%xh", &tmp);
 	if (read < 1)
-		::error("strToInt failed on string \"%s\"", s);
+		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
 }
 

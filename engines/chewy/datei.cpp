@@ -86,16 +86,13 @@ void datei::load_image(Stream *stream, byte *sp, byte *palette) {
 					break;
 				}
 			} else {
-				fcode = NOTTBF;
-				modul = DATEI;
+				error("load_image error");
 			}
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("load_image error");
 		}
 	} else {
-		fcode = ZEIGERFEHLER;
-		modul = GRAFIK;
+		error("load_image error");
 	}
 
 	ChunkHead ch;
@@ -110,9 +107,7 @@ uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	if (rs) {
 		rs->seek(0, SEEK_SET);
 		if (!ph->load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
-			rs->seek(0, SEEK_SET);
+			error("select_pool_item error");
 		} else {
 			if (!strncmp(ph->id, "NGS", 3)) {
 				if (nr >= ph->PoolAnz)
@@ -153,8 +148,7 @@ void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
 								next = iheader.next;
 								image = iheader.image;
 							} else {
-								fcode = READFEHLER;
-								modul = DATEI;
+								error("load_tafmcga error");
 							}
 							++sprcount;
 						}
@@ -167,8 +161,7 @@ void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
 							next = iheader.next;
 							image = iheader.image;
 						} else {
-							fcode = READFEHLER;
-							modul = DATEI;
+							error("load_tafmcga error");
 						}
 					}
 
@@ -180,22 +173,18 @@ void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
 					read_tbf_image(&f, komp, size, speicher);
 
 				} else {
-					fcode = NOTTBF;
-					modul = DATEI;
+					error("load_tafmcga error");
 				}
 			} else {
-				fcode = READFEHLER;
-				modul = DATEI;
+				error("load_tafmcga error");
 			}
 
 			f.close();
 		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
+			error("load_tafmcga error");
 		}
 	} else {
-		fcode = ZEIGERFEHLER;
-		modul = GRAFIK;
+		error("load_tafmcga error");
 	}
 }
 
@@ -226,8 +215,7 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 							next = iheader.next;
 							image = iheader.image;
 						} else {
-							fcode = READFEHLER;
-							modul = DATEI;
+							error("load_full_taf error");
 						}
 						uint16 *abmess = (uint16 *)speicher;
 						abmess[0] = iheader.width;
@@ -241,22 +229,18 @@ void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
 						speicher += size;
 					}
 				} else {
-					fcode = NOTTBF;
-					modul = DATEI;
+					error("load_full_taf error");
 				}
 			} else {
-				fcode = READFEHLER;
-				modul = DATEI;
+				error("load_full_taf error");
 			}
 
 			f.close();
 		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
+			error("load_full_taf error");
 		}
 	} else {
-		fcode = ZEIGERFEHLER;
-		modul = GRAFIK;
+		error("load_full_taf error");
 	}
 }
 
@@ -272,29 +256,24 @@ void datei::load_korrektur(const char *fname, int16 *sp) {
 				if ((id == TAFDATEI) && (header->korrekt > 0)) {
 					f.seek(-((int)(header->count * sizeof(int16) * 2) * header->korrekt), SEEK_END);
 					if ((f.size() - f.pos() / 2) < (int16)(header->count * sizeof(int16) * 2)) {
-						fcode = READFEHLER;
-						modul = DATEI;
+						error("load_korrektur error");
 					} else {
 						for (int i = 0; i < header->count * 2; ++i)
 							*sp++ = f.readSint16LE();
 					}
 				} else {
-					fcode = NOTTBF;
-					modul = DATEI;
+					error("load_korrektur error");
 				}
 			} else {
-				fcode = READFEHLER;
-				modul = DATEI;
+				error("load_korrektur error");
 			}
 
 			f.close();
 		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
+			error("load_korrektur error");
 		}
 	} else {
-		fcode = ZEIGERFEHLER;
-		modul = GRAFIK;
+		error("load_korrektur error");
 	}
 }
 
@@ -312,19 +291,16 @@ void datei::load_tff(const char *fname, byte *speicher) {
 			if (tff->load(&f)) {
 				uint32 size = tff->size;
 				if (f.read(speicher + sizeof(tff_header), size) != size) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_tff error");
 				}
 			}
 
 			f.close();
 		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
+			error("load_tff error");
 		}
 	} else {
-		fcode = ZEIGERFEHLER;
-		modul = GRAFIK;
+		error("load_tff error");
 	}
 }
 
@@ -382,17 +358,14 @@ uint32 datei::load_voc(Stream *handle, byte *speicher) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 		if (!ch->load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("load_voc error");
 		} else {
 			if (ch->type == VOCDATEI) {
 				if (rs->read(speicher, ch->size) != ch->size) {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("load_voc error");
 				}
 			} else {
-				modul = DATEI;
-				fcode = NOTVOC;
+				error("load_voc error");
 			}
 		}
 	}
@@ -407,14 +380,12 @@ void datei::void_load(const char *fname, byte *speicher, uint32 size) {
 	Common::File f;
 	if (f.open(filename)) {
 		if (!f.read(speicher, size)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("void_load error");
 		}
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("void_load error");
 	}
 }
 
@@ -426,15 +397,13 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 	if (rs) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!ch->load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("load_tmf error");
 		} else {
 			if (ch->type == TMFDATEI) {
 				assert(ch->size > (uint32)tmf_header::SIZE());
 
 				if (!song->load(rs)) {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("load_tmf error");
 				} else {
 					size = ch->size + sizeof(tmf_header);
 					byte *speicher = (byte *)song + sizeof(tmf_header);
@@ -447,8 +416,7 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 					}
 				}
 			} else {
-				modul = DATEI;
-				fcode = NOTTBF;
+				error("load_tmf error");
 			}
 		}
 	}
@@ -504,13 +472,10 @@ uint32 datei::size(const char *fname, int16 typ) {
 				if ((id == TBFDATEI) || (id == TPFDATEI)) {
 					size = tbfheader->entpsize + 4;
 				} else {
-					fcode = NOTTBF;
-					modul = DATEI;
-					size = 0;
+					error("size error");
 				}
 			} else {
-				fcode = READFEHLER;
-				modul = DATEI;
+				error("size error");
 			}
 			break;
 
@@ -522,13 +487,10 @@ uint32 datei::size(const char *fname, int16 typ) {
 					uint16 breite = pcxheader->bpz * pcxheader->planes;
 					size = (uint32)((long)hoehe) * ((long)breite) + 4;
 				} else {
-					fcode = NOTTBF;
-					modul = DATEI;
-					size = 0;
+					error("size error");
 				}
 			} else {
-				fcode = READFEHLER;
-				modul = DATEI;
+				error("size error");
 			}
 			break;
 
@@ -539,12 +501,10 @@ uint32 datei::size(const char *fname, int16 typ) {
 				if (id == TFFDATEI) {
 					size = tff.size + sizeof(tff_header);
 				} else {
-					modul = DATEI;
-					fcode = NOTTBF;
+					error("size error");
 				}
 			} else {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("size error");
 			}
 			}
 			break;
@@ -582,8 +542,7 @@ uint32 datei::size(const char *fname, int16 typ) {
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("size error");
 		size = 0;
 	}
 
@@ -597,8 +556,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 	Common::File f;
 	if (f.open(fname)) {
 		if (!Nph->load(&f)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("get_poolsize error");
 		} else {
 			if (!strncmp(Nph->id, "NGS", 3)) {
 				select_pool_item(&f, chunk_start);
@@ -607,9 +565,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 				for (int16 i = chunk_start; (i < Nph->PoolAnz) && (!modul) && i < (chunk_start + chunk_anz); i++) {
 					ChunkHead ch;
 					if (!ch.load(&f)) {
-						modul = DATEI;
-						fcode = READFEHLER;
-						size = 0;
+						error("get_poolsize error");
 					} else {
 						if (ch.size > size)
 							size = ch.size;
@@ -622,8 +578,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("get_poolsize error");
 	}
 
 	return size;
@@ -645,21 +600,15 @@ uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
 
 				size += ((uint32)sizeof(taf_info));
 			} else {
-				fcode = NOTTBF;
-				modul = DATEI;
-				size = 0;
+				error("get_tafinfo error");
 			}
 		} else {
-			fcode = NOTTBF;
-			modul = DATEI;
-			size = 0;
+			error("get_tafinfo error");
 		}
 
 		tafFile.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
-		size = 0;
+		error("get_tafinfo error");
 	}
 
 	return size;
@@ -687,8 +636,7 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 			strcat(filename, ".taf");
 			break;
 		default:
-			modul = DATEI;
-			fcode = NOTTBF;
+			error("load_palette error");
 		}
 	}
 
@@ -704,12 +652,10 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 						for (uint16 i = 0; i < 768; i++)
 							palette[i] = tbfheader->palette[i];
 					} else {
-						fcode = NOTTBF;
-						modul = DATEI;
+						error("load_palette error");
 					}
 				} else {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_palette error");
 				}
 				break;
 
@@ -722,8 +668,7 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 							if (zeichen == 12) {
 								f.seek(-768L, SEEK_END);
 								if ((chewy_fread(palette, 768, 1, &f)) != 1) {
-									fcode = PALETTEFEHLER;
-									modul = DATEI;
+									error("load_palette error");
 								} else {
 									uint16 j = 0;
 									for (uint16 i = 0; i < 255; i++) {
@@ -734,17 +679,14 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 									}
 								}
 							} else {
-								fcode = PALETTEFEHLER;
-								modul = DATEI;
+								error("load_palette error");
 							}
 						}
 					} else {
-						fcode = NOTTBF;
-						modul = DATEI;
+						error("load_palette error");
 					}
 				} else {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_palette error");
 				}
 				break;
 
@@ -755,24 +697,20 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 						for (uint16 i = 0; i < 768; i++)
 							palette[i] = tafheader->palette[i];
 					} else {
-						fcode = NOTTBF;
-						modul = DATEI;
+						error("load_palette error");
 					}
 				} else {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_palette error");
 				}
 				break;
 
 			default:
-				modul = DATEI;
-				fcode = NOTTBF;
+				error("load_palette error");
 			}
 
 			f.close();
 		} else {
-			fcode = OPENFEHLER;
-			modul = DATEI;
+			error("load_palette error");
 		}
 	}
 }
@@ -796,8 +734,7 @@ void datei::imsize(const char *fname, uint32 *svekt) {
 						next = iheader.next;
 						svekt[sprcount] = (uint32)iheader.width * (uint32)iheader.height;
 					} else {
-						fcode = READFEHLER;
-						modul = DATEI;
+						error("imsize error");
 					}
 					++sprcount;
 				}
@@ -806,8 +743,7 @@ void datei::imsize(const char *fname, uint32 *svekt) {
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("imsize error");
 	}
 }
 

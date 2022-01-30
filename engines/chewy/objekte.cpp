@@ -75,8 +75,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 
 	if (f.open(fname_)) {
 		if (!iib_datei_header.load(&f)) {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
 				assert(iib_datei_header.Size % RoomMovObjekt::SIZE() == 0);
@@ -87,22 +86,19 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 				}
 
 				if (!valid) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("objekt::load error");
 				} else {
 					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObjekt::SIZE();
 				}
 			} else
 				max_inventar_obj = 0;
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		}
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("objekt::load error");
 	}
 
 	return max_inventar_obj;
@@ -114,8 +110,7 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 
 	if (f.open(fname_)) {
 		if (!sib_datei_header.load(&f)) {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		} else if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
 			if (sib_datei_header.Anz) {
 				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++rsi) {
@@ -123,22 +118,19 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 				}
 
 				if (!valid) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("objekt::load error");
 				} else {
 					max_static_inventar = sib_datei_header.Anz;
 				}
 			} else
 				max_static_inventar = 0;
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		}
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("objekt::load error");
 	}
 
 	return max_static_inventar;
@@ -150,8 +142,7 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 
 	if (f.open(fname_)) {
 		if (!eib_datei_header.load(&f)) {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
 				for (int i = 0; i < eib_datei_header.Anz && valid; ++i, ++RoomEx) {
@@ -159,22 +150,19 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 				}
 
 				if (!valid) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("objekt::load error");
 				} else {
 					max_exit = eib_datei_header.Anz;
 				}
 			} else
 				max_exit = 0;
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("objekt::load error");
 		}
 
 		f.close();
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("objekt::load error");
 	}
 
 	return max_exit;
@@ -563,7 +551,6 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 ret;
 	int16 i;
 	ret = -1;
-
 	for (i = 0; i < max_exit && ret == -1; i++) {
 		if (Re[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 			if (mouse_x >= Re[i].X &&
@@ -574,7 +561,6 @@ int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
 			}
 		}
 	}
-
 	return ret;
 }
 

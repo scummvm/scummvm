@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	effect.o \
 	events.o \
 	events_base.o \
-	fehler.o \
 	file.o \
 	flic.o \
 	gedclass.o \

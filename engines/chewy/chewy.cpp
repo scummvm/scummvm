@@ -93,8 +93,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	Common::Serializer s(stream, nullptr);
 	if (!_G(spieler).synchronize(s)) {
-		fcode = READFEHLER;
-		modul = DATEI;
+		error("loadGameStream error");
 		return Common::kReadingFailed;
 
 	} else {
@@ -113,7 +112,6 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		if (_G(spieler).AkInvent != -1)
 			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
 		room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-		ERROR
 		load_chewy_taf(_G(spieler).ChewyAni);
 
 		fx_blend = BLEND1;

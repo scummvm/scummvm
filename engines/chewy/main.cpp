@@ -98,23 +98,16 @@ void game_main() {
 
 void alloc_buffers() {
 	workpage = (byte *)MALLOC(64004l);
-	ERROR
 	pal = (byte *)MALLOC(768l);
-	ERROR
 	cur_back = (byte *)MALLOC(16 * 16 + 4);
-	ERROR;
 	Ci.VirtScreen = workpage;
 	Ci.TempArea = (byte *)MALLOC(64004l);
-	ERROR;
 	det->set_taf_ani_mem(Ci.TempArea);
 	Ci.MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);
 	Ci.MaxMusicSize = MUSIC_SLOT_SIZE;
-	ERROR;
 	Ci.SoundSlot = (byte *)MALLOC(SOUND_SLOT_SIZE);
 	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
-	ERROR;
 	SpeechBuf[0] = (byte *)MALLOC(SPEECH_HALF_BUF * 2);
-	ERROR
 	SpeechBuf[1] = SpeechBuf[0] + SPEECH_HALF_BUF;
 }
 
@@ -1860,7 +1853,6 @@ void calc_ausgang(int16 x, int16 y) {
 				exit_room(nr);
 				_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).room_e_obj[nr].Exit;
 				room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-				ERROR
 				set_person_pos(Rdi->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].X -
 				               spieler_mi[_G(auto_p_nr)].HotMovX,
 				               Rdi->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].Y - spieler_mi[_G(auto_p_nr)].HotMovY
@@ -2091,7 +2083,7 @@ ChewyFont::ChewyFont(Common::String filename) {
 	uint32 header = stream.readUint32BE();
 
 	if (header != headerFont)
-		::error("Invalid resource - %s", filename.c_str());
+		error("Invalid resource - %s", filename.c_str());
 
 	stream.skip(4);	// total memory
 	_count = stream.readUint16LE();

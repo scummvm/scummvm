@@ -633,7 +633,7 @@ void ailclass::startDbVoc(Stream *v, int16 channel, int16 vol) {
 	src->seek(-ChunkHead::SIZE(), SEEK_CUR);
 	ChunkHead ch;
 	if (!ch.load(src))
-		::error("Error loading speech");
+		error("Error loading speech");
 
 	Common::SeekableReadStream *rs = src->readStream(ch.size);
 	playSpeech(channel, rs);

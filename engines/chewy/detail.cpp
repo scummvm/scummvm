@@ -177,22 +177,18 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 				f.seek(room_nr * room_detail_info::SIZE(), SEEK_CUR);
 
 				if (!rdi.load(&f)) {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("load_rdi error");
 				}
 			} else {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("load_rdi error");
 			}
 		} else {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("load_rdi error");
 		}
 
 		f.close();
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("load_rdi error");
 	}
 
 	rdi.dptr = tmprdi;
@@ -253,12 +249,11 @@ void detail::load_taf_tbl(taf_info *fti) {
 						load_taf_seq(CurrentTaf, rdi.Ainfo[i].start_ani, (rdi.Ainfo[i].end_ani - rdi.Ainfo[i].start_ani) + 1, fti);
 				}
 			} else {
-				modul = DATEI;
-				fcode = OPENFEHLER;
+				error("load_taf_tbl error");
 			}
 		}
 	} else {
-		ERROR
+		error("load_taf_tbl error");
 	}
 }
 
@@ -285,8 +280,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 				if (CurrentTaf) {
 					load_sprite_pointer(CurrentTaf);
 				} else {
-					modul = DATEI;
-					fcode = OPENFEHLER;
+					error("init_taf_tbl error");
 				}
 			}
 		}
@@ -350,8 +344,7 @@ void detail::load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz, taf_info 
 
 			rs->seek(iheader.next, SEEK_SET);
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("load_taf_seq error");
 		}
 	}
 }
@@ -729,17 +722,13 @@ void detail::load_room_sounds(Stream *tvp_handle) {
 					}
 
 					if (allsize > SoundBufferSize) {
-						modul = SPEICHER;
-						fcode = NOSPEICHER;
-						err->set_user_msg("SFX-SIZE TOO LARGE");
-						break_flag = true;
+						error("load_room_sounds error");
 					}
 				}
 			}
 		}
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("load_room_sounds error");
 	}
 }
 
@@ -974,18 +963,13 @@ void detail::load_taf_ani_sprite(int16 nr) {
 			if (taf_load_buffer)
 				mem->file->load_tafmcga(rs, iheader.komp, size, taf_load_buffer + 4l);
 			else {
-				modul = SPEICHER;
-				fcode = NOSPEICHER;
-				err->set_user_msg("Taf-Load-Puffer nicht initialisiert");
+				error("load_taf_ani_sprite error");
 			}
 		} else {
-			fcode = READFEHLER;
-			modul = DATEI;
+			error("load_taf_ani_sprite error");
 		}
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
-		err->set_user_msg("Arbeitstaf nicht geöffnet");
+		error("load_taf_ani_sprite error");
 	}
 }
 
@@ -1004,15 +988,13 @@ void detail::load_sprite_pointer(Stream *stream) {
 			for (int16 i = 1; i < anzahl && !modul; i++) {
 				taf_imageheader iheader;
 				if (!iheader.load(rs)) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_sprite_pointer error");
 				}
 				SpritePos[i] = iheader.next;
 				rs->seek(iheader.next, SEEK_SET);
 			}
 		} else {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("load_sprite_pointer error");
 		}
 	}
 }

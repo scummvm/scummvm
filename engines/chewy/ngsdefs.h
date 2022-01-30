@@ -119,16 +119,6 @@ namespace Chewy {
 #define GRAFIK 1
 #define SPEICHER 2
 #define DATEI 3
-#define OPENFEHLER 0
-#define READFEHLER 1
-#define WRITEFEHLER 2
-#define CLOSEFEHLER 3
-#define ZEIGERFEHLER 3
-#define NOTPCX 7
-#define PALETTEFEHLER 6
-#define NOTTBF 7
-#define NOTSBI 8
-#define NOTVOC 9
 #define MOD15 10
 #define TYPE_ANZ 27
 #define PCXDATEI 0

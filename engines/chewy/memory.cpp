@@ -105,8 +105,7 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 						rs->seek(iheader.next, SEEK_SET);
 
 					} else {
-						modul = DATEI;
-						fcode = READFEHLER;
+						error("taf_seq_adr error");
 					}
 				}
 				if (!modul) {
@@ -139,16 +138,14 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 								rs->seek(iheader.next, SEEK_SET);
 								sp_ptr += size;
 							} else {
-								modul = DATEI;
-								fcode = READFEHLER;
+								error("taf_seq_adr error");
 							}
 						}
 						if (!modul) {
 							rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
 
 							if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
-								fcode = READFEHLER;
-								modul = DATEI;
+								error("taf_seq_adr error");
 							} else {
 								int16 *p = ts_info->korrektur;
 								for (i = 0; i < (int)image_anz * 2; ++i, ++p)
@@ -160,16 +157,13 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 					}
 				}
 			} else {
-				fcode = NOTTBF;
-				modul = DATEI;
+				error("taf_seq_adr error");
 			}
 		} else {
-			fcode = NOTTBF;
-			modul = DATEI;
+			error("taf_seq_adr error");
 		}
 	} else {
-		modul = DATEI;
-		fcode = READFEHLER;
+		error("taf_seq_adr error");
 	}
 
 	return ts_info;
