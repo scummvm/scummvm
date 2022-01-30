@@ -32,8 +32,8 @@ from parse_base import parse_base
 from common_names import *
 from scummvm_hrh import Generate_ScummVm_hrh
 from parse_lua import parse_lua
-from parse_gamedata import parse_gamedata
-from pkg_generator import create_pkgs
+from ScummVM_pkg_generator import GenerateScummVMPackage
+from addon_pkg_generator import GenerateAddonsPackages
 from source_patcher import fix_src
 
 def minimal_whitelist(engine):
@@ -50,8 +50,8 @@ def run(build, pkgs, only_begotten_engine = None):
    parse_codecs(pkgs)
    parse_base()
    parse_lua()
-   parse_gamedata(build, pkgs)
-   create_pkgs(build, pkgs)
+   GenerateScummVMPackage(pkgs)
+   GenerateAddonsPackages(pkgs)
    fix_src()
 
    SafeWriteFile(build_log, log, 'a')
