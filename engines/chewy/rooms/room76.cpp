@@ -28,6 +28,9 @@
 namespace Chewy {
 namespace Rooms {
 
+int Room76::_state;
+
+
 void Room76::entry() {
 	det->enable_sound(0,0);
 	det->enable_sound(0, 1);
@@ -35,15 +38,18 @@ void Room76::entry() {
 	det->play_sound(0, 1);
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = setup_func;
-	_G(spieler).r76_word18DB1E = 0;
+	_state = 0;
+
 	set_person_pos(308, 84, P_NICHELLE, P_RIGHT);
 	set_person_pos(365, 84, P_HOWARD, P_RIGHT);
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	_G(spieler).PersonHide[P_NICHELLE] = true;
-	if (_G(spieler).flags29_4) {
+
+	if (!_G(spieler).flags29_4) {
 		atds->del_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
+
 	} else {
 		det->del_static_ani(2);
 		for (int i = 0; i < 3; ++i)
@@ -62,14 +68,15 @@ void Room76::entry() {
 		flags.NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).flags29_2 = true;
-		set_person_pos(128, 135, P_HOWARD, P_RIGHT);
+		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
 		proc3(420);
 		proc5();
-	} else if (!_G(spieler).r76_word18DB1A) {
+
+	} else if (!_G(spieler).r76State) {
 		hide_cur();
 		flags.NoScroll = true;
 		_G(spieler).scrollx = 122;
-		_G(spieler).r76_word18DB1A = -1;
+		_G(spieler).r76State = -1;
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
 		proc3(422);
 		flags.NoScroll = false;
@@ -78,14 +85,14 @@ void Room76::entry() {
 
 void Room76::xit() {
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).r76_word18DB1A = -1;
+	_G(spieler).r76State = -1;
 }
 
 void Room76::setup_func() {
-	if (_G(spieler).r76_word18DB1E != 1 || _G(spieler).scrollx < 300)
+	if (_state != 1 || _G(spieler).scrollx < 300)
 		return;
 
-	_G(spieler).r76_word18DB1E = 0;
+	_state = 0;
 	det->start_detail(11, 1, false);
 	det->start_detail(12, 1, false);
 }
@@ -126,7 +133,7 @@ void Room76::proc3(int diaNr) {
 }
 
 void Room76::proc5() {
-	_G(spieler).r76_word18DB1E = 1;
+	_state = 1;
 	det->del_static_ani(2);
 	det->start_detail(6, 1, false);
 	flags.NoScroll = false;

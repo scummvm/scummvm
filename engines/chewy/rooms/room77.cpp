@@ -33,7 +33,7 @@ void Room77::entry() {
 	det->play_sound(0, 0);
 	det->play_sound(0, 1);
 	_G(spieler).ScrollxStep = 2;
-	if (_G(spieler).r76_word18DB1A == 1) {
+	if (_G(spieler).r76State == 1) {
 		_G(spieler).flags29_4 = true;
 		atds->set_ats_str(452, 1, ATS_DATEI);
 	}
@@ -47,8 +47,8 @@ void Room77::entry() {
 		}
 	}
 
-	if (_G(spieler).r76_word18DB1A == 1) {
-		_G(spieler).r76_word18DB1A = -1;
+	if (_G(spieler).r76State == 1) {
+		_G(spieler).r76State = -1;
 		hide_cur();
 		_G(spieler).scrollx = 62;
 		set_person_pos(158, 127, P_CHEWY, P_RIGHT);
