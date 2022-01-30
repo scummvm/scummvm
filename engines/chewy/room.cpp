@@ -21,6 +21,7 @@
 
 #include "chewy/defines.h"
 #include "chewy/global.h"
+#include "chewy/resource.h"
 #include "chewy/room.h"
 #include "chewy/ngshext.h"
 
@@ -53,9 +54,7 @@ Stream *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
 		close_handle(mode);
 		roomhandle[mode] = stream;
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
-		err->set_user_msg(fname1);
+		error("open_handle error");
 	}
 
 	return roomhandle[mode];
@@ -72,7 +71,6 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 
 	clear_prog_ani();
 	det->load_rdi(Rb->DetFile, room_nr);
-	ERROR
 	load_sound();
 
 	if (player->SoundSwitch == false)
@@ -91,10 +89,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		}
 		if (!modul) {
 			obj->calc_all_static_detail();
-			ERROR
 			load_tgp(room_info->BildNr, Rb, EPISODE1_TGP, GED_LOAD);
-			ERROR
-
 			set_pal(AblagePal[Rb->AkAblage], Rb->LowPalMem);
 			calc_invent(Rb, player);
 
@@ -238,6 +233,8 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 }
 
 int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
+	//BackgroundResource *res = new BackgroundResource();
+
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(roomhandle[R_TGPDATEI]);
 	tbf_dateiheader tb;
 	bool ret = false;
@@ -246,8 +243,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 		mem->file->select_pool_item(rs, nr);
 
 		if (!tb.load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("Error reading from room data");
 		}
 
 		if (!modul) {
@@ -274,19 +270,16 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
 							GedXAnz[Rb->AkAblage] = tmp[0] / GedInfo[Rb->AkAblage].X;
 							GedYAnz[Rb->AkAblage] = tmp[1] / GedInfo[Rb->AkAblage].Y;
 						} else {
-							modul = DATEI;
-							fcode = READFEHLER;
+							error("load_tgp error");
 						}
 					}
 				} else {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("load_tgp error");
 				}
 			}
 		}
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("load_tgp error");
 	}
 
 	return ret;
@@ -309,7 +302,6 @@ void Room::init_ablage() {
 	} else {
 		AkAblage = -1;
 		Ablage[0] = 0;
-		ERROR
 	}
 }
 
@@ -498,14 +490,13 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(spieler).ChewyAni = taf_nr;
 			AkChewyTaf = taf_nr;
 			chewy = mem->taf_adr(fname_);
-			ERROR
 
 			taf_dateiheader *tafheader;
 			mem->file->get_tafinfo(fname_, &tafheader);
 			if (!modul) {
 				chewy_kor = chewy->korrektur;
 			} else {
-				error();
+				error("load_chewy_taf error");
 			}
 		}
 	}
@@ -516,8 +507,6 @@ void switch_room(int16 nr) {
 	exit_room(-1);
 	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-	ERROR
-
 	enter_room(-1);
 	set_up_screen(DO_SETUP);
 }

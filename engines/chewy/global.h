@@ -359,7 +359,6 @@ void standard_init();
 
 void get_detect(char *fname);
 
-void error();
 void tidy();
 
 void init_load();

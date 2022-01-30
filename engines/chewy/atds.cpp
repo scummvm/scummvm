@@ -306,9 +306,7 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	if (handle) {
 		atdshandle[ATDS_HANDLE] = handle;
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
-		err->set_user_msg(fname_);
+		error("Error reading from %s", fname_);
 	}
 
 	return handle;
@@ -327,13 +325,13 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 			atdshandle[mode] = rs;
 			atdsmem[mode] = tmp_adr;
 			atdspooloff[mode] = chunk_start;
-			if (mode == INV_USE_DATEI) {
+			switch (mode) {
+			case INV_USE_DATEI:
 				mem->file->select_pool_item(rs, atdspooloff[mode]);
 				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 				if (!Ch.load(rs)) {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("Error reading from %s", fname_);
 				} else {
 					free(inv_use_mem);
 					inv_use_mem = (char *)MALLOC(Ch.size + 3l);
@@ -341,8 +339,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					if (!modul) {
 						if (Ch.size) {
 							if (!rs->read(inv_use_mem, Ch.size)) {
-								fcode = READFEHLER;
-								modul = DATEI;
+								error("Error reading from %s", fname_);
 							} else
 								crypt(inv_use_mem, Ch.size);
 						}
@@ -351,10 +348,12 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 						inv_use_mem[Ch.size + 2] = (char)BLOCKENDE;
 					}
 				}
+				break;
+
 			}
 		}
 	} else
-		err->set_user_msg(fname_);
+		error("Error reading from %s", fname_);
 }
 
 void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
@@ -382,9 +381,7 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 				break;
 			}
 		} else {
-			modul = DATEI;
-			fcode = OPENFEHLER;
-			err->set_user_msg(fname_);
+			error("Error reading from %s", fname_);
 		}
 	}
 }
@@ -424,13 +421,11 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 		mem->file->select_pool_item(stream, chunk_nr + atdspooloff[mode]);
 		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!Ch.load(stream)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("load_atds error");
 		} else {
 			if (Ch.size) {
 				if (stream->read(txt_adr, Ch.size) != Ch.size) {
-					fcode = READFEHLER;
-					modul = DATEI;
+					error("load_atds error");
 				} else if (mode != ADH_DATEI)
 					crypt(txt_adr, Ch.size);
 			}
@@ -439,8 +434,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 			txt_adr[Ch.size + 2] = (char)BLOCKENDE;
 		}
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("load_atds error");
 	}
 }
 
@@ -454,23 +448,20 @@ void atdsys::save_ads_header(int16 dia_nr) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 		if (!Ch.load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("save_ads_header error");
 		} else {
 			if (Ch.size) {
 				Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
 				ws->seek(rs->pos());
 				if (ws->write(atdsmem[ADH_HANDLE], Ch.size) != Ch.size) {
-					fcode = WRITEFEHLER;
-					modul = DATEI;
+					error("save_ads_header error");
 				}
 
 				delete ws;
 			}
 		}
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("save_ads_header error");
 	}
 }
 
@@ -982,7 +973,6 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 						atdsv.VocNr = aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
 						if (atdsv.VocNr != -1) {
 							mem->file->select_pool_item(atdsv.SpeechHandle, atdsv.VocNr);
-							ERROR
 
 							int16 vocx = spieler_vector[aadv.StrHeader->AkPerson].Xypos[0] -
 							             _G(spieler).scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
@@ -992,9 +982,7 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 							aadv.DelayCount = 1;
 						}
 					} else {
-						modul = DATEI;
-						fcode = OPENFEHLER;
-						err->set_user_msg("sprachausgabe.tvp");
+						error("Error reading from sprachausgabe.tvp");
 					}
 				}
 				for (int16 i = 0; i < ssr->Anz; i++) {
@@ -1358,14 +1346,12 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 				InvUse *iu = (InvUse *)atdsmem[INV_IDX_HANDLE];
 				for (int16 i = 0; i < INV_STRC_ANZ; ++i, ++iu) {
 					if (!iu->load(rs)) {
-						modul = DATEI;
-						fcode = READFEHLER;
+						error("calc_inv_no_use error");
 						break;
 					}
 				}
 			} else {
-				modul = DATEI;
-				fcode = OPENFEHLER;
+				error("calc_inv_no_use error");
 			}
 		}
 

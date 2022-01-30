@@ -312,7 +312,6 @@ void enter_room(int16 eib_nr) {
 
 	if ((!modul) && (flags.InitSound))
 		load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
-	ERROR
 	load_chewy_taf(_G(spieler).ChewyAni);
 	atds->stop_aad();
 	atds->stop_ats();
@@ -1085,7 +1084,6 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 				}
 			}
-			ERROR
 			ailsnd->fadeOut(0);
 			out->ausblenden(1);
 			out->cls();
@@ -1771,7 +1769,6 @@ void flic_cut(int16 nr, int16 mode) {
 				break;
 			}
 
-			ERROR
 #else
 			playVideo(nr < 1000 ? nr : nr - 1000);
 #endif
@@ -1781,11 +1778,8 @@ void flic_cut(int16 nr, int16 mode) {
 
 		chewy_fclose(Ci.Handle);
 	} else {
-		fcode = OPENFEHLER;
-		modul = DATEI;
+		error("flic_cut error");
 	}
-
-	ERROR
 
 	ailsnd->endSound();
 	g_events->delay(50);
@@ -1794,9 +1788,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 	if (nr < 1000 && nr != 135) {
 		load_room_music(_G(spieler).PersonRoomNr[0]);
-		ERROR
 		room->load_sound();
-		ERROR
 
 		if (_G(spieler).SpeechSwitch)
 			det->enable_room_sound();

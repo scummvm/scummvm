@@ -54,8 +54,6 @@ enum SetupScreenMode {
 #define SOUND_SLOT_SIZE 500000
 #define SPEECH_HALF_BUF 25000
 
-#define ERROR if(modul) {error();}
-
 #define JXDIFF 180
 #define JYDIFF 150
 

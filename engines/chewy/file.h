@@ -81,12 +81,12 @@ inline size_t chewy_ftell(Stream *stream) {
 }
 
 inline size_t chewy_fwrite(void *ptr, size_t size, size_t nmemb, Stream *stream) {
-	::error("TODO: chewy_fwrite");
+	error("TODO: chewy_fwrite");
 	return 0;
 }
 
 inline int chewy_fputc(byte c, Stream *stream) {
-	::error("TODO: chewy_fputc");
+	error("TODO: chewy_fputc");
 	return 0;
 }
 

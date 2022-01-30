@@ -34,7 +34,6 @@ static void font_load();
 void standard_init() {
 	mem = new memory();
 	out = new mcga_grafik();
-	err = new fehler();
 	in = new maus();
 	fx = new effect();
 	txt = new text();
@@ -193,10 +192,7 @@ void init_room() {
 	strcpy(room_blk.RoomDir, "room/");
 
 	room->open_handle(&background[0], "rb", R_TGPDATEI);
-	ERROR
-
 	room->open_handle(&backged[0], "rb", R_GEPDATEI);
-	ERROR
 }
 
 void init_atds() {
@@ -210,33 +206,18 @@ void init_atds() {
 
 	// New set up
 	Stream *handle = atds->pool_handle(ATDS_TXT, "rb");
-	ERROR
 	atds->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
-	ERROR
 	atds->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
-
 	atds->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
-	ERROR
 	atds->init_ats_mode(INV_ATS_DATEI, _G(spieler).InvAts);
-
 	atds->set_handle(ATDS_TXT, AAD_DATEI, handle, AAD_TAP_OFF, AAD_TAP_MAX);
-	ERROR
-
 	atds->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
-	ERROR
-
 	atds->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
-	ERROR
 	atds->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
 	atds->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
-
 	atds->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
-	ERROR
-
 	mem->file->fcopy(ADSH_TMP, "txt/diah.adh");
 	atds->open_handle(ADSH_TMP, "rb", 3);
-	ERROR
-
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
@@ -244,7 +225,6 @@ void init_atds() {
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		atds->set_split_win(i, &ssi[i]);
 	atds->set_string_end_func(&atds_string_start);
-	ERROR
 }
 
 void new_game() {
@@ -260,48 +240,36 @@ void new_game() {
 		_G(spieler).room_e_obj[i].RoomNr = -1;
 
 	obj->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
-	ERROR
 	obj->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
-	ERROR
 	obj->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
-	ERROR
 
 	byte *tmp = (byte *)MALLOC(ROOM_ATS_MAX);
-	ERROR
-
 	Common::File f;
 	if (f.open(ROOM_ATS_STEUER)) {
 		if (!f.read(tmp, ROOM_ATS_MAX)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("new_game error");
 		}
 
 		f.close();
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("new_game error");
 	}
-	ERROR
 
 	for (int16 i = 0; i < ROOM_ATS_MAX; i++)
 		_G(spieler).Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
 	tmp = (byte *)MALLOC(MAX_MOV_OBJ);
-	ERROR
 
 	if (f.open(INV_ATS_STEUER)) {
 		if (!f.read(tmp, MAX_MOV_OBJ)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("new_game error");
 		}
 
 		f.close();
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("new_game error");
 	}
-	ERROR
 
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
 		_G(spieler).InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
@@ -323,7 +291,6 @@ static void font_load() {
 
 	// Load the 8x8 font
 	mem->tff_adr(FONT8x8, &font8x8);
-	ERROR
 	out->set_fontadr(font8x8);
 
 	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
@@ -332,7 +299,6 @@ static void font_load() {
 
 	// Load the 6x8 font
 	mem->tff_adr(FONT6x8, &font6x8);
-	ERROR
 	out->set_fontadr(font6x8);
 	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
 	fvorx6x8 = vorx - 2;
@@ -347,23 +313,15 @@ void init_load() {
 	load_chewy_taf(CHEWY_NORMAL);
 
 	spz_taf_handle = room->open_handle(CH_SPZ_FILE, "rb", R_SPEZTAF);
-	err->set_user_msg("Chewy Spezial Taf");
-	ERROR
 
 	spz_akt_id = -1;
 	spz_tinfo = nullptr;
 	set_spz_delay(3);
 
 	menutaf = mem->taf_adr(MENUTAF);
-	ERROR
 	mem->file->get_tafinfo(MENUTAF, &tafheader);
-	ERROR
-
 	spblende = mem->void_adr("cut/blende.rnd");
-	ERROR
-
 	room->load_room(&room_blk, room_start_nr, &_G(spieler));
-	ERROR
 	out->set_palette(pal);
 }
 
@@ -373,26 +331,12 @@ void get_detect(char *fname_) {
 	Stream *handle = chewy_fopen(fname_, "rb");
 	if (handle) {
 		if (!chewy_fread(&detect, sizeof(DetectInfo), 1, handle)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("get_detect error");
 		}
 		chewy_fclose(handle);
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("get_detect error");
 	}
-}
-
-void error() {
-	in->alter_kb_handler();
-	out->rest_palette();
-	out->restore_mode();
-
-	Common::String msg = err->get_user_msg();
-	err->msg();
-	tidy();
-
-	::error("%s", msg.c_str());
 }
 
 void tidy() {
@@ -417,7 +361,6 @@ void tidy() {
 	delete txt;
 	delete fx;
 	delete in;
-	delete err;
 	delete out;
 	delete mem;
 
@@ -436,7 +379,6 @@ void tidy() {
 	txt = nullptr;
 	fx = nullptr;
 	in = nullptr;
-	err = nullptr;
 	out = nullptr;
 	mem = nullptr;
 }
@@ -467,7 +409,6 @@ void sound_init() {
 		flags.InitSound = true;
 
 		voc_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
-		ERROR
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
 		music_handle = room->get_sound_handle();
@@ -478,18 +419,14 @@ void sound_init() {
 		EndOfPool = 0;
 		NewPhead Nph;
 		if (!Nph.load(rs)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("sound_init error");
 		} else {
 			EndOfPool = Nph.PoolAnz - 1;
 		}
-		ERROR
 
 		speech_handle = chewy_fopen(SPEECH_TVP, "rb");
 		if (!speech_handle) {
-			modul = DATEI;
-			fcode = OPENFEHLER;
-			err->set_user_msg("speech.tvp");
+			error("Error opening speech.tvp");
 		} else {
 			ailsnd->initDoubleBuffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
 			atds->set_speech_handle(speech_handle);

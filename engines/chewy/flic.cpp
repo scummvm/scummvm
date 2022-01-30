@@ -106,8 +106,7 @@ void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 		play(lhandle, vscreen, load_p);
 		delete lhandle;
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("flic error");
 	}
 }
 
@@ -128,8 +127,7 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 			CurrentFrame = 0;
 			for (uint16 i = 0; (i < flic_header.frames) && (!modul) && (ret >= 0); i++) {
 				if (!frame_header.load(rs)) {
-					modul = DATEI;
-					fcode = READFEHLER;
+					error("flic error");
 				} else {
 					if (frame_header.type != PREFIX) {
 						size_t tmp_size = ((size_t)frame_header.size) - sizeof(FrameHead);
@@ -138,8 +136,7 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 						start += flic_header.speed;
 						if (tmp_size) {
 							if (rs->read(load_puffer, tmp_size) != tmp_size) {
-								modul = DATEI;
-								fcode = READFEHLER;
+								error("flic error");
 							} else {
 								ret = decode_frame();
 							}
@@ -392,15 +389,13 @@ int16 flic::custom_play(CustomInfo *ci) {
 
 				for (uint16 i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0); i++) {
 					if (!custom_frame.load(rs)) {
-						modul = DATEI;
-						fcode = READFEHLER;
+						error("flic error");
 					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
 							uint32 start = g_system->getMillis() + custom_header.speed;
 							if (custom_frame.size) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
-									modul = DATEI;
-									fcode = READFEHLER;
+									error("flic error");
 								} else {
 									ret = decode_cframe();
 								}
@@ -432,8 +427,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 			}
 		}
 	} else {
-		modul = DATEI;
-		fcode = OPENFEHLER;
+		error("flic error");
 	}
 
 	return ret;
@@ -446,8 +440,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	for (uint16 i = 0; (i < custom_frame.chunks) && (!modul); i++) {
 		ChunkHead chead;
 		if (!chead.load(handle)) {
-			modul = DATEI;
-			fcode = READFEHLER;
+			error("flic error");
 		}
 
 		switch (chead.type) {
@@ -464,16 +457,14 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case FADE_OUT:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 				out->ausblenden(para[0]);
 			break;
 
 		case LOAD_MUSIC:
 			if (handle->read(Music, chead.size) != chead.size) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else {
 				byte *tmp = Music;
 				tmp += sizeof(tmf_header);
@@ -503,8 +494,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 		case LOAD_VOC:
 			if (!File::readArray(handle, &para[0], 1) ||
 				handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else {
 				sounds[para[0]] = Sound;
 				Ssize[para[0]] = chead.size - 2;
@@ -582,8 +572,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_MVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->setMusicMasterVol(para[0]);
@@ -610,8 +599,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case PLAY_VOC:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->playVoc(sounds[para[0]], para[1], para[2], para[3]);
@@ -627,8 +615,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_SVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->setSoundMasterVol(para[0]);
@@ -639,8 +626,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_CVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->setChannelVol((byte)para[0], (byte)para[1]);
@@ -651,16 +637,14 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case FREE_EFFECT:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 				free_sound(para[0]);
 			break;
 
 		case MFADE_IN:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->fadeIn(para[0]);
@@ -671,8 +655,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case MFADE_OUT:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifndef AIL
 				snd->fadeOut(para[0]);
@@ -683,8 +666,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_STEREO:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
+				error("flic error");
 			} else
 #ifdef AIL
 				ailsnd->setStereoPos(para[0], para[1]);

@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
+#include "chewy/resource.h"
 
 namespace Chewy {
 
@@ -151,14 +152,11 @@ int16 file_menue() {
 	char *tmp;
 	int16 text_off, active_slot;
 	int16 rect, line;
-	taf_info *ti;
+	taf_info *ti = mem->taf_adr(OPTION_TAF);
+	//SpriteResource *options = new SpriteResource(OPTION_TAF);
 	ret = 0;
 	room->open_handle("back/gbook.tgp", "rb", R_TGPDATEI);
-	ERROR
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
-	ERROR;
-	ti = mem->taf_adr(OPTION_TAF);
-	ERROR
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -168,7 +166,6 @@ int16 file_menue() {
 
 	fnames = iog->io_init(&ioptr);
 	fnames += 1;
-	ERROR
 	if (!modul) {
 		x[0] = 1;
 		x[1] = 1;
@@ -186,12 +183,22 @@ int16 file_menue() {
 		while (key != ESC) {
 			out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 			for (i = 28, j = 0; i < 35; i++, j++) {
+#if 0
+				TAFChunk *sprite = options->getSprite(i);
+				// TODO: korrektur?
+				if (!mode[j])
+					out->sprite_set(sprite->data, 16 + /*ti->korrektur[i << 1] + */x[j],
+									76 + /*ti->korrektur[(i << 1) + 1] + */y[j], 0);
+				else
+					out->sprite_set(sprite->data, 16 /* + ti->korrektur[i << 1]*/,
+									76 /*+ ti->korrektur[(i << 1) + 1]*/, 0);
+#endif
 				if (!mode[j])
 					out->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1] + x[j],
-					                76 + ti->korrektur[(i << 1) + 1] + y[j], 0);
+									76 + ti->korrektur[(i << 1) + 1] + y[j], 0);
 				else
 					out->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1],
-					                76 + ti->korrektur[(i << 1) + 1], 0);
+									76 + ti->korrektur[(i << 1) + 1], 0);
 			}
 			key = in->get_switch_code();
 			if (mode[2] || mode[3] || mode[8]) {
@@ -342,11 +349,9 @@ int16 file_menue() {
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
 						room->open_handle(&background[0], "rb", R_TGPDATEI);
-						ERROR
 						CurrentSong = -1;
 						iog->load(text_off + active_slot,
 						          ioptr.save_path);
-						ERROR
 						key = ESC;
 					}
 				} else if (mode[2]) {
@@ -361,7 +366,6 @@ int16 file_menue() {
 					if (key != 27) {
 						iog->save_entry(text_off + active_slot,
 						                ioptr.save_path);
-						ERROR
 					}
 					key = 0;
 				}
@@ -394,9 +398,7 @@ int16 file_menue() {
 	free(ti);
 
 	room->open_handle(&background[0], "rb", R_TGPDATEI);
-	ERROR
 	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
-	ERROR;
 	fx_blend = BLEND1;
 	room->set_ak_pal(&room_blk);
 	u_index = ged->ged_idx(spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
@@ -423,7 +425,6 @@ void option_menue(taf_info *ti) {
 	int16 delay_count;
 	short bar_off;
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0);
-	ERROR;
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -627,7 +628,6 @@ void option_menue(taf_info *ti) {
 	}
 
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
-	ERROR;
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
