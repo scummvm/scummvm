@@ -38,14 +38,41 @@ build = 'full'
 sis_major_version, sis_minor_version, sis_build_number = 2, '03', 0
 
 
-uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80", "0x2006FE81", "0x2006FE82")
+uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80", "0x2006FE81")#, "0x2006FE82")
 # Test uids 3
 uids_tests = ("0xAA000657", "0xAA000658", "0xA006FE7C", "0xA006FE7D", "0xA006FE7E", "0xA006FE7F", "0xA006FE80", "0xA006FE81", "0xA006FE82")
 
-def get_UIDs(build):
-   if build == 'full':
-      return uids_tests
-   return uids
+def isRelease():
+   return build == 'release'
+
+def setBuildType(type):
+   global build
+   build = type
+
+def SetFullBuild():
+   setBuildType('full')
+
+def SetReleaseBuild():
+   setBuildType('release')
+
+def SetTestReleaseBuild():
+   setBuildType('test_release')
+
+def MainInstallerName():
+   tmp = "ScummVM-%s.%s.%s-unstable.pkg"
+   if isRelease():
+      tmp = "ScummVM-%s.%s.%s.pkg"
+   return tmp %(sis_major_version, sis_minor_version, sis_build_number)
+
+def Get_ReleaseMACRO():
+   if isRelease():
+      return "MACRO RELEASE_BUILD\n"
+   return ""
+
+def get_UIDs(arg = "unused"):
+   if isRelease():
+      return uids
+   return uids_tests
 
 def SafeWriteFile(path, data, mode = 'w'):
    """Save list elements as strings. Save strings as is"""
