@@ -133,6 +133,9 @@ void Room80::setup_func() {
 
 	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 80)
 		_G(spieler).PersonRoomNr[P_NICHELLE] = nextRoom;
+
+	flags.NoScroll = false;
+	switch_room(nextRoom);
 }
 
 } // namespace Rooms
