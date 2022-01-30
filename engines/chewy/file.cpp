@@ -155,8 +155,7 @@ int16 file_menue() {
 	taf_info *ti = mem->taf_adr(OPTION_TAF);
 	//SpriteResource *options = new SpriteResource(OPTION_TAF);
 	ret = 0;
-	room->open_handle("back/gbook.tgp", "rb", R_TGPDATEI);
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
+	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -348,7 +347,6 @@ int16 file_menue() {
 				if (mode[3]) {
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
-						room->open_handle(&background[0], "rb", R_TGPDATEI);
 						CurrentSong = -1;
 						iog->load(text_off + active_slot,
 						          ioptr.save_path);
@@ -397,8 +395,7 @@ int16 file_menue() {
 	}
 	free(ti);
 
-	room->open_handle(&background[0], "rb", R_TGPDATEI);
-	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
+	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
 	fx_blend = BLEND1;
 	room->set_ak_pal(&room_blk);
 	u_index = ged->ged_idx(spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
@@ -424,7 +421,7 @@ void option_menue(taf_info *ti) {
 	//int16 TmpFrame;
 	int16 delay_count;
 	short bar_off;
-	room->load_tgp(0, &room_blk, GBOOK_TGP, 0);
+	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -627,7 +624,7 @@ void option_menue(taf_info *ti) {
 			--delay_count;
 	}
 
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0);
+	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);

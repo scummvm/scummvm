@@ -68,12 +68,6 @@ inline int chewy_fseek(Stream *stream, long int offset, int whence) {
 	return rs->seek(offset, whence);
 }
 
-inline int chewy_fgetc(Stream *stream) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-	return rs->readByte();
-}
-
 inline size_t chewy_ftell(Stream *stream) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	assert(rs);

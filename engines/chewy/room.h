@@ -39,7 +39,6 @@ extern const int16 SURIMY_TAF19_PHASEN[4][2];
 #define MAX_ROOM_HANDLE 4
 #define GED_LOAD 1
 
-#define R_TGPDATEI 0
 #define R_VOCDATEI 1
 #define R_GEPDATEI 2
 #define R_SPEZTAF 3
@@ -96,7 +95,7 @@ public:
 
 	void load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr);
 
-	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode);
+	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	void load_sound();
 
 	Stream *get_sound_handle();

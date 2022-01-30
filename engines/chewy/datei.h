@@ -36,10 +36,8 @@ public:
 
 	void load_tafmcga(const char *fname, byte *sp, int16 nr);
 
-	void load_image(Stream *stream, byte *sp, byte *palette);
 	uint16 select_pool_item(Stream *stream, uint16 nr);
 	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
-	void read_tpf_image(Stream *stream, int16 komp, uint32 size, byte *speicher);
 	uint32 load_voc(Stream *stream, byte *speicher);
 	uint32 load_tmf(Stream *stream, tmf_header *song);
 

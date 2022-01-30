@@ -159,7 +159,7 @@ public:
 	BackgroundResource(Common::String filename) : Resource(filename) {}
 	virtual ~BackgroundResource() {}
 
-	TBFChunk *getImage(uint num);
+	TBFChunk *getImage(uint num, bool fixPalette);
 };
 
 class SoundResource : public Resource {

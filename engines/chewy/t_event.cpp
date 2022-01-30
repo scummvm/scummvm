@@ -2177,8 +2177,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
 
-		room->open_handle("BACK/GBOOK.TGP", "rb", R_TGPDATEI);
-		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0);
+		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0, "BACK/GBOOK.TGP");
 		out->setze_zeiger(workptr);
 		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		out->back2screen(workpage);
@@ -2192,8 +2191,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		room->open_handle(EPISODE1, "rb", R_TGPDATEI);
-		room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
+		room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 		_G(spieler).scrollx = scrollx;
 		_G(spieler).scrolly = scrolly;
