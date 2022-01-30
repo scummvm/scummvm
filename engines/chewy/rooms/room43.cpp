@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room43.h"
 
@@ -30,8 +29,6 @@ namespace Chewy {
 namespace Rooms {
 
 void Room43::night_small() {
-	int16 i;
-
 	hide_person();
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
@@ -49,7 +46,7 @@ void Room43::night_small() {
 	_G(spieler).ScrollxStep = 16;
 	auto_scroll(192, 0);
 
-	for (i = 0; i < 3; i++) {
+	for (int16 i = 0; i < 3; i++) {
 		if (i)
 			_G(spieler).ScrollxStep = 16 / i;
 		auto_scroll(128 + i * 16, 0);
@@ -85,6 +82,8 @@ void Room43::catch_pg() {
 	flic_cut(FCUT_058, CFO_MODE);
 
 	det->disable_sound(0, 0);
+	test_intro(14);
+	
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;

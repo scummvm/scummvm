@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room44.h"
 
@@ -30,18 +29,15 @@ namespace Chewy {
 namespace Rooms {
 
 void Room44::look_news() {
-	int16 tmpsx, tmpsy;
-	int16 tmproom;
-
-	tmproom = _G(spieler).PersonRoomNr[P_CHEWY];
-	tmpsx = _G(spieler).scrollx;
-	tmpsy = _G(spieler).scrolly;
+	int16 tmproom = _G(spieler).PersonRoomNr[P_CHEWY];
+	int16 tmpsx = _G(spieler).scrollx;
+	int16 tmpsy = _G(spieler).scrolly;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	hide_person();
 	fx_blend = BLEND1;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
-	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	room->load_room(&room_blk, 44, &_G(spieler));
 
 	start_aad_wait(172, -1);
 	_G(spieler).scrollx = tmpsx;
