@@ -22,18 +22,15 @@
 #ifndef CHEWY_ROOMS_ROOM70_H
 #define CHEWY_ROOMS_ROOM70_H
 
+#include "chewy/room.h"
+
 namespace Chewy {
 namespace Rooms {
 
-class Room70 {
+class Room70 : public JungleRoom {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
-	static void setup_func();
-
-	static void topEntry();
-	static void leftEntry();
-	static void rightEntry();
 };
 
 } // namespace Rooms

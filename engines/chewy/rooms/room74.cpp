@@ -42,7 +42,7 @@ void Room74::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = Room70::setup_func;
+	SetUpScreenFunc = setup_func;
 
 	if (_G(spieler).flags29_1)
 		det->start_detail(0, 255, false);
@@ -52,14 +52,14 @@ void Room74::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 105:
-		Room70::leftEntry();
+		leftEntry();
 		break;
 	case 108:
 		_G(spieler).scrollx = 188;
 		Room75::proc1();
 		break;
 	case 109:
-		Room70::rightEntry();
+		rightEntry();
 		break;
 	default:
 		break;
