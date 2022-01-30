@@ -14,6 +14,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
 
+ AGI:
+   - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
+
  Buried:
    - Gleichzeitige Wiedergabe von Audio und Video kann nun übersprungen werden.
    - Der Mauszeiger wird nun während Zwischensequenzen versteckt.
