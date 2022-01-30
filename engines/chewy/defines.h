@@ -388,6 +388,8 @@ enum SetupScreenMode {
 #define VIDEO_INV 96
 #define B_MARY2_INV 97
 #define KARTE_INV 98
+#define MACHETE_INV 99
+#define RUBBER_INV 100
 
 #define SIB_SCHLEIM 3
 
