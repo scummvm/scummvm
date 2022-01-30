@@ -32,10 +32,8 @@ int16 load_ads_dia(int16 dia_nr) {
 
 	if (flags.AdsDialog == false) {
 		bool tmp = atds->ads_start(dia_nr);
-		ERROR
 		if (tmp == true) {
 			atds->load_atds(dia_nr, ADH_DATEI);
-			ERROR
 			ret = true;
 			ads_blk_nr = 0;
 			ads_item_ptr = atds->ads_item_ptr(ads_blk_nr, &ads_item_anz);
@@ -2180,9 +2178,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrolly = 0;
 
 		room->open_handle("BACK/GBOOK.TGP", "rb", R_TGPDATEI);
-		ERROR
 		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0);
-		ERROR;
 		out->setze_zeiger(workptr);
 		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		out->back2screen(workpage);
@@ -2197,9 +2193,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		}
 
 		room->open_handle(EPISODE1, "rb", R_TGPDATEI);
-		ERROR
 		room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD);
-		ERROR;
 
 		_G(spieler).scrollx = scrollx;
 		_G(spieler).scrolly = scrolly;
@@ -2320,7 +2314,6 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
 
 	atds->load_atds(cur_inv, INV_ATS_DATEI);
-	ERROR
 
 	s = atds->ats_get_txt(cur_inv, TXT_MARK_NAME, &txt_anz, 6);
 	_G(calc_inv_text_str1) += s;
@@ -2329,7 +2322,6 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	_G(calc_inv_text_str2) = Common::String::format("%s ", s);
 
 	atds->load_atds(test_nr, INV_ATS_DATEI);
-	ERROR
 
 	s = atds->ats_get_txt(test_nr, TXT_MARK_NAME, &txt_anz, 6);
 	_G(calc_inv_text_str2) += s;
@@ -2376,7 +2368,6 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 
 	if (inv_mode != -1) {
 		txt_nr = atds->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
-		ERROR
 		if (txt_nr != -1) {
 			if (!flags.InventMenu) {
 				if (txt_nr >= 15000) {
@@ -2384,7 +2375,6 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 				} else {
 					ret = start_ats_wait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATEI);
 				}
-				ERROR
 			} else {
 				look_invent(-1, INV_USE_ATS_MODE, txt_nr);
 			}

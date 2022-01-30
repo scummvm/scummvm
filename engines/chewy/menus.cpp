@@ -496,7 +496,6 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 	if (mode == INV_ATS_MODE) {
 		atds->load_atds(invent_nr, INV_ATS_DATEI);
-		ERROR
 		txt_name_adr = atds->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATEI);
 		txt_adr = atds->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATEI);
 		xoff = strlen(txt_name_adr);
@@ -516,7 +515,6 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (!txt_adr) {
 			ende = 1;
 		}
-		ERROR
 	}
 	else
 		ende = 1;
@@ -953,7 +951,6 @@ void ads_menu() {
 				talk_hide_static = -1;
 				if (flags.AdsDialog == false) {
 					atds->save_ads_header(ads_dia_nr);
-					ERROR;
 				}
 			}
 			break;

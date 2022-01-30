@@ -59,7 +59,6 @@ void Room92::entry() {
 		flags.NoPalAfterFlc = true;
 		flic_cut(104, CFO_MODE);
 		test_intro(27);
-		ERROR
 		out->setze_zeiger(nullptr);
 		out->cls();
 		flags.NoPalAfterFlc = true;

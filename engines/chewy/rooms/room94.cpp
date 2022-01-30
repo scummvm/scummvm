@@ -57,7 +57,6 @@ void Room94::entry() {
 		out->cls();
 		flic_cut(120, CFO_MODE);
 		test_intro(30);
-		ERROR
 		fx_blend = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
 		_G(spieler).r93_word18DB2C = _G(spieler).scrollx;
@@ -77,7 +76,6 @@ void Room94::entry() {
 			out->cls();
 			flic_cut(121, CFO_MODE);
 			test_intro(32);
-			ERROR
 
 			fx_blend = BLEND_NONE;
 			SetUpScreenFunc = nullptr;

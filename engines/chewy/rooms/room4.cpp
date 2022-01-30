@@ -121,8 +121,7 @@ int16 Room4::sonde_comp() {
 	minfo.button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-	ERROR
-	
+
 	fx_blend = BLEND1;
 	atds->stop_aad();
 

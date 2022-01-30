@@ -241,7 +241,6 @@ int16 Room55::use_telefon() {
 
 				flic_cut(FCUT_072, CFO_MODE);
 				test_intro(19);
-				ERROR
 				
 				flags.NoScroll = false;
 				invent_2_slot(SACKGELD_INV);
@@ -372,8 +371,7 @@ int16 Room55::use_kammeraus() {
 			flc->set_flic_user_function(cut_serv);
 			flic_cut(FCUT_070, CFO_MODE);
 			test_intro(18);
-			ERROR
-			
+		
 			flc->remove_flic_user_function();
 			const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
 			room->set_timer_status(aniNr, TIMER_STOP);

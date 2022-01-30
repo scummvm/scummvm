@@ -328,7 +328,6 @@ int Room90::proc6() {
 	out->cls();
 	flic_cut(109, CFO_MODE);
 	test_intro(29);
-	ERROR
 
 	det->hide_static_spr(4);
 	det->hide_static_spr(5);

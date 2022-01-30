@@ -111,7 +111,6 @@ int Room95::proc2() {
 		flags.NoPalAfterFlc = true;
 		flic_cut(133, CFO_MODE);
 		test_intro(33);
-		ERROR
 		_G(spieler).PersonRoomNr[P_HOWARD] = 97;
 		switch_room(97);
 	} else {

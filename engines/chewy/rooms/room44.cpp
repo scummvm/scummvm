@@ -42,7 +42,6 @@ void Room44::look_news() {
 	fx_blend = BLEND1;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-	ERROR
 
 	start_aad_wait(172, -1);
 	_G(spieler).scrollx = tmpsx;
