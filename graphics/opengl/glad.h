@@ -1967,7 +1967,18 @@ typedef void (*GLADpostcallback)(void *ret, const char *name, GLADapiproc apipro
 /*
  * Using <stdint.h>
  */
+#if defined __SYMBIAN32__
+#  if __has_include (<stdint.h>)
+#    include <stdint.h>
+#  else
+	 typedef signed int int32_t;
+	 typedef unsigned int uint32_t;
+	 typedef signed long long int64_t;
+	 typedef unsigned long long uint64_t;
+#  endif // __has_include
+#else
 #include <stdint.h>
+#endif //__SYMBIAN32__
 typedef int32_t                 khronos_int32_t;
 typedef uint32_t                khronos_uint32_t;
 typedef int64_t                 khronos_int64_t;
