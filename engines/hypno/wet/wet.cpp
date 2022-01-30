@@ -31,7 +31,9 @@ static const chapterEntry rawChapterTable[] = {
 	{20, {44, 172}, {218, 172}, {0, 0}}, 		// c20
 	{21, {70, 160}, {180, 160}, {220, 185}}, 	// c21
 	{22, {70, 160}, {180, 160}, {220, 185}}, 	// c22
+	{23, {70, 160}, {180, 160}, {220, 185}}, 	// c23
 	{31, {70, 160}, {180, 160}, {220, 185}}, 	// c31
+	{32, {70, 160}, {180, 160}, {220, 185}}, 	// c32
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
 	{0,  {0,  0},   {0,   0},   {0,   0}}    	// NULL
 };
@@ -238,9 +240,26 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c211.mi_", "c22", "");
 	loadArcadeLevel("c212.mi_", "c22", "");
 
-	loadArcadeLevel("c220.mi_", "???", "");
-	loadArcadeLevel("c201.mi_", "???", "");
-	loadArcadeLevel("c202.mi_", "???", "");
+	loadArcadeLevel("c220.mi_", "c23", "");
+	loadArcadeLevel("c221.mi_", "c23", "");
+	loadArcadeLevel("c222.mi_", "c23", "");
+
+	loadArcadeLevel("c230.mi_", "c20", "");
+	loadArcadeLevel("c231.mi_", "c20", "");
+	loadArcadeLevel("c232.mi_", "c20", "");
+
+	loadArcadeLevel("c200.mi_", "c31", "");
+	loadArcadeLevel("c201.mi_", "c31", "");
+	loadArcadeLevel("c202.mi_", "c31", "");
+
+	loadArcadeLevel("c310.mi_", "c32", "");
+	loadArcadeLevel("c311.mi_", "c32", "");
+	loadArcadeLevel("c312.mi_", "c32", "");
+
+	loadArcadeLevel("c320.mi_", "???", "");
+	loadArcadeLevel("c321.mi_", "???", "");
+	loadArcadeLevel("c322.mi_", "???", "");
+
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadLib("sound/", "c_misc/sound.lib", true);

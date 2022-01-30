@@ -450,6 +450,13 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
 			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
 			_obj1KillsCount = _obj1KillsCount + _shoots[i].obj1KillsCount;
+			if (!_shoots[i].explosionAnimation.empty()) {
+				_shoots[i].video = new MVideo(_shoots[i].explosionAnimation, mousePos, true, false, false);
+				playVideo(*_shoots[i].video);
+				int w = _shoots[i].video->decoder->getWidth();
+				int h = _shoots[i].video->decoder->getHeight();
+				_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+			}
 		}
 
 	}

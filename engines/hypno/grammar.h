@@ -364,6 +364,7 @@ public:
 		obj1KillsCount = 0;
 		obj1MissesCount = 0;
 		animation = "NONE";
+		explosionAnimation = "";
 	}
 	Common::String name;
 	Filename animation;
@@ -389,7 +390,7 @@ public:
 	MVideo *video;
 	uint32 attackFrame;
 	uint32 explosionFrame;
-	
+	Filename explosionAnimation;
 	bool destroyed;
 };
 

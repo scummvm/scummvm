@@ -187,6 +187,8 @@ bline: FNTOK FILENAME {
 		shoot = new Shoot();
 		if (Common::String("F0") == $1)
 			shoot->animation = $2;
+		else if (Common::String("F4") == $1)
+			shoot->explosionAnimation = $2;
 		debugC(1, kHypnoDebugParser, "FN %s", $2); 
 	}
 	| FNTOK NONETOK { 
