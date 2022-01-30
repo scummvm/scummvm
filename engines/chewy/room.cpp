@@ -518,7 +518,7 @@ void switch_room(int16 nr) {
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	ERROR
 
-		enter_room(-1);
+	enter_room(-1);
 	set_up_screen(DO_SETUP);
 }
 
