@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room78::entry() {
-	_G(spieler).r76_word18DB1A = -1;
+	_G(spieler).r76State = -1;
 	det->enable_sound(0, 1);
 	det->play_sound(0, 1);
 	hide_cur();
@@ -115,10 +115,10 @@ void Room78::entry() {
 		}
 
 		if (_G(spieler).flags29_10 && _G(spieler).flags29_20) {
-			_G(spieler).r76_word18DB1A = 1;
+			_G(spieler).r76State = 1;
 			destRoom = 77;
 		} else {
-			_G(spieler).r76_word18DB1A = 0;
+			_G(spieler).r76State = 0;
 			destRoom = 76;
 		}		
 	}
