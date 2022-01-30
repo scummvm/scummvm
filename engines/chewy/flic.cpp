@@ -445,6 +445,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		switch (chead.type) {
 		case FADE_IN:
+			error("decode_custom_frame: Unused frame type FADE_IN found");
+#if 0
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -452,7 +454,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				fade_flag = true;
 				fade_delay = para[0];
 			}
-
+#endif
 			break;
 
 		case FADE_OUT:
@@ -480,6 +482,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case LOAD_RAW:
+			error("decode_custom_frame: Unused frame type LOAD_RAW found");
+#if 0
 			if (!File::readArray(handle, &para[0], 1) ||
 			        handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
 				modul = DATEI;
@@ -489,6 +493,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				Ssize[para[0]] = chead.size;
 				Sound += chead.size - 2;
 			}
+#endif
+
 			break;
 
 		case LOAD_VOC:
@@ -513,6 +519,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case PLAY_SEQ:
+			error("decode_custom_frame: Unused frame type PLAY_SEQ found");
+#if 0
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -529,9 +537,12 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 				}
 			}
+#endif
 			break;
 
 		case PLAY_PATTERN:
+			error("decode_custom_frame: Unused frame type PLAY_PATTERN found");
+#if 0
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -548,6 +559,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #endif
 				}
 			}
+#endif
 			break;
 
 		case STOP_MUSIC:
@@ -583,6 +595,8 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case SET_LOOPMODE:
+			error("decode_custom_frame: Unused frame type SET_LOOPMODE found");
+#if 0
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				modul = DATEI;
 				fcode = READFEHLER;
@@ -591,6 +605,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 				snd->setLoopMode(para[0]);
 #else
 				ailsnd->setLoopMode(para[0]);
+#endif
 #endif
 			break;
 
@@ -674,7 +689,10 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case SET_SPEED:
+			error("decode_custom_frame: Unused frame type SET_SPEED found");
+#if 0
 			custom_header.speed = handle->readUint32LE();
+#endif
 			break;
 
 		case CLEAR_SCREEN:
