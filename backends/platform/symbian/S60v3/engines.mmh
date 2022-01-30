@@ -138,5 +138,7 @@ STATICLIBRARY    scummvm_startrek.lib
 STATICLIBRARY    scummvm_trecision.lib
 STATICLIBRARY    scummvm_twine.lib
 STATICLIBRARY    scummvm_wage.lib
+STATICLIBRARY    scummvm_hypno.lib
+STATICLIBRARY    scummvm_playground3d.lib
 #endif // SCUMMVM_PT_9
 

@@ -136,4 +136,6 @@ MACRO   ENABLE_STARTREK  //  LIB:scummvm_startrek.lib
 MACRO   ENABLE_TWINE  //  LIB:scummvm_twine.lib
 MACRO   ENABLE_TRECISION  //  LIB:scummvm_trecision.lib
 MACRO   ENABLE_WAGE  //  LIB:scummvm_wage.lib
+MACRO   ENABLE_HYPNO  //  LIB:scummvm_hypno.lib
+MACRO   ENABLE_PLAYGROUND3D  //  LIB:scummvm_playground3d.lib
 #endif // SCUMMVM_PT_9
