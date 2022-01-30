@@ -52,10 +52,10 @@ void Room75::entry(int16 eib_nr) {
 		proc1();
 		break;		
 	case 104:
-		Room70::proc3();
+		Room70::rightEntry();
 		break;
 	case 111:
-		Room70::proc2();
+		Room70::leftEntry();
 		break;
 	default:
 		break;

@@ -50,10 +50,10 @@ void Room73::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 106:
-		Room70::proc1();
+		Room70::topEntry();
 		break;
 	case 115:
-		Room70::proc2();
+		Room70::leftEntry();
 	default:
 		break;
 	}

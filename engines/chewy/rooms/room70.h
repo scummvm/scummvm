@@ -30,9 +30,10 @@ public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
 	static void setup_func();
-	static void proc1();
-	static void proc2();
-	static void proc3();
+
+	static void topEntry();
+	static void leftEntry();
+	static void rightEntry();
 };
 
 } // namespace Rooms
