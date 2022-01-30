@@ -343,7 +343,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			if (it->video && it->video->decoder) {
 				int frame = it->video->decoder->getCurFrame();
 				if (frame > 0 && frame >= (int)(it->attackFrame) && !it->destroyed) {
-					//_health = _health - it->attackWeight;
+					_health = _health - it->attackWeight;
 					hitPlayer();
 					it->attackFrame = it->video->decoder->getFrameCount() + 1; // It will never attack again
 				}
