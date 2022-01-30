@@ -215,9 +215,10 @@ void DialogBox::onKeyPress(const Common::KeyState &keyState) {
 }
 
 Graphics::Surface *DialogBox::loadBackground() {
-	Common::PEResources executable;
-	if (!executable.loadFromEXE("game.exe") && !executable.loadFromEXE("game.dll")) {
+	Common::PEResources *executable = new Common::PEResources();
+	if (!executable->loadFromEXE("game.exe") && !executable->loadFromEXE("game.dll")) {
 		warning("Unable to load 'game.exe' to read the modal dialog background image");
+		delete executable;
 		return nullptr;
 	}
 
@@ -228,12 +229,14 @@ Graphics::Surface *DialogBox::loadBackground() {
 	// so we skip trying to retrieve it.
 	if (_vm->getGameFlags() & GF_MISSING_EXE_RESOURCES) {
 		warning("Steam version does not contain the modal dialog background bitmap in 'game.exe'. Using fallback color for dialog background...");
+		delete executable;
 		return nullptr;
 	}
 
-	Common::SeekableReadStream *stream = executable.getResource(Common::kWinBitmap, 147);
+	Common::SeekableReadStream *stream = executable->getResource(Common::kWinBitmap, 147);
 	if (!stream) {
 		warning("Unable to find the modal dialog background bitmap in 'game.exe'");
+		delete executable;
 		return nullptr;
 	}
 
@@ -248,6 +251,7 @@ Graphics::Surface *DialogBox::loadBackground() {
 
 	stream->read(bitmapWithHeader + 14, stream->size());
 	delete stream;
+	delete executable;
 
 	Common::MemoryReadStream bitmapWithHeaderReadStream(bitmapWithHeader, bitmapWithHeaderLen);
 
