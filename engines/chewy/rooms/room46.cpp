@@ -132,11 +132,14 @@ void Room46::bodo() {
 	flic_cut(FCUT_065, CFO_MODE);
 	out->setze_zeiger(nullptr);
 	out->cls();
+	test_intro(16);
+	
 	_G(spieler).PersonHide[P_CHEWY] = false;
-
 	det->hide_static_spr(0);
 	det->hide_static_spr(3);
 	load_chewy_taf(CHEWY_ROCKER);
+	_G(spieler).R28ChewyPump = false;
+	
 	set_person_pos(213, 118, P_CHEWY, P_RIGHT);
 	start_aad_wait(243, -1);
 	invent_2_slot(UHR_INV);
@@ -149,13 +152,22 @@ void Room46::kloppe() {
 	for (int16 i = 0; i < 4; i++) {
 		mem->file->select_pool_item(Ci.Handle, FCUT_065);
 
-		flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+		flc->custom_play(&Ci);
+		
 		out->setze_zeiger(nullptr);
 		out->cls();
 		start_aad(244 + i, -1);
 		int16 delay = _G(spieler).DelaySpeed * 50;
 		atds->print_aad(0, 0);
 
+		if (flags.InitSound && _G(spieler).SpeechSwitch) {
+			while (ailsnd->isSpeechActive()) {
+				ailsnd->serveDbSamples();
+				SHOULD_QUIT_RETURN;
+			}
+			continue;
+		}
+		
 		while (in->get_switch_code() == 0 && delay) {
 			out->skip_frame(1);
 			--delay;
