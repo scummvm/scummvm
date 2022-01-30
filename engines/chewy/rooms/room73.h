@@ -25,7 +25,7 @@
 namespace Chewy {
 namespace Rooms {
 
-class Room73 {
+class Room73 : public JungleRoom {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);

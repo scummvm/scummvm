@@ -22,10 +22,12 @@
 #ifndef CHEWY_ROOMS_ROOM75_H
 #define CHEWY_ROOMS_ROOM75_H
 
+#include "chewy/room.h"
+
 namespace Chewy {
 namespace Rooms {
 
-class Room75 {
+class Room75 : public JungleRoom {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);

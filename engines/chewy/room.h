@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_RAUM_H
-#define CHEWY_RAUM_H
+#ifndef CHEWY_ROOM_H
+#define CHEWY_ROOM_H
 
 #include "chewy/objekt.h"
 
@@ -43,6 +43,17 @@ extern const int16 SURIMY_TAF19_PHASEN[4][2];
 #define R_VOCDATEI 1
 #define R_GEPDATEI 2
 #define R_SPEZTAF 3
+
+
+class JungleRoom {
+protected:
+	static void topEntry();
+	static void leftEntry();
+	static void rightEntry();
+
+	static void setup_func();
+};
+
 
 struct RaumBlk {
 	byte *LowPalMem;

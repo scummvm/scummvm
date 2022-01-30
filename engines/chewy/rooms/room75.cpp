@@ -41,7 +41,7 @@ void Room75::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = Room70::setup_func;
+	SetUpScreenFunc = setup_func;
 
 	if (flags.LoadGame)
 		return;
@@ -52,10 +52,10 @@ void Room75::entry(int16 eib_nr) {
 		proc1();
 		break;		
 	case 104:
-		Room70::rightEntry();
+		rightEntry();
 		break;
 	case 111:
-		Room70::leftEntry();
+		leftEntry();
 		break;
 	default:
 		break;
