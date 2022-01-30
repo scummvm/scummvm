@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room41.h"
 
@@ -106,8 +105,7 @@ void Room41::talk_hoggy1() {
 			_G(spieler).R41BruchInfo = true;
 			start_aad_wait(132, -1);
 			start_aad_wait(128, -1);
-		} else if (_G(spieler).R31SurFurz &&
-			!_G(spieler).R41KuerbisInfo) {
+		} else if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
 			start_aad_wait(131, -1);
 			auto_move(5, P_CHEWY);
@@ -130,8 +128,7 @@ void Room41::talk_hoggy2() {
 		first_talk();
 
 	} else if (_G(spieler).R41BruchInfo) {
-		if (_G(spieler).R31SurFurz &&
-			!_G(spieler).R41KuerbisInfo) {
+		if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
 			start_aad_wait(131, -1);
 			auto_move(5, P_CHEWY);
@@ -155,10 +152,9 @@ void Room41::first_talk() {
 }
 
 void Room41::start_hoggy() {
-	int16 i;
 	show_cur();
 
-	for (i = 0; i < 2; i++) {
+	for (int16 i = 0; i < 2; i++) {
 		room->set_timer_status(i, TIMER_START);
 		det->set_static_ani(i, -1);
 		det->del_static_ani(i + 3);
@@ -166,10 +162,9 @@ void Room41::start_hoggy() {
 }
 
 void Room41::stop_hoggy() {
-	int16 i;
 	hide_cur();
 
-	for (i = 0; i < 2; i++) {
+	for (int16 i = 0; i < 2; i++) {
 		room->set_timer_status(i, TIMER_STOP);
 		det->del_static_ani(i);
 		det->stop_detail(i);
@@ -194,22 +189,20 @@ int16 Room41::use_kasse() {
 int16 Room41::use_lola() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
-		if (!_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo) {
-			hide_cur();
-			action_flag = true;
-			_G(spieler).R41LolaOk = true;
-			auto_move(4, P_CHEWY);
-			det->disable_sound(6, 0);
-			flic_cut(FCUT_057, CFO_MODE);
-			set_person_pos(127, 112, P_CHEWY, P_LEFT);
-			det->stop_detail(6);
+	if (!_G(spieler).inv_cur && !_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo) {
+		hide_cur();
+		action_flag = true;
+		_G(spieler).R41LolaOk = true;
+		auto_move(4, P_CHEWY);
+		det->disable_sound(6, 0);
+		flic_cut(FCUT_057, CFO_MODE);
+		set_person_pos(127, 112, P_CHEWY, P_LEFT);
+		det->stop_detail(6);
 
-			atds->del_steuer_bit(267, 1, 1);
-			atds->set_ats_str(267, 1, ATS_DATEI);
-			atds->hide_item(11, 0, 3);
-			show_cur();
-		}
+		atds->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATEI);
+		atds->set_ats_str(267, 1, ATS_DATEI);
+		atds->hide_item(11, 0, 3);
+		show_cur();
 	}
 
 	return action_flag;
@@ -217,6 +210,7 @@ int16 Room41::use_lola() {
 
 int16 Room41::use_brief() {
 	int16 action_flag = false;
+	hide_cur();
 
 	if (is_cur_inventar(BRIEF_INV)) {
 		action_flag = true;
