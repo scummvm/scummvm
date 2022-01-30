@@ -178,7 +178,7 @@ int Room66::proc2() {
 }
 
 int Room66::proc7() {
-	if (!is_cur_inventar(88))
+	if (!is_cur_inventar(ARTE_INV))
 		return 0;
 
 	hide_cur();
@@ -191,7 +191,7 @@ int Room66::proc7() {
 		_G(spieler).flags26_20 = true;
 	}
 
-	proc8(7, 2, 3, 411 + (_G(spieler).R68Papagei ? 1 : 0));
+	proc8(7, 2, 3, 411 + (_G(spieler).flags26_10 ? 1 : 0));
 	_G(cur_hide_flag) = 0;
 	hide_cur();
 	if (_G(spieler).flags26_20)
