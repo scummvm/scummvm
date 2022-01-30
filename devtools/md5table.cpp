@@ -110,7 +110,7 @@ static const StringMap langMap[] = {
 	{ "en",		"EN_GRB" },
 	{ "he",		"HE_ISR" },
 	{ "ru",		"RU_RUS" },
-	{ "cz",		"CZ_CZE" },
+	{ "cs",		"CS_CZE" },
 	{ "nl",		"NL_NLD" },
 	{ "nb",		"NB_NOR" },
 	{ "pl",		"PL_POL" },

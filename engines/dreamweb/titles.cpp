@@ -140,7 +140,7 @@ void DreamWebEngine::bibleQuote() {
 	case Common::RU_RUS:
 		theStory = ruStory;
 		break;
-	case Common::CZ_CZE:
+	case Common::CS_CZE:
 		theStory = csStory;
 		break;
 	default:

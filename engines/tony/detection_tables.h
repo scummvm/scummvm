@@ -51,7 +51,7 @@ static const TonyGameDescription gameDescriptions[] = {
 				{ "voices.vdb",  0, "3384bdcb70d1e1ecedbde26e79683ede", 299019523 },
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)

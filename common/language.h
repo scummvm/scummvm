@@ -44,7 +44,7 @@ class String;
 enum Language {
 	AR_ARB,
 	CA_ESP,
-	CZ_CZE,
+	CS_CZE,
 	DA_DNK,
 	DE_DEU,
 	EL_GRC,

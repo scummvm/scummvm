@@ -220,7 +220,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Five Lethal Demons (Czech)
 	WME_WINENTRY("5ld", "",
 		WME_ENTRY2s("czech.dcp", "9021b7a1e154d6764228116f894b213b", 186,
-					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_6_1),
+					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::CS_CZE, ADGF_UNSTABLE, WME_1_6_1),
 
 	// Five Lethal Demons (English)
 	WME_WINENTRY("5ld", "",
@@ -235,7 +235,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Five Magical Amulets (Czech)
 	WME_WINENTRY("5ma", "",
 		WME_ENTRY2s("czech.dcp", "7b2515a8ceb955c72bc14f0f1fca869e", 184,
-					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_3_3),
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::CS_CZE, ADGF_UNSTABLE, WME_1_3_3),
 
 	// Five Magical Amulets (English)
 	WME_WINENTRY("5ma", "",
@@ -439,7 +439,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Basis Octavus
 	WME_WINENTRY("basisoctavus", "",
-		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
@@ -810,11 +810,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dead City (Czech) (25.06.2004)
 	WME_WINENTRY("deadcity", "v1.0.1",
-		WME_ENTRY1s("data.dcp", "6860a4aa55576cbee1a0f2a04f2c8810", 9132626), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
+		WME_ENTRY1s("data.dcp", "6860a4aa55576cbee1a0f2a04f2c8810", 9132626), Common::CS_CZE, ADGF_UNSTABLE, WME_1_2_43),
 
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
-		WME_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_4_1),
+		WME_ENTRY1s("data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::CS_CZE, ADGF_UNSTABLE, WME_1_4_1),
 
 	// Dead City (English)
 	WME_WINENTRY("deadcity", "",
@@ -856,7 +856,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("czech.dcp", "08a71446467cf8f9444cfea446b46ad6", 127697934,
-					"data.dcp", "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_8_5),
+					"data.dcp", "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623), Common::CS_CZE, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Dirty Split (English)
 	WME_WINENTRY("dirtysplit", "",
@@ -895,7 +895,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dr. Bohus
 	WME_WINENTRY("drbohus", "",
-		WME_ENTRY1s("data.dcp", "a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
+		WME_ENTRY1s("data.dcp", "a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CS_CZE, ADGF_UNSTABLE, WME_1_2_43),
 
 	// Dr. Doyle - Mystery Of The Cloche Hat
 	WME_WINENTRY("drdoylemotch", "Steam",
@@ -1391,7 +1391,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Helga Deep In Trouble (Czech)
 	WME_WINENTRY("helga", "",
 		WME_ENTRY2s("data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259,
-					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_3),
+					"data.dcp", "25cb955a60b58326f2eeda1ce288fb37", 183251259), Common::CS_CZE, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Helga Deep In Trouble (English)
 	WME_WINENTRY("helga", "",
@@ -1401,7 +1401,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Helga Deep In Trouble (Demo) (Czech)
 	WME_WINENTRY("helga", "Demo",
 		WME_ENTRY2s("data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028,
-					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::CS_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Helga Deep In Trouble (Demo) (English)
 	WME_WINENTRY("helga", "Demo",
@@ -1501,7 +1501,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Lov Mamuta
 	WME_WINENTRY("lovmamuta", "",
-		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CZ_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// J.U.L.I.A. (English)
 	WME_WINENTRY("julia", "",
@@ -1601,15 +1601,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Kulivocko (Czech)
 	WME_WINENTRY("kulivocko", "",
-		WME_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392), Common::CS_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Kulivocko (Czech) (Demo 1)
 	WME_WINENTRY("kulivocko", "Demo 1",
-		WME_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234), Common::CS_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Kulivocko (Czech) (Demo 2)
 	WME_WINENTRY("kulivocko", "Demo 2",
-		WME_ENTRY1s("data.dcp", "501c59ddb787646d87dead183199c8ed", 73601289), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "501c59ddb787646d87dead183199c8ed", 73601289), Common::CS_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",

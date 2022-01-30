@@ -59,7 +59,7 @@ const ADGameDescription gameDescriptions[] = {
 		"draci",
 		nullptr,
 		AD_ENTRY1s("INIT.DFW", "9921c8f0045679a8f37eca8d41c5ec02", 906),
-		Common::CZ_CZE,
+		Common::CS_CZE,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()

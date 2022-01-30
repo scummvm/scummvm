@@ -242,7 +242,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 				{"dreamweb.exe", 0, "40cc15bdc8fa3a785b5fd1ecd6194119", 65440},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)

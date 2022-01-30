@@ -2839,7 +2839,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "SystemLanguage") {
 		switch (Common::parseLanguage(ConfMan.get("language"))) {
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 			_scValue->setString("czech");
 			break;
 		case Common::DA_DNK:

@@ -327,7 +327,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", 368},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
@@ -705,7 +705,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"8252660df0edbdbc3e6377e155bbd0c5", 284},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
@@ -1469,7 +1469,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
@@ -1541,7 +1541,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
@@ -2464,7 +2464,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO0()
@@ -2741,7 +2741,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
 				AD_LISTEND
 			},
-			Common::CZ_CZE,
+			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()

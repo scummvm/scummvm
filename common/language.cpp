@@ -58,7 +58,7 @@ const LanguageDescription g_languages[] = {
 	{ "cn", "zh_CN", "Chinese (Simplified)", ZH_CHN },
 	{ "tw", "zh_TW", "Chinese (Traditional)", ZH_TWN },
 	{ "hr", "hr_HR", "Croatian", HR_HRV },
-	{ "cz", "cs_CZ", "Czech", CZ_CZE },
+	{ "cs", "cs_CZ", "Czech", CS_CZE },
 	{ "da", "da_DK", "Danish", DA_DNK },
 	{ "nl", "nl_NL", "Dutch", NL_NLD },
 	{ "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
@@ -92,6 +92,7 @@ const LanguageDescription g_languages[] = {
 };
 
 const LanguageDescription g_obsoleteLanguages[] = {
+	{	 "cz", "cs_CZ", "Czech", CS_CZE },
 	{	 "gr", "el_GR", "Greek", EL_GRC },
 	{	 "hb", "he_IL", "Hebrew", HE_ISR },
 	{	 "jp", "ja_JP", "Japanese", JA_JPN },

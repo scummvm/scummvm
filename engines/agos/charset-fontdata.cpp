@@ -2930,7 +2930,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		w = 6;
 
 		switch (_language) {
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 			src = czech_simonFont + (chr - 32) * 8;
 			break;
 		case Common::RU_RUS:
