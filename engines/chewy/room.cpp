@@ -137,7 +137,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		}
 		if (!modul) {
 			obj->calc_all_static_detail();
-			load_tgp(room_info->BildNr, Rb, EPISODE1_TGP, GED_LOAD);
+			load_tgp(room_info->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
 			set_pal(AblagePal[Rb->AkAblage], Rb->LowPalMem);
 			calc_invent(Rb, player);
 
@@ -280,57 +280,38 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 	}
 }
 
-int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode) {
-	//BackgroundResource *res = new BackgroundResource();
+int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName) {
+	BackgroundResource *res = new BackgroundResource(fileName);
+	TBFChunk *img = res->getImage(nr, false);
 
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(roomhandle[R_TGPDATEI]);
-	tbf_dateiheader tb;
-	bool ret = false;
+	Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), img->size + 4);
 
-	if (rs) {
-		mem->file->select_pool_item(rs, nr);
-
-		if (!tb.load(rs)) {
-			error("Error reading from room data");
-		}
-
-		if (!modul) {
-			rs->seek(-tbf_dateiheader::SIZE(), SEEK_CUR);
-			Rb->AkAblage = get_ablage(nr + (1000 * tgp_idx), tb.entpsize + 4);
-
-			if (Rb->AkAblage == -1) {
-			} else if (Rb->AkAblage >= 1000) {
-				Rb->AkAblage -= 1000;
-
-			} else {
-				mem->file->load_image(rs, Ablage[Rb->AkAblage], AblagePal[Rb->AkAblage]);
-				if (!modul) {
-					set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), tb.entpsize);
-					ret = true;
-
-					if (mode == GED_LOAD) {
-						Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
-							roomhandle[R_GEPDATEI]);
-						ged->load_ged_pool(gstream, &GedInfo[Rb->AkAblage],
-						                   nr, GedMem[Rb->AkAblage]);
-						if (!modul) {
-							int16 *tmp = (int16 *)Ablage[Rb->AkAblage];
-							GedXAnz[Rb->AkAblage] = tmp[0] / GedInfo[Rb->AkAblage].X;
-							GedYAnz[Rb->AkAblage] = tmp[1] / GedInfo[Rb->AkAblage].Y;
-						} else {
-							error("load_tgp error");
-						}
-					}
-				} else {
-					error("load_tgp error");
-				}
-			}
-		}
+	if (Rb->AkAblage == -1) {
+	} else if (Rb->AkAblage >= 1000) {
+		Rb->AkAblage -= 1000;
 	} else {
-		error("load_tgp error");
+		// Image width and height is piggy-banked inside the image data
+		uint16 *mem = (uint16 *)Ablage[Rb->AkAblage];
+		mem[0] = img->width;
+		mem[1] = img->height;
+		memcpy(Ablage[Rb->AkAblage] + 4, img->data, img->size);
+		memcpy(AblagePal[Rb->AkAblage], img->palette, 3 * 256);
+		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
+
+		if (mode == GED_LOAD) {
+			Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
+				roomhandle[R_GEPDATEI]);
+			ged->load_ged_pool(gstream, &GedInfo[Rb->AkAblage],
+						        nr, GedMem[Rb->AkAblage]);
+			GedXAnz[Rb->AkAblage] = img->width / GedInfo[Rb->AkAblage].X;
+			GedYAnz[Rb->AkAblage] = img->height / GedInfo[Rb->AkAblage].Y;
+		}
 	}
 
-	return ret;
+	delete img;
+	delete res;
+
+	return true;
 }
 
 void Room::init_ablage() {

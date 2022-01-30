@@ -251,7 +251,6 @@ atdsys *atds;
 flic *flc;
 movclass *mov;
 
-char background[] = { EPISODE1 };
 char backged[] = { EPISODE1_GEP };
 
 AutoMov auto_mov[MAX_AUTO_MOV];

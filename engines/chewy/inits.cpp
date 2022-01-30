@@ -191,7 +191,6 @@ void init_room() {
 	room_blk.AtsLoad = true;
 	strcpy(room_blk.RoomDir, "room/");
 
-	room->open_handle(&background[0], "rb", R_TGPDATEI);
 	room->open_handle(&backged[0], "rb", R_GEPDATEI);
 }
 

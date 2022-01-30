@@ -56,50 +56,6 @@ void datei::assign_filename(const char *fname, const char *ext) {
 		strcat(filename, ext);
 }
 
-void datei::load_image(Stream *stream, byte *sp, byte *palette) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	tbf_dateiheader *header = (tbf_dateiheader *)tmp;
-	byte *speicher = sp;
-	int16 *abmess = (int16 *)speicher;
-
-	if ((speicher) && (palette) && (rs)) {
-		if (header->load(rs)) {
-			int16 format = get_id(header->id);
-			if (format != -1) {
-				for (uint16 i = 0; i < 768; i++)
-					palette[i] = header->palette[i];
-				switch (format) {
-				case TBFDATEI:
-					abmess[0] = header->width;
-					abmess[1] = header->height;
-					speicher += 4;
-					read_tbf_image(rs, header->komp, header->entpsize, speicher);
-					break;
-				case TPFDATEI:
-					abmess[0] = header->width;
-					abmess[1] = header->height;
-					speicher += 4;
-					read_tpf_image(rs, header->komp, header->entpsize, speicher);
-					break;
-
-				default:
-					break;
-				}
-			} else {
-				error("load_image error");
-			}
-		} else {
-			error("load_image error");
-		}
-	} else {
-		error("load_image error");
-	}
-
-	ChunkHead ch;
-	if (!modul)
-		ch.load(rs);
-}
-
 uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	NewPhead *ph = (NewPhead *)tmp;
@@ -324,29 +280,6 @@ void datei::read_tbf_image(Stream *stream, int16 komp, uint32 size, byte *sp) {
 	} else {
 		rs->read(speicher, size);
 		speicher += size;
-	}
-}
-
-void datei::read_tpf_image(Stream *handle, int16 komp, uint32 size, byte *speicher) {
-	if (komp == 1) {
-		for (int16 plane = 0; plane < 4; plane++) {
-			for (uint32 pos = (uint32)plane; pos < (size + plane);) {
-				uint8 count = chewy_fgetc(handle);
-				char zeichen = chewy_fgetc(handle);
-				for (uint8 i = 0; i < count && pos < (size + plane); i++) {
-					speicher[pos] = zeichen;
-					pos += 4;
-				}
-			}
-		}
-	} else {
-		for (int16 plane = 0; plane < 4; plane++) {
-			for (uint32 pos = (uint32)plane; pos < size + plane;) {
-				char zeichen = chewy_fgetc(handle);
-				speicher[pos] = zeichen;
-				pos += 4;
-			}
-		}
 	}
 }
 

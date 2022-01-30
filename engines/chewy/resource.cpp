@@ -190,7 +190,7 @@ TAFChunk *SpriteResource::getSprite(uint num) {
 	return taf;
 }
 
-TBFChunk *BackgroundResource::getImage(uint num) {
+TBFChunk *BackgroundResource::getImage(uint num, bool fixPalette) {
 	assert(num < _chunkList.size());
 
 	Chunk *chunk = &_chunkList[num];
@@ -207,7 +207,7 @@ TBFChunk *BackgroundResource::getImage(uint num) {
 	tbf->width = _stream.readUint16LE();
 	tbf->height = _stream.readUint16LE();
 	for (int j = 0; j < 3 * 256; j++)
-		tbf->palette[j] = (_stream.readByte() << 2) & 0xff;
+		tbf->palette[j] = fixPalette ? (_stream.readByte() << 2) & 0xff : _stream.readByte();
 
 	tbf->data = new uint8[tbf->size];
 
