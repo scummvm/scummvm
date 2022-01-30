@@ -52,14 +52,14 @@ void Room74::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 105:
-		Room70::proc2();
+		Room70::leftEntry();
 		break;
 	case 108:
 		_G(spieler).scrollx = 188;
 		Room75::proc1();
 		break;
 	case 109:
-		Room70::proc3();
+		Room70::rightEntry();
 		break;
 	default:
 		break;

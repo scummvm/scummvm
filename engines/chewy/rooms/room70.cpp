@@ -48,19 +48,52 @@ void Room70::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 116:
-		proc2();
+		leftEntry();
 		break;
 	case 117:
-		proc3();
+		rightEntry();
 		break;
 	default:
 		_G(spieler).scrollx = 62;
-		proc1();
+		topEntry();
 		break;
 	}
 }
 
 void Room70::xit(int16 eib_nr) {
+	_G(spieler).ScrollxStep = 1;
+
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 70) {
+		if (eib_nr == 102) {
+			_G(spieler).PersonRoomNr[P_HOWARD] = 69;
+			_G(spieler).PersonRoomNr[P_NICHELLE] = 69;
+		} else if (eib_nr == 103 || eib_nr == 104) {
+			_G(spieler).PersonRoomNr[P_HOWARD] = 75;
+			_G(spieler).PersonRoomNr[P_NICHELLE] = 75;
+		}
+	}
+}
+
+void Room70::topEntry() {
+	_G(cur_hide_flag) = 0;
+	hide_cur();
+	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
+	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
+	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
+	go_auto_xy(266, 113, P_HOWARD, ANI_WAIT);
+	show_cur();
+}
+
+void Room70::leftEntry() {
+	set_person_pos(31, 118, P_CHEWY, P_RIGHT);
+	set_person_pos(71, 104, P_NICHELLE, P_RIGHT);
+	set_person_pos(6, 111, P_HOWARD, P_RIGHT);
+}
+
+void Room70::rightEntry() {
+	set_person_pos(587, 114, P_CHEWY, P_LEFT);
+	set_person_pos(613, 103, P_NICHELLE, P_LEFT);
+	set_person_pos(561, 112, P_HOWARD, P_LEFT);
 }
 
 void Room70::setup_func() {
@@ -69,7 +102,7 @@ void Room70::setup_func() {
 	const int posX = spieler_vector[P_CHEWY].Xypos[0];
 
 	int howDestX, nicDestX;
-	if (posX > 40) {
+	if (posX < 40) {
 		howDestX = 52;
 		nicDestX = 100;
 	} else if (posX < 230) {
@@ -87,26 +120,5 @@ void Room70::setup_func() {
 	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);	
 }
 
-void Room70::proc1() {
-	_G(cur_hide_flag) = 0;
-	hide_cur();
-	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
-	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
-	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
-	go_auto_xy(266, 113, P_HOWARD, ANI_WAIT);
-	show_cur();
-}
-
-void Room70::proc2() {
-	set_person_pos(31, 118, P_CHEWY, P_RIGHT);
-	set_person_pos(71, 104, P_NICHELLE, P_RIGHT);
-	set_person_pos(6, 111, P_HOWARD, P_RIGHT);
-}
-
-void Room70::proc3() {
-	set_person_pos(587, 114, P_CHEWY, P_LEFT);
-	set_person_pos(613, 103, P_NICHELLE, P_LEFT);
-	set_person_pos(561, 112, P_HOWARD, P_LEFT);
-}
 } // namespace Rooms
 } // namespace Chewy
