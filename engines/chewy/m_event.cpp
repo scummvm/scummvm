@@ -29,17 +29,13 @@ namespace Chewy {
 #define PATTERN_PLAY 2
 
 void load_room_music(int16 room_nr) {
-	int16 ttp_index;
-	int16 volume;
-	int16 lp_mode;
-	int16 play_mode;
-	int16 seq_start = 0;
-	int16 seq_end = 0;
-	int16 pattern = 0;
-	ttp_index = -1;
-	volume = _G(spieler).MusicVol;
-	lp_mode = 1;
-	play_mode = NORMAL_PLAY;
+	const int16 seq_start = 0;
+	const int16 seq_end = 0;
+	const int16 pattern = 0;
+	int16 ttp_index = -1;
+	int16 volume = _G(spieler).MusicVol;
+	const int16 lp_mode = 1;
+	const int16 play_mode = NORMAL_PLAY;
 	if (_G(spieler).MusicSwitch && (music_handle)) {
 		switch (room_nr) {
 		case 0:

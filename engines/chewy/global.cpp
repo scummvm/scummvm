@@ -25,7 +25,6 @@
 #include "chewy/defines.h"
 #include "chewy/file.h"
 #include "chewy/ngshext.h"
-#include "chewy/objekt.h"
 #include "chewy/text.h"
 #include "chewy/room.h"
 #include "chewy/objekte.h"
@@ -36,7 +35,6 @@
 #include "chewy/movclass.h"
 #include "chewy/gedclass.h"
 #include "chewy/bitclass.h"
-#include "chewy/ailclass.h"
 
 namespace Chewy {
 
@@ -135,8 +133,7 @@ Globals::Globals() {
 		{ 0, 1, 5, 90 },
 		{ 0, 1, 7, 190 }
 	};
-	Common::copy(&R45_PINFO[0][0], &R45_PINFO[0][0] + R45_MAX_PERSON * 4,
-		&_r45_pinfo[0][0]);
+	Common::copy(&R45_PINFO[0][0], &R45_PINFO[0][0] + R45_MAX_PERSON * 4, &_r45_pinfo[0][0]);
 }
 
 Globals::~Globals() {

@@ -284,15 +284,15 @@ void new_game() {
 }
 
 static void font_load() {
-	int16 vorx;
-	int16 vory;
-	int16 fntbr;
-	int16 fnth;
 
 	// Load the 8x8 font
 	mem->tff_adr(FONT8x8, &font8x8);
 	out->set_fontadr(font8x8);
 
+	int16 vorx;
+	int16 vory;
+	int16 fntbr;
+	int16 fnth;
 	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
 	fvorx8x8 = vorx;
 	fvory8x8 = vory;
@@ -308,7 +308,6 @@ static void font_load() {
 }
 
 void init_load() {
-	taf_dateiheader *tafheader;
 	AkChewyTaf = 0;
 	load_chewy_taf(CHEWY_NORMAL);
 
@@ -319,6 +318,7 @@ void init_load() {
 	set_spz_delay(3);
 
 	menutaf = mem->taf_adr(MENUTAF);
+	taf_dateiheader *tafheader;
 	mem->file->get_tafinfo(MENUTAF, &tafheader);
 	spblende = mem->void_adr("cut/blende.rnd");
 	room->load_room(&room_blk, room_start_nr, &_G(spieler));
