@@ -174,9 +174,9 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 }
 #endif
 
-Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources &exe) {
+Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources *exe) {
 	for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
-		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(&exe, cursorids[i]);
+		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, cursorids[i]);
 
 		if (!group) {
 			debug("Cannot find cursor group %d", cursorids[i]);
@@ -193,11 +193,13 @@ Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources &exe) {
 Common::ErrorCode HadeschEngine::loadCursors() {
 	debug("HadeschEngine: loading cursors");
 
-	{
-		Common::PEResources exe = Common::PEResources();
-		if (exe.loadFromEXE("HADESCH.EXE")) {
-			return loadWindowsCursors(exe);
-		}
+	Common::PEResources *exe = new Common::PEResources();
+	if (exe->loadFromEXE("HADESCH.EXE")) {
+		Common::ErrorCode status = loadWindowsCursors(exe);
+		delete exe;
+		return status;
+	} else {
+		delete exe;
 	}
 
 	const char *const macPaths[] = {
@@ -247,9 +249,13 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 					return Common::kUnsupportedGameidError;
 				}
 
-				Common::PEResources exe = Common::PEResources();
-				if (exe.loadFromEXE(hadeschExe)) {
-					return loadWindowsCursors(exe);
+				exe = new Common::PEResources();
+				if (exe->loadFromEXE(hadeschExe)) {
+					Common::ErrorCode status = loadWindowsCursors(exe);
+					delete exe;
+					return status;
+				} else {
+					delete exe;
 				}
 			}
 		}
