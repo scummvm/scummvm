@@ -2560,153 +2560,26 @@ void calc_person_dia(int16 p_nr) {
 	switch (p_nr) {
 	case P_HOWARD:
 	case P_NICHELLE:
-		switch (_G(spieler).PersonRoomNr[P_CHEWY] - 28) {
-		case 0:
-			_G(spieler).PersonDia[p_nr] = (p_nr == P_HOWARD) ? 545 : 547;
-			break;
-
-		case 18:
-			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 542;
-			break;
-
+		switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 		case 28:
-			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 543;
-			break;
-
-		case 38:
-			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 540;
-			break;
-
-		case 39:
-			_G(spieler).PersonDia[p_nr] = 501;
-			break;
-
-		case 40:
-			_G(spieler).PersonDia[p_nr] = 500;
-			break;
-
-		case 41:
-			_G(spieler).PersonDia[p_nr] = 492;
-			break;
-
-		case 42:
-			if (_G(spieler).flags32_10) {
-				_G(spieler).PersonDia[p_nr] = 465;
-				if (_G(spieler).flags30_80 && !_G(spieler).flags31_1)
-					_G(spieler).PersonDia[p_nr] = 466;
-			}
-			break;
-
-		case 43:
 			if (p_nr == P_HOWARD) {
-				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
-				_G(spieler).PersonDia[P_HOWARD] = 470;
-			} else {
-				_G(spieler).PersonDia[P_NICHELLE] = 536;
+				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
+					_G(spieler).PersonDia[p_nr] = 565;
+				else
+					flag = true;
 			}
-			break;
-
-		case 45:
-			_G(spieler).PersonDia[p_nr] = _G(spieler).flags32_2 ? 469 : 467;
 			break;
 
 		case 46:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 535;
-			else
-				flag = true;
-			break;
-
-		case 47:
-			if (!_G(spieler).flags32_10)
-				_G(spieler).PersonDia[P_NICHELLE] = 536;
-			else if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[P_NICHELLE] = 534;
-			else
-				flag = true;
-			break;
-
-		case 51:
-			if (p_nr != P_NICHELLE)
-				flag = true;
-			else if (_G(spieler).flags30_10)
-				_G(spieler).PersonDia[p_nr] = 533;
-			else
-				Room82::proc8();
-			break;
-
-		case 53:
-			if (!_G(spieler).flags30_2)
-				_G(spieler).PersonDia[p_nr] = 457;
-			else
-				flag = true;
-			break;
-
-		case 54:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 532;
-			else
-				flag = true;
-			break;
-
-		case 56:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 531;
-			else
-				flag = true;
-			break;
-
-		case 57:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 530;
+			if (_G(spieler).flags32_10)
+				_G(spieler).PersonDia[p_nr] = 497;
 			else
 				flag = true;
 			break;
 
 		case 58:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 529;
-			else
-				flag = true;
-			break;
-
-		case 59:
-			if (p_nr == P_NICHELLE) {
-				if (!_G(spieler).flags28_4) {
-					Room71::proc7();
-					_G(spieler).PersonDia[p_nr] = -1;
-				}
-			} else if (!_G(spieler).flags28_4) {
-				_G(spieler).PersonDia[p_nr] = 528;
-			} else {
-				flag = true;
-			}
-			break;
-
-		case 60:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 528;
-			else
-				flag = true;
-			break;
-
-		case 61:
-			_G(spieler).PersonDia[p_nr] = 381;
-			break;
-
-		case 62:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 527;
-			else
-				flag = true;
-			break;
-
-		case 63:
-			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 526;
+			if (_G(spieler).flags32_10)
+				_G(spieler).PersonDia[p_nr] = 507;
 			else
 				flag = true;
 			break;
@@ -2719,26 +2592,158 @@ void calc_person_dia(int16 p_nr) {
 			break;
 
 		case 67:
-			if (_G(spieler).flags32_10)
-				_G(spieler).PersonDia[p_nr] = 507;
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 526;
 			else
 				flag = true;
 			break;
 
 		case 68:
-			if (_G(spieler).flags32_10)
-				_G(spieler).PersonDia[p_nr] = 497;
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 527;
 			else
 				flag = true;
 			break;
 
 		case 69:
+			_G(spieler).PersonDia[p_nr] = 381;
+			break;
+
+		case 70:
+			if (p_nr == P_NICHELLE) {
+				_G(spieler).PersonDia[p_nr] = 528;
+			} else {
+				flag = true;
+			}
+			break;
+
+		case 71:
+			if (p_nr == P_NICHELLE) {
+				if (!_G(spieler).flags28_4) {
+					Room71::proc7();
+					_G(spieler).PersonDia[p_nr] = -1;
+				}
+			} else if (!_G(spieler).flags28_4) {
+				_G(spieler).PersonDia[p_nr] = 435;
+			} else {
+				flag = true;
+			}
+			break;
+
+		case 73:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 529;
+			else
+				flag = true;
+			break;
+
+		case 74:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 530;
+			else
+				flag = true;
+			break;
+
+		case 75:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 531;
+			else
+				flag = true;
+			break;
+
+		case 79:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 532;
+			else
+				flag = true;
+			break;
+
+		case 81:
+			if (!_G(spieler).flags30_2)
+				_G(spieler).PersonDia[p_nr] = 457;
+			else
+				flag = true;
+			break;
+
+		case 82:
+			if (p_nr != P_NICHELLE)
+				flag = true;
+			else if (_G(spieler).flags30_10)
+				_G(spieler).PersonDia[p_nr] = 533;
+			else
+				Room82::proc8();
+			break;
+
+		case 84:
+			if (!_G(spieler).flags32_10)
+				_G(spieler).PersonDia[P_NICHELLE] = 479;
+			else if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[P_NICHELLE] = 534;
+			else
+				flag = true;
+			break;
+
+		case 85:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 535;
+			else
+				flag = true;
+			break;
+
+		case 86:
+			_G(spieler).PersonDia[p_nr] = _G(spieler).flags32_2 ? 469 : 467;
+			break;
+
+		case 87:
 			if (p_nr == P_HOWARD) {
-				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
-					_G(spieler).PersonDia[p_nr] = 565;
-				else
-					flag = true;
-			}			
+				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
+				_G(spieler).PersonDia[P_HOWARD] = 470;
+			} else {
+				_G(spieler).PersonDia[P_NICHELLE] = 536;
+			}
+			break;
+
+
+		case 88:
+			if (_G(spieler).flags32_10) {
+				_G(spieler).PersonDia[p_nr] = 465;
+				if (_G(spieler).flags30_80 && !_G(spieler).flags31_1)
+					_G(spieler).PersonDia[p_nr] = 466;
+			}
+			break;
+
+		case 89:
+			_G(spieler).PersonDia[p_nr] = 492;
+			break;
+
+		case 90:
+			_G(spieler).PersonDia[p_nr] = 500;
+			break;
+
+		case 91:
+			_G(spieler).PersonDia[p_nr] = 501;
+			break;
+
+		case 94:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 540;
+			break;
+
+		case 95:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 543;
+			break;
+
+		case 96:
+			if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 542;
+			break;
+
+		case 97:
+			if (p_nr == P_NICHELLE)
+				_G(spieler).PersonDia[p_nr] = 547;
+			else if (p_nr == P_HOWARD)
+				_G(spieler).PersonDia[p_nr] = 545;
 			break;
 
 		default:
