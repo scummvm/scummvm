@@ -401,7 +401,7 @@ Common::Error DreamWebEngine::run() {
 		case Common::RU_RUS:
 			_textEncoding = Common::kDos866;
 			break;
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 			_textEncoding = Common::kWindows1250;
 			break;
 		default:

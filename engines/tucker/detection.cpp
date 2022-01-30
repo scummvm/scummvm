@@ -79,7 +79,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"tucker",
 		"",
 		AD_ENTRY1s("infobar.txt", "e548994877ff31ca304f6352ce022a8e", 497),
-		Common::CZ_CZE,
+		Common::CS_CZE,
 		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
 		GUIO1(GUIO_NOMIDI)

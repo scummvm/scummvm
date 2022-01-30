@@ -128,7 +128,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sdr.res",     0, "434c62c1f43b7aa4def62ff276163edb", 14672},
 			AD_LISTEND
 		},
-		Common::CZ_CZE,
+		Common::CS_CZE,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
@@ -149,7 +149,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sdr.res",     0, "d0b1398c78dc82571ddef5877c9a3a06", 14993},
 			AD_LISTEND
 		},
-		Common::CZ_CZE,
+		Common::CS_CZE,
 		Common::kPlatformDOS,
 		ADGF_CD,
 		GUIO1(GUIO_NOMIDI)

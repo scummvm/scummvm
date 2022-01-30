@@ -90,7 +90,7 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		switch (BaseEngine::instance().getLanguage()) {
 
 		//cp1250: Central Europe
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 		case Common::HR_HRV:
 		case Common::HU_HUN:
 		case Common::PL_POL:

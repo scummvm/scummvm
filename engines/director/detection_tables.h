@@ -4694,7 +4694,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Found on PC World (Czechia) Sept 2003
 	WINGAME2_l("nemcina", "", "START_32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1710313,
-							  "CVIC.DXR",     "8f12d20e12dddc2fc3207e1f4e571d17", 23223862, Common::CZ_CZE, 500),
+							  "CVIC.DXR",     "8f12d20e12dddc2fc3207e1f4e571d17", 23223862, Common::CS_CZE, 500),
 
 	// All original Mac filenames end with ™
 	// Nikolai in Outer Space did not get a Mac release

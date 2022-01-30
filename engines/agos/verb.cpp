@@ -281,7 +281,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::DE_DEU:
 			verb_prep_names = german_verb_prep_names;
 			break;
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 			verb_prep_names = czech_verb_prep_names;
 			break;
 		default:
@@ -310,7 +310,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::DE_DEU:
 			verb_names = german_verb_names;
 			break;
-		case Common::CZ_CZE:
+		case Common::CS_CZE:
 			verb_names = czech_verb_names;
 			break;
 		default:

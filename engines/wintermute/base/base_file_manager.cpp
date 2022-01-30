@@ -257,7 +257,7 @@ bool BaseFileManager::registerPackages() {
 					}
 				// Czech
 				} else if (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp" || fileName == "czech_language_pack.dcp") {
-					if (_language != Common::CZ_CZE) {
+					if (_language != Common::CS_CZE) {
 						continue;
 					}
 				// French

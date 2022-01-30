@@ -209,7 +209,7 @@ DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
-	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::HE_ISR));
 
 	detectedGames.push_back(game);

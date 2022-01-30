@@ -143,7 +143,7 @@ Common::Error SwordEngine::init() {
 	case Common::PT_BRA:
 		_systemVars.language = BS1_PORT;
 		break;
-	case Common::CZ_CZE:
+	case Common::CS_CZE:
 		_systemVars.language = BS1_CZECH;
 		break;
 	case Common::HE_ISR:

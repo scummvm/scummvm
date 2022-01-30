@@ -228,7 +228,7 @@ bool TonyEngine::loadTonyDat() {
 	case Common::RU_RUS:
 		expectedLangVariant = 2;
 		break;
-	case Common::CZ_CZE:
+	case Common::CS_CZE:
 		expectedLangVariant = 3;
 		break;
 	case Common::FR_FRA:
