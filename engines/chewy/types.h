@@ -277,7 +277,7 @@ struct SpielerFlags {
 	bool R68IndigoDia : 1;
 
 	bool R68Gutschein : 1;
-	bool flags28_2 : 1;
+	bool R71LeopardVined : 1;
 	bool flags28_4 : 1;
 	bool flags28_8 : 1;
 	bool flags28_10 : 1;

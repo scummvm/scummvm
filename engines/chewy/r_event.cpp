@@ -223,14 +223,12 @@ int16 ged_user_func(int16 idx_nr) {
 			break;
 
 		case 71:
-			if (!_G(spieler).flags28_2 || !_G(spieler).flags29_4)
-				idx_nr = 0;
-			else
-				idx_nr = 4;
+			idx_nr = _G(spieler).R71LeopardVined ? 1 : 0;
 			break;
 
 		case 76:
-			return idx_nr;
+			idx_nr = _G(spieler).flags29_4 ? 4 : 0;
+			break;
 
 		case 84:
 			if (!_G(spieler).flags31_1)
