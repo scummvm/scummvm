@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-29 16:33+0000\n"
-"PO-Revision-Date: 2021-12-30 19:27+0000\n"
+"PO-Revision-Date: 2022-01-30 10:28+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -783,10 +783,8 @@ msgid "Quit ScummVM"
 msgstr "ScummVM beenden"
 
 #: gui/launcher.cpp:230
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "Übe~r~..."
+msgstr "Übe~r~"
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
@@ -2820,7 +2818,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -7972,11 +7970,11 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Aktiviere das Weihnachts-Easter-Egg immer"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Die Weihnachts-Musik wird das ganze Jahr über gespielt."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
