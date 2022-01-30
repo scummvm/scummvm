@@ -264,6 +264,7 @@ def create_mmps(build, path):
       data = mmp_template %(idx, UID3, idx, idx, idx, idx2, idx2)
       mmp_name = "ScummVM%s.mmp" %idx2
       SafeWriteFile(os.path.join(path, mmp_name), data)
+      AppendToFile(os.path.join(path, mmp_name), Get_ReleaseMACRO())
       AppendToFile(bld_inf, mmp_name + "\n")
    check_cashed(path)
 

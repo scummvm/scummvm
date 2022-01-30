@@ -289,8 +289,6 @@ LINK_PLUGIN(%s_DETECTION)
 #create files and add bld.inf header
    if firstRun is True:
       SafeWriteFile(bldinf, 'w', "PRJ_MMPFILES\n")
-      if(build == 'release'):
-         SafeWriteFile(macros, 'w', "MACRO RELEASE_BUILD\n")
       guard_macros = [guard_macro %(i + 1, i + 1) for i in range(len(uids))]
       SafeWriteFile(macros, 'w', ro_warning)
       SafeWriteFile(macros, 'a', guard_macros)
@@ -301,6 +299,7 @@ LINK_PLUGIN(%s_DETECTION)
       firstRun = False
 
    SafeWriteFile(mmpfile, 'w', mmp)
+   SafeWriteFile(mmpfile, 'a', Get_ReleaseMACRO())
    SafeWriteFile(mmpfile, 'a', src)
 
    SafeWriteFile(bldinf, 'a', "%s.mmp\n" %engine)
