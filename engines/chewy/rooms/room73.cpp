@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/rooms/room70.h"
 #include "chewy/rooms/room73.h"
 
 namespace Chewy {
