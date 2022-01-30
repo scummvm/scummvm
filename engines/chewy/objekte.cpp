@@ -154,7 +154,7 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 			modul = DATEI;
 		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
-				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++RoomEx) {
+				for (int i = 0; i < eib_datei_header.Anz && valid; ++i, ++RoomEx) {
 					valid = RoomEx->load(&f);
 				}
 
