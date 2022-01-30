@@ -6,6 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.
    - Unterstützung für Hades Challenge hinzugefügt.
+   - Unterstützung Marvel Comics Spider-Man: The Sinister Six hinzugefügt.
 
  Allgemein:
    - Die Lizenz des Projektes wurde auf GPLv3+ aktualisiert.
