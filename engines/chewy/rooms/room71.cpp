@@ -48,10 +48,10 @@ void Room71::entry(int16 eib_nr) {
 	_delay = 0;
 	SetUpScreenFunc = setup_func;
 	_G(spieler).DiaAMov = 4;
-	if (!_G(spieler).flags28_2 && !_G(spieler).flags28_4) {
+	if (!_G(spieler).R71LeopardVined && !_G(spieler).flags28_4) {
 		_G(timer_nr)[0] = room->set_timer(0, 10);
 		det->set_static_ani(0, -1);
-	} else if (_G(spieler).flags28_2) {
+	} else if (_G(spieler).R71LeopardVined) {
 		det->start_detail(2, 255, ANI_VOR);
 		det->show_static_spr(8);
 		det->hide_static_spr(2);
@@ -183,7 +183,7 @@ int Room71::proc1() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
 
-	if (!_G(spieler).flags28_2)
+	if (!_G(spieler).R71LeopardVined)
 		start_aad_wait(432, -1);
 
 	show_cur();
@@ -217,7 +217,7 @@ void Room71::proc2() {
 	_G(spieler).PersonHide[P_HOWARD] = false;
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	_G(spieler).flags28_2 = true;
+	_G(spieler).R71LeopardVined = true;
 	flags.NoScroll = false;
 	menu_item = CUR_WALK;
 	cursor_wahl(CUR_WALK);
