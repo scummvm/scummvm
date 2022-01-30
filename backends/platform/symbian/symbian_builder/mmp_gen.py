@@ -87,6 +87,9 @@ def processModule_mk(path, buildparams):
             if "MACRO   %s"%i.strip()[6:] in x:
                addsrc = True
                src += ["// Subengine %s" %x[18:]]
+      elif "ifdef USE_" in i: #special case if dependency not metioned in module.mk
+         if i.split()[-1].strip() in active_config:
+            addsrc = True
       elif "KYRARPG_COMMON_OBJ" in i: #special case for kyra engine
          addsrc = True
       elif "DETECT_OBJS" in i:
