@@ -50,13 +50,7 @@ short file_xy_g[7][4] = {
 	{ 6, 6, 133, 97}
 };
 
-byte code_tbl_g[6] = {72,
-                      80,
-                      59,
-                      60,
-                      61,
-                      62
-                     };
+byte code_tbl_g[6] = {72, 80, 59, 60, 61, 62};
 
 char auf_tbl_g[3][3] = { {FSTRING8 },
 	{FSTRING9 },
@@ -70,11 +64,7 @@ char ab_tbl_g[4][3] = { {FSTRING11},
 
 int16 io_game::io_menu(iog_init *iostruc) {
 	int16 max_scroll = 20;
-	int16 i, j, x, y;
-	int16 auswahl;
-	int16 cur_y1;
-	int16 cur_y;
-	int16 scroll_flag;
+	int16 i, j, y;
 	char ende = 0, mouse_f = 1;
 	char a = 0;
 	int16 y1 = 106;
@@ -92,15 +82,16 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		kbinfo = inzeig->kbinfo;
 	scr_width = scr_w << 2;
 	d_klick = DOPPEL_KLICK;
-	cur_y1 = io->popy + 4;
-	cur_y = io->popy + 8;
+	int16 cur_y1 = io->popy + 4;
+	int16 cur_y = io->popy + 8;
 	plot_io();
 	schalter_aus();
 	for (i = 0; i < 20; i++)
 		file_find_g[i][0] = 0;
-	scroll_flag = 0;
+	int16 scroll_flag = 0;
 	i = 0;
 
+	int16 auswahl;
 	if (!io->key_nr) {
 		out->box(io->popx + 161, io->popy + 4, io->popx + 243, io->popy + 21, io->m_col[1]);
 		auswahl = 1;
@@ -156,7 +147,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		cur->plot_cur();
 
 		if (minfo->button == 1) {
-			x = minfo->x;
+			int16 x = minfo->x;
 			y = minfo->y;
 
 			j = in->maus_vector(x - io->popx, y - io->popy, (int16 *)file_xy_g, 7);
@@ -475,8 +466,7 @@ void io_game::unmark_eintrag(int16 y, int16 nr) {
 }
 
 void io_game::plot_dir_liste(int16 cur_y, int16 start) {
-	int16 i;
-	for (i = start; i < start + 8; i++) {
+	for (int16 i = start; i < start + 8; i++) {
 		if (i < 20) {
 
 			out->pop_box(io->popx + 8, cur_y + 1, io->popx + 131, cur_y + 10,
@@ -496,9 +486,7 @@ void io_game::plot_dir_liste(int16 cur_y, int16 start) {
 	}
 }
 
-void io_game::schalter_aus()
-
-{
+void io_game::schalter_aus() {
 	out->vsync_start();
 	out->pop_box(io->popx + 163, io->popy + 6, io->popx + 241, io->popy + 18,
 	              io->m_col[0], io->m_col[1], io->m_col[5]);
@@ -524,38 +512,29 @@ void io_game::schalter_aus()
 }
 
 void io_game::plot_io() {
-	int16 i;
-	int16 y1 = 120;
+	const int16 y1 = 120;
 
-	out->pop_box(io->popx, io->popy, io->popx + 248, io->popy + y1,
-	              io->m_col[0], io->m_col[1], io->m_col[5]);
-	out->pop_box(io->popx + 1, io->popy + 1, io->popx - 1 + 248, io->popy - 1 + y1,
-	              io->m_col[0], io->m_col[1], 300);
-
-	out->pop_box(io->popx + 6, io->popy + 6, io->popx + 133, io->popy + y1 - 20,
-	              io->m_col[1], io->m_col[0], io->m_col[3]);
-
-	out->pop_box(io->popx + 140, io->popy + 6, io->popx + 156, io->popy + 51,
-	              io->m_col[0], io->m_col[1], 300);
+	out->pop_box(io->popx, io->popy, io->popx + 248, io->popy + y1, io->m_col[0], io->m_col[1], io->m_col[5]);
+	out->pop_box(io->popx + 1, io->popy + 1, io->popx - 1 + 248, io->popy - 1 + y1, io->m_col[0], io->m_col[1], 300);
+	out->pop_box(io->popx + 6, io->popy + 6, io->popx + 133, io->popy + y1 - 20, io->m_col[1], io->m_col[0], io->m_col[3]);
+	out->pop_box(io->popx + 140, io->popy + 6, io->popx + 156, io->popy + 51, io->m_col[0], io->m_col[1], 300);
 	plot_auf_txt(io->m_col[1]);
-	out->pop_box(io->popx + 140, io->popy + 55, io->popx + 156, io->popy + y1 - 20,
-	              io->m_col[0], io->m_col[1], 300);
+
+	out->pop_box(io->popx + 140, io->popy + 55, io->popx + 156, io->popy + y1 - 20,io->m_col[0], io->m_col[1], 300);
 	plot_ab_txt(io->m_col[1]);
-	for (i = 0; i < 9; i++) {
-		out->printxy(io->popx + 10, io->popy + 10 + i * 10,
-		              io->m_col[5], 300, scr_width, "%d.\0", i + 1);
+
+	for (int16 i = 0; i < 9; i++) {
+		out->printxy(io->popx + 10, io->popy + 10 + i * 10,io->m_col[5], 300, scr_width, "%d.\0", i + 1);
 	}
 }
 
 void io_game::plot_auf_txt(int16 farbe) {
-	int16 i;
-	for (i = 0; i < 3; i++)
+	for (int16 i = 0; i < 3; i++)
 		out->printxy(io->popx + 146, io->popy + 15 + i * 10, farbe, 300, scr_width, auf_tbl_g[i]);
 }
 
 void io_game::plot_ab_txt(int16 farbe) {
-	int16 i;
-	for (i = 0; i < 4; i++)
+	for (int16 i = 0; i < 4; i++)
 		out->printxy(io->popx + 146, io->popy + 59 + i * 10, farbe, 300, scr_width, ab_tbl_g[i]);
 }
 
@@ -621,18 +600,14 @@ void io_game::load(int16 slotNum, char *fname) {
 	}
 }
 
-void io_game::print_shad(int16 x, int16 y, int16 fcol, int16 bcol,
-                         int16 scol, int16 width, char *name)
-
-{
+void io_game::print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 width, char *name) {
 	out->printxy(x + 1, y + 1, scol, bcol, width, name);
 	out->printxy(x, y, fcol, bcol, width, name);
 }
 
 char *io_game::io_init(iog_init *iostruc) {
-	int16 i;
 	io = iostruc;
-	for (i = 0; i < 20; i++)
+	for (int16 i = 0; i < 20; i++)
 		file_find_g[i][0] = 0;
 	get_savegame_files();
 
