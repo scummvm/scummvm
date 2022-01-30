@@ -63,7 +63,6 @@ void Room74::entry(int16 eib_nr) {
 	default:
 		break;
 	}
-	
 }
 
 void Room74::xit(int16 eib_nr) {
@@ -90,22 +89,24 @@ void Room74::xit(int16 eib_nr) {
 int Room74::proc1() {
 	int retVal = 0;
 	hide_cur();
-	if (is_cur_inventar(99)) {
+
+	if (is_cur_inventar(MACHETE_INV)) {
 		retVal = 1;
-		_G(spieler).flags28_80 = true;
+		_G(spieler).R74CutRubberPlant = true;
 		auto_move(4, P_CHEWY);
-		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(1, 1, ANI_VOR);
 		set_person_pos(272, 116, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonHide[P_CHEWY] = 0;
+		_G(spieler).PersonHide[P_CHEWY] = false;
 		det->start_detail(0, 255, false);
 		_G(spieler).flags29_1 = true;
 		atds->set_ats_str(435, 1, ATS_DATEI);
-	} else if (!_G(spieler).inv_cur && _G(spieler).flags28_80) {
+
+	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
 		atds->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
 		auto_move(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		new_invent_2_cur(100);
+		new_invent_2_cur(RUBBER_INV);
 	}
 
 	show_cur();

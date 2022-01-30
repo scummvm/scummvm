@@ -283,7 +283,7 @@ struct SpielerFlags {
 	bool flags28_10 : 1;
 	bool flags28_20 : 1;
 	bool flags28_40 : 1;
-	bool flags28_80 : 1;
+	bool R74CutRubberPlant : 1;
 
 	bool flags29_1 : 1;
 	bool flags29_2 : 1;
