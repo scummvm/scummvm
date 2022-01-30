@@ -26,6 +26,8 @@ namespace Chewy {
 namespace Rooms {
 
 class Room71 {
+private:
+	static int _state, _delay;
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);

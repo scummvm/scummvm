@@ -28,6 +28,9 @@
 namespace Chewy {
 namespace Rooms {
 
+int Room71::_state;
+int Room71::_delay;
+
 void Room71::entry(int16 eib_nr) {
 	det->enable_sound(0, 0);
 	det->enable_sound(0, 1);
@@ -41,8 +44,8 @@ void Room71::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 8;
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 16;
 	_G(zoom_horizont) = 0;
-	_G(spieler).r71_word18DB16 = 0;
-	_G(spieler).r71_word18DB18 = 0;
+	_state = 0;
+	_delay = 0;
 	SetUpScreenFunc = setup_func;
 	_G(spieler).DiaAMov = 4;
 	if (!_G(spieler).flags28_2 && !_G(spieler).flags28_4) {
@@ -98,19 +101,22 @@ void Room71::xit(int16 eib_nr) {
 void Room71::setup_func() {
 	calc_person_look();
 
-	if (_G(spieler).r71_word18DB16) {
-		if (_G(spieler).r71_word18DB18)
-			--_G(spieler).r71_word18DB18;
+	if (_state) {
+		if (_delay)
+			--_delay;
 		else {
-			_G(spieler).r71_word18DB18 = (_G(spieler).DelaySpeed + 1) / 2;
-			if (_G(spieler).r71_word18DB16 == 1) {
+			_delay = (_G(spieler).DelaySpeed + 1) / 2;
+
+			if (_state == 1) {
 				det->set_static_pos(3, 244 + g_engine->_rnd.getRandomNumber(4), -1 * g_engine->_rnd.getRandomNumber(4), false, false);				
 			} else {
 				det->set_static_pos(5, 198 + g_engine->_rnd.getRandomNumber(3), -1 * g_engine->_rnd.getRandomNumber(3), false, false);
 			}
 		}
+
 	} else {
 		const int posX = spieler_vector[P_CHEWY].Xypos[0];
+
 		int howDestX, howDestY, nicDestX, nicDestY;
 		if (posX < 40) {
 			howDestX = 82;
@@ -154,7 +160,7 @@ int Room71::proc1() {
 	auto_move(2, P_CHEWY);
 	flags.NoScroll = true;
 	auto_scroll(256, 0);
-	_G(spieler).r71_word18DB18 = 0;
+	_delay = 0;
 	if (menu_item == CUR_HOWARD) {
 		proc4();
 		if (_G(spieler).flags28_4) {
@@ -243,11 +249,11 @@ void Room71::proc4() {
 }
 
 void Room71::proc5(int16 val) {
-	_G(spieler).r71_word18DB16 = 1 + (_G(spieler).flags28_4 ? 1 : 0);
+	_state = 1 + (_G(spieler).flags28_4 ? 1 : 0);
 	det->hide_static_spr(2);
 	start_detail_wait(val, 5, ANI_VOR);
 	det->show_static_spr(2);
-	_G(spieler).r71_word18DB16 = 0;
+	_state = 0;
 }
 
 int Room71::proc6() {
