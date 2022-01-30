@@ -1832,6 +1832,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		start_aad_wait(406, -1);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 66)
 			start_aad_wait(613, -1);
+		show_cur();
 		break;
 
 	case 100:
