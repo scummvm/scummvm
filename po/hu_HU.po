@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-29 16:33+0000\n"
+"POT-Creation-Date: 2022-01-29 19:43+0000\n"
 "PO-Revision-Date: 2022-01-29 20:12+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6190,7 +6190,7 @@ msgstr "Játék betöltés"
 msgid "This menu item is not yet implemented"
 msgstr "Ez a menüpont még nincs megvalósítva"
 
-#: engines/private/detection.cpp:183 engines/private/detection.cpp:202
+#: engines/private/detection.cpp:193 engines/private/detection.cpp:212
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
