@@ -100,7 +100,7 @@ void Room45::setup_func() {
 		if (!_G(r45_delay)) {
 			_G(r45_delay) = _G(spieler).DelaySpeed / 2;
 
-			for (int16 i = 0; i < MAX_PERSON; i++) {
+			for (int16 i = 0; i < R45_MAX_PERSON; i++) {
 				if (_G(r45_pinfo)[i][0] == 1) {
 					y = Adi[3 + i].y;
 					x = Adi[3 + i].x;
@@ -146,14 +146,13 @@ void Room45::setup_func() {
 
 			if (ch_x < 95) {
 				x = 18;
-				y = 130;
 			} else if (ch_x > 240) {
 				x = 304;
-				y = 130;
 			} else {
 				x = 176;
-				y = 130;
 			}
+
+			y = 130;
 
 			if (HowardMov && flags.ExitMov) {
 				x = 56;
@@ -213,6 +212,8 @@ void Room45::taxi_mov() {
 	room->set_timer_status(12, TIMER_STOP);
 	det->del_static_ani(12);
 	det->enable_sound(15, 1);
+	det->play_sound(15, 1);
+	
 	det->show_static_spr(11);
 	auto_move(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
