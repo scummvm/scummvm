@@ -97,7 +97,6 @@ namespace std
 
 #if __cplusplus >= 201103L
 #define USE_CXX11
-#define NO_CXX11_INITIALIZER_LIST
 #define NO_CXX11_NULLPTR_T
 #endif //USE_CXX11
 
