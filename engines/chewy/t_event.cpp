@@ -2269,13 +2269,18 @@ void calc_inv_use_txt(int16 test_nr) {
 		obj->change_inventar(test_nr, B_MARY2_INV, &room_blk);
 		break;
 
-	case 88:
 	case 13:
 		_G(spieler).flags26_10 = true;
 		flags.InventMenu = false;
 		start_spz(5, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		flags.InventMenu = true;
+		atds->set_ats_str(88, 1, INV_ATS_DATEI);
+		break;
+
+	case 88:
+		_G(spieler).flags26_10 = true;
+		start_aad_wait(350, -1);
 		atds->set_ats_str(88, 1, INV_ATS_DATEI);
 		break;
 
