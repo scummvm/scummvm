@@ -47,7 +47,12 @@ void Room77::entry() {
 		}
 	}
 
-	if (_G(spieler).r76State == 1) {
+	// WORKAROUND: Loading saved game in this room don't properly
+	// reset the flag used for cutscenes when returning to village
+	if (flags.LoadGame) {
+		_G(spieler).r76State = -1;
+
+	} else if (_G(spieler).r76State == 1) {
 		_G(spieler).r76State = -1;
 		hide_cur();
 		_G(spieler).scrollx = 62;
