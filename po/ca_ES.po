@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-01-30 11:30+0000\n"
-"PO-Revision-Date: 2022-01-13 06:26+0000\n"
+"PO-Revision-Date: 2022-01-31 06:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -780,10 +780,8 @@ msgid "Quit ScummVM"
 msgstr "Surt de ScummVM"
 
 #: gui/launcher.cpp:230
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "~Q~uant a..."
+msgstr "~Q~uant a"
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
@@ -4553,19 +4551,17 @@ msgstr ""
 "Utilitza l'àudio del CD en lloc de l'àudio intern del joc, si està disponible"
 
 #: engines/glk/detection.cpp:239
-#, fuzzy
 msgid "Use TTS to read the text"
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr "Utilitzeu un servei de conversió de text a veu per llegir el text"
 
 #: engines/glk/detection.cpp:244
-#, fuzzy
 msgid "Also read input text"
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr "Llegeix també el text d'entrada"
 
 #: engines/glk/detection.cpp:245
-#, fuzzy
 msgid "Use TTS to read the input text"
-msgstr "No s'ha pogut esborrar el fitxer."
+msgstr ""
+"Utilitzeu un servei de conversió de text a veu per llegir el text d'entrada"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -4586,14 +4582,12 @@ msgid "Could not start AdvSys game"
 msgstr "No s'ha pogut canviar al mode de vídeo: '"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
-#, fuzzy
 msgid "Sorry, the savegame couldn't be restored"
-msgstr "no s'ha pogut canviar el mode de vídeo."
+msgstr "No s'ha pogut restaurar la partida desada"
 
 #: engines/glk/advsys/vm.cpp:314
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "no s'ha pogut canviar el mode de vídeo."
+msgstr "No s'ha pogut crear la partida desada"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
@@ -4655,19 +4649,16 @@ msgid "I can't do that yet. "
 msgstr "Encara no puc fer-ho. "
 
 #: engines/glk/scott/scott.cpp:118
-#, fuzzy
 msgid "Light has run out! "
-msgstr "Simula el botó dret del ratolí"
+msgstr "La llum s'ha acabat! "
 
 #: engines/glk/scott/scott.cpp:120
-#, fuzzy
 msgid "Your light has run out. "
-msgstr "Simula el botó dret del ratolí"
+msgstr "La teva llum s'ha acabat. "
 
 #: engines/glk/scott/scott.cpp:129
-#, fuzzy
 msgid "Light runs out in "
-msgstr "Simula el botó dret del ratolí"
+msgstr "La llum s'esgotarà en "
 
 #: engines/glk/scott/scott.cpp:131
 msgid " turns. "
@@ -4764,14 +4755,12 @@ msgid "The game is now over.\n"
 msgstr "El joc s'ha acabat.\n"
 
 #: engines/glk/scott/scott.cpp:835
-#, fuzzy
 msgid "You have stored "
-msgstr "Restaura"
+msgstr "Heu emmagatzemat "
 
 #: engines/glk/scott/scott.cpp:837
-#, fuzzy
 msgid "I've stored "
-msgstr "Restaura"
+msgstr "He emmagatzemat "
 
 #: engines/glk/scott/scott.cpp:839
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -4834,9 +4823,8 @@ msgid "Nothing taken."
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-#, fuzzy
 msgid "What ? "
-msgstr "Què és"
+msgstr "Què ? "
 
 #: engines/glk/scott/scott.cpp:1126
 msgid "It is beyond your power to do that. "
@@ -5083,22 +5071,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "Voleu carregar o desar el joc?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "Aquest joc no és compatible."
+msgstr "El minijoc Minotaur encara no és compatible. Omet"
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "Aquest joc no és compatible."
+msgstr "El minijoc Medusa encara no és compatible. Omet"
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "Aquest joc no és compatible."
+msgstr "El minijoc Troy encara no està suportat. Omet"
 
 #: engines/hdb/detection.cpp:123
 #, fuzzy
@@ -5908,9 +5890,8 @@ msgid "Open event flags cheat menu"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:40
-#, fuzzy
 msgid "Player Speech"
-msgstr "Temps de joc: "
+msgstr "Veu del jugador"
 
 #: engines/nancy/dialogs.cpp:40
 msgid ""
@@ -5998,14 +5979,12 @@ msgid "Hard"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:124
-#, fuzzy
 msgid "Player Data"
-msgstr "Temps de joc: "
+msgstr "Dades del jugador"
 
 #: engines/nancy/dialogs.cpp:125
-#, fuzzy
 msgid "Player Time:"
-msgstr "Temps de joc: "
+msgstr "Temps del jugador:"
 
 #: engines/nancy/dialogs.cpp:127
 msgid "Days"
@@ -6028,9 +6007,8 @@ msgid "Software Timer"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:136
-#, fuzzy
 msgid "Timer On"
-msgstr "Hora: "
+msgstr "Temporitzador activat"
 
 #: engines/nancy/dialogs.cpp:143
 #, fuzzy
@@ -7057,14 +7035,12 @@ msgid "Snap scroll off"
 msgstr "Desplaçament suau"
 
 #: engines/scumm/input.cpp:589
-#, fuzzy
 msgid "Music volume: "
-msgstr "Volum de música:"
+msgstr "Volum de música: "
 
 #: engines/scumm/input.cpp:606
-#, fuzzy
 msgid "Subtitle speed: "
-msgstr "Velocitat de subt.:"
+msgstr "Velocitat dels subtítols: "
 
 #: engines/scumm/metaengine.cpp:329
 msgid ""
@@ -7894,9 +7870,8 @@ msgid "Wintermute3D support is not compiled in"
 msgstr "Característiques compilades:"
 
 #: engines/wintermute/wintermute.cpp:148
-#, fuzzy
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr "Identificador de joc no suportat"
+msgstr "Aquest joc requereix suport per a PNG, JPEG i Vorbis."
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
@@ -8316,39 +8291,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1009
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 1: La"
 
 #: engines/wintermute/keymapper_tables.h:1014
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 2: Fa#"
 
 #: engines/wintermute/keymapper_tables.h:1019
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 3: Re#"
 
 #: engines/wintermute/keymapper_tables.h:1024
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 4: Do#"
 
 #: engines/wintermute/keymapper_tables.h:1029
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 5: Mi"
 
 #: engines/wintermute/keymapper_tables.h:1034
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 6: Sol#"
 
 #: engines/wintermute/keymapper_tables.h:1039
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Temps de joc: "
+msgstr "Toqueu la nota 7: Si"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
@@ -8500,57 +8468,49 @@ msgid "Drop"
 msgstr "~D~escarta la pàgina"
 
 #: engines/wintermute/keymapper_tables.h:1966
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Temps de joc: "
+msgstr "Jugador 1: Amunt"
 
 #: engines/wintermute/keymapper_tables.h:1971
-#, fuzzy
 msgid "Player 1: Left"
-msgstr "Temps de joc: "
+msgstr "Jugador 1: Esquerra"
 
 #: engines/wintermute/keymapper_tables.h:1976
-#, fuzzy
 msgid "Player 1: Down"
-msgstr "Temps de joc: "
+msgstr "Jugador 1: Abaix"
 
 #: engines/wintermute/keymapper_tables.h:1981
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Temps de joc: "
+msgstr "Jugador 1: Dreta"
 
 #: engines/wintermute/keymapper_tables.h:1986
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "Temps de joc: "
+msgstr "Jugador 2: Amunt"
 
 #: engines/wintermute/keymapper_tables.h:1991
-#, fuzzy
 msgid "Player 2: Left"
-msgstr "Temps de joc: "
+msgstr "Jugador 2: Esquerra"
 
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "Player 2: Down"
-msgstr "Jugador 2: abaix"
+msgstr "Jugador 2: Abaix"
 
 #: engines/wintermute/keymapper_tables.h:2001
-#, fuzzy
 msgid "Player 2: Right"
-msgstr "Mou a la dreta"
+msgstr "Jugador 2: Dreta"
 
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2007
-#, fuzzy
 msgid "Debug FPS"
-msgstr "Depurador"
+msgstr "Depura els FPS"
 
 #: engines/wintermute/keymapper_tables.h:2104
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2109
 msgid "Key i"
-msgstr ""
+msgstr "Tecla i"
 
 #: engines/xeen/detection.cpp:55
 msgid "Show item costs in standard inventory mode"
