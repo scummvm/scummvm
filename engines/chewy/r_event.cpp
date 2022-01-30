@@ -25,8 +25,13 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/rooms.h"
+#include "chewy/resource.h"
+#include "chewy/sound.h"
+#include "chewy/video/cfo_decoder.h"
 
 namespace Chewy {
+
+//#define NEW_VIDEO_CODE 1
 
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
@@ -828,6 +833,58 @@ int16 flic_user_function(int16 keys) {
 	return ret;
 }
 
+static void playVideo(uint num) {
+	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
+	VideoResource *videoResource = new VideoResource("cut.tap");
+	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
+
+	if (!cfoDecoder->loadStream(videoStream)) {
+		delete videoResource;
+		delete cfoDecoder;
+		return;
+	}
+
+	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
+	bool skipVideo = false;
+	byte curPalette[256 * 3];
+
+	save_palette(curPalette);
+	//_vm->_cursor->hideCursor();	// TODO
+
+	cfoDecoder->start();
+
+	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo) {
+		if (cfoDecoder->needsUpdate()) {
+			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+
+				if (cfoDecoder->hasDirtyPalette())
+					setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
+
+				g_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
+
+		g_system->delayMillis(10);
+	}
+
+	cfoDecoder->close();
+
+	setScummVMPalette(curPalette, 0, 256);
+	//_vm->_cursor->showCursor();	// TODO
+
+	delete videoResource;
+	delete cfoDecoder;
+}
+
 static void flic_proc1() {
 	const int16 VALS1[] = {
 		135,  145,  142,  140,  145,  144,  142,  134,  148,  138,
@@ -874,8 +931,12 @@ static void flic_proc1() {
 		bool flag;
 		do {
 			flic_val2 = VALS1[i];
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, flic_val2);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(flic_val2);
+#endif
 
 			flag = VALS4[i] && atds->aad_get_status() != -1;
 		} while (flag && ret != -1 && ret != -2);
@@ -904,12 +965,6 @@ static void flic_proc1() {
 	out->cls();
 }
 
-#define PLAY_LOOP do { \
-		mem->file->select_pool_item(Ci.Handle, nr); \
-		ret = flc->custom_play(&Ci); \
-	} while (atds->aad_get_status() != -1 && ret != -1)
-
-
 void flic_cut(int16 nr, int16 mode) {
 	static const int16 FLIC_CUT_133[] = {
 		133, 123, 125, 126, 124, 128, 129, 130, 131,
@@ -931,8 +986,10 @@ void flic_cut(int16 nr, int16 mode) {
 	det->disable_room_sound();
 	ailsnd->endSound();
 	g_events->delay(50);
+//#ifndef NEW_VIDEO_CODE
 	Common::File *f = File::open("cut/cut.tap");
 	Ci.Handle = f;
+//#endif
 
 	if (Ci.Handle) {
 		switch (nr) {
@@ -940,8 +997,12 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1000:
 			ailsnd->stopMod();
 			CurrentSong = -1;
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
+#else
+			playVideo(nr);
+#endif // !NEW_VIDEO_CODE	
 			break;
 
 		case FCUT_019:
@@ -958,60 +1019,71 @@ void flic_cut(int16 nr, int16 mode) {
 			ailsnd->stopMod();
 			CurrentSong = -1;
 			nr = FCUT_019;
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, nr);
-			ret = flc->custom_play(&Ci);
+			flc->custom_play(&Ci);
+#else
+			playVideo(nr);
+#endif // !NEW_VIDEO_CODE
 			ailsnd->setLoopMode(1);
 
 			if (!modul && ret != -1) {
+#ifndef NEW_VIDEO_CODE
 				f->seek(ChunkHead::SIZE(), SEEK_CUR);
 				out->cls();
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif // !NEW_VIDEO_CODE
 
 				if (ret != -1) {
+#ifndef NEW_VIDEO_CODE
 					mem->file->select_pool_item(Ci.Handle, 21);
 					out->cls();
 					flc->custom_play(&Ci);
+#else
+					playVideo(21);
+#endif
+
 					if (!modul) {
+#ifndef NEW_VIDEO_CODE
 						f->seek(ChunkHead::SIZE(), SEEK_CUR);
 						out->cls();
-						flc->custom_play(&Ci);
+						ret = flc->custom_play(&Ci);
+#else
+						playVideo(nr);
+#endif // !NEW_VIDEO_CODE
 					}
 				}
 			}
 			if (!modul) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 20);
 				out->cls();
 				flc->custom_play(&Ci);
+#else
+				playVideo(20);
+#endif
 			}
 			if (!modul) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 23);
 				out->cls();
 				flc->custom_play(&Ci);
+#else
+				playVideo(23);
+#endif
 			}
-			if (!modul) {
-				f->seek(ChunkHead::SIZE(), SEEK_CUR);
-				out->cls();
-				flc->custom_play(&Ci);
-			}
-			if (!modul) {
-				f->seek(ChunkHead::SIZE(), SEEK_CUR);
-				out->cls();
-				flc->custom_play(&Ci);
-			}
-			if (!modul) {
-				f->seek(ChunkHead::SIZE(), SEEK_CUR);
-				out->cls();
-				flc->custom_play(&Ci);
-			}
-			if (!modul) {
-				f->seek(ChunkHead::SIZE(), SEEK_CUR);
-				out->cls();
-				flc->custom_play(&Ci);
-			}
-			if (!modul) {
-				f->seek(ChunkHead::SIZE(), SEEK_CUR);
-				out->cls();
-				flc->custom_play(&Ci);
+			for (int i = 0; i < 5; i++) {
+				if (!modul) {
+#ifndef NEW_VIDEO_CODE
+					f->seek(ChunkHead::SIZE(), SEEK_CUR);
+					out->cls();
+					ret = flc->custom_play(&Ci);
+#else
+					playVideo(nr);
+#endif
+				}
 			}
 			ERROR
 			ailsnd->fadeOut(0);
@@ -1026,44 +1098,79 @@ void flic_cut(int16 nr, int16 mode) {
 		case FCUT_036:
 		case FCUT_037:
 		case FCUT_040:
-			PLAY_LOOP;
+			do {
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, nr);
+				ret = flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif
+			} while (atds->aad_get_status() != -1 && ret != -1);
 			break;
 
 		case FCUT_034:
 			ailsnd->stopMod();
 			CurrentSong = -1;
 
-			PLAY_LOOP;
+			do {
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, nr);
+				ret = flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif
+			} while (atds->aad_get_status() != -1 && ret != -1);
 			break;
 
 		case FCUT_053:
 			for (i = 0; i < 3; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, nr);
 				flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif
 			}
 			break;
 
 		case FCUT_054:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
+#else
+			playVideo(nr);
+			playVideo(nr);
+#endif
 			break;
 
 		case FCUT_058:
 			load_room_music(255);
+#ifndef NEW_VIDEO_CODE
 			nr = FCUT_058;
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
+#else
+			playVideo(FCUT_058);
+#endif // !NEW_VIDEO_CODE
 
 			if (!modul) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, FCUT_059);
 				flc->custom_play(&Ci);
+#else
+				playVideo(FCUT_059);
+#endif
 			}
 			if (!_G(spieler).R43GetPgLady) {
 				if (!modul) {
+#ifndef NEW_VIDEO_CODE
 					mem->file->select_pool_item(Ci.Handle, FCUT_060);
 					flc->custom_play(&Ci);
+#else
+					playVideo(FCUT_060);
+#endif
 				}
 			} else {
 				if (!modul) {
@@ -1074,8 +1181,12 @@ void flic_cut(int16 nr, int16 mode) {
 					flc->remove_custom_user_function();
 				}
 				if (!modul) {
+#ifndef NEW_VIDEO_CODE
 					mem->file->select_pool_item(Ci.Handle, FCUT_062);
 					flc->custom_play(&Ci);
+#else
+					playVideo(FCUT_062);
+#endif
 				}
 			}
 			ailsnd->fadeOut(0);
@@ -1097,46 +1208,71 @@ void flic_cut(int16 nr, int16 mode) {
 		case FCUT_071:
 			ailsnd->stopMod();
 			CurrentSong = -1;
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
+#else
+			playVideo(nr);
+#endif
 			break;
 
 		case 83:
 		case 1083:
 			for (i = 0; i < 2 && ret != -1; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 83);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(83);
+#endif
 			}
 
 
 		case 95:
 			while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, nr);
 				flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif
 			}
 			break;
 
 		case 112:
 			ailsnd->setMusicMasterVol(32);
+#ifndef NEW_VIDEO_CODE
+			mem->file->select_pool_item(Ci.Handle, nr);
+			ret = flc->custom_play(&Ci);
 			mem->file->select_pool_item(Ci.Handle, nr);
 			flc->custom_play(&Ci);
-			mem->file->select_pool_item(Ci.Handle, nr);
-			flc->custom_play(&Ci);
+#else
+			playVideo(nr);
+			playVideo(nr);
+#endif
 			ailsnd->setMusicMasterVol(5);
 			break;
 
 		case 116:
 			for (i = 0; i < 6; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, nr);
 				flc->custom_play(&Ci);
+#else
+				playVideo(nr);
+#endif
 			}
 			break;
 
 		case 133:
 		case 1123:
 			for (i = 0; i < 13 && i != -1 && !modul; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_133[i]);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(FLIC_CUT_133[i]);
+#endif
 				if (i == 0 || i == 1) {
 					out->setze_zeiger(nullptr);
 					out->cls();
@@ -1151,53 +1287,82 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1003:
 			fx->border(workpage, 100, 0, 0);
 			print_rows(590);
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 1);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(1);
+#endif
 
 			if (ret != -1) {
 				for (i = 0; i < 3 && ret != -1; ++i) {
 					fx->border(workpage, 100, 0, 0);
 					print_rows(591);
+#ifndef NEW_VIDEO_CODE
 					mem->file->select_pool_item(Ci.Handle, i + 3);
 					ret = flc->custom_play(&Ci);
+#else
+					playVideo(i + 3);
+#endif
 				}
 			}
 			break;
 
 		case 1006:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 6);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 6);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + 6);
+#endif
 			}
 			break;
 
 		case 1009:
 			for (i = 0; i < 2 && ret != -1; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, i + 9);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(i + 9);
+#endif
 			}
 			break;
 
 		case 1012:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 12);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 12);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + 12);
+#endif
 			}
 
+#ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				out->cls();
 				mem->file->select_pool_item(Ci.Handle, 17);
 				fx->border(workpage, 100, 0, 0);
 			}
+#else
+			out->cls();
+			fx->border(workpage, 100, 0, 0);
+#endif
 			break;
 
 		case 1015:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 15);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 15);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + 15);
+#endif
 			}
 			break;
 
@@ -1205,14 +1370,18 @@ void flic_cut(int16 nr, int16 mode) {
 			for (i = 0; i < 11 && ret != -1; ++i) {
 				fx->border(workpage, 100, 0, 0);
 				print_rows(594);
-				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1045[i]);
 				if (FLIC_CUT_1045[i] == 53) {
 					ailsnd->stopMod();
 					CurrentSong = -1;
 					load_room_music(256);
 				}
 
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1045[i]);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(FLIC_CUT_1045[i]);
+#endif
 
 				if (FLIC_CUT_1045[i] == 53) {
 					ailsnd->stopMod();
@@ -1221,29 +1390,53 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1031:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 31);
-			ret = flc->custom_play(&Ci);
+			flc->custom_play(&Ci);
+#else
+			playVideo(31);
+#endif
 
 			if (ret != -1) {
 				fx->border(workpage, 100, 0, 0);
+				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 43);
-				flc->custom_play(&Ci);
+				ret = flc->custom_play(&Ci);
+#else
+				playVideo(43);
+#endif
 			}
 			break;
 
 		case 1048:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 50);
-			ret = flc->custom_play(&Ci);
+			flc->custom_play(&Ci);
+#else
+			playVideo(50);
+#endif
 
 			if (ret != -1) {
 				fx->spr_blende(workpage, 100, false, 0);
+				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 48);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(48);
+#endif
 			}
 			if (ret != -1) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 49);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(49);
+#endif
 			}
+
+#ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				fx->spr_blende(workpage, 100, false, 0);
 				ret = flc->custom_play(&Ci);
@@ -1252,17 +1445,27 @@ void flic_cut(int16 nr, int16 mode) {
 				fx->spr_blende(workpage, 100, false, 0);
 				mem->file->select_pool_item(Ci.Handle, 54);
 			}
+#else
+			fx->spr_blende(workpage, 100, false, 0);
+			playVideo(nr);
+#endif
 			break;
 
 		case 1055:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 55);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 55);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + 55);
+#endif
 			}
 
 			if (ret != -1) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 46);
+#endif
 				fx->border(workpage, 100, 0, 0);
 			}
 			break;
@@ -1271,26 +1474,46 @@ void flic_cut(int16 nr, int16 mode) {
 			ailsnd->stopMod();
 			CurrentSong = -1;
 			load_room_music(255);
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 58);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(58);
+#endif
 
 			if (ret != -1) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 59);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(59);
+#endif
 			}
 			if (ret != -1) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 60);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(60);
+#endif
 			}
 			if (ret != -1) {
-				mem->file->select_pool_item(Ci.Handle, 61);
 				fx->spr_blende(workpage, 100, false, 0);
-				ret = flc->custom_play(&Ci);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, 61);
+				flc->custom_play(&Ci);
+#else
+				playVideo(61);
+#endif
 			}
 			if (ret != -1) {
-				mem->file->select_pool_item(Ci.Handle, 62);
 				fx->border(workpage, 100, 0, 0);
-				ret = flc->custom_play(&Ci);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, 62);
+				flc->custom_play(&Ci);
+#else
+				playVideo(62);
+#endif
 			}
 			break;
 
@@ -1300,30 +1523,50 @@ void flic_cut(int16 nr, int16 mode) {
 			load_room_music(256);
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, i + 65);
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(i + 65);
+#endif
 			}
 			break;
 
 		case 1068:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 68);
-			ret = flc->custom_play(&Ci);
+			flc->custom_play(&Ci);
+#else
+			playVideo(68);
+#endif
 
 			if (ret != -1) {
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, 70);
-				flc->custom_play(&Ci);
+				ret = flc->custom_play(&Ci);
+#else
+				playVideo(70);
+#endif
 			}
 			break;
 
 		case 1069:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 69);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(69);
+#endif
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 71);
 				fx->spr_blende(workpage, 100, false, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 71);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + 71);
+#endif
 			}
 			break;
 
@@ -1331,39 +1574,63 @@ void flic_cut(int16 nr, int16 mode) {
 			for (i = 0; i < 4 && ret != -1; ++i) {
 				fx->border(workpage, 100, 0, 0);
 				print_rows(605);
-				mem->file->select_pool_item(Ci.Handle, i + FLIC_CUT_1074[i]);
 				fx->spr_blende(workpage, 100, false, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + FLIC_CUT_1074[i]);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(i + FLIC_CUT_1074[i]);
+#endif
 			}
 			break;
 
 		case 1080:
 			for (i = 0; i < 8 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1080[i]);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1080[i]);
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(FLIC_CUT_1080[i]);
+#endif
 			}
 			break;
 
 		case 1087:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 87);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(87);
+#endif
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				mem->file->select_pool_item(Ci.Handle, i + 102);
 				fx->border(workpage, 100, 0, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, i + 102);
 				flc->custom_play(&Ci);
+#else
+				playVideo(i + 102);
+#endif
 			}
 			break;
 
 		case 1088:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 88);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(88);
+#endif
 
 			if (ret != -1) {
-				mem->file->select_pool_item(Ci.Handle, 86);
 				fx->spr_blende(workpage, 100, false, 0);
+#ifndef NEW_VIDEO_CODE
+				mem->file->select_pool_item(Ci.Handle, 86);
 				flc->custom_play(&Ci);
+#else
+				playVideo(86);
+#endif
 				ailsnd->stopMod();
 			}
 			break;
@@ -1387,31 +1654,53 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1106:
 			for (i = 0; i < 3 && ret == -1; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1106[i]);
 				out->cls();
-				ret = flc->custom_play(&Ci);
+				flc->custom_play(&Ci);
+#else
+				playVideo(FLIC_CUT_1106[i]);
+#endif
 			}
 			break;
 
 		case 1107:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 107);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(107);
+#endif
 
+#ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				mem->file->select_pool_item(Ci.Handle, 109);
 				fx->border(workpage, 100, 0, 0);
 			}
+#else
+			fx->border(workpage, 100, 0, 0);
+			//playVideo(109);
+#endif
 			break;
 
 		case 1108:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 108);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(108);
+#endif
 
+#ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				mem->file->select_pool_item(Ci.Handle, 115);
 				fx->spr_blende(workpage, 100, false, 0);
 				flc->custom_play(&Ci);
 			}
+#else
+			fx->spr_blende(workpage, 100, false, 0);
+			playVideo(115);
+#endif
 			break;
 
 		case 1110:
@@ -1419,36 +1708,55 @@ void flic_cut(int16 nr, int16 mode) {
 			CurrentSong = -1;
 			load_room_music(257);
 			ailsnd->setMusicMasterVol(20);
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 110);
 			ret = flc->custom_play(&Ci);
+#else
+			playVideo(110);
+#endif
 
+#ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
-				mem->file->select_pool_item(Ci.Handle, 112);
-				fx->spr_blende(workpage, 100, false, 0);
 				ailsnd->setMusicMasterVol(63);
+				fx->spr_blende(workpage, 100, false, 0);
+				mem->file->select_pool_item(Ci.Handle, 112);
 				flc->custom_play(&Ci);
 			}
-
+#else
+			ailsnd->setMusicMasterVol(63);
+			fx->spr_blende(workpage, 100, false, 0);
+			playVideo(112);
+#endif
 			ailsnd->stopMod();
 			break;
 
 		case 1113:
 			for (i = 0; i < 5 && ret != -1; ++i) {
+#ifndef NEW_VIDEO_CODE
 				mem->file->select_pool_item(Ci.Handle, FLIC_CUT_1113[i]);
 				out->cls();
 				ret = flc->custom_play(&Ci);
+#else
+				playVideo(FLIC_CUT_1113[i]);
+#endif
 			}
 			break;
 
 		case 1117:
+#ifndef NEW_VIDEO_CODE
 			if (mem->file->select_pool_item(Ci.Handle, 117) != (uint16)-1) {
-				mem->file->select_pool_item(Ci.Handle, 119);
 				fx->border(workpage, 100, 0, 0);
+				mem->file->select_pool_item(Ci.Handle, 119);
 				flc->custom_play(&Ci);
 			}
+#else
+			fx->border(workpage, 100, 0, 0);
+			playVideo(119);
+#endif
 			break;
 
 		default:
+#ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle,
 				(nr < 1000) ? nr : nr - 1000);
 
@@ -1464,6 +1772,10 @@ void flic_cut(int16 nr, int16 mode) {
 			}
 
 			ERROR
+#else
+			playVideo(nr < 1000 ? nr : nr - 1000);
+#endif
+
 			break;
 		}
 
