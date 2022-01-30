@@ -1073,7 +1073,7 @@ void flic_cut(int16 nr, int16 mode) {
 				playVideo(23);
 #endif
 			}
-			for (int i = 0; i < 5; i++) {
+			for (i = 0; i < 5; i++) {
 				if (!modul) {
 #ifndef NEW_VIDEO_CODE
 					f->seek(ChunkHead::SIZE(), SEEK_CUR);
