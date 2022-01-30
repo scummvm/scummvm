@@ -173,7 +173,6 @@ void Room51::setup_func() {
 				out->cls();
 				flic_cut(115, 0);
 				test_intro(28);
-				ERROR
 				
 				switch_room(91);
 				break;

@@ -1022,7 +1022,6 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 				free((char *)spz_tinfo);
 			spz_akt_id = ani_id;
 			spz_tinfo = mem->taf_seq_adr(spz_taf_handle, spr_start, spr_anz);
-			ERROR
 		}
 
 		for (i = 0; i < spr_anz; i++) {
@@ -1087,7 +1086,6 @@ void load_person_ani(int16 ani_id, int16 p_nr) {
 		if (PersonTaf[p_nr])
 			free((char *)PersonTaf[p_nr]);
 		PersonTaf[p_nr] = mem->taf_seq_adr(spz_taf_handle, ani_start, ani_anz);
-		ERROR
 		spieler_vector[p_nr].PhNr = 0;
 		spieler_vector[p_nr].PhAnz = ani_anz;
 	}

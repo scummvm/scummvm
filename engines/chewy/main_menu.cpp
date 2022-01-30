@@ -63,7 +63,6 @@ void MainMenu::execute() {
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
 		room->load_room(&room_blk, 98, &_G(spieler));
-		ERROR
 
 		CurrentSong = -1;
 		load_room_music(98);
@@ -212,7 +211,6 @@ void MainMenu::startGame() {
 
 	_G(spieler).PersonRoomNr[P_CHEWY] = 0;
 	room->load_room(&room_blk, 0, &_G(spieler));
-	ERROR
 
 	spieler_vector[P_CHEWY].Phase = 6;
 	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];

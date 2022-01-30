@@ -63,7 +63,6 @@ void Room72::entry(int16 eib_nr) {
 		go_auto_xy(120, 104, P_NICHELLE, ANI_WAIT);
 		proc1(84);
 		test_intro(23);
-		ERROR
 		break;
 	case 113:
 		set_person_pos(213, 129, P_CHEWY, P_LEFT);
@@ -74,7 +73,6 @@ void Room72::entry(int16 eib_nr) {
 		go_auto_xy(186, 102, P_NICHELLE, ANI_WAIT);
 		proc1(85);
 		test_intro(23);
-		ERROR
 		break;
 	default:
 		break;

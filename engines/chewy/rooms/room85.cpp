@@ -96,7 +96,6 @@ void Room85::entry(int16 eib_nr) {
 		flc->set_custom_user_function(Room87::proc5);
 		flic_cut(89, CFO_MODE);
 		test_intro(25);
-		ERROR
 
 		flc->remove_custom_user_function();
 		switch_room(84);

@@ -164,7 +164,6 @@ void Room56::entry() {
 		flags.NoPalAfterFlc = true;
 		flic_cut(116, CFO_MODE);
 		test_intro(21);
-		ERROR
 		out->setze_zeiger(nullptr);
 		out->cls();
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
@@ -357,7 +356,6 @@ int16 Room56::use_kneipe() {
 		flic_cut(112, CFO_MODE);
 		flc->remove_custom_user_function();
 		test_intro(31);
-		ERROR
 
 		set_up_screen(NO_SETUP);
 		fx_blend = BLEND3;

@@ -135,7 +135,6 @@ int Room88::proc3() {
 		flags.NoPalAfterFlc = true;
 		flic_cut(86, CFO_MODE);
 		test_intro(24);
-		ERROR
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 88;

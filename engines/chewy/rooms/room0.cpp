@@ -767,11 +767,9 @@ void Room0::feederAni() {
 			flic_cut(FCUT_001, CFO_MODE);
 
 			test_intro(1);
-			ERROR
 
 			_G(spieler).PersonRoomNr[P_CHEWY] = 1;
 			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-			ERROR
 			set_person_pos(Rdi->AutoMov[4].X - CH_HOT_MOV_X,
 			               Rdi->AutoMov[4].Y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			spieler_vector[P_CHEWY].DelayCount = 0;

@@ -320,7 +320,6 @@ int16 Room68::use_diva() {
 		flic_cut(FCUT_083, CFO_MODE);
 		det->del_static_ani(18);
 		test_intro(22);
-		ERROR
 		det->del_static_ani(18);
 		start_detail_wait(7, 1, ANI_VOR);
 		atds->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATEI);
@@ -366,7 +365,6 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			det->start_detail(23, 255, ANI_VOR);
 			ailsnd->initDoubleBuffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
 			mem->file->select_pool_item(voc_handle, 109);
-			ERROR
 
 			ailsnd->startDbVoc(voc_handle, 1, 30);
 			wait_show_screen(2);
@@ -379,7 +377,6 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 		if (_G(spieler).DisplayText) {
 			mem->file->select_pool_item(voc_handle, 108);
-			ERROR
 			ailsnd->startDbVoc(voc_handle, 1, 30);			
 		}
 		
