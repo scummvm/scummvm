@@ -3,7 +3,7 @@
 
 
  Copyright (C) 2008-2022 ScummVM Team
- Copyright (C) 2013-2021 Fiodar Stryzhniou aka zanac
+ Copyright (C) 2013-2022 Fiodar Stryzhniou aka zanac
  Copyright (C) 2003-2013 Lars 'AnotherGuest' Persson
  Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
  Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
@@ -26,6 +26,17 @@ About ScummVM.
 	Current port maintained by Fiodar Stryzhniou.
 
 Release History:
+	Release version: 2.5.1
+	* SDL 1.2.15-01 used.
+	* Fixed 20 years old bug - inverted portrait-landscape detection(portrait mode treats as landscape, landscape as portrait).
+	* ScummVM can find and use required data files.
+	* Changed installation - all engines comes in separate packages named ScummVM-*-games-addon-*.sis. ScummVM-*.pkg contains common data for all engines only - localization, game data, licences and so on...
+	* Ultima 4&6 added.
+	* AGS engine added.
+	Thanks:
+	* huhungaru for excellent bugreports.
+	* Stephan for Phenom II x6 1090t.
+
 	Release version: 2.3.0
 	* Symbian port now split in nine parts, ScummVM 1, ScummVM and so on to keep the exe size amd memory pressure down.
 	  For engines layout see ScummVM in OS help menu.
@@ -114,7 +125,7 @@ Building ScummVM
 
 	- GCC 5.x and above for best perfomance(UIQ 3 and S60v3). Build it by yourself.
 	  https://github.com/fedor4ever/GCC-4-Symbian/tree/master
-
+	  
 	- UIQ 3.x SDK (To build for UIQ3 devices)(Build scripts in SDK need tweaking in order to build scummvm since Symbian OS GCCE never builds as large projects as ScummVM before)
 	- UIQ 2.1 SDK (To build for UIQ2 devices);
 	  http://www.symbian.com/developer/sdks_uiq.asp
