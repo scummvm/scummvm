@@ -239,6 +239,10 @@ public:
 	int _playerFrameIdx;
 	int _playerFrameSep;
 
+	// Objectives
+	uint32 _obj1KillsCount;
+	uint32 _obj1MissesCount;
+
 	void loadFont(const Filename &name);
 	void drawString(const Common::String &str, int x, int y, int w, uint32 c);
 	const Graphics::Font *_font;

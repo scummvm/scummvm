@@ -55,7 +55,7 @@ void WetEngine::drawPlayer() {
 
 	if (_playerFrameIdx < _playerFrameSep) {
 		// TARGET ACQUIRED frame
-		uint32 c = 251;
+		uint32 c = 251; // green
 		_compositeSurface->drawLine(113, 1, 119, 1, c);
 		_compositeSurface->drawLine(200, 1, 206, 1, c);
 
@@ -65,7 +65,7 @@ void WetEngine::drawPlayer() {
 		_compositeSurface->drawLine(113, 9, 119, 9, c);
 		_compositeSurface->drawLine(200, 9, 206, 9, c);
 
-		c = _pixelFormat.RGBToColor(255, 0, 0);
+		c = 250; // red ?
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		int i = detectTarget(mousePos);
 		if (i > 0)

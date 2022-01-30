@@ -64,7 +64,7 @@ W							return WTOK;
 X							return XTOK;
 T							return TTOK;
 Tp							return TPTOK;
-F[0-9]						return FNTOK;
+F[0-9]						HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FNTOK;
 F							return FTOK;
 S[0-9]						HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return SNTOK;
 A0							return A0TOK;

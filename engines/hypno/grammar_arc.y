@@ -55,14 +55,14 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK
+%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK
 %token<i> NUM BYTE
 // header
 %token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK ENCTOK RESTOK
 %token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK ONTOK NTOK NSTOK RTOK R0TOK ITOK JTOK ZTOK
 
 // body
-%token FNTOK NONETOK A0TOK P0TOK WTOK
+%token NONETOK A0TOK P0TOK WTOK
 
 // end
 %token XTOK
@@ -85,12 +85,19 @@ hline: 	CTOK NUM {
 		g_parsedArc->id = $2; 
 		debugC(1, kHypnoDebugParser, "C %d", $2); }
 	| FTOK NUM { debugC(1, kHypnoDebugParser, "F %d", $2); }
-	| DTOK NUM  { debugC(1, kHypnoDebugParser, "D %d", $2); }
+	| DTOK NUM  { 
+		g_parsedArc->frameDelay = $2;
+		debugC(1, kHypnoDebugParser, "D %d", $2);
+	}
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
 	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
-	| OTOK NUM NUM { debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); }
+	| OTOK NUM NUM {
+		g_parsedArc->obj1KillsRequired = $2;
+		g_parsedArc->obj1MissesAllowed = $3;
+		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3);
+	}
 	| ONTOK NUM NUM { debugC(1, kHypnoDebugParser, "ON %d %d", $2, $3); }
 	| ONTOK NUM { debugC(1, kHypnoDebugParser, "ON %d", $2); }
 	| TPTOK FILENAME NUM FILENAME {
@@ -106,15 +113,15 @@ hline: 	CTOK NUM {
 	}
 	| TTOK NONETOK NUM { debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
 	| NTOK FILENAME  { 
-		g_parsedArc->background = $2; 
+		g_parsedArc->backgroundVideo = $2; 
 		debugC(1, kHypnoDebugParser, "N %s", $2); 
 	}
 	| NSTOK FILENAME  { 
-		g_parsedArc->background = $2; 
+		g_parsedArc->backgroundVideo = $2; 
 		debugC(1, kHypnoDebugParser, "N* %s", $2); 
 	}
 	| RTOK FILENAME  {
-		g_parsedArc->palette = $2; 
+		g_parsedArc->backgroundPalette = $2; 
 		debugC(1, kHypnoDebugParser, "R %s", $2); }
 	| ITOK FILENAME { 
 		g_parsedArc->player = $2; 
@@ -129,9 +136,11 @@ hline: 	CTOK NUM {
 		else if (Common::String("B2") == $1)
 			g_parsedArc->nextLevelVideo = $2;
 		else if (Common::String("B3") == $1)
-			g_parsedArc->defeatNoEnergyVideo = $2;
+			g_parsedArc->defeatNoEnergyFirstVideo = $2;
 		else if (Common::String("B4") == $1)
 			g_parsedArc->defeatMissBossVideo = $2;
+		else if (Common::String("B5") == $1)
+			g_parsedArc->defeatNoEnergySecondVideo = $2;
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}
@@ -176,7 +185,8 @@ body: bline body
 
 bline: FNTOK FILENAME { 
 		shoot = new Shoot();
-		shoot->animation = $2;
+		if (Common::String("F0") == $1)
+			shoot->animation = $2;
 		debugC(1, kHypnoDebugParser, "FN %s", $2); 
 	}
 	| FNTOK NONETOK { 
@@ -260,7 +270,11 @@ bline: FNTOK FILENAME {
 		shoot->position = Common::Point($2, $3);
 		debugC(1, kHypnoDebugParser, "A0 %d %d", $2, $3); 
 	}
-	| RTOK NUM NUM  { debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); }
+	| RTOK NUM NUM  {
+		shoot->obj1KillsCount = $2;
+		shoot->obj1MissesCount = $3; 
+		debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); 
+	}
 	| R0TOK NUM NUM  { debugC(1, kHypnoDebugParser, "R0 %d %d", $2, $3); }
 	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
 	| KNTOK NUM NUM { 

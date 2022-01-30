@@ -361,6 +361,9 @@ public:
 		paletteSize = 0;
 		attackFrame = 0;
 		explosionFrame = 0;
+		obj1KillsCount = 0;
+		obj1MissesCount = 0;
+		animation = "NONE";
 	}
 	Common::String name;
 	Filename animation;
@@ -370,6 +373,10 @@ public:
 	uint32 timesToShoot;
 	uint32 pointsToShoot;
 	uint32 attackWeight;
+
+	// Objectives
+	uint32 obj1KillsCount;
+	uint32 obj1MissesCount;
 
 	// Palette
 	uint32 paletteOffset;
@@ -420,22 +427,30 @@ public:
 		health = 100;
 		transitionTime = 0;
 		id = 0;
+		obj1KillsRequired = 0;
+		obj1MissesAllowed = 0;
 	}
 	uint32 id;
+	uint32 frameDelay;
 	Common::String mode;
 	uint32 transitionTime;
-	Segments segments; 
+	Segments segments;
+
+	// Objectives
+	uint32 obj1KillsRequired;
+	uint32 obj1MissesAllowed;
 
 	// Videos
 	Filename transitionVideo;
 	Filename transitionPalette;
 	Filename nextLevelVideo;
-	Filename defeatNoEnergyVideo;
+	Filename defeatNoEnergyFirstVideo;
+	Filename defeatNoEnergySecondVideo;
 	Filename defeatMissBossVideo;
 
-	Filename background;
+	Filename backgroundVideo;
+	Filename backgroundPalette;
 	Filename player;
-	Filename palette;
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;

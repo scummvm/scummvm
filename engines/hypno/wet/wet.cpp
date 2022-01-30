@@ -28,6 +28,9 @@ namespace Hypno {
 
 static const chapterEntry rawChapterTable[] = {
 	{11, {44, 172}, {218, 172}, {0, 0}}, 		// c11
+	{20, {44, 172}, {218, 172}, {0, 0}}, 		// c20
+	{21, {70, 160}, {180, 160}, {220, 185}}, 	// c21
+	{22, {70, 160}, {180, 160}, {220, 185}}, 	// c22
 	{31, {70, 160}, {180, 160}, {220, 185}}, 	// c31
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
 	{0,  {0,  0},   {0,   0},   {0,   0}}    	// NULL
@@ -216,23 +219,28 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<main_menu>"]->levelIfWin = "c11";
 
 	loadArcadeLevel("c110.mi_", "c10", "");
+	_levels["c110.mi_"]->levelIfLose = "<quit>";
 	_levels["c110.mi_"]->intros.push_front("c_misc/intros.smk");
 
 	loadArcadeLevel("c111.mi_", "c10", "");
+	_levels["c111.mi_"]->levelIfLose = "<quit>";
 	_levels["c111.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	 loadArcadeLevel("c112.mi_", "c10", "");
-	 _levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
+	loadArcadeLevel("c112.mi_", "c10", "");
+	_levels["c112.mi_"]->levelIfLose = "<quit>";
+	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
-	loadArcadeLevel("c100.mi_", "c20", "");
-	loadArcadeLevel("c101.mi_", "c20", "");
-	loadArcadeLevel("c102.mi_", "c20", "");
+	loadArcadeLevel("c100.mi_", "c21", "");
+	loadArcadeLevel("c101.mi_", "c21", "");
+	loadArcadeLevel("c102.mi_", "c21", "");
 
-	//loadArcadeLevel("c300.mi_", "???", "");
-	//loadArcadeLevel("c201.mi_", "???", "");
-	//loadArcadeLevel("c202.mi_", "???", "");
+	loadArcadeLevel("c210.mi_", "c22", "");
+	loadArcadeLevel("c211.mi_", "c22", "");
+	loadArcadeLevel("c212.mi_", "c22", "");
 
-	//loadArcadeLevel("c20", "", "");
+	loadArcadeLevel("c220.mi_", "???", "");
+	loadArcadeLevel("c201.mi_", "???", "");
+	loadArcadeLevel("c202.mi_", "???", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadLib("sound/", "c_misc/sound.lib", true);

@@ -1239,7 +1239,7 @@ return TPTOK;
 case 25:
 YY_RULE_SETUP
 #line 67 "engines/hypno/lexer_arc.l"
-return FNTOK;
+HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FNTOK;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
