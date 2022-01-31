@@ -232,7 +232,7 @@ int16 ged_user_func(int16 idx_nr) {
 
 		case 84:
 			if (!_G(spieler).flags31_1)
-				_G(spieler).flags31_4 = true;
+				_G(spieler).R84GoonsPresent = true;
 			break;
 
 		case 86:

@@ -26,6 +26,9 @@ namespace Chewy {
 namespace Rooms {
 
 class Room84 {
+private:
+	static bool _flag;
+
 public:
 	static void entry();
 	static void xit(int16 eib_nr);

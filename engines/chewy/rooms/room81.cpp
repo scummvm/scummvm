@@ -92,7 +92,7 @@ void Room81::proc1() {
 		auto_move(1, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = false;
 		invent_2_slot(DIARY_INV);
-		_G(spieler).flags31_4 = true;
+		_G(spieler).R84GoonsPresent = true;
 		_G(spieler).gottenDiary = true;
 	}
 	
