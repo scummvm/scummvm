@@ -54,7 +54,7 @@ void Room82::entry() {
 	if (_G(spieler).flags30_1) {
 		set_person_pos(635, 144, P_CHEWY, P_LEFT);
 		set_person_pos(592, 115, P_HOWARD, P_RIGHT);
-		set_person_pos(543, 11, P_NICHELLE, P_RIGHT);
+		set_person_pos(543, 110, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags30_1 = false;
 		_G(spieler).scrollx = 479;
 	} else if (_G(spieler).flags31_8) {
