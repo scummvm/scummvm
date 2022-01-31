@@ -305,7 +305,7 @@ struct SpielerFlags {
 
 	bool flags31_1 : 1;
 	bool gottenDiary : 1;
-	bool flags31_4 : 1;
+	bool R84GoonsPresent : 1;
 	bool flags31_8 : 1;
 	bool flags31_10 : 1;
 	byte flags31_unused : 3;
@@ -493,8 +493,6 @@ struct Spieler : public SpielerFlags {
 	int16 r76State = 0;
 	// ---- //
 	int16 R79Val[3] = {0, 0, 0};
-	// ---- //
-	int16 r84_bool18DB1C = false;
 	// ---- //
 	int16 R88Val1 = 0;
 	// ---- //

@@ -28,6 +28,8 @@
 namespace Chewy {
 namespace Rooms {
 
+bool Room84::_flag;
+
 void Room84::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(zoom_horizont) = 110;
@@ -35,8 +37,8 @@ void Room84::entry() {
 	_G(zoom_mov_fak) = 3;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
-	_G(spieler).flags31_4 = false;
-	_G(spieler).r84_bool18DB1C = false;
+	_G(spieler).R84GoonsPresent = false;
+	_flag = false;
 	det->enable_sound(0, 0);
 	det->play_sound(0, 0);
 
@@ -128,8 +130,9 @@ void Room84::xit(int16 eib_nr) {
 
 void Room84::setup_func() {
 	calc_person_look();
-	if (_G(spieler).flags31_4 && !_G(spieler).r84_bool18DB1C) {
-		_G(spieler).r84_bool18DB1C = true;
+
+	if (_G(spieler).R84GoonsPresent && !_flag) {
+		_flag = true;
 		_G(spieler).flags30_80 = true;
 		hide_cur();
 		auto_move(4, P_CHEWY);
