@@ -830,6 +830,7 @@ int16 flic_user_function(int16 keys) {
 	return ret;
 }
 
+#ifdef NEW_VIDEO_CODE
 static void playVideo(uint num) {
 	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
 	VideoResource *videoResource = new VideoResource("cut.tap");
@@ -881,6 +882,7 @@ static void playVideo(uint num) {
 	delete videoResource;
 	delete cfoDecoder;
 }
+#endif
 
 static void flic_proc1() {
 	const int16 VALS1[] = {
