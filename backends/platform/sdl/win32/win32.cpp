@@ -238,10 +238,15 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 }
 
 Common::String OSystem_Win32::getScreenshotsPath() {
-	Common::String screenshotsPath = ConfMan.get("screenshotpath");
+	// If the user has configured a screenshots path, use it
+	Common::String screenshotsPath = OSystem_SDL::getScreenshotsPath();
 	if (!screenshotsPath.empty()) {
-		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
-			screenshotsPath += "\\";
+		// OSystem_SDL may have appended a '/' at the end
+		if (screenshotsPath.hasSuffix("/")) {
+			screenshotsPath.deleteLastChar();
+			if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
+				screenshotsPath += "\\";
+		}
 		return screenshotsPath;
 	}
 
