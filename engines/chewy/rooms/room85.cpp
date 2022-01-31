@@ -162,7 +162,7 @@ int Room85::proc2() {
 	remove_inventory(109);
 	remove_inventory(98);
 	remove_inventory(87);
-	remove_inventory(89);
+	switch_room(89);
 	
 	show_cur();
 	return 1;
