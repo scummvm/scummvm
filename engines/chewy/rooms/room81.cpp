@@ -36,7 +36,7 @@ void Room81::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).DiaAMov = 0;
-	if (_G(spieler).R88Val1 == 84) {
+	if (_G(spieler).r88DestRoom == 84) {
 		det->show_static_spr(0);
 		atds->del_steuer_bit(488, ATS_AKTIV_BIT, ATS_DATEI);
 	}

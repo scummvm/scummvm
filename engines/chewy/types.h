@@ -303,12 +303,14 @@ struct SpielerFlags {
 	bool flags30_40 : 1;
 	bool flags30_80 : 1;
 
-	bool flags31_1 : 1;
+	bool R88UsedMonkey : 1;
 	bool gottenDiary : 1;
 	bool R84GoonsPresent : 1;
 	bool flags31_8 : 1;
 	bool flags31_10 : 1;
-	byte flags31_unused : 3;
+	byte flags31_20 : 1;
+	byte flags31_40 : 1;
+	byte flags31_80 : 1;
 
 	// Further flags
 	bool flags32_1 : 1;
@@ -494,7 +496,7 @@ struct Spieler : public SpielerFlags {
 	// ---- //
 	int16 R79Val[3] = {0, 0, 0};
 	// ---- //
-	int16 R88Val1 = 0;
+	int16 r88DestRoom = 0;
 	// ---- //
 	int r90_word18DB28 = 0;
 	int r90_Array187030[8][4] = {

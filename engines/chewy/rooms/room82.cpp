@@ -37,7 +37,7 @@ void Room82::entry() {
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
 
-	if (_G(spieler).flags31_1) {
+	if (_G(spieler).R88UsedMonkey) {
 		det->show_static_spr(6);
 		atds->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATEI);

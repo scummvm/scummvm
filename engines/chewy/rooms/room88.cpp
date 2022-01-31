@@ -35,8 +35,8 @@ void Room88::entry() {
 	set_person_pos(91, 110, P_NICHELLE, P_RIGHT);
 	
 	det->show_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
-	if (_G(spieler).R88Val1 == 0)
-		_G(spieler).R88Val1 = 82;
+	if (_G(spieler).r88DestRoom == 0)
+		_G(spieler).r88DestRoom = 82;
 
 	SetUpScreenFunc = calc_person_look;
 
@@ -48,7 +48,7 @@ void Room88::entry() {
 
 void Room88::xit() {
 	_G(spieler).flags31_8 = true;
-	_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).R88Val1;
+	_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).r88DestRoom;
 
 	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 88)
 		_G(spieler).PersonRoomNr[P_NICHELLE] = _G(spieler).PersonRoomNr[P_HOWARD];
@@ -60,7 +60,7 @@ int Room88::proc1() {
 
 	hide_cur();
 	auto_move(0, P_CHEWY);
-	switch_room(_G(spieler).R88Val1);
+	switch_room(_G(spieler).r88DestRoom);
 	menu_item = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	show_cur();
@@ -94,7 +94,7 @@ int Room88::proc3() {
 	hide_cur();
 	auto_move(2, P_CHEWY);
 
-	if (!_G(spieler).flags30_80 || _G(spieler).flags31_1) {
+	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
 		hide_cur();
 		if (_G(spieler).flags32_10) {
 			start_aad_wait(480, -1);
@@ -140,8 +140,8 @@ int Room88::proc3() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 88;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
 		switch_room(88);
-		_G(spieler).R88Val1 = 84;
-		_G(spieler).flags31_1 = true;
+		_G(spieler).r88DestRoom = 84;
+		_G(spieler).R88UsedMonkey = true;
 		_G(spieler).flags32_1 = false;
 	}
 

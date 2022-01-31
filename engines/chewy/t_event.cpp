@@ -2707,7 +2707,7 @@ void calc_person_dia(int16 p_nr) {
 		case 88:
 			if (_G(spieler).flags32_10) {
 				_G(spieler).PersonDia[p_nr] = 465;
-				if (_G(spieler).flags30_80 && !_G(spieler).flags31_1)
+				if (_G(spieler).flags30_80 && !_G(spieler).R88UsedMonkey)
 					_G(spieler).PersonDia[p_nr] = 466;
 			}
 			break;
