@@ -304,7 +304,7 @@ struct SpielerFlags {
 	bool flags30_80 : 1;
 
 	bool flags31_1 : 1;
-	bool flags31_2 : 1;
+	bool gottenDiary : 1;
 	bool flags31_4 : 1;
 	bool flags31_8 : 1;
 	bool flags31_10 : 1;
