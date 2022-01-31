@@ -38,7 +38,7 @@ void Room80::entry() {
 	det->play_sound(0, 1);
 	det->play_sound(0, 2);
 
-	if (_G(spieler).flags31_2) {
+	if (_G(spieler).gottenDiary) {
 		atds->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
 		atds->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
@@ -83,7 +83,7 @@ void Room80::setup_func() {
 		return;
 
 	if (vec != 0 && vec != 2) {
-		if (vec != 1 || !_G(spieler).flags31_2)
+		if (vec != 1 || !_G(spieler).gottenDiary)
 			return;
 	}
 
