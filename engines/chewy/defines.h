@@ -164,6 +164,7 @@ enum SetupScreenMode {
 #define GBOOK_TGP 1
 #define EPISODE1 "back/episode1.tgp\0"
 #define BUCH_START 2
+#define DIARY_START 3
 
 #define EPISODE1_GEP "back/episode1.gep\0"
 
@@ -391,6 +392,7 @@ enum SetupScreenMode {
 #define MACHETE_INV 99
 #define RUBBER_INV 100
 #define FOOD_CERTIFICATE_INV 101
+#define DIARY_INV 109
 
 #define SIB_SCHLEIM 3
 

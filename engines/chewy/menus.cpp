@@ -702,10 +702,43 @@ void look_invent_screen(int16 txt_mode, int16 txt_nr) {
 	}
 }
 
+static void showDiary() {
+	int16 scrollx = _G(spieler).scrollx,
+		scrolly = _G(spieler).scrolly;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
+
+	room->load_tgp(DIARY_START, &room_blk, GBOOK_TGP, 0, "BACK/GBOOK.TGP");
+	out->setze_zeiger(workptr);
+	out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+	out->back2screen(workpage);
+	room->set_ak_pal(&room_blk);
+	out->setze_zeiger(nullptr);
+	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+
+	while (in->get_switch_code() != ESC) {
+		g_events->update();
+		SHOULD_QUIT_RETURN;
+	}
+	while (in->get_switch_code() != 0) {
+		g_events->update();
+		SHOULD_QUIT_RETURN;
+	}
+
+	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(spieler).scrollx = scrollx;
+	_G(spieler).scrolly = scrolly;
+	set_up_screen(NO_SETUP);
+	plot_inventar_menu();
+	out->setze_zeiger(nullptr);
+	room->set_ak_pal(&room_blk);
+	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+}
+
 int16 calc_use_invent(int16 inv_nr) {
-	int16 benutzt;
+	int16 ret_val;
 	int16 ret;
-	benutzt = false;
+	ret_val = false;
 
 	if (menu_item == CUR_LOOK) {
 		switch (inv_nr) {
@@ -715,17 +748,24 @@ int16 calc_use_invent(int16 inv_nr) {
 
 		case CUTMAG_INV:
 			show_invent_menu = 2;
-			benutzt = true;
+			ret_val = true;
 			Rooms::Room58::look_cut_mag(58);
 			break;
 
 		case SPARK_INV:
 			show_invent_menu = 2;
-			benutzt = true;
+			ret_val = true;
 			save_person_rnr();
 			Rooms::Room58::look_cut_mag(60);
 			break;
 
+		case DIARY_INV:
+			showDiary();
+			ret_val = true;
+			break;
+
+		default:
+			break;
 		}
 	} else if (menu_item == CUR_USE) {
 		switch (inv_nr) {
@@ -733,13 +773,15 @@ int16 calc_use_invent(int16 inv_nr) {
 			ret = del_invent_slot(GBUCH_INV);
 			_G(spieler).InventSlot[ret] = GBUCH_OPEN_INV;
 			obj->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &room_blk);
-			benutzt = true;
+			ret_val = true;
 			break;
 
+		default:
+			break;
 		}
 	}
 
-	return benutzt;
+	return ret_val;
 }
 
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {

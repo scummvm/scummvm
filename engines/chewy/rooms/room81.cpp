@@ -91,7 +91,7 @@ void Room81::proc1() {
 		go_auto_xy(222, 97, P_CHEWY, ANI_WAIT);
 		auto_move(1, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = false;
-		invent_2_slot(109);
+		invent_2_slot(DIARY_INV);
 		_G(spieler).flags30_2 = true;
 		_G(spieler).flags31_4 = true;
 	}
