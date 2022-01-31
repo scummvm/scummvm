@@ -103,7 +103,7 @@ void Room80::setup_func() {
 			nextRoom = 84;
 		break;
 	case 2:
-		nextRoom = 82;
+		nextRoom = 81;
 		break;
 	default:
 		nextRoom = -1;
