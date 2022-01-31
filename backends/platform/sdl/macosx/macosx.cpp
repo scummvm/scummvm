@@ -269,12 +269,15 @@ Common::String OSystem_MacOSX::getDefaultLogFileName() {
 }
 
 Common::String OSystem_MacOSX::getScreenshotsPath() {
-	Common::String path = ConfMan.get("screenshotpath");
-	if (path.empty())
-		path = getDesktopPathMacOSX();
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
-	return path;
+	// If the user has configured a screenshots path, use it
+	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	if (!path.empty())
+		return path;
+
+	Common::String desktopPath = getDesktopPathMacOSX();
+	if (!desktopPath.empty() && !desktopPath.hasSuffix("/"))
+		desktopPath += "/";
+	return desktopPath;
 }
 
 AudioCDManager *OSystem_MacOSX::createAudioCDManager() {
