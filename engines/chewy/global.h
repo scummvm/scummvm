@@ -109,6 +109,7 @@ public:
 	int16 _r65tmp_ho_x = 0;
 	int16 _r65tmp_ho_y = 0;
 	int16 _r68HohesC = 0;
+	bool _r51onOff[5] = {false};
 };
 
 extern Globals *g_globals;

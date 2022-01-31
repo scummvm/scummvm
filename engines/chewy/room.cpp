@@ -291,9 +291,9 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		Rb->AkAblage -= 1000;
 	} else {
 		// Image width and height is piggy-banked inside the image data
-		uint16 *mem = (uint16 *)Ablage[Rb->AkAblage];
-		mem[0] = img->width;
-		mem[1] = img->height;
+		uint16 *memPtr = (uint16 *)Ablage[Rb->AkAblage];
+		memPtr[0] = img->width;
+		memPtr[1] = img->height;
 		memcpy(Ablage[Rb->AkAblage] + 4, img->data, img->size);
 		memcpy(AblagePal[Rb->AkAblage], img->palette, 3 * 256);
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
