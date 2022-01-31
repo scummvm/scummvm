@@ -110,19 +110,19 @@ void MainMenu::reflowLayout() {
 
 	x = 0;
 	y = 0;
-	_buttons[0]->resize(x, y, buttonWidth, buttonHeight);
+	_buttons[0]->resize(x, y, buttonWidth, buttonHeight, false);
 	x += buttonWidth + buttonPadding;
-	_buttons[1]->resize(x, y, buttonWidth, buttonHeight);
+	_buttons[1]->resize(x, y, buttonWidth, buttonHeight, false);
 
 	x = 0;
 	y += buttonHeight + buttonPadding;
-	_buttons[2]->resize(x, y, buttonWidth, buttonHeight);
+	_buttons[2]->resize(x, y, buttonWidth, buttonHeight, false);
 	x += buttonWidth + buttonPadding;
-	_buttons[3]->resize(x, y, buttonWidth, buttonHeight);
+	_buttons[3]->resize(x, y, buttonWidth, buttonHeight, false);
 
 	x = (_w - buttonWidth) / 2; // Center the last button
 	y += buttonHeight + buttonPadding;
-	_buttons[4]->resize(x, y, buttonWidth, buttonHeight);
+	_buttons[4]->resize(x, y, buttonWidth, buttonHeight, false);
 
 	GUI::Dialog::reflowLayout();
 
