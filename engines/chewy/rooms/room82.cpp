@@ -142,7 +142,7 @@ void Room82::talk3() {
 }
 
 int Room82::proc3() {
-	if (!is_cur_inventar(101))
+	if (!is_cur_inventar(FOOD_CERTIFICATE_INV))
 		return 0;
 
 	hide_cur();
