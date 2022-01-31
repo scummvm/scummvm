@@ -98,6 +98,7 @@ static const char HELP_STRING[] =
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 #if defined(SDL_BACKEND)
 	"  -l, --logfile=PATH       Use alternate path for log file\n"
+	"  --screenshotpath=PATH    Specify path where screenshot files are created\n"
 #endif
 	"  -p, --path=PATH          Path to where the game is installed\n"
 	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
@@ -596,6 +597,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 #if defined(SDL_BACKEND)
 			DO_OPTION('l', "logfile")
+			END_OPTION
+
+			DO_LONG_OPTION("screenshotpath")
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent game path '%s'", option);
+				} else if (!path.isWritable()) {
+					usage("Non-writable screenshot path '%s'", option);
+				}
 			END_OPTION
 #endif
 

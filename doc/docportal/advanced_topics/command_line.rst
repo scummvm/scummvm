@@ -157,6 +157,7 @@ Short options are listed where they are available.
         ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`"
         ``--save-slot=NUM``,``-x``,"Specifies the saved game slot to load (default: autosave)"
         ``--savepath=PATH``,,":ref:`Specifies path to where saved games are stored <savepath>`"
+        ``--screenshotpath=PATH``,,"Specify path where screenshot files are created (SDL backend only)"
         ``--sfx-volume=NUM``,``-s``,":ref:`Sets the sfx volume <sfx>`, 0-255 (default: 192)"
         ``--soundfont=FILE``,,":ref:`Selects the SoundFont for MIDI playback. <soundfont>`. Only supported by some MIDI drivers."
         ``--speech-volume=NUM``,``-r``,":ref:`Sets the speech volume <speechvol>`, 0-255 (default: 192)"
