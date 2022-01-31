@@ -799,7 +799,6 @@ void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_) {
 	char *tmp_str = *str_;
 	char *start_str = *str_;
-	tmp_str += AtsStrHeader::SIZE();
 	*anz = 0;
 	bool ende = false;
 	int16 count = 0;
