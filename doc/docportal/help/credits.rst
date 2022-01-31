@@ -514,6 +514,8 @@ Grim
      - Grim (retired)
    * - Giulio Camuffo
      - Grim (retired)
+   * - Daniel Schepler
+     - Initial engine contributor
    * - Dries Harnie
      - EMI
    * - Paweł Kołodziejski
@@ -582,6 +584,15 @@ Hugo
    * - Oystein Eftevaag
      -
    * - Eugene Sandulenko
+     -
+
+Hypno
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gustavo Grieco
      -
 
 ICB
@@ -1535,7 +1546,7 @@ PlayStation Vita
      -
 
 SDL (Win/Linux/macOS/etc.)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table::
    :widths: 35 65
