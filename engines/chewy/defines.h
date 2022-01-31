@@ -390,6 +390,7 @@ enum SetupScreenMode {
 #define KARTE_INV 98
 #define MACHETE_INV 99
 #define RUBBER_INV 100
+#define FOOD_CERTIFICATE_INV 101
 
 #define SIB_SCHLEIM 3
 
