@@ -60,7 +60,7 @@ void Room80::entry() {
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
 	_G(zoom_horizont) = 0;
 
-	if (_G(spieler).R88Val1 == 84)
+	if (_G(spieler).r88DestRoom == 84)
 		det->show_static_spr(3);
 	else
 		det->show_static_spr(4);
@@ -97,7 +97,7 @@ void Room80::setup_func() {
 		nextRoom = 82;
 		break;
 	case 1:
-		if (_G(spieler).flags31_1)
+		if (_G(spieler).R88UsedMonkey)
 			nextRoom = 85;
 		else
 			nextRoom = 84;

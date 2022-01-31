@@ -158,7 +158,7 @@ void Room56::entry() {
 	case 1:
 		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
-		_G(spieler).R88Val1 = 82;
+		_G(spieler).r88DestRoom = 82;
 		out->setze_zeiger(nullptr);
 		out->cls();
 		flags.NoPalAfterFlc = true;

@@ -42,7 +42,7 @@ void Room84::entry() {
 	det->enable_sound(0, 0);
 	det->play_sound(0, 0);
 
-	if (_G(spieler).flags31_1) {
+	if (_G(spieler).R88UsedMonkey) {
 		det->del_static_ani(3);
 		det->stop_detail(0);
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
@@ -58,7 +58,7 @@ void Room84::entry() {
 		atds->set_ats_str(485, 2, ATS_DATEI);
 	}
 
-	if (_G(spieler).R88Val1 == 84) {
+	if (_G(spieler).r88DestRoom == 84) {
 		det->show_static_spr(7);
 		atds->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
 		atds->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
@@ -77,10 +77,11 @@ void Room84::entry() {
 		set_person_pos(569, 135, P_CHEWY, P_LEFT);
 		set_person_pos(489, 113, P_HOWARD, P_RIGHT);
 		set_person_pos(523, 110, P_NICHELLE, P_RIGHT);
-		_G(spieler).flags30_8 = false;
-		_G(spieler).flags31_1 = false;
+		_G(spieler).flags30_1 = false;
+		_G(spieler).flags31_8 = false;
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 319;
+
 		if (_G(spieler).flags32_10) {
 			set_person_pos(347, 130, P_CHEWY, P_RIGHT);
 			set_person_pos(408, 113, P_HOWARD, P_LEFT);

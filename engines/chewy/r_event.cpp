@@ -231,7 +231,7 @@ int16 ged_user_func(int16 idx_nr) {
 			break;
 
 		case 84:
-			if (!_G(spieler).flags31_1)
+			if (!_G(spieler).R88UsedMonkey)
 				_G(spieler).R84GoonsPresent = true;
 			break;
 
