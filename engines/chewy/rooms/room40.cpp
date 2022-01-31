@@ -572,7 +572,7 @@ bool Room40::use_police() {
 	bool result = false;
 
 	if (menu_item == CUR_HOWARD) {
-		if (_G(spieler).R40PoliceWeg == false && _G(spieler).R40PoliceAniStatus == 255) {
+		if (!_G(spieler).R40PoliceWeg && _G(spieler).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(spieler).R40PoliceAb = true;
 			hide_cur();
@@ -602,62 +602,59 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
-		if (_G(spieler).R40PoliceWeg == false) {
-			action_flag = true;
-			hide_cur();
+	if (!_G(spieler).inv_cur && _G(spieler).R40PoliceWeg == false) {
+		action_flag = true;
+		hide_cur();
 
-			int16 dia_nr1 = -1;
-			if (!_G(spieler).R40PoliceAb) {
-				start_aad_wait(219, -1);
-				_G(spieler).R40HoUse = false;
+		int16 dia_nr1 = -1;
+		if (!_G(spieler).R40PoliceAb) {
+			start_aad_wait(219, -1);
+			_G(spieler).R40HoUse = false;
 
+		} else {
+			auto_move(13, P_CHEWY);
+			det->show_static_spr(0);
+
+			int16 dia_nr;
+			if (!_G(spieler).R40DuengerMit) {
+				dia_nr = 220;
+				dia_nr1 = 222;
 			} else {
-				auto_move(13, P_CHEWY);
-				det->show_static_spr(0);
-
-				int16 dia_nr;
-				if (!_G(spieler).R40DuengerMit) {
-					dia_nr = 220;
-					dia_nr1 = 222;
-				} else {
-					dia_nr = 221;
-					dia_nr1 = 223;
-				}
-
-				start_aad_wait(dia_nr, -1);
-				auto_move(11, P_HOWARD);
-				det->hide_static_spr(0);
-				auto_move(9, P_CHEWY);
-				start_aad_wait(dia_nr1, -1);
-				_G(spieler).R40HoUse = false;
-				int16 timer_wert = 0;
-
-				if (dia_nr1 == 223) {
-					if (is_cur_inventar(DUENGER_INV)) {
-						del_inventar(_G(spieler).AkInvent);
-					} else {
-						obj->del_inventar(DUENGER_INV, &room_blk);
-						del_invent_slot(DUENGER_INV);
-					}
-
-					invent_2_slot(LIKOER_INV);
-					auto_move(1, P_CHEWY);
-					_G(spieler).R40DuengerMit = false;
-					_G(spieler).R40DuengerTele = true;
-					flags.MausLinks = true;
-					flags.MainInput = false;
-					timer_wert = 3;
-				}
-
-				_G(spieler).R40PoliceAb = false;
-				room->set_timer_status(255, TIMER_START);
-				uhr->reset_timer(_G(timer_nr)[0], timer_wert);
+				dia_nr = 221;
+				dia_nr1 = 223;
 			}
 
-			if (dia_nr1 != 223)
-				show_cur();
+			start_aad_wait(dia_nr, -1);
+			auto_move(11, P_HOWARD);
+			det->hide_static_spr(0);
+			auto_move(9, P_CHEWY);
+			start_aad_wait(dia_nr1, -1);
+			_G(spieler).R40HoUse = false;
+			int16 timer_wert = 0;
+
+			if (dia_nr1 == 223) {
+				if (is_cur_inventar(DUENGER_INV)) {
+					del_inventar(_G(spieler).AkInvent);
+				} else {
+					remove_inventory(DUENGER_INV);
+				}
+
+				invent_2_slot(LIKOER_INV);
+				auto_move(1, P_CHEWY);
+				_G(spieler).R40DuengerMit = false;
+				_G(spieler).R40DuengerTele = true;
+				flags.MausLinks = true;
+				flags.MainInput = false;
+				timer_wert = 3;
+			}
+
+			_G(spieler).R40PoliceAb = false;
+			room->set_timer_status(255, TIMER_START);
+			uhr->reset_timer(_G(timer_nr)[0], timer_wert);
 		}
+
+		if (dia_nr1 != 223)
+			show_cur();
 	}
 
 	return action_flag;
