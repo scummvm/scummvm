@@ -503,10 +503,11 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		xoff = (254 - xoff) / 2;
 		txt_zeilen = 2;
 		yoff = 10;
-	}
-	else if (mode == INV_USE_ATS_MODE) {
+
+	} else if (mode == INV_USE_ATS_MODE) {
 		txt_zeilen = 3;
 		yoff = 0;
+
 		if (ats_nr >= 15000) {
 			txt_adr = atds->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
 		} else {
@@ -515,12 +516,13 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (!txt_adr) {
 			ende = 1;
 		}
-	}
-	else
+	} else {
 		ende = 1;
+	}
 
 	while (!ende) {
 		rect = in->maus_vector(minfo.x, minfo.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
+
 		if (minfo.button) {
 			if (minfo.button == 2) {
 				if (!maus_flag)
@@ -553,12 +555,17 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 						ende = 1;
 						break;
 
+					default:
+						break;
 					}
 				}
 			}
+
 			maus_flag = 1;
-		} else
+		} else {
 			maus_flag = 0;
+		}
+
 		switch (kbinfo.scan_code) {
 		case F1_KEY:
 			in->hot_key = F1_KEY;
@@ -571,6 +578,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 		case ESC:
 			ende = 1;
 			break;
+
 		case CURSOR_UP:
 			if (txt_start > 0)
 				--txt_start;
@@ -581,7 +589,10 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 				++txt_start;
 			break;
 
+		default:
+			break;
 		}
+
 		kbinfo.scan_code = Common::KEYCODE_INVALID;
 		set_up_screen(NO_SETUP);
 		plot_inventar_menu();
@@ -590,9 +601,11 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 		if (mode == INV_ATS_MODE)
 			out->printxy(WIN_LOOK_X + xoff, WIN_LOOK_Y, 255, 300,
-			              scr_width, txt_name_adr);
+				scr_width, txt_name_adr);
+
 		out->set_fontadr(font6x8);
 		out->set_vorschub(fvorx6x8, fvory6x8);
+
 		if (txt_anz > txt_zeilen) {
 			if (txt_start > 0) {
 				if (rect == 6)
@@ -602,6 +615,7 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 				out->printxy(WIN_LOOK_X + 250, WIN_LOOK_Y + 4, 14, 300,
 				              scr_width, c);
 			}
+
 			if (txt_start < txt_anz - txt_zeilen) {
 				if (rect == 7)
 					out->box_fill(WIN_INF_X + 262, WIN_INF_Y + 156, WIN_INF_X + 272,
@@ -610,14 +624,15 @@ int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr) {
 				out->printxy(WIN_LOOK_X + 250, WIN_LOOK_Y + 24, 14, 300, scr_width, c);
 			}
 		}
+
 		k = 0;
 		for (i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
 			out->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
 			              scr_width, "%s", txt->str_pos(txt_adr, i));
 			++k;
 		}
-		cur->plot_cur();
 
+		cur->plot_cur();
 		out->back2screen(workpage);
 		SHOULD_QUIT_RETURN0;
 	}
@@ -691,6 +706,7 @@ int16 calc_use_invent(int16 inv_nr) {
 	int16 benutzt;
 	int16 ret;
 	benutzt = false;
+
 	if (menu_item == CUR_LOOK) {
 		switch (inv_nr) {
 		case ZEITUNG_INV:
