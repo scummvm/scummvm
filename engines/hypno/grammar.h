@@ -430,6 +430,7 @@ public:
 		id = 0;
 		obj1KillsRequired = 0;
 		obj1MissesAllowed = 0;
+		frameDelay = 0;
 	}
 	uint32 id;
 	uint32 frameDelay;
