@@ -1853,7 +1853,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 我流競馬ｵｰﾄﾃﾞﾓ
 	MACDEMO1_l("garyukeiba", "Demo", "Garyu Keiba Auto Demo", "276bee761e48a6fd709df77d5c2f60dd", 393175, Common::JA_JPN, 313),
 
-	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 394984, Common::JA_JPN, 311),
+	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 394728, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 392276, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush2", "Demo", "GOAL RUSH!! DEMO", "276bee761e48a6fd709df77d5c2f60dd", 397408, Common::JA_JPN, 313),
 
@@ -2064,7 +2064,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is ピーターと狼
 	// One gameplay mode supports General MIDI
-	MACDEMO1_l("mipeterwolf", "Demo", "Peter and the Wolf", "f5277c53bacd27936158dd3867e587e2", 394909, Common::JA_JPN, 311),
+	MACDEMO1_l("mipeterwolf", "Demo", "Peter and the Wolf", "f5277c53bacd27936158dd3867e587e2", 394653, Common::JA_JPN, 311),
 	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9juj9b8hb1942h", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
 	// Decomposed variant of the above filename
 	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9j5ete2cvkb7839i", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
@@ -2072,7 +2072,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("mmmozart", "Sampler", "Mozart Sampler", "67fb0a6c1b3c11367b06e2cf30c9ced9", 1700540, 311),
 	MACDEMO1("mmschubert", "Sampler", "Schubert Sampler", "52890d7211ae1258734c612f636da2c0", 1703468, 311),
 
-	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391613, Common::JA_JPN, 311),
+	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391357, Common::JA_JPN, 311),
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391334, Common::JA_JPN, 311),
 
 	// Demos from The Computer Buyer Collection Volume 1 - Sep 1995
@@ -2202,7 +2202,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("provektormed", "Demo", "PVM_Demo", "7c80091b84d4d5d48f7c773b30b10598", 2025339, 311),
 
 	MACGAME1_l("pyramidint", "", "Pyramid Interactive", "f5277c53bacd27936158dd3867e587e2", 396919, Common::JA_JPN, 311),
-	MACDEMO1_l("pyramidint", "Demo", "PyramidInteractive", "f5277c53bacd27936158dd3867e587e2", 1591182, Common::JA_JPN, 311),
+	MACDEMO1_l("pyramidint", "Demo", "PyramidInteractive", "f5277c53bacd27936158dd3867e587e2", 1590926, Common::JA_JPN, 311),
 
 	MACDEMO1("ramdoubler", "", "RAM Doubler Tour", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 445441, 300),
 
@@ -2339,7 +2339,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("vcb", "", "Virtual Cocktail Bar", "f5277c53bacd27936158dd3867e587e2", 393446, Common::JA_JPN, 311),
 
-	MACDEMO1_l("vcbe", "Demo", "VirtualCocktailBar Exective", "f5277c53bacd27936158dd3867e587e2", 394261, Common::JA_JPN, 311),
+	MACDEMO1_l("vcbe", "Demo", "VirtualCocktailBar Exective", "f5277c53bacd27936158dd3867e587e2", 394005, Common::JA_JPN, 311),
 	MACDEMO1_l("vcbe", "Demo", "VirtualCocktailBar Exective", "f5277c53bacd27936158dd3867e587e2", 393996, Common::JA_JPN, 311),
 	MACGAME1_l("vcbe", "", "VirtualCocktailBarExecutive", "f5277c53bacd27936158dd3867e587e2", 394073, Common::JA_JPN, 311),
 
@@ -6646,7 +6646,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Photography disc published by The One Corporation
 	MACDEMO1_l("labyrinth",		   "Demonstration Version",		 "Labyrinth_Demo", "276bee761e48a6fd709df77d5c2f60dd", 395949, Common::JA_JPN, 313),
 
-	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 548017, Common::JA_JPN, 311),
+	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 547761, Common::JA_JPN, 311),
 	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 547752, Common::JA_JPN, 311),
 
 	// Touring Engine Ver 1.00. Original filename is MacPlaymate™
