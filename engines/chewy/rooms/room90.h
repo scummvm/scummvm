@@ -35,9 +35,9 @@ public:
 	static void setup_func();
 	static void proc2();
 	static int getHubcaps();
-	static int proc4();
+	static int shootControlUnit();
 	static int16 proc5(int16 key);
-	static int proc6();
+	static int useSurimyOnWreck();
 };
 
 } // namespace Rooms

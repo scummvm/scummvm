@@ -112,7 +112,7 @@ void Room90::xit(int16 eib_nr) {
 }
 
 void Room90::setup_func() {
-	if (menu_item != CUR_WALK)
+	if (menu_display)
 		return;
 
 	if (_delay)
@@ -157,7 +157,7 @@ void Room90::setup_func() {
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 90 || HowardMov)
+	if (_G(spieler).PersonRoomNr[P_HOWARD] != 90 || HowardMov == 1)
 		return;
 
 	calc_person_look();
@@ -278,7 +278,7 @@ int Room90::getHubcaps() {
 	return 1;
 }	
 
-int Room90::proc4() {
+int Room90::shootControlUnit() {
 	if (!is_cur_inventar(111))
 		return 0;
 
@@ -322,7 +322,7 @@ int16 Room90::proc5(int16 key) {
 	return 0;
 }
 
-int Room90::proc6() {
+int Room90::useSurimyOnWreck() {
 	if (!is_cur_inventar(18))
 		return 0;
 
