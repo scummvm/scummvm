@@ -39,7 +39,7 @@ static const AniBlock ABLOCK37[5] = {
 };
 
 bool Room51::_flag;
-bool Room51::_arr[2];
+bool Room51::_enemyFlag[2];
 int16 Room51::_tmpx;
 int16 Room51::_tmpy;
 int Room51::_index;
@@ -64,7 +64,7 @@ void Room51::entry() {
 		hide_cur();
 
 		for (int i = 0; i < 2; ++i) {
-			_arr[i] = false;
+			_enemyFlag[i] = false;
 			_G(timer_nr)[i] = room->set_timer(i + 9, i * 2 + 6);
 		}
 
@@ -353,15 +353,15 @@ int16 Room51::cut_serv(int16 frame) {
 
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
-		assert(t_nr >= 0 && t_nr < 5);
-		if (!_G(r51onOff)[t_nr]) {
-			det->start_detail(t_nr, 1, ANI_VOR);
-			_G(r51onOff)[t_nr] = true;
-		} else if (!det->get_ani_status(t_nr)) {
-			det->start_detail(t_nr, 1, ANI_GO);
-			det->start_detail(t_nr + 2, 1, ANI_VOR);
-			uhr->reset_timer(obj_nr, 0);
-			_G(r51onOff)[t_nr] = false;
+		if (!_enemyFlag[obj_nr - 9]) {
+			det->start_detail(obj_nr, 1, ANI_VOR);
+			_enemyFlag[obj_nr - 9] = true;
+
+		} else if (!det->get_ani_status(obj_nr)) {
+			det->start_detail(obj_nr, 1, ANI_GO);
+			det->start_detail(obj_nr + 2, 1, ANI_VOR);
+			uhr->reset_timer(t_nr, 0);
+			_enemyFlag[obj_nr - 9] = false;
 		}
 	}
 }
