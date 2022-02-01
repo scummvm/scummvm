@@ -220,7 +220,7 @@ room_detail_info *Rdi;
 static_detail_info *Sdi;
 ani_detail_info *Adi;
 Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				0, 0, 0, 0, 0, 0, 0, 0, 0 };
 CustomInfo Ci;
 GotoPkt gpkt;
 

@@ -278,7 +278,7 @@ void Room28::set_pump() {
 				stop_person(P_HOWARD);
 				SetUpScreenFunc = nullptr;
 
-				if (flags.InitSound && _G(spieler).SpeechSwitch) {
+				if (_G(spieler).SpeechSwitch) {
 					g_engine->_sound->waitForSpeechToFinish();
 				}
 

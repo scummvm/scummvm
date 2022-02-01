@@ -389,7 +389,6 @@ void set_speed() {
 #define RAP10 9
 
 void sound_init() {
-	flags.InitSound = false;
 	_G(spieler).SoundSwitch = false;
 	_G(spieler).MusicSwitch = false;
 	frequenz = 22050;
@@ -402,9 +401,6 @@ void sound_init() {
 		_G(spieler).SoundVol = 63;
 		ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
 		ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
-		ailsnd->switchMusic(true);
-		ailsnd->switchSound(true);
-		flags.InitSound = true;
 
 		music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
@@ -430,7 +426,7 @@ void sound_init() {
 }
 
 void sound_exit() {
-	if (detect.SoundSource && flags.InitSound) {
+	if (detect.SoundSource) {
 		ailsnd->exitMixMode();
 		ailsnd->exit1();
 	}

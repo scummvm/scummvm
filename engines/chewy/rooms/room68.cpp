@@ -100,7 +100,7 @@ void Room68::setup_func() {
 	case 1:
 		if (det->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
-			if (_G(spieler).SpeechSwitch && flags.InitSound) {
+			if (_G(spieler).SpeechSwitch) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(_G(r68HohesC));
 				det->start_detail(_G(r68HohesC), 255, ANI_VOR);
