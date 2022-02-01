@@ -215,6 +215,9 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		case MKTAG('P', 'J', '9', '5'):
 			desc->version = 500;
 			break;
+		case MKTAG('P', 'J', '9', '7'):
+			desc->version = 600;
+			break;
 		case MKTAG('P', 'J', '0', '0'):
 			desc->version = 700;
 			break;
