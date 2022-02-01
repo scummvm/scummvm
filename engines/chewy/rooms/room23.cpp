@@ -104,7 +104,7 @@ int16 Room23::start_gleiter() {
 				} else if (_G(spieler).R23GleiterExit == 16) {
 					out->setze_zeiger(nullptr);
 					out->cls();
-					flic_cut(FCUT_019, CFO_MODE);
+					flic_cut(FCUT_019_01, CFO_MODE);
 					_G(spieler).R23GleiterExit = 25;
 
 					cur_2_inventory();

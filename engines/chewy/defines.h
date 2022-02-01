@@ -415,80 +415,168 @@ enum SetupScreenMode {
 #define CFO_MODE 0
 #define FLC_MODE 1
 #define ASF_MODE 2
-#define FCUT_001 0
-#define FCUT_002 1
-#define FCUT_003 2
-#define FCUT_004 3
-#define FCUT_005 4
-#define FCUT_006 5
-#define FCUT_007 6
-#define FCUT_008 7
-#define FCUT_009 8
-#define FCUT_010 9
-#define FCUT_011 10
-#define FCUT_012 11
-#define FCUT_013 12
-#define FCUT_014 13
-#define FCUT_015 14
-#define FCUT_016 15
-#define FCUT_017 16
-#define FCUT_018 17
-#define FCUT_019 18
-#define FCUT_029 29
-#define FCUT_030 30
-#define FCUT_031 31
-#define FCUT_032 32
-#define FCUT_033 33
-#define FCUT_034 34
-#define FCUT_035 35
-#define FCUT_036 36
-#define FCUT_037 37
-#define FCUT_038 38
-#define FCUT_039 39
-#define FCUT_040 40
-#define FCUT_041 41
-#define FCUT_042 42
-#define FCUT_043 43
-#define FCUT_044 44
-#define FCUT_045 45
-#define FCUT_046 46
-#define FCUT_047 47
-#define FCUT_048 48
-#define FCUT_049 49
-#define FCUT_050 50
-#define FCUT_051 51
-#define FCUT_052 52
-#define FCUT_053 53
-#define FCUT_054 54
-#define FCUT_055 55
-#define FCUT_056 56
-#define FCUT_057 57
-#define FCUT_058 58
-#define FCUT_059 59
-#define FCUT_060 60
-#define FCUT_061 61
-#define FCUT_062 62
-#define FCUT_063 63
-#define FCUT_064 64
-#define FCUT_065 65
-#define FCUT_066 66
-#define FCUT_067 67
-#define FCUT_068 68
-#define FCUT_069 69
-#define FCUT_070 70
-#define FCUT_071 71
-#define FCUT_072 72
-#define FCUT_073 73
-#define FCUT_074 74
-#define FCUT_075 75
-#define FCUT_076 76
-#define FCUT_077 77
-#define FCUT_078 78
-#define FCUT_079 79
-#define FCUT_080 80
-#define FCUT_081 81
-#define FCUT_082 82
-#define FCUT_083 83
+
+#define FCUT_001 0	// Chewy escapes the prison cell
+#define FCUT_002 1	// Burger
+#define FCUT_003 2	// Chewy mocks an alien and he trips on a rope
+#define FCUT_004 3	// Jumping rat-line creature
+#define FCUT_005 4	// Chewy sticks his hand in the rat's hole (custom callback: Room6::cut_serv1)
+#define FCUT_006 5	// Chewy sticks the burger in the rat's hole and catches it (custom callback: Room6::cut_serv2)
+#define FCUT_007 6	// Chewy pushes the big red button and a huge anvil drops on him
+#define FCUT_008 7	// Chewy paints "don't" in front of "push this"
+#define FCUT_009 8	// Alien pushes the big red button and a huge anvil drops on him
+#define FCUT_010 9	// Chewy tries the transporter (custom callback: Room11::cut_serv)
+#define FCUT_011 10	// Chewy uses a deflated alien in the transporter (custom callback: Room12::cut_serv)
+#define FCUT_012 11	// Four panel video, where Chewy flies in a spaceship
+#define FCUT_013 12	// Chewy messes with a conveyor belt
+#define FCUT_014 13	// Chewy is transported in place of an alien
+#define FCUT_015 14	// Chewy jumps on a conveyor belt
+#define FCUT_016 15	// Transporter
+#define FCUT_017 16	// Transporter
+#define FCUT_018 17	// Chewy drops from a conveyor belt into a dumpster
+#define FCUT_019_01 18	// Space chase: Chewy escapes F5 with spaceship
+#define FCUT_019_02 19	// Space chase: Spaceship flight
+#define FCUT_019_03 20  // Space chase: Spaceship flight
+#define FCUT_019_04 21	// Space chase: Aliens chasing Chewy's spaceship
+#define FCUT_019_05 22  // Space chase: Dogfight with Chewy and alien spaceship
+#define FCUT_019_06 23  // Space chase: Chewy's spaceship enters bumper field and black hole
+#define FCUT_019_07 24  // Space chase: Chewy's spaceship travels through black hole
+#define FCUT_019_08 25  // Space chase: Chewy's spaceship approaches earth
+#define FCUT_019_09 26  // Space chase: Chewy's spaceship starts descending
+#define FCUT_019_10 27  // Space chase: Chewy's spaceship approaches farm
+#define FCUT_019_11 28	// Space chase: Chewy's spaceship performs crash landing near farm
+#define FCUT_029 29 // Chewy wakes up after crash landing
+#define FCUT_030 30	// Chewy douses shaceship fire
+#define FCUT_031 31	// Chewy uses kitchen appliance
+#define FCUT_032 32	// TV: Farmer speaking (custom callback: Room39::setup_func)
+#define FCUT_033 33	// TV: Gasp ghost show intro
+#define FCUT_034 34 // TV: Gasp ghost show (custom callback: Room39::setup_func)
+#define FCUT_035 35 // TV: Book sale show (custom callback: Room39::setup_func)
+#define FCUT_036 36	// TV: Laura letter - head chopping block
+#define FCUT_037 37 // TV: Tied girl and aliens (custom callback: Room39::setup_func)
+#define FCUT_038 38 // TV: Flap news (custom callback: Room39::setup_func)
+#define FCUT_039 39 // TV: Flap news with alien (custom callback: Room39::setup_func)
+#define FCUT_040 40 // TV: Cooking show (custom callback: Room39::setup_func)
+#define FCUT_041 41	// Using translator on TV to learn English
+#define FCUT_042 42	// Turning on TV
+#define FCUT_043 43	// Chewy trying to wake up Howard
+#define FCUT_044 44	// Chewy using head band with typewriter
+#define FCUT_045 45	// Using translator on cat
+#define FCUT_046 46	// Using rat in the attic
+#define FCUT_047 47	// Using chicken feed on seesaw 
+#define FCUT_048 48	// Using fishing pole and bone to grab the dog dentures
+#define FCUT_049 49	// Closeup of Chewy having taken the dog dentures
+#define FCUT_050 50	// Barking dog
+#define FCUT_051 51	// Barking dog without dentures
+#define FCUT_052 52 // Using translator on chicken
+#define FCUT_053 53	// Chewy watching a fight
+#define FCUT_054 54	// Chewy mocking animal
+#define FCUT_055 55	// Using rat on old car
+#define FCUT_056 56	// Using rat in front of old car, flower appears
+#define FCUT_057 57	// Chewy with pumpkin head in the mail office using the vending machine
+#define FCUT_058 58	// Zombie girl jumping on train tracks
+#define FCUT_059 59	// Zombie girl talking to the pumpkin dummy, causing its head to explode
+#define FCUT_060 60	// Zombie girl talking to the pumpkin dummy and crashing into the store
+#define FCUT_061 61 // Zombie girl getting scared, shrinks and is placed in bottle by Howard (custom callback: Room43::setup_func)
+#define FCUT_062 62	// Zombie girl talks from inside the bottle
+#define FCUT_063 63	// Howard and Chewy walking beside a moving truck
+#define FCUT_064 64	// Giant pumpkin bursts through the house
+#define FCUT_065 65	// Policeman fighting Howard and Chewy
+#define FCUT_066 66 // Policeman loses from Howard and Chewy
+#define FCUT_067 67	// Chewy throws smoke at kid, so it spits a chewing gum at Howard
+#define FCUT_068 68	// Man runs out of room full of spiders
+#define FCUT_069 69	// Chewy enters phone booth, transforms into blonde woman
+#define FCUT_070 70	// Woman runs out of room full of spiders
+#define FCUT_071 71	// Best seller book presentation
+#define FCUT_072 72	// Chewy removes his woman disguise
+#define FCUT_073 73	// Train moving
+#define FCUT_074 74	// Howard and Chewy at docks, another man appears
+#define FCUT_075 75	// Howard and Chewy at docks, get thrown out of store
+#define FCUT_076 76	// Howard inside box, lid closes
+#define FCUT_077 77	// Chewy turns TV host into alien
+#define FCUT_078 78	// Fire alarm in TV console room
+#define FCUT_079 79	// Running away in the sewers
+#define FCUT_080 80	// Gasp ghost show TV set, rain starts
+#define FCUT_081 81	// Gasp ghost show TV set, Chewy and alien
+#define FCUT_082 82	// Gasp ghost show TV set, large monster prop is dropped on alien
+#define FCUT_083 83	// Lady screaming at piranha in cocktail glass
+#define FCUT_084 84 // Dropping inside trap in jungle
+#define FCUT_085 85 // Dropping inside trap in jungle (with Howard)
+#define FCUT_086 86 // King kong chasing hunters
+#define FCUT_087 87 // King kong fights alien spaceships
+#define FCUT_088 88 // King kong shouting
+#define FCUT_089 89	// Lasers shot at heroes outside temple (custom callback: Room87::proc5)
+#define FCUT_090 90	// Aliens abduct Nichelle
+#define FCUT_091 91 // Alien ship flies away with Nichelle
+#define FCUT_092 92 // Chewy taunts aliens opposite a cave
+#define FCUT_093 93 // Chewy, pink ball and statue turning into pink alien
+#define FCUT_094 94 // Pink alien talking (custom callback: Room87::proc3)
+#define FCUT_095 95 // Pink alien talking (custom callback: Room87::proc5)
+#define FCUT_096 96	// Pink alien jumping down
+#define FCUT_097 97 // Aliens coming out of door and shooting
+#define FCUT_098 98	// Chewy and pink alien running away from aliens
+#define FCUT_099 99	// Pink alien taking pink ball
+#define FCUT_100 100 // Heroes running away from aliens
+#define FCUT_101 101 // Heroes falling off waterfall
+#define FCUT_102 102 // Spaceship flying away from jungle and King Kong
+#define FCUT_103 103 // Spaceship flying
+#define FCUT_104 104 // Howard and Chewy beaming down
+#define FCUT_105 105 // Spaceship beams up the heroes and flies away
+#define FCUT_106 106 // Pink alien beams down the heroes
+#define FCUT_107 107 // Chewy shooting at slime police zeppelin (custom callback: Room90::proc5)
+#define FCUT_108 108 // Aliens entering hotel
+#define FCUT_109 109 // Rat jumping closeup
+#define FCUT_110 110 // Aliens at docks
+#define FCUT_111 111 // Rat closeup
+#define FCUT_112 112 // Alien band playing music (custom callback: Room56::proc1)
+#define FCUT_113 113 // Howard and Chewy beaming up
+#define FCUT_114 114 // Howard and Chewy opening a door leading outside building
+#define FCUT_115 115 // Aliens falling off building
+#define FCUT_116 116 // Ship in ocean
+#define FCUT_117 117 // Volcano erupting, F5 emerges from inside
+#define FCUT_118 118 // Ship flying above town
+#define FCUT_119 119 // Ship flying above town
+#define FCUT_120 120 // Howard and Chewy beaming down, shooting starts
+#define FCUT_121 121 // Zombie sheriff shoots small winding pink aliens
+#define FCUT_122 122 // Alien chases small winding pink alien
+#define FCUT_123 123 // Howard and Chewy on a wagon jumping a gap on train track
+#define FCUT_124 124 // Howard and Chewy on wagon
+#define FCUT_125 125 // Wagon crashes into alien
+#define FCUT_126 126 // Wagon running next to shooting alien
+#define FCUT_127 127 // Wagon reaching the end of the tracks
+#define FCUT_128 128 // Wagon reaching bridge
+#define FCUT_129 129 // Wagon crossing bridge
+#define FCUT_130 130 // Wagon crossing bridge
+#define FCUT_131 131 // Wagon moving
+#define FCUT_132 132 // Wagon moving
+#define FCUT_133 133 // Howard and Chewy on wagon
+#define FCUT_134 134 // Red spaceships (custom callback: flic_user_function)
+#define FCUT_135 135 // Red spaceships (custom callback: flic_user_function)
+#define FCUT_136 136 // Red spaceship shooting spaceship (custom callback: flic_user_function)
+#define FCUT_137 137 // Dogfight between red spaceship and spaceship (custom callback: flic_user_function)
+#define FCUT_138 138 // Spaceships flying from F5 (custom callback: flic_user_function)
+#define FCUT_139 139 // Chewy's spaceship enters bumper field (custom callback: flic_user_function)
+#define FCUT_140 140 // Purple aliens talking from inside spaceships (custom callback: flic_user_function)
+#define FCUT_141 141 // Purple alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_142 142 // Purple alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_143 143 // Purple alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_144 144 // Purple alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_145 145 // Purple alien talking from inside spaceship
+#define FCUT_146 146 // Purple alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_147 147 // Red space ship approaching Earth (custom callback: flic_user_function)
+#define FCUT_148 148 // Purple alien entering F5 and getting pink orb (custom callback: flic_user_function)
+#define FCUT_149 149 // Space ship shooting green bullet (custom callback: flic_user_function)
+#define FCUT_150 150 // Space ship generating force field (custom callback: flic_user_function)
+#define FCUT_151 151 // Alien talking from inside spaceship (custom callback: flic_user_function)
+#define FCUT_152 152 // Purple alien crash landing outside temple, natives appear (custom callback: flic_user_function)
+#define FCUT_153 153 // Red space ship crash landing in jungle (custom callback: flic_user_function)
+#define FCUT_154 154 // Red space ship being chased (custom callback: flic_user_function)
+#define FCUT_155 155 // Intro logos (German)
+#define FCUT_156 156 // Red space ship entering black hole (custom callback: flic_user_function)
+#define FCUT_157 157 // Red space ship travelling inside black hole (custom callback: flic_user_function)
+#define FCUT_158 158 // Howard and Chewy waking up
+#define FCUT_159 159 // Credits
+#define FCUT_155 160 // Intro logos (English)
 
 #define AUSGANG_LINKS 1
 #define AUSGANG_RECHTS 2
