@@ -59,7 +59,7 @@ void Room94::entry() {
 		test_intro(30);
 		fx_blend = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
-		_G(spieler).r93_word18DB2C = _G(spieler).scrollx;
+		_G(spieler).r94Scrollx = _G(spieler).scrollx;
 		switch_room(93);
 		return;
 	}
