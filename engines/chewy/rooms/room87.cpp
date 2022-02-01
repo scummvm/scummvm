@@ -148,7 +148,6 @@ int16 Room87::proc3(int16 key) {
 }
 
 int16 Room87::proc5(int16 key) {
-	serve_speech();
 	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 	return 0;
 }

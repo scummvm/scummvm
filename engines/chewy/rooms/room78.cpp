@@ -24,14 +24,15 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room78.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room78::entry() {
 	_G(spieler).r76State = -1;
-	det->enable_sound(0, 1);
-	det->play_sound(0, 1);
+	g_engine->_sound->playSound(0, 1);
+	g_engine->_sound->playSound(0, 1, false);
 	hide_cur();
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).PersonHide[P_CHEWY] = true;

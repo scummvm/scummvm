@@ -25,13 +25,14 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room42.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room42::entry() {
 	if (!_G(spieler).R42BeamterWach) {
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0);
 		det->start_detail(0, 255, ANI_VOR);
 	}
 
@@ -43,7 +44,7 @@ void Room42::entry() {
 			_G(timer_nr)[0] = room->set_timer(8, 5);
 			det->set_static_ani(8, -1);
 			_G(spieler).R42BeamterWach = true;
-			det->disable_sound(0, 0);
+			g_engine->_sound->stopSound(0);
 
 			SetUpScreenFunc = setup_func;
 
@@ -192,7 +193,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 			break;
 
 		case 2:
-			det->play_sound(4, 0);
+			g_engine->_sound->playSound(4);
 			start_detail_wait(4, 13, ANI_VOR);
 			break;
 
@@ -210,7 +211,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 		}
 
 		det->stop_detail(0);
-		det->disable_sound(0, 0);
+		g_engine->_sound->stopSound(0);
 		start_detail_wait(1, 1, ANI_VOR);
 		det->start_detail(2, 255, ANI_VOR);
 
@@ -221,8 +222,8 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		det->stop_detail(2);
 		det->start_detail(0, 255, ANI_VOR);
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 	}
 
 	_G(spieler).PersonHide[P_CHEWY] = true;

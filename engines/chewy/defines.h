@@ -179,7 +179,6 @@ enum SetupScreenMode {
 #define INV_USE_IDX "txt/inv_use.idx"
 
 #define DETAIL_TVP "sound/details.tap"
-#define SPEECH_TVP "sound/speech.tvp"
 
 #define ADSH_TMP "adsh.tmp"
 

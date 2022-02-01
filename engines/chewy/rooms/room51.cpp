@@ -26,6 +26,7 @@
 #include "chewy/room.h"
 #include "chewy/rooms/room51.h"
 #include "chewy/rooms/room65.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -236,8 +237,8 @@ int16 Room51::use_door(int16 txt_nr) {
 			auto_move(9, P_CHEWY);
 
 			if (!_G(spieler).R51KillerWeg) {
-				det->enable_sound(2, 0);
-				det->play_sound(2, 0);
+				g_engine->_sound->playSound(2, 0);
+				g_engine->_sound->playSound(2);
 				det->show_static_spr(1);
 				start_detail_wait(2, 1, ANI_VOR);
 				det->start_detail(5, 255, ANI_VOR);
@@ -248,12 +249,12 @@ int16 Room51::use_door(int16 txt_nr) {
 					det->stop_detail(5);
 					start_ani_block(5, ABLOCK37);
 					det->hide_static_spr(1);
-					det->disable_sound(2, 0);
+					g_engine->_sound->stopSound(0);
 					start_aad_wait(284, -1);
 				} else {
 					_G(spieler).R51KillerWeg = true;
 					start_aad_wait(290, -1);
-					det->disable_sound(2, 0);
+					g_engine->_sound->stopSound(0);
 					out->ausblenden(1);
 					out->setze_zeiger(nullptr);
 					out->cls();

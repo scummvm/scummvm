@@ -25,6 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/flic.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -615,39 +616,31 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 		case PLAY_VOC:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
-			} else
-#ifndef AIL
-				snd->playVoc(sounds[para[0]], para[1], para[2], para[3]);
-#else
-				if (para[3] == 255)
-					para[3] = 0;
-				else
-					para[3] += 1;
-			ailsnd->playVoc(sounds[para[0]], para[1], para[2], para[3]);
-#endif
+			} else {
+				uint16 number = para[0];
+				uint16 channel = para[1];
+				uint16 volume = para[2] * Audio::Mixer::kMaxChannelVolume / 63;
+				uint16 repeat = para[3];
+				assert(number < MAX_SOUND_EFFECTS);
 
+				Chewy::Sound *sound = g_engine->_sound;
+				sound->setSoundVolume(volume);
+				sound->playSound(sounds[number], Ssize[number], channel, repeat, DisposeAfterUse::NO);
+			}
 			break;
 
 		case SET_SVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
 			} else
-#ifndef AIL
-				snd->setSoundMasterVol(para[0]);
-#else
-				ailsnd->setSoundMasterVol(para[0]);
-#endif
+				g_engine->_sound->setSoundVolume(para[0]);
 			break;
 
 		case SET_CVOL:
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
 			} else
-#ifndef AIL
-				snd->setChannelVol((byte)para[0], (byte)para[1]);
-#else
-				ailsnd->setChannelVol((byte)para[0], (byte)para[1]);
-#endif
+				g_engine->_sound->setSoundChannelVolume(para[0], para[1]);
 			break;
 
 		case FREE_EFFECT:
@@ -683,9 +676,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
 			} else
-#ifdef AIL
-				ailsnd->setStereoPos(para[0], para[1]);
-#endif
+				g_engine->_sound->setSoundChannelBalance(para[0], para[1]);
 			break;
 
 		case SET_SPEED:

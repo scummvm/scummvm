@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/room23.h"
 #include "chewy/rooms/room25.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -44,8 +45,8 @@ static const MovLine SURIMY_MPKT[2] = {
 
 void Room25::entry() {
 	if (!_G(spieler).R25GleiteLoesch) {
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 
 		for (int i = 0; i < 9; ++i)
 			det->start_detail(i, 255, ANI_VOR);
@@ -73,8 +74,8 @@ void Room25::entry() {
 		_G(spieler).R25FirstEntry = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		flic_cut(FCUT_029, CFO_MODE);
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 		fx_blend = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -109,7 +110,7 @@ int16 Room25::gleiter_loesch() {
 			obj->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			atds->set_ats_str(219, 1, ATS_DATEI);
 			atds->set_ats_str(187, 1, ATS_DATEI);
-			det->disable_sound(0, 0);
+			g_engine->_sound->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)
 				det->stop_detail(i);

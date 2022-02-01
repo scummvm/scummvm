@@ -32,42 +32,7 @@ void checkSampleEnd();
 void DecodePatternLine();
 void DecodeChannel(int16 ch);
 
-class ailScummVM {
-private:
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandles[2];
-public:
-	ailScummVM();
-
-	/**
-	 * Plays a VOC file from the passed stream, and takes
-	 * responsibility for freeing it when done
-	 */
-	void playSpeech(int channel, Common::SeekableReadStream *src);
-
-	/**
-	 * Returns true if one of the two speech channels are
-	 * currently playing
-	 */
-	bool isSpeechActive(int channel = 0) const;
-
-	/**
-	 * Helper method to wait until any playing speech is finished
-	 */
-	void waitForSpeechToFinish();
-
-	/**
-	 * Returns true if subtitles are enabled
-	 */
-	bool hasSubtitles();
-
-	/**
-	 * Returns true if speech is muted
-	 */
-	bool isSpeechMuted();
-};
-
-class ailclass : public ailScummVM {
+class ailclass {
 public:
 	ailclass();
 	~ailclass();
@@ -78,12 +43,9 @@ public:
 
 	void setMusicMasterVol(int16 vol);
 	void setSoundMasterVol(int16 vol);
-	void setStereoPos(int16 channel, int16 pos);
-	void setChannelVol(uint8 channel, uint8 vol);
 	void disableSound();
 
 	void getMusicInfo(musik_info *mi);
-	void getChannelInfo(channel_info *mi, int16 channel);
 	int16 musicPlaying();
 	int16 getSampleStatus(int16 channel);
 
@@ -99,23 +61,12 @@ public:
 	void fadeIn(uint16 delay);
 	void fadeOut(uint16 delay);
 
-	void playVoc(byte *anf_adr, int16 channel, int16 vol, int16 rep);
-	void playRaw(int16 channel, char *voc, uint32 len, uint16 frequency, int16 volume, int16 rep);
 	void endSound();
 	void stopSound();
-	void continueSound();
-	void stopSample(int16 channel);
-	void continueSample(int16 channel);
-	void endSample(int16 channel);
-	void initDoubleBuffer(byte *b1, byte *b2, uint32 len, int16 channel);
 
-	void startDbVoc(Stream *voc, int16 channel, int16 vol);
-	void serveDbSamples();
 	void switchMusic(bool onOff);
 	void switchSound(bool onOff);
 };
-
-extern void serve_speech();
 
 } // namespace Chewy
 

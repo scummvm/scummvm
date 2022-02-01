@@ -25,6 +25,7 @@
 #include "chewy/defines.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -88,7 +89,6 @@ atdsys::atdsys() {
 	atdsv.Display = DISPLAY_TXT;
 	atdsv.DiaNr = -1;
 	atdsv.aad_str = 0;
-	atdsv.SpeechHandle = nullptr;
 	atdsv.VocNr = -1;
 	ssret.Next = false;
 	ssr = &ssret;
@@ -133,7 +133,7 @@ void atdsys::updateSoundSettings() {
 
 	if (_hasSpeech) {
 		// TODO: In the future, properly implement DISPLAY_ALL
-		if (!ailsnd->isSpeechMuted())
+		if (!g_engine->_sound->isSpeechMuted())
 			atdsv.Display = DISPLAY_VOC;
 	}
 }
@@ -310,10 +310,6 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	}
 
 	return handle;
-}
-
-void atdsys::set_speech_handle(Stream *stream) {
-	atdsv.SpeechHandle = stream;
 }
 
 void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
@@ -968,22 +964,14 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 #ifndef SCRIPT
 			else if (atdsv.Display == DISPLAY_VOC) {
 				if (atdsv.VocNr != aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) {
-					if (atdsv.SpeechHandle) {
-						atdsv.VocNr = aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
-						if (atdsv.VocNr != -1) {
-							mem->file->select_pool_item(atdsv.SpeechHandle, atdsv.VocNr);
-
-							int16 vocx = spieler_vector[aadv.StrHeader->AkPerson].Xypos[0] -
-							             _G(spieler).scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
-							ailsnd->setStereoPos(0, get_stereo_pos(vocx));
-							ailsnd->startDbVoc(atdsv.SpeechHandle, 0, 63);
-							ailsnd->setStereoPos(0, get_stereo_pos(vocx));
-							aadv.DelayCount = 1;
-						}
-					} else {
-						error("Error reading from sprachausgabe.tvp");
-					}
+					atdsv.VocNr = aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
+					g_engine->_sound->playSpeech(atdsv.VocNr);
+					int16 vocx = spieler_vector[aadv.StrHeader->AkPerson].Xypos[0] -
+								 _G(spieler).scrollx + spieler_mi[aadv.StrHeader->AkPerson].HotX;
+					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
+					aadv.DelayCount = 1;
 				}
+
 				for (int16 i = 0; i < ssr->Anz; i++) {
 					tmp_ptr += strlen(ssr->StrPtr[i]) + 1;
 				}
@@ -1370,7 +1358,10 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 	return txt_nr;
 }
 
-int16 atdsys::get_stereo_pos(int16 x) {
+int16 atdsys::getStereoPos(int16 x) {
+	// TODO: Convert to ScummVM's balance (-127 ... 0 ... 127)
+	return 0;
+#if 0
 	float fx_ = (float)x;
 
 	fx_ /= 2.5;
@@ -1378,6 +1369,7 @@ int16 atdsys::get_stereo_pos(int16 x) {
 		fx_ += 1.0;
 
 	return (int16)fx_;
+#endif
 }
 
 } // namespace Chewy

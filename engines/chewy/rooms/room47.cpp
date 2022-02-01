@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/rooms/room47.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -65,8 +66,8 @@ int16 Room47::use_knopf(int16 txt_nr) {
 			break;
 		}
 
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 		++_G(spieler).R47Schloss[k_nr];
 
 		if (_G(spieler).R47Schloss[k_nr] > 9)

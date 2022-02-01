@@ -96,9 +96,6 @@ public:
 	void load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr);
 
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
-	void load_sound();
-
-	Stream *get_sound_handle();
 
 	byte *get_ablage(int16 nr);
 

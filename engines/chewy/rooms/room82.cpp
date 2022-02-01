@@ -26,13 +26,14 @@
 
 #include "chewy/rooms/room82.h"
 #include "chewy/rooms/room66.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room82::entry() {
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;

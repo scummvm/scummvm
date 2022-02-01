@@ -22,10 +22,12 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/types.h"
+#include "chewy/global.h"
 
 namespace Chewy {
 
@@ -40,18 +42,18 @@ Sound::~Sound() {
 	delete _speechRes;
 }
 
-void Sound::playSound(int num, bool loop, uint channel) {
+void Sound::playSound(int num, uint channel, bool loop) {
 	SoundChunk *sound = _soundRes->getSound(num);
 	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);
 
-	playSound(data, sound->size, loop, channel);
+	playSound(data, sound->size, channel, loop);
 
 	delete[] sound->data;
 	delete sound;
 }
 
-void Sound::playSound(uint8 *data, uint32 size, bool loop, uint channel, DisposeAfterUse::Flag dispose) {
+void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, DisposeAfterUse::Flag dispose) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 	                                 Audio::makeRawStream(data,
 	                                         size, 22050, Audio::FLAG_UNSIGNED,
@@ -157,6 +159,11 @@ void Sound::playSpeech(int num) {
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 
+	// Wait for speech to finish
+	while (isSpeechActive() && !SHOULD_QUIT) {
+		set_up_screen(DO_SETUP);
+	}
+
 	delete[] sound->data;
 	delete sound;
 }
@@ -254,6 +261,22 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 	modPtr += 4;
 
 	free(modData);
+}
+
+void Sound::waitForSpeechToFinish() {
+	if (flags.InitSound && _G(spieler).SpeechSwitch) {
+		while (g_engine->_sound->isSpeechActive() && !SHOULD_QUIT) {
+			set_up_screen(DO_SETUP);
+		}
+	}
+}
+
+bool Sound::hasSubtitles() {
+	return ConfMan.getBool("subtitles");
+}
+
+bool Sound::isSpeechMuted() {
+	return ConfMan.getBool("speech_mute");
 }
 
 }

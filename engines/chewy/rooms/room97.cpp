@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room97.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -37,8 +38,8 @@ int Room97::_word18DB38;
 bool Room97::_bool18DB3A;
 
 void Room97::entry() {
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	SetUpScreenFunc = setup_func;
 	_G(zoom_horizont) = 0;
 
@@ -84,9 +85,9 @@ void Room97::entry() {
 			det->stop_detail(23 + i);
 			det->start_detail(27 + i, 255, ANI_VOR);
 		}
-		det->disable_sound(26, 0);
-		det->disable_sound(27, 0);
-		det->disable_sound(28, 0);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->stopSound(0);
 	}
 
 	if (_G(spieler).flags37_1)
@@ -336,8 +337,8 @@ void Room97::proc4() {
 		hide_cur();
 		spieler_mi[P_CHEWY].Mode = true;
 		stop_person(P_CHEWY);
-		det->enable_sound(9, 0);
-		det->disable_sound(9, 1);
+		g_engine->_sound->playSound(9, 0);
+		g_engine->_sound->stopSound(1);
 		start_detail_wait(9, 1, ANI_VOR);
 		det->show_static_spr(21);
 
@@ -356,8 +357,8 @@ void Room97::proc4() {
 
 		start_detail_wait(29, 1, ANI_VOR);
 		det->hide_static_spr(21);
-		det->enable_sound(9, 1);
-		det->disable_sound(9, 0);
+		g_engine->_sound->playSound(9, 1);
+		g_engine->_sound->stopSound(0);
 		start_detail_wait(9, 0, ANI_RUECK);
 
 		go_auto_xy(1008, 93, P_CHEWY, ANI_WAIT);
@@ -489,8 +490,8 @@ int Room97::proc8() {
 		auto_scroll(406, 0);
 		wait_show_screen(40);
 		det->stop_detail(24);
-		det->enable_sound(26, 0);
-		det->play_sound(26, 0);
+		g_engine->_sound->playSound(26, 0);
+		g_engine->_sound->playSound(26);
 		start_detail_wait(25, 1, ANI_VOR);
 		det->start_detail(26, 255, false);
 		det->stop_detail(23);
@@ -555,8 +556,8 @@ int Room97::proc10() {
 	hide_cur();
 	auto_move(8, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	det->enable_sound(7, 0);
-	det->disable_sound(7, 1);
+	g_engine->_sound->playSound(7, 0);
+	g_engine->_sound->stopSound(1);
 	start_detail_wait(7, 1, ANI_VOR);
 	det->show_static_spr(19);
 	_G(spieler).flags37_1 = true;
@@ -584,8 +585,8 @@ int Room97::proc11() {
 		auto_move(7, P_CHEWY);
 		start_spz(5, 255, false, P_CHEWY);
 		start_aad_wait(571, -1);
-		det->enable_sound(4, 0);
-		det->play_sound(4, 0);
+		g_engine->_sound->playSound(4, 0);
+		g_engine->_sound->playSound(4);
 		det->start_detail(4, 1, false);
 		auto_move(12, P_CHEWY);
 		start_spz_wait(64, 1, false, P_CHEWY);
@@ -700,8 +701,8 @@ void Room97::proc15() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		det->hide_static_spr(27);
 		start_detail_wait(18, 1, ANI_VOR);
-		det->enable_sound(8, 0);
-		det->disable_sound(8, 1);
+		g_engine->_sound->playSound(8, 0);
+		g_engine->_sound->stopSound(1);
 		start_detail_wait(8, 1, ANI_VOR);
 		det->show_static_spr(20);
 		auto_move(10, P_CHEWY);

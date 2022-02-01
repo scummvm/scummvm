@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room41.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -38,7 +39,7 @@ void Room41::entry() {
 	hide_cur();
 
 	if (!_G(spieler).R41LolaOk) {
-		det->play_sound(6, 0);
+		g_engine->_sound->playSound(6);
 
 		if (!flags.LoadGame) {
 			room->set_timer_status(0, TIMER_STOP);
@@ -194,7 +195,7 @@ int16 Room41::use_lola() {
 		action_flag = true;
 		_G(spieler).R41LolaOk = true;
 		auto_move(4, P_CHEWY);
-		det->disable_sound(6, 0);
+		g_engine->_sound->stopSound(0);
 		flic_cut(FCUT_057, CFO_MODE);
 		set_person_pos(127, 112, P_CHEWY, P_LEFT);
 		det->stop_detail(6);

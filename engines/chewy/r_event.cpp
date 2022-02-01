@@ -97,7 +97,7 @@ void timer_action(int16 t_nr) {
 	int16 ani_nr = t_nr - room->room_timer.TimerStart;
 	bool default_flag = false;
 
-	if (ailsnd->isSpeechActive())
+	if (g_engine->_sound->isSpeechActive())
 		return;
 
 #define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr); break;
@@ -356,7 +356,7 @@ void enter_room(int16 eib_nr) {
 		Room17::entry();
 		if (_G(spieler).SoundSwitch) {
 			if (!_G(spieler).R17EnergieOut)
-				det->play_sound(15, 0);
+				g_engine->_sound->playSound(15);
 		}
 		break;
 
@@ -369,7 +369,7 @@ void enter_room(int16 eib_nr) {
 	case 24:
 		Room24::entry();
 		if (_G(spieler).SoundSwitch)
-			det->play_sound(17, 0);
+			g_engine->_sound->playSound(17);
 		break;
 
 	ENTRY(25);
@@ -796,7 +796,6 @@ void print_rows(int16 id) {
 int16 flic_user_function(int16 keys) {
 	int ret;
 
-	serve_speech();
 	if (atds->aad_get_status() != -1) {
 		switch (flic_val1) {
 		case 579:
@@ -952,9 +951,7 @@ static void flic_proc1() {
 		atds->print_aad(254, 0);
 
 		if (flags.InitSound && _G(spieler).SpeechSwitch) {
-			while (ailsnd->isSpeechActive() && !SHOULD_QUIT) {
-				ailsnd->serveDbSamples();
-			}
+			g_engine->_sound->waitForSpeechToFinish();
 		} else {
 			delay(6000);
 		}
@@ -1781,14 +1778,13 @@ void flic_cut(int16 nr, int16 mode) {
 		error("flic_cut error");
 	}
 
-	ailsnd->endSound();
+	g_engine->_sound->stopSound();
 	g_events->delay(50);
 	ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
 	ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
 
 	if (nr < 1000 && nr != 135) {
 		load_room_music(_G(spieler).PersonRoomNr[0]);
-		room->load_sound();
 
 		if (_G(spieler).SpeechSwitch)
 			det->enable_room_sound();
@@ -2030,11 +2026,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_TUERKNOPF_R18:
 		if (_G(spieler).R18DoorBruecke) {
-			det->disable_sound(19, 0);
-			det->enable_sound(19, 1);
+			g_engine->_sound->stopSound(0);
+			g_engine->_sound->playSound(19, 1);
 		} else {
-			det->enable_sound(19, 0);
-			det->disable_sound(19, 1);
+			g_engine->_sound->playSound(19, 0);
+			g_engine->_sound->stopSound(1);
 		}
 
 		if (!_G(spieler).R6DoorLeftF) {

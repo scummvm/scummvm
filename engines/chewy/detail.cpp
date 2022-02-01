@@ -22,6 +22,7 @@
 #include "chewy/detail.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -480,24 +481,18 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 			} else
 				out->scale_set(rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
 
+			Sound *sound = g_engine->_sound;
+
 			for (int16 k = 0; k < MAX_SOUNDS; k++) {
-				int16 sound_effect = adiptr->sfx.sound_index[k];
-				if ((adiptr->sfx.sound_enable[k]) && (sound_effect != -1) &&
-				        (rdi.sample[sound_effect])) {
+				int16 soundEffect = adiptr->sfx.sound_index[k];
+				if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
+				        (rdi.sample[soundEffect])) {
 					if ((adiptr->sfx.sound_start[k] == adiptr->ani_count) &&
 					        (!adiptr->delay_count)) {
-#ifdef AIL
-						ailsnd->setStereoPos(adiptr->sfx.kanal[k],
-						                       adiptr->sfx.stereo[k]);
-						ailsnd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
-						                 adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
-#else
-#if 0
-						snd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
-						              adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
-#endif
-						warning("STUB: detail::plot_ani_details()");
-#endif
+						const uint channel = adiptr->sfx.kanal[k] & 7;
+						sound->setSoundChannelBalance(channel, adiptr->sfx.stereo[k]);
+						sound->setSoundChannelVolume(channel, adiptr->sfx.volume[k]);
+						sound->playSound(soundEffect, channel,	adiptr->sfx.repeats[k]);
 					}
 				}
 			}
@@ -645,23 +640,17 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 	if (mode)
 		out->sprite_set(spr_info.Image, spr_info.X, spr_info.Y, 0);
 
+	Sound *sound = g_engine->_sound;
+
 	for (int16 k = 0; k < MAX_SOUNDS; k++) {
-		int16 sound_effect = adiptr->sfx.sound_index[k];
-		if ((adiptr->sfx.sound_enable[k] != false) && (sound_effect != -1) &&
-		        (rdi.sample[sound_effect])) {
+		int16 soundEffect = adiptr->sfx.sound_index[k];
+		if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
+		        (rdi.sample[soundEffect])) {
 			if (adiptr->sfx.sound_start[k] == spr_nr) {
-#ifdef AIL
-				ailsnd->setStereoPos(adiptr->sfx.kanal[k],
-				                       adiptr->sfx.stereo[k]);
-				ailsnd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
-				                 adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
-#else
-				warning("STUB: detail::plot_detail_sprite()");
-#if 0
-				snd->playVoc(rdi.sample[sound_effect], adiptr->sfx.kanal[k],
-				              adiptr->sfx.volume[k], adiptr->sfx.repeats[k]);
-#endif
-#endif
+				const uint channel = adiptr->sfx.kanal[k] & 7;
+				sound->setSoundChannelBalance(channel, adiptr->sfx.stereo[k]);
+				sound->setSoundChannelVolume(channel, adiptr->sfx.volume[k]);
+				sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k]);
 			}
 		}
 	}
@@ -697,156 +686,37 @@ void detail::set_sound_area(byte *buffer, uint32 size) {
 	SoundBufferSize = size;
 }
 
-void detail::load_room_sounds(Stream *tvp_handle) {
-	if (tvp_handle) {
-		byte *workbuf = SoundBuffer;
-		int16 break_flag = false;
-
-		if (workbuf) {
-			for (int16 i = 0; i < MAXDETAILS * MAX_SOUNDS; i++)
-				rdi.sample[i] = nullptr;
-
-			uint32 allsize = 0;
-			for (int16 i = 0; (i < MAXDETAILS * MAX_SOUNDS) && (break_flag == false); i++) {
-				int16 index = rdi.tvp_index[i];
-				if ((index != -1) && (rdi.sample[i] == NULL)) {
-					mem->file->select_pool_item(tvp_handle, index);
-					uint32 size = mem->file->load_voc(tvp_handle, workbuf);
-
-					if (!modul) {
-						rdi.sample[i] = workbuf;
-						workbuf += size;
-						allsize += size;
-					} else {
-						break_flag = true;
-					}
-
-					if (allsize > SoundBufferSize) {
-						error("load_room_sounds error");
-					}
-				}
-			}
-		}
-	} else {
-		error("load_room_sounds error");
-	}
-}
-
-void detail::set_sound_para(int16 nr, sound_def_blk *sdb_src) {
-	sound_def_blk *sdb_dest = &rdi.Ainfo[nr].sfx;
-	memcpy(sdb_dest, sdb_src, sizeof(sound_def_blk));
-}
-
-void detail::get_sound_para(int16 nr, sound_def_blk *sdb_dest) {
-	sound_def_blk *sdb_src = &rdi.Ainfo[nr].sfx;
-	memcpy(sdb_dest, sdb_src, sizeof(sound_def_blk));
-}
-
-void detail::map_tvp2sound(int16 nr, int16 sslot, int16 tvp_index) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
-	remove_unused_samples();
-
-	bool found = false;
-	if (sdb->sound_index[sslot] != -1) {
-		for (int16 i = 0; (i < MAXDETAILS) && (!found); i++) {
-			for (int16 j = 0; (j < MAX_SOUNDS) && (!found); j++)
-				if ((rdi.Ainfo[i].sfx.sound_index[j] == sdb->sound_index[sslot]) &&
-				        (i != nr) && (j != sslot))
-					found = true;
-		}
-
-		if (!found) {
-			rdi.tvp_index[sdb->sound_index[sslot]] = -1;
-			sdb->sound_index[sslot] = -1;
-		}
-	}
-
-	found = false;
-	for (int16 i = 0; (i < MAXDETAILS * MAX_SOUNDS) && (!found); i++) {
-		if (rdi.tvp_index[i] == tvp_index) {
-			found = true;
-			sdb->sound_index[sslot] = i;
-		}
-	}
-
-	for (int16 i = 0; (i < MAXDETAILS * MAX_SOUNDS) && (!found); i++) {
-		if (rdi.tvp_index[i] == -1) {
-			found = true;
-			sdb->sound_index[sslot] = i;
-			rdi.tvp_index[i] = tvp_index;
-		}
-	}
-}
-
-void detail::disable_sound(int16 nr, int16 sslot) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
-	sdb->sound_enable[sslot] = 0;
-	ailsnd->endSample(sdb->kanal[sslot]);
-}
-
-void detail::enable_sound(int16 nr, int16 sslot) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
-	sdb->sound_enable[sslot] = 1;
-}
-
-void detail::play_sound(int16 nr, int16 sslot) {
-	warning("STUB: detail::play_sound()");
-#if 0
-	sound_def_blk *sdb;
-	sdb = &rdi.Ainfo[nr].sfx;
-	if ((sdb->sound_enable[sslot] != FALSE) && (sdb->sound_index[sslot] != -1) &&
-	        (rdi.sample[sdb->sound_index[sslot]])) {
-#ifdef AIL
-		ailsnd->setStereoPos(sdb->kanal[sslot], sdb->stereo[sslot]);
-		ailsnd->playVoc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
-		                 sdb->volume[sslot], sdb->repeats[sslot]);
-#else
-		snd->playVoc(rdi.sample[sdb->sound_index[sslot]], sdb->kanal[sslot],
-		              sdb->volume[sslot], sdb->repeats[sslot]);
-#endif
-	}
-#endif
-}
-
 void detail::disable_detail_sound(int16 nr) {
 	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
-		sdb->sound_enable[i] = 0;
+		sdb->sound_enable[i] = false;
 }
 
 void detail::enable_detail_sound(int16 nr) {
 	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
 		if (sdb->sound_index[i] != -1)
-			sdb->sound_enable[i] = 1;
+			sdb->sound_enable[i] = true;
 }
 
 void detail::play_detail_sound(int16 nr) {
-	warning("STUB: detail::play_detail_sound()");
-#if 0
-	sound_def_blk *sdb;
-	int16 k;
-	sdb = &rdi.Ainfo[nr].sfx;
-	for (k = 0; k < MAX_SOUNDS; k++) {
-		if ((sdb->sound_enable[k] != FALSE) && (sdb->sound_index[k] != -1) &&
+	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
+	Sound *sound = g_engine->_sound;
+	for (int16 k = 0; k < MAX_SOUNDS; k++) {
+		if ((sdb->sound_enable[k]) && (sdb->sound_index[k] != -1) &&
 		        (rdi.sample[sdb->sound_index[k]])) {
-#ifdef AIL
-			ailsnd->setStereoPos(sdb->kanal[k], sdb->stereo[k]);
-			ailsnd->playVoc(rdi.sample[sdb->sound_index[k]], sdb->kanal[k],
-			                 sdb->volume[k], sdb->repeats[k]);
-#else
-			snd->playVoc(rdi.sample[sound_effect], sdb->kanal[k],
-			              sdb->volume[k], sdb->repeats[k]);
-#endif
+			const uint channel = sdb->kanal[k] & 7;
+			sound->setSoundChannelBalance(channel, sdb->stereo[k]);
+			sound->setSoundChannelVolume(channel, sdb->volume[k]);
+			sound->playSound(sdb->sound_index[k], channel, sdb->repeats[k]);
 		}
 	}
-#endif
 }
 
 void detail::clear_detail_sound(int16 nr) {
 	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
 	for (short i = 0; i < MAX_SOUNDS; i++) {
-		sdb->sound_enable[i] = 0;
+		sdb->sound_enable[i] = false;
 		sdb->sound_index[i] = -1;
 		sdb->sound_start[i] = 0;
 		sdb->kanal[i] = 0;
@@ -872,7 +742,7 @@ void detail::clear_room_sound() {
 	for (int16 j = 0; j < MAXDETAILS; j++) {
 		sound_def_blk *sdb = &rdi.Ainfo[j].sfx;
 		for (int16 i = 0; i < MAX_SOUNDS; i++) {
-			sdb->sound_enable[i] = 0;
+			sdb->sound_enable[i] = false;
 			sdb->sound_index[i] = -1;
 			sdb->sound_start[i] = 0;
 			sdb->kanal[i] = 0;
@@ -886,15 +756,6 @@ void detail::clear_room_sound() {
 		rdi.sample[i] = nullptr;
 	}
 }
-#ifdef DETEDIT
-
-void detail::shadow_room(int16 mode) {
-	if (mode == SAVE_ROOM)
-		memcpy(&rdi_shadow, &rdi, sizeof(room_detail_info));
-	else
-		memcpy(&rdi, &rdi_shadow, sizeof(room_detail_info));
-}
-#endif
 
 void detail::remove_unused_samples() {
 	bool found = false;

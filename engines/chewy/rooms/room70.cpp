@@ -24,13 +24,14 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room70.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room70::entry(int16 eib_nr) {
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 100;

@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room17.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -291,7 +292,7 @@ int16 Room17::energie_hebel() {
 		obj->calc_rsi_flip_flop(SIB_HEBEL_R17);
 		_G(spieler).R17EnergieOut ^= 1;
 		atds->set_ats_str(142, TXT_MARK_LOOK, _G(spieler).R17EnergieOut, ATS_DATEI);
-		det->play_sound(12, 0);
+		g_engine->_sound->playSound(12);
 
 		if (!_G(spieler).R17EnergieOut) {
 			det->start_detail(1, 255, ANI_VOR);
@@ -302,13 +303,13 @@ int16 Room17::energie_hebel() {
 
 		atds->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
 		atds->set_ats_str(140, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
-		det->play_sound(12, 0);
+		g_engine->_sound->playSound(12);
 
 		if (_G(spieler).R17EnergieOut) {
-			det->disable_sound(15, 0);
+			g_engine->_sound->stopSound(0);
 		} else {
-			det->enable_sound(15, 0);
-			det->play_sound(15, 0);
+			g_engine->_sound->playSound(15, 0);
+			g_engine->_sound->playSound(15);
 		}
 	}
 

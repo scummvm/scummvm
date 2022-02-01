@@ -24,13 +24,14 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room72.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room72::entry(int16 eib_nr) {
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
 	

@@ -380,7 +380,6 @@ int16 Room39::setup_func(int16 frame) {
 		}
 	}
 
-	serve_speech();
 	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 
 	if (!_flag && atds->aad_get_status() == -1)

@@ -142,7 +142,6 @@ int16 Room6::cut_serv2(int16 frame) {
 	if (frame == 31)
 		start_aad(107, 0);
 
-	serve_speech();
 	return 0;
 }
 

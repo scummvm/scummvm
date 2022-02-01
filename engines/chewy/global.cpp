@@ -363,11 +363,8 @@ SplitStringInit ssi[AAD_MAX_PERSON] = {
 int16 frequenz;
 int16 CurrentSong = -1;
 bool savegameFlag;
-Stream *voc_handle;
 Stream *music_handle;
 int16 EndOfPool;
-Stream *speech_handle;
-byte *SpeechBuf[2];
 int timer_action_ctr;
 
 } // namespace Chewy

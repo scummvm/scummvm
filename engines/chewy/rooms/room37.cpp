@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room37.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -194,7 +195,7 @@ int16 Room37::use_glas() {
 			start_aad_wait(146, -1);
 			show_cur();
 			flags.NoScroll = false;
-			det->play_sound(3, 0);
+			g_engine->_sound->playSound(3);
 		} else {
 			auto_move(4, P_CHEWY);
 		}
@@ -233,8 +234,8 @@ void Room37::dog_bell() {
 			det->show_static_spr(9);
 			start_ani_block(3, ABLOCK31);
 			det->set_static_ani(3, -1);
-			det->enable_sound(3, 0);
-			det->play_sound(3, 0);
+			g_engine->_sound->playSound(3, 0);
+			g_engine->_sound->playSound(3);
 			enable_timer();
 			dia_nr = 149;
 			ani_nr = CH_TALK12;

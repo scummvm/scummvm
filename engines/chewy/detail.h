@@ -75,7 +75,7 @@ struct SprInfo {
 };
 
 struct sound_def_blk {
-	int16 sound_enable[MAX_SOUNDS];
+	bool sound_enable[MAX_SOUNDS];
 	int16 sound_index[MAX_SOUNDS];
 	int16 sound_start[MAX_SOUNDS];
 	int16 kanal[MAX_SOUNDS];
@@ -252,13 +252,6 @@ public:
 	                      int16 scrx, int16 scry);
 
 	void set_sound_area(byte *buffer, uint32 size);
-	void load_room_sounds(Stream *tvp_handle);
-	void get_sound_para(int16 nr, sound_def_blk *sdb_dest);
-	void set_sound_para(int16 nr, sound_def_blk *sdb_src);
-	void map_tvp2sound(int16 nr, int16 sslot, int16 tvp_index);
-	void disable_sound(int16 nr, int16 sslot);
-	void enable_sound(int16 nr, int16 sslot);
-	void play_sound(int16 nr, int16 sslot);
 	void disable_detail_sound(int16 nr);
 	void enable_detail_sound(int16 nr);
 	void clear_detail_sound(int16 nr);
@@ -266,9 +259,6 @@ public:
 	void disable_room_sound();
 	void enable_room_sound();
 	void clear_room_sound();
-#ifdef DETEDIT
-	void shadow_room(int16 mode);
-#endif
 	void set_taf_ani_mem(byte *load_area);
 	void load_sprite_pointer(Stream *stream);
 

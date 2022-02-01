@@ -23,15 +23,16 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/rooms/room77.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room77::entry() {
-	det->enable_sound(0, 0);
-	det->enable_sound(0, 1);
-	det->play_sound(0, 0);
-	det->play_sound(0, 1);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0, 1);
+	g_engine->_sound->playSound(0);
+	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
 	if (_G(spieler).r76State == 1) {
 		_G(spieler).flags29_4 = true;

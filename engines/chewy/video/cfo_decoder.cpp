@@ -253,7 +253,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			assert(number < MAX_SOUND_EFFECTS);
 
 			_sound->setSoundVolume(volume);
-			_sound->playSound(_soundEffects[number], _soundEffectSize[number], repeat, channel, DisposeAfterUse::NO);
+			_sound->playSound(_soundEffects[number], _soundEffectSize[number], channel, repeat, DisposeAfterUse::NO);
 			break;
 		case kChunkSetSoundVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;

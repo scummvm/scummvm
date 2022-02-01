@@ -119,8 +119,6 @@ struct AtdsVar {
 	int16 _field12 = 0;
 	int16 VocNr = 0;
 
-	Stream *SpeechHandle = nullptr;
-
 	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) = nullptr;
 };
 
@@ -270,7 +268,6 @@ public:
 	void save_ads_header(int16 dia_nr);
 
 	Stream *pool_handle(const char *fname, const char *fmode);
-	void set_speech_handle(Stream *speech_handle);
 	void set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz);
 	void open_handle(const char *fname, const char *fmode, int16 mode);
 	void close_handle(int16 mode);
@@ -312,7 +309,7 @@ public:
 	int16 start_ads_auto_dia(char *item_adr);
 	int16 check_item(int16 block_nr, int16 item_nr);
 	int16 calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode);
-	int16 get_stereo_pos(int16 x);
+	int16 getStereoPos(int16 x);
 	void set_unknown(bool nr) {
 		atdsv._field12 = nr;
 	}

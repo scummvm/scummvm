@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room0.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -205,15 +206,15 @@ void Room0::eyeStart(EyeMode mode) {
 	flags.AniUserAction = true;
 
 	if (mode == EYE_START) {
-		det->enable_sound(FLAP_DETAIL, 0);
-		det->disable_sound(FLAP_DETAIL, 1);
-		det->enable_sound(SCHLAUCH_DETAIL, 0);
-		det->disable_sound(SCHLAUCH_DETAIL, 2);
+		g_engine->_sound->playSound(FLAP_DETAIL, 0, false);
+		g_engine->_sound->stopSound(1);
+		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 0, false);
+		g_engine->_sound->stopSound(2);
 	} else {
-		det->disable_sound(FLAP_DETAIL, 0);
-		det->enable_sound(FLAP_DETAIL, 1);
-		det->disable_sound(SCHLAUCH_DETAIL, 0);
-		det->enable_sound(SCHLAUCH_DETAIL, 2);
+		g_engine->_sound->stopSound(1);
+		g_engine->_sound->playSound(FLAP_DETAIL, 1, false);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 2, false);
 	}
 
 	while (!ende) {
@@ -477,15 +478,15 @@ void Room0::feederStart(int16 mode) {
 
 	if (!mode) {
 		trapDoorOpen();
-		det->enable_sound(FLAP_DETAIL, 0);
-		det->disable_sound(FLAP_DETAIL, 1);
-		det->enable_sound(FUETTER_SCHLAUCH, 0);
-		det->disable_sound(FUETTER_SCHLAUCH, 2);
+		g_engine->_sound->playSound(FLAP_DETAIL, 0);
+		g_engine->_sound->stopSound(1);
+		g_engine->_sound->playSound(FUETTER_SCHLAUCH, 0);
+		g_engine->_sound->stopSound(2);
 	} else {
-		det->disable_sound(FLAP_DETAIL, 0);
-		det->enable_sound(FLAP_DETAIL, 1);
-		det->disable_sound(FUETTER_SCHLAUCH, 0);
-		det->enable_sound(FUETTER_SCHLAUCH, 2);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->playSound(FLAP_DETAIL, 1);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->playSound(FUETTER_SCHLAUCH, 2);
 	}
 
 	ende = false;

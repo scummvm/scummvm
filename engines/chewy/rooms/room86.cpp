@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room86.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -148,8 +149,8 @@ int Room86::proc2() {
 	auto_move(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	det->start_detail(0, 255, false);
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	del_inventar(_G(spieler).AkInvent);
 	auto_move(3, P_CHEWY);
 	proc3(true);
@@ -181,10 +182,10 @@ void Room86::proc3(bool cond) {
 
 	det->set_static_pos(0, 352, destY, false, false);
 	det->show_static_spr(0);
-	det->enable_sound(0, 1);
-	det->enable_sound(0, 2);
-	det->play_sound(0, 1);
-	det->play_sound(0, 2);
+	g_engine->_sound->playSound(0, 1);
+	g_engine->_sound->playSound(0, 2);
+	g_engine->_sound->playSound(0, 1, false);
+	g_engine->_sound->playSound(0, 2, false);
 
 	for (int i = 0; i < 48; ++i) {
 		set_up_screen(NO_SETUP);
@@ -194,8 +195,8 @@ void Room86::proc3(bool cond) {
 		out->back2screen(workpage);
 	}
 
-	det->disable_sound(0, 1);
-	det->disable_sound(0, 2);
+	g_engine->_sound->stopSound(1);
+	g_engine->_sound->stopSound(2);
 	flags.NoScroll = false;
 }
 
