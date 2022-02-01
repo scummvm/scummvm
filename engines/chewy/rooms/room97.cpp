@@ -294,7 +294,7 @@ void Room97::proc3() {
 		go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	} else if (!_G(spieler).flags36_40) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(567, -1);
+		start_aad_wait(568, -1);
 		go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	} else {
 		_G(spieler).flags36_1 = true;
@@ -342,15 +342,17 @@ void Room97::proc4() {
 		start_detail_wait(9, 1, ANI_VOR);
 		det->show_static_spr(21);
 
-		while (spieler_vector[P_HOWARD].Xypos[0] > 996)
+		while (spieler_vector[P_HOWARD].Xypos[0] > 996) {
 			set_up_screen(DO_SETUP);
+			SHOULD_QUIT_RETURN;
+		}
 
 		det->show_static_spr(2);
 		HowardMov = 1;
 		
 		go_auto_xy(967, 111, P_CHEWY, ANI_WAIT);
 		go_auto_xy(1008, 93, P_CHEWY, ANI_WAIT);
-		go_auto_xy(1037, 99, P_CHEWY, ANI_WAIT);
+		go_auto_xy(1037, 90, P_CHEWY, ANI_WAIT);
 
 		go_auto_xy(995, 77, P_HOWARD, ANI_WAIT);
 		go_auto_xy(1047, 87, P_HOWARD, ANI_WAIT);
@@ -389,18 +391,21 @@ int Room97::proc5() {
 	}
 
 	flic_cut(122, CFO_MODE);
+	test_intro(34);
 
-	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-	start_detail_wait(0, 1, ANI_VOR);
-	det->show_static_spr(13);
-	start_detail_wait(13, 1, ANI_VOR);
-	det->start_detail(14, 255, false);
-	start_aad_wait(555, -1);
-	_G(spieler).flags36_40 = true;
-	atds->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->del_steuer_bit(535, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+	det->enable_sound(0, 0);
+	det->play_sound(0, 0);
+	_G(spieler).scrollx = 720;
+	set_person_pos(822, 98, P_CHEWY, P_LEFT);
+	set_person_pos(861, 81, P_HOWARD, P_LEFT);
+	del_inventar(_G(spieler).AkInvent);
+	det->show_static_spr(21);
+	_G(spieler).flags35_80 = true;
+	start_aad_wait(546, -1);
+	det->hide_static_spr(21);
+	det->enable_sound(9, 1);
+	det->disable_sound(9, 0);
+	start_detail_wait(9, 0, ANI_GO);
 	
 	show_cur();
 	return 1;
@@ -674,6 +679,7 @@ void Room97::proc15() {
 	cursor_wahl(CUR_USE);
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
+	_bool18DB30 = false;
 	
 	while (det->get_ani_detail(16) != nullptr) {
 		get_user_key(NO_SETUP);
