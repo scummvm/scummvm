@@ -393,7 +393,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 						error("flic error");
 					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
-							uint32 start = g_system->getMillis() + custom_header.speed;
+							uint32 start = g_system->getMillis();
 							if (custom_frame.size) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									error("flic error");
@@ -447,15 +447,6 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 		switch (chead.type) {
 		case FADE_IN:
 			error("decode_custom_frame: Unused frame type FADE_IN found");
-#if 0
-			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else {
-				fade_flag = true;
-				fade_delay = para[0];
-			}
-#endif
 			break;
 
 		case FADE_OUT:
@@ -484,18 +475,6 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case LOAD_RAW:
 			error("decode_custom_frame: Unused frame type LOAD_RAW found");
-#if 0
-			if (!File::readArray(handle, &para[0], 1) ||
-			        handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else {
-				sounds[para[0]] = Sound;
-				Ssize[para[0]] = chead.size;
-				Sound += chead.size - 2;
-			}
-#endif
-
 			break;
 
 		case LOAD_VOC:
@@ -521,46 +500,10 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case PLAY_SEQ:
 			error("decode_custom_frame: Unused frame type PLAY_SEQ found");
-#if 0
-			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else {
-				if (!strncmp(th->id, "TMF\0", 4)) {
-#ifndef AIL
-					snd->playMod(th);
-					snd->stopMod();
-					snd->playSequence(para[0], para[1]);
-#else
-					ailsnd->playMod(th);
-					ailsnd->stopMod();
-					ailsnd->playSequence(para[0], para[1]);
-#endif
-				}
-			}
-#endif
 			break;
 
 		case PLAY_PATTERN:
 			error("decode_custom_frame: Unused frame type PLAY_PATTERN found");
-#if 0
-			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else {
-				if (!strncmp(th->id, "TMF\0", 4)) {
-#ifndef AIL
-					snd->playMod(th);
-					snd->stopMod();
-					snd->playPattern(para[0]);
-#else
-					ailsnd->playMod(th);
-					ailsnd->stopMod();
-					ailsnd->playPattern(para[0]);
-#endif
-				}
-			}
-#endif
 			break;
 
 		case STOP_MUSIC:
@@ -597,17 +540,6 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_LOOPMODE:
 			error("decode_custom_frame: Unused frame type SET_LOOPMODE found");
-#if 0
-			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				modul = DATEI;
-				fcode = READFEHLER;
-			} else
-#ifndef AIL
-				snd->setLoopMode(para[0]);
-#else
-				ailsnd->setLoopMode(para[0]);
-#endif
-#endif
 			break;
 
 		case PLAY_RAW:
@@ -681,9 +613,6 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case SET_SPEED:
 			error("decode_custom_frame: Unused frame type SET_SPEED found");
-#if 0
-			custom_header.speed = handle->readUint32LE();
-#endif
 			break;
 
 		case CLEAR_SCREEN:
