@@ -43,7 +43,7 @@ void Room50::entry(int16 eib_nr) {
 		hide_cur();
 		stop_page();
 		_G(maus_links_click) = false;
-		set_person_pos(0, 64, P_HOWARD, P_RIGHT);
+		set_person_pos(1, 64, P_HOWARD, P_RIGHT);
 		set_person_pos(92, 123, P_CHEWY, P_LEFT);
 		start_aad_wait(510, -1);
 		out->setze_zeiger(nullptr);
