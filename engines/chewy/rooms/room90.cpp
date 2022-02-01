@@ -230,7 +230,7 @@ void Room90::proc2() {
 	flags.AutoAniPlay = false;
 }
 
-int Room90::proc3() {
+int Room90::getHubcaps() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
@@ -241,8 +241,10 @@ int Room90::proc3() {
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
 
-	while (spieler_vector[P_HOWARD].Xypos[0] != 176)
+	while (spieler_vector[P_HOWARD].Xypos[0] != 176) {
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN0;
+	}
 
 	start_spz_wait(47, 1, false, P_HOWARD);
 	_G(spieler).mi[1] = 2;
@@ -262,6 +264,7 @@ int Room90::proc3() {
 		destX -= 2;
 		det->set_detail_pos(12, destX, 15);
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN0;
 	}
 
 	start_aad_wait(517, -1);
