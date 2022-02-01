@@ -93,6 +93,7 @@ CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
 	}
 
 	delete[] _musicData;
+	_musicData = nullptr;
 }
 
 void CfoDecoder::CfoVideoTrack::readHeader() {
@@ -225,6 +226,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 
 			// Game videos do not restart music after stopping it
 			delete[] _musicData;
+			_musicData = nullptr;
 			_musicSize = 0;
 			break;
 		case kChunkWaitMusicEnd:
@@ -310,7 +312,8 @@ void CfoDecoder::CfoVideoTrack::fadeOut() {
 				--_palette[i * 3 + 2];
 		}
 
-		setScummVMPalette(_palette, 0, 256);
+		//setScummVMPalette(_palette, 0, 256);
+		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}

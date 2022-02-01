@@ -100,6 +100,8 @@ public:
 	uint getRandomNumber(uint max) {
 		return _rnd.getRandomNumber(max);
 	}
+
+	void playVideo(uint num);
 };
 
 extern ChewyEngine *g_engine;
