@@ -18,6 +18,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
 
+ BBVS:
+   - Fixed the size of the main menu buttons being incorrect in some cases.
+   - Fixed crash at the end of the Hock-A-Loogie mini game.
+
  Buried:
    - Added support for skipping synchronous audio and video.
    - The mouse pointer is now hidden during cutscenes.
