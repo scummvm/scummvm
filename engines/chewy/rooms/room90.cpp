@@ -28,10 +28,12 @@
 namespace Chewy {
 namespace Rooms {
 
+int Room90::_delay;
+
 void Room90::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
-	_G(spieler).r90_word18DB28 = 0;
+	_delay = 0;
 	SetUpScreenFunc = setup_func;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 90;
 	_G(zoom_horizont) = 150;
@@ -113,10 +115,10 @@ void Room90::setup_func() {
 	if (menu_item != CUR_WALK)
 		return;
 
-	if (_G(spieler).r90_word18DB28)
-		--_G(spieler).r90_word18DB28;
+	if (_delay)
+		--_delay;
 	else {
-		_G(spieler).r90_word18DB28 = _G(spieler).DelaySpeed - 1;
+		_delay = _G(spieler).DelaySpeed - 1;
 		for (int i = 0; i < 8; ++i) {
 			if (_G(spieler).r90_Array187030[i][0] == 1) {
 				int destY = Adi[i + 4].y;

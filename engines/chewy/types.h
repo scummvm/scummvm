@@ -498,7 +498,6 @@ struct Spieler : public SpielerFlags {
 	// ---- //
 	int16 r88DestRoom = 0;
 	// ---- //
-	int r90_word18DB28 = 0;
 	int r90_Array187030[8][4] = {
 		{0, 1, 180, 190},
 		{0, 1,  60,  60},
