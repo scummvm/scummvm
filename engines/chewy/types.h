@@ -511,7 +511,7 @@ struct Spieler : public SpielerFlags {
 	};
 	
 	// ---- //
-	int r93_word18DB2C = 0;
+	int r94Scrollx = 0;
 	// ---- //
 	int r97_word18DB2E = 0;
 	bool r97_bool18DB30 = false;
