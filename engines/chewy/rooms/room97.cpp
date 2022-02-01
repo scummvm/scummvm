@@ -393,8 +393,8 @@ int Room97::proc5() {
 	flic_cut(122, CFO_MODE);
 	test_intro(34);
 
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0);
 	_G(spieler).scrollx = 720;
 	set_person_pos(822, 98, P_CHEWY, P_LEFT);
 	set_person_pos(861, 81, P_HOWARD, P_LEFT);
@@ -403,8 +403,8 @@ int Room97::proc5() {
 	_G(spieler).flags35_80 = true;
 	start_aad_wait(546, -1);
 	det->hide_static_spr(21);
-	det->enable_sound(9, 1);
-	det->disable_sound(9, 0);
+	g_engine->_sound->playSound(9, 1);
+	g_engine->_sound->stopSound(0);
 	start_detail_wait(9, 0, ANI_GO);
 	
 	show_cur();
