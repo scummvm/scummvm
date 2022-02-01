@@ -27,6 +27,15 @@ namespace Rooms {
 
 class Room97 {
 private:
+	static int _word18DB2E;
+	static bool _bool18DB30;
+	static bool _bool18DB32;
+	static int _word18DB34;
+	static int _word18DB36;
+	static int _word18DB38;
+	static bool _bool18DB3A;
+
+private:
 	static void setup_func();
 	static void proc2();
 	static void proc3();
