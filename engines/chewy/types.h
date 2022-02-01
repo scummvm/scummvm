@@ -579,13 +579,11 @@ struct Flags {
 	uint16 InventMenu : 1;
 	uint16 NoScroll : 1;
 
-	bool InitSound : true;
 	uint16 ExitMov : 1;
 	uint16 MausTxt : 1;
 	uint16 LoadGame : 1;
 	uint16 main_maus_flag: 1;
 	uint16 ZoomMov : 1;
-	uint16 IcmEntry : 1;
 	uint16 SaveMenu : 1;
 
 	uint16 SpzAni : 1;
@@ -594,7 +592,6 @@ struct Flags {
 	uint16 NoPalAfterFlc : 1;
 	uint16 NoDiaBox : 1;
 	uint16 NoEndPosMovObj: 1;
-	uint16 NoShad : 1;
 	uint16 SavePersonRnr : 1;
 
 	uint16 CursorStatus : 1;

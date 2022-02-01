@@ -130,8 +130,6 @@ int16 SoundEnable = 0;
 int16 SoundCard = 0;
 int16 SoundMasterVol = 120;
 int16 MusicMasterVol = 120;
-int16 MusicSwitch = false;
-int16 SoundSwitch = false;
 int16 LoopEnable = OFF;
 int16 PlaybackMode = NORMAL_PLAYBACK;
 int16 StartPos = 0;
@@ -387,7 +385,7 @@ void ailclass::endSound() {
 void mod_irq() {
 	if (!InInterrupt) {
 		++InInterrupt;
-		if (MusicSwitch && (MusicStatus == ON)) {
+		if (MusicStatus == ON) {
 			checkSampleEnd();
 			if (PatternCount <= 0) {
 				PatternCount = CurrentTempo;
@@ -601,16 +599,6 @@ void DecodeChannel(int16 ch) {
 		}
 	}
 #endif
-}
-
-void ailclass::switchMusic(bool onOff) {
-	if (SoundEnable)
-		MusicSwitch = onOff;
-}
-
-void ailclass::switchSound(bool onOff) {
-	if (SoundEnable)
-		SoundSwitch = onOff;
 }
 
 } // namespace Chewy

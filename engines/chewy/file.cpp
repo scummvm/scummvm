@@ -458,53 +458,51 @@ void option_menue(taf_info *ti) {
 		out->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
 		out->printxy(36 + bar_off, 65, 255, 300, 0, "%d", _G(spieler).FramesPerSecond << 1);
 
-		if (flags.InitSound) {
-			if (_G(spieler).SoundSwitch) {
-				out->sprite_set(ti->image[mund_ani],
-				                18 + ti->korrektur[mund_ani << 1],
-				                8 + ti->korrektur[(mund_ani << 1) + 1], 0);
-				out->sprite_set(ti->image[SCHNULL_OFF],
-				                18 + ti->korrektur[SCHNULL_OFF << 1],
-				                8 + ti->korrektur[(SCHNULL_OFF << 1) + 1], 0);
-			} else {
-				out->sprite_set(ti->image[SCHNULLER],
-				                18 + ti->korrektur[SCHNULLER << 1],
-				                8 + ti->korrektur[(SCHNULLER << 1) + 1], 0);
-				out->sprite_set(ti->image[SCHNULL_BAND],
-				                18 + ti->korrektur[SCHNULL_BAND << 1],
-				                8 + ti->korrektur[(SCHNULL_BAND << 1) + 1], 0);
-			}
-			out->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
-			out->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
-			out->box_fill(33, 136 - (_G(spieler).SoundVol >> 1), 42, 136, 15);
-
-			out->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
-			out->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
-			out->box_fill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
-			if (_G(spieler).MusicSwitch) {
-				out->sprite_set(ti->image[MUSIC_ON1],
-				                18 + ti->korrektur[MUSIC_ON1 << 1],
-				                8 + ti->korrektur[(MUSIC_ON1 << 1) + 1], 0);
-				out->sprite_set(ti->image[MUSIC_ON2],
-				                18 + ti->korrektur[MUSIC_ON2 << 1],
-				                8 + ti->korrektur[(MUSIC_ON2 << 1) + 1], 0);
-			} else
-				out->sprite_set(ti->image[MUSIC_OFF],
-				                18 + ti->korrektur[MUSIC_OFF << 1],
-				                8 + ti->korrektur[(MUSIC_OFF << 1) + 1], 0);
-
-			if (_G(spieler).DisplayText) {
-				out->sprite_set(ti->image[tdisp_ani],
-				                18 + ti->korrektur[tdisp_ani << 1],
-				                8 + ti->korrektur[(tdisp_ani << 1) + 1], 0);
-				out->sprite_set(ti->image[TDISP_EIN],
-				                18 + ti->korrektur[TDISP_EIN << 1],
-				                8 + ti->korrektur[(TDISP_EIN << 1) + 1], 0);
-			} else
-				out->sprite_set(ti->image[TDISP_AUS],
-				                18 + ti->korrektur[TDISP_AUS << 1],
-				                8 + ti->korrektur[(TDISP_AUS << 1) + 1], 0);
+		if (_G(spieler).SoundSwitch) {
+			out->sprite_set(ti->image[mund_ani],
+				            18 + ti->korrektur[mund_ani << 1],
+				            8 + ti->korrektur[(mund_ani << 1) + 1], 0);
+			out->sprite_set(ti->image[SCHNULL_OFF],
+				            18 + ti->korrektur[SCHNULL_OFF << 1],
+				            8 + ti->korrektur[(SCHNULL_OFF << 1) + 1], 0);
+		} else {
+			out->sprite_set(ti->image[SCHNULLER],
+				            18 + ti->korrektur[SCHNULLER << 1],
+				            8 + ti->korrektur[(SCHNULLER << 1) + 1], 0);
+			out->sprite_set(ti->image[SCHNULL_BAND],
+				            18 + ti->korrektur[SCHNULL_BAND << 1],
+				            8 + ti->korrektur[(SCHNULL_BAND << 1) + 1], 0);
 		}
+		out->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
+		out->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
+		out->box_fill(33, 136 - (_G(spieler).SoundVol >> 1), 42, 136, 15);
+
+		out->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
+		out->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
+		out->box_fill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
+		if (_G(spieler).MusicSwitch) {
+			out->sprite_set(ti->image[MUSIC_ON1],
+				            18 + ti->korrektur[MUSIC_ON1 << 1],
+				            8 + ti->korrektur[(MUSIC_ON1 << 1) + 1], 0);
+			out->sprite_set(ti->image[MUSIC_ON2],
+				            18 + ti->korrektur[MUSIC_ON2 << 1],
+				            8 + ti->korrektur[(MUSIC_ON2 << 1) + 1], 0);
+		} else
+			out->sprite_set(ti->image[MUSIC_OFF],
+				            18 + ti->korrektur[MUSIC_OFF << 1],
+				            8 + ti->korrektur[(MUSIC_OFF << 1) + 1], 0);
+
+		if (_G(spieler).DisplayText) {
+			out->sprite_set(ti->image[tdisp_ani],
+				            18 + ti->korrektur[tdisp_ani << 1],
+				            8 + ti->korrektur[(tdisp_ani << 1) + 1], 0);
+			out->sprite_set(ti->image[TDISP_EIN],
+				            18 + ti->korrektur[TDISP_EIN << 1],
+				            8 + ti->korrektur[(TDISP_EIN << 1) + 1], 0);
+		} else
+			out->sprite_set(ti->image[TDISP_AUS],
+				            18 + ti->korrektur[TDISP_AUS << 1],
+				            8 + ti->korrektur[(TDISP_AUS << 1) + 1], 0);
 
 		out->sprite_set(ti->image[EXIT],
 		                18 + ti->korrektur[EXIT << 1],
@@ -528,20 +526,16 @@ void option_menue(taf_info *ti) {
 					_G(spieler).SoundSwitch = false;
 					det->disable_room_sound();
 				} else {
-					if (flags.InitSound) {
-						_G(spieler).SoundSwitch = true;
-						det->enable_room_sound();
-					}
+					_G(spieler).SoundSwitch = true;
+					det->enable_room_sound();
 				}
 				break;
 			case 3:
 			case 4:
 				if (_G(spieler).DisplayText) {
-					if (flags.InitSound) {
-						_G(spieler).DisplayText = false;
-						atds->setHasSpeech(true);
-						_G(spieler).SpeechSwitch = true;
-					}
+					_G(spieler).DisplayText = false;
+					atds->setHasSpeech(true);
+					_G(spieler).SpeechSwitch = true;
 				} else {
 					_G(spieler).DisplayText = true;
 					atds->setHasSpeech(false);
@@ -552,7 +546,7 @@ void option_menue(taf_info *ti) {
 				if (_G(spieler).MusicSwitch) {
 					_G(spieler).MusicSwitch = false;
 					ailsnd->stopMod();
-				} else  if (flags.InitSound) {
+				} else {
 					_G(spieler).MusicSwitch = true;
 					CurrentSong = -1;
 					load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);

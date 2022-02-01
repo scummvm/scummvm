@@ -307,7 +307,7 @@ int16 ged_user_func(int16 idx_nr) {
 void enter_room(int16 eib_nr) {
 	int16 i;
 
-	if ((!modul) && (flags.InitSound))
+	if (!modul)
 		load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(spieler).ChewyAni);
 	atds->stop_aad();
@@ -894,7 +894,7 @@ static void flic_proc1() {
 		start_aad(595);
 		atds->print_aad(254, 0);
 
-		if (flags.InitSound && _G(spieler).SpeechSwitch) {
+		if (_G(spieler).SpeechSwitch) {
 			g_engine->_sound->waitForSpeechToFinish();
 		} else {
 			delay(6000);
