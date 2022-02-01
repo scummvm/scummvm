@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-01-30 11:30+0000\n"
+"POT-Creation-Date: 2022-02-01 16:15+0000\n"
 "PO-Revision-Date: 2022-01-29 20:12+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4369,7 +4369,7 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
-#: engines/saga/detection_tables.h:1219 engines/saga/detection_tables.h:1278
+#: engines/saga/detection_tables.h:1217 engines/saga/detection_tables.h:1276
 #: engines/sci/detection_tables.h:5005 engines/sci/detection_tables.h:5013
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
@@ -6226,17 +6226,17 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Використовувати альтернативний вступ гри (тільки в CD версії)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:791
+#: engines/saga/detection_tables.h:789
 msgid "Windows Trial version is not supported"
 msgstr "Пробна версія для Windows не підтримується"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:817
+#: engines/saga/detection_tables.h:815
 msgid "macOS Trial version is not supported"
 msgstr "Пробна версія для macOS не підтримується"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:842
+#: engines/saga/detection_tables.h:840
 msgid "Pocket PC Trial version is not supported"
 msgstr "Пробна версія для Pocket PC не підтримується"
 
