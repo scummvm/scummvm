@@ -200,7 +200,7 @@ void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
 		Obj *obj = &_objects[i];
 		if (obj->kind == 2)
 			drawList.add(obj->anim->frameIndices[obj->frameIndex], obj->x, obj->y, 400);
-		else
+		else if (obj->kind != 0)
 			drawList.add(obj->anim->frameIndices[obj->frameIndex], obj->x, obj->y, obj->y + 16);
 	}
 
