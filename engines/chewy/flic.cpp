@@ -391,7 +391,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 						error("flic error");
 					} else {
 						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
-							uint32 start = g_system->getMillis();
+							uint32 start = g_system->getMillis() + custom_header.speed;
 							if (custom_frame.size) {
 								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
 									error("flic error");
