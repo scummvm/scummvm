@@ -45,6 +45,7 @@ static int strToInt(const char *s) {
 Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("room", WRAP_METHOD(Debugger, Cmd_GotoRoom));
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
+	registerCmd("video", WRAP_METHOD(Debugger, Cmd_PlayVideo));
 }
 
 Debugger::~Debugger() {
@@ -76,6 +77,18 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_video <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	g_engine->playVideo(resNum);
+
+	return false;
 }
 
 } // namespace Chewy
