@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room54.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -137,9 +138,9 @@ int16 Room54::use_schalter() {
 			start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 			det->show_static_spr(0);
 			auto_move(2, P_CHEWY);
-			det->enable_sound(1, 0);
-			det->enable_sound(0, 1);
-			det->disable_sound(1, 2);
+			g_engine->_sound->playSound(1, 0);
+			g_engine->_sound->playSound(0, 1);
+			g_engine->_sound->stopSound(2);
 
 			start_detail_wait(1, 1, ANI_VOR);
 			det->start_detail(3, 255, ANI_VOR);
@@ -151,11 +152,11 @@ int16 Room54::use_schalter() {
 			if (_G(spieler).R54LiftCount < 3) {
 				start_detail_wait(2, 1, ANI_VOR);
 				det->hide_static_spr(0);
-				det->disable_sound(1, 0);
-				det->disable_sound(0, 1);
-				det->enable_sound(1, 2);
+				g_engine->_sound->stopSound(0);
+				g_engine->_sound->stopSound(1);
+				g_engine->_sound->playSound(1, 2);
 				start_detail_wait(1, 1, ANI_RUECK);
-				det->disable_sound(1, 2);
+				g_engine->_sound->stopSound(2);
 				aad_nr = 295;
 
 			} else {
@@ -291,8 +292,8 @@ int16 Room54::use_azug() {
 				_G(spieler).R55Location = true;
 				SetUpScreenFunc = nullptr;
 				go_auto_xy(91, 62, P_HOWARD, ANI_WAIT);
-				det->enable_sound(1, 0);
-				det->play_sound(1, 0);
+				g_engine->_sound->playSound(1, 0);
+				g_engine->_sound->playSound(1);
 
 				int16 ch_y = 68;
 				int16 ay = 0;
@@ -332,8 +333,8 @@ void Room54::aufzug_ab() {
 	_G(spieler).scrollx = 0;
 	SetUpScreenFunc = setup_func;
 	det->show_static_spr(12);
-	det->enable_sound(1, 0);
-	det->play_sound(1, 0);
+	g_engine->_sound->playSound(1, 0);
+	g_engine->_sound->playSound(1);
 
 	int16 ch_y = -40;
 	int16 ay = -108;
@@ -355,7 +356,7 @@ void Room54::aufzug_ab() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	det->disable_sound(1, 0);
+	g_engine->_sound->stopSound(0);
 	det->hide_static_spr(12);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;

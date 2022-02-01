@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/room28.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -278,8 +279,7 @@ void Room28::set_pump() {
 				SetUpScreenFunc = nullptr;
 
 				if (flags.InitSound && _G(spieler).SpeechSwitch) {
-					while (ailsnd->isSpeechActive() && !SHOULD_QUIT)
-						set_up_screen(DO_SETUP);
+					g_engine->_sound->waitForSpeechToFinish();
 				}
 
 				start_aad_wait(177, -1);

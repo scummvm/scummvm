@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room31.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -96,7 +97,7 @@ void Room31::open_luke() {
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = false;
-		det->play_sound(3, 0);
+		g_engine->_sound->playSound(3);
 		calc_luke();
 		show_cur();
 	}
@@ -108,7 +109,7 @@ void Room31::proc1() {
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
-		det->play_sound(3, 0);
+		g_engine->_sound->playSound(3);
 		calc_luke();
 		show_cur();
 	}
@@ -194,8 +195,8 @@ void Room31::close_luke() {
 		auto_move(2, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
-		det->play_sound(3, 0);
-		det->play_sound(3, 1);
+		g_engine->_sound->playSound(3);
+		g_engine->_sound->playSound(3, 1, false);
 		calc_luke();
 		show_cur();
 	}

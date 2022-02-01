@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room71.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -32,10 +33,10 @@ int Room71::_state;
 int Room71::_delay;
 
 void Room71::entry(int16 eib_nr) {
-	det->enable_sound(0, 0);
-	det->enable_sound(0, 1);
-	det->play_sound(0, 0);
-	det->play_sound(0, 1);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0, 1);
+	g_engine->_sound->playSound(0);
+	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;

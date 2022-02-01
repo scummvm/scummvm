@@ -283,29 +283,6 @@ void datei::read_tbf_image(Stream *stream, int16 komp, uint32 size, byte *sp) {
 	}
 }
 
-uint32 datei::load_voc(Stream *handle, byte *speicher) {
-	ChunkHead *ch = (ChunkHead *)tmp;
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-
-	if (rs) {
-		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-
-		if (!ch->load(rs)) {
-			error("load_voc error");
-		} else {
-			if (ch->type == VOCDATEI) {
-				if (rs->read(speicher, ch->size) != ch->size) {
-					error("load_voc error");
-				}
-			} else {
-				error("load_voc error");
-			}
-		}
-	}
-
-	return ch->size;
-}
-
 void datei::void_load(const char *fname, byte *speicher, uint32 size) {
 	strncpy(filename, fname, MAXPATH - 1);
 	filename[MAXPATH - 1] = '\0';

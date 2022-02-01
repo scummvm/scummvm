@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room43.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -34,7 +35,7 @@ void Room43::night_small() {
 	_G(spieler).scrolly = 0;
 	switch_room(43);
 	ailsnd->stopMod();
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0);
 	hide_cur();
 	flags.NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
@@ -56,7 +57,7 @@ void Room43::night_small() {
 	_G(spieler).scrollx = 194;
 	start_aad_wait(191, -1);
 	flic_cut(FCUT_058, CFO_MODE);
-	det->disable_sound(0, 0);
+	g_engine->_sound->stopSound(0);
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
@@ -71,7 +72,7 @@ void Room43::catch_pg() {
 	_G(spieler).scrolly = 0;
 	switch_room(43);
 	ailsnd->stopMod();
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0);
 	hide_cur();
 	flags.NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
@@ -81,7 +82,7 @@ void Room43::catch_pg() {
 	_G(spieler).R43GetPgLady = true;
 	flic_cut(FCUT_058, CFO_MODE);
 
-	det->disable_sound(0, 0);
+	g_engine->_sound->stopSound(0);
 	test_intro(14);
 	
 	flags.NoScroll = false;
@@ -94,7 +95,6 @@ void Room43::catch_pg() {
 
 int16 Room43::setup_func(int16 frame) {
 	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-	serve_speech();
 
 	return 0;
 }

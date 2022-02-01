@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room52.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -34,10 +35,10 @@ void Room52::entry() {
 
 	if (_G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg) {
 		plot_armee(0);
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 	} else {
-		det->disable_sound(0, 0);
+		g_engine->_sound->stopSound(0);
 	}
 
 	if (_G(spieler).R52KakerWeg)
@@ -80,8 +81,8 @@ int16 Room52::use_hot_dog() {
 		auto_move(4, P_CHEWY);
 		_G(spieler).R52HotDogOk = true;
 		plot_armee(20);
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 		atds->set_ats_str(341, 1, ATS_DATEI);
 		auto_move(2, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
@@ -92,8 +93,8 @@ int16 Room52::use_hot_dog() {
 		auto_move(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(7, 1, ANI_VOR);
-		det->enable_sound(7, 0);
-		det->play_sound(7, 0);
+		g_engine->_sound->playSound(7, 0);
+		g_engine->_sound->playSound(7);
 		det->start_detail(8, 255, ANI_VOR);
 
 		for (int16 i = 0; i < 5; i++) {
@@ -101,11 +102,11 @@ int16 Room52::use_hot_dog() {
 			det->stop_detail(2 + i);
 		}
 
-		det->disable_sound(0, 0);
+		g_engine->_sound->stopSound(0);
 		det->stop_detail(0);
 		det->stop_detail(8);
 		start_detail_wait(7, 1, ANI_RUECK);
-		det->disable_sound(7, 0);
+		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		atds->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
 		start_aad_wait(303, -1);

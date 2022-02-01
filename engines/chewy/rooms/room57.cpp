@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room57.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -82,8 +83,8 @@ int16 Room57::use_taxi() {
 		action_ret = true;
 		hide_cur();
 		auto_move(3, P_CHEWY);
-		det->enable_sound(3, 0);
-		det->play_sound(3, 0);
+		g_engine->_sound->playSound(3, 0);
+		g_engine->_sound->playSound(3);
 		det->show_static_spr(7);
 		go_auto_xy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -96,12 +97,12 @@ int16 Room57::use_taxi() {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 		det->hide_static_spr(7);
-		det->enable_sound(3, 1);
-		det->play_sound(3, 1);
+		g_engine->_sound->playSound(3, 1);
+		g_engine->_sound->playSound(3);
 		room->set_timer_status(3, TIMER_STOP);
 		det->del_static_ani(3);
 		start_detail_wait(5, 1, ANI_VOR);
-		det->disable_sound(5, 0);
+		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}
 	return action_ret;
@@ -138,7 +139,7 @@ int16 Room57::use_pfoertner() {
 			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
 			det->hide_static_spr(4);
 			start_detail_wait(6, 1, ANI_WAIT);
-			det->disable_sound(6, 0);
+			g_engine->_sound->stopSound(0);
 			atds->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);
 		} else {
 			start_aad_wait(349, -1);

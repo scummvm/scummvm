@@ -26,6 +26,7 @@
 #include "chewy/room.h"
 #include "chewy/rooms/room40.h"
 #include "chewy/rooms/room43.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -176,8 +177,7 @@ void Room40::move_train(int16 mode) {
 	if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
 		det->show_static_spr(12);
 
-	det->enable_sound(7, 0);
-	det->play_sound(7, 0);
+	g_engine->_sound->playSound(7, 0);
 	int16 delay = 0;
 
 	while (ax < 560) {

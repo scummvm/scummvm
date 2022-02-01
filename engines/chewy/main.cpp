@@ -107,8 +107,6 @@ void alloc_buffers() {
 	Ci.MaxMusicSize = MUSIC_SLOT_SIZE;
 	Ci.SoundSlot = (byte *)MALLOC(SOUND_SLOT_SIZE);
 	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
-	SpeechBuf[0] = (byte *)MALLOC(SPEECH_HALF_BUF * 2);
-	SpeechBuf[1] = SpeechBuf[0] + SPEECH_HALF_BUF;
 }
 
 void free_buffers() {
@@ -123,7 +121,6 @@ void free_buffers() {
 	free((char *)chewy);
 
 	free((char *)curtaf);
-	free(SpeechBuf[0]);
 	free(Ci.SoundSlot);
 	free(Ci.MusicSlot);
 	free(Ci.TempArea);
@@ -553,8 +550,6 @@ void set_up_screen(SetupScreenMode mode) {
 	if (isMainLoop)
 		mode = DO_SETUP;
 
-	if (flags.InitSound && _G(spieler).SpeechSwitch)
-		ailsnd->serveDbSamples();
 	uhr->calc_timer();
 
 	if (ani_timer[0].TimeFlag) {

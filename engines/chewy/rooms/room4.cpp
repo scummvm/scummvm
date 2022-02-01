@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room4.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -66,13 +67,13 @@ int16 Room4::sonde_comp() {
 					--cur_x;
 				else
 					cur_x = 2;
-				det->play_sound(0, 1);
+				g_engine->_sound->playSound(0, 1, false);
 				break;
 
 			case 1:
 				ende = 1;
 				spr_nr = RAHMEN_GELB;
-				det->play_sound(0, 0);
+				g_engine->_sound->playSound(0);
 				break;
 
 			case 2:
@@ -80,7 +81,7 @@ int16 Room4::sonde_comp() {
 					++cur_x;
 				else
 					cur_x = 0;
-				det->play_sound(0, 2);
+				g_engine->_sound->playSound(0, 2, false);
 				break;
 
 			default:

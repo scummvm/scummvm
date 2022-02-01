@@ -21,6 +21,7 @@
 
 #include "chewy/defines.h"
 #include "chewy/global.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -427,7 +428,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 }
 
 void start_aad(int16 dia_nr) {
-	ailsnd->waitForSpeechToFinish();
+	g_engine->_sound->waitForSpeechToFinish();
 	set_ssi_xy();
 	atds->start_aad(dia_nr);
 }
@@ -447,14 +448,12 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			if (ret) {
 				while (atds->ats_get_status() != false && !SHOULD_QUIT)
 					set_up_screen(DO_SETUP);
-			} else if (VocNr != -1) {
+			} else if (VocNr >= 0) {
 				ret = true;
-				mem->file->select_pool_item(speech_handle, VocNr);
 				vocx = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
-				ailsnd->setStereoPos(0, atds->get_stereo_pos(vocx));
-				ailsnd->startDbVoc(speech_handle, 0, 63);
-				ailsnd->setStereoPos(0, atds->get_stereo_pos(vocx));
-				warning("FIXME - unknown constant SMP_PLAYING");
+				g_engine->_sound->setSoundChannelBalance(0, atds->getStereoPos(vocx));
+				g_engine->_sound->playSpeech(VocNr);
+				//warning("FIXME - unknown constant SMP_PLAYING");
 
 				set_up_screen(DO_SETUP);
 			}

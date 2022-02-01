@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room46.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -161,10 +162,7 @@ void Room46::kloppe() {
 		atds->print_aad(0, 0);
 
 		if (flags.InitSound && _G(spieler).SpeechSwitch) {
-			while (ailsnd->isSpeechActive()) {
-				ailsnd->serveDbSamples();
-				SHOULD_QUIT_RETURN;
-			}
+			g_engine->_sound->waitForSpeechToFinish();
 			continue;
 		}
 		

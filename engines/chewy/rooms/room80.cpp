@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/rooms/room80.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -31,12 +32,12 @@ void Room80::entry() {
 	_G(maus_links_click) = false;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	det->enable_sound(0, 0);
-	det->enable_sound(0, 1);
-	det->enable_sound(0, 2);
-	det->play_sound(0, 0);
-	det->play_sound(0, 1);
-	det->play_sound(0, 2);
+	g_engine->_sound->playSound(0, 0);
+	g_engine->_sound->playSound(0, 1);
+	g_engine->_sound->playSound(0, 2);
+	g_engine->_sound->playSound(0);
+	g_engine->_sound->playSound(0, 1, false);
+	g_engine->_sound->playSound(0, 2, false);
 
 	if (_G(spieler).gottenDiary) {
 		atds->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);

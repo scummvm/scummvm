@@ -36,11 +36,11 @@ public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
 
-	void playSound(int num, bool loop = false, uint channel = 0);
-	void playSound(uint8 *data, uint32 size, bool loop = false, uint channel = 0, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
+	void playSound(int num, uint channel = 0, bool loop = false);
+	void playSound(uint8 *data, uint32 size, uint channel = 0, bool loop = false, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
 	void pauseSound(uint channel);
 	void resumeSound(uint channel);
-	void stopSound(uint channel);
+	void stopSound(uint channel = 0);
 	bool isSoundActive(uint channel);
 	void setSoundVolume(uint volume);
 	void setSoundChannelVolume(uint channel, uint volume);
@@ -62,6 +62,22 @@ public:
 	void setSpeechVolume(uint volume);
 
 	void stopAll();
+
+	/**
+	 * Helper method to wait until any playing speech is finished
+	 */
+	void waitForSpeechToFinish();
+
+	/**
+	 * Returns true if subtitles are enabled
+	 */
+	bool hasSubtitles();
+
+	/**
+	 * Returns true if speech is muted
+	 */
+	bool isSpeechMuted();
+
 
 private:
 	Audio::Mixer *_mixer;

@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room24.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -92,16 +93,16 @@ void Room24::use_hebel(int16 txt_nr) {
 			_G(spieler).R24Hebel[1] == 0 &&
 			_G(spieler).R24Hebel[2] == 2) {
 		_G(spieler).R16F5Exit = true;
-		det->enable_sound(1, 0);
-		det->disable_sound(1, 1);
+		g_engine->_sound->playSound(1, 0);
+		g_engine->_sound->stopSound(1);
 		det->start_detail(1, 1, ANI_VOR);
 		det->show_static_spr(10);
 		atds->set_ats_str(164, TXT_MARK_NAME, 1, ATS_DATEI);
 
 	} else if (_G(spieler).R16F5Exit) {
 		det->hide_static_spr(10);
-		det->enable_sound(1, 1);
-		det->disable_sound(1, 0);
+		g_engine->_sound->playSound(1, 1);
+		g_engine->_sound->stopSound(0);
 		det->start_detail(1, 1, ANI_RUECK);
 		_G(spieler).R16F5Exit = false;
 		atds->set_ats_str(164, TXT_MARK_NAME, 0, ATS_DATEI);
@@ -145,8 +146,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 				ani_nr = 8;
 			}
 
-			det->enable_sound(ani_nr + kristall_nr * 4, 0);
-			det->disable_sound(5 + ani_nr + kristall_nr * 4, 0);
+			g_engine->_sound->playSound(ani_nr + kristall_nr * 4, 0);
+			g_engine->_sound->stopSound(0);
 			det->hide_static_spr(_G(spieler).R24KristallLast[kristall_nr] + kristall_nr * 2);
 			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_RUECK);
 			start_detail_wait(6 + kristall_nr * 4, 1, ANI_RUECK);
@@ -159,8 +160,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 				ani_nr = 8;
 			}
 
-			det->disable_sound(ani_nr + kristall_nr * 4, 0);
-			det->enable_sound(5 + ani_nr + kristall_nr * 4, 0);
+			g_engine->_sound->stopSound(0);
+			g_engine->_sound->playSound(5 + ani_nr + kristall_nr * 4, 0);
 			det->stop_detail(5 + kristall_nr * 4);
 			start_detail_wait(6 + kristall_nr * 4, 1, ANI_VOR);
 			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_VOR);

@@ -407,10 +407,9 @@ void sound_init() {
 		ailsnd->switchSound(true);
 		flags.InitSound = true;
 
-		voc_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+		music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
-		music_handle = room->get_sound_handle();
 		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
 		assert(rs);
 
@@ -423,22 +422,11 @@ void sound_init() {
 			EndOfPool = Nph.PoolAnz - 1;
 		}
 
-		speech_handle = chewy_fopen(SPEECH_TVP, "rb");
-		if (!speech_handle) {
-			error("Error opening speech.tvp");
-		} else {
-			ailsnd->initDoubleBuffer(SpeechBuf[0], SpeechBuf[1], SPEECH_HALF_BUF, 0);
-			atds->set_speech_handle(speech_handle);
-
-			atds->setHasSpeech(true);
-			_G(spieler).DisplayText = false;
-		}
-
-		if (!modul) {
-			_G(spieler).SoundSwitch = true;
-			_G(spieler).MusicSwitch = true;
-			_G(spieler).SpeechSwitch = true;
-		}
+		atds->setHasSpeech(true);
+		_G(spieler).DisplayText = false;
+		_G(spieler).SoundSwitch = true;
+		_G(spieler).MusicSwitch = true;
+		_G(spieler).SpeechSwitch = true;
 	}
 }
 
@@ -446,8 +434,6 @@ void sound_exit() {
 	if (detect.SoundSource && flags.InitSound) {
 		ailsnd->exitMixMode();
 		ailsnd->exit1();
-		if (speech_handle)
-			chewy_fclose(speech_handle);
 	}
 }
 

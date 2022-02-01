@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room68.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -100,8 +101,8 @@ void Room68::setup_func() {
 		if (det->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
 			if (_G(spieler).SpeechSwitch && flags.InitSound) {
-				det->enable_sound(2, 0);
-				det->play_sound(_G(r68HohesC), 0);
+				g_engine->_sound->playSound(2, 0);
+				g_engine->_sound->playSound(_G(r68HohesC));
 				det->start_detail(_G(r68HohesC), 255, ANI_VOR);
 
 				while (ailsnd->getSampleStatus(1) == 4)
@@ -363,21 +364,16 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			start_detail_wait(23, 3, ANI_VOR);
 		else {
 			det->start_detail(23, 255, ANI_VOR);
-			ailsnd->initDoubleBuffer(Ci.SoundSlot, &(Ci.SoundSlot[22000]), 22000, 1);
-			mem->file->select_pool_item(voc_handle, 109);
-
-			ailsnd->startDbVoc(voc_handle, 1, 30);
+			g_engine->_sound->playSound(109, 1, false);
 			wait_show_screen(2);
 
-			while (!ailsnd->isSpeechActive(1))
-				set_up_screen(DO_SETUP);
+			g_engine->_sound->waitForSpeechToFinish();
 
 			det->stop_detail(23);
 		}
 
 		if (_G(spieler).DisplayText) {
-			mem->file->select_pool_item(voc_handle, 108);
-			ailsnd->startDbVoc(voc_handle, 1, 30);			
+			g_engine->_sound->playSound(108, 1, false);
 		}
 		
 		det->start_detail(24, 255, ANI_VOR);
@@ -406,8 +402,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		det->set_static_ani(8, -1);
 		start_aad_wait(392, -1);
 
-		while (ailsnd->isSpeechActive(1))
-			set_up_screen(DO_SETUP);
+		g_engine->_sound->waitForSpeechToFinish();
 		
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		det->stop_detail(27);

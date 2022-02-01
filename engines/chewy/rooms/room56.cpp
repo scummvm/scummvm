@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room56.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -54,12 +55,12 @@ void Room56::entry() {
 			_G(zoom_horizont) = 0;
 			set_person_pos(-6, 16, P_HOWARD, P_RIGHT);
 			set_person_pos(3, 42, P_CHEWY, P_RIGHT);
-			det->disable_sound(7, 0);
-			det->enable_sound(7, 1);
+			g_engine->_sound->stopSound(0);
+			g_engine->_sound->playSound(7, 1);
 			start_detail_wait(7, 1, ANI_RUECK);
 			start_detail_wait(8, 1, ANI_VOR);
-			det->disable_sound(7, 1);
-			det->enable_sound(7, 0);
+			g_engine->_sound->stopSound(1);
+			g_engine->_sound->playSound(7, 0);
 			start_detail_wait(7, 1, ANI_VOR);
 			set_up_screen(DO_SETUP);
 
@@ -185,8 +186,8 @@ void Room56::entry() {
 		break;
 	}
 
-	det->enable_sound(9, 0);
-	det->play_sound(9, 0);
+	g_engine->_sound->playSound(9, 0);
+	g_engine->_sound->playSound(9);
 }
 
 void Room56::xit() {
@@ -209,8 +210,8 @@ int16 Room56::use_taxi() {
 		action_ret = true;
 		hide_cur();
 		auto_move(1, P_CHEWY);
-		det->disable_sound(7, 0);
-		det->enable_sound(7, 1);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->playSound(7, 1);
 		start_detail_wait(7, 1, ANI_RUECK);
 		det->start_detail(8, 1, ANI_VOR);
 		_G(zoom_horizont) = 0;
@@ -299,12 +300,12 @@ int16 Room56::use_kneipe() {
 				auto_scroll(0, 0);
 				start_detail_wait(12, 3, ANI_VOR);
 				flic_cut(75, CFO_MODE);
-				det->disable_sound(10, 0);
-				det->play_sound(9, 0);
+				g_engine->_sound->stopSound(0);
+				g_engine->_sound->playSound(9);
 				det->start_detail(10, 6, ANI_VOR);
 				start_aad_wait(307, -1);
 				det->stop_detail(10);
-				det->enable_sound(10, 0);
+				g_engine->_sound->playSound(10, 0);
 				out->ausblenden(0);
 				set_up_screen(DO_SETUP);
 				_G(spieler).PersonHide[P_CHEWY] = false;
@@ -360,8 +361,8 @@ int16 Room56::use_kneipe() {
 		set_up_screen(NO_SETUP);
 		fx_blend = BLEND3;
 		show_cur();
-		det->enable_sound(9, 0);
-		det->play_sound(9, 0);
+		g_engine->_sound->playSound(9, 0);
+		g_engine->_sound->playSound(9);
 	}
 	return action_ret;
 }

@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room45.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -211,9 +212,7 @@ void Room45::taxi_mov() {
 	HowardMov = 2;
 	room->set_timer_status(12, TIMER_STOP);
 	det->del_static_ani(12);
-	det->enable_sound(15, 1);
-	det->play_sound(15, 1);
-	
+	g_engine->_sound->playSound(15, 1);
 	det->show_static_spr(11);
 	auto_move(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
@@ -227,11 +226,11 @@ void Room45::taxi_mov() {
 	}
 
 	det->hide_static_spr(11);
-	det->enable_sound(15, 2);
-	det->play_sound(15, 2);
-	det->enable_sound(15, 0);
+	g_engine->_sound->playSound(15, 2);
+	g_engine->_sound->playSound(15, 2, false);
+	g_engine->_sound->playSound(15, 0);
 	start_detail_wait(15, 1, ANI_VOR);
-	det->disable_sound(15, 0);
+	g_engine->_sound->stopSound(0);
 	switch_room(48);
 }
 

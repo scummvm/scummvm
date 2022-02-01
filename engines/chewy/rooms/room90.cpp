@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room90.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -66,8 +67,8 @@ void Room90::entry(int16 eib_nr) {
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
 		det->set_detail_pos(12, 329, 15);
 		det->start_detail(12, 255, false);
-		det->enable_sound(12, 0);
-		det->play_sound(12, 0);
+		g_engine->_sound->playSound(12, 0);
+		g_engine->_sound->playSound(12);
 	}
 
 	if (_G(spieler).flags33_40 && !_G(spieler).flags34_10) {
@@ -257,8 +258,8 @@ int Room90::getHubcaps() {
 	auto_scroll(176, 0);
 	det->set_detail_pos(12, 495, 15);
 	det->start_detail(12, 255, false);
-	det->enable_sound(12, 0);
-	det->play_sound(12, 0);
+	g_engine->_sound->playSound(12, 0);
+	g_engine->_sound->playSound(12);
 
 	int destX = 495;
 

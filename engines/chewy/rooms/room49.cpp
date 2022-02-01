@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room49.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -259,7 +260,7 @@ int16 Room49::use_taxi() {
 
 		det->hide_static_spr(7);
 		start_detail_wait(5, 1, ANI_VOR);
-		det->disable_sound(5, 0);
+		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}
 

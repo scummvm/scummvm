@@ -119,7 +119,6 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 
 	clear_prog_ani();
 	det->load_rdi(Rb->DetFile, room_nr);
-	load_sound();
 
 	if (player->SoundSwitch == false)
 		det->disable_room_sound();
@@ -450,18 +449,6 @@ void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {
 		++LastAblageSave;
 	}
 }
-
-void Room::load_sound() {
-	if (!modul && flags.InitSound) {
-		det->load_room_sounds(roomhandle[R_VOCDATEI]);
-	}
-}
-
-Stream *Room::get_sound_handle() {
-	return (modul || !flags.InitSound) ? nullptr :
-		roomhandle[R_VOCDATEI];
-}
-
 
 void load_chewy_taf(int16 taf_nr) {
 	if (AkChewyTaf != taf_nr) {

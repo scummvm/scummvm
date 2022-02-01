@@ -24,16 +24,17 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/room26.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
 
 void Room26::entry() {
 	if (_G(spieler).R25GleiteLoesch) {
-		det->disable_sound(0, 0);
+		g_engine->_sound->stopSound(0);
 	} else {
-		det->enable_sound(0, 0);
-		det->play_sound(0, 0);
+		g_engine->_sound->playSound(0, 0);
+		g_engine->_sound->playSound(0);
 	}
 }
 

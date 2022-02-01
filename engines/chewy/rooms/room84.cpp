@@ -24,6 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room84.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -39,8 +40,7 @@ void Room84::entry() {
 	spieler_mi[P_NICHELLE].Mode = true;
 	_G(spieler).R84GoonsPresent = false;
 	_flag = false;
-	det->enable_sound(0, 0);
-	det->play_sound(0, 0);
+	g_engine->_sound->playSound(0, 0);
 
 	if (_G(spieler).R88UsedMonkey) {
 		det->del_static_ani(3);

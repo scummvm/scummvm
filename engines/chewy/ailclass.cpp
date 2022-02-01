@@ -21,12 +21,12 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "common/config-manager.h"
 #include "chewy/chewy.h"
 #include "chewy/ailclass.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
 #include "chewy/ngshext.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -161,66 +161,7 @@ char *Patterns[128];
 char *CurrentLine;
 int16 StereoPos[8] = {63};
 
-byte *Dbuffer[8][2] = { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} };
-uint32 DbufferLen[8] = {0};
-uint32 DbSampleLen[8] = {0};
-Stream *DbufferHandles[8] = {0};
-
-ailScummVM::ailScummVM() {
-	_mixer = g_engine->_mixer;
-}
-
-void ailScummVM::playSpeech(int channel, Common::SeekableReadStream *src) {
-	Audio::AudioStream *audioStream =
-		Audio::makeRawStream(src, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
-		&_soundHandles[channel & 1], audioStream);
-
-	waitForSpeechToFinish();
-}
-
-bool ailScummVM::isSpeechActive(int channel) const {
-	return _mixer->isSoundHandleActive(
-		_soundHandles[channel & 1]);
-}
-
-void ailScummVM::waitForSpeechToFinish() {
-	if (flags.InitSound && _G(spieler).SpeechSwitch) {
-		while (isSpeechActive() && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
-		}
-	}
-}
-
-bool ailScummVM::hasSubtitles() {
-	return ConfMan.getBool("subtitles");
-}
-
-bool ailScummVM::isSpeechMuted() {
-	return ConfMan.getBool("speech_mute");
-}
-
-
 ailclass::ailclass() {
-#if 0
-	int16 i;
-	char *enstr;
-	char a[] = {116, 109, 121, 83, 120, 107, 124, 107, 103, 114, 0}; // "NGS-REVEAL"
-	char
-	b[] = {121, 117, 123, 116, 106, 133, 121, 127, 121, 122, 107, 115, 133, 78, 105, 79,
-		133, 116, 107, 125, 133, 109, 107, 116, 107, 120, 103, 122, 111, 117, 116, 133,
-		121, 117, 108, 122, 125, 103, 120, 107, 0 }; // "SOUND_SYSTEM_(C)_NEW_GENERATION_SOFTWARE"
-	for (i = 0; a[i] != 0; i++)
-		a[i] -= 38;
-	for (i = 0; b[i] != 0; i++)
-		b[i] -= 38;
-	enstr = (char *)getenv(a);
-	if (enstr) {
-		printf(b);
-		printf("\n");
-		g_events->delay(800);
-	}
-#endif
 	SoundEnable = false;
 	MusicFade = false;
 }
@@ -237,34 +178,6 @@ ailclass::~ailclass() {
 int16 ailclass::init(uint16 freq) {
 	warning("STUB: ailclass::init()");
 
-#if 0
-	int16 port, irq, dma;
-	int16 i;
-	GlobalFrequency = freq;
-	AIL_startup();
-	AIL_set_preference(DIG_SERVICE_RATE, 300);
-	AIL_set_preference(DIG_LATENCY, 30);
-	AIL_set_preference(DIG_USE_STEREO, YES);
-	AIL_set_preference(DIG_HARDWARE_SAMPLE_RATE, freq);
-	AIL_set_preference(DIG_USE_16_BITS, NO);
-	dig = AIL_install_DIG_INI();
-	if (dig == NULL) {
-		AIL_shutdown();
-		SoundCard = 0;
-	} else {
-		SoundEnable = TRUE;
-		for (i = 0; i < MAX_VOICES; i++) {
-			smp[i] = AIL_allocate_sample_handle(dig);
-			if (smp[i] == NULL) {
-				break;
-			}
-		}
-		RealVoices = i;
-		SoundCard = SOUNDBLASTER;
-	}
-
-	return SoundCard;
-#endif
 	return SOUNDBLASTER;
 }
 
@@ -290,31 +203,6 @@ void ailclass::setSoundMasterVol(int16 vol) {
 	if (vol > 120)
 		vol = 120;
 	SoundMasterVol = vol;
-}
-
-void ailclass::setChannelVol(uint8 channel, uint8 vol) {
-	channel &= 3;
-	channel += 4;
-
-	warning("STUB: ailclass::setChannelVol()");
-#if 0
-	if (SoundEnable)
-		AIL_set_sample_volume(smp[channel], vol);
-#endif
-}
-
-void ailclass::setStereoPos(int16 channel, int16 pos) {
-	channel &= 7;
-	channel += 4;
-	pos &= 127;
-
-	warning("STUB: ailclass::setStereoPos()");
-#if 0
-	if (SoundEnable) {
-		StereoPos[channel] = pos;
-		AIL_set_sample_pan(smp[channel], (byte)StereoPos[channel]);
-	}
-#endif
 }
 
 void ailclass::disableSound() {
@@ -459,20 +347,6 @@ void ailclass::getMusicInfo(musik_info *mi) {
 	mi->cur_pattnr = PatPointer;
 }
 
-void ailclass::getChannelInfo(channel_info *ch, int16 channel) {
-	warning("STUB: ailclass::getChannelInfo()");
-
-#if 0
-	ch->finetune = Instrument[channel].finetune;
-	ch->volume = Instrument[channel].insvol;
-	ch->repstart = Instrument[channel].repstart;
-	ch->replen = Instrument[channel].replen;
-	ch->len = Instrument[channel].laenge;
-	ch->pointer = (dword)Sample[channel];
-	ch->pos = AIL_sample_position(smp[channel]);
-#endif
-}
-
 int16 ailclass::musicPlaying() {
 	return MusicStatus;
 }
@@ -500,64 +374,6 @@ void ailclass::initNoteTable(uint16 sfreq) {
 	}
 }
 
-void ailclass::playVoc(byte *anf_adr, int16 channel, int16 vol, int16 rep) {
-	warning("STUB: ailclass::playVoc()");
-
-#if 0
-	byte *vptr = 0;
-	byte blockt;
-	byte freq = 0;
-	dword blocklen;
-	uint16 RealFrq;
-	if (SoundEnable) {
-		vptr = (byte *)anf_adr;
-		vol = (vol << 1) & 127;
-		channel &= 3;
-		channel += 4;
-		while (*vptr != 0) {
-			blockt = *vptr++;
-			if (blockt > 7)
-				blockt = 8;
-			blocklen = (uint32) * vptr++;
-			blocklen += ((uint32) * vptr++) << 8;
-			blocklen += ((uint32) * vptr++) << 16;
-			if (blockt == 1) {
-				freq = vptr[0];
-				RealFrq = 1000000 / (256 - freq);
-				AIL_init_sample(smp[channel]);
-				AIL_set_sample_type(smp[channel], DIG_F_MONO_8, 0);
-				AIL_set_sample_address(smp[channel], vptr + 2, blocklen);
-				AIL_set_sample_playback_rate(smp[channel], RealFrq);
-				AIL_set_sample_volume(smp[channel], vol);
-				AIL_set_sample_loop_count(smp[channel], rep);
-				AIL_set_sample_pan(smp[channel], (byte)StereoPos[channel]);
-				AIL_start_sample(smp[channel]);
-			}
-			vptr += blocklen;
-		}
-	}
-#endif
-}
-
-void ailclass::playRaw(int16 channel, char *sp, uint32 len, uint16 frequency, int16 volume, int16 rep) {
-	warning("STUB: ailclass::playRaw()");
-
-#if 0
-	channel &= 3;
-	channel += 4;
-	if (SoundEnable) {
-		AIL_init_sample(smp[channel]);
-		AIL_set_sample_type(smp[channel], DIG_F_MONO_8, 0);
-		AIL_set_sample_address(smp[channel], sp, len);
-		AIL_set_sample_playback_rate(smp[channel], frequency);
-		AIL_set_sample_volume(smp[channel], volume);
-		AIL_set_sample_loop_count(smp[channel], rep);
-		AIL_set_sample_pan(smp[channel], (byte)StereoPos[channel]);
-		AIL_start_sample(smp[channel]);
-	}
-#endif
-}
-
 void ailclass::stopSound() {
 	warning("STUB: ailclass::stopSound()");
 
@@ -568,16 +384,6 @@ void ailclass::stopSound() {
 #endif
 }
 
-void ailclass::continueSound() {
-	warning("STUB: ailclass::continueSound()");
-
-#if 0
-	int16 i;
-	for (i = 4; i < 8; i++)
-		AIL_resume_sample(smp[i]);
-#endif
-}
-
 void ailclass::endSound() {
 	warning("STUB: ailclass::endSound()");
 
@@ -585,92 +391,6 @@ void ailclass::endSound() {
 	int16 i;
 	for (i = 4; i < 8; i++)
 		AIL_end_sample(smp[i]);
-#endif
-}
-
-void ailclass::stopSample(int16 channel) {
-	warning("STUB: ailclass::stopSample()");
-
-#if 0
-	channel &= 3;
-	channel += 4;
-	AIL_stop_sample(smp[channel]);
-#endif
-}
-
-void ailclass::continueSample(int16 channel) {
-	warning("STUB: ailclass::continueSample()");
-
-#if 0
-	channel &= 3;
-	channel += 4;
-	AIL_resume_sample(smp[channel]);
-#endif
-}
-
-void ailclass::endSample(int16 channel) {
-	warning("STUB: ailclass::endSample()");
-
-#if 0
-	channel &= 3;
-	channel += 4;
-	AIL_end_sample(smp[channel]);
-#endif
-}
-
-void ailclass::initDoubleBuffer(byte *b1, byte *b2, uint32 len, int16 channel) {
-	channel &= 3;
-	channel += 4;
-	Dbuffer[channel][0] = b1;
-	Dbuffer[channel][1] = b2;
-	DbufferLen[channel] = len;
-}
-
-void ailclass::startDbVoc(Stream *v, int16 channel, int16 vol) {
-	Common::SeekableReadStream *src = dynamic_cast<Common::SeekableReadStream *>(v);
-	assert(src);
-
-	src->seek(-ChunkHead::SIZE(), SEEK_CUR);
-	ChunkHead ch;
-	if (!ch.load(src))
-		error("Error loading speech");
-
-	Common::SeekableReadStream *rs = src->readStream(ch.size);
-	playSpeech(channel, rs);
-}
-
-void ailclass::serveDbSamples() {
-	debug(1, "STUB: ailclass::serveDbSamples()");
-
-#if 0
-	int16 i;
-	int16 BufNr;
-	dword len;
-	for (i = 4; (i < 8) && (!modul); i++) {
-		if (DbSampleLen[i] != 0) {
-			BufNr = AIL_sample_buffer_ready(smp[i]);
-			if (BufNr != -1) {
-				if (DbSampleLen[i] > DbufferLen[i]) {
-					len = DbufferLen[i];
-					DbSampleLen[i] -= DbufferLen[i];
-				} else {
-					len = DbSampleLen[i];
-					DbSampleLen[i] = 0;
-				}
-				if (!chewy_fread(Dbuffer[i][BufNr], len, 1, DbufferHandles[i])) {
-					modul = DATEI;
-					fcode = READFEHLER;
-				} else
-					AIL_load_sample_buffer(smp[i], BufNr, Dbuffer[i][BufNr], len);
-			}
-		} else if (DbufferHandles[i]) {
-			BufNr = AIL_sample_buffer_ready(smp[i]);
-			if (BufNr != -1) {
-				AIL_load_sample_buffer(smp[i], BufNr, Dbuffer[i][BufNr], 0);
-				DbufferHandles[i] = 0;
-			}
-		}
-	}
 #endif
 }
 
@@ -901,11 +621,6 @@ void ailclass::switchMusic(bool onOff) {
 void ailclass::switchSound(bool onOff) {
 	if (SoundEnable)
 		SoundSwitch = onOff;
-}
-
-void serve_speech() {
-	if (flags.InitSound && _G(spieler).SpeechSwitch)
-		ailsnd->serveDbSamples();
 }
 
 } // namespace Chewy
