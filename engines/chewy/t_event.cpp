@@ -713,7 +713,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 517:
-						action_ret = Room90::proc3();
+						action_ret = Room90::getHubcaps();
 						break;
 
 					case 519:

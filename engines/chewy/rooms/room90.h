@@ -31,7 +31,7 @@ public:
 	static void xit(int16 eib_nr);
 	static void setup_func();
 	static void proc2();
-	static int proc3();
+	static int getHubcaps();
 	static int proc4();
 	static int16 proc5(int16 key);
 	static int proc6();
