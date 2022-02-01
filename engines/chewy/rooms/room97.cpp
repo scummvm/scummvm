@@ -273,7 +273,7 @@ void Room97::proc2() {
 	go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	spieler_mi[P_CHEWY].Mode = false;
 	Sdi[6].z_ebene = 166;
-	Sdi[18].z_ebene = 157;
+	Sdi[24].z_ebene = 157;
 	show_cur();
 	flags.AutoAniPlay = false;
 }
