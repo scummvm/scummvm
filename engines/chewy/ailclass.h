@@ -62,7 +62,6 @@ public:
 	void fadeOut(uint16 delay);
 
 	void endSound();
-	void stopSound();
 
 	void switchMusic(bool onOff);
 	void switchSound(bool onOff);

@@ -374,16 +374,6 @@ void ailclass::initNoteTable(uint16 sfreq) {
 	}
 }
 
-void ailclass::stopSound() {
-	warning("STUB: ailclass::stopSound()");
-
-#if 0
-	int16 i;
-	for (i = 4; i < 8; i++)
-		AIL_stop_sample(smp[i]);
-#endif
-}
-
 void ailclass::endSound() {
 	warning("STUB: ailclass::endSound()");
 
