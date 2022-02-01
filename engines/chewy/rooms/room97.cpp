@@ -55,9 +55,14 @@ void Room97::entry() {
 	_G(spieler).ScrollxStep = 2;
 	det->hide_static_spr(14);
 
-	if (_G(spieler).flags36_4)
-		det->show_static_spr(17);
+	if (_G(spieler).flags36_2) {
+		det->hide_static_spr(14);
+		det->hide_static_spr(18);
 
+		if (!_G(spieler).flags36_4)
+			det->show_static_spr(17);
+	}
+	
 	if (_G(spieler).flags36_10) {
 		det->start_detail(11, 255, ANI_VOR);
 		det->stop_detail(5);
@@ -95,26 +100,27 @@ void Room97::entry() {
 	_word18DB36 = 110;
 	_word18DB38 = 132;
 
-	if (!flags.ExitMov) {
-		if (_G(spieler).flags37_8) {
-			hide_cur();
-			out->setze_zeiger(nullptr);
-			out->cls();
+	if (flags.LoadGame)
+		return;
 
-			_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 89;
-			_G(spieler).SVal2 = 0;
-			_G(spieler).flags35_4 = true;
-			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(19, 1, ANI_VOR);
-			_G(spieler).PersonHide[P_CHEWY] = false;
-			show_cur();
-			switch_room(89);
-		} else {
-			_G(spieler).scrollx = 800;
-			set_person_pos(1067, 98, P_CHEWY, P_LEFT);
-			set_person_pos(1092, 83, P_HOWARD, P_LEFT);
-			set_person_pos(130, 29, P_NICHELLE, P_RIGHT);
-		}
+	if (_G(spieler).flags37_8) {
+		hide_cur();
+		out->setze_zeiger(nullptr);
+		out->cls();
+
+		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 89;
+		_G(spieler).SVal2 = 0;
+		_G(spieler).flags35_4 = true;
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		start_detail_wait(19, 1, ANI_VOR);
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		show_cur();
+		switch_room(89);
+	} else {
+		_G(spieler).scrollx = 800;
+		set_person_pos(1067, 98, P_CHEWY, P_LEFT);
+		set_person_pos(1092, 83, P_HOWARD, P_LEFT);
+		set_person_pos(130, 29, P_NICHELLE, P_RIGHT);
 	}
 }
 
