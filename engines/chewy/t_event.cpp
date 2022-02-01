@@ -717,11 +717,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 519:
-						action_ret = Room90::proc4();
+						action_ret = Room90::shootControlUnit();
 						break;
 
 					case 520:
-						action_ret = Room90::proc6();
+						action_ret = Room90::useSurimyOnWreck();
 						break;
 
 					case 522:
