@@ -510,6 +510,12 @@ void load_chewy_taf(int16 taf_nr) {
 			spieler_mi[P_CHEWY].HotY = 68;
 			break;
 
+		case CHEWY_ANI7:
+			fname_ = CHEWY_HELM_TAF;
+			chewy_ph_anz = chewy_mi_phasen_anz;
+			chewy_ph = (uint8 *)chewy_mi_phasen;
+			break;
+
 		default:
 			fname_ = NULL;
 			break;

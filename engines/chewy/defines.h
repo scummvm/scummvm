@@ -152,6 +152,7 @@ enum SetupScreenMode {
 #define CHEWY_PUMP_TAF "misc/ch_pump.taf"
 #define CHEWY_ROCK_TAF "misc/ch_rock.taf"
 #define CHEWY_JMAN_TAF "misc/ch_mans.taf"
+#define CHEWY_HELM_TAF "misc/ch_helm.taf"
 #define MENUTAF "misc/menu.taf"
 #define CH_SPZ_FILE "misc/ch_spez.taf"
 #define OPTION_TAF "MISC/OPTION.TAF"
