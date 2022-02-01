@@ -33,7 +33,7 @@ public:
 	static void setup_func();
 
 	static void talk1();
-	static int proc3();
+	static int giveGhostBottle();
 };
 
 } // namespace Rooms

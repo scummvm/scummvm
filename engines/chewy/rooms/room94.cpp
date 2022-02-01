@@ -125,8 +125,8 @@ void Room94::talk1() {
 	show_cur();
 }
 
-int Room94::proc3() {
-	if (is_cur_inventar(62))
+int Room94::giveGhostBottle() {
+	if (!is_cur_inventar(LIKOER2_INV))
 		return 0;
 
 	hide_cur();
