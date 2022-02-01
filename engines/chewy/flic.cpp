@@ -246,7 +246,6 @@ void flic::col256_chunk(byte *tmp) {
 	int packets = *(int16 *)tmp;
 	tmp += 2;
 
-	out->vsync_start();
 	if (cls_flag == true)
 		out->cls();
 	else
@@ -283,7 +282,6 @@ void flic::col64_chunk(byte *tmp) {
 	int packets = *((int16 *)tmp);
 	tmp += 2;
 
-	out->vsync_start();
 	if (cls_flag == true)
 		out->cls();
 	else

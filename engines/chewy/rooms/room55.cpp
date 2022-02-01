@@ -231,7 +231,6 @@ int16 Room55::use_telefon() {
 					else
 						_G(spieler).scrollx = 0;
 					while (delay) {
-						out->skip_frame(1);
 						--delay;
 					}
 

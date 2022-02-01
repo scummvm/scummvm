@@ -167,7 +167,6 @@ void Room46::kloppe() {
 		}
 		
 		while (in->get_switch_code() == 0 && delay) {
-			out->skip_frame(1);
 			--delay;
 			SHOULD_QUIT_RETURN;
 		}

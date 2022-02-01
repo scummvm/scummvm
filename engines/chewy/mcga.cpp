@@ -46,26 +46,6 @@ void init_mcga() {
 	spriteWidth = 0;
 }
 
-void old_mode() {
-	// No implementation needed
-}
-
-void vflyback_start() {
-	// No implementation needed
-}
-
-void vflyback_end() {
-	// No implementation needed
-}
-
-void hflyback_start() {
-	// No implementation needed
-}
-
-void hflyback_end() {
-	// No implementation needed
-}
-
 void set_pointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
@@ -143,16 +123,6 @@ void mem2mcga(const byte *ptr) {
 	byte *destP = (byte *)g_screen->getPixels();
 	Common::copy(ptr + 4, ptr + 4 + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 	g_screen->markAllDirty();
-}
-
-void mem2mcga_masked(const byte *ptr, int16 maske) {
-	byte *destP = SCREEN;
-
-	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr, ++destP) {
-		byte pixel = *ptr;
-		if (pixel != maske)
-			*destP = pixel;
-	}
 }
 
 void mcga2mem(byte *ptr) {

@@ -64,7 +64,6 @@ ChewyFont *_font6;
 ChewyFont *_font8;
 FontMgr *_fontMgr;
 
-void r39_ok();
 void switch_room(int16 nr);
 
 void game_main() {
@@ -93,7 +92,6 @@ void game_main() {
 	remove(ADSH_TMP);
 	tidy();
 	out->rest_palette();
-	out->restore_mode();
 }
 
 void alloc_buffers() {

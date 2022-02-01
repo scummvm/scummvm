@@ -60,21 +60,13 @@ public:
 	~mcga_grafik();
 
 	void init();
-	void restore_mode();
 	void set_writemode(char wm);
 	void init_mausmode(maus_info *minfo);
 	void exit_mausmode();
 
 	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
-	void vsync_start();
-	void vsync_end();
-	void hsync_start();
-	void hsync_end();
-	void skip_line(int16 lines);
-	void skip_frame(int16 frames);
 	void setze_zeiger(byte *ptr);
 	byte *get_zeiger();
-	void set_bildbreite(int16 breite);
 
 	void set_mono();
 	void calc_mono(byte *pal, int16 startcol, int16 anz);
@@ -100,21 +92,7 @@ public:
 	void kreis(int16 x, int16 y, int16 r, int16 farbe);
 	void fkreis(int16 x, int16 y, int16 r, int16 farbe);
 
-#ifdef EFFEKTE
-	void upscroll();
-	void downscroll();
-	void leftscroll();
-	void rightscroll();
-	void set_dispoff(int16 offset);
-	void seit_in(byte *source);
-	void falling_in(byte *source);
-	void ueberblend(byte *source);
-	void y_shrumpf(byte *source, byte *dest, int16 faktor,
-	               int16 zeile);
-#endif
-
 	void back2screen(byte *ptr);
-	void back2screen_maskiert(byte *ptr, int16 maske);
 	void screen2back(byte *ptr);
 	void back2back(byte *ptr1, byte *ptr2);
 	void back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske);

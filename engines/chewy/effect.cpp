@@ -42,7 +42,6 @@ void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 					x = (rnd_zeiger[i] - (40 * (y / 8))) * 8;
 				else
 					x = rnd_zeiger[i] * 8;
-				out->skip_line(skip_line);
 				out->box_fill(x, y, x + 8, y + 8, col);
 			}
 			out->set_palette(palette);
@@ -54,7 +53,6 @@ void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 				x = (rnd_zeiger[i] - (40 * (y / 8))) * 8;
 			else
 				x = rnd_zeiger[i] * 8;
-			out->skip_line(skip_line);
 			out->setze_zeiger(sram_speicher);
 			out->sprite_save(sp, x, y, 8, 8, 0);
 			out->setze_zeiger(screen);
@@ -79,7 +77,6 @@ void effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 					out->box_fill(x1 * 8, y * 8, x1 * 8 + 8, y * 8 + 8, col);
 				for (int16 y1 = 24 - i; y1 >= i; y1--)
 					out->box_fill(x1 * 8, y1 * 8, x1 * 8 + 8, y1 * 8 + 8, col);
-				out->skip_line(frames);
 			}
 			out->set_palette(palette);
 		}
@@ -111,7 +108,6 @@ void effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 					out->setze_zeiger(screen);
 					out->sprite_set(sp, x1 * 8, y1 * 8, 0);
 				}
-				out->skip_line(frames);
 			}
 			break;
 
@@ -142,7 +138,6 @@ void effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 					out->setze_zeiger(screen);
 					out->sprite_set(sp, x1 * 8, y1 * 8, 0);
 				}
-				out->skip_line(frames);
 			}
 			break;
 
@@ -160,7 +155,6 @@ void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 			out->box_fill(152 - x, 0, 152 - x + 8, 200, farbe);
 			out->box_fill(x + 160, 0, x + 168, 200, farbe);
 			out->back2screen(workpage_);
-			out->skip_line(lines);
 		}
 	} else {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
@@ -168,7 +162,6 @@ void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 			out->box_fill(x, 0, x + 8, 200, farbe);
 			out->box_fill(312 - x, 0, 31 - x + 8, 200, farbe);
 			out->back2screen(workpage_);
-			out->skip_line(lines);
 		}
 	}
 }
@@ -180,7 +173,6 @@ void effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
 			out->box_fill(0, 92 - y, 320, 92 - y + 8, col);
 			out->box_fill(0, 100 + y, 320, 108 + y, col);
 			out->back2screen(workpage_);
-			out->skip_line(lines);
 		}
 	} else {
 		for (int i = 0; i < 20; ++i) {
@@ -188,7 +180,6 @@ void effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
 			out->box_fill(0, i, 320, i + 8, col);
 			out->box_fill(0, 192 - i, 320, 200 - i, col);
 			out->back2screen(workpage_);
-			out->skip_line(lines);
 		}
 	}
 }
