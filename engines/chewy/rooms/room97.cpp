@@ -205,7 +205,7 @@ void Room97::setup_func() {
 		int destX, destY;
 
 		if (chewyPosX > 980) {
-			destX = 1000;
+			destX = 1080;
 			destY = 91;
 		} else if (chewyPosX > 880) {
 			destX = 994;
