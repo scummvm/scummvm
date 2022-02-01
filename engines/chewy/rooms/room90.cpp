@@ -84,9 +84,11 @@ void Room90::entry(int16 eib_nr) {
 		_G(spieler).flags33_10 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
 		switch_room(91);
+
 	} else if (!_G(spieler).flags33_20) {
-		start_aad_wait(-1, 499);
+		start_aad_wait(499, -1);
 		_G(spieler).flags33_20 = true;
+
 	} else if (_G(spieler).flags34_20) {
 		set_person_pos(411, 146, P_CHEWY, P_RIGHT);
 		set_person_pos(440, 132, P_HOWARD, P_RIGHT);
