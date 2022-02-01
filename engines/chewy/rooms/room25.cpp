@@ -75,7 +75,6 @@ void Room25::entry() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		flic_cut(FCUT_029, CFO_MODE);
 		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
 		fx_blend = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
