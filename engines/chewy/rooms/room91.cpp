@@ -45,7 +45,6 @@ void Room91::entry() {
 
 	_G(spieler).scrollx = 320;
 	hide_cur();
-	_G(spieler).scrollx = 320;
 
 	if (_G(spieler).flags34_1) {
 		set_person_pos(499, 106, P_CHEWY, P_RIGHT);
@@ -56,8 +55,7 @@ void Room91::entry() {
 		}
 	} else {
 		flags.MainInput = false;
-		flags.NoScroll = false;
-		flags.NoScroll = true; // CHECKME: clearly, this has to be double checked. Maybe I didn't understand properly the NOT?
+		flags.NoScroll = true;
 		_G(spieler).flags34_1 = true;
 		set_person_pos(326, 99, P_CHEWY, P_RIGHT);
 		set_person_pos(312, 75, P_HOWARD, P_RIGHT);
@@ -79,6 +77,7 @@ void Room91::entry() {
 void Room91::xit(int16 eib_nr) {
 	flags.MainInput = true;
 	_G(spieler).ScrollxStep = 1;
+	_G(spieler).scrollx = 0;
 
 	if (eib_nr == 136)
 		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
