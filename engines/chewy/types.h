@@ -511,8 +511,6 @@ struct Spieler : public SpielerFlags {
 	};
 	
 	// ---- //
-	int r91_word18DB2A = 0;
-	// ---- //
 	int r93_word18DB2C = 0;
 	// ---- //
 	int r97_word18DB2E = 0;

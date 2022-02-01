@@ -28,13 +28,15 @@
 namespace Chewy {
 namespace Rooms {
 
+int16 Room91::_click;
+
 void Room91::entry() {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
 	SetUpScreenFunc = setup_func;
-	_G(spieler).r91_word18DB2A = 0;
+	_click = 0;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	spieler_mi[P_HOWARD].Mode = true;
 
@@ -105,17 +107,17 @@ void Room91::setup_func() {
 		cur_2_inventory();
 		cursor_wahl(CUR_22);
 
-		if (_G(maus_links_click) == 0 || _G(spieler).r91_word18DB2A)
+		if (_G(maus_links_click) == 0 || _click)
 			return;
 
-		const int old_r91_word18DB2A = _G(spieler).r91_word18DB2A;
-		_G(maus_links_click) = old_r91_word18DB2A;
-		_G(spieler).r91_word18DB2A = 1;
+		const int oldClick = _click;
+		_G(maus_links_click) = oldClick;
+		_click = 1;
 		const int aniNr = 1 + (minfo.y <= 100 ? 1 : 0);
 		hide_cur();
 		det->stop_detail(0);
 		start_detail_wait(aniNr, 1, ANI_VOR);
-		_G(spieler).r91_word18DB2A = old_r91_word18DB2A;
+		_click = oldClick;
 		det->start_detail(0, 255, false);
 		det->start_detail(aniNr + 2, 1, false);
 		det->start_detail(7, 1, false);
