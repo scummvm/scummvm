@@ -28,7 +28,7 @@ namespace Rooms {
 class Room51 {
 private:
 	static bool _flag;
-	static bool _arr[2];
+	static bool _enemyFlag[2];
 	static int16 _tmpx, _tmpy;
 	static int _index;
 
