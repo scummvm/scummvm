@@ -521,6 +521,7 @@ struct CustomFlicHead {
 	uint16 frames = 0;
 	uint16 width = 0;
 	uint16 height = 0;
+	uint32 speed = 0;
 	uint32 oframe1 = 0;
 
 	bool load(Common::SeekableReadStream *src);
