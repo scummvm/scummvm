@@ -30,12 +30,7 @@ namespace Chewy {
 extern int fontFirst, fontLast;
 
 void init_mcga();
-void old_mode();
 
-void vflyback_start();
-void vflyback_end();
-void hflyback_start();
-void hflyback_end();
 void set_pointer(byte *ptr);
 byte *get_dispoff();
 
@@ -51,15 +46,7 @@ void setpixel_mcga(int16 x, int16 y, int16 farbe);
 uint8 getpix(int16 x, int16 y);
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 
-#ifdef EFFEKTE
-void split_in(byte *source);
-void fall_in(byte *source);
-void over_in(byte *source);
-void y_shrink(byte *source, byte *dest, int16 faktor, int16 zeile);
-#endif
-
 void mem2mcga(const byte *ptr);
-void mem2mcga_masked(const byte *ptr, int16 maske);
 void mcga2mem(byte *ptr);
 void mem2mem(const byte *ptr1, byte *ptr2);
 void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske);

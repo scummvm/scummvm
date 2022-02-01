@@ -113,47 +113,11 @@ void mcga_grafik::set_writemode(char wm) {
 	writemode = wm;
 }
 
-void mcga_grafik::restore_mode() {
-	old_mode();
-}
-
 void mcga_grafik::set_clip(int16 x1, int16 y1, int16 x2, int16 y2) {
 	clipx1 = x1;
 	clipx2 = x2;
 	clipy1 = y1;
 	clipy2 = y2;
-}
-
-void mcga_grafik::vsync_start() {
-	vflyback_start();
-}
-
-void mcga_grafik::vsync_end() {
-	vflyback_end();
-}
-
-void mcga_grafik::hsync_start() {
-	hflyback_start();
-}
-
-void mcga_grafik::hsync_end() {
-	hflyback_end();
-}
-
-void mcga_grafik::skip_frame(int16 frames) {
-	int16 i = 0;
-	for (i = 0; i < frames; i++) {
-		vflyback_start();
-		vflyback_end();
-	}
-}
-
-void mcga_grafik::skip_line(int16 lines) {
-	int16 i = 0;
-	for (i = 0; i < lines; i++) {
-		hflyback_start();
-		hflyback_end();
-	}
 }
 
 void mcga_grafik::setze_zeiger(byte *ptr) {
@@ -162,12 +126,6 @@ void mcga_grafik::setze_zeiger(byte *ptr) {
 
 byte *mcga_grafik::get_zeiger() {
 	return get_dispoff();
-}
-
-void mcga_grafik::set_bildbreite(int16 breite) {
-	scr_w = breite;
-	if (!scr_w)
-		scr_w = 320;
 }
 
 void mcga_grafik::set_mono() {
@@ -242,8 +200,6 @@ void mcga_grafik::einblenden(byte *palette, int16 frames) {
 			k += 3;
 		}
 		setpalette(pal_table);
-		if (frames)
-			skip_frame(frames);
 	}
 }
 
@@ -271,8 +227,6 @@ void mcga_grafik::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stuf
 			k += 3;
 		}
 		set_palpart(pal_table, startcol, anz);
-		if (frames)
-			skip_frame(frames);
 	}
 }
 
@@ -294,8 +248,6 @@ void mcga_grafik::ausblenden(int16 frames) {
 			k += 3;
 		}
 		setpalette(pal_table);
-		if (frames)
-			skip_frame(frames);
 	}
 }
 
@@ -319,8 +271,6 @@ void mcga_grafik::abblenden(int16 startcol, int16 anz, int16 stufen, int16 frame
 			k += 3;
 		}
 		set_palpart(pal_table, startcol, anz);
-		if (frames)
-			skip_frame(frames);
 	}
 }
 
@@ -428,35 +378,12 @@ void mcga_grafik::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
 	}
 }
 
-#ifdef EFFEKTE
-void mcga_grafik::seit_in(char *source) {
-	split_in(source);
-}
-
-void mcga_grafik::falling_in(char *source) {
-	fall_in(source);
-}
-
-void mcga_grafik::ueberblend(char *source) {
-	over_in(source);
-}
-
-void mcga_grafik::y_shrumpf(char *source, char *dest, int16 faktor,
-                            int16 zeile) {
-	y_shrink(source, dest, faktor, zeile);
-}
-#endif
-
 void mcga_grafik::back2screen(byte *ptr) {
 	mem2mcga(ptr);
 }
 
 void mcga_grafik::back2back(byte *ptr1, byte *ptr2) {
 	mem2mem(ptr1, ptr2);
-}
-
-void mcga_grafik::back2screen_maskiert(byte *ptr, int16 maske) {
-	mem2mcga_masked(ptr, maske);
 }
 
 void mcga_grafik::back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske) {
@@ -679,7 +606,6 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 
 						eing = 0;
 						move(x, y);
-						vsync_start();
 						for (i = disp_stelle; i <= disp_stellemax + disp_stelle; ++i) {
 							if (zstring[i] != 0) {
 								putz(zstring[i], fcol, bcol, scrwidth);
@@ -695,7 +621,6 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++)
 
 						{
-							skip_frame(1);
 							izahl = devices();
 							if (izahl == 13) {
 								eing = 2;
@@ -711,7 +636,6 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++)
 
 						{
-							skip_frame(1);
 							izahl = devices();
 							if (izahl == 13) {
 								eing = 2;

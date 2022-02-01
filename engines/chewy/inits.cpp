@@ -48,7 +48,6 @@ void standard_init() {
 	flc = new flic();
 	mov = new movclass();
 
-	out->vsync_start();
 	out->init();
 	out->cls();
 	out->palette_save();

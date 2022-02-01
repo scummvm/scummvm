@@ -241,7 +241,6 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				}
 			}
 			cur->show_cur();
-			out->skip_frame((int16)io->delay);
 			break;
 
 		case 80:
@@ -276,7 +275,6 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				}
 			}
 			cur->show_cur();
-			out->skip_frame((int16)io->delay);
 			break;
 
 		case 59:
@@ -438,7 +436,6 @@ void io_game::mark_eintrag(int16 y, int16 nr) {
 		else
 			out->printxy(io->popx + 28, y + 2, io->m_col[2], 300,
 			              scr_width, &file_find_g[nr][1]);
-		out->vsync_start();
 		out->box_fill(io->popx + 8, io->popy + 106, io->popx + 244, io->popy + 117,
 		               io->m_col[5]);
 		print_shad(io->popx + 8, io->popy + 106, io->m_col[0], 300, io->m_col[1],
@@ -487,7 +484,6 @@ void io_game::plot_dir_liste(int16 cur_y, int16 start) {
 }
 
 void io_game::schalter_aus() {
-	out->vsync_start();
 	out->pop_box(io->popx + 163, io->popy + 6, io->popx + 241, io->popy + 18,
 	              io->m_col[0], io->m_col[1], io->m_col[5]);
 	if (io->f1)
@@ -503,7 +499,6 @@ void io_game::schalter_aus() {
 	if (io->f3)
 		out->printxy(io->popx + 167, io->popy + 41, io->m_col[1], 300, scr_width,
 		              FSTRING3);
-	out->vsync_start();
 	out->pop_box(io->popx + 163, io->popy + 6 + 16 * 3, io->popx + 241, io->popy + 18 + 16 * 3,
 	              io->m_col[0], io->m_col[1], io->m_col[5]);
 	if (io->f4)
