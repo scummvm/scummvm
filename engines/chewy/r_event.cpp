@@ -132,6 +132,7 @@ void timer_action(int16 t_nr) {
 }
 
 void check_ged_action(int16 index) {
+	int16 orig_index = index;
 	index -= 50;
 	index /= 4;
 
@@ -162,7 +163,7 @@ void check_ged_action(int16 index) {
 		GED_ACTION(52);
 		GED_ACTION(55);
 		GED_ACTION(94);
-		GED_ACTION(97);
+		case 97: Room97::gedAction(orig_index); break;
 
 		default:
 			break;
