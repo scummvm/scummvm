@@ -31,6 +31,7 @@ protected:
 	bool Cmd_GotoRoom(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);
 	bool Cmd_PlayVideo(int argc, const char **argv);
+	bool Cmd_WalkAreas(int argc, const char **argv);
 
 public:
 	Debugger();
