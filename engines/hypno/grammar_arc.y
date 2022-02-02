@@ -280,9 +280,7 @@ bline: FNTOK FILENAME {
 	| R0TOK NUM NUM  { debugC(1, kHypnoDebugParser, "R0 %d %d", $2, $3); }
 	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
 	| KNTOK NUM NUM { 
-		shoot->explosionFrame = $3;
-		if (shoot->attackFrame == 0) // Override attack frame if it is not specified
-			shoot->attackFrame = $3 - 4;
+		shoot->explosionFrames.push_front($3);
 		debugC(1, kHypnoDebugParser, "KN %d %d", $2, $3);
 	}
 	| P0TOK NUM NUM { 
@@ -294,7 +292,7 @@ bline: FNTOK FILENAME {
 	}
 	| CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); } 
 	| HTOK NUM  {
-		shoot->attackFrame = $2; 
+		shoot->attackFrames.push_back($2); 
 		debugC(1, kHypnoDebugParser, "H %d", $2); }
 	| WTOK NUM  {
 		shoot->attackWeight = $2;  

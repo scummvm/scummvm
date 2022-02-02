@@ -359,8 +359,6 @@ public:
 		attackWeight = 0;
 		paletteOffset = 0;
 		paletteSize = 0;
-		attackFrame = 0;
-		explosionFrame = 0;
 		obj1KillsCount = 0;
 		obj1MissesCount = 0;
 		animation = "NONE";
@@ -388,8 +386,8 @@ public:
 	Filename hitSound;
 
 	MVideo *video;
-	uint32 attackFrame;
-	uint32 explosionFrame;
+	Common::List<uint32> attackFrames;
+	Common::List<uint32> explosionFrames;
 	Filename explosionAnimation;
 	bool destroyed;
 };

@@ -64,6 +64,9 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->player.clear();
 	g_parsedArc->shoots.clear();
 	g_parsedArc->intros.clear();
+	g_parsedArc->defeatNoEnergyFirstVideo.clear();
+	g_parsedArc->defeatMissBossVideo.clear();
+	g_parsedArc->defeatNoEnergySecondVideo.clear();
 }
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
@@ -327,6 +330,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							s.video = new MVideo(it->animation, it->position, true, false, false);
 							playVideo(*s.video);
 							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
+							if (s.attackFrames.size() == 0)
+								s.attackFrames.push_back(s.explosionFrames.back()-3);
 							loadPalette(s.video->decoder->getPalette() + 3*s.paletteOffset, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
 							playSound(_soundPath + arc->enemySound, 1);
@@ -341,14 +346,17 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 			if (it->video && it->video->decoder) {
+				uint32 attackFrame = it->attackFrames.front();
 				int frame = it->video->decoder->getCurFrame();
-				if (frame > 0 && frame >= (int)(it->attackFrame) && !it->destroyed) {
+				if (frame > 0 && frame >= (int)(attackFrame - 1) && !it->destroyed) {
 					_health = _health - it->attackWeight;
 					hitPlayer();
-					it->attackFrame = it->video->decoder->getFrameCount() + 1; // It will never attack again
+					it->attackFrames.pop_front();
 				}
 
-				if (frame > 0 && frame >= (int)(it->explosionFrame - 3) && !it->destroyed) {
+				uint32 explosionFrame = it->explosionFrames.back();
+				if (frame > 0 && frame >= (int)(explosionFrame - 3) && !it->destroyed) {
+					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
 				} else if (frame > 0 && frame >= (int)(it->video->decoder->getFrameCount() - 2)) {
 					skipVideo(*it->video);
@@ -444,7 +452,16 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 			int w = _shoots[i].video->decoder->getWidth();
 			int h = _shoots[i].video->decoder->getHeight();
 			_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
-			_shoots[i].video->decoder->forceSeekToFrame(_shoots[i].explosionFrame + 2);
+
+			uint32 explosionFrame = *_shoots[i].explosionFrames.begin();
+			int currentFrame = _shoots[i].video->decoder->getCurFrame();
+			for (Common::List<uint32>::iterator it = _shoots[i].explosionFrames.begin(); it != _shoots[i].explosionFrames.end(); ++it) {
+				if (int(explosionFrame) >= currentFrame)
+					break;
+				explosionFrame = *it;
+			}
+
+			_shoots[i].video->decoder->forceSeekToFrame(explosionFrame + 2);
 		} else {
 			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
