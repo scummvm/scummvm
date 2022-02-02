@@ -79,71 +79,6 @@ uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-void datei::load_tafmcga(const char *fname, byte *sp, int16 nr) {
-	taf_imageheader iheader;
-	byte *speicher = sp;
-	taf_dateiheader *header = (taf_dateiheader *)tmp;
-
-	assign_filename(fname, ".taf");
-
-	int16 *abmess = (int16 *)speicher;
-	speicher += 4;
-	if (abmess) {
-		Common::File f;
-		if (f.open(filename)) {
-			if (header->load(&f)) {
-				int16 id = get_id(header->id);
-				if (id == TAFDATEI) {
-					uint32 image = 0;
-					if (header->korrekt == 1) {
-						uint32 next = header->next;
-						uint16 sprcount = 0;
-						while ((sprcount <= nr) && (nr <= header->count)) {
-							f.seek(next, SEEK_SET);
-							if (iheader.load(&f)) {
-								next = iheader.next;
-								image = iheader.image;
-							} else {
-								error("load_tafmcga error");
-							}
-							++sprcount;
-						}
-					} else {
-						f.seek((-(int)((header->count - nr) * sizeof(uint32))), SEEK_END);
-						uint32 next = f.readUint32LE();
-						f.seek(next, SEEK_SET);
-
-						if (iheader.load(&f)) {
-							next = iheader.next;
-							image = iheader.image;
-						} else {
-							error("load_tafmcga error");
-						}
-					}
-
-					abmess[0] = iheader.width;
-					abmess[1] = iheader.height;
-					const uint32 size = (uint32)(iheader.height * iheader.width);
-					int16 komp = iheader.komp;
-					f.seek(image, SEEK_SET);
-					read_tbf_image(&f, komp, size, speicher);
-
-				} else {
-					error("load_tafmcga error");
-				}
-			} else {
-				error("load_tafmcga error");
-			}
-
-			f.close();
-		} else {
-			error("load_tafmcga error");
-		}
-	} else {
-		error("load_tafmcga error");
-	}
-}
-
 void datei::load_tafmcga(Stream *handle, int16 komp, uint32 size, byte *speicher) {
 	read_tbf_image(handle, komp, size, speicher);
 }
@@ -622,38 +557,6 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 		} else {
 			error("load_palette error");
 		}
-	}
-}
-
-void datei::imsize(const char *fname, uint32 *svekt) {
-	taf_dateiheader *header = (taf_dateiheader *)tmp;
-
-	assign_filename(fname, ".taf");
-
-	Common::File f;
-	if (f.open(filename)) {
-		if (header->load(&f)) {
-			int16 id = get_id(header->id);
-			if ((id == TAFDATEI) && (header->mode == 19)) {
-				uint32 next = header->next;
-				uint16 sprcount = 0;
-				while (sprcount < header->count) {
-					f.seek(next, SEEK_SET);
-					taf_imageheader iheader;
-					if (iheader.load(&f)) {
-						next = iheader.next;
-						svekt[sprcount] = (uint32)iheader.width * (uint32)iheader.height;
-					} else {
-						error("imsize error");
-					}
-					++sprcount;
-				}
-			}
-		}
-
-		f.close();
-	} else {
-		error("imsize error");
 	}
 }
 

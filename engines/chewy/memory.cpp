@@ -27,7 +27,6 @@ namespace Chewy {
 
 extern int16 modul;
 extern int16 fcode;
-uint32 imagesize[MAXSPRITE];
 memory::memory() {
 	file = nullptr;
 }
