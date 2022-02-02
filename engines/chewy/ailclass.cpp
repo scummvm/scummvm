@@ -127,7 +127,6 @@ int16 TimerEnabled = false;
 int16 RealVoices;
 
 int16 SoundEnable = 0;
-int16 SoundCard = 0;
 int16 SoundMasterVol = 120;
 int16 MusicMasterVol = 120;
 int16 LoopEnable = OFF;
@@ -166,27 +165,6 @@ ailclass::ailclass() {
 
 ailclass::~ailclass() {
 	warning("STUB: ailclass::~ailclass()");
-
-#if 0
-	if (SoundCard != NONE)
-		AIL_shutdown();
-#endif
-}
-
-int16 ailclass::init(uint16 freq) {
-	warning("STUB: ailclass::init()");
-
-	return SOUNDBLASTER;
-}
-
-int16 ailclass::init(char *midiDrvName) {
-	return SoundCard;
-}
-
-void ailclass::exit1() {
-	warning("STUB: ailclass::exit1()");
-	// AIL_shutdown();
-	SoundCard = NONE;
 }
 
 void ailclass::setMusicMasterVol(int16 vol) {
@@ -320,14 +298,6 @@ void ailclass::setLoopMode(int16 mode) {
 	mode &= 1;
 	if (SoundEnable)
 		LoopEnable = mode;
-}
-
-void ailclass::fadeIn(uint16 delay) {
-	FadeVol = MusicMasterVol;
-	MusicMasterVol = 0;
-	FadeStart = delay;
-	FadeCounter = 0;
-	MusicFade = FADE_IN;
 }
 
 void ailclass::fadeOut(uint16 delay) {

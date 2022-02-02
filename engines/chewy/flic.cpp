@@ -581,14 +581,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case MFADE_IN:
-			if (!File::readArray(handle, &para[0], chead.size / 2)) {
-				error("flic error");
-			} else
-#ifndef AIL
-				snd->fadeIn(para[0]);
-#else
-				ailsnd->fadeIn(para[0]);
-#endif
+			error("decode_custom_frame: Unused frame type MFADE_IN found");
 			break;
 
 		case MFADE_OUT:
