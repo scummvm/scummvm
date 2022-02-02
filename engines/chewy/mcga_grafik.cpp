@@ -871,21 +871,17 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
                           const char *string, ...) {
 	int16 i = 0, k = 0, l;
 	char zstring[35];
-	unsigned char nextChar;
-	int16 izahl;
-	int16 count, diff;
-	uint16 uzahl;
-	long lzahl;
-	uint32 luzahl;
+	int16 diff;
 	char *tempptr;
 	va_list parptr;
 	va_start(parptr, string);
 	crlfx = x;
-	crlfy = y + (int16)fonth + 2;
+	crlfy = y + fonth + 2;
 	gcurx = x;
 	gcury = y;
 	i = 0;
 
+	unsigned char nextChar;
 	do {
 		nextChar = (unsigned char)string[i];
 		++i;
@@ -923,7 +919,7 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 				vors();
 			} else {
 				nextChar = string[i];
-				count = 0;
+				int16 count = 0;
 				if ((nextChar >= 0x30) && (nextChar <= 0x39))
 					count = atoi(string + i);
 				while ((nextChar >= 0x30) && (nextChar <= 0x39)) {
@@ -940,10 +936,10 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 				case 'd':
 				case 'u':
 					if (nextChar == 'd') {
-						izahl = va_arg(parptr, int);
+						int16 izahl = va_arg(parptr, int);
 						itoa(izahl, zstring, 10);
 					} else {
-						uzahl = va_arg(parptr, unsigned int);
+						uint16 uzahl = va_arg(parptr, unsigned int);
 						itoa(uzahl, zstring, 10);
 					}
 					k = 0;
@@ -963,10 +959,10 @@ void mcga_grafik::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrw
 
 				case 'l':
 					if (string[i] != 'u') {
-						lzahl = va_arg(parptr, long);
+						long lzahl = va_arg(parptr, long);
 						ltoa(lzahl, zstring, 10);
 					} else {
-						luzahl = va_arg(parptr, uint32);
+						uint32 luzahl = va_arg(parptr, uint32);
 						ultoa(luzahl, zstring, 10);
 						++i;
 					}

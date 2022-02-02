@@ -718,19 +718,19 @@ void gbook() {
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
-		int esi = 63 - (6 * i);
+		int color = 63 - (6 * i);
 		
-		out->raster_col(6 - i, esi, 0, 0);
-		out->raster_col(7 + i, esi, 0, 0);
+		out->raster_col(6 - i, color, 0, 0);
+		out->raster_col(7 + i, color, 0, 0);
 
-		esi = 63 - (4 * i);
-		out->raster_col(37 - i, esi, esi, esi);
-		out->raster_col(38 + i, esi, esi, esi);		
+		color = 63 - (4 * i);
+		out->raster_col(37 - i, color, color, color);
+		out->raster_col(38 + i, color, color, color);		
 	}
 
 	_G(spieler).DelaySpeed = 2;
 
-	int edi = 0;	
+	int lineScrolled = 0;	
 	bool endLoop = false;
 	while (!endLoop) {
 		if (in->get_switch_code() == 1)
@@ -742,36 +742,35 @@ void gbook() {
 		if (in->get_switch_code() == 1)
 			endLoop = true;
 
-		_G(spieler).scrollx++;
-		if (_G(spieler).scrollx >= 320)
+		if (++_G(spieler).scrollx >= 320)
 			_G(spieler).scrollx = 0;
 
-		++edi;
+		++lineScrolled;
 		g_events->delay(50);
-		int esp_4 = 0;
+		bool stillScrolling = false;
 		
 		for (int i = 0; i < 65; ++i) {
-			int edx = ARRAY187546[i][1] - edi;
-			if (edx >= 160 || edx <= 40)
+			int destY = ARRAY187546[i][1] - lineScrolled;
+			if (destY >= 160 || destY <= 40)
 				continue;
-			int esp_8;
+			int fontCol;
 			if (ARRAY187504[i]) {
-				esp_8 = 32;
+				fontCol = 32;
 				out->set_fontadr(font6x8);
 				out->set_vorschub(fvorx6x8, fvorx6x8);
 			} else {
-				esp_8 = 1;
+				fontCol = 1;
 				out->set_fontadr(font8x8);
 				out->set_vorschub(fvorx8x8, fvorx8x8);
 			}
-			esp_4 = 1;
+			stillScrolling = true;
 
 			// txt->str_pos((char *)&ARRAY187070, i);
-			int fgCol = esp_8 + (160 - (ARRAY187546[i][1] - edi)) / 10;
-			out->printxy(ARRAY187546[i][0], ARRAY187546[i][1], fgCol, 300, scr_width, ARRAY187070[i]);
+			int fgCol = fontCol + (160 - destY) / 10;
+			out->printxy(ARRAY187546[i][0], destY, fgCol, 300, scr_width, ARRAY187070[i]);
 		}
 
-		if (esp_4 == 0)
+		if (!stillScrolling)
 			endLoop = true;
 
 		out->setze_zeiger(nullptr);
