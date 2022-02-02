@@ -20,7 +20,7 @@
  */
 
 #include "common/events.h"
-
+#include "gui/message.h"
 #include "hypno/hypno.h"
 
 namespace Hypno {
@@ -303,7 +303,11 @@ void SpiderEngine::runNote(Code *code) {
 		}
 	break;
 	default:
-		error("Unsupported language");
+		GUI::MessageDialog dialog("The following puzzle is not fully implemented for\
+								   the current language yet, so it will be skipped");
+		dialog.runModal();
+		_nextLevel = code->levelIfWin;
+		return;
 	break;
 	}
 
