@@ -31,26 +31,9 @@ namespace Chewy {
 #define MAXFONTBREITE 32
 #define MAXFONTHOEHE 32
 
-/*
-#define master_clear outportb(0x00d,0)
-#define flipflop_clear outportb(0x00c,0)
-#define all_mask_set outportb(0x00f,0x0ff)
-#define all_mask_clear outportb(0x00f,0)
-#define read_status inportb(0x008)
-#define set_kommando(komm) outportb(0x008,komm);
-*/
-
 #define CHECK 0x00
 #define WRITE 0x04
 #define READ 0x08
-#define AUTOINIT_EIN 0x10
-#define AUTOINIT_AUS 0x00
-#define ADRESSDEC 0x20
-#define ADRESSINC 0x00
-#define REQUESTMODE 0x00
-#define SINGLEMODE 0x40
-#define BLOCKMODE 0x80
-#define KASKAMODE 0xc0
 
 #define MCGA_SPEICHER 64000L
 #define SETZEN 0
@@ -59,58 +42,6 @@ namespace Chewy {
 #define XODER 3
 
 #define COPY_PAGE out->screen2screen
-
-#define PAGE_0_1 0,0,316,199,0,0,0,80
-#define PAGE_0_2 0,0,316,199,0,0,0,160*200
-#define PAGE_0_3 0,0,316,199,0,0,0,160*200+80
-#define PAGE_1_0 0,0,316,199,0,0,80,0
-#define PAGE_1_2 0,0,316,199,0,0,80,160*200
-#define PAGE_1_3 0,0,316,199,0,0,80,160*200+80
-#define PAGE_2_0 0,0,316,199,0,0,160*200,0
-#define PAGE_2_1 0,0,316,199,0,0,160*200,80
-#define PAGE_2_3 0,0,316,199,0,0,160*200,160*200+80
-#define PAGE_3_0 0,0,316,199,0,0,160*200+80,0
-#define PAGE_3_1 0,0,316,199,0,0,160*200+80,80
-#define PAGE_3_2 0,0,316,199,0,0,160*200+80,160*200
-#define PAGE_R_L 0,0,316,399,0,0,80,0
-#define PAGE_L_R 0,0,316,399,0,0,0,80
-#define PAGE_D_U 0,0,635,199,0,0,160*200,0
-#define PAGE_U_D 0,0,635,199,0,0,0,160*200
-
-#define PAGEWA_0_1 0,0,316,199,0,0,0,80
-#define PAGEWA_0_2 0,0,316,199,0,0,0,160
-#define PAGEWA_0_3 0,0,316,199,0,0,0,240
-#define PAGEWA_1_0 0,0,316,199,0,0,80,0
-#define PAGEWA_1_2 0,0,316,199,0,0,80,160
-#define PAGEWA_1_3 0,0,316,199,0,0,80,240
-#define PAGEWA_2_0 0,0,316,199,0,0,160,0
-#define PAGEWA_2_1 0,0,316,199,0,0,160,80
-#define PAGEWA_2_3 0,0,316,199,0,0,160,240
-#define PAGEWA_3_0 0,0,316,199,0,0,240,0
-#define PAGEWA_3_1 0,0,316,199,0,0,240,80
-#define PAGEWA_3_2 0,0,316,199,0,0,240,160
-
-#define PAGESE_0_1 0,0,316,199,0,0,0,80*200
-#define PAGESE_0_2 0,0,316,199,0,0,0,80*400
-#define PAGESE_0_3 0,0,316,199,0,0,0,80*600
-#define PAGESE_1_0 0,0,316,199,0,0,80*200,0
-#define PAGESE_1_2 0,0,316,199,0,0,80*200,80*400
-#define PAGESE_1_3 0,0,316,199,0,0,80*200,80*600
-#define PAGESE_2_0 0,0,316,199,0,0,80*400,0
-#define PAGESE_2_1 0,0,316,199,0,0,80*400,80*200
-#define PAGESE_2_3 0,0,316,199,0,0,80*400,80*600
-#define PAGESE_3_0 0,0,316,199,0,0,80*600,0
-#define PAGESE_3_1 0,0,316,199,0,0,80*600,80*200
-#define PAGESE_3_2 0,0,316,199,0,0,80*600,80*400
-
-#define MODE640X400X256 0x100
-#define MODE640X480X256 0x101
-#define MODE800X600X16 0x102
-#define MODE800X600X256 0x103
-#define MODE1024X768X16 0x104
-#define MODE1024X768X256 0x105
-#define MODE1280X1024X16 0x106
-#define MODE1280X1024X256 0x107
 
 #define END_POOL 32767
 
@@ -151,13 +82,6 @@ namespace Chewy {
 #define NODATEI 255
 #define SCREENSAVE 0
 #define SPRITESAVE 1
-
-#define MAUS 4
-#define NICHT_BEWEGT 0
-#define LINKS 1
-#define RECHTS 2
-#define HOCH 3
-#define RUNTER 4
 
 #define ALT 0x1000
 #define SHIFT_LEFT Common::KEYCODE_LSHIFT
@@ -235,28 +159,6 @@ namespace Chewy {
 #define NEIN 0
 #define ON 1
 #define OFF 0
-#define KEINE 0
-#define SPEAKER 1
-#define ADLIB 2
-#define SOUNDBLASTER 3
-#define SB_PRO 4
-#define SB_16_ASP 5
-
-#define NONE 0
-#define MDA 1
-#define CGA 2
-#define EGAMono 3
-#define EGAColor 4
-#define VGAMono 5
-#define VGAColor 6
-#define MCGAMono 7
-#define MCGAColor 8
-#define I86 0
-#define I186 1
-#define I286 2
-#define I386sx 3
-#define I386dx 4
-#define I486 5
 
 } // namespace Chewy
 
