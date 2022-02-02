@@ -26,7 +26,7 @@
 
 namespace Chewy {
 
-#define MAXSPRITE 350
+#define MAXSPRITE 620
 #define NOSPEICHER 0
 #define MAXFONTBREITE 32
 #define MAXFONTHOEHE 32

@@ -845,6 +845,7 @@ void detail::load_sprite_pointer(Stream *stream) {
 			uint16 anzahl = header.count;
 			rs->seek(header.next, SEEK_SET);
 			SpritePos[0] = header.next;
+			assert(anzahl < MAXSPRITE);
 
 			for (int16 i = 1; i < anzahl && !modul; i++) {
 				taf_imageheader iheader;
