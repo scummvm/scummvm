@@ -269,6 +269,9 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 	return size;
 }
 
+// Only used in 2 places, will be removed eventually:
+// tff_adr() with type TFFDATEI
+// void_adr() with type 200
 uint32 datei::size(const char *fname, int16 typ) {
 	uint32 size = 0;
 	tbf_dateiheader *tbfheader = (tbf_dateiheader *)tmp;
@@ -278,31 +281,8 @@ uint32 datei::size(const char *fname, int16 typ) {
 	strncpy(filename, fname, MAXPATH - 5);
 	filename[MAXPATH - 5] = '\0';
 
-	if (!strchr(filename, '.')) {
-		switch (typ) {
-		case TBFDATEI:
-		case TPFDATEI:
-			strcat(filename, ".tbf");
-			break;
-		case PCXDATEI:
-			strcat(filename, ".pcx");
-			break;
-		case TFFDATEI:
-			strcat(filename, ".tff");
-			break;
-		case VOCDATEI:
-			strcat(filename, ".voc");
-			break;
-		case MODDATEI:
-			strcat(filename, ".mod");
-			break;
-		case TMFDATEI:
-			strcat(filename, ".tmf");
-			typ = 300;
-			break;
-		default:
-			break;
-		}
+	if (!strchr(filename, '.') && typ == TFFDATEI) {
+		strcat(filename, ".tff");
 	}
 
 	// SCUMMVM: Note to self, use sizeof(structures) for
@@ -310,35 +290,6 @@ uint32 datei::size(const char *fname, int16 typ) {
 	Common::File f;
 	if (f.open(filename)) {
 		switch (typ) {
-		case TBFDATEI:
-		case TPFDATEI:
-			if (chewy_fread(tbfheader, sizeof(tbf_dateiheader), 1, &f)) {
-				int16 id = get_id(tbfheader->id);
-				if ((id == TBFDATEI) || (id == TPFDATEI)) {
-					size = tbfheader->entpsize + 4;
-				} else {
-					error("size error");
-				}
-			} else {
-				error("size error");
-			}
-			break;
-
-		case PCXDATEI:
-			if (chewy_fread(pcxheader, sizeof(pcx_header), 1, &f)) {
-				if ((pcxheader->id == 10) && (pcxheader->version == 5)
-				        && (pcxheader->bpp == 8)) {
-					uint16 hoehe = (pcxheader->ymax - pcxheader->ymin) + 1;
-					uint16 breite = pcxheader->bpz * pcxheader->planes;
-					size = (uint32)((long)hoehe) * ((long)breite) + 4;
-				} else {
-					error("size error");
-				}
-			} else {
-				error("size error");
-			}
-			break;
-
 		case TFFDATEI: {
 			tff_header tff;
 			if (tff.load(&f)) {
@@ -353,33 +304,6 @@ uint32 datei::size(const char *fname, int16 typ) {
 			}
 			}
 			break;
-
-		case VOCDATEI:
-			size = (uint32)f.size() - sizeof(voc_header);
-			break;
-
-		case MODDATEI: {
-			size = (uint32)f.size();
-			int16 id = 0;
-
-			if (chewy_fread(mh, sizeof(mod_header), 1, &f)) {
-				if (!strncmp(mh->id, "M.K.", 4))
-					id = 1;
-				if (!strncmp(mh->id, "M!K!", 4))
-					id = 2;
-				if (!strncmp(mh->id, "FLT4", 4))
-					id = 3;
-				if (!strncmp(mh->id, "FLT8", 4))
-					id = 4;
-			}
-			if (id)
-				size -= (uint32)sizeof(mod_header);
-			else
-				size -= (uint32)sizeof(mod15_header);
-			size += sizeof(tmf_header);
-			}
-			break;
-
 		default:
 			size = (uint32)f.size();
 			break;

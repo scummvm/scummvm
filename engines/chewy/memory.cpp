@@ -186,6 +186,7 @@ void memory::tff_adr(const char *filename, byte **speicher) {
 	}
 }
 
+// Only called from init_load() with filename blende.rnd
 byte *memory::void_adr(const char *filename) {
 	uint32 size = 0;
 	byte *ptr = 0;
