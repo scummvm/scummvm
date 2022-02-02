@@ -37,10 +37,6 @@ public:
 	ailclass();
 	~ailclass();
 
-	int16 init(uint16 freq);
-	int16 init(char *midiDrvName);
-	void exit1();
-
 	void setMusicMasterVol(int16 vol);
 	void setSoundMasterVol(int16 vol);
 	void disableSound();
@@ -58,7 +54,6 @@ public:
 	void playSequence(int16 startPos, int16 endPos);
 	void playPattern(int16 pattern);
 	void setLoopMode(int16 mode);
-	void fadeIn(uint16 delay);
 	void fadeOut(uint16 delay);
 
 	void endSound();
