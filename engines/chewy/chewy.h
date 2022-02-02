@@ -70,6 +70,7 @@ public:
 	Sound *_sound = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	bool _canLoadSave = false;
+	bool _showWalkAreas = false;
 
 public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);

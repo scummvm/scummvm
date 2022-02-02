@@ -23,6 +23,7 @@
 #include "chewy/debugger.h"
 #include "chewy/global.h"
 #include "chewy/ngshext.h"
+#include "chewy/chewy.h"
 
 namespace Chewy {
 
@@ -46,6 +47,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("room", WRAP_METHOD(Debugger, Cmd_GotoRoom));
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
 	registerCmd("video", WRAP_METHOD(Debugger, Cmd_PlayVideo));
+	registerCmd("walk", WRAP_METHOD(Debugger, Cmd_WalkAreas));
 }
 
 Debugger::~Debugger() {
@@ -88,6 +90,11 @@ bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
 	int resNum = atoi(argv[1]);
 	g_engine->playVideo(resNum);
 
+	return false;
+}
+
+bool Debugger::Cmd_WalkAreas(int argc, const char **argv) {
+	g_engine->_showWalkAreas = (argc == 2) && !strcmp(argv[1], "on");
 	return false;
 }
 

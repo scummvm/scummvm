@@ -537,6 +537,27 @@ int16 main_loop(int16 mode) {
 	return ende;
 }
 
+static void showWalkAreas() {
+	int xs = (_G(spieler).scrollx / 8) * 8,
+		ys = (_G(spieler).scrolly / 8) * 8;
+
+	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
+		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
+			int idx = ged->ged_idx(xp, yp,
+				room->GedXAnz[room_blk.AkAblage],
+				ged_mem[room_blk.AkAblage]);
+
+			if (idx) {
+				Common::Rect r(xp, yp, xp + 8, yp + 8);
+				r.translate(-_G(spieler).scrollx, -_G(spieler).scrolly);
+				r.clip(Common::Rect(0, 0, 320, 200));
+
+				g_screen->frameRect(r, 0xff);
+			}
+		}
+	}
+}
+
 void set_up_screen(SetupScreenMode mode) {
 	int16 nr;
 	int16 tmp;
@@ -713,6 +734,9 @@ void set_up_screen(SetupScreenMode mode) {
 
 		fx_blend = BLEND_NONE;
 	}
+
+	if (g_engine->_showWalkAreas)
+		showWalkAreas();
 
 	_G(cur_hide_flag) = false;
 	ScrXy = (int16 *)ablage[room_blk.AkAblage];
