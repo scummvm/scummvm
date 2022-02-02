@@ -28,7 +28,7 @@ namespace Rooms {
 class Room97 {
 private:
 	static int _word18DB2E;
-	static bool _bool18DB30;
+	static bool _slimeThrown;
 	static bool _bool18DB32;
 	static int _word18DB34;
 	static int _word18DB36;
@@ -42,7 +42,7 @@ private:
 	static void proc4();
 	static void proc12();
 	static void proc13();
-	static void proc15();
+	static void sensorAnim();
 
 public:
 	static void entry();
@@ -56,7 +56,7 @@ public:
 	static int proc9();
 	static int proc10();
 	static int proc11();
-	static int proc14();
+	static int throwSlime();
 };
 
 } // namespace Rooms

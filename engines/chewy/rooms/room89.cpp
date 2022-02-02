@@ -71,6 +71,7 @@ void Room89::entry() {
 		switch_room(92);
 		show_cur();
 	} else if (_G(spieler).flags35_4) {
+		// End sequence
 		hide_cur();
 		set_person_pos(138, 82, P_CHEWY, P_RIGHT);
 		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
@@ -89,6 +90,7 @@ void Room89::entry() {
 		flags.NoPalAfterFlc = true;
 		flic_cut(119, CFO_MODE);
 
+		// Squash screen into a single point at the center
 		int edi = -20;
 		int var24 = 0;
 		out->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
@@ -103,6 +105,7 @@ void Room89::entry() {
 			g_events->delay(30);
 		}
 
+		// Unsquish out thanks for playing screen
 		out->setze_zeiger(workptr);
 		out->cls();
 		out->printxy(70, 80, 15, 0, 0, "Thank you for playing");

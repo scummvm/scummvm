@@ -30,7 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 int Room97::_word18DB2E;
-bool Room97::_bool18DB30;
+bool Room97::_slimeThrown;
 bool Room97::_bool18DB32;
 int Room97::_word18DB34;
 int Room97::_word18DB36;
@@ -151,7 +151,7 @@ void Room97::gedAction(int index) {
 			auto_scroll(268, 0);
 		break;
 	case 56:
-		proc15();
+		sensorAnim();
 		break;
 	default:
 		break;
@@ -656,11 +656,11 @@ void Room97::proc13() {
 	flags.AutoAniPlay = false;
 }
 
-int Room97::proc14() {
+int Room97::throwSlime() {
 	if (!is_cur_inventar(SLIME_INV))
 		return 0;
 
-	_bool18DB30 = true;
+	_slimeThrown = true;
 	hide_cur();
 	del_inventar(_G(spieler).AkInvent);
 	menu_item = CUR_USE;
@@ -669,7 +669,7 @@ int Room97::proc14() {
 	return 1;
 }
 
-void Room97::proc15() {
+void Room97::sensorAnim() {
 	if (_G(spieler).flags37_4 || flags.AutoAniPlay)
 		return;
 
@@ -679,19 +679,22 @@ void Room97::proc15() {
 	cursor_wahl(CUR_USE);
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
-	_bool18DB30 = false;
+	_slimeThrown = false;
+	det->start_detail(16, 1, 0);
 	
-	while (det->get_ani_detail(16) != nullptr) {
+	while (det->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
 		if (minfo.button == 1 || in->get_switch_code() == 28) {
 			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}
+
 		set_up_screen(DO_SETUP);
+		SHOULD_QUIT_RETURN;
 	}
 
 	hide_cur();
-	if (_bool18DB30) {
+	if (!_slimeThrown) {
 		start_detail_wait(17, 1, ANI_VOR);
 		det->start_detail(16, 1, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -707,6 +710,7 @@ void Room97::proc15() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		det->hide_static_spr(27);
 		start_detail_wait(18, 1, ANI_VOR);
+
 		g_engine->_sound->playSound(8, 0);
 		g_engine->_sound->stopSound(1);
 		start_detail_wait(8, 1, ANI_VOR);
@@ -722,8 +726,10 @@ void Room97::proc15() {
 		flags.AutoAniPlay = true;
 		auto_move(7, P_CHEWY);
 
-		while (_G(spieler).scrollx < 368)
+		while (_G(spieler).scrollx < 368) {
 			set_up_screen(DO_SETUP);
+			SHOULD_QUIT_RETURN;
+		}
 
 		det->show_static_spr(26);
 		set_person_pos(482, 24, P_NICHELLE, P_RIGHT);
