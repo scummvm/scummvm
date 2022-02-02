@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-01 16:15+0000\n"
-"PO-Revision-Date: 2022-01-07 18:12+0000\n"
+"PO-Revision-Date: 2022-02-02 10:30+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -777,10 +777,8 @@ msgid "Quit ScummVM"
 msgstr "Avslutt ScummVM"
 
 #: gui/launcher.cpp:230
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "~O~m..."
+msgstr "~O~m"
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
@@ -2804,7 +2802,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
