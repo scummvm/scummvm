@@ -34,11 +34,8 @@ public:
 	datei();
 	~datei();
 
-	void load_tafmcga(const char *fname, byte *sp, int16 nr);
-
 	uint16 select_pool_item(Stream *stream, uint16 nr);
 	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
-	uint32 load_voc(Stream *stream, byte *speicher);
 	uint32 load_tmf(Stream *stream, tmf_header *song);
 
 	void load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo);
@@ -49,7 +46,6 @@ public:
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
 	uint32 get_tafinfo(const char *fname, taf_dateiheader **tafheader);
 	void load_palette(const char *fname, byte *palette, int16 typ);
-	void imsize(const char *fname, uint32 *svekt);
 
 	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);

@@ -93,8 +93,6 @@ public:
 
 	void load_room(RaumBlk *Rb, int16 room_nr, Spieler *player);
 
-	void load_taf(const char *filename, byte **speicher, byte *palette, int16 sprnr);
-
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 
 	byte *get_ablage(int16 nr);
