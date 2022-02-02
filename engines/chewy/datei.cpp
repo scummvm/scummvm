@@ -459,9 +459,8 @@ uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
 	return size;
 }
 
-void datei::load_palette(const char *fname, byte *palette, int16 typ) {
-	tbf_dateiheader *tbfheader = (tbf_dateiheader *)tmp;
-	pcx_header *pcxheader = (pcx_header *)tmp;
+// Currently only used for TAF palettes from taf_adr(). Will be removed
+void datei::load_palette(const char *fname, byte *palette) {
 	taf_dateiheader *tafheader = (taf_dateiheader *)tmp;
 
 	strncpy(filename, fname, MAXPATH - 5);
@@ -469,87 +468,20 @@ void datei::load_palette(const char *fname, byte *palette, int16 typ) {
 
 	Common::File f;
 	if (!strchr(filename, '.')) {
-		switch (typ) {
-		case TBFDATEI:
-		case TPFDATEI:
-			strcat(filename, ".tbf");
-			break;
-		case PCXDATEI:
-			strcat(filename, ".pcx");
-			break;
-		case TAFDATEI:
-			strcat(filename, ".taf");
-			break;
-		default:
-			error("load_palette error");
-		}
+		strcat(filename, ".taf");
 	}
 
 	if (!modul) {
 		if (f.open(filename)) {
-			switch (typ) {
-			case TBFDATEI:
-			case TPFDATEI:
-				if (chewy_fread(tbfheader, sizeof(tbf_dateiheader), 1, &f)) {
-					int16 id = get_id(tbfheader->id);
-					if (((id == TBFDATEI) || (id == TPFDATEI)) &&
-					        (tbfheader->mode == 19)) {
-						for (uint16 i = 0; i < 768; i++)
-							palette[i] = tbfheader->palette[i];
-					} else {
-						error("load_palette error");
-					}
+			if (tafheader->load(&f)) {
+				int16 id = get_id(tafheader->id);
+				if ((id == TAFDATEI) && (tafheader->mode == 19)) {
+					for (uint16 i = 0; i < 768; i++)
+						palette[i] = tafheader->palette[i];
 				} else {
 					error("load_palette error");
 				}
-				break;
-
-			case PCXDATEI:
-				if (chewy_fread(pcxheader, sizeof(pcx_header), 1, &f)) {
-					if ((pcxheader->id == 10) && (pcxheader->version == 5)
-					        && (pcxheader->bpp == 8)) {
-						if (!f.seek(-769L, SEEK_END)) {
-							uint8 zeichen = f.readByte();
-							if (zeichen == 12) {
-								f.seek(-768L, SEEK_END);
-								if ((chewy_fread(palette, 768, 1, &f)) != 1) {
-									error("load_palette error");
-								} else {
-									uint16 j = 0;
-									for (uint16 i = 0; i < 255; i++) {
-										palette[j] >>= 2;
-										palette[j + 1] >>= 2;
-										palette[j + 2] >>= 2;
-										j += 3;
-									}
-								}
-							} else {
-								error("load_palette error");
-							}
-						}
-					} else {
-						error("load_palette error");
-					}
-				} else {
-					error("load_palette error");
-				}
-				break;
-
-			case TAFDATEI:
-				if (tafheader->load(&f)) {
-					int16 id = get_id(tafheader->id);
-					if ((id == TAFDATEI) && (tafheader->mode == 19)) {
-						for (uint16 i = 0; i < 768; i++)
-							palette[i] = tafheader->palette[i];
-					} else {
-						error("load_palette error");
-					}
-				} else {
-					error("load_palette error");
-				}
-				break;
-
-			default:
+			} else {
 				error("load_palette error");
 			}
 
