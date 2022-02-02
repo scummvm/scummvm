@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-01 16:15+0000\n"
+"POT-Creation-Date: 2022-02-02 19:14+0000\n"
 "PO-Revision-Date: 2022-01-30 10:12+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4313,7 +4313,7 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/hypno/detection.cpp:144 engines/kyra/detection_tables.h:303
+#: engines/hypno/detection.cpp:154 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
@@ -5117,11 +5117,11 @@ msgstr "ゴアモード"
 msgid "Enable Gore Mode when available"
 msgstr "利用可能ならゴアモードを有効にする"
 
-#: engines/hypno/detection.cpp:169 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:179 engines/ultima/detection.cpp:78
 msgid "Enable cheats"
 msgstr "チートを有効化"
 
-#: engines/hypno/detection.cpp:170
+#: engines/hypno/detection.cpp:180
 msgid "Allow cheats using the C key."
 msgstr "Cキーでチートが使えます。"
 
