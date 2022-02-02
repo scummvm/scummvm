@@ -184,7 +184,6 @@ extern char *life_str;
 extern int16 life_handler;
 
 extern SprInfo spr_info[MAX_PROG_ANI];
-extern DetectInfo detect;
 extern maus_info minfo;
 extern kb_info kbinfo;
 extern cur_blk curblk;
@@ -353,15 +352,11 @@ int16 is_chewy_busy();
 
 void standard_init();
 
-void get_detect(char *fname);
-
 void tidy();
 
 void init_load();
 
 void var_init();
-
-void get_frame_speed(char *work_page, char *source);
 
 void set_speed();
 
