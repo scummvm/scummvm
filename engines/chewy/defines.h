@@ -576,7 +576,7 @@ enum SetupScreenMode {
 #define FCUT_157 157 // Red space ship travelling inside black hole (custom callback: flic_user_function)
 #define FCUT_158 158 // Howard and Chewy waking up
 #define FCUT_159 159 // Credits
-#define FCUT_155 160 // Intro logos (English)
+//#define FCUT_155 160 // Intro logos (English)
 
 #define AUSGANG_LINKS 1
 #define AUSGANG_RECHTS 2
