@@ -55,7 +55,7 @@ taf_info *memory::taf_adr(const char *filename) {
 			tinfo->image = (byte **)(tmp1 + sizeof(taf_info));
 			tinfo->palette = tmp1 + size;
 			tinfo->anzahl = anz_image;
-			file->load_palette(filename, tinfo->palette, TAFDATEI);
+			file->load_palette(filename, tinfo->palette);
 			if (!modul) {
 				tempptr = tmp1 + (((uint32)sizeof(taf_info)) + kgroesse);
 				file ->load_full_taf(filename, tempptr, tinfo);

@@ -45,7 +45,7 @@ public:
 	uint32 size(const char *fname, int16 typ);
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
 	uint32 get_tafinfo(const char *fname, taf_dateiheader **tafheader);
-	void load_palette(const char *fname, byte *palette, int16 typ);
+	void load_palette(const char *fname, byte *palette);
 
 	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);
