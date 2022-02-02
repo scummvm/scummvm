@@ -245,7 +245,7 @@ int16 ged_user_func(int16 idx_nr) {
 			break;
 
 		case 97:
-			if (!_G(spieler).flags35_80)
+			if (_G(spieler).flags35_80)
 				idx_nr = 0;
 			break;
 
