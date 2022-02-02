@@ -27,6 +27,10 @@
 #include "base/main.h"
 
 #include <net/net.h>
+#include <sys/process.h>
+
+// Set program stack size from default 64KB to 1MB
+SYS_PROCESS_PARAM(1000, 0x100000)
 
 int main(int argc, char *argv[]) {
 
