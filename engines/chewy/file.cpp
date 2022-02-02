@@ -66,7 +66,100 @@ static const int16 FILE_ICONS[8 * 4] = {
 	232, 143, 310, 193
 };
 
-Common::File *File::open(const char *name) {
+static const int16 ARRAY187546[65][2] = {
+	{40,  160}, {80,  170}, {40,  190}, {80,  200}, {80,  210},
+	{40,  230}, {80,  240}, {80,  250}, {80,  260}, {40,  280},
+	{80,  290}, {80,  300}, {80,  310}, {80,  320}, {40,  340},
+	{80,  350}, {80,  360}, {40,  380}, {80,  390}, {40,  410},
+	{80,  420}, {40,  440}, {80,  450}, {40,  470}, {80,  480},
+	{80,  490}, {80,  500}, {80,  510}, {80,  520}, {40,  540},
+	{80,  550}, {80,  560}, {80,  570}, {80,  580}, {40,  600},
+	{80,  610}, {80,  620}, {80,  630}, {80,  640}, {80,  650},
+	{80,  660}, {80,  670}, {80,  680}, {80,  690}, {80,  700},
+	{80,  710}, {80,  720}, {80,  730}, {80,  740}, {80,  750},
+	{80,  760}, {40,  780}, {40,  790}, {40,  800}, {40,  810},
+	{40,  820}, {40,  840}, {80,  850}, {40,  870}, {80,  880},
+	{80,  890}, {80,  910}, {80,  920}, {80,  930}, {80,  940}
+};
+
+static const bool ARRAY187504[65] = {
+	true, false, true, false, false, true, false, false, false, true,
+	false, false, false, false, true, false, false, true, false, true,
+	false, true, false, true, false, false, false, false, false, true,
+	false, false, false, false, true, false, false, false, false, false,
+	false, false, false, false, false, false, false, false, false, false,
+	false, true, true, true, true, true, true, false, true, false,
+	false, true, true, true, true
+};
+
+static const char *ARRAY187070[65] = {
+	"Idea & Story:",
+	"Carsten Wieland",
+	"Programming:",
+	"Helmut Theuerkauf",
+	"Alexander Diessner",
+	"Graphics & Animation:",
+	"Carsten Wieland",
+	"Nihat Keesen",
+	"Stefan Frank",
+	"Text & Dialogues:",
+	"Helmut Theuerkauf",
+	"Alexander Diessner",
+	"Carsten Wieland",
+	"Wolfgang Walk",
+	"Music:",
+	"Carsten Wieland",
+	"Stelter Studios",
+	"Sound FX:",
+	"Helmut Theuerkauf",
+	"Producer & Lecturer:",
+	"Wolfgang Walk",
+	"Minister of financial affairs:",
+	"Carsten (Dagobert) Korte",
+	"Testers:",
+	"Lutz Rafflenbeul",
+	"Thomas Friedmann",
+	"Bernhard Ewers",
+	"Christian von der Hotline",
+	"Carsten Korte",
+	"The voices:",
+	"Chewy......Renier Baaken",
+	"Howard.....Wolfgang Walk",
+	"Nichelle...Indhira Mohammed",
+	"Clint......Alexander Schottky",
+	"Also cast:",
+	"Renier Baaken",
+	"Guido B_94h_sherz", // FIXME
+	"Gerhard Fehn",
+	"Alice Krause",
+	"Reinhard Lie_E1h_Willi Meyer", //FIXME
+	"Nicole Meister",
+	"Lutz Rafflenbeul",
+	"Alexander Schottky",
+	"Bernd Schulze",
+	"Susanne Simenec",
+	"Helmut Theuerkauf",
+	"Andreas Vogelpoth",
+	"Mark Wagener",
+	"Wolfgang Walk",
+	"Thomas Piet Wiesenm_81h_ller", //FIXME
+	"Speech recorded by",
+	"tmp Studio, Moers by Willi Meyer",
+	"Cut by Hartmut Stelter",
+	"Studios Hamburg and",
+	"Carsten Wieland",
+	"Soundsystem:",
+	"AIL (c) Miles Design",
+	"Adventure Engine:",
+	"I.C.M. developed by",
+	"New Generation Software",
+	"Song Boo Boo Ba Baby composed",
+	"by Haiko Ruttmann,",
+	"Lyrics Wolfgang Walk,",
+	"feIndhira Mohammed."
+};
+
+	Common::File *File::open(const char *name) {
 	Common::File *f = new Common::File();
 	if (f->open(name)) {
 		return f;
@@ -408,19 +501,7 @@ int16 file_menue() {
 }
 
 void option_menue(taf_info *ti) {
-	int16 key;
-	int16 surimy_ani;
-	int16 mund_ani;
-	int16 mund_delay;
-	int16 mund_count;
-	int16 tdisp_ani;
-	int16 tdisp_delay;
-	int16 tdisp_count;
-	int16 rect;
 	long akt_clock = 0, stop_clock = 0;
-	//int16 TmpFrame;
-	int16 delay_count;
-	short bar_off;
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
@@ -429,16 +510,16 @@ void option_menue(taf_info *ti) {
 	room->set_ak_pal(&room_blk);
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 	out->setze_zeiger(workptr);
-	key = 0;
-	surimy_ani = SURIMY_START;
-	mund_ani = MUND_START;
-	mund_delay = 3;
-	mund_count = mund_delay;
-	tdisp_ani = TDISP_START;
-	tdisp_delay = 3;
-	tdisp_count = tdisp_delay;
+	int16 key = 0;
+	int16 surimy_ani = SURIMY_START;
+	int16 mund_ani = MUND_START;
+	int16 mund_delay = 3;
+	int16 mund_count = mund_delay;
+	int16 tdisp_ani = TDISP_START;
+	int16 tdisp_delay = 3;
+	int16 tdisp_count = tdisp_delay;
 	FrameSpeed = 0;
-	delay_count = _G(spieler).DelaySpeed;
+	int16 delay_count = _G(spieler).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != ESC) {
 		out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
@@ -454,7 +535,7 @@ void option_menue(taf_info *ti) {
 
 		out->sprite_set(ti->image[surimy_ani], 18 + ti->korrektur[surimy_ani << 1],
 		                8 + ti->korrektur[(surimy_ani << 1) + 1], 0);
-		bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
+		short bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
 		out->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
 		out->printxy(36 + bar_off, 65, 255, 300, 0, "%d", _G(spieler).FramesPerSecond << 1);
 
@@ -511,7 +592,7 @@ void option_menue(taf_info *ti) {
 		key = in->get_switch_code();
 		if ((minfo.button == 1) || (key == ENTER)) {
 			WAIT_TASTE_LOS
-			rect = in->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
+			int16 rect = in->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (_G(spieler).FramesPerSecond > 6)
@@ -628,6 +709,81 @@ void option_menue(taf_info *ti) {
 }
 
 void gbook() {
-	warning("STUB - gbook()");
-}
+	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
+	room->load_tgp(5, &room_blk, 1, 0, "BACK/GBOOK.TGP");
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
+	out->setze_zeiger(screen0);
+	room->set_ak_pal(&room_blk);
+	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+
+	for (int i = 0; i < 6; ++i) {
+		int esi = 63 - (6 * i);
+		
+		out->raster_col(6 - i, esi, 0, 0);
+		out->raster_col(7 + i, esi, 0, 0);
+
+		esi = 63 - (4 * i);
+		out->raster_col(37 - i, esi, esi, esi);
+		out->raster_col(38 + i, esi, esi, esi);		
+	}
+
+	_G(spieler).DelaySpeed = 2;
+
+	int edi = 0;	
+	bool endLoop = false;
+	while (!endLoop) {
+		if (in->get_switch_code() == 1)
+			endLoop = true;
+
+		out->setze_zeiger(workptr);
+		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+
+		if (in->get_switch_code() == 1)
+			endLoop = true;
+
+		_G(spieler).scrollx++;
+		if (_G(spieler).scrollx >= 320)
+			_G(spieler).scrollx = 0;
+
+		++edi;
+		g_events->delay(50);
+		int esp_4 = 0;
+		
+		for (int i = 0; i < 65; ++i) {
+			int edx = ARRAY187546[i][1] - edi;
+			if (edx >= 160 || edx <= 40)
+				continue;
+			int esp_8;
+			if (ARRAY187504[i]) {
+				esp_8 = 32;
+				out->set_fontadr(font6x8);
+				out->set_vorschub(fvorx6x8, fvorx6x8);
+			} else {
+				esp_8 = 1;
+				out->set_fontadr(font8x8);
+				out->set_vorschub(fvorx8x8, fvorx8x8);
+			}
+			esp_4 = 1;
+
+			// txt->str_pos((char *)&ARRAY187070, i);
+			int fgCol = esp_8 + (160 - (ARRAY187546[i][1] - edi)) / 10;
+			out->printxy(ARRAY187546[i][0], ARRAY187546[i][1], fgCol, 300, scr_width, ARRAY187070[i]);
+		}
+
+		if (esp_4 == 0)
+			endLoop = true;
+
+		out->setze_zeiger(nullptr);
+		out->back2screen(workpage);
+	}
+
+	out->set_fontadr(font8x8);
+	out->set_vorschub(fvorx8x8, fvorx8x8);
+	room->open_handle("back/episode1.tgp", "rb", 0);
+
+	room->set_ak_pal(&room_blk);
+	hide_cur();
+	uhr->reset_timer(0, 5);
+	}
 } // namespace Chewy
