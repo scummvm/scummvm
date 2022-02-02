@@ -200,7 +200,6 @@ int16 life_handler;
 void (*SetUpScreenFunc)();
 
 SprInfo spr_info[MAX_PROG_ANI];
-DetectInfo detect;
 maus_info minfo;
 kb_info kbinfo;
 cur_blk curblk;

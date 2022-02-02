@@ -323,20 +323,6 @@ void init_load() {
 	out->set_palette(pal);
 }
 
-void get_detect(char *fname_) {
-	modul = 0;
-	fcode = 0;
-	Stream *handle = chewy_fopen(fname_, "rb");
-	if (handle) {
-		if (!chewy_fread(&detect, sizeof(DetectInfo), 1, handle)) {
-			error("get_detect error");
-		}
-		chewy_fclose(handle);
-	} else {
-		error("get_detect error");
-	}
-}
-
 void tidy() {
 	sound_exit();
 	in->alter_kb_handler();
@@ -393,43 +379,36 @@ void sound_init() {
 	_G(spieler).MusicSwitch = false;
 	frequenz = 22050;
 
-	detect.SoundSource = ailsnd->init(frequenz);
+	ailsnd->initMixMode();
+	_G(spieler).MusicVol = 63;
+	_G(spieler).SoundVol = 63;
+	ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
+	ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
 
-	if (detect.SoundSource) {
-		ailsnd->initMixMode();
-		_G(spieler).MusicVol = 63;
-		_G(spieler).SoundVol = 63;
-		ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
-		ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
+	music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+	det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
-		music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
-		det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
+	assert(rs);
 
-		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
-		assert(rs);
-
-		rs->seek(0);
-		EndOfPool = 0;
-		NewPhead Nph;
-		if (!Nph.load(rs)) {
-			error("sound_init error");
-		} else {
-			EndOfPool = Nph.PoolAnz - 1;
-		}
-
-		atds->setHasSpeech(true);
-		_G(spieler).DisplayText = false;
-		_G(spieler).SoundSwitch = true;
-		_G(spieler).MusicSwitch = true;
-		_G(spieler).SpeechSwitch = true;
+	rs->seek(0);
+	EndOfPool = 0;
+	NewPhead Nph;
+	if (!Nph.load(rs)) {
+		error("sound_init error");
+	} else {
+		EndOfPool = Nph.PoolAnz - 1;
 	}
+
+	atds->setHasSpeech(true);
+	_G(spieler).DisplayText = false;
+	_G(spieler).SoundSwitch = true;
+	_G(spieler).MusicSwitch = true;
+	_G(spieler).SpeechSwitch = true;
 }
 
 void sound_exit() {
-	if (detect.SoundSource) {
-		ailsnd->exitMixMode();
-		ailsnd->exit1();
-	}
+	ailsnd->exitMixMode();
 }
 
 #define CSP_INT "csp.int"

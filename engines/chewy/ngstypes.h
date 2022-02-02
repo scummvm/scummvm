@@ -359,34 +359,6 @@ struct vesa_modus_block {
 	char dummy[100] = { 0 };
 };
 
-struct DetectInfo {
-	int16 Adlib = 0;
-	int16 Port = 0;
-	int16 Irq = 0;
-	int16 Dma = 0;
-	int16 SoundSource = 0;
-
-	int16 VideoRam = 0;
-	int16 VgaDisplay = 0;
-
-	int16 Ems = 0;
-	int16 EmsVerV = 0;
-	int16 EmsVerN = 0;
-	int16 EmsPages = 0;
-	int16 EmsFree = 0;
-	char *EmsPage0 = nullptr;
-	char *EmsPage1 = nullptr;
-	char *EmsPage2 = nullptr;
-	char *EmsPage3 = nullptr;
-	int16 Joy = 0;
-
-	int16 Himem = 0;
-	int16 CpuId = 0;
-
-	int16 Fpu = 0;
-	int16 Manuell = 0;
-};
-
 struct iog_init {
 	char id[4] = { 0 };
 	char save_path[30] = { 0 };
