@@ -38,7 +38,7 @@ public:
 	static int16 use_tv();
 	static short use_howard();
 	static void talk_howard();
-	static void look_tv(int16 cls_mode);
+	static void look_tv(bool cls_mode);
 };
 
 } // namespace Rooms

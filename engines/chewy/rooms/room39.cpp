@@ -110,6 +110,7 @@ short Room39::use_howard() {
 				}
 
 				dia_nr = -1;
+				action_flag = true;
 			} else {
 				ani_nr = CH_TALK11;
 				dia_nr = 166;
@@ -169,11 +170,13 @@ int16 Room39::use_tv() {
 	int16 ani_nr = -1;
 	int16 action_flag = false;
 
+	hide_cur();
 	auto_move(2, P_CHEWY);
 	int16 cls_flag = false;
-	hide_cur();
 
 	if (is_cur_inventar(ZAPPER_INV)) {
+		_G(maus_links_click) = false;
+		
 		_G(spieler).R39TvOn = true;
 		if (_G(spieler).R39TvKanal >= 5)
 			_G(spieler).R39TvKanal = -1;
@@ -190,25 +193,28 @@ int16 Room39::use_tv() {
 		else if (_G(spieler).R39TvKanal == 5)
 			flic_cut(FCUT_033, CFO_MODE);
 
-		look_tv(0);
+		look_tv(false);
 		set_tv();
 		cls_flag = true;
 
 		if (!_G(spieler).R39TransMensch) {
 			ani_nr = CH_TALK11;
 			dia_nr = 78;
+		} else if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
+			dia_nr = -1;
+			ani_nr = -1;
 		} else {
-			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
-				dia_nr = 79;
-				ani_nr = -1;
-			} else {
-				dia_nr = 80 + _G(spieler).R39TvKanal;
-				ani_nr = -1;
-			}
+			if (80 + _G(spieler).R39TvKanal != 85)
+				dia_nr = -1;
+			else
+				dia_nr = 85;
+			
+			ani_nr = -1;
 		}
 
 		action_flag = true;
 	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+		action_flag = true;
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			_G(spieler).R39TransMensch = true;
@@ -239,12 +245,10 @@ int16 Room39::use_tv() {
 
 		set_tv();
 
-	} else if (is_cur_inventar(RECORDER_INV)) {
-		if (_G(spieler).R39TvOn && _G(spieler).ChewyAni != 5) {
-			if (!_G(spieler).R39TransMensch) {
-				ani_nr = CH_TALK12;
-				dia_nr = 97;
-			} else {
+	} else if (is_cur_inventar(RECORDER_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+		action_flag = true;
+		if (_G(spieler).R39TvOn) {
+			if (_G(spieler).R39TransMensch) {
 				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(98, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
@@ -252,8 +256,11 @@ int16 Room39::use_tv() {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
-				atds->set_ats_str(CASSETTE_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATEI);
+				atds->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATEI);
 				_G(spieler).R39TvRecord = _G(spieler).R39TvKanal + 1;
+			} else {
+				ani_nr = CH_TALK12;
+				dia_nr = 97;
 			}
 		} else {
 			ani_nr = CH_TALK11;
@@ -280,11 +287,12 @@ int16 Room39::use_tv() {
 	return action_flag;
 }
 
-void Room39::look_tv(int16 cls_mode) {
+void Room39::look_tv(bool cls_mode) {
 	_flag = false;
 
 	if (_G(spieler).R39TvOn) {
 		if (!flags.AutoAniPlay) {
+			flags.AutoAniPlay = true;
 			int16 flic_nr;
 			int16 dia_nr;
 			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
