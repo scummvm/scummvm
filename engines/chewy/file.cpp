@@ -66,7 +66,7 @@ static const int16 FILE_ICONS[8 * 4] = {
 	232, 143, 310, 193
 };
 
-static const int16 ARRAY187546[65][2] = {
+static const int16 CREDITS_POS[65][2] = {
 	{40,  160}, {80,  170}, {40,  190}, {80,  200}, {80,  210},
 	{40,  230}, {80,  240}, {80,  250}, {80,  260}, {40,  280},
 	{80,  290}, {80,  300}, {80,  310}, {80,  320}, {40,  340},
@@ -82,7 +82,7 @@ static const int16 ARRAY187546[65][2] = {
 	{80,  890}, {80,  910}, {80,  920}, {80,  930}, {80,  940}
 };
 
-static const bool ARRAY187504[65] = {
+static const bool CREDITS_TYPE[65] = {
 	true, false, true, false, false, true, false, false, false, true,
 	false, false, false, false, true, false, false, true, false, true,
 	false, true, false, true, false, false, false, false, false, true,
@@ -92,7 +92,7 @@ static const bool ARRAY187504[65] = {
 	false, true, true, true, true
 };
 
-static const char *ARRAY187070[65] = {
+static const char *CREDITS_TEXT[65] = {
 	"Idea & Story:",
 	"Carsten Wieland",
 	"Programming:",
@@ -709,6 +709,9 @@ void option_menue(taf_info *ti) {
 }
 
 void gbook() {
+	int lineScrolled = 0;
+	int fontCol;
+
 	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
 	room->load_tgp(5, &room_blk, 1, 0, "BACK/GBOOK.TGP");
 	_G(spieler).scrollx = 0;
@@ -730,48 +733,48 @@ void gbook() {
 
 	_G(spieler).DelaySpeed = 2;
 
-	int lineScrolled = 0;	
-	bool endLoop = false;
-	while (!endLoop) {
-		if (in->get_switch_code() == 1)
-			endLoop = true;
+	for (;;) {
+		if (in->get_switch_code() == ESC || SHOULD_QUIT)
+			break;
 
+		// Display the starfield background
 		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		out->map_spr2screen(ablage[room_blk.AkAblage],
+			_G(spieler).scrollx, _G(spieler).scrolly);
 
-		if (in->get_switch_code() == 1)
-			endLoop = true;
-
+		// Animate moving the background
 		if (++_G(spieler).scrollx >= 320)
 			_G(spieler).scrollx = 0;
+
+		if (in->get_switch_code() == ESC)
+			break;
 
 		++lineScrolled;
 		g_events->delay(50);
 		bool stillScrolling = false;
 		
 		for (int i = 0; i < 65; ++i) {
-			int destY = ARRAY187546[i][1] - lineScrolled;
+			int destY = CREDITS_POS[i][1] - lineScrolled;
 			if (destY >= 160 || destY <= 40)
 				continue;
-			int fontCol;
-			if (ARRAY187504[i]) {
+
+			if (CREDITS_TYPE[i]) {
 				fontCol = 32;
 				out->set_fontadr(font6x8);
-				out->set_vorschub(fvorx6x8, fvorx6x8);
+				out->set_vorschub(fvorx6x8, fvory6x8);
 			} else {
 				fontCol = 1;
 				out->set_fontadr(font8x8);
-				out->set_vorschub(fvorx8x8, fvorx8x8);
+				out->set_vorschub(fvorx8x8, fvory8x8);
 			}
 			stillScrolling = true;
 
-			// txt->str_pos((char *)&ARRAY187070, i);
 			int fgCol = fontCol + (160 - destY) / 10;
-			out->printxy(ARRAY187546[i][0], destY, fgCol, 300, scr_width, ARRAY187070[i]);
+			out->printxy(CREDITS_POS[i][0], destY, fgCol, 300, scr_width, CREDITS_TEXT[i]);
 		}
 
 		if (!stillScrolling)
-			endLoop = true;
+			break;
 
 		out->setze_zeiger(nullptr);
 		out->back2screen(workpage);
@@ -784,5 +787,6 @@ void gbook() {
 	room->set_ak_pal(&room_blk);
 	hide_cur();
 	uhr->reset_timer(0, 5);
-	}
+}
+
 } // namespace Chewy
