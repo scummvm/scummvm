@@ -176,6 +176,7 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width, int16 height, int1
 		for (int row = 0; row < height; ++row) {
 			Common::copy(scrP, scrP + width, sptr);
 			scrP += pitch;
+			sptr += width;
 		}
 	}
 }
