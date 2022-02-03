@@ -173,7 +173,7 @@ void Room51::setup_func() {
 				out->setze_zeiger(nullptr);
 				out->cls();
 				flic_cut(115, 0);
-				test_intro(28);
+				register_cutscene(28);
 				
 				switch_room(91);
 				break;

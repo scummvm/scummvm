@@ -411,8 +411,6 @@ void sound_exit() {
 	ailsnd->exitMixMode();
 }
 
-#define CSP_INT "csp.int"
-
 void show_intro() {
 	if (!ConfMan.getBool("shown_intro")) {
 		ConfMan.setBool("shown_intro", true);
@@ -421,9 +419,22 @@ void show_intro() {
 	}
 }
 
-void test_intro(int testVal) {
-	// No implementation
-}
+static const char *CUTSCENES = "cutscenes";
+static const int MAX_CUTSCENES = 36;
 
+void register_cutscene(int cutsceneNum) {
+	assert(cutsceneNum >= 0 && cutsceneNum < MAX_CUTSCENES);
+	Common::String creditsStr;
+	if (ConfMan.hasKey(CUTSCENES)) {
+		creditsStr = ConfMan.get(CUTSCENES);
+	} else {
+		for (int i = 0; i < MAX_CUTSCENES; ++i)
+			creditsStr += '0';
+	}
+
+	creditsStr.setChar('1', cutsceneNum);
+	ConfMan.set(CUTSCENES, creditsStr);
+	ConfMan.flushToDisk();
+}
 
 } // namespace Chewy

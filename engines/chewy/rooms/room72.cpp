@@ -63,7 +63,7 @@ void Room72::entry(int16 eib_nr) {
 		go_auto_xy(147, 103, P_HOWARD, ANI_GO);
 		go_auto_xy(120, 104, P_NICHELLE, ANI_WAIT);
 		proc1(84);
-		test_intro(23);
+		register_cutscene(23);
 		break;
 	case 113:
 		set_person_pos(213, 129, P_CHEWY, P_LEFT);
@@ -73,7 +73,7 @@ void Room72::entry(int16 eib_nr) {
 		go_auto_xy(154, 102, P_HOWARD, ANI_GO);
 		go_auto_xy(186, 102, P_NICHELLE, ANI_WAIT);
 		proc1(85);
-		test_intro(23);
+		register_cutscene(23);
 		break;
 	default:
 		break;

@@ -335,7 +335,7 @@ int Room90::useSurimyOnWreck() {
 	out->setze_zeiger(nullptr);
 	out->cls();
 	flic_cut(109, CFO_MODE);
-	test_intro(29);
+	register_cutscene(29);
 
 	det->hide_static_spr(4);
 	det->hide_static_spr(5);

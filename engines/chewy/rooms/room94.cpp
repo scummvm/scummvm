@@ -56,7 +56,7 @@ void Room94::entry() {
 		out->setze_zeiger(nullptr);
 		out->cls();
 		flic_cut(120, CFO_MODE);
-		test_intro(30);
+		register_cutscene(30);
 		fx_blend = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
 		_G(spieler).r94Scrollx = _G(spieler).scrollx;
@@ -75,7 +75,7 @@ void Room94::entry() {
 			out->setze_zeiger(nullptr);
 			out->cls();
 			flic_cut(121, CFO_MODE);
-			test_intro(32);
+			register_cutscene(32);
 
 			fx_blend = BLEND_NONE;
 			SetUpScreenFunc = nullptr;

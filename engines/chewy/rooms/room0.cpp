@@ -767,7 +767,7 @@ void Room0::feederAni() {
 			out->cls();
 			flic_cut(FCUT_001, CFO_MODE);
 
-			test_intro(1);
+			register_cutscene(1);
 
 			_G(spieler).PersonRoomNr[P_CHEWY] = 1;
 			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
