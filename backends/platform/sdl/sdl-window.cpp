@@ -168,10 +168,11 @@ void SdlWindow::grabMouse(bool grab) {
 }
 
 void SdlWindow::setMouseRect(const Common::Rect &rect) {
-	grabRect.x = rect.left;
-	grabRect.y = rect.top;
-	grabRect.w = rect.width();
-	grabRect.h = rect.height();
+	float dpiScale = getSdlDpiScalingFactor();
+	grabRect.x = (int)(rect.left / dpiScale + 0.5f);
+	grabRect.y = (int)(rect.top / dpiScale + 0.5f);
+	grabRect.w = (int)(rect.width() / dpiScale + 0.5f);
+	grabRect.h = (int)(rect.height() / dpiScale + 0.5f);
 
 #if SDL_VERSION_ATLEAST(2, 0, 18)
 	if (_inputGrabState || _lastFlags & fullscreenMask) {
