@@ -88,6 +88,7 @@ int16 Room23::start_gleiter() {
 					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_012, CFO_MODE);
+					register_cutscene(7);
 					out->cls();
 					_G(spieler).R23GleiterExit = 16;
 					set_person_pos(126, 110, P_CHEWY, P_RIGHT);
@@ -105,6 +106,7 @@ int16 Room23::start_gleiter() {
 					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_019_01, CFO_MODE);
+					register_cutscene(9);
 					_G(spieler).R23GleiterExit = 25;
 
 					cur_2_inventory();

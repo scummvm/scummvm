@@ -210,6 +210,7 @@ int16 Room12::use_terminal() {
 				flags.NoScroll = true;
 				auto_scroll(46, 0);
 				flic_cut(FCUT_017, CFO_MODE);
+				register_cutscene(5);
 
 				load_chewy_taf(CHEWY_BORK);
 				flags.NoScroll = false;

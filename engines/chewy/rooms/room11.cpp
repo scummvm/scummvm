@@ -151,6 +151,7 @@ int16 Room11::scanner() {
 				flc->set_custom_user_function(Room12::cut_serv);
 				start_aad(105, 0);
 				flic_cut(FCUT_011, CFO_MODE);
+				register_cutscene(4);
 				flc->remove_custom_user_function();
 				_G(spieler).R11TerminalOk = true;
 				cur_2_inventory();
