@@ -158,28 +158,28 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c2h_solo.mi_"] = _levels["c2h.mi_"];
 
 	cl = new ChangeLevel("c2h_solo.mi_");
-	sc->hots[3].actions.push_back(cl);
+	sc->hots[4].actions.push_back(cl);
 
 	loadArcadeLevel("c3h.mi_", "<practice_win>", prefix);
 	_levels["c3h.mi_"]->levelIfLose = "<practice_lose>";
 	_levels["c3h_solo.mi_"] = _levels["c3h.mi_"];
 
 	cl = new ChangeLevel("c3h_solo.mi_");
-	sc->hots[4].actions.push_back(cl);
+	sc->hots[6].actions.push_back(cl);
 
 	loadArcadeLevel("c4h.mi_", "<practice_win>", prefix);
 	_levels["c4h.mi_"]->levelIfLose = "<practice_lose>";
 	_levels["c4h_solo.mi_"] = _levels["c4h.mi_"];
 
 	cl = new ChangeLevel("c4h_solo.mi_");
-	sc->hots[5].actions.push_back(cl);
+	sc->hots[3].actions.push_back(cl);
 
 	loadArcadeLevel("c5h.mi_", "<practice_win>", prefix);
 	_levels["c5h.mi_"]->levelIfLose = "<practice_lose>";
 	_levels["c5h_solo.mi_"] = _levels["c5h.mi_"];
 
 	cl = new ChangeLevel("c5h_solo.mi_");
-	sc->hots[6].actions.push_back(cl);
+	sc->hots[5].actions.push_back(cl);
 
 	loadArcadeLevel("c8h.mi_", "<practice_win>", prefix);
 	_levels["c8h.mi_"]->levelIfLose = "<practice_lose>";
@@ -214,6 +214,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c12h_solo.mi_"] = _levels["c12h.mi_"];
 
 	cl = new ChangeLevel("c12h_solo.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	loadArcadeLevel("c13h.mi_", "<practice_win>", prefix);
+	_levels["c13h.mi_"]->levelIfLose = "<practice_lose>";
+	_levels["c13h_solo.mi_"] = _levels["c13h.mi_"];
+
+	cl = new ChangeLevel("c13h_solo.mi_");
 	sc->hots[11].actions.push_back(cl);
 
 	loadSceneLevel("mv0t.mi_", "roof.mi_", prefix);
