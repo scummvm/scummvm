@@ -272,6 +272,7 @@ void SpiderEngine::runNote(Code *code) {
 
 	switch (_language) {
 	case Common::EN_USA:
+	case Common::DE_DEU:
 		alpha = alphaEN;
 		letterBox = letterBoxEN;
 		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
