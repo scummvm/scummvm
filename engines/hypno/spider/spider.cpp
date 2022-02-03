@@ -1100,7 +1100,8 @@ void SpiderEngine::drawBackToMenu(Hotspot *h) {
 					transparent = true;
 				}
 			} else {
-				menu = decodeFrame("int_main/menu.smk", 0);
+				if (_currentLevel != "mainmenu.mi_" && _currentLevel != "options.mi_" && _currentLevel != "combmenu.mi_")
+					menu = decodeFrame("int_main/menu.smk", 0);
 			}
 		} 
 
