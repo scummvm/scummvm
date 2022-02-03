@@ -129,10 +129,11 @@ static const char *CREDITS_TEXT[65] = {
 	"Clint......Alexander Schottky",
 	"Also cast:",
 	"Renier Baaken",
-	"Guido B_94h_sherz", // FIXME
+	"Guido B\x94sherz",
 	"Gerhard Fehn",
 	"Alice Krause",
-	"Reinhard Lie_E1h_Willi Meyer", //FIXME
+	"Reinhard Lie\xE1",
+	"Willi Meyer",
 	"Nicole Meister",
 	"Lutz Rafflenbeul",
 	"Alexander Schottky",
@@ -142,7 +143,7 @@ static const char *CREDITS_TEXT[65] = {
 	"Andreas Vogelpoth",
 	"Mark Wagener",
 	"Wolfgang Walk",
-	"Thomas Piet Wiesenm_81h_ller", //FIXME
+	"Thomas Piet Wiesenm\x81ller",
 	"Speech recorded by",
 	"tmp Studio, Moers by Willi Meyer",
 	"Cut by Hartmut Stelter",
@@ -156,7 +157,7 @@ static const char *CREDITS_TEXT[65] = {
 	"Song Boo Boo Ba Baby composed",
 	"by Haiko Ruttmann,",
 	"Lyrics Wolfgang Walk,",
-	"feIndhira Mohammed."
+	"featuring Indhira Mohammed."
 };
 
 	Common::File *File::open(const char *name) {
