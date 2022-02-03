@@ -29,6 +29,8 @@
 #include "backends/audiocd/audiocd.h"
 #include "scumm/file.h"
 
+#define DEFAULT_LOOM_OVERTURE_TICKS 8940
+
 namespace Audio {
 class Mixer;
 class SoundHandle;
@@ -94,6 +96,7 @@ protected:
 	bool _useReplacementAudioTracks;
 	int _musicTimer;
 	uint32 _scummTicks;
+	uint32 _loomOvertureTicks;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
