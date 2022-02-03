@@ -703,7 +703,7 @@ EgaLoomOptionsWidget::EgaLoomOptionsWidget(GuiObject *boss, const Common::String
 		OptionsContainerWidget(boss, name, "EgaLoomOptionsDialog", false, domain) {
 	new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksHeader", _("Overture Timing:"));
 
-	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("Adjusts how quickly the Overture transition happens when using replacement audio tracks."), kOvertureTicksChanged);
+	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("Adjusts the timing of the EGA Loom Overture when using enhanced music. The lower the value, the earlier the Lucasfilm logo appears."), kOvertureTicksChanged);
 
 	// Each step of the slider changes the assumed length of the Loom
 	// Overture by ten SCUMM ticks. When I timed it, I was able to set the
