@@ -437,4 +437,16 @@ void register_cutscene(int cutsceneNum) {
 	ConfMan.flushToDisk();
 }
 
+void getCutscenes(Common::Array<int> &cutscenes) {
+	cutscenes.clear();
+	if (!ConfMan.hasKey(CUTSCENES))
+		return;
+
+	Common::String str = ConfMan.get(CUTSCENES);
+	for (int i = 0; i < MAX_CUTSCENES; ++i) {
+		if (str[i] == '1')
+			cutscenes.push_back(i + 1);
+	}
+}
+
 } // namespace Chewy

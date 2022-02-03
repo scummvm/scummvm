@@ -22,6 +22,7 @@
 #ifndef CHEWY_GLOBAL_H
 #define CHEWY_GLOBAL_H
 
+#include "common/array.h"
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/atds.h"
@@ -365,6 +366,7 @@ void sound_init();
 void sound_exit();
 void show_intro();
 void register_cutscene(int cutsceneNum);
+void getCutscenes(Common::Array<int> &cutscenes);
 
 void init_atds();
 
