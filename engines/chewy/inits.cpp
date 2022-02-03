@@ -420,10 +420,10 @@ void show_intro() {
 }
 
 static const char *CUTSCENES = "cutscenes";
-static const int MAX_CUTSCENES = 36;
+static const int MAX_CUTSCENES = 35;
 
 void register_cutscene(int cutsceneNum) {
-	assert(cutsceneNum >= 0 && cutsceneNum < MAX_CUTSCENES);
+	assert(cutsceneNum >= 1 && cutsceneNum <= MAX_CUTSCENES);
 	Common::String creditsStr;
 	if (ConfMan.hasKey(CUTSCENES)) {
 		creditsStr = ConfMan.get(CUTSCENES);
@@ -432,7 +432,7 @@ void register_cutscene(int cutsceneNum) {
 			creditsStr += '0';
 	}
 
-	creditsStr.setChar('1', cutsceneNum);
+	creditsStr.setChar('1', cutsceneNum - 1);
 	ConfMan.set(CUTSCENES, creditsStr);
 	ConfMan.flushToDisk();
 }
