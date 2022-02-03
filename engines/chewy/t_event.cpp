@@ -75,7 +75,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					switch (txt_nr) {
 					case 229:
 						auto_move(2, P_CHEWY);
-						Room39::look_tv(1);
+						Room39::look_tv(true);
 						break;
 
 					case 268:
