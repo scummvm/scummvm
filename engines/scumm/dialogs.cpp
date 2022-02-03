@@ -721,7 +721,7 @@ EgaLoomOptionsWidget::EgaLoomOptionsWidget(GuiObject *boss, const Common::String
 }
 
 void EgaLoomOptionsWidget::load() {
-	int loomOvertureTicks = DEFAULT_LOOM_OVERTURE_TICKS;
+	int loomOvertureTicks = 0;
 
 	if (ConfMan.hasKey("loom_overture_ticks", _domain))
 		loomOvertureTicks = ConfMan.getInt("loom_overture_ticks", _domain);
