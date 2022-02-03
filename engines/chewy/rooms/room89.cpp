@@ -99,7 +99,7 @@ void Room89::entry() {
 			var24 -= 2;
 			out->setze_zeiger(workptr);
 			out->cls();
-			out->scale_set(Ci.TempArea, abs(edi) / 2, abs(var24) / 2, edi, var24, scr_width);
+			out->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, scr_width);
 			out->setze_zeiger(nullptr);
 			out->back2screen(workpage);
 			g_events->delay(30);
@@ -119,7 +119,7 @@ void Room89::entry() {
 			var30 += 2;
 			out->setze_zeiger(workptr);
 			out->cls();
-			out->scale_set(Ci.TempArea, abs(edi) / 2, abs(var30) / 2, edi, var30, scr_width);
+			out->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, scr_width);
 			out->setze_zeiger(nullptr);
 			out->back2screen(workpage);
 			g_events->delay(30);

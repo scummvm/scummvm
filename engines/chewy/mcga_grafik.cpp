@@ -396,8 +396,10 @@ void mcga_grafik::screen2back(byte *ptr) {
 
 void mcga_grafik::sprite_save(byte *sptr, int16 x,
                               int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
-	if (breite < 4)breite = 4;
-	if (hoehe <= 0)hoehe = 1;
+	if (breite < 4)
+		breite = 4;
+	if (hoehe <= 0)
+		hoehe = 1;
 	if (x < clipx1) {
 		x = clipx1;
 		breite -= (clipx1 - x);
@@ -410,8 +412,11 @@ void mcga_grafik::sprite_save(byte *sptr, int16 x,
 	}
 	if ((y + hoehe) > clipy2 + 1)
 		hoehe = clipy2 - y;
-	if (breite < 1)breite = 0;
-	if (hoehe <= 0)hoehe = 0;
+	if (breite < 1)
+		breite = 0;
+	if (hoehe <= 0)
+		hoehe = 0;
+
 	spr_save_mcga(sptr, x, y, breite, hoehe, scrwidth);
 }
 
