@@ -320,7 +320,7 @@ int16 Room68::use_diva() {
 		start_ani_block(2, ABLOCK38);
 		flic_cut(FCUT_083, CFO_MODE);
 		det->del_static_ani(18);
-		test_intro(22);
+		register_cutscene(22);
 		det->del_static_ani(18);
 		start_detail_wait(7, 1, ANI_VOR);
 		atds->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATEI);

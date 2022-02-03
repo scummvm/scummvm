@@ -183,7 +183,7 @@ void Room49::use_boy_cigar() {
 
 	auto_scroll(164, 0);
 	flic_cut(67, CFO_MODE);
-	test_intro(17);
+	register_cutscene(17);
 	
 	room->set_timer_status(255, TIMER_STOP);
 	uhr->reset_timer(_G(timer_nr)[0], 0);

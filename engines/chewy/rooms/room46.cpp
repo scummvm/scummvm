@@ -133,7 +133,7 @@ void Room46::bodo() {
 	flic_cut(FCUT_065, CFO_MODE);
 	out->setze_zeiger(nullptr);
 	out->cls();
-	test_intro(16);
+	register_cutscene(16);
 	
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	det->hide_static_spr(0);

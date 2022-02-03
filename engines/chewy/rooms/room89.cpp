@@ -81,7 +81,7 @@ void Room89::entry() {
 		out->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(117, CFO_MODE);
-		test_intro(35);
+		register_cutscene(35);
 
 		fx_blend = BLEND3;
 		Room66::proc8(-1, 2, 3, 563);
@@ -179,7 +179,7 @@ int Room89::proc2() {
 	out->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(102, CFO_MODE);
-	test_intro(26);
+	register_cutscene(26);
 
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 487;

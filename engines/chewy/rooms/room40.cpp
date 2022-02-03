@@ -124,7 +124,7 @@ void Room40::xit(int16 eib_nr) {
 				_G(maus_links_click) = false;
 				start_aad_wait(238, -1);
 				move_train(1);
-				test_intro(15);
+				register_cutscene(15);
 				
 				flags.NoPalAfterFlc = true;
 				flic_cut(FCUT_073, CFO_MODE);

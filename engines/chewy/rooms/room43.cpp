@@ -83,7 +83,7 @@ void Room43::catch_pg() {
 	flic_cut(FCUT_058, CFO_MODE);
 
 	g_engine->_sound->stopSound(0);
-	test_intro(14);
+	register_cutscene(14);
 	
 	flags.NoScroll = false;
 	_G(spieler).ScrollxStep = 1;

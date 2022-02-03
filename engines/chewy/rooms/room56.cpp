@@ -164,7 +164,7 @@ void Room56::entry() {
 		out->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(116, CFO_MODE);
-		test_intro(21);
+		register_cutscene(21);
 		out->setze_zeiger(nullptr);
 		out->cls();
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
@@ -356,7 +356,7 @@ int16 Room56::use_kneipe() {
 		flc->set_custom_user_function(proc1);
 		flic_cut(112, CFO_MODE);
 		flc->remove_custom_user_function();
-		test_intro(31);
+		register_cutscene(31);
 
 		set_up_screen(NO_SETUP);
 		fx_blend = BLEND3;

@@ -239,7 +239,7 @@ int16 Room55::use_telefon() {
 				}
 
 				flic_cut(FCUT_072, CFO_MODE);
-				test_intro(19);
+				register_cutscene(19);
 				
 				flags.NoScroll = false;
 				invent_2_slot(SACKGELD_INV);
@@ -369,7 +369,7 @@ int16 Room55::use_kammeraus() {
 			det->show_static_spr(10);
 			flc->set_flic_user_function(cut_serv);
 			flic_cut(FCUT_070, CFO_MODE);
-			test_intro(18);
+			register_cutscene(18);
 		
 			flc->remove_flic_user_function();
 			const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);

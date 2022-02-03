@@ -391,7 +391,7 @@ int Room97::proc5() {
 	}
 
 	flic_cut(122, CFO_MODE);
-	test_intro(34);
+	register_cutscene(34);
 
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);

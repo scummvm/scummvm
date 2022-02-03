@@ -364,7 +364,7 @@ void new_game();
 void sound_init();
 void sound_exit();
 void show_intro();
-void test_intro(int testVal);
+void register_cutscene(int cutsceneNum);
 
 void init_atds();
 
