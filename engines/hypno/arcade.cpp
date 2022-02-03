@@ -404,6 +404,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	if (background.decoder)
 		skipVideo(background);
 
+	stopSound();
+	_music.clear();
 }
 
 int HypnoEngine::detectTarget(const Common::Point &mousePos) {

@@ -198,7 +198,7 @@ void WetEngine::loadAssetsPCG() {
 	over->intros.push_back("g.s");
 	_levels["<gameover>"] = over;
 
-	loadLib("", "sound.lib", false);
+	loadLib("sound/", "sound.lib", false);
 	_nextLevel = "<start>";
 }
 

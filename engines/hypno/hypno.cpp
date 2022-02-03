@@ -517,16 +517,21 @@ void HypnoEngine::skipVideo(MVideo &video) {
 void HypnoEngine::playSound(const Common::String &filename, uint32 loops) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d)", __FUNCTION__, filename.c_str(), loops);
 	Common::String name = convertPath(filename);
-	if (!_prefixDir.empty())
-		name = _prefixDir + "/" + name;
 
 	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
 		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-	} else
-		debugC(1, kHypnoDebugMedia, "%s not found!", name.c_str());
+	} else {
+		if (!_prefixDir.empty())
+			name = _prefixDir + "/" + name;
+		if (file->open(name)) {
+			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+		} else 
+			debugC(1, kHypnoDebugMedia, "%s not found!", name.c_str());
+	}
 }
 
 void HypnoEngine::stopSound() {
