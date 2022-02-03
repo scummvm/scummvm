@@ -98,6 +98,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_loomSteamCD.balance = 0;
 
 	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
+	_loomOvertureTicks = DEFAULT_LOOM_OVERTURE_TICKS + 10 * ConfMan.getInt("loom_overture_ticks");
 
 	_loomSteamCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
@@ -127,8 +128,8 @@ bool Sound::isRolandLoom() const {
 // Ozawa version of No. 10 Scène (Moderato). Good enough for now, but maybe it
 // needs to be configurable to accommodate for different recordings?
 
-#define TICKS_TO_TIMER(x) ((((x) * 278) / 8940) + 1)
-#define TIMER_TO_TICKS(x) ((((x) - 1) * 8940) / 278)
+#define TICKS_TO_TIMER(x) ((((x) * 278) / _loomOvertureTicks) + 1)
+#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTicks) / 278)
 
 void Sound::updateMusicTimer(int ticks) {
 	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56 && !(_vm->_game.features & GF_DEMO));

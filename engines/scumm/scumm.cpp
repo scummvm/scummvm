@@ -1541,6 +1541,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	bool useReplacementAudioTracks = (_game.id == GID_LOOM && !(_game.features & GF_AUDIOTRACKS));
 
 	if (useReplacementAudioTracks) {
+		ConfMan.registerDefault("loom_overture_ticks", DEFAULT_LOOM_OVERTURE_TICKS);
 		_system->getAudioCDManager()->open();
 	}
 

@@ -32,6 +32,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
+#include "scumm/dialogs.h"
 #include "scumm/resource.h"
 
 // Files related for detection.
@@ -520,6 +521,26 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	}
 
 	return desc;
+}
+
+GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	if (ConfMan.get("gameid", target) != "loom")
+		return nullptr;
+
+	// These Loom settings are only relevant for the EGA version, so
+	// exclude non-DOS versions. If the game was added a long time ago,
+	// the platform may still be listed as unknown.
+
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
+		return nullptr;
+
+	if (ConfMan.get("extra", target) == "Steam")
+		return nullptr;
+
+	// And yet, after all this, we still can't be sure that it's not the
+	// VGA version or a demo...
+	return new Scumm::EgaLoomOptionsWidget(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

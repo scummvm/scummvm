@@ -699,4 +699,69 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 	}
 }
 
+EgaLoomOptionsWidget::EgaLoomOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "EgaLoomOptionsDialog", false, domain) {
+	new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksHeader", _("Overture Timing:"));
+
+	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("Adjusts how quickly the Overture transition happens when using replacement audio tracks."), kOvertureTicksChanged);
+
+	// Each step of the slider changes the assumed length of the Loom
+	// Overture by ten SCUMM ticks. When I timed it, I was able to set the
+	// transition to happen anywhere between approximately 1:30 and 2:20,
+	// which should be more than enough. I think it's nice if the interval
+	// is small enough that you can set the slider back to 0 at reasonable
+	// screen resolutions.
+
+	_overtureTicksSlider->setMinValue(-200);
+	_overtureTicksSlider->setMaxValue(200);
+
+	_overtureTicksLabel = new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksLabel", Common::U32String());
+
+	_overtureTicksLabel->setFlags(GUI::WIDGET_CLEARBG);
+}
+
+void EgaLoomOptionsWidget::load() {
+	int loomOvertureTicks = DEFAULT_LOOM_OVERTURE_TICKS;
+
+	if (ConfMan.hasKey("loom_overture_ticks", _domain))
+		loomOvertureTicks = ConfMan.getInt("loom_overture_ticks", _domain);
+
+	_overtureTicksSlider->setValue(loomOvertureTicks);
+	updateOvertureTicksLabel();
+}
+
+bool EgaLoomOptionsWidget::save() {
+	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
+	return true;
+}
+
+void EgaLoomOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(16, 16, 16, 16)
+			.addWidget("OvertureTicksHeader", "OptionsLabel")
+			.addWidget("OvertureTicks", "WideSlider")
+			.addSpace(8)
+			.addWidget("OvertureTicksLabel", "SmallLabel")
+		.closeLayout()
+	.closeDialog();
+}
+
+void EgaLoomOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+
+	switch (cmd) {
+	case kOvertureTicksChanged:
+		updateOvertureTicksLabel();
+		break;
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+
+void EgaLoomOptionsWidget::updateOvertureTicksLabel() {
+	_overtureTicksLabel->setValue(_overtureTicksSlider->getValue());
+	_overtureTicksLabel->markAsDirty();
+}
+
 } // End of namespace Scumm
