@@ -103,6 +103,7 @@ void Room89::entry() {
 			out->setze_zeiger(nullptr);
 			out->back2screen(workpage);
 			g_events->delay(30);
+			SHOULD_QUIT_RETURN;
 		}
 
 		// Unsquish out thanks for playing screen
@@ -123,6 +124,7 @@ void Room89::entry() {
 			out->setze_zeiger(nullptr);
 			out->back2screen(workpage);
 			g_events->delay(30);
+			SHOULD_QUIT_RETURN;
 		}
 
 		g_events->delay(3000);
