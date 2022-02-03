@@ -28,6 +28,8 @@
 
 namespace Chewy {
 
+static constexpr int CINEMA_LINES = 12;
+
 int MainMenu::_selection;
 int MainMenu::_personAni[3];
 
@@ -289,7 +291,45 @@ void MainMenu::restorePersonAni() {
 }
 
 void MainMenu::cinema() {
-	warning("TODO: cinema dialog");
+	int timer_nr;
+	int16 txt_anz;
+	int topIndex = 0;
+	Common::Array<int> cutscenes;
+	getCutscenes(cutscenes);
+
+	out->set_fontadr(font6x8);
+	out->set_vorschub(fvorx6x8, fvory6x8);
+	atds->load_atds(98, 1);
+	
+	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
+	room->load_tgp(4, &room_blk, 1, 0, "BACK/GBOOK.TGP");
+	show_cur();
+	show_intro();
+	kbinfo.scan_code = 0;
+
+	for (;;) {
+		timer_nr = 0;
+		out->setze_zeiger(workptr);
+		out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+
+		if (!cutscenes.empty()) {
+			// Render cutscene list
+			for (int i = 0; i < CINEMA_LINES; ++i) {
+				// TODO
+			}
+		} else {
+			// No cutscenes seen yet
+			char *s = atds->ats_get_txt(545, 0, &txt_anz, 1);
+			out->printxy(40, 68, 14, 300, scr_width, s);
+		}
+
+		// TODO
+	}
+
+	room->open_handle(EPISODE1_TGP, "rb", 0);
+	room->set_ak_pal(&room_blk);
+	hide_cur();
+	uhr->reset_timer(0, 5);
 }
 
 } // namespace Chewy
