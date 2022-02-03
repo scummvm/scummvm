@@ -154,6 +154,7 @@ void Room7::klingel() {
 		obj->set_rsi_flip_flop(SIB_TKNOPF2_R7, 255);
 		obj->hide_sib(SIB_KLINGEL_R7);
 		flags.NoPalAfterFlc = false;
+		register_cutscene(2);
 		flic_cut(FCUT_003, CFO_MODE);
 		set_person_pos(201, 117, P_CHEWY, P_LEFT);
 		_G(spieler).scrollx = 0;

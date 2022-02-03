@@ -152,6 +152,7 @@ void Room22::bork_walk2() {
 	wait_auto_obj(BORK_OBJ);
 
 	flic_cut(FCUT_009, CFO_MODE);
+	register_cutscene(3);
 	det->show_static_spr(4);
 	atds->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).R22BorkPlatt = true;

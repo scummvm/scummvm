@@ -252,6 +252,7 @@ void Room37::dog_bell() {
 			flic_cut(FCUT_051, CFO_MODE);
 			_G(spieler).scrollx = 104;
 			flic_cut(FCUT_054, CFO_MODE);
+			register_cutscene(10);
 			det->show_static_spr(0);
 
 			_G(spieler).R37HundScham = true;

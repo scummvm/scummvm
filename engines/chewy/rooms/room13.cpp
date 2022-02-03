@@ -186,6 +186,7 @@ void Room13::jmp_band() {
 			switch_room(14);
 
 			flic_cut(FCUT_018, CFO_MODE);
+			register_cutscene(6);
 			_G(spieler).scrollx = 92;
 			_G(spieler).scrolly = 120;
 			_G(spieler).PersonHide[P_CHEWY] = true;
