@@ -388,6 +388,7 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 	if (x < clipx1) {
 		int xCount = clipx1 - x;
 		spriteDeltaX2 -= xCount;
+		dest += xCount;
 
 		--xCount;
 		if (xCount >= 1) {
