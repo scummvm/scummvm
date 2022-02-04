@@ -938,9 +938,21 @@ void PCEngineCostumeRenderer::setPalette(uint16 *palette) {
 	byte *rgbPtr = rgb;
 	_vm->readPCEPalette(&ptr, &rgbPtr, 15);
 
+	// Normally, palette is filled with 0xFF and can be ignored. But this
+	// can be changed through scripting, and when entering the darkened
+	// tent in Loom certain colors are set to 0. These should be black.
+	//
+	// There are several other cases where other colors are set, but in my
+	// playthrough I couldn't see any case where honoring these would make
+	// any improvements. Quite the contrary in fact, since it would
+	// introduce numerous glitches comparing to what I've seen of the
+	// original behavior.
+
 	_palette[0] = 0;
-	for (int i = 0; i < 15; ++i)
-		_palette[i + 1] = _vm->get16BitColor(rgb[i * 3 + 0], rgb[i * 3 + 1], rgb[i * 3 + 2]);
+	for (int i = 0; i < 15; ++i) {
+		int c = (palette[i + 1] != 0) ? i : 0;
+		_palette[i + 1] = _vm->get16BitColor(rgb[c * 3 + 0], rgb[c * 3 + 1], rgb[c * 3 + 2]);
+	}
 }
 #endif
 

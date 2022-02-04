@@ -519,7 +519,18 @@ void ScummEngine_v5::o5_actorOps() {
 					i = 3;
 			}
 
-			a->setPalette(i, j);
+			// Setting palette color 0 to 0 appears to be a way to
+			// reset the actor palette in the TurboGrafx-16 version
+			// of Loom. It's used in several places, but the only
+			// one where I can see any visible difference is when
+			// leaving the darkened tent.
+
+			if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && i == 0 && j == 0) {
+				for (int k = 0; k < 32; k++)
+					a->setPalette(k, 0xFF);
+			} else {
+				a->setPalette(i, j);
+			}
 			break;
 		case 12:		// SO_TALK_COLOR
 			a->_talkColor = getVarOrDirectByte(PARAM_1);
