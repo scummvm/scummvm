@@ -157,7 +157,7 @@ enum SetupScreenMode {
 #define CH_SPZ_FILE "misc/ch_spez.taf"
 #define OPTION_TAF "MISC/OPTION.TAF"
 
-#define SAVEDIR "save/savegame.\0"
+#define SAVEDIR "save/savegame."
 
 #define DETAILTEST "room/test.rdi"
 
@@ -167,10 +167,10 @@ enum SetupScreenMode {
 #define BUCH_START 2
 #define DIARY_START 3
 
-#define EPISODE1_GEP "back/episode1.gep\0"
+#define EPISODE1_GEP "back/episode1.gep"
 
-#define FONT6x8 "txt/6x8.tff\0"
-#define FONT8x8 "txt/8x8.tff\0"
+#define FONT6x8 "txt/6x8.tff"
+#define FONT8x8 "txt/8x8.tff"
 
 #define ATDS_TXT "txt/atds.tap"
 #define INV_ATS_STEUER "txt/inv_st.s"
