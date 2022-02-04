@@ -163,7 +163,7 @@ enum SetupScreenMode {
 
 #define EPISODE1_TGP 0
 #define GBOOK_TGP 1
-#define EPISODE1 "back/episode1.tgp\0"
+#define EPISODE1 "back/episode1.tgp"
 #define BUCH_START 2
 #define DIARY_START 3
 

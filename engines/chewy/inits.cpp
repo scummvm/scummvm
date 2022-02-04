@@ -442,9 +442,9 @@ void getCutscenes(Common::Array<int> &cutscenes) {
 	if (!ConfMan.hasKey(CUTSCENES))
 		return;
 
-	Common::String str = ConfMan.get(CUTSCENES);
+	Common::String cutStr = ConfMan.get(CUTSCENES);
 	for (int i = 0; i < MAX_CUTSCENES; ++i) {
-		if (str[i] == '1')
+		if (cutStr[i] == '1')
 			cutscenes.push_back(i + 1);
 	}
 }

@@ -80,6 +80,9 @@ private:
 	 * Restores the personAni array
 	 */
 	static void restorePersonAni();
+
+	static int16 cinema_cut_serv(int16 frame);
+
 public:
 	/**
 	 * Displays the menu
