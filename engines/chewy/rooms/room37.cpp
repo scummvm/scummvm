@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+	/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -57,6 +57,7 @@ void Room37::entry() {
 		if (!_G(spieler).R37HundScham) {
 			_G(timer_nr)[0] = room->set_timer(3, 4);
 			det->set_static_ani(3, -1);
+			g_engine->_sound->playSound(3, 0);
 		}
 	}
 
@@ -132,10 +133,9 @@ short Room37::use_wippe() {
 }
 
 int16 Room37::cut_serv1(int16 frame) {
-	int16 static_nr;
-	int16 static_nr1;
-
 	if (!_G(spieler).R37Kloppe) {
+		int16 static_nr;
+		int16 static_nr1;
 		if (!_G(spieler).R37Gebiss) {
 			static_nr = 9;
 			static_nr1 = 11;
@@ -156,11 +156,10 @@ int16 Room37::cut_serv1(int16 frame) {
 
 int16 Room37::cut_serv2(int16 frame) {
 	static const int16 STATIC_NR[] = { 7, 14, 12, 10 };
-	short i;
 
 	det->show_static_spr(12);
 	det->show_static_spr(10);
-	for (i = 0; i < 4; i++)
+	for (short i = 0; i < 4; i++)
 		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
 
 	return 0;
@@ -170,8 +169,8 @@ int16 Room37::use_glas() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).R37Gebiss) {
+		action_flag = true;
 		if (is_cur_inventar(ANGEL2_INV)) {
-			action_flag = true;
 			flags.NoScroll = true;
 			hide_cur();
 			auto_move(5, P_CHEWY);
@@ -211,6 +210,7 @@ void Room37::dog_bell() {
 
 	if (!flags.AutoAniPlay) {
 		flags.AutoAniPlay = true;
+		g_engine->_sound->stopSound(0); // nr 3, sslot 0
 
 		if (!_G(spieler).R37Gebiss) {
 			stop_person(P_CHEWY);
@@ -235,7 +235,7 @@ void Room37::dog_bell() {
 			start_ani_block(3, ABLOCK31);
 			det->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
-			g_engine->_sound->playSound(3);
+//			g_engine->_sound->playSound(3);
 			enable_timer();
 			dia_nr = 149;
 			ani_nr = CH_TALK12;
@@ -345,12 +345,9 @@ void Room37::use_hahn() {
 }
 
 void Room37::hahn_dia() {
-	int16 tmp_scrollx;
-	int16 tmp_scrolly;
-
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	tmp_scrollx = _G(spieler).scrollx;
-	tmp_scrolly = _G(spieler).scrolly;
+	int16 tmp_scrollx = _G(spieler).scrollx;
+	int16 tmp_scrolly = _G(spieler).scrolly;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	switch_room(38);
