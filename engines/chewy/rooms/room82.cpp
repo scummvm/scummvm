@@ -198,9 +198,9 @@ int Room82::proc6() {
 		start_aad_wait(450, -1);
 		out->ausblenden(0);
 		out->set_teilpalette(pal, 255, 1);
-		atds->set_unknown(false);
+		atds->enableEvents(false);
 		start_aad_wait(598, -1);
-		atds->set_unknown(true);
+		atds->enableEvents(true);
 		det->show_static_spr(7);
 		fx_blend = BLEND3;
 		set_up_screen(DO_SETUP);

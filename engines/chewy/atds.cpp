@@ -90,6 +90,7 @@ atdsys::atdsys() {
 	atdsv.DiaNr = -1;
 	atdsv.aad_str = 0;
 	atdsv.VocNr = -1;
+	atdsv._eventsEnabled = true;
 	ssret.Next = false;
 	ssr = &ssret;
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
@@ -565,7 +566,7 @@ int16 atdsys::ats_get_status() {
 
 void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	if (atsv.Display) {
-		if (atdsv._field12) {
+		if (atdsv._eventsEnabled) {
 			switch (in->get_switch_code()) {
 			case ESC:
 			case ENTER:
@@ -894,7 +895,7 @@ void atdsys::stop_aad() {
 
 void atdsys::print_aad(int16 scrx, int16 scry) {
 	if (aadv.Dialog) {
-		if (atdsv._field12) {
+		if (atdsv._eventsEnabled) {
 			switch (in->get_switch_code()) {
 			case ESC:
 			case ENTER:
