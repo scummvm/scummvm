@@ -380,7 +380,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(ci->Handle);
 	if (rs) {
 		if (custom_header.load(rs)) {
-			if (!scumm_strnicmp(custom_header.id, "CFO\0", 4)) {
+			if (!scumm_strnicmp(custom_header.id, "CFO", 4)) {
 				cls_flag = false;
 				fade_flag = false;
 				fade_delay = 0;
@@ -487,7 +487,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case PLAY_MUSIC:
-			if (!strncmp(th->id, "TMF\0", 4))
+			if (!strncmp(th->id, "TMF", 4))
 #ifndef AIL
 				snd->playMod(th);
 #else

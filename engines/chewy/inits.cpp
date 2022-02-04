@@ -80,7 +80,7 @@ void standard_init() {
 	cur->set_cur_ani(&curani);
 
 	iog = new io_game(out, in, cur);
-	strcpy(ioptr.id, "CHE\0");
+	strcpy(ioptr.id, "CHE");
 	strcpy(ioptr.save_path, SAVEDIR);
 	ioptr.delay = 8;
 	alloc_buffers();

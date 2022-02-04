@@ -428,7 +428,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 void io_game::mark_eintrag(int16 y, int16 nr) {
 	out->pop_box(io->popx + 8, y, io->popx + 131, y + 10,
 	              io->m_col[1], io->m_col[0], io->m_col[4]);
-	out->printxy(io->popx + 10, y + 2, io->m_col[2], 300, scr_width, "%d.\0", nr + 1);
+	out->printxy(io->popx + 10, y + 2, io->m_col[2], 300, scr_width, "%d.", nr + 1);
 	if (file_find_g[nr][0] != 0) {
 		if (strlen(&file_find_g[nr][1]) >= 17)
 			out->printnxy(io->popx + 28, y + 2, io->m_col[2], 300, 17,
@@ -451,7 +451,7 @@ void io_game::mark_eintrag(int16 y, int16 nr) {
 void io_game::unmark_eintrag(int16 y, int16 nr) {
 	out->pop_box(io->popx + 8, y, io->popx + 131, y + 10, io->m_col[3],
 	              io->m_col[3], io->m_col[3]);
-	out->printxy(io->popx + 10, y + 2, io->m_col[5], 300, scr_width, "%d.\0", nr + 1);
+	out->printxy(io->popx + 10, y + 2, io->m_col[5], 300, scr_width, "%d.", nr + 1);
 	if (file_find_g[nr][0] != 0) {
 		if (strlen(&file_find_g[nr][1]) >= 17)
 			out->printnxy(io->popx + 28, y + 2, io->m_col[5], 300, 17,
@@ -469,7 +469,7 @@ void io_game::plot_dir_liste(int16 cur_y, int16 start) {
 			out->pop_box(io->popx + 8, cur_y + 1, io->popx + 131, cur_y + 10,
 			              io->m_col[3], io->m_col[3], io->m_col[3]);
 			out->printxy(io->popx + 10, cur_y + 2, io->m_col[5], 300,
-			              scr_width, "%d.\0", i + 1);
+			              scr_width, "%d.", i + 1);
 			if (file_find_g[i][0] != 0) {
 				if (strlen(&file_find_g[i][1]) >= 17)
 					out->printnxy(io->popx + 28, cur_y + 2, io->m_col[5], 300, 17,
@@ -519,7 +519,7 @@ void io_game::plot_io() {
 	plot_ab_txt(io->m_col[1]);
 
 	for (int16 i = 0; i < 9; i++) {
-		out->printxy(io->popx + 10, io->popy + 10 + i * 10,io->m_col[5], 300, scr_width, "%d.\0", i + 1);
+		out->printxy(io->popx + 10, io->popy + 10 + i * 10,io->m_col[5], 300, scr_width, "%d.", i + 1);
 	}
 }
 
@@ -566,7 +566,7 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 	out->pop_box
 	(io->popx + 8, y, io->popx + 131, y + 10, io->m_col[1], io->m_col[0], io->m_col[4]);
 
-	out->printxy(io->popx + 10, y + 2, io->m_col[0], 300, scr_width, "%d.\0", slotNum + 1);
+	out->printxy(io->popx + 10, y + 2, io->m_col[0], 300, scr_width, "%d.", slotNum + 1);
 	if (file_find_g[slotNum][0] == 0) {
 		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
 	} else {
