@@ -116,7 +116,7 @@ struct AtdsVar {
 	int16 DiaNr = 0;
 
 	uint8 Display = 0;
-	int16 _field12 = 0;
+	bool _eventsEnabled = false;
 	int16 VocNr = 0;
 
 	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) = nullptr;
@@ -310,8 +310,8 @@ public:
 	int16 check_item(int16 block_nr, int16 item_nr);
 	int16 calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode);
 	int16 getStereoPos(int16 x);
-	void set_unknown(bool nr) {
-		atdsv._field12 = nr;
+	void enableEvents(bool nr) {
+		atdsv._eventsEnabled = nr;
 	}
 
 private:
