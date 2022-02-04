@@ -4195,8 +4195,10 @@ void ScummEngine::scrollEffect(int dir) {
 
 void ScummEngine::unkScreenEffect6() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
-	if (_game.id == GID_LOOM && (_game.version == 4))
+	if (_game.id == GID_LOOM && _game.version == 4)
 		dissolveEffect(1, 1);
+	else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+		dissolveEffect(8, 8);
 	else
 		dissolveEffect(8, 4);
 }
