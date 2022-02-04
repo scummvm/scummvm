@@ -147,7 +147,7 @@ void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
 
 void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
 	const int width = *((const int16 *)sptr);
-	sptr += y * width + x;
+	sptr += 4 + y * width + x;
 	byte *destP = SCREEN;
 
 	for (int row = 0; row < SCREEN_HEIGHT;
