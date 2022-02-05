@@ -44,7 +44,7 @@ int16 Room35::schublade() {
 	int16 action_flag = false;
 	hide_cur();
 
-	if (!_G(spieler).inv_cur) {
+	if (_G(spieler).ChewyAni != CHEWY_ROCKER && !_G(spieler).inv_cur) {
 		if (!_G(spieler).R35Schublade) {
 			action_flag = true;
 			auto_move(3, P_CHEWY);
@@ -117,11 +117,11 @@ int16 Room35::use_cat() {
 }
 
 void Room35::talk_cat() {
-	int16 dia_nr;
 	hide_cur();
 	auto_move(4, P_CHEWY);
 
 	if (_G(spieler).R35TransCat) {
+		int16 dia_nr;
 		if (!_G(spieler).R35CatEat) {
 			dia_nr = 7;
 		} else {
