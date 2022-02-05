@@ -237,19 +237,22 @@ void WetEngine::loadAssetsFullGame() {
 	Code *menu = new Code();
 	menu->name = "<main_menu>";
 	_levels["<main_menu>"] = menu;
-	_levels["<main_menu>"]->levelIfWin = "c11";
+	_levels["<main_menu>"]->levelIfWin = "<intros>";
+
+	Transition *intros = new Transition("c11");
+	intros->intros.push_back("c_misc/stardate.smk");
+	intros->intros.push_back("c_misc/intros.smk");
+	intros->intros.push_back("c_misc/confs.smk");
+	_levels["<intros>"] = intros;
 
 	loadArcadeLevel("c110.mi_", "c10", "");
 	_levels["c110.mi_"]->levelIfLose = "<quit>";
-	_levels["c110.mi_"]->intros.push_front("c_misc/intros.smk");
 
 	loadArcadeLevel("c111.mi_", "c10", "");
 	_levels["c111.mi_"]->levelIfLose = "<quit>";
-	_levels["c111.mi_"]->intros.push_front("c_misc/intros.smk");
 
 	loadArcadeLevel("c112.mi_", "c10", "");
 	_levels["c112.mi_"]->levelIfLose = "<quit>";
-	_levels["c112.mi_"]->intros.push_front("c_misc/intros.smk");
 
 	loadArcadeLevel("c100.mi_", "c21", "");
 	loadArcadeLevel("c101.mi_", "c21", "");
