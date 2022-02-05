@@ -155,7 +155,7 @@ int16 file_menue() {
 	taf_info *ti = mem->taf_adr(OPTION_TAF);
 	//SpriteResource *options = new SpriteResource(OPTION_TAF);
 	ret = 0;
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
+	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -409,7 +409,7 @@ int16 file_menue() {
 
 void option_menue(taf_info *ti) {
 	long akt_clock = 0, stop_clock = 0;
-	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
+	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);
@@ -606,7 +606,7 @@ void option_menue(taf_info *ti) {
 			--delay_count;
 	}
 
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, "back/gbook.tgp");
+	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 	out->setze_zeiger(screen0);

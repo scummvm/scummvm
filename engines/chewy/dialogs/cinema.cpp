@@ -55,8 +55,8 @@ void Cinema::execute() {
 	out->set_vorschub(fvorx6x8, fvory6x8);
 	atds->load_atds(98, 1);
 
-	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
-	room->load_tgp(4, &room_blk, 1, 0, "BACK/GBOOK.TGP");
+	room->open_handle(GBOOK, "rb", 0);
+	room->load_tgp(4, &room_blk, 1, 0, GBOOK);
 	show_cur();
 	g_events->clearEvents();
 	kbinfo.scan_code = 0;

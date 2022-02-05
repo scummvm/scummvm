@@ -158,8 +158,8 @@ enum SetupScreenMode {
 #define OPTION_TAF "MISC/OPTION.TAF"
 
 #define SAVEDIR "save/savegame."
-
 #define DETAILTEST "room/test.rdi"
+#define GBOOK "BACK/GBOOK.TGP"
 
 #define EPISODE1_TGP 0
 #define GBOOK_TGP 1

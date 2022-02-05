@@ -125,8 +125,8 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
-	room->load_tgp(5, &room_blk, 1, 0, "BACK/GBOOK.TGP");
+	room->open_handle(GBOOK, "rb", 0);
+	room->load_tgp(5, &room_blk, 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	out->setze_zeiger(screen0);
