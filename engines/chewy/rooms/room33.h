@@ -28,7 +28,7 @@ namespace Rooms {
 class Room33 {
 private:
 	static void surimy_go();
-	static int16 calc_muntermacher();
+	static bool calc_muntermacher();
 
 public:
 	static void entry();

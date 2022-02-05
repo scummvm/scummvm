@@ -54,7 +54,7 @@ void Room33::surimy_go() {
 			auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			auto_mov_obj[SURIMY_OBJ].Mode = true;
-			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(158, -1);
 			wait_auto_obj(SURIMY_OBJ);
@@ -80,19 +80,17 @@ void Room33::look_schublade() {
 int16 Room33::use_schublade() {
 	int16 action_flag = false;
 
-	if (_G(spieler).R33SchubFirst && !_G(spieler).inv_cur) {
-		if (!_G(spieler).R33Messer) {
-			action_flag = true;
-			_G(spieler).R33Messer = true;
+	if (_G(spieler).R33SchubFirst && !_G(spieler).inv_cur && !_G(spieler).R33Messer) {
+		hide_cur();
+		action_flag = true;
+		_G(spieler).R33Messer = true;
 
-			hide_cur();
-			atds->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
-			atds->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
-			atds->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
-			start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
-			invent_2_slot(MESSER_INV);
-			show_cur();
-		}
+		atds->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
+		atds->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
+		atds->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
+		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		invent_2_slot(MESSER_INV);
+		show_cur();
 	}
 
 	return action_flag;
@@ -101,8 +99,8 @@ int16 Room33::use_schublade() {
 void Room33::use_maschine() {
 	int16 dia_nr;
 	int16 ani_nr;
-	int16 action = true;
-	int16 hocker = false;
+	bool action = true;
+	bool hocker = false;
 	hide_cur();
 
 	if (!_G(spieler).R33MunterOk) {
@@ -110,21 +108,21 @@ void Room33::use_maschine() {
 
 		if (_G(spieler).inv_cur) {
 			switch (_G(spieler).AkInvent) {
-			case K_FLEISCH_INV:
-				_G(spieler).R33Munter[1] = true;
-				break;
-
 			case MILCH_INV:
 				_G(spieler).R33Munter[3] = true;
 				invent_2_slot(MILCH_LEER_INV);
 				break;
 
-			case KAFFEE_INV:
-				_G(spieler).R33Munter[0] = true;
+			case K_FLEISCH_INV:
+				_G(spieler).R33Munter[1] = true;
 				break;
 
 			case EIER_INV:
 				_G(spieler).R33Munter[2] = true;
+				break;
+
+			case KAFFEE_INV:
+				_G(spieler).R33Munter[0] = true;
 				break;
 
 			default:
@@ -185,8 +183,8 @@ void Room33::use_maschine() {
 	show_cur();
 }
 
-int16 Room33::calc_muntermacher() {
-	int16 ret = true;
+bool Room33::calc_muntermacher() {
+	bool ret = true;
 
 	for (int16 i = 0; i < 4; i++) {
 		if (_G(spieler).R33Munter[i] == false)
@@ -199,20 +197,18 @@ int16 Room33::calc_muntermacher() {
 int16 Room33::get_munter() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
-		if (!_G(spieler).R33MunterGet && _G(spieler).R33MunterOk) {
-			action_flag = true;
-			hide_cur();
-			_G(spieler).R33MunterGet = true;
-			auto_move(4, P_CHEWY);
-			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			invent_2_slot(MUNTER_INV);
-			atds->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
-			det->hide_static_spr(3);
-			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
-			start_aad_wait(72, -1);
-			show_cur();
-		}
+	if (!_G(spieler).inv_cur && !_G(spieler).R33MunterGet && _G(spieler).R33MunterOk) {
+		action_flag = true;
+		hide_cur();
+		_G(spieler).R33MunterGet = true;
+		auto_move(4, P_CHEWY);
+		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
+		invent_2_slot(MUNTER_INV);
+		atds->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
+		det->hide_static_spr(3);
+		start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+		start_aad_wait(72, -1);
+		show_cur();
 	}
 
 	return action_flag;
