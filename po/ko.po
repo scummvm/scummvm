@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-02 19:14+0000\n"
+"POT-Creation-Date: 2022-02-05 08:40+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4362,7 +4362,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/hypno/detection.cpp:154 engines/kyra/detection_tables.h:303
+#: engines/hypno/detection.cpp:165 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
@@ -5183,11 +5183,11 @@ msgstr "고어 모드"
 msgid "Enable Gore Mode when available"
 msgstr "가능한 경우 고어 모드를 활성화합니다"
 
-#: engines/hypno/detection.cpp:179 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
 msgid "Enable cheats"
 msgstr "치트 활성화"
 
-#: engines/hypno/detection.cpp:180
+#: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-02 19:14+0000\n"
+"POT-Creation-Date: 2022-02-05 08:40+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4437,7 +4437,7 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/hypno/detection.cpp:154 engines/kyra/detection_tables.h:303
+#: engines/hypno/detection.cpp:165 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
@@ -5246,12 +5246,12 @@ msgstr "Gore modua"
 msgid "Enable Gore Mode when available"
 msgstr "Gaitu Gore modua eskuragarri dagoenean"
 
-#: engines/hypno/detection.cpp:179 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
 #, fuzzy
 msgid "Enable cheats"
 msgstr "Gaitu helio modua"
 
-#: engines/hypno/detection.cpp:180
+#: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
 msgstr ""
 
