@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 01:10+0000\n"
+"PO-Revision-Date: 2022-02-05 12:48+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1085,152 +1085,153 @@ msgstr "немажліва зьмяніць налады фільтравань�
 
 #: gui/options.cpp:1245 backends/platform/android/options.cpp:71
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Паказваць кіраваньне на экране"
 
 #: gui/options.cpp:1249 backends/platform/android/options.cpp:72
 msgid "Touchpad mouse mode"
-msgstr ""
+msgstr "Рэжым тачпаду"
 
 #: gui/options.cpp:1253
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Памяняць кнопкі „Меню“ й „Назад“"
 
 #: gui/options.cpp:1258
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "Хуткасьць паказальніка:"
 
 #: gui/options.cpp:1258 gui/options.cpp:1260 gui/options.cpp:1261
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Хуткасьць паказальніка мышы, які кіруецца клявіятурай/джойстыкам"
 
 #: gui/options.cpp:1260
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "Хуткасьць паказальніка:"
 
 #: gui/options.cpp:1271
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "„Мёртвая“ зона джойстыку:"
 
 #: gui/options.cpp:1271 gui/options.cpp:1273 gui/options.cpp:1274
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "„Мёртвая“ зона аналягавага джойстыку"
 
 #: gui/options.cpp:1273
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "„Мёртвая“ зона джойстыку:"
 
 #: gui/options.cpp:1345
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Засталося таемных дасягненьняў — %d"
 
 #: gui/options.cpp:1350
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Дасягненьняў разблякавана: %d/%d"
 
 #: gui/options.cpp:1396
 msgid "HW Shader:"
-msgstr ""
+msgstr "Апаратны шэйдэр:"
 
 #: gui/options.cpp:1396 gui/options.cpp:1398
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Розныя апаратныя шэйдэры даюць розныя візуальныя эфэкты"
 
 #: gui/options.cpp:1398
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Апаратны шэйдэр:"
 
 #: gui/options.cpp:1399
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Розныя шэйдэры даюць розныя візуальныя эфэкты"
 
 #: gui/options.cpp:1419
 msgid "Graphics mode:"
-msgstr ""
+msgstr "Граф. рэжым:"
 
 #: gui/options.cpp:1433
 msgid "Render mode:"
-msgstr ""
+msgstr "Рэжым рэндэру:"
 
 #: gui/options.cpp:1433 gui/options.cpp:1434
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "Спэцыяльныя рэжымы дызэрынґу, якія падтрымліваюць нейкія гульні"
 
 #: gui/options.cpp:1446
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Рэжым расьцягу:"
 
 #: gui/options.cpp:1458
 msgid "Scaler:"
-msgstr ""
+msgstr "Павялічнік:"
 
 #: gui/options.cpp:1471 backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "Рэжым поўнага экрану"
 
 #: gui/options.cpp:1473
 msgid "V-Sync"
-msgstr ""
+msgstr "Вэрт. сынхранаваньне"
 
 #: gui/options.cpp:1473
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
+"Чакаць пакуль вэртыкальнае сынхранаваньне абновіць экран, каб перадухіліць "
+"разрыў выявы"
 
 #: gui/options.cpp:1476
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "3D рэндэр:"
 
 #: gui/options.cpp:1478
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "3D рэндэр:"
 
 #: gui/options.cpp:1491
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "Памякчэньне 3D:"
 
 #: gui/options.cpp:1495 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
-msgstr ""
+msgstr "Адлучана"
 
 #: gui/options.cpp:1507
 msgid "Filter graphics"
-msgstr ""
+msgstr "Фільтраваньне графікі"
 
 #: gui/options.cpp:1507
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Ужывайце лінейнае фільтраваньне, калі павялічваеце графіку"
 
 #: gui/options.cpp:1510
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "Карэкцыя прапорцый экрану"
 
 #: gui/options.cpp:1510
 msgid "Correct aspect ratio for games"
-msgstr ""
+msgstr "Карэктаваць прапорцыі экрану пад гульні"
 
 #: gui/options.cpp:1518
 msgid "Preferred device:"
 msgstr "Пераважная прылада:"
 
 #: gui/options.cpp:1518
-#, fuzzy
 msgid "Music device:"
 msgstr "Музычная прылада:"
 
 #: gui/options.cpp:1518 gui/options.cpp:1520
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr ""
+msgstr "Пераважная гукавая прылада або эмулятар гукавой карты"
 
 #: gui/options.cpp:1518 gui/options.cpp:1520 gui/options.cpp:1521
 msgid "Specifies output sound device or sound card emulator"
-msgstr ""
+msgstr "Выходная гукавая прылада або эмулятар гукавой карты"
 
 #: gui/options.cpp:1520
 msgctxt "lowres"
@@ -1244,11 +1245,11 @@ msgstr "Муз. прыл.:"
 
 #: gui/options.cpp:1547
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "Эмулятар AdLib:"
 
 #: gui/options.cpp:1547 gui/options.cpp:1548
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib выкарыстоўваецца для музыкі ў многіх гульнях"
 
 #: gui/options.cpp:1561
 msgid "GM device:"
@@ -1256,26 +1257,24 @@ msgstr "Прылада GM:"
 
 #: gui/options.cpp:1561
 msgid "Specifies default sound device for General MIDI output"
-msgstr ""
+msgstr "Стандартная выходная гукавая прылада для General MIDI"
 
 #: gui/options.cpp:1572
-#, fuzzy
 msgid "Don't use General MIDI music"
-msgstr "Ня карыстацца музыкай General MIDI"
+msgstr "Не выкарыстоўваць музыку General MIDI"
 
 #: gui/options.cpp:1583 gui/options.cpp:1645
-#, fuzzy
 msgid "Use first available device"
-msgstr "Карыстацца першай даступнай прыладай"
+msgstr "Выкарыстоўваць першую даступную прыладу"
 
 #: gui/options.cpp:1595
-#, fuzzy
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
 #: gui/options.cpp:1595 gui/options.cpp:1597 gui/options.cpp:1598
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
+"SoundFont падтрымліваецца нейкімі гукавымі картамі, FluidSynth і Timidity"
 
 #: gui/options.cpp:1597
 msgctxt "lowres"
@@ -1284,15 +1283,15 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:1603
 msgid "Mixed AdLib/MIDI mode"
-msgstr ""
+msgstr "Рэжым мяшаных AdLib/MIDI"
 
 #: gui/options.cpp:1603
 msgid "Use both MIDI and AdLib sound generation"
-msgstr ""
+msgstr "Выкарыстоўваць і MIDI, і AdLib для стварэньня гуку"
 
 #: gui/options.cpp:1606
 msgid "MIDI gain:"
-msgstr ""
+msgstr "Узмацненьне MIDI:"
 
 #: gui/options.cpp:1616
 msgid "MT-32 Device:"
@@ -1328,9 +1327,8 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:1635
-#, fuzzy
 msgid "Don't use Roland MT-32 music"
-msgstr "Ня карыстацца музыкай Roland MT-32"
+msgstr "Не выкарыстоўваць музыку Roland MT-32"
 
 #: gui/options.cpp:1662
 msgid "Text and speech:"
