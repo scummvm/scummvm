@@ -174,8 +174,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 
 	_videoDec.reset(new Video::AVIDecoder);
 	if (!_videoDec->loadStream(stream)) {
-		_videoDec.reset();
-		return;
+		goto end;
 	}
 
 	_videoDec->start();
@@ -189,8 +188,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
-				_videoDec.reset();
-				return;
+				goto end;
 			default:
 				break;
 			}
@@ -208,6 +206,8 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		_system->delayMillis(15);
 	}
 
+end:
+	_vsys->makeAllDirty();
 	_videoDec.reset();
 }
 
