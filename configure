@@ -3166,9 +3166,7 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-static-libstdc++"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
-			if test "$_backend" != android3d; then
-				_backend="android"
-			fi
+			_backend="android"
 			_port_mk="backends/platform/$_backend/android.mk"
 			_build_aspect=no
 			_seq_midi=no
@@ -3632,7 +3630,7 @@ fi
 case $_backend in
 	3ds)
 		;;
-	android | android3d)
+	android)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var DEFINES "-DNONSTANDARD_PORT"
 		append_var INCLUDES '-I$(srcdir)/backends/platform/'$_backend
@@ -3919,7 +3917,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | android3d | androidsdl | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | androidsdl | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -5366,11 +5364,6 @@ _opengl_glad=no
 if test "$_opengl_mode" != none ; then
 	case $_backend in
 		android)
-			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
-			_opengl_mode=gles2
-			_opengl_glad=yes
-			;;
-		android3d)
 			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
 			_opengl_mode=gles2
 			_opengl_glad=yes
