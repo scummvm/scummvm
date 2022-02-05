@@ -1540,7 +1540,8 @@ msgstr "Заўжды вяртацца ў ScummVM пасьля выхаду з г
 #: gui/options.cpp:2337
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
-msgstr "Не закрываць ScummVM, а заўжды вяртацца да яго пасьля выйсьця з гульні."
+msgstr ""
+"Не закрываць ScummVM, а заўжды вяртацца да яго пасьля выйсьця з гульні."
 
 #: gui/options.cpp:2344
 msgid "Ask for confirmation on exit"
