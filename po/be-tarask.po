@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 19:32+0000\n"
+"PO-Revision-Date: 2022-02-05 21:08+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2176,7 +2176,7 @@ msgstr "Уся патрэбная інфармацыя пра гульню ск�
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Ня выйшла скапіяваць ў кішэню інфармацыю пра гульню!"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2184,125 +2184,130 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"ScummVM можа аўтаматычна правяраць\n"
+"абнаўленьні цераз інтэрнэт. Ці хочаце вы\n"
+"далучыць гэтую функцыю?"
 
 #: gui/updates-dialog.cpp:51
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Вы можаце наладзіць гэтую функцыю пазьней\n"
+"на картцы „Рознае“ у дыялёгу Наладаў."
 
 #: gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "Працягнуць"
 
 #: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
-msgstr ""
+msgstr "Ачысьціць значэньне"
 
 #: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:177
 msgid "Play"
-msgstr ""
+msgstr "Гуляць"
 
 #: gui/widgets/grid.cpp:221
 msgid "Saves"
-msgstr ""
+msgstr "Заховы"
 
 #: base/main.cpp:650
 msgid "Error running game:"
-msgstr ""
+msgstr "Памылка запуску гульні:"
 
 #: base/main.cpp:697
 msgid "Could not find any engine capable of running the selected game"
-msgstr ""
+msgstr "Ня знойдзена рухавікоў для запуску гэтай гульні"
 
 #: common/achievements.cpp:230
 msgid "Achievement unlocked!"
-msgstr ""
+msgstr "Дасягненьне разблякавана!"
 
 #: common/error.cpp:37
 msgid "No error"
-msgstr ""
+msgstr "Памылкі няма"
 
 #: common/error.cpp:39
 msgid "Game data not found"
-msgstr ""
+msgstr "Файлы гульні ня знойдзены"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr ""
+msgstr "ID гульні не падтрымліваецца"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "Рэжым колеру не падтрымліваецца"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Ня выйшла выкарыстаць гукавую прыладу"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr ""
+msgstr "Брак правоў для чытаньня"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
-msgstr ""
+msgstr "Брак правоў для запісу"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr ""
+msgstr "Шлях не існуе"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr ""
+msgstr "Шлях ня ё тэчкаю"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr ""
+msgstr "Шлях ня ё файлам"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
-msgstr ""
+msgstr "Немажліва стварыць файл"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr ""
+msgstr "Ня выйшла прачытаць зьвесткі"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr ""
+msgstr "Ня выйшла запісаць зьвесткі"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Ня знойдзены адпаведны рухавіковы плаґін"
 
 #: common/error.cpp:69
 msgid "Engine plugin does not support saved games"
-msgstr ""
+msgstr "Рухавіковы плаґін не падтрымлівае захваныя гульні"
 
 #: common/error.cpp:72
 msgid "User canceled"
-msgstr ""
+msgstr "Скасована карыстачом"
 
 #: common/error.cpp:76
 msgid "Unknown error"
-msgstr ""
+msgstr "Невядомая памылка"
 
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
-msgstr ""
+msgstr "Зялёны Hercules"
 
 #: common/rendermode.cpp:35
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Бурштынавы Hercules"
 
 #: common/rendermode.cpp:41
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 колераў)"
 
 #: common/rendermode.cpp:42
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 колераў)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:47
