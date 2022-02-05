@@ -27,6 +27,7 @@
 #include "chewy/ngshext.h"
 #include "chewy/main_menu.h"
 #include "chewy/dialogs/files.h"
+#include "chewy/dialogs/inventory.h"
 
 namespace Chewy {
 
@@ -363,7 +364,7 @@ int16 main_loop(int16 mode) {
 			maus_old_y = minfo.y;
 			menu_item = CUR_USE;
 			menu_entry();
-			invent_menu();
+			Dialogs::Inventory::menu();
 			menu_exit();
 			menu_flag = MENU_AUSBLENDEN;
 			menu_display = 0;
@@ -430,7 +431,7 @@ int16 main_loop(int16 mode) {
 
 				menu_item = CUR_USE;
 				menu_entry();
-				invent_menu();
+				Dialogs::Inventory::menu();
 				menu_exit();
 				menu_flag = MENU_AUSBLENDEN;
 				menu_display = 0;
@@ -787,7 +788,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 
 	if (_G(maus_links_click)) {
 		if (menu_item != CUR_USE)
-			look_invent_screen(txt_mode, txt_nr);
+			Dialogs::Inventory::look_screen(txt_mode, txt_nr);
 		else {
 			if (_G(spieler).inv_cur) {
 				obj_auswerten(nr, txt_mode);
@@ -796,7 +797,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 					if (!flags.ChAutoMov) {
 						_G(maus_links_click) = false;
 						auto_move(_G(spieler).room_m_obj[nr].AutoMov, P_CHEWY);
-						look_invent_screen(txt_mode, txt_nr);
+						Dialogs::Inventory::look_screen(txt_mode, txt_nr);
 
 						if (_G(spieler).AkInvent != -1)
 							_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
@@ -982,7 +983,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 					auto_move(_G(spieler).room_m_obj[test_nr].AutoMov, P_CHEWY);
 				}
 				txt_nr = obj->iib_txt_nr(test_nr);
-				look_invent_screen(INVENTAR_NORMAL, txt_nr);
+				Dialogs::Inventory::look_screen(INVENTAR_NORMAL, txt_nr);
 				if (_G(spieler).room_m_obj[test_nr].AniFlag != 255) {
 					_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_m_obj[test_nr].HeldHide;
 					play_scene_ani(_G(spieler).room_m_obj[test_nr].AniFlag, ANI_VOR);
@@ -1002,7 +1003,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
 			}
 			txt_nr = obj->sib_txt_nr(test_nr);
-			look_invent_screen(INVENTAR_STATIC, txt_nr);
+			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
 				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
 				tmp = get_ani_richtung((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
@@ -1041,7 +1042,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
 			}
 			txt_nr = obj->sib_txt_nr(test_nr);
-			look_invent_screen(INVENTAR_STATIC, txt_nr);
+			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
 				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
 				tmp = get_ani_richtung((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
@@ -1084,7 +1085,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
 			}
 			txt_nr = obj->sib_txt_nr(test_nr);
-			look_invent_screen(INVENTAR_STATIC, txt_nr);
+			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
 				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
 				tmp = get_ani_richtung((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
@@ -1117,7 +1118,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 			}
 		} else if (ret == NO_ACTION) {
 			txt_nr = obj->sib_txt_nr(test_nr);
-			look_invent_screen(INVENTAR_STATIC, txt_nr);
+			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
 		}
 	}
 
@@ -1719,7 +1720,7 @@ void get_user_key(int16 mode) {
 
 			tmp_menu_item = menu_item;
 			menu_item = CUR_USE;
-			invent_menu();
+			Dialogs::Inventory::menu();
 			menu_flag = MENU_AUSBLENDEN;
 			menu_display = 0;
 			_G(cur_display) = true;

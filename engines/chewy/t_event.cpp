@@ -23,6 +23,7 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
+#include "chewy/dialogs/inventory.h"
 #include "chewy/rooms/rooms.h"
 
 namespace Chewy {
@@ -2374,7 +2375,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 					ret = start_ats_wait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATEI);
 				}
 			} else {
-				look_invent(-1, INV_USE_ATS_MODE, txt_nr);
+				Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, txt_nr);
 			}
 		} else {
 			ok = false;
@@ -2385,7 +2386,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 
 				if (flags.InventMenu) {
 					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
-					look_invent(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
+					Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
 				} else {
 					ret = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 				}

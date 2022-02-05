@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	dialogs/cinema.o \
 	dialogs/credits.o \
 	dialogs/files.o \
+	dialogs/inventory.o \
 	dialogs/options.o \
 	video/cfo_decoder.o \
 	rooms/room0.o \
