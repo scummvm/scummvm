@@ -1997,7 +1997,7 @@ void GlobalOptionsDialog::build() {
 	}
 
 	//
-	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
+	// The control tab (currently visible only for SDL and Vita platform, visibility checking by features
 	//
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
 		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
