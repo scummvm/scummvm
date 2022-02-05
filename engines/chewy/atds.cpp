@@ -676,11 +676,11 @@ char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 
 	// WORKAROUND: Proper word wrapping some inventory items' look desc
 	if (txt_mode == TXT_MARK_LOOK) {
-		if (txt_nr == 29 && str_[37] == ' ' && str_[56] == '\0') {
+		if (txt_nr == CYB_KRONE_INV && str_[37] == ' ' && str_[56] == '\0') {
 			str_[37] = '\0';
 			str_[56] = ' ';
 		}
-		if (txt_nr == 21 && str_[39] == ' ' && str_[46] == '\0') {
+		if (txt_nr == YEL_CARD_INV && str_[39] == ' ' && str_[46] == '\0') {
 			str_[39] = '\0';
 			str_[46] = ' ';
 		}
