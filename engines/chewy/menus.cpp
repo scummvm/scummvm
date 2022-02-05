@@ -708,7 +708,7 @@ static void showDiary() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 
-	room->load_tgp(DIARY_START, &room_blk, GBOOK_TGP, 0, "BACK/GBOOK.TGP");
+	room->load_tgp(DIARY_START, &room_blk, GBOOK_TGP, 0, GBOOK);
 	out->setze_zeiger(workptr);
 	out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 	out->back2screen(workpage);
