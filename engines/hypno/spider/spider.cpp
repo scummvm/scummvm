@@ -253,7 +253,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<alley_selector>"] = alley_selector;
 
 	loadSceneLevel("alley.mi_", "<after_bank>", prefix);
-	_levels["alley.mi_"]->music = "alleymus.raw";
+	_levels["alley.mi_"]->music = "sound.lib/alleymus.raw";
 	_levels["alley.mi_"]->intros.push_back("cine/aleyc01s.smk");
 
 	loadArcadeLevel("c1.mi_", "<trans_apt_1>", prefix);
@@ -589,6 +589,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_apt_6>"] = trans_apt_6;
 
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
+	//_levels["ball1.mi_"]->music = "sound.lib/ballroom.raw"; // 11k
 	loadSceneLevel("coat.mi_", "ball2.mi_", prefix);
 
 	Code *note = new Code();
