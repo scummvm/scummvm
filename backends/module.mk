@@ -246,11 +246,6 @@ MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
 endif
 
-ifeq ($(BACKEND),android3d)
-MODULE_OBJS += \
-	mutex/pthread/pthread-mutex.o
-endif
-
 ifeq ($(BACKEND),androidsdl)
 MODULE_OBJS += \
 	events/androidsdl/androidsdl-events.o

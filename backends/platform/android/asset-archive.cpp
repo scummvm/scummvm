@@ -134,10 +134,6 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 	int count = 0;
 	Common::List<Common::String> dirs;
 	dirs.push_back("");
-#ifdef BACKEND_ANDROID3D
-	// ResidualVM specific: multiple directories
-	dirs.push_back("shaders");
-#endif
 	for (const auto& currentDir : dirs) {
 		AAssetDir *dir = AAssetManager_openDir(_am, "");
 		const char *file = AAssetDir_getNextFileName(dir);
