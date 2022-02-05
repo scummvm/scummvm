@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 22:03+0000\n"
+"PO-Revision-Date: 2022-02-05 22:26+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2416,36 +2416,36 @@ msgstr "Знойдзена нелегальная копія гульні. Та�
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
-msgstr ""
+msgstr "~П~рацягнуць"
 
 #: engines/dialogs.cpp:70
 msgid "~L~oad"
-msgstr ""
+msgstr "За~л~адаваць"
 
 #: engines/dialogs.cpp:74 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
-msgstr ""
+msgstr "~З~ахаваць"
 
 #: engines/dialogs.cpp:78
 msgid "~O~ptions"
-msgstr ""
+msgstr "~Н~алады"
 
 #: engines/dialogs.cpp:83
 msgid "~H~elp"
-msgstr ""
+msgstr "Дапа~м~ога"
 
 #: engines/dialogs.cpp:85
 msgid "~A~bout"
-msgstr ""
+msgstr "Д~а~ведка"
 
 #: engines/dialogs.cpp:88 engines/dialogs.cpp:164
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "Да S~c~ummVM"
 
 #: engines/dialogs.cpp:90 engines/dialogs.cpp:166
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "Да S~c~ummVM"
 
 #: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2464,7 +2464,7 @@ msgstr ""
 #: engines/wage/saveload.cpp:751 engines/xeen/saves.cpp:276
 #: engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
-msgstr ""
+msgstr "Захаваць гульню:"
 
 #: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2486,7 +2486,7 @@ msgstr ""
 #: engines/wage/saveload.cpp:751 engines/xeen/saves.cpp:276
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:193
 msgid "Save"
-msgstr ""
+msgstr "Захаваць"
 
 #: engines/dialogs.cpp:128
 msgid ""
@@ -2494,6 +2494,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Прабачце, гэты рухавіх пакуль не падтрымлівае даведку ў гульні. Калі ласка, "
+"праглядзіце файл README з асноўнай інфармацыяй й інструкцыямі, як атрымаць "
+"дадатковую дапамогу."
 
 #: engines/dialogs.cpp:212 engines/pegasus/pegasus.cpp:413
 #, c-format
@@ -2501,19 +2504,21 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
+"Ня выйшла захаваць гульню (%s)! Калі ласка, праглядзіце файл README з "
+"асноўнай інфармацыяй й інструкцыямі, як атрымаць дадатковую дапамогу."
 
 #: engines/dialogs.cpp:355
 msgid "~O~K"
-msgstr ""
+msgstr "~О~К"
 
 #: engines/dialogs.cpp:356
 msgid "~C~ancel"
-msgstr ""
+msgstr "С~к~асаваць"
 
 #: engines/engine.cpp:342
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr ""
+msgstr "Ня выйшла перайсьці да разрознасьці '%dx%d'."
 
 #: engines/engine.cpp:351
 msgid "Could not initialize color format."
@@ -2522,37 +2527,38 @@ msgstr ""
 #: engines/engine.cpp:360
 #, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr ""
+msgstr "Ня выйшла перайсьці да відэарэжыму '%s'."
 
 #: engines/engine.cpp:368
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr ""
+msgstr "Ня выйшла перайсьці да рэжыму расьцягу '%s'."
 
 #: engines/engine.cpp:375
 msgid "Could not apply aspect ratio setting."
-msgstr ""
+msgstr "Ня выйшла ўжыць налады прапорцыяў экрану."
 
 #: engines/engine.cpp:380
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Ня выйшла ўжыць налады поўнага экрану."
 
 #: engines/engine.cpp:385
 msgid "Could not apply filtering setting."
-msgstr ""
+msgstr "Ня выйшла ўжыць налады фільтраваньня."
 
 #: engines/engine.cpp:443
 msgid "Error"
-msgstr ""
+msgstr "Памылка"
 
 #: engines/engine.cpp:521
+#, fuzzy
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
 "and it is therefore recommended that you copy\n"
 "the data files to your hard disk instead.\n"
 "See the documentation (CD audio) for details."
-msgstr ""
+msgstr "Відаць, вы гуляеце ў гульню наўпрост"
 
 #: engines/engine.cpp:545
 msgid ""
