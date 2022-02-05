@@ -108,5 +108,5 @@ Common::String getDesktopPathMacOSX() {
 	NSString *path = [paths objectAtIndex:0];
 	if (path == nil)
 		return Common::String();
-	return Common::String([path cStringUsingEncoding:NSASCIIStringEncoding]);
+	return Common::String([path fileSystemRepresentation]);
 }
