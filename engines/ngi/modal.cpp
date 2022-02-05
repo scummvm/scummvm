@@ -730,7 +730,12 @@ void ModalMap::clickButton(PictureObject *pic) {
 	if (pitem && pitem2) {
 		pitem->preloadId1 = g_nmi->_currentScene->_sceneId;
 		pitem->sceneId = pitem2->sceneId;
-		pitem->param = pitem2->param;
+		if (pitem->sceneId == SC_30 && pitem->preloadId2 == SC_MAP) {
+			pitem->param = TrubaRight;
+		} else {
+			pitem->param = pitem2->param;
+		}
+
 
 		if (pitem->preloadId1 == pitem2->sceneId) {
 			_isRunning = 0;
