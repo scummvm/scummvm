@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 13:35+0000\n"
+"PO-Revision-Date: 2022-02-05 14:39+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1488,89 +1488,89 @@ msgstr "Шлях да значкоў:"
 #: gui/options.cpp:2263
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr ""
+msgstr "Шлях да значкоў:"
 
 #: gui/options.cpp:2269 gui/options.cpp:2271 gui/options.cpp:2272
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr ""
+msgstr "Шлях да дадатковых зьвестак усіх гульняў ці ScummVM"
 
 #: gui/options.cpp:2278
 msgid "Plugins Path:"
-msgstr ""
+msgstr "Шлях да плаґінаў:"
 
 #: gui/options.cpp:2280
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr ""
+msgstr "Шлях да плаґінаў:"
 
 #: gui/options.cpp:2290
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "Шлях да наладаў ScummVM: "
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2297 gui/options.cpp:2984
 msgid "Last browser path: "
-msgstr ""
+msgstr "Апошні шлях: "
 
 #: gui/options.cpp:2302
 msgid "Theme:"
-msgstr ""
+msgstr "Тэма:"
 
 #: gui/options.cpp:2306
 msgid "GUI scale:"
-msgstr ""
+msgstr "Памер інтэрфэйсу:"
 
 #: gui/options.cpp:2313
 msgid "GUI renderer:"
-msgstr ""
+msgstr "Рэндэр інтэрфэйсу:"
 
 #: gui/options.cpp:2325
 msgid "Autosave:"
-msgstr ""
+msgstr "Аўтазахаваньне:"
 
 #: gui/options.cpp:2327
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr ""
+msgstr "Аўтазахаваньне:"
 
 #: gui/options.cpp:2336
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Заўжды вяртацца ў ScummVM пасьля выхаду з гульні"
 
 #: gui/options.cpp:2337
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
-msgstr ""
+msgstr "Не закрываць ScummVM, а заўжды вяртацца да яго пасьля выйсьця з гульні."
 
 #: gui/options.cpp:2344
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Запытваць падцьвярджэньне выйсьця"
 
 #: gui/options.cpp:2345
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Запытваць падцьвярджэньне пры закрыцьці ScummVM ці выйсьці з гульні."
 
 #: gui/options.cpp:2352
 msgid "Enable Discord integration"
-msgstr ""
+msgstr "Далучыць інтэґрацыю з Discord"
 
 #: gui/options.cpp:2353
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr ""
+msgstr "Паказваць гульню, у якую вы гуляеце ў Discord, калі ён запушчаны."
 
 #: gui/options.cpp:2362
 msgid "GUI language:"
-msgstr ""
+msgstr "Мова інтэрфэйсу:"
 
 #: gui/options.cpp:2362
 msgid "Language of ScummVM GUI"
-msgstr ""
+msgstr "Мова графічнага інтэрфэйсу ScummVM"
 
 #: gui/options.cpp:2388
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr ""
+msgstr "Мяняць мову інтэрфэйсу ScummVM на мову гульні"
 
 #: gui/options.cpp:2389
 msgid ""
@@ -1578,134 +1578,145 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
+"Калі гульня запускаецца, мяняць мову інтэрфэйсу ScummVM на мову гульні. "
+"Такім чынам, калі гульня выкарыстоўвае дыялёгі захаваньня й заладаваньня ад "
+"ScummVM, яны будуць той жа моваю, што й гульня."
 
 #: gui/options.cpp:2401
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Выкарыстоўваць сістэмны файлавы аглядач"
 
 #: gui/options.cpp:2402
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Выкарыстоўваць сістэмны файлавы аглядач для выбару файлаў і тэчак, замест "
+"аглядача ScummVM."
 
 #: gui/options.cpp:2410 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr ""
+msgstr "Правяраць абнаўленьні:"
 
 #: gui/options.cpp:2410
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Як часта правяраць абнаўленьні ScummVM"
 
 #: gui/options.cpp:2421
 msgid "Check now"
-msgstr ""
+msgstr "Праверыць зараз"
 
 #: gui/options.cpp:2427
 msgid "Update Icons"
-msgstr ""
+msgstr "Абнавіць значкі"
 
 #: gui/options.cpp:2435
 msgid "Active storage:"
-msgstr ""
+msgstr "Дзейнае сховішча:"
 
 #: gui/options.cpp:2435
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Дзейнае воблачнае сховішча"
 
 #: gui/options.cpp:2444
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Сховішча шчэ не далучана. Праверце, ці імя карыстача карэктнае й далучыце:"
 
 #: gui/options.cpp:2446
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
+"4. Сховішча шчэ не далучана. Праверце, ці імя карыстача карэктнае й далучыце:"
 
 #: gui/options.cpp:2447
 msgid "Enable storage"
-msgstr ""
+msgstr "Далучыць сховішча"
 
 #: gui/options.cpp:2447
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "Пацьвердзіце, што хочаце выкарыстоўваць гэты конт для гэтага сховішча"
 
 #: gui/options.cpp:2449 backends/platform/wii/options.cpp:113
 msgid "Username:"
-msgstr ""
+msgstr "Карыстач:"
 
 #: gui/options.cpp:2449
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Імя карыстача для гэтага сховішча"
 
 #: gui/options.cpp:2450
 msgid "<none>"
-msgstr ""
+msgstr "<няма>"
 
 #: gui/options.cpp:2452
 msgid "Used space:"
-msgstr ""
+msgstr "Выкарыстана месца:"
 
 #: gui/options.cpp:2452
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Месца, занятае захаванымі гульнямі ScummVM на гэтым сховішчы"
 
 #: gui/options.cpp:2455
 msgid "Last sync:"
-msgstr ""
+msgstr "Апошняе сынхранаваньне:"
 
 #: gui/options.cpp:2455
 msgid "When was the last time saved games were synced with this storage"
-msgstr ""
+msgstr "Калі было апошняе сынхранаваньне захаваных гульняў з гэтым сховішчам"
 
 #: gui/options.cpp:2456 gui/options.cpp:3339
 msgid "<never>"
-msgstr ""
+msgstr "<аніколі>"
 
 #: gui/options.cpp:2458
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Захаваныя гульні сынхрануюцца аўтаматычна падчас запуску, захаваньня й "
+"заладаваньня."
 
 #: gui/options.cpp:2460
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Захаваныя гульні сынхрануюцца аўтаматычна падчас запуску, захаваньня й "
+"заладаваньня."
 
 #: gui/options.cpp:2461
 msgid "Sync now"
-msgstr ""
+msgstr "Сынхранаваць зараз"
 
 #: gui/options.cpp:2461
 msgid "Start saved games sync"
-msgstr ""
+msgstr "Пачаць сынхранаваньне захаваных гульняў"
 
 #: gui/options.cpp:2464
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Вы можаце заладаваць гульнёвыя файлы з вашай воблачнай тэчкі ScummVM:"
 
 #: gui/options.cpp:2466
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Вы можаце заладаваць гульнёвыя файлы з вашай воблачнай тэчкі ScummVM:"
 
 #: gui/options.cpp:2467
 msgid "Download game files"
-msgstr ""
+msgstr "Заладаваць гульнёвыя файлы"
 
 #: gui/options.cpp:2467
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Адкрыць кіраваньні заладаваньнямі"
 
 #: gui/options.cpp:2470
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Каб зьмяніць конт гэтага сховішча, адлучыцеся й далучыцеся зноўку:"
 
 #: gui/options.cpp:2472
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Каб зьмяніць конт гэтага сховішча, адлучыцеся й далучыцеся зноўку:"
 
 #: gui/options.cpp:2473
 msgid "Disconnect"
