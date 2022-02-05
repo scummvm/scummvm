@@ -25,6 +25,7 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room8.h"
+#include "chewy/dialogs/inventory.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -134,7 +135,7 @@ bool Room8::gips_wurf() {
 		auto_move(8, P_CHEWY);
 		flags.AtsAction = false;
 		menu_item = CUR_USE;
-		look_invent_screen(INVENTAR_NORMAL, 178);
+		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
 		flags.AtsAction = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(20, 1, ANI_VOR);

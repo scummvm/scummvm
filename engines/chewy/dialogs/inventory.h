@@ -19,21 +19,28 @@
  *
  */
 
-#ifndef CHEWY_MENUS_H
-#define CHEWY_MENUS_H
+#ifndef CHEWY_DIALOGS_INVENTORY_H
+#define CHEWY_DIALOGS_INVENTORY_H
+
+#include "chewy/ngstypes.h"
 
 namespace Chewy {
+namespace Dialogs {
 
-#define MAUS_MENU_MAX_X 200
-#define MENU_EINBLENDEN 1
-#define MENU_AUSBLENDEN 2
-#define MENU_INVENTAR 3
-#define MENU_IOMENU 4
-#define MENU_MAIN 5
+class Inventory {
+private:
+	static int16 inv_rand_x;
+	static int16 inv_rand_y;
+	static int keyVal;
 
-extern int16 tmp_menu;
-extern int16 show_invent_menu;
+public:
+	static void plot_menu();
+	static void menu();
+	static int16 look(int16 invent_nr, int16 mode, int16 ats_nr);
+	static void look_screen(int16 txt_mode, int16 txt_nr);
+};
 
+} // namespace Dialogs
 } // namespace Chewy
 
 #endif

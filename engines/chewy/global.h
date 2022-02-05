@@ -383,14 +383,6 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 zeilen_hoehe,
 
 void maus_mov_menu();
 
-void plot_inventar_menu();
-
-void invent_menu();
-
-int16 look_invent(int16 invent_nr, int16 mode, int16 ats_nr);
-
-void look_invent_screen(int16 txt_mode, int16 nr);
-
 int16 calc_use_invent(int16 inv_nr);
 
 void cur_2_inventory();
