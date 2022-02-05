@@ -19,75 +19,23 @@
  *
  */
 
-#ifndef CHEWY_MAIN_MENU_H
-#define CHEWY_MAIN_MENU_H
+#ifndef CHEWY_DIALOGS_CINEMA_H
+#define CHEWY_DIALOGS_CINEMA_H
 
-#include "chewy/events_base.h"
+#include "common/scummsys.h"
 
 namespace Chewy {
+namespace Dialogs {
 
-enum MainMenuSelection {
-	MM_START_GAME = 0,
-	MM_VIEW_INTRO = 1,
-	MM_LOAD_GAME = 2,
-	MM_CINEMA = 3,
-	MM_QUIT = 4,
-	MM_CREDITS = 5
-};
-
-class MainMenu {
+class Cinema {
 private:
-	static int _selection;
-	static int _personAni[3];
-
-	/**
-	 * Screen rendering function for the main menu
-	 */
-	static void screenFunc();
-
-	/**
-	 * Animates the contents of the main menu,
-	 * and checks for any option selection
-	 */
-	static void animate();
-
-	/**
-	 * Support function for controlling the credits flic playback
-	 */
-	static int16 creditsFn(int16 key);
-
-	/**
-	 * Starts a new game
-	 */
-	static void startGame();
-
-	/**
-	 * Starts a new game
-	 */
-	static bool loadGame();
-
-	/**
-	 * Saves the personAni array
-	 */
-	static void savePersonAni();
-
-	/**
-	 * Restores the personAni array
-	 */
-	static void restorePersonAni();
+	static int16 cut_serv(int16 frame);
 
 public:
-	/**
-	 * Displays the menu
-	 */
 	static void execute();
-
-	/**
-	 * Plays the game
-	 */
-	static void playGame();
 };
 
+} // namespace Dialogs
 } // namespace Chewy
 
 #endif

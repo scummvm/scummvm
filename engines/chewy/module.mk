@@ -40,6 +40,8 @@ MODULE_OBJS = \
 	text.o \
 	timer.o \
 	types.o \
+	dialogs/cinema.o \
+	dialogs/credits.o \
 	video/cfo_decoder.o \
 	rooms/room0.o \
 	rooms/room1.o \
