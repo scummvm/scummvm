@@ -27,6 +27,7 @@
 #include "chewy/ngshext.h"
 #include "chewy/dialogs/cinema.h"
 #include "chewy/dialogs/credits.h"
+#include "chewy/dialogs/files.h"
 
 namespace Chewy {
 
@@ -236,7 +237,7 @@ bool MainMenu::loadGame() {
 	minfo.x = 152;
 	minfo.y = 92;
 	savegameFlag = true;
-	int result = file_menue();
+	int result = Dialogs::Files::execute();
 
 	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
 		menu_item == CUR_USE) ? 8 : 0);
