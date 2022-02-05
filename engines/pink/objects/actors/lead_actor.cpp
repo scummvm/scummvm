@@ -108,6 +108,7 @@ void LeadActor::start(bool isHandler) {
 	case kPDA:
 		if (_stateBeforePDA == kInventory)
 			startInventory(1);
+		_page->getGame()->getDirector()->saveStage();
 		loadPDA(_page->getGame()->getPdaMgr().getSavedPageName());
 		break;
 	default:
