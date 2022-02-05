@@ -20,6 +20,8 @@
  */
 
 #include "chewy/dialogs/inventory.h"
+#include "chewy/rooms/room44.h"
+#include "chewy/rooms/room58.h"
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
@@ -630,6 +632,88 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 			}
 		}
 	}
+}
+
+int16 Inventory::calc_use_invent(int16 inv_nr) {
+	int16 ret_val;
+	int16 ret;
+	ret_val = false;
+
+	if (menu_item == CUR_LOOK) {
+		switch (inv_nr) {
+		case ZEITUNG_INV:
+			Rooms::Room44::look_news();
+			break;
+
+		case CUTMAG_INV:
+			show_invent_menu = 2;
+			ret_val = true;
+			Rooms::Room58::look_cut_mag(58);
+			break;
+
+		case SPARK_INV:
+			show_invent_menu = 2;
+			ret_val = true;
+			save_person_rnr();
+			Rooms::Room58::look_cut_mag(60);
+			break;
+
+		case DIARY_INV:
+			showDiary();
+			ret_val = true;
+			break;
+
+		default:
+			break;
+		}
+	} else if (menu_item == CUR_USE) {
+		switch (inv_nr) {
+		case GBUCH_INV:
+			ret = del_invent_slot(GBUCH_INV);
+			_G(spieler).InventSlot[ret] = GBUCH_OPEN_INV;
+			obj->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &room_blk);
+			ret_val = true;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return ret_val;
+}
+
+void Inventory::showDiary() {
+	int16 scrollx = _G(spieler).scrollx,
+		scrolly = _G(spieler).scrolly;
+	_G(spieler).scrollx = 0;
+	_G(spieler).scrolly = 0;
+
+	room->load_tgp(DIARY_START, &room_blk, GBOOK_TGP, 0, GBOOK);
+	out->setze_zeiger(workptr);
+	out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+	out->back2screen(workpage);
+	room->set_ak_pal(&room_blk);
+	out->setze_zeiger(nullptr);
+	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+
+	while (in->get_switch_code() != ESC) {
+		g_events->update();
+		SHOULD_QUIT_RETURN;
+	}
+	while (in->get_switch_code() != 0) {
+		g_events->update();
+		SHOULD_QUIT_RETURN;
+	}
+
+	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(spieler).scrollx = scrollx;
+	_G(spieler).scrolly = scrolly;
+	set_up_screen(NO_SETUP);
+	Dialogs::Inventory::plot_menu();
+	out->setze_zeiger(nullptr);
+	room->set_ak_pal(&room_blk);
+	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 }
 
 } // namespace Dialogs

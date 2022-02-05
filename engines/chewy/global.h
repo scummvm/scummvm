@@ -374,16 +374,12 @@ void init_room();
 
 int16 call_fileio(int16 palette, int16 mode);
 
-//void look_debug_action(int16 key_nr);
-
 void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode);
 
 void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 zeilen_hoehe,
                char *txt, int16 mode);
 
 void maus_mov_menu();
-
-int16 calc_use_invent(int16 inv_nr);
 
 void cur_2_inventory();
 
