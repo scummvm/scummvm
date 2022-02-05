@@ -447,6 +447,8 @@ public:
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
 	Filename defeatMissBossVideo;
+	Filename beforeVideo;
+	Filename briefingVideo;
 
 	Filename backgroundVideo;
 	Filename backgroundPalette;

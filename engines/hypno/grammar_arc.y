@@ -130,7 +130,7 @@ hline: 	CTOK NUM {
 	| QTOK NUM NUM { debugC(1, kHypnoDebugParser, "Q %d %d", $2, $3); }
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
-			g_parsedArc->intros.push_back($2);
+			g_parsedArc->beforeVideo = $2;
 		//else if (Common::String("B1") == $1) 
 		//	g_parsedArc->nextLevelVideo = $2;
 		else if (Common::String("B2") == $1)
@@ -141,6 +141,8 @@ hline: 	CTOK NUM {
 			g_parsedArc->defeatMissBossVideo = $2;
 		else if (Common::String("B5") == $1)
 			g_parsedArc->defeatNoEnergySecondVideo = $2;
+		else if (Common::String("BA") == $1)
+			g_parsedArc->briefingVideo = $2;
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}

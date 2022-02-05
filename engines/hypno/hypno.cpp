@@ -175,6 +175,7 @@ void HypnoEngine::runLevel(Common::String &name) {
 	} else if (_levels[name]->type == ArcadeLevel) {
 		debugC(1, kHypnoDebugArcade, "Executing arcade level %s", name.c_str());
 		changeScreenMode("320x200");
+		runBeforeArcade((ArcadeShooting *)_levels[name]);
 		runArcade((ArcadeShooting *)_levels[name]);
 	} else if (_levels[name]->type == CodeLevel) {
 		debugC(1, kHypnoDebugScene, "Executing hardcoded level %s", name.c_str());

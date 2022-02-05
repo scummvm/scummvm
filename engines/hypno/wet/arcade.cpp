@@ -27,6 +27,57 @@
 
 namespace Hypno {
 
+void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
+	Common::Event event;
+	uint32 c = 252; // green
+	byte *palette;
+	Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", (arc->id / 10 - 1) * 2, &palette);
+	loadPalette(palette, 0, 256);
+	byte p[3] = {0xff, 0x00, 0x00}; // Always red?
+	loadPalette((byte *) &p, 240 - arc->id % 10, 1);
+	drawImage(*frame, 0, 0, false);
+	bool showedBriefing = false;
+	bool endedBriefing = false;
+	MVideo *video;
+	while (!shouldQuit() && !endedBriefing) {
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (showedBriefing) {
+					endedBriefing = true;
+					break;
+				}
+				if (!arc->briefingVideo.empty()) {
+					video = new MVideo(arc->briefingVideo, Common::Point(44, 22), false, false, false);
+					runIntro(*video);
+					delete video;
+				}
+				showedBriefing = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (!arc->beforeVideo.empty()) {
+		video = new MVideo(arc->beforeVideo, Common::Point(0, 0), false, true, false);
+		runIntro(*video);
+		delete video;
+	}
+}
+
 bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }

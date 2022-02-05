@@ -34,7 +34,15 @@ static const chapterEntry rawChapterTable[] = {
 	{23, {70, 160}, {180, 160}, {220, 185}}, 	// c23
 	{31, {70, 160}, {180, 160}, {220, 185}}, 	// c31
 	{32, {70, 160}, {180, 160}, {220, 185}}, 	// c32
+	{41, {70, 160}, {180, 160}, {220, 185}}, 	// c41
+	{42, {70, 160}, {180, 160}, {220, 185}}, 	// c42
+	{43, {70, 160}, {180, 160}, {220, 185}}, 	// c43
+	{44, {70, 160}, {180, 160}, {220, 185}}, 	// c44
+	{51, {60, 167}, {190, 167}, {135, 187}}, 	// c51
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
+	{50, {60, 167}, {190, 167}, {135, 187}}, 	// c50
+	{61, {44, 172}, {218, 172}, {0, 0}}, 		// c61
+	{60, {44, 172}, {218, 172}, {0, 0}}, 		// c60
 	{0,  {0,  0},   {0,   0},   {0,   0}}    	// NULL
 };
 
@@ -70,7 +78,9 @@ void WetEngine::loadAssets() {
 
 
 void WetEngine::loadAssetsDemoDisc() {
-	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", true);
+
+	bool encrypted = _language == Common::HE_ISR ? false : true;
+	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
@@ -139,10 +149,19 @@ void WetEngine::loadAssetsDemoDisc() {
 	movies->frameNumber = 0;
 	_levels["<movies>"] = movies;
 
-	loadArcadeLevel("c31.mi_", "c52", "wetlands");
-	_levels["c31.mi_"]->levelIfLose = "c52";
-	loadArcadeLevel("c52.mi_", "<gameover>", "wetlands");
-	_levels["c52.mi_"]->levelIfLose = "<gameover>";
+	if (_language == Common::EN_USA) {
+		loadArcadeLevel("c31.mi_", "c52", "wetlands");
+		_levels["c31.mi_"]->levelIfLose = "c52";
+		loadArcadeLevel("c52.mi_", "<gameover>", "wetlands");
+		_levels["c52.mi_"]->levelIfLose = "<gameover>";
+	} else if (_language == Common::HE_ISR) {
+		loadArcadeLevel("c31.mis", "c52.mis", "wetlands");
+		_levels["c31.mis"]->levelIfLose = "c52.mis";
+		loadArcadeLevel("c52.mis", "<gameover>", "wetlands");
+		_levels["c52.mis"]->levelIfLose = "<gameover>";
+	} else {
+		error("Unsupported language");
+	}
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("movie/gameover.smk");
@@ -256,10 +275,57 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c311.mi_", "c32", "");
 	loadArcadeLevel("c312.mi_", "c32", "");
 
-	loadArcadeLevel("c320.mi_", "???", "");
-	loadArcadeLevel("c321.mi_", "???", "");
-	loadArcadeLevel("c322.mi_", "???", "");
+	loadArcadeLevel("c320.mi_", "c41", "");
+	loadArcadeLevel("c321.mi_", "c41", "");
+	loadArcadeLevel("c322.mi_", "c41", "");
 
+	//loadArcadeLevel("c330.mi_", "???", "");
+	//loadArcadeLevel("c331.mi_", "???", "");
+	//loadArcadeLevel("c332.mi_", "???", "");
+
+	//loadArcadeLevel("c300.mi_", "???", "");
+	//loadArcadeLevel("c301.mi_", "???", "");
+	//loadArcadeLevel("c302.mi_", "???", "");
+
+	loadArcadeLevel("c410.mi_", "c42", "");
+	loadArcadeLevel("c411.mi_", "c42", "");
+	loadArcadeLevel("c412.mi_", "c42", "");
+
+	loadArcadeLevel("c420.mi_", "c43", "");
+	loadArcadeLevel("c421.mi_", "c43", "");
+	loadArcadeLevel("c422.mi_", "c43", "");
+
+	loadArcadeLevel("c430.mi_", "c44", "");
+	loadArcadeLevel("c431.mi_", "c44", "");
+	loadArcadeLevel("c432.mi_", "c44", "");
+
+	loadArcadeLevel("c440.mi_", "c51", "");
+	loadArcadeLevel("c441.mi_", "c51", "");
+	loadArcadeLevel("c442.mi_", "c51", "");
+
+	//loadArcadeLevel("c400.mi_", "???", "");
+	//loadArcadeLevel("c401.mi_", "???", "");
+	//loadArcadeLevel("c402.mi_", "???", "");
+
+	loadArcadeLevel("c510.mi_", "c52", "");
+	loadArcadeLevel("c511.mi_", "c52", "");
+	loadArcadeLevel("c512.mi_", "c52", "");
+
+	loadArcadeLevel("c520.mi_", "c61", "");
+	loadArcadeLevel("c521.mi_", "c61", "");
+	loadArcadeLevel("c522.mi_", "c61", "");
+
+	//loadArcadeLevel("c500.mi_", "???", "");
+	//loadArcadeLevel("c501.mi_", "???", "");
+	//loadArcadeLevel("c502.mi_", "???", "");
+
+	loadArcadeLevel("c610.mi_", "<quit>", "");
+	loadArcadeLevel("c611.mi_", "<quit>", "");
+	loadArcadeLevel("c612.mi_", "<quit>", "");
+
+	//loadArcadeLevel("c600.mi_", "???", "");
+	//loadArcadeLevel("c601.mi_", "???", "");
+	//loadArcadeLevel("c602.mi_", "???", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadLib("sound/", "c_misc/sound.lib", true);

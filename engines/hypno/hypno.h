@@ -96,6 +96,7 @@ public:
 	bool checkLevelWon();
 	void runLevel(Common::String &name);
 	void runScene(Scene *scene);
+	virtual void runBeforeArcade(ArcadeShooting *arc);
 	void runArcade(ArcadeShooting *arc);
 	// For some menus and hardcoded puzzles
 	virtual void runCode(Code *code);
@@ -291,11 +292,9 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
-	//virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) = 0;
-	//virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) = 0;
-
-
+	void runBeforeArcade(ArcadeShooting *arc) override;
 private:
+	uint32 _zone;
 	void runMainMenu(Code *code);
 };
 

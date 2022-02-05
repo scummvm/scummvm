@@ -67,6 +67,8 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->defeatNoEnergyFirstVideo.clear();
 	g_parsedArc->defeatMissBossVideo.clear();
 	g_parsedArc->defeatNoEnergySecondVideo.clear();
+	g_parsedArc->beforeVideo.clear();
+	g_parsedArc->briefingVideo.clear();
 }
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
@@ -102,7 +104,7 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 		si.name = n;
 		si.timestamp = atoi(t.c_str());
 		if (si.timestamp == 0)
-			error("Error at parsing '%s'", n.c_str());
+			error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
 		seq.push_back(si);
 		debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
 	}
@@ -126,6 +128,8 @@ void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
+
+void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;
@@ -171,6 +175,11 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	changeCursor("arcade");
 	playVideo(background);
+	float rate = background.decoder->getFrameRate().toDouble();
+	if (rate < 10) {
+		debugC(1, kHypnoDebugArcade, "Using frame rate looks odd: %f, increasing x 10", rate);
+		background.decoder->setRate(10.0);
+	}
 	loadPalette(arc->backgroundPalette);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
