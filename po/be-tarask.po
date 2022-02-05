@@ -979,7 +979,8 @@ msgstr "Пошук завершаны!"
 #: gui/massadd.cpp:259
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "Знойдзена новых гульняў — %d. Праігнаравана даданых раней гульняў — %d."
+msgstr ""
+"Знойдзена новых гульняў — %d. Праігнаравана даданых раней гульняў — %d."
 
 #: gui/massadd.cpp:263
 #, c-format
