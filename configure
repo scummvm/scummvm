@@ -812,7 +812,6 @@ Special configuration feature:
                                            android-arm64-v8a for Android ARMv8-A (arm64-v8a)
                                            android-x86 for Android x86
                                            android-x86_64 for Android x86_64
-                                           androidsdl for Android with SDL backend
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            raspberrypi for Raspberry Pi
@@ -1531,31 +1530,6 @@ android-x86_64)
 	_host_cpu=x86_64
 	_host_alias=x86_64-linux-android
 	;;
-androidsdl-armeabi | androidsdl-armeabi-v7a)
-	_host_os=androidsdl
-	_host_cpu=arm
-	_host_alias=arm-linux-androideabi
-	;;
-androidsdl-arm64-v8a)
-	_host_os=androidsdl
-	_host_cpu=aarch64
-	_host_alias=aarch64-linux-android
-	;;
-androidsdl-mips)
-	_host_os=androidsdl
-	_host_cpu=mipsel
-	_host_alias=mipsel-linux-android
-	;;
-androidsdl-x86)
-	_host_os=androidsdl
-	_host_cpu=i686
-	_host_alias=i686-linux-android
-	;;
-androidsdl-x86_64)
-	_host_os=androidsdl
-	_host_cpu=x86_64
-	_host_alias=x86_64-linux-android
-	;;
 arm-vfp-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -2185,7 +2159,7 @@ if test "$have_gcc" = yes ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function
 	# declarations under __STRICT_ANSI__, undefine it
-	3ds | android | androidsdl | gamecube | psp | switch | wii)
+	3ds | android | gamecube | psp | switch | wii)
 		std_variant=gnu++
 		pedantic=no
 		;;
@@ -2538,7 +2512,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			androidsdl-armeabi | arm-*riscos | caanoo | gp2x | gp2xwiz | maemo )
+			arm-*riscos | caanoo | gp2x | gp2xwiz | maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
@@ -3172,15 +3146,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
-		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
-			DEFINES="$DEFINES -DANDROIDSDL"
-			_unix=yes
-			_build_aspect=no
-			_seq_midi=no
-			_timidity=no
-			_backend="androidsdl"
-			_port_mk="backends/platform/androidsdl/androidsdl.mk"
-			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
 		arm-vfp-riscos)
@@ -3643,9 +3608,6 @@ case $_backend in
 			_sdlnet=no
 		fi
 		;;
-	androidsdl)
-		_sdl=auto
-		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
 		append_var INCLUDES "-isystem $RONINDIR/include"
@@ -3917,7 +3879,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3993,7 +3955,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)

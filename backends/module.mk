@@ -246,11 +246,6 @@ MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
 endif
 
-ifeq ($(BACKEND),androidsdl)
-MODULE_OBJS += \
-	events/androidsdl/androidsdl-events.o
-endif
-
 ifdef AMIGAOS
 MODULE_OBJS += \
 	dialogs/amigaos/amigaos-dialogs.o \
