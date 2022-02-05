@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 12:48+0000\n"
+"PO-Revision-Date: 2022-02-05 13:35+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1299,32 +1299,36 @@ msgstr "Прылада MT-32:"
 
 #: gui/options.cpp:1616
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr ""
+msgstr "Стандартная выходная гукавая прылада для Roland MT-32/LAPC1/CM32l/CM64"
 
 #: gui/options.cpp:1621
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr ""
+msgstr "Сапраўдны Roland MT-32 (адлучыць эмуляцыю GM)"
 
 #: gui/options.cpp:1621 gui/options.cpp:1623
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
+"Адзначце, калі вы хочаце выкарыстоўваць гукавую прыладу, сумяшчальную з "
+"Roland, увамкнёную да вашага кампутара"
 
 #: gui/options.cpp:1623
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr ""
+msgstr "Сапраўдны Roland MT-32 (без эмуляцыі GM)"
 
 #: gui/options.cpp:1626
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr ""
+msgstr "Прылада Roland GS (далучыць мапаваньне MT-32)"
 
 #: gui/options.cpp:1626
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Адзначце, калі вы хочаце далучыць латкі мапаваньня для эмуляцыі MT-32 на "
+"прыладзе Roland GS"
 
 #: gui/options.cpp:1635
 msgid "Don't use Roland MT-32 music"
@@ -1336,20 +1340,17 @@ msgstr "Тэкст ды мова:"
 
 #: gui/options.cpp:1666 gui/options.cpp:1676
 msgid "Speech"
-msgstr ""
+msgstr "Агучка"
 
 #: gui/options.cpp:1667 gui/options.cpp:1677
-#, fuzzy
 msgid "Subtitles"
 msgstr "Субтытры"
 
 #: gui/options.cpp:1668
-#, fuzzy
 msgid "Both"
 msgstr "Разам"
 
 #: gui/options.cpp:1670
-#, fuzzy
 msgid "Subtitle speed:"
 msgstr "Хуткасьць субтытраў:"
 
@@ -1360,132 +1361,129 @@ msgstr "Тэкст ды мова:"
 
 #: gui/options.cpp:1676
 msgid "Spch"
-msgstr ""
+msgstr "Мова"
 
 #: gui/options.cpp:1677
 msgid "Subs"
-msgstr ""
+msgstr "Тэкст"
 
 #: gui/options.cpp:1678
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
 msgstr "Разам"
 
 #: gui/options.cpp:1678
 msgid "Show subtitles and play speech"
-msgstr ""
+msgstr "Паказваць субтытры й граць мову"
 
 #: gui/options.cpp:1680
-#, fuzzy
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Хуткасьць субтытраў:"
+msgstr "Хутк. субтытраў:"
 
 #: gui/options.cpp:1697
-#, fuzzy
 msgid "Music volume:"
 msgstr "Гучнасьць музыкі:"
 
 #: gui/options.cpp:1699
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Гучнасьць музыкі:"
+msgstr "Гучн. музыкі:"
 
 #: gui/options.cpp:1706
 msgid "Mute all"
-msgstr ""
+msgstr "Бяз гуку"
 
 #: gui/options.cpp:1709
 msgid "SFX volume:"
-msgstr ""
+msgstr "Гучнасьць гук. эфэктаў:"
 
 #: gui/options.cpp:1709 gui/options.cpp:1711 gui/options.cpp:1712
 msgid "Special sound effects volume"
-msgstr ""
+msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
 
 #: gui/options.cpp:1711
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr ""
+msgstr "Гучнасьць гук. эф.:"
 
 #: gui/options.cpp:1719
 msgid "Speech volume:"
-msgstr ""
+msgstr "Гучнасьць мовы:"
 
 #: gui/options.cpp:1721
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr ""
+msgstr "Гучнасьць мовы:"
 
 #: gui/options.cpp:2007
 msgid "Control"
-msgstr ""
+msgstr "Кіраваньне"
 
 #: gui/options.cpp:2089
 msgctxt "lowres"
 msgid "Misc"
-msgstr ""
+msgstr "Рознае"
 
 #: gui/options.cpp:2101
 msgid "Cloud"
-msgstr ""
+msgstr "Воблака"
 
 #: gui/options.cpp:2103
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Воблака"
 
 #: gui/options.cpp:2117
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2119
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2127
 msgid "Accessibility"
-msgstr ""
+msgstr "Даступнасьць"
 
 #: gui/options.cpp:2129
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Даступнасьць"
 
 #: gui/options.cpp:2138
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Скасаваць зьмены й закрыць дыялёг"
 
 #: gui/options.cpp:2139
 msgid "Apply"
-msgstr ""
+msgstr "Ужыць"
 
 #: gui/options.cpp:2139
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Ужыць зьмены й не закрываць дыялёг"
 
 #: gui/options.cpp:2140
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Ужыць зьмены й закрыць дыялёг"
 
 #: gui/options.cpp:2234
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Налады FluidSynth"
 
 #: gui/options.cpp:2253
 msgid "Theme Path:"
-msgstr ""
+msgstr "Шлях да тэмаў:"
 
 #: gui/options.cpp:2255
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr ""
+msgstr "Шлях да тэмаў:"
 
 #: gui/options.cpp:2261
 msgid "Icon Path:"
-msgstr ""
+msgstr "Шлях да значкоў:"
 
 #: gui/options.cpp:2263
 msgctxt "lowres"
