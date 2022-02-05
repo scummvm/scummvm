@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/room.h"
+#include "chewy/dialogs/credits.h"
 #include "chewy/rooms/room89.h"
 #include "chewy/rooms/room66.h"
 
@@ -134,7 +135,7 @@ void Room89::entry() {
 		out->setze_zeiger(nullptr);
 		out->cls();
 
-		gbook();
+		Dialogs::Credits::execute();
 		
 		_G(spieler).SVal4 = 1;
 		out->ausblenden(2);

@@ -25,21 +25,10 @@
 #include "chewy/global.h"
 #include "chewy/main.h"
 #include "chewy/ngshext.h"
+#include "chewy/dialogs/cinema.h"
+#include "chewy/dialogs/credits.h"
 
 namespace Chewy {
-
-static constexpr int CINEMA_LINES = 12;
-
-static const int16 CINEMA_TBL[4 * 3] = {
-	10,  80,  32, 105,
-	10, 150,  32, 175,
-	36,  64, 310, 188
-};
-static const uint8 CINEMA_FLICS[35] = {
-	0, 2, 6, 9, 15, 12, 11, 18, 3, 48, 31, 44,
-	55, 58, 45, 65, 67, 68, 69, 80, 74, 83, 84, 88,
-	93, 87, 106, 108, 107, 113, 110, 121, 123, 122, 117
-};
 
 int MainMenu::_selection;
 int MainMenu::_personAni[3];
@@ -116,7 +105,7 @@ void MainMenu::execute() {
 			cur->move(152, 92);
 			minfo.x = 152;
 			minfo.y = 92;
-			cinema();
+			Dialogs::Cinema::execute();
 			break;
 
 		case MM_QUIT:
@@ -132,7 +121,7 @@ void MainMenu::execute() {
 			flic_cut(159, CFO_MODE);
 			flc->remove_custom_user_function();
 			fx->border(workpage, 100, 0, 0);
-			gbook();
+			Dialogs::Credits::execute();
 			break;
 
 		default:
@@ -298,181 +287,6 @@ void MainMenu::savePersonAni() {
 void MainMenu::restorePersonAni() {
 	for (int i = 0; i < MAX_PERSON; ++i) {
 		load_person_ani(_personAni[i], i);
-	}
-}
-
-void MainMenu::cinema() {
-	int timer_nr = 0;
-	int16 txt_anz = 0;
-	int topIndex = 0;
-	int selected = -1;
-	bool flag = false;
-	int delay = 0;
-	Common::Array<int> cutscenes;
-	getCutscenes(cutscenes);
-
-	out->set_fontadr(font6x8);
-	out->set_vorschub(fvorx6x8, fvory6x8);
-	atds->load_atds(98, 1);
-	
-	room->open_handle("BACK/GBOOK.TGP", "rb", 0);
-	room->load_tgp(4, &room_blk, 1, 0, "BACK/GBOOK.TGP");
-	show_cur();
-	g_events->clearEvents();
-	kbinfo.scan_code = 0;
-
-	for (bool endLoop = false; !endLoop;) {
-		timer_nr = 0;
-		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-
-		if (!cutscenes.empty()) {
-			// Render cutscene list
-			for (int i = 0; i < CINEMA_LINES; ++i) {
-				char *csName = atds->ats_get_txt(546 + i + topIndex,
-					0, &txt_anz, 1);
-				int yp = i * 10 + 68;
-
-				if (i == selected)
-					out->box_fill(37, yp, 308, yp + 10, 42);
-				out->printxy(40, yp, 14, 300, 0, "%s", csName);
-			}
-		} else {
-			// No cutscenes seen yet
-			char *none = atds->ats_get_txt(545, 0, &txt_anz, 1);
-			out->printxy(40, 68, 14, 300, scr_width, none);
-		}
-
-		if (minfo.button == 1 && !flag) {
-			flag = true;
-			switch (in->maus_vector(minfo.x, minfo.y, CINEMA_TBL, 3)) {
-			case 0:
-				kbinfo.scan_code = Common::KEYCODE_UP;
-				if (!endLoop) {
-					endLoop = true;
-					timer_nr = 5;
-				}
-				break;
-
-			case 1:
-				kbinfo.scan_code = Common::KEYCODE_DOWN;
-				if (!endLoop) {
-					endLoop = true;
-					timer_nr = 5;
-				}
-				break;
-
-			case 2: {
-				int selIndex = (minfo.y - 68) / 10 + topIndex;
-				if (selIndex < (int)cutscenes.size())
-					selected = selIndex;
-				kbinfo.scan_code = Common::KEYCODE_RETURN;
-				break;
-			}
-
-			default:
-				break;
-			}
-		} else if (minfo.button == 2 && !flag) {
-			kbinfo.scan_code = ESC;
-			flag = true;
-		} else if (minfo.button != 1) {
-			flag = false;
-			timer_nr = 0;
-			delay = 0;
-		} else if (flag) {
-			EVENTS_UPDATE;
-			if (--delay <= 0)
-				flag = false;
-		}
-
-		switch (kbinfo.scan_code) {
-		case ESC:
-			endLoop = true;
-			kbinfo.scan_code = 0;
-			break;
-
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_KP8:
-			if (selected > 0) {
-				--selected;
-			} else if (topIndex > 0) {
-				--topIndex;
-			}
-			kbinfo.scan_code = 0;
-			break;
-
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_KP2: {
-			int newIndex = selected + 1;
-			if (selected >= 11) {
-				if ((topIndex + newIndex) < (int)cutscenes.size())
-					++topIndex;
-			} else {
-				if ((topIndex + newIndex) < (int)cutscenes.size())
-					++selected;
-			}
-			kbinfo.scan_code = 0;
-			break;
-		}
-
-		case Common::KEYCODE_RETURN:
-			hide_cur();
-			out->cls();
-			out->setze_zeiger(screen0);
-			fx->blende1(workptr, screen0, pal, 150, 0, 0);
-			print_rows(546 + topIndex);
-
-			flc->set_custom_user_function(cinema_cut_serv);
-			flic_cut(CINEMA_FLICS[topIndex + selected], CFO_MODE);
-			flc->remove_custom_user_function();
-			out->set_fontadr(font6x8);
-			out->set_vorschub(fvorx6x8, fvory6x8);
-			show_cur();
-			delay = 0;
-			flag = false;
-			break;
-
-		default:
-			break;
-		}
-
-		// The below are hacks to get the dialog to work in ScummVM
-		kbinfo.scan_code = 0;
-		minfo.button = 0;
-		txt_anz = 0;
-
-		if (!txt_anz) {
-			cur->plot_cur();
-
-			if (flag) {
-				flag = false;
-				out->setze_zeiger(screen0);
-				room->set_ak_pal(&room_blk);
-				fx->blende1(workptr, screen0, pal, 150, 0, 0);
-			} else {
-				out->back2screen(workpage);
-			}
-		}
-
-		EVENTS_UPDATE;
-		SHOULD_QUIT_RETURN;
-	}
-
-	room->open_handle(EPISODE1, "rb", 0);
-	room->set_ak_pal(&room_blk);
-	hide_cur();
-	uhr->reset_timer(0, 5);
-}
-
-int16 MainMenu::cinema_cut_serv(int16 frame) {
-	if (in->get_switch_code() == ESC) {
-		ailsnd->stopMod();
-		ailsnd->endSound();
-		return -1;
-
-	} else {
-		return 0;
 	}
 }
 
