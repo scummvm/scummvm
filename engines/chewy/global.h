@@ -373,10 +373,8 @@ void init_atds();
 void init_room();
 
 int16 call_fileio(int16 palette, int16 mode);
-int16 file_menue();
-void option_menue(taf_info *ti);
 
-void look_debug_action(int16 key_nr);
+//void look_debug_action(int16 key_nr);
 
 void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode);
 

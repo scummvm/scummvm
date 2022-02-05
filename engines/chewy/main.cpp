@@ -26,6 +26,7 @@
 #include "chewy/menus.h"
 #include "chewy/ngshext.h"
 #include "chewy/main_menu.h"
+#include "chewy/dialogs/files.h"
 
 namespace Chewy {
 
@@ -388,7 +389,7 @@ int16 main_loop(int16 mode) {
 			out->set_fontadr(font6x8);
 			out->set_vorschub(fvorx6x8, fvory6x8);
 			cursor_wahl(CUR_SAVE);
-			if (file_menue() == 1) {
+			if (Dialogs::Files::execute() == 1) {
 				ende = 1;
 				fx_blend = BLEND4;
 			}
@@ -456,7 +457,7 @@ int16 main_loop(int16 mode) {
 
 				out->setze_zeiger(screen0);
 				cursor_wahl(CUR_SAVE);
-				ret = file_menue();
+				ret = Dialogs::Files::execute();
 				if (ret == IOG_END) {
 					ende = 1;
 					fx_blend = BLEND4;
