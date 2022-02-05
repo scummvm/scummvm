@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 18:46+0000\n"
+"PO-Revision-Date: 2022-02-05 19:32+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1945,42 +1945,44 @@ msgstr "Спыніць сэрвэр"
 
 #: gui/options.cpp:3447
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Гэта спыніць лякальны вэб-сэрвэр"
 
 #: gui/options.cpp:3499
 msgid "Storage connected."
-msgstr ""
+msgstr "Сховішча далучана."
 
 #: gui/options.cpp:3501
 msgid "Failed to connect storage."
-msgstr ""
+msgstr "Ня выйшла далучыць сховішча."
 
 #: gui/options.cpp:3503
 msgid "Failed to connect storage: "
-msgstr ""
+msgstr "Ня выйшла далучыць сховішча: "
 
 #: gui/options.cpp:3523
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Памылка запыту.\n"
+"Праверце вашае злучэньне з інтэрнэтам."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
 msgid "#  next"
-msgstr ""
+msgstr "#  наступны"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
-msgstr ""
+msgstr "дадаць"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:184
 msgid "Delete char"
-msgstr ""
+msgstr "Выдаліць сымбаль"
 
 #: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:188
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:601
@@ -1999,173 +2001,177 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:61
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Запісаць ці прайграць гульнёвы працэс"
 
 #: gui/recorderdialog.cpp:66 gui/recorderdialog.cpp:154
 #: gui/saveload-dialog.cpp:422 gui/saveload-dialog.cpp:489
 msgid "Delete"
-msgstr ""
+msgstr "Выдаліць"
 
 #: gui/recorderdialog.cpp:68
 msgid "Record"
-msgstr ""
+msgstr "Запісаць"
 
 #: gui/recorderdialog.cpp:69
 msgid "Playback"
-msgstr ""
+msgstr "Прайграць"
 
 #: gui/recorderdialog.cpp:71 gui/widgets/grid.cpp:224
 msgid "Edit"
-msgstr ""
+msgstr "Рэдагаваць"
 
 #: gui/recorderdialog.cpp:83 gui/recorderdialog.cpp:240
 #: gui/recorderdialog.cpp:250
 msgid "Author: "
-msgstr ""
+msgstr "Аўтар: "
 
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Notes: "
-msgstr ""
+msgstr "Нататкі: "
 
 #: gui/recorderdialog.cpp:153
 msgid "Do you really want to delete this record?"
-msgstr ""
+msgstr "Ці сапраўды вы хочаце выдаліць гэты запіс?"
 
 #: gui/recorderdialog.cpp:170
 msgid "Unknown Author"
-msgstr ""
+msgstr "Невядомы аўтар"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
-msgstr ""
+msgstr "ScummVM ня мае доступу да гэтай тэчкі!"
 
 #: gui/saveload-dialog.cpp:54
 msgid "Downloading saves..."
-msgstr ""
+msgstr "Ладуюцца сховы…"
 
 #: gui/saveload-dialog.cpp:63
 msgid "Run in background"
-msgstr ""
+msgstr "Працаваць на фоне"
 
 #: gui/saveload-dialog.cpp:342
 msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"УВАГА: У існым захове вы гулялі даўжэй, чым цяпер. Ці сапраўды вы хочаце яго "
+"перазапісаць?"
 
 #: gui/saveload-dialog.cpp:413 gui/saveload-dialog.cpp:593
 msgid "No date saved"
-msgstr ""
+msgstr "Дата не захаваная"
 
 #: gui/saveload-dialog.cpp:414 gui/saveload-dialog.cpp:594
 msgid "No time saved"
-msgstr ""
+msgstr "Час не захаваны"
 
 #: gui/saveload-dialog.cpp:415 gui/saveload-dialog.cpp:595
 msgid "No playtime saved"
-msgstr ""
+msgstr "Час гульні не захаваны"
 
 #: gui/saveload-dialog.cpp:488
 msgid "Do you really want to delete this saved game?"
-msgstr ""
+msgstr "Ці сапраўды вы хочаце выдаліць гэтую захаваную гульню?"
 
 #: gui/saveload-dialog.cpp:620 gui/saveload-dialog.cpp:1137
 msgid "Date: "
-msgstr ""
+msgstr "Дата: "
 
 #: gui/saveload-dialog.cpp:624 gui/saveload-dialog.cpp:1143
 msgid "Time: "
-msgstr ""
+msgstr "Час: "
 
 #: gui/saveload-dialog.cpp:630 gui/saveload-dialog.cpp:1151
 msgid "Playtime: "
-msgstr ""
+msgstr "Час гульні: "
 
 #: gui/saveload-dialog.cpp:643 gui/saveload-dialog.cpp:731
 msgid "Untitled saved game"
-msgstr ""
+msgstr "Неназваная захаваная гульня"
 
 #: gui/saveload-dialog.cpp:794
 msgid "Next"
-msgstr ""
+msgstr "Наступны"
 
 #: gui/saveload-dialog.cpp:797
 msgid "Prev"
-msgstr ""
+msgstr "Папярэдні"
 
 #: gui/saveload-dialog.cpp:998
 msgid "New Save"
-msgstr ""
+msgstr "Новы захоў"
 
 #: gui/saveload-dialog.cpp:998
 msgid "Create a new saved game"
-msgstr ""
+msgstr "Стварыць новую захаваную гульню"
 
 #: gui/saveload-dialog.cpp:1130
 msgid "Name: "
-msgstr ""
+msgstr "Назва: "
 
 #: gui/saveload-dialog.cpp:1206
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Напішыце апісаньне для слоту %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
-msgstr ""
+msgstr "Выбярыце тэму"
 
 #: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
-msgstr ""
+msgstr "Без графічных эфэктаў"
 
 #: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr ""
+msgstr "Без граф. эф."
 
 #: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
-msgstr ""
+msgstr "Стандартны рэндэр"
 
 #: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:675
 msgid "Standard"
-msgstr ""
+msgstr "Стандартна"
 
 #: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
-msgstr ""
+msgstr "Памякчальны рэндэр"
 
 #: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
-msgstr ""
+msgstr "З памякчэньнем"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr ""
+msgstr "Усё адно дадаць"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Скапіяваць у кішэню"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
-msgstr ""
+msgstr "Паведаміць пра гульню"
 
 #: gui/unknown-game-dialog.cpp:100
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Скарыстайцеся ніжэйшай кнопкай, каб скапіяваць у кішэню патрэбную інфармацыю "
+"пра гульню."
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Таксама вы можаце наўпрост паведаміць пра гульню ў Выяўнік хібаў."
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Уся патрэбная інфармацыя пра гульню скапіявана ў кішэню"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
