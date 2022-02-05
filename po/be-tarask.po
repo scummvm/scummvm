@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 14:39+0000\n"
+"PO-Revision-Date: 2022-02-05 18:46+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1720,61 +1720,61 @@ msgstr "Каб зьмяніць конт гэтага сховішча, адлу
 
 #: gui/options.cpp:2473
 msgid "Disconnect"
-msgstr ""
+msgstr "Адлучыць"
 
 #: gui/options.cpp:2473
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Спыніць карыстаньне гэтым сховішчам на гэтай прыладзе"
 
 #: gui/options.cpp:2476
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Гэтае сховішча шчэ не далучана! Каб далучыць,"
 
 #: gui/options.cpp:2478
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Гэтае сховішча шчэ не далучана! Каб далучыць,"
 
 #: gui/options.cpp:2479
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Адкрыйце спасылку:"
 
 #: gui/options.cpp:2482
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Атрымайце код і напішыце яго тут:"
 
 #: gui/options.cpp:2484
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Атрымайце код і напішыце яго тут:"
 
 #: gui/options.cpp:2486
 msgid "Paste"
-msgstr ""
+msgstr "Уставіць"
 
 #: gui/options.cpp:2486
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Уставіць код з кішэні"
 
 #: gui/options.cpp:2487
 msgid "3. Connect"
-msgstr ""
+msgstr "3. Далучыць"
 
 #: gui/options.cpp:2487
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "Далучыць конт вашага воблачнага сховішча"
 
 #: gui/options.cpp:2496
 msgid "Run server"
-msgstr ""
+msgstr "Запусьціць сэрвэр"
 
 #: gui/options.cpp:2496
 msgid "Run local webserver"
-msgstr ""
+msgstr "Запусьціць лякальны вэб-сэрвэр"
 
 #: gui/options.cpp:2497 gui/options.cpp:3454
 msgid "Not running"
-msgstr ""
+msgstr "Не запушчаны"
 
 #: gui/options.cpp:2501
 msgctxt "lowres"
@@ -1791,50 +1791,49 @@ msgstr ""
 
 #: gui/options.cpp:2509
 msgid "Server's port:"
-msgstr ""
+msgstr "Порт сэрвэру:"
 
 #: gui/options.cpp:2509
 msgid "Port for server to use"
-msgstr ""
+msgstr "Порт для выкарыстаньня сэрвэрам"
 
 #: gui/options.cpp:2514
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
 
 #: gui/options.cpp:2515
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
 
 #: gui/options.cpp:2517
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
 
 #: gui/options.cpp:2518
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
 
 #: gui/options.cpp:2530
 msgid "Use Text to speech"
-msgstr ""
+msgstr "Ператвараць тэкст у мову"
 
 #: gui/options.cpp:2530
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Прачытае тэкст інтэрфэйсу пры навядзеньні мышы."
 
 #: gui/options.cpp:2543
 msgid "None"
-msgstr ""
+msgstr "Няма"
 
 #: gui/options.cpp:2604
 msgid "Ignore"
-msgstr ""
+msgstr "Ігнараваць"
 
 #: gui/options.cpp:2605
-#, fuzzy
 msgid "Disable autosave"
-msgstr "Скасаваць ладаваньне"
+msgstr "Адлучыць аўтазахаваньне"
 
 #: gui/options.cpp:2606
 msgid ""
@@ -1844,61 +1843,68 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"УВАГА: Аўтазахаваньне было далучана. Нейкія вашыя гульні маюць заховы ў "
+"слоце аўтазахаваньня. Вы можаце перамясьціць існыя заховы ў новыя слоты, "
+"адлучыць аўтазахаваньне, або праігнараваць (вам паведамяць, калі "
+"аўтазахаваньне захоча перазапісаць захоў).\n"
+"Сьпіс гульняў:\n"
 
 #: gui/options.cpp:2615
 #, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "~Д~адаць гульню..."
+msgstr ""
+"\n"
+"Ды іншыя…"
 
 #: gui/options.cpp:2616 engines/engine.cpp:579
 msgid "Move"
-msgstr ""
+msgstr "Перамясьціць"
 
 #: gui/options.cpp:2629
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ПАМЫЛКА: Ня выйшла перамясьціць гэтыя захаваныя гульні:\n"
 
 #: gui/options.cpp:2722
 msgid "Failed to change cloud storage!"
-msgstr ""
+msgstr "Ня выйшла зьмяніць воблачнае сховішча!"
 
 #: gui/options.cpp:2725
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Ужо дзейнае іншае воблачнае сховішча."
 
 #: gui/options.cpp:2815
 msgid "Theme does not support selected language!"
-msgstr ""
+msgstr "Тэма не падтрымлівае выбраную мову!"
 
 #: gui/options.cpp:2818
 msgid "Theme cannot be loaded!"
-msgstr ""
+msgstr "Немажліва заладаваць тэму!"
 
 #: gui/options.cpp:2821
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Налады з „Рознае“ будуць адноўлены."
 
 #: gui/options.cpp:2892
 msgid "Select directory for GUI themes"
-msgstr ""
+msgstr "Выбярыце тэчку для тэм інтэрфэйсу"
 
 #: gui/options.cpp:2902
-#, fuzzy
-#| msgid "Select directory for saved games"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Выберыце тэчку для заховаў"
+msgstr "Выбярыце тэчку для значкоў інтэрфэйсу"
 
 #: gui/options.cpp:2912
 msgid "Select directory for extra files"
-msgstr ""
+msgstr "Выбярыце тэчку для дадатковых файлаў"
 
 #: gui/options.cpp:2923
 msgid "Select directory for plugins"
-msgstr ""
+msgstr "Выбярыце тэчку для плаґінаў"
 
 #: gui/options.cpp:2936
 msgid "Select directory for Files Manager /root/"
@@ -1909,30 +1915,33 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Ня выйшла адкрыць URL!\n"
+"Калі ласка, зайдзіце на гэтую старонку самі."
 
 #: gui/options.cpp:3096
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Іншае сховішча працуе цяпер. Ці хочаце вы адлучыць яго?"
 
 #: gui/options.cpp:3105 gui/options.cpp:3143
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
+"Пачакайце, пакуль існае сховішча ня скончыць працу й паспрабуйце зноўку."
 
 #: gui/options.cpp:3118
 msgid "Connecting..."
-msgstr ""
+msgstr "Далучэньне…"
 
 #: gui/options.cpp:3134
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Гэтае сховішча працуе цяпер. Ці хочаце вы адлучыць яго?"
 
 #: gui/options.cpp:3337 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
-msgstr ""
+msgstr "<цяпер>"
 
 #: gui/options.cpp:3446
 msgid "Stop server"
-msgstr ""
+msgstr "Спыніць сэрвэр"
 
 #: gui/options.cpp:3447
 msgid "Stop local webserver"
