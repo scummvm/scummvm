@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 21:08+0000\n"
+"PO-Revision-Date: 2022-02-05 22:03+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2312,65 +2312,65 @@ msgstr "PC-9801 (16 колераў)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:47
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Ч/б Macintosh"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Зялёны Hercules"
 
 #: common/rendermode.cpp:76
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Бурштынавы Hercules"
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr ""
+msgstr "Штодзень"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr ""
+msgstr "Штотыдзень"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr ""
+msgstr "Штомесяц"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
-msgstr ""
+msgstr "<Няпэўнае значэньне>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/ds/osystem_ds.cpp:145
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
-msgstr ""
+msgstr "Б"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
 msgid "KB"
-msgstr ""
+msgstr "КБ"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
 msgid "MB"
-msgstr ""
+msgstr "МБ"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
 msgid "GB"
-msgstr ""
+msgstr "ҐБ"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
 msgid "TB"
-msgstr ""
+msgstr "ТБ"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Інтэрпрэтатар многіх авантурных і ролявых гульняў"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:37
@@ -2381,6 +2381,10 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM — гэта праграма для запуску розных клясічных графічных point-and-"
+"click авантурных і ралявых гульняў, пры ўмове, што вы маеце зьвесткі тых "
+"гульняў. Карацей, ScummVM проста замяняе выканальныя файлы гульняў, "
+"дазваляючы гуляць на сістэмах, на якія іх ніколі не распрацоўвалі!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:45
@@ -2390,6 +2394,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"На гэты момант ScummVM падтрымлівае вялічэзную бібліятэку авантур, дзе болей "
+"за 4000 гульняў. Вы зможаце дакрануцца да многіх клясічных твораў, выданых "
+"леґэндарнымі студыямі як LucasArts, Sierra On-Line, Revolution Software, "
+"Cyan, Inc. і Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:51
@@ -2398,10 +2406,13 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Разам з рэвалюцыйнымі гульнямі як Monkey Island, Broken Sword, Myst, Blade "
+"Runner і безьлічам іншых гульняў, вы знойдзіце насамрэч малавядомыя авантуры "
+"й прыхаваныя скарбы."
 
 #: engines/advancedDetector.cpp:241
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "Знойдзена нелегальная копія гульні. Такія гульні мы не падтрымліваем"
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
