@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 17:30+0000\n"
+"PO-Revision-Date: 2022-02-06 18:18+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3016,7 +3016,7 @@ msgstr "Пстрыкі адлучаны"
 
 #: backends/events/openpandora/op-events.cpp:162
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Дотык экрану — Рух (пстрык DPad)"
+msgstr "Дотык экрану — Рух (пстрыкі кірункавага крыжу)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3215,11 +3215,11 @@ msgstr "Правы стык"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:208
 msgid "Left Shoulder"
-msgstr "Левы цынгель"
+msgstr "Левы гак"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:214
 msgid "Right Shoulder"
-msgstr "Правы цынгель"
+msgstr "Правы гак"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
@@ -3227,7 +3227,7 @@ msgstr "Правы цынгель"
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
-msgstr ""
+msgstr "Кірункавы крыжак угару"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
@@ -3235,7 +3235,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
-msgstr ""
+msgstr "Кірункавы крыжак уніз"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
@@ -3243,7 +3243,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
-msgstr ""
+msgstr "Кірункавы крыжак улева"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
@@ -3251,44 +3251,44 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
-msgstr ""
+msgstr "Кірункавы крыжак управа"
 
 #: backends/keymapper/hardware-input.cpp:274
 msgid "Left Trigger"
-msgstr ""
+msgstr "Левы цынгель"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Right Trigger"
-msgstr ""
+msgstr "Правы цынгель"
 
 #: backends/keymapper/hardware-input.cpp:276
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
-msgstr ""
+msgstr "Левы стык, вось X"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick Y"
-msgstr ""
+msgstr "Левы стык, вось Y"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Right Stick X"
-msgstr ""
+msgstr "Правы стык, вось X"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick Y"
-msgstr ""
+msgstr "Правы стык, вось Y"
 
 #: backends/keymapper/remap-widget.cpp:289
 #: backends/keymapper/remap-widget.cpp:319
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Скінуць да стандарту"
 
 #: backends/keymapper/remap-widget.cpp:290
 msgid "Clear mapping"
