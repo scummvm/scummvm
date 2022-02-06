@@ -29,7 +29,7 @@ namespace Dialogs {
 
 class Files {
 public:
-	static int16 execute();
+	static int16 execute(bool isInGame);
 };
 
 } // namespace Dialogs

@@ -182,6 +182,8 @@ enum SetupScreenMode {
 
 #define ADSH_TMP "adsh.tmp"
 
+#define QUIT_MSG "QUIT ?? Y/N "
+
 #define MAX_PERSON 3
 
 #define P_CHEWY 0
@@ -586,6 +588,8 @@ enum SetupScreenMode {
 	&& !SHOULD_QUIT) { g_events->update(); }
 
 #define FILEMENUE 1
+
+#define ERROR if (modul) ::error("General failure - %d", modul);
 
 } // namespace Chewy
 

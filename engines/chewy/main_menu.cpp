@@ -237,7 +237,7 @@ bool MainMenu::loadGame() {
 	minfo.x = 152;
 	minfo.y = 92;
 	savegameFlag = true;
-	int result = Dialogs::Files::execute();
+	int result = Dialogs::Files::execute(false);
 
 	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
 		menu_item == CUR_USE) ? 8 : 0);

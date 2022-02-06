@@ -390,7 +390,7 @@ int16 main_loop(int16 mode) {
 			out->set_fontadr(font6x8);
 			out->set_vorschub(fvorx6x8, fvory6x8);
 			cursor_wahl(CUR_SAVE);
-			if (Dialogs::Files::execute() == 1) {
+			if (Dialogs::Files::execute(true) == 1) {
 				ende = 1;
 				fx_blend = BLEND4;
 			}
@@ -458,15 +458,16 @@ int16 main_loop(int16 mode) {
 
 				out->setze_zeiger(screen0);
 				cursor_wahl(CUR_SAVE);
-				ret = Dialogs::Files::execute();
+				ret = Dialogs::Files::execute(true);
 				if (ret == IOG_END) {
 					ende = 1;
 					fx_blend = BLEND4;
 				}
-				out->setze_zeiger(workptr);
 
+				out->setze_zeiger(workptr);
 				menu_item = tmp_menu_item;
 				menu_display = MENU_AUSBLENDEN;
+
 				if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1 && menu_item == CUR_USE) {
 					cursor_wahl(CUR_AK_INVENT);
 				} else
@@ -490,7 +491,6 @@ int16 main_loop(int16 mode) {
 					cursor_wahl(menu_item);
 				}
 				break;
-
 			}
 			break;
 
@@ -519,6 +519,7 @@ int16 main_loop(int16 mode) {
 			break;
 
 		}
+
 		if (menu_display == MENU_AUSBLENDEN) {
 			menu_exit();
 			menu_flag = MENU_AUSBLENDEN;
@@ -529,13 +530,11 @@ int16 main_loop(int16 mode) {
 			minfo.y = maus_old_y;
 		}
 	}
+
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
 		set_up_screen(DO_MAIN_LOOP);
-#ifdef DEMO
-	if (_G(spieler).PersonRoomNr[P_CHEWY] > 24)
-		ende = 1;
-#endif
+
 	return ende;
 }
 

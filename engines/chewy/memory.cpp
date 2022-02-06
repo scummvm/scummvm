@@ -67,7 +67,7 @@ taf_info *memory::taf_adr(const char *filename) {
 		} else {
 			fcode = NOSPEICHER;
 			modul = SPEICHER;
-			tinfo = 0;
+			tinfo = nullptr;
 		}
 	}
 
