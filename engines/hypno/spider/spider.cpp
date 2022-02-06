@@ -66,8 +66,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	_levels["<quit>"]->prefix = prefix;
 
-	Code *credits = new Code();
-	credits->name = "<credits>";
+	Code *credits = new Code("<credits>");
 	credits->prefix = prefix;
 	_levels["<credits>"] = credits;
 	credits->levelIfWin = "options.mi_";
@@ -255,8 +254,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c1h.mi_"]->intros.push_back("cine/ross002s.smk");
 
 	// Hardcoded levels
-	Code *matrix = new Code();
-	matrix->name = "<puz_matr>";
+	Code *matrix = new Code("<puz_matr>");
 	matrix->intros.push_back("cine/aleyc01s.smk");
 	matrix->levelIfWin = "<after_bank>";
 	matrix->prefix = prefix;
@@ -293,13 +291,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	bus_hard_intro->intros.push_back("spider/cine/ppv001s.smk");
 	_levels["<bus_hard_intro>"] = bus_hard_intro;
 
-	Code *add_ingredient = new Code();
-	add_ingredient->name = "<add_ingredient>";
+	Code *add_ingredient = new Code("<add_ingredient>");
 	add_ingredient->prefix = prefix;
 	_levels["<add_ingredient>"] = add_ingredient;
 
-	Code *check_mixture = new Code();
-	check_mixture->name = "<check_mixture>";
+	Code *check_mixture = new Code("<check_mixture>");
 	check_mixture->prefix = prefix;
 	_levels["<check_mixture>"] = check_mixture;
 
@@ -443,14 +439,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
 
-	Code *fuse_panel = new Code();
-	fuse_panel->name = "<fuse_panel>";
+	Code *fuse_panel = new Code("<fuse_panel>");
 	fuse_panel->levelIfWin = "<boil_selector_2>";
 	fuse_panel->prefix = prefix;
 	_levels["<fuse_panel>"] = fuse_panel;
 
-	Code *office = new Code();
-	office->name = "<office>";
+	Code *office = new Code("<office>");
 	office->prefix = prefix;
 	_levels["<office>"] = office;
 	
@@ -475,8 +469,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("<fuse_panel>");
 	sc->hots[3].actions.push_back(cl);
 
-	Code *file_cabinet = new Code();
-	file_cabinet->name = "<file_cabinet>";
+	Code *file_cabinet = new Code("<file_cabinet>");
 	file_cabinet->levelIfWin = "<alveroff_selector>";
 	file_cabinet->prefix = prefix;
 	_levels["<file_cabinet>"] = file_cabinet;
@@ -506,8 +499,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	Transition *alveroff_selector = new Transition("alveroff.mi_", "alverofh.mi_");
 	_levels["<alveroff_selector>"] = alveroff_selector;
 
-	Code *recept = new Code();
-	recept->name = "<recept>";
+	Code *recept = new Code("<recept>");
 	recept->prefix = prefix;
 	_levels["<recept>"] = recept;
 
@@ -578,8 +570,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	//_levels["ball1.mi_"]->music = "sound.lib/ballroom.raw"; // 11k
 	loadSceneLevel("coat.mi_", "ball2.mi_", prefix);
 
-	Code *note = new Code();
-	note->name = "<note>";
+	Code *note = new Code("<note>");
 	note->levelIfWin = "coat.mi_";
 	note->intros.push_back("cine/dia005s.smk");
 	note->prefix = prefix;
@@ -609,8 +600,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c6h.mi_"]->intros.push_back("cine/dia007s.smk");
 	_levels["c6h.mi_"]->intros.push_back("cine/rdss001s.smk");
 
-	Code *lock = new Code();
-	lock->name = "<lock>";
+	Code *lock = new Code("<lock>");
 	lock->intros.push_back("cine/rdss003s.smk");
 	lock->levelIfWin = "movie2.mi_";
 	lock->prefix = prefix;
@@ -635,8 +625,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["movie3.mi_"]->intros.push_back("cine/imss001s.smk");
 	loadSceneLevel("movie4.mi_", "<fuse_box>", prefix);
 	_levels["movie4.mi_"]->intros.push_back("cine/imss002s.smk");
-	Code *fuse_box = new Code();
-	fuse_box->name = "<fuse_box>";
+	Code *fuse_box = new Code("<fuse_box>");
 	fuse_box->levelIfWin = "<trans_fuse_box>";
 	fuse_box->prefix = prefix;
 	_levels["<fuse_box>"] = fuse_box;
@@ -992,9 +981,8 @@ void SpiderEngine::loadAssetsDemo() {
 
 	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", prefix);
 
-	Code *matrix = new Code();
+	Code *matrix = new Code("<puz_matr>");
 	matrix->prefix = prefix;
-	matrix->name = "<puz_matr>";
 	matrix->intros.push_back("demo/aleyc01s.smk");
 	matrix->levelIfWin = "sixdemo/mis/demo.mis";
 	matrix->levelIfLose = "sixdemo/mis/demo.mis";

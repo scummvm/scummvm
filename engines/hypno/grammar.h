@@ -492,8 +492,9 @@ public:
 
 class Code : public Level {
 public:
-	Code()  {
+	Code(Common::String name_)  {
 		type = CodeLevel;
+		name = name_;
 	}
 	Common::String name;
 };

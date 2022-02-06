@@ -235,8 +235,7 @@ void WetEngine::loadAssetsFullGame() {
 	logos->intros.push_back("c_misc/wetlogo.smk");
 	_levels["<start>"] = logos;
 
-	Code *menu = new Code();
-	menu->name = "<main_menu>";
+	Code *menu = new Code("<main_menu>");
 	_levels["<main_menu>"] = menu;
 	_levels["<main_menu>"]->levelIfWin = "<intros>";
 
@@ -250,8 +249,7 @@ void WetEngine::loadAssetsFullGame() {
 	intros->intros.push_back("c_misc/confs.smk");
 	_levels["<intros>"] = intros;
 
-	Code *check_lives = new Code();
-	check_lives->name = "<check_lives>";
+	Code *check_lives = new Code("<check_lives>");
 	_levels["<check_lives>"] = check_lives;
 
 	loadArcadeLevel("c110.mi_", "c10", "<check_lives>", "");
