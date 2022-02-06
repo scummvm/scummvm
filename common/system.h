@@ -454,19 +454,9 @@ public:
 		kFeatureOpenUrl,
 
 		/**
-		* Show on-screen control.
-		*/
-		kFeatureOnScreenControl,
-
-		/**
 		* Mouse emulation mode.
 		*/
 		kFeatureTouchpadMode,
-
-		/**
-		* Swap menu and back buttons.
-		*/
-		kFeatureSwapMenuAndBackButtons,
 
 		/**
 		* Keyboard mouse and joystick mouse speed.

@@ -129,8 +129,6 @@ private:
 	bool _enableControlSettings;
 
 	CheckboxWidget *_touchpadCheckbox;
-	CheckboxWidget *_onscreenCheckbox;
-	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
 
 	StaticTextWidget *_kbdMouseSpeedDesc;
 	SliderWidget *_kbdMouseSpeedSlider;

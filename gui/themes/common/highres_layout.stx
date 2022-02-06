@@ -382,13 +382,7 @@
 
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'grOnScreenCheckbox'
-					type = 'Checkbox'
-			/>
 			<widget name = 'grTouchpadCheckbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
 					type = 'Checkbox'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
