@@ -58,7 +58,9 @@ void SpiderEngine::loadAssetsFullGame() {
 	if (missions == nullptr || missions->listMembers(files) == 0)
 		error("Failed to load any file from missions.lib");
 
-	//loadLib("", "c_misc/fonts.lib", true);
+	loadLib("", "spider/c_misc/fonts.lib", true);
+	loadFonts();
+
 	loadLib("spider/sound.lib/", "spider/c_misc/sound.lib", true);
 
 	_levels["<quit>"]->prefix = prefix;
@@ -1041,6 +1043,58 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 		return _sceneState["GS_PUZZLELEVEL"] == 0 ? trans->levelEasy : trans->levelHard;
 
 	return trans->nextLevel;
+}
+
+void SpiderEngine::loadFonts() {
+	Common::File file;
+
+	if (!file.open("block05.fgx"))
+		error("Cannot open font");
+
+	byte *font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font05.set_size(file.size()*8);
+	_font05.set_bits((byte *)font);
+
+	file.close();
+	free(font);
+	if (!file.open("scifi08.fgx"))
+		error("Cannot open font");
+
+	font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font08.set_size(file.size()*8);
+	_font08.set_bits((byte *)font);
+
+	free(font);
+}
+
+void SpiderEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
+	if (font == "block05.fgx") {
+		for (int c = 0; c < str.size(); c++) {
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 5; j++) {
+					if (!_font05.get(275 + 40*str[c] + j*8 + i))
+						_compositeSurface->setPixel(x + 5 - i + 6*c, y + j, color);
+				}
+			}
+		}
+	} else if (font == "scifi08.fgx") {
+		for (int c = 0; c < str.size(); c++) {
+			if (str[c] == 0)
+				continue;
+			assert(str[c] >= 32);
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 8; j++) {
+					if (!_font08.get(1554 + 72*(str[c]-32) + j*8 + i))
+						_compositeSurface->setPixel(x + 6 - i + 7*c, y + j, color);
+				}
+			}
+		}
+	} else
+		error("Invalid font: '%s'", font.c_str());
 }
 
 Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {

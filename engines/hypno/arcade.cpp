@@ -139,7 +139,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
 	_hitSound = arc->hitSound;
-	_score = 0;
 	_health = arc->health;
 	_maxHealth = _health;
 	Segments segments = arc->segments;
@@ -264,6 +263,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			assert(!arc->levelIfLose.empty());
 			_nextLevel = arc->levelIfLose;
 			debugC(1, kHypnoDebugArcade, "Losing level and jumping to %s", _nextLevel.c_str());
+			_lives = _lives - 1;
 			break;
 		}
 
@@ -300,6 +300,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					runIntro(video);
 					assert(!arc->levelIfLose.empty());
 					_nextLevel = arc->levelIfLose;
+					_lives = _lives - 1;
 					_arcadeMode = "";
 					debugC(1, kHypnoDebugArcade, "Losing level (objectives) and jumping to %s", _nextLevel.c_str());
 					break;

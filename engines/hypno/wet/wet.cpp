@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/bitarray.h"
 #include "common/events.h"
 #include "common/config-manager.h"
 
@@ -331,6 +332,7 @@ void WetEngine::loadAssetsFullGame() {
 	//loadArcadeLevel("c602.mi_", "???", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
+	loadFonts();
 	loadLib("sound/", "c_misc/sound.lib", true);
 	_nextLevel = "<start>";
 }
@@ -355,6 +357,65 @@ void WetEngine::runCode(Code *code) {
 		error("invalid hardcoded level: %s", code->name.c_str());
 }
 
+void WetEngine::runCheckLives(Code *code) {
+	if (_lives < 0)
+		_nextLevel = "<game_over>";
+	else
+		_nextLevel = _checkpoint;
+}
+
+void WetEngine::loadFonts() {
+	Common::File file;
+
+	if (!file.open("block05.fgx"))
+		error("Cannot open font");
+
+	byte *font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font05.set_size(file.size()*8);
+	_font05.set_bits((byte *)font);
+
+	file.close();
+	free(font);
+	if (!file.open("scifi08.fgx"))
+		error("Cannot open font");
+
+	font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font08.set_size(file.size()*8);
+	_font08.set_bits((byte *)font);
+
+	free(font);
+}
+
+void WetEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
+	if (font == "block05.fgx") {
+		for (int c = 0; c < str.size(); c++) {
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 5; j++) {
+					if (!_font05.get(275 + 40*str[c] + j*8 + i))
+						_compositeSurface->setPixel(x + 5 - i + 6*c, y + j, color);
+				}
+			}
+		}
+	} else if (font == "scifi08.fgx") {
+		for (int c = 0; c < str.size(); c++) {
+			if (str[c] == 0)
+				continue;
+			assert(str[c] >= 32);
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 8; j++) {
+					if (!_font08.get(1554 + 72*(str[c]-32) + j*8 + i))
+						_compositeSurface->setPixel(x + 6 - i + 7*c, y + j, color);
+				}
+			}
+		}
+	} else
+		error("Invalid font: '%s'", font.c_str());
+}
+
 void WetEngine::runMainMenu(Code *code) {
 	Common::Event event;
 	uint32 c = 252; // green
@@ -363,7 +424,7 @@ void WetEngine::runMainMenu(Code *code) {
 	loadPalette(palette, 0, 256);
 	Common::String _name = "";
 	drawImage(*frame, 0, 0, false);
-	drawString("ENTER NAME :", 48, 50, 100, c);
+	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
 	while (!shouldQuit()) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -386,8 +447,8 @@ void WetEngine::runMainMenu(Code *code) {
 				}
 
 				drawImage(*frame, 0, 0, false);
-				drawString("ENTER NAME :", 48, 50, 100, c);
-				drawString(_name, 140, 50, 170, c);
+				drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 				break;
 
 

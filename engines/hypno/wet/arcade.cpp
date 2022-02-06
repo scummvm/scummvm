@@ -120,7 +120,7 @@ void WetEngine::drawPlayer() {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		int i = detectTarget(mousePos);
 		if (i > 0)
-			drawString("TARGET  ACQUIRED", 120, 1, 80, c);
+			drawString("block05.fgx", "TARGET  ACQUIRED", 120, 1, 80, c);
 
 		_playerFrameIdx++;
 		_playerFrameIdx = _playerFrameIdx % _playerFrameSep;
@@ -137,16 +137,16 @@ void WetEngine::drawHealth() {
 	if (_arcadeMode == "Y1")
 		return;
 
-	uint32 c = 253; //_pixelFormat.RGBToColor(252, 252, 0);
+	uint32 c = 253;
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;
 	if (_playerFrameIdx < _playerFrameSep) {
 		const chapterEntry *entry = _chapterTable[_levelId];
 		//uint32 id = _levelId;
-		drawString(Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
-		drawString(Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
+		drawString("block05.fgx", Common::String::format("ENERGY   %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
+		drawString("block05.fgx", Common::String::format("SCORE    %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
 		// Objectives are always in the zero in the demo
-		//drawString(Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
+		//drawString("block05.fgx", Common::String::format("M.O.     0/0"), uiPos[id][2][0], uiPos[id][2][1], 60, c);
 	}
 }
 

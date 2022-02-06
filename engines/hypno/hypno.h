@@ -233,6 +233,7 @@ public:
 	int _health;
 	int _maxHealth;
 	int _score;
+	int _lives;
 	Filename _shootSound;
 	Filename _hitSound;
 	Shoots _shoots;
@@ -244,8 +245,9 @@ public:
 	uint32 _obj1KillsCount;
 	uint32 _obj1MissesCount;
 
-	void loadFont(const Filename &name);
-	void drawString(const Common::String &str, int x, int y, int w, uint32 c);
+	// Fonts
+	virtual void loadFonts();
+	virtual void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c);
 	const Graphics::Font *_font;
 
 	// Conversation
@@ -282,6 +284,9 @@ public:
 	void loadAssetsPCW();
 	void loadAssetsPCG();
 	void loadAssetsFullGame();
+	void loadFonts() override;
+	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
+
 	void showCredits() override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 	void drawShoot(const Common::Point &target) override;
@@ -294,8 +299,11 @@ public:
 
 	void runBeforeArcade(ArcadeShooting *arc) override;
 private:
-	uint32 _zone;
 	void runMainMenu(Code *code);
+	void runCheckLives(Code *code);
+
+	Common::BitArray _font05;
+	Common::BitArray _font08;
 };
 
 class SpiderEngine : public HypnoEngine {
@@ -317,6 +325,9 @@ public:
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
+
+	void loadFonts() override;
+	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 
 	void showConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
@@ -350,6 +361,9 @@ private:
 	Common::Rect _h1Area;
 	Common::Rect _h2Area;
 	Common::Rect _h3Area; 
+
+	Common::BitArray _font05;
+	Common::BitArray _font08;
 
 };
 

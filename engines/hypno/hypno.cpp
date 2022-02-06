@@ -52,7 +52,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr), _font(nullptr),
 	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0),
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
-	  _countdown(0), _timerStarted(false), _score(0),
+	  _countdown(0), _timerStarted(false), _score(0), _lives(0),
 	  _defaultCursor(""), _checkpoint(""),
 	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft),
 	  _obj1KillsCount(0), _obj1MissesCount(0),
@@ -127,7 +127,6 @@ Common::Error HypnoEngine::run() {
 
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-	loadFont(""); // TODO
 
 	// Main event loop
 	loadAssets();
@@ -256,19 +255,12 @@ void HypnoEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty
 	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
-void HypnoEngine::loadFont(const Filename &name) {
-	// TODO: properly load some font
-	if (_font)
-		error("Font already loaded");
-
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+void HypnoEngine::loadFonts() {
+	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
-void HypnoEngine::drawString(const Common::String &str, int x, int y, int w, uint32 c) {
-	if (!_font)
-		error("No font was loaded");
-
-	_font->drawString(_compositeSurface, str, x, y, w, c);
+void HypnoEngine::drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) {
+	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent, bool palette, int frameNumber) {

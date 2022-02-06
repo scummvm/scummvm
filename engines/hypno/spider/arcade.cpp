@@ -198,7 +198,7 @@ void SpiderEngine::drawHealth() {
 	c = 252; // blue
 	_compositeSurface->frameRect(r, c);
 
-	drawString("ENERGY", 248, 180, 38, c);
+	drawString("block05.fgx", "ENERGY", 248, 180, 38, c);
 }
 
 bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {

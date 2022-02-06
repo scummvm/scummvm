@@ -276,11 +276,11 @@ void HypnoEngine::runScene(Scene *scene) {
 
 			if (lastCountdown == _countdown) {
 			} else if (_countdown > 0) {
-				uint32 c = _pixelFormat.RGBToColor(255, 0, 0);
+				uint32 c = 251; // red
 				runMenu(stack.back());
 				uint32 minutes = _countdown / 60;
 				uint32 seconds = _countdown % 60;
-				drawString(Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
+				drawString("block05.fgx", Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
 				drawScreen();
 			} else {
 				assert(!scene->levelIfLose.empty());
