@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 11:11+0000\n"
+"PO-Revision-Date: 2022-02-06 11:23+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2905,6 +2905,8 @@ msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Ня выйшла сынхранаваць захаваныя гульні.\n"
+"Праверце вашае злучэньне з інтэрнэтам."
 
 #: backends/cloud/storage.cpp:347
 #, c-format
@@ -2912,20 +2914,24 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Ладаваньне завершанае.\n"
+"Ня выйшла заладаваць файлаў: %u."
 
 #: backends/cloud/storage.cpp:349
 msgid "Download complete."
-msgstr ""
+msgstr "Ладаваньне завершанае."
 
 #: backends/cloud/storage.cpp:359
 msgid "Download failed."
-msgstr ""
+msgstr "Ладаваньне ня выйшла."
 
 #: backends/events/default/default-events.cpp:194
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
+"Ці сапраўды вы хочаце вярнуцца да ScummVM?\n"
+"Увесь незахаваны поступ будзе страчаны."
 
 #: backends/events/default/default-events.cpp:218
 msgid ""
