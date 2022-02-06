@@ -18,6 +18,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGI:
    - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
 
+ BBVS:
+   - Teilweise fehlerhafte Darstellung der Buttons im Hauptmenü korrigiert.
+   - Absturz am Ende des Hock-A-Loogie-Minispiels behoben.
+
  Buried:
    - Gleichzeitige Wiedergabe von Audio und Video kann nun übersprungen werden.
    - Der Mauszeiger wird nun während Zwischensequenzen versteckt.
