@@ -112,7 +112,7 @@ public:
 	void splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list);
 	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
 	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
-	void loadArcadeLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
+	void loadArcadeLevel(const Common::String &current, const Common::String &nextWin, const Common::String &nextLose, const Common::String &prefix);
 	void loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
 	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
 

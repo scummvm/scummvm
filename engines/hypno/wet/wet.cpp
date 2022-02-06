@@ -152,15 +152,11 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<movies>"] = movies;
 
 	if (_language == Common::EN_USA) {
-		loadArcadeLevel("c31.mi_", "c52", "wetlands");
-		_levels["c31.mi_"]->levelIfLose = "c52";
-		loadArcadeLevel("c52.mi_", "<gameover>", "wetlands");
-		_levels["c52.mi_"]->levelIfLose = "<gameover>";
+		loadArcadeLevel("c31.mi_", "c52", "c52", "wetlands");
+		loadArcadeLevel("c52.mi_", "<game_over>", "<quit>", "wetlands");
 	} else if (_language == Common::HE_ISR) {
-		loadArcadeLevel("c31.mis", "c52.mis", "wetlands");
-		_levels["c31.mis"]->levelIfLose = "c52.mis";
-		loadArcadeLevel("c52.mis", "<gameover>", "wetlands");
-		_levels["c52.mis"]->levelIfLose = "<gameover>";
+		loadArcadeLevel("c31.mis", "c52.mis", "c52.mis", "wetlands");
+		loadArcadeLevel("c52.mis", "<game_over>", "<quit>", "wetlands");
 	} else {
 		error("Unsupported language");
 	}
@@ -188,11 +184,10 @@ void WetEngine::loadAssetsPCW() {
 	intro->intros.push_back("c_misc/wet.smk");
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c11.mis", "<gameover>", "");
-	_levels["c11.mis"]->levelIfLose = "<gameover>";
+	loadArcadeLevel("c11.mis", "<quit>", "<check_lives>", "");
 
 	Transition *over = new Transition("<quit>");
-	_levels["<gameover>"] = over;
+	_levels["<game_over>"] = over;
 
 	loadLib("", "c_misc/sound.lib", false);
 	loadLib("", "c_misc/fonts.lib", true);
@@ -215,8 +210,7 @@ void WetEngine::loadAssetsPCG() {
 	intro->frameNumber = 0;
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c31.mis", "<gameover>", "");
-	_levels["c31.mis"]->levelIfLose = "<gameover>";
+	loadArcadeLevel("c31.mis", "<quit>", "<check_lives>", "");
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("g.s");
@@ -260,42 +254,38 @@ void WetEngine::loadAssetsFullGame() {
 	check_lives->name = "<check_lives>";
 	_levels["<check_lives>"] = check_lives;
 
-	loadArcadeLevel("c110.mi_", "c10", "");
-	_levels["c110.mi_"]->levelIfLose = "<check_lives>";
+	loadArcadeLevel("c110.mi_", "c10", "<check_lives>", "");
+	loadArcadeLevel("c111.mi_", "c10", "<check_lives>", "");
+	loadArcadeLevel("c112.mi_", "c10", "<check_lives>", "");
 
-	loadArcadeLevel("c111.mi_", "c10", "");
-	_levels["c111.mi_"]->levelIfLose = "<check_lives>";
 
-	loadArcadeLevel("c112.mi_", "c10", "");
-	_levels["c112.mi_"]->levelIfLose = "<check_lives>";
+	loadArcadeLevel("c100.mi_", "c21", "<check_lives>", "");
+	loadArcadeLevel("c101.mi_", "c21", "<check_lives>", "");
+	loadArcadeLevel("c102.mi_", "c21", "<check_lives>", "");
 
-	loadArcadeLevel("c100.mi_", "c21", "");
-	loadArcadeLevel("c101.mi_", "c21", "");
-	loadArcadeLevel("c102.mi_", "c21", "");
+	loadArcadeLevel("c210.mi_", "c22", "<check_lives>", "");
+	loadArcadeLevel("c211.mi_", "c22", "<check_lives>", "");
+	loadArcadeLevel("c212.mi_", "c22", "<check_lives>", "");
 
-	loadArcadeLevel("c210.mi_", "c22", "");
-	loadArcadeLevel("c211.mi_", "c22", "");
-	loadArcadeLevel("c212.mi_", "c22", "");
+	loadArcadeLevel("c220.mi_", "c23", "<check_lives>", "");
+	loadArcadeLevel("c221.mi_", "c23", "<check_lives>", "");
+	loadArcadeLevel("c222.mi_", "c23", "<check_lives>", "");
 
-	loadArcadeLevel("c220.mi_", "c23", "");
-	loadArcadeLevel("c221.mi_", "c23", "");
-	loadArcadeLevel("c222.mi_", "c23", "");
+	loadArcadeLevel("c230.mi_", "c20", "<check_lives>", "");
+	loadArcadeLevel("c231.mi_", "c20", "<check_lives>", "");
+	loadArcadeLevel("c232.mi_", "c20", "<check_lives>", "");
 
-	loadArcadeLevel("c230.mi_", "c20", "");
-	loadArcadeLevel("c231.mi_", "c20", "");
-	loadArcadeLevel("c232.mi_", "c20", "");
+	loadArcadeLevel("c200.mi_", "c31", "<check_lives>", "");
+	loadArcadeLevel("c201.mi_", "c31", "<check_lives>", "");
+	loadArcadeLevel("c202.mi_", "c31", "<check_lives>", "");
 
-	loadArcadeLevel("c200.mi_", "c31", "");
-	loadArcadeLevel("c201.mi_", "c31", "");
-	loadArcadeLevel("c202.mi_", "c31", "");
+	loadArcadeLevel("c310.mi_", "c32", "<check_lives>", "");
+	loadArcadeLevel("c311.mi_", "c32", "<check_lives>", "");
+	loadArcadeLevel("c312.mi_", "c32", "<check_lives>", "");
 
-	loadArcadeLevel("c310.mi_", "c32", "");
-	loadArcadeLevel("c311.mi_", "c32", "");
-	loadArcadeLevel("c312.mi_", "c32", "");
-
-	loadArcadeLevel("c320.mi_", "c41", "");
-	loadArcadeLevel("c321.mi_", "c41", "");
-	loadArcadeLevel("c322.mi_", "c41", "");
+	loadArcadeLevel("c320.mi_", "c41", "<check_lives>", "");
+	loadArcadeLevel("c321.mi_", "c41", "<check_lives>", "");
+	loadArcadeLevel("c322.mi_", "c41", "<check_lives>", "");
 
 	//loadArcadeLevel("c330.mi_", "???", "");
 	//loadArcadeLevel("c331.mi_", "???", "");
@@ -305,41 +295,41 @@ void WetEngine::loadAssetsFullGame() {
 	//loadArcadeLevel("c301.mi_", "???", "");
 	//loadArcadeLevel("c302.mi_", "???", "");
 
-	loadArcadeLevel("c410.mi_", "c42", "");
-	loadArcadeLevel("c411.mi_", "c42", "");
-	loadArcadeLevel("c412.mi_", "c42", "");
+	loadArcadeLevel("c410.mi_", "c42", "<check_lives>", "");
+	loadArcadeLevel("c411.mi_", "c42", "<check_lives>", "");
+	loadArcadeLevel("c412.mi_", "c42", "<check_lives>", "");
 
-	loadArcadeLevel("c420.mi_", "c43", "");
-	loadArcadeLevel("c421.mi_", "c43", "");
-	loadArcadeLevel("c422.mi_", "c43", "");
+	loadArcadeLevel("c420.mi_", "c43", "<check_lives>", "");
+	loadArcadeLevel("c421.mi_", "c43", "<check_lives>", "");
+	loadArcadeLevel("c422.mi_", "c43", "<check_lives>", "");
 
-	loadArcadeLevel("c430.mi_", "c44", "");
-	loadArcadeLevel("c431.mi_", "c44", "");
-	loadArcadeLevel("c432.mi_", "c44", "");
+	loadArcadeLevel("c430.mi_", "c44", "<check_lives>", "");
+	loadArcadeLevel("c431.mi_", "c44", "<check_lives>", "");
+	loadArcadeLevel("c432.mi_", "c44", "<check_lives>", "");
 
-	loadArcadeLevel("c440.mi_", "c51", "");
-	loadArcadeLevel("c441.mi_", "c51", "");
-	loadArcadeLevel("c442.mi_", "c51", "");
+	loadArcadeLevel("c440.mi_", "c51", "<check_lives>", "");
+	loadArcadeLevel("c441.mi_", "c51", "<check_lives>", "");
+	loadArcadeLevel("c442.mi_", "c51", "<check_lives>", "");
 
 	//loadArcadeLevel("c400.mi_", "???", "");
 	//loadArcadeLevel("c401.mi_", "???", "");
 	//loadArcadeLevel("c402.mi_", "???", "");
 
-	loadArcadeLevel("c510.mi_", "c52", "");
-	loadArcadeLevel("c511.mi_", "c52", "");
-	loadArcadeLevel("c512.mi_", "c52", "");
+	loadArcadeLevel("c510.mi_", "c52", "<check_lives>", "");
+	loadArcadeLevel("c511.mi_", "c52", "<check_lives>", "");
+	loadArcadeLevel("c512.mi_", "c52", "<check_lives>", "");
 
-	loadArcadeLevel("c520.mi_", "c61", "");
-	loadArcadeLevel("c521.mi_", "c61", "");
-	loadArcadeLevel("c522.mi_", "c61", "");
+	loadArcadeLevel("c520.mi_", "c61", "<check_lives>", "");
+	loadArcadeLevel("c521.mi_", "c61", "<check_lives>", "");
+	loadArcadeLevel("c522.mi_", "c61", "<check_lives>", "");
 
 	//loadArcadeLevel("c500.mi_", "???", "");
 	//loadArcadeLevel("c501.mi_", "???", "");
 	//loadArcadeLevel("c502.mi_", "???", "");
 
-	loadArcadeLevel("c610.mi_", "<quit>", "");
-	loadArcadeLevel("c611.mi_", "<quit>", "");
-	loadArcadeLevel("c612.mi_", "<quit>", "");
+	loadArcadeLevel("c610.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c611.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c612.mi_", "<quit>", "<check_lives>", "");
 
 	//loadArcadeLevel("c600.mi_", "???", "");
 	//loadArcadeLevel("c601.mi_", "???", "");

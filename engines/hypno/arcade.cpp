@@ -111,7 +111,7 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 	return seq;
 }
 
-void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::String &next, const Common::String &prefix) {
+void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::String &nextWin, const Common::String &nextLose, const Common::String &prefix) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", arclevel.c_str());
 	Common::String arc;
 	Common::String list;
@@ -121,7 +121,8 @@ void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::
 	ArcadeShooting *arcade = (ArcadeShooting *) _levels[arclevel]; 
 	arcade->shootSequence = parseShootList(arclevel, list);
 	arcade->prefix = prefix;
-	arcade->levelIfWin = next;
+	arcade->levelIfWin = nextWin;
+	arcade->levelIfLose = nextLose;
 }
 
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
