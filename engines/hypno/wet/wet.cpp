@@ -397,7 +397,7 @@ void WetEngine::loadFonts() {
 
 void WetEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
 	if (font == "block05.fgx") {
-		for (int c = 0; c < str.size(); c++) {
+		for (uint32 c = 0; c < str.size(); c++) {
 			for (int i = 0; i < 5; i++) {
 				for (int j = 0; j < 5; j++) {
 					if (!_font05.get(275 + 40*str[c] + j*8 + i))
@@ -406,7 +406,7 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 			}
 		}
 	} else if (font == "scifi08.fgx") {
-		for (int c = 0; c < str.size(); c++) {
+		for (uint32 c = 0; c < str.size(); c++) {
 			if (str[c] == 0)
 				continue;
 			assert(str[c] >= 32);

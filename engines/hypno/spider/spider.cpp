@@ -33,6 +33,7 @@ extern const char *sceneVariables[];
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
 	_screenW = 640;
 	_screenH = 480;
+	_font = nullptr;
 }
 
 void SpiderEngine::loadAssets() {
@@ -987,7 +988,8 @@ void SpiderEngine::loadAssetsDemo() {
 	loadArcadeLevel("c1.mi_", "sixdemo/mis/demo.mis", prefix);
 	_levels["c1.mi_"]->levelIfLose = "sixdemo/mis/demo.mis";
 
-	loadLib("", "c_misc/fonts.lib", true);
+	loadLib("", "sixdemo/c_misc/fonts.lib", true);
+	loadFonts();
 	loadLib("c_misc/sound.lib/", "c_misc/sound.lib", true);
 	loadLib("demo/sound.lib/", "demo/sound.lib", true);
 
@@ -1069,11 +1071,14 @@ void SpiderEngine::loadFonts() {
 	_font08.set_bits((byte *)font);
 
 	free(font);
+
+	// Additional fonts
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 }
 
 void SpiderEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
 	if (font == "block05.fgx") {
-		for (int c = 0; c < str.size(); c++) {
+		for (uint32 c = 0; c < str.size(); c++) {
 			for (int i = 0; i < 5; i++) {
 				for (int j = 0; j < 5; j++) {
 					if (!_font05.get(275 + 40*str[c] + j*8 + i))
@@ -1082,7 +1087,7 @@ void SpiderEngine::drawString(const Common::String &font, const Common::String &
 			}
 		}
 	} else if (font == "scifi08.fgx") {
-		for (int c = 0; c < str.size(); c++) {
+		for (uint32 c = 0; c < str.size(); c++) {
 			if (str[c] == 0)
 				continue;
 			assert(str[c] >= 32);
@@ -1093,6 +1098,8 @@ void SpiderEngine::drawString(const Common::String &font, const Common::String &
 				}
 			}
 		}
+	} else if (font == "console") {
+		_font->drawString(_compositeSurface, str, x, y, w, color);
 	} else
 		error("Invalid font: '%s'", font.c_str());
 }

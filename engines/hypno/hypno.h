@@ -248,7 +248,6 @@ public:
 	// Fonts
 	virtual void loadFonts();
 	virtual void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c);
-	const Graphics::Font *_font;
 
 	// Conversation
 	Actions _conversation;
@@ -364,7 +363,7 @@ private:
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
-
+	const Graphics::Font *_font;
 };
 
 class BoyzEngine : public HypnoEngine {
