@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 14:54+0000\n"
+"PO-Revision-Date: 2022-02-06 16:06+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2996,33 +2996,33 @@ msgstr "Максымальная гучнасьць"
 
 #: backends/events/gph/gph-events.cpp:437
 msgid "Increasing Volume"
-msgstr ""
+msgstr "Павелічэньне гучнасьці"
 
 #: backends/events/gph/gph-events.cpp:443
 msgid "Minimal Volume"
-msgstr ""
+msgstr "Мінімальная гучнасьць"
 
 #: backends/events/gph/gph-events.cpp:445
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "Памяншэньне гучнасьці"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "Пстрыкі далучаны"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "Пстрыкі адлучаны"
 
 #: backends/events/openpandora/op-events.cpp:162
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr ""
+msgstr "Дотык экрану — Рух (пстрык DPad)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
-msgstr ""
+msgstr "Цэнтравана"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
