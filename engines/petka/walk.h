@@ -71,7 +71,7 @@ public:
 	int sub_422EA0(Point p1, Point p2);
 	int sub_423350();
 	Common::Point sub_4234B0();
-	bool sub_423570(int, int);
+	bool areEdgesAdjacent(int, int);
 
 	int sub_423600(Point p);
 	int sub_423970(int, int);
@@ -137,13 +137,13 @@ public:
 	double field_198;
 	int destX;
 	int destY;
-	int _bkg1Count;
-	Point *_bkg1;
-	int _bkg2Count;
+	int _verticesCount;
+	Point *_vertices;
+	int _edgesCount;
 	int _bkg3Count;
 	int *_bkg3_1;
 	int **_bkg3_2;
-	Point *_bkg2;
+	Point *_edges;
 	char field_1C4;
 	char field_1C5;
 	char field_1C6;

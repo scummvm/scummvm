@@ -73,16 +73,16 @@ Walk::Walk(int id) { // CHECKED
 	currX = 0.0;
 	currY = 0.0;
 	_bkg3Count = 0;
-	_bkg2Count = 0;
+	_edgesCount = 0;
 	field_134 = 0;
-	_bkg1Count = 0;
+	_verticesCount = 0;
 	_bkg3_1 = nullptr;
 	_bkg3_2 = nullptr;
-	_bkg2 = nullptr;
+	_edges = nullptr;
 	_bkg3_3 = nullptr;
 	_bkg3_4 = nullptr;
 	_bkg3_5 = nullptr;
-	_bkg1 = nullptr;
+	_vertices = nullptr;
 	field_190 = 0;
 	resId = 0;
 }
@@ -155,8 +155,8 @@ void Walk::init(Point start, Point end) {
 		if (field_134 > 1) {
 			do {
 				int v23 = sub_423A30(_bkg3_4[(v21 - 4) / 4], _bkg3_4[v21 / 4]);
-				_bkg3_3[v22].x = (_bkg1[_bkg2[v23].x].x + _bkg1[_bkg2[v23].y].x) / 2;
-				_bkg3_3[v22].y = (_bkg1[_bkg2[v23].x].y + _bkg1[_bkg2[v23].y].y) / 2;
+				_bkg3_3[v22].x = (_vertices[_edges[v23].x].x + _vertices[_edges[v23].y].x) / 2;
+				_bkg3_3[v22].y = (_vertices[_edges[v23].x].y + _vertices[_edges[v23].y].y) / 2;
 
 				if (v22 > 1 && !sub_424160(&_bkg3_3[v22 - 2], &_bkg3_3[v22])) {
 					v20--;
@@ -191,9 +191,9 @@ void Walk::init(Point start, Point end) {
 }
 
 void Walk::clearBackground() { // CHECKED
-	delete[] _bkg1;
-	_bkg1 = nullptr;
-	_bkg1Count = 0;
+	delete[] _vertices;
+	_vertices = nullptr;
+	_verticesCount = 0;
 
 
 	if (_bkg3_1) {
@@ -210,9 +210,9 @@ void Walk::clearBackground() { // CHECKED
 		_bkg3Count = 0;
 	}
 
-	delete[] _bkg2;
-	_bkg2 = nullptr;
-	_bkg2Count = 0;
+	delete[] _edges;
+	_edges = nullptr;
+	_edgesCount = 0;
 
 	delete[] _bkg3_3;
 	_bkg3_3 = nullptr;
@@ -234,20 +234,20 @@ void Walk::setBackground(Common::String name) { // CHECKED
 	if (!stream)
 		return;
 
-	_bkg1Count = stream->readUint32LE();
-	_bkg1 = new Point[_bkg1Count];
+	_verticesCount = stream->readUint32LE();
+	_vertices = new Point[_verticesCount];
 
-	for (int i = 0; i < _bkg1Count; ++i) {
-		_bkg1[i].x = stream->readUint32LE();
-		_bkg1[i].y = stream->readUint32LE();
+	for (int i = 0; i < _verticesCount; ++i) {
+		_vertices[i].x = stream->readUint32LE();
+		_vertices[i].y = stream->readUint32LE();
 	}
 
-	_bkg2Count = stream->readUint32LE();
-	_bkg2 = new Point[_bkg2Count];
+	_edgesCount = stream->readUint32LE();
+	_edges = new Point[_edgesCount];
 
-	for (int i = 0; i < _bkg2Count; ++i) {
-		_bkg2[i].x = stream->readUint32LE();
-		_bkg2[i].y = stream->readUint32LE();
+	for (int i = 0; i < _edgesCount; ++i) {
+		_edges[i].x = stream->readUint32LE();
+		_edges[i].y = stream->readUint32LE();
 	}
 
 	_bkg3Count = stream->readUint32LE();
@@ -289,13 +289,13 @@ int Walk::getSpriteId() { // CHECKED
 }
 
 int Walk::commonPoint(int idx1, int idx2) { // CHECKED
-	if (_bkg2[idx1].x == _bkg2[idx2].x || _bkg2[idx1].x == _bkg2[idx2].y)
-		return _bkg2[idx1].x;
+	if (_edges[idx1].x == _edges[idx2].x || _edges[idx1].x == _edges[idx2].y)
+		return _edges[idx1].x;
 
-	if (_bkg2[idx1].y != _bkg2[idx2].x && _bkg2[idx1].y != _bkg2[idx2].y)
-		return 0;
+	if (_edges[idx1].y == _edges[idx2].x || _edges[idx1].y == _edges[idx2].y)
+		return _edges[idx1].y;
 
-	return _bkg2[idx1].y;
+	return 0;
 }
 
 int Walk::readWayFile(const Common::String &name, int **p1, int **p2) { // CHECKED
@@ -472,14 +472,16 @@ Common::Point Walk::sub_4234B0() { // CHECKED
 	return p;
 }
 
-bool Walk::sub_423570(int i1, int i2) { // CHECKED
-	if (i1 == i2)
-		return false;
-
-	if (_bkg2[i1].x == _bkg2[i2].x || _bkg2[i1].x == _bkg2[i2].y)
-		return true;
-
-	return !(_bkg2[i1].y != _bkg2[i2].x && _bkg2[i1].y != _bkg2[i2].y);
+bool Walk::areEdgesAdjacent(int first_index, int second_index) { // CHECKED
+	if (first_index != second_index) {
+		if (_edges[first_index].x == _edges[second_index].x ||
+			_edges[first_index].x == _edges[second_index].y ||
+			_edges[first_index].y == _edges[second_index].x ||
+			_edges[first_index].y == _edges[second_index].y) {
+			return true;
+		}
+	}
+	return false;
 }
 
 int Walk::sub_423600(Point p) {
@@ -489,7 +491,7 @@ int Walk::sub_423600(Point p) {
 		v4[0] = _bkg3_2[j][0];
 
 		for (int k = 0; k < _bkg3_1[j]; ++k) {
-			if (sub_423570(v4[0], _bkg3_2[j][k])) {
+			if (areEdgesAdjacent(v4[0], _bkg3_2[j][k])) {
 				v4[1] = _bkg3_2[j][k];
 				break;
 			}
@@ -497,7 +499,7 @@ int Walk::sub_423600(Point p) {
 
 		for (int k = 2; k < _bkg3_1[j]; ++k) {
 			for (int l = 0; l < _bkg3_1[j]; ++l) {
-				if (sub_423570(v4[k - 1], _bkg3_2[j][l]) && v4[k - 2] != _bkg3_2[j][l]) {
+				if (areEdgesAdjacent(v4[k - 1], _bkg3_2[j][l]) && v4[k - 2] != _bkg3_2[j][l]) {
 					v4[k] = _bkg3_2[j][l];
 					break;
 				}
@@ -507,8 +509,8 @@ int Walk::sub_423600(Point p) {
 		int v11 = commonPoint(v4[_bkg3_1[j] - 1], v4[0]);
 		int v31 = commonPoint(v4[0], v4[1]);
 
-		double v12 = angle(p, _bkg1[v11], _bkg1[v31]);
-		if (p == _bkg1[v11] || p == _bkg1[v31]) {
+		double v12 = angle(p, _vertices[v11], _vertices[v31]);
+		if (p == _vertices[v11] || p == _vertices[v31]) {
 			delete[] v4;
 			return i;
 		}
@@ -519,8 +521,8 @@ int Walk::sub_423600(Point p) {
 			int v16 = commonPoint(v4[k - 1], v4[k]);
 			int v32 = commonPoint(v4[k], v4[k + 1]);
 
-			v12 += angle(p, _bkg1[v16], _bkg1[v32]);
-			if (p == _bkg1[v16] || p == _bkg1[v32]) {
+			v12 += angle(p, _vertices[v16], _vertices[v32]);
+			if (p == _vertices[v16] || p == _vertices[v32]) {
 				delete[] v4;
 				return i;
 			}
@@ -531,10 +533,10 @@ int Walk::sub_423600(Point p) {
 
 		delete[] v4;
 
-		double v23 = angle(p, _bkg1[v19], _bkg2[v20]);
+		double v23 = angle(p, _vertices[v19], _vertices[v20]);
 		v12 += v23;
 
-		if (p == _bkg1[v19] || p == _bkg1[v20])
+		if (p == _vertices[v19] || p == _vertices[v20])
 			return i;
 
 		if (v12 < 0.0)
@@ -691,12 +693,12 @@ bool Walk::sub_424160(Point *p1, Point *p2) { // CHECKED
 
 	Point p;
 	int v = 1;
-	if (_bkg1Count <= 1)
-		return sub_423E00(_bkg1[v - 1], _bkg1[0], *p1, *p2, p) != 0;
+	if (_verticesCount <= 1)
+		return sub_423E00(_vertices[v - 1], _vertices[0], *p1, *p2, p) != 0;
 
-	while (!sub_423E00(_bkg1[v - 1], _bkg1[v], *p1, *p2, p)) {
-		if (++v >= _bkg1Count)
-			return sub_423E00(_bkg1[v - 1], _bkg1[0], *p1, *p2, p) != 0;
+	while (!sub_423E00(_vertices[v - 1], _vertices[v], *p1, *p2, p)) {
+		if (++v >= _verticesCount)
+			return sub_423E00(_vertices[v - 1], _vertices[0], *p1, *p2, p) != 0;
 	}
 	return true;
 }
@@ -734,13 +736,13 @@ int Walk::sub_424320(Point *p1, Point *p2) { // CHECKED
 	Point p;
 
 	int i;
-	for (i = 1; i < _bkg1Count; ++i) {
-		if (sub_423E00(_bkg1[i - 1], _bkg1[i], *p1, *p2, p) && *p1 != p && *p2 != p) {
+	for (i = 1; i < _verticesCount; ++i) {
+		if (sub_423E00(_vertices[i - 1], _vertices[i], *p1, *p2, p) && *p1 != p && *p2 != p) {
 			ret++;
 		}
 	}
 
-	if (sub_423E00(_bkg1[i - 1], _bkg1[0], *p1, *p2, p) && *p1 != p && *p2 != p) {
+	if (sub_423E00(_vertices[i - 1], _vertices[0], *p1, *p2, p) && *p1 != p && *p2 != p) {
 		ret++;
 	}
 
@@ -748,13 +750,13 @@ int Walk::sub_424320(Point *p1, Point *p2) { // CHECKED
 }
 
 int Walk::moveInside(Point *p) { // CHECKED
-	DBLPoint dp = sub_424610(_bkg1[_bkg2->x], _bkg1[_bkg2->y].x, _bkg1[_bkg2->y].y, *p);
+	DBLPoint dp = sub_424610(_vertices[_edges->x], _vertices[_edges->y].x, _vertices[_edges->y].y, *p);
 
 	int index = 0;
 
 	double min = (dp.y - p->y) * (dp.y - p->y) + (dp.x - p->x) * (dp.x - p->x);
-	for (int i = 1; i < _bkg1Count; ++i) {
-		DBLPoint dp1 = sub_424610(_bkg1[_bkg2[i].x], _bkg1[_bkg2[i].y].x, _bkg1[_bkg2[i].y].y, *p);
+	for (int i = 1; i < _verticesCount; ++i) {
+		DBLPoint dp1 = sub_424610(_vertices[_edges[i].x], _vertices[_edges[i].y].x, _vertices[_edges[i].y].y, *p);
 		double curr = (dp1.y - p->y) * (dp1.y - p->y) + (dp1.x - p->x) * (dp1.x - p->x);
 		if (curr < min) {
 			dp = dp1;
@@ -768,7 +770,7 @@ int Walk::moveInside(Point *p) { // CHECKED
 	p->y = dp.y;
 
 
-	for (int i = 0; i < _bkg1Count; ++i) {
+	for (int i = 0; i < _verticesCount; ++i) {
 		for (int j = 0; j < _bkg3_1[i]; ++j) {
 			if (_bkg3_2[i][j] == index)
 				return i;
