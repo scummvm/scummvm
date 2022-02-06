@@ -207,7 +207,9 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 	}
 
 end:
-	_vsys->makeAllDirty();
+	if (_vsys) {
+		_vsys->makeAllDirty();
+	}
 	_videoDec.reset();
 }
 
