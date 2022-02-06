@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 20:34+0000\n"
-"PO-Revision-Date: 2022-02-06 22:28+0000\n"
+"PO-Revision-Date: 2022-02-06 23:04+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3722,12 +3722,12 @@ msgstr "Акно"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "Minimize"
-msgstr ""
+msgstr "Паменьшыць"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:237
 #: engines/zvision/metaengine.cpp:157
 msgid "Help"
-msgstr ""
+msgstr "Дапамога"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:242
 msgid "User Manual"
