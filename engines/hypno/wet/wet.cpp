@@ -50,6 +50,7 @@ static const chapterEntry rawChapterTable[] = {
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
 	_screenW = 320;
 	_screenH = 200;
+	_lives = 2;
  
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
@@ -166,7 +167,7 @@ void WetEngine::loadAssetsDemoDisc() {
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("movie/gameover.smk");
-	_levels["<gameover>"] = over;
+	_levels["<game_over>"] = over;
 
 	loadLib("", "wetlands/c_misc/fonts.lib", true);
 	loadFonts();
@@ -219,7 +220,7 @@ void WetEngine::loadAssetsPCG() {
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("g.s");
-	_levels["<gameover>"] = over;
+	_levels["<game_over>"] = over;
 
 	loadLib("sound/", "sound.lib", false);
 	loadLib("", "fonts.lib", true);
@@ -245,20 +246,28 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<main_menu>"] = menu;
 	_levels["<main_menu>"]->levelIfWin = "<intros>";
 
+	Transition *over = new Transition("<quit>");
+	over->intros.push_back("c_misc/gameover.smk");
+	_levels["<game_over>"] = over;
+
 	Transition *intros = new Transition("c11");
 	intros->intros.push_back("c_misc/stardate.smk");
 	intros->intros.push_back("c_misc/intros.smk");
 	intros->intros.push_back("c_misc/confs.smk");
 	_levels["<intros>"] = intros;
 
+	Code *check_lives = new Code();
+	check_lives->name = "<check_lives>";
+	_levels["<check_lives>"] = check_lives;
+
 	loadArcadeLevel("c110.mi_", "c10", "");
-	_levels["c110.mi_"]->levelIfLose = "<quit>";
+	_levels["c110.mi_"]->levelIfLose = "<check_lives>";
 
 	loadArcadeLevel("c111.mi_", "c10", "");
-	_levels["c111.mi_"]->levelIfLose = "<quit>";
+	_levels["c111.mi_"]->levelIfLose = "<check_lives>";
 
 	loadArcadeLevel("c112.mi_", "c10", "");
-	_levels["c112.mi_"]->levelIfLose = "<quit>";
+	_levels["c112.mi_"]->levelIfLose = "<check_lives>";
 
 	loadArcadeLevel("c100.mi_", "c21", "");
 	loadArcadeLevel("c101.mi_", "c21", "");
@@ -358,6 +367,8 @@ void WetEngine::runCode(Code *code) {
 	changeScreenMode("320x200");
 	if (code->name == "<main_menu>")
 		runMainMenu(code);
+	else if (code->name == "<check_lives>")
+		runCheckLives(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }

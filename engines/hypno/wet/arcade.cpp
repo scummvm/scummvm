@@ -28,6 +28,7 @@
 namespace Hypno {
 
 void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_checkpoint = _currentLevel;
 	MVideo *video;
 	if (!isDemo()) {
 
@@ -37,6 +38,8 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		byte p[3] = {0xff, 0x00, 0x00}; // Always red?
 		loadPalette((byte *) &p, 240 - arc->id % 10, 1);
 		drawImage(*frame, 0, 0, false);
+		frame->free();
+		delete frame;
 		bool showedBriefing = false;
 		bool endedBriefing = false;
 		Common::Event event;
