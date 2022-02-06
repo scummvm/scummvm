@@ -30,6 +30,7 @@
 
 #include "petka/flc.h"
 #include "petka/q_manager.h"
+#include "petka/q_system.h"
 #include "petka/petka.h"
 
 namespace Petka {
@@ -120,6 +121,10 @@ Graphics::Surface *QManager::getSurface(uint32 id) {
 	Common::ScopedPtr<Common::SeekableReadStream> preloaded_stream (stream->readStream(stream->size()));
 	Graphics::Surface *s = loadBitmapSurface(*preloaded_stream);
 	if (s) {
+		assert(s->w >= 640);
+		g_vm->getQSystem()->_sceneWidth = MAX<int>(s->w, 640);
+		g_vm->getQSystem()->_xOffset = 0;
+
 		QResource &res = _resourceMap.getOrCreateVal(id);
 		res.type = QResource::kSurface;
 		res.surface = s;
