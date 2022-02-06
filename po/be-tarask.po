@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 09:55+0000\n"
+"PO-Revision-Date: 2022-02-06 10:11+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2746,44 +2746,44 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:33
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL з шэйдэрамі"
 
 #: graphics/renderer.cpp:41
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL з шэйдэрамі"
 
 #: audio/adlib.cpp:2294
 msgid "AdLib emulator"
-msgstr ""
+msgstr "Эмулятар AdLib"
 
 #: audio/fmopl.cpp:81
 msgid "MAME OPL emulator"
-msgstr ""
+msgstr "Эмулятар MAME OPL"
 
 #: audio/fmopl.cpp:83
 msgid "DOSBox OPL emulator"
-msgstr ""
+msgstr "Эмулятар DOSBox OPL"
 
 #: audio/fmopl.cpp:86
 msgid "Nuked OPL emulator"
-msgstr ""
+msgstr "Эмулятар Nuked OPL"
 
 #: audio/fmopl.cpp:89
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Просты FM"
 
 #: audio/fmopl.cpp:92
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:93
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -2791,11 +2791,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
+"Адзначаная гукавая прылада '%s' ня знойдзена (мабыць яна вымкнена або "
+"адлучана)."
 
 #: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
 #: audio/mididrv.cpp:289
 msgid "Attempting to fall back to the next available device..."
-msgstr ""
+msgstr "Спроба выкарыстаць іншую даступную прыладу…"
 
 #: audio/mididrv.cpp:233
 #, c-format
@@ -2803,6 +2805,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"Адзначаная гукавая прылада '%s' ня можа быць выкарыстана. Падрабязнасьці ў "
+"файле хронікі."
 
 #: audio/mididrv.cpp:271
 #, c-format
