@@ -28,6 +28,13 @@
 namespace Chewy {
 namespace Dialogs {
 
+#define NUM_VISIBLE_SLOTS 6
+
+enum Widget {
+	SCROLL_UP = 0, SCROLL_DOWN = 1, SAVE = 2, LOAD = 3,
+	GAME = 4, QUIT = 5, OPTIONS = 6, W7 = 7, W8 = 8
+};
+
 static const int16 FILE_ICONS[8 * 4] = {
 	14, 73, 32, 94,
 	14, 96, 32, 118,
@@ -41,12 +48,11 @@ static const int16 FILE_ICONS[8 * 4] = {
 
 
 int16 Files::execute(bool isInGame) {
-	//int16 u_index;
 	int16 key = 0;
 	int16 i, j;
-	int16 x[8];
-	int16 y[8];
+	Common::Point pt[8];
 	int16 mode[9];
+	bool visibility[8];
 	int16 ret = 0;
 	char *fnames;
 	char *tmp;
@@ -72,39 +78,46 @@ int16 Files::execute(bool isInGame) {
 	show_cur();
 
 	if (!modul) {
-		x[0] = 1;
-		x[1] = 1;
-		y[0] = 0;
-		y[1] = 0;
+		pt[SCROLL_UP] = pt[SCROLL_DOWN] = Common::Point(1, 0);
+		for (i = SAVE; i <= W7; i++)
+			pt[i] = Common::Point(5, 5);
 
-		for (i = 2; i < 8; i++) {
-			x[i] = 5;
-			y[i] = 5;
+		Common::fill(visibility, visibility + 8, true);
+		Common::fill(mode, mode + 8, 0);
+		mode[W8] = 1;
+
+		if (!isInGame) {
+			visibility[SAVE] = false;
+			visibility[GAME] = false;
+			mode[LOAD] = 1;
+			mode[W8] = 0;
 		}
-		for (i = 0; i < 8; i++)
-			mode[i] = 0;
 
-		mode[8] = 1;
-		text_off = 0;
-		active_slot = 0;
+		text_off = 0;		// Top visible save slot
+		active_slot = 0;	// Currently selected slot
 
 		while (key != ESC && !SHOULD_QUIT) {
 			// Draw the dialog background
 			out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 
 			// Draw the buttons at the bottom
-			for (i = 28, j = 0; i < 35; i++, j++) {
-				if (!mode[j])
-					out->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1] + x[j],
-						76 + ti->korrektur[(i << 1) + 1] + y[j], 0);
-				else
-					out->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1],
-						76 + ti->korrektur[(i << 1) + 1], 0);
+			for (i = 28, j = SCROLL_UP; j <= OPTIONS; i++, j++) {
+				if (visibility[j]) {
+					if (!mode[j])
+						// Not pressed
+						out->sprite_set(
+							ti->image[i], 16 + ti->korrektur[i << 1] + pt[j].x,
+							76 + ti->korrektur[(i << 1) + 1] + pt[j].y, 0);
+					else
+						// Pressed
+						out->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1],
+							76 + ti->korrektur[(i << 1) + 1], 0);
+				}
 			}
 
-			// Render the list of savegame slots
+			// Write the list of savegame slots
 			tmp = fnames + (text_off * 40);
-			for (i = 0; i < 6; i++, tmp += 40) {
+			for (i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
 				if (i != active_slot) {
 					out->printxy(40, 68 + (i * 10), 14, 300, 0, "%2d.", text_off + i);
 					out->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
@@ -117,18 +130,19 @@ int16 Files::execute(bool isInGame) {
 
 			key = in->get_switch_code();
 
-			if (mode[0])
-				--mode[0];
-			if (mode[1])
-				--mode[1];
-			if (mode[4])
-				--mode[4];
-			if (mode[4] == 1)
-				key = ESC;
-			if (mode[5])
-				--mode[5];
+			if (mode[SCROLL_UP])
+				--mode[SCROLL_UP];
+			if (mode[SCROLL_DOWN])
+				--mode[SCROLL_DOWN];
 
-			if (mode[5] == 1) {
+			if (mode[GAME])
+				--mode[GAME];
+			if (mode[GAME] == 1)
+				key = ESC;
+
+			if (mode[QUIT])
+				--mode[QUIT];
+			if (mode[QUIT] == 1) {
 				out->printxy(120, 138, 255, 300, 0, QUIT_MSG);
 				out->back2screen(workpage);
 				in->alter_kb_handler();
@@ -144,28 +158,25 @@ int16 Files::execute(bool isInGame) {
 				in->neuer_kb_handler(&kbinfo);
 			}
 
-			if (mode[6])
-				--mode[6];
-			if (mode[6] == 1) {
+			if (mode[OPTIONS])
+				--mode[OPTIONS];
+			if (mode[OPTIONS] == 1) {
 				Dialogs::Options::execute(ti);
 			}
 
-			if (!flag && ((minfo.button == 1) || (key == ENTER))) {
+			if (!flag && minfo.button == 1) {
 				rect = in->maus_vector(minfo.x, minfo.y, FILE_ICONS, 8);
 				flag = true;
 				key = 0;
 
 				switch (rect) {
 				case 0:
-					// Scroll up button
-					key = CURSOR_UP + ALT;
+					key = CURSOR_UP;
 					break;
 				case 1:
-					// Scroll down button
-					key = CURSOR_DOWN + ALT;
+					key = CURSOR_DOWN;
 					break;
 				case 2:
-					// Savegame list area
 					line = (minfo.y - 68) / 10;
 					if (line == active_slot)
 						key = ENTER;
@@ -173,6 +184,9 @@ int16 Files::execute(bool isInGame) {
 						active_slot = line;
 					if (active_slot > 5)
 						active_slot = 5;
+
+					if (!isInGame)
+						goto enter;
 					break;
 				case 3:
 					key = F1_KEY;
@@ -191,68 +205,67 @@ int16 Files::execute(bool isInGame) {
 					break;
 				}
 
-				minfo.button = 0;
-			} else {
+			} else if (flag && minfo.button == 0) {
 				flag = false;
-				EVENTS_UPDATE;
 			}
 
 			switch (key) {
 			case F1_KEY:
-				mode[2] = 1;
-				mode[3] = 0;
-				mode[8] = 0;
+				if (visibility[SAVE]) {
+					mode[LOAD] = 0;
+					mode[SAVE] = 1;
+					mode[W8] = 0;
+					goto enter;
+				}
 				break;
 
 			case F2_KEY:
-				mode[2] = 0;
-				mode[3] = 1;
-				mode[8] = 0;
+				mode[LOAD] = 1;
+				mode[SAVE] = 0;
+				mode[W8] = 0;
+				goto enter;
 				break;
 
 			case F3_KEY:
-				mode[4] = 10;
+				if (visibility[GAME])
+					mode[GAME] = 10;
 				break;
 
 			case F4_KEY:
-				mode[5] = 10;
+				mode[QUIT] = 10;
 				break;
 
 			case F5_KEY:
-				mode[6] = 10;
+				mode[OPTIONS] = 10;
 				break;
 
-			case CURSOR_UP + ALT:
-				if (mode[2] || mode[3]) {
-					mode[0] = 10;
-					if (active_slot > 0)
-						--active_slot;
-					else if (text_off > 0)
-						--text_off;
-				}
+			case CURSOR_UP:
+				mode[SCROLL_UP] = 10;
+				if (active_slot > 0)
+					--active_slot;
+				else if (text_off > 0)
+					--text_off;
 				break;
 
-			case CURSOR_DOWN + ALT:
-				if (mode[2] || mode[3]) {
-					mode[1] = 10;
-					if (active_slot < 5)
-						++active_slot;
-					else if (text_off < (20 - 6))
-						++text_off;
-				}
+			case CURSOR_DOWN:
+				mode[SCROLL_DOWN] = 10;
+				if (active_slot < (NUM_VISIBLE_SLOTS - 1))
+					++active_slot;
+				else if (text_off < (20 - NUM_VISIBLE_SLOTS))
+					++text_off;
 				break;
 
 			case ENTER:
 			case ENTER + ALT:
-				if (mode[3]) {
+enter:
+				if (mode[LOAD]) {
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
 						CurrentSong = -1;
-						iog->load(text_off + active_slot,
-							ioptr.save_path);
+						iog->load(text_off + active_slot, ioptr.save_path);
 						key = ESC;
 					}
-				} else if (mode[2]) {
+				} else if (mode[SAVE]) {
 					out->back2screen(workpage);
 					out->setze_zeiger(screen0);
 					in->alter_kb_handler();
@@ -261,28 +274,12 @@ int16 Files::execute(bool isInGame) {
 						255, 42, 14, 0, "%36s36", tmp);
 					in->neuer_kb_handler(&kbinfo);
 					out->setze_zeiger(workptr);
-					if (key != 27) {
+					if (key != Common::KEYCODE_ESCAPE) {
 						iog->save_entry(text_off + active_slot,
 							ioptr.save_path);
 					}
-					key = 0;
+					key = ESC;
 				}
-				break;
-
-			case CURSOR_UP:
-				cur->move(minfo.x, --minfo.y);
-				break;
-
-			case CURSOR_DOWN:
-				cur->move(minfo.x, ++minfo.y);
-				break;
-
-			case CURSOR_LEFT:
-				cur->move(--minfo.x, minfo.y);
-				break;
-
-			case CURSOR_RIGHT:
-				cur->move(++minfo.x, minfo.y);
 				break;
 
 			default:
