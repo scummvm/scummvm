@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 20:21+0000\n"
-"PO-Revision-Date: 2022-02-06 18:18+0000\n"
+"PO-Revision-Date: 2022-02-06 20:39+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3292,35 +3292,35 @@ msgstr "Скінуць да стандарту"
 
 #: backends/keymapper/remap-widget.cpp:290
 msgid "Clear mapping"
-msgstr ""
+msgstr "Скінуць клявішы"
 
 #: backends/keymapper/virtual-mouse.cpp:156
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Віртуальная мыш угару"
 
 #: backends/keymapper/virtual-mouse.cpp:161
 msgid "Virtual mouse down"
-msgstr ""
+msgstr "Віртуальная мыш уніз"
 
 #: backends/keymapper/virtual-mouse.cpp:166
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "Віртуальная мыш улева"
 
 #: backends/keymapper/virtual-mouse.cpp:171
 msgid "Virtual mouse right"
-msgstr ""
+msgstr "Віртуальная мыш управа"
 
 #: backends/keymapper/virtual-mouse.cpp:176
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Замарудзіць віртуальную мыш"
 
 #: backends/midi/windows.cpp:168
 msgid "Windows MIDI"
-msgstr ""
+msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:59
 msgid "Can't create directory here!"
-msgstr ""
+msgstr "Немажліва стварыць тэчку тут!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:65
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -3335,124 +3335,126 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:62
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:136
 msgid "Invalid path!"
-msgstr ""
+msgstr "Няпэўны шлях!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:83
 msgid "Parent directory doesn't exists!"
-msgstr ""
+msgstr "Бацькоўскай тэчкі не існуе!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Немажліва стварыць тэчку ў файле!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:97
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:140
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "У бацькоўскай тэчцы ё файл з такой назвай!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:103
 msgid "Failed to create the directory!"
-msgstr ""
+msgstr "Ня выйшла стварыць тэчку!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:110
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 msgid "Directory created successfully!"
-msgstr ""
+msgstr "Тэчка пасьпяхова створана!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:121
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:203
 msgid "Back to parent directory"
-msgstr ""
+msgstr "Назад да бацькоўскай тэчкі"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:66
 msgid "The file doesn't exist!"
-msgstr ""
+msgstr "Файл не існуе!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:70
 msgid "Can't download a directory!"
-msgstr ""
+msgstr "Немажліва заладаваць тэчку!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
-msgstr ""
+msgstr "Ня выйшла прачытаць файл!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:58
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"Старонка недаступная без рэсурсаў. Упэўніцеся, што файл wwwroot.zip з "
+"дыстрыбуцыі ScummVM даступны у 'themepath'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 msgid "Create directory"
-msgstr ""
+msgstr "Стварыць тэчку"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Upload files"
-msgstr ""
+msgstr "Заладаваць файлы"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Увядзіце новую назву тэчкі:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Select a file to upload:"
-msgstr ""
+msgstr "Выбярыце файл для ладаваньня:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Or select a directory (works in Chrome only):"
-msgstr ""
+msgstr "Ці выбярыце тэчку (працуе толькі ў Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr ""
+msgstr "Паказальнік "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
-msgstr ""
+msgstr "Узьнікла памылка"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:80
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:44
 msgid "File system root"
-msgstr ""
+msgstr "Корань файлавай сістэмы"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "Saved games"
-msgstr ""
+msgstr "Захаваныя гульні"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
 msgid "Parent directory"
-msgstr ""
+msgstr "Бацькоўская тэчка"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
 msgid "ScummVM couldn't list the directory you specified."
-msgstr ""
+msgstr "ScummVM ня змог вывесьці азначаную вамі тэчку."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Index of"
-msgstr ""
+msgstr "Паказальнік"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "Гэта галоўная старонка лякальнага вэб-сэрвэру."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "Open Files manager"
-msgstr ""
+msgstr "Адкрыць кіраваньні файламі"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "Бацькоўская тэчка не існуе!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
