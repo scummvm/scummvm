@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 20:34+0000\n"
-"PO-Revision-Date: 2022-02-06 21:57+0000\n"
+"PO-Revision-Date: 2022-02-06 22:06+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3589,41 +3589,43 @@ msgstr ""
 #: backends/platform/3ds/osystem-events.cpp:71
 #: backends/platform/ds/osystem_ds.cpp:164
 msgid "Touch"
-msgstr ""
+msgstr "Дотык"
 
 #: backends/platform/3ds/osystem-events.cpp:311
 msgid "Toggle Drag Mode"
-msgstr ""
+msgstr "Пералучыць рэжым перацягу"
 
 #: backends/platform/3ds/osystem-events.cpp:316
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "Пералучыць рэжым люпы"
 
 #: backends/platform/3ds/osystem-events.cpp:321
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Адкрыць налады 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:359
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Рэжым люпы адлучаны. Перазапуск рэжыму перацягу.\n"
+"Зварот да ScummVM…"
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Рэжым люпы адлучаны. Зварот да ScummVM…"
 
 #: backends/platform/3ds/osystem-events.cpp:395
 msgid "Hover Mode"
-msgstr ""
+msgstr "Рэжым руху"
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Drag Mode"
-msgstr ""
+msgstr "Рэжым перацягу"
 
 #: backends/platform/3ds/osystem-events.cpp:401
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "Немажліва пералучыцца на рэжым перацягу, калі далучаны рэжым люпы"
 
 #: backends/platform/3ds/osystem-events.cpp:408
 msgid "Magnify Mode cannot be activated in menus."
