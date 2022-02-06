@@ -170,9 +170,7 @@ OptionsDialog::~OptionsDialog() {
 
 void OptionsDialog::init() {
 	_enableControlSettings = false;
-	_onscreenCheckbox = nullptr;
 	_touchpadCheckbox = nullptr;
-	_swapMenuAndBackBtnsCheckbox = nullptr;
 	_kbdMouseSpeedDesc = nullptr;
 	_kbdMouseSpeedSlider = nullptr;
 	_kbdMouseSpeedLabel = nullptr;
@@ -261,25 +259,11 @@ void OptionsDialog::build() {
 	}
 
 	// Control options
-	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
-		if (ConfMan.hasKey("onscreen_control", _domain)) {
-			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
-			if (_onscreenCheckbox != nullptr)
-				_onscreenCheckbox->setState(onscreenState);
-		}
-	}
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
 			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
 			if (_touchpadCheckbox != nullptr)
 				_touchpadCheckbox->setState(touchpadState);
-		}
-	}
-	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
-		if (ConfMan.hasKey("swap_menu_and_back_buttons", _domain)) {
-			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
-			if (_swapMenuAndBackBtnsCheckbox != nullptr)
-				_swapMenuAndBackBtnsCheckbox->setState(state);
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
@@ -813,19 +797,9 @@ void OptionsDialog::apply() {
 
 	// Control options
 	if (_enableControlSettings) {
-		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
-			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
-				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
-			}
-		}
 		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
 				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
-			}
-		}
-		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
-			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
-				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
 			}
 		}
 		if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
@@ -1240,17 +1214,9 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 }
 
 void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
-	// Show On-Screen control
-	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
-		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
-
 	// Touchpad Mouse mode
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
 		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
-
-	// Swap menu and back buttons
-	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons))
-		_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", _("Swap Menu and Back buttons"));
 
 	// Keyboard and joystick mouse speed
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
@@ -2000,8 +1966,6 @@ void GlobalOptionsDialog::build() {
 	// The control tab (currently visible only for SDL and Vita platform, visibility checking by features
 	//
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
-		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
-		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
 		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
 		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
 		tab->addTab(_("Control"), "GlobalOptions_Control");
