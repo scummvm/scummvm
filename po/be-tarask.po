@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 16:06+0000\n"
+"PO-Revision-Date: 2022-02-06 17:30+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2996,7 +2996,7 @@ msgstr "Максымальная гучнасьць"
 
 #: backends/events/gph/gph-events.cpp:437
 msgid "Increasing Volume"
-msgstr "Павелічэньне гучнасьці"
+msgstr "Павялічэньне гучнасьці"
 
 #: backends/events/gph/gph-events.cpp:443
 msgid "Minimal Volume"
@@ -3027,86 +3027,86 @@ msgstr "Цэнтравана"
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Павялічэньне акурат у піксэль"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
 msgid "Even pixels scaling"
-msgstr ""
+msgstr "Раўнамернае павялічэньне піксэляў"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Fit to window"
-msgstr ""
+msgstr "Па памеру акна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Stretch to window"
-msgstr ""
+msgstr "Расьцягнуць па акну"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Па памеру акна (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Разрознасьць: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
-msgstr ""
+msgstr "Карэкцыя прапорцыяў экрану далучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
-msgstr ""
+msgstr "Карэкцыя прапорцыяў экрану адлучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
-msgstr ""
+msgstr "Фільтраваньне далучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:765
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
-msgstr ""
+msgstr "Фільтраваньне адлучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:794
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Stretch mode"
-msgstr ""
+msgstr "Рэжым расьцягу"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr ""
+msgstr "Паверхня SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
-msgstr ""
+msgstr "Дзейны графічны фільтар:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:349
 #, c-format
 msgid "Saved screenshot '%s'"
-msgstr ""
+msgstr "Захаваны здымак экрану '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:358
 msgid "Could not save screenshot"
-msgstr ""
+msgstr "Ня выйшла захаваць здымак экрану"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:403
 msgid "Windowed mode"
-msgstr ""
+msgstr "Аконны рэжым"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:414 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Пералучэньне рэжыму поўнага экрану"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
-msgstr ""
+msgstr "Пералучэньне захопу мышы"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 #: engines/wintermute/keymapper_tables.h:646
@@ -3119,107 +3119,107 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1785
 #: engines/wintermute/keymapper_tables.h:1818
 msgid "Save screenshot"
-msgstr ""
+msgstr "Захаваць здымак экрану"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Toggle aspect ratio correction"
-msgstr ""
+msgstr "Пералучэньне карэкцыі прапорцыяў экрану"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Toggle linear filtered scaling"
-msgstr ""
+msgstr "Пералучэньне лінейнага фільтраваньня пры павялічэньні"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:446
 msgid "Cycle through stretch modes"
-msgstr ""
+msgstr "Пералучэньне рэжыму расьцягу"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:452
 msgid "Increase the scale factor"
-msgstr ""
+msgstr "Павысіць каэфіцыент павялічэньне"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:458
 msgid "Decrease the scale factor"
-msgstr ""
+msgstr "Зьнізіць каэфіцыент павялічэньня"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:464
 msgid "Switch to the next scaler"
-msgstr ""
+msgstr "Пералучэньне на наступны павялічнік"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:469
 msgid "Switch to the previous scaler"
-msgstr ""
+msgstr "Пералучэньне на папярэдні павялічнік"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Left Mouse Button"
-msgstr ""
+msgstr "Левая кнопка мышы"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Right Mouse Button"
-msgstr ""
+msgstr "Правая кнопка мышы"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Middle Mouse Button"
-msgstr ""
+msgstr "Сярэдняя кнопка мышы"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Кола мышы ўгару"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Кола мышы ўніз"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "X1 Mouse Button"
-msgstr ""
+msgstr "Кнопка мышы X1"
 
 #: backends/keymapper/hardware-input.cpp:250
 msgid "X2 Mouse Button"
-msgstr ""
+msgstr "Кнопка мышы X2"
 
 #: backends/keymapper/hardware-input.cpp:255
 msgid "Joy A"
-msgstr ""
+msgstr "„A“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy B"
-msgstr ""
+msgstr "„B“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy X"
-msgstr ""
+msgstr "„X“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy Y"
-msgstr ""
+msgstr "„Y“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Back"
-msgstr ""
+msgstr "„Назад“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Guide"
-msgstr ""
+msgstr "„Меню“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Start"
-msgstr ""
+msgstr "„Пачатак“ джойстыку"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Left Stick"
-msgstr ""
+msgstr "Левы стык"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Right Stick"
-msgstr ""
+msgstr "Правы стык"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:208
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Левы цынгель"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:214
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Правы цынгель"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
