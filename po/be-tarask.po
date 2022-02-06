@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-05 22:47+0000\n"
+"PO-Revision-Date: 2022-02-06 09:55+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2593,20 +2593,23 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"УВАГА: У слоце аўтазахаваньня ё захаваная гульня %S. Вы можаце перанесьці "
+"існы захоў у новы слот, перазапісаць яго або скасаваць аўтазахаваньне (ажно "
+"да перазапуску)"
 
 #: engines/engine.cpp:583
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ПАМЫЛКА: Ня выйшла перанесьці захоў у новы слот"
 
 #: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
-msgstr ""
+msgstr "Аўтазахаваньне"
 
 #: engines/engine.cpp:617
 msgid "Error occurred making autosave"
-msgstr ""
+msgstr "Памылка аўтазахаваньня"
 
 #: engines/engine.cpp:692
 #, c-format
@@ -2614,15 +2617,17 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
+"Ня выйшла заладаваць захаваную гульню (%s)! Калі ласка, праглядзіце файл "
+"README з асноўнай інфармацыяй й інструкцыямі, як атрымаць дадатковую "
+"дапамогу."
 
 #: engines/engine.cpp:710
 msgid "WARNING: "
-msgstr ""
+msgstr "УВАГА: "
 
 #: engines/engine.cpp:710
-#, fuzzy
 msgid " Shall we still run the game?"
-msgstr "Цэлая назва гульні"
+msgstr " Ці хочаце вы шчэ запусьціць гульню?"
 
 #: engines/engine.cpp:711
 msgid ""
@@ -2630,28 +2635,33 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
+"УВАГА: Гэтая гульня шчэ ня поўнасьцю падтрымлівае ScummVM. Хутчэй за ўсё, "
+"гульня будзе нестабільная й вашыя захаваныя гульні могуць не працаваць у "
+"будучых вэрсіях ScummVM."
 
 #: engines/engine.cpp:714 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
-msgstr ""
+msgstr "Усё адно запусьціць"
 
 #: engines/engine.cpp:721
 msgid "This game is not supported."
-msgstr ""
+msgstr "Гэтая гульня не падтрымліваецца."
 
 #: engines/engine.cpp:721
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
+"Гэтая гульня не падтрымліваецца, бо:\n"
+"\n"
 
 #: engines/engine.cpp:860
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Заладаваньне гульні немажліва цяпер"
 
 #: engines/engine.cpp:889
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Захаваньне гульні немажліва цяпер"
 
 #: engines/game.cpp:184
 #, c-format
@@ -2661,45 +2671,49 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Відаць, гульня у '%s' ё невядомым варыянтам гульні.\n"
+"\n"
+"Калі ласка, паведаміце суполцы ScummVM на %s наступныя зьвесткі, разам з "
+"назваю гульні, ейнай вэрсіяй, мовай і г.д.:"
 
 #: engines/game.cpp:188
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "Прыдатныя ID гульні для рухавіку %s:"
 
 #: engines/metaengine.cpp:56
 msgid "Default game keymap"
-msgstr ""
+msgstr "Стандартныя клявішы гульні"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
-msgstr ""
+msgstr "Левы пстрык"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2089
 msgid "Middle Click"
-msgstr ""
+msgstr "Сярэдні пстрык"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
-msgstr ""
+msgstr "Правы пстрык"
 
 #: engines/metaengine.cpp:77 engines/grim/grim.cpp:523
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:122
 #: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1531
 msgid "Pause"
-msgstr ""
+msgstr "Перапынак"
 
 #: engines/metaengine.cpp:82 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
-msgstr ""
+msgstr "Меню гульні"
 
 #: engines/metaengine.cpp:88 engines/grim/grim.cpp:506
 #: engines/grim/grim.cpp:602 engines/mohawk/myst.cpp:567
@@ -2710,25 +2724,25 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1639
 #: engines/wintermute/keymapper_tables.h:2033
 msgid "Skip"
-msgstr ""
+msgstr "Прапусьціць"
 
 #: engines/metaengine.cpp:94 engines/sky/metaengine.cpp:117
 msgid "Skip line"
-msgstr ""
+msgstr "Прапусьціць радок"
 
 #: engines/metaengine.cpp:100
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Дыялёг прадбачнага ўводу"
 
 #: engines/metaengine.cpp:104 engines/griffon/metaengine.cpp:89
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:608
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
-msgstr ""
+msgstr "Пацьвердзіць"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
-msgstr ""
+msgstr "OpenGL"
 
 #: graphics/renderer.cpp:33
 msgid "OpenGL with shaders"
