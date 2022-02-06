@@ -123,6 +123,34 @@ static const PrinceGameDescription gameDescriptions[] = {
 		},
 		kPrinceDataPL
 	},
+	{
+		{
+			"prince",
+			"w/translation",
+			AD_ENTRY3s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031,
+					   "FONT1.RAW", nullptr, -1,
+					   "prince_translation.dat", nullptr, -1),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			GF_TRANSLATED | ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataDE
+	},
+	{
+		{
+			"prince",
+			"w/translation",
+			AD_ENTRY3s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298,
+					   "FONT1.RAW", nullptr, -1,
+					   "prince_translation.dat", nullptr, -1),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			GF_TRANSLATED | ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataPL
+	},
 	{ AD_TABLE_END_MARKER, kPrinceDataUNK }
 };
 
