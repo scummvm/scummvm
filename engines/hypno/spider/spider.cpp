@@ -843,7 +843,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_octo1 = new Transition("tryagain.mi_");
 	over_octo1->intros.push_back("spider/cine/doos001a.smk");
-	_levels["<over_octo>"] = over_octo1;
+	_levels["<over_octo1>"] = over_octo1;
 
 	Transition *over_hob_vul = new Transition("tryagain.mi_");
 	over_hob_vul->intros.push_back("spider/cine/dals001a.smk");
