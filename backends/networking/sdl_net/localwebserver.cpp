@@ -50,6 +50,10 @@
 #endif
 
 #define LSSDP_BUFFER_LEN 2048
+#endif // POSIX
+
+#ifdef PLAYSTATION3
+#include <net/netctl.h>
 #endif
 
 namespace Common {
@@ -321,7 +325,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		ifc.ifc_buf = (caddr_t) buffer;
 
 		if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
-		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
+			warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
 		} else {
 			struct ifreq *i;
 			for (size_t index = 0; index < (size_t)ifc.ifc_len; index += _SIZEOF_ADDR_IFREQ(*i)) {
@@ -372,6 +376,22 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			warning("LocalWebserver: failed to close socket [fd %d]: %s (%d)", fd, strerror(errno), errno);
 		}
 	}
+#elif defined(PLAYSTATION3)
+	netCtlInit();
+	s32 connectionState;
+	netCtlGetState(&connectionState);
+	if (connectionState == NET_CTL_STATE_IPObtained) {
+		union net_ctl_info info;
+		if (netCtlGetInfo(NET_CTL_INFO_IP_ADDRESS, &info) == 0) {
+			debug(9, "LocalWebserver: IP Address %s", info.ip_address);
+			_address = "http://" + Common::String(info.ip_address) + Common::String::format(":%u/", _serverPort);
+		} else {
+			warning("LocalWebserver: failed to get IP address for network connection");
+		}
+	} else {
+		warning("LocalWebserver: no active network connection was detected");
+	}
+	netCtlTerm();
 #endif
 }
 

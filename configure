@@ -3024,7 +3024,7 @@ EOF
 		append_var CXXFLAGS "-mcpu=cell -mno-fp-in-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		append_var LDFLAGS "-L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		# The network libraries are statically linked and need to be specified in the following order
-		append_var SDL_NET_LIBS "-lSDL_net -lnet -lsysmodule"
+		append_var SDL_NET_LIBS "-lSDL2_net -lnet -lnetctl -lsysmodule"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		# PS3 has no OpenGL support at all even though it's SDL based
