@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 20:34+0000\n"
-"PO-Revision-Date: 2022-02-06 20:39+0000\n"
+"PO-Revision-Date: 2022-02-06 21:57+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3458,123 +3458,125 @@ msgstr "Бацькоўская тэчка не існуе!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
-msgstr ""
+msgstr "Немажліва заладаваць у файл!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
-msgstr ""
+msgstr "Вярнуцца да кіраваньня файламі"
 
 #: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Ня выйшла запусьціць лякальны вэб-сэрвэр.\n"
+"Праверце, ці не заняты выбраны порт іншай праграмай і паспрабуйце зноўку."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:68
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:110
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Няпэўны запыт: загалоўкі задоўгія!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:154
 msgid "Failed to upload the file!"
-msgstr ""
+msgstr "Ня выйшла заладаваць файл!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:183
 msgid "No file was passed!"
-msgstr ""
+msgstr "Файлы не былі пераданы!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:201
 msgid "Uploaded successfully!"
-msgstr ""
+msgstr "Пасьпяхова заладована!"
 
 #: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:278
 msgid "~C~lose"
-msgstr ""
+msgstr "Зак~р~ыць"
 
 #: backends/platform/3ds/options-dialog.cpp:47
 msgid "Show mouse cursor"
-msgstr ""
+msgstr "Паказваць паказальнік мышы"
 
 #: backends/platform/3ds/options-dialog.cpp:50
 msgid "Snap to edges"
-msgstr ""
+msgstr "Прымацаваць да краёў"
 
 #: backends/platform/3ds/options-dialog.cpp:53
 msgid "Stretch to fit"
-msgstr ""
+msgstr "Расьцягнуць да адпаведнасьці"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 msgid "Use Screen:"
-msgstr ""
+msgstr "Карыстаць экран:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "Вышні"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "Ніжні"
 
 #: backends/platform/3ds/options-dialog.cpp:60
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr ""
+msgstr "Разам"
 
 #: backends/platform/3ds/osystem-events.cpp:47
 #: backends/platform/ds/osystem_ds.cpp:144
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/ds/osystem_ds.cpp:148 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Select"
-msgstr ""
+msgstr "Выбраць"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:46
 #: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
-msgstr ""
+msgstr "Пачаць"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/ds/osystem_ds.cpp:150
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:151
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:65
 msgid "C-Pad X"
