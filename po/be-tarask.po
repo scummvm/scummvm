@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 11:23+0000\n"
+"PO-Revision-Date: 2022-02-06 13:08+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1093,7 +1093,7 @@ msgstr "Рэжым тачпаду"
 
 #: gui/options.cpp:1253
 msgid "Swap Menu and Back buttons"
-msgstr "Памяняць кнопкі „Меню“ й „Назад“"
+msgstr "Памяняць кнопкі „Мэню“ й „Назад“"
 
 #: gui/options.cpp:1258
 msgid "Pointer Speed:"
@@ -2713,7 +2713,7 @@ msgstr "Перапынак"
 
 #: engines/metaengine.cpp:82 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
-msgstr "Меню гульні"
+msgstr "Мэню гульні"
 
 #: engines/metaengine.cpp:88 engines/grim/grim.cpp:506
 #: engines/grim/grim.cpp:602 engines/mohawk/myst.cpp:567
@@ -2938,6 +2938,8 @@ msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
+"Ці сапраўды вы хочаце выйсьці?\n"
+"Увесь незахаваны поступ будзе страчаны."
 
 #: backends/events/default/default-events.cpp:218
 #: backends/events/default/default-events.cpp:359
@@ -2947,7 +2949,7 @@ msgstr ""
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:83
 #: engines/zvision/metaengine.cpp:203 engines/zvision/metaengine.cpp:221
 msgid "Quit"
-msgstr ""
+msgstr "Выйсьце"
 
 #: backends/events/default/default-events.cpp:333
 msgid "Global"
@@ -2956,19 +2958,19 @@ msgstr ""
 #: backends/events/default/default-events.cpp:336
 #: engines/twine/metaengine.cpp:218
 msgid "Global Main Menu"
-msgstr ""
+msgstr "Глябальнае мэню"
 
 #: backends/events/default/default-events.cpp:346
 msgid "Display keyboard"
-msgstr ""
+msgstr "Паказваць клявіятуру"
 
 #: backends/events/default/default-events.cpp:353
 msgid "Toggle mute"
-msgstr ""
+msgstr "Прыбраць гук"
 
 #: backends/events/default/default-events.cpp:381
 msgid "Open Debugger"
-msgstr ""
+msgstr "Адкрыць наладнік хібаў"
 
 #: backends/events/gph/gph-events.cpp:411
 #: backends/events/gph/gph-events.cpp:454
