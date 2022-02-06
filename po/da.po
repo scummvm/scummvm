@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-05 08:40+0000\n"
+"POT-Creation-Date: 2022-02-06 20:21+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -3536,7 +3536,7 @@ msgstr "Kan ikke uploade en fil!"
 msgid "Back to the files manager"
 msgstr "Tilbage til filhåndteringen"
 
-#: backends/networking/sdl_net/localwebserver.cpp:122
+#: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

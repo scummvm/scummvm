@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-05 08:40+0000\n"
+"POT-Creation-Date: 2022-02-06 20:21+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3495,7 +3495,7 @@ msgstr "파일을 업로드할 수 없습니다!"
 msgid "Back to the files manager"
 msgstr "파일 매니저로 돌아가기"
 
-#: backends/networking/sdl_net/localwebserver.cpp:122
+#: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

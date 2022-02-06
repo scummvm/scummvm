@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-05 08:40+0000\n"
+"POT-Creation-Date: 2022-02-06 20:21+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -3513,7 +3513,7 @@ msgstr "Não é possível carregar para dentro dum ficheiro!"
 msgid "Back to the files manager"
 msgstr "Voltar ao gestor de ficheiros"
 
-#: backends/networking/sdl_net/localwebserver.cpp:122
+#: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

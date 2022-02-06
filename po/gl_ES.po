@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-05 08:40+0000\n"
+"POT-Creation-Date: 2022-02-06 20:21+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3591,7 +3591,7 @@ msgstr "O camiño non é un ficheiro"
 msgid "Back to the files manager"
 msgstr "Abre o diálogo do xestor de descargas."
 
-#: backends/networking/sdl_net/localwebserver.cpp:122
+#: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

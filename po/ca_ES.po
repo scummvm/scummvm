@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-05 08:40+0000\n"
+"POT-Creation-Date: 2022-02-06 20:21+0000\n"
 "PO-Revision-Date: 2022-01-31 06:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3488,7 +3488,7 @@ msgstr "No es pot pujar a un fitxer!"
 msgid "Back to the files manager"
 msgstr "Torna al gestor de fitxers"
 
-#: backends/networking/sdl_net/localwebserver.cpp:122
+#: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
