@@ -48,6 +48,9 @@ public:
 		_bits = (byte*)malloc((bitcount + 7) / 8);
 		clear();
 	}
+	void set_bits(byte *bits) {
+		memcpy(_bits, bits, (_bitcount + 7) / 8);
+	}
 
 	void clear() {
 		memset(_bits, 0, (_bitcount + 7) / 8);
