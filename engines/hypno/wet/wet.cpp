@@ -169,6 +169,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<gameover>"] = over;
 
 	loadLib("", "wetlands/c_misc/fonts.lib", true);
+	loadFonts();
 	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
 	_nextLevel = "<start>";
 }
@@ -193,6 +194,8 @@ void WetEngine::loadAssetsPCW() {
 	_levels["<gameover>"] = over;
 
 	loadLib("", "c_misc/sound.lib", false);
+	loadLib("", "c_misc/fonts.lib", true);
+	loadFonts();
 	_nextLevel = "<start>";
 }
 
@@ -219,6 +222,8 @@ void WetEngine::loadAssetsPCG() {
 	_levels["<gameover>"] = over;
 
 	loadLib("sound/", "sound.lib", false);
+	loadLib("", "fonts.lib", true);
+	loadFonts();
 	_nextLevel = "<start>";
 }
 
