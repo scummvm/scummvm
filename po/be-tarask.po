@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-05 08:40+0000\n"
-"PO-Revision-Date: 2022-02-06 10:11+0000\n"
+"PO-Revision-Date: 2022-02-06 11:11+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -2814,6 +2814,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
+"Пераважная гукавая прылада '%s' ня знойдзена (мабыць яна вымкнена або "
+"адлучана)."
 
 #: audio/mididrv.cpp:288
 #, c-format
@@ -2821,77 +2823,82 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"Пераважная гукавая прылада '%s' ня можа быць выкарыстана. Падрабязнасьці ў "
+"файле хронікі."
 
 #: audio/mididrv.cpp:453
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Запуск адбітку MIDI"
 
 #: audio/mods/paula.cpp:313
 msgid "Amiga Audio emulator"
-msgstr ""
+msgstr "Гукавы эмулятар Amiga"
 
 #: audio/null.h:43
 msgid "No music"
-msgstr ""
+msgstr "Бяз музыкі"
 
 #: audio/softsynth/appleiigs.cpp:32
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "Эмулятар Apple II GS (НЯ ДЗЕЙСНЫ)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System emulator"
-msgstr ""
+msgstr "Эмулятар Creative Music System"
 
 #: audio/softsynth/fluidsynth.cpp:235
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"FluidSynth патрабуе наладаў 'soundfont'. Калі ласка, адзначце яго ў ScummVM "
+"на картцы MIDI. Музыка адлучана."
 
 #: audio/softsynth/fluidsynth.cpp:367
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
+"ScummVM: Ня выйшла заладаваць карыстальніцкі SoundFont '%s'. Музыка адлучана."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "Гук FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
-msgstr ""
+msgstr "Гук PC-98"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:81
 msgid "SegaCD Audio"
-msgstr ""
+msgstr "Гук SegaCD"
 
 #: audio/softsynth/mt32.cpp:169
 msgid "Initializing MT-32 Emulator"
-msgstr ""
+msgstr "Наладжваньне эмулятару MT-32"
 
 #: audio/softsynth/mt32.cpp:436
 msgid "MT-32 emulator"
-msgstr ""
+msgstr "Эмулятар MT-32"
 
 #: audio/softsynth/pcspk.cpp:203
 msgid "PC Speaker emulator"
-msgstr ""
+msgstr "Эмулятар дынаміку ПК"
 
 #: audio/softsynth/pcspk.cpp:222
 msgid "IBM PCjr emulator"
-msgstr ""
+msgstr "Эмулятар IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1433
 msgid "C64 Audio emulator"
-msgstr ""
+msgstr "Эмулятар гуку C64"
 
 #: backends/cloud/cloudmanager.cpp:155
 msgid "<syncing...>"
-msgstr ""
+msgstr "<сынхранаваньне...>"
 
 #: backends/cloud/storage.cpp:241
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Сынхранаваньне захаваных гульняў скасована."
 
 #: backends/cloud/storage.cpp:243
 msgid ""
