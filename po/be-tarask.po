@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 14:49+0000\n"
+"PO-Revision-Date: 2022-02-07 15:29+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4176,7 +4176,7 @@ msgstr "Файл сцэнкі '%s' ня знойдзены!"
 
 #: engines/agos/metaengine.cpp:103
 msgid "AGOS 2 support is not compiled in"
-msgstr "Падтрыманьне AGOS 2 не сабраная"
+msgstr "Падтрыманьне AGOS 2 не сабранае"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
@@ -4388,42 +4388,44 @@ msgstr ""
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
-msgstr ""
+msgstr "Рэжым колеравай сьлепаты"
 
 #: engines/cge/detection.cpp:114
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Робіць рэжым Колеравай сьлепаты стандартным"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
 #: engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
-msgstr ""
+msgstr "Далучыць ператварэньне тэксту ў мову"
 
 #: engines/cge/detection.cpp:125
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr ""
+msgstr "Ператвараць тэкст у мову ў гульні (калі даступна)"
 
 #: engines/cine/detection.cpp:60
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "Выкарыстоўваць празрыстыя дыялёгавыя вокны ў 16-каляровых сцэнах"
 
 #: engines/cine/detection.cpp:61
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+"Выкарыстоўваць празрыстыя дыялёгавыя вокны ў 16-каляровых сцэнах, нават калі "
+"арыґінальная гульна не падтрымлівала гэтага"
 
 #: engines/cine/metaengine.cpp:133
 msgid "Unnamed autosave"
-msgstr ""
+msgstr "Неназваны аўтазахоў"
 
 #: engines/cine/metaengine.cpp:135 engines/cine/metaengine.cpp:207
 msgid "Unnamed savegame"
-msgstr ""
+msgstr "Неназваны захоў"
 
 #: engines/cine/metaengine.cpp:152 engines/cine/metaengine.cpp:215
 msgid "Empty autosave"
-msgstr ""
+msgstr "Пусты аўтазахоў"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -4431,10 +4433,13 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"УВАГА: Захаваная гульня, якую вы ладуеце, выкарыстоўвае няпэўны часовы "
+"фармат. Гульня будзе зламаная. Калі ласка, абмяркуйце гуляньне ў Operation "
+"Stealth адпачатку з новымі захаваньнямі."
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Versailles 1685 не сабранае"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
