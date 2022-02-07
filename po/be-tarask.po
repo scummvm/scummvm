@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-06 23:04+0000\n"
+"PO-Revision-Date: 2022-02-07 10:45+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1918,7 +1918,7 @@ msgstr "Іншае сховішча працуе цяпер. Ці хочаце �
 #: gui/options.cpp:3069 gui/options.cpp:3107
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
-"Пачакайце, пакуль існае сховішча ня скончыць працу й паспрабуйце зноўку."
+"Пачакайце, пакуль цяперашняе сховішча ня скончыць працу й паспрабуйце зноўку."
 
 #: gui/options.cpp:3082
 msgid "Connecting..."
@@ -2048,8 +2048,8 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
-"УВАГА: У існым захове вы гулялі даўжэй, чым цяпер. Ці сапраўды вы хочаце яго "
-"перазапісаць?"
+"УВАГА: У цяперашнім захове вы гулялі даўжэй, чым цяпер. Ці сапраўды вы "
+"хочаце яго перазапісаць?"
 
 #: gui/saveload-dialog.cpp:413 gui/saveload-dialog.cpp:593
 msgid "No date saved"
@@ -3727,101 +3727,101 @@ msgstr "Дапамога"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:242
 msgid "User Manual"
-msgstr ""
+msgstr "Дапаможнік карыстача"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:244
 msgid "General Information"
-msgstr ""
+msgstr "Асноўная інфармацыя"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Навіны ў ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:247
 msgid "Credits"
-msgstr ""
+msgstr "Аўтары"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "GPL License"
-msgstr ""
+msgstr "Ліцэнзія GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "LGPL License"
-msgstr ""
+msgstr "Ліцэнзія LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "Freefont License"
-msgstr ""
+msgstr "Ліцэнзія Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "OFL License"
-msgstr ""
+msgstr "Ліцэнзія OFL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "BSD License"
-msgstr ""
+msgstr "Ліцэнзія BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
-msgstr ""
+msgstr "Крыж"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:196
 msgid "Circle"
-msgstr ""
+msgstr "Круг"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:184
 msgid "Square"
-msgstr ""
+msgstr "Квадрат"
 
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr ""
+msgstr "Мінус"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr ""
+msgstr "Плюс"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
-msgstr ""
+msgstr "Відэа"
 
 #: backends/platform/wii/options.cpp:53
 msgid "Current video mode:"
-msgstr ""
+msgstr "Цяперашні відэарэжым:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
