@@ -749,9 +749,9 @@ void set_up_screen(SetupScreenMode mode) {
 
 	g_screen->update();
 
-	g_engine->_canLoadSave = isMainLoop;
+	g_engine->setCanLoadSave(isMainLoop);
 	EVENTS_UPDATE;
-	g_engine->_canLoadSave = false;
+	g_engine->setCanLoadSave(false);
 }
 
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {

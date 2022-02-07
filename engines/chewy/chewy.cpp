@@ -162,6 +162,17 @@ SaveStateList ChewyEngine::listSaves() {
 	return getMetaEngine()->listSaves(_targetName.c_str());
 }
 
+void ChewyEngine::showGmm(bool isInGame) {
+	_canLoad = true;
+	_canSave = isInGame;
+
+	openMainMenuDialog();
+	_events->clearEvents();
+
+	_canLoad = false;
+	_canSave = false;
+}
+
 void ChewyEngine::playVideo(uint num) {
 	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
 	VideoResource *videoResource = new VideoResource("cut.tap");
