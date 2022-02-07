@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 17:24+0000\n"
+"PO-Revision-Date: 2022-02-07 17:54+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4825,83 +4825,85 @@ msgstr "Што? "
 
 #: engines/glk/scott/scott.cpp:1126
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Вы няздольны гэта зрабіць. "
 
 #: engines/glk/scott/scott.cpp:1128
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Я няздольны гэта зрабіць. "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "O.K. "
-msgstr ""
+msgstr "ОК "
 
 #: engines/glk/scott/scott.cpp:1157
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Нічога ня выпала.\n"
 
 #: engines/glk/scott/scott.cpp:1167
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Вы няздольны гэта зрабіць.\n"
 
 #: engines/glk/scott/scott.cpp:1169
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Я няздольны гэта зрабіць.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
-msgstr ""
+msgstr "Памылка захаваньня гульні\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Няпэўны rs файл."
 
 #: engines/glk/hugo/hugo.cpp:189
 msgid "Save file created by different version."
-msgstr ""
+msgstr "Захаваная гульня зробленая іншай вэрсіяй."
 
 #: engines/gob/inter_playtoons.cpp:257 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:553
 msgid "Failed to load saved game from file."
-msgstr ""
+msgstr "Ня выйшла заладаваць захаваную гульню з файлу."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:262
 #: engines/tinsel/saveload.cpp:566
 msgid "Failed to save game to file."
-msgstr ""
+msgstr "Ня выйшла захаваць гульню ў файл."
 
 #: engines/gob/inter_v5.cpp:106
 msgid "Failed to delete file."
-msgstr ""
+msgstr "Ня выйшла выдаліць файл."
 
 #: engines/griffon/metaengine.cpp:83
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Мэню / Прапусьціць"
 
 #: engines/griffon/metaengine.cpp:119
 msgid "Attack"
-msgstr ""
+msgstr "Атака"
 
 #: engines/griffon/metaengine.cpp:133
 msgid "Speed Up Cutscene"
-msgstr ""
+msgstr "Паскорыць сцэнку"
 
 #: engines/grim/detection.cpp:69
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Заладаваць карыстальніцкую латку (ня мае падтрыманьня)"
 
 #: engines/grim/detection.cpp:70
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Заладаваць карыстальніцкую латку. Калі ласка, заўважце, што суполка ScummVM "
+"не падтрымлівае па пытаньням такіх латак."
 
 #: engines/grim/detection.cpp:78 engines/zvision/metaengine.cpp:152
 msgid "Show FPS"
-msgstr ""
+msgstr "Паказваць лічыльнік кадраў/с"
 
 #: engines/grim/detection.cpp:79
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Паказваць лічыльнік кадраў/с падчас гульні."
 
 #: engines/grim/grim.cpp:352
 #, c-format
@@ -4910,52 +4912,56 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ScummVM знайшоў нейкія праблемы са зьвесткамі вашай гульні.\n"
+"Запук ScummVM можа выклікаць хібы й нават крахі.\n"
+"Ці хочаце вы шчэ запусьціць %s?"
 
 #: engines/grim/grim.cpp:475 engines/grim/grim.cpp:566
+#, fuzzy
 msgid "Run"
-msgstr ""
+msgstr "Запусьціць"
 
 #: engines/grim/grim.cpp:480 engines/scumm/help.cpp:238
 #: engines/scumm/help.cpp:246
 msgid "Examine"
-msgstr ""
+msgstr "Праверыць"
 
 #: engines/grim/grim.cpp:485 engines/grim/grim.cpp:581
 msgid "Use/Talk"
-msgstr ""
+msgstr "Ужыць/Гаварыць"
 
 #: engines/grim/grim.cpp:490 engines/grim/grim.cpp:586
 msgid "Pick up/Put away"
-msgstr ""
+msgstr "Падняць/Адкласьці"
 
 #: engines/grim/grim.cpp:500 engines/grim/grim.cpp:596
 msgid "Skip dialog lines"
-msgstr ""
+msgstr "Прапусьціць дыялёг"
 
 #: engines/grim/grim.cpp:518 engines/grim/grim.cpp:614
 #: engines/hdb/metaengine.cpp:244
 msgid "Menu"
-msgstr ""
+msgstr "Мэню"
 
 #: engines/grim/grim.cpp:556
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Круціць аб’екты ўгару"
 
 #: engines/grim/grim.cpp:561
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Круціць аб’екты ўніз"
 
 #: engines/grim/grim.cpp:571
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Хуткае выйсьце з пакою"
 
 #: engines/grim/grim.cpp:576
 msgid "Examine/Look"
-msgstr ""
+msgstr "Праверыць/Глядзець"
 
 #: engines/grim/grim.cpp:1350
 msgid "Error: the game could not be saved."
-msgstr ""
+msgstr "Памылка: ня выйшла захаваць гульню."
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -4966,6 +4972,10 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"Файл %s зьвестак гульні сапсаваны.\n"
+"Калі вы ўпэўнены, што гэта ня так, калі ласка, перадайце суполцы ScummVM "
+"наступны код разам з назвай файлу й апісаньнем вашай вэрсіі гульні (то бок "
+"dvd-box ці jewelcase):"
 
 #: engines/grim/md5check.cpp:565
 #, c-format
@@ -4975,6 +4985,10 @@ msgid ""
 "Go to https://wiki.scummvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"Ня выйшла адкрыць файл %s каб праверыць.\n"
+"Яго можа ня быць або вы можаце ня мець правоў, каб адкрыць яго.\n"
+"Праглядзіце сьпіс патрэбных файлаў тут: https://wiki.scummvm.org/index.php/"
+"Datafiles"
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -4983,10 +4997,14 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVM зараз праверыць файлы гульні, каб упэўніцца, што вашая гульня працуе "
+"найлепшым чынам.\n"
+"Гэта можа заняць нейкі час, калі ласка, пачакайце.\n"
+"Наступныя запускі гульні правярацца ня будуць."
 
 #: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Monkey Island не сабранае"
 
 #: engines/grim/resource.cpp:99
 msgid ""
