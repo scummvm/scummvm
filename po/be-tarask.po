@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 14:17+0000\n"
+"PO-Revision-Date: 2022-02-07 14:38+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4293,37 +4293,42 @@ msgstr "Рэжым курдупляў"
 
 #: engines/bladerunner/detection.cpp:62
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "Гульня паменьшыць герояў і павысіць іхныя галасы"
 
 #: engines/bladerunner/detection.cpp:70
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "Рэжым высокай прадукцыйнасьці з абмежаваньнем кадраў"
 
 #: engines/bladerunner/detection.cpp:71
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"Гэты рэжым можа моцна выкарыстоўваць працэсар! Ён пазьбягае функцыю "
+"delayMillis()."
 
 #: engines/bladerunner/detection.cpp:79
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Максымальны ліміт кадраў у сэкунду"
 
 #: engines/bladerunner/detection.cpp:80
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"З гэты рэжымам будзе максымальна 120 кадраў/c. Калі ён адлучаны, то гульня ё "
+"максымальна 60 кадраў/с"
 
 #: engines/bladerunner/detection.cpp:88
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Адлучыць хуткае стамленьне МакКоя"
 
 #: engines/bladerunner/detection.cpp:89
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Падчас бегу, МакКой ня будзе замаруджвацца, калі гулец спыняе пстрыкаць мышшу"
 
 #: engines/bladerunner/detection_tables.h:95
 #: engines/bladerunner/detection_tables.h:106
@@ -4331,7 +4336,7 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "Аматарскі перакладнік не пажадаў, каб ягоны пераклад быў у ScummVM."
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
@@ -4347,11 +4352,11 @@ msgstr ""
 #: engines/zvision/detection_tables.h:190
 #: engines/zvision/detection_tables.h:210
 msgid "Missing game code"
-msgstr ""
+msgstr "Брак коду гульні"
 
 #: engines/buried/buried.cpp:580
 msgid "Are you sure you want to quit?"
-msgstr ""
+msgstr "Ці сапраўды вы хочаце выйсьці?"
 
 #: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
