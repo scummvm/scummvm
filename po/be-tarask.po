@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 12:56+0000\n"
+"PO-Revision-Date: 2022-02-07 13:10+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4197,36 +4197,41 @@ msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
+"Гэтая гульня выкарыстоўвае рухавік AGS engine вэрсіі да 2.5, якая не "
+"падтрымліваецца."
 
 #: engines/ags/ags.cpp:135
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Гэтая гульня мае файл зьвестак памерам больш за 2 Гб, што не падтрымліваецца "
+"ў вашай вэрсіі ScummVM."
 
 #: engines/asylum/metaengine.cpp:114
+#, fuzzy
 msgid "Show version"
-msgstr ""
+msgstr "Паказваць вэрсію"
 
 #: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
-msgstr ""
+msgstr "Хуткае заладаваньне"
 
 #: engines/asylum/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
-msgstr ""
+msgstr "Хуткае захаваньне"
 
 #: engines/asylum/metaengine.cpp:129
 msgid "Switch to Sarah"
-msgstr ""
+msgstr "Пералучыцца на Сару"
 
 #: engines/asylum/metaengine.cpp:134
 msgid "Switch to Grimwall"
-msgstr ""
+msgstr "Пералучцыцца на Ґрэмвэла"
 
 #: engines/asylum/metaengine.cpp:139
 msgid "Switch to Olmec"
-msgstr ""
+msgstr "Пералучыцца на Олмэка"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -4235,18 +4240,20 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
+"Увага: Спроба заладваць захаваную гульню папярэдняй вэрсіі: Вэрсія %s / Збор "
+"%d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
-msgstr ""
+msgstr "Усё адно заладаваць"
 
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Ня выйшла прадвызначыць рэсурсы"
 
 #: engines/bladerunner/bladerunner.cpp:1058
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Патрэбны рэсурс гульні ня знойдзены"
 
 #: engines/bladerunner/bladerunner.cpp:2301
 msgid ""
