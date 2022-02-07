@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 14:38+0000\n"
+"PO-Revision-Date: 2022-02-07 14:49+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4360,7 +4360,7 @@ msgstr "Ці сапраўды вы хочаце выйсьці?"
 
 #: engines/buried/buried.cpp:590
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr ""
+msgstr "Гульня перапынена.  Націсьніце ОК, каб працягнуць."
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4372,10 +4372,19 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM знайшоў вашыя захаваныя гульні, якія патрэбна ператварыць з "
+"арыґінальнага фармату.\n"
+"Арыґінальны фармат болей не падтрымліваецца, таму немажліва заладаваць "
+"неператвораную гульню.\n"
+"\n"
+"Націсьніце ОК, каб ператварыць іх, інакш наступным разам вам паведамяць "
+"зноўку.\n"
 
 #: engines/buried/saveload.cpp:165
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
+"Захаваная гульня была зроблена цераз навейшую вэрсію ScummVM. Заладаваць "
+"немажліва."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
