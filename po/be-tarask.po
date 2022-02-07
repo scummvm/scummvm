@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 17:08+0000\n"
+"PO-Revision-Date: 2022-02-07 17:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4662,160 +4662,166 @@ msgstr "Вашае сьвятло гасьне. "
 
 #: engines/glk/scott/scott.cpp:411
 msgid "North"
-msgstr ""
+msgstr "Поўнач"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "South"
-msgstr ""
+msgstr "Поўдзень"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "East"
-msgstr ""
+msgstr "Усход"
 
 #: engines/glk/scott/scott.cpp:411
 msgid "West"
-msgstr ""
+msgstr "Захад"
 
 #: engines/glk/scott/scott.cpp:423
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Вы ня бачыце. Тут зацемна!\n"
 
 #: engines/glk/scott/scott.cpp:425
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "Я нічога ня бачу. Тут зацемна!\n"
 
 #: engines/glk/scott/scott.cpp:435
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Вы знаходзіцеся ў %s\n"
 
 #: engines/glk/scott/scott.cpp:437
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Я знаходжуся ў %s\n"
 
 #: engines/glk/scott/scott.cpp:442
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Яўныя выйсьці: "
 
 #: engines/glk/scott/scott.cpp:455
 msgid "none"
-msgstr ""
+msgstr "няма"
 
 #: engines/glk/scott/scott.cpp:464
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"Вы таксама бачыце: "
 
 #: engines/glk/scott/scott.cpp:467
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Я таксама бачу: "
 
 #: engines/glk/scott/scott.cpp:550
 msgid "Saved.\n"
-msgstr ""
+msgstr "Захавана.\n"
 
 #: engines/glk/scott/scott.cpp:643
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Вы ўжываеце словы, якія я ня ведаю! "
 
 #: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
 #: engines/glk/scott/scott.cpp:1118
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Вы нясеце зашмат. "
 
 #: engines/glk/scott/scott.cpp:775
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "Я нясу зашмат! "
 
 #: engines/glk/scott/scott.cpp:806
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Вы памерлі.\n"
 
 #: engines/glk/scott/scott.cpp:808
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Я памёр.\n"
 
 #: engines/glk/scott/scott.cpp:820
 msgid "The game is now over.\n"
-msgstr ""
+msgstr "Гульня скончаная.\n"
 
 #: engines/glk/scott/scott.cpp:835
 msgid "You have stored "
-msgstr ""
+msgstr "Вы нажылі "
 
 #: engines/glk/scott/scott.cpp:837
 msgid "I've stored "
-msgstr ""
+msgstr "Я нажыў "
 
 #: engines/glk/scott/scott.cpp:839
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " скарбаў. Па шкале ад 0 да 100, гэта роўна "
 
 #: engines/glk/scott/scott.cpp:843
 msgid "Well done.\n"
-msgstr ""
+msgstr "Цудоўна.\n"
 
 #: engines/glk/scott/scott.cpp:852
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "Вы несяце:\n"
 
 #: engines/glk/scott/scott.cpp:854
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Я нясу:\n"
 
 #: engines/glk/scott/scott.cpp:869
 msgid "Nothing"
-msgstr ""
+msgstr "Нічога"
 
 #: engines/glk/scott/scott.cpp:998
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Дайце мне загад таксама."
 
 #: engines/glk/scott/scott.cpp:1007
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "У цемры небясьпечна рухацца! "
 
 #: engines/glk/scott/scott.cpp:1015
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Вы ўпалі й зламалі шыю. "
 
 #: engines/glk/scott/scott.cpp:1017
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Я ўпаў і зламаў шыю. "
 
 #: engines/glk/scott/scott.cpp:1022
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Вы ня можаце ісьці ў тым кірунку. "
 
 #: engines/glk/scott/scott.cpp:1024
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Я не магу ісьці ў тым кірунку. "
 
 #: engines/glk/scott/scott.cpp:1082
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Тут цёмна.\n"
 
 #: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Я нясу зашмат. "
 
 #: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": ОК\n"
 
 #: engines/glk/scott/scott.cpp:1109
 msgid "Nothing taken."
-msgstr ""
+msgstr "Няма чаго ўзяць."
 
 #: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
 msgid "What ? "
-msgstr ""
+msgstr "Што? "
 
 #: engines/glk/scott/scott.cpp:1126
 msgid "It is beyond your power to do that. "
