@@ -529,17 +529,19 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 
 	// These Loom settings are only relevant for the EGA version, so
 	// exclude non-DOS versions. If the game was added a long time ago,
-	// the platform may still be listed as unknown.
+	// the platform may still be listed as unknown, and there may be no
+	// "extra" field to query.
 
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
 		return nullptr;
 
-	if (ConfMan.get("extra", target) == "Steam")
+	Common::String extra = ConfMan.get("extra", target);
+
+	if (extra == "Steam" || extra == "VGA")
 		return nullptr;
 
-	// And yet, after all this, we still can't be sure that it's not the
-	// VGA version or a demo...
+	// So we still can't be quite sure it's the EGA version. Oh well...
 	return new Scumm::EgaLoomOptionsWidget(boss, name, target);
 }
 
