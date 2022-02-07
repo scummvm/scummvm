@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 21:33+0000\n"
+"PO-Revision-Date: 2022-02-07 21:54+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -542,7 +542,7 @@ msgstr "Выбярыце файл для ладаваньня"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Enter filename for saving"
-msgstr "Напішыце імя файла для захова"
+msgstr "Напішыце назву файла для захова"
 
 #: gui/filebrowser-dialog.cpp:136
 msgid "Do you really want to overwrite the file?"
@@ -5086,43 +5086,43 @@ msgstr "Ня выйшла захаваць гульню"
 
 #: engines/groovie/script.cpp:795 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr ""
+msgstr "Ці хочаце вы захаваць або заладаваць гульню?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "Міні-гульня Minotaur яшчэ не падтрымліваецца. Пропуск"
 
 #: engines/hadesch/rooms/medisle.cpp:647
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "Міні-гульня Medusa яшчэ не падтрымліваецца. Пропуск"
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "Міні-гульня Troy яшчэ не падтрымліваецца. Пропуск"
 
 #: engines/hdb/detection.cpp:123
 msgid "Enable cheat mode"
-msgstr ""
+msgstr "Далучыць рэжым махляваньня"
 
 #: engines/hdb/detection.cpp:124
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Выбар роўню ды інфармацыя пра наладжваньне робяцца даступнымі"
 
 #: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:177
 msgid "Move up"
-msgstr ""
+msgstr "Рухацца ўгару"
 
 #: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:183
 msgid "Move down"
-msgstr ""
+msgstr "Рухацца ўніз"
 
 #: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:189
 msgid "Move left"
-msgstr ""
+msgstr "Рухацца налева"
 
 #: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:195
 msgid "Move right"
-msgstr ""
+msgstr "Рухацца направа"
 
 #: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:151 engines/scumm/help.cpp:169
@@ -5131,59 +5131,59 @@ msgstr ""
 #: engines/sky/metaengine.cpp:91 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1475
 msgid "Use"
-msgstr ""
+msgstr "Скарыстаць"
 
 #: engines/hdb/metaengine.cpp:224
 msgid "Clear waypoints"
-msgstr ""
+msgstr "Ачысьціць пункты шляху"
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
-msgstr ""
+msgstr "Наладжваньне хібаў"
 
 #: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:56
 msgid "Gore Mode"
-msgstr ""
+msgstr "Крывавы рэжым"
 
 #: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:57
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Далучыць крывавы рэжым, калі даступна"
 
 #: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
 msgid "Enable cheats"
-msgstr ""
+msgstr "Далучыць махлярства"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Дазваляе махлярства на клявішу C."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:61
 msgid "Studio audience"
-msgstr ""
+msgstr "Студыйныя гледачы"
 
 #: engines/kyra/detection.cpp:62
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Далучыць студыйных гледачоў"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:72
 msgid "Skip support"
-msgstr ""
+msgstr "Дазволіць пропускі"
 
 #: engines/kyra/detection.cpp:73
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Дазволіць прапускаць тэкст і сцэнкі"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:83
 msgid "Helium mode"
-msgstr ""
+msgstr "Гэлійны рэжым"
 
 #: engines/kyra/detection.cpp:84
 msgid "Enable helium mode"
-msgstr ""
+msgstr "Далучыць гэлійны рэжым"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
