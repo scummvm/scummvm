@@ -20,16 +20,17 @@
  */
 
 #include "common/textconsole.h"
-#include "chewy/main_menu.h"
+#include "chewy/dialogs/main_menu.h"
+#include "chewy/dialogs/cinema.h"
+#include "chewy/dialogs/credits.h"
+#include "chewy/dialogs/files.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/main.h"
 #include "chewy/ngshext.h"
-#include "chewy/dialogs/cinema.h"
-#include "chewy/dialogs/credits.h"
-#include "chewy/dialogs/files.h"
 
 namespace Chewy {
+namespace Dialogs {
 
 int MainMenu::_selection;
 int MainMenu::_personAni[3];
@@ -173,8 +174,8 @@ void MainMenu::animate() {
 
 int16 MainMenu::creditsFn(int16 key) {
 	if (key == 32 || key == 72 || key == 92 ||
-			key == 128 || key == 165 || key == 185 ||
-			key == 211 || key == 248 || key == 266) {
+		key == 128 || key == 165 || key == 185 ||
+		key == 211 || key == 248 || key == 266) {
 		for (int idx = 0; idx < 2000; ++idx) {
 			if (in->get_switch_code() == ESC)
 				return -1;
@@ -291,4 +292,5 @@ void MainMenu::restorePersonAni() {
 	}
 }
 
+} // namespace Dialogs
 } // namespace Chewy
