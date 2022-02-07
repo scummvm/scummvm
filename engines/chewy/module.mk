@@ -19,7 +19,6 @@ MODULE_OBJS = \
 	io_game.o \
 	m_event.o \
 	main.o \
-	main_menu.o \
 	mouse.o \
 	mcga.o \
 	mcga_grafik.o \
@@ -44,6 +43,7 @@ MODULE_OBJS = \
 	dialogs/credits.o \
 	dialogs/files.o \
 	dialogs/inventory.o \
+	dialogs/main_menu.o \
 	dialogs/options.o \
 	video/cfo_decoder.o \
 	rooms/room0.o \

@@ -25,6 +25,7 @@
 #include "chewy/events_base.h"
 
 namespace Chewy {
+namespace Dialogs {
 
 enum MainMenuSelection {
 	MM_START_GAME = 0,
@@ -88,6 +89,7 @@ public:
 	static void playGame();
 };
 
+} // namespace Dialogs
 } // namespace Chewy
 
 #endif

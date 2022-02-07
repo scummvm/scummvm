@@ -25,9 +25,9 @@
 #include "chewy/events.h"
 #include "chewy/menus.h"
 #include "chewy/ngshext.h"
-#include "chewy/main_menu.h"
 #include "chewy/dialogs/files.h"
 #include "chewy/dialogs/inventory.h"
+#include "chewy/dialogs/main_menu.h"
 
 namespace Chewy {
 
@@ -85,10 +85,10 @@ void game_main() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1) {
 		(void)g_engine->loadGameState(saveSlot);
-		MainMenu::playGame();
+		Dialogs::MainMenu::playGame();
 		return;
 	} else {
-		MainMenu::execute();
+		Dialogs::MainMenu::execute();
 	}
 
 	remove(ADSH_TMP);
