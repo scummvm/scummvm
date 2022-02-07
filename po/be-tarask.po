@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 10:45+0000\n"
+"PO-Revision-Date: 2022-02-07 11:41+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3825,63 +3825,64 @@ msgstr "Цяперашні відэарэжым:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
-msgstr ""
+msgstr "Падвойны ўдар"
 
 #: backends/platform/wii/options.cpp:59
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "Гарызантальны underscan:"
 
 #: backends/platform/wii/options.cpp:65
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "Вэртыкальны underscan:"
 
 #: backends/platform/wii/options.cpp:70
 msgid "Input"
-msgstr ""
+msgstr "Увод"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
-msgstr ""
+msgstr "Чуласьць GC Pad:"
 
 #: backends/platform/wii/options.cpp:79
 msgid "GC Pad acceleration:"
-msgstr ""
+msgstr "Паскарэньне GC Pad:"
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:88 backends/platform/wii/options.cpp:100
 msgid "Status:"
-msgstr ""
+msgstr "Статус:"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Unknown"
-msgstr ""
+msgstr "Невядома"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
-msgstr ""
+msgstr "Усталяваць DVD"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Unmount DVD"
-msgstr ""
+msgstr "Высталяваць DVD"
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:105
 msgid "Server:"
-msgstr ""
+msgstr "Сэрвэр:"
 
 #: backends/platform/wii/options.cpp:109
+#, fuzzy
 msgid "Share:"
-msgstr ""
+msgstr "Мена:"
 
 #: backends/platform/wii/options.cpp:117
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
