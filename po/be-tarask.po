@@ -3978,8 +3978,8 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
-"Знойдзена няпэўная вэрсія рухавіковага файлу'%s'. Мусіў быць %d.%d, але ё "
-"%d.%d."
+"Знойдзена няпэўная вэрсія рухавіковага файлу'%s'. Мусіў быць %d.%d, але ё %d."
+"%d."
 
 #: engines/adl/detection.cpp:53
 msgid "TV emulation"
@@ -4469,8 +4469,8 @@ msgstr ""
 "Вы маеце выцягваць толькі файлы STR і XA спэцыяльным спосабам, а астатнія "
 "проста скапіяваць з кампактнага дыску гульні.\n"
 "\n"
-"Праглядзіце: https://wiki.scummvm.org/index."
-"php?title=Datafiles#Blazing_Dragons"
+"Праглядзіце: https://wiki.scummvm.org/index.php?"
+"title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
