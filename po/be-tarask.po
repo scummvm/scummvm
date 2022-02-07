@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 16:28+0000\n"
+"PO-Revision-Date: 2022-02-07 16:51+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4522,86 +4522,87 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:64
 msgid "Use bright palette mode"
-msgstr ""
+msgstr "Выкарыстоўваць рэжым яскравай палітры"
 
 #: engines/dreamweb/detection.cpp:65
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Паказваць графіку карыстаючыся яскравай палітрай гульні"
 
 #: engines/dreamweb/detection.cpp:75
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
+"Далучыць ператварэньне тэксту ў мову для аб’ектаў, наладаў і біблійнай цытаты"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
 #: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:747
 msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
+msgstr "Ператвараць тэкст у мову ў апісаньнях (калі даступна)"
 
 #: engines/dreamweb/detection.cpp:85
 msgid "Enable Text to Speech for Subtitles"
-msgstr ""
+msgstr "Далучыць ператварэньне тэкст у мову для субтытраў"
 
 #: engines/dreamweb/detection.cpp:86
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr ""
+msgstr "Ператвараць тэкст у мову ў субтытрах (калі даступна)"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
-msgstr ""
+msgstr "Ператвараць тэкст у мову ў тэкстах"
 
 #: engines/glk/detection.cpp:244
 msgid "Also read input text"
-msgstr ""
+msgstr "Таксама ператвараць у мову ўведзены тэкст"
 
 #: engines/glk/detection.cpp:245
 msgid "Use TTS to read the input text"
-msgstr ""
+msgstr "Ператвараць ўведзены тэкст у мову"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ націсьніце абы-якую клявішу для выйсьця ]"
 
 #: engines/glk/quetzal.cpp:147 engines/glk/quetzal.cpp:156
 msgid "Untitled Savegame"
-msgstr ""
+msgstr "Неназваны захоў"
 
 #: engines/glk/adrift/os_glk.cpp:2813
 msgid "Loading game...\n"
-msgstr ""
+msgstr "Ладаваньне гульні…\n"
 
 #: engines/glk/advsys/advsys.cpp:34
 msgid "Could not start AdvSys game"
-msgstr ""
+msgstr "Ня выйшла запусьціць гульню AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "Прабачце, ня выйшла аднавіць захаваную гульню"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
-msgstr ""
+msgstr "Прабачце, ня выйшла стварыць захаваную гульню"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Гаварыце гучней! Я вас ня чую!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "Я ня ведаю слова „%s“.\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "Я не разумею.\n"
 
 #: engines/glk/alan2/alan2.cpp:75
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "Закоратка, каб быць сапраўдным файлам Alan2."
 
 #: engines/glk/alan2/alan2.cpp:80
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "Гэта несапраўдны файл Alan2."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
