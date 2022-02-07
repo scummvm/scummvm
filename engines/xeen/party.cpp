@@ -243,7 +243,7 @@ Party::Party(XeenEngine *vm) {
 
 	Common::fill(&_gameFlags[0][0], &_gameFlags[0][256], false);
 	Common::fill(&_gameFlags[1][0], &_gameFlags[1][256], false);
-	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
+	Common::fill(&_worldFlags[0], &_worldFlags[129], false);
 	Common::fill(&_questFlags[0], &_questFlags[60], false);
 	Common::fill(&_questItems[0], &_questItems[85], 0);
 
@@ -1458,7 +1458,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_gold += _vm->getRandomNumber(1, giveVal);
 		break;
 	case 103:
-		assert(giveVal < (uint)(_vm->getGameID() == GType_Swords ? 49 : 128));
+		assert(giveVal < (uint)(_vm->getGameID() == GType_Swords ? 49 : 129));
 		_worldFlags[giveVal] = true;
 		break;
 	case 104:

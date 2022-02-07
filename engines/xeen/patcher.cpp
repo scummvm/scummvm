@@ -44,7 +44,7 @@ struct ObjectEntry {
 
 static const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
 static const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
-static const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
+static const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 128 };
 static const byte DS_MAP62_PIT1[] = { 9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0 };
 static const byte DS_MAP62_PIT2[] = { 9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0 };
 
