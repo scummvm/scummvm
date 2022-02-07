@@ -1471,6 +1471,11 @@ void tint_image(Bitmap *ds, Bitmap *srcimg, int red, int grn, int blu, int light
 		return;
 	}
 
+	// Some games have incorrect data that result in a negative luminance.
+	// Do the same as the accelerated drivers that use 255 luminance for that case.
+	if (luminance <= 0)
+		luminance = 255;
+
 	// For performance reasons, we have a separate blender for
 	// when light is being adjusted and when it is not.
 	// If luminance >= 250, then normal brightness, otherwise darken
