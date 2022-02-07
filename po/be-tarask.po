@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 17:54+0000\n"
+"PO-Revision-Date: 2022-02-07 21:33+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5013,6 +5013,10 @@ msgid ""
 "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"Арыґінальнай латкі для Grim Fandango\n"
+"бракуе. Калі ласка, заладуйце й\n"
+"памясьціце ў тэчку са зьвесткамі гульні:\n"
+"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe"
 
 #: engines/grim/resource.cpp:104
 msgid ""
@@ -5022,6 +5026,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Арыґінальнай латкі для Escape from Monkey Island\n"
+"бракуе. Калі ласка, заладуйце й\n"
+"памясьціце ў тэчку са зьвесткамі гульні:\n"
+"https://downloads.scummvm.org/frs/extras/patches/"
 
 #: engines/grim/emi/sound/emisound.cpp:653
 msgid ""
@@ -5034,39 +5042,47 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"ПАМЫЛКА: Знойдзена ня ўся мызка!\n"
+"Escape from Monkey Island мае дзьве вэрсіі FullMonkeyMap.imt,\n"
+"вам трэба скапіяваць абодва файла з абодвух кампактных дыскаў\n"
+"ў тэчку Textures/ і пераназваць іх наступным чынам:\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"Дарэчы, копіі гульні Steam ці GOG маюць зьяднаны файл FullMonkeyMap.imt"
 
 #: engines/groovie/detection.cpp:414
 msgid "Fast movie speed"
-msgstr ""
+msgstr "Хуткія відэа"
 
 #: engines/groovie/detection.cpp:415
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Іграць відэа з павялічанай хуткасьцю"
 
 #: engines/groovie/detection.cpp:434
 msgid "Easier AI"
-msgstr ""
+msgstr "Праставаты ШІ"
 
 #: engines/groovie/detection.cpp:435
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Памяньшае складанасьць загадак са штучным інтэлектам"
 
 #: engines/groovie/detection.cpp:444
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Абноўленая музыка тытраў"
 
 #: engines/groovie/detection.cpp:445
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr ""
+msgstr "Граць песьнюThe Final Hour падчас тытраў замест паўтору MIDI-мэлёдый"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне GroovieV2 не сабранае"
 
 #: engines/groovie/script.cpp:616
 msgid "Failed to save game"
-msgstr ""
+msgstr "Ня выйшла захаваць гульню"
 
 #: engines/groovie/script.cpp:795 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
