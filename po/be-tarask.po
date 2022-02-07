@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 13:10+0000\n"
+"PO-Revision-Date: 2022-02-07 14:17+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4261,6 +4261,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"УВАГА: Гэтая гульня захаваная ў рэжыме адноўленага выдаленага зьместу, а вы "
+"гуляеце ў рэжыме арыґінальнага зьместу. Для гэтай сэсіі будзе пастаўлены "
+"рэжым адноўленага выдаленага зьместу да поўнага выйсьця з Гульні."
 
 #: engines/bladerunner/bladerunner.cpp:2303
 msgid ""
@@ -4268,22 +4271,25 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"УВАГА: Гэтая гульня захаваная ў рэжыме арыґінальнага зьместу, а вы гуляеце ў "
+"рэжыме адноўленага выдаленага зьместу. Для гэтай сэсіі будзе пастаўлены "
+"рэжым арыґінальнага зьместу да поўнага выйсьця з Гульні."
 
 #: engines/bladerunner/bladerunner.cpp:2305
 msgid "Continue"
-msgstr ""
+msgstr "Працягнуць"
 
 #: engines/bladerunner/detection.cpp:52
 msgid "Sitcom mode"
-msgstr ""
+msgstr "Рэжым сыткому"
 
 #: engines/bladerunner/detection.cpp:53
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "Гульня дадасьць сьмех пасьля слоў героя ці дыктара"
 
 #: engines/bladerunner/detection.cpp:61
 msgid "Shorty mode"
-msgstr ""
+msgstr "Рэжым курдупляў"
 
 #: engines/bladerunner/detection.cpp:62
 msgid "Game will shrink the actors and make their voices high pitched"
