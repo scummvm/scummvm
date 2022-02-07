@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 11:41+0000\n"
+"PO-Revision-Date: 2022-02-07 11:51+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1589,11 +1589,11 @@ msgstr ""
 
 #: gui/options.cpp:2374 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr "Правяраць абнаўленьні:"
+msgstr "Правяраць абновы:"
 
 #: gui/options.cpp:2374
 msgid "How often to check ScummVM updates"
-msgstr "Як часта правяраць абнаўленьні ScummVM"
+msgstr "Як часта правяраць абновы ScummVM"
 
 #: gui/options.cpp:2385
 msgid "Check now"
@@ -2177,7 +2177,7 @@ msgid ""
 "like to enable this feature?"
 msgstr ""
 "ScummVM можа аўтаматычна правяраць\n"
-"абнаўленьні цераз інтэрнэт. Ці хочаце вы\n"
+"абновы цераз інтэрнэт. Ці хочаце вы\n"
 "далучыць гэтую функцыю?"
 
 #: gui/updates-dialog.cpp:51
@@ -2234,7 +2234,7 @@ msgstr "Рэжым колеру не падтрымліваецца"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr "Ня выйшла выкарыстаць гукавую прыладу"
+msgstr "Ня выйшла прадвызначыць гукавую прыладу"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
@@ -2514,7 +2514,7 @@ msgstr "Ня выйшла перайсьці да разрознасьці '%dx%
 
 #: engines/engine.cpp:351
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "Ня выйшла прадвызначыць фармат колеру."
 
 #: engines/engine.cpp:360
 #, c-format
@@ -2866,7 +2866,7 @@ msgstr "Гук SegaCD"
 
 #: audio/softsynth/mt32.cpp:169
 msgid "Initializing MT-32 Emulator"
-msgstr "Наладжваньне эмулятару MT-32"
+msgstr "Прадвызначэньне эмулятару MT-32"
 
 #: audio/softsynth/mt32.cpp:436
 msgid "MT-32 emulator"
@@ -3861,11 +3861,11 @@ msgstr "Невядома"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
-msgstr "Усталяваць DVD"
+msgstr "Умацаваць DVD"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Unmount DVD"
-msgstr "Высталяваць DVD"
+msgstr "Размацаваць DVD"
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
@@ -3886,68 +3886,71 @@ msgstr "Пароль:"
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
-msgstr ""
+msgstr "Прадвызначэньне сеткі"
 
 #: backends/platform/wii/options.cpp:122
 msgid "Mount SMB"
-msgstr ""
+msgstr "Умацаваць SMB"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Unmount SMB"
-msgstr ""
+msgstr "Размацаваць SMB"
 
 #: backends/platform/wii/options.cpp:142
 msgid "DVD Mounted successfully"
-msgstr ""
+msgstr "DVD пасьпяхова ўмацованы"
 
 #: backends/platform/wii/options.cpp:145
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "Памылка падчас умацаваньня DVD"
 
 #: backends/platform/wii/options.cpp:147
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVD не ўмацаваны"
 
 #: backends/platform/wii/options.cpp:160
+#, fuzzy
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "Сетка працуе, мена ўмацаваная"
 
 #: backends/platform/wii/options.cpp:162
 msgid "Network up"
-msgstr ""
+msgstr "Сетка працуе"
 
 #: backends/platform/wii/options.cpp:165
+#, fuzzy
 msgid ", error while mounting the share"
-msgstr ""
+msgstr ", памылка падчас умацаваньне мены"
 
 #: backends/platform/wii/options.cpp:167
+#, fuzzy
 msgid ", share not mounted"
-msgstr ""
+msgstr ", мена не ўмацаваная"
 
 #: backends/platform/wii/options.cpp:173
 msgid "Network down"
-msgstr ""
+msgstr "Сетка не працуе"
 
 #: backends/platform/wii/options.cpp:177
 msgid "Initializing network"
-msgstr ""
+msgstr "Прадвызначэньне сеткі"
 
 #: backends/platform/wii/options.cpp:181
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "Выйшаў час прадвызначэньня сеткі"
 
 #: backends/platform/wii/options.cpp:185
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "Сетка не прадвызначаная (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr ""
+msgstr "ScummVM"
 
 #: backends/updates/macosx/macosx-updates.mm:73
 msgid "Check for Updates..."
-msgstr ""
+msgstr "Праверыць абновы..."
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:933
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:56
