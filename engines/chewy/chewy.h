@@ -49,6 +49,10 @@ class Globals;
 class Sound;
 
 class ChewyEngine : public Engine {
+private:
+	bool _canLoad = false;
+	bool _canSave = false;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -69,7 +73,6 @@ public:
 	Globals *_globals = nullptr;
 	Sound *_sound = nullptr;
 	Graphics::Screen *_screen = nullptr;
-	bool _canLoadSave = false;
 	bool _showWalkAreas = false;
 
 public:
@@ -80,10 +83,14 @@ public:
 	Common::Language getLanguage() const;
 
 	bool canLoadGameStateCurrently() override {
-		return _canLoadSave;
+		return _canLoad;
 	}
 	bool canSaveGameStateCurrently() override {
-		return _canLoadSave;
+		return _canSave;
+	}
+	void setCanLoadSave(bool canLoadSave) {
+		_canLoad = canLoadSave;
+		_canSave = canLoadSave;
 	}
 
 	/**
@@ -97,6 +104,11 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 
 	SaveStateList listSaves();
+
+	/**
+	 * Show the GMM
+	 */
+	void showGmm(bool isInGame);
 
 	uint getRandomNumber(uint max) {
 		return _rnd.getRandomNumber(max);

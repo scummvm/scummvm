@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "chewy/dialogs/files.h"
 #include "chewy/dialogs/options.h"
 #include "chewy/events.h"
@@ -60,6 +61,11 @@ int16 Files::execute(bool isInGame) {
 	int16 rect, line;
 	bool flag = false;
 
+	if (!ConfMan.getBool("original_menus")) {
+		g_engine->showGmm(isInGame);
+		return 0;
+	}
+
 	taf_info *ti = mem->taf_adr(OPTION_TAF);
 	g_events->clearEvents();
 
@@ -72,7 +78,7 @@ int16 Files::execute(bool isInGame) {
 	fnames = iog->io_init(&ioptr);
 	fnames += 1;
 	ERROR;
-
+ 
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 	out->setze_zeiger(workptr);
 	show_cur();
