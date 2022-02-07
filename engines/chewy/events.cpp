@@ -147,6 +147,12 @@ void EventsManager::clearEvents() {
 	minfo.button = 0;
 }
 
+kb_info *EventsManager::setKbdInfo(kb_info *kbInfo) {
+	kb_info *kb = _kbInfo;
+	_kbInfo = kbInfo;
+	return kb;
+}
+
 void EventsManager::setMousePos(const Common::Point &pt) {
 	g_system->warpMouse(pt.x, pt.y);
 	_mousePos = pt;

@@ -451,13 +451,13 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 	int16 disp_stelle = 0, disp_stellemax = 0, disp_akt = 0;
 	int16 ret = 0;
 	int16 delay_flag;
-	char ende = 0, zeichen, zaehler, cursor_z;
+	int8 ende = 0, zeichen, zaehler, cursor_z;
 	char zstring[81], z1string[81];
-	char einfuege_cur = 0;
-	char char_anf = 0, char_end = 0;
+	int8 einfuege_cur = 0;
+	unsigned char char_anf = 0, char_end = 0;
 	uint16 vorzeichen = 0;
-	char x_mode = 0;
-	char eing = 0;
+	int8 x_mode = 0;
+	int8 eing = 0;
 	uint16 izahl = 0;
 	uint16 *intzahl = nullptr;
 	int16 *intzahl1 = nullptr;
@@ -466,6 +466,10 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 	uint32 luzahl;
 	va_list parptr;
 	va_start(parptr, string);
+
+	kb_info kbInfo;
+	kb_info *kb_old = g_events->setKbdInfo(&kbInfo);
+
 	if ((x == -1) || (y == -1)) {
 		x = gcurx;
 		y = gcury;
@@ -473,15 +477,16 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 		gcurx = x;
 		gcury = y;
 	}
+
 	move(x, y);
 	i = 0;
+
 	while (!ende) {
 		zeichen = string[i];
 		++i;
 
 		if ((zeichen >= fontFirst) && (zeichen <= fontLast) && (zeichen != 127)) {
 			if (zeichen == '%') {
-
 				zeichen = string[i];
 				++i;
 				zaehler = 0;
@@ -563,7 +568,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 				case 's':
 					if ((char_anf == 0) && (char_end == 0)) {
 						char_anf = ' ';
-						char_end = '\xdc';
+						char_end = 0xdc;
 					}
 					mode = 3;
 					vorzeichen = 0xFF;
@@ -573,6 +578,7 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 					strcpy(zstring, charstr);
 					break;
 				}
+
 				zeichen = string[i];
 				++i;
 				if (zeichen == 'x') {
@@ -608,9 +614,11 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 				}
 				for (j = stelle; j < j + 1; j++) {
 					while ((!kbhit()) || (eing != 0)) {
+						EVENTS_UPDATE;
 
 						eing = 0;
 						move(x, y);
+
 						for (i = disp_stelle; i <= disp_stellemax + disp_stelle; ++i) {
 							if (zstring[i] != 0) {
 								putz(zstring[i], fcol, bcol, scrwidth);
@@ -623,14 +631,13 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 						}
 						if (svga == ON)
 							upd_scr();
-						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++)
-
-						{
+						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
-							if (izahl == 13) {
+
+							if (izahl == Common::KEYCODE_RETURN) {
 								eing = 2;
 								break;
-							} else if (izahl == 27) {
+							} else if (izahl == Common::KEYCODE_ESCAPE) {
 								eing = 2;
 								break;
 							}
@@ -638,14 +645,12 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 						plot_scan_cur((x + (disp_akt)*fvorx), gcury, cur_col, 300, scrwidth, cursor_z);
 						if (svga == ON)
 							upd_scr();
-						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++)
-
-						{
+						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
-							if (izahl == 13) {
+							if (izahl == Common::KEYCODE_RETURN) {
 								eing = 2;
 								break;
-							} else if (izahl == 27) {
+							} else if (izahl == Common::KEYCODE_ESCAPE) {
 								eing = 2;
 								break;
 							}
@@ -655,23 +660,24 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 					}
 					if (eing < 2)
 						izahl = (uint16)getch();
-					if (izahl == 13) {
 
-						ret = 13;
+					if (izahl == Common::KEYCODE_RETURN) {
+						ret = Common::KEYCODE_RETURN;
 						ende = 1;
 						break;
 					}
-					if (izahl == 27) {
 
-						ret = 27;
+					if (izahl == Common::KEYCODE_ESCAPE) {
+						ret = Common::KEYCODE_ESCAPE;
 						ende = 2;
 						break;
 					}
 
-					if (izahl == 8) {
+					if (izahl == Common::KEYCODE_BACKSPACE) {
 						eing = 1;
 						while (kbhit())
 							getch();
+
 						if (stelle > 0) {
 							strcpy(zstring + stelle - 1, zstring + stelle);
 							plot_scan_cur((x + disp_akt * fvorx), gcury, bcol, bcol, scrwidth, cursor_z);
@@ -684,8 +690,9 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 							else if (disp_akt > 0) {
 								--disp_akt;
 							}
-						} else
+						} else {
 							putch(7);
+						}
 					}
 
 					if (izahl == 0) {
@@ -784,8 +791,8 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 					if ((stelle == stellemax) && (stellemax >= zaehler)) {
 						stellemax = zaehler;
 						putch(7);
-					} else {
 
+					} else {
 						if (disp_akt < disp_stellemax) {
 							++disp_akt;
 						} else {
@@ -816,10 +823,10 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 							}
 						}
 					}
+
 					if (x_mode == 1) {
 						ende = 1;
 						ret = izahl;
-
 						break;
 					}
 				}
@@ -839,8 +846,8 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 			break;
 		}
 	}
-	switch (ende) {
 
+	switch (ende) {
 	case 1:
 		switch (mode) {
 		case 1:
@@ -861,8 +868,12 @@ int16 mcga_grafik::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_co
 	case 2:
 		break;
 	}
+
 	if (svga == ON)
 		upd_scr();
+
+	g_events->setKbdInfo(kb_old);
+
 	return ret;
 }
 

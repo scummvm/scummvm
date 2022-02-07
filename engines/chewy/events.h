@@ -50,9 +50,7 @@ public:
 
 	void clearEvents();
 
-	void setKbdInfo(kb_info *kb_info) {
-		_kbInfo = kb_info;
-	}
+	kb_info *setKbdInfo(kb_info *kbInfo);
 
 	/**
 	 * Set the mouse position
