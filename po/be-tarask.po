@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 12:10+0000\n"
+"PO-Revision-Date: 2022-02-07 12:29+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4030,51 +4030,60 @@ msgstr "Выкарыстоўваць арыґінальныя экраны за�
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
+"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
+"ScummVM"
 
 #: engines/agi/detection.cpp:96
 msgid "Use an alternative palette"
-msgstr ""
+msgstr "Выкарыстоўваць альтэрнатыўную палітру"
 
 #: engines/agi/detection.cpp:97
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Выкарыстоўваць альтэрнатыўную палітру для ўсіх гульняў Amiga. Гэта старая "
+"функцыя"
 
 #: engines/agi/detection.cpp:106
 msgid "Mouse support"
-msgstr ""
+msgstr "Падтрыманьне мышы"
 
 #: engines/agi/detection.cpp:107
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Далучае падтыманьне мышы. Дазваляе карыстаць мыш для руху ды ў мэню гульняў."
 
 #: engines/agi/detection.cpp:116
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "Выкарыстоўваць HD шрыфт Hercules"
 
 #: engines/agi/detection.cpp:117
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Выкарыстоўваецца шрыфт Hercules вялікай разрознасьці, калі ё даступны файл "
+"шрыфту."
 
 #: engines/agi/detection.cpp:126
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Перапынак падчас уводу загадаў"
 
 #: engines/agi/detection.cpp:127
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Паказваць загаднае акно ўводу й перапыняць гульню (як у SCI) замест ўводу ў "
+"цяперашнім часе."
 
 #: engines/agi/detection.cpp:136
 msgid "Add speed menu"
-msgstr ""
+msgstr "Дадаць хуткае мэню"
 
 #: engines/agi/detection.cpp:137
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4082,6 +4091,9 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"Ня выйшла адкрыць/ужыць файл 'hgc_font' для HD шрыфту Hercules.\n"
+"Калі вы маеце такі ж файл у іншай гульні AGI (Sierra), вы можаце скапіяваць "
+"яго ў тэчку з гульнёй"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
@@ -4099,7 +4111,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
-msgstr ""
+msgstr "Аднавіць гульню:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
@@ -4118,11 +4130,11 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:198
 msgid "Restore"
-msgstr ""
+msgstr "Аднавіць"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "Хуткія заладаваньне ці захаваньне не падтрымліваюцца ў гэтай лякацыі"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2754
 #, c-format
