@@ -170,9 +170,10 @@ void QTextDescription::draw() {
 	}
 }
 
-QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor) {
+QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 outlineColor, uint16 selectedColor) {
 	_activeChoice = 0;
 	_choiceColor = color;
+	_outlineColor = outlineColor;
 	_selectedColor = selectedColor;
 	_choices = choices;
 
@@ -201,6 +202,7 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 		_rects[i].moveTo(0, y);
 		y += _rects[i].height();
 	}
+	drawOutline(s, outlineColor);
 }
 
 void QTextChoice::onMouseMove(Common::Point p) {
@@ -222,7 +224,7 @@ void QTextChoice::onMouseMove(Common::Point p) {
 			uint color = (i == newChoice) ? _selectedColor : _choiceColor;
 			drawText(*s, _rects[i].top, 630, _choices[i], color, *font);
 		}
-
+		drawOutline(s, _outlineColor);
 		_activeChoice = newChoice;
 	}
 }

@@ -243,7 +243,10 @@ void DialogInterface::onMenuOpcode() {
 
 	Common::Array<Common::U32String> choices;
 	_dialog->getMenuChoices(choices);
-	_qsys->_mainInterface->setTextChoice(choices, 0xFFFF, g_system->getScreenFormat().RGBToColor(0xFF, 0, 0));
+	_qsys->_mainInterface->setTextChoice(choices,
+										 g_system->getScreenFormat().RGBToColor(0xFF, 0xFF, 0xFF),
+										 g_system->getScreenFormat().RGBToColor(0xA, 0xA, 0xA),
+										 g_system->getScreenFormat().RGBToColor(0, 0, 0xFF));
 
 	_qsys->getCursor()->_isShown = true;
 	_state = kMenu;

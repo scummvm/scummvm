@@ -77,7 +77,7 @@ public:
 
 class QTextChoice : public QText {
 public:
-	QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
+	QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 outlineColor, uint16 selectedColor);
 
 	void onMouseMove(Common::Point p) override;
 	void onClick(Common::Point p) override;
@@ -87,6 +87,7 @@ private:
 	Common::Array<Common::Rect> _rects;
 	Common::Array<Common::U32String> _choices;
 	uint _activeChoice;
+	uint16 _outlineColor;
 	uint16 _choiceColor;
 	uint16 _selectedColor;
 };

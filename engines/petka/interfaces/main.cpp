@@ -253,10 +253,10 @@ void InterfaceMain::onMouseMove(Common::Point p) {
 	}
 }
 
-void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor) {
+void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 outlineColor, uint16 selectedColor) {
 	removeTexts();
 	_objUnderCursor = nullptr;
-	_objs.push_back(new QTextChoice(choices, color, selectedColor));
+	_objs.push_back(new QTextChoice(choices, color, outlineColor, selectedColor));
 }
 
 void InterfaceMain::setTextDescription(const Common::U32String &text, int frame) {
