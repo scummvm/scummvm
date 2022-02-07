@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 12:29+0000\n"
+"PO-Revision-Date: 2022-02-07 12:56+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4143,6 +4143,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Ня выйшла заладаваць гульню з файлу:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2744
 #, c-format
@@ -4151,6 +4154,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Ня выйшла захаваць гульню ў файл:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2767
 #, c-format
@@ -4159,15 +4165,18 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Гульня пасьпяхова захаваная ў файл:\n"
+"\n"
+"%s"
 
 #: engines/agos/animation.cpp:557
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "Файл сцэнкі '%s' ня знойдзены!"
 
 #: engines/agos/metaengine.cpp:103
 msgid "AGOS 2 support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне AGOS 2 не сабраная"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
@@ -4177,6 +4186,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
+"Відаць, вы выкарыстоўваеце прыладу General MIDI,\n"
+"але гэтая гульня падтрымлівае толькі Roland MT32 MIDI.\n"
+"Мы паспрабуем параўнаць інструмэнты Roland MT32 да\n"
+"General MIDI. Але можа быць, што некаторая музыка\n"
+"будзе гучаць няправільна."
 
 #: engines/ags/ags.cpp:127
 msgid ""
