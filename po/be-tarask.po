@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 16:51+0000\n"
+"PO-Revision-Date: 2022-02-07 17:08+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4606,59 +4606,59 @@ msgstr "Гэта несапраўдны файл Alan2."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
-msgstr ""
+msgstr "Захаваная гульня"
 
 #: engines/glk/comprehend/game.cpp:861
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "Акно выявы пералучанае\n"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Закоратка, каб быць сапраўдным файлам Glulx."
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Гэта несапраўдны файл Glulx ."
 
 #: engines/glk/glulx/glulx.cpp:93
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "Вэрсія файлу Glulx застарая для запуску."
 
 #: engines/glk/glulx/glulx.cpp:97
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "Вэрсія файлу Glulx зановая для запуску."
 
 #: engines/glk/quest/quest.cpp:44
 msgid "Could not start Quest game"
-msgstr ""
+msgstr "Ня выйшла запусьціць гульню Quest"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "Я не разумею ваш загад. "
 
 #: engines/glk/scott/scott.cpp:102
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Я не магу зрабіць гэта шчэ. "
 
 #: engines/glk/scott/scott.cpp:118
 msgid "Light has run out! "
-msgstr ""
+msgstr "Сьвятло згасла! "
 
 #: engines/glk/scott/scott.cpp:120
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Вашае сьвятло згасла. "
 
 #: engines/glk/scott/scott.cpp:129
 msgid "Light runs out in "
-msgstr ""
+msgstr "Сьвятло згасьне цераз "
 
 #: engines/glk/scott/scott.cpp:131
 msgid " turns. "
-msgstr ""
+msgstr " рухаў. "
 
 #: engines/glk/scott/scott.cpp:134
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Вашае сьвятло гасьне. "
 
 #: engines/glk/scott/scott.cpp:411
 msgid "North"
