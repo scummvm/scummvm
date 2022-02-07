@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 11:51+0000\n"
+"PO-Revision-Date: 2022-02-07 12:10+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3959,7 +3959,7 @@ msgstr "Праверыць абновы..."
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:4999
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "Ня выйшла знайсьці рухавіковы файл '%s'."
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:949
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:65
@@ -3967,7 +3967,7 @@ msgstr ""
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5012
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "Рухавіковы файл '%s' сапсаваны."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:960
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:68
@@ -3978,38 +3978,40 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Знойдзена няпэўная вэрсія рухавіковага файлу'%s'. Мусіў быць %d.%d, але ё "
+"%d.%d."
 
 #: engines/adl/detection.cpp:53
 msgid "TV emulation"
-msgstr ""
+msgstr "Эмуляцыя ТВ"
 
 #: engines/adl/detection.cpp:54
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "Эмуляцыя складальнага вываду на тэлевізію NTSC"
 
 #: engines/adl/detection.cpp:63 engines/adl/detection.cpp:73
 msgid "Color graphics"
-msgstr ""
+msgstr "Каляровая графіка"
 
 #: engines/adl/detection.cpp:64 engines/adl/detection.cpp:74
 msgid "Use color graphics instead of monochrome"
-msgstr ""
+msgstr "Каляровая графіка замест манахромнай"
 
 #: engines/adl/detection.cpp:83
 msgid "Show scanlines"
-msgstr ""
+msgstr "Паказваць рысы сканаваньня"
 
 #: engines/adl/detection.cpp:84
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Зацямняць кожную другую рысу сканаваньня для імітацыі выгляду CRT"
 
 #: engines/adl/detection.cpp:93
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Заўжды выкарыстоўваць выразны манахромны тэкст"
 
 #: engines/adl/detection.cpp:94
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
@@ -4018,7 +4020,7 @@ msgstr ""
 #: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
 #: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
