@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-07 15:29+0000\n"
+"PO-Revision-Date: 2022-02-07 16:28+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4450,6 +4450,10 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"Памылка: Файл '%s' выцягнуты няправільна.\n"
+"Калі ласка, праглядзіце старонку на Вікі пра тое, як правільна выцягнуць "
+"DTSPEECH.XA і файлы *.STR з вашага дыску з гульнёй:\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos"
 
 #: engines/dragons/metaengine.cpp:121
 msgid ""
@@ -4460,14 +4464,21 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"Памылка: Відаць, файлы гульні выцягнуты няправільна.\n"
+"\n"
+"Вы маеце выцягваць толькі файлы STR і XA спэцыяльным спосабам, а астатнія "
+"проста скапіяваць з кампактнага дыску гульні.\n"
+"\n"
+"Праглядзіце: https://wiki.scummvm.org/index."
+"php?title=Datafiles#Blazing_Dragons"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
-msgstr ""
+msgstr "Дзея"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
-msgstr ""
+msgstr "Зьмяніць загад"
 
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:126
 #: engines/grim/grim.cpp:495 engines/grim/grim.cpp:591
@@ -4481,15 +4492,15 @@ msgstr ""
 #: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:88
 msgid "Enter"
-msgstr ""
+msgstr "Увод"
 
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
-msgstr ""
+msgstr "Наладжваньне графікі"
 
 #: engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
-msgstr ""
+msgstr "Выйсьці з гульні"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -4501,6 +4512,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM знайшоў вашыя старыя захаваныя гульні для Drascula, якія патрэбна "
+"ператварыць.\n"
+"Стары фармат захаванай гульні болей не падтрымліваецца, таму немажліва "
+"заладаваць неператвораную гульню.\n"
+"\n"
+"Націсьніце ОК, каб ператварыць іх, інакш наступным разам вам паведамяць "
+"зноўку.\n"
 
 #: engines/dreamweb/detection.cpp:64
 msgid "Use bright palette mode"
