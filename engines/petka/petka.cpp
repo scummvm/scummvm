@@ -72,6 +72,7 @@ Common::Error PetkaEngine::run() {
 	debug("PetkaEngine::run");
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
+	syncSoundSettings();
 
 	const char *const videos[] = {"buka.avi", "skif.avi", "adv.avi"};
 	for (uint i = 0; i < sizeof(videos) / sizeof(char *); ++i) {
