@@ -82,7 +82,7 @@ void QManager::removeResource(uint32 id) {
 
 void QManager::clearUnneeded() {
 	for (auto it = _resourceMap.begin(); it != _resourceMap.end(); ++it) {
-		if (!_isAlwaysNeededMap.getVal(it->_key)) {
+		if (!_isAlwaysNeededMap.getValOrDefault(it->_key, false)) {
 			_resourceMap.erase(it);
 		}
 	}
