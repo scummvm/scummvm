@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-08 11:54+0000\n"
+"PO-Revision-Date: 2022-02-08 18:10+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5506,60 +5506,66 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"Гэта каштавальная Windows-вэрсія гульні. Каб гуляць у поўную вэрсію, вам трэ "
+"выкарыстоўваць арыґінальны інтэрпрэтатар і купіць ключ у Wyrmkeep"
 
 #: engines/lab/processroom.cpp:329
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
 msgstr ""
+"Гэта канец каштавальнай вэрсіі. Каб гуляць у поўную вэрсію, вам трэ "
+"выкарыстоўваць арыґінальны інтэрпрэтатар і купіць ключ у Wyrmkeep"
 
 #: engines/lab/speciallocks.cpp:148
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
+msgstr "Гэтая загадка недаступная ў каштавальнай вэрсіі гульні"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:113
 #: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:746
 msgid "TTS Narrator"
-msgstr ""
+msgstr "Расказьнік TTS"
 
 #: engines/made/detection.cpp:62
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "Іграць дыґітальны саўндтрэк падчас уступнага відэа"
 
 #: engines/made/detection.cpp:63
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"Калі выбрана, гульня будзе граць дыґітальны саўндтрэк ува ўступе. Іначай "
+"будзе грацца музыка MIDI."
 
 #: engines/made/detection_tables.h:441 engines/made/detection_tables.h:458
 msgid "The game is using unsupported engine"
-msgstr ""
+msgstr "Гэта гульня выкарыстоўвае непадтрымны рухавик"
 
 #: engines/mads/detection.cpp:62
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Просты інтэрфэйс мышы"
 
 #: engines/mads/detection.cpp:63
 msgid "Shows object names when hovering the mouse over them"
-msgstr ""
+msgstr "Паказваць назвы аб’ектаў пры навядзеньні на іх паказальніку"
 
 #: engines/mads/detection.cpp:72 engines/mads/detection.cpp:73
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Анімаваныя рыштункавыя рэчы"
 
 #: engines/mads/detection.cpp:82 engines/mads/detection.cpp:83
 msgid "Animated game interface"
-msgstr ""
+msgstr "Анімаваны інтэрфэйс гульні"
 
 #: engines/mads/detection.cpp:92 engines/mads/detection.cpp:93
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Саромны рэжым гульні"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:358
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "~Б~уй-рэжым дзейны"
 
 #: engines/mohawk/dialogs.cpp:114
 msgid ""
@@ -5567,10 +5573,13 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Калі дзейны, пстрыканьне на рэч ці зону маланкавым паказальнікам адразу жа "
+"перанясе вас туды, мінуючы прамежныя экраны. Вы можаце ўжываць „буй“ толькі "
+"на адкрытую зону, дзе вы ўжо былі."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
-msgstr ""
+msgstr "П~е~раходы далучаны"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid ""
