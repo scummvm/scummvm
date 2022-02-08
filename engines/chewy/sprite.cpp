@@ -439,6 +439,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	bool ret = false;
 	tmp_maus_links = _G(maus_links_click);
 	_G(maus_links_click) = false;
+
 	if (!flags.AtsText) {
 		flags.AtsText = true;
 		if (txt_nr != -1) {
@@ -448,7 +449,11 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			if (ret) {
 				while (atds->ats_get_status() != false && !SHOULD_QUIT)
 					set_up_screen(DO_SETUP);
-			} else if (VocNr >= 0) {
+
+			// WORKAROUND: There are a few cases in the game with no text,
+			// but a voice sample the game would fall back on even in
+			// subtitles only mode. Don't allow this in ScummVM
+			} else if (VocNr >= 0 && !g_engine->_sound->isSpeechMuted()) {
 				ret = true;
 				vocx = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
 				g_engine->_sound->setSoundChannelBalance(0, atds->getStereoPos(vocx));
