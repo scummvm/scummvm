@@ -316,8 +316,6 @@ void init_load() {
 	set_spz_delay(3);
 
 	menutaf = mem->taf_adr(MENUTAF);
-	taf_dateiheader *tafheader;
-	mem->file->get_tafinfo(MENUTAF, &tafheader);
 	spblende = mem->void_adr("cut/blende.rnd");
 	room->load_room(&room_blk, room_start_nr, &_G(spieler));
 	out->set_palette(pal);
