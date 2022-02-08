@@ -49,13 +49,6 @@ datei::datei() {
 datei::~datei() {
 }
 
-void datei::assign_filename(const char *fname, const char *ext) {
-	strncpy(filename, fname, MAXPATH - 5);
-	filename[MAXPATH - 5] = '\0';
-	if (!strchr(filename, '.'))
-		strcat(filename, ext);
-}
-
 uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	NewPhead *ph = (NewPhead *)tmp;
@@ -79,8 +72,27 @@ uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-void datei::load_tafmcga(Stream *handle, int16 komp, uint32 size, byte *speicher) {
-	read_tbf_image(handle, komp, size, speicher);
+void datei::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
+	assert(rs);
+
+	byte *sp = speicher;
+
+	if (komp == 1) {
+		// Run length encoding using count/value pairs
+		for (uint32 pos = 0; pos < size;) {
+			uint8 count = rs->readByte();
+			uint8 value = rs->readByte();
+
+			for (uint8 i = 0; (i < count) && (pos < size); i++) {
+				sp[pos] = value;
+				++pos;
+			}
+		}
+	} else {
+		rs->read(sp, size);
+		sp += size;
+	}
 }
 
 void datei::load_tff(const char *fname, byte *speicher) {
@@ -107,29 +119,6 @@ void datei::load_tff(const char *fname, byte *speicher) {
 		}
 	} else {
 		error("load_tff error");
-	}
-}
-
-void datei::read_tbf_image(Stream *stream, int16 komp, uint32 size, byte *sp) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-
-	byte *speicher = sp;
-
-	if (komp == 1) {
-		// Run length encoding using count/value pairs
-		for (uint32 pos = 0; pos < size;) {
-			uint8 count = rs->readByte();
-			uint8 value = rs->readByte();
-
-			for (uint8 i = 0; (i < count) && (pos < size); i++) {
-				speicher[pos] = value;
-				++pos;
-			}
-		}
-	} else {
-		rs->read(speicher, size);
-		speicher += size;
 	}
 }
 
