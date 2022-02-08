@@ -570,9 +570,7 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 	if (file_find_g[slotNum][0] == 0) {
 		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
 	} else {
-		//handle = chewy_fopen(path, "rb");
 		out->printxy(io->popx + 167, io->popy + 85, io->m_col[1], 300, scr_width, FSTRING7);
-		//chewy_fclose(handle);
 		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
 
 	}
