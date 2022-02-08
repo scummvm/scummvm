@@ -3170,7 +3170,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("henachocoexpo", "", "iTA-YABOU", "3731a1d809be07929da1f5d691ee3c97", 290426, Common::JA_JPN, 402),
 
 	// Mac version is D3
-	WINGAME1t("hhouse", "",	  "HHOUSE/HHOUSE.EXE", "b0486032820bc6a413dd836650f8b0c3", 3181345, 400),
+	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 400),
 	WINDEMO1("hhouse", "1995 Demo", "HAUNTED.EXE", "5b7e970d8b8dec473e31cc6815c03bf6", 1166813, 404),
 
 	MACGAME1_l("hidoiyo", "Dai-ichi-wa", "xn--n8jwd0a9fz90pnw8c3lwa", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
