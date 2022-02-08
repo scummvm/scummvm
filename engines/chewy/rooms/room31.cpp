@@ -60,7 +60,7 @@ void Room31::surimy_go() {
 			auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			auto_mov_obj[SURIMY_OBJ].Mode = true;
-			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(157, -1);
 			wait_auto_obj(SURIMY_OBJ);
@@ -91,8 +91,11 @@ void Room31::calc_luke() {
 	}
 }
 
-void Room31::open_luke() {
+int16 Room31::open_luke() {
+	int16 action_flag = false;
+	
 	if (!_G(spieler).inv_cur && _G(spieler).R31KlappeZu) {
+		action_flag = true;
 		hide_cur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
@@ -101,15 +104,35 @@ void Room31::open_luke() {
 		calc_luke();
 		show_cur();
 	}
+
+	return action_flag;
 }
 
-void Room31::proc1() {
+int16 Room31::close_luke_proc1() {
+	int16 action_flag = false;
+
 	if (!_G(spieler).inv_cur && !_G(spieler).R31KlappeZu) {
+		action_flag = true;
 		hide_cur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
 		g_engine->_sound->playSound(3);
+		calc_luke();
+		show_cur();
+	}
+
+	return action_flag;
+}
+
+void Room31::close_luke_proc3() {
+	if (!_G(spieler).R31KlappeZu) {
+		hide_cur();
+		auto_move(2, P_CHEWY);
+		start_spz_wait(13, 1, false, P_CHEWY);
+		_G(spieler).R31KlappeZu = true;
+		g_engine->_sound->playSound(3);
+		g_engine->_sound->playSound(3, 1, false);
 		calc_luke();
 		show_cur();
 	}
@@ -156,7 +179,7 @@ int16 Room31::use_topf() {
 							ani_nr = CH_TALK5;
 							dia_nr = 180;
 						} else {
-							close_luke();
+							close_luke_proc3();
 							auto_move(3, P_CHEWY);
 							flic_cut(FCUT_046, CFO_MODE);
 							register_cutscene(13);
@@ -180,6 +203,7 @@ int16 Room31::use_topf() {
 			dia_nr = 154;
 		}
 	}
+	
 	if (dia_nr != -1) {
 		start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
@@ -188,19 +212,6 @@ int16 Room31::use_topf() {
 
 	show_cur();
 	return action_flag;
-}
-
-void Room31::close_luke() {
-	if (!_G(spieler).R31KlappeZu) {
-		hide_cur();
-		auto_move(2, P_CHEWY);
-		start_spz_wait(13, 1, false, P_CHEWY);
-		_G(spieler).R31KlappeZu = true;
-		g_engine->_sound->playSound(3);
-		g_engine->_sound->playSound(3, 1, false);
-		calc_luke();
-		show_cur();
-	}
 }
 
 } // namespace Rooms

@@ -29,12 +29,12 @@ class Room31 {
 private:
 	static void surimy_go();
 	static void calc_luke();
-	static void close_luke();
+	static void close_luke_proc3();
 
 public:
 	static void entry();
-	static void open_luke();
-	static void proc1();
+	static int16 open_luke();
+	static int16 close_luke_proc1();
 	static int16 use_topf();
 };
 
