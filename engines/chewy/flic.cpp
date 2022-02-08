@@ -29,6 +29,8 @@
 
 namespace Chewy {
 
+#define SOUND_SLOT_SIZE 500000
+
 static int16(*custom_user)(int16) = nullptr;
 static int16(*flic_user)(int16) = nullptr;
 
@@ -98,6 +100,11 @@ void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
 
 flic::flic() {
 	Common::fill(&sounds[0], &sounds[50], (byte *)nullptr);
+	_soundBuffer = new byte[SOUND_SLOT_SIZE];
+}
+
+flic::~flic() {
+	delete[] _soundBuffer;
 }
 
 void flic::play(const char *fname, byte *vscreen, byte *load_p) {
@@ -375,7 +382,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 	load_puffer = ci->TempArea;
 	virt_screen = ci->VirtScreen + 4;
 	Music = ci->MusicSlot;
-	Sound = ci->SoundSlot;
+	Sound = _soundBuffer;
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(ci->Handle);
 	if (rs) {
@@ -708,8 +715,8 @@ void flic::free_sound(int16 nr) {
 	byte *fsound = sounds[nr];
 	long fsize = Ssize[nr];
 	if ((fsound != 0) && (fsize != 0)) {
-		long copysize = Cinfo->MaxSoundSize;
-		copysize -= (long)(fsound - Cinfo->SoundSlot);
+		long copysize = SOUND_SLOT_SIZE;
+		copysize -= (long)(fsound - _soundBuffer);
 		memmove(fsound, fsound + fsize, copysize);
 		for (int16 i = 0; i < 50; i++) {
 			if (sounds[i] == fsound) {

@@ -251,7 +251,6 @@ public:
 	int16 mouse_on_detail(int16 mouse_x, int16 mouse_y,
 	                      int16 scrx, int16 scry);
 
-	void set_sound_area(byte *buffer, uint32 size);
 	void disable_detail_sound(int16 nr);
 	void enable_detail_sound(int16 nr);
 	void clear_detail_sound(int16 nr);
@@ -281,9 +280,6 @@ private:
 	int16 direct_taf_ani;
 	Stream *CurrentTaf;
 	uint32 SpritePos[MAXSPRITE];
-
-	byte *SoundBuffer;
-	uint32 SoundBufferSize;
 };
 
 } // namespace Chewy

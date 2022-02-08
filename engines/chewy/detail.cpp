@@ -157,7 +157,6 @@ detail::detail() {
 		rdi.sample[i] = nullptr;
 		rdi.tvp_index[i] = -1;
 	}
-	SoundBuffer = nullptr;
 	direct_taf_ani = OFF;
 	CurrentTaf = nullptr;
 }
@@ -679,11 +678,6 @@ void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 		++tmpy;
 	*kx += (int16)tmpx;
 	*ky += (int16)tmpy;
-}
-
-void detail::set_sound_area(byte *buffer, uint32 size) {
-	SoundBuffer = buffer;
-	SoundBufferSize = size;
 }
 
 void detail::disable_detail_sound(int16 nr) {

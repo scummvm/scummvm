@@ -105,8 +105,6 @@ void alloc_buffers() {
 	det->set_taf_ani_mem(Ci.TempArea);
 	Ci.MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);
 	Ci.MaxMusicSize = MUSIC_SLOT_SIZE;
-	Ci.SoundSlot = (byte *)MALLOC(SOUND_SLOT_SIZE);
-	Ci.MaxSoundSize = SOUND_SLOT_SIZE;
 }
 
 void free_buffers() {
@@ -121,7 +119,6 @@ void free_buffers() {
 	free((char *)chewy);
 
 	free((char *)curtaf);
-	free(Ci.SoundSlot);
 	free(Ci.MusicSlot);
 	free(Ci.TempArea);
 	free(cur_back);
