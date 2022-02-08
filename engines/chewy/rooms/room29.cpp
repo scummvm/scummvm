@@ -22,14 +22,12 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/rooms/room29.h"
 
 namespace Chewy {
 namespace Rooms {
 
-static const AniBlock ABLOCK26[4] = {
-	{ 2, 255, ANI_VOR, ANI_GO, 0 },
+static const AniBlock ABLOCK26[3] = {
 	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
 	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
 	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
@@ -53,8 +51,6 @@ void Room29::entry() {
 	}
 
 	if (_G(spieler).R29AutoSitz) {
-		det->show_static_spr(9);
-
 		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
 			atds->set_steuer_bit(212, 1, 1);
 		else
@@ -65,19 +61,18 @@ void Room29::entry() {
 }
 
 void Room29::xit() {
-	if (obj->check_inventar(PUMPE_INV)) {
+	if (obj->check_inventar(PUMPE_INV))
 		del_inventar(PUMPE_INV);
-	}
 }
 
 int16 Room29::use_pumpe() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).R29Pumpe) {
-		action_flag = true;
 		hide_cur();
 
 		if (is_cur_inventar(SCHLAUCH_INV)) {
+			action_flag = true;
 			_G(spieler).R29Pumpe = true;
 			_G(spieler).R29Schlauch1 = true;
 			auto_move(1, P_CHEWY);
@@ -86,6 +81,7 @@ int16 Room29::use_pumpe() {
 			atds->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
+			action_flag = true;
 			start_aad_wait(62, -1);
 		}
 
@@ -99,9 +95,13 @@ int16 Room29::get_schlauch() {
 	int16 action_flag = false;
 	if (_G(spieler).R29Schlauch1 && !_G(spieler).inv_cur) {
 		action_flag = true;
+		hide_cur();
+
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		new_invent_2_cur(PUMPE_INV);
+
+		show_cur();
 	}
 	return action_flag;
 }
@@ -141,7 +141,7 @@ void Room29::schlitz_sitz() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		det->hide_static_spr(4);
 		det->show_static_spr(11);
-		start_ani_block(4, ABLOCK26);
+		start_ani_block(3, ABLOCK26);
 		det->show_static_spr(9);
 		det->hide_static_spr(11);
 		det->start_detail(2, 255, ANI_VOR);
@@ -161,6 +161,8 @@ int16 Room29::zaun_sprung() {
 	int16 action_flag = false;
 
 	if (_G(spieler).R29AutoSitz && !_G(spieler).inv_cur) {
+		hide_cur();
+		
 		action_flag = true;
 		auto_move(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -169,8 +171,10 @@ int16 Room29::zaun_sprung() {
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
 
+		show_cur();
 		switch_room(37);
 		_G(spieler).PersonHide[P_CHEWY] = false;
+
 	}
 
 	return action_flag;
