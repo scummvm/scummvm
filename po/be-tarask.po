@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-08 18:10+0000\n"
+"PO-Revision-Date: 2022-02-08 19:52+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5586,14 +5586,16 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Далучыць/адлучыць экранавыя пераходы. Адучыўшы пераходы, вы будзеце хутчэй "
+"прасоўвацца па гульні."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Іграць відэа лёту над Myst"
 
 #: engines/mohawk/dialogs.cpp:122
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Відэа лёту над Myst не гралася арыґінальным рухавіком."
 
 #. I18N:
 #. This Option is for hard-of-hearing.
