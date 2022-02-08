@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-08 10:13+0000\n"
+"PO-Revision-Date: 2022-02-08 10:55+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5228,29 +5228,33 @@ msgstr "Далучыць гістаграму пунктаў здароўя"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:146
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Мена кнопак бою (Лева/Права)"
 
 #: engines/kyra/detection.cpp:147
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Левая кнопка, каб біцца, а правая, каб браць рэчы"
 
 #: engines/kyra/detection_tables.h:82
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Бракуе адмысловага коду гульні й (або) рэсурсаў для гэтай мовы."
 
 #: engines/kyra/detection_tables.h:83
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Бракуе адмысловага коду гульні й (або) рэсурсаў для гэтага аматарскага "
+"перакладу."
 
 #: engines/kyra/detection_tables.h:85
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
+"Дэманстрацыя грае простыя анімацыі без выкарыстоўваньня рухавіку ад Westwood."
 
 #: engines/kyra/detection_tables.h:1447
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
+"Вы няправільна дадалі гульню. Калі ласка, дадайце каранёвую тэчку гульні."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1463
@@ -5258,10 +5262,12 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Вы няправільна дадалі гульню. Файл GAME.DAT гэта выява ISO, вам трэба "
+"выцягнуць зьвесткі гульні аддтуль."
 
 #: engines/kyra/metaengine.cpp:116
 msgid "Lands of Lore support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Lands of Lore не сабраная"
 
 #: engines/kyra/metaengine.cpp:126
 msgid ""
