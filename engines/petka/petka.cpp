@@ -329,4 +329,11 @@ void PetkaEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 }
 
+void PetkaEngine::pushMouseMoveEvent() {
+	Common::Event ev;
+	ev.type = Common::EVENT_MOUSEMOVE;
+	ev.mouse = g_system->getEventManager()->getMousePos();
+	_eventMan->pushEvent(ev);
+}
+
 } // End of namespace Petka

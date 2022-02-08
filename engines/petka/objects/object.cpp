@@ -90,6 +90,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		switch (msg.opcode) {
 		case kAddInv:
 			g_vm->getQSystem()->getCase()->addItem(msg.objId);
+			// original bug fix
+			g_vm->pushMouseMoveEvent();
 			break;
 		case kDelInv:
 			g_vm->getQSystem()->getCase()->removeItem(msg.objId);

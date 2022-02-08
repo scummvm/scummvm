@@ -112,6 +112,8 @@ public:
 	Graphics::Font *getTextFont() const { return _textFont.get(); }
 	Graphics::Font *getDescriptionFont() const { return _descriptionFont.get(); }
 
+	void pushMouseMoveEvent();
+
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 

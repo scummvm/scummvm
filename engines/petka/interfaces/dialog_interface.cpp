@@ -87,10 +87,7 @@ void DialogInterface::restoreCursor() {
 	cursor->_actionType = _savedCursorActType;
 
 	// original bug fix
-	Common::Event ev;
-	ev.type = Common::EVENT_MOUSEMOVE;
-	ev.mouse = g_system->getEventManager()->getMousePos();
-	_qsys->onEvent(ev);
+	g_vm->pushMouseMoveEvent();
 }
 
 void DialogInterface::next(int choice) {
