@@ -56,34 +56,6 @@ inline void chewy_fclose(Stream *&stream) {
 	stream = nullptr;
 }
 
-inline size_t chewy_fread(void *ptr, size_t size, size_t nmemb, Stream *stream) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-	return rs->read(ptr, size * nmemb) / size;
-}
-
-inline int chewy_fseek(Stream *stream, long int offset, int whence) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-	return rs->seek(offset, whence);
-}
-
-inline size_t chewy_ftell(Stream *stream) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-	return rs->size();
-}
-
-inline size_t chewy_fwrite(void *ptr, size_t size, size_t nmemb, Stream *stream) {
-	error("TODO: chewy_fwrite");
-	return 0;
-}
-
-inline int chewy_fputc(byte c, Stream *stream) {
-	error("TODO: chewy_fputc");
-	return 0;
-}
-
 } // namespace Chewy
 
 #endif
