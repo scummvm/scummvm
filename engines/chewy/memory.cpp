@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 #include "chewy/memory.h"
 #include "chewy/types.h"
+#include "chewy/resource.h"
 
 namespace Chewy {
 
@@ -35,48 +36,38 @@ memory::~memory() {
 }
 
 taf_info *memory::taf_adr(const char *filename) {
-	uint32 size;
-	int16 anz_image = 0;
-	uint32 kgroesse;
-	byte *tempptr, *tmp1;
+	SpriteResource *res = new SpriteResource(filename);
+	int32 imageCount = res->getChunkCount();
+	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(taf_info);
+	uint32 kgroesse = imageCount * sizeof(byte *);
+	byte *imgPtr, *tmp1;
 	taf_info *tinfo = nullptr;
-	taf_dateiheader *tafheader;
-	tafheader = 0;
 
-	size = file->get_tafinfo(filename, &tafheader);
-	kgroesse = 0l;
-	if (!modul) {
-		anz_image = tafheader->count;
-		kgroesse = ((uint32)anz_image) * sizeof(byte *);
+	tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
+	tinfo = (taf_info *)tmp1;
+	tinfo->image = (byte **)(tmp1 + sizeof(taf_info));
+	tinfo->palette = tmp1 + size;
+	tinfo->anzahl = imageCount;
+	memcpy(tinfo->palette, res->getSpritePalette(), PALETTE_SIZE);
+	imgPtr = tmp1 + sizeof(taf_info) + kgroesse;
 
-		tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
-		if (!modul) {
-			tinfo = (taf_info *)tmp1;
-			tinfo->image = (byte **)(tmp1 + sizeof(taf_info));
-			tinfo->palette = tmp1 + size;
-			tinfo->anzahl = anz_image;
-			file->load_palette(filename, tinfo->palette);
-			if (!modul) {
-				tempptr = tmp1 + (((uint32)sizeof(taf_info)) + kgroesse);
-				file ->load_full_taf(filename, tempptr, tinfo);
-				tinfo->korrektur = (int16 *)(tmp1 + (size + 768l));
-				file ->load_korrektur(filename, tinfo->korrektur);
-			}
-			if (modul)
-				free(tmp1);
-		} else {
-			fcode = NOSPEICHER;
-			modul = SPEICHER;
-			tinfo = nullptr;
-		}
+	for (int i = 0; i < imageCount; i++) {
+		tinfo->image[i] = imgPtr;
+		imgPtr += res->getSpriteData(i, &tinfo->image[i], false);
 	}
+
+	tinfo->korrektur = (int16 *)(tmp1 + (size + 768l));
+	memcpy(tinfo->korrektur, res->getSpriteCorrectionsTable(), imageCount * 2 * sizeof(int16));
+
+	delete res;
 
 	return tinfo;
 }
 
-taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
-                                  int16 image_anz) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
+taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
+#if 1
+	Common::File *rs = new Common::File();
+	rs->open(CH_SPZ_FILE);
 	taf_dateiheader header;
 	taf_imageheader iheader;
 	taf_seq_info *ts_info = nullptr;
@@ -165,7 +156,47 @@ taf_seq_info *memory::taf_seq_adr(Stream *stream, int16 image_start,
 		error("taf_seq_adr error");
 	}
 
+	delete rs;
+
 	return ts_info;
+#else
+	// TODO: New code - currently crashes with an OOB memory access
+	SpriteResource *res = new SpriteResource(CH_SPZ_FILE);
+	int16 imageCount = res->getChunkCount();
+	uint32 size = 0;
+	taf_seq_info *ts_info = nullptr;
+	byte *tmp1;
+	byte *imgPtr;
+
+	for (int i = 0; i < image_anz; i++) {
+		TAFChunk *sprite = res->getSprite(i + image_start);
+		size += sprite->width * sprite->height;
+		delete sprite;
+	}
+
+	size += image_anz * sizeof(byte *);
+	size += image_anz * sizeof(char *);
+	size += ((uint32)sizeof(taf_seq_info));
+	tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
+
+	ts_info = (taf_seq_info *)tmp1;
+	ts_info->anzahl = image_anz;
+	ts_info->image = (byte **)(tmp1 + sizeof(taf_seq_info));
+	ts_info->korrektur = (int16 *)(tmp1 + size);
+
+	imgPtr = tmp1 + (((uint32)sizeof(taf_seq_info)) + (image_anz * sizeof(char *)));
+
+	for (int i = 0; i < image_anz; i++) {
+		ts_info->image[i] = imgPtr;
+		imgPtr += res->getSpriteData(i, &ts_info->image[i], false);
+	}
+
+	memcpy(ts_info->korrektur, res->getSpriteCorrectionsTable(), image_anz * 2 * sizeof(int16));
+
+	delete res;
+
+	return ts_info;
+#endif
 }
 
 void memory::tff_adr(const char *filename, byte **speicher) {

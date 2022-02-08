@@ -278,8 +278,6 @@ private:
 	char tafname[80];
 	byte *taf_load_buffer;
 	int16 direct_taf_ani;
-	Stream *CurrentTaf;
-	uint32 SpritePos[MAXSPRITE];
 };
 
 } // namespace Chewy

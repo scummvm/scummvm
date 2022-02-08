@@ -38,14 +38,10 @@ public:
 	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
 	uint32 load_tmf(Stream *stream, tmf_header *song);
 
-	void load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo);
-	void load_korrektur(const char *fname, int16 *sp);
 	void load_tff(const char *fname, byte *speicher);
 	void void_load(const char *fname, byte *speicher, uint32 size);
 	uint32 size(const char *fname, int16 typ);
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
-	uint32 get_tafinfo(const char *fname, taf_dateiheader **tafheader);
-	void load_palette(const char *fname, byte *palette);
 
 	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);

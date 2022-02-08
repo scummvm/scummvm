@@ -83,91 +83,6 @@ void datei::load_tafmcga(Stream *handle, int16 komp, uint32 size, byte *speicher
 	read_tbf_image(handle, komp, size, speicher);
 }
 
-void datei::load_full_taf(const char *fname, byte *hi_sp, taf_info *tinfo) {
-	taf_dateiheader *header = (taf_dateiheader *)tmp;
-
-	assign_filename(fname, ".taf");
-
-	byte *speicher = hi_sp;
-	if (speicher) {
-		Common::File f;
-		if (f.open(filename)) {
-			if (header->load(&f)) {
-				int16 id = get_id(header->id);
-				if ((id == TAFDATEI) && (header->mode == 19)) {
-					uint32 next = header->next;
-					uint16 anzahl = header->count;
-					uint32 image = 0;
-					for (uint16 sprcount = 0; (sprcount < anzahl) && (!modul); sprcount++) {
-						tinfo->image[sprcount] = speicher;
-						f.seek(next, SEEK_SET);
-						taf_imageheader iheader;
-						if (iheader.load(&f)) {
-							next = iheader.next;
-							image = iheader.image;
-						} else {
-							error("load_full_taf error");
-						}
-						uint16 *abmess = (uint16 *)speicher;
-						abmess[0] = iheader.width;
-						abmess[1] = iheader.height;
-						speicher += 4;
-						uint32 size = (uint32)((uint32)iheader.height) * ((uint32)iheader.width);
-						int16 komp = iheader.komp;
-
-						f.seek(image, SEEK_SET);
-						read_tbf_image(&f, komp, size, speicher);
-						speicher += size;
-					}
-				} else {
-					error("load_full_taf error");
-				}
-			} else {
-				error("load_full_taf error");
-			}
-
-			f.close();
-		} else {
-			error("load_full_taf error");
-		}
-	} else {
-		error("load_full_taf error");
-	}
-}
-
-void datei::load_korrektur(const char *fname, int16 *sp) {
-	taf_dateiheader *header = (taf_dateiheader *)tmp;
-	assign_filename(fname, ".taf");
-
-	if (sp) {
-		Common::File f;
-		if (f.open(filename)) {
-			if (header->load(&f)) {
-				int16 id = get_id(header->id);
-				if ((id == TAFDATEI) && (header->korrekt > 0)) {
-					f.seek(-((int)(header->count * sizeof(int16) * 2) * header->korrekt), SEEK_END);
-					if ((f.size() - f.pos() / 2) < (int16)(header->count * sizeof(int16) * 2)) {
-						error("load_korrektur error");
-					} else {
-						for (int i = 0; i < header->count * 2; ++i)
-							*sp++ = f.readSint16LE();
-					}
-				} else {
-					error("load_korrektur error");
-				}
-			} else {
-				error("load_korrektur error");
-			}
-
-			f.close();
-		} else {
-			error("load_korrektur error");
-		}
-	} else {
-		error("load_korrektur error");
-	}
-}
-
 void datei::load_tff(const char *fname, byte *speicher) {
 	strncpy(filename, fname, MAXPATH - 5);
 	filename[MAXPATH - 5] = '\0';
@@ -274,8 +189,6 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 // void_adr() with type 200
 uint32 datei::size(const char *fname, int16 typ) {
 	uint32 size = 0;
-	tbf_dateiheader *tbfheader = (tbf_dateiheader *)tmp;
-	pcx_header *pcxheader = (pcx_header *)tmp;
 	mod_header *mh = (mod_header *)tmp;
 
 	strncpy(filename, fname, MAXPATH - 5);
@@ -351,69 +264,6 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 	}
 
 	return size;
-}
-
-uint32 datei::get_tafinfo(const char *fname, taf_dateiheader **tafheader) {
-	uint32 size = 0;
-	taf_dateiheader *tdh = (taf_dateiheader *)tmp;
-	*tafheader = tdh;
-
-	assign_filename(fname, ".taf");
-
-	Common::File tafFile;
-	if (tafFile.open(filename)) {
-		if (tdh->load(&tafFile)) {
-			int16 id = get_id(tdh->id);
-			if ((id == TAFDATEI) && (tdh->mode == 19)) {
-				size = tdh->allsize + (((uint32)tdh->count) * 8l);
-
-				size += ((uint32)sizeof(taf_info));
-			} else {
-				error("get_tafinfo error");
-			}
-		} else {
-			error("get_tafinfo error");
-		}
-
-		tafFile.close();
-	} else {
-		error("get_tafinfo error");
-	}
-
-	return size;
-}
-
-// Currently only used for TAF palettes from taf_adr(). Will be removed
-void datei::load_palette(const char *fname, byte *palette) {
-	taf_dateiheader *tafheader = (taf_dateiheader *)tmp;
-
-	strncpy(filename, fname, MAXPATH - 5);
-	filename[MAXPATH - 5] = '\0';
-
-	Common::File f;
-	if (!strchr(filename, '.')) {
-		strcat(filename, ".taf");
-	}
-
-	if (!modul) {
-		if (f.open(filename)) {
-			if (tafheader->load(&f)) {
-				int16 id = get_id(tafheader->id);
-				if ((id == TAFDATEI) && (tafheader->mode == 19)) {
-					for (uint16 i = 0; i < 768; i++)
-						palette[i] = tafheader->palette[i];
-				} else {
-					error("load_palette error");
-				}
-			} else {
-				error("load_palette error");
-			}
-
-			f.close();
-		} else {
-			error("load_palette error");
-		}
-	}
 }
 
 int16 datei::get_id(char *id_code) {
