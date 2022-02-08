@@ -28,44 +28,6 @@
 
 namespace Chewy {
 
-struct pcx_header {
-	int8 id = 0;
-	int8 version = 0;
-	int8 komp = 0;
-	int8 bpp = 0;
-	int16 xmin = 0;
-	int16 ymin = 0;
-	int16 xmax = 0;
-	int16 ymax = 0;
-	int16 hodpi = 0;
-	int16 verdpi = 0;
-	int8 lcmap[16 * 3] = { 0 };
-	int8 reserviert = 0;
-	int8 planes = 0;
-	int16 bpz = 0;
-	int16 palinfo = 0;
-	int16 screenx = 0;
-	int16 screeny = 0;
-	byte dummy[54];
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct tbf_dateiheader {
-	char id[4] = { 0 };
-	int16 mode = 0;
-	int16 komp = 0;
-	uint32 entpsize = 0;
-	uint16 width = 0;
-	uint16 height = 0;
-	char palette[768];
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() {
-		return 4 + 2 + 2 + 4 + 2 + 2 + 768;
-	}
-};
-
 struct taf_dateiheader {
 	char id[4] = { 0 };
 	int16 mode = 0;
@@ -511,9 +473,7 @@ struct CustomInfo {
 	Stream *Handle = nullptr;
 	byte *VirtScreen = 0;
 	byte *TempArea = 0;
-	byte *SoundSlot = 0;
 	byte *MusicSlot = 0;
-	uint32 MaxSoundSize = 0;
 	uint32 MaxMusicSize = 0;
 };
 

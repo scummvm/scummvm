@@ -23,6 +23,7 @@
 #include "chewy/file.h"
 #include "chewy/global.h"
 #include "chewy/sound.h"
+#include "chewy/resource.h"
 
 namespace Chewy {
 
@@ -158,12 +159,9 @@ detail::detail() {
 		rdi.tvp_index[i] = -1;
 	}
 	direct_taf_ani = OFF;
-	CurrentTaf = nullptr;
 }
 
 detail::~detail() {
-	if (CurrentTaf)
-		chewy_fclose(CurrentTaf);
 	direct_taf_ani = OFF;
 }
 
@@ -238,53 +236,31 @@ void detail::load_taf_tbl(taf_info *fti) {
 		fti = rdi.dptr;
 	}
 
-	if (!modul) {
-		if (fti) {
-			if (CurrentTaf) {
-				for (int16 i = 0; i < MAXDETAILS; i++) {
-					if (rdi.Sinfo[i].SprNr != -1)
-						load_taf_seq(CurrentTaf, rdi.Sinfo[i].SprNr, 1, fti);
-					if (rdi.Ainfo[i].start_ani != -1 &&
-					        rdi.Ainfo[i].end_ani != -1 && !rdi.Ainfo[i].load_flag)
-						load_taf_seq(CurrentTaf, rdi.Ainfo[i].start_ani, (rdi.Ainfo[i].end_ani - rdi.Ainfo[i].start_ani) + 1, fti);
-				}
-			} else {
-				error("load_taf_tbl error");
-			}
+	if (fti) {
+		for (int16 i = 0; i < MAXDETAILS; i++) {
+			if (rdi.Sinfo[i].SprNr != -1)
+				load_taf_seq(rdi.Sinfo[i].SprNr, 1, fti);
+			if (rdi.Ainfo[i].start_ani != -1 &&
+					rdi.Ainfo[i].end_ani != -1 && !rdi.Ainfo[i].load_flag)
+				load_taf_seq(rdi.Ainfo[i].start_ani, (rdi.Ainfo[i].end_ani - rdi.Ainfo[i].start_ani) + 1, fti);
 		}
-	} else {
-		error("load_taf_tbl error");
 	}
 }
 
 taf_info *detail::init_taf_tbl(const char *fname_) {
-	taf_dateiheader *tafheader;
-
 	taf_info *Tt = 0;
+	SpriteResource *res = new SpriteResource(tafname);
+	int16 anz = res->getChunkCount();
+	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(taf_info));
 
-	mem->file->get_tafinfo(fname_, &tafheader);
-	if (!modul) {
-		int16 anz = tafheader->count;
-		byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(taf_info));
+	Tt = (taf_info *)tmp;
+	Tt->anzahl = anz;
+	Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
+	Tt->image = (byte **)(tmp + sizeof(taf_info));
+	memcpy(Tt->korrektur, (byte *)res->getSpriteCorrectionsTable(), Tt->anzahl * 2 * sizeof(int16));
+	Tt->palette = 0;
 
-		if (!modul) {
-			Tt = (taf_info *)tmp;
-			Tt->anzahl = anz;
-			Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
-			Tt->image = (byte **)(tmp + sizeof(taf_info));
-
-			if (!modul) {
-				mem->file->load_korrektur(fname_, Tt->korrektur);
-				Tt->palette = 0;
-				CurrentTaf = chewy_fopen(fname_, "rb");
-				if (CurrentTaf) {
-					load_sprite_pointer(CurrentTaf);
-				} else {
-					error("init_taf_tbl error");
-				}
-			}
-		}
-	}
+	delete res;
 
 	return Tt;
 }
@@ -298,11 +274,6 @@ void detail::del_taf_tbl(taf_info *Tt) {
 	}
 	free((char *) Tt->korrektur);
 	free((char *) Tt);
-
-	if (CurrentTaf) {
-		chewy_fclose(CurrentTaf);
-		CurrentTaf = 0;
-	}
 }
 
 void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
@@ -315,38 +286,18 @@ void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 }
 
 void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
-
 	if (!Tt)
 		Tt = rdi.dptr;
 
-	if (CurrentTaf) {
-		load_taf_seq(CurrentTaf, spr_nr, spr_anz, Tt);
+	SpriteResource *res = new SpriteResource(tafname);
 
-	}
-}
-
-void detail::load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz, taf_info *Tt) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-
-	rs->seek(SpritePos[spr_nr], SEEK_SET);
-	for (int16 i = 0; i < spr_anz && !modul; i++) {
-		taf_imageheader iheader;
-		if (iheader.load(rs)) {
-			if (!Tt->image[spr_nr + i]) {
-				uint32 size = iheader.width * iheader.height;
-				Tt->image[spr_nr + i] = (byte *)MALLOC(size + 4l);
-				((int16 *)Tt->image[spr_nr + i])[0] = iheader.width;
-				((int16 *)Tt->image[spr_nr + i])[1] = iheader.height;
-
-				rs->seek(iheader.image, SEEK_SET);
-				mem->file->load_tafmcga(rs, iheader.komp, size, Tt->image[spr_nr + i] + 4l);
-			}
-
-			rs->seek(iheader.next, SEEK_SET);
-		} else {
-			error("load_taf_seq error");
+	for (int16 i = 0; i < spr_anz; i++) {
+		if (!Tt->image[spr_nr + i]) {
+			res->getSpriteData(spr_nr + i, &Tt->image[spr_nr + i], true);
 		}
 	}
+
+	delete res;
 }
 
 void detail::set_static_spr(int16 nr, int16 spr_nr) {
@@ -803,56 +754,9 @@ void detail::set_taf_ani_mem(byte *load_area) {
 }
 
 void detail::load_taf_ani_sprite(int16 nr) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(CurrentTaf);
-
-	if (rs) {
-		rs->seek(SpritePos[nr]);
-
-		taf_imageheader iheader;
-		if (iheader.load(rs)) {
-			int32 size = (int32)iheader.width * (int32)iheader.height;
-			((int16 *)taf_load_buffer)[0] = iheader.width;
-			((int16 *)taf_load_buffer)[1] = iheader.height;
-
-			rs->seek(iheader.image);
-			if (taf_load_buffer)
-				mem->file->load_tafmcga(rs, iheader.komp, size, taf_load_buffer + 4l);
-			else {
-				error("load_taf_ani_sprite error");
-			}
-		} else {
-			error("load_taf_ani_sprite error");
-		}
-	} else {
-		error("load_taf_ani_sprite error");
-	}
-}
-
-void detail::load_sprite_pointer(Stream *stream) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-
-	if (rs) {
-		rs->seek(0, SEEK_SET);
-
-		taf_dateiheader header;
-		if (header.load(rs)) {
-			uint16 anzahl = header.count;
-			rs->seek(header.next, SEEK_SET);
-			SpritePos[0] = header.next;
-			assert(anzahl < MAXSPRITE);
-
-			for (int16 i = 1; i < anzahl && !modul; i++) {
-				taf_imageheader iheader;
-				if (!iheader.load(rs)) {
-					error("load_sprite_pointer error");
-				}
-				SpritePos[i] = iheader.next;
-				rs->seek(iheader.next, SEEK_SET);
-			}
-		} else {
-			error("load_sprite_pointer error");
-		}
-	}
+	SpriteResource *res = new SpriteResource(tafname);
+	res->getSpriteData(nr, &taf_load_buffer, false);
+	delete res;
 }
 
 } // namespace Chewy

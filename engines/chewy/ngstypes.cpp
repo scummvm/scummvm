@@ -23,41 +23,6 @@
 
 namespace Chewy {
 
-bool pcx_header::load(Common::SeekableReadStream *src) {
-	id = src->readByte();
-	version = src->readByte();
-	komp = src->readByte();
-	bpp = src->readByte();
-	xmin = src->readSint16LE();
-	ymin = src->readSint16LE();
-	xmax = src->readSint16LE();
-	ymax = src->readSint16LE();
-	hodpi = src->readSint16LE();
-	verdpi = src->readSint16LE();
-	src->read(lcmap, 16 * 3);
-	reserviert = src->readByte();
-	planes = src->readByte();
-	bpz = src->readSint16LE();
-	palinfo = src->readSint16LE();
-	screenx = src->readSint16LE();
-	screeny = src->readSint16LE();
-	src->read(dummy, 54);
-
-	return true;
-}
-
-bool tbf_dateiheader::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	mode = src->readSint16LE();
-	komp = src->readSint16LE();
-	entpsize = src->readUint32LE();
-	width = src->readUint16LE();
-	height = src->readUint16LE();
-	src->read(palette, 768);
-
-	return true;
-}
-
 bool taf_dateiheader::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	mode = src->readSint16LE();

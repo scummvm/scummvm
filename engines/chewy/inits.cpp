@@ -309,8 +309,6 @@ void init_load() {
 	AkChewyTaf = 0;
 	load_chewy_taf(CHEWY_NORMAL);
 
-	spz_taf_handle = room->open_handle(CH_SPZ_FILE, "rb", R_SPEZTAF);
-
 	spz_akt_id = -1;
 	spz_tinfo = nullptr;
 	set_spz_delay(3);
@@ -384,7 +382,6 @@ void sound_init() {
 	ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
 
 	music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
-	det->set_sound_area(Ci.SoundSlot, SOUND_SLOT_SIZE);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
 	assert(rs);
