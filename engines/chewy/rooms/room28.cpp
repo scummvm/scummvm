@@ -37,6 +37,7 @@ void Room28::entry(int16 eib_nr) {
 
 	if (_G(spieler).R28RKuerbis)
 		det->show_static_spr(6);
+
 	if (_G(spieler).R28Briefkasten) {
 		det->show_static_spr(8);
 		det->show_static_spr(9);
@@ -92,7 +93,7 @@ void Room28::entry(int16 eib_nr) {
 					if (_G(spieler).R40TeilKarte) {
 						haendler();
 					} else {
-						wait_show_screen(50);
+						wait_show_screen(60);
 						start_aad_wait(195, -1);
 					}
 
@@ -144,18 +145,16 @@ void Room28::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	hide_cur();
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28) {
-		if (eib_nr == 69) {
-			SetUpScreenFunc = nullptr;
-			if (!_G(spieler).R28ExitTown) {
-				start_aad_wait(178, -1);
-				_G(spieler).R28ExitTown = true;
-			}
-
-			flags.ExitMov = false;
-			auto_move(6, P_HOWARD);
-			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
+		SetUpScreenFunc = nullptr;
+		if (!_G(spieler).R28ExitTown) {
+			start_aad_wait(178, -1);
+			_G(spieler).R28ExitTown = true;
 		}
+
+		flags.ExitMov = false;
+		auto_move(6, P_HOWARD);
+		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 	}
 
 	show_cur();
@@ -179,7 +178,7 @@ void Room28::haendler() {
 	set_person_pos(490, 146, P_CHEWY, P_RIGHT);
 	det->set_static_ani(2, -1);
 
-	while (_G(spieler).scrollx < SCREEN_WIDTH) {
+	while (_G(spieler).scrollx < 300) {
 		SHOULD_QUIT_RETURN;
 		set_up_screen(DO_SETUP);
 	}
@@ -277,10 +276,7 @@ void Room28::set_pump() {
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
 				stop_person(P_HOWARD);
 				SetUpScreenFunc = nullptr;
-
-				if (_G(spieler).SpeechSwitch) {
-					g_engine->_sound->waitForSpeechToFinish();
-				}
+				g_engine->_sound->waitForSpeechToFinish();
 
 				start_aad_wait(177, -1);
 				SetUpScreenFunc = setup_func;
@@ -300,6 +296,7 @@ void Room28::get_pump() {
 
 	if (_G(spieler).R28ChewyPump) {
 		hide_cur();
+
 		stop_person(P_CHEWY);
 		_G(spieler).R28ChewyPump = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -356,13 +353,8 @@ int16 Room28::cut_serv1(int16 frame) {
 }
 
 int16 Room28::cut_serv2(int16 frame) {
-	if (frame < 23) {
-		if (_G(spieler).R28Briefkasten) {
-			det->plot_static_details(0, 0, 8, 9);
-		} else {
-			det->plot_static_details(0, 0, 7, 7);
-		}
-	}
+	if (frame < 23)
+		cut_serv1(frame);
 
 	return 0;
 }
