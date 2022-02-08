@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-08 11:12+0000\n"
+"PO-Revision-Date: 2022-02-08 11:28+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5332,71 +5332,71 @@ msgstr "Пералучыць экраны рыштунку/пэрсанажу"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
-msgstr ""
+msgstr "Лягер"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Cast Spell"
-msgstr ""
+msgstr "Сыпаць чары"
 
 #: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Чары 1-ай ступені"
 
 #: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Чары 2-ой ступені"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Чары 3-яй ступені"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Чары 4-ай ступені"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Чары 5-ай ступені"
 
 #: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Чары 6-ай ступені"
 
 #: engines/kyra/engine/lol.cpp:457
 msgid "Attack 1"
-msgstr ""
+msgstr "Атака 1"
 
 #: engines/kyra/engine/lol.cpp:458
 msgid "Attack 2"
-msgstr ""
+msgstr "Атака 2"
 
 #: engines/kyra/engine/lol.cpp:459
 msgid "Attack 3"
-msgstr ""
+msgstr "Атака 3"
 
 #: engines/kyra/engine/lol.cpp:460
 msgid "Show Map"
-msgstr ""
+msgstr "Паказаць мапу"
 
 #: engines/kyra/engine/lol.cpp:463
 msgid "Slide Left"
-msgstr ""
+msgstr "Сьлізганьне налева"
 
 #: engines/kyra/engine/lol.cpp:464
 msgid "Slide Right"
-msgstr ""
+msgstr "Сьлізганьне направа"
 
 #: engines/kyra/engine/lol.cpp:467
 msgid "Rest"
-msgstr ""
+msgstr "Адпачынак"
 
 #: engines/kyra/engine/lol.cpp:468
 msgid "Options"
-msgstr ""
+msgstr "Налады"
 
 #: engines/kyra/engine/lol.cpp:469
 msgid "Choose Spell"
-msgstr ""
+msgstr "Выбраць чары"
 
 #: engines/kyra/gui/saveload_eob.cpp:595
 #, c-format
@@ -5408,6 +5408,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"У папцы з гульнёю знойдзены арыґінальны файл захаванай гульні:\n"
+"\n"
+"%s⋅%s\n"
+"\n"
+"Ці хочаце вы выкарыстаць гэты захоў у ScummVM?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:628
 #, c-format
@@ -5415,6 +5421,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"У слоце %d ужо ёсьць захаваная гульня. Перазапісаць?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:661
 #, c-format
