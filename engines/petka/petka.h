@@ -51,6 +51,10 @@ namespace Common {
 class SeekableReadStream;
 }
 
+namespace Graphics {
+class Font;
+}
+
 namespace Video {
 class VideoDecoder;
 }
@@ -105,6 +109,9 @@ public:
 	Common::RandomSource &getRnd();
 	const Common::String &getSpeechPath();
 
+	Graphics::Font *getTextFont() const { return _textFont.get(); }
+	Graphics::Font *getDescriptionFont() const { return _descriptionFont.get(); }
+
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 
@@ -129,6 +136,8 @@ private:
 	Common::ScopedPtr<VideoSystem> _vsys;
 	Common::ScopedPtr<BigDialogue> _dialogMan;
 	Common::ScopedPtr<Video::VideoDecoder> _videoDec;
+	Common::ScopedPtr<Graphics::Font> _textFont;
+	Common::ScopedPtr<Graphics::Font> _descriptionFont;
 
 	Common::RandomSource _rnd;
 

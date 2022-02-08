@@ -32,6 +32,8 @@
 #include "engines/util.h"
 
 #include "graphics/surface.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 
 #include "video/avi_decoder.h"
 
@@ -86,6 +88,9 @@ Common::Error PetkaEngine::run() {
 	_soundMgr.reset(new SoundMgr(*this));
 	_vsys.reset(new VideoSystem(*this));
 	_resMgr.reset(new QManager(*this));
+
+	_textFont.reset(Graphics::loadTTFFontFromArchive("FreeSansBold.ttf", 20, Graphics::kTTFSizeModeCell));
+	_descriptionFont.reset(Graphics::loadTTFFontFromArchive("FreeSansBold.ttf", 16, Graphics::kTTFSizeModeCell));
 
 	loadPart(isDemo() ? 1 : 0);
 

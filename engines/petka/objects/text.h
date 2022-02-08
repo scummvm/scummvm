@@ -45,7 +45,7 @@ protected:
 
 	static void drawOutline(Graphics::Surface *surface, uint16 color);
 	static Common::Rect calculateBoundingBoxForText(const Common::U32String &text, Graphics::Font &font);
-	static void drawText(Graphics::Surface &s, int y, int maxWidth, const Common::U32String &text, uint color, Graphics::Font &font);
+	static void drawText(Graphics::Surface &s, int y, int maxWidth, const Common::U32String &text, uint color, Graphics::Font &font, Graphics::TextAlign alignment);
 
 protected:
 	Common::Rect _rect;
