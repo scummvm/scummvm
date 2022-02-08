@@ -22,8 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room32.h"
 
 namespace Chewy {
@@ -32,9 +30,8 @@ namespace Rooms {
 void Room32::entry() {
 	if (_G(spieler).R32HowardWeg)
 		det->hide_static_spr(0);
-	if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib) {
+	if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib)
 		det->show_static_spr(5);
-	}
 }
 
 int16 Room32::use_howard() {
@@ -101,16 +98,6 @@ void Room32::use_schreibmaschine() {
 	if (_G(spieler).R32HowardWeg) {
 		if (_G(spieler).inv_cur) {
 			switch (_G(spieler).AkInvent) {
-			case PAPIER_INV:
-				auto_move(2, P_CHEWY);
-				_G(spieler).R32PapierOk = true;
-				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				del_inventar(_G(spieler).AkInvent);
-				atds->set_ats_str(231, TXT_MARK_LOOK, 1, ATS_DATEI);
-				ani_nr = CH_TALK3;
-				dia_nr = 86;
-				break;
-
 			case CYB_KRONE_INV:
 				if (!_G(spieler).R32UseSchreib) {
 					if (!_G(spieler).R32PapierOk) {
@@ -129,6 +116,16 @@ void Room32::use_schreibmaschine() {
 						atds->set_ats_str(231, TXT_MARK_LOOK, 0, ATS_DATEI);
 					}
 				}
+				break;
+
+			case PAPIER_INV:
+				auto_move(2, P_CHEWY);
+				_G(spieler).R32PapierOk = true;
+				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
+				del_inventar(_G(spieler).AkInvent);
+				atds->set_ats_str(231, TXT_MARK_LOOK, 1, ATS_DATEI);
+				ani_nr = CH_TALK3;
+				dia_nr = 86;
 				break;
 
 			default:
@@ -154,18 +151,16 @@ void Room32::use_schreibmaschine() {
 int16 Room32::get_script() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
-		if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib) {
-			action_flag = true;
-			_G(spieler).R32Script = true;
-			auto_move(4, P_CHEWY);
-			invent_2_slot(MANUSKRIPT_INV);
-			start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-			det->hide_static_spr(5);
-			atds->set_ats_str(203, 0, ATS_DATEI);
-			start_spz(CH_TALK3, 1, ANI_VOR, P_CHEWY);
-			start_aad_wait(91, -1);
-		}
+	if (!_G(spieler).inv_cur && !_G(spieler).R32Script && _G(spieler).R32UseSchreib) {
+		action_flag = true;
+		_G(spieler).R32Script = true;
+		auto_move(4, P_CHEWY);
+		invent_2_slot(MANUSKRIPT_INV);
+		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
+		det->hide_static_spr(5);
+		atds->set_ats_str(203, 0, ATS_DATEI);
+		start_spz(CH_TALK3, 1, ANI_VOR, P_CHEWY);
+		start_aad_wait(91, -1);
 	}
 
 	return action_flag;
