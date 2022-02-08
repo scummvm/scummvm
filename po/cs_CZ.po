@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-06 22:53+0000\n"
+"POT-Creation-Date: 2022-02-08 12:31+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -175,8 +175,8 @@ msgstr ""
 #: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
 #: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
-#: engines/scumm/scumm.cpp:1400 engines/scumm/scumm.cpp:1672
-#: engines/scumm/scumm.cpp:2142 engines/sky/compact.cpp:141
+#: engines/scumm/scumm.cpp:1400 engines/scumm/scumm.cpp:1678
+#: engines/scumm/scumm.cpp:2146 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
 #: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
 #: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
@@ -4214,7 +4214,7 @@ msgstr "Obnovit"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2754
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2761
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4225,7 +4225,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2744
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2751
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4236,7 +4236,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2767
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2774
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6635,6 +6635,16 @@ msgstr "Cvičení"
 msgid "Expert"
 msgstr "Pokročilý"
 
+#: engines/scumm/dialogs.cpp:704
+msgid "Overture Timing:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:706
+msgid ""
+"Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
+"lower the value, the earlier the Lucasfilm logo appears."
+msgstr ""
+
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
 msgstr "Běžné klávesové příkazy:"
@@ -7164,7 +7174,7 @@ msgstr "Hlasitost hudby: "
 msgid "Subtitle speed: "
 msgstr "Rychlost titulků: "
 
-#: engines/scumm/metaengine.cpp:329
+#: engines/scumm/metaengine.cpp:330
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7174,12 +7184,12 @@ msgstr ""
 "předešlo nelegálnímu šíření.\n"
 "Plnou verzi je možno zakoupit v obchodě iTunes."
 
-#: engines/scumm/metaengine.cpp:420
+#: engines/scumm/metaengine.cpp:421
 #, fuzzy
 msgid "HE v71+ support is not compiled in"
 msgstr "Zakompilované funkce:"
 
-#: engines/scumm/metaengine.cpp:444
+#: engines/scumm/metaengine.cpp:445
 #, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Zakompilované funkce:"
@@ -7218,14 +7228,14 @@ msgstr ""
 "Nelze najít spustitelný soubor 'Monkey Island' pro Macintosh z\n"
 "jehož mají být načteny hudební nástroje. Hudba bude zakázána."
 
-#: engines/scumm/scumm.cpp:1669
+#: engines/scumm/scumm.cpp:1675
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2140
+#: engines/scumm/scumm.cpp:2144
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7234,7 +7244,7 @@ msgstr ""
 "Přirozená podpora MIDI vyžaduje Aktualizaci Roland od LucasArts,\n"
 "ale %s chybí. Místo toho je použit AdLib."
 
-#: engines/scumm/scumm.cpp:3068
+#: engines/scumm/scumm.cpp:3075
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
