@@ -77,7 +77,6 @@ int16 Files::execute(bool isInGame) {
 	room->set_ak_pal(&room_blk);
 	fnames = iog->io_init(&ioptr);
 	fnames += 1;
-	ERROR;
  
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 	out->setze_zeiger(workptr);
@@ -303,7 +302,6 @@ enter:
 
 	room->open_handle(EPISODE1, "rb", 0);
 	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
-	ERROR;
 
 	fx_blend = BLEND1;
 	room->set_ak_pal(&room_blk);

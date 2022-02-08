@@ -589,8 +589,6 @@ enum SetupScreenMode {
 
 #define FILEMENUE 1
 
-#define ERROR if (modul) ::error("General failure - %d", modul);
-
 } // namespace Chewy
 
 #endif
