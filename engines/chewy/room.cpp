@@ -235,14 +235,7 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 
 		for (int16 i = 1; i < obj->mov_obj_room[0] + 1; i++) {
 			if (!tmp_inv_spr[obj->mov_obj_room[i]]) {
-				TAFChunk *sprite = spriteRes->getSprite(obj->mov_obj_room[i]);
-				Rb->InvSprAdr[obj->mov_obj_room[i]] = (byte *)MALLOC(sprite->width * sprite->height + 4);
-				// Sprite width and height is piggy-banked inside the sprite data
-				uint16 *memPtr = (uint16 *)Rb->InvSprAdr[obj->mov_obj_room[i]];
-				memPtr[0] = sprite->width;
-				memPtr[1] = sprite->height;
-				memcpy(Rb->InvSprAdr[obj->mov_obj_room[i]] + 4, sprite->data, sprite->width * sprite->height);
-				delete sprite;
+				spriteRes->getSpriteData(obj->mov_obj_room[i], &Rb->InvSprAdr[obj->mov_obj_room[i]], true);
 			} else {
 				Rb->InvSprAdr[obj->mov_obj_room[i]] = tmp_inv_spr[obj->mov_obj_room[i]];
 				tmp_inv_spr[obj->mov_obj_room[i]] = nullptr;
@@ -251,14 +244,7 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 
 		for (int16 i = 1; i < obj->spieler_invnr[0] + 1; i++) {
 			if (!tmp_inv_spr[obj->spieler_invnr[i]]) {
-				TAFChunk *sprite = spriteRes->getSprite(obj->spieler_invnr[i]);
-				Rb->InvSprAdr[obj->spieler_invnr[i]] = (byte *)MALLOC(sprite->width * sprite->height + 4);
-				// Sprite width and height is piggy-banked inside the sprite data
-				uint16 *memPtr = (uint16 *)Rb->InvSprAdr[obj->spieler_invnr[i]];
-				memPtr[0] = sprite->width;
-				memPtr[1] = sprite->height;
-				memcpy(Rb->InvSprAdr[obj->spieler_invnr[i]] + 4, sprite->data, sprite->width * sprite->height);
-				delete sprite;
+				spriteRes->getSpriteData(obj->spieler_invnr[i], &Rb->InvSprAdr[obj->spieler_invnr[i]], true);
 			} else {
 				Rb->InvSprAdr[obj->spieler_invnr[i]] = tmp_inv_spr[obj->spieler_invnr[i]];
 				tmp_inv_spr[obj->spieler_invnr[i]] = 0;
@@ -272,14 +258,7 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 
 		if (player->AkInvent != -1) {
 			if (Rb->InvSprAdr[player->AkInvent] == nullptr) {
-				TAFChunk *sprite = spriteRes->getSprite(player->AkInvent);
-				Rb->InvSprAdr[player->AkInvent] = (byte *)MALLOC(sprite->width * sprite->height + 4);
-				// Sprite width and height is piggy-banked inside the sprite data
-				uint16 *memPtr = (uint16 *)Rb->InvSprAdr[player->AkInvent];
-				memPtr[0] = sprite->width;
-				memPtr[1] = sprite->height;
-				memcpy(Rb->InvSprAdr[player->AkInvent] + 4, sprite->data, sprite->width * sprite->height);
-				delete sprite;
+				spriteRes->getSpriteData(player->AkInvent, &Rb->InvSprAdr[player->AkInvent], true);
 			}
 		}
 
@@ -520,14 +499,7 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(spieler).ChewyAni = taf_nr;
 			AkChewyTaf = taf_nr;
 			chewy = mem->taf_adr(fname_);
-
-			taf_dateiheader *tafheader;
-			mem->file->get_tafinfo(fname_, &tafheader);
-			if (!modul) {
-				chewy_kor = chewy->korrektur;
-			} else {
-				error("load_chewy_taf error");
-			}
+			chewy_kor = chewy->korrektur;
 		}
 	}
 }
