@@ -978,7 +978,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 		stream.seek(stringPos);
 
 		Common::String script = stream.readString(0, nextStringPos - stringPos);
-		_actions[i] = script.decode(Common::kMacRoman).encode(Common::kUtf8);
+		_actions[i] = _movie->getCast()->decodeString(script).encode(Common::kUtf8);
 
 		debugC(3, kDebugLoading, "Action index: %d id: %d nextId: %d subId: %d, code: %s", i, id, nextId, subId, _actions[i].c_str());
 
