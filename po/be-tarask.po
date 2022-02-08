@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-06 22:53+0000\n"
-"PO-Revision-Date: 2022-02-08 10:55+0000\n"
+"PO-Revision-Date: 2022-02-08 11:12+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5267,66 +5267,68 @@ msgstr ""
 
 #: engines/kyra/metaengine.cpp:116
 msgid "Lands of Lore support is not compiled in"
-msgstr "Падтрыманьне Lands of Lore не сабраная"
+msgstr "Падтрыманьне Lands of Lore не сабранае"
 
 #: engines/kyra/metaengine.cpp:126
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II FM-TOWNS патрабуе падтрыманьне рэжымаў 16-бітных колераў, якія ў вас "
+"ня дзейныя ў вашым збору ScummVM"
 
 #: engines/kyra/metaengine.cpp:132
 msgid "Eye of Beholder support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Eye of Beholder не сабранае"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:453
 #: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Left Click"
-msgstr ""
+msgstr "Інтэракцыя левым пстрыкам"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Right Click"
-msgstr ""
+msgstr "Інтэракцыя правым пстрыкам"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:461
 #: engines/twine/metaengine.cpp:248
 msgid "Move Forward"
-msgstr ""
+msgstr "Рух наперад"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:462
 msgid "Move Back"
-msgstr ""
+msgstr "Рух назад"
 
 #: engines/kyra/engine/eobcommon.cpp:371
 msgid "Move Left"
-msgstr ""
+msgstr "Рух налева"
 
 #: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Right"
-msgstr ""
+msgstr "Рух направа"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:465
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:269
 #: engines/zvision/metaengine.cpp:140
 msgid "Turn Left"
-msgstr ""
+msgstr "Паварот налева"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:466
 #: engines/pegasus/pegasus.cpp:2742 engines/twine/metaengine.cpp:262
 #: engines/zvision/metaengine.cpp:146
 msgid "Turn Right"
-msgstr ""
+msgstr "Паварот направа"
 
 #: engines/kyra/engine/eobcommon.cpp:375
 msgid "Open/Close Inventory"
-msgstr ""
+msgstr "Адкрыць/закрыць рыштунак"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Пералучыць экраны рыштунку/пэрсанажу"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
