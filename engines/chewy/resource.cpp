@@ -58,7 +58,7 @@ Resource::Resource(Common::String filename) {
 		_encrypted = false;
 	}
 
-	if (filename == "atds.tap")
+	if (filename.contains("atds.tap"))
 		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
@@ -77,11 +77,17 @@ Resource::Resource(Common::String filename) {
 		_stream.skip(cur.size);
 		_chunkList.push_back(cur);
 	}
+
+	_spriteCorrectionsCount = 0;
+	_spriteCorrectionsTable = nullptr;
 }
 
 Resource::~Resource() {
 	_chunkList.clear();
 	_stream.close();
+
+	delete _spriteCorrectionsTable;
+	_spriteCorrectionsTable = nullptr;
 }
 
 uint32 Resource::getChunkCount() const {
@@ -115,10 +121,15 @@ void Resource::initSprite(Common::String filename) {
 	_encrypted = false;
 	/*screenMode = */_stream.readUint16LE();
 	_chunkCount = _stream.readUint16LE();
-	_stream.skip(4);
-	_stream.skip(3 * 256);
+	_allSize = _stream.readUint32LE();
+	_stream.read(_spritePalette, 3 * 256);
 	nextSpriteOffset = _stream.readUint32LE();
-	_stream.skip(2 + 1);
+	_spriteCorrectionsCount = _stream.readUint16LE();
+
+	// Sometimes there's a filler byte
+	if ((int32)nextSpriteOffset == _stream.pos() + 1)
+		_stream.skip(1);
+
 	if ((int32)nextSpriteOffset != _stream.pos())
 		error("Invalid sprite resource - %s", filename.c_str());
 
@@ -140,6 +151,16 @@ void Resource::initSprite(Common::String filename) {
 
 		_stream.skip(cur.size);
 		_chunkList.push_back(cur);
+
+		if (_stream.err())
+			error("Sprite stream error - %s", filename.c_str());
+	}
+
+	_spriteCorrectionsTable = new uint16[_chunkCount * 2];
+
+	for (uint i = 0; i < _chunkCount; i++) {
+		_spriteCorrectionsTable[i * 2] = _stream.readUint16LE();
+		_spriteCorrectionsTable[i * 2 + 1] = _stream.readUint16LE();
 	}
 }
 
@@ -188,6 +209,21 @@ TAFChunk *SpriteResource::getSprite(uint num) {
 		unpackRLE(taf->data, chunk->size, taf->width * taf->height);
 
 	return taf;
+}
+
+uint32 SpriteResource::getSpriteData(uint num, uint8 **buf, bool initBuffer) {
+	TAFChunk *sprite = getSprite(num);
+	uint32 size = sprite->width * sprite->height;
+	if (initBuffer)
+		*buf = (byte *)malloc(size + 4);
+	// Sprite width and height is piggy-banked inside the sprite data
+	uint16 *memPtr = (uint16 *)*buf;
+	memPtr[0] = sprite->width;
+	memPtr[1] = sprite->height;
+	memcpy(*buf + 4, sprite->data, size);
+	delete sprite;
+
+	return size + 4;
 }
 
 TBFChunk *BackgroundResource::getImage(uint num, bool fixPalette) {

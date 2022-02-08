@@ -143,6 +143,12 @@ protected:
 	ResourceType _resType;
 	bool _encrypted;
 
+	// Sprite specific
+	uint8 _spritePalette[3 * 256];
+	uint32 _allSize;
+	uint16 _spriteCorrectionsCount;
+	uint16 *_spriteCorrectionsTable;
+
 	ChunkList _chunkList;
 };
 
@@ -152,6 +158,11 @@ public:
 	virtual ~SpriteResource() {}
 
 	TAFChunk *getSprite(uint num);
+	uint32 getSpriteData(uint num, uint8 **buf, bool initBuffer);
+	uint8 *getSpritePalette() { return _spritePalette; }
+	uint32 getAllSize() { return _allSize; }
+	uint16 getSpriteCorrectionsCount() { return _spriteCorrectionsCount; }
+	uint16 *getSpriteCorrectionsTable() { return _spriteCorrectionsTable; }
 };
 
 class BackgroundResource : public Resource {
