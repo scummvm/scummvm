@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_AILCLASS_H
-#define CHEWY_AILCLASS_H
+#ifndef CHEWY_SOUND_PLAYER_H
+#define CHEWY_SOUND_PLAYER_H
 
 #include "audio/mixer.h"
 #include "chewy/ngstypes.h"
@@ -32,10 +32,10 @@ void checkSampleEnd();
 void DecodePatternLine();
 void DecodeChannel(int16 ch);
 
-class ailclass {
+class SoundPlayer {
 public:
-	ailclass();
-	~ailclass();
+	SoundPlayer();
+	~SoundPlayer();
 
 	void setMusicMasterVol(int16 vol);
 	void setSoundMasterVol(int16 vol);

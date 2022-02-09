@@ -22,7 +22,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "chewy/chewy.h"
-#include "chewy/ailclass.h"
+#include "chewy/sound_player.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
 #include "chewy/ngshext.h"
@@ -158,34 +158,34 @@ char *Patterns[128];
 char *CurrentLine;
 int16 StereoPos[8] = {63};
 
-ailclass::ailclass() {
+SoundPlayer::SoundPlayer() {
 	SoundEnable = false;
 	MusicFade = false;
 }
 
-ailclass::~ailclass() {
+SoundPlayer::~SoundPlayer() {
 	warning("STUB: ailclass::~ailclass()");
 }
 
-void ailclass::setMusicMasterVol(int16 vol) {
+void SoundPlayer::setMusicMasterVol(int16 vol) {
 	vol <<= 1;
 	if (vol > 120)
 		vol = 120;
 	MusicMasterVol = vol;
 }
 
-void ailclass::setSoundMasterVol(int16 vol) {
+void SoundPlayer::setSoundMasterVol(int16 vol) {
 	vol <<= 1;
 	if (vol > 120)
 		vol = 120;
 	SoundMasterVol = vol;
 }
 
-void ailclass::disableSound() {
+void SoundPlayer::disableSound() {
 	SoundEnable = false;
 }
 
-void ailclass::initMixMode() {
+void SoundPlayer::initMixMode() {
 	warning("STUB: ailclass::initMixMode()");
 
 	if (SoundEnable) {
@@ -207,7 +207,7 @@ void ailclass::initMixMode() {
 	}
 }
 
-void ailclass::exitMixMode() {
+void SoundPlayer::exitMixMode() {
 	warning("STUB: ailclass::exitMixMode()");
 
 #if 0
@@ -220,7 +220,7 @@ void ailclass::exitMixMode() {
 #endif
 }
 
-void ailclass::playMod(tmf_header *th) {
+void SoundPlayer::playMod(tmf_header *th) {
 	char *tmp;
 	int16 i;
 	ActiveSong = th;
@@ -245,7 +245,7 @@ void ailclass::playMod(tmf_header *th) {
 	}
 }
 
-void ailclass::stopMod() {
+void SoundPlayer::stopMod() {
 	warning("STUB: ailclass::stopMod()");
 
 #if 0
@@ -260,13 +260,13 @@ void ailclass::stopMod() {
 #endif
 }
 
-void ailclass::continueMusic() {
+void SoundPlayer::continueMusic() {
 	if (SoundEnable)
 		if (!strncmp(ActiveSong->id, "TMF", 3))
 			MusicStatus = ON;
 }
 
-void ailclass::playSequence(int16 startPos, int16 endPos) {
+void SoundPlayer::playSequence(int16 startPos, int16 endPos) {
 	if (SoundEnable) {
 		if (!strncmp(ActiveSong->id, "TMF", 3)) {
 			StartPos = startPos;
@@ -280,7 +280,7 @@ void ailclass::playSequence(int16 startPos, int16 endPos) {
 	}
 }
 
-void ailclass::playPattern(int16 pattern) {
+void SoundPlayer::playPattern(int16 pattern) {
 	if (SoundEnable) {
 		if (!strncmp(ActiveSong->id, "TMF", 3)) {
 			StartPos = 0;
@@ -294,20 +294,20 @@ void ailclass::playPattern(int16 pattern) {
 	}
 }
 
-void ailclass::setLoopMode(int16 mode) {
+void SoundPlayer::setLoopMode(int16 mode) {
 	mode &= 1;
 	if (SoundEnable)
 		LoopEnable = mode;
 }
 
-void ailclass::fadeOut(uint16 delay) {
+void SoundPlayer::fadeOut(uint16 delay) {
 	FadeStart = delay;
 	FadeCounter = 0;
 	MusicFade = FADE_OUT;
 	FadeVol = MusicMasterVol;
 }
 
-void ailclass::getMusicInfo(musik_info *mi) {
+void SoundPlayer::getMusicInfo(musik_info *mi) {
 	mi->musik_playing = MusicStatus;
 	mi->play_mode = 0;
 	mi->pattern_line = PatLine;
@@ -315,11 +315,11 @@ void ailclass::getMusicInfo(musik_info *mi) {
 	mi->cur_pattnr = PatPointer;
 }
 
-int16 ailclass::musicPlaying() {
+int16 SoundPlayer::musicPlaying() {
 	return MusicStatus;
 }
 
-int16 ailclass::getSampleStatus(int16 channel) {
+int16 SoundPlayer::getSampleStatus(int16 channel) {
 	warning("STUB: ailclass::getSampleStatus()");
 
 #if 0
@@ -332,7 +332,7 @@ int16 ailclass::getSampleStatus(int16 channel) {
 	return 0;
 }
 
-void ailclass::initNoteTable(uint16 sfreq) {
+void SoundPlayer::initNoteTable(uint16 sfreq) {
 	float TimerFreq;
 	TimerFreq = 7093789.2f;
 	for (int j = 0; j < 16; j++) {
@@ -342,7 +342,7 @@ void ailclass::initNoteTable(uint16 sfreq) {
 	}
 }
 
-void ailclass::endSound() {
+void SoundPlayer::endSound() {
 	warning("STUB: ailclass::endSound()");
 
 #if 0

@@ -44,7 +44,7 @@ void standard_init() {
 	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
 	det = new detail();
 	atds = new atdsys();
-	ailsnd = new ailclass();
+	sndPlayer = new SoundPlayer();
 	flc = new flic();
 	mov = new movclass();
 
@@ -330,7 +330,7 @@ void tidy() {
 	delete cur;
 	delete mov;
 	delete flc;
-	delete ailsnd;
+	delete sndPlayer;
 	delete atds;
 	delete det;
 	delete uhr;
@@ -348,7 +348,7 @@ void tidy() {
 	cur = nullptr;
 	mov = nullptr;
 	flc = nullptr;
-	ailsnd = nullptr;
+	sndPlayer = nullptr;
 	atds = nullptr;
 	det = nullptr;
 	uhr = nullptr;
@@ -375,11 +375,11 @@ void sound_init() {
 	_G(spieler).MusicSwitch = false;
 	frequenz = 22050;
 
-	ailsnd->initMixMode();
+	sndPlayer->initMixMode();
 	_G(spieler).MusicVol = 63;
 	_G(spieler).SoundVol = 63;
-	ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
-	ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
+	sndPlayer->setMusicMasterVol(_G(spieler).MusicVol);
+	sndPlayer->setSoundMasterVol(_G(spieler).SoundVol);
 
 	music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 
@@ -403,7 +403,7 @@ void sound_init() {
 }
 
 void sound_exit() {
-	ailsnd->exitMixMode();
+	sndPlayer->exitMixMode();
 }
 
 void show_intro() {

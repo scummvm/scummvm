@@ -56,7 +56,7 @@ io_game *iog;
 mcga_grafik *out;
 cursor *cur;
 #ifdef AIL
-ailclass *ailsnd;
+SoundPlayer *sndPlayer;
 #endif
 
 int16 modul = 0;

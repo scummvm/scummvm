@@ -177,7 +177,7 @@ void load_room_music(int16 room_nr) {
 		default:
 			ttp_index = -1;
 			CurrentSong = -1;
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			break;
 		}
 		if (ttp_index != -1) {
@@ -185,25 +185,25 @@ void load_room_music(int16 room_nr) {
 				volume = 0;
 			else if (volume > _G(spieler).MusicVol)
 				volume = _G(spieler).MusicVol;
-			ailsnd->setMusicMasterVol(volume);
-			ailsnd->setLoopMode(lp_mode);
+			sndPlayer->setMusicMasterVol(volume);
+			sndPlayer->setLoopMode(lp_mode);
 			if (ttp_index != CurrentSong) {
-				ailsnd->stopMod();
-				while (ailsnd->musicPlaying());
+				sndPlayer->stopMod();
+				while (sndPlayer->musicPlaying());
 				memset(Ci.MusicSlot, 0, MUSIC_SLOT_SIZE);
 				mem->file->select_pool_item(music_handle, EndOfPool - ttp_index);
 				mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
 				CurrentSong = ttp_index;
 				if (!modul) {
 					if (play_mode == NORMAL_PLAY)
-						ailsnd->playMod((tmf_header *)Ci.MusicSlot);
+						sndPlayer->playMod((tmf_header *)Ci.MusicSlot);
 					else {
-						ailsnd->playMod((tmf_header *)Ci.MusicSlot);
-						ailsnd->stopMod();
+						sndPlayer->playMod((tmf_header *)Ci.MusicSlot);
+						sndPlayer->stopMod();
 						if (play_mode == SEQUENCE_PLAY)
-							ailsnd->playSequence(seq_start, seq_end);
+							sndPlayer->playSequence(seq_start, seq_end);
 						else if (play_mode == PATTERN_PLAY)
-							ailsnd->playPattern(pattern);
+							sndPlayer->playPattern(pattern);
 					}
 				}
 			}

@@ -30,7 +30,7 @@
 #include "chewy/cursor.h"
 #include "chewy/flic.h"
 #ifdef AIL
-#include "chewy/ailclass.h"
+#include "chewy/sound_player.h"
 #endif
 
 namespace Chewy {
@@ -46,7 +46,7 @@ extern sblaster *snd;
 extern io_game *iog;
 extern cursor *cur;
 #ifdef AIL
-extern ailclass *ailsnd;
+extern SoundPlayer *sndPlayer;
 #endif
 
 extern uint16 _stklen;

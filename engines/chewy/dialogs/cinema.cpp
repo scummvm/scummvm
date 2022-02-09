@@ -209,8 +209,8 @@ void Cinema::execute() {
 
 int16 Cinema::cut_serv(int16 frame) {
 	if (in->get_switch_code() == ESC) {
-		ailsnd->stopMod();
-		ailsnd->endSound();
+		sndPlayer->stopMod();
+		sndPlayer->endSound();
 		return -1;
 
 	} else {

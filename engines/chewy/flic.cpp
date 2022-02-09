@@ -498,7 +498,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->playMod(th);
 #else
-				ailsnd->playMod(th);
+				sndPlayer->playMod(th);
 #endif
 
 			break;
@@ -515,7 +515,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 			snd->stopMod();
 #else
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 #endif
 			break;
 
@@ -525,7 +525,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->getMusicInfo(&mi);
 #else
-				ailsnd->getMusicInfo(&mi);
+				sndPlayer->getMusicInfo(&mi);
 #endif
 			} while (mi.musik_playing != 0);
 			}
@@ -538,7 +538,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->setMusicMasterVol(para[0]);
 #else
-				ailsnd->setMusicMasterVol(para[0]);
+				sndPlayer->setMusicMasterVol(para[0]);
 #endif
 
 			break;
@@ -598,7 +598,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->fadeOut(para[0]);
 #else
-				ailsnd->fadeOut(para[0]);
+				sndPlayer->fadeOut(para[0]);
 #endif
 			break;
 

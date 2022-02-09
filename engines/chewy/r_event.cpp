@@ -925,7 +925,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 	out->setze_zeiger(nullptr);
 	det->disable_room_sound();
-	ailsnd->endSound();
+	sndPlayer->endSound();
 	g_events->delay(50);
 //#ifndef NEW_VIDEO_CODE
 	Common::File *f = File::open("cut/cut.tap");
@@ -936,7 +936,7 @@ void flic_cut(int16 nr, int16 mode) {
 		switch (nr) {
 		case FCUT_001:
 		case 1000:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			g_engine->playVideo(nr);
 			break;
@@ -952,21 +952,21 @@ void flic_cut(int16 nr, int16 mode) {
 		case FCUT_019_09:
 		case FCUT_019_10:
 		case FCUT_019_11:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			nr = FCUT_019_01;
-			ailsnd->setLoopMode(1);
+			sndPlayer->setLoopMode(1);
 
 			for (i = 0; i < 11; i++) {
 				g_engine->playVideo(FCUT_019_01 + i);
 				SHOULD_QUIT_RETURN;
 			}
 
-			ailsnd->fadeOut(0);
+			sndPlayer->fadeOut(0);
 			out->ausblenden(1);
 			out->cls();
-			while (ailsnd->musicPlaying());
-			ailsnd->setLoopMode(_G(spieler).soundLoopMode);
+			while (sndPlayer->musicPlaying());
+			sndPlayer->setLoopMode(_G(spieler).soundLoopMode);
 			break;
 
 		case FCUT_032:
@@ -986,7 +986,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case FCUT_034:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 
 			do {
@@ -1039,24 +1039,24 @@ void flic_cut(int16 nr, int16 mode) {
 					g_engine->playVideo(FCUT_062);
 				}
 			}
-			ailsnd->fadeOut(0);
+			sndPlayer->fadeOut(0);
 			out->ausblenden(1);
 			out->cls();
-			while (ailsnd->musicPlaying() && !SHOULD_QUIT);
+			while (sndPlayer->musicPlaying() && !SHOULD_QUIT);
 			break;
 
 		case FCUT_065:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			load_room_music(256);
-			ailsnd->setLoopMode(1);
+			sndPlayer->setLoopMode(1);
 			Room46::kloppe();
-			ailsnd->setLoopMode(_G(spieler).soundLoopMode);
+			sndPlayer->setLoopMode(_G(spieler).soundLoopMode);
 			CurrentSong = -1;
 			break;
 
 		case FCUT_071:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			g_engine->playVideo(FCUT_071);
 			break;
@@ -1080,7 +1080,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case FCUT_112:
-			ailsnd->setMusicMasterVol(32);
+			sndPlayer->setMusicMasterVol(32);
 #ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, nr);
 			ret = flc->custom_play(&Ci);
@@ -1090,7 +1090,7 @@ void flic_cut(int16 nr, int16 mode) {
 			playVideo(nr);
 			playVideo(nr);
 #endif
-			ailsnd->setMusicMasterVol(5);
+			sndPlayer->setMusicMasterVol(5);
 			break;
 
 		case FCUT_116:
@@ -1213,7 +1213,7 @@ void flic_cut(int16 nr, int16 mode) {
 				fx->border(workpage, 100, 0, 0);
 				print_rows(594);
 				if (FLIC_CUT_1045[i] == 53) {
-					ailsnd->stopMod();
+					sndPlayer->stopMod();
 					CurrentSong = -1;
 					load_room_music(256);
 				}
@@ -1227,7 +1227,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 				if (FLIC_CUT_1045[i] == 53) {
-					ailsnd->stopMod();
+					sndPlayer->stopMod();
 				}
 			}
 			break;
@@ -1309,7 +1309,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1058:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			load_room_music(255);
 #ifndef NEW_VIDEO_CODE
@@ -1356,7 +1356,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1065:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			load_room_music(256);
 
@@ -1474,7 +1474,7 @@ void flic_cut(int16 nr, int16 mode) {
 #else
 				playVideo(86);
 #endif
-				ailsnd->stopMod();
+				sndPlayer->stopMod();
 			}
 			break;
 
@@ -1549,10 +1549,10 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1110:
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			CurrentSong = -1;
 			load_room_music(257);
-			ailsnd->setMusicMasterVol(20);
+			sndPlayer->setMusicMasterVol(20);
 #ifndef NEW_VIDEO_CODE
 			mem->file->select_pool_item(Ci.Handle, 110);
 			ret = flc->custom_play(&Ci);
@@ -1562,7 +1562,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
-				ailsnd->setMusicMasterVol(63);
+				sndPlayer->setMusicMasterVol(63);
 				fx->spr_blende(workpage, 100, false, 0);
 				mem->file->select_pool_item(Ci.Handle, 112);
 				flc->custom_play(&Ci);
@@ -1572,7 +1572,7 @@ void flic_cut(int16 nr, int16 mode) {
 			fx->spr_blende(workpage, 100, false, 0);
 			playVideo(112);
 #endif
-			ailsnd->stopMod();
+			sndPlayer->stopMod();
 			break;
 
 		case 1113:
@@ -1631,8 +1631,8 @@ void flic_cut(int16 nr, int16 mode) {
 
 	g_engine->_sound->stopSound();
 	g_events->delay(50);
-	ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
-	ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
+	sndPlayer->setSoundMasterVol(_G(spieler).SoundVol);
+	sndPlayer->setMusicMasterVol(_G(spieler).MusicVol);
 
 	if (nr < 1000 && nr != 135) {
 		load_room_music(_G(spieler).PersonRoomNr[0]);

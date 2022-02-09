@@ -181,7 +181,7 @@ void Options::execute(taf_info *ti) {
 			case 5:
 				if (_G(spieler).MusicSwitch) {
 					_G(spieler).MusicSwitch = false;
-					ailsnd->stopMod();
+					sndPlayer->stopMod();
 				} else {
 					_G(spieler).MusicSwitch = true;
 					CurrentSong = -1;
@@ -193,11 +193,11 @@ void Options::execute(taf_info *ti) {
 				break;
 			case 7:
 				_G(spieler).SoundVol = (136 - minfo.y) << 1;
-				ailsnd->setSoundMasterVol(_G(spieler).SoundVol);
+				sndPlayer->setSoundMasterVol(_G(spieler).SoundVol);
 				break;
 			case 8:
 				_G(spieler).MusicVol = (136 - minfo.y) << 1;
-				ailsnd->setMusicMasterVol(_G(spieler).MusicVol);
+				sndPlayer->setMusicMasterVol(_G(spieler).MusicVol);
 				break;
 			}
 			minfo.button = 0;
