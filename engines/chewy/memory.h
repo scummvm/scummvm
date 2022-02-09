@@ -22,7 +22,7 @@
 #ifndef CHEWY_MEMORY_H
 #define CHEWY_MEMORY_H
 
-#include "chewy/datei.h"
+#include "chewy/data.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -38,7 +38,7 @@ public:
 	void tff_adr(const char *filename, byte **speicher);
 	byte *void_adr(const char *filename);
 
-	datei *file;
+	Data *file;
 private:
 
 	uint32 mem_avail;

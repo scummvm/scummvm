@@ -21,7 +21,7 @@
 
 #include "common/debug.h"
 #include "common/system.h"
-#include "chewy/datei.h"
+#include "chewy/data.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
 #include "chewy/file.h"
@@ -43,13 +43,13 @@ uint8 tmp[10000]; // FIXME
 extern int16 modul;
 extern int16 fcode;
 
-datei::datei() {
+Data::Data() {
 }
 
-datei::~datei() {
+Data::~Data() {
 }
 
-uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
+uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	NewPhead *ph = (NewPhead *)tmp;
 
@@ -72,7 +72,7 @@ uint16 datei::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-void datei::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher) {
+void Data::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	assert(rs);
 
@@ -95,7 +95,7 @@ void datei::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher
 	}
 }
 
-void datei::load_tff(const char *fname, byte *speicher) {
+void Data::load_tff(const char *fname, byte *speicher) {
 	strncpy(filename, fname, MAXPATH - 5);
 	filename[MAXPATH - 5] = '\0';
 
@@ -122,7 +122,7 @@ void datei::load_tff(const char *fname, byte *speicher) {
 	}
 }
 
-void datei::void_load(const char *fname, byte *speicher, uint32 size) {
+void Data::void_load(const char *fname, byte *speicher, uint32 size) {
 	strncpy(filename, fname, MAXPATH - 1);
 	filename[MAXPATH - 1] = '\0';
 
@@ -138,7 +138,7 @@ void datei::void_load(const char *fname, byte *speicher, uint32 size) {
 	}
 }
 
-uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
+uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead *ch = (ChunkHead *)tmp;
 	uint32 size = 0;
@@ -176,7 +176,7 @@ uint32 datei::load_tmf(Stream *handle, tmf_header *song) {
 // Only used in 2 places, will be removed eventually:
 // tff_adr() with type TFFDATEI
 // void_adr() with type 200
-uint32 datei::size(const char *fname, int16 typ) {
+uint32 Data::size(const char *fname, int16 typ) {
 	uint32 size = 0;
 	mod_header *mh = (mod_header *)tmp;
 
@@ -220,7 +220,7 @@ uint32 datei::size(const char *fname, int16 typ) {
 	return size;
 }
 
-uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
+uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
 	NewPhead *Nph = (NewPhead *)tmp;
 	uint32 size = 0;
 
@@ -255,7 +255,7 @@ uint32 datei::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz
 	return size;
 }
 
-int16 datei::get_id(char *id_code) {
+int16 Data::get_id(char *id_code) {
 	int16 id = -1;
 	if (!(scumm_strnicmp(id_code, "TBF", 3)))
 		id = TBFDATEI;
@@ -269,7 +269,7 @@ int16 datei::get_id(char *id_code) {
 	return id;
 }
 
-void datei::fcopy(const char *d_fname, const char *s_fname) {
+void Data::fcopy(const char *d_fname, const char *s_fname) {
 	assert(!strcmp(d_fname, ADSH_TMP));
 
 	Common::File f;
