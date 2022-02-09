@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 19:16+0000\n"
+"PO-Revision-Date: 2022-02-09 19:41+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6467,114 +6467,116 @@ msgid ""
 "Draw text with correct font spacing. This arguably looks better, but doesn't "
 "match the original behavior."
 msgstr ""
+"Маляваць тэкст з правільнымі інтэрваламі шрыфтоў. Хай гэта й выглядае лепей, "
+"але не адпавядае арыґіналу."
 
 #: engines/scumm/detection.cpp:210
 msgid "Enable smooth scrolling"
-msgstr ""
+msgstr "Далучыць плыўнае прагортваньне"
 
 #: engines/scumm/detection.cpp:211
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(замест звычайнага прагортваньня ў 8 піксэляў)"
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr ""
+msgstr "Устаўце дыск %c і націсьніце кнопку, каб працягнуць."
 
 #: engines/scumm/dialogs.cpp:164
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr ""
+msgstr "Ня выйшла знайсьці %s, (%c%d). Націсьніце кнопку."
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr ""
+msgstr "Памылка чытаньня дыску %c, (%c%d). Націсьніце кнопку."
 
 #: engines/scumm/dialogs.cpp:166
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr ""
+msgstr "Гульня перапынена.  Для працягу націсьніце прагал."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:170
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr ""
+msgstr "Ці сапраўды вы хочаце перазапусьціць?  (Т/Н)Т"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:172
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr ""
+msgstr "Ці сапраўды вы хочаце выйсьці?  (Т/Н)Т"
 
 #: engines/scumm/dialogs.cpp:181
 msgid "Insert save/load game disk"
-msgstr ""
+msgstr "Устаўце дыск з заховамі"
 
 #: engines/scumm/dialogs.cpp:182
 msgid "You must enter a name"
-msgstr ""
+msgstr "Вы мусіце напісаць назву"
 
 #: engines/scumm/dialogs.cpp:183
 msgid "The game was NOT saved (disk full?)"
-msgstr ""
+msgstr "Гульня НЕ захавана (мо брак месца?)"
 
 #: engines/scumm/dialogs.cpp:184
 msgid "The game was NOT loaded"
-msgstr ""
+msgstr "Гульня НЕ заладавана"
 
 #: engines/scumm/dialogs.cpp:185
 #, c-format
 msgid "Saving '%s'"
-msgstr ""
+msgstr "Захаваньне '%s'"
 
 #: engines/scumm/dialogs.cpp:186
 #, c-format
 msgid "Loading '%s'"
-msgstr ""
+msgstr "Ладаваньне '%s'"
 
 #: engines/scumm/dialogs.cpp:187
 msgid "Name your SAVE game"
-msgstr ""
+msgstr "Назавіце ваш захоў"
 
 #: engines/scumm/dialogs.cpp:188
 msgid "Select a game to LOAD"
-msgstr ""
+msgstr "Выбярыце гульню для ладаваньня"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "Game title)"
-msgstr ""
+msgstr "Назва гульні)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:275
 msgid "~P~revious"
-msgstr ""
+msgstr "Пап~я~рэдняя"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:277
 msgid "~N~ext"
-msgstr ""
+msgstr "Наст~у~пная"
 
 #: engines/scumm/dialogs.cpp:614
 msgid "Speech Only"
-msgstr ""
+msgstr "Толькі агучка"
 
 #: engines/scumm/dialogs.cpp:615
 msgid "Speech and Subtitles"
-msgstr ""
+msgstr "Агучка й субтытры"
 
 #: engines/scumm/dialogs.cpp:616
 msgid "Subtitles Only"
-msgstr ""
+msgstr "Толькі субтытры"
 
 #: engines/scumm/dialogs.cpp:624
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr ""
+msgstr "Агучка й субтытры"
 
 #: engines/scumm/dialogs.cpp:670
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Выбярыце ступень умеласьці."
 
 #: engines/scumm/dialogs.cpp:672
 msgid "Refer to your Loom(TM) manual for help."
