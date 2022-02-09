@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 15:13+0000\n"
+"PO-Revision-Date: 2022-02-09 15:33+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6013,67 +6013,67 @@ msgstr "Рэшта падказак"
 
 #: engines/nancy/dialogs.cpp:117
 msgid "Easy"
-msgstr ""
+msgstr "Лёгка"
 
 #: engines/nancy/dialogs.cpp:121
 msgid "Hard"
-msgstr ""
+msgstr "Цяжка"
 
 #: engines/nancy/dialogs.cpp:124
 msgid "Player Data"
-msgstr ""
+msgstr "Зьвесткі гульца"
 
 #: engines/nancy/dialogs.cpp:125
 msgid "Player Time:"
-msgstr ""
+msgstr "Час гульца:"
 
 #: engines/nancy/dialogs.cpp:127
 msgid "Days"
-msgstr ""
+msgstr "Дзён"
 
 #: engines/nancy/dialogs.cpp:129 engines/nancy/dialogs.cpp:139
 msgid "Hours"
-msgstr ""
+msgstr "Гадзін"
 
 #: engines/nancy/dialogs.cpp:131 engines/nancy/dialogs.cpp:141
 msgid "Minutes"
-msgstr ""
+msgstr "Хвілін"
 
 #: engines/nancy/dialogs.cpp:133
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Ступень складанасьці"
 
 #: engines/nancy/dialogs.cpp:135
 msgid "Software Timer"
-msgstr ""
+msgstr "Праграмны гадзіньнік"
 
 #: engines/nancy/dialogs.cpp:136
 msgid "Timer On"
-msgstr ""
+msgstr "Гадзіньнік далучаны"
 
 #: engines/nancy/dialogs.cpp:143
 msgid "Seconds"
-msgstr ""
+msgstr "Сэкундаў"
 
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
-msgstr ""
+msgstr "Няпэўны ID сцэны!"
 
 #: engines/neverhood/detection.cpp:141
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Прапусьціць раскадроўныя сцэны Залы запісаў"
 
 #: engines/neverhood/detection.cpp:142
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Дазволіць гульцу прапусьціць раскадроўныя сцэны Залы запісаў"
 
 #: engines/neverhood/detection.cpp:148
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Павялічваць да поўнага экрану відэа аб стварэньні"
 
 #: engines/neverhood/detection.cpp:149
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Павялічваць відэа аб стварэньні гульні на ўвесь экран"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -6081,22 +6081,24 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"Немажліва захаваць гульню ў слот %i\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:193
 msgid "Load file"
-msgstr ""
+msgstr "Заладаваць гульню"
 
 #: engines/parallaction/saveload.cpp:200
 msgid "Loading game..."
-msgstr ""
+msgstr "Ладаваньне гульні…"
 
 #: engines/parallaction/saveload.cpp:208
 msgid "Save file"
-msgstr ""
+msgstr "Захаваць гульню"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
-msgstr ""
+msgstr "Захаваньне гульні…"
 
 #: engines/parallaction/saveload.cpp:268
 msgid ""
@@ -6107,10 +6109,17 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM знайшоў вашыя старыя захаваныя гульні Nippon Safes, якія патрэбна "
+"пераназваць.\n"
+"Старыя назвы болей не падтрымліваюцца, таму немажліва заладаваць "
+"неператвораную гульню.\n"
+"\n"
+"Націсьніце ОК, каб ператварыць іх, інакш наступным разам вам паведамяць "
+"зноўку.\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
-msgstr ""
+msgstr "ScummVM пасьпяхова ператварыў усе вашыя захаваныя гульні."
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
