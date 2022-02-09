@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 20:46+0000\n"
+"PO-Revision-Date: 2022-02-09 21:27+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6933,133 +6933,133 @@ msgstr "Язык"
 
 #: engines/scumm/help.cpp:234
 msgid "Punch"
-msgstr ""
+msgstr "Ударыць"
 
 #: engines/scumm/help.cpp:235
 msgid "Kick"
-msgstr ""
+msgstr "Штурхаць"
 
 #: engines/scumm/help.cpp:239
 msgid "Regular cursor"
-msgstr ""
+msgstr "Звычайны паказальнік"
 
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:242
 msgid "Comm"
-msgstr ""
+msgstr "Сувязь"
 
 #: engines/scumm/help.cpp:245
 msgid "Save / Load / Options"
-msgstr ""
+msgstr "Захаваць / Заладаваць / Налады"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr ""
+msgstr "Іншыя клявішы гульні:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr ""
+msgstr "Рыштунак:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
-msgstr ""
+msgstr "Прагартаць сьпіс угару"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
-msgstr ""
+msgstr "Прагартаць сьпіс уніз"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr ""
+msgstr "Вышняя левая рэч"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr ""
+msgstr "Ніжняя левая рэч"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr ""
+msgstr "Вышняя правая рэч"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr ""
+msgstr "Ніжняя правая рэч"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr ""
+msgstr "Сярэдняя левая рэч"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr ""
+msgstr "Сярэдняя правая рэч"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
-msgstr ""
+msgstr "Пералучэньне пэрсанажаў:"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
-msgstr ""
+msgstr "Другое дзіцё"
 
 #: engines/scumm/help.cpp:283
 msgid "Third kid"
-msgstr ""
+msgstr "Трэцяе дзіцё"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "Пералучыць рыштунак/экран пунктаў IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Пералучыць кіраваньне баямі клявіятурай/мышшу (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Бой клявіятурай заўжды далучаны,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  незважаючы на паведамленьні ў гульні,"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  гэта насамрэч пералучае бой мышшу"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr ""
+msgstr "Клявішы бою (numpad):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
 msgid "Step back"
-msgstr ""
+msgstr "Ступ назад"
 
 #: engines/scumm/help.cpp:308
 msgid "Block high"
-msgstr ""
+msgstr "Высокі блёк"
 
 #: engines/scumm/help.cpp:309
 msgid "Block middle"
-msgstr ""
+msgstr "Сярэдні блёк"
 
 #: engines/scumm/help.cpp:310
 msgid "Block low"
-msgstr ""
+msgstr "Нізкі блёк"
 
 #: engines/scumm/help.cpp:311
 msgid "Punch high"
-msgstr ""
+msgstr "Высокі ўдар"
 
 #: engines/scumm/help.cpp:312
 msgid "Punch middle"
-msgstr ""
+msgstr "Сярэдні ўдар"
 
 #: engines/scumm/help.cpp:313
 msgid "Punch low"
-msgstr ""
+msgstr "Нізкі ўдар"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Раптоўны ўдар"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -7071,51 +7071,51 @@ msgstr ""
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "7, 4, і 1 мяняюцца з"
 
 #: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "9, 6, і 3 адпаведна."
 
 #: engines/scumm/help.cpp:330
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "Клявішы біпляну (numpad):"
 
 #: engines/scumm/help.cpp:331
 msgid "Fly to upper left"
-msgstr ""
+msgstr "Лёт угару налева"
 
 #: engines/scumm/help.cpp:332
 msgid "Fly to left"
-msgstr ""
+msgstr "Лёт налева"
 
 #: engines/scumm/help.cpp:333
 msgid "Fly to lower left"
-msgstr ""
+msgstr "Лёт уніз налева"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly upwards"
-msgstr ""
+msgstr "Лёт угару"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly straight"
-msgstr ""
+msgstr "Лёт проста"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly down"
-msgstr ""
+msgstr "Лёт уніз"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to upper right"
-msgstr ""
+msgstr "Лёт угару направа"
 
 #: engines/scumm/help.cpp:338
 msgid "Fly to right"
-msgstr ""
+msgstr "Лёт направа"
 
 #: engines/scumm/help.cpp:339
 msgid "Fly to lower right"
-msgstr ""
+msgstr "Лёт уніз направа"
 
 #: engines/scumm/input.cpp:574
 msgid "Snap scroll on"
@@ -7127,11 +7127,11 @@ msgstr ""
 
 #: engines/scumm/input.cpp:589
 msgid "Music volume: "
-msgstr ""
+msgstr "Гучнасьць музыкі: "
 
 #: engines/scumm/input.cpp:606
 msgid "Subtitle speed: "
-msgstr ""
+msgstr "Хуткасьць субтытраў: "
 
 #: engines/scumm/metaengine.cpp:330
 msgid ""
@@ -7139,14 +7139,17 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Лёгкая вэрсія Putt-Putt Saves the Zoo для iOS не падтрымліваецца, каб "
+"пазьбегнуць пірацтва.\n"
+"Поўную вэрсію можна купіць у iTunes Store."
 
 #: engines/scumm/metaengine.cpp:421
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне HE v71+ не сабранае"
 
 #: engines/scumm/metaengine.cpp:445
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне SCUMM v7-8 не сабранае"
 
 #: engines/scumm/scumm.cpp:542
 msgid ""
@@ -7155,18 +7158,26 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Вы далучылі „карэкцыю прапорцыяў экрану“. Аднак натуральная разрознасьць ё "
+"320x240, зь якой немажліва карэктаваць прапорцыі экрану.\n"
+"Карэкцыя прапорцыяў экрану можа быць дасягнута асячэньнем разрознасьці да "
+"320x200 на картцы „рухавік“."
 
 #: engines/scumm/scumm.cpp:1351
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
+"Ня выйшла знайсьці выканальны файл 'Indy' Macintosh. Шрыфты высокай\n"
+"разрознасьці будуць адлучаны."
 
 #: engines/scumm/scumm.cpp:1377
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
+"Ня выйшла знайсьці выканальны файл 'Loom' Macintosh. Музыка й вэрсіі\n"
+"шрыфта й паказальніка высокай разрознасьці будуць адлучаны."
 
 #: engines/scumm/scumm.cpp:1399
 msgid ""
