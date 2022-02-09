@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 12:58+0000\n"
+"PO-Revision-Date: 2022-02-09 13:34+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5623,83 +5623,85 @@ msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Сымуляваць час ладаваньня старых кампактных дыскаў, дадаваючы адвольнае "
+"затрыманьне падчас пераходаў між сцэнамі."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:146
 msgid "~D~rop Page"
-msgstr ""
+msgstr "К~і~нуць старонку"
 
 #: engines/mohawk/dialogs.cpp:150
 msgid "Show ~M~ap"
-msgstr ""
+msgstr "Паказаць мап~у~"
 
 #: engines/mohawk/dialogs.cpp:155
 msgid "Main Men~u~"
-msgstr ""
+msgstr "Галоўнае мэн~ю~"
 
 #: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "Новая мова будзе ўжыта пасьля перазапуску гульні."
 
 #: engines/mohawk/dialogs.cpp:359
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "Водны э~ф~экт далучаны"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
-msgstr ""
+msgstr "Пераходы:"
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
-msgstr ""
+msgstr "Найхутка"
 
 #: engines/mohawk/dialogs.cpp:367
 msgid "Normal"
-msgstr ""
+msgstr "Нармальна"
 
 #: engines/mohawk/dialogs.cpp:368
 msgid "Best"
-msgstr ""
+msgstr "Найлепша"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Myst ME не сабранае"
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "Myst support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Myst не сабранае"
 
 #: engines/mohawk/metaengine.cpp:304
 msgid "Riven support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Riven не сабранае"
 
 #: engines/mohawk/metaengine.cpp:318
 msgid "CSTime support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне CSTime не сабранае"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
-msgstr ""
+msgstr "Гульны перапынена. Націсьніце абы-якую клявішу для працягу."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:819
 msgid "Open main menu"
-msgstr ""
+msgstr "Адкрыць галоўнае мэню"
 
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:843
 msgid "Load game state"
-msgstr ""
+msgstr "Заладаваць гульню"
 
 #: engines/mohawk/myst.cpp:584 engines/mohawk/riven.cpp:848
 msgid "Save game state"
-msgstr ""
+msgstr "Захаваць гульню"
 
 #: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:853
 msgid "Show options menu"
-msgstr ""
+msgstr "Паказаць налады"
 
 #: engines/mohawk/myst.cpp:601
 msgid "Drop page"
-msgstr ""
+msgstr "Кінуць старонку"
 
 #: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1596
@@ -5708,7 +5710,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1687
 #: engines/wintermute/keymapper_tables.h:1720
 msgid "Show map"
-msgstr ""
+msgstr "Паказаць мапу"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -5716,102 +5718,113 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Ці сапраўды вы хочаце заладаваць гульню? Увесь незахаваны поступ будзе "
+"страчаны."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/wintermute/keymapper_tables.h:925
 msgid "Load game"
-msgstr ""
+msgstr "Заладаваць гульню"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Ці сапраўды вы хочаце пачаць новую гульню? Увесь незахаваны поступ будзе "
+"страчаны."
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
-msgstr ""
+msgstr "Новая гульня"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr ""
+msgstr "Ці сапраўды вы хочаце выйсьці? Увесь незахаваны поступ будзе страчаны."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Вы ня можаце пайсьці з Бібліятэкі ў дэманстрацыі."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Бракуе выканальнага файлу Riven. Ад Windows ён мае назву 'riven.exe' або "
+"'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:157
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Замест яго пасуе файл усталяваньня 'arcriven.z'. Дарэчы, вы можаце "
+"скарыстацца выканальным файлам 'Riven' ад Mac."
 
 #: engines/mohawk/riven.cpp:169
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Бракуе файлу 'extras.mhk'. Замест яго пасуе файл усталяваньня 'arcriven.z'."
 
 #: engines/mohawk/riven.cpp:503
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Бракуе наступных файлаў, патрэбных для Riven:\n"
 
 #: engines/mohawk/riven.cpp:865
 msgid "Move forward"
-msgstr ""
+msgstr "Рух наперад"
 
 #: engines/mohawk/riven.cpp:871
 msgid "Move forward left"
-msgstr ""
+msgstr "Рух наперад налева"
 
 #: engines/mohawk/riven.cpp:875
 msgid "Move forward right"
-msgstr ""
+msgstr "Рух наперад направа"
 
 #: engines/mohawk/riven.cpp:879
 msgid "Move backwards"
-msgstr ""
+msgstr "Рух назад"
 
 #: engines/mohawk/riven.cpp:885 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2045
 #: engines/wintermute/keymapper_tables.h:2146
 msgid "Turn left"
-msgstr ""
+msgstr "Паварот налева"
 
 #: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2051
 #: engines/wintermute/keymapper_tables.h:2153
 msgid "Turn right"
-msgstr ""
+msgstr "Паварот направа"
 
 #: engines/mohawk/riven.cpp:897
 msgid "Look up"
-msgstr ""
+msgstr "Пагляд угару"
 
 #: engines/mohawk/riven.cpp:902
 msgid "Look down"
-msgstr ""
+msgstr "Пагляд уніз"
 
 #: engines/mohawk/riven.cpp:908
 msgid "Play intro videos"
-msgstr ""
+msgstr "Граць уступныя відэа"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"Дасьледваньне надалей даступна толькі ў поўнай вэрсіі\n"
+"гульні."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -5821,23 +5834,28 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"Зараз дэманстрацыя Riven спытала б\n"
+"у вас адкрыць вэб-аглядач і перайсьці ў\n"
+"краму Red Orb, каб купіць поўную гульню.\n"
+"ScummVM ня можа гэтага зрабіць, ды й\n"
+"сайту болей не існуе."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr ""
+msgstr "Ня выйшла знайсьці рухавіковы файл '%s'"
 
 #: engines/myst3/detection.cpp:179 engines/myst3/detection.cpp:193
 msgid "PS2 version is not yet supported"
-msgstr ""
+msgstr "Вэрсія PS2 яшчэ не падтрымліваецца"
 
 #: engines/myst3/detection.cpp:212
 msgid "Widescreen mod"
-msgstr ""
+msgstr "Мод на шырокі экран"
 
 #: engines/myst3/detection.cpp:213
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Далучыць рэндэраваньне шырокага экрану ў рэжыме поўнага экрану."
 
 #: engines/myst3/myst3.cpp:355
 msgid ""
@@ -5847,18 +5865,22 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Гэтая вэрсія Myst III не была абноўлена апошняй афіцыйнай латкай.\n"
+"Калі ласка, усталюйце афіцыйную абнову, адпаведную мове вашай гульні.\n"
+"Абновы можна заладаваць з:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1569 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
-msgstr ""
+msgstr "Няпэўная назва файлу для захаваньня"
 
 #: engines/nancy/input.cpp:163
 msgid "Left Click Interact"
-msgstr ""
+msgstr "Інтэракцыя левым пстрыкам"
 
 #: engines/nancy/input.cpp:170
 msgid "Right Click Interact"
-msgstr ""
+msgstr "Інтэракцыя правым пстрыкам"
 
 #: engines/nancy/input.cpp:201
 msgid "Fast move modifier"
