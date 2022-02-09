@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 21:27+0000\n"
+"PO-Revision-Date: 2022-02-09 21:31+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7184,6 +7184,8 @@ msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Ня выйшла знайсьці выканальны файл 'Monkey Island' Macintosh, каб\n"
+"прачытаць інструмэнты. Музыка будзе адлучана."
 
 #: engines/scumm/scumm.cpp:1675
 msgid ""
@@ -7191,6 +7193,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"Знойдзены гукавыя файлы, сьціснутыя ScummVM Tools. Сьціск *.BUN/*.SOU\n"
+"больш не падтрымліваецца для гэтай гульні, гук будзе адлучаны.\n"
+"Калі ласка, скапіюйце гульню з арыґінальных носьбітаў бяз сьціску."
 
 #: engines/scumm/scumm.cpp:2144
 #, c-format
