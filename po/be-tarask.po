@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 15:54+0000\n"
+"PO-Revision-Date: 2022-02-09 16:20+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6246,6 +6246,8 @@ msgstr "(Аўтазахаваньне)"
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Калі ласка, скарыстайцеся зьнешнім праглядачом, каб адкрыць файл дапамогі па "
+"гульне: %s"
 
 #: engines/sci/engine/kmisc.cpp:876
 msgid ""
@@ -6253,6 +6255,8 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Лёгіка покэру глыбока закадаваная ў зьнешняй DLL і шчэ ня дзейсная. Пакуль "
+"што працуе імітацыя лёгікі, дзе дзеі супраціўнікаў выбіраюцца адвольна"
 
 #: engines/sci/engine/savegame.cpp:1446
 msgid "The format of this saved game is obsolete, unable to load it"
