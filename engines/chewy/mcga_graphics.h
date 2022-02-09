@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_MCGA_GRAFIK_H
-#define CHEWY_MCGA_GRAFIK_H
+#ifndef CHEWY_MCGA_GRAPHICS_H
+#define CHEWY_MCGA_GRAPHICS_H
 
 #include "graphics/screen.h"
 #include "chewy/mouse.h"
