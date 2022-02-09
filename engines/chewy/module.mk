@@ -4,7 +4,7 @@ MODULE_OBJS = \
 	atds.o \
 	chewy.o \
 	cursor.o \
-	datei.o \
+	data.o \
 	debugger.o \
 	detail.o \
 	effect.o \

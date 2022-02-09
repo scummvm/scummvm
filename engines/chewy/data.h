@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef CHEWY_DATEI_H
-#define CHEWY_DATEI_H
+#ifndef CHEWY_DATA_H
+#define CHEWY_DATA_H
 
 #include "chewy/chewy.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
 
-class datei {
+class Data {
 public:
-	datei();
-	~datei();
+	Data();
+	~Data();
 
 	uint16 select_pool_item(Stream *stream, uint16 nr);
 	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
