@@ -46,7 +46,6 @@ static const MovLine SURIMY_MPKT[2] = {
 void Room25::entry() {
 	if (!_G(spieler).R25GleiteLoesch) {
 		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
 
 		for (int i = 0; i < 9; ++i)
 			det->start_detail(i, 255, ANI_VOR);
@@ -64,7 +63,7 @@ void Room25::entry() {
 			obj->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
 			atds->set_ats_str(113, 0, ATS_DATEI);
 
-			obj->del_inventar(TRANSLATOR_INV, &room_blk);
+			remove_inventory(TRANSLATOR_INV);
 			_G(spieler).inv_cur = false;
 			menu_item = CUR_WALK;
 			_G(spieler).AkInvent = -1;
@@ -82,14 +81,12 @@ void Room25::entry() {
 		start_aad_wait(64, -1);
 		show_cur();
 
-	} else if (_G(spieler).R25GleiterExit) {
-		if (!flags.LoadGame) {
-			set_person_pos(127, 122, P_CHEWY, P_LEFT);
+	} else if (_G(spieler).R25GleiterExit && !flags.LoadGame) {
+		set_person_pos(127, 122, P_CHEWY, P_LEFT);
 
-			if (!_G(spieler).R25SurimyGo) {
-				_G(spieler).R25SurimyGo = 1;
-				xit_gleiter();
-			}
+		if (!_G(spieler).R25SurimyGo) {
+			_G(spieler).R25SurimyGo = 1;
+			xit_gleiter();
 		}
 	}
 
@@ -160,7 +157,7 @@ void Room25::xit_gleiter() {
 		auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 		auto_mov_obj[SURIMY_OBJ].Mode = true;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 		fx_blend = BLEND1;
 		set_up_screen(DO_SETUP);
 
