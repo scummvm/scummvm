@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 16:20+0000\n"
+"PO-Revision-Date: 2022-02-09 17:55+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6260,28 +6260,30 @@ msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1446
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "Фармат гэтай гульні застары. Немажліва заладаваць"
 
 #: engines/sci/engine/savegame.cpp:1448
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Вэрсія захаванай гульні %d, але падтрымліваецца максымальна %0d"
 
 #: engines/sci/engine/savegame.cpp:1459
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
+msgstr "Захаваная гульня была створана ў іншай вэрсіі. Немажліва заладваць"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
+"Немажліва паказваць %dbpp відэа на сістэме з максімальнай глыбінёй колеру "
+"8bpp"
 
 #: engines/sci/metaengine.cpp:298
 msgid "SCI32 support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне SCI32 не сабранае"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -6289,6 +6291,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Знойдзен брак або сапсаванасьць рэсурсаў гульні. Нейкія функцыі гульні "
+"могуць працаваць няправільна. Калі ласка, праглядзіце кансоль для "
+"падрабязнасьцей, а таксама праверце, што вашыя файлы гульні вартыя."
 
 #: engines/sci/sci.cpp:387
 msgid ""
@@ -6298,6 +6303,10 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Субтытры гульні далучаны, аднак субтытры King's Quest 7 былі незавершаныя й "
+"адлучаныя ў выпушчанай вэрсіі гульні. ScummVM можа іх далучыць, але яны не "
+"заўжды правільна выглядаюць ці перадаюць пэўны сэнс, бо былі выдалены з "
+"арыґінальнай гульні. Гэта хіба ня ScummVM, а рэсурсаў гульні."
 
 #: engines/sci/sci.cpp:411
 msgid ""
