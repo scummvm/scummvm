@@ -22,7 +22,7 @@
 #include "chewy/defines.h"
 #include "chewy/global.h"
 #include "chewy/ngshext.h"
-#include "chewy/objekte.h"
+#include "chewy/object.h"
 
 namespace Chewy {
 
@@ -57,7 +57,7 @@ static const int16 SIB_ZUSTAND_TBL[] = {
 	32000
 };
 
-objekt::objekt(Spieler *sp) {
+Object::Object(Spieler *sp) {
 	max_inventar_obj = 0;
 	max_static_inventar = 0;
 	max_exit = 0;
@@ -66,10 +66,10 @@ objekt::objekt(Spieler *sp) {
 	Rsi = sp->room_s_obj;
 	Re = sp->room_e_obj;
 }
-objekt::~objekt() {
+Object::~Object() {
 }
 
-int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
+int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 	Common::File f;
 	bool valid = true;
 
@@ -78,9 +78,9 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 			error("objekt::load error");
 		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
-				assert(iib_datei_header.Size % RoomMovObjekt::SIZE() == 0);
+				assert(iib_datei_header.Size % RoomMovObject::SIZE() == 0);
 
-				for (uint i = 0; i < iib_datei_header.Size / RoomMovObjekt::SIZE() && valid;
+				for (uint i = 0; i < iib_datei_header.Size / RoomMovObject::SIZE() && valid;
 						++i, ++rmo) {
 					valid = rmo->load(&f);
 				}
@@ -88,7 +88,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 				if (!valid) {
 					error("objekt::load error");
 				} else {
-					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObjekt::SIZE();
+					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObject::SIZE();
 				}
 			} else
 				max_inventar_obj = 0;
@@ -104,7 +104,7 @@ int16 objekt::load(const char *fname_, RoomMovObjekt *rmo) {
 	return max_inventar_obj;
 }
 
-int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
+int16 Object::load(const char *fname_, RoomStaticInventar *rsi) {
 	Common::File f;
 	bool valid = true;
 
@@ -136,7 +136,7 @@ int16 objekt::load(const char *fname_, RoomStaticInventar *rsi) {
 	return max_static_inventar;
 }
 
-int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
+int16 Object::load(const char *fname_, RoomExit *RoomEx) {
 	Common::File f;
 	bool valid = true;
 
@@ -168,7 +168,7 @@ int16 objekt::load(const char *fname_, RoomExit *RoomEx) {
 	return max_exit;
 }
 
-void objekt::sort() {
+void Object::sort() {
 	short i;
 	mov_obj_room[0] = 0;
 
@@ -186,7 +186,7 @@ void objekt::sort() {
 	}
 }
 
-void objekt::free_inv_spr(byte **inv_spr_adr) {
+void Object::free_inv_spr(byte **inv_spr_adr) {
 	int16 i;
 	for (i = 0; i < MAX_MOV_OBJ; i++)
 		if (inv_spr_adr[i] != 0) {
@@ -195,7 +195,7 @@ void objekt::free_inv_spr(byte **inv_spr_adr) {
 		}
 }
 
-int16 objekt::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
+int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 i;
 	int16 ret;
 	ret = -1;
@@ -211,7 +211,7 @@ int16 objekt::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 	return ret;
 }
 
-int16 objekt::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
+int16 Object::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 i;
 	int16 ret;
 	ret = -1;
@@ -226,15 +226,15 @@ int16 objekt::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
 	return ret;
 }
 
-int16 objekt::iib_txt_nr(int16 inv_nr) {
+int16 Object::iib_txt_nr(int16 inv_nr) {
 	return Rmo[inv_nr].TxtNr;
 }
 
-int16 objekt::sib_txt_nr(int16 sib_nr) {
+int16 Object::sib_txt_nr(int16 sib_nr) {
 	return Rsi[sib_nr].TxtNr;
 }
 
-int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
+int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 	int16 ret;
 	int16 i, j;
 	int16 ok;
@@ -291,7 +291,7 @@ int16 objekt::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 	return ret;
 }
 
-int16 objekt::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
+int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 	int16 action_flag;
 	int16 i;
 	int16 ok;
@@ -332,22 +332,22 @@ int16 objekt::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 	return action_flag;
 }
 
-void objekt::hide_sib(int16 nr) {
+void Object::hide_sib(int16 nr) {
 	Rsi[nr].HideSib = true;
 }
 
-void objekt::show_sib(int16 nr) {
+void Object::show_sib(int16 nr) {
 	Rsi[nr].HideSib = false;
 }
 
-void objekt::calc_all_static_detail() {
+void Object::calc_all_static_detail() {
 	int16 i;
 	for (i = 0; i < max_static_inventar; i++) {
 		calc_static_detail(i);
 	}
 }
 
-void objekt::calc_static_detail(int16 det_nr) {
+void Object::calc_static_detail(int16 det_nr) {
 	int16 nr;
 	int16 i;
 	int16 n;
@@ -418,7 +418,7 @@ void objekt::calc_static_detail(int16 det_nr) {
 	}
 }
 
-int16 objekt::calc_static_use(int16 nr) {
+int16 Object::calc_static_use(int16 nr) {
 	int16 ret;
 	switch (Rsi[nr].ZustandAk) {
 	case OBJZU_AUF:
@@ -444,7 +444,7 @@ int16 objekt::calc_static_use(int16 nr) {
 	return ret;
 }
 
-int16 objekt::calc_rsi_flip_flop(int16 nr) {
+int16 Object::calc_rsi_flip_flop(int16 nr) {
 	int16 tmp;
 	int16 ret;
 	ret = true;
@@ -467,11 +467,11 @@ int16 objekt::calc_rsi_flip_flop(int16 nr) {
 	return ret;
 }
 
-void objekt::set_rsi_flip_flop(int16 nr, int16 anz) {
+void Object::set_rsi_flip_flop(int16 nr, int16 anz) {
 	Rsi[nr].ZustandFlipFlop = anz;
 }
 
-int16 objekt::calc_rmo_flip_flop(int16 nr) {
+int16 Object::calc_rmo_flip_flop(int16 nr) {
 	int16 tmp;
 	int16 ret;
 	if (Rmo[nr].ZustandFlipFlop > 0) {
@@ -487,7 +487,7 @@ int16 objekt::calc_rmo_flip_flop(int16 nr) {
 	return ret;
 }
 
-int16 objekt::del_obj_use(int16 nr) {
+int16 Object::del_obj_use(int16 nr) {
 	int16 ret;
 	if (Rmo[nr].Del == 1) {
 		Rmo[nr].RoomNr = -1;
@@ -502,20 +502,20 @@ int16 objekt::del_obj_use(int16 nr) {
 	return ret;
 }
 
-void objekt::add_inventar(int16 nr, RaumBlk *Rb) {
+void Object::add_inventar(int16 nr, RaumBlk *Rb) {
 	Player->room_m_obj[nr].RoomNr = 255;
 	sort();
 	room->calc_invent(Rb, Player);
 
 }
 
-void objekt::del_inventar(int16 nr, RaumBlk *Rb) {
+void Object::del_inventar(int16 nr, RaumBlk *Rb) {
 
 	Player->room_m_obj[nr].RoomNr = -1;
 	sort();
 }
 
-void objekt::change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
+void Object::change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
 	Player->room_m_obj[old_inv].RoomNr = -1;
 	Player->room_m_obj[new_inv].RoomNr = 255;
 	sort();
@@ -523,7 +523,7 @@ void objekt::change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
 
 }
 
-void objekt::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
+void Object::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
                           RaumBlk *Rb) {
 
 	++mov_obj_room[0];
@@ -536,7 +536,7 @@ void objekt::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
 	sort();
 }
 
-int16 objekt::check_inventar(int16 nr) {
+int16 Object::check_inventar(int16 nr) {
 	int16 i;
 	int16 ret;
 	ret = false;
@@ -547,7 +547,7 @@ int16 objekt::check_inventar(int16 nr) {
 	return ret;
 }
 
-int16 objekt::is_exit(int16 mouse_x, int16 mouse_y) {
+int16 Object::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 ret;
 	int16 i;
 	ret = -1;

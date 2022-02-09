@@ -19,15 +19,15 @@
  *
  */
 
-#ifndef CHEWY_OBJEKT_H
-#define CHEWY_OBJEKT_H
+#ifndef CHEWY_OBJECT_EXTRA_H
+#define CHEWY_OBJECT_EXTRA_H
 
 #include "common/serializer.h"
 #include "common/stream.h"
 
 namespace Chewy {
 
-struct RoomMovObjekt {
+struct RoomMovObject {
 	int16 RoomNr = 0;
 
 	int16 X = 0;

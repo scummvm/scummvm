@@ -27,7 +27,7 @@
 #include "chewy/ngshext.h"
 #include "chewy/text.h"
 #include "chewy/room.h"
-#include "chewy/objekte.h"
+#include "chewy/object.h"
 #include "chewy/timer.h"
 #include "chewy/detail.h"
 #include "chewy/effect.h"
@@ -242,7 +242,7 @@ bitclass *bit;
 gedclass *ged;
 text *txt;
 Room *room;
-objekt *obj;
+Object *obj;
 timer *uhr;
 detail *det;
 effect *fx;

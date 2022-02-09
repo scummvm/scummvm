@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef CHEWY_OBJEKTE_H
-#define CHEWY_OBJEKTE_H
+#ifndef CHEWY_OBJECT_H
+#define CHEWY_OBJECT_H
 
-#include "chewy/objekt.h"
+#include "chewy/object_extra.h"
 
 namespace Chewy {
 
@@ -34,69 +34,41 @@ namespace Chewy {
 #define OBJEKT_1 1
 #define OBJEKT_2 2
 
-class objekt {
-
+class Object {
 public:
-	objekt(Spieler *sp);
-	~objekt();
+	Object(Spieler *sp);
+	~Object();
 
-	short load(const char *fname, RoomMovObjekt *Rmo);
-
+	short load(const char *fname, RoomMovObject *Rmo);
 	int16 load(const char *fname, RoomStaticInventar *Rsi);
-
 	int16 load(const char *fname, RoomExit *RoomEx);
-
 	void sort();
-
 	void free_inv_spr(byte **inv_spr_adr);
-
 	int16 is_sib_mouse(int16 mouse_x, int16 mouse_y);
-
 	int16 is_iib_mouse(int16 mouse_x, int16 mouse_y);
-
 	int16 iib_txt_nr(int16 inv_nr);
-
 	int16 sib_txt_nr(int16 sib_nr);
-
 	int16 action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr);
-
 	int16 action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr);
-
 	void hide_sib(int16 nr);
-
 	void show_sib(int16 nr);
-
 	void calc_all_static_detail();
-
 	void calc_static_detail(int16 det_nr);
-
 	int16 calc_static_use(int16 nr);
-
 	int16 del_obj_use(int16 nr);
-
 	int16 calc_rsi_flip_flop(int16 nr);
-
 	void set_rsi_flip_flop(int16 nr, int16 anz);
-
 	void add_inventar(int16 nr, RaumBlk *Rb);
-
 	void del_inventar(int16 nr, RaumBlk *Rb);
-
 	void change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb);
-
 	void set_inventar(int16 nr, int16 x, int16 y, int16 automov,
 	                  RaumBlk *Rb);
-
 	int16 check_inventar(int16 nr);
-
 	int16 is_exit(int16 mouse_x, int16 mouse_y);
-
 	uint8 mov_obj_room[MAX_MOV_OBJ + 1];
-
 	uint8 spieler_invnr[MAX_MOV_OBJ + 1];
 
 private:
-
 	int16 calc_rmo_flip_flop(int16 nr);
 
 	IibDateiHeader iib_datei_header;
@@ -106,10 +78,9 @@ private:
 	int16 max_static_inventar;
 	int16 max_exit;
 	Spieler *Player;
-	RoomMovObjekt *Rmo;
+	RoomMovObject *Rmo;
 	RoomStaticInventar *Rsi;
 	RoomExit *Re;
-
 };
 
 } // namespace Chewy

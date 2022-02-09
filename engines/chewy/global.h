@@ -32,7 +32,7 @@
 #include "chewy/gedclass.h"
 #include "chewy/bitclass.h"
 #include "chewy/text.h"
-#include "chewy/objekte.h"
+#include "chewy/object.h"
 #include "chewy/effect.h"
 #include "chewy/sound_player.h"
 
@@ -227,7 +227,7 @@ extern bitclass *bit;
 extern gedclass *ged;
 extern text *txt;
 extern Room *room;
-extern objekt *obj;
+extern Object *obj;
 extern timer *uhr;
 extern detail *det;
 extern effect *fx;
