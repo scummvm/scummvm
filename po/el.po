@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-01-30 20:04+0000\n"
+"PO-Revision-Date: 2022-02-09 18:31+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6764,13 +6764,16 @@ msgstr "Ειδικός"
 
 #: engines/scumm/dialogs.cpp:704
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Διάρκεια Ουβερτούρας:"
 
 #: engines/scumm/dialogs.cpp:706
 msgid ""
 "Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
 "lower the value, the earlier the Lucasfilm logo appears."
 msgstr ""
+"Ρυθμίζει το χρόνο που θα διαρκέσει η Ουβερτούρα για την έκδοση EGA του LOOM "
+"όταν χρησιμοποιείται η βελτιωμένη μουσική υποστήριξη. Μικρότερη τιμή "
+"σημαίνει ότι το σήμα (logo) της Lucasfilm θα εμφανιστεί συντομότερα."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
