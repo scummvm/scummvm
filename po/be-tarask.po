@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 18:22+0000\n"
+"PO-Revision-Date: 2022-02-09 19:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5451,7 +5451,7 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"Для гэтай вэрсіі AMIGA патрэбна гэтыя шрыфтавыя файлы:\n"
+"Для гэтай вэрсіі AMIGA патрэбныя гэтыя шрыфтавыя файлы:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -5483,7 +5483,7 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
-"Для гэтай вэрсіі AMIGA патрэбна гэтыя шрыфтавыя файлы:\n"
+"Для гэтай вэрсіі AMIGA патрэбныя гэтыя шрыфтавыя файлы:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -6336,16 +6336,22 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Гэтая гульня мае аматарскую латку скрыптоў. Як гавораць, такія латкі надаюць "
+"праблемы, бо моцна закранают скрыпты. Тых праблемаў, што выпраўляюць гэтыя "
+"латкі няма ў ScummVM, таму вам раіцца выдаліць гэтую латку з вашай тэчкі "
+"гульні, каб пазьбегнуць непрадбачных праблемаў у будучыні."
 
 #: engines/sci/sci.cpp:509
 msgid "Download patch"
-msgstr ""
+msgstr "Заладаваць латку"
 
 #: engines/sci/sci.cpp:510
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
+"(або націсьніце „Заладаваць латку“. Але заўважце — яна проста заладуецца, "
+"далей вы самі)\n"
 
 #: engines/sci/sci.cpp:517
 msgid ""
@@ -6356,6 +6362,10 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"Для GK2 ё субтытры, створаныя добрымі аматарамі з SierraHelp.\n"
+"\n"
+"Каб усталяваць, заладуйце:\n"
+"http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
 #: engines/sci/sci.cpp:848
 msgid ""
@@ -6365,12 +6375,19 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Пэрсанажы, захаваныя цераз ScummVM паказваюцца аўтаматычна. Файлы "
+"пэрсанажаў, захаваных ў арыґінальных гульнях, трэ памясьціць у тэчку "
+"захаваных гульняў ScummVM, дапісаўшы прэфікс, адпаведны гульні, у якой яны "
+"былі захаваныя: 'qfg1-' для Quest for Glory 1, 'qfg2-' для Quest for Glory "
+"2. Напрыклад: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:160
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"Для выбранага гукавога драйвэра патрэбныя гэтыя файлы:\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:163
 msgid ""
@@ -6387,46 +6404,63 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Нейкія гукавыя драйвэры (прынамсі, для нейкіх гульняў)\n"
+"ішлі ад Sierra як латкі, такім чынам, маглі быць\n"
+"не ўсталёваны разам з гульнёй. \n"
+"\n"
+"Калі ласка, скапіюйце гэныя файлы ў тэчку вашай гульні.\n"
+"\n"
+"Аднак, калі ласка, заўважце, што тыя файлы могуць быць\n"
+"не даступныя асобна, а толькі як частка (латаных) пакоў рэсурсаў.\n"
+"Тады, мажліва, вам прыдзецца ўжыць арыґінальную латку ад Sierra.\n"
+"\n"
 
 #: engines/scumm/detection.cpp:175
 msgid "Show Object Line"
-msgstr ""
+msgstr "Паказваць аб’ектавы радок"
 
 #: engines/scumm/detection.cpp:176
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Паказваць назвы аб’ектаў зьнізу экрану"
 
 #: engines/scumm/detection.cpp:182
 msgid "Use NES Classic Palette"
-msgstr ""
+msgstr "Выкарыстоўваць клясічную палітру NES"
 
 #: engines/scumm/detection.cpp:183
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
+"Выкарыстоўваць болей нэўтральную колеравую палітру, якая бліжэй да NES "
+"Classic"
 
 #: engines/scumm/detection.cpp:189
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Асякаць гульні FM-TOWNS да вышыні ў 200 піксэляў"
 
 #: engines/scumm/detection.cpp:190
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Адсячы непатрэбныя 40 піксэляў зьнізу экрану, каб зрабіць стандарт вышыні у "
+"200 піксэляў, дазваляючы выкарыстаць „карэкцыю прапорцыяў экрану“"
 
 #: engines/scumm/detection.cpp:196
 msgid "Play simplified music"
-msgstr ""
+msgstr "Граць спрошчаную музыку"
 
 #: engines/scumm/detection.cpp:197
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Мажліва, гэтая музыка для слабых кампутараў Mac. Яна мае толькі адзін канал."
 
 #: engines/scumm/detection.cpp:203
 msgid "Use correct font spacing"
-msgstr ""
+msgstr "Выкарыстоўваць правільныя інтэрвалы для шрыфтоў"
 
 #: engines/scumm/detection.cpp:204
 msgid ""
