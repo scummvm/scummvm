@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 15:33+0000\n"
+"PO-Revision-Date: 2022-02-09 15:54+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4451,7 +4451,7 @@ msgid ""
 "game disc."
 msgstr ""
 "Памылка: Файл '%s' выцягнуты няправільна.\n"
-"Калі ласка, праглядзіце старонку на Вікі пра тое, як правільна выцягнуць "
+"Калі ласка, праглядзіце старонку на Wiki пра тое, як правільна выцягнуць "
 "DTSPEECH.XA і файлы *.STR з вашага дыску з гульнёй:\n"
 "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos"
 
@@ -6128,87 +6128,94 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM выпісаў нейкія папярэджаньні ў вашай кансолі й ня можа гарантаваць, "
+"што ўсе файлы ператвораны.\n"
+"\n"
+"Калі ласка, паведаміце суполцы ScummVM."
 
 #: engines/pegasus/pegasus.cpp:2719
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Угару/Няблізіць/Рух наперад/Адчыніць дзьверы"
 
 #: engines/pegasus/pegasus.cpp:2727
 msgid "Down/Zoom Out"
-msgstr ""
+msgstr "Уніз/Аддаліць"
 
 #: engines/pegasus/pegasus.cpp:2749
 msgid "Action/Select"
-msgstr ""
+msgstr "Дзея/Выбар"
 
 #: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Паказаць/схаваць рыштунак"
 
 #: engines/pegasus/pegasus.cpp:2776
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Паказаць/схаваць біячып"
 
 #: engines/pegasus/pegasus.cpp:2784
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Пералучэньне паказу зьвестак у цэнтры экрану"
 
 #: engines/pegasus/pegasus.cpp:2791
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Паказаць/схаваць экран інфармацыі"
 
 #: engines/pegasus/pegasus.cpp:2798
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Паказаць/схаваць мэню перапынку"
 
 #: engines/pegasus/pegasus.cpp:2805
 msgid "Toggle Chatty AI"
-msgstr ""
+msgstr "Пералучэньне гаваркога ШІ"
 
 #: engines/pegasus/pegasus.cpp:2820
 msgid "Save Game"
-msgstr ""
+msgstr "Захаваць гульню"
 
 #: engines/pegasus/pegasus.cpp:2826
 msgid "Load Game"
-msgstr ""
+msgstr "Заладаваць гульню"
 
 #: engines/pink/gui.cpp:219
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "Гэты пункт мэню шчэ ня дзейсны"
 
 #: engines/private/detection.cpp:193 engines/private/detection.cpp:212
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Знойдзена сьціснутая гульня. Калі ласка, расьцісьніце яе па інструкцыі з "
+"нашай Wiki"
 
 #: engines/queen/detection.cpp:44
 msgid "Alternative intro"
-msgstr ""
+msgstr "Альтэрнатыўны ўступ"
 
 #: engines/queen/detection.cpp:45
 msgid "Use an alternative game intro (CD version only)"
 msgstr ""
+"Выкарыстоўваць альтэрнатыўны ўступ (толькі для вэрсіі кампатовых дыскаў)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:789
 msgid "Windows Trial version is not supported"
-msgstr ""
+msgstr "Каштавальная вэрсія для Windows не падтрымліваецца"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:815
 msgid "macOS Trial version is not supported"
-msgstr ""
+msgstr "Каштавальная вэрсія для macOS не падтрымліваецца"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:840
 msgid "Pocket PC Trial version is not supported"
-msgstr ""
+msgstr "Каштавальная вэрсія для Pocket PC не падтрымліваецца"
 
 #: engines/saga/metaengine.cpp:112
 msgid "I Have No Mouth support not compiled in"
-msgstr ""
+msgstr "Падтрыманьне I Have No Mouth не сабранае"
 
 #: engines/saga/music.cpp:95
 #, c-format
@@ -6217,18 +6224,23 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Ня выйшла знайсьці файлы %s і %s\n"
+"інструмэнтаў AdLib. Бяз гэтых файлаў,\n"
+"музыка будзе гучаць ня так, як у арыґінале."
 
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
-msgstr ""
+msgstr "Памылка ладаваньня зьвестак гульні."
 
 #: engines/sci/detection_tables.h:4350
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
+"Знойдзена няпоўная гульня. Вам трэ скапіяваць зьвесткі з усіх кампактных "
+"дыскаў."
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
 msgid "(Autosave)"
-msgstr ""
+msgstr "(Аўтазахаваньне)"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
