@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 19:41+0000\n"
+"PO-Revision-Date: 2022-02-09 20:25+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6580,53 +6580,55 @@ msgstr "Выбярыце ступень умеласьці."
 
 #: engines/scumm/dialogs.cpp:672
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Праглядзіце ваш дапаможнік Loom(TM) для дапамогі."
 
 #: engines/scumm/dialogs.cpp:676
 msgid "Practice"
-msgstr ""
+msgstr "Практыкант"
 
 #: engines/scumm/dialogs.cpp:677
 msgid "Expert"
-msgstr ""
+msgstr "Майстра"
 
 #: engines/scumm/dialogs.cpp:704
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Час увэртуры:"
 
 #: engines/scumm/dialogs.cpp:706
 msgid ""
 "Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
 "lower the value, the earlier the Lucasfilm logo appears."
 msgstr ""
+"Рэгулюе сынхранаваньне увэртуры EGA Loom, карыстаючыся палепшанай музыкай. "
+"Чым меней значэньне, тым раней зьявіцца лёгатып Lucasfilm."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "Асноўныя клявіятурныя загады:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "Дыялёг захаваньня / заладаваньня"
 
 #: engines/scumm/help.cpp:75
 msgid "Skip line of text"
-msgstr ""
+msgstr "Прапусьціць радок тэксту"
 
 #: engines/scumm/help.cpp:76
 msgid "Esc"
-msgstr ""
+msgstr "Esc"
 
 #: engines/scumm/help.cpp:76 engines/zvision/metaengine.cpp:215
 msgid "Skip cutscene"
-msgstr ""
+msgstr "Прапусьціць сцэнку"
 
 #: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
 msgid "Space"
-msgstr ""
+msgstr "Прагал"
 
 #: engines/scumm/help.cpp:77
 msgid "Pause game"
-msgstr ""
+msgstr "Перапынак гульні"
 
 #: engines/scumm/help.cpp:78 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:94 engines/scumm/help.cpp:95
@@ -6634,93 +6636,93 @@ msgstr ""
 #: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
 #: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
 msgid "Ctrl"
-msgstr ""
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:78
 msgid "Load saved game 1-10"
-msgstr ""
+msgstr "Заладаваць гульню 1-10"
 
 #: engines/scumm/help.cpp:79 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85 engines/scumm/help.cpp:99
 #: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #: engines/scumm/help.cpp:79
 msgid "Save game 1-10"
-msgstr ""
+msgstr "Захаваць гульню 1-10"
 
 #: engines/scumm/help.cpp:86
 msgid "Music volume up / down"
-msgstr ""
+msgstr "Павялічыць / паменьшыць гучнасьць музыкі"
 
 #: engines/scumm/help.cpp:87
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "Паскорыць / замарудзіць хуткасьць тэксту"
 
 #: engines/scumm/help.cpp:88
 msgid "Simulate left mouse button"
-msgstr ""
+msgstr "Сымуляцыя левай кнопкі мышы"
 
 #: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2114
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:89
 msgid "Simulate right mouse button"
-msgstr ""
+msgstr "Сымуляцыя правай кнопкі мышы"
 
 #: engines/scumm/help.cpp:92
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "Адмысловыя клявіятурныя загады:"
 
 #: engines/scumm/help.cpp:93
 msgid "Show / Hide console"
-msgstr ""
+msgstr "Паказаць / убраць кансоль"
 
 #: engines/scumm/help.cpp:94
 msgid "Start the debugger"
-msgstr ""
+msgstr "Запусьціць наладнік хібаў"
 
 #: engines/scumm/help.cpp:95
 msgid "Show memory consumption"
-msgstr ""
+msgstr "Паказаць спажываньне памяці"
 
 #: engines/scumm/help.cpp:96
 msgid "Run in fast mode (*)"
-msgstr ""
+msgstr "Запусьціць у хуткім рэжыме (*)"
 
 #: engines/scumm/help.cpp:97
 msgid "Run in really fast mode (*)"
-msgstr ""
+msgstr "Запусьціць у дужа хуткім рэжыме (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "Пералучэньне між графічнымі фільтрамі"
 
 #: engines/scumm/help.cpp:100
 msgid "Increase / Decrease scale factor"
-msgstr ""
+msgstr "Павялічыць / паменьшыць маштаб"
 
 #: engines/scumm/help.cpp:101
 msgid "Toggle aspect-ratio correction"
-msgstr ""
+msgstr "Далучыць карэкцыю прапорцыяў экрану"
 
 #: engines/scumm/help.cpp:106
 msgid "* Note that using ctrl-f and"
-msgstr ""
+msgstr "* Выкарыстаньне ctrl+f і"
 
 #: engines/scumm/help.cpp:107
 msgid "  ctrl-g are not recommended"
-msgstr ""
+msgstr "  ctrl+g не рэкамэндуецца"
 
 #: engines/scumm/help.cpp:108
 msgid "  since they may cause crashes"
-msgstr ""
+msgstr "  , бо яны могуць выклікаць крахі"
 
 #: engines/scumm/help.cpp:109
 msgid "  or incorrect game behavior."
-msgstr ""
+msgstr "  або няправільную працу гульні."
 
 #: engines/scumm/help.cpp:113
 msgid "Spinning drafts on the keyboard:"
@@ -6728,37 +6730,37 @@ msgstr ""
 
 #: engines/scumm/help.cpp:115
 msgid "Main game controls:"
-msgstr ""
+msgstr "Асноўныя клявішы гульні:"
 
 #: engines/scumm/help.cpp:120 engines/scumm/help.cpp:135
 #: engines/scumm/help.cpp:160
 msgid "Push"
-msgstr ""
+msgstr "Пхаць"
 
 #: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
 #: engines/scumm/help.cpp:161
 msgid "Pull"
-msgstr ""
+msgstr "Цягнуць"
 
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162 engines/scumm/help.cpp:196
 #: engines/scumm/help.cpp:206
 msgid "Give"
-msgstr ""
+msgstr "Даць"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163 engines/scumm/help.cpp:189
 #: engines/scumm/help.cpp:207
 msgid "Open"
-msgstr ""
+msgstr "Адкрыць"
 
 #: engines/scumm/help.cpp:125
 msgid "Go to"
-msgstr ""
+msgstr "Ісьці"
 
 #: engines/scumm/help.cpp:126
 msgid "Get"
-msgstr ""
+msgstr "Узяць"
 
 #: engines/scumm/help.cpp:128 engines/scumm/help.cpp:140
 msgid "Read"
