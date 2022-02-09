@@ -47,10 +47,10 @@ void Room23::cockpit() {
 	_G(maus_links_click) = false;
 	switch_room(23);
 
-	if (_G(spieler).R23Cartridge)
-		det->show_static_spr(3);
-	else
+	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
 		det->hide_static_spr(3);
+	else
+		det->show_static_spr(3);
 }
 
 int16 Room23::start_gleiter() {
@@ -67,7 +67,7 @@ int16 Room23::start_gleiter() {
 				if (!_G(spieler).R16F5Exit) {
 					start_ok = false;
 					start_aad_wait(35, -1);
-				} else if ((!_G(spieler).R23Cartridge) || (!_G(spieler).R18CartSave)) {
+				} else if (!_G(spieler).R23Cartridge || !_G(spieler).R18CartSave) {
 					start_ok = false;
 					start_aad_wait(41, -1);
 				} else if (!_G(spieler).R17EnergieOut) {
@@ -87,6 +87,7 @@ int16 Room23::start_gleiter() {
 				if (_G(spieler).R23GleiterExit == 14) {
 					out->setze_zeiger(nullptr);
 					out->cls();
+					flags.NoPalAfterFlc = true;
 					flic_cut(FCUT_012, CFO_MODE);
 					register_cutscene(7);
 					out->cls();
@@ -94,7 +95,7 @@ int16 Room23::start_gleiter() {
 					set_person_pos(126, 110, P_CHEWY, P_RIGHT);
 
 					switch_room(_G(spieler).R23GleiterExit);
-					start_spz_wait(CH_WONDER1, 1, false, P_CHEWY);
+					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
 
 					_G(spieler).DelaySpeed = 10;
@@ -106,8 +107,8 @@ int16 Room23::start_gleiter() {
 					out->setze_zeiger(nullptr);
 					out->cls();
 					flic_cut(FCUT_019_01, CFO_MODE);
-					register_cutscene(9);
 					_G(spieler).R23GleiterExit = 25;
+					register_cutscene(9);
 
 					cur_2_inventory();
 					remove_inventory(5);
@@ -132,7 +133,7 @@ void Room23::use_cartridge() {
 
 	if (_G(spieler).R18CartSave) {
 		atds->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(111, 1, ATS_DATEI);
+		atds->set_ats_str(111, 2, ATS_DATEI);
 		start_detail_wait(4, 1, ANI_VOR);
 		det->show_static_spr(3);
 	} else {
