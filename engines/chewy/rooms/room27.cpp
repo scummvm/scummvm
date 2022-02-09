@@ -53,13 +53,12 @@ void Room27::xit(int16 eib_nr) {
 			start_detail_wait(2, 1, ANI_VOR);
 			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 			spieler_mi[P_HOWARD].Id = HOWARD_OBJ;
-		} else if ((_G(spieler).R27HowardGed < 3) && (eib_nr != -1)) {
+		} else if (_G(spieler).R27HowardGed < 3 && eib_nr != -1) {
 			++_G(spieler).R27HowardGed;
 			start_aad_wait(174, -1);
 		}
 	}
 
-	_G(spieler).PersonHide[P_HOWARD] = false;
 	show_cur();
 }
 
