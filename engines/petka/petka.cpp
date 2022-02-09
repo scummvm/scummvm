@@ -175,6 +175,9 @@ Common::RandomSource &PetkaEngine::getRnd() {
 }
 
 void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
+	if (!stream)
+		return;
+
 	PauseToken token = pauseEngine();
 	Graphics::PixelFormat fmt = _system->getScreenFormat();
 
