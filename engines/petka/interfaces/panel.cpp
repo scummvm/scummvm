@@ -114,7 +114,6 @@ void InterfacePanel::start(int id) {
 		obj->_y = _objectPoints[i].y;
 		obj->_frame = 1;
 		obj->_animate = false;
-		obj->_isShown = true;
 		_objs.push_back(obj);
 	}
 
