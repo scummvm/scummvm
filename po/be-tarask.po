@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-08 19:52+0000\n"
+"PO-Revision-Date: 2022-02-09 12:58+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5606,15 +5606,17 @@ msgstr "Відэа лёту над Myst не гралася арыґінальн
 #.
 #: engines/mohawk/dialogs.cpp:134
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Палепшыць дас~т~упнасьць загадкі сэленітавага веку"
 
 #: engines/mohawk/dialogs.cpp:135
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
+"Дазваляць дапускаць болей хібнасьцей падчас разьвязваньня загадкі "
+"сэленітавага веку."
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "Сымуляваць час ладаваньня старых кампактных дыскаў"
 
 #: engines/mohawk/dialogs.cpp:139
 msgid ""
