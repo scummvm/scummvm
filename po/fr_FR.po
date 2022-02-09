@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-01-30 10:12+0000\n"
+"PO-Revision-Date: 2022-02-09 15:13+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6700,13 +6700,16 @@ msgstr "Expert"
 
 #: engines/scumm/dialogs.cpp:704
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Timing de l'ouverture :"
 
 #: engines/scumm/dialogs.cpp:706
 msgid ""
 "Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
 "lower the value, the earlier the Lucasfilm logo appears."
 msgstr ""
+"Règle le timing de l'ouverture de Loom (EGA) lors de l'utilisation des "
+"musiques améliorées. Plus la valeur est faible, plus le logo Lucasfilm "
+"apparaît tôt."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
