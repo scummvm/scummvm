@@ -45,32 +45,32 @@ void set_mouse_handler(maus_info *mpos) {
 	// No implementation in ScummVM
 }
 
-maus::maus() {
+InputMgr::InputMgr() {
 	maus_info_blk = nullptr;
 	kb_info_blk = nullptr;
 }
 
-maus::~maus() {
+InputMgr::~InputMgr() {
 }
 
-int maus::init() {
+int InputMgr::init() {
 	// ScummVM supports three buttons
 	return 3;
 }
 
-void maus::speed(int16 x, int16 y) {
+void InputMgr::speed(int16 x, int16 y) {
 	// Changing mouse speed isn't supported in ScummVM
 }
 
-void maus::move_mouse(int16 x, int16 y) {
+void InputMgr::move_mouse(int16 x, int16 y) {
 	g_events->warpMouse(Common::Point(x, y));
 }
 
-void maus::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
+void InputMgr::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
 	// Mouse clip rectangle isn't supported in ScummVM
 }
 
-int16 maus::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
+int16 InputMgr::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 	int16 i = -1;
 	for (int16 j = 0; (j < anz * 4) && (i == -1); j += 4) {
 		if ((x >= tbl[j]) && (x <= tbl[j + 2]) && (y >= tbl[j + 1]) && (y <= tbl[j + 3]))
@@ -80,35 +80,35 @@ int16 maus::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 	return i;
 }
 
-void maus::neuer_kb_handler(kb_info *key) {
+void InputMgr::neuer_kb_handler(kb_info *key) {
 	set_new_kb_handler(key);
 	kb_info_blk = key;
 	kb_info_blk->key_code = '\0';
 }
 
-void maus::alter_kb_handler() {
+void InputMgr::alter_kb_handler() {
 	set_old_kb_handler();
 	kb_info_blk = nullptr;
-	warning("STUB - maus::alter_kb_handler");
+	warning("STUB - InputMgr::alter_kb_handler");
 #if 0
 	while (kbhit())
 		getch();
 #endif
 }
 
-void maus::neuer_maushandler(maus_info *mpos) {
+void InputMgr::neuer_maushandler(maus_info *mpos) {
 	set_mouse_handler(mpos);
 	maus_info_blk = mpos;
 }
 
-in_zeiger *maus::get_in_zeiger() {
+in_zeiger *InputMgr::get_in_zeiger() {
 	inzeig.minfo = maus_info_blk;
 	inzeig.kbinfo = kb_info_blk;
 
 	return &inzeig;
 }
 
-int16 maus::get_switch_code() {
+int16 InputMgr::get_switch_code() {
 	int16 switch_code = 0;
 
 	if (maus_info_blk) {

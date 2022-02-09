@@ -50,10 +50,10 @@ loudness *music;
 
 #endif
 
-maus *in;
+InputMgr *in;
 memory *mem;
 io_game *iog;
-mcga_grafik *out;
+McgaGraphic *out;
 cursor *cur;
 #ifdef AIL
 SoundPlayer *sndPlayer;

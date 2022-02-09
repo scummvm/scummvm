@@ -33,8 +33,8 @@ static void font_load();
 
 void standard_init() {
 	mem = new memory();
-	out = new mcga_grafik();
-	in = new maus();
+	out = new McgaGraphic();
+	in = new InputMgr();
 	fx = new effect();
 	txt = new text();
 	bit = new bitclass();

@@ -32,7 +32,7 @@ extern int16 scr_w;
 class cursor {
 public:
 	cursor();
-	cursor(mcga_grafik *out, maus *in, cur_blk *curblk);
+	cursor(McgaGraphic *out, InputMgr *in, cur_blk *curblk);
 	~cursor();
 
 	void plot_cur();
@@ -46,8 +46,8 @@ public:
 	void move(int16 x, int16 y);
 	void wait_taste_los(bool maus_plot);
 
-	mcga_grafik *out = nullptr;
-	maus *in = nullptr;
+	McgaGraphic *out = nullptr;
+	InputMgr *in = nullptr;
 	maus_info *minfo = nullptr;
 	in_zeiger *inzeig = nullptr;
 	cur_blk *curblk = nullptr;
