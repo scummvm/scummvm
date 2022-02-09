@@ -61,9 +61,9 @@ AniBlock ABLOCK14[2] = {
 
 void Room22::entry() {
 	if (!_G(spieler).R22BorkPlatt) {
-		det->load_taf_seq(36, (56 - 36) + 1, nullptr);
+		det->load_taf_seq(36, 21, nullptr);
 		room->set_timer(255, 15);
-	} else if (_G(spieler).R22ChewyPlatt && !_G(spieler).R22GetBork) {
+	} else if (!_G(spieler).R22GetBork) {
 		det->show_static_spr(4);
 	}
 }
