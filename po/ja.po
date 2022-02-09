@@ -6541,7 +6541,9 @@ msgstr "Overtureのタイミング："
 msgid ""
 "Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
 "lower the value, the earlier the Lucasfilm logo appears."
-msgstr "拡張音源使用時のEGA Loom Overtureのタイミングを調整します。値を小さくすると、Lucasfilmロゴが早く表示されます。"
+msgstr ""
+"拡張音源使用時のEGA Loom Overtureのタイミングを調整します。値を小さくすると、"
+"Lucasfilmロゴが早く表示されます。"
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
