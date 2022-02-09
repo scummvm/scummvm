@@ -38,10 +38,10 @@ extern bool cur_move;
 extern int16 modul;
 extern int16 fcode;
 
-class maus {
+class InputMgr {
 public:
-	maus();
-	~maus();
+	InputMgr();
+	~InputMgr();
 	int init();
 	void speed(int16 x, int16 y);
 	void move_mouse(int16 x, int16 y);

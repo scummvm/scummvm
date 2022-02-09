@@ -54,10 +54,10 @@ extern int16 *rlist;
 extern bool mono;
 extern uint8 svga;
 
-class mcga_grafik {
+class McgaGraphic {
 public:
-	mcga_grafik();
-	~mcga_grafik();
+	McgaGraphic();
+	~McgaGraphic();
 
 	void init();
 	void set_writemode(char wm);

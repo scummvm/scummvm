@@ -39,9 +39,9 @@ namespace Chewy {
 
 class sblaster;
 
-extern mcga_grafik *out;
+extern McgaGraphic *out;
 extern memory *mem;
-extern maus *in;
+extern InputMgr *in;
 extern sblaster *snd;
 extern io_game *iog;
 extern cursor *cur;
