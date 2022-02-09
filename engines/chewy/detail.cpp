@@ -675,7 +675,7 @@ void detail::clear_detail_sound(int16 nr) {
 void detail::disable_room_sound() {
 	for (int16 i = 0; i < MAXDETAILS; i++)
 		disable_detail_sound(i);
-	ailsnd->endSound();
+	sndPlayer->endSound();
 }
 
 void detail::enable_room_sound() {

@@ -58,8 +58,8 @@ void MainMenu::execute() {
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
-		ailsnd->stopMod();
-		ailsnd->endSound();
+		sndPlayer->stopMod();
+		sndPlayer->endSound();
 		SetUpScreenFunc = screenFunc;
 
 		cursor_wahl(CUR_ZEIGE);
@@ -268,7 +268,7 @@ void MainMenu::playGame() {
 	cur->show_cur();
 	spieler_vector[P_CHEWY].Count = 0;
 	uhr->reset_timer(0, 0);
-	ailsnd->setLoopMode(_G(spieler).soundLoopMode);
+	sndPlayer->setLoopMode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !main_loop(1)) {
 	}

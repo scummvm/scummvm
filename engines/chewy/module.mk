@@ -1,7 +1,6 @@
 MODULE := engines/chewy
 
 MODULE_OBJS = \
-	ailclass.o \
 	atds.o \
 	chewy.o \
 	cursor.o \
@@ -33,6 +32,7 @@ MODULE_OBJS = \
 	room.o \
 	resource.o \
 	sound.o \
+	sound_player.o \
 	sprite.o \
 	t_event.o \
 	temp_file.o \

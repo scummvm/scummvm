@@ -34,7 +34,7 @@ void Room43::night_small() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	switch_room(43);
-	ailsnd->stopMod();
+	sndPlayer->stopMod();
 	g_engine->_sound->playSound(0);
 	hide_cur();
 	flags.NoScroll = true;
@@ -71,7 +71,7 @@ void Room43::catch_pg() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	switch_room(43);
-	ailsnd->stopMod();
+	sndPlayer->stopMod();
 	g_engine->_sound->playSound(0);
 	hide_cur();
 	flags.NoScroll = true;

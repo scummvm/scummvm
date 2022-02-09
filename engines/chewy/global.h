@@ -34,7 +34,7 @@
 #include "chewy/text.h"
 #include "chewy/objekte.h"
 #include "chewy/effect.h"
-#include "chewy/ailclass.h"
+#include "chewy/sound_player.h"
 
 namespace Chewy {
 
@@ -234,7 +234,7 @@ extern effect *fx;
 extern atdsys *atds;
 extern flic *flc;
 extern movclass *mov;
-extern ailclass *ailsnd;
+extern SoundPlayer *sndPlayer;
 
 extern char backged[];
 extern char fname[80];

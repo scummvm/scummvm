@@ -174,10 +174,10 @@ void Room46::kloppe() {
 
 	mem->file->select_pool_item(Ci.Handle, 66);
 	flc->custom_play(&Ci);
-	ailsnd->fadeOut(0);
+	sndPlayer->fadeOut(0);
 	out->cls();
 
-	while (ailsnd->musicPlaying() && !SHOULD_QUIT) {
+	while (sndPlayer->musicPlaying() && !SHOULD_QUIT) {
 		EVENTS_UPDATE;
 	}
 }
