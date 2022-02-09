@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-09 20:25+0000\n"
+"PO-Revision-Date: 2022-02-09 20:46+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6756,7 +6756,7 @@ msgstr "Адкрыць"
 
 #: engines/scumm/help.cpp:125
 msgid "Go to"
-msgstr "Ісьці"
+msgstr "Перайсьці да"
 
 #: engines/scumm/help.cpp:126
 msgid "Get"
@@ -6764,69 +6764,70 @@ msgstr "Узяць"
 
 #: engines/scumm/help.cpp:128 engines/scumm/help.cpp:140
 msgid "Read"
-msgstr ""
+msgstr "Чытаць"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:146
 msgid "New kid"
-msgstr ""
+msgstr "Новае дзіцё"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:152
 #: engines/scumm/help.cpp:170
 msgid "Turn on"
-msgstr ""
+msgstr "Увамкнуць"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:153
 #: engines/scumm/help.cpp:171
 msgid "Turn off"
-msgstr ""
+msgstr "Вымкнуць"
 
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1463
 msgid "Walk to"
-msgstr ""
+msgstr "Ісьці да"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:209
 #: engines/scumm/help.cpp:226 engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1469
 msgid "Pick up"
-msgstr ""
+msgstr "Падняць"
 
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 msgid "What is"
-msgstr ""
+msgstr "Што ё"
 
 #: engines/scumm/help.cpp:145
 msgid "Unlock"
-msgstr ""
+msgstr "Адчыніць"
 
 #: engines/scumm/help.cpp:148
+#, fuzzy
 msgid "Put on"
-msgstr ""
+msgstr "Надзець"
 
 #: engines/scumm/help.cpp:149
 msgid "Take off"
-msgstr ""
+msgstr "Зьняць"
 
 #: engines/scumm/help.cpp:155
 msgid "Fix"
-msgstr ""
+msgstr "Наладзіць"
 
 #: engines/scumm/help.cpp:157
 msgid "Switch"
-msgstr ""
+msgstr "Перамкнуць"
 
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:227
 msgid "Look"
-msgstr ""
+msgstr "Глядзець"
 
 #: engines/scumm/help.cpp:172 engines/scumm/help.cpp:222
 msgid "Talk"
-msgstr ""
+msgstr "Гутарыць"
 
 #: engines/scumm/help.cpp:173
 msgid "Travel"
-msgstr ""
+msgstr "Вандраваць"
 
 #: engines/scumm/help.cpp:174
 msgid "To Henry / To Indy"
@@ -6835,99 +6836,100 @@ msgstr ""
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:178
 msgid "play C minor on distaff"
-msgstr ""
+msgstr "граць до мінор на калаўроце"
 
 #: engines/scumm/help.cpp:179
 msgid "play D on distaff"
-msgstr ""
+msgstr "граць рэ на калаўроце"
 
 #: engines/scumm/help.cpp:180
 msgid "play E on distaff"
-msgstr ""
+msgstr "граць мі на калаўроце"
 
 #: engines/scumm/help.cpp:181
 msgid "play F on distaff"
-msgstr ""
+msgstr "граць фа на калаўроце"
 
 #: engines/scumm/help.cpp:182
 msgid "play G on distaff"
-msgstr ""
+msgstr "граць соль на калаўроце"
 
 #: engines/scumm/help.cpp:183
 msgid "play A on distaff"
-msgstr ""
+msgstr "граць ля на калаўроце"
 
 #: engines/scumm/help.cpp:184
 msgid "play B on distaff"
-msgstr ""
+msgstr "граць сі на калаўроце"
 
 #: engines/scumm/help.cpp:185
 msgid "play C major on distaff"
-msgstr ""
+msgstr "граць до мажор на калаўроце"
 
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:213
 msgid "puSh"
-msgstr ""
+msgstr "пхаць"
 
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "pull (Yank)"
-msgstr ""
+msgstr "цягнуць (таргаць)"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:247 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1481
 msgid "Talk to"
-msgstr ""
+msgstr "Гутарыць з"
 
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:210
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1457
 msgid "Look at"
-msgstr ""
+msgstr "Глядзець на"
 
 #: engines/scumm/help.cpp:199
 msgid "turn oN"
-msgstr ""
+msgstr "увамкнуць"
 
 #: engines/scumm/help.cpp:200
 msgid "turn oFf"
-msgstr ""
+msgstr "вымкнуць"
 
 #: engines/scumm/help.cpp:216
+#, fuzzy
 msgid "KeyUp"
-msgstr ""
+msgstr "Падвышаць"
 
 #: engines/scumm/help.cpp:216
 msgid "Highlight prev dialogue"
-msgstr ""
+msgstr "Падсвяціць папярэдні дыялёг"
 
 #: engines/scumm/help.cpp:217
 msgid "KeyDown"
-msgstr ""
+msgstr "Памяншаць"
 
 #: engines/scumm/help.cpp:217
 msgid "Highlight next dialogue"
-msgstr ""
+msgstr "Падсвяціць наступны дыялёг"
 
 #: engines/scumm/help.cpp:221
 msgid "Walk"
-msgstr ""
+msgstr "Ісьці"
 
 #: engines/scumm/help.cpp:225
 msgid "Object"
-msgstr ""
+msgstr "Аб’ект"
 
 #: engines/scumm/help.cpp:228
 msgid "Black and White / Color"
-msgstr ""
+msgstr "Чорна-белы / каляровы"
 
 #: engines/scumm/help.cpp:231
 msgid "Eyes"
-msgstr ""
+msgstr "Вочы"
 
 #: engines/scumm/help.cpp:232
 msgid "Tongue"
-msgstr ""
+msgstr "Язык"
 
 #: engines/scumm/help.cpp:234
 msgid "Punch"
