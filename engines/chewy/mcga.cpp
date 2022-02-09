@@ -24,7 +24,7 @@
 #include "chewy/chewy.h"
 #include "chewy/global.h"
 #include "chewy/mcga.h"
-#include "chewy/mcga_grafik.h"
+#include "chewy/mcga_graphics.h"
 
 namespace Chewy {
 

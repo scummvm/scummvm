@@ -22,7 +22,7 @@
 #include "common/memstream.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
-#include "chewy/mcga_grafik.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/mcga.h"
 
 namespace Chewy {

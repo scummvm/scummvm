@@ -22,7 +22,7 @@
 #ifndef CHEWY_CURSOR_H
 #define CHEWY_CURSOR_H
 
-#include "chewy/mcga_grafik.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {

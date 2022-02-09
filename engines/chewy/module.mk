@@ -20,7 +20,7 @@ MODULE_OBJS = \
 	main.o \
 	mouse.o \
 	mcga.o \
-	mcga_grafik.o \
+	mcga_graphics.o \
 	memory.o \
 	menus.o \
 	metaengine.o \
