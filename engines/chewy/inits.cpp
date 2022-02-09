@@ -40,7 +40,7 @@ void standard_init() {
 	bit = new bitclass();
 	ged = new gedclass(&ged_user_func);
 	room = new Room();
-	obj = new objekt(&_G(spieler));
+	obj = new Object(&_G(spieler));
 	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
 	det = new detail();
 	atds = new atdsys();

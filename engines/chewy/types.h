@@ -24,7 +24,7 @@
 
 #include "common/serializer.h"
 #include "chewy/defines.h"
-#include "chewy/objekt.h"
+#include "chewy/object_extra.h"
 #include "chewy/detail.h"
 
 namespace Chewy {
@@ -410,7 +410,7 @@ struct Spieler : public SpielerFlags {
 	int16 CurBreite = 0;
 	int16 CurHoehe = 0;
 
-	RoomMovObjekt room_m_obj[MAX_MOV_OBJ];
+	RoomMovObject room_m_obj[MAX_MOV_OBJ];
 	RoomStaticInventar room_s_obj[MAX_FEST_OBJ];
 	RoomExit room_e_obj[MAX_EXIT];
 	int16 X[MAX_PERSON] = { 0 };

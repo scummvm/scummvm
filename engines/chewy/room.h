@@ -22,7 +22,7 @@
 #ifndef CHEWY_ROOM_H
 #define CHEWY_ROOM_H
 
-#include "chewy/objekt.h"
+#include "chewy/object_extra.h"
 
 namespace Chewy {
 
@@ -60,7 +60,7 @@ struct RaumBlk {
 	const char *DetFile;
 	byte **InvSprAdr;
 
-	RoomMovObjekt *Rmo;
+	RoomMovObject *Rmo;
 
 	RoomStaticInventar *Rsi;
 

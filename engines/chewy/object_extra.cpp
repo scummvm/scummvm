@@ -19,17 +19,17 @@
  *
  */
 
-#include "chewy/objekt.h"
+#include "chewy/object_extra.h"
 
 namespace Chewy {
 
-bool RoomMovObjekt::load(Common::SeekableReadStream *src) {
+bool RoomMovObject::load(Common::SeekableReadStream *src) {
 	Common::Serializer s(src, nullptr);
 	synchronize(s);
 	return true;
 }
 
-void RoomMovObjekt::synchronize(Common::Serializer &s) {	
+void RoomMovObject::synchronize(Common::Serializer &s) {	
 	s.syncAsSint16LE(RoomNr);
 
 	s.syncAsSint16LE(X);
