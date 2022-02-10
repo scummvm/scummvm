@@ -48,13 +48,14 @@ private:
 	void updateSliders();
 	void updateSubtitles();
 
+	void updateSprite(uint index, uint frame) const;
+
 private:
 	bool _subtitles;
 	int _speechFrame;
 	int _musicFrame;
 	int _sfxFrame;
 	int _speedFrame;
-	Common::Point _objectPoints[24];
 };
 
 } // End of namespace Petka
