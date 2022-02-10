@@ -38,6 +38,9 @@ InterfaceSequence::InterfaceSequence() {
 }
 
 void InterfaceSequence::start(int id) {
+	// original bug fix
+	g_vm->getQSystem()->_mainInterface->removeTexts();
+
 	removeObjects();
 
 	g_system->getMixer()->pauseAll(true);
