@@ -48,6 +48,13 @@ void InterfaceSequence::start(int id) {
 	QObjectBG* bg = (QObjectBG *)g_vm->getQSystem()->findObject(id);
 	_objs.push_back(bg);
 
+	const auto *surface = g_vm->resMgr()->getSurface(bg->_resourceId);
+	if (surface) {
+		assert(surface->w >= 640);
+		g_vm->getQSystem()->_sceneWidth = MAX<int>(surface->w, 640);
+		g_vm->getQSystem()->_xOffset = 0;
+	}
+
 	playSound(bg->_musicId, Audio::Mixer::kMusicSoundType);
 	playSound(bg->_fxId, Audio::Mixer::kSFXSoundType);
 

@@ -96,7 +96,12 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	sys->_room = room;
 	_objs.push_back(room);
 
-	resMgr->getSurface(room->_resourceId);
+	const auto *surface = resMgr->getSurface(room->_resourceId);
+	if (surface) {
+		assert(surface->w >= 640);
+		sys->_sceneWidth = MAX<int>(surface->w, 640);
+		sys->_xOffset = 0;
+	}
 
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
