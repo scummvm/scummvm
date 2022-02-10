@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 16:13+0000\n"
+"PO-Revision-Date: 2022-02-10 16:26+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1772,15 +1772,15 @@ msgstr "Не запушчаны"
 #: gui/options.cpp:2465
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr ""
+msgstr "Шлях да корню:"
 
 #: gui/options.cpp:2465 gui/options.cpp:2467 gui/options.cpp:2468
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr ""
+msgstr "Выбярыце, якая тэчка будзе паказвацца як каранёвая ў кіраваньні файлаў"
 
 #: gui/options.cpp:2467
 msgid "/root/ Path:"
-msgstr ""
+msgstr "Шлях да корню:"
 
 #: gui/options.cpp:2473
 msgid "Server's port:"
@@ -1901,7 +1901,7 @@ msgstr "Выбярыце тэчку для плаґінаў"
 
 #: gui/options.cpp:2900
 msgid "Select directory for Files Manager /root/"
-msgstr ""
+msgstr "Выбярыце каранёвую тэчку для кіраваньняў файлаў"
 
 #: gui/options.cpp:3035
 msgid ""
@@ -1980,17 +1980,17 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:601
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Прадбачны"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:604
 msgid "*  Num"
-msgstr ""
+msgstr "*  Лічбы"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:607
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:61
 msgid "Recorder or Playback Gameplay"
@@ -2945,7 +2945,7 @@ msgstr "Выйсьце"
 
 #: backends/events/default/default-events.cpp:333
 msgid "Global"
-msgstr ""
+msgstr "Глябальна"
 
 #: backends/events/default/default-events.cpp:336
 #: engines/twine/metaengine.cpp:218
@@ -3572,11 +3572,11 @@ msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:65
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:71
 #: backends/platform/ds/osystem_ds.cpp:164
@@ -4487,7 +4487,7 @@ msgstr "Зьмяніць загад"
 #: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 #: engines/twine/metaengine.cpp:286 engines/zvision/metaengine.cpp:163
 msgid "Inventory"
-msgstr ""
+msgstr "Рыштунак"
 
 #: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:88
