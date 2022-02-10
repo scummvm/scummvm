@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 16:01+0000\n"
+"PO-Revision-Date: 2022-02-10 16:13+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -8558,31 +8558,31 @@ msgstr "Падвойны лічыльнік кадраў"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Павялічыць частату кадраў/с з 30 да 60"
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
-msgstr ""
+msgstr "Далучыць Venus"
 
 #: engines/zvision/detection_tables.h:71
 msgid "Enable the Venus help system"
-msgstr ""
+msgstr "Далучыць дапаможную сістэму Venus"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Адлучыць анімацыю падчас паваротаў"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Адлучыць анімацыю падчас паваротаў у рэжыме панарамы"
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Выкарыстоўваць відэа MPEG высокай разрознасьці"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "Выкарыстоўваць відэа MPEG з DVD, замест AVI нізкай разрознасьці"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -8590,34 +8590,36 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Гэтая захаваная гульня вэрсіі %u, але рухавік падтрымлівае толькі вэрсіі да "
+"%d. Вам трэ абнавіць рухавік, каб заладаваць гэты захоў."
 
 #: engines/zvision/metaengine.cpp:128
 msgid "Look Up"
-msgstr ""
+msgstr "Пагляд угару"
 
 #: engines/zvision/metaengine.cpp:134
 msgid "Look Down"
-msgstr ""
+msgstr "Пагляд уніз"
 
 #: engines/zvision/metaengine.cpp:169
 msgid "Spellbook"
-msgstr ""
+msgstr "Кніга чараў"
 
 #: engines/zvision/metaengine.cpp:175
 msgid "Score"
-msgstr ""
+msgstr "Рахунак"
 
 #: engines/zvision/metaengine.cpp:181
 msgid "Put away object"
-msgstr ""
+msgstr "Прыбраць аб’ект"
 
 #: engines/zvision/metaengine.cpp:187
 msgid "Extract coin"
-msgstr ""
+msgstr "Выцягнуць манэту"
 
 #: engines/zvision/metaengine.cpp:208
 msgid "Preferences"
-msgstr ""
+msgstr "Пажаданьні"
 
 #: engines/zvision/zvision.cpp:309
 msgid ""
@@ -8630,6 +8632,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Перад тым, як гуляць у гэтую гульню, вам трэ скапіяваць патрэбныя шрыфты ў "
+"тэчку дадаткаў ScummVM або ў тэчку гульні. На Windows вам патрэбны наступныя "
+"шрыфты стандартнай шрыфтавой бібліятэкі: Times New Roman, Century "
+"Schoolbook, Garamond, Courier New і Arial. Альбо заладуйце Liberation Fonts "
+"ці пак GNU FreeFont. Вам спатрэбяцца ўсе шрыфты выбранага паку, а менавіта: "
+"LiberationMono, LiberationSans and LiberationSerif, or FreeMono, FreeSans і "
+"FreeSerif адпаведна."
 
 #~ msgid "Swap Menu and Back buttons"
 #~ msgstr "Памяняць кнопкі „Мэню“ й „Назад“"
