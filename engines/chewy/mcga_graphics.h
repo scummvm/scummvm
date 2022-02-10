@@ -54,10 +54,10 @@ extern int16 *rlist;
 extern bool mono;
 extern uint8 svga;
 
-class McgaGraphic {
+class McgaGraphics {
 public:
-	McgaGraphic();
-	~McgaGraphic();
+	McgaGraphics();
+	~McgaGraphics();
 
 	void init();
 	void set_writemode(char wm);
@@ -127,6 +127,7 @@ public:
 	int16 get_vesa_info(uint16 mode, byte *info_blk);
 	void init(uint16 mode, byte *info_blk, byte *vscreen);
 	void update_screen();
+
 private:
 	int16 check_stellen_anz(char *zstring, int16 *pos, int16 stellen);
 	int16 devices();
@@ -136,7 +137,6 @@ private:
 	void ltoa(long N, char *str, int base);
 	void ultoa(uint32 N, char *str, int base);
 	void itoa(int N, char *str, int base);
-
 };
 
 } // namespace Chewy

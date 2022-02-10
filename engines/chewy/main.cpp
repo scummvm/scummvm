@@ -53,7 +53,7 @@ loudness *music;
 InputMgr *in;
 memory *mem;
 io_game *iog;
-McgaGraphic *out;
+McgaGraphics *out;
 cursor *cur;
 #ifdef AIL
 SoundPlayer *sndPlayer;

@@ -29,7 +29,7 @@ namespace Chewy {
 
 extern int16 scr_w;
 
-io_game::io_game(McgaGraphic *iout, InputMgr *iin, cursor *curp) {
+io_game::io_game(McgaGraphics *iout, InputMgr *iin, cursor *curp) {
 	out = iout;
 	in = iin;
 	cur = curp;
