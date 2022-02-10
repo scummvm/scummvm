@@ -24,7 +24,7 @@
 
 namespace Chewy {
 
-cursor::cursor(McgaGraphic *iout, InputMgr *iin, cur_blk *curblkp) {
+cursor::cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
 	out = iout;
 	in = iin;
 	scr_width = scr_w;

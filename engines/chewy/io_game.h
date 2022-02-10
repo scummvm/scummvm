@@ -73,7 +73,7 @@ namespace Chewy {
 class io_game {
 
 public:
-	io_game(McgaGraphic *out, InputMgr *in, cursor *curp);
+	io_game(McgaGraphics *out, InputMgr *in, cursor *curp);
 	~io_game();
 
 	int16 io_menu(iog_init *iostruc);
@@ -100,7 +100,7 @@ private:
 
 	void itoa(int N, char *str, int base);
 
-	McgaGraphic *out;
+	McgaGraphics *out;
 	InputMgr *in;
 	cursor *cur;
 	iog_init *io;

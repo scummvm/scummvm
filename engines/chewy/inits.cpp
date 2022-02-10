@@ -33,7 +33,7 @@ static void font_load();
 
 void standard_init() {
 	mem = new memory();
-	out = new McgaGraphic();
+	out = new McgaGraphics();
 	in = new InputMgr();
 	fx = new effect();
 	txt = new text();
