@@ -43,6 +43,7 @@
 #include "petka/petka.h"
 #include "petka/q_manager.h"
 #include "petka/interfaces/interface.h"
+#include "petka/interfaces/panel.h"
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
 
@@ -337,6 +338,15 @@ void PetkaEngine::pushMouseMoveEvent() {
 	ev.type = Common::EVENT_MOUSEMOVE;
 	ev.mouse = g_system->getEventManager()->getMousePos();
 	_eventMan->pushEvent(ev);
+}
+
+void PetkaEngine::applyGameSettings() {
+	if (_qsystem->_currInterface == _qsystem->_panelInterface.get())
+	{
+		_qsystem->_panelInterface->onSettingsChanged();
+	}
+
+	Engine::applyGameSettings();
 }
 
 } // End of namespace Petka

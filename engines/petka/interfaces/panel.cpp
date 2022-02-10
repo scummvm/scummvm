@@ -92,7 +92,6 @@ InterfacePanel::InterfacePanel() {
 
 void InterfacePanel::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
-	readSettings();
 
 	sys->getCase()->show(false);
 
@@ -118,10 +117,7 @@ void InterfacePanel::start(int id) {
 	}
 
 	SubInterface::start(id);
-
-	updateSliders();
-	updateSubtitles();
-
+	onSettingsChanged();
 	sys->getCursor()->_animate = true;
 }
 
@@ -286,11 +282,32 @@ void InterfacePanel::applySettings() {
 	_sfxFrame = CLIP<int>(_sfxFrame, 1, 31);
 	_speedFrame = CLIP<int>(_speedFrame, 1, 26);
 
-	ConfMan.setInt("speech_volume", 255 * (_speechFrame - 1) / (31 - 1));
-	ConfMan.setInt("music_volume", 255 * (_musicFrame - 1) / (41 - 1));
-	ConfMan.setInt("sfx_volume", 255 * (_sfxFrame - 1) / (31 - 1));
-	ConfMan.setBool("subtitles", _subtitles);
-	ConfMan.setInt("petka_speed", 4 * (_speedFrame - 1));
+	const auto speechFrame = _speechFrame;
+	const auto musicFrame = _musicFrame;
+	const auto sfxFrame = _sfxFrame;
+	const auto speedFrame = _speedFrame;
+	const auto subtitles = _subtitles;
+
+	readSettings();
+
+	if (speechFrame != _speechFrame) {
+		ConfMan.setInt("speech_volume", 255 * (speechFrame - 1) / (31 - 1));
+	}
+	if (musicFrame != _musicFrame) {
+		ConfMan.setInt("music_volume", 255 * (musicFrame - 1) / (41 - 1));
+	}
+	if (sfxFrame != _sfxFrame) {
+		ConfMan.setInt("sfx_volume", 255 * (sfxFrame - 1) / (31 - 1));
+	}
+
+	ConfMan.setBool("subtitles", subtitles);
+
+	if (speedFrame != _speedFrame) {
+		ConfMan.setInt("petka_speed", 4 * (speedFrame - 1));
+	}
+
+	readSettings();
+
 	ConfMan.flushToDisk();
 	g_vm->syncSoundSettings();
 }
@@ -301,6 +318,12 @@ void InterfacePanel::onRightButtonDown(Common::Point p) {
 
 int InterfacePanel::getHeroSpeed() {
 	return (_speedFrame * 100 - 100) / 25;
+}
+
+void InterfacePanel::onSettingsChanged() {
+	readSettings();
+	updateSliders();
+	updateSubtitles();
 }
 
 } // End of namespace Petka

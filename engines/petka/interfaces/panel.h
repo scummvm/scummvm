@@ -36,6 +36,8 @@ public:
 	void onRightButtonDown(Common::Point p) override;
 	void onMouseMove(Common::Point p) override;
 
+	void onSettingsChanged();
+
 	int getHeroSpeed();
 	bool showSubtitles() const { return _subtitles; }
 
