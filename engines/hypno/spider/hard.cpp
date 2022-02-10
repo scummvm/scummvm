@@ -322,12 +322,12 @@ void SpiderEngine::runNote(Code *code) {
 	MVideo *v = nullptr;
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
-		v = new MVideo("int_ball/ppv007es.smk", Common::Point(0, 0), false, true, false);
+		v = new MVideo("cine/ppv007es.smk", Common::Point(0, 0), false, true, false);
 		runIntro(*v);
 		delete v;
 		loadImage("int_ball/enote.smk", 0, 0, false, true);
 	} else { // hard
-		v = new MVideo("int_ball/ppv007hs.smk", Common::Point(0, 0), false, true, false);
+		v = new MVideo("cine/ppv007hs.smk", Common::Point(0, 0), false, true, false);
 		runIntro(*v);
 		delete v;
 		loadImage("int_ball/hnote.smk", 0, 0, false, true);
