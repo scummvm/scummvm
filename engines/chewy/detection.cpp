@@ -29,11 +29,6 @@ static const PlainGameDescriptor chewyGames[] = {
 	{nullptr, nullptr}
 };
 
-static const char *directoryGlobs[] = {
-	"txt",
-	nullptr
-};
-
 namespace Chewy {
 
 static const ChewyGameDescription gameDescriptions[] = {
@@ -42,7 +37,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			nullptr,
-			AD_ENTRY1s("atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
+			AD_ENTRY1s("txt/atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -55,7 +50,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			nullptr,
-			AD_ENTRY1s("atds.tap", "b1210066a524fe0f88862f44671ed97d", 226988),
+			AD_ENTRY1s("txt/atds.tap", "b1210066a524fe0f88862f44671ed97d", 226988),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -67,7 +62,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			nullptr,
-			AD_ENTRY1s("atds.tap", "c117e884cc5b4bbe50ae1217d13916c4", 231071),
+			AD_ENTRY1s("txt/atds.tap", "c117e884cc5b4bbe50ae1217d13916c4", 231071),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -79,7 +74,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			nullptr,
-			AD_ENTRY1s("atds.tap", "e22f97761c0e7772ec99660f2277b1a4", 231001),
+			AD_ENTRY1s("txt/atds.tap", "e22f97761c0e7772ec99660f2277b1a4", 231001),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -96,7 +91,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			nullptr,
-			AD_ENTRY1s("atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
+			AD_ENTRY1s("txt/atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -113,7 +108,7 @@ class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
 		_maxScanDepth = 2;
-		_directoryGlobs = directoryGlobs;
+		_flags = kADFlagMatchFullPaths;
 	}
 
 	const char *getEngineId() const override {
