@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 12:46+0000\n"
+"PO-Revision-Date: 2022-02-10 13:36+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7662,173 +7662,174 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:129
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Наладзіць сетку камэры ўгару"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Наладзіць сетку камэры ўніз"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Наладзіць сетку камэры налева"
 
 #: engines/twine/metaengine.cpp:145
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Наладзіць сетку камэру направа"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Памясьціць актора па цэнтру экрану"
 
 #: engines/twine/metaengine.cpp:155
 msgid "Debug Menu"
-msgstr ""
+msgstr "Мэню наладжваньня хібаў"
 
 #: engines/twine/metaengine.cpp:160
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Выкананьне мэню наладжваньня"
 
 #: engines/twine/metaengine.cpp:165 engines/twine/metaengine.cpp:185
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Нармальныя паводзіны"
 
 #: engines/twine/metaengine.cpp:170 engines/twine/metaengine.cpp:190
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Спартоўныя паводзіны"
 
 #: engines/twine/metaengine.cpp:175 engines/twine/metaengine.cpp:195
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Гарэзныя паводзіны"
 
 #: engines/twine/metaengine.cpp:180 engines/twine/metaengine.cpp:200
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Памяркоўныя паводзіны"
 
 #: engines/twine/metaengine.cpp:205
 msgid "Behaviour Action"
-msgstr ""
+msgstr "Паводзіны"
 
 #: engines/twine/metaengine.cpp:211
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Зьмяніць паводзіны"
 
 #: engines/twine/metaengine.cpp:223
 msgid "Options Menu"
-msgstr ""
+msgstr "Мэню наладаў"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Выкарыстаць выбраны аб’ект"
 
 #: engines/twine/metaengine.cpp:241
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Кінуць чароўную ґалку"
 
 #: engines/twine/metaengine.cpp:255
 msgid "Move Backward"
-msgstr ""
+msgstr "Рух наперад"
 
 #: engines/twine/metaengine.cpp:276
 msgid "Use Protopack"
-msgstr ""
+msgstr "Ужыць протапак"
 
 #: engines/twine/metaengine.cpp:281
 msgid "Open Holomap"
-msgstr ""
+msgstr "Адкрыць галамапу"
 
 #: engines/twine/metaengine.cpp:294
 msgid "Special Action"
-msgstr ""
+msgstr "Спэцыяльная дзея"
 
 #: engines/twine/metaengine.cpp:300 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
-msgstr ""
+msgstr "Выйсьці"
 
 #: engines/twine/metaengine.cpp:313
 msgid "Accept"
-msgstr ""
+msgstr "Пацьвердзіць"
 
 #: engines/twine/metaengine.cpp:321 engines/twine/metaengine.cpp:373
 #: engines/twine/metaengine.cpp:389
 msgid "Abort"
-msgstr ""
+msgstr "Спыніць"
 
 #: engines/twine/metaengine.cpp:359
 msgid "Next Page"
-msgstr ""
+msgstr "Наступная старонка"
 
 #: engines/twine/metaengine.cpp:426
 msgid "Previous location"
-msgstr ""
+msgstr "Папярэдняя лякацыя"
 
 #: engines/twine/metaengine.cpp:431
 msgid "Next location"
-msgstr ""
+msgstr "Наступная лякацыя"
 
 #: engines/twine/parser/text.cpp:33
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr ""
+msgstr "Высокая разрознасьць далучаная"
 
 #: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr ""
+msgstr "Высокая разрознасьць адлучаная"
 
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "Сутычка са сьценамі далучаная"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr ""
+msgstr "Сутычка са сьценамі адлучаная"
 
 #: engines/ultima/detection.cpp:66
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Далучыць пропуск кадраў"
 
 #: engines/ultima/detection.cpp:67
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "Дазваляць гульне прапускаць кадры анімацыі, калі занадта павольна."
 
 #: engines/ultima/detection.cpp:72
 msgid "Enable frame limiting"
-msgstr ""
+msgstr "Далучыць абмежаваньне кадраў"
 
 #: engines/ultima/detection.cpp:73
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "Абмяжоўвае хуткасьць гульні, каб пазьбегнуць занадтую скорасьць."
 
 #: engines/ultima/detection.cpp:79
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "Дазволіць махляваньне цераз загады й мэню, калі гулец пстрыкне."
 
 #: engines/ultima/detection.cpp:94
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Граць гукі ступаў"
 
 #: engines/ultima/detection.cpp:95
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Граць гукі, калі гулец рухаецца."
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable jump to mouse position"
-msgstr ""
+msgstr "Далучыць скок да паказальніку мышы"
 
 #: engines/ultima/detection.cpp:101
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Скокнуць на месца, куды паказвае паказальнік мышы, але падчас руху цэляў."
 
 #: engines/ultima/detection.cpp:112
 msgid "Enable font replacement"
-msgstr ""
+msgstr "Далучыць замену шрыфту"
 
 #: engines/ultima/detection.cpp:113
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Замяніць шрыфты гульні на рэндэрныя шрыфты"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:128
@@ -7842,7 +7843,7 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Назаўжды далучыць Калядны"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
