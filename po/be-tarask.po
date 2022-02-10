@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 16:37+0000\n"
+"PO-Revision-Date: 2022-02-10 17:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -889,9 +889,8 @@ msgid "Pick the game:"
 msgstr "Выбярыце гульню:"
 
 #: gui/launcher.cpp:777
-#, fuzzy
 msgid "Group by:"
-msgstr "Групаваць па:"
+msgstr "Групаваць як:"
 
 #: gui/launcher.cpp:817 gui/saveload-dialog.cpp:367
 msgid "List view"
