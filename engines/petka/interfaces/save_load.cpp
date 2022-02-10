@@ -113,7 +113,9 @@ void InterfaceSaveLoad::onLeftButtonDown(Common::Point p) {
 		}
 	} else {
 		stop();
-		_loadMode ? g_vm->loadGameState(_page * 6 + index) : g_vm->saveGameState(_page * 6 + index, "", false);
+
+		const uint slot = _page * 6 + index;
+		_loadMode ? g_vm->loadGameState(slot) : g_vm->saveGameState(slot, Common::String::format("Save %d", slot + 1), false);
 	}
 }
 
