@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 15:47+0000\n"
+"PO-Revision-Date: 2022-02-10 16:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -8418,143 +8418,143 @@ msgstr "Кнопка Shift"
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1489
 msgid "Chapayev's action"
-msgstr ""
+msgstr "Дзея Чапаява"
 
 #: engines/wintermute/keymapper_tables.h:1537
 #: engines/wintermute/keymapper_tables.h:1790
 #: engines/wintermute/keymapper_tables.h:1886
 msgid "Settings"
-msgstr ""
+msgstr "Налады"
 
 #: engines/wintermute/keymapper_tables.h:1542
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Дыялёгавы адказ 1"
 
 #: engines/wintermute/keymapper_tables.h:1547
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Дыялёгавы адказ 2"
 
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Дыялёгавы адказ 3"
 
 #: engines/wintermute/keymapper_tables.h:1557
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Дыялёгавы адказ 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1568
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "Круціць кола павольней"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1576
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "Круціць кола хутчэй"
 
 #: engines/wintermute/keymapper_tables.h:1654
 msgid "Zoom out"
-msgstr ""
+msgstr "Аддаліць"
 
 #: engines/wintermute/keymapper_tables.h:1661
 msgid "Zoom in"
-msgstr ""
+msgstr "Наблізіць"
 
 #: engines/wintermute/keymapper_tables.h:1674
 #: engines/wintermute/keymapper_tables.h:1880
 msgid "Show journal"
-msgstr ""
+msgstr "Паказаць дзёньнік"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1807
 msgid "Bezier window"
-msgstr ""
+msgstr "Акно Бэзі"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1824
 msgid "Droid's action"
-msgstr ""
+msgstr "Дзея дройду"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1932
 msgid "Rotate"
-msgstr ""
+msgstr "Паварот"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:1958
 msgid "Drop"
-msgstr ""
+msgstr "Скід"
 
 #: engines/wintermute/keymapper_tables.h:1966
 msgid "Player 1: Up"
-msgstr ""
+msgstr "Гулец 1: Угару"
 
 #: engines/wintermute/keymapper_tables.h:1971
 msgid "Player 1: Left"
-msgstr ""
+msgstr "Гулец 1: Налева"
 
 #: engines/wintermute/keymapper_tables.h:1976
 msgid "Player 1: Down"
-msgstr ""
+msgstr "Гулец 1: Уніз"
 
 #: engines/wintermute/keymapper_tables.h:1981
 msgid "Player 1: Right"
-msgstr ""
+msgstr "Гулец 1: Направа"
 
 #: engines/wintermute/keymapper_tables.h:1986
 msgid "Player 2: Up"
-msgstr ""
+msgstr "Гулец 2: Угару"
 
 #: engines/wintermute/keymapper_tables.h:1991
 msgid "Player 2: Left"
-msgstr ""
+msgstr "Гулец 2: Налева"
 
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "Player 2: Down"
-msgstr ""
+msgstr "Гулец 2: Уніз"
 
 #: engines/wintermute/keymapper_tables.h:2001
 msgid "Player 2: Right"
-msgstr ""
+msgstr "Гулец 2: Направа"
 
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2007
 msgid "Debug FPS"
-msgstr ""
+msgstr "Наладны лічыльнік кадраў"
 
 #: engines/wintermute/keymapper_tables.h:2104
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2109
 msgid "Key i"
-msgstr ""
+msgstr "Кнопка i"
 
 #: engines/xeen/detection.cpp:55
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Паказваць кошт рэчаў у стандартным рэжыме рыштунку"
 
 #: engines/xeen/detection.cpp:56
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
+msgstr "Паказваць кошт рэчаў у стандартным рэжыме рыштунку дзеля параўнаньня"
 
 #: engines/xeen/detection.cpp:65
 msgid "More durable armor"
-msgstr ""
+msgstr "Мацнейшы панцыр"
 
 #: engines/xeen/detection.cpp:66
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr ""
+msgstr "Панцыр не зламаецца, пакуль пэрсанаж ня будзе мець -80HP, замест -10HP"
 
 #: engines/xeen/saves.cpp:290
 msgid "Failed to autosave"
-msgstr ""
+msgstr "Аўтазахаваньне ня выйшла"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
-msgstr ""
+msgstr "Падвойны лічыльнік кадраў"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
