@@ -154,8 +154,6 @@ extern int16 fvory8x8;
 
 extern char *invent_txt;
 extern char *invent_name;
-
-extern char *str;
 extern char **ads_item_ptr;
 
 extern SplitStringInit ssi[AAD_MAX_PERSON];
@@ -242,7 +240,6 @@ extern movclass *mov;
 extern SoundPlayer *sndPlayer;
 
 extern char backged[];
-extern char fname[80];
 extern AutoMov auto_mov[MAX_AUTO_MOV];
 extern int16 HowardMov;
 

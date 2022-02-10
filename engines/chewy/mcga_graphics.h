@@ -35,7 +35,7 @@ public:
 
 	void init();
 	void set_writemode(char wm);
-	void init_mausmode(maus_info *minfo);
+	void init_mausmode(maus_info *mInfo);
 	void exit_mausmode();
 
 	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -43,9 +43,9 @@ public:
 	byte *get_zeiger();
 
 	void set_mono();
-	void calc_mono(byte *pal, int16 startcol, int16 anz);
+	void calc_mono(byte *palette, int16 startcol, int16 anz);
 	void set_palette(byte *palette);
-	void palette_save(byte *pal = nullptr);
+	void palette_save(byte *palette = nullptr);
 	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);

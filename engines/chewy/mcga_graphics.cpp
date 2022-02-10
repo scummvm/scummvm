@@ -69,18 +69,18 @@ void McgaGraphics::set_mono() {
 	_mono = true;
 }
 
-void McgaGraphics::calc_mono(byte *pal, int16 startcol, int16 anz) {
+void McgaGraphics::calc_mono(byte *palette, int16 startcol, int16 anz) {
 	int16 i, k;
 	uint8 r, g, b, grau;
 	k = startcol * 3;
 	for (i = 0; i < anz; i++) {
-		r = pal[k];
-		g = pal[k + 1];
-		b = pal[k + 2];
+		r = palette[k];
+		g = palette[k + 1];
+		b = palette[k + 2];
 		grau = (((float)r) * 0.30) + (((float)g) * 0.59) + (((float)b) * 0.11);
-		pal[k] = grau;
-		pal[k + 1] = grau;
-		pal[k + 2] = grau;
+		palette[k] = grau;
+		palette[k + 1] = grau;
+		palette[k + 2] = grau;
 		k += 3;
 	}
 }
@@ -94,8 +94,8 @@ void McgaGraphics::set_palette(byte *palette) {
 	setpalette(palette);
 }
 
-void McgaGraphics::palette_save(byte *pal) {
-	save_palette(pal);
+void McgaGraphics::palette_save(byte *palette) {
+	save_palette(palette);
 }
 
 void McgaGraphics::rest_palette() {
@@ -1344,9 +1344,9 @@ void McgaGraphics::move(int16 x, int16 y) {
 	_G(gcury) = y;
 }
 
-void McgaGraphics::init_mausmode(maus_info *minfo) {
+void McgaGraphics::init_mausmode(maus_info *mInfo) {
 	_mausMode = true;
-	_mInfo = minfo;
+	_mInfo = mInfo;
 }
 
 void McgaGraphics::exit_mausmode() {
