@@ -141,7 +141,8 @@ Common::SeekableReadStream *PetkaEngine::openIniFile(const Common::String &name)
 	class IniReadStream : public Common::SeekableSubReadStream
 	{
 	public:
-		using SeekableSubReadStream::SeekableSubReadStream;
+		IniReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
+			: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {}
 
 		char *readLine(char *buf, size_t bufSize, bool handleCR = true) override
 		{
