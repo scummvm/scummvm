@@ -363,7 +363,8 @@ bool PetkaEngine::hasFeature(EngineFeature f) const {
 		f == kSupportsReturnToLauncher ||
 		f == kSupportsLoadingDuringRuntime ||
 		f == kSupportsSavingDuringRuntime ||
-		f == kSupportsChangingOptionsDuringRuntime;
+		f == kSupportsChangingOptionsDuringRuntime ||
+		f == kSupportsSubtitleOptions;
 }
 
 void PetkaEngine::pauseEngineIntern(bool pause) {
