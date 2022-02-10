@@ -97,9 +97,6 @@ public:
 	void set_vorschub(int16 x, int16 y);
 	void move(int16 x, int16 y);
 	void get_fontinfo(int16 *vorx, int16 *vory, int16 *fntbr, int16 *fnth);
-
-	int16 get_vesa_info(uint16 mode, byte *info_blk);
-	void init(uint16 mode, byte *info_blk, byte *vscreen);
 	void update_screen();
 
 private:
