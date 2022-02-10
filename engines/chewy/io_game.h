@@ -111,7 +111,7 @@ private:
 	int16 scr_width;
 	float d_klick;
 	int16 switch_code;
-
+	char _fileFind[20][USER_NAME + 4];
 };
 
 } // namespace Chewy
