@@ -123,6 +123,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
 
+	int getAutosaveSlot() const override { return - 1;}
+
 	const ADGameDescription *const _desc;
 	Common::ScopedPtr<Common::MemoryReadStream> _thumbnail;
 
