@@ -64,6 +64,12 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 	if (!out)
 		return Common::kUnknownError;
 
+	if (_qsystem->_currInterface == _qsystem->_panelInterface.get() ||
+		_qsystem->_currInterface == _qsystem->_saveLoadInterface.get())
+	{
+		_qsystem->goPrevInterface();
+	}
+
 	out->writeUint32BE(MKTAG('p', 'e', 't', 'k'));
 	out->writeByte(desci.size());
 	out->writeString(desci);
