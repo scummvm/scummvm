@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
+#include "chewy/global.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/mcga.h"
 
@@ -29,88 +30,33 @@ namespace Chewy {
 
 #define MAXSTRING 255
 
-byte pal_table[PALETTE_SIZE];
-
-int16 FuNr;
-real_regs rr;
-real_regs *rp = &rr;
-maus_info *m_info;
 VesaInfo vi;
 
-int16 clipx1, clipx2, clipy1, clipy2;
-int16 gcurx, gcury, fvorx, fvory;
-int16 fontbr, fonth;
-int16 scr_w, scr_h;
-char writemode;
-
-char MausMode;
-char enter_key;
-char escape_key;
-char einfuegen = 0;
-
-int16 crlfx = 0, crlfy = 0;
-int16 r_gef = -1, r_end = false;
-int16 *rlist = 0;
-bool mono = false;
-uint8 svga;
-
 McgaGraphics::McgaGraphics() {
-	int16 i;
-
-	crlfx = crlfy = 0;
-	r_gef = -1;
-	r_end = false;
-	rlist = 0;
-	mono = false;
-	svga = 0;
-
-#if 0
-	char *enstr;
-
-	char a[] = {92, 85, 97, 59, 96, 83, 100, 83, 79, 90, 0}; // "NGS-REVEAL"
-	char b[] = {85, 96, 79, 94, 86, 87, 81, 97, 109, 82, 96, 87, 100, 83, 96, 109,
-		54, 81, 55, 109, 92, 83, 101, 109, 85, 83, 92, 83, 96, 79, 98, 87, 93, 92,
-		109, 97, 93, 84, 98, 101, 79, 96, 83, 0 }; // "GRAPHICS_DRIVER_(C)_NEW_GENERATION_SOFTWARE"
-	for (i = 0; a[i] != 0; i++)
-		a[i] -= 14;
-	for (i = 0; b[i] != 0; i++)
-		b[i] -= 14;
-	enstr = (char *)getenv(a);
-	if (enstr) {
-		printf(b);
-		printf("\n");
-		g_events->delay(800);
-	}
-#endif
-
-	for (i = 0; i < 360; i++) {
+	for (int i = 0; i < 360; i++) {
 		sinus[i] = sin(i * 3.14159265359 / 180);
 		cosinus[i] = cos(i * 3.14159265359 / 180);
 	}
-	scr_w = 0;
-	scr_h = 200;
-	mono = false;
-	MausMode = false;
 }
 
 McgaGraphics::~McgaGraphics() {
 }
 
 void McgaGraphics::init() {
-	scr_w = 320;
-	scr_h = 200;
+	_G(scr_w) = SCREEN_WIDTH;
+	_G(scr_h) = SCREEN_HEIGHT;
 	init_mcga();
 }
 
 void McgaGraphics::set_writemode(char wm) {
-	writemode = wm;
+	_writeMode = wm;
 }
 
 void McgaGraphics::set_clip(int16 x1, int16 y1, int16 x2, int16 y2) {
-	clipx1 = x1;
-	clipx2 = x2;
-	clipy1 = y1;
-	clipy2 = y2;
+	_G(clipx1) = x1;
+	_G(clipx2) = x2;
+	_G(clipy1) = y1;
+	_G(clipy2) = y2;
 }
 
 void McgaGraphics::setze_zeiger(byte *ptr) {
@@ -122,7 +68,7 @@ byte *McgaGraphics::get_zeiger() {
 }
 
 void McgaGraphics::set_mono() {
-	mono = true;
+	_mono = true;
 }
 
 void McgaGraphics::calc_mono(byte *pal, int16 startcol, int16 anz) {
@@ -144,8 +90,8 @@ void McgaGraphics::calc_mono(byte *pal, int16 startcol, int16 anz) {
 void McgaGraphics::set_palette(byte *palette) {
 	int16 i;
 	for (i = 0; i < 768; i++)
-		pal_table[i] = palette[i];
-	if (mono)
+		_palTable[i] = palette[i];
+	if (_mono)
 		calc_mono(palette, 0, 256);
 	setpalette(palette);
 }
@@ -161,11 +107,11 @@ void McgaGraphics::rest_palette() {
 void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	int16 index;
 	index = c * 3;
-	pal_table[index] = r;
-	pal_table[index + 1] = g;
-	pal_table[index + 2] = b;
-	if (mono)
-		calc_mono(pal_table, c, 1);
+	_palTable[index] = r;
+	_palTable[index + 1] = g;
+	_palTable[index + 2] = b;
+	if (_mono)
+		calc_mono(_palTable, c, 1);
 	rastercol(c, r, g, b);
 }
 
@@ -173,7 +119,7 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 	int16 i, j, k;
 	int16 r, g, b;
 	int16 r1, g1, b1;
-	if (mono)
+	if (_mono)
 		calc_mono(palette, 0, 256);
 	for (j = 63; j >= 0; j--) {
 		k = 0;
@@ -185,14 +131,14 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 			g1 = g - j;
 			b1 = b - j;
 			if ((r1 > 0) && (r1 <= r))
-				pal_table[k] = r1;
+				_palTable[k] = r1;
 			if ((g1 > 0) && (r1 <= r))
-				pal_table[k + 1] = g1;
+				_palTable[k + 1] = g1;
 			if ((b1 > 0) && (r1 <= r))
-				pal_table[k + 2] = b1;
+				_palTable[k + 2] = b1;
 			k += 3;
 		}
-		setpalette(pal_table);
+		setpalette(_palTable);
 	}
 }
 
@@ -201,25 +147,25 @@ void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stu
 	int16 i = 0, j, k;
 	int16 r, g, b;
 	int16 endcol = 0;
-	if (mono)
+	if (_mono)
 		calc_mono(palette, startcol, anz);
 	endcol = startcol + anz;
 	for (j = stufen; j >= 0; j--) {
 		endcol = startcol + anz;
 		k = startcol * 3;
 		for (i = startcol; i < endcol; i++) {
-			r = pal_table[k];
-			g = pal_table[k + 1];
-			b = pal_table[k + 2];
+			r = _palTable[k];
+			g = _palTable[k + 1];
+			b = _palTable[k + 2];
 			if ((r + 1) <= palette[k]) ++r;
 			if ((g + 1) <= palette[k + 1]) ++g;
 			if ((b + 1) <= palette[k + 2]) ++b;
-			pal_table[k] = r;
-			pal_table[k + 1] = g;
-			pal_table[k + 2] = b;
+			_palTable[k] = r;
+			_palTable[k + 1] = g;
+			_palTable[k + 2] = b;
 			k += 3;
 		}
-		set_palpart(pal_table, startcol, anz);
+		set_palpart(_palTable, startcol, anz);
 	}
 }
 
@@ -229,18 +175,18 @@ void McgaGraphics::ausblenden(int16 frames) {
 	for (j = 0; j < 64; j++) {
 		k = 0;
 		for (i = 0; i < 256; i++) {
-			r = pal_table[k];
-			g = pal_table[k + 1];
-			b = pal_table[k + 2];
+			r = _palTable[k];
+			g = _palTable[k + 1];
+			b = _palTable[k + 2];
 			if (r > 0) --r;
 			if (g > 0) --g;
 			if (b > 0) --b;
-			pal_table[k] = r;
-			pal_table[k + 1] = g;
-			pal_table[k + 2] = b;
+			_palTable[k] = r;
+			_palTable[k + 1] = g;
+			_palTable[k + 2] = b;
 			k += 3;
 		}
-		setpalette(pal_table);
+		setpalette(_palTable);
 	}
 }
 
@@ -252,18 +198,18 @@ void McgaGraphics::abblenden(int16 startcol, int16 anz, int16 stufen, int16 fram
 	for (j = 0; j < stufen; j++) {
 		k = startcol * 3;
 		for (i = startcol; i < endcol; i++) {
-			r = pal_table[k];
-			g = pal_table[k + 1];
-			b = pal_table[k + 2];
+			r = _palTable[k];
+			g = _palTable[k + 1];
+			b = _palTable[k + 2];
 			if (r > 0) --r;
 			if (g > 0) --g;
 			if (b > 0) --b;
-			pal_table[k] = r;
-			pal_table[k + 1] = g;
-			pal_table[k + 2] = b;
+			_palTable[k] = r;
+			_palTable[k + 1] = g;
+			_palTable[k + 2] = b;
 			k += 3;
 		}
-		set_palpart(pal_table, startcol, anz);
+		set_palpart(_palTable, startcol, anz);
 	}
 }
 
@@ -273,14 +219,14 @@ void McgaGraphics::set_teilpalette(const byte *palette, int16 startcol, int16 an
 	k = startcol * 3;
 	endcol = startcol + anz;
 	for (i = startcol; i < endcol; i++) {
-		pal_table[k] = palette[k];
-		pal_table[k + 1] = palette[k + 1];
-		pal_table[k + 2] = palette[k + 2];
+		_palTable[k] = palette[k];
+		_palTable[k + 1] = palette[k + 1];
+		_palTable[k + 2] = palette[k + 2];
 		k += 3;
 	}
-	if (mono)
-		calc_mono(pal_table, startcol, anz);
-	set_palpart(pal_table, startcol, anz);
+	if (_mono)
+		calc_mono(_palTable, startcol, anz);
+	set_palpart(_palTable, startcol, anz);
 }
 
 void McgaGraphics::cls() {
@@ -393,18 +339,18 @@ void McgaGraphics::sprite_save(byte *sptr, int16 x,
 		breite = 4;
 	if (hoehe <= 0)
 		hoehe = 1;
-	if (x < clipx1) {
-		x = clipx1;
-		breite -= (clipx1 - x);
+	if (x < _G(clipx1)) {
+		x = _G(clipx1);
+		breite -= (_G(clipx1) - x);
 	}
-	if ((x + breite) > clipx2 + 1)
-		breite = clipx2 - x;
-	if (y < clipy1) {
-		y = clipy1;
-		hoehe -= (clipy1 - y);
+	if ((x + breite) > _G(clipx2) + 1)
+		breite = _G(clipx2) - x;
+	if (y < _G(clipy1)) {
+		y = _G(clipy1);
+		hoehe -= (_G(clipy1) - y);
 	}
-	if ((y + hoehe) > clipy2 + 1)
-		hoehe = clipy2 - y;
+	if ((y + hoehe) > _G(clipy2) + 1)
+		hoehe = _G(clipy2) - y;
 	if (breite < 1)
 		breite = 0;
 	if (hoehe <= 0)
@@ -434,8 +380,8 @@ void McgaGraphics::set_fontadr(byte *adr) {
 
 	setfont(adr + sizeof(tff_header), tff->width, tff->height,
 	        tff->first, tff->last);
-	fvorx = tff->width;
-	fvory = 0;
+	_G(fvorx) = tff->width;
+	_G(fvory) = 0;
 }
 
 int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth,
@@ -464,11 +410,11 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	kb_info *kb_old = g_events->setKbdInfo(&kbInfo);
 
 	if ((x == -1) || (y == -1)) {
-		x = gcurx;
-		y = gcury;
+		x = _G(gcurx);
+		y = _G(gcury);
 	} else {
-		gcurx = x;
-		gcury = y;
+		_G(gcurx) = x;
+		_G(gcury) = y;
 	}
 
 	move(x, y);
@@ -503,7 +449,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 					zeichen = string[i];
 					++i;
 				}
-				if (einfuegen == 1) {
+				if (_einfuegen == 1) {
 					einfuege_cur = 125;
 					cursor_z = '_' + einfuege_cur;
 				} else {
@@ -622,7 +568,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								break;
 							}
 						}
-						if (svga == ON)
+						if (_svga == ON)
 							upd_scr();
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
@@ -635,8 +581,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								break;
 							}
 						}
-						plot_scan_cur((x + (disp_akt)*fvorx), gcury, cur_col, 300, scrwidth, cursor_z);
-						if (svga == ON)
+						plot_scan_cur((x + (disp_akt)*_G(fvorx)), _G(gcury), cur_col, 300, scrwidth, cursor_z);
+						if (_svga == ON)
 							upd_scr();
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
@@ -673,8 +619,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 
 						if (stelle > 0) {
 							strcpy(zstring + stelle - 1, zstring + stelle);
-							plot_scan_cur((x + disp_akt * fvorx), gcury, bcol, bcol, scrwidth, cursor_z);
-							if (svga == ON)
+							plot_scan_cur((x + disp_akt * _G(fvorx)), _G(gcury), bcol, bcol, scrwidth, cursor_z);
+							if (_svga == ON)
 								upd_scr();
 							--stelle;
 							--stellemax;
@@ -757,12 +703,12 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 
 						if (izahl == 82) {
 							g_events->delay(200);
-							if (!einfuegen) {
-								einfuegen = 1;
+							if (!_einfuegen) {
+								_einfuegen = 1;
 								einfuege_cur = 125;
 								cursor_z = '_' + einfuege_cur;
 							} else {
-								einfuegen = 0;
+								_einfuegen = 0;
 								einfuege_cur = 0;
 								cursor_z = '_';
 							}
@@ -794,7 +740,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								disp_akt = disp_stellemax;
 							}
 						}
-						if (!einfuegen) {
+						if (!_einfuegen) {
 							zstring[stelle] = izahl;
 							zstring[stellemax + 1] = 0;
 							if (stelle == stellemax) {
@@ -862,7 +808,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 		break;
 	}
 
-	if (svga == ON)
+	if (_svga == ON)
 		upd_scr();
 
 	g_events->setKbdInfo(kb_old);
@@ -884,10 +830,10 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 	char *tempptr;
 	va_list parptr;
 	va_start(parptr, string);
-	crlfx = x;
-	crlfy = y + fonth + 2;
-	gcurx = x;
-	gcury = y;
+	_crlfx = x;
+	_crlfy = y + _fontH + 2;
+	_G(gcurx) = x;
+	_G(gcury) = y;
 	i = 0;
 
 	unsigned char nextChar;
@@ -897,20 +843,20 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 		if ((nextChar < 32) || (nextChar == 127)) {
 			switch (nextChar) {
 			case 8:
-				gcurx -= fvorx;
-				gcury -= fvory;
+				_G(gcurx) -= _G(fvorx);
+				_G(gcury) -= _G(fvory);
 				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
-				gcury = crlfy;
-				gcurx = crlfx;
-				crlfx = gcurx;
-				crlfy = gcury + fonth + 2;
+				_G(gcury) = _crlfy;
+				_G(gcurx) = _crlfx;
+				_crlfx = _G(gcurx);
+				_crlfy = _G(gcury) + _fontH + 2;
 				break;
 
 			case 13:
-				gcurx = crlfx;
+				_G(gcurx) = _crlfx;
 				break;
 
 			case 127 :
@@ -1017,8 +963,8 @@ void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
                                 int16 scrwidth, const char *string) {
 	int16 i = 0;
 	char zeichen;
-	gcurx = x;
-	gcury = y;
+	_G(gcurx) = x;
+	_G(gcury) = y;
 	i = 0;
 	do {
 		zeichen = string[i];
@@ -1041,8 +987,8 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 	uint32 luzahl;
 	va_list parptr;
 	va_start(parptr, string);
-	crlfx = gcurx;
-	crlfy = gcury + fonth + 2;
+	_crlfx = _G(gcurx);
+	_crlfy = _G(gcury) + _fontH + 2;
 	i = 0;
 	do {
 		zeichen = string[i];
@@ -1050,20 +996,20 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 		if ((zeichen > 0 && zeichen < 32) || (zeichen == 127)) {
 			switch (zeichen) {
 			case 8:
-				gcurx -= fvorx;
-				gcury -= fvory;
+				_G(gcurx) -= _G(fvorx);
+				_G(gcury) -= _G(fvory);
 				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
-				gcury = crlfy;
-				gcurx = crlfx;
-				crlfx = gcurx;
-				crlfy = gcury + fonth + 2;
+				_G(gcury) = _crlfy;
+				_G(gcurx) = _crlfx;
+				_crlfx = _G(gcurx);
+				_crlfy = _G(gcury) + _fontH + 2;
 				break;
 
 			case 13:
-				gcurx = crlfx;
+				_G(gcurx) = _crlfx;
 				break;
 
 			case 127 :
@@ -1180,30 +1126,30 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 	uint32 luzahl;
 	va_list parptr;
 	va_start(parptr, string);
-	gcurx = x;
-	gcury = y;
-	crlfx = gcurx;
-	crlfy = y + fonth + 2;
+	_G(gcurx) = x;
+	_G(gcury) = y;
+	_crlfx = _G(gcurx);
+	_crlfy = y + _fontH + 2;
 	for (i = 0; i < menge;) {
 		zeichen = string[i];
 		++i;
 		if ((zeichen < 32) || (zeichen == 127)) {
 			switch (zeichen) {
 			case 8:
-				gcurx -= fvorx;
-				gcury -= fvory;
+				_G(gcurx) -= _G(fvorx);
+				_G(gcury) -= _G(fvory);
 				putz(32, fgCol, bgCol, scrwidth);
 				break;
 
 			case 10:
-				gcury = crlfy;
-				gcurx = crlfx;
-				crlfx = gcurx;
-				crlfy = gcury + fonth + 2;
+				_G(gcury) = _crlfy;
+				_G(gcurx) = _crlfx;
+				_crlfx = _G(gcurx);
+				_crlfy = _G(gcury) + _fontH + 2;
 				break;
 
 			case 13:
-				gcurx = crlfx;
+				_G(gcurx) = _crlfx;
 				break;
 
 			case 127 :
@@ -1312,26 +1258,26 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 
 void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol,
                               int16 scrwidth) {
-	crlfx = x;
-	crlfy = y + fonth + 2;
+	_crlfx = x;
+	_crlfy = y + _fontH + 2;
 	if ((zeichen < 32) || (zeichen == 127)) {
 		switch (zeichen) {
 		case 8:
-			x -= fvorx;
-			y -= fvory;
+			x -= _G(fvorx);
+			y -= _G(fvory);
 			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
 			break;
 
 		case 10:
-			gcury = crlfy;
-			gcurx = crlfx;
-			crlfx = gcurx;
-			crlfy = gcury + fonth + 2;
+			_G(gcury) = _crlfy;
+			_G(gcurx) = _crlfx;
+			_crlfx = _G(gcurx);
+			_crlfy = _G(gcury) + _fontH + 2;
 			break;
 
 		case 13:
-			gcurx = crlfx;
-			gcury = crlfy;
+			_G(gcurx) = _crlfx;
+			_G(gcury) = _crlfy;
 			break;
 
 		case 127:
@@ -1345,26 +1291,26 @@ void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int1
 }
 
 void McgaGraphics::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
-	crlfx = gcurx;
-	crlfy = gcury + fonth + 2;
+	_crlfx = _G(gcurx);
+	_crlfy = _G(gcury) + _fontH + 2;
 	if ((zeichen < 32) || (zeichen == 127)) {
 		switch (zeichen) {
 		case 8:
-			gcurx -= fvorx;
-			gcury -= fvory;
+			_G(gcurx) -= _G(fvorx);
+			_G(gcury) -= _G(fvory);
 			putz(32, fgCol, bgCol, scrwidth);
 			break;
 
 		case 10:
-			gcury = crlfy;
-			gcurx = crlfx;
-			crlfx = gcurx;
-			crlfy = gcury + fonth + 2;
+			_G(gcury) = _crlfy;
+			_G(gcurx) = _crlfx;
+			_crlfx = _G(gcurx);
+			_crlfy = _G(gcury) + _fontH + 2;
 			break;
 
 		case 13:
-			gcurx = crlfx;
-			gcury = crlfy;
+			_G(gcurx) = _crlfx;
+			_G(gcury) = _crlfy;
 			break;
 
 		case 127:
@@ -1378,17 +1324,17 @@ void McgaGraphics::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwi
 }
 
 void McgaGraphics::set_vorschub(int16 x, int16 y) {
-	if (fvorx != -255)
-		fvorx = x;
-	if (fvory != -255)
-		fvory = y;
+	if (_G(fvorx) != -255)
+		_G(fvorx) = x;
+	if (_G(fvory) != -255)
+		_G(fvory) = y;
 }
 
 void McgaGraphics::get_fontinfo(int16 *vorx, int16 *vory, int16 *fntbr, int16 *fnth) {
-	*vorx = fvorx;
-	*vory = fvory;
-	*fntbr = fontbr;
-	*fnth = fonth;
+	*vorx = _G(fvorx);
+	*vory = _G(fvory);
+	*fntbr = _fontBr;
+	*fnth = _fontH;
 }
 
 void McgaGraphics::vorschub() {
@@ -1396,24 +1342,24 @@ void McgaGraphics::vorschub() {
 }
 
 void McgaGraphics::move(int16 x, int16 y) {
-	gcurx = x;
-	gcury = y;
+	_G(gcurx) = x;
+	_G(gcury) = y;
 }
 
 void McgaGraphics::init_mausmode(maus_info *minfo) {
-	MausMode = true;
-	m_info = minfo;
+	_mausMode = true;
+	_mInfo = minfo;
 }
 
 void McgaGraphics::exit_mausmode() {
-	MausMode = false;
-	m_info = nullptr;
+	_mausMode = false;
+	_mInfo = nullptr;
 }
 
 int16 McgaGraphics::devices() {
 	int16 i;
 	i = 0;
-	if (MausMode != false) {
+	if (_mausMode != false) {
 		if (i > 1) {
 			i = 27;
 		} else if (i == 1)
@@ -1460,7 +1406,7 @@ void McgaGraphics::init(uint16 mode, byte *info_blk, byte *vscreen) {
 }
 
 void McgaGraphics::update_screen() {
-	if (svga == ON)
+	if (_svga == ON)
 		upd_scr();
 }
 
@@ -1483,7 +1429,7 @@ int16 McgaGraphics::get_vesa_info(uint16 mode, byte *iblk) {
 	rr.eax = 0x4f00;
 	rr.edi = (dword)vsb & 15;
 	rr.es = (uint16)(((dword)vsb) >> 4);
-	FuNr = 0x10;
+	_fuNr = 0x10;
 	r_int();
 	if ((rr.eax != 0x4f) && (strnicmp((char *)vsb->id, "VESA", 4)))
 		error = 1;
@@ -1516,7 +1462,7 @@ int16 McgaGraphics::get_vesa_info(uint16 mode, byte *iblk) {
 		rr.ecx = (dword) mode;
 		rr.edi = (dword)vmb & 15;
 		rr.es = (uint16)(((dword)vmb) >> 4);
-		FuNr = 0x10;
+		_fuNr = 0x10;
 		r_int();
 		if (rr.eax != 0x4f)
 			error = 1;
@@ -1545,50 +1491,50 @@ int16 McgaGraphics::get_vesa_info(uint16 mode, byte *iblk) {
 				switch (mode) {
 				case 0x100:
 					screensize = 640l * 400l;
-					scr_w = 640;
-					scr_h = 400;
+					_G(scr_w) = 640;
+					_G(scr_h) = 400;
 					break;
 
 				case 0x101:
 					screensize = 640l * 480l;
-					scr_w = 640;
-					scr_h = 480;
+					_G(scr_w) = 640;
+					_G(scr_h) = 480;
 					break;
 
 				case 0x102:
 					screensize = (800l * 600l) >> 1;
-					scr_w = 800;
-					scr_h = 600;
+					_G(scr_w) = 800;
+					_G(scr_h) = 600;
 					break;
 
 				case 0x103:
 					screensize = 800l * 600l;
-					scr_w = 800;
-					scr_h = 600;
+					_G(scr_w) = 800;
+					_G(scr_h) = 600;
 					break;
 
 				case 0x104:
 					screensize = (1024l * 768l) >> 1;
-					scr_w = 1024;
-					scr_h = 768;
+					_G(scr_w) = 1024;
+					_G(scr_h) = 768;
 					break;
 
 				case 0x105:
 					screensize = 1024l * 768l;
-					scr_w = 1024;
-					scr_h = 768;
+					_G(scr_w) = 1024;
+					_G(scr_h) = 768;
 					break;
 
 				case 0x106:
 					screensize = (1280l * 1024l) >> 1;
-					scr_w = 1280;
-					scr_h = 1280;
+					_G(scr_w) = 1280;
+					_G(scr_h) = 1280;
 					break;
 
 				case 0x107:
 					screensize = 1280l * 1024l;
-					scr_w = 1280;
-					scr_h = 1280;
+					_G(scr_w) = 1280;
+					_G(scr_h) = 1280;
 					break;
 
 				}

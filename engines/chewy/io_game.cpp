@@ -22,12 +22,11 @@
 #include "common/system.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
+#include "chewy/global.h"
 #include "chewy/file.h"
 #include "chewy/io_game.h"
 
 namespace Chewy {
-
-extern int16 scr_w;
 
 io_game::io_game(McgaGraphics *iout, InputMgr *iin, cursor *curp) {
 	out = iout;
@@ -80,7 +79,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		in->neuer_kb_handler(kbinfo);
 	else
 		kbinfo = inzeig->kbinfo;
-	scr_width = scr_w << 2;
+	scr_width = _G(scr_w) << 2;
 	d_klick = DOPPEL_KLICK;
 	int16 cur_y1 = io->popy + 4;
 	int16 cur_y = io->popy + 8;
@@ -533,8 +532,8 @@ void io_game::plot_ab_txt(int16 farbe) {
 		out->printxy(io->popx + 146, io->popy + 59 + i * 10, farbe, 300, scr_width, ab_tbl_g[i]);
 }
 
-void io_game::itoa(int N, char *str, int base) {
-	sprintf(str, "%d", N);
+void io_game::itoa(int N, char *s, int base) {
+	sprintf(s, "%d", N);
 }
 
 int16 io_game::get_savegame_files() {

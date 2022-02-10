@@ -1232,9 +1232,9 @@ void check_shad(int16 g_idx, int16 mode) {
 	};
 }
 
-void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 scr_w_, char *txtptr) {
-	out->printxy(x + 1, y + 1, scol, bcol, scr_w_, txtptr);
-	out->printxy(x, y, fcol, bcol, scr_w_, txtptr);
+void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 scr_w, char *txtptr) {
+	out->printxy(x + 1, y + 1, scol, bcol, scr_w, txtptr);
+	out->printxy(x, y, fcol, bcol, scr_w, txtptr);
 }
 
 bool auto_move(int16 mov_nr, int16 p_nr) {
