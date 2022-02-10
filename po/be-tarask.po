@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 13:36+0000\n"
+"PO-Revision-Date: 2022-02-10 14:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7843,137 +7843,140 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr "Назаўжды далучыць Калядны"
+msgstr "Назаўжды далучыць Калядную маляванку"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Далучыць калядную музыку ў абы-якую пару года."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "Ня вйшла знайсьці пэўны файл ultima.dat"
 
 #: engines/ultima/shared/engine/data_archive.cpp:80
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr ""
+msgstr "Ня выйшла знайсьці зьвесткі рухавіку %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:98
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
+"Знойдзена старая вэрсія зьвестак рухавіку. Мусіла быць %d.%d, але ё %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "loading quick save %d"
-msgstr ""
+msgstr "ладаваньне хуткага захову %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
 #, c-format
 msgid "saving quick save %d"
-msgstr ""
+msgstr "хуткае захаваньне %d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:38
 msgid "Original Save"
-msgstr ""
+msgstr "Арыґінальнае захаваньне"
 
 #: engines/ultima/nuvie/save/save_game.cpp:211
 msgid "Transfer Character"
-msgstr ""
+msgstr "Перанос пэрсанажа"
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Crusader"
-msgstr ""
+msgstr "Crusader"
 
 #: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Мяхлярства Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:193
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Наладжваньне Ultima VIII"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
 msgid "[corrupt]"
-msgstr ""
+msgstr "[сапсавана]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
 msgid "[outdated]"
-msgstr ""
+msgstr "[застарэла]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
 msgid "[too modern]"
-msgstr ""
+msgstr "[занова]"
 
 #: engines/wintermute/detection.cpp:52
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Паказваць лічыльнік кадраў/с"
 
 #: engines/wintermute/detection.cpp:53
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "Паказваць колькасьць кадраў на сэкунду ў левым вышнім куту"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Білінейная філтраваньне спрайтаў (марудна)"
 
 #: engines/wintermute/detection.cpp:63
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Выкарыстоўваць білінейнае філтраваньне да асобных спрайтаў"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне FoxTail не сабранае"
 
 #: engines/wintermute/metaengine.cpp:70
 msgid "Hero Craft support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Hero Craft не сабранае"
 
 #: engines/wintermute/metaengine.cpp:76
 msgid "Wintermute3D support is not compiled in"
-msgstr ""
+msgstr "Падтрыманьне Wintermute3D не сабранае"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Для гэтай гульні патрэбна падтрыманьне PNG, JPEG і Vorbis."
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "Для гэтай гульні патрэбны рухавік FoxTail, які не сабраны."
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "Для гэтай гульні патрэбны рухавік HeroCraft, які не сабраны."
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"Для гэтай гульні патрэбна падтрыманьне 3D, але яно не сабранае. Таму, гэтая "
+"гульня ня будзе працаваць часткова ці поўнасьцю."
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2039
 #: engines/wintermute/keymapper_tables.h:2139
 msgid "Walk forward"
-msgstr ""
+msgstr "Рух наперад"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2161
 msgid "Walk backward"
-msgstr ""
+msgstr "Рух назад"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1778
 msgid "Show scene geometry"
-msgstr ""
+msgstr "Паказваць гэамэтрыю сцэнаў"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -7982,7 +7985,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1103
 #: engines/wintermute/keymapper_tables.h:1231
 msgid "Previous page"
-msgstr ""
+msgstr "Папярэдняя старонка"
 
 #: engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
@@ -7991,7 +7994,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1110
 #: engines/wintermute/keymapper_tables.h:1236
 msgid "Next page"
-msgstr ""
+msgstr "Наступная старонка"
 
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
@@ -8018,7 +8021,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1906
 #: engines/wintermute/keymapper_tables.h:2026
 msgid "Show hints"
-msgstr ""
+msgstr "Паказаць падказкі"
 
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -8031,7 +8034,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1611
 #: engines/wintermute/keymapper_tables.h:1873
 msgid "Show inventory"
-msgstr ""
+msgstr "Паказаць рыштунак"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
@@ -8042,7 +8045,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1855
 #: engines/wintermute/keymapper_tables.h:1913
 msgid "GUI variant A"
-msgstr ""
+msgstr "Інтэрфэйс варыянт A"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -8053,114 +8056,114 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1861
 #: engines/wintermute/keymapper_tables.h:1919
 msgid "GUI variant B"
-msgstr ""
+msgstr "Інтэрфэйс варыянт B"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Кнопка тэлефону „Скасаваць“"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:552
 #: engines/wintermute/keymapper_tables.h:1122
 msgid "Phone up button"
-msgstr ""
+msgstr "Кнопка тэлефону „Угару“"
 
 #: engines/wintermute/keymapper_tables.h:294
 #: engines/wintermute/keymapper_tables.h:425
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "Кнопка тэлефону „Уніз“"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
 msgid "Alternative action"
-msgstr ""
+msgstr "Альтэрнатыўная дзея"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
 #: engines/wintermute/keymapper_tables.h:1134
 msgid "Phone 0 button"
-msgstr ""
+msgstr "Кнопка тэлефону „0“"
 
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
 #: engines/wintermute/keymapper_tables.h:1740
 msgid "Phone 1 button"
-msgstr ""
+msgstr "Кнопка тэлефону „1“"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
 #: engines/wintermute/keymapper_tables.h:1745
 msgid "Phone 2 button"
-msgstr ""
+msgstr "Кнопка тэлефону „2“"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
 #: engines/wintermute/keymapper_tables.h:1750
 msgid "Phone 3 button"
-msgstr ""
+msgstr "Кнопка тэлефону „3“"
 
 #: engines/wintermute/keymapper_tables.h:451
 #: engines/wintermute/keymapper_tables.h:584
 #: engines/wintermute/keymapper_tables.h:1154
 msgid "Phone 4 button"
-msgstr ""
+msgstr "Кнопка тэлефону „4“"
 
 #: engines/wintermute/keymapper_tables.h:456
 #: engines/wintermute/keymapper_tables.h:589
 #: engines/wintermute/keymapper_tables.h:1159
 msgid "Phone 5 button"
-msgstr ""
+msgstr "Кнопка тэлефону „5“"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:594
 #: engines/wintermute/keymapper_tables.h:1164
 msgid "Phone 6 button"
-msgstr ""
+msgstr "Кнопка тэлефону „6“"
 
 #: engines/wintermute/keymapper_tables.h:466
 #: engines/wintermute/keymapper_tables.h:599
 #: engines/wintermute/keymapper_tables.h:1169
 msgid "Phone 7 button"
-msgstr ""
+msgstr "Кнопка тэлефону „7“"
 
 #: engines/wintermute/keymapper_tables.h:471
 #: engines/wintermute/keymapper_tables.h:604
 #: engines/wintermute/keymapper_tables.h:1174
 msgid "Phone 8 button"
-msgstr ""
+msgstr "Кнопка тэлефону „8“"
 
 #: engines/wintermute/keymapper_tables.h:476
 #: engines/wintermute/keymapper_tables.h:609
 #: engines/wintermute/keymapper_tables.h:1179
 msgid "Phone 9 button"
-msgstr ""
+msgstr "Кнопка тэлефону „9“"
 
 #: engines/wintermute/keymapper_tables.h:481
 #: engines/wintermute/keymapper_tables.h:614
 #: engines/wintermute/keymapper_tables.h:1184
 msgid "Phone * button"
-msgstr ""
+msgstr "Кнопка тэлефону „*“"
 
 #: engines/wintermute/keymapper_tables.h:486
 #: engines/wintermute/keymapper_tables.h:619
 #: engines/wintermute/keymapper_tables.h:1189
 msgid "Phone # button"
-msgstr ""
+msgstr "Кнопка тэлефону „#“"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Show help"
-msgstr ""
+msgstr "Паказаць дапамогу"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -8174,7 +8177,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1892
 #: engines/wintermute/keymapper_tables.h:2094
 msgid "Scroll up"
-msgstr ""
+msgstr "Прагортваньне ўгару"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
@@ -8188,11 +8191,11 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1899
 #: engines/wintermute/keymapper_tables.h:2099
 msgid "Scroll down"
-msgstr ""
+msgstr "Прагортваньне ўніз"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr ""
+msgstr "Зьмяніць тып ценю"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
