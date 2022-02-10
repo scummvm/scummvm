@@ -28,18 +28,7 @@
 
 namespace Chewy {
 
-io_game::io_game(McgaGraphics *iout, InputMgr *iin, cursor *curp) {
-	out = iout;
-	in = iin;
-	cur = curp;
-}
-
-io_game::~io_game() {
-}
-
-char file_find_g[20][USER_NAME + 4];
-
-short file_xy_g[7][4] = {
+static const int16 FILE_XY_G[7][4] = {
 	{140, 6, 156, 51},
 	{140, 55, 156, 100},
 	{163, 6, 241, 18},
@@ -49,17 +38,24 @@ short file_xy_g[7][4] = {
 	{ 6, 6, 133, 97}
 };
 
-byte code_tbl_g[6] = {72, 80, 59, 60, 61, 62};
+static const byte CODE_TBL_G[6] = { 72, 80, 59, 60, 61, 62 };
 
-char auf_tbl_g[3][3] = { {FSTRING8 },
-	{FSTRING9 },
-	{FSTRING10},
+static const char AUF_TBL_G[3][3] = {
+	{ FSTRING8 }, {FSTRING9 }, { FSTRING10 }
 };
-char ab_tbl_g[4][3] = { {FSTRING11},
-	{FSTRING12},
-	{FSTRING13},
-	{FSTRING14},
+
+static const char AB_TBL_G[4][3] = {
+	{ FSTRING11 }, { FSTRING12 }, { FSTRING13 }, { FSTRING14 }
 };
+
+io_game::io_game(McgaGraphics *iout, InputMgr *iin, cursor *curp) {
+	out = iout;
+	in = iin;
+	cur = curp;
+}
+
+io_game::~io_game() {
+}
 
 int16 io_game::io_menu(iog_init *iostruc) {
 	int16 max_scroll = 20;
@@ -79,14 +75,17 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		in->neuer_kb_handler(kbinfo);
 	else
 		kbinfo = inzeig->kbinfo;
+
 	scr_width = _G(scr_w) << 2;
 	d_klick = DOPPEL_KLICK;
 	int16 cur_y1 = io->popy + 4;
 	int16 cur_y = io->popy + 8;
 	plot_io();
 	schalter_aus();
+
 	for (i = 0; i < 20; i++)
-		file_find_g[i][0] = 0;
+		_fileFind[i][0] = 0;
+
 	int16 scroll_flag = 0;
 	i = 0;
 
@@ -100,11 +99,13 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		auswahl = (int16)io->key_nr;
 		cur_y1 = (auswahl - 1) * 16 + io->popy + 4;
 	}
+
 	cur->show_cur();
 	switch_code = 1;
 	cur->wait_taste_los(true);
 	kbinfo->key_code = '\0';
 	kbinfo->scan_code = Common::KEYCODE_INVALID;
+
 	switch ((int16)io->key_nr) {
 	case 0:
 		cur->hide_cur();
@@ -112,14 +113,14 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		i = 0;
 		cur_y = io->popy + 8;
 		scroll_flag = 0;
-		if (file_find_g[0][0] != 0) {
-			if (strlen(&file_find_g[0][1]) >= 17)
+		if (_fileFind[0][0] != 0) {
+			if (strlen(&_fileFind[0][1]) >= 17)
 				out->
-				printnxy(io->popx + 28, io->popy + 10, io->m_col[5], 300, 17, scr_width, &file_find_g[0][1]
+				printnxy(io->popx + 28, io->popy + 10, io->m_col[5], 300, 17, scr_width, &_fileFind[0][1]
 				        );
 			else
 				out->
-				printxy(io->popx + 28, io->popy + 10, io->m_col[5], 300, scr_width, &file_find_g[0][1]);
+				printxy(io->popx + 28, io->popy + 10, io->m_col[5], 300, scr_width, &_fileFind[0][1]);
 		}
 		plot_dir_liste(io->popy + 18, i + 1);
 		cur->show_cur();
@@ -137,6 +138,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		in->hot_key = 62;
 		break;
 	}
+
 	switch_code = 0;
 	while (ende == 0) {
 		if (mouse_f != 0) {
@@ -149,13 +151,13 @@ int16 io_game::io_menu(iog_init *iostruc) {
 			int16 x = minfo->x;
 			y = minfo->y;
 
-			j = in->maus_vector(x - io->popx, y - io->popy, (int16 *)file_xy_g, 7);
+			j = in->maus_vector(x - io->popx, y - io->popy, (int16 *)FILE_XY_G, 7);
 
 			if (j != -1) {
 				mouse_f = 1;
 				if (j < 6)
 
-					in->hot_key = code_tbl_g[j];
+					in->hot_key = CODE_TBL_G[j];
 				if ((j == 6) && (y >= io->popy + 8)) {
 					y -= io->popy + 8;
 					y /= 10;
@@ -201,7 +203,6 @@ int16 io_game::io_menu(iog_init *iostruc) {
 					}
 				}
 			}
-
 		}
 
 		switch_code = in->get_switch_code();
@@ -377,7 +378,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 					ende = 1;
 				}
 
-				if ((io_flag == 2) && (file_find_g[i][0] == 1)) {
+				if ((io_flag == 2) && (_fileFind[i][0] == 1)) {
 
 					load(i, io->save_path);
 
@@ -428,17 +429,17 @@ void io_game::mark_eintrag(int16 y, int16 nr) {
 	out->pop_box(io->popx + 8, y, io->popx + 131, y + 10,
 	              io->m_col[1], io->m_col[0], io->m_col[4]);
 	out->printxy(io->popx + 10, y + 2, io->m_col[2], 300, scr_width, "%d.", nr + 1);
-	if (file_find_g[nr][0] != 0) {
-		if (strlen(&file_find_g[nr][1]) >= 17)
+	if (_fileFind[nr][0] != 0) {
+		if (strlen(&_fileFind[nr][1]) >= 17)
 			out->printnxy(io->popx + 28, y + 2, io->m_col[2], 300, 17,
-			               scr_width, &file_find_g[nr][1]);
+			               scr_width, &_fileFind[nr][1]);
 		else
 			out->printxy(io->popx + 28, y + 2, io->m_col[2], 300,
-			              scr_width, &file_find_g[nr][1]);
+			              scr_width, &_fileFind[nr][1]);
 		out->box_fill(io->popx + 8, io->popy + 106, io->popx + 244, io->popy + 117,
 		               io->m_col[5]);
 		print_shad(io->popx + 8, io->popy + 106, io->m_col[0], 300, io->m_col[1],
-		           scr_width, &file_find_g[nr][1]);
+		           scr_width, &_fileFind[nr][1]);
 	} else {
 		out->move(io->popx + 8, io->popy + 106);
 		out->box_fill(io->popx + 8, io->popy + 106, io->popx + 244, io->popy + 117,
@@ -451,13 +452,13 @@ void io_game::unmark_eintrag(int16 y, int16 nr) {
 	out->pop_box(io->popx + 8, y, io->popx + 131, y + 10, io->m_col[3],
 	              io->m_col[3], io->m_col[3]);
 	out->printxy(io->popx + 10, y + 2, io->m_col[5], 300, scr_width, "%d.", nr + 1);
-	if (file_find_g[nr][0] != 0) {
-		if (strlen(&file_find_g[nr][1]) >= 17)
+	if (_fileFind[nr][0] != 0) {
+		if (strlen(&_fileFind[nr][1]) >= 17)
 			out->printnxy(io->popx + 28, y + 2, io->m_col[5], 300, 17,
-			               scr_width, &file_find_g[nr][1]);
+			               scr_width, &_fileFind[nr][1]);
 		else
 			out->printxy(io->popx + 28, y + 2, io->m_col[5], 300,
-			              scr_width, &file_find_g[nr][1]);
+			              scr_width, &_fileFind[nr][1]);
 	}
 }
 
@@ -469,13 +470,13 @@ void io_game::plot_dir_liste(int16 cur_y, int16 start) {
 			              io->m_col[3], io->m_col[3], io->m_col[3]);
 			out->printxy(io->popx + 10, cur_y + 2, io->m_col[5], 300,
 			              scr_width, "%d.", i + 1);
-			if (file_find_g[i][0] != 0) {
-				if (strlen(&file_find_g[i][1]) >= 17)
+			if (_fileFind[i][0] != 0) {
+				if (strlen(&_fileFind[i][1]) >= 17)
 					out->printnxy(io->popx + 28, cur_y + 2, io->m_col[5], 300, 17,
-					               scr_width, &file_find_g[i][1]);
+					               scr_width, &_fileFind[i][1]);
 				else
 					out->printxy(io->popx + 28, cur_y + 2, io->m_col[5], 300,
-					              scr_width, &file_find_g[i][1]);
+					              scr_width, &_fileFind[i][1]);
 			}
 			cur_y += 10;
 		}
@@ -524,12 +525,12 @@ void io_game::plot_io() {
 
 void io_game::plot_auf_txt(int16 farbe) {
 	for (int16 i = 0; i < 3; i++)
-		out->printxy(io->popx + 146, io->popy + 15 + i * 10, farbe, 300, scr_width, auf_tbl_g[i]);
+		out->printxy(io->popx + 146, io->popy + 15 + i * 10, farbe, 300, scr_width, AUF_TBL_G[i]);
 }
 
 void io_game::plot_ab_txt(int16 farbe) {
 	for (int16 i = 0; i < 4; i++)
-		out->printxy(io->popx + 146, io->popy + 59 + i * 10, farbe, 300, scr_width, ab_tbl_g[i]);
+		out->printxy(io->popx + 146, io->popy + 59 + i * 10, farbe, 300, scr_width, AB_TBL_G[i]);
 }
 
 void io_game::itoa(int N, char *s, int base) {
@@ -541,14 +542,14 @@ int16 io_game::get_savegame_files() {
 	int ret = 0;
 
 	for (int i = 0; i < 20; i++) {
-		file_find_g[i][0] = 0;
+		_fileFind[i][0] = 0;
 
 		for (uint j = 0; j < saveList.size(); ++j) {
 			if (saveList[j].getSaveSlot() == i) {
 				Common::String name = saveList[j].getDescription();
-				file_find_g[i][0] = 1;
-				strncpy(&file_find_g[i][1], name.c_str(), USER_NAME + 3);
-				file_find_g[i][USER_NAME + 3] = '\0';
+				_fileFind[i][0] = 1;
+				strncpy(&_fileFind[i][1], name.c_str(), USER_NAME + 3);
+				_fileFind[i][USER_NAME + 3] = '\0';
 				++ret;
 				break;
 			}
@@ -566,11 +567,11 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 	(io->popx + 8, y, io->popx + 131, y + 10, io->m_col[1], io->m_col[0], io->m_col[4]);
 
 	out->printxy(io->popx + 10, y + 2, io->m_col[0], 300, scr_width, "%d.", slotNum + 1);
-	if (file_find_g[slotNum][0] == 0) {
-		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
+	if (_fileFind[slotNum][0] == 0) {
+		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &_fileFind[slotNum][1]);
 	} else {
 		out->printxy(io->popx + 167, io->popy + 85, io->m_col[1], 300, scr_width, FSTRING7);
-		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &file_find_g[slotNum][1]);
+		out->scanxy(io->popx + 28, y + 2, io->m_col[0], io->m_col[4], io->m_col[2], scr_width, "%36s15", &_fileFind[slotNum][1]);
 
 	}
 	in->neuer_kb_handler(kbinfo);
@@ -579,7 +580,7 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 
 	cur->show_cur();
 
-	Common::String desc(&file_find_g[slotNum][1]);
+	Common::String desc(&_fileFind[slotNum][1]);
 	(void)g_engine->saveGameState(slotNum, desc);
 }
 
@@ -587,7 +588,7 @@ void io_game::load(int16 slotNum, char *fname) {
 	get_savegame_files();
 
 	cur->hide_cur();
-	if (file_find_g[slotNum][0] == 1) {
+	if (_fileFind[slotNum][0] == 1) {
 		(void)g_engine->loadGameState(slotNum);
 	}
 }
@@ -600,14 +601,14 @@ void io_game::print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, i
 char *io_game::io_init(iog_init *iostruc) {
 	io = iostruc;
 	for (int16 i = 0; i < 20; i++)
-		file_find_g[i][0] = 0;
+		_fileFind[i][0] = 0;
 	get_savegame_files();
 
-	return &file_find_g[0][0];
+	return &_fileFind[0][0];
 }
 
 void io_game::save_entry(int16 slotNum, char *fname) {
-	Common::String desc(&file_find_g[slotNum][1]);
+	Common::String desc(&_fileFind[slotNum][1]);
 	g_engine->saveGameState(slotNum, desc);
 }
 
