@@ -67,6 +67,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      to the original code.
    - Fix missing cursor in the 16-color Macintosh versions of Loom and Indiana
      Jones and the Last Crusade after loading a savegame.
+   - It is now possible to replace the music in the floppy versions of Loom
+     with audio tracks. The ScummVM Wiki has a list of which parts of the Swan
+     Lake ballet the game uses.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
