@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 07:50+0000\n"
+"PO-Revision-Date: 2022-02-10 08:38+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1085,7 +1085,7 @@ msgstr "немажліва зьмяніць налады фільтравань�
 
 #: gui/options.cpp:1219 backends/platform/android/options.cpp:72
 msgid "Touchpad mouse mode"
-msgstr "Рэжым тачпаду"
+msgstr "Рэжым тачпэду"
 
 #: gui/options.cpp:1224
 msgid "Pointer Speed:"
@@ -7213,12 +7213,17 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
+"Maniac Mansion мусіла запусьціцца. Але каб яна запрацавала, файлы гульні "
+"Maniac Mansion мусяць быць у тэчцы 'Maniac' унутры тэчкі гульні Day of the "
+"Tentacle, а гульня мусіць быць даданая ў ScummVM."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:652
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"У гэтай вэрсіі AMIGA бракуе (прынамсі) гэтых файлаў:\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:657
 msgid ""
@@ -7226,110 +7231,117 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Калі ласка, скапіюйце гэтыя файлы ў тэчку зьвестак гульні.\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:68
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Піксэляваныя пераходы між сцэнамі"
 
 #: engines/sherlock/detection.cpp:69
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Зьмены сцэнаў будуць з пераходам адвольных піксэляў"
 
 #: engines/sherlock/detection.cpp:78
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Не паказаваць пункты доступу пры навядзеньні мышшу"
 
 #: engines/sherlock/detection.cpp:79
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr ""
+msgstr "Паказваць назвы пунктаў доступу пасьля пстрыку па ім або кнопкі дзеі"
 
 #: engines/sherlock/detection.cpp:88
 msgid "Show character portraits"
-msgstr ""
+msgstr "Паказваць партрэты пэрсанажаў"
 
 #: engines/sherlock/detection.cpp:89
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Паказваць партрэты пэрсанажаў, падчас гутаркі"
 
 #: engines/sherlock/detection.cpp:98
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Анімацыя зьяўленьня дыялёгаў"
 
 #: engines/sherlock/detection.cpp:99
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Анімаванае зьяўленьне дыялёгаў, замест імгненнага"
 
 #: engines/sherlock/detection.cpp:108
 msgid "Transparent windows"
-msgstr ""
+msgstr "Празрыстыя вокны"
 
 #: engines/sherlock/detection.cpp:109
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Паказваць вокны з часткова празрыстым фонам"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Рухавіковы файл „sky.cpt“ мае няправільны памер."
 
 #: engines/sky/detection.cpp:36
 msgid "Floppy intro"
-msgstr ""
+msgstr "Дыскэтны ўступ"
 
 #: engines/sky/detection.cpp:37
 msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
+"Выкарыстоўваць уступ з вэрсіі гнуткіх дыскаў (толькі для вэрсіі кампактных "
+"дыскаў)"
 
 #: engines/sky/metaengine.cpp:85
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "Ісьці / Глядзець / Гаварыць"
 
 #: engines/sky/metaengine.cpp:103
 msgid "Skip / Close"
-msgstr ""
+msgstr "Прапусьціць / Закрыць"
 
 #: engines/sky/metaengine.cpp:111
 msgid "Open control panel"
-msgstr ""
+msgstr "Адкрыць панэль кіраваньня"
 
 #: engines/sky/metaengine.cpp:127
 msgid "Toggle fast mode"
-msgstr ""
+msgstr "Перамыканьне хуткага рэжыму"
 
 #: engines/sky/metaengine.cpp:132
 msgid "Toggle really fast mode"
-msgstr ""
+msgstr "Перамыканьне дужа хуткага рэжыму"
 
 #: engines/sky/metaengine.cpp:202
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr ""
+msgstr "УВАГА: Гэты рухавік не падтрымлівае выдаленьня слоту аўтазахову"
 
 #: engines/stark/detection.cpp:375
 msgid "Load modded assets"
-msgstr ""
+msgstr "Заладаваць мадыфікаваныя рэсурсы"
 
 #: engines/stark/detection.cpp:376
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Далучыць ладаваньне дадатковых заменных рэсурсаў."
 
 #: engines/stark/detection.cpp:384
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Далучыць лінейнае фільтраваньне фонавых выяў"
 
 #: engines/stark/detection.cpp:385
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Лінейнае філтраваньне згладзіць фонавую графіку ў рэжыме поўнага экрану праз "
+"страту дэталізацыі."
 
 #: engines/stark/detection.cpp:393 engines/ultima/detection.cpp:118
 msgid "Enable font anti-aliasing"
-msgstr ""
+msgstr "Далучыць памякчэньне шрыфтоў"
 
 #: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "Памякчэньне зробіць тэкст гладкім."
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
