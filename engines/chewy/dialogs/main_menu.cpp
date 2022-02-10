@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "chewy/dialogs/main_menu.h"
 #include "chewy/dialogs/cinema.h"
@@ -36,16 +37,16 @@ int MainMenu::_selection;
 int MainMenu::_personAni[3];
 
 void MainMenu::execute() {
-#ifdef TODO_REENABLE
-	// TODO: Currently disabled so it doesn't keep playing on startup
-	mem->file->select_pool_item(music_handle, EndOfPool - 17);
-	mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
-	if (!modul)
-		ailsnd->playMod((tmf_header *)Ci.MusicSlot);
+	// Convenience during testing to not keep showing title sequence
+	if (!ConfMan.getBool("skip_title")) {
+		mem->file->select_pool_item(music_handle, EndOfPool - 17);
+		mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
+		if (!modul)
+			sndPlayer->playMod((tmf_header *)Ci.MusicSlot);
 
-	flic_cut(200, 0);
-	ailsnd->stopMod();
-#endif
+		flic_cut(200, 0);
+		sndPlayer->stopMod();
+	}
 
 	show_intro();
 
