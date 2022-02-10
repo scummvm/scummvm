@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 08:38+0000\n"
+"PO-Revision-Date: 2022-02-10 11:59+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7345,11 +7345,11 @@ msgstr "Памякчэньне зробіць тэкст гладкім."
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
-msgstr ""
+msgstr "Праграмны рэндэр не падтрымлівае мадыфікаваныя рэсурсы"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "Бракуе наступных рэкамэндаваных файлаў:"
 
 #: engines/stark/stark.cpp:305
 msgid ""
@@ -7357,31 +7357,38 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Тэчка 'fonts' патрэбна для таго, каб тэкст выглядаў такім, якім быў "
+"задуманы. У вэрсіі Steam яе бракуе. Вы можаце ўзяць шрыфты з дэманстрацыйнай "
+"вэрсіі гульні."
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"Файл 'gui.ini' рэкамэндаваны для правільных наладаў шрыфтоў лякалізацыі "
+"гульні."
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"Файл 'language.ini' рэкамэндаваны лякалізаваных дыялёгаў пацьвярджэньня."
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "Файл 'game.exe' рэкамэндаваны для стылізаваных дыялёгаў пацьвярдэньня."
 
 #: engines/supernova/supernova.cpp:190
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
+msgstr "Ня выйшла знайсьці тэкст для мовы (%s) у рухавіковых файлах."
 
 #: engines/supernova/supernova.cpp:474
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
+"Знойдзена няпэўная вэрсія зьвестак рухавіку '%s'. Мусіў быць %d, але ё %d."
 
 #: engines/supernova/supernova.cpp:484
 #, c-format
