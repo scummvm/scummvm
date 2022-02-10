@@ -110,6 +110,11 @@ public:
 	int16 _r65tmp_ho_x = 0;
 	int16 _r65tmp_ho_y = 0;
 	int16 _r68HohesC = 0;
+
+	// mcga_graphics.cpp
+	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
+	int16 _gcurx = 0, _gcury = 0, _fvorx = 0, _fvory = 0;
+	int16 _scr_w = 0, _scr_h = SCREEN_HEIGHT;
 };
 
 extern Globals *g_globals;
@@ -297,8 +302,8 @@ void obj_auswerten(int16 test_nr, int16 txt_nr);
 
 void swap_if_l(int16 *x1, int16 *x2);
 
-void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 scr_w,
-                char *txtptr);
+void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol,
+	int16 scr_w, char *txtptr);
 
 bool auto_move(int16 mov_nr, int16 p_nr);
 void get_user_key(int16 mode);

@@ -27,8 +27,6 @@
 
 namespace Chewy {
 
-extern int16 scr_w;
-
 class cursor {
 public:
 	cursor();

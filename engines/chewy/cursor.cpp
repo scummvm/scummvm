@@ -21,13 +21,14 @@
 
 #include "chewy/cursor.h"
 #include "chewy/events.h"
+#include "chewy/global.h"
 
 namespace Chewy {
 
 cursor::cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
 	out = iout;
 	in = iin;
-	scr_width = scr_w;
+	scr_width = _G(scr_w);
 	curblk = curblkp;
 	inzeig = in->get_in_zeiger();
 	if (!inzeig->minfo)

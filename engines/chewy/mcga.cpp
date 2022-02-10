@@ -206,35 +206,35 @@ void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrWidth) {
 }
 
 static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height, const byte *&srcP, byte *&destP) {
-	if (y < clipy1) {
-		int yDiff = ABS(clipy1 - y);
+	if (y < _G(clipy1)) {
+		int yDiff = ABS(_G(clipy1) - y);
 		height -= yDiff;
 		srcP += yDiff * width;
-		y = clipy1;
+		y = _G(clipy1);
 	}
 	if (height < 1)
 		return false;
 
-	if (x < clipx1) {
-		int xDiff = ABS(clipx1 - x);
+	if (x < _G(clipx1)) {
+		int xDiff = ABS(_G(clipx1) - x);
 		width -= xDiff;
 		srcP += xDiff;
-		x = clipx1;
+		x = _G(clipx1);
 	}
 	if (width < 1)
 		return false;
 
 	int x2 = x + width;
-	if (x2 > clipx2) {
-		int xDiff = x2 - clipx2;
+	if (x2 > _G(clipx2)) {
+		int xDiff = x2 - _G(clipx2);
 		width -= xDiff;
 	}
 	if (width <= 1)
 		return false;
 
 	int y2 = y + height;
-	if (y2 > clipy2) {
-		int yDiff = y2 - clipy2;
+	if (y2 > _G(clipy2)) {
+		int yDiff = y2 - _G(clipy2);
 		height -= yDiff;
 	}
 	if (height < 1)
@@ -288,8 +288,8 @@ void upd_scr() {
 }
 
 void vors() {
-	gcurx += fvorx;
-	gcury += fvory;
+	_G(gcurx) += _G(fvorx);
+	_G(gcury) += _G(fvory);
 }
 
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
@@ -322,7 +322,7 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 }
 
 void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
-	putcxy(gcurx, gcury, c, fgCol, bgCol, scrWidth);
+	putcxy(_G(gcurx), _G(gcury), c, fgCol, bgCol, scrWidth);
 }
 
 void init_svga(VesaInfo *vi_, byte *virt_screen) {
@@ -362,8 +362,8 @@ static void setYVals() {
 }
 
 void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
-	if (y < clipy1) {
-		int yCount = clipy1 - y;
+	if (y < _G(clipy1)) {
+		int yCount = _G(clipy1) - y;
 		spriteDeltaY2 -= yCount;
 
 		--yCount;
@@ -385,8 +385,8 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 		return;
 	}
 
-	if (x < clipx1) {
-		int xCount = clipx1 - x;
+	if (x < _G(clipx1)) {
+		int xCount = _G(clipx1) - x;
 		spriteDeltaX2 -= xCount;
 		dest += xCount;
 
@@ -404,14 +404,14 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 
 	if (spriteDeltaX2 > 0) {
 		int x2 = x + spriteDeltaX2;
-		if (x2 >= clipx2) {
-			spriteDeltaX2 -= x2 - clipx2;
+		if (x2 >= _G(clipx2)) {
+			spriteDeltaX2 -= x2 - _G(clipx2);
 		}
 
 		if (spriteDeltaY2 > 0) {
 			int y2 = y + spriteDeltaY2;
-			if (y2 >= clipy2) {
-				spriteDeltaY2 -= y2 - clipy2;
+			if (y2 >= _G(clipy2)) {
+				spriteDeltaY2 -= y2 - _G(clipy2);
 			}
 			if (spriteDeltaY2 <= 0)
 				source = nullptr;
