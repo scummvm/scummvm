@@ -19,12 +19,12 @@
  *
  */
 
+#include "common/substream.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/ini-file.h"
-#include "common/stream.h"
 #include "common/system.h"
 #include "common/file.h"
 
@@ -134,6 +134,48 @@ Common::SeekableReadStream *PetkaEngine::openFile(const Common::String &name, bo
 		return nullptr;
 	}
 	return _fileMgr->getFileStream(addCurrentPath ? _currentPath + name : name);
+}
+
+Common::SeekableReadStream *PetkaEngine::openIniFile(const Common::String &name) {
+	// Some lines in ini files have null terminators befoen CR+LF
+	class IniReadStream : public Common::SeekableSubReadStream
+	{
+	public:
+		using SeekableSubReadStream::SeekableSubReadStream;
+
+		char *readLine(char *buf, size_t bufSize, bool handleCR = true) override
+		{
+			memset(buf, '\0', bufSize);
+
+			if (!Common::SeekableSubReadStream::readLine(buf, bufSize, handleCR)) {
+				return nullptr;
+			}
+
+			char *null_term = nullptr;
+			for (uint i = 0; i < bufSize; ++i) {
+				if (buf[i] == '\n') {
+					if (null_term) {
+						null_term[0] = '\n';
+						null_term[1] = '\0';
+					}
+
+					return buf;
+				}
+
+				if (buf[i] == '\0' && !null_term) {
+					null_term = &buf[i];
+				}
+			}
+
+			return buf;
+		}
+	};
+
+
+	auto *file_stream = openFile(name, true);
+	if (!file_stream)
+		return nullptr;
+	return new IniReadStream(file_stream, 0, file_stream->size(), DisposeAfterUse::YES);
 }
 
 void PetkaEngine::loadStores() {
@@ -286,8 +328,8 @@ void PetkaEngine::loadChapter(byte chapter) {
 
 	_fileMgr->openStore(_chapterStoreName);
 
-	Common::ScopedPtr<Common::SeekableReadStream> namesStream(openFile("Names.ini", true));
-	Common::ScopedPtr<Common::SeekableReadStream> castStream(openFile("Cast.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(openIniFile("Names.ini"));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(openIniFile("Cast.ini"));
 
 	Common::INIFile namesIni;
 	Common::INIFile castIni;

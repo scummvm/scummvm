@@ -58,9 +58,9 @@ bool QSystem::init() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm.openFile("script.dat", true));
 	if (!stream)
 		return false;
-	Common::ScopedPtr<Common::SeekableReadStream> namesStream(_vm.openFile("Names.ini", true));
-	Common::ScopedPtr<Common::SeekableReadStream> castStream(_vm.openFile("Cast.ini", true));
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(_vm.openFile("BGs.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(_vm.openIniFile("Names.ini"));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(_vm.openIniFile("Cast.ini"));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(_vm.openIniFile("BGs.ini"));
 
 	Common::INIFile namesIni;
 	Common::INIFile castIni;

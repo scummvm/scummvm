@@ -99,6 +99,7 @@ public:
 	void applyGameSettings() override;
 
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
+	Common::SeekableReadStream *openIniFile(const Common::String &name);
 
 	void playVideo(Common::SeekableReadStream *stream);
 	QSystem *getQSystem() const;
