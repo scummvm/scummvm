@@ -346,6 +346,8 @@ private:
 	int16 tmp_delay;
 	in_zeiger *inzeig = nullptr;
 	bool _hasSpeech = false;
+	int16 _mousePush = 0;
+	int _printDelayCount1 = 0;
 };
 
 } // namespace Chewy
