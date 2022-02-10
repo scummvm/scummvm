@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 14:24+0000\n"
+"PO-Revision-Date: 2022-02-10 15:47+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -8200,12 +8200,12 @@ msgstr "Зьмяніць тып ценю"
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
 msgid "Volume max"
-msgstr ""
+msgstr "Максымальная гучнасьць"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
 msgid "Show debug parser"
-msgstr ""
+msgstr "Паказаць наладны аналізатар"
 
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
@@ -8214,39 +8214,39 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1756
 #: engines/wintermute/keymapper_tables.h:1801
 msgid "Debug print"
-msgstr ""
+msgstr "Наладны адбітак"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1772
 msgid "Exit"
-msgstr ""
+msgstr "Выйсьце"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
 msgid "Light helper window"
-msgstr ""
+msgstr "Дапаможнае акно сьвятлу"
 
 #: engines/wintermute/keymapper_tables.h:751
 msgid "Run forward"
-msgstr ""
+msgstr "Бег наперад"
 
 #: engines/wintermute/keymapper_tables.h:756
 msgid "Run backward"
-msgstr ""
+msgstr "Бег назад"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
-msgstr ""
+msgstr "Швыдкі паварод налева"
 
 #: engines/wintermute/keymapper_tables.h:766
 msgid "Turn right fast"
-msgstr ""
+msgstr "Швыдкі паварот направа"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
 msgid "Show blueprint"
-msgstr ""
+msgstr "Паказаць рысунак"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1510
@@ -8254,7 +8254,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1726
 #: engines/wintermute/keymapper_tables.h:2012
 msgid "Next action"
-msgstr ""
+msgstr "Наступная дзея"
 
 #: engines/wintermute/keymapper_tables.h:799
 #: engines/wintermute/keymapper_tables.h:1518
@@ -8262,156 +8262,157 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1733
 #: engines/wintermute/keymapper_tables.h:2020
 msgid "Previous action"
-msgstr ""
+msgstr "Папярэдняя дзея"
 
 #: engines/wintermute/keymapper_tables.h:826
+#, fuzzy
 msgid "Volume off"
-msgstr ""
+msgstr "Гук адлучаны"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "Зьмяніць памер шрыфту"
 
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
-msgstr ""
+msgstr "Захаваць гульню"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Хуткасьць хады: павольна"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Хуткасьць хады: сярэдне"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Хуткасьць хады: спрытна"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1286
 #: engines/wintermute/keymapper_tables.h:1795
 msgid "Cancel waiting"
-msgstr ""
+msgstr "Скасаваць чаканьне"
 
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
-msgstr ""
+msgstr "Першая старонка"
 
 #: engines/wintermute/keymapper_tables.h:970
 msgid "Last page"
-msgstr ""
+msgstr "Апошняя старонка"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Хуткасьць хады: ультрасупэрмеґахутка"
 
 #: engines/wintermute/keymapper_tables.h:994
 msgid "Show game credits"
-msgstr ""
+msgstr "Паказаць тытры гульні"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "Граць выбраны музчыны запіс"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "Выбраць наступны музычны запіс"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
-msgstr ""
+msgstr "Граць ноту 1: Ля"
 
 #: engines/wintermute/keymapper_tables.h:1014
 msgid "Play note 2: F#"
-msgstr ""
+msgstr "Граць ноту 2: Фа-дыез"
 
 #: engines/wintermute/keymapper_tables.h:1019
 msgid "Play note 3: D#"
-msgstr ""
+msgstr "Граць ноту 3: Рэ-дыез"
 
 #: engines/wintermute/keymapper_tables.h:1024
 msgid "Play note 4: C#"
-msgstr ""
+msgstr "Граць ноту 4: До-дыез"
 
 #: engines/wintermute/keymapper_tables.h:1029
 msgid "Play note 5: E"
-msgstr ""
+msgstr "Граць ноту 5: Мі-дыез"
 
 #: engines/wintermute/keymapper_tables.h:1034
 msgid "Play note 6: G#"
-msgstr ""
+msgstr "Граць ноту 6: Соль-дыез"
 
 #: engines/wintermute/keymapper_tables.h:1039
 msgid "Play note 7: B"
-msgstr ""
+msgstr "Граць ноту 7: Сі"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Здольнасьць: Тэлекінэз"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "Здольнасьць: Штуршок"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Здольнасьць: Маланка"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "Здольнасьць: Сьвятло"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Здольнасьць: Вецер"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Здольнасьць: Гук"
 
 #: engines/wintermute/keymapper_tables.h:1082
+#, fuzzy
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Здольнасьць: Пах"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Здольнасьць: Экзарцызм"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "Паказаць падказкі / Рухі танцу"
 
 #: engines/wintermute/keymapper_tables.h:1207
 msgid "Dance move up"
-msgstr ""
+msgstr "Рух танцу ўгару"
 
 #: engines/wintermute/keymapper_tables.h:1213
 msgid "Dance move down"
-msgstr ""
+msgstr "Рух танцу ўніз"
 
 #: engines/wintermute/keymapper_tables.h:1219
 msgid "Dance move left"
-msgstr ""
+msgstr "Рух танцу налева"
 
 #: engines/wintermute/keymapper_tables.h:1225
 msgid "Dance move right"
-msgstr ""
+msgstr "Рух танцу направа"
 
 #: engines/wintermute/keymapper_tables.h:1255
 msgid "Cancel input"
-msgstr ""
+msgstr "Скасаваць увод"
 
 #: engines/wintermute/keymapper_tables.h:1317
-#, fuzzy
 msgid "Toggle subtitles"
-msgstr "Субтытры"
+msgstr "Пералучыць субтытры"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1387
 msgid "Shift key"
-msgstr ""
+msgstr "Кнопка Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
