@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 11:59+0000\n"
+"PO-Revision-Date: 2022-02-10 12:46+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7393,50 +7393,54 @@ msgstr ""
 #: engines/supernova/supernova.cpp:484
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Ня выйшла знайсьці блёк для часткі %d"
 
 #: engines/supernova/supernova.cpp:527
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr ""
+msgstr "Ня выйшла знайсьці '%s' у тэчцы гульні або зьвестках рухавіку."
 
 #: engines/supernova/supernova.cpp:831
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Ня выйшла стварыць часовы захоў. Праверце, што тэчка заховаў выстаўлена ў "
+"ScummVM і што вы маеце да яе доступ."
 
 #: engines/supernova/supernova.cpp:832
 msgid "Failed to load temporary game state."
-msgstr ""
+msgstr "Ня выйшла заладаваць часовы захоў."
 
 #: engines/supernova/detection.cpp:41
 msgid "Improved mode"
-msgstr ""
+msgstr "Палепшаны рэжым"
 
 #: engines/supernova/detection.cpp:42
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"Выдаліць нейкія паўторныя дзеі, дадаць мажлівась мяняць дзеясловы з "
+"клявіятуры"
 
 #: engines/sword1/animation.cpp:531
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "Немажліва паказаць сцэнку PSX '%s' у рэжыме палітры"
 
 #: engines/sword1/animation.cpp:552 engines/sword2/animation.cpp:448
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr ""
+msgstr "Знойдзены сцэнкі DXA, але ScummVM сабраны без падтрыманьня zlib"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:464
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
+msgstr "Знойдзены сцэнкі MPEG-2, але ScummVM сабраны без падтрыманьня MPEG-2"
 
 #: engines/sword1/animation.cpp:575 engines/sword2/animation.cpp:473
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "Сцэнка '%s' ня знойдзена"
 
 #: engines/sword1/control.cpp:886
 msgid ""
@@ -7448,6 +7452,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM знайшоў вашыя старыя захаваныя гульні для Broken Sword 1, якія "
+"патрэбна ператварыць.\n"
+"Стары фармат захаванай гульні болей не падтрымліваецца, таму немажліва "
+"заладаваць неператвораную гульню.\n"
+"\n"
+"Націсьніце ОК, каб ператварыць іх, інакш наступным разам вам паведамяць "
+"зноўку.\n"
 
 #: engines/sword1/control.cpp:1260
 #, c-format
@@ -7466,170 +7477,176 @@ msgstr ""
 
 #: engines/sword1/logic.cpp:1634
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "Гэта канец дэманстрацыі Broken Sword 1"
 
 #: engines/sword2/animation.cpp:428
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
+msgstr "Знойдзены сцэнкі PSX, але ScummVM сабраны без падтрыманьня колераў RGB"
 
 #: engines/sword2/detection.cpp:32
 msgid "Show object labels"
-msgstr ""
+msgstr "Паказваць назывы аб’ектаў"
 
 #: engines/sword2/detection.cpp:33
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Паказваць назвы аб’ектаў пры навядзеньні на іх паказальніку"
 
 #: engines/sword25/detection.cpp:47
 msgid "Use English speech"
-msgstr ""
+msgstr "Выкарыстоўваць ангельскую агучку"
 
 #: engines/sword25/detection.cpp:48
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Выкарыстоўваць ангельскую агучку замест нямецкай для кожнай мовы, акром "
+"нямецкай"
 
 #: engines/teenagent/resources.cpp:120
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Файл teenagent.dat сьціснуты, але zlib ня быў улучаны ў гэты выканальнік. "
+"Калі ласка, расьцісніце яго"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
-msgstr ""
+msgstr "Вэрсія кампактнах дыскаў Saturn яшчэ не падтрымліваецца"
 
 #: engines/tony/tony.cpp:248
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Варыянт шрыфту няма ў рухавіковым файле '%s'."
 
 #: engines/toon/toon.cpp:215
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
+msgstr "Гульня захаваная ў слоце #%d "
 
 #: engines/toon/toon.cpp:219
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Ня выйшла хутка захаваць гульню ў слот #%d"
 
 #: engines/toon/toon.cpp:232
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
+msgstr "Захоў #%d хутка заладаваны"
 
 #: engines/toon/toon.cpp:236
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr ""
+msgstr "Ня выйшла хутка заладаваць захоў #%d"
 
 #: engines/toon/toon.cpp:1563
 #, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr ""
+msgstr "Ня выйшла знайсьці зьвесткавы файл '%s' ."
 
 #: engines/twine/detection.cpp:253
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
+msgstr "Для гэтай гульні патрэбна Giflib, якой няма ў зборы ScummVM"
 
 #: engines/twine/detection.cpp:667
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Далучыць сутычку са сьценамі"
 
 #: engines/twine/detection.cpp:668
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Далучыць арыґінальнае пашкоджэньне ад сутычкі са сьценамі"
 
 #: engines/twine/detection.cpp:675
 msgid "Disable save menu"
-msgstr ""
+msgstr "Адлучыць мэню захаваньня"
 
 #: engines/twine/detection.cpp:676
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"У арыґінале былі толькі аўтазахаваньні. Гэта дазволіць вам захоўвацца, дзе "
+"вы захочаце."
 
 #: engines/twine/detection.cpp:682
 msgid "Enable debug mode"
-msgstr ""
+msgstr "Далучыць рэжым наладжваньня хібаў"
 
 #: engines/twine/detection.cpp:683
 msgid "Enable the debug mode"
-msgstr ""
+msgstr "Далучыць рэжым наладжваньня хібаў"
 
 #: engines/twine/detection.cpp:689
 msgid "Enable audio CD"
-msgstr ""
+msgstr "Далучыць гукавыя кампактныя дыскі"
 
 #: engines/twine/detection.cpp:690
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Далучыць арыґінальную дарожку гукавых кампактных дыскаў"
 
 #: engines/twine/detection.cpp:696
 msgid "Enable sound"
-msgstr ""
+msgstr "Далучыць гук"
 
 #: engines/twine/detection.cpp:697
 msgid "Enable the sound for the game"
-msgstr ""
+msgstr "Далучыць гук у гульні"
 
 #: engines/twine/detection.cpp:703
 msgid "Enable voices"
-msgstr ""
+msgstr "Далучыць галасы"
 
 #: engines/twine/detection.cpp:704
 msgid "Enable the voices for the game"
-msgstr ""
+msgstr "Далучыць галасы ў гульні"
 
 #: engines/twine/detection.cpp:710
 msgid "Enable text"
-msgstr ""
+msgstr "Далучыць тэкст"
 
 #: engines/twine/detection.cpp:711
 msgid "Enable the text for the game"
-msgstr ""
+msgstr "Далучыць тэкст у гульні"
 
 #: engines/twine/detection.cpp:717
 msgid "Enable movies"
-msgstr ""
+msgstr "Далучыць відэа"
 
 #: engines/twine/detection.cpp:718
 msgid "Enable the cutscenes for the game"
-msgstr ""
+msgstr "Далучыць сцэнкі ў гульні"
 
 #: engines/twine/detection.cpp:724
 msgid "Enable mouse"
-msgstr ""
+msgstr "Далучыць мыш"
 
 #: engines/twine/detection.cpp:725
 msgid "Enable the mouse for the UI"
-msgstr ""
+msgstr "Далучыць мыш для інтэрфэйсу"
 
 #: engines/twine/detection.cpp:731
 msgid "Use the USA version"
-msgstr ""
+msgstr "Выкарыстоўваць вэрсію для ЗША"
 
 #: engines/twine/detection.cpp:732
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Далучыць сьцягі, уласьцівыя вэрсіі для ЗША"
 
 #: engines/twine/detection.cpp:738 engines/ultima/detection.cpp:84
 msgid "Enable high resolution"
-msgstr ""
+msgstr "Далучыць высокую разрознасьць"
 
 #: engines/twine/detection.cpp:739 engines/ultima/detection.cpp:85
 msgid "Enable a higher resolution for the game"
-msgstr ""
+msgstr "Далучыць высокую разрознасьць у гульні"
 
 #: engines/twine/metaengine.cpp:104
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Наладзіць наступны пакой"
 
 #: engines/twine/metaengine.cpp:109
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Наладзіць папярэдні пакой"
 
 #: engines/twine/metaengine.cpp:114
 msgid "Debug Apply Celling Grid"
