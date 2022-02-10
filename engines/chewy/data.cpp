@@ -178,7 +178,6 @@ uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
 // void_adr() with type 200
 uint32 Data::size(const char *fname, int16 typ) {
 	uint32 size = 0;
-	mod_header *mh = (mod_header *)tmp;
 
 	strncpy(filename, fname, MAXPATH - 5);
 	filename[MAXPATH - 5] = '\0';
