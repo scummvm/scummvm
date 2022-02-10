@@ -807,10 +807,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "belzerion",			"Belzerion" },	// ベルゼリオン
 	{ "bem",				"妖怪人間ベム 新たなる魂の迷宮" },					// Yokai Ningen Bemu
 	{ "bemtoybox",			"妖怪人間ベム データToyBox" },						// Bem Data Toy Box
+	{ "beyondthetime",		"Beyond the Time" },
 	{ "bombreikochiba",		"千葉麗子 BOMB!" },	// Reiko Chiba - Bomb
 	{ "cellofania",			"セロファニア" },
 	{ "chinacrisis",		"China Crisis" },
 	{ "chisanaensoka",		"小さな演奏家" },									// Little Musician (Crickets)
+	{ "choroli",			"The Trip of Choroli" }, // title also provided in Japanese on the web - 「ちょろりの冒険」
 	{ "christmassmallhouse","Christmastime at Small House" },
 	{ "chuckletime",		"チャックルタイム" },
 	{ "chuteng",			"中天" },
@@ -844,12 +846,14 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "henachoco02",		"サイテイバード" },								// Saitei Birds
 	{ "henachoco03",		"難しい本を読むと眠くなる" },						// "Reading a Difficult Book Makes Me Sleepy"
 	{ "henachoco04",		"あの素晴らしい弁当を2度3度" },								// That Wonderful Bento 2 or 3 Times
+	{ "henachoco04r",		"あの素晴らしいラメンスペシャル" },								// That Wonderful Ramen Special
 	{ "henachoco05",		"野犬ロデム" },								// Rodem the Wild
 	{ "henachoco06",		"蒸し蒸しチキンそり旅行" },								// Steamed Chicken Sled Trip
 	{ "henachoco07",		"うそつきと私" },								// Liar and Me
 	{ "henachoco08",		"おませなおませな屋台大作戦" },								// Omasena Omasena Stall Strategy
 	{ "henachoco09",		"ニセミジンコのうそひみつ" },								// The Secret Lie of Nisemijinko
 	{ "henachoco11",		"スロプロウエスタン" }, // Slowpro Western
+	{ "henachococd",		"ギャラクレヤン'75 オレニモインゼイクレヤン" }, // Galakureyan'75 Inzeikureyan
 	{ "henachocoexpo",		"イタチョコの野望" }, // Itachoco's Ambition
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
@@ -1009,6 +1013,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "inuchanmovieparody",	"デジタルまんが いぬちゃん ナチュラルボーンクラーズ" }, // Digital Manga Inuchan: Natural Born Killers
 	{ "ioshow",				"iós How To Game" },
 	{ "japanart04",			"Japan Art Today 04" },
+	{ "japanart07",			"Japan Art Today 07 村上隆「ロマンスの夕べ」展" }, // Japan Art Today 07: Takashi Murakami - "Romantic Evening" Exhibition
 	{ "jinseiproresu",		"人生プロレス" }, // Life Pro Wrestling
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "llla",				"Live Love Life AIDS" },
@@ -2034,6 +2039,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
 	MACGAME1_l("henachoco03", "", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1579812, Common::JA_JPN, 311),
 
+	MACGAME1_l("henachoco04", "", "bentoben", "f5277c53bacd27936158dd3867e587e2", 2413669, Common::JA_JPN, 311),
+
 	// Windows version is D4
 	MACGAME1("hhouse", "", "The Ultimate Haunted House", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384219, 313),
 	WINDEMO1("hhouse", "1994 Demo", "HAUNTED.EXE", "2b3543a9131a49f665982d26513a84f8", 914491, 310),
@@ -2106,6 +2113,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// The others use different tools.
 	// Original filename is '04-12SHOCHOROTｱﾆﾒ'
 	MACGAME1_l("japanart04", "", "xn--04-12SHOCHOROT-eg31fvj4g", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 452303, Common::JA_JPN, 300),
+
+	// Original filename is ' ダブルクリックして下さい'
+	MACGAME1_l("japanart07", "", "xn-- -17t4bh9eswa8k2a2qnika8408g", "f5277c53bacd27936158dd3867e587e2", 392401, Common::JA_JPN, 310),
+	// Decomposed variant of the above
+	MACGAME1_l("japanart07", "", "xn-- -17t4bh9etpa0pa0nxb5n6jma0692i", "f5277c53bacd27936158dd3867e587e2", 392401, Common::JA_JPN, 310),
 
 	MACGAME1("jman", "",	 "Journeyman.16 MB", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
 	MACGAME1("jman", "v1.2", "Journeyman 16MB",  "2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
@@ -2592,6 +2604,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// American release, French version
 	MACGAME1_l("wallobee", "American rerelease", "Bingi Burra", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384688, Common::FR_FRA, 313),
 
+	MACGAME1("wallobee2", "", "Thai Sun", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384678, 313),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_NO_FLAGS
@@ -2879,8 +2892,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Developed and published by Vantan International, Shibuya, Tokyo
 	// Original filename for game is 新たなる魂の迷宮
 	// Filename for toy box is データToyBox
-	MACGAME1_l("bem", "", "xn--f9jwam9iq41vctmzz3e04s", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484219, Common::JA_JPN, 404),
-	MACGAME1_l("bemtoybox", "", "xn--ToyBox-hu4e9b90a", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484323, Common::JA_JPN, 404),
+	MACGAME1_l("bem", "", "xn--f9jwam9iq41vctmzz3e04s", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483963, Common::JA_JPN, 404),
+	WINGAME1t_l("bem", "", "BEM1.EXE", "5ab66bac290cb2891745d69b5656ed44", 743253, Common::JA_JPN, 404),
+	MACGAME1_l("bemtoybox", "", "xn--ToyBox-hu4e9b90a", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484067, Common::JA_JPN, 404),
+	// Decomposed variant of the above
+	MACGAME1_l("bemtoybox", "", "xn--ToyBox-vm4eyk6b36a", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484067, Common::JA_JPN, 404),
 
 	// Original filename is 'BD-J/Demo'
 	// Developed by ART Sector ONE / Richard M. Coombs
@@ -2888,6 +2904,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("betterd", "", "Better Dead 12 megs", "17efee018a660458fae80de4364021ac", 486717, 404),
 	MACDEMO1_l("betterd", "Demo", "xn--BD-JDemo-na47b", "17efee018a660458fae80de4364021ac", 487275, Common::JA_JPN, 404),
 	WINGAME1_l("betterd", "", "BETTERD.EXE", "e484d23ce2b6750d9e7e4a7b32632f47", 696877, Common::JA_JPN, 404),
+
+	// Bilingual Japanese/English
+	MACGAME1("beyondthetime", "", "Beyond the time", "2c7d0c0d55cbe3f622c7d68cedb671e0", 500421, 404),
+	WINGAME1t("beyondthetime", "", "TIME.EXE", "ed9f213b3bddf7573d40367cf1068b5c", 748793, 404),
 
 	// Demo is from covermount of PC Guide (UK) Feb 1997
 	MACGAME1("bht", "",   "A Brief History Of Time 16megs", "8719de9c083aca942fc0e5c0a127b6dc", 486982, 404),
@@ -3001,6 +3021,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("chinacrisis", "Demo", "Chine Crisis -demo", "b06606b4d174b85d41b265bd366959d6", 288414, Common::JA_JPN, 402),
 
 	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 400),
+
+	MACGAME1_l("choroli", "", "The Trip Of Choroli", "953c7bda965b8ee1ddb01e9120186412", 484021, Common::JA_JPN, 404),
 
 	MACGAME1("chuckaduck", "", "Chuck A Duck", "77f4098988d5386794d1530065f514cd", 304189, 400),
 
@@ -3479,6 +3501,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("henachoco04", "", "BENTO.EXE", "3a42f519df56d4cecac5e0915cf90f33", 2330381, Common::JA_JPN, 400),
 
+	MACGAME1_l("henachoco04r", "", "RamenSpecial", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+
 	MACGAME1_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	WINGAME1_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400),
 
@@ -3498,6 +3522,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("henachoco11", "", "surowest", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
 	MACGAME1_l("henachocoexpo", "", "iTA-YABOU", "3731a1d809be07929da1f5d691ee3c97", 290426, Common::JA_JPN, 402),
+
+	// Original filename is 'オレニモインゼイクレヤンNew'
+	MACGAME1_l("henachococd", "", "xn--New-qi4ba8azb4g2fxj0a3gg8gf", "ace16ae334528bef72c8a232539b4952", 292201, Common::JA_JPN, 402),
+	// Decomposed variant of the above
+	MACGAME1_l("henachococd", "", "xn--New-hh4b3bb3b5b1g6gnk3a0hh4hg", "ace16ae334528bef72c8a232539b4952", 292201, Common::JA_JPN, 402),
+	WINGAME1t_l("henachococd", "", "INKURE.EXE", "0eeb6c11f37605f7e506eab7624cc193", 19324531, Common::JA_JPN, 404),
 
 	// Mac version is D3
 	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 400),
@@ -4897,6 +4927,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("cezanne", "", "CEZANNE", "8e171256e4811dc976720da230634d87", 705689, 500),
 	WINGAME1("cezanne", "", "CEZWIN95.EXE", "3460ad87d2ba57104e2810a77b53c220", 2763107, 500),
+
+	WINGAME1t_l("choroli", "", "The trip of choroli.exe", "de072eb89068861c64d8abf08b70d29d", 4452460, Common::JA_JPN, 501),
 
 	MACDEMO1_l("christmassmallhouse", "Demo 1", "Demo Xmas",    "552992fb31c736ca67ffd403096596d6", 719604, Common::JA_JPN, 500),
 	WINDEMO1t_l("christmassmallhouse", "Demo 1", "DEMOXMAS.EXE",    "e64f9a6a2a78de2ed6e73498237f422b", 1411640, Common::JA_JPN, 501),
