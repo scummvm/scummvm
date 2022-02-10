@@ -28,7 +28,6 @@ namespace Rooms {
 class Room21 {
 private:
 	static void init_spinne();
-	static void e_streifen();
 	static void setup_func();
 	static void chewy_kolli();
 	static void restart_spinne2();
