@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-08 12:31+0000\n"
-"PO-Revision-Date: 2022-02-10 16:26+0000\n"
+"PO-Revision-Date: 2022-02-10 16:37+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7120,11 +7120,11 @@ msgstr "Лёт уніз направа"
 
 #: engines/scumm/input.cpp:574
 msgid "Snap scroll on"
-msgstr ""
+msgstr "Прагортваньне скокамі далучана"
 
 #: engines/scumm/input.cpp:576
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Прагортваньне скокамі адлучана"
 
 #: engines/scumm/input.cpp:589
 msgid "Music volume: "
@@ -7834,12 +7834,12 @@ msgstr "Замяніць шрыфты гульні на рэндэрныя шр�
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:128
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Камэра рухаецца за Сайленсэрам"
 
 #: engines/ultima/detection.cpp:129
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "Камэра сочыць за рухамі гульца, а не скокае па зададзеным пазыцыям."
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
