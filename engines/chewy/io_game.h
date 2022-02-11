@@ -71,7 +71,6 @@ namespace Chewy {
 #define DOPPEL_KLICK 0.5
 
 class io_game {
-
 public:
 	io_game(McgaGraphics *out, InputMgr *in, cursor *curp);
 	~io_game();
@@ -96,21 +95,19 @@ private:
 	void plot_dir_liste(int16 cur_y, int16 start);
 	void schalter_aus();
 	int16 get_savegame_files();
-	void get_switch_code();
-
 	void itoa(int N, char *str, int base);
 
-	McgaGraphics *out;
-	InputMgr *in;
-	cursor *cur;
-	iog_init *io;
-	long dklick_start, dklick_end;
-	kb_info *kbinfo;
-	maus_info *minfo;
-	in_zeiger *inzeig;
-	int16 scr_width;
-	float d_klick;
-	int16 switch_code;
+	McgaGraphics *_out;
+	InputMgr *_in;
+	cursor *_cur;
+	iog_init *_io;
+	uint32 _dblClickStart, _dblClickEnd;
+	kb_info *_kbinfo;
+	maus_info *_minfo;
+	in_zeiger *_inzeig;
+	int16 _scrWidth;
+	float _dblClick;
+	int16 _switchCode;
 	char _fileFind[20][USER_NAME + 4];
 };
 
