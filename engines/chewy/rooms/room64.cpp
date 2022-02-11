@@ -63,7 +63,7 @@ int16 Room64::cut_sev(int16 frame) {
 	const int16 x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
 	const int16 y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
 	
-	calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->room_info->ZoomFak, (int16)room->room_info->ZoomFak, &spieler_vector[P_CHEWY]);
+	calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->_roomInfo->ZoomFak, (int16)room->_roomInfo->ZoomFak, &spieler_vector[P_CHEWY]);
 	out->scale_set(chewy->image[spr_nr], x, y, spieler_vector[P_CHEWY].Xzoom, spieler_vector[P_CHEWY].Yzoom, scr_width);
 	return 0;
 }

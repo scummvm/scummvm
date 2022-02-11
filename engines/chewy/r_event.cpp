@@ -93,7 +93,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 }
 
 void timer_action(int16 t_nr) {
-	int16 ani_nr = t_nr - room->room_timer.TimerStart;
+	int16 ani_nr = t_nr - room->_roomTimer.TimerStart;
 	bool default_flag = false;
 
 	if (g_engine->_sound->isSpeechActive())
@@ -124,7 +124,7 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && flags.AutoAniPlay == false) {
-		det->start_detail(room->room_timer.ObjNr[ani_nr], 1, ANI_VOR);
+		det->start_detail(room->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
 		uhr->reset_timer(t_nr, 0);
 	}
 
@@ -324,8 +324,8 @@ void enter_room(int16 eib_nr) {
 
 	flags.ZoomMov = false;
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)room->room_info->ZoomFak;
-	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->room_info->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)room->_roomInfo->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->_roomInfo->ZoomFak;
 
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;

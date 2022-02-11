@@ -542,7 +542,7 @@ static void showWalkAreas() {
 	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
 		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
 			int idx = ged->ged_idx(xp, yp,
-				room->GedXAnz[room_blk.AkAblage],
+				room->_gedXAnz[room_blk.AkAblage],
 				ged_mem[room_blk.AkAblage]);
 
 			if (idx) {
@@ -625,10 +625,10 @@ void set_up_screen(SetupScreenMode mode) {
 						          spieler_mi[P_CHEWY].HotX;
 						gpkt.Sy = spieler_vector[P_CHEWY].Xypos[1] +
 						          spieler_mi[P_CHEWY].HotY;
-						gpkt.Breite = room->GedXAnz[room_blk.AkAblage];
-						gpkt.Hoehe = room->GedYAnz[room_blk.AkAblage];
+						gpkt.Breite = room->_gedXAnz[room_blk.AkAblage];
+						gpkt.Hoehe = room->_gedYAnz[room_blk.AkAblage];
 						gpkt.Mem = ged_mem[room_blk.AkAblage];
-						gpkt.Ebenen = room->GedInfo[room_blk.AkAblage].Ebenen;
+						gpkt.Ebenen = room->_gedInfo[room_blk.AkAblage].Ebenen;
 						gpkt.AkMovEbene = _G(ged_mov_ebene);
 						mov->goto_xy(&gpkt);
 						spieler_mi[P_CHEWY].XyzStart[0] = spieler_vector[P_CHEWY].Xypos[0];
@@ -650,7 +650,7 @@ void set_up_screen(SetupScreenMode mode) {
 			int16 idx = ged->ged_idx(
 				spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
 				spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
-				room->GedXAnz[room_blk.AkAblage],
+				room->_gedXAnz[room_blk.AkAblage],
 				ged_mem[room_blk.AkAblage]);
 			check_shad(idx, 0);
 		} else {
@@ -1256,10 +1256,10 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 			          spieler_mi[p_nr].HotMovY + spieler_mi[p_nr].HotY;
 			gpkt.Sx = spieler_vector[p_nr].Xypos[0] + spieler_mi[p_nr].HotX;
 			gpkt.Sy = spieler_vector[p_nr].Xypos[1] + spieler_mi[p_nr].HotY;
-			gpkt.Breite = room->GedXAnz[room_blk.AkAblage];
-			gpkt.Hoehe = room->GedYAnz[room_blk.AkAblage];
+			gpkt.Breite = room->_gedXAnz[room_blk.AkAblage];
+			gpkt.Hoehe = room->_gedYAnz[room_blk.AkAblage];
 			gpkt.Mem = ged_mem[room_blk.AkAblage];
-			gpkt.Ebenen = room->GedInfo[room_blk.AkAblage].Ebenen;
+			gpkt.Ebenen = room->_gedInfo[room_blk.AkAblage].Ebenen;
 			gpkt.AkMovEbene = _G(ged_mov_ebene);
 			mov->goto_xy(&gpkt);
 
@@ -1694,8 +1694,8 @@ int16 calc_mouse_mov_obj(int16 *auto_nr) {
 
 void calc_ani_timer() {
 	int16 i;
-	for (i = room->room_timer.TimerStart;
-	        i < room->room_timer.TimerStart + room->room_timer.TimerAnz; i++) {
+	for (i = room->_roomTimer.TimerStart;
+	        i < room->_roomTimer.TimerStart + room->_roomTimer.TimerAnz; i++) {
 		if (ani_timer[i].TimeFlag)
 			timer_action(i);
 	}
@@ -1847,7 +1847,7 @@ void calc_ausgang(int16 x, int16 y) {
 
 				u_idx = ged->ged_idx(spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
 				                      spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
-				                      room->GedXAnz[room_blk.AkAblage],
+				                      room->_gedXAnz[room_blk.AkAblage],
 				                      ged_mem[room_blk.AkAblage]);
 				check_shad(u_idx, 0);
 				set_person_spr(Rdi->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
