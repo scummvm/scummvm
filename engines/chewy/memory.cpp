@@ -28,9 +28,11 @@ namespace Chewy {
 
 extern int16 modul;
 extern int16 fcode;
+
 memory::memory() {
-	file = nullptr;
+	file = new Data();
 }
+
 memory::~memory() {
 	delete (file);
 }
