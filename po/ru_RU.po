@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-11 01:08+0000\n"
+"POT-Creation-Date: 2022-02-11 02:51+0000\n"
 "PO-Revision-Date: 2022-01-29 20:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -169,7 +169,7 @@ msgstr ""
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
-#: engines/groovie/script.cpp:616 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:617 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
 #: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
@@ -2469,8 +2469,8 @@ msgstr "~В~ главное меню"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:800
-#: engines/groovie/script.cpp:2110 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:803
+#: engines/groovie/script.cpp:2133 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/pegasus/pegasus.cpp:402
@@ -2488,8 +2488,8 @@ msgstr "Сохранить игру:"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:795
-#: engines/groovie/script.cpp:800 engines/groovie/script.cpp:2110
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:798
+#: engines/groovie/script.cpp:803 engines/groovie/script.cpp:2133
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4119,8 +4119,8 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:777
-#: engines/groovie/script.cpp:812 engines/groovie/script.cpp:2097
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
+#: engines/groovie/script.cpp:815 engines/groovie/script.cpp:2120
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4137,9 +4137,9 @@ msgstr "Восстановить игру:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:777
-#: engines/groovie/script.cpp:795 engines/groovie/script.cpp:812
-#: engines/groovie/script.cpp:2097 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
+#: engines/groovie/script.cpp:798 engines/groovie/script.cpp:815
+#: engines/groovie/script.cpp:2120 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -5102,11 +5102,11 @@ msgstr ""
 msgid "GroovieV2 support is not compiled in"
 msgstr "Поддержка для версии GroovieV2 не скомпилирована"
 
-#: engines/groovie/script.cpp:616
+#: engines/groovie/script.cpp:617
 msgid "Failed to save game"
 msgstr "Не удалось сохранить игру"
 
-#: engines/groovie/script.cpp:795 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:798 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr "Вы хотите сохранить либо загрузить игру?"
 
