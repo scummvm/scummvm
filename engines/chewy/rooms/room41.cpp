@@ -60,7 +60,7 @@ void Room41::entry() {
 	}
 
 	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
-		atds->set_steuer_bit(269, 1, 1);
+		atds->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (!flags.LoadGame)
