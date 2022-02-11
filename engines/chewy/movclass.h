@@ -126,13 +126,13 @@ private:
 	void get_mov_line();
 	void calc_mov_line_xit(int16 start_feld);
 
-	int16 feld1knoten = 0;
-	int16 plot_delay = 0;
-	AutoGoVar agv;
-	MovLineExit mle;
-	GotoMovLine gml;
-	GotoPkt *gpkt = nullptr;
-	int16 vec_tbl[4];
+	int16 _feld1knoten = 0;
+	int16 _plotDelay = 0;
+	AutoGoVar _agv;
+	MovLineExit _mle;
+	GotoMovLine _gml;
+	GotoPkt *_gpkt = nullptr;
+	int16 _vecTbl[4];
 };
 
 } // namespace Chewy
