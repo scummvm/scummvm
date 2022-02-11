@@ -58,15 +58,10 @@ namespace Chewy {
 #define SPLIT_LEFT 2
 
 #define ATDS_END_ZEILE 0
-
 #define ATDS_END_BLOCK 0x0b
-
 #define ATDS_END_EINTRAG 0x0c
-
 #define ATDS_END_TEXT 0x0d
-
 #define ATDS_END 0x0e
-
 #define BLOCKENDE 0x0f
 
 #define MAX_ATS_ROOM 100
@@ -91,9 +86,7 @@ namespace Chewy {
 #define ADS_STACK_SIZE 50
 
 #define ADS_EXIT_BIT 1
-
 #define ADS_SHOW_BIT 2
-
 #define ADS_RESTART_BIT 4
 
 struct AdsDiaHeaders {
@@ -311,40 +304,40 @@ public:
 	int16 calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode);
 	int16 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
-		atdsv._eventsEnabled = nr;
+		_atdsv._eventsEnabled = nr;
 	}
 
 private:
 	int16 get_delay(int16 txt_len);
 
-	Stream *atdshandle[MAX_HANDLE] = { nullptr };
-	char *atdsmem[MAX_HANDLE] = { nullptr };
-	int16 atdspooloff[MAX_HANDLE] = { 0 };
-	char *atsmem = nullptr;
-	uint8 *ats_sheader = nullptr;
-	uint8 *ats_st_header[4];
-	char *atds_id_ptr = nullptr;
-	AadVar aadv;
-	AtsVar atsv;
-	AdsVar adsv;
-	AtdsVar atdsv;
-	char *e_ptr[ADS_MAX_BL_EIN] = { nullptr };
-	int16 e_nr[ADS_MAX_BL_EIN] = { 0 };
-	AdsBlock *ads_block = nullptr;
-	AdsNextBlk adsnb;
-	uint8 ads_stack[ADS_STACK_SIZE] = { 0 };
-	int16 ads_stack_ptr;
-	SplitStringRet ssret;
-	SplitStringRet *ssr = nullptr;
-	SplitStringInit ssi[AAD_MAX_PERSON];
-	SplitStringInit ats_ssi;
+	Stream *_atdshandle[MAX_HANDLE] = { nullptr };
+	char *_atdsmem[MAX_HANDLE] = { nullptr };
+	int16 _atdspooloff[MAX_HANDLE] = { 0 };
+	char *_atsmem = nullptr;
+	uint8 *_ats_sheader = nullptr;
+	uint8 *_ats_st_header[4];
+	char *_atds_id_ptr = nullptr;
+	AadVar _aadv;
+	AtsVar _atsv;
+	AdsVar _adsv;
+	AtdsVar _atdsv;
+	char *_ePtr[ADS_MAX_BL_EIN] = { nullptr };
+	int16 _eNr[ADS_MAX_BL_EIN] = { 0 };
+	AdsBlock *_adsBlock = nullptr;
+	AdsNextBlk _adsnb;
+	uint8 _adsStack[ADS_STACK_SIZE] = { 0 };
+	int16 _adsStackPtr;
+	SplitStringRet _ssret;
+	SplitStringRet *_ssr = nullptr;
+	SplitStringInit _ssi[AAD_MAX_PERSON];
+	SplitStringInit _atsSsi;
 
-	char *split_ptr[MAX_STR_SPLIT] = { nullptr };
-	int16 split_x[MAX_STR_SPLIT] = { 0 };
-	int16 inv_block_nr;
-	char *inv_use_mem = nullptr;
-	int16 tmp_delay;
-	in_zeiger *inzeig = nullptr;
+	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
+	int16 _splitX[MAX_STR_SPLIT] = { 0 };
+	int16 _invBlockNr;
+	char *_invUseMem = nullptr;
+	int16 _tmpDelay;
+	in_zeiger *_inzeig = nullptr;
 	bool _hasSpeech = false;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
