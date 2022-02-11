@@ -265,19 +265,19 @@ private:
 	void load_taf_ani_sprite(int16 nr);
 
 	void remove_unused_samples();
-	room_detail_info rdi;
+	room_detail_info _rdi;
 #ifdef DETEDIT
 	room_detail_info rdi_shadow;
 #endif
-	RdiDateiHeader rdi_datei_header;
-	SprInfo spr_info;
+	RdiDateiHeader _rdi_datei_header;
+	SprInfo _sprInfo;
 
-	int16 global_delay;
-	int16 ani_freezeflag;
-	int16 fulltaf;
-	char tafname[80];
-	byte *taf_load_buffer;
-	int16 direct_taf_ani;
+	int16 _globalDelay = 0;
+	int16 _aniFreezeflag = 0;
+	int16 _fullTaf = 0;
+	char _tafName[80];
+	byte *_tafLoadBuffer = nullptr;
+	int16 _directTafAni = 0;
 };
 
 } // namespace Chewy
