@@ -31,9 +31,6 @@ namespace Chewy {
 #define MENU_IOMENU 4
 #define MENU_MAIN 5
 
-extern int16 tmp_menu;
-extern int16 show_invent_menu;
-
 } // namespace Chewy
 
 #endif
