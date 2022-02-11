@@ -90,7 +90,7 @@ void sprite_engine() {
 			break;
 
 		case ZOBJ_INVENTAR:
-			out->sprite_set(inv_spr[nr],
+			_G(out)->sprite_set(inv_spr[nr],
 			                 _G(spieler).room_m_obj[nr].X - _G(spieler).scrollx,
 			                 _G(spieler).room_m_obj[nr].Y - _G(spieler).scrolly, 0);
 			break;
@@ -104,7 +104,7 @@ void sprite_engine() {
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->_roomInfo->ZoomFak,
 					          (int16)room->_roomInfo->ZoomFak, &spieler_vector[P_CHEWY]);
 
-					out->scale_set(chewy->image[spr_nr], x, y,
+					_G(out)->scale_set(chewy->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
 					                scr_width);
@@ -119,7 +119,7 @@ void sprite_engine() {
 					          (int16)room->_roomInfo->ZoomFak,
 					          &spieler_vector[P_CHEWY]);
 
-					out->scale_set(spz_tinfo->image[spr_nr], x, y,
+					_G(out)->scale_set(spz_tinfo->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
 					                scr_width);
@@ -149,14 +149,14 @@ void sprite_engine() {
 				          _G(spieler).ZoomXy[p_nr][0],
 				          _G(spieler).ZoomXy[p_nr][1],
 				          &spieler_vector[p_nr]);
-				out->scale_set(ts_info->image[spr_nr], x, y,
+				_G(out)->scale_set(ts_info->image[spr_nr], x, y,
 				                spieler_vector[p_nr].Xzoom,
 				                spieler_vector[p_nr].Yzoom,
 				                scr_width);
 			}
 			break;
 		case ZOBJ_PROGANI:
-			out->sprite_set(spr_info[nr].Image,
+			_G(out)->sprite_set(spr_info[nr].Image,
 			                 spr_info[nr].X - _G(spieler).scrollx,
 			                 spr_info[nr].Y - _G(spieler).scrolly, 0);
 			break;
@@ -169,7 +169,7 @@ void sprite_engine() {
 			          mov_phasen[nr].ZoomFak,
 			          mov_phasen[nr].ZoomFak,
 			          &auto_mov_vector[nr]);
-			out->scale_set(room_blk.DetImage[spr_nr],
+			_G(out)->scale_set(room_blk.DetImage[spr_nr],
 			                auto_mov_vector[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx,
 			                auto_mov_vector[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly,
 			                auto_mov_vector[nr].Xzoom,
@@ -1025,7 +1025,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 			if (spz_tinfo)
 				free((char *)spz_tinfo);
 			spz_akt_id = ani_id;
-			spz_tinfo = mem->taf_seq_adr(spr_start, spr_anz);
+			spz_tinfo = _G(mem)->taf_seq_adr(spr_start, spr_anz);
 		}
 
 		for (i = 0; i < spr_anz; i++) {
@@ -1089,7 +1089,7 @@ void load_person_ani(int16 ani_id, int16 p_nr) {
 		PersonAni[p_nr] = ani_id;
 		if (PersonTaf[p_nr])
 			free((char *)PersonTaf[p_nr]);
-		PersonTaf[p_nr] = mem->taf_seq_adr(ani_start, ani_anz);
+		PersonTaf[p_nr] = _G(mem)->taf_seq_adr(ani_start, ani_anz);
 		spieler_vector[p_nr].PhNr = 0;
 		spieler_vector[p_nr].PhAnz = ani_anz;
 	}

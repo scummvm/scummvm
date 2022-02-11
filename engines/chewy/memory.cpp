@@ -21,13 +21,11 @@
 
 #include "common/memstream.h"
 #include "chewy/memory.h"
+#include "chewy/global.h"
 #include "chewy/types.h"
 #include "chewy/resource.h"
 
 namespace Chewy {
-
-extern int16 modul;
-extern int16 fcode;
 
 memory::memory() {
 	file = new Data();
@@ -90,7 +88,7 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 
 				rs->seek(ptr, SEEK_SET);
 				size = 0;
-				for (i = 0; i < image_anz && !modul; i++) {
+				for (i = 0; i < image_anz && !_G(modul); i++) {
 					if (iheader.load(rs)) {
 						size += iheader.width * iheader.height;
 						rs->seek(iheader.next, SEEK_SET);
@@ -99,13 +97,13 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 						error("taf_seq_adr error");
 					}
 				}
-				if (!modul) {
+				if (!_G(modul)) {
 					size += image_anz * sizeof(byte *);
 					size += image_anz * sizeof(char *);
 					size += ((uint32)sizeof(taf_seq_info));
 					tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
 
-					if (!modul) {
+					if (!_G(modul)) {
 						ts_info = (taf_seq_info *)tmp1;
 						ts_info->anzahl = image_anz;
 						ts_info->image = (byte **)(tmp1 + sizeof(taf_seq_info));
@@ -114,7 +112,7 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 						sp_ptr = tmp1 + (((uint32)sizeof(taf_seq_info))
 							+ (image_anz * sizeof(char *)));
 
-						for (i = 0; i < image_anz && !modul; i++) {
+						for (i = 0; i < image_anz && !_G(modul); i++) {
 							if (iheader.load(rs)) {
 								ts_info->image[i] = sp_ptr;
 								abmess = (int16 *)sp_ptr;
@@ -132,7 +130,7 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 								error("taf_seq_adr error");
 							}
 						}
-						if (!modul) {
+						if (!_G(modul)) {
 							rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
 
 							if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
@@ -143,7 +141,7 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 									*p = rs->readSint16LE();
 							}
 						}
-						if (modul)
+						if (_G(modul))
 							free(tmp1);
 					}
 				}
@@ -166,17 +164,17 @@ void memory::tff_adr(const char *filename, byte **speicher) {
 	uint32 size;
 	size = file->size(filename, TFFDATEI);
 
-	if (!modul) {
+	if (!_G(modul)) {
 		*speicher = (byte *)MALLOC(size);
 		if (*speicher) {
 			file->load_tff(filename, *speicher);
-			if (modul) {
+			if (_G(modul)) {
 				free(*speicher);
 				*speicher = 0;
 			}
 		} else {
-			fcode = NOSPEICHER;
-			modul = SPEICHER;
+			_G(fcode) = NOSPEICHER;
+			_G(modul) = SPEICHER;
 		}
 	}
 }
@@ -187,12 +185,12 @@ byte *memory::void_adr(const char *filename) {
 	byte *ptr = 0;
 	size = file->size(filename, 200);
 
-	if (!modul) {
+	if (!_G(modul)) {
 		ptr = (byte *)MALLOC(size * sizeof(uint32));
-		if (!modul) {
+		if (!_G(modul)) {
 			*(uint32 *)ptr = size;
 			file->void_load(filename, ptr + sizeof(uint32), size);
-			if (modul)
+			if (_G(modul))
 				free(ptr);
 		}
 	}

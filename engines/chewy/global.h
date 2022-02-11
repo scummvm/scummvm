@@ -45,6 +45,14 @@ extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
 extern const int16 ANI_INVENT_END[3];
 extern const int16 SPZ_ANI_PH[][2];
 
+class ChewyFont;
+class cursor;
+class FontMgr;
+class InputMgr;
+class io_game;
+class McgaGraphics;
+class memory;
+class SoundPlayer;
 
 class Globals {
 	class CurrentScreen : public Graphics::Surface {
@@ -110,6 +118,27 @@ public:
 	int16 _r65tmp_ho_x = 0;
 	int16 _r65tmp_ho_y = 0;
 	int16 _r68HohesC = 0;
+
+	// main.cpp
+	int16 _menu_flag = 0;
+	bool _inv_disp_ok = 0;
+	int16 _txt_aus_click = 0;
+	int16 _txt_nummer = 0;
+	int16 _tmp_menu_item = 0;
+	int16 _cur_ausgang_flag = 0;
+	int16 _room_start_nr = 0;
+	int16 _TmpFrameSpeed = 0;
+	InputMgr *_in = nullptr;
+	memory *_mem = nullptr;
+	io_game *_iog = nullptr;
+	McgaGraphics *_out = nullptr;
+	cursor *_cur = nullptr;
+	SoundPlayer *_sndPlayer = nullptr;
+	ChewyFont *_font6 = nullptr;
+	ChewyFont *_font8 = nullptr;
+	FontMgr *_fontMgr = nullptr;
+	int16 _modul = 0;
+	int16 _fcode = 0;
 
 	// mcga_graphics.cpp
 	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
@@ -237,7 +266,6 @@ extern effect *fx;
 extern atdsys *atds;
 extern flic *flc;
 extern movclass *mov;
-extern SoundPlayer *sndPlayer;
 
 extern char backged[];
 extern AutoMov auto_mov[MAX_AUTO_MOV];

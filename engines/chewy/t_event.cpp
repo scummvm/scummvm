@@ -2179,15 +2179,15 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrolly = 0;
 
 		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0, GBOOK);
-		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
-		out->back2screen(workpage);
+		_G(out)->setze_zeiger(workptr);
+		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->back2screen(workpage);
 
-		while (in->get_switch_code() != ESC) {
+		while (_G(in)->get_switch_code() != ESC) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
-		while (in->get_switch_code() != 0) {
+		while (_G(in)->get_switch_code() != 0) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}

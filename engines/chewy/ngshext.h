@@ -39,19 +39,9 @@ namespace Chewy {
 
 class sblaster;
 
-extern McgaGraphics *out;
-extern memory *mem;
-extern InputMgr *in;
 extern sblaster *snd;
-extern io_game *iog;
-extern cursor *cur;
-#ifdef AIL
-extern SoundPlayer *sndPlayer;
-#endif
 
 extern uint16 _stklen;
-extern int16 modul;
-extern int16 fcode;
 
 } // namespace Chewy
 

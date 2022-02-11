@@ -585,7 +585,7 @@ enum SetupScreenMode {
 #define AUSGANG_RECHTS 2
 #define AUSGANG_OBEN 3
 #define AUSGANG_UNTEN 4
-#define WAIT_TASTE_LOS while (in->get_switch_code() != 0 \
+#define WAIT_TASTE_LOS while (_G(in)->get_switch_code() != 0 \
 	&& !SHOULD_QUIT) { g_events->update(); }
 
 #define FILEMENUE 1

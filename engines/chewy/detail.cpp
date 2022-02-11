@@ -206,10 +206,10 @@ void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 		strcpy(_tafName, fname_);
 		if (!load_flag) {
 			_rdi.dptr = init_taf_tbl(fname_);
-			if (!modul)
+			if (!_G(modul))
 				load_taf_tbl(_rdi.dptr);
 		} else {
-			_rdi.dptr = mem->taf_adr(fname_);
+			_rdi.dptr = _G(mem)->taf_adr(fname_);
 			_fullTaf = true;
 		}
 	} else {
@@ -413,7 +413,7 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 	if (end > MAXDETAILS)
 		end = MAXDETAILS - 1;
 
-	for (int16 i = start; (i <= end) && (!modul); i++) {
+	for (int16 i = start; (i <= end) && (!_G(modul)); i++) {
 		ani_detail_info *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
@@ -426,10 +426,10 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 			int16 y = adiptr->y + ky - scry;
 			if (adiptr->load_flag == 1) {
 				load_taf_ani_sprite(sprnr);
-				if (!modul)
-					out->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
+				if (!_G(modul))
+					_G(out)->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
 			} else
-				out->scale_set(_rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
+				_G(out)->scale_set(_rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
 
 			Sound *sound = g_engine->_sound;
 
@@ -505,7 +505,7 @@ void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 			int16 x = _rdi.Sinfo[i].x - scrx;
 			int16 y = _rdi.Sinfo[i].y - scry;
 			byte *simage = _rdi.dptr->image[_rdi.Sinfo[i].SprNr];
-			out->sprite_set(simage, x, y, 0);
+			_G(out)->sprite_set(simage, x, y, 0);
 		}
 	}
 }
@@ -588,7 +588,7 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 	_sprInfo.X1 = _sprInfo.X + Xy[0];
 	_sprInfo.Y1 = _sprInfo.Y + Xy[1];
 	if (mode)
-		out->sprite_set(_sprInfo.Image, _sprInfo.X, _sprInfo.Y, 0);
+		_G(out)->sprite_set(_sprInfo.Image, _sprInfo.X, _sprInfo.Y, 0);
 
 	Sound *sound = g_engine->_sound;
 
@@ -675,7 +675,7 @@ void detail::clear_detail_sound(int16 nr) {
 void detail::disable_room_sound() {
 	for (int16 i = 0; i < MAXDETAILS; i++)
 		disable_detail_sound(i);
-	sndPlayer->endSound();
+	_G(sndPlayer)->endSound();
 }
 
 void detail::enable_room_sound() {

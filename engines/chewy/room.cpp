@@ -114,15 +114,15 @@ void Room::close_handle(int16 mode) {
 }
 
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
-	modul = 0;
-	fcode = 0;
+	_G(modul) = 0;
+	_G(fcode) = 0;
 
 	clear_prog_ani();
 	det->load_rdi(Rb->DetFile, room_nr);
 
 	if (player->SoundSwitch == false)
 		det->disable_room_sound();
-	if (!modul) {
+	if (!_G(modul)) {
 		room_detail_info *Rdi_ = det->get_room_detail_info();
 		_roomInfo = &Rdi_->Ri;
 		if (_roomInfo->TafLoad != 255) {
@@ -134,23 +134,23 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 			Rb->DetImage = Rb->Fti->image;
 			Rb->DetKorrekt = Rb->Fti->korrektur;
 		}
-		if (!modul) {
+		if (!_G(modul)) {
 			obj->calc_all_static_detail();
 			load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
 			set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 			calc_invent(Rb, player);
 
-			if (!modul) {
+			if (!_G(modul)) {
 				del_timer_old_room();
 				add_timer_new_room();
 			}
 
-			if (!modul) {
+			if (!_G(modul)) {
 				if (Rb->AtsLoad)
 					atds->load_atds(_roomInfo->RoomNr, ATS_DATEI);
 			}
 
-			if (!modul) {
+			if (!_G(modul)) {
 				if (Rb->AadLoad)
 					atds->load_atds(_roomInfo->RoomNr, AAD_DATEI);
 			}
@@ -226,7 +226,7 @@ void Room::set_ak_pal(RaumBlk *Rb) {
 void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 	byte *tmp_inv_spr[MAX_MOV_OBJ];
 
-	if (!modul) {
+	if (!_G(modul)) {
 		obj->sort();
 		memcpy(tmp_inv_spr, Rb->InvSprAdr, MAX_MOV_OBJ * sizeof(char *));
 		memset(Rb->InvSprAdr, 0, MAX_MOV_OBJ * sizeof(char *));
@@ -305,7 +305,7 @@ void Room::init_ablage() {
 	_ablage[0] = (byte *)MALLOC(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
 	_ablagePal[0] = (byte *)MALLOC(MAX_ABLAGE * 768l);
 	_gedMem[0] = (byte *)MALLOC(MAX_ABLAGE * GED_BLOCK_SIZE);
-	if (!modul) {
+	if (!_G(modul)) {
 		_akAblage = 0;
 		for (int16 i = 0; i < MAX_ABLAGE; i++) {
 			_ablage[i] = _ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
@@ -498,7 +498,7 @@ void load_chewy_taf(int16 taf_nr) {
 		if (fname_ != NULL) {
 			_G(spieler).ChewyAni = taf_nr;
 			AkChewyTaf = taf_nr;
-			chewy = mem->taf_adr(fname_);
+			chewy = _G(mem)->taf_adr(fname_);
 			chewy_kor = chewy->korrektur;
 		}
 	}

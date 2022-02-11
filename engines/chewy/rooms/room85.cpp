@@ -85,8 +85,8 @@ void Room85::entry(int16 eib_nr) {
 		det->show_static_spr(6);
 		start_aad_wait(474, -1);
 		flic_cut(90, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(91, CFO_MODE);
 		det->hide_static_spr(6);

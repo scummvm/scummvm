@@ -25,6 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/flic.h"
+#include "chewy/global.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -130,7 +131,7 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 			_fadeDelay = 0;
 			_clsFlag = false;
 			_currentFrame = 0;
-			for (uint16 i = 0; (i < _flicHeader.frames) && (!modul) && (ret >= 0); i++) {
+			for (uint16 i = 0; (i < _flicHeader.frames) && (!_G(modul)) && (ret >= 0); i++) {
 				if (!_frameHeader.load(rs)) {
 					error("flic error");
 				} else {
@@ -206,15 +207,15 @@ int16 flic::decode_frame() {
 				break;
 
 			case CLS:
-				out->setze_zeiger(_virtScreen);
-				out->cls();
-				out->setze_zeiger(nullptr);
+				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->cls();
+				_G(out)->setze_zeiger(nullptr);
 
 				update_flag = true;
 				break;
 
 			case UNPRESSED:
-				out->back2back(_loadBuffer, _virtScreen);
+				_G(out)->back2back(_loadBuffer, _virtScreen);
 
 				update_flag = true;
 				break;
@@ -231,13 +232,13 @@ int16 flic::decode_frame() {
 		}
 		if (update_flag != false) {
 			if (_flicUser) {
-				out->setze_zeiger(_virtScreen);
+				_G(out)->setze_zeiger(_virtScreen);
 				action_ret = _flicUser(_currentFrame);
-				out->setze_zeiger(nullptr);
+				_G(out)->setze_zeiger(nullptr);
 			}
-			out->back2screen(_virtScreen - 4);
+			_G(out)->back2screen(_virtScreen - 4);
 			if (_fadeFlag != false) {
-				out->einblenden(_fadePal, _fadeDelay);
+				_G(out)->einblenden(_fadePal, _fadeDelay);
 				_fadeFlag = false;
 			}
 		}
@@ -251,7 +252,7 @@ void flic::col256_chunk(byte *tmp) {
 	tmp += 2;
 
 	if (_clsFlag == true)
-		out->cls();
+		_G(out)->cls();
 	else
 		_clsFlag = true;
 
@@ -260,10 +261,10 @@ void flic::col256_chunk(byte *tmp) {
 		for (int i = 0; i < PALETTE_SIZE; i++)
 			tmp[i] >>= 2;
 		if (_fadeFlag == false)
-			out->set_palette(tmp);
+			_G(out)->set_palette(tmp);
 		else {
 			memset(_fadePal, 0, PALETTE_SIZE);
-			out->set_palette(_fadePal);
+			_G(out)->set_palette(_fadePal);
 			memcpy(_fadePal, tmp, PALETTE_SIZE);
 		}
 	} else {
@@ -275,7 +276,7 @@ void flic::col256_chunk(byte *tmp) {
 				byte r = *tmp++ >> 2;
 				byte g = *tmp++ >> 2;
 				byte b = *tmp++ >> 2;
-				out->raster_col(col, r, g, b);
+				_G(out)->raster_col(col, r, g, b);
 				++col;
 			}
 		}
@@ -287,16 +288,16 @@ void flic::col64_chunk(byte *tmp) {
 	tmp += 2;
 
 	if (_clsFlag == true)
-		out->cls();
+		_G(out)->cls();
 	else
 		_clsFlag = true;
 
 	if (!tmp[1]) {
 		if (_fadeFlag == false)
-			out->set_palette(tmp + 2);
+			_G(out)->set_palette(tmp + 2);
 		else {
 			memset(_fadePal, 0, PALETTE_SIZE);
-			out->set_palette(_fadePal);
+			_G(out)->set_palette(_fadePal);
 			memcpy(_fadePal, tmp + 2, PALETTE_SIZE);
 		}
 	} else {
@@ -308,7 +309,7 @@ void flic::col64_chunk(byte *tmp) {
 				byte r = *tmp++ >> 2;
 				byte g = *tmp++ >> 2;
 				byte b = *tmp++ >> 2;
-				out->raster_col(col, r, g, b);
+				_G(out)->raster_col(col, r, g, b);
 				++col;
 			}
 		}
@@ -390,7 +391,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 				_fadeDelay = 0;
 				_currentFrame = 0;
 
-				for (uint16 i = 0; (i < _customHeader.frames) && (!modul) && (ret >= 0); i++) {
+				for (uint16 i = 0; (i < _customHeader.frames) && (!_G(modul)) && (ret >= 0); i++) {
 					if (!_customFrame.load(rs)) {
 						error("flic error");
 					} else {
@@ -421,8 +422,8 @@ int16 flic::custom_play(CustomInfo *ci) {
 								dynamic_cast<Common::SeekableReadStream *>(ci->Handle));
 
 						} else {
-							out->raster_col(255, 63, 63, 63);
-							out->printxy(0, 0, 255, 0, 0, "Unknown Frame Type");
+							_G(out)->raster_col(255, 63, 63, 63);
+							_G(out)->printxy(0, 0, 255, 0, 0, "Unknown Frame Type");
 							taste;
 						}
 					}
@@ -440,7 +441,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
 	tmf_header *th = (tmf_header *)_music;
 
-	for (uint16 i = 0; (i < _customFrame.chunks) && (!modul); i++) {
+	for (uint16 i = 0; (i < _customFrame.chunks) && (!_G(modul)); i++) {
 		ChunkHead chead;
 		if (!chead.load(handle)) {
 			error("flic error");
@@ -455,7 +456,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
 			} else
-				out->ausblenden(para[0]);
+				_G(out)->ausblenden(para[0]);
 			break;
 
 		case LOAD_MUSIC:
@@ -495,7 +496,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->playMod(th);
 #else
-				sndPlayer->playMod(th);
+				_G(sndPlayer)->playMod(th);
 #endif
 
 			break;
@@ -512,7 +513,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 			snd->stopMod();
 #else
-			sndPlayer->stopMod();
+			_G(sndPlayer)->stopMod();
 #endif
 			break;
 
@@ -522,7 +523,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->getMusicInfo(&mi);
 #else
-				sndPlayer->getMusicInfo(&mi);
+				_G(sndPlayer)->getMusicInfo(&mi);
 #endif
 			} while (mi.musik_playing != 0);
 			}
@@ -535,7 +536,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->setMusicMasterVol(para[0]);
 #else
-				sndPlayer->setMusicMasterVol(para[0]);
+				_G(sndPlayer)->setMusicMasterVol(para[0]);
 #endif
 
 			break;
@@ -595,7 +596,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 #ifndef AIL
 				snd->fadeOut(para[0]);
 #else
-				sndPlayer->fadeOut(para[0]);
+				_G(sndPlayer)->fadeOut(para[0]);
 #endif
 			break;
 
@@ -611,14 +612,14 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case CLEAR_SCREEN:
-			out->setze_zeiger(_virtScreen);
-			out->cls();
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(_virtScreen);
+			_G(out)->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			break;
 
 		default:
-			out->printxy(0, 10, 255, 0, 0, "Unknown Chunk %d ", chead.type);
+			_G(out)->printxy(0, 10, 255, 0, 0, "Unknown Chunk %d ", chead.type);
 			break;
 		}
 	}
@@ -661,15 +662,15 @@ int16 flic::decode_cframe() {
 				break;
 
 			case CLS:
-				out->setze_zeiger(_virtScreen);
-				out->cls();
-				out->setze_zeiger(nullptr);
+				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->cls();
+				_G(out)->setze_zeiger(nullptr);
 
 				update_flag = true;
 				break;
 
 			case UNPRESSED:
-				out->back2back(_loadBuffer, _virtScreen);
+				_G(out)->back2back(_loadBuffer, _virtScreen);
 
 				update_flag = true;
 				break;
@@ -678,8 +679,8 @@ int16 flic::decode_cframe() {
 				break;
 
 			default:
-				out->raster_col(255, 63, 63, 63);
-				out->printxy(0, 0, 255, 0, 0, "Unknown CHUNK");
+				_G(out)->raster_col(255, 63, 63, 63);
+				_G(out)->printxy(0, 0, 255, 0, 0, "Unknown CHUNK");
 
 				update_flag = true;
 				break;
@@ -690,16 +691,16 @@ int16 flic::decode_cframe() {
 
 		if (update_flag != false) {
 			if (_customUser) {
-				out->back2back(_virtScreen, _loadBuffer);
-				out->setze_zeiger(_virtScreen);
+				_G(out)->back2back(_virtScreen, _loadBuffer);
+				_G(out)->setze_zeiger(_virtScreen);
 				action_ret = _customUser(_currentFrame);
-				out->setze_zeiger(nullptr);
-				out->back2screen(_virtScreen - 4);
-				out->back2back(_loadBuffer, _virtScreen);
+				_G(out)->setze_zeiger(nullptr);
+				_G(out)->back2screen(_virtScreen - 4);
+				_G(out)->back2back(_loadBuffer, _virtScreen);
 			} else
-				out->back2screen(_virtScreen - 4);
+				_G(out)->back2screen(_virtScreen - 4);
 			if (_fadeFlag != false) {
-				out->einblenden(_fadePal, _fadeDelay);
+				_G(out)->einblenden(_fadePal, _fadeDelay);
 				_fadeFlag = false;
 			}
 		}

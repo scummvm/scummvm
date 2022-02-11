@@ -46,7 +46,7 @@ static const MovLine R13_BORK_MPKT[3] = {
 
 void Room13::entry() {
 	if (!_G(spieler).R12ChewyBork && !_G(spieler).R13BorkOk) {
-		out->cls();
+		_G(out)->cls();
 		flic_cut(FCUT_013, CFO_MODE);
 		set_person_pos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);

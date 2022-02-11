@@ -29,15 +29,10 @@
 
 namespace Chewy {
 
-extern int16 menu_flag;
-extern bool inv_disp_ok;
-extern int16 tmp_menu_item;
-
 void game_main();
 void free_buffers();
 void plot_main_menu();
 void test_menu();
-void shading(int16 new_shad_nr);
 void palcopy(byte *dipal, const byte *sipal, int16 distart,
              int16 sistart, int16 anz);
 short calc_maus_txt(int16 x, int16 y, int16 mode);
@@ -82,10 +77,6 @@ public:
 	void setFont(ChewyFont *font) { _font = font; }
 	ChewyFont *getFont() { return _font; }
 };
-
-extern ChewyFont *_font6;
-extern ChewyFont *_font8;
-extern FontMgr *_fontMgr;
 
 } // namespace Chewy
 

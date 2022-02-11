@@ -51,8 +51,8 @@ void Cinema::execute() {
 	Common::Array<int> cutscenes;
 	getCutscenes(cutscenes);
 
-	out->set_fontadr(font6x8);
-	out->set_vorschub(fvorx6x8, fvory6x8);
+	_G(out)->set_fontadr(font6x8);
+	_G(out)->set_vorschub(fvorx6x8, fvory6x8);
 	atds->load_atds(98, 1);
 
 	room->open_handle(GBOOK, "rb", 0);
@@ -63,8 +63,8 @@ void Cinema::execute() {
 
 	for (bool endLoop = false; !endLoop;) {
 		timer_nr = 0;
-		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+		_G(out)->setze_zeiger(workptr);
+		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
 			// Render cutscene list
@@ -74,18 +74,18 @@ void Cinema::execute() {
 				int yp = i * 10 + 68;
 
 				if (i == selected)
-					out->box_fill(37, yp, 308, yp + 10, 42);
-				out->printxy(40, yp, 14, 300, 0, "%s", csName);
+					_G(out)->box_fill(37, yp, 308, yp + 10, 42);
+				_G(out)->printxy(40, yp, 14, 300, 0, "%s", csName);
 			}
 		} else {
 			// No cutscenes seen yet
 			char *none = atds->ats_get_txt(545, 0, &txt_anz, 1);
-			out->printxy(40, 68, 14, 300, scr_width, none);
+			_G(out)->printxy(40, 68, 14, 300, scr_width, none);
 		}
 
 		if (minfo.button == 1 && !flag) {
 			flag = true;
-			switch (in->maus_vector(minfo.x, minfo.y, CINEMA_TBL, 3)) {
+			switch (_G(in)->maus_vector(minfo.x, minfo.y, CINEMA_TBL, 3)) {
 			case 0:
 				kbinfo.scan_code = Common::KEYCODE_UP;
 				if (!endLoop) {
@@ -160,16 +160,16 @@ void Cinema::execute() {
 
 		case Common::KEYCODE_RETURN:
 			hide_cur();
-			out->cls();
-			out->setze_zeiger(screen0);
+			_G(out)->cls();
+			_G(out)->setze_zeiger(screen0);
 			fx->blende1(workptr, screen0, pal, 150, 0, 0);
 			print_rows(546 + topIndex);
 
 			flc->set_custom_user_function(cut_serv);
 			flic_cut(CINEMA_FLICS[topIndex + selected], CFO_MODE);
 			flc->remove_custom_user_function();
-			out->set_fontadr(font6x8);
-			out->set_vorschub(fvorx6x8, fvory6x8);
+			_G(out)->set_fontadr(font6x8);
+			_G(out)->set_vorschub(fvorx6x8, fvory6x8);
 			show_cur();
 			delay = 0;
 			flag = false;
@@ -185,15 +185,15 @@ void Cinema::execute() {
 		txt_anz = 0;
 
 		if (!txt_anz) {
-			cur->plot_cur();
+			_G(cur)->plot_cur();
 
 			if (flag) {
 				flag = false;
-				out->setze_zeiger(screen0);
+				_G(out)->setze_zeiger(screen0);
 				room->set_ak_pal(&room_blk);
 				fx->blende1(workptr, screen0, pal, 150, 0, 0);
 			} else {
-				out->back2screen(workpage);
+				_G(out)->back2screen(workpage);
 			}
 		}
 
@@ -208,9 +208,9 @@ void Cinema::execute() {
 }
 
 int16 Cinema::cut_serv(int16 frame) {
-	if (in->get_switch_code() == ESC) {
-		sndPlayer->stopMod();
-		sndPlayer->endSound();
+	if (_G(in)->get_switch_code() == ESC) {
+		_G(sndPlayer)->stopMod();
+		_G(sndPlayer)->endSound();
 		return -1;
 
 	} else {

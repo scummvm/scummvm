@@ -196,8 +196,8 @@ int Room82::proc6() {
 
 	if (_G(spieler).flags30_10) {
 		start_aad_wait(450, -1);
-		out->ausblenden(0);
-		out->set_teilpalette(pal, 255, 1);
+		_G(out)->ausblenden(0);
+		_G(out)->set_teilpalette(pal, 255, 1);
 		atds->enableEvents(false);
 		start_aad_wait(598, -1);
 		atds->enableEvents(true);

@@ -106,8 +106,8 @@ void Room97::entry() {
 
 	if (_G(spieler).flags37_8) {
 		hide_cur();
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 
 		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 89;
 		_G(spieler).SVal2 = 0;
@@ -684,7 +684,7 @@ void Room97::sensorAnim() {
 	
 	while (det->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (minfo.button == 1 || in->get_switch_code() == 28) {
+		if (minfo.button == 1 || _G(in)->get_switch_code() == 28) {
 			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}

@@ -93,7 +93,7 @@ atdsys::atdsys() {
 		_ssi[i] = init_ssi;
 	_invBlockNr = -1;
 	_invUseMem = nullptr;
-	_inzeig = in->get_in_zeiger();
+	_inzeig = _G(in)->get_in_zeiger();
 }
 
 atdsys::~atdsys() {
@@ -313,14 +313,14 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
-	if (!modul) {
+	if (!_G(modul)) {
 		if (rs) {
 			_atdshandle[mode] = rs;
 			_atdsmem[mode] = tmp_adr;
 			_atdspooloff[mode] = chunk_start;
 			switch (mode) {
 			case INV_USE_DATEI:
-				mem->file->select_pool_item(rs, _atdspooloff[mode]);
+				_G(mem)->file->select_pool_item(rs, _atdspooloff[mode]);
 				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 				if (!Ch.load(rs)) {
@@ -329,7 +329,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					free(_invUseMem);
 					_invUseMem = (char *)MALLOC(Ch.size + 3l);
 
-					if (!modul) {
+					if (!_G(modul)) {
 						if (Ch.size) {
 							if (!rs->read(_invUseMem, Ch.size)) {
 								error("Error reading from %s", fname_);
@@ -354,7 +354,7 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname_, 0, 20000);
-	if (!modul) {
+	if (!_G(modul)) {
 		Stream *stream = chewy_fopen(fname_, fmode);
 		if (stream) {
 			close_handle(mode);
@@ -397,7 +397,7 @@ void atdsys::close_handle(int16 mode) {
 
 char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr = nullptr;
-	uint32 size = mem->file->get_poolsize(fname_, chunk_start, chunk_anz);
+	uint32 size = _G(mem)->file->get_poolsize(fname_, chunk_start, chunk_anz);
 	if (size) {
 		tmp_adr = (char *)MALLOC(size + 3l);
 	}
@@ -411,7 +411,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdshandle[mode]);
 
 	if (stream && txt_adr) {
-		mem->file->select_pool_item(stream, chunk_nr + _atdspooloff[mode]);
+		_G(mem)->file->select_pool_item(stream, chunk_nr + _atdspooloff[mode]);
 		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!Ch.load(stream)) {
 			error("load_atds error");
@@ -434,7 +434,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 void atdsys::save_ads_header(int16 dia_nr) {
 	ChunkHead Ch;
 	if (_atdshandle[ADH_HANDLE]) {
-		mem->file->select_pool_item(_atdshandle[ADH_HANDLE], dia_nr);
+		_G(mem)->file->select_pool_item(_atdshandle[ADH_HANDLE], dia_nr);
 		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
 			_atdshandle[ADH_HANDLE]);
 
@@ -563,7 +563,7 @@ int16 atdsys::ats_get_status() {
 void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	if (_atsv.Display) {
 		if (_atdsv._eventsEnabled) {
-			switch (in->get_switch_code()) {
+			switch (_G(in)->get_switch_code()) {
 			case ESC:
 			case ENTER:
 			case MAUS_LINKS:
@@ -587,8 +587,8 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 
 		if (_atsv.SilentCount <= 0) {
 			char *tmp_ptr = _atsv.Ptr;
-			out->set_fontadr(_atdsv.Font);
-			out->set_vorschub(_atdsv.Fvorx, 0);
+			_G(out)->set_fontadr(_atdsv.Font);
+			_G(out)->set_vorschub(_atdsv.Fvorx, 0);
 			_atsSsi = _ssi[0];
 			_atsSsi.Str = tmp_ptr;
 			_atsSsi.Fvorx = _atdsv.Fvorx;
@@ -601,19 +601,19 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			_ssr = split_string(&tmp_ssi);
 
 			for (int16 i = 0; i < _ssr->Anz; i++) {
-				out->printxy(_ssr->X[i],
+				_G(out)->printxy(_ssr->X[i],
 				              _ssr->Y + (i * _atsSsi.FHoehe) + 1,
 				              0, 300, 0, _ssr->StrPtr[i]);
-				out->printxy(_ssr->X[i],
+				_G(out)->printxy(_ssr->X[i],
 				              _ssr->Y + (i * _atsSsi.FHoehe) - 1,
 				              0, 300, 0, _ssr->StrPtr[i]);
-				out->printxy(_ssr->X[i] + 1,
+				_G(out)->printxy(_ssr->X[i] + 1,
 				              _ssr->Y + (i * _atsSsi.FHoehe),
 				              0, 300, 0, _ssr->StrPtr[i]);
-				out->printxy(_ssr->X[i] - 1,
+				_G(out)->printxy(_ssr->X[i] - 1,
 				              _ssr->Y + (i * _atsSsi.FHoehe),
 				              0, 300, 0, _ssr->StrPtr[i]);
-				out->printxy(_ssr->X[i],
+				_G(out)->printxy(_ssr->X[i],
 				              _ssr->Y + (i * _atsSsi.FHoehe),
 				              _atsv.Color,
 				              300, 0, _ssr->StrPtr[i]);
@@ -904,7 +904,7 @@ void atdsys::stop_aad() {
 void atdsys::print_aad(int16 scrx, int16 scry) {
 	if (_aadv.Dialog) {
 		if (_atdsv._eventsEnabled) {
-			switch (in->get_switch_code()) {
+			switch (_G(in)->get_switch_code()) {
 			case ESC:
 			case ENTER:
 			case MAUS_LINKS:
@@ -928,8 +928,8 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 
 		if (_aadv.SilentCount <= 0) {
 			char *tmp_ptr = _aadv.Ptr;
-			out->set_fontadr(_atdsv.Font);
-			out->set_vorschub(_atdsv.Fvorx, 0);
+			_G(out)->set_fontadr(_atdsv.Font);
+			_G(out)->set_vorschub(_atdsv.Fvorx, 0);
 			_ssi[_aadv.StrHeader->AkPerson].Str = tmp_ptr;
 			if (_aadv.Person[_aadv.StrHeader->AkPerson].X != -1) {
 				_ssi[_aadv.StrHeader->AkPerson].X = _aadv.Person[_aadv.StrHeader->AkPerson].X - scrx;
@@ -949,19 +949,19 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 			if (_atdsv.Display == DISPLAY_TXT ||
 			        (_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) == -1) {
 				for (int16 i = 0; i < _ssr->Anz; i++) {
-					out->printxy(_ssr->X[i] + 1,
+					_G(out)->printxy(_ssr->X[i] + 1,
 					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
 					              0, 300, 0, _ssr->StrPtr[i]);
-					out->printxy(_ssr->X[i] - 1,
+					_G(out)->printxy(_ssr->X[i] - 1,
 					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
 					              0, 300, 0, _ssr->StrPtr[i]);
-					out->printxy(_ssr->X[i],
+					_G(out)->printxy(_ssr->X[i],
 					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe) + 1,
 					              0, 300, 0, _ssr->StrPtr[i]);
-					out->printxy(_ssr->X[i],
+					_G(out)->printxy(_ssr->X[i],
 					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe) - 1,
 					              0, 300, 0, _ssr->StrPtr[i]);
-					out->printxy(_ssr->X[i],
+					_G(out)->printxy(_ssr->X[i],
 					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
 					              _aadv.Person[_aadv.StrHeader->AkPerson].Color,
 					              300, 0, _ssr->StrPtr[i]);
@@ -1096,7 +1096,7 @@ bool  atdsys::ads_start(int16 dia_nr) {
 	bool ret = false;
 
 	load_atds(dia_nr, ADS_DATEI);
-	if (!modul) {
+	if (!_G(modul)) {
 		bool ende = false;
 		if (_atdsmem[ADS_HANDLE][0] == (char)BLOCKENDE &&
 		        _atdsmem[ADS_HANDLE][1] == (char)BLOCKENDE &&

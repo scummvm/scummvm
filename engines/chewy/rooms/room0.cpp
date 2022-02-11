@@ -236,9 +236,9 @@ void Room0::eyeStart(EyeMode mode) {
 		set_up_screen(NO_SETUP);
 		SHOULD_QUIT_RETURN;
 
-		cur->plot_cur();
+		_G(cur)->plot_cur();
 		calcEyeClick(3);
-		out->back2screen(workpage);
+		_G(out)->back2screen(workpage);
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -283,9 +283,9 @@ void Room0::eyeWait() {
 		spr_info[2].ZEbene = 192;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
-		cur->plot_cur();
+		_G(cur)->plot_cur();
 		calcEyeClick(2);
-		out->back2screen(workpage);
+		_G(out)->back2screen(workpage);
 
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
@@ -311,8 +311,8 @@ void Room0::calcEyeClick(int16 ani_nr) {
 		if (minfo.button != 1 && kbinfo.key_code != ENTER) {
 			char *str_ = atds->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
-				out->set_fontadr(font8x8);
-				out->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(font8x8);
+				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
 				x = minfo.x;
 				y = minfo.y;
 				calc_txt_xy(&x, &y, str_, anz);
@@ -506,11 +506,11 @@ void Room0::feederStart(int16 mode) {
 		SHOULD_QUIT_RETURN;
 
 		set_up_screen(NO_SETUP);
-		cur->plot_cur();
+		_G(cur)->plot_cur();
 		if (!mode)
 			calcPillowClick(1);
 
-		out->back2screen(workpage);
+		_G(out)->back2screen(workpage);
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -547,9 +547,9 @@ void Room0::feederExtend() {
 		spr_info[1].ZEbene = 191;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
-		cur->plot_cur();
+		_G(cur)->plot_cur();
 		calcPillowClick(1);
-		out->back2screen(workpage);
+		_G(out)->back2screen(workpage);
 	}
 
 	clear_prog_ani();
@@ -564,8 +564,8 @@ void Room0::calcPillowClick(int16 ani_nr) {
 		if (minfo.button != 1 && kbinfo.key_code != ENTER) {
 			char *str_ = atds->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
-				out->set_fontadr(font8x8);
-				out->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(font8x8);
+				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
 				x = minfo.x;
 				y = minfo.y;
 				calc_txt_xy(&x, &y, str_, anz);
@@ -764,7 +764,7 @@ void Room0::feederAni() {
 			feederStart(1);
 			auto_move(VERSTECK_POS, P_CHEWY);
 			set_up_screen(DO_SETUP);
-			out->cls();
+			_G(out)->cls();
 			flic_cut(FCUT_001, CFO_MODE);
 
 			register_cutscene(1);

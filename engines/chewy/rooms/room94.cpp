@@ -53,8 +53,8 @@ void Room94::entry() {
 		_G(spieler).scrollx = 0;
 		set_person_pos(156, 149, P_CHEWY, P_RIGHT);
 		set_person_pos(153, 122, P_HOWARD, P_RIGHT);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flic_cut(120, CFO_MODE);
 		register_cutscene(30);
 		fx_blend = BLEND_NONE;
@@ -72,8 +72,8 @@ void Room94::entry() {
 		if (_G(spieler).flags37_40) {
 			_G(spieler).flags37_40 = true;
 			flags.NoScroll = true;
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			flic_cut(121, CFO_MODE);
 			register_cutscene(32);
 
@@ -133,8 +133,8 @@ int Room94::giveGhostBottle() {
 	auto_move(2, P_CHEWY);
 	auto_scroll(216, 0);
 	del_inventar(_G(spieler).AkInvent);
-	out->setze_zeiger(nullptr);
-	out->cls();
+	_G(out)->setze_zeiger(nullptr);
+	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(62, CFO_MODE);
 	fx_blend = BLEND3;

@@ -131,8 +131,8 @@ void Room46::bodo() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(1, 1, ANI_VOR);
 	flic_cut(FCUT_065, CFO_MODE);
-	out->setze_zeiger(nullptr);
-	out->cls();
+	_G(out)->setze_zeiger(nullptr);
+	_G(out)->cls();
 	register_cutscene(16);
 	
 	_G(spieler).PersonHide[P_CHEWY] = false;
@@ -151,12 +151,12 @@ void Room46::bodo() {
 
 void Room46::kloppe() {
 	for (int16 i = 0; i < 4; i++) {
-		mem->file->select_pool_item(Ci.Handle, FCUT_065);
+		_G(mem)->file->select_pool_item(Ci.Handle, FCUT_065);
 
 		flc->custom_play(&Ci);
 		
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		start_aad(244 + i, -1);
 		int16 delay = _G(spieler).DelaySpeed * 50;
 		atds->print_aad(0, 0);
@@ -166,18 +166,18 @@ void Room46::kloppe() {
 			continue;
 		}
 		
-		while (in->get_switch_code() == 0 && delay) {
+		while (_G(in)->get_switch_code() == 0 && delay) {
 			--delay;
 			SHOULD_QUIT_RETURN;
 		}
 	}
 
-	mem->file->select_pool_item(Ci.Handle, 66);
+	_G(mem)->file->select_pool_item(Ci.Handle, 66);
 	flc->custom_play(&Ci);
-	sndPlayer->fadeOut(0);
-	out->cls();
+	_G(sndPlayer)->fadeOut(0);
+	_G(out)->cls();
 
-	while (sndPlayer->musicPlaying() && !SHOULD_QUIT) {
+	while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {
 		EVENTS_UPDATE;
 	}
 }
