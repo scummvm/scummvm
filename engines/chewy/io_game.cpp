@@ -126,16 +126,16 @@ int16 io_game::io_menu(iog_init *iostruc) {
 		_cur->show_cur();
 		break;
 	case 1:
-		_in->hot_key = 59;
+		_in->_hotkey = 59;
 		break;
 	case 2:
-		_in->hot_key = 60;
+		_in->_hotkey = 60;
 		break;
 	case 3:
-		_in->hot_key = 61;
+		_in->_hotkey = 61;
 		break;
 	case 4:
-		_in->hot_key = 62;
+		_in->_hotkey = 62;
 		break;
 	}
 
@@ -157,7 +157,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 				mouse_f = 1;
 				if (j < 6)
 
-					_in->hot_key = CODE_TBL_G[j];
+					_in->_hotkey = CODE_TBL_G[j];
 				if ((j == 6) && (y >= _io->popy + 8)) {
 					y -= _io->popy + 8;
 					y /= 10;
@@ -387,7 +387,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 					io_flag = 0;
 				}
 			} else
-				_in->hot_key = auswahl + 58;
+				_in->_hotkey = auswahl + 58;
 			g_events->delay(200);
 			_kbinfo->key_code = '\0';
 			break;

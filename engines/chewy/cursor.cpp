@@ -140,7 +140,7 @@ void cursor::wait_taste_los(bool maus_plot) {
 	}
 
 	if (!is_mouse)
-		_in->hot_key = 0;
+		_in->_hotkey = 0;
 
 	int16 stay = 1;
 	int16 switch_code = 1;

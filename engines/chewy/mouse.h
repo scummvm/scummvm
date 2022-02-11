@@ -42,6 +42,7 @@ class InputMgr {
 public:
 	InputMgr();
 	~InputMgr();
+
 	int init();
 	void speed(int16 x, int16 y);
 	void move_mouse(int16 x, int16 y);
@@ -58,11 +59,12 @@ public:
 	in_zeiger *get_in_zeiger();
 	int16 get_switch_code();
 
-	int16 hot_key = 0;
+	int16 _hotkey = 0;
+
 private:
-	maus_info *maus_info_blk = nullptr;
-	kb_info *kb_info_blk = nullptr;
-	in_zeiger inzeig;
+	maus_info *_mouseInfoBlk = nullptr;
+	kb_info *_kbInfoBlk = nullptr;
+	in_zeiger _inzeig;
 };
 
 } // namespace Chewy
