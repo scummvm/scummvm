@@ -58,29 +58,19 @@ public:
 	timer(int16 max_timer, TimerBlk *t);
 	~timer();
 
-	void timer_init();
-
 	void calc_timer();
-
 	int16 set_new_timer(int16 timer_nr, int16 timer_end_wert,
 	                    int16 timer_mode);
-
 	void reset_timer(int16 timer_nr, int16 timer_wert);
-
 	void reset_all_timer();
-
 	void set_status(int16 timer_nr, int16 status);
-
 	void set_all_status(int16 status);
-
 	void disable_timer();
 	void enable_timer();
 
 private:
-	TimerBlk *timer_blk;
-
-	int16 timer_max;
-
+	TimerBlk *_timerBlk;
+	int16 _timerMax;
 };
 
 } // namespace Chewy

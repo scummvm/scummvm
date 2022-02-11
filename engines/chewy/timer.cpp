@@ -32,8 +32,8 @@ int timer_count;
 bool timer_suspend;
 
 timer::timer(int16 max_t, TimerBlk *t) {
-	timer_blk = t;
-	timer_max = max_t;
+	_timerBlk = t;
+	_timerMax = max_t;
 	timer_int = false;
 	timer_suspend = false;
 	set_all_status(TIMER_STOP);
@@ -57,22 +57,22 @@ void timer::calc_timer() {
 	int ak_time;
 	float freq;
 	ak_time = timer_count;
-	for (i = 0; i < timer_max; i++) {
-		if (timer_blk[i].TimeStatus != TIMER_STOP) {
-			freq = timer_freq[timer_blk[i].TimeMode];
+	for (i = 0; i < _timerMax; i++) {
+		if (_timerBlk[i].TimeStatus != TIMER_STOP) {
+			freq = timer_freq[_timerBlk[i].TimeMode];
 
-			timer_blk[i].TimeLast = ((float)ak_time - (float)timer_blk[i].TimeLast);
+			_timerBlk[i].TimeLast = ((float)ak_time - (float)_timerBlk[i].TimeLast);
 
-			count = (int16)((float)timer_blk[i].TimeLast / (float)freq);
-			if (timer_blk[i].TimeStatus == TIMER_START)
-				timer_blk[i].TimeCount += count;
+			count = (int16)((float)_timerBlk[i].TimeLast / (float)freq);
+			if (_timerBlk[i].TimeStatus == TIMER_START)
+				_timerBlk[i].TimeCount += count;
 
-			timer_blk[i].TimeLast = (float)ak_time - (float)(timer_blk[i].TimeLast -
+			_timerBlk[i].TimeLast = (float)ak_time - (float)(_timerBlk[i].TimeLast -
 			                        (float)((float)count * (float)freq));
 
-			if (timer_blk[i].TimeCount >= timer_blk[i].TimeEnd) {
-				++timer_blk[i].TimeFlag;
-				timer_blk[i].TimeCount = 0;
+			if (_timerBlk[i].TimeCount >= _timerBlk[i].TimeEnd) {
+				++_timerBlk[i].TimeFlag;
+				_timerBlk[i].TimeCount = 0;
 			}
 		}
 	}
@@ -80,60 +80,60 @@ void timer::calc_timer() {
 
 int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mode) {
 	int16 ret;
-	if (timer_nr < timer_max) {
+	if (timer_nr < _timerMax) {
 		ret = true;
-		timer_blk[timer_nr].TimeCount = 0;
-		timer_blk[timer_nr].TimeEnd = timer_end_wert;
-		timer_blk[timer_nr].TimeFlag = 0;
-		timer_blk[timer_nr].TimeLast = timer_count;
-		timer_blk[timer_nr].TimeMode = timer_mode;
-		timer_blk[timer_nr].TimeStatus = true;
+		_timerBlk[timer_nr].TimeCount = 0;
+		_timerBlk[timer_nr].TimeEnd = timer_end_wert;
+		_timerBlk[timer_nr].TimeFlag = 0;
+		_timerBlk[timer_nr].TimeLast = timer_count;
+		_timerBlk[timer_nr].TimeMode = timer_mode;
+		_timerBlk[timer_nr].TimeStatus = true;
 	} else
 		ret = -1;
 	return ret;
 }
 
 void timer::reset_timer(int16 timer_nr, int16 timer_wert) {
-	if (timer_nr < timer_max) {
-		timer_blk[timer_nr].TimeCount = 0;
-		timer_blk[timer_nr].TimeFlag = 0;
-		timer_blk[timer_nr].TimeLast = timer_count;
+	if (timer_nr < _timerMax) {
+		_timerBlk[timer_nr].TimeCount = 0;
+		_timerBlk[timer_nr].TimeFlag = 0;
+		_timerBlk[timer_nr].TimeLast = timer_count;
 		if (timer_wert)
-			timer_blk[timer_nr].TimeEnd = timer_wert;
+			_timerBlk[timer_nr].TimeEnd = timer_wert;
 	}
 }
 
 void timer::reset_all_timer() {
 	int16 i;
-	for (i = 0; i < timer_max; i++) {
-		timer_blk[i].TimeCount = 0;
-		timer_blk[i].TimeFlag = 0;
-		timer_blk[i].TimeLast = timer_count;
+	for (i = 0; i < _timerMax; i++) {
+		_timerBlk[i].TimeCount = 0;
+		_timerBlk[i].TimeFlag = 0;
+		_timerBlk[i].TimeLast = timer_count;
 	}
 }
 
 void timer::set_status(int16 timer_nr, int16 status) {
-	if (timer_nr < timer_max) {
-		timer_blk[timer_nr].TimeStatus = status;
+	if (timer_nr < _timerMax) {
+		_timerBlk[timer_nr].TimeStatus = status;
 	}
 }
 
 void timer::set_all_status(int16 status) {
 	int16 i;
 	if (status == TIMER_FREEZE) {
-		for (i = 0; i < timer_max; i++) {
-			if (timer_blk[i].TimeStatus != TIMER_STOP)
-				timer_blk[i].TimeStatus = TIMER_FREEZE;
+		for (i = 0; i < _timerMax; i++) {
+			if (_timerBlk[i].TimeStatus != TIMER_STOP)
+				_timerBlk[i].TimeStatus = TIMER_FREEZE;
 		}
 	}
 	else if (status == TIMER_UNFREEZE) {
-		for (i = 0; i < timer_max; i++) {
-			if (timer_blk[i].TimeStatus != TIMER_STOP)
-				timer_blk[i].TimeStatus = TIMER_START;
+		for (i = 0; i < _timerMax; i++) {
+			if (_timerBlk[i].TimeStatus != TIMER_STOP)
+				_timerBlk[i].TimeStatus = TIMER_START;
 		}
 	} else {
-		for (i = 0; i < timer_max; i++)
-			timer_blk[i].TimeStatus = status;
+		for (i = 0; i < _timerMax; i++)
+			_timerBlk[i].TimeStatus = status;
 	}
 }
 
