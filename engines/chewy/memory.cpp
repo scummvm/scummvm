@@ -67,7 +67,6 @@ taf_info *memory::taf_adr(const char *filename) {
 }
 
 taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
-#if 1
 	Common::File *rs = new Common::File();
 	rs->open(CH_SPZ_FILE);
 	taf_dateiheader header;
@@ -161,49 +160,12 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	delete rs;
 
 	return ts_info;
-#else
-	// TODO: New code - currently crashes with an OOB memory access
-	SpriteResource *res = new SpriteResource(CH_SPZ_FILE);
-	int16 imageCount = res->getChunkCount();
-	uint32 size = 0;
-	taf_seq_info *ts_info = nullptr;
-	byte *tmp1;
-	byte *imgPtr;
-
-	for (int i = 0; i < image_anz; i++) {
-		TAFChunk *sprite = res->getSprite(i + image_start);
-		size += sprite->width * sprite->height;
-		delete sprite;
-	}
-
-	size += image_anz * sizeof(byte *);
-	size += image_anz * sizeof(char *);
-	size += ((uint32)sizeof(taf_seq_info));
-	tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
-
-	ts_info = (taf_seq_info *)tmp1;
-	ts_info->anzahl = image_anz;
-	ts_info->image = (byte **)(tmp1 + sizeof(taf_seq_info));
-	ts_info->korrektur = (int16 *)(tmp1 + size);
-
-	imgPtr = tmp1 + (((uint32)sizeof(taf_seq_info)) + (image_anz * sizeof(char *)));
-
-	for (int i = 0; i < image_anz; i++) {
-		ts_info->image[i] = imgPtr;
-		imgPtr += res->getSpriteData(i, &ts_info->image[i], false);
-	}
-
-	memcpy(ts_info->korrektur, res->getSpriteCorrectionsTable(), image_anz * 2 * sizeof(int16));
-
-	delete res;
-
-	return ts_info;
-#endif
 }
 
 void memory::tff_adr(const char *filename, byte **speicher) {
 	uint32 size;
 	size = file->size(filename, TFFDATEI);
+
 	if (!modul) {
 		*speicher = (byte *)MALLOC(size);
 		if (*speicher) {

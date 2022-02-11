@@ -39,9 +39,6 @@ public:
 	byte *void_adr(const char *filename);
 
 	Data *file;
-private:
-
-	uint32 mem_avail;
 };
 
 } // namespace Chewy
