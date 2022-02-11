@@ -98,25 +98,25 @@ private:
 	void decode_custom_frame(Common::SeekableReadStream *handle);
 	void free_sound(int16 nr);
 
-	byte *load_puffer;
-	byte *virt_screen;
-	byte *Music;
-	byte *Sound;
+	byte *_loadBuffer;
+	byte *_virtScreen;
+	byte *_music;
+	byte *_sound;
 	byte *_soundBuffer;
-	CustomInfo *Cinfo;
-	FlicHead flic_header;
-	CustomFlicHead custom_header;
-	CustomFrameHead custom_frame;
-	FrameHead frame_header;
-	bool fade_flag;
-	bool cls_flag;
-	byte fade_pal[768];
-	int16 fade_delay;
-	byte *sounds[50];
-	uint32 Ssize[50];
-	int16 CurrentFrame;
-	int16(*custom_user)(int16) = nullptr;
-	int16(*flic_user)(int16) = nullptr;
+	CustomInfo *_cInfo;
+	FlicHead _flicHeader;
+	CustomFlicHead _customHeader;
+	CustomFrameHead _customFrame;
+	FrameHead _frameHeader;
+	bool _fadeFlag;
+	bool _clsFlag;
+	byte _fadePal[PALETTE_SIZE];
+	int16 _fadeDelay;
+	byte *_sounds[50];
+	uint32 _sSize[50];
+	int16 _currentFrame;
+	int16(*_customUser)(int16) = nullptr;
+	int16(*_flicUser)(int16) = nullptr;
 };
 
 } // namespace Chewy

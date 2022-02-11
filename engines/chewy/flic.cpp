@@ -96,7 +96,7 @@ void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
 
 
 flic::flic() {
-	Common::fill(&sounds[0], &sounds[50], (byte *)nullptr);
+	Common::fill(&_sounds[0], &_sounds[50], (byte *)nullptr);
 	_soundBuffer = new byte[SOUND_SLOT_SIZE];
 }
 
@@ -120,27 +120,27 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	float ende;
 	int16 ret = 0;
 
-	load_puffer = load_p;
-	virt_screen = vscreen + 4;
+	_loadBuffer = load_p;
+	_virtScreen = vscreen + 4;
 
-	if (flic_header.load(rs)) {
-		if (flic_header.type == FLC) {
+	if (_flicHeader.load(rs)) {
+		if (_flicHeader.type == FLC) {
 			//trace_mode = false;
-			fade_flag = false;
-			fade_delay = 0;
-			cls_flag = false;
-			CurrentFrame = 0;
-			for (uint16 i = 0; (i < flic_header.frames) && (!modul) && (ret >= 0); i++) {
-				if (!frame_header.load(rs)) {
+			_fadeFlag = false;
+			_fadeDelay = 0;
+			_clsFlag = false;
+			_currentFrame = 0;
+			for (uint16 i = 0; (i < _flicHeader.frames) && (!modul) && (ret >= 0); i++) {
+				if (!_frameHeader.load(rs)) {
 					error("flic error");
 				} else {
-					if (frame_header.type != PREFIX) {
-						size_t tmp_size = ((size_t)frame_header.size) - sizeof(FrameHead);
+					if (_frameHeader.type != PREFIX) {
+						size_t tmp_size = ((size_t)_frameHeader.size) - sizeof(FrameHead);
 						float start = (float)g_system->getMillis(); // clock()
 						start /= 0.05f;
-						start += flic_header.speed;
+						start += _flicHeader.speed;
 						if (tmp_size) {
-							if (rs->read(load_puffer, tmp_size) != tmp_size) {
+							if (rs->read(_loadBuffer, tmp_size) != tmp_size) {
 								error("flic error");
 							} else {
 								ret = decode_frame();
@@ -151,9 +151,9 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 							ende = (float)g_system->getMillis(); // clock()
 							ende /= 0.05f;
 						} while (ende <= start);
-						++CurrentFrame;
+						++_currentFrame;
 					} else {
-						rs->seek((int)frame_header.size - FrameHead::SIZE(), SEEK_CUR);
+						rs->seek((int)_frameHeader.size - FrameHead::SIZE(), SEEK_CUR);
 					}
 				}
 			}
@@ -167,11 +167,11 @@ int16 flic::decode_frame() {
 	ChunkHead chunk_header;
 	int16 action_ret = 0;
 
-	byte *tmp_buf = load_puffer;
+	byte *tmp_buf = _loadBuffer;
 	bool update_flag = false;
-	if (frame_header.chunks != 0) {
-		fade_flag = false;
-		for (uint16 i = 0; i < frame_header.chunks; i++) {
+	if (_frameHeader.chunks != 0) {
+		_fadeFlag = false;
+		for (uint16 i = 0; i < _frameHeader.chunks; i++) {
 			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
 			chunk_header.load(&rs);
 
@@ -188,14 +188,14 @@ int16 flic::decode_frame() {
 				break;
 
 			case BYTE_RUN:
-				decode_rle(virt_screen, tmp_buf,
-				           (int)flic_header.width,
-				           (int)flic_header.height);
+				decode_rle(_virtScreen, tmp_buf,
+				           (int)_flicHeader.width,
+				           (int)_flicHeader.height);
 				update_flag = true;
 				break;
 
 			case DELTA_FLC:
-				decode_flc(virt_screen, tmp_buf);
+				decode_flc(_virtScreen, tmp_buf);
 				update_flag = true;
 				break;
 
@@ -206,7 +206,7 @@ int16 flic::decode_frame() {
 				break;
 
 			case CLS:
-				out->setze_zeiger(virt_screen);
+				out->setze_zeiger(_virtScreen);
 				out->cls();
 				out->setze_zeiger(nullptr);
 
@@ -214,7 +214,7 @@ int16 flic::decode_frame() {
 				break;
 
 			case UNPRESSED:
-				out->back2back(load_puffer, virt_screen);
+				out->back2back(_loadBuffer, _virtScreen);
 
 				update_flag = true;
 				break;
@@ -230,15 +230,15 @@ int16 flic::decode_frame() {
 			tmp_buf += chunk_header.size;
 		}
 		if (update_flag != false) {
-			if (flic_user) {
-				out->setze_zeiger(virt_screen);
-				action_ret = flic_user(CurrentFrame);
+			if (_flicUser) {
+				out->setze_zeiger(_virtScreen);
+				action_ret = _flicUser(_currentFrame);
 				out->setze_zeiger(nullptr);
 			}
-			out->back2screen(virt_screen - 4);
-			if (fade_flag != false) {
-				out->einblenden(fade_pal, fade_delay);
-				fade_flag = false;
+			out->back2screen(_virtScreen - 4);
+			if (_fadeFlag != false) {
+				out->einblenden(_fadePal, _fadeDelay);
+				_fadeFlag = false;
 			}
 		}
 	}
@@ -250,21 +250,21 @@ void flic::col256_chunk(byte *tmp) {
 	int packets = *(int16 *)tmp;
 	tmp += 2;
 
-	if (cls_flag == true)
+	if (_clsFlag == true)
 		out->cls();
 	else
-		cls_flag = true;
+		_clsFlag = true;
 
 	if (tmp[1] == 0) {
 		tmp += 2;
 		for (int i = 0; i < PALETTE_SIZE; i++)
 			tmp[i] >>= 2;
-		if (fade_flag == false)
+		if (_fadeFlag == false)
 			out->set_palette(tmp);
 		else {
-			memset(fade_pal, 0, PALETTE_SIZE);
-			out->set_palette(fade_pal);
-			memcpy(fade_pal, tmp, PALETTE_SIZE);
+			memset(_fadePal, 0, PALETTE_SIZE);
+			out->set_palette(_fadePal);
+			memcpy(_fadePal, tmp, PALETTE_SIZE);
 		}
 	} else {
 		byte col = 0;
@@ -286,18 +286,18 @@ void flic::col64_chunk(byte *tmp) {
 	int packets = *((int16 *)tmp);
 	tmp += 2;
 
-	if (cls_flag == true)
+	if (_clsFlag == true)
 		out->cls();
 	else
-		cls_flag = true;
+		_clsFlag = true;
 
 	if (!tmp[1]) {
-		if (fade_flag == false)
+		if (_fadeFlag == false)
 			out->set_palette(tmp + 2);
 		else {
-			memset(fade_pal, 0, PALETTE_SIZE);
-			out->set_palette(fade_pal);
-			memcpy(fade_pal, tmp + 2, PALETTE_SIZE);
+			memset(_fadePal, 0, PALETTE_SIZE);
+			out->set_palette(_fadePal);
+			memcpy(_fadePal, tmp + 2, PALETTE_SIZE);
 		}
 	} else {
 		byte col = 0;
@@ -318,7 +318,7 @@ void flic::col64_chunk(byte *tmp) {
 void flic::delta_chunk_byte(byte *tmp) {
 	byte last_byte = 0;
 	bool last_flag;
-	byte *abl = virt_screen;
+	byte *abl = _virtScreen;
 	short int *ipo = (short int *)tmp;
 	short int rest_height = *ipo++;
 	tmp += 2;
@@ -327,7 +327,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 		short int mode_word = *ipo++;
 		if (mode_word & 0x4000) {
 			mode_word = -mode_word;
-			abl += (int16)(mode_word * flic_header.width);
+			abl += (int16)(mode_word * _flicHeader.width);
 			tabl = abl;
 			mode_word = *ipo++;
 		}
@@ -340,14 +340,14 @@ void flic::delta_chunk_byte(byte *tmp) {
 		tmp = (byte *)ipo;
 		if (mode_word) {
 			short int pcount = 0;
-			for (short int j = 0; (pcount < mode_word) && (j <= flic_header.width); ++pcount) {
+			for (short int j = 0; (pcount < mode_word) && (j <= _flicHeader.width); ++pcount) {
 				byte skip = *tmp++;
 				abl += skip;
 				signed char tmp_count = (signed char)*tmp++;
 				short signed int count = (short signed int)tmp_count;
 				if (count > 0) {
 					count <<= 1;
-					while ((count) && (j < flic_header.width)) {
+					while ((count) && (j < _flicHeader.width)) {
 						*abl++ = *tmp++;
 						++j;
 						--count;
@@ -356,7 +356,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 					count = -count;
 					short int data = *(short int *)tmp;
 					tmp += 2;
-					while ((count > 0) && (j < flic_header.width)) {
+					while ((count > 0) && (j < _flicHeader.width)) {
 						*((short int *)abl) = data;
 						abl += 2;
 						j += 2;
@@ -367,7 +367,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 			if (last_flag)
 				*abl++ = last_byte;
 		}
-		abl = tabl + flic_header.width;
+		abl = tabl + _flicHeader.width;
 		ipo = (short int *)tmp;
 	}
 }
@@ -375,29 +375,29 @@ void flic::delta_chunk_byte(byte *tmp) {
 int16 flic::custom_play(CustomInfo *ci) {
 	int16 ret = 0;
 
-	Cinfo = ci;
-	load_puffer = ci->TempArea;
-	virt_screen = ci->VirtScreen + 4;
-	Music = ci->MusicSlot;
-	Sound = _soundBuffer;
+	_cInfo = ci;
+	_loadBuffer = ci->TempArea;
+	_virtScreen = ci->VirtScreen + 4;
+	_music = ci->MusicSlot;
+	_sound = _soundBuffer;
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(ci->Handle);
 	if (rs) {
-		if (custom_header.load(rs)) {
-			if (!scumm_strnicmp(custom_header.id, "CFO", 4)) {
-				cls_flag = false;
-				fade_flag = false;
-				fade_delay = 0;
-				CurrentFrame = 0;
+		if (_customHeader.load(rs)) {
+			if (!scumm_strnicmp(_customHeader.id, "CFO", 4)) {
+				_clsFlag = false;
+				_fadeFlag = false;
+				_fadeDelay = 0;
+				_currentFrame = 0;
 
-				for (uint16 i = 0; (i < custom_header.frames) && (!modul) && (ret >= 0); i++) {
-					if (!custom_frame.load(rs)) {
+				for (uint16 i = 0; (i < _customHeader.frames) && (!modul) && (ret >= 0); i++) {
+					if (!_customFrame.load(rs)) {
 						error("flic error");
 					} else {
-						if ((custom_frame.type != PREFIX) && (custom_frame.type != CUSTOM)) {
-							uint32 start = g_system->getMillis() + custom_header.speed;
-							if (custom_frame.size) {
-								if (rs->read(load_puffer, custom_frame.size) != custom_frame.size) {
+						if ((_customFrame.type != PREFIX) && (_customFrame.type != CUSTOM)) {
+							uint32 start = g_system->getMillis() + _customHeader.speed;
+							if (_customFrame.size) {
+								if (rs->read(_loadBuffer, _customFrame.size) != _customFrame.size) {
 									error("flic error");
 								} else {
 									ret = decode_cframe();
@@ -414,9 +414,9 @@ int16 flic::custom_play(CustomInfo *ci) {
 								g_events->update();
 								SHOULD_QUIT_RETURN0;
 							} while (ende <= start);
-							++CurrentFrame;
+							++_currentFrame;
 
-						} else if (custom_frame.type == CUSTOM) {
+						} else if (_customFrame.type == CUSTOM) {
 							decode_custom_frame(
 								dynamic_cast<Common::SeekableReadStream *>(ci->Handle));
 
@@ -438,9 +438,9 @@ int16 flic::custom_play(CustomInfo *ci) {
 
 void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
-	tmf_header *th = (tmf_header *)Music;
+	tmf_header *th = (tmf_header *)_music;
 
-	for (uint16 i = 0; (i < custom_frame.chunks) && (!modul); i++) {
+	for (uint16 i = 0; (i < _customFrame.chunks) && (!modul); i++) {
 		ChunkHead chead;
 		if (!chead.load(handle)) {
 			error("flic error");
@@ -459,10 +459,10 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case LOAD_MUSIC:
-			if (handle->read(Music, chead.size) != chead.size) {
+			if (handle->read(_music, chead.size) != chead.size) {
 				error("flic error");
 			} else {
-				byte *tmp = Music;
+				byte *tmp = _music;
 				tmp += sizeof(tmf_header);
 				tmp += ((uint32)th->pattern_anz) * 1024l;
 				for (uint16 j = 0; j < 31; j++) {
@@ -481,12 +481,12 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 		case LOAD_VOC:
 			if (!File::readArray(handle, &para[0], 1) ||
-				handle->read(Sound, chead.size - 2) != (chead.size - 2)) {
+				handle->read(_sound, chead.size - 2) != (chead.size - 2)) {
 				error("flic error");
 			} else {
-				sounds[para[0]] = Sound;
-				Ssize[para[0]] = chead.size - 2;
-				Sound += chead.size;
+				_sounds[para[0]] = _sound;
+				_sSize[para[0]] = chead.size - 2;
+				_sound += chead.size;
 			}
 			break;
 
@@ -559,7 +559,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 
 				Chewy::Sound *sound = g_engine->_sound;
 				sound->setSoundVolume(volume);
-				sound->playSound(sounds[number], Ssize[number], channel, repeat, DisposeAfterUse::NO);
+				sound->playSound(_sounds[number], _sSize[number], channel, repeat, DisposeAfterUse::NO);
 			}
 			break;
 
@@ -611,7 +611,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case CLEAR_SCREEN:
-			out->setze_zeiger(virt_screen);
+			out->setze_zeiger(_virtScreen);
 			out->cls();
 			out->setze_zeiger(nullptr);
 			out->cls();
@@ -625,12 +625,12 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 }
 
 int16 flic::decode_cframe() {
-	byte *tmp_buf = load_puffer;
+	byte *tmp_buf = _loadBuffer;
 	int16 update_flag = false;
 	int16 action_ret = 0;
 
-	if (custom_frame.chunks != 0) {
-		for (uint16 i = 0; i < custom_frame.chunks; i++) {
+	if (_customFrame.chunks != 0) {
+		for (uint16 i = 0; i < _customFrame.chunks; i++) {
 			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
 			ChunkHead chunk_header;
 			chunk_header.load(&rs);
@@ -647,13 +647,13 @@ int16 flic::decode_cframe() {
 				break;
 
 			case BYTE_RUN:
-				decode_rle(virt_screen, tmp_buf,
-				    custom_header.width, custom_header.height);
+				decode_rle(_virtScreen, tmp_buf,
+				    _customHeader.width, _customHeader.height);
 				update_flag = true;
 				break;
 
 			case DELTA_FLC:
-				decode_flc(virt_screen, tmp_buf);
+				decode_flc(_virtScreen, tmp_buf);
 				update_flag = true;
 
 				break;
@@ -661,7 +661,7 @@ int16 flic::decode_cframe() {
 				break;
 
 			case CLS:
-				out->setze_zeiger(virt_screen);
+				out->setze_zeiger(_virtScreen);
 				out->cls();
 				out->setze_zeiger(nullptr);
 
@@ -669,7 +669,7 @@ int16 flic::decode_cframe() {
 				break;
 
 			case UNPRESSED:
-				out->back2back(load_puffer, virt_screen);
+				out->back2back(_loadBuffer, _virtScreen);
 
 				update_flag = true;
 				break;
@@ -689,18 +689,18 @@ int16 flic::decode_cframe() {
 		}
 
 		if (update_flag != false) {
-			if (custom_user) {
-				out->back2back(virt_screen, load_puffer);
-				out->setze_zeiger(virt_screen);
-				action_ret = custom_user(CurrentFrame);
+			if (_customUser) {
+				out->back2back(_virtScreen, _loadBuffer);
+				out->setze_zeiger(_virtScreen);
+				action_ret = _customUser(_currentFrame);
 				out->setze_zeiger(nullptr);
-				out->back2screen(virt_screen - 4);
-				out->back2back(load_puffer, virt_screen);
+				out->back2screen(_virtScreen - 4);
+				out->back2back(_loadBuffer, _virtScreen);
 			} else
-				out->back2screen(virt_screen - 4);
-			if (fade_flag != false) {
-				out->einblenden(fade_pal, fade_delay);
-				fade_flag = false;
+				out->back2screen(_virtScreen - 4);
+			if (_fadeFlag != false) {
+				out->einblenden(_fadePal, _fadeDelay);
+				_fadeFlag = false;
 			}
 		}
 	}
@@ -709,37 +709,37 @@ int16 flic::decode_cframe() {
 }
 
 void flic::free_sound(int16 nr) {
-	byte *fsound = sounds[nr];
-	long fsize = Ssize[nr];
+	byte *fsound = _sounds[nr];
+	long fsize = _sSize[nr];
 	if ((fsound != 0) && (fsize != 0)) {
 		long copysize = SOUND_SLOT_SIZE;
 		copysize -= (long)(fsound - _soundBuffer);
 		memmove(fsound, fsound + fsize, copysize);
 		for (int16 i = 0; i < 50; i++) {
-			if (sounds[i] == fsound) {
-				sounds[i] = 0;
-				Ssize[i] = 0;
-			} else if (sounds[i] > fsound)
-				sounds[i] -= fsize;
+			if (_sounds[i] == fsound) {
+				_sounds[i] = 0;
+				_sSize[i] = 0;
+			} else if (_sounds[i] > fsound)
+				_sounds[i] -= fsize;
 		}
-		Sound -= fsize;
+		_sound -= fsize;
 	}
 }
 
 void flic::set_custom_user_function(int16(*user_funktion)(int16 frame)) {
-	custom_user = user_funktion;
+	_customUser = user_funktion;
 }
 
 void flic::remove_custom_user_function() {
-	custom_user = nullptr;
+	_customUser = nullptr;
 }
 
 void flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
-	flic_user = user_funktion;
+	_flicUser = user_funktion;
 }
 
 void flic::remove_flic_user_function() {
-	flic_user = nullptr;
+	_flicUser = nullptr;
 }
 
 } // namespace Chewy
