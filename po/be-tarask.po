@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-11 02:51+0000\n"
-"PO-Revision-Date: 2022-02-11 13:51+0000\n"
+"PO-Revision-Date: 2022-02-11 13:58+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -7644,39 +7644,39 @@ msgstr "Далучыць высокую разрознасьць у гульні
 
 #: engines/twine/metaengine.cpp:104
 msgid "Debug Next Room"
-msgstr "Наладзіць наступны пакой"
+msgstr "Наладжваньне: Наступны пакой"
 
 #: engines/twine/metaengine.cpp:109
 msgid "Debug Previous Room"
-msgstr "Наладзіць папярэдні пакой"
+msgstr "Наладжваньне: Папярэдні пакой"
 
 #: engines/twine/metaengine.cpp:114
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Наладжваньне: Далучыць стольную сетку"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Наладжваньне: Павялічыць індэкс стольнай сеткі"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Наладжваньне: Зьменьшыць індэкс стольнай сеткі"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Debug Grid Camera Up"
-msgstr "Наладзіць сетку камэры ўгару"
+msgstr "Наладжваньне: Камэра сеткі ўгару"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Debug Grid Camera Down"
-msgstr "Наладзіць сетку камэры ўніз"
+msgstr "Наладжваньне: Камэра сеткі ўгару"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Debug Grid Camera Left"
-msgstr "Наладзіць сетку камэры налева"
+msgstr "Наладжваньне: Камэра сеткі налева"
 
 #: engines/twine/metaengine.cpp:145
 msgid "Debug Grid Camera Right"
-msgstr "Наладзіць сетку камэру направа"
+msgstr "Наладжваньне: Камэра сеткі направа"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Place actor at center of screen"
