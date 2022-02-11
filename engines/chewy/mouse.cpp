@@ -46,8 +46,8 @@ void set_mouse_handler(maus_info *mpos) {
 }
 
 InputMgr::InputMgr() {
-	maus_info_blk = nullptr;
-	kb_info_blk = nullptr;
+	_mouseInfoBlk = nullptr;
+	_kbInfoBlk = nullptr;
 }
 
 InputMgr::~InputMgr() {
@@ -82,13 +82,13 @@ int16 InputMgr::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 
 void InputMgr::neuer_kb_handler(kb_info *key) {
 	set_new_kb_handler(key);
-	kb_info_blk = key;
-	kb_info_blk->key_code = '\0';
+	_kbInfoBlk = key;
+	_kbInfoBlk->key_code = '\0';
 }
 
 void InputMgr::alter_kb_handler() {
 	set_old_kb_handler();
-	kb_info_blk = nullptr;
+	_kbInfoBlk = nullptr;
 	warning("STUB - InputMgr::alter_kb_handler");
 #if 0
 	while (kbhit())
@@ -98,35 +98,35 @@ void InputMgr::alter_kb_handler() {
 
 void InputMgr::neuer_maushandler(maus_info *mpos) {
 	set_mouse_handler(mpos);
-	maus_info_blk = mpos;
+	_mouseInfoBlk = mpos;
 }
 
 in_zeiger *InputMgr::get_in_zeiger() {
-	inzeig.minfo = maus_info_blk;
-	inzeig.kbinfo = kb_info_blk;
+	_inzeig.minfo = _mouseInfoBlk;
+	_inzeig.kbinfo = _kbInfoBlk;
 
-	return &inzeig;
+	return &_inzeig;
 }
 
 int16 InputMgr::get_switch_code() {
 	int16 switch_code = 0;
 
-	if (maus_info_blk) {
-		if (maus_info_blk->button == 2) {
+	if (_mouseInfoBlk) {
+		if (_mouseInfoBlk->button == 2) {
 			switch_code = ESC;
-		} else if (maus_info_blk->button == 1)
+		} else if (_mouseInfoBlk->button == 1)
 			switch_code = 255;
-		else if (maus_info_blk->button == 4)
+		else if (_mouseInfoBlk->button == 4)
 			switch_code = 254;
 	}
 
-	if (kb_info_blk)
-		if (kb_info_blk->key_code != 0)
-			switch_code = (int16)kb_info_blk->key_code;
+	if (_kbInfoBlk)
+		if (_kbInfoBlk->key_code != 0)
+			switch_code = (int16)_kbInfoBlk->key_code;
 
-	if (hot_key != 0) {
-		switch_code = (int16)hot_key;
-		hot_key = 0;
+	if (_hotkey != 0) {
+		switch_code = (int16)_hotkey;
+		_hotkey = 0;
 	}
 
 	return switch_code;

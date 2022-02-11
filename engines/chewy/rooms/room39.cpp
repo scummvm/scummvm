@@ -376,7 +376,7 @@ int16 Room39::setup_func(int16 frame) {
 			start_aad(601, 0);
 			break;
 		case 297:
-			in->hot_key = 1;
+			in->_hotkey = 1;
 			break;
 		case 171:
 		case 266:

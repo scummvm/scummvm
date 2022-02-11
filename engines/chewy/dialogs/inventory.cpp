@@ -220,11 +220,11 @@ void Inventory::menu() {
 					break;
 
 				case 3:
-					in->hot_key = PAGE_UP;
+					in->_hotkey = PAGE_UP;
 					break;
 
 				case 4:
-					in->hot_key = PAGE_DOWN;
+					in->_hotkey = PAGE_DOWN;
 					break;
 
 				case 5:
@@ -272,7 +272,7 @@ void Inventory::menu() {
 			}
 		} else if (minfo.button == 2 || kbinfo.key_code == ESC) {
 			if (!maus_flag) {
-				in->hot_key = ESC;
+				in->_hotkey = ESC;
 				maus_flag = 1;
 			}
 		}
@@ -500,11 +500,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 		switch (kbinfo.scan_code) {
 		case F1_KEY:
-			in->hot_key = F1_KEY;
+			in->_hotkey = F1_KEY;
 			break;
 
 		case F2_KEY:
-			in->hot_key = F2_KEY;
+			in->_hotkey = F2_KEY;
 			break;
 
 		case ESC:
