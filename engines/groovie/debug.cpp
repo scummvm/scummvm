@@ -118,7 +118,7 @@ bool Debugger::cmd_loadgame(int argc, const char **argv) {
 bool Debugger::cmd_savegame(int argc, const char **argv) {
 	if (argc == 2) {
 		int slot = getNumber(argv[1]);
-		_script->savegame(slot);
+		_script->directGameSave(slot, "debug save");
 	} else {
 		debugPrintf("Syntax: save <slot>\n");
 	}

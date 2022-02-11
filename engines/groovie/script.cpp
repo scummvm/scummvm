@@ -121,6 +121,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_fastForwarding = false;
 	_eventKbdChar = 0;
 	_eventMouseClicked = 0;
+	_wantAutosave = false;
 }
 
 Script::~Script() {
@@ -594,19 +595,19 @@ bool Script::canDirectSave() const {
 }
 
 void Script::directGameSave(int slot, const Common::String &desc) {
+	char name[15];
 	debugC(0, kDebugScript, "directGameSave %d %s", slot, desc.c_str());
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
 	const char *saveName = desc.c_str();
 	for (int i = 0; i < 15; i++) {
-		_variables[i] = saveName[i] - 0x30;
+		name[i] = saveName[i] - 0x30;
 	}
-	savegame(slot);
+	savegame(slot, name);
 }
 
-void Script::savegame(uint slot) {
-	char save[15];
+void Script::savegame(uint slot, const char name[15]) {
 	char newchar;
 	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
@@ -626,22 +627,24 @@ void Script::savegame(uint slot) {
 	}
 
 	// Saving the variables. It is endian safe because they're byte variables
-	file->write(_variables, 0x400);
+	file->write(name, 15);
+	file->write(_variables + 15, 0x400 - 15);
 	delete file;
 
 	// Cache the saved name
+	char cacheName[15];
 	for (int i = 0; i < 15; i++) {
-		newchar = _variables[i] + 0x30;
+		newchar = name[i] + 0x30;
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
-			save[i] = '\0';
+			cacheName[i] = '\0';
 			break;
 		} else if (newchar == 0x2E) { // '.', generated when space is pressed
-			save[i] = ' ';
+			cacheName[i] = ' ';
 		} else {
-			save[i] = newchar;
+			cacheName[i] = newchar;
 		}
 	}
-	_saveNames[slot] = save;
+	_saveNames[slot] = cacheName;
 }
 
 void Script::printString(Graphics::Surface *surface, const char *str) {
@@ -1141,6 +1144,11 @@ void Script::o_inputloopend() {
 		_vm->waitForInput();
 		_fastForwarding = DebugMan.isDebugChannelEnabled(kDebugFast);
 	}
+
+	if (_wantAutosave && canDirectSave()) {
+		_vm->saveAutosaveIfEnabled();
+		_wantAutosave = false;
+	}
 }
 
 void Script::o_random() {
@@ -1499,7 +1507,9 @@ void Script::o_savegame() {
 
 	debugC(0, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d", varnum, slot);
 
-	savegame(slot);
+	char name[15];
+	memcpy(name, _variables, 15);
+	savegame(slot, name);
 }
 
 void Script::o_hotspotbottom_4() {	//0x30
@@ -1926,9 +1936,15 @@ void Script::o_returnscript() {
 	_vm->_videoPlayer->resetFlags();
 	_vm->_videoPlayer->setOrigin(0, 0);
 
-	// T11H uses val==1 when you open the GameBook while the puzzle is still ongoing
-	if (canDirectSave() && (_version != kGroovieT11H || val == 0)) {
-		_vm->saveAutosaveIfEnabled();
+	// the autosave will actually happen in o_inputloopend in order to ensure that the game is in a stable state
+	_wantAutosave = true;
+	if (_version == kGroovieT11H) {
+		// T11H uses val==1 when you open the GameBook while the puzzle is still ongoing
+		// val==0 means don't open the GameBook, aka you solved the puzzle or walked away from it
+		_wantAutosave = val == 0;
+	} else if (_version == kGroovieCDY) {
+		// Clandestiny uses val==1 when you beat the puzzle
+		_wantAutosave = val == 1;
 	}
 }
 
