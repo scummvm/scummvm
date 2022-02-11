@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room14.h"
 #include "chewy/rooms/room23.h"
@@ -52,13 +51,8 @@ void Room14::entry() {
 }
 
 bool Room14::timer(int16 t_nr, int16 ani_nr) {
-	switch (ani_nr) {
-	case 0:
+	if (ani_nr) 
 		eremit_feuer(t_nr, ani_nr);
-		break;
-	default:
-		break;
-	}
 
 	return false;
 }
@@ -120,13 +114,12 @@ int16 Room14::use_gleiter() {
 void Room14::talk_eremit()  {
 	if (!_G(spieler).R14Feuer) {
 		auto_move(6, P_CHEWY);
+		flags.AutoAniPlay = true;
 
 		if (_G(spieler).R14Translator) {
-			flags.AutoAniPlay = true;
 			load_ads_dia(0);
 			obj->show_sib(46);
 		} else {
-			flags.AutoAniPlay = true;
 			hide_cur();
 			start_aad_wait(24, -1);
 			show_cur();
@@ -156,11 +149,8 @@ int16 Room14::use_schleim() {
 }
 
 void Room14::feuer() {
-	int16 tmp;
-	int16 waffe;
-
-	waffe = false;
-	tmp = _G(spieler).AkInvent;
+	int16 waffe = false;
+	int16 tmp = _G(spieler).AkInvent;
 	_G(spieler).R14Feuer = true;
 	_G(cur_hide_flag) = false;
 	flags.AutoAniPlay = true;
@@ -168,12 +158,12 @@ void Room14::feuer() {
 
 	if (is_cur_inventar(BWAFFE_INV)) {
 		auto_move(5, P_CHEWY);
+		waffe = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_frame(8, 1, ANI_VOR, 11);
 		start_detail_wait(9, 1, ANI_VOR);
 		wait_detail(8);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		waffe = true;
 	} else {
 		auto_move(7, P_CHEWY);
 		det->hide_static_spr(9);
