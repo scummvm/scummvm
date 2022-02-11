@@ -1389,7 +1389,7 @@ void Script::o_mov() {
 	uint16 varnum1 = readScript8or16bits();
 	uint16 varnum2 = readScript16bits();
 
-	debugC(1, kDebugScript, "Groovie::Script: MOV var[0x%04X] = var[0x%04X]", varnum1, varnum2);
+	debugC(1, kDebugScript, "Groovie::Script: MOV var[0x%04X] (%u) = var[0x%04X] (%u)", varnum1, _variables[varnum1], varnum2, _variables[varnum2]);
 
 	setVariable(varnum1, _variables[varnum2]);
 }
@@ -1542,7 +1542,7 @@ void Script::o_loadstringvar() {
 	debugCN(1, kDebugScript, "Groovie::Script: LOADSTRINGVAR var[0x%04X..] =", varnum);
 	do {
 		setVariable(varnum++, readScriptChar(true, true, true));
-		debugCN(1, kDebugScript, " 0x%02X", _variables[varnum - 1]);
+		debugCN(1, kDebugScript, " 0x%02X ", _variables[varnum - 1]);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
 	debugCN(1, kDebugScript, "\n");
 }
@@ -1926,7 +1926,8 @@ void Script::o_returnscript() {
 	_vm->_videoPlayer->resetFlags();
 	_vm->_videoPlayer->setOrigin(0, 0);
 
-	if (canDirectSave()) {
+	// T11H uses val==1 when you open the GameBook while the puzzle is still ongoing
+	if (canDirectSave() && (_version != kGroovieT11H || val == 0)) {
 		_vm->saveAutosaveIfEnabled();
 	}
 }
