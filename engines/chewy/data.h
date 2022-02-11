@@ -23,11 +23,15 @@
 #define CHEWY_DATA_H
 
 #include "chewy/chewy.h"
+#include "chewy/defines.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
 
 class Data {
+private:
+	char _filename[MAXPATH];
+
 public:
 	Data();
 	~Data();

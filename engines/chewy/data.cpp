@@ -28,12 +28,6 @@
 
 namespace Chewy {
 
-#undef MAXPATH
-#define MAXPATH 1000
-
-char filename[MAXPATH];
-uint8 tmp[10000]; // FIXME
-
 extern int16 modul;
 extern int16 fcode;
 
@@ -45,18 +39,18 @@ Data::~Data() {
 
 uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	NewPhead *ph = (NewPhead *)tmp;
+	NewPhead ph;
 
 	if (rs) {
 		rs->seek(0, SEEK_SET);
-		if (!ph->load(rs)) {
+		if (!ph.load(rs)) {
 			error("select_pool_item error");
 		} else {
-			if (!strncmp(ph->id, "NGS", 3)) {
-				if (nr >= ph->PoolAnz)
-					nr = ph->PoolAnz - 1;
+			if (!strncmp(ph.id, "NGS", 3)) {
+				if (nr >= ph.PoolAnz)
+					nr = ph.PoolAnz - 1;
 
-				rs->seek(-(int)((ph->PoolAnz - nr) * sizeof(uint32)), SEEK_END);
+				rs->seek(-(int)((ph.PoolAnz - nr) * sizeof(uint32)), SEEK_END);
 				uint32 tmp1 = rs->readUint32LE();
 				rs->seek(tmp1, SEEK_SET);
 			}
@@ -90,15 +84,15 @@ void Data::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher)
 }
 
 void Data::load_tff(const char *fname, byte *speicher) {
-	strncpy(filename, fname, MAXPATH - 5);
-	filename[MAXPATH - 5] = '\0';
+	strncpy(_filename, fname, MAXPATH - 5);
+	_filename[MAXPATH - 5] = '\0';
 
 	if (speicher) {
-		if (!strchr(filename, '.'))
-			strcat(filename, ".tff");
+		if (!strchr(_filename, '.'))
+			strcat(_filename, ".tff");
 
 		Common::File f;
-		if (f.open(filename)) {
+		if (f.open(_filename)) {
 			tff_header *tff = (tff_header *)speicher;
 			if (tff->load(&f)) {
 				uint32 size = tff->size;
@@ -117,11 +111,11 @@ void Data::load_tff(const char *fname, byte *speicher) {
 }
 
 void Data::void_load(const char *fname, byte *speicher, uint32 size) {
-	strncpy(filename, fname, MAXPATH - 1);
-	filename[MAXPATH - 1] = '\0';
+	strncpy(_filename, fname, MAXPATH - 1);
+	_filename[MAXPATH - 1] = '\0';
 
 	Common::File f;
-	if (f.open(filename)) {
+	if (f.open(_filename)) {
 		if (!f.read(speicher, size)) {
 			error("void_load error");
 		}
@@ -134,21 +128,21 @@ void Data::void_load(const char *fname, byte *speicher, uint32 size) {
 
 uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	ChunkHead *ch = (ChunkHead *)tmp;
+	ChunkHead ch;
 	uint32 size = 0;
 
 	if (rs) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		if (!ch->load(rs)) {
+		if (!ch.load(rs)) {
 			error("load_tmf error");
 		} else {
-			if (ch->type == TMFDATEI) {
-				assert(ch->size > (uint32)tmf_header::SIZE());
+			if (ch.type == TMFDATEI) {
+				assert(ch.size > (uint32)tmf_header::SIZE());
 
 				if (!song->load(rs)) {
 					error("load_tmf error");
 				} else {
-					size = ch->size + sizeof(tmf_header);
+					size = ch.size + sizeof(tmf_header);
 					byte *speicher = (byte *)song + sizeof(tmf_header);
 					speicher += ((uint32)song->pattern_anz) * 1024l;
 					for (int16 i = 0; i < 31; ++i) {
@@ -173,17 +167,17 @@ uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
 uint32 Data::size(const char *fname, int16 typ) {
 	uint32 size = 0;
 
-	strncpy(filename, fname, MAXPATH - 5);
-	filename[MAXPATH - 5] = '\0';
+	strncpy(_filename, fname, MAXPATH - 5);
+	_filename[MAXPATH - 5] = '\0';
 
-	if (!strchr(filename, '.') && typ == TFFDATEI) {
-		strcat(filename, ".tff");
+	if (!strchr(_filename, '.') && typ == TFFDATEI) {
+		strcat(_filename, ".tff");
 	}
 
 	// SCUMMVM: Note to self, use sizeof(structures) for
 	// allocating size, not custom ::SIZE() functions
 	Common::File f;
-	if (f.open(filename)) {
+	if (f.open(_filename)) {
 		switch (typ) {
 		case TFFDATEI: {
 			tff_header tff;
@@ -214,19 +208,19 @@ uint32 Data::size(const char *fname, int16 typ) {
 }
 
 uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
-	NewPhead *Nph = (NewPhead *)tmp;
+	NewPhead Nph;
 	uint32 size = 0;
 
 	Common::File f;
 	if (f.open(fname)) {
-		if (!Nph->load(&f)) {
+		if (!Nph.load(&f)) {
 			error("get_poolsize error");
 		} else {
-			if (!strncmp(Nph->id, "NGS", 3)) {
+			if (!strncmp(Nph.id, "NGS", 3)) {
 				select_pool_item(&f, chunk_start);
 				f.seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-				for (int16 i = chunk_start; (i < Nph->PoolAnz) && (!modul) && i < (chunk_start + chunk_anz); i++) {
+				for (int16 i = chunk_start; (i < Nph.PoolAnz) && (!modul) && i < (chunk_start + chunk_anz); i++) {
 					ChunkHead ch;
 					if (!ch.load(&f)) {
 						error("get_poolsize error");
