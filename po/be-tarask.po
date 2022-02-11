@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-11 02:51+0000\n"
-"PO-Revision-Date: 2022-02-11 13:58+0000\n"
+"PO-Revision-Date: 2022-02-11 14:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -3919,7 +3919,7 @@ msgstr "Сетка працуе"
 #: backends/platform/wii/options.cpp:165
 #, fuzzy
 msgid ", error while mounting the share"
-msgstr ", памылка падчас умацаваньне мены"
+msgstr ", памылка падчас умацаваньня мены"
 
 #: backends/platform/wii/options.cpp:167
 #, fuzzy
