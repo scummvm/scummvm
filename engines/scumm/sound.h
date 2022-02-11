@@ -29,7 +29,14 @@
 #include "backends/audiocd/audiocd.h"
 #include "scumm/file.h"
 
-#define DEFAULT_LOOM_OVERTURE_TICKS 8940
+// The number of "ticks" (1/10th of a second) into the Overture that the
+// LucasFilm logo should appear. This corresponds to a timer value of 204.
+// The default value is selected to work well with the Ozawa recording.
+
+#define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
+
+#define TICKS_TO_TIMER(x) ((((x) * 204) / _loomOvertureTransition) + 1)
+#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTransition) / 204)
 
 namespace Audio {
 class Mixer;
@@ -95,8 +102,9 @@ protected:
 	AudioCDManager::Status _loomSteamCD;
 	bool _useReplacementAudioTracks;
 	int _musicTimer;
-	uint32 _scummTicks;
-	uint32 _loomOvertureTicks;
+	int _loomOvertureTransition;
+	uint32 _replacementTrackStartTime;
+	uint32 _replacementTrackPauseTime;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -143,7 +151,7 @@ public:
 
 	bool isRolandLoom() const;
 	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
-	void updateMusicTimer(int ticks);
+	void updateMusicTimer();
 	int getMusicTimer() const { return _musicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;

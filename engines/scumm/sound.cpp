@@ -59,7 +59,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_vm(parent),
 	_mixer(mixer),
 	_useReplacementAudioTracks(useReplacementAudioTracks),
-	_scummTicks(0),
+	_replacementTrackStartTime(0),
+	_replacementTrackPauseTime(0),
 	_musicTimer(0),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
@@ -98,7 +99,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_loomSteamCD.balance = 0;
 
 	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
-	_loomOvertureTicks = DEFAULT_LOOM_OVERTURE_TICKS + 10 * ConfMan.getInt("loom_overture_ticks");
+	_loomOvertureTransition = DEFAULT_LOOM_OVERTURE_TRANSITION + ConfMan.getInt("loom_overture_ticks");
 
 	_loomSteamCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
@@ -120,26 +121,30 @@ bool Sound::isRolandLoom() const {
 		(_vm->VAR(_vm->VAR_SOUNDCARD) == 4);
 }
 
-// When timing the MT-32 version, it took on average 149.6 seconds for the
-// timer to reach 278. At 60 SCUMM ticks per second, this would be 8976 ticks
-// except... apparently you can't really use SCUMM ticks to this level of
-// accuracy, so the final timing is still off. I've adjusted it so that the
-// transition happens at almost the same point in the music when I use the
-// Ozawa version of No. 10 Scène (Moderato). Good enough for now, but maybe it
-// needs to be configurable to accommodate for different recordings?
-
-#define TICKS_TO_TIMER(x) ((((x) * 278) / _loomOvertureTicks) + 1)
-#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTicks) / 278)
-
-void Sound::updateMusicTimer(int ticks) {
+void Sound::updateMusicTimer() {
 	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56 && !(_vm->_game.features & GF_DEMO));
 
-	_scummTicks += ticks;
+	// If the replacement track has ended, reset the timer to 0 like when
+	// playing the original music. We make an exception for the Overture,
+	// since it may need to keep running after the track has ended.
+	//
+	// This is also why we can't query the CD audio manager for the current
+	// position. That, and the fact that the CD manager does not provide
+	// this information at the time of writing.
 
-	// For now, this is hard-coded for Loom's Overture. When playing the
-	// original song, the timer is apparently based on the MIDI tempo of
-	// it. But at least for Loom, the Overture seems to be the only piece
-	// of music where timing matters.
+	if (!pollCD() && !isLoomOverture) {
+		_musicTimer = 0;
+		return;
+	}
+
+	// Time is measured in "ticks", with ten ticks per second. This should
+	// be exact enough, while providing an easily understandable unit of
+	// measurement for the adjustment slider.
+
+	// The rate at which the timer is advanced is hard-coded for the Loom
+	// Overture. When playing the original music the rate is apparently
+	// based on the MIDI tempo of it. But at least for Loom, the Overture
+	// seems to be the only piece of music where timing matters.
 
 	// These are the values the timer will have to reach or exceed for the
 	// Overture to work correctly:
@@ -149,19 +154,22 @@ void Sound::updateMusicTimer(int ticks) {
 	// 204 - Show the LucasFilm logo
 	// 278 - End the Overture
 
-	// At the time of writing, we don't have any way to query the CD audio
-	// manager for the exact length of the track, so we just assume the
-	// timer should run at the same rate. If the track ends before the
-	// timer reaches 198, skip ahead. (If the timer didn't even reach 4,
-	// you weren't even trying!)
+	uint32 now = g_system->getMillis();
+	uint32 ticks = (now - _replacementTrackStartTime) / 100;
+
+	// If the track ends before the timer reaches 198, skip ahead. (If the
+	// timer didn't even reach 4 you weren't really trying, and must be
+	// punished for that!)
 
 	if (isLoomOverture && !pollCD()) {
 		uint32 fadeDownTick = TIMER_TO_TICKS(198);
-		if (_scummTicks < fadeDownTick)
-			_scummTicks = fadeDownTick;
+		if (ticks < fadeDownTick) {
+			_replacementTrackStartTime = now - 100 * fadeDownTick;
+			ticks = fadeDownTick;
+		}
 	}
 
-	_musicTimer = TICKS_TO_TIMER(_scummTicks);
+	_musicTimer = TICKS_TO_TIMER(ticks);
 
 	// But don't let the timer exceed 278 until the Overture has ended, or
 	// the music will be cut off.
@@ -169,9 +177,6 @@ void Sound::updateMusicTimer(int ticks) {
 	if (isLoomOverture && pollCD() && _musicTimer >= 278)
 		_musicTimer = 277;
 }
-
-#undef TIMER_TO_TICKS
-#undef TICKS_TO_TIMER
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
@@ -317,7 +322,7 @@ void Sound::playSound(int soundID) {
 		int trackNr = getReplacementAudioTrack(soundID);
 		if (trackNr != -1) {
 			_currentCDSound = soundID;
-			_scummTicks = 0;
+			_replacementTrackStartTime = g_system->getMillis();
 			_musicTimer = 0;
 			g_system->getAudioCDManager()->play(trackNr, 1, 0, 0, true);
 			return;
@@ -1018,8 +1023,8 @@ void Sound::stopSound(int sound) {
 
 	if (sound != 0 && sound == _currentCDSound) {
 		_currentCDSound = 0;
-		_scummTicks = 0;
 		_musicTimer = 0;
+		_replacementTrackStartTime = 0;
 		stopCD();
 		stopCDTimer();
 	}
@@ -1134,6 +1139,14 @@ void Sound::pauseSounds(bool pause) {
 			stopCDTimer();
 		else
 			startCDTimer();
+	}
+
+	if (pause) {
+		if (!_replacementTrackPauseTime)
+			_replacementTrackPauseTime = g_system->getMillis();
+	} else {
+		_replacementTrackStartTime += (g_system->getMillis() - _replacementTrackPauseTime);
+		_replacementTrackPauseTime = 0;
 	}
 }
 
@@ -1372,6 +1385,13 @@ AudioCDManager::Status Sound::getCDStatus() {
 void Sound::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_currentCDSound, VER(35));
 	s.syncAsSint16LE(_currentMusic, VER(35));
+
+	if (s.isLoading() && _vm->VAR_MUSIC_TIMER != 0xFF) {
+		uint32 now = g_system->getMillis();
+		_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
+		_replacementTrackStartTime = now - 100 * TIMER_TO_TICKS(_musicTimer);
+		_replacementTrackPauseTime = now;
+	}
 }
 
 
