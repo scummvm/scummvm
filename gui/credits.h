@@ -286,6 +286,7 @@ static const char *credits[] = {
 "C0""Henry Bush",
 "C0""Scott Thomas",
 "C0""Jordi Vilalta Prat",
+"C0""Ray Carro",
 "",
 "C1""Hades Challenge",
 "C0""Vladimir Serbinenko/Google",

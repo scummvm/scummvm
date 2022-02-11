@@ -541,6 +541,8 @@ Groovie
      -
    * - Jordi Vilalta Prat
      -
+   * - Ray Carro
+     -
 
 Hades Challenge
 ^^^^^^^^^^^^^^^
