@@ -38,6 +38,7 @@
 
 namespace Chewy {
 
+#define MAX_ZOBJ 60
 #define MAX_RAND_NO_USE 6
 #define R45_MAX_PERSON 9
 
@@ -69,15 +70,18 @@ class Globals {
 		byte *getPixels() { return (byte *)Graphics::Surface::getPixels(); }
 	};
 
+	struct ZObjSort {
+		uint8 ObjArt;
+		uint8 ObjNr;
+		int16 ObjZ;
+	};
 public:
 	Globals();
 	~Globals();
 public:
 	int16 _ani_invent_anf[3] = { 38, 39, 21 };
 	int16 _ani_invent_delay[3][2] = {
-		{12, 12},
-		{10, 10},
-		{11, 11},
+		{ 12, 12 }, { 10, 10 }, { 11, 11 }
 	};
 	int16 _ani_count[3] = { 38, 39, 21 };
 	int16 _timer_nr[MAX_TIMER_OBJ] = { 0 };
@@ -158,6 +162,20 @@ public:
 	int8 _m_flip = 0;
 	int16 _tmp_menu = 0;
 	int16 _show_invent_menu = 0;
+
+	// r_event.cpp
+	int16 _flic_val1 = 0, _flic_val2 = 0;
+
+	// sprite.cpp
+	int16 _z_count = 0;
+	ZObjSort _z_obj_sort[MAX_ZOBJ];
+	char _new_vector = false;
+	int16 _tmp_maus_links = 0;
+
+	// timer.cpp
+	bool _timer_int = false;
+	int _timer_count = 0;
+	bool _timer_suspend = false;
 };
 
 extern Globals *g_globals;

@@ -67,8 +67,8 @@ ChewyEngine::~ChewyEngine() {
 
 void ChewyEngine::initialize() {
 	g_screen = _screen = new Graphics::Screen();
-	_events = new EventsManager(_screen);
 	_globals = new Globals();
+	_events = new EventsManager(_screen);
 	_sound = new Sound(_mixer);
 
 	_tempFiles.add(ADSH_TMP, 5710);

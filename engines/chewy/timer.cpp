@@ -22,20 +22,17 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "chewy/chewy.h"
-#include "chewy/timer.h"
 #include "chewy/defines.h"
+#include "chewy/global.h"
+#include "chewy/timer.h"
 
 namespace Chewy {
-
-bool timer_int;
-int timer_count;
-bool timer_suspend;
 
 timer::timer(int16 max_t, TimerBlk *t) {
 	_timerBlk = t;
 	_timerMax = max_t;
-	timer_int = false;
-	timer_suspend = false;
+	_G(timer_int) = false;
+	_G(timer_suspend) = false;
 	set_all_status(TIMER_STOP);
 }
 
@@ -56,7 +53,7 @@ void timer::calc_timer() {
 	int16 count;
 	int ak_time;
 	float freq;
-	ak_time = timer_count;
+	ak_time = _G(timer_count);
 	for (i = 0; i < _timerMax; i++) {
 		if (_timerBlk[i].TimeStatus != TIMER_STOP) {
 			freq = timer_freq[_timerBlk[i].TimeMode];
@@ -85,7 +82,7 @@ int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mod
 		_timerBlk[timer_nr].TimeCount = 0;
 		_timerBlk[timer_nr].TimeEnd = timer_end_wert;
 		_timerBlk[timer_nr].TimeFlag = 0;
-		_timerBlk[timer_nr].TimeLast = timer_count;
+		_timerBlk[timer_nr].TimeLast = _G(timer_count);
 		_timerBlk[timer_nr].TimeMode = timer_mode;
 		_timerBlk[timer_nr].TimeStatus = true;
 	} else
@@ -97,7 +94,7 @@ void timer::reset_timer(int16 timer_nr, int16 timer_wert) {
 	if (timer_nr < _timerMax) {
 		_timerBlk[timer_nr].TimeCount = 0;
 		_timerBlk[timer_nr].TimeFlag = 0;
-		_timerBlk[timer_nr].TimeLast = timer_count;
+		_timerBlk[timer_nr].TimeLast = _G(timer_count);
 		if (timer_wert)
 			_timerBlk[timer_nr].TimeEnd = timer_wert;
 	}
@@ -108,7 +105,7 @@ void timer::reset_all_timer() {
 	for (i = 0; i < _timerMax; i++) {
 		_timerBlk[i].TimeCount = 0;
 		_timerBlk[i].TimeFlag = 0;
-		_timerBlk[i].TimeLast = timer_count;
+		_timerBlk[i].TimeLast = _G(timer_count);
 	}
 }
 
@@ -138,11 +135,11 @@ void timer::set_all_status(int16 status) {
 }
 
 void timer::disable_timer() {
-	timer_suspend = true;
+	_G(timer_suspend) = true;
 }
 
 void timer::enable_timer() {
-	timer_suspend = false;
+	_G(timer_suspend) = false;
 }
 
 } // namespace Chewy

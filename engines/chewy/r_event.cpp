@@ -35,8 +35,6 @@ namespace Chewy {
 #define STERNE_ANI 17
 #define TUER_ZU_ANI 3
 
-static int16 flic_val1, flic_val2;
-
 void play_scene_ani(int16 nr, int16 mode) {
 #define ROOM_1_1 101
 #define ROOM_1_2 102
@@ -797,7 +795,7 @@ int16 flic_user_function(int16 keys) {
 	int ret;
 
 	if (atds->aad_get_status() != -1) {
-		switch (flic_val1) {
+		switch (_G(flic_val1)) {
 		case 579:
 		case 584:
 		case 588:
@@ -810,18 +808,18 @@ int16 flic_user_function(int16 keys) {
 	}
 
 	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-	if (flic_val1 == 593 && keys == 35)
+	if (_G(flic_val1) == 593 && keys == 35)
 		atds->stop_aad();
-	if (flic_val1 == 594 && keys == 18)
+	if (_G(flic_val1) == 594 && keys == 18)
 		atds->stop_aad();
 
 	ret = _G(in)->get_switch_code() == ESC ? -1 : 0;
-	if (flic_val2 == 140 && keys == 15)
+	if (_G(flic_val2) == 140 && keys == 15)
 		ret = -2;
-	if (flic_val2 == 144 && keys == 7)
+	if (_G(flic_val2) == 144 && keys == 7)
 		ret = -2;
-	if (flic_val2 == 145 || flic_val2 == 142 ||
-			flic_val2 == 141 || flic_val2 == 146) {
+	if (_G(flic_val2) == 145 || _G(flic_val2) == 142 ||
+			_G(flic_val2) == 141 || _G(flic_val2) == 146) {
 		if (atds->aad_get_status() == -1)
 			ret = -2;
 	}
@@ -866,20 +864,20 @@ static void flic_proc1() {
 			_G(out)->cls();
 		}
 
-		flic_val1 = 0;
+		_G(flic_val1) = 0;
 		if (VALS3[i] != -1) {
 			start_aad(VALS3[i], -1);
-			flic_val1 = VALS3[i];
+			_G(flic_val1) = VALS3[i];
 		}
 
 		bool flag;
 		do {
-			flic_val2 = VALS1[i];
+			_G(flic_val2) = VALS1[i];
 #ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(Ci.Handle, flic_val2);
+			_G(mem)->file->select_pool_item(Ci.Handle, _G(flic_val2));
 			ret = flc->custom_play(&Ci);
 #else
-			g_engine->playVideo(flic_val2);
+			g_engine->playVideo(_G(flic_val2));
 #endif
 			flag = VALS4[i] && atds->aad_get_status() != -1;
 		} while (flag && ret != -1 && ret != -2);

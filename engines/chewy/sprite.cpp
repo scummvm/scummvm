@@ -33,18 +33,6 @@ namespace Chewy {
 #define ZOBJ_CHEWY 6
 #define ZOBJ_HOWARD 7
 #define ZOBJ_NICHELLE 8
-#define MAX_ZOBJ 60
-
-struct ZObjSort {
-	uint8 ObjArt;
-	uint8 ObjNr;
-	int16 ObjZ;
-};
-
-int16 z_count;
-ZObjSort z_obj_sort[MAX_ZOBJ];
-char new_vector = false;
-int16 tmp_maus_links;
 
 void sprite_engine() {
 	int16 zmin;
@@ -61,17 +49,17 @@ void sprite_engine() {
 	calc_z_ebene();
 	calc_person_ani();
 
-	for (i = 0; i < z_count; i++) {
+	for (i = 0; i < _G(z_count); i++) {
 		zmin = 3000;
-		for (j = 0; j < z_count; j++) {
-			if (z_obj_sort[j].ObjZ != 3000 && z_obj_sort[j].ObjZ < zmin) {
-				zmin = z_obj_sort[j].ObjZ;
+		for (j = 0; j < _G(z_count); j++) {
+			if (_G(z_obj_sort)[j].ObjZ != 3000 && _G(z_obj_sort)[j].ObjZ < zmin) {
+				zmin = _G(z_obj_sort)[j].ObjZ;
 				min_zeiger = j;
 			}
 		}
-		nr = (int16)z_obj_sort[min_zeiger].ObjNr;
+		nr = (int16)_G(z_obj_sort)[min_zeiger].ObjNr;
 
-		switch (z_obj_sort[min_zeiger].ObjArt) {
+		switch (_G(z_obj_sort)[min_zeiger].ObjArt) {
 		case ZOBJ_ANI_DETAIL:
 			if (Adi[nr].zoom) {
 
@@ -129,7 +117,7 @@ void sprite_engine() {
 
 		case ZOBJ_HOWARD:
 		case ZOBJ_NICHELLE:
-			p_nr = z_obj_sort[min_zeiger].ObjArt - 6;
+			p_nr = _G(z_obj_sort)[min_zeiger].ObjArt - 6;
 			if (!_G(spieler).PersonHide[p_nr]) {
 				if (!spz_ani[p_nr]) {
 					ts_info = PersonTaf[p_nr];
@@ -179,65 +167,65 @@ void sprite_engine() {
 		default:
 			break;
 		}
-		z_obj_sort[min_zeiger].ObjZ = 3000;
+		_G(z_obj_sort)[min_zeiger].ObjZ = 3000;
 	}
 }
 
 void calc_z_ebene() {
 	int16 i;
-	z_count = 0;
+	_G(z_count) = 0;
 
 	for (i = 0; i < MAX_PERSON; i++) {
 		if (_G(spieler).PersonRoomNr[P_CHEWY + i] == _G(spieler).PersonRoomNr[P_CHEWY] &&
 		        spieler_mi[P_CHEWY + i].Id != NO_MOV_OBJ) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_CHEWY + i;
-			z_obj_sort[z_count].ObjZ = spieler_vector[P_CHEWY + i].Xypos[1] +
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_CHEWY + i;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = spieler_vector[P_CHEWY + i].Xypos[1] +
 			                           spieler_mi[P_CHEWY + i].HotMovY
 			                           - abs(spieler_vector[P_CHEWY + i].Yzoom);
-			++z_count;
+			++_G(z_count);
 		}
 	}
 
 	for (i = 0; i < MAXDETAILS; i++) {
 		if (Sdi[i].SprNr != -1) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_STATIC_DETAIL;
-			z_obj_sort[z_count].ObjNr = i;
-			z_obj_sort[z_count].ObjZ = Sdi[i].z_ebene;
-			++z_count;
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_STATIC_DETAIL;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = Sdi[i].z_ebene;
+			++_G(z_count);
 		}
 		if (Adi[i].start_ani != -1) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_ANI_DETAIL;
-			z_obj_sort[z_count].ObjNr = i;
-			z_obj_sort[z_count].ObjZ = Adi[i].z_ebene;
-			++z_count;
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_ANI_DETAIL;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = Adi[i].z_ebene;
+			++_G(z_count);
 		}
 	}
 
 	for (i = 0; i < obj->mov_obj_room[0]; i++) {
 
 		if (_G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene < 2000) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_INVENTAR;
-			z_obj_sort[z_count].ObjNr = obj->mov_obj_room[i + 1];
-			z_obj_sort[z_count].ObjZ = _G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene;
-			++z_count;
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_INVENTAR;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = obj->mov_obj_room[i + 1];
+			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene;
+			++_G(z_count);
 		}
 	}
 
 	for (i = 0; i < MAX_PROG_ANI; i++) {
 		if (spr_info[i].ZEbene < 200) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_PROGANI;
-			z_obj_sort[z_count].ObjNr = i;
-			z_obj_sort[z_count].ObjZ = spr_info[i].ZEbene;
-			++z_count;
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_PROGANI;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = spr_info[i].ZEbene;
+			++_G(z_count);
 		}
 	}
 
 	for (i = 0; i < _G(auto_obj); i++) {
 		if (auto_mov_vector[i].Xypos[2] < 200) {
-			z_obj_sort[z_count].ObjArt = ZOBJ_AUTO_OBJ;
-			z_obj_sort[z_count].ObjNr = i;
-			z_obj_sort[z_count].ObjZ = auto_mov_vector[i].Xypos[2];
-			++z_count;
+			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_AUTO_OBJ;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = auto_mov_vector[i].Xypos[2];
+			++_G(z_count);
 		}
 	}
 }
@@ -353,18 +341,18 @@ void stop_person(int16 p_nr) {
 }
 
 void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	det->start_detail(ani_nr, rep, mode);
 	while (det->get_ani_status(ani_nr) && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	ani_detail_info *adi;
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	det->start_detail(ani_nr, rep, mode);
 	adi = det->get_ani_detail(ani_nr);
@@ -375,7 +363,7 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	while (det->get_ani_status(ani_nr) && adi->ani_count != frame && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void wait_detail(int16 det_nr) {
@@ -384,7 +372,7 @@ void wait_detail(int16 det_nr) {
 }
 
 void wait_show_screen(int16 frames) {
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	if (_G(spieler).DelaySpeed > 0)
 		frames *= _G(spieler).DelaySpeed;
@@ -393,12 +381,12 @@ void wait_show_screen(int16 frames) {
 			get_user_key(NO_SETUP);
 		set_up_screen(DO_SETUP);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void start_ani_block(int16 anz, const AniBlock *ab) {
 	int16 i;
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	for (i = 0; i < anz; i++) {
 		if (ab[i].Mode == ANI_WAIT)
@@ -406,12 +394,12 @@ void start_ani_block(int16 anz, const AniBlock *ab) {
 		else
 			det->start_detail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void start_aad_wait(int16 dia_nr, int16 str_nr) {
 
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	talk_start_ani = -1;
 	talk_hide_static = -1;
@@ -420,7 +408,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -437,7 +425,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	int16 VocNr;
 	int16 vocx;
 	bool ret = false;
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 
 	if (!flags.AtsText) {
@@ -470,12 +458,12 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 	return ret;
 }
 
 void aad_wait(int16 str_nr) {
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	if (str_nr == -1) {
 		while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
@@ -486,7 +474,7 @@ void aad_wait(int16 str_nr) {
 			set_up_screen(DO_SETUP);
 		}
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 	if (minfo.button)
 		flags.main_maus_flag = 1;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -518,12 +506,12 @@ void start_ads_wait(int16 dia_nr) {
 }
 
 void wait_auto_obj(int16 nr) {
-	tmp_maus_links = _G(maus_links_click);
+	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	while (mov_phasen[nr].Repeat != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
-	_G(maus_links_click) = tmp_maus_links;
+	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void stop_auto_obj(int16 nr) {
@@ -767,7 +755,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 								mi->XyzStart[1] = om->Xypos[1];
 								mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 								if (om->Xyvo[1] != 0) {
-									new_vector = true;
+									_G(new_vector) = true;
 									swap_if_l(&om->Xyvo[1], &om->Xyvo[0]);
 								}
 								get_phase(om, mi);
@@ -804,7 +792,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 							mi->XyzStart[1] = om->Xypos[1];
 							mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 							if (om->Xyvo[0] != 0) {
-								new_vector = true;
+								_G(new_vector) = true;
 								swap_if_l(&om->Xyvo[0], &om->Xyvo[1]);
 
 							}
@@ -823,8 +811,8 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 					om->Xypos[0] += tmpx;
 					om->Xypos[1] += tmpy;
 					om->Xypos[2] += tmpz;
-					if (new_vector) {
-						new_vector = false;
+					if (_G(new_vector)) {
+						_G(new_vector) = false;
 						mi->XyzStart[0] = om->Xypos[0];
 						mi->XyzStart[1] = om->Xypos[1];
 						mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);

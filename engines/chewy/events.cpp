@@ -39,15 +39,15 @@ EventsManager::~EventsManager() {
 
 
 void EventsManager::init_timer_handler() {
-	timer_int = true;
-	timer_count = 0;
+	_G(timer_int) = true;
+	_G(timer_count) = 0;
 
 	addTimer(timer_handler, (uint32)(1000 / 18.2));
 }
 
 void EventsManager::timer_handler() {
-	if (!timer_suspend)
-		++timer_count;
+	if (!_G(timer_suspend))
+		++_G(timer_count);
 }
 
 void EventsManager::handleEvent(const Common::Event &event) {
