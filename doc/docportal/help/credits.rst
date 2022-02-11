@@ -537,11 +537,11 @@ Groovie
 
    * - Henry Bush
      -
+   * - Ray Carro
+     -
    * - Scott Thomas
      -
    * - Jordi Vilalta Prat
-     -
-   * - Ray Carro
      -
 
 Hades Challenge
