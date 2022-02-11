@@ -128,6 +128,7 @@ private:
 	uint16 _hotspotLeftAction;
 	uint16 _hotspotSlot;
 	bool _fastForwarding;
+	void resetFastForward();
 
 	// Video
 	Common::SeekableReadStream *_videoFile;

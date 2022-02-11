@@ -118,7 +118,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 
 	_oldInstruction = (uint16)-1;
 	_videoSkipAddress = 0;
-	_fastForwarding = false;
+	resetFastForward();
 	_eventKbdChar = 0;
 	_eventMouseClicked = 0;
 	_wantAutosave = false;
@@ -1142,13 +1142,17 @@ void Script::o_inputloopend() {
 
 		// There's nothing to do until we get some input
 		_vm->waitForInput();
-		_fastForwarding = DebugMan.isDebugChannelEnabled(kDebugFast);
+		resetFastForward();
 	}
 
 	if (_wantAutosave && canDirectSave()) {
 		_vm->saveAutosaveIfEnabled();
 		_wantAutosave = false;
 	}
+}
+
+void Script::resetFastForward() {
+	_fastForwarding = DebugMan.isDebugChannelEnabled(kDebugFast);
 }
 
 void Script::o_random() {
@@ -1881,6 +1885,7 @@ void Script::o_loadscript() {
 
 	// Save the variables
 	memcpy(_savedVariables, _variables + 0x107, 0x180);
+	resetFastForward();
 }
 
 void Script::o_setvideoorigin() {
@@ -1946,6 +1951,8 @@ void Script::o_returnscript() {
 		// Clandestiny uses val==1 when you beat the puzzle
 		_wantAutosave = val == 1;
 	}
+
+	resetFastForward();
 }
 
 void Script::o_sethotspotright() {
