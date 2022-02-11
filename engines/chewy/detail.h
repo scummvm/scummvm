@@ -22,6 +22,7 @@
 #ifndef CHEWY_DETAIL_H
 #define CHEWY_DETAIL_H
 
+#include "chewy/defines.h"
 #include "chewy/file.h"
 #include "chewy/ngshext.h"
 
@@ -163,7 +164,6 @@ struct RdiDateiHeader {
 	bool load(Common::SeekableReadStream *src);
 };
 
-#define MAXPATH 255
 struct DeteditPrj {
 	char Id[7];
 	char IibFile[MAXPATH];
