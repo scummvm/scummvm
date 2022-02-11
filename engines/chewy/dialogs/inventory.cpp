@@ -174,9 +174,9 @@ void Inventory::menu() {
 
 	ret_look = -1;
 	menu_first = false;
-	show_invent_menu = 1;
+	_G(show_invent_menu) = 1;
 
-	while (show_invent_menu == 1 && !SHOULD_QUIT) {
+	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
 		if (!minfo.button)
 			maus_flag = 0;
 		if (minfo.button == 1 || kbinfo.key_code == ENTER || keyVal) {
@@ -323,7 +323,7 @@ void Inventory::menu() {
 				} else {
 					if (menu_flag1 != MENU_EINBLENDEN) {
 						menu_flag1 = MENU_AUSBLENDEN;
-						show_invent_menu = false;
+						_G(show_invent_menu) = false;
 					}
 				}
 				break;
@@ -366,7 +366,7 @@ void Inventory::menu() {
 			menu_first = true;
 		}
 
-		if (show_invent_menu != 2) {
+		if (_G(show_invent_menu) != 2) {
 			set_up_screen(NO_SETUP);
 			_G(cur)->move(minfo.x, minfo.y);
 			_G(cur)->show_cur();
@@ -403,7 +403,7 @@ void Inventory::menu() {
 	flags.InventMenu = false;
 	flags.AutoAniPlay = ani_tmp;
 	_G(spieler).DispFlag = disp_tmp;
-	menu_display = tmp_menu;
+	menu_display = _G(tmp_menu);
 	flags.StopAutoObj = false;
 }
 
@@ -646,13 +646,13 @@ int16 Inventory::calc_use_invent(int16 inv_nr) {
 			break;
 
 		case CUTMAG_INV:
-			show_invent_menu = 2;
+			_G(show_invent_menu) = 2;
 			ret_val = true;
 			Rooms::Room58::look_cut_mag(58);
 			break;
 
 		case SPARK_INV:
-			show_invent_menu = 2;
+			_G(show_invent_menu) = 2;
 			ret_val = true;
 			save_person_rnr();
 			Rooms::Room58::look_cut_mag(60);

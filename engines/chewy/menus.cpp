@@ -29,19 +29,15 @@
 
 namespace Chewy {
 
-char m_flip = 0;
-int16 tmp_menu;
-int16 show_invent_menu;
-
 void plot_main_menu() {
 	static const int IMAGES[] = { 7, 8, 9, 10, 12, 11 };
 	int16 i;
 	int16 zoomx, zoomy;
 	int16 *korrektur;
 
-	if (menu_item != tmp_menu) {
-		m_flip = 0;
-		tmp_menu = menu_item;
+	if (menu_item != _G(tmp_menu)) {
+		_G(m_flip) = 0;
+		_G(tmp_menu) = menu_item;
 	}
 
 	maus_mov_menu();
@@ -71,8 +67,8 @@ void plot_main_menu() {
 
 	zoomx = 16;
 	zoomy = 16;
-	++m_flip;
-	if (m_flip < 12 * (_G(spieler).DelaySpeed + 1)) {
+	++_G(m_flip);
+	if (_G(m_flip) < 12 * (_G(spieler).DelaySpeed + 1)) {
 		int deltaX = 0;
 		if (menu_item == CUR_SAVE)
 			deltaX = -40;
@@ -85,8 +81,8 @@ void plot_main_menu() {
 		    _G(spieler).MainMenuY + korrektur[img * 2 + 1] - 10,
 			zoomx, zoomy, 0);
 	} else {
-		if (m_flip > 15 * (_G(spieler).DelaySpeed + 1))
-			m_flip = 0;
+		if (_G(m_flip) > 15 * (_G(spieler).DelaySpeed + 1))
+			_G(m_flip) = 0;
 	}
 }
 

@@ -153,6 +153,11 @@ public:
 	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0, _fvorx = 0, _fvory = 0;
 	int16 _scr_w = 0, _scr_h = SCREEN_HEIGHT;
+
+	// menus.cpp
+	int8 _m_flip = 0;
+	int16 _tmp_menu = 0;
+	int16 _show_invent_menu = 0;
 };
 
 extern Globals *g_globals;
