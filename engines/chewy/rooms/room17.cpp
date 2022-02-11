@@ -54,13 +54,14 @@ void Room17::entry() {
 	if (!_G(spieler).R17EnergieOut) {
 		det->start_detail(1, 255, ANI_VOR);
 		for (int i = 0; i < 3; ++i)
-			det->start_detail(i, 255, ANI_VOR);
+			det->start_detail(6 + i, 255, ANI_VOR);
 	}
 
 	plot_seil();
 
 	if (_G(spieler).R17GitterWeg)
 		det->hide_static_spr(5);
+
 	if (_G(spieler).R17DoorKommand)
 		det->show_static_spr(7);
 
@@ -87,6 +88,7 @@ void Room17::entry() {
 			_G(spieler).room_e_obj[39].Attribut = AUSGANG_RECHTS;
 		else
 			_G(spieler).room_e_obj[39].Attribut = 255;
+
 		if (_G(spieler).R18DoorBruecke)
 			_G(spieler).room_e_obj[35].Attribut = AUSGANG_LINKS;
 		else
@@ -135,28 +137,24 @@ void Room17::gedAction(int index) {
 int16 Room17::use_seil() {
 	int16 action_flag = false;
 
-	if (!flags.AutoAniPlay) {
-		if (_G(spieler).R17Location == 1) {
-			if (is_cur_inventar(SEIL_INV)) {
-				action_flag = true;
-				hide_cur();
+	if (!flags.AutoAniPlay && _G(spieler).R17Location == 1 && is_cur_inventar(SEIL_INV)) {
+		action_flag = true;
+		hide_cur();
 
-				del_inventar(_G(spieler).AkInvent);
-				flags.AutoAniPlay = true;
-				auto_move(5, P_CHEWY);
-				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_detail_wait(10, 1, ANI_VOR);
-				_G(spieler).R17Seil = true;
-				atds->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATEI);
-				plot_seil();
-				_G(spieler).PersonHide[P_CHEWY] = false;
-				flags.AutoAniPlay = false;
-				start_spz(5, 255, false, P_CHEWY);
-				start_aad_wait(119, -1);
+		del_inventar(_G(spieler).AkInvent);
+		flags.AutoAniPlay = true;
+		auto_move(5, P_CHEWY);
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		start_detail_wait(10, 1, ANI_VOR);
+		_G(spieler).R17Seil = true;
+		atds->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATEI);
+		plot_seil();
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		flags.AutoAniPlay = false;
+		start_spz(5, 255, false, P_CHEWY);
+		start_aad_wait(119, -1);
 
-				show_cur();
-			}
-		}
+		show_cur();
 	}
 
 	return action_flag;
@@ -276,14 +274,14 @@ int16 Room17::energie_hebel() {
 	auto_move(7, P_CHEWY);
 
 	if (!_G(spieler).R17HebelOk) {
-		action_flag = true;
-
 		if (is_cur_inventar(BECHER_VOLL_INV)) {
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R17HebelOk = true;
 			start_aad_wait(38, -1);
-		} else {
+			action_flag = true;
+		} else if (!_G(spieler).inv_cur) {
 			start_aad_wait(37, -1);
+			action_flag = true;
 		}
 
 	} else if (!_G(spieler).inv_cur) {
@@ -291,8 +289,6 @@ int16 Room17::energie_hebel() {
 
 		obj->calc_rsi_flip_flop(SIB_HEBEL_R17);
 		_G(spieler).R17EnergieOut ^= 1;
-		atds->set_ats_str(142, TXT_MARK_LOOK, _G(spieler).R17EnergieOut, ATS_DATEI);
-		g_engine->_sound->playSound(12);
 
 		if (!_G(spieler).R17EnergieOut) {
 			det->start_detail(1, 255, ANI_VOR);
@@ -309,7 +305,6 @@ int16 Room17::energie_hebel() {
 			g_engine->_sound->stopSound(0);
 		} else {
 			g_engine->_sound->playSound(15, 0);
-			g_engine->_sound->playSound(15);
 		}
 	}
 
