@@ -140,6 +140,15 @@ public:
 	int16 _modul = 0;
 	int16 _fcode = 0;
 
+	// mcga.cpp
+	byte _saved_palette[PALETTE_SIZE] = { 0 };
+	bool _screenHasDefault = false;
+	byte *_screenDefaultP = nullptr;
+	int _spriteWidth = 0;
+	byte *_fontAddr = nullptr;
+	size_t _fontWidth = 0, _fontHeight = 0;
+	int _fontFirst = 0, _fontLast = 0;
+
 	// mcga_graphics.cpp
 	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0, _fvorx = 0, _fvory = 0;
