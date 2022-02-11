@@ -373,7 +373,9 @@ void Cursor_v2::enable() {
 
 void Cursor_v2::showFrame(uint16 frame) {
 	int offset = _width * _height * frame * 4;
-	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, 0, false, &_format);
+	// SDL uses keycolor even though we're using ABGR8888, so just set it to a pink color that isn't used
+	uint32 keycolor = _format.ARGBToColor(0, 255, 128, 255);
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, keycolor, false, &_format);
 }
 
 void blendCursorPixel(uint32 &d, uint32 &s) {
