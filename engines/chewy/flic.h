@@ -115,6 +115,8 @@ private:
 	byte *sounds[50];
 	uint32 Ssize[50];
 	int16 CurrentFrame;
+	int16(*custom_user)(int16) = nullptr;
+	int16(*flic_user)(int16) = nullptr;
 };
 
 } // namespace Chewy

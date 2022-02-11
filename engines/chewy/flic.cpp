@@ -31,9 +31,6 @@ namespace Chewy {
 
 #define SOUND_SLOT_SIZE 500000
 
-static int16(*custom_user)(int16) = nullptr;
-static int16(*flic_user)(int16) = nullptr;
-
 void decode_flc(byte *vscr, const byte *dbuf) {
 	Common::MemoryReadStream src(dbuf, 0xffffffff);
 	int h = src.readUint16LE();
