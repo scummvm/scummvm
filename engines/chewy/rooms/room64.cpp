@@ -59,7 +59,7 @@ void Room64::entry() {
 }
 
 int16 Room64::cut_sev(int16 frame) {
-	const int16 spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
+	const int16 spr_nr = _G(chewy_ph)[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 	const int16 x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
 	const int16 y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
 	

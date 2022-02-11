@@ -248,7 +248,7 @@ void test_menu() {
 	_G(cur_display) = true;
 	_G(cur)->show_cur();
 	spieler_vector[P_CHEWY].Phase = 6;
-	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[spieler_vector[P_CHEWY].Phase];
+	spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[spieler_vector[P_CHEWY].Phase];
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	spieler_vector[P_CHEWY].Count = 0;
 	ende = false;
@@ -1502,7 +1502,7 @@ int16 is_mouse_person(int16 x, int16 y) {
 					switch (i) {
 					case P_CHEWY:
 						xy = (int16
-						      *)chewy->image[chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr]];
+						      *)chewy->image[_G(chewy_ph)[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr]];
 						break;
 
 					case P_HOWARD:

@@ -123,6 +123,10 @@ public:
 	int16 _r65tmp_ho_y = 0;
 	int16 _r68HohesC = 0;
 
+	// global.cpp
+	const uint8 *_chewy_ph_anz;
+	const uint8 *_chewy_ph;
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -188,7 +192,6 @@ extern int16 person_tmp_room[MAX_PERSON];
 extern char *err_str;
 extern uint32 ram_end;
 
-extern uint32 ram_start;
 extern int16 FrameSpeed;
 extern int16 FrameSpeedTmp;
 
@@ -276,8 +279,6 @@ extern taf_info *curtaf;
 extern taf_info *menutaf;
 extern taf_seq_info *howard_taf;
 extern taf_info *chewy;
-extern uint8 *chewy_ph_anz;
-extern uint8 *chewy_ph;
 extern int16 *chewy_kor;
 
 extern int16 person_end_phase[MAX_PERSON];
@@ -304,7 +305,7 @@ extern AutoMov auto_mov[MAX_AUTO_MOV];
 extern int16 HowardMov;
 
 extern int16 AkChewyTaf;
-
+/*
 extern uint8 chewy_phasen[8][8];
 extern uint8 chewy_bo_phasen[8][8];
 extern uint8 chewy_mi_phasen[8][8];
@@ -314,7 +315,7 @@ extern uint8 chewy_phasen_anz[];
 extern uint8 chewy_bo_phasen_anz[];
 extern uint8 chewy_mi_phasen_anz[];
 extern uint8 chewy_ro_phasen_anz[];
-
+*/
 extern int16 PersonAni[MAX_PERSON];
 extern taf_seq_info *PersonTaf[MAX_PERSON];
 extern uint8 PersonSpr[MAX_PERSON][8];

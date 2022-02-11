@@ -218,7 +218,7 @@ void MainMenu::startGame() {
 	room->load_room(&room_blk, 0, &_G(spieler));
 
 	spieler_vector[P_CHEWY].Phase = 6;
-	spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[6];
+	spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	fx_blend = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;

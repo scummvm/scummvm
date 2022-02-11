@@ -86,7 +86,7 @@ void sprite_engine() {
 		case ZOBJ_CHEWY:
 			if (!_G(spieler).PersonHide[P_CHEWY]) {
 				if (!spz_ani[P_CHEWY]) {
-					spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
+					spr_nr = _G(chewy_ph)[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
 					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->_roomInfo->ZoomFak,
@@ -290,14 +290,14 @@ void set_person_spr(int16 nr, int16 p_nr) {
 		case P_LEFT:
 			spieler_vector[P_CHEWY].Phase = CH_L_STEHEN;
 			spieler_vector[P_CHEWY].PhNr = 0;
-			spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[CH_L_STEHEN];
+			spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[CH_L_STEHEN];
 			person_end_phase[P_CHEWY] = P_LEFT;
 			break;
 
 		case P_RIGHT:
 			spieler_vector[P_CHEWY].Phase = CH_R_STEHEN;
 			spieler_vector[P_CHEWY].PhNr = 0;
-			spieler_vector[P_CHEWY].PhAnz = chewy_ph_anz[CH_R_STEHEN];
+			spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[CH_R_STEHEN];
 			person_end_phase[P_CHEWY] = P_RIGHT;
 			break;
 
