@@ -28,8 +28,8 @@ namespace Chewy {
 
 #define LEFT_VECT -1
 #define RIGHT_VECT 1
-#define UP_VECT -gpkt->Breite
-#define DOWN_VECT gpkt->Breite
+#define UP_VECT -_gpkt->Breite
+#define DOWN_VECT _gpkt->Breite
 #define GEFUNDEN 1
 #define UNBEGEHBAR 2
 #define Y_DOWN 1
@@ -49,10 +49,10 @@ namespace Chewy {
 #define MOV_Y 2
 
 movclass::movclass() {
-	vec_tbl[0] = -40;
-	vec_tbl[1] = 1;
-	vec_tbl[2] = 40;
-	vec_tbl[3] = -1;
+	_vecTbl[0] = -40;
+	_vecTbl[1] = 1;
+	_vecTbl[2] = 40;
+	_vecTbl[3] = -1;
 }
 
 movclass::~movclass() {
@@ -63,36 +63,36 @@ void movclass::goto_xy(GotoPkt *gp) {
 	int16 ziel_feld;
 	//int16 anz;
 	int16 tmp;
-	gpkt = gp;
-	agv.AutoGo = false;
-	agv.Continue = false;
-	vec_tbl[0] = -gpkt->Breite;
-	vec_tbl[2] = gpkt->Breite;
-	plot_delay = 20;
+	_gpkt = gp;
+	_agv.AutoGo = false;
+	_agv.Continue = false;
+	_vecTbl[0] = -_gpkt->Breite;
+	_vecTbl[2] = _gpkt->Breite;
+	_plotDelay = 20;
 	calc_xy();
-	plot_delay = 0;
+	_plotDelay = 0;
 
-	start_feld = get_feld_nr(gpkt->Sx, gpkt->Sy);
-	ziel_feld = get_feld_nr(gpkt->Dx, gpkt->Dy);
+	start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
+	ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
 	tmp = ziel_feld;
 	/*anz = */calc_go(start_feld, &ziel_feld);
 
 	if (tmp != ziel_feld) {
 		get_mov_line();
-		if (gml.MLineFeld != -1) {
-			calc_mov_line_xit(gml.MLineFeld);
-			if (mle.FNr != -1) {
-				agv.AutoGo = true;
-				agv.Start = 0;
-				agv.LastFeld = -1;
-				agv.AkKnoten = 0;
-				start_feld = get_feld_nr(gpkt->Sx, gpkt->Sy);
-				ziel_feld = gml.MLineFeld;
+		if (_gml.MLineFeld != -1) {
+			calc_mov_line_xit(_gml.MLineFeld);
+			if (_mle.FNr != -1) {
+				_agv.AutoGo = true;
+				_agv.Start = 0;
+				_agv.LastFeld = -1;
+				_agv.AkKnoten = 0;
+				start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
+				ziel_feld = _gml.MLineFeld;
 				calc_go(start_feld, &ziel_feld);
-				if (gml.MLineFeld != ziel_feld) {
-					agv.PktAnz = 2;
+				if (_gml.MLineFeld != ziel_feld) {
+					_agv.PktAnz = 2;
 				} else {
-					agv.PktAnz = 1;
+					_agv.PktAnz = 1;
 				}
 			}
 		}
@@ -106,71 +106,71 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 	int16 ret;
 	ret = -1;
 
-	if (agv.AutoGo == true) {
-		speicher = gpkt->Mem;
-		speicher += (gpkt->Breite * gpkt->Hoehe) * gpkt->AkMovEbene;
-		if (!agv.Start) {
-			agv.Start = agv.PktAnz;
-			if (agv.PktAnz == 1) {
-				agv.Start = 3;
-				get_feld_xy(gml.MLineFeld, &agv.X_End, &agv.Y_End);
-				agv.AkFeld = gml.MLineFeld;
+	if (_agv.AutoGo == true) {
+		speicher = _gpkt->Mem;
+		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
+		if (!_agv.Start) {
+			_agv.Start = _agv.PktAnz;
+			if (_agv.PktAnz == 1) {
+				_agv.Start = 3;
+				get_feld_xy(_gml.MLineFeld, &_agv.X_End, &_agv.Y_End);
+				_agv.AkFeld = _gml.MLineFeld;
 			} else {
-				get_feld_xy(gml.GotoFeld, &agv.X_End, &agv.Y_End);
-				agv.AkFeld = gml.GotoFeld;
+				get_feld_xy(_gml.GotoFeld, &_agv.X_End, &_agv.Y_End);
+				_agv.AkFeld = _gml.GotoFeld;
 			}
-			*auto_x = agv.X_End + 4;
-			*auto_y = agv.Y_End + 4;
+			*auto_x = _agv.X_End + 4;
+			*auto_y = _agv.Y_End + 4;
 			ret = true;
 		} else {
-			if (get_feld_nr(x, y) == agv.AkFeld) {
-				if (agv.Start == 2) {
-					agv.Start = 3;
-					get_feld_xy(gml.GotoFeld, &agv.X_End, &agv.Y_End);
-					*auto_x = agv.X_End + 4;
-					*auto_y = agv.Y_End + 4;
+			if (get_feld_nr(x, y) == _agv.AkFeld) {
+				if (_agv.Start == 2) {
+					_agv.Start = 3;
+					get_feld_xy(_gml.GotoFeld, &_agv.X_End, &_agv.Y_End);
+					*auto_x = _agv.X_End + 4;
+					*auto_y = _agv.Y_End + 4;
 					ret = true;
-				} else if (agv.Start == 3) {
-					if (agv.LastFeld == -1) {
-						agv.LastFeld = gml.MLineFeld;
-						agv.AkFeld = gml.MLineFeld + mle.Direction;
-						if (speicher[agv.AkFeld] == MOV_LINE_KNOTEN) {
-							feld1knoten = true;
+				} else if (_agv.Start == 3) {
+					if (_agv.LastFeld == -1) {
+						_agv.LastFeld = _gml.MLineFeld;
+						_agv.AkFeld = _gml.MLineFeld + _mle.Direction;
+						if (speicher[_agv.AkFeld] == MOV_LINE_KNOTEN) {
+							_feld1knoten = true;
 						} else
-							feld1knoten = false;
-						get_feld_xy(agv.AkFeld, &agv.X_End, &agv.Y_End);
-						*auto_x = agv.X_End + 4;
-						*auto_y = agv.Y_End + 4;
+							_feld1knoten = false;
+						get_feld_xy(_agv.AkFeld, &_agv.X_End, &_agv.Y_End);
+						*auto_x = _agv.X_End + 4;
+						*auto_y = _agv.Y_End + 4;
 						ret = true;
-					} else if (get_feld_nr(x, y) == agv.AkFeld) {
-						if (agv.AkFeld == mle.FNr) {
-							agv.AutoGo = false;
-							*auto_x = gpkt->Dx;
-							*auto_y = gpkt->Dy;
+					} else if (get_feld_nr(x, y) == _agv.AkFeld) {
+						if (_agv.AkFeld == _mle.FNr) {
+							_agv.AutoGo = false;
+							*auto_x = _gpkt->Dx;
+							*auto_y = _gpkt->Dy;
 							ret = true;
 						} else {
 							ok = 0;
-							if (feld1knoten) {
-								feld1knoten = false;
-								agv.LastFeld = agv.AkFeld;
-								agv.AkFeld = mle.KnPkt[agv.AkKnoten];
-								++agv.AkKnoten;
-								if (agv.AkFeld != -1)
+							if (_feld1knoten) {
+								_feld1knoten = false;
+								_agv.LastFeld = _agv.AkFeld;
+								_agv.AkFeld = _mle.KnPkt[_agv.AkKnoten];
+								++_agv.AkKnoten;
+								if (_agv.AkFeld != -1)
 									ok = 1;
 							} else {
 								for (i = 0; i < 4 && !ok; i++) {
-									if (speicher[agv.AkFeld + vec_tbl[i]] == MOV_LINE_IDX) {
-										if (agv.AkFeld + vec_tbl[i] != agv.LastFeld) {
-											agv.LastFeld = agv.AkFeld;
-											agv.AkFeld += vec_tbl[i];
+									if (speicher[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_IDX) {
+										if (_agv.AkFeld + _vecTbl[i] != _agv.LastFeld) {
+											_agv.LastFeld = _agv.AkFeld;
+											_agv.AkFeld += _vecTbl[i];
 											ok = 1;
 										}
-									} else if (speicher[agv.AkFeld + vec_tbl[i]] == MOV_LINE_KNOTEN) {
-										if (agv.AkFeld + vec_tbl[i] != agv.LastFeld) {
-											agv.LastFeld = agv.AkFeld + vec_tbl[i];
-											agv.AkFeld = mle.KnPkt[agv.AkKnoten];
-											++agv.AkKnoten;
-											if (agv.AkFeld == -1)
+									} else if (speicher[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_KNOTEN) {
+										if (_agv.AkFeld + _vecTbl[i] != _agv.LastFeld) {
+											_agv.LastFeld = _agv.AkFeld + _vecTbl[i];
+											_agv.AkFeld = _mle.KnPkt[_agv.AkKnoten];
+											++_agv.AkKnoten;
+											if (_agv.AkFeld == -1)
 												ok = 0;
 											else
 												ok = 1;
@@ -179,13 +179,13 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 								}
 							}
 							if (ok) {
-								get_feld_xy(agv.AkFeld, &agv.X_End, &agv.Y_End);
-								*auto_x = agv.X_End + 4;
-								*auto_y = agv.Y_End + 4;
+								get_feld_xy(_agv.AkFeld, &_agv.X_End, &_agv.Y_End);
+								*auto_x = _agv.X_End + 4;
+								*auto_y = _agv.Y_End + 4;
 							} else {
-								agv.AutoGo = false;
-								*auto_x = gpkt->Dx;
-								*auto_y = gpkt->Dy;
+								_agv.AutoGo = false;
+								*auto_x = _gpkt->Dx;
+								*auto_y = _gpkt->Dy;
 							}
 							ret = true;
 						}
@@ -199,16 +199,16 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 }
 
 void movclass::stop_auto_go() {
-	agv.AutoGo = false;
-	agv.Continue = true;
+	_agv.AutoGo = false;
+	_agv.Continue = true;
 }
 
 void movclass::continue_auto_go() {
-	agv.AutoGo = agv.Continue;
+	_agv.AutoGo = _agv.Continue;
 }
 
 bool movclass::auto_go_status() {
-	return agv.AutoGo;
+	return _agv.AutoGo;
 }
 
 void movclass::calc_xy() {
@@ -225,7 +225,7 @@ void movclass::calc_xy() {
 	int16 yvector = 0;
 	int16 tmp_feld;
 
-	if (!ged->ged_idx(gpkt->Dx, gpkt->Dy, gpkt->Breite, gpkt->Mem)) {
+	if (!ged->ged_idx(_gpkt->Dx, _gpkt->Dy, _gpkt->Breite, _gpkt->Mem)) {
 		ende = 0;
 		count = 0;
 		min_x = -1;
@@ -233,8 +233,8 @@ void movclass::calc_xy() {
 
 		while (!ende) {
 			min_steps = 30000;
-			x = gpkt->Dx - (count + 1) * 8;
-			y = gpkt->Dy - (count + 1) * 8;
+			x = _gpkt->Dx - (count + 1) * 8;
+			y = _gpkt->Dy - (count + 1) * 8;
 
 			for (seite = 0; seite < 4; seite++) {
 				anz = 2 + (count * 2);
@@ -265,11 +265,11 @@ void movclass::calc_xy() {
 				}
 
 				for (i = 0; i < anz; i++) {
-					if (x >= 0 && x < gpkt->Breite * 8 &&
-					        y >= 0 && y < gpkt->Hoehe * 8) {
-						if (ged->ged_idx(x, y, gpkt->Breite, gpkt->Mem)) {
-							aksteps = abs(gpkt->Dx - x);
-							aksteps += abs(gpkt->Dy - y);
+					if (x >= 0 && x < _gpkt->Breite * 8 &&
+					        y >= 0 && y < _gpkt->Hoehe * 8) {
+						if (ged->ged_idx(x, y, _gpkt->Breite, _gpkt->Mem)) {
+							aksteps = abs(_gpkt->Dx - x);
+							aksteps += abs(_gpkt->Dy - y);
 							if (aksteps < min_steps) {
 								min_steps = aksteps;
 								min_x = x;
@@ -286,9 +286,9 @@ void movclass::calc_xy() {
 			if (min_steps != 30000) {
 				ende = 1;
 				tmp_feld = get_feld_nr(min_x, min_y);
-				get_feld_xy(tmp_feld, &gpkt->Dx, &gpkt->Dy);
-				gpkt->Dx += 4;
-				gpkt->Dy += 4;
+				get_feld_xy(tmp_feld, &_gpkt->Dx, &_gpkt->Dy);
+				_gpkt->Dx += 4;
+				_gpkt->Dy += 4;
 			}
 		}
 	}
@@ -307,7 +307,7 @@ short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
 	ObjMov om;
 	MovInfo mi;
 
-	mi.Vorschub = gpkt->Vorschub;
+	mi.Vorschub = _gpkt->Vorschub;
 	get_feld_xy(src_feld, &om.Xypos[0], &om.Xypos[1]);
 	get_feld_xy(*dst_feld, &mi.XyzEnd[0], &mi.XyzEnd[1]);
 	mi.XyzStart[0] = om.Xypos[0];
@@ -358,15 +358,15 @@ short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
 			tmpz = 0;
 			if (!ged->ged_idx(om.Xypos[0] + tmpx + tmpz,
 			                  om.Xypos[1] + tmpy + tmpz,
-			                  gpkt->Breite, gpkt->Mem)) {
+			                  _gpkt->Breite, _gpkt->Mem)) {
 
 				if (!ged->ged_idx(om.Xypos[0] + tmpx + tmpz,
 				                  om.Xypos[1] + tmpz,
-				                  gpkt->Breite, gpkt->Mem)) {
+				                  _gpkt->Breite, _gpkt->Mem)) {
 
 					if (!ged->ged_idx(om.Xypos[0] + tmpz,
 					                  om.Xypos[1] + tmpy + tmpz,
-					                  gpkt->Breite, gpkt->Mem)) {
+					                  _gpkt->Breite, _gpkt->Mem)) {
 
 						abbruch = UNBEGEHBAR;
 					} else {
@@ -448,14 +448,14 @@ void movclass::get_mov_line() {
 	int16 count;
 	int16 y_richtung;
 	byte *speicher;
-	gml.GotoFeld = -1;
-	gml.MLineFeld = -1;
-	if (gpkt->Ebenen > 1) {
-		speicher = gpkt->Mem;
+	_gml.GotoFeld = -1;
+	_gml.MLineFeld = -1;
+	if (_gpkt->Ebenen > 1) {
+		speicher = _gpkt->Mem;
 
-		speicher += (gpkt->Breite * gpkt->Hoehe) * gpkt->AkMovEbene;
+		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
 
-		start_feld = get_feld_nr(gpkt->Sx, gpkt->Sy);
+		start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
 		ende = 0;
 		count = 0;
 		min_steps = 30000;
@@ -464,20 +464,20 @@ void movclass::get_mov_line() {
 		while (!ende) {
 
 			tmp_feld = start_feld + count * count_vect;
-			if (ged->ged_idx(tmp_feld, gpkt->Breite, gpkt->Mem)) {
+			if (ged->ged_idx(tmp_feld, _gpkt->Breite, _gpkt->Mem)) {
 				abbruch = 0;
 				vector = 0;
-				while ((tmp_feld % gpkt->Breite) < (gpkt->Breite - 1) && !abbruch)
+				while ((tmp_feld % _gpkt->Breite) < (_gpkt->Breite - 1) && !abbruch)
 				{
-					if (ged->ged_idx(tmp_feld + vector, gpkt->Breite, gpkt->Mem)) {
+					if (ged->ged_idx(tmp_feld + vector, _gpkt->Breite, _gpkt->Mem)) {
 						tmp_feld += vector;
 						if (speicher[tmp_feld] == MOV_LINE_IDX) {
-							ak_steps = abs((tmp_feld % gpkt->Breite) - (start_feld % gpkt->Breite));
-							ak_steps += abs((tmp_feld / gpkt->Breite) - (start_feld / gpkt->Breite));
+							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));
+							ak_steps += abs((tmp_feld / _gpkt->Breite) - (start_feld / _gpkt->Breite));
 							if (ak_steps < min_steps) {
 								min_steps = ak_steps;
-								gml.GotoFeld = start_feld + count * count_vect;
-								gml.MLineFeld = tmp_feld;
+								_gml.GotoFeld = start_feld + count * count_vect;
+								_gml.MLineFeld = tmp_feld;
 							}
 						}
 						vector = RIGHT_VECT;
@@ -489,16 +489,16 @@ void movclass::get_mov_line() {
 				tmp_feld = start_feld + count * count_vect;
 				vector = LEFT_VECT;
 				abbruch = 0;
-				while ((tmp_feld % gpkt->Breite) > 0 && !abbruch) {
-					if (ged->ged_idx(tmp_feld + vector, gpkt->Breite, gpkt->Mem)) {
+				while ((tmp_feld % _gpkt->Breite) > 0 && !abbruch) {
+					if (ged->ged_idx(tmp_feld + vector, _gpkt->Breite, _gpkt->Mem)) {
 						tmp_feld += vector;
 						if (speicher[tmp_feld] == MOV_LINE_IDX) {
-							ak_steps = abs((tmp_feld % gpkt->Breite) - (start_feld % gpkt->Breite));
-							ak_steps += abs((tmp_feld / gpkt->Breite) - (start_feld / gpkt->Breite));
+							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));
+							ak_steps += abs((tmp_feld / _gpkt->Breite) - (start_feld / _gpkt->Breite));
 							if (ak_steps < min_steps) {
 								min_steps = ak_steps;
-								gml.GotoFeld = start_feld + count * count_vect;
-								gml.MLineFeld = tmp_feld;
+								_gml.GotoFeld = start_feld + count * count_vect;
+								_gml.MLineFeld = tmp_feld;
 							}
 						}
 					} else {
@@ -547,14 +547,14 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 	byte *speicher;
 	for (i = 0; i < MAX_KNOTEN_PKT; i++)
 		TmpKnPkt[i] = -1;
-	if (gpkt->Ebenen > 1) {
+	if (_gpkt->Ebenen > 1) {
 		memset((char *)knoten_felder, -1, MAX_KNOTEN_PKT * 6);
-		speicher = gpkt->Mem;
-		speicher += (gpkt->Breite * gpkt->Hoehe) * gpkt->AkMovEbene;
-		mle.Steps = 30000;
+		speicher = _gpkt->Mem;
+		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
+		_mle.Steps = 30000;
 		min_step_unerreicht = 30000;
-		mle.FNr = -1;
-		ziel_feld = get_feld_nr(gpkt->Dx, gpkt->Dy);
+		_mle.FNr = -1;
+		ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
 		calc_feld = start_feld;
 		last_feld = start_feld;
 		steps = 0;
@@ -570,21 +570,21 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 			tmp_feld = ziel_feld;
 			calc_go(calc_feld, &tmp_feld);
 			if (tmp_feld == ziel_feld) {
-				dest_steps = abs((ziel_feld % gpkt->Breite) - (calc_feld % gpkt->Breite));
-				dest_steps += abs((ziel_feld / gpkt->Breite) - (calc_feld / gpkt->Breite));
-				if (dest_steps < mle.Steps) {
-					mle.Steps = dest_steps;
-					mle.FNr = calc_feld;
+				dest_steps = abs((ziel_feld % _gpkt->Breite) - (calc_feld % _gpkt->Breite));
+				dest_steps += abs((ziel_feld / _gpkt->Breite) - (calc_feld / _gpkt->Breite));
+				if (dest_steps < _mle.Steps) {
+					_mle.Steps = dest_steps;
+					_mle.FNr = calc_feld;
 					if (dir == 30000)
-						mle.Direction = 0;
+						_mle.Direction = 0;
 					else
-						mle.Direction = dir;
+						_mle.Direction = dir;
 					for (i = 0; i < MAX_KNOTEN_PKT; i++)
-						mle.KnPkt[i] = TmpKnPkt[i];
+						_mle.KnPkt[i] = TmpKnPkt[i];
 				}
 			} else {
-				dest_steps = abs((ziel_feld % gpkt->Breite) - (tmp_feld % gpkt->Breite));
-				dest_steps += abs((ziel_feld / gpkt->Breite) - (tmp_feld / gpkt->Breite));
+				dest_steps = abs((ziel_feld % _gpkt->Breite) - (tmp_feld % _gpkt->Breite));
+				dest_steps += abs((ziel_feld / _gpkt->Breite) - (tmp_feld / _gpkt->Breite));
 				if (dest_steps < min_step_unerreicht) {
 					min_step_unerreicht = dest_steps;
 					feld_unerreicht = tmp_feld;
@@ -598,16 +598,16 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 			}
 			ok = 0;
 			for (i = 0; i < 4 && !ok; i++) {
-				if (speicher[calc_feld + vec_tbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
+				if (speicher[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
 				{
-					if (calc_feld + vec_tbl[tbl_ptr + i * tbl_dir] != last_feld)
+					if (calc_feld + _vecTbl[tbl_ptr + i * tbl_dir] != last_feld)
 					{
 						last_feld = calc_feld;
-						calc_feld += vec_tbl[tbl_ptr + i * tbl_dir];
+						calc_feld += _vecTbl[tbl_ptr + i * tbl_dir];
 						++steps;
 						ok = 1;
 						if (dir == 30000) {
-							dir = vec_tbl[tbl_ptr + i * tbl_dir];
+							dir = _vecTbl[tbl_ptr + i * tbl_dir];
 						}
 						if (knoten_flag) {
 							TmpKnPkt[ak_knoten] = calc_feld;
@@ -615,10 +615,10 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 							knoten_flag = false;
 						}
 					}
-				} else if (speicher[calc_feld + vec_tbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_KNOTEN) {
-					if (calc_feld + vec_tbl[tbl_ptr + i * tbl_dir] != last_feld) {
+				} else if (speicher[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_KNOTEN) {
+					if (calc_feld + _vecTbl[tbl_ptr + i * tbl_dir] != last_feld) {
 						if (dir == 30000) {
-							dir = vec_tbl[tbl_ptr + i * tbl_dir];
+							dir = _vecTbl[tbl_ptr + i * tbl_dir];
 						}
 						++ak_knoten;
 						for (k = 0; k < 6; k++)
@@ -639,7 +639,7 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 						}
 						knoten_felder[ak_knoten][k] = calc_feld;
 						last_feld = calc_feld;
-						calc_feld += vec_tbl[tbl_ptr + i * tbl_dir];
+						calc_feld += _vecTbl[tbl_ptr + i * tbl_dir];
 						knoten_felder[ak_knoten][4] = calc_feld;
 						++steps;
 						knoten_felder[ak_knoten][5] = steps;
@@ -656,10 +656,10 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 					for (i = 0; i < 4 && !ok; i++) {
 						if (knoten_felder[ak_knoten][tbl_ptr + i * tbl_dir] == -1) {
 							tmp_feld = knoten_felder[ak_knoten][4];
-							if (speicher[tmp_feld + vec_tbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
+							if (speicher[tmp_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
 							{
 								last_feld = knoten_felder[ak_knoten][4];
-								calc_feld = tmp_feld + vec_tbl[tbl_ptr + i * tbl_dir];
+								calc_feld = tmp_feld + _vecTbl[tbl_ptr + i * tbl_dir];
 
 								TmpKnPkt[ak_knoten] = calc_feld;
 								knoten_felder[ak_knoten][tbl_ptr + i * tbl_dir] = calc_feld;
@@ -680,16 +680,16 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 					last_feld = start_feld;
 				} else {
 					found = 1;
-					if (mle.FNr == -1) {
-						mle.Steps = min_step_unerreicht;
-						mle.FNr = feld_unerreicht;
-						mle.Direction = dir_unerreicht;
+					if (_mle.FNr == -1) {
+						_mle.Steps = min_step_unerreicht;
+						_mle.FNr = feld_unerreicht;
+						_mle.Direction = dir_unerreicht;
 						for (i = 0; i < MAX_KNOTEN_PKT; i++)
-							mle.KnPkt[i] = KnPkt_unrreicht[i];
+							_mle.KnPkt[i] = KnPkt_unrreicht[i];
 
-						get_feld_xy(feld_unerreicht, &gpkt->Dx, &gpkt->Dy);
-						gpkt->Dx += 4;
-						gpkt->Dy += 4;
+						get_feld_xy(feld_unerreicht, &_gpkt->Dx, &_gpkt->Dy);
+						_gpkt->Dx += 4;
+						_gpkt->Dy += 4;
 					}
 				}
 			}
@@ -701,12 +701,12 @@ int16 movclass::get_feld_nr(int16 x, int16 y) {
 	x >>= 3;
 	y >>= 3;
 
-	return x + (y * gpkt->Breite);
+	return x + (y * _gpkt->Breite);
 }
 
 void movclass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
-	*x = (fnr % gpkt->Breite);
-	*y = (fnr / gpkt->Breite);
+	*x = (fnr % _gpkt->Breite);
+	*y = (fnr / _gpkt->Breite);
 	*x <<= 3;
 	*y <<= 3;
 }
