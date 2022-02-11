@@ -99,11 +99,11 @@ msgstr "Выберыце тэчку з файламі гульні"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:226
 msgid "From: "
-msgstr ""
+msgstr "Ад: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "To: "
-msgstr ""
+msgstr "Да: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:93
 #: gui/downloadiconsdialog.cpp:136 gui/downloadiconsdialog.cpp:146
