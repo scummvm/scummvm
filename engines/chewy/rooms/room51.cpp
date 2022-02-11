@@ -143,7 +143,7 @@ void Room51::setup_func() {
 
 		det->set_static_pos(17, _tmpx, _tmpy, false, false);
 
-		if ((minfo.button == 1 || in->get_switch_code() == 28) && !_flag) {
+		if ((minfo.button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			det->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
 			start_detail_wait(8, 1, ANI_VOR);
@@ -170,8 +170,8 @@ void Room51::setup_func() {
 				start_aad_wait(514, -1);
 				wait_show_screen(5);
 				flags.NoPalAfterFlc = true;
-				out->setze_zeiger(nullptr);
-				out->cls();
+				_G(out)->setze_zeiger(nullptr);
+				_G(out)->cls();
 				flic_cut(115, 0);
 				register_cutscene(28);
 				
@@ -255,10 +255,10 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(spieler).R51KillerWeg = true;
 					start_aad_wait(290, -1);
 					g_engine->_sound->stopSound(0);
-					out->ausblenden(1);
-					out->setze_zeiger(nullptr);
-					out->cls();
-					out->einblenden(pal, 0);
+					_G(out)->ausblenden(1);
+					_G(out)->setze_zeiger(nullptr);
+					_G(out)->cls();
+					_G(out)->einblenden(pal, 0);
 					flags.NoPalAfterFlc = true;
 					flc->set_flic_user_function(cut_serv);
 					det->show_static_spr(16);
@@ -284,8 +284,8 @@ int16 Room51::use_door(int16 txt_nr) {
 		case 331:
 		case 334:
 			auto_move((txt_nr == 331) ? 10 : 7, P_CHEWY);
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			flags.NoPalAfterFlc = true;
 			flic_cut(114, 0);
 			set_person_pos(115, 144, P_CHEWY, P_LEFT);

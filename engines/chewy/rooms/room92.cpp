@@ -37,12 +37,12 @@ void Room92::entry() {
 	start_aad_wait(_G(spieler).SVal2, -1);
 	switch (_G(spieler).SVal2) {
 	case 487:
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		_G(spieler).scrollx = oldScrollX;
 		show_person();
 		switch_room(_G(spieler).SVal1);
@@ -50,21 +50,21 @@ void Room92::entry() {
 	case 488:
 		flags.StaticUseTxt = true;
 		flic_cut(106, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(105, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(104, CFO_MODE);
 		register_cutscene(27);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
 		_G(spieler).flags33_8 = true;
 		show_person();

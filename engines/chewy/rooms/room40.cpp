@@ -115,10 +115,10 @@ void Room40::xit(int16 eib_nr) {
 				obj->hide_sib(SIB_MUENZE_R40);
 
 				uhr->disable_timer();
-				out->ausblenden(0);
+				_G(out)->ausblenden(0);
 				hide_person();
 				set_up_screen(DO_SETUP);
-				out->einblenden(pal, 0);
+				_G(out)->einblenden(pal, 0);
 				uhr->enable_timer();
 
 				_G(maus_links_click) = false;
@@ -341,7 +341,7 @@ int16 Room40::use_mr_pumpkin() {
 						auto_move(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
 						del_inventar(_G(spieler).AkInvent);
-						out->ausblenden(1);
+						_G(out)->ausblenden(1);
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
 						obj->add_inventar(LIKOER2_INV, &room_blk);
@@ -474,15 +474,15 @@ int16 Room40::use_haendler() {
 				det->del_static_ani(5);
 				det->set_static_ani(3, -1);
 				start_aad_wait(211, -1);
-				out->ausblenden(0);
-				out->set_teilpalette(pal, 255, 1);
+				_G(out)->ausblenden(0);
+				_G(out)->set_teilpalette(pal, 255, 1);
 				start_aad_wait(212, -1);
-				out->ausblenden(0);
+				_G(out)->ausblenden(0);
 				_G(spieler).R40Wettbewerb = true;
 				_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 				flags.NoScroll = false;
-				out->setze_zeiger(nullptr);
-				out->cls();
+				_G(out)->setze_zeiger(nullptr);
+				_G(out)->cls();
 				switch_room(28);
 				SetUpScreenFunc = setup_func;
 

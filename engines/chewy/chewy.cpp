@@ -191,7 +191,7 @@ void ChewyEngine::playVideo(uint num) {
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
 	//save_palette(curPalette);
-	cur->hide_cur();
+	_G(cur)->hide_cur();
 
 	cfoDecoder->start();
 
@@ -222,7 +222,7 @@ void ChewyEngine::playVideo(uint num) {
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
 	//setScummVMPalette(curPalette, 0, 256);
-	cur->show_cur();
+	_G(cur)->show_cur();
 
 	delete videoResource;
 	delete cfoDecoder;

@@ -144,7 +144,7 @@ void Room63::bork_platt() {
 	start_detail_wait(4, 1, ANI_VOR);
 	det->show_static_spr(13);
 	start_aad_wait(361, -1);
-	out->cls();
+	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(FCUT_079, CFO_MODE);
 	fx_blend = BLEND3;

@@ -191,13 +191,13 @@ int Room76::proc7() {
 		invent_2_slot(106);
 		invent_2_slot(105);
 		start_aad_wait(444, -1);
-		out->ausblenden(0);
-		out->set_teilpalette(pal, 255, 1);
+		_G(out)->ausblenden(0);
+		_G(out)->set_teilpalette(pal, 255, 1);
 		start_aad_wait(443, -1);
 		_G(spieler).scrollx = 0;
 		fx_blend = BLEND3;
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
 		det->set_static_ani(2, -1);
 

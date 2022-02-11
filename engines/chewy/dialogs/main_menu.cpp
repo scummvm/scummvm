@@ -39,18 +39,18 @@ int MainMenu::_personAni[3];
 void MainMenu::execute() {
 	// Convenience during testing to not keep showing title sequence
 	if (!ConfMan.getBool("skip_title")) {
-		mem->file->select_pool_item(music_handle, EndOfPool - 17);
-		mem->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
-		if (!modul)
-			sndPlayer->playMod((tmf_header *)Ci.MusicSlot);
+		_G(mem)->file->select_pool_item(music_handle, EndOfPool - 17);
+		_G(mem)->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
+		if (!_G(modul))
+			_G(sndPlayer)->playMod((tmf_header *)Ci.MusicSlot);
 
 		flic_cut(200, 0);
-		sndPlayer->stopMod();
+		_G(sndPlayer)->stopMod();
 	}
 
 	show_intro();
 
-	cur->move(152, 92);
+	_G(cur)->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
 	_G(spieler).inv_cur = false;
@@ -59,8 +59,8 @@ void MainMenu::execute() {
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
-		sndPlayer->stopMod();
-		sndPlayer->endSound();
+		_G(sndPlayer)->stopMod();
+		_G(sndPlayer)->endSound();
 		SetUpScreenFunc = screenFunc;
 
 		cursor_wahl(CUR_ZEIGE);
@@ -73,7 +73,7 @@ void MainMenu::execute() {
 		load_room_music(98);
 		fx->border(workpage, 100, 0, 0);
 
-		out->set_palette(pal);
+		_G(out)->set_palette(pal);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		show_cur();
 
@@ -93,7 +93,7 @@ void MainMenu::execute() {
 
 		case MM_VIEW_INTRO:
 			fx->border(workpage, 100, 0, 0);
-			out->setze_zeiger(workptr);
+			_G(out)->setze_zeiger(workptr);
 			flags.NoPalAfterFlc = true;
 			flic_cut(135, CFO_MODE);
 			break;
@@ -105,15 +105,15 @@ void MainMenu::execute() {
 
 		case MM_CINEMA:
 			cursor_wahl(CUR_SAVE);
-			cur->move(152, 92);
+			_G(cur)->move(152, 92);
 			minfo.x = 152;
 			minfo.y = 92;
 			Dialogs::Cinema::execute();
 			break;
 
 		case MM_QUIT:
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			done = true;
 			break;
 
@@ -136,7 +136,7 @@ void MainMenu::execute() {
 void MainMenu::screenFunc() {
 	int vec = det->maus_vector(minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
 
-	if (in->get_switch_code() == 28 || minfo.button == 1) {
+	if (_G(in)->get_switch_code() == 28 || minfo.button == 1) {
 		_selection = vec;
 	}
 }
@@ -151,23 +151,23 @@ void MainMenu::animate() {
 	}
 
 	++FrameSpeed;
-	out->setze_zeiger(workptr);
-	out->map_spr2screen(ablage[room_blk.AkAblage],
+	_G(out)->setze_zeiger(workptr);
+	_G(out)->map_spr2screen(ablage[room_blk.AkAblage],
 		_G(spieler).scrollx, _G(spieler).scrolly);
 
 	if (SetUpScreenFunc && !menu_display && !flags.InventMenu) {
 		SetUpScreenFunc();
-		out->setze_zeiger(workptr);
+		_G(out)->setze_zeiger(workptr);
 	}
 
 	sprite_engine();
 	kb_mov(1);
 	calc_maus_txt(minfo.x, minfo.y, 1);
-	cur->plot_cur();
+	_G(cur)->plot_cur();
 	_G(maus_links_click) = false;
-	menu_flag = 0;
-	out->setze_zeiger(nullptr);
-	out->back2screen(workpage);
+	_G(menu_flag) = 0;
+	_G(out)->setze_zeiger(nullptr);
+	_G(out)->back2screen(workpage);
 
 	g_screen->update();
 	g_events->update();
@@ -178,14 +178,14 @@ int16 MainMenu::creditsFn(int16 key) {
 		key == 128 || key == 165 || key == 185 ||
 		key == 211 || key == 248 || key == 266) {
 		for (int idx = 0; idx < 2000; ++idx) {
-			if (in->get_switch_code() == ESC)
+			if (_G(in)->get_switch_code() == ESC)
 				return -1;
 			g_events->update();
 		}
 		return 0;
 
 	} else {
-		return in->get_switch_code() == ESC ? -1 : 0;
+		return _G(in)->get_switch_code() == ESC ? -1 : 0;
 	}
 }
 
@@ -231,11 +231,11 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	flags.SaveMenu = true;
 	savePersonAni();
-	out->setze_zeiger(screen0);
-	out->set_fontadr(font6x8);
-	out->set_vorschub(fvorx6x8, fvory6x8);
+	_G(out)->setze_zeiger(screen0);
+	_G(out)->set_fontadr(font6x8);
+	_G(out)->set_vorschub(fvorx6x8, fvory6x8);
 	cursor_wahl(CUR_SAVE);
-	cur->move(152, 92);
+	_G(cur)->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
 	savegameFlag = true;
@@ -257,19 +257,19 @@ bool MainMenu::loadGame() {
 
 void MainMenu::playGame() {
 	// unused1 = 0;
-	inv_disp_ok = false;
+	_G(inv_disp_ok) = false;
 	_G(cur_display) = true;
-	tmp_menu_item = 0;
+	_G(tmp_menu_item) = 0;
 	_G(maus_links_click) = false;
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
 
 	flags.main_maus_flag = false;
 	flags.MainInput = true;
 	flags.ShowAtsInvTxt = true;
-	cur->show_cur();
+	_G(cur)->show_cur();
 	spieler_vector[P_CHEWY].Count = 0;
 	uhr->reset_timer(0, 0);
-	sndPlayer->setLoopMode(_G(spieler).soundLoopMode);
+	_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !main_loop(1)) {
 	}

@@ -129,37 +129,37 @@ void Credits::execute() {
 	room->load_tgp(5, &room_blk, 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	out->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(screen0);
 	room->set_ak_pal(&room_blk);
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
 		int color = 63 - (6 * i);
 
-		out->raster_col(6 - i, color, 0, 0);
-		out->raster_col(7 + i, color, 0, 0);
+		_G(out)->raster_col(6 - i, color, 0, 0);
+		_G(out)->raster_col(7 + i, color, 0, 0);
 
 		color = 63 - (4 * i);
-		out->raster_col(37 - i, color, color, color);
-		out->raster_col(38 + i, color, color, color);
+		_G(out)->raster_col(37 - i, color, color, color);
+		_G(out)->raster_col(38 + i, color, color, color);
 	}
 
 	_G(spieler).DelaySpeed = 2;
 
 	for (;;) {
-		if (in->get_switch_code() == ESC || SHOULD_QUIT)
+		if (_G(in)->get_switch_code() == ESC || SHOULD_QUIT)
 			break;
 
 		// Display the starfield background
-		out->setze_zeiger(workptr);
-		out->map_spr2screen(ablage[room_blk.AkAblage],
+		_G(out)->setze_zeiger(workptr);
+		_G(out)->map_spr2screen(ablage[room_blk.AkAblage],
 			_G(spieler).scrollx, _G(spieler).scrolly);
 
 		// Animate moving the background
 		if (++_G(spieler).scrollx >= 320)
 			_G(spieler).scrollx = 0;
 
-		if (in->get_switch_code() == ESC)
+		if (_G(in)->get_switch_code() == ESC)
 			break;
 
 		++lineScrolled;
@@ -173,28 +173,28 @@ void Credits::execute() {
 
 			if (CREDITS_TYPE[i]) {
 				fontCol = 32;
-				out->set_fontadr(font6x8);
-				out->set_vorschub(fvorx6x8, fvory6x8);
+				_G(out)->set_fontadr(font6x8);
+				_G(out)->set_vorschub(fvorx6x8, fvory6x8);
 			} else {
 				fontCol = 1;
-				out->set_fontadr(font8x8);
-				out->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(font8x8);
+				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
 			}
 			stillScrolling = true;
 
 			int fgCol = fontCol + (160 - destY) / 10;
-			out->printxy(CREDITS_POS[i][0], destY, fgCol, 300, scr_width, CREDITS_TEXT[i]);
+			_G(out)->printxy(CREDITS_POS[i][0], destY, fgCol, 300, scr_width, CREDITS_TEXT[i]);
 		}
 
 		if (!stillScrolling)
 			break;
 
-		out->setze_zeiger(nullptr);
-		out->back2screen(workpage);
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->back2screen(workpage);
 	}
 
-	out->set_fontadr(font8x8);
-	out->set_vorschub(fvorx8x8, fvorx8x8);
+	_G(out)->set_fontadr(font8x8);
+	_G(out)->set_vorschub(fvorx8x8, fvorx8x8);
 	room->open_handle("back/episode1.tgp", "rb", 0);
 
 	room->set_ak_pal(&room_blk);

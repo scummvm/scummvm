@@ -41,7 +41,7 @@ namespace Chewy {
 #define ODER 2
 #define XODER 3
 
-#define COPY_PAGE out->screen2screen
+#define COPY_PAGE _G(out)->screen2screen
 
 #define END_POOL 32767
 

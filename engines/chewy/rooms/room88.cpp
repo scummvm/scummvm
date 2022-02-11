@@ -98,12 +98,12 @@ int Room88::proc3() {
 		hide_cur();
 		if (_G(spieler).flags32_10) {
 			start_aad_wait(480, -1);
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			flags.NoPalAfterFlc = true;
 			flic_cut(87, CFO_MODE);
-			out->setze_zeiger(nullptr);
-			out->cls();
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->cls();
 			_G(spieler).flags32_40 = true;
 			switch_room(84);
 		} else {
@@ -120,18 +120,18 @@ int Room88::proc3() {
 			start_detail_wait(aniNr, 1, ANI_GO);
 		}
 
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(88, CFO_MODE);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).flags32_1 = true;
-		out->raster_col(0, 0, 0, 0);
+		_G(out)->raster_col(0, 0, 0, 0);
 		switch_room(80);
 		hide_cur();
 		start_detail_wait(1, 1, ANI_VOR);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(86, CFO_MODE);
 		register_cutscene(24);

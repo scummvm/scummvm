@@ -35,9 +35,6 @@ extern bool mouse_links_los;
 extern bool mouse_active;
 extern bool cur_move;
 
-extern int16 modul;
-extern int16 fcode;
-
 class InputMgr {
 public:
 	InputMgr();

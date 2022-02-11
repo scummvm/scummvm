@@ -28,13 +28,12 @@
 
 namespace Chewy {
 
-extern int16 room_start_nr;
 static void font_load();
 
 void standard_init() {
-	mem = new memory();
-	out = new McgaGraphics();
-	in = new InputMgr();
+	_G(mem) = new memory();
+	_G(out) = new McgaGraphics();
+	_G(in) = new InputMgr();
 	fx = new effect();
 	txt = new text();
 	bit = new bitclass();
@@ -44,22 +43,22 @@ void standard_init() {
 	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
 	det = new detail();
 	atds = new atdsys();
-	sndPlayer = new SoundPlayer();
+	_G(sndPlayer) = new SoundPlayer();
 	flc = new flic();
 	mov = new movclass();
 
-	out->init();
-	out->cls();
-	out->palette_save();
-	out->set_clip(0, 0, 320, 200);
-	out->set_writemode(0);
+	_G(out)->init();
+	_G(out)->cls();
+	_G(out)->palette_save();
+	_G(out)->set_clip(0, 0, 320, 200);
+	_G(out)->set_writemode(0);
 	scr_width = 0;
 	screen0 = (byte *)g_screen->getPixels();
-	in->neuer_kb_handler(&kbinfo);
+	_G(in)->neuer_kb_handler(&kbinfo);
 
-	in->rectangle(0, 0, 320, 210);
-	in->neuer_maushandler(&minfo);
-	out->init_mausmode(&minfo);
+	_G(in)->rectangle(0, 0, 320, 210);
+	_G(in)->neuer_maushandler(&minfo);
+	_G(out)->init_mausmode(&minfo);
 	curblk.page_off_x = 0;
 	curblk.page_off_y = 0;
 	curblk.xsize = 16;
@@ -67,7 +66,7 @@ void standard_init() {
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses curtaf->image below before curtaf was initialized
-	curtaf = mem->taf_adr(CURSOR);
+	curtaf = _G(mem)->taf_adr(CURSOR);
 
 	curblk.sprite = curtaf->image;
 	curblk.cur_back = cur_back;
@@ -76,10 +75,10 @@ void standard_init() {
 	curani.ani_end = 0;
 	curani.delay = 0;
 	
-	cur = new cursor(out, in, &curblk);
-	cur->set_cur_ani(&curani);
+	_G(cur) = new cursor(_G(out), _G(in), &curblk);
+	_G(cur)->set_cur_ani(&curani);
 
-	iog = new io_game(out, in, cur);
+	_G(iog) = new io_game(_G(out), _G(in), _G(cur));
 	strcpy(ioptr.id, "CHE");
 	strcpy(ioptr.save_path, SAVEDIR);
 	ioptr.delay = 8;
@@ -87,12 +86,12 @@ void standard_init() {
 	pal[765] = 63;
 	pal[766] = 63;
 	pal[767] = 63;
-	out->einblenden(pal, 0);
+	_G(out)->einblenden(pal, 0);
 	room->set_timer_start(1);
 	font_load();
 
-	out->cls();
-	in->neuer_kb_handler(&kbinfo);
+	_G(out)->cls();
+	_G(in)->neuer_kb_handler(&kbinfo);
 
 	var_init();
 	ablage = room->get_ablage();
@@ -102,8 +101,8 @@ void standard_init() {
 	pal[765] = 63;
 	pal[766] = 63;
 	pal[767] = 63;
-	out->einblenden(pal, 0);
-	out->cls();
+	_G(out)->einblenden(pal, 0);
+	_G(out)->cls();
 	uhr->set_new_timer(0, 5, SEC_10_MODE);
 
 	curblk.cur_back = cur_back;
@@ -162,7 +161,7 @@ void var_init() {
 		_G(spieler).PersonRoomNr[i] = -1;
 		_G(spieler).PersonDia[i] = -1;
 	}
-	_G(spieler).PersonRoomNr[P_CHEWY] = room_start_nr;
+	_G(spieler).PersonRoomNr[P_CHEWY] = _G(room_start_nr);
 
 	gpkt.Vorschub = spieler_mi[P_CHEWY].Vorschub;
 	init_room();
@@ -214,7 +213,7 @@ void init_atds() {
 	atds->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
 	atds->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
 	atds->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
-	mem->file->fcopy(ADSH_TMP, "txt/diah.adh");
+	_G(mem)->file->fcopy(ADSH_TMP, "txt/diah.adh");
 	atds->open_handle(ADSH_TMP, "rb", 3);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
@@ -284,24 +283,24 @@ void new_game() {
 static void font_load() {
 
 	// Load the 8x8 font
-	mem->tff_adr(FONT8x8, &font8x8);
-	out->set_fontadr(font8x8);
+	_G(mem)->tff_adr(FONT8x8, &font8x8);
+	_G(out)->set_fontadr(font8x8);
 
 	int16 vorx;
 	int16 vory;
 	int16 fntbr;
 	int16 fnth;
-	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
+	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
 	fvorx8x8 = vorx;
 	fvory8x8 = vory;
 
 	// Load the 6x8 font
-	mem->tff_adr(FONT6x8, &font6x8);
-	out->set_fontadr(font6x8);
-	out->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
+	_G(mem)->tff_adr(FONT6x8, &font6x8);
+	_G(out)->set_fontadr(font6x8);
+	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
 	fvorx6x8 = vorx - 2;
 	fvory6x8 = vory;
-	out->set_vorschub(fvorx6x8, vory);
+	_G(out)->set_vorschub(fvorx6x8, vory);
 	atds->set_font(font8x8, fvorx8x8, 10);
 }
 
@@ -313,24 +312,24 @@ void init_load() {
 	spz_tinfo = nullptr;
 	set_spz_delay(3);
 
-	menutaf = mem->taf_adr(MENUTAF);
-	spblende = mem->void_adr("cut/blende.rnd");
-	room->load_room(&room_blk, room_start_nr, &_G(spieler));
-	out->set_palette(pal);
+	menutaf = _G(mem)->taf_adr(MENUTAF);
+	spblende = _G(mem)->void_adr("cut/blende.rnd");
+	room->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
+	_G(out)->set_palette(pal);
 }
 
 void tidy() {
 	sound_exit();
-	in->alter_kb_handler();
-	in->init();
+	_G(in)->alter_kb_handler();
+	_G(in)->init();
 	free_buffers();
 	obj->free_inv_spr(&inv_spr[0]);
 
-	delete iog;
-	delete cur;
+	delete _G(iog);
+	delete _G(cur);
 	delete mov;
 	delete flc;
-	delete sndPlayer;
+	delete _G(sndPlayer);
 	delete atds;
 	delete det;
 	delete uhr;
@@ -340,15 +339,15 @@ void tidy() {
 	delete bit;
 	delete txt;
 	delete fx;
-	delete in;
-	delete out;
-	delete mem;
+	delete _G(in);
+	delete _G(out);
+	delete _G(mem);
 
-	iog = nullptr;
-	cur = nullptr;
+	_G(iog) = nullptr;
+	_G(cur) = nullptr;
 	mov = nullptr;
 	flc = nullptr;
-	sndPlayer = nullptr;
+	_G(sndPlayer) = nullptr;
 	atds = nullptr;
 	det = nullptr;
 	uhr = nullptr;
@@ -358,13 +357,13 @@ void tidy() {
 	bit = nullptr;
 	txt = nullptr;
 	fx = nullptr;
-	in = nullptr;
-	out = nullptr;
-	mem = nullptr;
+	_G(in) = nullptr;
+	_G(out) = nullptr;
+	_G(mem) = nullptr;
 }
 
 void set_speed() {
-	in->speed(_G(spieler).MausSpeed, _G(spieler).MausSpeed * 2);
+	_G(in)->speed(_G(spieler).MausSpeed, _G(spieler).MausSpeed * 2);
 }
 
 #define GRAVIS 8
@@ -375,11 +374,11 @@ void sound_init() {
 	_G(spieler).MusicSwitch = false;
 	frequenz = 22050;
 
-	sndPlayer->initMixMode();
+	_G(sndPlayer)->initMixMode();
 	_G(spieler).MusicVol = 63;
 	_G(spieler).SoundVol = 63;
-	sndPlayer->setMusicMasterVol(_G(spieler).MusicVol);
-	sndPlayer->setSoundMasterVol(_G(spieler).SoundVol);
+	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
+	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 
 	music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 
@@ -403,7 +402,7 @@ void sound_init() {
 }
 
 void sound_exit() {
-	sndPlayer->exitMixMode();
+	_G(sndPlayer)->exitMixMode();
 }
 
 void show_intro() {

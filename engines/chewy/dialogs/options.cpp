@@ -58,13 +58,13 @@ static const int16 OPTION_ICONS[9 * 4] = {
 void Options::execute(taf_info *ti) {
 	long akt_clock = 0, stop_clock = 0;
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
-	out->setze_zeiger(workptr);
-	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-	out->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(workptr);
+	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+	_G(out)->setze_zeiger(screen0);
 
 	room->set_ak_pal(&room_blk);
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
-	out->setze_zeiger(workptr);
+	_G(out)->setze_zeiger(workptr);
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
 	int16 mund_ani = MUND_START;
@@ -77,7 +77,7 @@ void Options::execute(taf_info *ti) {
 	int16 delay_count = _G(spieler).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != ESC) {
-		out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 		++FrameSpeed;
 		warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
@@ -88,66 +88,66 @@ void Options::execute(taf_info *ti) {
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
-		out->sprite_set(ti->image[surimy_ani], 18 + ti->korrektur[surimy_ani << 1],
+		_G(out)->sprite_set(ti->image[surimy_ani], 18 + ti->korrektur[surimy_ani << 1],
 			8 + ti->korrektur[(surimy_ani << 1) + 1], 0);
 		short bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
-		out->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
-		out->printxy(36 + bar_off, 65, 255, 300, 0, "%d", _G(spieler).FramesPerSecond << 1);
+		_G(out)->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
+		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, "%d", _G(spieler).FramesPerSecond << 1);
 
 		if (_G(spieler).SoundSwitch) {
-			out->sprite_set(ti->image[mund_ani],
+			_G(out)->sprite_set(ti->image[mund_ani],
 				18 + ti->korrektur[mund_ani << 1],
 				8 + ti->korrektur[(mund_ani << 1) + 1], 0);
-			out->sprite_set(ti->image[SCHNULL_OFF],
+			_G(out)->sprite_set(ti->image[SCHNULL_OFF],
 				18 + ti->korrektur[SCHNULL_OFF << 1],
 				8 + ti->korrektur[(SCHNULL_OFF << 1) + 1], 0);
 		} else {
-			out->sprite_set(ti->image[SCHNULLER],
+			_G(out)->sprite_set(ti->image[SCHNULLER],
 				18 + ti->korrektur[SCHNULLER << 1],
 				8 + ti->korrektur[(SCHNULLER << 1) + 1], 0);
-			out->sprite_set(ti->image[SCHNULL_BAND],
+			_G(out)->sprite_set(ti->image[SCHNULL_BAND],
 				18 + ti->korrektur[SCHNULL_BAND << 1],
 				8 + ti->korrektur[(SCHNULL_BAND << 1) + 1], 0);
 		}
-		out->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
-		out->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
-		out->box_fill(33, 136 - (_G(spieler).SoundVol >> 1), 42, 136, 15);
+		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
+		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
+		_G(out)->box_fill(33, 136 - (_G(spieler).SoundVol >> 1), 42, 136, 15);
 
-		out->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
-		out->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
-		out->box_fill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
+		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
+		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
+		_G(out)->box_fill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
 		if (_G(spieler).MusicSwitch) {
-			out->sprite_set(ti->image[MUSIC_ON1],
+			_G(out)->sprite_set(ti->image[MUSIC_ON1],
 				18 + ti->korrektur[MUSIC_ON1 << 1],
 				8 + ti->korrektur[(MUSIC_ON1 << 1) + 1], 0);
-			out->sprite_set(ti->image[MUSIC_ON2],
+			_G(out)->sprite_set(ti->image[MUSIC_ON2],
 				18 + ti->korrektur[MUSIC_ON2 << 1],
 				8 + ti->korrektur[(MUSIC_ON2 << 1) + 1], 0);
 		} else
-			out->sprite_set(ti->image[MUSIC_OFF],
+			_G(out)->sprite_set(ti->image[MUSIC_OFF],
 				18 + ti->korrektur[MUSIC_OFF << 1],
 				8 + ti->korrektur[(MUSIC_OFF << 1) + 1], 0);
 
 		if (_G(spieler).DisplayText) {
-			out->sprite_set(ti->image[tdisp_ani],
+			_G(out)->sprite_set(ti->image[tdisp_ani],
 				18 + ti->korrektur[tdisp_ani << 1],
 				8 + ti->korrektur[(tdisp_ani << 1) + 1], 0);
-			out->sprite_set(ti->image[TDISP_EIN],
+			_G(out)->sprite_set(ti->image[TDISP_EIN],
 				18 + ti->korrektur[TDISP_EIN << 1],
 				8 + ti->korrektur[(TDISP_EIN << 1) + 1], 0);
 		} else
-			out->sprite_set(ti->image[TDISP_AUS],
+			_G(out)->sprite_set(ti->image[TDISP_AUS],
 				18 + ti->korrektur[TDISP_AUS << 1],
 				8 + ti->korrektur[(TDISP_AUS << 1) + 1], 0);
 
-		out->sprite_set(ti->image[EXIT],
+		_G(out)->sprite_set(ti->image[EXIT],
 			18 + ti->korrektur[EXIT << 1],
 			8 + ti->korrektur[(EXIT << 1) + 1], 0);
 
-		key = in->get_switch_code();
+		key = _G(in)->get_switch_code();
 		if ((minfo.button == 1) || (key == ENTER)) {
 			WAIT_TASTE_LOS
-				int16 rect = in->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
+				int16 rect = _G(in)->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (_G(spieler).FramesPerSecond > 6)
@@ -181,7 +181,7 @@ void Options::execute(taf_info *ti) {
 			case 5:
 				if (_G(spieler).MusicSwitch) {
 					_G(spieler).MusicSwitch = false;
-					sndPlayer->stopMod();
+					_G(sndPlayer)->stopMod();
 				} else {
 					_G(spieler).MusicSwitch = true;
 					CurrentSong = -1;
@@ -193,11 +193,11 @@ void Options::execute(taf_info *ti) {
 				break;
 			case 7:
 				_G(spieler).SoundVol = (136 - minfo.y) << 1;
-				sndPlayer->setSoundMasterVol(_G(spieler).SoundVol);
+				_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 				break;
 			case 8:
 				_G(spieler).MusicVol = (136 - minfo.y) << 1;
-				sndPlayer->setMusicMasterVol(_G(spieler).MusicVol);
+				_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
 				break;
 			}
 			minfo.button = 0;
@@ -205,24 +205,24 @@ void Options::execute(taf_info *ti) {
 		switch (key) {
 
 		case CURSOR_UP:
-			cur->move(minfo.x, --minfo.y);
+			_G(cur)->move(minfo.x, --minfo.y);
 			break;
 
 		case CURSOR_DOWN:
-			cur->move(minfo.x, ++minfo.y);
+			_G(cur)->move(minfo.x, ++minfo.y);
 			break;
 
 		case CURSOR_LEFT:
-			cur->move(--minfo.x, minfo.y);
+			_G(cur)->move(--minfo.x, minfo.y);
 			break;
 
 		case CURSOR_RIGHT:
-			cur->move(++minfo.x, minfo.y);
+			_G(cur)->move(++minfo.x, minfo.y);
 			break;
 		}
 
-		cur->plot_cur();
-		out->back2screen(workpage);
+		_G(cur)->plot_cur();
+		_G(out)->back2screen(workpage);
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 
@@ -255,12 +255,12 @@ void Options::execute(taf_info *ti) {
 	}
 
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
-	out->setze_zeiger(workptr);
-	out->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-	out->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(workptr);
+	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+	_G(out)->setze_zeiger(screen0);
 	room->set_ak_pal(&room_blk);
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
-	out->setze_zeiger(workptr);
+	_G(out)->setze_zeiger(workptr);
 }
 
 } // namespace Dialogs

@@ -59,12 +59,12 @@ void Room89::entry() {
 		_G(spieler).SVal2 = 537;
 		switch_room(92);
 		start_aad_wait(490, -1);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(118, CFO_MODE);
 		_G(spieler).SVal1 = 89;
@@ -78,69 +78,69 @@ void Room89::entry() {
 		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
 		set_person_pos(260, 57, P_NICHELLE, P_LEFT);
 		_G(spieler).ZoomXy[P_NICHELLE][0] = _G(spieler).ZoomXy[P_NICHELLE][1] = 10;
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(117, CFO_MODE);
 		register_cutscene(35);
 
 		fx_blend = BLEND3;
 		Room66::proc8(-1, 2, 3, 563);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(119, CFO_MODE);
 
 		// Squash screen into a single point at the center
 		int edi = -20;
 		int var24 = 0;
-		out->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
+		_G(out)->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
-			out->setze_zeiger(workptr);
-			out->cls();
-			out->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, scr_width);
-			out->setze_zeiger(nullptr);
-			out->back2screen(workpage);
+			_G(out)->setze_zeiger(workptr);
+			_G(out)->cls();
+			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, scr_width);
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->back2screen(workpage);
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		// Unsquish out thanks for playing screen
-		out->setze_zeiger(workptr);
-		out->cls();
-		out->printxy(70, 80, 15, 0, 0, "Thank you for playing");
-		out->printxy(70, 100, 15, 0, 0, "  CHEWY ESC from F5");
-		out->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
+		_G(out)->setze_zeiger(workptr);
+		_G(out)->cls();
+		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
+		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY ESC from F5");
+		_G(out)->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
 		edi = -300;
 		int var30 = -200;
 
 		for (int esi = 0; esi < 100; ++esi) {
 			edi += 3;
 			var30 += 2;
-			out->setze_zeiger(workptr);
-			out->cls();
-			out->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, scr_width);
-			out->setze_zeiger(nullptr);
-			out->back2screen(workpage);
+			_G(out)->setze_zeiger(workptr);
+			_G(out)->cls();
+			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, scr_width);
+			_G(out)->setze_zeiger(nullptr);
+			_G(out)->back2screen(workpage);
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		g_events->delay(3000);
-		out->ausblenden(2);
-		out->setze_zeiger(workptr);
-		out->cls();
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->ausblenden(2);
+		_G(out)->setze_zeiger(workptr);
+		_G(out)->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 
 		Dialogs::Credits::execute();
 		
 		_G(spieler).SVal4 = 1;
-		out->ausblenden(2);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->ausblenden(2);
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 	}
 
 	_G(spieler).SVal2 = 0;
@@ -176,8 +176,8 @@ int Room89::proc2() {
 	_G(spieler).SVal2 = 489;
 	switch_room(92);
 	start_aad_wait(490, -1);
-	out->setze_zeiger(nullptr);
-	out->cls();
+	_G(out)->setze_zeiger(nullptr);
+	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(102, CFO_MODE);
 	register_cutscene(26);

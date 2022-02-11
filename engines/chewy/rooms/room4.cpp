@@ -55,13 +55,13 @@ int16 Room4::sonde_comp() {
 	curblk.sprite = room_blk.DetImage;
 	int16 cur_x = 1;
 	int16 spr_nr = RAHMEN_ROT;
-	cur->move(160, 160);
+	_G(cur)->move(160, 160);
 
 	start_aad(46);
 	while (!ende) {
 		maus_action();
 		if (_G(maus_links_click)) {
-			switch (in->maus_vector(minfo.x + 17, minfo.y + 7, &CONSOLE[0][0], 3)) {
+			switch (_G(in)->maus_vector(minfo.x + 17, minfo.y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
 				if (cur_x > 0)
 					--cur_x;
@@ -102,7 +102,7 @@ int16 Room4::sonde_comp() {
 		}
 		cursor_wahl(CUR_USER);
 		_G(spieler).CurHoehe = 16;
-		in->rectangle(0, 123, 320 - _G(spieler).CurBreite, 194);
+		_G(in)->rectangle(0, 123, 320 - _G(spieler).CurBreite, 194);
 		if (minfo.y < 124) {
 			minfo.y = 123;
 		}

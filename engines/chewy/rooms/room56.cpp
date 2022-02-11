@@ -120,8 +120,8 @@ void Room56::entry() {
 				atds->set_steuer_bit(366, ATS_AKTIV_BIT, ATS_DATEI);
 				_G(spieler).room_e_obj[137].Attribut = 3;
 				if (_G(spieler).flags33_80) {
-					out->setze_zeiger(nullptr);
-					out->cls();
+					_G(out)->setze_zeiger(nullptr);
+					_G(out)->cls();
 					flic_cut(113, CFO_MODE);
 					_G(spieler).PersonRoomNr[P_HOWARD] = 89;
 					load_chewy_taf(CHEWY_NORMAL);
@@ -160,20 +160,20 @@ void Room56::entry() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
 		_G(spieler).r88DestRoom = 82;
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(116, CFO_MODE);
 		register_cutscene(21);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = 1;
 		switch_room(66);
 		break;
 	case 2:
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flic_cut(110, CFO_MODE);
 		_G(spieler).flags34_20 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
@@ -306,7 +306,7 @@ int16 Room56::use_kneipe() {
 				start_aad_wait(307, -1);
 				det->stop_detail(10);
 				g_engine->_sound->playSound(10, 0);
-				out->ausblenden(0);
+				_G(out)->ausblenden(0);
 				set_up_screen(DO_SETUP);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				_G(spieler).PersonHide[P_HOWARD] = false;
@@ -350,8 +350,8 @@ int16 Room56::use_kneipe() {
 		_G(maus_links_click) = false;
 		auto_move(4, P_CHEWY);
 		start_aad_wait(521, -1);
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flc->set_custom_user_function(proc1);
 		flic_cut(112, CFO_MODE);
@@ -370,7 +370,7 @@ int16 Room56::use_kneipe() {
 int16 Room56::proc1(int16 key) {
 	int16 retVal = 0;
 
-	if (in->get_switch_code() == 1)
+	if (_G(in)->get_switch_code() == 1)
 		retVal = -1;
 
 	return retVal;

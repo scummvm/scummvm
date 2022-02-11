@@ -82,8 +82,8 @@ void Room28::entry(int16 eib_nr) {
 					det->show_static_spr(6);
 
 					if (!_G(spieler).R40TeilKarte) {
-						out->ausblenden(0);
-						out->set_teilpalette(pal, 255, 1);
+						_G(out)->ausblenden(0);
+						_G(out)->set_teilpalette(pal, 255, 1);
 						start_aad_wait(607, -1);
 						fx_blend = BLEND3;
 					}
@@ -105,8 +105,8 @@ void Room28::entry(int16 eib_nr) {
 			case 77:
 				if (_G(spieler).R28PostCar) {
 					_G(spieler).R28PostCar = false;
-					out->setze_zeiger(nullptr);
-					out->cls();
+					_G(out)->setze_zeiger(nullptr);
+					_G(out)->cls();
 					flic_cut(FCUT_063, CFO_MODE);
 					_G(spieler).R28ChewyPump = false;
 					invent_2_slot(K_MASKE_INV);

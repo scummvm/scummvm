@@ -107,8 +107,8 @@ int Room95::proc2() {
 	}
 
 	if (_G(spieler).flags35_20) {
-		out->setze_zeiger(nullptr);
-		out->cls();
+		_G(out)->setze_zeiger(nullptr);
+		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(133, CFO_MODE);
 		register_cutscene(33);

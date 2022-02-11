@@ -89,14 +89,14 @@ int16 call_fileio(int16 palette, int16 mode) {
 	}
 	curblk.no_back = false;
 	cursor_wahl(CUR_SAVE);
-	out->sprite_save(cur_back, minfo.x + curblk.page_off_x,
+	_G(out)->sprite_save(cur_back, minfo.x + curblk.page_off_x,
 	                  minfo.y + curblk.page_off_y, 16,
 	                  16, scr_width);
-	cur->hide_cur();
-	cur->show_cur();
-	cur->hide_cur();
-	ret = iog->io_menu(&ioptr);
-	cur->show_cur();
+	_G(cur)->hide_cur();
+	_G(cur)->show_cur();
+	_G(cur)->hide_cur();
+	ret = _G(iog)->io_menu(&ioptr);
+	_G(cur)->show_cur();
 	curblk.no_back = true;
 	return ret;
 }

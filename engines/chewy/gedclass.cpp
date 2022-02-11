@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "chewy/chewy.h"
+#include "chewy/global.h"
 #include "chewy/gedclass.h"
 #include "chewy/ngshext.h"
 
@@ -52,18 +53,18 @@ void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *st
 		int i = 0;
 		do {
 			if (!Gh->load(stream)) {
-				modul = 3;
-				fcode = 1;
+				_G(modul) = 3;
+				_G(fcode) = 1;
 			} else if (i != nr) {
 				// Skip over the entry's data
 				stream->seek(Gh->Len, SEEK_CUR);
 			}
-		} while (!modul && ++i <= nr);
+		} while (!_G(modul) && ++i <= nr);
 
-		if (!modul) {
+		if (!_G(modul)) {
 			if (stream->read(speicher, Gh->Len) != Gh->Len) {
-				modul = 3;
-				fcode = 1;
+				_G(modul) = 3;
+				_G(fcode) = 1;
 			}
 		}
 	} else {
