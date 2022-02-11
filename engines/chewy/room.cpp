@@ -34,6 +34,69 @@ const int16 SURIMY_TAF19_PHASEN[4][2] = {
 	{ 0, 0 }
 };
 
+static const uint8 CHEWY_PHASEN[8][8] = {
+	{  0, 1, 2, 3, 4, 5, 6, 7 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 24, 25, 26, 27, 28, 29, 30, 31 },
+	{ 32, 33, 34, 33, 32 },
+	{ 35, 36, 37, 38, 39, 40, 41, 42 },
+	{ 43, 44, 45, 46, 47, 48, 49, 50 },
+	{ 51, 52, 53, 52, 51 }
+};
+
+static const uint8 CHEWY_PHASEN_ANZ[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
+
+static const uint8 CHEWY_BO_PHASEN[8][8] = {
+	{  0, 1, 2, 3, 4, 5 },
+	{  6, 7, 8, 9, 10, 11 },
+	{ 12, 13, 14, 15, 16, 17 },
+	{ 12, 13, 14, 15, 16, 17 },
+	{ 18, 19, 20, 19, 18 },
+	{ 21, 22, 23, 24, 25, 26 },
+	{ 21, 22, 23, 24, 25, 26 },
+	{ 27, 28, 29, 28, 27 }
+};
+
+static const uint8 CHEWY_BO_PHASEN_ANZ[] = { 6, 6, 6, 6, 5, 6, 6, 5 };
+
+static const uint8 CHEWY_MI_PHASEN[8][8] = {
+	{  0, 1, 2, 3, 4, 5, 6, 7 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{ 24, 25, 26, 27, 28, 29, 30, 31 },
+	{ 24, 25, 26, 27, 28, 29, 30, 31 },
+	{ 32, 33, 34, 33, 32 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 35, 36, 37, 36, 35 }
+};
+
+static const uint8 CHEWY_MI_PHASEN_ANZ[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
+
+static const uint8 CHEWY_RO_PHASEN[8][8] = {
+	{  0, 1, 2, 3, 4, 5, 6, 7 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{ 24, 25, 26, 27, 28, 29, 30, 31 },
+	{ 24, 25, 26, 27, 28, 29, 30, 31 },
+	{ 32, 33, 34, 35, 36, 35, 34, 33 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 37, 38, 39, 40, 41, 40, 39, 38 }
+};
+
+static const uint8 CHEWY_RO_PHASEN_ANZ[] = { 8, 8, 8, 8, 8, 8, 8, 8 };
+
+static const uint8 CHEWY_JM_PHASEN[8][8] = {
+	{  0, 1, 2, 3, 4, 5, 6, 7 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 16, 17, 18, 19, 20, 21, 22, 23 },
+	{ 24, 25, 26, 27, 27, 26, 25, 24 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{ 28, 29, 30, 31, 31, 30, 29, 28 }
+};
+
 
 void JungleRoom::topEntry() {
 	_G(cur_hide_flag) = 0;
@@ -449,45 +512,45 @@ void load_chewy_taf(int16 taf_nr) {
 		switch (taf_nr) {
 		case CHEWY_NORMAL:
 			fname_ = CHEWY_TAF;
-			chewy_ph_anz = chewy_phasen_anz;
-			chewy_ph = (uint8 *)chewy_phasen;
+			_G(chewy_ph_anz) = CHEWY_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_PHASEN;
 			break;
 
 		case CHEWY_BORK:
 			fname_ = CHEWY_BO_TAF;
-			chewy_ph_anz = chewy_bo_phasen_anz;
-			chewy_ph = (uint8 *)chewy_bo_phasen;
+			_G(chewy_ph_anz) = CHEWY_BO_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_BO_PHASEN;
 			break;
 
 		case CHEWY_MINI:
 			fname_ = CHEWY_MI_TAF;
-			chewy_ph_anz = chewy_mi_phasen_anz;
-			chewy_ph = (uint8 *)chewy_mi_phasen;
+			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
 			break;
 
 		case CHEWY_PUMPKIN:
 			fname_ = CHEWY_PUMP_TAF;
-			chewy_ph_anz = chewy_mi_phasen_anz;
-			chewy_ph = (uint8 *)chewy_mi_phasen;
+			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
 			break;
 
 		case CHEWY_ROCKER:
 			fname_ = CHEWY_ROCK_TAF;
-			chewy_ph_anz = chewy_ro_phasen_anz;
-			chewy_ph = (uint8 *)chewy_ro_phasen;
+			_G(chewy_ph_anz) = CHEWY_RO_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_RO_PHASEN;
 			break;
 
 		case CHEWY_JMANS:
 			fname_ = CHEWY_JMAN_TAF;
-			chewy_ph_anz = chewy_ro_phasen_anz;
-			chewy_ph = (uint8 *)chewy_jm_phasen;
+			_G(chewy_ph_anz) = CHEWY_RO_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_JM_PHASEN;
 			spieler_mi[P_CHEWY].HotY = 68;
 			break;
 
 		case CHEWY_ANI7:
 			fname_ = CHEWY_HELM_TAF;
-			chewy_ph_anz = chewy_mi_phasen_anz;
-			chewy_ph = (uint8 *)chewy_mi_phasen;
+			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
 			break;
 
 		default:
