@@ -28,12 +28,6 @@
 
 namespace Chewy {
 
-#define GRAFIK 1
-#define SPEICHER 2
-#define DATEI 3
-#define MAUS 4
-#define DIALOG 5
-
 #undef MAXPATH
 #define MAXPATH 1000
 
