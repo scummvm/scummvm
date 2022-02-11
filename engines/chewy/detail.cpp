@@ -136,45 +136,45 @@ bool RdiDateiHeader::load(Common::SeekableReadStream *src) {
 
 detail::detail() {
 	int16 size = sizeof(room_detail_info);
-	char *tptr = (char *)&rdi;
+	char *tptr = (char *)&_rdi;
 
 	for (int16 i = 0; i < size; i++)
 		*tptr++ = 0;
 
 	for (int16 i = 0; i < MAXDETAILS; i++) {
-		rdi.Sinfo[i].SprNr = -1;
-		rdi.Ainfo[i].start_ani = -1;
+		_rdi.Sinfo[i].SprNr = -1;
+		_rdi.Ainfo[i].start_ani = -1;
 	}
 
 	for (int16 i = 0; i < (MAX_M_ITEMS - 1) << 2; i += 4)
-		rdi.mvect[i] = -1;
+		_rdi.mvect[i] = -1;
 
-	global_delay = 0;
-	ani_freezeflag = false;
-	fulltaf = false;
-	rdi.dptr = nullptr;
-	tafname[0] = 0;
+	_globalDelay = 0;
+	_aniFreezeflag = false;
+	_fullTaf = false;
+	_rdi.dptr = nullptr;
+	_tafName[0] = 0;
 	for (int16 i = 0; i < (MAXDETAILS * MAX_SOUNDS); i++) {
-		rdi.sample[i] = nullptr;
-		rdi.tvp_index[i] = -1;
+		_rdi.sample[i] = nullptr;
+		_rdi.tvp_index[i] = -1;
 	}
-	direct_taf_ani = OFF;
+	_directTafAni = OFF;
 }
 
 detail::~detail() {
-	direct_taf_ani = OFF;
+	_directTafAni = OFF;
 }
 
 void detail::load_rdi(const char *fname_, int16 room_nr) {
 	Common::File f;
-	taf_info *tmprdi = rdi.dptr;
+	taf_info *tmprdi = _rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
-		if (rdi_datei_header.load(&f)) {
-			if (!scumm_strnicmp(rdi_datei_header.Id, "RDI", 3)) {
+		if (_rdi_datei_header.load(&f)) {
+			if (!scumm_strnicmp(_rdi_datei_header.Id, "RDI", 3)) {
 				f.seek(room_nr * room_detail_info::SIZE(), SEEK_CUR);
 
-				if (!rdi.load(&f)) {
+				if (!_rdi.load(&f)) {
 					error("load_rdi error");
 				}
 			} else {
@@ -189,67 +189,67 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 		error("load_rdi error");
 	}
 
-	rdi.dptr = tmprdi;
+	_rdi.dptr = tmprdi;
 }
 
 void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
-	if (strcmp(tafname, fname_)) {
-		if (rdi.dptr) {
-			if (fulltaf) {
-				free(rdi.dptr);
-				rdi.dptr = nullptr;
-				fulltaf = false;
+	if (strcmp(_tafName, fname_)) {
+		if (_rdi.dptr) {
+			if (_fullTaf) {
+				free(_rdi.dptr);
+				_rdi.dptr = nullptr;
+				_fullTaf = false;
 			} else {
-				del_taf_tbl(rdi.dptr);
+				del_taf_tbl(_rdi.dptr);
 			}
 		}
-		strcpy(tafname, fname_);
+		strcpy(_tafName, fname_);
 		if (!load_flag) {
-			rdi.dptr = init_taf_tbl(fname_);
+			_rdi.dptr = init_taf_tbl(fname_);
 			if (!modul)
-				load_taf_tbl(rdi.dptr);
+				load_taf_tbl(_rdi.dptr);
 		} else {
-			rdi.dptr = mem->taf_adr(fname_);
-			fulltaf = true;
+			_rdi.dptr = mem->taf_adr(fname_);
+			_fullTaf = true;
 		}
 	} else {
-		if (!fulltaf)
-			load_taf_tbl(rdi.dptr);
+		if (!_fullTaf)
+			load_taf_tbl(_rdi.dptr);
 	}
 }
 
 void detail::del_dptr() {
-	if (rdi.dptr) {
-		if (fulltaf)
-			free((char *)rdi.dptr);
+	if (_rdi.dptr) {
+		if (_fullTaf)
+			free((char *)_rdi.dptr);
 		else {
-			del_taf_tbl(rdi.dptr);
-			rdi.dptr = nullptr;
-			tafname[0] = 0;
+			del_taf_tbl(_rdi.dptr);
+			_rdi.dptr = nullptr;
+			_tafName[0] = 0;
 		}
-		rdi.dptr = nullptr;
+		_rdi.dptr = nullptr;
 	}
 }
 
 void detail::load_taf_tbl(taf_info *fti) {
 	if (!fti) {
-		fti = rdi.dptr;
+		fti = _rdi.dptr;
 	}
 
 	if (fti) {
 		for (int16 i = 0; i < MAXDETAILS; i++) {
-			if (rdi.Sinfo[i].SprNr != -1)
-				load_taf_seq(rdi.Sinfo[i].SprNr, 1, fti);
-			if (rdi.Ainfo[i].start_ani != -1 &&
-					rdi.Ainfo[i].end_ani != -1 && !rdi.Ainfo[i].load_flag)
-				load_taf_seq(rdi.Ainfo[i].start_ani, (rdi.Ainfo[i].end_ani - rdi.Ainfo[i].start_ani) + 1, fti);
+			if (_rdi.Sinfo[i].SprNr != -1)
+				load_taf_seq(_rdi.Sinfo[i].SprNr, 1, fti);
+			if (_rdi.Ainfo[i].start_ani != -1 &&
+					_rdi.Ainfo[i].end_ani != -1 && !_rdi.Ainfo[i].load_flag)
+				load_taf_seq(_rdi.Ainfo[i].start_ani, (_rdi.Ainfo[i].end_ani - _rdi.Ainfo[i].start_ani) + 1, fti);
 		}
 	}
 }
 
 taf_info *detail::init_taf_tbl(const char *fname_) {
 	taf_info *Tt = 0;
-	SpriteResource *res = new SpriteResource(tafname);
+	SpriteResource *res = new SpriteResource(_tafName);
 	int16 anz = res->getChunkCount();
 	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(taf_info));
 
@@ -267,7 +267,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 
 void detail::del_taf_tbl(taf_info *Tt) {
 	if (!Tt) {
-		Tt = rdi.dptr;
+		Tt = _rdi.dptr;
 	}
 	for (int16 i = 0; i < Tt->anzahl; i++) {
 		free(Tt->image[i]);
@@ -278,7 +278,7 @@ void detail::del_taf_tbl(taf_info *Tt) {
 
 void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 	if (!Tt)
-		Tt = rdi.dptr;
+		Tt = _rdi.dptr;
 	for (int16 i = start; i < start + anz && i < Tt->anzahl; i++) {
 		free(Tt->image[i]);
 		Tt->image[i] = 0;
@@ -287,9 +287,9 @@ void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 
 void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 	if (!Tt)
-		Tt = rdi.dptr;
+		Tt = _rdi.dptr;
 
-	SpriteResource *res = new SpriteResource(tafname);
+	SpriteResource *res = new SpriteResource(_tafName);
 
 	for (int16 i = 0; i < spr_anz; i++) {
 		if (!Tt->image[spr_nr + i]) {
@@ -301,48 +301,48 @@ void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 }
 
 void detail::set_static_spr(int16 nr, int16 spr_nr) {
-	rdi.Sinfo[nr].SprNr = spr_nr;
+	_rdi.Sinfo[nr].SprNr = spr_nr;
 }
 
 void detail::hide_static_spr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
-		rdi.Sinfo[nr].Hide = true;
+		_rdi.Sinfo[nr].Hide = true;
 }
 
 void detail::show_static_spr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
-		rdi.Sinfo[nr].Hide = false;
+		_rdi.Sinfo[nr].Hide = false;
 }
 
 byte *detail::get_static_image(int16 det_nr) {
 	byte *ret;
-	int16 index = rdi.Sinfo[det_nr].SprNr;
+	int16 index = _rdi.Sinfo[det_nr].SprNr;
 	if (index == -1)
 		ret = nullptr;
 	else
-		ret = rdi.dptr->image[index];
+		ret = _rdi.dptr->image[index];
 	return ret;
 }
 
 void detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag) {
 	if (korr_flag) {
-		int16 *Cxy = rdi.dptr->korrektur + (rdi.Sinfo[det_nr].SprNr << 1);
+		int16 *Cxy = _rdi.dptr->korrektur + (_rdi.Sinfo[det_nr].SprNr << 1);
 		x += Cxy[0];
 		y += Cxy[1];
 	}
-	rdi.Sinfo[det_nr].x = x;
-	rdi.Sinfo[det_nr].y = y;
-	rdi.Sinfo[det_nr].Hide = hide;
+	_rdi.Sinfo[det_nr].x = x;
+	_rdi.Sinfo[det_nr].y = y;
+	_rdi.Sinfo[det_nr].Hide = hide;
 }
 
 void detail::set_detail_pos(int16 det_nr, int16 x, int16 y) {
-	rdi.Ainfo[det_nr].x = x;
-	rdi.Ainfo[det_nr].y = y;
+	_rdi.Ainfo[det_nr].x = x;
+	_rdi.Ainfo[det_nr].y = y;
 }
 
 void detail::get_ani_werte(int16 ani_nr, int16 *start, int16 *end) {
-	*start = rdi.Ainfo[ani_nr].start_ani;
-	*end = rdi.Ainfo[ani_nr].end_ani;
+	*start = _rdi.Ainfo[ani_nr].start_ani;
+	*end = _rdi.Ainfo[ani_nr].end_ani;
 }
 
 void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
@@ -351,56 +351,56 @@ void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
 		start = end;
 		end = tmp;
 	}
-	rdi.Ainfo[ani_nr].start_ani = start;
-	rdi.Ainfo[ani_nr].end_ani = end;
+	_rdi.Ainfo[ani_nr].start_ani = start;
+	_rdi.Ainfo[ani_nr].end_ani = end;
 }
 
 byte *detail::get_image(int16 spr_nr) {
-	byte *ret = rdi.dptr->image[spr_nr];
+	byte *ret = _rdi.dptr->image[spr_nr];
 	return ret;
 }
 
 ani_detail_info *detail::get_ani_detail(int16 ani_nr) {
-	ani_detail_info *ret = &rdi.Ainfo[ani_nr];
+	ani_detail_info *ret = &_rdi.Ainfo[ani_nr];
 	return ret;
 }
 
 int16 *detail::get_korrektur_tbl() {
 	int16 *ret;
-	ret = rdi.dptr->korrektur;
+	ret = _rdi.dptr->korrektur;
 	return ret;
 }
 
 void detail::init_taf(taf_info *dptr) {
-	rdi.dptr = dptr;
+	_rdi.dptr = dptr;
 }
 
 taf_info *detail::get_taf_info() {
 	taf_info *ret;
-	ret = rdi.dptr;
+	ret = _rdi.dptr;
 	return ret;
 }
 
 room_detail_info *detail::get_room_detail_info() {
-	return &rdi;
+	return &_rdi;
 }
 
 void detail::freeze_ani() {
-	ani_freezeflag = true;
+	_aniFreezeflag = true;
 }
 
 void detail::unfreeze_ani() {
-	ani_freezeflag = false;
+	_aniFreezeflag = false;
 }
 
 void detail::set_static_ani(int16 ani_nr, int16 static_nr) {
-	rdi.Ainfo[ani_nr].show_1_phase = true;
+	_rdi.Ainfo[ani_nr].show_1_phase = true;
 	if (static_nr != -1)
-		rdi.Ainfo[ani_nr].phase_nr = static_nr;
+		_rdi.Ainfo[ani_nr].phase_nr = static_nr;
 }
 
 void detail::del_static_ani(int16 ani_nr) {
-	rdi.Ainfo[ani_nr].show_1_phase = false;
+	_rdi.Ainfo[ani_nr].show_1_phase = false;
 }
 
 void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, int16 zoomx, int16 zoomy) {
@@ -414,10 +414,10 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; (i <= end) && (!modul); i++) {
-		ani_detail_info *adiptr = &rdi.Ainfo[i];
+		ani_detail_info *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = rdi.dptr->korrektur + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
 			int16 kx = Cxy[0];
 			int16 ky = Cxy[1];
 			if (zoomx != 0 || zoomy != 0)
@@ -427,16 +427,16 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 			if (adiptr->load_flag == 1) {
 				load_taf_ani_sprite(sprnr);
 				if (!modul)
-					out->scale_set(taf_load_buffer, x, y, zoomx, zoomy, 0);
+					out->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
 			} else
-				out->scale_set(rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
+				out->scale_set(_rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
 
 			Sound *sound = g_engine->_sound;
 
 			for (int16 k = 0; k < MAX_SOUNDS; k++) {
 				int16 soundEffect = adiptr->sfx.sound_index[k];
 				if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
-				        (rdi.sample[soundEffect])) {
+				        (_rdi.sample[soundEffect])) {
 					if ((adiptr->sfx.sound_start[k] == adiptr->ani_count) &&
 					        (!adiptr->delay_count)) {
 						const uint channel = adiptr->sfx.kanal[k] & 7;
@@ -447,12 +447,12 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 				}
 			}
 
-			if (!ani_freezeflag) {
+			if (!_aniFreezeflag) {
 				if (adiptr->reverse) {
 					if (adiptr->delay_count > 0)
 						--adiptr->delay_count;
 					else {
-						adiptr->delay_count = adiptr->delay + global_delay;
+						adiptr->delay_count = adiptr->delay + _globalDelay;
 						if (adiptr->ani_count > adiptr->start_ani)
 							--adiptr->ani_count;
 						else {
@@ -467,7 +467,7 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 					if (adiptr->delay_count > 0)
 						--adiptr->delay_count;
 					else {
-						adiptr->delay_count = adiptr->delay + global_delay;
+						adiptr->delay_count = adiptr->delay + _globalDelay;
 						if (adiptr->ani_count < adiptr->end_ani)
 							++adiptr->ani_count;
 						else {
@@ -482,9 +482,9 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		} else {
 			adiptr->start_flag = 0;
 			if (adiptr->show_1_phase) {
-				rdi.Sinfo[adiptr->phase_nr].Hide = false;
+				_rdi.Sinfo[adiptr->phase_nr].Hide = false;
 				plot_static_details(scrx, scry, adiptr->phase_nr, adiptr->phase_nr);
-				rdi.Sinfo[adiptr->phase_nr].Hide = true;
+				_rdi.Sinfo[adiptr->phase_nr].Hide = true;
 			}
 		}
 	}
@@ -501,10 +501,10 @@ void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; i <= end; i++) {
-		if (rdi.Sinfo[i].SprNr != -1 && !rdi.Sinfo[i].Hide) {
-			int16 x = rdi.Sinfo[i].x - scrx;
-			int16 y = rdi.Sinfo[i].y - scry;
-			byte *simage = rdi.dptr->image[rdi.Sinfo[i].SprNr];
+		if (_rdi.Sinfo[i].SprNr != -1 && !_rdi.Sinfo[i].Hide) {
+			int16 x = _rdi.Sinfo[i].x - scrx;
+			int16 y = _rdi.Sinfo[i].y - scry;
+			byte *simage = _rdi.dptr->image[_rdi.Sinfo[i].SprNr];
 			out->sprite_set(simage, x, y, 0);
 		}
 	}
@@ -513,7 +513,7 @@ void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 void detail::start_detail(int16 nr, int16 rep, int16 reverse) {
 	if (nr != -1) {
 		ani_detail_info *adiptr;
-		adiptr = &rdi.Ainfo[nr];
+		adiptr = &_rdi.Ainfo[nr];
 		if (rep)
 			adiptr->start_flag = rep;
 		else
@@ -529,33 +529,33 @@ void detail::start_detail(int16 nr, int16 rep, int16 reverse) {
 
 void detail::stop_detail(int16 nr) {
 	if (nr >= 0 && nr < 32) {
-		ani_detail_info *adiptr = &rdi.Ainfo[nr];
+		ani_detail_info *adiptr = &_rdi.Ainfo[nr];
 		adiptr->start_flag = 0;
 	}
 }
 
 void detail::set_ani_delay(int16 nr, int16 del) {
-	ani_detail_info *adiptr = &rdi.Ainfo[nr];
+	ani_detail_info *adiptr = &_rdi.Ainfo[nr];
 	adiptr->delay = del;
 }
 
 void detail::init_list(int16 *mv) {
 	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
-		rdi.mvect[i] = mv[i];
+		_rdi.mvect[i] = mv[i];
 }
 
 void detail::get_list(int16 *mv) {
 	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
-		mv[i] = rdi.mvect[i];
+		mv[i] = _rdi.mvect[i];
 }
 
 int16 detail::maus_vector(int16 x, int16 y) {
 	int16 i, j;
 	i = -1;
 	for (j = 0; (j < (MAX_M_ITEMS - 1) << 2) && (i == -1); j += 4) {
-		if (rdi.mvect[j] != -1) {
-			if ((x >= rdi.mvect[j]) && (x <= rdi.mvect[j + 2]) &&
-			        (y >= rdi.mvect[j + 1]) && (y <= rdi.mvect[j + 3]))
+		if (_rdi.mvect[j] != -1) {
+			if ((x >= _rdi.mvect[j]) && (x <= _rdi.mvect[j + 2]) &&
+			        (y >= _rdi.mvect[j + 1]) && (y <= _rdi.mvect[j + 3]))
 				i = j / 4;
 		}
 	}
@@ -565,7 +565,7 @@ int16 detail::maus_vector(int16 x, int16 y) {
 
 int16 detail::get_ani_status(int16 det_nr) {
 	int16 ret;
-	if (rdi.Ainfo[det_nr].start_flag > 0)
+	if (_rdi.Ainfo[det_nr].start_flag > 0)
 		ret = 1;
 	else
 		ret = 0;
@@ -575,27 +575,27 @@ int16 detail::get_ani_status(int16 det_nr) {
 SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 spr_nr, int16 mode) {
 	if (det_nr > MAXDETAILS)
 		det_nr = MAXDETAILS - 1;
-	ani_detail_info *adiptr = &rdi.Ainfo[det_nr];
+	ani_detail_info *adiptr = &_rdi.Ainfo[det_nr];
 	if (spr_nr < adiptr->start_ani)
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
 		spr_nr = adiptr->end_ani - 1;
-	int16 *Cxy = rdi.dptr->korrektur + (spr_nr << 1);
-	int16 *Xy = (int16 *)rdi.dptr->image[spr_nr];
-	spr_info.Image = rdi.dptr->image[spr_nr];
-	spr_info.X = adiptr->x + Cxy[0] - scrx;
-	spr_info.Y = adiptr->y + Cxy[1] - scry;
-	spr_info.X1 = spr_info.X + Xy[0];
-	spr_info.Y1 = spr_info.Y + Xy[1];
+	int16 *Cxy = _rdi.dptr->korrektur + (spr_nr << 1);
+	int16 *Xy = (int16 *)_rdi.dptr->image[spr_nr];
+	_sprInfo.Image = _rdi.dptr->image[spr_nr];
+	_sprInfo.X = adiptr->x + Cxy[0] - scrx;
+	_sprInfo.Y = adiptr->y + Cxy[1] - scry;
+	_sprInfo.X1 = _sprInfo.X + Xy[0];
+	_sprInfo.Y1 = _sprInfo.Y + Xy[1];
 	if (mode)
-		out->sprite_set(spr_info.Image, spr_info.X, spr_info.Y, 0);
+		out->sprite_set(_sprInfo.Image, _sprInfo.X, _sprInfo.Y, 0);
 
 	Sound *sound = g_engine->_sound;
 
 	for (int16 k = 0; k < MAX_SOUNDS; k++) {
 		int16 soundEffect = adiptr->sfx.sound_index[k];
 		if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
-		        (rdi.sample[soundEffect])) {
+		        (_rdi.sample[soundEffect])) {
 			if (adiptr->sfx.sound_start[k] == spr_nr) {
 				const uint channel = adiptr->sfx.kanal[k] & 7;
 				sound->setSoundChannelBalance(channel, adiptr->sfx.stereo[k]);
@@ -605,12 +605,12 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		}
 	}
 
-	return spr_info;
+	return _sprInfo;
 }
 
 void detail::set_global_delay(int16 delay) {
-	global_delay = delay;
-	global_delay -= 2;
+	_globalDelay = delay;
+	_globalDelay -= 2;
 }
 
 void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
@@ -632,24 +632,24 @@ void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 }
 
 void detail::disable_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
+	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
 		sdb->sound_enable[i] = false;
 }
 
 void detail::enable_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
+	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
 		if (sdb->sound_index[i] != -1)
 			sdb->sound_enable[i] = true;
 }
 
 void detail::play_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
+	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
 	Sound *sound = g_engine->_sound;
 	for (int16 k = 0; k < MAX_SOUNDS; k++) {
 		if ((sdb->sound_enable[k]) && (sdb->sound_index[k] != -1) &&
-		        (rdi.sample[sdb->sound_index[k]])) {
+		        (_rdi.sample[sdb->sound_index[k]])) {
 			const uint channel = sdb->kanal[k] & 7;
 			sound->setSoundChannelBalance(channel, sdb->stereo[k]);
 			sound->setSoundChannelVolume(channel, sdb->volume[k]);
@@ -659,7 +659,7 @@ void detail::play_detail_sound(int16 nr) {
 }
 
 void detail::clear_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &rdi.Ainfo[nr].sfx;
+	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (short i = 0; i < MAX_SOUNDS; i++) {
 		sdb->sound_enable[i] = false;
 		sdb->sound_index[i] = -1;
@@ -685,7 +685,7 @@ void detail::enable_room_sound() {
 
 void detail::clear_room_sound() {
 	for (int16 j = 0; j < MAXDETAILS; j++) {
-		sound_def_blk *sdb = &rdi.Ainfo[j].sfx;
+		sound_def_blk *sdb = &_rdi.Ainfo[j].sfx;
 		for (int16 i = 0; i < MAX_SOUNDS; i++) {
 			sdb->sound_enable[i] = false;
 			sdb->sound_index[i] = -1;
@@ -697,8 +697,8 @@ void detail::clear_room_sound() {
 		}
 	}
 	for (int16 i = 0; i < MAXDETAILS * MAX_SOUNDS; i++) {
-		rdi.tvp_index[i] = -1;
-		rdi.sample[i] = nullptr;
+		_rdi.tvp_index[i] = -1;
+		_rdi.sample[i] = nullptr;
 	}
 }
 
@@ -706,16 +706,16 @@ void detail::remove_unused_samples() {
 	bool found = false;
 
 	for (int16 k = 0; k < MAXDETAILS * MAX_SOUNDS; k++) {
-		if (rdi.tvp_index[k] != -1) {
+		if (_rdi.tvp_index[k] != -1) {
 			found = false;
 			for (int16 i = 0; (i < MAXDETAILS) && (found == false); i++) {
 				for (int16 j = 0; (j < MAX_SOUNDS) && (found == false); j++)
-					if (rdi.Ainfo[i].sfx.sound_index[j] == k)
+					if (_rdi.Ainfo[i].sfx.sound_index[j] == k)
 						found = true;
 			}
 			if (!found) {
-				rdi.tvp_index[k] = -1;
-				rdi.sample[k] = nullptr;
+				_rdi.tvp_index[k] = -1;
+				_rdi.sample[k] = nullptr;
 			}
 		}
 	}
@@ -725,17 +725,17 @@ int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 	int16 ok = false;
 	int16 detail_nr = -1;
 	for (int16 i = 0; i < MAXDETAILS && !ok; i++) {
-		ani_detail_info *adiptr = &rdi.Ainfo[i];
+		ani_detail_info *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = rdi.dptr->korrektur + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
 			int16 x = adiptr->x + Cxy[0] - scrx;
 			int16 y = adiptr->y + Cxy[1] - scry;
 			int16 *Xy;
 			if (adiptr->load_flag == 1) {
-				Xy = (int16 *)taf_load_buffer;
+				Xy = (int16 *)_tafLoadBuffer;
 			} else {
-				Xy = (int16 *)rdi.dptr->image[sprnr];
+				Xy = (int16 *)_rdi.dptr->image[sprnr];
 			}
 			if (mouse_x >= x && mouse_x <= x + Xy[0] &&
 			        mouse_y >= y && mouse_y <= y + Xy[1]) {
@@ -749,13 +749,13 @@ int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 }
 
 void detail::set_taf_ani_mem(byte *load_area) {
-	taf_load_buffer = load_area;
-	direct_taf_ani = ON;
+	_tafLoadBuffer = load_area;
+	_directTafAni = ON;
 }
 
 void detail::load_taf_ani_sprite(int16 nr) {
-	SpriteResource *res = new SpriteResource(tafname);
-	res->getSpriteData(nr, &taf_load_buffer, false);
+	SpriteResource *res = new SpriteResource(_tafName);
+	res->getSpriteData(nr, &_tafLoadBuffer, false);
 	delete res;
 }
 
