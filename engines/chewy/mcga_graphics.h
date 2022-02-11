@@ -102,8 +102,9 @@ public:
 private:
 	int16 check_stellen_anz(char *zstring, int16 *pos, int16 stellen);
 	int16 devices();
-	float sinus[360];
-	float cosinus[360];
+
+	float _sines[360];
+	float _cosines[360];
 	byte _palTable[PALETTE_SIZE];
 	uint8 _writeMode = 0;
 	bool _mono = false;

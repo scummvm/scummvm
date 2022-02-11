@@ -32,8 +32,8 @@ namespace Chewy {
 
 McgaGraphics::McgaGraphics() {
 	for (int i = 0; i < 360; i++) {
-		sinus[i] = sin(i * 3.14159265359 / 180);
-		cosinus[i] = cos(i * 3.14159265359 / 180);
+		_sines[i] = sin(i * 3.14159265359 / 180);
+		_cosines[i] = cos(i * 3.14159265359 / 180);
 	}
 }
 
@@ -277,7 +277,7 @@ void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
 	int16 a = 0, b = 0, alt = 0, diff;
 	int16 w, i;
 	for (w = 0; w <= 91; w++) {
-		a = (int16)(sinus[w] * ((float)r * 0.85));
+		a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
 			diff = a - alt;
 			for (i = 0; i <= diff; i++) {
@@ -287,7 +287,7 @@ void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
 				setpixel_mcga(x + b, (y + (alt + i)), farbe);
 			}
 		}
-		b = (int16)(cosinus[w] * (float)r);
+		b = (int16)(_cosines[w] * (float)r);
 		setpixel_mcga(x - b, y - a, farbe);
 		setpixel_mcga(x + b, y - a, farbe);
 		setpixel_mcga(x - b, y + a, farbe);
@@ -300,7 +300,7 @@ void McgaGraphics::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
 	int16 a = 0, b = 0, alt = 0, i = 0, diff;
 	int16 w;
 	for (w = 0; w <= 90; w++) {
-		a = (int16)(sinus[w] * ((float)r * 0.85));
+		a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
 			diff = a - alt;
 			for (i = 0; i < diff; i++) {
@@ -308,7 +308,7 @@ void McgaGraphics::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
 				line_mcga(x - b, (y + (alt + i)), x + b, (y + (alt + i)), farbe);
 			}
 		}
-		b = (int16)(cosinus[w] * ((float)r));
+		b = (int16)(_cosines[w] * ((float)r));
 		line_mcga(x - b, (y - (alt + i)), x + b, (y - (alt + i)), farbe);
 		line_mcga(x - b, (y + (alt + i)), x + b, (y + (alt + i)), farbe);
 		alt = a;
