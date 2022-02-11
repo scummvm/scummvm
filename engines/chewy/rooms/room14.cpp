@@ -67,7 +67,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!flags.AutoAniPlay && !_G(spieler).R14Feuer) {
 		flags.AutoAniPlay = true;
 		det->hide_static_spr(9);
-		start_detail_wait(room->room_timer.ObjNr[ani_nr], 1, ANI_VOR);
+		start_detail_wait(room->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
 		uhr->reset_timer(t_nr, 0);
 		det->show_static_spr(9);
 		det->start_detail(7, 1, ANI_VOR);

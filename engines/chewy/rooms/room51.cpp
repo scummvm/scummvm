@@ -125,7 +125,7 @@ void Room51::xit(int16 eib_nr) {
 
 bool Room51::timer(int16 t_nr, int16 ani_nr) {
 	if (_G(spieler).flags32_10)
-		timer_action(t_nr, room->room_timer.ObjNr[ani_nr]);
+		timer_action(t_nr, room->_roomTimer.ObjNr[ani_nr]);
 	else
 		return true;
 

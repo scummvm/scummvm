@@ -106,8 +106,8 @@ void Room17::xit() {
 }
 
 bool Room17::timer(int16 t_nr, int16 ani_nr) {
-	if (room->room_timer.ObjNr[ani_nr] == 2 ||
-		room->room_timer.ObjNr[ani_nr] == 3) {
+	if (room->_roomTimer.ObjNr[ani_nr] == 2 ||
+		room->_roomTimer.ObjNr[ani_nr] == 3) {
 		if (_G(spieler).R17EnergieOut)
 			uhr->reset_timer(t_nr, 0);
 		else

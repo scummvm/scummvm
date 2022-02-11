@@ -88,71 +88,45 @@ public:
 	~Room();
 
 	Stream *open_handle(const char *fname, const char *fmode, int16 mode);
-
 	void close_handle(int16 mode);
-
 	void load_room(RaumBlk *Rb, int16 room_nr, Spieler *player);
-
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
-
 	byte *get_ablage(int16 nr);
-
 	byte **get_ablage();
-
 	byte **get_ged_mem();
-
 	void set_timer_start(int16 timer_start);
-
 	void add_timer_new_room();
-
 	void del_timer_old_room();
-
 	int16 set_timer(int16 ani_nr, int16 timer_end);
-
 	void set_timer_status(int16 ani_nr, int16 status);
-
 	void set_zoom(int16 zoom);
-
 	void set_pal(const byte *src_pal, byte *dest_pal);
-
 	void set_ak_pal(RaumBlk *Rb);
-
 	void calc_invent(RaumBlk *Rb, Spieler *player);
 
-	RaumTimer room_timer;
-	RaumInfo *room_info;
-	GedChunkHeader GedInfo[MAX_ABLAGE];
-	int16 GedXAnz[MAX_ABLAGE];
-
-	int16 GedYAnz[MAX_ABLAGE];
+	RaumTimer _roomTimer;
+	RaumInfo *_roomInfo;
+	GedChunkHeader _gedInfo[MAX_ABLAGE];
+	int16 _gedXAnz[MAX_ABLAGE];
+	int16 _gedYAnz[MAX_ABLAGE];
 
 private:
-
-	// FIXME: was FILE*
-	void load_ged_chunk(RaumBlk *Rb, void *handle, int16 nr,
-	                    char *speicher);
-
 	void init_ablage();
-
 	void free_ablage();
-
 	int16 get_ablage(int16 pic_nr, uint32 pic_size);
-
 	int16 get_ablage_g1(int16 ablage_bedarf, int16 ak_pos);
 	void set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size);
 
-	void load_room_music(int16 room_nr);
+	GedPoolHeader _gedPoolHeader;
+	int16 _akAblage;
+	int16 _lastAblageSave;
 
-	GedPoolHeader ged_pool_header;
-	int16 AkAblage;
-	int16 LastAblageSave;
+	byte *_ablage[MAX_ABLAGE];
+	byte *_ablagePal[MAX_ABLAGE];
+	int16 _ablageInfo[MAX_ABLAGE][2];
 
-	byte *Ablage[MAX_ABLAGE];
-	byte *AblagePal[MAX_ABLAGE];
-	int16 AblageInfo[MAX_ABLAGE][2];
-
-	byte *GedMem[MAX_ABLAGE];
-	Stream *roomhandle[MAX_ROOM_HANDLE];
+	byte *_gedMem[MAX_ABLAGE];
+	Stream *_roomHandle[MAX_ROOM_HANDLE];
 };
 
 extern void load_chewy_taf(int16 taf_nr);

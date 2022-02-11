@@ -175,7 +175,7 @@ void Room49::use_boy_cigar() {
 	SetUpScreenFunc = nullptr;
 	auto_move(5, P_CHEWY);
 
-	const int16 zoom = room->room_info->ZoomFak;
+	const int16 zoom = room->_roomInfo->ZoomFak;
 	room->set_zoom(zoom);
 	go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
 	set_person_spr(P_LEFT, P_HOWARD);

@@ -76,7 +76,7 @@ void sprite_engine() {
 			if (Adi[nr].zoom) {
 
 				y = Adi[nr].y;
-				calc_zoom(y, (int16)room->room_info->ZoomFak, (int16)room->room_info->ZoomFak, &detmov);
+				calc_zoom(y, (int16)room->_roomInfo->ZoomFak, (int16)room->_roomInfo->ZoomFak, &detmov);
 			} else {
 				detmov.Xzoom = 0;
 				detmov.Yzoom = 0;
@@ -101,8 +101,8 @@ void sprite_engine() {
 					spr_nr = chewy_ph[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
 					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
-					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->room_info->ZoomFak,
-					          (int16)room->room_info->ZoomFak, &spieler_vector[P_CHEWY]);
+					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->_roomInfo->ZoomFak,
+					          (int16)room->_roomInfo->ZoomFak, &spieler_vector[P_CHEWY]);
 
 					out->scale_set(chewy->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
@@ -115,8 +115,8 @@ void sprite_engine() {
 					y = spieler_mi[P_CHEWY].XyzStart[1] + spz_tinfo->korrektur[spr_nr * 2 + 1] -
 					    _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1],
-					          (int16)room->room_info->ZoomFak,
-					          (int16)room->room_info->ZoomFak,
+					          (int16)room->_roomInfo->ZoomFak,
+					          (int16)room->_roomInfo->ZoomFak,
 					          &spieler_vector[P_CHEWY]);
 
 					out->scale_set(spz_tinfo->image[spr_nr], x, y,
@@ -282,7 +282,7 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	if (!flags.ExitMov) {
 		if (p_nr == P_CHEWY) {
 			u_index = ged->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
-			                        room->GedXAnz[room_blk.AkAblage],
+			                        room->_gedXAnz[room_blk.AkAblage],
 			                        ged_mem[room_blk.AkAblage]);
 			check_shad(u_index, 1);
 		}
@@ -729,17 +729,17 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 			if (!mi->Mode) {
 				if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 				                              om->Xypos[1] + mi->HotY + tmpy,
-				                              room->GedXAnz[room_blk.AkAblage],
+				                              room->_gedXAnz[room_blk.AkAblage],
 				                              ged_mem[room_blk.AkAblage]))) {
 
 					if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 					                              om->Xypos[1] + mi->HotY,
-					                              room->GedXAnz[room_blk.AkAblage],
+					                              room->_gedXAnz[room_blk.AkAblage],
 					                              ged_mem[room_blk.AkAblage]))) {
 
 						if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
 						                              om->Xypos[1] + mi->HotY + tmpy,
-						                              room->GedXAnz[room_blk.AkAblage],
+						                              room->_gedXAnz[room_blk.AkAblage],
 						                              ged_mem[room_blk.AkAblage]))) {
 							om->Count = 0;
 						} else {
@@ -844,7 +844,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				if (mi->Id == CHEWY_OBJ) {
 					u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
 					                        om->Xypos[1] + mi->HotY,
-					                        room->GedXAnz[room_blk.AkAblage],
+					                        room->_gedXAnz[room_blk.AkAblage],
 					                        ged_mem[room_blk.AkAblage]);
 					check_shad(u_index, 1);
 				}
