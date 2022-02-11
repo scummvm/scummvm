@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-11 02:51+0000\n"
-"PO-Revision-Date: 2022-02-10 17:01+0000\n"
+"PO-Revision-Date: 2022-02-11 13:51+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6725,8 +6725,9 @@ msgid "  or incorrect game behavior."
 msgstr "  або няправільную працу гульні."
 
 #: engines/scumm/help.cpp:113
+#, fuzzy
 msgid "Spinning drafts on the keyboard:"
-msgstr ""
+msgstr "Прадзеньне чараў клявіятурай:"
 
 #: engines/scumm/help.cpp:115
 msgid "Main game controls:"
@@ -6831,7 +6832,7 @@ msgstr "Вандраваць"
 
 #: engines/scumm/help.cpp:174
 msgid "To Henry / To Indy"
-msgstr ""
+msgstr "Гэнры / Інды"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:178
@@ -7063,11 +7064,11 @@ msgstr "Раптоўны ўдар"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "Калі Інды леваруч."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "Калі інды праваруч,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
@@ -7465,14 +7466,16 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
+"Ужо ё захоў з такою назваю!\n"
+"Ці хочаце вы захаваць стары захоў (%s) ці новы (%s)?\n"
 
 #: engines/sword1/control.cpp:1263
 msgid "Keep the old one"
-msgstr ""
+msgstr "Захаваць стары"
 
 #: engines/sword1/control.cpp:1263
 msgid "Keep the new one"
-msgstr ""
+msgstr "Захаваць новы"
 
 #: engines/sword1/logic.cpp:1634
 msgid "This is the end of the Broken Sword 1 Demo"
