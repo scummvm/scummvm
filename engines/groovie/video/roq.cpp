@@ -157,6 +157,10 @@ uint16 ROQPlayer::loadInternal() {
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
 
+	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		dumpAllSurfaces();
+	}
+
 	if (!_flagOverlay && _flagNoPlay) {
 		clearOverlay();
 	}
@@ -271,6 +275,9 @@ void ROQPlayer::redrawRestoreArea(int screenOffset, bool force) {
 }
 
 void writeImage(const Common::String filename, Graphics::Surface &surface) {
+	if (surface.h == 0 || surface.w == 0) {
+		return;
+	}
 	Common::String tname = "img/" + filename;
 #ifdef USE_PNG
 	tname += ".png";
@@ -300,14 +307,16 @@ void ROQPlayer::dumpAllSurfaces() {
 													  date.tm_year + 1900, curMonth, date.tm_mday,
 													  date.tm_hour, date.tm_min, date.tm_sec, millis);
 
-	writeImage("lockScreen " + timestamp, *_vm->_system->lockScreen());
+	writeImage(timestamp + " lockScreen", *_vm->_system->lockScreen());
 	_vm->_system->unlockScreen();
-	writeImage("_bg " + timestamp, *_bg);
-	writeImage("_currBuf " + timestamp, *_currBuf);
-	writeImage("_overBuf " + timestamp, *_overBuf);
-	writeImage("_prevBuf " + timestamp, *_prevBuf);
-	writeImage("_screen " + timestamp, *_screen);
-	g_system->delayMillis(15); // make sure we get a new timestamp every time
+	writeImage(timestamp + " _bg", *_bg);
+	writeImage(timestamp + " _currBuf", *_currBuf);
+	writeImage(timestamp + " _overBuf", *_overBuf);
+	writeImage(timestamp + " _prevBuf", *_prevBuf);
+	writeImage(timestamp + " _screen", *_screen);
+	while (g_system->getMillis() == millis) {
+		g_system->delayMillis(1); // make sure we get a new timestamp every time
+	}
 }
 
 void ROQPlayer::buildShowBuf() {
@@ -389,7 +398,7 @@ void ROQPlayer::buildShowBuf() {
 		}
 	}
 
-	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+	if (gDebugLevel >= 9 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		dumpAllSurfaces();
 	}
 
