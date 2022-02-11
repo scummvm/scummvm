@@ -381,8 +381,8 @@ int16 Room55::use_kammeraus() {
 			_G(spieler).R55SekWeg = true;
 			atds->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(_G(spieler).AkInvent);
-			atds->set_steuer_bit(345, 1, 1);
-			atds->set_steuer_bit(346, 1, 1);
+			atds->set_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
+			atds->set_steuer_bit(346, ATS_AKTIV_BIT, ATS_DATEI);
 			strasse(1);
 			show_cur();
 		}

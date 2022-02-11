@@ -68,9 +68,15 @@ void Room13::entry() {
 			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 		}
 
-		if (_G(spieler).R13Band) {
+		if (_G(spieler).R13Bandlauf) {
+			for (int i = 0; i < 5; ++i)
+				det->start_detail(i, 255, false);
+		}
+		
+		if (!flags.LoadGame && _G(spieler).R13Band) {
 			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-			atds->set_steuer_bit(100, 1, 1);
+			atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(spieler).R13Band = false;
 		}
 
 		if (_G(spieler).R21GitterMuell)
@@ -80,21 +86,14 @@ void Room13::entry() {
 
 void Room13::xit() {
 	_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-	atds->set_steuer_bit(100, 1, 1);
+	atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).R13Band = false;
 }
 
 void Room13::gedAction(int index) {
-	switch (index) {
-	case 2:
-		if (_G(spieler).R12ChewyBork) {
-			stop_person(P_CHEWY);
-			talk_bork();
-		}
-		break;
-
-	default:
-		break;
+	if (index == 2 && _G(spieler).R12ChewyBork) {
+		stop_person(P_CHEWY);
+		talk_bork();
 	}
 }
 
@@ -108,7 +107,7 @@ void Room13::talk_bork() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);
 		det->stop_detail(9);
-		det->load_taf_seq(86, (97 - 86) + 1, nullptr);
+		det->load_taf_seq(86, 12, nullptr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		det->hide_static_spr(12);
 		_G(auto_obj) = 1;
@@ -120,7 +119,7 @@ void Room13::talk_bork() {
 		auto_mov_obj[R13_BORK_OBJ].Id = AUTO_OBJ0;
 		auto_mov_vector[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 		auto_mov_obj[R13_BORK_OBJ].Mode = true;
-		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], mov_phasen[R13_BORK_OBJ].Lines, (const MovLine *)R13_BORK_MPKT);
+		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], 3, (const MovLine *)R13_BORK_MPKT);
 		auto_move(9, P_CHEWY);
 		wait_auto_obj(R13_BORK_OBJ);
 		auto_move(11, P_CHEWY);
@@ -177,7 +176,7 @@ void Room13::jmp_band() {
 			flags.NoScroll = false;
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
-			_G(spieler).R13Bandlauf = 0;
+			_G(spieler).R13Bandlauf = false;
 			atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 			atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
@@ -190,11 +189,10 @@ void Room13::jmp_band() {
 			_G(spieler).scrollx = 92;
 			_G(spieler).scrolly = 120;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			wait_show_screen(40);
+			wait_show_screen(20);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 		}
-	} else
-		start_aad_wait(118, -1);
+	}
 }
 
 void Room13::jmp_boden() {
@@ -215,14 +213,14 @@ void Room13::jmp_boden() {
 
 int16 Room13::monitor_knopf() {
 	int16 action_flag = false;
-
+	
 	if (!_G(spieler).inv_cur) {
-		action_flag = true;
-
 		if (_G(spieler).R13Band) {
+			action_flag = true;
 			start_aad_wait(620, -1);
 
 		} else if (!_G(spieler).R12ChewyBork) {
+			action_flag = true;
 			auto_move(8, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(6, 1, ANI_VOR);

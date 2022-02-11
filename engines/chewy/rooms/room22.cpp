@@ -121,7 +121,7 @@ void Room22::bork(int16 t_nr) {
 				bork_walk1();
 			} else {
 				if (!_G(spieler).R22ChewyPlatt) {
-					atds->set_steuer_bit(79, 1, 1);
+					atds->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
 					_G(spieler).R22ChewyPlatt = true;
 				}
 
@@ -196,7 +196,7 @@ int16 Room22::malen() {
 
 		if (!_G(spieler).R22ChewyPlatt) {
 			_G(spieler).R22ChewyPlatt = true;
-			atds->set_steuer_bit(79, 1, 1);
+			atds->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 	}
 

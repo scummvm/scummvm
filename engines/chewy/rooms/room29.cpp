@@ -52,7 +52,7 @@ void Room29::entry() {
 
 	if (_G(spieler).R29AutoSitz) {
 		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
-			atds->set_steuer_bit(212, 1, 1);
+			atds->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		else
 			det->show_static_spr(9);
 	}
