@@ -31,26 +31,19 @@ namespace Chewy {
 #define SCREEN_S _G(currentScreen)
 #define SCREEN _G(currentScreen).getPixels()
 
-static byte saved_palette[PALETTE_SIZE];
-static bool screenHasDefault;
-static byte *screenDefaultP;
-static int spriteWidth;
-static byte *fontAddr;
-static size_t fontWidth, fontHeight;
-int fontFirst, fontLast;
 
 void init_mcga() {
 	_G(currentScreen) = (byte *)g_screen->getPixels();
-	screenHasDefault = false;
-	screenDefaultP = nullptr;
-	spriteWidth = 0;
+	_G(screenHasDefault) = false;
+	_G(screenDefaultP) = nullptr;
+	_G(spriteWidth) = 0;
 }
 
 void set_pointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
-	} else if (screenHasDefault) {
-		_G(currentScreen) = screenDefaultP;
+	} else if (_G(screenHasDefault)) {
+		_G(currentScreen) = _G(screenDefaultP);
 	} else {
 		_G(currentScreen) = (byte *)g_screen->getPixels();
 	}
@@ -78,13 +71,13 @@ void setpalette(const byte *palette) {
 
 void save_palette(byte *palette) {
 	if (!palette)
-		palette = saved_palette;
+		palette = _G(saved_palette);
 
 	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
 }
 
 void restore_palette() {
-	setpalette(saved_palette);
+	setpalette(_G(saved_palette));
 }
 
 void rastercol(int16 color, int16 r, int16 g, int16 b) {
@@ -254,7 +247,7 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 	int height = *((const int16 *)sptr);
 	sptr += 2;
 	const byte *srcP = sptr;
-	spriteWidth = width;
+	_G(spriteWidth) = width;
 
 	if (!(height >= 1 && width >= 4))
 		return;
@@ -263,7 +256,7 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 	if (!mspr_set_mcga_clip(x, y, pitch, width, height, srcP, destP))
 		return;
 	int destPitchRemainder = pitch - width;
-	int srcPitchRemainder = spriteWidth - width;
+	int srcPitchRemainder = _G(spriteWidth) - width;
 
 	for (int row = 0; row < height; ++row,
 			srcP += srcPitchRemainder, destP += destPitchRemainder) {
@@ -275,11 +268,11 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 }
 
 void setfont(byte *addr, int16 width, int16 height, int16 first, int16 last) {
-	fontAddr = addr;
-	fontWidth = width;
-	fontHeight = height;
-	fontFirst = first;
-	fontLast = last;
+	_G(fontAddr) = addr;
+	_G(fontWidth) = width;
+	_G(fontHeight) = height;
+	_G(fontFirst) = first;
+	_G(fontLast) = last;
 }
 
 void upd_scr() {
@@ -293,17 +286,17 @@ void vors() {
 }
 
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
-	size_t charSize = (fontWidth / 8) * fontHeight;
-	byte *charSrcP = fontAddr + (c - fontFirst) * charSize;
+	size_t charSize = (_G(fontWidth) / 8) * _G(fontHeight);
+	byte *charSrcP = _G(fontAddr) + (c - _G(fontFirst)) * charSize;
 
 	if (scrWidth == 0)
 		scrWidth = SCREEN_WIDTH;
 	byte *destP = SCREEN + (y * scrWidth) + x;
 
-	for (size_t yp = 0; yp < fontHeight; ++yp, destP += scrWidth) {
+	for (size_t yp = 0; yp < _G(fontHeight); ++yp, destP += scrWidth) {
 		byte *destLineP = destP;
 
-		for (size_t byteCtr = 0; byteCtr < (fontWidth / 8); ++byteCtr) {
+		for (size_t byteCtr = 0; byteCtr < (_G(fontWidth) / 8); ++byteCtr) {
 			byte bits = *charSrcP++;
 
 			// Iterate through the 8 bits
@@ -318,7 +311,7 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 
 	if (SCREEN == (byte *)g_screen->getPixels())
 		g_screen->addDirtyRect(Common::Rect(
-			x, y, x + fontWidth, y + fontHeight));
+			x, y, x + _G(fontWidth), y + _G(fontHeight)));
 }
 
 void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
@@ -342,8 +335,8 @@ static void setXVals() {
 		spriteXVal1 = 0;
 		spriteXVal2 = 1;
 	} else {
-		spriteXVal1 = spriteWidth / spriteDeltaX2;
-		spriteXVal2 = 1000 * (spriteWidth % spriteDeltaX2);
+		spriteXVal1 = _G(spriteWidth) / spriteDeltaX2;
+		spriteXVal2 = 1000 * (_G(spriteWidth) % spriteDeltaX2);
 		if (spriteDeltaX2)
 			spriteXVal2 /= spriteDeltaX2;
 	}
@@ -369,12 +362,12 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 		--yCount;
 		if (yCount >= 1) {
 			for (int yc = 0, countY = spriteYVal2; yc < yCount; ++yc) {
-				source += spriteWidth * spriteYVal1;
+				source += _G(spriteWidth) * spriteYVal1;
 				dest += SCREEN_WIDTH;
 
 				while (countY > 1000) {
 					countY -= 1000;
-					source += spriteWidth;
+					source += _G(spriteWidth);
 				}
 			}
 		}
@@ -424,12 +417,12 @@ void clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 }
 
 void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth) {
-	spriteWidth = ((int16 *)source)[0];
+	_G(spriteWidth) = ((int16 *)source)[0];
 	spriteHeight = ((int16 *)source)[1];
 	source += 4;
 
 	spriteDeltaX1 = xDiff;
-	spriteDeltaX2 = spriteWidth + xDiff;
+	spriteDeltaX2 = _G(spriteWidth) + xDiff;
 	spriteDeltaY1 = yDiff;
 	spriteDeltaY2 = spriteHeight + yDiff;
 
@@ -467,13 +460,13 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 			scrP = scrLine + SCREEN_WIDTH;
 
 			for (int ySkip = 0; ySkip < spriteYVal1; ++ySkip) {
-				source += spriteWidth;
+				source += _G(spriteWidth);
 			}
 
 			countY += spriteYVal2;
 			while (countY > 1000) {
 				countY -= 1000;
-				source += spriteWidth;
+				source += _G(spriteWidth);
 			}
 		}
 	}

@@ -27,8 +27,6 @@
 
 namespace Chewy {
 
-extern int fontFirst, fontLast;
-
 void init_mcga();
 
 void set_pointer(byte *ptr);

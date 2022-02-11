@@ -30,7 +30,7 @@ namespace Chewy {
 
 class Data {
 private:
-	char _filename[MAXPATH];
+	char _filename[MAXPATH] = { 0 };
 
 public:
 	Data();
