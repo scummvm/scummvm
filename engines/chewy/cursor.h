@@ -34,29 +34,25 @@ public:
 	~cursor();
 
 	void plot_cur();
-
 	void show_cur();
-
 	void hide_cur();
-
 	void set_cur_ani(cur_ani *ani);
-
 	void move(int16 x, int16 y);
 	void wait_taste_los(bool maus_plot);
 
-	McgaGraphics *out = nullptr;
-	InputMgr *in = nullptr;
-	maus_info *minfo = nullptr;
-	in_zeiger *inzeig = nullptr;
-	cur_blk *curblk = nullptr;
-	cur_ani *ani = nullptr;
-	int scr_width = 0;
-	int16 cur_x_old = 0;
-	int16 cur_y_old = 0;
-	int16 cur_aufruf = 0;
-	int16 ani_count = 0;
-	uint8 maus_da = 0;
-	bool sichtbar = false;
+	McgaGraphics *_out = nullptr;
+	InputMgr *_in = nullptr;
+	maus_info *_minfo = nullptr;
+	in_zeiger *_inzeig = nullptr;
+	cur_blk *_curblk = nullptr;
+	cur_ani *_ani = nullptr;
+	int _scrWidth = 0;
+	int16 _cur_x_old = 0;
+	int16 _cur_y_old = 0;
+	int16 _cur_aufruf = 0;
+	int16 _ani_count = 0;
+	uint8 _maus_da = 0;
+	bool _sichtbar = false;
 };
 
 } // namespace Chewy
