@@ -1195,6 +1195,35 @@ void check_shad(int16 g_idx, int16 mode) {
 		45, 3, 28,
 		45, 6, 32
 	};
+
+	switch (g_idx) {
+	case 1:
+		if (mode)
+			_G(out)->set_teilpalette(PAL_1, 1, 11);
+		palcopy(pal, PAL_1, 0, 0, 12);
+		break;
+
+	case 2:
+		if (mode)
+			_G(out)->set_teilpalette(PAL_2, 1, 11);
+		palcopy(pal, PAL_2, 0, 0, 12);
+		break;
+
+	case 3:
+		if (mode)
+			_G(out)->set_teilpalette(PAL_3, 1, 11);
+		palcopy(pal, PAL_3, 0, 0, 12);
+		break;
+
+	case 4:
+		if (mode)
+			_G(out)->set_teilpalette(PAL_0, 1, 11);
+		palcopy(pal, PAL_0, 0, 0, 12);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 scr_w, char *txtptr) {
