@@ -165,7 +165,6 @@ void Resource::initSprite(Common::String filename) {
 }
 
 void Resource::unpackRLE(uint8 *buffer, uint32 compressedSize, uint32 uncompressedSize) {
-
 	uint8 count;
 	uint8 value;
 	uint32 outPos = 0;
@@ -173,7 +172,7 @@ void Resource::unpackRLE(uint8 *buffer, uint32 compressedSize, uint32 uncompress
 	for (uint i = 0; i < (compressedSize) / 2 && outPos < uncompressedSize; i++) {
 		count = _stream.readByte();
 		value = _stream.readByte();
-		for (uint8 j = 0; j < count; j++) {
+		for (uint8 j = 0; j < count && outPos < uncompressedSize; j++) {
 			buffer[outPos++] = value;
 		}
 	}
