@@ -112,8 +112,11 @@ void Room8::start_verbrennen() {
 }
 
 bool Room8::gips_wurf() {
+	bool actionFl = false;
+	
 	if (is_cur_inventar(GIPS_EIMER_INV)) {
 		hide_cur();
+		actionFl = true;
 		det->load_taf_seq(116, 30, nullptr);
 		auto_move(2, P_CHEWY);
 		_G(maus_links_click) = false;
@@ -131,7 +134,7 @@ bool Room8::gips_wurf() {
 		_G(spieler).R8GipsWurf = true;
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
 		obj->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
-		det->del_taf_tbl(116, 30, 0);
+		det->del_taf_tbl(116, 30, nullptr);
 		auto_move(8, P_CHEWY);
 		flags.AtsAction = false;
 		menu_item = CUR_USE;
@@ -143,11 +146,9 @@ bool Room8::gips_wurf() {
 		invent_2_slot(MASKE_INV);
 		cursor_wahl(menu_item);
 		show_cur();
-
-		return true;
 	}
 
-	return false;
+	return actionFl;
 }
 
 void Room8::open_gdoor() {
@@ -170,17 +171,17 @@ void Room8::talk_nimoy() {
 	flags.NoScroll = true;
 	auto_scroll(0, 120);
 	if (_G(spieler).R8Folter) {
-		int16 tmp;
-		if (!_G(spieler).R8GipsWurf)
-			tmp = 1;
-		else
-			tmp = 2;
+		int16 diaNr = _G(spieler).R8GipsWurf ? 2 : 1;
+
 		if (!_G(spieler).R8GTuer)
-			load_ads_dia(tmp);
+			load_ads_dia(diaNr);
 		else
 			start_aad_wait(61, -1);
-	} else
+	} else {
+		start_aad_wait(603, -1);
 		load_ads_dia(6);
+	}
+
 	flags.NoScroll = false;
 }
 
