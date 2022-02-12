@@ -119,10 +119,12 @@ void HypnoEngine::changeCursor(const Common::String &cursor) {
 	CursorMan.showMouse(true);
 }
 
-void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n) {
+void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool centerCursor) {
 	byte *palette;
 	Graphics::Surface *entry = decodeFrame(cursor, n, &palette);
-	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, 0, 0, 0, &_pixelFormat);
+	uint32 hotspotX = centerCursor ? entry->w / 2 : 0;
+	uint32 hotspotY = centerCursor ? entry->h / 2 : 0;
+	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, hotspotX, hotspotY, 0, &_pixelFormat);
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 	entry->free();
 	delete entry;

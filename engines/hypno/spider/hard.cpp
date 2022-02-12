@@ -244,7 +244,6 @@ void SpiderEngine::runNote(Code *code) {
 	const char solEasyEN1[] = "speak with russian and save";
 	const char solEasyEN2[] = "mary jane";
 	char placeEasyEN[] = "????? ???? ??????? ??? ????";
-
 	char placeEasy2[] = "???? ????";
 
 	const char solHardES1[] = "encvenuse a tmesdzakpw p tv";
@@ -254,8 +253,8 @@ void SpiderEngine::runNote(Code *code) {
 
 	const char solHardEN1[] = "find smerdyakov or your wife";
 	const char solHardEN2[] = "dies";
-	char placeHardEN[] = "???? ?????????? ?? ???? ??? ????";
-	char placeHardEN2[] = "???? ????";
+	char placeHardEN[] = "???? ?????????? ?? ???? ????";
+	char placeHardEN2[] = "????";
 
 	changeScreenMode("640x480");
 	Common::Point mousePos;
@@ -270,6 +269,19 @@ void SpiderEngine::runNote(Code *code) {
 	Common::String secondSolution;
 	Common::Rect letterBox;
 
+	Common::Rect firstSentenceBox;
+	Common::Rect firstSentenceBoxEasyEN(21, 140, 560, 160);
+	Common::Rect firstSentenceBoxEasyES(21, 140, 560, 160);
+
+	Common::Rect firstSentenceBoxHardEN(21, 140, 580, 160);
+	Common::Rect firstSentenceBoxHardES(21, 140, 560, 160);
+
+	Common::Rect secondSentenceBox;
+	Common::Rect secondSentenceBoxEasyEN(21, 140, 196, 201);
+	Common::Rect secondSentenceBoxEasyES(21, 180, 195, 195);
+
+	Common::Rect secondSentenceBoxHardEN(21, 180, 96, 201);
+	Common::Rect secondSentenceBoxHardES(21, 180, 260, 195);
 	switch (_language) {
 	case Common::EN_USA:
 	case Common::DE_DEU:
@@ -280,11 +292,15 @@ void SpiderEngine::runNote(Code *code) {
 			secondSentence = (char*) &placeEasy2;
 			firstSolution = solEasyEN1;
 			secondSolution = solEasyEN2;
+			firstSentenceBox = firstSentenceBoxEasyEN;
+			secondSentenceBox = secondSentenceBoxEasyEN;
 		} else { // hard 
 			firstSentence = (char*) &placeHardEN;
 			secondSentence = (char*) &placeHardEN2;
 			firstSolution = solHardEN1;
 			secondSolution = solHardEN2;
+			firstSentenceBox = firstSentenceBoxHardEN;
+			secondSentenceBox = secondSentenceBoxHardEN;
 		}
 	break;
 	
@@ -296,11 +312,15 @@ void SpiderEngine::runNote(Code *code) {
 			secondSentence = (char*) &placeEasy2;
 			firstSolution = solEasyES1; 
 			secondSolution = solEasyES2;
+			firstSentenceBox = firstSentenceBoxEasyES;
+			secondSentenceBox = secondSentenceBoxEasyES;
 		} else { // hard 
 			firstSentence = (char*) &placeHardES;
 			secondSentence = (char*) &placeHardES2;
 			firstSolution = solHardES1;
 			secondSolution = solHardES2;
+			firstSentenceBox = firstSentenceBoxHardES;
+			secondSentenceBox = secondSentenceBoxHardES;
 		}
 	break;
 	default:
@@ -314,9 +334,6 @@ void SpiderEngine::runNote(Code *code) {
 
 	float firstSentenceLength = strlen(firstSentence);
 	float secondSentenceLength = strlen(secondSentence); 
-	Common::Rect firstSentenceBox(21, 140, 560, 162); 
-	Common::Rect secondSentenceBox(21, 140, 196, 201); 
-
 	Frames letters = decodeFrames("int_ball/letters.smk");
 	Common::Point size(letters[0]->w, letters[0]->h); 
 	MVideo *v = nullptr;
@@ -385,7 +402,7 @@ void SpiderEngine::runNote(Code *code) {
 				} else if (letterBox.contains(mousePos)) {
 					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
 					selected = alpha[idx];
-					changeCursor("int_ball/letters.smk", idx);
+					changeCursor("int_ball/letters.smk", idx, true);
 					//debug("%s", selected.c_str());
 				} else if (firstSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {

@@ -148,7 +148,7 @@ public:
 	Common::String _defaultCursor;
 	void disableCursor();
 	void defaultCursor();
-	void changeCursor(const Common::String &cursor, uint32 n);
+	void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
 	void changeCursor(const Common::String &cursor);
 
 	// Actions
