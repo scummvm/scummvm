@@ -148,7 +148,7 @@ int16 Room11::scanner() {
 				hide_cur();
 				action_flag = true;
 
-				flc->set_custom_user_function(Room12::cut_serv);
+				flc->set_custom_user_function(r12_cut_serv);
 				start_aad(105, 0);
 				flic_cut(FCUT_011, CFO_MODE);
 				register_cutscene(4);
@@ -216,6 +216,22 @@ int16 Room11::cut_serv(int16 frame) {
 		det->plot_static_details(0, 0, 6, 6);
 	if (_G(spieler).R45MagOk)
 		det->plot_static_details(0, 0, 7, 7);
+
+	return 0;
+}
+
+int16 Room11::r12_cut_serv(int16 frame) {
+	if (_G(spieler).R11DoorRightF)
+		det->plot_static_details(0, 0, 0, 0);
+	if (_G(spieler).R11DoorRightB)
+		det->plot_static_details(0, 0, 6, 6);
+	if (_G(spieler).R6DoorRightB)
+		det->plot_static_details(0, 0, 7, 7);
+
+	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+
+	if (frame == 43)
+		start_aad(106, 0);
 
 	return 0;
 }
