@@ -23,7 +23,6 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/room.h"
-#include "chewy/rooms/room6.h"
 #include "chewy/rooms/room10.h"
 
 namespace Chewy {
@@ -54,7 +53,7 @@ void Room10::get_surimy() {
 	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
-	flc->set_custom_user_function(Room6::cut_serv2);
+	flc->set_custom_user_function(cut_serv);
 	flic_cut(FCUT_006, CFO_MODE);
 	flc->remove_custom_user_function();
 	_G(spieler).R10SurimyOk = true;
@@ -64,6 +63,14 @@ void Room10::get_surimy() {
 
 	del_inventar(_G(spieler).AkInvent);
 	show_cur();
+}
+
+int16 Room10::cut_serv(int16 frame) {
+	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	if (frame == 31)
+		start_aad(107, 0);
+
+	return 0;
 }
 
 } // namespace Rooms

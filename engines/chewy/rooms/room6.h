@@ -32,7 +32,6 @@ private:
 public:
 	static void entry();
 	static int16 cut_serv1(int16 frame);
-	static int16 cut_serv2(int16 frame);
 	static void bola_knopf();
 };
 

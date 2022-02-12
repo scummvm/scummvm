@@ -137,13 +137,5 @@ int16 Room6::cut_serv1(int16 frame) {
 	return (frame == 40) ? -1 : 0;
 }
 
-int16 Room6::cut_serv2(int16 frame) {
-	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-	if (frame == 31)
-		start_aad(107, 0);
-
-	return 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy
