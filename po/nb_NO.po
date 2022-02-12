@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-12 11:04+0000\n"
-"PO-Revision-Date: 2022-02-12 14:18+0000\n"
+"PO-Revision-Date: 2022-02-12 14:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1565,7 +1565,7 @@ msgstr "Grensesnittspråk:"
 
 #: gui/options.cpp:2326
 msgid "Language of ScummVM GUI"
-msgstr "Språk i ScummVM-GUIet"
+msgstr "Språk for ScummVMs brukergrensesnitt"
 
 #: gui/options.cpp:2352
 msgid "Switch the ScummVM GUI language to the game language"
@@ -1898,11 +1898,11 @@ msgstr ""
 
 #: gui/options.cpp:2856
 msgid "Select directory for GUI themes"
-msgstr "Velg mappe for GUI-temaer"
+msgstr "Velg mappe for grensesnitt-temaer"
 
 #: gui/options.cpp:2866
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Velg mappe for ikoner til GUI-oppstarteren"
+msgstr "Velg mappe for ikoner til grensesnitt-oppstarteren"
 
 #: gui/options.cpp:2876
 msgid "Select directory for extra files"
