@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-12 11:04+0000\n"
+"POT-Creation-Date: 2022-02-12 21:18+0000\n"
 "PO-Revision-Date: 2022-02-09 15:54+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -167,7 +167,7 @@ msgstr ""
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
-#: engines/groovie/script.cpp:617 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:623 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
 #: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
@@ -2433,8 +2433,8 @@ msgstr "メインメニューに戻る(~R~)"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:803
-#: engines/groovie/script.cpp:2133 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:811
+#: engines/groovie/script.cpp:2143 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/pegasus/pegasus.cpp:402
@@ -2452,8 +2452,8 @@ msgstr "ゲームをセーブ："
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:798
-#: engines/groovie/script.cpp:803 engines/groovie/script.cpp:2133
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:806
+#: engines/groovie/script.cpp:811 engines/groovie/script.cpp:2143
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4074,8 +4074,8 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
-#: engines/groovie/script.cpp:815 engines/groovie/script.cpp:2120
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:788
+#: engines/groovie/script.cpp:823 engines/groovie/script.cpp:2130
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4092,9 +4092,9 @@ msgstr "ゲームを復元する:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:780
-#: engines/groovie/script.cpp:798 engines/groovie/script.cpp:815
-#: engines/groovie/script.cpp:2120 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:788
+#: engines/groovie/script.cpp:806 engines/groovie/script.cpp:823
+#: engines/groovie/script.cpp:2130 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -5044,11 +5044,11 @@ msgstr "クレジットでMIDI曲を再利用せず、代わりにThe Final Hour
 msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2のサポートはコンパイルされていません"
 
-#: engines/groovie/script.cpp:617
+#: engines/groovie/script.cpp:623
 msgid "Failed to save game"
 msgstr "セーブできませんでした"
 
-#: engines/groovie/script.cpp:798 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:806 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr "ゲームをセーブまたは復元してもよろしいですか?"
 
