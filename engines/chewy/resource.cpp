@@ -86,7 +86,7 @@ Resource::~Resource() {
 	_chunkList.clear();
 	_stream.close();
 
-	delete _spriteCorrectionsTable;
+	delete[] _spriteCorrectionsTable;
 	_spriteCorrectionsTable = nullptr;
 }
 
