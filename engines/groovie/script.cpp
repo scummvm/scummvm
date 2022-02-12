@@ -597,19 +597,23 @@ bool Script::canDirectSave() const {
 }
 
 void Script::directGameSave(int slot, const Common::String &desc) {
-	char name[15];
+	char name[19];
 	debugC(0, kDebugScript, "directGameSave %d %s", slot, desc.c_str());
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
 	const char *saveName = desc.c_str();
-	for (int i = 0; i < 15; i++) {
+	uint name_len = _version == kGroovieTLC ? 19 : 15;
+	for (uint i = 0; i < desc.size() && i < name_len; i++) {
 		name[i] = saveName[i] - 0x30;
+	}
+	for (uint i = desc.size(); i < name_len; i++) {
+		name[i] = '\0' - 0x30;
 	}
 	savegame(slot, name);
 }
 
-void Script::savegame(uint slot, const char name[15]) {
+void Script::savegame(uint slot, const char name[19]) {
 	char newchar;
 	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
@@ -629,13 +633,14 @@ void Script::savegame(uint slot, const char name[15]) {
 	}
 
 	// Saving the variables. It is endian safe because they're byte variables
-	file->write(name, 15);
-	file->write(_variables + 15, 0x400 - 15);
+	uint name_len = _version == kGroovieTLC ? 19 : 15;
+	file->write(name, name_len);
+	file->write(_variables + name_len, 0x400 - name_len);
 	delete file;
 
 	// Cache the saved name
-	char cacheName[15];
-	for (int i = 0; i < 15; i++) {
+	char cacheName[20];
+	for (uint i = 0; i < name_len; i++) {
 		newchar = name[i] + 0x30;
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
 			cacheName[i] = '\0';
@@ -646,6 +651,7 @@ void Script::savegame(uint slot, const char name[15]) {
 			cacheName[i] = newchar;
 		}
 	}
+	cacheName[name_len] = '\0';
 	_saveNames[slot] = cacheName;
 }
 
@@ -1513,8 +1519,10 @@ void Script::o_savegame() {
 
 	debugC(0, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d", varnum, slot);
 
-	char name[15];
-	memcpy(name, _variables, 15);
+	// TLC uses 19 characters, but there's no harm in copying the extra bytes for the other games
+	// the savegame function will trim it when needed
+	char name[19];
+	memcpy(name, _variables, 19);
 	savegame(slot, name);
 }
 
