@@ -22,8 +22,6 @@
 #ifndef CHEWY_ROOMS_ROOM11_H
 #define CHEWY_ROOMS_ROOM11_H
 
-#include "chewy/ngsdefs.h"
-
 namespace Chewy {
 namespace Rooms {
 
@@ -32,7 +30,7 @@ private:
 	static void bork_zwinkert();
 	static void chewy_bo_use();
 	static int16 cut_serv(int16 frame);
-	static int16 r12_cut_serv(int16 frame);
+	static int16 cut_serv_2(int16 frame);
 
 public:
 	static void entry();
