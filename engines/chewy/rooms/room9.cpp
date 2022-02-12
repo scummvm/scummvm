@@ -48,10 +48,11 @@ static const MovLine SURIMY_MPKT1[2] = {
 void Room9::entry() {
 	_G(spieler).R7ChewyFlug = false;
 
-	if (!_G(spieler).R9Gitter) {
+	if (!_G(spieler).R9Gitter)
 		set_person_pos(138, 91, P_CHEWY, P_LEFT);
-	} else
+	else
 		det->show_static_spr(5);
+
 	if (_G(spieler).R9Surimy) {
 		det->hide_static_spr(4);
 		room->set_timer_status(7, TIMER_STOP);
@@ -98,7 +99,7 @@ void Room9::surimy_ani() {
 	auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SURIMY_OBJ].Mode = true;
-	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
 	start_detail_frame(0, 1, ANI_VOR, 15);
 	det->start_detail(2, 1, ANI_VOR);
@@ -109,19 +110,12 @@ void Room9::surimy_ani() {
 	mov_phasen[SURIMY_OBJ].Repeat = 1;
 	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 	wait_auto_obj(SURIMY_OBJ);
-	det->del_taf_tbl(91, 8, 0);
+	det->del_taf_tbl(91, 8, nullptr);
 }
 
 void Room9::gedAction(int index) {
-	switch (index) {
-	case 0:
-		if (!_G(spieler).R9Surimy)
-			surimy();
-		break;
-
-	default:
-		break;
-	}
+	if (index == 0 && !_G(spieler).R9Surimy)
+		surimy();
 }
 
 } // namespace Rooms
