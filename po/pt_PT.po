@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-11 02:51+0000\n"
+"POT-Creation-Date: 2022-02-12 11:04+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -6531,10 +6531,10 @@ msgstr ""
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:706
+#: engines/scumm/dialogs.cpp:708
 msgid ""
-"Adjusts the timing of the EGA Loom Overture when using enhanced music. The "
-"lower the value, the earlier the Lucasfilm logo appears."
+"When using replacement music, this adjusts the time when the Overture "
+"changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
 
 #: engines/scumm/help.cpp:72
