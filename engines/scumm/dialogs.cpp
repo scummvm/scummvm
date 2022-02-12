@@ -701,16 +701,16 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 
 EgaLoomOptionsWidget::EgaLoomOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		OptionsContainerWidget(boss, name, "EgaLoomOptionsDialog", false, domain) {
-	new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksHeader", _("Overture Timing:"));
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksHeader", _("Overture Timing:"));
 
-	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("Adjusts the timing of the EGA Loom Overture when using enhanced music. The lower the value, the earlier the Lucasfilm logo appears."), kOvertureTicksChanged);
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-	// Each step of the slider changes the assumed length of the Loom
-	// Overture by ten SCUMM ticks. When I timed it, I was able to set the
-	// transition to happen anywhere between approximately 1:30 and 2:20,
-	// which should be more than enough. I think it's nice if the interval
-	// is small enough that you can set the slider back to 0 at reasonable
-	// screen resolutions.
+	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("When using replacement music, this adjusts the time when the Overture changes to the scene with the Lucasfilm and Loom logotypes."), kOvertureTicksChanged);
+
+	// This allows the transition in the Loom Overture to be changed by
+	// 20 seconds in each direction. I think it's nice if the interval is
+	// small enough that you can set the slider back to default at any
+	// reasonable screen resolution.
 
 	_overtureTicksSlider->setMinValue(-200);
 	_overtureTicksSlider->setMaxValue(200);
@@ -738,11 +738,12 @@ bool EgaLoomOptionsWidget::save() {
 void EgaLoomOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(16, 16, 16, 16)
+			.addPadding(0, 0, 16, 0)
 			.addWidget("OvertureTicksHeader", "OptionsLabel")
+			.addSpace(2)
 			.addWidget("OvertureTicks", "WideSlider")
-			.addSpace(8)
-			.addWidget("OvertureTicksLabel", "SmallLabel")
+			.addSpace(2)
+			.addWidget("OvertureTicksLabel", "ShortOptionsLabel")
 		.closeLayout()
 	.closeDialog();
 }
@@ -760,8 +761,9 @@ void EgaLoomOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 }
 
 void EgaLoomOptionsWidget::updateOvertureTicksLabel() {
-	_overtureTicksLabel->setValue(_overtureTicksSlider->getValue());
-	_overtureTicksLabel->markAsDirty();
+	int ticks = DEFAULT_LOOM_OVERTURE_TRANSITION + _overtureTicksSlider->getValue();
+
+	_overtureTicksLabel->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
 }
 
 } // End of namespace Scumm
