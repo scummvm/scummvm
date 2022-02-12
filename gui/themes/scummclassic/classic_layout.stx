@@ -63,6 +63,9 @@
 				size = '120, Globals.Line.Height'
 				textalign = 'end'
 		/>
+		<widget name = 'ShortOptionsLabel'
+				size = '60, Globals.Line.Height'
+		/>
 		<widget name = 'SmallLabel'
 				size = '24, Globals.Line.Height'
 		/>
@@ -71,10 +74,6 @@
 		/>
 		<widget name = 'CloudTabLabelValue'
 				size = '200, Globals.Line.Height'
-		/>
-
-		<widget name = 'ShortOptionsLabel'
-				size = '60, Globals.Line.Height'
 		/>
 
 		<widget name = 'Button'
