@@ -134,18 +134,18 @@ void Room11::chewy_bo_use() {
 }
 
 int16 Room11::scanner() {
-	int16 action_flag = false;
+	int16 actionFl = false;
 
 	if (!_G(spieler).R12ChewyBork) {
 		auto_move(7, P_CHEWY);
 
 		if (!_G(spieler).R11CardOk) {
-			action_flag = true;
+			actionFl = true;
 			start_aad_wait(13, -1);
 		} else if (is_cur_inventar(BORK_INV)) {
 			hide_cur();
 			set_up_screen(DO_SETUP);
-			action_flag = true;
+			actionFl = true;
 
 			flc->set_custom_user_function(cut_serv_2);
 			start_aad(105, 0);
@@ -161,13 +161,13 @@ int16 Room11::scanner() {
 			load_ads_dia(3);
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
-				action_flag = true;
+				actionFl = true;
 				flc->set_custom_user_function(cut_serv);
 				flic_cut(FCUT_010, CFO_MODE);
 				flc->remove_custom_user_function();
 				start_aad_wait(20, -1);
 			} else {
-				action_flag = true;
+				actionFl = true;
 				start_aad_wait(12, -1);
 				menu_item = CUR_TALK;
 				cursor_wahl(menu_item);
@@ -176,7 +176,7 @@ int16 Room11::scanner() {
 		}
 	}
 
-	return action_flag;
+	return actionFl;
 }
 
 void Room11::get_card() {
