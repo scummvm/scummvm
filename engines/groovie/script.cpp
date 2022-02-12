@@ -616,13 +616,18 @@ bool Script::canDirectSave() const {
 }
 
 void Script::directGameSave(int slot, const Common::String &desc) {
-	char name[19];
+	char name[27];
 	debugC(0, kDebugScript, "directGameSave %d %s", slot, desc.c_str());
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
 	const char *saveName = desc.c_str();
-	uint name_len = _version == kGroovieTLC ? 19 : 15;
+	uint name_len = _version == 15;
+	if (_version == kGroovieTLC) {
+		name_len = 19;
+	} else if (_version == kGroovieUHP) {
+		name_len = 27;
+	}
 	for (uint i = 0; i < desc.size() && i < name_len; i++) {
 		name[i] = saveName[i] - 0x30;
 	}
@@ -632,7 +637,7 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 	savegame(slot, name);
 }
 
-void Script::savegame(uint slot, const char name[19]) {
+void Script::savegame(uint slot, const char name[27]) {
 	char newchar;
 	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
@@ -652,13 +657,18 @@ void Script::savegame(uint slot, const char name[19]) {
 	}
 
 	// Saving the variables. It is endian safe because they're byte variables
-	uint name_len = _version == kGroovieTLC ? 19 : 15;
+	uint name_len = _version == 15;
+	if (_version == kGroovieTLC) {
+		name_len = 19;
+	} else if (_version == kGroovieUHP) {
+		name_len = 27;
+	}
 	file->write(name, name_len);
 	file->write(_variables + name_len, 0x400 - name_len);
 	delete file;
 
 	// Cache the saved name
-	char cacheName[20];
+	char cacheName[28];
 	for (uint i = 0; i < name_len; i++) {
 		newchar = name[i] + 0x30;
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
