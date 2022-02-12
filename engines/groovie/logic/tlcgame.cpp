@@ -63,7 +63,14 @@ const uint8 kTlcEpQuestToPlay[] = {
 TlcGame::TlcGame(byte *scriptVariables) :
 	_numRegionHeaders(0), _regionHeader(NULL), _curQuestNumAnswers(-1), _epQuestionsData(NULL),
 	_random("GroovieTlcGame"), _scriptVariables(scriptVariables),
-	_tatHeaders(NULL), _tatQuestions(NULL) {
+	_tatHeaders(NULL), _tatQuestions(NULL), _curQuestRegions(), _epScoreBin(), _tatFlags() {
+	_curAnswerIndex = 0;
+	_epEpisodeIdx = 0;
+	_epQuestionIdx = 0;
+	_epQuestionNumOfPool = -1;
+	_epQuestionsInEpisode = 0;
+	_tatEpisodes = 0;
+	_tatQuestCount = 0;
 }
 
 TlcGame::~TlcGame() {
@@ -289,6 +296,7 @@ void TlcGame::opExitPoll() {
 		break;
 	default:
 		// Unknown subcommand
+		debugC(0, kDebugLogic, "TLC:opExitPoll: Unknown subcommand=%d", _scriptVariables[0]);
 		setScriptVar(0, 0x08);
 	}
 }
@@ -709,7 +717,7 @@ void TlcGame::opFlags() {
 				_tatFlags[x][y] = 0;
 			}
 		}
-		debugC(1, kDebugLogic, "Tlc:TatFlags: Initialized fields (%d, %d)", x, y);
+		debugC(0, kDebugLogic, "Tlc:TatFlags: Initialized fields (%d, %d)", x, y);
 		break;
 
 	// Get and set flags
@@ -750,11 +758,11 @@ void TlcGame::opFlags() {
 void TlcGame::debugTatFlags(int y1, int y2) {
 	Common::String s1, s2;
 	for (int x = 0; x < 14; x++) {
-		s1 += int(_tatFlags[x][y1]);
-		s2 += int(_tatFlags[x][y2]);
+		s1 += Common::String::format("%d", _tatFlags[x][y1]);
+		s2 += Common::String::format("%d", _tatFlags[x][y2]);
 	}
 
-	debugC(5, kDebugLogic, "Tlc:TatFlags: %s  %s", s1.c_str(), s2.c_str());
+	debugC(0, kDebugLogic, "Tlc:TatFlags: %s  %s", s1.c_str(), s2.c_str());
 }
 
 

@@ -456,7 +456,7 @@ void Script::readScriptString(Common::String &str) {
 			c = _variables[c - 0x61] + 0x30;
 			if (_version == kGroovieT7G) {
 				if (c >= 0x41 && c <= 0x5A) {
-					c += ' ';
+					c += 0x20;// to lower case
 				}
 			}
 			break;
@@ -470,12 +470,14 @@ void Script::readScriptString(Common::String &str) {
 		default:
 			if (_version == kGroovieT7G) {
 				if (c >= 0x41 && c <= 0x5A) {
-					c += ' ';
+					c += 0x20;// to lower case
 				}
 			}
 		}
 		// Append the current character at the end of the string
-		str += c;
+		if (c) {
+			str += c;
+		}
  	}
 
 	debugC(5, kDebugScript, "readScriptString orig: %s, ret: %s", orig.c_str(), str.c_str());
