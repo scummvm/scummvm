@@ -136,7 +136,6 @@ enum LifeScriptConditions {
 static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 conditionValueSize = 1;
 	int32 conditionOpcode = ctx.stream.readByte();
-
 	switch (conditionOpcode) {
 	case kcCOL:
 		if (ctx.actor->_life <= 0) {
@@ -144,6 +143,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		} else {
 			engine->_scene->_currentScriptValue = ctx.actor->_collision;
 		}
+		debugCN(3, kDebugLevels::kDebugScripts, "collision(");
 		break;
 	case kcCOL_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
@@ -152,10 +152,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		} else {
 			engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_collision;
 		}
+		debugCN(3, kDebugLevels::kDebugScripts, "col_obj(%i, ", actorIdx);
 		break;
 	}
 	case kcDISTANCE: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i, ", actorIdx);
 		conditionValueSize = 2;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (!otherActor->_dynamicFlags.bIsDead) {
@@ -176,45 +178,55 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcZONE:
+		debugCN(3, kDebugLevels::kDebugScripts, "zone(");
 		engine->_scene->_currentScriptValue = ctx.actor->_zone;
 		break;
 	case kcZONE_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "zone_obj(%i, ", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zone;
 		break;
 	}
 	case kcBODY:
+		debugCN(3, kDebugLevels::kDebugScripts, "body(");
 		engine->_scene->_currentScriptValue = (int16)ctx.actor->_body;
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "body_obj(%i, ", actorIdx);
 		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_body;
 		break;
 	}
 	case kcANIM:
+		debugCN(3, kDebugLevels::kDebugScripts, "anim(");
 		engine->_scene->_currentScriptValue = (int16)ctx.actor->_anim;
 		break;
 	case kcANIM_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "anim_obj(%i, ", actorIdx);
 		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_anim;
 		break;
 	}
 	case kcL_TRACK:
+		debugCN(3, kDebugLevels::kDebugScripts, "track(");
 		engine->_scene->_currentScriptValue = ctx.actor->_labelIdx;
 		break;
 	case kcL_TRACK_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "track_obj(%i, ", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_labelIdx;
 		break;
 	}
 	case kcFLAG_CUBE: {
 		int32 flagIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->_sceneFlags[flagIdx];
 		break;
 	}
 	case kcCONE_VIEW: {
 		int32 newAngle = 0;
 		int32 targetActorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i, ", targetActorIdx);
 		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
 
 		conditionValueSize = 2;
@@ -257,13 +269,16 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcHIT_BY:
+		debugCN(3, kDebugLevels::kDebugScripts, "hit_by(");
 		engine->_scene->_currentScriptValue = ctx.actor->_hitBy;
 		break;
 	case kcACTION:
+		debugCN(3, kDebugLevels::kDebugScripts, "action(");
 		engine->_scene->_currentScriptValue = engine->_movements->shouldTriggerZoneAction() ? 1 : 0;
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "flag_game(%i, ", flagIdx);
 		if (!engine->_gameState->inventoryDisabled() ||
 		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->_currentScriptValue = engine->_gameState->hasGameFlag(flagIdx);
@@ -278,24 +293,30 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcLIFE_POINT:
+		debugCN(3, kDebugLevels::kDebugScripts, "life_point(");
 		engine->_scene->_currentScriptValue = ctx.actor->_life;
 		break;
 	case kcLIFE_POINT_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "life_point_obj(%i, ", actorIdx);
 		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_life;
 		break;
 	}
 	case kcNUM_LITTLE_KEYS:
+		debugCN(3, kDebugLevels::kDebugScripts, "num_little_keys(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKeys;
 		break;
 	case kcNUM_GOLD_PIECES:
+		debugCN(3, kDebugLevels::kDebugScripts, "num_gold_pieces(");
 		conditionValueSize = 2;
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKashes;
 		break;
 	case kcBEHAVIOUR:
+		debugCN(3, kDebugLevels::kDebugScripts, "behaviour(");
 		engine->_scene->_currentScriptValue = (int16)engine->_actor->_heroBehaviour;
 		break;
 	case kcCHAPTER:
+		debugCN(3, kDebugLevels::kDebugScripts, "chapter(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_gameChapter;
 		break;
 	case kcDISTANCE_3D: {
@@ -303,6 +324,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		ActorStruct *targetActor;
 
 		targetActorIdx = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i, ", targetActorIdx);
 		targetActor = engine->_scene->getActor(targetActorIdx);
 
 		conditionValueSize = 2;
@@ -321,13 +343,16 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcMAGIC_LEVEL:
+		debugCN(3, kDebugLevels::kDebugScripts, "magic_level(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_magicLevelIdx;
 		break;
 	case kcMAGIC_POINTS:
+		debugCN(3, kDebugLevels::kDebugScripts, "magic_points(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryMagicPoints;
 		break;
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
+		debugCN(3, kDebugLevels::kDebugScripts, "use_inventory(%i, ", item);
 
 		if (engine->_gameState->inventoryDisabled()) {
 			engine->_scene->_currentScriptValue = 0;
@@ -349,16 +374,20 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcCHOICE:
+		debugCN(3, kDebugLevels::kDebugScripts, "choice(");
 		conditionValueSize = 2;
 		engine->_scene->_currentScriptValue = (int16)engine->_gameState->_choiceAnswer;
 		break;
 	case kcFUEL:
+		debugCN(3, kDebugLevels::kDebugScripts, "fuel(");
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumGas;
 		break;
 	case kcCARRIED_BY:
+		debugCN(3, kDebugLevels::kDebugScripts, "carried_by(");
 		engine->_scene->_currentScriptValue = ctx.actor->_carryBy;
 		break;
 	case kcCDROM:
+		debugCN(3, kDebugLevels::kDebugScripts, "cdrom(");
 		engine->_scene->_currentScriptValue = 1;
 		break;
 	default:
@@ -386,31 +415,37 @@ static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, i
 
 	switch (operatorCode) {
 	case kEqualTo:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i == %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue == conditionValue) {
 			return 1;
 		}
 		break;
 	case kGreaterThan:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i > %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue > conditionValue) {
 			return 1;
 		}
 		break;
 	case kLessThan:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i < %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue < conditionValue) {
 			return 1;
 		}
 		break;
 	case kGreaterThanOrEqualTo:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i >= %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue >= conditionValue) {
 			return 1;
 		}
 		break;
 	case kLessThanOrEqualTo:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i <= %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue <= conditionValue) {
 			return 1;
 		}
 		break;
 	case kNotEqualTo:
+		debugCN(3, kDebugLevels::kDebugScripts, "%i != %i)", engine->_scene->_currentScriptValue, conditionValue);
 		if (engine->_scene->_currentScriptValue != conditionValue) {
 			return 1;
 		}
@@ -429,6 +464,7 @@ static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, i
  * For unused opcodes
  */
 static int32 lEMPTY(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::EMPTY()");
 	return 0;
 }
 
@@ -437,6 +473,7 @@ static int32 lEMPTY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x00
  */
 static int32 lEND(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END()");
 	ctx.actor->_positionInLifeScript = -1;
 	return 1; // break script
 }
@@ -446,6 +483,7 @@ static int32 lEND(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x01
  */
 static int32 lNOP(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::NOP()");
 	ctx.stream.skip(1);
 	return 0;
 }
@@ -456,10 +494,13 @@ static int32 lNOP(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSNIF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 valueSize = processLifeConditions(engine, ctx);
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
 	if (!processLifeOperators(engine, ctx, valueSize)) {
 		ctx.setOpcode(0x0D); // SWIF
 	}
-	ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
+	ctx.stream.seek(offset); // condition offset
 	return 0;
 }
 
@@ -468,7 +509,9 @@ static int32 lSNIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x03
  */
 static int32 lOFFSET(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.seek(ctx.stream.readSint16LE()); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::LABEL(%i)", (int)offset);
+	ctx.stream.seek(offset); // offset
 	return 0;
 }
 
@@ -477,9 +520,12 @@ static int32 lOFFSET(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x04
  */
 static int32 lNEVERIF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
 	const int32 valueSize = processLifeConditions(engine, ctx);
 	processLifeOperators(engine, ctx, valueSize);
-	ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
+	ctx.stream.seek(offset); // condition offset
 	return 0;
 }
 
@@ -488,6 +534,7 @@ static int32 lNEVERIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x06
  */
 static int32 lNO_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::NO_IF()");
 	return 0;
 }
 
@@ -496,6 +543,7 @@ static int32 lNO_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0A
  */
 static int32 lLABEL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::LABEL(x)");
 	ctx.stream.skip(1); // label id - script offset
 	return 0;
 }
@@ -505,6 +553,7 @@ static int32 lLABEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0B
  */
 static int32 lRETURN(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RETURN()");
 	return 1; // break script
 }
 
@@ -513,11 +562,15 @@ static int32 lRETURN(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0C
  */
 static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
 	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
-		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+		const int16 offset = ctx.stream.readSint16LE();
+		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
+		ctx.stream.seek(offset); // condition offset
 	} else {
 		ctx.stream.skip(2);
+		debugC(3, kDebugLevels::kDebugScripts, ")");
 	}
 
 	return 0;
@@ -528,12 +581,16 @@ static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0D
  */
 static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::SWIF(");
 	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
-		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+		const int16 offset = ctx.stream.readSint16LE();
+		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
+		ctx.stream.seek(offset); // condition offset
 	} else {
 		ctx.stream.skip(2);
 		ctx.setOpcode(0x02); // SNIF
+		debugC(3, kDebugLevels::kDebugScripts, ")");
 	}
 
 	return 0;
@@ -544,12 +601,16 @@ static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0E
  */
 static int32 lONEIF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::ONEIF(");
 	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
-		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+		const int16 offset = ctx.stream.readSint16LE();
+		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
+		ctx.stream.seek(offset); // condition offset
 	} else {
 		ctx.stream.skip(2);
 		ctx.setOpcode(0x04); // NEVERIF
+		debugC(3, kDebugLevels::kDebugScripts, ")");
 	}
 
 	return 0;
@@ -560,7 +621,9 @@ static int32 lONEIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0F
  */
 static int32 lELSE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.seek(ctx.stream.readSint16LE()); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ELSE(%i)", (int)offset);
+	ctx.stream.seek(offset); // offset
 	return 0;
 }
 
@@ -570,6 +633,7 @@ static int32 lELSE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const BodyType bodyIdx = (BodyType)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BODY(%i)", (int)bodyIdx);
 	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
 	return 0;
 }
@@ -581,6 +645,7 @@ static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const BodyType otherBodyIdx = (BodyType)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BODY_OBJ(%i, %i)", (int)otherActorIdx, (int)otherBodyIdx);
 	engine->_actor->initModelActor(otherBodyIdx, otherActorIdx);
 	return 0;
 }
@@ -591,6 +656,7 @@ static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM(%i)", (int)animIdx);
 	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 	return 0;
 }
@@ -602,6 +668,7 @@ static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const AnimationTypes otherAnimIdx = (AnimationTypes)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_OBJ(%i, %i)", (int)otherActorIdx, (int)otherAnimIdx);
 	engine->_animations->initAnim(otherAnimIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, otherActorIdx);
 	return 0;
 }
@@ -611,7 +678,9 @@ static int32 lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x15
  */
 static int32 lSET_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.actor->_positionInLifeScript = ctx.stream.readSint16LE(); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_LIFE(%i)", (int)offset);
+	ctx.actor->_positionInLifeScript = offset;
 	return 0;
 }
 
@@ -621,7 +690,9 @@ static int32 lSET_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_LIFE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = ctx.stream.readSint16LE(); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_LIFE_OBJ(%i, %i)", (int)otherActorIdx, (int)offset);
+	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = offset;
 	return 0;
 }
 
@@ -630,7 +701,9 @@ static int32 lSET_LIFE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x17
  */
 static int32 lSET_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.actor->_positionInMoveScript = ctx.stream.readSint16LE(); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	ctx.actor->_positionInMoveScript = offset;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_TRACK(%i)", (int)offset);
 	return 0;
 }
 
@@ -640,7 +713,9 @@ static int32 lSET_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = ctx.stream.readSint16LE(); // offset
+	const int16 offset = ctx.stream.readSint16LE();
+	engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = offset;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_TRACK_OBJ(%i, %i)", (int)otherActorIdx, (int)offset);
 	return 0;
 }
 
@@ -650,6 +725,7 @@ static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE(%i)", (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
@@ -673,6 +749,7 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lFALLABLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flag = ctx.stream.readByte();
 	ctx.actor->_staticFlags.bCanFall = flag & 1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FALLABLE(%i)", (int)flag);
 	return 0;
 }
 
@@ -686,6 +763,9 @@ static int32 lSET_DIRMODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_controlMode = (ControlMode)controlMode;
 	if (ctx.actor->_controlMode == ControlMode::kFollow) {
 		ctx.actor->_followedActor = ctx.stream.readByte();
+		debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DIRMODE(%i, %i)", (int)controlMode, (int)ctx.actor->_followedActor);
+	} else {
+		debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DIRMODE(%i)", (int)controlMode);
 	}
 
 	return 0;
@@ -704,6 +784,9 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: should ControlMode::kSameXZ be taken into account, too - see processSameXZAction
 	if (otherActor->_controlMode == ControlMode::kFollow || ctx.actor->_controlMode == ControlMode::kFollow2) {
 		otherActor->_followedActor = ctx.stream.readByte();
+		debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DIRMODE_OBJ(%i, %i, %i)", (int)otherActorIdx, (int)controlMode, (int)otherActor->_followedActor);
+	} else {
+		debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DIRMODE_OBJ(%i, %i)", (int)otherActorIdx, (int)controlMode);
 	}
 
 	return 0;
@@ -715,7 +798,7 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 followedActorIdx = ctx.stream.readByte();
-
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CAM_FOLLOW(%i)", (int)followedActorIdx);
 	if (engine->_scene->_currentlyFollowedActor != followedActorIdx) {
 		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
 		engine->_grid->centerOnActor(followedActor);
@@ -731,6 +814,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const HeroBehaviourType behavior = (HeroBehaviourType)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_BEHAVIOUR(%i)", (int)behavior);
 
 	engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 	engine->_actor->setBehaviour(behavior);
@@ -745,6 +829,7 @@ static int32 lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_FLAG_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flagIdx = ctx.stream.readByte();
 	const int32 flagValue = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_CUBE(%i, %i)", (int)flagIdx, (int)flagValue);
 
 	engine->_scene->_sceneFlags[flagIdx] = flagValue;
 
@@ -754,9 +839,11 @@ static int32 lSET_FLAG_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 /**
  * Set a new behaviour for the current actor. (Paramter = Comportament number)
  * @note Opcode @c 0x20
+ * @note Was only used in the lba editor
  */
 static int32 lCOMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.stream.skip(1);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::COMPORTEMENT()");
 	return 0;
 }
 
@@ -766,6 +853,7 @@ static int32 lCOMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_positionInLifeScript = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_COMPORTEMENT(%i)", (int)ctx.actor->_positionInLifeScript);
 	return 0;
 }
 
@@ -775,7 +863,9 @@ static int32 lSET_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = ctx.stream.readSint16LE();
+	const int16 pos = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_COMPORTEMENT_OBJ(%i, %i)", (int)otherActorIdx, (int)pos);
+	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = pos;
 	return 0;
 }
 
@@ -784,6 +874,7 @@ static int32 lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
  * @note Opcode @c 0x23
  */
 static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END_COMPORTEMENT()");
 	return 1; // break
 }
 
@@ -794,6 +885,7 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 flagIdx = ctx.stream.readByte();
 	const uint8 flagValue = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_GAME(%i, %i)", (int)flagIdx, (int)flagValue);
 	engine->_gameState->setGameFlag(flagIdx, flagValue);
 	return 0;
 }
@@ -804,6 +896,7 @@ static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lKILL_OBJ(%i)", (int)otherActorIdx);
 
 	engine->_actor->processActorCarrier(otherActorIdx);
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
@@ -820,6 +913,7 @@ static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x26
  */
 static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUICIDE()");
 	engine->_actor->processActorCarrier(ctx.actorIdx);
 	ctx.actor->_dynamicFlags.bIsDead = 1;
 	ctx.actor->_entity = -1;
@@ -834,6 +928,7 @@ static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x27
  */
 static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::USE_ONE_LITTLE_KEY()");
 	engine->_gameState->addKeys(-1);
 	engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 0, 0, 0, OverlayPosType::koFollowActor, 1);
 
@@ -848,6 +943,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 oldNumKashes = engine->_gameState->_inventoryNumKashes;
 	bool hideRange = false;
 	const int16 kashes = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GIVE_GOLD_PIECES(%i)", (int)kashes);
 
 	engine->_gameState->addKashes(-kashes);
 
@@ -876,6 +972,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x29
  */
 static int32 lEND_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END_LIFE()");
 	ctx.actor->_positionInLifeScript = -1;
 	return 1; // break;
 }
@@ -885,6 +982,7 @@ static int32 lEND_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2A
  */
 static int32 lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::STOP_L_TRACK(%i)", (int)ctx.actor->_currentLabelPtr);
 	ctx.actor->_pausedTrackPtr = ctx.actor->_currentLabelPtr;
 	ctx.actor->_positionInMoveScript = -1;
 	return 0;
@@ -895,6 +993,7 @@ static int32 lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2B
  */
 static int32 lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_L_TRACK(%i)", (int)ctx.actor->_pausedTrackPtr);
 	ctx.actor->_positionInMoveScript = ctx.actor->_pausedTrackPtr;
 	return 0;
 }
@@ -906,6 +1005,7 @@ static int32 lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE_OBJ(%i, %i)", (int)otherActorIdx, (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
@@ -924,6 +1024,7 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2D
  */
 static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INC_CHAPTER()");
 	engine->_gameState->_gameChapter++;
 	return 0;
 }
@@ -934,6 +1035,7 @@ static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const InventoryItems item = (InventoryItems)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FOUND_OBJECT(%i)", (int)item);
 
 	engine->_gameState->processFoundItem(item);
 	engine->_redraw->redrawEngineActions(true);
@@ -947,6 +1049,7 @@ static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_270;
 	ctx.actor->_pos.x = ctx.actor->_lastPos.x - distance;
@@ -962,6 +1065,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_90;
 	ctx.actor->_pos.x = ctx.actor->_lastPos.x + distance;
@@ -977,6 +1081,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_180;
 	ctx.actor->_pos.z = ctx.actor->_lastPos.z - distance;
@@ -992,6 +1097,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_0;
 	ctx.actor->_pos.z = ctx.actor->_lastPos.z + distance;
@@ -1007,6 +1113,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flag = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GIVE_BONUS(%i)", (int)flag);
 
 	if (ctx.actor->_bonusParameter.cloverleaf || ctx.actor->_bonusParameter.kashes || ctx.actor->_bonusParameter.key || ctx.actor->_bonusParameter.lifepoints || ctx.actor->_bonusParameter.magicpoints) {
 		engine->_actor->processActorExtraBonus(ctx.actorIdx);
@@ -1025,6 +1132,7 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 sceneIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CHANGE_CUBE(%i)", (int)sceneIdx);
 	engine->_scene->_needChangeScene = sceneIdx;
 	engine->_scene->_heroPositionType = ScenePositionType::kScene;
 	return 0;
@@ -1036,6 +1144,7 @@ static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lOBJ_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 collision = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::OBJ_COL(%i)", (int)collision);
 	if (collision != 0) {
 		ctx.actor->_staticFlags.bComputeCollisionWithObj = 1;
 	} else {
@@ -1050,6 +1159,7 @@ static int32 lOBJ_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 collision = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BRICK_COL(%i)", (int)collision);
 
 	ctx.actor->_staticFlags.bComputeCollisionWithBricks = 0;
 	ctx.actor->_staticFlags.bComputeLowCollision = 0;
@@ -1068,11 +1178,15 @@ static int32 lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x37
  */
 static int32 lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::OR_IF(");
 	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (processLifeOperators(engine, ctx, valueSize)) {
-		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
+		const int16 offset = ctx.stream.readSint16LE();
+		ctx.stream.seek(offset); // condition offset
+		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
 	} else {
 		ctx.stream.skip(2);
+		debugC(3, kDebugLevels::kDebugScripts, ")");
 	}
 
 	return 0;
@@ -1084,6 +1198,7 @@ static int32 lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_staticFlags.bIsHidden = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INVISIBLE(%i)", (int)ctx.actor->_staticFlags.bIsHidden);
 	return 0;
 }
 
@@ -1093,6 +1208,7 @@ static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int zoomScreen = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ZOOM(%i)", zoomScreen);
 
 	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->_cfgfile.SceZoom) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
@@ -1116,6 +1232,7 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 trackIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::POS_POINT(%i)", (int)trackIdx);
 	if (engine->_scene->_useScenePatches) {
 		if (IS_HERO(ctx.actorIdx) && engine->_scene->_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
 			ctx.stream.rewind(2);
@@ -1135,6 +1252,7 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_MAGIC_LEVEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->_magicLevelIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_MAGIC_LEVEL(%i)", (int)engine->_gameState->_magicLevelIdx);
 	engine->_gameState->setMaxMagicPoints();
 	return 0;
 }
@@ -1144,7 +1262,9 @@ static int32 lSET_MAGIC_LEVEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3C
  */
 static int32 lSUB_MAGIC_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->addMagicPoints(-ctx.stream.readByte());
+	const int16 magicPoints = (int16)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_MAGIC_POINT(%i)", (int)magicPoints);
+	engine->_gameState->addMagicPoints(-magicPoints);
 	return 0;
 }
 
@@ -1155,6 +1275,7 @@ static int32 lSUB_MAGIC_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 lifeValue = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_LIFE_POINT_OBJ(%i, %i)", (int)otherActorIdx, (int)lifeValue);
 
 	engine->_scene->getActor(otherActorIdx)->setLife(lifeValue);
 
@@ -1168,6 +1289,7 @@ static int32 lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 lifeValue = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUB_LIFE_POINT_OBJ(%i, %i)", (int)otherActorIdx, (int)lifeValue);
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->addLife(-lifeValue);
@@ -1185,6 +1307,7 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 strengthOfHit = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HIT_OBJ(%i, %i)", (int)otherActorIdx, (int)strengthOfHit);
 	engine->_actor->hitActor(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
 	return 0;
 }
@@ -1206,6 +1329,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 			error("Max string size exceeded for fla name");
 		}
 	} while (true);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_FLA(%s)", movie);
 
 	engine->_movie->playMovie(movie);
 	engine->setPalette(engine->_screens->_paletteRGBA);
@@ -1221,6 +1345,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 midiIdx = ctx.stream.readByte();
 	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_MIDI(%i)", (int)midiIdx);
 	return 0;
 }
 
@@ -1229,6 +1354,7 @@ static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x42
  */
 static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INC_CLOVER_BOX()");
 	engine->_gameState->addLeafBoxes(1);
 	return 0;
 }
@@ -1239,6 +1365,7 @@ static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 item = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_USED_INVENTORY(%i)", (int)item);
 	// Only up to keypad. lbawin and dotemu are doing this, too
 	if (item < InventoryItems::kKeypad) {
 		engine->_gameState->_inventoryFlags[item] = 1;
@@ -1252,6 +1379,7 @@ static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ADD_CHOICE(%i)", (int)choiceIdx);
 	engine->_gameState->_gameChoices[engine->_gameState->_numChoices++] = choiceIdx;
 	return 0;
 }
@@ -1262,6 +1390,7 @@ static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ASK_CHOICE(%i)", (int)choiceIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
@@ -1281,6 +1410,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BIG_MESSAGE(%i)", (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	engine->_text->textClipFull();
@@ -1301,7 +1431,8 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x47
  */
 static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 penguinActor = ctx.stream.readByte();
+	const int16 penguinActor = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INIT_PINGOUIN(%i)", (int)penguinActor);
 	engine->_scene->_mecaPenguinIdx = penguinActor;
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
 	penguin->_dynamicFlags.bIsDead = 1;
@@ -1316,6 +1447,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 location = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_HOLO_POS(%i)", (int)location);
 	engine->_holomap->setHolomapPosition(location);
 	return 0;
 }
@@ -1326,6 +1458,7 @@ static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 location = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CLR_HOLO_POS(%i)", (int)location);
 	engine->_holomap->clearHolomapPosition(location);
 	return 0;
 }
@@ -1335,7 +1468,9 @@ static int32 lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4A
  */
 static int32 lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->addGas(ctx.stream.readByte());
+	const int16 value = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ADD_FUEL(%i)", (int)value);
+	engine->_gameState->addGas(value);
 	return 0;
 }
 
@@ -1344,7 +1479,9 @@ static int32 lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4B
  */
 static int32 lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->addGas(-(int16)ctx.stream.readByte());
+	const int16 value = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUB_FUEL(%i)", (int)value);
+	engine->_gameState->addGas(-value);
 	return 0;
 }
 
@@ -1354,6 +1491,7 @@ static int32 lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_grid->_cellingGridIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_GRM(%i)", (int)engine->_grid->_cellingGridIdx);
 	engine->_grid->initCellingGrid(engine->_grid->_cellingGridIdx);
 	return 0;
 }
@@ -1364,6 +1502,7 @@ static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textEntry = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SAY_MESSAGE(%i)", (int)textEntry);
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
@@ -1380,6 +1519,7 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const TextId textEntry = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SAY_MESSAGE_OBJ(%i, %i)", (int)otherActorIdx, (int)textEntry);
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
@@ -1394,6 +1534,7 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4F
  */
 static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FULL_POINT()");
 	engine->_scene->_sceneHero->setLife(kActorMaxLife);
 	engine->_gameState->setMaxMagicPoints();
 	return 0;
@@ -1405,6 +1546,7 @@ static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 newAngle = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BETA(%i)", (int)newAngle);
 	ctx.actor->_angle = ToAngle(newAngle);
 	engine->_movements->clearRealAngle(ctx.actor);
 	return 0;
@@ -1415,6 +1557,7 @@ static int32 lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x51
  */
 static int32 lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GRM_OFF()");
 	if (engine->_grid->_cellingGridIdx != -1) {
 		engine->_grid->_useCellingGrid = -1;
 		engine->_grid->_cellingGridIdx = -1;
@@ -1430,6 +1573,7 @@ static int32 lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x52
  */
 static int32 lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_PAL_RED()");
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadePalRed(engine->_screens->_mainPaletteRGBA);
 	engine->_screens->_useAlternatePalette = false;
@@ -1441,6 +1585,7 @@ static int32 lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x53
  */
 static int32 lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_ALARM_RED()");
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
@@ -1454,6 +1599,7 @@ static int32 lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x54
  */
 static int32 lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_ALARM_PAL()");
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
@@ -1467,6 +1613,7 @@ static int32 lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x55
  */
 static int32 lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_RED_PAL()");
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeRedPal(engine->_screens->_mainPaletteRGBA);
 	engine->_screens->_useAlternatePalette = false;
@@ -1478,6 +1625,7 @@ static int32 lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x56
  */
 static int32 lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_RED_ALARM()");
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
@@ -1491,6 +1639,7 @@ static int32 lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x57
  */
 static int32 lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_PAL_ALARM()");
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
@@ -1505,10 +1654,14 @@ static int32 lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::EXPLODE_OBJ(%i)", (int)otherActorIdx);
 	const ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 
-	engine->_extra->addExtraExplode(otherActor->pos()); // RECHECK this
-
+	IVec3 pos = otherActor->pos();
+	pos.x += engine->getRandomNumber(512) - 256;
+	pos.y += engine->getRandomNumber(256) - 128;
+	pos.z += engine->getRandomNumber(512) - 256;
+	engine->_extra->addExtraExplode(pos);
 	return 0;
 }
 
@@ -1517,6 +1670,7 @@ static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x59
  */
 static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_ON()");
 	engine->_text->_showDialogueBubble = true;
 	return 0;
 }
@@ -1526,6 +1680,7 @@ static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5A
  */
 static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_OFF()");
 	engine->_text->_showDialogueBubble = false;
 	return 0;
 }
@@ -1537,6 +1692,7 @@ static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ASK_CHOICE_OBJ(%i, %i)", (int)otherActorIdx, (int)choiceIdx);
 
 	ScopedEngineFreeze freeze(engine);
 	engine->exitSceneryView();
@@ -1556,6 +1712,7 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5C
  */
 static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DARK_PAL()");
 	engine->_screens->setDarkPal();
 	return 0;
 }
@@ -1565,6 +1722,7 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5D
  */
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_NORMAL_PAL()");
 	engine->_screens->setNormalPal();
 	return 0;
 }
@@ -1574,6 +1732,7 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5E
  */
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MESSAGE_SENDELL()");
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBA);
 	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
@@ -1598,6 +1757,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_SET(%i)", (int)animIdx);
 
 	ctx.actor->_anim = AnimationTypes::kAnimNone;
 	ctx.actor->_previousAnimIdx = -1;
@@ -1612,6 +1772,7 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_holomapTrajectory = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HOLOMAP_TRAJ(%i)", (int)engine->_scene->_holomapTrajectory);
 	return 0;
 }
 
@@ -1623,6 +1784,7 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_sceneHero->_dynamicFlags.bAnimEnded = 1;
 	engine->_scene->_sceneHero->setLife(0);
 	engine->_gameState->setLeafs(0);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GAME_OVER()");
 	return 1; // break
 }
 
@@ -1631,6 +1793,7 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x62
  */
 static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::THE_END()");
 	engine->_sceneLoopState = SceneLoopState::Finished;
 	engine->_gameState->setLeafs(0);
 	engine->_scene->_sceneHero->setLife(kActorMaxLife);
@@ -1648,6 +1811,7 @@ static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x63
  */
 static int32 lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MIDI_OFF()");
 	engine->_music->stopMidiMusic();
 	return 0;
 }
@@ -1658,6 +1822,7 @@ static int32 lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 track = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_CD_TRACK(%i)", (int)track);
 	engine->_music->playTrackMusic(track);
 	return 0;
 }
@@ -1667,6 +1832,7 @@ static int32 lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x65
  */
 static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PROJ_ISO()");
 	engine->_gameState->initEngineProjections();
 	return 0;
 }
@@ -1676,6 +1842,7 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x66
  */
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PROJ_3D()");
 	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
 	engine->_screens->copyScreen(engine->_frontVideoBuffer, engine->_workVideoBuffer);
 	engine->_scene->_enableGridTileRendering = false;
@@ -1695,6 +1862,7 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::TEXT(%i)", (int)textIdx);
 
 	const int32 textHeight = 40;
 	if (lTextYPos < engine->height() - textHeight) {
@@ -1728,6 +1896,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x68
  */
 static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::CLEAR_TEXT()");
 	lTextYPos = 0;
 	const Common::Rect rect(0, 0, engine->width() - 1, engine->height() / 2);
 	engine->_interface->drawFilledRect(rect, COLOR_BLACK);
@@ -1739,6 +1908,7 @@ static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x69
  */
 static int32 lBRUTAL_EXIT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BRUTAL_EXIT()");
 	engine->_sceneLoopState = SceneLoopState::ReturnToMenu;
 	return 1; // break
 }
@@ -1860,20 +2030,24 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 	int32 end = -2;
 
 	LifeScriptContext ctx(actorIdx, actor);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BEGIN(%i)", actorIdx);
 	do {
 		const byte scriptOpcode = ctx.stream.readByte();
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
+			debugC(3, kDebugLevels::kDebugScripts, "LIFE::EXEC(%s, %i)", function_map[scriptOpcode].name, actorIdx);
 			end = function_map[scriptOpcode].function(_engine, ctx);
-			debug(3, "life script %s for actor %i (%i)", function_map[scriptOpcode].name, actorIdx, end);
 		} else {
 			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}
 
 		if (end < 0) {
 			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
+		} else if (end == 1) {
+			debugC(3, kDebugLevels::kDebugScripts, "LIFE::BREAK(%i)", actorIdx);
 		}
 		ctx.updateOpcodePos();
 	} while (end != 1);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END(%i)", actorIdx);
 }
 
 } // namespace TwinE

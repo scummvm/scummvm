@@ -680,6 +680,10 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 #define COLOR_GOLD 155
 #define COLOR_158 158
 
+enum kDebugLevels {
+	kDebugScripts =   1 << 0
+};
+
 }
 
 #endif

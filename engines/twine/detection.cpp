@@ -25,12 +25,18 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "twine/detection.h"
+#include "twine/shared.h"
 
 static const PlainGameDescriptor twineGames[] = {
 	{ "lba", "Little Big Adventure" },
 	{ "lbashow", "Little Big Adventure Freeware Slide Show" },
 	{ "lba2", "Little Big Adventure 2" },
 	{ nullptr,  nullptr }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{TwinE::kDebugScripts, "Scripts", "Scripts debugging"},
+	DEBUG_CHANNEL_END
 };
 
 static const ADGameDescription twineGameDescriptions[] = {
@@ -765,6 +771,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Little Big Adventure (C) Adeline Software International";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
