@@ -25,7 +25,6 @@
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room11.h"
-#include "chewy/rooms/room12.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -143,37 +142,36 @@ int16 Room11::scanner() {
 		if (!_G(spieler).R11CardOk) {
 			action_flag = true;
 			start_aad_wait(13, -1);
-		} else {
-			if (is_cur_inventar(BORK_INV)) {
-				hide_cur();
-				action_flag = true;
+		} else if (is_cur_inventar(BORK_INV)) {
+			hide_cur();
+			set_up_screen(DO_SETUP);
+			action_flag = true;
 
-				flc->set_custom_user_function(r12_cut_serv);
-				start_aad(105, 0);
-				flic_cut(FCUT_011, CFO_MODE);
-				register_cutscene(4);
+			flc->set_custom_user_function(cut_serv_2);
+			start_aad(105, 0);
+			flic_cut(FCUT_011, CFO_MODE);
+			register_cutscene(4);
+			flc->remove_custom_user_function();
+			_G(spieler).R11TerminalOk = true;
+			cur_2_inventory();
+			menu_item = CUR_TALK;
+			cursor_wahl(menu_item);
+			start_aad_wait(12, -1);
+			show_cur();
+			load_ads_dia(3);
+		} else if (!_G(spieler).inv_cur) {
+			if (!_G(spieler).R11TerminalOk) {
+				action_flag = true;
+				flc->set_custom_user_function(cut_serv);
+				flic_cut(FCUT_010, CFO_MODE);
 				flc->remove_custom_user_function();
-				_G(spieler).R11TerminalOk = true;
-				cur_2_inventory();
+				start_aad_wait(20, -1);
+			} else {
+				action_flag = true;
+				start_aad_wait(12, -1);
 				menu_item = CUR_TALK;
 				cursor_wahl(menu_item);
-				start_aad_wait(12, -1);
 				load_ads_dia(3);
-				show_cur();
-			} else if (!_G(spieler).inv_cur) {
-				if (!_G(spieler).R11TerminalOk) {
-					action_flag = true;
-					flc->set_custom_user_function(cut_serv);
-					flic_cut(FCUT_010, CFO_MODE);
-					flc->remove_custom_user_function();
-					start_aad_wait(20, -1);
-				} else {
-					action_flag = true;
-					start_aad_wait(12, -1);
-					menu_item = CUR_TALK;
-					cursor_wahl(menu_item);
-					load_ads_dia(3);
-				}
 			}
 		}
 	}
@@ -183,6 +181,7 @@ int16 Room11::scanner() {
 
 void Room11::get_card() {
 	if (_G(spieler).R11CardOk) {
+		cur_2_inventory();
 		_G(spieler).R11CardOk = false;
 		obj->add_inventar(_G(spieler).R11IdCardNr, &room_blk);
 
@@ -212,19 +211,23 @@ void Room11::put_card() {
 int16 Room11::cut_serv(int16 frame) {
 	if (_G(spieler).R11DoorRightF)
 		det->plot_static_details(0, 0, 0, 0);
+
 	if (_G(spieler).R11DoorRightB)
 		det->plot_static_details(0, 0, 6, 6);
+
 	if (_G(spieler).R45MagOk)
 		det->plot_static_details(0, 0, 7, 7);
 
 	return 0;
 }
 
-int16 Room11::r12_cut_serv(int16 frame) {
+int16 Room11::cut_serv_2(int16 frame) {
 	if (_G(spieler).R11DoorRightF)
 		det->plot_static_details(0, 0, 0, 0);
+
 	if (_G(spieler).R11DoorRightB)
 		det->plot_static_details(0, 0, 6, 6);
+
 	if (_G(spieler).R6DoorRightB)
 		det->plot_static_details(0, 0, 7, 7);
 
