@@ -179,6 +179,7 @@ bool Script::loadScript(Common::String filename) {
 
 	// Load the code
 	_codeSize = scriptfile->size();
+	delete[] _code;
 	_code = new byte[_codeSize];
 	if (!_code)
 		return false;
@@ -268,6 +269,7 @@ void Script::directGameLoad(int slot) {
 		_code = _savedCode;
 		_codeSize = _savedCodeSize;
 		_savedCode = nullptr;
+		_scriptFile = _savedScriptFile;
 	}
 
 	uint16 targetInstruction = 0;
@@ -299,6 +301,23 @@ void Script::directGameLoad(int slot) {
 	} else if (_version == kGroovieUHP) {
 		setVariable(0x19, slot);
 		_currentInstruction = 0x23B4;
+		return;
+	} else if (_version == kGroovieTLC) {
+		// Save the current code
+		_savedCode = _code;
+		_code = nullptr;
+		_savedCodeSize = _codeSize;
+
+		// Save the filename of the current script
+		_savedScriptFile = _scriptFile;
+
+		_savedInstruction = 0x45;
+		_savedStacktop = 0;
+
+		loadScript("register.grv");
+
+		setVariable(0x19, slot);
+		_currentInstruction = 0x5CF;
 		return;
 	}
 
@@ -1879,6 +1898,7 @@ void Script::o_loadscript() {
 
 	// Save the current code
 	_savedCode = _code;
+	_code = nullptr;
 	_savedCodeSize = _codeSize;
 	_savedInstruction = _currentInstruction;
 
