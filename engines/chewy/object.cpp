@@ -351,7 +351,7 @@ void Object::calc_static_detail(int16 det_nr) {
 	int16 nr;
 	int16 i;
 	int16 n;
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 
 	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 		nr = Rsi[det_nr].StaticAk;

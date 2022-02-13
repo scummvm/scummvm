@@ -31,21 +31,21 @@ namespace Chewy {
 static void font_load();
 
 void standard_init() {
-	_G(mem) = new memory();
+	_G(mem) = new Memory();
 	_G(out) = new McgaGraphics();
 	_G(in) = new InputMgr();
-	fx = new effect();
-	txt = new text();
-	bit = new bitclass();
-	ged = new gedclass(&ged_user_func);
+	fx = new Effect();
+	txt = new Text();
+	bit = new BitClass();
+	ged = new GedClass(&ged_user_func);
 	room = new Room();
 	obj = new Object(&_G(spieler));
-	uhr = new timer(MAX_TIMER_OBJ, ani_timer);
-	det = new detail();
-	atds = new atdsys();
+	uhr = new Timer(MAX_TIMER_OBJ, ani_timer);
+	det = new Detail();
+	atds = new Atdsys();
 	_G(sndPlayer) = new SoundPlayer();
-	flc = new flic();
-	mov = new movclass();
+	flc = new Flic();
+	mov = new MovClass();
 
 	_G(out)->init();
 	_G(out)->cls();
@@ -75,10 +75,10 @@ void standard_init() {
 	curani.ani_end = 0;
 	curani.delay = 0;
 	
-	_G(cur) = new cursor(_G(out), _G(in), &curblk);
+	_G(cur) = new Cursor(_G(out), _G(in), &curblk);
 	_G(cur)->set_cur_ani(&curani);
 
-	_G(iog) = new io_game(_G(out), _G(in), _G(cur));
+	_G(iog) = new IOGame(_G(out), _G(in), _G(cur));
 	strcpy(ioptr.id, "CHE");
 	strcpy(ioptr.save_path, SAVEDIR);
 	ioptr.delay = 8;

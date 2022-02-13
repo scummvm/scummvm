@@ -64,7 +64,6 @@ enum ResourceType {
 	kResourceTCF = 26
 };
 
-
 struct Chunk {
 	uint32 size;
 	uint16 num;
@@ -72,10 +71,7 @@ struct Chunk {
 	uint32 pos;
 };
 
-
 struct TBFChunk {
-
-
 	uint16 screenMode;
 	uint16 compressionFlag;
 	uint32 size;
@@ -85,26 +81,19 @@ struct TBFChunk {
 	uint8 *data;
 };
 
-
 struct TAFChunk {
 	uint16 compressionFlag;
 	uint16 width;
 	uint16 height;
-
-
-
 	uint8 *data;
 };
-
 
 struct SoundChunk {
 	uint32 size;
 	uint8 *data;
 };
 
-
 struct VideoChunk {
-
 	uint32 size;
 	uint16 frameCount;
 	uint16 width;
@@ -190,6 +179,6 @@ public:
 	Common::SeekableReadStream *getVideoStream(uint num);
 };
 
-}
+} // namespace Chewy
 
 #endif

@@ -214,9 +214,9 @@ MovInfo auto_mov_obj[MAX_OBJ_MOV];
 MovPhasen mov_phasen[MAX_OBJ_MOV];
 MovLine mov_line[MAX_OBJ_MOV][5];
 TimerBlk ani_timer[MAX_TIMER_OBJ];
-room_detail_info *Rdi;
-static_detail_info *Sdi;
-ani_detail_info *Adi;
+RoomDetailInfo *Rdi;
+StaticDetailInfo *Sdi;
+AniDetailInfo *Adi;
 Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0 };
 CustomInfo Ci;
@@ -233,17 +233,17 @@ int16 ani_stand_count[MAX_PERSON];
 
 bool ani_stand_flag[MAX_PERSON];
 
-bitclass *bit;
-gedclass *ged;
-text *txt;
+BitClass *bit;
+GedClass *ged;
+Text *txt;
 Room *room;
 Object *obj;
-timer *uhr;
-detail *det;
-effect *fx;
-atdsys *atds;
-flic *flc;
-movclass *mov;
+Timer *uhr;
+Detail *det;
+Effect *fx;
+Atdsys *atds;
+Flic *flc;
+MovClass *mov;
 
 char backged[] = { EPISODE1_GEP };
 

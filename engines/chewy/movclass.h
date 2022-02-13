@@ -106,10 +106,10 @@ struct AutoGoVar {
 	int16 AkKnoten = 0;
 };
 
-class movclass {
+class MovClass {
 public:
-	movclass();
-	~movclass();
+	MovClass();
+	~MovClass();
 
 	void goto_xy(GotoPkt *gpkt);
 	int16 calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y);

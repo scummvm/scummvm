@@ -75,7 +75,7 @@ struct SprInfo {
 	int16 Y1 = 0;
 };
 
-struct sound_def_blk {
+struct SoundDefBlk {
 	bool sound_enable[MAX_SOUNDS];
 	int16 sound_index[MAX_SOUNDS];
 	int16 sound_start[MAX_SOUNDS];
@@ -90,7 +90,7 @@ struct sound_def_blk {
 	}
 };
 
-struct ani_detail_info {
+struct AniDetailInfo {
 	int16 x;
 	int16 y;
 	uint8 start_flag;
@@ -105,18 +105,18 @@ struct ani_detail_info {
 	int16 z_ebene;
 	uint8 load_flag;
 	uint8 zoom;
-	sound_def_blk sfx;
+	SoundDefBlk sfx;
 	int16 show_1_phase;
 	int16 phase_nr;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() {
 		return 2 + 2 + 1 + 1 + 2 * 8 + 1 + 1 +
-			sound_def_blk::SIZE() + 2 + 2;
+			SoundDefBlk::SIZE() + 2 + 2;
 	}
 };
 
-struct static_detail_info {
+struct StaticDetailInfo {
 	int16 x;
 	int16 y;
 	int16 SprNr;
@@ -130,12 +130,12 @@ struct static_detail_info {
 	}
 };
 
-struct room_detail_info {
+struct RoomDetailInfo {
 	int16 StaticDetailAnz = 0;
 	int16 AniDetailAnz = 0;
 	taf_info *dptr = nullptr;
-	ani_detail_info Ainfo[MAXDETAILS];
-	static_detail_info Sinfo[MAXDETAILS];
+	AniDetailInfo Ainfo[MAXDETAILS];
+	StaticDetailInfo Sinfo[MAXDETAILS];
 	int16 mvect[MAX_M_ITEMS * 4] = { 0 };
 	int16 mtxt[MAX_M_ITEMS] = { 0 };
 	RaumInfo Ri;
@@ -146,8 +146,8 @@ struct room_detail_info {
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() {
 		return 2 + 2 + 4 +
-			(ani_detail_info::SIZE() * MAXDETAILS) +
-			(static_detail_info::SIZE() * MAXDETAILS) +
+			(AniDetailInfo::SIZE() * MAXDETAILS) +
+			(StaticDetailInfo::SIZE() * MAXDETAILS) +
 			(2 * MAX_M_ITEMS * 4) +
 			(2 * MAX_M_ITEMS) +
 			RaumInfo::SIZE() +
@@ -184,10 +184,10 @@ struct DeteditPrj {
 	char DummyFile[MAXPATH];
 };
 
-class detail {
+class Detail {
 public:
-	detail();
-	~detail();
+	Detail();
+	~Detail();
 
 	void load_rdi(const char *fname, int16 room_nr);
 
@@ -205,11 +205,11 @@ public:
 	void get_ani_werte(int16 ani_nr, int16 *start, int16 *end);
 	void set_ani(int16 ani_nr, int16 start, int16 end);
 	byte *get_image(int16 spr_nr);
-	ani_detail_info *get_ani_detail(int16 ani_nr);
+	AniDetailInfo *get_ani_detail(int16 ani_nr);
 	int16 *get_korrektur_tbl();
 	void init_taf(taf_info *dptr);
 	taf_info *get_taf_info();
-	room_detail_info *get_room_detail_info();
+	RoomDetailInfo *get_room_detail_info();
 
 	void set_static_ani(int16 ani_nr, int16 static_nr);
 
@@ -265,7 +265,7 @@ private:
 	void load_taf_ani_sprite(int16 nr);
 
 	void remove_unused_samples();
-	room_detail_info _rdi;
+	RoomDetailInfo _rdi;
 #ifdef DETEDIT
 	room_detail_info rdi_shadow;
 #endif

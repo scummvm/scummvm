@@ -351,7 +351,7 @@ void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
 }
 
 void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	det->start_detail(ani_nr, rep, mode);

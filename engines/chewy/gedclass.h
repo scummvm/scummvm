@@ -29,9 +29,9 @@ namespace Chewy {
 
 typedef int16(*GedUserFunc)(int16 idx_nr);
 
-class gedclass {
+class GedClass {
 public:
-	gedclass(GedUserFunc func) : _gedUserFunc(func) {
+	GedClass(GedUserFunc func) : _gedUserFunc(func) {
 	}
 
 	void load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);

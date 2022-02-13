@@ -189,7 +189,7 @@ void Room0::eyeAnim() {
 }
 
 void Room0::eyeStart(EyeMode mode) {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
@@ -265,7 +265,7 @@ void Room0::eyeStart(EyeMode mode) {
 }
 
 void Room0::eyeWait() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 39;
@@ -332,7 +332,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 }
 
 void Room0::eyeShoot() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
@@ -386,7 +386,7 @@ void Room0::eyeShoot() {
 }
 
 void Room0::eyeSlimeBack() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	bool ende;
 
 	adi = det->get_ani_detail(SCHLAUCH_DETAIL);
@@ -429,7 +429,7 @@ void Room0::eyeSlimeBack() {
 }
 
 void Room0::checkSlimeEye() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 
 	adi = det->get_ani_detail(CH_WIRFT_SCHLEIM);
 	adi->ani_count = adi->start_ani;
@@ -467,7 +467,7 @@ void Room0::checkSlimeEye() {
 }
 
 void Room0::feederStart(int16 mode) {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	bool ende;
 
 	adi = det->get_ani_detail(FUETTER_SCHLAUCH);
@@ -584,7 +584,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 }
 
 void Room0::checkFeed() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	int16 i;
 	bool ende;
 
@@ -675,7 +675,7 @@ void Room0::checkFeed() {
 }
 
 void Room0::checkPillow() {
-	ani_detail_info *adi;
+	AniDetailInfo *adi;
 	bool ende, mode;
 
 	adi = det->get_ani_detail(FUETTER_SCHLAUCH);

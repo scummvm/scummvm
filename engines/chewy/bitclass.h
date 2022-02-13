@@ -24,11 +24,10 @@
 
 namespace Chewy {
 
-class bitclass {
-
+class BitClass {
 public:
-	bitclass() {}
-	~bitclass() {}
+	BitClass() {}
+	~BitClass() {}
 
 	bool is_bit(int16 value, int16 bit) { return (value & bit) != 0; }
 	void set_bit(int16 *value, int16 bit) { *value |= bit; }

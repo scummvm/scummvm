@@ -24,10 +24,10 @@
 
 namespace Chewy {
 
-class text {
+class Text {
 public:
-	text();
-	~text();
+	Text();
+	~Text();
 
 	void crypt(char *txt, uint32 size);
 

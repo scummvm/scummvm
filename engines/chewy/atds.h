@@ -243,10 +243,10 @@ struct SplitStringInit {
 	int16 FHoehe;
 };
 
-class atdsys {
+class Atdsys {
 public:
-	atdsys();
-	~atdsys();
+	Atdsys();
+	~Atdsys();
 
 	void set_font(byte *font_adr, int16 fvorx, int16 fhoehe);
 	void set_delay(int16 *delay, int16 silent);

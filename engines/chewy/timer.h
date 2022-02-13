@@ -49,10 +49,10 @@ struct TimerBlk {
 	int16 TimeStatus;
 };
 
-class timer {
+class Timer {
 public:
-	timer(int16 max_timer, TimerBlk *t);
-	~timer();
+	Timer(int16 max_timer, TimerBlk *t);
+	~Timer();
 
 	void calc_timer();
 	int16 set_new_timer(int16 timer_nr, int16 timer_end_wert,
