@@ -20,6 +20,7 @@
  */
 
 #include "twine/scene/scene.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -460,6 +461,26 @@ void Scene::reloadCurrentScene() {
 	_needChangeScene = _currentSceneIdx;
 }
 
+void Scene::dumpSceneScript(const char *type, int actorIdx, const uint8* script, int size) const {
+	Common::String fname = Common::String::format("./dumps/%i-%i.%s", _currentSceneIdx, actorIdx, type);
+	Common::DumpFile out;
+	if (!out.open(fname.c_str(), true)) {
+		warning("Scene::dumpSceneScript(): Can not open dump file %s", fname.c_str());
+	} else {
+		out.write(script, size);
+		out.flush();
+		out.close();
+	}
+}
+
+void Scene::dumpSceneScripts() const {
+	for (int32 a = 0; a < _sceneNumActors; ++a) {
+		const ActorStruct &actor = _sceneActors[a];
+		dumpSceneScript("life", a, actor._lifeScript, actor._lifeScriptSize);
+		dumpSceneScript("move", a, actor._moveScript, actor._moveScriptSize);
+	}
+}
+
 void Scene::changeScene() {
 	if (_engine->isLBA1()) {
 		if (_useScenePatches) {
@@ -518,6 +539,9 @@ void Scene::changeScene() {
 	_sceneHero->_labelIdx = -1;
 
 	initScene(_needChangeScene);
+	if (ConfMan.getBool("dump_scripts")) {
+		dumpSceneScripts();
+	}
 
 	if (_holomapTrajectory != -1) {
 		_engine->_holomap->drawHolomapTrajectory(_holomapTrajectory);

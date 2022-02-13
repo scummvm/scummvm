@@ -160,7 +160,8 @@ private:
 	int32 _currentGameOverScene = 0;
 
 	uint8 *_currentScene = nullptr;
-
+	void dumpSceneScripts() const;
+	void dumpSceneScript(const char *type, int actorIdx, const uint8* script, int size) const;
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
 	~Scene();
