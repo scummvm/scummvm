@@ -1873,6 +1873,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - Hebrew DOS CD - Fan Dub, make sure to delete SIMON.WAV if you have it
+	{
+		{
+			"simon1",
+			"CD, Fan Dub",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"19f57784a1b83d238870b3eac49cccc1", 6976776},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",			GAME_BASEFILE,	"5bea08657999726d8332e96cda670591", 34615},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - Italian DOS CD
 	{
 		{
