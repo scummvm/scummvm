@@ -622,7 +622,7 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 		return;
 	}
 	const char *saveName = desc.c_str();
-	uint name_len = _version == 15;
+	uint name_len = 15;
 	if (_version == kGroovieTLC) {
 		name_len = 19;
 	} else if (_version == kGroovieUHP) {
@@ -657,7 +657,7 @@ void Script::savegame(uint slot, const char name[27]) {
 	}
 
 	// Saving the variables. It is endian safe because they're byte variables
-	uint name_len = _version == 15;
+	uint name_len = 15;
 	if (_version == kGroovieTLC) {
 		name_len = 19;
 	} else if (_version == kGroovieUHP) {
@@ -700,7 +700,7 @@ void Script::printString(Graphics::Surface *surface, const char *str) {
 	if (_version == kGroovieT7G) {
 		_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
 	} else {
-		_vm->_videoPlayer->drawString(Common::String(message), 190, 190, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A));
+		_vm->_videoPlayer->drawString(surface, Common::String(message), 190, 190, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A));
 	}
 }
 
@@ -2103,7 +2103,9 @@ void Script::o2_printstring() {
 	readScriptString(text);
 	debugC(1, kDebugScript, "Groovie::Script: PRINTSTRING (%d, %d): %s", posx, posy, text.c_str());
 
-	_vm->_videoPlayer->drawString(text, posx, posy, col);
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+	_vm->_videoPlayer->drawString(gamescreen, text, posx, posy, col);
+	_vm->_system->unlockScreen();
 }
 
 void Script::o2_playsong() {

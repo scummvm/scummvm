@@ -964,7 +964,7 @@ void ROQPlayer::createAudioStream(bool stereo) {
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 }
 
-void ROQPlayer::drawString(const Common::String text, int posx, int posy, uint32 color) {
+void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color) {
 	// TODO: fix redraw
 #if 0
 	int screenOffset = 0;
@@ -975,12 +975,9 @@ void ROQPlayer::drawString(const Common::String text, int posx, int posy, uint32
 	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 	Common::Rect rect(posx, posy - screenOffset, posx + _vm->_font->getMaxCharWidth()*15, posy + _vm->_font->getFontHeight()*2 - screenOffset);
 	gamescreen->copyRectToSurface(*_bg, posx, posy, rect);
-#else
-	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 #endif
 
-	_vm->_font->drawString(gamescreen, text.c_str(), posx, posy, _overBuf->w, color, Graphics::kTextAlignLeft);
-	_vm->_system->unlockScreen();
+	_vm->_font->drawString(surface, text.c_str(), posx, posy, _overBuf->w, color, Graphics::kTextAlignLeft);
 	_vm->_graphicsMan->change(); // Force Update screen after step
 }
 
