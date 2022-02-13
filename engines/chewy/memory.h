@@ -27,10 +27,10 @@
 
 namespace Chewy {
 
-class memory {
+class Memory {
 public:
-	memory();
-	~memory();
+	Memory();
+	~Memory();
 	void init();
 
 	taf_info *taf_adr(const char *filename);

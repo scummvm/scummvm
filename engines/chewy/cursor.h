@@ -27,11 +27,11 @@
 
 namespace Chewy {
 
-class cursor {
+class Cursor {
 public:
-	cursor();
-	cursor(McgaGraphics *out, InputMgr *in, cur_blk *curblk);
-	~cursor();
+	Cursor();
+	Cursor(McgaGraphics *out, InputMgr *in, cur_blk *curblk);
+	~Cursor();
 
 	void plot_cur();
 	void show_cur();

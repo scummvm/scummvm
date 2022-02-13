@@ -96,16 +96,16 @@ void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
 }
 
 
-flic::flic() {
+Flic::Flic() {
 	Common::fill(&_sounds[0], &_sounds[50], (byte *)nullptr);
 	_soundBuffer = new byte[SOUND_SLOT_SIZE];
 }
 
-flic::~flic() {
+Flic::~Flic() {
 	delete[] _soundBuffer;
 }
 
-void flic::play(const char *fname, byte *vscreen, byte *load_p) {
+void Flic::play(const char *fname, byte *vscreen, byte *load_p) {
 
 	Stream *lhandle = File::open(fname);
 	if (lhandle) {
@@ -116,7 +116,7 @@ void flic::play(const char *fname, byte *vscreen, byte *load_p) {
 	}
 }
 
-int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
+int16 Flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	float ende;
 	int16 ret = 0;
@@ -164,7 +164,7 @@ int16 flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
 	return ret;
 }
 
-int16 flic::decode_frame() {
+int16 Flic::decode_frame() {
 	ChunkHead chunk_header;
 	int16 action_ret = 0;
 
@@ -247,7 +247,7 @@ int16 flic::decode_frame() {
 	return action_ret;
 }
 
-void flic::col256_chunk(byte *tmp) {
+void Flic::col256_chunk(byte *tmp) {
 	int packets = *(int16 *)tmp;
 	tmp += 2;
 
@@ -283,7 +283,7 @@ void flic::col256_chunk(byte *tmp) {
 	}
 }
 
-void flic::col64_chunk(byte *tmp) {
+void Flic::col64_chunk(byte *tmp) {
 	int packets = *((int16 *)tmp);
 	tmp += 2;
 
@@ -316,7 +316,7 @@ void flic::col64_chunk(byte *tmp) {
 	}
 }
 
-void flic::delta_chunk_byte(byte *tmp) {
+void Flic::delta_chunk_byte(byte *tmp) {
 	byte last_byte = 0;
 	bool last_flag;
 	byte *abl = _virtScreen;
@@ -373,7 +373,7 @@ void flic::delta_chunk_byte(byte *tmp) {
 	}
 }
 
-int16 flic::custom_play(CustomInfo *ci) {
+int16 Flic::custom_play(CustomInfo *ci) {
 	int16 ret = 0;
 
 	_cInfo = ci;
@@ -437,7 +437,7 @@ int16 flic::custom_play(CustomInfo *ci) {
 	return ret;
 }
 
-void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
+void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
 	tmf_header *th = (tmf_header *)_music;
 
@@ -625,7 +625,7 @@ void flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	}
 }
 
-int16 flic::decode_cframe() {
+int16 Flic::decode_cframe() {
 	byte *tmp_buf = _loadBuffer;
 	int16 update_flag = false;
 	int16 action_ret = 0;
@@ -709,7 +709,7 @@ int16 flic::decode_cframe() {
 	return action_ret;
 }
 
-void flic::free_sound(int16 nr) {
+void Flic::free_sound(int16 nr) {
 	byte *fsound = _sounds[nr];
 	long fsize = _sSize[nr];
 	if ((fsound != 0) && (fsize != 0)) {
@@ -727,19 +727,19 @@ void flic::free_sound(int16 nr) {
 	}
 }
 
-void flic::set_custom_user_function(int16(*user_funktion)(int16 frame)) {
+void Flic::set_custom_user_function(int16(*user_funktion)(int16 frame)) {
 	_customUser = user_funktion;
 }
 
-void flic::remove_custom_user_function() {
+void Flic::remove_custom_user_function() {
 	_customUser = nullptr;
 }
 
-void flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
+void Flic::set_flic_user_function(int16(*user_funktion)(int16 frame)) {
 	_flicUser = user_funktion;
 }
 
-void flic::remove_flic_user_function() {
+void Flic::remove_flic_user_function() {
 	_flicUser = nullptr;
 }
 

@@ -24,12 +24,12 @@
 
 namespace Chewy {
 
-text::text() {
+Text::Text() {
 }
-text::~text() {
+Text::~Text() {
 }
 
-void text::crypt(char *txt, uint32 size) {
+void Text::crypt(char *txt, uint32 size) {
 	uint8 *sp;
 	uint32 i;
 	sp = (uint8 *)txt;
@@ -39,7 +39,7 @@ void text::crypt(char *txt, uint32 size) {
 	}
 }
 
-char *text::str_pos(char *txt_adr, int16 pos) {
+char *Text::str_pos(char *txt_adr, int16 pos) {
 	char *ptr;
 	int16 i;
 	ptr = txt_adr;

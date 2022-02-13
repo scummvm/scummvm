@@ -186,7 +186,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	if (player->SoundSwitch == false)
 		det->disable_room_sound();
 	if (!_G(modul)) {
-		room_detail_info *Rdi_ = det->get_room_detail_info();
+		RoomDetailInfo *Rdi_ = det->get_room_detail_info();
 		_roomInfo = &Rdi_->Ri;
 		if (_roomInfo->TafLoad != 255) {
 			char tmp_str[MAXPATH];
@@ -229,7 +229,7 @@ void Room::add_timer_new_room() {
 	_roomTimer.TimerAnz = 0;
 
 	for (int i = 0; i < MAXDETAILS && _roomTimer.TimerAnz < MAX_ROOM_TIMER; i++) {
-		ani_detail_info *adi = det->get_ani_detail(i);
+		AniDetailInfo *adi = det->get_ani_detail(i);
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
 		} else if (adi->start_flag || adi->repeat) {

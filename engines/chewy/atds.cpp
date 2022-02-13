@@ -68,7 +68,7 @@ bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 }
 
 
-atdsys::atdsys() {
+Atdsys::Atdsys() {
 	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_MITTE, 8, 8,};
 	_aadv.Dialog = false;
 	_aadv.StrNr = -1;
@@ -96,7 +96,7 @@ atdsys::atdsys() {
 	_inzeig = _G(in)->get_in_zeiger();
 }
 
-atdsys::~atdsys() {
+Atdsys::~Atdsys() {
 	for (int16 i = 0; i < MAX_HANDLE; i++)
 		close_handle(i);
 
@@ -104,28 +104,28 @@ atdsys::~atdsys() {
 		free(_invUseMem);
 }
 
-void atdsys::set_font(byte *font_adr, int16 fvorx, int16 fhoehe) {
+void Atdsys::set_font(byte *font_adr, int16 fvorx, int16 fhoehe) {
 	_atdsv.Font = font_adr;
 	_atdsv.Fvorx = fvorx;
 	_atdsv.Fhoehe = fhoehe;
 }
 
-void atdsys::set_delay(int16 *delay, int16 silent) {
+void Atdsys::set_delay(int16 *delay, int16 silent) {
 	_atdsv.Delay = delay;
 	_atdsv.Silent = silent;
 }
 
-void atdsys::set_string_end_func
+void Atdsys::set_string_end_func
 (void (*str_func)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode)) {
 	_atdsv.aad_str = str_func;
 }
 
-void atdsys::setHasSpeech(bool hasSpeech) {
+void Atdsys::setHasSpeech(bool hasSpeech) {
 	_hasSpeech = hasSpeech;
 	updateSoundSettings();
 }
 
-void atdsys::updateSoundSettings() {
+void Atdsys::updateSoundSettings() {
 	_atdsv.Display = DISPLAY_TXT;
 
 	if (_hasSpeech) {
@@ -135,7 +135,7 @@ void atdsys::updateSoundSettings() {
 	}
 }
 
-int16 atdsys::get_delay(int16 txt_len) {
+int16 Atdsys::get_delay(int16 txt_len) {
 	int16 z_len = (_ssi->Width / _ssi->Fvorx) + 1;
 	int16 max_len = z_len * _ssi->Zeilen;
 	if (txt_len > max_len)
@@ -145,7 +145,7 @@ int16 atdsys::get_delay(int16 txt_len) {
 	return ret;
 }
 
-SplitStringRet *atdsys::split_string(SplitStringInit *ssi_) {
+SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 	_ssret.Anz = 0;
 	_ssret.Next = false;
 	_ssret.StrPtr = _splitPtr;
@@ -269,7 +269,7 @@ SplitStringRet *atdsys::split_string(SplitStringInit *ssi_) {
 	return &_ssret;
 }
 
-void atdsys::str_null2leer(char *str_start, char *str_end) {
+void Atdsys::str_null2leer(char *str_start, char *str_end) {
 	while (str_start < str_end) {
 		if (*str_start == 0)
 			*str_start = 32;
@@ -277,7 +277,7 @@ void atdsys::str_null2leer(char *str_start, char *str_end) {
 	}
 }
 
-void atdsys::calc_txt_win(SplitStringInit *ssi_) {
+void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	if (ssi_->X - (ssi_->Width >> 1) < 2)
 		ssi_->X = 2;
 	else if (ssi_->X + (ssi_->Width >> 1) > (SCREEN_WIDTH - 2))
@@ -294,11 +294,11 @@ void atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	}
 }
 
-void atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
+void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 	_ssi[nr] = ssinit[0];
 }
 
-Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
+Stream *Atdsys::pool_handle(const char *fname_, const char *fmode) {
 	Stream *handle = chewy_fopen(fname_, fmode);
 	if (handle) {
 		_atdshandle[ATDS_HANDLE] = handle;
@@ -309,7 +309,7 @@ Stream *atdsys::pool_handle(const char *fname_, const char *fmode) {
 	return handle;
 }
 
-void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
+void Atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
@@ -349,7 +349,7 @@ void atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 		error("Error reading from %s", fname_);
 }
 
-void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
+void Atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
@@ -379,7 +379,7 @@ void atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 	}
 }
 
-void atdsys::close_handle(int16 mode) {
+void Atdsys::close_handle(int16 mode) {
 	Stream *stream = _atdshandle[mode];
 	if (stream) {
 		chewy_fclose(_atdshandle[mode]);
@@ -395,7 +395,7 @@ void atdsys::close_handle(int16 mode) {
 	_atdsmem[mode] = nullptr;
 }
 
-char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
+char *Atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr = nullptr;
 	uint32 size = _G(mem)->file->get_poolsize(fname_, chunk_start, chunk_anz);
 	if (size) {
@@ -405,7 +405,7 @@ char *atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
 	return tmp_adr;
 }
 
-void atdsys::load_atds(int16 chunk_nr, int16 mode) {
+void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
 	ChunkHead Ch;
 	char *txt_adr = _atdsmem[mode];
 	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdshandle[mode]);
@@ -431,7 +431,7 @@ void atdsys::load_atds(int16 chunk_nr, int16 mode) {
 	}
 }
 
-void atdsys::save_ads_header(int16 dia_nr) {
+void Atdsys::save_ads_header(int16 dia_nr) {
 	ChunkHead Ch;
 	if (_atdshandle[ADH_HANDLE]) {
 		_G(mem)->file->select_pool_item(_atdshandle[ADH_HANDLE], dia_nr);
@@ -458,7 +458,7 @@ void atdsys::save_ads_header(int16 dia_nr) {
 	}
 }
 
-void atdsys::crypt(char *txt_, uint32 size) {
+void Atdsys::crypt(char *txt_, uint32 size) {
 	uint8 *sp = (uint8 *)txt_;
 	for (uint32 i = 0; i < size; i++) {
 		*sp = -(*sp);
@@ -466,7 +466,7 @@ void atdsys::crypt(char *txt_, uint32 size) {
 	}
 }
 
-void atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
+void Atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
 	switch (mode) {
 	case ATS_DATEI:
 		_ats_st_header[0] = atsheader;
@@ -489,7 +489,7 @@ void atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
 	}
 }
 
-void atdsys::set_ats_mem(int16 mode) {
+void Atdsys::set_ats_mem(int16 mode) {
 	switch (mode) {
 	case ATS_DATEI:
 		_ats_sheader = _ats_st_header[0];
@@ -516,7 +516,7 @@ void atdsys::set_ats_mem(int16 mode) {
 	}
 }
 
-bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr) {
+bool Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr) {
 	*voc_nr = -1;
 	set_ats_mem(mode);
 	if (_atsmem) {
@@ -552,15 +552,15 @@ bool atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, in
 	return _atsv.Display;
 }
 
-void atdsys::stop_ats() {
+void Atdsys::stop_ats() {
 	_atsv.Display = false;
 }
 
-int16 atdsys::ats_get_status() {
+int16 Atdsys::ats_get_status() {
 	return _atsv.Display;
 }
 
-void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
+void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	if (_atsv.Display) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->get_switch_code()) {
@@ -640,7 +640,7 @@ void atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	}
 }
 
-char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mode) {
+char *Atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mode) {
 	char *str_ = nullptr;
 	set_ats_mem(mode);
 
@@ -685,7 +685,7 @@ char *atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 	return str_;
 }
 
-void atdsys::set_ats_str(int16 txt_nr, int16 txt_mode, int16 str_nr, int16 mode) {
+void Atdsys::set_ats_str(int16 txt_nr, int16 txt_mode, int16 str_nr, int16 mode) {
 	set_ats_mem(mode);
 	uint8 status = _ats_sheader[(txt_nr * MAX_ATS_STATUS) + (txt_mode + 1) / 2];
 	int16 ak_nybble = (txt_mode + 1) % 2;
@@ -701,12 +701,12 @@ void atdsys::set_ats_str(int16 txt_nr, int16 txt_mode, int16 str_nr, int16 mode)
 	_ats_sheader[(txt_nr * MAX_ATS_STATUS) + (txt_mode + 1) / 2] = status;
 }
 
-void atdsys::set_ats_str(int16 txt_nr, int16 str_nr, int16 mode) {
+void Atdsys::set_ats_str(int16 txt_nr, int16 str_nr, int16 mode) {
 	for (int16 i = 0; i < 5; i++)
 		set_ats_str(txt_nr, i, str_nr, mode);
 }
 
-int16 atdsys::get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode) {
+int16 Atdsys::get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode) {
 	set_ats_mem(mode);
 	uint8 status = _ats_sheader[(txt_nr * MAX_ATS_STATUS) + (txt_mode + 1) / 2];
 	int16 ak_nybble = (txt_mode + 1) % 2;
@@ -718,23 +718,23 @@ int16 atdsys::get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode) {
 	return (int16)lo_hi[ak_nybble];
 }
 
-int16 atdsys::get_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
+int16 Atdsys::get_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
 	int16 ret = bit->is_bit(_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 	return ret;
 }
 
-void atdsys::set_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
+void Atdsys::set_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
 	bit->set_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 }
 
-void atdsys::del_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
+void Atdsys::del_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
 	bit->del_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 }
 
-char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
+char *Atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 	char *strP = txt_adr;
 	int ende = 0;
 
@@ -756,7 +756,7 @@ char *atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 	return strP;
 }
 
-void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
+void Atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	char *start_str = *str_;
 
 	bool done1 = false;
@@ -801,7 +801,7 @@ void atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	}
 }
 
-void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_) {
+void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_) {
 	char *tmp_str = *str_;
 	char *start_str = *str_;
 	*anz = 0;
@@ -865,7 +865,7 @@ void atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 	}
 }
 
-int16 atdsys::start_aad(int16 dia_nr) {
+int16 Atdsys::start_aad(int16 dia_nr) {
 	if (_aadv.Dialog)
 		stop_aad();
 
@@ -896,12 +896,12 @@ int16 atdsys::start_aad(int16 dia_nr) {
 	return _aadv.Dialog;
 }
 
-void atdsys::stop_aad() {
+void Atdsys::stop_aad() {
 	_aadv.Dialog = false;
 	_aadv.StrNr = -1;
 }
 
-void atdsys::print_aad(int16 scrx, int16 scry) {
+void Atdsys::print_aad(int16 scrx, int16 scry) {
 	if (_aadv.Dialog) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->get_switch_code()) {
@@ -1035,11 +1035,11 @@ void atdsys::print_aad(int16 scrx, int16 scry) {
 	}
 }
 
-int16 atdsys::aad_get_status() {
+int16 Atdsys::aad_get_status() {
 	return _aadv.StrNr;
 }
 
-int16 atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
+int16 Atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
 	*txt_len = 0;
 	char *ptr = str_;
 	int16 zeilen = 0;
@@ -1052,7 +1052,7 @@ int16 atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
 	return zeilen;
 }
 
-void atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
+void Atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 	char *start_ptr = *ptr;
 
 	if (start_ptr[0] == (char)BLOCKENDE &&
@@ -1092,7 +1092,7 @@ void atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 	}
 }
 
-bool  atdsys::ads_start(int16 dia_nr) {
+bool  Atdsys::ads_start(int16 dia_nr) {
 	bool ret = false;
 
 	load_atds(dia_nr, ADS_DATEI);
@@ -1120,17 +1120,17 @@ bool  atdsys::ads_start(int16 dia_nr) {
 	return ret;
 }
 
-void atdsys::stop_ads() {
+void Atdsys::stop_ads() {
 	_adsv.Dialog = -1;
 	_adsv.AutoDia = false;
 
 }
 
-int16 atdsys::ads_get_status() {
+int16 Atdsys::ads_get_status() {
 	return _adsv.Dialog;
 }
 
-int16 atdsys::check_item(int16 block_nr, int16 item_nr) {
+int16 Atdsys::check_item(int16 block_nr, int16 item_nr) {
 	int16 ret = true;
 	char *tmp_adr = _adsv.Ptr;
 	ads_search_block(block_nr, &tmp_adr);
@@ -1143,7 +1143,7 @@ int16 atdsys::check_item(int16 block_nr, int16 item_nr) {
 	return ret;
 }
 
-char **atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
+char **Atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 	*anzahl = 0;
 	memset(_ePtr, 0, sizeof(char *)*ADS_MAX_BL_EIN);
 	if (_adsv.Dialog != -1) {
@@ -1169,7 +1169,7 @@ char **atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 	return _ePtr;
 }
 
-AdsNextBlk *atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
+AdsNextBlk *Atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 	_adsnb.BlkNr = blk_nr;
 	if (!_aadv.Dialog) {
 		if (!_adsv.AutoDia) {
@@ -1189,7 +1189,7 @@ AdsNextBlk *atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 	return &_adsnb;
 }
 
-AdsNextBlk *atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
+AdsNextBlk *Atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
 	if (bit->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_SHOW_BIT) == false)
 		_adsBlock[blk_nr].Show[_eNr[item_nr]] = false;
 	_adsnb.EndNr = _eNr[item_nr];
@@ -1220,7 +1220,7 @@ AdsNextBlk *atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
 	return &_adsnb;
 }
 
-int16 atdsys::return_block(AdsBlock *ab) {
+int16 Atdsys::return_block(AdsBlock *ab) {
 	_adsStackPtr -= 1;
 	int16 ret = -1;
 	bool ende = false;
@@ -1238,7 +1238,7 @@ int16 atdsys::return_block(AdsBlock *ab) {
 	return ret;
 }
 
-void atdsys::ads_search_block(int16 blk_nr, char **ptr) {
+void Atdsys::ads_search_block(int16 blk_nr, char **ptr) {
 	char *start_ptr = *ptr;
 	bool ende = false;
 	while (!ende) {
@@ -1257,7 +1257,7 @@ void atdsys::ads_search_block(int16 blk_nr, char **ptr) {
 	}
 }
 
-void atdsys::ads_search_item(int16 item_nr, char **blk_adr) {
+void Atdsys::ads_search_item(int16 item_nr, char **blk_adr) {
 	char *start_ptr = *blk_adr + 1;
 	bool ende = false;
 	while (!ende) {
@@ -1275,7 +1275,7 @@ void atdsys::ads_search_item(int16 item_nr, char **blk_adr) {
 	}
 }
 
-int16 atdsys::start_ads_auto_dia(char *item_adr) {
+int16 Atdsys::start_ads_auto_dia(char *item_adr) {
 	_aadv.Dialog = false;
 	if (item_adr) {
 		_aadv.Person = _adsv.Person;
@@ -1300,7 +1300,7 @@ int16 atdsys::start_ads_auto_dia(char *item_adr) {
 	return _aadv.Dialog;
 }
 
-void atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
+void Atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 	if (_adsv.Dialog == dia_nr) {
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = false;
@@ -1312,7 +1312,7 @@ void atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 	}
 }
 
-void atdsys::show_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
+void Atdsys::show_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 	if (_adsv.Dialog == dia_nr) {
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = true;
@@ -1324,7 +1324,7 @@ void atdsys::show_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 	}
 }
 
-int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
+int16 Atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 	int16 txt_nr = -1;
 	if (cur_inv != -1) {
 		if (_invBlockNr != cur_inv) {
@@ -1365,7 +1365,7 @@ int16 atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 	return txt_nr;
 }
 
-int16 atdsys::getStereoPos(int16 x) {
+int16 Atdsys::getStereoPos(int16 x) {
 	// TODO: Convert to ScummVM's balance (-127 ... 0 ... 127)
 	return 0;
 #if 0

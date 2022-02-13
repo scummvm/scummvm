@@ -25,12 +25,12 @@
 
 namespace Chewy {
 
-effect::effect() {
+Effect::Effect() {
 }
-effect::~effect() {
+Effect::~Effect() {
 }
 
-void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col, int16 skip_line) {
+void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col, int16 skip_line) {
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	if (!_G(modul)) {
 		int16 *rnd_zeiger = (int16 *)rnd_speicher;
@@ -62,7 +62,7 @@ void effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 	}
 }
 
-void effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 frames, uint8 mode, int16 col) {
+void Effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 frames, uint8 mode, int16 col) {
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	if (!_G(modul)) {
 		int16 i = 0;
@@ -148,7 +148,7 @@ void effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 	}
 }
 
-void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
+void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 	if (mode) {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setze_zeiger(workpage_ + 4);
@@ -166,7 +166,7 @@ void effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 	}
 }
 
-void effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
+void Effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
 	if (mode) {
 		for (int i = 0, y = 0; i < 20; ++i, y += 8) {
 			_G(out)->setze_zeiger(workpage_ + 4);

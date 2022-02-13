@@ -27,15 +27,15 @@
 
 namespace Chewy {
 
-memory::memory() {
+Memory::Memory() {
 	file = new Data();
 }
 
-memory::~memory() {
+Memory::~Memory() {
 	delete (file);
 }
 
-taf_info *memory::taf_adr(const char *filename) {
+taf_info *Memory::taf_adr(const char *filename) {
 	SpriteResource *res = new SpriteResource(filename);
 	int32 imageCount = res->getChunkCount();
 	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(taf_info);
@@ -64,7 +64,7 @@ taf_info *memory::taf_adr(const char *filename) {
 	return tinfo;
 }
 
-taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
+taf_seq_info *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	Common::File *rs = new Common::File();
 	rs->open(CH_SPZ_FILE);
 	taf_dateiheader header;
@@ -160,7 +160,7 @@ taf_seq_info *memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	return ts_info;
 }
 
-void memory::tff_adr(const char *filename, byte **speicher) {
+void Memory::tff_adr(const char *filename, byte **speicher) {
 	uint32 size;
 	size = file->size(filename, TFFDATEI);
 
@@ -180,7 +180,7 @@ void memory::tff_adr(const char *filename, byte **speicher) {
 }
 
 // Only called from init_load() with filename blende.rnd
-byte *memory::void_adr(const char *filename) {
+byte *Memory::void_adr(const char *filename) {
 	uint32 size = 0;
 	byte *ptr = 0;
 	size = file->size(filename, 200);

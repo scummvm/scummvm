@@ -47,12 +47,12 @@ extern const int16 ANI_INVENT_END[3];
 extern const int16 SPZ_ANI_PH[][2];
 
 class ChewyFont;
-class cursor;
+class Cursor;
 class FontMgr;
 class InputMgr;
-class io_game;
+class IOGame;
 class McgaGraphics;
-class memory;
+class Memory;
 class SoundPlayer;
 
 class Globals {
@@ -137,10 +137,10 @@ public:
 	int16 _room_start_nr = 0;
 	int16 _TmpFrameSpeed = 0;
 	InputMgr *_in = nullptr;
-	memory *_mem = nullptr;
-	io_game *_iog = nullptr;
+	Memory *_mem = nullptr;
+	IOGame *_iog = nullptr;
 	McgaGraphics *_out = nullptr;
-	cursor *_cur = nullptr;
+	Cursor *_cur = nullptr;
 	SoundPlayer *_sndPlayer = nullptr;
 	ChewyFont *_font6 = nullptr;
 	ChewyFont *_font8 = nullptr;
@@ -268,9 +268,9 @@ extern MovInfo auto_mov_obj[MAX_OBJ_MOV];
 extern MovPhasen mov_phasen[MAX_OBJ_MOV];
 extern MovLine mov_line[MAX_OBJ_MOV][5];
 extern TimerBlk ani_timer[MAX_TIMER_OBJ];
-extern room_detail_info *Rdi;
-extern static_detail_info *Sdi;
-extern ani_detail_info *Adi;
+extern RoomDetailInfo *Rdi;
+extern StaticDetailInfo *Sdi;
+extern AniDetailInfo *Adi;
 extern Flags flags;
 extern CustomInfo Ci;
 extern GotoPkt gpkt;
@@ -286,17 +286,17 @@ extern int16 ani_stand_count[MAX_PERSON];
 
 extern bool ani_stand_flag[MAX_PERSON];
 
-extern bitclass *bit;
-extern gedclass *ged;
-extern text *txt;
+extern BitClass *bit;
+extern GedClass *ged;
+extern Text *txt;
 extern Room *room;
 extern Object *obj;
-extern timer *uhr;
-extern detail *det;
-extern effect *fx;
-extern atdsys *atds;
-extern flic *flc;
-extern movclass *mov;
+extern Timer *uhr;
+extern Detail *det;
+extern Effect *fx;
+extern Atdsys *atds;
+extern Flic *flc;
+extern MovClass *mov;
 
 extern char backged[];
 extern AutoMov auto_mov[MAX_AUTO_MOV];

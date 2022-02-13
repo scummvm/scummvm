@@ -25,7 +25,7 @@
 
 namespace Chewy {
 
-cursor::cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
+Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
 	_out = iout;
 	_in = iin;
 	_scrWidth = _G(scr_w);
@@ -44,10 +44,10 @@ cursor::cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
 	}
 }
 
-cursor::~cursor() {
+Cursor::~Cursor() {
 }
 
-void cursor::plot_cur() {
+void Cursor::plot_cur() {
 	if (_maus_da && _sichtbar) {
 		if (cur_move) {
 			mouse_active = true;
@@ -79,7 +79,7 @@ void cursor::plot_cur() {
 	}
 }
 
-void cursor::show_cur() {
+void Cursor::show_cur() {
 	if ((_maus_da) && (!_sichtbar)) {
 		_sichtbar = true;
 		mouse_active = true;
@@ -100,7 +100,7 @@ void cursor::show_cur() {
 	}
 }
 
-void cursor::hide_cur() {
+void Cursor::hide_cur() {
 	if ((_maus_da) && (_sichtbar)) {
 		if (!_curblk->no_back) {
 			_out->blockcopy(_curblk->cur_back, _cur_x_old, _cur_y_old, _scrWidth);
@@ -109,13 +109,13 @@ void cursor::hide_cur() {
 	}
 }
 
-void cursor::set_cur_ani(cur_ani *ani1) {
+void Cursor::set_cur_ani(cur_ani *ani1) {
 	_ani = ani1;
 	_cur_aufruf = 0;
 	_ani_count = _ani->ani_anf;
 }
 
-void cursor::move(int16 x, int16 y) {
+void Cursor::move(int16 x, int16 y) {
 	if (_maus_da) {
 		mouse_active = true;
 
@@ -132,7 +132,7 @@ void cursor::move(int16 x, int16 y) {
 	}
 }
 
-void cursor::wait_taste_los(bool maus_plot) {
+void Cursor::wait_taste_los(bool maus_plot) {
 	int16 is_mouse = 0;
 	if (_maus_da) {
 		g_events->update();

@@ -70,10 +70,10 @@ namespace Chewy {
 
 #define DOPPEL_KLICK 0.5
 
-class io_game {
+class IOGame {
 public:
-	io_game(McgaGraphics *out, InputMgr *in, cursor *curp);
-	~io_game();
+	IOGame(McgaGraphics *out, InputMgr *in, Cursor *curp);
+	~IOGame();
 
 	int16 io_menu(iog_init *iostruc);
 
@@ -99,7 +99,7 @@ private:
 
 	McgaGraphics *_out;
 	InputMgr *_in;
-	cursor *_cur;
+	Cursor *_cur;
 	iog_init *_io;
 	uint32 _dblClickStart, _dblClickEnd;
 	kb_info *_kbinfo;

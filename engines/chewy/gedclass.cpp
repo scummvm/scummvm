@@ -27,7 +27,7 @@
 
 namespace Chewy {
 
-void gedclass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void GedClass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 	Common::File f;
 	if (f.open(fname)) {
 		load_ged_pool(&f, Gh, ch_nr, speicher);
@@ -36,7 +36,7 @@ void gedclass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr,
 	}
 }
 
-void gedclass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void GedClass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 	if (stream) {
 		stream->seek(0, SEEK_SET);
 		if (_gedPoolHeader.load(stream)) {
@@ -47,7 +47,7 @@ void gedclass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader 
 	}
 }
 
-void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher) {
+void GedClass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher) {
 	if (stream) {
 		// Scan for the correct index entry
 		int i = 0;
@@ -72,7 +72,7 @@ void gedclass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *st
 	}
 }
 
-int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
+int16 GedClass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
 	int16 result = 0;
 	if (_gedUserFunc)
 		result = _gedUserFunc(speicher[((y / 8) * x_anz) + (x / 8)]);
@@ -80,7 +80,7 @@ int16 gedclass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
 	return result;
 }
 
-int16 gedclass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
+int16 GedClass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
 	int16 result = 0;
 	if (_gedUserFunc)
 		result = _gedUserFunc(speicher[g_idx]);

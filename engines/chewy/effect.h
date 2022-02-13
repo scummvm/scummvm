@@ -32,10 +32,10 @@ enum BlendMode {
 	BLEND4 = 4
 };
 
-class effect {
+class Effect {
 public:
-	effect();
-	~effect();
+	Effect();
+	~Effect();
 
 	void blende1(byte *sram_speicher, byte *screen,
 		byte *palette, int16 frames, uint8 mode, int16 col);

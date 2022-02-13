@@ -180,7 +180,7 @@ void Room3::sonde_knarre() {
 		{ {  13,  45,  75 }, 1, 3 }
 	};
 	hide_cur();
-	room_detail_info *rdi = det->get_room_detail_info();
+	RoomDetailInfo *rdi = det->get_room_detail_info();
 
 	det->load_taf_seq(162, 17, nullptr);
 	int16 tmp = _G(zoom_horizont);

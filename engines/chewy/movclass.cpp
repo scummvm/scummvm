@@ -48,17 +48,17 @@ namespace Chewy {
 #define MOV_X 1
 #define MOV_Y 2
 
-movclass::movclass() {
+MovClass::MovClass() {
 	_vecTbl[0] = -40;
 	_vecTbl[1] = 1;
 	_vecTbl[2] = 40;
 	_vecTbl[3] = -1;
 }
 
-movclass::~movclass() {
+MovClass::~MovClass() {
 }
 
-void movclass::goto_xy(GotoPkt *gp) {
+void MovClass::goto_xy(GotoPkt *gp) {
 	int16 start_feld;
 	int16 ziel_feld;
 	//int16 anz;
@@ -99,7 +99,7 @@ void movclass::goto_xy(GotoPkt *gp) {
 	}
 }
 
-int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
+int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 	byte *speicher;
 	int16 i;
 	int16 ok;
@@ -198,20 +198,20 @@ int16 movclass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 	return ret;
 }
 
-void movclass::stop_auto_go() {
+void MovClass::stop_auto_go() {
 	_agv.AutoGo = false;
 	_agv.Continue = true;
 }
 
-void movclass::continue_auto_go() {
+void MovClass::continue_auto_go() {
 	_agv.AutoGo = _agv.Continue;
 }
 
-bool movclass::auto_go_status() {
+bool MovClass::auto_go_status() {
 	return _agv.AutoGo;
 }
 
-void movclass::calc_xy() {
+void MovClass::calc_xy() {
 	int16 ende;
 	int16 i;
 	int16 seite;
@@ -294,7 +294,7 @@ void movclass::calc_xy() {
 	}
 }
 
-short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
+short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 	int16 tmpx;
 	int16 tmpy;
 	int16 tmpz;
@@ -436,7 +436,7 @@ short movclass::calc_go(int16 src_feld, int16 *dst_feld) {
 	return steps;
 }
 
-void movclass::get_mov_line() {
+void MovClass::get_mov_line() {
 	int16 ende;
 	int16 start_feld;
 	int16 tmp_feld;
@@ -519,7 +519,7 @@ void movclass::get_mov_line() {
 	}
 }
 
-void movclass::calc_mov_line_xit(int16 start_feld) {
+void MovClass::calc_mov_line_xit(int16 start_feld) {
 	int16 calc_feld;
 	int16 last_feld;
 	int16 ziel_feld;
@@ -697,21 +697,21 @@ void movclass::calc_mov_line_xit(int16 start_feld) {
 	}
 }
 
-int16 movclass::get_feld_nr(int16 x, int16 y) {
+int16 MovClass::get_feld_nr(int16 x, int16 y) {
 	x >>= 3;
 	y >>= 3;
 
 	return x + (y * _gpkt->Breite);
 }
 
-void movclass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
+void MovClass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
 	*x = (fnr % _gpkt->Breite);
 	*y = (fnr / _gpkt->Breite);
 	*x <<= 3;
 	*y <<= 3;
 }
 
-void movclass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
+void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 	uint8 xvector;
 	uint8 yvector;
 	uint8 zvector;

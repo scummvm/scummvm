@@ -48,16 +48,16 @@ static const char AB_TBL_G[4][3] = {
 	{ FSTRING11 }, { FSTRING12 }, { FSTRING13 }, { FSTRING14 }
 };
 
-io_game::io_game(McgaGraphics *iout, InputMgr *iin, cursor *curp) {
+IOGame::IOGame(McgaGraphics *iout, InputMgr *iin, Cursor *curp) {
 	_out = iout;
 	_in = iin;
 	_cur = curp;
 }
 
-io_game::~io_game() {
+IOGame::~IOGame() {
 }
 
-int16 io_game::io_menu(iog_init *iostruc) {
+int16 IOGame::io_menu(iog_init *iostruc) {
 	int16 max_scroll = 20;
 	int16 i, j, y;
 	char ende = 0, mouse_f = 1;
@@ -425,7 +425,7 @@ int16 io_game::io_menu(iog_init *iostruc) {
 	return ret;
 }
 
-void io_game::mark_eintrag(int16 y, int16 nr) {
+void IOGame::mark_eintrag(int16 y, int16 nr) {
 	_out->pop_box(_io->popx + 8, y, _io->popx + 131, y + 10,
 	              _io->m_col[1], _io->m_col[0], _io->m_col[4]);
 	_out->printxy(_io->popx + 10, y + 2, _io->m_col[2], 300, _scrWidth, "%d.", nr + 1);
@@ -448,7 +448,7 @@ void io_game::mark_eintrag(int16 y, int16 nr) {
 	}
 }
 
-void io_game::unmark_eintrag(int16 y, int16 nr) {
+void IOGame::unmark_eintrag(int16 y, int16 nr) {
 	_out->pop_box(_io->popx + 8, y, _io->popx + 131, y + 10, _io->m_col[3],
 	              _io->m_col[3], _io->m_col[3]);
 	_out->printxy(_io->popx + 10, y + 2, _io->m_col[5], 300, _scrWidth, "%d.", nr + 1);
@@ -462,7 +462,7 @@ void io_game::unmark_eintrag(int16 y, int16 nr) {
 	}
 }
 
-void io_game::plot_dir_liste(int16 cur_y, int16 start) {
+void IOGame::plot_dir_liste(int16 cur_y, int16 start) {
 	for (int16 i = start; i < start + 8; i++) {
 		if (i < 20) {
 
@@ -483,7 +483,7 @@ void io_game::plot_dir_liste(int16 cur_y, int16 start) {
 	}
 }
 
-void io_game::schalter_aus() {
+void IOGame::schalter_aus() {
 	_out->pop_box(_io->popx + 163, _io->popy + 6, _io->popx + 241, _io->popy + 18,
 	              _io->m_col[0], _io->m_col[1], _io->m_col[5]);
 	if (_io->f1)
@@ -506,7 +506,7 @@ void io_game::schalter_aus() {
 		              FSTRING4);
 }
 
-void io_game::plot_io() {
+void IOGame::plot_io() {
 	const int16 y1 = 120;
 
 	_out->pop_box(_io->popx, _io->popy, _io->popx + 248, _io->popy + y1, _io->m_col[0], _io->m_col[1], _io->m_col[5]);
@@ -523,21 +523,21 @@ void io_game::plot_io() {
 	}
 }
 
-void io_game::plot_auf_txt(int16 farbe) {
+void IOGame::plot_auf_txt(int16 farbe) {
 	for (int16 i = 0; i < 3; i++)
 		_out->printxy(_io->popx + 146, _io->popy + 15 + i * 10, farbe, 300, _scrWidth, AUF_TBL_G[i]);
 }
 
-void io_game::plot_ab_txt(int16 farbe) {
+void IOGame::plot_ab_txt(int16 farbe) {
 	for (int16 i = 0; i < 4; i++)
 		_out->printxy(_io->popx + 146, _io->popy + 59 + i * 10, farbe, 300, _scrWidth, AB_TBL_G[i]);
 }
 
-void io_game::itoa(int N, char *s, int base) {
+void IOGame::itoa(int N, char *s, int base) {
 	sprintf(s, "%d", N);
 }
 
-int16 io_game::get_savegame_files() {
+int16 IOGame::get_savegame_files() {
 	SaveStateList saveList = g_engine->listSaves();
 	int ret = 0;
 
@@ -559,7 +559,7 @@ int16 io_game::get_savegame_files() {
 	return ret;
 }
 
-void io_game::save(int16 y, int16 slotNum, char *fname) {
+void IOGame::save(int16 y, int16 slotNum, char *fname) {
 	_cur->wait_taste_los(true);
 	_in->alter_kb_handler();
 	_cur->hide_cur();
@@ -584,7 +584,7 @@ void io_game::save(int16 y, int16 slotNum, char *fname) {
 	(void)g_engine->saveGameState(slotNum, desc);
 }
 
-void io_game::load(int16 slotNum, char *fname) {
+void IOGame::load(int16 slotNum, char *fname) {
 	get_savegame_files();
 
 	_cur->hide_cur();
@@ -593,12 +593,12 @@ void io_game::load(int16 slotNum, char *fname) {
 	}
 }
 
-void io_game::print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 width, char *name) {
+void IOGame::print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol, int16 width, char *name) {
 	_out->printxy(x + 1, y + 1, scol, bcol, width, name);
 	_out->printxy(x, y, fcol, bcol, width, name);
 }
 
-char *io_game::io_init(iog_init *iostruc) {
+char *IOGame::io_init(iog_init *iostruc) {
 	_io = iostruc;
 	for (int16 i = 0; i < 20; i++)
 		_fileFind[i][0] = 0;
@@ -607,7 +607,7 @@ char *io_game::io_init(iog_init *iostruc) {
 	return &_fileFind[0][0];
 }
 
-void io_game::save_entry(int16 slotNum, char *fname) {
+void IOGame::save_entry(int16 slotNum, char *fname) {
 	Common::String desc(&_fileFind[slotNum][1]);
 	g_engine->saveGameState(slotNum, desc);
 }

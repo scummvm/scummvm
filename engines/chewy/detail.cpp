@@ -48,7 +48,7 @@ bool RaumAutoMov::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool sound_def_blk::load(Common::SeekableReadStream *src) {
+bool SoundDefBlk::load(Common::SeekableReadStream *src) {
 	int i;
 
 	for (i = 0; i < MAX_SOUNDS; ++i)
@@ -69,7 +69,7 @@ bool sound_def_blk::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool ani_detail_info::load(Common::SeekableReadStream *src) {
+bool AniDetailInfo::load(Common::SeekableReadStream *src) {
 	x = src->readSint16LE();
 	y = src->readSint16LE();
 	start_flag = src->readByte();
@@ -91,7 +91,7 @@ bool ani_detail_info::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool static_detail_info::load(Common::SeekableReadStream *src) {
+bool StaticDetailInfo::load(Common::SeekableReadStream *src) {
 	x = src->readSint16LE();
 	y = src->readSint16LE();
 	SprNr = src->readSint16LE();
@@ -102,7 +102,7 @@ bool static_detail_info::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool room_detail_info::load(Common::SeekableReadStream *src) {
+bool RoomDetailInfo::load(Common::SeekableReadStream *src) {
 	int i;
 
 	StaticDetailAnz = src->readSint16LE();
@@ -134,8 +134,8 @@ bool RdiDateiHeader::load(Common::SeekableReadStream *src) {
 }
 
 
-detail::detail() {
-	int16 size = sizeof(room_detail_info);
+Detail::Detail() {
+	int16 size = sizeof(RoomDetailInfo);
 	char *tptr = (char *)&_rdi;
 
 	for (int16 i = 0; i < size; i++)
@@ -161,18 +161,18 @@ detail::detail() {
 	_directTafAni = OFF;
 }
 
-detail::~detail() {
+Detail::~Detail() {
 	_directTafAni = OFF;
 }
 
-void detail::load_rdi(const char *fname_, int16 room_nr) {
+void Detail::load_rdi(const char *fname_, int16 room_nr) {
 	Common::File f;
 	taf_info *tmprdi = _rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
 		if (_rdi_datei_header.load(&f)) {
 			if (!scumm_strnicmp(_rdi_datei_header.Id, "RDI", 3)) {
-				f.seek(room_nr * room_detail_info::SIZE(), SEEK_CUR);
+				f.seek(room_nr * RoomDetailInfo::SIZE(), SEEK_CUR);
 
 				if (!_rdi.load(&f)) {
 					error("load_rdi error");
@@ -192,7 +192,7 @@ void detail::load_rdi(const char *fname_, int16 room_nr) {
 	_rdi.dptr = tmprdi;
 }
 
-void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
+void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 	if (strcmp(_tafName, fname_)) {
 		if (_rdi.dptr) {
 			if (_fullTaf) {
@@ -218,7 +218,7 @@ void detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 	}
 }
 
-void detail::del_dptr() {
+void Detail::del_dptr() {
 	if (_rdi.dptr) {
 		if (_fullTaf)
 			free((char *)_rdi.dptr);
@@ -231,7 +231,7 @@ void detail::del_dptr() {
 	}
 }
 
-void detail::load_taf_tbl(taf_info *fti) {
+void Detail::load_taf_tbl(taf_info *fti) {
 	if (!fti) {
 		fti = _rdi.dptr;
 	}
@@ -247,7 +247,7 @@ void detail::load_taf_tbl(taf_info *fti) {
 	}
 }
 
-taf_info *detail::init_taf_tbl(const char *fname_) {
+taf_info *Detail::init_taf_tbl(const char *fname_) {
 	taf_info *Tt = 0;
 	SpriteResource *res = new SpriteResource(_tafName);
 	int16 anz = res->getChunkCount();
@@ -265,7 +265,7 @@ taf_info *detail::init_taf_tbl(const char *fname_) {
 	return Tt;
 }
 
-void detail::del_taf_tbl(taf_info *Tt) {
+void Detail::del_taf_tbl(taf_info *Tt) {
 	if (!Tt) {
 		Tt = _rdi.dptr;
 	}
@@ -276,7 +276,7 @@ void detail::del_taf_tbl(taf_info *Tt) {
 	free((char *) Tt);
 }
 
-void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
+void Detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
 	for (int16 i = start; i < start + anz && i < Tt->anzahl; i++) {
@@ -285,7 +285,7 @@ void detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 	}
 }
 
-void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
+void Detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
 
@@ -300,21 +300,21 @@ void detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
 	delete res;
 }
 
-void detail::set_static_spr(int16 nr, int16 spr_nr) {
+void Detail::set_static_spr(int16 nr, int16 spr_nr) {
 	_rdi.Sinfo[nr].SprNr = spr_nr;
 }
 
-void detail::hide_static_spr(int16 nr) {
+void Detail::hide_static_spr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = true;
 }
 
-void detail::show_static_spr(int16 nr) {
+void Detail::show_static_spr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = false;
 }
 
-byte *detail::get_static_image(int16 det_nr) {
+byte *Detail::get_static_image(int16 det_nr) {
 	byte *ret;
 	int16 index = _rdi.Sinfo[det_nr].SprNr;
 	if (index == -1)
@@ -324,7 +324,7 @@ byte *detail::get_static_image(int16 det_nr) {
 	return ret;
 }
 
-void detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag) {
+void Detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag) {
 	if (korr_flag) {
 		int16 *Cxy = _rdi.dptr->korrektur + (_rdi.Sinfo[det_nr].SprNr << 1);
 		x += Cxy[0];
@@ -335,17 +335,17 @@ void detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr
 	_rdi.Sinfo[det_nr].Hide = hide;
 }
 
-void detail::set_detail_pos(int16 det_nr, int16 x, int16 y) {
+void Detail::set_detail_pos(int16 det_nr, int16 x, int16 y) {
 	_rdi.Ainfo[det_nr].x = x;
 	_rdi.Ainfo[det_nr].y = y;
 }
 
-void detail::get_ani_werte(int16 ani_nr, int16 *start, int16 *end) {
+void Detail::get_ani_werte(int16 ani_nr, int16 *start, int16 *end) {
 	*start = _rdi.Ainfo[ani_nr].start_ani;
 	*end = _rdi.Ainfo[ani_nr].end_ani;
 }
 
-void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
+void Detail::set_ani(int16 ani_nr, int16 start, int16 end) {
 	if (start > end) {
 		int16 tmp = start;
 		start = end;
@@ -355,55 +355,55 @@ void detail::set_ani(int16 ani_nr, int16 start, int16 end) {
 	_rdi.Ainfo[ani_nr].end_ani = end;
 }
 
-byte *detail::get_image(int16 spr_nr) {
+byte *Detail::get_image(int16 spr_nr) {
 	byte *ret = _rdi.dptr->image[spr_nr];
 	return ret;
 }
 
-ani_detail_info *detail::get_ani_detail(int16 ani_nr) {
-	ani_detail_info *ret = &_rdi.Ainfo[ani_nr];
+AniDetailInfo *Detail::get_ani_detail(int16 ani_nr) {
+	AniDetailInfo *ret = &_rdi.Ainfo[ani_nr];
 	return ret;
 }
 
-int16 *detail::get_korrektur_tbl() {
+int16 *Detail::get_korrektur_tbl() {
 	int16 *ret;
 	ret = _rdi.dptr->korrektur;
 	return ret;
 }
 
-void detail::init_taf(taf_info *dptr) {
+void Detail::init_taf(taf_info *dptr) {
 	_rdi.dptr = dptr;
 }
 
-taf_info *detail::get_taf_info() {
+taf_info *Detail::get_taf_info() {
 	taf_info *ret;
 	ret = _rdi.dptr;
 	return ret;
 }
 
-room_detail_info *detail::get_room_detail_info() {
+RoomDetailInfo *Detail::get_room_detail_info() {
 	return &_rdi;
 }
 
-void detail::freeze_ani() {
+void Detail::freeze_ani() {
 	_aniFreezeflag = true;
 }
 
-void detail::unfreeze_ani() {
+void Detail::unfreeze_ani() {
 	_aniFreezeflag = false;
 }
 
-void detail::set_static_ani(int16 ani_nr, int16 static_nr) {
+void Detail::set_static_ani(int16 ani_nr, int16 static_nr) {
 	_rdi.Ainfo[ani_nr].show_1_phase = true;
 	if (static_nr != -1)
 		_rdi.Ainfo[ani_nr].phase_nr = static_nr;
 }
 
-void detail::del_static_ani(int16 ani_nr) {
+void Detail::del_static_ani(int16 ani_nr) {
 	_rdi.Ainfo[ani_nr].show_1_phase = false;
 }
 
-void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, int16 zoomx, int16 zoomy) {
+void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, int16 zoomx, int16 zoomy) {
 	if (start > end)
 		SWAP(start, end);
 
@@ -414,7 +414,7 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; (i <= end) && (!_G(modul)); i++) {
-		ani_detail_info *adiptr = &_rdi.Ainfo[i];
+		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
 			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
@@ -490,7 +490,7 @@ void detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 	}
 }
 
-void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end) {
+void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end) {
 	if (start > end)
 		SWAP(start, end);
 
@@ -510,9 +510,9 @@ void detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 	}
 }
 
-void detail::start_detail(int16 nr, int16 rep, int16 reverse) {
+void Detail::start_detail(int16 nr, int16 rep, int16 reverse) {
 	if (nr != -1) {
-		ani_detail_info *adiptr;
+		AniDetailInfo *adiptr;
 		adiptr = &_rdi.Ainfo[nr];
 		if (rep)
 			adiptr->start_flag = rep;
@@ -527,29 +527,29 @@ void detail::start_detail(int16 nr, int16 rep, int16 reverse) {
 	}
 }
 
-void detail::stop_detail(int16 nr) {
+void Detail::stop_detail(int16 nr) {
 	if (nr >= 0 && nr < 32) {
-		ani_detail_info *adiptr = &_rdi.Ainfo[nr];
+		AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
 		adiptr->start_flag = 0;
 	}
 }
 
-void detail::set_ani_delay(int16 nr, int16 del) {
-	ani_detail_info *adiptr = &_rdi.Ainfo[nr];
+void Detail::set_ani_delay(int16 nr, int16 del) {
+	AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
 	adiptr->delay = del;
 }
 
-void detail::init_list(int16 *mv) {
+void Detail::init_list(int16 *mv) {
 	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
 		_rdi.mvect[i] = mv[i];
 }
 
-void detail::get_list(int16 *mv) {
+void Detail::get_list(int16 *mv) {
 	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
 		mv[i] = _rdi.mvect[i];
 }
 
-int16 detail::maus_vector(int16 x, int16 y) {
+int16 Detail::maus_vector(int16 x, int16 y) {
 	int16 i, j;
 	i = -1;
 	for (j = 0; (j < (MAX_M_ITEMS - 1) << 2) && (i == -1); j += 4) {
@@ -563,7 +563,7 @@ int16 detail::maus_vector(int16 x, int16 y) {
 	return i;
 }
 
-int16 detail::get_ani_status(int16 det_nr) {
+int16 Detail::get_ani_status(int16 det_nr) {
 	int16 ret;
 	if (_rdi.Ainfo[det_nr].start_flag > 0)
 		ret = 1;
@@ -572,10 +572,10 @@ int16 detail::get_ani_status(int16 det_nr) {
 	return ret;
 }
 
-SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 spr_nr, int16 mode) {
+SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 spr_nr, int16 mode) {
 	if (det_nr > MAXDETAILS)
 		det_nr = MAXDETAILS - 1;
-	ani_detail_info *adiptr = &_rdi.Ainfo[det_nr];
+	AniDetailInfo *adiptr = &_rdi.Ainfo[det_nr];
 	if (spr_nr < adiptr->start_ani)
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
@@ -608,12 +608,12 @@ SprInfo detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 	return _sprInfo;
 }
 
-void detail::set_global_delay(int16 delay) {
+void Detail::set_global_delay(int16 delay) {
 	_globalDelay = delay;
 	_globalDelay -= 2;
 }
 
-void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
+void Detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 	float tmpx;
 	float tmpy;
 	float tmpx1;
@@ -631,21 +631,21 @@ void detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 	*ky += (int16)tmpy;
 }
 
-void detail::disable_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
+void Detail::disable_detail_sound(int16 nr) {
+	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
 		sdb->sound_enable[i] = false;
 }
 
-void detail::enable_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
+void Detail::enable_detail_sound(int16 nr) {
+	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (int16 i = 0; i < MAX_SOUNDS; i++)
 		if (sdb->sound_index[i] != -1)
 			sdb->sound_enable[i] = true;
 }
 
-void detail::play_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
+void Detail::play_detail_sound(int16 nr) {
+	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
 	Sound *sound = g_engine->_sound;
 	for (int16 k = 0; k < MAX_SOUNDS; k++) {
 		if ((sdb->sound_enable[k]) && (sdb->sound_index[k] != -1) &&
@@ -658,8 +658,8 @@ void detail::play_detail_sound(int16 nr) {
 	}
 }
 
-void detail::clear_detail_sound(int16 nr) {
-	sound_def_blk *sdb = &_rdi.Ainfo[nr].sfx;
+void Detail::clear_detail_sound(int16 nr) {
+	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
 	for (short i = 0; i < MAX_SOUNDS; i++) {
 		sdb->sound_enable[i] = false;
 		sdb->sound_index[i] = -1;
@@ -672,20 +672,20 @@ void detail::clear_detail_sound(int16 nr) {
 	remove_unused_samples();
 }
 
-void detail::disable_room_sound() {
+void Detail::disable_room_sound() {
 	for (int16 i = 0; i < MAXDETAILS; i++)
 		disable_detail_sound(i);
 	_G(sndPlayer)->endSound();
 }
 
-void detail::enable_room_sound() {
+void Detail::enable_room_sound() {
 	for (int16 i = 0; i < MAXDETAILS; i++)
 		enable_detail_sound(i);
 }
 
-void detail::clear_room_sound() {
+void Detail::clear_room_sound() {
 	for (int16 j = 0; j < MAXDETAILS; j++) {
-		sound_def_blk *sdb = &_rdi.Ainfo[j].sfx;
+		SoundDefBlk *sdb = &_rdi.Ainfo[j].sfx;
 		for (int16 i = 0; i < MAX_SOUNDS; i++) {
 			sdb->sound_enable[i] = false;
 			sdb->sound_index[i] = -1;
@@ -702,7 +702,7 @@ void detail::clear_room_sound() {
 	}
 }
 
-void detail::remove_unused_samples() {
+void Detail::remove_unused_samples() {
 	bool found = false;
 
 	for (int16 k = 0; k < MAXDETAILS * MAX_SOUNDS; k++) {
@@ -721,11 +721,11 @@ void detail::remove_unused_samples() {
 	}
 }
 
-int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 scry) {
+int16 Detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 scry) {
 	int16 ok = false;
 	int16 detail_nr = -1;
 	for (int16 i = 0; i < MAXDETAILS && !ok; i++) {
-		ani_detail_info *adiptr = &_rdi.Ainfo[i];
+		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
 			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
@@ -748,12 +748,12 @@ int16 detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 	return detail_nr;
 }
 
-void detail::set_taf_ani_mem(byte *load_area) {
+void Detail::set_taf_ani_mem(byte *load_area) {
 	_tafLoadBuffer = load_area;
 	_directTafAni = ON;
 }
 
-void detail::load_taf_ani_sprite(int16 nr) {
+void Detail::load_taf_ani_sprite(int16 nr) {
 	SpriteResource *res = new SpriteResource(_tafName);
 	res->getSpriteData(nr, &_tafLoadBuffer, false);
 	delete res;

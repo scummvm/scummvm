@@ -28,7 +28,7 @@
 
 namespace Chewy {
 
-timer::timer(int16 max_t, TimerBlk *t) {
+Timer::Timer(int16 max_t, TimerBlk *t) {
 	_timerBlk = t;
 	_timerMax = max_t;
 	_G(timer_int) = false;
@@ -36,7 +36,7 @@ timer::timer(int16 max_t, TimerBlk *t) {
 	set_all_status(TIMER_STOP);
 }
 
-timer::~timer() {
+Timer::~Timer() {
 }
 
 float timer_freq[6] = {
@@ -48,7 +48,7 @@ float timer_freq[6] = {
 	65520.0f
 };
 
-void timer::calc_timer() {
+void Timer::calc_timer() {
 	int16 i;
 	int16 count;
 	int ak_time;
@@ -75,7 +75,7 @@ void timer::calc_timer() {
 	}
 }
 
-int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mode) {
+int16 Timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mode) {
 	int16 ret;
 	if (timer_nr < _timerMax) {
 		ret = true;
@@ -90,7 +90,7 @@ int16 timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mod
 	return ret;
 }
 
-void timer::reset_timer(int16 timer_nr, int16 timer_wert) {
+void Timer::reset_timer(int16 timer_nr, int16 timer_wert) {
 	if (timer_nr < _timerMax) {
 		_timerBlk[timer_nr].TimeCount = 0;
 		_timerBlk[timer_nr].TimeFlag = 0;
@@ -100,7 +100,7 @@ void timer::reset_timer(int16 timer_nr, int16 timer_wert) {
 	}
 }
 
-void timer::reset_all_timer() {
+void Timer::reset_all_timer() {
 	int16 i;
 	for (i = 0; i < _timerMax; i++) {
 		_timerBlk[i].TimeCount = 0;
@@ -109,13 +109,13 @@ void timer::reset_all_timer() {
 	}
 }
 
-void timer::set_status(int16 timer_nr, int16 status) {
+void Timer::set_status(int16 timer_nr, int16 status) {
 	if (timer_nr < _timerMax) {
 		_timerBlk[timer_nr].TimeStatus = status;
 	}
 }
 
-void timer::set_all_status(int16 status) {
+void Timer::set_all_status(int16 status) {
 	int16 i;
 	if (status == TIMER_FREEZE) {
 		for (i = 0; i < _timerMax; i++) {
@@ -134,11 +134,11 @@ void timer::set_all_status(int16 status) {
 	}
 }
 
-void timer::disable_timer() {
+void Timer::disable_timer() {
 	_G(timer_suspend) = true;
 }
 
-void timer::enable_timer() {
+void Timer::enable_timer() {
 	_G(timer_suspend) = false;
 }
 
