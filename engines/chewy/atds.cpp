@@ -23,6 +23,7 @@
 #include "chewy/ngshext.h"
 #include "chewy/atds.h"
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/global.h"
 #include "chewy/sound.h"
@@ -908,6 +909,8 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
 			case MAUS_LINKS:
+				EVENTS_CLEAR;
+
 				if (_mousePush == false) {
 					if (_aadv.SilentCount <= 0 && _aadv.DelayCount > _printDelayCount1) {
 						_mousePush = true;

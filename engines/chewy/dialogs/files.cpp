@@ -67,7 +67,7 @@ int16 Files::execute(bool isInGame) {
 	}
 
 	taf_info *ti = _G(mem)->taf_adr(OPTION_TAF);
-	g_events->clearEvents();
+	EVENTS_CLEAR;
 
 	room->open_handle(GBOOK, "rb", 0);
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
