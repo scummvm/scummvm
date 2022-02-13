@@ -278,6 +278,22 @@ Common::Error TwinEEngine::run() {
 			}
 		}
 	}
+	if (ConfMan.hasKey("boot_param")) {
+		const int sceneIndex = ConfMan.getInt("boot_param");
+		if (sceneIndex < 0 || sceneIndex >= LBA1SceneId::SceneIdMax) {
+			warning("Scene index out of bounds\n");
+		} else {
+			debug("Boot parameter: %i\n", sceneIndex);
+			_gameState->initEngineVars();
+			_text->textClipSmall();
+			_text->_drawTextBoxBackground = true;
+			_text->_renderTextTriangle = false;
+			_scene->_needChangeScene = sceneIndex;
+			_scene->_heroPositionType = ScenePositionType::kScene;
+			_state = EngineState::GameLoop;
+		}
+	}
+
 	bool quitGame = false;
 	while (!quitGame && !shouldQuit()) {
 		readKeys();
@@ -308,8 +324,8 @@ Common::Error TwinEEngine::run() {
 			// this will enter the game and execute the commands in the file "debug"
 			_gameState->initEngineVars();
 			_text->textClipSmall();
-			_text->drawTextBoxBackground = true;
-			_text->renderTextTriangle = false;
+			_text->_drawTextBoxBackground = true;
+			_text->_renderTextTriangle = false;
 			if (!((TwinEConsole*)getDebugger())->exec("debug")) {
 				debug("Failed to execute debug file before entering the scene");
 			}
