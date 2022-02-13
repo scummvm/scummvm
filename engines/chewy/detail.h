@@ -219,7 +219,6 @@ public:
 	void stop_detail(int16 nr);
 	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 	                      int16 zoomx, int16 zoomy);
-	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end);
 	void plot_static_details(int16 scrx, int16 scry, int16 start, int16 end);
 	void init_list(int16 *mv);
 	void get_list(int16 *mv);
@@ -236,9 +235,6 @@ public:
 	void del_taf_tbl(taf_info *Tt);
 
 	void del_taf_tbl(int16 start, int16 anz, taf_info *Tt);
-
-	void load_taf_seq(Stream *stream, int16 spr_nr, int16 spr_anz,
-	                  taf_info *Tt);
 
 	void load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt);
 	void load_taf_tbl(taf_info *fti);
@@ -259,7 +255,6 @@ public:
 	void enable_room_sound();
 	void clear_room_sound();
 	void set_taf_ani_mem(byte *load_area);
-	void load_sprite_pointer(Stream *stream);
 
 private:
 	void load_taf_ani_sprite(int16 nr);

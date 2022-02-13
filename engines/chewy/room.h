@@ -53,7 +53,6 @@ protected:
 	static void setup_func();
 };
 
-
 struct RaumBlk {
 	byte *LowPalMem;
 	const char *InvFile;
@@ -61,7 +60,6 @@ struct RaumBlk {
 	byte **InvSprAdr;
 
 	RoomMovObject *Rmo;
-
 	RoomStaticInventar *Rsi;
 
 	char RoomDir[9];
@@ -78,7 +76,6 @@ struct RaumTimer {
 	int16 TimerAnz;
 
 	uint8 ObjNr[MAX_ROOM_TIMER];
-
 	uint8 TimerNr[MAX_ROOM_TIMER];
 };
 

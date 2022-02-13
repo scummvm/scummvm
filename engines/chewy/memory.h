@@ -31,7 +31,6 @@ class Memory {
 public:
 	Memory();
 	~Memory();
-	void init();
 
 	taf_info *taf_adr(const char *filename);
 	taf_seq_info *taf_seq_adr(int16 image_start, int16 image_anz);
