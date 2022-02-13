@@ -41,7 +41,7 @@ void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String
 		if (x == 'X') {
 			while (!file.eos()) {
 				x = file.readByte();
-				if (x == 'Y')
+				if (x == 'Y' && list.size() > 0 && list[list.size()-1] == '\n')
 					break;
 				list += x;
 			}
@@ -69,6 +69,7 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->defeatNoEnergySecondVideo.clear();
 	g_parsedArc->beforeVideo.clear();
 	g_parsedArc->briefingVideo.clear();
+	g_parsedArc->segments.clear();
 }
 
 ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
@@ -144,6 +145,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_maxHealth = _health;
 	Segments segments = arc->segments;
 	uint32 segmentIdx = 0;
+	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[segmentIdx].type);
 	changeCursor("arcade");
 	_shoots.clear();
 	if (!arc->player.empty())
@@ -285,11 +287,38 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			drawScreen();
 		}
 
-		if (background.decoder && background.decoder->getCurFrame() >= int(segments[segmentIdx].start + segments[segmentIdx].size)) {
-			debugC(1, kHypnoDebugArcade, "Finished segment %d", segmentIdx);
-			segmentIdx++;
+		if (background.decoder && background.decoder->getCurFrame() >= int(segments[segmentIdx].start + segments[segmentIdx].size - 1)) {
+			debugC(1, kHypnoDebugArcade, "Finished segment %d of type %x", segmentIdx, segments[segmentIdx].type);
+
+			if (segments[segmentIdx].type == 0xb3)
+				if (_rnd->getRandomBit() || segments.size() == 2)
+					segmentIdx = segmentIdx + 1;
+				else 
+					segmentIdx = segmentIdx + 5;
+			else if (segments[segmentIdx].type == 0xc5) {
+				if (mousePos.x <= 100)
+					segmentIdx = segmentIdx + 1;
+				else if (mousePos.x >= 300)
+					segmentIdx = segmentIdx + 3;
+				else 
+					segmentIdx = segmentIdx + 2;
+			} else if (segments[segmentIdx].type == 0xc2) {
+				if (mousePos.x <= 160)
+					segmentIdx = segmentIdx + 1;
+				else 
+					segmentIdx = segmentIdx + 2;
+			} else {
+				segmentIdx = 0;
+			}
+
 			if (segmentIdx >= segments.size())
 				error("Invalid segment %d", segmentIdx); 
+
+			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", segmentIdx, segments[segmentIdx].type, segments[segmentIdx].start);
+			if (segments[segmentIdx].type != 0x02) { // If it is not the end segment
+				background.decoder->forceSeekToFrame(segments[segmentIdx].start);
+				continue;
+			}
 		}
 
 		if (checkArcadeLevelCompleted(background, segments[segmentIdx])) {
@@ -488,7 +517,6 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 				_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
 			}
 		}
-
 	}
 }
 

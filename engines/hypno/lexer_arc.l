@@ -51,7 +51,7 @@ P							return PTOK;
 A							return ATOK;
 V							return VTOK;
 O							return OTOK;
-O[0-1]						return ONTOK;
+O[0-1]						HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ONTOK;
 N							return NTOK;
 N\*							return NSTOK;
 R							return RTOK;

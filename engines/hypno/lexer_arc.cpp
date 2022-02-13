@@ -1174,7 +1174,7 @@ return OTOK;
 case 12:
 YY_RULE_SETUP
 #line 54 "engines/hypno/lexer_arc.l"
-return ONTOK;
+HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ONTOK;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
