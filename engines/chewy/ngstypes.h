@@ -327,7 +327,7 @@ struct iog_init {
 
 	int16 popx = 0;
 	int16 popy = 0;
-	char *m_col = nullptr;
+	const byte *m_col = nullptr;
 	uint8 f1 = 0;
 	uint8 f2 = 0;
 	uint8 f3 = 0;

@@ -286,8 +286,6 @@ extern int16 ani_stand_count[MAX_PERSON];
 
 extern bool ani_stand_flag[MAX_PERSON];
 
-extern char io_pal1[7];
-
 extern bitclass *bit;
 extern gedclass *ged;
 extern text *txt;
