@@ -24,7 +24,7 @@
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
-#include "chewy/rooms/room8.h"
+#include "chewy/rooms/room08.h"
 #include "chewy/dialogs/inventory.h"
 
 namespace Chewy {

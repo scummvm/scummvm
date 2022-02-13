@@ -46,16 +46,16 @@ MODULE_OBJS = \
 	dialogs/main_menu.o \
 	dialogs/options.o \
 	video/cfo_decoder.o \
-	rooms/room0.o \
-	rooms/room1.o \
-	rooms/room2.o \
-	rooms/room3.o \
-	rooms/room4.o \
-	rooms/room5.o \
-	rooms/room6.o \
-	rooms/room7.o \
-	rooms/room8.o \
-	rooms/room9.o \
+	rooms/room00.o \
+	rooms/room01.o \
+	rooms/room02.o \
+	rooms/room03.o \
+	rooms/room04.o \
+	rooms/room05.o \
+	rooms/room06.o \
+	rooms/room07.o \
+	rooms/room08.o \
+	rooms/room09.o \
 	rooms/room10.o \
 	rooms/room11.o \
 	rooms/room12.o \

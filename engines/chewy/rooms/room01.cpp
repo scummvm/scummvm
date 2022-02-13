@@ -22,35 +22,49 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
-#include "chewy/rooms/room5.h"
+#include "chewy/rooms/room01.h"
 
 namespace Chewy {
 namespace Rooms {
 
-void Room5::entry() {
-	if (_G(spieler).R5Terminal)
-		det->start_detail(6, 255, ANI_VOR);
+void Room1::gottenCard() {
+	det->hide_static_spr(2);
+	start_detail_wait(4, 1, ANI_VOR);
+	_G(spieler).PersonHide[P_CHEWY] = false;
+	atds->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
+	int16 tmp;
+	atds->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
 }
 
-void Room5::pushButton() {
-	int16 str_nr;
-	if (_G(spieler).R5Terminal) {
-		if (_G(spieler).R5Tuer == false) {
-			start_detail_wait(9, 1, ANI_VOR);
-			_G(spieler).room_e_obj[6].Attribut = AUSGANG_OBEN;
-			str_nr = 1;
-		} else {
-			start_detail_wait(9, 1, ANI_RUECK);
-			_G(spieler).room_e_obj[6].Attribut = 255;
-			str_nr = 0;
+void Room1::gedAction(int index) {
+	#define KABELABDECKUNG 1
+
+	switch (index) {
+	case 0:
+		if (!_G(spieler).R2ElectrocutedBork) {
+			bool flag = false;
+			if (_G(spieler).AkInvent == KABEL_INV) {
+				flag = true;
+				del_inventar(_G(spieler).AkInvent);
+			} else if (obj->check_inventar(KABEL_INV)) {
+				flag = true;
+				obj->del_obj_use(KABEL_INV);
+				del_invent_slot(KABEL_INV);
+			}
+
+			if (flag) {
+				start_aad_wait(54, -1);
+				atds->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
+				_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
+				obj->calc_rsi_flip_flop(KABELABDECKUNG);
+				obj->calc_all_static_detail();
+			}
 		}
-		atds->set_ats_str(29, str_nr, ATS_DATEI);
-		_G(spieler).R5Tuer ^= 1;
-		obj->calc_rsi_flip_flop(SIB_TUERE_R5);
-	} else {
-		start_aad_wait(1, -1);
+		break;
+
+	default:
+		break;
 	}
 }
 

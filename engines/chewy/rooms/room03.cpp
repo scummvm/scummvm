@@ -23,9 +23,9 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/room.h"
-#include "chewy/rooms/room2.h"
-#include "chewy/rooms/room3.h"
-#include "chewy/rooms/room4.h"
+#include "chewy/rooms/room02.h"
+#include "chewy/rooms/room03.h"
+#include "chewy/rooms/room04.h"
 
 namespace Chewy {
 namespace Rooms {
