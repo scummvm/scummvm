@@ -115,7 +115,7 @@ void Cinema::execute() {
 				break;
 			}
 		} else if (minfo.button == 2 && !flag) {
-			kbinfo.scan_code = ESC;
+			kbinfo.scan_code = Common::KEYCODE_ESCAPE;
 			flag = true;
 		} else if (minfo.button != 1) {
 			flag = false;
@@ -128,7 +128,7 @@ void Cinema::execute() {
 		}
 
 		switch (kbinfo.scan_code) {
-		case ESC:
+		case Common::KEYCODE_ESCAPE:
 			endLoop = true;
 			kbinfo.scan_code = 0;
 			break;
@@ -208,7 +208,7 @@ void Cinema::execute() {
 }
 
 int16 Cinema::cut_serv(int16 frame) {
-	if (_G(in)->get_switch_code() == ESC) {
+	if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 		_G(sndPlayer)->stopMod();
 		_G(sndPlayer)->endSound();
 		return -1;

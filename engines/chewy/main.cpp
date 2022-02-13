@@ -287,7 +287,7 @@ int16 main_loop(int16 mode) {
 	maus_action();
 	if (flags.MainInput) {
 		switch (kbinfo.scan_code) {
-		case F1_KEY:
+		case Common::KEYCODE_F1:
 			_G(spieler).inv_cur = false;
 			menu_item = CUR_WALK;
 			cursor_wahl(menu_item);
@@ -295,7 +295,7 @@ int16 main_loop(int16 mode) {
 				menu_display = MENU_AUSBLENDEN;
 			break;
 
-		case F2_KEY:
+		case Common::KEYCODE_F2:
 			_G(spieler).inv_cur = false;
 			menu_item = CUR_USE;
 			cursor_wahl(menu_item);
@@ -303,7 +303,7 @@ int16 main_loop(int16 mode) {
 				menu_display = MENU_AUSBLENDEN;
 			break;
 
-		case F3_KEY:
+		case Common::KEYCODE_F3:
 			_G(spieler).inv_cur = false;
 			menu_item = CUR_LOOK;
 			cursor_wahl(menu_item);
@@ -311,7 +311,7 @@ int16 main_loop(int16 mode) {
 				menu_display = MENU_AUSBLENDEN;
 			break;
 
-		case F4_KEY:
+		case Common::KEYCODE_F4:
 			_G(spieler).inv_cur = false;
 			menu_item = CUR_TALK;
 			cursor_wahl(menu_item);
@@ -319,8 +319,8 @@ int16 main_loop(int16 mode) {
 				menu_display = MENU_AUSBLENDEN;
 			break;
 
-		case F5_KEY:
-		case SPACE:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_SPACE:
 			_G(tmp_menu_item) = menu_item;
 			maus_old_x = minfo.x;
 			maus_old_y = minfo.y;
@@ -345,7 +345,7 @@ int16 main_loop(int16 mode) {
 			kbinfo.key_code = '\0';
 			break;
 
-		case F6_KEY:
+		case Common::KEYCODE_F6:
 			flags.SaveMenu = true;
 
 			_G(out)->setze_zeiger(screen0);
@@ -366,7 +366,7 @@ int16 main_loop(int16 mode) {
 			_G(out)->setze_zeiger(workptr);
 			break;
 
-		case ESC:
+		case Common::KEYCODE_ESCAPE:
 			if (menu_display == 0) {
 				menu_entry();
 				_G(tmp_menu_item) = menu_item;
@@ -387,7 +387,7 @@ int16 main_loop(int16 mode) {
 			}
 			break;
 
-		case ENTER:
+		case Common::KEYCODE_RETURN:
 			switch (menu_item) {
 			case CUR_INVENT:
 
@@ -456,22 +456,18 @@ int16 main_loop(int16 mode) {
 			}
 			break;
 
-		case CURSOR_RIGHT:
-		case CURSOR_LEFT:
-		case CURSOR_UP:
-		case CURSOR_DOWN:
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_DOWN:
 			kb_cur_action(kbinfo.scan_code, 0);
-			break;
-
-		case X_KEY + ALT:
-			ende = 1;
 			break;
 
 		case 41:
 			_G(spieler).DispFlag ^= 1;
 			break;
 
-		case TAB:
+		case Common::KEYCODE_TAB:
 			if (menu_display == 0 && _G(spieler).DispFlag) {
 				if (_G(spieler).InvDisp < 3)
 					++_G(spieler).InvDisp;
@@ -794,22 +790,22 @@ void kb_mov(int16 mode) {
 	ende = 0;
 	while (!ende) {
 		switch (_G(in)->get_switch_code()) {
-		case CURSOR_RIGHT:
+		case Common::KEYCODE_RIGHT:
 			if (minfo.x < 320 - _G(spieler).CurBreite)
 				minfo.x += 2;
 			break;
 
-		case CURSOR_LEFT:
+		case Common::KEYCODE_LEFT:
 			if (minfo.x > 1)
 				minfo.x -= 2;
 			break;
 
-		case CURSOR_UP:
+		case Common::KEYCODE_UP:
 			if (minfo.y > 1)
 				minfo.y -= 2;
 			break;
 
-		case CURSOR_DOWN:
+		case Common::KEYCODE_DOWN:
 			if (minfo.y < 210 - _G(spieler).CurHoehe)
 				minfo.y += 2;
 			break;
@@ -830,7 +826,7 @@ void kb_mov(int16 mode) {
 
 void kb_cur_action(int16 key, int16 mode) {
 	switch (key) {
-	case CURSOR_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		if (menu_display == MENU_EINBLENDEN) {
 			if (menu_item < 5)
 				++menu_item;
@@ -841,7 +837,7 @@ void kb_cur_action(int16 key, int16 mode) {
 		}
 		break;
 
-	case CURSOR_LEFT:
+	case Common::KEYCODE_LEFT:
 		if (menu_display == MENU_EINBLENDEN) {
 			if (menu_item > 0)
 				--menu_item;
@@ -852,14 +848,14 @@ void kb_cur_action(int16 key, int16 mode) {
 		}
 		break;
 
-	case CURSOR_UP:
+	case Common::KEYCODE_UP:
 		if (menu_display == MENU_EINBLENDEN) {
 			if (_G(spieler).MainMenuY > 1)
 				_G(spieler).MainMenuY -= 2;
 		}
 		break;
 
-	case CURSOR_DOWN:
+	case Common::KEYCODE_DOWN:
 		if (menu_display == MENU_EINBLENDEN) {
 			if (_G(spieler).MainMenuY < 163)
 				_G(spieler).MainMenuY += 2;
@@ -889,16 +885,16 @@ void maus_action() {
 		_G(inv_disp_ok) = false;
 	}
 	if (atds->aad_get_status() == -1) {
-		if (minfo.button || kbinfo.key_code == ESC || kbinfo.key_code == ENTER) {
+		if (minfo.button || kbinfo.key_code == Common::KEYCODE_ESCAPE || kbinfo.key_code == Common::KEYCODE_RETURN) {
 
-			if (minfo.button == 2 || kbinfo.key_code == ESC) {
+			if (minfo.button == 2 || kbinfo.key_code == Common::KEYCODE_ESCAPE) {
 				if (!flags.main_maus_flag) {
-					kbinfo.scan_code = ESC;
+					kbinfo.scan_code = Common::KEYCODE_ESCAPE;
 				}
-			} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+			} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 				if (!flags.main_maus_flag) {
 					if (menu_display == MENU_EINBLENDEN)
-						kbinfo.scan_code = ENTER;
+						kbinfo.scan_code = Common::KEYCODE_RETURN;
 					else if (_G(spieler).AkInvent != -1) {
 						if (_G(inv_disp_ok)) {
 							if (_G(spieler).inv_cur) {
@@ -1270,9 +1266,9 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 				while (mov->auto_go_status()) {
 					if (SHOULD_QUIT)
 						return 0;
-					if (_G(in)->get_switch_code() == ESC) {
+					if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 						if (flags.ExitMov || flags.BreakAMov) {
-							key = ESC;
+							key = Common::KEYCODE_ESCAPE;
 							mov->stop_auto_go();
 							move_status = false;
 						}
@@ -1289,7 +1285,7 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 				mov->get_mov_vector((int16 *)spieler_mi[p_nr].XyzStart, spieler_mi[p_nr].Vorschub, &spieler_vector[p_nr]);
 				get_phase(&spieler_vector[p_nr], &spieler_mi[p_nr]);
 				while (!ende) {
-					if (_G(in)->get_switch_code() == ESC || key == ESC) {
+					if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE || key == Common::KEYCODE_ESCAPE) {
 						if (flags.ExitMov || flags.BreakAMov) {
 							spieler_vector[p_nr].Count = 0;
 							move_status = false;
@@ -1342,7 +1338,7 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 			get_phase(&spieler_vector[p_nr], &spieler_mi[p_nr]);
 		if (mode == ANI_WAIT) {
 			while (!ende) {
-				if (_G(in)->get_switch_code() == ESC) {
+				if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 					if (flags.ExitMov || flags.BreakAMov) {
 						spieler_vector[p_nr].Count = 0;
 						move_status = false;
@@ -1702,9 +1698,9 @@ void get_user_key(int16 mode) {
 
 	if (!_G(inv_disp_ok)) {
 		switch (_G(in)->get_switch_code()) {
-		case F5_KEY:
-		case SPACE:
-		case ESC:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_SPACE:
+		case Common::KEYCODE_ESCAPE:
 			maus_old_x = minfo.x;
 			maus_old_y = minfo.y;
 

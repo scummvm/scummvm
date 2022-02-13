@@ -813,7 +813,7 @@ int16 flic_user_function(int16 keys) {
 	if (_G(flic_val1) == 594 && keys == 18)
 		atds->stop_aad();
 
-	ret = _G(in)->get_switch_code() == ESC ? -1 : 0;
+	ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 	if (_G(flic_val2) == 140 && keys == 15)
 		ret = -2;
 	if (_G(flic_val2) == 144 && keys == 7)

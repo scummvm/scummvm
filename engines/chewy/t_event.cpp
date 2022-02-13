@@ -2183,7 +2183,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->back2screen(workpage);
 
-		while (_G(in)->get_switch_code() != ESC) {
+		while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}

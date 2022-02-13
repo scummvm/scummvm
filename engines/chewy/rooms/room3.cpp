@@ -339,7 +339,7 @@ void Room3::probeTransfer() {
 
 			if (i == 2 || i == 1) {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
-					if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+					if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 						if (is_cur_inventar(SPINAT_INV)) {
 							ssi[0].X = 120;
 							ssi[0].Y = 100;

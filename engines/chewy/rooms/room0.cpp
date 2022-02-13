@@ -308,7 +308,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 	int16 i;
 
 	if (mouse_on_prog_ani() == ani_nr) {
-		if (minfo.button != 1 && kbinfo.key_code != ENTER) {
+		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
 			char *str_ = atds->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
 				_G(out)->set_fontadr(font8x8);
@@ -319,7 +319,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 				for (i = 0; i < anz; i++)
 					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 			}
-		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(SLIME_INV)) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
@@ -561,7 +561,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 	int16 i;
 
 	if (mouse_on_prog_ani() == ani_nr) {
-		if (minfo.button != 1 && kbinfo.key_code != ENTER) {
+		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
 			char *str_ = atds->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
 				_G(out)->set_fontadr(font8x8);
@@ -572,7 +572,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 				for (i = 0; i < anz; i++)
 					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
 			}
-		} else if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;

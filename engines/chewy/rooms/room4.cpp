@@ -93,7 +93,7 @@ int16 Room4::sonde_comp() {
 		spr_info[0].ZEbene = 0;
 		spr_info[0].X = CUR_POS[cur_x][0];
 		spr_info[0].Y = CUR_POS[cur_x][1];
-		if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			curani.ani_anf = HAND_CLICK;
 			curani.ani_end = HAND_CLICK;
 		} else {

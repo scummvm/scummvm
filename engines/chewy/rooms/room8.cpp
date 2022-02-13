@@ -94,7 +94,7 @@ void Room8::start_verbrennen() {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
-			if (minfo.button == 1 || kbinfo.key_code == ENTER) {
+			if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 				if (minfo.x > 146 && minfo.x < 208 &&
 					minfo.y > 107 && minfo.y < 155)
 					break;

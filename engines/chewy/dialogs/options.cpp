@@ -76,7 +76,7 @@ void Options::execute(taf_info *ti) {
 	FrameSpeed = 0;
 	int16 delay_count = _G(spieler).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
-	while (key != ESC) {
+	while (key != Common::KEYCODE_ESCAPE) {
 		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 		++FrameSpeed;
 		warning("akt_clock = clock() / CLK_TCK;");
@@ -145,7 +145,7 @@ void Options::execute(taf_info *ti) {
 			8 + ti->korrektur[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->get_switch_code();
-		if ((minfo.button == 1) || (key == ENTER)) {
+		if ((minfo.button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 				int16 rect = _G(in)->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
 			switch (rect) {
@@ -189,7 +189,7 @@ void Options::execute(taf_info *ti) {
 				}
 				break;
 			case 6:
-				key = ESC;
+				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7:
 				_G(spieler).SoundVol = (136 - minfo.y) << 1;
@@ -204,19 +204,19 @@ void Options::execute(taf_info *ti) {
 		}
 		switch (key) {
 
-		case CURSOR_UP:
+		case Common::KEYCODE_UP:
 			_G(cur)->move(minfo.x, --minfo.y);
 			break;
 
-		case CURSOR_DOWN:
+		case Common::KEYCODE_DOWN:
 			_G(cur)->move(minfo.x, ++minfo.y);
 			break;
 
-		case CURSOR_LEFT:
+		case Common::KEYCODE_LEFT:
 			_G(cur)->move(--minfo.x, minfo.y);
 			break;
 
-		case CURSOR_RIGHT:
+		case Common::KEYCODE_RIGHT:
 			_G(cur)->move(++minfo.x, minfo.y);
 			break;
 		}

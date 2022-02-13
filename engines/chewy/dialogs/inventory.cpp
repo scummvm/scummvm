@@ -179,17 +179,17 @@ void Inventory::menu() {
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
 		if (!minfo.button)
 			maus_flag = 0;
-		if (minfo.button == 1 || kbinfo.key_code == ENTER || keyVal) {
+		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN || keyVal) {
 			if (!maus_flag) {
 				maus_flag = 1;
 				kbinfo.key_code = '\0';
 
 				k = _G(in)->maus_vector(minfo.x, minfo.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
-				if (keyVal == F1_KEY)
+				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
-				else if (keyVal == F2_KEY)
+				else if (keyVal == Common::KEYCODE_F2)
 					k = 1;
-				else if (keyVal == ENTER)
+				else if (keyVal == Common::KEYCODE_RETURN)
 					k = 5;
 
 				keyVal = 0;
@@ -211,7 +211,7 @@ void Inventory::menu() {
 						inv_rand_y = -1;
 						ret_look = look(_G(spieler).AkInvent, INV_ATS_MODE, -1);
 
-						taste_flag = ESC;
+						taste_flag = Common::KEYCODE_ESCAPE;
 					} else {
 						invent_cur_mode = CUR_LOOK;
 						menu_item = CUR_LOOK;
@@ -220,11 +220,11 @@ void Inventory::menu() {
 					break;
 
 				case 3:
-					_G(in)->_hotkey = PAGE_UP;
+					_G(in)->_hotkey = Common::KEYCODE_PAGEUP;
 					break;
 
 				case 4:
-					_G(in)->_hotkey = PAGE_DOWN;
+					_G(in)->_hotkey = Common::KEYCODE_PAGEDOWN;
 					break;
 
 				case 5:
@@ -260,7 +260,7 @@ void Inventory::menu() {
 								ret_look = look(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
 								_G(spieler).AkInvent = -1;
 								cursor_wahl(invent_cur_mode);
-								taste_flag = ESC;
+								taste_flag = Common::KEYCODE_ESCAPE;
 							}
 						}
 					}
@@ -270,9 +270,9 @@ void Inventory::menu() {
 					break;
 				}
 			}
-		} else if (minfo.button == 2 || kbinfo.key_code == ESC) {
+		} else if (minfo.button == 2 || kbinfo.key_code == Common::KEYCODE_ESCAPE) {
 			if (!maus_flag) {
-				_G(in)->_hotkey = ESC;
+				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
 				maus_flag = 1;
 			}
 		}
@@ -288,7 +288,7 @@ void Inventory::menu() {
 			taste_flag = false;
 			maus_flag = 0;
 			minfo.button = 1;
-			keyVal = ENTER;
+			keyVal = Common::KEYCODE_RETURN;
 		}
 
 		ret_look = -1;
@@ -300,19 +300,19 @@ void Inventory::menu() {
 				taste_flag = 0;
 		} else {
 			switch (abfrage) {
-			case F1_KEY:
-				keyVal = F1_KEY;
+			case Common::KEYCODE_F1:
+				keyVal = Common::KEYCODE_F1;
 				break;
 
-			case F2_KEY:
-				keyVal = F2_KEY;
+			case Common::KEYCODE_F2:
+				keyVal = Common::KEYCODE_F2;
 				break;
 
-			case ESC:
+			case Common::KEYCODE_ESCAPE:
 				if (!menu_first) {
 					menu_first = true;
 					_G(cur)->show_cur();
-					while (_G(in)->get_switch_code() == ESC) {
+					while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 						set_up_screen(NO_SETUP);
 						inv_rand_x = -1;
 						inv_rand_y = -1;
@@ -328,33 +328,33 @@ void Inventory::menu() {
 				}
 				break;
 
-			case CURSOR_RIGHT:
+			case Common::KEYCODE_RIGHT:
 				if (minfo.x < 320 - _G(spieler).CurBreite)
 					minfo.x += 3;
 				break;
 
-			case CURSOR_LEFT:
+			case Common::KEYCODE_LEFT:
 				if (minfo.x > 2)
 					minfo.x -= 3;
 				break;
 
-			case CURSOR_UP:
+			case Common::KEYCODE_UP:
 				if (minfo.y > 2)
 					minfo.y -= 3;
 				break;
 
-			case CURSOR_DOWN:
+			case Common::KEYCODE_DOWN:
 				if (minfo.y < 197 - _G(spieler).CurHoehe)
 					minfo.y += 3;
 				break;
 
-			case PAGE_UP:
+			case Common::KEYCODE_PAGEUP:
 				if (_G(spieler).InventY > 0)
 					--_G(spieler).InventY;
 				kbinfo.key_code = '\0';
 				break;
 
-			case PAGE_DOWN:
+			case Common::KEYCODE_PAGEDOWN:
 				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
 					++_G(spieler).InventY;
 				kbinfo.key_code = '\0';
@@ -393,7 +393,7 @@ void Inventory::menu() {
 	_G(cur)->move(maus_old_x, maus_old_y);
 	minfo.x = maus_old_x;
 	minfo.y = maus_old_y;
-	while (_G(in)->get_switch_code() == ESC && !SHOULD_QUIT) {
+	while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
 		_G(out)->back2screen(workpage);
@@ -458,7 +458,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (minfo.button) {
 			if (minfo.button == 2) {
 				if (!maus_flag)
-					kbinfo.scan_code = ESC;
+					kbinfo.scan_code = Common::KEYCODE_ESCAPE;
 			} else if (minfo.button == 1) {
 				if (!maus_flag) {
 					switch (rect) {
@@ -474,12 +474,12 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 					case 3:
 					case 6:
-						kbinfo.scan_code = CURSOR_UP;
+						kbinfo.scan_code = Common::KEYCODE_UP;
 						break;
 
 					case 4:
 					case 7:
-						kbinfo.scan_code = CURSOR_DOWN;
+						kbinfo.scan_code = Common::KEYCODE_DOWN;
 						break;
 
 					case 5:
@@ -499,24 +499,24 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		}
 
 		switch (kbinfo.scan_code) {
-		case F1_KEY:
-			_G(in)->_hotkey = F1_KEY;
+		case Common::KEYCODE_F1:
+			_G(in)->_hotkey = Common::KEYCODE_F1;
 			break;
 
-		case F2_KEY:
-			_G(in)->_hotkey = F2_KEY;
+		case Common::KEYCODE_F2:
+			_G(in)->_hotkey = Common::KEYCODE_F2;
 			break;
 
-		case ESC:
+		case Common::KEYCODE_ESCAPE:
 			ende = 1;
 			break;
 
-		case CURSOR_UP:
+		case Common::KEYCODE_UP:
 			if (txt_start > 0)
 				--txt_start;
 			break;
 
-		case CURSOR_DOWN:
+		case Common::KEYCODE_DOWN:
 			if (txt_start < txt_anz - txt_zeilen)
 				++txt_start;
 			break;
@@ -569,7 +569,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		SHOULD_QUIT_RETURN0;
 	}
 
-	while (_G(in)->get_switch_code() == ESC) {
+	while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 		set_up_screen(NO_SETUP);
 		Dialogs::Inventory::plot_menu();
 		_G(cur)->plot_cur();
@@ -697,7 +697,7 @@ void Inventory::showDiary() {
 	_G(out)->setze_zeiger(nullptr);
 	fx->blende1(workptr, screen0, pal, 150, 0, 0);
 
-	while (_G(in)->get_switch_code() != ESC) {
+	while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
 		SHOULD_QUIT_RETURN;
 	}

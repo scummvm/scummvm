@@ -298,7 +298,7 @@ void ads_menu() {
 
 		switch (_G(in)->get_switch_code()) {
 		case 255:
-		case ENTER:
+		case Common::KEYCODE_RETURN:
 			if (cur_y < ads_item_anz && cur_y >= 0 && ads_push == false) {
 				_G(cur_display) = false;
 				ads_push = true;
