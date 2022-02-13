@@ -147,7 +147,7 @@ void Credits::execute() {
 	_G(spieler).DelaySpeed = 2;
 
 	for (;;) {
-		if (_G(in)->get_switch_code() == ESC || SHOULD_QUIT)
+		if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
 			break;
 
 		// Display the starfield background
@@ -159,7 +159,7 @@ void Credits::execute() {
 		if (++_G(spieler).scrollx >= 320)
 			_G(spieler).scrollx = 0;
 
-		if (_G(in)->get_switch_code() == ESC)
+		if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE)
 			break;
 
 		++lineScrolled;

@@ -101,7 +101,7 @@ int16 Files::execute(bool isInGame) {
 		text_off = 0;		// Top visible save slot
 		active_slot = 0;	// Currently selected slot
 
-		while (key != ESC && !SHOULD_QUIT) {
+		while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 			// Draw the dialog background
 			_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
 
@@ -143,7 +143,7 @@ int16 Files::execute(bool isInGame) {
 			if (mode[GAME])
 				--mode[GAME];
 			if (mode[GAME] == 1)
-				key = ESC;
+				key = Common::KEYCODE_ESCAPE;
 
 			if (mode[QUIT])
 				--mode[QUIT];
@@ -155,7 +155,7 @@ int16 Files::execute(bool isInGame) {
 				key = getch();
 				if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
 					ret = 1;
-					key = ESC;
+					key = Common::KEYCODE_ESCAPE;
 				} else {
 					key = 0;
 				}
@@ -176,15 +176,15 @@ int16 Files::execute(bool isInGame) {
 
 				switch (rect) {
 				case 0:
-					key = CURSOR_UP;
+					key = Common::KEYCODE_UP;
 					break;
 				case 1:
-					key = CURSOR_DOWN;
+					key = Common::KEYCODE_DOWN;
 					break;
 				case 2:
 					line = (minfo.y - 68) / 10;
 					if (line == active_slot)
-						key = ENTER;
+						key = Common::KEYCODE_RETURN;
 					else
 						active_slot = line;
 					if (active_slot > 5)
@@ -194,19 +194,19 @@ int16 Files::execute(bool isInGame) {
 						goto enter;
 					break;
 				case 3:
-					key = F1_KEY;
+					key = Common::KEYCODE_F1;
 					break;
 				case 4:
-					key = F2_KEY;
+					key = Common::KEYCODE_F2;
 					break;
 				case 5:
-					key = F3_KEY;
+					key = Common::KEYCODE_F3;
 					break;
 				case 6:
-					key = F4_KEY;
+					key = Common::KEYCODE_F4;
 					break;
 				case 7:
-					key = F5_KEY;
+					key = Common::KEYCODE_F5;
 					break;
 				}
 
@@ -215,7 +215,7 @@ int16 Files::execute(bool isInGame) {
 			}
 
 			switch (key) {
-			case F1_KEY:
+			case Common::KEYCODE_F1:
 				if (visibility[SAVE]) {
 					mode[LOAD] = 0;
 					mode[SAVE] = 1;
@@ -224,27 +224,27 @@ int16 Files::execute(bool isInGame) {
 				}
 				break;
 
-			case F2_KEY:
+			case Common::KEYCODE_F2:
 				mode[LOAD] = 1;
 				mode[SAVE] = 0;
 				mode[W8] = 0;
 				goto enter;
 				break;
 
-			case F3_KEY:
+			case Common::KEYCODE_F3:
 				if (visibility[GAME])
 					mode[GAME] = 10;
 				break;
 
-			case F4_KEY:
+			case Common::KEYCODE_F4:
 				mode[QUIT] = 10;
 				break;
 
-			case F5_KEY:
+			case Common::KEYCODE_F5:
 				mode[OPTIONS] = 10;
 				break;
 
-			case CURSOR_UP:
+			case Common::KEYCODE_UP:
 				mode[SCROLL_UP] = 10;
 				if (active_slot > 0)
 					--active_slot;
@@ -252,7 +252,7 @@ int16 Files::execute(bool isInGame) {
 					--text_off;
 				break;
 
-			case CURSOR_DOWN:
+			case Common::KEYCODE_DOWN:
 				mode[SCROLL_DOWN] = 10;
 				if (active_slot < (NUM_VISIBLE_SLOTS - 1))
 					++active_slot;
@@ -260,15 +260,15 @@ int16 Files::execute(bool isInGame) {
 					++text_off;
 				break;
 
-			case ENTER:
-			case ENTER + ALT:
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_RETURN + ALT:
 enter:
 				if (mode[LOAD]) {
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
 						CurrentSong = -1;
 						_G(iog)->load(text_off + active_slot, ioptr.save_path);
-						key = ESC;
+						key = Common::KEYCODE_ESCAPE;
 					}
 				} else if (mode[SAVE]) {
 					_G(out)->back2screen(workpage);
@@ -283,7 +283,7 @@ enter:
 						_G(iog)->save_entry(text_off + active_slot,
 							ioptr.save_path);
 					}
-					key = ESC;
+					key = Common::KEYCODE_ESCAPE;
 				}
 				break;
 

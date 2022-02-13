@@ -113,7 +113,7 @@ int16 InputMgr::get_switch_code() {
 
 	if (_mouseInfoBlk) {
 		if (_mouseInfoBlk->button == 2) {
-			switch_code = ESC;
+			switch_code = Common::KEYCODE_ESCAPE;
 		} else if (_mouseInfoBlk->button == 1)
 			switch_code = 255;
 		else if (_mouseInfoBlk->button == 4)

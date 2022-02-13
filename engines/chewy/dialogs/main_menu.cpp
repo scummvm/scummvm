@@ -178,14 +178,14 @@ int16 MainMenu::creditsFn(int16 key) {
 		key == 128 || key == 165 || key == 185 ||
 		key == 211 || key == 248 || key == 266) {
 		for (int idx = 0; idx < 2000; ++idx) {
-			if (_G(in)->get_switch_code() == ESC)
+			if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE)
 				return -1;
 			g_events->update();
 		}
 		return 0;
 
 	} else {
-		return _G(in)->get_switch_code() == ESC ? -1 : 0;
+		return _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 	}
 }
 

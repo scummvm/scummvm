@@ -362,7 +362,7 @@ void Room39::set_tv() {
 }
 
 int16 Room39::setup_func(int16 frame) {
-	int16 action_ret = _G(in)->get_switch_code() == ESC ? -1 : 0;
+	int16 action_ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 
 	if (_flag) {
 		if (frame == 121)

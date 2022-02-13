@@ -111,7 +111,7 @@ void Room89::entry() {
 		_G(out)->setze_zeiger(workptr);
 		_G(out)->cls();
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
-		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY ESC from F5");
+		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Common::KEYCODE_ESCAPE from F5");
 		_G(out)->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
 		edi = -300;
 		int var30 = -200;
