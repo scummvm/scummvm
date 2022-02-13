@@ -22,9 +22,9 @@
 #ifndef CHEWY_NGSTYPES_H
 #define CHEWY_NGSTYPES_H
 
+#include "graphics/screen.h"
 #include "chewy/ngsdefs.h"
 #include "chewy/file.h"
-#include "common/stream.h"
 
 namespace Chewy {
 
@@ -33,7 +33,7 @@ struct taf_dateiheader {
 	int16 mode = 0;
 	int16 count = 0;
 	uint32 allsize = 0;
-	char palette[768];
+	byte palette[PALETTE_SIZE];
 	uint32 next = 0;
 	int16 korrekt = 0;
 

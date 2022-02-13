@@ -28,7 +28,7 @@ bool taf_dateiheader::load(Common::SeekableReadStream *src) {
 	mode = src->readSint16LE();
 	count = src->readSint16LE();
 	allsize = src->readUint32LE();
-	src->read(palette, 768);
+	src->read(palette, PALETTE_SIZE);
 	next = src->readUint32LE();
 	korrekt = src->readSint16LE();
 
