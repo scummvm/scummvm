@@ -74,8 +74,10 @@ void Room7::haken(int16 sib_nr) {
 }
 
 void Room7::klingel() {
+	hide_cur();
+	
 	if ((!_G(spieler).R7BellCount) ||
-		(_G(spieler).R7BellCount >= 2 && _G(spieler).R7SeilLeft != 0 && !_G(spieler).R7SeilOk)) {
+		(_G(spieler).R7BellCount >= 2 && _G(spieler).R7SeilLeft && !_G(spieler).R7SeilOk)) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(5, 0);
 		start_ani_block(3, ABLOCK25);
@@ -144,7 +146,7 @@ void Room7::klingel() {
 		set_person_pos(181, 130, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = false;
-		det->del_taf_tbl(192, 74, 0);
+		det->del_taf_tbl(192, 74, nullptr);
 
 	} else if (_G(spieler).R7SeilOk && !_G(spieler).R7BorkFlug) {
 		_G(spieler).R7BorkFlug = true;
@@ -163,25 +165,20 @@ void Room7::klingel() {
 	}
 
 	++_G(spieler).R7BellCount;
+
+	show_cur();
 }
 
 void Room7::gedAction(int index) {
-	switch (index) {
-	case 0:
-		if (_G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
-			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(20, 1, ANI_VOR);
-			det->show_static_spr(10);
-			wait_show_screen(20 * _G(spieler).DelaySpeed);
-			det->hide_static_spr(10);
-			set_person_pos(180, 124, P_CHEWY, P_LEFT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
-			_G(spieler).R7ChewyFlug = false;
-		}
-		break;
-
-	default:
-		break;
+	if (index == 0 && _G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
+		_G(spieler).PersonHide[P_CHEWY] = true;
+		set_person_pos(180, 124, P_CHEWY, P_LEFT);
+		start_detail_wait(20, 1, ANI_VOR);
+		det->show_static_spr(10);
+		wait_show_screen(10 * _G(spieler).DelaySpeed);
+		det->hide_static_spr(10);
+		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler).R7ChewyFlug = false;
 	}
 }
 
