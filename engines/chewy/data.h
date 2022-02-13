@@ -47,7 +47,6 @@ public:
 
 	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);
-	void read_tbf_image(Stream *stream, int16 komp, uint32 size, byte *sp);
 };
 
 } // namespace Chewy

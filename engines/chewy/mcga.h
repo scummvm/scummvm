@@ -54,7 +54,6 @@ void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
 	int16 height, int16 scrWidth);
 void spr_set_mcga(const byte *sptr, int16 x, int16 y, int16 scrWidth);
 void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth);
-void zoom_img(byte *source, byte *dest, int16 xdiff, int16 ydiff);
 void zoom_set(byte *source, int16 x, int16 y, int16 xdiff,
     int16 ydiff, int16 scrWidth);
 
@@ -63,9 +62,6 @@ void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
 void setfont(byte *addr, int16 width, int16 height, int16 first,
              int16 last);
 void vors();
-void movecur(int16 x, int16 y);
-
-uint8 joystick();
 
 void init_svga(VesaInfo *vi, byte *virt_screen);
 void upd_scr();
