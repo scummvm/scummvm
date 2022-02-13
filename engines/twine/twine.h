@@ -219,7 +219,7 @@ private:
 	 * Game engine main loop
 	 * @return true if we want to show credit sequence
 	 */
-	int32 runGameEngine();
+	bool runGameEngine();
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;

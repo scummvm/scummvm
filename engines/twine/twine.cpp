@@ -724,7 +724,7 @@ void TwinEEngine::processOptionsMenu() {
 	_redraw->redrawEngineActions(true);
 }
 
-int32 TwinEEngine::runGameEngine() { // mainLoopInteration
+bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	g_system->delayMillis(2);
 
 	FrameMarker frame(this, 60);
@@ -744,8 +744,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel
 			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
 				// TODO: PlayMidiFile(6);
-				// TODO: Credits();
-				return 1;
+				return true;
 			}
 		}
 		_scene->changeScene();
@@ -758,7 +757,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	if (_menuOptions->canShowCredits) {
 		// TODO: if current music playing != 8, than play_track(8);
 		if (_input->toggleAbortAction()) {
-			return 1;
+			return true;
 		}
 	} else {
 		// Process give up menu - Press ESC
@@ -767,12 +766,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
 			if (giveUp == kQuitEngine) {
-				return 0;
+				return false;
 			}
 			if (giveUp == 1) {
 				_redraw->redrawEngineActions(true);
 				_quitSceneLoop = 0;
-				return 0;
+				return false;
 			}
 			_redraw->redrawEngineActions(true);
 		}
@@ -933,7 +932,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		processActorSamplePosition(a);
 
 		if (_quitSceneLoop != -1) {
-			return _quitSceneLoop;
+			return _quitSceneLoop == 1;
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
@@ -1002,7 +1001,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						autoSave();
 						_gameState->processGameoverAnimation();
 						_quitSceneLoop = 0;
-						return 0;
+						return false;
 					}
 				}
 			} else {
@@ -1014,7 +1013,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (_scene->_needChangeScene != -1) {
-			return 0;
+			return false;
 		}
 	}
 
@@ -1032,7 +1031,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_redraw->_reqBgRedraw = false;
 
-	return 0;
+	return false;
 }
 
 bool TwinEEngine::gameEngineLoop() {
