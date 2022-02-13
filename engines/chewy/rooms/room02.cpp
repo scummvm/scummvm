@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/global.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room02.h"
 
@@ -79,19 +78,14 @@ void Room2::electrifyWalkway2() {
 }
 
 void Room2::gedAction(int index) {
-	switch (index) {
-	case 0:
+	if (index == 0) {
 		det->stop_detail(5);
-		if (!_G(spieler).R2ElectrocutedBork) {
+		if (!_G(spieler).R2ElectrocutedBork)
 			det->start_detail(6, 2, ANI_VOR);
-		} else {
+		else
 			start_ani_block(2, ABLOCK4);
-		}
-		jump_out_r1(9);
-		break;
 
-	default:
-		break;
+		jump_out_r1(9);
 	}
 }
 
