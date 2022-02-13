@@ -23,20 +23,19 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/ani_dat.h"
-#include "chewy/room.h"
 #include "chewy/rooms/room06.h"
 
 namespace Chewy {
 namespace Rooms {
 
-static const int16 R6_ROBO_PHASEN[4][2] = {
+static const int16 ROBO_PHASEN[4][2] = {
 	{ 86, 86 },
 	{ 86, 86 },
 	{ 86, 86 },
 	{ 86, 86 }
 };
 
-static const MovLine R6_ROBO_MPKT[3] = {
+static const MovLine ROBO_MPKT[3] = {
 	{ { 168,  71, 180 }, 1,  1 },
 	{ { 180,  71, 100 }, 1,  2 },
 	{ {  60, 210, 110 }, 1, 16 }
@@ -59,24 +58,22 @@ void Room6::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 
-	if (_G(spieler).R6BolaSchild) {
-		if (_G(spieler).R6RaumBetreten < 2) {
-			det->start_detail(7, 255, ANI_VOR);
-			atds->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
-			if (!flags.LoadGame)
-				++_G(spieler).R6RaumBetreten;
+	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
+		det->start_detail(7, 255, ANI_VOR);
+		atds->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
+		if (!flags.LoadGame)
+			++_G(spieler).R6RaumBetreten;
 
-			if (_G(spieler).R6RaumBetreten == 2) {
-				hide_cur();
-				det->stop_detail(7);
-				init_robo();
-				wait_auto_obj(0);
-				_G(spieler).R6BolaOk = true;
-				obj->show_sib(SIB_BOLA_KNOPF_R6);
-				obj->hide_sib(SIB_BOLA_R6);
-				atds->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
-				show_cur();
-			}
+		if (_G(spieler).R6RaumBetreten == 2) {
+			hide_cur();
+			det->stop_detail(7);
+			init_robo();
+			wait_auto_obj(0);
+			_G(spieler).R6BolaOk = true;
+			obj->show_sib(SIB_BOLA_KNOPF_R6);
+			obj->hide_sib(SIB_BOLA_R6);
+			atds->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
+			show_cur();
 		}
 	}
 }
@@ -91,12 +88,10 @@ void Room6::init_robo() {
 	auto_mov_obj[ROBO_OBJ].Id = AUTO_OBJ0;
 	auto_mov_vector[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[ROBO_OBJ].Mode = true;
-	init_auto_obj(ROBO_OBJ, &R6_ROBO_PHASEN[0][0], mov_phasen[ROBO_OBJ].Lines,
-		(const MovLine *)R6_ROBO_MPKT);
+	init_auto_obj(ROBO_OBJ, &ROBO_PHASEN[0][0], 3, (const MovLine *)ROBO_MPKT);
 }
 
 void Room6::bola_knopf() {
-	int16 tmp;
 	if (!_G(spieler).R6BolaBecher) {
 		det->hide_static_spr(0);
 		start_detail_wait(0, 1, ANI_VOR);
@@ -123,11 +118,9 @@ void Room6::bola_knopf() {
 			}
 			det->show_static_spr(0);
 			++_G(spieler).R6BolaJoke;
-			if (_G(spieler).R6BolaJoke < 3)
-				tmp = 3;
-			else
-				tmp = 4;
-			start_aad_wait(tmp, -1);
+			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
+			start_spz(4, 244, false, 0);
+			start_aad_wait(diaNr, -1);
 		}
 		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 	}
