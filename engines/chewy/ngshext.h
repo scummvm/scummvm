@@ -25,24 +25,9 @@
 #include "chewy/memory.h"
 #include "chewy/mcga.h"
 #include "chewy/mouse.h"
-
 #include "chewy/io_game.h"
 #include "chewy/cursor.h"
 #include "chewy/flic.h"
-#ifdef AIL
 #include "chewy/sound_player.h"
-#endif
-
-namespace Chewy {
-
-#define MAXPFAD 81
-
-class sblaster;
-
-extern sblaster *snd;
-
-extern uint16 _stklen;
-
-} // namespace Chewy
 
 #endif
