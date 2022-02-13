@@ -233,8 +233,6 @@ int16 ani_stand_count[MAX_PERSON];
 
 bool ani_stand_flag[MAX_PERSON];
 
-char io_pal1[7] = {11, 60, 14, 2, 1, 5, 4};
-
 bitclass *bit;
 gedclass *ged;
 text *txt;

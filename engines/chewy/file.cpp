@@ -27,6 +27,8 @@
 
 namespace Chewy {
 
+static const byte IO_PAL1[7] = { 11, 60, 14, 2, 1, 5, 4 };
+
 Common::File *File::open(const char *name) {
 	Common::File *f = new Common::File();
 	if (f->open(name)) {
@@ -58,7 +60,7 @@ int16 call_fileio(int16 palette, int16 mode) {
 	switch (palette) {
 
 	case PAL1:
-		ioptr.m_col = io_pal1;
+		ioptr.m_col = IO_PAL1;
 		break;
 	}
 	switch (mode) {
