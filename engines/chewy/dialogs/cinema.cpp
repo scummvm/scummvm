@@ -58,7 +58,7 @@ void Cinema::execute() {
 	room->open_handle(GBOOK, "rb", 0);
 	room->load_tgp(4, &room_blk, 1, 0, GBOOK);
 	show_cur();
-	g_events->clearEvents();
+	EVENTS_CLEAR;
 	kbinfo.scan_code = 0;
 
 	for (bool endLoop = false; !endLoop;) {

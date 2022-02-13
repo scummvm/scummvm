@@ -86,7 +86,7 @@ void MainMenu::execute() {
 
 		switch (_selection) {
 		case MM_START_GAME:
-			g_events->clearEvents();
+			EVENTS_CLEAR;
 			startGame();
 			playGame();
 			break;
