@@ -407,6 +407,16 @@ public:
 typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::Array<Common::String> Sounds;
 
+enum SegmentType {
+	Straight,
+	Select3,
+	TurnLeft3,
+	Straight3,
+	TurnRight3,
+	Select2,
+	TurnLeft2,
+	TurnRight2,
+};
 
 class Segment {
 public:
@@ -432,6 +442,8 @@ public:
 		id = 0;
 		obj1KillsRequired = 0;
 		obj1MissesAllowed = 0;
+		obj2KillsRequired = 0;
+		obj2MissesAllowed = 0;
 		frameDelay = 0;
 	}
 	uint32 id;
@@ -443,6 +455,8 @@ public:
 	// Objectives
 	uint32 obj1KillsRequired;
 	uint32 obj1MissesAllowed;
+	uint32 obj2KillsRequired;
+	uint32 obj2MissesAllowed;
 
 	// Videos
 	Filename transitionVideo;
