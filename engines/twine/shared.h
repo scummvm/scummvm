@@ -78,7 +78,7 @@
 #define GAMEFLAG_VIDEO_EXPLODE2 219
 
 #define OWN_ACTOR_SCENE_INDEX 0
-#define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
+#define IS_HERO(x) ((x) == OWN_ACTOR_SCENE_INDEX)
 
 namespace TwinE {
 
