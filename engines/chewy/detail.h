@@ -266,9 +266,6 @@ private:
 
 	void remove_unused_samples();
 	RoomDetailInfo _rdi;
-#ifdef DETEDIT
-	room_detail_info rdi_shadow;
-#endif
 	RdiDateiHeader _rdi_datei_header;
 	SprInfo _sprInfo;
 
