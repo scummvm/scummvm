@@ -41,6 +41,9 @@ static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
 	{ WIN_INF_X + 242, WIN_INF_Y + 156, WIN_INF_X + 292, WIN_INF_Y + 156 + 14 }
 };
 
+static const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
+
+
 int16 Inventory::inv_rand_x;
 int16 Inventory::inv_rand_y;
 int Inventory::keyVal;

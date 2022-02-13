@@ -43,8 +43,6 @@ namespace Chewy {
 #define R45_MAX_PERSON 9
 
 extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
-extern const int16 ANI_INVENT_END[3];
-extern const int16 SPZ_ANI_PH[][2];
 
 class ChewyFont;
 class Cursor;
