@@ -37,6 +37,7 @@ Hypno::Shoot *shoot;
 extern int HYPNO_ARC_lex();
 extern int HYPNO_ARC_parse();
 extern int HYPNO_ARC_lineno;
+uint32 HYPNO_ARC_default_sound_rate = 0;
 
 void HYPNO_ARC_xerror(const char *str) {
 	error("%s at line %d", str, HYPNO_ARC_lineno);
@@ -85,8 +86,12 @@ header: hline header
 
 hline: 	CTOK NUM {
 		g_parsedArc->id = $2; 
+		HYPNO_ARC_default_sound_rate = 0;
 		debugC(1, kHypnoDebugParser, "C %d", $2); }
-	| FTOK NUM { debugC(1, kHypnoDebugParser, "F %d", $2); }
+	| FTOK NUM { 
+		HYPNO_ARC_default_sound_rate = $2;
+		debugC(1, kHypnoDebugParser, "F %d", $2);
+	}
 	| DTOK NUM  { 
 		g_parsedArc->frameDelay = $2;
 		debugC(1, kHypnoDebugParser, "D %d", $2);
@@ -161,6 +166,8 @@ hline: 	CTOK NUM {
 		uint32 sampleRate = 11025;
 		if (Common::String("22K") == $3 || Common::String("22k") == $3)
 			sampleRate = 22050;
+		else if (HYPNO_ARC_default_sound_rate > 0)
+			sampleRate = HYPNO_ARC_default_sound_rate;
  
 		if (Common::String("S0") == $1) {
 			g_parsedArc->music = $2;

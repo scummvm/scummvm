@@ -112,7 +112,7 @@ extern int HYPNO_ARC_debug;
 #if ! defined HYPNO_ARC_STYPE && ! defined HYPNO_ARC_STYPE_IS_DECLARED
 union HYPNO_ARC_STYPE
 {
-#line 53 "engines/hypno/grammar_arc.y"
+#line 54 "engines/hypno/grammar_arc.y"
 
 	char *s; /* string value */
 	int i;	 /* integer value */
