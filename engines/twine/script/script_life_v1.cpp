@@ -219,39 +219,40 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 		conditionValueSize = 2;
 
-		if (!targetActor->_dynamicFlags.bIsDead) {
-			if (ABS(targetActor->_pos.y - ctx.actor->_pos.y) < 1500) {
-				newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos(), targetActor->pos());
-				if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
-					engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
-				}
-			} else {
+		if (targetActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+
+		if (ABS(targetActor->_pos.y - ctx.actor->_pos.y) < 1500) {
+			newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos(), targetActor->pos());
+			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 			}
+		} else {
+			engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
+		}
 
-			if (IS_HERO(targetActorIdx)) {
+		if (IS_HERO(targetActorIdx)) {
+			if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
 				int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
-				if (ABS(heroAngle) > ANGLE_90) {
-					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-				} else {
+				if (ABS(heroAngle) <= ANGLE_90) {
 					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
+				} else {
+					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 				}
 			} else {
-				if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
-					int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
-
-					if (ABS(heroAngle) > ANGLE_90) {
-						engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
-					} else {
-						engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
-					}
-				} else {
-					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
-				}
+				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 			}
 		} else {
-			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
+
+			if (ABS(heroAngle) <= ANGLE_90) {
+				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
+			} else {
+				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			}
 		}
 		break;
 	}
