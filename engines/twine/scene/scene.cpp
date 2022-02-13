@@ -633,7 +633,7 @@ void Scene::initSceneVars() {
 
 void Scene::playSceneMusic() {
 	if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
-		_engine->_music->playMidiMusic(8);
+		_engine->_music->playTrackMusic(8);
 	} else {
 		_engine->_music->playMidiMusic(_sceneMusic);
 	}
