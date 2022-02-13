@@ -432,8 +432,6 @@ void init_atds();
 
 void init_room();
 
-int16 call_fileio(int16 palette, int16 mode);
-
 void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode);
 
 void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 zeilen_hoehe,

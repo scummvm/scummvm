@@ -19,48 +19,14 @@
  *
  */
 
-#ifndef CHEWY_IOGAME_H
-#define CHEWY_IOGAME_H
+#ifndef CHEWY_IOGame2_H
+#define CHEWY_IOGame2_H
 
 #include "chewy/mcga.h"
 #include "chewy/cursor.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
-
-#ifdef ENGLISCH
-
-#define FSTRING1 "F1 Save"
-#define FSTRING2 "F2 Load"
-#define FSTRING3 "F3 Quit"
-#define FSTRING4 "F4 Return"
-#define FSTRING5 " Are You "
-#define FSTRING6 "Sure (Y/N)?"
-#define FSTRING7 "ESC Cancel"
-#define FSTRING8 "U"
-#define FSTRING9 " "
-#define FSTRING10 "P"
-#define FSTRING11 "D"
-#define FSTRING12 "O"
-#define FSTRING13 "W"
-#define FSTRING14 "N"
-#else
-
-#define FSTRING1 "F1 Speichern"
-#define FSTRING2 "F2 Laden"
-#define FSTRING3 "F3 Beenden "
-#define FSTRING4 "F4 ZurÃ¼ck"
-#define FSTRING5 " Bist Du "
-#define FSTRING6 "sicher (J/N)?"
-#define FSTRING7 "ESC Abbrechen"
-#define FSTRING8 "A"
-#define FSTRING9 "U"
-#define FSTRING10 "F"
-#define FSTRING11 " "
-#define FSTRING12 "A"
-#define FSTRING13 "B"
-#define FSTRING14 " "
-#endif
 
 #define IOG_END 1
 #define IOG_LOAD 2
@@ -71,44 +37,22 @@ namespace Chewy {
 #define DOPPEL_KLICK 0.5
 
 class IOGame {
+private:
+	Cursor *_cur;
+	iog_init *_io;
+	InputMgr *_in;
+	McgaGraphics *_out;
+	char _fileFind[20][USER_NAME + 4];
+
+private:
+	int16 get_savegame_files();
+
 public:
-	IOGame(McgaGraphics *out, InputMgr *in, Cursor *curp);
-	~IOGame();
+	IOGame(McgaGraphics *out, InputMgr *in, Cursor *cur);
 
-	int16 io_menu(iog_init *iostruc);
-
-	void print_shad(int16 x, int16 y,
-	                int16 fcol, int16 bcol,
-	                int16 scol, int16 width,
-	                char *name);
 	char *io_init(iog_init *iostruc);
 	void load(int16 nr, char *fname);
 	void save_entry(int16 nr, char *fname);
-
-private:
-	void save(int16 y, int16 nr, char *fname);
-	void plot_io();
-	void plot_auf_txt(int16 farbe);
-	void plot_ab_txt(int16 farbe);
-	void mark_eintrag(int16 y, int16 nr);
-	void unmark_eintrag(int16 y, int16 nr);
-	void plot_dir_liste(int16 cur_y, int16 start);
-	void schalter_aus();
-	int16 get_savegame_files();
-	void itoa(int N, char *str, int base);
-
-	McgaGraphics *_out;
-	InputMgr *_in;
-	Cursor *_cur;
-	iog_init *_io;
-	uint32 _dblClickStart, _dblClickEnd;
-	kb_info *_kbinfo;
-	maus_info *_minfo;
-	in_zeiger *_inzeig;
-	int16 _scrWidth;
-	float _dblClick;
-	int16 _switchCode;
-	char _fileFind[20][USER_NAME + 4];
 };
 
 } // namespace Chewy
