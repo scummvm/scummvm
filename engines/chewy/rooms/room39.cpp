@@ -224,14 +224,14 @@ int16 Room39::use_tv() {
 			_G(spieler).R39ClintNews = 0;
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
-			_G(out)->set_palette(pal);
+			_G(out)->set_palette(_G(pal));
 			flags.NoPalAfterFlc = true;
 			flic_cut(TV_FLIC[0], CFO_MODE);
 
 			_G(out)->cls();
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
-			_G(out)->set_palette(pal);
+			_G(out)->set_palette(_G(pal));
 			set_tv();
 			start_spz(CH_TRANS, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(80, -1);
@@ -272,7 +272,7 @@ int16 Room39::use_tv() {
 		_G(out)->cls();
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		_G(out)->set_palette(pal);
+		_G(out)->set_palette(_G(pal));
 		flags.NoPalAfterFlc = false;
 	}
 
@@ -309,7 +309,7 @@ void Room39::look_tv(bool cls_mode) {
 			if (cls_mode) {
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
-				_G(out)->set_palette(pal);
+				_G(out)->set_palette(_G(pal));
 				flags.NoPalAfterFlc = true;
 			}
 
@@ -328,7 +328,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(out)->cls();
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
-				_G(out)->set_palette(pal);
+				_G(out)->set_palette(_G(pal));
 				flags.NoPalAfterFlc = false;
 
 				if (_G(spieler).R39TransMensch && dia_nr == 85)

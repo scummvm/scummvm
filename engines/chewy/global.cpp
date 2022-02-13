@@ -77,19 +77,7 @@ byte *workpage;
 byte *workptr;
 byte *cur_back;
 byte **ged_mem;
-byte *pal;
 byte *spblende;
-
-byte *screen0;
-int16 scr_width;
-BlendMode fx_blend;
-
-byte *font6x8;
-byte *font8x8;
-int16 fvorx6x8;
-int16 fvorx8x8;
-int16 fvory6x8;
-short fvory8x8;
 
 char **ads_item_ptr;
 
@@ -193,25 +181,15 @@ int16 talk_start_ani = -1;
 int16 talk_hide_static = -1;
 
 SplitStringInit ssi[AAD_MAX_PERSON] = {
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-
 	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
 };
 

@@ -33,9 +33,9 @@ void Room10::entry() {
 		_G(out)->setze_zeiger(workptr);
 		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->setze_zeiger(nullptr);
-		fx->blende1(workptr, screen0, pal, 150, 0, 0);
+		fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 		_G(spieler).R10Surimy = true;
-		fx_blend = BLEND_NONE;
+		_G(fx_blend) = BLEND_NONE;
 		flic_cut(FCUT_004, CFO_MODE);
 		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);

@@ -303,7 +303,7 @@ int Room90::shootControlUnit() {
 	det->show_static_spr(4);
 	det->show_static_spr(5);
 	set_up_screen(NO_SETUP);
-	fx_blend = BLEND3;
+	_G(fx_blend) = BLEND3;
 	spieler_mi[P_CHEWY].Mode = false;
 	flags.NoScroll = false;
 	HowardMov = 0;

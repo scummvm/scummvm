@@ -125,7 +125,7 @@ int16 Room4::sonde_comp() {
 	room->load_room(&room_blk, 3, &_G(spieler));
 	set_person_pos(110, 139, P_CHEWY, P_LEFT);
 
-	fx_blend = BLEND1;
+	_G(fx_blend) = BLEND1;
 	atds->stop_aad();
 
 	return cur_x;

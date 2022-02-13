@@ -166,13 +166,13 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 
 	for (i = 0; i < 4; i++)
 		_G(out)->sprite_set(menutaf->image[(int16)sprite_eckenr[i]],
-		                 xy[i][0], xy[i][1], scr_width);
+		                 xy[i][0], xy[i][1], _G(scr_width));
 
 	s_nr = BAU_MENU_SEITE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
 		for (i = 0; i < yanz - 2; i++) {
-			_G(out)->sprite_set(menutaf->image[s_nr], xy[j][0], y + i * 16, scr_width);
+			_G(out)->sprite_set(menutaf->image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
 		}
 		++s_nr;
 	}
@@ -183,7 +183,7 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		if ((!mode) || (mode == 1 && j == 1)) {
 			for (i = 0; i < xanz - 2; i++) {
 				_G(out)->sprite_set(menutaf->image[s_nr],
-				                 xy[2][0] + 16 + i * 16, xy[j * 2][1], scr_width);
+				                 xy[2][0] + 16 + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
@@ -209,18 +209,18 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
 				_G(out)->sprite_set(menutaf->image[BAU_MENU_OBEN],
-				                 x + i * 16, xy[0][1], scr_width);
+				                 x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
 		_G(out)->sprite_set(menutaf->image[BAU_MENU_OBEN_L],
-		                 xy[0][0] + 16 + leer * 16, xy[0][1], scr_width);
+		                 xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
 		for (i = 0; i < mitte; i++)
 			_G(out)->sprite_set(menutaf->image[BAU_MENU_OBEN_M],
-			                 x + i * 16, xy[0][1], scr_width);
+			                 x + i * 16, xy[0][1], _G(scr_width));
 		_G(out)->sprite_set(menutaf->image[BAU_MENU_OBEN_R],
-		                 x + i * 16, xy[0][1], scr_width);
+		                 x + i * 16, xy[0][1], _G(scr_width));
 	}
 
 	_G(out)->box_fill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xanz - 2) * 16,
@@ -239,7 +239,7 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 		if (x_pix < tmp)
 			x_pix = tmp;
 	}
-	x_pix *= fvorx6x8;
+	x_pix *= _G(fvorx6x8);
 	x_pix += 12;
 	tmp = x_pix;
 	if (x_pix % 16)
@@ -281,8 +281,8 @@ void ads_menu() {
 			_G(cur_display) = true;
 
 			build_menu(ADS_WIN);
-			_G(out)->set_fontadr(font6x8);
-			_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+			_G(out)->set_fontadr(_G(font6x8));
+			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			if (ads_item_anz > 4)
 				cur_y_start = 190;
 			else

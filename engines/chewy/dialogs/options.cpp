@@ -60,10 +60,10 @@ void Options::execute(taf_info *ti) {
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(workptr);
 	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-	_G(out)->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(_G(screen0));
 
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(workptr);
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
@@ -257,9 +257,9 @@ void Options::execute(taf_info *ti) {
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(workptr);
 	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-	_G(out)->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(workptr);
 }
 

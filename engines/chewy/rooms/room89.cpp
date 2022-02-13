@@ -84,7 +84,7 @@ void Room89::entry() {
 		flic_cut(117, CFO_MODE);
 		register_cutscene(35);
 
-		fx_blend = BLEND3;
+		_G(fx_blend) = BLEND3;
 		Room66::proc8(-1, 2, 3, 563);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
@@ -100,7 +100,7 @@ void Room89::entry() {
 			var24 -= 2;
 			_G(out)->setze_zeiger(workptr);
 			_G(out)->cls();
-			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, scr_width);
+			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->back2screen(workpage);
 			g_events->delay(30);
@@ -121,7 +121,7 @@ void Room89::entry() {
 			var30 += 2;
 			_G(out)->setze_zeiger(workptr);
 			_G(out)->cls();
-			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, scr_width);
+			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->back2screen(workpage);
 			g_events->delay(30);

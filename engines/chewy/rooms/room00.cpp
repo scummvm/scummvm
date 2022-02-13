@@ -311,13 +311,13 @@ void Room0::calcEyeClick(int16 ani_nr) {
 		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
 			char *str_ = atds->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
-				_G(out)->set_fontadr(font8x8);
-				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(_G(font8x8));
+				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 				x = minfo.x;
 				y = minfo.y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (i = 0; i < anz; i++)
-					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
+					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), txt->str_pos((char *)str_, i));
 			}
 		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(SLIME_INV)) {
@@ -564,13 +564,13 @@ void Room0::calcPillowClick(int16 ani_nr) {
 		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
 			char *str_ = atds->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
-				_G(out)->set_fontadr(font8x8);
-				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(_G(font8x8));
+				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 				x = minfo.x;
 				y = minfo.y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (i = 0; i < anz; i++)
-					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
+					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), txt->str_pos((char *)str_, i));
 			}
 		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
@@ -776,7 +776,7 @@ void Room0::feederAni() {
 			spieler_vector[P_CHEWY].DelayCount = 0;
 
 			check_shad(4, 0);
-			fx_blend = BLEND1;
+			_G(fx_blend) = BLEND1;
 			set_up_screen(DO_SETUP);
 		} else {
 			action = true;

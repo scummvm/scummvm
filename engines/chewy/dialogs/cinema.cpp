@@ -51,8 +51,8 @@ void Cinema::execute() {
 	Common::Array<int> cutscenes;
 	getCutscenes(cutscenes);
 
-	_G(out)->set_fontadr(font6x8);
-	_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+	_G(out)->set_fontadr(_G(font6x8));
+	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 	atds->load_atds(98, 1);
 
 	room->open_handle(GBOOK, "rb", 0);
@@ -80,7 +80,7 @@ void Cinema::execute() {
 		} else {
 			// No cutscenes seen yet
 			char *none = atds->ats_get_txt(545, 0, &txt_anz, 1);
-			_G(out)->printxy(40, 68, 14, 300, scr_width, none);
+			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
 		}
 
 		if (minfo.button == 1 && !flag) {
@@ -161,15 +161,15 @@ void Cinema::execute() {
 		case Common::KEYCODE_RETURN:
 			hide_cur();
 			_G(out)->cls();
-			_G(out)->setze_zeiger(screen0);
-			fx->blende1(workptr, screen0, pal, 150, 0, 0);
+			_G(out)->setze_zeiger(_G(screen0));
+			fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
 			flc->set_custom_user_function(cut_serv);
 			flic_cut(CINEMA_FLICS[topIndex + selected], CFO_MODE);
 			flc->remove_custom_user_function();
-			_G(out)->set_fontadr(font6x8);
-			_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+			_G(out)->set_fontadr(_G(font6x8));
+			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			show_cur();
 			delay = 0;
 			flag = false;
@@ -189,9 +189,9 @@ void Cinema::execute() {
 
 			if (flag) {
 				flag = false;
-				_G(out)->setze_zeiger(screen0);
+				_G(out)->setze_zeiger(_G(screen0));
 				room->set_ak_pal(&room_blk);
-				fx->blende1(workptr, screen0, pal, 150, 0, 0);
+				fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 			} else {
 				_G(out)->back2screen(workpage);
 			}

@@ -776,14 +776,14 @@ void print_rows(int16 id) {
 	int16 txt_anz, len;
 	char *txtStr, *s;
 
-	_G(out)->set_fontadr(font8x8);
-	_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+	_G(out)->set_fontadr(_G(font8x8));
+	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 	txtStr = atds->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
 	_G(out)->setze_zeiger(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
 		s = txt->str_pos(txtStr, i);
-		len = (strlen(s) * fvorx8x8) / 2;
+		len = (strlen(s) * _G(fvorx8x8)) / 2;
 
 		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, "%s", s);
 	}
@@ -1457,7 +1457,7 @@ void flic_cut(int16 nr, int16 mode) {
 	}
 
 	if (!flags.NoPalAfterFlc)
-		_G(out)->set_palette(pal);
+		_G(out)->set_palette(_G(pal));
 
 	atds->stop_aad();
 	atds->stop_ats();

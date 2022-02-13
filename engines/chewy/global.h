@@ -124,6 +124,17 @@ public:
 	// global.cpp
 	const uint8 *_chewy_ph_anz;
 	const uint8 *_chewy_ph;
+	byte *_pal = nullptr;
+	byte *_screen0 = nullptr;
+	int16 _scr_width = 0;
+	BlendMode _fx_blend = BLEND_NONE;
+
+	byte *_font6x8 = nullptr;
+	byte *_font8x8 = nullptr;
+	int16 _fvorx6x8 = 0;
+	int16 _fvorx8x8 = 0;
+	int16 _fvory6x8 = 0;
+	short _fvory8x8 = 0;
 
 	// main.cpp
 	int16 _menu_flag = 0;
@@ -195,19 +206,7 @@ extern byte *workpage;
 extern byte *workptr;
 extern byte *cur_back;
 extern byte **ged_mem;
-extern byte *pal;
 extern byte *spblende;
-
-extern byte *screen0;
-extern int16 scr_width;
-extern BlendMode fx_blend;
-
-extern byte *font6x8;
-extern byte *font8x8;
-extern int16 fvorx6x8;
-extern int16 fvorx8x8;
-extern int16 fvory6x8;
-extern int16 fvory8x8;
 
 extern char *invent_txt;
 extern char *invent_name;

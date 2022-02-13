@@ -258,7 +258,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(out)->ausblenden(1);
 					_G(out)->setze_zeiger(nullptr);
 					_G(out)->cls();
-					_G(out)->einblenden(pal, 0);
+					_G(out)->einblenden(_G(pal), 0);
 					flags.NoPalAfterFlc = true;
 					flc->set_flic_user_function(cut_serv);
 					det->show_static_spr(16);
@@ -272,7 +272,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					obj->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
 					det->hide_static_spr(1);
 
-					fx_blend = BLEND3;
+					_G(fx_blend) = BLEND3;
 					set_up_screen(DO_SETUP);
 					start_aad_wait(291, -1);
 				}
@@ -289,7 +289,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			flags.NoPalAfterFlc = true;
 			flic_cut(114, 0);
 			set_person_pos(115, 144, P_CHEWY, P_LEFT);
-			fx_blend = BLEND3;
+			_G(fx_blend) = BLEND3;
 			set_up_screen(NO_SETUP);
 			start_aad_wait(564, -1);
 			break;

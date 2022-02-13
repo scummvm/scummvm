@@ -129,7 +129,7 @@ void Room3::terminal() {
 			clear_prog_ani();
 			_G(auto_obj) = 0;
 			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-			fx_blend = BLEND1;
+			_G(fx_blend) = BLEND1;
 			start_ani_block(3, ablock5);
 			set_person_pos(91, 107, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;

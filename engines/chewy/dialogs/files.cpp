@@ -73,12 +73,12 @@ int16 Files::execute(bool isInGame) {
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(workptr);
 	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-	_G(out)->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
 	fnames = _G(iog)->io_init(&ioptr);
 	fnames += 1;
  
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(workptr);
 	show_cur();
 
@@ -272,7 +272,7 @@ enter:
 					}
 				} else if (mode[SAVE]) {
 					_G(out)->back2screen(workpage);
-					_G(out)->setze_zeiger(screen0);
+					_G(out)->setze_zeiger(_G(screen0));
 					_G(in)->alter_kb_handler();
 					tmp = fnames + ((text_off + active_slot) * 40);
 					key = _G(out)->scanxy(70, 68 + (active_slot * 10),
@@ -303,7 +303,7 @@ enter:
 	room->open_handle(EPISODE1, "rb", 0);
 	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
 
-	fx_blend = BLEND1;
+	_G(fx_blend) = BLEND1;
 	room->set_ak_pal(&room_blk);
 
 	return ret;

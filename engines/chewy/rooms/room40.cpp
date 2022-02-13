@@ -118,7 +118,7 @@ void Room40::xit(int16 eib_nr) {
 				_G(out)->ausblenden(0);
 				hide_person();
 				set_up_screen(DO_SETUP);
-				_G(out)->einblenden(pal, 0);
+				_G(out)->einblenden(_G(pal), 0);
 				uhr->enable_timer();
 
 				_G(maus_links_click) = false;
@@ -475,7 +475,7 @@ int16 Room40::use_haendler() {
 				det->set_static_ani(3, -1);
 				start_aad_wait(211, -1);
 				_G(out)->ausblenden(0);
-				_G(out)->set_teilpalette(pal, 255, 1);
+				_G(out)->set_teilpalette(_G(pal), 255, 1);
 				start_aad_wait(212, -1);
 				_G(out)->ausblenden(0);
 				_G(spieler).R40Wettbewerb = true;
@@ -554,7 +554,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 		start_aad_wait(aad_nr, -1);
 		flags.NoPalAfterFlc = true;
 		flic_cut(FCUT_062, CFO_MODE);
-		fx_blend = BLEND3;
+		_G(fx_blend) = BLEND3;
 		start_aad_wait(375, -1);
 	} else {
 		start_aad_wait(aad_nr, -1);
