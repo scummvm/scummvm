@@ -23,7 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/global.h"
 #include "chewy/room.h"
-#include "chewy/rooms/room4.h"
+#include "chewy/rooms/room04.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
