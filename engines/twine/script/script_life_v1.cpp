@@ -329,7 +329,9 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
 
-		if (!engine->_gameState->inventoryDisabled()) {
+		if (engine->_gameState->inventoryDisabled()) {
+			engine->_scene->_currentScriptValue = 0;
+		} else {
 			if (item == engine->_loopInventoryItem) {
 				engine->_scene->_currentScriptValue = 1;
 			} else {
@@ -343,8 +345,6 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 			if (engine->_scene->_currentScriptValue == 1) {
 				engine->_redraw->addOverlay(OverlayType::koInventoryItem, item, 0, 0, 0, OverlayPosType::koNormal, 3);
 			}
-		} else {
-			engine->_scene->_currentScriptValue = 0;
 		}
 		break;
 	}
