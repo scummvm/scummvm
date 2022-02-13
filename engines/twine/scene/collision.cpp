@@ -94,6 +94,7 @@ int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 d
 	return (((end - start) * delay) / maxDelay) + start;
 }
 
+// ReajustPos
 void Collision::reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const {
 	if (brickShape == ShapeType::kNone) {
 		return;
@@ -292,6 +293,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	return actor->_collision;
 }
 
+// DoCornerReajustTwinkel
 void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
 	IVec3 &processActor = actor->_processActor;
 	IVec3 &previousActor = actor->_previousActor;
@@ -325,6 +327,7 @@ void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 
 	processActor = _processCollision;
 }
 
+// DoCornerReajust
 void Collision::checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
 	IVec3 &processActor = actor->_processActor;
 	IVec3 &previousActor = actor->_previousActor;

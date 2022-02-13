@@ -36,13 +36,13 @@ private:
 	TwinEEngine *_engine;
 
 	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
+
+	/** Actor collision coordinate */
+	IVec3 _processCollision;
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
 	IVec3 _collision;
-
-	/** Actor collision coordinate */
-	IVec3 _processCollision;
 
 	/** Cause damage in current processed actor */
 	int32 _causeActorDamage = 0; //fieldCauseDamage
