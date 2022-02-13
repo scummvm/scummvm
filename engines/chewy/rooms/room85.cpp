@@ -91,7 +91,7 @@ void Room85::entry(int16 eib_nr) {
 		flic_cut(91, CFO_MODE);
 		det->hide_static_spr(6);
 		_G(spieler).scrollx = 25;
-		fx_blend = BLEND3;
+		_G(fx_blend) = BLEND3;
 		start_aad_wait(475, -1);
 		start_aad(476, -1);
 		flc->set_custom_user_function(Room87::proc5);

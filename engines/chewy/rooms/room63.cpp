@@ -147,7 +147,7 @@ void Room63::bork_platt() {
 	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(FCUT_079, CFO_MODE);
-	fx_blend = BLEND3;
+	_G(fx_blend) = BLEND3;
 	show_cur();
 	flags.MainInput = true;
 	_G(spieler).R62Flucht = true;

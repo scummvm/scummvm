@@ -69,7 +69,7 @@ void game_main() {
 
 void alloc_buffers() {
 	workpage = (byte *)MALLOC(64004l);
-	pal = (byte *)MALLOC(768l);
+	_G(pal) = (byte *)MALLOC(768l);
 	cur_back = (byte *)MALLOC(16 * 16 + 4);
 	Ci.VirtScreen = workpage;
 	Ci.TempArea = (byte *)MALLOC(64004l);
@@ -83,8 +83,8 @@ void free_buffers() {
 	for (int16 i = 0; i < MAX_PERSON; i++)
 		free((char *)PersonTaf[i]);
 	free((char *)spz_tinfo);
-	free(font6x8);
-	free(font8x8);
+	free(_G(font6x8));
+	free(_G(font8x8));
 	free(spblende);
 	free((char *)menutaf);
 	free((char *)chewy);
@@ -93,7 +93,7 @@ void free_buffers() {
 	free(Ci.MusicSlot);
 	free(Ci.TempArea);
 	free(cur_back);
-	free(pal);
+	free(_G(pal));
 	free(workpage);
 }
 
@@ -258,7 +258,7 @@ void test_menu() {
 	_G(maus_links_click) = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(txt_aus_click) = false;
-	fx_blend = BLEND3;
+	_G(fx_blend) = BLEND3;
 	_G(auto_obj) = 0;
 	flags.MainInput = true;
 	flags.ShowAtsInvTxt = true;
@@ -348,13 +348,13 @@ int16 main_loop(int16 mode) {
 		case Common::KEYCODE_F6:
 			flags.SaveMenu = true;
 
-			_G(out)->setze_zeiger(screen0);
-			_G(out)->set_fontadr(font6x8);
-			_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+			_G(out)->setze_zeiger(_G(screen0));
+			_G(out)->set_fontadr(_G(font6x8));
+			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			cursor_wahl(CUR_SAVE);
 			if (Dialogs::Files::execute(true) == 1) {
 				ende = 1;
-				fx_blend = BLEND4;
+				_G(fx_blend) = BLEND4;
 			}
 			if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1 && menu_item == CUR_USE) {
 				cursor_wahl(CUR_AK_INVENT);
@@ -415,15 +415,15 @@ int16 main_loop(int16 mode) {
 				_G(cur)->move(152, 92);
 				minfo.x = 152;
 				minfo.y = 92;
-				_G(out)->set_fontadr(font6x8);
-				_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+				_G(out)->set_fontadr(_G(font6x8));
+				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 
-				_G(out)->setze_zeiger(screen0);
+				_G(out)->setze_zeiger(_G(screen0));
 				cursor_wahl(CUR_SAVE);
 				ret = Dialogs::Files::execute(true);
 				if (ret == IOG_END) {
 					ende = 1;
-					fx_blend = BLEND4;
+					_G(fx_blend) = BLEND4;
 				}
 
 				_G(out)->setze_zeiger(workptr);
@@ -567,7 +567,7 @@ void set_up_screen(SetupScreenMode mode) {
 			_G(out)->sprite_set(inv_spr[_G(spieler).AkInvent],
 			                 invent_display[_G(spieler).InvDisp][0] + 1 + _G(spieler).DispZx,
 			                 invent_display[_G(spieler).InvDisp][1] + 1 + _G(spieler).DispZy
-			                 , scr_width);
+			                 , _G(scr_width));
 		}
 
 		if (flags.AdsDialog)
@@ -607,7 +607,7 @@ void set_up_screen(SetupScreenMode mode) {
 
 		calc_auto_go();
 
-		if (fx_blend) {
+		if (_G(fx_blend)) {
 			int16 idx = ged->ged_idx(
 				spieler_vector[P_CHEWY].Xypos[0] + spieler_mi[P_CHEWY].HotX,
 				spieler_vector[P_CHEWY].Xypos[1] + spieler_mi[P_CHEWY].HotY,
@@ -646,7 +646,7 @@ void set_up_screen(SetupScreenMode mode) {
 
 			if ((_G(spieler).inv_cur) && (flags.CursorStatus == true))
 				_G(out)->sprite_set(curtaf->image[_G(pfeil_ani) + 32], minfo.x, minfo.y,
-				                scr_width);
+				                _G(scr_width));
 			if (_G(pfeil_delay) == 0) {
 				_G(pfeil_delay) = _G(spieler).DelaySpeed;
 				if (_G(pfeil_ani) < 4)
@@ -666,24 +666,24 @@ void set_up_screen(SetupScreenMode mode) {
 	_G(menu_flag) = false;
 	if (mode == DO_SETUP) {
 		_G(out)->setze_zeiger(nullptr);
-		switch (fx_blend) {
+		switch (_G(fx_blend)) {
 		case BLEND1:
-			fx->blende1(workptr, screen0, pal, 150, 0, 0);
+			fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 			break;
 
 		case BLEND2:
-			fx->blende1(workptr, screen0, pal, 150, 1, 0);
+			fx->blende1(workptr, _G(screen0), _G(pal), 150, 1, 0);
 			break;
 
 		case BLEND3:
-			fx->rnd_blende(spblende, workptr, screen0, pal, 0, 10);
+			fx->rnd_blende(spblende, workptr, _G(screen0), _G(pal), 0, 10);
 			break;
 
 		case BLEND4:
 			_G(out)->setze_zeiger(workptr);
 			_G(out)->cls();
 			_G(out)->setze_zeiger(nullptr);
-			fx->blende1(workptr, screen0, pal, 150, 0, 0);
+			fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 			break;
 
 		default:
@@ -691,7 +691,7 @@ void set_up_screen(SetupScreenMode mode) {
 			break;
 		}
 
-		fx_blend = BLEND_NONE;
+		_G(fx_blend) = BLEND_NONE;
 	}
 
 	if (g_engine->_showWalkAreas)
@@ -732,13 +732,13 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 
 			}
 			if (str_adr) {
-				_G(out)->set_fontadr(font8x8);
-				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(_G(font8x8));
+				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 				x = minfo.x;
 				y = minfo.y;
 				calc_txt_xy(&x, &y, str_adr, anz);
 				for (i = 0; i < anz; i++)
-					print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos(str_adr, i));
+					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), txt->str_pos(str_adr, i));
 			}
 		}
 	}
@@ -1196,25 +1196,25 @@ void check_shad(int16 g_idx, int16 mode) {
 	case 1:
 		if (mode)
 			_G(out)->set_teilpalette(PAL_1, 1, 11);
-		palcopy(pal, PAL_1, 0, 0, 12);
+		palcopy(_G(pal), PAL_1, 0, 0, 12);
 		break;
 
 	case 2:
 		if (mode)
 			_G(out)->set_teilpalette(PAL_2, 1, 11);
-		palcopy(pal, PAL_2, 0, 0, 12);
+		palcopy(_G(pal), PAL_2, 0, 0, 12);
 		break;
 
 	case 3:
 		if (mode)
 			_G(out)->set_teilpalette(PAL_3, 1, 11);
-		palcopy(pal, PAL_3, 0, 0, 12);
+		palcopy(_G(pal), PAL_3, 0, 0, 12);
 		break;
 
 	case 4:
 		if (mode)
 			_G(out)->set_teilpalette(PAL_0, 1, 11);
-		palcopy(pal, PAL_0, 0, 0, 12);
+		palcopy(_G(pal), PAL_0, 0, 0, 12);
 		break;
 
 	default:
@@ -1494,11 +1494,11 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 					char *str_ = atds->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATEI);
 					if (str_ != 0) {
 						ret = txt_nr;
-						_G(out)->set_fontadr(font8x8);
-						_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+						_G(out)->set_fontadr(_G(font8x8));
+						_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 						calc_txt_xy(&x, &y, str_, anz);
 						for (i = 0; i < anz; i++)
-							print_shad(x, y + i * 10, 255, 300, 0, scr_width, txt->str_pos((char *)str_, i));
+							print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), txt->str_pos((char *)str_, i));
 					}
 				}
 			} else {
@@ -1568,11 +1568,11 @@ void calc_mouse_person(int16 x, int16 y) {
 		p_nr = is_mouse_person(x, y);
 		if (p_nr != -1) {
 			if (!_G(spieler).PersonHide[p_nr]) {
-				_G(out)->set_fontadr(font8x8);
-				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(_G(font8x8));
+				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 				char *str_ = ch_txt[p_nr];
 				calc_txt_xy(&x, &y, str_, 1);
-				print_shad(x, y, 255, 300, 0, scr_width, str_);
+				print_shad(x, y, 255, 300, 0, _G(scr_width), str_);
 				if (_G(maus_links_click) == 1) {
 					def_nr = -1;
 					txt_nr = -1;
@@ -1842,7 +1842,7 @@ void calc_ausgang(int16 x, int16 y) {
 				check_shad(u_idx, 0);
 				set_person_spr(Rdi->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
 				spieler_vector[P_CHEWY].DelayCount = 0;
-				fx_blend = BLEND1;
+				_G(fx_blend) = BLEND1;
 				_G(auto_obj) = 0;
 				spieler_vector[P_CHEWY].Xzoom = 0;
 				spieler_vector[P_CHEWY].Yzoom = 0;

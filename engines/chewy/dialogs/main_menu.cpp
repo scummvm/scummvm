@@ -73,7 +73,7 @@ void MainMenu::execute() {
 		load_room_music(98);
 		fx->border(workpage, 100, 0, 0);
 
-		_G(out)->set_palette(pal);
+		_G(out)->set_palette(_G(pal));
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		show_cur();
 
@@ -220,7 +220,7 @@ void MainMenu::startGame() {
 	spieler_vector[P_CHEWY].Phase = 6;
 	spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
-	fx_blend = BLEND3;
+	_G(fx_blend) = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	menu_item = CUR_WALK;
 	cursor_wahl(CUR_WALK);
@@ -231,9 +231,9 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	flags.SaveMenu = true;
 	savePersonAni();
-	_G(out)->setze_zeiger(screen0);
-	_G(out)->set_fontadr(font6x8);
-	_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+	_G(out)->setze_zeiger(_G(screen0));
+	_G(out)->set_fontadr(_G(font6x8));
+	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 	cursor_wahl(CUR_SAVE);
 	_G(cur)->move(152, 92);
 	minfo.x = 152;
@@ -248,7 +248,7 @@ bool MainMenu::loadGame() {
 	flags.SaveMenu = false;
 
 	if (result == 0) {
-		fx_blend = BLEND1;
+		_G(fx_blend) = BLEND1;
 		return true;
 	} else {
 		return false;

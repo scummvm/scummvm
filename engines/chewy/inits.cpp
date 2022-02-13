@@ -52,8 +52,8 @@ void standard_init() {
 	_G(out)->palette_save();
 	_G(out)->set_clip(0, 0, 320, 200);
 	_G(out)->set_writemode(0);
-	scr_width = 0;
-	screen0 = (byte *)g_screen->getPixels();
+	_G(scr_width) = 0;
+	_G(screen0) = (byte *)g_screen->getPixels();
 	_G(in)->neuer_kb_handler(&kbinfo);
 
 	_G(in)->rectangle(0, 0, 320, 210);
@@ -83,10 +83,10 @@ void standard_init() {
 	strcpy(ioptr.save_path, SAVEDIR);
 	ioptr.delay = 8;
 	alloc_buffers();
-	pal[765] = 63;
-	pal[766] = 63;
-	pal[767] = 63;
-	_G(out)->einblenden(pal, 0);
+	_G(pal)[765] = 63;
+	_G(pal)[766] = 63;
+	_G(pal)[767] = 63;
+	_G(out)->einblenden(_G(pal), 0);
 	room->set_timer_start(1);
 	font_load();
 
@@ -98,10 +98,10 @@ void standard_init() {
 	ged_mem = room->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
-	pal[765] = 63;
-	pal[766] = 63;
-	pal[767] = 63;
-	_G(out)->einblenden(pal, 0);
+	_G(pal)[765] = 63;
+	_G(pal)[766] = 63;
+	_G(pal)[767] = 63;
+	_G(out)->einblenden(_G(pal), 0);
 	_G(out)->cls();
 	uhr->set_new_timer(0, 5, SEC_10_MODE);
 
@@ -179,7 +179,7 @@ void var_init() {
 
 void init_room() {
 	room_blk.AkAblage = 0;
-	room_blk.LowPalMem = pal;
+	room_blk.LowPalMem = _G(pal);
 	room_blk.InvFile = INVENTAR;
 	room_blk.DetFile = DETAILTEST;
 	room_blk.InvSprAdr = &inv_spr[0];
@@ -283,25 +283,25 @@ void new_game() {
 static void font_load() {
 
 	// Load the 8x8 font
-	_G(mem)->tff_adr(FONT8x8, &font8x8);
-	_G(out)->set_fontadr(font8x8);
+	_G(mem)->tff_adr(FONT8x8, &_G(font8x8));
+	_G(out)->set_fontadr(_G(font8x8));
 
 	int16 vorx;
 	int16 vory;
 	int16 fntbr;
 	int16 fnth;
 	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
-	fvorx8x8 = vorx;
-	fvory8x8 = vory;
+	_G(fvorx8x8) = vorx;
+	_G(fvory8x8) = vory;
 
 	// Load the 6x8 font
-	_G(mem)->tff_adr(FONT6x8, &font6x8);
-	_G(out)->set_fontadr(font6x8);
+	_G(mem)->tff_adr(FONT6x8, &_G(font6x8));
+	_G(out)->set_fontadr(_G(font6x8));
 	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
-	fvorx6x8 = vorx - 2;
-	fvory6x8 = vory;
-	_G(out)->set_vorschub(fvorx6x8, vory);
-	atds->set_font(font8x8, fvorx8x8, 10);
+	_G(fvorx6x8) = vorx - 2;
+	_G(fvory6x8) = vory;
+	_G(out)->set_vorschub(_G(fvorx6x8), vory);
+	atds->set_font(_G(font8x8), _G(fvorx8x8), 10);
 }
 
 void init_load() {
@@ -315,7 +315,7 @@ void init_load() {
 	menutaf = _G(mem)->taf_adr(MENUTAF);
 	spblende = _G(mem)->void_adr("cut/blende.rnd");
 	room->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
-	_G(out)->set_palette(pal);
+	_G(out)->set_palette(_G(pal));
 }
 
 void tidy() {

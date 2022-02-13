@@ -101,12 +101,12 @@ void Inventory::plot_menu() {
 		else
 			y = 0;
 		_G(out)->sprite_set(curtaf->image[_G(ani_count)[i]],
-			WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, scr_width);
+			WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, _G(scr_width));
 	}
 
 	for (i = 0; i < 2; i++) {
 		_G(out)->sprite_set(menutaf->image[PFEIL_UP + i],
-			WIN_INF_X + 200 + i * 40, WIN_INF_Y + 12, scr_width);
+			WIN_INF_X + 200 + i * 40, WIN_INF_Y + 12, _G(scr_width));
 	}
 
 	y = WIN_INF_Y + 6 + 30;
@@ -120,7 +120,7 @@ void Inventory::plot_menu() {
 				y1 /= 2;
 				_G(out)->sprite_set(inv_spr[_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i]],
 					x1 + WIN_INF_X + 14 + i * 54,
-					y1 + y + 32 * j, scr_width);
+					y1 + y + 32 * j, _G(scr_width));
 			}
 		}
 	}
@@ -382,9 +382,9 @@ void Inventory::menu() {
 				_G(cur)->plot_cur();
 			_G(out)->setze_zeiger(nullptr);
 			if (menu_flag1 == MENU_EINBLENDEN) {
-				fx->blende1(workptr, screen0, 0, 200, 0, 300);
+				fx->blende1(workptr, _G(screen0), 0, 200, 0, 300);
 			} else if (menu_flag1 == MENU_AUSBLENDEN)
-				fx->blende1(workptr, screen0, 0, 200, 1, 300);
+				fx->blende1(workptr, _G(screen0), 0, 200, 1, 300);
 			menu_flag1 = false;
 			_G(out)->set_clip(0, 0, 320, 200);
 			_G(out)->back2screen(workpage);
@@ -434,7 +434,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		txt_name_adr = atds->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATEI);
 		txt_adr = atds->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATEI);
 		xoff = strlen(txt_name_adr);
-		xoff *= fvorx8x8;
+		xoff *= _G(fvorx8x8);
 		xoff = (254 - xoff) / 2;
 		txt_zeilen = 2;
 		yoff = 10;
@@ -531,15 +531,15 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		kbinfo.scan_code = Common::KEYCODE_INVALID;
 		set_up_screen(NO_SETUP);
 		Dialogs::Inventory::plot_menu();
-		_G(out)->set_fontadr(font8x8);
-		_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+		_G(out)->set_fontadr(_G(font8x8));
+		_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 
 		if (mode == INV_ATS_MODE)
 			_G(out)->printxy(WIN_LOOK_X + xoff, WIN_LOOK_Y, 255, 300,
-				scr_width, txt_name_adr);
+				_G(scr_width), txt_name_adr);
 
-		_G(out)->set_fontadr(font6x8);
-		_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+		_G(out)->set_fontadr(_G(font6x8));
+		_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 
 		if (txt_anz > txt_zeilen) {
 			if (txt_start > 0) {
@@ -548,7 +548,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 						WIN_INF_Y + 136 + 14, 41);
 				c[0] = 24;
 				_G(out)->printxy(WIN_LOOK_X + 250, WIN_LOOK_Y + 4, 14, 300,
-					scr_width, c);
+					_G(scr_width), c);
 			}
 
 			if (txt_start < txt_anz - txt_zeilen) {
@@ -556,14 +556,14 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 					_G(out)->box_fill(WIN_INF_X + 262, WIN_INF_Y + 156, WIN_INF_X + 272,
 						WIN_INF_Y + 156 + 14, 41);
 				c[0] = 25;
-				_G(out)->printxy(WIN_LOOK_X + 250, WIN_LOOK_Y + 24, 14, 300, scr_width, c);
+				_G(out)->printxy(WIN_LOOK_X + 250, WIN_LOOK_Y + 24, 14, 300, _G(scr_width), c);
 			}
 		}
 
 		k = 0;
 		for (i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
 			_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
-				scr_width, "%s", txt->str_pos(txt_adr, i));
+				_G(scr_width), "%s", txt->str_pos(txt_adr, i));
 			++k;
 		}
 
@@ -698,7 +698,7 @@ void Inventory::showDiary() {
 	_G(out)->back2screen(workpage);
 	room->set_ak_pal(&room_blk);
 	_G(out)->setze_zeiger(nullptr);
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 
 	while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
@@ -716,7 +716,7 @@ void Inventory::showDiary() {
 	Dialogs::Inventory::plot_menu();
 	_G(out)->setze_zeiger(nullptr);
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 }
 
 } // namespace Dialogs

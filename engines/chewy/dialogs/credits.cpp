@@ -129,9 +129,9 @@ void Credits::execute() {
 	room->load_tgp(5, &room_blk, 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	_G(out)->setze_zeiger(screen0);
+	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, screen0, pal, 150, 0, 0);
+	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
 		int color = 63 - (6 * i);
@@ -173,17 +173,17 @@ void Credits::execute() {
 
 			if (CREDITS_TYPE[i]) {
 				fontCol = 32;
-				_G(out)->set_fontadr(font6x8);
-				_G(out)->set_vorschub(fvorx6x8, fvory6x8);
+				_G(out)->set_fontadr(_G(font6x8));
+				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			} else {
 				fontCol = 1;
-				_G(out)->set_fontadr(font8x8);
-				_G(out)->set_vorschub(fvorx8x8, fvory8x8);
+				_G(out)->set_fontadr(_G(font8x8));
+				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 			}
 			stillScrolling = true;
 
 			int fgCol = fontCol + (160 - destY) / 10;
-			_G(out)->printxy(CREDITS_POS[i][0], destY, fgCol, 300, scr_width, CREDITS_TEXT[i]);
+			_G(out)->printxy(CREDITS_POS[i][0], destY, fgCol, 300, _G(scr_width), CREDITS_TEXT[i]);
 		}
 
 		if (!stillScrolling)
@@ -193,8 +193,8 @@ void Credits::execute() {
 		_G(out)->back2screen(workpage);
 	}
 
-	_G(out)->set_fontadr(font8x8);
-	_G(out)->set_vorschub(fvorx8x8, fvorx8x8);
+	_G(out)->set_fontadr(_G(font8x8));
+	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvorx8x8));
 	room->open_handle("back/episode1.tgp", "rb", 0);
 
 	room->set_ak_pal(&room_blk);

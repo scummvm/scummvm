@@ -568,7 +568,7 @@ void load_chewy_taf(int16 taf_nr) {
 }
 
 void switch_room(int16 nr) {
-	fx_blend = BLEND1;
+	_G(fx_blend) = BLEND1;
 	exit_room(-1);
 	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
 	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));

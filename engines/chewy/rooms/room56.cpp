@@ -313,7 +313,7 @@ int16 Room56::use_kneipe() {
 				_G(spieler).scrollx = 0;
 				set_person_pos(23, 70, P_HOWARD, P_RIGHT);
 				set_person_pos(50, 81, P_CHEWY, P_LEFT);
-				fx_blend = BLEND3;
+				_G(fx_blend) = BLEND3;
 				start_aad_wait(308, -1);
 
 				SetUpScreenFunc = setup_func;
@@ -331,7 +331,7 @@ int16 Room56::use_kneipe() {
 			_G(spieler).flags33_80 = true;
 			auto_move(4, P_CHEWY);
 			flic_cut(111, CFO_MODE);
-			fx_blend = BLEND3;
+			_G(fx_blend) = BLEND3;
 			start_aad_wait(522, -1);
 			start_spz_wait(66, 1, false, P_CHEWY);
 			start_spz(67, 255, false, P_CHEWY);
@@ -359,7 +359,7 @@ int16 Room56::use_kneipe() {
 		register_cutscene(31);
 
 		set_up_screen(NO_SETUP);
-		fx_blend = BLEND3;
+		_G(fx_blend) = BLEND3;
 		show_cur();
 		g_engine->_sound->playSound(9, 0);
 		g_engine->_sound->playSound(9);

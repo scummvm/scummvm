@@ -168,7 +168,7 @@ void sprite_engine() {
 					_G(out)->scale_set(chewy->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
-					                scr_width);
+					                _G(scr_width));
 				} else {
 					spr_nr = spz_spr_nr[spieler_vector[P_CHEWY].PhNr];
 					x = spieler_mi[P_CHEWY].XyzStart[0] + spz_tinfo->korrektur[spr_nr * 2] -
@@ -183,7 +183,7 @@ void sprite_engine() {
 					_G(out)->scale_set(spz_tinfo->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
-					                scr_width);
+					                _G(scr_width));
 				}
 			}
 			break;
@@ -213,7 +213,7 @@ void sprite_engine() {
 				_G(out)->scale_set(ts_info->image[spr_nr], x, y,
 				                spieler_vector[p_nr].Xzoom,
 				                spieler_vector[p_nr].Yzoom,
-				                scr_width);
+				                _G(scr_width));
 			}
 			break;
 		case ZOBJ_PROGANI:
@@ -234,7 +234,7 @@ void sprite_engine() {
 			                auto_mov_vector[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx,
 			                auto_mov_vector[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly,
 			                auto_mov_vector[nr].Xzoom,
-			                auto_mov_vector[nr].Yzoom, scr_width);
+			                auto_mov_vector[nr].Yzoom, _G(scr_width));
 			break;
 
 		default:

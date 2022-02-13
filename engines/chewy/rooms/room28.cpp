@@ -83,9 +83,9 @@ void Room28::entry(int16 eib_nr) {
 
 					if (!_G(spieler).R40TeilKarte) {
 						_G(out)->ausblenden(0);
-						_G(out)->set_teilpalette(pal, 255, 1);
+						_G(out)->set_teilpalette(_G(pal), 255, 1);
 						start_aad_wait(607, -1);
-						fx_blend = BLEND3;
+						_G(fx_blend) = BLEND3;
 					}
 
 					flags.NoScroll = false;
@@ -116,7 +116,7 @@ void Room28::entry(int16 eib_nr) {
 
 					set_person_pos(480, 118, P_HOWARD, P_LEFT);
 					set_person_pos(440, 146, P_CHEWY, P_RIGHT);
-					fx_blend = BLEND_NONE;
+					_G(fx_blend) = BLEND_NONE;
 					flags.ExitMov = false;
 					spieler_mi[P_HOWARD].Mode = true;
 					go_auto_xy(420, 113, P_HOWARD, ANI_WAIT);

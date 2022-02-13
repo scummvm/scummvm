@@ -57,7 +57,7 @@ void Room94::entry() {
 		_G(out)->cls();
 		flic_cut(120, CFO_MODE);
 		register_cutscene(30);
-		fx_blend = BLEND_NONE;
+		_G(fx_blend) = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
 		_G(spieler).r94Scrollx = _G(spieler).scrollx;
 		switch_room(93);
@@ -77,7 +77,7 @@ void Room94::entry() {
 			flic_cut(121, CFO_MODE);
 			register_cutscene(32);
 
-			fx_blend = BLEND_NONE;
+			_G(fx_blend) = BLEND_NONE;
 			SetUpScreenFunc = nullptr;
 			Room66::proc8(2, 3, 0, 551);
 			SetUpScreenFunc = setup_func;
@@ -137,7 +137,7 @@ int Room94::giveGhostBottle() {
 	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
 	flic_cut(62, CFO_MODE);
-	fx_blend = BLEND3;
+	_G(fx_blend) = BLEND3;
 	det->start_detail(5, 255, false);
 	start_aad_wait(541, -1);
 	det->stop_detail(5);

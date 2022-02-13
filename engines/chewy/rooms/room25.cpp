@@ -74,7 +74,7 @@ void Room25::entry() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		flic_cut(FCUT_029, CFO_MODE);
 		g_engine->_sound->playSound(0, 0);
-		fx_blend = BLEND_NONE;
+		_G(fx_blend) = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_VOR, P_CHEWY);
@@ -158,12 +158,12 @@ void Room25::xit_gleiter() {
 		auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 		auto_mov_obj[SURIMY_OBJ].Mode = true;
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
-		fx_blend = BLEND1;
+		_G(fx_blend) = BLEND1;
 		set_up_screen(DO_SETUP);
 
 		start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(65, -1);
-		fx_blend = BLEND_NONE;
+		_G(fx_blend) = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
 		_G(auto_obj) = 0;
 

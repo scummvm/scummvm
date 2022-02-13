@@ -62,7 +62,7 @@ bool Debugger::Cmd_GotoRoom(int argc, const char **argv) {
 		exit_room(-1);
 		_G(spieler).PersonRoomNr[P_CHEWY] = roomNum;
 		room->load_room(&room_blk, roomNum, &_G(spieler));
-		fx_blend = BLEND1;
+		_G(fx_blend) = BLEND1;
 		enter_room(-1);
 
 		return false;
