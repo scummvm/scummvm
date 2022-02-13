@@ -339,6 +339,7 @@ public:
 	Filename levelIfWin;
 	Filename levelIfLose;
 	Filename music;
+	uint32 musicRate;
 };
 
 class Scene : public Level {
@@ -457,12 +458,15 @@ public:
 	Shoots shoots;
 	ShootSequence shootSequence;
 
-	// Sounds 
-	Filename backgroundSound;
+	// Sounds
 	Filename targetSound;
+	uint32 targetSoundRate;
 	Filename shootSound;
+	uint32 shootSoundRate;
 	Filename enemySound;
+	uint32 enemySoundRate;
 	Filename hitSound;
+	uint32 hitSoundRate;
 };
 
 class Transition : public Level {

@@ -1279,12 +1279,12 @@ HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 case 33:
 YY_RULE_SETUP
 #line 75 "engines/hypno/lexer_arc.l"
-return ENCTOK;
+HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ENCTOK;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 76 "engines/hypno/lexer_arc.l"
-return ENCTOK;
+HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ENCTOK;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP

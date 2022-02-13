@@ -210,7 +210,7 @@ public:
 	// Sounds
 	Filename _soundPath;
 	Filename _music;
-	void playSound(const Filename &filename, uint32);
+	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050);
 	void stopSound();
 
 	// Arcade

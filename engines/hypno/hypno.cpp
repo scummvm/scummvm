@@ -507,20 +507,20 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 // Sound handling
 
-void HypnoEngine::playSound(const Common::String &filename, uint32 loops) {
-	debugC(1, kHypnoDebugMedia, "%s(%s, %d)", __FUNCTION__, filename.c_str(), loops);
+void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate) {
+	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d)", __FUNCTION__, filename.c_str(), loops, sampleRate);
 	Common::String name = convertPath(filename);
 
 	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	} else {
 		if (!_prefixDir.empty())
 			name = _prefixDir + "/" + name;
 		if (file->open(name)) {
-			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 		} else 
 			debugC(1, kHypnoDebugMedia, "%s not found!", name.c_str());
@@ -529,7 +529,8 @@ void HypnoEngine::playSound(const Common::String &filename, uint32 loops) {
 
 void HypnoEngine::stopSound() {
 	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopAll();
+	//_mixer->stopHandle(_soundHandle);
 }
 
 // Path handling

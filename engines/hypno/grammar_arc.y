@@ -55,10 +55,10 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK
+%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK
 %token<i> NUM BYTE
 // header
-%token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK ENCTOK RESTOK
+%token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK RESTOK
 %token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK ONTOK NTOK NSTOK RTOK R0TOK ITOK JTOK ZTOK
 
 // body
@@ -69,6 +69,8 @@ using namespace Hypno;
 
 // bytes??
 %token CB3TOK C02TOK
+
+%type<s> enc
 
 %%
 
@@ -147,15 +149,23 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "BN %s", $2); 
 	}
 	| SNTOK FILENAME enc {
-		if (Common::String("S0") == $1)
+		uint32 sampleRate = 11025;
+		if (Common::String("22K") == $3 || Common::String("22k") == $3)
+			sampleRate = 22050;
+ 
+		if (Common::String("S0") == $1) {
 			g_parsedArc->music = $2;
-		else if (Common::String("S1") == $1)
+			g_parsedArc->musicRate = sampleRate;
+		} else if (Common::String("S1") == $1) {
 			g_parsedArc->shootSound = $2;
-		else if (Common::String("S2") == $1)
+			g_parsedArc->shootSoundRate = sampleRate;
+		} else if (Common::String("S2") == $1) {
 			g_parsedArc->hitSound = $2;
-		else if (Common::String("S4") == $1)
-			g_parsedArc->enemySound = $2; 
-
+			g_parsedArc->hitSoundRate = sampleRate;
+		} else if (Common::String("S4") == $1) {
+			g_parsedArc->enemySound = $2;
+			g_parsedArc->enemySoundRate = sampleRate;
+		}
 		debugC(1, kHypnoDebugParser, "SN %s", $2); 
 	}
 	| HETOK BYTE NUM NUM {
@@ -176,8 +186,8 @@ hline: 	CTOK NUM {
 	}
 	;
 
-enc: ENCTOK
-	| /* nothing */
+enc: ENCTOK          { $$ = $1; }
+	| /* nothing */  { $$ = scumm_strdup(""); }
 	;
 
 body: bline body

@@ -943,8 +943,8 @@ void SpiderEngine::loadAssetsDemo() {
 
 	loadLib("", "sixdemo/c_misc/fonts.lib", true);
 	loadFonts();
-	loadLib("c_misc/sound.lib/", "c_misc/sound.lib", true);
-	loadLib("demo/sound.lib/", "demo/sound.lib", true);
+	loadLib("c_misc/sound.lib/", "sixdemo/c_misc/sound.lib", true);
+	loadLib("demo/sound.lib/", "sixdemo/demo/sound.lib", true);
 
 	// Read assets from mis files
 	loadSceneLevel("sixdemo/mis/demo.mis", "", prefix);
