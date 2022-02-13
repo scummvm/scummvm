@@ -6541,7 +6541,9 @@ msgstr "Overtureのタイミング："
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
-msgstr "BGMを置き換える際、OvertureがLucasfilmとLoomのロゴに切り替わるタイミングを調整します。"
+msgstr ""
+"BGMを置き換える際、OvertureがLucasfilmとLoomのロゴに切り替わるタイミングを調"
+"整します。"
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
