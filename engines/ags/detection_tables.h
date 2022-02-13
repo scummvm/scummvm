@@ -2959,6 +2959,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
 	GAME_ENTRY_GOG("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697),
+	GAME_ENTRY_GOG("blackwell1", "ac2game.dat", "7865a17a36ff5a1844cd5359071eb04b", 64183795),
+	GAME_ENTRY_GOG("blackwell1", "ac2game.dat", "5b63e0d2bc117cc9d32b88bfb5de167c", 64199320),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell1", "blackwell1.exe", "e5a75b86a0ea8143e1784261f5f52e83", 67241529, AGSTEAM_WADJETEYE),
@@ -2969,6 +2971,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("blackwell1", "ac2game.dat", "4668e05ef2a94267b0d571e715413302", 64200367), // Humble Bundle (Linux)
 	GAME_ENTRY("blackwell1", "ac2game.dat", "7fe0cac6736427d67822bca3d4bb30cb", 66675482),
 	GAME_ENTRY_GOG("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753),
+	GAME_ENTRY_GOG("blackwell2", "ac2game.dat", "82f8bf2635ea1b5bfb2e8693fa883f89", 57638596), // Mac
 	GAME_ENTRY_PLUGIN_STEAM("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14469500, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell2", "unbound.exe", "00edc7b69ae377f6093ac567fd901849", 15683333, AGSTEAM_WADJETEYE),
@@ -2978,6 +2981,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("blackwell2", "ac2game.dat", "e28670a676a3e4e78eef76b9573e490a", 57670660), // Humble Bunde (Linux)
 	GAME_ENTRY("blackwell2", "ac2game.dat", "5c3a940514d91431e8e1c372018851ca", 59483140),
 	GAME_ENTRY_GOG("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801),
+	GAME_ENTRY_GOG("blackwell3", "ac2game.dat", "0b99002018dcf6d3db95925006da01bb", 170769466), // Mac
 	GAME_ENTRY_PLUGIN_STEAM("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 171969680, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell3", "convergence.exe", "f261c2505f98503a1ec9f1dff7f13bda", 173873229, AGSTEAM_WADJETEYE),
@@ -2989,10 +2993,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336),
 	GAME_ENTRY_GOG("blackwell4", "deception.exe", "1c0bf79d9720d0a81219e8778fb7e231", 304040703),
 	GAME_ENTRY_GOG("blackwell4", "agsgame.dat", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // Linux
+	GAME_ENTRY_GOG("blackwell4", "ac2game.dat", "05a3a5ff709a5764d2b4a5dc301107d6", 302140480), // Mac
 	GAME_ENTRY_PLUGIN_STEAM("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell4", "deception.exe", "499c3261a1f73c5b78125beeca1c2d08", 305215631, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_GOG("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897),
 	GAME_ENTRY_GOG("blackwell5", "agsgame.dat", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // Linux
+	GAME_ENTRY_GOG("blackwell5", "ac2game.dat", "8acaa20eab5589cdc2fd81ef3d55eff3", 279928291), // Mac
 	GAME_ENTRY_PLUGIN_STEAM("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM("blackwell5", "epiphany.exe", "764f20abb335b94ab8ec6a4ef6db01ea", 283020359, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_STEAM("captaindisaster", "cd-dhamsb-1-0-1.exe", "e2d290f8f21c6a83a9e8c5f3a0425b5e", 150665897),
@@ -3026,6 +3032,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("footballgame", "football game.exe", "8283bcdb6ec07ec4a4040ef34215ec96", 164960522),
 	GAME_ENTRY("geminirue", "GeminiRue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61906750), // v1.1 CD Release
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506),
+	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639), // Mac
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
 	DETECTION_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419, Common::DE_DEU, nullptr, nullptr, GAMEFLAG_FORCE_AA), // German retail
 	GAME_ENTRY_STEAM("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932),
@@ -3083,6 +3090,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890),
 	GAME_ENTRY_GOG("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830), // Linux
+	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850), // Mac
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182),
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
@@ -3100,6 +3108,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("quantumnauts", "QUANTUMNAUTS.exe", "78b3f99175ce10a60d70b7c70ab560af", 460832399),  // itch.io
 	GAME_ENTRY("quantumnauts2", "QN2.exe", "b00c1257945b1e553776b564dd03cb8d", 740268419),  // itch.io
 	GAME_ENTRY_GOG("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957),
+	GAME_ENTRY_GOG("resonance", "ac2game.dat", "1dd9f78fbd1947fdf66a820928baf8a4", 847433642), // Mac
 	GAME_ENTRY_PLUGIN_STEAM("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_STEAM("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768),
 	GAME_ENTRY_STEAM("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256),
@@ -3109,6 +3118,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375),
 	GAME_ENTRY_STEAM("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876),
+	GAME_ENTRY_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643459667),
+	GAME_ENTRY_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640346706), // Mac
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
 	GAME_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
@@ -3131,6 +3142,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701),
 	GAME_ENTRY_STEAM("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855),
 	GAME_ENTRY_STEAM("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356),
+	GAME_ENTRY_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac
 	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
 	GAME_ENTRY("theantidote", "The Antidote.exe", "4017d881af6467d6aad9183e6e38a261", 325819947),
@@ -5676,6 +5688,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879),
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1), // for 32-bit limited filesystems
 	GAME_ENTRY("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137),
+	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017), // Mac
 	GAME_ENTRY("strangerbynight", "Stranger.exe", "0500aacb6c176d47ac0f8158f055db83", 5849939),
 	GAME_ENTRY("strangerbynight", "Stranger.exe", "0500aacb6c176d47ac0f8158f055db83", 5854099), // v1.1
 	GAME_ENTRY("strangerinstickworld", "game1.exe", "a524cbb1c51589903c4043b98917f1d9", 42525810),
@@ -5887,6 +5900,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("uglyfiles", "ugly.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 4169486),
 	GAME_ENTRY("ulitsadimitrova", "ulitsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 291828379),
 	GAME_ENTRY_STEAM("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Mac
+	GAME_ENTRY_STEAM("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752922600), // Mac
 	GAME_ENTRY_PLATFORM("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, "Steam/GOG"), // TODO: split
 	GAME_ENTRY("unbound", "Unbound.exe", "900b277d7e1601c65b42868cd7fae662", 10448702),
 	GAME_ENTRY("underworld", "Underworld.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5147661),
