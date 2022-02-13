@@ -1120,7 +1120,7 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	if (flag != 0) {
-		ctx.actor->_bonusParameter.unk1 = 1;
+		ctx.actor->_bonusParameter.givenNothing = 1;
 	}
 
 	return 0;

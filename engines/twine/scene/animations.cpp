@@ -499,18 +499,17 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 				_engine->_movements->setActorAngle(ANGLE_0, actor->_speed, ANGLE_17, &actor->_move);
 
-				// AUTO_STOP_DOOR
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
-					if (actor->_doorStatus) { // open door
-						if (getDistance2D(processActor.x, processActor.z, actor->_animStep.x, actor->_animStep.z) >= actor->_doorStatus) {
+					if (actor->_doorWidth) { // open door
+						if (getDistance2D(processActor.x, processActor.z, actor->_animStep.x, actor->_animStep.z) >= actor->_doorWidth) {
 							if (actor->_angle == ANGLE_0) { // down
-								processActor.z = actor->_animStep.z + actor->_doorStatus;
+								processActor.z = actor->_animStep.z + actor->_doorWidth;
 							} else if (actor->_angle == ANGLE_90) { // right
-								processActor.x = actor->_animStep.x + actor->_doorStatus;
+								processActor.x = actor->_animStep.x + actor->_doorWidth;
 							} else if (actor->_angle == ANGLE_180) { // up
-								processActor.z = actor->_animStep.z - actor->_doorStatus;
+								processActor.z = actor->_animStep.z - actor->_doorWidth;
 							} else if (actor->_angle == ANGLE_270) { // left
-								processActor.x = actor->_animStep.x - actor->_doorStatus;
+								processActor.x = actor->_animStep.x - actor->_doorWidth;
 							}
 
 							actor->_dynamicFlags.bIsSpriteMoving = 0;

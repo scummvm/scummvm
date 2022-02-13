@@ -90,7 +90,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
-		//act->staticFlags.bIsBackgrounded = 1;
+		act->_staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
 		act->_staticFlags.bIsCarrierActor = 1;
@@ -120,7 +120,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 
 void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	if (bonusFlags & 0x1) {
-		act->_bonusParameter.unk1 = 1;
+		act->_bonusParameter.givenNothing = 1;
 	}
 	if (bonusFlags & 0x2) {
 		act->_bonusParameter.unk2 = 1;

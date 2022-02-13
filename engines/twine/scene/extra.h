@@ -70,16 +70,16 @@ struct ExtraListStruct {
 	ActorMoveStruct trackActorMove;
 
 	uint16 type = 0; /**< ExtraType bitmask */
-	int16 angle = 0; // field_16
-	int32 spawnTime = 0;
+	int16 angle = 0; // weight
+	int32 spawnTime = 0; // memo timer 50hz
 	union payload { // field_ 1C
 		int16 lifeTime;
 		int16 actorIdx;
 		int16 extraIdx;
 		int16 unknown;
 	} payload{0};
-	int16 strengthOfHit = 0; // field_1E
-	int16 info1 = 0;         // field_20
+	int16 strengthOfHit = 0; // apply damage if != 0
+	int16 info1 = 0;         // various - number for zone giver
 };
 
 class TwinEEngine;

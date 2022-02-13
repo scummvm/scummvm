@@ -936,7 +936,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			}
 
-			if (!actor->_bonusParameter.unk1 && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
+			if (!actor->_bonusParameter.givenNothing && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
 				_actor->processActorExtraBonus(a);
 			}
 		}
@@ -985,7 +985,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				} else {
 					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
-						if (!actor->_bonusParameter.unk1) {
+						if (!actor->_bonusParameter.givenNothing) {
 							_actor->processActorExtraBonus(a);
 						}
 						actor->setLife(0);

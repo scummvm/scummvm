@@ -189,7 +189,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 	int32 drawListPos = 0;
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		ActorStruct *actor = _engine->_scene->getActor(a);
-		actor->_dynamicFlags.bIsVisible = 0; // reset visible state
+		actor->_dynamicFlags.bIsDrawn = 0; // reset visible state
 
 		if (_engine->_grid->_useCellingGrid != -1 && actor->_pos.y > _engine->_scene->_sceneZones[_engine->_grid->_cellingGridIdx].maxs.y) {
 			continue;
@@ -201,7 +201,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 
 			// check if actor is visible on screen, otherwise don't display it
 			if (projPos.x > -50 && projPos.x < _engine->width() + 40 && projPos.y > -30 && projPos.y < _engine->height() + 100) {
-				actor->_dynamicFlags.bIsVisible = 1;
+				actor->_dynamicFlags.bIsDrawn = 1;
 			}
 			continue;
 		}
@@ -361,7 +361,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	}
 
 	if (_engine->_interface->setClip(renderRect)) {
-		actor->_dynamicFlags.bIsVisible = 1;
+		actor->_dynamicFlags.bIsDrawn = 1;
 
 		const int32 tempX = (actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
 		int32 tempY = actor->_pos.y / BRICK_HEIGHT;
@@ -415,7 +415,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	if (validClip) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
-		actor->_dynamicFlags.bIsVisible = 1;
+		actor->_dynamicFlags.bIsDrawn = 1;
 
 		if (actor->_staticFlags.bUsesClipping) {
 			const int32 tmpX = (actor->_animStep.x + BRICK_HEIGHT) / BRICK_SIZE;
