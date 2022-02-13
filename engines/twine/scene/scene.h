@@ -51,34 +51,23 @@ struct ZoneStruct {
 	IVec3 mins;
 	IVec3 maxs;
 	ZoneType type = ZoneType::kCube;
-	int16 snap = 0;
+	int32 num;
 	union {
 		struct {
-			int32 newSceneIdx;
 			int32 x;
 			int32 y;
 			int32 z;
 		} ChangeScene;
 		struct {
-			int32 dummy;
 			int32 x;
 			int32 y;
 			int32 z;
 		} CameraView;
-		struct {
-			int32 zoneIdx;
-		} Sceneric;
-		struct {
-			int32 newGrid;
-		} CeillingGrid;
-
 		/** show a text (e.g. when reading a sign) */
 		struct {
-			TextId textIdx;   /*!< text index in the current active text bank */
 			int32 textColor; /*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
-			int32 info0;
 			BonusParameter typesFlag;
 			int32 amount;
 			/**

@@ -258,7 +258,7 @@ bool Scene::loadSceneLBA2() {
 		zone->infoData.generic.info7 = stream.readSint32LE();
 
 		zone->type = (ZoneType)stream.readUint16LE();
-		zone->snap = stream.readUint16LE();
+		zone->num = stream.readSint16LE();
 	}
 
 	_sceneNumTracks = (int16)stream.readUint16LE();
@@ -366,30 +366,29 @@ bool Scene::loadSceneLBA1() {
 	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
 		ZoneStruct *zone = &_sceneZones[i];
-		zone->mins.x = (int16)stream.readUint16LE();
-		zone->mins.y = (int16)stream.readUint16LE();
-		zone->mins.z = (int16)stream.readUint16LE();
+		zone->mins.x = stream.readSint16LE();
+		zone->mins.y = stream.readSint16LE();
+		zone->mins.z = stream.readSint16LE();
 
-		zone->maxs.x = (int16)stream.readUint16LE();
-		zone->maxs.y = (int16)stream.readUint16LE();
-		zone->maxs.z = (int16)stream.readUint16LE();
+		zone->maxs.x = stream.readSint16LE();
+		zone->maxs.y = stream.readSint16LE();
+		zone->maxs.z = stream.readSint16LE();
 
 		zone->type = (ZoneType)stream.readUint16LE();
+		zone->num = stream.readSint16LE();
 
-		zone->infoData.generic.info0 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info1 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info2 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info3 = (int16)stream.readUint16LE();
-
-		zone->snap = stream.readUint16LE();
+		zone->infoData.generic.info0 = stream.readSint16LE();
+		zone->infoData.generic.info1 = stream.readSint16LE();
+		zone->infoData.generic.info2 = stream.readSint16LE();
+		zone->infoData.generic.info3 = stream.readSint16LE();
 	}
 
 	_sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumTracks; i++) {
 		IVec3 *point = &_sceneTracks[i];
-		point->x = (int16)stream.readUint16LE();
-		point->y = (int16)stream.readUint16LE();
-		point->z = (int16)stream.readUint16LE();
+		point->x = stream.readSint16LE();
+		point->y = stream.readSint16LE();
+		point->z = stream.readSint16LE();
 	}
 
 	if (_enableEnhancements) {
@@ -716,7 +715,7 @@ void Scene::processActorZones(int32 actorIdx) {
 			switch (zone->type) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_life > 0) {
-					_needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
+					_needChangeScene = zone->num;
 					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
 					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
 					_zoneHeroPos.z = actor->_pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
@@ -735,17 +734,17 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kSceneric:
-				actor->_zone = zone->infoData.Sceneric.zoneIdx;
+				actor->_zone = zone->num;
 				break;
 			case ZoneType::kGrid:
 				if (_currentlyFollowedActor == actorIdx) {
 					tmpCellingGrid = true;
-					if (_engine->_grid->_useCellingGrid != zone->infoData.CeillingGrid.newGrid) {
-						if (zone->infoData.CeillingGrid.newGrid != -1) {
+					if (_engine->_grid->_useCellingGrid != zone->num) {
+						if (zone->num != -1) {
 							_engine->_grid->createGridMap();
 						}
 
-						_engine->_grid->_useCellingGrid = zone->infoData.CeillingGrid.newGrid;
+						_engine->_grid->_useCellingGrid = zone->num;
 						_engine->_grid->_cellingGridIdx = z;
 						ScopedEngineFreeze freeze(_engine);
 						_engine->_grid->initCellingGrid(_engine->_grid->_useCellingGrid);
@@ -764,7 +763,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					_engine->exitSceneryView();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
-					_engine->_text->drawTextProgressive(zone->infoData.DisplayText.textIdx);
+					_engine->_text->drawTextProgressive((TextId)zone->num);
 					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
