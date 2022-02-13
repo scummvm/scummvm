@@ -143,9 +143,9 @@ bool IsRelativePath(const String &path) {
 }
 
 void FixupPath(String &path) {
-#if AGS_PLATFORM_OS_WINDOWS
+//#if AGS_PLATFORM_OS_WINDOWS
 	path.Replace('\\', '/'); // bring Windows path separators to uniform style
-#endif
+//#endif
 	path.MergeSequences('/');
 }
 
