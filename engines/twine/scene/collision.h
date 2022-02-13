@@ -44,9 +44,6 @@ public:
 	/** Actor collision coordinate */
 	IVec3 _collision;
 
-	/** Cause damage in current processed actor */
-	int32 _causeActorDamage = 0; //fieldCauseDamage
-
 	/**
 	 * Check if actor 1 is standing in actor 2
 	 * @param actorIdx1 Actor 1 index
@@ -73,18 +70,16 @@ public:
 	 * @param x Hero X coordinate
 	 * @param y Hero Y coordinate
 	 * @param z Hero Z coordinate
-	 * @param damageMask Cause damage mask
 	 */
-	void checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
+	bool checkHeroCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z);
 
 	/**
 	 * Check other actor collision with bricks
 	 * @param x Actor X coordinate
 	 * @param y Actor Y coordinate
 	 * @param z Actor Z coordinate
-	 * @param damageMask Cause damage mask
 	 */
-	void checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
+	bool checkActorCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z);
 
 	/** Make actor to stop falling */
 	void stopFalling();

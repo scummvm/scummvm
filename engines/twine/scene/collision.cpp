@@ -294,70 +294,70 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 }
 
 // DoCornerReajustTwinkel
-void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = actor->_processActor;
-	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
+bool Collision::checkHeroCollisionWithBricks(IVec3 &pos, const IVec3 &previousPos, int32 x, int32 y, int32 z) {
+	ShapeType brickShape = _engine->_grid->getBrickShape(pos);
 
-	processActor.x += x;
-	processActor.y += y;
-	processActor.z += z;
+	pos.x += x;
+	pos.y += y;
+	pos.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
+	bool causeActorDamage = false;
+	if (pos.x >= 0 && pos.z >= 0 && pos.x <= SCENE_SIZE_MAX && pos.z <= SCENE_SIZE_MAX) {
 		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boundingBox;
-		reajustActorPosition(processActor, brickShape);
-		brickShape = _engine->_grid->getBrickShapeFull(processActor, bbox.maxs.y);
+		reajustActorPosition(pos, brickShape);
+		brickShape = _engine->_grid->getBrickShapeFull(pos, bbox.maxs.y);
 
 		if (brickShape == ShapeType::kSolid) {
-			_causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShapeFull(processActor.x, processActor.y, previousActor.z + z, bbox.maxs.y);
+			causeActorDamage = true;
+			brickShape = _engine->_grid->getBrickShapeFull(pos.x, pos.y, previousPos.z + z, bbox.maxs.y);
 
 			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->getBrickShapeFull(x + previousActor.x, processActor.y, processActor.z, bbox.maxs.y);
+				brickShape = _engine->_grid->getBrickShapeFull(x + previousPos.x, pos.y, pos.z, bbox.maxs.y);
 
 				if (brickShape != ShapeType::kSolid) {
-					_processCollision.x = previousActor.x;
+					_processCollision.x = previousPos.x;
 				}
 			} else {
-				_processCollision.z = previousActor.z;
+				_processCollision.z = previousPos.z;
 			}
 		}
 	}
 
-	processActor = _processCollision;
+	pos = _processCollision;
+	return causeActorDamage;
 }
 
 // DoCornerReajust
-void Collision::checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = actor->_processActor;
-	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
+bool Collision::checkActorCollisionWithBricks(IVec3 &pos, const IVec3 &previousPos, int32 x, int32 y, int32 z) {
+	ShapeType brickShape = _engine->_grid->getBrickShape(pos);
 
-	processActor.x += x;
-	processActor.y += y;
-	processActor.z += z;
+	pos.x += x;
+	pos.y += y;
+	pos.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
-		reajustActorPosition(processActor, brickShape);
-		brickShape = _engine->_grid->getBrickShape(processActor);
+	bool causeActorDamage = false;
+	if (pos.x >= 0 && pos.z >= 0 && pos.x <= SCENE_SIZE_MAX && pos.z <= SCENE_SIZE_MAX) {
+		reajustActorPosition(pos, brickShape);
+		brickShape = _engine->_grid->getBrickShape(pos);
 
 		if (brickShape == ShapeType::kSolid) {
-			_causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShape(processActor.x, processActor.y, previousActor.z + z);
+			causeActorDamage = true;
+			brickShape = _engine->_grid->getBrickShape(pos.x, pos.y, previousPos.z + z);
 
 			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->getBrickShape(x + previousActor.x, processActor.y, processActor.z);
+				brickShape = _engine->_grid->getBrickShape(x + previousPos.x, pos.y, pos.z);
 
 				if (brickShape != ShapeType::kSolid) {
-					_processCollision.x = previousActor.x;
+					_processCollision.x = previousPos.x;
 				}
 			} else {
-				_processCollision.z = previousActor.z;
+				_processCollision.z = previousPos.z;
 			}
 		}
 	}
 
-	processActor = _processCollision;
+	pos = _processCollision;
+	return causeActorDamage != 0;
 }
 
 void Collision::stopFalling() { // ReceptionObj()
