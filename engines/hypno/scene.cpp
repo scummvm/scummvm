@@ -495,7 +495,7 @@ void HypnoEngine::runScene(Scene *scene) {
 
 		if (_music.empty() && !scene->music.empty()) {
 			_music = scene->music;
-			playSound(_music, 0);
+			playSound(_music, 0, scene->musicRate);
 		}
 
 		g_system->updateScreen();

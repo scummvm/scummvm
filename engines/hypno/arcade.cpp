@@ -386,7 +386,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 		}
 
-		if (_music.empty()) {
+		if (_music.empty() && !arc->music.empty()) {
 			_music = _soundPath + arc->music;
 			playSound(_music, 0, arc->musicRate); // music loop forever
 		}

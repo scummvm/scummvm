@@ -332,6 +332,9 @@ enum LevelType {
 
 class Level {
 public:
+	Level() {
+		musicRate = 22050;
+	}
 	virtual ~Level() {} // needed to make Level polymorphic
 	LevelType type;
 	Filenames intros;

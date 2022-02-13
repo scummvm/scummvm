@@ -222,6 +222,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["roof.mi_"]->music = "sound.lib/ros_mus.raw";
 
 	loadSceneLevel("decide1.mi_", "", prefix);
+	_levels["decide1.mi_"]->music = "sound.lib/sh_mus.raw";
+	_levels["decide1.mi_"]->musicRate = 11025;
 	_levels["decide1.mi_"]->intros.push_back("cine/siren1s.smk");
 	sc = (Scene *) _levels["decide1.mi_"];
 	cl = new ChangeLevel("bank.mi_");
@@ -239,6 +241,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("bank.mi_", "", prefix);
 	_levels["bank.mi_"]->intros.push_back("cine/swcs001s.smk");
 	_levels["bank.mi_"]->levelIfWin = "<alley_selector>";
+	_levels["bank.mi_"]->music = "sound.lib/cbh_mus.raw";
 
 	Transition *alley_selector = new Transition("alley.mi_", "<puz_matr>");
 	_levels["<alley_selector>"] = alley_selector;
@@ -278,6 +281,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_apt_2>"] = trans_apt_2;
 
 	loadSceneLevel("busint.mi_", "<bus_selector>", prefix);
+	_levels["busint.mi_"]->music = "sound.lib/blc_mus1.raw";
 	loadSceneLevel("busintro.mi_", "buspuz.mi_", prefix);
 	_levels["busintro.mi_"]->intros.push_back("cine/blcs00a.smk");
 	_levels["busintro.mi_"]->intros.push_back("cine/blcs001s.smk");
@@ -379,6 +383,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[14].actions.push_back(gl);
 
 	loadSceneLevel("buspuz.mi_", "<after_bus_easy>", prefix);
+	_levels["buspuz.mi_"]->music = "sound.lib/blc_mus2.raw";
+	_levels["buspuz.mi_"]->musicRate = 11025;
 
 	Transition *after_bus_easy = new Transition("decide3.mi_");
 	after_bus_easy->intros.push_back("spider/cine/blcs003s.smk");
@@ -389,6 +395,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_bus_hard>"] = after_bus_hard;
 
 	loadSceneLevel("decide3.mi_", "", prefix);
+	_levels["decide3.mi_"]->music = "sound.lib/sh_mus.raw";
+	_levels["decide3.mi_"]->musicRate = 11025;
 
 	sc = (Scene *) _levels["decide3.mi_"];
 	cl = new ChangeLevel("alofintr.mi_");
@@ -543,6 +551,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_c2>"] = after_c2;
 
 	loadSceneLevel("decide4.mi_", "", prefix);
+	_levels["decide4.mi_"]->music = "sound.lib/sh_mus.raw";
+	_levels["decide4.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide4.mi_"];
 	sc->intros.push_back("cine/apts006s.smk");
 	cl = new ChangeLevel("ball1.mi_");
@@ -567,8 +577,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_apt_6>"] = trans_apt_6;
 
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
-	//_levels["ball1.mi_"]->music = "sound.lib/ballroom.raw"; // 11k
+	_levels["ball1.mi_"]->music = "sound.lib/ballroom.raw";
+	_levels["ball1.mi_"]->musicRate = 11025;
 	loadSceneLevel("coat.mi_", "ball2.mi_", prefix);
+	_levels["coat.mi_"]->music = "sound.lib/ballroom.raw";
+	_levels["coat.mi_"]->musicRate = 11025;
 
 	Code *note = new Code("<note>");
 	note->levelIfWin = "coat.mi_";
@@ -578,11 +591,20 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("ball2.mi_", "balcony.mi_", prefix);
 	_levels["ball2.mi_"]->intros.push_back("cine/register.smk");
+	_levels["ball2.mi_"]->music = "sound.lib/ballroom.raw";
+	_levels["ball2.mi_"]->musicRate = 11025;
+
 	loadSceneLevel("balcony.mi_", "factory1.mi_", prefix);
+	_levels["balcony.mi_"]->music = "sound.lib/balcony.raw";
+	_levels["balcony.mi_"]->musicRate = 11025;
 
 	loadSceneLevel("factory1.mi_", "intercom.mi_", prefix);
+	_levels["factory1.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["factory1.mi_"]->musicRate = 11025;
 	_levels["factory1.mi_"]->intros.push_back("cine/swc003s.smk");
 	loadSceneLevel("intercom.mi_", "c3", prefix);
+	_levels["intercom.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["intercom.mi_"]->musicRate = 11025;
 
 	loadArcadeLevel("c3.mi_", "c6", "<over_octo1>", prefix);
 	_levels["c3.mi_"]->intros.push_back("cine/vrfs001s.smk");
@@ -608,7 +630,12 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("movie2.mi_", "decide5.mi_", prefix);
 	_levels["movie2.mi_"]->intros.push_back("cine/vrfs003s.smk");
+	_levels["movie2.mi_"]->music = "sound.lib/ims_mus2.raw";
+	_levels["movie2.mi_"]->musicRate = 11025;
+
 	loadSceneLevel("decide5.mi_", "", prefix);
+	_levels["decide5.mi_"]->music = "sound.lib/sh_mus.raw";
+	_levels["decide5.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide5.mi_"];
 
 	cl = new ChangeLevel("movie3.mi_");
@@ -622,9 +649,14 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("movie3.mi_", "movie4.mi_", prefix);
+	_levels["movie3.mi_"]->music = "sound.lib/ims_mus2.raw";
+	_levels["movie3.mi_"]->musicRate = 11025;
 	_levels["movie3.mi_"]->intros.push_back("cine/imss001s.smk");
 	loadSceneLevel("movie4.mi_", "<fuse_box>", prefix);
 	_levels["movie4.mi_"]->intros.push_back("cine/imss002s.smk");
+	_levels["movie4.mi_"]->music = "sound.lib/ims_mus2.raw";
+	_levels["movie4.mi_"]->musicRate = 11025;
+
 	Code *fuse_box = new Code("<fuse_box>");
 	fuse_box->levelIfWin = "<trans_fuse_box>";
 	fuse_box->prefix = prefix;
@@ -636,6 +668,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<trans_fuse_box>"] = trans_fuse_box;
 
 	loadSceneLevel("decide6.mi_", "", prefix);
+	_levels["decide6.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide6.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide6.mi_"];
 
 	cl = new ChangeLevel("shoctalk.mi_");
@@ -649,9 +683,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(gl);
 
 	loadSceneLevel("shoctalk.mi_", "decide7.mi_", prefix);
+	_levels["shoctalk.mi_"]->music = "sound.lib/sh_mus.raw";
+	_levels["shoctalk.mi_"]->musicRate = 11025;
 	_levels["shoctalk.mi_"]->intros.push_back("cine/vrfs004s.smk");
 
 	loadSceneLevel("decide7.mi_", "", prefix);
+	_levels["decide7.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide7.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide7.mi_"];
 
 	cl = new ChangeLevel("decide8.mi_");
@@ -676,6 +714,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_c13>"] = after_c13;
 
 	loadSceneLevel("docoffi2.mi_", "c12a", prefix);
+	_levels["docoffi2.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["docoffi2.mi_"]->musicRate = 11025;
 
 	loadArcadeLevel("c12.mi_", "<chip_lives_with_spiderman>", "<over_vr>", prefix);
 	_levels["c12.mi_"]->intros.push_back("cine/vrws010s.smk");
@@ -688,6 +728,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c12ah.mi_"] = _levels["c12h.mi_"];
 
 	loadSceneLevel("decide8.mi_", "", prefix);
+	_levels["decide8.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide8.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide8.mi_"];
 
 	cl = new ChangeLevel("c8");
@@ -731,7 +773,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["<after_c10>"] = after_c10;
 
 	loadSceneLevel("docoffic.mi_", "decide9.mi_", prefix);
+	_levels["docoffic.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["docoffic.mi_"]->musicRate = 11025;
+
 	loadSceneLevel("decide9.mi_", "", prefix);
+	_levels["decide9.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide9.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide9.mi_"];
 	sc->intros.push_back("cine/doocin1s.smk");
 
@@ -764,6 +811,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	_levels["c12sh.mi_"] = _levels["c12h.mi_"];
 
 	loadSceneLevel("decide10.mi_", "", prefix);
+	_levels["decide10.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide10.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide10.mi_"];
 	sc->intros.push_back("cine/dia012s.smk");
 
@@ -780,8 +829,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("docoffi1.mi_", "decide11.mi_", prefix);
 	_levels["docoffi1.mi_"]->intros.push_back("cine/doos002s.smk");
 	_levels["docoffi1.mi_"]->intros.push_back("cine/doocin2s.smk");
-	
+	_levels["docoffi1.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["docoffi1.mi_"]->musicRate = 11025;
+
 	loadSceneLevel("decide11.mi_", "", prefix);
+	_levels["decide11.mi_"]->music = "sound.lib/vm_mus.raw";
+	_levels["decide11.mi_"]->musicRate = 11025;
 	sc = (Scene *) _levels["decide11.mi_"];
 	//sc->intros.push_back("cine/dia012s.smk");
 
@@ -980,6 +1033,9 @@ void SpiderEngine::loadAssetsDemo() {
 	sc->levelIfLose = "sixdemo/mis/demo.mis";
 
 	loadSceneLevel("sixdemo/mis/shoctalk.mis", "", prefix);
+	sc = (Scene *) _levels["sixdemo/mis/shoctalk.mis"];
+	sc->music = "demo/sound.lib/sh_mus.raw";
+	sc->musicRate = 11025;
 
 	Code *matrix = new Code("<puz_matr>");
 	matrix->prefix = prefix;
