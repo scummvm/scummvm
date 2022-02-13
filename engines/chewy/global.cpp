@@ -70,11 +70,7 @@ int16 person_tmp_hide[MAX_PERSON];
 int16 person_tmp_room[MAX_PERSON];
 
 int16 FrameSpeed;
-
 int16 FrameSpeedTmp;
-
-int16 frame_delay_count;
-int16 show_frame;
 
 byte **ablage;
 byte *workpage;
@@ -95,7 +91,6 @@ int16 fvorx8x8;
 int16 fvory6x8;
 short fvory8x8;
 
-char *str;
 char **ads_item_ptr;
 
 int16 ads_dia_nr;

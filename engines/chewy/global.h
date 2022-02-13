@@ -187,13 +187,8 @@ extern Globals *g_globals;
 extern int16 person_tmp_hide[MAX_PERSON];
 extern int16 person_tmp_room[MAX_PERSON];
 
-extern char *err_str;
-extern uint32 ram_end;
-
 extern int16 FrameSpeed;
 extern int16 FrameSpeedTmp;
-
-extern int16 show_frame;
 
 extern byte **ablage;
 extern byte *workpage;
@@ -299,19 +294,8 @@ extern MovClass *mov;
 extern char backged[];
 extern AutoMov auto_mov[MAX_AUTO_MOV];
 extern int16 HowardMov;
-
 extern int16 AkChewyTaf;
-/*
-extern uint8 chewy_phasen[8][8];
-extern uint8 chewy_bo_phasen[8][8];
-extern uint8 chewy_mi_phasen[8][8];
-extern uint8 chewy_ro_phasen[8][8];
-extern uint8 chewy_jm_phasen[8][8];
-extern uint8 chewy_phasen_anz[];
-extern uint8 chewy_bo_phasen_anz[];
-extern uint8 chewy_mi_phasen_anz[];
-extern uint8 chewy_ro_phasen_anz[];
-*/
+
 extern int16 PersonAni[MAX_PERSON];
 extern taf_seq_info *PersonTaf[MAX_PERSON];
 extern uint8 PersonSpr[MAX_PERSON][8];
