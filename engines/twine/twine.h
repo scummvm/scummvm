@@ -151,6 +151,12 @@ enum class EngineState {
 	QuitGame
 };
 
+enum class SceneLoopState {
+	Continue = -1,
+	ReturnToMenu = 0,
+	Finished = 1
+};
+
 struct ScopedEngineFreeze {
 	TwinEEngine *_engine;
 	ScopedEngineFreeze(TwinEEngine *engine);
@@ -281,7 +287,7 @@ public:
 	ConfigFile _cfgfile;
 
 	int32 _frameCounter = 0;
-	int32 _quitSceneLoop = 0;
+	SceneLoopState _sceneLoopState = SceneLoopState::ReturnToMenu;
 	int32 _lbaTime = 0;
 
 	int32 _loopInventoryItem = 0;
