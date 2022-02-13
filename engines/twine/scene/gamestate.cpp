@@ -116,7 +116,7 @@ void GameState::initEngineVars() {
 
 	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	_engine->_quitGame = -1;
+	_engine->_quitSceneLoop = -1;
 	_engine->_scene->_mecaPenguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
 

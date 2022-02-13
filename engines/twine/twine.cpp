@@ -771,7 +771,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 			if (giveUp == 1) {
 				_redraw->redrawEngineActions(true);
-				_quitGame = 0;
+				_quitSceneLoop = 0;
 				return 0;
 			}
 			_redraw->redrawEngineActions(true);
@@ -932,8 +932,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		processActorSamplePosition(a);
 
-		if (_quitGame != -1) {
-			return _quitGame;
+		if (_quitSceneLoop != -1) {
+			return _quitSceneLoop;
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
@@ -1001,7 +1001,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						autoSave();
 						_gameState->processGameoverAnimation();
-						_quitGame = 0;
+						_quitSceneLoop = 0;
 						return 0;
 					}
 				}
@@ -1040,7 +1040,7 @@ bool TwinEEngine::gameEngineLoop() {
 	_screens->_fadePalette = true;
 	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
-	while (_quitGame == -1) {
+	while (_quitSceneLoop == -1) {
 		if (runGameEngine()) {
 			return true;
 		}

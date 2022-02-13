@@ -1631,7 +1631,7 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x62
  */
 static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_quitGame = 1;
+	engine->_quitSceneLoop = 1;
 	engine->_gameState->setLeafs(0);
 	engine->_scene->_sceneHero->setLife(kActorMaxLife);
 	engine->_gameState->setMagicPoints(80);
@@ -1739,7 +1739,7 @@ static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x69
  */
 static int32 lBRUTAL_EXIT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_quitGame = 0;
+	engine->_quitSceneLoop = 0;
 	return 1; // break
 }
 

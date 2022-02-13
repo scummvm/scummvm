@@ -281,7 +281,7 @@ public:
 	ConfigFile _cfgfile;
 
 	int32 _frameCounter = 0;
-	int32 _quitGame = 0;
+	int32 _quitSceneLoop = 0;
 	int32 _lbaTime = 0;
 
 	int32 _loopInventoryItem = 0;
