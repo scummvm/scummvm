@@ -398,15 +398,15 @@ void ROQPlayer::buildShowBuf() {
 		}
 	}
 
-	if (gDebugLevel >= 9 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
-		dumpAllSurfaces();
-	}
-
 	if (!_flagNoPlay) {
 		_vm->_system->unlockScreen();
 		_vm->_system->updateScreen();
 	}
 	_dirty = false;
+
+	if (gDebugLevel >= 9 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		dumpAllSurfaces();
+	}
 
 	// On the first frame, copy from the current buffer to the prev buffer
 	if (_firstFrame) {
@@ -985,7 +985,7 @@ void ROQPlayer::copyfgtobg(uint8 arg) {
 	// TODO: the arg isn't handled yet
 	// but since we're doing a full redraw of all layers we might not need to care about the arg
 	debugC(2, kDebugVideo, "Groovie::ROQ: copyfgtobg (0x%02X)", arg);
-	
+
 	redrawRestoreArea(_screen->h == 480 ? 0 : 80, true);
 	_vm->_system->updateScreen();
 }
