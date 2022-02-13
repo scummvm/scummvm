@@ -263,7 +263,6 @@ void Actor::resetActor(int16 actorIdx) {
 	*actor = ActorStruct();
 
 	actor->_actorIdx = actorIdx;
-	actor->_anim = AnimationTypes::kStanding;
 	actor->_pos = IVec3(0, -1, 0);
 
 	memset(&actor->_staticFlags, 0, sizeof(StaticFlagsStruct));

@@ -37,10 +37,11 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-void Movements::getShadowPosition(const IVec3 &pos) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, _processActor.y);
-	_processActor.x = pos.x;
-	_processActor.z = pos.z;
+IVec3 Movements::getShadowPosition(const IVec3 &pos) {
+	IVec3 shadowCoord;
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, shadowCoord.y);
+	shadowCoord.x = pos.x;
+	shadowCoord.z = pos.z;
 
 	ShapeType shadowCollisionType;
 	const int32 blockIdx = *ptr;
@@ -51,9 +52,8 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	} else {
 		shadowCollisionType = ShapeType::kNone;
 	}
-	_engine->_collision->reajustActorPosition(shadowCollisionType);
-
-	_engine->_actor->_shadowCoord = _processActor;
+	_engine->_collision->reajustActorPosition(shadowCoord, shadowCollisionType);
+	return shadowCoord;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {

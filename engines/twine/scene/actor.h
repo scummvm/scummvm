@@ -194,6 +194,10 @@ public:
 	int32 _armor = 1;
 	int32 _life = kActorMaxLife;
 
+	/** Process actor coordinate */
+	IVec3 _processActor;
+	/** Previous process actor coordinate */
+	IVec3 _previousActor;
 	IVec3 _collisionPos;
 
 	int32 _positionInMoveScript = -1;
@@ -279,9 +283,6 @@ public:
 	Actor(TwinEEngine *engine);
 
 	ActorStruct *_processActorPtr = nullptr;
-
-	/** Actor shadow coordinate */
-	IVec3 _shadowCoord;
 
 	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto aggressive mode */

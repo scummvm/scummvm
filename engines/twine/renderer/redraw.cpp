@@ -241,19 +241,19 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			// if use shadows
 			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->_staticFlags.bDoesntCastShadow)) {
 				if (actor->_carryBy != -1) {
-					_engine->_actor->_shadowCoord.x = actor->_pos.x;
-					_engine->_actor->_shadowCoord.y = actor->_pos.y - 1;
-					_engine->_actor->_shadowCoord.z = actor->_pos.z;
+					drawList[drawListPos].x = actor->_pos.x;
+					drawList[drawListPos].y = actor->_pos.y - 1;
+					drawList[drawListPos].z = actor->_pos.z;
 				} else {
-					_engine->_movements->getShadowPosition(actor->pos());
+					const IVec3 shadowCoord = _engine->_movements->getShadowPosition(actor->pos());
+					drawList[drawListPos].x = shadowCoord.x;
+					drawList[drawListPos].y = shadowCoord.y;
+					drawList[drawListPos].z = shadowCoord.z;
 				}
 
 				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the _drawList
 				drawList[drawListPos].type = DrawListType::DrawShadows;
 				drawList[drawListPos].actorIdx = 0;
-				drawList[drawListPos].x = _engine->_actor->_shadowCoord.x;
-				drawList[drawListPos].y = _engine->_actor->_shadowCoord.y;
-				drawList[drawListPos].z = _engine->_actor->_shadowCoord.z;
 				drawList[drawListPos].offset = 1;
 				drawListPos++;
 			}
@@ -291,14 +291,14 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 				drawListPos++;
 
 				if (_engine->_cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
-					_engine->_movements->getShadowPosition(extra->pos);
+					const IVec3 &shadowCoord = _engine->_movements->getShadowPosition(extra->pos);
 
 					drawList[drawListPos].posValue = tmpVal - 1;
 					drawList[drawListPos].actorIdx = 0;
 					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = _engine->_actor->_shadowCoord.x;
-					drawList[drawListPos].y = _engine->_actor->_shadowCoord.y;
-					drawList[drawListPos].z = _engine->_actor->_shadowCoord.z;
+					drawList[drawListPos].x = shadowCoord.x;
+					drawList[drawListPos].y = shadowCoord.y;
+					drawList[drawListPos].z = shadowCoord.z;
 					drawList[drawListPos].offset = 0;
 					drawListPos++;
 				}

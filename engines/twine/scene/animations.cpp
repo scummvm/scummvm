@@ -466,10 +466,10 @@ void Animations::processActorAnimations(int32 actorIdx) {
 		return;
 	}
 
-	IVec3 &previousActor = _engine->_movements->_previousActor;
+	IVec3 &previousActor = actor->_previousActor;
 	previousActor = actor->_collisionPos;
 
-	IVec3 &processActor = _engine->_movements->_processActor;
+	IVec3 &processActor = actor->_processActor;
 	if (actor->_staticFlags.bIsSpriteActor) {
 		if (actor->_strengthOfHit) {
 			actor->_dynamicFlags.bIsHitting = 1;
@@ -488,11 +488,11 @@ void Animations::processActorAnimations(int32 actorIdx) {
 					}
 				}
 
-				IVec3 destPos = _engine->_movements->rotateActor(xAxisRotation, 0, actor->_spriteActorRotation);
+				const IVec3 xRotPos = _engine->_movements->rotateActor(xAxisRotation, 0, actor->_spriteActorRotation);
 
-				processActor.y = actor->_pos.y - destPos.z;
+				processActor.y = actor->_pos.y - xRotPos.z;
 
-				destPos = _engine->_movements->rotateActor(0, destPos.x, actor->_angle);
+				const IVec3 destPos = _engine->_movements->rotateActor(0, xRotPos.x, actor->_angle);
 
 				processActor.x = actor->_pos.x + destPos.x;
 				processActor.z = actor->_pos.z + destPos.z;
@@ -653,7 +653,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 		if (brickShape != ShapeType::kNone) {
 			if (brickShape != ShapeType::kSolid) {
-				_engine->_collision->reajustActorPosition(brickShape);
+				_engine->_collision->reajustActorPosition(processActor, brickShape);
 			} else { // this shouldn't happen (collision should avoid it)
 				actor->_pos.y = processActor.y = (processActor.y / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
 			}
@@ -673,16 +673,16 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			_engine->_collision->checkHeroCollisionWithBricks(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			_engine->_collision->checkHeroCollisionWithBricks(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			_engine->_collision->checkHeroCollisionWithBricks(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			_engine->_collision->checkHeroCollisionWithBricks(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
 			// check other actors collisions with bricks
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			_engine->_collision->checkActorCollisionWithBricks(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			_engine->_collision->checkActorCollisionWithBricks(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			_engine->_collision->checkActorCollisionWithBricks(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			_engine->_collision->checkActorCollisionWithBricks(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		}
 		processActor = processActorSave;
 
@@ -739,7 +739,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 					_engine->_collision->stopFalling();
 				}
 
-				_engine->_collision->reajustActorPosition(brickShape);
+				_engine->_collision->reajustActorPosition(processActor, brickShape);
 			}
 
 			actor->_dynamicFlags.bIsFalling = 0;
@@ -752,7 +752,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 						_engine->_collision->stopFalling();
 					}
 
-					_engine->_collision->reajustActorPosition(brickShape);
+					_engine->_collision->reajustActorPosition(processActor, brickShape);
 				} else {
 					if (!actor->_dynamicFlags.bIsRotationByAnim) {
 						actor->_dynamicFlags.bIsFalling = 1;

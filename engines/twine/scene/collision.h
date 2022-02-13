@@ -35,7 +35,7 @@ class Collision {
 private:
 	TwinEEngine *_engine;
 
-	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, const ActorStruct *actor, ActorStruct *actorTest);
+	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
@@ -60,7 +60,7 @@ public:
 	 * Reajust actor position in scene according with brick shape bellow actor
 	 * @param brickShape Shape of brick bellow the actor
 	 */
-	void reajustActorPosition(ShapeType brickShape);
+	void reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const;
 
 	/**
 	 * Check collision with actors
@@ -75,7 +75,7 @@ public:
 	 * @param z Hero Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
+	void checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/**
 	 * Check other actor collision with bricks
@@ -84,7 +84,7 @@ public:
 	 * @param z Actor Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
+	void checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/** Make actor to stop falling */
 	void stopFalling();
