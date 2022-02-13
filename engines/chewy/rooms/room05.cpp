@@ -35,8 +35,8 @@ void Room5::entry() {
 }
 
 void Room5::pushButton() {
-	int16 str_nr;
 	if (_G(spieler).R5Terminal) {
+		int16 str_nr;
 		if (_G(spieler).R5Tuer == false) {
 			start_detail_wait(9, 1, ANI_VOR);
 			_G(spieler).room_e_obj[6].Attribut = AUSGANG_OBEN;
