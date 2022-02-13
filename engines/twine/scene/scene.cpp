@@ -640,34 +640,35 @@ void Scene::playSceneMusic() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->_lbaTime >= _sampleAmbienceTime) {
-		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
+	if (_engine->_lbaTime < _sampleAmbienceTime) {
+		return;
+	}
+	int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
 
-		for (int32 s = 0; s < 4; s++) {
-			if (!(_samplePlayed & (1 << currentAmb))) { // if not already played
-				_samplePlayed |= (1 << currentAmb);     // make sample played
+	for (int32 s = 0; s < 4; s++) {
+		if (!(_samplePlayed & (1 << currentAmb))) { // if not already played
+			_samplePlayed |= (1 << currentAmb);     // make sample played
 
-				if (_samplePlayed == 15) { // reset if all samples played
-					_samplePlayed = 0;
-				}
-
-				const int16 sampleIdx = _sampleAmbiance[currentAmb];
-				if (sampleIdx != -1) {
-					/*int16 decal = _sampleRound[currentAmb];*/
-					int16 repeat = _sampleRepeat[currentAmb];
-
-					_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
-					break;
-				}
+			if (_samplePlayed == 15) { // reset if all samples played
+				_samplePlayed = 0;
 			}
 
-			currentAmb++;    // try next ambiance
-			currentAmb &= 3; // loop in all 4 ambiances
+			const int16 sampleIdx = _sampleAmbiance[currentAmb];
+			if (sampleIdx != -1) {
+				/*int16 decal = _sampleRound[currentAmb];*/
+				int16 repeat = _sampleRepeat[currentAmb];
+
+				_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
+				break;
+			}
 		}
 
-		// compute next ambiance timer
-		_sampleAmbienceTime = _engine->_lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
+		currentAmb++;    // try next ambiance
+		currentAmb &= 3; // loop in all 4 ambiances
 	}
+
+	// compute next ambiance timer
+	_sampleAmbienceTime = _engine->_lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
@@ -680,7 +681,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 		return;
 	}
 
-	const int16 amount = zone->infoData.Bonus.amount;
+	const int32 amount = zone->infoData.Bonus.amount;
 	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, _sceneHero->_pos.x, _sceneHero->_pos.z);
 	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->maxs.x + zone->mins.x) / 2, zone->maxs.y, ABS(zone->maxs.z + zone->mins.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
