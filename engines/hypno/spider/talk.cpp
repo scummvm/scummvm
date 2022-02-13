@@ -106,6 +106,7 @@ void SpiderEngine::showConversation() {
 
 		debugC(1, kHypnoDebugScene, "Clearing conversation");
 		_conversation.clear();
+		_music.clear();
 
 		if (shouldEscape) {
 			runIntros(_escapeSequentialVideoToPlay);

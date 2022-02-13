@@ -474,6 +474,11 @@ void HypnoEngine::runScene(Scene *scene) {
 			}
 		}
 
+		if (_music.empty() && !scene->music.empty() && _videosPlaying.empty() && _nextSequentialVideoToPlay.empty()) {
+			_music = scene->music;
+			playSound(_music, 0, scene->musicRate);
+		}
+
 		if (!_videosPlaying.empty() || !_videosLooping.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
 			continue;
@@ -491,11 +496,6 @@ void HypnoEngine::runScene(Scene *scene) {
 			runMenu(stack.back());
 			_nextHotsToAdd = nullptr;
 			drawScreen();
-		}
-
-		if (_music.empty() && !scene->music.empty()) {
-			_music = scene->music;
-			playSound(_music, 0, scene->musicRate);
 		}
 
 		g_system->updateScreen();
