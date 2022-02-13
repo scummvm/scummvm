@@ -177,6 +177,7 @@ class TwineScreen : public Graphics::Screen {
 private:
 	using Super = Graphics::Screen;
 	TwinEEngine *_engine;
+	int _lastFrame = -1;
 
 public:
 	TwineScreen(TwinEEngine *engine);

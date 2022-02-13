@@ -115,11 +115,10 @@ TwineScreen::TwineScreen(TwinEEngine *engine) : _engine(engine) {
 }
 
 void TwineScreen::update() {
-	static int lastFrame = 0;
-	if (lastFrame == _engine->_frameCounter) {
+	if (_lastFrame == _engine->_frameCounter) {
 		return;
 	}
-	lastFrame = _engine->_frameCounter;
+	_lastFrame = _engine->_frameCounter;
 	Super::update();
 }
 
