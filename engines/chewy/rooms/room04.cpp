@@ -67,13 +67,13 @@ int16 Room4::sonde_comp() {
 					--cur_x;
 				else
 					cur_x = 2;
-				g_engine->_sound->playSound(0, 1, false);
+				g_engine->_sound->playSound(0, 1);
 				break;
 
 			case 1:
 				ende = 1;
 				spr_nr = RAHMEN_GELB;
-				g_engine->_sound->playSound(0);
+				g_engine->_sound->playSound(0, 0);
 				break;
 
 			case 2:
@@ -81,18 +81,19 @@ int16 Room4::sonde_comp() {
 					++cur_x;
 				else
 					cur_x = 0;
-				g_engine->_sound->playSound(0, 2, false);
+				g_engine->_sound->playSound(0, 2);
 				break;
 
 			default:
 				break;
 			}
 		}
-		spr_info[0].Image = room_blk.DetImage[spr_nr];
 
+		spr_info[0].Image = room_blk.DetImage[spr_nr];
 		spr_info[0].ZEbene = 0;
 		spr_info[0].X = CUR_POS[cur_x][0];
 		spr_info[0].Y = CUR_POS[cur_x][1];
+
 		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			curani.ani_anf = HAND_CLICK;
 			curani.ani_end = HAND_CLICK;
@@ -103,9 +104,10 @@ int16 Room4::sonde_comp() {
 		cursor_wahl(CUR_USER);
 		_G(spieler).CurHoehe = 16;
 		_G(in)->rectangle(0, 123, 320 - _G(spieler).CurBreite, 194);
-		if (minfo.y < 124) {
+
+		if (minfo.y < 124)
 			minfo.y = 123;
-		}
+
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
@@ -115,13 +117,13 @@ int16 Room4::sonde_comp() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	menu_item = CUR_WALK;
 	cursor_wahl(menu_item);
-	set_person_pos(118 - CH_HOT_MOV_X,
-		164 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+
 	spieler_vector[P_CHEWY].DelayCount = 0;
 	_G(maus_links_click) = false;
 	minfo.button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
-	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	room->load_room(&room_blk, 3, &_G(spieler));
+	set_person_pos(110, 139, P_CHEWY, P_LEFT);
 
 	fx_blend = BLEND1;
 	atds->stop_aad();
