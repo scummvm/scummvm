@@ -257,49 +257,20 @@ void Actor::initActor(int16 actorIdx) {
 	actor->_positionInLifeScript = 0;
 }
 
+// InitObject
 void Actor::resetActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	*actor = ActorStruct();
 
 	actor->_actorIdx = actorIdx;
-	actor->_genBody = BodyType::btNormal;
 	actor->_anim = AnimationTypes::kStanding;
 	actor->_pos = IVec3(0, -1, 0);
-	actor->_spriteActorRotation = 0;
-
-	actor->_boundingBox = BoundingBox();
-
-	actor->_angle = 0;
-	actor->_speed = 40;
-	actor->_controlMode = ControlMode::kNoMove;
-
-	actor->_cropLeft = 0;
-	actor->_cropTop = 0;
-	actor->_cropRight = 0;
-	actor->_cropBottom = 0;
-
-	actor->setBrickShape(ShapeType::kNone);
-	actor->_collision = -1;
-	actor->_carryBy = -1;
-	actor->_zone = -1;
 
 	memset(&actor->_staticFlags, 0, sizeof(StaticFlagsStruct));
 	memset(&actor->_dynamicFlags, 0, sizeof(DynamicFlagsStruct));
 	memset(&actor->_bonusParameter, 0, sizeof(BonusParameter));
 
-	actor->setLife(kActorMaxLife);
-	actor->_armor = 1;
-	actor->_hitBy = -1;
-	actor->_lastRotationAngle = ANGLE_0;
-	actor->_animStep = IVec3();
-	actor->_body = -1;
-	actor->_previousAnimIdx = -1;
-	actor->_animType = AnimType::kAnimationTypeLoop;
-	actor->_animPosition = 0;
-
 	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_move);
-
-	actor->_positionInMoveScript = -1;
-	actor->_positionInLifeScript = 0;
 }
 
 void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle) {

@@ -167,7 +167,7 @@ public:
 
 	const IVec3 &pos() const;
 
-	int32 _body = 0; // costumeIndex - index into bodyTable
+	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
 	AnimationTypes _anim = AnimationTypes::kAnimNone;
 	AnimationTypes _animExtra = AnimationTypes::kStanding;
@@ -178,10 +178,10 @@ public:
 	int16 _actorIdx = 0; // own actor index
 	IVec3 _pos;
 	int32 _strengthOfHit = 0;
-	int32 _hitBy = 0;
+	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
 	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
-	int32 _speed = 0;
+	int32 _speed = 40; // speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
 	int32 _cropLeft = 0;
@@ -191,12 +191,12 @@ public:
 	int32 _followedActor = 0; // same as info3
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
-	int32 _armor = 0;
-	int32 _life = 0;
+	int32 _armor = 1;
+	int32 _life = kActorMaxLife;
 
 	IVec3 _collisionPos;
 
-	int32 _positionInMoveScript = 0;
+	int32 _positionInMoveScript = -1;
 	uint8 *_moveScript = nullptr;
 	int32 _moveScriptSize = 0;
 
@@ -211,16 +211,16 @@ public:
 	/**
 	 * colliding actor id
 	 */
-	int32 _collision = 0;
+	int32 _collision = -1;
 	/**
 	 * actor id we are standing on
 	 */
-	int32 _carryBy = 0;
-	int32 _zone = 0;
+	int32 _carryBy = -1;
+	int32 _zone = -1;
 
 	int32 _lastRotationAngle = ANGLE_0;
 	IVec3 _animStep;
-	int32 _previousAnimIdx = 0;
+	int32 _previousAnimIdx = -1;
 	int32 _doorWidth = 0;
 	int32 _animPosition = 0;
 	AnimType _animType = AnimType::kAnimationTypeLoop;

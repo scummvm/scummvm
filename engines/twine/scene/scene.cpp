@@ -278,6 +278,7 @@ bool Scene::loadSceneLBA2() {
 	return true;
 }
 
+// LoadScene
 bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
 
@@ -335,6 +336,7 @@ bool Scene::loadSceneLBA1() {
 		act->_collisionPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
+		act->_bonusParameter.givenNothing = 0;
 		act->_angle = (int16)stream.readUint16LE();
 		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readUint16LE();
@@ -480,6 +482,7 @@ void Scene::dumpSceneScripts() const {
 	}
 }
 
+// ChangeCube
 void Scene::changeScene() {
 	if (_engine->isLBA1()) {
 		if (_enableEnhancements) {
@@ -579,8 +582,7 @@ void Scene::changeScene() {
 
 	_engine->_gameState->_inventoryNumKeys = 0;
 	_engine->_disableScreenRecenter = false;
-	_heroPositionType = ScenePositionType::kNoPosition;
-	_sampleAmbienceTime = 0;
+
 
 	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
 	_engine->_grid->centerOnActor(followedActor);
@@ -590,11 +592,13 @@ void Scene::changeScene() {
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
 	_engine->_screens->_fadePalette = false;
+	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
 
 	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_enableGridTileRendering = true;
-
-	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
+	_heroPositionType = ScenePositionType::kNoPosition;
+	_zoneHeroPos = IVec3();
+	_sampleAmbienceTime = 0;
 
 	if (_sceneMusic != -1) {
 		debug(2, "Scene %i music track id: %i", _currentSceneIdx, _sceneMusic);
