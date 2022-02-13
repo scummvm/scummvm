@@ -149,6 +149,7 @@ public:
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
+	// InitIncrustDisp
 	void addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 info1, OverlayPosType posType, int16 lifeTime);
 
 	/**

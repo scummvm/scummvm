@@ -89,8 +89,8 @@ struct ScriptLifeFunction {
 /** Script condition operators */
 enum LifeScriptOperators {
 	/*==*/kEqualTo = 0,
-	/*> */ kGreaterThan = 1,
-	/*< */ kLessThan = 2,
+	/*> */kGreaterThan = 1,
+	/*< */kLessThan = 2,
 	/*>=*/kGreaterThanOrEqualTo = 3,
 	/*<=*/kLessThanOrEqualTo = 4,
 	/*!=*/kNotEqualTo = 5
@@ -121,8 +121,8 @@ enum LifeScriptConditions {
 	/*0x14*/ kcBEHAVIOUR = 20,       /*<! Hero behaviour. (Parameter = Behaviour Index) */
 	/*0x15*/ kcCHAPTER = 21,         /*<! Story Chapters. (Parameter = Chapter Index) */
 	/*0x16*/ kcDISTANCE_3D = 22,     /*<! Distance between the actor passed as parameter and the current actor. (Parameter = Actor Index, Parameter = Distance) */
-	                                 /*0x17 - 23 unused */
-	                                 /*0x18 - 24 unused */
+	/*0x17*/ kcMAGIC_LEVEL = 23,
+	/*0x18*/ kcMAGIC_POINTS = 24,
 	/*0x19*/ kcUSE_INVENTORY = 25,   /*<! Use inventory object. (Parameter = Object Index in the inventory, Paramenter = 0 (Not in Inventory), = 1 (In the Inventory)) */
 	/*0x1A*/ kcCHOICE = 26,          /*<! Menu choice. (Parameter = Text Index in the current Text Bank) */
 	/*0x1B*/ kcFUEL = 27,            /*<! Amount of fuel gas the Hero have in his inventory. (Parameter = Gas amount) */
@@ -320,10 +320,10 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		}
 		break;
 	}
-	case 23:
+	case kcMAGIC_LEVEL:
 		engine->_scene->_currentScriptValue = engine->_gameState->_magicLevelIdx;
 		break;
-	case 24:
+	case kcMAGIC_POINTS:
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryMagicPoints;
 		break;
 	case kcUSE_INVENTORY: {
