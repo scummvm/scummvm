@@ -139,7 +139,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "",
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 						"introd1.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
@@ -151,7 +151,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "",
 			AD_ENTRY2s("script.grv", "560e90b47054639668e44a8b365fbe26", 62447,
 						"introd1.gjd", nullptr, -1),
-			Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
@@ -163,7 +163,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "",
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_TESTING,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
@@ -175,7 +175,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Installed",
 			AD_ENTRY2s("script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
 					"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_TESTING,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
 		},
 		kGroovieT11H
@@ -187,7 +187,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Interactive Demo",
 			AD_ENTRY2s("demo.grv", "5faec559b9abf18cf143751b420208dc", 15991,
 						"dvmod1a.gjd", "e304fe68f95c54fc82d785768e372892", 8068568),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -199,7 +199,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Interactive Demo",
 			AD_ENTRY2s("demo.grv", "824b1a051f841a50ab7a6b4c10180bbc", 15898,
 						"dvmod1a.gjd", "e304fe68f95c54fc82d785768e372892", 8068568),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -211,7 +211,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Non-Interactive Demo",
 			AD_ENTRY2s("niloop.grv", "b4c35a2a6ebaf72fbd830b590d48f8ea", 456,
 						"dvmod1b.gjd", "43eb268ef6d64a75b9846df5be453d30", 11264100),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -223,7 +223,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Making Of",
 			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
 						"zmakd2a.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -235,7 +235,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Making Of",
 			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
 					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_TESTING,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -247,7 +247,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "Making Of (Installed)",
 			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
 					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_TESTING,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieT11H
@@ -259,7 +259,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "Trailer",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"atpuz.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieCDY
@@ -271,7 +271,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "Trailer",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_TESTING,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieCDY
@@ -283,7 +283,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "Trailer (Installed)",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_TESTING,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieCDY
@@ -295,7 +295,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "Demo",
 			AD_ENTRY2s("clandemo.grv", "faa863738da1c93673ed58a4b9597a63", 6744,
 						"cddemo.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieCDY
@@ -307,7 +307,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "",
 			AD_ENTRY2s("clanmain.grv", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
 						"ACT01MUS.MPG", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
 		},
 		kGroovieCDY
@@ -319,7 +319,7 @@ static const GroovieGameDescription gameDescriptions[] = {
             "clandestiny", "Mac/iOS",
             AD_ENTRY2s("CLANMAIN.GRV", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
                        "ACT01MUS.m4a", nullptr, -1),
-            Common::EN_ANY, Common::kPlatformUnknown, ADGF_UNSTABLE,
+            Common::EN_ANY, Common::kPlatformUnknown, ADGF_TESTING,
             GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
         },
         kGroovieCDY
@@ -331,7 +331,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"unclehenry", "",
 			AD_ENTRY2s("tpot.grv", "849dc7e5309e1b9acf72d8abc9e145df", 11693,
 						"trt7g.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
 		},
 		kGroovieUHP
@@ -343,7 +343,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", "CD",
 			AD_ENTRY2s("tlcmain.grv", "47c235155de5103e72675fe7294720b8", 17479,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -352,10 +352,10 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// Tender Loving Care PC English (DVD-ROM 1998-08-26)
 	{
 		{
-			"tlc", "DVD 1998-08-26",
+			"tlc", _s("Missing game code"),
 			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -364,10 +364,10 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// Tender Loving Care PC English (DVD-ROM 1998-06-12)
 	{
 		{
-			"tlc", "DVD 1998-06-12",
+			"tlc", _s("Missing game code"),
 			AD_ENTRY2s("tlcmain.grv", "8a591c47d24dde38615e6ea2e79b51a5", 17375,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -379,7 +379,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", "Demo",
 			AD_ENTRY2s("tlcmain.grv", "6ec818f595eedca6570280af0c681642", 17361,
 						"tlcnav.gjd", nullptr, -1),
-			Common::DE_DEU, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -391,7 +391,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", "Trailer",
 			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
 						"drama1.gjd", nullptr, -1),
-			Common::UNK_LANG, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::UNK_LANG, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
