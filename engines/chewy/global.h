@@ -166,6 +166,28 @@ public:
 	int16 _person_tmp_hide[MAX_PERSON] = { 0 };
 	int16 _person_tmp_room[MAX_PERSON] = { 0 };
 
+	SplitStringInit _ssi[AAD_MAX_PERSON] = {
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
+	};
+
+	int16 _talk_start_ani = -1;
+	int16 _talk_hide_static = -1;
+	int16 _frequenz = 0;
+	int16 _currentSong = -1;
+	bool _savegameFlag = false;
+	Stream *_music_handle = nullptr;
+	int16 _EndOfPool = 0;
+	int _timer_action_ctr = 0;
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -228,11 +250,6 @@ extern Globals *g_globals;
 extern char *invent_txt;
 extern char *invent_name;
 
-extern SplitStringInit ssi[AAD_MAX_PERSON];
-extern int16 talk_start_ani;
-
-extern int16 talk_hide_static;
-
 extern int16 ak_invent;
 
 extern SprInfo spr_info[MAX_PROG_ANI];
@@ -282,7 +299,6 @@ extern Atdsys *atds;
 extern Flic *flc;
 extern MovClass *mov;
 
-extern char backged[];
 extern AutoMov auto_mov[MAX_AUTO_MOV];
 extern int16 HowardMov;
 extern int16 AkChewyTaf;
@@ -301,13 +317,6 @@ extern int16 spz_count;
 extern int16 spz_delay[MAX_PERSON];
 extern int16 spz_p_nr;
 extern int16 spz_ani[MAX_PERSON];
-
-extern int16 frequenz;
-extern Stream *music_handle;
-extern int16 EndOfPool;
-extern int16 CurrentSong;
-extern bool savegameFlag;
-extern int timer_action_ctr;
 
 void cursor_wahl(int16 nr);
 

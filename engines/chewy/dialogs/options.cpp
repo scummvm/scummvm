@@ -184,7 +184,7 @@ void Options::execute(taf_info *ti) {
 					_G(sndPlayer)->stopMod();
 				} else {
 					_G(spieler).MusicSwitch = true;
-					CurrentSong = -1;
+					_G(currentSong) = -1;
 					load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 				}
 				break;

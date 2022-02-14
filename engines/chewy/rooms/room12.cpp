@@ -180,7 +180,7 @@ void Room12::bork_ok() {
 	wait_auto_obj(R12_BORK_OBJ);
 	det->hide_static_spr(10);
 	start_detail_wait(4, 1, ANI_VOR);
-	talk_hide_static = -1;
+	_G(talk_hide_static) = -1;
 	det->show_static_spr(12);
 	atds->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
 	obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);

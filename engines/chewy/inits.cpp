@@ -167,13 +167,13 @@ void var_init() {
 	init_atds();
 	_G(spieler).FramesPerSecond = 7;
 	_G(spieler).DisplayText = true;
-	CurrentSong = -1;
+	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;
-	timer_action_ctr = 0;
+	_G(timer_action_ctr) = 0;
 	flags.CursorStatus = true;
-	savegameFlag = false;
+	_G(savegameFlag) = false;
 }
 
 void init_room() {
@@ -188,7 +188,7 @@ void init_room() {
 	room_blk.AtsLoad = true;
 	strcpy(room_blk.RoomDir, "room/");
 
-	room->open_handle(&backged[0], "rb", R_GEPDATEI);
+	room->open_handle(EPISODE1_GEP, "rb", R_GEPDATEI);
 }
 
 void init_atds() {
@@ -219,7 +219,7 @@ void init_atds() {
 	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
 	atds->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
-		atds->set_split_win(i, &ssi[i]);
+		atds->set_split_win(i, &_G(ssi)[i]);
 	atds->set_string_end_func(&atds_string_start);
 }
 
@@ -371,7 +371,7 @@ void set_speed() {
 void sound_init() {
 	_G(spieler).SoundSwitch = false;
 	_G(spieler).MusicSwitch = false;
-	frequenz = 22050;
+	_G(frequenz) = 22050;
 
 	_G(sndPlayer)->initMixMode();
 	_G(spieler).MusicVol = 63;
@@ -379,18 +379,18 @@ void sound_init() {
 	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
 	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 
-	music_handle = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+	_G(music_handle) = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(music_handle);
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_G(music_handle));
 	assert(rs);
 
 	rs->seek(0);
-	EndOfPool = 0;
+	_G(EndOfPool) = 0;
 	NewPhead Nph;
 	if (!Nph.load(rs)) {
 		error("sound_init error");
 	} else {
-		EndOfPool = Nph.PoolAnz - 1;
+		_G(EndOfPool) = Nph.PoolAnz - 1;
 	}
 
 	atds->setHasSpeech(true);

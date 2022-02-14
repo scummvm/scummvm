@@ -36,7 +36,7 @@ void load_room_music(int16 room_nr) {
 	int16 volume = _G(spieler).MusicVol;
 	const int16 lp_mode = 1;
 	const int16 play_mode = NORMAL_PLAY;
-	if (_G(spieler).MusicSwitch && (music_handle)) {
+	if (_G(spieler).MusicSwitch && (_G(music_handle))) {
 		switch (room_nr) {
 		case 0:
 			ttp_index = 0;
@@ -176,7 +176,7 @@ void load_room_music(int16 room_nr) {
 
 		default:
 			ttp_index = -1;
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			_G(sndPlayer)->stopMod();
 			break;
 		}
@@ -187,13 +187,13 @@ void load_room_music(int16 room_nr) {
 				volume = _G(spieler).MusicVol;
 			_G(sndPlayer)->setMusicMasterVol(volume);
 			_G(sndPlayer)->setLoopMode(lp_mode);
-			if (ttp_index != CurrentSong) {
+			if (ttp_index != _G(currentSong)) {
 				_G(sndPlayer)->stopMod();
 				while (_G(sndPlayer)->musicPlaying());
 				memset(Ci.MusicSlot, 0, MUSIC_SLOT_SIZE);
-				_G(mem)->file->select_pool_item(music_handle, EndOfPool - ttp_index);
-				_G(mem)->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
-				CurrentSong = ttp_index;
+				_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - ttp_index);
+				_G(mem)->file->load_tmf(_G(music_handle), (tmf_header *)Ci.MusicSlot);
+				_G(currentSong) = ttp_index;
 				if (!_G(modul)) {
 					if (play_mode == NORMAL_PLAY)
 						_G(sndPlayer)->playMod((tmf_header *)Ci.MusicSlot);

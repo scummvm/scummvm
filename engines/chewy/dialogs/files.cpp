@@ -266,7 +266,7 @@ enter:
 				if (mode[LOAD]) {
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
-						CurrentSong = -1;
+						_G(currentSong) = -1;
 						_G(iog)->load(text_off + active_slot, ioptr.save_path);
 						key = Common::KEYCODE_ESCAPE;
 					}

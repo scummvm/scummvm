@@ -338,8 +338,8 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	if (p_nr >= P_NICHELLE) {
 		++tmp_nr;
 	}
-	ssi[tmp_nr].X = spieler_vector[p_nr].Xypos[0] - _G(spieler).scrollx + spieler_mi[p_nr].HotX;
-	ssi[tmp_nr].Y = spieler_vector[p_nr].Xypos[1] - _G(spieler).scrolly;
+	_G(ssi)[tmp_nr].X = spieler_vector[p_nr].Xypos[0] - _G(spieler).scrollx + spieler_mi[p_nr].HotX;
+	_G(ssi)[tmp_nr].Y = spieler_vector[p_nr].Xypos[1] - _G(spieler).scrolly;
 	if (!flags.ExitMov) {
 		if (p_nr == P_CHEWY) {
 			u_index = ged->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
@@ -474,8 +474,8 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
-	talk_start_ani = -1;
-	talk_hide_static = -1;
+	_G(talk_start_ani) = -1;
+	_G(talk_hide_static) = -1;
 	set_ssi_xy();
 	atds->start_aad(dia_nr);
 	while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
@@ -556,9 +556,9 @@ void aad_wait(int16 str_nr) {
 void start_aad(int16 dia_nr, int16 ssi_nr) {
 	switch (ssi_nr) {
 	case 0:
-		ssi[0].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
-		ssi[0].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-		atds->set_split_win(0, &ssi[0]);
+		_G(ssi)[0].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
+		_G(ssi)[0].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+		atds->set_split_win(0, &_G(ssi)[0]);
 		break;
 
 	default:

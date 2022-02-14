@@ -39,8 +39,8 @@ int MainMenu::_personAni[3];
 void MainMenu::execute() {
 	// Convenience during testing to not keep showing title sequence
 	if (!ConfMan.getBool("skip_title")) {
-		_G(mem)->file->select_pool_item(music_handle, EndOfPool - 17);
-		_G(mem)->file->load_tmf(music_handle, (tmf_header *)Ci.MusicSlot);
+		_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - 17);
+		_G(mem)->file->load_tmf(_G(music_handle), (tmf_header *)Ci.MusicSlot);
 		if (!_G(modul))
 			_G(sndPlayer)->playMod((tmf_header *)Ci.MusicSlot);
 
@@ -69,7 +69,7 @@ void MainMenu::execute() {
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
 		room->load_room(&room_blk, 98, &_G(spieler));
 
-		CurrentSong = -1;
+		_G(currentSong) = -1;
 		load_room_music(98);
 		fx->border(_G(workpage), 100, 0, 0);
 
@@ -238,7 +238,7 @@ bool MainMenu::loadGame() {
 	_G(cur)->move(152, 92);
 	minfo.x = 152;
 	minfo.y = 92;
-	savegameFlag = true;
+	_G(savegameFlag) = true;
 	int result = Dialogs::Files::execute(false);
 
 	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
