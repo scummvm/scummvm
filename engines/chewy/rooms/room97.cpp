@@ -368,7 +368,7 @@ void Room97::proc4() {
 		go_auto_xy(995, 82, P_HOWARD, ANI_WAIT);
 		det->hide_static_spr(2);
 		spieler_mi[P_CHEWY].Mode = false;
-		start_spz(4, 255, false, P_CHEWY);
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(553, -1);
 		HowardMov = 0;
 		show_cur();
@@ -428,7 +428,7 @@ int Room97::proc6() {
 	det->hide_static_spr(18);
 	start_detail_wait(15, 1, ANI_VOR);
 	det->show_static_spr(17);
-	start_spz(4, 255, false, P_CHEWY);
+	start_spz(CH_TALK5, 255, false, P_CHEWY);
 	start_aad_wait(558, -1);
 	det->hide_static_spr(28);
 	det->stop_detail(5);
@@ -518,7 +518,7 @@ int Room97::proc8() {
 	}
 
 	if (diaNr != -1) {
-		start_spz(4, 255, false, P_CHEWY);
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(diaNr, -1);
 	}
 
@@ -534,7 +534,7 @@ int Room97::proc9() {
 	auto_move(5, P_CHEWY);
 	
 	if (!_G(spieler).flags36_20) {
-		start_spz(4, 255, false, P_CHEWY);
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(556, -1);
 	} else {
 		start_spz_wait(13, 1, false, P_CHEWY);
@@ -581,14 +581,14 @@ int Room97::proc11() {
 	hide_cur();
 
 	if (!_G(spieler).flags37_2) {
-		start_spz(4, 255, false, P_CHEWY);
+		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(569, -1);
 	} else {
 		auto_move(9, P_CHEWY);
 		start_aad_wait(570, -1);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		auto_move(7, P_CHEWY);
-		start_spz(5, 255, false, P_CHEWY);
+		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(571, -1);
 		g_engine->_sound->playSound(4, 0);
 		g_engine->_sound->playSound(4);

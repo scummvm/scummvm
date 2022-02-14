@@ -80,7 +80,7 @@ void Room9::surimy() {
 	det->hide_static_spr(4);
 	room->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
-	start_spz(15, 255, false, P_CHEWY);
+	start_spz(CH_TALK11, 255, false, P_CHEWY);
 	start_aad_wait(56, -1);
 	_G(spieler).room_e_obj[17].Attribut = AUSGANG_RECHTS;
 	spieler_vector[P_CHEWY].Count = tmp;

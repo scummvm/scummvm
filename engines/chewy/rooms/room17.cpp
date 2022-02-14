@@ -151,7 +151,7 @@ int16 Room17::use_seil() {
 		plot_seil();
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.AutoAniPlay = false;
-		start_spz(5, 255, false, P_CHEWY);
+		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(119, -1);
 
 		show_cur();

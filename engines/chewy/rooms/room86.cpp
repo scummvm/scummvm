@@ -159,7 +159,7 @@ int Room86::proc2() {
 	atds->set_ats_str(498, 1, ATS_DATEI);
 	_G(spieler).flags32_2 = true;
 	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
-	start_spz(16, 255, false, P_CHEWY);
+	start_spz(CH_TALK12, 255, false, P_CHEWY);
 	start_aad_wait(468, -1);
 
 	show_cur();

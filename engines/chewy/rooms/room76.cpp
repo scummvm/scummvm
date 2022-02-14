@@ -213,10 +213,10 @@ int Room76::proc7() {
 		_G(spieler).flags29_80 = true;
 		switch_room(78);
 	} else {
-			hide_cur();
-			start_spz(16, 255, false, P_CHEWY);
-			start_aad_wait(577, -1);
-			show_cur();
+		hide_cur();
+		start_spz(CH_TALK12, 255, false, P_CHEWY);
+		start_aad_wait(577, -1);
+		show_cur();
 	}
 
 	return 1;

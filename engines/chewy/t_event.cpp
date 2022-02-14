@@ -159,7 +159,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							flc->set_custom_user_function(Room6::cut_serv1);
 							flic_cut(FCUT_005, CFO_MODE);
 							flc->remove_custom_user_function();
-							start_spz(4, -1, false, P_CHEWY);
+							start_spz(CH_TALK5, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);
 							show_cur();
 						} else {
@@ -2265,7 +2265,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case 13:
 		_G(spieler).flags26_10 = true;
 		flags.InventMenu = false;
-		start_spz(5, 255, false, P_CHEWY);
+		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		flags.InventMenu = true;
 		atds->set_ats_str(88, 1, INV_ATS_DATEI);
