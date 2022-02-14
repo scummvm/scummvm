@@ -146,11 +146,11 @@ int16 CurrentTempo = 6;
 int16 FineSpeedV;
 int16 FineSpeedN;
 int16 FineSpeedS;
-tmf_inst Instrument[4] = {{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }};
+TmfInst Instrument[4] = {{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }};
 uint16 InsFreq[4] = {0};
 char *Sample[4] = {0};
 
-tmf_header *ActiveSong;
+TmfHeader *ActiveSong;
 int16 SeqPointer;
 int16 PatPointer;
 int16 PatLine;
@@ -220,13 +220,13 @@ void SoundPlayer::exitMixMode() {
 #endif
 }
 
-void SoundPlayer::playMod(tmf_header *th) {
+void SoundPlayer::playMod(TmfHeader *th) {
 	char *tmp;
 	int16 i;
 	ActiveSong = th;
 	if (SoundEnable) {
 		tmp = (char *)ActiveSong;
-		tmp += sizeof(tmf_header);
+		tmp += sizeof(TmfHeader);
 		for (i = 0; i < 128; i++) {
 			Patterns[i] = tmp;
 			tmp += 1024;

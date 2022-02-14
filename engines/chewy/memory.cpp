@@ -35,21 +35,21 @@ Memory::~Memory() {
 	delete (file);
 }
 
-taf_info *Memory::taf_adr(const char *filename) {
+TafInfo *Memory::taf_adr(const char *filename) {
 	SpriteResource *res = new SpriteResource(filename);
 	int32 imageCount = res->getChunkCount();
-	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(taf_info);
+	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(TafInfo);
 	uint32 kgroesse = imageCount * sizeof(byte *);
 	byte *imgPtr, *tmp1;
-	taf_info *tinfo = nullptr;
+	TafInfo *tinfo = nullptr;
 
 	tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
-	tinfo = (taf_info *)tmp1;
-	tinfo->image = (byte **)(tmp1 + sizeof(taf_info));
+	tinfo = (TafInfo *)tmp1;
+	tinfo->image = (byte **)(tmp1 + sizeof(TafInfo));
 	tinfo->palette = tmp1 + size;
 	tinfo->anzahl = imageCount;
 	memcpy(tinfo->palette, res->getSpritePalette(), PALETTE_SIZE);
-	imgPtr = tmp1 + sizeof(taf_info) + kgroesse;
+	imgPtr = tmp1 + sizeof(TafInfo) + kgroesse;
 
 	for (int i = 0; i < imageCount; i++) {
 		tinfo->image[i] = imgPtr;
@@ -64,12 +64,12 @@ taf_info *Memory::taf_adr(const char *filename) {
 	return tinfo;
 }
 
-taf_seq_info *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
+TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	Common::File *rs = new Common::File();
 	rs->open(CH_SPZ_FILE);
-	taf_dateiheader header;
-	taf_imageheader iheader;
-	taf_seq_info *ts_info = nullptr;
+	TafFileHeader header;
+	TafImageHeader iheader;
+	TafSeqInfo *ts_info = nullptr;
 	uint32 ptr;
 	uint32 size;
 	int16 i;
@@ -100,16 +100,16 @@ taf_seq_info *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 				if (!_G(modul)) {
 					size += image_anz * sizeof(byte *);
 					size += image_anz * sizeof(char *);
-					size += ((uint32)sizeof(taf_seq_info));
+					size += ((uint32)sizeof(TafSeqInfo));
 					tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
 
 					if (!_G(modul)) {
-						ts_info = (taf_seq_info *)tmp1;
+						ts_info = (TafSeqInfo *)tmp1;
 						ts_info->anzahl = image_anz;
-						ts_info->image = (byte **)(tmp1 + sizeof(taf_seq_info));
+						ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
 						ts_info->korrektur = (int16 *)(tmp1 + size);
 						rs->seek(ptr, SEEK_SET);
-						sp_ptr = tmp1 + (((uint32)sizeof(taf_seq_info))
+						sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo))
 							+ (image_anz * sizeof(char *)));
 
 						for (i = 0; i < image_anz && !_G(modul); i++) {

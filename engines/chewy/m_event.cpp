@@ -192,13 +192,13 @@ void load_room_music(int16 room_nr) {
 				while (_G(sndPlayer)->musicPlaying());
 				memset(_G(Ci).MusicSlot, 0, MUSIC_SLOT_SIZE);
 				_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - ttp_index);
-				_G(mem)->file->load_tmf(_G(music_handle), (tmf_header *)_G(Ci).MusicSlot);
+				_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
 				_G(currentSong) = ttp_index;
 				if (!_G(modul)) {
 					if (play_mode == NORMAL_PLAY)
-						_G(sndPlayer)->playMod((tmf_header *)_G(Ci).MusicSlot);
+						_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
 					else {
-						_G(sndPlayer)->playMod((tmf_header *)_G(Ci).MusicSlot);
+						_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
 						_G(sndPlayer)->stopMod();
 						if (play_mode == SEQUENCE_PLAY)
 							_G(sndPlayer)->playSequence(seq_start, seq_end);

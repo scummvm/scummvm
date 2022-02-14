@@ -32,8 +32,8 @@ public:
 	Memory();
 	~Memory();
 
-	taf_info *taf_adr(const char *filename);
-	taf_seq_info *taf_seq_adr(int16 image_start, int16 image_anz);
+	TafInfo *taf_adr(const char *filename);
+	TafSeqInfo *taf_seq_adr(int16 image_start, int16 image_anz);
 	void tff_adr(const char *filename, byte **speicher);
 	byte *void_adr(const char *filename);
 

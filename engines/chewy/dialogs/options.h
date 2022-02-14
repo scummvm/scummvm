@@ -29,7 +29,7 @@ namespace Dialogs {
 
 class Options {
 public:
-	static void execute(taf_info *ti);
+	static void execute(TafInfo *ti);
 };
 
 } // namespace Dialogs

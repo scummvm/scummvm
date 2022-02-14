@@ -33,7 +33,7 @@ bool mouse_active;
 bool cur_move;
 
 
-void set_new_kb_handler(kb_info *key) {
+void set_new_kb_handler(KbdInfo *key) {
 	g_events->setKbdInfo(key);
 }
 
@@ -41,7 +41,7 @@ void set_old_kb_handler() {
 	g_events->setKbdInfo(nullptr);
 }
 
-void set_mouse_handler(maus_info *mpos) {
+void set_mouse_handler(MouseInfo *mpos) {
 	// No implementation in ScummVM
 }
 
@@ -80,7 +80,7 @@ int16 InputMgr::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 	return i;
 }
 
-void InputMgr::neuer_kb_handler(kb_info *key) {
+void InputMgr::neuer_kb_handler(KbdInfo *key) {
 	set_new_kb_handler(key);
 	_kbInfoBlk = key;
 	_kbInfoBlk->key_code = '\0';
@@ -96,12 +96,12 @@ void InputMgr::alter_kb_handler() {
 #endif
 }
 
-void InputMgr::neuer_maushandler(maus_info *mpos) {
+void InputMgr::neuer_maushandler(MouseInfo *mpos) {
 	set_mouse_handler(mpos);
 	_mouseInfoBlk = mpos;
 }
 
-in_zeiger *InputMgr::get_in_zeiger() {
+KbdMouseInfo *InputMgr::get_in_zeiger() {
 	_inzeig.minfo = _mouseInfoBlk;
 	_inzeig.kbinfo = _kbInfoBlk;
 

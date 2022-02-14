@@ -91,10 +91,10 @@ void Data::load_tff(const char *fname, byte *speicher) {
 
 		Common::File f;
 		if (f.open(_filename)) {
-			tff_header *tff = (tff_header *)speicher;
+			TffHeader *tff = (TffHeader *)speicher;
 			if (tff->load(&f)) {
 				uint32 size = tff->size;
-				if (f.read(speicher + sizeof(tff_header), size) != size) {
+				if (f.read(speicher + sizeof(TffHeader), size) != size) {
 					error("load_tff error");
 				}
 			}
@@ -124,7 +124,7 @@ void Data::void_load(const char *fname, byte *speicher, uint32 size) {
 	}
 }
 
-uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
+uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead ch;
 	uint32 size = 0;
@@ -135,13 +135,13 @@ uint32 Data::load_tmf(Stream *handle, tmf_header *song) {
 			error("load_tmf error");
 		} else {
 			if (ch.type == TMFDATEI) {
-				assert(ch.size > (uint32)tmf_header::SIZE());
+				assert(ch.size > (uint32)TmfHeader::SIZE());
 
 				if (!song->load(rs)) {
 					error("load_tmf error");
 				} else {
-					size = ch.size + sizeof(tmf_header);
-					byte *speicher = (byte *)song + sizeof(tmf_header);
+					size = ch.size + sizeof(TmfHeader);
+					byte *speicher = (byte *)song + sizeof(TmfHeader);
 					speicher += ((uint32)song->pattern_anz) * 1024l;
 					for (int16 i = 0; i < 31; ++i) {
 						if (song->instrument[i].laenge) {
@@ -178,11 +178,11 @@ uint32 Data::size(const char *fname, int16 typ) {
 	if (f.open(_filename)) {
 		switch (typ) {
 		case TFFDATEI: {
-			tff_header tff;
+			TffHeader tff;
 			if (tff.load(&f)) {
 				int16 id = get_id(tff.id);
 				if (id == TFFDATEI) {
-					size = tff.size + sizeof(tff_header);
+					size = tff.size + sizeof(TffHeader);
 				} else {
 					error("size error");
 				}

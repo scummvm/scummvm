@@ -133,7 +133,7 @@ struct StaticDetailInfo {
 struct RoomDetailInfo {
 	int16 StaticDetailAnz = 0;
 	int16 AniDetailAnz = 0;
-	taf_info *dptr = nullptr;
+	TafInfo *dptr = nullptr;
 	AniDetailInfo Ainfo[MAXDETAILS];
 	StaticDetailInfo Sinfo[MAXDETAILS];
 	int16 mvect[MAX_M_ITEMS * 4] = { 0 };
@@ -207,8 +207,8 @@ public:
 	byte *get_image(int16 spr_nr);
 	AniDetailInfo *get_ani_detail(int16 ani_nr);
 	int16 *get_korrektur_tbl();
-	void init_taf(taf_info *dptr);
-	taf_info *get_taf_info();
+	void init_taf(TafInfo *dptr);
+	TafInfo *get_taf_info();
 	RoomDetailInfo *get_room_detail_info();
 
 	void set_static_ani(int16 ani_nr, int16 static_nr);
@@ -230,14 +230,14 @@ public:
 
 	void set_global_delay(int16 delay);
 
-	taf_info *init_taf_tbl(const char *fname);
+	TafInfo *init_taf_tbl(const char *fname);
 
-	void del_taf_tbl(taf_info *Tt);
+	void del_taf_tbl(TafInfo *Tt);
 
-	void del_taf_tbl(int16 start, int16 anz, taf_info *Tt);
+	void del_taf_tbl(int16 start, int16 anz, TafInfo *Tt);
 
-	void load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt);
-	void load_taf_tbl(taf_info *fti);
+	void load_taf_seq(int16 spr_nr, int16 spr_anz, TafInfo *Tt);
+	void load_taf_tbl(TafInfo *fti);
 
 	void del_dptr();
 

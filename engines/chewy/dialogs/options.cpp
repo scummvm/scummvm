@@ -55,7 +55,7 @@ static const int16 OPTION_ICONS[9 * 4] = {
 	 50,   92,   72,  136
 };
 
-void Options::execute(taf_info *ti) {
+void Options::execute(TafInfo *ti) {
 	long akt_clock = 0, stop_clock = 0;
 	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));

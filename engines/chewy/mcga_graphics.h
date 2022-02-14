@@ -35,7 +35,7 @@ public:
 
 	void init();
 	void set_writemode(char wm);
-	void init_mausmode(maus_info *mInfo);
+	void init_mausmode(MouseInfo *mInfo);
 	void exit_mausmode();
 
 	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -113,7 +113,7 @@ private:
 	int16 _fontBr = 0, _fontH = 0;
 	uint8 _svga = 0;
 	uint8 _einfuegen = 0;
-	maus_info *_mInfo = nullptr;
+	MouseInfo *_mInfo = nullptr;
 
 	void ltoa(long N, char *str, int base);
 	void ultoa(uint32 N, char *str, int base);

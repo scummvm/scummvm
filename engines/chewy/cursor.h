@@ -30,22 +30,22 @@ namespace Chewy {
 class Cursor {
 public:
 	Cursor();
-	Cursor(McgaGraphics *out, InputMgr *in, cur_blk *curblk);
+	Cursor(McgaGraphics *out, InputMgr *in, CurBlk *curblk);
 	~Cursor();
 
 	void plot_cur();
 	void show_cur();
 	void hide_cur();
-	void set_cur_ani(cur_ani *ani);
+	void set_cur_ani(CurAni *ani);
 	void move(int16 x, int16 y);
 	void wait_taste_los(bool maus_plot);
 
 	McgaGraphics *_out = nullptr;
 	InputMgr *_in = nullptr;
-	maus_info *_minfo = nullptr;
-	in_zeiger *_inzeig = nullptr;
-	cur_blk *_curblk = nullptr;
-	cur_ani *_ani = nullptr;
+	MouseInfo *_minfo = nullptr;
+	KbdMouseInfo *_inzeig = nullptr;
+	CurBlk *_curblk = nullptr;
+	CurAni *_ani = nullptr;
 	int _scrWidth = 0;
 	int16 _cur_x_old = 0;
 	int16 _cur_y_old = 0;

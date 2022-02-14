@@ -39,7 +39,7 @@ namespace Chewy {
 class IOGame {
 private:
 	Cursor *_cur;
-	iog_init *_io;
+	IogInit *_io;
 	InputMgr *_in;
 	McgaGraphics *_out;
 	char _fileFind[20][USER_NAME + 4];
@@ -50,7 +50,7 @@ private:
 public:
 	IOGame(McgaGraphics *out, InputMgr *in, Cursor *cur);
 
-	char *io_init(iog_init *iostruc);
+	char *io_init(IogInit *iostruc);
 	void load(int16 nr, char *fname);
 	void save_entry(int16 nr, char *fname);
 };

@@ -66,7 +66,7 @@ int16 Files::execute(bool isInGame) {
 		return 0;
 	}
 
-	taf_info *ti = _G(mem)->taf_adr(OPTION_TAF);
+	TafInfo *ti = _G(mem)->taf_adr(OPTION_TAF);
 	EVENTS_CLEAR;
 
 	_G(room)->open_handle(GBOOK, "rb", 0);
