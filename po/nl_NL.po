@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-13 04:15+0000\n"
+"POT-Creation-Date: 2022-02-14 23:02+0000\n"
 "PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4393,6 +4393,7 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
+#: engines/groovie/detection.cpp:355 engines/groovie/detection.cpp:367
 #: engines/hypno/detection.cpp:165 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
