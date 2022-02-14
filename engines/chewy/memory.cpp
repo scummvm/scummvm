@@ -21,7 +21,7 @@
 
 #include "common/memstream.h"
 #include "chewy/memory.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/types.h"
 #include "chewy/resource.h"
 

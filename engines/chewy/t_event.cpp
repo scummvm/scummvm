@@ -22,7 +22,7 @@
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/dialogs/inventory.h"
 #include "chewy/rooms/rooms.h"
 

@@ -105,7 +105,6 @@ public:
 	bool _stopAutoMove[3] = { false };
 	bool _e_streifen = false;
 	int16 _r45_delay = 0;
-	int16 _r45_pinfo[R45_MAX_PERSON][4];
 	int16 _r56koch_flug = 0;
 	int16 _r62Delay = 0;
 	int16 _r62TalkAni = 0;
@@ -165,19 +164,6 @@ public:
 	byte *_inv_spr[MAX_MOV_OBJ] = { nullptr };
 	int16 _person_tmp_hide[MAX_PERSON] = { 0 };
 	int16 _person_tmp_room[MAX_PERSON] = { 0 };
-
-	SplitStringInit _ssi[AAD_MAX_PERSON] = {
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	};
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
@@ -249,6 +235,30 @@ public:
 					0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	CustomInfo _Ci;
 	GotoPkt _gpkt;
+
+	SplitStringInit _ssi[AAD_MAX_PERSON] = {
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+	};
+	int16 _r45_pinfo[R45_MAX_PERSON][4] = {
+	   { 0, 4, 1490, 1500 },
+	   { 0, 1, 180, 190 },
+	   { 0, 1, 40, 60 },
+	   { 0, 1, 40, 150 },
+	   { 0, 1, 40, 230 },
+	   { 0, 1, 40, 340 },
+	   { 0, 1, 49, 50 },
+	   { 0, 1, 5, 90 },
+	   { 0, 1, 7, 190 }
+	};
 
 	// main.cpp
 	int16 _menu_flag = 0;

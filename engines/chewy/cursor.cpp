@@ -21,7 +21,7 @@
 
 #include "chewy/cursor.h"
 #include "chewy/events.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 

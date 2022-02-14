@@ -19,7 +19,7 @@
  *
  */
 
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/rooms/room83.h"
 #include "chewy/sound.h"
 

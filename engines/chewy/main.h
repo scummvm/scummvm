@@ -25,7 +25,7 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 #include "chewy/defines.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 

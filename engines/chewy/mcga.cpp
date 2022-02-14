@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "chewy/chewy.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/mcga.h"
 #include "chewy/mcga_graphics.h"
 

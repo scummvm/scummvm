@@ -20,7 +20,7 @@
  */
 
 #include "chewy/defines.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 

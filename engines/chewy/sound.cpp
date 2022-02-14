@@ -27,7 +27,7 @@
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/types.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 

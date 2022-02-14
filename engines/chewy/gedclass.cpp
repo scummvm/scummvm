@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "chewy/chewy.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/gedclass.h"
 #include "chewy/ngshext.h"
 

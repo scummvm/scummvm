@@ -22,7 +22,7 @@
 #include "chewy/dialogs/cinema.h"
 #include "chewy/events.h"
 #include "chewy/file.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 namespace Dialogs {

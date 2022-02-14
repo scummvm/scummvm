@@ -21,7 +21,7 @@
 
 #include "chewy/defines.h"
 #include "chewy/events.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room59.h"
 

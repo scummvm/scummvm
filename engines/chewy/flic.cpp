@@ -25,7 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/flic.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
