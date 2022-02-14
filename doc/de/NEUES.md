@@ -61,6 +61,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
    - Fehlender Cursor nach dem Laden eines gespeicherten Spielstands in der 16-Farben-Version (Macintosh)
      in Loom und Indiana Jones and the Last Crusade behoben.
+   - Es ist nun möglich, die Musik in den Disketten-Versionen von Loom durch eigene Audio-Tracks
+     zu ersetzen. Im ScummVM-Wiki findest Du eine Liste, welche Teile von Schwanensee im Spiel verwendet werden.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
