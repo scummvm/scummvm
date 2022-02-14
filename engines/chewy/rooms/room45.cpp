@@ -141,7 +141,7 @@ void Room45::setup_func() {
 			--_G(r45_delay);
 		}
 
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && HowardMov != 2) {
+		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
 			const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
 
@@ -155,7 +155,7 @@ void Room45::setup_func() {
 
 			y = 130;
 
-			if (HowardMov && flags.ExitMov) {
+			if (_G(HowardMov) && flags.ExitMov) {
 				x = 56;
 				y = 122;
 			}
@@ -209,7 +209,7 @@ void Room45::talk_taxi(int16 aad_nr) {
 }
 
 void Room45::taxi_mov() {
-	HowardMov = 2;
+	_G(HowardMov) = 2;
 	room->set_timer_status(12, TIMER_STOP);
 	det->del_static_ani(12);
 	g_engine->_sound->playSound(15, 1);

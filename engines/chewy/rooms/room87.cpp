@@ -72,7 +72,7 @@ void Room87::setup_func() {
 		nicDestY = 110;
 	}
 
-	if (HowardMov == 1) {
+	if (_G(HowardMov) == 1) {
 		howDestX = 11;
 		howDestY = 70;
 		nicDestX = -3;
@@ -90,7 +90,7 @@ void Room87::xit(int16 eib_nr) {
 	spieler_mi[P_CHEWY].Mode = true;
 	_G(zoom_horizont) = 0;
 	room->set_zoom(25);
-	HowardMov = 1;
+	_G(HowardMov) = 1;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 	go_auto_xy(20, 56, P_CHEWY, ANI_WAIT);

@@ -62,7 +62,7 @@ void Room90::entry(int16 eib_nr) {
 	}
 
 	hide_cur();
-	HowardMov = 1;
+	_G(HowardMov) = 1;
 
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
 		det->set_detail_pos(12, 329, 15);
@@ -100,7 +100,7 @@ void Room90::entry(int16 eib_nr) {
 		start_aad_wait(520, -1);
 	}
 
-	HowardMov = 0;
+	_G(HowardMov) = 0;
 	show_cur();
 }
 
@@ -158,7 +158,7 @@ void Room90::setup_func() {
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 90 || HowardMov == 1)
+	if (_G(spieler).PersonRoomNr[P_HOWARD] != 90 || _G(HowardMov) == 1)
 		return;
 
 	calc_person_look();
@@ -174,7 +174,7 @@ void Room90::setup_func() {
 	else
 		destX = 18;
 
-	if (HowardMov == 2)
+	if (_G(HowardMov) == 2)
 		destX = 18;
 
 	go_auto_xy(destX, 132, P_HOWARD, ANI_GO);
@@ -285,7 +285,7 @@ int Room90::shootControlUnit() {
 
 	hide_cur();
 	del_inventar(_G(spieler).AkInvent);
-	HowardMov = 2;
+	_G(HowardMov) = 2;
 	flags.ZoomMov = false;
 	auto_move(5, P_CHEWY);
 	spieler_mi[P_CHEWY].Mode = true;
@@ -306,7 +306,7 @@ int Room90::shootControlUnit() {
 	_G(fx_blend) = BLEND3;
 	spieler_mi[P_CHEWY].Mode = false;
 	flags.NoScroll = false;
-	HowardMov = 0;
+	_G(HowardMov) = 0;
 	_G(spieler).flags33_40 = true;
 	det->stop_detail(12);
 	atds->set_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);

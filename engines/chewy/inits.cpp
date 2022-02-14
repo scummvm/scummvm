@@ -151,12 +151,12 @@ void var_init() {
 	spieler_mi[P_NICHELLE].Mode = true;
 
 	for (int16 i = 0; i < MAX_PERSON; i++) {
-		PersonAni[i] = -1;
-		PersonTaf[i] = 0;
+		_G(PersonAni)[i] = -1;
+		_G(PersonTaf)[i] = 0;
 		spieler_mi[i].Mode = false;
 
 		ani_stand_flag[i] = false;
-		spz_delay[i] = 0;
+		_G(spz_delay)[i] = 0;
 		_G(spieler).PersonRoomNr[i] = -1;
 		_G(spieler).PersonDia[i] = -1;
 	}
@@ -275,7 +275,7 @@ void new_game() {
 	for (int16 i = 0; i < obj->spieler_invnr[0]; i++)
 		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
 
-	AkChewyTaf = 0;
+	_G(AkChewyTaf) = 0;
 	load_chewy_taf(CHEWY_NORMAL);
 }
 
@@ -304,11 +304,11 @@ static void font_load() {
 }
 
 void init_load() {
-	AkChewyTaf = 0;
+	_G(AkChewyTaf) = 0;
 	load_chewy_taf(CHEWY_NORMAL);
 
-	spz_akt_id = -1;
-	spz_tinfo = nullptr;
+	_G(spz_akt_id) = -1;
+	_G(spz_tinfo) = nullptr;
 	set_spz_delay(3);
 
 	menutaf = _G(mem)->taf_adr(MENUTAF);

@@ -142,7 +142,7 @@ void Room85::setup_func() {
 		nicDestX = 128;
 	}
 
-	if (HowardMov == 1) {
+	if (_G(HowardMov) == 1) {
 		howDestX = 98;
 		nicDestX = 128;
 	}

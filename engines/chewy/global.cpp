@@ -114,25 +114,5 @@ Atdsys *atds;
 Flic *flc;
 MovClass *mov;
 
-AutoMov auto_mov[MAX_AUTO_MOV];
-
-int16 HowardMov;
-
-taf_seq_info *spz_tinfo;
-int16 SpzDelay;
-int16 spz_spr_nr[MAX_SPZ_PHASEN];
-int16 spz_start;
-int16 spz_akt_id;
-
-int16 spz_p_nr;
-int16 spz_delay[MAX_PERSON];
-int16 spz_count;
-int16 spz_ani[MAX_PERSON];
-
-int16 AkChewyTaf;
-
-int16 PersonAni[MAX_PERSON];
-taf_seq_info *PersonTaf[MAX_PERSON];
-uint8 PersonSpr[MAX_PERSON][8];
 
 } // namespace Chewy

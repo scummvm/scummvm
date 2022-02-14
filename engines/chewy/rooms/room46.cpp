@@ -88,7 +88,7 @@ void Room46::setup_func() {
 		x = 120;
 	}
 
-	if (HowardMov && flags.ExitMov) {
+	if (_G(HowardMov) && flags.ExitMov) {
 		x = 160;
 		y = 200;
 	}

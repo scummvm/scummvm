@@ -153,7 +153,7 @@ void check_ged_action(int16 index) {
 		case 45:
 		case 46:
 			if (!index && flags.ExitMov)
-				HowardMov = 1;
+				_G(HowardMov) = 1;
 			break;
 
 		GED_ACTION(49);
@@ -328,7 +328,7 @@ void enter_room(int16 eib_nr) {
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
 	_G(SetUpScreenFunc) = nullptr;
-	HowardMov = 0;
+	_G(HowardMov) = 0;
 	_G(cur_hide_flag) = false;
 
 #define ENTRY(NUM) case NUM: Room##NUM::entry(); break
@@ -672,20 +672,20 @@ void exit_room(int16 eib_nr) {
 	case 84:
 		x = spieler_vector[P_CHEWY].Xypos[0] - 70;
 		y = spieler_vector[P_CHEWY].Xypos[1] - 50;
-		HowardMov = 1;
+		_G(HowardMov) = 1;
 		break;
 
 	case 85:
 		x = spieler_vector[P_CHEWY].Xypos[0] + 70;
 		y = spieler_vector[P_CHEWY].Xypos[1];
-		HowardMov = 1;
+		_G(HowardMov) = 1;
 		break;
 
 	case 86:
 		det->show_static_spr(0);
 		x = spieler_vector[P_CHEWY].Xypos[0] - 44;
 		y = spieler_vector[P_CHEWY].Xypos[1];
-		HowardMov = 2;
+		_G(HowardMov) = 2;
 		break;
 
 	case 90:

@@ -231,7 +231,7 @@ void Room97::setup_func() {
 			destY = 112;
 		}
 
-		if (HowardMov != 1)
+		if (_G(HowardMov) != 1)
 			go_auto_xy(destX, destY, P_HOWARD, ANI_GO);
 	}
 
@@ -298,7 +298,7 @@ void Room97::proc3() {
 		go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
 	} else {
 		_G(spieler).flags36_1 = true;
-		HowardMov = 1;
+		_G(HowardMov) = 1;
 		go_auto_xy(572, 139, P_CHEWY, ANI_WAIT);
 		Sdi[6].z_ebene = 6;
 		Sdi[24].z_ebene = 6;
@@ -348,7 +348,7 @@ void Room97::proc4() {
 		}
 
 		det->show_static_spr(2);
-		HowardMov = 1;
+		_G(HowardMov) = 1;
 		
 		go_auto_xy(967, 111, P_CHEWY, ANI_WAIT);
 		go_auto_xy(1008, 93, P_CHEWY, ANI_WAIT);
@@ -370,7 +370,7 @@ void Room97::proc4() {
 		spieler_mi[P_CHEWY].Mode = false;
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(553, -1);
-		HowardMov = 0;
+		_G(HowardMov) = 0;
 		show_cur();
 	}
 		

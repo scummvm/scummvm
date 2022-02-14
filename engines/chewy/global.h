@@ -188,6 +188,25 @@ public:
 	int16 _EndOfPool = 0;
 	int _timer_action_ctr = 0;
 
+	AutoMov _auto_mov[MAX_AUTO_MOV];
+	int16 _HowardMov = 0;
+
+	taf_seq_info *_spz_tinfo = nullptr;
+	int16 _SpzDelay = 0;
+	int16 _spz_spr_nr[MAX_SPZ_PHASEN] = { 0 };
+	int16 _spz_start = 0;
+	int16 _spz_akt_id = 0;
+
+	int16 _spz_p_nr = 0;
+	int16 _spz_delay[MAX_PERSON] = { 0 };
+	int16 _spz_count = 0;
+	int16 _spz_ani[MAX_PERSON] = { 0 };
+
+	int16 _AkChewyTaf = 0;
+	int16 _PersonAni[MAX_PERSON] = { 0 };
+	taf_seq_info *_PersonTaf[MAX_PERSON] = { nullptr };
+	uint8 _PersonSpr[MAX_PERSON][8] = { 0 };
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -299,24 +318,6 @@ extern Atdsys *atds;
 extern Flic *flc;
 extern MovClass *mov;
 
-extern AutoMov auto_mov[MAX_AUTO_MOV];
-extern int16 HowardMov;
-extern int16 AkChewyTaf;
-
-extern int16 PersonAni[MAX_PERSON];
-extern taf_seq_info *PersonTaf[MAX_PERSON];
-extern uint8 PersonSpr[MAX_PERSON][8];
-
-extern int16 SpzDelay;
-extern taf_seq_info *spz_tinfo;
-extern int16 spz_spr_nr[MAX_SPZ_PHASEN];
-extern int16 spz_start;
-extern int16 spz_akt_id;
-
-extern int16 spz_count;
-extern int16 spz_delay[MAX_PERSON];
-extern int16 spz_p_nr;
-extern int16 spz_ani[MAX_PERSON];
 
 void cursor_wahl(int16 nr);
 
