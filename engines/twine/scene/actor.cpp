@@ -265,6 +265,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->_body = BodyType::btNormal;
 	actor->_anim = AnimationTypes::kStanding;
 	actor->_pos = IVec3(0, -1, 0);
+	actor->_spriteActorRotation = 0;
 
 	actor->_boudingBox = BoundingBox();
 
