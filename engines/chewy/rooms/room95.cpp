@@ -115,7 +115,7 @@ int Room95::proc2() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 97;
 		switch_room(97);
 	} else {
-		start_spz(0, 255, false, P_CHEWY);
+		start_spz(CH_TALK1, 255, false, P_CHEWY);
 		start_aad_wait(548, -1);
 	}
 

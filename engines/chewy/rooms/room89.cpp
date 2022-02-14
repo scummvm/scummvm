@@ -203,7 +203,7 @@ int Room89::proc4() {
 		_G(spieler).flags32_80 = true;
 		det->hide_static_spr(6);
 		new_invent_2_cur(111);
-		start_spz(5, 255, false, P_CHEWY);
+		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(491, -1);
 	} else {
 		det->show_static_spr(5);

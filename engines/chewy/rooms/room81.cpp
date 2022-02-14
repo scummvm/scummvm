@@ -98,7 +98,7 @@ void Room81::proc1() {
 	}
 	
 	if (diaNr != -1) {
-		start_spz(16, 255, false, P_CHEWY);
+		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(diaNr, -1);
 	}
 

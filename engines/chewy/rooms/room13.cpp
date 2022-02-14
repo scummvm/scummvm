@@ -50,7 +50,7 @@ void Room13::entry() {
 		flic_cut(FCUT_013, CFO_MODE);
 		set_person_pos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);
-		start_spz(16, 255, false, P_CHEWY);
+		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(27, -1);
 	} else {
 		if (_G(spieler).R13MonitorStatus)

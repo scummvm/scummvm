@@ -60,7 +60,7 @@ void Room66::entry(int16 eib_nr) {
 		start_detail_wait(1, 1, ANI_VOR);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		start_spz(16, 255, false, P_CHEWY);
+		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(404, -1);
 		start_aad_wait(415, -1);
 		show_cur();

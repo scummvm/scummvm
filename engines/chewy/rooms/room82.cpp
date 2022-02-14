@@ -211,7 +211,7 @@ int Room82::proc6() {
 		remove_inventory(105);
 		remove_inventory(106);
 	} else {
-		start_spz(16, 255, false, P_CHEWY);
+		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(276, -1);
 	}
 

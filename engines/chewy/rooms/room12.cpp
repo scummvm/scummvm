@@ -86,7 +86,7 @@ void Room12::entry() {
 		obj->calc_rsi_flip_flop(SIB_TALISMAN_R12);
 		obj->calc_all_static_detail();
 		auto_move(5, P_CHEWY);
-		start_spz(16, 255, false, 0);
+		start_spz(CH_TALK12, 255, false, 0);
 		start_aad_wait(109, -1);
 		show_cur();
 
@@ -199,7 +199,7 @@ int16 Room12::use_terminal() {
 			start_aad_wait(110, -1);
 
 			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
-				start_spz(4, 255, false, P_CHEWY);
+				start_spz(CH_TALK5, 255, false, P_CHEWY);
 				start_aad_wait(112, -1);
 				flags.NoScroll = true;
 				auto_scroll(46, 0);

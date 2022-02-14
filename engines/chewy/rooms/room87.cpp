@@ -128,7 +128,7 @@ int Room87::proc2(int16 txt_nr) {
 	}
 
 	if (diaNr) {
-		start_spz(0, 255, false, P_CHEWY);
+		start_spz(CH_TALK1, 255, false, P_CHEWY);
 		start_aad_wait(diaNr, -1);
 	} else {
 		auto_move(movNr, P_CHEWY);
