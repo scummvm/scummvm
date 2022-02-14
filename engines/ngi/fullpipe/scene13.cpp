@@ -84,6 +84,7 @@ void scene13_initScene(Scene *sc) {
 
 void sceneHandler13_openBridge() {
 	Movement *mov = g_vars->scene13_bridge->_movement;
+	g_nmi->setObjectState(sO_Bridge, g_nmi->getObjectEnumState(sO_Bridge, sO_IsFree));
 
 	if (mov && mov->_id == MV_BDG_CLOSE) {
 		int sz;
