@@ -324,6 +324,8 @@ public:
 	void handleMouseClick3DObject(int objectId, bool buttonDown, bool isClickable, bool isTarget);
 	void handleMouseClickEmpty(int x, int y, Vector3 &scenePosition, bool buttonDown);
 
+	bool isAllowedRepeatedKey(const Common::KeyState &currKeyState);
+
 	void gameWaitForActive();
 	void loopActorSpeaking();
 	void loopQueuedDialogueStillPlaying();

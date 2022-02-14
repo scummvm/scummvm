@@ -1262,6 +1262,24 @@ void BladeRunnerEngine::walkingReset() {
 	_isInsideScriptActor  = false;
 }
 
+// The original allowed a few keyboard keys to be repeated ("key spamming")
+// namely, Esc, Return and Space during normal gameplay.
+// "Space" spamming results in McCoy quickly switching between combat mode and normal mode, 
+// which is not very useful but it's the original's behavior.
+// Spamming Space, backspace, latin letter keys and a few symbols is allowed
+// in KIA mode, particularly in the Save Panel when writing the name for a save game.
+// F-keys are not repeated.
+bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyState) {
+	return  currKeyState.keycode == Common::KEYCODE_ESCAPE
+	    ||  currKeyState.keycode == Common::KEYCODE_RETURN
+	    ||  currKeyState.keycode == Common::KEYCODE_BACKSPACE
+	    ||  currKeyState.keycode == Common::KEYCODE_SPACE
+	    || (currKeyState.keycode != Common::KEYCODE_INVALID
+	        && (   (currKeyState.ascii >= 'a' && currKeyState.ascii <= 'z')
+	            || (currKeyState.ascii >= 'A' && currKeyState.ascii <= 'Z')
+	            || (currKeyState.ascii >= '0' && currKeyState.ascii <= '9')));
+}
+
 void BladeRunnerEngine::handleEvents() {
 	if (shouldQuit()) {
 		_gameIsRunning = false;
@@ -1291,9 +1309,9 @@ void BladeRunnerEngine::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			// Process the actual key press only and filter out repeats
 			if (!event.kbdRepeat) {
-				// Only for Esc and Return keys, allow repeated firing emulation
+				// Only for some keys, allow repeated firing emulation
 				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN) {
+				if (isAllowedRepeatedKey(event.kbd.keycode)) {
 					_currentKeyDown = event.kbd.keycode;
 					_keyRepeatTimeLast =  _time->currentSystem();
 					_keyRepeatTimeDelay = kKeyRepeatInitialDelay;
@@ -1339,7 +1357,7 @@ void BladeRunnerEngine::handleEvents() {
 	// Some of those may lead to their own internal gameTick() loops (which will call handleEvents()).
 	// Thus, we need to get a new timeNow value here to ensure we're not comparing with a stale version.
 	uint32 timeNow = _time->currentSystem();
-	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN)
+	if (isAllowedRepeatedKey(_currentKeyDown)
 	    && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
 		// create a "new" keydown event
 		event.type = Common::EVENT_KEYDOWN;
