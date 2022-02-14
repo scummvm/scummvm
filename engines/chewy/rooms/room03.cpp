@@ -102,7 +102,7 @@ void Room3::terminal() {
 		spr_info[0].ZEbene = 0;
 
 		if (!_G(spieler).R2ElectrocutedBork) {
-			det->stop_detail(5);
+			_G(det)->stop_detail(5);
 			start_ani_block(2, ABLOCK3);
 			if (_G(spieler).R2FussSchleim) {
 				_G(spieler).R2FussSchleim = false;
@@ -112,7 +112,7 @@ void Room3::terminal() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(8, 1, ANI_VOR);
 			set_up_screen(DO_SETUP);
-			det->stop_detail(6);
+			_G(det)->stop_detail(6);
 			clear_prog_ani();
 			switch_room(1);
 			start_ani_block(2, ABLOCK0);
@@ -128,7 +128,7 @@ void Room3::terminal() {
 			_G(spieler).PersonRoomNr[P_CHEWY] = 5;
 			clear_prog_ani();
 			_G(auto_obj) = 0;
-			room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+			_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			_G(fx_blend) = BLEND1;
 			start_ani_block(3, ablock5);
 			set_person_pos(91, 107, P_CHEWY, P_LEFT);
@@ -180,9 +180,9 @@ void Room3::sonde_knarre() {
 		{ {  13,  45,  75 }, 1, 3 }
 	};
 	hide_cur();
-	RoomDetailInfo *rdi = det->get_room_detail_info();
+	RoomDetailInfo *rdi = _G(det)->get_room_detail_info();
 
-	det->load_taf_seq(162, 17, nullptr);
+	_G(det)->load_taf_seq(162, 17, nullptr);
 	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	_G(auto_obj) = 1;
@@ -197,28 +197,28 @@ void Room3::sonde_knarre() {
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
-	det->start_detail(SONDE_SHOOT, 1, ANI_VOR);
+	_G(det)->start_detail(SONDE_SHOOT, 1, ANI_VOR);
 	int16 ende = 0;
 	while (!ende) {
 		clear_prog_ani();
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 170) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			det->start_detail(KOPF_SCHUSS, 1, ANI_VOR);
+			_G(det)->start_detail(KOPF_SCHUSS, 1, ANI_VOR);
 		}
-		spr_info[0] = det->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
 		spr_info[0].ZEbene = 0;
 		if (rdi->Ainfo[KOPF_SCHUSS].ani_count >= 13 &&
 			rdi->Ainfo[KOPF_SCHUSS].ani_count <= 21) {
-			spr_info[1] = det->plot_detail_sprite(0, 0, KOPF_SCHUSS, 21, ANI_HIDE);
+			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, KOPF_SCHUSS, 21, ANI_HIDE);
 			spr_info[1].ZEbene = 190;
 		} else if (rdi->Ainfo[KOPF_SCHUSS].ani_count > 21 &&
-			det->get_ani_status(SONDE_RET) == 0) {
+			_G(det)->get_ani_status(SONDE_RET) == 0) {
 
-			spr_info[2] = det->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
+			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
 			spr_info[2].ZEbene = 190;
 		}
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 178) {
-			det->start_detail(SONDE_RET, 3, ANI_RUECK);
+			_G(det)->start_detail(SONDE_RET, 3, ANI_RUECK);
 		}
 		if (rdi->Ainfo[KOPF_SCHUSS].ani_count == 28) {
 			ende = 1;
@@ -228,14 +228,14 @@ void Room3::sonde_knarre() {
 	}
 
 	clear_prog_ani();
-	det->start_detail(SONDE_RAUCH, 3, ANI_VOR);
+	_G(det)->start_detail(SONDE_RAUCH, 3, ANI_VOR);
 	ende = 0;
-	while (det->get_ani_status(SONDE_RAUCH)) {
+	while (_G(det)->get_ani_status(SONDE_RAUCH)) {
 
-		spr_info[0] = det->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
 		spr_info[0].ZEbene = 0;
 
-		spr_info[1] = det->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
+		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
 		spr_info[1].ZEbene = 190;
 		++ende;
 		if (ende == 3)
@@ -245,10 +245,10 @@ void Room3::sonde_knarre() {
 	start_aad_wait(53, -1);
 
 	clear_prog_ani();
-	det->start_detail(SONDE_REIN, 1, ANI_RUECK);
-	while (det->get_ani_status(SONDE_REIN)) {
+	_G(det)->start_detail(SONDE_REIN, 1, ANI_RUECK);
+	while (_G(det)->get_ani_status(SONDE_REIN)) {
 
-		spr_info[0] = det->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
 		spr_info[0].ZEbene = 0;
 		set_ani_screen();
 	}
@@ -260,7 +260,7 @@ void Room3::sonde_knarre() {
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt2);
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
-	det->del_taf_tbl(162, 17, 0);
+	_G(det)->del_taf_tbl(162, 17, 0);
 	_G(zoom_horizont) = tmp;
 	init_sonde();
 
@@ -288,7 +288,7 @@ void Room3::probeTransfer() {
 
 	flags.AniUserAction = false;
 	hide_cur();
-	/*rdi = */(void)det->get_room_detail_info();
+	/*rdi = */(void)_G(det)->get_room_detail_info();
 	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	int16 anistart = false;
@@ -303,10 +303,10 @@ void Room3::probeTransfer() {
 	while (mov_phasen[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
-	det->start_detail(SONDE_GREIF, 1, ANI_VOR);
-	while (det->get_ani_status(SONDE_GREIF)) {
+	_G(det)->start_detail(SONDE_GREIF, 1, ANI_VOR);
+	while (_G(det)->get_ani_status(SONDE_GREIF)) {
 		clear_prog_ani();
-		spr_info[0] = det->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);
+		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);
 		spr_info[0].ZEbene = 146;
 		set_ani_screen();
 
@@ -380,7 +380,7 @@ void Room3::probeTransfer() {
 			flags.AniUserAction = true;
 			spr_nr = 141;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			det->load_taf_seq(142, 8, nullptr);
+			_G(det)->load_taf_seq(142, 8, nullptr);
 			break;
 
 		case 1:
@@ -388,7 +388,7 @@ void Room3::probeTransfer() {
 			break;
 
 		case 2:
-			det->del_taf_tbl(142, 7, nullptr);
+			_G(det)->del_taf_tbl(142, 7, nullptr);
 			flags.AniUserAction = false;
 			switch_room(2);
 			break;

@@ -34,15 +34,15 @@ void Room88::entry() {
 	set_person_pos(59, 107, P_HOWARD, P_RIGHT);
 	set_person_pos(91, 110, P_NICHELLE, P_RIGHT);
 	
-	det->show_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
+	_G(det)->show_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
 	if (_G(spieler).r88DestRoom == 0)
 		_G(spieler).r88DestRoom = 82;
 
 	_G(SetUpScreenFunc) = calc_person_look;
 
 	if (_G(spieler).flags32_10) {
-		det->start_detail(4, 255, false);
-		atds->del_steuer_bit(505, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->start_detail(4, 255, false);
+		_G(atds)->del_steuer_bit(505, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 }
 
@@ -75,13 +75,13 @@ int Room88::proc2() {
 	hide_cur();
 	auto_move(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	det->show_static_spr(0);
+	_G(det)->show_static_spr(0);
 	start_detail_wait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_VOR);
-	det->hide_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
+	_G(det)->hide_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
 	_G(spieler).flags31_10 = false;
-	det->show_static_spr(1 + (!_G(spieler).flags30_10 ? 1 : 0));
+	_G(det)->show_static_spr(1 + (!_G(spieler).flags30_10 ? 1 : 0));
 	start_spz_wait(13, 1, false, P_CHEWY);
-	det->hide_static_spr(0);
+	_G(det)->hide_static_spr(0);
 	
 	show_cur();
 	return 1;

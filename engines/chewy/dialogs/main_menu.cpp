@@ -67,11 +67,11 @@ void MainMenu::execute() {
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
-		room->load_room(&room_blk, 98, &_G(spieler));
+		_G(room)->load_room(&room_blk, 98, &_G(spieler));
 
 		_G(currentSong) = -1;
 		load_room_music(98);
-		fx->border(_G(workpage), 100, 0, 0);
+		_G(fx)->border(_G(workpage), 100, 0, 0);
 
 		_G(out)->set_palette(_G(pal));
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -92,7 +92,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_VIEW_INTRO:
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(out)->setze_zeiger(_G(workptr));
 			flags.NoPalAfterFlc = true;
 			flic_cut(135, CFO_MODE);
@@ -118,12 +118,12 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CREDITS:
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			flags.NoPalAfterFlc = true;
-			flc->set_custom_user_function(creditsFn);
+			_G(flc)->set_custom_user_function(creditsFn);
 			flic_cut(159, CFO_MODE);
-			flc->remove_custom_user_function();
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(flc)->remove_custom_user_function();
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			Dialogs::Credits::execute();
 			break;
 
@@ -134,7 +134,7 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
-	int vec = det->maus_vector(minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
+	int vec = _G(det)->maus_vector(minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
 
 	if (_G(in)->get_switch_code() == 28 || minfo.button == 1) {
 		_selection = vec;
@@ -143,11 +143,11 @@ void MainMenu::screenFunc() {
 
 void MainMenu::animate() {
 	if (ani_timer->TimeFlag) {
-		uhr->reset_timer(0, 0);
+		_G(uhr)->reset_timer(0, 0);
 		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
 		spieler_vector->Delay = _G(spieler).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
-		det->set_global_delay(_G(spieler).DelaySpeed);
+		_G(det)->set_global_delay(_G(spieler).DelaySpeed);
 	}
 
 	++_G(FrameSpeed);
@@ -215,7 +215,7 @@ void MainMenu::startGame() {
 	_G(spieler).soundLoopMode = sndLoopMode;
 
 	_G(spieler).PersonRoomNr[P_CHEWY] = 0;
-	room->load_room(&room_blk, 0, &_G(spieler));
+	_G(room)->load_room(&room_blk, 0, &_G(spieler));
 
 	spieler_vector[P_CHEWY].Phase = 6;
 	spieler_vector[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
@@ -268,7 +268,7 @@ void MainMenu::playGame() {
 	flags.ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
 	spieler_vector[P_CHEWY].Count = 0;
-	uhr->reset_timer(0, 0);
+	_G(uhr)->reset_timer(0, 0);
 	_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !main_loop(1)) {

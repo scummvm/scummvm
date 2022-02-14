@@ -69,16 +69,16 @@ int16 Files::execute(bool isInGame) {
 	taf_info *ti = _G(mem)->taf_adr(OPTION_TAF);
 	EVENTS_CLEAR;
 
-	room->open_handle(GBOOK, "rb", 0);
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->open_handle(GBOOK, "rb", 0);
+	_G(room)->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
-	room->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&room_blk);
 	fnames = _G(iog)->io_init(&ioptr);
 	fnames += 1;
  
-	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(_G(workptr));
 	show_cur();
 
@@ -300,11 +300,11 @@ enter:
 
 	free(ti);
 
-	room->open_handle(EPISODE1, "rb", 0);
-	room->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->open_handle(EPISODE1, "rb", 0);
+	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
-	room->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&room_blk);
 
 	return ret;
 }

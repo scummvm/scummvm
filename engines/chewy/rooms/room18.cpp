@@ -88,30 +88,30 @@ static const AniBlock ABLOCK24[2] = {
 
 void Room18::entry() {
 	_G(spieler).R18MoniSwitch = false;
-	atds->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATEI);
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).R18CartTerminal)
-		det->show_static_spr(23);
+		_G(det)->show_static_spr(23);
 
 	if (!_G(spieler).R18SurimyWurf) {
 		init_borks();
 	} else {
 		for (int16 i = 0; i < 5; i++)
-			det->hide_static_spr(BORK_SPR[i]);
+			_G(det)->hide_static_spr(BORK_SPR[i]);
 
 		for (int16 i = 0; i < (4 - (_G(spieler).R18Krone ? 1 : 0)); i++)
-			det->show_static_spr(BORK_SPR1[i]);
+			_G(det)->show_static_spr(BORK_SPR1[i]);
 	}
 
 	if (_G(spieler).R16F5Exit)
-		det->hide_static_spr(19);
+		_G(det)->hide_static_spr(19);
 	
 	if (_G(spieler).R17EnergieOut) {
-		det->stop_detail(0);
-		atds->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(det)->stop_detail(0);
+		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATEI);
 	} else {
-		atds->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATEI);
 	}
 
 	if (!_G(spieler).R18FirstEntry && !_G(spieler).R18Gitter) {
@@ -128,31 +128,31 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 		flags.AutoAniPlay = true;
 
 		if (t_nr == _G(timer_nr)[0]) {
-			det->hide_static_spr(16);
+			_G(det)->hide_static_spr(16);
 			start_detail_wait(10, 1, ANI_VOR);
-			det->show_static_spr(16);
-			uhr->reset_timer(_G(timer_nr)[0], 10);
+			_G(det)->show_static_spr(16);
+			_G(uhr)->reset_timer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hide_cur();
-			det->hide_static_spr(17);
+			_G(det)->hide_static_spr(17);
 			start_detail_wait(9, 1, ANI_VOR);
-			det->show_static_spr(17);
+			_G(det)->show_static_spr(17);
 
 			if (!_G(spieler).R18SondeMoni) {
 				_G(spieler).R18SondeMoni = true;
 				start_detail_wait(2, 1, ANI_VOR);
-				det->show_static_spr(9);
+				_G(det)->show_static_spr(9);
 				start_detail_wait(4, 1, ANI_VOR);
-				det->show_static_spr(11);
+				_G(det)->show_static_spr(11);
 				wait_show_screen(50);
-				det->hide_static_spr(9);
-				det->hide_static_spr(11);
+				_G(det)->hide_static_spr(9);
+				_G(det)->hide_static_spr(11);
 			} else {
 				monitor();
 			}
 
 			show_cur();
-			uhr->reset_timer(_G(timer_nr)[1], 15);
+			_G(uhr)->reset_timer(_G(timer_nr)[1], 15);
 		}
 
 		flags.AutoAniPlay = false;
@@ -171,13 +171,13 @@ void Room18::gedAction(int index) {
 
 void Room18::init_borks() {
 	for (int16 i = 0; i < 5; i++)
-		det->show_static_spr(BORK_SPR[i]);
+		_G(det)->show_static_spr(BORK_SPR[i]);
 	
 	for (int16 i = 0; i < 4; i++)
-		det->hide_static_spr(BORK_SPR1[i]);
+		_G(det)->hide_static_spr(BORK_SPR1[i]);
 
-	_G(timer_nr)[0] = room->set_timer(255, 10);
-	_G(timer_nr)[1] = room->set_timer(255, 15);
+	_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
+	_G(timer_nr)[1] = _G(room)->set_timer(255, 15);
 	_G(spieler).scrollx = 276;
 	_G(spieler).scrolly = 0;
 	flags.NoScroll = true;
@@ -191,11 +191,11 @@ void Room18::monitor() {
 		start_ani_block(2, ABLOCK21);
 		nr = (_G(spieler).R17EnergieOut) ? 2 : 1;
 	} else {
-		det->stop_detail(23);
-		atds->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(det)->stop_detail(23);
+		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATEI);
 	}
 
-	atds->set_ats_str(151, TXT_MARK_LOOK, nr, ATS_DATEI);
+	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, nr, ATS_DATEI);
 }
 
 int16 Room18::sonden_moni() {
@@ -207,16 +207,16 @@ int16 Room18::sonden_moni() {
 		hide_cur();
 		auto_move(8, P_CHEWY);
 		start_detail_wait(3, 1, ANI_VOR);
-		det->show_static_spr(10);
+		_G(det)->show_static_spr(10);
 		start_ani_block(3, ABLOCK20);
 
 		for (int16 i = 0; i < 3; i++)
-			det->show_static_spr(i + 12);
+			_G(det)->show_static_spr(i + 12);
 
 		wait_show_screen(40);
 
 		for (int16 i = 0; i < 5; i++)
-			det->hide_static_spr(i + 10);
+			_G(det)->hide_static_spr(i + 10);
 
 		show_cur();
 	}
@@ -232,8 +232,8 @@ int16 Room18::calc_surimy() {
 		hide_cur();
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).R18SurimyWurf = true;
-		det->load_taf_seq(245, 50, nullptr);
-		det->load_taf_seq(116, 55, nullptr);
+		_G(det)->load_taf_seq(245, 50, nullptr);
+		_G(det)->load_taf_seq(116, 55, nullptr);
 		_G(auto_obj) = 1;
 		mov_phasen[SURIMY_OBJ].AtsText = 0;
 		mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -262,25 +262,25 @@ int16 Room18::calc_surimy() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		wait_auto_obj(SURIMY_OBJ);
 
-		det->set_detail_pos(21, 392, 170);
-		det->set_detail_pos(22, 447, 154);
+		_G(det)->set_detail_pos(21, 392, 170);
+		_G(det)->set_detail_pos(22, 447, 154);
 		start_detail_frame(21, 1, ANI_VOR, 14);
-		det->start_detail(22, 1, ANI_VOR);
+		_G(det)->start_detail(22, 1, ANI_VOR);
 		wait_detail(21);
-		det->set_static_pos(26, 392, 170, false, true);
-		det->show_static_spr(26);
+		_G(det)->set_static_pos(26, 392, 170, false, true);
+		_G(det)->show_static_spr(26);
 
-		det->hide_static_spr(24);
+		_G(det)->hide_static_spr(24);
 		start_ani_block(2, ABLOCK22);
-		det->show_static_spr(20);
+		_G(det)->show_static_spr(20);
 
 		for (int16 i = 0; i < 3; i++)
-			det->hide_static_spr(i + 15);
+			_G(det)->hide_static_spr(i + 15);
 
 		start_ani_block(2, ABLOCK23);
-		det->show_static_spr(18);
-		det->show_static_spr(19);
-		det->hide_static_spr(26);
+		_G(det)->show_static_spr(18);
+		_G(det)->show_static_spr(19);
+		_G(det)->hide_static_spr(26);
 
 		flags.NoScroll = true;
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
@@ -288,19 +288,19 @@ int16 Room18::calc_surimy() {
 		auto_scroll(70, 0);
 		wait_auto_obj(SURIMY_OBJ);
 
-		det->set_detail_pos(21, 143, 170);
-		det->set_detail_pos(22, 198, 154);
+		_G(det)->set_detail_pos(21, 143, 170);
+		_G(det)->set_detail_pos(22, 198, 154);
 		start_detail_frame(21, 1, ANI_VOR, 14);
-		det->start_detail(22, 1, ANI_VOR);
+		_G(det)->start_detail(22, 1, ANI_VOR);
 		wait_detail(21);
-		det->set_static_pos(26, 143, 170, false, true);
-		det->show_static_spr(26);
+		_G(det)->set_static_pos(26, 143, 170, false, true);
+		_G(det)->show_static_spr(26);
 
-		det->hide_static_spr(25);
+		_G(det)->hide_static_spr(25);
 		start_ani_block(2, ABLOCK24);
-		det->show_static_spr(21);
+		_G(det)->show_static_spr(21);
 
-		det->hide_static_spr(26);
+		_G(det)->hide_static_spr(26);
 		mov_phasen[SURIMY_OBJ].Repeat = 1;
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
@@ -311,15 +311,15 @@ int16 Room18::calc_surimy() {
 		_G(spieler).ScrollxStep = 2;
 		_G(auto_obj) = 0;
 
-		atds->set_ats_str(153, 1, ATS_DATEI);
-		atds->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(153, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATEI);
 
 		for (int16 i = 0; i < 3; i++)
-			atds->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATEI);
 
-		atds->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
-		det->del_taf_tbl(245, 50, nullptr);
+		_G(det)->del_taf_tbl(245, 50, nullptr);
 	}
 
 	return action_flag;
@@ -353,17 +353,17 @@ short Room18::use_cart_moni() {
 		_G(spieler).R18CartTerminal ^= 1;
 
 		if (!_G(spieler).R18CartTerminal) {
-			atds->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATEI);
-			det->hide_static_spr(23);
+			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(det)->hide_static_spr(23);
 			start_detail_wait(20, 1, ANI_RUECK);
 		} else {
-			atds->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATEI);
 			start_detail_wait(20, 1, ANI_VOR);
-			det->show_static_spr(23);
+			_G(det)->show_static_spr(23);
 
 			if (_G(spieler).R18CartFach) {
 				_G(spieler).R18CartSave = true;
-				atds->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATEI);
+				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATEI);
 				start_aad_wait(120, -1);
 			}
 		}

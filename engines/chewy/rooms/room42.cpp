@@ -33,37 +33,37 @@ namespace Rooms {
 void Room42::entry() {
 	if (!_G(spieler).R42BeamterWach) {
 		g_engine->_sound->playSound(0);
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (!flags.LoadGame) {
-			det->stop_detail(0);
-			_G(timer_nr)[0] = room->set_timer(8, 5);
-			det->set_static_ani(8, -1);
+			_G(det)->stop_detail(0);
+			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
+			_G(det)->set_static_ani(8, -1);
 			_G(spieler).R42BeamterWach = true;
 			g_engine->_sound->stopSound(0);
 
 			_G(SetUpScreenFunc) = setup_func;
 
 			set_person_pos(80, 43, P_HOWARD, P_LEFT);
-			atds->set_ats_str(263, 1, ATS_DATEI);
-			atds->set_ats_str(264, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(263, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(264, 1, ATS_DATEI);
 		}
 
-		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) && !_G(spieler).R42BriefOk)
+		if (_G(obj)->check_inventar(HOTEL_INV) && _G(obj)->check_inventar(TICKET_INV) && !_G(spieler).R42BriefOk)
 			start_aad_wait(302, -1);
 
-		if (obj->check_inventar(HOTEL_INV) && obj->check_inventar(TICKET_INV) && _G(spieler).R42BriefOk)
+		if (_G(obj)->check_inventar(HOTEL_INV) && _G(obj)->check_inventar(TICKET_INV) && _G(spieler).R42BriefOk)
 			start_aad_wait(301, -1);
 	}
 }
 
 void Room42::xit() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
-		atds->set_ats_str(264, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(264, 1, ATS_DATEI);
 		stop_spz();
 		_G(spieler).R42HoToBeamter = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
@@ -124,8 +124,8 @@ int16 Room42::use_psack() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
 		start_aad_wait(183, -1);
-		obj->calc_rsi_flip_flop(SIB_BKASTEN_R28);
-		atds->set_ats_str(206, 1, ATS_DATEI);
+		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
+		_G(atds)->set_ats_str(206, 1, ATS_DATEI);
 		_G(spieler).R28Briefkasten = true;
 		_G(spieler).R40TrainMove = true;
 		_G(spieler).R28PostCar = true;
@@ -145,7 +145,7 @@ int16 Room42::use_beamter() {
 
 	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
-		atds->set_ats_str(264, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(264, 2, ATS_DATEI);
 		hide_cur();
 		auto_move(4, P_CHEWY);
 		start_aad_wait(184, -1);
@@ -179,7 +179,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 	hide_cur();
 
 	if (str_end_nr != 4) {
-		while (atds->aad_get_status() != -1) {
+		while (_G(atds)->aad_get_status() != -1) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
@@ -205,31 +205,31 @@ void Room42::dia_beamter(int16 str_end_nr) {
 			break;
 		}
 	} else {
-		while (atds->aad_get_status() < 2) {
+		while (_G(atds)->aad_get_status() < 2) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
-		det->stop_detail(0);
+		_G(det)->stop_detail(0);
 		g_engine->_sound->stopSound(0);
 		start_detail_wait(1, 1, ANI_VOR);
-		det->start_detail(2, 255, ANI_VOR);
+		_G(det)->start_detail(2, 255, ANI_VOR);
 
-		while (atds->aad_get_status() != -1) {
+		while (_G(atds)->aad_get_status() != -1) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
-		det->stop_detail(2);
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->stop_detail(2);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
 	}
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	det->start_detail(6, 255, ANI_VOR);
+	_G(det)->start_detail(6, 255, ANI_VOR);
 	start_aad_wait(135, -1);
-	det->stop_detail(6);
+	_G(det)->stop_detail(6);
 	flags.NoDiaBox = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	show_cur();

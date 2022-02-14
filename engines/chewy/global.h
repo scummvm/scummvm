@@ -207,6 +207,26 @@ public:
 	taf_seq_info *_PersonTaf[MAX_PERSON] = { nullptr };
 	uint8 _PersonSpr[MAX_PERSON][8] = { 0 };
 
+	RoomDetailInfo *_Rdi = nullptr;
+	StaticDetailInfo *_Sdi = nullptr;
+	AniDetailInfo *_Adi = nullptr;
+	taf_info *_curtaf = nullptr;
+	taf_info *_menutaf = nullptr;
+	taf_seq_info *_howard_taf = nullptr;
+	taf_info *_chewy = nullptr;
+	int16 *_chewy_kor = nullptr;
+	BitClass *_bit = nullptr;
+	GedClass *_ged = nullptr;
+	Text *_txt = nullptr;
+	Room *_room = nullptr;
+	Object *_obj = nullptr;
+	Timer *_uhr = nullptr;
+	Detail *_det = nullptr;
+	Effect *_fx = nullptr;
+	Atdsys *_atds = nullptr;
+	Flic *_flc = nullptr;
+	MovClass *_mov = nullptr;
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -288,35 +308,14 @@ extern MovInfo auto_mov_obj[MAX_OBJ_MOV];
 extern MovPhasen mov_phasen[MAX_OBJ_MOV];
 extern MovLine mov_line[MAX_OBJ_MOV][5];
 extern TimerBlk ani_timer[MAX_TIMER_OBJ];
-extern RoomDetailInfo *Rdi;
-extern StaticDetailInfo *Sdi;
-extern AniDetailInfo *Adi;
 extern Flags flags;
 extern CustomInfo Ci;
 extern GotoPkt gpkt;
-
-extern taf_info *curtaf;
-extern taf_info *menutaf;
-extern taf_seq_info *howard_taf;
-extern taf_info *chewy;
-extern int16 *chewy_kor;
 
 extern int16 person_end_phase[MAX_PERSON];
 extern int16 ani_stand_count[MAX_PERSON];
 
 extern bool ani_stand_flag[MAX_PERSON];
-
-extern BitClass *bit;
-extern GedClass *ged;
-extern Text *txt;
-extern Room *room;
-extern Object *obj;
-extern Timer *uhr;
-extern Detail *det;
-extern Effect *fx;
-extern Atdsys *atds;
-extern Flic *flc;
-extern MovClass *mov;
 
 
 void cursor_wahl(int16 nr);

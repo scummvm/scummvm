@@ -35,12 +35,12 @@ void Room67::entry() {
 	spieler_mi[P_NICHELLE].Mode = true;
 	_G(spieler).DiaAMov = 7;
 	if (_G(spieler).R67KommodeAuf)
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(9);
 	if (!_G(spieler).R67PapageiWeg) {
-		_G(timer_nr)[0] = room->set_timer(1, 10);
-		det->set_static_ani(1, -1);
+		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
+		_G(det)->set_static_ani(1, -1);
 	} else
-		det->show_static_spr(0);
+		_G(det)->show_static_spr(0);
 	if (!flags.LoadGame) {
 		hide_cur();
 		set_person_pos(102, 132, P_CHEWY, P_RIGHT);
@@ -83,14 +83,14 @@ int16 Room67::use_grammo() {
 		action_flag = true;
 		auto_move(6, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67)
 			start_aad_wait(376, -1);
 		else
 			start_aad_wait(614, -1);
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		det->stop_detail(0);
+		_G(det)->stop_detail(0);
 		show_cur();
 	}
 	return action_flag;
@@ -112,14 +112,14 @@ int16 Room67::use_kommode() {
 			_G(spieler).R67KommodeAuf = true;
 			auto_move(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			det->show_static_spr(9);
-			atds->set_ats_str(400, 1, ATS_DATEI);
+			_G(det)->show_static_spr(9);
+			_G(atds)->set_ats_str(400, 1, ATS_DATEI);
 		} else if (!_G(spieler).R67KostuemWeg) {
 			action_flag = true;
 			_G(spieler).R67KostuemWeg = true;
 			auto_move(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			atds->set_ats_str(400, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(400, 2, ATS_DATEI);
 			new_invent_2_cur(GALA_INV);
 		}
 		show_cur();
@@ -141,38 +141,38 @@ int16 Room67::talk_papagei() {
 	if (!_G(spieler).R67PapageiWeg && !_G(spieler).inv_cur) {
 		action_flag = true;
 		hide_cur();
-		room->set_timer_status(1, TIMER_STOP);
+		_G(room)->set_timer_status(1, TIMER_STOP);
 		if (_G(menu_item) == CUR_HOWARD) {
 			show_cur();
 
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
-			atds->set_split_win(2, &_G(ssi)[2]);
+			_G(atds)->set_split_win(2, &_G(ssi)[2]);
 			start_ads_wait(19);
-			room->set_timer_status(1, TIMER_START);
+			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
 			start_aad_wait(380, -1);
-			room->set_timer_status(1, TIMER_START);
+			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_TALK) {
 			auto_move(5, P_CHEWY);
 			show_cur();
 
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
-			atds->set_split_win(2, &_G(ssi)[2]);
+			_G(atds)->set_split_win(2, &_G(ssi)[2]);
 			start_ads_wait(18);
-			room->set_timer_status(1, TIMER_START);
+			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
 			hide_cur();
 			auto_move(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(spieler).R67PapageiWeg = true;
-			det->stop_detail(1);
-			det->del_static_ani(1);
-			det->show_static_spr(0);
+			_G(det)->stop_detail(1);
+			_G(det)->del_static_ani(1);
+			_G(det)->show_static_spr(0);
 			invent_2_slot(PAPAGEI_INV);
 			show_cur();
-			atds->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 		show_cur();
 	}

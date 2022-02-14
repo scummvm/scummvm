@@ -38,7 +38,7 @@ void Room57::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	spieler_mi[P_HOWARD].Mode = true;
 	if (_G(spieler).R57StudioAuf)
-		det->hide_static_spr(4);
+		_G(det)->hide_static_spr(4);
 	
 	if (!flags.LoadGame &&_G(spieler).R48TaxiEntry) {
 		hide_cur();
@@ -85,7 +85,7 @@ int16 Room57::use_taxi() {
 		auto_move(3, P_CHEWY);
 		g_engine->_sound->playSound(3, 0);
 		g_engine->_sound->playSound(3);
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 		go_auto_xy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -96,11 +96,11 @@ int16 Room57::use_taxi() {
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
-		det->hide_static_spr(7);
+		_G(det)->hide_static_spr(7);
 		g_engine->_sound->playSound(3, 1);
 		g_engine->_sound->playSound(3);
-		room->set_timer_status(3, TIMER_STOP);
-		det->del_static_ani(3);
+		_G(room)->set_timer_status(3, TIMER_STOP);
+		_G(det)->del_static_ani(3);
 		start_detail_wait(5, 1, ANI_VOR);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);
@@ -110,9 +110,9 @@ int16 Room57::use_taxi() {
 
 int16 Room57::use_pfoertner() {
 	int16 action_ret = false;
-	room->set_timer_status(1, TIMER_STOP);
-	det->del_static_ani(1);
-	det->set_static_ani(3, -1);
+	_G(room)->set_timer_status(1, TIMER_STOP);
+	_G(det)->del_static_ani(1);
+	_G(det)->set_static_ani(3, -1);
 	hide_cur();
 	auto_move(1, P_CHEWY);
 	if (is_cur_inventar(CUTMAG_INV)) {
@@ -137,10 +137,10 @@ int16 Room57::use_pfoertner() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
 			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
-			det->hide_static_spr(4);
+			_G(det)->hide_static_spr(4);
 			start_detail_wait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
-			atds->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);
 		} else {
 			start_aad_wait(349, -1);
 			go_auto_xy(176, 130, P_HOWARD, ANI_WAIT);
@@ -148,25 +148,25 @@ int16 Room57::use_pfoertner() {
 		_G(SetUpScreenFunc) = setup_func;
 	}
 	show_cur();
-	room->set_timer_status(1, TIMER_START);
-	det->set_static_ani(1, -1);
+	_G(room)->set_timer_status(1, TIMER_START);
+	_G(det)->set_static_ani(1, -1);
 	return action_ret;
 }
 
 void Room57::talk_pfoertner() {
 	hide_cur();
 	auto_move(1, P_CHEWY);
-	room->set_timer_status(1, TIMER_STOP);
-	det->del_static_ani(1);
-	det->set_static_ani(3, -1);
+	_G(room)->set_timer_status(1, TIMER_STOP);
+	_G(det)->del_static_ani(1);
+	_G(det)->set_static_ani(3, -1);
 	int16 aad_nr;
 	if (!_G(spieler).R57StudioAuf) {
 		aad_nr = 338;
 	} else
 		aad_nr = 342;
 	start_aad_wait(aad_nr, -1);
-	room->set_timer_status(1, TIMER_START);
-	det->set_static_ani(1, -1);
+	_G(room)->set_timer_status(1, TIMER_START);
+	_G(det)->set_static_ani(1, -1);
 	show_cur();
 }
 

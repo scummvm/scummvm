@@ -35,12 +35,12 @@ void Room14::entry() {
 	_G(spieler).ScrollxStep = 2;
 
 	if (!_G(spieler).R14Feuer)
-		obj->hide_sib(46);
+		_G(obj)->hide_sib(46);
 
 	if (!flags.LoadGame) {
 		if (_G(spieler).R14GleiterAuf) {
 			set_person_pos(381, 264, P_CHEWY, P_LEFT);
-			det->show_static_spr(6);
+			_G(det)->show_static_spr(6);
 			_G(spieler).scrollx = 160;
 			_G(spieler).scrolly = 120;
 		} else {
@@ -60,11 +60,11 @@ bool Room14::timer(int16 t_nr, int16 ani_nr) {
 void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!flags.AutoAniPlay && !_G(spieler).R14Feuer) {
 		flags.AutoAniPlay = true;
-		det->hide_static_spr(9);
-		start_detail_wait(room->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
-		uhr->reset_timer(t_nr, 0);
-		det->show_static_spr(9);
-		det->start_detail(7, 1, ANI_VOR);
+		_G(det)->hide_static_spr(9);
+		start_detail_wait(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
+		_G(uhr)->reset_timer(t_nr, 0);
+		_G(det)->show_static_spr(9);
+		_G(det)->start_detail(7, 1, ANI_VOR);
 		flags.AutoAniPlay = false;
 	}
 }
@@ -100,8 +100,8 @@ int16 Room14::use_gleiter() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(10, 1, ANI_VOR);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			det->show_static_spr(6);
-			atds->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(det)->show_static_spr(6);
+			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
 		} else {
 			_G(spieler).R23GleiterExit = 14;
 			Room23::cockpit();
@@ -118,7 +118,7 @@ void Room14::talk_eremit()  {
 
 		if (_G(spieler).R14Translator) {
 			load_ads_dia(0);
-			obj->show_sib(46);
+			_G(obj)->show_sib(46);
 		} else {
 			hide_cur();
 			start_aad_wait(24, -1);
@@ -166,29 +166,29 @@ void Room14::feuer() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
 		auto_move(7, P_CHEWY);
-		det->hide_static_spr(9);
+		_G(det)->hide_static_spr(9);
 		start_detail_frame(2, 1, ANI_VOR, 9);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(13, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		wait_detail(2);
 		start_detail_wait(5, 1, ANI_VOR);
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(9);
 	}
 
 	del_inventar(tmp);
-	det->start_detail(6, 255, ANI_VOR);
+	_G(det)->start_detail(6, 255, ANI_VOR);
 	wait_show_screen(40);
 
 	if (waffe)
 		auto_move(7, P_CHEWY);
 
 	start_aad_wait(26, -1);
-	det->hide_static_spr(9);
+	_G(det)->hide_static_spr(9);
 	start_detail_wait(3, 1, ANI_VOR);
-	det->show_static_spr(9);
+	_G(det)->show_static_spr(9);
 	invent_2_slot(FLUXO_INV);
-	atds->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
 	_G(spieler).R14FluxoFlex = true;
 	flags.AutoAniPlay = false;
 	show_cur();

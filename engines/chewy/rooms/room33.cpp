@@ -36,7 +36,7 @@ static const MovLine SURIMY_MPKT[2] = {
 
 void Room33::entry() {
 	if (_G(spieler).R33MunterGet)
-		det->hide_static_spr(3);
+		_G(det)->hide_static_spr(3);
 	surimy_go();
 }
 
@@ -45,7 +45,7 @@ void Room33::surimy_go() {
 		if (_G(spieler).R33SurimyGo >= 4) {
 			hide_cur();
 			_G(spieler).R33SurimyGo = 0;
-			det->load_taf_seq(39, 8, nullptr);
+			_G(det)->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -71,8 +71,8 @@ void Room33::look_schublade() {
 		_G(spieler).R33SchubFirst = true;
 		hide_cur();
 		auto_move(1, P_CHEWY);
-		atds->set_ats_str(210, TXT_MARK_NAME, 1, ATS_DATEI);
-		atds->set_ats_str(210, TXT_MARK_USE, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(210, TXT_MARK_NAME, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(210, TXT_MARK_USE, 1, ATS_DATEI);
 		show_cur();
 	}
 }
@@ -85,9 +85,9 @@ int16 Room33::use_schublade() {
 		action_flag = true;
 		_G(spieler).R33Messer = true;
 
-		atds->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
-		atds->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
-		atds->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
 		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		invent_2_slot(MESSER_INV);
 		show_cur();
@@ -166,7 +166,7 @@ void Room33::use_maschine() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(71, -1);
-			atds->del_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 
 		if (hocker) {
@@ -204,8 +204,8 @@ int16 Room33::get_munter() {
 		auto_move(4, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(MUNTER_INV);
-		atds->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
-		det->hide_static_spr(3);
+		_G(atds)->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->hide_static_spr(3);
 		start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(72, -1);
 		show_cur();

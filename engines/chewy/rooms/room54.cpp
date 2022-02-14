@@ -39,7 +39,7 @@ void Room54::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 66;
 
 	if (_G(spieler).R54FputzerWeg)
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(9);
 
 	spieler_mi[P_HOWARD].Mode = true;
 
@@ -136,22 +136,22 @@ int16 Room54::use_schalter() {
 			go_auto_xy(127, 76, P_HOWARD, ANI_WAIT);
 			go_auto_xy(14, 72, P_HOWARD, ANI_GO);
 			start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 			auto_move(2, P_CHEWY);
 			g_engine->_sound->playSound(1, 0);
 			g_engine->_sound->playSound(0, 1);
 			g_engine->_sound->stopSound(2);
 
 			start_detail_wait(1, 1, ANI_VOR);
-			det->start_detail(3, 255, ANI_VOR);
+			_G(det)->start_detail(3, 255, ANI_VOR);
 			start_aad_wait(292 + _G(spieler).R54LiftCount, -1);
-			det->stop_detail(3);
+			_G(det)->stop_detail(3);
 			++_G(spieler).R54LiftCount;
 
 			int16 aad_nr;
 			if (_G(spieler).R54LiftCount < 3) {
 				start_detail_wait(2, 1, ANI_VOR);
-				det->hide_static_spr(0);
+				_G(det)->hide_static_spr(0);
 				g_engine->_sound->stopSound(0);
 				g_engine->_sound->stopSound(1);
 				g_engine->_sound->playSound(1, 2);
@@ -161,13 +161,13 @@ int16 Room54::use_schalter() {
 
 			} else {
 				start_detail_wait(5, 1, ANI_VOR);
-				det->show_static_spr(9);
+				_G(det)->show_static_spr(9);
 				start_detail_wait(4, 1, ANI_VOR);
 				aad_nr = 296;
 				_G(spieler).R54FputzerWeg = true;
-				atds->del_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
-				atds->set_ats_str(349, 1, ATS_DATEI);
-				atds->set_ats_str(351, 1, ATS_DATEI);
+				_G(atds)->del_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->set_ats_str(349, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(351, 1, ATS_DATEI);
 			}
 
 			start_aad_wait(aad_nr, -1);
@@ -198,24 +198,24 @@ void Room54::talk_verkauf() {
 		auto_move(3, P_CHEWY);
 		_G(spieler).R54HowardVorne = 1;
 		start_aad_wait(299, -1);
-		room->set_timer_status(6, TIMER_STOP);
-		det->del_static_ani(6);
+		_G(room)->set_timer_status(6, TIMER_STOP);
+		_G(det)->del_static_ani(6);
 		start_detail_wait(7, 1, ANI_VOR);
-		det->start_detail(8, 255, ANI_VOR);
+		_G(det)->start_detail(8, 255, ANI_VOR);
 		start_aad_wait(310, -1);
 
-		det->stop_detail(8);
+		_G(det)->stop_detail(8);
 		start_detail_wait(9, 1, ANI_VOR);
 		start_detail_wait(10, 1, ANI_VOR);
-		det->start_detail(11, 255, ANI_VOR);
+		_G(det)->start_detail(11, 255, ANI_VOR);
 		start_aad_wait(311, -1);
-		det->stop_detail(11);
-		room->set_timer_status(6, TIMER_START);
-		det->set_static_ani(6, -1);
+		_G(det)->stop_detail(11);
+		_G(room)->set_timer_status(6, TIMER_START);
+		_G(det)->set_static_ani(6, -1);
 		auto_move(4, P_CHEWY);
 
 		start_aad(_G(spieler).R45MagOk ? 312 : 578, -1);
-		obj->add_inventar(BURGER_INV, &room_blk);
+		_G(obj)->add_inventar(BURGER_INV, &room_blk);
 		inventory_2_cur(BURGER_INV);
 	} else {
 		start_aad_wait(313, -1);
@@ -240,9 +240,9 @@ int16 Room54::use_zelle() {
 				_G(SetUpScreenFunc) = nullptr;
 				auto_scroll(176, 0);
 				go_auto_xy(239, 101, P_HOWARD, ANI_WAIT);
-				flc->set_flic_user_function(cut_serv);
+				_G(flc)->set_flic_user_function(cut_serv);
 				flic_cut(FCUT_069, CFO_MODE);
-				flc->remove_flic_user_function();
+				_G(flc)->remove_flic_user_function();
 
 				del_inventar(_G(spieler).AkInvent);
 				invent_2_slot(LEDER_INV);
@@ -271,7 +271,7 @@ int16 Room54::use_zelle() {
 }
 
 int16 Room54::cut_serv(int16 frame) {
-	det->plot_static_details(176, 0, 9, 9);
+	_G(det)->plot_static_details(176, 0, 9, 9);
 	return 0;
 }
 
@@ -288,7 +288,7 @@ int16 Room54::use_azug() {
 				_G(spieler).R54HowardVorne = 0;
 				start_aad_wait(298, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				det->show_static_spr(12);
+				_G(det)->show_static_spr(12);
 				_G(spieler).R55Location = true;
 				_G(SetUpScreenFunc) = nullptr;
 				go_auto_xy(91, 62, P_HOWARD, ANI_WAIT);
@@ -300,8 +300,8 @@ int16 Room54::use_azug() {
 				int16 delay = 0;
 
 				while (ch_y > -48) {
-					det->set_static_pos(12, 125, ch_y, false, false);
-					det->set_static_pos(9, 122, ay, false, false);
+					_G(det)->set_static_pos(12, 125, ch_y, false, false);
+					_G(det)->set_static_pos(9, 122, ay, false, false);
 
 					if (!delay) {
 						ch_y -= 3;
@@ -332,7 +332,7 @@ void Room54::aufzug_ab() {
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).scrollx = 0;
 	_G(SetUpScreenFunc) = setup_func;
-	det->show_static_spr(12);
+	_G(det)->show_static_spr(12);
 	g_engine->_sound->playSound(1, 0);
 	g_engine->_sound->playSound(1);
 
@@ -341,8 +341,8 @@ void Room54::aufzug_ab() {
 	int16 delay = 0;
 
 	while (ch_y < 68) {
-		det->set_static_pos(12, 125, ch_y, false, false);
-		det->set_static_pos(9, 122, ay, false, false);
+		_G(det)->set_static_pos(12, 125, ch_y, false, false);
+		_G(det)->set_static_pos(9, 122, ay, false, false);
 
 		if (!delay) {
 			ch_y += 3;
@@ -357,7 +357,7 @@ void Room54::aufzug_ab() {
 	}
 
 	g_engine->_sound->stopSound(0);
-	det->hide_static_spr(12);
+	_G(det)->hide_static_spr(12);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(maus_links_click) = false;

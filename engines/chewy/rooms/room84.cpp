@@ -43,31 +43,31 @@ void Room84::entry() {
 	g_engine->_sound->playSound(0, 0);
 
 	if (_G(spieler).R88UsedMonkey) {
-		det->del_static_ani(3);
-		det->stop_detail(0);
+		_G(det)->del_static_ani(3);
+		_G(det)->stop_detail(0);
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
-		atds->set_steuer_bit(478, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(479, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(485, 1, ATS_DATEI);	
+		_G(atds)->set_steuer_bit(478, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(479, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 1, ATS_DATEI);	
 	}
 
 	if (_G(spieler).flags32_10) {
-		det->start_detail(7, 255, false);
-		atds->del_steuer_bit(504, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->start_detail(7, 255, false);
+		_G(atds)->del_steuer_bit(504, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).room_e_obj[124].Attribut = 255;
-		atds->set_ats_str(485, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 2, ATS_DATEI);
 	}
 
 	if (_G(spieler).r88DestRoom == 84) {
-		det->show_static_spr(7);
-		atds->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->show_static_spr(7);
+		_G(atds)->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (_G(spieler).flags32_40) {
-		atds->set_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(485, 1, ATS_DATEI);		
+		_G(atds)->set_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 1, ATS_DATEI);		
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
 	}
 
@@ -99,7 +99,7 @@ void Room84::entry() {
 		_G(spieler).flags32_20 = false;
 		_G(spieler).room_e_obj[124].Attribut = 255;
 		_G(spieler).room_e_obj[125].Attribut = 255;
-		atds->set_ats_str(485, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 2, ATS_DATEI);
 		start_aad_wait(477, -1);
 		show_cur();
 	} else {
@@ -140,13 +140,13 @@ void Room84::setup_func() {
 		flags.NoScroll = true;
 		set_person_spr(P_LEFT, P_CHEWY);
 		auto_scroll(150, 0);
-		det->del_static_ani(3);
-		det->set_static_ani(4, -1);
+		_G(det)->del_static_ani(3);
+		_G(det)->set_static_ani(4, -1);
 		start_aad_wait(455, -1);
-		det->del_static_ani(4);
+		_G(det)->del_static_ani(4);
 		start_spz(62, 1, false, P_HOWARD);
 		start_detail_wait(5, 1, ANI_VOR);
-		det->set_static_ani(3, -1);
+		_G(det)->set_static_ani(3, -1);
 		start_aad_wait(456, -1);
 		flags.NoScroll = false;
 		show_cur();
@@ -192,7 +192,7 @@ int Room84::proc4() {
 	auto_move(5, P_CHEWY);
 
 	if (_G(spieler).flags32_10) {
-		det->stop_detail(7);
+		_G(det)->stop_detail(7);
 		start_detail_wait(8, 1, ANI_VOR);
 	} else {
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 88;

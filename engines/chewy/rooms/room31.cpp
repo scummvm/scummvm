@@ -51,7 +51,7 @@ void Room31::surimy_go() {
 		if (_G(spieler).R31SurimyGo >= 3) {
 			hide_cur();
 			_G(spieler).R31SurimyGo = 0;
-			det->load_taf_seq(39, 8, nullptr);
+			_G(det)->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
 			mov_phasen[SURIMY_OBJ].AtsText = 0;
 			mov_phasen[SURIMY_OBJ].Lines = 2;
@@ -75,18 +75,18 @@ void Room31::surimy_go() {
 void Room31::calc_luke() {
 	if (!_G(spieler).R31KlappeZu) {
 		for (int16 i = 0; i < 3; i++)
-			det->show_static_spr(5 + i);
+			_G(det)->show_static_spr(5 + i);
 
-		atds->set_ats_str(244, 1, ATS_DATEI);
-		atds->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(244, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).room_e_obj[75].Attribut = AUSGANG_UNTEN;
 
 	} else {
 		for (int16 i = 0; i < 3; i++)
-			det->hide_static_spr(5 + i);
+			_G(det)->hide_static_spr(5 + i);
 
-		atds->set_ats_str(244, 0, ATS_DATEI);
-		atds->set_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(244, 0, ATS_DATEI);
+		_G(atds)->set_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).room_e_obj[75].Attribut = 255;
 	}
 }
@@ -153,7 +153,7 @@ int16 Room31::use_topf() {
 				del_inventar(_G(spieler).AkInvent);
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
-				atds->set_ats_str(242, 2, ATS_DATEI);
+				_G(atds)->set_ats_str(242, 2, ATS_DATEI);
 
 			} else if (is_cur_inventar(MILCH_WAS_INV)) {
 				if (_G(spieler).R31KoernerDa) {
@@ -163,11 +163,11 @@ int16 Room31::use_topf() {
 					start_ani_block(3, ABLOCK30);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 					del_inventar(_G(spieler).AkInvent);
-					obj->add_inventar(MILCH_LEER_INV, &room_blk);
+					_G(obj)->add_inventar(MILCH_LEER_INV, &room_blk);
 					inventory_2_cur(MILCH_LEER_INV);
 					ani_nr = CH_TALK6;
 					dia_nr = 151;
-					atds->set_ats_str(242, 3, ATS_DATEI);
+					_G(atds)->set_ats_str(242, 3, ATS_DATEI);
 				} else {
 					ani_nr = CH_TALK5;
 					dia_nr = 152;
@@ -186,7 +186,7 @@ int16 Room31::use_topf() {
 							_G(spieler).R31SurFurz = true;
 							ani_nr = CH_TALK6;
 							dia_nr = 156;
-							atds->set_ats_str(242, 4, ATS_DATEI);
+							_G(atds)->set_ats_str(242, 4, ATS_DATEI);
 							cur_2_inventory();
 						}
 					} else {

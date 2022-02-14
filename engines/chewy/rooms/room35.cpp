@@ -37,7 +37,7 @@ static const AniBlock ABLOCK28[2] = {
 
 void Room35::entry() {
 	if (_G(spieler).R35Schublade)
-		det->show_static_spr(1);
+		_G(det)->show_static_spr(1);
 }
 
 int16 Room35::schublade() {
@@ -49,9 +49,9 @@ int16 Room35::schublade() {
 			action_flag = true;
 			auto_move(3, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			det->show_static_spr(1);
+			_G(det)->show_static_spr(1);
 			_G(spieler).R35Schublade = true;
-			atds->set_ats_str(234, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(234, 1, ATS_DATEI);
 		} else if (!_G(spieler).R35Falle) {
 			action_flag = true;
 			auto_move(3, P_CHEWY);
@@ -63,7 +63,7 @@ int16 Room35::schublade() {
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(93, -1);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			atds->set_ats_str(234, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(234, 2, ATS_DATEI);
 		}
 	}
 
@@ -91,21 +91,21 @@ int16 Room35::use_cat() {
 			_G(spieler).R35CatEat = true;
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(_G(spieler).AkInvent);
-			det->stop_detail(0);
-			det->del_static_ani(0);
+			_G(det)->stop_detail(0);
+			_G(det)->del_static_ani(0);
 			start_detail_wait(1, 1, ANI_VOR);
-			det->start_detail(2, 1, ANI_VOR);
+			_G(det)->start_detail(2, 1, ANI_VOR);
 			start_detail_wait(3, 1, ANI_VOR);
-			obj->show_sib(SIB_KNOCHEN_R35);
-			obj->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
-			det->show_static_spr(7);
-			atds->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(obj)->show_sib(SIB_KNOCHEN_R35);
+			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
+			_G(det)->show_static_spr(7);
+			_G(atds)->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATEI);
 
-			while (det->get_ani_status(2) && !SHOULD_QUIT) {
+			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {
 				set_up_screen(DO_SETUP);
 			}
 
-			det->set_static_ani(0, -1);
+			_G(det)->set_static_ani(0, -1);
 			enable_timer();
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(95, -1);

@@ -46,23 +46,23 @@ void Room8::entry() {
 		start_folter();
 	else
 		stop_folter();
-	atds->set_ats_str(60, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(60, 0, ATS_DATEI);
 }
 
 void Room8::start_folter() {
-	atds->set_ats_str(67, 1, ATS_DATEI);
-	det->stop_detail(19);
-	det->start_detail(13, 255, ANI_VOR);
+	_G(atds)->set_ats_str(67, 1, ATS_DATEI);
+	_G(det)->stop_detail(19);
+	_G(det)->start_detail(13, 255, ANI_VOR);
 }
 
 void Room8::stop_folter() {
-	atds->set_ats_str(67, 0, ATS_DATEI);
-	det->start_detail(19, 255, ANI_VOR);
+	_G(atds)->set_ats_str(67, 0, ATS_DATEI);
+	_G(det)->start_detail(19, 255, ANI_VOR);
 
-	det->stop_detail(13);
+	_G(det)->stop_detail(13);
 
 	_G(spieler).R8Folter = true;
-	obj->hide_sib(SIB_FOLTER_R8);
+	_G(obj)->hide_sib(SIB_FOLTER_R8);
 }
 
 void Room8::hole_kohle() {
@@ -90,7 +90,7 @@ void Room8::start_verbrennen() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ABLOCK12);
 
-		while (det->get_ani_status(9)) {
+		while (_G(det)->get_ani_status(9)) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
@@ -101,10 +101,10 @@ void Room8::start_verbrennen() {
 			}
 		}
 
-		det->stop_detail(9);
+		_G(det)->stop_detail(9);
 		set_person_pos(129, 246, P_CHEWY, P_RIGHT);
 		start_ani_block(2, ABLOCK13);
-		atds->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
 
@@ -117,7 +117,7 @@ bool Room8::gips_wurf() {
 	if (is_cur_inventar(GIPS_EIMER_INV)) {
 		hide_cur();
 		actionFl = true;
-		det->load_taf_seq(116, 30, nullptr);
+		_G(det)->load_taf_seq(116, 30, nullptr);
 		auto_move(2, P_CHEWY);
 		_G(maus_links_click) = false;
 
@@ -128,13 +128,13 @@ bool Room8::gips_wurf() {
 
 		start_detail_frame(5, 1, ANI_VOR, 16);
 		start_detail_wait(6, 1, ANI_VOR);
-		obj->show_sib(33);
-		det->show_static_spr(14);
+		_G(obj)->show_sib(33);
+		_G(det)->show_static_spr(14);
 		wait_detail(5);
 		_G(spieler).R8GipsWurf = true;
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
-		obj->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
-		det->del_taf_tbl(116, 30, nullptr);
+		_G(obj)->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
+		_G(det)->del_taf_tbl(116, 30, nullptr);
 		auto_move(8, P_CHEWY);
 		flags.AtsAction = false;
 		_G(menu_item) = CUR_USE;
@@ -153,15 +153,15 @@ bool Room8::gips_wurf() {
 
 void Room8::open_gdoor() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	det->show_static_spr(17);
+	_G(det)->show_static_spr(17);
 	set_up_screen(DO_SETUP);
 	start_detail_wait(7, 1, ANI_VOR);
-	det->show_static_spr(15);
-	det->hide_static_spr(17);
+	_G(det)->show_static_spr(15);
+	_G(det)->hide_static_spr(17);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	set_person_pos(204, 274, P_CHEWY, P_LEFT);
-	atds->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATEI);
-	obj->hide_sib(31);
+	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(obj)->hide_sib(31);
 	_G(spieler).R8GTuer = true;
 	_G(spieler).room_e_obj[15].Attribut = AUSGANG_UNTEN;
 }

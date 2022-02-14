@@ -33,13 +33,13 @@ void Room16::entry() {
 	_G(zoom_horizont) = 140;
 
 	if (!_G(spieler).R16F5Exit) {
-		det->show_static_spr(4);
+		_G(det)->show_static_spr(4);
 		_G(spieler).room_e_obj[32].Attribut = 255;
-		atds->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
-		det->hide_static_spr(4);
+		_G(det)->hide_static_spr(4);
 		_G(spieler).room_e_obj[32].Attribut = AUSGANG_LINKS;
-		atds->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 }
 

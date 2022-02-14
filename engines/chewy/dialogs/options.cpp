@@ -57,13 +57,13 @@ static const int16 OPTION_ICONS[9 * 4] = {
 
 void Options::execute(taf_info *ti) {
 	long akt_clock = 0, stop_clock = 0;
-	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
 
-	room->set_ak_pal(&room_blk);
-	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(room)->set_ak_pal(&room_blk);
+	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
@@ -160,21 +160,21 @@ void Options::execute(taf_info *ti) {
 			case 2:
 				if (_G(spieler).SoundSwitch) {
 					_G(spieler).SoundSwitch = false;
-					det->disable_room_sound();
+					_G(det)->disable_room_sound();
 				} else {
 					_G(spieler).SoundSwitch = true;
-					det->enable_room_sound();
+					_G(det)->enable_room_sound();
 				}
 				break;
 			case 3:
 			case 4:
 				if (_G(spieler).DisplayText) {
 					_G(spieler).DisplayText = false;
-					atds->setHasSpeech(true);
+					_G(atds)->setHasSpeech(true);
 					_G(spieler).SpeechSwitch = true;
 				} else {
 					_G(spieler).DisplayText = true;
-					atds->setHasSpeech(false);
+					_G(atds)->setHasSpeech(false);
 					_G(spieler).SpeechSwitch = false;
 				}
 				break;
@@ -254,12 +254,12 @@ void Options::execute(taf_info *ti) {
 			--delay_count;
 	}
 
-	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
-	room->set_ak_pal(&room_blk);
-	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(room)->set_ak_pal(&room_blk);
+	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(_G(workptr));
 }
 

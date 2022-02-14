@@ -42,8 +42,8 @@ void Room37::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
-	obj->show_sib(74);
-	obj->show_sib(75);
+	_G(obj)->show_sib(74);
+	_G(obj)->show_sib(75);
 
 	if (!flags.LoadGame) {
 		_G(spieler).scrollx = 124;
@@ -51,23 +51,23 @@ void Room37::entry() {
 	}
 
 	if (!_G(spieler).R37Kloppe) {
-		_G(timer_nr)[1] = room->set_timer(7, 5);
-		det->set_static_ani(7, -1);
+		_G(timer_nr)[1] = _G(room)->set_timer(7, 5);
+		_G(det)->set_static_ani(7, -1);
 
 		if (!_G(spieler).R37HundScham) {
-			_G(timer_nr)[0] = room->set_timer(3, 4);
-			det->set_static_ani(3, -1);
+			_G(timer_nr)[0] = _G(room)->set_timer(3, 4);
+			_G(det)->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
 		}
 	}
 
 	if (_G(spieler).R37Gebiss) {
-		det->hide_static_spr(9);
+		_G(det)->hide_static_spr(9);
 
 		if (_G(spieler).R37Kloppe) {
-			det->hide_static_spr(8);
+			_G(det)->hide_static_spr(8);
 		} else if (_G(spieler).R37HundScham) {
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 		}
 	}
 }
@@ -113,9 +113,9 @@ short Room37::use_wippe() {
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(159, -1);
 			del_inventar(_G(spieler).AkInvent);
-			flc->set_flic_user_function(cut_serv1);
+			_G(flc)->set_flic_user_function(cut_serv1);
 			flic_cut(FCUT_047, CFO_MODE);
-			flc->remove_flic_user_function();
+			_G(flc)->remove_flic_user_function();
 			flags.NoScroll = false;
 			show_cur();
 			_G(spieler).scrollx = 269;
@@ -139,28 +139,28 @@ int16 Room37::cut_serv1(int16 frame) {
 		if (!_G(spieler).R37Gebiss) {
 			static_nr = 9;
 			static_nr1 = 11;
-			det->show_static_spr(11);
+			_G(det)->show_static_spr(11);
 		} else {
 			static_nr = 8;
 			static_nr1 = 0;
 		}
 
-		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr, static_nr);
-		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr1, static_nr1);
+		_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr, static_nr);
+		_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, static_nr1, static_nr1);
 	}
 
-	det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, 7, 7);
-	det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, 14, 14);
+	_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, 7, 7);
+	_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, 14, 14);
 	return 0;
 }
 
 int16 Room37::cut_serv2(int16 frame) {
 	static const int16 STATIC_NR[] = { 7, 14, 12, 10 };
 
-	det->show_static_spr(12);
-	det->show_static_spr(10);
+	_G(det)->show_static_spr(12);
+	_G(det)->show_static_spr(10);
 	for (short i = 0; i < 4; i++)
-		det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
+		_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
 
 	return 0;
 }
@@ -179,16 +179,16 @@ int16 Room37::use_glas() {
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(147, -1);
 			del_inventar(_G(spieler).AkInvent);
-			flc->set_flic_user_function(cut_serv2);
+			_G(flc)->set_flic_user_function(cut_serv2);
 			flic_cut(FCUT_048, CFO_MODE);
-			flc->remove_flic_user_function();
+			_G(flc)->remove_flic_user_function();
 			flic_cut(FCUT_049, CFO_MODE);
 			invent_2_slot(GEBISS_INV);
-			det->hide_static_spr(9);
-			atds->set_ats_str(250, 1, ATS_DATEI);
-			atds->set_ats_str(256, 1, ATS_DATEI);
-			atds->del_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
-			obj->show_sib(SIB_HFUTTER2_R37);
+			_G(det)->hide_static_spr(9);
+			_G(atds)->set_ats_str(250, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(256, 1, ATS_DATEI);
+			_G(atds)->del_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(spieler).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(146, -1);
@@ -219,21 +219,21 @@ void Room37::dog_bell() {
 			flags.NoScroll = true;
 			auto_scroll(178, 0);
 			disable_timer();
-			det->stop_detail(3);
-			det->del_static_ani(3);
+			_G(det)->stop_detail(3);
+			_G(det)->del_static_ani(3);
 			start_detail_wait(5, 1, ANI_VOR);
-			det->hide_static_spr(9);
+			_G(det)->hide_static_spr(9);
 			start_detail_wait(6, 1, ANI_VOR);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			det->start_detail(11, 255, ANI_VOR);
+			_G(det)->start_detail(11, 255, ANI_VOR);
 			flic_cut(FCUT_050, CFO_MODE);
 			start_detail_wait(6, 1, ANI_RUECK);
-			det->stop_detail(11);
+			_G(det)->stop_detail(11);
 			set_person_pos(326, 85, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			det->show_static_spr(9);
+			_G(det)->show_static_spr(9);
 			start_ani_block(3, ABLOCK31);
-			det->set_static_ani(3, -1);
+			_G(det)->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
 //			g_engine->_sound->playSound(3);
 			enable_timer();
@@ -245,15 +245,15 @@ void Room37::dog_bell() {
 			set_person_spr(P_LEFT, P_CHEWY);
 			flags.NoScroll = true;
 			auto_scroll(178, 0);
-			room->set_timer_status(3, TIMER_STOP);
-			det->del_static_ani(3);
-			det->stop_detail(3);
+			_G(room)->set_timer_status(3, TIMER_STOP);
+			_G(det)->del_static_ani(3);
+			_G(det)->stop_detail(3);
 			start_detail_wait(4, 1, ANI_VOR);
 			flic_cut(FCUT_051, CFO_MODE);
 			_G(spieler).scrollx = 104;
 			flic_cut(FCUT_054, CFO_MODE);
 			register_cutscene(10);
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 
 			_G(spieler).R37HundScham = true;
 			dia_nr = 148;
@@ -306,36 +306,36 @@ void Room37::use_hahn() {
 			hide_cur();
 			auto_move(6, P_CHEWY);
 			load_room_music(256);
-			room->set_timer_status(7, TIMER_STOP);
-			det->stop_detail(7);
-			det->del_static_ani(7);
-			det->start_detail(9, 1, ANI_VOR);
+			_G(room)->set_timer_status(7, TIMER_STOP);
+			_G(det)->stop_detail(7);
+			_G(det)->del_static_ani(7);
+			_G(det)->start_detail(9, 1, ANI_VOR);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(GEBISS_INV);
 			flags.NoScroll = true;
 			auto_scroll(177, 0);
 
-			while (det->get_ani_status(9)) {
+			while (_G(det)->get_ani_status(9)) {
 				set_up_screen(DO_SETUP);
 				SHOULD_QUIT_RETURN;
 			}
 
-			det->start_detail(4, 1, ANI_VOR);
-			det->hide_static_spr(0);
-			det->start_detail(10, 10, ANI_VOR);
+			_G(det)->start_detail(4, 1, ANI_VOR);
+			_G(det)->hide_static_spr(0);
+			_G(det)->start_detail(10, 10, ANI_VOR);
 			auto_move(8, P_CHEWY);
 			flic_cut(FCUT_053, CFO_MODE);
-			det->stop_detail(10);
+			_G(det)->stop_detail(10);
 
 			_G(spieler).scrollx = 320;
 			flags.NoScroll = false;
-			atds->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
-			atds->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATEI);
-			atds->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATEI);
-			det->hide_static_spr(8);
+			_G(atds)->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(det)->hide_static_spr(8);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(141, -1);
-			obj->add_inventar(EIER_INV, &room_blk);
+			_G(obj)->add_inventar(EIER_INV, &room_blk);
 			inventory_2_cur(EIER_INV);
 			show_cur();
 		}

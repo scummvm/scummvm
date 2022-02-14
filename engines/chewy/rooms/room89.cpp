@@ -34,11 +34,11 @@ void Room89::entry() {
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(timer_nr)[0] = room->set_timer(2, 10);
+	_G(timer_nr)[0] = _G(room)->set_timer(2, 10);
 	if (_G(spieler).flags33_4) {
-		det->show_static_spr(5);
+		_G(det)->show_static_spr(5);
 		if (!_G(spieler).flags32_80)
-			det->show_static_spr(6);
+			_G(det)->show_static_spr(6);
 	}
 
 	if (flags.LoadGame) {
@@ -199,17 +199,17 @@ int Room89::proc4() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 
 	if (_G(spieler).flags33_4) {
-		atds->set_ats_str(514, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(514, 2, ATS_DATEI);
 		_G(spieler).flags32_80 = true;
-		det->hide_static_spr(6);
+		_G(det)->hide_static_spr(6);
 		new_invent_2_cur(111);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(491, -1);
 	} else {
-		det->show_static_spr(5);
-		det->show_static_spr(6);
+		_G(det)->show_static_spr(5);
+		_G(det)->show_static_spr(6);
 		_G(spieler).flags33_4 = true;
-		atds->set_ats_str(514, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(514, 1, ATS_DATEI);
 	}
 
 	show_cur();

@@ -57,19 +57,19 @@ void Room7::haken(int16 sib_nr) {
 	if (_G(spieler).R7RHaken) {
 		_G(spieler).R7SeilOk = true;
 		if (sib_nr == SIB_LHAKEN_R7) {
-			obj->calc_rsi_flip_flop(SIB_LHAKEN_R7);
-			obj->calc_rsi_flip_flop(SIB_RHAKEN_R7);
+			_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
+			_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 		}
-		atds->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
 		dia_nr = 9;
 	} else {
 		_G(spieler).R7SeilLeft = true;
 		dia_nr = 48;
 	}
 
-	obj->calc_all_static_detail();
-	atds->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(obj)->calc_all_static_detail();
+	_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
 	start_aad_wait(dia_nr, -1);
 }
 
@@ -82,79 +82,79 @@ void Room7::klingel() {
 		start_aad(5, 0);
 		start_ani_block(3, ABLOCK25);
 
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 		start_detail_wait(12, 1, ANI_VOR);
 		start_detail_wait(11, 1, ANI_VOR);
-		det->hide_static_spr(7);
-		det->stop_detail(5);
+		_G(det)->hide_static_spr(7);
+		_G(det)->stop_detail(5);
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else if (_G(spieler).R7BellCount == 1) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(6, 0);
 		start_ani_block(3, ABLOCK25);
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 		start_detail_wait(10, 1, ANI_VOR);
-		det->start_detail(13, 1, ANI_VOR);
+		_G(det)->start_detail(13, 1, ANI_VOR);
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
-		det->stop_detail(5);
+		_G(det)->stop_detail(5);
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 		start_detail_wait(13, 1, ANI_VOR);
 		flic_cut(FCUT_002, CFO_MODE);
-		det->stop_detail(0);
+		_G(det)->stop_detail(0);
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
 		set_person_pos(114, 138, P_CHEWY, -1);
 
 		start_detail_frame(19, 1, ANI_VOR, 6);
 		start_detail_frame(9, 1, ANI_VOR, 4);
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(9);
 		wait_detail(9);
-		det->hide_static_spr(9);
-		obj->show_sib(SIB_SCHLOTT_R7);
-		obj->calc_rsi_flip_flop(SIB_SCHLOTT_R7);
+		_G(det)->hide_static_spr(9);
+		_G(obj)->show_sib(SIB_SCHLOTT_R7);
+		_G(obj)->calc_rsi_flip_flop(SIB_SCHLOTT_R7);
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = false;
-		det->hide_static_spr(7);
+		_G(det)->hide_static_spr(7);
 
 	} else if (!_G(spieler).R7SeilOk) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(7, 0);
 		start_ani_block(3, ABLOCK25);
-		det->show_static_spr(7);
-		det->load_taf_seq(192, 74, nullptr);
-		det->start_detail(14, 1, ANI_VOR);
+		_G(det)->show_static_spr(7);
+		_G(det)->load_taf_seq(192, 74, nullptr);
+		_G(det)->start_detail(14, 1, ANI_VOR);
 		set_person_pos(95, 94, P_CHEWY, P_RIGHT);
-		det->stop_detail(5);
+		_G(det)->stop_detail(5);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 
 		flags.NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 		wait_detail(14);
 		start_ani_block(4, ABLOCK10);
-		det->hide_static_spr(7);
-		det->stop_detail(0);
+		_G(det)->hide_static_spr(7);
+		_G(det)->stop_detail(0);
 		set_person_pos(181, 130, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.NoScroll = false;
-		det->del_taf_tbl(192, 74, nullptr);
+		_G(det)->del_taf_tbl(192, 74, nullptr);
 
 	} else if (_G(spieler).R7SeilOk && !_G(spieler).R7BorkFlug) {
 		_G(spieler).R7BorkFlug = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad(8, 0);
 		start_detail_wait(1, 1, ANI_VOR);
-		obj->set_rsi_flip_flop(SIB_TKNOPF2_R7, 255);
-		obj->hide_sib(SIB_KLINGEL_R7);
+		_G(obj)->set_rsi_flip_flop(SIB_TKNOPF2_R7, 255);
+		_G(obj)->hide_sib(SIB_KLINGEL_R7);
 		flags.NoPalAfterFlc = false;
 		register_cutscene(2);
 		flic_cut(FCUT_003, CFO_MODE);
@@ -174,9 +174,9 @@ void Room7::gedAction(int index) {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		set_person_pos(180, 124, P_CHEWY, P_LEFT);
 		start_detail_wait(20, 1, ANI_VOR);
-		det->show_static_spr(10);
+		_G(det)->show_static_spr(10);
 		wait_show_screen(10 * _G(spieler).DelaySpeed);
-		det->hide_static_spr(10);
+		_G(det)->hide_static_spr(10);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(spieler).R7ChewyFlug = false;
 	}

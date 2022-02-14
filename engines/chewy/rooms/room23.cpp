@@ -48,9 +48,9 @@ void Room23::cockpit() {
 	switch_room(23);
 
 	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
-		det->hide_static_spr(3);
+		_G(det)->hide_static_spr(3);
 	else
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 }
 
 int16 Room23::start_gleiter() {
@@ -82,7 +82,7 @@ int16 Room23::start_gleiter() {
 				wait_show_screen(30);
 
 				for (int16 i = 0; i < 4; i++)
-					det->stop_detail(i);
+					_G(det)->stop_detail(i);
 
 				if (_G(spieler).R23GleiterExit == 14) {
 					_G(out)->setze_zeiger(nullptr);
@@ -132,23 +132,23 @@ void Room23::use_cartridge() {
 	_G(spieler).R23Cartridge = true;
 
 	if (_G(spieler).R18CartSave) {
-		atds->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(111, 2, ATS_DATEI);
+		_G(atds)->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(111, 2, ATS_DATEI);
 		start_detail_wait(4, 1, ANI_VOR);
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 	} else {
-		atds->set_ats_str(111, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(111, 1, ATS_DATEI);
 	}
 
 	_G(menu_item_vorwahl) = CUR_USE;
 }
 
 void Room23::get_cartridge() {
-	atds->set_ats_str(111, 0, ATS_DATEI);
-	atds->set_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_ats_str(111, 0, ATS_DATEI);
+	_G(atds)->set_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
 
 	_G(spieler).R23Cartridge = false;
-	det->hide_static_spr(3);
+	_G(det)->hide_static_spr(3);
 }
 
 } // namespace Rooms

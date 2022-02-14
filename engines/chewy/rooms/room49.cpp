@@ -43,12 +43,12 @@ void Room49::entry(int16 eib_nr) {
 	_G(SetUpScreenFunc) = setup_func;
 
 	if (!_G(spieler).R49BoyWeg) {
-		_G(timer_nr)[0] = room->set_timer(255, 2);
+		_G(timer_nr)[0] = _G(room)->set_timer(255, 2);
 	} else {
-		det->del_static_ani(0);
-		det->hide_static_spr(5);
-		det->del_static_ani(0);
-		det->del_static_ani(1);
+		_G(det)->del_static_ani(0);
+		_G(det)->hide_static_spr(5);
+		_G(det)->del_static_ani(0);
+		_G(det)->del_static_ani(1);
 	}
 
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
@@ -63,7 +63,7 @@ void Room49::entry(int16 eib_nr) {
 			_G(maus_links_click) = false;
 			_G(spieler).scrollx = 320;
 			_G(spieler).scrolly = 0;
-			det->start_detail(5, 1, ANI_VOR);
+			_G(det)->start_detail(5, 1, ANI_VOR);
 		} else if (eib_nr == 83) {
 			set_person_pos(377, 78, P_HOWARD, P_LEFT);
 		}
@@ -100,29 +100,29 @@ void Room49::calc_boy_ani() {
 	if (!_G(spieler).R49BoyAniCount) {
 		_G(spieler).R49BoyAniCount = 3;
 		_G(spieler).R49BoyAni = true;
-		det->del_static_ani(0);
+		_G(det)->del_static_ani(0);
 	} else {
 		--_G(spieler).R49BoyAniCount;
 		_G(spieler).R49BoyAni = false;
-		det->del_static_ani(1);
+		_G(det)->del_static_ani(1);
 	}
 
-	det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-	det->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_VOR);
-	uhr->reset_timer(_G(timer_nr)[0], 0);
+	_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
+	_G(det)->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_VOR);
+	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 }
 
 void Room49::calc_boy() {
 	if (!_G(spieler).R49WegFrei) {
 		hide_cur();
-		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(_G(timer_nr)[0], 0);
+		_G(room)->set_timer_status(255, TIMER_STOP);
+		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
 		person_end_phase[P_CHEWY] = P_LEFT;
-		det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
-		det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
-		det->set_static_ani(2, -1);
+		_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
+		_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
+		_G(det)->set_static_ani(2, -1);
 
 		_G(SetUpScreenFunc) = nullptr;
 		start_aad_wait(262, -1);
@@ -130,19 +130,19 @@ void Room49::calc_boy() {
 		auto_move(3, P_CHEWY);
 		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
-		det->del_static_ani(2);
+		_G(det)->del_static_ani(2);
 		start_detail_wait(3, 1, ANI_VOR);
 
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(9);
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		start_detail_wait(8, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_HOWARD] = false;
-		det->hide_static_spr(9);
+		_G(det)->hide_static_spr(9);
 		start_detail_wait(4, 1, ANI_GO);
 
 		_G(SetUpScreenFunc) = setup_func;
-		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-		room->set_timer_status(255, TIMER_START);
+		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
+		_G(room)->set_timer_status(255, TIMER_START);
 		show_cur();
 	}
 }
@@ -175,8 +175,8 @@ void Room49::use_boy_cigar() {
 	_G(SetUpScreenFunc) = nullptr;
 	auto_move(5, P_CHEWY);
 
-	const int16 zoom = room->_roomInfo->ZoomFak;
-	room->set_zoom(zoom);
+	const int16 zoom = _G(room)->_roomInfo->ZoomFak;
+	_G(room)->set_zoom(zoom);
 	go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
 	set_person_spr(P_LEFT, P_HOWARD);
 	flags.NoScroll = true;
@@ -185,19 +185,19 @@ void Room49::use_boy_cigar() {
 	flic_cut(67, CFO_MODE);
 	register_cutscene(17);
 	
-	room->set_timer_status(255, TIMER_STOP);
-	uhr->reset_timer(_G(timer_nr)[0], 0);
-	det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
-	det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
+	_G(room)->set_timer_status(255, TIMER_STOP);
+	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+	_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
+	_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
 	flags.NoScroll = false;
 	set_person_spr(P_RIGHT, P_CHEWY);
 	start_aad_wait(264, -1);
-	room->set_zoom(zoom);
+	_G(room)->set_zoom(zoom);
 
-	obj->add_inventar(GUM_INV, &room_blk);
+	_G(obj)->add_inventar(GUM_INV, &room_blk);
 	inventory_2_cur(GUM_INV);
-	atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).R49BoyWeg = true;
@@ -213,19 +213,19 @@ void Room49::talk_boy() {
 
 void Room49::talk_boy(int16 aad_nr) {
 	if (!_G(spieler).R49BoyWeg) {
-		room->set_timer_status(255, TIMER_STOP);
-		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
+		_G(room)->set_timer_status(255, TIMER_STOP);
+		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
-		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-		det->set_static_ani(2, -1);
+		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
+		_G(det)->set_static_ani(2, -1);
 		_G(SetUpScreenFunc) = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(aad_nr, -1);
 		_G(SetUpScreenFunc) = setup_func;
-		det->del_static_ani(2);
-		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-		room->set_timer_status(255, TIMER_START);
+		_G(det)->del_static_ani(2);
+		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
+		_G(room)->set_timer_status(255, TIMER_START);
 	}
 }
 
@@ -245,7 +245,7 @@ int16 Room49::use_taxi() {
 		action_ret = true;
 		hide_cur();
 		start_ani_block(2, ABLOCK34);
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -258,7 +258,7 @@ int16 Room49::use_taxi() {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 
-		det->hide_static_spr(7);
+		_G(det)->hide_static_spr(7);
 		start_detail_wait(5, 1, ANI_VOR);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);

@@ -83,36 +83,15 @@ MovInfo auto_mov_obj[MAX_OBJ_MOV];
 MovPhasen mov_phasen[MAX_OBJ_MOV];
 MovLine mov_line[MAX_OBJ_MOV][5];
 TimerBlk ani_timer[MAX_TIMER_OBJ];
-RoomDetailInfo *Rdi;
-StaticDetailInfo *Sdi;
-AniDetailInfo *Adi;
 Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0 };
 CustomInfo Ci;
 GotoPkt gpkt;
 
-taf_info *curtaf;
-taf_info *menutaf;
-taf_seq_info *howard_taf;
-taf_info *chewy;
-int16 *chewy_kor;
-
 int16 person_end_phase[MAX_PERSON];
 int16 ani_stand_count[MAX_PERSON];
 
 bool ani_stand_flag[MAX_PERSON];
-
-BitClass *bit;
-GedClass *ged;
-Text *txt;
-Room *room;
-Object *obj;
-Timer *uhr;
-Detail *det;
-Effect *fx;
-Atdsys *atds;
-Flic *flc;
-MovClass *mov;
 
 
 } // namespace Chewy

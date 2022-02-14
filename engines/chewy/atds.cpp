@@ -721,18 +721,18 @@ int16 Atdsys::get_ats_str(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 int16 Atdsys::get_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
-	int16 ret = bit->is_bit(_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
+	int16 ret = _G(bit)->is_bit(_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 	return ret;
 }
 
 void Atdsys::set_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
-	bit->set_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
+	_G(bit)->set_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 }
 
 void Atdsys::del_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode) {
 	set_ats_mem(mode);
-	bit->del_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
+	_G(bit)->del_bit(&_ats_sheader[txt_nr * MAX_ATS_STATUS], bit_idx);
 }
 
 char *Atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
@@ -825,11 +825,11 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 				}
 
 				if (tmp_str[1] != ATDS_END) {
-					if (!bit->is_bit(steuer, ATS_COUNT_BIT))
+					if (!_G(bit)->is_bit(steuer, ATS_COUNT_BIT))
 						++*status;
 				} else {
 
-					if (bit->is_bit(steuer, ATS_RESET_BIT))
+					if (_G(bit)->is_bit(steuer, ATS_RESET_BIT))
 						*status = 0;
 				}
 			}
@@ -1180,7 +1180,7 @@ AdsNextBlk *Atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 			if (_adsv.BlkPtr) {
 				if (start_ads_auto_dia(_adsv.BlkPtr))
 					_adsv.AutoDia = true;
-				if (bit->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_EXIT_BIT) == true) {
+				if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_EXIT_BIT) == true) {
 					stop_ads();
 					_adsnb.EndNr = _eNr[item_nr];
 					_adsnb.BlkNr = -1;
@@ -1193,10 +1193,10 @@ AdsNextBlk *Atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 }
 
 AdsNextBlk *Atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
-	if (bit->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_SHOW_BIT) == false)
+	if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_SHOW_BIT) == false)
 		_adsBlock[blk_nr].Show[_eNr[item_nr]] = false;
 	_adsnb.EndNr = _eNr[item_nr];
-	if (bit->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_RESTART_BIT) == true) {
+	if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_RESTART_BIT) == true) {
 		_adsnb.BlkNr = 0;
 
 		_adsStackPtr = 0;

@@ -122,11 +122,11 @@ int16 Room4::sonde_comp() {
 	_G(maus_links_click) = false;
 	minfo.button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
-	room->load_room(&room_blk, 3, &_G(spieler));
+	_G(room)->load_room(&room_blk, 3, &_G(spieler));
 	set_person_pos(110, 139, P_CHEWY, P_LEFT);
 
 	_G(fx_blend) = BLEND1;
-	atds->stop_aad();
+	_G(atds)->stop_aad();
 
 	return cur_x;
 }

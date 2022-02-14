@@ -134,20 +134,20 @@ void sprite_engine() {
 
 		switch (_G(z_obj_sort)[min_zeiger].ObjArt) {
 		case ZOBJ_ANI_DETAIL:
-			if (Adi[nr].zoom) {
+			if (_G(Adi)[nr].zoom) {
 
-				y = Adi[nr].y;
-				calc_zoom(y, (int16)room->_roomInfo->ZoomFak, (int16)room->_roomInfo->ZoomFak, &detmov);
+				y = _G(Adi)[nr].y;
+				calc_zoom(y, (int16)_G(room)->_roomInfo->ZoomFak, (int16)_G(room)->_roomInfo->ZoomFak, &detmov);
 			} else {
 				detmov.Xzoom = 0;
 				detmov.Yzoom = 0;
 			}
-			det->plot_ani_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr,
+			_G(det)->plot_ani_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr,
 			                       detmov.Xzoom, detmov.Yzoom);
 			break;
 
 		case ZOBJ_STATIC_DETAIL:
-			det->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr);
+			_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, nr, nr);
 			break;
 
 		case ZOBJ_INVENTAR:
@@ -160,12 +160,12 @@ void sprite_engine() {
 			if (!_G(spieler).PersonHide[P_CHEWY]) {
 				if (!_G(spz_ani)[P_CHEWY]) {
 					spr_nr = _G(chewy_ph)[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
-					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
-					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
-					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)room->_roomInfo->ZoomFak,
-					          (int16)room->_roomInfo->ZoomFak, &spieler_vector[P_CHEWY]);
+					x = spieler_mi[P_CHEWY].XyzStart[0] + _G(chewy_kor)[spr_nr * 2] - _G(spieler).scrollx;
+					y = spieler_mi[P_CHEWY].XyzStart[1] + _G(chewy_kor)[spr_nr * 2 + 1] - _G(spieler).scrolly;
+					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->ZoomFak,
+					          (int16)_G(room)->_roomInfo->ZoomFak, &spieler_vector[P_CHEWY]);
 
-					_G(out)->scale_set(chewy->image[spr_nr], x, y,
+					_G(out)->scale_set(_G(chewy)->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
 					                _G(scr_width));
@@ -176,8 +176,8 @@ void sprite_engine() {
 					y = spieler_mi[P_CHEWY].XyzStart[1] + _G(spz_tinfo)->korrektur[spr_nr * 2 + 1] -
 					    _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1],
-					          (int16)room->_roomInfo->ZoomFak,
-					          (int16)room->_roomInfo->ZoomFak,
+					          (int16)_G(room)->_roomInfo->ZoomFak,
+					          (int16)_G(room)->_roomInfo->ZoomFak,
 					          &spieler_vector[P_CHEWY]);
 
 					_G(out)->scale_set(_G(spz_tinfo)->image[spr_nr], x, y,
@@ -260,26 +260,26 @@ void calc_z_ebene() {
 	}
 
 	for (i = 0; i < MAXDETAILS; i++) {
-		if (Sdi[i].SprNr != -1) {
+		if (_G(Sdi)[i].SprNr != -1) {
 			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_STATIC_DETAIL;
 			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
-			_G(z_obj_sort)[_G(z_count)].ObjZ = Sdi[i].z_ebene;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(Sdi)[i].z_ebene;
 			++_G(z_count);
 		}
-		if (Adi[i].start_ani != -1) {
+		if (_G(Adi)[i].start_ani != -1) {
 			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_ANI_DETAIL;
 			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
-			_G(z_obj_sort)[_G(z_count)].ObjZ = Adi[i].z_ebene;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(Adi)[i].z_ebene;
 			++_G(z_count);
 		}
 	}
 
-	for (i = 0; i < obj->mov_obj_room[0]; i++) {
+	for (i = 0; i < _G(obj)->mov_obj_room[0]; i++) {
 
-		if (_G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene < 2000) {
+		if (_G(spieler).room_m_obj[_G(obj)->mov_obj_room[i + 1]].ZEbene < 2000) {
 			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_INVENTAR;
-			_G(z_obj_sort)[_G(z_count)].ObjNr = obj->mov_obj_room[i + 1];
-			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spieler).room_m_obj[obj->mov_obj_room[i + 1]].ZEbene;
+			_G(z_obj_sort)[_G(z_count)].ObjNr = _G(obj)->mov_obj_room[i + 1];
+			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spieler).room_m_obj[_G(obj)->mov_obj_room[i + 1]].ZEbene;
 			++_G(z_count);
 		}
 	}
@@ -342,8 +342,8 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	_G(ssi)[tmp_nr].Y = spieler_vector[p_nr].Xypos[1] - _G(spieler).scrolly;
 	if (!flags.ExitMov) {
 		if (p_nr == P_CHEWY) {
-			u_index = ged->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
-			                        room->_gedXAnz[room_blk.AkAblage],
+			u_index = _G(ged)->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
+			                        _G(room)->_gedXAnz[room_blk.AkAblage],
 			                        _G(ged_mem)[room_blk.AkAblage]);
 			check_shad(u_index, 1);
 		}
@@ -408,7 +408,7 @@ void set_person_spr(int16 nr, int16 p_nr) {
 }
 
 void stop_person(int16 p_nr) {
-	mov->stop_auto_go();
+	_G(mov)->stop_auto_go();
 	spieler_vector[p_nr].Count = 0;
 
 }
@@ -416,8 +416,8 @@ void stop_person(int16 p_nr) {
 void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
-	det->start_detail(ani_nr, rep, mode);
-	while (det->get_ani_status(ani_nr) && !SHOULD_QUIT) {
+	_G(det)->start_detail(ani_nr, rep, mode);
+	while (_G(det)->get_ani_status(ani_nr) && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
@@ -427,20 +427,20 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	AniDetailInfo *adi;
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
-	det->start_detail(ani_nr, rep, mode);
-	adi = det->get_ani_detail(ani_nr);
+	_G(det)->start_detail(ani_nr, rep, mode);
+	adi = _G(det)->get_ani_detail(ani_nr);
 	if (mode == ANI_VOR)
 		frame = adi->ani_count + frame;
 	else
 		frame = adi->ani_count - frame;
-	while (det->get_ani_status(ani_nr) && adi->ani_count != frame && !SHOULD_QUIT) {
+	while (_G(det)->get_ani_status(ani_nr) && adi->ani_count != frame && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
 }
 
 void wait_detail(int16 det_nr) {
-	while (det->get_ani_status(det_nr) && !SHOULD_QUIT)
+	while (_G(det)->get_ani_status(det_nr) && !SHOULD_QUIT)
 		set_up_screen(DO_SETUP);
 }
 
@@ -465,7 +465,7 @@ void start_ani_block(int16 anz, const AniBlock *ab) {
 		if (ab[i].Mode == ANI_WAIT)
 			start_detail_wait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 		else
-			det->start_detail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
+			_G(det)->start_detail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
 }
@@ -477,8 +477,8 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	_G(talk_start_ani) = -1;
 	_G(talk_hide_static) = -1;
 	set_ssi_xy();
-	atds->start_aad(dia_nr);
-	while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
+	_G(atds)->start_aad(dia_nr);
+	while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
 		set_up_screen(DO_SETUP);
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
@@ -491,7 +491,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 void start_aad(int16 dia_nr) {
 	g_engine->_sound->waitForSpeechToFinish();
 	set_ssi_xy();
-	atds->start_aad(dia_nr);
+	_G(atds)->start_aad(dia_nr);
 }
 
 bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
@@ -506,9 +506,9 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 		if (txt_nr != -1) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
-			ret = atds->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
+			ret = _G(atds)->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 			if (ret) {
-				while (atds->ats_get_status() != false && !SHOULD_QUIT)
+				while (_G(atds)->ats_get_status() != false && !SHOULD_QUIT)
 					set_up_screen(DO_SETUP);
 
 			// WORKAROUND: There are a few cases in the game with no text,
@@ -517,7 +517,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			} else if (VocNr >= 0 && !g_engine->_sound->isSpeechMuted()) {
 				ret = true;
 				vocx = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
-				g_engine->_sound->setSoundChannelBalance(0, atds->getStereoPos(vocx));
+				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
 				g_engine->_sound->playSpeech(VocNr);
 				//warning("FIXME - unknown constant SMP_PLAYING");
 
@@ -539,11 +539,11 @@ void aad_wait(int16 str_nr) {
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	if (str_nr == -1) {
-		while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
+		while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	} else {
-		while (atds->aad_get_status() < str_nr && !SHOULD_QUIT) {
+		while (_G(atds)->aad_get_status() < str_nr && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	}
@@ -558,13 +558,13 @@ void start_aad(int16 dia_nr, int16 ssi_nr) {
 	case 0:
 		_G(ssi)[0].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;
 		_G(ssi)[0].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-		atds->set_split_win(0, &_G(ssi)[0]);
+		_G(atds)->set_split_win(0, &_G(ssi)[0]);
 		break;
 
 	default:
 		break;
 	}
-	atds->start_aad(dia_nr);
+	_G(atds)->start_aad(dia_nr);
 }
 
 void start_ads_wait(int16 dia_nr) {
@@ -665,7 +665,7 @@ void new_auto_line(int16 nr) {
 				auto_mov_obj[nr].XyzEnd[0] = mov_line[nr][auto_mov_vector[nr].StNr - 1].EndXyz[0] ;
 				auto_mov_obj[nr].XyzEnd[1] = mov_line[nr][auto_mov_vector[nr].StNr - 1].EndXyz[1] ;;
 				auto_mov_obj[nr].XyzEnd[2] = mov_line[nr][auto_mov_vector[nr].StNr - 1].EndXyz[2] ;;
-				mov->get_mov_vector((int16 *)auto_mov_obj[nr].XyzStart,
+				_G(mov)->get_mov_vector((int16 *)auto_mov_obj[nr].XyzStart,
 				                     auto_mov_obj[nr].Vorschub, &auto_mov_vector[nr]);
 			}
 		} else {
@@ -788,19 +788,19 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 			}
 
 			if (!mi->Mode) {
-				if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
+				if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 				                              om->Xypos[1] + mi->HotY + tmpy,
-				                              room->_gedXAnz[room_blk.AkAblage],
+				                              _G(room)->_gedXAnz[room_blk.AkAblage],
 				                              _G(ged_mem)[room_blk.AkAblage]))) {
 
-					if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
+					if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 					                              om->Xypos[1] + mi->HotY,
-					                              room->_gedXAnz[room_blk.AkAblage],
+					                              _G(room)->_gedXAnz[room_blk.AkAblage],
 					                              _G(ged_mem)[room_blk.AkAblage]))) {
 
-						if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
+						if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 						                              om->Xypos[1] + mi->HotY + tmpy,
-						                              room->_gedXAnz[room_blk.AkAblage],
+						                              _G(room)->_gedXAnz[room_blk.AkAblage],
 						                              _G(ged_mem)[room_blk.AkAblage]))) {
 							om->Count = 0;
 						} else {
@@ -826,7 +826,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 								om->Xypos[2] += tmpz;
 								mi->XyzStart[0] = om->Xypos[0];
 								mi->XyzStart[1] = om->Xypos[1];
-								mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+								_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 								if (om->Xyvo[1] != 0) {
 									_G(new_vector) = true;
 									swap_if_l(&om->Xyvo[1], &om->Xyvo[0]);
@@ -863,7 +863,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 							om->Xypos[2] += tmpz;
 							mi->XyzStart[0] = om->Xypos[0];
 							mi->XyzStart[1] = om->Xypos[1];
-							mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+							_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 							if (om->Xyvo[0] != 0) {
 								_G(new_vector) = true;
 								swap_if_l(&om->Xyvo[0], &om->Xyvo[1]);
@@ -888,7 +888,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 						_G(new_vector) = false;
 						mi->XyzStart[0] = om->Xypos[0];
 						mi->XyzStart[1] = om->Xypos[1];
-						mov->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+						_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 					}
 					if (om->Count == 0 && !flags.NoEndPosMovObj) {
 						mi->XyzStart[0] = mi->XyzEnd[0];
@@ -903,9 +903,9 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				om->Xypos[1] += tmpy;
 				om->Xypos[2] += tmpz;
 				if (mi->Id == CHEWY_OBJ) {
-					u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
+					u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 					                        om->Xypos[1] + mi->HotY,
-					                        room->_gedXAnz[room_blk.AkAblage],
+					                        _G(room)->_gedXAnz[room_blk.AkAblage],
 					                        _G(ged_mem)[room_blk.AkAblage]);
 					check_shad(u_index, 1);
 				}
@@ -1052,7 +1052,7 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 				mi->Vorschub = 2;
 		}
 		if (tmp_vorschub != mi->Vorschub && om->Count) {
-			mov->get_mov_vector((int16 *)mi->XyzStart, mi->Vorschub, om);
+			_G(mov)->get_mov_vector((int16 *)mi->XyzStart, mi->Vorschub, om);
 			get_phase(om, mi);
 		}
 	}

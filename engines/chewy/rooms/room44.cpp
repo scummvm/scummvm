@@ -37,7 +37,7 @@ void Room44::look_news() {
 	hide_person();
 	_G(fx_blend) = BLEND1;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
-	room->load_room(&room_blk, 44, &_G(spieler));
+	_G(room)->load_room(&room_blk, 44, &_G(spieler));
 
 	start_aad_wait(172, -1);
 	_G(spieler).scrollx = tmpsx;

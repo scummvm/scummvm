@@ -103,37 +103,37 @@ void Room45::setup_func() {
 
 			for (int16 i = 0; i < R45_MAX_PERSON; i++) {
 				if (_G(r45_pinfo)[i][0] == 1) {
-					y = Adi[3 + i].y;
-					x = Adi[3 + i].x;
+					y = _G(Adi)[3 + i].y;
+					x = _G(Adi)[3 + i].x;
 
 					if (i < 6) {
 						x -= _G(r45_pinfo)[i][1];
 						if (x < -30) {
 							_G(r45_pinfo)[i][0] = 0;
-							det->stop_detail(3 + i);
+							_G(det)->stop_detail(3 + i);
 						}
 					} else {
 						x += _G(r45_pinfo)[i][1];
 						if (x > 540) {
 							_G(r45_pinfo)[i][0] = 0;
-							det->stop_detail(3 + i);
+							_G(det)->stop_detail(3 + i);
 						}
 					}
-					det->set_detail_pos(3 + i, x, y);
+					_G(det)->set_detail_pos(3 + i, x, y);
 				} else {
 					++_G(r45_pinfo)[i][2];
 
 					if (_G(r45_pinfo)[i][2] >= _G(r45_pinfo)[i][3]) {
 						_G(r45_pinfo)[i][2] = 0;
 						_G(r45_pinfo)[i][0] = 1;
-						y = Adi[3 + i].y;
+						y = _G(Adi)[3 + i].y;
 						if (i < 6) {
 							x = 500;
 						} else {
 							x = 0;
 						}
-						det->set_detail_pos(3 + i, x, y);
-						det->start_detail(3 + i, 255, ANI_VOR);
+						_G(det)->set_detail_pos(3 + i, x, y);
+						_G(det)->start_detail(3 + i, 255, ANI_VOR);
 					}
 				}
 			}
@@ -197,23 +197,23 @@ int16 Room45::use_taxi() {
 }
 
 void Room45::talk_taxi(int16 aad_nr) {
-	room->set_timer_status(12, TIMER_STOP);
-	det->del_static_ani(12);
+	_G(room)->set_timer_status(12, TIMER_STOP);
+	_G(det)->del_static_ani(12);
 	start_detail_wait(13, 1, ANI_VOR);
-	det->set_static_ani(14, -1);
+	_G(det)->set_static_ani(14, -1);
 	start_aad_wait(aad_nr, -1);
-	det->del_static_ani(14);
+	_G(det)->del_static_ani(14);
 	start_detail_wait(13, 1, ANI_RUECK);
-	det->set_static_ani(12, -1);
-	room->set_timer_status(12, TIMER_START);
+	_G(det)->set_static_ani(12, -1);
+	_G(room)->set_timer_status(12, TIMER_START);
 }
 
 void Room45::taxi_mov() {
 	_G(HowardMov) = 2;
-	room->set_timer_status(12, TIMER_STOP);
-	det->del_static_ani(12);
+	_G(room)->set_timer_status(12, TIMER_STOP);
+	_G(det)->del_static_ani(12);
 	g_engine->_sound->playSound(15, 1);
-	det->show_static_spr(11);
+	_G(det)->show_static_spr(11);
 	auto_move(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -225,7 +225,7 @@ void Room45::taxi_mov() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 	}
 
-	det->hide_static_spr(11);
+	_G(det)->hide_static_spr(11);
 	g_engine->_sound->playSound(15, 2);
 	g_engine->_sound->playSound(15, 2, false);
 	g_engine->_sound->playSound(15, 0);
@@ -243,13 +243,13 @@ int16 Room45::use_boy() {
 		if (is_cur_inventar(DOLLAR175_INV)) {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
-			atds->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATEI);
+			_G(atds)->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATEI);
 			start_aad_wait(258, -1);
-			room->set_timer_status(0, TIMER_STOP);
-			det->del_static_ani(0);
+			_G(room)->set_timer_status(0, TIMER_STOP);
+			_G(det)->del_static_ani(0);
 			start_detail_wait(1, 1, ANI_VOR);
-			room->set_timer_status(0, TIMER_START);
-			det->set_static_ani(0, -1);
+			_G(room)->set_timer_status(0, TIMER_START);
+			_G(det)->set_static_ani(0, -1);
 			_G(spieler).R45MagOk = true;
 		}
 	} else {

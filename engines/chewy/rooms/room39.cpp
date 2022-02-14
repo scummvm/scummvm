@@ -55,16 +55,16 @@ bool Room39::_flag;
 void Room39::entry() {
 	if (!_G(spieler).R41Einbruch) {
 		if (_G(spieler).R39HowardDa) {
-			det->show_static_spr(10);
+			_G(det)->show_static_spr(10);
 			if (!_G(spieler).R39HowardWach)
-				det->start_detail(1, 255, ANI_VOR);
+				_G(det)->start_detail(1, 255, ANI_VOR);
 			else
-				det->set_static_ani(5, -1);
+				_G(det)->set_static_ani(5, -1);
 
-			atds->del_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 	} else {
-		atds->set_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	set_tv();
@@ -83,21 +83,21 @@ short Room39::use_howard() {
 				_G(spieler).R39ScriptOk = true;
 				auto_move(3, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				det->start_detail(6, 255, ANI_VOR);
+				_G(det)->start_detail(6, 255, ANI_VOR);
 				start_aad_wait(170, -1);
-				det->stop_detail(6);
+				_G(det)->stop_detail(6);
 				start_detail_wait(7, 1, ANI_VOR);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 
 				del_inventar(_G(spieler).AkInvent);
-				det->stop_detail(1);
+				_G(det)->stop_detail(1);
 				start_ani_block(2, ABLOCK33);
 				start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(167, -1);
-				det->stop_detail(3);
+				_G(det)->stop_detail(3);
 				start_detail_wait(4, 1, ANI_VOR);
-				det->set_static_ani(5, -1);
-				atds->set_ats_str(62, 1, ATS_DATEI);
+				_G(det)->set_static_ani(5, -1);
+				_G(atds)->set_ats_str(62, 1, ATS_DATEI);
 				start_aad_wait(169, -1);
 				show_cur();
 
@@ -153,10 +153,10 @@ void Room39::ok() {
 
 	Room43::night_small();
 	_G(spieler).PersonRoomNr[P_HOWARD] = 27;
-	obj->show_sib(SIB_SURIMY_R27);
-	obj->show_sib(SIB_ZEITUNG_R27);
-	obj->calc_rsi_flip_flop(SIB_SURIMY_R27);
-	obj->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
+	_G(obj)->show_sib(SIB_SURIMY_R27);
+	_G(obj)->show_sib(SIB_ZEITUNG_R27);
+	_G(obj)->calc_rsi_flip_flop(SIB_SURIMY_R27);
+	_G(obj)->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
 	invent_2_slot(BRIEF_INV);
 
 	switch_room(27);
@@ -256,7 +256,7 @@ int16 Room39::use_tv() {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
-				atds->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATEI);
+				_G(atds)->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATEI);
 				_G(spieler).R39TvRecord = _G(spieler).R39TvKanal + 1;
 			} else {
 				ani_nr = CH_TALK12;
@@ -320,9 +320,9 @@ void Room39::look_tv(bool cls_mode) {
 					_flag = true;
 			}
 
-			flc->set_custom_user_function(setup_func);
+			_G(flc)->set_custom_user_function(setup_func);
 			flic_cut(flic_nr, CFO_MODE);
-			flc->remove_custom_user_function();
+			_G(flc)->remove_custom_user_function();
 
 			if (cls_mode) {
 				_G(out)->cls();
@@ -343,20 +343,20 @@ void Room39::look_tv(bool cls_mode) {
 
 void Room39::set_tv() {
 	for (int16 i = 0; i < 6; i++)
-		det->hide_static_spr(i + 4);
+		_G(det)->hide_static_spr(i + 4);
 
 	if (_G(spieler).R39TvOn) {
 		if (_G(spieler).R39TvKanal == 2) {
-			det->start_detail(0, 255, ANI_VOR);
+			_G(det)->start_detail(0, 255, ANI_VOR);
 		} else {
-			det->stop_detail(0);
-			det->show_static_spr(_G(spieler).R39TvKanal + 4);
+			_G(det)->stop_detail(0);
+			_G(det)->show_static_spr(_G(spieler).R39TvKanal + 4);
 		}
 
 		if (_G(spieler).R39TransMensch) {
-			atds->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATEI);
+			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATEI);
 		} else {
-			atds->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATEI);
 		}
 	}
 }
@@ -381,16 +381,16 @@ int16 Room39::setup_func(int16 frame) {
 		case 171:
 		case 266:
 		case 370:
-			atds->stop_aad();
+			_G(atds)->stop_aad();
 			break;
 		default:
 			break;
 		}
 	}
 
-	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 
-	if (!_flag && atds->aad_get_status() == -1)
+	if (!_flag && _G(atds)->aad_get_status() == -1)
 		action_ret = -1;
 
 	return action_ret;

@@ -39,10 +39,10 @@ void Room87::entry() {
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 28;
 	_G(zoom_horizont) = 176;
 	if (_G(spieler).flags32_4)
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 
 	if (_G(spieler).flags32_8)
-		det->show_static_spr(4);
+		_G(det)->show_static_spr(4);
 
 	if (flags.LoadGame)
 		return;
@@ -89,7 +89,7 @@ void Room87::xit(int16 eib_nr) {
 
 	spieler_mi[P_CHEWY].Mode = true;
 	_G(zoom_horizont) = 0;
-	room->set_zoom(25);
+	_G(room)->set_zoom(25);
 	_G(HowardMov) = 1;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
@@ -134,10 +134,10 @@ int Room87::proc2(int16 txt_nr) {
 		auto_move(movNr, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
-		atds->set_ats_str(txt_nr, 1, ATS_DATEI);
-		det->show_static_spr(movNr);
+		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATEI);
+		_G(det)->show_static_spr(movNr);
 		if (_G(spieler).flags32_4 && _G(spieler).flags32_8)
-			atds->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 	show_cur();
 	return 1;
@@ -148,7 +148,7 @@ int16 Room87::proc3(int16 key) {
 }
 
 int16 Room87::proc5(int16 key) {
-	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 	return 0;
 }
 
@@ -159,16 +159,16 @@ int Room87::proc4() {
 	hide_cur();
 	auto_move(1, P_CHEWY);
 	flic_cut(93, CFO_MODE);
-	flc->set_custom_user_function(proc3);
+	_G(flc)->set_custom_user_function(proc3);
 	flic_cut(94, CFO_MODE);
-	flc->remove_custom_user_function();
-	flc->set_custom_user_function(proc5);
+	_G(flc)->remove_custom_user_function();
+	_G(flc)->set_custom_user_function(proc5);
 	start_aad(472);
 	flic_cut(95, CFO_MODE);
-	flc->remove_custom_user_function();
+	_G(flc)->remove_custom_user_function();
 	flic_cut(96, CFO_MODE);
-	det->hide_static_spr(2);
-	det->start_detail(2, 255, false);
+	_G(det)->hide_static_spr(2);
+	_G(det)->start_detail(2, 255, false);
 	start_aad_wait(471, -1);
 	flic_cut(97, CFO_MODE);
 	flic_cut(98, CFO_MODE);

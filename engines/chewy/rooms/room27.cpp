@@ -30,11 +30,11 @@ namespace Rooms {
 
 void Room27::entry() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
-		_G(timer_nr)[0] = room->set_timer(0, 5);
-		det->set_static_ani(0, -1);
-		atds->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(timer_nr)[0] = _G(room)->set_timer(0, 5);
+		_G(det)->set_static_ani(0, -1);
+		_G(atds)->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
-		atds->set_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	_G(spieler).PersonHide[P_HOWARD] = true;
@@ -48,8 +48,8 @@ void Room27::xit(int16 eib_nr) {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		if (eib_nr == 55) {
 			start_aad_wait(175, -1);
-			room->set_timer_status(0, TIMER_STOP);
-			det->del_static_ani(0);
+			_G(room)->set_timer_status(0, TIMER_STOP);
+			_G(det)->del_static_ani(0);
 			start_detail_wait(2, 1, ANI_VOR);
 			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 			spieler_mi[P_HOWARD].Id = HOWARD_OBJ;
@@ -63,7 +63,7 @@ void Room27::xit(int16 eib_nr) {
 }
 
 void Room27::get_surimy() {
-	obj->calc_all_static_detail();
+	_G(obj)->calc_all_static_detail();
 	hide_cur();
 	auto_move(4, P_CHEWY);
 
@@ -72,7 +72,7 @@ void Room27::get_surimy() {
 	}
 
 	show_cur();
-	obj->hide_sib(SIB_SURIMY_R27);
+	_G(obj)->hide_sib(SIB_SURIMY_R27);
 }
 
 void Room27::talk_howard() {

@@ -34,26 +34,26 @@ void Room63::entry() {
 	_G(r63Schalter) = false;
 	_G(r63RunDia) = 0;
 	if (_G(spieler).R63FxMannWeg)
-		det->del_static_ani(5);
+		_G(det)->del_static_ani(5);
 	if (!_G(spieler).R63Uhr) {
 		_G(cur_hide_flag) = false;
 		hide_cur();
-		det->start_detail(12, 255, ANI_VOR);
-		det->start_detail(10, 255, ANI_VOR);
-		det->start_detail(18, 255, ANI_VOR);
+		_G(det)->start_detail(12, 255, ANI_VOR);
+		_G(det)->start_detail(10, 255, ANI_VOR);
+		_G(det)->start_detail(18, 255, ANI_VOR);
 		auto_move(4, P_CHEWY);
-		det->stop_detail(10);
-		det->start_detail(11, 255, ANI_VOR);
+		_G(det)->stop_detail(10);
+		_G(det)->start_detail(11, 255, ANI_VOR);
 		auto_scroll(58, 0);
 		start_aad_wait(355, -1);
-		det->stop_detail(11);
-		det->start_detail(10, 255, ANI_VOR);
+		_G(det)->stop_detail(11);
+		_G(det)->start_detail(10, 255, ANI_VOR);
 		show_cur();
 	} else if (!_G(spieler).R63Feuer) {
-		det->show_static_spr(10);
-		det->show_static_spr(12);
+		_G(det)->show_static_spr(10);
+		_G(det)->show_static_spr(12);
 	} else if (_G(spieler).R62LauraVerwandlung) {
-		atds->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
@@ -61,7 +61,7 @@ void Room63::entry() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).room_e_obj[95].Attribut = 255;
 		_G(r63ChewyAni) = 0;
-		det->start_detail(0, 1, ANI_VOR);
+		_G(det)->start_detail(0, 1, ANI_VOR);
 	}
 }
 
@@ -75,35 +75,35 @@ void Room63::setup_func() {
 	
 	switch (_G(r63ChewyAni)) {
 	case 0:
-		if (det->get_ani_status(0) == false) {
+		if (_G(det)->get_ani_status(0) == false) {
 			if (_G(r63RunDia) < 4)
 				++_G(r63RunDia);
 			start_aad(370 + _G(r63RunDia));
-			det->start_detail(1, 1, ANI_VOR);
+			_G(det)->start_detail(1, 1, ANI_VOR);
 			_G(r63ChewyAni) = 1;
 		}
 		break;
 
 	case 1:
-		if (det->get_ani_status(1) == false) {
+		if (_G(det)->get_ani_status(1) == false) {
 			_G(spieler).ScrollxStep = 4;
 			set_person_pos(0, 0, P_CHEWY, P_RIGHT);
-			det->start_detail(22, 1, ANI_VOR);
-			det->start_detail(2, 1, ANI_VOR);
-			atds->stop_aad();
+			_G(det)->start_detail(22, 1, ANI_VOR);
+			_G(det)->start_detail(2, 1, ANI_VOR);
+			_G(atds)->stop_aad();
 			_G(r63ChewyAni) = 2;
 		}
 		break;
 
 	case 2:
-		if (det->get_ani_status(2) == false) {
-			det->start_detail(3, 1, ANI_VOR);
+		if (_G(det)->get_ani_status(2) == false) {
+			_G(det)->start_detail(3, 1, ANI_VOR);
 			_G(r63ChewyAni) = 3;
 		}
 		break;
 
 	case 3:
-		if (det->get_ani_status(3) == false) {
+		if (_G(det)->get_ani_status(3) == false) {
 			if (!flags.AutoAniPlay) {
 				flags.AutoAniPlay = true;
 				flags.NoScroll = true;
@@ -115,7 +115,7 @@ void Room63::setup_func() {
 				flags.NoScroll = false;
 				_G(spieler).ScrollxStep = 4;
 				if (!_G(r63Schalter)) {
-					det->start_detail(0, 1, ANI_VOR);
+					_G(det)->start_detail(0, 1, ANI_VOR);
 					_G(r63ChewyAni) = 0;
 				} else
 					bork_platt();
@@ -142,7 +142,7 @@ void Room63::bork_platt() {
 	spieler_mi[P_CHEWY].Mode = false;
 	start_aad_wait(370, -1);
 	start_detail_wait(4, 1, ANI_VOR);
-	det->show_static_spr(13);
+	_G(det)->show_static_spr(13);
 	start_aad_wait(361, -1);
 	_G(out)->cls();
 	flags.NoPalAfterFlc = true;
@@ -159,12 +159,12 @@ void Room63::talk_hunter() {
 	hide_cur();
 	auto_move(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
-		det->hide_static_spr(10);
-	det->start_detail(10, 255, ANI_VOR);
+		_G(det)->hide_static_spr(10);
+	_G(det)->start_detail(10, 255, ANI_VOR);
 	start_aad_wait(356, -1);
 	if (_G(spieler).R63Uhr) {
-		det->show_static_spr(10);
-		det->stop_detail(10);
+		_G(det)->show_static_spr(10);
+		_G(det)->stop_detail(10);
 	}
 	show_cur();
 }
@@ -173,15 +173,15 @@ void Room63::talk_regie() {
 	hide_cur();
 	auto_move(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
-		det->hide_static_spr(12);
-	det->stop_detail(18);
-	det->start_detail(19, 255, ANI_VOR);
+		_G(det)->hide_static_spr(12);
+	_G(det)->stop_detail(18);
+	_G(det)->start_detail(19, 255, ANI_VOR);
 	start_aad_wait(357, -1);
-	det->stop_detail(19);
+	_G(det)->stop_detail(19);
 	if (_G(spieler).R63Uhr) {
-		det->show_static_spr(12);
+		_G(det)->show_static_spr(12);
 	} else {
-		det->start_detail(18, 255, ANI_VOR);
+		_G(det)->start_detail(18, 255, ANI_VOR);
 	}
 	show_cur();
 }
@@ -202,14 +202,14 @@ int16 Room63::use_fx_man() {
 		del_inventar(_G(spieler).AkInvent);
 		remove_inventory(34);
 		start_aad_wait(359, -1);
-		det->del_static_ani(5);
+		_G(det)->del_static_ani(5);
 		start_detail_wait(6, 1, ANI_VOR);
-		det->start_detail(7, 255, ANI_VOR);
+		_G(det)->start_detail(7, 255, ANI_VOR);
 		start_aad_wait(362, -1);
-		det->stop_detail(7);
+		_G(det)->stop_detail(7);
 		start_detail_wait(8, 1, ANI_VOR);
 		_G(spieler).R63FxMannWeg = true;
-		atds->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();
 	}
 	return action_ret;
@@ -228,17 +228,17 @@ int16 Room63::use_schalter() {
 				hide_cur();
 				auto_move(1, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
-				det->show_static_spr(2);
+				_G(det)->show_static_spr(2);
 				set_person_spr(P_LEFT, P_CHEWY);
 				start_detail_wait(21, 1, ANI_VOR);
-				det->show_static_spr(14);
+				_G(det)->show_static_spr(14);
 				wait_show_screen(18);
-				det->hide_static_spr(14);
+				_G(det)->hide_static_spr(14);
 				start_detail_wait(24, 1, ANI_VOR);
-				det->show_static_spr(1);
-				det->hide_static_spr(2);
+				_G(det)->show_static_spr(1);
+				_G(det)->hide_static_spr(2);
 				start_aad_wait(364, -1);
-				atds->set_ats_str(385, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(385, 1, ATS_DATEI);
 				show_cur();
 			}
 		} else {
@@ -252,12 +252,12 @@ int16 Room63::use_schalter() {
 
 void Room63::talk_girl() {
 	auto_move(2, P_CHEWY);
-	det->stop_detail(12);
+	_G(det)->stop_detail(12);
 	start_detail_wait(13, 1, ANI_VOR);
-	det->set_static_ani(14, -1);
+	_G(det)->set_static_ani(14, -1);
 	start_ads_wait(17);
-	det->del_static_ani(14);
-	det->start_detail(12, 255, ANI_VOR);
+	_G(det)->del_static_ani(14);
+	_G(det)->start_detail(12, 255, ANI_VOR);
 }
 
 int16 Room63::use_girl() {
@@ -267,23 +267,23 @@ int16 Room63::use_girl() {
 		hide_cur();
 		auto_move(2, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
-		det->stop_detail(12);
+		_G(det)->stop_detail(12);
 		start_detail_wait(13, 1, ANI_VOR);
-		det->set_static_ani(14, -1);
+		_G(det)->set_static_ani(14, -1);
 		start_aad_wait(365, -1);
-		det->del_static_ani(14);
-		det->start_detail(15, 255, ANI_VOR);
+		_G(det)->del_static_ani(14);
+		_G(det)->start_detail(15, 255, ANI_VOR);
 		start_aad_wait(360, -1);
-		det->stop_detail(15);
+		_G(det)->stop_detail(15);
 		start_detail_wait(16, 1, ANI_VOR);
 		_G(spieler).R63Uhr = true;
-		det->stop_detail(10);
-		det->stop_detail(18);
-		det->show_static_spr(10);
-		det->show_static_spr(12);
-		atds->set_ats_str(381, 1, ATS_DATEI);
-		atds->set_ats_str(382, 1, ATS_DATEI);
-		atds->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->stop_detail(10);
+		_G(det)->stop_detail(18);
+		_G(det)->show_static_spr(10);
+		_G(det)->show_static_spr(12);
+		_G(atds)->set_ats_str(381, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(382, 1, ATS_DATEI);
+		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATEI);
 		start_aad_wait(367, -1);
 		show_cur();
 	}
@@ -304,16 +304,16 @@ int16 Room63::use_aschenbecher() {
 				auto_scroll(70, 0);
 				auto_move(1, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				det->start_detail(20, 255, ANI_VOR);
-				det->start_detail(10, 255, ANI_VOR);
-				det->start_detail(18, 255, ANI_VOR);
-				det->hide_static_spr(10);
-				det->hide_static_spr(12);
+				_G(det)->start_detail(20, 255, ANI_VOR);
+				_G(det)->start_detail(10, 255, ANI_VOR);
+				_G(det)->start_detail(18, 255, ANI_VOR);
+				_G(det)->hide_static_spr(10);
+				_G(det)->hide_static_spr(12);
 				start_aad_wait(368, -1);
 				flic_cut(FCUT_080, CFO_MODE);
-				atds->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);
-				atds->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATEI);
-				atds->set_ats_str(383, 1, ATS_DATEI);
+				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->set_ats_str(383, 1, ATS_DATEI);
 				_G(spieler).R63Feuer = true;
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				_G(spieler).scrollx = 0;

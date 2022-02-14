@@ -138,9 +138,9 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 			break;
 		}
 	} else if (mode == AAD_STR_START) {
-		det->start_detail(person_nr, 255, ANI_VOR);
+		_G(det)->start_detail(person_nr, 255, ANI_VOR);
 	} else {
-		det->stop_detail(person_nr);
+		_G(det)->stop_detail(person_nr);
 	}
 }
 

@@ -41,9 +41,9 @@ void Room86::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).flags32_2) {
-		det->start_detail(0, 255, false);
-		det->set_static_pos(0, 352, 107, false, false);
-		det->show_static_spr(0);
+		_G(det)->start_detail(0, 255, false);
+		_G(det)->set_static_pos(0, 352, 107, false, false);
+		_G(det)->show_static_spr(0);
 	}
 
 	if (flags.LoadGame)
@@ -76,9 +76,9 @@ void Room86::entry(int16 eib_nr) {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		flags.NoScroll = false;
 		spieler_mi[P_CHEWY].Vorschub = 8;
-		det->stop_detail(0);
-		det->show_static_spr(4);
-		det->show_static_spr(5);
+		_G(det)->stop_detail(0);
+		_G(det)->show_static_spr(4);
+		_G(det)->show_static_spr(5);
 		invent_2_slot(94);
 		auto_move(4, P_CHEWY);
 		flags.NoScroll = true;
@@ -148,15 +148,15 @@ int Room86::proc2() {
 	hide_cur();
 	auto_move(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	det->start_detail(0, 255, false);
+	_G(det)->start_detail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	del_inventar(_G(spieler).AkInvent);
 	auto_move(3, P_CHEWY);
 	proc3(true);
-	atds->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->set_ats_str(497, 1, ATS_DATEI);
-	atds->set_ats_str(498, 1, ATS_DATEI);
+	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_ats_str(497, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(498, 1, ATS_DATEI);
 	_G(spieler).flags32_2 = true;
 	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
@@ -180,8 +180,8 @@ void Room86::proc3(bool cond) {
 	if (flags.NoScroll)
 		auto_scroll(196, 0);
 
-	det->set_static_pos(0, 352, destY, false, false);
-	det->show_static_spr(0);
+	_G(det)->set_static_pos(0, 352, destY, false, false);
+	_G(det)->show_static_spr(0);
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 2);
 	g_engine->_sound->playSound(0, 1, false);
@@ -189,7 +189,7 @@ void Room86::proc3(bool cond) {
 
 	for (int i = 0; i < 48; ++i) {
 		set_up_screen(NO_SETUP);
-		det->set_static_pos(0, 352, destY, false, false);
+		_G(det)->set_static_pos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->back2screen(_G(workpage));

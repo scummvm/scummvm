@@ -98,7 +98,7 @@ void Room46::setup_func() {
 
 void Room46::bodo() {
 	hide_cur();
-	det->show_static_spr(0);
+	_G(det)->show_static_spr(0);
 	person_end_phase[P_CHEWY] = P_RIGHT;
 	start_aad_wait(240, -1);
 	spieler_mi[P_CHEWY].Mode = true;
@@ -111,23 +111,23 @@ void Room46::bodo() {
 
 	spieler_mi[P_CHEWY].Mode = false;
 	start_detail_wait(0, 1, ANI_VOR);
-	det->start_detail(5, 255, ANI_VOR);
+	_G(det)->start_detail(5, 255, ANI_VOR);
 	start_aad_wait(241, -1);
-	det->stop_detail(5);
-	det->show_static_spr(5);
+	_G(det)->stop_detail(5);
+	_G(det)->show_static_spr(5);
 	start_aad_wait(609, -1);
-	det->hide_static_spr(5);
+	_G(det)->hide_static_spr(5);
 	start_detail_wait(2, 1, ANI_VOR);
 	start_detail_wait(3, 1, ANI_VOR);
-	det->start_detail(4, 255, ANI_VOR);
+	_G(det)->start_detail(4, 255, ANI_VOR);
 	start_aad_wait(242, -1);
-	det->stop_detail(4);
+	_G(det)->stop_detail(4);
 
-	det->show_static_spr(6);
+	_G(det)->show_static_spr(6);
 	start_aad_wait(610, -1);
-	det->hide_static_spr(6);
+	_G(det)->hide_static_spr(6);
 	start_detail_wait(6, 1, ANI_VOR);
-	det->show_static_spr(3);
+	_G(det)->show_static_spr(3);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(1, 1, ANI_VOR);
 	flic_cut(FCUT_065, CFO_MODE);
@@ -136,8 +136,8 @@ void Room46::bodo() {
 	register_cutscene(16);
 	
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	det->hide_static_spr(0);
-	det->hide_static_spr(3);
+	_G(det)->hide_static_spr(0);
+	_G(det)->hide_static_spr(3);
 	load_chewy_taf(CHEWY_ROCKER);
 	_G(spieler).R28ChewyPump = false;
 	
@@ -153,13 +153,13 @@ void Room46::kloppe() {
 	for (int16 i = 0; i < 4; i++) {
 		_G(mem)->file->select_pool_item(Ci.Handle, FCUT_065);
 
-		flc->custom_play(&Ci);
+		_G(flc)->custom_play(&Ci);
 		
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		start_aad(244 + i, -1);
 		int16 delay = _G(spieler).DelaySpeed * 50;
-		atds->print_aad(0, 0);
+		_G(atds)->print_aad(0, 0);
 
 		if (_G(spieler).SpeechSwitch) {
 			g_engine->_sound->waitForSpeechToFinish();
@@ -173,7 +173,7 @@ void Room46::kloppe() {
 	}
 
 	_G(mem)->file->select_pool_item(Ci.Handle, 66);
-	flc->custom_play(&Ci);
+	_G(flc)->custom_play(&Ci);
 	_G(sndPlayer)->fadeOut(0);
 	_G(out)->cls();
 

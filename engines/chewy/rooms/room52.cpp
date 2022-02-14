@@ -42,16 +42,16 @@ void Room52::entry() {
 	}
 
 	if (_G(spieler).R52KakerWeg)
-		det->stop_detail(0);
+		_G(det)->stop_detail(0);
 
 	if (!flags.LoadGame) {
-		det->show_static_spr(4);
+		_G(det)->show_static_spr(4);
 		_G(spieler).R52TuerAuf = true;
 		set_person_pos(20, 50, P_HOWARD, P_LEFT);
 		set_person_pos(35, 74, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 		_G(spieler).R52TuerAuf = false;
-		det->hide_static_spr(4);
+		_G(det)->hide_static_spr(4);
 		check_shad(2, 1);
 	}
 }
@@ -76,14 +76,14 @@ int16 Room52::use_hot_dog() {
 		action_ret = true;
 		auto_move(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
-		det->show_static_spr(0);
+		_G(det)->show_static_spr(0);
 		del_inventar(_G(spieler).AkInvent);
 		auto_move(4, P_CHEWY);
 		_G(spieler).R52HotDogOk = true;
 		plot_armee(20);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
-		atds->set_ats_str(341, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(341, 1, ATS_DATEI);
 		auto_move(2, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_aad_wait(288, -1);
@@ -95,22 +95,22 @@ int16 Room52::use_hot_dog() {
 		start_detail_wait(7, 1, ANI_VOR);
 		g_engine->_sound->playSound(7, 0);
 		g_engine->_sound->playSound(7);
-		det->start_detail(8, 255, ANI_VOR);
+		_G(det)->start_detail(8, 255, ANI_VOR);
 
 		for (int16 i = 0; i < 5; i++) {
 			wait_show_screen(20);
-			det->stop_detail(2 + i);
+			_G(det)->stop_detail(2 + i);
 		}
 
 		g_engine->_sound->stopSound(0);
-		det->stop_detail(0);
-		det->stop_detail(8);
+		_G(det)->stop_detail(0);
+		_G(det)->stop_detail(8);
 		start_detail_wait(7, 1, ANI_RUECK);
 		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		atds->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
 		start_aad_wait(303, -1);
-		atds->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
+		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
 		_G(spieler).R52KakerWeg = true;
 	}
 
@@ -121,7 +121,7 @@ int16 Room52::use_hot_dog() {
 void Room52::plot_armee(int16 frame) {
 	for (int16 i = 0; i < 5; i++) {
 		wait_show_screen(frame);
-		det->start_detail(2 + i, 255, ANI_VOR);
+		_G(det)->start_detail(2 + i, 255, ANI_VOR);
 	}
 }
 
