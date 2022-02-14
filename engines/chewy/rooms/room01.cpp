@@ -40,31 +40,24 @@ void Room1::gottenCard() {
 void Room1::gedAction(int index) {
 	#define KABELABDECKUNG 1
 
-	switch (index) {
-	case 0:
-		if (!_G(spieler).R2ElectrocutedBork) {
-			bool flag = false;
-			if (_G(spieler).AkInvent == KABEL_INV) {
-				flag = true;
-				del_inventar(_G(spieler).AkInvent);
-			} else if (obj->check_inventar(KABEL_INV)) {
-				flag = true;
-				obj->del_obj_use(KABEL_INV);
-				del_invent_slot(KABEL_INV);
-			}
-
-			if (flag) {
-				start_aad_wait(54, -1);
-				atds->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
-				_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
-				obj->calc_rsi_flip_flop(KABELABDECKUNG);
-				obj->calc_all_static_detail();
-			}
+	if (index == 0 && !_G(spieler).R2ElectrocutedBork) {
+		bool flag = false;
+		if (_G(spieler).AkInvent == KABEL_INV) {
+			flag = true;
+			del_inventar(_G(spieler).AkInvent);
+		} else if (obj->check_inventar(KABEL_INV)) {
+			flag = true;
+			obj->del_obj_use(KABEL_INV);
+			remove_inventory(KABEL_INV);
 		}
-		break;
 
-	default:
-		break;
+		if (flag) {
+			start_aad_wait(54, -1);
+			atds->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
+			obj->calc_rsi_flip_flop(KABELABDECKUNG);
+			obj->calc_all_static_detail();
+		}
 	}
 }
 
