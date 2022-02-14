@@ -108,6 +108,7 @@ public:
 	bool loadMusic(byte *data, uint32 size) override;
 	bool hasJumpIndex(uint8 index) override;
 	bool jumpToIndex(uint8 index, bool stopNotes) override;
+	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };
 
 // This is a special XMIDI variable length quantity
@@ -524,6 +525,45 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	}
 
 	return false;
+}
+
+int32 MidiParser_XMIDI::determineDataSize(Common::SeekableReadStream *stream) {
+	int32 length = 0;
+
+	byte buf[4];
+	Common::fill(buf, buf + 4, 0);
+	// Read FourCC.
+	stream->read(buf, 4);
+
+	if (!memcmp(buf, "FORM", 4)) {
+		// Optional XDIR header.
+
+		// Skip over the header.
+		uint32 headerLength = stream->readUint32BE();
+		stream->seek(headerLength, SEEK_CUR);
+
+		// Read next FourCC.
+		Common::fill(buf, buf + 4, 0);
+		stream->read(buf, 4);
+
+		// Add header length to total length.
+		length += 8;
+		length += headerLength;
+	}
+
+	if (!memcmp(buf, "CAT ", 4)) {
+		// CAT chunk.
+		uint32 catLength = stream->readUint32BE();
+		// Add catalog chunk length to total length.
+		length += 8;
+		length += catLength;
+	} else {
+		// XMIDI files must have a CAT chunk.
+		warning("Expected FORM or CAT  but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
+		return -1;
+	}
+
+	return length;
 }
 
 void MidiParser_XMIDI::onTrackStart(uint8 track) {
