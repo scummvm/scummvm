@@ -73,10 +73,10 @@ void Room80::setup_func() {
 	for (int i = 0; i < 3; ++i)
 		det->hide_static_spr(i);
 
-	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || menu_display)
+	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || _G(menu_display))
 		return;
 
-	menu_item = CUR_USE;
+	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
 	cursor_wahl(CUR_ZEIGE);
 	int vec = det->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);
@@ -116,7 +116,7 @@ void Room80::setup_func() {
 
 	SetUpScreenFunc = nullptr;
 	det->hide_static_spr(vec);
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	_G(spieler).flags30_1 = true;
 	_G(maus_links_click) = false;

@@ -200,7 +200,7 @@ int Room84::proc4() {
 
 	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
 	switch_room(88);
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	show_cur();
 

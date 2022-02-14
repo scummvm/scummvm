@@ -198,7 +198,7 @@ void Room97::setup_func() {
 		}
 	}
 
-	if (_G(spieler).flags37_1 && menu_item == CUR_WALK) {
+	if (_G(spieler).flags37_1 && _G(menu_item) == CUR_WALK) {
 		if (_G(spieler).scrollx + minfo.x >= 487 && _G(spieler).scrollx + minfo.x <= 522 && minfo.y >= 23 && minfo.y <= 59)
 			cursor_wahl(CUR_AUSGANG_OBEN);
 		else
@@ -567,7 +567,7 @@ int Room97::proc10() {
 	det->show_static_spr(19);
 	_G(spieler).flags37_1 = true;
 	atds->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 
 	show_cur();
@@ -663,7 +663,7 @@ int Room97::throwSlime() {
 	_slimeThrown = true;
 	hide_cur();
 	del_inventar(_G(spieler).AkInvent);
-	menu_item = CUR_USE;
+	_G(menu_item) = CUR_USE;
 	cursor_wahl(CUR_USE);
 	
 	return 1;
@@ -675,7 +675,7 @@ void Room97::sensorAnim() {
 
 	flags.AutoAniPlay = true;
 	stop_person(P_CHEWY);
-	menu_item = CUR_USE;
+	_G(menu_item) = CUR_USE;
 	cursor_wahl(CUR_USE);
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	atds->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);

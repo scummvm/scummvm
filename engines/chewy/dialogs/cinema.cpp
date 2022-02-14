@@ -63,8 +63,8 @@ void Cinema::execute() {
 
 	for (bool endLoop = false; !endLoop;) {
 		timer_nr = 0;
-		_G(out)->setze_zeiger(workptr);
-		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
 			// Render cutscene list
@@ -162,7 +162,7 @@ void Cinema::execute() {
 			hide_cur();
 			_G(out)->cls();
 			_G(out)->setze_zeiger(_G(screen0));
-			fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
+			fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
 			flc->set_custom_user_function(cut_serv);
@@ -191,9 +191,9 @@ void Cinema::execute() {
 				flag = false;
 				_G(out)->setze_zeiger(_G(screen0));
 				room->set_ak_pal(&room_blk);
-				fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
+				fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {
-				_G(out)->back2screen(workpage);
+				_G(out)->back2screen(_G(workpage));
 			}
 		}
 

@@ -222,8 +222,8 @@ void Room17::calc_seil() {
 				_G(spieler).R17Location = 1;
 			}
 
-			menu_item = CUR_WALK;
-			cursor_wahl(menu_item);
+			_G(menu_item) = CUR_WALK;
+			cursor_wahl(_G(menu_item));
 			wait_auto_obj(CHEWY_OBJ);
 			show_cur();
 			set_person_spr(P_LEFT, P_CHEWY);

@@ -71,15 +71,15 @@ int16 Files::execute(bool isInGame) {
 
 	room->open_handle(GBOOK, "rb", 0);
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(workptr);
-	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
 	fnames = _G(iog)->io_init(&ioptr);
 	fnames += 1;
  
-	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->setze_zeiger(workptr);
+	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
 	show_cur();
 
 	if (!_G(modul)) {
@@ -103,7 +103,7 @@ int16 Files::execute(bool isInGame) {
 
 		while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 			// Draw the dialog background
-			_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+			_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 
 			// Draw the buttons at the bottom
 			for (i = 28, j = SCROLL_UP; j <= OPTIONS; i++, j++) {
@@ -149,7 +149,7 @@ int16 Files::execute(bool isInGame) {
 				--mode[QUIT];
 			if (mode[QUIT] == 1) {
 				_G(out)->printxy(120, 138, 255, 300, 0, QUIT_MSG);
-				_G(out)->back2screen(workpage);
+				_G(out)->back2screen(_G(workpage));
 				_G(in)->alter_kb_handler();
 
 				key = getch();
@@ -271,14 +271,14 @@ enter:
 						key = Common::KEYCODE_ESCAPE;
 					}
 				} else if (mode[SAVE]) {
-					_G(out)->back2screen(workpage);
+					_G(out)->back2screen(_G(workpage));
 					_G(out)->setze_zeiger(_G(screen0));
 					_G(in)->alter_kb_handler();
 					tmp = fnames + ((text_off + active_slot) * 40);
 					key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 						255, 42, 14, 0, "%36s36", tmp);
 					_G(in)->neuer_kb_handler(&kbinfo);
-					_G(out)->setze_zeiger(workptr);
+					_G(out)->setze_zeiger(_G(workptr));
 					if (key != Common::KEYCODE_ESCAPE) {
 						_G(iog)->save_entry(text_off + active_slot,
 							ioptr.save_path);
@@ -292,7 +292,7 @@ enter:
 			}
 
 			_G(cur)->plot_cur();
-			_G(out)->back2screen(workpage);
+			_G(out)->back2screen(_G(workpage));
 
 			EVENTS_UPDATE;
 		}

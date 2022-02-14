@@ -192,7 +192,7 @@ void Room86::proc3(bool cond) {
 		det->set_static_pos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setze_zeiger(nullptr);
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 	}
 
 	g_engine->_sound->stopSound(1);

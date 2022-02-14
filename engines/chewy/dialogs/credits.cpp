@@ -131,7 +131,7 @@ void Credits::execute() {
 	_G(spieler).scrolly = 0;
 	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
+	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
 		int color = 63 - (6 * i);
@@ -151,8 +151,8 @@ void Credits::execute() {
 			break;
 
 		// Display the starfield background
-		_G(out)->setze_zeiger(workptr);
-		_G(out)->map_spr2screen(ablage[room_blk.AkAblage],
+		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage],
 			_G(spieler).scrollx, _G(spieler).scrolly);
 
 		// Animate moving the background
@@ -190,7 +190,7 @@ void Credits::execute() {
 			break;
 
 		_G(out)->setze_zeiger(nullptr);
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 	}
 
 	_G(out)->set_fontadr(_G(font8x8));

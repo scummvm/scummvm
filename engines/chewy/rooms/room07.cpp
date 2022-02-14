@@ -51,8 +51,8 @@ void Room7::haken(int16 sib_nr) {
 
 	del_inventar(8);
 	_G(spieler).AkInvent = -1;
-	menu_item = CUR_WALK;
-	cursor_wahl(menu_item);
+	_G(menu_item) = CUR_WALK;
+	cursor_wahl(_G(menu_item));
 
 	if (_G(spieler).R7RHaken) {
 		_G(spieler).R7SeilOk = true;

@@ -512,8 +512,8 @@ void exit_room(int16 eib_nr) {
 			break;
 
 		}
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 		_G(maus_links_click) = false;
 		break;
 
@@ -598,7 +598,7 @@ void exit_room(int16 eib_nr) {
 	case 123:
 	case 125:
 	case 135:
-		xy = (int16 *)ablage[room_blk.AkAblage];
+		xy = (int16 *)_G(ablage)[room_blk.AkAblage];
 		x = xy[0] + 30;
 		y = spieler_vector[P_CHEWY].Xypos[1];
 		break;
@@ -613,7 +613,7 @@ void exit_room(int16 eib_nr) {
 	case 92:
 	case 122:
 	case 131:
-		xy = (int16 *)ablage[room_blk.AkAblage];
+		xy = (int16 *)_G(ablage)[room_blk.AkAblage];
 		x = spieler_vector[P_CHEWY].Xypos[0];
 		y = xy[1] + 3;
 		break;
@@ -900,7 +900,7 @@ static void flic_proc1() {
 		}
 	}
 
-	_G(out)->setze_zeiger(workptr);
+	_G(out)->setze_zeiger(_G(workptr));
 	_G(out)->cls();
 }
 
@@ -1120,7 +1120,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1003:
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 			print_rows(590);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 1);
@@ -1131,7 +1131,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 			if (ret != -1) {
 				for (i = 0; i < 3 && ret != -1; ++i) {
-					fx->border(workpage, 100, 0, 0);
+					fx->border(_G(workpage), 100, 0, 0);
 					print_rows(591);
 #ifndef NEW_VIDEO_CODE
 					_G(mem)->file->select_pool_item(Ci.Handle, i + 3);
@@ -1146,7 +1146,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1006:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 6);
 				ret = flc->custom_play(&Ci);
@@ -1171,7 +1171,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1012:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 				SHOULD_QUIT_RETURN;
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 12);
@@ -1185,17 +1185,17 @@ void flic_cut(int16 nr, int16 mode) {
 			if (ret != -1) {
 				_G(out)->cls();
 				_G(mem)->file->select_pool_item(Ci.Handle, FCUT_017);
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 			}
 #else
 			_G(out)->cls();
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 #endif
 			break;
 
 		case 1015:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 15);
 				ret = flc->custom_play(&Ci);
@@ -1208,7 +1208,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1045:
 			for (i = 0; i < 11 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 				print_rows(594);
 				if (FLIC_CUT_1045[i] == 53) {
 					_G(sndPlayer)->stopMod();
@@ -1234,7 +1234,7 @@ void flic_cut(int16 nr, int16 mode) {
 			g_engine->playVideo(FCUT_031);
 
 			if (ret != -1) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 43);
 				ret = flc->custom_play(&Ci);
@@ -1253,8 +1253,8 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 			if (ret != -1) {
-				fx->spr_blende(workpage, 100, false, 0);
-				fx->border(workpage, 100, 0, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 48);
 				ret = flc->custom_play(&Ci);
@@ -1273,22 +1273,22 @@ void flic_cut(int16 nr, int16 mode) {
 
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 				ret = flc->custom_play(&Ci);
 			}
 			if (ret != -1) {
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 54);
 			}
 #else
-			fx->spr_blende(workpage, 100, false, 0);
+			fx->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(nr);
 #endif
 			break;
 
 		case 1055:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 55);
 				ret = flc->custom_play(&Ci);
@@ -1302,7 +1302,7 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 46);
 #endif
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 			}
 			break;
 
@@ -1334,7 +1334,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 			}
 			if (ret != -1) {
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 61);
 				flc->custom_play(&Ci);
@@ -1343,7 +1343,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 			}
 			if (ret != -1) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 62);
 				flc->custom_play(&Ci);
@@ -1378,7 +1378,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 			if (ret != -1) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 70);
 				ret = flc->custom_play(&Ci);
@@ -1398,7 +1398,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 			for (i = 0; i < 2 && ret != -1 && !SHOULD_QUIT; ++i) {
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 71);
 				ret = flc->custom_play(&Ci);
@@ -1410,9 +1410,9 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1074:
 			for (i = 0; i < 4 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 				print_rows(605);
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + FLIC_CUT_1074[i]);
 				ret = flc->custom_play(&Ci);
@@ -1425,7 +1425,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1080:
 			for (i = 0; i < 8 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_1080[i]);
 				ret = flc->custom_play(&Ci);
@@ -1445,7 +1445,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 102);
 				flc->custom_play(&Ci);
@@ -1465,7 +1465,7 @@ void flic_cut(int16 nr, int16 mode) {
 #endif
 
 			if (ret != -1) {
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 86);
 				flc->custom_play(&Ci);
@@ -1518,10 +1518,10 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(mem)->file->select_pool_item(Ci.Handle, 109);
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 			}
 #else
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 			//playVideo(109);
 #endif
 			break;
@@ -1537,11 +1537,11 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(mem)->file->select_pool_item(Ci.Handle, 115);
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 				flc->custom_play(&Ci);
 			}
 #else
-			fx->spr_blende(workpage, 100, false, 0);
+			fx->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(115);
 #endif
 			break;
@@ -1561,13 +1561,13 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(sndPlayer)->setMusicMasterVol(63);
-				fx->spr_blende(workpage, 100, false, 0);
+				fx->spr_blende(_G(workpage), 100, false, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 112);
 				flc->custom_play(&Ci);
 			}
 #else
 			ailsnd->setMusicMasterVol(63);
-			fx->spr_blende(workpage, 100, false, 0);
+			fx->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(112);
 #endif
 			_G(sndPlayer)->stopMod();
@@ -1589,12 +1589,12 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1117:
 #ifndef NEW_VIDEO_CODE
 			if (_G(mem)->file->select_pool_item(Ci.Handle, 117) != (uint16)-1) {
-				fx->border(workpage, 100, 0, 0);
+				fx->border(_G(workpage), 100, 0, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 119);
 				flc->custom_play(&Ci);
 			}
 #else
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 			playVideo(119);
 #endif
 			break;
@@ -1646,7 +1646,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 	atds->stop_aad();
 	atds->stop_ats();
-	_G(out)->setze_zeiger(workptr);
+	_G(out)->setze_zeiger(_G(workptr));
 	flags.NoPalAfterFlc = false;
 }
 
@@ -1821,12 +1821,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = false;
 		atds->set_ats_str(112, 0, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
 		atds->set_ats_str(113, 1, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TALISMAN_R12:
@@ -2074,20 +2074,20 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_CARTRIDGE_R23:
 		Room23::use_cartridge();
-		menu_item_vorwahl = CUR_USE;
+		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = true;
 		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(112, 1, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
 		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(113, 0, ATS_DATEI);
-		menu_item_vorwahl = CUR_USE;
+		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_FEUER_R14:

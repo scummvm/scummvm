@@ -108,8 +108,8 @@ void Room51::xit(int16 eib_nr) {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 		show_cur();
 
 	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {

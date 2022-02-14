@@ -59,9 +59,9 @@ void EventsManager::handleEvent(const Common::Event &event) {
 
 void EventsManager::handleMouseEvent(const Common::Event &event) {
 	_mousePos = event.mouse;
-	bool isWheelEnabled = !menu_display && !flags.InventMenu &&
+	bool isWheelEnabled = !_G(menu_display) && !flags.InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
-		menu_item >= CUR_WALK && menu_item <= CUR_TALK;
+		_G(menu_item) >= CUR_WALK && _G(menu_item) <= CUR_TALK;
 
 	// Different event types handling
 	if (event.type != Common::EVENT_MOUSEMOVE)
@@ -79,26 +79,26 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_WHEELUP:
 		// Cycle backwards through cursors
 		if (isWheelEnabled) {
-			if (--menu_item < 0)
-				menu_item = CUR_TALK;
-			cursor_wahl(menu_item);
+			if (--_G(menu_item) < 0)
+				_G(menu_item) = CUR_TALK;
+			cursor_wahl(_G(menu_item));
 		}
 		return;
 
 	case Common::EVENT_WHEELDOWN:
 		// Cycle forwards through cursors
 		if (isWheelEnabled) {
-			if (++menu_item > CUR_TALK)
-				menu_item = CUR_WALK;
-			cursor_wahl(menu_item);
+			if (++_G(menu_item) > CUR_TALK)
+				_G(menu_item) = CUR_WALK;
+			cursor_wahl(_G(menu_item));
 		}
 		return;
 
 	case Common::EVENT_MBUTTONDOWN:
 		// Toggle between walk and look cursor
 		if (isWheelEnabled) {
-			menu_item = (menu_item == CUR_WALK) ? CUR_LOOK : CUR_WALK;
-			cursor_wahl(menu_item);
+			_G(menu_item) = (_G(menu_item) == CUR_WALK) ? CUR_LOOK : CUR_WALK;
+			cursor_wahl(_G(menu_item));
 		}
 		return;
 

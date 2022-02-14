@@ -137,14 +137,14 @@ bool Room8::gips_wurf() {
 		det->del_taf_tbl(116, 30, nullptr);
 		auto_move(8, P_CHEWY);
 		flags.AtsAction = false;
-		menu_item = CUR_USE;
+		_G(menu_item) = CUR_USE;
 		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
 		flags.AtsAction = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(20, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
-		cursor_wahl(menu_item);
+		cursor_wahl(_G(menu_item));
 		show_cur();
 	}
 

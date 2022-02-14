@@ -97,7 +97,7 @@ void Room45::setup_func() {
 	int16 x;
 	int16 y;
 
-	if (menu_display == 0) {
+	if (_G(menu_display) == 0) {
 		if (!_G(r45_delay)) {
 			_G(r45_delay) = _G(spieler).DelaySpeed / 2;
 

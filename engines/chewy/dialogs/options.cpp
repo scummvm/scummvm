@@ -58,13 +58,13 @@ static const int16 OPTION_ICONS[9 * 4] = {
 void Options::execute(taf_info *ti) {
 	long akt_clock = 0, stop_clock = 0;
 	room->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(workptr);
-	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
 
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->setze_zeiger(workptr);
+	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
 	int16 mund_ani = MUND_START;
@@ -73,18 +73,18 @@ void Options::execute(taf_info *ti) {
 	int16 tdisp_ani = TDISP_START;
 	int16 tdisp_delay = 3;
 	int16 tdisp_count = tdisp_delay;
-	FrameSpeed = 0;
+	_G(FrameSpeed) = 0;
 	int16 delay_count = _G(spieler).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != Common::KEYCODE_ESCAPE) {
-		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
-		++FrameSpeed;
+		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+		++_G(FrameSpeed);
 		warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
-			//TmpFrame = FrameSpeed;
-			_G(spieler).DelaySpeed = (FrameSpeed >> 1) / _G(spieler).FramesPerSecond;
+			//TmpFrame = _G(FrameSpeed);
+			_G(spieler).DelaySpeed = (_G(FrameSpeed) >> 1) / _G(spieler).FramesPerSecond;
 
-			FrameSpeed = 0;
+			_G(FrameSpeed) = 0;
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
@@ -222,7 +222,7 @@ void Options::execute(taf_info *ti) {
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 
@@ -255,12 +255,12 @@ void Options::execute(taf_info *ti) {
 	}
 
 	room->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(workptr);
-	_G(out)->map_spr2screen(ablage[room_blk.AkAblage], 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
 	room->set_ak_pal(&room_blk);
-	fx->blende1(workptr, _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->setze_zeiger(workptr);
+	fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(out)->setze_zeiger(_G(workptr));
 }
 
 } // namespace Dialogs

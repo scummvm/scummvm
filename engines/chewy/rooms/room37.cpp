@@ -88,7 +88,7 @@ void Room37::gedAction(int index) {
 
 void Room37::setup_func() {
 	if (_G(maus_links_click) && !_G(spieler).R37Kloppe &&
-			menu_item == CUR_WALK) {
+			_G(menu_item) == CUR_WALK) {
 		if ((minfo.x + _G(spieler).scrollx > 380 && minfo.y > 120) ||
 			(minfo.x + _G(spieler).scrollx > 482)) {
 			// Don't allow moving into chicken coop area
@@ -295,8 +295,8 @@ void Room37::use_hahn() {
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 		flic_cut(FCUT_052, CFO_MODE);
 		cur_2_inventory();
-		menu_item = CUR_TALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_TALK;
+		cursor_wahl(_G(menu_item));
 		show_cur();
 		hahn_dia();
 

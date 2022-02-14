@@ -248,7 +248,7 @@ int Room82::proc9() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
 	switch_room(88);
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 
 	return 1;

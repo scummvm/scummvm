@@ -115,8 +115,8 @@ int16 Room4::sonde_comp() {
 
 	clear_prog_ani();
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	menu_item = CUR_WALK;
-	cursor_wahl(menu_item);
+	_G(menu_item) = CUR_WALK;
+	cursor_wahl(_G(menu_item));
 
 	spieler_vector[P_CHEWY].DelayCount = 0;
 	_G(maus_links_click) = false;

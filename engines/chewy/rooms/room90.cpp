@@ -113,7 +113,7 @@ void Room90::xit(int16 eib_nr) {
 }
 
 void Room90::setup_func() {
-	if (menu_display)
+	if (_G(menu_display))
 		return;
 
 	if (_delay)

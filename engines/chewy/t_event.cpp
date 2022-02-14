@@ -36,15 +36,15 @@ int16 load_ads_dia(int16 dia_nr) {
 		if (tmp == true) {
 			atds->load_atds(dia_nr, ADH_DATEI);
 			ret = true;
-			ads_blk_nr = 0;
-			ads_item_ptr = atds->ads_item_ptr(ads_blk_nr, &ads_item_anz);
+			_G(ads_blk_nr) = 0;
+			_G(ads_item_ptr) = atds->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_anz));
 			flags.AdsDialog = true;
-			ads_push = true;
-			ads_tmp_dsp = _G(spieler).DispFlag;
+			_G(ads_push) = true;
+			_G(ads_tmp_dsp) = _G(spieler).DispFlag;
 			_G(spieler).DispFlag = false;
 
 			set_ssi_xy();
-			ads_dia_nr = dia_nr;
+			_G(ads_dia_nr) = dia_nr;
 			talk_start_ani = -1;
 			talk_hide_static = -1;
 		}
@@ -2179,9 +2179,9 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrolly = 0;
 
 		room->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0, GBOOK);
-		_G(out)->setze_zeiger(workptr);
-		_G(out)->map_spr2screen(ablage[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
-		_G(out)->back2screen(workpage);
+		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->back2screen(_G(workpage));
 
 		while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
 			g_events->update();
@@ -2201,8 +2201,8 @@ void calc_inv_use_txt(int16 test_nr) {
 	case ANGEL_INV:
 	case KNOCHEN_INV:
 		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_USE;
+		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = ANGEL2_INV;
 		obj->change_inventar(test_nr, ANGEL2_INV, &room_blk);
@@ -2219,8 +2219,8 @@ void calc_inv_use_txt(int16 test_nr) {
 	case MESSER_INV:
 		if (_G(spieler).AkInvent == 40) {
 			del_inventar(_G(spieler).AkInvent);
-			menu_item = CUR_USE;
-			cursor_wahl(menu_item);
+			_G(menu_item) = CUR_USE;
+			cursor_wahl(_G(menu_item));
 			invent_2_slot(K_MASKE_INV);
 			invent_2_slot(K_FLEISCH_INV);
 			invent_2_slot(K_KERNE_INV);
@@ -2232,8 +2232,8 @@ void calc_inv_use_txt(int16 test_nr) {
 
 	case BRIEF_INV:
 		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_USE;
+		cursor_wahl(_G(menu_item));
 		_G(spieler).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
 		_G(spieler).InventSlot[ret] = BRIEF2_INV;
@@ -2242,8 +2242,8 @@ void calc_inv_use_txt(int16 test_nr) {
 
 	case FLASCHE_INV:
 		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_USE;
+		cursor_wahl(_G(menu_item));
 		// fall through
 
 	case WOLLE_INV:
@@ -2255,8 +2255,8 @@ void calc_inv_use_txt(int16 test_nr) {
 	case B_MARY_INV:
 	case PIRANHA_INV:
 		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_USE;
+		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = B_MARY2_INV;
 		obj->change_inventar(test_nr, B_MARY2_INV, &room_blk);
@@ -2280,7 +2280,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case 102:
 	case 104:
 		del_inventar(_G(spieler).AkInvent);
-		menu_item = CUR_USE;
+		_G(menu_item) = CUR_USE;
 		cursor_wahl(CUR_USE);
 
 		ret = del_invent_slot(test_nr);
@@ -2291,7 +2291,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case 105:
 		del_inventar(_G(spieler).AkInvent);
 		atds->set_ats_str(105, 0, 1, 6);
-		menu_item = CUR_USE;
+		_G(menu_item) = CUR_USE;
 		cursor_wahl(CUR_USE);
 		break;
 
@@ -2417,28 +2417,28 @@ int16 calc_person_txt(int16 p_nr) {
 		break;
 
 	case P_HOWARD:
-		switch (menu_item) {
+		switch (_G(menu_item)) {
 		case CUR_USE:
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 40:
 				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != CHEWY_ROCKER) {
-					menu_item = CUR_HOWARD;
-					cursor_wahl(menu_item);
+					_G(menu_item) = CUR_HOWARD;
+					cursor_wahl(_G(menu_item));
 					txt_nr = 30000;
 				}
 				break;
 
 			case 67:
 			case 71:
-				menu_item = CUR_HOWARD;
-				cursor_wahl(menu_item);
+				_G(menu_item) = CUR_HOWARD;
+				cursor_wahl(_G(menu_item));
 				txt_nr = 30000;
 				break;
 
 			case 42:
 				if (!_G(spieler).R42MarkeOk && !_G(spieler).R42HoToBeamter) {
-					menu_item = CUR_HOWARD;
-					cursor_wahl(menu_item);
+					_G(menu_item) = CUR_HOWARD;
+					cursor_wahl(_G(menu_item));
 					txt_nr = 30000;
 				}
 				break;
@@ -2457,12 +2457,12 @@ int16 calc_person_txt(int16 p_nr) {
 		break;
 
 	case P_NICHELLE:
-		if (menu_item == CUR_USE) {
+		if (_G(menu_item) == CUR_USE) {
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 67:
 			case 71:
-				menu_item = CUR_NICHELLE;
-				cursor_wahl(menu_item);
+				_G(menu_item) = CUR_NICHELLE;
+				cursor_wahl(_G(menu_item));
 				txt_nr = 30000;
 				break;
 

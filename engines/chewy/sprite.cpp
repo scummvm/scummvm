@@ -151,7 +151,7 @@ void sprite_engine() {
 			break;
 
 		case ZOBJ_INVENTAR:
-			_G(out)->sprite_set(inv_spr[nr],
+			_G(out)->sprite_set(_G(inv_spr)[nr],
 			                 _G(spieler).room_m_obj[nr].X - _G(spieler).scrollx,
 			                 _G(spieler).room_m_obj[nr].Y - _G(spieler).scrolly, 0);
 			break;
@@ -344,7 +344,7 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 		if (p_nr == P_CHEWY) {
 			u_index = ged->ged_idx(x + spieler_mi[p_nr].HotX, y + spieler_mi[p_nr].HotY,
 			                        room->_gedXAnz[room_blk.AkAblage],
-			                        ged_mem[room_blk.AkAblage]);
+			                        _G(ged_mem)[room_blk.AkAblage]);
 			check_shad(u_index, 1);
 		}
 	}
@@ -504,7 +504,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	if (!flags.AtsText) {
 		flags.AtsText = true;
 		if (txt_nr != -1) {
-			if (menu_item != CUR_WALK)
+			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
 			ret = atds->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 			if (ret) {
@@ -523,7 +523,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 
 				set_up_screen(DO_SETUP);
 			}
-			if (menu_item != CUR_WALK)
+			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_END);
 		}
 		flags.AtsText = false;
@@ -569,8 +569,8 @@ void start_aad(int16 dia_nr, int16 ssi_nr) {
 
 void start_ads_wait(int16 dia_nr) {
 	if (!flags.AdsDialog) {
-		menu_item = CUR_TALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_TALK;
+		cursor_wahl(_G(menu_item));
 		load_ads_dia(dia_nr);
 		while (flags.AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
@@ -791,17 +791,17 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 				                              om->Xypos[1] + mi->HotY + tmpy,
 				                              room->_gedXAnz[room_blk.AkAblage],
-				                              ged_mem[room_blk.AkAblage]))) {
+				                              _G(ged_mem)[room_blk.AkAblage]))) {
 
 					if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 					                              om->Xypos[1] + mi->HotY,
 					                              room->_gedXAnz[room_blk.AkAblage],
-					                              ged_mem[room_blk.AkAblage]))) {
+					                              _G(ged_mem)[room_blk.AkAblage]))) {
 
 						if (!(u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
 						                              om->Xypos[1] + mi->HotY + tmpy,
 						                              room->_gedXAnz[room_blk.AkAblage],
-						                              ged_mem[room_blk.AkAblage]))) {
+						                              _G(ged_mem)[room_blk.AkAblage]))) {
 							om->Count = 0;
 						} else {
 							if (!tmpy) {
@@ -906,7 +906,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 					u_index = ged->ged_idx(om->Xypos[0] + mi->HotX,
 					                        om->Xypos[1] + mi->HotY,
 					                        room->_gedXAnz[room_blk.AkAblage],
-					                        ged_mem[room_blk.AkAblage]);
+					                        _G(ged_mem)[room_blk.AkAblage]);
 					check_shad(u_index, 1);
 				}
 			}

@@ -65,9 +65,9 @@ void Room25::entry() {
 
 			remove_inventory(TRANSLATOR_INV);
 			_G(spieler).inv_cur = false;
-			menu_item = CUR_WALK;
+			_G(menu_item) = CUR_WALK;
 			_G(spieler).AkInvent = -1;
-			cursor_wahl(menu_item);
+			cursor_wahl(_G(menu_item));
 		}
 
 		_G(spieler).R25FirstEntry = true;

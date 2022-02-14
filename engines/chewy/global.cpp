@@ -66,38 +66,6 @@ Globals::~Globals() {
 	g_globals = nullptr;
 }
 
-int16 person_tmp_hide[MAX_PERSON];
-int16 person_tmp_room[MAX_PERSON];
-
-int16 FrameSpeed;
-int16 FrameSpeedTmp;
-
-byte **ablage;
-byte *workpage;
-byte *workptr;
-byte *cur_back;
-byte **ged_mem;
-byte *spblende;
-
-char **ads_item_ptr;
-
-int16 ads_dia_nr;
-int16 ads_item_anz;
-int16 ads_blk_nr;
-int16 ads_push;
-
-int16 ads_tmp_dsp;
-int8 menu_display;
-int16 menu_lauflicht;
-int16 menu_item;
-int16 menu_item_vorwahl;
-int16 maus_menu_x;
-int16 maus_old_x;
-int16 maus_old_y;
-int16 inventar_nr;
-int16 invent_cur_mode;
-byte *inv_spr[MAX_MOV_OBJ];
-
 bool life_flag;
 int16 life_x;
 int16 life_y;

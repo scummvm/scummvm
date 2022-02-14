@@ -99,10 +99,10 @@ void Room91::setup_func() {
 		else
 			go_auto_xy(536, 90, P_HOWARD, ANI_GO);
 	} else {
-		if (menu_display)
+		if (_G(menu_display))
 			return;
 		
-		menu_item = CUR_USE;
+		_G(menu_item) = CUR_USE;
 		cur_2_inventory();
 		cursor_wahl(CUR_22);
 
