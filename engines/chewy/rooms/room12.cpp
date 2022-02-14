@@ -115,20 +115,20 @@ void Room12::init_bork() {
 
 		if (!flags.AutoAniPlay && !flags.ChAutoMov) {
 			_G(auto_obj) = 1;
-			mov_phasen[R12_BORK_OBJ].AtsText = 120;
-			mov_phasen[R12_BORK_OBJ].Lines = 5;
-			mov_phasen[R12_BORK_OBJ].Repeat = 1;
-			mov_phasen[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->ZoomFak + 20;
-			auto_mov_obj[R12_BORK_OBJ].Id = AUTO_OBJ0;
-			auto_mov_vector[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-			auto_mov_obj[R12_BORK_OBJ].Mode = true;
+			_G(mov_phasen)[R12_BORK_OBJ].AtsText = 120;
+			_G(mov_phasen)[R12_BORK_OBJ].Lines = 5;
+			_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
+			_G(mov_phasen)[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->ZoomFak + 20;
+			_G(auto_mov_obj)[R12_BORK_OBJ].Id = AUTO_OBJ0;
+			_G(auto_mov_vector)[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+			_G(auto_mov_obj)[R12_BORK_OBJ].Mode = true;
 			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 5, (const MovLine *)R12_BORK_MPKT);
 
 			if (!_G(spieler).R12TalismanOk) {
 				hide_cur();
-				auto_mov_vector[R12_BORK_OBJ].DelayCount = 1000;
+				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
 				auto_move(5, P_CHEWY);
-				auto_mov_vector[R12_BORK_OBJ].DelayCount = 0;
+				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
 
 				if (_G(spieler).R12BorkCount < 3) {
 					++_G(spieler).R12BorkCount;
@@ -158,13 +158,13 @@ void Room12::talk_bork() {
 void Room12::bork_ok() {
 	hide_cur();
 	flags.MausLinks = true;
-	auto_mov_vector[R12_BORK_OBJ].DelayCount = 1000;
+	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
 	auto_move(5, P_CHEWY);
-	auto_mov_vector[R12_BORK_OBJ].DelayCount = 0;
+	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
 	_G(spieler).R12BorkTalk = true;
 
-	mov_phasen[R12_BORK_OBJ].Repeat = 1;
-	mov_phasen[R12_BORK_OBJ].Lines = 2;
+	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
+	_G(mov_phasen)[R12_BORK_OBJ].Lines = 2;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 2, (const MovLine *)R12_BORK_MPKT1);
 	wait_auto_obj(R12_BORK_OBJ);
 
@@ -174,8 +174,8 @@ void Room12::bork_ok() {
 	start_aad_wait(57, -1);
 	_G(det)->stop_detail(3);
 
-	mov_phasen[R12_BORK_OBJ].Repeat = 1;
-	mov_phasen[R12_BORK_OBJ].Lines = 3;
+	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
+	_G(mov_phasen)[R12_BORK_OBJ].Lines = 3;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 3, (const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
 	_G(det)->hide_static_spr(10);

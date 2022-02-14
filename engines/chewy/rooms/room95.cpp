@@ -36,7 +36,7 @@ void Room95::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 140;
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (_G(spieler).flags35_20)
 		_G(det)->show_static_spr(10);
@@ -66,7 +66,7 @@ void Room95::xit(int16 eib_nr) {
 
 void Room95::setup_func() {
 	calc_person_look();
-	int posX = spieler_vector[P_CHEWY].Xypos[0];
+	int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int destX;
 	int destY = 120;
 	

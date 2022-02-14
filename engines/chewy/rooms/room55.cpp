@@ -56,7 +56,7 @@ void Room55::entry() {
 		_G(det)->set_static_ani(aniNr, -1);
 	}
 
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (_G(spieler).R55Job) {
 		rock2mans();
@@ -115,7 +115,7 @@ void Room55::xit(int16 eib_nr) {
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 54;
-			spieler_mi[P_HOWARD].Mode = false;
+			_G(spieler_mi)[P_HOWARD].Mode = false;
 		}
 	}
 
@@ -247,7 +247,7 @@ int16 Room55::use_telefon() {
 				del_invent_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_ROCKER);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 54;
-				spieler_mi[P_HOWARD].Mode = false;
+				_G(spieler_mi)[P_HOWARD].Mode = false;
 				show_cur();
 				_G(spieler).R55R54First = true;
 				_G(spieler).R55ExitDia = 337;
@@ -298,7 +298,7 @@ void Room55::get_job() {
 	}
 
 	_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (r_nr == 54)
 		flags.LoadGame = false;
@@ -401,7 +401,7 @@ int16 Room55::cut_serv(int16 frame) {
 void Room55::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
 		calc_person_look();
-		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 100) {
@@ -459,7 +459,7 @@ void Room55::talk_line() {
 
 	flags.NoScroll = false;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 54;
-	spieler_mi[P_HOWARD].Mode = false;
+	_G(spieler_mi)[P_HOWARD].Mode = false;
 	switch_room(54);
 	show_cur();
 }

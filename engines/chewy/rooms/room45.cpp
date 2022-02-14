@@ -40,11 +40,11 @@ void Room45::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
-		spieler_mi[P_HOWARD].Mode = true;
+		_G(spieler_mi)[P_HOWARD].Mode = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 45;
 	}
 
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (!flags.LoadGame) {
 		int16 ch_x, ch_y;
 		int16 ho_x, ho_y;
@@ -80,7 +80,7 @@ void Room45::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 
 		if (eib_nr == 87) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
@@ -143,7 +143,7 @@ void Room45::setup_func() {
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
-			const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 			if (ch_x < 95) {
 				x = 18;

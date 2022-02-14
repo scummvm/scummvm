@@ -63,7 +63,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(spieler).R28EntryHaus = true;
 					set_person_pos(232, 100, P_HOWARD, P_RIGHT);
 					auto_move(3, P_HOWARD);
-					go_auto_xy(320, spieler_vector[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
+					go_auto_xy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
 					start_aad_wait(176, -1);
 				} else if (_G(spieler).R31SurFurz && !_G(spieler).R28RKuerbis) {
 					_G(spieler).R28RKuerbis = true;
@@ -118,9 +118,9 @@ void Room28::entry(int16 eib_nr) {
 					set_person_pos(440, 146, P_CHEWY, P_RIGHT);
 					_G(fx_blend) = BLEND_NONE;
 					flags.ExitMov = false;
-					spieler_mi[P_HOWARD].Mode = true;
+					_G(spieler_mi)[P_HOWARD].Mode = true;
 					go_auto_xy(420, 113, P_HOWARD, ANI_WAIT);
-					spieler_mi[P_HOWARD].Mode = false;
+					_G(spieler_mi)[P_HOWARD].Mode = false;
 					set_person_pos(440, 146, P_CHEWY, P_LEFT);
 					start_aad_wait(193, -1);
 				} else {
@@ -204,7 +204,7 @@ void Room28::haendler() {
 void Room28::setup_func() {
 	calc_person_look();
 
-	int16 x = (spieler_vector[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
+	int16 x = (_G(spieler_vector)[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
 	go_auto_xy(x, 113, P_HOWARD, ANI_GO);
 }
 
@@ -248,13 +248,13 @@ void Room28::set_pump() {
 	if (_G(spieler).PersonRoomNr[P_CHEWY] == 28) {
 		if (!flags.AutoAniPlay) {
 			flags.AutoAniPlay = true;
-			if (spieler_vector[P_CHEWY].Xypos[0] < 380)
+			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
 				auto_move(5, P_CHEWY);
 
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
+			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			del_inventar(K_MASKE_INV);
-			_G(det)->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+			_G(det)->set_detail_pos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 
 			if (_G(spieler).R28PumpTxt1 < 3) {
 				start_aad(137);
@@ -300,8 +300,8 @@ void Room28::get_pump() {
 		stop_person(P_CHEWY);
 		_G(spieler).R28ChewyPump = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
-		_G(det)->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
+		_G(det)->set_detail_pos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		start_detail_wait(tmp, 1, ANI_RUECK);
 
 		invent_2_slot(K_MASKE_INV);

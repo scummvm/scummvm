@@ -39,7 +39,7 @@ void Room47::xit() {
 	flags.MainInput = true;
 	show_person();
 	set_person_pos(114, 102, P_CHEWY, P_LEFT);
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 }
 
 int16 Room47::use_knopf(int16 txt_nr) {

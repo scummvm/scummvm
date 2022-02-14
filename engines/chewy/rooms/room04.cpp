@@ -89,10 +89,10 @@ int16 Room4::sonde_comp() {
 			}
 		}
 
-		spr_info[0].Image = room_blk.DetImage[spr_nr];
-		spr_info[0].ZEbene = 0;
-		spr_info[0].X = CUR_POS[cur_x][0];
-		spr_info[0].Y = CUR_POS[cur_x][1];
+		_G(spr_info)[0].Image = room_blk.DetImage[spr_nr];
+		_G(spr_info)[0].ZEbene = 0;
+		_G(spr_info)[0].X = CUR_POS[cur_x][0];
+		_G(spr_info)[0].Y = CUR_POS[cur_x][1];
 
 		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
 			curani.ani_anf = HAND_CLICK;
@@ -118,7 +118,7 @@ int16 Room4::sonde_comp() {
 	_G(menu_item) = CUR_WALK;
 	cursor_wahl(_G(menu_item));
 
-	spieler_vector[P_CHEWY].DelayCount = 0;
+	_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 	_G(maus_links_click) = false;
 	minfo.button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;

@@ -227,6 +227,18 @@ public:
 	Flic *_flc = nullptr;
 	MovClass *_mov = nullptr;
 
+	ObjMov _spieler_vector[MAX_PERSON];
+	SprInfo _spr_info[MAX_PROG_ANI];
+	MovInfo _spieler_mi[MAX_PERSON];
+	ObjMov _auto_mov_vector[MAX_OBJ_MOV];
+	MovInfo _auto_mov_obj[MAX_OBJ_MOV];
+	MovPhasen _mov_phasen[MAX_OBJ_MOV];
+	MovLine _mov_line[MAX_OBJ_MOV][5];
+	TimerBlk _ani_timer[MAX_TIMER_OBJ];
+	int16 _person_end_phase[MAX_PERSON] = { 0 };
+	int16 _ani_stand_count[MAX_PERSON] = { 0 };
+	bool _ani_stand_flag[MAX_PERSON] = { false };
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -291,31 +303,16 @@ extern char *invent_name;
 
 extern int16 ak_invent;
 
-extern SprInfo spr_info[MAX_PROG_ANI];
 extern maus_info minfo;
 extern kb_info kbinfo;
 extern cur_blk curblk;
 extern cur_ani curani;
 extern iog_init ioptr;
 extern RaumBlk room_blk;
-extern ObjMov spieler_vector[MAX_PERSON];
 
-extern MovInfo spieler_mi[MAX_PERSON];
-
-extern ObjMov auto_mov_vector[MAX_OBJ_MOV];
-extern MovInfo auto_mov_obj[MAX_OBJ_MOV];
-
-extern MovPhasen mov_phasen[MAX_OBJ_MOV];
-extern MovLine mov_line[MAX_OBJ_MOV][5];
-extern TimerBlk ani_timer[MAX_TIMER_OBJ];
 extern Flags flags;
 extern CustomInfo Ci;
 extern GotoPkt gpkt;
-
-extern int16 person_end_phase[MAX_PERSON];
-extern int16 ani_stand_count[MAX_PERSON];
-
-extern bool ani_stand_flag[MAX_PERSON];
 
 
 void cursor_wahl(int16 nr);

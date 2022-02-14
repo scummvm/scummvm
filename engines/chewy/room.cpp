@@ -123,7 +123,7 @@ void JungleRoom::rightEntry() {
 void JungleRoom::setup_func() {
 	calc_person_look();
 
-	const int posX = spieler_vector[P_CHEWY].Xypos[0];
+	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 	int howDestX, nicDestX;
 	if (posX < 40) {
@@ -506,7 +506,7 @@ void load_chewy_taf(int16 taf_nr) {
 			free((char *)_G(chewy));
 			_G(chewy) = nullptr;
 		}
-		spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
+		_G(spieler_mi)[P_CHEWY].HotY = CH_HOT_Y;
 
 		const char *fname_;
 		switch (taf_nr) {
@@ -544,7 +544,7 @@ void load_chewy_taf(int16 taf_nr) {
 			fname_ = CHEWY_JMAN_TAF;
 			_G(chewy_ph_anz) = CHEWY_RO_PHASEN_ANZ;
 			_G(chewy_ph) = (const uint8 *)CHEWY_JM_PHASEN;
-			spieler_mi[P_CHEWY].HotY = 68;
+			_G(spieler_mi)[P_CHEWY].HotY = 68;
 			break;
 
 		case CHEWY_ANI7:
@@ -578,12 +578,12 @@ void switch_room(int16 nr) {
 
 void calc_person_look() {
 	for (int16 i = 1; i < MAX_PERSON; i++) {
-		if (spieler_mi[i].Id != NO_MOV_OBJ) {
+		if (_G(spieler_mi)[i].Id != NO_MOV_OBJ) {
 
-			if (spieler_vector[i].Xypos[0] > spieler_vector[P_CHEWY].Xypos[0])
-				person_end_phase[i] = P_LEFT;
+			if (_G(spieler_vector)[i].Xypos[0] > _G(spieler_vector)[P_CHEWY].Xypos[0])
+				_G(person_end_phase)[i] = P_LEFT;
 			else
-				person_end_phase[i] = P_RIGHT;
+				_G(person_end_phase)[i] = P_RIGHT;
 		}
 	}
 }

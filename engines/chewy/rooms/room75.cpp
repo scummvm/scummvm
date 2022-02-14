@@ -36,8 +36,8 @@ void Room75::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;

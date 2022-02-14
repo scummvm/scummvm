@@ -35,8 +35,8 @@ void Room82::entry() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	_G(spieler).ScrollxStep = 2;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 
 	if (_G(spieler).R88UsedMonkey) {
 		_G(det)->show_static_spr(6);
@@ -90,7 +90,7 @@ void Room82::xit(int16 eib_nr) {
 void Room82::setup_func() {
 	calc_person_look();
 
-	const int posX = spieler_vector[P_CHEWY].Xypos[0];
+	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (posX < 200) {
@@ -225,7 +225,7 @@ void Room82::proc8() {
 	start_aad_wait(447, -1);
 	auto_move(6, P_CHEWY);
 
-	while (spieler_vector[P_NICHELLE].Count != 0)
+	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
 		set_up_screen(DO_SETUP);
 
 	_G(spieler).PersonHide[P_NICHELLE] = true;

@@ -42,7 +42,7 @@ void Room46::entry(int16 eib_nr) {
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
-		spieler_mi[P_HOWARD].Mode = true;
+		_G(spieler_mi)[P_HOWARD].Mode = true;
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).flags33_8) {
@@ -72,14 +72,14 @@ void Room46::entry(int16 eib_nr) {
 
 void Room46::xit() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
 void Room46::setup_func() {
 	calc_person_look();
 	int16 y = 64;
-	const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+	const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 	int16 x;
 	if (ch_x > 160) {
@@ -99,9 +99,9 @@ void Room46::setup_func() {
 void Room46::bodo() {
 	hide_cur();
 	_G(det)->show_static_spr(0);
-	person_end_phase[P_CHEWY] = P_RIGHT;
+	_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 	start_aad_wait(240, -1);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(42, 76, P_CHEWY, ANI_WAIT);
 	start_aad_wait(250, -1);
 	auto_move(1, P_CHEWY);
@@ -109,7 +109,7 @@ void Room46::bodo() {
 	start_aad_wait(251, -1);
 	auto_move(2, P_CHEWY);
 
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	start_detail_wait(0, 1, ANI_VOR);
 	_G(det)->start_detail(5, 255, ANI_VOR);
 	start_aad_wait(241, -1);

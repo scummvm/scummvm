@@ -35,9 +35,9 @@ void Room96::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 50;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 
 	if (flags.LoadGame)
 		return;
@@ -60,7 +60,7 @@ void Room96::setup_func() {
 	calc_person_look();
 	int destX, destY = 62;
 	
-	if (spieler_vector[P_CHEWY].Xypos[0] >= 120)
+	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 120)
 		destX = 121;
 	else
 		destX = 93;

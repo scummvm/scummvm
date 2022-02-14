@@ -53,7 +53,7 @@ void Room49::entry(int16 eib_nr) {
 
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 30;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (!flags.LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
@@ -74,7 +74,7 @@ void Room49::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 		if (eib_nr == 80) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		} else if (eib_nr == 81) {
@@ -119,7 +119,7 @@ void Room49::calc_boy() {
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
-		person_end_phase[P_CHEWY] = P_LEFT;
+		_G(person_end_phase)[P_CHEWY] = P_LEFT;
 		_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 		_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 		_G(det)->set_static_ani(2, -1);
@@ -270,7 +270,7 @@ int16 Room49::use_taxi() {
 void Room49::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		calc_person_look();
-		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 130) {

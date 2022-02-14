@@ -235,18 +235,18 @@ int16 Room18::calc_surimy() {
 		_G(det)->load_taf_seq(245, 50, nullptr);
 		_G(det)->load_taf_seq(116, 55, nullptr);
 		_G(auto_obj) = 1;
-		mov_phasen[SURIMY_OBJ].AtsText = 0;
-		mov_phasen[SURIMY_OBJ].Lines = 2;
-		mov_phasen[SURIMY_OBJ].Repeat = 1;
-		mov_phasen[SURIMY_OBJ].ZoomFak = 0;
-		auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
-		auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
-		auto_mov_obj[SURIMY_OBJ].Mode = true;
+		_G(mov_phasen)[SURIMY_OBJ].AtsText = 0;
+		_G(mov_phasen)[SURIMY_OBJ].Lines = 2;
+		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
+		_G(mov_phasen)[SURIMY_OBJ].ZoomFak = 0;
+		_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
+		_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 
-		if (spieler_vector[P_CHEWY].Xypos[1] < 150) {
+		if (_G(spieler_vector)[P_CHEWY].Xypos[1] < 150) {
 			start_detail_frame(18, 1, ANI_VOR, 8);
 
-			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
 			wait_detail(18);
 		} else {
 			auto_move(1, P_CHEWY);
@@ -255,7 +255,7 @@ int16 Room18::calc_surimy() {
 			start_detail_frame(17, 1, ANI_VOR, 12);
 			_G(maus_links_click) = false;
 
-			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 			wait_detail(17);
 		}
 
@@ -283,8 +283,8 @@ int16 Room18::calc_surimy() {
 		_G(det)->hide_static_spr(26);
 
 		flags.NoScroll = true;
-		mov_phasen[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
+		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 		auto_scroll(70, 0);
 		wait_auto_obj(SURIMY_OBJ);
 
@@ -301,8 +301,8 @@ int16 Room18::calc_surimy() {
 		_G(det)->show_static_spr(21);
 
 		_G(det)->hide_static_spr(26);
-		mov_phasen[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
+		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
 		wait_auto_obj(SURIMY_OBJ);
 		_G(spieler).ScrollxStep = 6;

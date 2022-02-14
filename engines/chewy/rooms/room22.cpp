@@ -109,13 +109,13 @@ void Room22::bork(int16 t_nr) {
 			start_aad_wait(10, -1);
 			auto_move(3, P_CHEWY);
 			_G(auto_obj) = 1;
-			mov_phasen[BORK_OBJ].AtsText = 0;
-			mov_phasen[BORK_OBJ].Lines = 2;
-			mov_phasen[BORK_OBJ].Repeat = 1;
-			mov_phasen[BORK_OBJ].ZoomFak = 0;
-			auto_mov_obj[BORK_OBJ].Id = AUTO_OBJ0;
-			auto_mov_vector[BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-			auto_mov_obj[BORK_OBJ].Mode = true;
+			_G(mov_phasen)[BORK_OBJ].AtsText = 0;
+			_G(mov_phasen)[BORK_OBJ].Lines = 2;
+			_G(mov_phasen)[BORK_OBJ].Repeat = 1;
+			_G(mov_phasen)[BORK_OBJ].ZoomFak = 0;
+			_G(auto_mov_obj)[BORK_OBJ].Id = AUTO_OBJ0;
+			_G(auto_mov_vector)[BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+			_G(auto_mov_obj)[BORK_OBJ].Mode = true;
 
 			if (!_G(spieler).R22Paint) {
 				bork_walk1();
@@ -137,18 +137,18 @@ void Room22::bork(int16 t_nr) {
 }
 
 void Room22::bork_walk1() {
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
 	start_detail_wait(2, 1, ANI_VOR);
 
-	mov_phasen[BORK_OBJ].Repeat = 1;
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);
+	_G(mov_phasen)[BORK_OBJ].Repeat = 1;
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);
 	wait_auto_obj(BORK_OBJ);
 }
 
 void Room22::bork_walk2() {
-	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], mov_phasen[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT2);
+	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT2);
 	wait_auto_obj(BORK_OBJ);
 
 	flic_cut(FCUT_009, CFO_MODE);

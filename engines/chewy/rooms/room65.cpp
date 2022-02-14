@@ -37,14 +37,14 @@ void Room65::entry() {
 	_G(r65tmp_scrolly) = _G(spieler).scrolly;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	_G(r65tmp_ch_x) = spieler_vector[P_CHEWY].Xypos[0];;
-	_G(r65tmp_ch_y) = spieler_vector[P_CHEWY].Xypos[1];;
-	_G(r65tmp_ho_x) = spieler_vector[P_HOWARD].Xypos[0];;
-	_G(r65tmp_ho_y) = spieler_vector[P_HOWARD].Xypos[1];;
-	spieler_vector[P_CHEWY].Xypos[0] = 10;
-	spieler_vector[P_CHEWY].Xypos[1] = 80;
-	spieler_vector[P_HOWARD].Xypos[0] = 150;
-	spieler_vector[P_HOWARD].Xypos[1] = 10;
+	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];;
+	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];;
+	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];;
+	_G(r65tmp_ho_y) = _G(spieler_vector)[P_HOWARD].Xypos[1];;
+	_G(spieler_vector)[P_CHEWY].Xypos[0] = 10;
+	_G(spieler_vector)[P_CHEWY].Xypos[1] = 80;
+	_G(spieler_vector)[P_HOWARD].Xypos[0] = 150;
+	_G(spieler_vector)[P_HOWARD].Xypos[1] = 10;
 	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hide_cur();

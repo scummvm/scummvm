@@ -40,7 +40,7 @@ void standard_init() {
 	_G(ged) = new GedClass(&ged_user_func);
 	_G(room) = new Room();
 	_G(obj) = new Object(&_G(spieler));
-	_G(uhr) = new Timer(MAX_TIMER_OBJ, ani_timer);
+	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
 	_G(det) = new Detail();
 	_G(atds) = new Atdsys();
 	_G(sndPlayer) = new SoundPlayer();
@@ -127,42 +127,42 @@ void var_init() {
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).ScrollyStep = 1;
 
-	spieler_mi[P_CHEWY].HotX = CH_HOT_X;
-	spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
-	spieler_mi[P_CHEWY].HotMovX = CH_HOT_MOV_X;
-	spieler_mi[P_CHEWY].HotMovY = CH_HOT_MOV_Y;
-	spieler_mi[P_CHEWY].Vorschub = CH_X_PIX;
-	spieler_mi[P_CHEWY].Id = CHEWY_OBJ;
+	_G(spieler_mi)[P_CHEWY].HotX = CH_HOT_X;
+	_G(spieler_mi)[P_CHEWY].HotY = CH_HOT_Y;
+	_G(spieler_mi)[P_CHEWY].HotMovX = CH_HOT_MOV_X;
+	_G(spieler_mi)[P_CHEWY].HotMovY = CH_HOT_MOV_Y;
+	_G(spieler_mi)[P_CHEWY].Vorschub = CH_X_PIX;
+	_G(spieler_mi)[P_CHEWY].Id = CHEWY_OBJ;
 
-	spieler_mi[P_HOWARD].HotX = HO_HOT_X;
-	spieler_mi[P_HOWARD].HotY = HO_HOT_Y ;
-	spieler_mi[P_HOWARD].HotMovX = HO_HOT_MOV_X;
-	spieler_mi[P_HOWARD].HotMovY = HO_HOT_MOV_Y;
-	spieler_mi[P_HOWARD].Vorschub = HO_X_PIX;
-	spieler_mi[P_HOWARD].Id = HOWARD_OBJ;
+	_G(spieler_mi)[P_HOWARD].HotX = HO_HOT_X;
+	_G(spieler_mi)[P_HOWARD].HotY = HO_HOT_Y ;
+	_G(spieler_mi)[P_HOWARD].HotMovX = HO_HOT_MOV_X;
+	_G(spieler_mi)[P_HOWARD].HotMovY = HO_HOT_MOV_Y;
+	_G(spieler_mi)[P_HOWARD].Vorschub = HO_X_PIX;
+	_G(spieler_mi)[P_HOWARD].Id = HOWARD_OBJ;
 
-	spieler_mi[P_NICHELLE].HotX = NI_HOT_X;
-	spieler_mi[P_NICHELLE].HotY = NI_HOT_Y ;
-	spieler_mi[P_NICHELLE].HotMovX = NI_HOT_MOV_X;
-	spieler_mi[P_NICHELLE].HotMovY = 62;
-	spieler_mi[P_NICHELLE].Vorschub = NI_X_PIX;
-	spieler_mi[P_NICHELLE].Id = NICHELLE_OBJ;
+	_G(spieler_mi)[P_NICHELLE].HotX = NI_HOT_X;
+	_G(spieler_mi)[P_NICHELLE].HotY = NI_HOT_Y ;
+	_G(spieler_mi)[P_NICHELLE].HotMovX = NI_HOT_MOV_X;
+	_G(spieler_mi)[P_NICHELLE].HotMovY = 62;
+	_G(spieler_mi)[P_NICHELLE].Vorschub = NI_X_PIX;
+	_G(spieler_mi)[P_NICHELLE].Id = NICHELLE_OBJ;
 
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		_G(PersonAni)[i] = -1;
 		_G(PersonTaf)[i] = 0;
-		spieler_mi[i].Mode = false;
+		_G(spieler_mi)[i].Mode = false;
 
-		ani_stand_flag[i] = false;
+		_G(ani_stand_flag)[i] = false;
 		_G(spz_delay)[i] = 0;
 		_G(spieler).PersonRoomNr[i] = -1;
 		_G(spieler).PersonDia[i] = -1;
 	}
 	_G(spieler).PersonRoomNr[P_CHEWY] = _G(room_start_nr);
 
-	gpkt.Vorschub = spieler_mi[P_CHEWY].Vorschub;
+	gpkt.Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	init_atds();
 	_G(spieler).FramesPerSecond = 7;
@@ -216,7 +216,7 @@ void init_atds() {
 	_G(atds)->open_handle(ADSH_TMP, "rb", 3);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
-	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
+	_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed;
 	_G(atds)->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		_G(atds)->set_split_win(i, &_G(ssi)[i]);

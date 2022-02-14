@@ -74,7 +74,7 @@ void Room9::gtuer() {
 void Room9::surimy() {
 	hide_cur();
 	_G(spieler).R9Surimy = true;
-	const int16 tmp = spieler_vector[P_CHEWY].Count;
+	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 	stop_person(P_CHEWY);
 	_G(atds)->set_steuer_bit(75, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(det)->hide_static_spr(4);
@@ -83,8 +83,8 @@ void Room9::surimy() {
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
 	start_aad_wait(56, -1);
 	_G(spieler).room_e_obj[17].Attribut = AUSGANG_RECHTS;
-	spieler_vector[P_CHEWY].Count = tmp;
-	get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
+	_G(spieler_vector)[P_CHEWY].Count = tmp;
+	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 	_G(mov)->continue_auto_go();
 	show_cur();
 }
@@ -92,13 +92,13 @@ void Room9::surimy() {
 void Room9::surimy_ani() {
 	_G(det)->load_taf_seq(91, 8, nullptr);
 	_G(auto_obj) = 1;
-	mov_phasen[SURIMY_OBJ].AtsText = 0;
-	mov_phasen[SURIMY_OBJ].Lines = 2;
-	mov_phasen[SURIMY_OBJ].Repeat = 1;
-	mov_phasen[SURIMY_OBJ].ZoomFak = 0;
-	auto_mov_obj[SURIMY_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SURIMY_OBJ].Mode = true;
+	_G(mov_phasen)[SURIMY_OBJ].AtsText = 0;
+	_G(mov_phasen)[SURIMY_OBJ].Lines = 2;
+	_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
+	_G(mov_phasen)[SURIMY_OBJ].ZoomFak = 0;
+	_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
 	start_detail_frame(0, 1, ANI_VOR, 15);
@@ -107,8 +107,8 @@ void Room9::surimy_ani() {
 	start_detail_wait(1, 1, ANI_VOR);
 	start_spz(CH_EKEL, 2, ANI_VOR, P_CHEWY);
 	_G(det)->hide_static_spr(4);
-	mov_phasen[SURIMY_OBJ].Repeat = 1;
-	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], mov_phasen[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
+	_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
+	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 	wait_auto_obj(SURIMY_OBJ);
 	_G(det)->del_taf_tbl(91, 8, nullptr);
 }

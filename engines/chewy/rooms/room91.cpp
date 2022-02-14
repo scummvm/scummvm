@@ -38,7 +38,7 @@ void Room91::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_click = 0;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (flags.LoadGame)
 		return;
@@ -89,7 +89,7 @@ void Room91::xit(int16 eib_nr) {
 void Room91::setup_func() {
 	if (!_G(spieler).flags34_4) {
 		calc_person_look();
-		const int xyPos = spieler_vector[0].Xypos[0];
+		const int xyPos = _G(spieler_vector)[0].Xypos[0];
 		if (xyPos < 130)
 			go_auto_xy(40, 97, P_HOWARD, ANI_GO);
 		else if (xyPos < 312)

@@ -38,8 +38,8 @@ void Room71::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0);
 	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 8;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 16;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 8;
@@ -116,7 +116,7 @@ void Room71::setup_func() {
 		}
 
 	} else {
-		const int posX = spieler_vector[P_CHEWY].Xypos[0];
+		const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 		int howDestX, howDestY, nicDestX, nicDestY;
 		if (posX < 40) {
@@ -266,7 +266,7 @@ int Room71::proc6() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hide_static_spr(3);
 	_G(det)->show_static_spr(4);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(244, 44, P_CHEWY, ANI_WAIT);
 	start_spz_wait(14, 1, false, P_CHEWY);
 	_G(det)->hide_static_spr(4);
@@ -276,7 +276,7 @@ int Room71::proc6() {
 	_G(det)->del_static_ani(0);
 	_G(atds)->set_steuer_bit(443, ATS_AKTIV_BIT, ATS_DATEI);
 	auto_move(3, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	
 	show_cur();
 	return 1;

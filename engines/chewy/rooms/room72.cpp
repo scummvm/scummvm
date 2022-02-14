@@ -32,8 +32,8 @@ namespace Rooms {
 void Room72::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
 	if (_G(spieler).flags28_10) {
 		_G(zoom_horizont) = 110;
@@ -44,7 +44,7 @@ void Room72::entry(int16 eib_nr) {
 		_G(spieler).ZoomXy[P_NICHELLE][0] = 20;
 		_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
 		_G(zoom_horizont) = 140;
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		hide_cur();
 	}
 
@@ -96,7 +96,7 @@ void Room72::proc1(int16 flicNr) {
 	_G(det)->hide_static_spr(0);
 	set_up_screen(DO_SETUP);
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
 	switch_room(76);
 }

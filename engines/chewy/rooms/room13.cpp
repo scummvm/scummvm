@@ -102,8 +102,8 @@ void Room13::talk_bork() {
 		_G(spieler).R13BorkOk = true;
 		_G(spieler).R12ChewyBork = false;
 		_G(det)->show_static_spr(13);
-		_G(det)->set_detail_pos(10, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
-		_G(det)->set_static_pos(12, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1], false, true);
+		_G(det)->set_detail_pos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		_G(det)->set_static_pos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);
 		_G(det)->stop_detail(9);
@@ -112,13 +112,13 @@ void Room13::talk_bork() {
 		_G(det)->hide_static_spr(12);
 		_G(auto_obj) = 1;
 
-		mov_phasen[R13_BORK_OBJ].AtsText = 122;
-		mov_phasen[R13_BORK_OBJ].Lines = 3;
-		mov_phasen[R13_BORK_OBJ].Repeat = 1;
-		mov_phasen[R13_BORK_OBJ].ZoomFak = 0;
-		auto_mov_obj[R13_BORK_OBJ].Id = AUTO_OBJ0;
-		auto_mov_vector[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
-		auto_mov_obj[R13_BORK_OBJ].Mode = true;
+		_G(mov_phasen)[R13_BORK_OBJ].AtsText = 122;
+		_G(mov_phasen)[R13_BORK_OBJ].Lines = 3;
+		_G(mov_phasen)[R13_BORK_OBJ].Repeat = 1;
+		_G(mov_phasen)[R13_BORK_OBJ].ZoomFak = 0;
+		_G(auto_mov_obj)[R13_BORK_OBJ].Id = AUTO_OBJ0;
+		_G(auto_mov_vector)[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_obj)[R13_BORK_OBJ].Mode = true;
 		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], 3, (const MovLine *)R13_BORK_MPKT);
 		auto_move(9, P_CHEWY);
 		wait_auto_obj(R13_BORK_OBJ);

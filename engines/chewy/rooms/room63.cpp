@@ -137,9 +137,9 @@ void Room63::bork_platt() {
 	flic_cut(FCUT_082, CFO_MODE);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	check_shad(4, 1);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	auto_move(6, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	start_aad_wait(370, -1);
 	start_detail_wait(4, 1, ANI_VOR);
 	_G(det)->show_static_spr(13);

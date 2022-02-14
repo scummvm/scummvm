@@ -95,7 +95,7 @@ void Room51::entry() {
 			}
 
 			_G(SetUpScreenFunc) = setup_func;
-			spieler_mi[P_HOWARD].Mode = true;
+			_G(spieler_mi)[P_HOWARD].Mode = true;
 		}
 	}
 }
@@ -119,7 +119,7 @@ void Room51::xit(int16 eib_nr) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 52;
 		}
 
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
@@ -184,7 +184,7 @@ void Room51::setup_func() {
 		}
 	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		const int16 ch_y = spieler_vector[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 
 		int16 x, y;
 		if (ch_y < 129) {

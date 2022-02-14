@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room52::entry() {
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (_G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg) {
 		plot_armee(0);
@@ -59,7 +59,7 @@ void Room52::entry() {
 void Room52::xit() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 51;
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
@@ -138,7 +138,7 @@ void Room52::kaker_platt() {
 void Room52::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
-		const int16 y = (spieler_vector[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
+		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
 		go_auto_xy(1, y, P_HOWARD, ANI_GO);
 	}
 }

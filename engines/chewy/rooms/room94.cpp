@@ -38,7 +38,7 @@ void Room94::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 34;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 48;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (_G(spieler).flags35_10) {
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
@@ -101,7 +101,7 @@ void Room94::setup_func() {
 	calc_person_look();
 	int destX, destY = 122;
 
-	if (spieler_vector[P_CHEWY].Xypos[0] >= 370)
+	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 370)
 		destX = 399;
 	else
 		destX = 255;
