@@ -100,7 +100,7 @@ void Room7::klingel() {
 		_G(det)->stop_detail(5);
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
@@ -121,7 +121,7 @@ void Room7::klingel() {
 		_G(obj)->calc_rsi_flip_flop(SIB_SCHLOTT_R7);
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		_G(det)->hide_static_spr(7);
 
 	} else if (!_G(spieler).R7SeilOk) {
@@ -135,7 +135,7 @@ void Room7::klingel() {
 		_G(det)->stop_detail(5);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_move(6, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(det)->start_detail(0, 255, ANI_VOR);
@@ -145,7 +145,7 @@ void Room7::klingel() {
 		_G(det)->stop_detail(0);
 		set_person_pos(181, 130, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		_G(det)->del_taf_tbl(192, 74, nullptr);
 
 	} else if (_G(spieler).R7SeilOk && !_G(spieler).R7BorkFlug) {
@@ -155,7 +155,7 @@ void Room7::klingel() {
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(obj)->set_rsi_flip_flop(SIB_TKNOPF2_R7, 255);
 		_G(obj)->hide_sib(SIB_KLINGEL_R7);
-		flags.NoPalAfterFlc = false;
+		_G(flags).NoPalAfterFlc = false;
 		register_cutscene(2);
 		flic_cut(FCUT_003, CFO_MODE);
 		set_person_pos(201, 117, P_CHEWY, P_LEFT);

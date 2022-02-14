@@ -34,7 +34,7 @@ void Room81::entry() {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).r88DestRoom == 84) {
@@ -44,7 +44,7 @@ void Room81::entry() {
 
 	proc3();
 
-	if (flags.LoadGame || !_G(spieler).flags30_1)
+	if (_G(flags).LoadGame || !_G(spieler).flags30_1)
 		return;
 
 	set_person_pos(155, 146, P_CHEWY, P_LEFT);

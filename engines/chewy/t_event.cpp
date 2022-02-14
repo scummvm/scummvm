@@ -31,14 +31,14 @@ namespace Chewy {
 int16 load_ads_dia(int16 dia_nr) {
 	int16 ret = false;
 
-	if (flags.AdsDialog == false) {
+	if (_G(flags).AdsDialog == false) {
 		bool tmp = _G(atds)->ads_start(dia_nr);
 		if (tmp == true) {
 			_G(atds)->load_atds(dia_nr, ADH_DATEI);
 			ret = true;
 			_G(ads_blk_nr) = 0;
 			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_anz));
-			flags.AdsDialog = true;
+			_G(flags).AdsDialog = true;
 			_G(ads_push) = true;
 			_G(ads_tmp_dsp) = _G(spieler).DispFlag;
 			_G(spieler).DispFlag = false;
@@ -68,8 +68,8 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 	int16 action_ret;
 	if (!_G(atds)->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
 		action_ret = true;
-		if (flags.AtsAction == false) {
-			flags.AtsAction = true;
+		if (_G(flags).AtsAction == false) {
+			_G(flags).AtsAction = true;
 			if (mode == ATS_ACTION_NACH) {
 				switch (txt_mode) {
 				case TXT_MARK_LOOK:
@@ -1122,7 +1122,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				}
 			}
 
-			flags.AtsAction = false;
+			_G(flags).AtsAction = false;
 		}
 	} else {
 		action_ret = false;
@@ -1132,8 +1132,8 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 }
 
 void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
-	if (flags.AdsAction == false) {
-		flags.AdsAction = true;
+	if (_G(flags).AdsAction == false) {
+		_G(flags).AdsAction = true;
 
 		switch (dia_nr) {
 		case 2:
@@ -1221,14 +1221,14 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			break;
 		}
 
-		flags.AdsAction = false;
+		_G(flags).AdsAction = false;
 	}
 }
 
 void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 	switch (dia_nr) {
 	case 0:
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		break;
 
 	case 5:
@@ -2178,9 +2178,9 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
 
-		_G(room)->load_tgp(BUCH_START, &room_blk, GBOOK_TGP, 0, GBOOK);
+		_G(room)->load_tgp(BUCH_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 		_G(out)->setze_zeiger(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->back2screen(_G(workpage));
 
 		while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
@@ -2192,7 +2192,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+		_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 		_G(spieler).scrollx = scrollx;
 		_G(spieler).scrolly = scrolly;
@@ -2205,13 +2205,13 @@ void calc_inv_use_txt(int16 test_nr) {
 		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = ANGEL2_INV;
-		_G(obj)->change_inventar(test_nr, ANGEL2_INV, &room_blk);
+		_G(obj)->change_inventar(test_nr, ANGEL2_INV, &_G(room_blk));
 		break;
 
 	case KUERBIS1_INV:
 		ret = del_invent_slot(KUERBIS1_INV);
 		_G(spieler).InventSlot[ret] = K_MASKE_INV;
-		_G(obj)->change_inventar(KUERBIS1_INV, K_MASKE_INV, &room_blk);
+		_G(obj)->change_inventar(KUERBIS1_INV, K_MASKE_INV, &_G(room_blk));
 		invent_2_slot(K_FLEISCH_INV);
 		invent_2_slot(K_KERNE_INV);
 		break;
@@ -2237,7 +2237,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
 		_G(spieler).InventSlot[ret] = BRIEF2_INV;
-		_G(obj)->change_inventar(BRIEF_INV, BRIEF2_INV, &room_blk);
+		_G(obj)->change_inventar(BRIEF_INV, BRIEF2_INV, &_G(room_blk));
 		break;
 
 	case FLASCHE_INV:
@@ -2259,15 +2259,15 @@ void calc_inv_use_txt(int16 test_nr) {
 		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = B_MARY2_INV;
-		_G(obj)->change_inventar(test_nr, B_MARY2_INV, &room_blk);
+		_G(obj)->change_inventar(test_nr, B_MARY2_INV, &_G(room_blk));
 		break;
 
 	case 13:
 		_G(spieler).flags26_10 = true;
-		flags.InventMenu = false;
+		_G(flags).InventMenu = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
-		flags.InventMenu = true;
+		_G(flags).InventMenu = true;
 		_G(atds)->set_ats_str(88, 1, INV_ATS_DATEI);
 		break;
 
@@ -2285,7 +2285,7 @@ void calc_inv_use_txt(int16 test_nr) {
 
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = 110;
-		_G(obj)->change_inventar(104, 110, &room_blk);
+		_G(obj)->change_inventar(104, 110, &_G(room_blk));
 		break;
 
 	case 105:
@@ -2368,7 +2368,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	if (inv_mode != -1) {
 		txt_nr = _G(atds)->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
 		if (txt_nr != -1) {
-			if (!flags.InventMenu) {
+			if (!_G(flags).InventMenu) {
 				if (txt_nr >= 15000) {
 					ret = start_ats_wait(txt_nr - 15000, TXT_MARK_USE, 14, INV_USE_DEF);
 				} else {
@@ -2384,7 +2384,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 			if (!ok) {
 				r_val = g_engine->getRandomNumber(5);
 
-				if (flags.InventMenu) {
+				if (_G(flags).InventMenu) {
 					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
 					Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
 				} else {
@@ -2779,8 +2779,8 @@ void calc_person_dia(int16 p_nr) {
 
 			show_cur();
 		} else {
-			room_blk.AadLoad = false;
-			room_blk.AtsLoad = false;
+			_G(room_blk).AadLoad = false;
+			_G(room_blk).AtsLoad = false;
 			_G(spieler).PersonDiaTmpRoom[p_nr] = _G(spieler).PersonRoomNr[P_CHEWY];
 			save_person_rnr();
 

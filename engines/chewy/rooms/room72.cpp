@@ -48,10 +48,10 @@ void Room72::entry(int16 eib_nr) {
 		hide_cur();
 	}
 
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 
-	if (flags.LoadGame || _G(spieler).flags28_10)
+	if (_G(flags).LoadGame || _G(spieler).flags28_10)
 		return;
 
 	switch (eib_nr) {

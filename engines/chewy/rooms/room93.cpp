@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room93::entry() {
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	_G(spieler).scrollx = 0;

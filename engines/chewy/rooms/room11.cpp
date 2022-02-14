@@ -42,7 +42,7 @@ AniBlock ABLOCK18[2] = {
 
 void Room11::entry() {
 	_G(zoom_horizont) = 80;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 
 	if (_G(spieler).R12ChewyBork) {
@@ -61,14 +61,14 @@ void Room11::entry() {
 		_G(spieler).room_e_obj[21].Attribut = 255;
 		_G(atds)->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			start_ani_block(2, ABLOCK17);
 			auto_move(8, P_CHEWY);
 			start_aad_wait(31, -1);
 			_G(det)->stop_detail(9);
 		}
 		_G(det)->show_static_spr(8);
-		if (!flags.LoadGame)
+		if (!_G(flags).LoadGame)
 			auto_move(6, P_CHEWY);
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 	}
@@ -93,32 +93,32 @@ void Room11::gedAction(int index) {
 }
 
 void Room11::bork_zwinkert() {
-	if (!flags.AutoAniPlay) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay) {
+		_G(flags).AutoAniPlay = true;
 		_G(det)->hide_static_spr(8);
 		start_ani_block(2, ABLOCK18);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		_G(det)->show_static_spr(8);
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
 void Room11::talk_debug() {
 	if (_G(spieler).R12ChewyBork) {
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		auto_move(8, P_CHEWY);
 		start_ads_wait(5);
 		_G(menu_item) = CUR_WALK;
 		cursor_wahl(CUR_WALK);
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
 void Room11::chewy_bo_use() {
 	if (_G(spieler).R12ChewyBork) {
 		hide_cur();
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 
 		stop_person(P_CHEWY);
 		_G(det)->hide_static_spr(8);
@@ -128,7 +128,7 @@ void Room11::chewy_bo_use() {
 		_G(det)->show_static_spr(8);
 		auto_move(6, P_CHEWY);
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		show_cur();
 	}
 }
@@ -183,7 +183,7 @@ void Room11::get_card() {
 	if (_G(spieler).R11CardOk) {
 		cur_2_inventory();
 		_G(spieler).R11CardOk = false;
-		_G(obj)->add_inventar(_G(spieler).R11IdCardNr, &room_blk);
+		_G(obj)->add_inventar(_G(spieler).R11IdCardNr, &_G(room_blk));
 
 		_G(spieler).AkInvent = _G(spieler).R11IdCardNr;
 		cursor_wahl(CUR_AK_INVENT);

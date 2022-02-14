@@ -59,21 +59,21 @@ void EventsManager::handleEvent(const Common::Event &event) {
 
 void EventsManager::handleMouseEvent(const Common::Event &event) {
 	_mousePos = event.mouse;
-	bool isWheelEnabled = !_G(menu_display) && !flags.InventMenu &&
+	bool isWheelEnabled = !_G(menu_display) && !_G(flags).InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
 		_G(menu_item) >= CUR_WALK && _G(menu_item) <= CUR_TALK;
 
 	// Different event types handling
 	if (event.type != Common::EVENT_MOUSEMOVE)
-		minfo.button = 0;
+		_G(minfo).button = 0;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-		minfo.button = 1;
+		_G(minfo).button = 1;
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		minfo.button = 2;
+		_G(minfo).button = 2;
 		break;
 
 	case Common::EVENT_WHEELUP:
@@ -109,8 +109,8 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	// Set mouse position
 	if (!cur_move) {
 		cur_move = true;
-		minfo.x = event.mouse.x;
-		minfo.y = event.mouse.y;
+		_G(minfo).x = event.mouse.x;
+		_G(minfo).y = event.mouse.y;
 	}
 }
 
@@ -144,7 +144,7 @@ void EventsManager::clearEvents() {
 		_kbInfo->key_code = '\0';
 	}
 
-	minfo.button = 0;
+	_G(minfo).button = 0;
 }
 
 kb_info *EventsManager::setKbdInfo(kb_info *kbInfo) {

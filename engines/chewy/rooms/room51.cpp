@@ -48,7 +48,7 @@ int Room51::_index;
 
 void Room51::entry() {
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 
 	if (_G(spieler).flags32_10) {
@@ -69,7 +69,7 @@ void Room51::entry() {
 			_G(timer_nr)[i] = _G(room)->set_timer(i + 9, i * 2 + 6);
 		}
 
-		flags.MainInput = false;
+		_G(flags).MainInput = false;
 		_flag = false;
 
 	} else {
@@ -82,7 +82,7 @@ void Room51::entry() {
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 
-			if (!flags.LoadGame) {
+			if (!_G(flags).LoadGame) {
 				set_person_pos(88, 93, P_HOWARD, P_RIGHT);
 			}
 
@@ -104,7 +104,7 @@ void Room51::xit(int16 eib_nr) {
 	_G(atds)->enableEvents(true);
 
 	if (_G(spieler).flags32_10) {
-		flags.MainInput = true;
+		_G(flags).MainInput = true;
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
@@ -134,8 +134,8 @@ bool Room51::timer(int16 t_nr, int16 ani_nr) {
 
 void Room51::setup_func() {
 	if (_G(spieler).flags32_10) {
-		_tmpx = minfo.x;
-		_tmpy = minfo.y;
+		_tmpx = _G(minfo).x;
+		_tmpy = _G(minfo).y;
 		if (_tmpx > 215)
 			_tmpx = 215;
 		if (_tmpy < 81)
@@ -143,7 +143,7 @@ void Room51::setup_func() {
 
 		_G(det)->set_static_pos(17, _tmpx, _tmpy, false, false);
 
-		if ((minfo.button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
+		if ((_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
 			start_detail_wait(8, 1, ANI_VOR);
@@ -169,7 +169,7 @@ void Room51::setup_func() {
 			case 10012:
 				start_aad_wait(514, -1);
 				wait_show_screen(5);
-				flags.NoPalAfterFlc = true;
+				_G(flags).NoPalAfterFlc = true;
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
 				flic_cut(115, 0);
@@ -195,7 +195,7 @@ void Room51::setup_func() {
 			y = 118;
 		}
 
-		if (_G(HowardMov) && flags.ExitMov) {
+		if (_G(HowardMov) && _G(flags).ExitMov) {
 			_G(SetUpScreenFunc) = nullptr;
 			_G(HowardMov) = 0;
 			auto_move(9, P_HOWARD);
@@ -259,14 +259,14 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(out)->setze_zeiger(nullptr);
 					_G(out)->cls();
 					_G(out)->einblenden(_G(pal), 0);
-					flags.NoPalAfterFlc = true;
+					_G(flags).NoPalAfterFlc = true;
 					_G(flc)->set_flic_user_function(cut_serv);
 					_G(det)->show_static_spr(16);
 					flic_cut(FCUT_068, CFO_MODE);
 					_G(flc)->remove_flic_user_function();
 
 					_G(det)->hide_static_spr(16);
-					flags.NoPalAfterFlc = false;
+					_G(flags).NoPalAfterFlc = false;
 					_G(det)->stop_detail(5);
 					_G(obj)->show_sib(SIB_AUSRUEST_R52);
 					_G(obj)->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
@@ -286,7 +286,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			auto_move((txt_nr == 331) ? 10 : 7, P_CHEWY);
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			flic_cut(114, 0);
 			set_person_pos(115, 144, P_CHEWY, P_LEFT);
 			_G(fx_blend) = BLEND3;

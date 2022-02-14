@@ -39,7 +39,7 @@ void Room42::entry() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
 		_G(SetUpScreenFunc) = setup_func;
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			_G(det)->stop_detail(0);
 			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
 			_G(det)->set_static_ani(8, -1);
@@ -154,7 +154,7 @@ int16 Room42::use_beamter() {
 		cursor_wahl(_G(menu_item));
 		show_cur();
 		start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
-		flags.MausLinks = false;
+		_G(flags).MausLinks = false;
 	}
 
 	return action_flag;
@@ -185,7 +185,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 		}
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		flags.NoDiaBox = true;
+		_G(flags).NoDiaBox = true;
 
 		switch (str_end_nr) {
 		case 1:
@@ -230,7 +230,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 	_G(det)->start_detail(6, 255, ANI_VOR);
 	start_aad_wait(135, -1);
 	_G(det)->stop_detail(6);
-	flags.NoDiaBox = false;
+	_G(flags).NoDiaBox = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	show_cur();
 }

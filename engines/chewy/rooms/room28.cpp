@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room28::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
 
@@ -73,7 +73,7 @@ void Room28::entry(int16 eib_nr) {
 					start_aad_wait(194, -1);
 					_G(spieler).room_e_obj[62].Attribut = 255;
 					_G(atds)->set_ats_str(208, 1, ATS_DATEI);
-					flags.NoScroll = true;
+					_G(flags).NoScroll = true;
 
 					auto_scroll(0, 0);
 					_G(flc)->set_flic_user_function(cut_serv1);
@@ -88,7 +88,7 @@ void Room28::entry(int16 eib_nr) {
 						_G(fx_blend) = BLEND3;
 					}
 
-					flags.NoScroll = false;
+					_G(flags).NoScroll = false;
 
 					if (_G(spieler).R40TeilKarte) {
 						haendler();
@@ -117,7 +117,7 @@ void Room28::entry(int16 eib_nr) {
 					set_person_pos(480, 118, P_HOWARD, P_LEFT);
 					set_person_pos(440, 146, P_CHEWY, P_RIGHT);
 					_G(fx_blend) = BLEND_NONE;
-					flags.ExitMov = false;
+					_G(flags).ExitMov = false;
 					_G(spieler_mi)[P_HOWARD].Mode = true;
 					go_auto_xy(420, 113, P_HOWARD, ANI_WAIT);
 					_G(spieler_mi)[P_HOWARD].Mode = false;
@@ -126,7 +126,7 @@ void Room28::entry(int16 eib_nr) {
 				} else {
 					set_person_pos(480, 100, P_HOWARD, P_LEFT);
 					go_auto_xy(420, 113, P_HOWARD, ANI_GO);
-					flags.ExitMov = false;
+					_G(flags).ExitMov = false;
 					auto_move(6, P_CHEWY);
 				}
 				break;
@@ -152,7 +152,7 @@ void Room28::xit(int16 eib_nr) {
 			_G(spieler).R28ExitTown = true;
 		}
 
-		flags.ExitMov = false;
+		_G(flags).ExitMov = false;
 		auto_move(6, P_HOWARD);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 	}
@@ -214,7 +214,7 @@ void Room28::use_surimy() {
 
 	if (!_G(spieler).R28SurimyCar) {
 		hide_cur();
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_scroll(0, 0);
 		_G(spieler).R28SurimyCar = true;
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
@@ -238,7 +238,7 @@ void Room28::use_surimy() {
 	_G(obj)->calc_all_static_detail();
 	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	show_cur();
 }
 
@@ -246,8 +246,8 @@ void Room28::set_pump() {
 	hide_cur();
 
 	if (_G(spieler).PersonRoomNr[P_CHEWY] == 28) {
-		if (!flags.AutoAniPlay) {
-			flags.AutoAniPlay = true;
+		if (!_G(flags).AutoAniPlay) {
+			_G(flags).AutoAniPlay = true;
 			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
 				auto_move(5, P_CHEWY);
 
@@ -283,7 +283,7 @@ void Room28::set_pump() {
 				++_G(spieler).R28PumpTxt;
 			}
 
-			flags.AutoAniPlay = false;
+			_G(flags).AutoAniPlay = false;
 		}
 	} else {
 		start_ats_wait(20, TXT_MARK_USE, 14, INV_USE_DEF);

@@ -52,7 +52,7 @@ int16 Room4::sonde_comp() {
 	switch_room(4);
 	_G(cur_display) = true;
 	int16 ende = 0;
-	curblk.sprite = room_blk.DetImage;
+	_G(curblk).sprite = _G(room_blk).DetImage;
 	int16 cur_x = 1;
 	int16 spr_nr = RAHMEN_ROT;
 	_G(cur)->move(160, 160);
@@ -61,7 +61,7 @@ int16 Room4::sonde_comp() {
 	while (!ende) {
 		maus_action();
 		if (_G(maus_links_click)) {
-			switch (_G(in)->maus_vector(minfo.x + 17, minfo.y + 7, &CONSOLE[0][0], 3)) {
+			switch (_G(in)->maus_vector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
 				if (cur_x > 0)
 					--cur_x;
@@ -89,24 +89,24 @@ int16 Room4::sonde_comp() {
 			}
 		}
 
-		_G(spr_info)[0].Image = room_blk.DetImage[spr_nr];
+		_G(spr_info)[0].Image = _G(room_blk).DetImage[spr_nr];
 		_G(spr_info)[0].ZEbene = 0;
 		_G(spr_info)[0].X = CUR_POS[cur_x][0];
 		_G(spr_info)[0].Y = CUR_POS[cur_x][1];
 
-		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
-			curani.ani_anf = HAND_CLICK;
-			curani.ani_end = HAND_CLICK;
+		if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
+			_G(curani).ani_anf = HAND_CLICK;
+			_G(curani).ani_end = HAND_CLICK;
 		} else {
-			curani.ani_anf = HAND_NORMAL;
-			curani.ani_end = HAND_NORMAL;
+			_G(curani).ani_anf = HAND_NORMAL;
+			_G(curani).ani_end = HAND_NORMAL;
 		}
 		cursor_wahl(CUR_USER);
 		_G(spieler).CurHoehe = 16;
 		_G(in)->rectangle(0, 123, 320 - _G(spieler).CurBreite, 194);
 
-		if (minfo.y < 124)
-			minfo.y = 123;
+		if (_G(minfo).y < 124)
+			_G(minfo).y = 123;
 
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
@@ -120,9 +120,9 @@ int16 Room4::sonde_comp() {
 
 	_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 	_G(maus_links_click) = false;
-	minfo.button = 0;
+	_G(minfo).button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
-	_G(room)->load_room(&room_blk, 3, &_G(spieler));
+	_G(room)->load_room(&_G(room_blk), 3, &_G(spieler));
 	set_person_pos(110, 139, P_CHEWY, P_LEFT);
 
 	_G(fx_blend) = BLEND1;

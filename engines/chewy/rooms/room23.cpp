@@ -87,7 +87,7 @@ int16 Room23::start_gleiter() {
 				if (_G(spieler).R23GleiterExit == 14) {
 					_G(out)->setze_zeiger(nullptr);
 					_G(out)->cls();
-					flags.NoPalAfterFlc = true;
+					_G(flags).NoPalAfterFlc = true;
 					flic_cut(FCUT_012, CFO_MODE);
 					register_cutscene(7);
 					_G(out)->cls();

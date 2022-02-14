@@ -571,7 +571,7 @@ void switch_room(int16 nr) {
 	_G(fx_blend) = BLEND1;
 	exit_room(-1);
 	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
-	_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	enter_room(-1);
 	set_up_screen(DO_SETUP);
 }

@@ -70,12 +70,12 @@ int16 Files::execute(bool isInGame) {
 	EVENTS_CLEAR;
 
 	_G(room)->open_handle(GBOOK, "rb", 0);
-	_G(room)->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
-	_G(room)->set_ak_pal(&room_blk);
-	fnames = _G(iog)->io_init(&ioptr);
+	_G(room)->set_ak_pal(&_G(room_blk));
+	fnames = _G(iog)->io_init(&_G(ioptr));
 	fnames += 1;
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -103,7 +103,7 @@ int16 Files::execute(bool isInGame) {
 
 		while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 			// Draw the dialog background
-			_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+			_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 			// Draw the buttons at the bottom
 			for (i = 28, j = SCROLL_UP; j <= OPTIONS; i++, j++) {
@@ -160,7 +160,7 @@ int16 Files::execute(bool isInGame) {
 					key = 0;
 				}
 
-				_G(in)->neuer_kb_handler(&kbinfo);
+				_G(in)->neuer_kb_handler(&_G(kbinfo));
 			}
 
 			if (mode[OPTIONS])
@@ -169,8 +169,8 @@ int16 Files::execute(bool isInGame) {
 				Dialogs::Options::execute(ti);
 			}
 
-			if (!flag && minfo.button == 1) {
-				rect = _G(in)->maus_vector(minfo.x, minfo.y, FILE_ICONS, 8);
+			if (!flag && _G(minfo).button == 1) {
+				rect = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, FILE_ICONS, 8);
 				flag = true;
 				key = 0;
 
@@ -182,7 +182,7 @@ int16 Files::execute(bool isInGame) {
 					key = Common::KEYCODE_DOWN;
 					break;
 				case 2:
-					line = (minfo.y - 68) / 10;
+					line = (_G(minfo).y - 68) / 10;
 					if (line == active_slot)
 						key = Common::KEYCODE_RETURN;
 					else
@@ -210,7 +210,7 @@ int16 Files::execute(bool isInGame) {
 					break;
 				}
 
-			} else if (flag && minfo.button == 0) {
+			} else if (flag && _G(minfo).button == 0) {
 				flag = false;
 			}
 
@@ -267,7 +267,7 @@ enter:
 					tmp = fnames + ((text_off + active_slot) * 40);
 					if (tmp[0]) {
 						_G(currentSong) = -1;
-						_G(iog)->load(text_off + active_slot, ioptr.save_path);
+						_G(iog)->load(text_off + active_slot, _G(ioptr).save_path);
 						key = Common::KEYCODE_ESCAPE;
 					}
 				} else if (mode[SAVE]) {
@@ -277,11 +277,11 @@ enter:
 					tmp = fnames + ((text_off + active_slot) * 40);
 					key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 						255, 42, 14, 0, "%36s36", tmp);
-					_G(in)->neuer_kb_handler(&kbinfo);
+					_G(in)->neuer_kb_handler(&_G(kbinfo));
 					_G(out)->setze_zeiger(_G(workptr));
 					if (key != Common::KEYCODE_ESCAPE) {
 						_G(iog)->save_entry(text_off + active_slot,
-							ioptr.save_path);
+							_G(ioptr).save_path);
 					}
 					key = Common::KEYCODE_ESCAPE;
 				}
@@ -301,10 +301,10 @@ enter:
 	free(ti);
 
 	_G(room)->open_handle(EPISODE1, "rb", 0);
-	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 
 	return ret;
 }

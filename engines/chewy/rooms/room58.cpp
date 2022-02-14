@@ -39,8 +39,8 @@ void Room58::xit() {
 	_G(spieler_vector)[P_CHEWY].Xypos[1] = _G(spieler).R58TmpY;
 	_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler).R58TmpX;
 	_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(spieler).R58TmpY;
-	flags.MainInput = true;
-	flags.LoadGame = true;
+	_G(flags).MainInput = true;
+	_G(flags).LoadGame = true;
 	show_person();
 	set_person_rnr();
 	const int16 tmp = _G(spieler).R58TmpRoom1;
@@ -61,7 +61,7 @@ void Room58::look_cut_mag(int16 r_nr) {
 	_G(spieler_vector)[P_CHEWY].Xypos[1] = 100;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	flags.MainInput = false;
+	_G(flags).MainInput = false;
 	hide_person();
 	switch_room(r_nr);
 }

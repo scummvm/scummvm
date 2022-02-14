@@ -56,15 +56,15 @@ void Cinema::execute() {
 	_G(atds)->load_atds(98, 1);
 
 	_G(room)->open_handle(GBOOK, "rb", 0);
-	_G(room)->load_tgp(4, &room_blk, 1, 0, GBOOK);
+	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	show_cur();
 	EVENTS_CLEAR;
-	kbinfo.scan_code = 0;
+	_G(kbinfo).scan_code = 0;
 
 	for (bool endLoop = false; !endLoop;) {
 		timer_nr = 0;
 		_G(out)->setze_zeiger(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
 			// Render cutscene list
@@ -83,11 +83,11 @@ void Cinema::execute() {
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
 		}
 
-		if (minfo.button == 1 && !flag) {
+		if (_G(minfo).button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->maus_vector(minfo.x, minfo.y, CINEMA_TBL, 3)) {
+			switch (_G(in)->maus_vector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
 			case 0:
-				kbinfo.scan_code = Common::KEYCODE_UP;
+				_G(kbinfo).scan_code = Common::KEYCODE_UP;
 				if (!endLoop) {
 					endLoop = true;
 					timer_nr = 5;
@@ -95,7 +95,7 @@ void Cinema::execute() {
 				break;
 
 			case 1:
-				kbinfo.scan_code = Common::KEYCODE_DOWN;
+				_G(kbinfo).scan_code = Common::KEYCODE_DOWN;
 				if (!endLoop) {
 					endLoop = true;
 					timer_nr = 5;
@@ -104,20 +104,20 @@ void Cinema::execute() {
 
 			case 2:
 			{
-				int selIndex = (minfo.y - 68) / 10 + topIndex;
+				int selIndex = (_G(minfo).y - 68) / 10 + topIndex;
 				if (selIndex < (int)cutscenes.size())
 					selected = selIndex;
-				kbinfo.scan_code = Common::KEYCODE_RETURN;
+				_G(kbinfo).scan_code = Common::KEYCODE_RETURN;
 				break;
 			}
 
 			default:
 				break;
 			}
-		} else if (minfo.button == 2 && !flag) {
-			kbinfo.scan_code = Common::KEYCODE_ESCAPE;
+		} else if (_G(minfo).button == 2 && !flag) {
+			_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
 			flag = true;
-		} else if (minfo.button != 1) {
+		} else if (_G(minfo).button != 1) {
 			flag = false;
 			timer_nr = 0;
 			delay = 0;
@@ -127,10 +127,10 @@ void Cinema::execute() {
 				flag = false;
 		}
 
-		switch (kbinfo.scan_code) {
+		switch (_G(kbinfo).scan_code) {
 		case Common::KEYCODE_ESCAPE:
 			endLoop = true;
-			kbinfo.scan_code = 0;
+			_G(kbinfo).scan_code = 0;
 			break;
 
 		case Common::KEYCODE_UP:
@@ -140,7 +140,7 @@ void Cinema::execute() {
 			} else if (topIndex > 0) {
 				--topIndex;
 			}
-			kbinfo.scan_code = 0;
+			_G(kbinfo).scan_code = 0;
 			break;
 
 		case Common::KEYCODE_DOWN:
@@ -154,7 +154,7 @@ void Cinema::execute() {
 				if ((topIndex + newIndex) < (int)cutscenes.size())
 					++selected;
 			}
-			kbinfo.scan_code = 0;
+			_G(kbinfo).scan_code = 0;
 			break;
 		}
 
@@ -180,8 +180,8 @@ void Cinema::execute() {
 		}
 
 		// The below are hacks to get the dialog to work in ScummVM
-		kbinfo.scan_code = 0;
-		minfo.button = 0;
+		_G(kbinfo).scan_code = 0;
+		_G(minfo).button = 0;
 		txt_anz = 0;
 
 		if (!txt_anz) {
@@ -190,7 +190,7 @@ void Cinema::execute() {
 			if (flag) {
 				flag = false;
 				_G(out)->setze_zeiger(_G(screen0));
-				_G(room)->set_ak_pal(&room_blk);
+				_G(room)->set_ak_pal(&_G(room_blk));
 				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {
 				_G(out)->back2screen(_G(workpage));
@@ -202,7 +202,7 @@ void Cinema::execute() {
 	}
 
 	_G(room)->open_handle(EPISODE1, "rb", 0);
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	hide_cur();
 	_G(uhr)->reset_timer(0, 5);
 }

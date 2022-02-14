@@ -32,11 +32,11 @@ void Room47::entry() {
 	hide_person();
 	set_person_pos(40, 170, P_CHEWY, P_RIGHT);
 	_G(SetUpScreenFunc) = set_detail;
-	flags.MainInput = false;
+	_G(flags).MainInput = false;
 }
 
 void Room47::xit() {
-	flags.MainInput = true;
+	_G(flags).MainInput = true;
 	show_person();
 	set_person_pos(114, 102, P_CHEWY, P_LEFT);
 	_G(spieler_mi)[P_HOWARD].Mode = true;

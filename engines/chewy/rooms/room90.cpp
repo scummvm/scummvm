@@ -38,12 +38,12 @@ void Room90::entry(int16 eib_nr) {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 90;
 	_G(zoom_horizont) = 150;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 60;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 90;
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		switch (eib_nr) {
 		case 78:
 		case 136:
@@ -77,7 +77,7 @@ void Room90::entry(int16 eib_nr) {
 	}
 
 	if (!_G(spieler).flags33_10) {
-		flags.ZoomMov = false;
+		_G(flags).ZoomMov = false;
 		start_aad_wait(498, -1);
 		go_auto_xy(-20, 121, P_HOWARD, ANI_GO);
 		auto_move(1, P_CHEWY);
@@ -181,10 +181,10 @@ void Room90::setup_func() {
 }
 
 void Room90::proc2() {
-	if (_G(spieler).flags33_80 || flags.AutoAniPlay)
+	if (_G(spieler).flags33_80 || _G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	int diaNr = -1;
 
 	switch (_G(spieler).PersonRoomNr[0]) {
@@ -230,7 +230,7 @@ void Room90::proc2() {
 		start_aad_wait(-1, diaNr);
 		show_cur();
 	}
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 int Room90::getHubcaps() {
@@ -286,15 +286,15 @@ int Room90::shootControlUnit() {
 	hide_cur();
 	del_inventar(_G(spieler).AkInvent);
 	_G(HowardMov) = 2;
-	flags.ZoomMov = false;
+	_G(flags).ZoomMov = false;
 	auto_move(5, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(232, 142, P_CHEWY, ANI_WAIT);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(176, 0);
 	start_detail_wait(13, 1, ANI_VOR);
 	_G(flc)->set_custom_user_function(Room90::proc5);
-	flags.NoPalAfterFlc = true;
+	_G(flags).NoPalAfterFlc = true;
 	flic_cut(107, CFO_MODE);
 	_G(flc)->remove_custom_user_function();
 	_G(spieler).scrollx = 0;
@@ -305,13 +305,13 @@ int Room90::shootControlUnit() {
 	set_up_screen(NO_SETUP);
 	_G(fx_blend) = BLEND3;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	_G(HowardMov) = 0;
 	_G(spieler).flags33_40 = true;
 	_G(det)->stop_detail(12);
 	_G(atds)->set_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->del_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 
 	show_cur();
 	return 1;

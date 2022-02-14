@@ -69,7 +69,7 @@ void Room22::entry() {
 }
 
 bool Room22::timer(int16 t_nr, int16 ani_nr) {
-	if (!ani_nr && !flags.ExitMov) {
+	if (!ani_nr && !_G(flags).ExitMov) {
 		bork(t_nr);
 	}
 
@@ -78,9 +78,9 @@ bool Room22::timer(int16 t_nr, int16 ani_nr) {
 
 int16 Room22::chewy_amboss() {
 	int16 action_flag = false;
-	if (!_G(spieler).R22ChewyPlatt && !_G(spieler).inv_cur && !flags.AutoAniPlay) {
+	if (!_G(spieler).R22ChewyPlatt && !_G(spieler).inv_cur && !_G(flags).AutoAniPlay) {
 		action_flag = true;
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		hide_cur();
 
 		auto_move(5, P_CHEWY);
@@ -88,11 +88,11 @@ int16 Room22::chewy_amboss() {
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		auto_move(2, P_CHEWY);
-		flags.NoPalAfterFlc = false;
+		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_007, CFO_MODE);
 		_G(spieler).R22ChewyPlatt = true;
 		_G(atds)->set_ats_str(79, 1, ATS_DATEI);
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 
 		show_cur();
 	}
@@ -100,8 +100,8 @@ int16 Room22::chewy_amboss() {
 }
 
 void Room22::bork(int16 t_nr) {
-	if (!flags.AutoAniPlay && !is_chewy_busy()) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay && !is_chewy_busy()) {
+		_G(flags).AutoAniPlay = true;
 
 		if (!_G(spieler).R22BorkPlatt) {
 			hide_cur();
@@ -132,7 +132,7 @@ void Room22::bork(int16 t_nr) {
 		}
 
 		_G(uhr)->reset_timer(t_nr, 0);
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
@@ -181,9 +181,9 @@ void Room22::get_bork() {
 int16 Room22::malen() {
 	int16 action_flag = false;
 
-	if (!flags.AutoAniPlay && is_cur_inventar(17)) {
+	if (!_G(flags).AutoAniPlay && is_cur_inventar(17)) {
 		action_flag = true;
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		auto_move(8, P_CHEWY);
 		flic_cut(FCUT_008, CFO_MODE);
 		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATEI);
@@ -192,7 +192,7 @@ int16 Room22::malen() {
 		_G(obj)->hide_sib(SIB_PAINT_R22);
 		del_inventar(_G(spieler).AkInvent);
 		_G(obj)->calc_all_static_detail();
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 
 		if (!_G(spieler).R22ChewyPlatt) {
 			_G(spieler).R22ChewyPlatt = true;

@@ -36,7 +36,7 @@ void Room66::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 36;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 50;
 	_G(zoom_horizont) = 130;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	if (!_G(spieler).flags26_4) {
 		_G(det)->show_static_spr(4);
@@ -64,7 +64,7 @@ void Room66::entry(int16 eib_nr) {
 		start_aad_wait(404, -1);
 		start_aad_wait(415, -1);
 		show_cur();
-	} else if (!flags.LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
+	} else if (!_G(flags).LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
 		switch (eib_nr) {
 		case 96:
 			set_person_pos(488, 114, P_HOWARD, P_RIGHT);

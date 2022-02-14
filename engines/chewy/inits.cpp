@@ -54,34 +54,34 @@ void standard_init() {
 	_G(out)->set_writemode(0);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();
-	_G(in)->neuer_kb_handler(&kbinfo);
+	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
 	_G(in)->rectangle(0, 0, 320, 210);
-	_G(in)->neuer_maushandler(&minfo);
-	_G(out)->init_mausmode(&minfo);
-	curblk.page_off_x = 0;
-	curblk.page_off_y = 0;
-	curblk.xsize = 16;
-	curblk.ysize = 16;
+	_G(in)->neuer_maushandler(&_G(minfo));
+	_G(out)->init_mausmode(&_G(minfo));
+	_G(curblk).page_off_x = 0;
+	_G(curblk).page_off_y = 0;
+	_G(curblk).xsize = 16;
+	_G(curblk).ysize = 16;
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->image below before _G(curtaf) was initialized
 	_G(curtaf) = _G(mem)->taf_adr(CURSOR);
 
-	curblk.sprite = _G(curtaf)->image;
-	curblk.cur_back = _G(cur_back);
-	curblk.no_back = true;
-	curani.ani_anf = 0;
-	curani.ani_end = 0;
-	curani.delay = 0;
+	_G(curblk).sprite = _G(curtaf)->image;
+	_G(curblk).cur_back = _G(cur_back);
+	_G(curblk).no_back = true;
+	_G(curani).ani_anf = 0;
+	_G(curani).ani_end = 0;
+	_G(curani).delay = 0;
 	
-	_G(cur) = new Cursor(_G(out), _G(in), &curblk);
-	_G(cur)->set_cur_ani(&curani);
+	_G(cur) = new Cursor(_G(out), _G(in), &_G(curblk));
+	_G(cur)->set_cur_ani(&_G(curani));
 
 	_G(iog) = new IOGame(_G(out), _G(in), _G(cur));
-	strcpy(ioptr.id, "CHE");
-	strcpy(ioptr.save_path, SAVEDIR);
-	ioptr.delay = 8;
+	strcpy(_G(ioptr).id, "CHE");
+	strcpy(_G(ioptr).save_path, SAVEDIR);
+	_G(ioptr).delay = 8;
 	alloc_buffers();
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
@@ -91,7 +91,7 @@ void standard_init() {
 	font_load();
 
 	_G(out)->cls();
-	_G(in)->neuer_kb_handler(&kbinfo);
+	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
 	var_init();
 	_G(ablage) = _G(room)->get_ablage();
@@ -105,7 +105,7 @@ void standard_init() {
 	_G(out)->cls();
 	_G(uhr)->set_new_timer(0, 5, SEC_10_MODE);
 
-	curblk.cur_back = _G(cur_back);
+	_G(curblk).cur_back = _G(cur_back);
 	sound_init();
 	init_load();
 }
@@ -162,7 +162,7 @@ void var_init() {
 	}
 	_G(spieler).PersonRoomNr[P_CHEWY] = _G(room_start_nr);
 
-	gpkt.Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
+	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	init_atds();
 	_G(spieler).FramesPerSecond = 7;
@@ -172,21 +172,21 @@ void var_init() {
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;
 	_G(timer_action_ctr) = 0;
-	flags.CursorStatus = true;
+	_G(flags).CursorStatus = true;
 	_G(savegameFlag) = false;
 }
 
 void init_room() {
-	room_blk.AkAblage = 0;
-	room_blk.LowPalMem = _G(pal);
-	room_blk.InvFile = INVENTAR;
-	room_blk.DetFile = DETAILTEST;
-	room_blk.InvSprAdr = &_G(inv_spr)[0];
-	room_blk.Rmo = _G(spieler).room_m_obj;
-	room_blk.Rsi = _G(spieler).room_s_obj;
-	room_blk.AadLoad = true;
-	room_blk.AtsLoad = true;
-	strcpy(room_blk.RoomDir, "room/");
+	_G(room_blk).AkAblage = 0;
+	_G(room_blk).LowPalMem = _G(pal);
+	_G(room_blk).InvFile = INVENTAR;
+	_G(room_blk).DetFile = DETAILTEST;
+	_G(room_blk).InvSprAdr = &_G(inv_spr)[0];
+	_G(room_blk).Rmo = _G(spieler).room_m_obj;
+	_G(room_blk).Rsi = _G(spieler).room_s_obj;
+	_G(room_blk).AadLoad = true;
+	_G(room_blk).AtsLoad = true;
+	strcpy(_G(room_blk).RoomDir, "room/");
 
 	_G(room)->open_handle(EPISODE1_GEP, "rb", R_GEPDATEI);
 }
@@ -313,7 +313,7 @@ void init_load() {
 
 	_G(menutaf) = _G(mem)->taf_adr(MENUTAF);
 	_G(spblende) = _G(mem)->void_adr("cut/blende.rnd");
-	_G(room)->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
+	_G(room)->load_room(&_G(room_blk), _G(room_start_nr), &_G(spieler));
 	_G(out)->set_palette(_G(pal));
 }
 
@@ -407,7 +407,7 @@ void sound_exit() {
 void show_intro() {
 	if (!ConfMan.getBool("shown_intro")) {
 		ConfMan.setBool("shown_intro", true);
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(135, CFO_MODE);
 	}
 }

@@ -101,7 +101,7 @@ void Room97::entry() {
 	_word18DB36 = 110;
 	_word18DB38 = 132;
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	if (_G(spieler).flags37_8) {
@@ -199,7 +199,7 @@ void Room97::setup_func() {
 	}
 
 	if (_G(spieler).flags37_1 && _G(menu_item) == CUR_WALK) {
-		if (_G(spieler).scrollx + minfo.x >= 487 && _G(spieler).scrollx + minfo.x <= 522 && minfo.y >= 23 && minfo.y <= 59)
+		if (_G(spieler).scrollx + _G(minfo).x >= 487 && _G(spieler).scrollx + _G(minfo).x <= 522 && _G(minfo).y >= 23 && _G(minfo).y <= 59)
 			cursor_wahl(CUR_AUSGANG_OBEN);
 		else
 			cursor_wahl(CUR_WALK);
@@ -257,10 +257,10 @@ void Room97::setup_func() {
 }
 
 void Room97::proc2() {
-	if (flags.AutoAniPlay)
+	if (_G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	stop_person(P_CHEWY);
 	hide_cur();
 	_G(Sdi)[6].z_ebene = 6;
@@ -276,14 +276,14 @@ void Room97::proc2() {
 	_G(Sdi)[6].z_ebene = 166;
 	_G(Sdi)[24].z_ebene = 157;
 	show_cur();
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 void Room97::proc3() {
-	if (flags.AutoAniPlay)
+	if (_G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	hide_cur();
 	stop_person(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -325,15 +325,15 @@ void Room97::proc3() {
 		_G(spieler).flags36_80 = true;
 	}
 	show_cur();
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 void Room97::proc4() {
-	if (flags.AutoAniPlay)
+	if (_G(flags).AutoAniPlay)
 		return;
 
 	if (!_G(spieler).flags35_80) {
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		hide_cur();
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		stop_person(P_CHEWY);
@@ -374,7 +374,7 @@ void Room97::proc4() {
 		show_cur();
 	}
 		
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 int Room97::proc5() {
@@ -616,10 +616,10 @@ void Room97::proc12() {
 		return;
 	}
 
-	if (flags.AutoAniPlay)
+	if (_G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	hide_cur();
 	stop_person(P_CHEWY);
 	_G(det)->show_static_spr(26);
@@ -632,14 +632,14 @@ void Room97::proc12() {
 	_G(det)->hide_static_spr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 void Room97::proc13() {
-	if (!_G(spieler).flags37_1 || flags.AutoAniPlay)
+	if (!_G(spieler).flags37_1 || _G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	hide_cur();
 	stop_person(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -653,7 +653,7 @@ void Room97::proc13() {
 	_G(det)->hide_static_spr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 int Room97::throwSlime() {
@@ -670,10 +670,10 @@ int Room97::throwSlime() {
 }
 
 void Room97::sensorAnim() {
-	if (_G(spieler).flags37_4 || flags.AutoAniPlay)
+	if (_G(spieler).flags37_4 || _G(flags).AutoAniPlay)
 		return;
 
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	stop_person(P_CHEWY);
 	_G(menu_item) = CUR_USE;
 	cursor_wahl(CUR_USE);
@@ -684,7 +684,7 @@ void Room97::sensorAnim() {
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (minfo.button == 1 || _G(in)->get_switch_code() == 28) {
+		if (_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) {
 			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}
@@ -721,9 +721,9 @@ void Room97::sensorAnim() {
 		_bool18DB32 = true;
 		auto_move(11, P_CHEWY);
 		_bool18DB32 = false;
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		proc13();
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		auto_move(7, P_CHEWY);
 
 		while (_G(spieler).scrollx < 368) {
@@ -740,7 +740,7 @@ void Room97::sensorAnim() {
 
 	_G(atds)->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
 	show_cur();
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 }
 
 } // namespace Rooms

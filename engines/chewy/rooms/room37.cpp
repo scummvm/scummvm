@@ -39,13 +39,13 @@ static const AniBlock ABLOCK31[3] = {
 
 void Room37::entry() {
 	_G(zoom_horizont) = 100;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(obj)->show_sib(74);
 	_G(obj)->show_sib(75);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		_G(spieler).scrollx = 124;
 		set_person_pos(219, 66, P_CHEWY, P_RIGHT);
 	}
@@ -89,8 +89,8 @@ void Room37::gedAction(int index) {
 void Room37::setup_func() {
 	if (_G(maus_links_click) && !_G(spieler).R37Kloppe &&
 			_G(menu_item) == CUR_WALK) {
-		if ((minfo.x + _G(spieler).scrollx > 380 && minfo.y > 120) ||
-			(minfo.x + _G(spieler).scrollx > 482)) {
+		if ((_G(minfo).x + _G(spieler).scrollx > 380 && _G(minfo).y > 120) ||
+			(_G(minfo).x + _G(spieler).scrollx > 482)) {
 			// Don't allow moving into chicken coop area
 			// until the rooster has left
 			auto_move(7, P_CHEWY);
@@ -108,7 +108,7 @@ short Room37::use_wippe() {
 		if (is_cur_inventar(H_FUTTER_INV)) {
 			hide_cur();
 			auto_move(0, P_CHEWY);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(159, -1);
@@ -116,7 +116,7 @@ short Room37::use_wippe() {
 			_G(flc)->set_flic_user_function(cut_serv1);
 			flic_cut(FCUT_047, CFO_MODE);
 			_G(flc)->remove_flic_user_function();
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 			show_cur();
 			_G(spieler).scrollx = 269;
 			set_person_pos(388, 119, P_CHEWY, P_RIGHT);
@@ -171,10 +171,10 @@ int16 Room37::use_glas() {
 	if (!_G(spieler).R37Gebiss) {
 		action_flag = true;
 		if (is_cur_inventar(ANGEL2_INV)) {
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			hide_cur();
 			auto_move(5, P_CHEWY);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(147, -1);
@@ -193,7 +193,7 @@ int16 Room37::use_glas() {
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(146, -1);
 			show_cur();
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 			g_engine->_sound->playSound(3);
 		} else {
 			auto_move(4, P_CHEWY);
@@ -208,15 +208,15 @@ void Room37::dog_bell() {
 	int16 ani_nr = 0;
 	hide_cur();
 
-	if (!flags.AutoAniPlay) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay) {
+		_G(flags).AutoAniPlay = true;
 		g_engine->_sound->stopSound(0); // nr 3, sslot 0
 
 		if (!_G(spieler).R37Gebiss) {
 			stop_person(P_CHEWY);
-			flags.ChAutoMov = false;
+			_G(flags).ChAutoMov = false;
 			set_person_spr(P_LEFT, P_CHEWY);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			disable_timer();
 			_G(det)->stop_detail(3);
@@ -243,7 +243,7 @@ void Room37::dog_bell() {
 		} else if (!_G(spieler).R37HundScham) {
 			stop_person(P_CHEWY);
 			set_person_spr(P_LEFT, P_CHEWY);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			_G(room)->set_timer_status(3, TIMER_STOP);
 			_G(det)->del_static_ani(3);
@@ -260,7 +260,7 @@ void Room37::dog_bell() {
 			ani_nr = CH_TALK6;
 		}
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 
 		if (dia_nr != -1) {
 			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
@@ -268,7 +268,7 @@ void Room37::dog_bell() {
 		}
 	}
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	show_cur();
 }
 
@@ -312,7 +312,7 @@ void Room37::use_hahn() {
 			_G(det)->start_detail(9, 1, ANI_VOR);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(GEBISS_INV);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(177, 0);
 
 			while (_G(det)->get_ani_status(9)) {
@@ -328,14 +328,14 @@ void Room37::use_hahn() {
 			_G(det)->stop_detail(10);
 
 			_G(spieler).scrollx = 320;
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 			_G(atds)->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(atds)->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(det)->hide_static_spr(8);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(141, -1);
-			_G(obj)->add_inventar(EIER_INV, &room_blk);
+			_G(obj)->add_inventar(EIER_INV, &_G(room_blk));
 			inventory_2_cur(EIER_INV);
 			show_cur();
 		}
@@ -353,11 +353,11 @@ void Room37::hahn_dia() {
 	switch_room(38);
 	start_ads_wait(9);
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	flags.LoadGame = true;
+	_G(flags).LoadGame = true;
 	_G(spieler).scrollx = tmp_scrollx;
 	_G(spieler).scrolly = tmp_scrolly;
 	switch_room(37);
-	flags.LoadGame = false;
+	_G(flags).LoadGame = false;
 }
 
 } // namespace Rooms

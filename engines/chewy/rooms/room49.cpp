@@ -37,7 +37,7 @@ static const AniBlock ABLOCK34[2] = {
 
 void Room49::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
@@ -55,7 +55,7 @@ void Room49::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
 			_G(spieler).R48TaxiEntry = false;
 			set_person_pos(527, 76, P_HOWARD, P_LEFT);
@@ -179,7 +179,7 @@ void Room49::use_boy_cigar() {
 	_G(room)->set_zoom(zoom);
 	go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
 	set_person_spr(P_LEFT, P_HOWARD);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 
 	auto_scroll(164, 0);
 	flic_cut(67, CFO_MODE);
@@ -190,12 +190,12 @@ void Room49::use_boy_cigar() {
 	_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 	_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	set_person_spr(P_RIGHT, P_CHEWY);
 	start_aad_wait(264, -1);
 	_G(room)->set_zoom(zoom);
 
-	_G(obj)->add_inventar(GUM_INV, &room_blk);
+	_G(obj)->add_inventar(GUM_INV, &_G(room_blk));
 	inventory_2_cur(GUM_INV);
 	_G(atds)->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 

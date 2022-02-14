@@ -100,7 +100,7 @@ int Room88::proc3() {
 			start_aad_wait(480, -1);
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			flic_cut(87, CFO_MODE);
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
@@ -122,7 +122,7 @@ int Room88::proc3() {
 
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(88, CFO_MODE);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).flags32_1 = true;
@@ -132,7 +132,7 @@ int Room88::proc3() {
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(86, CFO_MODE);
 		register_cutscene(24);
 

@@ -53,7 +53,7 @@ void Room65::entry() {
 	} else {
 		start_ads_wait(_G(spieler).PersonDia[P_HOWARD] - 10000);
 	}
-	flags.LoadGame = true;
+	_G(flags).LoadGame = true;
 	show_person();
 	switch_room(_G(spieler).PersonDiaTmpRoom[P_HOWARD]);
 }
@@ -64,8 +64,8 @@ void Room65::xit() {
 	set_person_rnr();
 	set_person_pos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
 	set_person_pos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
-	room_blk.AadLoad = true;
-	room_blk.AtsLoad = true;
+	_G(room_blk).AadLoad = true;
+	_G(room_blk).AtsLoad = true;
 	_G(maus_links_click) = false;
 }
 

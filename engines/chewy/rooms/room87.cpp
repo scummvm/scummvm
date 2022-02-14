@@ -44,7 +44,7 @@ void Room87::entry() {
 	if (_G(spieler).flags32_8)
 		_G(det)->show_static_spr(4);
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	set_person_pos(11, 70, P_HOWARD, P_RIGHT);
@@ -91,7 +91,7 @@ void Room87::xit(int16 eib_nr) {
 	_G(zoom_horizont) = 0;
 	_G(room)->set_zoom(25);
 	_G(HowardMov) = 1;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 	go_auto_xy(20, 56, P_CHEWY, ANI_WAIT);
 	go_auto_xy(31, 56, P_CHEWY, ANI_WAIT);

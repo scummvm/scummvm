@@ -41,7 +41,7 @@ void Room67::entry() {
 		_G(det)->set_static_ani(1, -1);
 	} else
 		_G(det)->show_static_spr(0);
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		hide_cur();
 		set_person_pos(102, 132, P_CHEWY, P_RIGHT);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67) {

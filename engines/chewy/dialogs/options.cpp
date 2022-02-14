@@ -57,12 +57,12 @@ static const int16 OPTION_ICONS[9 * 4] = {
 
 void Options::execute(taf_info *ti) {
 	long akt_clock = 0, stop_clock = 0;
-	_G(room)->load_tgp(0, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
 
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(_G(workptr));
 	int16 key = 0;
@@ -77,7 +77,7 @@ void Options::execute(taf_info *ti) {
 	int16 delay_count = _G(spieler).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != Common::KEYCODE_ESCAPE) {
-		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 		++_G(FrameSpeed);
 		warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
@@ -145,9 +145,9 @@ void Options::execute(taf_info *ti) {
 			8 + ti->korrektur[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->get_switch_code();
-		if ((minfo.button == 1) || (key == Common::KEYCODE_RETURN)) {
+		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
-				int16 rect = _G(in)->maus_vector(minfo.x, minfo.y, OPTION_ICONS, 9);
+				int16 rect = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (_G(spieler).FramesPerSecond > 6)
@@ -192,32 +192,32 @@ void Options::execute(taf_info *ti) {
 				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7:
-				_G(spieler).SoundVol = (136 - minfo.y) << 1;
+				_G(spieler).SoundVol = (136 - _G(minfo).y) << 1;
 				_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 				break;
 			case 8:
-				_G(spieler).MusicVol = (136 - minfo.y) << 1;
+				_G(spieler).MusicVol = (136 - _G(minfo).y) << 1;
 				_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
 				break;
 			}
-			minfo.button = 0;
+			_G(minfo).button = 0;
 		}
 		switch (key) {
 
 		case Common::KEYCODE_UP:
-			_G(cur)->move(minfo.x, --minfo.y);
+			_G(cur)->move(_G(minfo).x, --_G(minfo).y);
 			break;
 
 		case Common::KEYCODE_DOWN:
-			_G(cur)->move(minfo.x, ++minfo.y);
+			_G(cur)->move(_G(minfo).x, ++_G(minfo).y);
 			break;
 
 		case Common::KEYCODE_LEFT:
-			_G(cur)->move(--minfo.x, minfo.y);
+			_G(cur)->move(--_G(minfo).x, _G(minfo).y);
 			break;
 
 		case Common::KEYCODE_RIGHT:
-			_G(cur)->move(++minfo.x, minfo.y);
+			_G(cur)->move(++_G(minfo).x, _G(minfo).y);
 			break;
 		}
 
@@ -254,11 +254,11 @@ void Options::execute(taf_info *ti) {
 			--delay_count;
 	}
 
-	_G(room)->load_tgp(1, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], 0, 0);
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setze_zeiger(_G(screen0));
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setze_zeiger(_G(workptr));
 }

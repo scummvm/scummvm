@@ -225,12 +225,12 @@ void sprite_engine() {
 		case ZOBJ_AUTO_OBJ:
 			spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
 			         _G(auto_mov_vector)[nr].PhNr;
-			Cxy = room_blk.DetKorrekt + (spr_nr << 1);
+			Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 			calc_zoom(_G(auto_mov_vector)[nr].Xypos[1],
 			          _G(mov_phasen)[nr].ZoomFak,
 			          _G(mov_phasen)[nr].ZoomFak,
 			          &_G(auto_mov_vector)[nr]);
-			_G(out)->scale_set(room_blk.DetImage[spr_nr],
+			_G(out)->scale_set(_G(room_blk).DetImage[spr_nr],
 			                _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx,
 			                _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly,
 			                _G(auto_mov_vector)[nr].Xzoom,
@@ -309,8 +309,8 @@ int16 mouse_on_prog_ani() {
 	ani_nr = -1;
 	for (i = 0; i < MAX_PROG_ANI && ani_nr == -1; i++) {
 
-		if (minfo.x >= _G(spr_info)[i].X && minfo.x <= _G(spr_info)[i].X1 &&
-		        minfo.y >= _G(spr_info)[i].Y && minfo.y <= _G(spr_info)[i].Y1) {
+		if (_G(minfo).x >= _G(spr_info)[i].X && _G(minfo).x <= _G(spr_info)[i].X1 &&
+		        _G(minfo).y >= _G(spr_info)[i].Y && _G(minfo).y <= _G(spr_info)[i].Y1) {
 			ani_nr = i;
 		}
 	}
@@ -340,11 +340,11 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	}
 	_G(ssi)[tmp_nr].X = _G(spieler_vector)[p_nr].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[p_nr].HotX;
 	_G(ssi)[tmp_nr].Y = _G(spieler_vector)[p_nr].Xypos[1] - _G(spieler).scrolly;
-	if (!flags.ExitMov) {
+	if (!_G(flags).ExitMov) {
 		if (p_nr == P_CHEWY) {
 			u_index = _G(ged)->ged_idx(x + _G(spieler_mi)[p_nr].HotX, y + _G(spieler_mi)[p_nr].HotY,
-			                        _G(room)->_gedXAnz[room_blk.AkAblage],
-			                        _G(ged_mem)[room_blk.AkAblage]);
+			                        _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+			                        _G(ged_mem)[_G(room_blk).AkAblage]);
 			check_shad(u_index, 1);
 		}
 	}
@@ -450,7 +450,7 @@ void wait_show_screen(int16 frames) {
 	if (_G(spieler).DelaySpeed > 0)
 		frames *= _G(spieler).DelaySpeed;
 	while (--frames > 0 && !SHOULD_QUIT) {
-		if (flags.AniUserAction)
+		if (_G(flags).AniUserAction)
 			get_user_key(NO_SETUP);
 		set_up_screen(DO_SETUP);
 	}
@@ -482,9 +482,9 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 		set_up_screen(DO_SETUP);
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
-	if (minfo.button)
-		flags.main_maus_flag = 1;
-	kbinfo.scan_code = Common::KEYCODE_INVALID;
+	if (_G(minfo).button)
+		_G(flags).main_maus_flag = 1;
+	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	stop_spz();
 }
 
@@ -501,8 +501,8 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 
-	if (!flags.AtsText) {
-		flags.AtsText = true;
+	if (!_G(flags).AtsText) {
+		_G(flags).AtsText = true;
 		if (txt_nr != -1) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
@@ -526,11 +526,11 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_END);
 		}
-		flags.AtsText = false;
+		_G(flags).AtsText = false;
 	}
-	if (minfo.button)
-		flags.main_maus_flag = 1;
-	kbinfo.scan_code = Common::KEYCODE_INVALID;
+	if (_G(minfo).button)
+		_G(flags).main_maus_flag = 1;
+	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	_G(maus_links_click) = _G(tmp_maus_links);
 	return ret;
 }
@@ -548,9 +548,9 @@ void aad_wait(int16 str_nr) {
 		}
 	}
 	_G(maus_links_click) = _G(tmp_maus_links);
-	if (minfo.button)
-		flags.main_maus_flag = 1;
-	kbinfo.scan_code = Common::KEYCODE_INVALID;
+	if (_G(minfo).button)
+		_G(flags).main_maus_flag = 1;
+	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 }
 
 void start_aad(int16 dia_nr, int16 ssi_nr) {
@@ -568,11 +568,11 @@ void start_aad(int16 dia_nr, int16 ssi_nr) {
 }
 
 void start_ads_wait(int16 dia_nr) {
-	if (!flags.AdsDialog) {
+	if (!_G(flags).AdsDialog) {
 		_G(menu_item) = CUR_TALK;
 		cursor_wahl(_G(menu_item));
 		load_ads_dia(dia_nr);
-		while (flags.AdsDialog && !SHOULD_QUIT) {
+		while (_G(flags).AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 	}
@@ -683,8 +683,8 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 	if (_G(mov_phasen)[nr].Start == 1) {
 		spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
 		         _G(auto_mov_vector)[nr].PhNr;
-		xy = (int16 *)room_blk.DetImage[spr_nr];
-		Cxy = room_blk.DetKorrekt + (spr_nr << 1);
+		xy = (int16 *)_G(room_blk).DetImage[spr_nr];
+		Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 
 		if (!xoff) {
 			xoff = xy ? xy[0] : 0;
@@ -694,10 +694,10 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 			yoff = xy ? xy[1] : 0;
 			yoff += _G(auto_mov_vector)[nr].Yzoom;
 		}
-		if (minfo.x >= _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
-		        minfo.x <= _G(auto_mov_vector)[nr].Xypos[0] + xoff + Cxy[0] - _G(spieler).scrollx &&
-		        minfo.y >= _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly &&
-		        minfo.y <= _G(auto_mov_vector)[nr].Xypos[1] + yoff + Cxy[1] - _G(spieler).scrolly)
+		if (_G(minfo).x >= _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
+		        _G(minfo).x <= _G(auto_mov_vector)[nr].Xypos[0] + xoff + Cxy[0] - _G(spieler).scrollx &&
+		        _G(minfo).y >= _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly &&
+		        _G(minfo).y <= _G(auto_mov_vector)[nr].Xypos[1] + yoff + Cxy[1] - _G(spieler).scrolly)
 			ret = true;
 	}
 	return ret;
@@ -790,18 +790,18 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 			if (!mi->Mode) {
 				if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 				                              om->Xypos[1] + mi->HotY + tmpy,
-				                              _G(room)->_gedXAnz[room_blk.AkAblage],
-				                              _G(ged_mem)[room_blk.AkAblage]))) {
+				                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+				                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 
 					if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 					                              om->Xypos[1] + mi->HotY,
-					                              _G(room)->_gedXAnz[room_blk.AkAblage],
-					                              _G(ged_mem)[room_blk.AkAblage]))) {
+					                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+					                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 
 						if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 						                              om->Xypos[1] + mi->HotY + tmpy,
-						                              _G(room)->_gedXAnz[room_blk.AkAblage],
-						                              _G(ged_mem)[room_blk.AkAblage]))) {
+						                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+						                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 							om->Count = 0;
 						} else {
 							if (!tmpy) {
@@ -815,7 +815,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 
 							if (abs(om->Xypos[1] - mi->XyzEnd[1]) <= abs(tmpy)) {
 								om->Count = 0;
-								if (!flags.NoEndPosMovObj) {
+								if (!_G(flags).NoEndPosMovObj) {
 									mi->XyzStart[0] = mi->XyzEnd[0];
 									mi->XyzStart[1] = mi->XyzEnd[1];
 									om->Xypos[0] = mi->XyzEnd[0];
@@ -832,7 +832,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 									swap_if_l(&om->Xyvo[1], &om->Xyvo[0]);
 								}
 								get_phase(om, mi);
-								if (om->Count == 0 && !flags.NoEndPosMovObj) {
+								if (om->Count == 0 && !_G(flags).NoEndPosMovObj) {
 									mi->XyzStart[0] = mi->XyzEnd[0];
 									mi->XyzStart[1] = mi->XyzEnd[1];
 									om->Xypos[0] = mi->XyzEnd[0];
@@ -852,7 +852,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 
 						if (abs(om->Xypos[0] - mi->XyzEnd[0]) <= abs(tmpx)) {
 							om->Count = 0;
-							if (!flags.NoEndPosMovObj) {
+							if (!_G(flags).NoEndPosMovObj) {
 								mi->XyzStart[0] = mi->XyzEnd[0];
 								mi->XyzStart[1] = mi->XyzEnd[1];
 								om->Xypos[0] = mi->XyzEnd[0];
@@ -870,7 +870,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 
 							}
 							get_lr_phase(om, mi->Id);
-							if (om->Count == 0 && !flags.NoEndPosMovObj) {
+							if (om->Count == 0 && !_G(flags).NoEndPosMovObj) {
 								mi->XyzStart[0] = mi->XyzEnd[0];
 								mi->XyzStart[1] = mi->XyzEnd[1];
 								om->Xypos[0] = mi->XyzEnd[0];
@@ -890,7 +890,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 						mi->XyzStart[1] = om->Xypos[1];
 						_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
 					}
-					if (om->Count == 0 && !flags.NoEndPosMovObj) {
+					if (om->Count == 0 && !_G(flags).NoEndPosMovObj) {
 						mi->XyzStart[0] = mi->XyzEnd[0];
 						mi->XyzStart[1] = mi->XyzEnd[1];
 						om->Xypos[0] = mi->XyzEnd[0];
@@ -905,8 +905,8 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				if (mi->Id == CHEWY_OBJ) {
 					u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 					                        om->Xypos[1] + mi->HotY,
-					                        _G(room)->_gedXAnz[room_blk.AkAblage],
-					                        _G(ged_mem)[room_blk.AkAblage]);
+					                        _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+					                        _G(ged_mem)[_G(room_blk).AkAblage]);
 					check_shad(u_index, 1);
 				}
 			}
@@ -1043,7 +1043,7 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 	int16 tmp_vorschub;
 	tmp_vorschub = mi->Vorschub;
 	mi->Vorschub = CH_X_PIX;
-	if (flags.ZoomMov) {
+	if (_G(flags).ZoomMov) {
 		if (om->Xzoom < 0 && _G(zoom_mov_fak) > 0) {
 			tmp = om->Xzoom / _G(zoom_mov_fak);
 			tmp = abs(tmp);
@@ -1071,8 +1071,8 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 	int16 spr_anz;
 
 	bool ret = false;
-	if (!flags.SpzAni) {
-		flags.SpzAni = true;
+	if (!_G(flags).SpzAni) {
+		_G(flags).SpzAni = true;
 		_G(spz_ani)[p_nr] = true;
 		_G(spz_p_nr) = p_nr;
 		spr_start = SPZ_ANI_PH[ani_id][0];
@@ -1104,7 +1104,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		_G(spieler_vector)[p_nr].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[p_nr];
 		_G(spieler_vector)[p_nr].DelayCount = 0;
 		_G(spz_count) = count;
-		flags.MausLinks = true;
+		_G(flags).MausLinks = true;
 		ret = true;
 	}
 	return ret;
@@ -1126,9 +1126,9 @@ void calc_person_spz_ani(ObjMov *om) {
 }
 
 void stop_spz() {
-	if (flags.SpzAni) {
-		flags.SpzAni = false;
-		flags.MausLinks = false;
+	if (_G(flags).SpzAni) {
+		_G(flags).SpzAni = false;
+		_G(flags).MausLinks = false;
 		_G(spz_ani)[_G(spz_p_nr)] = false;
 		_G(spieler_vector)[_G(spz_p_nr)].Count = 0;
 		_G(spieler_vector)[_G(spz_p_nr)].PhNr = 0;

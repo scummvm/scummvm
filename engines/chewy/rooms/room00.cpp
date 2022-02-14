@@ -56,7 +56,7 @@ void Room0::entry() {
 			_G(obj)->check_inventar(0))
 		_G(det)->hide_static_spr(6);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		set_person_pos(150, 100, P_CHEWY, P_RIGHT);
 		_G(cur_hide_flag) = 0;
 		hide_cur();
@@ -83,7 +83,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 			if (!_G(spieler).R0FueterLab)
 				_G(timer_action_ctr) = 2;
 
-			flags.AutoAniPlay = true;
+			_G(flags).AutoAniPlay = true;
 			if (!_G(spieler).R0SlimeUsed) {
 				start_aad_wait(42, -1);
 				auto_move(5, P_CHEWY);
@@ -115,7 +115,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 				feederAni();
 
 			_G(uhr)->reset_timer(t_nr, 0);
-			flags.AutoAniPlay = false;
+			_G(flags).AutoAniPlay = false;
 		}
 		break;
 
@@ -129,7 +129,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 bool Room0::getPillow() {
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		auto_move(1, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(0);
@@ -138,7 +138,7 @@ bool Room0::getPillow() {
 		_G(atds)->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(det)->hide_static_spr(6);
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		show_cur();
 		return true;
 	}
@@ -159,7 +159,7 @@ bool Room0::pullSlime() {
 		cursor_wahl(CUR_WALK);
 		_G(atds)->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		show_cur();
 		return true;
 	}
@@ -203,7 +203,7 @@ void Room0::eyeStart(EyeMode mode) {
 	}
 
 	ende = false;
-	flags.AniUserAction = true;
+	_G(flags).AniUserAction = true;
 
 	if (mode == EYE_START) {
 		g_engine->_sound->playSound(FLAP_DETAIL, 0, false);
@@ -257,7 +257,7 @@ void Room0::eyeStart(EyeMode mode) {
 	}
 
 	clear_prog_ani();
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 
 	if (mode == EYE_END) {
 		trapDoorClose();
@@ -270,7 +270,7 @@ void Room0::eyeWait() {
 	adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 39;
 	adi->delay_count = 15;
-	flags.AniUserAction = true;
+	_G(flags).AniUserAction = true;
 
 	while (adi->ani_count < 46) {
 		clear_prog_ani();
@@ -298,7 +298,7 @@ void Room0::eyeWait() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	clear_prog_ani();
 }
 
@@ -308,18 +308,18 @@ void Room0::calcEyeClick(int16 ani_nr) {
 	int16 i;
 
 	if (mouse_on_prog_ani() == ani_nr) {
-		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && _G(kbinfo).key_code != Common::KEYCODE_RETURN) {
 			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
 				_G(out)->set_fontadr(_G(font8x8));
 				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
-				x = minfo.x;
-				y = minfo.y;
+				x = _G(minfo).x;
+				y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (i = 0; i < anz; i++)
 					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
 			}
-		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(SLIME_INV)) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
@@ -393,7 +393,7 @@ void Room0::eyeSlimeBack() {
 	adi->ani_count = 53;
 
 	ende = false;
-	flags.AniUserAction = true;
+	_G(flags).AniUserAction = true;
 
 	while (!ende) {
 		clear_prog_ani();
@@ -424,7 +424,7 @@ void Room0::eyeSlimeBack() {
 		}
 	}
 
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	clear_prog_ani();
 }
 
@@ -491,7 +491,7 @@ void Room0::feederStart(int16 mode) {
 
 	ende = false;
 	if (_G(spieler).R0SlimeUsed)
-		flags.AniUserAction = true;
+		_G(flags).AniUserAction = true;
 
 	while (!ende) {
 		clear_prog_ani();
@@ -500,7 +500,7 @@ void Room0::feederStart(int16 mode) {
 		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[1].ZEbene = 191;
 
-		if (flags.AniUserAction)
+		if (_G(flags).AniUserAction)
 			get_user_key(NO_SETUP);
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
@@ -528,7 +528,7 @@ void Room0::feederStart(int16 mode) {
 	}
 
 	clear_prog_ani();
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 
 	if (mode) {
 		_G(det)->start_detail(FLAP_DETAIL, 1, RUECK);
@@ -561,18 +561,18 @@ void Room0::calcPillowClick(int16 ani_nr) {
 	int16 i;
 
 	if (mouse_on_prog_ani() == ani_nr) {
-		if (minfo.button != 1 && kbinfo.key_code != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && _G(kbinfo).key_code != Common::KEYCODE_RETURN) {
 			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
 				_G(out)->set_fontadr(_G(font8x8));
 				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
-				x = minfo.x;
-				y = minfo.y;
+				x = _G(minfo).x;
+				y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (i = 0; i < anz; i++)
 					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
 			}
-		} else if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;
@@ -595,7 +595,7 @@ void Room0::checkFeed() {
 	ende = false;
 
 	if (_G(spieler).R0SlimeUsed)
-		flags.AniUserAction = true;
+		_G(flags).AniUserAction = true;
 	while (!ende) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
@@ -670,7 +670,7 @@ void Room0::checkFeed() {
 	}
 
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	clear_prog_ani();
 }
 
@@ -728,7 +728,7 @@ void Room0::trapDoorOpen() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	flags.AniUserAction = true;
+	_G(flags).AniUserAction = true;
 	for (i = 0; i < 25; i++) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
@@ -738,7 +738,7 @@ void Room0::trapDoorOpen() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	clear_prog_ani();
 }
 
@@ -770,7 +770,7 @@ void Room0::feederAni() {
 			register_cutscene(1);
 
 			_G(spieler).PersonRoomNr[P_CHEWY] = 1;
-			_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+			_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			set_person_pos(_G(Rdi)->AutoMov[4].X - CH_HOT_MOV_X,
 			               _G(Rdi)->AutoMov[4].Y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			_G(spieler_vector)[P_CHEWY].DelayCount = 0;

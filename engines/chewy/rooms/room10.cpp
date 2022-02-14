@@ -31,7 +31,7 @@ namespace Rooms {
 void Room10::entry() {
 	if (!_G(spieler).R10Surimy) {
 		_G(out)->setze_zeiger(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->setze_zeiger(nullptr);
 		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 		_G(spieler).R10Surimy = true;

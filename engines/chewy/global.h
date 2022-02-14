@@ -239,6 +239,17 @@ public:
 	int16 _ani_stand_count[MAX_PERSON] = { 0 };
 	bool _ani_stand_flag[MAX_PERSON] = { false };
 
+	maus_info _minfo;
+	kb_info _kbinfo;
+	cur_blk _curblk;
+	cur_ani _curani;
+	iog_init _ioptr;
+	RaumBlk _room_blk;
+	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+					0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	CustomInfo _Ci;
+	GotoPkt _gpkt;
+
 	// main.cpp
 	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
@@ -297,7 +308,7 @@ public:
 extern Globals *g_globals;
 
 #define _G(FIELD) g_globals->_##FIELD
-
+/*
 extern char *invent_txt;
 extern char *invent_name;
 
@@ -313,7 +324,7 @@ extern RaumBlk room_blk;
 extern Flags flags;
 extern CustomInfo Ci;
 extern GotoPkt gpkt;
-
+*/
 
 void cursor_wahl(int16 nr);
 

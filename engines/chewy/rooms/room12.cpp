@@ -74,10 +74,10 @@ void Room12::entry() {
 		for (int16 i = 7; i < 10; i++)
 			_G(det)->show_static_spr(i);
 
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_scroll(60, 0);
 		flic_cut(FCUT_016, CFO_MODE);
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 
 		for (int16 i = 7; i < 10; i++)
 			_G(det)->hide_static_spr(i);
@@ -113,7 +113,7 @@ void Room12::init_bork() {
 		if (!_G(auto_obj))
 			_G(det)->load_taf_seq(62, 24, nullptr);
 
-		if (!flags.AutoAniPlay && !flags.ChAutoMov) {
+		if (!_G(flags).AutoAniPlay && !_G(flags).ChAutoMov) {
 			_G(auto_obj) = 1;
 			_G(mov_phasen)[R12_BORK_OBJ].AtsText = 120;
 			_G(mov_phasen)[R12_BORK_OBJ].Lines = 5;
@@ -157,7 +157,7 @@ void Room12::talk_bork() {
 
 void Room12::bork_ok() {
 	hide_cur();
-	flags.MausLinks = true;
+	_G(flags).MausLinks = true;
 	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
 	auto_move(5, P_CHEWY);
 	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
@@ -185,7 +185,7 @@ void Room12::bork_ok() {
 	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
-	flags.MausLinks = false;
+	_G(flags).MausLinks = false;
 	show_cur();
 }
 
@@ -201,13 +201,13 @@ int16 Room12::use_terminal() {
 			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
 				start_spz(CH_TALK5, 255, false, P_CHEWY);
 				start_aad_wait(112, -1);
-				flags.NoScroll = true;
+				_G(flags).NoScroll = true;
 				auto_scroll(46, 0);
 				flic_cut(FCUT_017, CFO_MODE);
 				register_cutscene(5);
 
 				load_chewy_taf(CHEWY_BORK);
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 				_G(atds)->set_ats_str(118, 0, ATS_DATEI);
 				_G(det)->hide_static_spr(12);
 				_G(menu_item) = CUR_WALK;
@@ -250,14 +250,14 @@ int16 Room12::chewy_trans() {
 	int16 action_flag = false;
 	if (!_G(spieler).inv_cur && _G(spieler).R12TransOn) {
 		action_flag = true;
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		auto_move(9, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ABLOCK16);
 		set_person_pos(108, 82, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(spieler).R12TransOn = false;
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 	return action_flag;
 }

@@ -105,7 +105,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			return Common::kReadingFailed;
 		adh->writeStream(stream, adh->size());
 
-		flags.LoadGame = true;
+		_G(flags).LoadGame = true;
 
 		if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1) {
 			_G(menu_item) = CUR_USE;
@@ -113,11 +113,11 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		if (_G(spieler).AkInvent != -1)
 			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
-		_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+		_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 		load_chewy_taf(_G(spieler).ChewyAni);
 
 		_G(fx_blend) = BLEND1;
-		_G(room)->calc_invent(&room_blk, &_G(spieler));
+		_G(room)->calc_invent(&_G(room_blk), &_G(spieler));
 
 		if (_G(spieler).AkInvent != -1)
 			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
@@ -132,7 +132,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		_G(auto_obj) = 0;
 
 		enter_room(-1);
-		flags.LoadGame = false;
+		_G(flags).LoadGame = false;
 
 		return Common::kNoError;
 	}
