@@ -35,7 +35,7 @@ void Room94::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 34;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 48;
 	spieler_mi[P_HOWARD].Mode = true;
@@ -78,9 +78,9 @@ void Room94::entry() {
 			register_cutscene(32);
 
 			_G(fx_blend) = BLEND_NONE;
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			Room66::proc8(2, 3, 0, 551);
-			SetUpScreenFunc = setup_func;
+			_G(SetUpScreenFunc) = setup_func;
 			flags.NoScroll = false;
 		}
 	} else {

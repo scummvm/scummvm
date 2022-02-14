@@ -35,7 +35,7 @@ void Room90::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
 	_delay = 0;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 90;
 	_G(zoom_horizont) = 150;
 	flags.ZoomMov = true;

@@ -89,7 +89,7 @@ void Room40::entry(int16 eib_nr) {
 		}
 	}
 
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	if (_G(spieler).R40TrainMove)
 		move_train(0);
 }
@@ -100,7 +100,7 @@ void Room40::xit(int16 eib_nr) {
 	_G(spieler).R40PoliceAb = false;
 	_G(spieler).R40HoUse = false;
 	stop_spz();
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 40) {
 		if (eib_nr == 70 || eib_nr == 77) {
@@ -484,7 +484,7 @@ int16 Room40::use_haendler() {
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
 				switch_room(28);
-				SetUpScreenFunc = setup_func;
+				_G(SetUpScreenFunc) = setup_func;
 
 			} else {
 				auto_move(11, P_HOWARD);

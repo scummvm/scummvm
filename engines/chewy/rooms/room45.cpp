@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room45::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(r45_delay) = 0;
 	_G(zoom_horizont) = 150;
 	flags.ZoomMov = true;

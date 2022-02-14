@@ -40,7 +40,7 @@ void Room49::entry(int16 eib_nr) {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 
 	if (!_G(spieler).R49BoyWeg) {
 		_G(timer_nr)[0] = room->set_timer(255, 2);
@@ -78,7 +78,7 @@ void Room49::xit(int16 eib_nr) {
 		if (eib_nr == 80) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		} else if (eib_nr == 81) {
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			start_aad_wait(268, -1);
 		}
 	}
@@ -124,9 +124,9 @@ void Room49::calc_boy() {
 		det->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 		det->set_static_ani(2, -1);
 
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		start_aad_wait(262, -1);
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		auto_move(3, P_CHEWY);
 		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
@@ -140,7 +140,7 @@ void Room49::calc_boy() {
 		det->hide_static_spr(9);
 		start_detail_wait(4, 1, ANI_GO);
 
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		room->set_timer_status(255, TIMER_START);
 		show_cur();
@@ -172,7 +172,7 @@ void Room49::use_boy_cigar() {
 	hide_cur();
 	del_inventar(_G(spieler).AkInvent);
 	talk_boy(263);
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 	auto_move(5, P_CHEWY);
 
 	const int16 zoom = room->_roomInfo->ZoomFak;
@@ -199,7 +199,7 @@ void Room49::use_boy_cigar() {
 	inventory_2_cur(GUM_INV);
 	atds->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).R49BoyWeg = true;
 	show_cur();
 }
@@ -219,10 +219,10 @@ void Room49::talk_boy(int16 aad_nr) {
 
 		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		det->set_static_ani(2, -1);
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(aad_nr, -1);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		det->del_static_ani(2);
 		det->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		room->set_timer_status(255, TIMER_START);
@@ -231,10 +231,10 @@ void Room49::talk_boy(int16 aad_nr) {
 
 void Room49::look_hotel() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		stop_person(P_HOWARD);
 		start_aad_wait(261, -1);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 	}
 }
 

@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room55::entry() {
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
@@ -217,7 +217,7 @@ int16 Room55::use_telefon() {
 
 				set_person_pos(178, 75, P_CHEWY, P_LEFT);
 				set_person_pos(66, 73, P_HOWARD, P_RIGHT);
-				SetUpScreenFunc = nullptr;
+				_G(SetUpScreenFunc) = nullptr;
 				det->set_static_ani(18, -1);
 				start_aad_wait(334, -1);
 				start_aad_wait(335, -1);

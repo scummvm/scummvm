@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room67::entry() {
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
 	_G(spieler).DiaAMov = 7;

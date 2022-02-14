@@ -72,7 +72,7 @@ void Room84::entry() {
 	}
 
 	if (flags.LoadGame) {
-		; // Nothing. It avoids a deeper level of if, and we need the SetUpScreenFunc at the end
+		; // Nothing. It avoids a deeper level of if, and we need the _G(SetUpScreenFunc) at the end
 	} else if (_G(spieler).flags30_1 || _G(spieler).flags31_8) {
 		set_person_pos(569, 135, P_CHEWY, P_LEFT);
 		set_person_pos(489, 113, P_HOWARD, P_RIGHT);
@@ -110,7 +110,7 @@ void Room84::entry() {
 		_G(spieler).scrollx = 156;
 	}
 	
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room84::xit(int16 eib_nr) {

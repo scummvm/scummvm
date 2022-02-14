@@ -32,7 +32,7 @@ namespace Rooms {
 void Room95::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	SetUpScreenFunc = setup_func;	
+	_G(SetUpScreenFunc) = setup_func;	
 	_G(zoom_horizont) = 140;
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;

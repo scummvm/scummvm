@@ -33,7 +33,7 @@ void Room57::entry() {
 	_G(zoom_horizont) = 180;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	spieler_mi[P_HOWARD].Mode = true;
@@ -90,7 +90,7 @@ int16 Room57::use_taxi() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			go_auto_xy(11, 144, P_HOWARD, ANI_WAIT);
 			_G(spieler).PersonHide[P_HOWARD] = true;
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
@@ -129,7 +129,7 @@ int16 Room57::use_pfoertner() {
 		start_aad_wait(340, -1);
 	} else if (is_cur_inventar(EINLAD_INV)) {
 		action_ret = true;
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		go_auto_xy(132, 130, P_HOWARD, ANI_WAIT);
 		if (_G(spieler).R56AbfahrtOk) {
 			start_aad_wait(341, -1);
@@ -145,7 +145,7 @@ int16 Room57::use_pfoertner() {
 			start_aad_wait(349, -1);
 			go_auto_xy(176, 130, P_HOWARD, ANI_WAIT);
 		}
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 	}
 	show_cur();
 	room->set_timer_status(1, TIMER_START);

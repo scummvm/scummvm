@@ -33,7 +33,7 @@ namespace Rooms {
 void Room89::entry() {
 	_G(spieler).ScrollxStep = 2;
 	spieler_mi[P_HOWARD].Mode = true;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = room->set_timer(2, 10);
 	if (_G(spieler).flags33_4) {
 		det->show_static_spr(5);

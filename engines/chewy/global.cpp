@@ -66,14 +66,6 @@ Globals::~Globals() {
 	g_globals = nullptr;
 }
 
-bool life_flag;
-int16 life_x;
-int16 life_y;
-int16 life_anz;
-char *life_str;
-int16 life_handler;
-
-void (*SetUpScreenFunc)();
 
 SprInfo spr_info[MAX_PROG_ANI];
 maus_info minfo;

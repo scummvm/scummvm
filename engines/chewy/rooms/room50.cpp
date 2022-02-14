@@ -67,7 +67,7 @@ void Room50::entry(int16 eib_nr) {
 			det->show_static_spr(4);
 		}
 
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 			spieler_mi[P_HOWARD].Mode = true;
@@ -195,7 +195,7 @@ int16 Room50::use_gum() {
 		auto_move(3, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = true;
 		go_auto_xy(75, 92, P_CHEWY, ANI_WAIT);
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
 
 		set_person_spr(P_LEFT, P_HOWARD);
@@ -212,7 +212,7 @@ int16 Room50::use_gum() {
 		det->del_static_ani(5);
 		det->set_static_ani(10, -1);
 		start_aad_wait(277, -1);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		auto_move(3, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = true;
 		det->del_static_ani(10);
@@ -269,7 +269,7 @@ void Room50::setup_func() {
 		}
 
 		if (HowardMov && flags.ExitMov) {
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			HowardMov = 0;
 			auto_move(4, P_HOWARD);
 		} else {

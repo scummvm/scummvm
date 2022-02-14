@@ -49,7 +49,7 @@ void Room28::entry(int16 eib_nr) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
 		hide_cur();
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).R40Wettbewerb) {
 			_G(spieler).scrollx = 320;
@@ -146,7 +146,7 @@ void Room28::xit(int16 eib_nr) {
 	hide_cur();
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		if (!_G(spieler).R28ExitTown) {
 			start_aad_wait(178, -1);
 			_G(spieler).R28ExitTown = true;
@@ -167,7 +167,7 @@ void Room28::gedAction(int index) {
 
 void Room28::haendler() {
 	hide_cur();
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 	_G(spieler).R28ChewyPump = true;
 	del_inventar(K_MASKE_INV);
 	atds->set_ats_str(209, 1, ATS_DATEI);
@@ -190,7 +190,7 @@ void Room28::haendler() {
 	det->del_static_ani(3);
 	det->set_static_ani(4, -1);
 	start_aad_wait(198, -1);
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	auto_move(4, P_CHEWY);
 	hide_cur();
 	auto_move(3, P_CHEWY);
@@ -275,11 +275,11 @@ void Room28::set_pump() {
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
 				stop_person(P_HOWARD);
-				SetUpScreenFunc = nullptr;
+				_G(SetUpScreenFunc) = nullptr;
 				g_engine->_sound->waitForSpeechToFinish();
 
 				start_aad_wait(177, -1);
-				SetUpScreenFunc = setup_func;
+				_G(SetUpScreenFunc) = setup_func;
 				++_G(spieler).R28PumpTxt;
 			}
 

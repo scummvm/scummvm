@@ -41,7 +41,7 @@ void Room37::entry() {
 	_G(zoom_horizont) = 100;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	obj->show_sib(74);
 	obj->show_sib(75);
 

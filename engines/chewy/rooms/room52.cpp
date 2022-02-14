@@ -30,7 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room52::entry() {
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
 
 	if (_G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg) {

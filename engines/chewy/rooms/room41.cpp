@@ -66,7 +66,7 @@ void Room41::entry() {
 	if (!flags.LoadGame)
 		set_person_pos(241, 113, P_HOWARD, P_RIGHT);
 
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	show_cur();
 }
 

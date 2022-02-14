@@ -48,7 +48,7 @@ void Room82::entry() {
 		det->show_static_spr(7);
 
 	if (flags.LoadGame) {
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		return;
 	}
 
@@ -67,12 +67,12 @@ void Room82::entry() {
 	}
 
 	if (_G(spieler).flags30_8) {
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		proc4();
 	}
 
 	_G(maus_links_click) = false;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room82::xit(int16 eib_nr) {

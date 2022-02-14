@@ -50,7 +50,7 @@ void Room66::entry(int16 eib_nr) {
 		set_person_pos(623, 81, P_HOWARD, P_LEFT);
 		start_aad_wait(413, -1);
 		auto_move(9, P_CHEWY);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		start_aad_wait(403, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(0, 1, ANI_VOR);
@@ -83,7 +83,7 @@ void Room66::entry(int16 eib_nr) {
 		}
 		
 	}
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room66::xit(int16 eib_nr) {

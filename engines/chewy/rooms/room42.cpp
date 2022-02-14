@@ -37,7 +37,7 @@ void Room42::entry() {
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 
 		if (!flags.LoadGame) {
 			det->stop_detail(0);
@@ -46,7 +46,7 @@ void Room42::entry() {
 			_G(spieler).R42BeamterWach = true;
 			g_engine->_sound->stopSound(0);
 
-			SetUpScreenFunc = setup_func;
+			_G(SetUpScreenFunc) = setup_func;
 
 			set_person_pos(80, 43, P_HOWARD, P_LEFT);
 			atds->set_ats_str(263, 1, ATS_DATEI);
