@@ -74,7 +74,7 @@ void Room56::entry() {
 			_G(spieler).ZoomXy[P_HOWARD][1] = 37;
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(spieler).PersonHide[P_HOWARD] = false;
-			SetUpScreenFunc = setup_func;
+			_G(SetUpScreenFunc) = setup_func;
 			spieler_mi[P_CHEWY].Mode = true;
 			auto_move(1, P_CHEWY);
 			spieler_mi[P_CHEWY].Mode = false;
@@ -138,7 +138,7 @@ void Room56::entry() {
 					room->set_zoom(23);
 					_G(spieler).ZoomXy[P_HOWARD][0] = 17;
 					_G(spieler).ZoomXy[P_HOWARD][0] = 37;
-					SetUpScreenFunc = setup_func;
+					_G(SetUpScreenFunc) = setup_func;
 					spieler_mi[P_CHEWY].Mode = true;
 					auto_move(1, P_CHEWY);
 					spieler_mi[P_CHEWY].Mode = false;
@@ -149,7 +149,7 @@ void Room56::entry() {
 			}
 		}
 	}
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	_G(zoom_horizont) = 114;
@@ -290,7 +290,7 @@ int16 Room56::use_kneipe() {
 			if (_G(spieler).R56Kneipe) {
 				start_aad_wait(344, -1);
 			} else {
-				SetUpScreenFunc = nullptr;
+				_G(SetUpScreenFunc) = nullptr;
 				auto_move(4, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				go_auto_xy(160, 58, P_HOWARD, ANI_VOR);
@@ -316,7 +316,7 @@ int16 Room56::use_kneipe() {
 				_G(fx_blend) = BLEND3;
 				start_aad_wait(308, -1);
 
-				SetUpScreenFunc = setup_func;
+				_G(SetUpScreenFunc) = setup_func;
 				flags.NoScroll = false;
 				if (obj->check_inventar(SACKGELD_INV)) {
 					remove_inventory(SACKGELD_INV);

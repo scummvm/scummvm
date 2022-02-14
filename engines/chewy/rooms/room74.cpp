@@ -42,7 +42,7 @@ void Room74::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 
 	if (_G(spieler).flags29_1)
 		det->start_detail(0, 255, false);

@@ -52,7 +52,7 @@ void Room79::entry() {
 		show_cur();
 	}
 
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room79::xit() {

@@ -35,7 +35,7 @@ void Room91::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_click = 0;
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	spieler_mi[P_HOWARD].Mode = true;

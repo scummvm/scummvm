@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room54::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 106;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
@@ -237,7 +237,7 @@ int16 Room54::use_zelle() {
 			} else {
 				auto_move(5, P_CHEWY);
 				_G(spieler).R54HowardVorne = 1;
-				SetUpScreenFunc = nullptr;
+				_G(SetUpScreenFunc) = nullptr;
 				auto_scroll(176, 0);
 				go_auto_xy(239, 101, P_HOWARD, ANI_WAIT);
 				flc->set_flic_user_function(cut_serv);
@@ -290,7 +290,7 @@ int16 Room54::use_azug() {
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				det->show_static_spr(12);
 				_G(spieler).R55Location = true;
-				SetUpScreenFunc = nullptr;
+				_G(SetUpScreenFunc) = nullptr;
 				go_auto_xy(91, 62, P_HOWARD, ANI_WAIT);
 				g_engine->_sound->playSound(1, 0);
 				g_engine->_sound->playSound(1);
@@ -331,7 +331,7 @@ void Room54::aufzug_ab() {
 	set_person_pos(91, 62, P_HOWARD, P_RIGHT);
 	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).scrollx = 0;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	det->show_static_spr(12);
 	g_engine->_sound->playSound(1, 0);
 	g_engine->_sound->playSound(1);

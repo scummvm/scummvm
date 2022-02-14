@@ -38,7 +38,7 @@ void Room88::entry() {
 	if (_G(spieler).r88DestRoom == 0)
 		_G(spieler).r88DestRoom = 82;
 
-	SetUpScreenFunc = calc_person_look;
+	_G(SetUpScreenFunc) = calc_person_look;
 
 	if (_G(spieler).flags32_10) {
 		det->start_detail(4, 255, false);

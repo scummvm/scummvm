@@ -43,7 +43,7 @@ void Room69::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).DiaAMov = 2;
 	if (flags.LoadGame)
 		return;

@@ -115,7 +115,6 @@ void var_init() {
 	Sdi = &Rdi->Sinfo[0];
 	Adi = &Rdi->Ainfo[0];
 
-	life_handler = false;
 	_G(auto_p_nr) = 0;
 	_G(menu_item) = CUR_WALK;
 	_G(inventar_nr) = 0;
@@ -169,7 +168,7 @@ void var_init() {
 	_G(spieler).FramesPerSecond = 7;
 	_G(spieler).DisplayText = true;
 	CurrentSong = -1;
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;
 	timer_action_ctr = 0;

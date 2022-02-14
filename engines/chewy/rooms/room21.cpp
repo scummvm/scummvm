@@ -70,7 +70,7 @@ void Room21::entry() {
 	init_spinne();
 	_G(timer_nr)[2] = room->set_timer(255, 1);
 	flags.NoEndPosMovObj = true;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 bool Room21::timer(int16 t_nr, int16 ani_nr) {

@@ -59,7 +59,7 @@ void Room51::entry() {
 		_G(spieler).scrollx = 0;
 		set_person_pos(34, 120, P_HOWARD, P_RIGHT);
 		set_person_pos(234, 69, P_CHEWY, P_LEFT);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		det->show_static_spr(17);
 		_index = 0;
 		hide_cur();
@@ -94,7 +94,7 @@ void Room51::entry() {
 				show_cur();
 			}
 
-			SetUpScreenFunc = setup_func;
+			_G(SetUpScreenFunc) = setup_func;
 			spieler_mi[P_HOWARD].Mode = true;
 		}
 	}
@@ -196,7 +196,7 @@ void Room51::setup_func() {
 		}
 
 		if (HowardMov && flags.ExitMov) {
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			HowardMov = 0;
 			auto_move(9, P_HOWARD);
 		} else {
@@ -215,7 +215,7 @@ int16 Room51::use_door(int16 txt_nr) {
 		switch (txt_nr) {
 		case 329:
 			auto_move(8, P_CHEWY);
-			SetUpScreenFunc = nullptr;
+			_G(SetUpScreenFunc) = nullptr;
 			det->show_static_spr(0);
 
 			if (!_G(spieler).R51HotelRoom) {
@@ -225,7 +225,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
 				start_aad_wait(285, -1);
 				atds->set_ats_str(329, 1, ATS_DATEI);
-				SetUpScreenFunc = setup_func;
+				_G(SetUpScreenFunc) = setup_func;
 
 			} else {
 				show_cur();

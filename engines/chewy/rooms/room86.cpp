@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room86::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 20;

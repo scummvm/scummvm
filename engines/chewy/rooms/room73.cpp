@@ -41,7 +41,7 @@ void Room73::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	if (_G(spieler).flags28_20)
 		det->show_static_spr(3+ (_G(spieler).R63Feuer ? 1 : 0)); // flags25_40
 

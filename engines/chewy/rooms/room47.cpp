@@ -31,7 +31,7 @@ namespace Rooms {
 void Room47::entry() {
 	hide_person();
 	set_person_pos(40, 170, P_CHEWY, P_RIGHT);
-	SetUpScreenFunc = set_detail;
+	_G(SetUpScreenFunc) = set_detail;
 	flags.MainInput = false;
 }
 

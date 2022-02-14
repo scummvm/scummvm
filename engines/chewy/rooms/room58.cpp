@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room58::entry() {
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room58::xit() {

@@ -54,7 +54,7 @@ void Room63::entry() {
 		det->show_static_spr(12);
 	} else if (_G(spieler).R62LauraVerwandlung) {
 		atds->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
 		set_person_pos(424, 78, P_CHEWY, P_LEFT);

@@ -35,7 +35,7 @@ void Room48::entry() {
 	_G(spieler).scrolly = 0;
 	show_cur();
 	calc_pic();
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = room->set_timer(255, 20);
 }
 
@@ -129,7 +129,7 @@ void Room48::setup_func() {
 						}
 
 						if (r_nr != -1) {
-							SetUpScreenFunc = nullptr;
+							_G(SetUpScreenFunc) = nullptr;
 							det->hide_static_spr(1 + idx);
 							hide_cur();
 							room->set_timer_status(255, TIMER_STOP);

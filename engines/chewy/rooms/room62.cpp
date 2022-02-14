@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room62::entry() {
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
 	_G(spieler).R62LauraVerwandlung = 0;
 	_G(spieler).room_e_obj[91].Attribut = 255;
@@ -102,7 +102,7 @@ int16 Room62::use_laura() {
 		hide_cur();
 		auto_move(2, P_CHEWY);
 		auto_scroll(0, 0);
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		det->del_static_ani(8);
 		det->stop_detail(8);
 		_G(spieler).PersonHide[P_CHEWY] = true;

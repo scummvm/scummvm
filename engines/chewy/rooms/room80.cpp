@@ -66,7 +66,7 @@ void Room80::entry() {
 	else
 		det->show_static_spr(4);
 
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room80::setup_func() {
@@ -114,7 +114,7 @@ void Room80::setup_func() {
 	if (nextRoom == -1)
 		return;
 
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 	det->hide_static_spr(vec);
 	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);

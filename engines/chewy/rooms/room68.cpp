@@ -44,7 +44,7 @@ static const AniBlock ABLOCK39[3] = {
 void Room68::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).DiaAMov = 1;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(r68HohesC) = -1;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
@@ -349,7 +349,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		if (_G(spieler).DisplayText == 0)
 			_G(sndPlayer)->fadeOut(5);
 		
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		del_inventar(_G(spieler).AkInvent);
 		go_auto_xy(150, -13, P_NICHELLE, ANI_WAIT);
 		_G(spieler).PersonHide[P_NICHELLE] = true;

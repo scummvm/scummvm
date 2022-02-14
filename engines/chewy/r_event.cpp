@@ -327,7 +327,7 @@ void enter_room(int16 eib_nr) {
 
 	uhr->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
-	SetUpScreenFunc = nullptr;
+	_G(SetUpScreenFunc) = nullptr;
 	HowardMov = 0;
 	_G(cur_hide_flag) = false;
 
@@ -492,7 +492,7 @@ void exit_room(int16 eib_nr) {
 		if (eib_nr == 47)
 			_G(spieler).R17Location = 1;
 		flags.NoEndPosMovObj = false;
-		SetUpScreenFunc = nullptr;
+		_G(SetUpScreenFunc) = nullptr;
 		load_chewy_taf(CHEWY_NORMAL);
 
 		break;

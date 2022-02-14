@@ -38,7 +38,7 @@ void Room76::entry() {
 	g_engine->_sound->playSound(0);
 	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_state = 0;
 
 	set_person_pos(308, 84, P_NICHELLE, P_RIGHT);

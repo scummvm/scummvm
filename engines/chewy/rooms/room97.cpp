@@ -40,7 +40,7 @@ bool Room97::_bool18DB3A;
 void Room97::entry() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 0;
 
 	spieler_mi[P_HOWARD].Mode = true;

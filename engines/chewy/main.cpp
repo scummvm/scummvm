@@ -544,8 +544,8 @@ void set_up_screen(SetupScreenMode mode) {
 	for (i = 0; i < MAX_PERSON; i++)
 		zoom_mov_anpass(&spieler_vector[i], &spieler_mi[i]);
 
-	if (SetUpScreenFunc && _G(menu_display) == 0 && !flags.InventMenu) {
-		SetUpScreenFunc();
+	if (_G(SetUpScreenFunc) && _G(menu_display) == 0 && !flags.InventMenu) {
+		_G(SetUpScreenFunc)();
 		_G(out)->setze_zeiger(_G(workptr));
 	}
 

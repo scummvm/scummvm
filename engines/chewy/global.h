@@ -128,6 +128,7 @@ public:
 	byte *_screen0 = nullptr;
 	int16 _scr_width = 0;
 	BlendMode _fx_blend = BLEND_NONE;
+	void (*_SetUpScreenFunc)() = nullptr;
 
 	byte *_font6x8 = nullptr;
 	byte *_font8x8 = nullptr;
@@ -233,13 +234,6 @@ extern int16 talk_start_ani;
 extern int16 talk_hide_static;
 
 extern int16 ak_invent;
-
-extern bool life_flag;
-extern int16 life_x;
-extern int16 life_y;
-extern int16 life_anz;
-extern char *life_str;
-extern int16 life_handler;
 
 extern SprInfo spr_info[MAX_PROG_ANI];
 extern maus_info minfo;
@@ -377,8 +371,6 @@ void enable_timer();
 int16 is_mouse_person(int16 x, int16 y);
 
 void calc_mouse_person(int16 x, int16 y);
-
-extern void (*SetUpScreenFunc)(void);
 
 void hide_person();
 

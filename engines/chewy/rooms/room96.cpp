@@ -36,7 +36,7 @@ void Room96::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 50;
 	spieler_mi[P_HOWARD].Mode = true;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_CHEWY].Mode = true;
 
 	if (flags.LoadGame)

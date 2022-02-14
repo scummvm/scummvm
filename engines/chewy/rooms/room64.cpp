@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room64::entry() {
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	_G(r62Delay) = 0;
 	_G(r64TalkAni) = _G(spieler).R64Moni1Ani;
 

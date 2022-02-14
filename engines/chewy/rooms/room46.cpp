@@ -32,7 +32,7 @@ namespace Rooms {
 void Room46::entry(int16 eib_nr) {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 
 		if (eib_nr == 79) {
 			set_person_pos(140, 90, P_HOWARD, P_LEFT);
@@ -43,7 +43,7 @@ void Room46::entry(int16 eib_nr) {
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
 		spieler_mi[P_HOWARD].Mode = true;
-		SetUpScreenFunc = setup_func;
+		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).flags33_8) {
 			_G(maus_links_click) = false;

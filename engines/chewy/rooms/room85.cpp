@@ -36,7 +36,7 @@ void Room85::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
-	SetUpScreenFunc = setup_func;
+	_G(SetUpScreenFunc) = setup_func;
 	spieler_mi[P_HOWARD].Mode = true;
 	spieler_mi[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 22;

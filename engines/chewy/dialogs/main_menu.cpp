@@ -61,7 +61,7 @@ void MainMenu::execute() {
 	while (!done && !SHOULD_QUIT) {
 		_G(sndPlayer)->stopMod();
 		_G(sndPlayer)->endSound();
-		SetUpScreenFunc = screenFunc;
+		_G(SetUpScreenFunc) = screenFunc;
 
 		cursor_wahl(CUR_ZEIGE);
 		_selection = -1;
@@ -155,8 +155,8 @@ void MainMenu::animate() {
 	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage],
 		_G(spieler).scrollx, _G(spieler).scrolly);
 
-	if (SetUpScreenFunc && !_G(menu_display) && !flags.InventMenu) {
-		SetUpScreenFunc();
+	if (_G(SetUpScreenFunc) && !_G(menu_display) && !flags.InventMenu) {
+		_G(SetUpScreenFunc)();
 		_G(out)->setze_zeiger(_G(workptr));
 	}
 
