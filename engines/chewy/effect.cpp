@@ -166,20 +166,20 @@ void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 	}
 }
 
-void Effect::spr_blende(byte *workpage_, int16 lines, bool mode, int16 col) {
+void Effect::spr_blende(byte *wrkPage, int16 lines, bool mode, int16 col) {
 	if (mode) {
 		for (int i = 0, y = 0; i < 20; ++i, y += 8) {
-			_G(out)->setze_zeiger(workpage_ + 4);
+			_G(out)->setze_zeiger(wrkPage + 4);
 			_G(out)->box_fill(0, 92 - y, 320, 92 - y + 8, col);
 			_G(out)->box_fill(0, 100 + y, 320, 108 + y, col);
-			_G(out)->back2screen(workpage_);
+			_G(out)->back2screen(wrkPage);
 		}
 	} else {
 		for (int i = 0; i < 20; ++i) {
-			_G(out)->setze_zeiger(workpage_ + 4);
+			_G(out)->setze_zeiger(wrkPage + 4);
 			_G(out)->box_fill(0, i, 320, i + 8, col);
 			_G(out)->box_fill(0, 192 - i, 320, 200 - i, col);
-			_G(out)->back2screen(workpage_);
+			_G(out)->back2screen(wrkPage);
 		}
 	}
 }

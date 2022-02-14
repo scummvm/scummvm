@@ -162,7 +162,7 @@ int Room71::proc1() {
 	flags.NoScroll = true;
 	auto_scroll(256, 0);
 	_delay = 0;
-	if (menu_item == CUR_HOWARD) {
+	if (_G(menu_item) == CUR_HOWARD) {
 		proc4();
 		if (_G(spieler).flags28_4) {
 			if (_G(spieler).R71Val2)
@@ -170,7 +170,7 @@ int Room71::proc1() {
 			else
 				_G(spieler).R71Val1 = 1;
 		}
-	} else if (menu_item == CUR_NICHELLE) {
+	} else if (_G(menu_item) == CUR_NICHELLE) {
 		proc3();
 		if (_G(spieler).flags28_4) {
 			if (_G(spieler).R71Val1)
@@ -220,7 +220,7 @@ void Room71::proc2() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(spieler).R71LeopardVined = true;
 	flags.NoScroll = false;
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	start_aad_wait(434, -1);
 }

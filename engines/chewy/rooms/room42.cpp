@@ -93,7 +93,7 @@ void Room42::get_kuerbis(int16 aad_nr) {
 int16 Room42::use_psack() {
 	int16 action_flag = false;
 
-	if (menu_item == CUR_HOWARD)
+	if (_G(menu_item) == CUR_HOWARD)
 		return action_flag;
 
 	hide_cur();
@@ -143,15 +143,15 @@ int16 Room42::use_psack() {
 int16 Room42::use_beamter() {
 	int16 action_flag = false;
 
-	if (menu_item == CUR_HOWARD) {
+	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
 		atds->set_ats_str(264, 2, ATS_DATEI);
 		hide_cur();
 		auto_move(4, P_CHEWY);
 		start_aad_wait(184, -1);
 		_G(spieler).R42HoToBeamter = true;
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 		show_cur();
 		start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
 		flags.MausLinks = false;

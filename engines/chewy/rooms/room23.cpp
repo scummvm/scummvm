@@ -140,7 +140,7 @@ void Room23::use_cartridge() {
 		atds->set_ats_str(111, 1, ATS_DATEI);
 	}
 
-	menu_item_vorwahl = CUR_USE;
+	_G(menu_item_vorwahl) = CUR_USE;
 }
 
 void Room23::get_cartridge() {

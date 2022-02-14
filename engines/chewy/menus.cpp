@@ -35,9 +35,9 @@ void plot_main_menu() {
 	int16 zoomx, zoomy;
 	int16 *korrektur;
 
-	if (menu_item != _G(tmp_menu)) {
+	if (_G(menu_item) != _G(tmp_menu)) {
 		_G(m_flip) = 0;
-		_G(tmp_menu) = menu_item;
+		_G(tmp_menu) = _G(menu_item);
 	}
 
 	maus_mov_menu();
@@ -70,12 +70,12 @@ void plot_main_menu() {
 	++_G(m_flip);
 	if (_G(m_flip) < 12 * (_G(spieler).DelaySpeed + 1)) {
 		int deltaX = 0;
-		if (menu_item == CUR_SAVE)
+		if (_G(menu_item) == CUR_SAVE)
 			deltaX = -40;
-		else if (menu_item == CUR_INVENT)
+		else if (_G(menu_item) == CUR_INVENT)
 			deltaX = 40;
 
-		int img = IMAGES[menu_item];
+		int img = IMAGES[_G(menu_item)];
 		_G(out)->scale_set(menutaf->image[img],
 		    MENU_X + deltaX + korrektur[img * 2] - 5,
 		    _G(spieler).MainMenuY + korrektur[img * 2 + 1] - 10,
@@ -87,13 +87,13 @@ void plot_main_menu() {
 }
 
 void maus_mov_menu() {
-	maus_menu_x = g_events->_mousePos.x;
-	if (maus_menu_x > 200) {
+	_G(maus_menu_x) = g_events->_mousePos.x;
+	if (_G(maus_menu_x) > 200) {
 		g_events->warpMouse(Common::Point(200, g_events->_mousePos.y));
-		maus_menu_x = 200;
+		_G(maus_menu_x) = 200;
 	}
 
-	menu_item = (maus_menu_x / (MAUS_MENU_MAX_X / 5));
+	_G(menu_item) = (_G(maus_menu_x) / (MAUS_MENU_MAX_X / 5));
 }
 
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
@@ -125,7 +125,7 @@ void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
 void get_display_xy(int16 *x, int16 *y, int16 nr) {
 	int16 *xy;
 	int16 x1, y1;
-	xy = (int16 *)inv_spr[nr];
+	xy = (int16 *)_G(inv_spr)[nr];
 	x1 = 48 - xy[0];
 	x1 /= 2;
 	*x = x1;
@@ -266,67 +266,67 @@ void ads_menu() {
 	if (flags.AdsDialog) {
 		flags.ShowAtsInvTxt = false;
 		flags.MainInput = false;
-		if (ads_item_anz > 4)
+		if (_G(ads_item_anz) > 4)
 			cur_y_start = 190;
 		else
-			cur_y_start = 190 - (4 - ads_item_anz) * 10;
+			cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
 		cur_y = minfo.y;
 		if (cur_y < 160 || cur_y > cur_y_start + 10)
 			cur_y = 255;
 		else
 			cur_y = (cur_y_start + 5 - cur_y) / 10;
 
-		if (atds->aad_get_status() == -1 && ads_push == false &&
+		if (atds->aad_get_status() == -1 && _G(ads_push) == false &&
 		        flags.NoDiaBox == false) {
 			_G(cur_display) = true;
 
 			build_menu(ADS_WIN);
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
-			if (ads_item_anz > 4)
+			if (_G(ads_item_anz) > 4)
 				cur_y_start = 190;
 			else
-				cur_y_start = 190 - (4 - ads_item_anz) * 10;
-			for (i = 0; i < ads_item_anz && i < 4; i++) {
+				cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
+			for (i = 0; i < _G(ads_item_anz) && i < 4; i++) {
 				if (cur_y == i)
 					col = 255;
 				else
 					col = 14;
-				_G(out)->printxy(4, cur_y_start - i * 10, col, 300, 0, ads_item_ptr[i]);
+				_G(out)->printxy(4, cur_y_start - i * 10, col, 300, 0, _G(ads_item_ptr)[i]);
 			}
 		}
 
 		switch (_G(in)->get_switch_code()) {
 		case 255:
 		case Common::KEYCODE_RETURN:
-			if (cur_y < ads_item_anz && cur_y >= 0 && ads_push == false) {
+			if (cur_y < _G(ads_item_anz) && cur_y >= 0 && _G(ads_push) == false) {
 				_G(cur_display) = false;
-				ads_push = true;
+				_G(ads_push) = true;
 				minfo.y = 159;
-				an_blk = atds->ads_item_choice(ads_blk_nr, cur_y);
+				an_blk = atds->ads_item_choice(_G(ads_blk_nr), cur_y);
 				if (an_blk->BlkNr == -1) {
-					ads_action(ads_dia_nr, ads_blk_nr, an_blk->EndNr);
-					ads_ende(ads_dia_nr, ads_blk_nr, an_blk->EndNr);
+					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
+					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					stop_ads_dialog();
 				} else {
-					an_blk = atds->calc_next_block(ads_blk_nr, cur_y);
-					ads_action(ads_dia_nr, ads_blk_nr, an_blk->EndNr);
-					ads_blk_nr = an_blk->BlkNr;
-					ads_item_ptr = atds->ads_item_ptr(ads_blk_nr,
-					                                  &ads_item_anz);
+					an_blk = atds->calc_next_block(_G(ads_blk_nr), cur_y);
+					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
+					_G(ads_blk_nr) = an_blk->BlkNr;
+					_G(ads_item_ptr) = atds->ads_item_ptr(_G(ads_blk_nr),
+					                                  &_G(ads_item_anz));
 				}
 				det->stop_detail(talk_start_ani);
 				det->show_static_spr(talk_hide_static);
 				talk_start_ani = -1;
 				talk_hide_static = -1;
 				if (flags.AdsDialog == false) {
-					atds->save_ads_header(ads_dia_nr);
+					atds->save_ads_header(_G(ads_dia_nr));
 				}
 			}
 			break;
 
 		default:
-			ads_push = false;
+			_G(ads_push) = false;
 			break;
 		}
 	}
@@ -334,7 +334,7 @@ void ads_menu() {
 
 void stop_ads_dialog() {
 	aad_wait(-1);
-	_G(spieler).DispFlag = ads_tmp_dsp;
+	_G(spieler).DispFlag = _G(ads_tmp_dsp);
 	_G(cur_display) = true;
 	flags.ShowAtsInvTxt = true;
 	flags.MainInput = true;
@@ -349,8 +349,8 @@ void cur_2_inventory() {
 	if (_G(spieler).AkInvent != -1) {
 		invent_2_slot(_G(spieler).AkInvent);
 		_G(spieler).AkInvent = -1;
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 	}
 	_G(spieler).inv_cur = false;
 }
@@ -359,7 +359,7 @@ void inventory_2_cur(int16 nr) {
 	if (_G(spieler).AkInvent == -1) {
 		if (obj->check_inventar(nr)) {
 			del_invent_slot(nr);
-			menu_item = CUR_USE;
+			_G(menu_item) = CUR_USE;
 			_G(spieler).AkInvent = nr;
 			cursor_wahl(CUR_AK_INVENT);
 			get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);

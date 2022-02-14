@@ -173,8 +173,8 @@ void Room22::get_bork() {
 		invent_2_slot(BORK_INV);
 
 		_G(spieler).R22GetBork = true;
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 	}
 }
 

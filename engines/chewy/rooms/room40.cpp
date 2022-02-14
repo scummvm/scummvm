@@ -313,7 +313,7 @@ void Room40::setup_func() {
 int16 Room40::use_mr_pumpkin() {
 	int16 action_ret = false;
 
-	if (menu_item != CUR_HOWARD) {
+	if (_G(menu_item) != CUR_HOWARD) {
 		hide_cur();
 
 		if (!_G(spieler).inv_cur) {
@@ -368,7 +368,7 @@ int16 Room40::use_mr_pumpkin() {
 int16 Room40::use_schalter(int16 aad_nr) {
 	int16 action_flag = false;
 
-	if (menu_item != CUR_HOWARD &&_G(spieler).R40PoliceWeg == false) {
+	if (_G(menu_item) != CUR_HOWARD &&_G(spieler).R40PoliceWeg == false) {
 		action_flag = true;
 
 		hide_cur();
@@ -443,7 +443,7 @@ void Room40::talk_handler() {
 int16 Room40::use_haendler() {
 	int16 action_flag = false;
 
-	if (menu_item == CUR_HOWARD && !_G(spieler).R40HaendlerOk) {
+	if (_G(menu_item) == CUR_HOWARD && !_G(spieler).R40HaendlerOk) {
 		action_flag = true;
 		if (!_G(spieler).flags38_2) {
 			start_aad_wait(612, -1);
@@ -491,8 +491,8 @@ int16 Room40::use_haendler() {
 				start_aad_wait(210, -1);
 			}
 
-			menu_item = CUR_WALK;
-			cursor_wahl(menu_item);
+			_G(menu_item) = CUR_WALK;
+			cursor_wahl(_G(menu_item));
 			show_cur();
 			flags.NoScroll = false;
 			flags.MausLinks = false;
@@ -506,7 +506,7 @@ int16 Room40::use_haendler() {
 int16 Room40::use_bmeister() {
 	short action_flag = false;
 
-	if (menu_item == CUR_HOWARD) {
+	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
 		hide_cur();
 		_G(spieler).R40HoUse = true;
@@ -517,8 +517,8 @@ int16 Room40::use_bmeister() {
 		start_aad_wait(216, -1);
 		_G(spieler).R40HoUse = false;
 		flags.NoScroll = false;
-		menu_item = CUR_WALK;
-		cursor_wahl(menu_item);
+		_G(menu_item) = CUR_WALK;
+		cursor_wahl(_G(menu_item));
 		show_cur();
 
 	} else if (is_cur_inventar(LIKOER2_INV)) {
@@ -571,7 +571,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 bool Room40::use_police() {
 	bool result = false;
 
-	if (menu_item == CUR_HOWARD) {
+	if (_G(menu_item) == CUR_HOWARD) {
 		if (!_G(spieler).R40PoliceWeg && _G(spieler).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(spieler).R40PoliceAb = true;
@@ -587,8 +587,8 @@ bool Room40::use_police() {
 			person_end_phase[P_HOWARD] = P_RIGHT;
 			start_aad_wait(218, -1);
 			start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
-			menu_item = CUR_WALK;
-			cursor_wahl(menu_item);
+			_G(menu_item) = CUR_WALK;
+			cursor_wahl(_G(menu_item));
 			show_cur();
 			flags.MausLinks = false;
 		}

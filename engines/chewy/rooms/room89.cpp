@@ -98,17 +98,17 @@ void Room89::entry() {
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
-			_G(out)->setze_zeiger(workptr);
+			_G(out)->setze_zeiger(_G(workptr));
 			_G(out)->cls();
 			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
-			_G(out)->back2screen(workpage);
+			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		// Unsquish out thanks for playing screen
-		_G(out)->setze_zeiger(workptr);
+		_G(out)->setze_zeiger(_G(workptr));
 		_G(out)->cls();
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
 		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Common::KEYCODE_ESCAPE from F5");
@@ -119,18 +119,18 @@ void Room89::entry() {
 		for (int esi = 0; esi < 100; ++esi) {
 			edi += 3;
 			var30 += 2;
-			_G(out)->setze_zeiger(workptr);
+			_G(out)->setze_zeiger(_G(workptr));
 			_G(out)->cls();
 			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
-			_G(out)->back2screen(workpage);
+			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		g_events->delay(3000);
 		_G(out)->ausblenden(2);
-		_G(out)->setze_zeiger(workptr);
+		_G(out)->setze_zeiger(_G(workptr));
 		_G(out)->cls();
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();

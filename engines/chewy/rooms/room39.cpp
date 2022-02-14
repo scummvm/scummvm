@@ -161,8 +161,8 @@ void Room39::ok() {
 
 	switch_room(27);
 	start_aad_wait(192, -1);
-	menu_item = CUR_WALK;
-	cursor_wahl(menu_item);
+	_G(menu_item) = CUR_WALK;
+	cursor_wahl(_G(menu_item));
 }
 
 int16 Room39::use_tv() {

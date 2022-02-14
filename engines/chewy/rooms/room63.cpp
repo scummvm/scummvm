@@ -70,7 +70,7 @@ void Room63::setup_func() {
 		return;
 
 	cur_2_inventory();
-	menu_item = CUR_USE;
+	_G(menu_item) = CUR_USE;
 	cursor_wahl(CUR_USE);
 	
 	switch (_G(r63ChewyAni)) {

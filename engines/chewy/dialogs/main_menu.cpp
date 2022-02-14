@@ -54,7 +54,7 @@ void MainMenu::execute() {
 	minfo.x = 152;
 	minfo.y = 92;
 	_G(spieler).inv_cur = false;
-	menu_display = 0;
+	_G(menu_display) = 0;
 	_G(spieler).soundLoopMode = 1;
 
 	bool done = false;
@@ -71,7 +71,7 @@ void MainMenu::execute() {
 
 		CurrentSong = -1;
 		load_room_music(98);
-		fx->border(workpage, 100, 0, 0);
+		fx->border(_G(workpage), 100, 0, 0);
 
 		_G(out)->set_palette(_G(pal));
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -92,8 +92,8 @@ void MainMenu::execute() {
 			break;
 
 		case MM_VIEW_INTRO:
-			fx->border(workpage, 100, 0, 0);
-			_G(out)->setze_zeiger(workptr);
+			fx->border(_G(workpage), 100, 0, 0);
+			_G(out)->setze_zeiger(_G(workptr));
 			flags.NoPalAfterFlc = true;
 			flic_cut(135, CFO_MODE);
 			break;
@@ -118,12 +118,12 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CREDITS:
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 			flags.NoPalAfterFlc = true;
 			flc->set_custom_user_function(creditsFn);
 			flic_cut(159, CFO_MODE);
 			flc->remove_custom_user_function();
-			fx->border(workpage, 100, 0, 0);
+			fx->border(_G(workpage), 100, 0, 0);
 			Dialogs::Credits::execute();
 			break;
 
@@ -144,20 +144,20 @@ void MainMenu::screenFunc() {
 void MainMenu::animate() {
 	if (ani_timer->TimeFlag) {
 		uhr->reset_timer(0, 0);
-		_G(spieler).DelaySpeed = FrameSpeed / _G(spieler).FramesPerSecond;
+		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
 		spieler_vector->Delay = _G(spieler).DelaySpeed + spz_delay[0];
-		FrameSpeed = 0;
+		_G(FrameSpeed) = 0;
 		det->set_global_delay(_G(spieler).DelaySpeed);
 	}
 
-	++FrameSpeed;
-	_G(out)->setze_zeiger(workptr);
-	_G(out)->map_spr2screen(ablage[room_blk.AkAblage],
+	++_G(FrameSpeed);
+	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage],
 		_G(spieler).scrollx, _G(spieler).scrolly);
 
-	if (SetUpScreenFunc && !menu_display && !flags.InventMenu) {
+	if (SetUpScreenFunc && !_G(menu_display) && !flags.InventMenu) {
 		SetUpScreenFunc();
-		_G(out)->setze_zeiger(workptr);
+		_G(out)->setze_zeiger(_G(workptr));
 	}
 
 	sprite_engine();
@@ -167,7 +167,7 @@ void MainMenu::animate() {
 	_G(maus_links_click) = false;
 	_G(menu_flag) = 0;
 	_G(out)->setze_zeiger(nullptr);
-	_G(out)->back2screen(workpage);
+	_G(out)->back2screen(_G(workpage));
 
 	g_screen->update();
 	g_events->update();
@@ -222,7 +222,7 @@ void MainMenu::startGame() {
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	enter_room(-1);
 	_G(auto_obj) = 0;
@@ -242,7 +242,7 @@ bool MainMenu::loadGame() {
 	int result = Dialogs::Files::execute(false);
 
 	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
-		menu_item == CUR_USE) ? 8 : 0);
+		_G(menu_item) == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
 	flags.SaveMenu = false;

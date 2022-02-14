@@ -210,8 +210,8 @@ int16 Room12::use_terminal() {
 				flags.NoScroll = false;
 				atds->set_ats_str(118, 0, ATS_DATEI);
 				det->hide_static_spr(12);
-				menu_item = CUR_WALK;
-				cursor_wahl(menu_item);
+				_G(menu_item) = CUR_WALK;
+				cursor_wahl(_G(menu_item));
 				set_person_pos(108, 90, P_CHEWY, -1);
 				_G(spieler).R12ChewyBork = true;
 				_G(spieler).R12RaumOk = true;

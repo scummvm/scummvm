@@ -69,7 +69,7 @@ void standard_init() {
 	curtaf = _G(mem)->taf_adr(CURSOR);
 
 	curblk.sprite = curtaf->image;
-	curblk.cur_back = cur_back;
+	curblk.cur_back = _G(cur_back);
 	curblk.no_back = true;
 	curani.ani_anf = 0;
 	curani.ani_end = 0;
@@ -94,8 +94,8 @@ void standard_init() {
 	_G(in)->neuer_kb_handler(&kbinfo);
 
 	var_init();
-	ablage = room->get_ablage();
-	ged_mem = room->get_ged_mem();
+	_G(ablage) = room->get_ablage();
+	_G(ged_mem) = room->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
 	_G(pal)[765] = 63;
@@ -105,7 +105,7 @@ void standard_init() {
 	_G(out)->cls();
 	uhr->set_new_timer(0, 5, SEC_10_MODE);
 
-	curblk.cur_back = cur_back;
+	curblk.cur_back = _G(cur_back);
 	sound_init();
 	init_load();
 }
@@ -117,8 +117,8 @@ void var_init() {
 
 	life_handler = false;
 	_G(auto_p_nr) = 0;
-	menu_item = CUR_WALK;
-	inventar_nr = 0;
+	_G(menu_item) = CUR_WALK;
+	_G(inventar_nr) = 0;
 	_G(ged_mov_ebene) = 1;
 	new_game();
 	_G(spieler).MainMenuY = MENU_Y;
@@ -182,7 +182,7 @@ void init_room() {
 	room_blk.LowPalMem = _G(pal);
 	room_blk.InvFile = INVENTAR;
 	room_blk.DetFile = DETAILTEST;
-	room_blk.InvSprAdr = &inv_spr[0];
+	room_blk.InvSprAdr = &_G(inv_spr)[0];
 	room_blk.Rmo = _G(spieler).room_m_obj;
 	room_blk.Rsi = _G(spieler).room_s_obj;
 	room_blk.AadLoad = true;
@@ -313,7 +313,7 @@ void init_load() {
 	set_spz_delay(3);
 
 	menutaf = _G(mem)->taf_adr(MENUTAF);
-	spblende = _G(mem)->void_adr("cut/blende.rnd");
+	_G(spblende) = _G(mem)->void_adr("cut/blende.rnd");
 	room->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
 	_G(out)->set_palette(_G(pal));
 }
@@ -323,7 +323,7 @@ void tidy() {
 	_G(in)->alter_kb_handler();
 	_G(in)->init();
 	free_buffers();
-	obj->free_inv_spr(&inv_spr[0]);
+	obj->free_inv_spr(&_G(inv_spr)[0]);
 
 	delete _G(iog);
 	delete _G(cur);

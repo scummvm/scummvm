@@ -68,7 +68,7 @@ void Room93::entry() {
 void Room93::xit() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 94;
 	_G(spieler).scrollx = _G(spieler).r94Scrollx;
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 }
 

@@ -133,7 +133,7 @@ bool Room0::getPillow() {
 		auto_move(1, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(0);
-		menu_item = CUR_WALK;
+		_G(menu_item) = CUR_WALK;
 		cursor_wahl(CUR_WALK);
 		atds->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
 		det->hide_static_spr(6);
@@ -155,7 +155,7 @@ bool Room0::pullSlime() {
 		set_person_pos(222, 106, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
-		menu_item = CUR_WALK;
+		_G(menu_item) = CUR_WALK;
 		cursor_wahl(CUR_WALK);
 		atds->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
 
@@ -238,7 +238,7 @@ void Room0::eyeStart(EyeMode mode) {
 
 		_G(cur)->plot_cur();
 		calcEyeClick(3);
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -285,7 +285,7 @@ void Room0::eyeWait() {
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcEyeClick(2);
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
@@ -510,7 +510,7 @@ void Room0::feederStart(int16 mode) {
 		if (!mode)
 			calcPillowClick(1);
 
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -549,7 +549,7 @@ void Room0::feederExtend() {
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcPillowClick(1);
-		_G(out)->back2screen(workpage);
+		_G(out)->back2screen(_G(workpage));
 	}
 
 	clear_prog_ani();

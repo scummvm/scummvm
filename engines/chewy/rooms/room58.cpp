@@ -67,9 +67,9 @@ void Room58::look_cut_mag(int16 r_nr) {
 }
 
 void Room58::setup_func() {
-	if (menu_item != CUR_LOOK) {
-		menu_item = CUR_LOOK;
-		cursor_wahl(menu_item);
+	if (_G(menu_item) != CUR_LOOK) {
+		_G(menu_item) = CUR_LOOK;
+		cursor_wahl(_G(menu_item));
 	}
 }
 

@@ -135,6 +135,35 @@ public:
 	int16 _fvorx8x8 = 0;
 	int16 _fvory6x8 = 0;
 	short _fvory8x8 = 0;
+	int16 _FrameSpeed = 0;
+	int16 _FrameSpeedTmp = 0;
+
+	byte **_ablage = nullptr;
+	byte *_workpage = nullptr;
+	byte *_workptr = nullptr;
+	byte *_cur_back = nullptr;
+	byte **_ged_mem = nullptr;
+	byte *_spblende = nullptr;
+	char **_ads_item_ptr = nullptr;
+
+	int16 _ads_dia_nr = 0;
+	int16 _ads_item_anz = 0;
+	int16 _ads_blk_nr = 0;
+	int16 _ads_push = 0;
+
+	int16 _ads_tmp_dsp = 0;
+	int8 _menu_display = 0;
+	int16 _menu_lauflicht = 0;
+	int16 _menu_item = 0;
+	int16 _menu_item_vorwahl = 0;
+	int16 _maus_menu_x = 0;
+	int16 _maus_old_x = 0;
+	int16 _maus_old_y = 0;
+	int16 _inventar_nr = 0;
+	int16 _invent_cur_mode = 0;
+	byte *_inv_spr[MAX_MOV_OBJ] = { nullptr };
+	int16 _person_tmp_hide[MAX_PERSON] = { 0 };
+	int16 _person_tmp_room[MAX_PERSON] = { 0 };
 
 	// main.cpp
 	int16 _menu_flag = 0;
@@ -195,46 +224,15 @@ extern Globals *g_globals;
 
 #define _G(FIELD) g_globals->_##FIELD
 
-extern int16 person_tmp_hide[MAX_PERSON];
-extern int16 person_tmp_room[MAX_PERSON];
-
-extern int16 FrameSpeed;
-extern int16 FrameSpeedTmp;
-
-extern byte **ablage;
-extern byte *workpage;
-extern byte *workptr;
-extern byte *cur_back;
-extern byte **ged_mem;
-extern byte *spblende;
-
 extern char *invent_txt;
 extern char *invent_name;
-extern char **ads_item_ptr;
 
 extern SplitStringInit ssi[AAD_MAX_PERSON];
 extern int16 talk_start_ani;
 
 extern int16 talk_hide_static;
 
-extern int16 ads_dia_nr;
-extern int16 ads_item_anz;
-extern int16 ads_blk_nr;
-extern int16 ads_push;
-
-extern int16 ads_tmp_dsp;
-extern int8 menu_display;
-extern int16 menu_lauflicht;
-extern int16 menu_item;
-extern int16 menu_item_vorwahl;
-extern int16 maus_menu_x;
-extern int16 maus_old_x;
-extern int16 maus_old_y;
-extern int16 inventar_nr;
-
-extern int16 invent_cur_mode;
 extern int16 ak_invent;
-extern byte *inv_spr[MAX_MOV_OBJ];
 
 extern bool life_flag;
 extern int16 life_x;

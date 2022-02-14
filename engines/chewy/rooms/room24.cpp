@@ -44,7 +44,7 @@ void Room24::entry() {
 	curblk.sprite = room_blk.DetImage;
 	curani.ani_anf = 7;
 	curani.ani_end = 10;
-	menu_item = CUR_USER;
+	_G(menu_item) = CUR_USER;
 	cursor_wahl(CUR_USER);
 
 	if (_G(spieler).R16F5Exit)
@@ -63,8 +63,8 @@ void Room24::entry() {
 
 void Room24::xit() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	menu_item = CUR_WALK;
-	cursor_wahl(menu_item);
+	_G(menu_item) = CUR_WALK;
+	cursor_wahl(_G(menu_item));
 	set_person_pos(263, 144, P_CHEWY, -1);
 	_G(spieler).scrollx = 88;
 	_G(maus_links_click) = false;

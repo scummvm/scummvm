@@ -108,7 +108,7 @@ void Room11::talk_debug() {
 		flags.AutoAniPlay = true;
 		auto_move(8, P_CHEWY);
 		start_ads_wait(5);
-		menu_item = CUR_WALK;
+		_G(menu_item) = CUR_WALK;
 		cursor_wahl(CUR_WALK);
 
 		flags.AutoAniPlay = false;
@@ -154,8 +154,8 @@ int16 Room11::scanner() {
 			flc->remove_custom_user_function();
 			_G(spieler).R11TerminalOk = true;
 			cur_2_inventory();
-			menu_item = CUR_TALK;
-			cursor_wahl(menu_item);
+			_G(menu_item) = CUR_TALK;
+			cursor_wahl(_G(menu_item));
 			start_aad_wait(12, -1);
 			show_cur();
 			load_ads_dia(3);
@@ -169,8 +169,8 @@ int16 Room11::scanner() {
 			} else {
 				actionFl = true;
 				start_aad_wait(12, -1);
-				menu_item = CUR_TALK;
-				cursor_wahl(menu_item);
+				_G(menu_item) = CUR_TALK;
+				cursor_wahl(_G(menu_item));
 				load_ads_dia(3);
 			}
 		}

@@ -90,8 +90,8 @@ void Room48::setup_func() {
 		det->hide_static_spr(1 + i);
 
 	if (flags.ShowAtsInvTxt) {
-		if (menu_display == 0) {
-			menu_item = CUR_USE;
+		if (_G(menu_display) == 0) {
+			_G(menu_item) = CUR_USE;
 			cur_2_inventory();
 			cursor_wahl(CUR_ZEIGE);
 			const int16 idx = det->maus_vector(minfo.x, minfo.y);
@@ -138,8 +138,8 @@ void Room48::setup_func() {
 							det->del_static_ani(0);
 							start_detail_wait(2, 1, ANI_VOR);
 							g_engine->_sound->stopSound(0);
-							menu_item = CUR_WALK;
-							cursor_wahl(menu_item);
+							_G(menu_item) = CUR_WALK;
+							cursor_wahl(_G(menu_item));
 							show_cur();
 							_G(spieler).R48TaxiEntry = true;
 							_G(maus_links_click) = false;

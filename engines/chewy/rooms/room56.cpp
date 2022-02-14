@@ -284,7 +284,7 @@ int16 Room56::use_man() {
 int16 Room56::use_kneipe() {
 	int16 action_ret = false;
 	if (!_G(spieler).flags32_10) {
-		if (menu_item == CUR_WALK && !_G(spieler).inv_cur && atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) == 0) {
+		if (_G(menu_item) == CUR_WALK && !_G(spieler).inv_cur && atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) == 0) {
 			action_ret = true;
 			hide_cur();
 			if (_G(spieler).R56Kneipe) {
@@ -344,7 +344,7 @@ int16 Room56::use_kneipe() {
 			start_aad_wait(518, -1);
 		}
 		show_cur();
-	} else if (menu_item == 0 || menu_item == 2 || (menu_item == 1 && !_G(spieler).inv_cur)){
+	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(spieler).inv_cur)){
 		hide_cur();
 		action_ret = 1;
 		_G(maus_links_click) = false;
@@ -441,7 +441,7 @@ void Room56::setup_func() {
 	if (_G(spieler).flags32_10)
 		return;
 	
-	if (!atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) && menu_item == CUR_WALK) {
+	if (!atds->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) && _G(menu_item) == CUR_WALK) {
 		if (minfo.x + _G(spieler).scrollx >= 157 && minfo.x + _G(spieler).scrollx <= 204 && minfo.y >= 28 && minfo.y <= 89)
 			cursor_wahl(CUR_AUSGANG_OBEN);
 		else

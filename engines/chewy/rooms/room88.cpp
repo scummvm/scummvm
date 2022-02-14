@@ -61,7 +61,7 @@ int Room88::proc1() {
 	hide_cur();
 	auto_move(0, P_CHEWY);
 	switch_room(_G(spieler).r88DestRoom);
-	menu_item = CUR_WALK;
+	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	show_cur();
 	
