@@ -32,6 +32,10 @@
 namespace Chewy {
 
 #define AUSGANG_CHECK_PIX 8
+#define SCROLL_LEFT 120
+#define SCROLL_RIGHT SCREEN_WIDTH-SCROLL_LEFT
+#define SCROLL_UP 80
+#define SCROLL_DOWN SCREEN_HEIGHT-SCROLL_UP
 
 static const int16 invent_display[4][2] = {
 	{5, 0}, { 265, 0 }, { 265, 149 }, { 5, 149 }
@@ -1888,19 +1892,13 @@ void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
 	}
 }
 
-#define SCROLL_LEFT 120
-#define SCROLL_RIGHT SCREEN_WIDTH-SCROLL_LEFT
-#define SCROLL_UP 80
-#define SCROLL_DOWN SCREEN_HEIGHT-SCROLL_UP
-
-int16 scroll_delay = 0;
 void calc_scroll(int16 x, int16 y, int16 pic_x, int16 pic_y,
                  int16 *sc_x, int16 *sc_y) {
 	if (!_G(flags).NoScroll) {
-		if (!scroll_delay) {
+		if (!_G(scroll_delay)) {
 
 			if ((_G(spieler).ScrollxStep * _G(spieler).DelaySpeed) > CH_X_PIX)
-				scroll_delay = CH_X_PIX / _G(spieler).ScrollxStep;
+				_G(scroll_delay) = CH_X_PIX / _G(spieler).ScrollxStep;
 
 			if (x - *sc_x < SCROLL_LEFT) {
 				if ((*sc_x - _G(spieler).ScrollxStep) > 0) {
@@ -1922,7 +1920,7 @@ void calc_scroll(int16 x, int16 y, int16 pic_x, int16 pic_y,
 				}
 			}
 		} else
-			--scroll_delay;
+			--_G(scroll_delay);
 	}
 }
 
