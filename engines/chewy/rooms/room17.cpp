@@ -176,10 +176,10 @@ void Room17::kletter_down() {
 	_G(zoom_mov_fak) = 1;
 	_G(spieler).ScrollyStep = 2;
 	_G(room)->set_zoom(32);
-	spieler_mi->Vorschub = 8;
+	_G(spieler_mi)->Vorschub = 8;
 	_G(zoom_horizont) = 399;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], _G(mov_phasen)[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT);
 	set_person_pos(242, 350, P_CHEWY, P_LEFT);
 }
 
@@ -194,7 +194,7 @@ void Room17::kletter_up() {
 	_G(room)->set_zoom(25);
 	_G(zoom_horizont) = 0;
 	_G(auto_obj) = 1;
-	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], mov_phasen[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT1);
+	init_auto_obj(CHEWY_OBJ, &CHEWY_PHASEN[0][0], _G(mov_phasen)[CHEWY_OBJ].Lines, (const MovLine *)CHEWY_MPKT1);
 	set_person_pos(243, 146, P_CHEWY, P_LEFT);
 }
 
@@ -205,13 +205,13 @@ void Room17::calc_seil() {
 		} else if (!flags.AutoAniPlay && !_G(spieler).inv_cur) {
 			close_door();
 			flags.AutoAniPlay = true;
-			mov_phasen[CHEWY_OBJ].AtsText = 0;
-			mov_phasen[CHEWY_OBJ].Lines = 2;
-			mov_phasen[CHEWY_OBJ].Repeat = 1;
-			mov_phasen[CHEWY_OBJ].ZoomFak = 0;
-			auto_mov_obj[CHEWY_OBJ].Id = AUTO_OBJ0;
-			auto_mov_vector[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
-			auto_mov_obj[CHEWY_OBJ].Mode = true;
+			_G(mov_phasen)[CHEWY_OBJ].AtsText = 0;
+			_G(mov_phasen)[CHEWY_OBJ].Lines = 2;
+			_G(mov_phasen)[CHEWY_OBJ].Repeat = 1;
+			_G(mov_phasen)[CHEWY_OBJ].ZoomFak = 0;
+			_G(auto_mov_obj)[CHEWY_OBJ].Id = AUTO_OBJ0;
+			_G(auto_mov_vector)[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
+			_G(auto_mov_obj)[CHEWY_OBJ].Mode = true;
 			hide_cur();
 
 			if (_G(spieler).R17Location == 1) {

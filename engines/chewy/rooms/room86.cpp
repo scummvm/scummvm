@@ -32,8 +32,8 @@ namespace Rooms {
 void Room86::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 20;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 20;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 20;
@@ -61,7 +61,7 @@ void Room86::entry(int16 eib_nr) {
 		set_person_pos(320, 42, P_NICHELLE, P_LEFT);
 		_G(spieler).scrollx = 164;
 	} else {
-		spieler_mi[P_CHEWY].Vorschub = 16;
+		_G(spieler_mi)[P_CHEWY].Vorschub = 16;
 		hide_cur();
 		flags.ZoomMov = false;
 		_G(spieler).scrollx = 246;
@@ -75,7 +75,7 @@ void Room86::entry(int16 eib_nr) {
 		auto_scroll(30, 0);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		flags.NoScroll = false;
-		spieler_mi[P_CHEWY].Vorschub = 8;
+		_G(spieler_mi)[P_CHEWY].Vorschub = 8;
 		_G(det)->stop_detail(0);
 		_G(det)->show_static_spr(4);
 		_G(det)->show_static_spr(5);
@@ -123,7 +123,7 @@ void Room86::setup_func() {
 	int howDestX;
 	int nicDestY = 56;
 
-	int xyPos = spieler_vector[P_CHEWY].Xypos[0];	
+	int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];	
 	if (xyPos > 390) {
 		howDestX = 298;
 		howDestY = 44;

@@ -118,46 +118,46 @@ void Room21::init_spinne() {
 	_G(det)->load_taf_seq(42, 48, nullptr);
 	_G(auto_obj) = 2;
 
-	mov_phasen[SPINNE1_OBJ].AtsText = 130;
-	mov_phasen[SPINNE1_OBJ].Lines = 3;
-	mov_phasen[SPINNE1_OBJ].Repeat = 255;
-	mov_phasen[SPINNE1_OBJ].ZoomFak = 0;
-	auto_mov_obj[SPINNE1_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[SPINNE1_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SPINNE1_OBJ].Mode = true;
+	_G(mov_phasen)[SPINNE1_OBJ].AtsText = 130;
+	_G(mov_phasen)[SPINNE1_OBJ].Lines = 3;
+	_G(mov_phasen)[SPINNE1_OBJ].Repeat = 255;
+	_G(mov_phasen)[SPINNE1_OBJ].ZoomFak = 0;
+	_G(auto_mov_obj)[SPINNE1_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[SPINNE1_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SPINNE1_OBJ].Mode = true;
 	init_auto_obj(SPINNE1_OBJ, &SPINNE_PHASEN[0][0], 3, (const MovLine *)SPINNE_MPKT);
 
-	mov_phasen[SPINNE2_OBJ].AtsText = 130;
-	mov_phasen[SPINNE2_OBJ].Lines = 2;
-	mov_phasen[SPINNE2_OBJ].Repeat = 1;
-	mov_phasen[SPINNE2_OBJ].ZoomFak = 0;
-	auto_mov_obj[SPINNE2_OBJ].Id = AUTO_OBJ1;
-	auto_mov_vector[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SPINNE2_OBJ].Mode = true;
+	_G(mov_phasen)[SPINNE2_OBJ].AtsText = 130;
+	_G(mov_phasen)[SPINNE2_OBJ].Lines = 2;
+	_G(mov_phasen)[SPINNE2_OBJ].Repeat = 1;
+	_G(mov_phasen)[SPINNE2_OBJ].ZoomFak = 0;
+	_G(auto_mov_obj)[SPINNE2_OBJ].Id = AUTO_OBJ1;
+	_G(auto_mov_vector)[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SPINNE2_OBJ].Mode = true;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], 2, (const MovLine *)SPINNE_MPKT1);
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 21);
 	_G(e_streifen) = false;
 }
 
 void Room21::restart_spinne2() {
-	mov_phasen[SPINNE2_OBJ].Repeat = 1;
-	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
+	_G(mov_phasen)[SPINNE2_OBJ].Repeat = 1;
+	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], _G(mov_phasen)[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
 	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 	_G(e_streifen) = false;
 }
 
 void Room21::setup_func() {
-	if (auto_mov_vector[SPINNE2_OBJ].Xypos[1] >= 190 && !_G(e_streifen)) {
+	if (_G(auto_mov_vector)[SPINNE2_OBJ].Xypos[1] >= 190 && !_G(e_streifen)) {
 		_G(e_streifen) = true;
 
 		_G(auto_obj) = 3;
-		mov_phasen[ENERGIE_OBJ].AtsText = 0;
-		mov_phasen[ENERGIE_OBJ].Lines = 2;
-		mov_phasen[ENERGIE_OBJ].Repeat = 1;
-		mov_phasen[ENERGIE_OBJ].ZoomFak = 0;
-		auto_mov_obj[ENERGIE_OBJ].Id = AUTO_OBJ2;
-		auto_mov_vector[ENERGIE_OBJ].Delay = _G(spieler).DelaySpeed;
-		auto_mov_obj[ENERGIE_OBJ].Mode = true;
+		_G(mov_phasen)[ENERGIE_OBJ].AtsText = 0;
+		_G(mov_phasen)[ENERGIE_OBJ].Lines = 2;
+		_G(mov_phasen)[ENERGIE_OBJ].Repeat = 1;
+		_G(mov_phasen)[ENERGIE_OBJ].ZoomFak = 0;
+		_G(auto_mov_obj)[ENERGIE_OBJ].Id = AUTO_OBJ2;
+		_G(auto_mov_vector)[ENERGIE_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_obj)[ENERGIE_OBJ].Mode = true;
 		init_auto_obj(ENERGIE_OBJ, &SPINNE_PHASEN[0][0], 2, (const MovLine *)SPINNE_MPKT2);
 	}
 }
@@ -166,40 +166,40 @@ void Room21::chewy_kolli() {
 	int16 kolli = false;
 
 	for (int16 i = 0; i < 3 && !kolli; i++) {
-		int16 spr_nr = mov_phasen[i].Phase[auto_mov_vector[i].Phase][0] + auto_mov_vector[i].PhNr;
+		int16 spr_nr = _G(mov_phasen)[i].Phase[_G(auto_mov_vector)[i].Phase][0] + _G(auto_mov_vector)[i].PhNr;
 		int16 *xy = (int16 *)room_blk.DetImage[spr_nr];
 		int16 *Cxy = room_blk.DetKorrekt + (spr_nr << 1);
 		int16 xoff = xy[0];
 		int16 yoff = xy[1];
 		if (i == 2)
 			xoff += 10;
-		xoff += auto_mov_vector[i].Xzoom;
-		yoff += auto_mov_vector[i].Yzoom;
+		xoff += _G(auto_mov_vector)[i].Xzoom;
+		yoff += _G(auto_mov_vector)[i].Yzoom;
 
-		if ((!i && spieler_vector[P_CHEWY].Xypos[0] < 516) ||
-			(i == 1 && spieler_vector[P_CHEWY].Xypos[1] > 70) ||
+		if ((!i && _G(spieler_vector)[P_CHEWY].Xypos[0] < 516) ||
+			(i == 1 && _G(spieler_vector)[P_CHEWY].Xypos[1] > 70) ||
 			(i == 2)) {
-			if (spieler_vector[P_CHEWY].Xypos[0] + 12 >= auto_mov_vector[i].Xypos[0] + Cxy[0] &&
-				spieler_vector[P_CHEWY].Xypos[0] + 12 <= auto_mov_vector[i].Xypos[0] + xoff + Cxy[0] &&
-				spieler_vector[P_CHEWY].Xypos[1] + 12 >= auto_mov_vector[i].Xypos[1] + Cxy[1] &&
-				spieler_vector[P_CHEWY].Xypos[1] + 12 <= auto_mov_vector[i].Xypos[1] + yoff + Cxy[1] &&
-				mov_phasen[i].Start == 1)
+			if (_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 >= _G(auto_mov_vector)[i].Xypos[0] + Cxy[0] &&
+				_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 <= _G(auto_mov_vector)[i].Xypos[0] + xoff + Cxy[0] &&
+				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 >= _G(auto_mov_vector)[i].Xypos[1] + Cxy[1] &&
+				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 <= _G(auto_mov_vector)[i].Xypos[1] + yoff + Cxy[1] &&
+				_G(mov_phasen)[i].Start == 1)
 				kolli = true;
 		}
 	}
 
 	if (kolli && !flags.AutoAniPlay) {
-		const int16 tmp = spieler_vector[P_CHEWY].Count;
+		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 		stop_person(P_CHEWY);
 		flags.AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		int16 ani_nr = (spieler_vector[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
-		_G(det)->set_detail_pos(ani_nr, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
+		_G(det)->set_detail_pos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		start_detail_wait(ani_nr, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.AutoAniPlay = false;
-		spieler_vector[P_CHEWY].Count = tmp;
-		get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
+		_G(spieler_vector)[P_CHEWY].Count = tmp;
+		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 		_G(mov)->continue_auto_go();
 	}
 }
@@ -212,8 +212,8 @@ void Room21::salto() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
-			_G(det)->set_detail_pos(12 + i, spieler_vector[P_CHEWY].Xypos[0],
-				spieler_vector[P_CHEWY].Xypos[1]);
+			_G(det)->set_detail_pos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
+				_G(spieler_vector)[P_CHEWY].Xypos[1]);
 		}
 
 		start_ani_block(3, ABLOCK19);

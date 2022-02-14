@@ -36,7 +36,7 @@ void Room57::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (_G(spieler).R57StudioAuf)
 		_G(det)->hide_static_spr(4);
 	
@@ -55,7 +55,7 @@ void Room57::entry() {
 
 void Room57::xit(int16 eib_nr) {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 		if (eib_nr == 91)
 			_G(spieler).PersonRoomNr[P_HOWARD] = 62;
 	}
@@ -64,7 +64,7 @@ void Room57::xit(int16 eib_nr) {
 void Room57::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
 		calc_person_look();
-		const int16 ch_y = spieler_vector[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_y < 145) {
 			x = 176;

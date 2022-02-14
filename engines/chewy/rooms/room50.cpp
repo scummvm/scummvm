@@ -70,7 +70,7 @@ void Room50::entry(int16 eib_nr) {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
-			spieler_mi[P_HOWARD].Mode = true;
+			_G(spieler_mi)[P_HOWARD].Mode = true;
 
 			if (!flags.LoadGame) {
 				if (eib_nr == 85)
@@ -91,7 +91,7 @@ void Room50::xit(int16 eib_nr) {
 		else
 			_G(spieler).PersonRoomNr[P_HOWARD] = 51;
 
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
@@ -193,7 +193,7 @@ int16 Room50::use_gum() {
 		start_detail_wait(6, 1, ANI_VOR);
 		_G(det)->set_static_ani(5, -1);
 		auto_move(3, P_CHEWY);
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		go_auto_xy(75, 92, P_CHEWY, ANI_WAIT);
 		_G(SetUpScreenFunc) = nullptr;
 		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
@@ -214,7 +214,7 @@ int16 Room50::use_gum() {
 		start_aad_wait(277, -1);
 		_G(SetUpScreenFunc) = setup_func;
 		auto_move(3, P_CHEWY);
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		_G(det)->del_static_ani(10);
 		go_page();
 
@@ -254,13 +254,13 @@ void Room50::setup_func() {
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
-		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 72) {
 			x = 1;
 			y = 64;
-		} else if (ch_x < 275 && spieler_vector[P_CHEWY].Xypos[1] > 72) {
+		} else if (ch_x < 275 && _G(spieler_vector)[P_CHEWY].Xypos[1] > 72) {
 			x = 143;
 			y = 57;
 		} else {

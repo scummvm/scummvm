@@ -142,10 +142,10 @@ void Room76::proc5() {
 	auto_move(5, P_CHEWY);
 	_G(det)->hide_static_spr(10);
 	_G(det)->start_detail(13, 1, false);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(669, 127, P_CHEWY, ANI_WAIT);
 	wait_show_screen(20);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
 	set_person_pos(30, 150, P_CHEWY, P_RIGHT);
 	switch_room(78);

@@ -37,8 +37,8 @@ void Room85::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 1, false);
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 22;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 37;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 22;
@@ -128,7 +128,7 @@ void Room85::xit(int16 eib_nr) {
 void Room85::setup_func() {
 	calc_person_look();
 
-	const int xyPos = spieler_vector[P_CHEWY].Xypos[0];
+	const int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (xyPos > 255) {

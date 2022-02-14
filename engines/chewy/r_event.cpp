@@ -315,7 +315,7 @@ void enter_room(int16 eib_nr) {
 	_G(zoom_mov_fak) = 1;
 
 	for (i = 0; i < MAX_PERSON; i++) {
-		spieler_mi[i].Vorschub = 8;
+		_G(spieler_mi)[i].Vorschub = 8;
 		_G(spieler).ZoomXy[i][0] = 0;
 		_G(spieler).ZoomXy[i][1] = 0;
 	}
@@ -578,7 +578,7 @@ void exit_room(int16 eib_nr) {
 	case 120:
 	case 139:
 		x = -44;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	case 1:
@@ -600,7 +600,7 @@ void exit_room(int16 eib_nr) {
 	case 135:
 		xy = (int16 *)_G(ablage)[room_blk.AkAblage];
 		x = xy[0] + 30;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	case 10:
@@ -614,7 +614,7 @@ void exit_room(int16 eib_nr) {
 	case 122:
 	case 131:
 		xy = (int16 *)_G(ablage)[room_blk.AkAblage];
-		x = spieler_vector[P_CHEWY].Xypos[0];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 		y = xy[1] + 3;
 		break;
 
@@ -632,8 +632,8 @@ void exit_room(int16 eib_nr) {
 	case 50:
 	case 65:
 	case 126:
-		set_person_pos(spieler_vector[P_CHEWY].Xypos[0],
-		               spieler_vector[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
+		set_person_pos(_G(spieler_vector)[P_CHEWY].Xypos[0],
+		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
 		set_up_screen(DO_SETUP);
 		break;
 
@@ -648,8 +648,8 @@ void exit_room(int16 eib_nr) {
 	case 36:
 	case 71:
 	case 96:
-		set_person_pos(spieler_vector[P_CHEWY].Xypos[0],
-		               spieler_vector[P_CHEWY].Xypos[1], P_CHEWY, P_LEFT);
+		set_person_pos(_G(spieler_vector)[P_CHEWY].Xypos[0],
+		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_LEFT);
 		set_up_screen(DO_SETUP);
 		break;
 
@@ -659,8 +659,8 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 72:
-		x = spieler_vector[P_CHEWY].Xypos[0];
-		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 10;
 		break;
 
 	case 75:
@@ -670,34 +670,34 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 84:
-		x = spieler_vector[P_CHEWY].Xypos[0] - 70;
-		y = spieler_vector[P_CHEWY].Xypos[1] - 50;
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 70;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 50;
 		_G(HowardMov) = 1;
 		break;
 
 	case 85:
-		x = spieler_vector[P_CHEWY].Xypos[0] + 70;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] + 70;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 1;
 		break;
 
 	case 86:
 		_G(det)->show_static_spr(0);
-		x = spieler_vector[P_CHEWY].Xypos[0] - 44;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 44;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 2;
 		break;
 
 	case 90:
 		_G(det)->show_static_spr(8);
-		x = spieler_vector[P_CHEWY].Xypos[0] - 60;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 60;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	case 94:
 		_G(det)->show_static_spr(3);
-		x = spieler_vector[P_CHEWY].Xypos[0] - 40;
-		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 40;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 10;
 		break;
 
 	case 127:
@@ -712,13 +712,13 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 140:
-		x = spieler_vector[P_CHEWY].Xypos[0] + 40;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] + 40;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	case 141:
-		x = spieler_vector[P_CHEWY].Xypos[0] - 12;
-		y = spieler_vector[P_CHEWY].Xypos[1];
+		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 12;
+		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	default:
@@ -726,9 +726,9 @@ void exit_room(int16 eib_nr) {
 	}
 
 	if (x != -1 && y != -1) {
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		go_auto_xy(x, y, P_CHEWY, ANI_WAIT);
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 	}
 
 	if (no_exit) {

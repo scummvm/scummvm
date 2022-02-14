@@ -33,8 +33,8 @@ void Room79::entry() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	_G(spieler).ScrollxStep = 2;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(spieler).PersonHide[P_HOWARD] = false;
 	_G(spieler).PersonHide[P_NICHELLE] = false;
@@ -65,7 +65,7 @@ void Room79::xit() {
 
 void Room79::setup_func() {
 	calc_person_look();
-	const int posX = spieler_vector[P_CHEWY].Xypos[0];
+	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
 	int howDestX, howDestY, nicDestX, nicDestY;
 

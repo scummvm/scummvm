@@ -31,8 +31,8 @@ namespace Rooms {
 void Room81::entry() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 140;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
@@ -72,7 +72,7 @@ void Room81::proc1() {
 	else if (_G(spieler).flags30_4)
 		diaNr = 460;
 	else {
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		go_auto_xy(222, 97, P_CHEWY, ANI_WAIT);
 		go_auto_xy(100, 96, P_CHEWY, ANI_WAIT);
 		go_auto_xy(171, 93, P_CHEWY, ANI_WAIT);
@@ -91,7 +91,7 @@ void Room81::proc1() {
 		go_auto_xy(100, 96, P_CHEWY, ANI_WAIT);
 		go_auto_xy(222, 97, P_CHEWY, ANI_WAIT);
 		auto_move(1, P_CHEWY);
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 		invent_2_slot(DIARY_INV);
 		_G(spieler).R84GoonsPresent = true;
 		_G(spieler).gottenDiary = true;

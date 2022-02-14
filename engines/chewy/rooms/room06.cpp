@@ -81,13 +81,13 @@ void Room6::entry() {
 void Room6::init_robo() {
 #define ROBO_OBJ 0
 	_G(auto_obj) = 1;
-	mov_phasen[ROBO_OBJ].AtsText = 44;
-	mov_phasen[ROBO_OBJ].Lines = 3;
-	mov_phasen[ROBO_OBJ].Repeat = 1;
-	mov_phasen[ROBO_OBJ].ZoomFak = 0;
-	auto_mov_obj[ROBO_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[ROBO_OBJ].Mode = true;
+	_G(mov_phasen)[ROBO_OBJ].AtsText = 44;
+	_G(mov_phasen)[ROBO_OBJ].Lines = 3;
+	_G(mov_phasen)[ROBO_OBJ].Repeat = 1;
+	_G(mov_phasen)[ROBO_OBJ].ZoomFak = 0;
+	_G(auto_mov_obj)[ROBO_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[ROBO_OBJ].Mode = true;
 	init_auto_obj(ROBO_OBJ, &ROBO_PHASEN[0][0], 3, (const MovLine *)ROBO_MPKT);
 }
 

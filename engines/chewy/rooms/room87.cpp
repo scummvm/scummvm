@@ -31,8 +31,8 @@ namespace Rooms {
 void Room87::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 18;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 28;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 18;
@@ -60,12 +60,12 @@ void Room87::setup_func() {
 	int nicDestY = 0;
 
 	
-	if (spieler_vector[P_CHEWY].Xypos[0] > 186) {
+	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 186) {
 		howDestX = 103;
 		howDestY = 128;
 		nicDestX = 134;
 		nicDestY = 123;
-	} else if (spieler_vector[P_CHEWY].Xypos[0] > 20) {
+	} else if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 20) {
 		howDestX = 27;
 		howDestY = 98;
 		nicDestX = -2;
@@ -87,7 +87,7 @@ void Room87::xit(int16 eib_nr) {
 	if (eib_nr != 129)
 		return;
 
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(zoom_horizont) = 0;
 	_G(room)->set_zoom(25);
 	_G(HowardMov) = 1;
@@ -96,7 +96,7 @@ void Room87::xit(int16 eib_nr) {
 	go_auto_xy(20, 56, P_CHEWY, ANI_WAIT);
 	go_auto_xy(31, 56, P_CHEWY, ANI_WAIT);
 	go_auto_xy(9, 53, P_CHEWY, ANI_WAIT);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).ScrollxStep = 1;
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 87)
 		_G(spieler).PersonRoomNr[P_HOWARD] = 86;

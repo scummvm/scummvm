@@ -32,7 +32,7 @@ namespace Rooms {
 
 void Room89::entry() {
 	_G(spieler).ScrollxStep = 2;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = _G(room)->set_timer(2, 10);
 	if (_G(spieler).flags33_4) {
@@ -154,7 +154,7 @@ void Room89::setup_func() {
 	calc_person_look();
 	int destX;
 	
-	if (spieler_vector[P_CHEWY].Xypos[0] >= 230)
+	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 230)
 		destX = 318;
 	else
 		destX = 116;

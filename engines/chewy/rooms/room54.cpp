@@ -41,7 +41,7 @@ void Room54::entry(int16 eib_nr) {
 	if (_G(spieler).R54FputzerWeg)
 		_G(det)->show_static_spr(9);
 
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (!flags.LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
@@ -87,7 +87,7 @@ void Room54::xit(int16 eib_nr) {
 
 	if (eib_nr == 89 && _G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 55;
-		spieler_mi[P_HOWARD].Mode = false;
+		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
@@ -96,7 +96,7 @@ void Room54::setup_func() {
 		calc_person_look();
 
 		if (_G(spieler).R54HowardVorne != 255) {
-			const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 			int16 x, y;
 			if (_G(spieler).R54HowardVorne) {
 				if (ch_x < 218) {
@@ -255,7 +255,7 @@ int16 Room54::use_zelle() {
 				go_auto_xy(241, 74, P_CHEWY, ANI_WAIT);
 				start_aad_wait(316, -1);
 
-				spieler_mi[P_HOWARD].Mode = true;
+				_G(spieler_mi)[P_HOWARD].Mode = true;
 				switch_room(55);
 			}
 		}

@@ -67,31 +67,19 @@ Globals::~Globals() {
 }
 
 
-SprInfo spr_info[MAX_PROG_ANI];
 maus_info minfo;
 kb_info kbinfo;
 cur_blk curblk;
 cur_ani curani;
 iog_init ioptr;
 RaumBlk room_blk;
-ObjMov spieler_vector[MAX_PERSON];
 
-MovInfo spieler_mi[MAX_PERSON];
 
-ObjMov auto_mov_vector[MAX_OBJ_MOV];
-MovInfo auto_mov_obj[MAX_OBJ_MOV];
-MovPhasen mov_phasen[MAX_OBJ_MOV];
-MovLine mov_line[MAX_OBJ_MOV][5];
-TimerBlk ani_timer[MAX_TIMER_OBJ];
 Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0 };
 CustomInfo Ci;
 GotoPkt gpkt;
 
-int16 person_end_phase[MAX_PERSON];
-int16 ani_stand_count[MAX_PERSON];
-
-bool ani_stand_flag[MAX_PERSON];
 
 
 } // namespace Chewy

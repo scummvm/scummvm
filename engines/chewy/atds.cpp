@@ -976,8 +976,8 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 				if (_atdsv.VocNr != _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) {
 					_atdsv.VocNr = _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
 					g_engine->_sound->playSpeech(_atdsv.VocNr);
-					int16 vocx = spieler_vector[_aadv.StrHeader->AkPerson].Xypos[0] -
-								 _G(spieler).scrollx + spieler_mi[_aadv.StrHeader->AkPerson].HotX;
+					int16 vocx = _G(spieler_vector)[_aadv.StrHeader->AkPerson].Xypos[0] -
+								 _G(spieler).scrollx + _G(spieler_mi)[_aadv.StrHeader->AkPerson].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 					_aadv.DelayCount = 1;
 				}

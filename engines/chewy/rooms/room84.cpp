@@ -36,8 +36,8 @@ void Room84::entry() {
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).R84GoonsPresent = false;
 	_flag = false;
 	g_engine->_sound->playSound(0, 0);
@@ -152,7 +152,7 @@ void Room84::setup_func() {
 		show_cur();
 	}
 
-	const int posX = spieler_vector[P_CHEWY].Xypos[0];
+	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	if (posX > 610) {
 		howDestX = nicDestX = 610;

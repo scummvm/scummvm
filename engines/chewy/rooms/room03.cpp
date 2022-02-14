@@ -96,10 +96,10 @@ void Room3::terminal() {
 	switch (Room4::sonde_comp()) {
 	case 0:
 		probeTransfer();
-		spr_info[0].Image = room_blk.DetImage[120];
-		spr_info[0].X = 250;
-		spr_info[0].Y = 2;
-		spr_info[0].ZEbene = 0;
+		_G(spr_info)[0].Image = room_blk.DetImage[120];
+		_G(spr_info)[0].X = 250;
+		_G(spr_info)[0].Y = 2;
+		_G(spr_info)[0].ZEbene = 0;
 
 		if (!_G(spieler).R2ElectrocutedBork) {
 			_G(det)->stop_detail(5);
@@ -159,14 +159,14 @@ void Room3::init_sonde() {
 #define SONDE_OBJ 0
 #define SONDE_OBJ1 1
 	_G(auto_obj) = 1;
-	mov_phasen[SONDE_OBJ].AtsText = 24;
-	mov_phasen[SONDE_OBJ].Lines = 3;
-	mov_phasen[SONDE_OBJ].Repeat = 255;
-	mov_phasen[SONDE_OBJ].ZoomFak = 20;
-	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = true;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT);
+	_G(mov_phasen)[SONDE_OBJ].AtsText = 24;
+	_G(mov_phasen)[SONDE_OBJ].Lines = 3;
+	_G(mov_phasen)[SONDE_OBJ].Repeat = 255;
+	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
+	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT);
 }
 
 void Room3::sonde_knarre() {
@@ -186,15 +186,15 @@ void Room3::sonde_knarre() {
 	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	_G(auto_obj) = 1;
-	mov_phasen[SONDE_OBJ].Lines = 3;
-	mov_phasen[SONDE_OBJ].Repeat = 1;
-	mov_phasen[SONDE_OBJ].ZoomFak = 20;
-	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = true;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt1);
+	_G(mov_phasen)[SONDE_OBJ].Lines = 3;
+	_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
+	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
+	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt1);
 	flags.AniUserAction = false;
-	while (mov_phasen[SONDE_OBJ].Repeat != -1)
+	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
 	_G(det)->start_detail(SONDE_SHOOT, 1, ANI_VOR);
@@ -205,17 +205,17 @@ void Room3::sonde_knarre() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			_G(det)->start_detail(KOPF_SCHUSS, 1, ANI_VOR);
 		}
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
-		spr_info[0].ZEbene = 0;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 0;
 		if (rdi->Ainfo[KOPF_SCHUSS].ani_count >= 13 &&
 			rdi->Ainfo[KOPF_SCHUSS].ani_count <= 21) {
-			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, KOPF_SCHUSS, 21, ANI_HIDE);
-			spr_info[1].ZEbene = 190;
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, KOPF_SCHUSS, 21, ANI_HIDE);
+			_G(spr_info)[1].ZEbene = 190;
 		} else if (rdi->Ainfo[KOPF_SCHUSS].ani_count > 21 &&
 			_G(det)->get_ani_status(SONDE_RET) == 0) {
 
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
-			spr_info[2].ZEbene = 190;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 190;
 		}
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 178) {
 			_G(det)->start_detail(SONDE_RET, 3, ANI_RUECK);
@@ -232,11 +232,11 @@ void Room3::sonde_knarre() {
 	ende = 0;
 	while (_G(det)->get_ani_status(SONDE_RAUCH)) {
 
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
-		spr_info[0].ZEbene = 0;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 0;
 
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
-		spr_info[1].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SONDE_RET, 173, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 190;
 		++ende;
 		if (ende == 3)
 			_G(spieler).PersonHide[P_CHEWY] = false;
@@ -248,17 +248,17 @@ void Room3::sonde_knarre() {
 	_G(det)->start_detail(SONDE_REIN, 1, ANI_RUECK);
 	while (_G(det)->get_ani_status(SONDE_REIN)) {
 
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
-		spr_info[0].ZEbene = 0;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 0;
 		set_ani_screen();
 	}
 	clear_prog_ani();
 
-	mov_phasen[SONDE_OBJ].Lines = 2;
-	mov_phasen[SONDE_OBJ].Repeat = 1;
-	mov_phasen[SONDE_OBJ].ZoomFak = 28;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt2);
-	while (mov_phasen[SONDE_OBJ].Repeat != -1)
+	_G(mov_phasen)[SONDE_OBJ].Lines = 2;
+	_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
+	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 28;
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt2);
+	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 	_G(det)->del_taf_tbl(162, 17, 0);
 	_G(zoom_horizont) = tmp;
@@ -293,21 +293,21 @@ void Room3::probeTransfer() {
 	_G(zoom_horizont) = 100;
 	int16 anistart = false;
 	_G(auto_obj) = 1;
-	mov_phasen[SONDE_OBJ].Lines = 2;
-	mov_phasen[SONDE_OBJ].Repeat = 1;
-	mov_phasen[SONDE_OBJ].ZoomFak = 20;
-	auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
-	auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-	auto_mov_obj[SONDE_OBJ].Mode = true;
-	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT1);
-	while (mov_phasen[SONDE_OBJ].Repeat != -1)
+	_G(mov_phasen)[SONDE_OBJ].Lines = 2;
+	_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
+	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
+	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
+	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, (const MovLine *)SONDE_MPKT1);
+	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
 	_G(det)->start_detail(SONDE_GREIF, 1, ANI_VOR);
 	while (_G(det)->get_ani_status(SONDE_GREIF)) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);
-		spr_info[0].ZEbene = 146;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 146;
 		set_ani_screen();
 
 		SHOULD_QUIT_RETURN;
@@ -318,23 +318,23 @@ void Room3::probeTransfer() {
 
 	int16 spr_nr = 140;
 	for (int16 i = 0; i < 4 && !SHOULD_QUIT; i++) {
-		mov_phasen[SONDE_OBJ].Lines = 2;
-		mov_phasen[SONDE_OBJ].Repeat = 1;
-		mov_phasen[SONDE_OBJ].ZoomFak = 0;
-		auto_mov_obj[SONDE_OBJ].Id = AUTO_OBJ0;
-		auto_mov_obj[SONDE_OBJ].Mode = true;
-		auto_mov_vector[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
-		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ].Lines, SONDE_MPKT_[i]);
-		mov_phasen[SONDE_OBJ1].Lines = 2;
-		mov_phasen[SONDE_OBJ1].Repeat = 1;
-		mov_phasen[SONDE_OBJ1].ZoomFak = 0;
-		auto_mov_obj[SONDE_OBJ1].Id = AUTO_OBJ1;
-		auto_mov_obj[SONDE_OBJ1].Mode = true;
-		auto_mov_vector[SONDE_OBJ1].Delay = _G(spieler).DelaySpeed;
-		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], mov_phasen[SONDE_OBJ1].Lines, SONDE_MPKT_[i]);
-		mov_phasen[SONDE_OBJ1].Phase[0][0] = spr_nr;
-		mov_phasen[SONDE_OBJ1].Phase[0][1] = spr_nr;
-		while (mov_phasen[SONDE_OBJ].Repeat != -1) {
+		_G(mov_phasen)[SONDE_OBJ].Lines = 2;
+		_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
+		_G(mov_phasen)[SONDE_OBJ].ZoomFak = 0;
+		_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
+		_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
+		_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, SONDE_MPKT_[i]);
+		_G(mov_phasen)[SONDE_OBJ1].Lines = 2;
+		_G(mov_phasen)[SONDE_OBJ1].Repeat = 1;
+		_G(mov_phasen)[SONDE_OBJ1].ZoomFak = 0;
+		_G(auto_mov_obj)[SONDE_OBJ1].Id = AUTO_OBJ1;
+		_G(auto_mov_obj)[SONDE_OBJ1].Mode = true;
+		_G(auto_mov_vector)[SONDE_OBJ1].Delay = _G(spieler).DelaySpeed;
+		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ1].Lines, SONDE_MPKT_[i]);
+		_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = spr_nr;
+		_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = spr_nr;
+		while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1) {
 			SHOULD_QUIT_RETURN;
 
 			if (i == 2 || i == 1) {
@@ -351,9 +351,9 @@ void Room3::probeTransfer() {
 								start_aad(44);
 							del_inventar(_G(spieler).AkInvent);
 							_G(spieler).R2FussSchleim = 1;
-							mov_phasen[SONDE_OBJ1].Phase[0][0] = 142;
-							mov_phasen[SONDE_OBJ1].Phase[0][1] = 149;
-							auto_mov_vector[SONDE_OBJ1].PhAnz = 8;
+							_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = 142;
+							_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = 149;
+							_G(auto_mov_vector)[SONDE_OBJ1].PhAnz = 8;
 							anistart = true;
 						}
 					}
@@ -362,13 +362,13 @@ void Room3::probeTransfer() {
 			set_ani_screen();
 
 			if (anistart) {
-				if (auto_mov_vector[SONDE_OBJ1].PhNr == 7) {
+				if (_G(auto_mov_vector)[SONDE_OBJ1].PhNr == 7) {
 					anistart = false;
 					spr_nr = 149;
-					mov_phasen[SONDE_OBJ1].Phase[0][0] = spr_nr;
-					mov_phasen[SONDE_OBJ1].Phase[0][1] = spr_nr;
-					auto_mov_vector[SONDE_OBJ1].PhAnz = 1;
-					auto_mov_vector[SONDE_OBJ1].PhNr = 0;
+					_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = spr_nr;
+					_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = spr_nr;
+					_G(auto_mov_vector)[SONDE_OBJ1].PhAnz = 1;
+					_G(auto_mov_vector)[SONDE_OBJ1].PhNr = 0;
 				}
 			}
 		}

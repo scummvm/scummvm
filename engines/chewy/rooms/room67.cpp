@@ -31,8 +31,8 @@ namespace Rooms {
 void Room67::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).DiaAMov = 7;
 	if (_G(spieler).R67KommodeAuf)
 		_G(det)->show_static_spr(9);
@@ -67,7 +67,7 @@ void Room67::setup_func() {
 	calc_person_look();
 	const int16 y = 117;
 	int16 x;
-	if (spieler_vector[P_CHEWY].Xypos[0] > 320) {
+	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 320) {
 		x = 178;
 	} else {
 		x = 137;

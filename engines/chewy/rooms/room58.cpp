@@ -35,10 +35,10 @@ void Room58::entry() {
 void Room58::xit() {
 	_G(spieler).scrollx = _G(spieler).R58TmpSx;
 	_G(spieler).scrolly = _G(spieler).R58TmpSy;
-	spieler_vector[P_CHEWY].Xypos[0] = _G(spieler).R58TmpX;
-	spieler_vector[P_CHEWY].Xypos[1] = _G(spieler).R58TmpY;
-	spieler_mi[P_CHEWY].XyzStart[0] = _G(spieler).R58TmpX;
-	spieler_mi[P_CHEWY].XyzStart[1] = _G(spieler).R58TmpY;
+	_G(spieler_vector)[P_CHEWY].Xypos[0] = _G(spieler).R58TmpX;
+	_G(spieler_vector)[P_CHEWY].Xypos[1] = _G(spieler).R58TmpY;
+	_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler).R58TmpX;
+	_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(spieler).R58TmpY;
 	flags.MainInput = true;
 	flags.LoadGame = true;
 	show_person();
@@ -55,10 +55,10 @@ void Room58::look_cut_mag(int16 r_nr) {
 
 	_G(spieler).R58TmpSx = _G(spieler).scrollx;
 	_G(spieler).R58TmpSy = _G(spieler).scrolly;
-	_G(spieler).R58TmpX = spieler_vector[P_CHEWY].Xypos[0];
-	_G(spieler).R58TmpY = spieler_vector[P_CHEWY].Xypos[1];
-	spieler_vector[P_CHEWY].Xypos[0] = 160;
-	spieler_vector[P_CHEWY].Xypos[1] = 100;
+	_G(spieler).R58TmpX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	_G(spieler).R58TmpY = _G(spieler_vector)[P_CHEWY].Xypos[1];
+	_G(spieler_vector)[P_CHEWY].Xypos[0] = 160;
+	_G(spieler_vector)[P_CHEWY].Xypos[1] = 100;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	flags.MainInput = false;

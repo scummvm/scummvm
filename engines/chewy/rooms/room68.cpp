@@ -46,8 +46,8 @@ void Room68::entry() {
 	_G(spieler).DiaAMov = 1;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(r68HohesC) = -1;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
 	if (_G(spieler).R68Papagei) {
 		_G(det)->show_static_spr(12);
@@ -132,7 +132,7 @@ void Room68::setup_func() {
 	calc_person_look();
 	int16 ho_y = 75;
 	int16 ni_y = 75;
-	int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
+	int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int16 ho_x, ni_x;
 
 	if (ch_x < 130) {
@@ -226,8 +226,8 @@ void Room68::talk_keeper() {
 	start_detail_wait(15, 1, ANI_VOR);
 	_G(det)->set_static_ani(16, -1);
 	show_cur();
-	_G(ssi)[3].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;;
-	_G(ssi)[3].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+	_G(ssi)[3].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
+	_G(ssi)[3].Y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
 	_G(atds)->set_split_win(3, &_G(ssi)[3]);
 	start_ads_wait(20);
 	_G(cur_hide_flag) = false;

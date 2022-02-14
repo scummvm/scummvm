@@ -38,8 +38,8 @@ void Room69::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 90;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 46;
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 90;
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
@@ -92,7 +92,7 @@ int16 Room69::use_bruecke() {
 			calc_person_dia(P_HOWARD);
 		} else {
 			auto_move(3, P_CHEWY);
-			spieler_mi[P_CHEWY].Mode = true;
+			_G(spieler_mi)[P_CHEWY].Mode = true;
 			go_auto_xy(253, 103, P_CHEWY, ANI_WAIT);
 			go_auto_xy(141, 103, P_CHEWY, ANI_WAIT);
 
@@ -113,7 +113,7 @@ int16 Room69::use_bruecke() {
 				_G(spieler).PersonRoomNr[P_NICHELLE] = 70;
 			}
 
-			spieler_mi[P_CHEWY].Mode = false;
+			_G(spieler_mi)[P_CHEWY].Mode = false;
 			switch_room(70);
 		}
 		show_cur();
@@ -123,7 +123,7 @@ int16 Room69::use_bruecke() {
 
 void Room69::proc1() {
 	_G(spieler).scrollx = 0;
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	set_person_pos(46, 83, P_CHEWY, P_RIGHT);
 	set_person_pos(59, 68, P_NICHELLE, P_RIGHT);
 	set_person_pos(94, 82, P_HOWARD, P_RIGHT);
@@ -140,7 +140,7 @@ void Room69::proc1() {
 	go_auto_xy(141, 109, P_CHEWY, ANI_GO);
 	go_auto_xy(253, 106, P_CHEWY, ANI_WAIT);
 	auto_move(3, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 }
 
 } // namespace Rooms

@@ -34,7 +34,7 @@ void Room56::entry() {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	int esi = 0; //TODO: rename this variable
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (_G(spieler).flags32_10) {
 		_G(det)->show_static_spr(10);
 		_G(room)->set_timer_status(0, TIMER_STOP);
@@ -75,9 +75,9 @@ void Room56::entry() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(spieler).PersonHide[P_HOWARD] = false;
 			_G(SetUpScreenFunc) = setup_func;
-			spieler_mi[P_CHEWY].Mode = true;
+			_G(spieler_mi)[P_CHEWY].Mode = true;
 			auto_move(1, P_CHEWY);
-			spieler_mi[P_CHEWY].Mode = false;
+			_G(spieler_mi)[P_CHEWY].Mode = false;
 			_G(maus_links_click) = false;
 			show_cur();
 		} else if (_G(spieler).R62Flucht && !_G(spieler).flags32_10) {
@@ -139,9 +139,9 @@ void Room56::entry() {
 					_G(spieler).ZoomXy[P_HOWARD][0] = 17;
 					_G(spieler).ZoomXy[P_HOWARD][0] = 37;
 					_G(SetUpScreenFunc) = setup_func;
-					spieler_mi[P_CHEWY].Mode = true;
+					_G(spieler_mi)[P_CHEWY].Mode = true;
 					auto_move(1, P_CHEWY);
-					spieler_mi[P_CHEWY].Mode = false;
+					_G(spieler_mi)[P_CHEWY].Mode = false;
 				}
 				show_cur();
 			} else {
@@ -191,7 +191,7 @@ void Room56::entry() {
 }
 
 void Room56::xit() {
-	spieler_mi[P_HOWARD].Mode = false;
+	_G(spieler_mi)[P_HOWARD].Mode = false;
 	_G(spieler).ScrollxStep = 1;
 }
 
@@ -218,9 +218,9 @@ int16 Room56::use_taxi() {
 		_G(room)->set_zoom(23);
 		_G(spieler).ZoomXy[P_HOWARD][0] = 17;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 37;
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		go_auto_xy(3, 42, P_CHEWY, ANI_WAIT);
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
@@ -384,9 +384,9 @@ void Room56::start_flug() {
 }
 
 void Room56::setup_func() {
-	++spieler_mi[P_HOWARD].Vorschub;
-	if (spieler_mi[P_HOWARD].Vorschub > 8)
-		spieler_mi[P_HOWARD].Vorschub = 8;
+	++_G(spieler_mi)[P_HOWARD].Vorschub;
+	if (_G(spieler_mi)[P_HOWARD].Vorschub > 8)
+		_G(spieler_mi)[P_HOWARD].Vorschub = 8;
 
 	if (!_G(spieler).flags32_10) {
 		switch (_G(r56koch_flug)) {
@@ -419,8 +419,8 @@ void Room56::setup_func() {
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
-		const int16 ch_x = spieler_vector[P_CHEWY].Xypos[0];
-		const int16 ch_y = spieler_vector[P_CHEWY].Xypos[1];
+		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_x < 196) {
 			x = 23;

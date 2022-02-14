@@ -43,8 +43,8 @@ void Room97::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 0;
 
-	spieler_mi[P_HOWARD].Mode = true;
-	spieler_mi[P_NICHELLE].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 24;
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 43;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
@@ -159,11 +159,11 @@ void Room97::gedAction(int index) {
 }
 
 void Room97::setup_func() {
-	spieler_mi[P_CHEWY].Vorschub = 4;
-	spieler_mi[P_HOWARD].Vorschub = 6;
-	spieler_mi[P_NICHELLE].Vorschub = 4;
+	_G(spieler_mi)[P_CHEWY].Vorschub = 4;
+	_G(spieler_mi)[P_HOWARD].Vorschub = 6;
+	_G(spieler_mi)[P_NICHELLE].Vorschub = 4;
 
-	if (_G(spieler).flags35_80 && spieler_vector->Xypos[P_CHEWY] > 830)
+	if (_G(spieler).flags35_80 && _G(spieler_vector)->Xypos[P_CHEWY] > 830)
 		set_person_pos(830, 98, P_CHEWY, P_RIGHT);
 
 	if (_word18DB2E)
@@ -207,7 +207,7 @@ void Room97::setup_func() {
 
 	calc_person_look();
 
-	const int chewyPosX = spieler_vector[P_CHEWY].Xypos[0];
+	const int chewyPosX = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	if (!_G(spieler).flags36_80) {
 		int destX, destY;
 
@@ -240,7 +240,7 @@ void Room97::setup_func() {
 
 	int destX = -1;
 	int destY = -1;
-	const int nichellePosX = spieler_vector[P_NICHELLE].Xypos[0];
+	const int nichellePosX = _G(spieler_vector)[P_NICHELLE].Xypos[0];
 	if (chewyPosX > 250 && nichellePosX < 232) {
 		destX = 232;
 		destY = 27;
@@ -266,13 +266,13 @@ void Room97::proc2() {
 	_G(Sdi)[6].z_ebene = 6;
 	_G(Sdi)[24].z_ebene = 6;
 	_G(spieler).flags36_1 = false;
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(455, 59, P_CHEWY, ANI_WAIT);
 	go_auto_xy(496, 99, P_CHEWY, ANI_WAIT);
 	go_auto_xy(530, 99, P_CHEWY, ANI_WAIT);
 	go_auto_xy(572, 139, P_CHEWY, ANI_WAIT);
 	go_auto_xy(588, 129, P_CHEWY, ANI_WAIT);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(Sdi)[6].z_ebene = 166;
 	_G(Sdi)[24].z_ebene = 157;
 	show_cur();
@@ -286,7 +286,7 @@ void Room97::proc3() {
 	flags.AutoAniPlay = true;
 	hide_cur();
 	stop_person(P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
@@ -319,7 +319,7 @@ void Room97::proc3() {
 			go_auto_xy(497, 31, P_HOWARD, ANI_WAIT);
 			start_aad_wait(562, -1);
 		}
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(Sdi)[6].z_ebene = 166;
 		_G(Sdi)[24].z_ebene = 157;
 		_G(spieler).flags36_80 = true;
@@ -335,14 +335,14 @@ void Room97::proc4() {
 	if (!_G(spieler).flags35_80) {
 		flags.AutoAniPlay = true;
 		hide_cur();
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		stop_person(P_CHEWY);
 		g_engine->_sound->playSound(9, 0);
 		g_engine->_sound->stopSound(1);
 		start_detail_wait(9, 1, ANI_VOR);
 		_G(det)->show_static_spr(21);
 
-		while (spieler_vector[P_HOWARD].Xypos[0] > 996) {
+		while (_G(spieler_vector)[P_HOWARD].Xypos[0] > 996) {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
@@ -367,7 +367,7 @@ void Room97::proc4() {
 		go_auto_xy(967, 111, P_CHEWY, ANI_WAIT);
 		go_auto_xy(995, 82, P_HOWARD, ANI_WAIT);
 		_G(det)->hide_static_spr(2);
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(553, -1);
 		_G(HowardMov) = 0;
@@ -385,7 +385,7 @@ int Room97::proc5() {
 	auto_move(0, P_CHEWY);
 	auto_scroll(800, 0);
 	
-	while (spieler_vector[P_HOWARD].Xypos[0] < 1080) {
+	while (_G(spieler_vector)[P_HOWARD].Xypos[0] < 1080) {
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
@@ -417,7 +417,7 @@ int Room97::proc6() {
 
 	hide_cur();
 	auto_move(1, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(298, 120, P_CHEWY, ANI_WAIT);
 	set_person_spr(P_LEFT, P_CHEWY);
 	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -438,7 +438,7 @@ int Room97::proc6() {
 	_G(atds)->set_steuer_bit(531, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->set_ats_str(530, 1, ATS_DATEI);
 	_G(atds)->set_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATEI);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).flags36_8 = true;
 
 	show_cur();
@@ -451,7 +451,7 @@ int Room97::proc7() {
 
 	hide_cur();
 	auto_move(2, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->hide_static_spr(17);
 	start_detail_wait(22, 1, ANI_VOR);
@@ -462,7 +462,7 @@ int Room97::proc7() {
 	set_person_pos(304, 102, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	auto_move(1, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 
 	show_cur();
 	return 1;
@@ -630,7 +630,7 @@ void Room97::proc12() {
 	set_person_pos(347, 42, P_CHEWY, P_LEFT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(det)->hide_static_spr(26);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
 	flags.AutoAniPlay = false;
 }
@@ -642,7 +642,7 @@ void Room97::proc13() {
 	flags.AutoAniPlay = true;
 	hide_cur();
 	stop_person(P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(det)->show_static_spr(26);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	set_person_pos(508, 41, P_CHEWY, P_LEFT);
@@ -651,7 +651,7 @@ void Room97::proc13() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	auto_move(6, P_CHEWY);
 	_G(det)->hide_static_spr(26);
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	show_cur();
 	flags.AutoAniPlay = false;
 }

@@ -62,7 +62,7 @@ void Room0::entry() {
 		hide_cur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 
-		while (!ani_timer[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
+		while (!_G(ani_timer)[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 
@@ -219,19 +219,19 @@ void Room0::eyeStart(EyeMode mode) {
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
 		if ((adi->ani_count > 11) && (adi->ani_count < 19)) {
-			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH1, ANI_HIDE);
-			spr_info[1].ZEbene = 191;
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH1, ANI_HIDE);
+			_G(spr_info)[1].ZEbene = 191;
 		}
 		if (adi->ani_count == 38) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF1, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF1, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		}
 
-		spr_info[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
-		spr_info[3].ZEbene = 193;
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3].ZEbene = 193;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		SHOULD_QUIT_RETURN;
@@ -275,12 +275,12 @@ void Room0::eyeWait() {
 	while (adi->ani_count < 46) {
 		clear_prog_ani();
 
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
-		spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
-		spr_info[2].ZEbene = 192;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
+		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[2].ZEbene = 192;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
@@ -344,17 +344,17 @@ void Room0::eyeShoot() {
 	while (!ende) {
 		clear_prog_ani();
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
 
 		if (adi->ani_count < 53) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		} else {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, 47, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, 47, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 			if (!_G(det)->get_ani_status(CH_BLITZ))
 				ende = true;
 		}
@@ -372,12 +372,12 @@ void Room0::eyeShoot() {
 
 	_G(det)->start_detail(STERNE_STEHEN, 255, VOR);
 	clear_prog_ani();
-	spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-	spr_info[0].ZEbene = 190;
-	spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
-	spr_info[1].ZEbene = 191;
-	spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
-	spr_info[2].ZEbene = 192;
+	_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+	_G(spr_info)[0].ZEbene = 190;
+	_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+	_G(spr_info)[1].ZEbene = 191;
+	_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
+	_G(spr_info)[2].ZEbene = 192;
 
 	wait_show_screen(30);
 	clear_prog_ani();
@@ -397,20 +397,20 @@ void Room0::eyeSlimeBack() {
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
 
 		if ((adi->ani_count > 52) && (adi->ani_count < 59)) {
-			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
-			spr_info[1].ZEbene = 191;
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+			_G(spr_info)[1].ZEbene = 191;
 		}
 		if (adi->ani_count == 61) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH3, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH3, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		}
 
-		spr_info[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
-		spr_info[3].ZEbene = 193;
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3].ZEbene = 193;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
 
@@ -440,14 +440,14 @@ void Room0::checkSlimeEye() {
 	while (adi->ani_count < adi->end_ani && !SHOULD_QUIT) {
 		clear_prog_ani();
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
-		spr_info[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
-		spr_info[2].ZEbene = 192;
-		spr_info[3] = _G(det)->plot_detail_sprite(0, 0, CH_WIRFT_SCHLEIM, adi->ani_count, ANI_HIDE);
-		spr_info[3].ZEbene = 193;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
+		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
+		_G(spr_info)[2].ZEbene = 192;
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, CH_WIRFT_SCHLEIM, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3].ZEbene = 193;
 		set_up_screen(DO_SETUP);
 
 		if (adi->delay_count > 0)
@@ -495,10 +495,10 @@ void Room0::feederStart(int16 mode) {
 
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
 
 		if (flags.AniUserAction)
 			get_user_key(NO_SETUP);
@@ -541,10 +541,10 @@ void Room0::feederStart(int16 mode) {
 void Room0::feederExtend() {
 	for (int16 i = 0; i < 30 && !_G(spieler).R0PillowThrow; i++) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 136, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 136, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
 		get_user_key(NO_SETUP);
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
@@ -598,28 +598,28 @@ void Room0::checkFeed() {
 		flags.AniUserAction = true;
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
 		if (adi->ani_count == 136) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			if (!_G(spieler).R0SlimeUsed)
 				_G(det)->stop_detail(16);
 		}
 		if (adi->ani_count > 138) {
-			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
-			spr_info[1].ZEbene = 191;
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+			_G(spr_info)[1].ZEbene = 191;
 		}
 		if (adi->ani_count > 141) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, i, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, i, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		}
 		if (adi->ani_count == 138) {
-			spr_info[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
-			spr_info[3].ZEbene = 193;
+			_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
+			_G(spr_info)[3].ZEbene = 193;
 		}
 
-		spr_info[4] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
-		spr_info[4].ZEbene = 194;
+		_G(spr_info)[4] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[4].ZEbene = 194;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
 
@@ -641,20 +641,20 @@ void Room0::checkFeed() {
 	_G(det)->start_detail(CH_NACH_FUETTERN, 2, VOR);
 	while (!ende) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
 
 		if (adi->ani_count > 138) {
-			spr_info[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
-			spr_info[1].ZEbene = 191;
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+			_G(spr_info)[1].ZEbene = 191;
 		}
 		if (adi->ani_count == 138) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		}
 
-		spr_info[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
-		spr_info[3].ZEbene = 193;
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3].ZEbene = 193;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
 
@@ -694,13 +694,13 @@ void Room0::checkPillow() {
 			set_person_pos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		}
 
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
-		spr_info[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
-		spr_info[1].ZEbene = 191;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+		_G(spr_info)[1].ZEbene = 191;
 		if (mode) {
-			spr_info[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
-			spr_info[2].ZEbene = 192;
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+			_G(spr_info)[2].ZEbene = 192;
 		}
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
@@ -731,8 +731,8 @@ void Room0::trapDoorOpen() {
 	flags.AniUserAction = true;
 	for (i = 0; i < 25; i++) {
 		clear_prog_ani();
-		spr_info[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
-		spr_info[0].ZEbene = 190;
+		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
+		_G(spr_info)[0].ZEbene = 190;
 
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
@@ -773,7 +773,7 @@ void Room0::feederAni() {
 			_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			set_person_pos(_G(Rdi)->AutoMov[4].X - CH_HOT_MOV_X,
 			               _G(Rdi)->AutoMov[4].Y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
-			spieler_vector[P_CHEWY].DelayCount = 0;
+			_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 
 			check_shad(4, 0);
 			_G(fx_blend) = BLEND1;

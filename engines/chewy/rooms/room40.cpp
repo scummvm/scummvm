@@ -62,7 +62,7 @@ void Room40::entry(int16 eib_nr) {
 
 	_G(spieler).R40PoliceAniStatus = 255;
 	_G(spieler).R40PoliceStart = false;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41)
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
@@ -145,7 +145,7 @@ void Room40::xit(int16 eib_nr) {
 		}
 	}
 
-	spieler_mi[P_HOWARD].Mode = false;
+	_G(spieler_mi)[P_HOWARD].Mode = false;
 	show_cur();
 }
 
@@ -217,7 +217,7 @@ void Room40::setup_func() {
 		calc_person_look();
 
 		int16 x, y;
-		const int16 sp_x = spieler_vector[P_CHEWY].Xypos[0];
+		const int16 sp_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 		if (sp_x > 170 && sp_x < 255) {
 			x = 248;
 			y = 97;
@@ -231,8 +231,8 @@ void Room40::setup_func() {
 			x = 166;
 			y = 99;
 		} else {
-			x = spieler_vector[P_HOWARD].Xypos[0];
-			y = spieler_vector[P_HOWARD].Xypos[1];
+			x = _G(spieler_vector)[P_HOWARD].Xypos[0];
+			y = _G(spieler_vector)[P_HOWARD].Xypos[1];
 		}
 
 		go_auto_xy(x, y, P_HOWARD, ANI_GO);
@@ -285,9 +285,9 @@ void Room40::setup_func() {
 					start_aad_wait(226, -1);
 					_G(det)->stop_detail(17);
 					_G(spieler).R40HoUse = true;
-					person_end_phase[P_CHEWY] = P_RIGHT;
+					_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 					start_detail_wait(10, 1, ANI_VOR);
-					person_end_phase[P_HOWARD] = P_RIGHT;
+					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					start_aad_wait(224, -1);
 					_G(spieler).R40PoliceWeg = true;
 					show_cur();
@@ -584,7 +584,7 @@ bool Room40::use_police() {
 			start_aad_wait(217, -1);
 			auto_move(8, P_CHEWY);
 			go_auto_xy(300, 120, P_HOWARD, ANI_WAIT);
-			person_end_phase[P_HOWARD] = P_RIGHT;
+			_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 			start_aad_wait(218, -1);
 			start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
 			_G(menu_item) = CUR_WALK;

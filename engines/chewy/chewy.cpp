@@ -142,9 +142,9 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	Common::Serializer s(nullptr, stream);
 
 	for (int i = 0; i < MAX_PERSON; i++) {
-		_G(spieler).X[i] = spieler_vector[i].Xypos[0];
-		_G(spieler).Y[i] = spieler_vector[i].Xypos[1];
-		_G(spieler).Phase[i] = person_end_phase[i];
+		_G(spieler).X[i] = _G(spieler_vector)[i].Xypos[0];
+		_G(spieler).Y[i] = _G(spieler_vector)[i].Xypos[1];
+		_G(spieler).Phase[i] = _G(person_end_phase)[i];
 	}
 
 	if (!_G(spieler).synchronize(s))

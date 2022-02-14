@@ -33,7 +33,7 @@ int Room90::_delay;
 
 void Room90::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_delay = 0;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 90;
@@ -162,7 +162,7 @@ void Room90::setup_func() {
 		return;
 
 	calc_person_look();
-	int xyPos = spieler_vector[P_CHEWY].Xypos[0];
+	int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
 	int destX;
 
 	if (xyPos > 400)
@@ -244,7 +244,7 @@ int Room90::getHubcaps() {
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
 
-	while (spieler_vector[P_HOWARD].Xypos[0] != 176) {
+	while (_G(spieler_vector)[P_HOWARD].Xypos[0] != 176) {
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
@@ -288,7 +288,7 @@ int Room90::shootControlUnit() {
 	_G(HowardMov) = 2;
 	flags.ZoomMov = false;
 	auto_move(5, P_CHEWY);
-	spieler_mi[P_CHEWY].Mode = true;
+	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(232, 142, P_CHEWY, ANI_WAIT);
 	flags.NoScroll = true;
 	auto_scroll(176, 0);
@@ -304,7 +304,7 @@ int Room90::shootControlUnit() {
 	_G(det)->show_static_spr(5);
 	set_up_screen(NO_SETUP);
 	_G(fx_blend) = BLEND3;
-	spieler_mi[P_CHEWY].Mode = false;
+	_G(spieler_mi)[P_CHEWY].Mode = false;
 	flags.NoScroll = false;
 	_G(HowardMov) = 0;
 	_G(spieler).flags33_40 = true;

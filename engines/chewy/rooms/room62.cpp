@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room62::entry() {
 	_G(SetUpScreenFunc) = setup_func;
-	spieler_mi[P_HOWARD].Mode = true;
+	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler).R62LauraVerwandlung = 0;
 	_G(spieler).room_e_obj[91].Attribut = 255;
 	if (!_G(spieler).R62FirstEntry) {
@@ -60,9 +60,9 @@ void Room62::entry() {
 		_G(det)->del_static_ani(0);
 		_G(det)->start_detail(1, 1, ANI_VOR);
 		auto_move(0, P_CHEWY);
-		spieler_mi[P_CHEWY].Mode = true;
+		_G(spieler_mi)[P_CHEWY].Mode = true;
 		go_auto_xy(160, 240, P_CHEWY, ANI_WAIT);
-		spieler_mi[P_CHEWY].Mode = false;
+		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(det)->del_static_ani(5);
 		start_detail_wait(7, 1, ANI_VOR);
 		show_cur();
