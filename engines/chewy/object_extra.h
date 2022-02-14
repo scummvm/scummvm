@@ -27,6 +27,23 @@
 
 namespace Chewy {
 
+#define OBJZU_AUF 0
+#define OBJZU_ZU 1
+#define OBJZU_AN 2
+#define OBJZU_AUS 3
+#define OBJZU_VERSCHLOSSEN 5
+#define OBJZU_GEOEFFNET 6
+#define OBJZU_NASS 7
+#define OBJZU_TROCKEN 8
+#define OBJZU_OELIG 9
+#define OBJZU_HEISS 10
+#define OBJZU_KALT 11
+#define OBJZU_LEER 12
+#define OBJZU_VOLL 13
+#define OBJZU_UNDICHT 14
+#define OBJZU_KLEMMT 15
+#define SIB_GET_INV 16
+
 struct RoomMovObject {
 	int16 RoomNr = 0;
 
@@ -112,23 +129,6 @@ struct EibDateiHeader {
 
 	bool load(Common::SeekableReadStream *src);
 };
-
-#define OBJZU_AUF 0
-#define OBJZU_ZU 1
-#define OBJZU_AN 2
-#define OBJZU_AUS 3
-#define OBJZU_VERSCHLOSSEN 5
-#define OBJZU_GEOEFFNET 6
-#define OBJZU_NASS 7
-#define OBJZU_TROCKEN 8
-#define OBJZU_OELIG 9
-#define OBJZU_HEISS 10
-#define OBJZU_KALT 11
-#define OBJZU_LEER 12
-#define OBJZU_VOLL 13
-#define OBJZU_UNDICHT 14
-#define OBJZU_KLEMMT 15
-#define SIB_GET_INV 16
 
 } // namespace Chewy
 

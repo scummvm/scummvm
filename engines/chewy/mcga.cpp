@@ -30,7 +30,7 @@ namespace Chewy {
 
 #define SCREEN_S _G(currentScreen)
 #define SCREEN _G(currentScreen).getPixels()
-
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void init_mcga() {
 	_G(currentScreen) = (byte *)g_screen->getPixels();
@@ -52,8 +52,6 @@ void set_pointer(byte *ptr) {
 byte *get_dispoff() {
 	return SCREEN;
 }
-
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void setScummVMPalette(const byte *palette, uint start, uint count) {
 	byte tempPal[PALETTE_SIZE];
