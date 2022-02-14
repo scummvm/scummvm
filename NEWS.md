@@ -7,6 +7,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Sanitarium.
    - Added support for Hades Challenge.
    - Added support for Marvel Comics Spider-Man: The Sinister Six.
+   - Added support for The 11th Hour.
+   - Added support for Clandestiny.
+   - Added support for Tender Loving Care (CD-ROM Editions).
+   - Added support for Uncle Henry's Playhouse.
 
  General:
    - The project license has been upgraded to GPLv3+.
