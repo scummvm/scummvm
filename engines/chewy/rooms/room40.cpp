@@ -71,7 +71,7 @@ void Room40::entry(int16 eib_nr) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			switch (eib_nr) {
 			case 69:
 				set_person_pos(30, 105, P_HOWARD, P_RIGHT);
@@ -126,7 +126,7 @@ void Room40::xit(int16 eib_nr) {
 				move_train(1);
 				register_cutscene(15);
 				
-				flags.NoPalAfterFlc = true;
+				_G(flags).NoPalAfterFlc = true;
 				flic_cut(FCUT_073, CFO_MODE);
 
 				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
@@ -162,7 +162,7 @@ void Room40::move_train(int16 mode) {
 	_G(spieler).R40TrainMove = false;
 	hide_cur();
 	auto_move(9, P_CHEWY);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(232, 0);
 
 	if (!mode)
@@ -208,7 +208,7 @@ void Room40::move_train(int16 mode) {
 	if (!mode)
 		auto_scroll(180, 0);
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	show_cur();
 }
 
@@ -292,8 +292,8 @@ void Room40::setup_func() {
 					_G(spieler).R40PoliceWeg = true;
 					show_cur();
 
-					flags.MausLinks = false;
-					flags.MainInput = true;
+					_G(flags).MausLinks = false;
+					_G(flags).MainInput = true;
 					_G(spieler).R40HoUse = false;
 					_G(atds)->set_steuer_bit(276, ATS_AKTIV_BIT, ATS_DATEI);
 
@@ -344,7 +344,7 @@ int16 Room40::use_mr_pumpkin() {
 						_G(out)->ausblenden(1);
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
-						_G(obj)->add_inventar(LIKOER2_INV, &room_blk);
+						_G(obj)->add_inventar(LIKOER2_INV, &_G(room_blk));
 						inventory_2_cur(LIKOER2_INV);
 						switch_room(40);
 						start_aad_wait(236, -1);
@@ -459,7 +459,7 @@ int16 Room40::use_haendler() {
 			auto_move(11, P_HOWARD);
 			start_aad_wait(208, -1);
 			auto_move(6, P_HOWARD);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 
 			auto_scroll(270, 0);
 			_G(det)->del_static_ani(4);
@@ -480,7 +480,7 @@ int16 Room40::use_haendler() {
 				_G(out)->ausblenden(0);
 				_G(spieler).R40Wettbewerb = true;
 				_G(spieler).PersonRoomNr[P_HOWARD] = 28;
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
 				switch_room(28);
@@ -494,8 +494,8 @@ int16 Room40::use_haendler() {
 			_G(menu_item) = CUR_WALK;
 			cursor_wahl(_G(menu_item));
 			show_cur();
-			flags.NoScroll = false;
-			flags.MausLinks = false;
+			_G(flags).NoScroll = false;
+			_G(flags).MausLinks = false;
 			_G(spieler).R40HoUse = false;
 		}
 	}
@@ -516,7 +516,7 @@ int16 Room40::use_bmeister() {
 		bmeister_dia(215);
 		start_aad_wait(216, -1);
 		_G(spieler).R40HoUse = false;
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		_G(menu_item) = CUR_WALK;
 		cursor_wahl(_G(menu_item));
 		show_cur();
@@ -531,7 +531,7 @@ int16 Room40::use_bmeister() {
 			new_invent_2_cur(HOTEL_INV);
 			bmeister_dia(237);
 			_G(spieler).flags37_80 = true;
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 			show_cur();
 		}
 	}
@@ -542,7 +542,7 @@ int16 Room40::use_bmeister() {
 void Room40::bmeister_dia(int16 aad_nr) {
 	auto_move(7, P_CHEWY);
 	auto_move(12, P_HOWARD);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(206, 0);
 	_G(det)->del_static_ani(0);
 	_G(room)->set_timer_status(0, TIMER_STOP);
@@ -552,7 +552,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 
 	if (aad_nr == 237) {
 		start_aad_wait(aad_nr, -1);
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_062, CFO_MODE);
 		_G(fx_blend) = BLEND3;
 		start_aad_wait(375, -1);
@@ -560,7 +560,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 		start_aad_wait(aad_nr, -1);
 	}
 
-	flags.NoPalAfterFlc = false;
+	_G(flags).NoPalAfterFlc = false;
 	_G(room)->set_timer_status(0, TIMER_START);
 	_G(det)->set_static_ani(0, -1);
 	_G(det)->del_static_ani(2);
@@ -590,7 +590,7 @@ bool Room40::use_police() {
 			_G(menu_item) = CUR_WALK;
 			cursor_wahl(_G(menu_item));
 			show_cur();
-			flags.MausLinks = false;
+			_G(flags).MausLinks = false;
 		}
 	} else {
 		start_aad_wait(225, -1);
@@ -643,8 +643,8 @@ int16 Room40::use_tele() {
 				auto_move(1, P_CHEWY);
 				_G(spieler).R40DuengerMit = false;
 				_G(spieler).R40DuengerTele = true;
-				flags.MausLinks = true;
-				flags.MainInput = false;
+				_G(flags).MausLinks = true;
+				_G(flags).MainInput = false;
 				timer_wert = 3;
 			}
 

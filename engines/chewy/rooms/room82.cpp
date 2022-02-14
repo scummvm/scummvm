@@ -47,7 +47,7 @@ void Room82::entry() {
 	if (_G(spieler).flags37_20)
 		_G(det)->show_static_spr(7);
 
-	if (flags.LoadGame) {
+	if (_G(flags).LoadGame) {
 		_G(SetUpScreenFunc) = setup_func;
 		return;
 	}
@@ -167,7 +167,7 @@ void Room82::proc4() {
 	hide_cur();
 	_G(spieler).flags30_8 = true;
 	auto_move(5, P_CHEWY);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(270, 0);
 	_G(room)->set_timer_status(7, TIMER_STOP);
 	_G(det)->del_static_ani(7);
@@ -182,7 +182,7 @@ void Room82::proc4() {
 	_G(det)->del_static_ani(8);
 	_G(det)->set_static_ani(7, -1);
 	_G(room)->set_timer_status(7, TIMER_START);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 
 	show_cur();
 }

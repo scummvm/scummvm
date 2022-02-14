@@ -40,7 +40,7 @@ void Room79::entry() {
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 79;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 79;
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		set_person_pos(459, 114, P_CHEWY, P_LEFT);
 		set_person_pos(568, 65, P_HOWARD, P_LEFT);
 		set_person_pos(534, 75, P_NICHELLE, P_LEFT);

@@ -37,7 +37,7 @@ void Room43::night_small() {
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hide_cur();
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
 	start_aad_wait(188, -1);
 	auto_scroll(320, 0);
@@ -58,7 +58,7 @@ void Room43::night_small() {
 	start_aad_wait(191, -1);
 	flic_cut(FCUT_058, CFO_MODE);
 	g_engine->_sound->stopSound(0);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
@@ -74,7 +74,7 @@ void Room43::catch_pg() {
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hide_cur();
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
 	start_aad_wait(234, -1);
 	auto_scroll(194, 0);
@@ -85,7 +85,7 @@ void Room43::catch_pg() {
 	g_engine->_sound->stopSound(0);
 	register_cutscene(14);
 	
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;

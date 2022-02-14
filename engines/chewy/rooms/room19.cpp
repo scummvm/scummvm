@@ -29,7 +29,7 @@ namespace Rooms {
 
 void Room19::entry() {
 	_G(zoom_horizont) = 250;
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 24;
 }

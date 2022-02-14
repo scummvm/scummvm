@@ -63,14 +63,14 @@ void Inventory::plot_menu() {
 				WIN_INF_X + 14 + i * 54 + 40, WIN_INF_Y + 6 + 30 + j * 32 + 24, 12);
 	}
 
-	k = _G(in)->maus_vector(minfo.x, minfo.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+	k = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 	if (k != -1) {
 		if (k < 5)
 			_G(out)->box_fill(INVENTORY_HOTSPOTS[k][0], INVENTORY_HOTSPOTS[k][1],
 				INVENTORY_HOTSPOTS[k][2] + 1, INVENTORY_HOTSPOTS[k][3] + 5, 41);
 		else {
-			x = (minfo.x - (WIN_INF_X)) / 54;
-			y = (minfo.y - (WIN_INF_Y + 4 + 30)) / 30;
+			x = (_G(minfo).x - (WIN_INF_X)) / 54;
+			y = (_G(minfo).y - (WIN_INF_Y + 4 + 30)) / 30;
 			k = x + (y * 5);
 			k += _G(spieler).InventY * 5;
 			if (k < (_G(spieler).InventY + 3) * 5)
@@ -139,12 +139,12 @@ void Inventory::menu() {
 	int16 menu_first;
 
 	keyVal = 0;
-	flags.InventMenu = true;
+	_G(flags).InventMenu = true;
 	disp_tmp = _G(spieler).DispFlag;
 	_G(spieler).DispFlag = false;
-	ani_tmp = flags.AutoAniPlay;
-	flags.AutoAniPlay = true;
-	flags.StopAutoObj = true;
+	ani_tmp = _G(flags).AutoAniPlay;
+	_G(flags).AutoAniPlay = true;
+	_G(flags).StopAutoObj = true;
 	_G(menu_display) = 0;
 	tmp = _G(spieler).MausSpeed;
 	if (tmp > 3) {
@@ -153,8 +153,8 @@ void Inventory::menu() {
 		tmp1 = tmp;
 	_G(in)->speed(tmp1, tmp1 * 2);
 	_G(cur)->move(152, 92);
-	minfo.x = 152;
-	minfo.y = 92;
+	_G(minfo).x = 152;
+	_G(minfo).y = 92;
 
 	_G(invent_cur_mode) = CUR_USE;
 	if (_G(spieler).AkInvent != -1) {
@@ -167,7 +167,7 @@ void Inventory::menu() {
 
 	menu_flag1 = MENU_EINBLENDEN;
 	taste_flag = 28;
-	kbinfo.key_code = '\0';
+	_G(kbinfo).key_code = '\0';
 	maus_flag = 1;
 
 	for (i = 0; i < 3; i++) {
@@ -180,14 +180,14 @@ void Inventory::menu() {
 	_G(show_invent_menu) = 1;
 
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
-		if (!minfo.button)
+		if (!_G(minfo).button)
 			maus_flag = 0;
-		if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN || keyVal) {
+		if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN || keyVal) {
 			if (!maus_flag) {
 				maus_flag = 1;
-				kbinfo.key_code = '\0';
+				_G(kbinfo).key_code = '\0';
 
-				k = _G(in)->maus_vector(minfo.x, minfo.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+				k = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -231,8 +231,8 @@ void Inventory::menu() {
 					break;
 
 				case 5:
-					inv_rand_x = (minfo.x - (WIN_INF_X)) / 54;
-					inv_rand_y = (minfo.y - (WIN_INF_Y + 4 + 30)) / 30;
+					inv_rand_x = (_G(minfo).x - (WIN_INF_X)) / 54;
+					inv_rand_y = (_G(minfo).y - (WIN_INF_Y + 4 + 30)) / 30;
 					k = inv_rand_x + (inv_rand_y * 5);
 					k += _G(spieler).InventY * 5;
 					if (_G(invent_cur_mode) == CUR_USE) {
@@ -273,7 +273,7 @@ void Inventory::menu() {
 					break;
 				}
 			}
-		} else if (minfo.button == 2 || kbinfo.key_code == Common::KEYCODE_ESCAPE) {
+		} else if (_G(minfo).button == 2 || _G(kbinfo).key_code == Common::KEYCODE_ESCAPE) {
 			if (!maus_flag) {
 				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
 				maus_flag = 1;
@@ -290,7 +290,7 @@ void Inventory::menu() {
 		} else if (ret_look == 5) {
 			taste_flag = false;
 			maus_flag = 0;
-			minfo.button = 1;
+			_G(minfo).button = 1;
 			keyVal = Common::KEYCODE_RETURN;
 		}
 
@@ -332,35 +332,35 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_RIGHT:
-				if (minfo.x < 320 - _G(spieler).CurBreite)
-					minfo.x += 3;
+				if (_G(minfo).x < 320 - _G(spieler).CurBreite)
+					_G(minfo).x += 3;
 				break;
 
 			case Common::KEYCODE_LEFT:
-				if (minfo.x > 2)
-					minfo.x -= 3;
+				if (_G(minfo).x > 2)
+					_G(minfo).x -= 3;
 				break;
 
 			case Common::KEYCODE_UP:
-				if (minfo.y > 2)
-					minfo.y -= 3;
+				if (_G(minfo).y > 2)
+					_G(minfo).y -= 3;
 				break;
 
 			case Common::KEYCODE_DOWN:
-				if (minfo.y < 197 - _G(spieler).CurHoehe)
-					minfo.y += 3;
+				if (_G(minfo).y < 197 - _G(spieler).CurHoehe)
+					_G(minfo).y += 3;
 				break;
 
 			case Common::KEYCODE_PAGEUP:
 				if (_G(spieler).InventY > 0)
 					--_G(spieler).InventY;
-				kbinfo.key_code = '\0';
+				_G(kbinfo).key_code = '\0';
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
 				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
 					++_G(spieler).InventY;
-				kbinfo.key_code = '\0';
+				_G(kbinfo).key_code = '\0';
 				break;
 
 			default:
@@ -371,7 +371,7 @@ void Inventory::menu() {
 
 		if (_G(show_invent_menu) != 2) {
 			set_up_screen(NO_SETUP);
-			_G(cur)->move(minfo.x, minfo.y);
+			_G(cur)->move(_G(minfo).x, _G(minfo).y);
 			_G(cur)->show_cur();
 			if (menu_flag1 != MENU_AUSBLENDEN) {
 				inv_rand_x = -1;
@@ -394,8 +394,8 @@ void Inventory::menu() {
 	}
 
 	_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
-	minfo.x = _G(maus_old_x);
-	minfo.y = _G(maus_old_y);
+	_G(minfo).x = _G(maus_old_x);
+	_G(minfo).y = _G(maus_old_y);
 	while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		set_up_screen(NO_SETUP);
 		_G(cur)->plot_cur();
@@ -403,11 +403,11 @@ void Inventory::menu() {
 	}
 
 	_G(in)->speed(tmp, tmp * 2);
-	flags.InventMenu = false;
-	flags.AutoAniPlay = ani_tmp;
+	_G(flags).InventMenu = false;
+	_G(flags).AutoAniPlay = ani_tmp;
 	_G(spieler).DispFlag = disp_tmp;
 	_G(menu_display) = _G(tmp_menu);
-	flags.StopAutoObj = false;
+	_G(flags).StopAutoObj = false;
 }
 
 int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
@@ -456,13 +456,13 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 
 	while (!ende) {
-		rect = _G(in)->maus_vector(minfo.x, minfo.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
+		rect = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 
-		if (minfo.button) {
-			if (minfo.button == 2) {
+		if (_G(minfo).button) {
+			if (_G(minfo).button == 2) {
 				if (!maus_flag)
-					kbinfo.scan_code = Common::KEYCODE_ESCAPE;
-			} else if (minfo.button == 1) {
+					_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
+			} else if (_G(minfo).button == 1) {
 				if (!maus_flag) {
 					switch (rect) {
 					case 0:
@@ -477,12 +477,12 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 					case 3:
 					case 6:
-						kbinfo.scan_code = Common::KEYCODE_UP;
+						_G(kbinfo).scan_code = Common::KEYCODE_UP;
 						break;
 
 					case 4:
 					case 7:
-						kbinfo.scan_code = Common::KEYCODE_DOWN;
+						_G(kbinfo).scan_code = Common::KEYCODE_DOWN;
 						break;
 
 					case 5:
@@ -501,7 +501,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			maus_flag = 0;
 		}
 
-		switch (kbinfo.scan_code) {
+		switch (_G(kbinfo).scan_code) {
 		case Common::KEYCODE_F1:
 			_G(in)->_hotkey = Common::KEYCODE_F1;
 			break;
@@ -528,7 +528,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 		}
 
-		kbinfo.scan_code = Common::KEYCODE_INVALID;
+		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 		set_up_screen(NO_SETUP);
 		Dialogs::Inventory::plot_menu();
 		_G(out)->set_fontadr(_G(font8x8));
@@ -587,7 +587,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 	int16 ok;
 	int16 m_mode = 0;
 
-	if (!flags.AtsAction) {
+	if (!_G(flags).AtsAction) {
 		if (txt_nr != -1) {
 			switch (txt_mode) {
 			case INVENTAR_NORMAL:
@@ -627,7 +627,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI))
 					ats_action(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (_G(menu_item) == CUR_USE)
-					flags.StaticUseTxt = true;
+					_G(flags).StaticUseTxt = true;
 				break;
 
 			default:
@@ -674,7 +674,7 @@ int16 Inventory::calc_use_invent(int16 inv_nr) {
 		case GBUCH_INV:
 			ret = del_invent_slot(GBUCH_INV);
 			_G(spieler).InventSlot[ret] = GBUCH_OPEN_INV;
-			_G(obj)->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &room_blk);
+			_G(obj)->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &_G(room_blk));
 			ret_val = true;
 			break;
 
@@ -692,11 +692,11 @@ void Inventory::showDiary() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 
-	_G(room)->load_tgp(DIARY_START, &room_blk, GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 	_G(out)->back2screen(_G(workpage));
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setze_zeiger(nullptr);
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 
@@ -709,13 +709,13 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &room_blk, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 	_G(spieler).scrollx = scrollx;
 	_G(spieler).scrolly = scrolly;
 	set_up_screen(NO_SETUP);
 	Dialogs::Inventory::plot_menu();
 	_G(out)->setze_zeiger(nullptr);
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 }
 

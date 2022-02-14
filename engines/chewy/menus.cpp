@@ -263,21 +263,21 @@ void ads_menu() {
 	int16 col;
 	AdsNextBlk *an_blk;
 
-	if (flags.AdsDialog) {
-		flags.ShowAtsInvTxt = false;
-		flags.MainInput = false;
+	if (_G(flags).AdsDialog) {
+		_G(flags).ShowAtsInvTxt = false;
+		_G(flags).MainInput = false;
 		if (_G(ads_item_anz) > 4)
 			cur_y_start = 190;
 		else
 			cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
-		cur_y = minfo.y;
+		cur_y = _G(minfo).y;
 		if (cur_y < 160 || cur_y > cur_y_start + 10)
 			cur_y = 255;
 		else
 			cur_y = (cur_y_start + 5 - cur_y) / 10;
 
 		if (_G(atds)->aad_get_status() == -1 && _G(ads_push) == false &&
-		        flags.NoDiaBox == false) {
+		        _G(flags).NoDiaBox == false) {
 			_G(cur_display) = true;
 
 			build_menu(ADS_WIN);
@@ -302,7 +302,7 @@ void ads_menu() {
 			if (cur_y < _G(ads_item_anz) && cur_y >= 0 && _G(ads_push) == false) {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
-				minfo.y = 159;
+				_G(minfo).y = 159;
 				an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), cur_y);
 				if (an_blk->BlkNr == -1) {
 					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
@@ -319,7 +319,7 @@ void ads_menu() {
 				_G(det)->show_static_spr(_G(talk_hide_static));
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
-				if (flags.AdsDialog == false) {
+				if (_G(flags).AdsDialog == false) {
 					_G(atds)->save_ads_header(_G(ads_dia_nr));
 				}
 			}
@@ -336,13 +336,13 @@ void stop_ads_dialog() {
 	aad_wait(-1);
 	_G(spieler).DispFlag = _G(ads_tmp_dsp);
 	_G(cur_display) = true;
-	flags.ShowAtsInvTxt = true;
-	flags.MainInput = true;
-	flags.AdsDialog = false;
+	_G(flags).ShowAtsInvTxt = true;
+	_G(flags).MainInput = true;
+	_G(flags).AdsDialog = false;
 	_G(maus_links_click) = false;
 	_G(atds)->stop_ads();
-	if (minfo.button)
-		flags.main_maus_flag = 1;
+	if (_G(minfo).button)
+		_G(flags).main_maus_flag = 1;
 }
 
 void cur_2_inventory() {
@@ -369,7 +369,7 @@ void inventory_2_cur(int16 nr) {
 
 void new_invent_2_cur(int16 inv_nr) {
 	cur_2_inventory();
-	_G(obj)->add_inventar(inv_nr, &room_blk);
+	_G(obj)->add_inventar(inv_nr, &_G(room_blk));
 	inventory_2_cur(inv_nr);
 }
 
@@ -383,7 +383,7 @@ void invent_2_slot(int16 nr) {
 			ok = true;
 		}
 	}
-	_G(obj)->add_inventar(nr, &room_blk);
+	_G(obj)->add_inventar(nr, &_G(room_blk));
 }
 
 int16 del_invent_slot(int16 nr) {
@@ -405,7 +405,7 @@ void remove_inventory(int16 nr) {
 	if (nr == _G(spieler).AkInvent) {
 		del_inventar(nr);
 	} else {
-		_G(obj)->del_inventar(nr, &room_blk);
+		_G(obj)->del_inventar(nr, &_G(room_blk));
 		del_invent_slot(nr);
 	}
 }

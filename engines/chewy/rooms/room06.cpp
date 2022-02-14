@@ -55,13 +55,13 @@ static const AniBlock ABLOCK7[2] = {
 
 void Room6::entry() {
 	_G(zoom_horizont) = 80;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 
 	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
 		_G(det)->start_detail(7, 255, ANI_VOR);
 		_G(atds)->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
-		if (!flags.LoadGame)
+		if (!_G(flags).LoadGame)
 			++_G(spieler).R6RaumBetreten;
 
 		if (_G(spieler).R6RaumBetreten == 2) {

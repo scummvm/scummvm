@@ -45,7 +45,7 @@ void Room85::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 38;
 
 	_G(zoom_horizont) = 0;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 1;
 
 	if (_G(spieler).flags32_10) {
@@ -53,7 +53,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(atds)->del_steuer_bit(495, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	if (_G(spieler).flags30_1 || eib_nr == 124) {
@@ -87,7 +87,7 @@ void Room85::entry(int16 eib_nr) {
 		flic_cut(90, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(91, CFO_MODE);
 		_G(det)->hide_static_spr(6);
 		_G(spieler).scrollx = 25;

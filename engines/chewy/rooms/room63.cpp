@@ -104,22 +104,22 @@ void Room63::setup_func() {
 
 	case 3:
 		if (_G(det)->get_ani_status(3) == false) {
-			if (!flags.AutoAniPlay) {
-				flags.AutoAniPlay = true;
-				flags.NoScroll = true;
+			if (!_G(flags).AutoAniPlay) {
+				_G(flags).AutoAniPlay = true;
+				_G(flags).NoScroll = true;
 
 				_G(spieler).ScrollxStep = 16;
 				_G(spieler).scrollx -= _G(spieler).scrollx % 16;
 				auto_scroll(176, 0);
 				set_person_pos(424, 78, P_CHEWY, P_LEFT);
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 				_G(spieler).ScrollxStep = 4;
 				if (!_G(r63Schalter)) {
 					_G(det)->start_detail(0, 1, ANI_VOR);
 					_G(r63ChewyAni) = 0;
 				} else
 					bork_platt();
-				flags.AutoAniPlay = false;
+				_G(flags).AutoAniPlay = false;
 			}
 		}
 		break;
@@ -145,11 +145,11 @@ void Room63::bork_platt() {
 	_G(det)->show_static_spr(13);
 	start_aad_wait(361, -1);
 	_G(out)->cls();
-	flags.NoPalAfterFlc = true;
+	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_079, CFO_MODE);
 	_G(fx_blend) = BLEND3;
 	show_cur();
-	flags.MainInput = true;
+	_G(flags).MainInput = true;
 	_G(spieler).R62Flucht = true;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 56;
 	switch_room(56);
@@ -223,7 +223,7 @@ int16 Room63::use_schalter() {
 			if (_G(spieler).R62LauraVerwandlung) {
 				_G(r63Schalter) = true;
 				hide_cur();
-				flags.MainInput = false;
+				_G(flags).MainInput = false;
 			} else {
 				hide_cur();
 				auto_move(1, P_CHEWY);
@@ -300,7 +300,7 @@ int16 Room63::use_aschenbecher() {
 			if (_G(spieler).R63FxMannWeg) {
 				auto_move(5, P_CHEWY);
 				del_inventar(_G(spieler).AkInvent);
-				flags.NoScroll = true;
+				_G(flags).NoScroll = true;
 				auto_scroll(70, 0);
 				auto_move(1, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
@@ -319,7 +319,7 @@ int16 Room63::use_aschenbecher() {
 				_G(spieler).scrollx = 0;
 				set_person_pos(187, 42, P_CHEWY, P_RIGHT);
 				switch_room(64);
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 			} else
 				start_aad_wait(369, -1);
 		} else

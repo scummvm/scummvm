@@ -54,7 +54,7 @@ void Room80::entry() {
 	set_person_pos(22, -1, P_HOWARD, P_RIGHT);
 	set_person_pos(6, 2, P_NICHELLE, P_RIGHT);
 	_G(spieler).scrollx = 10;
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 40;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 24;
@@ -73,13 +73,13 @@ void Room80::setup_func() {
 	for (int i = 0; i < 3; ++i)
 		_G(det)->hide_static_spr(i);
 
-	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || _G(menu_display))
+	if (_G(spieler).flags32_1 || !_G(flags).ShowAtsInvTxt || _G(menu_display))
 		return;
 
 	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
 	cursor_wahl(CUR_ZEIGE);
-	int vec = _G(det)->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);
+	int vec = _G(det)->maus_vector(_G(spieler).scrollx + _G(minfo).x, _G(minfo).y);
 	if (vec == -1)
 		return;
 
@@ -135,7 +135,7 @@ void Room80::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 80)
 		_G(spieler).PersonRoomNr[P_NICHELLE] = nextRoom;
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	switch_room(nextRoom);
 }
 

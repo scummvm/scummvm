@@ -58,7 +58,7 @@ void Room78::entry() {
 			}
 			set_up_screen(DO_SETUP);
 		}
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(101, CFO_MODE);
 		destRoom = 79;
 	} else {

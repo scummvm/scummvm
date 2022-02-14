@@ -39,7 +39,7 @@ void Room92::entry() {
 	case 487:
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
@@ -48,20 +48,20 @@ void Room92::entry() {
 		switch_room(_G(spieler).SVal1);
 		break;
 	case 488:
-		flags.StaticUseTxt = true;
+		_G(flags).StaticUseTxt = true;
 		flic_cut(106, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(105, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(104, CFO_MODE);
 		register_cutscene(27);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
@@ -71,7 +71,7 @@ void Room92::entry() {
 		switch_room(46);
 		break;
 	case 538:
-		flags.StaticUseTxt = true;
+		_G(flags).StaticUseTxt = true;
 		flic_cut(106, CFO_MODE);
 		show_person();
 		_G(spieler).PersonRoomNr[P_HOWARD] = 94;

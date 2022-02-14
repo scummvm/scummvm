@@ -48,7 +48,7 @@ void Room50::entry(int16 eib_nr) {
 		start_aad_wait(510, -1);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(108, 0);
 		show_cur();
 		switch_room(51);
@@ -72,7 +72,7 @@ void Room50::entry(int16 eib_nr) {
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
 			_G(spieler_mi)[P_HOWARD].Mode = true;
 
-			if (!flags.LoadGame) {
+			if (!_G(flags).LoadGame) {
 				if (eib_nr == 85)
 					set_person_pos(298, 56, P_HOWARD, P_RIGHT);
 				else
@@ -136,25 +136,25 @@ void Room50::go_page() {
 }
 
 void Room50::calc_treppe() {
-	if (!flags.AutoAniPlay) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay) {
+		_G(flags).AutoAniPlay = true;
 
 		if (!_G(spieler).R50KeyOK) {
 			hide_cur();
 			stop_person(P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(40, 0);
 			stop_page();
 			_G(det)->set_static_ani(5, -1);
 			start_aad_wait(272, -1);
 			auto_move(3, P_CHEWY);
 			aad_page(273, 5);
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 		}
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
@@ -218,7 +218,7 @@ int16 Room50::use_gum() {
 		_G(det)->del_static_ani(10);
 		go_page();
 
-		_G(obj)->add_inventar(KEY_INV, &room_blk);
+		_G(obj)->add_inventar(KEY_INV, &_G(room_blk));
 		inventory_2_cur(KEY_INV);
 		_G(atds)->set_ats_str(323, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(327, 1, ATS_DATEI);
@@ -268,7 +268,7 @@ void Room50::setup_func() {
 			y = 115;
 		}
 
-		if (_G(HowardMov) && flags.ExitMov) {
+		if (_G(HowardMov) && _G(flags).ExitMov) {
 			_G(SetUpScreenFunc) = nullptr;
 			_G(HowardMov) = 0;
 			auto_move(4, P_HOWARD);

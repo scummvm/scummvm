@@ -40,9 +40,9 @@ void MainMenu::execute() {
 	// Convenience during testing to not keep showing title sequence
 	if (!ConfMan.getBool("skip_title")) {
 		_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - 17);
-		_G(mem)->file->load_tmf(_G(music_handle), (tmf_header *)Ci.MusicSlot);
+		_G(mem)->file->load_tmf(_G(music_handle), (tmf_header *)_G(Ci).MusicSlot);
 		if (!_G(modul))
-			_G(sndPlayer)->playMod((tmf_header *)Ci.MusicSlot);
+			_G(sndPlayer)->playMod((tmf_header *)_G(Ci).MusicSlot);
 
 		flic_cut(200, 0);
 		_G(sndPlayer)->stopMod();
@@ -51,8 +51,8 @@ void MainMenu::execute() {
 	show_intro();
 
 	_G(cur)->move(152, 92);
-	minfo.x = 152;
-	minfo.y = 92;
+	_G(minfo).x = 152;
+	_G(minfo).y = 92;
 	_G(spieler).inv_cur = false;
 	_G(menu_display) = 0;
 	_G(spieler).soundLoopMode = 1;
@@ -67,7 +67,7 @@ void MainMenu::execute() {
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
-		_G(room)->load_room(&room_blk, 98, &_G(spieler));
+		_G(room)->load_room(&_G(room_blk), 98, &_G(spieler));
 
 		_G(currentSong) = -1;
 		load_room_music(98);
@@ -94,7 +94,7 @@ void MainMenu::execute() {
 		case MM_VIEW_INTRO:
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(out)->setze_zeiger(_G(workptr));
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			flic_cut(135, CFO_MODE);
 			break;
 
@@ -106,8 +106,8 @@ void MainMenu::execute() {
 		case MM_CINEMA:
 			cursor_wahl(CUR_SAVE);
 			_G(cur)->move(152, 92);
-			minfo.x = 152;
-			minfo.y = 92;
+			_G(minfo).x = 152;
+			_G(minfo).y = 92;
 			Dialogs::Cinema::execute();
 			break;
 
@@ -119,7 +119,7 @@ void MainMenu::execute() {
 
 		case MM_CREDITS:
 			_G(fx)->border(_G(workpage), 100, 0, 0);
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			_G(flc)->set_custom_user_function(creditsFn);
 			flic_cut(159, CFO_MODE);
 			_G(flc)->remove_custom_user_function();
@@ -134,9 +134,9 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
-	int vec = _G(det)->maus_vector(minfo.x + _G(spieler).scrollx, minfo.y + _G(spieler).scrolly);
+	int vec = _G(det)->maus_vector(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
 
-	if (_G(in)->get_switch_code() == 28 || minfo.button == 1) {
+	if (_G(in)->get_switch_code() == 28 || _G(minfo).button == 1) {
 		_selection = vec;
 	}
 }
@@ -152,17 +152,17 @@ void MainMenu::animate() {
 
 	++_G(FrameSpeed);
 	_G(out)->setze_zeiger(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage],
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
 		_G(spieler).scrollx, _G(spieler).scrolly);
 
-	if (_G(SetUpScreenFunc) && !_G(menu_display) && !flags.InventMenu) {
+	if (_G(SetUpScreenFunc) && !_G(menu_display) && !_G(flags).InventMenu) {
 		_G(SetUpScreenFunc)();
 		_G(out)->setze_zeiger(_G(workptr));
 	}
 
 	sprite_engine();
 	kb_mov(1);
-	calc_maus_txt(minfo.x, minfo.y, 1);
+	calc_maus_txt(_G(minfo).x, _G(minfo).y, 1);
 	_G(cur)->plot_cur();
 	_G(maus_links_click) = false;
 	_G(menu_flag) = 0;
@@ -215,7 +215,7 @@ void MainMenu::startGame() {
 	_G(spieler).soundLoopMode = sndLoopMode;
 
 	_G(spieler).PersonRoomNr[P_CHEWY] = 0;
-	_G(room)->load_room(&room_blk, 0, &_G(spieler));
+	_G(room)->load_room(&_G(room_blk), 0, &_G(spieler));
 
 	_G(spieler_vector)[P_CHEWY].Phase = 6;
 	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
@@ -229,15 +229,15 @@ void MainMenu::startGame() {
 }
 
 bool MainMenu::loadGame() {
-	flags.SaveMenu = true;
+	_G(flags).SaveMenu = true;
 	savePersonAni();
 	_G(out)->setze_zeiger(_G(screen0));
 	_G(out)->set_fontadr(_G(font6x8));
 	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 	cursor_wahl(CUR_SAVE);
 	_G(cur)->move(152, 92);
-	minfo.x = 152;
-	minfo.y = 92;
+	_G(minfo).x = 152;
+	_G(minfo).y = 92;
 	_G(savegameFlag) = true;
 	int result = Dialogs::Files::execute(false);
 
@@ -245,7 +245,7 @@ bool MainMenu::loadGame() {
 		_G(menu_item) == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
-	flags.SaveMenu = false;
+	_G(flags).SaveMenu = false;
 
 	if (result == 0) {
 		_G(fx_blend) = BLEND1;
@@ -261,11 +261,11 @@ void MainMenu::playGame() {
 	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
 	_G(maus_links_click) = false;
-	kbinfo.scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 
-	flags.main_maus_flag = false;
-	flags.MainInput = true;
-	flags.ShowAtsInvTxt = true;
+	_G(flags).main_maus_flag = false;
+	_G(flags).MainInput = true;
+	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
 	_G(spieler_vector)[P_CHEWY].Count = 0;
 	_G(uhr)->reset_timer(0, 0);

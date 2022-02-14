@@ -62,7 +62,7 @@ void Room71::entry(int16 eib_nr) {
 		_G(det)->hide_static_spr(3);
 	}
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	switch (eib_nr) {
@@ -153,13 +153,13 @@ void Room71::setup_func() {
 
 int Room71::proc1() {
 	if (_G(spieler).inv_cur) {
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		return 0;
 	}
 
 	hide_cur();
 	auto_move(2, P_CHEWY);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(256, 0);
 	_delay = 0;
 	if (_G(menu_item) == CUR_HOWARD) {
@@ -188,7 +188,7 @@ int Room71::proc1() {
 		start_aad_wait(432, -1);
 
 	show_cur();
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	return 1;
 }
 
@@ -199,7 +199,7 @@ void Room71::proc2() {
 	go_auto_xy(518, 35, P_HOWARD, ANI_GO);
 	go_auto_xy(568, 36, P_NICHELLE, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(284, 0);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).PersonHide[P_NICHELLE] = true;
@@ -219,7 +219,7 @@ void Room71::proc2() {
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(spieler).R71LeopardVined = true;
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	start_aad_wait(434, -1);
@@ -289,7 +289,7 @@ void Room71::proc7() {
 	_G(SetUpScreenFunc) = nullptr;
 	set_person_spr(P_LEFT, P_CHEWY);
 	go_auto_xy(323, 28, P_NICHELLE, ANI_WAIT);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(200, 0);
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 	_G(det)->start_detail(7, 255, false);
@@ -297,7 +297,7 @@ void Room71::proc7() {
 	_G(det)->stop_detail(7);
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	_G(SetUpScreenFunc) = setup_func;
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	start_aad_wait(432, -1);
 
 	show_cur();

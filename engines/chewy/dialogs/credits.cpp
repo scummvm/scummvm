@@ -126,11 +126,11 @@ void Credits::execute() {
 	int fontCol;
 
 	_G(room)->open_handle(GBOOK, "rb", 0);
-	_G(room)->load_tgp(5, &room_blk, 1, 0, GBOOK);
+	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	_G(out)->setze_zeiger(_G(screen0));
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
@@ -152,7 +152,7 @@ void Credits::execute() {
 
 		// Display the starfield background
 		_G(out)->setze_zeiger(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage],
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
 			_G(spieler).scrollx, _G(spieler).scrolly);
 
 		// Animate moving the background
@@ -197,7 +197,7 @@ void Credits::execute() {
 	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvorx8x8));
 	_G(room)->open_handle("back/episode1.tgp", "rb", 0);
 
-	_G(room)->set_ak_pal(&room_blk);
+	_G(room)->set_ak_pal(&_G(room_blk));
 	hide_cur();
 	_G(uhr)->reset_timer(0, 5);
 }

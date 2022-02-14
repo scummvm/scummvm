@@ -44,7 +44,7 @@ void Room52::entry() {
 	if (_G(spieler).R52KakerWeg)
 		_G(det)->stop_detail(0);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		_G(det)->show_static_spr(4);
 		_G(spieler).R52TuerAuf = true;
 		set_person_pos(20, 50, P_HOWARD, P_LEFT);
@@ -126,7 +126,7 @@ void Room52::plot_armee(int16 frame) {
 }
 
 void Room52::kaker_platt() {
-	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !flags.ExitMov) {
+	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !_G(flags).ExitMov) {
 		_G(spieler).R52KakerJoke = true;
 		stop_person(P_CHEWY);
 		hide_cur();

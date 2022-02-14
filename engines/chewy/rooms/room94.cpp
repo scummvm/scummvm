@@ -32,7 +32,7 @@ namespace Rooms {
 void Room94::entry() {
 	_G(spieler).flags33_80 = true;
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
@@ -44,7 +44,7 @@ void Room94::entry() {
 		_G(det)->del_static_ani(3);
 	}
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	if (_G(spieler).flags35_8) {
@@ -71,7 +71,7 @@ void Room94::entry() {
 		_G(spieler).scrollx = 150;
 		if (_G(spieler).flags37_40) {
 			_G(spieler).flags37_40 = true;
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
 			flic_cut(121, CFO_MODE);
@@ -81,7 +81,7 @@ void Room94::entry() {
 			_G(SetUpScreenFunc) = nullptr;
 			Room66::proc8(2, 3, 0, 551);
 			_G(SetUpScreenFunc) = setup_func;
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 		}
 	} else {
 		hide_cur();
@@ -106,7 +106,7 @@ void Room94::setup_func() {
 	else
 		destX = 255;
 
-	if (flags.ExitMov) {
+	if (_G(flags).ExitMov) {
 		destX = 255;
 		destY = 86;
 	}
@@ -135,7 +135,7 @@ int Room94::giveGhostBottle() {
 	del_inventar(_G(spieler).AkInvent);
 	_G(out)->setze_zeiger(nullptr);
 	_G(out)->cls();
-	flags.NoPalAfterFlc = true;
+	_G(flags).NoPalAfterFlc = true;
 	flic_cut(62, CFO_MODE);
 	_G(fx_blend) = BLEND3;
 	_G(det)->start_detail(5, 255, false);

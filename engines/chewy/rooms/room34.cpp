@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room34::entry() {
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		use_kuehlschrank();
 }
 
@@ -39,7 +39,7 @@ bool Room34::use_kuehlschrank() {
 	if (!_G(spieler).inv_cur) {
 		result = true;
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			hide_cur();
 			auto_move(3, P_CHEWY);
 			_G(maus_links_click) = false;
@@ -48,9 +48,9 @@ bool Room34::use_kuehlschrank() {
 		}
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		flags.ChewyDontGo = true;
+		_G(flags).ChewyDontGo = true;
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			switch_room(34);
 		}
 
@@ -64,7 +64,7 @@ void Room34::xit_kuehlschrank() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	set_person_pos(54, 111, P_CHEWY, -1);
 	switch_room(33);
-	flags.ChewyDontGo = false;
+	_G(flags).ChewyDontGo = false;
 	_G(maus_links_click) = false;
 }
 

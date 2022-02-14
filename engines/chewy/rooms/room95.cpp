@@ -41,7 +41,7 @@ void Room95::entry(int16 eib_nr) {
 	if (_G(spieler).flags35_20)
 		_G(det)->show_static_spr(10);
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	hide_cur();
@@ -109,7 +109,7 @@ int Room95::proc2() {
 	if (_G(spieler).flags35_20) {
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(133, CFO_MODE);
 		register_cutscene(33);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 97;

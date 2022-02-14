@@ -73,7 +73,7 @@ void Room13::entry() {
 				_G(det)->start_detail(i, 255, false);
 		}
 		
-		if (!flags.LoadGame && _G(spieler).R13Band) {
+		if (!_G(flags).LoadGame && _G(spieler).R13Band) {
 			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(spieler).R13Band = false;
@@ -123,7 +123,7 @@ void Room13::talk_bork() {
 		auto_move(9, P_CHEWY);
 		wait_auto_obj(R13_BORK_OBJ);
 		auto_move(11, P_CHEWY);
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_scroll(41, 0);
 
 		start_spz(68, 255, false, P_CHEWY);
@@ -131,7 +131,7 @@ void Room13::talk_bork() {
 		flic_cut(FCUT_014, CFO_MODE);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(auto_obj) = 0;
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 
 		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
@@ -170,10 +170,10 @@ void Room13::jmp_band() {
 			_G(maus_links_click) = false;
 			auto_move(12, P_CHEWY);
 			start_aad_wait(117, -1);
-			flags.NoScroll = true;
+			_G(flags).NoScroll = true;
 			auto_scroll(76, 0);
 			flic_cut(FCUT_015, CFO_MODE);
-			flags.NoScroll = false;
+			_G(flags).NoScroll = false;
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
 			_G(spieler).R13Bandlauf = false;

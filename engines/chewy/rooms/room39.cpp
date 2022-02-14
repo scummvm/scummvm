@@ -181,12 +181,12 @@ int16 Room39::use_tv() {
 		if (_G(spieler).R39TvKanal >= 5)
 			_G(spieler).R39TvKanal = -1;
 
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_042, CFO_MODE);
 		++_G(spieler).R39TvKanal;
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 
 		if (_G(spieler).R39TvKanal == 2)
 			flic_cut(FCUT_036, CFO_MODE);
@@ -218,14 +218,14 @@ int16 Room39::use_tv() {
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			_G(spieler).R39TransMensch = true;
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_041, CFO_MODE);
 			_G(spieler).R39TvKanal = 0;
 			_G(spieler).R39ClintNews = 0;
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->cls();
 			_G(out)->set_palette(_G(pal));
-			flags.NoPalAfterFlc = true;
+			_G(flags).NoPalAfterFlc = true;
 			flic_cut(TV_FLIC[0], CFO_MODE);
 
 			_G(out)->cls();
@@ -273,7 +273,7 @@ int16 Room39::use_tv() {
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		_G(out)->set_palette(_G(pal));
-		flags.NoPalAfterFlc = false;
+		_G(flags).NoPalAfterFlc = false;
 	}
 
 	if (dia_nr != -1) {
@@ -291,8 +291,8 @@ void Room39::look_tv(bool cls_mode) {
 	_flag = false;
 
 	if (_G(spieler).R39TvOn) {
-		if (!flags.AutoAniPlay) {
-			flags.AutoAniPlay = true;
+		if (!_G(flags).AutoAniPlay) {
+			_G(flags).AutoAniPlay = true;
 			int16 flic_nr;
 			int16 dia_nr;
 			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
@@ -310,7 +310,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
 				_G(out)->set_palette(_G(pal));
-				flags.NoPalAfterFlc = true;
+				_G(flags).NoPalAfterFlc = true;
 			}
 
 			if (_G(spieler).R39TransMensch) {
@@ -329,7 +329,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(out)->setze_zeiger(nullptr);
 				_G(out)->cls();
 				_G(out)->set_palette(_G(pal));
-				flags.NoPalAfterFlc = false;
+				_G(flags).NoPalAfterFlc = false;
 
 				if (_G(spieler).R39TransMensch && dia_nr == 85)
 					start_aad_wait(dia_nr, -1);
@@ -337,7 +337,7 @@ void Room39::look_tv(bool cls_mode) {
 		}
 
 		_G(maus_links_click) = false;
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 

@@ -96,7 +96,7 @@ void Room3::terminal() {
 	switch (Room4::sonde_comp()) {
 	case 0:
 		probeTransfer();
-		_G(spr_info)[0].Image = room_blk.DetImage[120];
+		_G(spr_info)[0].Image = _G(room_blk).DetImage[120];
 		_G(spr_info)[0].X = 250;
 		_G(spr_info)[0].Y = 2;
 		_G(spr_info)[0].ZEbene = 0;
@@ -128,7 +128,7 @@ void Room3::terminal() {
 			_G(spieler).PersonRoomNr[P_CHEWY] = 5;
 			clear_prog_ani();
 			_G(auto_obj) = 0;
-			_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+			_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 			_G(fx_blend) = BLEND1;
 			start_ani_block(3, ablock5);
 			set_person_pos(91, 107, P_CHEWY, P_LEFT);
@@ -140,7 +140,7 @@ void Room3::terminal() {
 	case 1:
 		_G(auto_obj) = 1;
 		_G(maus_links_click) = false;
-		minfo.button = 0;
+		_G(minfo).button = 0;
 		stop_person(P_CHEWY);
 		start_aad_wait(51, -1);
 		set_up_screen(DO_SETUP);
@@ -193,7 +193,7 @@ void Room3::sonde_knarre() {
 	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], _G(mov_phasen)[SONDE_OBJ].Lines, (MovLine*)sonde_mpkt1);
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
@@ -286,7 +286,7 @@ void Room3::probeTransfer() {
 		  { { 250,   2, 180 }, 0, 3 } }
 	};
 
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	hide_cur();
 	/*rdi = */(void)_G(det)->get_room_detail_info();
 	int16 tmp = _G(zoom_horizont);
@@ -339,7 +339,7 @@ void Room3::probeTransfer() {
 
 			if (i == 2 || i == 1) {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
-					if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
+					if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
 						if (is_cur_inventar(SPINAT_INV)) {
 							_G(ssi)[0].X = 120;
 							_G(ssi)[0].Y = 100;
@@ -377,7 +377,7 @@ void Room3::probeTransfer() {
 		case 0:
 			show_cur();
 			start_aad(52);
-			flags.AniUserAction = true;
+			_G(flags).AniUserAction = true;
 			spr_nr = 141;
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			_G(det)->load_taf_seq(142, 8, nullptr);
@@ -389,7 +389,7 @@ void Room3::probeTransfer() {
 
 		case 2:
 			_G(det)->del_taf_tbl(142, 7, nullptr);
-			flags.AniUserAction = false;
+			_G(flags).AniUserAction = false;
 			switch_room(2);
 			break;
 
@@ -398,7 +398,7 @@ void Room3::probeTransfer() {
 		}
 	}
 
-	flags.AniUserAction = false;
+	_G(flags).AniUserAction = false;
 	_G(zoom_horizont) = tmp;
 	_G(auto_obj) = 0;
 }

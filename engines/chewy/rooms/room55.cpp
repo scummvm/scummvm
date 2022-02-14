@@ -32,7 +32,7 @@ void Room55::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).R55ExitDia = 0;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 20;
@@ -71,7 +71,7 @@ void Room55::entry() {
 	if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk)
 		_G(det)->show_static_spr(0);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R55Location) {
 			_G(spieler).scrollx = 136;
 			set_person_pos(404, 66, P_CHEWY, P_RIGHT);
@@ -196,7 +196,7 @@ int16 Room55::use_telefon() {
 
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				auto_move(7, P_CHEWY);
-				flags.NoScroll = true;
+				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
 				start_aad_wait(330, -1);
 				_G(det)->show_static_spr(8);
@@ -241,7 +241,7 @@ int16 Room55::use_telefon() {
 				flic_cut(FCUT_072, CFO_MODE);
 				register_cutscene(19);
 				
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 				invent_2_slot(SACKGELD_INV);
 				invent_2_slot(EINLAD_INV);
 				del_invent_slot(LEDER_INV);
@@ -282,7 +282,7 @@ void Room55::get_job() {
 	show_cur();
 	start_ads_wait(15);
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	flags.LoadGame = true;
+	_G(flags).LoadGame = true;
 	_G(spieler).scrollx = oldScrollx;
 	_G(spieler).scrolly = oldScrolly;
 
@@ -301,11 +301,11 @@ void Room55::get_job() {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (r_nr == 54)
-		flags.LoadGame = false;
+		_G(flags).LoadGame = false;
 
 	set_person_pos(118, 96, P_CHEWY, P_LEFT);
 	switch_room(r_nr);
-	flags.LoadGame = false;
+	_G(flags).LoadGame = false;
 }
 
 void Room55::mans2rock() {
@@ -431,7 +431,7 @@ void Room55::talk_line() {
 	int16 aad_nr = 0;
 	if (!_G(spieler).R55SekWeg) {
 		auto_move(2, P_CHEWY);
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_scroll(136, 0);
 		aad_nr = 320;
 		_G(spieler).R55ExitDia = 321;
@@ -457,7 +457,7 @@ void Room55::talk_line() {
 		start_detail_wait(22, 1, ANI_VOR);
 	}
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 	_G(spieler_mi)[P_HOWARD].Mode = false;
 	switch_room(54);

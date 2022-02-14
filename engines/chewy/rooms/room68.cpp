@@ -60,7 +60,7 @@ void Room68::entry() {
 	} else
 		_G(det)->hide_static_spr(3);
 	
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		hide_cur();
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 68) {
 			set_person_pos(524, 51, P_HOWARD, P_LEFT);

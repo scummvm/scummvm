@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room96::entry() {
 	_G(zoom_horizont) = 140;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 1;
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
@@ -39,7 +39,7 @@ void Room96::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	hide_cur();

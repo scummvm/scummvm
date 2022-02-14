@@ -94,9 +94,9 @@ void Room8::start_verbrennen() {
 			set_up_screen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
-			if (minfo.button == 1 || kbinfo.key_code == Common::KEYCODE_RETURN) {
-				if (minfo.x > 146 && minfo.x < 208 &&
-					minfo.y > 107 && minfo.y < 155)
+			if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
+				if (_G(minfo).x > 146 && _G(minfo).x < 208 &&
+					_G(minfo).y > 107 && _G(minfo).y < 155)
 					break;
 			}
 		}
@@ -133,13 +133,13 @@ bool Room8::gips_wurf() {
 		wait_detail(5);
 		_G(spieler).R8GipsWurf = true;
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
-		_G(obj)->set_inventar(MASKE_INV, 181, 251, 8, &room_blk);
+		_G(obj)->set_inventar(MASKE_INV, 181, 251, 8, &_G(room_blk));
 		_G(det)->del_taf_tbl(116, 30, nullptr);
 		auto_move(8, P_CHEWY);
-		flags.AtsAction = false;
+		_G(flags).AtsAction = false;
 		_G(menu_item) = CUR_USE;
 		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
-		flags.AtsAction = true;
+		_G(flags).AtsAction = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(20, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -168,7 +168,7 @@ void Room8::open_gdoor() {
 
 void Room8::talk_nimoy() {
 	auto_move(9, P_CHEWY);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	auto_scroll(0, 120);
 	if (_G(spieler).R8Folter) {
 		int16 diaNr = _G(spieler).R8GipsWurf ? 2 : 1;
@@ -182,7 +182,7 @@ void Room8::talk_nimoy() {
 		load_ads_dia(6);
 	}
 
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 }
 
 } // namespace Rooms

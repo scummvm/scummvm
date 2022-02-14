@@ -61,12 +61,12 @@ void Room76::entry() {
 		_G(atds)->set_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	if (!_G(spieler).flags29_2) {
 		hide_cur();
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).flags29_2 = true;
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
@@ -75,12 +75,12 @@ void Room76::entry() {
 
 	} else if (!_G(spieler).r76State) {
 		hide_cur();
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).r76State = -1;
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
 		proc3(422);
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 	}
 }
 
@@ -137,7 +137,7 @@ void Room76::proc5() {
 	_state = 1;
 	_G(det)->del_static_ani(2);
 	_G(det)->start_detail(6, 1, false);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 	wait_show_screen(15);
 	auto_move(5, P_CHEWY);
 	_G(det)->hide_static_spr(10);

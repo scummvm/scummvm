@@ -37,7 +37,7 @@ void Room14::entry() {
 	if (!_G(spieler).R14Feuer)
 		_G(obj)->hide_sib(46);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R14GleiterAuf) {
 			set_person_pos(381, 264, P_CHEWY, P_LEFT);
 			_G(det)->show_static_spr(6);
@@ -58,14 +58,14 @@ bool Room14::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
-	if (!flags.AutoAniPlay && !_G(spieler).R14Feuer) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay && !_G(spieler).R14Feuer) {
+		_G(flags).AutoAniPlay = true;
 		_G(det)->hide_static_spr(9);
 		start_detail_wait(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
 		_G(uhr)->reset_timer(t_nr, 0);
 		_G(det)->show_static_spr(9);
 		_G(det)->start_detail(7, 1, ANI_VOR);
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
@@ -114,7 +114,7 @@ int16 Room14::use_gleiter() {
 void Room14::talk_eremit()  {
 	if (!_G(spieler).R14Feuer) {
 		auto_move(6, P_CHEWY);
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 
 		if (_G(spieler).R14Translator) {
 			load_ads_dia(0);
@@ -123,7 +123,7 @@ void Room14::talk_eremit()  {
 			hide_cur();
 			start_aad_wait(24, -1);
 			show_cur();
-			flags.AutoAniPlay = false;
+			_G(flags).AutoAniPlay = false;
 		}
 	}
 }
@@ -153,7 +153,7 @@ void Room14::feuer() {
 	int16 tmp = _G(spieler).AkInvent;
 	_G(spieler).R14Feuer = true;
 	_G(cur_hide_flag) = false;
-	flags.AutoAniPlay = true;
+	_G(flags).AutoAniPlay = true;
 	hide_cur();
 
 	if (is_cur_inventar(BWAFFE_INV)) {
@@ -190,7 +190,7 @@ void Room14::feuer() {
 	invent_2_slot(FLUXO_INV);
 	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
 	_G(spieler).R14FluxoFlex = true;
-	flags.AutoAniPlay = false;
+	_G(flags).AutoAniPlay = false;
 	show_cur();
 }
 

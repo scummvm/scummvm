@@ -41,7 +41,7 @@ void Room89::entry() {
 			_G(det)->show_static_spr(6);
 	}
 
-	if (flags.LoadGame) {
+	if (_G(flags).LoadGame) {
 		_G(spieler).SVal2 = 0;
 		return;
 	}
@@ -61,11 +61,11 @@ void Room89::entry() {
 		start_aad_wait(490, -1);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(103, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(118, CFO_MODE);
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 538;
@@ -80,7 +80,7 @@ void Room89::entry() {
 		_G(spieler).ZoomXy[P_NICHELLE][0] = _G(spieler).ZoomXy[P_NICHELLE][1] = 10;
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(117, CFO_MODE);
 		register_cutscene(35);
 
@@ -88,19 +88,19 @@ void Room89::entry() {
 		Room66::proc8(-1, 2, 3, 563);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(119, CFO_MODE);
 
 		// Squash screen into a single point at the center
 		int edi = -20;
 		int var24 = 0;
-		_G(out)->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
+		_G(out)->sprite_save(_G(Ci).TempArea, 0, 0, 320, 200, 320);
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
 			_G(out)->setze_zeiger(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
+			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
@@ -112,7 +112,7 @@ void Room89::entry() {
 		_G(out)->cls();
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
 		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Common::KEYCODE_ESCAPE from F5");
-		_G(out)->sprite_save(Ci.TempArea, 0, 0, 320, 200, 320);
+		_G(out)->sprite_save(_G(Ci).TempArea, 0, 0, 320, 200, 320);
 		edi = -300;
 		int var30 = -200;
 
@@ -121,7 +121,7 @@ void Room89::entry() {
 			var30 += 2;
 			_G(out)->setze_zeiger(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(Ci.TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
+			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setze_zeiger(nullptr);
 			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
@@ -178,7 +178,7 @@ int Room89::proc2() {
 	start_aad_wait(490, -1);
 	_G(out)->setze_zeiger(nullptr);
 	_G(out)->cls();
-	flags.NoPalAfterFlc = true;
+	_G(flags).NoPalAfterFlc = true;
 	flic_cut(102, CFO_MODE);
 	register_cutscene(26);
 

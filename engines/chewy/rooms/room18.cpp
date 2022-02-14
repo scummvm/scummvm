@@ -124,8 +124,8 @@ void Room18::entry() {
 }
 
 bool Room18::timer(int16 t_nr, int16 ani_nr) {
-	if (!_G(spieler).R18SurimyWurf && !flags.AutoAniPlay) {
-		flags.AutoAniPlay = true;
+	if (!_G(spieler).R18SurimyWurf && !_G(flags).AutoAniPlay) {
+		_G(flags).AutoAniPlay = true;
 
 		if (t_nr == _G(timer_nr)[0]) {
 			_G(det)->hide_static_spr(16);
@@ -155,7 +155,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 			_G(uhr)->reset_timer(_G(timer_nr)[1], 15);
 		}
 
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 
 	return false;
@@ -180,7 +180,7 @@ void Room18::init_borks() {
 	_G(timer_nr)[1] = _G(room)->set_timer(255, 15);
 	_G(spieler).scrollx = 276;
 	_G(spieler).scrolly = 0;
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 }
 
 void Room18::monitor() {
@@ -282,7 +282,7 @@ int16 Room18::calc_surimy() {
 		_G(det)->show_static_spr(19);
 		_G(det)->hide_static_spr(26);
 
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 		auto_scroll(70, 0);
@@ -306,7 +306,7 @@ int16 Room18::calc_surimy() {
 		auto_scroll(0, 0);
 		wait_auto_obj(SURIMY_OBJ);
 		_G(spieler).ScrollxStep = 6;
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		auto_scroll(318, 0);
 		_G(spieler).ScrollxStep = 2;
 		_G(auto_obj) = 0;

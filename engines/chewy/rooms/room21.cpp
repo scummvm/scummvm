@@ -69,7 +69,7 @@ void Room21::entry() {
 	calc_laser();
 	init_spinne();
 	_G(timer_nr)[2] = _G(room)->set_timer(255, 1);
-	flags.NoEndPosMovObj = true;
+	_G(flags).NoEndPosMovObj = true;
 	_G(SetUpScreenFunc) = setup_func;
 }
 
@@ -167,8 +167,8 @@ void Room21::chewy_kolli() {
 
 	for (int16 i = 0; i < 3 && !kolli; i++) {
 		int16 spr_nr = _G(mov_phasen)[i].Phase[_G(auto_mov_vector)[i].Phase][0] + _G(auto_mov_vector)[i].PhNr;
-		int16 *xy = (int16 *)room_blk.DetImage[spr_nr];
-		int16 *Cxy = room_blk.DetKorrekt + (spr_nr << 1);
+		int16 *xy = (int16 *)_G(room_blk).DetImage[spr_nr];
+		int16 *Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 		int16 xoff = xy[0];
 		int16 yoff = xy[1];
 		if (i == 2)
@@ -188,16 +188,16 @@ void Room21::chewy_kolli() {
 		}
 	}
 
-	if (kolli && !flags.AutoAniPlay) {
+	if (kolli && !_G(flags).AutoAniPlay) {
 		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 		stop_person(P_CHEWY);
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->set_detail_pos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		start_detail_wait(ani_nr, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
 		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 		_G(mov)->continue_auto_go();
@@ -206,9 +206,9 @@ void Room21::chewy_kolli() {
 
 void Room21::salto() {
 	if (!_G(spieler).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATEI) == 8
-		&& !_G(spieler).R21Salto && !flags.AutoAniPlay) {
+		&& !_G(spieler).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(spieler).R21Salto = true;
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
@@ -219,7 +219,7 @@ void Room21::salto() {
 		start_ani_block(3, ABLOCK19);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_aad_wait(36, -1);
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
@@ -240,9 +240,9 @@ void Room21::use_gitter_energie() {
 int16 Room21::use_fenster() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !flags.AutoAniPlay && _G(spieler).R21Laser1Weg) {
+	if (!_G(spieler).inv_cur && !_G(flags).AutoAniPlay && _G(spieler).R21Laser1Weg) {
 		action_flag = true;
-		flags.AutoAniPlay = true;
+		_G(flags).AutoAniPlay = true;
 		_G(spieler).R18Gitter = true;
 		auto_move(13, P_CHEWY);
 		set_person_pos(541, 66, P_CHEWY, P_LEFT);
@@ -255,7 +255,7 @@ int16 Room21::use_fenster() {
 
 		_G(spieler).room_e_obj[50].Attribut = AUSGANG_OBEN;
 		_G(spieler).room_e_obj[41].Attribut = 255;
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 
 	return action_flag;

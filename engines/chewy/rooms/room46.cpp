@@ -88,7 +88,7 @@ void Room46::setup_func() {
 		x = 120;
 	}
 
-	if (_G(HowardMov) && flags.ExitMov) {
+	if (_G(HowardMov) && _G(flags).ExitMov) {
 		x = 160;
 		y = 200;
 	}
@@ -151,9 +151,8 @@ void Room46::bodo() {
 
 void Room46::kloppe() {
 	for (int16 i = 0; i < 4; i++) {
-		_G(mem)->file->select_pool_item(Ci.Handle, FCUT_065);
-
-		_G(flc)->custom_play(&Ci);
+		_G(mem)->file->select_pool_item(_G(Ci).Handle, FCUT_065);
+		_G(flc)->custom_play(&_G(Ci));
 		
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
@@ -172,8 +171,8 @@ void Room46::kloppe() {
 		}
 	}
 
-	_G(mem)->file->select_pool_item(Ci.Handle, 66);
-	_G(flc)->custom_play(&Ci);
+	_G(mem)->file->select_pool_item(_G(Ci).Handle, 66);
+	_G(flc)->custom_play(&_G(Ci));
 	_G(sndPlayer)->fadeOut(0);
 	_G(out)->cls();
 

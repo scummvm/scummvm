@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room57::entry() {
 	_G(zoom_horizont) = 180;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
@@ -40,7 +40,7 @@ void Room57::entry() {
 	if (_G(spieler).R57StudioAuf)
 		_G(det)->hide_static_spr(4);
 	
-	if (!flags.LoadGame &&_G(spieler).R48TaxiEntry) {
+	if (!_G(flags).LoadGame &&_G(spieler).R48TaxiEntry) {
 		hide_cur();
 		_G(spieler).R48TaxiEntry = false;
 		_G(spieler).scrollx = 0;

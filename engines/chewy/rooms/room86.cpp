@@ -46,7 +46,7 @@ void Room86::entry(int16 eib_nr) {
 		_G(det)->show_static_spr(0);
 	}
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	if (eib_nr == 127) {
@@ -63,29 +63,29 @@ void Room86::entry(int16 eib_nr) {
 	} else {
 		_G(spieler_mi)[P_CHEWY].Vorschub = 16;
 		hide_cur();
-		flags.ZoomMov = false;
+		_G(flags).ZoomMov = false;
 		_G(spieler).scrollx = 246;
 		_G(spieler).ScrollxStep = 8;
 		set_person_pos(443, 66, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 84;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 0;
 		auto_move(2, P_CHEWY);
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		_G(spieler.ScrollxStep = 2);
 		auto_scroll(30, 0);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		_G(spieler_mi)[P_CHEWY].Vorschub = 8;
 		_G(det)->stop_detail(0);
 		_G(det)->show_static_spr(4);
 		_G(det)->show_static_spr(5);
 		invent_2_slot(94);
 		auto_move(4, P_CHEWY);
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		auto_scroll(246, 0);
 		proc3(false);
 		flic_cut(92, CFO_MODE);
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		auto_move(0, P_CHEWY);
 		_G(spieler).flags32_20 = true;
 		switch_room(85);
@@ -177,7 +177,7 @@ void Room86::proc3(bool cond) {
 		deltaY = 2;
 	}
 
-	if (flags.NoScroll)
+	if (_G(flags).NoScroll)
 		auto_scroll(196, 0);
 
 	_G(det)->set_static_pos(0, 352, destY, false, false);
@@ -197,7 +197,7 @@ void Room86::proc3(bool cond) {
 
 	g_engine->_sound->stopSound(1);
 	g_engine->_sound->stopSound(2);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 }
 
 } // namespace Rooms

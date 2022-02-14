@@ -66,20 +66,4 @@ Globals::~Globals() {
 	g_globals = nullptr;
 }
 
-
-maus_info minfo;
-kb_info kbinfo;
-cur_blk curblk;
-cur_ani curani;
-iog_init ioptr;
-RaumBlk room_blk;
-
-
-Flags flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0 };
-CustomInfo Ci;
-GotoPkt gpkt;
-
-
-
 } // namespace Chewy

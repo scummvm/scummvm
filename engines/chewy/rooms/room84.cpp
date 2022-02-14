@@ -34,7 +34,7 @@ bool Room84::_flag;
 void Room84::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(zoom_horizont) = 110;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
@@ -71,7 +71,7 @@ void Room84::entry() {
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
 	}
 
-	if (flags.LoadGame) {
+	if (_G(flags).LoadGame) {
 		; // Nothing. It avoids a deeper level of if, and we need the _G(SetUpScreenFunc) at the end
 	} else if (_G(spieler).flags30_1 || _G(spieler).flags31_8) {
 		set_person_pos(569, 135, P_CHEWY, P_LEFT);
@@ -137,7 +137,7 @@ void Room84::setup_func() {
 		_G(spieler).flags30_80 = true;
 		hide_cur();
 		auto_move(4, P_CHEWY);
-		flags.NoScroll = true;
+		_G(flags).NoScroll = true;
 		set_person_spr(P_LEFT, P_CHEWY);
 		auto_scroll(150, 0);
 		_G(det)->del_static_ani(3);
@@ -148,7 +148,7 @@ void Room84::setup_func() {
 		start_detail_wait(5, 1, ANI_VOR);
 		_G(det)->set_static_ani(3, -1);
 		start_aad_wait(456, -1);
-		flags.NoScroll = false;
+		_G(flags).NoScroll = false;
 		show_cur();
 	}
 
@@ -173,11 +173,11 @@ void Room84::setup_func() {
 
 void Room84::talk1() {
 	auto_move(4, P_CHEWY);
-	flags.NoScroll = true;
+	_G(flags).NoScroll = true;
 	set_person_spr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
 	start_ads_wait(22);
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 }
 
 void Room84::talk2() {

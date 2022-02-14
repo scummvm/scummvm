@@ -72,8 +72,8 @@ void Room48::calc_pic() {
 }
 
 void Room48::frage() {
-	if (!flags.AutoAniPlay) {
-		flags.AutoAniPlay = true;
+	if (!_G(flags).AutoAniPlay) {
+		_G(flags).AutoAniPlay = true;
 		hide_cur();
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(det)->show_static_spr(6);
@@ -81,7 +81,7 @@ void Room48::frage() {
 		_G(det)->hide_static_spr(6);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		show_cur();
-		flags.AutoAniPlay = false;
+		_G(flags).AutoAniPlay = false;
 	}
 }
 
@@ -89,12 +89,12 @@ void Room48::setup_func() {
 	for (int16 i = 0; i < 5; i++)
 		_G(det)->hide_static_spr(1 + i);
 
-	if (flags.ShowAtsInvTxt) {
+	if (_G(flags).ShowAtsInvTxt) {
 		if (_G(menu_display) == 0) {
 			_G(menu_item) = CUR_USE;
 			cur_2_inventory();
 			cursor_wahl(CUR_ZEIGE);
-			const int16 idx = _G(det)->maus_vector(minfo.x, minfo.y);
+			const int16 idx = _G(det)->maus_vector(_G(minfo).x, _G(minfo).y);
 
 			if (idx != -1) {
 				if (_G(spieler).R48Auswahl[idx]) {

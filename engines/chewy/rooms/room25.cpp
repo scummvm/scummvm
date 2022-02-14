@@ -81,7 +81,7 @@ void Room25::entry() {
 		start_aad_wait(64, -1);
 		show_cur();
 
-	} else if (_G(spieler).R25GleiterExit && !flags.LoadGame) {
+	} else if (_G(spieler).R25GleiterExit && !_G(flags).LoadGame) {
 		set_person_pos(127, 122, P_CHEWY, P_LEFT);
 
 		if (!_G(spieler).R25SurimyGo) {
@@ -119,7 +119,7 @@ int16 Room25::gleiter_loesch() {
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);
-			_G(obj)->add_inventar(MILCH_WAS_INV, &room_blk);
+			_G(obj)->add_inventar(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
 			start_aad_wait(253, -1);
 		}

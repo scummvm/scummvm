@@ -70,7 +70,7 @@ int16 Room64::cut_sev(int16 frame) {
 
 void Room64::chewy_entry() {
 	calc_monitor();
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		hide_cur();
 		_G(det)->show_static_spr(3);
 		auto_move(2, P_CHEWY);

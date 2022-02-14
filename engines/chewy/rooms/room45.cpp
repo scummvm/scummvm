@@ -34,7 +34,7 @@ void Room45::entry(int16 eib_nr) {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(r45_delay) = 0;
 	_G(zoom_horizont) = 150;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 80;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
@@ -45,7 +45,7 @@ void Room45::entry(int16 eib_nr) {
 	}
 
 	_G(spieler_mi)[P_HOWARD].Mode = true;
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		int16 ch_x, ch_y;
 		int16 ho_x, ho_y;
 		if (_G(spieler).R48TaxiEntry) {
@@ -88,7 +88,7 @@ void Room45::xit(int16 eib_nr) {
 	}
 
 	if (eib_nr == 87) {
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_073, CFO_MODE);
 	}
 }
@@ -155,7 +155,7 @@ void Room45::setup_func() {
 
 			y = 130;
 
-			if (_G(HowardMov) && flags.ExitMov) {
+			if (_G(HowardMov) && _G(flags).ExitMov) {
 				x = 56;
 				y = 122;
 			}

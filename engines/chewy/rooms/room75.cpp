@@ -39,11 +39,11 @@ void Room75::entry(int16 eib_nr) {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	switch (eib_nr) {

@@ -41,7 +41,7 @@ void Room41::entry() {
 	if (!_G(spieler).R41LolaOk) {
 		g_engine->_sound->playSound(6);
 
-		if (!flags.LoadGame) {
+		if (!_G(flags).LoadGame) {
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			start_ani_block(2, ABLOCK32);
@@ -63,7 +63,7 @@ void Room41::entry() {
 		_G(atds)->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
-	if (!flags.LoadGame)
+	if (!_G(flags).LoadGame)
 		set_person_pos(241, 113, P_HOWARD, P_RIGHT);
 
 	_G(SetUpScreenFunc) = setup_func;

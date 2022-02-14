@@ -31,7 +31,7 @@ namespace Rooms {
 
 void Room56::entry() {
 	_G(spieler).ScrollxStep = 2;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	int esi = 0; //TODO: rename this variable
 	_G(spieler_mi)[P_HOWARD].Mode = true;
@@ -43,7 +43,7 @@ void Room56::entry() {
 	} else
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 25);
 
-	if (!flags.LoadGame) {
+	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
 			hide_cur();
 			_G(spieler).R48TaxiEntry = false;
@@ -162,7 +162,7 @@ void Room56::entry() {
 		_G(spieler).r88DestRoom = 82;
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		flic_cut(116, CFO_MODE);
 		register_cutscene(21);
 		_G(out)->setze_zeiger(nullptr);
@@ -296,7 +296,7 @@ int16 Room56::use_kneipe() {
 				go_auto_xy(160, 58, P_HOWARD, ANI_VOR);
 				_G(spieler).PersonHide[P_HOWARD] = true;
 				_G(spieler).R56Kneipe = true;
-				flags.NoScroll = true;
+				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
 				start_detail_wait(12, 3, ANI_VOR);
 				flic_cut(75, CFO_MODE);
@@ -317,7 +317,7 @@ int16 Room56::use_kneipe() {
 				start_aad_wait(308, -1);
 
 				_G(SetUpScreenFunc) = setup_func;
-				flags.NoScroll = false;
+				_G(flags).NoScroll = false;
 				if (_G(obj)->check_inventar(SACKGELD_INV)) {
 					remove_inventory(SACKGELD_INV);
 					start_aad_wait(309, -1);
@@ -352,7 +352,7 @@ int16 Room56::use_kneipe() {
 		start_aad_wait(521, -1);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
-		flags.NoPalAfterFlc = true;
+		_G(flags).NoPalAfterFlc = true;
 		_G(flc)->set_custom_user_function(proc1);
 		flic_cut(112, CFO_MODE);
 		_G(flc)->remove_custom_user_function();
@@ -442,7 +442,7 @@ void Room56::setup_func() {
 		return;
 	
 	if (!_G(atds)->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) && _G(menu_item) == CUR_WALK) {
-		if (minfo.x + _G(spieler).scrollx >= 157 && minfo.x + _G(spieler).scrollx <= 204 && minfo.y >= 28 && minfo.y <= 89)
+		if (_G(minfo).x + _G(spieler).scrollx >= 157 && _G(minfo).x + _G(spieler).scrollx <= 204 && _G(minfo).y >= 28 && _G(minfo).y <= 89)
 			cursor_wahl(CUR_AUSGANG_OBEN);
 		else
 			cursor_wahl(CUR_WALK);

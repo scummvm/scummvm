@@ -50,7 +50,7 @@ void Room77::entry() {
 
 	// WORKAROUND: Loading saved game in this room don't properly
 	// reset the flag used for cutscenes when returning to village
-	if (flags.LoadGame) {
+	if (_G(flags).LoadGame) {
 		_G(spieler).r76State = -1;
 
 	} else if (_G(spieler).r76State == 1) {

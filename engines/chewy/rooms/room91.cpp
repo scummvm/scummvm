@@ -32,7 +32,7 @@ int16 Room91::_click;
 
 void Room91::entry() {
 	_G(zoom_horizont) = 110;
-	flags.ZoomMov = true;
+	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
@@ -40,7 +40,7 @@ void Room91::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (flags.LoadGame)
+	if (_G(flags).LoadGame)
 		return;
 
 	_G(spieler).scrollx = 320;
@@ -54,8 +54,8 @@ void Room91::entry() {
 			start_aad_wait(503, -1);
 		}
 	} else {
-		flags.MainInput = false;
-		flags.NoScroll = true;
+		_G(flags).MainInput = false;
+		_G(flags).NoScroll = true;
 		_G(spieler).flags34_1 = true;
 		set_person_pos(326, 99, P_CHEWY, P_RIGHT);
 		set_person_pos(312, 75, P_HOWARD, P_RIGHT);
@@ -75,7 +75,7 @@ void Room91::entry() {
 }
 
 void Room91::xit(int16 eib_nr) {
-	flags.MainInput = true;
+	_G(flags).MainInput = true;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 
@@ -83,7 +83,7 @@ void Room91::xit(int16 eib_nr) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
 
 	_G(spieler).flags34_4 = false;
-	flags.NoScroll = false;
+	_G(flags).NoScroll = false;
 }
 
 void Room91::setup_func() {
@@ -112,7 +112,7 @@ void Room91::setup_func() {
 		const int oldClick = _click;
 		_G(maus_links_click) = oldClick;
 		_click = 1;
-		const int aniNr = 1 + (minfo.y <= 100 ? 1 : 0);
+		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
 		hide_cur();
 		_G(det)->stop_detail(0);
 		start_detail_wait(aniNr, 1, ANI_VOR);
