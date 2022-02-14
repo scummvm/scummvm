@@ -114,8 +114,6 @@ Atdsys *atds;
 Flic *flc;
 MovClass *mov;
 
-char backged[] = { EPISODE1_GEP };
-
 AutoMov auto_mov[MAX_AUTO_MOV];
 
 int16 HowardMov;
@@ -136,28 +134,5 @@ int16 AkChewyTaf;
 int16 PersonAni[MAX_PERSON];
 taf_seq_info *PersonTaf[MAX_PERSON];
 uint8 PersonSpr[MAX_PERSON][8];
-
-int16 talk_start_ani = -1;
-int16 talk_hide_static = -1;
-
-SplitStringInit ssi[AAD_MAX_PERSON] = {
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-	{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8},
-};
-
-int16 frequenz;
-int16 CurrentSong = -1;
-bool savegameFlag;
-Stream *music_handle;
-int16 EndOfPool;
-int timer_action_ctr;
 
 } // namespace Chewy

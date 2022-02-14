@@ -315,10 +315,10 @@ void ads_menu() {
 					_G(ads_item_ptr) = atds->ads_item_ptr(_G(ads_blk_nr),
 					                                  &_G(ads_item_anz));
 				}
-				det->stop_detail(talk_start_ani);
-				det->show_static_spr(talk_hide_static);
-				talk_start_ani = -1;
-				talk_hide_static = -1;
+				det->stop_detail(_G(talk_start_ani));
+				det->show_static_spr(_G(talk_hide_static));
+				_G(talk_start_ani) = -1;
+				_G(talk_hide_static) = -1;
 				if (flags.AdsDialog == false) {
 					atds->save_ads_header(_G(ads_dia_nr));
 				}

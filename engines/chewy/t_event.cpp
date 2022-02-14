@@ -45,8 +45,8 @@ int16 load_ads_dia(int16 dia_nr) {
 
 			set_ssi_xy();
 			_G(ads_dia_nr) = dia_nr;
-			talk_start_ani = -1;
-			talk_hide_static = -1;
+			_G(talk_start_ani) = -1;
+			_G(talk_hide_static) = -1;
 		}
 	}
 	return ret;
@@ -58,9 +58,9 @@ void set_ssi_xy() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		if (i >= P_NICHELLE)
 			tmp = 1;
-		ssi[i + tmp].X = spieler_vector[i].Xypos[0] - _G(spieler).scrollx + spieler_mi[i].HotX;
-		ssi[i + tmp].Y = spieler_vector[i].Xypos[1] - _G(spieler).scrolly;
-		atds->set_split_win(i + tmp, &ssi[i + tmp]);
+		_G(ssi)[i + tmp].X = spieler_vector[i].Xypos[0] - _G(spieler).scrollx + spieler_mi[i].HotX;
+		_G(ssi)[i + tmp].Y = spieler_vector[i].Xypos[1] - _G(spieler).scrolly;
+		atds->set_split_win(i + tmp, &_G(ssi)[i + tmp]);
 	}
 }
 
@@ -1407,13 +1407,13 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		switch (person_nr) {
 		case 1:
 			if (mode == AAD_STR_START) {
-				talk_start_ani = 9;
-				talk_hide_static = 8;
+				_G(talk_start_ani) = 9;
+				_G(talk_hide_static) = 8;
 			} else {
 				talk_stop_ani = 9;
 				talk_show_static = 8;
-				talk_start_ani = -1;
-				talk_hide_static = -1;
+				_G(talk_start_ani) = -1;
+				_G(talk_hide_static) = -1;
 			}
 			break;
 
@@ -1425,15 +1425,15 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		switch (person_nr) {
 		case 0:
 			talk_stop_ani = 9;
-			talk_start_ani = 10;
+			_G(talk_start_ani) = 10;
 			talk_show_static = 13;
-			talk_hide_static = 12;
+			_G(talk_hide_static) = 12;
 			break;
 
 		case 1:
-			talk_start_ani = 9;
+			_G(talk_start_ani) = 9;
 			talk_stop_ani = 10;
-			talk_hide_static = 13;
+			_G(talk_hide_static) = 13;
 			talk_show_static = 12;
 			break;
 
@@ -1454,13 +1454,13 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 1:
 			if (mode == AAD_STR_START) {
-				talk_start_ani = 4;
-				talk_hide_static = 9;
+				_G(talk_start_ani) = 4;
+				_G(talk_hide_static) = 9;
 			} else {
 				talk_stop_ani = 4;
 				talk_show_static = 9;
-				talk_start_ani = -1;
-				talk_hide_static = -1;
+				_G(talk_start_ani) = -1;
+				_G(talk_hide_static) = -1;
 			}
 			break;
 
@@ -2153,9 +2153,9 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	}
 
 	if (altes_format) {
-		det->start_detail(talk_start_ani, 255, ANI_VOR);
+		det->start_detail(_G(talk_start_ani), 255, ANI_VOR);
 		det->stop_detail(talk_stop_ani);
-		det->hide_static_spr(talk_hide_static);
+		det->hide_static_spr(_G(talk_hide_static));
 		det->show_static_spr(talk_show_static);
 	} else {
 		det->start_detail(talk_ani, 255, ANI_VOR);

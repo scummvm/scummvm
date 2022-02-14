@@ -145,9 +145,9 @@ int16 Room67::talk_papagei() {
 		if (_G(menu_item) == CUR_HOWARD) {
 			show_cur();
 
-			ssi[2].X = 270 - _G(spieler).scrollx;
-			ssi[2].Y = 10;
-			atds->set_split_win(2, &ssi[2]);
+			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
+			_G(ssi)[2].Y = 10;
+			atds->set_split_win(2, &_G(ssi)[2]);
 			start_ads_wait(19);
 			room->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
@@ -157,9 +157,9 @@ int16 Room67::talk_papagei() {
 			auto_move(5, P_CHEWY);
 			show_cur();
 
-			ssi[2].X = 270 - _G(spieler).scrollx;
-			ssi[2].Y = 10;
-			atds->set_split_win(2, &ssi[2]);
+			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
+			_G(ssi)[2].Y = 10;
+			atds->set_split_win(2, &_G(ssi)[2]);
 			start_ads_wait(18);
 			room->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {

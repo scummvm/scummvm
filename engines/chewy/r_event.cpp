@@ -935,7 +935,7 @@ void flic_cut(int16 nr, int16 mode) {
 		case FCUT_001:
 		case 1000:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			g_engine->playVideo(nr);
 			break;
 
@@ -951,7 +951,7 @@ void flic_cut(int16 nr, int16 mode) {
 		case FCUT_019_10:
 		case FCUT_019_11:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			nr = FCUT_019_01;
 			_G(sndPlayer)->setLoopMode(1);
 
@@ -985,7 +985,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case FCUT_034:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 
 			do {
 #ifndef NEW_VIDEO_CODE
@@ -1045,17 +1045,17 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case FCUT_065:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			load_room_music(256);
 			_G(sndPlayer)->setLoopMode(1);
 			Room46::kloppe();
 			_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			break;
 
 		case FCUT_071:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			g_engine->playVideo(FCUT_071);
 			break;
 
@@ -1212,7 +1212,7 @@ void flic_cut(int16 nr, int16 mode) {
 				print_rows(594);
 				if (FLIC_CUT_1045[i] == 53) {
 					_G(sndPlayer)->stopMod();
-					CurrentSong = -1;
+					_G(currentSong) = -1;
 					load_room_music(256);
 				}
 
@@ -1308,7 +1308,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1058:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			load_room_music(255);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 58);
@@ -1355,7 +1355,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1065:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			load_room_music(256);
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
@@ -1548,7 +1548,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1110:
 			_G(sndPlayer)->stopMod();
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			load_room_music(257);
 			_G(sndPlayer)->setMusicMasterVol(20);
 #ifndef NEW_VIDEO_CODE

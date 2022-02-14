@@ -226,9 +226,9 @@ void Room68::talk_keeper() {
 	start_detail_wait(15, 1, ANI_VOR);
 	det->set_static_ani(16, -1);
 	show_cur();
-	ssi[3].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;;
-	ssi[3].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-	atds->set_split_win(3, &ssi[3]);
+	_G(ssi)[3].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;;
+	_G(ssi)[3].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+	atds->set_split_win(3, &_G(ssi)[3]);
 	start_ads_wait(20);
 	_G(cur_hide_flag) = false;
 	hide_cur();
@@ -416,7 +416,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		set_person_pos(150, -13, P_NICHELLE, P_RIGHT);
 
 		if (_G(spieler).DisplayText) {
-			CurrentSong = -1;
+			_G(currentSong) = -1;
 			load_room_music(_G(spieler).PersonRoomNr[0]);
 		}
 	}
@@ -428,9 +428,9 @@ void Room68::talk_papagei() {
 	auto_move(5, P_CHEWY);
 	show_cur();
 
-	ssi[2].X = 60;
-	ssi[2].Y = 80;
-	atds->set_split_win(2, &ssi[2]);
+	_G(ssi)[2].X = 60;
+	_G(ssi)[2].Y = 80;
+	atds->set_split_win(2, &_G(ssi)[2]);
 	start_ads_wait(18);
 }
 

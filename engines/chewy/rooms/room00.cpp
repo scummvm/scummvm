@@ -76,12 +76,12 @@ void Room0::entry() {
 bool Room0::timer(int16 t_nr, int16 ani_nr) {
 	switch (ani_nr) {
 	case 1:
-		if (timer_action_ctr > 0) {
+		if (_G(timer_action_ctr) > 0) {
 			uhr->reset_timer(t_nr, 0);
-			--timer_action_ctr;
+			--_G(timer_action_ctr);
 		} else if (!is_chewy_busy()) {
 			if (!_G(spieler).R0FueterLab)
-				timer_action_ctr = 2;
+				_G(timer_action_ctr) = 2;
 
 			flags.AutoAniPlay = true;
 			if (!_G(spieler).R0SlimeUsed) {
