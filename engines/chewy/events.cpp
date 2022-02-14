@@ -147,8 +147,8 @@ void EventsManager::clearEvents() {
 	_G(minfo).button = 0;
 }
 
-kb_info *EventsManager::setKbdInfo(kb_info *kbInfo) {
-	kb_info *kb = _kbInfo;
+KbdInfo *EventsManager::setKbdInfo(KbdInfo *kbInfo) {
+	KbdInfo *kb = _kbInfo;
 	_kbInfo = kbInfo;
 	return kb;
 }

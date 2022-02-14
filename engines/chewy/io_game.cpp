@@ -34,7 +34,7 @@ IOGame::IOGame(McgaGraphics *out, InputMgr *in, Cursor *cur) {
 	_cur = cur;
 }
 
-char *IOGame::io_init(iog_init *iostruc) {
+char *IOGame::io_init(IogInit *iostruc) {
 	_io = iostruc;
 	for (int16 i = 0; i < 20; i++)
 		_fileFind[i][0] = 0;

@@ -26,7 +26,7 @@
 
 namespace Chewy {
 
-struct kb_info;
+struct KbdInfo;
 
 class EventsManager : public EventsBase {
 private:
@@ -38,7 +38,7 @@ private:
 protected:
 	void handleEvent(const Common::Event &event) override;
 public:
-	kb_info *_kbInfo = nullptr;
+	KbdInfo *_kbInfo = nullptr;
 	Common::Point _mousePos;
 	bool _flag1 = false;
 	bool _flag2 = false;
@@ -50,7 +50,7 @@ public:
 
 	void clearEvents();
 
-	kb_info *setKbdInfo(kb_info *kbInfo);
+	KbdInfo *setKbdInfo(KbdInfo *kbInfo);
 
 	/**
 	 * Set the mouse position

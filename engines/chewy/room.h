@@ -66,7 +66,7 @@ struct RaumBlk {
 	int16 AkAblage;
 	byte **DetImage;
 	int16 *DetKorrekt;
-	taf_info *Fti;
+	TafInfo *Fti;
 	int16 AadLoad;
 	int16 AtsLoad;
 };

@@ -26,10 +26,10 @@
 
 namespace Chewy {
 
-void set_new_kb_handler(kb_info *key);
+void set_new_kb_handler(KbdInfo *key);
 void set_old_kb_handler();
 
-void set_mouse_handler(maus_info *mpos);
+void set_mouse_handler(MouseInfo *mpos);
 
 extern bool mouse_links_los;
 extern bool mouse_active;
@@ -45,20 +45,20 @@ public:
 	void move_mouse(int16 x, int16 y);
 	void rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax);
 
-	void neuer_kb_handler(kb_info *key);
+	void neuer_kb_handler(KbdInfo *key);
 	void alter_kb_handler();
-	void neuer_maushandler(maus_info *mpos);
+	void neuer_maushandler(MouseInfo *mpos);
 	int16 maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
-	in_zeiger *get_in_zeiger();
+	KbdMouseInfo *get_in_zeiger();
 	int16 get_switch_code();
 
 	int16 _hotkey = 0;
 
 private:
-	maus_info *_mouseInfoBlk = nullptr;
-	kb_info *_kbInfoBlk = nullptr;
-	in_zeiger _inzeig;
+	MouseInfo *_mouseInfoBlk = nullptr;
+	KbdInfo *_kbInfoBlk = nullptr;
+	KbdMouseInfo _inzeig;
 };
 
 } // namespace Chewy

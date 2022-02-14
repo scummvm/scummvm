@@ -374,9 +374,9 @@ void McgaGraphics::map_spr2screen(byte *sptr, int16 x, int16 y) {
 }
 
 void McgaGraphics::set_fontadr(byte *adr) {
-	tff_header *tff = (tff_header *)adr;
+	TffHeader *tff = (TffHeader *)adr;
 
-	setfont(adr + sizeof(tff_header), tff->width, tff->height,
+	setfont(adr + sizeof(TffHeader), tff->width, tff->height,
 	        tff->first, tff->last);
 	_G(fvorx) = tff->width;
 	_G(fvory) = 0;
@@ -404,8 +404,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	va_list parptr;
 	va_start(parptr, string);
 
-	kb_info kbInfo;
-	kb_info *kb_old = g_events->setKbdInfo(&kbInfo);
+	KbdInfo kbInfo;
+	KbdInfo *kb_old = g_events->setKbdInfo(&kbInfo);
 
 	if ((x == -1) || (y == -1)) {
 		x = _G(gcurx);
@@ -1344,7 +1344,7 @@ void McgaGraphics::move(int16 x, int16 y) {
 	_G(gcury) = y;
 }
 
-void McgaGraphics::init_mausmode(maus_info *mInfo) {
+void McgaGraphics::init_mausmode(MouseInfo *mInfo) {
 	_mausMode = true;
 	_mInfo = mInfo;
 }

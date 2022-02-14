@@ -337,7 +337,7 @@ private:
 	int16 _invBlockNr;
 	char *_invUseMem = nullptr;
 	int16 _tmpDelay;
-	in_zeiger *_inzeig = nullptr;
+	KbdMouseInfo *_inzeig = nullptr;
 	bool _hasSpeech = false;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;

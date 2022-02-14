@@ -23,7 +23,7 @@
 
 namespace Chewy {
 
-bool taf_dateiheader::load(Common::SeekableReadStream *src) {
+bool TafFileHeader::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	mode = src->readSint16LE();
 	count = src->readSint16LE();
@@ -35,7 +35,7 @@ bool taf_dateiheader::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool taf_imageheader::load(Common::SeekableReadStream *src) {
+bool TafImageHeader::load(Common::SeekableReadStream *src) {
 	komp = src->readSint16LE();
 	width = src->readUint16LE();
 	height = src->readUint16LE();
@@ -53,7 +53,7 @@ bool NewPhead::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool tff_header::load(Common::SeekableReadStream *src) {
+bool TffHeader::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	size = src->readUint32LE();
 	count = src->readSint16LE();
@@ -65,7 +65,7 @@ bool tff_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool knopf::load(Common::SeekableReadStream *src) {
+bool Button::load(Common::SeekableReadStream *src) {
 	typ = src->readSint16LE();
 	enable = src->readSint16LE();
 	x1 = src->readSint16LE();
@@ -82,7 +82,7 @@ bool knopf::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool menue::load(Common::SeekableReadStream *src) {
+bool Menu::load(Common::SeekableReadStream *src) {
 	nr = src->readSint16LE();
 	disp = src->readSint16LE();
 	typ = src->readSint16LE();
@@ -99,7 +99,7 @@ bool menue::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool dialogue::load(Common::SeekableReadStream *src) {
+bool Dialogue::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	anzmenue = src->readSint16LE();
 	src->skip(4 * MAXMENUE);
@@ -109,7 +109,7 @@ bool dialogue::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool dialogue::save(Common::WriteStream *dest) {
+bool Dialogue::save(Common::WriteStream *dest) {
 	dest->write(id, 4);
 	dest->writeSint16LE(anzmenue);
 	for (int i = 0; i < MAXMENUE; ++i)
@@ -120,7 +120,7 @@ bool dialogue::save(Common::WriteStream *dest) {
 	return true;
 }
 
-bool sbi_inst::load(Common::SeekableReadStream *src) {
+bool SbiInst::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	src->read(name, 32);
 	modmulti = src->readByte();
@@ -139,7 +139,7 @@ bool sbi_inst::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool voc_header::load(Common::SeekableReadStream *src) {
+bool VocHeader::load(Common::SeekableReadStream *src) {
 	src->read(id, 0x14);
 	offset = src->readUint16LE();
 	ver_low = src->readByte();
@@ -149,7 +149,7 @@ bool voc_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool mod_inst::load(Common::SeekableReadStream *src) {
+bool ModInst::load(Common::SeekableReadStream *src) {
 	src->read(name, 22);
 	laenge = src->readUint16LE();
 	finetune = src->readSByte();
@@ -160,7 +160,7 @@ bool mod_inst::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool mod_header::load(Common::SeekableReadStream *src) {
+bool ModHeader::load(Common::SeekableReadStream *src) {
 	src->read(name, 20);
 	for (int i = 0; i < 31; ++i) {
 		if (!instrument[i].load(src))
@@ -175,7 +175,7 @@ bool mod_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool mod15_header::load(Common::SeekableReadStream *src) {
+bool Mod15Header::load(Common::SeekableReadStream *src) {
 	src->read(name, 20);
 	for (int i = 0; i < 15; ++i)
 		instrument[i].load(src);
@@ -187,7 +187,7 @@ bool mod15_header::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool tmf_inst::load(Common::SeekableReadStream *src) {
+bool TmfInst::load(Common::SeekableReadStream *src) {
 	finetune = src->readByte();
 	insvol = src->readByte();
 	repstart = src->readUint32LE();
@@ -197,7 +197,7 @@ bool tmf_inst::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool tmf_header::load(Common::SeekableReadStream *src) {
+bool TmfHeader::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	for (int i = 0; i < 31; ++i)
 		instrument[i].load(src);

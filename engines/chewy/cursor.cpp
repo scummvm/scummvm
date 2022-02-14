@@ -25,7 +25,7 @@
 
 namespace Chewy {
 
-Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, cur_blk *curblkp) {
+Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, CurBlk *curblkp) {
 	_out = iout;
 	_in = iin;
 	_scrWidth = _G(scr_w);
@@ -109,7 +109,7 @@ void Cursor::hide_cur() {
 	}
 }
 
-void Cursor::set_cur_ani(cur_ani *ani1) {
+void Cursor::set_cur_ani(CurAni *ani1) {
 	_ani = ani1;
 	_cur_aufruf = 0;
 	_ani_count = _ani->ani_anf;

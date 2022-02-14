@@ -118,7 +118,7 @@ void sprite_engine() {
 	int16 x, y;
 	int16 p_nr;
 	ObjMov detmov;
-	taf_seq_info *ts_info;
+	TafSeqInfo *ts_info;
 	calc_z_ebene();
 	calc_person_ani();
 

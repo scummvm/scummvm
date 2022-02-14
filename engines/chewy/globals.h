@@ -177,7 +177,7 @@ public:
 	AutoMov _auto_mov[MAX_AUTO_MOV];
 	int16 _HowardMov = 0;
 
-	taf_seq_info *_spz_tinfo = nullptr;
+	TafSeqInfo *_spz_tinfo = nullptr;
 	int16 _SpzDelay = 0;
 	int16 _spz_spr_nr[MAX_SPZ_PHASEN] = { 0 };
 	int16 _spz_start = 0;
@@ -190,16 +190,16 @@ public:
 
 	int16 _AkChewyTaf = 0;
 	int16 _PersonAni[MAX_PERSON] = { 0 };
-	taf_seq_info *_PersonTaf[MAX_PERSON] = { nullptr };
+	TafSeqInfo *_PersonTaf[MAX_PERSON] = { nullptr };
 	uint8 _PersonSpr[MAX_PERSON][8] = { 0 };
 
 	RoomDetailInfo *_Rdi = nullptr;
 	StaticDetailInfo *_Sdi = nullptr;
 	AniDetailInfo *_Adi = nullptr;
-	taf_info *_curtaf = nullptr;
-	taf_info *_menutaf = nullptr;
-	taf_seq_info *_howard_taf = nullptr;
-	taf_info *_chewy = nullptr;
+	TafInfo *_curtaf = nullptr;
+	TafInfo *_menutaf = nullptr;
+	TafSeqInfo *_howard_taf = nullptr;
+	TafInfo *_chewy = nullptr;
 	int16 *_chewy_kor = nullptr;
 	BitClass *_bit = nullptr;
 	GedClass *_ged = nullptr;
@@ -225,11 +225,11 @@ public:
 	int16 _ani_stand_count[MAX_PERSON] = { 0 };
 	bool _ani_stand_flag[MAX_PERSON] = { false };
 
-	maus_info _minfo;
-	kb_info _kbinfo;
-	cur_blk _curblk;
-	cur_ani _curani;
-	iog_init _ioptr;
+	MouseInfo _minfo;
+	KbdInfo _kbinfo;
+	CurBlk _curblk;
+	CurAni _curani;
+	IogInit _ioptr;
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 0, 0, 0, 0, 0 };

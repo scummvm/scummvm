@@ -28,7 +28,11 @@
 
 namespace Chewy {
 
-struct taf_dateiheader {
+#define D_GR 16
+#define MAXMENUE 50
+#define MAXKNOPF 400
+
+struct TafFileHeader {
 	char id[4] = { 0 };
 	int16 mode = 0;
 	int16 count = 0;
@@ -40,7 +44,7 @@ struct taf_dateiheader {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct taf_imageheader {
+struct TafImageHeader {
 	int16 komp = 0;
 	uint16 width = 0;
 	uint16 height = 0;
@@ -50,14 +54,14 @@ struct taf_imageheader {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct taf_info {
+struct TafInfo {
 	int16 anzahl = 0;
 	byte *palette = nullptr;
 	int16 *korrektur = nullptr;
 	byte **image = nullptr;
 };
 
-struct taf_seq_info {
+struct TafSeqInfo {
 	int16 anzahl = 0;
 	int16 *korrektur = nullptr;
 	byte **image = nullptr;
@@ -71,7 +75,7 @@ struct NewPhead {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct tff_header {
+struct TffHeader {
 	char id[4] = { 0 };
 	uint32 size = 0;
 	int16 count = 0;
@@ -84,11 +88,7 @@ struct tff_header {
 	static constexpr int SIZE() { return 18; }
 };
 
-#define D_GR 16
-#define MAXMENUE 50
-#define MAXKNOPF 400
-
-struct knopf {
+struct Button {
 	int16 typ = 0;
 	int16 enable = 0;
 	int16 x1 = 0;
@@ -108,7 +108,7 @@ struct knopf {
 	}
 };
 
-struct menue {
+struct Menu {
 	int16 nr = 0;
 	int16 disp = 0;
 	int16 typ = 0;
@@ -117,7 +117,7 @@ struct menue {
 	int16 width = 0;
 	int16 height = 0;
 	int16 anzknoepfe = 0;
-	knopf *knopfliste[MAXKNOPF] = { nullptr };
+	Button *knopfliste[MAXKNOPF] = { nullptr };
 	int16 spritenr = 0;
 	char *sprite = nullptr;
 	char *spritesave = nullptr;
@@ -129,10 +129,10 @@ struct menue {
 	}
 };
 
-struct dialogue {
+struct Dialogue {
 	char id[4] = { 0 };
 	int16 anzmenue = 0;
-	menue *menueliste[MAXMENUE] = { nullptr };
+	Menu *menueliste[MAXMENUE] = { nullptr };
 	char menuetaf[D_GR] = { '\0' };
 	char knopftaf[D_GR] = { '\0' };
 
@@ -143,7 +143,7 @@ struct dialogue {
 	}
 };
 
-struct sbi_inst {
+struct SbiInst {
 	char id[4];
 	char name[32];
 	uint8 modmulti;
@@ -162,7 +162,7 @@ struct sbi_inst {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct voc_header {
+struct VocHeader {
 	char id[0x14];
 	uint16 offset;
 	uint8 ver_low;
@@ -172,23 +172,23 @@ struct voc_header {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct maus_info {
+struct MouseInfo {
 	int16 x = 0;
 	int16 y = 0;
 	int16 button = 0;
 };
 
-struct kb_info {
+struct KbdInfo {
 	char key_code = '\0';
 	int scan_code = Common::KEYCODE_INVALID;
 };
 
-struct in_zeiger {
-	maus_info *minfo = nullptr;
-	kb_info *kbinfo = nullptr;
+struct KbdMouseInfo {
+	MouseInfo *minfo = nullptr;
+	KbdInfo *kbinfo = nullptr;
 };
 
-struct mod_inst {
+struct ModInst {
 	char name[22];
 	uint16 laenge;
 	char finetune;
@@ -200,9 +200,9 @@ struct mod_inst {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct mod_header {
+struct ModHeader {
 	char name[20] = { 0 };
-	mod_inst instrument[31];
+	ModInst instrument[31];
 	char pattern_anz = 0;
 	char dummy = 0;
 	char sequenz[128] = { 0 };
@@ -211,9 +211,9 @@ struct mod_header {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct mod15_header {
+struct Mod15Header {
 	char name[20];
-	mod_inst instrument[15];
+	ModInst instrument[15];
 	char pattern_anz;
 	char dummy;
 	char sequenz[128];
@@ -222,7 +222,7 @@ struct mod15_header {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct tmf_inst {
+struct TmfInst {
 	uint8 finetune;
 	uint8 insvol;
 	uint32 repstart;
@@ -232,9 +232,9 @@ struct tmf_inst {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct tmf_header {
+struct TmfHeader {
 	char id[4] = { 0 };
-	tmf_inst instrument[31];
+	TmfInst instrument[31];
 	uint8 lied_len = 0;
 	uint8 pattern_anz = 0;
 	uint8 sequenz[128] = { 0 };
@@ -253,7 +253,7 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct channel_info {
+struct ChannelInfo {
 	uint8 finetune = 0;
 	uint8 volume = 0;
 	uint32 repstart = 0;
@@ -278,7 +278,7 @@ struct VesaInfo {
 	char dummy[10] = { 0 };
 };
 
-struct vesa_status_block {
+struct VesaStatusBlock {
 	uint8 id[4] = { 0 };
 	uint8 ver_low = 0;
 	uint8 ver_high = 0;
@@ -296,11 +296,9 @@ struct vesa_status_block {
 	char OemData[256] = { 0 };
 };
 
-struct vesa_modus_block {
+struct VesaModusBlock {
 	uint16 mflag = 0;
-
 	uint8 fw_flag = 0;
-
 	uint8 fs_flag = 0;
 
 	uint16 stepgr = 0;
@@ -321,7 +319,7 @@ struct vesa_modus_block {
 	char dummy[100] = { 0 };
 };
 
-struct iog_init {
+struct IogInit {
 	char id[4] = { 0 };
 	char save_path[30] = { 0 };
 
@@ -336,7 +334,7 @@ struct iog_init {
 	int16 delay = 0;
 };
 
-struct iot_init {
+struct IotInit {
 	int16 popx = 0;
 	int16 popy = 0;
 	char *m_col = nullptr;
@@ -351,7 +349,7 @@ struct iot_init {
 	int16 delay = 0;
 };
 
-struct mem_info_blk {
+struct MemInfoBlk {
 	uint32 size = 0;
 	uint32 akt_size = 0;
 	uint32 biggest_block = 0;
@@ -381,7 +379,7 @@ struct GedHeader {
 	uint32 Len = 0;
 };
 
-struct cur_blk {
+struct CurBlk {
 	int16 page_off_x = 0;
 	int16 page_off_y = 0;
 	byte *cur_back = nullptr;
@@ -391,13 +389,13 @@ struct cur_blk {
 	bool no_back = false;
 };
 
-struct cur_ani {
+struct CurAni {
 	uint8 ani_anf = 0;
 	uint8 ani_end = 0;
 	int16 delay = 0;
 };
 
-struct fcur_blk {
+struct FCurBlk {
 	int16 page_off_x = 0;
 	int16 page_off_y = 0;
 	uint32 cur_back = 0;
@@ -475,26 +473,6 @@ struct CustomInfo {
 	byte *TempArea = 0;
 	byte *MusicSlot = 0;
 	uint32 MaxMusicSize = 0;
-};
-
-struct real_regs {
-	uint32 edi = 0;
-	uint32 esi = 0;
-	uint32 ebp = 0;
-	uint32 reserved = 0;
-	uint32 ebx = 0;
-	uint32 edx = 0;
-	uint32 ecx = 0;
-	uint32 eax = 0;
-	uint16 flags = 0;
-	uint16 es = 0;
-	uint16 ds = 0;
-	uint16 fs = 0;
-	uint16 gs = 0;
-	uint16 ip = 0;
-	uint16 cs = 0;
-	uint16 sp = 0;
-	uint16 ss = 0;
 };
 
 } // namespace Chewy

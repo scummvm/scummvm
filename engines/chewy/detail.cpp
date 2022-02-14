@@ -167,7 +167,7 @@ Detail::~Detail() {
 
 void Detail::load_rdi(const char *fname_, int16 room_nr) {
 	Common::File f;
-	taf_info *tmprdi = _rdi.dptr;
+	TafInfo *tmprdi = _rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
 		if (_rdi_datei_header.load(&f)) {
@@ -231,7 +231,7 @@ void Detail::del_dptr() {
 	}
 }
 
-void Detail::load_taf_tbl(taf_info *fti) {
+void Detail::load_taf_tbl(TafInfo *fti) {
 	if (!fti) {
 		fti = _rdi.dptr;
 	}
@@ -247,16 +247,16 @@ void Detail::load_taf_tbl(taf_info *fti) {
 	}
 }
 
-taf_info *Detail::init_taf_tbl(const char *fname_) {
-	taf_info *Tt = 0;
+TafInfo *Detail::init_taf_tbl(const char *fname_) {
+	TafInfo *Tt = 0;
 	SpriteResource *res = new SpriteResource(_tafName);
 	int16 anz = res->getChunkCount();
-	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(taf_info));
+	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(TafInfo));
 
-	Tt = (taf_info *)tmp;
+	Tt = (TafInfo *)tmp;
 	Tt->anzahl = anz;
 	Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
-	Tt->image = (byte **)(tmp + sizeof(taf_info));
+	Tt->image = (byte **)(tmp + sizeof(TafInfo));
 	memcpy(Tt->korrektur, (byte *)res->getSpriteCorrectionsTable(), Tt->anzahl * 2 * sizeof(int16));
 	Tt->palette = 0;
 
@@ -265,7 +265,7 @@ taf_info *Detail::init_taf_tbl(const char *fname_) {
 	return Tt;
 }
 
-void Detail::del_taf_tbl(taf_info *Tt) {
+void Detail::del_taf_tbl(TafInfo *Tt) {
 	if (!Tt) {
 		Tt = _rdi.dptr;
 	}
@@ -276,7 +276,7 @@ void Detail::del_taf_tbl(taf_info *Tt) {
 	free((char *) Tt);
 }
 
-void Detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
+void Detail::del_taf_tbl(int16 start, int16 anz, TafInfo *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
 	for (int16 i = start; i < start + anz && i < Tt->anzahl; i++) {
@@ -285,7 +285,7 @@ void Detail::del_taf_tbl(int16 start, int16 anz, taf_info *Tt) {
 	}
 }
 
-void Detail::load_taf_seq(int16 spr_nr, int16 spr_anz, taf_info *Tt) {
+void Detail::load_taf_seq(int16 spr_nr, int16 spr_anz, TafInfo *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
 
@@ -371,12 +371,12 @@ int16 *Detail::get_korrektur_tbl() {
 	return ret;
 }
 
-void Detail::init_taf(taf_info *dptr) {
+void Detail::init_taf(TafInfo *dptr) {
 	_rdi.dptr = dptr;
 }
 
-taf_info *Detail::get_taf_info() {
-	taf_info *ret;
+TafInfo *Detail::get_taf_info() {
+	TafInfo *ret;
 	ret = _rdi.dptr;
 	return ret;
 }

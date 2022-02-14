@@ -38,7 +38,7 @@ public:
 
 	uint16 select_pool_item(Stream *stream, uint16 nr);
 	void load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher);
-	uint32 load_tmf(Stream *stream, tmf_header *song);
+	uint32 load_tmf(Stream *stream, TmfHeader *song);
 
 	void load_tff(const char *fname, byte *speicher);
 	void void_load(const char *fname, byte *speicher, uint32 size);

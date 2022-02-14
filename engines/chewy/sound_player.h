@@ -48,7 +48,7 @@ public:
 	void initNoteTable(uint16 sfreq);
 	void initMixMode();
 	void exitMixMode();
-	void playMod(tmf_header *th);
+	void playMod(TmfHeader *th);
 	void stopMod();
 	void continueMusic();
 	void playSequence(int16 startPos, int16 endPos);
