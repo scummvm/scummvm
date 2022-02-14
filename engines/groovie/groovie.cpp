@@ -88,10 +88,11 @@ Common::Error GroovieEngine::run() {
 			SearchMan.add("The 11th Hour Installer", archive);
 	}
 
-	// TODO: remove this when we figure out the potential intermittent save game bug
+	// TODO: remove this default logging when we're done testing?
 	DebugMan.enableDebugChannel(kDebugScript);
 	DebugMan.enableDebugChannel(kDebugScriptvars);
 	DebugMan.enableDebugChannel(kDebugLogic);
+	DebugMan.enableDebugChannel(kDebugVideo);
 	if (gDebugLevel < 0)
 		gDebugLevel = 0;
 

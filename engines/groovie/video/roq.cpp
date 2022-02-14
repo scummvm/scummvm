@@ -152,16 +152,20 @@ uint16 ROQPlayer::loadInternal() {
 	// Flags:
 	// - 2 For overlay videos, show the whole video
 	// - 14 Manual flag indication alternate motion copy decoder
+	bool oldOverlay = _flagOverlay;
 	_flagNoPlay = ((_flags & (1 << 1)) != 0);
 	_flagOverlay = ((_flags & (1 << 2)) != 0);
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
 
 	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
-		dumpAllSurfaces();
+		dumpAllSurfaces("loadInternal");
 	}
 
 	if (!_flagOverlay && _flagNoPlay) {
+		// Clandestiny's bricks puzzle needs this copy to bg
+		if(oldOverlay && _overBuf->w && _vm->getEngineVersion() == kGroovieCDY)
+			_bg->copyFrom(*_overBuf);
 		clearOverlay();
 	}
 
@@ -214,6 +218,9 @@ uint16 ROQPlayer::loadInternal() {
 
 void ROQPlayer::clearOverlay() {
 	debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
+	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		dumpAllSurfaces("clearOverlay");
+	}
 	if (_overBuf->w) {
 		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
 	}
@@ -297,7 +304,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 #endif
 }
 
-void ROQPlayer::dumpAllSurfaces() {
+void ROQPlayer::dumpAllSurfaces(const Common::String funcname) {
 	TimeDate date;
 	int curMonth;
 	g_system->getTimeAndDate(date, true);
@@ -307,13 +314,15 @@ void ROQPlayer::dumpAllSurfaces() {
 													  date.tm_year + 1900, curMonth, date.tm_mday,
 													  date.tm_hour, date.tm_min, date.tm_sec, millis);
 
-	writeImage(timestamp + " lockScreen", *_vm->_system->lockScreen());
+	debugC(kDebugVideo, "%s %s dumpAllSurfaces", timestamp.c_str(), funcname.c_str());
+
+	writeImage(timestamp + " lockScreen " + funcname, *_vm->_system->lockScreen());
 	_vm->_system->unlockScreen();
-	writeImage(timestamp + " _bg", *_bg);
-	writeImage(timestamp + " _currBuf", *_currBuf);
-	writeImage(timestamp + " _overBuf", *_overBuf);
-	writeImage(timestamp + " _prevBuf", *_prevBuf);
-	writeImage(timestamp + " _screen", *_screen);
+	writeImage(timestamp + " _bg " + funcname, *_bg);
+	writeImage(timestamp + " _currBuf " + funcname, *_currBuf);
+	writeImage(timestamp + " _overBuf " + funcname, *_overBuf);
+	writeImage(timestamp + " _prevBuf " + funcname, *_prevBuf);
+	writeImage(timestamp + " _screen " + funcname, *_screen);
 	while (g_system->getMillis() == millis) {
 		g_system->delayMillis(1); // make sure we get a new timestamp every time
 	}
@@ -405,7 +414,7 @@ void ROQPlayer::buildShowBuf() {
 	_dirty = false;
 
 	if (gDebugLevel >= 9 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
-		dumpAllSurfaces();
+		dumpAllSurfaces("buildShowBuf");
 	}
 
 	// On the first frame, copy from the current buffer to the prev buffer
@@ -444,9 +453,9 @@ bool ROQPlayer::playFrameInternal() {
 		_syst->updateScreen();
 
 		// TODO: For overlay videos, set the background buffer when the video ends
-		if (_alpha && (!_flagOverlay || _file->eos())) {
-			//_bg->copyFrom(*_fg);
-		}
+		/*if (_alpha && (!_flagOverlay || _file->eos())) {
+			_bg->copyFrom(*_screen);
+		}*/
 
 		// Clear the dirty flag
 		_dirty = false;
@@ -984,10 +993,12 @@ void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text
 void ROQPlayer::copyfgtobg(uint8 arg) {
 	// TODO: the arg isn't handled yet
 	// but since we're doing a full redraw of all layers we might not need to care about the arg
-	debugC(2, kDebugVideo, "Groovie::ROQ: copyfgtobg (0x%02X)", arg);
+	debugC(1, kDebugVideo, "Groovie::ROQ: copyfgtobg (0x%02X)", arg);
 
 	redrawRestoreArea(_screen->h == 480 ? 0 : 80, true);
+	_screen->copyFrom(*_bg);
 	_vm->_system->updateScreen();
+	clearOverlay();
 }
 
 ROQSoundPlayer::ROQSoundPlayer(GroovieEngine *vm) : ROQPlayer(vm) {
