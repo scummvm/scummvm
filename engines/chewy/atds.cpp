@@ -299,21 +299,21 @@ void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 	_ssi[nr] = ssinit[0];
 }
 
-Stream *Atdsys::pool_handle(const char *fname_, const char *fmode) {
-	Stream *handle = chewy_fopen(fname_, fmode);
+Stream *Atdsys::pool_handle(const char *fname, const char *fmode) {
+	Stream *handle = chewy_fopen(fname, fmode);
 	if (handle) {
 		_atdshandle[ATDS_HANDLE] = handle;
 	} else {
-		error("Error reading from %s", fname_);
+		error("Error reading from %s", fname);
 	}
 
 	return handle;
 }
 
-void Atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
+void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead Ch;
-	char *tmp_adr = atds_adr(fname_, chunk_start, chunk_anz);
+	char *tmp_adr = atds_adr(fname, chunk_start, chunk_anz);
 	if (!_G(modul)) {
 		if (rs) {
 			_atdshandle[mode] = rs;
@@ -325,7 +325,7 @@ void Atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 				if (!Ch.load(rs)) {
-					error("Error reading from %s", fname_);
+					error("Error reading from %s", fname);
 				} else {
 					free(_invUseMem);
 					_invUseMem = (char *)MALLOC(Ch.size + 3l);
@@ -333,7 +333,7 @@ void Atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					if (!_G(modul)) {
 						if (Ch.size) {
 							if (!rs->read(_invUseMem, Ch.size)) {
-								error("Error reading from %s", fname_);
+								error("Error reading from %s", fname);
 							} else
 								crypt(_invUseMem, Ch.size);
 						}
@@ -343,20 +343,20 @@ void Atdsys::set_handle(const char *fname_, int16 mode, Stream *handle, int16 ch
 					}
 				}
 				break;
-
 			}
 		}
-	} else
-		error("Error reading from %s", fname_);
+	} else {
+		error("Error reading from %s", fname);
+	}
 }
 
-void Atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
+void Atdsys::open_handle(const char *fname, const char *fmode, int16 mode) {
 	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
-		tmp_adr = atds_adr(fname_, 0, 20000);
+		tmp_adr = atds_adr(fname, 0, 20000);
 	if (!_G(modul)) {
-		Stream *stream = chewy_fopen(fname_, fmode);
+		Stream *stream = chewy_fopen(fname, fmode);
 		if (stream) {
 			close_handle(mode);
 			_atdshandle[mode] = stream;
@@ -375,7 +375,7 @@ void Atdsys::open_handle(const char *fname_, const char *fmode, int16 mode) {
 				break;
 			}
 		} else {
-			error("Error reading from %s", fname_);
+			error("Error reading from %s", fname);
 		}
 	}
 }
@@ -396,9 +396,9 @@ void Atdsys::close_handle(int16 mode) {
 	_atdsmem[mode] = nullptr;
 }
 
-char *Atdsys::atds_adr(const char *fname_, int16 chunk_start, int16 chunk_anz) {
+char *Atdsys::atds_adr(const char *fname, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr = nullptr;
-	uint32 size = _G(mem)->file->get_poolsize(fname_, chunk_start, chunk_anz);
+	uint32 size = _G(mem)->file->get_poolsize(fname, chunk_start, chunk_anz);
 	if (size) {
 		tmp_adr = (char *)MALLOC(size + 3l);
 	}
@@ -459,8 +459,8 @@ void Atdsys::save_ads_header(int16 dia_nr) {
 	}
 }
 
-void Atdsys::crypt(char *txt_, uint32 size) {
-	uint8 *sp = (uint8 *)txt_;
+void Atdsys::crypt(char *txt, uint32 size) {
+	uint8 *sp = (uint8 *)txt;
 	for (uint32 i = 0; i < size; i++) {
 		*sp = -(*sp);
 		++sp;
@@ -757,8 +757,8 @@ char *Atdsys::ats_search_block(int16 txt_mode, char *txt_adr) {
 	return strP;
 }
 
-void Atdsys::ats_search_nr(int16 txt_nr, char **str_) {
-	char *start_str = *str_;
+void Atdsys::ats_search_nr(int16 txt_nr, char **str) {
+	char *start_str = *str;
 
 	bool done1 = false;
 	while (!done1) {
@@ -768,14 +768,14 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 		if (_atsv.TxtHeader.TxtNr == 0xFEF0 &&
 				_atsv.TxtHeader.AMov == txt_nr) {
 			// Found match
-			*str_ = start_str + AtsTxtHeader::SIZE();
+			*str = start_str + AtsTxtHeader::SIZE();
 
 			if (_atsv.TxtMode) {
-				Common::MemoryReadStream rs2((const byte *)*str_, AtsStrHeader::SIZE());
+				Common::MemoryReadStream rs2((const byte *)*str, AtsStrHeader::SIZE());
 				_atsv.StrHeader.load(&rs2);
 			}
 
-			*str_ += AtsStrHeader::SIZE();
+			*str += AtsStrHeader::SIZE();
 			break;
 		}
 
@@ -792,7 +792,7 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 					++start_str;
 					if (start_str[1] == 0xf && start_str[2] == 0xf && start_str[3] == 0xf) {
 						done1 = done2 = true;
-						*str_ = nullptr;
+						*str = nullptr;
 					} else {
 						done2 = true;
 					}
@@ -802,9 +802,9 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str_) {
 	}
 }
 
-void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_) {
-	char *tmp_str = *str_;
-	char *start_str = *str_;
+void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str) {
+	char *tmp_str = *str;
+	char *start_str = *str;
 	*anz = 0;
 	bool ende = false;
 	int16 count = 0;
@@ -815,7 +815,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 				++*anz;
 			} else if (*tmp_str == ATDS_END_TEXT) {
 				ende = true;
-				*str_ = start_str;
+				*str = start_str;
 				start_str -= AtsStrHeader::SIZE();
 
 				if (_atsv.TxtMode != TXT_MARK_NAME) {
@@ -839,7 +839,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 					ende = false;
 					*anz = 0;
 					*status = count;
-					*str_ = start_str;
+					*str = start_str;
 					start_str -= AtsStrHeader::SIZE();
 					if (_atsv.TxtMode != TXT_MARK_NAME) {
 						Common::MemoryReadStream rs((const byte *)start_str,
@@ -858,7 +858,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str_
 			            tmp_str[2] == (char)BLOCKENDE)) {
 				ende = false;
 				*anz = 0;
-				*str_ = nullptr;
+				*str = nullptr;
 			}
 		}
 
@@ -1042,15 +1042,15 @@ int16 Atdsys::aad_get_status() {
 	return _aadv.StrNr;
 }
 
-int16 Atdsys::aad_get_zeilen(char *str_, int16 *txt_len) {
+int16 Atdsys::aad_get_zeilen(char *str, int16 *txt_len) {
 	*txt_len = 0;
-	char *ptr = str_;
+	char *ptr = str;
 	int16 zeilen = 0;
-	while (*str_ != ATDS_END_TEXT) {
-		if (*str_++ == 0)
+	while (*str != ATDS_END_TEXT) {
+		if (*str++ == 0)
 			++zeilen;
 	}
-	*txt_len = (str_ - ptr) - 1;
+	*txt_len = (str - ptr) - 1;
 
 	return zeilen;
 }
