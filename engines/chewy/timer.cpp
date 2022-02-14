@@ -23,7 +23,7 @@
 #include "common/textconsole.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/timer.h"
 
 namespace Chewy {

@@ -21,7 +21,7 @@
 
 #include "chewy/detail.h"
 #include "chewy/file.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/sound.h"
 #include "chewy/resource.h"
 

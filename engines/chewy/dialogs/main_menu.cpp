@@ -26,7 +26,7 @@
 #include "chewy/dialogs/credits.h"
 #include "chewy/dialogs/files.h"
 #include "chewy/events.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/ngshext.h"
 

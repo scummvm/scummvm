@@ -13,7 +13,7 @@ MODULE_OBJS = \
 	file.o \
 	flic.o \
 	gedclass.o \
-	global.o \
+	globals.o \
 	inits.o \
 	io_game.o \
 	m_event.o \

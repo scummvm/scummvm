@@ -27,7 +27,7 @@
 #include "chewy/chewy.h"
 #include "chewy/debugger.h"
 #include "chewy/events.h"
-#include "chewy/global.h"
+#include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
