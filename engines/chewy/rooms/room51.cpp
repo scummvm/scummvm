@@ -195,9 +195,9 @@ void Room51::setup_func() {
 			y = 118;
 		}
 
-		if (HowardMov && flags.ExitMov) {
+		if (_G(HowardMov) && flags.ExitMov) {
 			_G(SetUpScreenFunc) = nullptr;
-			HowardMov = 0;
+			_G(HowardMov) = 0;
 			auto_move(9, P_HOWARD);
 		} else {
 			go_auto_xy(x, y, P_HOWARD, ANI_GO);

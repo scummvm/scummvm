@@ -145,7 +145,7 @@ void MainMenu::animate() {
 	if (ani_timer->TimeFlag) {
 		uhr->reset_timer(0, 0);
 		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
-		spieler_vector->Delay = _G(spieler).DelaySpeed + spz_delay[0];
+		spieler_vector->Delay = _G(spieler).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
 		det->set_global_delay(_G(spieler).DelaySpeed);
 	}
@@ -279,11 +279,11 @@ void MainMenu::playGame() {
 
 void MainMenu::savePersonAni() {
 	for (int i = 0; i < MAX_PERSON; ++i) {
-		_personAni[i] = PersonAni[i];
-		PersonAni[i] = -1;
+		_personAni[i] = _G(PersonAni)[i];
+		_G(PersonAni)[i] = -1;
 
-		delete PersonTaf[i];
-		PersonTaf[i] = nullptr;
+		delete _G(PersonTaf)[i];
+		_G(PersonTaf)[i] = nullptr;
 	}
 }
 

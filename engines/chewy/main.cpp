@@ -81,8 +81,8 @@ void alloc_buffers() {
 void free_buffers() {
 	det->del_dptr();
 	for (int16 i = 0; i < MAX_PERSON; i++)
-		free((char *)PersonTaf[i]);
-	free((char *)spz_tinfo);
+		free((char *)_G(PersonTaf)[i]);
+	free((char *)_G(spz_tinfo));
 	free(_G(font6x8));
 	free(_G(font8x8));
 	free(_G(spblende));
@@ -533,7 +533,7 @@ void set_up_screen(SetupScreenMode mode) {
 	if (ani_timer[0].TimeFlag) {
 		uhr->reset_timer(0, 0);
 		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
-		spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed + spz_delay[P_CHEWY];
+		spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[P_CHEWY];
 		_G(FrameSpeed) = 0;
 		det->set_global_delay(_G(spieler).DelaySpeed);
 	}
@@ -1523,7 +1523,7 @@ int16 is_mouse_person(int16 x, int16 y) {
 				check = false;
 			else {
 				check = true;;
-				if (!spz_ani[i]) {
+				if (!_G(spz_ani)[i]) {
 					switch (i) {
 					case P_CHEWY:
 						xy = (int16
@@ -1535,12 +1535,12 @@ int16 is_mouse_person(int16 x, int16 y) {
 						if (_G(spieler).PersonRoomNr[i] !=
 						        _G(spieler).PersonRoomNr[P_CHEWY])
 							check = false;
-						xy = (int16 *)PersonTaf[i]->image[PersonSpr[i][spieler_vector[i].PhNr]];
+						xy = (int16 *)_G(PersonTaf)[i]->image[_G(PersonSpr)[i][spieler_vector[i].PhNr]];
 						break;
 
 					}
 				} else
-					xy = (int16 *)spz_tinfo->image[spz_spr_nr[spieler_vector[i].PhNr]];
+					xy = (int16 *)_G(spz_tinfo)->image[_G(spz_spr_nr)[spieler_vector[i].PhNr]];
 				if (check) {
 					if (x + _G(spieler).scrollx >= spieler_vector[i].Xypos[0] &&
 					        x + _G(spieler).scrollx <= spieler_vector[i].Xypos[0] + xy[0] + spieler_vector[i].Xzoom &&
@@ -2032,7 +2032,7 @@ int16 is_chewy_busy() {
 				if (!mov->auto_go_status()) {
 					if (!spieler_vector[P_CHEWY].Count) {
 						if (!flags.ExitMov) {
-							if (!spz_ani[P_CHEWY]) {
+							if (!_G(spz_ani)[P_CHEWY]) {
 								ret = false;
 							}
 						}

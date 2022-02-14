@@ -158,7 +158,7 @@ void sprite_engine() {
 
 		case ZOBJ_CHEWY:
 			if (!_G(spieler).PersonHide[P_CHEWY]) {
-				if (!spz_ani[P_CHEWY]) {
+				if (!_G(spz_ani)[P_CHEWY]) {
 					spr_nr = _G(chewy_ph)[spieler_vector[P_CHEWY].Phase * 8 + spieler_vector[P_CHEWY].PhNr];
 					x = spieler_mi[P_CHEWY].XyzStart[0] + chewy_kor[spr_nr * 2] - _G(spieler).scrollx;
 					y = spieler_mi[P_CHEWY].XyzStart[1] + chewy_kor[spr_nr * 2 + 1] - _G(spieler).scrolly;
@@ -170,17 +170,17 @@ void sprite_engine() {
 					                spieler_vector[P_CHEWY].Yzoom,
 					                _G(scr_width));
 				} else {
-					spr_nr = spz_spr_nr[spieler_vector[P_CHEWY].PhNr];
-					x = spieler_mi[P_CHEWY].XyzStart[0] + spz_tinfo->korrektur[spr_nr * 2] -
+					spr_nr = _G(spz_spr_nr)[spieler_vector[P_CHEWY].PhNr];
+					x = spieler_mi[P_CHEWY].XyzStart[0] + _G(spz_tinfo)->korrektur[spr_nr * 2] -
 					    _G(spieler).scrollx;
-					y = spieler_mi[P_CHEWY].XyzStart[1] + spz_tinfo->korrektur[spr_nr * 2 + 1] -
+					y = spieler_mi[P_CHEWY].XyzStart[1] + _G(spz_tinfo)->korrektur[spr_nr * 2 + 1] -
 					    _G(spieler).scrolly;
 					calc_zoom(spieler_mi[P_CHEWY].XyzStart[1],
 					          (int16)room->_roomInfo->ZoomFak,
 					          (int16)room->_roomInfo->ZoomFak,
 					          &spieler_vector[P_CHEWY]);
 
-					_G(out)->scale_set(spz_tinfo->image[spr_nr], x, y,
+					_G(out)->scale_set(_G(spz_tinfo)->image[spr_nr], x, y,
 					                spieler_vector[P_CHEWY].Xzoom,
 					                spieler_vector[P_CHEWY].Yzoom,
 					                _G(scr_width));
@@ -192,12 +192,12 @@ void sprite_engine() {
 		case ZOBJ_NICHELLE:
 			p_nr = _G(z_obj_sort)[min_zeiger].ObjArt - 6;
 			if (!_G(spieler).PersonHide[p_nr]) {
-				if (!spz_ani[p_nr]) {
-					ts_info = PersonTaf[p_nr];
-					spr_nr = PersonSpr[p_nr][spieler_vector[p_nr].PhNr];
+				if (!_G(spz_ani)[p_nr]) {
+					ts_info = _G(PersonTaf)[p_nr];
+					spr_nr = _G(PersonSpr)[p_nr][spieler_vector[p_nr].PhNr];
 				} else {
-					ts_info = spz_tinfo;
-					spr_nr = spz_spr_nr[spieler_vector[p_nr].PhNr];
+					ts_info = _G(spz_tinfo);
+					spr_nr = _G(spz_spr_nr)[spieler_vector[p_nr].PhNr];
 				}
 
 				x = spieler_mi[p_nr].XyzStart[0] +
@@ -917,21 +917,21 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 		} else {
 			switch (mi->Id) {
 			case CHEWY_OBJ:
-				if (!spz_ani[P_CHEWY])
+				if (!_G(spz_ani)[P_CHEWY])
 					calc_person_end_ani(om, P_CHEWY);
 				else
 					calc_person_spz_ani(om);
 				break;
 
 			case HOWARD_OBJ:
-				if (!spz_ani[P_HOWARD])
+				if (!_G(spz_ani)[P_HOWARD])
 					calc_person_end_ani(om, P_HOWARD);
 				else
 					calc_person_spz_ani(om);
 				break;
 
 			case NICHELLE_OBJ:
-				if (!spz_ani[P_NICHELLE])
+				if (!_G(spz_ani)[P_NICHELLE])
 					calc_person_end_ani(om, P_NICHELLE);
 				else
 					calc_person_spz_ani(om);
@@ -1060,7 +1060,7 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 
 void start_spz_wait(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 	if (start_spz(ani_id, count, reverse, p_nr)) {
-		while (spz_count && !SHOULD_QUIT)
+		while (_G(spz_count) && !SHOULD_QUIT)
 			set_up_screen(DO_SETUP);
 	}
 }
@@ -1073,8 +1073,8 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 	bool ret = false;
 	if (!flags.SpzAni) {
 		flags.SpzAni = true;
-		spz_ani[p_nr] = true;
-		spz_p_nr = p_nr;
+		_G(spz_ani)[p_nr] = true;
+		_G(spz_p_nr) = p_nr;
 		spr_start = SPZ_ANI_PH[ani_id][0];
 		spr_anz = SPZ_ANI_PH[ani_id][1];
 		if (person_end_phase[p_nr] == P_RIGHT) {
@@ -1082,28 +1082,28 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 			spr_start += CH_SPZ_OFFSET;
 		}
 
-		if (ani_id != spz_akt_id) {
-			if (spz_tinfo)
-				free((char *)spz_tinfo);
-			spz_akt_id = ani_id;
-			spz_tinfo = _G(mem)->taf_seq_adr(spr_start, spr_anz);
+		if (ani_id != _G(spz_akt_id)) {
+			if (_G(spz_tinfo))
+				free((char *)_G(spz_tinfo));
+			_G(spz_akt_id) = ani_id;
+			_G(spz_tinfo) = _G(mem)->taf_seq_adr(spr_start, spr_anz);
 		}
 
 		for (i = 0; i < spr_anz; i++) {
 			if (!reverse)
-				spz_spr_nr[i] = i;
+				_G(spz_spr_nr)[i] = i;
 			else
-				spz_spr_nr[i] = spr_anz - i - 1;
+				_G(spz_spr_nr)[i] = spr_anz - i - 1;
 		}
 
-		spz_start = spr_start;
-		spz_delay[p_nr] = SpzDelay;
+		_G(spz_start) = spr_start;
+		_G(spz_delay)[p_nr] = _G(SpzDelay);
 		spieler_vector[p_nr].Count = 0;
 		spieler_vector[p_nr].PhNr = 0;
 		spieler_vector[p_nr].PhAnz = spr_anz;
-		spieler_vector[p_nr].Delay = _G(spieler).DelaySpeed + spz_delay[p_nr];
+		spieler_vector[p_nr].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[p_nr];
 		spieler_vector[p_nr].DelayCount = 0;
-		spz_count = count;
+		_G(spz_count) = count;
 		flags.MausLinks = true;
 		ret = true;
 	}
@@ -1114,12 +1114,12 @@ void calc_person_spz_ani(ObjMov *om) {
 	if (om->PhNr < om->PhAnz - 1)
 		++om->PhNr;
 	else {
-		--spz_count;
-		if (spz_count > 0) {
+		--_G(spz_count);
+		if (_G(spz_count) > 0) {
 			om->PhNr = 0;
-			om->Delay = _G(spieler).DelaySpeed + spz_delay[spz_p_nr];
+			om->Delay = _G(spieler).DelaySpeed + _G(spz_delay)[_G(spz_p_nr)];
 		} else {
-			if (spz_count != 255)
+			if (_G(spz_count) != 255)
 				stop_spz();
 		}
 	}
@@ -1129,28 +1129,28 @@ void stop_spz() {
 	if (flags.SpzAni) {
 		flags.SpzAni = false;
 		flags.MausLinks = false;
-		spz_ani[spz_p_nr] = false;
-		spieler_vector[spz_p_nr].Count = 0;
-		spieler_vector[spz_p_nr].PhNr = 0;
-		set_person_spr(person_end_phase[spz_p_nr], spz_p_nr);
-		spz_delay[spz_p_nr] = 0;
+		_G(spz_ani)[_G(spz_p_nr)] = false;
+		spieler_vector[_G(spz_p_nr)].Count = 0;
+		spieler_vector[_G(spz_p_nr)].PhNr = 0;
+		set_person_spr(person_end_phase[_G(spz_p_nr)], _G(spz_p_nr));
+		_G(spz_delay)[_G(spz_p_nr)] = 0;
 	}
 }
 
 void set_spz_delay(int16 delay) {
-	SpzDelay = delay;
+	_G(SpzDelay) = delay;
 }
 
 void load_person_ani(int16 ani_id, int16 p_nr) {
 	int16 ani_start;
 	short ani_anz;
-	if (PersonAni[p_nr] != ani_id) {
+	if (_G(PersonAni)[p_nr] != ani_id) {
 		ani_start = SPZ_ANI_PH[ani_id][0];
 		ani_anz = SPZ_ANI_PH[ani_id][1];
-		PersonAni[p_nr] = ani_id;
-		if (PersonTaf[p_nr])
-			free((char *)PersonTaf[p_nr]);
-		PersonTaf[p_nr] = _G(mem)->taf_seq_adr(ani_start, ani_anz);
+		_G(PersonAni)[p_nr] = ani_id;
+		if (_G(PersonTaf)[p_nr])
+			free((char *)_G(PersonTaf)[p_nr]);
+		_G(PersonTaf)[p_nr] = _G(mem)->taf_seq_adr(ani_start, ani_anz);
 		spieler_vector[p_nr].PhNr = 0;
 		spieler_vector[p_nr].PhAnz = ani_anz;
 	}
@@ -1173,17 +1173,17 @@ void calc_person_ani() {
 
 			case P_HOWARD:
 			case P_NICHELLE:
-				if (!spz_ani[p_nr]) {
+				if (!_G(spz_ani)[p_nr]) {
 					for (i = 0; i < 8; i++)
-						PersonSpr[p_nr][i] = i;
+						_G(PersonSpr)[p_nr][i] = i;
 
 					if (!spieler_vector[p_nr].Count &&
 					        _G(auto_p_nr) != p_nr) {
 						ani_nr = (int16)p_ani[p_nr - 1][4] + (person_end_phase[p_nr] * 4);
 
 						spieler_vector[p_nr].PhAnz = 5;
-						PersonSpr[p_nr][3] = 1;
-						PersonSpr[p_nr][4] = 0;
+						_G(PersonSpr)[p_nr][3] = 1;
+						_G(PersonSpr)[p_nr][4] = 0;
 					} else {
 						switch (spieler_vector[p_nr].Phase) {
 						case CH_LEFT_NO:

@@ -79,7 +79,7 @@ void Room95::setup_func() {
 	else
 		destX = 536;
 
-	if (HowardMov == 1) {
+	if (_G(HowardMov) == 1) {
 		destX = 473;
 		destY = 83;
 	}

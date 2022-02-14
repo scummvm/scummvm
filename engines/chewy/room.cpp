@@ -501,7 +501,7 @@ void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {
 }
 
 void load_chewy_taf(int16 taf_nr) {
-	if (AkChewyTaf != taf_nr) {
+	if (_G(AkChewyTaf) != taf_nr) {
 		if (chewy) {
 			free((char *)chewy);
 			chewy = nullptr;
@@ -560,7 +560,7 @@ void load_chewy_taf(int16 taf_nr) {
 		}
 		if (fname_ != NULL) {
 			_G(spieler).ChewyAni = taf_nr;
-			AkChewyTaf = taf_nr;
+			_G(AkChewyTaf) = taf_nr;
 			chewy = _G(mem)->taf_adr(fname_);
 			chewy_kor = chewy->korrektur;
 		}
