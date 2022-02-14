@@ -63,12 +63,12 @@ void Room91::entry() {
 		_G(spieler).flags34_4 = true;
 		start_aad_wait(502, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		det->start_detail(0, 255, false);
+		_G(det)->start_detail(0, 255, false);
 
 		for (int i = 0; i < 3; ++i) {
-			_G(timer_nr)[i] = room->set_timer(5 + i, 3 + (2 * i));
+			_G(timer_nr)[i] = _G(room)->set_timer(5 + i, 3 + (2 * i));
 		}
-		det->start_detail(5, 2, false);
+		_G(det)->start_detail(5, 2, false);
 	}
 
 	show_cur();
@@ -114,17 +114,17 @@ void Room91::setup_func() {
 		_click = 1;
 		const int aniNr = 1 + (minfo.y <= 100 ? 1 : 0);
 		hide_cur();
-		det->stop_detail(0);
+		_G(det)->stop_detail(0);
 		start_detail_wait(aniNr, 1, ANI_VOR);
 		_click = oldClick;
-		det->start_detail(0, 255, false);
-		det->start_detail(aniNr + 2, 1, false);
-		det->start_detail(7, 1, false);
+		_G(det)->start_detail(0, 255, false);
+		_G(det)->start_detail(aniNr + 2, 1, false);
+		_G(det)->start_detail(7, 1, false);
 		start_spz_wait(62, 1, false, P_HOWARD);
 		_G(spieler).SVal3 += 1;
 		show_cur();
 		if (_G(spieler).SVal3 == 4) {
-			det->stop_detail(0);
+			_G(det)->stop_detail(0);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			hide_cur();
 			auto_move(1, P_CHEWY);

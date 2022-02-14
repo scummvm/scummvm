@@ -65,15 +65,15 @@ void Room90::entry(int16 eib_nr) {
 	_G(HowardMov) = 1;
 
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
-		det->set_detail_pos(12, 329, 15);
-		det->start_detail(12, 255, false);
+		_G(det)->set_detail_pos(12, 329, 15);
+		_G(det)->start_detail(12, 255, false);
 		g_engine->_sound->playSound(12, 0);
 		g_engine->_sound->playSound(12);
 	}
 
 	if (_G(spieler).flags33_40 && !_G(spieler).flags34_10) {
-		det->show_static_spr(4);
-		det->show_static_spr(5);
+		_G(det)->show_static_spr(4);
+		_G(det)->show_static_spr(5);
 	}
 
 	if (!_G(spieler).flags33_10) {
@@ -82,7 +82,7 @@ void Room90::entry(int16 eib_nr) {
 		go_auto_xy(-20, 121, P_HOWARD, ANI_GO);
 		auto_move(1, P_CHEWY);
 		start_detail_frame(2, 1, ANI_VOR, 3);
-		det->start_detail(0, 1, false);
+		_G(det)->start_detail(0, 1, false);
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(spieler).flags33_10 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
@@ -122,22 +122,22 @@ void Room90::setup_func() {
 		_delay = _G(spieler).DelaySpeed - 1;
 		for (int i = 0; i < 8; ++i) {
 			if (_G(spieler).r90_Array187030[i][0] == 1) {
-				int destY = Adi[i + 4].y;
-				int destX = Adi[i + 4].x;
+				int destY = _G(Adi)[i + 4].y;
+				int destX = _G(Adi)[i + 4].x;
 				if (i >= 5) {
 					destX += _G(spieler).r90_Array187030[i][1];
 					if (destX > 540) {
 						_G(spieler).r90_Array187030[i][0] = 0;
-						det->stop_detail(i + 4);
+						_G(det)->stop_detail(i + 4);
 					}
 				} else {
 					destX -= _G(spieler).r90_Array187030[i][1];
 					if (destX < -30) {
 						_G(spieler).r90_Array187030[i][0] = 0;
-						det->stop_detail(i + 4);
+						_G(det)->stop_detail(i + 4);
 					}
 				}
-				det->set_detail_pos(i + 4, destX, destY);
+				_G(det)->set_detail_pos(i + 4, destX, destY);
 			} else {
 				++_G(spieler).r90_Array187030[i][2];
 				if (_G(spieler).r90_Array187030[i][2] < _G(spieler).r90_Array187030[i][3])
@@ -150,10 +150,10 @@ void Room90::setup_func() {
 				else
 					destX = 500;
 
-				det->set_detail_pos(i + 4, destX, Adi[i + 4].y);
+				_G(det)->set_detail_pos(i + 4, destX, _G(Adi)[i + 4].y);
 				
 				if (!_G(spieler).flags34_40)
-					det->start_detail(i + 4, 255, false);
+					_G(det)->start_detail(i + 4, 255, false);
 			}
 		}
 	}
@@ -256,8 +256,8 @@ int Room90::getHubcaps() {
 	_G(spieler).flags35_1 = true;
 	auto_move(4, P_CHEWY);
 	auto_scroll(176, 0);
-	det->set_detail_pos(12, 495, 15);
-	det->start_detail(12, 255, false);
+	_G(det)->set_detail_pos(12, 495, 15);
+	_G(det)->start_detail(12, 255, false);
 	g_engine->_sound->playSound(12, 0);
 	g_engine->_sound->playSound(12);
 
@@ -265,15 +265,15 @@ int Room90::getHubcaps() {
 
 	while (destX > 329) {
 		destX -= 2;
-		det->set_detail_pos(12, destX, 15);
+		_G(det)->set_detail_pos(12, destX, 15);
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 
 	start_aad_wait(517, -1);
 	_G(spieler).flags35_1 = false;
-	atds->set_steuer_bit(517, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->del_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(517, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
 	show_cur();
 
 	return 1;
@@ -293,24 +293,24 @@ int Room90::shootControlUnit() {
 	flags.NoScroll = true;
 	auto_scroll(176, 0);
 	start_detail_wait(13, 1, ANI_VOR);
-	flc->set_custom_user_function(Room90::proc5);
+	_G(flc)->set_custom_user_function(Room90::proc5);
 	flags.NoPalAfterFlc = true;
 	flic_cut(107, CFO_MODE);
-	flc->remove_custom_user_function();
+	_G(flc)->remove_custom_user_function();
 	_G(spieler).scrollx = 0;
 	set_person_pos(76, 145, P_CHEWY, P_LEFT);
 	_G(maus_links_click) = false;
-	det->show_static_spr(4);
-	det->show_static_spr(5);
+	_G(det)->show_static_spr(4);
+	_G(det)->show_static_spr(5);
 	set_up_screen(NO_SETUP);
 	_G(fx_blend) = BLEND3;
 	spieler_mi[P_CHEWY].Mode = false;
 	flags.NoScroll = false;
 	_G(HowardMov) = 0;
 	_G(spieler).flags33_40 = true;
-	det->stop_detail(12);
-	atds->set_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->del_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(det)->stop_detail(12);
+	_G(atds)->set_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
 	flags.ZoomMov = true;
 
 	show_cur();
@@ -318,7 +318,7 @@ int Room90::shootControlUnit() {
 }
 
 int16 Room90::proc5(int16 key) {
-	det->plot_static_details(_G(spieler).scrollx, 0, 3, 3);
+	_G(det)->plot_static_details(_G(spieler).scrollx, 0, 3, 3);
 	
 	return 0;
 }
@@ -337,12 +337,12 @@ int Room90::useSurimyOnWreck() {
 	flic_cut(109, CFO_MODE);
 	register_cutscene(29);
 
-	det->hide_static_spr(4);
-	det->hide_static_spr(5);
+	_G(det)->hide_static_spr(4);
+	_G(det)->hide_static_spr(5);
 	_G(spieler).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
 	start_aad_wait(519, -1);
-	atds->set_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
 
 	show_cur();
 	return 1;

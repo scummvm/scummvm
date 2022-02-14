@@ -36,13 +36,13 @@ void Room28::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).R28RKuerbis)
-		det->show_static_spr(6);
+		_G(det)->show_static_spr(6);
 
 	if (_G(spieler).R28Briefkasten) {
-		det->show_static_spr(8);
-		det->show_static_spr(9);
+		_G(det)->show_static_spr(8);
+		_G(det)->show_static_spr(9);
 	} else {
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28) {
@@ -72,14 +72,14 @@ void Room28::entry(int16 eib_nr) {
 					wait_show_screen(10);
 					start_aad_wait(194, -1);
 					_G(spieler).room_e_obj[62].Attribut = 255;
-					atds->set_ats_str(208, 1, ATS_DATEI);
+					_G(atds)->set_ats_str(208, 1, ATS_DATEI);
 					flags.NoScroll = true;
 
 					auto_scroll(0, 0);
-					flc->set_flic_user_function(cut_serv1);
+					_G(flc)->set_flic_user_function(cut_serv1);
 					flic_cut(FCUT_064, CFO_MODE);
-					flc->remove_flic_user_function();
-					det->show_static_spr(6);
+					_G(flc)->remove_flic_user_function();
+					_G(det)->show_static_spr(6);
 
 					if (!_G(spieler).R40TeilKarte) {
 						_G(out)->ausblenden(0);
@@ -110,7 +110,7 @@ void Room28::entry(int16 eib_nr) {
 					flic_cut(FCUT_063, CFO_MODE);
 					_G(spieler).R28ChewyPump = false;
 					invent_2_slot(K_MASKE_INV);
-					atds->set_ats_str(209, 0, ATS_DATEI);
+					_G(atds)->set_ats_str(209, 0, ATS_DATEI);
 					_G(spieler).room_e_obj[69].Attribut = 255;
 					load_chewy_taf(CHEWY_NORMAL);
 
@@ -170,13 +170,13 @@ void Room28::haendler() {
 	_G(SetUpScreenFunc) = nullptr;
 	_G(spieler).R28ChewyPump = true;
 	del_inventar(K_MASKE_INV);
-	atds->set_ats_str(209, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(209, 1, ATS_DATEI);
 	_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
 	load_chewy_taf(CHEWY_PUMPKIN);
 
 	set_person_pos(480, 113, P_HOWARD, P_RIGHT);
 	set_person_pos(490, 146, P_CHEWY, P_RIGHT);
-	det->set_static_ani(2, -1);
+	_G(det)->set_static_ani(2, -1);
 
 	while (_G(spieler).scrollx < 300) {
 		SHOULD_QUIT_RETURN;
@@ -184,18 +184,18 @@ void Room28::haendler() {
 	}
 
 	start_aad_wait(196, -1);
-	det->del_static_ani(2);
-	det->set_static_ani(3, -1);
+	_G(det)->del_static_ani(2);
+	_G(det)->set_static_ani(3, -1);
 	start_aad_wait(197, -1);
-	det->del_static_ani(3);
-	det->set_static_ani(4, -1);
+	_G(det)->del_static_ani(3);
+	_G(det)->set_static_ani(4, -1);
 	start_aad_wait(198, -1);
 	_G(SetUpScreenFunc) = setup_func;
 	auto_move(4, P_CHEWY);
 	hide_cur();
 	auto_move(3, P_CHEWY);
 	set_person_spr(P_RIGHT, P_CHEWY);
-	det->del_static_ani(4);
+	_G(det)->del_static_ani(4);
 	wait_show_screen(28);
 	start_aad_wait(199, -1);
 	invent_2_slot(DOLLAR175_INV);
@@ -218,24 +218,24 @@ void Room28::use_surimy() {
 		auto_scroll(0, 0);
 		_G(spieler).R28SurimyCar = true;
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		flc->set_flic_user_function(cut_serv2);
+		_G(flc)->set_flic_user_function(cut_serv2);
 		flic_cut(FCUT_055, CFO_MODE);
-		flc->remove_flic_user_function();
-		flc->set_flic_user_function(cut_serv1);
+		_G(flc)->remove_flic_user_function();
+		_G(flc)->set_flic_user_function(cut_serv1);
 		flic_cut(FCUT_056, CFO_MODE);
-		flc->remove_flic_user_function();
+		_G(flc)->remove_flic_user_function();
 		ani_nr = CH_TALK3;
 		dia_nr = 140;
-		atds->set_ats_str(205, 1, ATS_DATEI);
-		atds->set_ats_str(222, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(205, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(222, 1, ATS_DATEI);
 
 	} else {
 		ani_nr = CH_TALK5;
 		dia_nr = 139;
-		obj->calc_rsi_flip_flop(SIB_AUTO_R28);
+		_G(obj)->calc_rsi_flip_flop(SIB_AUTO_R28);
 	}
 
-	obj->calc_all_static_detail();
+	_G(obj)->calc_all_static_detail();
 	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
 	flags.NoScroll = false;
@@ -254,7 +254,7 @@ void Room28::set_pump() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			del_inventar(K_MASKE_INV);
-			det->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+			_G(det)->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
 
 			if (_G(spieler).R28PumpTxt1 < 3) {
 				start_aad(137);
@@ -270,7 +270,7 @@ void Room28::set_pump() {
 			if (_G(spieler).R39TransMensch) {
 				_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
 			} else {
-				atds->set_ats_str(209, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(209, 1, ATS_DATEI);
 			}
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
@@ -301,11 +301,11 @@ void Room28::get_pump() {
 		_G(spieler).R28ChewyPump = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 tmp = (person_end_phase[P_CHEWY] == P_RIGHT) ? 1 : 0;
-		det->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+		_G(det)->set_detail_pos(tmp, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
 		start_detail_wait(tmp, 1, ANI_RUECK);
 
 		invent_2_slot(K_MASKE_INV);
-		atds->set_ats_str(209, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(209, 0, ATS_DATEI);
 		_G(spieler).room_e_obj[69].Attribut = 255;
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		load_chewy_taf(CHEWY_NORMAL);
@@ -328,13 +328,13 @@ int16 Room28::use_breifkasten() {
 		_G(spieler).R28Briefkasten = false;
 		auto_move(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		det->hide_static_spr(8);
-		det->hide_static_spr(9);
-		det->show_static_spr(7);
+		_G(det)->hide_static_spr(8);
+		_G(det)->hide_static_spr(9);
+		_G(det)->show_static_spr(7);
 		auto_move(8, P_CHEWY);
 		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		start_aad_wait(179, -1);
-		atds->set_ats_str(206, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(206, 0, ATS_DATEI);
 		show_cur();
 		invent_2_slot(MANUSKRIPT_INV);
 		_G(spieler).R28Manuskript = true;
@@ -345,9 +345,9 @@ int16 Room28::use_breifkasten() {
 
 int16 Room28::cut_serv1(int16 frame) {
 	if (_G(spieler).R28Briefkasten) {
-		det->plot_static_details(0, 0, 8, 9);
+		_G(det)->plot_static_details(0, 0, 8, 9);
 	} else {
-		det->plot_static_details(0, 0, 7, 7);
+		_G(det)->plot_static_details(0, 0, 7, 7);
 	}
 	return 0;
 }

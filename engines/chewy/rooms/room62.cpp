@@ -39,31 +39,31 @@ void Room62::entry() {
 		hide_cur();
 		_G(spieler).R62FirstEntry = true;
 		set_person_pos(49, 113, P_HOWARD, P_RIGHT);
-		det->start_detail(6, 255, ANI_VOR);
+		_G(det)->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(345, -1);
-		det->stop_detail(6);
-		det->set_static_ani(5, -1);
+		_G(det)->stop_detail(6);
+		_G(det)->set_static_ani(5, -1);
 		go_auto_xy(199, 59, P_HOWARD, ANI_WAIT);
 		set_person_spr(0, P_HOWARD);
-		det->del_static_ani(5);
-		det->start_detail(5, 255, ANI_VOR);
+		_G(det)->del_static_ani(5);
+		_G(det)->start_detail(5, 255, ANI_VOR);
 		start_aad_wait(346, -1);
-		det->stop_detail(5);
-		det->start_detail(6, 255, ANI_VOR);
+		_G(det)->stop_detail(5);
+		_G(det)->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(347, -1);
-		det->stop_detail(6);
+		_G(det)->stop_detail(6);
 		start_detail_wait(7, 1, ANI_VOR);
-		det->set_static_ani(5, -1);
-		det->start_detail(0, 255, ANI_VOR);
+		_G(det)->set_static_ani(5, -1);
+		_G(det)->start_detail(0, 255, ANI_VOR);
 		start_aad_wait(348, -1);
-		det->stop_detail(0);
-		det->del_static_ani(0);
-		det->start_detail(1, 1, ANI_VOR);
+		_G(det)->stop_detail(0);
+		_G(det)->del_static_ani(0);
+		_G(det)->start_detail(1, 1, ANI_VOR);
 		auto_move(0, P_CHEWY);
 		spieler_mi[P_CHEWY].Mode = true;
 		go_auto_xy(160, 240, P_CHEWY, ANI_WAIT);
 		spieler_mi[P_CHEWY].Mode = false;
-		det->del_static_ani(5);
+		_G(det)->del_static_ani(5);
 		start_detail_wait(7, 1, ANI_VOR);
 		show_cur();
 		_G(spieler).R64Moni1Ani = 3;
@@ -72,10 +72,10 @@ void Room62::entry() {
 		_G(spieler).R62TShow = true;
 		switch_room(64);
 	} else {
-		det->del_static_ani(0);
+		_G(det)->del_static_ani(0);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		det->set_static_ani(4, -1);
-		det->set_static_ani(8, -1);
+		_G(det)->set_static_ani(4, -1);
+		_G(det)->set_static_ani(8, -1);
 		_G(r62Delay) = 0;
 		_G(r62TalkAni) = 8;
 
@@ -85,12 +85,12 @@ void Room62::entry() {
 void Room62::setup_func() {
 	if (_G(r62Delay) <= 0 && _G(spieler).R62TShow) {
 		_G(r62Delay) = (_G(spieler).DelaySpeed + 1) * 60;
-		det->stop_detail(_G(r62TalkAni));
+		_G(det)->stop_detail(_G(r62TalkAni));
 		if (_G(r62TalkAni) == 4)
 			_G(r62TalkAni) = 8;
 		else
 			_G(r62TalkAni) = 4;
-		det->start_detail(_G(r62TalkAni), 255, ANI_VOR);
+		_G(det)->start_detail(_G(r62TalkAni), 255, ANI_VOR);
 	} else
 		--_G(r62Delay);
 }
@@ -103,11 +103,11 @@ int16 Room62::use_laura() {
 		auto_move(2, P_CHEWY);
 		auto_scroll(0, 0);
 		_G(SetUpScreenFunc) = nullptr;
-		det->del_static_ani(8);
-		det->stop_detail(8);
+		_G(det)->del_static_ani(8);
+		_G(det)->stop_detail(8);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		det->start_detail(2, 255, ANI_VOR);
-		det->start_detail(6, 255, ANI_VOR);
+		_G(det)->start_detail(2, 255, ANI_VOR);
+		_G(det)->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(399, -1);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flic_cut(FCUT_077, CFO_MODE);

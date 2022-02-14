@@ -47,18 +47,18 @@ void Room76::entry() {
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 
 	if (!_G(spieler).flags29_4) {
-		atds->del_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->del_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->del_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
 
 	} else {
-		det->del_static_ani(2);
+		_G(det)->del_static_ani(2);
 		for (int i = 0; i < 3; ++i)
-			det->hide_static_spr(8 + i);
+			_G(det)->hide_static_spr(8 + i);
 
-		atds->set_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (flags.LoadGame)
@@ -94,8 +94,8 @@ void Room76::setup_func() {
 		return;
 
 	_state = 0;
-	det->start_detail(11, 1, false);
-	det->start_detail(12, 1, false);
+	_G(det)->start_detail(11, 1, false);
+	_G(det)->start_detail(12, 1, false);
 }
 
 void Room76::talk1() {
@@ -127,21 +127,21 @@ void Room76::talk2() {
 
 void Room76::proc3(int diaNr) {
 	start_aad_wait(diaNr, -1);
-	det->del_static_ani(2);
+	_G(det)->del_static_ani(2);
 	start_detail_wait(3, 1, ANI_VOR);
 	start_detail_wait(4, 2, ANI_VOR);
-	det->set_static_ani(2, -1);
+	_G(det)->set_static_ani(2, -1);
 }
 
 void Room76::proc5() {
 	_state = 1;
-	det->del_static_ani(2);
-	det->start_detail(6, 1, false);
+	_G(det)->del_static_ani(2);
+	_G(det)->start_detail(6, 1, false);
 	flags.NoScroll = false;
 	wait_show_screen(15);
 	auto_move(5, P_CHEWY);
-	det->hide_static_spr(10);
-	det->start_detail(13, 1, false);
+	_G(det)->hide_static_spr(10);
+	_G(det)->start_detail(13, 1, false);
 	spieler_mi[P_CHEWY].Mode = true;
 	go_auto_xy(669, 127, P_CHEWY, ANI_WAIT);
 	wait_show_screen(20);
@@ -162,9 +162,9 @@ int Room76::proc6() {
 		auto_move(3, P_CHEWY);
 		proc3(424);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		det->del_static_ani(2);
+		_G(det)->del_static_ani(2);
 		start_detail_wait(5, 1, ANI_VOR);
-		det->set_static_ani(2, -1);
+		_G(det)->set_static_ani(2, -1);
 		start_detail_wait(9, 1, ANI_VOR);
 		start_detail_wait(10, 1, ANI_VOR);
 		show_cur();
@@ -199,10 +199,10 @@ int Room76::proc7() {
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
-		det->set_static_ani(2, -1);
+		_G(det)->set_static_ani(2, -1);
 
 		for (int i = 0; i < 3; ++i)
-			det->show_static_spr(8 + i);
+			_G(det)->show_static_spr(8 + i);
 
 		start_aad_wait(427, -1);
 		show_cur();

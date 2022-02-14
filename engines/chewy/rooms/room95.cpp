@@ -39,7 +39,7 @@ void Room95::entry(int16 eib_nr) {
 	spieler_mi[P_HOWARD].Mode = true;
 
 	if (_G(spieler).flags35_20)
-		det->show_static_spr(10);
+		_G(det)->show_static_spr(10);
 
 	if (flags.LoadGame)
 		return;
@@ -95,7 +95,7 @@ int Room95::proc2() {
 
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(spieler).flags35_20 = true;
-		det->show_static_spr(10);
+		_G(det)->show_static_spr(10);
 
 		show_cur();
 		return 1;

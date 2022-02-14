@@ -39,14 +39,14 @@ static const AniBlock ABLOCK4[2] = {
 
 void Room2::entry() {
 	if (!_G(spieler).R2ElectrocutedBork)
-		det->start_detail(5, 255, ANI_VOR);
+		_G(det)->start_detail(5, 255, ANI_VOR);
 }
 
 void Room2::jump_out_r1(int16 nr) {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(nr, 1, ANI_VOR);
 	set_up_screen(DO_SETUP);
-	det->stop_detail(6);
+	_G(det)->stop_detail(6);
 	set_person_pos(32, 127, P_CHEWY, P_LEFT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	clear_prog_ani();
@@ -55,21 +55,21 @@ void Room2::jump_out_r1(int16 nr) {
 }
 
 void Room2::electrifyWalkway1() {
-	det->start_detail(ANI_5, 255, ANI_VOR);
+	_G(det)->start_detail(ANI_5, 255, ANI_VOR);
 	start_spz(CH_TALK6, 255, false, ANI_VOR);
 	start_aad_wait(49, -1);
-	det->stop_detail(ANI_5);
+	_G(det)->stop_detail(ANI_5);
 
-	det->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
+	_G(det)->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
 	_G(spieler).R2ElectrocutedBork = true;
 	del_inventar(_G(spieler).AkInvent);
 
-	atds->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
-	atds->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
-	atds->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
-	atds->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
-	atds->set_ats_str(11, 1, ATS_DATEI);
+	_G(atds)->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
+	_G(atds)->set_ats_str(11, 1, ATS_DATEI);
 }
 
 void Room2::electrifyWalkway2() {
@@ -79,9 +79,9 @@ void Room2::electrifyWalkway2() {
 
 void Room2::gedAction(int index) {
 	if (index == 0) {
-		det->stop_detail(5);
+		_G(det)->stop_detail(5);
 		if (!_G(spieler).R2ElectrocutedBork)
-			det->start_detail(6, 2, ANI_VOR);
+			_G(det)->start_detail(6, 2, ANI_VOR);
 		else
 			start_ani_block(2, ABLOCK4);
 

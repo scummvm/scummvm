@@ -52,7 +52,7 @@ void Room51::entry() {
 	_G(zoom_mov_fak) = 4;
 
 	if (_G(spieler).flags32_10) {
-		atds->enableEvents(false);
+		_G(atds)->enableEvents(false);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(maus_links_click) = false;
@@ -60,23 +60,23 @@ void Room51::entry() {
 		set_person_pos(34, 120, P_HOWARD, P_RIGHT);
 		set_person_pos(234, 69, P_CHEWY, P_LEFT);
 		_G(SetUpScreenFunc) = setup_func;
-		det->show_static_spr(17);
+		_G(det)->show_static_spr(17);
 		_index = 0;
 		hide_cur();
 
 		for (int i = 0; i < 2; ++i) {
 			_enemyFlag[i] = false;
-			_G(timer_nr)[i] = room->set_timer(i + 9, i * 2 + 6);
+			_G(timer_nr)[i] = _G(room)->set_timer(i + 9, i * 2 + 6);
 		}
 
 		flags.MainInput = false;
 		_flag = false;
 
 	} else {
-		det->hide_static_spr(17);
+		_G(det)->hide_static_spr(17);
 
 		for (int i = 0; i < 2; i++)
-			det->start_detail(3 + i, 1, ANI_VOR);
+			_G(det)->start_detail(3 + i, 1, ANI_VOR);
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
@@ -101,7 +101,7 @@ void Room51::entry() {
 }
 
 void Room51::xit(int16 eib_nr) {
-	atds->enableEvents(true);
+	_G(atds)->enableEvents(true);
 
 	if (_G(spieler).flags32_10) {
 		flags.MainInput = true;
@@ -125,7 +125,7 @@ void Room51::xit(int16 eib_nr) {
 
 bool Room51::timer(int16 t_nr, int16 ani_nr) {
 	if (_G(spieler).flags32_10)
-		timer_action(t_nr, room->_roomTimer.ObjNr[ani_nr]);
+		timer_action(t_nr, _G(room)->_roomTimer.ObjNr[ani_nr]);
 	else
 		return true;
 
@@ -141,11 +141,11 @@ void Room51::setup_func() {
 		if (_tmpy < 81)
 			_tmpy = 81;
 
-		det->set_static_pos(17, _tmpx, _tmpy, false, false);
+		_G(det)->set_static_pos(17, _tmpx, _tmpy, false, false);
 
 		if ((minfo.button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
-			det->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
+			_G(det)->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
 			start_detail_wait(8, 1, ANI_VOR);
 			_flag = false;
 			++_index;
@@ -216,7 +216,7 @@ int16 Room51::use_door(int16 txt_nr) {
 		case 329:
 			auto_move(8, P_CHEWY);
 			_G(SetUpScreenFunc) = nullptr;
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 
 			if (!_G(spieler).R51HotelRoom) {
 				auto_move(11, P_HOWARD);
@@ -224,7 +224,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				_G(spieler).R51HotelRoom = true;
 				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
 				start_aad_wait(285, -1);
-				atds->set_ats_str(329, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(329, 1, ATS_DATEI);
 				_G(SetUpScreenFunc) = setup_func;
 
 			} else {
@@ -239,16 +239,16 @@ int16 Room51::use_door(int16 txt_nr) {
 			if (!_G(spieler).R51KillerWeg) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(2);
-				det->show_static_spr(1);
+				_G(det)->show_static_spr(1);
 				start_detail_wait(2, 1, ANI_VOR);
-				det->start_detail(5, 255, ANI_VOR);
+				_G(det)->start_detail(5, 255, ANI_VOR);
 
 				if (!_G(spieler).R52HotDogOk) {
 					start_aad_wait(287, -1);
 					auto_move(12, P_CHEWY);
-					det->stop_detail(5);
+					_G(det)->stop_detail(5);
 					start_ani_block(5, ABLOCK37);
-					det->hide_static_spr(1);
+					_G(det)->hide_static_spr(1);
 					g_engine->_sound->stopSound(0);
 					start_aad_wait(284, -1);
 				} else {
@@ -260,17 +260,17 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(out)->cls();
 					_G(out)->einblenden(_G(pal), 0);
 					flags.NoPalAfterFlc = true;
-					flc->set_flic_user_function(cut_serv);
-					det->show_static_spr(16);
+					_G(flc)->set_flic_user_function(cut_serv);
+					_G(det)->show_static_spr(16);
 					flic_cut(FCUT_068, CFO_MODE);
-					flc->remove_flic_user_function();
+					_G(flc)->remove_flic_user_function();
 
-					det->hide_static_spr(16);
+					_G(det)->hide_static_spr(16);
 					flags.NoPalAfterFlc = false;
-					det->stop_detail(5);
-					obj->show_sib(SIB_AUSRUEST_R52);
-					obj->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
-					det->hide_static_spr(1);
+					_G(det)->stop_detail(5);
+					_G(obj)->show_sib(SIB_AUSRUEST_R52);
+					_G(obj)->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
+					_G(det)->hide_static_spr(1);
 
 					_G(fx_blend) = BLEND3;
 					set_up_screen(DO_SETUP);
@@ -304,29 +304,29 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			switch (_G(spieler).R51DoorCount) {
 			case 0:
-				det->show_static_spr(3);
+				_G(det)->show_static_spr(3);
 				start_aad_wait(278, -1);
 				start_detail_frame(0, 1, ANI_VOR, 3);
 				start_spz(HO_BRILL_JMP, 1, ANI_VOR, P_HOWARD);
 				wait_detail(0);
 
-				det->show_static_spr(14);
+				_G(det)->show_static_spr(14);
 				start_aad_wait(279, -1);
 				++_G(spieler).R51DoorCount;
-				obj->show_sib(SIB_FLASCHE_R51);
-				obj->calc_rsi_flip_flop(SIB_FLASCHE_R51);
-				det->hide_static_spr(3);
+				_G(obj)->show_sib(SIB_FLASCHE_R51);
+				_G(obj)->calc_rsi_flip_flop(SIB_FLASCHE_R51);
+				_G(det)->hide_static_spr(3);
 				break;
 
 			case 1:
-				det->show_static_spr(3);
+				_G(det)->show_static_spr(3);
 				start_aad_wait(280, -1);
 				start_detail_wait(1, 1, ANI_VOR);
 				++_G(spieler).R51DoorCount;
-				obj->show_sib(SIB_KAPPE_R51);
-				obj->calc_rsi_flip_flop(SIB_KAPPE_R51);
-				det->hide_static_spr(3);
-				det->show_static_spr(15);
+				_G(obj)->show_sib(SIB_KAPPE_R51);
+				_G(obj)->calc_rsi_flip_flop(SIB_KAPPE_R51);
+				_G(det)->hide_static_spr(3);
+				_G(det)->show_static_spr(15);
 				break;
 
 			default:
@@ -348,20 +348,20 @@ int16 Room51::use_door(int16 txt_nr) {
 }
 
 int16 Room51::cut_serv(int16 frame) {
-	det->plot_static_details(0, 0, 16, 16);
+	_G(det)->plot_static_details(0, 0, 16, 16);
 	return 0;
 }
 
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
 		if (!_enemyFlag[obj_nr - 9]) {
-			det->start_detail(obj_nr, 1, ANI_VOR);
+			_G(det)->start_detail(obj_nr, 1, ANI_VOR);
 			_enemyFlag[obj_nr - 9] = true;
 
-		} else if (!det->get_ani_status(obj_nr)) {
-			det->start_detail(obj_nr, 1, ANI_GO);
-			det->start_detail(obj_nr + 2, 1, ANI_VOR);
-			uhr->reset_timer(t_nr, 0);
+		} else if (!_G(det)->get_ani_status(obj_nr)) {
+			_G(det)->start_detail(obj_nr, 1, ANI_GO);
+			_G(det)->start_detail(obj_nr + 2, 1, ANI_VOR);
+			_G(uhr)->reset_timer(t_nr, 0);
 			_enemyFlag[obj_nr - 9] = false;
 		}
 	}

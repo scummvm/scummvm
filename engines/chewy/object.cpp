@@ -368,25 +368,25 @@ void Object::calc_static_detail(int16 det_nr) {
 
 						if (nr >= 40) {
 							n = nr - 40;
-							adi = det->get_ani_detail(n);
+							adi = _G(det)->get_ani_detail(n);
 							if (adi->repeat)
-								det->start_detail(n, 0, ANI_VOR);
+								_G(det)->start_detail(n, 0, ANI_VOR);
 							else
-								det->start_detail(n, 1, ANI_VOR);
+								_G(det)->start_detail(n, 1, ANI_VOR);
 						} else
-							det->show_static_spr(nr);
+							_G(det)->show_static_spr(nr);
 						++i;
 					}
 				}
 			} else if (nr >= 40) {
 				n = nr - 40;
-				adi = det->get_ani_detail(n);
+				adi = _G(det)->get_ani_detail(n);
 				if (adi->repeat)
-					det->start_detail(n, 0, ANI_VOR);
+					_G(det)->start_detail(n, 0, ANI_VOR);
 				else
-					det->start_detail(n, 1, ANI_VOR);
+					_G(det)->start_detail(n, 1, ANI_VOR);
 			} else {
-				det->show_static_spr(nr);
+				_G(det)->show_static_spr(nr);
 			}
 		}
 
@@ -403,16 +403,16 @@ void Object::calc_static_detail(int16 det_nr) {
 						nr = SIB_ZUSTAND_TBL[i];
 
 						if (nr >= 40)
-							det->stop_detail(nr - 40);
+							_G(det)->stop_detail(nr - 40);
 						else
-							det->hide_static_spr(nr);
+							_G(det)->hide_static_spr(nr);
 						++i;
 					}
 				}
 			} else if (nr >= 40)
-				det->stop_detail(nr - 40);
+				_G(det)->stop_detail(nr - 40);
 			else {
-				det->hide_static_spr(nr);
+				_G(det)->hide_static_spr(nr);
 			}
 		}
 	}
@@ -505,7 +505,7 @@ int16 Object::del_obj_use(int16 nr) {
 void Object::add_inventar(int16 nr, RaumBlk *Rb) {
 	Player->room_m_obj[nr].RoomNr = 255;
 	sort();
-	room->calc_invent(Rb, Player);
+	_G(room)->calc_invent(Rb, Player);
 
 }
 
@@ -519,7 +519,7 @@ void Object::change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
 	Player->room_m_obj[old_inv].RoomNr = -1;
 	Player->room_m_obj[new_inv].RoomNr = 255;
 	sort();
-	room->calc_invent(Rb, Player);
+	_G(room)->calc_invent(Rb, Player);
 
 }
 
@@ -532,7 +532,7 @@ void Object::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
 	Player->room_m_obj[nr].X = x;
 	Player->room_m_obj[nr].Y = y;
 	Player->room_m_obj[nr].AutoMov = automov;
-	room->calc_invent(Rb, Player);
+	_G(room)->calc_invent(Rb, Player);
 	sort();
 }
 

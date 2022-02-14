@@ -54,39 +54,39 @@ void Room13::entry() {
 		start_aad_wait(27, -1);
 	} else {
 		if (_G(spieler).R13MonitorStatus)
-			det->show_static_spr(11 - _G(spieler).R13MonitorStatus);
+			_G(det)->show_static_spr(11 - _G(spieler).R13MonitorStatus);
 
 		if (!_G(spieler).R13BorkOk) {
-			det->show_static_spr(12);
-			obj->hide_sib(SIB_BANDKNOPF_R13);
+			_G(det)->show_static_spr(12);
+			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			_G(spieler).R13Bandlauf = true;
 
-			atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 
-			atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 
-			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 		}
 
 		if (_G(spieler).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
-				det->start_detail(i, 255, false);
+				_G(det)->start_detail(i, 255, false);
 		}
 		
 		if (!flags.LoadGame && _G(spieler).R13Band) {
 			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-			atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(spieler).R13Band = false;
 		}
 
 		if (_G(spieler).R21GitterMuell)
-			det->hide_static_spr(6);
+			_G(det)->hide_static_spr(6);
 	}
 }
 
 void Room13::xit() {
 	_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-	atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).R13Band = false;
 }
 
@@ -101,15 +101,15 @@ void Room13::talk_bork() {
 	if (!_G(spieler).R13BorkOk) {
 		_G(spieler).R13BorkOk = true;
 		_G(spieler).R12ChewyBork = false;
-		det->show_static_spr(13);
-		det->set_detail_pos(10, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
-		det->set_static_pos(12, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1], false, true);
+		_G(det)->show_static_spr(13);
+		_G(det)->set_detail_pos(10, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+		_G(det)->set_static_pos(12, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1], false, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);
-		det->stop_detail(9);
-		det->load_taf_seq(86, 12, nullptr);
+		_G(det)->stop_detail(9);
+		_G(det)->load_taf_seq(86, 12, nullptr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		det->hide_static_spr(12);
+		_G(det)->hide_static_spr(12);
 		_G(auto_obj) = 1;
 
 		mov_phasen[R13_BORK_OBJ].AtsText = 122;
@@ -133,18 +133,18 @@ void Room13::talk_bork() {
 		_G(auto_obj) = 0;
 		flags.NoScroll = false;
 
-		atds->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
-		obj->show_sib(SIB_BANDKNOPF_R13);
+		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(obj)->show_sib(SIB_BANDKNOPF_R13);
 		set_person_pos(153, 138, P_CHEWY, P_LEFT);
 
 		start_aad_wait(34, -1);
 		start_aad_wait(249, -1);
 
-		obj->show_sib(SIB_TKNOPF1_R11);
-		obj->show_sib(SIB_SCHLITZ_R11);
-		obj->show_sib(SIB_TKNOPF2_R11);
-		obj->show_sib(SIB_TKNOPF3_R11);
+		_G(obj)->show_sib(SIB_TKNOPF1_R11);
+		_G(obj)->show_sib(SIB_SCHLITZ_R11);
+		_G(obj)->show_sib(SIB_TKNOPF2_R11);
+		_G(obj)->show_sib(SIB_TKNOPF3_R11);
 
 		if (_G(spieler).R6DoorRightB)
 			_G(spieler).room_e_obj[20].Attribut = AUSGANG_LINKS;
@@ -155,9 +155,9 @@ void Room13::talk_bork() {
 void Room13::jmp_band() {
 	if (!_G(spieler).R13Band && !_G(spieler).R12ChewyBork) {
 		if (!_G(spieler).R13Bandlauf) {
-			obj->hide_sib(SIB_BANDKNOPF_R13);
+			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			_G(spieler).room_e_obj[25].Attribut = 255;
-			atds->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(spieler).R13Band = true;
 			auto_move(3, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -177,11 +177,11 @@ void Room13::jmp_band() {
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
 			_G(spieler).R13Bandlauf = false;
-			atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-			atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-			atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-			obj->calc_rsi_flip_flop(SIB_BANDKNOPF_R13);
-			obj->hide_sib(SIB_BANDKNOPF_R13);
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(obj)->calc_rsi_flip_flop(SIB_BANDKNOPF_R13);
+			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			switch_room(14);
 
 			flic_cut(FCUT_018, CFO_MODE);
@@ -198,10 +198,10 @@ void Room13::jmp_band() {
 void Room13::jmp_boden() {
 	if (_G(spieler).R13Band) {
 		if (!_G(spieler).R13Surf)
-			obj->show_sib(SIB_BANDKNOPF_R13);
+			_G(obj)->show_sib(SIB_BANDKNOPF_R13);
 
 		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-		atds->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R13Band = false;
 		auto_move(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -227,15 +227,15 @@ int16 Room13::monitor_knopf() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 
 			if (_G(spieler).R13MonitorStatus)
-				det->hide_static_spr(11 - _G(spieler).R13MonitorStatus);
+				_G(det)->hide_static_spr(11 - _G(spieler).R13MonitorStatus);
 
 			++_G(spieler).R13MonitorStatus;
 			if (_G(spieler).R13MonitorStatus > 4)
 				_G(spieler).R13MonitorStatus = 0;
 			else
-				det->show_static_spr(11 - _G(spieler).R13MonitorStatus);
+				_G(det)->show_static_spr(11 - _G(spieler).R13MonitorStatus);
 
-			atds->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
+			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
 		}
 	}
 

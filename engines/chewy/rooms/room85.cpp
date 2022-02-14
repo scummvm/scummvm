@@ -49,8 +49,8 @@ void Room85::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 1;
 
 	if (_G(spieler).flags32_10) {
-		det->show_static_spr(4);
-		atds->del_steuer_bit(495, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->show_static_spr(4);
+		_G(atds)->del_steuer_bit(495, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (flags.LoadGame)
@@ -65,8 +65,8 @@ void Room85::entry(int16 eib_nr) {
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 78;
 		if (_G(spieler).flags32_40) {
-			atds->del_steuer_bit(506, ATS_AKTIV_BIT, ATS_DATEI);
-			det->start_detail(1, 255, false);
+			_G(atds)->del_steuer_bit(506, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(det)->start_detail(1, 255, false);
 			set_person_pos(195, 146, P_CHEWY, P_RIGHT);
 			set_person_pos(186, 142, P_HOWARD, P_RIGHT);
 		}
@@ -81,24 +81,24 @@ void Room85::entry(int16 eib_nr) {
 		_G(spieler).scrollx = 0;
 		set_person_pos(133, 152, P_CHEWY, P_RIGHT);
 		_G(spieler).room_e_obj[127].Attribut = 255;
-		det->show_static_spr(5);
-		det->show_static_spr(6);
+		_G(det)->show_static_spr(5);
+		_G(det)->show_static_spr(6);
 		start_aad_wait(474, -1);
 		flic_cut(90, CFO_MODE);
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		flags.NoPalAfterFlc = true;
 		flic_cut(91, CFO_MODE);
-		det->hide_static_spr(6);
+		_G(det)->hide_static_spr(6);
 		_G(spieler).scrollx = 25;
 		_G(fx_blend) = BLEND3;
 		start_aad_wait(475, -1);
 		start_aad(476, -1);
-		flc->set_custom_user_function(Room87::proc5);
+		_G(flc)->set_custom_user_function(Room87::proc5);
 		flic_cut(89, CFO_MODE);
 		register_cutscene(25);
 
-		flc->remove_custom_user_function();
+		_G(flc)->remove_custom_user_function();
 		switch_room(84);
 		show_cur();
 	}
@@ -156,7 +156,7 @@ int Room85::proc2() {
 		return 0;
 
 	auto_move(2, P_CHEWY);
-	det->stop_detail(1);
+	_G(det)->stop_detail(1);
 	start_detail_wait(2, 1, ANI_VOR);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();

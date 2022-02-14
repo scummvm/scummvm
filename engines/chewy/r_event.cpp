@@ -53,7 +53,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	case ROOM_8_17:
 		start_aad(100, 0);
-		det->start_detail(21, 4, ANI_VOR);
+		_G(det)->start_detail(21, 4, ANI_VOR);
 		break;
 
 	case ROOM_18_20:
@@ -91,7 +91,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 }
 
 void timer_action(int16 t_nr) {
-	int16 ani_nr = t_nr - room->_roomTimer.TimerStart;
+	int16 ani_nr = t_nr - _G(room)->_roomTimer.TimerStart;
 	bool default_flag = false;
 
 	if (g_engine->_sound->isSpeechActive())
@@ -122,8 +122,8 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && flags.AutoAniPlay == false) {
-		det->start_detail(room->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
-		uhr->reset_timer(t_nr, 0);
+		_G(det)->start_detail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
+		_G(uhr)->reset_timer(t_nr, 0);
 	}
 
 	kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -309,8 +309,8 @@ void enter_room(int16 eib_nr) {
 	if (!_G(modul))
 		load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(spieler).ChewyAni);
-	atds->stop_aad();
-	atds->stop_ats();
+	_G(atds)->stop_aad();
+	_G(atds)->stop_ats();
 	_G(spieler).DiaAMov = -1;
 	_G(zoom_mov_fak) = 1;
 
@@ -322,10 +322,10 @@ void enter_room(int16 eib_nr) {
 
 	flags.ZoomMov = false;
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)room->_roomInfo->ZoomFak;
-	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)room->_roomInfo->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)_G(room)->_roomInfo->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)_G(room)->_roomInfo->ZoomFak;
 
-	uhr->reset_timer(0, 0);
+	_G(uhr)->reset_timer(0, 0);
 	flags.AutoAniPlay = false;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(HowardMov) = 0;
@@ -456,7 +456,7 @@ void exit_room(int16 eib_nr) {
 	int16 x, y;
 	int16 no_exit;
 	no_exit = false;
-	det->disable_room_sound();
+	_G(det)->disable_room_sound();
 
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 	case 6:
@@ -465,7 +465,7 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 11:
-		atds->set_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case 13:
@@ -666,7 +666,7 @@ void exit_room(int16 eib_nr) {
 	case 75:
 		x = 160;
 		y = 200;
-		det->show_static_spr(4);
+		_G(det)->show_static_spr(4);
 		break;
 
 	case 84:
@@ -682,20 +682,20 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 86:
-		det->show_static_spr(0);
+		_G(det)->show_static_spr(0);
 		x = spieler_vector[P_CHEWY].Xypos[0] - 44;
 		y = spieler_vector[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 2;
 		break;
 
 	case 90:
-		det->show_static_spr(8);
+		_G(det)->show_static_spr(8);
 		x = spieler_vector[P_CHEWY].Xypos[0] - 60;
 		y = spieler_vector[P_CHEWY].Xypos[1];
 		break;
 
 	case 94:
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 		x = spieler_vector[P_CHEWY].Xypos[0] - 40;
 		y = spieler_vector[P_CHEWY].Xypos[1] - 10;
 		break;
@@ -703,7 +703,7 @@ void exit_room(int16 eib_nr) {
 	case 127:
 		x = 196;
 		y = 133;
-		det->show_static_spr(0);
+		_G(det)->show_static_spr(0);
 		break;
 
 	case 132:
@@ -780,11 +780,11 @@ void print_rows(int16 id) {
 
 	_G(out)->set_fontadr(_G(font8x8));
 	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
-	txtStr = atds->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
+	txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
 	_G(out)->setze_zeiger(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
-		s = txt->str_pos(txtStr, i);
+		s = _G(txt)->str_pos(txtStr, i);
 		len = (strlen(s) * _G(fvorx8x8)) / 2;
 
 		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, "%s", s);
@@ -794,7 +794,7 @@ void print_rows(int16 id) {
 int16 flic_user_function(int16 keys) {
 	int ret;
 
-	if (atds->aad_get_status() != -1) {
+	if (_G(atds)->aad_get_status() != -1) {
 		switch (_G(flic_val1)) {
 		case 579:
 		case 584:
@@ -807,11 +807,11 @@ int16 flic_user_function(int16 keys) {
 		}
 	}
 
-	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 	if (_G(flic_val1) == 593 && keys == 35)
-		atds->stop_aad();
+		_G(atds)->stop_aad();
 	if (_G(flic_val1) == 594 && keys == 18)
-		atds->stop_aad();
+		_G(atds)->stop_aad();
 
 	ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 	if (_G(flic_val2) == 140 && keys == 15)
@@ -820,7 +820,7 @@ int16 flic_user_function(int16 keys) {
 		ret = -2;
 	if (_G(flic_val2) == 145 || _G(flic_val2) == 142 ||
 			_G(flic_val2) == 141 || _G(flic_val2) == 146) {
-		if (atds->aad_get_status() == -1)
+		if (_G(atds)->aad_get_status() == -1)
 			ret = -2;
 	}
 
@@ -850,8 +850,8 @@ static void flic_proc1() {
 	};
 	int16 ret = 0;
 
-	atds->load_atds(98, AAD_DATEI);
-	flc->set_custom_user_function(flic_user_function);
+	_G(atds)->load_atds(98, AAD_DATEI);
+	_G(flc)->set_custom_user_function(flic_user_function);
 	load_room_music(258);
 
 	for (int i = 0; i < 29 && ret != -1; ++i) {
@@ -875,23 +875,23 @@ static void flic_proc1() {
 			_G(flic_val2) = VALS1[i];
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, _G(flic_val2));
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			g_engine->playVideo(_G(flic_val2));
 #endif
-			flag = VALS4[i] && atds->aad_get_status() != -1;
+			flag = VALS4[i] && _G(atds)->aad_get_status() != -1;
 		} while (flag && ret != -1 && ret != -2);
 
-		atds->stop_aad();
+		_G(atds)->stop_aad();
 	}
 
-	flc->remove_custom_user_function();
+	_G(flc)->remove_custom_user_function();
 	if (ret == -1) {
 		_G(out)->setze_zeiger(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
 		start_aad(595);
-		atds->print_aad(254, 0);
+		_G(atds)->print_aad(254, 0);
 
 		if (_G(spieler).SpeechSwitch) {
 			g_engine->_sound->waitForSpeechToFinish();
@@ -922,7 +922,7 @@ void flic_cut(int16 nr, int16 mode) {
 	int16 i, ret = 0;
 
 	_G(out)->setze_zeiger(nullptr);
-	det->disable_room_sound();
+	_G(det)->disable_room_sound();
 	_G(sndPlayer)->endSound();
 	g_events->delay(50);
 //#ifndef NEW_VIDEO_CODE
@@ -975,12 +975,12 @@ void flic_cut(int16 nr, int16 mode) {
 			do {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, nr);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(nr);
 #endif
-			} while (atds->aad_get_status() != -1 && ret != -1);
+			} while (_G(atds)->aad_get_status() != -1 && ret != -1);
 			break;
 
 		case FCUT_034:
@@ -990,12 +990,12 @@ void flic_cut(int16 nr, int16 mode) {
 			do {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, nr);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(nr);
 #endif
-			} while (atds->aad_get_status() != -1 && ret != -1);
+			} while (_G(atds)->aad_get_status() != -1 && ret != -1);
 			break;
 
 		case FCUT_053:
@@ -1026,9 +1026,9 @@ void flic_cut(int16 nr, int16 mode) {
 					start_aad(623, -1);
 #ifndef NEW_VIDEO_CODE
 					_G(mem)->file->select_pool_item(Ci.Handle, FCUT_061);
-					flc->set_custom_user_function(Room43::setup_func);
-					flc->custom_play(&Ci);
-					flc->remove_custom_user_function();
+					_G(flc)->set_custom_user_function(Room43::setup_func);
+					_G(flc)->custom_play(&Ci);
+					_G(flc)->remove_custom_user_function();
 #else
 					g_engine->playVideo(FCUT_061);
 #endif
@@ -1067,10 +1067,10 @@ void flic_cut(int16 nr, int16 mode) {
 			}
 
 		case FCUT_095:
-			while (atds->aad_get_status() != -1 && !SHOULD_QUIT) {
+			while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, nr);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(nr);
 #endif
@@ -1081,9 +1081,9 @@ void flic_cut(int16 nr, int16 mode) {
 			_G(sndPlayer)->setMusicMasterVol(32);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, nr);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 			_G(mem)->file->select_pool_item(Ci.Handle, nr);
-			flc->custom_play(&Ci);
+			_G(flc)->custom_play(&Ci);
 #else
 			playVideo(nr);
 			playVideo(nr);
@@ -1103,7 +1103,7 @@ void flic_cut(int16 nr, int16 mode) {
 			for (i = 0; i < 13 && i != -1 && !_G(modul); ++i) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_133[i]);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(FLIC_CUT_133[i]);
@@ -1120,22 +1120,22 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case 1003:
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			print_rows(590);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 1);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			g_engine->playVideo(FCUT_001);
 #endif
 
 			if (ret != -1) {
 				for (i = 0; i < 3 && ret != -1; ++i) {
-					fx->border(_G(workpage), 100, 0, 0);
+					_G(fx)->border(_G(workpage), 100, 0, 0);
 					print_rows(591);
 #ifndef NEW_VIDEO_CODE
 					_G(mem)->file->select_pool_item(Ci.Handle, i + 3);
-					ret = flc->custom_play(&Ci);
+					ret = _G(flc)->custom_play(&Ci);
 					SHOULD_QUIT_RETURN;
 #else
 					playVideo(i + 3);
@@ -1146,10 +1146,10 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1006:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 6);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 6);
@@ -1161,7 +1161,7 @@ void flic_cut(int16 nr, int16 mode) {
 			for (i = 0; i < 2 && ret != -1; ++i) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 9);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 9);
@@ -1171,11 +1171,11 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1012:
 			for (i = 0; i < 3 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 				SHOULD_QUIT_RETURN;
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 12);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 #else
 				playVideo(i + 12);
 #endif
@@ -1185,20 +1185,20 @@ void flic_cut(int16 nr, int16 mode) {
 			if (ret != -1) {
 				_G(out)->cls();
 				_G(mem)->file->select_pool_item(Ci.Handle, FCUT_017);
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 			}
 #else
 			_G(out)->cls();
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 #endif
 			break;
 
 		case 1015:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 15);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 15);
@@ -1208,7 +1208,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1045:
 			for (i = 0; i < 11 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 				print_rows(594);
 				if (FLIC_CUT_1045[i] == 53) {
 					_G(sndPlayer)->stopMod();
@@ -1218,7 +1218,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_1045[i]);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(FLIC_CUT_1045[i]);
@@ -1234,10 +1234,10 @@ void flic_cut(int16 nr, int16 mode) {
 			g_engine->playVideo(FCUT_031);
 
 			if (ret != -1) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 43);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 #else
 				playVideo(43);
 #endif
@@ -1247,17 +1247,17 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1048:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 50);
-			flc->custom_play(&Ci);
+			_G(flc)->custom_play(&Ci);
 #else
 			playVideo(50);
 #endif
 
 			if (ret != -1) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 48);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 #else
 				playVideo(48);
 #endif
@@ -1265,7 +1265,7 @@ void flic_cut(int16 nr, int16 mode) {
 			if (ret != -1) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 49);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(49);
 #endif
@@ -1273,25 +1273,25 @@ void flic_cut(int16 nr, int16 mode) {
 
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
-				ret = flc->custom_play(&Ci);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
+				ret = _G(flc)->custom_play(&Ci);
 			}
 			if (ret != -1) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 54);
 			}
 #else
-			fx->spr_blende(_G(workpage), 100, false, 0);
+			_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(nr);
 #endif
 			break;
 
 		case 1055:
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 55);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 55);
@@ -1302,7 +1302,7 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 46);
 #endif
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 			}
 			break;
 
@@ -1312,7 +1312,7 @@ void flic_cut(int16 nr, int16 mode) {
 			load_room_music(255);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 58);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(58);
 #endif
@@ -1320,7 +1320,7 @@ void flic_cut(int16 nr, int16 mode) {
 			if (ret != -1) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 59);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(59);
 #endif
@@ -1328,25 +1328,25 @@ void flic_cut(int16 nr, int16 mode) {
 			if (ret != -1) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 60);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(60);
 #endif
 			}
 			if (ret != -1) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 61);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(61);
 #endif
 			}
 			if (ret != -1) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 62);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(62);
 #endif
@@ -1361,7 +1361,7 @@ void flic_cut(int16 nr, int16 mode) {
 			for (i = 0; i < 2 && ret != -1; ++i) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 65);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 65);
@@ -1372,16 +1372,16 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1068:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 68);
-			flc->custom_play(&Ci);
+			_G(flc)->custom_play(&Ci);
 #else
 			playVideo(68);
 #endif
 
 			if (ret != -1) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 70);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(70);
@@ -1392,16 +1392,16 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1069:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 69);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(69);
 #endif
 
 			for (i = 0; i < 2 && ret != -1 && !SHOULD_QUIT; ++i) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 71);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 #else
 				playVideo(i + 71);
 #endif
@@ -1410,12 +1410,12 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1074:
 			for (i = 0; i < 4 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 				print_rows(605);
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + FLIC_CUT_1074[i]);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + FLIC_CUT_1074[i]);
@@ -1425,10 +1425,10 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case 1080:
 			for (i = 0; i < 8 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_1080[i]);
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(FLIC_CUT_1080[i]);
@@ -1439,16 +1439,16 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1087:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 87);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(87);
 #endif
 
 			for (i = 0; i < 2 && ret != -1; ++i) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, i + 102);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(i + 102);
@@ -1459,16 +1459,16 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1088:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 88);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(88);
 #endif
 
 			if (ret != -1) {
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, 86);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 #else
 				playVideo(86);
 #endif
@@ -1489,7 +1489,7 @@ void flic_cut(int16 nr, int16 mode) {
 					break;
 				}
 
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 			}
 			break;
@@ -1499,7 +1499,7 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_1106[i]);
 				_G(out)->cls();
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(FLIC_CUT_1106[i]);
@@ -1510,7 +1510,7 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1107:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, FCUT_107);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(107);
 #endif
@@ -1518,10 +1518,10 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(mem)->file->select_pool_item(Ci.Handle, 109);
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 			}
 #else
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			//playVideo(109);
 #endif
 			break;
@@ -1529,7 +1529,7 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1108:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 108);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(108);
 #endif
@@ -1537,11 +1537,11 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(mem)->file->select_pool_item(Ci.Handle, 115);
-				fx->spr_blende(_G(workpage), 100, false, 0);
-				flc->custom_play(&Ci);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
+				_G(flc)->custom_play(&Ci);
 			}
 #else
-			fx->spr_blende(_G(workpage), 100, false, 0);
+			_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(115);
 #endif
 			break;
@@ -1553,7 +1553,7 @@ void flic_cut(int16 nr, int16 mode) {
 			_G(sndPlayer)->setMusicMasterVol(20);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(Ci.Handle, 110);
-			ret = flc->custom_play(&Ci);
+			ret = _G(flc)->custom_play(&Ci);
 #else
 			playVideo(110);
 #endif
@@ -1561,13 +1561,13 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(sndPlayer)->setMusicMasterVol(63);
-				fx->spr_blende(_G(workpage), 100, false, 0);
+				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 112);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 			}
 #else
 			ailsnd->setMusicMasterVol(63);
-			fx->spr_blende(_G(workpage), 100, false, 0);
+			_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 			playVideo(112);
 #endif
 			_G(sndPlayer)->stopMod();
@@ -1578,7 +1578,7 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(Ci.Handle, FLIC_CUT_1113[i]);
 				_G(out)->cls();
-				ret = flc->custom_play(&Ci);
+				ret = _G(flc)->custom_play(&Ci);
 				SHOULD_QUIT_RETURN;
 #else
 				playVideo(FLIC_CUT_1113[i]);
@@ -1589,12 +1589,12 @@ void flic_cut(int16 nr, int16 mode) {
 		case 1117:
 #ifndef NEW_VIDEO_CODE
 			if (_G(mem)->file->select_pool_item(Ci.Handle, 117) != (uint16)-1) {
-				fx->border(_G(workpage), 100, 0, 0);
+				_G(fx)->border(_G(workpage), 100, 0, 0);
 				_G(mem)->file->select_pool_item(Ci.Handle, 119);
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 			}
 #else
-			fx->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 100, 0, 0);
 			playVideo(119);
 #endif
 			break;
@@ -1606,10 +1606,10 @@ void flic_cut(int16 nr, int16 mode) {
 
 			switch (mode) {
 			case 0:
-				flc->custom_play(&Ci);
+				_G(flc)->custom_play(&Ci);
 				break;
 			case 1:
-				flc->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
+				_G(flc)->play(Ci.Handle, Ci.VirtScreen, Ci.TempArea);
 				break;
 			default:
 				break;
@@ -1636,16 +1636,16 @@ void flic_cut(int16 nr, int16 mode) {
 		load_room_music(_G(spieler).PersonRoomNr[0]);
 
 		if (_G(spieler).SpeechSwitch)
-			det->enable_room_sound();
+			_G(det)->enable_room_sound();
 
-		uhr->reset_timer(0, 0);
+		_G(uhr)->reset_timer(0, 0);
 	}
 
 	if (!flags.NoPalAfterFlc)
 		_G(out)->set_palette(_G(pal));
 
-	atds->stop_aad();
-	atds->stop_ats();
+	_G(atds)->stop_aad();
+	_G(atds)->stop_ats();
 	_G(out)->setze_zeiger(_G(workptr));
 	flags.NoPalAfterFlc = false;
 }
@@ -1654,12 +1654,12 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag) {
 	if (ani_nr != -1)
-		det->start_detail(ani_nr, 1, flag);
+		_G(det)->start_detail(ani_nr, 1, flag);
 	flag ^= 1;
 	if (ats_nr1 != -1)
-		atds->set_ats_str(ats_nr1, flag, ATS_DATEI);
+		_G(atds)->set_ats_str(ats_nr1, flag, ATS_DATEI);
 	if (ats_nr2 != -1)
-		atds->set_ats_str(ats_nr2, flag, ATS_DATEI);
+		_G(atds)->set_ats_str(ats_nr2, flag, ATS_DATEI);
 	if (flag) {
 		if (eib_nr1 != -1)
 			_G(spieler).room_e_obj[eib_nr1].Attribut = spr_nr1;
@@ -1672,7 +1672,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 			_G(spieler).room_e_obj[eib_nr1].Attribut = 255;
 	}
 	if (sib_nr != -1)
-		obj->calc_rsi_flip_flop(sib_nr);
+		_G(obj)->calc_rsi_flip_flop(sib_nr);
 
 	return (uint16)flag;
 }
@@ -1683,29 +1683,29 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	switch (sib_nr) {
 	case SIB_KABEL_R1:
-		atds->set_ats_str(8, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 1, ATS_DATEI);
 		break;
 
 	case SIB_MONOKEL:
 		_G(spieler).R0Monokel = true;
-		obj->hide_sib(SIB_MONOKEL);
+		_G(obj)->hide_sib(SIB_MONOKEL);
 		if (_G(spieler).R0GBuch)
-			atds->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case SIB_GBUCH:
 		_G(spieler).R0GBuch = true;
-		obj->hide_sib(SIB_GBUCH);
+		_G(obj)->hide_sib(SIB_GBUCH);
 		if (_G(spieler).R0Monokel)
-			atds->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case SIB_TERMINAL_R5:
 		if (_G(spieler).R5Terminal) {
 			_G(spieler).R5Terminal = 0;
-			det->stop_detail(6);
-			atds->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATEI);
-			atds->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(det)->stop_detail(6);
+			_G(atds)->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATEI);
 		}
 		break;
 
@@ -1714,11 +1714,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SEIL:
-		obj->hide_sib(SIB_SEIL);
+		_G(obj)->hide_sib(SIB_SEIL);
 		break;
 
 	case SIB_BOLA_SCHACHT:
-		atds->set_ats_str(41, TXT_MARK_LOOK, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 0, ATS_DATEI);
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
@@ -1735,11 +1735,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(spieler).R7Hebel ^= 1;
 
 		if (!_G(spieler).R7Hebel)
-			atds->set_ats_str(50, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 0, ATS_DATEI);
 		else if (!_G(spieler).R7BorkFlug)
-			atds->set_ats_str(50, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 1, ATS_DATEI);
 		else
-			atds->set_ats_str(50, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 2, ATS_DATEI);
 		break;
 
 	case SIB_KLINGEL_R7:
@@ -1748,8 +1748,8 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_GIPS_R7:
 		_G(spieler).R7RHaken = true;
-		obj->show_sib(SIB_RHAKEN_R7);
-		obj->hide_sib(SIB_GIPS_R7);
+		_G(obj)->show_sib(SIB_RHAKEN_R7);
+		_G(obj)->hide_sib(SIB_GIPS_R7);
 		break;
 
 	case SIB_TKNOPF2_R7:
@@ -1759,7 +1759,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SCHLOTT_R7:
-		obj->hide_sib(SIB_SCHLOTT_R7);
+		_G(obj)->hide_sib(SIB_SCHLOTT_R7);
 		break;
 
 	case SIB_LHAKEN_R7:
@@ -1767,15 +1767,15 @@ int16 sib_event_no_inv(int16 sib_nr) {
 			if (_G(spieler).R7RHaken) {
 				_G(spieler).R7SeilOk = true;
 				auto_move(4, P_CHEWY);
-				obj->calc_rsi_flip_flop(SIB_LHAKEN_R7);
-				obj->calc_rsi_flip_flop(SIB_RHAKEN_R7);
-				atds->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
-				atds->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
-				atds->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
+				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
+				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
+				_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
 				start_aad(9);
 			} else {
-				obj->set_rsi_flip_flop(SIB_LHAKEN_R7, 2);
-				obj->calc_rsi_flip_flop(SIB_LHAKEN_R7);
+				_G(obj)->set_rsi_flip_flop(SIB_LHAKEN_R7, 2);
+				_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 			}
 		}
 		break;
@@ -1791,7 +1791,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_DEE_PAINT_R9:
-		obj->hide_sib(SIB_DEE_PAINT_R9);
+		_G(obj)->hide_sib(SIB_DEE_PAINT_R9);
 		break;
 
 	case SIB_SCHLITZ_R11:
@@ -1803,15 +1803,15 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (_G(spieler).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
-				det->start_detail(i, 255, ANI_VOR);
+				_G(det)->start_detail(i, 255, ANI_VOR);
 		} else {
 			for (int i = 0; i < 5; ++i)
-				det->stop_detail(i);
+				_G(det)->stop_detail(i);
 		}
 
-		atds->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-		atds->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-		atds->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+		_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+		_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+		_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
 		break;
 
 	case SIB_CARTRIDGE_R23:
@@ -1820,49 +1820,49 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = false;
-		atds->set_ats_str(112, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(112, 0, ATS_DATEI);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		atds->set_ats_str(113, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(113, 1, ATS_DATEI);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TALISMAN_R12:
 		_G(spieler).R12Talisman = true;
-		obj->hide_sib(SIB_TALISMAN_R12);
-		_G(timer_nr)[0] = room->set_timer(255, 20);
+		_G(obj)->hide_sib(SIB_TALISMAN_R12);
+		_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
 		break;
 
 	case SIB_GITTER_R16:
-		atds->set_ats_str(125, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(125, 1, ATS_DATEI);
 		_G(spieler).room_e_obj[33].Attribut = AUSGANG_OBEN;
 		break;
 
 	case SIB_SCHALTER1_R21:
-		det->start_detail(0, 1, _G(spieler).R21Hebel1);
+		_G(det)->start_detail(0, 1, _G(spieler).R21Hebel1);
 		_G(spieler).R21Hebel1 ^= 1;
 		Room21::calc_laser();
-		atds->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATEI);
+		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER2_R21:
-		det->start_detail(1, 1, _G(spieler).R21Hebel2);
+		_G(det)->start_detail(1, 1, _G(spieler).R21Hebel2);
 		_G(spieler).R21Hebel2 ^= 1;
 		Room21::calc_laser();
-		atds->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATEI);
+		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATEI);
 		break;
 
 	case SIB_SCHALTER3_R21:
-		det->start_detail(2, 1, _G(spieler).R21Hebel3);
+		_G(det)->start_detail(2, 1, _G(spieler).R21Hebel3);
 		_G(spieler).R21Hebel3 ^= 1;
 		Room21::calc_laser();
-		atds->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATEI);
+		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATEI);
 		break;
 
 	case SIB_SEIL_R21:
-		atds->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case SIB_GITTER1_R21:
@@ -1870,7 +1870,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART1_R18:
-		atds->set_steuer_bit(155, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(155, ATS_AKTIV_BIT, ATS_DATEI);
 		break;
 
 	case SIB_TUERKNOPF_R18:
@@ -1896,7 +1896,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = 0;
 		cur_2_inventory();
-		atds->set_ats_str(157, 1, AAD_DATEI);
+		_G(atds)->set_ats_str(157, 1, AAD_DATEI);
 		break;
 
 	case SIB_SCHLAUCH_R26:
@@ -1915,23 +1915,23 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_PIRANHA:
 	case SIB_SCHALL:
 	case SIB_ARTEFAKT:
-		obj->hide_sib(sib_nr);
+		_G(obj)->hide_sib(sib_nr);
 		break;
 
 	case SIB_PUTE_R34:
-		atds->set_ats_str(226, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(226, 1, ATS_DATEI);
 		break;
 
 	case SIB_TOPF_R31:
-		obj->hide_sib(SIB_TOPF_R31);
-		atds->set_ats_str(242, 1, ATS_DATEI);
+		_G(obj)->hide_sib(SIB_TOPF_R31);
+		_G(atds)->set_ats_str(242, 1, ATS_DATEI);
 		_G(spieler).R31PflanzeWeg = true;
 		break;
 
 	case SIB_HFUTTER1_R37:
 	case SIB_HFUTTER2_R37:
-		obj->hide_sib(74);
-		obj->hide_sib(75);
+		_G(obj)->hide_sib(74);
+		_G(obj)->hide_sib(75);
 		break;
 
 	case SIB_SURIMY_R27:
@@ -1939,16 +1939,16 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_MUENZE_R40:
-		obj->hide_sib(sib_nr);
-		det->del_static_ani(6);
-		room->set_timer_status(6, TIMER_STOP);
+		_G(obj)->hide_sib(sib_nr);
+		_G(det)->del_static_ani(6);
+		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(spieler).R40Geld = true;
 		start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(201, -1);
 		break;
 
 	case SIB_VISIT_R53:
-		obj->hide_sib(sib_nr);
+		_G(obj)->hide_sib(sib_nr);
 		_G(spieler).R53Visit = true;
 		break;
 
@@ -1957,24 +1957,24 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LAMPE_R52:
-		atds->del_steuer_bit(338, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(338, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R52LichtAn ^= 1;
 		check_shad(2 * (_G(spieler).R52LichtAn + 1), 1);
 		break;
 
 	case SIB_KAUTABAK_R56:
-		obj->hide_sib(sib_nr);
+		_G(obj)->hide_sib(sib_nr);
 		_G(spieler).R56GetTabak = true;
 		break;
 
 	case SIB_ASCHE_R64:
-		det->stop_detail(0);
-		obj->hide_sib(sib_nr);
+		_G(det)->stop_detail(0);
+		_G(obj)->hide_sib(sib_nr);
 		Room64::talk_man(351);
 		break;
 
 	case 94:
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 		_G(cur_hide_flag) = false;
 		hide_cur();
 		start_aad_wait(406, -1);
@@ -2004,9 +2004,9 @@ void sib_event_inv(int16 sib_nr) {
 			cur_2_inventory();
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
-			det->start_detail(6, 255, ANI_VOR);
-			atds->set_ats_str(27, 1, ATS_DATEI);
-			atds->set_ats_str(30, 1, ATS_DATEI);
+			_G(det)->start_detail(6, 255, ANI_VOR);
+			_G(atds)->set_ats_str(27, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(30, 1, ATS_DATEI);
 		}
 		break;
 
@@ -2028,10 +2028,10 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_BOLA_KNOPF_R6:
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).R6BolaSchild = true;
-		det->show_static_spr(2);
-		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
-		obj->hide_sib(SIB_BOLA_KNOPF_R6);
-		obj->show_sib(SIB_BOLA_R6);
+		_G(det)->show_static_spr(2);
+		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
+		_G(obj)->hide_sib(SIB_BOLA_KNOPF_R6);
+		_G(obj)->show_sib(SIB_BOLA_R6);
 		break;
 
 	case SIB_LHAKEN_R7:
@@ -2080,13 +2080,13 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = true;
 		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(112, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(112, 1, ATS_DATEI);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
 		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(113, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(113, 0, ATS_DATEI);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
@@ -2097,7 +2097,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_ROEHRE_R12:
 		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
-		atds->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(115, 0);
 
@@ -2108,7 +2108,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_GITTER2_R21:
 		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
 			AUSGANG_RECHTS, AUSGANG_RECHTS, _G(spieler).R21GitterMuell);
-		atds->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
 		break;
 
 	case SIB_CART_FACH_R18:
@@ -2116,12 +2116,12 @@ void sib_event_inv(int16 sib_nr) {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = true;
 		del_inventar(_G(spieler).AkInvent);
-		det->show_static_spr(7);
-		atds->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(det)->show_static_spr(7);
+		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
 
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
-			atds->set_ats_str(26, 1, INV_ATS_DATEI);
+			_G(atds)->set_ats_str(26, 1, INV_ATS_DATEI);
 			start_aad_wait(120, -1);
 		} else {
 			start_aad_wait(121, -1);

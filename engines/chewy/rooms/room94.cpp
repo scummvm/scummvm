@@ -40,8 +40,8 @@ void Room94::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 48;
 	spieler_mi[P_HOWARD].Mode = true;
 	if (_G(spieler).flags35_10) {
-		room->set_timer_status(3, TIMER_STOP);
-		det->del_static_ani(3);
+		_G(room)->set_timer_status(3, TIMER_STOP);
+		_G(det)->del_static_ani(3);
 	}
 
 	if (flags.LoadGame)
@@ -138,23 +138,23 @@ int Room94::giveGhostBottle() {
 	flags.NoPalAfterFlc = true;
 	flic_cut(62, CFO_MODE);
 	_G(fx_blend) = BLEND3;
-	det->start_detail(5, 255, false);
+	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(541, -1);
-	det->stop_detail(5);
-	det->show_static_spr(5);
+	_G(det)->stop_detail(5);
+	_G(det)->show_static_spr(5);
 	Room66::proc8(3, 3, 2, 617);
 	hide_cur();
-	det->hide_static_spr(5);
-	det->start_detail(5, 255, false);
+	_G(det)->hide_static_spr(5);
+	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(622, -1);
-	det->stop_detail(5);
-	det->start_detail(6, 1, false);	
-	room->set_timer_status(3, TIMER_STOP);
-	det->del_static_ani(3);
+	_G(det)->stop_detail(5);
+	_G(det)->start_detail(6, 1, false);	
+	_G(room)->set_timer_status(3, TIMER_STOP);
+	_G(det)->del_static_ani(3);
 	start_detail_wait(4, 1, ANI_VOR);
 	_G(spieler).flags35_10 = true;
 	_G(spieler).room_e_obj[138].Attribut = AUSGANG_OBEN;
-	atds->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATEI);
 	new_invent_2_cur(114);
 	
 	show_cur();

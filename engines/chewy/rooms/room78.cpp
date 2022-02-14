@@ -45,11 +45,11 @@ void Room78::entry() {
 	int destRoom;
 
 	if (_G(spieler).flags29_80) {
-		det->start_detail(3, 255, false);
+		_G(det)->start_detail(3, 255, false);
 
 		int destX = 592;
 		while (destX > 0) {
-			det->set_detail_pos(3, destX, 77);
+			_G(det)->set_detail_pos(3, destX, 77);
 			if (delay)
 				--delay;
 			else {
@@ -62,8 +62,8 @@ void Room78::entry() {
 		flic_cut(101, CFO_MODE);
 		destRoom = 79;
 	} else {
-		det->start_detail(0, 255, false);
-		det->start_detail(4, 255, false);
+		_G(det)->start_detail(0, 255, false);
+		_G(det)->start_detail(4, 255, false);
 		int det0DestX = 608;
 		int det4DestX = 570;
 		bool exitLoopFlag = false;
@@ -71,8 +71,8 @@ void Room78::entry() {
 		bool flag2 = false;
 
 		while (exitLoopFlag == 0) {
-			det->set_detail_pos(0, det0DestX, 93);
-			det->set_detail_pos(4, det4DestX, 57);
+			_G(det)->set_detail_pos(0, det0DestX, 93);
+			_G(det)->set_detail_pos(4, det4DestX, 57);
 			
 			if (delay)
 				--delay;
@@ -84,8 +84,8 @@ void Room78::entry() {
 							flag1 = true;
 					} else {
 						flag1 = true;
-						det->stop_detail(0);
-						det->start_detail(1, 1, false);
+						_G(det)->stop_detail(0);
+						_G(det)->start_detail(1, 1, false);
 					}
 				}
 
@@ -94,9 +94,9 @@ void Room78::entry() {
 				if (det4DestX <= 222 && flag2 == 0) {
 					if (_G(spieler).flags29_10) {
 						flag2 = true;
-						det->stop_detail(4);
+						_G(det)->stop_detail(4);
 						if (flag1 == 0) {
-							det->start_detail(5, 1, false);
+							_G(det)->start_detail(5, 1, false);
 						} else {
 							start_detail_wait(5, 1, CFO_MODE);
 						}

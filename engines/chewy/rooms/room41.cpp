@@ -42,25 +42,25 @@ void Room41::entry() {
 		g_engine->_sound->playSound(6);
 
 		if (!flags.LoadGame) {
-			room->set_timer_status(0, TIMER_STOP);
-			det->del_static_ani(0);
+			_G(room)->set_timer_status(0, TIMER_STOP);
+			_G(det)->del_static_ani(0);
 			start_ani_block(2, ABLOCK32);
-			room->set_timer_status(0, TIMER_START);
-			det->set_static_ani(0, -1);
+			_G(room)->set_timer_status(0, TIMER_START);
+			_G(det)->set_static_ani(0, -1);
 			start_aad_wait(127, -1);
 		} else {
-			det->start_detail(6, 255, ANI_VOR);
+			_G(det)->start_detail(6, 255, ANI_VOR);
 		}
 	}
 
 	if (_G(spieler).R41Einbruch) {
-		atds->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATEI);
-		det->show_static_spr(6);
-		det->show_static_spr(7);
+		_G(atds)->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->show_static_spr(6);
+		_G(det)->show_static_spr(7);
 	}
 
 	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
-		atds->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (!flags.LoadGame)
@@ -148,17 +148,17 @@ void Room41::talk_hoggy2() {
 void Room41::first_talk() {
 	_G(spieler).R41FirstTalk = true;
 	start_aad_wait(134, -1);
-	atds->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATEI);
-	atds->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATEI);
 }
 
 void Room41::start_hoggy() {
 	show_cur();
 
 	for (int16 i = 0; i < 2; i++) {
-		room->set_timer_status(i, TIMER_START);
-		det->set_static_ani(i, -1);
-		det->del_static_ani(i + 3);
+		_G(room)->set_timer_status(i, TIMER_START);
+		_G(det)->set_static_ani(i, -1);
+		_G(det)->del_static_ani(i + 3);
 	}
 }
 
@@ -166,10 +166,10 @@ void Room41::stop_hoggy() {
 	hide_cur();
 
 	for (int16 i = 0; i < 2; i++) {
-		room->set_timer_status(i, TIMER_STOP);
-		det->del_static_ani(i);
-		det->stop_detail(i);
-		det->set_static_ani(i + 3, -1);
+		_G(room)->set_timer_status(i, TIMER_STOP);
+		_G(det)->del_static_ani(i);
+		_G(det)->stop_detail(i);
+		_G(det)->set_static_ani(i + 3, -1);
 	}
 }
 
@@ -198,11 +198,11 @@ int16 Room41::use_lola() {
 		g_engine->_sound->stopSound(0);
 		flic_cut(FCUT_057, CFO_MODE);
 		set_person_pos(127, 112, P_CHEWY, P_LEFT);
-		det->stop_detail(6);
+		_G(det)->stop_detail(6);
 
-		atds->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(267, 1, ATS_DATEI);
-		atds->hide_item(11, 0, 3);
+		_G(atds)->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(267, 1, ATS_DATEI);
+		_G(atds)->hide_item(11, 0, 3);
 		show_cur();
 	}
 
@@ -227,7 +227,7 @@ int16 Room41::use_brief() {
 		stop_hoggy();
 		start_aad_wait(186, -1);
 		start_hoggy();
-		atds->set_ats_str(206, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(206, 1, ATS_DATEI);
 		_G(spieler).R28Briefkasten = true;
 		_G(spieler).R40TrainMove = true;
 		_G(spieler).R28PostCar = true;
@@ -244,7 +244,7 @@ void Room41::sub_dia() {
 
 	if (_G(spieler).R41LolaOk) {
 		start_aad_wait(163, -1);
-		atds->hide_item(11, 0, 2);
+		_G(atds)->hide_item(11, 0, 2);
 		stop_ads_dialog();
 		auto_move(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);

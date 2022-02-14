@@ -39,13 +39,13 @@ void Room82::entry() {
 	spieler_mi[P_NICHELLE].Mode = true;
 
 	if (_G(spieler).R88UsedMonkey) {
-		det->show_static_spr(6);
-		atds->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->show_static_spr(6);
+		_G(atds)->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (_G(spieler).flags37_20)
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 
 	if (flags.LoadGame) {
 		_G(SetUpScreenFunc) = setup_func;
@@ -124,8 +124,8 @@ void Room82::talk1() {
 		transitionAniNr = 7;
 
 		_G(spieler).flags30_40 = true;
-		atds->set_ats_str(473, 1, ATS_DATEI);
-		atds->set_ats_str(467, 1, ATS_DATEI);		
+		_G(atds)->set_ats_str(473, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(467, 1, ATS_DATEI);		
 	}
 
 	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);
@@ -149,11 +149,11 @@ int Room82::proc3() {
 	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	room->set_timer_status(0, TIMER_STOP);
-	det->del_static_ani(0);
+	_G(room)->set_timer_status(0, TIMER_STOP);
+	_G(det)->del_static_ani(0);
 	start_detail_wait(2, 1, ANI_VOR);
 	start_detail_wait(3, 1, ANI_VOR);
-	det->set_static_ani(0, -1);
+	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
 	del_inventar(_G(spieler).AkInvent);
@@ -169,19 +169,19 @@ void Room82::proc4() {
 	auto_move(5, P_CHEWY);
 	flags.NoScroll = true;
 	auto_scroll(270, 0);
-	room->set_timer_status(7, TIMER_STOP);
-	det->del_static_ani(7);
-	det->set_static_ani(8, -1);
-	room->set_timer_status(4, TIMER_STOP);
-	det->del_static_ani(4);
-	det->set_static_ani(5, 3);
+	_G(room)->set_timer_status(7, TIMER_STOP);
+	_G(det)->del_static_ani(7);
+	_G(det)->set_static_ani(8, -1);
+	_G(room)->set_timer_status(4, TIMER_STOP);
+	_G(det)->del_static_ani(4);
+	_G(det)->set_static_ani(5, 3);
 	start_aad_wait(445, -1);
-	det->del_static_ani(5);
-	det->set_static_ani(4, -1);
-	room->set_timer_status(4, TIMER_START);
-	det->del_static_ani(8);
-	det->set_static_ani(7, -1);
-	room->set_timer_status(7, TIMER_START);
+	_G(det)->del_static_ani(5);
+	_G(det)->set_static_ani(4, -1);
+	_G(room)->set_timer_status(4, TIMER_START);
+	_G(det)->del_static_ani(8);
+	_G(det)->set_static_ani(7, -1);
+	_G(room)->set_timer_status(7, TIMER_START);
 	flags.NoScroll = false;
 
 	show_cur();
@@ -198,10 +198,10 @@ int Room82::proc6() {
 		start_aad_wait(450, -1);
 		_G(out)->ausblenden(0);
 		_G(out)->set_teilpalette(_G(pal), 255, 1);
-		atds->enableEvents(false);
+		_G(atds)->enableEvents(false);
 		start_aad_wait(598, -1);
-		atds->enableEvents(true);
-		det->show_static_spr(7);
+		_G(atds)->enableEvents(true);
+		_G(det)->show_static_spr(7);
 		_G(fx_blend) = BLEND3;
 		set_up_screen(DO_SETUP);
 		Room66::proc8(2, 7, 7, 451);
@@ -229,14 +229,14 @@ void Room82::proc8() {
 		set_up_screen(DO_SETUP);
 
 	_G(spieler).PersonHide[P_NICHELLE] = true;
-	det->start_detail(10, 255, false);
+	_G(det)->start_detail(10, 255, false);
 	start_aad_wait(625, -1);
-	det->stop_detail(10);
+	_G(det)->stop_detail(10);
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	start_aad_wait(448, -1);
-	det->del_static_ani(4);
+	_G(det)->del_static_ani(4);
 	start_detail_wait(6, 2, ANI_VOR);
-	det->set_static_ani(4, -1);
+	_G(det)->set_static_ani(4, -1);
 	show_cur();
 }
 

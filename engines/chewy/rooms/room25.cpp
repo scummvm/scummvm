@@ -48,20 +48,20 @@ void Room25::entry() {
 		g_engine->_sound->playSound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
-			det->start_detail(i, 255, ANI_VOR);
+			_G(det)->start_detail(i, 255, ANI_VOR);
 	}
 
 	if (!_G(spieler).R29Schlauch2) {
-		det->hide_static_spr(0);
-		det->hide_static_spr(1);
+		_G(det)->hide_static_spr(0);
+		_G(det)->hide_static_spr(1);
 	}
 
 	if (!_G(spieler).R25FirstEntry) {
 		hide_cur();
 
-		if (obj->check_inventar(TRANSLATOR_INV)) {
-			obj->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
-			atds->set_ats_str(113, 0, ATS_DATEI);
+		if (_G(obj)->check_inventar(TRANSLATOR_INV)) {
+			_G(obj)->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
+			_G(atds)->set_ats_str(113, 0, ATS_DATEI);
 
 			remove_inventory(TRANSLATOR_INV);
 			_G(spieler).inv_cur = false;
@@ -103,13 +103,13 @@ int16 Room25::gleiter_loesch() {
 			_G(spieler).R25GleiteLoesch = true;
 			auto_move(2, P_CHEWY);
 			flic_cut(FCUT_030, CFO_MODE);
-			obj->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
-			atds->set_ats_str(219, 1, ATS_DATEI);
-			atds->set_ats_str(187, 1, ATS_DATEI);
+			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
+			_G(atds)->set_ats_str(219, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(187, 1, ATS_DATEI);
 			g_engine->_sound->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)
-				det->stop_detail(i);
+				_G(det)->stop_detail(i);
 		}
 
 	} else if (_G(spieler).R25GleiteLoesch) {
@@ -119,7 +119,7 @@ int16 Room25::gleiter_loesch() {
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);
-			obj->add_inventar(MILCH_WAS_INV, &room_blk);
+			_G(obj)->add_inventar(MILCH_WAS_INV, &room_blk);
 			inventory_2_cur(MILCH_WAS_INV);
 			start_aad_wait(253, -1);
 		}
@@ -148,7 +148,7 @@ void Room25::xit_gleiter() {
 	if (!_G(spieler).R25SurimyLauf) {
 		hide_cur();
 		_G(spieler).R25SurimyLauf = true;
-		det->load_taf_seq(56, 8, nullptr);
+		_G(det)->load_taf_seq(56, 8, nullptr);
 		_G(auto_obj) = 1;
 		mov_phasen[SURIMY_OBJ].AtsText = 0;
 		mov_phasen[SURIMY_OBJ].Lines = 2;

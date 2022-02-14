@@ -65,14 +65,14 @@ static const AniBlock ABLOCK16[2] = {
 
 void Room12::entry() {
 	_G(zoom_horizont) = 150;
-	_G(timer_nr)[1] = room->set_timer(254, 20);
+	_G(timer_nr)[1] = _G(room)->set_timer(254, 20);
 
 	if (!_G(spieler).R12Betreten) {
 		_G(spieler).R12Betreten = true;
 		hide_cur();
 
 		for (int16 i = 7; i < 10; i++)
-			det->show_static_spr(i);
+			_G(det)->show_static_spr(i);
 
 		flags.NoScroll = true;
 		auto_scroll(60, 0);
@@ -80,20 +80,20 @@ void Room12::entry() {
 		flags.NoScroll = false;
 
 		for (int16 i = 7; i < 10; i++)
-			det->hide_static_spr(i);
+			_G(det)->hide_static_spr(i);
 
-		obj->show_sib(SIB_TALISMAN_R12);
-		obj->calc_rsi_flip_flop(SIB_TALISMAN_R12);
-		obj->calc_all_static_detail();
+		_G(obj)->show_sib(SIB_TALISMAN_R12);
+		_G(obj)->calc_rsi_flip_flop(SIB_TALISMAN_R12);
+		_G(obj)->calc_all_static_detail();
 		auto_move(5, P_CHEWY);
 		start_spz(CH_TALK12, 255, false, 0);
 		start_aad_wait(109, -1);
 		show_cur();
 
 	} else if (_G(spieler).R12Talisman && !_G(spieler).R12BorkInRohr)
-		_G(timer_nr)[0] = room->set_timer(255, 20);
+		_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
 	else if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk)
-		det->show_static_spr(12);
+		_G(det)->show_static_spr(12);
 }
 
 bool Room12::timer(int16 t_nr, int16 ani_nr) {
@@ -111,14 +111,14 @@ bool Room12::timer(int16 t_nr, int16 ani_nr) {
 void Room12::init_bork() {
 	if (!auto_obj_status(R12_BORK_OBJ) && !_G(spieler).R12BorkTalk) {
 		if (!_G(auto_obj))
-			det->load_taf_seq(62, 24, nullptr);
+			_G(det)->load_taf_seq(62, 24, nullptr);
 
 		if (!flags.AutoAniPlay && !flags.ChAutoMov) {
 			_G(auto_obj) = 1;
 			mov_phasen[R12_BORK_OBJ].AtsText = 120;
 			mov_phasen[R12_BORK_OBJ].Lines = 5;
 			mov_phasen[R12_BORK_OBJ].Repeat = 1;
-			mov_phasen[R12_BORK_OBJ].ZoomFak = (int16)room->_roomInfo->ZoomFak + 20;
+			mov_phasen[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->ZoomFak + 20;
 			auto_mov_obj[R12_BORK_OBJ].Id = AUTO_OBJ0;
 			auto_mov_vector[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 			auto_mov_obj[R12_BORK_OBJ].Mode = true;
@@ -132,7 +132,7 @@ void Room12::init_bork() {
 
 				if (_G(spieler).R12BorkCount < 3) {
 					++_G(spieler).R12BorkCount;
-					uhr->reset_timer(_G(timer_nr)[0], 0);
+					_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 					wait_show_screen(10);
 					start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 					start_aad_wait(14, -1);
@@ -145,7 +145,7 @@ void Room12::init_bork() {
 			}
 		}
 
-		uhr->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 	}
 }
 
@@ -169,21 +169,21 @@ void Room12::bork_ok() {
 	wait_auto_obj(R12_BORK_OBJ);
 
 	_G(spieler).R12BorkInRohr = true;
-	det->set_detail_pos(3, 170, 145);
-	det->start_detail(3, 255, ANI_VOR);
+	_G(det)->set_detail_pos(3, 170, 145);
+	_G(det)->start_detail(3, 255, ANI_VOR);
 	start_aad_wait(57, -1);
-	det->stop_detail(3);
+	_G(det)->stop_detail(3);
 
 	mov_phasen[R12_BORK_OBJ].Repeat = 1;
 	mov_phasen[R12_BORK_OBJ].Lines = 3;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 3, (const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
-	det->hide_static_spr(10);
+	_G(det)->hide_static_spr(10);
 	start_detail_wait(4, 1, ANI_VOR);
 	_G(talk_hide_static) = -1;
-	det->show_static_spr(12);
-	atds->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
-	obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);
+	_G(det)->show_static_spr(12);
+	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
+	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
 	flags.MausLinks = false;
 	show_cur();
@@ -208,8 +208,8 @@ int16 Room12::use_terminal() {
 
 				load_chewy_taf(CHEWY_BORK);
 				flags.NoScroll = false;
-				atds->set_ats_str(118, 0, ATS_DATEI);
-				det->hide_static_spr(12);
+				_G(atds)->set_ats_str(118, 0, ATS_DATEI);
+				_G(det)->hide_static_spr(12);
 				_G(menu_item) = CUR_WALK;
 				cursor_wahl(_G(menu_item));
 				set_person_pos(108, 90, P_CHEWY, -1);
@@ -224,7 +224,7 @@ int16 Room12::use_terminal() {
 
 			} else {
 				_G(spieler).R12TransOn = true;
-				uhr->reset_timer(_G(timer_nr)[1], 0);
+				_G(uhr)->reset_timer(_G(timer_nr)[1], 0);
 			}
 		} else {
 			start_aad(114, 0);
@@ -237,12 +237,12 @@ int16 Room12::use_terminal() {
 void Room12::use_linke_rohr() {
 	_G(spieler).R12TalismanOk = false;
 	_G(spieler).R12KetteLinks = true;
-	uhr->disable_timer();
-	obj->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
-	obj->calc_rsi_flip_flop(SIB_ROEHRE_R12);
-	obj->calc_all_static_detail();
-	atds->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
-	atds->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(uhr)->disable_timer();
+	_G(obj)->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
+	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
+	_G(obj)->calc_all_static_detail();
+	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
 	start_aad(111, 0);
 }
 
@@ -270,8 +270,8 @@ int16 Room12::useTransformerTube() {
 
 		if (_G(spieler).R12KetteLinks) {
 			_G(spieler).R12KetteLinks = false;
-			uhr->enable_timer();
-			atds->set_ats_str(117, 1, AAD_DATEI);
+			_G(uhr)->enable_timer();
+			_G(atds)->set_ats_str(117, 1, AAD_DATEI);
 		} else {
 			auto_move(7, P_CHEWY);
 			start_aad_wait(29, -1);

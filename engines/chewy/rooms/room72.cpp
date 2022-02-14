@@ -37,7 +37,7 @@ void Room72::entry(int16 eib_nr) {
 	
 	if (_G(spieler).flags28_10) {
 		_G(zoom_horizont) = 110;
-		det->hide_static_spr(0);
+		_G(det)->hide_static_spr(0);
 	} else {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 20;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
@@ -85,7 +85,7 @@ void Room72::xit(int16 eib_nr) {
 }
 
 void Room72::proc1(int16 flicNr) {
-	atds->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).flags28_10 = true;
 	wait_show_screen(7);
 	start_aad_wait(437, -1);
@@ -93,7 +93,7 @@ void Room72::proc1(int16 flicNr) {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	det->hide_static_spr(0);
+	_G(det)->hide_static_spr(0);
 	set_up_screen(DO_SETUP);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	spieler_mi[P_CHEWY].Mode = false;

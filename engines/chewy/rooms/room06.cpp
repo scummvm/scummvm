@@ -59,20 +59,20 @@ void Room6::entry() {
 	_G(zoom_mov_fak) = 2;
 
 	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
-		det->start_detail(7, 255, ANI_VOR);
-		atds->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->start_detail(7, 255, ANI_VOR);
+		_G(atds)->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
 		if (!flags.LoadGame)
 			++_G(spieler).R6RaumBetreten;
 
 		if (_G(spieler).R6RaumBetreten == 2) {
 			hide_cur();
-			det->stop_detail(7);
+			_G(det)->stop_detail(7);
 			init_robo();
 			wait_auto_obj(0);
 			_G(spieler).R6BolaOk = true;
-			obj->show_sib(SIB_BOLA_KNOPF_R6);
-			obj->hide_sib(SIB_BOLA_R6);
-			atds->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(obj)->show_sib(SIB_BOLA_KNOPF_R6);
+			_G(obj)->hide_sib(SIB_BOLA_R6);
+			_G(atds)->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
 			show_cur();
 		}
 	}
@@ -93,36 +93,36 @@ void Room6::init_robo() {
 
 void Room6::bola_knopf() {
 	if (!_G(spieler).R6BolaBecher) {
-		det->hide_static_spr(0);
+		_G(det)->hide_static_spr(0);
 		start_detail_wait(0, 1, ANI_VOR);
 		if (_G(spieler).R6BolaOk) {
 			_G(spieler).R6BolaBecher = true;
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 			start_ani_block(2, ABLOCK7);
-			obj->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
+			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
 			wait_detail(2);
-			obj->calc_rsi_flip_flop(SIB_BOLA_SCHACHT);
-			atds->del_steuer_bit(42, ATS_AKTIV_BIT, ATS_DATEI);
-			atds->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATEI);
-			obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
-			obj->hide_sib(SIB_BOLA_KNOPF_R6);
+			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_SCHACHT);
+			_G(atds)->del_steuer_bit(42, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
+			_G(obj)->hide_sib(SIB_BOLA_KNOPF_R6);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_ani_block(3, ABLOCK6);
-			while (det->get_ani_status(3) && !SHOULD_QUIT) {
-				if (!det->get_ani_status(14)) {
+			while (_G(det)->get_ani_status(3) && !SHOULD_QUIT) {
+				if (!_G(det)->get_ani_status(14)) {
 					set_person_pos(220, 89, P_CHEWY, P_LEFT);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
 				set_up_screen(DO_SETUP);
 			}
-			det->show_static_spr(0);
+			_G(det)->show_static_spr(0);
 			++_G(spieler).R6BolaJoke;
 			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
 			start_spz(CH_TALK5, 244, false, 0);
 			start_aad_wait(diaNr, -1);
 		}
-		obj->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
+		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 	}
 }
 

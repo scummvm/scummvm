@@ -33,7 +33,7 @@ void Room10::entry() {
 		_G(out)->setze_zeiger(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[room_blk.AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->setze_zeiger(nullptr);
-		fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 		_G(spieler).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
 		flic_cut(FCUT_004, CFO_MODE);
@@ -45,7 +45,7 @@ void Room10::entry() {
 		show_cur();
 
 	} else if (_G(spieler).R10SurimyOk) {
-		room->set_timer_status(3, TIMER_STOP);
+		_G(room)->set_timer_status(3, TIMER_STOP);
 	}
 }
 
@@ -53,12 +53,12 @@ void Room10::get_surimy() {
 	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
-	flc->set_custom_user_function(cut_serv);
+	_G(flc)->set_custom_user_function(cut_serv);
 	flic_cut(FCUT_006, CFO_MODE);
-	flc->remove_custom_user_function();
+	_G(flc)->remove_custom_user_function();
 	_G(spieler).R10SurimyOk = true;
-	room->set_timer_status(3, TIMER_STOP);
-	atds->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(room)->set_timer_status(3, TIMER_STOP);
+	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATEI);
 	invent_2_slot(18);
 
 	del_inventar(_G(spieler).AkInvent);
@@ -66,7 +66,7 @@ void Room10::get_surimy() {
 }
 
 int16 Room10::cut_serv(int16 frame) {
-	atds->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 	if (frame == 31)
 		start_aad(107, 0);
 

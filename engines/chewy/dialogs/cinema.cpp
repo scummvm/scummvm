@@ -53,10 +53,10 @@ void Cinema::execute() {
 
 	_G(out)->set_fontadr(_G(font6x8));
 	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
-	atds->load_atds(98, 1);
+	_G(atds)->load_atds(98, 1);
 
-	room->open_handle(GBOOK, "rb", 0);
-	room->load_tgp(4, &room_blk, 1, 0, GBOOK);
+	_G(room)->open_handle(GBOOK, "rb", 0);
+	_G(room)->load_tgp(4, &room_blk, 1, 0, GBOOK);
 	show_cur();
 	EVENTS_CLEAR;
 	kbinfo.scan_code = 0;
@@ -69,7 +69,7 @@ void Cinema::execute() {
 		if (!cutscenes.empty()) {
 			// Render cutscene list
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				char *csName = atds->ats_get_txt(546 + i + topIndex,
+				char *csName = _G(atds)->ats_get_txt(546 + i + topIndex,
 					0, &txt_anz, 1);
 				int yp = i * 10 + 68;
 
@@ -79,7 +79,7 @@ void Cinema::execute() {
 			}
 		} else {
 			// No cutscenes seen yet
-			char *none = atds->ats_get_txt(545, 0, &txt_anz, 1);
+			char *none = _G(atds)->ats_get_txt(545, 0, &txt_anz, 1);
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
 		}
 
@@ -162,12 +162,12 @@ void Cinema::execute() {
 			hide_cur();
 			_G(out)->cls();
 			_G(out)->setze_zeiger(_G(screen0));
-			fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
-			flc->set_custom_user_function(cut_serv);
+			_G(flc)->set_custom_user_function(cut_serv);
 			flic_cut(CINEMA_FLICS[topIndex + selected], CFO_MODE);
-			flc->remove_custom_user_function();
+			_G(flc)->remove_custom_user_function();
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			show_cur();
@@ -190,8 +190,8 @@ void Cinema::execute() {
 			if (flag) {
 				flag = false;
 				_G(out)->setze_zeiger(_G(screen0));
-				room->set_ak_pal(&room_blk);
-				fx->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+				_G(room)->set_ak_pal(&room_blk);
+				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {
 				_G(out)->back2screen(_G(workpage));
 			}
@@ -201,10 +201,10 @@ void Cinema::execute() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	room->open_handle(EPISODE1, "rb", 0);
-	room->set_ak_pal(&room_blk);
+	_G(room)->open_handle(EPISODE1, "rb", 0);
+	_G(room)->set_ak_pal(&room_blk);
 	hide_cur();
-	uhr->reset_timer(0, 5);
+	_G(uhr)->reset_timer(0, 5);
 }
 
 int16 Cinema::cut_serv(int16 frame) {

@@ -50,15 +50,15 @@ void Room68::entry() {
 	spieler_mi[P_NICHELLE].Mode = true;
 	
 	if (_G(spieler).R68Papagei) {
-		det->show_static_spr(12);
-		det->start_detail(21, 255, ANI_VOR);
+		_G(det)->show_static_spr(12);
+		_G(det)->start_detail(21, 255, ANI_VOR);
 	}
 
 	if (!_G(spieler).R68DivaWeg) {
-		_G(timer_nr)[0] = room->set_timer(255, 10);
-		det->set_static_ani(18, -1);
+		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
+		_G(det)->set_static_ani(18, -1);
 	} else
-		det->hide_static_spr(3);
+		_G(det)->hide_static_spr(3);
 	
 	if (!flags.LoadGame) {
 		hide_cur();
@@ -91,38 +91,38 @@ bool Room68::timer(int16 t_nr, int16 ani_nr) {
 void Room68::setup_func() {
 	switch (_G(r68HohesC)) {
 	case 0:
-		if (det->get_ani_status(_G(r68HohesC)) == false) {
+		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 1;
-			det->start_detail(_G(r68HohesC), 1, ANI_VOR);
+			_G(det)->start_detail(_G(r68HohesC), 1, ANI_VOR);
 		}
 		break;
 
 	case 1:
-		if (det->get_ani_status(_G(r68HohesC)) == false) {
+		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
 			if (_G(spieler).SpeechSwitch) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(_G(r68HohesC));
-				det->start_detail(_G(r68HohesC), 255, ANI_VOR);
+				_G(det)->start_detail(_G(r68HohesC), 255, ANI_VOR);
 
 				while (_G(sndPlayer)->getSampleStatus(1) == 4)
 					set_up_screen(DO_SETUP);
-				det->stop_detail(_G(r68HohesC));
+				_G(det)->stop_detail(_G(r68HohesC));
 			} else {
-				det->start_detail(_G(r68HohesC), 3, ANI_VOR);
+				_G(det)->start_detail(_G(r68HohesC), 3, ANI_VOR);
 			}
 			
 			
-			det->start_detail(_G(r68HohesC), 3, ANI_VOR);
+			_G(det)->start_detail(_G(r68HohesC), 3, ANI_VOR);
 		}
 		break;
 
 	case 2:
-		if (det->get_ani_status(_G(r68HohesC)) == false) {
+		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = -1;
-			det->stop_detail(18);
-			det->show_static_spr(3);
-			uhr->reset_timer(_G(timer_nr)[0], 0);
+			_G(det)->stop_detail(18);
+			_G(det)->show_static_spr(3);
+			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		}
 		break;
 
@@ -160,20 +160,20 @@ void Room68::talk_indigo() {
 void Room68::talk_indigo(int16 aad_nr) {
 	hide_cur();
 	auto_move(3, P_CHEWY);
-	room->set_timer_status(8, TIMER_STOP);
-	det->del_static_ani(8);
+	_G(room)->set_timer_status(8, TIMER_STOP);
+	_G(det)->del_static_ani(8);
 	if (aad_nr == -1) {
-		det->set_static_ani(9, -1);
+		_G(det)->set_static_ani(9, -1);
 		start_aad_wait(384 + (int16)_G(spieler).R68IndigoDia, -1);
 		_G(spieler).R68IndigoDia ^= 1;
-		det->del_static_ani(9);
+		_G(det)->del_static_ani(9);
 	} else {
-		det->set_static_ani(12, -1);
+		_G(det)->set_static_ani(12, -1);
 		start_aad_wait(aad_nr, -1);
-		det->del_static_ani(12);
+		_G(det)->del_static_ani(12);
 	}
-	room->set_timer_status(8, TIMER_START);
-	det->set_static_ani(8, -1);
+	_G(room)->set_timer_status(8, TIMER_START);
+	_G(det)->set_static_ani(8, -1);
 	show_cur();
 }
 
@@ -190,21 +190,21 @@ int16 Room68::use_indigo() {
 			talk_indigo(394);
 			_G(cur_hide_flag) = false;
 			hide_cur();
-			room->set_timer_status(8, TIMER_STOP);
-			det->del_static_ani(8);
-			det->stop_detail(8);
+			_G(room)->set_timer_status(8, TIMER_STOP);
+			_G(det)->del_static_ani(8);
+			_G(det)->stop_detail(8);
 			start_detail_wait(13, 3, ANI_VOR);
 			start_detail_wait(25, 1, ANI_VOR);
-			det->set_static_ani(12, -1);
+			_G(det)->set_static_ani(12, -1);
 			talk_indigo(398);
 			_G(cur_hide_flag) = false;
 			hide_cur();
-			room->set_timer_status(8, TIMER_STOP);
-			det->del_static_ani(8);
-			det->stop_detail(8);
+			_G(room)->set_timer_status(8, TIMER_STOP);
+			_G(det)->del_static_ani(8);
+			_G(det)->stop_detail(8);
 			start_detail_wait(26, 1, ANI_VOR);
-			room->set_timer_status(8, TIMER_START);
-			det->set_static_ani(8, -1);
+			_G(room)->set_timer_status(8, TIMER_START);
+			_G(det)->set_static_ani(8, -1);
 			new_invent_2_cur(KARTE_INV);
 			_G(spieler).R68KarteDa = true;
 		} else {
@@ -221,21 +221,21 @@ int16 Room68::use_indigo() {
 void Room68::talk_keeper() {
 	hide_cur();
 	auto_move(2, P_CHEWY);
-	room->set_timer_status(20, TIMER_STOP);
-	det->del_static_ani(20);
+	_G(room)->set_timer_status(20, TIMER_STOP);
+	_G(det)->del_static_ani(20);
 	start_detail_wait(15, 1, ANI_VOR);
-	det->set_static_ani(16, -1);
+	_G(det)->set_static_ani(16, -1);
 	show_cur();
 	_G(ssi)[3].X = spieler_vector[P_CHEWY].Xypos[0] - _G(spieler).scrollx + spieler_mi[P_CHEWY].HotX;;
 	_G(ssi)[3].Y = spieler_vector[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-	atds->set_split_win(3, &_G(ssi)[3]);
+	_G(atds)->set_split_win(3, &_G(ssi)[3]);
 	start_ads_wait(20);
 	_G(cur_hide_flag) = false;
 	hide_cur();
-	det->del_static_ani(16);
+	_G(det)->del_static_ani(16);
 	start_detail_wait(15, 1, ANI_RUECK);
-	room->set_timer_status(20, TIMER_START);
-	det->set_static_ani(20, -1);
+	_G(room)->set_timer_status(20, TIMER_START);
+	_G(det)->set_static_ani(20, -1);
 	show_cur();
 }
 
@@ -248,10 +248,10 @@ int16 Room68::use_papagei() {
 		del_inventar(_G(spieler).AkInvent);
 		auto_move(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		det->show_static_spr(12);
-		det->start_detail(21, 255, ANI_VOR);
-		atds->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(407, 1, ATS_DATEI);
+		_G(det)->show_static_spr(12);
+		_G(det)->start_detail(21, 255, ANI_VOR);
+		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(407, 1, ATS_DATEI);
 		show_cur();
 	}
 	return action_flag;
@@ -261,11 +261,11 @@ void Room68::calc_diva() {
 	if (!_G(spieler).R68DivaWeg) {
 		if (!_G(spieler).R68Papagei) {
 			if (_G(r68HohesC) == -1) {
-				uhr->reset_timer(_G(timer_nr)[0], 0);
+				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
-				det->hide_static_spr(3);
-				det->start_detail(_G(r68HohesC), 1, ANI_RUECK);
-				det->start_detail(18, 255, ANI_VOR);
+				_G(det)->hide_static_spr(3);
+				_G(det)->start_detail(_G(r68HohesC), 1, ANI_RUECK);
+				_G(det)->start_detail(18, 255, ANI_VOR);
 			}
 		} else if (!_G(spieler).R68Gutschein && !is_chewy_busy()) {
 			hide_cur();
@@ -274,7 +274,7 @@ void Room68::calc_diva() {
 			start_aad_wait(386, -1);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			new_invent_2_cur(BAR_GUT_INV);
-			uhr->reset_timer(_G(timer_nr)[0], 0);
+			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 			show_cur();
 		}
 	}
@@ -288,11 +288,11 @@ int16 Room68::use_keeper() {
 		action_flag = true;
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		room->set_timer_status(20, TIMER_STOP);
-		det->del_static_ani(20);
+		_G(room)->set_timer_status(20, TIMER_STOP);
+		_G(det)->del_static_ani(20);
 		start_ani_block(3, ABLOCK39);
-		room->set_timer_status(20, TIMER_START);
-		det->set_static_ani(20, -1);
+		_G(room)->set_timer_status(20, TIMER_START);
+		_G(det)->set_static_ani(20, -1);
 		new_invent_2_cur(B_MARY_INV);
 		show_cur();
 	}
@@ -306,25 +306,25 @@ int16 Room68::use_diva() {
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = 1;
 		auto_move(4, P_CHEWY);
-		uhr->reset_timer(_G(timer_nr)[0], 0);
-		det->hide_static_spr(3);
+		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(det)->hide_static_spr(3);
 		start_detail_wait(4, 1, ANI_VOR);
 		_G(spieler).R68Gutschein = false;
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 	} else if (is_cur_inventar(B_MARY2_INV)) {
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = 1;
 		auto_move(4, P_CHEWY);
-		det->hide_static_spr(3);
+		_G(det)->hide_static_spr(3);
 		_G(spieler).R68DivaWeg = true;
 		start_ani_block(2, ABLOCK38);
 		flic_cut(FCUT_083, CFO_MODE);
-		det->del_static_ani(18);
+		_G(det)->del_static_ani(18);
 		register_cutscene(22);
-		det->del_static_ani(18);
+		_G(det)->del_static_ani(18);
 		start_detail_wait(7, 1, ANI_VOR);
-		atds->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(412, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(412, ATS_AKTIV_BIT, ATS_DATEI);
 		set_person_spr(P_RIGHT, P_CHEWY);
 		start_aad_wait(402, -1);
 	} else
@@ -358,25 +358,25 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		start_aad_wait(390, -1);
 		start_detail_wait(22, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		det->start_detail(27, 255, ANI_VOR);
+		_G(det)->start_detail(27, 255, ANI_VOR);
 
 		if (_G(spieler).DisplayText)
 			start_detail_wait(23, 3, ANI_VOR);
 		else {
-			det->start_detail(23, 255, ANI_VOR);
+			_G(det)->start_detail(23, 255, ANI_VOR);
 			g_engine->_sound->playSound(109, 1, false);
 			wait_show_screen(2);
 
 			g_engine->_sound->waitForSpeechToFinish();
 
-			det->stop_detail(23);
+			_G(det)->stop_detail(23);
 		}
 
 		if (_G(spieler).DisplayText) {
 			g_engine->_sound->playSound(108, 1, false);
 		}
 		
-		det->start_detail(24, 255, ANI_VOR);
+		_G(det)->start_detail(24, 255, ANI_VOR);
 		set_person_pos(26, 40, P_NICHELLE, P_RIGHT);
 		if (_G(spieler).DisplayText) {
 			start_aad_wait(391, -1);
@@ -386,32 +386,32 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			wait_show_screen(100);
 		}
 
-		room->set_timer_status(8, TIMER_STOP);
-		det->del_static_ani(8);
+		_G(room)->set_timer_status(8, TIMER_STOP);
+		_G(det)->del_static_ani(8);
 		start_detail_wait(10, 1, ANI_VOR);
-		det->start_detail(11, 255, ANI_VOR);
+		_G(det)->start_detail(11, 255, ANI_VOR);
 		start_aad_wait(396, -1);
-		det->stop_detail(11);
-		det->set_static_ani(12, -1);
+		_G(det)->stop_detail(11);
+		_G(det)->set_static_ani(12, -1);
 		start_aad_wait(611, -1);
-		det->del_static_ani(12);
-		det->start_detail(14, 255, ANI_VOR);
+		_G(det)->del_static_ani(12);
+		_G(det)->start_detail(14, 255, ANI_VOR);
 		start_aad_wait(395, -1);
-		det->stop_detail(14);
-		room->set_timer_status(8, TIMER_START);
-		det->set_static_ani(8, -1);
+		_G(det)->stop_detail(14);
+		_G(room)->set_timer_status(8, TIMER_START);
+		_G(det)->set_static_ani(8, -1);
 		start_aad_wait(392, -1);
 
 		g_engine->_sound->waitForSpeechToFinish();
 		
 		_G(spieler).PersonHide[P_HOWARD] = false;
-		det->stop_detail(27);
-		det->stop_detail(24);
-		det->show_static_spr(13);
+		_G(det)->stop_detail(27);
+		_G(det)->stop_detail(24);
+		_G(det)->show_static_spr(13);
 		_G(spieler).R68Lied = true;
 		auto_move(1, P_CHEWY);
 		auto_scroll(216, 0);
-		det->hide_static_spr(13);
+		_G(det)->hide_static_spr(13);
 		_G(spieler).PersonHide[P_NICHELLE] = false;
 		set_person_pos(150, -13, P_NICHELLE, P_RIGHT);
 
@@ -430,7 +430,7 @@ void Room68::talk_papagei() {
 
 	_G(ssi)[2].X = 60;
 	_G(ssi)[2].Y = 80;
-	atds->set_split_win(2, &_G(ssi)[2]);
+	_G(atds)->set_split_win(2, &_G(ssi)[2]);
 	start_ads_wait(18);
 }
 

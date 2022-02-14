@@ -45,7 +45,7 @@ void Room74::entry(int16 eib_nr) {
 	_G(SetUpScreenFunc) = setup_func;
 
 	if (_G(spieler).flags29_1)
-		det->start_detail(0, 255, false);
+		_G(det)->start_detail(0, 255, false);
 
 	if (flags.LoadGame)
 		return;
@@ -99,12 +99,12 @@ int Room74::proc1() {
 		start_detail_wait(1, 1, ANI_VOR);
 		set_person_pos(272, 116, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		det->start_detail(0, 255, false);
+		_G(det)->start_detail(0, 255, false);
 		_G(spieler).flags29_1 = true;
-		atds->set_ats_str(435, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(435, 1, ATS_DATEI);
 
 	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
-		atds->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
 		auto_move(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		new_invent_2_cur(RUBBER_INV);

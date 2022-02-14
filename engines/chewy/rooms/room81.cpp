@@ -38,8 +38,8 @@ void Room81::entry() {
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).r88DestRoom == 84) {
-		det->show_static_spr(0);
-		atds->del_steuer_bit(488, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->show_static_spr(0);
+		_G(atds)->del_steuer_bit(488, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	proc3();
@@ -82,9 +82,9 @@ void Room81::proc1() {
 		go_auto_xy(143, 62, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(0, 1, ANI_VOR);
-		det->start_detail(1, 255, false);
+		_G(det)->start_detail(1, 255, false);
 		start_aad_wait(459, -1);
-		det->stop_detail(1);
+		_G(det)->stop_detail(1);
 		start_detail_wait(0, 1, ANI_GO);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		go_auto_xy(171, 93, P_CHEWY, ANI_WAIT);
@@ -139,16 +139,16 @@ int Room81::proc2() {
 
 void Room81::proc3() {
 	if (!_G(spieler).flags30_2) {
-		det->start_detail(2, 255, false);
+		_G(det)->start_detail(2, 255, false);
 		return;
 	}
 
 	for (int i = 0; i < 3; ++i)
-		det->start_detail(3 + i, 255, false);
+		_G(det)->start_detail(3 + i, 255, false);
 
-	det->stop_detail(2);
-	atds->del_steuer_bit(486, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->set_steuer_bit(490, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(det)->stop_detail(2);
+	_G(atds)->del_steuer_bit(486, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(490, ATS_AKTIV_BIT, ATS_DATEI);
 }
 
 } // namespace Rooms

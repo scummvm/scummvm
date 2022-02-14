@@ -68,7 +68,7 @@ void Room21::entry() {
 	load_chewy_taf(CHEWY_MINI);
 	calc_laser();
 	init_spinne();
-	_G(timer_nr)[2] = room->set_timer(255, 1);
+	_G(timer_nr)[2] = _G(room)->set_timer(255, 1);
 	flags.NoEndPosMovObj = true;
 	_G(SetUpScreenFunc) = setup_func;
 }
@@ -85,37 +85,37 @@ bool Room21::timer(int16 t_nr, int16 ani_nr) {
 void Room21::calc_laser() {
 	if (_G(spieler).R21Hebel1 && !_G(spieler).R21Hebel2 && _G(spieler).R21Hebel3) {
 		_G(spieler).R21Laser1Weg = true;
-		det->stop_detail(3);
-		atds->set_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->stop_detail(3);
+		_G(atds)->set_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
 		_G(spieler).R21Laser1Weg = false;
-		det->start_detail(3, 255, ANI_VOR);
-		atds->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->start_detail(3, 255, ANI_VOR);
+		_G(atds)->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (!_G(spieler).R21Hebel1 && _G(spieler).R21Hebel2 && !_G(spieler).R21Hebel3) {
-		if (!obj->check_inventar(SEIL_INV) && !_G(spieler).R17Seil) {
-			obj->show_sib(SIB_SEIL_R21);
-			atds->del_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+		if (!_G(obj)->check_inventar(SEIL_INV) && !_G(spieler).R17Seil) {
+			_G(obj)->show_sib(SIB_SEIL_R21);
+			_G(atds)->del_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 
 		_G(spieler).R21Laser2Weg = true;
-		det->stop_detail(4);
-		atds->set_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->stop_detail(4);
+		_G(atds)->set_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
 
 	} else {
-		obj->hide_sib(SIB_SEIL_R21);
-		atds->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(obj)->hide_sib(SIB_SEIL_R21);
+		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R21Laser2Weg = false;
-		det->start_detail(4, 255, ANI_VOR);
-		atds->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->start_detail(4, 255, ANI_VOR);
+		_G(atds)->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 }
 
 void Room21::init_spinne() {
-	det->load_taf_seq(42, 48, nullptr);
+	_G(det)->load_taf_seq(42, 48, nullptr);
 	_G(auto_obj) = 2;
 
 	mov_phasen[SPINNE1_OBJ].AtsText = 130;
@@ -135,14 +135,14 @@ void Room21::init_spinne() {
 	auto_mov_vector[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
 	auto_mov_obj[SPINNE2_OBJ].Mode = true;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], 2, (const MovLine *)SPINNE_MPKT1);
-	_G(timer_nr)[0] = room->set_timer(255, 21);
+	_G(timer_nr)[0] = _G(room)->set_timer(255, 21);
 	_G(e_streifen) = false;
 }
 
 void Room21::restart_spinne2() {
 	mov_phasen[SPINNE2_OBJ].Repeat = 1;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], mov_phasen[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
-	uhr->reset_timer(_G(timer_nr)[0], 0);
+	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 	_G(e_streifen) = false;
 }
 
@@ -194,25 +194,25 @@ void Room21::chewy_kolli() {
 		flags.AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 ani_nr = (spieler_vector[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
-		det->set_detail_pos(ani_nr, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
+		_G(det)->set_detail_pos(ani_nr, spieler_vector[P_CHEWY].Xypos[0], spieler_vector[P_CHEWY].Xypos[1]);
 		start_detail_wait(ani_nr, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flags.AutoAniPlay = false;
 		spieler_vector[P_CHEWY].Count = tmp;
 		get_phase(&spieler_vector[P_CHEWY], &spieler_mi[P_CHEWY]);
-		mov->continue_auto_go();
+		_G(mov)->continue_auto_go();
 	}
 }
 
 void Room21::salto() {
-	if (!_G(spieler).inv_cur && atds->get_ats_str(134, TXT_MARK_USE, ATS_DATEI) == 8
+	if (!_G(spieler).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATEI) == 8
 		&& !_G(spieler).R21Salto && !flags.AutoAniPlay) {
 		_G(spieler).R21Salto = true;
 		flags.AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
-			det->set_detail_pos(12 + i, spieler_vector[P_CHEWY].Xypos[0],
+			_G(det)->set_detail_pos(12 + i, spieler_vector[P_CHEWY].Xypos[0],
 				spieler_vector[P_CHEWY].Xypos[1]);
 		}
 
@@ -231,7 +231,7 @@ void Room21::use_gitter_energie() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 
 	switch_room(17);
-	det->hide_static_spr(5);
+	_G(det)->hide_static_spr(5);
 	start_detail_wait(9, 1, ANI_VOR);
 	_G(spieler).R17GitterWeg = true;
 	_G(spieler).PersonHide[P_CHEWY] = false;

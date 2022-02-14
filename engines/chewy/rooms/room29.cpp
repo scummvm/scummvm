@@ -44,24 +44,24 @@ static const AniBlock ABLOCK27[5] = {
 
 void Room29::entry() {
 	if (_G(spieler).R29Schlauch1) {
-		det->show_static_spr(7);
+		_G(det)->show_static_spr(7);
 	} else if (_G(spieler).R29Schlauch2) {
-		det->show_static_spr(8);
-		det->show_static_spr(10);
+		_G(det)->show_static_spr(8);
+		_G(det)->show_static_spr(10);
 	}
 
 	if (_G(spieler).R29AutoSitz) {
 		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
-			atds->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		else
-			det->show_static_spr(9);
+			_G(det)->show_static_spr(9);
 	}
 
 	_G(spieler).ScrollxStep = 2;
 }
 
 void Room29::xit() {
-	if (obj->check_inventar(PUMPE_INV))
+	if (_G(obj)->check_inventar(PUMPE_INV))
 		del_inventar(PUMPE_INV);
 }
 
@@ -77,8 +77,8 @@ int16 Room29::use_pumpe() {
 			_G(spieler).R29Schlauch1 = true;
 			auto_move(1, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			det->show_static_spr(7);
-			atds->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(det)->show_static_spr(7);
+			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
 			action_flag = true;
@@ -115,13 +115,13 @@ bool Room29::use_schlauch() {
 
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		det->hide_static_spr(7);
+		_G(det)->hide_static_spr(7);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(4, 1, ANI_VOR);
-		det->show_static_spr(8);
-		det->show_static_spr(10);
-		atds->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
-		atds->set_ats_str(218, 1, ATS_DATEI);
+		_G(det)->show_static_spr(8);
+		_G(det)->show_static_spr(10);
+		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(218, 1, ATS_DATEI);
 
 		_G(spieler).R29Schlauch1 = false;
 		_G(spieler).R29Schlauch2 = true;
@@ -139,16 +139,16 @@ void Room29::schlitz_sitz() {
 		hide_cur();
 		_G(spieler).R29AutoSitz = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		det->hide_static_spr(4);
-		det->show_static_spr(11);
+		_G(det)->hide_static_spr(4);
+		_G(det)->show_static_spr(11);
 		start_ani_block(3, ABLOCK26);
-		det->show_static_spr(9);
-		det->hide_static_spr(11);
-		det->start_detail(2, 255, ANI_VOR);
+		_G(det)->show_static_spr(9);
+		_G(det)->hide_static_spr(11);
+		_G(det)->start_detail(2, 255, ANI_VOR);
 		start_aad_wait(63, -1);
 
-		det->stop_detail(2);
-		atds->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(det)->stop_detail(2);
+		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(maus_links_click) = false;
 		kbinfo.scan_code = Common::KEYCODE_INVALID;
@@ -167,7 +167,7 @@ int16 Room29::zaun_sprung() {
 		auto_move(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_frame(3, 1, ANI_VOR, 7);
-		det->hide_static_spr(9);
+		_G(det)->hide_static_spr(9);
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
 

@@ -40,9 +40,9 @@ void Room80::entry() {
 	g_engine->_sound->playSound(0, 2, false);
 
 	if (_G(spieler).gottenDiary) {
-		atds->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
-		atds->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (_G(spieler).flags32_1) {
@@ -62,16 +62,16 @@ void Room80::entry() {
 	_G(zoom_horizont) = 0;
 
 	if (_G(spieler).r88DestRoom == 84)
-		det->show_static_spr(3);
+		_G(det)->show_static_spr(3);
 	else
-		det->show_static_spr(4);
+		_G(det)->show_static_spr(4);
 
 	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room80::setup_func() {
 	for (int i = 0; i < 3; ++i)
-		det->hide_static_spr(i);
+		_G(det)->hide_static_spr(i);
 
 	if (_G(spieler).flags32_1 || !flags.ShowAtsInvTxt || _G(menu_display))
 		return;
@@ -79,7 +79,7 @@ void Room80::setup_func() {
 	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
 	cursor_wahl(CUR_ZEIGE);
-	int vec = det->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);
+	int vec = _G(det)->maus_vector(_G(spieler).scrollx + minfo.x, minfo.y);
 	if (vec == -1)
 		return;
 
@@ -88,7 +88,7 @@ void Room80::setup_func() {
 			return;
 	}
 
-	det->show_static_spr(vec);
+	_G(det)->show_static_spr(vec);
 	if (!_G(maus_links_click))
 		return;
 
@@ -115,7 +115,7 @@ void Room80::setup_func() {
 		return;
 
 	_G(SetUpScreenFunc) = nullptr;
-	det->hide_static_spr(vec);
+	_G(det)->hide_static_spr(vec);
 	_G(menu_item) = CUR_WALK;
 	cursor_wahl(CUR_WALK);
 	_G(spieler).flags30_1 = true;

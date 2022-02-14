@@ -34,18 +34,18 @@ void standard_init() {
 	_G(mem) = new Memory();
 	_G(out) = new McgaGraphics();
 	_G(in) = new InputMgr();
-	fx = new Effect();
-	txt = new Text();
-	bit = new BitClass();
-	ged = new GedClass(&ged_user_func);
-	room = new Room();
-	obj = new Object(&_G(spieler));
-	uhr = new Timer(MAX_TIMER_OBJ, ani_timer);
-	det = new Detail();
-	atds = new Atdsys();
+	_G(fx) = new Effect();
+	_G(txt) = new Text();
+	_G(bit) = new BitClass();
+	_G(ged) = new GedClass(&ged_user_func);
+	_G(room) = new Room();
+	_G(obj) = new Object(&_G(spieler));
+	_G(uhr) = new Timer(MAX_TIMER_OBJ, ani_timer);
+	_G(det) = new Detail();
+	_G(atds) = new Atdsys();
 	_G(sndPlayer) = new SoundPlayer();
-	flc = new Flic();
-	mov = new MovClass();
+	_G(flc) = new Flic();
+	_G(mov) = new MovClass();
 
 	_G(out)->init();
 	_G(out)->cls();
@@ -65,10 +65,10 @@ void standard_init() {
 	curblk.ysize = 16;
 
 	// WORKAROUND: Moved from init_load because the original
-	// uses curtaf->image below before curtaf was initialized
-	curtaf = _G(mem)->taf_adr(CURSOR);
+	// uses _G(curtaf)->image below before _G(curtaf) was initialized
+	_G(curtaf) = _G(mem)->taf_adr(CURSOR);
 
-	curblk.sprite = curtaf->image;
+	curblk.sprite = _G(curtaf)->image;
 	curblk.cur_back = _G(cur_back);
 	curblk.no_back = true;
 	curani.ani_anf = 0;
@@ -87,15 +87,15 @@ void standard_init() {
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
 	_G(out)->einblenden(_G(pal), 0);
-	room->set_timer_start(1);
+	_G(room)->set_timer_start(1);
 	font_load();
 
 	_G(out)->cls();
 	_G(in)->neuer_kb_handler(&kbinfo);
 
 	var_init();
-	_G(ablage) = room->get_ablage();
-	_G(ged_mem) = room->get_ged_mem();
+	_G(ablage) = _G(room)->get_ablage();
+	_G(ged_mem) = _G(room)->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
 	_G(pal)[765] = 63;
@@ -103,7 +103,7 @@ void standard_init() {
 	_G(pal)[767] = 63;
 	_G(out)->einblenden(_G(pal), 0);
 	_G(out)->cls();
-	uhr->set_new_timer(0, 5, SEC_10_MODE);
+	_G(uhr)->set_new_timer(0, 5, SEC_10_MODE);
 
 	curblk.cur_back = _G(cur_back);
 	sound_init();
@@ -111,9 +111,9 @@ void standard_init() {
 }
 
 void var_init() {
-	Rdi = det->get_room_detail_info();
-	Sdi = &Rdi->Sinfo[0];
-	Adi = &Rdi->Ainfo[0];
+	_G(Rdi) = _G(det)->get_room_detail_info();
+	_G(Sdi) = &_G(Rdi)->Sinfo[0];
+	_G(Adi) = &_G(Rdi)->Ainfo[0];
 
 	_G(auto_p_nr) = 0;
 	_G(menu_item) = CUR_WALK;
@@ -188,39 +188,39 @@ void init_room() {
 	room_blk.AtsLoad = true;
 	strcpy(room_blk.RoomDir, "room/");
 
-	room->open_handle(EPISODE1_GEP, "rb", R_GEPDATEI);
+	_G(room)->open_handle(EPISODE1_GEP, "rb", R_GEPDATEI);
 }
 
 void init_atds() {
 	// Close any prior handles
-	atds->close_handle(AAD_DATEI);
-	atds->close_handle(ATS_DATEI);
-	atds->close_handle(ADS_DATEI);
-	atds->close_handle(INV_USE_DATEI);
-	atds->close_handle(INV_ATS_DATEI);
-	atds->close_handle(ATDS_HANDLE);
+	_G(atds)->close_handle(AAD_DATEI);
+	_G(atds)->close_handle(ATS_DATEI);
+	_G(atds)->close_handle(ADS_DATEI);
+	_G(atds)->close_handle(INV_USE_DATEI);
+	_G(atds)->close_handle(INV_ATS_DATEI);
+	_G(atds)->close_handle(ATDS_HANDLE);
 
 	// New set up
-	Stream *handle = atds->pool_handle(ATDS_TXT, "rb");
-	atds->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
-	atds->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
-	atds->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
-	atds->init_ats_mode(INV_ATS_DATEI, _G(spieler).InvAts);
-	atds->set_handle(ATDS_TXT, AAD_DATEI, handle, AAD_TAP_OFF, AAD_TAP_MAX);
-	atds->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
-	atds->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
-	atds->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
-	atds->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
-	atds->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
+	Stream *handle = _G(atds)->pool_handle(ATDS_TXT, "rb");
+	_G(atds)->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
+	_G(atds)->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
+	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
+	_G(atds)->init_ats_mode(INV_ATS_DATEI, _G(spieler).InvAts);
+	_G(atds)->set_handle(ATDS_TXT, AAD_DATEI, handle, AAD_TAP_OFF, AAD_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
+	_G(atds)->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
+	_G(atds)->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
+	_G(atds)->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
 	_G(mem)->file->fcopy(ADSH_TMP, "txt/diah.adh");
-	atds->open_handle(ADSH_TMP, "rb", 3);
+	_G(atds)->open_handle(ADSH_TMP, "rb", 3);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	spieler_vector[P_CHEWY].Delay = _G(spieler).DelaySpeed;
-	atds->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
+	_G(atds)->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
-		atds->set_split_win(i, &_G(ssi)[i]);
-	atds->set_string_end_func(&atds_string_start);
+		_G(atds)->set_split_win(i, &_G(ssi)[i]);
+	_G(atds)->set_string_end_func(&atds_string_start);
 }
 
 void new_game() {
@@ -235,9 +235,9 @@ void new_game() {
 	for (int16 i = 0; i < MAX_EXIT; i++)
 		_G(spieler).room_e_obj[i].RoomNr = -1;
 
-	obj->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
-	obj->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
-	obj->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
+	_G(obj)->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
+	_G(obj)->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
+	_G(obj)->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 
 	byte *tmp = (byte *)MALLOC(ROOM_ATS_MAX);
 	Common::File f;
@@ -271,9 +271,9 @@ void new_game() {
 		_G(spieler).InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
 	free(tmp);
 
-	obj->sort();
-	for (int16 i = 0; i < obj->spieler_invnr[0]; i++)
-		_G(spieler).InventSlot[i] = obj->spieler_invnr[i + 1];
+	_G(obj)->sort();
+	for (int16 i = 0; i < _G(obj)->spieler_invnr[0]; i++)
+		_G(spieler).InventSlot[i] = _G(obj)->spieler_invnr[i + 1];
 
 	_G(AkChewyTaf) = 0;
 	load_chewy_taf(CHEWY_NORMAL);
@@ -300,7 +300,7 @@ static void font_load() {
 	_G(fvorx6x8) = vorx - 2;
 	_G(fvory6x8) = vory;
 	_G(out)->set_vorschub(_G(fvorx6x8), vory);
-	atds->set_font(_G(font8x8), _G(fvorx8x8), 10);
+	_G(atds)->set_font(_G(font8x8), _G(fvorx8x8), 10);
 }
 
 void init_load() {
@@ -311,9 +311,9 @@ void init_load() {
 	_G(spz_tinfo) = nullptr;
 	set_spz_delay(3);
 
-	menutaf = _G(mem)->taf_adr(MENUTAF);
+	_G(menutaf) = _G(mem)->taf_adr(MENUTAF);
 	_G(spblende) = _G(mem)->void_adr("cut/blende.rnd");
-	room->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
+	_G(room)->load_room(&room_blk, _G(room_start_nr), &_G(spieler));
 	_G(out)->set_palette(_G(pal));
 }
 
@@ -322,40 +322,40 @@ void tidy() {
 	_G(in)->alter_kb_handler();
 	_G(in)->init();
 	free_buffers();
-	obj->free_inv_spr(&_G(inv_spr)[0]);
+	_G(obj)->free_inv_spr(&_G(inv_spr)[0]);
 
 	delete _G(iog);
 	delete _G(cur);
-	delete mov;
-	delete flc;
+	delete _G(mov);
+	delete _G(flc);
 	delete _G(sndPlayer);
-	delete atds;
-	delete det;
-	delete uhr;
-	delete obj;
-	delete room;
-	delete ged;
-	delete bit;
-	delete txt;
-	delete fx;
+	delete _G(atds);
+	delete _G(det);
+	delete _G(uhr);
+	delete _G(obj);
+	delete _G(room);
+	delete _G(ged);
+	delete _G(bit);
+	delete _G(txt);
+	delete _G(fx);
 	delete _G(in);
 	delete _G(out);
 	delete _G(mem);
 
 	_G(iog) = nullptr;
 	_G(cur) = nullptr;
-	mov = nullptr;
-	flc = nullptr;
+	_G(mov) = nullptr;
+	_G(flc) = nullptr;
 	_G(sndPlayer) = nullptr;
-	atds = nullptr;
-	det = nullptr;
-	uhr = nullptr;
-	obj = nullptr;
-	room = nullptr;
-	ged = nullptr;
-	bit = nullptr;
-	txt = nullptr;
-	fx = nullptr;
+	_G(atds) = nullptr;
+	_G(det) = nullptr;
+	_G(uhr) = nullptr;
+	_G(obj) = nullptr;
+	_G(room) = nullptr;
+	_G(ged) = nullptr;
+	_G(bit) = nullptr;
+	_G(txt) = nullptr;
+	_G(fx) = nullptr;
 	_G(in) = nullptr;
 	_G(out) = nullptr;
 	_G(mem) = nullptr;
@@ -379,7 +379,7 @@ void sound_init() {
 	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
 	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 
-	_G(music_handle) = room->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_G(music_handle));
 	assert(rs);
@@ -393,7 +393,7 @@ void sound_init() {
 		_G(EndOfPool) = Nph.PoolAnz - 1;
 	}
 
-	atds->setHasSpeech(true);
+	_G(atds)->setHasSpeech(true);
 	_G(spieler).DisplayText = false;
 	_G(spieler).SoundSwitch = true;
 	_G(spieler).MusicSwitch = true;

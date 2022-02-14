@@ -181,24 +181,24 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	_G(fcode) = 0;
 
 	clear_prog_ani();
-	det->load_rdi(Rb->DetFile, room_nr);
+	_G(det)->load_rdi(Rb->DetFile, room_nr);
 
 	if (player->SoundSwitch == false)
-		det->disable_room_sound();
+		_G(det)->disable_room_sound();
 	if (!_G(modul)) {
-		RoomDetailInfo *Rdi_ = det->get_room_detail_info();
+		RoomDetailInfo *Rdi_ = _G(det)->get_room_detail_info();
 		_roomInfo = &Rdi_->Ri;
 		if (_roomInfo->TafLoad != 255) {
 			char tmp_str[MAXPATH];
 			strcpy(tmp_str, Rb->RoomDir);
 			strcat(tmp_str, _roomInfo->TafName);
-			det->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
-			Rb->Fti = det->get_taf_info();
+			_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
+			Rb->Fti = _G(det)->get_taf_info();
 			Rb->DetImage = Rb->Fti->image;
 			Rb->DetKorrekt = Rb->Fti->korrektur;
 		}
 		if (!_G(modul)) {
-			obj->calc_all_static_detail();
+			_G(obj)->calc_all_static_detail();
 			load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
 			set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 			calc_invent(Rb, player);
@@ -210,12 +210,12 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 
 			if (!_G(modul)) {
 				if (Rb->AtsLoad)
-					atds->load_atds(_roomInfo->RoomNr, ATS_DATEI);
+					_G(atds)->load_atds(_roomInfo->RoomNr, ATS_DATEI);
 			}
 
 			if (!_G(modul)) {
 				if (Rb->AadLoad)
-					atds->load_atds(_roomInfo->RoomNr, AAD_DATEI);
+					_G(atds)->load_atds(_roomInfo->RoomNr, AAD_DATEI);
 			}
 		}
 	}
@@ -229,18 +229,18 @@ void Room::add_timer_new_room() {
 	_roomTimer.TimerAnz = 0;
 
 	for (int i = 0; i < MAXDETAILS && _roomTimer.TimerAnz < MAX_ROOM_TIMER; i++) {
-		AniDetailInfo *adi = det->get_ani_detail(i);
+		AniDetailInfo *adi = _G(det)->get_ani_detail(i);
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
 		} else if (adi->start_flag || adi->repeat) {
-			det->start_detail(i, 0, ANI_VOR);
+			_G(det)->start_detail(i, 0, ANI_VOR);
 		}
 	}
 }
 
 void Room::del_timer_old_room() {
 	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
-		uhr->set_status(_roomTimer.TimerNr[i], TIMER_STOP);
+		_G(uhr)->set_status(_roomTimer.TimerNr[i], TIMER_STOP);
 
 	}
 
@@ -250,7 +250,7 @@ void Room::del_timer_old_room() {
 int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 
 	int16 timer_nr_ = _roomTimer.TimerStart + _roomTimer.TimerAnz;
-	int16 ret = uhr->set_new_timer(timer_nr_, timer_end, SEC_MODE);
+	int16 ret = _G(uhr)->set_new_timer(timer_nr_, timer_end, SEC_MODE);
 	if (ret != -1) {
 		_roomTimer.ObjNr[_roomTimer.TimerAnz] = ani_nr;
 		_roomTimer.TimerNr[_roomTimer.TimerAnz] = timer_nr_;
@@ -263,7 +263,7 @@ int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 void Room::set_timer_status(int16 ani_nr, int16 status) {
 	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
 		if (_roomTimer.ObjNr[i] == ani_nr) {
-			uhr->set_status(_roomTimer.TimerNr[i], status);
+			_G(uhr)->set_status(_roomTimer.TimerNr[i], status);
 		}
 	}
 }
@@ -290,27 +290,27 @@ void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 	byte *tmp_inv_spr[MAX_MOV_OBJ];
 
 	if (!_G(modul)) {
-		obj->sort();
+		_G(obj)->sort();
 		memcpy(tmp_inv_spr, Rb->InvSprAdr, MAX_MOV_OBJ * sizeof(char *));
 		memset(Rb->InvSprAdr, 0, MAX_MOV_OBJ * sizeof(char *));
 
 		SpriteResource *spriteRes = new SpriteResource(Rb->InvFile);
 
-		for (int16 i = 1; i < obj->mov_obj_room[0] + 1; i++) {
-			if (!tmp_inv_spr[obj->mov_obj_room[i]]) {
-				spriteRes->getSpriteData(obj->mov_obj_room[i], &Rb->InvSprAdr[obj->mov_obj_room[i]], true);
+		for (int16 i = 1; i < _G(obj)->mov_obj_room[0] + 1; i++) {
+			if (!tmp_inv_spr[_G(obj)->mov_obj_room[i]]) {
+				spriteRes->getSpriteData(_G(obj)->mov_obj_room[i], &Rb->InvSprAdr[_G(obj)->mov_obj_room[i]], true);
 			} else {
-				Rb->InvSprAdr[obj->mov_obj_room[i]] = tmp_inv_spr[obj->mov_obj_room[i]];
-				tmp_inv_spr[obj->mov_obj_room[i]] = nullptr;
+				Rb->InvSprAdr[_G(obj)->mov_obj_room[i]] = tmp_inv_spr[_G(obj)->mov_obj_room[i]];
+				tmp_inv_spr[_G(obj)->mov_obj_room[i]] = nullptr;
 			}
 		}
 
-		for (int16 i = 1; i < obj->spieler_invnr[0] + 1; i++) {
-			if (!tmp_inv_spr[obj->spieler_invnr[i]]) {
-				spriteRes->getSpriteData(obj->spieler_invnr[i], &Rb->InvSprAdr[obj->spieler_invnr[i]], true);
+		for (int16 i = 1; i < _G(obj)->spieler_invnr[0] + 1; i++) {
+			if (!tmp_inv_spr[_G(obj)->spieler_invnr[i]]) {
+				spriteRes->getSpriteData(_G(obj)->spieler_invnr[i], &Rb->InvSprAdr[_G(obj)->spieler_invnr[i]], true);
 			} else {
-				Rb->InvSprAdr[obj->spieler_invnr[i]] = tmp_inv_spr[obj->spieler_invnr[i]];
-				tmp_inv_spr[obj->spieler_invnr[i]] = 0;
+				Rb->InvSprAdr[_G(obj)->spieler_invnr[i]] = tmp_inv_spr[_G(obj)->spieler_invnr[i]];
+				tmp_inv_spr[_G(obj)->spieler_invnr[i]] = 0;
 			}
 		}
 
@@ -350,7 +350,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		if (mode == GED_LOAD) {
 			Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
 				_roomHandle[R_GEPDATEI]);
-			ged->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
+			_G(ged)->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
 						        nr, _gedMem[Rb->AkAblage]);
 			_gedXAnz[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
 			_gedYAnz[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
@@ -502,9 +502,9 @@ void Room::set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size) {
 
 void load_chewy_taf(int16 taf_nr) {
 	if (_G(AkChewyTaf) != taf_nr) {
-		if (chewy) {
-			free((char *)chewy);
-			chewy = nullptr;
+		if (_G(chewy)) {
+			free((char *)_G(chewy));
+			_G(chewy) = nullptr;
 		}
 		spieler_mi[P_CHEWY].HotY = CH_HOT_Y;
 
@@ -561,8 +561,8 @@ void load_chewy_taf(int16 taf_nr) {
 		if (fname_ != NULL) {
 			_G(spieler).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
-			chewy = _G(mem)->taf_adr(fname_);
-			chewy_kor = chewy->korrektur;
+			_G(chewy) = _G(mem)->taf_adr(fname_);
+			_G(chewy_kor) = _G(chewy)->korrektur;
 		}
 	}
 }
@@ -571,7 +571,7 @@ void switch_room(int16 nr) {
 	_G(fx_blend) = BLEND1;
 	exit_room(-1);
 	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
-	room->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	_G(room)->load_room(&room_blk, _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	enter_room(-1);
 	set_up_screen(DO_SETUP);
 }

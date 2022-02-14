@@ -39,8 +39,8 @@ void Room66::entry(int16 eib_nr) {
 	flags.ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	if (!_G(spieler).flags26_4) {
-		det->show_static_spr(4);
-		det->show_static_spr(8);
+		_G(det)->show_static_spr(4);
+		_G(det)->show_static_spr(8);
 		_G(cur_hide_flag) = false;
 		hide_cur();
 		_G(spieler).flags26_4 = true;
@@ -54,9 +54,9 @@ void Room66::entry(int16 eib_nr) {
 		start_aad_wait(403, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(0, 1, ANI_VOR);
-		det->show_static_spr(14);
+		_G(det)->show_static_spr(14);
 		wait_show_screen(15);
-		det->hide_static_spr(14);
+		_G(det)->hide_static_spr(14);
 		start_detail_wait(1, 1, ANI_VOR);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -88,8 +88,8 @@ void Room66::entry(int16 eib_nr) {
 
 void Room66::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
-	atds->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATEI);
-	atds->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATEI);
 	if (_G(spieler).PersonRoomNr[P_HOWARD] != 66)
 		return;
 
@@ -143,7 +143,7 @@ void Room66::setup_func() {
 		return;
 
 	_G(spieler).flags26_8 = true;
-	det->start_detail(9, 5, false);
+	_G(det)->start_detail(9, 5, false);
 	start_aad_wait(405, -1);
 }
 
@@ -171,7 +171,7 @@ int Room66::proc2() {
 	auto_move(0, P_CHEWY);
 	_G(spieler).flags26_40 = true;
 	_G(spieler).room_e_obj[100].Attribut = 3;
-	atds->set_ats_str(423, 1, ANI_GO);
+	_G(atds)->set_ats_str(423, 1, ANI_GO);
 	show_cur();
 	
 	return 0;
@@ -207,13 +207,13 @@ void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, in
 	if (chewyAutoMovNr != -1)
 		auto_move(chewyAutoMovNr, P_CHEWY);
 
-	room->set_timer_status(restartAniNr, TIMER_STOP);
-	det->del_static_ani(restartAniNr);
-	det->set_static_ani(transitionAniNr, -1);
+	_G(room)->set_timer_status(restartAniNr, TIMER_STOP);
+	_G(det)->del_static_ani(restartAniNr);
+	_G(det)->set_static_ani(transitionAniNr, -1);
 	start_aad_wait(transitionDiaNr, -1);
-	det->del_static_ani(transitionAniNr);
-	det->set_static_ani(restartAniNr, -1);
-	room->set_timer_status(restartAniNr, TIMER_START);
+	_G(det)->del_static_ani(transitionAniNr);
+	_G(det)->set_static_ani(restartAniNr, -1);
+	_G(room)->set_timer_status(restartAniNr, TIMER_START);
 	show_cur();
 }
 

@@ -35,25 +35,25 @@ void Room93::entry() {
 	_G(spieler).scrollx = 0;
 	hide_person();
 	start_detail_wait(3, 0, ANI_GO);
-	det->set_static_ani(0, -1);
+	_G(det)->set_static_ani(0, -1);
 	start_aad_wait(616, -1);
-	det->del_static_ani(0);
+	_G(det)->del_static_ani(0);
 	start_detail_wait(3, 1, ANI_VOR);
-	det->set_static_ani(1, -1);
+	_G(det)->set_static_ani(1, -1);
 	start_ads_wait(27);
 
 	if (!_G(spieler).flags37_40) {
-		det->del_static_ani(1);
+		_G(det)->del_static_ani(1);
 		hide_cur();
 		start_detail_wait(3, 1, ANI_GO);
-		det->set_static_ani(0, -1);
+		_G(det)->set_static_ani(0, -1);
 		start_aad_wait(549, -1);
-		det->del_static_ani(0);
+		_G(det)->del_static_ani(0);
 		start_detail_wait(3, 1, ANI_VOR);
 		start_detail_wait(6, 1, ANI_VOR);
-		det->set_static_ani(7, -1);
+		_G(det)->set_static_ani(7, -1);
 		start_aad_wait(550, -1);
-		det->del_static_ani(7);
+		_G(det)->del_static_ani(7);
 		start_detail_wait(6, 1, ANI_GO);
 		start_detail_wait(2, 1, ANI_VOR);
 		set_up_screen(DO_SETUP);
