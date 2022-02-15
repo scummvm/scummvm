@@ -24,6 +24,7 @@
 
 #include "common/system.h"
 #include "common/substream.h"
+#include "common/translation.h"
 
 #define SUPPORTED_SAVEFILE_VERSION 1
 // 0 - Just script variables, compatible with the original
@@ -46,6 +47,10 @@ Common::String SaveLoad::getSlotSaveName(const Common::String &target, int slot)
 
 SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 	SaveStateList list;
+
+	// some Groovie 2 games use save 0 with a garbage name for internal tracking, other games use slot 0 for Open House mode
+	const Common::U32String reservedName = _("Reserved");
+	bool hasReserved = false;
 
 	// Get the list of savefiles
 	Common::String pattern = Common::String::format("%s.0##", target.c_str());
@@ -71,9 +76,20 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 		if (file) {
 			// It's a valid savefile, save the descriptor
 			delete file;
+			if (slot == 0) {
+				hasReserved = true;
+				if (descriptor.getDescription() != "OPEN HOUSE" && descriptor.getDescription() != "Open House")
+					descriptor.setDescription(reservedName);
+			}
 			list.push_back(descriptor);
 		}
 		it++;
+	}
+
+	if (!hasReserved) {
+		SaveStateDescriptor desc;
+		desc.setDescription(reservedName);
+		list.push_back(desc);
 	}
 
 	return list;
