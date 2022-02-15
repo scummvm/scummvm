@@ -706,13 +706,15 @@ BlockEntry Grid::getBlockEntry(int32 x, int32 y, int32 z) const {
 ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
+	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
+		return ShapeType::kNone;
+	}
+
 	if (collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (collision.x < 0 || collision.x >= GRID_SIZE_X
-	 || collision.y < 0 || collision.y >= GRID_SIZE_Y
-	 || collision.z < 0 || collision.z >= GRID_SIZE_Z) {
+	if (collision.y < 0 || collision.y >= GRID_SIZE_Y || collision.z < 0 || collision.z >= GRID_SIZE_Z) {
 		return ShapeType::kNone;
 	}
 
