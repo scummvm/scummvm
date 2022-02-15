@@ -149,6 +149,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"mothergoosehires","Mixed-Up Mother Goose Deluxe"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
+	{"realm",           "The Realm"},
 	{"shivers",         "Shivers"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},

@@ -4912,6 +4912,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
 
+	// The Realm - English Windows demo from the Space Quest Collection
+	// Executable scanning reports "2.100.002", VERSION file reports "2.184"
+	{"realm", "Demo", {
+		{"resmap.000", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
+		{"ressci.000", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70611091},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO1(GUIO_NONE) },
+
+	// The Realm - English Windows demo from SWAT 2 CD
+	// Executable scanning reports "2.100.002", version file reports "3.38"
+	{"realm", "Demo", {
+		{"resmap.000", 0, "cff25ac9b1a24b38b964c67d5c5dbcac", 2344},
+		{"ressci.000", 0, "93f0c4caa2461f383a656c6e81656efc", 431707},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO1(GUIO_NONE) },
+
 #define GUIO_SHIVERS_DEMO GUIO6(GUIO_NOSUBTITLES, \
 								GUIO_NOMIDI, \
 								GUIO_NOLAUNCHLOAD, \
