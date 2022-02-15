@@ -301,6 +301,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieCDY
 	},
 
+	// Clandestiny PC Trailer English https://downloads.scummvm.org/frs/demos/groovie/clandestiny-dos-ni-demo-en.zip
+	{
+		{
+			"clandestiny", "Trailer",
+			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
+						"zclan.gjd", "4a7258166916fcc0d217c8f21fa3cc79", 20454932),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
+			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+		},
+		kGroovieCDY
+	},
+
 	// Clandestiny PC English
 	{
 		{
