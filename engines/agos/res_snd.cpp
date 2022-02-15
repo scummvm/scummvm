@@ -45,7 +45,6 @@ const int AGOSEngine_Simon1::SIMON1_GMF_SIZE[] = {
 	1232, 17256,  5103,  8794,  4884,    16
 };
 
-// This data is hardcoded in the executable.
 // High nibble is the file ID (STINGSx.MUS), low nibble is the SFX number
 // in the file (0 based).
 const byte AGOSEngine::SIMON1_RHYTHM_SFX[] = {
@@ -133,19 +132,10 @@ void AGOSEngine::skipSpeech() {
 }
 
 void AGOSEngine::loadMusic(uint16 music) {
-	char buf[4];
-
 	stopMusic();
 
 	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-	_gameFile->read(buf, 4);
-	if (!memcmp(buf, "FORM", 4)) {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi->loadXMIDI(_gameFile);
-	} else {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi->loadMultipleSMF(_gameFile);
-	}
+	_midi->loadMusic(_gameFile);
 
 	_lastMusicPlayed = music;
 	_nextMusicToPlay = -1;

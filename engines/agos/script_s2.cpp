@@ -347,7 +347,7 @@ void AGOSEngine_Simon2::os2_playTune() {
 	if (_lastMusicPlayed != music)
 		_nextMusicToPlay = music;
 	else
-		_midi->startTrack(track);
+		_midi->play(track);
 }
 
 void AGOSEngine_Simon2::os2_screenTextPObj() {

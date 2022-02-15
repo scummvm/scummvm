@@ -113,32 +113,40 @@ public:
 	// version of the game. Specify sfx to indicate that this is a MIDI sound
 	// effect.
 	void loadMusic(Common::SeekableReadStream *in, int32 size = -1, bool sfx = false);
-	// Plays the currently loaded music data. If the loaded MIDI data has
-	// multiple tracks, specify track to select the track to play. Specify sfx
-	// to indicate that the loaded sound effect data should be used. Specify
-	// sfxUsesRhythm to inidicate that the sound effect uses OPL rhythm
-	// instruments; this will disable music rhythm notes while the sound effect
-	// is playing.
-	void play(int track = 0, bool sfx = false, bool sfxUsesRhythm = false);
+
+	/**
+	 * Plays the currently loaded music data. If the loaded MIDI data has
+	 * multiple tracks, specify track to select the track to play.
+	 * 
+	 * @param track The track to play. Default 0.
+	 * @param sfx True if the SFX MIDI data should be played, otherwise the
+	 * loaded music data will be played. Default false.
+	 * @param sfxUsesRhythm True if the sound effect uses OPL rhythm
+	 * instruments. Default false.
+	 * @param queued True if this track was queued; false if it was played
+	 * directly. Default false.
+	 */
+	void play(int track = 0, bool sfx = false, bool sfxUsesRhythm = false, bool queued = false);
 
 	void loadSMF(Common::SeekableReadStream *in, int song, bool sfx = false);
 	void loadMultipleSMF(Common::SeekableReadStream *in, bool sfx = false);
 	void loadXMIDI(Common::SeekableReadStream *in, bool sfx = false);
 	void loadS1D(Common::SeekableReadStream *in, bool sfx = false);
 
-	bool hasNativeMT32() const { return _nativeMT32; }
-	bool hasAdLibSfx() const { return _parserSfx != nullptr; }
+	// Returns true if the playback device uses MT-32 MIDI data; false it it
+	// uses a different data type.
+	bool usesMT32Data() const;
+	bool hasAdLibSfx() const;
 	void setLoop(bool loop);
 	void startTrack(int track);
 	void queueTrack(int track, bool loop);
-	bool isPlaying(bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
+	bool isPlaying(bool checkQueued = false);
 
 	void stop();
 	void stopSfx();
 	void pause(bool b);
+	void fadeOut();
 
-	int  getMusicVolume() const { return _musicVolume; }
-	int  getSFXVolume() const { return _sfxVolume; }
 	void setVolume(int musicVol, int sfxVol);
 	void syncSoundSettings();
 
@@ -151,7 +159,10 @@ public:
 
 private:
 	kMusicMode _musicMode;
-	MusicType musicType;
+	// The type of the music device selected for playback.
+	MusicType _deviceType;
+	// The type of the MIDI data of the game (MT-32 or GM).
+	MusicType _dataType;
 
 private:
 	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
