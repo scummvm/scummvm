@@ -1266,18 +1266,22 @@ void BladeRunnerEngine::walkingReset() {
 // namely, Esc, Return and Space during normal gameplay.
 // "Space" spamming results in McCoy quickly switching between combat mode and normal mode, 
 // which is not very useful but it's the original's behavior.
-// Spamming Space, backspace, latin letter keys and a few symbols is allowed
+// Spamming Space, backspace, latin letter keys and symbols is allowed
 // in KIA mode, particularly in the Save Panel when writing the name for a save game.
+// For simplicity, we allow everything after the 0x20 (space ascii code) up to 0xFF.
+// The UIInputBox::charIsValid() will filter out any unsupported characters.
 // F-keys are not repeated.
 bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyState) {
 	return  currKeyState.keycode == Common::KEYCODE_ESCAPE
 	    ||  currKeyState.keycode == Common::KEYCODE_RETURN
+	    ||  currKeyState.keycode == Common::KEYCODE_KP_ENTER
 	    ||  currKeyState.keycode == Common::KEYCODE_BACKSPACE
 	    ||  currKeyState.keycode == Common::KEYCODE_SPACE
+	    ||  currKeyState.keycode == Common::KEYCODE_KP_MINUS
+	    ||  currKeyState.keycode == Common::KEYCODE_KP_PLUS
+	    ||  currKeyState.keycode == Common::KEYCODE_KP_EQUALS
 	    || (currKeyState.keycode != Common::KEYCODE_INVALID
-	        && (   (currKeyState.ascii >= 'a' && currKeyState.ascii <= 'z')
-	            || (currKeyState.ascii >= 'A' && currKeyState.ascii <= 'Z')
-	            || (currKeyState.ascii >= '0' && currKeyState.ascii <= '9')));
+	        && (currKeyState.ascii > 0x20 && currKeyState.ascii <= 0xFF));
 }
 
 void BladeRunnerEngine::handleEvents() {
@@ -1311,8 +1315,8 @@ void BladeRunnerEngine::handleEvents() {
 			if (!event.kbdRepeat) {
 				// Only for some keys, allow repeated firing emulation
 				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
-				if (isAllowedRepeatedKey(event.kbd.keycode)) {
-					_currentKeyDown = event.kbd.keycode;
+				if (isAllowedRepeatedKey(event.kbd)) {
+					_currentKeyDown = event.kbd;
 					_keyRepeatTimeLast =  _time->currentSystem();
 					_keyRepeatTimeDelay = kKeyRepeatInitialDelay;
 				}
@@ -1388,7 +1392,9 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if (_vqaIsPlaying
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN
+	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		// Note: Original only uses the Esc key here
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
@@ -1397,12 +1403,16 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 
 	if (_vqaStopIsRequested
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN
+	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		 return;
 	}
 
 	if (_actorIsSpeaking
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN
+	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		// Note: Original only uses the Return key here
 		_actorSpeakStopIsRequested = true;
 		_actorIsSpeaking = false;
@@ -1411,7 +1421,9 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 
 	if (_actorSpeakStopIsRequested
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN
+	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		 return;
 	}
 

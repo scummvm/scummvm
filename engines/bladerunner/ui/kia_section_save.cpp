@@ -237,12 +237,12 @@ void KIASectionSave::handleKeyDown(const Common::KeyState &kbd) {
 		}
 		_uiContainer->handleKeyDown(kbd);
 	} else if (_state == kStateOverwrite) {
-		if (kbd.keycode == Common::KEYCODE_RETURN) {
+		if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
 			save();
 			changeState(kStateNormal);
 		}
 	} else if (_state == kStateDelete) {
-		if (kbd.keycode == Common::KEYCODE_RETURN) {
+		if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
 			deleteSave();
 			changeState(kStateNormal);
 		}

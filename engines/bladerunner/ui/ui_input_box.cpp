@@ -95,13 +95,14 @@ void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 		// The values that the KeyState::ascii field receives from the SDL backend are actually ISO 8859-1 encoded. They need to be
 		// reencoded to DOS so as to match the game font encoding (although we currently use UIInputBox::charIsValid() to block most
 		// extra characters, so it might not make much of a difference).
-		char kc = Common::U32String(Common::String::format("%c", kbd.ascii), Common::kISO8859_1).encode(Common::kDos850).firstChar();
+		uint8 kc = (uint8)(Common::U32String(Common::String::format("%c", kbd.ascii), Common::kISO8859_1).encode(Common::kDos850).firstChar());
 		if (_isVisible) {
 			if (charIsValid(kc) && _text.size() < _maxLength) {
 				_text += kc;
 			} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 				_text.deleteLastChar();
-			} else if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
+			} else if ((kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER)
+			           && !_text.empty()) {
 				if (_valueChangedCallback) {
 					_valueChangedCallback(_callbackData, this);
 				}
@@ -110,7 +111,17 @@ void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 	}
 }
 
-bool UIInputBox::charIsValid(char kc) {
+bool UIInputBox::charIsValid(uint8 kc) {
+	// The in-game font for text input is KIA6PT which follows IBM PC Code page 437 (CCSID 437)
+	// This code page is identical to Code page 850 for the first 128 codes.
+	// This method is:
+	// 1) filtering out characters not allowed in a DOS filename.
+	//    Note, however, that it does allow ',', '.', ';', '=', '[' and ']'
+	//    TODO Is that a bug?
+	// 2) allowing codes for glyphs that exist in KIA6PT up to code 0xA8 (glyph '¿')
+	//    and also the extra codes for 0xAD (glyph '¡') and 0xE1 (glyph 'ß')
+	//    (in order for these extra extended ASCII codes to be included,
+	//     the comparisons in the return clause should be between uint values).
 	return kc >= ' '
 		&& kc != '<'
 		&& kc != '>'
@@ -121,7 +132,7 @@ bool UIInputBox::charIsValid(char kc) {
 		&& kc != '|'
 		&& kc != '?'
 		&& kc != '*'
-		&& kc <= '~';// || kc == '¡' || kc == 'ß');
+		&& (kc <= (uint8)'\xA8' || kc == (uint8)'\xAD' || kc == (uint8)'\xE1');
 }
 
 } // End of namespace BladeRunner

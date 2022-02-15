@@ -57,7 +57,7 @@ public:
 	void handleKeyDown(const Common::KeyState &kbd) override;
 
 private:
-	bool charIsValid(char kc);
+	bool charIsValid(uint8 kc);
 };
 
 } // End of namespace BladeRunner
