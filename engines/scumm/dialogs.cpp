@@ -737,12 +737,10 @@ bool EgaLoomOptionsWidget::save() {
 
 void EgaLoomOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
-		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+		.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 			.addPadding(0, 0, 16, 0)
 			.addWidget("OvertureTicksHeader", "OptionsLabel")
-			.addSpace(2)
 			.addWidget("OvertureTicks", "WideSlider")
-			.addSpace(2)
 			.addWidget("OvertureTicksLabel", "ShortOptionsLabel")
 		.closeLayout()
 	.closeDialog();
