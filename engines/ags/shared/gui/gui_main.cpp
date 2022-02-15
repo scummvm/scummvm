@@ -157,6 +157,11 @@ bool GUIMain::IsDisplayed() const {
 bool GUIMain::IsInteractableAt(int x, int y) const {
 	if (!IsDisplayed())
 		return false;
+	// The Transparency test was unintentionally added in 3.5.0 as a side effect,
+	// and unfortunately there are already games which require it to work.
+	if ((_G(game_compiled_version).AsNumber() == 30500) && (Transparency == 255)) {
+		return false;
+	}
 	if (!IsClickable())
 		return false;
 	if ((x >= X) & (y >= Y) & (x < X + Width) & (y < Y + Height))

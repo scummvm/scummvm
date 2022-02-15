@@ -758,7 +758,10 @@ public:
 	int _our_eip = 0;
 
 	int _oldmouse = 0;
+	// Data format version of the loaded game
 	GameDataVersion _loaded_game_file_version = kGameVersion_Undefined;
+	// The version of the engine the loaded game was compiled for (if available)
+	Version _game_compiled_version;
 	int _game_paused = 0;
 	char _pexbuf[STD_BUFFER_SIZE] = { 0 };
 	unsigned int _load_new_game = 0;
