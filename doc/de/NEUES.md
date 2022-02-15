@@ -6,7 +6,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.
    - Unterstützung für Hades Challenge hinzugefügt.
-   - Unterstützung Marvel Comics Spider-Man: The Sinister Six hinzugefügt.
+   - Unterstützung für Marvel Comics Spider-Man: The Sinister Six hinzugefügt.
+   - Unterstützung für The 11th Hour hinzugefügt.
+   - Unterstützung für Clandestiny hinzugefügt.
+   - Unterstützung für Tender Loving Care (CD-ROM-Versionen) hinzugefügt.
+   - Unterstützung für Uncle Henry's Playhouse hinzugefügt.
 
  Allgemein:
    - Die Lizenz des Projektes wurde auf GPLv3+ aktualisiert.
@@ -75,6 +79,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Rendering-Artefakte aufgrund fehlerhafter Berechnung des Lichteinfalls in einigen Szenen korrigiert.
    - Fehler in der Polygon-Darstellung in einigen Szenen korrigiert.
    - Falsche Schussrichtung einiger Charaktere korrigiert.
+   - Tür-Bewegungen in einigen Situationen korrigiert.
 
  macOS-Port:
    - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
