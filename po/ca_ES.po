@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 22:39+0000\n"
+"POT-Creation-Date: 2022-02-15 22:58+0000\n"
 "PO-Revision-Date: 2022-02-09 10:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2618,7 +2618,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ERROR: No s'ha pogut copiar la partida desada a una ranura nova"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2756,12 +2756,6 @@ msgstr "Diàleg d'entrada predictiu"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Confirma"
-
-#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
-#, fuzzy
-#| msgid "Run server"
-msgid "Reserved"
-msgstr "Executa el servidor"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
@@ -8600,6 +8594,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Run server"
+#~ msgid "Reserved"
+#~ msgstr "Executa el servidor"
 
 #~ msgid "Swap Menu and Back buttons"
 #~ msgstr "Intercanvia el menú i el botó enrere"

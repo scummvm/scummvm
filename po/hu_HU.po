@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 22:39+0000\n"
+"POT-Creation-Date: 2022-02-15 22:58+0000\n"
 "PO-Revision-Date: 2022-02-12 14:13+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2600,7 +2600,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "HIBA: A játékmentés nem másolható új helyre"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2738,12 +2738,6 @@ msgstr "Prediktív beviteli párbeszédpanel"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Megerõsítés"
-
-#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
-#, fuzzy
-#| msgid "Run server"
-msgid "Reserved"
-msgstr "Szerver futtatás"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
@@ -8664,6 +8658,11 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#, fuzzy
+#~| msgid "Run server"
+#~ msgid "Reserved"
+#~ msgstr "Szerver futtatás"
 
 #~ msgid ""
 #~ "Adjusts the timing of the EGA Loom Overture when using enhanced music. "

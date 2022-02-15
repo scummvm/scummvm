@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 22:39+0000\n"
+"POT-Creation-Date: 2022-02-15 22:58+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2626,7 +2626,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "오류: 저장 데이터를 새로운 슬롯으로 복사하지 못했습니다"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2763,12 +2763,6 @@ msgstr "예측 입력 창"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "확인"
-
-#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
-#, fuzzy
-#| msgid "Run server"
-msgid "Reserved"
-msgstr "서버 실행"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
@@ -8660,6 +8654,11 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#, fuzzy
+#~| msgid "Run server"
+#~ msgid "Reserved"
+#~ msgstr "서버 실행"
 
 #~ msgid "Swap Menu and Back buttons"
 #~ msgstr "메뉴와 뒤로가기 버튼을 서로 교체"

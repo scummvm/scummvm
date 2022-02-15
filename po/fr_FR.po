@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 22:39+0000\n"
+"POT-Creation-Date: 2022-02-15 22:58+0000\n"
 "PO-Revision-Date: 2022-02-13 15:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2642,7 +2642,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 "ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2780,12 +2780,6 @@ msgstr "Dialogue de saisie prédictive"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Confirmer"
-
-#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
-#, fuzzy
-#| msgid "Run server"
-msgid "Reserved"
-msgstr "Démarrer serveur"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
@@ -8808,6 +8802,11 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#, fuzzy
+#~| msgid "Run server"
+#~ msgid "Reserved"
+#~ msgstr "Démarrer serveur"
 
 #~ msgid ""
 #~ "Adjusts the timing of the EGA Loom Overture when using enhanced music. "
