@@ -1178,6 +1178,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Hoyle 1 - English Macintosh (supplied by Omer Mor)
 	// Executable scanning reports "x.yyy.zzz"
+	// Resource fork reports "Sierra Interpreter 0.022"
 	{"hoyle1", "", {
 		{"resource.map", 0, "e96963c2e34b21e2680fdaafb5d00a40", 8706},
 		{"resource.001", 0, "37b23afcf940ddbccfbe0b44080d9bc2", 611892},
@@ -1274,6 +1275,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Hoyle 3 - English DOS Floppy (from jvprat)
 	// Executable scanning reports "x.yyy.zzz", Floppy label reports "1.0, 11.2.91", VERSION file reports "1.000"
+	// Also found on SierraOriginals CD as Hoyle Classic Board Games (1996)
 	// SCI interpreter version 1.000.510 (just a guess)
 	{"hoyle3", "", {
 		{"resource.map", 0, "7216a2972f9c595c45ab314941628e43", 2247},
@@ -1319,6 +1321,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Hoyle 4 (Hoyle Classic Card Games) - English DOS/Win
 	// Supplied by abevi in bug report #5131
+	// VERSION file reports "2.000"
 	// Although this is a floppy game, it does have speech. (bug #13007)
 	{"hoyle4", "", {
 		{"resource.map", 0, "2b577c975cc8d8d43f61b6a756129fe3", 4352},
@@ -1350,6 +1353,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 								   GAMEOPTION_ORIGINAL_SAVELOAD )
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows demo
+	// Executable scanning reports "2.100.002"
 	{"hoyle5", "Demo", {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
@@ -2357,7 +2361,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
 
-	// King's Quest 7 - English DOS Non-Interactive Demo
+	// King's Quest 7 - English DOS/Win Non-Interactive Demo
+	// Demo from original PQ4CD release has only the Windows interpreter
 	// SCI interpreter version 2.100.002
 	{"kq7", "Demo", {
 		{"resource.map", 0, "b44f774108d63faa1d021101221c5a54", 1690},
@@ -4226,7 +4231,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							  GAMEOPTION_ORIGINAL_SAVELOAD)
 #define GUIO_PQ4_MAC    GUIO1(GUIO_LINKSPEECHTOSFX)
 
-	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
+	// Police Quest 4 - English DOS CD
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000"
 	{"pq4", "CD", {
 		{"resource.map", 0, "379dfe80ed6bd16c47e4b950c4722eac", 11374},
