@@ -355,20 +355,37 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 	SaveStateList saveList = listSaves(target);
 	int autosaveSlot = ConfMan.getInt("autosave_period") ? getAutosaveSlot() : -1;
-	if (!saveMode || autosaveSlot == -1)
-		return saveList;
+	bool addAutosave = saveMode;
+	bool addReserved = saveMode;
+	if (autosaveSlot == -1)
+		addAutosave = false;
 
 	// Check to see if an autosave is present
 	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
 		// It has an autosave
 		if (it->isAutosave())
-			return saveList;
+			addAutosave = false;
+		if (it->getSaveSlot() == 0) {
+			addReserved = false;
+			if (it->getDescription() != "OPEN HOUSE" && it->getDescription() != "Open House") {
+				it->setDescription(_("Reserved"));
+			}
+			it->setLocked(saveMode);
+		}
 	}
 
 	// No autosave yet. We want to add a dummy one in so that it can be marked as
 	// write protected, and thus be prevented from being saved in
-	SaveStateDescriptor desc(this, autosaveSlot, _("Autosave"));
-	saveList.push_back(desc);
+	if (addAutosave) {
+		SaveStateDescriptor desc(this, autosaveSlot, _("Autosave"));
+		desc.setLocked(saveMode);
+		saveList.push_back(desc);
+	}
+	if (addReserved) {
+		SaveStateDescriptor desc(this, 0, _("Reserved"));
+		desc.setLocked(saveMode);
+		saveList.push_back(desc);
+	}
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 
 	return saveList;

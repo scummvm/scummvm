@@ -89,10 +89,6 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 	Common::String savename = getSlotSaveName(target, slot);
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(savename);
 	if (!savefile) {
-		if (slot == 0 && descriptor) {
-			descriptor->setSaveSlot(slot);
-			descriptor->setDescription("Reserved");
-		}
 		return nullptr;
 	}
 
@@ -144,9 +140,6 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 			if (c != 0) {
 				description += c;
 			}
-		}
-		if (slot == 0 && description.compareToIgnoreCase("open house") != 0) {
-			description = "Reserved";
 		}
 		descriptor->setDescription(description);
 	}
