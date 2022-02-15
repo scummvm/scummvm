@@ -22,7 +22,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room00.h"
 #include "chewy/sound.h"
@@ -52,8 +51,7 @@ namespace Rooms {
 #define KOPF3 48
 
 void Room0::entry() {
-	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow ||
-			_G(obj)->check_inventar(0))
+	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow || _G(obj)->check_inventar(0))
 		_G(det)->hide_static_spr(6);
 
 	if (!_G(flags).LoadGame) {
@@ -74,8 +72,8 @@ void Room0::entry() {
 }
 
 bool Room0::timer(int16 t_nr, int16 ani_nr) {
-	switch (ani_nr) {
-	case 1:
+	bool retval = false;
+	if (ani_nr == 1) {
 		if (_G(timer_action_ctr) > 0) {
 			_G(uhr)->reset_timer(t_nr, 0);
 			--_G(timer_action_ctr);
@@ -95,6 +93,8 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 						start_aad_wait(618, -1);
 					else
 						start_aad_wait(43, -1);
+
+					++_G(spieler).R0FueterLab;
 				}
 
 				eyeAnim();
@@ -117,16 +117,15 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 			_G(uhr)->reset_timer(t_nr, 0);
 			_G(flags).AutoAniPlay = false;
 		}
-		break;
+	} else if (t_nr == 3)
+		retval = true;
 
-	default:
-		break;
-	}
-
-	return false;
+	return retval;
 }
 
 bool Room0::getPillow() {
+	bool retval = false;
+	
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
 		_G(flags).AutoAniPlay = true;
@@ -140,18 +139,22 @@ bool Room0::getPillow() {
 
 		_G(flags).AutoAniPlay = false;
 		show_cur();
-		return true;
+		retval = true;
 	}
 
-	return false;
+	return retval;
 }
 
 bool Room0::pullSlime() {
+	bool retval = false;
 	if (!_G(spieler).inv_cur) {
 		hide_cur();
+		
+		_G(flags).AutoAniPlay = true;
 		auto_move(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(3, 1, ANI_VOR);
+		start_detail_wait(17, 2, ANI_VOR);
 		set_person_pos(222, 106, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
@@ -161,10 +164,10 @@ bool Room0::pullSlime() {
 
 		_G(flags).AutoAniPlay = false;
 		show_cur();
-		return true;
+		retval = true;
 	}
 
-	return false;
+	return retval;
 }
 
 void Room0::eyeAnim() {
@@ -189,10 +192,7 @@ void Room0::eyeAnim() {
 }
 
 void Room0::eyeStart(EyeMode mode) {
-	AniDetailInfo *adi;
-	bool ende;
-
-	adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
 	if (mode == EYE_START)
 		adi->ani_count = adi->start_ani;
 	else
@@ -202,19 +202,19 @@ void Room0::eyeStart(EyeMode mode) {
 		trapDoorOpen();
 	}
 
-	ende = false;
+	bool ende = false;
 	_G(flags).AniUserAction = true;
 
 	if (mode == EYE_START) {
-		g_engine->_sound->playSound(FLAP_DETAIL, 0, false);
+		g_engine->_sound->playSound(FLAP_DETAIL, 0);
 		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 0, false);
+		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 0);
 		g_engine->_sound->stopSound(2);
 	} else {
-		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(FLAP_DETAIL, 1, false);
 		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 2, false);
+		g_engine->_sound->playSound(FLAP_DETAIL, 1);
+		g_engine->_sound->stopSound(0);
+		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 2);
 	}
 
 	while (!ende) {
@@ -225,6 +225,7 @@ void Room0::eyeStart(EyeMode mode) {
 			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH1, ANI_HIDE);
 			_G(spr_info)[1].ZEbene = 191;
 		}
+		
 		if (adi->ani_count == 38) {
 			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF1, ANI_HIDE);
 			_G(spr_info)[2].ZEbene = 192;
@@ -265,9 +266,7 @@ void Room0::eyeStart(EyeMode mode) {
 }
 
 void Room0::eyeWait() {
-	AniDetailInfo *adi;
-
-	adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 39;
 	adi->delay_count = 15;
 	_G(flags).AniUserAction = true;
