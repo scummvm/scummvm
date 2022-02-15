@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-14 23:02+0000\n"
+"POT-Creation-Date: 2022-02-15 06:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4324,7 +4324,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:747
+#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5220,7 +5220,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:113
-#: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:746
+#: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:752
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7069,96 +7069,96 @@ msgstr ""
 msgid "Unable to locate the '%s' data file."
 msgstr ""
 
-#: engines/twine/detection.cpp:253
+#: engines/twine/detection.cpp:259
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:667
+#: engines/twine/detection.cpp:673
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:668
+#: engines/twine/detection.cpp:674
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:675
+#: engines/twine/detection.cpp:681
 msgid "Disable save menu"
 msgstr ""
 
-#: engines/twine/detection.cpp:676
+#: engines/twine/detection.cpp:682
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:682
+#: engines/twine/detection.cpp:688
 msgid "Enable debug mode"
 msgstr ""
 
-#: engines/twine/detection.cpp:683
+#: engines/twine/detection.cpp:689
 msgid "Enable the debug mode"
 msgstr ""
 
-#: engines/twine/detection.cpp:689
+#: engines/twine/detection.cpp:695
 msgid "Enable audio CD"
 msgstr ""
 
-#: engines/twine/detection.cpp:690
+#: engines/twine/detection.cpp:696
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:696
+#: engines/twine/detection.cpp:702
 msgid "Enable sound"
 msgstr ""
 
-#: engines/twine/detection.cpp:697
+#: engines/twine/detection.cpp:703
 msgid "Enable the sound for the game"
 msgstr ""
 
-#: engines/twine/detection.cpp:703
+#: engines/twine/detection.cpp:709
 msgid "Enable voices"
 msgstr ""
 
-#: engines/twine/detection.cpp:704
+#: engines/twine/detection.cpp:710
 msgid "Enable the voices for the game"
 msgstr ""
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:716
 msgid "Enable text"
 msgstr ""
 
-#: engines/twine/detection.cpp:711
+#: engines/twine/detection.cpp:717
 msgid "Enable the text for the game"
 msgstr ""
 
-#: engines/twine/detection.cpp:717
+#: engines/twine/detection.cpp:723
 msgid "Enable movies"
 msgstr ""
 
-#: engines/twine/detection.cpp:718
+#: engines/twine/detection.cpp:724
 msgid "Enable the cutscenes for the game"
 msgstr ""
 
-#: engines/twine/detection.cpp:724
+#: engines/twine/detection.cpp:730
 msgid "Enable mouse"
 msgstr ""
 
-#: engines/twine/detection.cpp:725
+#: engines/twine/detection.cpp:731
 msgid "Enable the mouse for the UI"
 msgstr ""
 
-#: engines/twine/detection.cpp:731
+#: engines/twine/detection.cpp:737
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:732
+#: engines/twine/detection.cpp:738
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:738 engines/ultima/detection.cpp:84
+#: engines/twine/detection.cpp:744 engines/ultima/detection.cpp:84
 msgid "Enable high resolution"
 msgstr ""
 
-#: engines/twine/detection.cpp:739 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:745 engines/ultima/detection.cpp:85
 msgid "Enable a higher resolution for the game"
 msgstr ""
 
