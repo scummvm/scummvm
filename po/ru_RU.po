@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 20:18+0000\n"
+"POT-Creation-Date: 2022-02-15 21:46+0000\n"
 "PO-Revision-Date: 2022-01-29 20:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4273,7 +4273,7 @@ msgstr "Не удалось инициализировать ресурсы"
 msgid "A required game resource was not found"
 msgstr "Требуемый игровой ресурс не найден"
 
-#: engines/bladerunner/bladerunner.cpp:2319
+#: engines/bladerunner/bladerunner.cpp:2331
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4284,7 +4284,7 @@ msgstr ""
 "режим будет изменен на Restored Cut Content, пока вы полностью не выйдете из "
 "игры."
 
-#: engines/bladerunner/bladerunner.cpp:2321
+#: engines/bladerunner/bladerunner.cpp:2333
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4295,7 +4295,7 @@ msgstr ""
 "изменен на режим оригинального содержимого, пока вы полностью не выйдете из "
 "игры."
 
-#: engines/bladerunner/bladerunner.cpp:2323
+#: engines/bladerunner/bladerunner.cpp:2335
 msgid "Continue"
 msgstr "Продолжить"
 
