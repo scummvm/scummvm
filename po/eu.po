@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 21:46+0000\n"
+"POT-Creation-Date: 2022-02-15 22:39+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2640,7 +2640,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 #, fuzzy
@@ -2777,6 +2777,11 @@ msgstr ""
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr ""
+
+#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
+#, fuzzy
+msgid "Reserved"
+msgstr "Zerbitzaria:"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"

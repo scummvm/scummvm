@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 21:46+0000\n"
+"POT-Creation-Date: 2022-02-15 22:39+0000\n"
 "PO-Revision-Date: 2022-01-29 20:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2619,7 +2619,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ОШИБКА: Не удалось перенести сохранение в новый слот"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2756,6 +2756,12 @@ msgstr "Диалог предиктивного ввода"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Подтвердить"
+
+#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
+#, fuzzy
+#| msgid "Run server"
+msgid "Reserved"
+msgstr "Запустить сервер"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"

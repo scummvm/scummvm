@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 21:46+0000\n"
+"POT-Creation-Date: 2022-02-15 22:39+0000\n"
 "PO-Revision-Date: 2022-02-12 14:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2611,7 +2611,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "FEIL: Kunne ikke kopiere det lagrede spillet til et nytt lagringsspor"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2750,6 +2750,12 @@ msgstr "Forutsigende inndatadialog"
 #: engines/sky/metaengine.cpp:97 engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Bekreft"
+
+#: engines/metaengine.cpp:371 engines/metaengine.cpp:385
+#, fuzzy
+#| msgid "Run server"
+msgid "Reserved"
+msgstr "Kjør server"
 
 #: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
