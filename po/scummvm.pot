@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-15 16:15+0000\n"
+"POT-Creation-Date: 2022-02-15 20:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -162,7 +162,7 @@ msgstr ""
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69 engines/drascula/saveload.cpp:48
-#: engines/groovie/script.cpp:647 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:649 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:99 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:180
 #: engines/scumm/scumm.cpp:1352 engines/scumm/scumm.cpp:1378
@@ -2371,8 +2371,8 @@ msgstr ""
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:840
-#: engines/groovie/script.cpp:2175 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:842
+#: engines/groovie/script.cpp:2179 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/neverhood/menumodule.cpp:889 engines/pegasus/pegasus.cpp:402
@@ -2390,8 +2390,8 @@ msgstr ""
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:835
-#: engines/groovie/script.cpp:840 engines/groovie/script.cpp:2175
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:837
+#: engines/groovie/script.cpp:842 engines/groovie/script.cpp:2179
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
@@ -3952,8 +3952,8 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:817
-#: engines/groovie/script.cpp:852 engines/groovie/script.cpp:2162
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:819
+#: engines/groovie/script.cpp:854 engines/groovie/script.cpp:2166
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -3970,9 +3970,9 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:817
-#: engines/groovie/script.cpp:835 engines/groovie/script.cpp:852
-#: engines/groovie/script.cpp:2162 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:819
+#: engines/groovie/script.cpp:837 engines/groovie/script.cpp:854
+#: engines/groovie/script.cpp:2166 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4829,11 +4829,11 @@ msgstr ""
 msgid "GroovieV2 support is not compiled in"
 msgstr ""
 
-#: engines/groovie/script.cpp:647
+#: engines/groovie/script.cpp:649
 msgid "Failed to save game"
 msgstr ""
 
-#: engines/groovie/script.cpp:835 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:837 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr ""
 
