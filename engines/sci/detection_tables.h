@@ -4325,6 +4325,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PQSWAT },
 
+	// Police Quest: SWAT - English DOS/Windows
+	// Executable scanning reports "2.100.002", VERSION.TXT file reports "1.100"
+	{"pqswat", "", {
+		{"resmap.001", 0, "c2571ca6fc43f9a0b2d44c14aa2a39a3", 6955},
+		{"ressci.001", 0, "4550b56b6ea65c10c507b571abb43b97", 29312320},
+		{"resmap.002", 0, "808de8c5357f519ace8836a5e52d9e44", 6439},
+		{"ressci.002", 0, "672665bbe12be2aee44722495daca84e", 31599543},
+		{"resmap.003", 0, "3a8e446d7355789cdf0fe2cdf5e478db", 6841},
+		{"ressci.003", 0, "621621778cf754986e7f9f3f245b898b", 46510796},
+		{"resmap.004", 0, "98cd83681994e922a2f65031cf13fd49", 7069},
+		{"ressci.004", 0, "d28ad458276f42748f47ac27d0a0cc76", 50759885},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PQSWAT },
+
 	// Police Quest: SWAT - English DOS
 	// Reported by canuckflicks in bug #12264
 	{"pqswat", "", {
