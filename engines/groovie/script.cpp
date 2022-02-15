@@ -272,6 +272,8 @@ void Script::directGameLoad(int slot) {
 		_scriptFile = _savedScriptFile;
 	}
 
+	_videoSkipAddress = 0;
+
 	uint16 targetInstruction = 0;
 	const byte *midiInitScript = nullptr;
 	uint8 midiInitScriptSize = 0;
@@ -509,7 +511,7 @@ uint32 Script::getVideoRefString(Common::String &resName) {
 	// Add a trailing dot
 	resName += '.';
 
-	debugCN(1, kDebugScript, "%s", resName.c_str());
+	debugC(1, kDebugScript, "getVideoRefString %s", resName.c_str());
 
 	// Get the fileref of the resource
 	return _vm->_resMan->getRef(resName);
@@ -1925,6 +1927,7 @@ void Script::o_loadscript() {
 
 	// Save the variables
 	memcpy(_savedVariables, _variables + 0x107, 0x180);
+	_videoSkipAddress = 0;
 	resetFastForward();
 }
 
@@ -1992,6 +1995,7 @@ void Script::o_returnscript() {
 		_wantAutosave = val == 1;
 	}
 
+	_videoSkipAddress = 0;
 	resetFastForward();
 }
 
