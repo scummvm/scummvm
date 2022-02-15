@@ -186,6 +186,7 @@ static HGameFileError OpenMainGameFileBase(Stream *in, MainGameSource &src) {
 	// rid of it too easily; the easy way is to set it whenever the main
 	// game file is opened.
 	_G(loaded_game_file_version) = src.DataVersion;
+	_G(game_compiled_version).SetFromString(src.CompiledWith);
 	return HGameFileError::None();
 }
 
