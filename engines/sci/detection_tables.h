@@ -5829,7 +5829,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							  GAMEOPTION_HQ_VIDEO)
 #define GUIO_TORIN_MAC  GUIO_TORIN
 
-	// Torin's Passage - English Windows Interactive Demo
+	// Torin's Passage - English DOS/Windows Early Demo
+	// SCI interpreter version 2.100.002
+	{"torin", "Demo", {
+		{"resmap.000", 0, "2f466e0dca27d2e6a85e422492a92915", 3403},
+		{"ressci.000", 0, "db3e290481c35c3224e9602e71e4a1f1", 5004165},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_DROPPLATFORM, GUIO_TORIN_DEMO },
+
+	// Torin's Passage - English DOS/Windows Interactive Demo
 	// SCI interpreter version 2.100.002
 	{"torin", "Demo", {
 		{"resmap.000", 0, "9a3e172cde9963d0a969f26469318cec", 3403},
