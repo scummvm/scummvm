@@ -87,6 +87,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      scenes.
    - Fixed polygon rendering method for the boat windows.
    - Fixed wrong shooting direction for some actors.
+   - Fixed door movement in some situations.
 
  macOS port:
    - Added support for displaying OSD messages on the Touch Bar.
