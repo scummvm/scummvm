@@ -121,6 +121,8 @@ public:
 	EngineVersion getEngineVersion() const;
 
 	int getAutosaveSlot() const override;
+	bool canLaunchLoad() const;
+	bool isDemo() const;
 
 protected:
 

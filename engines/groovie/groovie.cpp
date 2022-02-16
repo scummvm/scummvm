@@ -370,6 +370,16 @@ bool GroovieEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
+bool GroovieEngine::canLaunchLoad() const {
+	if (_gameDescription->desc.guiOptions == nullptr)
+		return false;
+	return strstr(_gameDescription->desc.guiOptions, GUIO_NOLAUNCHLOAD) != nullptr;
+}
+
+bool GroovieEngine::isDemo() const {
+	return _gameDescription->desc.flags & ADGF_DEMO;
+}
+
 void GroovieEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -389,6 +399,8 @@ void GroovieEngine::syncSoundSettings() {
 
 bool GroovieEngine::canLoadGameStateCurrently() {
 	// TODO: verify the engine has been initialized
+	if (isDemo())
+		return false;
 	if (_script)
 		return true;
 	else
@@ -397,6 +409,8 @@ bool GroovieEngine::canLoadGameStateCurrently() {
 
 bool GroovieEngine::canSaveGameStateCurrently() {
 	// TODO: verify the engine has been initialized
+	if (isDemo())
+		return false;
 	if (_script)
 		return _script->canDirectSave();
 	else

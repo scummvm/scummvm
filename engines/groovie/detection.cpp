@@ -404,7 +404,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("tlcmain.grv", "6ec818f595eedca6570280af0c681642", 17361,
 						"tlcnav.gjd", nullptr, -1),
 			Common::DE_DEU, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		kGroovieTLC
 	},
@@ -416,7 +416,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
 						"drama1.gjd", nullptr, -1),
 			Common::UNK_LANG, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		kGroovieTLC
 	},

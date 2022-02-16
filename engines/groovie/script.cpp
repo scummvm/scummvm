@@ -600,6 +600,9 @@ bool Script::preview_loadgame(uint slot) { // used by Clandestiny for the photos
 }
 
 bool Script::canDirectSave() const {
+	if (this->_vm->isDemo())
+		return false;
+
 	// Disallow when running a subscript (puzzle)
 	if (_savedCode == nullptr) {
 		// UHP appears not to use "room" variables(?)
@@ -1186,8 +1189,8 @@ void Script::o_inputloopend() {
 	}
 
 	if (_wantAutosave && canDirectSave()) {
-		_vm->saveAutosaveIfEnabled();
 		_wantAutosave = false;
+		_vm->saveAutosaveIfEnabled();
 	}
 }
 
