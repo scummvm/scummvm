@@ -944,6 +944,9 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// Original clan engine specifically references these files by name to set the flag
 			else if (_version == kGroovieCDY && (resInfo.filename.hasPrefix("act") || resInfo.filename.hasPrefix("door")))
 				_bitflags |= (1 << 14);
+			// HACK: Clandestiny bricks puzzle appears to use different behavior for copying the _overBuf to the _bg
+			if (_version == kGroovieCDY && _scriptFile == "26a_graf.grv")
+				_bitflags |= 1;
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
 		} else {
 			error("Groovie::Script: Couldn't open file");

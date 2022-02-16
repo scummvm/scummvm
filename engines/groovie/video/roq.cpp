@@ -157,6 +157,7 @@ uint16 ROQPlayer::loadInternal() {
 	_flagOverlay = ((_flags & (1 << 2)) != 0);
 	_altMotionDecoder = ((_flags & (1 << 14)) != 0);
 	_flagMasked = ((_flags & (1 << 10)) != 0);
+	bool flagBricks = ((_flags & 1) != 0);
 
 	if (gDebugLevel >= 8 && DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		dumpAllSurfaces("loadInternal");
@@ -164,7 +165,7 @@ uint16 ROQPlayer::loadInternal() {
 
 	if (!_flagOverlay && _flagNoPlay) {
 		// Clandestiny's bricks puzzle needs this copy to bg
-		if(oldOverlay && _overBuf->w && _vm->getEngineVersion() == kGroovieCDY)
+		if (oldOverlay && _overBuf->w && flagBricks)
 			_bg->copyFrom(*_overBuf);
 		clearOverlay();
 	}
