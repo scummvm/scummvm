@@ -2191,11 +2191,6 @@ void Script::o2_videofromref() {
 		}
 	}
 
-	if (_version == kGroovieCDY && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
-		if (_currentInstruction == 0xE50A && _scriptFile == "save_cam.grv") {
-		}
-	}
-
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
@@ -2234,7 +2229,24 @@ void Script::o2_vdxtransition() {
 			}
 
 			_currentInstruction = 0x162; // end of save_cam.grv
+			return;
 		}
+		// TODO: modern load menu needs to tell the user that slot 0 is for starting a new game
+#if 0
+		else if (_currentInstruction == 0xA12C && _scriptFile == "clanmain.grv") {
+			// Load from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0) {
+				directGameLoad(slot);
+			} else {
+				_currentInstruction = 0xA730;
+			}
+			return;
+		}
+#endif
 	}
 
 	// Set bit 1
