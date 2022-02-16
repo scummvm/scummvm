@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-16 20:54+0000\n"
+"POT-Creation-Date: 2022-02-16 21:07+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -2429,7 +2429,7 @@ msgstr ""
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:846
-#: engines/groovie/script.cpp:2184 engines/groovie/script.cpp:2225
+#: engines/groovie/script.cpp:2187 engines/groovie/script.cpp:2228
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -2449,8 +2449,8 @@ msgstr ""
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:841
-#: engines/groovie/script.cpp:846 engines/groovie/script.cpp:2184
-#: engines/groovie/script.cpp:2225 engines/hugo/file.cpp:297
+#: engines/groovie/script.cpp:846 engines/groovie/script.cpp:2187
+#: engines/groovie/script.cpp:2228 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4032,8 +4032,8 @@ msgstr ""
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:823
-#: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2171
-#: engines/groovie/script.cpp:2241 engines/hugo/file.cpp:399
+#: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2174
+#: engines/groovie/script.cpp:2244 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/neverhood/menumodule.cpp:902 engines/prince/saveload.cpp:63
@@ -4051,7 +4051,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:823
 #: engines/groovie/script.cpp:841 engines/groovie/script.cpp:858
-#: engines/groovie/script.cpp:2171 engines/groovie/script.cpp:2241
+#: engines/groovie/script.cpp:2174 engines/groovie/script.cpp:2244
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
