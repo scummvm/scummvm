@@ -950,7 +950,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "eight", "8" },
 	{ "eikos1", "La Légende d'Eikos chapitre 1 : Le Seigneur des Loups" },
 	{ "eikos2", "La Légende d'Eikos chapitre 2 : Réveil dans la Nuit" },
-	{ "einsteinmachine", "Einstein Machine" },
 	{ "electrokit", "Maaikes Elektrokit" },
 	{ "elevator", "The Elevator" },
 	{ "elevatorriseabyss", "The Elevator - Rise from the Abyss!" },
@@ -998,7 +997,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "everlight", "Everlight Forest" },
 	{ "evil", "Evil" },
 	{ "evilenterprises", "Evil Enterprises" },
-	{ "evildead4", "Evil Dead 4" },
 	{ "evillodge", "Evillodge: The Criminal Adventure Game" },
 	{ "exclamation", "!" },
 	{ "exit", "EXIT" },
@@ -1124,7 +1122,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "gonorth", "Go North" },
 	{ "gonorth2", "Go North 2" },
 	{ "goodgod", "Good God!" },
-	{ "goodman", "Good Man" },
 	{ "goodmorningmrgingerbread", "Good Morning, Mr. Gingerbread!" },
 	{ "goodsantabadsanta", "Good Santa, Bad Santa" },
 	{ "goontang", "Goontang Chackalaka" },
@@ -1995,7 +1992,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "princessmarianspigeonpinger", "Princess Marian's Pigeon Pinger" },
 	{ "principlesofevil", "Principles of Evil" },
 	{ "principlesofevil2", "Principles of Evil II" },
-	{ "prisonersofice", "Prisoners of Ice" },
 	{ "privatedetective", "Private Detective" },
 	{ "procrastinator", "Procrastinator" },
 	{ "prodigal0", "Prodigal 0" },
@@ -2254,7 +2250,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "snowmaneatcarrot", "May the Best Snowman Eat a Carrot" },
 	{ "snowqueen", "Snow Queen: After the Apocalypse" },
 	{ "snowtheadventure", "SNOW - The Adventure Game" },
-	{ "snowyadventures", "Snowy Adventures" },
 	{ "sockstoday", "Should Have Worn Socks Today" },
 	{ "solitude", "Solitude" },
 	{ "somethingnovel", "Something Novel" },
@@ -2383,7 +2378,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "taospacetime", "Tao Through Space and Time" },
 	{ "tarthenia", "Tarthenia" },
 	{ "tasteblood", "Taste the blood of darkness" },
-	{ "tbdiy", "The BAD day in year" },
 	{ "teafortwo", "Tea for Two - A Detective Logan Case" },
 	{ "technobabylonp3", "Technobabylon - Part 3: In Nuntius Veritas" },
 	{ "tehhorror", "Teh Horror!" },
@@ -2654,6 +2648,20 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zombiefish", "Night of the Zombie Fish!" },
 	{ "zooreal", "ZooReal" },
 	{ "zugzwang", "Zugzwang" },
+
+	// RuCOMM games and demos (Russian Only)
+	
+	// RuCOMM #1. The Best Man
+	{ "evildead4", "Evil Dead 4" },
+	{ "goodman", "Good Man" },
+	{ "tbdiy", "The BAD day in year" },
+	
+	// RuCOMM #2. Laboratory / Hotel between worlds
+	{ "einsteinmachine", "Einstein Machine" },
+
+	// RuCOMM #3. Santa Claus Summit on Canaries
+	{ "prisonersofice", "Prisoners of Ice" },
+	{ "snowyadventures", "Snowy Adventures" },
 
 	{ 0, 0 }
 };
@@ -6135,21 +6143,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	GAME_ENTRY("zugzwang", "Zugzwang.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 17209702),
 
-	//////////
-	// RuCOMM
-	//////////
-
-	// RuCOMM #1. The Best Man
-	DEMO_ENTRY_LANG("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251, Common::RU_RUS),
-	GAME_ENTRY_LANG("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578,Common::RU_RUS),
-	GAME_ENTRY_LANG("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432,Common::RU_RUS),
-
-	// RuCOMM #2. Laboratory / Hotel between worlds
-	GAME_ENTRY_LANG("einsteinmachine", "em.exe", "bb59de174d70797d774dec76a171352d", 76169675, Common::RU_RUS),
-
-	// RuCOMM #3. Santa Claus Summit on Canaries
-	GAME_ENTRY_LANG("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231, Common::RU_RUS),
+	//RuCOMM games and demos
 	DEMO_ENTRY_LANG("snowyadventures", "snowyadventures.exe", "27343924ddad3be0b97bdcaa71858b1b", 86439776, Common::RU_RUS),
+	DEMO_ENTRY_LANG("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251, Common::RU_RUS),
+
+	GAME_ENTRY_LANG("einsteinmachine", "em.exe", "bb59de174d70797d774dec76a171352d", 76169675, Common::RU_RUS),
+	GAME_ENTRY_LANG("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432,Common::RU_RUS),
+	GAME_ENTRY_LANG("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578,Common::RU_RUS),
+	GAME_ENTRY_LANG("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231, Common::RU_RUS),
+
 
 	{ AD_TABLE_END_MARKER, nullptr }
 };
