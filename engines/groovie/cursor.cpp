@@ -428,8 +428,12 @@ void Cursor_v2::show2Cursors(Cursor_v2 *c1, uint16 frame1, Cursor_v2 *c2, uint16
 	c2->blendCursor(img, frame2, width, height);
 	c1->blendCursor(img, frame1, width, height);
 
+	// SDL uses keycolor even though we're using ABGR8888, so just set it to a pink color that isn't used
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	uint32 keycolor = format.ARGBToColor(0, 255, 128, 255);
+
 	// replaceCursor copies the buffer, so we're ok to delete it
-	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, 0, false, &c1->_format);
+	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, keycolor, false, &c1->_format);
 	delete[] img;
 }
 
