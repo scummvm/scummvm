@@ -231,7 +231,7 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, cons
 		if (newAngle >= ANGLE_225 && newAngle < ANGLE_315) {
 			processActor.x = maxsTest.x - actor->_boudingBox.mins.x;
 		}
-		if (newAngle >= ANGLE_315 && newAngle < ANGLE_45) {
+		if (newAngle >= ANGLE_315 || newAngle < ANGLE_45) {
 			processActor.z = minsTest.z - actor->_boudingBox.maxs.z;
 		}
 	} else if (!actor->_dynamicFlags.bIsFalling) {
