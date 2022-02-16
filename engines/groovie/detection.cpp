@@ -157,6 +157,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
+	// The 11th Hour DOS/Windows French
+	{
+		{
+			"11h", "",
+			AD_ENTRY2s("script.grv", "752c0a8ea62a1207c8583f3dbc16e6ef", 62447,
+						"introd1.gjd", nullptr, -1),
+			Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR)
+		},
+		kGroovieT11H
+	},
+
 	// The 11th Hour Mac English
 	{
 		{
