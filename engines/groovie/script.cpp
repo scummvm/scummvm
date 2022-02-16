@@ -2161,7 +2161,7 @@ void Script::o2_videofromref() {
 		_videoSkipAddress = 1417;
 
 	if (_version == kGroovieT11H && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
-		if (_currentInstruction == 0xE50A) {
+		if (_currentInstruction == 0xE50A && _scriptFile == "script.grv") {
 			// Load from the main menu
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
@@ -2174,7 +2174,7 @@ void Script::o2_videofromref() {
 			} else {
 				_currentInstruction = 0xBF37; // main menu
 			}
-		} else if (_currentInstruction == 0xE955) {
+		} else if (_currentInstruction == 0xE955 && _scriptFile == "script.grv") {
 			// Save from the main menu
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int slot = dialog->runModalWithCurrentTarget();
@@ -2186,6 +2186,11 @@ void Script::o2_videofromref() {
 			}
 
 			_currentInstruction = 0xBF37; // main menu
+		}
+	}
+
+	if (_version == kGroovieCDY && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
+		if (_currentInstruction == 0xE50A && _scriptFile == "save_cam.grv") {
 		}
 	}
 
@@ -2212,6 +2217,22 @@ void Script::o2_vdxtransition() {
 	if (fileref != _videoRef) {
 		debugC(1, kDebugScript, "Groovie::Script: VDX transition fileref = 0x%08X", fileref);
 		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d with transition via 0x1C (o2_vdxtransition)", _currentInstruction-5, fileref);
+	}
+
+	if (_version == kGroovieCDY && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
+		if (_currentInstruction == 0x59 && _scriptFile == "save_cam.grv") {
+			// Save from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String saveName = dialog->getResultString();
+			delete dialog;
+
+			if (slot >= 0) {
+				directGameSave(slot, saveName);
+			}
+
+			_currentInstruction = 0x162; // end of save_cam.grv
+		}
 	}
 
 	// Set bit 1

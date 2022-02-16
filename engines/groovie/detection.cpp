@@ -332,7 +332,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("clanmain.grv", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
 						"ACT01MUS.MPG", nullptr, -1),
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
-			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
+			GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		kGroovieCDY
 	},
@@ -344,7 +344,7 @@ static const GroovieGameDescription gameDescriptions[] = {
             AD_ENTRY2s("CLANMAIN.GRV", "dd424120fa1daa9d6b576d0ba22a4936", 54253,
                        "ACT01MUS.m4a", nullptr, -1),
             Common::EN_ANY, Common::kPlatformUnknown, ADGF_TESTING,
-            GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
+            GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI, GAMEOPTION_ORIGINAL_SAVELOAD)
         },
         kGroovieCDY
     },
