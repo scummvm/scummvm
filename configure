@@ -198,6 +198,7 @@ _cloud=auto
 _pandoc=no
 _curl=yes
 _lld=no
+_mold=no
 _gold=yes
 # Default vkeybd/eventrec options
 _vkeybd=no
@@ -1158,6 +1159,8 @@ for ac_option in $@; do
 	--disable-cloud)              _cloud=no              ;;
 	--enable-lld)                 _lld=yes               ;;
 	--disable-lld)                _lld=no                ;;
+	--enable-mold)                _mold=yes              ;;
+	--disable-mold)               _mold=no               ;;
 	--enable-gold)                _gold=yes              ;;
 	--disable-gold)               _gold=no               ;;
 	--enable-updates)             _updates=yes           ;;
@@ -2253,6 +2256,10 @@ if test "$_debug_build" != no; then
 			append_var LDFLAGS "-fuse-ld=lld"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + LLD"
+		elif test "$_mold" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=mold -Wl,--gdb-index; then
+			append_var LDFLAGS "-fuse-ld=mold"
+			append_var LDFLAGS "-Wl,--gdb-index"
+			echo_n -- " + Mold"
 		elif test "$_gold" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
 			append_var LDFLAGS "-fuse-ld=gold"
 			append_var LDFLAGS "-Wl,--gdb-index"
@@ -2272,6 +2279,13 @@ if ! echo "$LDFLAGS" | grep -q -e -fuse-ld; then
 	echo "Using LLD linker... $_lld"
 	if test "$_lld" = yes ; then
 		append_var LDFLAGS -fuse-ld=lld
+	fi
+fi
+
+if ! echo "$LDFLAGS" | grep -q -e -fuse-ld; then
+	echo "Using Mold linker... $_mold"
+	if test "$_mold" =  yes ; then
+		append_var LDFLAGS -fuse-ld=mold
 	fi
 fi
 
