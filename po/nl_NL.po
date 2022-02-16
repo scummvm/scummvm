@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-16 02:26+0000\n"
+"POT-Creation-Date: 2022-02-16 02:47+0000\n"
 "PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2493,8 +2493,8 @@ msgstr "S~t~artmenu"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:842
-#: engines/groovie/script.cpp:2179 engines/groovie/script.cpp:2225
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:843
+#: engines/groovie/script.cpp:2181 engines/groovie/script.cpp:2227
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -2513,9 +2513,9 @@ msgstr "Spel opslaan:"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:837
-#: engines/groovie/script.cpp:842 engines/groovie/script.cpp:2179
-#: engines/groovie/script.cpp:2225 engines/hugo/file.cpp:297
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:838
+#: engines/groovie/script.cpp:843 engines/groovie/script.cpp:2181
+#: engines/groovie/script.cpp:2227 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4156,8 +4156,8 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:819
-#: engines/groovie/script.cpp:854 engines/groovie/script.cpp:2166
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:820
+#: engines/groovie/script.cpp:855 engines/groovie/script.cpp:2168
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4174,9 +4174,9 @@ msgstr "Laad opgeslagen spel:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:819
-#: engines/groovie/script.cpp:837 engines/groovie/script.cpp:854
-#: engines/groovie/script.cpp:2166 engines/hugo/file.cpp:399
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:820
+#: engines/groovie/script.cpp:838 engines/groovie/script.cpp:855
+#: engines/groovie/script.cpp:2168 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -5158,7 +5158,7 @@ msgstr "Ondersteuning voor GroovieV2 is niet meegecompileerd"
 msgid "Failed to save game"
 msgstr "Opslaan van spel mislukt"
 
-#: engines/groovie/script.cpp:837 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:838 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
 msgstr "Wilt u een spel laden of opslaan?"
 
