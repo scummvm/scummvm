@@ -702,7 +702,8 @@ void Script::printString(Graphics::Surface *surface, const char *str) {
 	if (_version == kGroovieT7G) {
 		_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
 	} else {
-		_vm->_videoPlayer->drawString(surface, Common::String(message), 190, 190, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A));
+		bool drawBackground = _version == kGroovieCDY;
+		_vm->_videoPlayer->drawString(surface, Common::String(message), 190, 190, _vm->_pixelFormat.RGBToColor(0xff, 0x0A, 0x0A), drawBackground);
 	}
 }
 
@@ -2108,7 +2109,8 @@ void Script::o2_printstring() {
 	debugC(1, kDebugScript, "Groovie::Script: PRINTSTRING (%d, %d): %s", posx, posy, text.c_str());
 
 	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
-	_vm->_videoPlayer->drawString(gamescreen, text, posx, posy, col);
+	bool drawBackground = _version == kGroovieCDY;
+	_vm->_videoPlayer->drawString(gamescreen, text, posx, posy, col, drawBackground);
 	_vm->_system->unlockScreen();
 }
 

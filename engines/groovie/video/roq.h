@@ -45,7 +45,7 @@ public:
 		return _soundHandle;
 	}
 
-	void drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color) override;
+	void drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) override;
 	void copyfgtobg(uint8 arg) override;
 
 protected:

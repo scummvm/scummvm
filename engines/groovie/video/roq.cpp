@@ -973,20 +973,23 @@ void ROQPlayer::createAudioStream(bool stereo) {
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 }
 
-void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color) {
+void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) {
 	// TODO: fix redraw
 #if 0
 	int screenOffset = 0;
 	if (_screen->h != 480) {
 		screenOffset = 80;
 	}
-
 	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 	Common::Rect rect(posx, posy - screenOffset, posx + _vm->_font->getMaxCharWidth()*15, posy + _vm->_font->getFontHeight()*2 - screenOffset);
 	gamescreen->copyRectToSurface(*_bg, posx, posy, rect);
 #endif
 
-	_vm->_font->drawString(surface, text.c_str(), posx, posy, _overBuf->w, color, Graphics::kTextAlignLeft);
+	if (blackBackground) {
+		Common::Rect rect(posx - _vm->_font->getMaxCharWidth() * 0.3f, posy, posx + _vm->_font->getMaxCharWidth() * 15.3f, posy + _vm->_font->getFontHeight() * 1.3f);
+		surface->fillRect(rect, surface->format.ARGBToColor(255, 0, 0, 0));
+	}
+	_vm->_font->drawString(surface, text.c_str(), posx, posy, surface->w, color, Graphics::kTextAlignLeft);
 	_vm->_graphicsMan->change(); // Force Update screen after step
 }
 
