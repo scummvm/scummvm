@@ -41,8 +41,6 @@ namespace Rooms {
 #define CH_WIRFT_KISSEN 14
 #define FUETTER_SCHLAUCH 15
 #define STERNE_STEHEN 16
-#define VOR 0
-#define RUECK 1
 #define SCHLAUCH1 11
 #define SCHLAUCH2 38
 #define SCHLAUCH3 59
@@ -302,20 +300,17 @@ void Room0::eyeWait() {
 }
 
 void Room0::calcEyeClick(int16 ani_nr) {
-	int16 anz;
-	int16 x, y;
-	int16 i;
-
 	if (mouse_on_prog_ani() == ani_nr) {
 		if (_G(minfo).button != 1 && _G(kbinfo).key_code != Common::KEYCODE_RETURN) {
+			int16 anz;
 			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
 				_G(out)->set_fontadr(_G(font8x8));
 				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
-				x = _G(minfo).x;
-				y = _G(minfo).y;
+				int16 x = _G(minfo).x;
+				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
-				for (i = 0; i < anz; i++)
+				for (int16 i = 0; i < anz; i++)
 					print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
 			}
 		} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
@@ -323,7 +318,6 @@ void Room0::calcEyeClick(int16 ani_nr) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
 			} else if (is_cur_inventar(PILLOW_INV)) {
-
 				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATEI);
 			}
 		}
@@ -331,14 +325,11 @@ void Room0::calcEyeClick(int16 ani_nr) {
 }
 
 void Room0::eyeShoot() {
-	AniDetailInfo *adi;
-	bool ende;
-
-	adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 47;
 
-	ende = false;
-	_G(det)->start_detail(CH_BLITZ, 1, VOR);
+	bool ende = false;
+	_G(det)->start_detail(CH_BLITZ, 1, ANI_VOR);
 
 	while (!ende) {
 		clear_prog_ani();
@@ -369,7 +360,7 @@ void Room0::eyeShoot() {
 		}
 	}
 
-	_G(det)->start_detail(STERNE_STEHEN, 255, VOR);
+	_G(det)->start_detail(STERNE_STEHEN, 255, ANI_VOR);
 	clear_prog_ani();
 	_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 	_G(spr_info)[0].ZEbene = 190;
@@ -385,13 +376,10 @@ void Room0::eyeShoot() {
 }
 
 void Room0::eyeSlimeBack() {
-	AniDetailInfo *adi;
-	bool ende;
-
-	adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
 	adi->ani_count = 53;
 
-	ende = false;
+	bool ende = false;
 	_G(flags).AniUserAction = true;
 
 	while (!ende) {
@@ -530,7 +518,7 @@ void Room0::feederStart(int16 mode) {
 	_G(flags).AniUserAction = false;
 
 	if (mode) {
-		_G(det)->start_detail(FLAP_DETAIL, 1, RUECK);
+		_G(det)->start_detail(FLAP_DETAIL, 1, ANI_RUECK);
 		while (_G(det)->get_ani_status(FLAP_DETAIL))
 			set_ani_screen();
 
@@ -637,7 +625,7 @@ void Room0::checkFeed() {
 	adi->ani_count = 138;
 
 	ende = false;
-	_G(det)->start_detail(CH_NACH_FUETTERN, 2, VOR);
+	_G(det)->start_detail(CH_NACH_FUETTERN, 2, ANI_VOR);
 	while (!ende) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
@@ -682,7 +670,7 @@ void Room0::checkPillow() {
 
 	ende = false;
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(det)->start_detail(CH_WIRFT_KISSEN, 1, VOR);
+	_G(det)->start_detail(CH_WIRFT_KISSEN, 1, ANI_VOR);
 	mode = 0;
 
 	while (!ende) {
@@ -721,7 +709,7 @@ void Room0::checkPillow() {
 
 void Room0::trapDoorOpen() {
 	int16 i;
-	_G(det)->start_detail(FLAP_DETAIL, 1, VOR);
+	_G(det)->start_detail(FLAP_DETAIL, 1, ANI_VOR);
 	while (_G(det)->get_ani_status(FLAP_DETAIL)) {
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
@@ -742,7 +730,7 @@ void Room0::trapDoorOpen() {
 }
 
 void Room0::trapDoorClose() {
-	_G(det)->start_detail(FLAP_DETAIL, 1, RUECK);
+	_G(det)->start_detail(FLAP_DETAIL, 1, ANI_RUECK);
 
 	while (_G(det)->get_ani_status(FLAP_DETAIL)) {
 		set_ani_screen();
