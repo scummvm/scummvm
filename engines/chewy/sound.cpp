@@ -147,25 +147,29 @@ void Sound::setMusicVolume(uint volume) {
 }
 
 void Sound::playSpeech(int num) {
+	// Get the speech data
 	SoundChunk *sound = _speechRes->getSound(num);
-	uint8 *data = (uint8 *)MALLOC(sound->size);
-	memcpy(data, sound->data, sound->size);
-
-	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	                                 Audio::makeRawStream(data,
-	                                         sound->size, 22050, Audio::FLAG_UNSIGNED,
-	                                         DisposeAfterUse::YES),
-	                                 1);
-
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
-
-	// Wait for speech to finish
-	while (isSpeechActive() && !SHOULD_QUIT) {
-		set_up_screen(DO_SETUP);
-	}
+	size_t size = sound->size;
+	uint8 *data = (uint8 *)MALLOC(size);
+	memcpy(data, sound->data, size);
 
 	delete[] sound->data;
 	delete sound;
+
+	// Play it
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+	    Audio::makeRawStream(data, size, 22050, Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES), 1);
+
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
+		&_speechHandle, stream);
+
+	if (_G(atds)->getAtdDisplay() == DISPLAY_VOC) {
+		// Wait for speech to finish
+		while (isSpeechActive() && !SHOULD_QUIT) {
+			set_up_screen(DO_SETUP);
+		}
+	}
 }
 
 void Sound::pauseSpeech() {

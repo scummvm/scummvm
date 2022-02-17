@@ -478,9 +478,14 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	_G(talk_hide_static) = -1;
 	set_ssi_xy();
 	_G(atds)->start_aad(dia_nr);
-	while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
+
+	while (!SHOULD_QUIT && (
+		_G(atds)->aad_get_status() != -1 ||
+		g_engine->_sound->isSpeechActive()
+		)) {
 		set_up_screen(DO_SETUP);
 	}
+
 	_G(maus_links_click) = _G(tmp_maus_links);
 	if (_G(minfo).button)
 		_G(flags).main_maus_flag = 1;
