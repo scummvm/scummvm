@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-16 22:15+0000\n"
+"POT-Creation-Date: 2022-02-17 01:39+0000\n"
 "PO-Revision-Date: 2022-02-13 15:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -92,7 +92,7 @@ msgstr "Choisir"
 msgid "Select directory where to download game data"
 msgstr "Sélectionner le répertoire de téléchargement des données du jeu"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:269
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:272
 msgid "Select directory with game data"
 msgstr "Sélectionner le répertoire contenant les données du jeu"
 
@@ -130,7 +130,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
+#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
@@ -142,7 +142,7 @@ msgstr "Oui"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
+#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: engines/buried/buried.cpp:580 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
@@ -151,7 +151,7 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:561
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:564
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM n'a pas pu ouvrir le répertoire sélectionné !"
 
@@ -164,7 +164,7 @@ msgstr ""
 "même nom existe déjà."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:520 gui/launcher.cpp:524
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:523 gui/launcher.cpp:527
 #: gui/massadd.cpp:88 gui/options.cpp:2104 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -788,65 +788,74 @@ msgstr "À ~P~ropos"
 msgid "About ScummVM"
 msgstr "À propos de ScummVM"
 
-#: gui/launcher.cpp:231
-msgid "~O~ptions..."
+#: gui/launcher.cpp:232
+#, fuzzy
+#| msgid "~O~ptions..."
+msgid "Global ~O~ptions..."
 msgstr "~O~ptions..."
 
-#: gui/launcher.cpp:231
+#: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
 msgstr "Change les options globales de ScummVM"
 
-#: gui/launcher.cpp:236
+#: gui/launcher.cpp:234
+#, fuzzy
+#| msgid "~O~ptions..."
+msgctxt "lowres"
+msgid "Global ~O~pts..."
+msgstr "~O~ptions..."
+
+#: gui/launcher.cpp:239
 msgid "~A~dd Game..."
 msgstr "~A~jouter..."
 
-#: gui/launcher.cpp:236 gui/launcher.cpp:244
+#: gui/launcher.cpp:239 gui/launcher.cpp:247
 msgid "Add games to the list"
 msgstr "Ajoute les jeux à la liste"
 
-#: gui/launcher.cpp:237
+#: gui/launcher.cpp:240
 msgid "Mass Add..."
 msgstr "Ajout Massif..."
 
-#: gui/launcher.cpp:241
+#: gui/launcher.cpp:244
 msgid "~R~emove Game"
 msgstr "~S~upprimer"
 
-#: gui/launcher.cpp:241 gui/launcher.cpp:249
+#: gui/launcher.cpp:244 gui/launcher.cpp:252
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Supprime le jeu de la liste. Les fichiers sont conservés"
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:247
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~A~jouter..."
 
-#: gui/launcher.cpp:245
+#: gui/launcher.cpp:248
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Ajout Massif..."
 
-#: gui/launcher.cpp:249
+#: gui/launcher.cpp:252
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~S~upprimer"
 
-#: gui/launcher.cpp:257
+#: gui/launcher.cpp:260
 msgid "Search in game list"
 msgstr "Recherche dans la liste de jeux"
 
-#: gui/launcher.cpp:261 gui/launcher.cpp:768
+#: gui/launcher.cpp:264 gui/launcher.cpp:771
 msgid "Search:"
 msgstr "Filtre :"
 
-#: gui/launcher.cpp:272 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Charger le jeu :"
 
-#: gui/launcher.cpp:272 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -855,13 +864,13 @@ msgstr "Charger le jeu :"
 msgid "Load"
 msgstr "Charger"
 
-#: gui/launcher.cpp:380
+#: gui/launcher.cpp:383
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Ce répertoire est en cours de téléchargement et ne peut pas encore être "
 "utilisé !"
 
-#: gui/launcher.cpp:391
+#: gui/launcher.cpp:394
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -869,112 +878,116 @@ msgstr ""
 "Voulez-vous vraiment lancer la détection automatique des jeux ? Cela peut "
 "potentiellement ajouter un grand nombre de jeux."
 
-#: gui/launcher.cpp:421
+#: gui/launcher.cpp:424
 msgid "Do you really want to remove this game configuration?"
 msgstr "Voulez-vous vraiment supprimer ce jeu ?"
 
-#: gui/launcher.cpp:463
+#: gui/launcher.cpp:466
 msgid "Do you want to load saved game?"
 msgstr "Voulez-vous charger le jeu ?"
 
-#: gui/launcher.cpp:520
+#: gui/launcher.cpp:523
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Le chargement de sauvegarde depuis le lanceur n'est pas supporté pour ce jeu."
 
-#: gui/launcher.cpp:524
+#: gui/launcher.cpp:527
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM n'a pas pu trouver de moteur pour lancer le jeu sélectionné !"
 
-#: gui/launcher.cpp:580
+#: gui/launcher.cpp:583
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM n'a pas trouvé de jeu dans le répertoire sélectionné !"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:596
+#: gui/launcher.cpp:599
 msgid "Unknown variant"
 msgstr "Variante inconnue"
 
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:605
 msgid "Pick the game:"
 msgstr "Choisissez le jeu :"
 
-#: gui/launcher.cpp:777
+#: gui/launcher.cpp:780
 msgid "Group by:"
 msgstr "Regrouper par :"
 
-#: gui/launcher.cpp:817 gui/saveload-dialog.cpp:367
+#: gui/launcher.cpp:820 gui/saveload-dialog.cpp:367
 msgid "List view"
 msgstr "Vue en liste"
 
-#: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
+#: gui/launcher.cpp:821 gui/saveload-dialog.cpp:368
 msgid "Grid view"
 msgstr "Vue en grille"
 
-#: gui/launcher.cpp:972
+#: gui/launcher.cpp:975
 msgid "~S~tart"
 msgstr "~D~émarrer"
 
-#: gui/launcher.cpp:972
+#: gui/launcher.cpp:975
 msgid "Start selected game"
 msgstr "Démarre le jeu sélectionné"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:978
 msgid "~L~oad..."
 msgstr "~C~harger..."
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:978
 msgid "Load saved game for selected game"
 msgstr "Charge une sauvegarde pour le jeu sélectionné"
 
-#: gui/launcher.cpp:977
+#: gui/launcher.cpp:980
 msgid "Record..."
 msgstr "Enregistrer..."
 
-#: gui/launcher.cpp:984
-msgid "~E~dit Game..."
-msgstr "~E~diter..."
+#: gui/launcher.cpp:987
+#, fuzzy
+#| msgid "~O~ptions..."
+msgid "~G~ame Options..."
+msgstr "~O~ptions..."
 
-#: gui/launcher.cpp:984 gui/launcher.cpp:987
+#: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "Change les options du jeu"
 
-#: gui/launcher.cpp:987
+#: gui/launcher.cpp:990
+#, fuzzy
+#| msgid "~O~ptions..."
 msgctxt "lowres"
-msgid "~E~dit Game..."
-msgstr "~E~diter..."
+msgid "~G~ame Opts..."
+msgstr "~O~ptions..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1109 gui/launcher.cpp:1296
+#: gui/launcher.cpp:1112 gui/launcher.cpp:1299
 msgid "Unknown Engine"
 msgstr "Moteur inconnu"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1127 gui/launcher.cpp:1328
+#: gui/launcher.cpp:1130 gui/launcher.cpp:1331
 msgid "Unknown Publisher"
 msgstr "Editeur inconnu"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1145 gui/launcher.cpp:1314
+#: gui/launcher.cpp:1148 gui/launcher.cpp:1317
 msgid "No Series"
 msgstr "Pas de série"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1160 gui/launcher.cpp:1347
+#: gui/launcher.cpp:1163 gui/launcher.cpp:1350
 msgid "Language not detected"
 msgstr "Langue non détectée"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1175 gui/launcher.cpp:1362
+#: gui/launcher.cpp:1178 gui/launcher.cpp:1365
 msgid "Platform not detected"
 msgstr "Plateforme non détectée"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1373 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:122
 msgid "All"
 msgstr "Tous"
 
@@ -8804,6 +8817,13 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "~E~dit Game..."
+#~ msgstr "~E~diter..."
+
+#~ msgctxt "lowres"
+#~ msgid "~E~dit Game..."
+#~ msgstr "~E~diter..."
 
 #, fuzzy
 #~| msgid "Run server"

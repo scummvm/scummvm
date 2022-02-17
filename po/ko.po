@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-16 22:15+0000\n"
+"POT-Creation-Date: 2022-02-17 01:39+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -92,7 +92,7 @@ msgstr "선택"
 msgid "Select directory where to download game data"
 msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:269
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:272
 msgid "Select directory with game data"
 msgstr "게임 데이터가 있는 디렉토리를 선택"
 
@@ -128,7 +128,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
+#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
@@ -140,7 +140,7 @@ msgstr "예"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:392 gui/launcher.cpp:421 gui/launcher.cpp:464
+#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: engines/buried/buried.cpp:580 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
@@ -149,7 +149,7 @@ msgstr "예"
 msgid "No"
 msgstr "아니오"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:561
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:564
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
 
@@ -162,7 +162,7 @@ msgstr ""
 "의 파일이 이미 존재합니다."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:520 gui/launcher.cpp:524
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:523 gui/launcher.cpp:527
 #: gui/massadd.cpp:88 gui/options.cpp:2104 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -796,65 +796,74 @@ msgstr "프로그램 정보(~b~)..."
 msgid "About ScummVM"
 msgstr "ScummVM 정보"
 
-#: gui/launcher.cpp:231
-msgid "~O~ptions..."
+#: gui/launcher.cpp:232
+#, fuzzy
+#| msgid "~O~ptions..."
+msgid "Global ~O~ptions..."
 msgstr "옵션(~O~)..."
 
-#: gui/launcher.cpp:231
+#: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
 msgstr "전역 ScummVM 설정을 수정합니다"
 
-#: gui/launcher.cpp:236
+#: gui/launcher.cpp:234
+#, fuzzy
+#| msgid "~O~ptions..."
+msgctxt "lowres"
+msgid "Global ~O~pts..."
+msgstr "옵션(~O~)..."
+
+#: gui/launcher.cpp:239
 msgid "~A~dd Game..."
 msgstr "게임 추가(~A~)..."
 
-#: gui/launcher.cpp:236 gui/launcher.cpp:244
+#: gui/launcher.cpp:239 gui/launcher.cpp:247
 msgid "Add games to the list"
 msgstr "게임을 목록에 추가합니다"
 
-#: gui/launcher.cpp:237
+#: gui/launcher.cpp:240
 msgid "Mass Add..."
 msgstr "대량 추가..."
 
-#: gui/launcher.cpp:241
+#: gui/launcher.cpp:244
 msgid "~R~emove Game"
 msgstr "게임 제거(~R~)"
 
-#: gui/launcher.cpp:241 gui/launcher.cpp:249
+#: gui/launcher.cpp:244 gui/launcher.cpp:252
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둡니다"
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:247
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "게임 추가(~A~)..."
 
-#: gui/launcher.cpp:245
+#: gui/launcher.cpp:248
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "대량 추가..."
 
-#: gui/launcher.cpp:249
+#: gui/launcher.cpp:252
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "게임 제거(~R~)"
 
-#: gui/launcher.cpp:257
+#: gui/launcher.cpp:260
 msgid "Search in game list"
 msgstr "게임 리스트에서 검색"
 
-#: gui/launcher.cpp:261 gui/launcher.cpp:768
+#: gui/launcher.cpp:264 gui/launcher.cpp:771
 msgid "Search:"
 msgstr "검색:"
 
-#: gui/launcher.cpp:272 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "게임 불러오기:"
 
-#: gui/launcher.cpp:272 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -863,11 +872,11 @@ msgstr "게임 불러오기:"
 msgid "Load"
 msgstr "불러오기"
 
-#: gui/launcher.cpp:380
+#: gui/launcher.cpp:383
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "이 디렉토리는 아직 사용할 수 없습니다. 여기로 다운로드 중입니다!"
 
-#: gui/launcher.cpp:391
+#: gui/launcher.cpp:394
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -875,83 +884,87 @@ msgstr ""
 "대량 추가 탐지기를 실행하겠습니까? 매우 많은 수의 게임이 추가될 수도 있습니"
 "다."
 
-#: gui/launcher.cpp:421
+#: gui/launcher.cpp:424
 msgid "Do you really want to remove this game configuration?"
 msgstr "이 게임의 설정을 제거하겠습니까?"
 
-#: gui/launcher.cpp:463
+#: gui/launcher.cpp:466
 msgid "Do you want to load saved game?"
 msgstr "세이브 파일을 불러오겠습니까?"
 
-#: gui/launcher.cpp:520
+#: gui/launcher.cpp:523
 msgid "This game does not support loading games from the launcher."
 msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
 
-#: gui/launcher.cpp:524
+#: gui/launcher.cpp:527
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM은 선택한 게임을 실행할 수 있는 엔진을 찾지 못했습니다!"
 
-#: gui/launcher.cpp:580
+#: gui/launcher.cpp:583
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:596
+#: gui/launcher.cpp:599
 msgid "Unknown variant"
 msgstr "알려지지 않은 버전"
 
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:605
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
-#: gui/launcher.cpp:777
+#: gui/launcher.cpp:780
 msgid "Group by:"
 msgstr ""
 
-#: gui/launcher.cpp:817 gui/saveload-dialog.cpp:367
+#: gui/launcher.cpp:820 gui/saveload-dialog.cpp:367
 msgid "List view"
 msgstr "리스트로 표시"
 
-#: gui/launcher.cpp:818 gui/saveload-dialog.cpp:368
+#: gui/launcher.cpp:821 gui/saveload-dialog.cpp:368
 msgid "Grid view"
 msgstr "그리드로 표시"
 
-#: gui/launcher.cpp:972
+#: gui/launcher.cpp:975
 msgid "~S~tart"
 msgstr "시작(~S~)"
 
-#: gui/launcher.cpp:972
+#: gui/launcher.cpp:975
 msgid "Start selected game"
 msgstr "선택한 게임을 시작합니다"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:978
 msgid "~L~oad..."
 msgstr "불러오기(~L~)..."
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:978
 msgid "Load saved game for selected game"
 msgstr "선택된 게임의 저장 데이터를 불러옵니다"
 
-#: gui/launcher.cpp:977
+#: gui/launcher.cpp:980
 msgid "Record..."
 msgstr "녹화..."
 
-#: gui/launcher.cpp:984
-msgid "~E~dit Game..."
-msgstr "게임 편집(~E~)..."
+#: gui/launcher.cpp:987
+#, fuzzy
+#| msgid "~O~ptions..."
+msgid "~G~ame Options..."
+msgstr "옵션(~O~)..."
 
-#: gui/launcher.cpp:984 gui/launcher.cpp:987
+#: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "게임 옵션을 변경합니다"
 
-#: gui/launcher.cpp:987
+#: gui/launcher.cpp:990
+#, fuzzy
+#| msgid "~O~ptions..."
 msgctxt "lowres"
-msgid "~E~dit Game..."
-msgstr "게임 편집(~E~)..."
+msgid "~G~ame Opts..."
+msgstr "옵션(~O~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1109 gui/launcher.cpp:1296
+#: gui/launcher.cpp:1112 gui/launcher.cpp:1299
 #, fuzzy
 #| msgid "Unknown variant"
 msgid "Unknown Engine"
@@ -959,7 +972,7 @@ msgstr "알려지지 않은 버전"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1127 gui/launcher.cpp:1328
+#: gui/launcher.cpp:1130 gui/launcher.cpp:1331
 #, fuzzy
 #| msgid "Unknown Author"
 msgid "Unknown Publisher"
@@ -967,23 +980,23 @@ msgstr "알 수 없는 작성자"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1145 gui/launcher.cpp:1314
+#: gui/launcher.cpp:1148 gui/launcher.cpp:1317
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1160 gui/launcher.cpp:1347
+#: gui/launcher.cpp:1163 gui/launcher.cpp:1350
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1175 gui/launcher.cpp:1362
+#: gui/launcher.cpp:1178 gui/launcher.cpp:1365
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1373 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:122
 #, fuzzy
 #| msgid "Alt"
 msgid "All"
@@ -8656,6 +8669,13 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#~ msgid "~E~dit Game..."
+#~ msgstr "게임 편집(~E~)..."
+
+#~ msgctxt "lowres"
+#~ msgid "~E~dit Game..."
+#~ msgstr "게임 편집(~E~)..."
 
 #, fuzzy
 #~| msgid "Run server"
