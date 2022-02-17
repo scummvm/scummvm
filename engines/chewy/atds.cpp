@@ -127,13 +127,10 @@ void Atdsys::setHasSpeech(bool hasSpeech) {
 }
 
 void Atdsys::updateSoundSettings() {
-	_atdsv.Display = DISPLAY_TXT;
-
-	if (_hasSpeech) {
-		// TODO: In the future, properly implement DISPLAY_ALL
-		if (!g_engine->_sound->isSpeechMuted())
-			_atdsv.Display = DISPLAY_VOC;
-	}
+	if (!_hasSpeech)
+		_atdsv.Display = DISPLAY_TXT;
+	else
+		_atdsv.Display = g_engine->_sound->getSpeechSubtitlesMode();
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {

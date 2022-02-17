@@ -271,12 +271,13 @@ void Sound::waitForSpeechToFinish() {
 	}
 }
 
-bool Sound::hasSubtitles() {
-	return ConfMan.getBool("subtitles");
+int Sound::getSpeechSubtitlesMode() const {
+	if (!ConfMan.getBool("subtitles"))
+		return DISPLAY_VOC;
+	else if (!ConfMan.getBool("speech_mute"))
+		return DISPLAY_ALL;
+	else
+		return DISPLAY_TXT;
 }
 
-bool Sound::isSpeechMuted() {
-	return ConfMan.getBool("speech_mute");
-}
-
-}
+} // namespace Chewy
