@@ -141,7 +141,7 @@ Short options are listed where they are available.
         ``--list-saves --game=TARGET``,,"Displays a list of saved games for the game (TARGET) specified"
         ``--list-targets``,``-t``,"Displays list of configured targets and exits"
         ``--list-themes``,,"Displays list of all usable GUI themes"
-        ``--logfile=PATH``,-l,"Uses alternate path for log file (SDL backend only)."
+        ``--logfile=PATH``,``-l``,"Uses alternate path for log file (SDL backend only)."
         ``--midi-gain=NUM``,,":ref:`Sets the gain for MIDI playback <gain>`. 0-1000 (default: 100). Only supported by some MIDI drivers"
         ``--multi-midi``,,":ref:`Enables combination AdLib and native MIDI <multi>`"
         ``--music-driver=MODE``,``-e``,":ref:`Selects preferred music device <device>`"
