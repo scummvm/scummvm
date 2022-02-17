@@ -879,8 +879,8 @@ int16 Atdsys::start_aad(int16 dia_nr) {
 			_aadv.Ptr += sizeof(AadStrHeader);
 			int16 txt_len;
 			aad_get_zeilen(_aadv.Ptr, &txt_len);
-			_aadv.DelayCount = get_delay(txt_len);
-			_printDelayCount1 = _aadv.DelayCount / 10;
+			_aadv._delayCount = get_delay(txt_len);
+			_printDelayCount1 = _aadv._delayCount / 10;
 
 			_atdsv.DiaNr = dia_nr;
 			if (_atdsv.aad_str != nullptr)
@@ -909,9 +909,9 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 				EVENTS_CLEAR;
 
 				if (_mousePush == false) {
-					if (_aadv.SilentCount <= 0 && _aadv.DelayCount > _printDelayCount1) {
+					if (_aadv.SilentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
-						_aadv.DelayCount = 0;
+						_aadv._delayCount = 0;
 						_inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
 						_inzeig->kbinfo->key_code = '\0';
 					}
@@ -946,7 +946,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 			SplitStringInit tmp_ssi = _ssi[_aadv.StrHeader->AkPerson];
 			_ssr = split_string(&tmp_ssi);
 
-			if (_atdsv.Display == DISPLAY_TXT ||
+			if (_atdsv.Display != DISPLAY_VOC ||
 			        (_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) == -1) {
 				for (int16 i = 0; i < _ssr->Anz; i++) {
 					_G(out)->printxy(_ssr->X[i] + 1,
@@ -969,23 +969,32 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 				}
 				str_null2leer(start_ptr, start_ptr + txt_len - 1);
 
-			} else if (_atdsv.Display == DISPLAY_VOC) {
+			}
+
+			if (_atdsv.Display != DISPLAY_TXT &&
+					(_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) != -1) {
 				if (_atdsv.VocNr != _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) {
 					_atdsv.VocNr = _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
 					g_engine->_sound->playSpeech(_atdsv.VocNr);
 					int16 vocx = _G(spieler_vector)[_aadv.StrHeader->AkPerson].Xypos[0] -
 								 _G(spieler).scrollx + _G(spieler_mi)[_aadv.StrHeader->AkPerson].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
-					_aadv.DelayCount = 1;
+
+					if (_atdsv.Display == DISPLAY_VOC) {
+						_aadv.StrNr = -1;
+						_aadv._delayCount = 1;
+					}
 				}
 
-				for (int16 i = 0; i < _ssr->Anz; i++) {
-					tmp_ptr += strlen(_ssr->StrPtr[i]) + 1;
+				if (_atdsv.Display != DISPLAY_ALL) {
+					for (int16 i = 0; i < _ssr->Anz; i++) {
+						tmp_ptr += strlen(_ssr->StrPtr[i]) + 1;
+					}
+					str_null2leer(start_ptr, start_ptr + txt_len - 1);
 				}
-				str_null2leer(start_ptr, start_ptr + txt_len - 1);
 			}
 
-			if (_aadv.DelayCount <= 0) {
+			if (_aadv._delayCount <= 0) {
 				_aadv.Ptr = tmp_ptr;
 				while (*tmp_ptr == ' ' || *tmp_ptr == 0)
 					++tmp_ptr;
@@ -1014,19 +1023,19 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 						}
 					}
 					aad_get_zeilen(_aadv.Ptr, &txt_len);
-					_aadv.DelayCount = get_delay(txt_len);
-					_printDelayCount1 = _aadv.DelayCount / 10;
+					_aadv._delayCount = get_delay(txt_len);
+					_printDelayCount1 = _aadv._delayCount / 10;
 					_aadv.SilentCount = _atdsv.Silent;
 				}
 			} else {
-				if (_atdsv.Display == DISPLAY_TXT ||
+				if (_atdsv.Display != DISPLAY_VOC ||
 				        (_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) == -1)
-					--_aadv.DelayCount;
+					--_aadv._delayCount;
 
 				else if (_atdsv.Display == DISPLAY_VOC) {
 					warning("FIXME - unknown constant SMP_PLAYING");
 
-					_aadv.DelayCount = 0;
+					_aadv._delayCount = 0;
 				}
 			}
 		} else {
@@ -1286,7 +1295,7 @@ int16 Atdsys::start_ads_auto_dia(char *item_adr) {
 		_aadv.Ptr += sizeof(AadStrHeader);
 		int16 txt_len;
 		aad_get_zeilen(_aadv.Ptr, &txt_len);
-		_aadv.DelayCount = get_delay(txt_len);
+		_aadv._delayCount = get_delay(txt_len);
 		_atdsv.DiaNr = _adsv.TxtHeader->DiaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)

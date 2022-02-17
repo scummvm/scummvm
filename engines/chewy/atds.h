@@ -165,7 +165,7 @@ struct AadVar {
 	AadInfo *Person;
 	char *Ptr;
 	int16 StrNr;
-	int16 DelayCount;
+	int16 _delayCount;
 	int16 SilentCount;
 };
 
