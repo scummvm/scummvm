@@ -22,7 +22,7 @@ For the impatient among you, here is how to get ScummVM running in five simple s
 
 3. Start ScummVM, choose 'Add game', select the directory containing the game datafiles (do not try to select the datafiles themselves!) and press Choose.
 
-4. The Edit Game dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings.
+4. The Game Options dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings.
 
 5. Select the game you want to play in the list, and press Start. To play a game next time, skip to step 5, unless you want to add more games.
 
