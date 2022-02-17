@@ -53,7 +53,7 @@ static const bool CREDITS_TYPE[65] = {
 	false, true, true, true, true
 };
 
-static const char *CREDITS_TEXT[65] = {
+static const char *CREDITS_TEXT_EN[65] = {
 	"Idea & Story:",
 	"Carsten Wieland",
 	"Programming:",
@@ -121,6 +121,74 @@ static const char *CREDITS_TEXT[65] = {
 	"featuring Indhira Mohammed."
 };
 
+static const char *CREDITS_TEXT_DE[65] = {
+	"Idee & Story:",
+	"Carsten Wieland",
+	"Programmierung:",
+	"Helmut Theuerkauf",
+	"Alexander Diessner",
+	"Grafiken & Animationen:",
+	"Carsten Wieland",
+	"Nihat Keesen",
+	"Stefan Frank",
+	"Text & Dialoge:",
+	"Helmut Theuerkauf",
+	"Alexander Diessner",
+	"Carsten Wieland",
+	"Wolfgang Walk",
+	"Musik:",
+	"Carsten Wieland",
+	"Stelter Studios",
+	"Soundeffekte:",
+	"Helmut Theuerkauf",
+	"Produzent & Lektor:",
+	"Wolfgang Walk",
+	"Minister f\x81r Finanzen",
+	"Carsten (Dagobert) Korte",
+	"Tester:",
+	"Lutz Rafflenbeul",
+	"Thomas Friedmann",
+	"Bernhard Ewers",
+	"Christian von der Hotline",
+	"Carsten Korte",
+	"Die Stimmen:",
+	"Chewy......Renier Baaken",
+	"Howard.....Wolfgang Walk",
+	"Nichelle...Indhira Mohammed",
+	"Clint......Alexander Schottky",
+	"In weiteren Rollen:",
+	"Renier Baaken",
+	"Guido B\x94sherz",
+	"Gerhard Fehn",
+	"Alice Krause",
+	"Reinhard Lie\xE1",
+	"Willi Meyer",
+	"Nicole Meister",
+	"Lutz Rafflenbeul",
+	"Alexander Schottky",
+	"Bernd Schulze",
+	"Susanne Simenec",
+	"Helmut Theuerkauf",
+	"Andreas Vogelpoth",
+	"Mark Wagener",
+	"Wolfgang Walk",
+	"Thomas Piet Wiesenm\x81ller",
+	"Die Sprache wurde aufgenommen",
+	"im tmp Studio, Moers von Willi Meyer",
+	"Nachbearbeitung in den Hartmut Stelter",
+	"Studios Hamburg und",
+	"Carsten Wieland",
+	"Soundsystem:",
+	"AIL (c) Miles Design",
+	"Adventure Engine:",
+	"I.C.M. entwickelt von",
+	"New Generation Software",
+	"Song Boo Boo Ba Baby komponiert",
+	"von Haiko Ruttmann,",
+	"Text Wolfgang Walk,",
+	"Gesang Indhira Mohammed."
+};
+
 void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
@@ -183,7 +251,7 @@ void Credits::execute() {
 			stillScrolling = true;
 
 			int fgCol = fontCol + (160 - destY) / 10;
-			_G(out)->printxy(CREDITS_POS[i][0], destY, fgCol, 300, _G(scr_width), CREDITS_TEXT[i]);
+			_G(out)->printxy(CREDITS_POS[i][0], destY, fgCol, 300, _G(scr_width), g_engine->getLanguage() == Common::Language::DE_DEU ? CREDITS_TEXT_DE[i] : CREDITS_TEXT_EN[i]);
 		}
 
 		if (!stillScrolling)
