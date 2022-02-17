@@ -433,6 +433,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("barrowhilldp", "",
 		WME_ENTRY1s("data.dcp", "958b89bd394bbaae17a3abe51eb00b5b", 1066776), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
+	// Barrow Hill - The Dark Path (GOG) (English)
+	WME_WINENTRY("barrowhilldp", "",
+		WME_ENTRY1s("data.dcp", "2b11a98ebc1afd07b4d03f650c32b12b", 1066752), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
 	// Basis Octavus
 	WME_WINENTRY("basisoctavus", "",
 		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CZ_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
