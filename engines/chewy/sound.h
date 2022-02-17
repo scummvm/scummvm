@@ -69,15 +69,9 @@ public:
 	void waitForSpeechToFinish();
 
 	/**
-	 * Returns true if subtitles are enabled
+	 * Returns the speech, subtitles mode from the ScummVM config
 	 */
-	bool hasSubtitles();
-
-	/**
-	 * Returns true if speech is muted
-	 */
-	bool isSpeechMuted();
-
+	int getSpeechSubtitlesMode() const;
 
 private:
 	Audio::Mixer *_mixer;

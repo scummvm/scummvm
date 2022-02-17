@@ -306,6 +306,9 @@ public:
 	void enableEvents(bool nr) {
 		_atdsv._eventsEnabled = nr;
 	}
+	int getAtdDisplay() const {
+		return _atdsv.Display;	
+	}
 
 private:
 	int16 get_delay(int16 txt_len);
