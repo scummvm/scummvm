@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2022-02-15 10:45+0000\n"
+"PO-Revision-Date: 2022-02-17 11:51+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -786,21 +786,17 @@ msgid "About ScummVM"
 msgstr "Informazioni su ScummVM"
 
 #: gui/launcher.cpp:232
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~O~pzioni..."
+msgstr "~O~pzioni Globali..."
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
 msgstr "Modifica le opzioni globali di ScummVM"
 
 #: gui/launcher.cpp:234
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~O~pzioni..."
+msgstr "~O~pz. Globali..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -940,21 +936,17 @@ msgid "Record..."
 msgstr "Registra..."
 
 #: gui/launcher.cpp:987
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~O~pzioni..."
+msgstr "Op~z~ioni Gioco..."
 
 #: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "Modifica le opzioni del gioco selezionato"
 
 #: gui/launcher.cpp:990
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~O~pzioni..."
+msgstr "Op~z~. Gioco..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
