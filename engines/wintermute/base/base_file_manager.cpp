@@ -182,7 +182,7 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Adding %s", it->getName().c_str());
 		if (it->getName().contains(".dcp")) {
-			if (registerPackage(*it)) {
+			if (registerPackage(*it, it->getName())) {
 				addPath(PATH_PACKAGE, *it);
 			}
 		}
