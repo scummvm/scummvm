@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2022-02-17 11:04+0000\n"
+"PO-Revision-Date: 2022-02-17 12:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -785,7 +785,7 @@ msgstr "Έξοδος από το ScummVM"
 
 #: gui/launcher.cpp:230
 msgid "A~b~out"
-msgstr "~Π~ερί"
+msgstr "Περ~ί~"
 
 #: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
@@ -793,7 +793,7 @@ msgstr "Περί του ScummVM"
 
 #: gui/launcher.cpp:232
 msgid "Global ~O~ptions..."
-msgstr "Καθολικές ~Ε~πιλογές..."
+msgstr "~Κ~αθολικές Επιλογές..."
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
@@ -802,7 +802,7 @@ msgstr "Αλλαγή καθολικών επιλογών του ScummVM"
 #: gui/launcher.cpp:234
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "Καθολ ~Ε~πιλ..."
+msgstr "~Κ~αθολ Επιλ..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -839,7 +839,7 @@ msgstr "Μαζική Προσθήκη..."
 #: gui/launcher.cpp:252
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν..."
+msgstr "~Α~φαίρ. Παιχν."
 
 #: gui/launcher.cpp:260
 msgid "Search in game list"
@@ -923,7 +923,7 @@ msgstr "Προβολή ως πλέγμα"
 
 #: gui/launcher.cpp:975
 msgid "~S~tart"
-msgstr "Ε~κ~κίνηση"
+msgstr "~Ε~κκίνηση"
 
 #: gui/launcher.cpp:975
 msgid "Start selected game"
@@ -943,7 +943,7 @@ msgstr "Εγγραφή..."
 
 #: gui/launcher.cpp:987
 msgid "~G~ame Options..."
-msgstr "Ρυθμίσεις ~Π~αιχνιδιού..."
+msgstr "~Ρ~υθμίσεις Παιχνιδιού..."
 
 #: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
@@ -952,7 +952,7 @@ msgstr "Αλλαγή επιλογών παιχνιδιού"
 #: gui/launcher.cpp:990
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "Ρυθμ ~Π~αιχν..."
+msgstr "~Ρ~υθμ Παιχν..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -2513,7 +2513,7 @@ msgstr "Επισ~τ~ροφή στο Launcher"
 #: engines/dialogs.cpp:90 engines/dialogs.cpp:166
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "Επισ~τ~ρ. στο Launcher"
+msgstr "Επισ~τ~ρ. σε Launcher"
 
 #: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2581,11 +2581,11 @@ msgstr ""
 
 #: engines/dialogs.cpp:355
 msgid "~O~K"
-msgstr "~O~K"
+msgstr "~Ο~K"
 
 #: engines/dialogs.cpp:356
 msgid "~C~ancel"
-msgstr "Ακύρ~ω~ση"
+msgstr "~Α~κύρωση"
 
 #: engines/engine.cpp:342
 #, c-format
@@ -5699,7 +5699,7 @@ msgstr "Λειτουργία παιχνιδιού για άτακτους"
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:358
 msgid "~Z~ip Mode Activated"
-msgstr "Λειτουργία ~Z~ip Ενεργοποιημένη"
+msgstr "Λειτουργία ~Ζ~ip"
 
 #: engines/mohawk/dialogs.cpp:114
 msgid ""
@@ -5714,7 +5714,7 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
-msgstr "~Μ~εταβάσεις Ενεργοποιημένες"
+msgstr "~Μ~εταβάσεις Οθονών"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid ""
@@ -5744,7 +5744,7 @@ msgstr ""
 #.
 #: engines/mohawk/dialogs.cpp:134
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr "Βελτιώση προσβασιμότητας στο γρίφο της Εποχής Selenitic"
+msgstr "Βελτίωση ~π~ροσβασιμότητας στο γρίφο της Εποχής Selenitic"
 
 #: engines/mohawk/dialogs.cpp:135
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
@@ -5775,7 +5775,7 @@ msgstr "Προβολή ~Χ~άρτη"
 
 #: engines/mohawk/dialogs.cpp:155
 msgid "Main Men~u~"
-msgstr "Κεντρικό Μενο~ύ~"
+msgstr "~Κ~εντρικό Μενού"
 
 #: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
@@ -5784,11 +5784,11 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:359
 msgid "~W~ater Effect Enabled"
-msgstr "Εφέ ~Ν~ερού Ενεργοποιημένο"
+msgstr "Εφέ ~Ν~ερού"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
-msgstr "~Μ~εταβάσεις:"
+msgstr "Μεταβάσεις:"
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
@@ -5841,7 +5841,7 @@ msgstr "Προβολή μενού επιλογών"
 
 #: engines/mohawk/myst.cpp:601
 msgid "Drop page"
-msgstr "~Ρ~ίξιμο σελίδας"
+msgstr "Ρίξιμο σελίδας"
 
 #: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1596
@@ -5850,7 +5850,7 @@ msgstr "~Ρ~ίξιμο σελίδας"
 #: engines/wintermute/keymapper_tables.h:1687
 #: engines/wintermute/keymapper_tables.h:1720
 msgid "Show map"
-msgstr "Προβολή ~Χ~άρτη"
+msgstr "Προβολή χάρτη"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
