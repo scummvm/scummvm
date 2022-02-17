@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2022-02-12 17:31+0000\n"
+"PO-Revision-Date: 2022-02-17 11:04+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -792,21 +792,17 @@ msgid "About ScummVM"
 msgstr "Περί του ScummVM"
 
 #: gui/launcher.cpp:232
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~Ε~πιλογές..."
+msgstr "Καθολικές ~Ε~πιλογές..."
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
 msgstr "Αλλαγή καθολικών επιλογών του ScummVM"
 
 #: gui/launcher.cpp:234
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~Ε~πιλογές..."
+msgstr "Καθολ ~Ε~πιλ..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -946,21 +942,17 @@ msgid "Record..."
 msgstr "Εγγραφή..."
 
 #: gui/launcher.cpp:987
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~Ε~πιλογές..."
+msgstr "Ρυθμίσεις ~Π~αιχνιδιού..."
 
 #: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "Αλλαγή επιλογών παιχνιδιού"
 
 #: gui/launcher.cpp:990
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~Ε~πιλογές..."
+msgstr "Ρυθμ ~Π~αιχν..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
