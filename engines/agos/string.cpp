@@ -175,10 +175,6 @@ const byte *AGOSEngine::getLocalStringByID(uint16 stringId) {
 
 		if (stringId == 36035 && _language == Common::FR_FRA)
 			return (byte *)"Je ne peux pas sortir de l; pour l'instant.";
-
-		if (stringId == 36016 && _language == Common::EN_ANY) {
-			return (byte *)"I can't get out of here at the moment.";
-		}
 	}
 	return localString;
 }
