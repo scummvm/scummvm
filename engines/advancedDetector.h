@@ -89,22 +89,23 @@ struct ADGameFileDescription {
  */
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,        ///< No flags.
-	ADGF_TAILMD5		 = (1 << 16), ///< Calculate the MD5 for this entry from the end of the file.
-	ADGF_REMASTERED      = (1 << 17), ///< Add "-remastered' to gameid.
-	ADGF_AUTOGENTARGET   = (1 << 18), ///< Automatically generate gameid from @ref ADGameDescription::extra.
-	ADGF_UNSTABLE        = (1 << 19), ///< Flag to designate not yet officially supported games that are not fit for public testing.
-	ADGF_TESTING         = (1 << 20), ///< Flag to designate not yet officially supported games that are fit for public testing.
-	ADGF_PIRATED         = (1 << 21), ///< Flag to designate well-known pirated versions with cracks.
-	ADGF_UNSUPPORTED     = (1 << 22), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
+	ADGF_TAILMD5		 = (1 << 15), ///< Calculate the MD5 for this entry from the end of the file.
+	ADGF_REMASTERED      = (1 << 16), ///< Add "-remastered' to gameid.
+	ADGF_AUTOGENTARGET   = (1 << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
+	ADGF_UNSTABLE        = (1 << 18), ///< Flag to designate not yet officially supported games that are not fit for public testing.
+	ADGF_TESTING         = (1 << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
+	ADGF_PIRATED         = (1 << 20), ///< Flag to designate well-known pirated versions with cracks.
+	ADGF_UNSUPPORTED     = (1 << 21), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
 	                                       A custom message can be provided in the @ref ADGameDescription::extra field. */
-	ADGF_WARNING         = (1 << 23), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
+	ADGF_WARNING         = (1 << 22), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
 	                                       A custom message should be provided in the @ref ADGameDescription::extra field. */
-	ADGF_ADDENGLISH      = (1 << 24), ///< Always add English as a language option.
-	ADGF_MACRESFORK      = (1 << 25), ///< Calculate the MD5 for this entry from the resource fork.
-	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
-	ADGF_DROPLANGUAGE    = (1 << 27), ///< Do not add language to gameid.
-	ADGF_DROPPLATFORM    = (1 << 28), ///< Do not add platform to gameid.
-	ADGF_CD              = (1 << 29), ///< Add "-cd" to gameid.
+	ADGF_ADDENGLISH      = (1 << 23), ///< Always add English as a language option.
+	ADGF_MACRESFORK      = (1 << 24), ///< Calculate the MD5 for this entry from the resource fork.
+	ADGF_USEEXTRAASTITLE = (1 << 25), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
+	ADGF_DROPLANGUAGE    = (1 << 26), ///< Do not add language to gameid.
+	ADGF_DROPPLATFORM    = (1 << 27), ///< Do not add platform to gameid.
+	ADGF_CD              = (1 << 28), ///< Add "-cd" to gameid.
+	ADGF_DVD             = (1 << 29), ///< Add "-dvd" to gameid.
 	ADGF_DEMO            = (1 << 30)  ///< Add "-demo" to gameid.
 };
 

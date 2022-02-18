@@ -144,6 +144,10 @@ static Common::String generatePreferredTarget(const ADGameDescription *desc, int
 		res = res + "-cd";
 	}
 
+	if (desc->flags & ADGF_DVD) {
+		res = res + "-dvd";
+	}
+
 	if (desc->flags & ADGF_REMASTERED) {
 		res = res + "-remastered";
 	}
