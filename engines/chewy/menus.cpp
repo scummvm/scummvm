@@ -24,16 +24,12 @@
 #include "chewy/globals.h"
 #include "chewy/menus.h"
 #include "chewy/dialogs/inventory.h"
-#include "chewy/rooms/room44.h"
-#include "chewy/rooms/room58.h"
 
 namespace Chewy {
 
 void plot_main_menu() {
 	static const int IMAGES[] = { 7, 8, 9, 10, 12, 11 };
-	int16 i;
 	int16 zoomx, zoomy;
-	int16 *korrektur;
 
 	if (_G(menu_item) != _G(tmp_menu)) {
 		_G(m_flip) = 0;
@@ -41,9 +37,9 @@ void plot_main_menu() {
 	}
 
 	maus_mov_menu();
-	korrektur = (int16 *)_G(menutaf)->korrektur;
+	int16 *korrektur = (int16 *)_G(menutaf)->korrektur;
 
-	for (i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
+	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
 
 		if (i <= 8) {
@@ -98,20 +94,15 @@ void maus_mov_menu() {
 
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
 	int16 vorx, vory, fntbr, fnth;
-	int16 len;
-	int16 pix_len;
-	int16 tmp_len;
-	int16 i;
 	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
-	len = 0;
-	for (i = 0; i < txt_anz; i++) {
-
-		tmp_len = strlen(_G(txt)->str_pos((char *)txt_adr, i));
+	int16 len = 0;
+	for (int16 i = 0; i < txt_anz; i++) {
+		int16 tmp_len = strlen(_G(txt)->str_pos((char *)txt_adr, i));
 		if (tmp_len > len)
 			len = tmp_len;
 	}
 	len = len * vorx;
-	pix_len = len / 2;
+	int16 pix_len = len / 2;
 	*x = *x - pix_len + 12;
 	if (*x > (SCREEN_WIDTH - len))
 		*x = SCREEN_WIDTH - len;
@@ -123,13 +114,11 @@ void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
 }
 
 void get_display_xy(int16 *x, int16 *y, int16 nr) {
-	int16 *xy;
-	int16 x1, y1;
-	xy = (int16 *)_G(inv_spr)[nr];
-	x1 = 48 - xy[0];
+	int16 *xy = (int16 *)_G(inv_spr)[nr];
+	int16 x1 = 48 - xy[0];
 	x1 /= 2;
 	*x = x1;
-	y1 = 48 - xy[1];
+	int16 y1 = 48 - xy[1];
 	y1 /= 2;
 	*y = y1;
 }
@@ -147,13 +136,8 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 #define BAU_MENU_OBEN_R 24
 #define BAU_MENU_OBEN_M 25
 	int16 i, j;
-	int16 leer;
-	int16 mitte;
-	int16 s_nr;
 	int16 xy[4][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};
-	uint8 sprite_eckenr[4] = {BAU_MENU_ECKE_LO, BAU_MENU_ECKE_RO,
-	                         BAU_MENU_ECKE_LU, BAU_MENU_ECKE_RU
-	                        };
+	uint8 sprite_eckenr[4] = { BAU_MENU_ECKE_LO, BAU_MENU_ECKE_RO, BAU_MENU_ECKE_LU, BAU_MENU_ECKE_RU };
 
 	xy[0][0] = x;
 	xy[0][1] = y;
@@ -168,7 +152,7 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		_G(out)->sprite_set(_G(menutaf)->image[(int16)sprite_eckenr[i]],
 		                 xy[i][0], xy[i][1], _G(scr_width));
 
-	s_nr = BAU_MENU_SEITE_L;
+	int16 s_nr = BAU_MENU_SEITE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
 		for (i = 0; i < yanz - 2; i++) {
@@ -182,16 +166,15 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		x = xy[j * 2][0] + 16;
 		if ((!mode) || (mode == 1 && j == 1)) {
 			for (i = 0; i < xanz - 2; i++) {
-				_G(out)->sprite_set(_G(menutaf)->image[s_nr],
-				                 xy[2][0] + 16 + i * 16, xy[j * 2][1], _G(scr_width));
+				_G(out)->sprite_set(_G(menutaf)->image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
 	}
 
 	if (mode) {
-		leer = 0;
-		mitte = 0;
+		int16 leer = 0;
+		int16 mitte;
 		i = xanz - 7;
 		if (i == 0)
 			mitte = 1;
@@ -208,33 +191,25 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		x = xy[0][0] + 16;
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
-				_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN],
-				                 x + i * 16, xy[0][1], _G(scr_width));
+				_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN], x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
-		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_L],
-		                 xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
+		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
 		for (i = 0; i < mitte; i++)
-			_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_M],
-			                 x + i * 16, xy[0][1], _G(scr_width));
-		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_R],
-		                 x + i * 16, xy[0][1], _G(scr_width));
+			_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_M], x + i * 16, xy[0][1], _G(scr_width));
+		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_R], x + i * 16, xy[0][1], _G(scr_width));
 	}
 
-	_G(out)->box_fill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xanz - 2) * 16,
-	               xy[0][1] + 16 + (yanz - 2) * 16, col);
+	_G(out)->box_fill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xanz - 2) * 16, xy[0][1] + 16 + (yanz - 2) * 16, col);
 }
 
 void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, int16 mode) {
-	int16 x_pix;
 	int16 tmp;
-	int16 tmp1;
-	int16 i;
 
-	x_pix = 0;
-	for (i = 0; i < zeilen_anz; i++) {
+	int16 x_pix = 0;
+	for (int16 i = 0; i < zeilen_anz; i++) {
 		tmp = strlen(_G(txt)->str_pos(text, i));
 		if (x_pix < tmp)
 			x_pix = tmp;
@@ -244,7 +219,7 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 	tmp = x_pix;
 	if (x_pix % 16)
 		tmp += 16;
-	tmp1 = zeilen_anz * hoehe + 6 + 11;
+	int16 tmp1 = zeilen_anz * hoehe + 6 + 11;
 	if (tmp1 % 16)
 		tmp1 += 16;
 	*x -= ((tmp / 16) * 16) / 2;
@@ -257,11 +232,8 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 #define ADS_WIN 0,153,20,3,60,1
 
 void ads_menu() {
-	int16 i;
-	int16 cur_y;
 	int16 cur_y_start;
 	int16 col;
-	AdsNextBlk *an_blk;
 
 	if (_G(flags).AdsDialog) {
 		_G(flags).ShowAtsInvTxt = false;
@@ -270,7 +242,7 @@ void ads_menu() {
 			cur_y_start = 190;
 		else
 			cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
-		cur_y = _G(minfo).y;
+		int16 cur_y = _G(minfo).y;
 		if (cur_y < 160 || cur_y > cur_y_start + 10)
 			cur_y = 255;
 		else
@@ -287,7 +259,7 @@ void ads_menu() {
 				cur_y_start = 190;
 			else
 				cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
-			for (i = 0; i < _G(ads_item_anz) && i < 4; i++) {
+			for (int16 i = 0; i < _G(ads_item_anz) && i < 4; i++) {
 				if (cur_y == i)
 					col = 255;
 				else
@@ -303,7 +275,7 @@ void ads_menu() {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
 				_G(minfo).y = 159;
-				an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), cur_y);
+				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), cur_y);
 				if (an_blk->BlkNr == -1) {
 					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
@@ -356,14 +328,12 @@ void cur_2_inventory() {
 }
 
 void inventory_2_cur(int16 nr) {
-	if (_G(spieler).AkInvent == -1) {
-		if (_G(obj)->check_inventar(nr)) {
-			del_invent_slot(nr);
-			_G(menu_item) = CUR_USE;
-			_G(spieler).AkInvent = nr;
-			cursor_wahl(CUR_AK_INVENT);
-			get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
-		}
+	if (_G(spieler).AkInvent == -1 && _G(obj)->check_inventar(nr)) {
+		del_invent_slot(nr);
+		_G(menu_item) = CUR_USE;
+		_G(spieler).AkInvent = nr;
+		cursor_wahl(CUR_AK_INVENT);
+		get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 	}
 }
 
@@ -374,10 +344,8 @@ void new_invent_2_cur(int16 inv_nr) {
 }
 
 void invent_2_slot(int16 nr) {
-	int16 i;
-	int16 ok;
-	ok = 0;
-	for (i = 0; i < MAX_MOV_OBJ && !ok; i++) {
+	int16 ok = 0;
+	for (int16 i = 0; i < MAX_MOV_OBJ && !ok; i++) {
 		if (_G(spieler).InventSlot[i] == -1) {
 			_G(spieler).InventSlot[i] = nr;
 			ok = true;
@@ -387,10 +355,8 @@ void invent_2_slot(int16 nr) {
 }
 
 int16 del_invent_slot(int16 nr) {
-	int16 i;
-	int16 ok;
-	ok = -1;
-	for (i = 0; i < MAX_MOV_OBJ; i++) {
+	int16 ok = -1;
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
 		if (_G(spieler).InventSlot[i] == nr) {
 			_G(spieler).InventSlot[i] = -1;
 			if (ok == -1)

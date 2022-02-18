@@ -1311,7 +1311,6 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 		int16 move_status = true;
 		int16 tmp = _G(maus_links_click);
 		_G(maus_links_click) = false;
-		bool ende = false;
 
 		_G(spieler_mi)[p_nr].XyzStart[0] = _G(spieler_vector)[p_nr].Xypos[0];
 		_G(spieler_mi)[p_nr].XyzStart[1] = _G(spieler_vector)[p_nr].Xypos[1];
@@ -1323,6 +1322,7 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 		if (_G(spieler_vector)[p_nr].Count)
 			get_phase(&_G(spieler_vector)[p_nr], &_G(spieler_mi)[p_nr]);
 		if (mode == ANI_WAIT) {
+			bool ende = false;
 			while (!ende) {
 				if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 					if (_G(flags).ExitMov || _G(flags).BreakAMov) {
@@ -1360,19 +1360,14 @@ int16 get_ani_richtung(int16 zustand) {
 }
 
 int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
-	int16 idx;
-	int16 anz;
-	int16 txt_nr = 0;
 	int16 txt_mode = 0;
-	bool disp_flag = true;
-	bool action_flag = false;
 	int16 ret = -1;
-	int16 inv_no_use_mode = -1;
 
 	if (mode == DO_SETUP) {
 		if (_G(flags).ShowAtsInvTxt) {
-			inv_no_use_mode = AUTO_OBJ;
-			txt_nr = calc_mouse_mov_obj(&idx);
+			int16 inv_no_use_mode = AUTO_OBJ;
+			int16 idx;
+			int16 txt_nr = calc_mouse_mov_obj(&idx);
 
 			if (txt_nr == -1) {
 				idx = _G(det)->maus_vector(x + _G(spieler).scrollx, y + _G(spieler).scrolly);
@@ -1384,6 +1379,8 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 
 			if (txt_nr != -1) {
 				ret = -1;
+				bool disp_flag = true;
+				bool action_flag = false;
 
 				if (_G(maus_links_click) && !_G(flags).MausTxt) {
 					int16 ok = true;
@@ -1409,6 +1406,9 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 
 					case CUR_TALK:
 						txt_mode = TXT_MARK_TALK;
+						break;
+
+					default:
 						break;
 					}
 
@@ -1469,6 +1469,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 				}
 
 				if (disp_flag && !action_flag) {
+					int16 anz;
 					char *str_ = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATEI);
 					if (str_ != 0) {
 						ret = txt_nr;
@@ -1490,15 +1491,12 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 
 int16 is_mouse_person(int16 x, int16 y) {
 	int16 *xy = nullptr;
-	int16 check;
 	int16 is_person = -1;
 	if (_G(flags).ShowAtsInvTxt) {
 
 		for (int16 i = 0; i < MAX_PERSON && is_person == -1; i++) {
-			if (_G(spieler_mi)[i].Id == NO_MOV_OBJ)
-				check = false;
-			else {
-				check = true;;
+			if (_G(spieler_mi)[i].Id != NO_MOV_OBJ) {
+				bool check = true;
 				if (!_G(spz_ani)[i]) {
 					switch (i) {
 					case P_CHEWY:
@@ -1507,8 +1505,7 @@ int16 is_mouse_person(int16 x, int16 y) {
 
 					case P_HOWARD:
 					case P_NICHELLE:
-						if (_G(spieler).PersonRoomNr[i] !=
-						        _G(spieler).PersonRoomNr[P_CHEWY])
+						if (_G(spieler).PersonRoomNr[i] != _G(spieler).PersonRoomNr[P_CHEWY])
 							check = false;
 						xy = (int16 *)_G(PersonTaf)[i]->image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
 						break;
@@ -1548,9 +1545,8 @@ void calc_mouse_person(int16 x, int16 y) {
 				print_shad(x, y, 255, 300, 0, _G(scr_width), str_);
 				if (_G(maus_links_click) == 1) {
 					int16 def_nr = -1;
-					int16 txt_nr = -1;
 					if (!_G(spieler).inv_cur) {
-						txt_nr = calc_person_txt(p_nr);
+						int16 txt_nr = calc_person_txt(p_nr);
 						switch (_G(menu_item)) {
 						case CUR_LOOK:
 							mode = TXT_MARK_LOOK;
@@ -1738,9 +1734,8 @@ bool is_cur_inventar(int16 nr) {
 }
 
 void check_mouse_ausgang(int16 x, int16 y) {
-	bool found = true;
-
 	if (_G(menu_item) == CUR_WALK) {
+		bool found = true;
 		int16 nr = _G(obj)->is_exit(x, y);
 		int16 attr = (nr >= 0 && nr < MAX_EXIT) ? _G(spieler).room_e_obj[nr].Attribut : 0;
 
@@ -1892,7 +1887,7 @@ void auto_scroll(int16 scrx, int16 scry) {
 	_G(spieler).scrollx <<= 1;
 	_G(spieler).scrolly >>= 1;
 	_G(spieler).scrolly <<= 1;
-	int16 ende = false;
+	bool ende = false;
 	while (!ende) {
 		if (scrx < _G(spieler).scrollx)
 			_G(spieler).scrollx -= _G(spieler).ScrollxStep;
@@ -1932,8 +1927,7 @@ void calc_auto_go() {
 		_G(spieler_mi)[_G(auto_p_nr)].XyzStart[1] = _G(spieler_vector)[_G(auto_p_nr)].Xypos[1];
 		_G(spieler_mi)[_G(auto_p_nr)].XyzEnd[0] -= x_offset;
 		_G(spieler_mi)[_G(auto_p_nr)].XyzEnd[1] -= y_offset;
-		_G(mov)->get_mov_vector((int16
-		                     *)_G(spieler_mi)[_G(auto_p_nr)].XyzStart, _G(spieler_mi)[_G(auto_p_nr)].Vorschub, &_G(spieler_vector)[_G(auto_p_nr)])
+		_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[_G(auto_p_nr)].XyzStart, _G(spieler_mi)[_G(auto_p_nr)].Vorschub, &_G(spieler_vector)[_G(auto_p_nr)])
 		;
 		get_phase(&_G(spieler_vector)[_G(auto_p_nr)], &_G(spieler_mi)[_G(auto_p_nr)]);
 	}
