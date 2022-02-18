@@ -22,6 +22,8 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
+#include "chewy/file.h"
+
 namespace Chewy {
 
 #define ATDS_VOC_OFFSET 20
@@ -48,9 +50,11 @@ namespace Chewy {
 #define INV_ATS_HANDLE 6
 #define ATDS_HANDLE 7
 
-#define DISPLAY_TXT 0
-#define DISPLAY_VOC 1
-#define DISPLAY_ALL 2
+enum Display {
+	DISPLAY_TXT = 0,
+	DISPLAY_VOC = 1,
+	DISPLAY_ALL = 2
+};
 
 #define MAX_STR_SPLIT 10
 
@@ -89,6 +93,8 @@ namespace Chewy {
 #define ADS_SHOW_BIT 2
 #define ADS_RESTART_BIT 4
 
+struct KbdMouseInfo;
+
 struct AdsDiaHeaders {
 	int16 Anz;
 };
@@ -108,7 +114,7 @@ struct AtdsVar {
 	int16 *Delay = 0;
 	int16 DiaNr = 0;
 
-	uint8 Display = 0;
+	Display Display = DISPLAY_TXT;
 	bool _eventsEnabled = false;
 	int16 VocNr = 0;
 
@@ -260,8 +266,8 @@ public:
 	void load_atds(int16 chunk_nr, int16 mode);
 	void save_ads_header(int16 dia_nr);
 
-	Stream *pool_handle(const char *fname);
-	void set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz);
+	Common::Stream *pool_handle(const char *fname);
+	void set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunk_start, int16 chunk_anz);
 	void open_handle(const char *fname, int16 mode);
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
@@ -313,7 +319,7 @@ public:
 private:
 	int16 get_delay(int16 txt_len);
 
-	Stream *_atdshandle[MAX_HANDLE] = { nullptr };
+	Common::Stream *_atdshandle[MAX_HANDLE] = { nullptr };
 	char *_atdsmem[MAX_HANDLE] = { nullptr };
 	int16 _atdspooloff[MAX_HANDLE] = { 0 };
 	char *_atsmem = nullptr;
