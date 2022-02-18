@@ -361,6 +361,19 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieUHP
 	},
 
+	// Uncle Henry's Playhouse PC German
+	// Funsoft (1997-02-14)
+	{
+		{
+			"unclehenry", "",
+			AD_ENTRY2s("tpot.grv", "30d06af7669004f1ea7a99a5ebdb6935", 10469,
+						"trt7g.gjd", nullptr, -1),
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING,
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_EASIER_AI)
+		},
+		kGroovieUHP
+	},
+
 	// Tender Loving Care PC English (CD-ROM 1998-05-01)
 	{
 		{
