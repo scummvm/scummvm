@@ -161,7 +161,22 @@ const byte *AGOSEngine::getLocalStringByID(uint16 stringId) {
 	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
 		loadTextIntoMem(stringId);
 	}
-	return _localStringtable[stringId - _stringIdLocalMin];
+	byte *localString = _localStringtable[stringId - _stringIdLocalMin];
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && (strlen((char *)localString) == 0)) {
+		// WORKAROUND bug for Simon 1 (only in CD-ROM versions) missing subtitles text when using the map at the dungeon, strings taken from Floppy versions
+		if (stringId == 36034) {
+			if (_language == Common::HE_ISR)
+				return (byte *)"@PI L@ IKEL LV@Z NK@O KXBR.";
+			if (_language == Common::ES_ESP)
+				return (byte *)"Ahora no puedo salir de aqu<.";
+			if (_language == Common::IT_ITA)
+				return (byte *)"Non posso uscire per il momento.";
+		}
+
+		if (stringId == 36035 && _language == Common::FR_FRA)
+			return (byte *)"Je ne peux pas sortir de l; pour l'instant.";
+	}
+	return localString;
 }
 
 TextLocation *AGOSEngine::getTextLocation(uint a) {
