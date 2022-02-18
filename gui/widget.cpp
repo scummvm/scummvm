@@ -437,6 +437,23 @@ void ButtonWidget::setUnpressedState() {
 
 #pragma mark -
 
+ButtonWidgetAutoRes::ButtonWidgetAutoRes(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &lowresLabel, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey) {
+	_lowresLabel = lowresLabel;
+}
+
+void ButtonWidgetAutoRes::setLowresLabel(const Common::U32String &label) {
+	_lowresLabel = label;
+}
+
+void ButtonWidgetAutoRes::drawWidget() {
+	bool useLowres = g_gui.theme()->getStringWidth(_label) > _w;
+	const Common::U32String &label = useLowres ? _lowresLabel : _label;
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), label, _state, getFlags());
+}
+
+#pragma mark -
+
 DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey) :
 		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey) {
 	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
