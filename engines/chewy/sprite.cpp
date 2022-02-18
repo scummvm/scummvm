@@ -511,6 +511,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 		if (txt_nr != -1) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
+
 			ret = _G(atds)->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 			if (ret) {
 				while (_G(atds)->ats_get_status() != false && !SHOULD_QUIT)
@@ -528,15 +529,20 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 
 				set_up_screen(DO_SETUP);
 			}
+
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_END);
 		}
+
 		_G(flags).AtsText = false;
 	}
+
 	if (_G(minfo).button)
 		_G(flags).main_maus_flag = 1;
+
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	_G(maus_links_click) = _G(tmp_maus_links);
+
 	return ret;
 }
 
