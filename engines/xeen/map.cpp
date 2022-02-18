@@ -123,7 +123,6 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_gold = s.readUint16LE();
 	_gems = s.readByte();
 	_itemDrop = s.readByte();
-	assert(_itemDrop >= 0 && _itemDrop <= 7);
 	_flying = s.readByte() != 0;
 	_imageNumber = s.readByte();
 	_loopAnimation = s.readByte();
