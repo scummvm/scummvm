@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-18 19:20+0000\n"
+"POT-Creation-Date: 2022-02-18 21:35+0000\n"
 "PO-Revision-Date: 2022-02-18 16:42+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4040,7 +4040,7 @@ msgstr "Ikke bruk emulering av NTSC-artefakter på tekst"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:489 engines/neverhood/detection.cpp:134
+#: engines/groovie/detection.cpp:465 engines/neverhood/detection.cpp:134
 #: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
 #: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
@@ -4049,7 +4049,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:490 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:466 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -4363,7 +4363,7 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/groovie/detection.cpp:392 engines/groovie/detection.cpp:404
+#: engines/groovie/detection.cpp:368 engines/groovie/detection.cpp:380
 #: engines/hypno/detection.cpp:165 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
@@ -5090,27 +5090,27 @@ msgstr ""
 "\n"
 "Merk: Steam- og GOG-utgivelsene av spillet har en kombinert FullMonkeyMap.imt"
 
-#: engines/groovie/detection.cpp:479
+#: engines/groovie/detection.cpp:455
 msgid "Fast movie speed"
 msgstr "Rask filmhastighet"
 
-#: engines/groovie/detection.cpp:480
+#: engines/groovie/detection.cpp:456
 msgid "Play movies at an increased speed"
 msgstr "Spill filmer med økt hastighet"
 
-#: engines/groovie/detection.cpp:499
+#: engines/groovie/detection.cpp:475
 msgid "Easier AI"
 msgstr "Enklere kunstig intelligens"
 
-#: engines/groovie/detection.cpp:500
+#: engines/groovie/detection.cpp:476
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Minsk vanskelighetsgraden på utfordringer fra kunstig intelligens"
 
-#: engines/groovie/detection.cpp:509
+#: engines/groovie/detection.cpp:485
 msgid "Updated Credits Music"
 msgstr "Oppdatert musikk for liste over medvirkende"
 
-#: engines/groovie/detection.cpp:510
+#: engines/groovie/detection.cpp:486
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
