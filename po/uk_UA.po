@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2022-01-29 20:12+0000\n"
+"PO-Revision-Date: 2022-02-18 18:36+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -788,8 +788,6 @@ msgid "About ScummVM"
 msgstr "Про ScummVM"
 
 #: gui/launcher.cpp:232
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
 msgstr "~Н~алаштування..."
 
@@ -798,11 +796,9 @@ msgid "Change global ScummVM options"
 msgstr "Змінити глобальні налаштування ScummVM"
 
 #: gui/launcher.cpp:234
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~Н~алаштування..."
+msgstr "~Н~алашт..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -937,21 +933,17 @@ msgid "Record..."
 msgstr "Запис..."
 
 #: gui/launcher.cpp:987
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~Н~алаштування..."
+msgstr "Налашт. ~г~ри..."
 
 #: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "Змінити налаштування гри"
 
 #: gui/launcher.cpp:990
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~Н~алаштування..."
+msgstr "Нал. ~г~ри..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -6635,13 +6627,15 @@ msgstr "Експерт"
 
 #: engines/scumm/dialogs.cpp:704
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Час увертюри:"
 
 #: engines/scumm/dialogs.cpp:708
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
+"Якщо використовується заміна для музики, це налаштування підстроює час, коли "
+"увертюра переключиться на сцену з логотипами Lucasfilm та Loom."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
