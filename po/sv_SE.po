@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
-"Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -1550,7 +1550,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:2270
 msgid "GUI scale:"
-msgstr "GUI-språk:"
+msgstr "GUI-skala:"
 
 #: gui/options.cpp:2277
 msgid "GUI renderer:"
@@ -1594,7 +1594,7 @@ msgstr ""
 
 #: gui/options.cpp:2326
 msgid "GUI language:"
-msgstr "GUI-språk:"
+msgstr "GUI-skala:"
 
 #: gui/options.cpp:2326
 msgid "Language of ScummVM GUI"
