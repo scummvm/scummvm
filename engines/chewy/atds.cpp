@@ -517,18 +517,22 @@ void Atdsys::set_ats_mem(int16 mode) {
 bool Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr) {
 	*voc_nr = -1;
 	set_ats_mem(mode);
+
 	if (_atsmem) {
 		if (_atsv.Display)
 			stop_ats();
 
 		int16 txt_anz;
 		_atsv.Ptr = ats_get_txt(txt_nr, txt_mode, &txt_anz, mode);
+
 		if (_atsv.Ptr) {
 			_atsv.Display = true;
 			char *ptr = _atsv.Ptr;
 			_atsv.TxtLen = 0;
+
 			while (*ptr++ != ATDS_END_TEXT)
 				++_atsv.TxtLen;
+
 			if ((byte)*_atsv.Ptr == 248) {
 				// Special code for no message to display
 				_atsv.Display = false;
@@ -538,14 +542,18 @@ bool Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, in
 				_atsv.Color = color;
 				_mousePush = true;
 			}
+
 			*voc_nr = _atsv.StrHeader.VocNr - ATDS_VOC_OFFSET;
+
 			if ((_atdsv.Display == DISPLAY_VOC) && (*voc_nr != -1)) {
 				_atsv.Display = false;
 			}
-		} else
+		} else {
 			_atsv.Display = false;
-	} else
+		}
+	} else {
 		_atsv.Display = false;
+	}
 
 	return _atsv.Display;
 }
