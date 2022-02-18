@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-17 01:39+0000\n"
+"POT-Creation-Date: 2022-02-18 16:46+0000\n"
 "PO-Revision-Date: 2022-02-11 14:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2414,7 +2414,7 @@ msgstr ""
 "Runner і безьлічам іншых гульняў, вы знойдзіце насамрэч малавядомыя авантуры "
 "й прыхаваныя скарбы."
 
-#: engines/advancedDetector.cpp:241
+#: engines/advancedDetector.cpp:245
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знойдзена нелегальная копія гульні. Такія гульні мы не падтрымліваем"
 
@@ -4029,7 +4029,7 @@ msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:448 engines/neverhood/detection.cpp:134
+#: engines/groovie/detection.cpp:474 engines/neverhood/detection.cpp:134
 #: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
 #: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
@@ -4038,7 +4038,7 @@ msgstr "Выкарыстоўваць арыґінальныя экраны за�
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:449 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:475 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -5067,27 +5067,27 @@ msgstr ""
 "\n"
 "Дарэчы, копіі гульні Steam ці GOG маюць зьяднаны файл FullMonkeyMap.imt"
 
-#: engines/groovie/detection.cpp:438
+#: engines/groovie/detection.cpp:464
 msgid "Fast movie speed"
 msgstr "Хуткія відэа"
 
-#: engines/groovie/detection.cpp:439
+#: engines/groovie/detection.cpp:465
 msgid "Play movies at an increased speed"
 msgstr "Іграць відэа з павялічанай хуткасьцю"
 
-#: engines/groovie/detection.cpp:458
+#: engines/groovie/detection.cpp:484
 msgid "Easier AI"
 msgstr "Праставаты ШІ"
 
-#: engines/groovie/detection.cpp:459
+#: engines/groovie/detection.cpp:485
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Памяньшае складанасьць загадак са штучным інтэлектам"
 
-#: engines/groovie/detection.cpp:468
+#: engines/groovie/detection.cpp:494
 msgid "Updated Credits Music"
 msgstr "Абноўленая музыка тытраў"
 
-#: engines/groovie/detection.cpp:469
+#: engines/groovie/detection.cpp:495
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr "Граць песьнюThe Final Hour падчас тытраў замест паўтору MIDI-мэлёдый"
