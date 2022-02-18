@@ -260,9 +260,9 @@ public:
 	void load_atds(int16 chunk_nr, int16 mode);
 	void save_ads_header(int16 dia_nr);
 
-	Stream *pool_handle(const char *fname, const char *fmode);
+	Stream *pool_handle(const char *fname);
 	void set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz);
-	void open_handle(const char *fname, const char *fmode, int16 mode);
+	void open_handle(const char *fname, int16 mode);
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
 	void init_ats_mode(int16 mode, uint8 *atsheader);

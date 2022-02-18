@@ -110,6 +110,7 @@ void Room89::entry() {
 		// Unsquish out thanks for playing screen
 		_G(out)->setze_zeiger(_G(workptr));
 		_G(out)->cls();
+		// Those strings are also displayed in the the German version
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
 		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Common::KEYCODE_ESCAPE from F5");
 		_G(out)->sprite_save(_G(Ci).TempArea, 0, 0, 320, 200, 320);

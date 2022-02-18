@@ -296,8 +296,8 @@ void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 	_ssi[nr] = ssinit[0];
 }
 
-Stream *Atdsys::pool_handle(const char *fname, const char *fmode) {
-	Stream *handle = chewy_fopen(fname, fmode);
+Stream *Atdsys::pool_handle(const char *fname) {
+	Stream *handle = chewy_fopen(fname);
 	if (handle) {
 		_atdshandle[ATDS_HANDLE] = handle;
 	} else {
@@ -347,13 +347,13 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 	}
 }
 
-void Atdsys::open_handle(const char *fname, const char *fmode, int16 mode) {
+void Atdsys::open_handle(const char *fname, int16 mode) {
 	char *tmp_adr = nullptr;
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname, 0, 20000);
 	if (!_G(modul)) {
-		Stream *stream = chewy_fopen(fname, fmode);
+		Stream *stream = chewy_fopen(fname);
 		if (stream) {
 			close_handle(mode);
 			_atdshandle[mode] = stream;

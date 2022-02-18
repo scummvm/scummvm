@@ -46,8 +46,7 @@ public:
 };
 
 
-inline Stream *chewy_fopen(const char *fname, const char *mode) {
-	assert(!strcmp(mode, "rb"));
+inline Stream *chewy_fopen(const char *fname) {
 	return File::open(fname);
 }
 

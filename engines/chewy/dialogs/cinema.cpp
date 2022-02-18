@@ -55,7 +55,7 @@ void Cinema::execute() {
 	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 	_G(atds)->load_atds(98, 1);
 
-	_G(room)->open_handle(GBOOK, "rb", 0);
+	_G(room)->open_handle(GBOOK, 0);
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	show_cur();
 	EVENTS_CLEAR;
@@ -201,7 +201,7 @@ void Cinema::execute() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->open_handle(EPISODE1, "rb", 0);
+	_G(room)->open_handle(EPISODE1, 0);
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hide_cur();
 	_G(uhr)->reset_timer(0, 5);
