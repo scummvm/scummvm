@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2021-10-03 07:20+0000\n"
+"PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -221,7 +221,7 @@ msgstr "Wczytywanie stanu gry..."
 #: gui/downloadiconsdialog.cpp:155
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Wykryto %d nowe pakiety, %s %S"
 
 #: gui/downloadiconsdialog.cpp:157
 #, fuzzy
@@ -249,15 +249,15 @@ msgstr "Zamknij"
 #: gui/downloadiconsdialog.cpp:308
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "BŁĄD %d: %s"
 
 #: gui/downloadiconsdialog.cpp:325
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "BŁĄD: Ścieżka do ikon nie jest ustawiona"
 
 #: gui/downloadiconsdialog.cpp:355
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Brak nowych pakietów ikon"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
 msgid "Game"
@@ -365,7 +365,7 @@ msgstr "Klawisze"
 
 #: gui/editgamedialog.cpp:251 gui/options.cpp:2000 engines/dialogs.cpp:325
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:254
 #, fuzzy
@@ -765,12 +765,12 @@ msgstr "Silnik"
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:207
 msgid "Series"
-msgstr ""
+msgstr "Seria"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:209
 msgid "Publisher"
-msgstr ""
+msgstr "Wydawca"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:211
@@ -995,12 +995,12 @@ msgstr ""
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1163 gui/launcher.cpp:1350
 msgid "Language not detected"
-msgstr ""
+msgstr "Nie wykryto języka"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1178 gui/launcher.cpp:1365
 msgid "Platform not detected"
-msgstr ""
+msgstr "Platforma nie wykryta"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:122
@@ -1205,7 +1205,7 @@ msgstr "Pełny ekran"
 
 #: gui/options.cpp:1439
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1439
 #, fuzzy
@@ -1591,7 +1591,7 @@ msgstr "Wymagaj potwierdzenia przy wyjściu"
 
 #: gui/options.cpp:2309
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Pytaj przed zamknięciem ScummVM lub wyjściem z gry."
 
 #: gui/options.cpp:2316
 #, fuzzy
@@ -1603,6 +1603,8 @@ msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"Wyświetl informacje o granych grach na Discordzie jeżeli klient Discorda "
+"jest włączony."
 
 #: gui/options.cpp:2326
 msgid "GUI language:"
@@ -1897,6 +1899,12 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"UWAGA: Automatyczny zapis gry jest włączony. Niektóre z twoich gier mają już "
+"zapisane stany gier w slocie na automatyczny zapis. Możesz przenieść "
+"zapisane gry do nowego slotu, wyłączyć automatyczny zapis gier lub "
+"zignorować problem (zostaniesz zapytany gdy automatyczny zapis gry będzie "
+"próbował nadpisać zapisaną ręcznie grę).\n"
+"Lista gier:\n"
 
 #: gui/options.cpp:2579
 #, fuzzy
@@ -1924,7 +1932,7 @@ msgstr "Inna usługa przechowywania jest już aktywna."
 
 #: gui/options.cpp:2779
 msgid "Theme does not support selected language!"
-msgstr "Motyw nie wespiera wybranego języka!"
+msgstr "Motyw nie wspiera wybranego języka!"
 
 #: gui/options.cpp:2782
 msgid "Theme cannot be loaded!"
@@ -2105,6 +2113,8 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"UWAGA: Istniejący zapis ma dłuższy czas gry niż obecny. Czy na pewno go "
+"nadpisać?"
 
 #: gui/saveload-dialog.cpp:413 gui/saveload-dialog.cpp:593
 msgid "No date saved"
@@ -2425,7 +2435,7 @@ msgstr "B"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Interpreter wielu gier przygodowych oraz RPG"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:37
@@ -2436,6 +2446,10 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM to program pozwalający na uruchomienie bogatego wyboru klasycznych "
+"graficznych gier przygodowych typu „wskaż i kliknij”, oraz gier RPG - pod "
+"warunkiem posiadania ich danych. ScummVM podmienia oryginalny program gier, "
+"pozwalając na granie w nie na systemach, na które nigdy nie były napisane!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:45
@@ -2445,6 +2459,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Obecnie ScummVM obsługuje wielki katalog przygód liczący razem ponad 4000 "
+"gier. Obsługuje wiele klasycznych gier wydanych przez legandarne studia "
+"takie jak LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. oraz "
+"Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:51
@@ -2453,6 +2471,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Poza przełomowymi tytułami, takimi jak seria Monkey Island, Broken Sword, "
+"Myst, Blade Runner i wieloma innymi, znajdziesz tu również wiele mało "
+"znanych przygód i naprawdę mało znanych perełek."
 
 #: engines/advancedDetector.cpp:241
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2576,9 +2597,9 @@ msgid "Could not switch to video mode '%s'."
 msgstr "Nie udało się przełączyć w tryb video '%s'."
 
 #: engines/engine.cpp:368
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Nie udało się przełączyć w tryb wideo: '"
+msgstr "Nie udało się przełączyć w tryb wideo: '%s'."
 
 #: engines/engine.cpp:375
 msgid "Could not apply aspect ratio setting."
@@ -2593,9 +2614,8 @@ msgid "Could not apply filtering setting."
 msgstr "Nie udało się zastosować ustawienia filtrowania."
 
 #: engines/engine.cpp:443
-#, fuzzy
 msgid "Error"
-msgstr "Brak błędu"
+msgstr "Błąd"
 
 #: engines/engine.cpp:521
 #, fuzzy
@@ -2628,9 +2648,8 @@ msgid "Overwrite"
 msgstr "Nadpisz"
 
 #: engines/engine.cpp:573
-#, fuzzy
 msgid "Cancel autosave"
-msgstr "Nienazwany stan gry"
+msgstr "Anuluj autozapis"
 
 #: engines/engine.cpp:575
 #, c-format
@@ -2639,10 +2658,14 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"UWAGA: Slot automatycznego zapisu stanu gry ma już zapisaną grę pod nazwą "
+"%S. Możesz przenieść istniejący zapis gry do nowego slotu, nadpisać go lub "
+"anulować automatyczny zapis stanu gry (program nie zapyta ponownie bez "
+"restartu)"
 
 #: engines/engine.cpp:583
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "BŁĄD: Nie udało się skopiować zapisu stanu gry do nowego slotu"
 
 #: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:248 engines/sky/metaengine.cpp:185
@@ -2726,7 +2749,7 @@ msgstr "Pasujące identyfikatory gry dla silnika %s:"
 
 #: engines/metaengine.cpp:56
 msgid "Default game keymap"
-msgstr ""
+msgstr "Domyślne mapowanie klawiatury"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:114
@@ -2776,7 +2799,7 @@ msgstr "Pomiń linię"
 
 #: engines/metaengine.cpp:100
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "Okienko klawiatury predyktywnej"
 
 #: engines/metaengine.cpp:104 engines/griffon/metaengine.cpp:89
 #: engines/grim/grim.cpp:512 engines/grim/grim.cpp:608
@@ -2895,11 +2918,15 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"FluidSynth wymaga ustawienia „czcionki dźwiękowej”. Proszę ustawić ją w "
+"interfejsie ScummVM, w zakładce MIDI. Muzyka jest teraz wyłączona."
 
 #: audio/softsynth/fluidsynth.cpp:367
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
+"FluidSynth: Nie udało się załadować czcionki dźwiękowej '%s'. Muzyka jest "
+"wyłączona."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
@@ -3523,6 +3550,9 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Nie udało się uruchomić lokalnego serwera web.\n"
+"Proszę sprawdzić czy wybrany port nie jest w użyciu przez inną aplikację i "
+"spróbować ponownie."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:68
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:110
@@ -3666,17 +3696,19 @@ msgstr "Tryb krwi"
 
 #: backends/platform/3ds/osystem-events.cpp:321
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Otwórz ustawienia 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:359
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Tryb przybliżenia wyłączony. Przełączam w tryb przeciągania.\n"
+"Wracam do launchera..."
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Tryb przybliżenia wyłączony. Wracam do launchera..."
 
 #: backends/platform/3ds/osystem-events.cpp:395
 #, fuzzy
@@ -3729,7 +3761,7 @@ msgstr "Pokaż kontrole na ekranie"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:76
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Wyświetlaj przycisk do anulowania zezwoleń SAF"
 
 #: backends/platform/ds/ds-graphics.cpp:256
 #, fuzzy
@@ -4145,11 +4177,11 @@ msgstr ""
 
 #: engines/agi/detection.cpp:136
 msgid "Add speed menu"
-msgstr ""
+msgstr "Dodaj menu szybkości"
 
 #: engines/agi/detection.cpp:137
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "Dodaj menu szybkości gry (podobnie jak w wersji PC)"
 
 #: engines/agi/font.cpp:1096
 msgid ""
