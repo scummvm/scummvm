@@ -355,10 +355,10 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 	Common::String guiOptions = ConfMan.get("guioptions", domain);
 	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 
-	_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
-	_waterEffectCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.WaterEffect", _("~W~ater Effect Enabled"));
+	_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.ZipMode", _("~Z~ip Mode Activated"), _("When activated, clicking on an item or area with the lightning bolt cursor takes you directly there, skipping intermediate screens. You can only 'Zip' to a precise area you've already been."));
+	_waterEffectCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.WaterEffect", _("~W~ater Effect Enabled"), _("Toggles the use of QuickTime videos for visual effects related to water surfaces (ripples, waves, etc.)."));
 
-	GUI::StaticTextWidget *transitionModeCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.TransistionsDesc", _("Transitions:"));
+	GUI::StaticTextWidget *transitionModeCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.TransistionsDesc", _("Transitions:"), _("Adjusts the speed of screen transitions. Disabling screen transitions will enable you to navigate more quickly through the game."));
 	transitionModeCaption->setAlign(Graphics::kTextAlignRight);
 
 	_transitionModePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Transistions");
