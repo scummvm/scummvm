@@ -349,7 +349,7 @@ static const GroovieGameDescription gameDescriptions[] = {
         kGroovieCDY
     },
 
-	// Uncle Henry's Playhouse PC English
+	// Uncle Henry's Playhouse PC English (1996-09-13)
 	{
 		{
 			"unclehenry", "",
@@ -386,18 +386,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC English (DVD-ROM 1998-08-26)
-	{
-		{
-			"tlc", _s("Missing game code"),
-			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
-						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_DVD | ADGF_UNSUPPORTED,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
-		},
-		kGroovieTLC
-	},
-
 	// Tender Loving Care PC English (DVD-ROM 1998-06-12)
 	{
 		{
@@ -410,20 +398,32 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC German (CD-ROM 1998-04-09)
+	// Tender Loving Care PC English (DVD-ROM 1998-08-26)
+	{
+		{
+			"tlc", _s("Missing game code"),
+			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
+						"tlcnav.gjd", nullptr, -1),
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DVD | ADGF_UNSUPPORTED,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC German (CD-ROM 1998-04-08)
 	// "Die Versuchung", Funsoft
 	{
 		{
 			"tlc", "CD",
 			AD_ENTRY2s("tlcmain.grv", "3459a25a5f31b430d320cba2e47d3c98", 17353,
 						"tlcnav.gjd", nullptr, -1),
-			Common::DE_DEU, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING,
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC German (DVD-ROM 1998-03-06)
+	// Tender Loving Care PC German (DVD-ROM 1998-08-23)
 	// "Die Versuchung", Conspiracy Entertainment Europe
 	{
 		{
@@ -436,7 +436,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC Demo German https://archive.org/details/Tender_Loving_Care_demo
+	// Tender Loving Care PC Demo German (CD-ROM 1998-03-23)
+	// https://archive.org/details/Tender_Loving_Care_demo
 	{
 		{
 			"tlc", "Demo",
@@ -448,7 +449,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
-	// Tender Loving Care PC Trailer https://archive.org/details/Tender_Loving_Care_demo
+	// Tender Loving Care PC Trailer (CD-ROM 1998-03-23)
+	// On the same disc with the above German demo
 	{
 		{
 			"tlc", "Trailer",
