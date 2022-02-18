@@ -367,7 +367,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", "CD",
 			AD_ENTRY2s("tlcmain.grv", "47c235155de5103e72675fe7294720b8", 17479,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -379,7 +379,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", _s("Missing game code"),
 			AD_ENTRY2s("tlcmain.grv", "151af191015beb6f662919153e6c28d8", 17379,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DVD | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
@@ -391,7 +391,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"tlc", _s("Missing game code"),
 			AD_ENTRY2s("tlcmain.grv", "8a591c47d24dde38615e6ea2e79b51a5", 17375,
 						"tlcnav.gjd", nullptr, -1),
-			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED,
+			Common::EN_ANY, Common::kPlatformWindows, ADGF_DVD | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieTLC
