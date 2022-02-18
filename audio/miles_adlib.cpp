@@ -1145,6 +1145,10 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 }
 
 void MidiDriver_Miles_AdLib::programChange(byte midiChannel, byte patchId) {
+	if (_instrumentRemapping && midiChannel != MIDI_RHYTHM_CHANNEL)
+		// Apply instrument remapping (if specified) to instrument channels.
+		patchId = _instrumentRemapping[patchId];
+
 	const InstrumentEntry *instrumentPtr = nullptr;
 	byte patchBank = _midiChannels[midiChannel].currentPatchBank;
 

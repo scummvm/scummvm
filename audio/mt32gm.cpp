@@ -712,6 +712,10 @@ void MidiDriver_MT32GM::removeActiveNotes(uint8 outputChannel, bool sustainedNot
 }
 
 void MidiDriver_MT32GM::programChange(byte outputChannel, byte patchId, int8 source, MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
+	if (_instrumentRemapping && outputChannel != MIDI_RHYTHM_CHANNEL)
+		// Apply instrument remapping (if specified) to instrument channels.
+		patchId = _instrumentRemapping[patchId];
+
 	// remember patch id for the current MIDI-channel
 	controlData.program = patchId;
 

@@ -361,6 +361,21 @@ public:
 	void clearControllerDefault(ControllerDefaultType type);
 
 	/**
+	 * Sets an instrument map for arbitrarily remapping instruments in the MIDI
+	 * data. The map should consist of 128 bytes, with the index representing
+	 * the instrument number in the MIDI data, and the value being the
+	 * instrument which should be substituted.
+	 * This instrument mapping is applied before MT-32 to GM or GM to MT-32
+	 * instrument mapping.
+	 * Call this method with nullptr as parameter to clear a previously set
+	 * instrument remapping.
+	 * 
+	 * @param instrumentRemapping The instrument map that should be used for
+	 * remapping, or nullptr to disable remapping.
+	 */
+	void setInstrumentRemapping(byte *instrumentRemapping);
+
+	/**
 	 * Applies the user volume settings to the MIDI driver. MIDI channel
 	 * volumes will be scaled using the user volume.
 	 * This function must be called by the engine when the user has changed the
@@ -422,6 +437,9 @@ protected:
 
 	// Default values for each controller
 	ControllerDefaults _controllerDefaults;
+
+	// Map for arbitrary instrument remapping.
+	byte *_instrumentRemapping;
 
 	// True if the driver should scale MIDI channel volume to the user
 	// specified volume settings.

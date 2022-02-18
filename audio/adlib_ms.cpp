@@ -768,6 +768,10 @@ void MidiDriver_ADLIB_Multisource::controlChange(uint8 channel, uint8 controller
 }
 
 void MidiDriver_ADLIB_Multisource::programChange(uint8 channel, uint8 program, uint8 source) {
+	if (_instrumentRemapping && channel != MIDI_RHYTHM_CHANNEL)
+		// Apply instrument remapping (if specified) to instrument channels.
+		program = _instrumentRemapping[program];
+
 	// Just set the MIDI program value; this event does not affect active notes.
 	_controlData[source][channel].program = program;
 }

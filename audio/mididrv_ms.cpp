@@ -52,6 +52,7 @@ MidiDriver_Multisource::ControllerDefaults::ControllerDefaults() :
 	pitchBendSensitivity(-1) { }
 
 MidiDriver_Multisource::MidiDriver_Multisource() :
+		_instrumentRemapping(nullptr),
 		_userVolumeScaling(false),
 		_userMusicVolume(192),
 		_userSfxVolume(192),
@@ -344,6 +345,10 @@ void MidiDriver_Multisource::setSourceNeutralVolume(uint8 source, uint16 volume)
 	assert(source < MAXIMUM_SOURCES);
 
 	_sources[source].neutralVolume = volume;
+}
+
+void MidiDriver_Multisource::setInstrumentRemapping(byte *instrumentRemapping) {
+	_instrumentRemapping = instrumentRemapping;
 }
 
 void MidiDriver_Multisource::syncSoundSettings() {
