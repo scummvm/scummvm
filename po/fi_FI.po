@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2022-02-08 16:38+0000\n"
+"PO-Revision-Date: 2022-02-18 18:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -782,21 +782,17 @@ msgid "About ScummVM"
 msgstr "Tietoa ScummVM:stä"
 
 #: gui/launcher.cpp:232
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~A~setukset..."
+msgstr "Globaalit ~A~setukset..."
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:234
 msgid "Change global ScummVM options"
 msgstr "Muuta globaaleja ScummVM:n asetuksia"
 
 #: gui/launcher.cpp:234
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~A~setukset..."
+msgstr "Globaalit ~A~setukset..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -931,21 +927,17 @@ msgid "Record..."
 msgstr "Nauhoita..."
 
 #: gui/launcher.cpp:987
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~A~setukset..."
+msgstr "~P~elin Asetukset..."
 
 #: gui/launcher.cpp:987 gui/launcher.cpp:990
 msgid "Change game options"
 msgstr "Muuta pelin asetuksia"
 
 #: gui/launcher.cpp:990
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~A~setukset..."
+msgstr "~P~elin Asetukset..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -6624,6 +6616,8 @@ msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
+"Vaihtoehtoista musiikkia käytettäessä tämä säätää alkusoiton vaihtumista "
+"Lucasfilm:in ja Loom:in logotyypeiksi."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
