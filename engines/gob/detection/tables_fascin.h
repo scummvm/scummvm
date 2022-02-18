@@ -88,7 +88,7 @@
 {
 	{
 		"fascination",
-		"Hebrew edition (censored)",
+		"Censored",
 		AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
 		HE_ISR,
 		kPlatformDOS,
