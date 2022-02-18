@@ -754,9 +754,9 @@ void AGOSEngine_Simon2::setupGame() {
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
 	if (getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformDOS && _midi->usesMT32Data())
-		_musicIndexBase = (1128 + 612) / 4;
+		_musicIndexBase = MUSIC_INDEX_BASE_SIMON2_MT32;
 	else
-		_musicIndexBase = 1128 / 4;
+		_musicIndexBase = MUSIC_INDEX_BASE_SIMON2_GM;
 	_soundIndexBase = 1660 / 4;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;

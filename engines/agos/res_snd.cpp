@@ -131,11 +131,17 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadMusic(uint16 music) {
+void AGOSEngine::loadMusic(uint16 music, bool forceSimon2Gm) {
 	stopMusic();
 
-	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+	uint16 indexBase = forceSimon2Gm ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
+
+	_gameFile->seek(_gameOffsetsPtr[indexBase + music - 1], SEEK_SET);
 	_midi->loadMusic(_gameFile);
+
+	// Activate Simon 2 GM to MT-32 remapping if we force GM, otherwise
+	// deactivate it (in case it was previously activated).
+	_midi->setSimon2Remapping(forceSimon2Gm);
 
 	_lastMusicPlayed = music;
 	_nextMusicToPlay = -1;
@@ -226,6 +232,23 @@ void AGOSEngine::playModule(uint16 music) {
 	}
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
+}
+
+void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
+	if (_lastMusicPlayed == 10 && getPlatform() == Common::kPlatformDOS && _midi->usesMT32Data()) {
+		// WORKAROUND Simon 2 track 10 (played during the first intro scene)
+		// consist of 3 subtracks. Subtracks 2 and 3 are missing from the MT-32
+		// MIDI data. The original interpreter just stops playing after track 1
+		// and does not restart until the next scene.
+		// We fix this by loading the GM version of track 10 and remapping the
+		// instruments to MT-32.
+
+		// Reload track 10 and force GM for all subtracks but the first (this
+		// also activates the instrument remapping).
+		loadMusic(10, track > 0);
+	}
+
+	_midi->play(track);
 }
 
 void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {

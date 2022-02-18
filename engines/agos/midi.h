@@ -62,6 +62,10 @@ struct MusicInfo {
 
 class MidiPlayer : public MidiDriver_BASE {
 protected:
+	// Instrument map specifically for remapping the instruments of the GM
+	// version of Simon 2 track 10 subtracks 2 and 3 to MT-32.
+	static byte SIMON2_TRACK10_GM_MT32_INSTRUMENT_REMAPPING[];
+
 	AGOSEngine *_vm;
 
 	Common::Mutex _mutex;
@@ -138,6 +142,9 @@ public:
 	bool usesMT32Data() const;
 	bool hasAdLibSfx() const;
 	void setLoop(bool loop);
+	// Activates or deactivates remapping GM to MT-32 instruments for
+	// Simon 2 track 10.
+	void setSimon2Remapping(bool remap);
 	void startTrack(int track);
 	void queueTrack(int track, bool loop);
 	bool isPlaying(bool checkQueued = false);

@@ -202,6 +202,11 @@ protected:
 	// List of Simon 1 DOS floppy SFX which use rhythm notes.
 	static const byte SIMON1_RHYTHM_SFX[];
 
+	// Music index base for Simon 2 GM data.
+	static const uint16 MUSIC_INDEX_BASE_SIMON2_GM = 1128 / 4;
+	// Music index base for Simon 2 MT-32 data.
+	static const uint16 MUSIC_INDEX_BASE_SIMON2_MT32 = (1128 + 612) / 4;
+
 protected:
 	friend class Debugger;
 
@@ -1289,7 +1294,11 @@ protected:
 	void windowScroll(WindowBlock *window);
 	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
-	void loadMusic(uint16 track);
+	// Loads the MIDI data for the specified track. The forceSimon2Gm parameter
+	// forces loading the MIDI data from the GM data set and activates GM to
+	// MT-32 instrument remapping. This is useful only for a specific
+	// workaround (see AGOSEngine_Simon2::playMusic for more details).
+	void loadMusic(uint16 track, bool forceSimon2Gm = false);
 	void playModule(uint16 music);
 	virtual void playMusic(uint16 music, uint16 track);
 	void stopMusic();
@@ -1943,6 +1952,10 @@ protected:
 	void clearVideoWindow(uint16 windowNum, uint16 color) override;
 
 	void playSpeech(uint16 speechId, uint16 vgaSpriteId) override;
+	// This overload plays the music track specified in the second parameter.
+	// The first parameter is ignored; music data must be loaded using the
+	// loadMusic method before calling this method.
+	void playMusic(uint16 music, uint16 track) override;
 
 	Common::String genSaveName(int slot) const override;
 };
