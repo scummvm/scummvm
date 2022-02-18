@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2021-11-07 02:48+0000\n"
-"Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
+"PO-Revision-Date: 2022-02-18 18:47+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -4423,12 +4423,8 @@ msgstr ""
 "시 이 창이 표시됩니다.\n"
 
 #: engines/buried/saveload.cpp:165
-#, fuzzy
-#| msgid ""
-#| "This saved game was created with a different version of the game, unable "
-#| "to load it"
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
-msgstr "이 저장 파일은 다른 버전의 게임으로부터 생성되어 로드할 수 없습니다"
+msgstr "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
 #: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
@@ -5129,22 +5125,16 @@ msgid "Would you like to save or restore a game?"
 msgstr "게임을 저장하거나 불러오시겠습니까?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "미노타우르스 미니 게임은 아직 지원되지 않습니다. 건너뛰기"
 
 #: engines/hadesch/rooms/medisle.cpp:647
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "메두사 미니게임은 아직 지원되지 않습니다. 건너뛰기"
 
 #: engines/hadesch/rooms/troy.cpp:505
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "트로이 미니게임은 아직 지원하지 않습니다. 건너뛰기"
 
 #: engines/hdb/detection.cpp:123
 msgid "Enable cheat mode"
@@ -5201,7 +5191,7 @@ msgstr "치트 활성화"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "C 키를 사용하여 치트를 허용합니다."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -5481,18 +5471,6 @@ msgstr ""
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
-#, fuzzy
-#| msgid ""
-#| "This AMIGA version requires the following font files:\n"
-#| "\n"
-#| "EOBF6.FONT\n"
-#| "EOBF6/6\n"
-#| "EOBF8.FONT\n"
-#| "EOBF8/8\n"
-#| "\n"
-#| "If you used the orginal installer for the installation these files\n"
-#| "should be located in the AmigaDOS system 'Fonts/' folder.\n"
-#| "Please copy them into the EOB game data directory.\n"
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -7184,20 +7162,13 @@ msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
 
 #: engines/scumm/scumm.cpp:542
-#, fuzzy
-#| msgid ""
-#| "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
-#| "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
-#| "Aspect ratio correction can be acheived by trimming the resolution to "
-#| "320x200, under 'engine' tab."
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
-"'종횡비 보정'이 활성화되었습니다. 하지만 FM-TOWNS의 해상도는 320x240이기 때문"
-"에 종횡비 보정을 지원하지 않습니다.\n"
+"'종횡비 보정'이 활성화되었습니다. 하지만 FM-TOWNS의 해상도는 320x240이기 때문에 종횡비 보정을 지원하지 않습니다.\n"
 "'엔진' 탭에서 해상도를 320x200으로 잘라내면 종횡비 보정이 가능합니다."
 
 #: engines/scumm/scumm.cpp:1351
@@ -7375,10 +7346,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 
 #: engines/stark/stark.cpp:106
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "이 엔진 플러그인이 세이브 파일을 지원하지 않음"
+msgstr "소프트웨어 렌더러는 모드 애셋을 지원하지 않습니다."
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
@@ -7875,11 +7844,11 @@ msgstr "카메라가 미리 지정된 위치에 고정되지 않고 플레이어
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "항상 크리스마스 에스터에그 활성화"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "연중 언제든지 크리스마스 음악을 활성화하십시오."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
