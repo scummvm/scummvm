@@ -159,8 +159,8 @@ Room::~Room() {
 	free_ablage();
 }
 
-Stream *Room::open_handle(const char *fname1, const char *fmode, int16 mode) {
-	Stream *stream = chewy_fopen(fname1, fmode);
+Stream *Room::open_handle(const char *fname1, int16 mode) {
+	Stream *stream = chewy_fopen(fname1);
 	if (stream) {
 		close_handle(mode);
 		_roomHandle[mode] = stream;

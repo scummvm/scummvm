@@ -193,7 +193,7 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	_G(room)->open_handle(GBOOK, "rb", 0);
+	_G(room)->open_handle(GBOOK, 0);
 	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
@@ -263,7 +263,7 @@ void Credits::execute() {
 
 	_G(out)->set_fontadr(_G(font8x8));
 	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvorx8x8));
-	_G(room)->open_handle("back/episode1.tgp", "rb", 0);
+	_G(room)->open_handle("back/episode1.tgp", R_GEPDATEI);
 
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hide_cur();

@@ -69,7 +69,7 @@ int16 Files::execute(bool isInGame) {
 	TafInfo *ti = _G(mem)->taf_adr(OPTION_TAF);
 	EVENTS_CLEAR;
 
-	_G(room)->open_handle(GBOOK, "rb", 0);
+	_G(room)->open_handle(GBOOK, 0);
 	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setze_zeiger(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
@@ -300,7 +300,7 @@ enter:
 
 	free(ti);
 
-	_G(room)->open_handle(EPISODE1, "rb", 0);
+	_G(room)->open_handle(EPISODE1, 0);
 	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 	_G(fx_blend) = BLEND1;

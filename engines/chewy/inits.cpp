@@ -188,7 +188,7 @@ void init_room() {
 	_G(room_blk).AtsLoad = true;
 	strcpy(_G(room_blk).RoomDir, "room/");
 
-	_G(room)->open_handle(EPISODE1_GEP, "rb", R_GEPDATEI);
+	_G(room)->open_handle(EPISODE1_GEP, R_GEPDATEI);
 }
 
 void init_atds() {
@@ -201,7 +201,7 @@ void init_atds() {
 	_G(atds)->close_handle(ATDS_HANDLE);
 
 	// New set up
-	Stream *handle = _G(atds)->pool_handle(ATDS_TXT, "rb");
+	Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
 	_G(atds)->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
 	_G(atds)->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
 	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
@@ -211,9 +211,9 @@ void init_atds() {
 	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
 	_G(atds)->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
 	_G(atds)->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
-	_G(atds)->open_handle(INV_USE_IDX, "rb", INV_IDX_DATEI);
+	_G(atds)->open_handle(INV_USE_IDX, INV_IDX_DATEI);
 	_G(mem)->file->fcopy(ADSH_TMP, "txt/diah.adh");
-	_G(atds)->open_handle(ADSH_TMP, "rb", 3);
+	_G(atds)->open_handle(ADSH_TMP, 3);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed;
@@ -379,7 +379,7 @@ void sound_init() {
 	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
 	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
 
-	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, "rb", R_VOCDATEI);
+	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOCDATEI);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_G(music_handle));
 	assert(rs);
