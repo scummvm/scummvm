@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -202,37 +202,29 @@ msgid "Download speed: %s %S"
 msgstr "다운로드 속도: %s %S"
 
 #: gui/downloadiconsdialog.cpp:81 gui/downloadiconsdialog.cpp:135
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "세이브 파일을 다운로드하는 중..."
+msgstr "아이콘 목록을 다운로드하는 중..."
 
 #: gui/downloadiconsdialog.cpp:145
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "세이브 파일을 다운로드하는 중..."
+msgstr "아이콘 목록을 다운로드하는 중... %d개 항목"
 
 #: gui/downloadiconsdialog.cpp:155
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%d개의 새 팩을 발견했습니다, %s %S"
 
 #: gui/downloadiconsdialog.cpp:157
-#, fuzzy
-#| msgid "Download patch"
 msgid "Download"
-msgstr "패치 다운로드"
+msgstr "다운로드"
 
 #: gui/downloadiconsdialog.cpp:180
-#, fuzzy, c-format
-#| msgid ""
-#| "Download complete.\n"
-#| "Failed to download %u files."
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 "다운로드 완료.\n"
-"%u개 파일 다운로드에 실패했습니다."
+"%d팩을 다운로드했습니다, %s %S."
 
 #: gui/downloadiconsdialog.cpp:186 gui/downloadiconsdialog.cpp:303
 #: gui/gui-manager.cpp:221 gui/unknown-game-dialog.cpp:53
@@ -245,15 +237,15 @@ msgstr "닫기"
 #: gui/downloadiconsdialog.cpp:308
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "에러 %d: %s"
 
 #: gui/downloadiconsdialog.cpp:325
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "에러: 아이콘 경로가 설정되지 않음"
 
 #: gui/downloadiconsdialog.cpp:355
 msgid "No new icons packs available"
-msgstr ""
+msgstr "사용 가능한 새 아이콘 팩 없음"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
 msgid "Game"
@@ -282,7 +274,7 @@ msgstr "제목:"
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:154
 #: gui/editgamedialog.cpp:155
 msgid "Full title of the game"
-msgstr "게임의 전체 이름"
+msgstr "게임의 전체 제목"
 
 #: gui/editgamedialog.cpp:154
 msgctxt "lowres"
@@ -724,15 +716,15 @@ msgstr "???"
 
 #: gui/launcher.cpp:192
 msgid "Select Group by"
-msgstr ""
+msgstr "그룹 선택 기준"
 
 #: gui/launcher.cpp:197
 msgid "Group by: "
-msgstr ""
+msgstr "그룹화 기준: "
 
 #: gui/launcher.cpp:199
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "항목을 그룹화할 기준을 선택"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:201
@@ -744,10 +736,8 @@ msgstr "없음"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:203
-#, fuzzy
-#| msgid "First page"
 msgid "First letter"
-msgstr "첫 페이지"
+msgstr "첫 글자"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:205
@@ -757,26 +747,22 @@ msgstr "엔진"
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:207
 msgid "Series"
-msgstr ""
+msgstr "시리즈"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:209
 msgid "Publisher"
-msgstr ""
+msgstr "배급사"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:211
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "언어:"
+msgstr "언어"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:213
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "플랫폼:"
+msgstr "플랫폼"
 
 #: gui/launcher.cpp:229 engines/dialogs.cpp:94
 msgid "~Q~uit"
@@ -915,7 +901,7 @@ msgstr "게임을 선택하세요:"
 
 #: gui/launcher.cpp:780
 msgid "Group by:"
-msgstr ""
+msgstr "그룹화 기준:"
 
 #: gui/launcher.cpp:820 gui/saveload-dialog.cpp:367
 msgid "List view"
@@ -965,42 +951,36 @@ msgstr "옵션(~O~)..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1112 gui/launcher.cpp:1299
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "알려지지 않은 버전"
+msgstr "알려지지 않은 엔진"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1130 gui/launcher.cpp:1331
-#, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
-msgstr "알 수 없는 작성자"
+msgstr "알 수 없는 배급사"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1148 gui/launcher.cpp:1317
 msgid "No Series"
-msgstr ""
+msgstr "시리즈 없음"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1163 gui/launcher.cpp:1350
 msgid "Language not detected"
-msgstr ""
+msgstr "언어가 감지되지 않음"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1178 gui/launcher.cpp:1365
 msgid "Platform not detected"
-msgstr ""
+msgstr "플랫폼이 감지되지 않음"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:122
-#, fuzzy
-#| msgid "Alt"
 msgid "All"
-msgstr "Alt"
+msgstr "모두"
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
@@ -1506,18 +1486,13 @@ msgid "Theme Path:"
 msgstr "테마 경로:"
 
 #: gui/options.cpp:2225
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/root/ 경로:"
+msgstr "/icon/ 경로:"
 
 #: gui/options.cpp:2227
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/root/ 경로:"
+msgstr "/icon/ 경로:"
 
 #: gui/options.cpp:2233 gui/options.cpp:2235 gui/options.cpp:2236
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1637,10 +1612,8 @@ msgid "Check now"
 msgstr "지금 확인"
 
 #: gui/options.cpp:2391
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "업데이트 확인:"
+msgstr "아이콘 업데이트"
 
 #: gui/options.cpp:2399
 msgid "Active storage:"
@@ -1923,13 +1896,11 @@ msgstr ""
 
 #: gui/options.cpp:2856
 msgid "Select directory for GUI themes"
-msgstr "GUI 테마 폴더를 선택"
+msgstr "GUI 테마 디렉토리를 선택"
 
 #: gui/options.cpp:2866
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "GUI 테마 폴더를 선택"
+msgstr "GUI 런처 썸네일을 위한 디렉토리 선택"
 
 #: gui/options.cpp:2876
 msgid "Select directory for extra files"
@@ -2380,31 +2351,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
@@ -5097,11 +5060,11 @@ msgstr "동영상을 빠른 속도로 재생합니다"
 
 #: engines/groovie/detection.cpp:458
 msgid "Easier AI"
-msgstr ""
+msgstr "더 쉬운 AI"
 
 #: engines/groovie/detection.cpp:459
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "AI 퍼즐의 난이도 낮추기"
 
 #: engines/groovie/detection.cpp:468
 msgid "Updated Credits Music"
@@ -7201,6 +7164,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"ScummVM Tools로 압축된 오디오 파일이 탐지되었습니다. 이 게임에 대해 *.BUN/*.SOU\n"
+"압축이 더 이상 지원되지 않습니다. 오디오가 비활성화됩니다..\n"
+"게임을 압축하지 않고 원본 미디어에서 복사하십시오."
 
 #: engines/scumm/scumm.cpp:2144
 #, c-format
