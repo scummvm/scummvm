@@ -319,23 +319,6 @@ public:
 extern Globals *g_globals;
 
 #define _G(FIELD) g_globals->_##FIELD
-/*
-extern char *invent_txt;
-extern char *invent_name;
-
-extern int16 ak_invent;
-
-extern maus_info minfo;
-extern kb_info kbinfo;
-extern cur_blk curblk;
-extern cur_ani curani;
-extern iog_init ioptr;
-extern RaumBlk room_blk;
-
-extern Flags flags;
-extern CustomInfo Ci;
-extern GotoPkt gpkt;
-*/
 
 void cursor_wahl(int16 nr);
 
@@ -346,7 +329,7 @@ void show_cur();
 void alloc_buffers();
 void free_buffers();
 
-int16 main_loop(int16 mode);
+bool main_loop(int16 mode);
 
 void set_up_screen(SetupScreenMode mode);
 
@@ -408,7 +391,7 @@ void save_person_rnr();
 
 void set_person_rnr();
 
-int16 is_chewy_busy();
+bool is_chewy_busy();
 
 void standard_init();
 
