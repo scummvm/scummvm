@@ -253,18 +253,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT11H
 	},
 
-	// The Making of The 11th Hour Macintosh English (Installed)
-	{
-		{
-			"11h", "Making Of (Installed)",
-			AD_ENTRY2s("makingof.grv", "12e1e5eef2c7a9536cd12ac800b31408", 994,
-					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_TESTING,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieT11H
-	},
-
 	// Clandestiny Trailer DOS/Windows English
 	{
 		{
@@ -283,18 +271,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"clandestiny", "Trailer",
 			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
 						"The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_TESTING,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
-		},
-		kGroovieCDY
-	},
-
-	// Clandestiny Trailer Macintosh English (Installed)
-	{
-		{
-			"clandestiny", "Trailer (Installed)",
-			AD_ENTRY2s("trailer.grv", "a7c8bdc4e8bff621f4f50928a95eaaba", 6,
-						"el01.mov", "70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO | ADGF_TESTING,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
