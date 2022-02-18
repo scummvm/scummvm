@@ -397,6 +397,32 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
+	// Tender Loving Care PC German (CD-ROM 1998-04-09)
+	// "Die Versuchung", Funsoft
+	{
+		{
+			"tlc", "CD",
+			AD_ENTRY2s("tlcmain.grv", "3459a25a5f31b430d320cba2e47d3c98", 17353,
+						"tlcnav.gjd", nullptr, -1),
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
+	// Tender Loving Care PC German (DVD-ROM 1998-03-06)
+	// "Die Versuchung", Conspiracy Entertainment Europe
+	{
+		{
+			"tlc", "DVD",
+			AD_ENTRY2s("tlcmain.grv", "50e62d41ad2cddd0f31ea0a542338387", 17344,
+						"tlcnav.gjd", nullptr, -1),
+			Common::DE_DEU, Common::kPlatformWindows, ADGF_DVD | ADGF_TESTING,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC
+	},
+
 	// Tender Loving Care PC Demo German https://archive.org/details/Tender_Loving_Care_demo
 	{
 		{
