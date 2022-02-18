@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-17 01:39+0000\n"
-"PO-Revision-Date: 2021-11-07 02:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2022-02-18 18:47+0000\n"
+"Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -222,9 +222,8 @@ msgid "Detected %d new packs, %s %S"
 msgstr ""
 
 #: gui/downloadiconsdialog.cpp:157
-#, fuzzy
 msgid "Download"
-msgstr "Nedladdning"
+msgstr "Ladda ner"
 
 #: gui/downloadiconsdialog.cpp:180
 #, fuzzy, c-format
@@ -247,15 +246,15 @@ msgstr "Stäng"
 #: gui/downloadiconsdialog.cpp:308
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "FEL %d: %s"
 
 #: gui/downloadiconsdialog.cpp:325
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "FEL: Ingen icon sökväg satt"
 
 #: gui/downloadiconsdialog.cpp:355
 msgid "No new icons packs available"
-msgstr ""
+msgstr "Inga nya icon packet tillgängliga"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
 msgid "Game"
@@ -740,7 +739,7 @@ msgstr ""
 
 #: gui/launcher.cpp:197
 msgid "Group by: "
-msgstr ""
+msgstr "Grupera efter: "
 
 #: gui/launcher.cpp:199
 msgid "Select a criteria to group the entries"
@@ -768,26 +767,22 @@ msgstr "Motor"
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:207
 msgid "Series"
-msgstr ""
+msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:209
 msgid "Publisher"
-msgstr ""
+msgstr "Utgivare"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:211
-#, fuzzy
-#| msgid "Language:"
 msgid "Language"
-msgstr "Språk:"
+msgstr "Språk"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:213
-#, fuzzy
-#| msgid "Platform:"
 msgid "Platform"
-msgstr "Plattform:"
+msgstr "Plattform"
 
 #: gui/launcher.cpp:229 engines/dialogs.cpp:94
 msgid "~Q~uit"
@@ -928,7 +923,7 @@ msgstr "Välj spel:"
 
 #: gui/launcher.cpp:780
 msgid "Group by:"
-msgstr ""
+msgstr "Gruppera efter:"
 
 #: gui/launcher.cpp:820 gui/saveload-dialog.cpp:367
 msgid "List view"
@@ -978,10 +973,8 @@ msgstr "~I~nställningar..."
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1112 gui/launcher.cpp:1299
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Engine"
-msgstr "Okänt fel"
+msgstr "Okänd motor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
@@ -1211,7 +1204,7 @@ msgstr "Fullskärmsläge"
 
 #: gui/options.cpp:1439
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Synk"
 
 #: gui/options.cpp:1439
 #, fuzzy
@@ -1520,18 +1513,13 @@ msgid "Theme Path:"
 msgstr "Sökv. tema:"
 
 #: gui/options.cpp:2225
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/root/-sökväg:"
+msgstr "Ikon sökväg:"
 
 #: gui/options.cpp:2227
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/root/-sökväg:"
+msgstr "Ikon sökväg:"
 
 #: gui/options.cpp:2233 gui/options.cpp:2235 gui/options.cpp:2236
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1595,9 +1583,8 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
 
 #: gui/options.cpp:2316
-#, fuzzy
 msgid "Enable Discord integration"
-msgstr "Aktivera censurering"
+msgstr "Aktivera Discord integration"
 
 #: gui/options.cpp:2317
 msgid ""
@@ -1652,10 +1639,8 @@ msgid "Check now"
 msgstr "Kolla nu"
 
 #: gui/options.cpp:2391
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Icons"
-msgstr "Uppdateringskoll:"
+msgstr "Uppdatera Ikoner"
 
 #: gui/options.cpp:2399
 #, fuzzy
@@ -1857,7 +1842,7 @@ msgstr "Serverport"
 #: gui/options.cpp:2478
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Kör server för att hantera filer med webbläsare (i samma nätverk)."
 
 #: gui/options.cpp:2479
 msgctxt "lowres"
@@ -1887,7 +1872,7 @@ msgstr "Ingen"
 
 #: gui/options.cpp:2568
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorera"
 
 #: gui/options.cpp:2569
 #, fuzzy
@@ -1911,9 +1896,8 @@ msgid ""
 msgstr "Lägg till spel..."
 
 #: gui/options.cpp:2580 engines/engine.cpp:579
-#, fuzzy
 msgid "Move"
-msgstr "Steg bakåt"
+msgstr "Flytta"
 
 #: gui/options.cpp:2593
 msgid "ERROR: Failed to move the following saved games:\n"
@@ -2370,7 +2354,7 @@ msgstr "PC-9801 (16 färger)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:47
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Machibtosh s/v"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
@@ -2407,31 +2391,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
@@ -2573,9 +2549,9 @@ msgid "~C~ancel"
 msgstr "A~v~bryt"
 
 #: engines/engine.cpp:342
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Kunde inte byta till skalningsläget: '"
+msgstr "Kunde inte byta till upplösning '%dx%d'."
 
 #: engines/engine.cpp:351
 msgid "Could not initialize color format."
@@ -2639,7 +2615,7 @@ msgstr ""
 
 #: engines/engine.cpp:572
 msgid "Overwrite"
-msgstr ""
+msgstr "Skriv över"
 
 #: engines/engine.cpp:573
 #, fuzzy
@@ -2681,7 +2657,7 @@ msgstr ""
 
 #: engines/engine.cpp:710
 msgid "WARNING: "
-msgstr ""
+msgstr "Varning: "
 
 #: engines/engine.cpp:710
 #, fuzzy
@@ -2811,7 +2787,7 @@ msgstr "OpenGL med shaders"
 #: graphics/renderer.cpp:41
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL med shaders"
 
 #: audio/adlib.cpp:2294
 msgid "AdLib emulator"
@@ -2843,7 +2819,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -2985,22 +2961,20 @@ msgid "Download failed."
 msgstr "Nedladdningen misslyckades."
 
 #: backends/events/default/default-events.cpp:194
-#, fuzzy
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Är du säker på att du vill avsluta? Alla osparade framsteg kommer gå "
-"förlorade."
+"Är du säker på att du vill avsluta?\n"
+"Alla osparade framsteg kommer gå förlorade."
 
 #: backends/events/default/default-events.cpp:218
-#, fuzzy
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Är du säker på att du vill avsluta? Alla osparade framsteg kommer gå "
-"förlorade."
+"Är du säker på att du vill avsluta?\n"
+"Alla osparade framsteg kommer gå förlorade."
 
 #: backends/events/default/default-events.cpp:218
 #: backends/events/default/default-events.cpp:359
@@ -3031,9 +3005,8 @@ msgid "Toggle mute"
 msgstr "Ljud av/på"
 
 #: backends/events/default/default-events.cpp:381
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Debug-konsol"
+msgstr "Öppna Felsökare"
 
 #: backends/events/gph/gph-events.cpp:411
 #: backends/events/gph/gph-events.cpp:454
@@ -3144,21 +3117,20 @@ msgstr "Utdraget läge"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Yta"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikfilter:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:355
-#, fuzzy, c-format
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Spara skärmbild"
+msgstr "Sparade skärmdump '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:364
-#, fuzzy
 msgid "Could not save screenshot"
-msgstr "Spara skärmbild"
+msgstr "Kunda inte spara skärmdump"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:409
 msgid "Windowed mode"
@@ -3221,14 +3193,12 @@ msgid "Switch to the previous scaler"
 msgstr "Byt till närmsta-granne-förstoring"
 
 #: backends/keymapper/hardware-input.cpp:244
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Simulera vänster musknapp"
+msgstr "Vänster musknapp"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Simulera höger musknapp"
+msgstr "Höger musknapp"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Middle Mouse Button"
@@ -3557,11 +3527,14 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"Misslyckades att starta lokal webbserver.\n"
+"Kontrollera att vald port inte används av en annan applikation och försök "
+"igen."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:68
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:110
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "Ogiltig förfrågan: headers är för långa!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:154
 #, fuzzy
@@ -3760,7 +3733,7 @@ msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:256
 msgid "Unscaled"
-msgstr ""
+msgstr "Oskalad"
 
 #: backends/platform/ds/ds-graphics.cpp:257
 msgid "Hardware scale (fast, but low quality)"
@@ -3829,11 +3802,11 @@ msgstr "Användarhandbok"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:244
 msgid "General Information"
-msgstr ""
+msgstr "Generel Information"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Nytt i ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:247
 msgid "Credits"
@@ -3849,11 +3822,11 @@ msgstr "LGPL Licens"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "Freefont License"
-msgstr ""
+msgstr "Freefont Licens"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "OFL License"
-msgstr ""
+msgstr "OFL Licens"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "BSD License"
@@ -4267,9 +4240,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Filmfilen '%s' hittades ej!"
 
 #: engines/agos/metaengine.cpp:103
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "Funktioner kompilerade i:"
+msgstr "AGOS 2 stöd är inte kompilerat in"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
@@ -4313,14 +4285,12 @@ msgid "Quick save"
 msgstr "Klickläge"
 
 #: engines/asylum/metaengine.cpp:129
-#, fuzzy
 msgid "Switch to Sarah"
-msgstr "Växla till spelet"
+msgstr "Växla till Sarah"
 
 #: engines/asylum/metaengine.cpp:134
-#, fuzzy
 msgid "Switch to Grimwall"
-msgstr "Växla till spelet"
+msgstr "Växla till Grimwall"
 
 #: engines/asylum/metaengine.cpp:139
 #, fuzzy
@@ -4445,9 +4415,8 @@ msgid "Missing game code"
 msgstr "Huvudkontroller:"
 
 #: engines/buried/buried.cpp:580
-#, fuzzy
 msgid "Are you sure you want to quit?"
-msgstr "   Är du säker på att du vill avsluta?   "
+msgstr "Är du säker på att du vill avsluta?"
 
 #: engines/buried/buried.cpp:590
 #, fuzzy
@@ -4528,7 +4497,6 @@ msgid "Unnamed autosave"
 msgstr "Namnlös sparfil"
 
 #: engines/cine/metaengine.cpp:135 engines/cine/metaengine.cpp:207
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "Namnlös sparfil"
 
@@ -4593,14 +4561,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/metaengine.cpp:220
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Grafik"
+msgstr "Felsök Grafik"
 
 #: engines/dragons/metaengine.cpp:225
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Spel)"
+msgstr "Avsluta Spel"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -4668,9 +4634,8 @@ msgid "[ press any key to exit ]"
 msgstr ""
 
 #: engines/glk/quetzal.cpp:147 engines/glk/quetzal.cpp:156
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "Namnlös sparfil"
+msgstr "Namnlös Sparfil"
 
 #: engines/glk/adrift/os_glk.cpp:2813
 msgid "Loading game...\n"
@@ -4800,12 +4765,12 @@ msgstr "Jag kan inte se. Det är för mörkt!\n"
 #: engines/glk/scott/scott.cpp:435
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Du är i en %s\n"
 
 #: engines/glk/scott/scott.cpp:437
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Jag är i en %s\n"
 
 #: engines/glk/scott/scott.cpp:442
 msgid ""
@@ -4839,7 +4804,7 @@ msgstr "Spara\n"
 
 #: engines/glk/scott/scott.cpp:643
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Du använder ord jag inte kan! "
 
 #: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
 #: engines/glk/scott/scott.cpp:1118
@@ -4878,7 +4843,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:843
 msgid "Well done.\n"
-msgstr ""
+msgstr "Bra jobbat.\n"
 
 #: engines/glk/scott/scott.cpp:852
 msgid "You are carrying:\n"
@@ -4910,11 +4875,11 @@ msgstr "Jag föll ner och bröt min nacke. "
 
 #: engines/glk/scott/scott.cpp:1022
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Du kan inte gå åt det hållet. "
 
 #: engines/glk/scott/scott.cpp:1024
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Jag kan inte gå åt det hållet. "
 
 #: engines/glk/scott/scott.cpp:1082
 msgid "It is dark.\n"
@@ -4926,7 +4891,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1109
 msgid "Nothing taken."
@@ -4947,7 +4912,7 @@ msgstr "Det är bortom min färmåga att göra det. "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1157
 msgid "Nothing dropped.\n"
@@ -5151,11 +5116,11 @@ msgstr "Spela filmer i högre hastighet"
 
 #: engines/groovie/detection.cpp:458
 msgid "Easier AI"
-msgstr ""
+msgstr "Enklare AI"
 
 #: engines/groovie/detection.cpp:459
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Reducera svårigheten för AI pussel"
 
 #: engines/groovie/detection.cpp:468
 msgid "Updated Credits Music"
@@ -5196,9 +5161,8 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "Spel-ID stöds inte"
 
 #: engines/hdb/detection.cpp:123
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Aktivera heliumläge"
+msgstr "Aktivera fuskläge"
 
 #: engines/hdb/detection.cpp:124
 msgid "Debug info and level selection becomes available"
@@ -5239,9 +5203,8 @@ msgid "Clear waypoints"
 msgstr "Radera knapp"
 
 #: engines/hdb/metaengine.cpp:250
-#, fuzzy
 msgid "Debug"
-msgstr "Debug-konsol"
+msgstr "Felsök"
 
 #: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:56
 msgid "Gore Mode"
@@ -5252,9 +5215,8 @@ msgid "Enable Gore Mode when available"
 msgstr "Aktivera våldsamt läge om tillgängligt"
 
 #: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
-#, fuzzy
 msgid "Enable cheats"
-msgstr "Aktivera heliumläge"
+msgstr "Aktivera fusk"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
@@ -6088,7 +6050,7 @@ msgstr "Öppna debug-konsolen"
 
 #: engines/nancy/dialogs.cpp:108
 msgid "Scene Number"
-msgstr ""
+msgstr "Scen Nummer"
 
 #: engines/nancy/dialogs.cpp:110
 msgid "Frame Number"
@@ -6105,11 +6067,11 @@ msgstr ""
 
 #: engines/nancy/dialogs.cpp:117
 msgid "Easy"
-msgstr ""
+msgstr "Enkel"
 
 #: engines/nancy/dialogs.cpp:121
 msgid "Hard"
-msgstr ""
+msgstr "Svår"
 
 #: engines/nancy/dialogs.cpp:124
 #, fuzzy
@@ -6123,15 +6085,15 @@ msgstr "Speltid: "
 
 #: engines/nancy/dialogs.cpp:127
 msgid "Days"
-msgstr ""
+msgstr "Dagar"
 
 #: engines/nancy/dialogs.cpp:129 engines/nancy/dialogs.cpp:139
 msgid "Hours"
-msgstr ""
+msgstr "Timmar"
 
 #: engines/nancy/dialogs.cpp:131 engines/nancy/dialogs.cpp:141
 msgid "Minutes"
-msgstr ""
+msgstr "Minuter"
 
 #: engines/nancy/dialogs.cpp:133
 msgid "Player Difficulty Level"
@@ -6139,7 +6101,7 @@ msgstr ""
 
 #: engines/nancy/dialogs.cpp:135
 msgid "Software Timer"
-msgstr ""
+msgstr "Mjukvarutimer"
 
 #: engines/nancy/dialogs.cpp:136
 #, fuzzy
@@ -6147,9 +6109,8 @@ msgid "Timer On"
 msgstr "Tid: "
 
 #: engines/nancy/dialogs.cpp:143
-#, fuzzy
 msgid "Seconds"
-msgstr "Andra ungen"
+msgstr "Sekunder"
 
 #: engines/nancy/dialogs.cpp:212
 #, fuzzy
@@ -7760,9 +7721,8 @@ msgid "Place actor at center of screen"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Debug Menu"
-msgstr "Debug-konsol"
+msgstr "Felsökningsmeny"
 
 #: engines/twine/metaengine.cpp:160
 #, fuzzy
@@ -8284,9 +8244,8 @@ msgstr "Simulera höger musknapp"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1345
-#, fuzzy
 msgid "Show help"
-msgstr "Visa alla"
+msgstr "Visa hjälp"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -8348,7 +8307,7 @@ msgstr "Debug-konsol"
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1772
 msgid "Exit"
-msgstr ""
+msgstr "Avsluta"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
@@ -8780,7 +8739,7 @@ msgstr "Trollbok"
 
 #: engines/zvision/metaengine.cpp:175
 msgid "Score"
-msgstr ""
+msgstr "Poäng"
 
 #: engines/zvision/metaengine.cpp:181
 msgid "Put away object"
