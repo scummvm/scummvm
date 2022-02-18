@@ -275,7 +275,7 @@ void Sound::waitForSpeechToFinish() {
 	}
 }
 
-int Sound::getSpeechSubtitlesMode() const {
+Display Sound::getSpeechSubtitlesMode() const {
 	if (!ConfMan.getBool("subtitles"))
 		return DISPLAY_VOC;
 	else if (!ConfMan.getBool("speech_mute"))

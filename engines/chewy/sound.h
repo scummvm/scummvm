@@ -23,6 +23,7 @@
 #define CHEWY_SOUND_H
 
 #include "audio/mixer.h"
+#include "chewy/atds.h"
 #include "chewy/chewy.h"
 
 namespace Chewy {
@@ -71,7 +72,7 @@ public:
 	/**
 	 * Returns the speech, subtitles mode from the ScummVM config
 	 */
-	int getSpeechSubtitlesMode() const;
+	Display getSpeechSubtitlesMode() const;
 
 private:
 	Audio::Mixer *_mixer;
