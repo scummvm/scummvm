@@ -99,14 +99,15 @@ int16 Room33::use_schublade() {
 void Room33::use_maschine() {
 	int16 dia_nr;
 	int16 ani_nr;
-	bool action = true;
-	bool hocker = false;
 	hide_cur();
 
 	if (!_G(spieler).R33MunterOk) {
 		auto_move(4, P_CHEWY);
 
+		bool hocker = false;
 		if (_G(spieler).inv_cur) {
+			bool action = true;
+
 			switch (_G(spieler).AkInvent) {
 			case MILCH_INV:
 				_G(spieler).R33Munter[3] = true;

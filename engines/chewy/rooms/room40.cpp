@@ -203,11 +203,11 @@ void Room40::move_train(int16 mode) {
 	_G(det)->hide_static_spr(11);
 	_G(det)->hide_static_spr(12);
 
-	if (!mode)
+	if (!mode) {
 		start_aad_wait(207, -1);
-	if (!mode)
 		auto_scroll(180, 0);
-
+	}
+	
 	_G(flags).NoScroll = false;
 	show_cur();
 }

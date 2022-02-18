@@ -248,7 +248,7 @@ void Detail::load_taf_tbl(TafInfo *fti) {
 }
 
 TafInfo *Detail::init_taf_tbl(const char *fname_) {
-	TafInfo *Tt = 0;
+	TafInfo *Tt = nullptr;
 	SpriteResource *res = new SpriteResource(_tafName);
 	int16 anz = res->getChunkCount();
 	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(TafInfo));
@@ -346,11 +346,9 @@ void Detail::get_ani_werte(int16 ani_nr, int16 *start, int16 *end) {
 }
 
 void Detail::set_ani(int16 ani_nr, int16 start, int16 end) {
-	if (start > end) {
-		int16 tmp = start;
-		start = end;
-		end = tmp;
-	}
+	if (start > end)
+		SWAP(start, end);
+
 	_rdi.Ainfo[ani_nr].start_ani = start;
 	_rdi.Ainfo[ani_nr].end_ani = end;
 }
@@ -366,8 +364,7 @@ AniDetailInfo *Detail::get_ani_detail(int16 ani_nr) {
 }
 
 int16 *Detail::get_korrektur_tbl() {
-	int16 *ret;
-	ret = _rdi.dptr->korrektur;
+	int16 *ret = _rdi.dptr->korrektur;
 	return ret;
 }
 
@@ -376,8 +373,7 @@ void Detail::init_taf(TafInfo *dptr) {
 }
 
 TafInfo *Detail::get_taf_info() {
-	TafInfo *ret;
-	ret = _rdi.dptr;
+	TafInfo *ret = _rdi.dptr;
 	return ret;
 }
 
@@ -550,9 +546,8 @@ void Detail::get_list(int16 *mv) {
 }
 
 int16 Detail::maus_vector(int16 x, int16 y) {
-	int16 i, j;
-	i = -1;
-	for (j = 0; (j < (MAX_M_ITEMS - 1) << 2) && (i == -1); j += 4) {
+	int16 i = -1;
+	for (int16 j = 0; (j < (MAX_M_ITEMS - 1) << 2) && (i == -1); j += 4) {
 		if (_rdi.mvect[j] != -1) {
 			if ((x >= _rdi.mvect[j]) && (x <= _rdi.mvect[j + 2]) &&
 			        (y >= _rdi.mvect[j + 1]) && (y <= _rdi.mvect[j + 3]))
@@ -614,17 +609,13 @@ void Detail::set_global_delay(int16 delay) {
 }
 
 void Detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
-	float tmpx;
-	float tmpy;
-	float tmpx1;
-	float tmpy1;
-	tmpx = (float)(((float) * kx / 100.0) * ((float)xzoom));
-	tmpy = (float)(((float) * ky / 100.0) * ((float)yzoom));
+	float tmpx = (float)(((float)*kx / 100.0) * ((float)xzoom));
+	float tmpy = (float)(((float)*ky / 100.0) * ((float)yzoom));
 
-	tmpx1 = tmpx - (int16)tmpx;
+	float tmpx1 = tmpx - (int16)tmpx;
 	if (fabs(tmpx1) > 0.5)
 		++tmpx;
-	tmpy1 = tmpy - (int16)tmpy;
+	float tmpy1 = tmpy - (int16)tmpy;
 	if (fabs(tmpy1) > 0.5)
 		++tmpy;
 	*kx += (int16)tmpx;
@@ -703,11 +694,9 @@ void Detail::clear_room_sound() {
 }
 
 void Detail::remove_unused_samples() {
-	bool found = false;
-
 	for (int16 k = 0; k < MAXDETAILS * MAX_SOUNDS; k++) {
 		if (_rdi.tvp_index[k] != -1) {
-			found = false;
+			bool found = false;
 			for (int16 i = 0; (i < MAXDETAILS) && (found == false); i++) {
 				for (int16 j = 0; (j < MAX_SOUNDS) && (found == false); j++)
 					if (_rdi.Ainfo[i].sfx.sound_index[j] == k)
