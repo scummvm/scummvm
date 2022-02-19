@@ -30,8 +30,6 @@ namespace Rooms {
 class Room37 {
 private:
 	static void setup_func();
-	static int16 cut_serv1(int16 frame);
-	static int16 cut_serv2(int16 frame);
 	static void hahn_dia();
 	static void dog_bell();
 
@@ -43,6 +41,9 @@ public:
 	static int16 use_glas();
 	static void talk_hahn();
 	static void use_hahn();
+
+	static int16 cut_serv1(int16 frame);
+	static int16 cut_serv2(int16 frame);
 };
 
 } // namespace Rooms

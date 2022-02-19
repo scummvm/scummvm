@@ -240,9 +240,7 @@ int16 Room54::use_zelle() {
 				_G(SetUpScreenFunc) = nullptr;
 				auto_scroll(176, 0);
 				go_auto_xy(239, 101, P_HOWARD, ANI_WAIT);
-				_G(flc)->set_flic_user_function(cut_serv);
 				flic_cut(FCUT_069);
-				_G(flc)->remove_flic_user_function();
 
 				del_inventar(_G(spieler).AkInvent);
 				invent_2_slot(LEDER_INV);

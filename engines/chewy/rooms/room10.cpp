@@ -53,9 +53,7 @@ void Room10::get_surimy() {
 	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
-	_G(flc)->set_custom_user_function(cut_serv);
 	flic_cut(FCUT_006);
-	_G(flc)->remove_custom_user_function();
 	_G(spieler).R10SurimyOk = true;
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATEI);

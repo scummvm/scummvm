@@ -159,13 +159,9 @@ int Room87::proc4() {
 	hide_cur();
 	auto_move(1, P_CHEWY);
 	flic_cut(FCUT_093);
-	_G(flc)->set_custom_user_function(proc3);
 	flic_cut(FCUT_094);
-	_G(flc)->remove_custom_user_function();
-	_G(flc)->set_custom_user_function(proc5);
 	start_aad(472);
 	flic_cut(FCUT_095);
-	_G(flc)->remove_custom_user_function();
 	flic_cut(FCUT_096);
 	_G(det)->hide_static_spr(2);
 	_G(det)->start_detail(2, 255, false);

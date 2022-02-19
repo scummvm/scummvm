@@ -31,7 +31,6 @@ private:
 	static void verleger_mov(int16 mode);
 	static void mans2rock();
 	static void rock2mans();
-	static int16 cut_serv(int16 frame);
 	static void setup_func();
 
 public:
@@ -45,6 +44,8 @@ public:
 	static int16 use_kammeraus();
 	static void strasse(int16 mode);
 	static void talk_line();
+
+	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

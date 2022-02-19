@@ -27,7 +27,6 @@ namespace Rooms {
 
 class Room64 {
 private:
-	static int16 cut_sev(int16 frame);
 	static void chewy_entry();
 	static void calc_monitor();
 	static void setup_func();
@@ -37,6 +36,8 @@ public:
 	static int16 use_tasche();
 	static void talk_man();
 	static void talk_man(int16 aad_nr);
+
+	static int16 cut_sev(int16 frame);
 };
 
 } // namespace Rooms

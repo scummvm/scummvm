@@ -28,7 +28,6 @@ namespace Rooms {
 class Room54 {
 private:
 	static void setup_func();
-	static int16 cut_serv(int16 frame);
 	static void aufzug_ab();
 
 public:
@@ -39,6 +38,8 @@ public:
 	static int16 use_zelle();
 	static short use_taxi();
 	static int16 use_azug();
+
+	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms
