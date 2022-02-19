@@ -89,7 +89,7 @@ void Room45::xit(int16 eib_nr) {
 
 	if (eib_nr == 87) {
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(FCUT_073, CFO_MODE);
+		flic_cut(FCUT_073);
 	}
 }
 

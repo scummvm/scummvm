@@ -745,7 +745,7 @@ void Room0::feederAni() {
 			auto_move(VERSTECK_POS, P_CHEWY);
 			set_up_screen(DO_SETUP);
 			_G(out)->cls();
-			flic_cut(FCUT_001, CFO_MODE);
+			flic_cut(FCUT_001);
 
 			register_cutscene(1);
 

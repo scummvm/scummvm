@@ -47,7 +47,7 @@ static const MovLine R13_BORK_MPKT[3] = {
 void Room13::entry() {
 	if (!_G(spieler).R12ChewyBork && !_G(spieler).R13BorkOk) {
 		_G(out)->cls();
-		flic_cut(FCUT_013, CFO_MODE);
+		flic_cut(FCUT_013);
 		set_person_pos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
@@ -128,7 +128,7 @@ void Room13::talk_bork() {
 
 		start_spz(68, 255, false, P_CHEWY);
 		start_aad_wait(248, -1);
-		flic_cut(FCUT_014, CFO_MODE);
+		flic_cut(FCUT_014);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(auto_obj) = 0;
 		_G(flags).NoScroll = false;
@@ -172,7 +172,7 @@ void Room13::jmp_band() {
 			start_aad_wait(117, -1);
 			_G(flags).NoScroll = true;
 			auto_scroll(76, 0);
-			flic_cut(FCUT_015, CFO_MODE);
+			flic_cut(FCUT_015);
 			_G(flags).NoScroll = false;
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
@@ -184,7 +184,7 @@ void Room13::jmp_band() {
 			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			switch_room(14);
 
-			flic_cut(FCUT_018, CFO_MODE);
+			flic_cut(FCUT_018);
 			register_cutscene(6);
 			_G(spieler).scrollx = 92;
 			_G(spieler).scrolly = 120;

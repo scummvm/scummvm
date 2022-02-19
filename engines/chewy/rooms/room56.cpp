@@ -65,7 +65,7 @@ void Room56::entry() {
 			set_up_screen(DO_SETUP);
 
 			if (!_G(spieler).R56GetTabak) {
-				flic_cut(FCUT_074, CFO_MODE);
+				flic_cut(FCUT_074);
 				_G(det)->show_static_spr(2);
 			}
 
@@ -101,7 +101,7 @@ void Room56::entry() {
 			hide_cur();
 			start_aad_wait(306, -1);
 			show_cur();
-			flic_cut(FCUT_076, CFO_MODE);
+			flic_cut(FCUT_076);
 			esi = 1;
 			cur_2_inventory();
 			remove_inventory(56);
@@ -122,7 +122,7 @@ void Room56::entry() {
 				if (_G(spieler).flags33_80) {
 					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
-					flic_cut(113, CFO_MODE);
+					flic_cut(113);
 					_G(spieler).PersonRoomNr[P_HOWARD] = 89;
 					load_chewy_taf(CHEWY_NORMAL);
 					_G(spieler).mi[P_HOWARD] = 0;
@@ -163,7 +163,7 @@ void Room56::entry() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(116, CFO_MODE);
+		flic_cut(116);
 		register_cutscene(21);
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
@@ -174,7 +174,7 @@ void Room56::entry() {
 	case 2:
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
-		flic_cut(110, CFO_MODE);
+		flic_cut(110);
 		_G(spieler).flags34_20 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
 		switch_room(90);
@@ -299,7 +299,7 @@ int16 Room56::use_kneipe() {
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
 				start_detail_wait(12, 3, ANI_VOR);
-				flic_cut(75, CFO_MODE);
+				flic_cut(75);
 				g_engine->_sound->stopSound(0);
 				g_engine->_sound->playSound(9);
 				_G(det)->start_detail(10, 6, ANI_VOR);
@@ -330,7 +330,7 @@ int16 Room56::use_kneipe() {
 		if (_G(spieler).flags34_10) {
 			_G(spieler).flags33_80 = true;
 			auto_move(4, P_CHEWY);
-			flic_cut(111, CFO_MODE);
+			flic_cut(111);
 			_G(fx_blend) = BLEND3;
 			start_aad_wait(522, -1);
 			start_spz_wait(66, 1, false, P_CHEWY);
@@ -354,7 +354,7 @@ int16 Room56::use_kneipe() {
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		_G(flc)->set_custom_user_function(proc1);
-		flic_cut(112, CFO_MODE);
+		flic_cut(112);
 		_G(flc)->remove_custom_user_function();
 		register_cutscene(31);
 

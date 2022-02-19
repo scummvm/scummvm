@@ -45,7 +45,9 @@ void MainMenu::execute() {
 		if (!_G(modul))
 			_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
 
-		flic_cut(200, 0);
+		// NOTE: Originally, this was set to play video 200, but this actually
+		// jumped to the very last video in the file, so we play it explicitly
+		flic_cut(FCUT_160);
 		_G(sndPlayer)->stopMod();
 	}
 
@@ -95,7 +97,7 @@ void MainMenu::execute() {
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(out)->set_pointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(135, CFO_MODE);
+			flic_cut(135);
 			break;
 
 		case MM_LOAD_GAME:
@@ -121,7 +123,7 @@ void MainMenu::execute() {
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(flags).NoPalAfterFlc = true;
 			_G(flc)->set_custom_user_function(creditsFn);
-			flic_cut(159, CFO_MODE);
+			flic_cut(159);
 			_G(flc)->remove_custom_user_function();
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			Dialogs::Credits::execute();

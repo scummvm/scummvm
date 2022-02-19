@@ -212,7 +212,7 @@ int16 Room55::use_telefon() {
 				_G(det)->hide_static_spr(0);
 				_G(det)->hide_static_spr(8);
 				_G(atds)->set_ats_str(354, 1, ATS_DATEI);
-				flic_cut(FCUT_071, CFO_MODE);
+				flic_cut(FCUT_071);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 
 				set_person_pos(178, 75, P_CHEWY, P_LEFT);
@@ -238,7 +238,7 @@ int16 Room55::use_telefon() {
 					SHOULD_QUIT_RETURN0;
 				}
 
-				flic_cut(FCUT_072, CFO_MODE);
+				flic_cut(FCUT_072);
 				register_cutscene(19);
 				
 				_G(flags).NoScroll = false;
@@ -368,7 +368,7 @@ int16 Room55::use_kammeraus() {
 			start_detail_wait(5, 1, ANI_VOR);
 			_G(det)->show_static_spr(10);
 			_G(flc)->set_flic_user_function(cut_serv);
-			flic_cut(FCUT_070, CFO_MODE);
+			flic_cut(FCUT_070);
 			register_cutscene(18);
 		
 			_G(flc)->remove_flic_user_function();

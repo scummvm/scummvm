@@ -184,14 +184,14 @@ int16 Room39::use_tv() {
 		_G(flags).NoPalAfterFlc = true;
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
-		flic_cut(FCUT_042, CFO_MODE);
+		flic_cut(FCUT_042);
 		++_G(spieler).R39TvKanal;
 		_G(flags).NoPalAfterFlc = true;
 
 		if (_G(spieler).R39TvKanal == 2)
-			flic_cut(FCUT_036, CFO_MODE);
+			flic_cut(FCUT_036);
 		else if (_G(spieler).R39TvKanal == 5)
-			flic_cut(FCUT_033, CFO_MODE);
+			flic_cut(FCUT_033);
 
 		look_tv(false);
 		set_tv();
@@ -219,14 +219,14 @@ int16 Room39::use_tv() {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			_G(spieler).R39TransMensch = true;
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(FCUT_041, CFO_MODE);
+			flic_cut(FCUT_041);
 			_G(spieler).R39TvKanal = 0;
 			_G(spieler).R39ClintNews = 0;
 			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			_G(out)->set_palette(_G(pal));
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(TV_FLIC[0], CFO_MODE);
+			flic_cut(TV_FLIC[0]);
 
 			_G(out)->cls();
 			_G(out)->set_pointer(nullptr);
@@ -321,7 +321,7 @@ void Room39::look_tv(bool cls_mode) {
 			}
 
 			_G(flc)->set_custom_user_function(setup_func);
-			flic_cut(flic_nr, CFO_MODE);
+			flic_cut(flic_nr);
 			_G(flc)->remove_custom_user_function();
 
 			if (cls_mode) {

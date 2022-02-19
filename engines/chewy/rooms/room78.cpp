@@ -59,7 +59,7 @@ void Room78::entry() {
 			set_up_screen(DO_SETUP);
 		}
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(101, CFO_MODE);
+		flic_cut(101);
 		destRoom = 79;
 	} else {
 		_G(det)->start_detail(0, 255, false);
@@ -98,7 +98,7 @@ void Room78::entry() {
 						if (flag1 == 0) {
 							_G(det)->start_detail(5, 1, false);
 						} else {
-							start_detail_wait(5, 1, CFO_MODE);
+							start_detail_wait(5, 1, ANI_VOR);
 						}
 					} else {
 						if (det4DestX <= 0)
