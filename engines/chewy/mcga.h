@@ -29,7 +29,6 @@ namespace Chewy {
 
 void init_mcga();
 
-void set_pointer(byte *ptr);
 byte *get_dispoff();
 
 void setScummVMPalette(const byte *palette, uint start, uint count);

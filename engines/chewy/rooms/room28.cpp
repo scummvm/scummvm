@@ -105,7 +105,7 @@ void Room28::entry(int16 eib_nr) {
 			case 77:
 				if (_G(spieler).R28PostCar) {
 					_G(spieler).R28PostCar = false;
-					_G(out)->setze_zeiger(nullptr);
+					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_063, CFO_MODE);
 					_G(spieler).R28ChewyPump = false;

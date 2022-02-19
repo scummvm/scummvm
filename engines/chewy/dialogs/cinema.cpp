@@ -63,7 +63,7 @@ void Cinema::execute() {
 
 	for (bool endLoop = false; !endLoop;) {
 		timer_nr = 0;
-		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->set_pointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
@@ -161,7 +161,7 @@ void Cinema::execute() {
 		case Common::KEYCODE_RETURN:
 			hide_cur();
 			_G(out)->cls();
-			_G(out)->setze_zeiger(_G(screen0));
+			_G(out)->set_pointer(_G(screen0));
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
@@ -189,7 +189,7 @@ void Cinema::execute() {
 
 			if (flag) {
 				flag = false;
-				_G(out)->setze_zeiger(_G(screen0));
+				_G(out)->set_pointer(_G(screen0));
 				_G(room)->set_ak_pal(&_G(room_blk));
 				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {

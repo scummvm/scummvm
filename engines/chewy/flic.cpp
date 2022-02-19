@@ -207,9 +207,9 @@ int16 Flic::decode_frame() {
 				break;
 
 			case CLS:
-				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->set_pointer(_virtScreen);
 				_G(out)->cls();
-				_G(out)->setze_zeiger(nullptr);
+				_G(out)->set_pointer(nullptr);
 
 				update_flag = true;
 				break;
@@ -232,9 +232,9 @@ int16 Flic::decode_frame() {
 		}
 		if (update_flag != false) {
 			if (_flicUser) {
-				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->set_pointer(_virtScreen);
 				action_ret = _flicUser(_currentFrame);
-				_G(out)->setze_zeiger(nullptr);
+				_G(out)->set_pointer(nullptr);
 			}
 			_G(out)->back2screen(_virtScreen - 4);
 			if (_fadeFlag != false) {
@@ -612,9 +612,9 @@ void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case CLEAR_SCREEN:
-			_G(out)->setze_zeiger(_virtScreen);
+			_G(out)->set_pointer(_virtScreen);
 			_G(out)->cls();
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			break;
 
@@ -662,9 +662,9 @@ int16 Flic::decode_cframe() {
 				break;
 
 			case CLS:
-				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->set_pointer(_virtScreen);
 				_G(out)->cls();
-				_G(out)->setze_zeiger(nullptr);
+				_G(out)->set_pointer(nullptr);
 
 				update_flag = true;
 				break;
@@ -692,9 +692,9 @@ int16 Flic::decode_cframe() {
 		if (update_flag != false) {
 			if (_customUser) {
 				_G(out)->back2back(_virtScreen, _loadBuffer);
-				_G(out)->setze_zeiger(_virtScreen);
+				_G(out)->set_pointer(_virtScreen);
 				action_ret = _customUser(_currentFrame);
-				_G(out)->setze_zeiger(nullptr);
+				_G(out)->set_pointer(nullptr);
 				_G(out)->back2screen(_virtScreen - 4);
 				_G(out)->back2back(_loadBuffer, _virtScreen);
 			} else

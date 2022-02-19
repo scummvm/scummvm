@@ -93,7 +93,7 @@ void MainMenu::execute() {
 
 		case MM_VIEW_INTRO:
 			_G(fx)->border(_G(workpage), 100, 0, 0);
-			_G(out)->setze_zeiger(_G(workptr));
+			_G(out)->set_pointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(135, CFO_MODE);
 			break;
@@ -112,7 +112,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_QUIT:
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			done = true;
 			break;
@@ -151,13 +151,13 @@ void MainMenu::animate() {
 	}
 
 	++_G(FrameSpeed);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
 		_G(spieler).scrollx, _G(spieler).scrolly);
 
 	if (_G(SetUpScreenFunc) && !_G(menu_display) && !_G(flags).InventMenu) {
 		_G(SetUpScreenFunc)();
-		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->set_pointer(_G(workptr));
 	}
 
 	sprite_engine();
@@ -166,7 +166,7 @@ void MainMenu::animate() {
 	_G(cur)->plot_cur();
 	_G(maus_links_click) = false;
 	_G(menu_flag) = 0;
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(out)->back2screen(_G(workpage));
 
 	g_screen->update();
@@ -231,7 +231,7 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	_G(flags).SaveMenu = true;
 	savePersonAni();
-	_G(out)->setze_zeiger(_G(screen0));
+	_G(out)->set_pointer(_G(screen0));
 	_G(out)->set_fontadr(_G(font6x8));
 	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 	cursor_wahl(CUR_SAVE);

@@ -2179,7 +2179,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).scrolly = 0;
 
 		_G(room)->load_tgp(BUCH_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
-		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->set_pointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->back2screen(_G(workpage));
 

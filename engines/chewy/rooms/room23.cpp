@@ -85,7 +85,7 @@ int16 Room23::start_gleiter() {
 					_G(det)->stop_detail(i);
 
 				if (_G(spieler).R23GleiterExit == 14) {
-					_G(out)->setze_zeiger(nullptr);
+					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 					_G(flags).NoPalAfterFlc = true;
 					flic_cut(FCUT_012, CFO_MODE);
@@ -104,7 +104,7 @@ int16 Room23::start_gleiter() {
 					_G(maus_links_click) = false;
 
 				} else if (_G(spieler).R23GleiterExit == 16) {
-					_G(out)->setze_zeiger(nullptr);
+					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_019_01, CFO_MODE);
 					_G(spieler).R23GleiterExit = 25;

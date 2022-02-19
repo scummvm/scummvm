@@ -39,16 +39,6 @@ void init_mcga() {
 	_G(spriteWidth) = 0;
 }
 
-void set_pointer(byte *ptr) {
-	if (ptr) {
-		_G(currentScreen) = ptr;
-	} else if (_G(screenHasDefault)) {
-		_G(currentScreen) = _G(screenDefaultP);
-	} else {
-		_G(currentScreen) = (byte *)g_screen->getPixels();
-	}
-}
-
 byte *get_dispoff() {
 	return SCREEN;
 }

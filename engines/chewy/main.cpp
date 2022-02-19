@@ -350,7 +350,7 @@ bool main_loop(int16 mode) {
 		case Common::KEYCODE_F6:
 			_G(flags).SaveMenu = true;
 
-			_G(out)->setze_zeiger(_G(screen0));
+			_G(out)->set_pointer(_G(screen0));
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 			cursor_wahl(CUR_SAVE);
@@ -365,7 +365,7 @@ bool main_loop(int16 mode) {
 			_G(cur_display) = true;
 			_G(flags).SaveMenu = false;
 			_G(cur)->show_cur();
-			_G(out)->setze_zeiger(_G(workptr));
+			_G(out)->set_pointer(_G(workptr));
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -420,7 +420,7 @@ bool main_loop(int16 mode) {
 				_G(out)->set_fontadr(_G(font6x8));
 				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 
-				_G(out)->setze_zeiger(_G(screen0));
+				_G(out)->set_pointer(_G(screen0));
 				cursor_wahl(CUR_SAVE);
 				int16 ret = Dialogs::Files::execute(true);
 				if (ret == IOG_END) {
@@ -428,7 +428,7 @@ bool main_loop(int16 mode) {
 					_G(fx_blend) = BLEND4;
 				}
 
-				_G(out)->setze_zeiger(_G(workptr));
+				_G(out)->set_pointer(_G(workptr));
 				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_AUSBLENDEN;
 
@@ -540,7 +540,7 @@ void set_up_screen(SetupScreenMode mode) {
 		_G(det)->set_global_delay(_G(spieler).DelaySpeed);
 	}
 	++_G(FrameSpeed);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 
 	for (i = 0; i < MAX_PERSON; i++)
@@ -548,7 +548,7 @@ void set_up_screen(SetupScreenMode mode) {
 
 	if (_G(SetUpScreenFunc) && _G(menu_display) == 0 && !_G(flags).InventMenu) {
 		_G(SetUpScreenFunc)();
-		_G(out)->setze_zeiger(_G(workptr));
+		_G(out)->set_pointer(_G(workptr));
 	}
 
 	sprite_engine();
@@ -667,7 +667,7 @@ void set_up_screen(SetupScreenMode mode) {
 	_G(maus_links_click) = false;
 	_G(menu_flag) = false;
 	if (mode == DO_SETUP) {
-		_G(out)->setze_zeiger(nullptr);
+		_G(out)->set_pointer(nullptr);
 		switch (_G(fx_blend)) {
 		case BLEND1:
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -682,9 +682,9 @@ void set_up_screen(SetupScreenMode mode) {
 			break;
 
 		case BLEND4:
-			_G(out)->setze_zeiger(_G(workptr));
+			_G(out)->set_pointer(_G(workptr));
 			_G(out)->cls();
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			break;
 

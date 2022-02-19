@@ -57,8 +57,14 @@ void McgaGraphics::set_clip(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_G(clipy2) = y2;
 }
 
-void McgaGraphics::setze_zeiger(byte *ptr) {
-	set_pointer(ptr);
+void McgaGraphics::set_pointer(byte *ptr) {
+	if (ptr) {
+		_G(currentScreen) = ptr;
+	} else if (_G(screenHasDefault)) {
+		_G(currentScreen) = _G(screenDefaultP);
+	} else {
+		_G(currentScreen) = (byte *)g_screen->getPixels();
+	}
 }
 
 byte *McgaGraphics::get_zeiger() {

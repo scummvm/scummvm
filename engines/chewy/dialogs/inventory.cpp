@@ -54,7 +54,7 @@ void Inventory::plot_menu() {
 	int16 *xy;
 	int16 x, y;
 	int16 x1, y1;
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	build_menu(WIN_INVENTAR);
 
 	for (j = 0; j < 3; j++) {
@@ -380,7 +380,7 @@ void Inventory::menu() {
 			}
 			if (menu_flag1 == false)
 				_G(cur)->plot_cur();
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			if (menu_flag1 == MENU_EINBLENDEN) {
 				_G(fx)->blende1(_G(workptr), _G(screen0), 0, 200, 0, 300);
 			} else if (menu_flag1 == MENU_AUSBLENDEN)
@@ -693,11 +693,11 @@ void Inventory::showDiary() {
 	_G(spieler).scrolly = 0;
 
 	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 	_G(out)->back2screen(_G(workpage));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 
 	while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
@@ -714,7 +714,7 @@ void Inventory::showDiary() {
 	_G(spieler).scrolly = scrolly;
 	set_up_screen(NO_SETUP);
 	Dialogs::Inventory::plot_menu();
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 }

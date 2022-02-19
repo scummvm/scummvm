@@ -46,7 +46,7 @@ void Room50::entry(int16 eib_nr) {
 		set_person_pos(1, 64, P_HOWARD, P_RIGHT);
 		set_person_pos(92, 123, P_CHEWY, P_LEFT);
 		start_aad_wait(510, -1);
-		_G(out)->setze_zeiger(nullptr);
+		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(108, 0);

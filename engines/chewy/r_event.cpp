@@ -781,7 +781,7 @@ void print_rows(int16 id) {
 	_G(out)->set_fontadr(_G(font8x8));
 	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
 	txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
 		s = _G(txt)->str_pos(txtStr, i);
@@ -860,7 +860,7 @@ static void flic_proc1() {
 		else if (VALS1[i] == 143)
 			load_room_music(260);
 		if (VALS2[i]) {
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 		}
 
@@ -887,7 +887,7 @@ static void flic_proc1() {
 
 	_G(flc)->remove_custom_user_function();
 	if (ret == -1) {
-		_G(out)->setze_zeiger(nullptr);
+		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
 		start_aad(595);
@@ -900,7 +900,7 @@ static void flic_proc1() {
 		}
 	}
 
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->cls();
 }
 
@@ -921,7 +921,7 @@ void flic_cut(int16 nr, int16 mode) {
 	static const int16 FLIC_CUT_1113[] = { 113, 106, 103, 118, 120 };
 	int16 i, ret = 0;
 
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(det)->disable_room_sound();
 	_G(sndPlayer)->endSound();
 	g_events->delay(50);
@@ -1109,7 +1109,7 @@ void flic_cut(int16 nr, int16 mode) {
 				g_engine->playVideo(FLIC_CUT_133[i]);
 #endif
 				if (i == 0 || i == 1) {
-					_G(out)->setze_zeiger(nullptr);
+					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 				}
 			}
@@ -1646,7 +1646,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 	_G(atds)->stop_aad();
 	_G(atds)->stop_ats();
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(flags).NoPalAfterFlc = false;
 }
 

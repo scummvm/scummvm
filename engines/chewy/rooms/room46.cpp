@@ -131,7 +131,7 @@ void Room46::bodo() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(1, 1, ANI_VOR);
 	flic_cut(FCUT_065, CFO_MODE);
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(out)->cls();
 	register_cutscene(16);
 	
@@ -154,7 +154,7 @@ void Room46::kloppe() {
 		_G(mem)->file->select_pool_item(_G(Ci).Handle, FCUT_065);
 		_G(flc)->custom_play(&_G(Ci));
 		
-		_G(out)->setze_zeiger(nullptr);
+		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		start_aad(244 + i, -1);
 		int16 delay = _G(spieler).DelaySpeed * 50;
