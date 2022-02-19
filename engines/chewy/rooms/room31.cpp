@@ -163,7 +163,7 @@ int16 Room31::use_topf() {
 					start_ani_block(3, ABLOCK30);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 					del_inventar(_G(spieler).AkInvent);
-					_G(obj)->add_inventar(MILCH_LEER_INV, &_G(room_blk));
+					_G(obj)->addInventory(MILCH_LEER_INV, &_G(room_blk));
 					inventory_2_cur(MILCH_LEER_INV);
 					ani_nr = CH_TALK6;
 					dia_nr = 151;

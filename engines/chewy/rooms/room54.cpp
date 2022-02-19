@@ -215,7 +215,7 @@ void Room54::talk_verkauf() {
 		auto_move(4, P_CHEWY);
 
 		start_aad(_G(spieler).R45MagOk ? 312 : 578, -1);
-		_G(obj)->add_inventar(BURGER_INV, &_G(room_blk));
+		_G(obj)->addInventory(BURGER_INV, &_G(room_blk));
 		inventory_2_cur(BURGER_INV);
 	} else {
 		start_aad_wait(313, -1);

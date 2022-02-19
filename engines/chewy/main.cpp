@@ -1715,7 +1715,7 @@ void set_ani_screen() {
 }
 
 void del_inventar(int16 nr) {
-	_G(obj)->del_inventar(nr, &_G(room_blk));
+	_G(obj)->delInventory(nr, &_G(room_blk));
 	_G(spieler).inv_cur = false;
 	_G(menu_item) = CUR_WALK;
 	_G(spieler).AkInvent = -1;

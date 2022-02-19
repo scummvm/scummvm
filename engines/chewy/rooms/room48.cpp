@@ -58,13 +58,13 @@ void Room48::calc_pic() {
 	_G(spieler).R48Auswahl[1] = 1;
 	_G(spieler).R48Auswahl[2] = 1;
 
-	if (_G(obj)->check_inventar(VCARD_INV)) {
+	if (_G(obj)->checkInventory(VCARD_INV)) {
 		_G(spieler).R48Auswahl[3] = 1;
 		_G(atds)->del_steuer_bit(312, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(det)->show_static_spr(4);
 	}
 
-	if (_G(obj)->check_inventar(KAPPE_INV)) {
+	if (_G(obj)->checkInventory(KAPPE_INV)) {
 		_G(spieler).R48Auswahl[4] = 1;
 		_G(atds)->del_steuer_bit(313, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(det)->show_static_spr(4);

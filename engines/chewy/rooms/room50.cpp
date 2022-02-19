@@ -218,7 +218,7 @@ int16 Room50::use_gum() {
 		_G(det)->del_static_ani(10);
 		go_page();
 
-		_G(obj)->add_inventar(KEY_INV, &_G(room_blk));
+		_G(obj)->addInventory(KEY_INV, &_G(room_blk));
 		inventory_2_cur(KEY_INV);
 		_G(atds)->set_ats_str(323, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(327, 1, ATS_DATEI);

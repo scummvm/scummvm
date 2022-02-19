@@ -133,7 +133,7 @@ bool Room8::gips_wurf() {
 		wait_detail(5);
 		_G(spieler).R8GipsWurf = true;
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
-		_G(obj)->set_inventar(MASKE_INV, 181, 251, 8, &_G(room_blk));
+		_G(obj)->setInventory(MASKE_INV, 181, 251, 8, &_G(room_blk));
 		_G(det)->del_taf_tbl(116, 30, nullptr);
 		auto_move(8, P_CHEWY);
 		_G(flags).AtsAction = false;

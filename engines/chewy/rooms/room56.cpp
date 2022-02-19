@@ -318,7 +318,7 @@ int16 Room56::use_kneipe() {
 
 				_G(SetUpScreenFunc) = setup_func;
 				_G(flags).NoScroll = false;
-				if (_G(obj)->check_inventar(SACKGELD_INV)) {
+				if (_G(obj)->checkInventory(SACKGELD_INV)) {
 					remove_inventory(SACKGELD_INV);
 					start_aad_wait(309, -1);
 				}

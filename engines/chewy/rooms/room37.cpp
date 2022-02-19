@@ -331,7 +331,7 @@ void Room37::use_hahn() {
 			_G(det)->hide_static_spr(8);
 			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(141, -1);
-			_G(obj)->add_inventar(EIER_INV, &_G(room_blk));
+			_G(obj)->addInventory(EIER_INV, &_G(room_blk));
 			inventory_2_cur(EIER_INV);
 			show_cur();
 		}

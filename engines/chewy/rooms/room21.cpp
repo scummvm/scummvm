@@ -96,7 +96,7 @@ void Room21::calc_laser() {
 	}
 
 	if (!_G(spieler).R21Hebel1 && _G(spieler).R21Hebel2 && !_G(spieler).R21Hebel3) {
-		if (!_G(obj)->check_inventar(SEIL_INV) && !_G(spieler).R17Seil) {
+		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(spieler).R17Seil) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
 			_G(atds)->del_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
 		}

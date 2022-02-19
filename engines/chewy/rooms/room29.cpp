@@ -61,7 +61,7 @@ void Room29::entry() {
 }
 
 void Room29::xit() {
-	if (_G(obj)->check_inventar(PUMPE_INV))
+	if (_G(obj)->checkInventory(PUMPE_INV))
 		del_inventar(PUMPE_INV);
 }
 

@@ -59,7 +59,7 @@ void Room25::entry() {
 	if (!_G(spieler).R25FirstEntry) {
 		hide_cur();
 
-		if (_G(obj)->check_inventar(TRANSLATOR_INV)) {
+		if (_G(obj)->checkInventory(TRANSLATOR_INV)) {
 			_G(obj)->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
 			_G(atds)->set_ats_str(113, 0, ATS_DATEI);
 
@@ -119,7 +119,7 @@ int16 Room25::gleiter_loesch() {
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);
-			_G(obj)->add_inventar(MILCH_WAS_INV, &_G(room_blk));
+			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
 			start_aad_wait(253, -1);
 		}
