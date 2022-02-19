@@ -59,10 +59,6 @@ MovClass::~MovClass() {
 }
 
 void MovClass::goto_xy(GotoPkt *gp) {
-	int16 start_feld;
-	int16 ziel_feld;
-	//int16 anz;
-	int16 tmp;
 	_gpkt = gp;
 	_agv.AutoGo = false;
 	_agv.Continue = false;
@@ -72,10 +68,10 @@ void MovClass::goto_xy(GotoPkt *gp) {
 	calc_xy();
 	_plotDelay = 0;
 
-	start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
-	ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
-	tmp = ziel_feld;
-	/*anz = */calc_go(start_feld, &ziel_feld);
+	int16 start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
+	int16 ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
+	int16 tmp = ziel_feld;
+	calc_go(start_feld, &ziel_feld);
 
 	if (tmp != ziel_feld) {
 		get_mov_line();
@@ -100,14 +96,10 @@ void MovClass::goto_xy(GotoPkt *gp) {
 }
 
 int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
-	byte *speicher;
-	int16 i;
-	int16 ok;
-	int16 ret;
-	ret = -1;
+	int16 ret = -1;
 
 	if (_agv.AutoGo == true) {
-		speicher = _gpkt->Mem;
+		byte *speicher = _gpkt->Mem;
 		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
 		if (!_agv.Start) {
 			_agv.Start = _agv.PktAnz;
@@ -149,7 +141,7 @@ int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 							*auto_y = _gpkt->Dy;
 							ret = true;
 						} else {
-							ok = 0;
+							int16 ok = 0;
 							if (_feld1knoten) {
 								_feld1knoten = false;
 								_agv.LastFeld = _agv.AkFeld;
@@ -158,7 +150,7 @@ int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 								if (_agv.AkFeld != -1)
 									ok = 1;
 							} else {
-								for (i = 0; i < 4 && !ok; i++) {
+								for (int16 i = 0; i < 4 && !ok; i++) {
 									if (speicher[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_IDX) {
 										if (_agv.AkFeld + _vecTbl[i] != _agv.LastFeld) {
 											_agv.LastFeld = _agv.AkFeld;
@@ -212,32 +204,22 @@ bool MovClass::auto_go_status() {
 }
 
 void MovClass::calc_xy() {
-	int16 ende;
-	int16 i;
-	int16 seite;
-	int16 count;
-	int16 anz;
-	int16 x, y;
-	int16 min_x, min_y;
-	int16 min_steps;
-	int16 aksteps;
 	int16 xvector = 0;
 	int16 yvector = 0;
-	int16 tmp_feld;
 
 	if (!_G(ged)->ged_idx(_gpkt->Dx, _gpkt->Dy, _gpkt->Breite, _gpkt->Mem)) {
-		ende = 0;
-		count = 0;
-		min_x = -1;
-		min_y = -1;
+		int16 ende = 0;
+		int16 count = 0;
+		int16 min_x = -1;
+		int16 min_y = -1;
 
 		while (!ende) {
-			min_steps = 30000;
-			x = _gpkt->Dx - (count + 1) * 8;
-			y = _gpkt->Dy - (count + 1) * 8;
+			int16 min_steps = 30000;
+			int16 x = _gpkt->Dx - (count + 1) * 8;
+			int16 y = _gpkt->Dy - (count + 1) * 8;
 
-			for (seite = 0; seite < 4; seite++) {
-				anz = 2 + (count * 2);
+			for (int16 seite = 0; seite < 4; seite++) {
+				int16 anz = 2 + (count * 2);
 
 				switch (seite) {
 				case S_OBEN:
@@ -264,11 +246,11 @@ void MovClass::calc_xy() {
 					break;
 				}
 
-				for (i = 0; i < anz; i++) {
+				for (int16 i = 0; i < anz; i++) {
 					if (x >= 0 && x < _gpkt->Breite * 8 &&
 					        y >= 0 && y < _gpkt->Hoehe * 8) {
 						if (_G(ged)->ged_idx(x, y, _gpkt->Breite, _gpkt->Mem)) {
-							aksteps = abs(_gpkt->Dx - x);
+							int16 aksteps = abs(_gpkt->Dx - x);
 							aksteps += abs(_gpkt->Dy - y);
 							if (aksteps < min_steps) {
 								min_steps = aksteps;
@@ -285,7 +267,7 @@ void MovClass::calc_xy() {
 			++count;
 			if (min_steps != 30000) {
 				ende = 1;
-				tmp_feld = get_feld_nr(min_x, min_y);
+				int16 tmp_feld = get_feld_nr(min_x, min_y);
 				get_feld_xy(tmp_feld, &_gpkt->Dx, &_gpkt->Dy);
 				_gpkt->Dx += 4;
 				_gpkt->Dy += 4;
@@ -295,14 +277,6 @@ void MovClass::calc_xy() {
 }
 
 short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
-	int16 tmpx;
-	int16 tmpy;
-	int16 tmpz;
-
-	int16 ende;
-	int16 mov_ok;
-	int16 steps;
-	int16 abbruch;
 	int16 new_vector = true;
 	ObjMov om;
 	MovInfo mi;
@@ -313,17 +287,17 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 	mi.XyzStart[0] = om.Xypos[0];
 	mi.XyzStart[1] = om.Xypos[1];
 	get_mov_vector(mi.XyzStart, mi.Vorschub, &om);
-	ende = 0;
-	mov_ok = 0;
-	steps = 0;
-	abbruch = 0;
+	int16 ende = 0;
+	int16 mov_ok = 0;
+	int16 steps = 0;
+	int16 abbruch = 0;
 
 	while (!ende && !abbruch) {
 		if (om.Count > 0) {
 			--om.Count;
-			tmpx = om.Xyvo[0];
-			tmpy = om.Xyvo[1];
-			tmpz = om.Xyvo[2];
+			int16 tmpx = om.Xyvo[0];
+			int16 tmpy = om.Xyvo[1];
+			int16 tmpz = om.Xyvo[2];
 			om.Xyna[0][0] += om.Xyna[0][1];
 			if (om.Xyna[0][1] < 0) {
 				if (om.Xyna[0][0] < -1000) {
@@ -437,36 +411,26 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 }
 
 void MovClass::get_mov_line() {
-	int16 ende;
-	int16 start_feld;
-	int16 tmp_feld;
 	int16 ak_steps;
-	int16 min_steps;
-	int16 vector;
-	int16 abbruch;
-	int16 count_vect;
-	int16 count;
-	int16 y_richtung;
-	byte *speicher;
 	_gml.GotoFeld = -1;
 	_gml.MLineFeld = -1;
 	if (_gpkt->Ebenen > 1) {
-		speicher = _gpkt->Mem;
+		byte *speicher = _gpkt->Mem;
 
 		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
 
-		start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
-		ende = 0;
-		count = 0;
-		min_steps = 30000;
-		count_vect = DOWN_VECT;
-		y_richtung = Y_DOWN;
+		int16 start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
+		int16 ende = 0;
+		int16 count = 0;
+		int16 min_steps = 30000;
+		int16 count_vect = DOWN_VECT;
+		int16 y_richtung = Y_DOWN;
 		while (!ende) {
 
-			tmp_feld = start_feld + count * count_vect;
+			int16 tmp_feld = start_feld + count * count_vect;
 			if (_G(ged)->ged_idx(tmp_feld, _gpkt->Breite, _gpkt->Mem)) {
-				abbruch = 0;
-				vector = 0;
+				int16 abbruch = 0;
+				int16 vector = 0;
 				while ((tmp_feld % _gpkt->Breite) < (_gpkt->Breite - 1) && !abbruch)
 				{
 					if (_G(ged)->ged_idx(tmp_feld + vector, _gpkt->Breite, _gpkt->Mem)) {
@@ -520,52 +484,39 @@ void MovClass::get_mov_line() {
 }
 
 void MovClass::calc_mov_line_xit(int16 start_feld) {
-	int16 calc_feld;
-	int16 last_feld;
-	int16 ziel_feld;
 	int16 tmp_feld;
 	int16 i;
-	int16 found;
-	int16 steps;
 	int16 dest_steps;
 
-	int16 ok;
 	int16 k;
 	//int16 found_min;
 	int16 TmpKnPkt[MAX_KNOTEN_PKT];
-	int16 min_step_unerreicht;
 	int16 dir_unerreicht = 0;
 	int16 KnPkt_unrreicht[MAX_KNOTEN_PKT];
 	int16 feld_unerreicht = 0;
 	int16 knoten_felder[MAX_KNOTEN_PKT][6];
 
-	int16 ak_knoten;
-	int16 knoten_flag;
-	int16 tbl_dir;
-	int16 tbl_ptr;
-	int16 dir;
-	byte *speicher;
 	for (i = 0; i < MAX_KNOTEN_PKT; i++)
 		TmpKnPkt[i] = -1;
 	if (_gpkt->Ebenen > 1) {
 		memset((char *)knoten_felder, -1, MAX_KNOTEN_PKT * 6);
-		speicher = _gpkt->Mem;
+		byte *speicher = _gpkt->Mem;
 		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
 		_mle.Steps = 30000;
-		min_step_unerreicht = 30000;
+		int16 min_step_unerreicht = 30000;
 		_mle.FNr = -1;
-		ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
-		calc_feld = start_feld;
-		last_feld = start_feld;
-		steps = 0;
-		found = 0;
-		ak_knoten = -1;
-		tbl_dir = 1;
-		tbl_ptr = 0;
-		knoten_flag = 0;
+		int16 ziel_feld = get_feld_nr(_gpkt->Dx, _gpkt->Dy);
+		int16 calc_feld = start_feld;
+		int16 last_feld = start_feld;
+		int16 steps = 0;
+		int16 found = 0;
+		int16 ak_knoten = -1;
+		int16 tbl_dir = 1;
+		int16 tbl_ptr = 0;
+		int16 knoten_flag = 0;
 
 		//found_min = 0;
-		dir = 30000;
+		int16 dir = 30000;
 		while (!found) {
 			tmp_feld = ziel_feld;
 			calc_go(calc_feld, &tmp_feld);
@@ -596,7 +547,7 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 						KnPkt_unrreicht[i] = TmpKnPkt[i];
 				}
 			}
-			ok = 0;
+			int16 ok = 0;
 			for (i = 0; i < 4 && !ok; i++) {
 				if (speicher[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
 				{
@@ -712,23 +663,13 @@ void MovClass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
 }
 
 void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
-	uint8 xvector;
-	uint8 yvector;
-	uint8 zvector;
-	float xstep;
-	float ystep;
-	float zstep;
-	int16 tmp;
-	int16 absx, absy, absz;
-	int16 x, y, z, x1, y1, z1;
-
 	if (vorschub > 0) {
-		x = xyz[0];
-		y = xyz[1];
-		z = xyz[2];
-		x1 = xyz[3];
-		y1 = xyz[4];
-		z1 = xyz[5];
+		int16 x = xyz[0];
+		int16 y = xyz[1];
+		int16 z = xyz[2];
+		int16 x1 = xyz[3];
+		int16 y1 = xyz[4];
+		int16 z1 = xyz[5];
 		om->Xypos[0] = x;
 		om->Xypos[1] = y;
 		om->Xypos[2] = z;
@@ -736,6 +677,7 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 		y = y - y1;
 		z = z - z1;
 
+		uint8 xvector;
 		if (x < 0) {
 			xvector = 1;
 			--x;
@@ -743,6 +685,9 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 			xvector = 0;
 			++x;
 		}
+
+
+		uint8 yvector;
 		if (y < 0) {
 			yvector = 1;
 			--y;
@@ -750,6 +695,8 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 			yvector = 0;
 			++y;
 		}
+
+		uint8 zvector;
 		if (z < 0) {
 			zvector = 1;
 			--z;
@@ -758,9 +705,11 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 			++z;
 		}
 
-		absx = abs(x);
-		absy = abs(y);
-		absz = abs(z);
+		int16 absx = abs(x);
+		int16 absy = abs(y);
+		int16 absz = abs(z);
+		float xstep;
+		float ystep;
 		if (absx < absy) {
 			xstep = (float)absx / ((float)absy / (float)vorschub);
 			ystep = vorschub;
@@ -770,6 +719,8 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 			ystep = (float)absy / ((float)absx / (float)vorschub);
 			om->Count = (int16)((float) x / (float)xstep);
 		}
+
+		float zstep;
 		om->Count = abs(om->Count);
 		if (!om->Count) {
 			zstep = (float)absz / 1.0;
@@ -786,7 +737,7 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 		om->Xyvo[0] = (int16)xstep;
 		om->Xyvo[1] = (int16)ystep;
 		om->Xyvo[2] = (int16)zstep;
-		tmp = (int16)((float)xstep * 1000.0);
+		int16 tmp = (int16)((float)xstep * 1000.0);
 		om->Xyna[0][1] = tmp - (om->Xyvo[0] * 1000);
 		om->Xyna[0][0] = 0;
 		tmp = (int16)((float)ystep * 1000.0);
