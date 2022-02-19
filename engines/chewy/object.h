@@ -58,12 +58,11 @@ public:
 	int16 del_obj_use(int16 nr);
 	int16 calc_rsi_flip_flop(int16 nr);
 	void set_rsi_flip_flop(int16 nr, int16 anz);
-	void add_inventar(int16 nr, RaumBlk *Rb);
-	void del_inventar(int16 nr, RaumBlk *Rb);
-	void change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb);
-	void set_inventar(int16 nr, int16 x, int16 y, int16 automov,
-	                  RaumBlk *Rb);
-	int16 check_inventar(int16 nr);
+	void addInventory(int16 nr, RaumBlk *Rb);
+	void delInventory(int16 nr, RaumBlk *Rb);
+	void changeInventory(int16 old_inv, int16 new_inv, RaumBlk *Rb);
+	void setInventory(int16 nr, int16 x, int16 y, int16 automov, RaumBlk *Rb);
+	bool checkInventory(int16 nr);
 	int16 is_exit(int16 mouse_x, int16 mouse_y);
 	uint8 mov_obj_room[MAX_MOV_OBJ + 1];
 	uint8 spieler_invnr[MAX_MOV_OBJ + 1];
