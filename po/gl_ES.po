@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-19 09:02+0000\n"
+"POT-Creation-Date: 2022-02-19 20:27+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5685,7 +5685,7 @@ msgstr "Modo de xogo rebelde"
 msgid "~Z~ip Mode Activated"
 msgstr "Modo ~C~omprimido activado"
 
-#: engines/mohawk/dialogs.cpp:114
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
 msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
@@ -5756,9 +5756,21 @@ msgstr ""
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto de ~a~uga activado"
 
+#: engines/mohawk/dialogs.cpp:359
+msgid ""
+"Toggles the use of QuickTime videos for visual effects related to water "
+"surfaces (ripples, waves, etc.)."
+msgstr ""
+
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Transicións:"
+
+#: engines/mohawk/dialogs.cpp:361
+msgid ""
+"Adjusts the speed of screen transitions. Disabling screen transitions will "
+"enable you to navigate more quickly through the game."
+msgstr ""
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-19 09:02+0000\n"
+"POT-Creation-Date: 2022-02-19 20:27+0000\n"
 "PO-Revision-Date: 2022-02-17 23:27+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -5614,7 +5614,7 @@ msgstr "Modo de jogo impróprio"
 msgid "~Z~ip Mode Activated"
 msgstr "Modo ~Z~ip ativado"
 
-#: engines/mohawk/dialogs.cpp:114
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
 msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
@@ -5694,9 +5694,27 @@ msgstr "O novo idioma será aplicado após reiniciar o jogo."
 msgid "~W~ater Effect Enabled"
 msgstr "Modo de ~E~feitos de água ativado"
 
+#: engines/mohawk/dialogs.cpp:359
+msgid ""
+"Toggles the use of QuickTime videos for visual effects related to water "
+"surfaces (ripples, waves, etc.)."
+msgstr ""
+
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Transições:"
+
+#: engines/mohawk/dialogs.cpp:361
+#, fuzzy
+#| msgid ""
+#| "Toggle screen transitions on or off. Turning off screen transitions will "
+#| "enable you to navigate more quickly through the game."
+msgid ""
+"Adjusts the speed of screen transitions. Disabling screen transitions will "
+"enable you to navigate more quickly through the game."
+msgstr ""
+"Ativa ou desativa as transições de tela. Desativar as transições de tela "
+"permitirá que você navegue mais rapidamente pelo jogo."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
