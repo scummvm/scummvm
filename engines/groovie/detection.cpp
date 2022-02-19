@@ -77,7 +77,7 @@ const int BASE_FLAGS = ADGF_NO_FLAGS;
 	GROOVIEGAME("t7g", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI), kGroovieT7G)
 
 #define T7GNOMIDIENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags, guiOptions) \
-	GROOVIEGAME("t7g", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, (GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOSFX, GAMEOPTION_T7G_FAST_MOVIE_SPEED guiOptions), kGroovieT7G)
+	GROOVIEGAME("t7g", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, (GUIO_NOMIDI GUIO_NOASPECT GUIO_NOSFX GAMEOPTION_T7G_FAST_MOVIE_SPEED guiOptions), kGroovieT7G)
 
 #define T11HENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags) \
 	GROOVIEGAME("11h", extra, f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_TESTING, GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR), kGroovieT11H)
