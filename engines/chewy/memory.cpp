@@ -40,16 +40,14 @@ TafInfo *Memory::taf_adr(const char *filename) {
 	int32 imageCount = res->getChunkCount();
 	uint32 size = res->getAllSize() + imageCount * 8 + sizeof(TafInfo);
 	uint32 kgroesse = imageCount * sizeof(byte *);
-	byte *imgPtr, *tmp1;
-	TafInfo *tinfo = nullptr;
 
-	tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
-	tinfo = (TafInfo *)tmp1;
+	byte *tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
+	TafInfo *tinfo = (TafInfo *)tmp1;
 	tinfo->image = (byte **)(tmp1 + sizeof(TafInfo));
 	tinfo->palette = tmp1 + size;
 	tinfo->anzahl = imageCount;
 	memcpy(tinfo->palette, res->getSpritePalette(), PALETTE_SIZE);
-	imgPtr = tmp1 + sizeof(TafInfo) + kgroesse;
+	byte *imgPtr = tmp1 + sizeof(TafInfo) + kgroesse;
 
 	for (int i = 0; i < imageCount; i++) {
 		tinfo->image[i] = imgPtr;
@@ -70,24 +68,18 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	TafFileHeader header;
 	TafImageHeader iheader;
 	TafSeqInfo *ts_info = nullptr;
-	uint32 ptr;
-	uint32 size;
 	int16 i;
-	int16 *abmess;
-	int16 id;
-	byte *tmp1;
-	byte *sp_ptr;
 
 	rs->seek(0, SEEK_SET);
 	if (header.load(rs)) {
-		id = file->get_id(header.id);
+		int16 id = file->get_id(header.id);
 		if (id == TAFDATEI) {
 			if (header.korrekt > 1) {
 				rs->seek((-(int)((header.count - image_start) * sizeof(uint32))), SEEK_END);
-				ptr = rs->readUint32LE();
+				uint32 ptr = rs->readUint32LE();
 
 				rs->seek(ptr, SEEK_SET);
-				size = 0;
+				uint32 size = 0;
 				for (i = 0; i < image_anz && !_G(modul); i++) {
 					if (iheader.load(rs)) {
 						size += iheader.width * iheader.height;
@@ -101,7 +93,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 					size += image_anz * sizeof(byte *);
 					size += image_anz * sizeof(char *);
 					size += ((uint32)sizeof(TafSeqInfo));
-					tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
+					byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
 
 					if (!_G(modul)) {
 						ts_info = (TafSeqInfo *)tmp1;
@@ -109,18 +101,17 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 						ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
 						ts_info->korrektur = (int16 *)(tmp1 + size);
 						rs->seek(ptr, SEEK_SET);
-						sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo))
-							+ (image_anz * sizeof(char *)));
+						byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo))
+						                       + (image_anz * sizeof(char *)));
 
 						for (i = 0; i < image_anz && !_G(modul); i++) {
 							if (iheader.load(rs)) {
 								ts_info->image[i] = sp_ptr;
-								abmess = (int16 *)sp_ptr;
+								int16 *abmess = (int16 *)sp_ptr;
 								abmess[0] = iheader.width;
 								abmess[1] = iheader.height;
 								sp_ptr += 4;
-								size = (uint32)((uint32)iheader.height) *
-									    ((uint32)iheader.width);
+								size = (uint32)((uint32)iheader.height) * ((uint32)iheader.width);
 
 								rs->seek(iheader.image, SEEK_SET);
 								file->load_tafmcga(rs, iheader.komp, size, sp_ptr);
@@ -161,8 +152,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 }
 
 void Memory::tff_adr(const char *filename, byte **speicher) {
-	uint32 size;
-	size = file->size(filename, TFFDATEI);
+	uint32 size = file->size(filename, TFFDATEI);
 
 	if (!_G(modul)) {
 		*speicher = (byte *)MALLOC(size);
@@ -170,7 +160,7 @@ void Memory::tff_adr(const char *filename, byte **speicher) {
 			file->load_tff(filename, *speicher);
 			if (_G(modul)) {
 				free(*speicher);
-				*speicher = 0;
+				*speicher = nullptr;
 			}
 		} else {
 			_G(fcode) = NOSPEICHER;
@@ -181,17 +171,18 @@ void Memory::tff_adr(const char *filename, byte **speicher) {
 
 // Only called from init_load() with filename blende.rnd
 byte *Memory::void_adr(const char *filename) {
-	uint32 size = 0;
-	byte *ptr = 0;
-	size = file->size(filename, 200);
+	byte *ptr = nullptr;
+	uint32 size = file->size(filename, 200);
 
 	if (!_G(modul)) {
 		ptr = (byte *)MALLOC(size * sizeof(uint32));
 		if (!_G(modul)) {
-			*(uint32 *)ptr = size;
+			WRITE_LE_INT32(ptr, size);
 			file->void_load(filename, ptr + sizeof(uint32), size);
-			if (_G(modul))
+			if (_G(modul)) {
 				free(ptr);
+				ptr = nullptr;
+			}
 		}
 	}
 
