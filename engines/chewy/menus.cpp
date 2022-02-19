@@ -328,7 +328,7 @@ void cur_2_inventory() {
 }
 
 void inventory_2_cur(int16 nr) {
-	if (_G(spieler).AkInvent == -1 && _G(obj)->check_inventar(nr)) {
+	if (_G(spieler).AkInvent == -1 && _G(obj)->checkInventory(nr)) {
 		del_invent_slot(nr);
 		_G(menu_item) = CUR_USE;
 		_G(spieler).AkInvent = nr;
@@ -339,7 +339,7 @@ void inventory_2_cur(int16 nr) {
 
 void new_invent_2_cur(int16 inv_nr) {
 	cur_2_inventory();
-	_G(obj)->add_inventar(inv_nr, &_G(room_blk));
+	_G(obj)->addInventory(inv_nr, &_G(room_blk));
 	inventory_2_cur(inv_nr);
 }
 
@@ -351,7 +351,7 @@ void invent_2_slot(int16 nr) {
 			ok = true;
 		}
 	}
-	_G(obj)->add_inventar(nr, &_G(room_blk));
+	_G(obj)->addInventory(nr, &_G(room_blk));
 }
 
 int16 del_invent_slot(int16 nr) {
@@ -371,7 +371,7 @@ void remove_inventory(int16 nr) {
 	if (nr == _G(spieler).AkInvent) {
 		del_inventar(nr);
 	} else {
-		_G(obj)->del_inventar(nr, &_G(room_blk));
+		_G(obj)->delInventory(nr, &_G(room_blk));
 		del_invent_slot(nr);
 	}
 }

@@ -329,7 +329,7 @@ int16 Room17::get_oel() {
 		start_detail_wait(13, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
-		_G(obj)->add_inventar(BECHER_VOLL_INV, &_G(room_blk));
+		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));
 		inventory_2_cur(BECHER_VOLL_INV);
 	}
 

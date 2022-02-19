@@ -674,7 +674,7 @@ int16 Inventory::calc_use_invent(int16 inv_nr) {
 		case GBUCH_INV:
 			ret = del_invent_slot(GBUCH_INV);
 			_G(spieler).InventSlot[ret] = GBUCH_OPEN_INV;
-			_G(obj)->change_inventar(GBUCH_INV, GBUCH_OPEN_INV, &_G(room_blk));
+			_G(obj)->changeInventory(GBUCH_INV, GBUCH_OPEN_INV, &_G(room_blk));
 			ret_val = true;
 			break;
 

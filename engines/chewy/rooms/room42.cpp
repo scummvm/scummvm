@@ -53,10 +53,10 @@ void Room42::entry() {
 			_G(atds)->set_ats_str(264, 1, ATS_DATEI);
 		}
 
-		if (_G(obj)->check_inventar(HOTEL_INV) && _G(obj)->check_inventar(TICKET_INV) && !_G(spieler).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(spieler).R42BriefOk)
 			start_aad_wait(302, -1);
 
-		if (_G(obj)->check_inventar(HOTEL_INV) && _G(obj)->check_inventar(TICKET_INV) && _G(spieler).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk)
 			start_aad_wait(301, -1);
 	}
 }

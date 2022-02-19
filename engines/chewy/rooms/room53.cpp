@@ -86,7 +86,7 @@ int16 Room53::use_man() {
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);
 		start_ani_block(7, ABLOCK35);
-		_G(obj)->add_inventar(JMKOST_INV, &_G(room_blk));
+		_G(obj)->addInventory(JMKOST_INV, &_G(room_blk));
 		inventory_2_cur(JMKOST_INV);
 		_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 		show_cur();

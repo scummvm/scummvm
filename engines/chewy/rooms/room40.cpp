@@ -107,7 +107,7 @@ void Room40::xit(int16 eib_nr) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 
 		} else if (eib_nr == 72) {
-			if ((_G(obj)->check_inventar(HOTEL_INV) && _G(obj)->check_inventar(TICKET_INV) && _G(spieler).R42BriefOk && _G(spieler).R28Manuskript)
+			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk && _G(spieler).R28Manuskript)
 				|| _G(spieler).R40TrainOk) {
 				_G(spieler).R40TrainOk = true;
 				_G(spieler).PersonRoomNr[P_HOWARD] = 45;
@@ -344,7 +344,7 @@ int16 Room40::use_mr_pumpkin() {
 						_G(out)->ausblenden(1);
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
-						_G(obj)->add_inventar(LIKOER2_INV, &_G(room_blk));
+						_G(obj)->addInventory(LIKOER2_INV, &_G(room_blk));
 						inventory_2_cur(LIKOER2_INV);
 						switch_room(40);
 						start_aad_wait(236, -1);

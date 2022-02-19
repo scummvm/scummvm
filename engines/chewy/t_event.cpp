@@ -2203,13 +2203,13 @@ void calc_inv_use_txt(int16 test_nr) {
 		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = ANGEL2_INV;
-		_G(obj)->change_inventar(test_nr, ANGEL2_INV, &_G(room_blk));
+		_G(obj)->changeInventory(test_nr, ANGEL2_INV, &_G(room_blk));
 		break;
 
 	case KUERBIS1_INV:
 		ret = del_invent_slot(KUERBIS1_INV);
 		_G(spieler).InventSlot[ret] = K_MASKE_INV;
-		_G(obj)->change_inventar(KUERBIS1_INV, K_MASKE_INV, &_G(room_blk));
+		_G(obj)->changeInventory(KUERBIS1_INV, K_MASKE_INV, &_G(room_blk));
 		invent_2_slot(K_FLEISCH_INV);
 		invent_2_slot(K_KERNE_INV);
 		break;
@@ -2235,7 +2235,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
 		_G(spieler).InventSlot[ret] = BRIEF2_INV;
-		_G(obj)->change_inventar(BRIEF_INV, BRIEF2_INV, &_G(room_blk));
+		_G(obj)->changeInventory(BRIEF_INV, BRIEF2_INV, &_G(room_blk));
 		break;
 
 	case FLASCHE_INV:
@@ -2257,7 +2257,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		cursor_wahl(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = B_MARY2_INV;
-		_G(obj)->change_inventar(test_nr, B_MARY2_INV, &_G(room_blk));
+		_G(obj)->changeInventory(test_nr, B_MARY2_INV, &_G(room_blk));
 		break;
 
 	case 13:
@@ -2283,7 +2283,7 @@ void calc_inv_use_txt(int16 test_nr) {
 
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = 110;
-		_G(obj)->change_inventar(104, 110, &_G(room_blk));
+		_G(obj)->changeInventory(104, 110, &_G(room_blk));
 		break;
 
 	case 105:

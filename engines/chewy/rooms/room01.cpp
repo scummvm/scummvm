@@ -45,7 +45,7 @@ void Room1::gedAction(int index) {
 		if (_G(spieler).AkInvent == KABEL_INV) {
 			flag = true;
 			del_inventar(_G(spieler).AkInvent);
-		} else if (_G(obj)->check_inventar(KABEL_INV)) {
+		} else if (_G(obj)->checkInventory(KABEL_INV)) {
 			flag = true;
 			_G(obj)->del_obj_use(KABEL_INV);
 			remove_inventory(KABEL_INV);

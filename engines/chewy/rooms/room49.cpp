@@ -195,7 +195,7 @@ void Room49::use_boy_cigar() {
 	start_aad_wait(264, -1);
 	_G(room)->set_zoom(zoom);
 
-	_G(obj)->add_inventar(GUM_INV, &_G(room_blk));
+	_G(obj)->addInventory(GUM_INV, &_G(room_blk));
 	inventory_2_cur(GUM_INV);
 	_G(atds)->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATEI);
 

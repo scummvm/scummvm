@@ -71,34 +71,34 @@ Object::~Object() {
 
 int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 	Common::File f;
-	bool valid = true;
 
 	if (f.open(fname_)) {
 		if (!iib_datei_header.load(&f)) {
-			error("objekt::load error");
-		} else if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
+			error("Object::load error");
+		}
+
+		if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
 			if (iib_datei_header.Size) {
 				assert(iib_datei_header.Size % RoomMovObject::SIZE() == 0);
 
-				for (uint i = 0; i < iib_datei_header.Size / RoomMovObject::SIZE() && valid;
-						++i, ++rmo) {
+				bool valid = true;
+				for (uint i = 0; i < iib_datei_header.Size / RoomMovObject::SIZE() && valid; ++i, ++rmo) {
 					valid = rmo->load(&f);
 				}
 
-				if (!valid) {
-					error("objekt::load error");
-				} else {
-					max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObject::SIZE();
-				}
+				if (!valid)
+					error("Object::load error");
+
+				max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObject::SIZE();
 			} else
 				max_inventar_obj = 0;
 		} else {
-			error("objekt::load error");
+			error("Object::load error");
 		}
 
 		f.close();
 	} else {
-		error("objekt::load error");
+		error("Object::load error");
 	}
 
 	return max_inventar_obj;
@@ -106,31 +106,32 @@ int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 
 int16 Object::load(const char *fname_, RoomStaticInventar *rsi) {
 	Common::File f;
-	bool valid = true;
 
 	if (f.open(fname_)) {
 		if (!sib_datei_header.load(&f)) {
-			error("objekt::load error");
-		} else if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
+			error("Object::load error");
+		}
+
+		if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
 			if (sib_datei_header.Anz) {
+				bool valid = true;
 				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++rsi) {
 					valid = rsi->load(&f);
 				}
 
-				if (!valid) {
-					error("objekt::load error");
-				} else {
-					max_static_inventar = sib_datei_header.Anz;
-				}
+				if (!valid)
+					error("Object::load error");
+
+				max_static_inventar = sib_datei_header.Anz;
 			} else
 				max_static_inventar = 0;
 		} else {
-			error("objekt::load error");
+			error("Object::load error");
 		}
 
 		f.close();
 	} else {
-		error("objekt::load error");
+		error("Object::load error");
 	}
 
 	return max_static_inventar;
@@ -138,42 +139,42 @@ int16 Object::load(const char *fname_, RoomStaticInventar *rsi) {
 
 int16 Object::load(const char *fname_, RoomExit *RoomEx) {
 	Common::File f;
-	bool valid = true;
 
 	if (f.open(fname_)) {
 		if (!eib_datei_header.load(&f)) {
-			error("objekt::load error");
-		} else if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
+			error("Object::load error");
+		}
+
+		if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
 			if (sib_datei_header.Anz) {
+				bool valid = true;
 				for (int i = 0; i < eib_datei_header.Anz && valid; ++i, ++RoomEx) {
 					valid = RoomEx->load(&f);
 				}
 
-				if (!valid) {
-					error("objekt::load error");
-				} else {
-					max_exit = eib_datei_header.Anz;
-				}
+				if (!valid)
+					error("Object::load error");
+
+				max_exit = eib_datei_header.Anz;
 			} else
 				max_exit = 0;
 		} else {
-			error("objekt::load error");
+			error("Object::load error");
 		}
 
 		f.close();
 	} else {
-		error("objekt::load error");
+		error("Object::load error");
 	}
 
 	return max_exit;
 }
 
 void Object::sort() {
-	short i;
 	mov_obj_room[0] = 0;
 
 	spieler_invnr[0] = 0;
-	for (i = 0; i < MAX_MOV_OBJ; i++) {
+	for (short i = 0; i < MAX_MOV_OBJ; i++) {
 		if (Rmo[i].RoomNr != -1) {
 			if (Rmo[i].RoomNr == 255) {
 				++spieler_invnr[0];
@@ -187,8 +188,7 @@ void Object::sort() {
 }
 
 void Object::free_inv_spr(byte **inv_spr_adr) {
-	int16 i;
-	for (i = 0; i < MAX_MOV_OBJ; i++)
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
 		if (inv_spr_adr[i] != 0) {
 			free(inv_spr_adr[i]);
 			inv_spr_adr[i] = 0;
@@ -196,10 +196,8 @@ void Object::free_inv_spr(byte **inv_spr_adr) {
 }
 
 int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
-	int16 i;
-	int16 ret;
-	ret = -1;
-	for (i = 0; i < max_static_inventar && ret == -1; i++) {
+	int16 ret = -1;
+	for (int16 i = 0; i < max_static_inventar && ret == -1; i++) {
 		if (Rsi[i].RoomNr == Player->PersonRoomNr[P_CHEWY] && Rsi[i].HideSib == false) {
 			if (mouse_x >= Rsi[i].X &&
 			        mouse_x <= (Rsi[i].X + Rsi[i].XOff) &&
@@ -212,10 +210,8 @@ int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 }
 
 int16 Object::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
-	int16 i;
-	int16 ret;
-	ret = -1;
-	for (i = 1; i < mov_obj_room[0] + 1 && ret == -1; i++) {
+	int16 ret = -1;
+	for (int16 i = 1; i < mov_obj_room[0] + 1 && ret == -1; i++) {
 		if (Rmo[mov_obj_room[i]].X != -1 &&
 		        mouse_x >= Rmo[mov_obj_room[i]].X &&
 		        mouse_x <= (Rmo[mov_obj_room[i]].X + Rmo[mov_obj_room[i]].XOff) &&
@@ -235,40 +231,34 @@ int16 Object::sib_txt_nr(int16 sib_nr) {
 }
 
 int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
-	int16 ret;
-	int16 i, j;
-	int16 ok;
-	int16 tmp1, tmp2;
-	int16 action_flag;
-	ret = NO_ACTION;
+	int16 ret = NO_ACTION;
 
-	tmp1 = maus_obj_nr;
-	tmp2 = test_obj_nr;
-	action_flag = 0;
+	int16 tmp1 = maus_obj_nr;
+	int16 tmp2 = test_obj_nr;
+	bool actionFl = false;
 
-	for (j = 0; j < 2 && !action_flag; j++) {
+	for (int16 j = 0; j < 2 && !actionFl; j++) {
 		if (j) {
 			tmp1 = test_obj_nr;
 			tmp2 = maus_obj_nr;
 		}
 
 		if (Rmo[tmp1].ActionObj != -1) {
-			if (Rmo[tmp1].ActionObj < 30000 &&
-			        Rmo[tmp1].ActionObj == tmp2) {
-				action_flag = 1;
+			if (Rmo[tmp1].ActionObj < 30000 && Rmo[tmp1].ActionObj == tmp2) {
+				actionFl = true;
 			} else if (Rmo[tmp1].ActionObj >= 30000) {
-				i = 0;
+				int16 i = 0;
 				while (ACTION_OBJ_TBL[i] != Rmo[tmp1].ActionObj &&
 				        ACTION_OBJ_TBL[i] != 32000) {
 					++i;
 				}
 				if (ACTION_OBJ_TBL[i] != 32000) {
 					++i;
-					ok = 0;
+					int16 ok = 0;
 					while (ACTION_OBJ_TBL[i] < 30000 && !ok) {
 						if (ACTION_OBJ_TBL[i] == tmp2 + 5000) {
 							ok = 1;
-							action_flag = 1;
+							actionFl = true;
 						}
 						++i;
 					}
@@ -277,39 +267,28 @@ int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 		}
 	}
 
-	if (action_flag == 1) {
-		if (!calc_rmo_flip_flop(tmp2)) {
-			action_flag = NO_ACTION;
-		} else {
-			if (tmp2 == test_obj_nr)
-				ret = OBJEKT_2;
-			else
-				ret = OBJEKT_1;
-		}
-	}
+	if (actionFl && calc_rmo_flip_flop(tmp2))
+		ret = (tmp2 == test_obj_nr) ? OBJEKT_2 : OBJEKT_1;
 
 	return ret;
 }
 
 int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
-	int16 action_flag;
-	int16 i;
-	int16 ok;
-	action_flag = NO_ACTION;
+	int16 action_flag = NO_ACTION;
 
 	if (Rmo[maus_obj_nr].ActionObj != -1) {
 		if (Rmo[maus_obj_nr].ActionObj < 30000 &&
 		        Rmo[maus_obj_nr].ActionObj == test_obj_nr) {
 			action_flag = OBJEKT_2;
 		} else if (Rmo[maus_obj_nr].ActionObj >= 30000) {
-			i = 0;
+			int16 i = 0;
 			while (ACTION_OBJ_TBL[i] != Rmo[maus_obj_nr].ActionObj &&
 			        ACTION_OBJ_TBL[i] != 32000) {
 				++i;
 			}
 			if (ACTION_OBJ_TBL[i] != 32000) {
 				++i;
-				ok = 0;
+				int16 ok = 0;
 				while (ACTION_OBJ_TBL[i] < 30000 && !ok) {
 					if (ACTION_OBJ_TBL[i] == test_obj_nr) {
 						ok = 1;
@@ -341,20 +320,17 @@ void Object::show_sib(int16 nr) {
 }
 
 void Object::calc_all_static_detail() {
-	int16 i;
-	for (i = 0; i < max_static_inventar; i++) {
+	for (int16 i = 0; i < max_static_inventar; i++) {
 		calc_static_detail(i);
 	}
 }
 
 void Object::calc_static_detail(int16 det_nr) {
-	int16 nr;
 	int16 i;
 	int16 n;
-	AniDetailInfo *adi;
 
 	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
-		nr = Rsi[det_nr].StaticAk;
+		int16 nr = Rsi[det_nr].StaticAk;
 		if (nr != -1) {
 			if (nr >= 30000) {
 				i = 0;
@@ -368,7 +344,7 @@ void Object::calc_static_detail(int16 det_nr) {
 
 						if (nr >= 40) {
 							n = nr - 40;
-							adi = _G(det)->get_ani_detail(n);
+							AniDetailInfo *adi = _G(det)->get_ani_detail(n);
 							if (adi->repeat)
 								_G(det)->start_detail(n, 0, ANI_VOR);
 							else
@@ -380,7 +356,7 @@ void Object::calc_static_detail(int16 det_nr) {
 				}
 			} else if (nr >= 40) {
 				n = nr - 40;
-				adi = _G(det)->get_ani_detail(n);
+				AniDetailInfo *adi = _G(det)->get_ani_detail(n);
 				if (adi->repeat)
 					_G(det)->start_detail(n, 0, ANI_VOR);
 				else
@@ -445,11 +421,9 @@ int16 Object::calc_static_use(int16 nr) {
 }
 
 int16 Object::calc_rsi_flip_flop(int16 nr) {
-	int16 tmp;
-	int16 ret;
-	ret = true;
+	int16 ret = true;
 	if (Rsi[nr].ZustandFlipFlop > 0 && Rsi[nr].HideSib == false) {
-		tmp = Rsi[nr].ZustandAk;
+		int16 tmp = Rsi[nr].ZustandAk;
 		Rsi[nr].ZustandAk = Rsi[nr].ZustandOff;
 		Rsi[nr].ZustandOff = tmp;
 		tmp = Rsi[nr].StaticAk;
@@ -472,11 +446,10 @@ void Object::set_rsi_flip_flop(int16 nr, int16 anz) {
 }
 
 int16 Object::calc_rmo_flip_flop(int16 nr) {
-	int16 tmp;
 	int16 ret;
 	if (Rmo[nr].ZustandFlipFlop > 0) {
 		ret = true;
-		tmp = Rmo[nr].ZustandAk;
+		int16 tmp = Rmo[nr].ZustandAk;
 		Rmo[nr].ZustandAk = Rmo[nr].ZustandOff;
 		Rmo[nr].ZustandOff = tmp;
 		if (Rmo[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
@@ -502,30 +475,26 @@ int16 Object::del_obj_use(int16 nr) {
 	return ret;
 }
 
-void Object::add_inventar(int16 nr, RaumBlk *Rb) {
+void Object::addInventory(int16 nr, RaumBlk *Rb) {
 	Player->room_m_obj[nr].RoomNr = 255;
 	sort();
 	_G(room)->calc_invent(Rb, Player);
 
 }
 
-void Object::del_inventar(int16 nr, RaumBlk *Rb) {
-
+void Object::delInventory(int16 nr, RaumBlk *Rb) {
 	Player->room_m_obj[nr].RoomNr = -1;
 	sort();
 }
 
-void Object::change_inventar(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
+void Object::changeInventory(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
 	Player->room_m_obj[old_inv].RoomNr = -1;
 	Player->room_m_obj[new_inv].RoomNr = 255;
 	sort();
 	_G(room)->calc_invent(Rb, Player);
-
 }
 
-void Object::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
-                          RaumBlk *Rb) {
-
+void Object::setInventory(int16 nr, int16 x, int16 y, int16 automov, RaumBlk *Rb) {
 	++mov_obj_room[0];
 	mov_obj_room[mov_obj_room[0]] = nr;
 	Player->room_m_obj[nr].RoomNr = Player->PersonRoomNr[P_CHEWY];
@@ -536,11 +505,9 @@ void Object::set_inventar(int16 nr, int16 x, int16 y, int16 automov,
 	sort();
 }
 
-int16 Object::check_inventar(int16 nr) {
-	int16 i;
-	int16 ret;
-	ret = false;
-	for (i = 0; i < spieler_invnr[0] && !ret; i++) {
+bool Object::checkInventory(int16 nr) {
+	bool ret = false;
+	for (int16 i = 0; i < spieler_invnr[0] && !ret; i++) {
 		if (spieler_invnr[i + 1] == nr)
 			ret = true;
 	}
@@ -548,10 +515,8 @@ int16 Object::check_inventar(int16 nr) {
 }
 
 int16 Object::is_exit(int16 mouse_x, int16 mouse_y) {
-	int16 ret;
-	int16 i;
-	ret = -1;
-	for (i = 0; i < max_exit && ret == -1; i++) {
+	int16 ret = -1;
+	for (int16 i = 0; i < max_exit && ret == -1; i++) {
 		if (Re[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
 			if (mouse_x >= Re[i].X &&
 			        mouse_x <= (Re[i].X + Re[i].XOff) &&

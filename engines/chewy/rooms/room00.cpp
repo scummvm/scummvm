@@ -49,7 +49,7 @@ namespace Rooms {
 #define KOPF3 48
 
 void Room0::entry() {
-	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow || _G(obj)->check_inventar(0))
+	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow || _G(obj)->checkInventory(0))
 		_G(det)->hide_static_spr(6);
 
 	if (!_G(flags).LoadGame) {

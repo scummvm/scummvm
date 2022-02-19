@@ -179,7 +179,7 @@ void Room11::get_card() {
 	if (_G(spieler).R11CardOk) {
 		cur_2_inventory();
 		_G(spieler).R11CardOk = false;
-		_G(obj)->add_inventar(_G(spieler).R11IdCardNr, &_G(room_blk));
+		_G(obj)->addInventory(_G(spieler).R11IdCardNr, &_G(room_blk));
 
 		_G(spieler).AkInvent = _G(spieler).R11IdCardNr;
 		cursor_wahl(CUR_AK_INVENT);
