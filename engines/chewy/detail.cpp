@@ -666,7 +666,7 @@ void Detail::clear_detail_sound(int16 nr) {
 void Detail::disable_room_sound() {
 	for (int16 i = 0; i < MAXDETAILS; i++)
 		disable_detail_sound(i);
-	_G(sndPlayer)->endSound();
+	g_engine->_sound->stopAllSounds();
 }
 
 void Detail::enable_room_sound() {

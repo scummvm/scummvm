@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -210,7 +211,7 @@ void Cinema::execute() {
 int16 Cinema::cut_serv(int16 frame) {
 	if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 		_G(sndPlayer)->stopMod();
-		_G(sndPlayer)->endSound();
+		g_engine->_sound->stopAllSounds();
 		return -1;
 
 	} else {

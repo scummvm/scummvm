@@ -78,6 +78,11 @@ void Sound::stopSound(uint channel) {
 	_mixer->stopHandle(_soundHandle[channel]);
 }
 
+void Sound::stopAllSounds() {
+	for (int i = 4; i < 8; i++)
+		stopSound(i);
+}
+
 bool Sound::isSoundActive(uint channel) {
 	assert(channel < MAX_SOUND_EFFECTS);
 	return _mixer->isSoundHandleActive(_soundHandle[channel]);

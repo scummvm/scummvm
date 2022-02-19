@@ -533,12 +533,7 @@ void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			if (!File::readArray(handle, &para[0], chead.size / 2)) {
 				error("flic error");
 			} else
-#ifndef AIL
-				snd->setMusicMasterVol(para[0]);
-#else
-				_G(sndPlayer)->setMusicMasterVol(para[0]);
-#endif
-
+				g_engine->_sound->setMusicVolume(para[0] * Audio::Mixer::kMaxChannelVolume / 120);
 			break;
 
 		case SET_LOOPMODE:

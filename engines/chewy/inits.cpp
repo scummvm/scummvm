@@ -25,6 +25,7 @@
 #include "chewy/defines.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -376,8 +377,8 @@ void sound_init() {
 	_G(sndPlayer)->initMixMode();
 	_G(spieler).MusicVol = 63;
 	_G(spieler).SoundVol = 63;
-	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
-	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
+	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
+	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOCDATEI);
 

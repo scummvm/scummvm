@@ -29,6 +29,7 @@
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/ngshext.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -59,8 +60,7 @@ void MainMenu::execute() {
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
-		_G(sndPlayer)->stopMod();
-		_G(sndPlayer)->endSound();
+		g_engine->_sound->stopAllSounds();
 		_G(SetUpScreenFunc) = screenFunc;
 
 		cursor_wahl(CUR_ZEIGE);

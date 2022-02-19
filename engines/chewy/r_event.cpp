@@ -923,7 +923,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 	_G(out)->set_pointer(nullptr);
 	_G(det)->disable_room_sound();
-	_G(sndPlayer)->endSound();
+	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
 //#ifndef NEW_VIDEO_CODE
 	Common::File *f = File::open("cut/cut.tap");
@@ -1078,7 +1078,7 @@ void flic_cut(int16 nr, int16 mode) {
 			break;
 
 		case FCUT_112:
-			_G(sndPlayer)->setMusicMasterVol(32);
+			g_engine->_sound->setMusicVolume(32 * Audio::Mixer::kMaxChannelVolume / 120);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->custom_play(&_G(Ci));
@@ -1088,7 +1088,7 @@ void flic_cut(int16 nr, int16 mode) {
 			g_engine->playVideo(nr);
 			g_engine->playVideo(nr);
 #endif
-			_G(sndPlayer)->setMusicMasterVol(5);
+			g_engine->_sound->setMusicVolume(5 * Audio::Mixer::kMaxChannelVolume / 120);
 			break;
 
 		case FCUT_116:
@@ -1550,7 +1550,7 @@ void flic_cut(int16 nr, int16 mode) {
 			_G(sndPlayer)->stopMod();
 			_G(currentSong) = -1;
 			load_room_music(257);
-			_G(sndPlayer)->setMusicMasterVol(20);
+			g_engine->_sound->setMusicVolume(20 * Audio::Mixer::kMaxChannelVolume / 120);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, 110);
 			ret = _G(flc)->custom_play(&_G(Ci));
@@ -1560,7 +1560,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
-				_G(sndPlayer)->setMusicMasterVol(63);
+				g_engine->_sound->setMusicVolume(63 * Audio::Mixer::kMaxChannelVolume / 120);
 				_G(fx)->spr_blende(_G(workpage), 100, false, 0);
 				_G(mem)->file->select_pool_item(_G(Ci).Handle, 112);
 				_G(flc)->custom_play(&_G(Ci));
@@ -1629,8 +1629,8 @@ void flic_cut(int16 nr, int16 mode) {
 
 	g_engine->_sound->stopSound();
 	g_events->delay(50);
-	_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
-	_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
+	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
+	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	if (nr < 1000 && nr != 135) {
 		load_room_music(_G(spieler).PersonRoomNr[0]);

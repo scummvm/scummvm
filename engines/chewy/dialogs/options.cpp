@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -193,11 +194,11 @@ void Options::execute(TafInfo *ti) {
 				break;
 			case 7:
 				_G(spieler).SoundVol = (136 - _G(minfo).y) << 1;
-				_G(sndPlayer)->setSoundMasterVol(_G(spieler).SoundVol);
+				g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 			case 8:
 				_G(spieler).MusicVol = (136 - _G(minfo).y) << 1;
-				_G(sndPlayer)->setMusicMasterVol(_G(spieler).MusicVol);
+				g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 			}
 			_G(minfo).button = 0;

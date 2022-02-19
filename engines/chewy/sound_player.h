@@ -37,13 +37,8 @@ public:
 	SoundPlayer();
 	~SoundPlayer();
 
-	void setMusicMasterVol(int16 vol);
-	void setSoundMasterVol(int16 vol);
-	void disableSound();
-
 	void getMusicInfo(musik_info *mi);
 	int16 musicPlaying();
-	int16 getSampleStatus(int16 channel);
 
 	void initNoteTable(uint16 sfreq);
 	void initMixMode();
@@ -55,8 +50,6 @@ public:
 	void playPattern(int16 pattern);
 	void setLoopMode(int16 mode);
 	void fadeOut(uint16 delay);
-
-	void endSound();
 };
 
 } // namespace Chewy
