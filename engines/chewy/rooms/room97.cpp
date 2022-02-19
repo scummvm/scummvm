@@ -390,7 +390,7 @@ int Room97::proc5() {
 		SHOULD_QUIT_RETURN0;
 	}
 
-	flic_cut(122);
+	flic_cut(FCUT_122);
 	register_cutscene(34);
 
 	g_engine->_sound->playSound(0, 0);

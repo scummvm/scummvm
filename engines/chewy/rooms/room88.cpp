@@ -101,7 +101,7 @@ int Room88::proc3() {
 			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(87);
+			flic_cut(FCUT_087);
 			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			_G(spieler).flags32_40 = true;
@@ -123,7 +123,7 @@ int Room88::proc3() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(88);
+		flic_cut(FCUT_088);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).flags32_1 = true;
 		_G(out)->raster_col(0, 0, 0, 0);
@@ -133,7 +133,7 @@ int Room88::proc3() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(86);
+		flic_cut(FCUT_086);
 		register_cutscene(24);
 
 		_G(spieler).PersonHide[P_CHEWY] = false;

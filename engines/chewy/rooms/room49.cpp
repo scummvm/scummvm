@@ -182,7 +182,7 @@ void Room49::use_boy_cigar() {
 	_G(flags).NoScroll = true;
 
 	auto_scroll(164, 0);
-	flic_cut(67);
+	flic_cut(FCUT_067);
 	register_cutscene(17);
 	
 	_G(room)->set_timer_status(255, TIMER_STOP);

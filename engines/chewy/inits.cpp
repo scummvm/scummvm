@@ -409,7 +409,7 @@ void show_intro() {
 	if (!ConfMan.getBool("shown_intro")) {
 		ConfMan.setBool("shown_intro", true);
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(135);
+		flic_cut(FCUT_135);
 	}
 }
 

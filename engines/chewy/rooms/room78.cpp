@@ -59,7 +59,7 @@ void Room78::entry() {
 			set_up_screen(DO_SETUP);
 		}
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(101);
+		flic_cut(FCUT_101);
 		destRoom = 79;
 	} else {
 		_G(det)->start_detail(0, 255, false);

@@ -172,7 +172,7 @@ void Room51::setup_func() {
 				_G(flags).NoPalAfterFlc = true;
 				_G(out)->set_pointer(nullptr);
 				_G(out)->cls();
-				flic_cut(115);
+				flic_cut(FCUT_115);
 				register_cutscene(28);
 				
 				switch_room(91);
@@ -287,7 +287,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(114);
+			flic_cut(FCUT_114);
 			set_person_pos(115, 144, P_CHEWY, P_LEFT);
 			_G(fx_blend) = BLEND3;
 			set_up_screen(NO_SETUP);

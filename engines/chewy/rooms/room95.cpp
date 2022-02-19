@@ -110,7 +110,7 @@ int Room95::proc2() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(133);
+		flic_cut(FCUT_133);
 		register_cutscene(33);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 97;
 		switch_room(97);

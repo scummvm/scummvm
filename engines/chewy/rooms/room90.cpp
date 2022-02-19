@@ -295,7 +295,7 @@ int Room90::shootControlUnit() {
 	start_detail_wait(13, 1, ANI_VOR);
 	_G(flc)->set_custom_user_function(Room90::proc5);
 	_G(flags).NoPalAfterFlc = true;
-	flic_cut(107);
+	flic_cut(FCUT_107);
 	_G(flc)->remove_custom_user_function();
 	_G(spieler).scrollx = 0;
 	set_person_pos(76, 145, P_CHEWY, P_LEFT);
@@ -334,7 +334,7 @@ int Room90::useSurimyOnWreck() {
 	_G(maus_links_click) = false;
 	_G(out)->set_pointer(nullptr);
 	_G(out)->cls();
-	flic_cut(109);
+	flic_cut(FCUT_109);
 	register_cutscene(29);
 
 	_G(det)->hide_static_spr(4);
