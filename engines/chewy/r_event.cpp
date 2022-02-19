@@ -947,14 +947,14 @@ void flic_cut(int16 nr) {
 
 	if (_G(Ci).Handle) {
 		switch (nr) {
-		case FCUT_001:
+		case FCUT_000:
 		case 1000:
 			_G(sndPlayer)->stopMod();
 			_G(currentSong) = -1;
 			g_engine->playVideo(nr);
 			break;
 
-		case FCUT_005:
+		case FCUT_004:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->set_custom_user_function(Room6::cut_serv1);
@@ -965,7 +965,7 @@ void flic_cut(int16 nr) {
 #endif
 			break;
 
-		case FCUT_006:
+		case FCUT_005:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->set_custom_user_function(Room10::cut_serv);
@@ -976,7 +976,7 @@ void flic_cut(int16 nr) {
 #endif
 			break;
 
-		case FCUT_010:
+		case FCUT_009:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->set_custom_user_function(Room11::cut_serv);
@@ -987,7 +987,7 @@ void flic_cut(int16 nr) {
 #endif
 			break;
 
-		case FCUT_011:
+		case FCUT_010:
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->set_custom_user_function(Room11::cut_serv_2);
@@ -998,24 +998,24 @@ void flic_cut(int16 nr) {
 #endif
 			break;
 
-		case FCUT_019_01:
-		case FCUT_019_02:
-		case FCUT_019_03:
-		case FCUT_019_04:
-		case FCUT_019_05:
-		case FCUT_019_06:
-		case FCUT_019_07:
-		case FCUT_019_08:
-		case FCUT_019_09:
-		case FCUT_019_10:
-		case FCUT_019_11:
+		case FCUT_SPACECHASE_18:
+		case FCUT_SPACECHASE_19:
+		case FCUT_SPACECHASE_20:
+		case FCUT_SPACECHASE_21:
+		case FCUT_SPACECHASE_22:
+		case FCUT_SPACECHASE_23:
+		case FCUT_SPACECHASE_24:
+		case FCUT_SPACECHASE_25:
+		case FCUT_SPACECHASE_26:
+		case FCUT_SPACECHASE_27:
+		case FCUT_SPACECHASE_28:
 			_G(sndPlayer)->stopMod();
 			_G(currentSong) = -1;
-			nr = FCUT_019_01;
+			nr = FCUT_SPACECHASE_18;
 			_G(sndPlayer)->setLoopMode(1);
 
 			for (i = 0; i < 11; i++) {
-				g_engine->playVideo(FCUT_019_01 + i);
+				g_engine->playVideo(FCUT_SPACECHASE_18 + i);
 				SHOULD_QUIT_RETURN;
 			}
 
@@ -1323,7 +1323,7 @@ void flic_cut(int16 nr) {
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, 1);
 			ret = _G(flc)->custom_play(&_G(Ci));
 #else
-			g_engine->playVideo(FCUT_001);
+			g_engine->playVideo(FCUT_000);
 #endif
 
 			if (ret != -1) {
@@ -1381,7 +1381,7 @@ void flic_cut(int16 nr) {
 #ifndef NEW_VIDEO_CODE
 			if (ret != -1) {
 				_G(out)->cls();
-				_G(mem)->file->select_pool_item(_G(Ci).Handle, FCUT_017);
+				_G(mem)->file->select_pool_item(_G(Ci).Handle, FCUT_016);
 				_G(fx)->border(_G(workpage), 100, 0, 0);
 			}
 #else

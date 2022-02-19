@@ -36,7 +36,7 @@ void Room10::entry() {
 		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 		_G(spieler).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
-		flic_cut(FCUT_004);
+		flic_cut(FCUT_003);
 		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 		hide_cur();
@@ -53,7 +53,7 @@ void Room10::get_surimy() {
 	hide_cur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
-	flic_cut(FCUT_006);
+	flic_cut(FCUT_005);
 	_G(spieler).R10SurimyOk = true;
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATEI);

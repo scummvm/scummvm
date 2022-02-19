@@ -415,35 +415,35 @@ enum SetupScreenMode {
 #define ATS_ACTION_VOR 0
 #define ATS_ACTION_NACH 1
 
-#define FCUT_001 0	// Chewy escapes the prison cell
-#define FCUT_002 1	// Burger
-#define FCUT_003 2	// Chewy mocks an alien and he trips on a rope
-#define FCUT_004 3	// Jumping rat-line creature
-#define FCUT_005 4	// Chewy sticks his hand in the rat's hole (custom callback: Room6::cut_serv1)
-#define FCUT_006 5	// Chewy sticks the burger in the rat's hole and catches it (custom callback: Room6::cut_serv2)
-#define FCUT_007 6	// Chewy pushes the big red button and a huge anvil drops on him
-#define FCUT_008 7	// Chewy paints "don't" in front of "push this"
-#define FCUT_009 8	// Alien pushes the big red button and a huge anvil drops on him
-#define FCUT_010 9	// Chewy tries the transporter (custom callback: Room11::cut_serv)
-#define FCUT_011 10	// Chewy uses a deflated alien in the transporter (custom callback: Room12::cut_serv)
-#define FCUT_012 11	// Four panel video, where Chewy flies in a spaceship
-#define FCUT_013 12	// Chewy messes with a conveyor belt
-#define FCUT_014 13	// Chewy is transported in place of an alien
-#define FCUT_015 14	// Chewy jumps on a conveyor belt
-#define FCUT_016 15	// Transporter
-#define FCUT_017 16	// Transporter
-#define FCUT_018 17	// Chewy drops from a conveyor belt into a dumpster
-#define FCUT_019_01 18	// Space chase: Chewy escapes F5 with spaceship
-#define FCUT_019_02 19	// Space chase: Spaceship flight
-#define FCUT_019_03 20  // Space chase: Spaceship flight
-#define FCUT_019_04 21	// Space chase: Aliens chasing Chewy's spaceship
-#define FCUT_019_05 22  // Space chase: Dogfight with Chewy and alien spaceship
-#define FCUT_019_06 23  // Space chase: Chewy's spaceship enters bumper field and black hole
-#define FCUT_019_07 24  // Space chase: Chewy's spaceship travels through black hole
-#define FCUT_019_08 25  // Space chase: Chewy's spaceship approaches earth
-#define FCUT_019_09 26  // Space chase: Chewy's spaceship starts descending
-#define FCUT_019_10 27  // Space chase: Chewy's spaceship approaches farm
-#define FCUT_019_11 28	// Space chase: Chewy's spaceship performs crash landing near farm
+#define FCUT_000 0	// Chewy escapes the prison cell
+#define FCUT_001 1	// Burger
+#define FCUT_002 2	// Chewy mocks an alien and he trips on a rope
+#define FCUT_003 3	// Jumping rat-line creature
+#define FCUT_004 4	// Chewy sticks his hand in the rat's hole (custom callback: Room6::cut_serv1)
+#define FCUT_005 5	// Chewy sticks the burger in the rat's hole and catches it (custom callback: Room6::cut_serv2)
+#define FCUT_006 6	// Chewy pushes the big red button and a huge anvil drops on him
+#define FCUT_007 7	// Chewy paints "don't" in front of "push this"
+#define FCUT_008 8	// Alien pushes the big red button and a huge anvil drops on him
+#define FCUT_009 9	// Chewy tries the transporter (custom callback: Room11::cut_serv)
+#define FCUT_010 10	// Chewy uses a deflated alien in the transporter (custom callback: Room12::cut_serv)
+#define FCUT_011 11	// Four panel video, where Chewy flies in a spaceship
+#define FCUT_012 12	// Chewy messes with a conveyor belt
+#define FCUT_013 13	// Chewy is transported in place of an alien
+#define FCUT_014 14	// Chewy jumps on a conveyor belt
+#define FCUT_015 15	// Transporter
+#define FCUT_016 16	// Transporter
+#define FCUT_017 17	// Chewy drops from a conveyor belt into a dumpster
+#define FCUT_SPACECHASE_18 18	// Space chase: Chewy escapes F5 with spaceship
+#define FCUT_SPACECHASE_19 19	// Space chase: Spaceship flight
+#define FCUT_SPACECHASE_20 20  // Space chase: Spaceship flight
+#define FCUT_SPACECHASE_21 21	// Space chase: Aliens chasing Chewy's spaceship
+#define FCUT_SPACECHASE_22 22  // Space chase: Dogfight with Chewy and alien spaceship
+#define FCUT_SPACECHASE_23 23  // Space chase: Chewy's spaceship enters bumper field and black hole
+#define FCUT_SPACECHASE_24 24  // Space chase: Chewy's spaceship travels through black hole
+#define FCUT_SPACECHASE_25 25  // Space chase: Chewy's spaceship approaches earth
+#define FCUT_SPACECHASE_26 26  // Space chase: Chewy's spaceship starts descending
+#define FCUT_SPACECHASE_27 27  // Space chase: Chewy's spaceship approaches farm
+#define FCUT_SPACECHASE_28 28	// Space chase: Chewy's spaceship performs crash landing near farm
 #define FCUT_029 29 // Chewy wakes up after crash landing
 #define FCUT_030 30	// Chewy douses shaceship fire
 #define FCUT_031 31	// Chewy uses kitchen appliance

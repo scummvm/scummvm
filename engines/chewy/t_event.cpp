@@ -156,7 +156,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
 							hide_cur();
 							auto_move(3, P_CHEWY);
-							flic_cut(FCUT_005);
+							flic_cut(FCUT_004);
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);
 							show_cur();

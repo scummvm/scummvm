@@ -148,7 +148,7 @@ int16 Room11::scanner() {
 			actionFl = true;
 
 			start_aad(105, 0);
-			flic_cut(FCUT_011);
+			flic_cut(FCUT_010);
 			register_cutscene(4);
 			_G(spieler).R11TerminalOk = true;
 			cur_2_inventory();
@@ -160,7 +160,7 @@ int16 Room11::scanner() {
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
 				actionFl = true;
-				flic_cut(FCUT_010);
+				flic_cut(FCUT_009);
 				start_aad_wait(20, -1);
 			} else {
 				actionFl = true;
