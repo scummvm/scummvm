@@ -79,9 +79,7 @@ class Flic {
 public:
 	Flic();
 	~Flic();
-	void play(const char *fname, byte *vscreen, byte *load_p);
 
-	int16 play(Common::Stream *handle, byte *vscreen, byte *load_p);
 	void set_flic_user_function(int16(*user_funktion)(int16 key));
 	void remove_flic_user_function();
 	int16 custom_play(CustomInfo *ci);
