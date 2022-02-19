@@ -170,7 +170,7 @@ void Room51::setup_func() {
 				start_aad_wait(514, -1);
 				wait_show_screen(5);
 				_G(flags).NoPalAfterFlc = true;
-				_G(out)->setze_zeiger(nullptr);
+				_G(out)->set_pointer(nullptr);
 				_G(out)->cls();
 				flic_cut(115, 0);
 				register_cutscene(28);
@@ -256,7 +256,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					start_aad_wait(290, -1);
 					g_engine->_sound->stopSound(0);
 					_G(out)->ausblenden(1);
-					_G(out)->setze_zeiger(nullptr);
+					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 					_G(out)->einblenden(_G(pal), 0);
 					_G(flags).NoPalAfterFlc = true;
@@ -284,7 +284,7 @@ int16 Room51::use_door(int16 txt_nr) {
 		case 331:
 		case 334:
 			auto_move((txt_nr == 331) ? 10 : 7, P_CHEWY);
-			_G(out)->setze_zeiger(nullptr);
+			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(114, 0);

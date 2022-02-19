@@ -332,7 +332,7 @@ int Room90::useSurimyOnWreck() {
 	cur_2_inventory();
 	auto_move(6, P_CHEWY);
 	_G(maus_links_click) = false;
-	_G(out)->setze_zeiger(nullptr);
+	_G(out)->set_pointer(nullptr);
 	_G(out)->cls();
 	flic_cut(109, CFO_MODE);
 	register_cutscene(29);

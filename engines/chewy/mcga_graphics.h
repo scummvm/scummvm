@@ -39,7 +39,7 @@ public:
 	void exit_mausmode();
 
 	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
-	void setze_zeiger(byte *ptr);
+	void set_pointer(byte *ptr);
 	byte *get_zeiger();
 
 	void set_mono();

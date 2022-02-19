@@ -58,13 +58,13 @@ static const int16 OPTION_ICONS[9 * 4] = {
 void Options::execute(TafInfo *ti) {
 	long akt_clock = 0, stop_clock = 0;
 	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setze_zeiger(_G(screen0));
+	_G(out)->set_pointer(_G(screen0));
 
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
 	int16 mund_ani = MUND_START;
@@ -255,12 +255,12 @@ void Options::execute(TafInfo *ti) {
 	}
 
 	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setze_zeiger(_G(screen0));
+	_G(out)->set_pointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->setze_zeiger(_G(workptr));
+	_G(out)->set_pointer(_G(workptr));
 }
 
 } // namespace Dialogs
