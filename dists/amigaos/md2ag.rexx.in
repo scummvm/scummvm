@@ -1,7 +1,7 @@
 /*
-$VER: md2ag.rexx 0.1 (25.05.2021) README(.md) to (amiga).guide converter.
-Converts a given markdown README file to a basic hypertext Amiga guide file
-and installs it to a given location.
+$VER: md2ag.rexx 0.2 (16.02.2022) README(.md) to (amiga).guide converter.
+Converts ScummVM's markdown README file to a basic hypertext Amiga guide
+file and installs it to a given location.
 */
 
 PARSE ARG p_readme p_instpath
@@ -76,12 +76,14 @@ DO WHILE ~EOF(read_md)
 	v_line=READLN(read_md)
 
 	/*
-	Handle one rolled over line that cuts a weblink.
-	Lines 11, 12 and 13 in the original .md file hold a weblink which is cut short.
-	Rejoin lines 12 and 13 to fix the otherwise cut link.
+	Rejoin two rolled over lines that cut a weblink.
+	Lines 12, 13 and 40 in the original .md file both hold a weblink
+	which is cut due to the lines rolling over.
 	Lines are:
-	"latest release, progress reports and more, please visit the ScummVM [home
-	page](https://www.scummvm.org/)"
+	12 - latest release, progress reports and more, please visit the ScummVM [home
+	13 - page](https://www.scummvm.org/).
+	and
+	40 - Please make sure the bug is reproducible, and still occurs in the latest git/Daily build version. Also check the [compatibility list](https://www.scummvm.org/compatibility/) for that game, to ensure the issue is not already known. Please do not report bugs for games that are not listed as completable on the [Supported Games](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) wiki page, or on the compatibility list. We already know those games have bugs!
 	*/
 	IF POS('[',v_line)>0 THEN DO
 		IF POS(']',v_line)=0 THEN DO
@@ -103,39 +105,27 @@ DO WHILE ~EOF(read_md)
 	Change html markdown links to AmigaGuide ones.
 	*/
 	IF POS('http',v_line)>0 THEN DO
-		v_protocol=UPPER(SUBSTR(v_line,POS('http',v_line),POS('://',v_line)-POS('http',v_line)))
-		IF POS('(http',v_line)>0 THEN DO
-			v_weblink=SUBSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
-			v_weblink=COMPRESS(v_weblink,'>')
-			v_line=DELSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
-			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_protocol' 'v_weblink'"}',v_line,POS(']',v_line)+1)
+		v_protocol=SUBSTR(v_line,POS('http',v_line),POS('://',v_line)-POS('http',v_line))
+		IF POS('<http',v_line)>0 THEN DO
+			v_weblink=SUBSTR(v_line,POS('://',v_line)+3,LASTPOS('>',v_line)-POS('://',v_line)-3)
+			v_line=DELSTR(v_line,POS('<',v_line)+1,LASTPOS('>',v_line)-POS('<',v_line)-1)
+			SAY v_line
+			v_line=INSERT('@{"'v_protocol'://'v_weblink'" System "URLOpen 'v_protocol' 'v_weblink'"}',v_line,POS('<',v_line))
+			SAY v_line
 		END
 		ELSE DO
-			v_weblink=SUBSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('/>',v_line)-LASTPOS('<',v_line)-1)
-			v_line=DELSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('>',v_line)-LASTPOS('<',v_line)-1)
-			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,LASTPOS('>',v_line)-1)
+			v_weblink=SUBSTR(v_line,POS('://',v_line)+3,POS(')',v_line)-POS('://',v_line)-3)
+			v_line=DELSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
+			v_line=INSERT('@{"'v_protocol'://'v_weblink'" System "URLOpen 'v_protocol' 'v_weblink'"}',v_line,POS('(',v_line))
 		END
 	END
 
 	/*
-	Make the "[]" links stand out.
+	Use bold font for all links to make the [ ] encapsulated text stand out.
 	*/
 	IF POS('[',v_line)>0 THEN DO
 		v_line=INSERT('@{b}',v_line,POS('[',v_line)-1)
 		v_line=INSERT('@{ub} ',v_line,POS(']',v_line))
-	END
-
-	/*
-	There is one long line with two weblinks.
-	*/
-	IF POS('[Supported Games]',v_line)>0 THEN DO
-		v_protocol=UPPER(SUBSTR(v_line,LASTPOS('http',v_line),LASTPOS('://',v_line)-LASTPOS('http',v_line)))
-		v_weblink=SUBSTR(v_line,LASTPOS('(',v_line)+1,LASTPOS(')',v_line)-LASTPOS('(',v_line)-1)
-		v_weblink=COMPRESS(v_weblink,'>')
-		v_line=DELSTR(v_line,LASTPOS('(',v_line)+1,LASTPOS(')',v_line)-LASTPOS('(',v_line)-1)
-		v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_protocol' 'v_weblink'"}',v_line,LASTPOS(']',v_line)+1)
-		v_line=INSERT('@{b}',v_line,LASTPOS('[',v_line)-1)
-		v_line=INSERT('@{ub} ',v_line,LASTPOS(']',v_line))
 	END
 
 	CALL WRITELN write_guide,v_line
