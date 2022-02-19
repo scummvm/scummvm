@@ -76,7 +76,7 @@ void Room12::entry() {
 
 		_G(flags).NoScroll = true;
 		auto_scroll(60, 0);
-		flic_cut(FCUT_016);
+		flic_cut(FCUT_015);
 		_G(flags).NoScroll = false;
 
 		for (int16 i = 7; i < 10; i++)
@@ -203,7 +203,7 @@ int16 Room12::use_terminal() {
 				start_aad_wait(112, -1);
 				_G(flags).NoScroll = true;
 				auto_scroll(46, 0);
-				flic_cut(FCUT_017);
+				flic_cut(FCUT_016);
 				register_cutscene(5);
 
 				load_chewy_taf(CHEWY_BORK);
