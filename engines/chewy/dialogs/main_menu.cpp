@@ -97,7 +97,7 @@ void MainMenu::execute() {
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(out)->set_pointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
-			flic_cut(135);
+			flic_cut(FCUT_135);
 			break;
 
 		case MM_LOAD_GAME:
@@ -123,7 +123,7 @@ void MainMenu::execute() {
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(flags).NoPalAfterFlc = true;
 			_G(flc)->set_custom_user_function(creditsFn);
-			flic_cut(159);
+			flic_cut(FCUT_159);
 			_G(flc)->remove_custom_user_function();
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			Dialogs::Credits::execute();

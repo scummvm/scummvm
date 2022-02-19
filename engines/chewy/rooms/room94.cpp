@@ -55,7 +55,7 @@ void Room94::entry() {
 		set_person_pos(153, 122, P_HOWARD, P_RIGHT);
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
-		flic_cut(120);
+		flic_cut(FCUT_120);
 		register_cutscene(30);
 		_G(fx_blend) = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
@@ -74,7 +74,7 @@ void Room94::entry() {
 			_G(flags).NoScroll = true;
 			_G(out)->set_pointer(nullptr);
 			_G(out)->cls();
-			flic_cut(121);
+			flic_cut(FCUT_121);
 			register_cutscene(32);
 
 			_G(fx_blend) = BLEND_NONE;
@@ -136,7 +136,7 @@ int Room94::giveGhostBottle() {
 	_G(out)->set_pointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
-	flic_cut(62);
+	flic_cut(FCUT_062);
 	_G(fx_blend) = BLEND3;
 	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(541, -1);

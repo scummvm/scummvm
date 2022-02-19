@@ -62,11 +62,11 @@ void Room89::entry() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(103);
+		flic_cut(FCUT_103);
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(118);
+		flic_cut(FCUT_118);
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 538;
 		switch_room(92);
@@ -81,7 +81,7 @@ void Room89::entry() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(117);
+		flic_cut(FCUT_117);
 		register_cutscene(35);
 
 		_G(fx_blend) = BLEND3;
@@ -89,7 +89,7 @@ void Room89::entry() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(119);
+		flic_cut(FCUT_119);
 
 		// Squash screen into a single point at the center
 		int edi = -20;
@@ -180,7 +180,7 @@ int Room89::proc2() {
 	_G(out)->set_pointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
-	flic_cut(102);
+	flic_cut(FCUT_102);
 	register_cutscene(26);
 
 	_G(spieler).SVal1 = 89;

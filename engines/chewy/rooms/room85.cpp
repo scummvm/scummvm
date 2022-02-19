@@ -84,18 +84,18 @@ void Room85::entry(int16 eib_nr) {
 		_G(det)->show_static_spr(5);
 		_G(det)->show_static_spr(6);
 		start_aad_wait(474, -1);
-		flic_cut(90);
+		flic_cut(FCUT_090);
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(91);
+		flic_cut(FCUT_091);
 		_G(det)->hide_static_spr(6);
 		_G(spieler).scrollx = 25;
 		_G(fx_blend) = BLEND3;
 		start_aad_wait(475, -1);
 		start_aad(476, -1);
 		_G(flc)->set_custom_user_function(Room87::proc5);
-		flic_cut(89);
+		flic_cut(FCUT_089);
 		register_cutscene(25);
 
 		_G(flc)->remove_custom_user_function();

@@ -49,7 +49,7 @@ void Room50::entry(int16 eib_nr) {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		flic_cut(108);
+		flic_cut(FCUT_108);
 		show_cur();
 		switch_room(51);
 
