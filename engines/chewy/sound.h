@@ -42,6 +42,7 @@ public:
 	void pauseSound(uint channel);
 	void resumeSound(uint channel);
 	void stopSound(uint channel = 0);
+	void stopAllSounds();
 	bool isSoundActive(uint channel);
 	void setSoundVolume(uint volume);
 	void setSoundChannelVolume(uint channel, uint volume);

@@ -105,8 +105,9 @@ void Room68::setup_func() {
 				g_engine->_sound->playSound(_G(r68HohesC));
 				_G(det)->start_detail(_G(r68HohesC), 255, ANI_VOR);
 
-				while (_G(sndPlayer)->getSampleStatus(1) == 4)
-					set_up_screen(DO_SETUP);
+				// TODO
+				//while (_G(sndPlayer)->getSampleStatus(1) == 4)
+				//	set_up_screen(DO_SETUP);
 				_G(det)->stop_detail(_G(r68HohesC));
 			} else {
 				_G(det)->start_detail(_G(r68HohesC), 3, ANI_VOR);

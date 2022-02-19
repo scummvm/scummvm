@@ -126,9 +126,6 @@ int TimerHandle; // FIXME: HTIMER
 int16 TimerEnabled = false;
 int16 RealVoices;
 
-int16 SoundEnable = 0;
-int16 SoundMasterVol = 120;
-int16 MusicMasterVol = 120;
 int16 LoopEnable = OFF;
 int16 PlaybackMode = NORMAL_PLAYBACK;
 int16 StartPos = 0;
@@ -159,7 +156,6 @@ char *CurrentLine;
 int16 StereoPos[8] = {63};
 
 SoundPlayer::SoundPlayer() {
-	SoundEnable = false;
 	MusicFade = false;
 }
 
@@ -167,44 +163,24 @@ SoundPlayer::~SoundPlayer() {
 	warning("STUB: ailclass::~ailclass()");
 }
 
-void SoundPlayer::setMusicMasterVol(int16 vol) {
-	vol <<= 1;
-	if (vol > 120)
-		vol = 120;
-	MusicMasterVol = vol;
-}
-
-void SoundPlayer::setSoundMasterVol(int16 vol) {
-	vol <<= 1;
-	if (vol > 120)
-		vol = 120;
-	SoundMasterVol = vol;
-}
-
-void SoundPlayer::disableSound() {
-	SoundEnable = false;
-}
-
 void SoundPlayer::initMixMode() {
 	warning("STUB: ailclass::initMixMode()");
 
-	if (SoundEnable) {
-		initNoteTable(GlobalFrequency);
+	initNoteTable(GlobalFrequency);
 #if 0
-		TimerHandle = AIL_register_timer(mod_irq);
-		if (TimerHandle != -1) {
-			AIL_set_timer_frequency(TimerHandle, 50);
-			AIL_start_timer(TimerHandle);
-			TimerEnabled = true;
-		} else
+	TimerHandle = AIL_register_timer(mod_irq);
+	if (TimerHandle != -1) {
+		AIL_set_timer_frequency(TimerHandle, 50);
+		AIL_start_timer(TimerHandle);
+		TimerEnabled = true;
+	} else
 #endif
 
-		TimerEnabled = false;
-		StereoPos[0] = 7;
-		StereoPos[1] = 120;
-		StereoPos[2] = 30;
-		StereoPos[3] = 90;
-	}
+	TimerEnabled = false;
+	StereoPos[0] = 7;
+	StereoPos[1] = 120;
+	StereoPos[2] = 30;
+	StereoPos[3] = 90;
 }
 
 void SoundPlayer::exitMixMode() {
@@ -224,25 +200,23 @@ void SoundPlayer::playMod(TmfHeader *th) {
 	char *tmp;
 	int16 i;
 	ActiveSong = th;
-	if (SoundEnable) {
-		tmp = (char *)ActiveSong;
-		tmp += sizeof(TmfHeader);
-		for (i = 0; i < 128; i++) {
-			Patterns[i] = tmp;
-			tmp += 1024;
-		}
-		SeqPointer = 0;
-		PatLine = 0;
-		PatPointer = ActiveSong->sequenz[SeqPointer];
-		CurrentLine = Patterns[PatPointer];
-		CurrentTempo = 6;
-		PatternCount = 0;
-		FineSpeedV = 1;
-		FineSpeedN = 0;
-		FineSpeedS = 0;
-
-		MusicStatus = ON;
+	tmp = (char *)ActiveSong;
+	tmp += sizeof(TmfHeader);
+	for (i = 0; i < 128; i++) {
+		Patterns[i] = tmp;
+		tmp += 1024;
 	}
+	SeqPointer = 0;
+	PatLine = 0;
+	PatPointer = ActiveSong->sequenz[SeqPointer];
+	CurrentLine = Patterns[PatPointer];
+	CurrentTempo = 6;
+	PatternCount = 0;
+	FineSpeedV = 1;
+	FineSpeedN = 0;
+	FineSpeedS = 0;
+
+	MusicStatus = ON;
 }
 
 void SoundPlayer::stopMod() {
@@ -261,50 +235,44 @@ void SoundPlayer::stopMod() {
 }
 
 void SoundPlayer::continueMusic() {
-	if (SoundEnable)
-		if (!strncmp(ActiveSong->id, "TMF", 3))
-			MusicStatus = ON;
+	if (!strncmp(ActiveSong->id, "TMF", 3))
+		MusicStatus = ON;
 }
 
 void SoundPlayer::playSequence(int16 startPos, int16 endPos) {
-	if (SoundEnable) {
-		if (!strncmp(ActiveSong->id, "TMF", 3)) {
-			StartPos = startPos;
-			EndPos = endPos;
-			SeqPointer = StartPos;
-			PatLine = 0;
-			PatPointer = ActiveSong->sequenz[SeqPointer];
-			CurrentLine = Patterns[PatPointer];
-			MusicStatus = ON;
-		}
+	if (!strncmp(ActiveSong->id, "TMF", 3)) {
+		StartPos = startPos;
+		EndPos = endPos;
+		SeqPointer = StartPos;
+		PatLine = 0;
+		PatPointer = ActiveSong->sequenz[SeqPointer];
+		CurrentLine = Patterns[PatPointer];
+		MusicStatus = ON;
 	}
 }
 
 void SoundPlayer::playPattern(int16 pattern) {
-	if (SoundEnable) {
-		if (!strncmp(ActiveSong->id, "TMF", 3)) {
-			StartPos = 0;
-			EndPos = 0;
-			SeqPointer = 0;
-			PatLine = 0;
-			PatPointer = pattern;
-			CurrentLine = Patterns[PatPointer];
-			MusicStatus = ON;
-		}
+	if (!strncmp(ActiveSong->id, "TMF", 3)) {
+		StartPos = 0;
+		EndPos = 0;
+		SeqPointer = 0;
+		PatLine = 0;
+		PatPointer = pattern;
+		CurrentLine = Patterns[PatPointer];
+		MusicStatus = ON;
 	}
 }
 
 void SoundPlayer::setLoopMode(int16 mode) {
 	mode &= 1;
-	if (SoundEnable)
-		LoopEnable = mode;
+	LoopEnable = mode;
 }
 
 void SoundPlayer::fadeOut(uint16 delay) {
 	FadeStart = delay;
 	FadeCounter = 0;
 	MusicFade = FADE_OUT;
-	FadeVol = MusicMasterVol;
+	FadeVol = _G(spieler).MusicVol;
 }
 
 void SoundPlayer::getMusicInfo(musik_info *mi) {
@@ -316,20 +284,8 @@ void SoundPlayer::getMusicInfo(musik_info *mi) {
 }
 
 int16 SoundPlayer::musicPlaying() {
-	return MusicStatus;
-}
-
-int16 SoundPlayer::getSampleStatus(int16 channel) {
-	warning("STUB: ailclass::getSampleStatus()");
-
-#if 0
-	int16 ret;
-	channel &= 3;
-	channel += 4;
-	ret = AIL_sample_status(smp[channel]);
-	return ret;
-#endif
-	return 0;
+	return 0;	// Temporary hack until the music code is finished
+	//return MusicStatus;
 }
 
 void SoundPlayer::initNoteTable(uint16 sfreq) {
@@ -340,16 +296,6 @@ void SoundPlayer::initNoteTable(uint16 sfreq) {
 			RealFreq[(j * 48) + i] = (uint16)(TimerFreq / (float)(FreqTable[(j * 48) + i] << 1));
 
 	}
-}
-
-void SoundPlayer::endSound() {
-	warning("STUB: ailclass::endSound()");
-
-#if 0
-	int16 i;
-	for (i = 4; i < 8; i++)
-		AIL_end_sample(smp[i]);
-#endif
 }
 
 void mod_irq() {
@@ -364,23 +310,23 @@ void mod_irq() {
 			if (MusicFade == FADE_IN) {
 				if (!FadeCounter) {
 					FadeCounter = FadeStart;
-					if ((MusicMasterVol + 2) <= FadeVol)
-						MusicMasterVol += 2;
+					if ((_G(spieler).MusicVol / 2 + 2) <= FadeVol)
+						_G(spieler).MusicVol += 2;
 					else {
 						MusicFade = OFF;
-						MusicMasterVol = FadeVol;
+						_G(spieler).MusicVol = FadeVol;
 					}
 				} else
 					--FadeCounter;
 			} else if (MusicFade == FADE_OUT) {
 				if (!FadeCounter) {
 					FadeCounter = FadeStart;
-					if ((MusicMasterVol - 2) > 0)
-						MusicMasterVol -= 2;
+					if (_G(spieler).MusicVol - 2 > 0)
+						_G(spieler).MusicVol -= 2;
 					else {
 						MusicFade = OFF;
 						MusicStatus = OFF;
-						MusicMasterVol = FadeVol;
+						_G(spieler).MusicVol = FadeVol;
 					}
 				} else
 					--FadeCounter;

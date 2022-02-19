@@ -21,6 +21,7 @@
 
 #include "chewy/defines.h"
 #include "chewy/globals.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -185,7 +186,7 @@ void load_room_music(int16 room_nr) {
 				volume = 0;
 			else if (volume > _G(spieler).MusicVol)
 				volume = _G(spieler).MusicVol;
-			_G(sndPlayer)->setMusicMasterVol(volume);
+			g_engine->_sound->setMusicVolume(volume * Audio::Mixer::kMaxChannelVolume / 120);
 			_G(sndPlayer)->setLoopMode(lp_mode);
 			if (ttp_index != _G(currentSong)) {
 				_G(sndPlayer)->stopMod();
