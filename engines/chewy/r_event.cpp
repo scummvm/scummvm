@@ -1081,7 +1081,7 @@ void flic_cut(int16 nr, int16 mode) {
 			_G(sndPlayer)->setMusicMasterVol(32);
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			ret = _G(flc)->custom_play(&_G(Ci));
+			_G(flc)->custom_play(&_G(Ci));
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 			_G(flc)->custom_play(&_G(Ci));
 #else
@@ -1100,7 +1100,7 @@ void flic_cut(int16 nr, int16 mode) {
 
 		case FCUT_133:
 		case 1123:
-			for (i = 0; i < 13 && i != -1 && !_G(modul); ++i) {
+			for (i = 0; i < 13 && ret != -1 && !_G(modul); ++i) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(_G(Ci).Handle, FLIC_CUT_133[i]);
 				ret = _G(flc)->custom_play(&_G(Ci));
@@ -1237,7 +1237,7 @@ void flic_cut(int16 nr, int16 mode) {
 				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(_G(Ci).Handle, 43);
-				ret = _G(flc)->custom_play(&_G(Ci));
+				_G(flc)->custom_play(&_G(Ci));
 #else
 				g_engine->playVideo(43);
 #endif
@@ -1381,7 +1381,7 @@ void flic_cut(int16 nr, int16 mode) {
 				_G(fx)->border(_G(workpage), 100, 0, 0);
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(_G(Ci).Handle, 70);
-				ret = _G(flc)->custom_play(&_G(Ci));
+				_G(flc)->custom_play(&_G(Ci));
 				SHOULD_QUIT_RETURN;
 #else
 				g_engine->playVideo(70);
