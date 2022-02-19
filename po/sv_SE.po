@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-19 05:18+0000\n"
+"POT-Creation-Date: 2022-02-19 09:02+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4085,7 +4085,7 @@ msgstr "Emulera inte NTSC artifakter för text"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:276 engines/neverhood/detection.cpp:134
+#: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
 #: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
 #: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
@@ -4094,7 +4094,7 @@ msgstr "Använd originalskärmar för spara/ladda"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:277 engines/neverhood/detection.cpp:135
+#: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
 #: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
@@ -4398,7 +4398,7 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/groovie/detection.cpp:96 engines/hypno/detection.cpp:165
+#: engines/groovie/detection.cpp:104 engines/hypno/detection.cpp:165
 #: engines/kyra/detection_tables.h:303 engines/lure/detection.cpp:249
 #: engines/mohawk/detection_tables.h:988 engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
@@ -5105,27 +5105,27 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
-#: engines/groovie/detection.cpp:266
+#: engines/groovie/detection.cpp:275
 msgid "Fast movie speed"
 msgstr "Snabb filmhastighet"
 
-#: engines/groovie/detection.cpp:267
+#: engines/groovie/detection.cpp:276
 msgid "Play movies at an increased speed"
 msgstr "Spela filmer i högre hastighet"
 
-#: engines/groovie/detection.cpp:286
+#: engines/groovie/detection.cpp:295
 msgid "Easier AI"
 msgstr "Enklare AI"
 
-#: engines/groovie/detection.cpp:287
+#: engines/groovie/detection.cpp:296
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Reducera svårigheten för AI pussel"
 
-#: engines/groovie/detection.cpp:296
+#: engines/groovie/detection.cpp:305
 msgid "Updated Credits Music"
 msgstr ""
 
-#: engines/groovie/detection.cpp:297
+#: engines/groovie/detection.cpp:306
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
