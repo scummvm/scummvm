@@ -105,65 +105,6 @@ Flic::~Flic() {
 	delete[] _soundBuffer;
 }
 
-void Flic::play(const char *fname, byte *vscreen, byte *load_p) {
-
-	Stream *lhandle = File::open(fname);
-	if (lhandle) {
-		play(lhandle, vscreen, load_p);
-		delete lhandle;
-	} else {
-		error("flic error");
-	}
-}
-
-int16 Flic::play(Common::Stream *handle, byte *vscreen, byte *load_p) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	float ende;
-	int16 ret = 0;
-
-	_loadBuffer = load_p;
-	_virtScreen = vscreen + 4;
-
-	if (_flicHeader.load(rs)) {
-		if (_flicHeader.type == FLC) {
-			//trace_mode = false;
-			_fadeFlag = false;
-			_fadeDelay = 0;
-			_clsFlag = false;
-			_currentFrame = 0;
-			for (uint16 i = 0; (i < _flicHeader.frames) && (!_G(modul)) && (ret >= 0); i++) {
-				if (!_frameHeader.load(rs)) {
-					error("flic error");
-				} else {
-					if (_frameHeader.type != PREFIX) {
-						size_t tmp_size = ((size_t)_frameHeader.size) - sizeof(FrameHead);
-						float start = (float)g_system->getMillis(); // clock()
-						start /= 0.05f;
-						start += _flicHeader.speed;
-						if (tmp_size) {
-							if (rs->read(_loadBuffer, tmp_size) != tmp_size) {
-								error("flic error");
-							} else {
-								ret = decode_frame();
-							}
-						}
-
-						do {
-							ende = (float)g_system->getMillis(); // clock()
-							ende /= 0.05f;
-						} while (ende <= start);
-						++_currentFrame;
-					} else {
-						rs->seek((int)_frameHeader.size - FrameHead::SIZE(), SEEK_CUR);
-					}
-				}
-			}
-		}
-	}
-
-	return ret;
-}
-
 int16 Flic::decode_frame() {
 	ChunkHead chunk_header;
 	int16 action_ret = 0;
