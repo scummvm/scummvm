@@ -319,7 +319,7 @@ int16 Room68::use_diva() {
 		_G(det)->hide_static_spr(3);
 		_G(spieler).R68DivaWeg = true;
 		start_ani_block(2, ABLOCK38);
-		flic_cut(FCUT_083, CFO_MODE);
+		flic_cut(FCUT_083);
 		_G(det)->del_static_ani(18);
 		register_cutscene(22);
 		_G(det)->del_static_ani(18);

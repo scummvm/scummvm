@@ -451,7 +451,7 @@ void enter_room(int16 eib_nr);
 
 void exit_room(int16 eib_nr);
 
-void flic_cut(int16 nr, int16 mode);
+void flic_cut(int16 nr);
 
 void print_rows(int16 id);
 

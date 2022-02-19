@@ -46,7 +46,7 @@ int16 Room32::use_howard() {
 			cur_2_inventory();
 			remove_inventory(MUNTER_INV);
 			register_cutscene(11);
-			flic_cut(FCUT_043, CFO_MODE);
+			flic_cut(FCUT_043);
 			_G(atds)->set_steuer_bit(230, ATS_AKTIV_BIT, ATS_DATEI);
 			start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(75, -1);
@@ -107,7 +107,7 @@ void Room32::use_schreibmaschine() {
 						auto_move(3, P_CHEWY);
 						_G(spieler).R32UseSchreib = true;
 						cur_2_inventory();
-						flic_cut(FCUT_044, CFO_MODE);
+						flic_cut(FCUT_044);
 						register_cutscene(12);
 						_G(det)->show_static_spr(5);
 						_G(atds)->set_ats_str(203, 1, ATS_DATEI);

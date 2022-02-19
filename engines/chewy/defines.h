@@ -415,10 +415,6 @@ enum SetupScreenMode {
 #define ATS_ACTION_VOR 0
 #define ATS_ACTION_NACH 1
 
-#define CFO_MODE 0
-#define FLC_MODE 1
-#define ASF_MODE 2
-
 #define FCUT_001 0	// Chewy escapes the prison cell
 #define FCUT_002 1	// Burger
 #define FCUT_003 2	// Chewy mocks an alien and he trips on a rope
@@ -579,7 +575,7 @@ enum SetupScreenMode {
 #define FCUT_157 157 // Red space ship travelling inside black hole (custom callback: flic_user_function)
 #define FCUT_158 158 // Howard and Chewy waking up
 #define FCUT_159 159 // Credits
-//#define FCUT_155 160 // Intro logos (English)
+#define FCUT_160 160 // Intro logos (English)
 
 #define AUSGANG_LINKS 1
 #define AUSGANG_RECHTS 2

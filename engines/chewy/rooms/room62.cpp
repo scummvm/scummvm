@@ -110,7 +110,7 @@ int16 Room62::use_laura() {
 		_G(det)->start_detail(6, 255, ANI_VOR);
 		start_aad_wait(399, -1);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		flic_cut(FCUT_077, CFO_MODE);
+		flic_cut(FCUT_077);
 		show_cur();
 		_G(spieler).R64Moni1Ani = 0;
 		_G(spieler).R64Moni2Ani = 0;

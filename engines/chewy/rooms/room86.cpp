@@ -84,7 +84,7 @@ void Room86::entry(int16 eib_nr) {
 		_G(flags).NoScroll = true;
 		auto_scroll(246, 0);
 		proc3(false);
-		flic_cut(92, CFO_MODE);
+		flic_cut(92);
 		_G(flags).NoScroll = false;
 		auto_move(0, P_CHEWY);
 		_G(spieler).flags32_20 = true;

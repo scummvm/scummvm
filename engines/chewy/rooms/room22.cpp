@@ -89,7 +89,7 @@ int16 Room22::chewy_amboss() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		auto_move(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
-		flic_cut(FCUT_007, CFO_MODE);
+		flic_cut(FCUT_007);
 		_G(spieler).R22ChewyPlatt = true;
 		_G(atds)->set_ats_str(79, 1, ATS_DATEI);
 		_G(flags).AutoAniPlay = false;
@@ -151,7 +151,7 @@ void Room22::bork_walk2() {
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT2);
 	wait_auto_obj(BORK_OBJ);
 
-	flic_cut(FCUT_009, CFO_MODE);
+	flic_cut(FCUT_009);
 	register_cutscene(3);
 	_G(det)->show_static_spr(4);
 	_G(atds)->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATEI);
@@ -185,7 +185,7 @@ int16 Room22::malen() {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		auto_move(8, P_CHEWY);
-		flic_cut(FCUT_008, CFO_MODE);
+		flic_cut(FCUT_008);
 		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).R22Paint = true;
 		_G(obj)->calc_rsi_flip_flop(SIB_PAINT_R22);

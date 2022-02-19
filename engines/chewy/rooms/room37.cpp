@@ -114,7 +114,7 @@ short Room37::use_wippe() {
 			start_aad_wait(159, -1);
 			del_inventar(_G(spieler).AkInvent);
 			_G(flc)->set_flic_user_function(cut_serv1);
-			flic_cut(FCUT_047, CFO_MODE);
+			flic_cut(FCUT_047);
 			_G(flc)->remove_flic_user_function();
 			_G(flags).NoScroll = false;
 			show_cur();
@@ -180,9 +180,9 @@ int16 Room37::use_glas() {
 			start_aad_wait(147, -1);
 			del_inventar(_G(spieler).AkInvent);
 			_G(flc)->set_flic_user_function(cut_serv2);
-			flic_cut(FCUT_048, CFO_MODE);
+			flic_cut(FCUT_048);
 			_G(flc)->remove_flic_user_function();
-			flic_cut(FCUT_049, CFO_MODE);
+			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
 			_G(det)->hide_static_spr(9);
 			_G(atds)->set_ats_str(250, 1, ATS_DATEI);
@@ -226,7 +226,7 @@ void Room37::dog_bell() {
 			start_detail_wait(6, 1, ANI_VOR);
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			_G(det)->start_detail(11, 255, ANI_VOR);
-			flic_cut(FCUT_050, CFO_MODE);
+			flic_cut(FCUT_050);
 			start_detail_wait(6, 1, ANI_RUECK);
 			_G(det)->stop_detail(11);
 			set_person_pos(326, 85, P_CHEWY, P_LEFT);
@@ -249,9 +249,9 @@ void Room37::dog_bell() {
 			_G(det)->del_static_ani(3);
 			_G(det)->stop_detail(3);
 			start_detail_wait(4, 1, ANI_VOR);
-			flic_cut(FCUT_051, CFO_MODE);
+			flic_cut(FCUT_051);
 			_G(spieler).scrollx = 104;
-			flic_cut(FCUT_054, CFO_MODE);
+			flic_cut(FCUT_054);
 			register_cutscene(10);
 			_G(det)->show_static_spr(0);
 
@@ -293,7 +293,7 @@ void Room37::use_hahn() {
 		auto_move(7, P_CHEWY);
 		_G(spieler).R37TransHahn = true;
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
-		flic_cut(FCUT_052, CFO_MODE);
+		flic_cut(FCUT_052);
 		cur_2_inventory();
 		_G(menu_item) = CUR_TALK;
 		cursor_wahl(_G(menu_item));
@@ -324,7 +324,7 @@ void Room37::use_hahn() {
 			_G(det)->hide_static_spr(0);
 			_G(det)->start_detail(10, 10, ANI_VOR);
 			auto_move(8, P_CHEWY);
-			flic_cut(FCUT_053, CFO_MODE);
+			flic_cut(FCUT_053);
 			_G(det)->stop_detail(10);
 
 			_G(spieler).scrollx = 320;

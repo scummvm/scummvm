@@ -157,7 +157,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							hide_cur();
 							auto_move(3, P_CHEWY);
 							_G(flc)->set_custom_user_function(Room6::cut_serv1);
-							flic_cut(FCUT_005, CFO_MODE);
+							flic_cut(FCUT_005);
 							_G(flc)->remove_custom_user_function();
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);

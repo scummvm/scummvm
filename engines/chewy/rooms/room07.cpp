@@ -106,7 +106,7 @@ void Room7::klingel() {
 
 		_G(det)->start_detail(0, 255, ANI_VOR);
 		start_detail_wait(13, 1, ANI_VOR);
-		flic_cut(FCUT_002, CFO_MODE);
+		flic_cut(FCUT_002);
 		_G(det)->stop_detail(0);
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
@@ -157,7 +157,7 @@ void Room7::klingel() {
 		_G(obj)->hide_sib(SIB_KLINGEL_R7);
 		_G(flags).NoPalAfterFlc = false;
 		register_cutscene(2);
-		flic_cut(FCUT_003, CFO_MODE);
+		flic_cut(FCUT_003);
 		set_person_pos(201, 117, P_CHEWY, P_LEFT);
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;

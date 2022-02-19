@@ -77,7 +77,7 @@ void Room28::entry(int16 eib_nr) {
 
 					auto_scroll(0, 0);
 					_G(flc)->set_flic_user_function(cut_serv1);
-					flic_cut(FCUT_064, CFO_MODE);
+					flic_cut(FCUT_064);
 					_G(flc)->remove_flic_user_function();
 					_G(det)->show_static_spr(6);
 
@@ -107,7 +107,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(spieler).R28PostCar = false;
 					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
-					flic_cut(FCUT_063, CFO_MODE);
+					flic_cut(FCUT_063);
 					_G(spieler).R28ChewyPump = false;
 					invent_2_slot(K_MASKE_INV);
 					_G(atds)->set_ats_str(209, 0, ATS_DATEI);
@@ -219,10 +219,10 @@ void Room28::use_surimy() {
 		_G(spieler).R28SurimyCar = true;
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(flc)->set_flic_user_function(cut_serv2);
-		flic_cut(FCUT_055, CFO_MODE);
+		flic_cut(FCUT_055);
 		_G(flc)->remove_flic_user_function();
 		_G(flc)->set_flic_user_function(cut_serv1);
-		flic_cut(FCUT_056, CFO_MODE);
+		flic_cut(FCUT_056);
 		_G(flc)->remove_flic_user_function();
 		ani_nr = CH_TALK3;
 		dia_nr = 140;

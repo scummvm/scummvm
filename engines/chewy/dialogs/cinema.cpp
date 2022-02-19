@@ -167,7 +167,7 @@ void Cinema::execute() {
 			print_rows(546 + topIndex);
 
 			_G(flc)->set_custom_user_function(cut_serv);
-			flic_cut(CINEMA_FLICS[topIndex + selected], CFO_MODE);
+			flic_cut(CINEMA_FLICS[topIndex + selected]);
 			_G(flc)->remove_custom_user_function();
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));

@@ -89,7 +89,7 @@ void Room72::proc1(int16 flicNr) {
 	_G(spieler).flags28_10 = true;
 	wait_show_screen(7);
 	start_aad_wait(437, -1);
-	flic_cut(flicNr, CFO_MODE);
+	flic_cut(flicNr);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;
 	_G(spieler).PersonHide[P_CHEWY] = true;

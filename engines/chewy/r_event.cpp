@@ -904,7 +904,7 @@ static void flic_proc1() {
 	_G(out)->cls();
 }
 
-void flic_cut(int16 nr, int16 mode) {
+void flic_cut(int16 nr) {
 	static const int16 FLIC_CUT_133[] = {
 		133, 123, 125, 126, 124, 128, 129, 130, 131,
 		132, 133, 127, 158
@@ -1603,22 +1603,10 @@ void flic_cut(int16 nr, int16 mode) {
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle,
 				(nr < 1000) ? nr : nr - 1000);
-
-			switch (mode) {
-			case 0:
-				_G(flc)->custom_play(&_G(Ci));
-				break;
-			case 1:
-				_G(flc)->play(_G(Ci).Handle, _G(Ci).VirtScreen, _G(Ci).TempArea);
-				break;
-			default:
-				break;
-			}
-
+			_G(flc)->custom_play(&_G(Ci));
 #else
 			g_engine->playVideo(nr < 1000 ? nr : nr - 1000);
 #endif
-
 			break;
 		}
 

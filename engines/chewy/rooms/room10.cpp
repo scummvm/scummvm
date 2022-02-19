@@ -36,7 +36,7 @@ void Room10::entry() {
 		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 		_G(spieler).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
-		flic_cut(FCUT_004, CFO_MODE);
+		flic_cut(FCUT_004);
 		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 		hide_cur();
@@ -54,7 +54,7 @@ void Room10::get_surimy() {
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
 	_G(flc)->set_custom_user_function(cut_serv);
-	flic_cut(FCUT_006, CFO_MODE);
+	flic_cut(FCUT_006);
 	_G(flc)->remove_custom_user_function();
 	_G(spieler).R10SurimyOk = true;
 	_G(room)->set_timer_status(3, TIMER_STOP);

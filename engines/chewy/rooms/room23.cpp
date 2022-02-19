@@ -88,7 +88,7 @@ int16 Room23::start_gleiter() {
 					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
 					_G(flags).NoPalAfterFlc = true;
-					flic_cut(FCUT_012, CFO_MODE);
+					flic_cut(FCUT_012);
 					register_cutscene(7);
 					_G(out)->cls();
 					_G(spieler).R23GleiterExit = 16;
@@ -106,7 +106,7 @@ int16 Room23::start_gleiter() {
 				} else if (_G(spieler).R23GleiterExit == 16) {
 					_G(out)->set_pointer(nullptr);
 					_G(out)->cls();
-					flic_cut(FCUT_019_01, CFO_MODE);
+					flic_cut(FCUT_019_01);
 					_G(spieler).R23GleiterExit = 25;
 					register_cutscene(9);
 

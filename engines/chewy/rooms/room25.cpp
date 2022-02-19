@@ -72,7 +72,7 @@ void Room25::entry() {
 
 		_G(spieler).R25FirstEntry = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		flic_cut(FCUT_029, CFO_MODE);
+		flic_cut(FCUT_029);
 		g_engine->_sound->playSound(0, 0);
 		_G(fx_blend) = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
@@ -102,7 +102,7 @@ int16 Room25::gleiter_loesch() {
 			action_flag = true;
 			_G(spieler).R25GleiteLoesch = true;
 			auto_move(2, P_CHEWY);
-			flic_cut(FCUT_030, CFO_MODE);
+			flic_cut(FCUT_030);
 			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			_G(atds)->set_ats_str(219, 1, ATS_DATEI);
 			_G(atds)->set_ats_str(187, 1, ATS_DATEI);
