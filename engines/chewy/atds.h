@@ -203,13 +203,13 @@ struct AtsStrHeader {
 	uint16 VocNr = 0;
 
 	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() { return 4; }
+	static constexpr int SIZE() { return 2; }
 };
 
 struct AtsTxtHeader {
 	uint16 TxtNr = 0;
-	uint16 AMov = 0;
-	uint16 CurNr = 0;
+	int16 AMov = 0;
+	int16 CurNr = 0;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 8; }

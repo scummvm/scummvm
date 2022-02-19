@@ -32,8 +32,10 @@ namespace Chewy {
 
 bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	TxtNr = src->readUint16LE();
-	AMov = src->readUint16LE();
-	CurNr = src->readUint16LE();
+	AMov = src->readSint16LE();
+	CurNr = src->readSint16LE();
+	src->skip(2);
+
 	return true;
 }
 
@@ -767,13 +769,13 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str) {
 
 	bool done1 = false;
 	while (!done1) {
-		Common::MemoryReadStream rs1((const byte *)start_str, AtsTxtHeader::SIZE());
+		Common::MemoryReadStream rs1((const byte *)start_str + 2, AtsTxtHeader::SIZE());
 		_atsv.TxtHeader.load(&rs1);
 
-		if (_atsv.TxtHeader.TxtNr == 0xFEF0 &&
-				_atsv.TxtHeader.AMov == txt_nr) {
+		if (READ_LE_UINT16(start_str) == 0xFEF0 &&
+				_atsv.TxtHeader.TxtNr == txt_nr) {
 			// Found match
-			*str = start_str + AtsTxtHeader::SIZE();
+			*str = start_str + 2 + AtsTxtHeader::SIZE();
 
 			if (_atsv.TxtMode) {
 				Common::MemoryReadStream rs2((const byte *)*str, AtsStrHeader::SIZE());
@@ -784,7 +786,7 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str) {
 			break;
 		}
 
-		start_str += AtsTxtHeader::SIZE() + AtsStrHeader::SIZE();
+		start_str += 2 + AtsTxtHeader::SIZE() + AtsStrHeader::SIZE();
 
 		// Need to iterate over the following string to next entry
 		bool done2 = false;
