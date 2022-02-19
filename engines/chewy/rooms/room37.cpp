@@ -113,9 +113,7 @@ short Room37::use_wippe() {
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(159, -1);
 			del_inventar(_G(spieler).AkInvent);
-			_G(flc)->set_flic_user_function(cut_serv1);
 			flic_cut(FCUT_047);
-			_G(flc)->remove_flic_user_function();
 			_G(flags).NoScroll = false;
 			show_cur();
 			_G(spieler).scrollx = 269;
@@ -179,9 +177,7 @@ int16 Room37::use_glas() {
 			start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(147, -1);
 			del_inventar(_G(spieler).AkInvent);
-			_G(flc)->set_flic_user_function(cut_serv2);
 			flic_cut(FCUT_048);
-			_G(flc)->remove_flic_user_function();
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
 			_G(det)->hide_static_spr(9);

@@ -41,9 +41,7 @@ void Room64::entry() {
 		_G(det)->set_static_ani(1, -1);
 		chewy_entry();
 		if (_G(spieler).R63Feuer) {
-			_G(flc)->set_flic_user_function(cut_sev);
 			flic_cut(FCUT_078);
-			_G(flc)->remove_flic_user_function();
 			_G(spieler).R64ManWeg = true;
 			_G(det)->del_static_ani(1);
 			_G(room)->set_timer_status(1, TIMER_STOP);

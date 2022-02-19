@@ -76,9 +76,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(flags).NoScroll = true;
 
 					auto_scroll(0, 0);
-					_G(flc)->set_flic_user_function(cut_serv1);
 					flic_cut(FCUT_064);
-					_G(flc)->remove_flic_user_function();
 					_G(det)->show_static_spr(6);
 
 					if (!_G(spieler).R40TeilKarte) {
@@ -218,12 +216,8 @@ void Room28::use_surimy() {
 		auto_scroll(0, 0);
 		_G(spieler).R28SurimyCar = true;
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		_G(flc)->set_flic_user_function(cut_serv2);
 		flic_cut(FCUT_055);
-		_G(flc)->remove_flic_user_function();
-		_G(flc)->set_flic_user_function(cut_serv1);
 		flic_cut(FCUT_056);
-		_G(flc)->remove_flic_user_function();
 		ani_nr = CH_TALK3;
 		dia_nr = 140;
 		_G(atds)->set_ats_str(205, 1, ATS_DATEI);

@@ -353,9 +353,7 @@ int16 Room56::use_kneipe() {
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
-		_G(flc)->set_custom_user_function(proc1);
 		flic_cut(FCUT_112);
-		_G(flc)->remove_custom_user_function();
 		register_cutscene(31);
 
 		set_up_screen(NO_SETUP);

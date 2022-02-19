@@ -26,11 +26,11 @@ namespace Chewy {
 namespace Rooms {
 
 class Room10 {
-	static int16 cut_serv(int16 frame);
-
 public:
 	static void entry();
 	static void get_surimy();
+
+	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

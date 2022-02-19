@@ -320,9 +320,7 @@ void Room39::look_tv(bool cls_mode) {
 					_flag = true;
 			}
 
-			_G(flc)->set_custom_user_function(setup_func);
 			flic_cut(flic_nr);
-			_G(flc)->remove_custom_user_function();
 
 			if (cls_mode) {
 				_G(out)->cls();

@@ -293,10 +293,8 @@ int Room90::shootControlUnit() {
 	_G(flags).NoScroll = true;
 	auto_scroll(176, 0);
 	start_detail_wait(13, 1, ANI_VOR);
-	_G(flc)->set_custom_user_function(Room90::proc5);
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_107);
-	_G(flc)->remove_custom_user_function();
 	_G(spieler).scrollx = 0;
 	set_person_pos(76, 145, P_CHEWY, P_LEFT);
 	_G(maus_links_click) = false;

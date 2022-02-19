@@ -147,11 +147,9 @@ int16 Room11::scanner() {
 			set_up_screen(DO_SETUP);
 			actionFl = true;
 
-			_G(flc)->set_custom_user_function(cut_serv_2);
 			start_aad(105, 0);
 			flic_cut(FCUT_011);
 			register_cutscene(4);
-			_G(flc)->remove_custom_user_function();
 			_G(spieler).R11TerminalOk = true;
 			cur_2_inventory();
 			_G(menu_item) = CUR_TALK;
@@ -162,9 +160,7 @@ int16 Room11::scanner() {
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
 				actionFl = true;
-				_G(flc)->set_custom_user_function(cut_serv);
 				flic_cut(FCUT_010);
-				_G(flc)->remove_custom_user_function();
 				start_aad_wait(20, -1);
 			} else {
 				actionFl = true;

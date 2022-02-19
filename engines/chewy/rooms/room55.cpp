@@ -367,11 +367,9 @@ int16 Room55::use_kammeraus() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(5, 1, ANI_VOR);
 			_G(det)->show_static_spr(10);
-			_G(flc)->set_flic_user_function(cut_serv);
 			flic_cut(FCUT_070);
 			register_cutscene(18);
 		
-			_G(flc)->remove_flic_user_function();
 			const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
 			_G(room)->set_timer_status(aniNr, TIMER_STOP);
 			_G(det)->stop_detail(aniNr);

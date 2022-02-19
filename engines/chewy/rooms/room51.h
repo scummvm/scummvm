@@ -33,7 +33,6 @@ private:
 	static int _index;
 
 	static void setup_func();
-	static int16 cut_serv(int16 frame);
 	static void timer_action(int16 t_nr, int16 obj_nr);
 
 public:
@@ -42,6 +41,7 @@ public:
 	static bool timer(int16 t_nr, int16 ani_nr);
 
 	static int16 use_door(int16 txt_nr);
+	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

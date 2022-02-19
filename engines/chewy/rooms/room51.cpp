@@ -260,10 +260,8 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(out)->cls();
 					_G(out)->einblenden(_G(pal), 0);
 					_G(flags).NoPalAfterFlc = true;
-					_G(flc)->set_flic_user_function(cut_serv);
 					_G(det)->show_static_spr(16);
 					flic_cut(FCUT_068);
-					_G(flc)->remove_flic_user_function();
 
 					_G(det)->hide_static_spr(16);
 					_G(flags).NoPalAfterFlc = false;

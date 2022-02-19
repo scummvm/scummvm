@@ -94,11 +94,9 @@ void Room85::entry(int16 eib_nr) {
 		_G(fx_blend) = BLEND3;
 		start_aad_wait(475, -1);
 		start_aad(476, -1);
-		_G(flc)->set_custom_user_function(Room87::proc5);
 		flic_cut(FCUT_089);
 		register_cutscene(25);
 
-		_G(flc)->remove_custom_user_function();
 		switch_room(84);
 		show_cur();
 	}

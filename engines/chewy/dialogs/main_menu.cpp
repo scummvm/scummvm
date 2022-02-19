@@ -122,9 +122,7 @@ void MainMenu::execute() {
 		case MM_CREDITS:
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			_G(flags).NoPalAfterFlc = true;
-			_G(flc)->set_custom_user_function(creditsFn);
 			flic_cut(FCUT_159);
-			_G(flc)->remove_custom_user_function();
 			_G(fx)->border(_G(workpage), 100, 0, 0);
 			Dialogs::Credits::execute();
 			break;

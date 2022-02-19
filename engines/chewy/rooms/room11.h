@@ -29,8 +29,6 @@ class Room11 {
 private:
 	static void bork_zwinkert();
 	static void chewy_bo_use();
-	static int16 cut_serv(int16 frame);
-	static int16 cut_serv_2(int16 frame);
 
 public:
 	static void entry();
@@ -41,6 +39,9 @@ public:
 	static void put_card();
 	static int16 scanner();
 	static void talk_debug();
+
+	static int16 cut_serv(int16 frame);
+	static int16 cut_serv_2(int16 frame);
 };
 
 } // namespace Rooms
