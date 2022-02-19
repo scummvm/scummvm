@@ -1898,6 +1898,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - Hebrew DOS CD with patch applied, Dubbed by Gal Shemesh (https://www.youtube.com/watch?v=TGveX6tTcJ4&ab_channel=HebrewAdventure)
+	{
+		{
+			"simon1",
+			"CD, Hebrew (Dubbed by Gal Shemesh)",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"2f2d8fb65b224fb294c969acc40415a6", 6976776},
+				{ "icon.dat",		GAME_ICONFILE,	"4184de25c7a3f4cbabf7b7af0691b093", 14361},
+				{ "gamepc",			GAME_BASEFILE,	"0819f6c6d6f747c46eee1c856b875b65", 34615},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - Italian DOS CD
 	{
 		{
