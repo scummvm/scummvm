@@ -32,28 +32,6 @@ namespace Chewy {
 #define MAXMENUE 50
 #define MAXKNOPF 400
 
-struct TafFileHeader {
-	char id[4] = { 0 };
-	int16 mode = 0;
-	int16 count = 0;
-	uint32 allsize = 0;
-	byte palette[PALETTE_SIZE];
-	uint32 next = 0;
-	int16 korrekt = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct TafImageHeader {
-	int16 komp = 0;
-	uint16 width = 0;
-	uint16 height = 0;
-	uint32 next = 0;
-	uint32 image = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct TafInfo {
 	int16 anzahl = 0;
 	byte *palette = nullptr;
@@ -162,16 +140,6 @@ struct SbiInst {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct VocHeader {
-	char id[0x14];
-	uint16 offset;
-	uint8 ver_low;
-	uint8 ver_high;
-	uint16 id_code;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct MouseInfo {
 	int16 x = 0;
 	int16 y = 0;
@@ -186,40 +154,6 @@ struct KbdInfo {
 struct KbdMouseInfo {
 	MouseInfo *minfo = nullptr;
 	KbdInfo *kbinfo = nullptr;
-};
-
-struct ModInst {
-	char name[22];
-	uint16 laenge;
-	char finetune;
-
-	char insvol;
-	int16 repstart;
-	int16 replen;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct ModHeader {
-	char name[20] = { 0 };
-	ModInst instrument[31];
-	char pattern_anz = 0;
-	char dummy = 0;
-	char sequenz[128] = { 0 };
-	char id[4] = { 0 };
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct Mod15Header {
-	char name[20];
-	ModInst instrument[15];
-	char pattern_anz;
-	char dummy;
-	char sequenz[128];
-	char id[4];
-
-	bool load(Common::SeekableReadStream *src);
 };
 
 struct TmfInst {

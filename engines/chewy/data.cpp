@@ -58,29 +58,6 @@ uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-void Data::load_tafmcga(Stream *stream, int16 komp, uint32 size, byte *speicher) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-
-	byte *sp = speicher;
-
-	if (komp == 1) {
-		// Run length encoding using count/value pairs
-		for (uint32 pos = 0; pos < size;) {
-			uint8 count = rs->readByte();
-			uint8 value = rs->readByte();
-
-			for (uint8 i = 0; (i < count) && (pos < size); i++) {
-				sp[pos] = value;
-				++pos;
-			}
-		}
-	} else {
-		rs->read(sp, size);
-		sp += size;
-	}
-}
-
 void Data::load_tff(const char *fname, byte *speicher) {
 	strncpy(_filename, fname, MAXPATH - 5);
 	_filename[MAXPATH - 5] = '\0';
@@ -242,8 +219,6 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 
 int16 Data::get_id(char *id_code) {
 	int16 id = -1;
-	if (!(scumm_strnicmp(id_code, "TAF", 3)))
-		id = TAFDATEI;
 	if (!(scumm_strnicmp(id_code, "TFF", 3)))
 		id = TFFDATEI;
 
