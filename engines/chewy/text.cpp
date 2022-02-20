@@ -20,14 +20,125 @@
  */
 
 #include "common/system.h"
+#include "chewy/resource.h"
 #include "chewy/text.h"
 
 namespace Chewy {
 
-Text::Text() {
+Text::Text() : Resource("atds.tap") {
 }
+
 Text::~Text() {
 }
+
+TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
+	if (dialogNum >= kADSTextMax)
+		error("getDialog(): Invalid entry number requested, %d (max %d)", dialogNum, kADSTextMax - 1);
+
+	TextEntryList *l = new TextEntryList();
+
+	byte *data = getChunkData(dialogNum);
+	byte *ptr = data;
+
+	ptr += 2;  // entry number
+	ptr += 2;  // number of persons
+	ptr += 2;  // automove count
+	ptr += 2;  // cursor number
+	ptr += 13; // misc data
+
+	for (uint i = 0; i <= entryNum; i++) {
+		do {
+			TextEntry curDialog;
+			ptr++; // current entry
+			ptr += 2;
+			curDialog.speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+			ptr += 2;
+
+			do {
+				curDialog.text += *ptr++;
+
+				if (*ptr == 0 && *(ptr + 1) != kEndText) {
+					// TODO: Split lines
+					*ptr = ' ';
+				}
+			} while (*ptr != kEndText);
+
+			if (i == entryNum)
+				l->push_back(curDialog);
+
+		} while (*(ptr + 1) != kEndEntry);
+
+		ptr += 2; // kEndText, kEndEntry
+
+		if (*ptr == kEndBlock) // not found
+			break;
+	}
+
+	delete[] data;
+
+	return l;
+}
+
+TextEntry *Text::getText(uint dialogNum, uint entryNum) {
+	if (dialogNum < kADSTextMax)
+		error("getText(): Invalid entry number requested, %d (min %d)", dialogNum, kADSTextMax);
+
+	TextEntry *d = new TextEntry();
+	bool isText = (dialogNum >= kADSTextMax && dialogNum < kADSTextMax + kATSTextMax);
+	bool isAutoDialog = (dialogNum >= kADSTextMax + kATSTextMax && dialogNum < kADSTextMax + kATSTextMax + kAADTextMax);
+	//bool isInvText = (dialogNum >= kADSTextMax + kATSTextMax + kAADTextMax && dialogNum < kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax);
+
+	byte *data = getChunkData(dialogNum);
+	byte *ptr = data;
+
+	if (isAutoDialog)
+		ptr += 3;
+
+	for (uint i = 0; i <= entryNum; i++) {
+		ptr += 13;
+		d->speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+		ptr += 2;
+
+		do {
+			if (i == entryNum)
+				d->text += *ptr++;
+			else
+				ptr++;
+
+			if (*ptr == 0 && *(ptr + 1) != kEndText) {
+				// TODO: Split lines
+				*ptr = ' ';
+			}
+		} while (*ptr);
+
+		if (*(ptr + 1) != kEndText || *(ptr + 2) != kEndChunk) {
+			warning("Invalid text resource - %d, %d", dialogNum, entryNum);
+
+			delete[] data;
+			delete d;
+
+			return nullptr;
+		}
+
+		if (!isText)
+			ptr += 3; // 0, kEndText, kEndChunk
+		if (isAutoDialog)
+			ptr += 3;
+
+		if (i == entryNum) {
+			// Found
+			delete[] data;
+			return d;
+		}
+	}
+
+	// Not found
+	delete[] data;
+	delete d;
+
+	return nullptr;
+}
+
 
 void Text::crypt(char *txt, uint32 size) {
 	uint8 *sp;
