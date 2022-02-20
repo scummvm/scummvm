@@ -3110,6 +3110,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
 	GAME_ENTRY_STEAM("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554),
 	GAME_ENTRY_GOG("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772),
+	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90713626), // Big Box Limited Edition DVD
 	GAME_ENTRY_EN("diamondsintherough", "Diamonds.exe", "14c995189266969d538b31d1df451d3f", 180079079),
 	GAME_ENTRY_STEAM("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989),
 	GAME_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47959435),
