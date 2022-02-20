@@ -59,7 +59,7 @@ void EventsBase::updateScreen() {
 		g_system->updateScreen();
 }
 
-void EventsBase::update() {
+void EventsBase::update(bool updateOnButtonUp) {
 	// Brief pause to prevent 100% CPU usage
 	g_system->delayMillis(10);
 
@@ -72,11 +72,11 @@ void EventsBase::update() {
 
 #define MOUSE_MOVE \
 	if (moveEvent.type != Common::EVENT_INVALID) { \
-		handleEvent(moveEvent); \
+		handleEvent(moveEvent, updateOnButtonUp); \
 		moveEvent.type = Common::EVENT_INVALID; \
 	}
 
-void EventsBase::processEvents() {
+void EventsBase::processEvents(bool updateOnButtonUp) {
 	Common::Event e;
 	Common::Event moveEvent;
 
@@ -89,7 +89,7 @@ void EventsBase::processEvents() {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			MOUSE_MOVE;
-			handleEvent(e);
+			handleEvent(e, updateOnButtonUp);
 			break;
 
 		default:
@@ -99,7 +99,7 @@ void EventsBase::processEvents() {
 				moveEvent = e;
 			} else {
 				MOUSE_MOVE;
-				handleEvent(e);
+				handleEvent(e, updateOnButtonUp);
 				return;
 			}
 			break;
@@ -111,7 +111,7 @@ void EventsBase::processEvents() {
 
 #undef MOUSE_MOVE
 
-void EventsBase::handleEvent(const Common::Event &event) {
+void EventsBase::handleEvent(const Common::Event &event, bool updateOnButtonUp) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		_pendingKeyEvents.push(event);
 	} else {

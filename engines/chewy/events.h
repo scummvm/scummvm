@@ -33,10 +33,10 @@ private:
 	void init_timer_handler();
 	static void timer_handler();
 
-	void handleMouseEvent(const Common::Event &event);
+	void handleMouseEvent(const Common::Event &event, bool updateOnButtonUp);
 	void handleKbdEvent(const Common::Event &event);
 protected:
-	void handleEvent(const Common::Event &event) override;
+	void handleEvent(const Common::Event &event, bool updateOnButtonUp) override;
 public:
 	KbdInfo *_kbInfo = nullptr;
 	Common::Point _mousePos;

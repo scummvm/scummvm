@@ -123,7 +123,7 @@ void Cinema::execute() {
 			timer_nr = 0;
 			delay = 0;
 		} else if (flag) {
-			EVENTS_UPDATE;
+			g_events->update(true);
 			if (--delay <= 0)
 				flag = false;
 		}
@@ -198,7 +198,7 @@ void Cinema::execute() {
 			}
 		}
 
-		EVENTS_UPDATE;
+		g_events->update(true);
 		SHOULD_QUIT_RETURN;
 	}
 

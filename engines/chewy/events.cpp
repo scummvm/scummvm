@@ -50,14 +50,14 @@ void EventsManager::timer_handler() {
 		++_G(timer_count);
 }
 
-void EventsManager::handleEvent(const Common::Event &event) {
+void EventsManager::handleEvent(const Common::Event &event, bool updateOnButtonUp) {
 	if (event.type >= Common::EVENT_MOUSEMOVE && event.type <= Common::EVENT_MBUTTONUP)
-		handleMouseEvent(event);
+		handleMouseEvent(event, updateOnButtonUp);
 	else if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
 		handleKbdEvent(event);
 }
 
-void EventsManager::handleMouseEvent(const Common::Event &event) {
+void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnButtonUp) {
 	_mousePos = event.mouse;
 	bool isWheelEnabled = !_G(menu_display) && !_G(flags).InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
@@ -69,11 +69,19 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-		_G(minfo).button = 1;
+	case Common::EVENT_LBUTTONUP:
+		if (updateOnButtonUp && event.type == Common::EVENT_LBUTTONUP)
+			_G(minfo).button = 1;
+		if (!updateOnButtonUp && event.type == Common::EVENT_LBUTTONDOWN)
+			_G(minfo).button = 1;
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		_G(minfo).button = 2;
+	case Common::EVENT_RBUTTONUP:
+		if (updateOnButtonUp && event.type == Common::EVENT_RBUTTONUP)
+			_G(minfo).button = 2;
+		if (!updateOnButtonUp && event.type == Common::EVENT_RBUTTONDOWN)
+			_G(minfo).button = 2;
 		break;
 
 	case Common::EVENT_WHEELUP:
