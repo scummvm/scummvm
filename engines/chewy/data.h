@@ -40,7 +40,6 @@ public:
 	uint32 load_tmf(Stream *stream, TmfHeader *song);
 
 	void load_tff(const char *fname, byte *speicher);
-	void void_load(const char *fname, byte *speicher, uint32 size);
 	uint32 size(const char *fname, int16 typ);
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
 

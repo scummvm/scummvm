@@ -295,7 +295,15 @@ void init_load() {
 	set_spz_delay(3);
 
 	_G(menutaf) = _G(mem)->taf_adr(MENUTAF);
-	_G(spblende) = _G(mem)->void_adr("cut/blende.rnd");
+
+	Common::File f;
+	if (!f.open("cut/blende.rnd"))
+		error("Error reading file: cut/blende.rnd");
+	_G(spblende) = (byte *)MALLOC(f.size() + sizeof(uint32));
+	WRITE_LE_INT32(_G(spblende), f.size());
+	f.read(_G(spblende) + sizeof(uint32), f.size());
+	f.close();
+
 	_G(room)->load_room(&_G(room_blk), _G(room_start_nr), &_G(spieler));
 	_G(out)->set_palette(_G(pal));
 }

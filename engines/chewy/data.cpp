@@ -85,22 +85,6 @@ void Data::load_tff(const char *fname, byte *speicher) {
 	}
 }
 
-void Data::void_load(const char *fname, byte *speicher, uint32 size) {
-	strncpy(_filename, fname, MAXPATH - 1);
-	_filename[MAXPATH - 1] = '\0';
-
-	Common::File f;
-	if (f.open(_filename)) {
-		if (!f.read(speicher, size)) {
-			error("void_load error");
-		}
-
-		f.close();
-	} else {
-		error("void_load error");
-	}
-}
-
 uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead ch;
@@ -136,9 +120,8 @@ uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	return size;
 }
 
-// Only used in 2 places, will be removed eventually:
+// Only used in 1 place, will be removed eventually:
 // tff_adr() with type TFFDATEI
-// void_adr() with type 200
 uint32 Data::size(const char *fname, int16 typ) {
 	uint32 size = 0;
 
