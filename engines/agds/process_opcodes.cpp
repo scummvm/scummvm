@@ -540,7 +540,7 @@ void Process::checkScreenPatch() {
 
 	if (!screenName.empty() && screenName != screen->getName()) {
 		if (objectName != _engine->getSystemVariable("inventory_scr")->getString()) {
-			debug("checkScreenPatch for object %s %s");
+			debug("checkScreenPatch for object %s %s", screenName.c_str(), objectName.c_str());
 			auto patch = _engine->getPatch(screenName);
 			push(patch? patch->getFlag(objectName): 0);
 		} else {
