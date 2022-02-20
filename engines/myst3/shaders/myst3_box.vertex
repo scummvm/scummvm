@@ -5,7 +5,7 @@ uniform vec2 texOffsetXY;
 uniform vec2 texSizeWH;
 uniform vec2 verOffsetXY;
 uniform vec2 verSizeWH;
-uniform bool flipY;
+uniform UBOOL flipY;
 
 out vec2 Texcoord;
 
@@ -18,7 +18,7 @@ void main()
 	pos.x = pos.x * 2.0 - 1.0;
 	pos.y = -1.0 * (pos.y * 2.0 - 1.0);
 
-	if (flipY) {
+	if (UBOOL_TEST(flipY)) {
 		pos.y *= -1.0;
 	}
 

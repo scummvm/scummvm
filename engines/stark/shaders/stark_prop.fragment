@@ -3,14 +3,14 @@ in vec3 Color;
 
 OUTPUT
 
-uniform bool textured;
+uniform UBOOL textured;
 uniform vec3 color;
 uniform sampler2D tex;
 
 void main() {
 	outColor = vec4(Color, 1.0);
 
-	if (textured) {
+	if (UBOOL_TEST(textured)) {
 		outColor *= texture(tex, Texcoord);
 	} else {
 		outColor *= vec4(color, 1.0);

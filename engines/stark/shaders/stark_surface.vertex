@@ -4,7 +4,7 @@ in vec2 texcoord;
 uniform vec2 verOffsetXY;
 uniform vec2 verSizeWH;
 uniform vec2 viewport;
-uniform bool snapToGrid;
+uniform UBOOL snapToGrid;
 
 out vec2 Texcoord;
 
@@ -14,7 +14,7 @@ void main() {
 	// Coordinates are [0.0; 1.0], transform to [-1.0; 1.0]
 	vec2 pos = verOffsetXY + position * verSizeWH;
 
-	if (snapToGrid) {
+	if (UBOOL_TEST(snapToGrid)) {
 		// Align vertex coordinates to the native pixel grid
 		// This ensures text does not get garbled by nearest neighbors scaling
 		pos.x = floor(pos.x * viewport.x + 0.5) / viewport.x;

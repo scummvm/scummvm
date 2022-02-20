@@ -31,7 +31,7 @@ uniform vec3 bonePosition[maxBones];
 uniform Light lights[maxLights];
 uniform vec3 ambientColor;
 uniform vec3 color;
-uniform bool textured;
+uniform UBOOL textured;
 
 vec4 eyePosition;
 vec3 eyeNormal;
@@ -94,7 +94,7 @@ void main()
 	gl_Position = projectionMatrix * eyePosition;
 
 	// Set the initial vertex color
-	if (textured) {
+	if (UBOOL_TEST(textured)) {
 		Color = vec3(1.0);
 	} else {
 		Color = color;
