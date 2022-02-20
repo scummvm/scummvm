@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-19 20:27+0000\n"
-"PO-Revision-Date: 2022-02-18 09:53+0000\n"
+"PO-Revision-Date: 2022-02-20 17:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5790,23 +5790,22 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Εναλλαγή μεταξύ ενεργοποίησης και απενεργοποίησης της χρήσης βίντεο "
+"QuickTime για οπτικά εφέ που σχετίζονται με επιφάνειες νερού (πχ. "
+"κυματισμός)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Μεταβάσεις:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Εναλλαγή μεταξύ ενεργών κι ανενεργών μεταβάσεων μεταξύ οθονών του "
-"παιχνιδιού. Απενεργοποιώντας τις μεταβάσεις, θα έχετε τη δυνατότητα να "
-"πλοηγηθείτε γρηγορότερα στο παιχνίδι."
+"Ρυθμίζει την ταχύτητα για τις μεταβάσεις μεταξύ οθονών του παιχνιδιού. "
+"Απενεργοποιώντας τις μεταβάσεις, θα έχετε τη δυνατότητα να πλοηγηθείτε "
+"γρηγορότερα στο παιχνίδι."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
