@@ -22,15 +22,69 @@
 #ifndef CHEWY_TEXT_H
 #define CHEWY_TEXT_H
 
+#include "common/list.h"
+#include "chewy/chewy.h"
+#include "chewy/resource.h"
+
 namespace Chewy {
 
-class Text {
+/**
+ * Game texts are contained in txt/atds.tap, and contain the following (in that order):
+ * ADS (Adventure Dialog System) - dialogs, 500 entries max
+ * ATS (Adventure Text System) - text descriptions, 100 entries max
+ * AAD (Adventure Auto Dialog System) - automatic dialogs, 100 entries max
+ * INV - inventory text descriptions, 100 entries max
+ * USE - use action texts, 100 entries max
+ */
+enum MaxTextTypes {
+	kADSTextMax = 500, //   0 - 499
+	kATSTextMax = 100, // 500 - 599
+	kAADTextMax = 100, // 600 - 699
+	kINVTextMax = 100, // 700 - 799
+	kUSETextMax = 100  // 800 - 899
+};
+
+/**
+ * Markers for text entries
+ */
+enum TextEntryMarkers {
+	kEndRow = 0x00,
+	kEndBlock = 0x0b,
+	kEndEntry = 0x0c,
+	kEndText = 0x0d,
+	kEndChunk = 0x0e
+	// There's also 0x0f, block end, which we don't use
+};
+
+#define VOICE_OFFSET 20
+
+struct TextEntry {
+	int16 speechId;
+	Common::String text;
+};
+
+typedef Common::List<TextEntry> TextEntryList;
+
+class Text : public Resource {
 public:
 	Text();
 	~Text();
 
-	void crypt(char *txt, uint32 size);
+	/**
+	 * Gets a list of lines for a specific dialog entry
+	 */
+	TextEntryList *getDialog(uint dialogNum, uint entryNum);
 
+	/**
+	* Gets a line of text of the following types:
+	* - text (ATS) - 500 - 599
+	* - auto dialog (AAD) - 600 - 699
+	* - inventory text (INV) - 700 - 799
+	* - use text (USE) - 800 - 899
+	*/
+	TextEntry *getText(uint dialogNum, uint entryNum);
+
+	void crypt(char *txt, uint32 size);
 	char *str_pos(char *txt_adr, int16 pos);
 };
 
