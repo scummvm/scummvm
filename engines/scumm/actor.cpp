@@ -650,11 +650,13 @@ int Actor_v3::actorWalkStep() {
 	}
 
 	if ((_walkdata.xfrac += _walkdata.xAdd) >= _stepThreshold) {
-		_pos.x += _walkdata.deltaXFactor;
+		if (_pos.x != _walkdata.next.x)
+			_pos.x += _walkdata.deltaXFactor;
 		_walkdata.xfrac -= _stepThreshold;
 	}
 	if ((_walkdata.yfrac += _walkdata.yAdd) >= _stepThreshold) {
-		_pos.y += _walkdata.deltaYFactor;
+		if (_pos.y != _walkdata.next.y)
+			_pos.y += _walkdata.deltaYFactor;
 		_walkdata.yfrac -= _stepThreshold;
 	}
 
