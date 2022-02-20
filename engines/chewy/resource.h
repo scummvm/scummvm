@@ -35,43 +35,47 @@
 namespace Chewy {
 
 enum ResourceType {
-	kResourcePCX = 0,
-	kResourceTBF = 1,
+	kResourcePCX = 0,		// unused
+	kResourceTBF = 1,		// background art, contained in TGPs
 	kResourceTAF = 2,
 	kResourceTFF = 3,
-	kResourceVOC = 4,
-	kResourceTPF = 5,
-	kResourceTMF = 6,
-	kResourceMOD = 7,
-	kResourceRAW = 8,
-	kResourceLBM = 9,
+	kResourceVOC = 4,		// speech and SFX, contained in TVPs
+	kResourceTPF = 5,		// unused
+	kResourceTMF = 6,		// music, similar to a MOD file, contained in details.tap
+	kResourceMOD = 7,		// unused
+	kResourceRAW = 8,		// unused
+	kResourceLBM = 9,		// unused
 	kResourceRDI = 10,
 	kResourceTXT = 11,
 	kResourceIIB = 12,
 	kResourceSIB = 13,
 	kResourceEIB = 14,
-	kResourceATS = 15,
-	kResourceSAA = 16,
-	kResourceFLC = 17,
-	kResourceAAD = 18,
-	kResourceADS = 19,
-	kResourceADH = 20,
-	kResourceTGP = 21,
-	kResourceTVP = 22,
-	kResourceTTP = 23,
-	kResourceTAP = 24,
-	kResourceCFO = 25,
-	kResourceTCF = 26
+	kResourceATS = 15,		// unused
+	kResourceSAA = 16,		// unused
+	kResourceFLC = 17,		// unused
+	kResourceAAD = 18,		// unused
+	kResourceADS = 19,		// unused
+	kResourceADH = 20,		// used in txt/diah.adh
+	kResourceTGP = 21,		// container for background art, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
+	kResourceTVP = 22,		// container for speech, used in sound/speech.tvp
+	kResourceTTP = 23,		// unused
+	kResourceTAP = 24,		// container for sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
+	kResourceCFO = 25,		// unused
+	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
 };
 
+// Generic chunk header
 struct Chunk {
 	uint32 size;
-	uint16 num;
+	uint16 num;	// same as the type below, used in chunks where the type is substituted with count
 	ResourceType type;
-	uint32 pos;
+	uint32 pos;	// position of the actual data
 };
 
+// TBF (background) chunk header
 struct TBFChunk {
+	// TBF chunk header
+	// ID (TBF, followed by a zero)
 	uint16 screenMode;
 	uint16 compressionFlag;
 	uint32 size;
@@ -81,24 +85,31 @@ struct TBFChunk {
 	uint8 *data;
 };
 
+// TAF (sprite) image data chunk header - 15 bytes
 struct TAFChunk {
 	uint16 compressionFlag;
 	uint16 width;
 	uint16 height;
+	// 4 bytes next sprite offset
+	// 4 bytes sprite image offset
+	// 1 byte padding
 	uint8 *data;
 };
 
+// Sound chunk header
 struct SoundChunk {
 	uint32 size;
 	uint8 *data;
 };
 
+// Video chunk header
 struct VideoChunk {
+	// ID (CFA, followed by a zero)
 	uint32 size;
 	uint16 frameCount;
 	uint16 width;
 	uint16 height;
-	uint32 frameDelay;
+	uint32 frameDelay;	// in ms
 	uint32 firstFrameOffset;
 };
 
