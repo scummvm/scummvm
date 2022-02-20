@@ -412,6 +412,8 @@ void AGDSEngine::tick() {
 		runProcesses();
 		return;
 	}
+	if (_currentScreen)
+		_currentScreen->tick();
 	tickInventory();
 	tickCharacter();
 	runProcesses();
@@ -660,7 +662,6 @@ Common::Error AGDSEngine::run() {
 				skipFilm();
 			}
 		} else if (_currentScreen) {
-			_currentScreen->tick();
 			_currentScreen->paint(*backbuffer);
 		}
 
