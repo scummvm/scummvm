@@ -26,7 +26,12 @@ namespace Chewy {
 
 class VideoPlayer {
 public:
-	void playVideo(uint num);
+	/**
+	 * @Plays a video file
+	 * @param num - the video file number
+	 * @return - true if played, false if skipped
+	*/
+	bool playVideo(uint num, bool stopMusic = true);
 
 private:
 	bool handleCustom(uint num, uint frame);

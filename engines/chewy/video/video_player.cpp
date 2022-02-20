@@ -29,15 +29,20 @@
 
 namespace Chewy {
 
-void VideoPlayer::playVideo(uint num) {
+bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
 	VideoResource *videoResource = new VideoResource("cut.tap");
 	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
 
+	if (stopMusic) {
+		_G(sndPlayer)->stopMod();
+		_G(currentSong) = -1;
+	}
+
 	if (!cfoDecoder->loadStream(videoStream)) {
 		delete videoResource;
 		delete cfoDecoder;
-		return;
+		return false;
 	}
 
 	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
@@ -88,6 +93,8 @@ void VideoPlayer::playVideo(uint num) {
 
 	delete videoResource;
 	delete cfoDecoder;
+
+	return !skipVideo;
 }
 
 bool VideoPlayer::handleCustom(uint num, uint frame) {
@@ -106,6 +113,12 @@ bool VideoPlayer::handleCustom(uint num, uint frame) {
 			//delete text;
 		}
 		break;
+	case FCUT_094:
+		//Room87::proc3
+		return (frame >= 12) ? false : true;
+	case FCUT_112:
+		//Room56::proc1
+		return (_G(in)->get_switch_code() == 1) ? false : true;
 	default:
 		return true;
 	}
