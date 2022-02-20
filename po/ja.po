@@ -5612,7 +5612,9 @@ msgstr "水のエフェクトを有効にする(~W~)"
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
-msgstr "水面に関するエフェクト(波紋、波など)に対するQuickTimeビデオの使用を切り替えます。"
+msgstr ""
+"水面に関するエフェクト(波紋、波など)に対するQuickTimeビデオの使用を切り替えま"
+"す。"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
