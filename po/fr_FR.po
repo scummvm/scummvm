@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-19 20:27+0000\n"
-"PO-Revision-Date: 2022-02-17 23:27+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2022-02-20 17:58+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -789,22 +789,17 @@ msgid "About ScummVM"
 msgstr "À propos de ScummVM"
 
 #: gui/launcher.cpp:232
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~O~ptions générales..."
+msgstr "~O~ptions Globales..."
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:234
-#, fuzzy
 msgid "Change global ScummVM options"
-msgstr "Change les options générales de ScummVM"
+msgstr "Change les options globales de ScummVM"
 
 #: gui/launcher.cpp:234
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~O~pts générales..."
+msgstr "~O~pts Globales..."
 
 #: gui/launcher.cpp:239
 msgid "~A~dd Game..."
@@ -942,8 +937,6 @@ msgid "Record..."
 msgstr "Enregistrer..."
 
 #: gui/launcher.cpp:987
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
 msgstr "Options du ~J~eu..."
 
@@ -952,8 +945,6 @@ msgid "Change game options"
 msgstr "Change les options du jeu"
 
 #: gui/launcher.cpp:990
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Opts du ~J~eu..."
@@ -5750,22 +5741,20 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Utilise des vidéos QuickTime pour les effets visuels liés aux étendues d'eau "
+"(ondulations, vagues, etc.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Transitions :"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Active ou désactive la transition entre les écrans, ce qui vous permet de "
-"parcourir plus rapidement le jeu."
+"Règle la vitesse des transitions d'écran. En désactivant les transitions "
+"d'écran, vous pourrez naviguer plus rapidement dans le jeu."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
