@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-19 20:27+0000\n"
-"PO-Revision-Date: 2022-02-18 18:36+0000\n"
+"PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5681,22 +5681,20 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Перемикає використання Quicktime відео для візуальних ефектів стосовно води ("
+"хвилі, бриж, тощо)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Переходи:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Ввімкнути або вимкнути переходи між екранами. Вимикання переходів дозволить "
-"вам швидше пересуватися у грі."
+"Задає швидкість переходів між екранами. Вимикання переходів дозволить вам "
+"швидше пересуватися у грі."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
