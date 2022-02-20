@@ -185,7 +185,8 @@ void SpiderEngine::drawHealth() {
 	Common::Rect r;
 	uint32 c;
 	int d = (22 * (_maxHealth - _health) / _maxHealth);
-
+	if (d >= 22)
+		return;
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
 		c = 250; // red
