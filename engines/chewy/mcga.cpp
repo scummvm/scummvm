@@ -306,10 +306,6 @@ void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
 	putcxy(_G(gcurx), _G(gcury), c, fgCol, bgCol, scrWidth);
 }
 
-void init_svga(VesaInfo *vi_, byte *virt_screen) {
-	warning("STUB - init_svga");
-}
-
 namespace Zoom {
 
 static int spriteHeight;
