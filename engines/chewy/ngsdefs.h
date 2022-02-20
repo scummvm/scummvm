@@ -52,7 +52,6 @@ namespace Chewy {
 #define DATEI 3
 #define MOD15 10
 #define TYPE_ANZ 27
-#define TAFDATEI 2
 #define TFFDATEI 3
 #define TMFDATEI 6
 #define SCREENSAVE 0

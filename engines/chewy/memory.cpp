@@ -63,86 +63,6 @@ TafInfo *Memory::taf_adr(const char *filename) {
 }
 
 TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
-	Common::File *rs = new Common::File();
-	rs->open(CH_SPZ_FILE);
-	TafFileHeader header;
-	TafImageHeader iheader;
-	TafSeqInfo *ts_info = nullptr;
-	int16 i;
-
-	rs->seek(0, SEEK_SET);
-	if (header.load(rs)) {
-		int16 id = file->get_id(header.id);
-		if (id == TAFDATEI) {
-			if (header.korrekt > 1) {
-				rs->seek((-(int)((header.count - image_start) * sizeof(uint32))), SEEK_END);
-				uint32 ptr = rs->readUint32LE();
-
-				rs->seek(ptr, SEEK_SET);
-				uint32 size = 0;
-				for (i = 0; i < image_anz; i++) {
-					if (iheader.load(rs)) {
-						size += iheader.width * iheader.height;
-						rs->seek(iheader.next, SEEK_SET);
-
-					} else {
-						error("taf_seq_adr error");
-					}
-				}
-				size += image_anz * sizeof(byte *);
-				size += image_anz * sizeof(char *);
-				size += ((uint32)sizeof(TafSeqInfo));
-				byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
-
-				ts_info = (TafSeqInfo *)tmp1;
-				ts_info->anzahl = image_anz;
-				ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
-				ts_info->korrektur = (int16 *)(tmp1 + size);
-				rs->seek(ptr, SEEK_SET);
-				byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
-
-				for (i = 0; i < image_anz; i++) {
-					if (iheader.load(rs)) {
-						ts_info->image[i] = sp_ptr;
-						int16 *abmess = (int16 *)sp_ptr;
-						abmess[0] = iheader.width;
-						abmess[1] = iheader.height;
-						sp_ptr += 4;
-						size = (uint32)((uint32)iheader.height) * ((uint32)iheader.width);
-
-						rs->seek(iheader.image, SEEK_SET);
-						file->load_tafmcga(rs, iheader.komp, size, sp_ptr);
-						rs->seek(iheader.next, SEEK_SET);
-						sp_ptr += size;
-					} else {
-						error("taf_seq_adr error");
-					}
-				}
-				rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
-
-				if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
-					error("taf_seq_adr error");
-				} else {
-					int16 *p = ts_info->korrektur;
-					for (i = 0; i < (int)image_anz * 2; ++i, ++p)
-						*p = rs->readSint16LE();
-				}
-			} else {
-				error("taf_seq_adr error");
-			}
-		} else {
-			error("taf_seq_adr error");
-		}
-	} else {
-		error("taf_seq_adr error");
-	}
-
-	delete rs;
-
-	return ts_info;
-
-	// TODO: This implementation draws sprites with wrong offsets
-#if 0
 	TafSeqInfo *ts_info = nullptr;
 	SpriteResource *res = new SpriteResource(CH_SPZ_FILE);
 	uint32 size = 0;
@@ -169,12 +89,12 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 		sp_ptr += res->getSpriteData(i + image_start, &ts_info->image[i], false);
 	}
 
-	memcpy(ts_info->korrektur, res->getSpriteCorrectionsTable(), image_anz * 2 * sizeof(int16));
+	uint16 *correctionsTable = res->getSpriteCorrectionsTable() + image_start * 2;
+	memcpy(ts_info->korrektur, correctionsTable, image_anz * 2 * sizeof(int16));
 
 	delete res;
 
 	return ts_info;
-#endif
 }
 
 void Memory::tff_adr(const char *filename, byte **speicher) {

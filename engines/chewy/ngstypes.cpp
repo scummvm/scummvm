@@ -23,28 +23,6 @@
 
 namespace Chewy {
 
-bool TafFileHeader::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	mode = src->readSint16LE();
-	count = src->readSint16LE();
-	allsize = src->readUint32LE();
-	src->read(palette, PALETTE_SIZE);
-	next = src->readUint32LE();
-	korrekt = src->readSint16LE();
-
-	return true;
-}
-
-bool TafImageHeader::load(Common::SeekableReadStream *src) {
-	komp = src->readSint16LE();
-	width = src->readUint16LE();
-	height = src->readUint16LE();
-	next = src->readUint32LE();
-	image = src->readUint32LE();
-
-	return true;
-}
-
 bool NewPhead::load(Common::SeekableReadStream *src) {
 	src->read(id, 4);
 	type = src->readUint16LE();
@@ -135,54 +113,6 @@ bool SbiInst::load(Common::SeekableReadStream *src) {
 	carrw = src->readByte();
 	rv = src->readByte();
 	src->read(frei, 5);
-
-	return true;
-}
-
-bool VocHeader::load(Common::SeekableReadStream *src) {
-	src->read(id, 0x14);
-	offset = src->readUint16LE();
-	ver_low = src->readByte();
-	ver_high = src->readByte();
-	id_code = src->readUint16LE();
-
-	return true;
-}
-
-bool ModInst::load(Common::SeekableReadStream *src) {
-	src->read(name, 22);
-	laenge = src->readUint16LE();
-	finetune = src->readSByte();
-	insvol = src->readSByte();
-	repstart = src->readSint16LE();
-	replen = src->readSint16LE();
-
-	return true;
-}
-
-bool ModHeader::load(Common::SeekableReadStream *src) {
-	src->read(name, 20);
-	for (int i = 0; i < 31; ++i) {
-		if (!instrument[i].load(src))
-			return false;
-	}
-
-	pattern_anz = src->readSByte();
-	dummy = src->readSByte();
-	src->read(sequenz, 128);
-	src->read(id, 4);
-
-	return true;
-}
-
-bool Mod15Header::load(Common::SeekableReadStream *src) {
-	src->read(name, 20);
-	for (int i = 0; i < 15; ++i)
-		instrument[i].load(src);
-	pattern_anz = src->readSByte();
-	dummy = src->readSByte();
-	src->read(sequenz, 128);
-	src->read(id, 4);
 
 	return true;
 }
