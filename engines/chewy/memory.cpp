@@ -104,16 +104,4 @@ void Memory::tff_adr(const char *filename, byte **speicher) {
 	file->load_tff(filename, *speicher);
 }
 
-// Only called from init_load() with filename blende.rnd
-byte *Memory::void_adr(const char *filename) {
-	byte *ptr = nullptr;
-	uint32 size = file->size(filename, 200);
-
-	ptr = (byte *)MALLOC(size * sizeof(uint32));
-	WRITE_LE_INT32(ptr, size);
-	file->void_load(filename, ptr + sizeof(uint32), size);
-
-	return ptr;
-}
-
 } // namespace Chewy
