@@ -240,37 +240,19 @@ void new_game() {
 	_G(obj)->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
 	_G(obj)->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 
-	byte *tmp = (byte *)MALLOC(ROOM_ATS_MAX);
 	Common::File f;
-	if (f.open(ROOM_ATS_STEUER)) {
-		if (!f.read(tmp, ROOM_ATS_MAX)) {
-			error("new_game error");
-		}
 
-		f.close();
-	} else {
-		error("new_game error");
-	}
-
+	if (!f.open(ROOM_ATS_STEUER))
+		error("Error reading file: %s", ROOM_ATS_STEUER);
 	for (int16 i = 0; i < ROOM_ATS_MAX; i++)
-		_G(spieler).Ats[i * MAX_ATS_STATUS] = (uint8)tmp[i];
-	free(tmp);
+		_G(spieler).Ats[i * MAX_ATS_STATUS] = f.readByte();
+	f.close();
 
-	tmp = (byte *)MALLOC(MAX_MOV_OBJ);
-
-	if (f.open(INV_ATS_STEUER)) {
-		if (!f.read(tmp, MAX_MOV_OBJ)) {
-			error("new_game error");
-		}
-
-		f.close();
-	} else {
-		error("new_game error");
-	}
-
+	if (!f.open(INV_ATS_STEUER))
+		error("Error reading file: %s", INV_ATS_STEUER);
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
-		_G(spieler).InvAts[i * MAX_ATS_STATUS] = (uint8)tmp[i];
-	free(tmp);
+		_G(spieler).InvAts[i * MAX_ATS_STATUS] = f.readByte();
+	f.close();
 
 	_G(obj)->sort();
 	for (int16 i = 0; i < _G(obj)->spieler_invnr[0]; i++)
