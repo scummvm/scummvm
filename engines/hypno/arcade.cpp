@@ -321,7 +321,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 		}
 
-		if (checkArcadeLevelCompleted(background, segments[segmentIdx])) {
+		if (segments[segmentIdx].end || checkArcadeLevelCompleted(background, segments[segmentIdx])) {
 			skipVideo(background);
 			// Objectives
 			if (arc->obj1KillsRequired > 0 || arc->obj1MissesAllowed > 0) {
