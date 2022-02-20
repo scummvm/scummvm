@@ -42,8 +42,7 @@ void MainMenu::execute() {
 	if (!ConfMan.getBool("skip_title")) {
 		_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - 17);
 		_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
-		if (!_G(modul))
-			_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
+		_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
 
 		// NOTE: Originally, this was set to play video 200, but this actually
 		// jumped to the very last video in the file, so we play it explicitly

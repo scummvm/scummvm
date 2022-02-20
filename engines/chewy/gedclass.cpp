@@ -52,20 +52,15 @@ void GedClass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *st
 		// Scan for the correct index entry
 		int i = 0;
 		do {
-			if (!Gh->load(stream)) {
-				_G(modul) = 3;
-				_G(fcode) = 1;
-			} else if (i != nr) {
+			Gh->load(stream);
+			if (i != nr) {
 				// Skip over the entry's data
 				stream->seek(Gh->Len, SEEK_CUR);
 			}
-		} while (!_G(modul) && ++i <= nr);
+		} while (++i <= nr);
 
-		if (!_G(modul)) {
-			if (stream->read(speicher, Gh->Len) != Gh->Len) {
-				_G(modul) = 3;
-				_G(fcode) = 1;
-			}
+		if (stream->read(speicher, Gh->Len) != Gh->Len) {
+			error("load_ged_chunk error");
 		}
 	} else {
 		error("load_ged_chunk error");

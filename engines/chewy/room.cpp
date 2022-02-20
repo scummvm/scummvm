@@ -177,48 +177,35 @@ void Room::close_handle(int16 mode) {
 }
 
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
-	_G(modul) = 0;
-	_G(fcode) = 0;
-
 	clear_prog_ani();
 	_G(det)->load_rdi(Rb->DetFile, room_nr);
 
 	if (player->SoundSwitch == false)
 		_G(det)->disable_room_sound();
-	if (!_G(modul)) {
-		RoomDetailInfo *Rdi_ = _G(det)->get_room_detail_info();
-		_roomInfo = &Rdi_->Ri;
-		if (_roomInfo->TafLoad != 255) {
-			char tmp_str[MAXPATH];
-			strcpy(tmp_str, Rb->RoomDir);
-			strcat(tmp_str, _roomInfo->TafName);
-			_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
-			Rb->Fti = _G(det)->get_taf_info();
-			Rb->DetImage = Rb->Fti->image;
-			Rb->DetKorrekt = Rb->Fti->korrektur;
-		}
-		if (!_G(modul)) {
-			_G(obj)->calc_all_static_detail();
-			load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
-			set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
-			calc_invent(Rb, player);
-
-			if (!_G(modul)) {
-				del_timer_old_room();
-				add_timer_new_room();
-			}
-
-			if (!_G(modul)) {
-				if (Rb->AtsLoad)
-					_G(atds)->load_atds(_roomInfo->RoomNr, ATS_DATEI);
-			}
-
-			if (!_G(modul)) {
-				if (Rb->AadLoad)
-					_G(atds)->load_atds(_roomInfo->RoomNr, AAD_DATEI);
-			}
-		}
+	RoomDetailInfo *Rdi_ = _G(det)->get_room_detail_info();
+	_roomInfo = &Rdi_->Ri;
+	if (_roomInfo->TafLoad != 255) {
+		char tmp_str[MAXPATH];
+		strcpy(tmp_str, Rb->RoomDir);
+		strcat(tmp_str, _roomInfo->TafName);
+		_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
+		Rb->Fti = _G(det)->get_taf_info();
+		Rb->DetImage = Rb->Fti->image;
+		Rb->DetKorrekt = Rb->Fti->korrektur;
 	}
+	_G(obj)->calc_all_static_detail();
+	load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
+	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
+	calc_invent(Rb, player);
+
+	del_timer_old_room();
+	add_timer_new_room();
+
+	if (Rb->AtsLoad)
+		_G(atds)->load_atds(_roomInfo->RoomNr, ATS_DATEI);
+
+	if (Rb->AadLoad)
+		_G(atds)->load_atds(_roomInfo->RoomNr, AAD_DATEI);
 }
 
 void Room::set_timer_start(int16 timer_start) {
@@ -289,44 +276,42 @@ void Room::set_ak_pal(RaumBlk *Rb) {
 void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
 	byte *tmp_inv_spr[MAX_MOV_OBJ];
 
-	if (!_G(modul)) {
-		_G(obj)->sort();
-		memcpy(tmp_inv_spr, Rb->InvSprAdr, MAX_MOV_OBJ * sizeof(char *));
-		memset(Rb->InvSprAdr, 0, MAX_MOV_OBJ * sizeof(char *));
+	_G(obj)->sort();
+	memcpy(tmp_inv_spr, Rb->InvSprAdr, MAX_MOV_OBJ * sizeof(char *));
+	memset(Rb->InvSprAdr, 0, MAX_MOV_OBJ * sizeof(char *));
 
-		SpriteResource *spriteRes = new SpriteResource(Rb->InvFile);
+	SpriteResource *spriteRes = new SpriteResource(Rb->InvFile);
 
-		for (int16 i = 1; i < _G(obj)->mov_obj_room[0] + 1; i++) {
-			if (!tmp_inv_spr[_G(obj)->mov_obj_room[i]]) {
-				spriteRes->getSpriteData(_G(obj)->mov_obj_room[i], &Rb->InvSprAdr[_G(obj)->mov_obj_room[i]], true);
-			} else {
-				Rb->InvSprAdr[_G(obj)->mov_obj_room[i]] = tmp_inv_spr[_G(obj)->mov_obj_room[i]];
-				tmp_inv_spr[_G(obj)->mov_obj_room[i]] = nullptr;
-			}
+	for (int16 i = 1; i < _G(obj)->mov_obj_room[0] + 1; i++) {
+		if (!tmp_inv_spr[_G(obj)->mov_obj_room[i]]) {
+			spriteRes->getSpriteData(_G(obj)->mov_obj_room[i], &Rb->InvSprAdr[_G(obj)->mov_obj_room[i]], true);
+		} else {
+			Rb->InvSprAdr[_G(obj)->mov_obj_room[i]] = tmp_inv_spr[_G(obj)->mov_obj_room[i]];
+			tmp_inv_spr[_G(obj)->mov_obj_room[i]] = nullptr;
 		}
-
-		for (int16 i = 1; i < _G(obj)->spieler_invnr[0] + 1; i++) {
-			if (!tmp_inv_spr[_G(obj)->spieler_invnr[i]]) {
-				spriteRes->getSpriteData(_G(obj)->spieler_invnr[i], &Rb->InvSprAdr[_G(obj)->spieler_invnr[i]], true);
-			} else {
-				Rb->InvSprAdr[_G(obj)->spieler_invnr[i]] = tmp_inv_spr[_G(obj)->spieler_invnr[i]];
-				tmp_inv_spr[_G(obj)->spieler_invnr[i]] = 0;
-			}
-		}
-
-		for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
-			if (tmp_inv_spr[i] != 0)
-				free(tmp_inv_spr[i]);
-		}
-
-		if (player->AkInvent != -1) {
-			if (Rb->InvSprAdr[player->AkInvent] == nullptr) {
-				spriteRes->getSpriteData(player->AkInvent, &Rb->InvSprAdr[player->AkInvent], true);
-			}
-		}
-
-		delete spriteRes;
 	}
+
+	for (int16 i = 1; i < _G(obj)->spieler_invnr[0] + 1; i++) {
+		if (!tmp_inv_spr[_G(obj)->spieler_invnr[i]]) {
+			spriteRes->getSpriteData(_G(obj)->spieler_invnr[i], &Rb->InvSprAdr[_G(obj)->spieler_invnr[i]], true);
+		} else {
+			Rb->InvSprAdr[_G(obj)->spieler_invnr[i]] = tmp_inv_spr[_G(obj)->spieler_invnr[i]];
+			tmp_inv_spr[_G(obj)->spieler_invnr[i]] = 0;
+		}
+	}
+
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
+		if (tmp_inv_spr[i] != 0)
+			free(tmp_inv_spr[i]);
+	}
+
+	if (player->AkInvent != -1) {
+		if (Rb->InvSprAdr[player->AkInvent] == nullptr) {
+			spriteRes->getSpriteData(player->AkInvent, &Rb->InvSprAdr[player->AkInvent], true);
+		}
+	}
+
+	delete spriteRes;
 }
 
 int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName) {
@@ -368,18 +353,13 @@ void Room::init_ablage() {
 	_ablage[0] = (byte *)MALLOC(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
 	_ablagePal[0] = (byte *)MALLOC(MAX_ABLAGE * 768l);
 	_gedMem[0] = (byte *)MALLOC(MAX_ABLAGE * GED_BLOCK_SIZE);
-	if (!_G(modul)) {
-		_akAblage = 0;
-		for (int16 i = 0; i < MAX_ABLAGE; i++) {
-			_ablage[i] = _ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
-			_ablageInfo[i][0] = -1;
-			_ablageInfo[i][1] = -1;
-			_ablagePal[i] = _ablagePal[0] + 768l * i;
-			_gedMem[i] = _gedMem[0] + (GED_BLOCK_SIZE * i);
-		}
-	} else {
-		_akAblage = -1;
-		_ablage[0] = 0;
+	_akAblage = 0;
+	for (int16 i = 0; i < MAX_ABLAGE; i++) {
+		_ablage[i] = _ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
+		_ablageInfo[i][0] = -1;
+		_ablageInfo[i][1] = -1;
+		_ablagePal[i] = _ablagePal[0] + 768l * i;
+		_gedMem[i] = _gedMem[0] + (GED_BLOCK_SIZE * i);
 	}
 }
 
