@@ -1285,17 +1285,11 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {
 	int16 talk_stop_ani = -1;
 	int16 talk_show_static = -1;
-	int16 tmp = -1;
-	int16 anz;
-	int16 i;
-	int16 altes_format;
-	int16 talk_ani;
-	int16 stop_ani;
 	int16 ani_nr;
-	talk_ani = -1;
-	stop_ani = -1;
-	altes_format = false;
-	tmp = -1;
+	int16 talk_ani = -1;
+	int16 stop_ani = -1;
+	int16 altes_format = false;
+	int16 tmp = -1;
 
 	switch (dia_nr) {
 	case 30000:
@@ -1495,8 +1489,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case R35_CAT_DIA2:
 	case R35_CAT_DIA1:
 	case R37_HAHN_DIA:
-		switch (person_nr) {
-		case 1:
+		if (person_nr == 1) {
 			if (mode == AAD_STR_START) {
 				_G(room)->set_timer_status(1, TIMER_STOP);
 				_G(det)->del_static_ani(1);
@@ -1506,14 +1499,20 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				_G(det)->stop_detail(0);
 				_G(det)->set_static_ani(1, -1);
 			}
-			break;
-
 		}
 		break;
 
 	case 169:
 
 		switch (person_nr) {
+		case 0:
+			if (mode == AAD_STR_START) {
+				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+			} else {
+				stop_spz();
+			}
+			break;
+
 		case 1:
 			if (mode == AAD_STR_START) {
 				_G(det)->start_detail(5, 255, ANI_VOR);
@@ -1522,12 +1521,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			}
 			break;
 
-		case 0:
-			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
-			} else {
-				stop_spz();
-			}
+		default:
 			break;
 		}
 		break;
@@ -1564,7 +1558,8 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case P_HOWARD:
 		case P_NICHELLE:
-		case P_4:
+		case P_4: {
+			int16 anz;
 			if (person_nr == 4) {
 				anz = 2;
 				tmp = 3;
@@ -1572,7 +1567,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				anz = 1;
 				tmp = person_nr + 2;
 			}
-			for (i = 0; i < anz; i++) {
+			for (int16 i = 0; i < anz; i++) {
 				if (mode == AAD_STR_START) {
 					_G(det)->start_detail(tmp, 255, ANI_VOR);
 				} else {
@@ -1580,6 +1575,9 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				}
 				++tmp;
 			}
+			}
+			break;
+		default:
 			break;
 		}
 		break;
@@ -2143,6 +2141,8 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			}
 			break;
 
+		default:
+			break;
 		}
 		break;
 
@@ -2305,9 +2305,8 @@ void calc_inv_use_txt(int16 test_nr) {
 
 static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	int16 txt_anz;
-	const char *s;
 
-	s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, 16);
+	const char *s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, 16);
 	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
 
 	_G(atds)->load_atds(cur_inv, INV_ATS_DATEI);
@@ -2327,11 +2326,7 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 
 bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	int16 inv_mode;
-	int16 txt_nr = 0;
 	bool ret = false;
-	int16 r_val = 0;
-	int16 ok;
-	ret = false;
 
 	switch (mode) {
 	case INVENTAR_NORMAL:
@@ -2364,7 +2359,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	}
 
 	if (inv_mode != -1) {
-		txt_nr = _G(atds)->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
+		int16 txt_nr = _G(atds)->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
 		if (txt_nr != -1) {
 			if (!_G(flags).InventMenu) {
 				if (txt_nr >= 15000) {
@@ -2376,11 +2371,11 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 				Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, txt_nr);
 			}
 		} else {
-			ok = false;
+			int16 ok = false;
 			if (inv_mode == IUID_SPIELER)
 				ok = calc_person_click(test_nr);
 			if (!ok) {
-				r_val = g_engine->getRandomNumber(5);
+				int16 r_val = g_engine->getRandomNumber(5);
 
 				if (_G(flags).InventMenu) {
 					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
@@ -2554,7 +2549,6 @@ int16 calc_person_click(int16 p_nr) {
 void calc_person_dia(int16 p_nr) {
 	bool flag = false;
 	int16 room_nr = 0;
-	int i;
 
 	switch (p_nr) {
 	case P_HOWARD:
@@ -2762,7 +2756,7 @@ void calc_person_dia(int16 p_nr) {
 				auto_move(_G(spieler).DiaAMov, P_CHEWY);
 
 			int16 tmp[3];
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				tmp[i] = _G(spieler).PersonDiaRoom[i];
 				_G(spieler).PersonDiaRoom[i] = false;
 				_G(stopAutoMove)[i] = true;
@@ -2770,7 +2764,7 @@ void calc_person_dia(int16 p_nr) {
 
 			start_aad_wait(_G(spieler).PersonDia[p_nr], -1);
 
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				_G(spieler).PersonDiaRoom[i] = tmp[i];
 				_G(stopAutoMove)[i] = false;
 			}
