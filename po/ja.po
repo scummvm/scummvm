@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-19 20:27+0000\n"
-"PO-Revision-Date: 2022-02-19 20:37+0000\n"
+"PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5612,22 +5612,17 @@ msgstr "水のエフェクトを有効にする(~W~)"
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
-msgstr ""
+msgstr "水面に関するエフェクト(波紋、波など)に対するQuickTimeビデオの使用を切り替えます。"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "トランジション："
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
-"画面遷移のON/OFFを切り替えます。OFFにすると、ゲームの速度が上がります。"
+msgstr "画面遷移の速度を調整します。無効化すると、ゲームの速度が上がります。"
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
