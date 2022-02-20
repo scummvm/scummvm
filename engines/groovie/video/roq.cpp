@@ -286,7 +286,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 	if (surface.h == 0 || surface.w == 0) {
 		return;
 	}
-	Common::String tname = "img/" + filename;
+	Common::String tname = "imgf/" + filename;
 #ifdef USE_PNG
 	tname += ".png";
 #else
@@ -295,7 +295,8 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 
 	Common::DumpFile out;
 	if (!out.open(tname)) {
-		error("failed to open %s", tname.c_str());
+		warning("failed to write debug image to %s", tname.c_str());
+		return;
 	}
 
 #ifdef USE_PNG
