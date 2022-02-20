@@ -30,8 +30,9 @@ namespace Chewy {
 #define RIGHT_VECT 1
 #define UP_VECT -_gpkt->Breite
 #define DOWN_VECT _gpkt->Breite
-#define GEFUNDEN 1
-#define UNBEGEHBAR 2
+#define MOV_START 0
+#define MOV_FOUND 1
+#define MOV_UNPASSABLE 2
 #define Y_DOWN 1
 #define Y_UP 2
 #define SOURCE_COL 14
@@ -287,12 +288,12 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 	mi.XyzStart[0] = om.Xypos[0];
 	mi.XyzStart[1] = om.Xypos[1];
 	get_mov_vector(mi.XyzStart, mi.Vorschub, &om);
-	int16 ende = 0;
+	bool endFl = false;
 	int16 mov_ok = 0;
 	int16 steps = 0;
-	int16 abbruch = 0;
+	int16 abbruch = MOV_START;
 
-	while (!ende && !abbruch) {
+	while (!endFl && !abbruch) {
 		if (om.Count > 0) {
 			--om.Count;
 			int16 tmpx = om.Xyvo[0];
@@ -342,21 +343,21 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 					                  om.Xypos[1] + tmpy + tmpz,
 					                  _gpkt->Breite, _gpkt->Mem)) {
 
-						abbruch = UNBEGEHBAR;
+						abbruch = MOV_UNPASSABLE;
 					} else {
 						if (!tmpy) {
-							abbruch = UNBEGEHBAR;
+							abbruch = MOV_UNPASSABLE;
 						} else if (abs(om.Xypos[1] - mi.XyzEnd[1]) <= abs(tmpy)) {
-							abbruch = GEFUNDEN;
+							abbruch = MOV_FOUND;
 						} else {
 							mov_ok = MOV_Y;
 						}
 					}
 				} else {
 					if (!tmpx) {
-						abbruch = UNBEGEHBAR;
+						abbruch = MOV_UNPASSABLE;
 					} else  if (abs(om.Xypos[0] - mi.XyzEnd[0]) <= abs(tmpx)) {
-							abbruch = GEFUNDEN;
+							abbruch = MOV_FOUND;
 					} else {
 						mov_ok = MOV_X;
 					}
@@ -374,7 +375,7 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 				}
 				if (om.Count == 0) {
 
-					abbruch = GEFUNDEN;
+					abbruch = MOV_FOUND;
 				}
 			}
 
@@ -397,14 +398,14 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 				}
 				if (om.Count == 0) {
 
-					abbruch = GEFUNDEN;
+					abbruch = MOV_FOUND;
 				}
 				mov_ok = false;
 			}
 		} else
-			ende = 1;
+			endFl = true;
 	}
-	if (abbruch == UNBEGEHBAR)
+	if (abbruch == MOV_UNPASSABLE)
 		*dst_feld = get_feld_nr(om.Xypos[0], om.Xypos[1]);
 
 	return steps;
@@ -446,7 +447,7 @@ void MovClass::get_mov_line() {
 						}
 						vector = RIGHT_VECT;
 					} else {
-						abbruch = UNBEGEHBAR;
+						abbruch = MOV_UNPASSABLE;
 					}
 				}
 
@@ -466,7 +467,7 @@ void MovClass::get_mov_line() {
 							}
 						}
 					} else {
-						abbruch = UNBEGEHBAR;
+						abbruch = MOV_UNPASSABLE;
 					}
 				}
 				++count;

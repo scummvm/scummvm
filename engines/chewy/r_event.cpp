@@ -306,8 +306,6 @@ int16 ged_user_func(int16 idx_nr) {
 }
 
 void enter_room(int16 eib_nr) {
-	int16 i;
-
 	load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(spieler).ChewyAni);
 	_G(atds)->stop_aad();
@@ -315,7 +313,7 @@ void enter_room(int16 eib_nr) {
 	_G(spieler).DiaAMov = -1;
 	_G(zoom_mov_fak) = 1;
 
-	for (i = 0; i < MAX_PERSON; i++) {
+	for (int16 i = 0; i < MAX_PERSON; i++) {
 		_G(spieler_mi)[i].Vorschub = 8;
 		_G(spieler).ZoomXy[i][0] = 0;
 		_G(spieler).ZoomXy[i][1] = 0;
@@ -453,10 +451,7 @@ void enter_room(int16 eib_nr) {
 }
 
 void exit_room(int16 eib_nr) {
-	int16 *xy;
-	int16 x, y;
-	int16 no_exit;
-	no_exit = false;
+	bool no_exit = false;
 	_G(det)->disable_room_sound();
 
 	switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
@@ -512,6 +507,8 @@ void exit_room(int16 eib_nr) {
 			_G(spieler).R25GleiterExit = true;
 			break;
 
+		default:
+			break;
 		}
 		_G(menu_item) = CUR_WALK;
 		cursor_wahl(_G(menu_item));
@@ -555,8 +552,8 @@ void exit_room(int16 eib_nr) {
 		break;
 	}
 
-	x = -1;
-	y = -1;
+	int16 x = -1;
+	int16 y = -1;
 
 	switch (eib_nr) {
 	case 0:
@@ -598,10 +595,11 @@ void exit_room(int16 eib_nr) {
 	case 119:
 	case 123:
 	case 125:
-	case 135:
-		xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
+	case 135: {
+		int16 *xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 		x = xy[0] + 30;
 		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		}
 		break;
 
 	case 10:
@@ -613,10 +611,11 @@ void exit_room(int16 eib_nr) {
 	case 78:
 	case 92:
 	case 122:
-	case 131:
-		xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
+	case 131: {
+		int16 *xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 		x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 		y = xy[1] + 3;
+		}
 		break;
 
 	case 6:
@@ -776,25 +775,21 @@ void exit_room(int16 eib_nr) {
 }
 
 void print_rows(int16 id) {
-	int16 txt_anz, len;
-	char *txtStr, *s;
-
 	_G(out)->set_fontadr(_G(font8x8));
 	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
-	txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
+	int16 txt_anz;
+	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
 	_G(out)->set_pointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
-		s = _G(txt)->str_pos(txtStr, i);
-		len = (strlen(s) * _G(fvorx8x8)) / 2;
+		char *s = _G(txt)->str_pos(txtStr, i);
+		int16 len = (strlen(s) * _G(fvorx8x8)) / 2;
 
 		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, "%s", s);
 	}
 }
 
 int16 flic_user_function(int16 keys) {
-	int ret;
-
 	if (_G(atds)->aad_get_status() != -1) {
 		switch (_G(flic_val1)) {
 		case 579:
@@ -814,7 +809,7 @@ int16 flic_user_function(int16 keys) {
 	if (_G(flic_val1) == 594 && keys == 18)
 		_G(atds)->stop_aad();
 
-	ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
+	int ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 	if (_G(flic_val2) == 140 && keys == 15)
 		ret = -2;
 	if (_G(flic_val2) == 144 && keys == 7)
@@ -1742,8 +1737,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 }
 
 int16 sib_event_no_inv(int16 sib_nr) {
-	int16 ret;
-	ret = true;
+	int16 ret = true;
 
 	switch (sib_nr) {
 	case SIB_KABEL_R1:
