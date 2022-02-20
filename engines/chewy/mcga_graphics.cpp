@@ -76,14 +76,12 @@ void McgaGraphics::set_mono() {
 }
 
 void McgaGraphics::calc_mono(byte *palette, int16 startcol, int16 anz) {
-	int16 i, k;
-	uint8 r, g, b, grau;
-	k = startcol * 3;
-	for (i = 0; i < anz; i++) {
-		r = palette[k];
-		g = palette[k + 1];
-		b = palette[k + 2];
-		grau = (((float)r) * 0.30) + (((float)g) * 0.59) + (((float)b) * 0.11);
+	int16 k = startcol * 3;
+	for (int16 i = 0; i < anz; i++) {
+		uint8 r = palette[k];
+		uint8 g = palette[k + 1];
+		uint8 b = palette[k + 2];
+		uint8 grau = (((float)r) * 0.30) + (((float)g) * 0.59) + (((float)b) * 0.11);
 		palette[k] = grau;
 		palette[k + 1] = grau;
 		palette[k + 2] = grau;
@@ -92,8 +90,7 @@ void McgaGraphics::calc_mono(byte *palette, int16 startcol, int16 anz) {
 }
 
 void McgaGraphics::set_palette(byte *palette) {
-	int16 i;
-	for (i = 0; i < 768; i++)
+	for (int16 i = 0; i < 768; i++)
 		_palTable[i] = palette[i];
 	if (_mono)
 		calc_mono(palette, 0, 256);
@@ -109,8 +106,7 @@ void McgaGraphics::rest_palette() {
 }
 
 void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
-	int16 index;
-	index = c * 3;
+	int16 index = c * 3;
 	_palTable[index] = r;
 	_palTable[index + 1] = g;
 	_palTable[index + 2] = b;
@@ -120,20 +116,17 @@ void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 }
 
 void McgaGraphics::einblenden(byte *palette, int16 frames) {
-	int16 i, j, k;
-	int16 r, g, b;
-	int16 r1, g1, b1;
 	if (_mono)
 		calc_mono(palette, 0, 256);
-	for (j = 63; j >= 0; j--) {
-		k = 0;
-		for (i = 0; i < 256; i++) {
-			r = palette[k];
-			g = palette[k + 1];
-			b = palette[k + 2];
-			r1 = r - j;
-			g1 = g - j;
-			b1 = b - j;
+	for (int16 j = 63; j >= 0; j--) {
+		int16 k = 0;
+		for (int16 i = 0; i < 256; i++) {
+			int16 r = palette[k];
+			int16 g = palette[k + 1];
+			int16 b = palette[k + 2];
+			int16 r1 = r - j;
+			int16 g1 = g - j;
+			int16 b1 = b - j;
 			if ((r1 > 0) && (r1 <= r))
 				_palTable[k] = r1;
 			if ((g1 > 0) && (r1 <= r))
@@ -146,21 +139,17 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 	}
 }
 
-void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen, int16
-                            frames) {
-	int16 i = 0, j, k;
-	int16 r, g, b;
-	int16 endcol = 0;
+void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen, int16 frames) {
 	if (_mono)
 		calc_mono(palette, startcol, anz);
-	endcol = startcol + anz;
-	for (j = stufen; j >= 0; j--) {
+	int16 endcol = startcol + anz;
+	for (int16 j = stufen; j >= 0; j--) {
 		endcol = startcol + anz;
-		k = startcol * 3;
-		for (i = startcol; i < endcol; i++) {
-			r = _palTable[k];
-			g = _palTable[k + 1];
-			b = _palTable[k + 2];
+		int16 k = startcol * 3;
+		for (int16 i = startcol; i < endcol; i++) {
+			int16 r = _palTable[k];
+			int16 g = _palTable[k + 1];
+			int16 b = _palTable[k + 2];
 			if ((r + 1) <= palette[k]) ++r;
 			if ((g + 1) <= palette[k + 1]) ++g;
 			if ((b + 1) <= palette[k + 2]) ++b;
@@ -174,14 +163,12 @@ void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stu
 }
 
 void McgaGraphics::ausblenden(int16 frames) {
-	int16 i, j, k;
-	int16 r, g, b;
-	for (j = 0; j < 64; j++) {
-		k = 0;
-		for (i = 0; i < 256; i++) {
-			r = _palTable[k];
-			g = _palTable[k + 1];
-			b = _palTable[k + 2];
+	for (int16 j = 0; j < 64; j++) {
+		int16 k = 0;
+		for (int16 i = 0; i < 256; i++) {
+			int16 r = _palTable[k];
+			int16 g = _palTable[k + 1];
+			int16 b = _palTable[k + 2];
 			if (r > 0) --r;
 			if (g > 0) --g;
 			if (b > 0) --b;
@@ -195,16 +182,13 @@ void McgaGraphics::ausblenden(int16 frames) {
 }
 
 void McgaGraphics::abblenden(int16 startcol, int16 anz, int16 stufen, int16 frames) {
-	int16 i, j, k;
-	int16 r, g, b;
-	int16 endcol = 0;
-	endcol = startcol + anz;
-	for (j = 0; j < stufen; j++) {
-		k = startcol * 3;
-		for (i = startcol; i < endcol; i++) {
-			r = _palTable[k];
-			g = _palTable[k + 1];
-			b = _palTable[k + 2];
+	int16 endcol = startcol + anz;
+	for (int16 j = 0; j < stufen; j++) {
+		int16 k = startcol * 3;
+		for (int16 i = startcol; i < endcol; i++) {
+			int16 r = _palTable[k];
+			int16 g = _palTable[k + 1];
+			int16 b = _palTable[k + 2];
 			if (r > 0) --r;
 			if (g > 0) --g;
 			if (b > 0) --b;
@@ -218,11 +202,9 @@ void McgaGraphics::abblenden(int16 startcol, int16 anz, int16 stufen, int16 fram
 }
 
 void McgaGraphics::set_teilpalette(const byte *palette, int16 startcol, int16 anz) {
-	int16 i;
-	int16 k, endcol;
-	k = startcol * 3;
-	endcol = startcol + anz;
-	for (i = startcol; i < endcol; i++) {
+	int16 k = startcol * 3;
+	int16 endcol = startcol + anz;
+	for (int16 i = startcol; i < endcol; i++) {
 		_palTable[k] = palette[k];
 		_palTable[k + 1] = palette[k + 1];
 		_palTable[k + 2] = palette[k + 2];
@@ -242,8 +224,7 @@ void McgaGraphics::punkt(int16 xpos, int16 ypos, int16 farbn) {
 }
 
 uint8 McgaGraphics::get_pixel(int16 xpos, int16 ypos) {
-	uint8 pix;
-	pix = getpix(xpos, ypos);
+	uint8 pix = getpix(xpos, ypos);
 
 	return pix;
 }
@@ -260,17 +241,15 @@ void McgaGraphics::box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
 }
 
 void McgaGraphics::box_fill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	int16 h, i;
 	if (x2 == x1)x2++;
-	h = abs(y2 - y1);
+	int16 h = abs(y2 - y1);
 	if (h == 0)
 		h = 1;
-	for (i = 0; i < h; i++)
+	for (int16 i = 0; i < h; i++)
 		line_mcga(x1, y1 + i, x2, y1 + i, farbe);
 }
 
-void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1,
-                          int16 col1, int16 col2, int16 back_col) {
+void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int16 col2, int16 back_col) {
 	if (back_col < 255)
 		box_fill(x, y, x1, y1, back_col);
 	linie(x, y1, x1, y1, col2);
@@ -280,13 +259,12 @@ void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1,
 }
 
 void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
-	int16 a = 0, b = 0, alt = 0, diff;
-	int16 w, i;
-	for (w = 0; w <= 91; w++) {
+	int16 a = 0, b = 0, alt = 0;
+	for (int16 w = 0; w <= 91; w++) {
 		a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
-			diff = a - alt;
-			for (i = 0; i <= diff; i++) {
+			int16 diff = a - alt;
+			for (int16 i = 0; i <= diff; i++) {
 				setpixel_mcga(x - b, (y - (alt + i)), farbe);
 				setpixel_mcga(x + b, (y - (alt + i)), farbe);
 				setpixel_mcga(x - b, (y + (alt + i)), farbe);
@@ -304,8 +282,7 @@ void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
 
 void McgaGraphics::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
 	int16 a = 0, b = 0, alt = 0, i = 0, diff;
-	int16 w;
-	for (w = 0; w <= 90; w++) {
+	for (int16 w = 0; w <= 90; w++) {
 		a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
 			diff = a - alt;
@@ -337,8 +314,7 @@ void McgaGraphics::screen2back(byte *ptr) {
 	mcga2mem(ptr);
 }
 
-void McgaGraphics::sprite_save(byte *sptr, int16 x,
-                              int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
+void McgaGraphics::sprite_save(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
 	if (breite < 4)
 		breite = 4;
 	if (hoehe <= 0)
@@ -372,9 +348,8 @@ void McgaGraphics::blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth) {
 }
 
 void McgaGraphics::map_spr2screen(byte *sptr, int16 x, int16 y) {
-	int16 br, h;
-	br = ((int16 *)sptr)[0];
-	h = ((int16 *)sptr)[1];
+	int16 br = ((int16 *)sptr)[0];
+	int16 h = ((int16 *)sptr)[1];
 	if ((br >= 320) || (h >= 200))
 		map_spr_2screen(sptr, x, y);
 }
@@ -790,8 +765,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 		}
 	}
 
-	switch (ende) {
-	case 1:
+	if (ende == 1) {
 		switch (mode) {
 		case 1:
 			intzahl[0] = atoi(zstring);
@@ -805,11 +779,9 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 		case 4:
 			intzahl1[0] = atoi(zstring);
 			break;
+		default:
+			break;
 		}
-		break;
-
-	case 2:
-		break;
 	}
 
 	if (_svga == ON)
@@ -820,14 +792,12 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	return ret;
 }
 
-void McgaGraphics::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 scrwidth,
-                                char cursor_z) {
+void McgaGraphics::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16 scrwidth, char cursor_z) {
 	move(x, y);
 	putz(cursor_z, fcol, bcol, scrwidth);
 }
 
-void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
-                          const char *string, ...) {
+void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string, ...) {
 	int16 i = 0, k = 0, l;
 	char zstring[35];
 	int16 diff;
@@ -957,19 +927,19 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 					}
 					break;
 
+				default:
+					break;
 				}
 			}
 		}
 	} while ((i < MAXSTRING) && (nextChar != 0));
 }
 
-void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
-                                int16 scrwidth, const char *string) {
-	int16 i = 0;
+void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string) {
 	char zeichen;
 	_G(gcurx) = x;
 	_G(gcury) = y;
-	i = 0;
+	int16 i = 0;
 	do {
 		zeichen = string[i];
 		++i;
@@ -980,20 +950,16 @@ void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol,
 	} while ((i < MAXSTRING) && (zeichen != 0));
 }
 
-void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
-		const char *string, ...) {
-	int16 i = 0, k = 0, l;
+void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth, const char *string, ...) {
+	int16 k = 0, l;
 	char zeichen, zstring[35];
 	char *tempptr;
-	int16 izahl, count, diff;
-	uint16 uzahl;
-	long lzahl;
-	uint32 luzahl;
+	int16 diff;
 	va_list parptr;
 	va_start(parptr, string);
 	_crlfx = _G(gcurx);
 	_crlfy = _G(gcury) + _fontH + 2;
-	i = 0;
+	int16 i = 0;
 	do {
 		zeichen = string[i];
 		++i;
@@ -1033,7 +999,7 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 				vors();
 			} else {
 				zeichen = string[i];
-				count = 0;
+				int16 count = 0;
 				if ((zeichen >= 0x30) && (zeichen <= 0x39))
 					count = atoi(string + i);
 				while ((zeichen >= 0x30) && (zeichen <= 0x39)) {
@@ -1050,10 +1016,10 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 				case 'd':
 				case 'u':
 					if (zeichen == 'd') {
-						izahl = va_arg(parptr, int);
+						int16 izahl = va_arg(parptr, int);
 						itoa(izahl, zstring, 10);
 					} else {
-						uzahl = va_arg(parptr, unsigned int);
+						uint16 uzahl = va_arg(parptr, unsigned int);
 						itoa(uzahl, zstring, 10);
 					}
 					k = 0;
@@ -1073,10 +1039,10 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 
 				case 'l':
 					if (string[i] != 'u') {
-						lzahl = va_arg(parptr, long);
+						long lzahl = va_arg(parptr, long);
 						ltoa(lzahl, zstring, 10);
 					} else {
-						luzahl = va_arg(parptr, unsigned long);
+						uint32 luzahl = va_arg(parptr, unsigned long);
 						ultoa(luzahl, zstring, 10);
 						++i;
 					}
@@ -1122,12 +1088,9 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth,
 void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 menge,
                            int16 scrwidth, const char *string, ...) {
 	int16 i = 0, k = 0, l;
-	char zeichen, zstring[35];
+	char zstring[35];
 	char *tempptr;
-	int16 izahl, count, diff;
-	uint16 uzahl;
-	long lzahl;
-	uint32 luzahl;
+	int16 diff;
 	va_list parptr;
 	va_start(parptr, string);
 	_G(gcurx) = x;
@@ -1135,7 +1098,7 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 	_crlfx = _G(gcurx);
 	_crlfy = y + _fontH + 2;
 	for (i = 0; i < menge;) {
-		zeichen = string[i];
+		char zeichen = string[i];
 		++i;
 		if ((zeichen < 32) || (zeichen == 127)) {
 			switch (zeichen) {
@@ -1165,15 +1128,13 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 					putz(zeichen, fgCol, bgCol, scrwidth);
 				break;
 			}
-		}
-		else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast))) {
+		} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast))) {
 			if (zeichen != '%') {
 				putz(zeichen, fgCol, bgCol, scrwidth);
 				vors();
-			}
-			else {
+			} else {
 				zeichen = string[i];
-				count = 0;
+				int16 count = 0;
 				if ((zeichen >= 0x30) && (zeichen <= 0x39))
 					count = atoi(string + i);
 				while ((zeichen >= 0x30) && (zeichen <= 0x39)) {
@@ -1190,10 +1151,10 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 				case 'd':
 				case 'u':
 					if (zeichen == 'd') {
-						izahl = va_arg(parptr, int);
+						int16 izahl = va_arg(parptr, int);
 						itoa(izahl, zstring, 10);
 					} else {
-						uzahl = va_arg(parptr, unsigned int);
+						uint16 uzahl = va_arg(parptr, unsigned int);
 						itoa(uzahl, zstring, 10);
 					}
 					k = 0;
@@ -1213,10 +1174,10 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 
 				case 'l':
 					if (string[i] != 'u') {
-						lzahl = va_arg(parptr, long);
+						long lzahl = va_arg(parptr, long);
 						ltoa(lzahl, zstring, 10);
 					} else {
-						luzahl = va_arg(parptr, uint32);
+						uint32 luzahl = va_arg(parptr, uint32);
 						ultoa(luzahl, zstring, 10);
 						++i;
 					} k
@@ -1254,14 +1215,15 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 
 					break;
 
+				default:
+					break;
 				}
 			}
 		}
 	}
 }
 
-void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol,
-                              int16 scrwidth) {
+void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
 	_crlfx = x;
 	_crlfy = y + _fontH + 2;
 	if ((zeichen < 32) || (zeichen == 127)) {
@@ -1286,6 +1248,9 @@ void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int1
 
 		case 127:
 			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
+			break;
+
+		default:
 			break;
 		}
 	} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 127)) {
@@ -1319,6 +1284,9 @@ void McgaGraphics::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwi
 
 		case 127:
 			putz(32, fgCol, bgCol, scrwidth);
+			break;
+
+		default:
 			break;
 		}
 	} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 127)) {
@@ -1361,8 +1329,7 @@ void McgaGraphics::exit_mausmode() {
 }
 
 int16 McgaGraphics::devices() {
-	int16 i;
-	i = 0;
+	int16 i = 0;
 	if (_mausMode != false) {
 		if (i > 1) {
 			i = 27;
@@ -1376,10 +1343,11 @@ int16 McgaGraphics::devices() {
 }
 
 int16 McgaGraphics::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
-	int16 k, diff;
-	k = 0;
+	int16 diff;
+	int16 k = 0;
 	while (zstring[k] != 0)
 		++k;
+
 	if (k >= stellen) {
 		while ((k) && (stellen)) {
 			--k;
