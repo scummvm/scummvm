@@ -46,6 +46,7 @@ MODULE_OBJS = \
 	dialogs/main_menu.o \
 	dialogs/options.o \
 	video/cfo_decoder.o \
+	video/video_player.o \
 	rooms/room00.o \
 	rooms/room01.o \
 	rooms/room02.o \

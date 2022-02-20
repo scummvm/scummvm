@@ -31,7 +31,7 @@
 #include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
-#include "chewy/video/cfo_decoder.h"
+#include "chewy/video/video_player.h"
 
 namespace Chewy {
 
@@ -61,6 +61,7 @@ ChewyEngine::~ChewyEngine() {
 	delete _globals;
 	delete _screen;
 	delete _sound;
+	delete _video;
 	g_engine = nullptr;
 	g_screen = nullptr;
 }
@@ -70,6 +71,7 @@ void ChewyEngine::initialize() {
 	_globals = new Globals();
 	_events = new EventsManager(_screen);
 	_sound = new Sound(_mixer);
+	_video = new VideoPlayer();
 
 	_tempFiles.add(ADSH_TMP, 5710);
 	SearchMan.add("temp", &_tempFiles, 99, false);
@@ -171,61 +173,6 @@ void ChewyEngine::showGmm(bool isInGame) {
 
 	_canLoad = false;
 	_canSave = false;
-}
-
-void ChewyEngine::playVideo(uint num) {
-	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
-	VideoResource *videoResource = new VideoResource("cut.tap");
-	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
-
-	if (!cfoDecoder->loadStream(videoStream)) {
-		delete videoResource;
-		delete cfoDecoder;
-		return;
-	}
-
-	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
-	bool skipVideo = false;
-	byte curPalette[256 * 3];
-
-	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
-	//save_palette(curPalette);
-	_G(cur)->hide_cur();
-
-	cfoDecoder->start();
-
-	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo) {
-		if (cfoDecoder->needsUpdate()) {
-			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
-			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
-
-				if (cfoDecoder->hasDirtyPalette())
-					g_system->getPaletteManager()->setPalette(cfoDecoder->getPalette(), 0, 256);
-					//setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
-
-				g_system->updateScreen();
-			}
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-				skipVideo = true;
-		}
-
-		g_system->delayMillis(10);
-	}
-
-	cfoDecoder->close();
-
-	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
-	//setScummVMPalette(curPalette, 0, 256);
-	_G(cur)->show_cur();
-
-	delete videoResource;
-	delete cfoDecoder;
 }
 
 } // End of namespace Chewy

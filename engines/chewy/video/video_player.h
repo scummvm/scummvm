@@ -19,22 +19,19 @@
  *
  */
 
-#ifndef CHEWY_ROOMS_ROOM6_H
-#define CHEWY_ROOMS_ROOM6_H
+#ifndef CHEWY_VIDEO_VIDEO_PLAYER_H
+#define CHEWY_VIDEO_VIDEO_PLAYER_H
 
 namespace Chewy {
-namespace Rooms {
 
-class Room6 {
-private:
-	static void init_robo();
-
+class VideoPlayer {
 public:
-	static void entry();
-	static void bola_knopf();
+	void playVideo(uint num);
+
+private:
+	bool handleCustom(uint num, uint frame);
 };
 
-} // namespace Rooms
-} // namespace Chewy
+} // End of namespace Chewy
 
 #endif

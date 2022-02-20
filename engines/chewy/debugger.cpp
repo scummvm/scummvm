@@ -24,6 +24,7 @@
 #include "chewy/globals.h"
 #include "chewy/ngshext.h"
 #include "chewy/chewy.h"
+#include "chewy/video/video_player.h"
 
 namespace Chewy {
 
@@ -88,7 +89,7 @@ bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
 	}
 
 	int resNum = atoi(argv[1]);
-	g_engine->playVideo(resNum);
+	g_engine->_video->playVideo(resNum);
 
 	return false;
 }

@@ -126,9 +126,5 @@ void Room6::bola_knopf() {
 	}
 }
 
-int16 Room6::cut_serv1(int16 frame) {
-	return (frame == 40) ? -1 : 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy

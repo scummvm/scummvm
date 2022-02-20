@@ -47,6 +47,7 @@ struct ChewyGameDescription;
 class EventsManager;
 class Globals;
 class Sound;
+class VideoPlayer;
 
 class ChewyEngine : public Engine {
 private:
@@ -72,6 +73,7 @@ public:
 	EventsManager *_events = nullptr;
 	Globals *_globals = nullptr;
 	Sound *_sound = nullptr;
+	VideoPlayer *_video = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	bool _showWalkAreas = false;
 
