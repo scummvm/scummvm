@@ -140,6 +140,41 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	delete rs;
 
 	return ts_info;
+
+	// TODO: This implementation draws sprites with wrong offsets
+#if 0
+	TafSeqInfo *ts_info = nullptr;
+	SpriteResource *res = new SpriteResource(CH_SPZ_FILE);
+	uint32 size = 0;
+
+	for (int16 i = 0; i < image_anz; i++) {
+		TAFChunk *sprite = res->getSprite(i + image_start);
+		size += sprite->width * sprite->height;
+		delete sprite;
+	}
+
+	size += image_anz * sizeof(byte *);
+	size += image_anz * sizeof(char *);
+	size += ((uint32)sizeof(TafSeqInfo));
+
+	byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
+	ts_info = (TafSeqInfo *)tmp1;
+	ts_info->anzahl = image_anz;
+	ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
+	ts_info->korrektur = (int16 *)(tmp1 + size);
+	byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
+
+	for (int16 i = 0; i < image_anz; i++) {
+		ts_info->image[i] = sp_ptr;
+		sp_ptr += res->getSpriteData(i + image_start, &ts_info->image[i], false);
+	}
+
+	memcpy(ts_info->korrektur, res->getSpriteCorrectionsTable(), image_anz * 2 * sizeof(int16));
+
+	delete res;
+
+	return ts_info;
+#endif
 }
 
 void Memory::tff_adr(const char *filename, byte **speicher) {
