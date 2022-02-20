@@ -186,6 +186,7 @@ hline: 	CTOK NUM {
 	}
 	| HETOK BYTE NUM NUM {
 		Segment segment($2, $4, $3);
+		segment.end = true;
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "HE %x %d %d", $2, $3, $4); 
 	}

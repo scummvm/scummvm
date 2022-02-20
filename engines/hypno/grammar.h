@@ -424,11 +424,13 @@ public:
 		type = type_;
 		start = start_;
 		size = size_;
+		end = false;
 	}
 
 	byte type;
 	uint32 start;
 	uint32 size;
+	bool end;
 };
 
 typedef Common::Array<Segment> Segments;

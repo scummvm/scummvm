@@ -315,7 +315,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				error("Invalid segment %d", segmentIdx); 
 
 			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", segmentIdx, segments[segmentIdx].type, segments[segmentIdx].start);
-			if (segments[segmentIdx].type != 0x02) { // If it is not the end segment
+			if (!segments[segmentIdx].end) { // If it is not the end segment
 				background.decoder->forceSeekToFrame(segments[segmentIdx].start);
 				continue;
 			}
@@ -521,7 +521,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 }
 
 bool HypnoEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {
-	return !background.decoder || background.decoder->endOfVideo() || segment.type == 2 || _skipLevel;
+	return !background.decoder || background.decoder->endOfVideo() || segment.end || _skipLevel;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
