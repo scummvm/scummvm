@@ -206,8 +206,7 @@ void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 		strcpy(_tafName, fname_);
 		if (!load_flag) {
 			_rdi.dptr = init_taf_tbl(fname_);
-			if (!_G(modul))
-				load_taf_tbl(_rdi.dptr);
+			load_taf_tbl(_rdi.dptr);
 		} else {
 			_rdi.dptr = _G(mem)->taf_adr(fname_);
 			_fullTaf = true;
@@ -409,7 +408,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 	if (end > MAXDETAILS)
 		end = MAXDETAILS - 1;
 
-	for (int16 i = start; (i <= end) && (!_G(modul)); i++) {
+	for (int16 i = start; (i <= end); i++) {
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
@@ -422,8 +421,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 			int16 y = adiptr->y + ky - scry;
 			if (adiptr->load_flag == 1) {
 				load_taf_ani_sprite(sprnr);
-				if (!_G(modul))
-					_G(out)->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
+				_G(out)->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
 			} else
 				_G(out)->scale_set(_rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
 

@@ -313,39 +313,33 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname, chunk_start, chunk_anz);
-	if (!_G(modul)) {
-		if (rs) {
-			_atdshandle[mode] = rs;
-			_atdsmem[mode] = tmp_adr;
-			_atdspooloff[mode] = chunk_start;
-			switch (mode) {
-			case INV_USE_DATEI:
-				_G(mem)->file->select_pool_item(rs, _atdspooloff[mode]);
-				rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
+	if (rs) {
+		_atdshandle[mode] = rs;
+		_atdsmem[mode] = tmp_adr;
+		_atdspooloff[mode] = chunk_start;
+		switch (mode) {
+		case INV_USE_DATEI:
+			_G(mem)->file->select_pool_item(rs, _atdspooloff[mode]);
+			rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-				if (!Ch.load(rs)) {
-					error("Error reading from %s", fname);
-				} else {
-					free(_invUseMem);
-					_invUseMem = (char *)MALLOC(Ch.size + 3l);
+			if (!Ch.load(rs)) {
+				error("Error reading from %s", fname);
+			} else {
+				free(_invUseMem);
+				_invUseMem = (char *)MALLOC(Ch.size + 3l);
 
-					if (!_G(modul)) {
-						if (Ch.size) {
-							if (!rs->read(_invUseMem, Ch.size)) {
-								error("Error reading from %s", fname);
-							} else
-								crypt(_invUseMem, Ch.size);
-						}
-						_invUseMem[Ch.size] = (char)BLOCKENDE;
-						_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
-						_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
-					}
+				if (Ch.size) {
+					if (!rs->read(_invUseMem, Ch.size)) {
+						error("Error reading from %s", fname);
+					} else
+						crypt(_invUseMem, Ch.size);
 				}
-				break;
+				_invUseMem[Ch.size] = (char)BLOCKENDE;
+				_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
+				_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
 			}
+			break;
 		}
-	} else {
-		error("Error reading from %s", fname);
 	}
 }
 
@@ -354,28 +348,26 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname, 0, 20000);
-	if (!_G(modul)) {
-		Stream *stream = chewy_fopen(fname);
-		if (stream) {
-			close_handle(mode);
-			_atdshandle[mode] = stream;
-			_atdsmem[mode] = tmp_adr;
+	Stream *stream = chewy_fopen(fname);
+	if (stream) {
+		close_handle(mode);
+		_atdshandle[mode] = stream;
+		_atdsmem[mode] = tmp_adr;
 
-			switch (mode) {
-			case ADH_DATEI:
-				_adsBlock = (AdsBlock *)_atdsmem[ADH_HANDLE];
-				break;
+		switch (mode) {
+		case ADH_DATEI:
+			_adsBlock = (AdsBlock *)_atdsmem[ADH_HANDLE];
+			break;
 
-			case INV_IDX_DATEI:
-				_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_ANZ * sizeof(InvUse));
-				break;
+		case INV_IDX_DATEI:
+			_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_ANZ * sizeof(InvUse));
+			break;
 
-			default:
-				break;
-			}
-		} else {
-			error("Error reading from %s", fname);
+		default:
+			break;
 		}
+	} else {
+		error("Error reading from %s", fname);
 	}
 }
 
@@ -1115,25 +1107,23 @@ bool  Atdsys::ads_start(int16 dia_nr) {
 	bool ret = false;
 
 	load_atds(dia_nr, ADS_DATEI);
-	if (!_G(modul)) {
-		bool ende = false;
-		if (_atdsmem[ADS_HANDLE][0] == (char)BLOCKENDE &&
-		        _atdsmem[ADS_HANDLE][1] == (char)BLOCKENDE &&
-		        _atdsmem[ADS_HANDLE][2] == (char)BLOCKENDE)
-			ende = true;
-		if (!ende) {
-			_adsv.Ptr = _atdsmem[ADS_HANDLE];
-			_adsv.TxtHeader = (AdsTxtHeader *)_adsv.Ptr;
-			if (_adsv.TxtHeader->DiaNr == dia_nr) {
-				ret = true;
-				_adsv.Ptr += sizeof(AdsTxtHeader);
-				_adsv.Person = (AadInfo *) _adsv.Ptr;
-				_adsv.Ptr += _adsv.TxtHeader->PerAnz * sizeof(AadInfo);
-				_adsv.Dialog = dia_nr;
-				_adsv.StrNr = 0;
-				_adsStack[0] = 0;
-				_adsStackPtr = 1;
-			}
+	bool ende = false;
+	if (_atdsmem[ADS_HANDLE][0] == (char)BLOCKENDE &&
+		    _atdsmem[ADS_HANDLE][1] == (char)BLOCKENDE &&
+		    _atdsmem[ADS_HANDLE][2] == (char)BLOCKENDE)
+		ende = true;
+	if (!ende) {
+		_adsv.Ptr = _atdsmem[ADS_HANDLE];
+		_adsv.TxtHeader = (AdsTxtHeader *)_adsv.Ptr;
+		if (_adsv.TxtHeader->DiaNr == dia_nr) {
+			ret = true;
+			_adsv.Ptr += sizeof(AdsTxtHeader);
+			_adsv.Person = (AadInfo *) _adsv.Ptr;
+			_adsv.Ptr += _adsv.TxtHeader->PerAnz * sizeof(AadInfo);
+			_adsv.Dialog = dia_nr;
+			_adsv.StrNr = 0;
+			_adsStack[0] = 0;
+			_adsStackPtr = 1;
 		}
 	}
 	return ret;

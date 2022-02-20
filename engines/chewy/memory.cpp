@@ -80,7 +80,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 
 				rs->seek(ptr, SEEK_SET);
 				uint32 size = 0;
-				for (i = 0; i < image_anz && !_G(modul); i++) {
+				for (i = 0; i < image_anz; i++) {
 					if (iheader.load(rs)) {
 						size += iheader.width * iheader.height;
 						rs->seek(iheader.next, SEEK_SET);
@@ -89,52 +89,43 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 						error("taf_seq_adr error");
 					}
 				}
-				if (!_G(modul)) {
-					size += image_anz * sizeof(byte *);
-					size += image_anz * sizeof(char *);
-					size += ((uint32)sizeof(TafSeqInfo));
-					byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
+				size += image_anz * sizeof(byte *);
+				size += image_anz * sizeof(char *);
+				size += ((uint32)sizeof(TafSeqInfo));
+				byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
 
-					if (!_G(modul)) {
-						ts_info = (TafSeqInfo *)tmp1;
-						ts_info->anzahl = image_anz;
-						ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
-						ts_info->korrektur = (int16 *)(tmp1 + size);
-						rs->seek(ptr, SEEK_SET);
-						byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo))
-						                       + (image_anz * sizeof(char *)));
+				ts_info = (TafSeqInfo *)tmp1;
+				ts_info->anzahl = image_anz;
+				ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
+				ts_info->korrektur = (int16 *)(tmp1 + size);
+				rs->seek(ptr, SEEK_SET);
+				byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
 
-						for (i = 0; i < image_anz && !_G(modul); i++) {
-							if (iheader.load(rs)) {
-								ts_info->image[i] = sp_ptr;
-								int16 *abmess = (int16 *)sp_ptr;
-								abmess[0] = iheader.width;
-								abmess[1] = iheader.height;
-								sp_ptr += 4;
-								size = (uint32)((uint32)iheader.height) * ((uint32)iheader.width);
+				for (i = 0; i < image_anz; i++) {
+					if (iheader.load(rs)) {
+						ts_info->image[i] = sp_ptr;
+						int16 *abmess = (int16 *)sp_ptr;
+						abmess[0] = iheader.width;
+						abmess[1] = iheader.height;
+						sp_ptr += 4;
+						size = (uint32)((uint32)iheader.height) * ((uint32)iheader.width);
 
-								rs->seek(iheader.image, SEEK_SET);
-								file->load_tafmcga(rs, iheader.komp, size, sp_ptr);
-								rs->seek(iheader.next, SEEK_SET);
-								sp_ptr += size;
-							} else {
-								error("taf_seq_adr error");
-							}
-						}
-						if (!_G(modul)) {
-							rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
-
-							if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
-								error("taf_seq_adr error");
-							} else {
-								int16 *p = ts_info->korrektur;
-								for (i = 0; i < (int)image_anz * 2; ++i, ++p)
-									*p = rs->readSint16LE();
-							}
-						}
-						if (_G(modul))
-							free(tmp1);
+						rs->seek(iheader.image, SEEK_SET);
+						file->load_tafmcga(rs, iheader.komp, size, sp_ptr);
+						rs->seek(iheader.next, SEEK_SET);
+						sp_ptr += size;
+					} else {
+						error("taf_seq_adr error");
 					}
+				}
+				rs->seek((-(int)(((header.count * 2) - image_start) * sizeof(uint32))), SEEK_END);
+
+				if ((rs->size() - rs->pos()) < (int)image_anz * 4) {
+					error("taf_seq_adr error");
+				} else {
+					int16 *p = ts_info->korrektur;
+					for (i = 0; i < (int)image_anz * 2; ++i, ++p)
+						*p = rs->readSint16LE();
 				}
 			} else {
 				error("taf_seq_adr error");
@@ -154,19 +145,8 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 void Memory::tff_adr(const char *filename, byte **speicher) {
 	uint32 size = file->size(filename, TFFDATEI);
 
-	if (!_G(modul)) {
-		*speicher = (byte *)MALLOC(size);
-		if (*speicher) {
-			file->load_tff(filename, *speicher);
-			if (_G(modul)) {
-				free(*speicher);
-				*speicher = nullptr;
-			}
-		} else {
-			_G(fcode) = NOSPEICHER;
-			_G(modul) = SPEICHER;
-		}
-	}
+	*speicher = (byte *)MALLOC(size);
+	file->load_tff(filename, *speicher);
 }
 
 // Only called from init_load() with filename blende.rnd
@@ -174,17 +154,9 @@ byte *Memory::void_adr(const char *filename) {
 	byte *ptr = nullptr;
 	uint32 size = file->size(filename, 200);
 
-	if (!_G(modul)) {
-		ptr = (byte *)MALLOC(size * sizeof(uint32));
-		if (!_G(modul)) {
-			WRITE_LE_INT32(ptr, size);
-			file->void_load(filename, ptr + sizeof(uint32), size);
-			if (_G(modul)) {
-				free(ptr);
-				ptr = nullptr;
-			}
-		}
-	}
+	ptr = (byte *)MALLOC(size * sizeof(uint32));
+	WRITE_LE_INT32(ptr, size);
+	file->void_load(filename, ptr + sizeof(uint32), size);
 
 	return ptr;
 }

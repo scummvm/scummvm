@@ -195,17 +195,15 @@ void load_room_music(int16 room_nr) {
 				_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - ttp_index);
 				_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
 				_G(currentSong) = ttp_index;
-				if (!_G(modul)) {
-					if (play_mode == NORMAL_PLAY)
-						_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
-					else {
-						_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
-						_G(sndPlayer)->stopMod();
-						if (play_mode == SEQUENCE_PLAY)
-							_G(sndPlayer)->playSequence(seq_start, seq_end);
-						else if (play_mode == PATTERN_PLAY)
-							_G(sndPlayer)->playPattern(pattern);
-					}
+				if (play_mode == NORMAL_PLAY)
+					_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
+				else {
+					_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
+					_G(sndPlayer)->stopMod();
+					if (play_mode == SEQUENCE_PLAY)
+						_G(sndPlayer)->playSequence(seq_start, seq_end);
+					else if (play_mode == PATTERN_PLAY)
+						_G(sndPlayer)->playPattern(pattern);
 				}
 			}
 		}

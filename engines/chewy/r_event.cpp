@@ -308,8 +308,7 @@ int16 ged_user_func(int16 idx_nr) {
 void enter_room(int16 eib_nr) {
 	int16 i;
 
-	if (!_G(modul))
-		load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
+	load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(spieler).ChewyAni);
 	_G(atds)->stop_aad();
 	_G(atds)->stop_ats();
@@ -1091,29 +1090,22 @@ void flic_cut(int16 nr) {
 		case FCUT_058:
 			load_room_music(255);
 			g_engine->_video->playVideo(FCUT_058);
+			g_engine->_video->playVideo(FCUT_059);
 
-			if (!_G(modul)) {
-				g_engine->_video->playVideo(FCUT_059);
-			}
 			if (!_G(spieler).R43GetPgLady) {
-				if (!_G(modul)) {
-					g_engine->_video->playVideo(FCUT_060);
-				}
+				g_engine->_video->playVideo(FCUT_060);
 			} else {
-				if (!_G(modul)) {
 					start_aad(623, -1);
 #ifndef NEW_VIDEO_CODE
-					_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-					_G(flc)->set_custom_user_function(Room43::setup_func);
-					_G(flc)->custom_play(&_G(Ci));
-					_G(flc)->remove_custom_user_function();
+				_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
+				_G(flc)->set_custom_user_function(Room43::setup_func);
+				_G(flc)->custom_play(&_G(Ci));
+				_G(flc)->remove_custom_user_function();
 #else
-					g_engine->_video->playVideo(FCUT_061);
+				g_engine->_video->playVideo(FCUT_061);
 #endif
-				}
-				if (!_G(modul)) {
-					g_engine->_video->playVideo(FCUT_062);
-				}
+
+				g_engine->_video->playVideo(FCUT_062);
 			}
 			_G(sndPlayer)->fadeOut(0);
 			_G(out)->ausblenden(1);
@@ -1249,7 +1241,7 @@ void flic_cut(int16 nr) {
 
 		case FCUT_133:
 		case 1123:
-			for (i = 0; i < 13 && ret != -1 && !_G(modul); ++i) {
+			for (i = 0; i < 13 && ret != -1; ++i) {
 				ret = g_engine->_video->playVideo(FLIC_CUT_133[i]) ? 0 : -1;
 				SHOULD_QUIT_RETURN;
 

@@ -218,7 +218,7 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 				select_pool_item(&f, chunk_start);
 				f.seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-				for (int16 i = chunk_start; (i < Nph.PoolAnz) && (!_G(modul)) && i < (chunk_start + chunk_anz); i++) {
+				for (int16 i = chunk_start; (i < Nph.PoolAnz) && i < (chunk_start + chunk_anz); i++) {
 					ChunkHead ch;
 					if (!ch.load(&f)) {
 						error("get_poolsize error");

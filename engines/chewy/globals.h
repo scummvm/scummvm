@@ -278,8 +278,6 @@ public:
 	ChewyFont *_font6 = nullptr;
 	ChewyFont *_font8 = nullptr;
 	FontMgr *_fontMgr = nullptr;
-	int16 _modul = 0;
-	int16 _fcode = 0;
 	int16 _scroll_delay = 0;
 
 	// mcga.cpp

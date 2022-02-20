@@ -332,7 +332,7 @@ int16 Flic::custom_play(CustomInfo *ci) {
 				_fadeDelay = 0;
 				_currentFrame = 0;
 
-				for (uint16 i = 0; (i < _customHeader.frames) && (!_G(modul)) && (ret >= 0); i++) {
+				for (uint16 i = 0; (i < _customHeader.frames) && (ret >= 0); i++) {
 					if (!_customFrame.load(rs)) {
 						error("flic error");
 					} else {
@@ -382,7 +382,7 @@ void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 	uint16 para[10];
 	TmfHeader *th = (TmfHeader *)_music;
 
-	for (uint16 i = 0; (i < _customFrame.chunks) && (!_G(modul)); i++) {
+	for (uint16 i = 0; (i < _customFrame.chunks); i++) {
 		ChunkHead chead;
 		if (!chead.load(handle)) {
 			error("flic error");
