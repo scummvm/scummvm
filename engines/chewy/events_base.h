@@ -67,12 +67,13 @@ protected:
 	/**
 	 * Process any pending events
 	 */
-	void processEvents();
+	void processEvents(bool updateOnButtonUp = false);
 
 	/**
 	 * Handles pending event
 	 */
-	virtual void handleEvent(const Common::Event &event);
+	virtual void handleEvent(const Common::Event &event, bool updateOnButtonUp);
+
 public:
 	Graphics::Screen *_screen;
 public:
@@ -88,7 +89,7 @@ public:
 	 * Handles doing a brief delay, checking for timer updates,
 	 * and polling events
 	 */
-	void update();
+	void update(bool updateOnButtonUp = false);
 
 	/**
 	 * Returns true if any unprocessed keyboard events are pending
