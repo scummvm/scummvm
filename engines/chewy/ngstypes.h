@@ -121,25 +121,6 @@ struct Dialogue {
 	}
 };
 
-struct SbiInst {
-	char id[4];
-	char name[32];
-	uint8 modmulti;
-	uint8 carrmulti;
-	uint8 modamp;
-	uint8 carramp;
-	uint8 modad;
-	uint8 carrad;
-	uint8 modsr;
-	uint8 carrsr;
-	uint8 modw;
-	uint8 carrw;
-	uint8 rv;
-	uint8 frei[5];
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct MouseInfo {
 	int16 x = 0;
 	int16 y = 0;
@@ -187,72 +168,6 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct ChannelInfo {
-	uint8 finetune = 0;
-	uint8 volume = 0;
-	uint32 repstart = 0;
-	uint32 replen = 0;
-	uint32 len = 0;
-	uint32 pointer = 0;
-	uint32 pos = 0;
-};
-
-struct VesaInfo {
-	int16 ModeNr = 0;
-	int16 ModeAvail = 0;
-	int16 WriteWin = 0;
-	uint32 WinSize = 0;
-	int16 Page[20] = { 0 };
-	int16 PageAnz = 0;
-	uint16 WriteSeg = 0;
-	uint16 CallSeg = 0;
-	uint16 CallOff = 0;
-	uint32 ScreenSize = 0;
-	uint32 CopyRest = 0;
-	char dummy[10] = { 0 };
-};
-
-struct VesaStatusBlock {
-	uint8 id[4] = { 0 };
-	uint8 ver_low = 0;
-	uint8 ver_high = 0;
-	char *name = nullptr;
-	uint32 lflag = 0;
-	uint16 *codenrs = nullptr;
-
-	uint16 memory = 0;
-
-	char *SoftwareRev = nullptr;
-	char *VendorName = nullptr;
-	char *ProductName = nullptr;
-	char *ProductRev = nullptr;
-	char dummy[222] = { 0 };
-	char OemData[256] = { 0 };
-};
-
-struct VesaModusBlock {
-	uint16 mflag = 0;
-	uint8 fw_flag = 0;
-	uint8 fs_flag = 0;
-
-	uint16 stepgr = 0;
-	uint16 wsize = 0;
-	uint16 fw_seg = 0;
-	uint16 fs_seg = 0;
-	void (*page_set)(int16 page) = nullptr;
-	uint16 scr_width = 0;
-	uint16 x_charsize = 0;
-	uint16 y_charsize = 0;
-	uint8 x_charwidth = 0;
-	uint8 y_charwidth = 0;
-	uint8 planes = 0;
-	uint8 bppix = 0;
-	uint8 memblks = 0;
-	uint8 model = 0;
-	uint8 blksize = 0;
-	char dummy[100] = { 0 };
-};
-
 struct IogInit {
 	char id[4] = { 0 };
 	char save_path[30] = { 0 };
@@ -266,28 +181,6 @@ struct IogInit {
 	uint8 f4 = 0;
 	uint8 key_nr = 0;
 	int16 delay = 0;
-};
-
-struct IotInit {
-	int16 popx = 0;
-	int16 popy = 0;
-	char *m_col = nullptr;
-	char fname[81] = { 0 };
-	uint8 f1 = 0;
-	uint8 f2 = 0;
-	uint8 f3 = 0;
-	uint8 abbruch = 0;
-
-	int16(*save_funktion)(char *fname) = nullptr;
-	int16(*load_funktion)(char *fname) = nullptr;
-	int16 delay = 0;
-};
-
-struct MemInfoBlk {
-	uint32 size = 0;
-	uint32 akt_size = 0;
-	uint32 biggest_block = 0;
-	uint32 start = 0;
 };
 
 struct GedPoolHeader {
@@ -304,13 +197,6 @@ struct GedChunkHeader {
 	int16 Ebenen = 0;
 
 	bool load(Common::SeekableReadStream *src);
-};
-
-struct GedHeader {
-	char Id[4] = { 0 };
-	int16 X = 0;
-	int16 Y = 0;
-	uint32 Len = 0;
 };
 
 struct CurBlk {

@@ -62,7 +62,6 @@ void setfont(byte *addr, int16 width, int16 height, int16 first,
              int16 last);
 void vors();
 
-void init_svga(VesaInfo *vi, byte *virt_screen);
 void upd_scr();
 
 } // namespace Chewy

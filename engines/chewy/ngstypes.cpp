@@ -98,25 +98,6 @@ bool Dialogue::save(Common::WriteStream *dest) {
 	return true;
 }
 
-bool SbiInst::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	src->read(name, 32);
-	modmulti = src->readByte();
-	carrmulti = src->readByte();
-	modamp = src->readByte();
-	carramp = src->readByte();
-	modad = src->readByte();
-	carrad = src->readByte();
-	modsr = src->readByte();
-	carrsr = src->readByte();
-	modw = src->readByte();
-	carrw = src->readByte();
-	rv = src->readByte();
-	src->read(frei, 5);
-
-	return true;
-}
-
 bool TmfInst::load(Common::SeekableReadStream *src) {
 	finetune = src->readByte();
 	insvol = src->readByte();
