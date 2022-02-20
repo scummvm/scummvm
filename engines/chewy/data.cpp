@@ -242,10 +242,6 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 
 int16 Data::get_id(char *id_code) {
 	int16 id = -1;
-	if (!(scumm_strnicmp(id_code, "TBF", 3)))
-		id = TBFDATEI;
-	if (!(scumm_strnicmp(id_code, "TPF", 3)))
-		id = TPFDATEI;
 	if (!(scumm_strnicmp(id_code, "TAF", 3)))
 		id = TAFDATEI;
 	if (!(scumm_strnicmp(id_code, "TFF", 3)))
