@@ -143,10 +143,6 @@ int Room87::proc2(int16 txt_nr) {
 	return 1;
 }
 
-int16 Room87::proc3(int16 key) {
-	return key < 12 ? 0 : -1;
-}
-
 int16 Room87::proc5(int16 key) {
 	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 	return 0;
