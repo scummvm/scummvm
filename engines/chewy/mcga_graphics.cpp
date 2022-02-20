@@ -142,9 +142,8 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen, int16 frames) {
 	if (_mono)
 		calc_mono(palette, startcol, anz);
-	int16 endcol = startcol + anz;
 	for (int16 j = stufen; j >= 0; j--) {
-		endcol = startcol + anz;
+		int16 endcol = startcol + anz;
 		int16 k = startcol * 3;
 		for (int16 i = startcol; i < endcol; i++) {
 			int16 r = _palTable[k];
@@ -259,9 +258,9 @@ void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int
 }
 
 void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
-	int16 a = 0, b = 0, alt = 0;
+	int16 b = 0, alt = 0;
 	for (int16 w = 0; w <= 91; w++) {
-		a = (int16)(_sines[w] * ((float)r * 0.85));
+		int16 a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
 			int16 diff = a - alt;
 			for (int16 i = 0; i <= diff; i++) {
@@ -281,9 +280,9 @@ void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
 }
 
 void McgaGraphics::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
-	int16 a = 0, b = 0, alt = 0, i = 0, diff;
+	int16 b = 0, alt = 0, i = 0, diff;
 	for (int16 w = 0; w <= 90; w++) {
-		a = (int16)(_sines[w] * ((float)r * 0.85));
+		int16 a = (int16)(_sines[w] * ((float)r * 0.85));
 		if ((a - alt) > 1) {
 			diff = a - alt;
 			for (i = 0; i < diff; i++) {
@@ -494,6 +493,9 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 						zaehler = 81;
 					charstr = va_arg(parptr, char *);
 					strcpy(zstring, charstr);
+					break;
+
+				default:
 					break;
 				}
 
@@ -789,6 +791,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 
 	g_events->setKbdInfo(kb_old);
 
+	va_end(parptr);
 	return ret;
 }
 
@@ -933,6 +936,7 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 			}
 		}
 	} while ((i < MAXSTRING) && (nextChar != 0));
+	va_end(parptr);
 }
 
 void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string) {
@@ -1079,10 +1083,14 @@ void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth, const char *s
 
 					break;
 
+				default:
+					break;
 				}
 			}
 		}
 	} while ((i < MAXSTRING) && (zeichen != 0));
+
+	va_end(parptr);
 }
 
 void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 menge,
@@ -1221,6 +1229,7 @@ void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 me
 			}
 		}
 	}
+	va_end(parptr);
 }
 
 void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
@@ -1331,6 +1340,7 @@ void McgaGraphics::exit_mausmode() {
 int16 McgaGraphics::devices() {
 	int16 i = 0;
 	if (_mausMode != false) {
+		// TODO: This is wrong. 'i' should be initialized to "button status" (BX after a call to Int33h/03
 		if (i > 1) {
 			i = 27;
 		} else if (i == 1)
