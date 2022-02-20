@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-19 20:27+0000\n"
-"PO-Revision-Date: 2022-02-17 12:23+0000\n"
+"PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5664,21 +5664,19 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Bekapcsolja a QuickTime-videók használatát a vízfelületek vizuális "
+"effektusaihoz (fodrok, hullámok stb.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Átmenetek:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"A képernyő átmeneteinek be- vagy kikapcsolása. A képernyőátmenetek "
+"Beállítja a képernyő átmenetek sebességét. A képernyőátmenetek "
 "kikapcsolásával gyorsabban navigálhat a játékban."
 
 #: engines/mohawk/dialogs.cpp:366
