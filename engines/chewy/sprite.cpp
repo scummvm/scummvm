@@ -108,29 +108,23 @@ static const int16 SPZ_ANI_PH[][2] = {
 
 
 void sprite_engine() {
-	int16 zmin;
 	int16 min_zeiger = 0;
-	int16 i;
-	int16 j;
-	int16 nr;
 	int16 spr_nr;
-	int16 *Cxy;
 	int16 x, y;
-	int16 p_nr;
 	ObjMov detmov;
 	TafSeqInfo *ts_info;
 	calc_z_ebene();
 	calc_person_ani();
 
-	for (i = 0; i < _G(z_count); i++) {
-		zmin = 3000;
-		for (j = 0; j < _G(z_count); j++) {
+	for (int16 i = 0; i < _G(z_count); i++) {
+		int16 zmin = 3000;
+		for (int16 j = 0; j < _G(z_count); j++) {
 			if (_G(z_obj_sort)[j].ObjZ != 3000 && _G(z_obj_sort)[j].ObjZ < zmin) {
 				zmin = _G(z_obj_sort)[j].ObjZ;
 				min_zeiger = j;
 			}
 		}
-		nr = (int16)_G(z_obj_sort)[min_zeiger].ObjNr;
+		int16 nr = (int16)_G(z_obj_sort)[min_zeiger].ObjNr;
 
 		switch (_G(z_obj_sort)[min_zeiger].ObjArt) {
 		case ZOBJ_ANI_DETAIL:
@@ -189,8 +183,8 @@ void sprite_engine() {
 			break;
 
 		case ZOBJ_HOWARD:
-		case ZOBJ_NICHELLE:
-			p_nr = _G(z_obj_sort)[min_zeiger].ObjArt - 6;
+		case ZOBJ_NICHELLE: {
+			int16 p_nr = _G(z_obj_sort)[min_zeiger].ObjArt - 6;
 			if (!_G(spieler).PersonHide[p_nr]) {
 				if (!_G(spz_ani)[p_nr]) {
 					ts_info = _G(PersonTaf)[p_nr];
@@ -200,41 +194,31 @@ void sprite_engine() {
 					spr_nr = _G(spz_spr_nr)[_G(spieler_vector)[p_nr].PhNr];
 				}
 
-				x = _G(spieler_mi)[p_nr].XyzStart[0] +
-				    ts_info->korrektur[spr_nr * 2] -
-				    _G(spieler).scrollx;
-				y = _G(spieler_mi)[p_nr].XyzStart[1] +
-				    ts_info->korrektur[spr_nr * 2 + 1] -
-				    _G(spieler).scrolly;
-				calc_zoom(_G(spieler_mi)[p_nr].XyzStart[1],
-				          _G(spieler).ZoomXy[p_nr][0],
-				          _G(spieler).ZoomXy[p_nr][1],
-				          &_G(spieler_vector)[p_nr]);
-				_G(out)->scale_set(ts_info->image[spr_nr], x, y,
-				                _G(spieler_vector)[p_nr].Xzoom,
-				                _G(spieler_vector)[p_nr].Yzoom,
-				                _G(scr_width));
+				x = _G(spieler_mi)[p_nr].XyzStart[0] + ts_info->korrektur[spr_nr * 2] - _G(spieler).scrollx;
+				y = _G(spieler_mi)[p_nr].XyzStart[1] + ts_info->korrektur[spr_nr * 2 + 1] - _G(spieler).scrolly;
+				calc_zoom(_G(spieler_mi)[p_nr].XyzStart[1], _G(spieler).ZoomXy[p_nr][0],_G(spieler).ZoomXy[p_nr][1], &_G(spieler_vector)[p_nr]);
+				_G(out)->scale_set(ts_info->image[spr_nr], x, y, _G(spieler_vector)[p_nr].Xzoom, _G(spieler_vector)[p_nr].Yzoom, _G(scr_width));
+			}
 			}
 			break;
 		case ZOBJ_PROGANI:
-			_G(out)->sprite_set(_G(spr_info)[nr].Image,
-			                 _G(spr_info)[nr].X - _G(spieler).scrollx,
-			                 _G(spr_info)[nr].Y - _G(spieler).scrolly, 0);
+			_G(out)->sprite_set(_G(spr_info)[nr].Image, _G(spr_info)[nr].X - _G(spieler).scrollx, _G(spr_info)[nr].Y - _G(spieler).scrolly, 0);
 			break;
 
-		case ZOBJ_AUTO_OBJ:
+		case ZOBJ_AUTO_OBJ: {
 			spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
 			         _G(auto_mov_vector)[nr].PhNr;
-			Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
+			int16 *cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 			calc_zoom(_G(auto_mov_vector)[nr].Xypos[1],
 			          _G(mov_phasen)[nr].ZoomFak,
 			          _G(mov_phasen)[nr].ZoomFak,
 			          &_G(auto_mov_vector)[nr]);
 			_G(out)->scale_set(_G(room_blk).DetImage[spr_nr],
-			                _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx,
-			                _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly,
+			                _G(auto_mov_vector)[nr].Xypos[0] + cxy[0] - _G(spieler).scrollx,
+			                _G(auto_mov_vector)[nr].Xypos[1] + cxy[1] - _G(spieler).scrolly,
 			                _G(auto_mov_vector)[nr].Xzoom,
 			                _G(auto_mov_vector)[nr].Yzoom, _G(scr_width));
+			}
 			break;
 
 		default:
@@ -304,11 +288,8 @@ void calc_z_ebene() {
 }
 
 int16 mouse_on_prog_ani() {
-	int16 i;
-	int16 ani_nr;
-	ani_nr = -1;
-	for (i = 0; i < MAX_PROG_ANI && ani_nr == -1; i++) {
-
+	int16 ani_nr = -1;
+	for (int16 i = 0; i < MAX_PROG_ANI && ani_nr == -1; i++) {
 		if (_G(minfo).x >= _G(spr_info)[i].X && _G(minfo).x <= _G(spr_info)[i].X1 &&
 		        _G(minfo).y >= _G(spr_info)[i].Y && _G(minfo).y <= _G(spr_info)[i].Y1) {
 			ani_nr = i;
@@ -319,8 +300,6 @@ int16 mouse_on_prog_ani() {
 }
 
 void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
-	int16 u_index;
-	int16 tmp_nr;
 	if (richtung != -1)
 		set_person_spr(richtung, p_nr);
 	_G(spieler_vector)[p_nr].Xypos[0] = x;
@@ -334,7 +313,7 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	          _G(spieler).ZoomXy[p_nr][0],
 	          _G(spieler).ZoomXy[p_nr][1],
 	          &_G(spieler_vector)[p_nr]);
-	tmp_nr = p_nr;
+	int16 tmp_nr = p_nr;
 	if (p_nr >= P_NICHELLE) {
 		++tmp_nr;
 	}
@@ -342,16 +321,15 @@ void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung) {
 	_G(ssi)[tmp_nr].Y = _G(spieler_vector)[p_nr].Xypos[1] - _G(spieler).scrolly;
 	if (!_G(flags).ExitMov) {
 		if (p_nr == P_CHEWY) {
-			u_index = _G(ged)->ged_idx(x + _G(spieler_mi)[p_nr].HotX, y + _G(spieler_mi)[p_nr].HotY,
-			                        _G(room)->_gedXAnz[_G(room_blk).AkAblage],
-			                        _G(ged_mem)[_G(room_blk).AkAblage]);
+			int16 u_index = _G(ged)->ged_idx(x + _G(spieler_mi)[p_nr].HotX, y + _G(spieler_mi)[p_nr].HotY,
+			                                 _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+			                                 _G(ged_mem)[_G(room_blk).AkAblage]);
 			check_shad(u_index, 1);
 		}
 	}
 }
 
 void set_person_spr(int16 nr, int16 p_nr) {
-
 	if (nr == 5 || nr == 4)
 		nr = 0;
 	else if (nr == 10 || nr == 7)
@@ -424,11 +402,10 @@ void start_detail_wait(int16 ani_nr, int16 rep, int16 mode) {
 }
 
 void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
-	AniDetailInfo *adi;
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	_G(det)->start_detail(ani_nr, rep, mode);
-	adi = _G(det)->get_ani_detail(ani_nr);
+	AniDetailInfo *adi = _G(det)->get_ani_detail(ani_nr);
 	if (mode == ANI_VOR)
 		frame = adi->ani_count + frame;
 	else
@@ -458,10 +435,9 @@ void wait_show_screen(int16 frames) {
 }
 
 void start_ani_block(int16 anz, const AniBlock *ab) {
-	int16 i;
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
-	for (i = 0; i < anz; i++) {
+	for (int16 i = 0; i < anz; i++) {
 		if (ab[i].Mode == ANI_WAIT)
 			start_detail_wait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 		else
@@ -471,7 +447,6 @@ void start_ani_block(int16 anz, const AniBlock *ab) {
 }
 
 void start_aad_wait(int16 dia_nr, int16 str_nr) {
-
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	_G(talk_start_ani) = -1;
@@ -500,8 +475,6 @@ void start_aad(int16 dia_nr) {
 }
 
 bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
-	int16 VocNr;
-	int16 vocx;
 	bool ret = false;
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
@@ -512,6 +485,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
 
+			int16 VocNr;
 			ret = _G(atds)->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 			if (ret) {
 				while (_G(atds)->ats_get_status() != false && !SHOULD_QUIT)
@@ -522,7 +496,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			// subtitles only mode. Don't allow this in ScummVM
 			} else if (VocNr != -1 && g_engine->_sound->getSpeechSubtitlesMode() != DISPLAY_TXT) {
 				ret = true;
-				vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+				int16 vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
 				g_engine->_sound->playSpeech(VocNr);
 				//warning("FIXME - unknown constant SMP_PLAYING");
@@ -565,16 +539,12 @@ void aad_wait(int16 str_nr) {
 }
 
 void start_aad(int16 dia_nr, int16 ssi_nr) {
-	switch (ssi_nr) {
-	case 0:
+	if (ssi_nr == 0) {
 		_G(ssi)[0].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 		_G(ssi)[0].Y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
 		_G(atds)->set_split_win(0, &_G(ssi)[0]);
-		break;
-
-	default:
-		break;
 	}
+
 	_G(atds)->start_aad(dia_nr);
 }
 
@@ -613,18 +583,14 @@ void continue_auto_obj(int16 nr, int16 repeat) {
 }
 
 void init_auto_obj(int16 auto_nr, const int16 *phasen, int16 lines, const MovLine *mline) {
-	int16 i;
-	int16 *tmp;
-	MovLine *tmp1;
-	const MovLine *tmp2;
-	tmp2 = mline;
-	tmp = (int16 *)_G(mov_phasen)[auto_nr].Phase;
-	for (i = 0; i < 8; i++)
+	const MovLine *tmp2 = mline;
+	int16 *tmp = (int16 *)_G(mov_phasen)[auto_nr].Phase;
+	for (int16 i = 0; i < 8; i++)
 		tmp[i] = phasen[i];
 	_G(mov_phasen)[auto_nr].Start = 1;
 
-	tmp1 = _G(mov_line)[auto_nr];
-	for (i = 0; i < lines; i++) {
+	MovLine *tmp1 = _G(mov_line)[auto_nr];
+	for (int16 i = 0; i < lines; i++) {
 		tmp1->EndXyz[0] = tmp2->EndXyz[0];
 		tmp1->EndXyz[1] = tmp2->EndXyz[1];
 		tmp1->EndXyz[2] = tmp2->EndXyz[2];
@@ -645,7 +611,6 @@ void init_auto_obj(int16 auto_nr, const int16 *phasen, int16 lines, const MovLin
 }
 
 void new_auto_line(int16 nr) {
-
 	if (nr < _G(auto_obj)) {
 		if (_G(mov_phasen)[nr].Repeat != -1 &&
 		        _G(mov_phasen)[nr].Start) {
@@ -686,16 +651,12 @@ void new_auto_line(int16 nr) {
 }
 
 int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
-	int16 ret;
-	int16 spr_nr;
-	int16 *xy;
-	int16 *Cxy;
-	ret = false;
+	int16 ret = false;
 	if (_G(mov_phasen)[nr].Start == 1) {
-		spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
-		         _G(auto_mov_vector)[nr].PhNr;
-		xy = (int16 *)_G(room_blk).DetImage[spr_nr];
-		Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
+		int16 spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
+		               _G(auto_mov_vector)[nr].PhNr;
+		int16 *xy = (int16 *)_G(room_blk).DetImage[spr_nr];
+		int16 *Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 
 		if (!xoff) {
 			xoff = xy ? xy[0] : 0;
@@ -715,8 +676,7 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 }
 
 int16 auto_obj_status(int16 nr) {
-	int16 status;
-	status = false;
+	int16 status = false;
 	if (nr < _G(auto_obj)) {
 		if (_G(mov_phasen)[nr].Repeat != -1)
 			status = true;
@@ -726,11 +686,9 @@ int16 auto_obj_status(int16 nr) {
 }
 
 void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y, ObjMov *om) {
-	float zoom_fak_x;
-	float zoom_fak_y;
-	zoom_fak_x = (float)zoomfak_x / (float)100.0;
+	float zoom_fak_x = (float)zoomfak_x / (float)100.0;
 	zoom_fak_x = -zoom_fak_x;
-	zoom_fak_y = (float)zoomfak_y / (float)100.0;
+	float zoom_fak_y = (float)zoomfak_y / (float)100.0;
 	zoom_fak_y = -zoom_fak_y;
 	if (!_G(zoom_horizont)) {
 		om->Xzoom = -zoomfak_x;
@@ -747,11 +705,7 @@ void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y, ObjMov *om) {
 }
 
 void mov_objekt(ObjMov *om, MovInfo *mi) {
-	int16 tmpx;
-	int16 tmpy;
-	int16 tmpz;
-	int16 u_index;
-	u_index = 0;
+	int16 u_index = 0;
 
 	if (om->DelayCount > 0)
 		--om->DelayCount;
@@ -764,9 +718,9 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				++om->PhNr;
 			else
 				om->PhNr = 0;
-			tmpx = om->Xyvo[0];
-			tmpy = om->Xyvo[1];
-			tmpz = om->Xyvo[2];
+			int16 tmpx = om->Xyvo[0];
+			int16 tmpy = om->Xyvo[1];
+			int16 tmpz = om->Xyvo[2];
 			om->Xyna[0][0] += om->Xyna[0][1];
 			if (om->Xyna[0][1] < 0) {
 				if (om->Xyna[0][0] < -1000) {
@@ -980,8 +934,7 @@ void calc_person_end_ani(ObjMov *om, int16 p_nr) {
 }
 
 void get_phase(ObjMov *om, MovInfo *mi) {
-	int16 p_nr;
-	p_nr = 255 - mi->Id;
+	int16 p_nr = 255 - mi->Id;
 	if (p_nr >= 0) {
 		if (om->Xyvo[0] > 0) {
 			if (om->Xyvo[1] > 0) {
@@ -1038,8 +991,7 @@ void get_phase(ObjMov *om, MovInfo *mi) {
 }
 
 void get_lr_phase(ObjMov *om, int16 mode) {
-	int16 p_nr;
-	p_nr = 255 - mode;
+	int16 p_nr = 255 - mode;
 	if (p_nr >= 0) {
 		if (om->Xyvo[0] > 0) {
 			om->Phase = CH_RIGHT_NO;
@@ -1050,13 +1002,11 @@ void get_lr_phase(ObjMov *om, int16 mode) {
 }
 
 void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
-	int16 tmp;
-	int16 tmp_vorschub;
-	tmp_vorschub = mi->Vorschub;
+	int16 tmp_vorschub = mi->Vorschub;
 	mi->Vorschub = CH_X_PIX;
 	if (_G(flags).ZoomMov) {
 		if (om->Xzoom < 0 && _G(zoom_mov_fak) > 0) {
-			tmp = om->Xzoom / _G(zoom_mov_fak);
+			int16 tmp = om->Xzoom / _G(zoom_mov_fak);
 			tmp = abs(tmp);
 			mi->Vorschub -= tmp;
 			if (mi->Vorschub < 2)
@@ -1077,17 +1027,13 @@ void start_spz_wait(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 }
 
 bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
-	int16 i;
-	int16 spr_start;
-	int16 spr_anz;
-
 	bool ret = false;
 	if (!_G(flags).SpzAni) {
 		_G(flags).SpzAni = true;
 		_G(spz_ani)[p_nr] = true;
 		_G(spz_p_nr) = p_nr;
-		spr_start = SPZ_ANI_PH[ani_id][0];
-		spr_anz = SPZ_ANI_PH[ani_id][1];
+		int16 spr_start = SPZ_ANI_PH[ani_id][0];
+		int16 spr_anz = SPZ_ANI_PH[ani_id][1];
 		if (_G(person_end_phase)[p_nr] == P_RIGHT) {
 			ani_id += 100;
 			spr_start += CH_SPZ_OFFSET;
@@ -1100,7 +1046,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 			_G(spz_tinfo) = _G(mem)->taf_seq_adr(spr_start, spr_anz);
 		}
 
-		for (i = 0; i < spr_anz; i++) {
+		for (int16 i = 0; i < spr_anz; i++) {
 			if (!reverse)
 				_G(spz_spr_nr)[i] = i;
 			else
@@ -1153,11 +1099,9 @@ void set_spz_delay(int16 delay) {
 }
 
 void load_person_ani(int16 ani_id, int16 p_nr) {
-	int16 ani_start;
-	short ani_anz;
 	if (_G(PersonAni)[p_nr] != ani_id) {
-		ani_start = SPZ_ANI_PH[ani_id][0];
-		ani_anz = SPZ_ANI_PH[ani_id][1];
+		int16 ani_start = SPZ_ANI_PH[ani_id][0];
+		short ani_anz = SPZ_ANI_PH[ani_id][1];
 		_G(PersonAni)[p_nr] = ani_id;
 		if (_G(PersonTaf)[p_nr])
 			free((char *)_G(PersonTaf)[p_nr]);
@@ -1173,10 +1117,8 @@ uint8 p_ani[MAX_PERSON - 1][5] = {
 };
 
 void calc_person_ani() {
-	int16 i;
-	int16 p_nr;
 	int16 ani_nr = 0;
-	for (p_nr = 0; p_nr < MAX_PERSON; p_nr++) {
+	for (int16 p_nr = 0; p_nr < MAX_PERSON; p_nr++) {
 		if (_G(spieler_mi)[p_nr].Id != NO_MOV_OBJ) {
 			switch (p_nr) {
 			case P_CHEWY:
@@ -1185,7 +1127,7 @@ void calc_person_ani() {
 			case P_HOWARD:
 			case P_NICHELLE:
 				if (!_G(spz_ani)[p_nr]) {
-					for (i = 0; i < 8; i++)
+					for (int16 i = 0; i < 8; i++)
 						_G(PersonSpr)[p_nr][i] = i;
 
 					if (!_G(spieler_vector)[p_nr].Count &&
@@ -1211,6 +1153,9 @@ void calc_person_ani() {
 
 						case CH_DOWN:
 							ani_nr = (int16)p_ani[p_nr - 1][3];
+							break;
+
+						default:
 							break;
 						}
 					}
