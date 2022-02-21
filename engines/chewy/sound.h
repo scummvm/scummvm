@@ -73,7 +73,7 @@ public:
 	/**
 	 * Returns the speech, subtitles mode from the ScummVM config
 	 */
-	Display getSpeechSubtitlesMode() const;
+	DisplayMode getSpeechSubtitlesMode() const;
 
 private:
 	Audio::Mixer *_mixer;

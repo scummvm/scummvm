@@ -50,7 +50,7 @@ namespace Chewy {
 #define INV_ATS_HANDLE 6
 #define ATDS_HANDLE 7
 
-enum Display {
+enum DisplayMode {
 	DISPLAY_TXT = 0,
 	DISPLAY_VOC = 1,
 	DISPLAY_ALL = 2
@@ -114,7 +114,7 @@ struct AtdsVar {
 	int16 *Delay = 0;
 	int16 DiaNr = 0;
 
-	Display Display = DISPLAY_TXT;
+	DisplayMode Display = DISPLAY_TXT;
 	bool _eventsEnabled = false;
 	int16 VocNr = 0;
 
