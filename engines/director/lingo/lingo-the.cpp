@@ -814,22 +814,22 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheStageBottom:
 		d.type = INT;
-		d.u.i = movie->_movieRect.bottom;
+		d.u.i = _vm->getCurrentWindow()->getSurface()->h;
 		break;
 	case kTheStageColor:
 		getTheEntitySTUB(kTheStageColor);
 		break;
 	case kTheStageLeft:
 		d.type = INT;
-		d.u.i = movie->_movieRect.left;
+		d.u.i = 0;
 		break;
 	case kTheStageRight:
 		d.type = INT;
-		d.u.i = movie->_movieRect.right;
+		d.u.i = _vm->getCurrentWindow()->getSurface()->w;
 		break;
 	case kTheStageTop:
 		d.type = INT;
-		d.u.i = movie->_movieRect.top;
+		d.u.i = 0;
 		break;
 	case kTheStillDown:
 		d.type = INT;
