@@ -124,7 +124,6 @@ void var_init() {
 	_G(spieler).MainMenuY = MENU_Y;
 	_G(spieler).DispFlag = true;
 	_G(spieler).AkInvent = -1;
-	_G(spieler).MausSpeed = 6;
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).ScrollyStep = 1;
 
@@ -350,10 +349,6 @@ void tidy() {
 	_G(in) = nullptr;
 	_G(out) = nullptr;
 	_G(mem) = nullptr;
-}
-
-void set_speed() {
-	_G(in)->speed(_G(spieler).MausSpeed, _G(spieler).MausSpeed * 2);
 }
 
 #define GRAVIS 8

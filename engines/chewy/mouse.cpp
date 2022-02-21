@@ -41,10 +41,6 @@ void set_old_kb_handler() {
 	g_events->setKbdInfo(nullptr);
 }
 
-void set_mouse_handler(MouseInfo *mpos) {
-	// No implementation in ScummVM
-}
-
 InputMgr::InputMgr() {
 	_mouseInfoBlk = nullptr;
 	_kbInfoBlk = nullptr;
@@ -56,10 +52,6 @@ InputMgr::~InputMgr() {
 int InputMgr::init() {
 	// ScummVM supports three buttons
 	return 3;
-}
-
-void InputMgr::speed(int16 x, int16 y) {
-	// Changing mouse speed isn't supported in ScummVM
 }
 
 void InputMgr::move_mouse(int16 x, int16 y) {
@@ -97,7 +89,6 @@ void InputMgr::alter_kb_handler() {
 }
 
 void InputMgr::neuer_maushandler(MouseInfo *mpos) {
-	set_mouse_handler(mpos);
 	_mouseInfoBlk = mpos;
 }
 

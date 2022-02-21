@@ -430,7 +430,6 @@ struct Spieler : public SpielerFlags {
 	int16 scrolly = 0;
 	int16 ScrollxStep = 0;
 	int16 ScrollyStep = 0;
-	int16 MausSpeed = 0;
 	int16 DelaySpeed = 0;
 	int16 AadDelay = 0;
 	int16 AadSilent = 0;
