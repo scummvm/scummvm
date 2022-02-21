@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	hnm_decoder.o \
 	mpegps_decoder.o \
 	mve_decoder.o \
+	paco_decoder.o \
 	psx_decoder.o \
 	qt_decoder.o \
 	smk_decoder.o \
