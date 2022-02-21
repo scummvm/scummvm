@@ -132,7 +132,6 @@ void Inventory::menu() {
 	int16 taste_flag;
 	int16 i, k;
 	int16 abfrage;
-	int16 tmp, tmp1;
 	int16 disp_tmp;
 	int16 ret_look;
 	int16 ani_tmp;
@@ -146,12 +145,6 @@ void Inventory::menu() {
 	_G(flags).AutoAniPlay = true;
 	_G(flags).StopAutoObj = true;
 	_G(menu_display) = 0;
-	tmp = _G(spieler).MausSpeed;
-	if (tmp > 3) {
-		tmp1 = tmp - 2;
-	} else
-		tmp1 = tmp;
-	_G(in)->speed(tmp1, tmp1 * 2);
 	_G(cur)->move(152, 92);
 	_G(minfo).x = 152;
 	_G(minfo).y = 92;
@@ -402,7 +395,6 @@ void Inventory::menu() {
 		_G(out)->back2screen(_G(workpage));
 	}
 
-	_G(in)->speed(tmp, tmp * 2);
 	_G(flags).InventMenu = false;
 	_G(flags).AutoAniPlay = ani_tmp;
 	_G(spieler).DispFlag = disp_tmp;

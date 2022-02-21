@@ -399,8 +399,6 @@ void init_load();
 
 void var_init();
 
-void set_speed();
-
 void new_game();
 void sound_init();
 void sound_exit();

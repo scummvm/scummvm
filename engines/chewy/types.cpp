@@ -95,7 +95,8 @@ bool Spieler::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(scrolly);
 	s.syncAsSint16LE(ScrollxStep);
 	s.syncAsSint16LE(ScrollyStep);
-	s.syncAsSint16LE(MausSpeed);
+	int16 mouseSpeed = 6;
+	s.syncAsSint16LE(mouseSpeed);
 	s.syncAsSint16LE(DelaySpeed);
 	s.syncAsSint16LE(AadDelay);
 	s.syncAsSint16LE(AadSilent);

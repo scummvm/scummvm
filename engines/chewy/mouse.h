@@ -29,8 +29,6 @@ namespace Chewy {
 void set_new_kb_handler(KbdInfo *key);
 void set_old_kb_handler();
 
-void set_mouse_handler(MouseInfo *mpos);
-
 extern bool mouse_links_los;
 extern bool mouse_active;
 extern bool cur_move;
@@ -41,7 +39,6 @@ public:
 	~InputMgr();
 
 	int init();
-	void speed(int16 x, int16 y);
 	void move_mouse(int16 x, int16 y);
 	void rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax);
 

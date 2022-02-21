@@ -144,7 +144,6 @@ void JungleRoom::setup_func() {
 	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
-
 Room::Room() {
 	_roomTimer.TimerAnz = 0;
 	_roomTimer.TimerStart = 0;
@@ -152,6 +151,7 @@ Room::Room() {
 	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		_roomHandle[i] = 0;
 }
+
 Room::~Room() {
 	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		if (_roomHandle[i])

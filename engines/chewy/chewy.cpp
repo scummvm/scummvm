@@ -125,8 +125,6 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
 		_G(obj)->sort();
 
-		set_speed();
-
 		for (int i = 0; i < MAX_PERSON; i++) {
 			set_person_pos(_G(spieler).X[i], _G(spieler).Y[i], i, _G(spieler).Phase[i]);
 		}
