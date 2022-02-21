@@ -58,8 +58,8 @@ protected:
 	class PacoVideoTrack : public VideoTrack {
 	public:
 		PacoVideoTrack(
-			Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount, 
-		    bool hasAudio, uint16 width, uint16 height);
+			Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount,
+			bool hasAudio, uint16 width, uint16 height);
 		~PacoVideoTrack();
 
 		bool endOfTrack() const;
@@ -87,7 +87,7 @@ protected:
 		int _curFrame;
 
 		byte *_palette;
-        int _frameSizes[65536]; // can be done differently?
+		int _frameSizes[65536]; // can be done differently?
 		mutable bool _dirtyPalette;
 
 		uint32 _frameCount;
