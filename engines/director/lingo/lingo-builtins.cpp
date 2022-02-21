@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "common/tokenizer.h"
 
+#include "video/paco_decoder.h"
+
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -224,6 +226,8 @@ static BuiltinProto builtins[] = {
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,200,HBLTIN },
 
+	// Expose Paco
+	{ "XPlayAnim", LB::b_xPlayAnim, 3,3, 300, HBLTIN },
 	// XCMD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, 400, FBLTIN },
 
@@ -2692,6 +2696,26 @@ void LB::b_scummvmassertequal(int nargs) {
 		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}
 	assert(result == 1);
+}
+
+void LB::b_xPlayAnim(int nargs){
+	int y = g_lingo->pop().asInt();
+	int x = g_lingo->pop().asInt();
+	Common::String filename = g_lingo->pop().asString();
+
+	warning("LB::b_xPlayAnim: x: %i y: %i", x, y);
+	Video::PacoDecoder *video = new Video::PacoDecoder();
+	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
+
+	while (!video->endOfVideo()) {
+		warning("LB::b_xPlayAnim: loop");
+		Graphics::Surface const *frame = video->decodeNextFrame();
+		Graphics::ManagedSurface *surface = g_director->getCurrentWindow()->getSurface();
+		surface->copyRectToSurface(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 void LB::b_getVolumes(int nargs) {

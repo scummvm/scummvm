@@ -194,6 +194,8 @@ void b_numberofwords(int nargs);
 void b_scummvmassert(int nargs);
 void b_scummvmassertequal(int nargs);
 
+void b_xPlayAnim(int nargs);
+
 // XCMD/XFCN (HyperCard), normally exposed
 void b_getVolumes(int nargs);
 
