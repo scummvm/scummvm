@@ -936,7 +936,8 @@ void flic_cut(int16 nr) {
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
 //#ifndef NEW_VIDEO_CODE
-	Common::File *f = File::open("cut/cut.tap");
+	Common::File *f = new Common::File();
+	f->open("cut/cut.tap");
 	_G(Ci).Handle = f;
 //#endif
 
@@ -1681,7 +1682,8 @@ void flic_cut(int16 nr) {
 			break;
 		}
 
-		chewy_fclose(_G(Ci).Handle);
+		delete _G(Ci).Handle;
+		_G(Ci).Handle = nullptr;
 	} else {
 		error("flic_cut error");
 	}

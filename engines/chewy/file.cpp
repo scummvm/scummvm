@@ -27,18 +27,6 @@
 
 namespace Chewy {
 
-static const byte IO_PAL1[7] = { 11, 60, 14, 2, 1, 5, 4 };
-
-Common::File *File::open(const char *name) {
-	Common::File *f = new Common::File();
-	if (f->open(name)) {
-		return f;
-	} else {
-		delete f;
-		return nullptr;
-	}
-}
-
 bool File::readArray(Common::SeekableReadStream *src, uint16 *arr, size_t size) {
 	Common::SeekableReadStream *rs = src->readStream(size * 2);
 

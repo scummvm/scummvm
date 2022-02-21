@@ -155,25 +155,22 @@ Room::Room() {
 Room::~Room() {
 	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		if (_roomHandle[i])
-			chewy_fclose(_roomHandle[i]);
+			delete _roomHandle[i];
 	free_ablage();
 }
 
 Stream *Room::open_handle(const char *fname1, int16 mode) {
-	Stream *stream = chewy_fopen(fname1);
-	if (stream) {
-		close_handle(mode);
-		_roomHandle[mode] = stream;
+	Common::File *f = new Common::File();
+	f->open(fname1);
+	if (f->isOpen()) {
+		if (_roomHandle[mode])
+			delete _roomHandle[mode];
+		_roomHandle[mode] = f;
 	} else {
 		error("open_handle error");
 	}
 
 	return _roomHandle[mode];
-}
-
-void Room::close_handle(int16 mode) {
-	if (_roomHandle[mode])
-		chewy_fclose(_roomHandle[mode]);
 }
 
 void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
