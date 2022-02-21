@@ -394,7 +394,7 @@ void Mouse::tick(int x, int y) {
 	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects);
 
 	if (!_vm->_playerActor->isMoving()) {
-		if (actorId >= 0) {
+		if (actorId > 0) {
 			_vm->_playerActor->faceActor(actorId, false);
 		} else if (itemId >= 0) {
 			_vm->_playerActor->faceItem(itemId, false);
