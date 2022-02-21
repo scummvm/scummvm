@@ -70,7 +70,9 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 	int rect_w = MIN(CLIP(_width + x, 0, _width), surface.w - x);
 	int rect_h = MIN(CLIP(_height + y, 0, _height), surface.h - y);
 
-	if (rect_w == 0 || rect_h == 0) {
+	if (rect_w <= 0 || rect_h <= 0) {
+		// Checking here for negative values also,
+		// prevents segmentation fault (in the for loop below)
 		return;
 	}
 
