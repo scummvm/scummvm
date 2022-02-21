@@ -496,11 +496,11 @@ struct RectBase {
 			dst.y = clip.top;
 		}
 
-		int right = dst.x + rect.right;
+		int right = dst.x + rect.width();
 		if (right > clip.right)
 			rect.right -= right - clip.right;
 
-		int bottom = dst.y + rect.bottom;
+		int bottom = dst.y + rect.height();
 		if (bottom > clip.bottom)
 			rect.bottom -= bottom - clip.bottom;
 		return !rect.isEmpty();
