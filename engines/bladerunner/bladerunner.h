@@ -396,6 +396,22 @@ static inline void drawPixel(Graphics::Surface &surface, void* dst, uint32 value
 	}
 }
 
+static inline void getPixel(Graphics::Surface &surface, void* dst, uint32 &value) {
+	switch (surface.format.bytesPerPixel) {
+	case 1:
+		 value = (uint8)(*(uint8*)dst);
+		break;
+	case 2:
+		 value = (uint16)(*(uint16*)dst);
+		break;
+	case 4:
+		value = (uint32)(*(uint32*)dst);
+		break;
+	default:
+		break;
+	}
+}
+
 void blit(const Graphics::Surface &src, Graphics::Surface &dst);
 
 } // End of namespace BladeRunner

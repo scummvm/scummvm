@@ -50,7 +50,7 @@ class Shape {
 public:
 	~Shape();
 
-	void draw(Graphics::Surface &surface, int x, int y) const;
+	void draw(Graphics::Surface &surface, int x, int y, uint8 drawModeBitFlags = 0) const;
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }

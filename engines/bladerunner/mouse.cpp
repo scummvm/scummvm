@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "bladerunner/mouse.h"
 
 #include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/debugger.h"
 #include "bladerunner/dialogue_menu.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/items.h"
@@ -56,106 +56,165 @@ Mouse::Mouse(BladeRunnerEngine *vm) {
 	_randomCountdownY = 0;
 	_randomX = 0;
 	_randomY = 0;
+
+	_drawModeBitFlags = 0;
 }
 
 Mouse::~Mouse() {
 }
 
 void Mouse::setCursor(int cursor) {
-	assert(cursor >= 0 && cursor <= 16);
+	assert(cursor >= 0 && cursor <= 17);
 	if (cursor == _cursor) {
 		return;
 	}
 
 	_cursor = cursor;
+	_drawModeBitFlags = 0;
 
 	switch (_cursor) {
 	case 0:
+		// normal cursor (white)
+		// (also the default init value for mouse cursor)
 		_frame = 3;
 		_hotspotX = 0;
 		_hotspotY = 0;
 		break;
 	case 1:
+		// normal cursor over hotspot (not exit) (green rotating)
+		// animating: 8 frames (4-11)
 		_frame = 4;
 		_hotspotX = 0;
 		_hotspotY = 0;
+		if (_vm->_debugger->_useAdditiveDrawModeForMouseCursorMode0
+		    || _vm->_debugger->_useAdditiveDrawModeForMouseCursorMode1) {
+			_drawModeBitFlags |= MouseDrawFlags::SPECIAL;
+			if (_vm->_debugger->_useAdditiveDrawModeForMouseCursorMode0) {
+				_drawModeBitFlags |= MouseDrawFlags::ADDITIVE_MODE0;
+			} else {
+				_drawModeBitFlags |= MouseDrawFlags::ADDITIVE_MODE1;
+			}
+		}
 		break;
 	case 2:
+		// exit cursor (upwards/North)
 		_frame = 12;
 		_hotspotX = 12;
 		_hotspotY = 0;
 		break;
 	case 3:
+		// exit cursor (right/East)
 		_frame = 15;
 		_hotspotX = 23;
 		_hotspotY = 12;
 		break;
 	case 4:
+		// exit cursor (downwards/South)
 		_frame = 13;
 		_hotspotX = 12;
 		_hotspotY = 23;
 		break;
 	case 5:
+		// exit cursor (left/West)
 		_frame = 14;
 		_hotspotX = 0;
 		_hotspotY = 12;
 		break;
 	case 6:
+		// combat cursor, simple bullets (normal / no target)
 		_frame = 16;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 7:
+		// combat cursor, simple bullets (hot target)
+		// animating: 8 frames (17-24)
 		_frame = 17;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 8:
+		// combat cursor, advanced bullets (normal / no target)
 		_frame = 25;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 9:
+		// combat cursor, advanced bullets (hot target)
+		// animating: 8 frames (26-33)
 		_frame = 26;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 10:
+		// combat cursor, best bullets (normal / no target)
 		_frame = 34;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 11:
+		// combat cursor, best bullets (hot target)
+		// animating: 8 frames (35-42)
 		_frame = 35;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
 	case 12:
+		// exit cursor (upwards/North)
+		// resets animCounter too (as opposed to _cursor == 2)
+		// bouncy animation (handled in updateCursorFrame())
 		_frame = 12;
 		_hotspotX = 12;
 		_hotspotY = 0;
 		_animCounter = 0;
 		break;
 	case 13:
+		// exit cursor (right/East)
+		// resets animCounter too (as opposed to _cursor == 3)
+		// bouncy animation (handled in updateCursorFrame())
 		_frame = 15;
 		_hotspotX = 23;
 		_hotspotY = 12;
 		_animCounter = 0;
 		break;
 	case 14:
+		// exit cursor (downwards/South)
+		// resets animCounter too (as opposed to _cursor == 4)
+		// bouncy animation (handled in updateCursorFrame())
 		_frame = 13;
 		_hotspotX = 12;
 		_hotspotY = 23;
 		_animCounter = 0;
 		break;
 	case 15:
+		// exit cursor (left/West)
+		// resets animCounter too (as opposed to _cursor == 5)
+		// bouncy animation (handled in updateCursorFrame())
 		_frame = 14;
 		_hotspotX = 0;
 		_hotspotY = 12;
 		_animCounter = 0;
 		break;
 	case 16:
+#if !BLADERUNNER_ORIGINAL_BUGS
 		_frame = 0;
+		break;
+	case 17:
+#endif
+		// (beta version) combat cursor (white or flashing white/blue)
+		// Original behavior in the code remnandts seems to have been
+		// that this cursor (id: 16) would animate (3 frames (0-2)),
+		// essentially continuously flashing fast.
+		// In the preview trailers, the cursor is white while not on a target
+		// and red when on target (shown on Zuben) -- perhaps other solid colors were used,
+		// (it's hard to tell the color at the shooting grounds shown in the preview trailer).
+		// We introduce an extra case (id 17) to differentiate the beta crosshairs
+		// depending on whether they're hovering over a hot target or not.
+		// TODO Maybe replace the solid colored frames with a color based on McCoy's bullet type
+		// So:
+		// id 16: inactive (beta) combat crosshairs
+		// id 17: active (beta) combat crosshairs
+		_frame = 1;
 		_hotspotX = 11;
 		_hotspotY = 11;
 	default:
@@ -256,7 +315,7 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	_x = CLIP(x, 0, surface.w - 1);
 	_y = CLIP(y, 0, surface.h - 1);
 
-	_vm->_shapes->get(_frame)->draw(surface, _x - _hotspotX, _y - _hotspotY);
+	_vm->_shapes->get(_frame)->draw(surface, _x - _hotspotX, _y - _hotspotY, _drawModeBitFlags);
 
 	updateCursorFrame();
 }
@@ -324,8 +383,19 @@ void Mouse::updateCursorFrame() {
 		_hotspotX = -offset[_animCounter];
 		break;
 	case 16:
+#if !BLADERUNNER_ORIGINAL_BUGS
+		break;
+	case 17:
+#endif
 		if (++_frame > 2)
+#if BLADERUNNER_ORIGINAL_BUGS
 			_frame = 0;
+#else
+			// Better not to flash the white frame (frame 0),
+			// while quickly animating the beta cursor.
+			// It's less annoying to the eyes this way.
+			_frame = 1;
+#endif
 		break;
 	default:
 		break;
@@ -404,36 +474,47 @@ void Mouse::tick(int x, int y) {
 	}
 
 	if (actorId >= 0 || itemId >= 0 || isObject) {
-		switch (_vm->_settings->getAmmoType()) {
-		case 0:
-			cursorId = 7;
-			break;
-		case 1:
-			cursorId = 9;
-			break;
-		case 2:
-			cursorId = 11;
-			break;
-		default:
-			break;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			cursorId = 17;
+			_drawModeBitFlags |= (0x01 << _vm->_settings->getAmmoType());
+			_drawModeBitFlags |=  MouseDrawFlags::SPECIAL;
+		} else {
+			switch (_vm->_settings->getAmmoType()) {
+			case 0:
+				cursorId = 7;
+				break;
+			case 1:
+				cursorId = 9;
+				break;
+			case 2:
+				cursorId = 11;
+				break;
+			default:
+				break;
+			}
 		}
-
 		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatAim, false);
 		}
 	} else {
-		switch (_vm->_settings->getAmmoType()) {
-		case 0:
-			cursorId = 6;
-			break;
-		case 1:
-			cursorId = 8;
-			break;
-		case 2:
-			cursorId = 10;
-			break;
-		default:
-			break;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			cursorId = 16;
+			_drawModeBitFlags &= ~(0x01 << _vm->_settings->getAmmoType());
+			_drawModeBitFlags &= ~(MouseDrawFlags::SPECIAL);
+		} else {
+			switch (_vm->_settings->getAmmoType()) {
+			case 0:
+				cursorId = 6;
+				break;
+			case 1:
+				cursorId = 8;
+				break;
+			case 2:
+				cursorId = 10;
+				break;
+			default:
+				break;
+			}
 		}
 		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatIdle, false);
@@ -448,7 +529,8 @@ bool Mouse::isRandomized() const {
 }
 
 bool Mouse::isInactive() const {
-	return _cursor == 6 || _cursor == 8 || _cursor == 10;
+	// Note: This only refers to "inactive" cursor in combat mode!
+	return _cursor == 6 || _cursor == 8 || _cursor == 10 || _cursor == 16;
 }
 
 // TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]

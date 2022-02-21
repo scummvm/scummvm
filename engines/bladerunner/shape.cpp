@@ -22,6 +22,7 @@
 #include "bladerunner/shape.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/mouse.h"
 
 #include "common/debug.h"
 #include "common/ptr.h"
@@ -60,7 +61,7 @@ Shape::~Shape() {
 	delete[] _data;
 }
 
-void Shape::draw(Graphics::Surface &surface, int x, int y) const {
+void Shape::draw(Graphics::Surface &surface, int x, int y, uint8 drawModeBitFlags) const {
 	int src_x = CLIP(-x, 0, _width);
 	int src_y = CLIP(-y, 0, _height);
 
@@ -78,18 +79,61 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 
 	const uint8 *src_p = _data + 2 * (src_y * _width + src_x);
 
+	uint16 shpColor = 0;
+	uint32 surfaceColorRGBPrev = 0;
+	uint32 newSurfaceColorRGB = 0;
+	uint8 a, r, g, b;
+	uint8 rPrev, gPrev, bPrev;
+	uint16 rgb16bitPrev = 0;
+	uint16 rgb16bitAdd = 0;
 	for (int yi = 0; yi != rect_h; ++yi) {
 		for (int xi = 0; xi != rect_w; ++xi) {
-			uint16 shpColor = READ_LE_UINT16(src_p);
+			shpColor = READ_LE_UINT16(src_p);
 			src_p += 2;
 
-			uint8 a, r, g, b;
 			getGameDataColor(shpColor, a, r, g, b);
 
 			if (!a) {
 				// Ignore the alpha in the output as it is inversed in the input
 				void *dstPtr = surface.getBasePtr(CLIP(dst_x + xi, 0, surface.w - 1), CLIP(dst_y + yi, 0, surface.h - 1));
-				drawPixel(surface, dstPtr, surface.format.RGBToColor(r, g, b));
+				if (drawModeBitFlags & Mouse::MouseDrawFlags::SPECIAL) {
+					// It seems that the additive mode was supposed to be used only for cursor shapes
+					// From testing, the only cursor shape that seems to work with it is the green rotating cursor
+					// We add extra code here to cover the cases of the beta crosshairs cursor
+					// being drawn a different color based on bullet power
+					// The code for creating the specific color is custom.
+					if (drawModeBitFlags & Mouse::MouseDrawFlags::REDCROSSHAIRS) {
+						newSurfaceColorRGB = surface.format.RGBToColor((b & 0x8B) | (g >> 1), 0, 0);
+					} else if (drawModeBitFlags & Mouse::MouseDrawFlags::YELLOWCROSSHAIRS) {
+						newSurfaceColorRGB = surface.format.RGBToColor(b & 0xDF, (b & 0xA5) | (g >> 1), 0);
+					} else if (drawModeBitFlags & Mouse::MouseDrawFlags::BLUECROSSHAIRS) {
+						newSurfaceColorRGB = surface.format.RGBToColor(r, g, b);
+					} else {
+						// Additive modes
+						getPixel(surface, dstPtr, surfaceColorRGBPrev);
+						if (drawModeBitFlags & Mouse::MouseDrawFlags::ADDITIVE_MODE0) {
+							// This code makes the cursor semi-transparent
+							// but it may not be what the disassembly of the original was going for.
+							newSurfaceColorRGB = surface.format.RGBToColor(r, g, b);
+							newSurfaceColorRGB = (((uint16)surfaceColorRGBPrev >> 1) & 0xFBEF)
+												  + (((uint16)newSurfaceColorRGB >> 1) & 0xFBEF);
+						} else if (drawModeBitFlags & Mouse::MouseDrawFlags::ADDITIVE_MODE1) {
+							// This code may be closer to what the disassembly of the original was doing
+							// for additive draw mode but it doesn't look well.
+							surface.format.colorToRGB(surfaceColorRGBPrev, rPrev, gPrev, bPrev);
+							rgb16bitPrev = (  ((uint16)(rPrev >> 3) << 10)
+							                | ((uint16)(gPrev >> 3) <<  5)
+							                | ((uint16)(bPrev >> 3)));
+							rgb16bitAdd = (((uint16)rgb16bitPrev >> 1) & 0xFBEF)
+							                      + ((shpColor >> 1) & 0xFBEF);
+							getGameDataColor(rgb16bitAdd, a, r, g, b);
+							newSurfaceColorRGB = surface.format.RGBToColor(r, g, b);
+						}
+					}
+				} else {
+					newSurfaceColorRGB = surface.format.RGBToColor(r, g, b);
+				}
+				drawPixel(surface, dstPtr, newSurfaceColorRGB);
 			}
 		}
 		src_p += 2 * (_width - rect_w);

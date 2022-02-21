@@ -109,6 +109,9 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_showStatsVk = false;
 	_showMazeScore = false;
 	_showMouseClickInfo = false;
+	_useBetaCrosshairsCursor = false;
+	_useAdditiveDrawModeForMouseCursorMode0 = false;
+	_useAdditiveDrawModeForMouseCursorMode1 = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("health", WRAP_METHOD(Debugger, cmdHealth));
@@ -134,7 +137,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("object", WRAP_METHOD(Debugger, cmdObject));
 	registerCmd("item", WRAP_METHOD(Debugger, cmdItem));
 	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
-	registerCmd("click", WRAP_METHOD(Debugger, cmdClick));
+	registerCmd("mouse", WRAP_METHOD(Debugger, cmdMouse));
 	registerCmd("difficulty", WRAP_METHOD(Debugger, cmdDifficulty));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -1854,31 +1857,55 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 }
 
 /**
-* Toggle showing mouse click info in the text console (not the debugger window)
+* click:  Toggle showing mouse click info in the text console (not the debugger window)
+* beta:   Toggle beta crosshairs for aiming in combat mode
+* add0:   Toggle semi-transparent hotspot cursor (additive draw mode 0)
+* add1:   Toggle semi-transparent hotspot cursor (additive draw mode 1)
 */
-bool Debugger::cmdClick(int argc, const char **argv) {
+bool Debugger::cmdMouse(int argc, const char **argv) {
 	bool invalidSyntax = false;
 
-	if (argc != 2) {
-		invalidSyntax = true;
-	} else {
+	if (argc == 2) {
 		//
 		// set a debug variable to enable showing the mouse click info
 		//
 		Common::String argName = argv[1];
 		argName.toLowercase();
-		if (argc == 2 && argName == "toggle") {
+
+		invalidSyntax = false;
+		if (argName == "click") {
 			_showMouseClickInfo = !_showMouseClickInfo;
-			debugPrintf("Showing mouse click info = %s\n", _showMouseClickInfo ? "True":"False");
-			return false; // close the debugger console
+		} else if (argName == "beta") {
+			_useBetaCrosshairsCursor = !_useBetaCrosshairsCursor;
+		} else if (argName == "add0") {
+			_useAdditiveDrawModeForMouseCursorMode0  = !_useAdditiveDrawModeForMouseCursorMode0;
+			_useAdditiveDrawModeForMouseCursorMode1  = false;
+		} else if (argName == "add1") {
+			_useAdditiveDrawModeForMouseCursorMode0  = false;
+			_useAdditiveDrawModeForMouseCursorMode1  = !_useAdditiveDrawModeForMouseCursorMode1;
 		} else {
 			invalidSyntax = true;
 		}
+
+		if (!invalidSyntax) {
+			debugPrintf("Showing mouse click info   = %s\n", _showMouseClickInfo ? "True":"False");
+			debugPrintf("Showing beta crosshairs    = %s\n", _useBetaCrosshairsCursor ? "True":"False");
+			debugPrintf("Mouse draw additive mode 0 = %s\n", _useAdditiveDrawModeForMouseCursorMode0 ? "True":"False");
+			debugPrintf("Mouse draw additive mode 1 = %s\n", _useAdditiveDrawModeForMouseCursorMode1 ? "True":"False");
+		}
+	} else {
+		invalidSyntax = true;
 	}
 
 	if (invalidSyntax) {
-		debugPrintf("Toggle showing mouse info (on mouse click) in the text console\n");
-		debugPrintf("Usage: %s toggle\n", argv[0]);
+		debugPrintf("click: Toggle showing mouse info (on mouse click) in the text console\n");
+		debugPrintf("beta:  Toggle beta crosshairs cursor\n");
+		debugPrintf("add0:  Toggle semi-transparent hotspot cursor (additive mode 0)\n");
+		debugPrintf("add1:  Toggle semi-transparent hotspot cursor (additive mode 1)\n");
+		debugPrintf("Usage 1: %s click\n", argv[0]);
+		debugPrintf("Usage 2: %s beta\n", argv[0]);
+		debugPrintf("Usage 3: %s add0\n", argv[0]);
+		debugPrintf("Usage 4: %s add1\n", argv[0]);
 	}
 	return true;
 }
