@@ -45,7 +45,7 @@ public:
 	void neuer_kb_handler(KbdInfo *key);
 	void alter_kb_handler();
 	void neuer_maushandler(MouseInfo *mpos);
-	int16 maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz);
+	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
 	KbdMouseInfo *get_in_zeiger();
 	int16 get_switch_code();

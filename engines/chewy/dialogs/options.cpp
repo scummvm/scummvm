@@ -148,7 +148,8 @@ void Options::execute(TafInfo *ti) {
 		key = _G(in)->get_switch_code();
 		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
-				int16 rect = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, OPTION_ICONS, 9);
+
+			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (_G(spieler).FramesPerSecond > 6)
@@ -200,6 +201,9 @@ void Options::execute(TafInfo *ti) {
 				_G(spieler).MusicVol = (136 - _G(minfo).y) << 1;
 				g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
+
+			default:
+				break;
 			}
 			_G(minfo).button = 0;
 		}
@@ -219,6 +223,9 @@ void Options::execute(TafInfo *ti) {
 
 		case Common::KEYCODE_RIGHT:
 			_G(cur)->move(++_G(minfo).x, _G(minfo).y);
+			break;
+
+		default:
 			break;
 		}
 

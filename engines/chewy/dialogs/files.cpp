@@ -55,10 +55,7 @@ int16 Files::execute(bool isInGame) {
 	int16 mode[9];
 	bool visibility[8];
 	int16 ret = 0;
-	char *fnames;
-	char *tmp;
-	int16 text_off, active_slot;
-	int16 rect, line;
+	int16 line;
 	bool flag = false;
 
 	if (!ConfMan.getBool("original_menus")) {
@@ -75,7 +72,7 @@ int16 Files::execute(bool isInGame) {
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->set_pointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	fnames = _G(iog)->io_init(&_G(ioptr));
+	char *fnames = _G(iog)->io_init(&_G(ioptr));
 	fnames += 1;
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -97,8 +94,8 @@ int16 Files::execute(bool isInGame) {
 		mode[W8] = 0;
 	}
 
-	text_off = 0;		// Top visible save slot
-	active_slot = 0;	// Currently selected slot
+	int16 text_off = 0;		// Top visible save slot
+	int16 active_slot = 0;	// Currently selected slot
 
 	while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		// Draw the dialog background
@@ -120,7 +117,7 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		// Write the list of savegame slots
-		tmp = fnames + (text_off * 40);
+		char *tmp = fnames + (text_off * 40);
 		for (i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, "%2d.", text_off + i);
@@ -169,7 +166,7 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		if (!flag && _G(minfo).button == 1) {
-			rect = _G(in)->maus_vector(_G(minfo).x, _G(minfo).y, FILE_ICONS, 8);
+			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, FILE_ICONS, 8);
 			flag = true;
 			key = 0;
 
@@ -206,6 +203,9 @@ int16 Files::execute(bool isInGame) {
 				break;
 			case 7:
 				key = Common::KEYCODE_F5;
+				break;
+
+			default:
 				break;
 			}
 

@@ -61,7 +61,7 @@ int16 Room4::sonde_comp() {
 	while (!ende) {
 		maus_action();
 		if (_G(maus_links_click)) {
-			switch (_G(in)->maus_vector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
+			switch (_G(in)->mouseVector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
 				if (cur_x > 0)
 					--cur_x;
