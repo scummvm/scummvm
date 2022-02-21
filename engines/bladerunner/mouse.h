@@ -42,7 +42,7 @@ class Mouse {
 	int _x;
 	int _y;
 	int _disabledCounter;
-	int _lastFrameTime;
+	uint32 _lastFrameTime;
 	int _animCounter;
 
 	int _randomCountdownX;

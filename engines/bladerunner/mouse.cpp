@@ -49,7 +49,7 @@ Mouse::Mouse(BladeRunnerEngine *vm) {
 	_x = 0;
 	_y = 0;
 	_disabledCounter = 0;
-	_lastFrameTime = 0;
+	_lastFrameTime = 0u;
 	_animCounter = 0;
 
 	_randomCountdownX = 0;
