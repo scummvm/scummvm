@@ -299,14 +299,14 @@ void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 }
 
 Stream *Atdsys::pool_handle(const char *fname) {
-	Stream *handle = chewy_fopen(fname);
-	if (handle) {
-		_atdshandle[ATDS_HANDLE] = handle;
+	Common::File *f = new Common::File();
+	f->open(fname);
+	if (f->isOpen()) {
+		_atdshandle[ATDS_HANDLE] = f;
 	} else {
 		error("Error reading from %s", fname);
 	}
-
-	return handle;
+	return f;
 }
 
 void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
@@ -348,10 +348,11 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 
 	if (mode != INV_IDX_DATEI)
 		tmp_adr = atds_adr(fname, 0, 20000);
-	Stream *stream = chewy_fopen(fname);
-	if (stream) {
+	Common::File *f = new Common::File();
+	f->open(fname);
+	if (f->isOpen()) {
 		close_handle(mode);
-		_atdshandle[mode] = stream;
+		_atdshandle[mode] = f;
 		_atdsmem[mode] = tmp_adr;
 
 		switch (mode) {
@@ -374,7 +375,8 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 void Atdsys::close_handle(int16 mode) {
 	Stream *stream = _atdshandle[mode];
 	if (stream) {
-		chewy_fclose(_atdshandle[mode]);
+		delete _atdshandle[mode];
+		_atdshandle[mode] = nullptr;
 
 		for (int i = 0; i < MAX_HANDLE; ++i) {
 			if (_atdshandle[i] == stream)

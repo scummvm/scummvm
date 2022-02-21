@@ -85,7 +85,6 @@ public:
 	~Room();
 
 	Stream *open_handle(const char *fname, int16 mode);
-	void close_handle(int16 mode);
 	void load_room(RaumBlk *Rb, int16 room_nr, Spieler *player);
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
