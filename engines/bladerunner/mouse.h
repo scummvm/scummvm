@@ -68,6 +68,7 @@ public:
 	void updateCursorFrame();
 
 	void tick(int x, int y);
+	bool isRandomized() const;
 	bool isInactive() const;
 
 // private:

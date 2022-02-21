@@ -442,6 +442,11 @@ void Mouse::tick(int x, int y) {
 	setCursor(cursorId);
 }
 
+// This method checks if jitter (due to gun recoil) is currently ongoing
+bool Mouse::isRandomized() const {
+	return _randomCountdownX > 0 || _randomCountdownY > 0;
+}
+
 bool Mouse::isInactive() const {
 	return _cursor == 6 || _cursor == 8 || _cursor == 10;
 }
