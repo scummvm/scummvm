@@ -286,7 +286,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 	if (surface.h == 0 || surface.w == 0) {
 		return;
 	}
-	Common::String tname = "imgf/" + filename;
+	Common::String tname = "img/" + filename;
 #ifdef USE_PNG
 	tname += ".png";
 #else
@@ -603,9 +603,9 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	debugC(2, kDebugVideo, "Groovie::ROQ: width=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d, interl.=%d, _alpha=%d", width, height, _scaleX, _scaleY, _interlacedVideo, _offScale, _alpha);
 
 	// Switch from/to fullscreen, if needed
-	if (_screen->h != 480 && height == 480)
+	if (_screen->h != 480 && height * _scaleY == 480)
 		_vm->_graphicsMan->switchToFullScreen(true);
-	else if (_screen->h == 480 && height != 480)
+	else if (_screen->h == 480 && height * _scaleY != 480)
 		_vm->_graphicsMan->switchToFullScreen(false);
 
 	// TODO: Clear the buffers with black
