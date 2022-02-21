@@ -1898,16 +1898,18 @@ void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool
 
 	if (!buttonDown) {
 		if (actorId == kActorMcCoy) {
-			if (mainButton) {
-				if (!_combat->isActive()) {
-					_kia->openLastOpened();
+			// While McCoy is moving, clicking on him does not bring up KIA (this is also the original behavior)
+			if (!_playerActor->isMoving()) {
+				if (mainButton) {
+					if (!_combat->isActive()) {
+						_kia->openLastOpened();
+					}
+				} else if (!_playerActor->mustReachWalkDestination()) {
+					_combat->change();
 				}
-			} else if (!_playerActor->mustReachWalkDestination()) {
-				_combat->change();
 			}
 			return;
 		}
-
 		if (_isInsideScriptActor && actorId == _walkingToActorId) {
 			_playerActor->run();
 			if (_mouseClickTimeDiff <= 10000) {
@@ -1931,7 +1933,6 @@ void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool
 		}
 	} else {
 		Actor *actor = _actors[actorId];
-
 		if (!_combat->isActive() || actorId == kActorMcCoy || !actor->isTarget() || actor->isRetired() /*|| _mouse->isRandomized()*/) {
 			return;
 		}
