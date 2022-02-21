@@ -208,18 +208,18 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 		bool z_valid = false;
 		int z = 0;
 		int render_type = -1;
-		if (child_valid) {
-			if (!z_valid || (*child)->z() > z) {
-				z = (*child)->z();
-				z_valid = true;
-				render_type = 0;
-			}
-		}
 		if (animation_valid) {
 			if (!z_valid || (*animation)->z() > z) {
 				z = (*animation)->z();
 				z_valid = true;
 				render_type = 1;
+			}
+		}
+		if (child_valid) {
+			if (!z_valid || (*child)->z() > z) {
+				z = (*child)->z();
+				z_valid = true;
+				render_type = 0;
 			}
 		}
 		if (character) {
