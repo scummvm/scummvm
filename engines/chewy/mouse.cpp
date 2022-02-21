@@ -62,7 +62,7 @@ void InputMgr::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
 	// Mouse clip rectangle isn't supported in ScummVM
 }
 
-int16 InputMgr::maus_vector(int16 x, int16 y, const int16 *tbl, int16 anz) {
+int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 	int16 i = -1;
 	for (int16 j = 0; (j < anz * 4) && (i == -1); j += 4) {
 		if ((x >= tbl[j]) && (x <= tbl[j + 2]) && (y >= tbl[j + 1]) && (y <= tbl[j + 3]))

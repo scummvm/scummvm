@@ -84,7 +84,7 @@ void Cinema::execute() {
 
 		if (_G(minfo).button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->maus_vector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
+			switch (_G(in)->mouseVector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
 			case 0:
 				_G(kbinfo).scan_code = Common::KEYCODE_UP;
 				if (!endLoop)

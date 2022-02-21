@@ -33,7 +33,7 @@ private:
 	static int16 inv_rand_y;
 	static int keyVal;
 
-	static int16 calc_use_invent(int16 inv_nr);
+	static bool calc_use_invent(int16 invNr);
 	static void showDiary();
 public:
 	static void plot_menu();
