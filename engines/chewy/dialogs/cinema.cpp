@@ -43,7 +43,6 @@ static const uint8 CINEMA_FLICS[35] = {
 };
 
 void Cinema::execute() {
-	int timer_nr = 0;
 	int16 txt_anz = 0;
 	int topIndex = 0;
 	int selected = -1;
@@ -63,12 +62,11 @@ void Cinema::execute() {
 	_G(kbinfo).scan_code = 0;
 
 	for (bool endLoop = false; !endLoop;) {
-		timer_nr = 0;
 		_G(out)->set_pointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
-			// Render cutscene list
+			// Render cut-scene list
 			for (int i = 0; i < CINEMA_LINES; ++i) {
 				char *csName = _G(atds)->ats_get_txt(546 + i + topIndex,
 					0, &txt_anz, 1);
@@ -79,7 +77,7 @@ void Cinema::execute() {
 				_G(out)->printxy(40, yp, 14, 300, 0, "%s", csName);
 			}
 		} else {
-			// No cutscenes seen yet
+			// No cut-scene seen yet
 			char *none = _G(atds)->ats_get_txt(545, 0, &txt_anz, 1);
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
 		}
@@ -89,18 +87,16 @@ void Cinema::execute() {
 			switch (_G(in)->maus_vector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
 			case 0:
 				_G(kbinfo).scan_code = Common::KEYCODE_UP;
-				if (!endLoop) {
+				if (!endLoop)
 					endLoop = true;
-					timer_nr = 5;
-				}
+
 				break;
 
 			case 1:
 				_G(kbinfo).scan_code = Common::KEYCODE_DOWN;
-				if (!endLoop) {
+				if (!endLoop)
 					endLoop = true;
-					timer_nr = 5;
-				}
+
 				break;
 
 			case 2:
@@ -120,7 +116,6 @@ void Cinema::execute() {
 			flag = true;
 		} else if (_G(minfo).button != 1) {
 			flag = false;
-			timer_nr = 0;
 			delay = 0;
 		} else if (flag) {
 			g_events->update(true);
@@ -213,10 +208,9 @@ int16 Cinema::cut_serv(int16 frame) {
 		_G(sndPlayer)->stopMod();
 		g_engine->_sound->stopAllSounds();
 		return -1;
-
-	} else {
-		return 0;
 	}
+
+	return 0;
 }
 
 } // namespace Dialogs
