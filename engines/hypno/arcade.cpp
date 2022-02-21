@@ -324,10 +324,12 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (segments[segmentIdx].end || checkArcadeLevelCompleted(background, segments[segmentIdx])) {
 			skipVideo(background);
 			// Objectives
-			if (arc->obj1KillsRequired > 0 || arc->obj1MissesAllowed > 0) {
+			if ((arc->obj1KillsRequired > 0 || arc->obj1MissesAllowed) > 0 && !_skipLevel) {
 				if (_obj1KillsCount < arc->obj1KillsRequired || _obj1MissesCount > arc->obj1MissesAllowed) {
-					MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
-					runIntro(video);
+					if (!arc->defeatMissBossVideo.empty()) {
+						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
+						runIntro(video);
+					}
 					assert(!arc->levelIfLose.empty());
 					_nextLevel = arc->levelIfLose;
 					_lives = _lives - 1;
