@@ -411,7 +411,7 @@ struct Spieler : public SpielerFlags {
 	int16 CurHoehe = 0;
 
 	RoomMovObject room_m_obj[MAX_MOV_OBJ];
-	RoomStaticInventar room_s_obj[MAX_FEST_OBJ];
+	RoomStaticInventory room_s_obj[MAX_FEST_OBJ];
 	RoomExit room_e_obj[MAX_EXIT];
 	int16 X[MAX_PERSON] = { 0 };
 	int16 Y[MAX_PERSON] = { 0 };

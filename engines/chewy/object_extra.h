@@ -69,7 +69,7 @@ struct RoomMovObject {
 	static constexpr int SIZE() { return 24; }
 };
 
-struct IibDateiHeader {
+struct IibFileHeader {
 	char Id[4];
 	char Tafname[14];
 	uint32 Size;
@@ -77,7 +77,7 @@ struct IibDateiHeader {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct RoomStaticInventar {
+struct RoomStaticInventory {
 	int16 RoomNr = 0;
 	int16 X = 0;
 	int16 Y = 0;
@@ -100,7 +100,7 @@ struct RoomStaticInventar {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct SibDateiHeader {
+struct SibFileHeader {
 	char Id[4];
 	int16 Anz;
 
@@ -123,7 +123,7 @@ struct RoomExit {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct EibDateiHeader {
+struct EibFileHeader {
 	char Id[4];
 	int16 Anz;
 

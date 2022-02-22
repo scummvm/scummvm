@@ -50,7 +50,7 @@ void RoomMovObject::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(ZEbene);
 }
 
-bool IibDateiHeader::load(Common::SeekableReadStream *src) {
+bool IibFileHeader::load(Common::SeekableReadStream *src) {
 	src->read(Id, 4);
 	src->read(Tafname, 14);
 	Size = src->readUint32LE();
@@ -58,13 +58,13 @@ bool IibDateiHeader::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool RoomStaticInventar::load(Common::SeekableReadStream *src) {
+bool RoomStaticInventory::load(Common::SeekableReadStream *src) {
 	Common::Serializer s(src, nullptr);
 	synchronize(s);
 	return true;
 }
 
-void RoomStaticInventar::synchronize(Common::Serializer &s) {
+void RoomStaticInventory::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(RoomNr);
 	s.syncAsSint16LE(X);
 	s.syncAsSint16LE(Y);
@@ -84,7 +84,7 @@ void RoomStaticInventar::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(StaticOff);
 }
 
-bool SibDateiHeader::load(Common::SeekableReadStream *src) {
+bool SibFileHeader::load(Common::SeekableReadStream *src) {
 	src->read(Id, 4);
 	Anz = src->readUint16LE();
 
@@ -110,7 +110,7 @@ void RoomExit::synchronize(Common::Serializer &s) {
 	s.syncAsByte(dummy);
 }
 
-bool EibDateiHeader::load(Common::SeekableReadStream *src) {
+bool EibFileHeader::load(Common::SeekableReadStream *src) {
 	src->read(Id, 4);
 	Anz = src->readSint16LE();
 
