@@ -49,7 +49,7 @@ void Room69::entry(int16 eib_nr) {
 		return;
 
 	_G(cur_hide_flag) = false;
-	hide_cur();
+	hideCur();
 
 	if (eib_nr == 102)
 		proc1();
@@ -58,7 +58,7 @@ void Room69::entry(int16 eib_nr) {
 		set_person_pos(237, 101, P_NICHELLE, P_RIGHT);
 		set_person_pos(347, 119, P_HOWARD, P_RIGHT);
 		go_auto_xy(351, 97, P_HOWARD, ANI_WAIT);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -76,16 +76,16 @@ void Room69::setup_func() {
 }
 
 void Room69::look_schild() {
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	start_aad_wait(382, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room69::use_bruecke() {
 	int16 action_flag = false;
 	if (!_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		action_flag = true;
 
 		if (!_G(spieler).R68KarteDa) {
@@ -116,7 +116,7 @@ int16 Room69::use_bruecke() {
 			_G(spieler_mi)[P_CHEWY].Mode = false;
 			switch_room(70);
 		}
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }

@@ -43,7 +43,7 @@ void Room33::entry() {
 void Room33::surimy_go() {
 	if (!_G(spieler).R39ScriptOk && _G(spieler).R25SurimyLauf) {
 		if (_G(spieler).R33SurimyGo >= 4) {
-			hide_cur();
+			hideCur();
 			_G(spieler).R33SurimyGo = 0;
 			_G(det)->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
@@ -59,7 +59,7 @@ void Room33::surimy_go() {
 			start_aad_wait(158, -1);
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
-			show_cur();
+			showCur();
 		} else {
 			++_G(spieler).R33SurimyGo;
 		}
@@ -69,11 +69,11 @@ void Room33::surimy_go() {
 void Room33::look_schublade() {
 	if (!_G(spieler).R33SchubFirst) {
 		_G(spieler).R33SchubFirst = true;
-		hide_cur();
+		hideCur();
 		auto_move(1, P_CHEWY);
 		_G(atds)->set_ats_str(210, TXT_MARK_NAME, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 1, ATS_DATEI);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -81,7 +81,7 @@ int16 Room33::use_schublade() {
 	int16 action_flag = false;
 
 	if (_G(spieler).R33SchubFirst && !_G(spieler).inv_cur && !_G(spieler).R33Messer) {
-		hide_cur();
+		hideCur();
 		action_flag = true;
 		_G(spieler).R33Messer = true;
 
@@ -90,7 +90,7 @@ int16 Room33::use_schublade() {
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
 		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		invent_2_slot(MESSER_INV);
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -99,7 +99,7 @@ int16 Room33::use_schublade() {
 void Room33::use_maschine() {
 	int16 dia_nr;
 	int16 ani_nr;
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).R33MunterOk) {
 		auto_move(4, P_CHEWY);
@@ -181,7 +181,7 @@ void Room33::use_maschine() {
 		start_aad_wait(70, -1);
 	}
 
-	show_cur();
+	showCur();
 }
 
 bool Room33::calc_muntermacher() {
@@ -200,7 +200,7 @@ int16 Room33::get_munter() {
 
 	if (!_G(spieler).inv_cur && !_G(spieler).R33MunterGet && _G(spieler).R33MunterOk) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		_G(spieler).R33MunterGet = true;
 		auto_move(4, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -209,7 +209,7 @@ int16 Room33::get_munter() {
 		_G(det)->hide_static_spr(3);
 		start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(72, -1);
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;

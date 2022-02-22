@@ -48,7 +48,7 @@ void Room28::entry(int16 eib_nr) {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
-		hide_cur();
+		hideCur();
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).R40Wettbewerb) {
@@ -134,14 +134,14 @@ void Room28::entry(int16 eib_nr) {
 			}
 		}
 
-		show_cur();
+		showCur();
 	}
 }
 
 void Room28::xit(int16 eib_nr) {
 	_G(spieler).R28PostCar = false;
 	_G(spieler).ScrollxStep = 1;
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
 		_G(SetUpScreenFunc) = nullptr;
@@ -155,7 +155,7 @@ void Room28::xit(int16 eib_nr) {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 	}
 
-	show_cur();
+	showCur();
 }
 
 void Room28::gedAction(int index) {
@@ -164,7 +164,7 @@ void Room28::gedAction(int index) {
 }
 
 void Room28::haendler() {
-	hide_cur();
+	hideCur();
 	_G(SetUpScreenFunc) = nullptr;
 	_G(spieler).R28ChewyPump = true;
 	del_inventar(K_MASKE_INV);
@@ -190,7 +190,7 @@ void Room28::haendler() {
 	start_aad_wait(198, -1);
 	_G(SetUpScreenFunc) = setup_func;
 	auto_move(4, P_CHEWY);
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	set_person_spr(P_RIGHT, P_CHEWY);
 	_G(det)->del_static_ani(4);
@@ -211,7 +211,7 @@ void Room28::use_surimy() {
 	int16 ani_nr;
 
 	if (!_G(spieler).R28SurimyCar) {
-		hide_cur();
+		hideCur();
 		_G(flags).NoScroll = true;
 		auto_scroll(0, 0);
 		_G(spieler).R28SurimyCar = true;
@@ -233,11 +233,11 @@ void Room28::use_surimy() {
 	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
 	_G(flags).NoScroll = false;
-	show_cur();
+	showCur();
 }
 
 void Room28::set_pump() {
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).PersonRoomNr[P_CHEWY] == 28) {
 		if (!_G(flags).AutoAniPlay) {
@@ -283,13 +283,13 @@ void Room28::set_pump() {
 		start_ats_wait(20, TXT_MARK_USE, 14, INV_USE_DEF);
 	}
 
-	show_cur();
+	showCur();
 }
 
 void Room28::get_pump() {
 
 	if (_G(spieler).R28ChewyPump) {
-		hide_cur();
+		hideCur();
 
 		stop_person(P_CHEWY);
 		_G(spieler).R28ChewyPump = false;
@@ -309,7 +309,7 @@ void Room28::get_pump() {
 			start_aad_wait(138, -1);
 		}
 
-		show_cur();
+		showCur();
 	}
 }
 
@@ -318,7 +318,7 @@ int16 Room28::use_breifkasten() {
 
 	if (_G(spieler).R28Briefkasten && !_G(spieler).inv_cur) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		_G(spieler).R28Briefkasten = false;
 		auto_move(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -329,7 +329,7 @@ int16 Room28::use_breifkasten() {
 		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
 		start_aad_wait(179, -1);
 		_G(atds)->set_ats_str(206, 0, ATS_DATEI);
-		show_cur();
+		showCur();
 		invent_2_slot(MANUSKRIPT_INV);
 		_G(spieler).R28Manuskript = true;
 	}

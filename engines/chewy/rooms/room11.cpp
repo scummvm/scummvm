@@ -109,7 +109,7 @@ void Room11::talk_debug() {
 		auto_move(8, P_CHEWY);
 		start_ads_wait(5);
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(CUR_WALK);
+		cursorChoice(CUR_WALK);
 
 		_G(flags).AutoAniPlay = false;
 	}
@@ -117,7 +117,7 @@ void Room11::talk_debug() {
 
 void Room11::chewy_bo_use() {
 	if (_G(spieler).R12ChewyBork) {
-		hide_cur();
+		hideCur();
 		_G(flags).AutoAniPlay = true;
 
 		stop_person(P_CHEWY);
@@ -129,7 +129,7 @@ void Room11::chewy_bo_use() {
 		auto_move(6, P_CHEWY);
 
 		_G(flags).AutoAniPlay = false;
-		show_cur();
+		showCur();
 	}
 }
 
@@ -143,7 +143,7 @@ int16 Room11::scanner() {
 			actionFl = true;
 			start_aad_wait(13, -1);
 		} else if (is_cur_inventar(BORK_INV)) {
-			hide_cur();
+			hideCur();
 			set_up_screen(DO_SETUP);
 			actionFl = true;
 
@@ -153,9 +153,9 @@ int16 Room11::scanner() {
 			_G(spieler).R11TerminalOk = true;
 			cur_2_inventory();
 			_G(menu_item) = CUR_TALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			start_aad_wait(12, -1);
-			show_cur();
+			showCur();
 			load_ads_dia(3);
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
@@ -166,7 +166,7 @@ int16 Room11::scanner() {
 				actionFl = true;
 				start_aad_wait(12, -1);
 				_G(menu_item) = CUR_TALK;
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				load_ads_dia(3);
 			}
 		}
@@ -182,8 +182,8 @@ void Room11::get_card() {
 		_G(obj)->addInventory(_G(spieler).R11IdCardNr, &_G(room_blk));
 
 		_G(spieler).AkInvent = _G(spieler).R11IdCardNr;
-		cursor_wahl(CUR_AK_INVENT);
-		cursor_wahl(CUR_AK_INVENT);
+		cursorChoice(CUR_AK_INVENT);
+		cursorChoice(CUR_AK_INVENT);
 		_G(det)->stop_detail(0);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATEI);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATEI);

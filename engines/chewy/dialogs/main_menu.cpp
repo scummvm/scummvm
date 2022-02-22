@@ -64,7 +64,7 @@ void MainMenu::execute() {
 		g_engine->_sound->stopAllSounds();
 		_G(SetUpScreenFunc) = screenFunc;
 
-		cursor_wahl(CUR_ZEIGE);
+		cursorChoice(CUR_ZEIGE);
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
 		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
@@ -76,7 +76,7 @@ void MainMenu::execute() {
 
 		_G(out)->set_palette(_G(pal));
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		show_cur();
+		showCur();
 
 		// Wait for a selection to be made on the main menu
 		do {
@@ -105,7 +105,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CINEMA:
-			cursor_wahl(CUR_SAVE);
+			cursorChoice(CUR_SAVE);
 			_G(cur)->move(152, 92);
 			_G(minfo).x = 152;
 			_G(minfo).y = 92;
@@ -189,7 +189,7 @@ int16 MainMenu::creditsFn(int16 key) {
 }
 
 void MainMenu::startGame() {
-	hide_cur();
+	hideCur();
 	animate();
 	exit_room(-1);
 
@@ -222,7 +222,7 @@ void MainMenu::startGame() {
 	_G(fx_blend) = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 	enter_room(-1);
 	_G(auto_obj) = 0;
 }
@@ -233,14 +233,14 @@ bool MainMenu::loadGame() {
 	_G(out)->set_pointer(_G(screen0));
 	_G(out)->set_fontadr(_G(font6x8));
 	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
-	cursor_wahl(CUR_SAVE);
+	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
 	_G(minfo).x = 152;
 	_G(minfo).y = 92;
 	_G(savegameFlag) = true;
 	int result = Dialogs::Files::execute(false);
 
-	cursor_wahl((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
+	cursorChoice((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
 		_G(menu_item) == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
@@ -270,7 +270,7 @@ void MainMenu::playGame() {
 	_G(uhr)->reset_timer(0, 0);
 	_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
 
-	while (!SHOULD_QUIT && !main_loop(1)) {
+	while (!SHOULD_QUIT && !mainLoop(1)) {
 	}
 
 	_G(auto_obj) = 0;

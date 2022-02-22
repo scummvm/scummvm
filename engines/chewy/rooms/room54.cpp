@@ -72,7 +72,7 @@ void Room54::entry(int16 eib_nr) {
 
 		if (_G(spieler).R55ExitDia) {
 			start_aad_wait(_G(spieler).R55ExitDia, -1);
-			show_cur();
+			showCur();
 			_G(spieler).R55ExitDia = false;
 		}
 
@@ -127,7 +127,7 @@ int16 Room54::use_schalter() {
 	int16 action_ret = false;
 
 	if (!_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		action_ret = true;
 
 		if (!_G(spieler).R54FputzerWeg) {
@@ -177,14 +177,14 @@ int16 Room54::use_schalter() {
 			start_aad_wait(297, -1);
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;
 }
 
 void Room54::talk_verkauf() {
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).R54HotDogOk) {
 		if (_G(spieler).R45MagOk) {
@@ -221,12 +221,12 @@ void Room54::talk_verkauf() {
 		start_aad_wait(313, -1);
 	}
 
-	show_cur();
+	showCur();
 }
 
 int16 Room54::use_zelle() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).inv_cur) {
 		if (is_cur_inventar(JMKOST_INV)) {
@@ -264,7 +264,7 @@ int16 Room54::use_zelle() {
 		start_aad_wait(319, -1);
 	}
 
-	show_cur();
+	showCur();
 	return action_ret;
 }
 
@@ -278,7 +278,7 @@ int16 Room54::use_azug() {
 
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 
 		if (!_G(spieler).R54LiftOk) {
 			if (_G(spieler).R54FputzerWeg) {
@@ -319,7 +319,7 @@ int16 Room54::use_azug() {
 			start_aad_wait(314, -1);
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;
@@ -368,7 +368,7 @@ short Room54::use_taxi() {
 
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(7, P_CHEWY);
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 

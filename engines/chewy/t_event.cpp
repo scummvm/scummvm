@@ -154,12 +154,12 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 77:
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
-							hide_cur();
+							hideCur();
 							auto_move(3, P_CHEWY);
 							flic_cut(FCUT_004);
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);
-							show_cur();
+							showCur();
 						} else {
 							action_ret = false;
 						}
@@ -2200,7 +2200,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case KNOCHEN_INV:
 		del_inventar(_G(spieler).AkInvent);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = ANGEL2_INV;
 		_G(obj)->changeInventory(test_nr, ANGEL2_INV, &_G(room_blk));
@@ -2218,7 +2218,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		if (_G(spieler).AkInvent == 40) {
 			del_inventar(_G(spieler).AkInvent);
 			_G(menu_item) = CUR_USE;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			invent_2_slot(K_MASKE_INV);
 			invent_2_slot(K_FLEISCH_INV);
 			invent_2_slot(K_KERNE_INV);
@@ -2231,7 +2231,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case BRIEF_INV:
 		del_inventar(_G(spieler).AkInvent);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		_G(spieler).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
 		_G(spieler).InventSlot[ret] = BRIEF2_INV;
@@ -2241,7 +2241,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case FLASCHE_INV:
 		del_inventar(_G(spieler).AkInvent);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		// fall through
 
 	case WOLLE_INV:
@@ -2254,7 +2254,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case PIRANHA_INV:
 		del_inventar(_G(spieler).AkInvent);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = B_MARY2_INV;
 		_G(obj)->changeInventory(test_nr, B_MARY2_INV, &_G(room_blk));
@@ -2279,7 +2279,7 @@ void calc_inv_use_txt(int16 test_nr) {
 	case 104:
 		del_inventar(_G(spieler).AkInvent);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(CUR_USE);
+		cursorChoice(CUR_USE);
 
 		ret = del_invent_slot(test_nr);
 		_G(spieler).InventSlot[ret] = 110;
@@ -2290,7 +2290,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		del_inventar(_G(spieler).AkInvent);
 		_G(atds)->set_ats_str(105, 0, 1, 6);
 		_G(menu_item) = CUR_USE;
-		cursor_wahl(CUR_USE);
+		cursorChoice(CUR_USE);
 		break;
 
 	case 106:
@@ -2416,7 +2416,7 @@ int16 calc_person_txt(int16 p_nr) {
 			case 40:
 				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 					_G(menu_item) = CUR_HOWARD;
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 					txt_nr = 30000;
 				}
 				break;
@@ -2424,14 +2424,14 @@ int16 calc_person_txt(int16 p_nr) {
 			case 67:
 			case 71:
 				_G(menu_item) = CUR_HOWARD;
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				txt_nr = 30000;
 				break;
 
 			case 42:
 				if (!_G(spieler).R42MarkeOk && !_G(spieler).R42HoToBeamter) {
 					_G(menu_item) = CUR_HOWARD;
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 					txt_nr = 30000;
 				}
 				break;
@@ -2455,7 +2455,7 @@ int16 calc_person_txt(int16 p_nr) {
 			case 67:
 			case 71:
 				_G(menu_item) = CUR_NICHELLE;
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				txt_nr = 30000;
 				break;
 
@@ -2769,7 +2769,7 @@ void calc_person_dia(int16 p_nr) {
 				_G(stopAutoMove)[i] = false;
 			}
 
-			show_cur();
+			showCur();
 		} else {
 			_G(room_blk).AadLoad = false;
 			_G(room_blk).AtsLoad = false;
@@ -2784,10 +2784,10 @@ void calc_person_dia(int16 p_nr) {
 			} else if (p_nr == P_NICHELLE) {
 				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
-					hide_cur();
+					hideCur();
 					start_aad_wait(_G(spieler).PersonDia[P_NICHELLE], -1);
 					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE];
-					show_cur();
+					showCur();
 				} else {
 					start_ads_wait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
 				}

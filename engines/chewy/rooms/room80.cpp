@@ -78,7 +78,7 @@ void Room80::setup_func() {
 
 	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
-	cursor_wahl(CUR_ZEIGE);
+	cursorChoice(CUR_ZEIGE);
 	int vec = _G(det)->maus_vector(_G(spieler).scrollx + _G(minfo).x, _G(minfo).y);
 	if (vec == -1)
 		return;
@@ -117,7 +117,7 @@ void Room80::setup_func() {
 	_G(SetUpScreenFunc) = nullptr;
 	_G(det)->hide_static_spr(vec);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 	_G(spieler).flags30_1 = true;
 	_G(maus_links_click) = false;
 	set_up_screen(DO_SETUP);

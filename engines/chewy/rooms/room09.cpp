@@ -72,7 +72,7 @@ void Room9::gtuer() {
 }
 
 void Room9::surimy() {
-	hide_cur();
+	hideCur();
 	_G(spieler).R9Surimy = true;
 	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 	stop_person(P_CHEWY);
@@ -86,7 +86,7 @@ void Room9::surimy() {
 	_G(spieler_vector)[P_CHEWY].Count = tmp;
 	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 	_G(mov)->continue_auto_go();
-	show_cur();
+	showCur();
 }
 
 void Room9::surimy_ani() {

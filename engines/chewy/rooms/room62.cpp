@@ -36,7 +36,7 @@ void Room62::entry() {
 	if (!_G(spieler).R62FirstEntry) {
 		_G(spieler).R62TShow = false;
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		_G(spieler).R62FirstEntry = true;
 		set_person_pos(49, 113, P_HOWARD, P_RIGHT);
 		_G(det)->start_detail(6, 255, ANI_VOR);
@@ -65,7 +65,7 @@ void Room62::entry() {
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(det)->del_static_ani(5);
 		start_detail_wait(7, 1, ANI_VOR);
-		show_cur();
+		showCur();
 		_G(spieler).R64Moni1Ani = 3;
 		_G(spieler).R64Moni2Ani = 4;
 		set_person_pos(187, 43, P_CHEWY, P_RIGHT);
@@ -99,7 +99,7 @@ int16 Room62::use_laura() {
 	int16 action_ret = false;
 	if (is_cur_inventar(GERAET_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(2, P_CHEWY);
 		auto_scroll(0, 0);
 		_G(SetUpScreenFunc) = nullptr;
@@ -111,7 +111,7 @@ int16 Room62::use_laura() {
 		start_aad_wait(399, -1);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		flic_cut(FCUT_077);
-		show_cur();
+		showCur();
 		_G(spieler).R64Moni1Ani = 0;
 		_G(spieler).R64Moni2Ani = 0;
 		_G(spieler).R62TShow = false;

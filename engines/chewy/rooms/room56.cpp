@@ -45,7 +45,7 @@ void Room56::entry() {
 
 	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
-			hide_cur();
+			hideCur();
 			_G(spieler).R48TaxiEntry = false;
 			_G(spieler).scrollx = 0;
 			_G(spieler).scrolly = 0;
@@ -79,7 +79,7 @@ void Room56::entry() {
 			auto_move(1, P_CHEWY);
 			_G(spieler_mi)[P_CHEWY].Mode = false;
 			_G(maus_links_click) = false;
-			show_cur();
+			showCur();
 		} else if (_G(spieler).R62Flucht && !_G(spieler).flags32_10) {
 			_G(maus_links_click) = false;
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
@@ -98,9 +98,9 @@ void Room56::entry() {
 			_G(det)->set_static_ani(3, -1);
 			_G(maus_links_click) = false;
 			_G(atds)->stop_aad();
-			hide_cur();
+			hideCur();
 			start_aad_wait(306, -1);
-			show_cur();
+			showCur();
 			flic_cut(FCUT_076);
 			esi = 1;
 			cur_2_inventory();
@@ -130,7 +130,7 @@ void Room56::entry() {
 					_G(spieler).flags35_2 = true;
 					esi = 3;
 				} else {
-					hide_cur();
+					hideCur();
 					_G(spieler).scrollx = _G(spieler).scrolly = 0;
 					_G(zoom_horizont) = 0;
 					set_person_pos(-6, 16, P_HOWARD, P_RIGHT);
@@ -143,7 +143,7 @@ void Room56::entry() {
 					auto_move(1, P_CHEWY);
 					_G(spieler_mi)[P_CHEWY].Mode = false;
 				}
-				show_cur();
+				showCur();
 			} else {
 				esi = 2;
 			}
@@ -208,7 +208,7 @@ int16 Room56::use_taxi() {
 	int16 action_ret = false;
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(1, P_CHEWY);
 		g_engine->_sound->stopSound(0);
 		g_engine->_sound->playSound(7, 1);
@@ -228,7 +228,7 @@ int16 Room56::use_taxi() {
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
-		show_cur();
+		showCur();
 		switch_room(48);
 	}
 	return action_ret;
@@ -239,9 +239,9 @@ void Room56::talk_man() {
 	if (!_G(spieler).R56AbfahrtOk) {
 		start_ads_wait(16);
 	} else if (!_G(spieler).R62Flucht) {
-		hide_cur();
+		hideCur();
 		start_aad_wait(343, -1);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -251,7 +251,7 @@ int16 Room56::use_man() {
 		return action_ret;
 	
 	action_ret = true;
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 	_G(room)->set_timer_status(0, TIMER_STOP);
@@ -277,7 +277,7 @@ int16 Room56::use_man() {
 	_G(room)->set_timer_status(0, TIMER_START);
 	_G(det)->set_static_ani(0, -1);
 
-	show_cur();
+	showCur();
 	return action_ret;
 }
 
@@ -286,7 +286,7 @@ int16 Room56::use_kneipe() {
 	if (!_G(spieler).flags32_10) {
 		if (_G(menu_item) == CUR_WALK && !_G(spieler).inv_cur && _G(atds)->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) == 0) {
 			action_ret = true;
-			hide_cur();
+			hideCur();
 			if (_G(spieler).R56Kneipe) {
 				start_aad_wait(344, -1);
 			} else {
@@ -323,10 +323,10 @@ int16 Room56::use_kneipe() {
 					start_aad_wait(309, -1);
 				}
 			}
-			show_cur();
+			showCur();
 		}
 	} else if (is_cur_inventar(18)) {
-		hide_cur();
+		hideCur();
 		if (_G(spieler).flags34_10) {
 			_G(spieler).flags33_80 = true;
 			auto_move(4, P_CHEWY);
@@ -343,9 +343,9 @@ int16 Room56::use_kneipe() {
 		} else {
 			start_aad_wait(518, -1);
 		}
-		show_cur();
+		showCur();
 	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(spieler).inv_cur)){
-		hide_cur();
+		hideCur();
 		action_ret = 1;
 		_G(maus_links_click) = false;
 		auto_move(4, P_CHEWY);
@@ -358,7 +358,7 @@ int16 Room56::use_kneipe() {
 
 		set_up_screen(NO_SETUP);
 		_G(fx_blend) = BLEND3;
-		show_cur();
+		showCur();
 		g_engine->_sound->playSound(9, 0);
 		g_engine->_sound->playSound(9);
 	}
@@ -441,9 +441,9 @@ void Room56::setup_func() {
 	
 	if (!_G(atds)->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI) && _G(menu_item) == CUR_WALK) {
 		if (_G(minfo).x + _G(spieler).scrollx >= 157 && _G(minfo).x + _G(spieler).scrollx <= 204 && _G(minfo).y >= 28 && _G(minfo).y <= 89)
-			cursor_wahl(CUR_AUSGANG_OBEN);
+			cursorChoice(CUR_AUSGANG_OBEN);
 		else
-			cursor_wahl(CUR_WALK);
+			cursorChoice(CUR_WALK);
 	}
 }
 

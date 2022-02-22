@@ -44,7 +44,7 @@ void Room91::entry() {
 		return;
 
 	_G(spieler).scrollx = 320;
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).flags34_1) {
 		set_person_pos(499, 106, P_CHEWY, P_RIGHT);
@@ -71,7 +71,7 @@ void Room91::entry() {
 		_G(det)->start_detail(5, 2, false);
 	}
 
-	show_cur();
+	showCur();
 }
 
 void Room91::xit(int16 eib_nr) {
@@ -104,7 +104,7 @@ void Room91::setup_func() {
 		
 		_G(menu_item) = CUR_USE;
 		cur_2_inventory();
-		cursor_wahl(CUR_22);
+		cursorChoice(CUR_22);
 
 		if (_G(maus_links_click) == 0 || _click)
 			return;
@@ -113,7 +113,7 @@ void Room91::setup_func() {
 		_G(maus_links_click) = oldClick;
 		_click = 1;
 		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
-		hide_cur();
+		hideCur();
 		_G(det)->stop_detail(0);
 		start_detail_wait(aniNr, 1, ANI_VOR);
 		_click = oldClick;
@@ -122,11 +122,11 @@ void Room91::setup_func() {
 		_G(det)->start_detail(7, 1, false);
 		start_spz_wait(62, 1, false, P_HOWARD);
 		_G(spieler).SVal3 += 1;
-		show_cur();
+		showCur();
 		if (_G(spieler).SVal3 == 4) {
 			_G(det)->stop_detail(0);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			hide_cur();
+			hideCur();
 			auto_move(1, P_CHEWY);
 			stop_spz();
 			start_aad_wait(505, -1);
@@ -135,7 +135,7 @@ void Room91::setup_func() {
 			_G(spieler).PersonHide[P_HOWARD] = false;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 			_G(spieler).flags34_4 = false;
-			show_cur();
+			showCur();
 			switch_room(50);
 		}
 	}

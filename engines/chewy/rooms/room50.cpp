@@ -40,7 +40,7 @@ void Room50::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).flags32_10) {
-		hide_cur();
+		hideCur();
 		stop_page();
 		_G(maus_links_click) = false;
 		set_person_pos(1, 64, P_HOWARD, P_RIGHT);
@@ -50,7 +50,7 @@ void Room50::entry(int16 eib_nr) {
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_108);
-		show_cur();
+		showCur();
 		switch_room(51);
 
 	} else {
@@ -140,7 +140,7 @@ void Room50::calc_treppe() {
 		_G(flags).AutoAniPlay = true;
 
 		if (!_G(spieler).R50KeyOK) {
-			hide_cur();
+			hideCur();
 			stop_person(P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
@@ -164,7 +164,7 @@ int16 Room50::use_gutschein() {
 	if (is_cur_inventar(HOTEL_INV)) {
 		action_ret = true;
 		if (!_G(spieler).R50KeyOK) {
-			hide_cur();
+			hideCur();
 			auto_move(3, P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
@@ -185,7 +185,7 @@ int16 Room50::use_gum() {
 
 	if (is_cur_inventar(GUM_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		_G(spieler).R50KeyOK = true;
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
@@ -223,7 +223,7 @@ int16 Room50::use_gum() {
 		_G(atds)->set_ats_str(323, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(327, 1, ATS_DATEI);
 		_G(spieler).room_e_obj[84].Attribut = AUSGANG_OBEN;
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;
@@ -243,7 +243,7 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	if (!_G(spieler).R50KeyOK)
 		_G(room)->set_timer_status(1, TIMER_START);
 
-	show_cur();
+	showCur();
 }
 
 void Room50::setup_func() {

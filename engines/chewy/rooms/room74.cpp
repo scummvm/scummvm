@@ -89,7 +89,7 @@ void Room74::xit(int16 eib_nr) {
 
 int Room74::proc1() {
 	int retVal = 0;
-	hide_cur();
+	hideCur();
 
 	if (is_cur_inventar(MACHETE_INV)) {
 		retVal = 1;
@@ -110,7 +110,7 @@ int Room74::proc1() {
 		new_invent_2_cur(RUBBER_INV);
 	}
 
-	show_cur();
+	showCur();
 	return retVal;
 }
 

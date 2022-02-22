@@ -45,7 +45,7 @@ void Room72::entry(int16 eib_nr) {
 		_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
 		_G(zoom_horizont) = 140;
 		_G(spieler_mi)[P_CHEWY].Mode = true;
-		hide_cur();
+		hideCur();
 	}
 
 	_G(flags).ZoomMov = true;
@@ -97,7 +97,7 @@ void Room72::proc1(int16 flicNr) {
 	set_up_screen(DO_SETUP);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	show_cur();
+	showCur();
 	switch_room(76);
 }
 

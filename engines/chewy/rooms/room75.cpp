@@ -85,12 +85,12 @@ void Room75::xit(int16 eib_nr) {
 
 void Room75::proc1() {
 	_G(cur_hide_flag) = 0;
-	hide_cur();
+	hideCur();
 	set_person_pos(363, 110, P_CHEWY, P_LEFT);
 	set_person_pos(322, 85, P_NICHELLE, P_RIGHT);
 	set_person_pos(317, 96, P_HOWARD, P_RIGHT);
 	go_auto_xy(318, 110, P_NICHELLE, ANI_WAIT);
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

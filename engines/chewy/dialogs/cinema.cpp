@@ -57,7 +57,7 @@ void Cinema::execute() {
 
 	_G(room)->open_handle(GBOOK, 0);
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
-	show_cur();
+	showCur();
 	EVENTS_CLEAR;
 	_G(kbinfo).scan_code = 0;
 
@@ -155,7 +155,7 @@ void Cinema::execute() {
 		}
 
 		case Common::KEYCODE_RETURN:
-			hide_cur();
+			hideCur();
 			_G(out)->cls();
 			_G(out)->set_pointer(_G(screen0));
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -166,7 +166,7 @@ void Cinema::execute() {
 			_G(flc)->remove_custom_user_function();
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
-			show_cur();
+			showCur();
 			delay = 0;
 			flag = false;
 			break;
@@ -199,7 +199,7 @@ void Cinema::execute() {
 
 	_G(room)->open_handle(EPISODE1, 0);
 	_G(room)->set_ak_pal(&_G(room_blk));
-	hide_cur();
+	hideCur();
 	_G(uhr)->reset_timer(0, 5);
 }
 

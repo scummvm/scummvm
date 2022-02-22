@@ -77,7 +77,7 @@ int16 Room23::start_gleiter() {
 			}
 
 			if (start_ok) {
-				hide_cur();
+				hideCur();
 				start_ani_block(4, ABLOCK15);
 				wait_show_screen(30);
 
@@ -119,7 +119,7 @@ int16 Room23::start_gleiter() {
 					switch_room(_G(spieler).R23GleiterExit);
 				}
 
-				show_cur();
+				showCur();
 			}
 		}
 	}

@@ -62,7 +62,7 @@ void Room86::entry(int16 eib_nr) {
 		_G(spieler).scrollx = 164;
 	} else {
 		_G(spieler_mi)[P_CHEWY].Vorschub = 16;
-		hide_cur();
+		hideCur();
 		_G(flags).ZoomMov = false;
 		_G(spieler).scrollx = 246;
 		_G(spieler).ScrollxStep = 8;
@@ -89,7 +89,7 @@ void Room86::entry(int16 eib_nr) {
 		auto_move(0, P_CHEWY);
 		_G(spieler).flags32_20 = true;
 		switch_room(85);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -145,7 +145,7 @@ int Room86::proc2() {
 	if (!is_cur_inventar(94))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->start_detail(0, 255, false);
@@ -162,7 +162,7 @@ int Room86::proc2() {
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
 	start_aad_wait(468, -1);
 
-	show_cur();
+	showCur();
 	return 1;
 }
 

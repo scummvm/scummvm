@@ -48,9 +48,9 @@ void Room64::entry() {
 			_G(atds)->set_steuer_bit(376, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(spieler).R64Moni1Ani = 5;
 			calc_monitor();
-			hide_cur();
+			hideCur();
 			start_aad_wait(354, -1);
-			show_cur();
+			showCur();
 		}
 	} else
 		chewy_entry();
@@ -69,11 +69,11 @@ int16 Room64::cut_sev(int16 frame) {
 void Room64::chewy_entry() {
 	calc_monitor();
 	if (!_G(flags).LoadGame) {
-		hide_cur();
+		hideCur();
 		_G(det)->show_static_spr(3);
 		auto_move(2, P_CHEWY);
 		_G(det)->hide_static_spr(3);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -138,7 +138,7 @@ void Room64::talk_man() {
 
 void Room64::talk_man(int16 aad_nr) {
 	if (!_G(spieler).R64ManWeg) {
-		hide_cur();
+		hideCur();
 		auto_move(4, P_CHEWY);
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);
@@ -148,13 +148,13 @@ void Room64::talk_man(int16 aad_nr) {
 		_G(det)->del_static_ani(2);
 		_G(room)->set_timer_status(1, TIMER_START);
 		_G(det)->set_static_ani(1, -1);
-		show_cur();
+		showCur();
 	}
 }
 
 int16 Room64::use_tasche() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).R64ManWeg) {
 			if (!_G(atds)->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI)) {
@@ -164,7 +164,7 @@ int16 Room64::use_tasche() {
 				_G(atds)->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI);
 				start_aad_wait(353, -1);
 			} else {
-				show_cur();
+				showCur();
 				return 0;
 			}
 		} else {
@@ -181,7 +181,7 @@ int16 Room64::use_tasche() {
 		
 		action_ret = true;
 	}
-	show_cur();
+	showCur();
 	return action_ret;
 }
 

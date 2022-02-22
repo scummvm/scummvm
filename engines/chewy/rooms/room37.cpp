@@ -106,7 +106,7 @@ short Room37::use_wippe() {
 		action_flag = true;
 
 		if (is_cur_inventar(H_FUTTER_INV)) {
-			hide_cur();
+			hideCur();
 			auto_move(0, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(129, 0);
@@ -115,7 +115,7 @@ short Room37::use_wippe() {
 			del_inventar(_G(spieler).AkInvent);
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
-			show_cur();
+			showCur();
 			_G(spieler).scrollx = 269;
 			set_person_pos(388, 119, P_CHEWY, P_RIGHT);
 			switch_room(29);
@@ -170,7 +170,7 @@ int16 Room37::use_glas() {
 		action_flag = true;
 		if (is_cur_inventar(ANGEL2_INV)) {
 			_G(flags).NoScroll = true;
-			hide_cur();
+			hideCur();
 			auto_move(5, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(146, 0);
@@ -188,7 +188,7 @@ int16 Room37::use_glas() {
 			_G(spieler).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(146, -1);
-			show_cur();
+			showCur();
 			_G(flags).NoScroll = false;
 			g_engine->_sound->playSound(3);
 		} else {
@@ -202,7 +202,7 @@ int16 Room37::use_glas() {
 void Room37::dog_bell() {
 	int16 dia_nr = -1;
 	int16 ani_nr = 0;
-	hide_cur();
+	hideCur();
 
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
@@ -265,19 +265,19 @@ void Room37::dog_bell() {
 	}
 
 	_G(flags).NoScroll = false;
-	show_cur();
+	showCur();
 }
 
 void Room37::talk_hahn() {
-	hide_cur();
+	hideCur();
 	auto_move(7, P_CHEWY);
-	show_cur();
+	showCur();
 
 	if (!_G(spieler).R37TransHahn) {
 		_G(cur_hide_flag) = 0;
-		hide_cur();
+		hideCur();
 		start_aad_wait(145, -1);
-		show_cur();
+		showCur();
 	} else {
 		hahn_dia();
 	}
@@ -285,21 +285,21 @@ void Room37::talk_hahn() {
 
 void Room37::use_hahn() {
 	if (is_cur_inventar(TRANSLATOR_INV)) {
-		hide_cur();
+		hideCur();
 		auto_move(7, P_CHEWY);
 		_G(spieler).R37TransHahn = true;
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 		flic_cut(FCUT_052);
 		cur_2_inventory();
 		_G(menu_item) = CUR_TALK;
-		cursor_wahl(_G(menu_item));
-		show_cur();
+		cursorChoice(_G(menu_item));
+		showCur();
 		hahn_dia();
 
 	} else if (_G(spieler).R37TransHahn) {
 		if (is_cur_inventar(GEBISS_INV)) {
 			_G(spieler).R37Kloppe = true;
-			hide_cur();
+			hideCur();
 			auto_move(6, P_CHEWY);
 			load_room_music(256);
 			_G(room)->set_timer_status(7, TIMER_STOP);
@@ -333,7 +333,7 @@ void Room37::use_hahn() {
 			start_aad_wait(141, -1);
 			_G(obj)->addInventory(EIER_INV, &_G(room_blk));
 			inventory_2_cur(EIER_INV);
-			show_cur();
+			showCur();
 		}
 	} else if (_G(spieler).inv_cur) {
 		start_aad_wait(143, -1);

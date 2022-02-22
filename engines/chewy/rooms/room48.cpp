@@ -33,7 +33,7 @@ void Room48::entry() {
 	_G(maus_links_click) = false;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	show_cur();
+	showCur();
 	calc_pic();
 	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
@@ -74,13 +74,13 @@ void Room48::calc_pic() {
 void Room48::frage() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
-		hide_cur();
+		hideCur();
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(det)->show_static_spr(6);
 		start_detail_wait(1, 1, ANI_RUECK);
 		_G(det)->hide_static_spr(6);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
-		show_cur();
+		showCur();
 		_G(flags).AutoAniPlay = false;
 	}
 }
@@ -93,7 +93,7 @@ void Room48::setup_func() {
 		if (_G(menu_display) == 0) {
 			_G(menu_item) = CUR_USE;
 			cur_2_inventory();
-			cursor_wahl(CUR_ZEIGE);
+			cursorChoice(CUR_ZEIGE);
 			const int16 idx = _G(det)->maus_vector(_G(minfo).x, _G(minfo).y);
 
 			if (idx != -1) {
@@ -131,7 +131,7 @@ void Room48::setup_func() {
 						if (r_nr != -1) {
 							_G(SetUpScreenFunc) = nullptr;
 							_G(det)->hide_static_spr(1 + idx);
-							hide_cur();
+							hideCur();
 							_G(room)->set_timer_status(255, TIMER_STOP);
 							_G(room)->set_timer_status(0, TIMER_STOP);
 							_G(det)->stop_detail(0);
@@ -139,8 +139,8 @@ void Room48::setup_func() {
 							start_detail_wait(2, 1, ANI_VOR);
 							g_engine->_sound->stopSound(0);
 							_G(menu_item) = CUR_WALK;
-							cursor_wahl(_G(menu_item));
-							show_cur();
+							cursorChoice(_G(menu_item));
+							showCur();
 							_G(spieler).R48TaxiEntry = true;
 							_G(maus_links_click) = false;
 							set_up_screen(DO_SETUP);

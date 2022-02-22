@@ -55,7 +55,7 @@ void Room0::entry() {
 	if (!_G(flags).LoadGame) {
 		set_person_pos(150, 100, P_CHEWY, P_RIGHT);
 		_G(cur_hide_flag) = 0;
-		hide_cur();
+		hideCur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 
 		while (!_G(ani_timer)[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
@@ -65,7 +65,7 @@ void Room0::entry() {
 		start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(2, -1);
 
-		show_cur();
+		showCur();
 	}
 }
 
@@ -125,18 +125,18 @@ bool Room0::getPillow() {
 	bool retval = false;
 	
 	if (!_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		_G(flags).AutoAniPlay = true;
 		auto_move(1, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(0);
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(CUR_WALK);
+		cursorChoice(CUR_WALK);
 		_G(atds)->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(det)->hide_static_spr(6);
 
 		_G(flags).AutoAniPlay = false;
-		show_cur();
+		showCur();
 		retval = true;
 	}
 
@@ -146,7 +146,7 @@ bool Room0::getPillow() {
 bool Room0::pullSlime() {
 	bool retval = false;
 	if (!_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		
 		_G(flags).AutoAniPlay = true;
 		auto_move(2, P_CHEWY);
@@ -157,11 +157,11 @@ bool Room0::pullSlime() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(CUR_WALK);
+		cursorChoice(CUR_WALK);
 		_G(atds)->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
 
 		_G(flags).AutoAniPlay = false;
-		show_cur();
+		showCur();
 		retval = true;
 	}
 

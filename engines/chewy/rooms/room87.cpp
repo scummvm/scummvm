@@ -109,7 +109,7 @@ int Room87::proc2(int16 txt_nr) {
 	if (!is_cur_inventar(107) && !is_cur_inventar(108))
 		return 0;
 
-	hide_cur();
+	hideCur();
 
 	int diaNr = 0;
 	int movNr;
@@ -139,7 +139,7 @@ int Room87::proc2(int16 txt_nr) {
 		if (_G(spieler).flags32_4 && _G(spieler).flags32_8)
 			_G(atds)->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATEI);
 	}
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -152,7 +152,7 @@ int Room87::proc4() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	flic_cut(FCUT_093);
 	flic_cut(FCUT_094);
@@ -171,7 +171,7 @@ int Room87::proc4() {
 	_G(spieler).flags32_10 = true;
 
 	switch_room(86);
-	show_cur();
+	showCur();
 	return 1;
 }
 

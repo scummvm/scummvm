@@ -42,7 +42,7 @@ void Room35::entry() {
 
 int16 Room35::schublade() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).ChewyAni != CHEWY_ROCKER && !_G(spieler).inv_cur) {
 		if (!_G(spieler).R35Schublade) {
@@ -67,13 +67,13 @@ int16 Room35::schublade() {
 		}
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
 int16 Room35::use_cat() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (_G(spieler).ChewyAni != CHEWY_ROCKER) {
 		if (is_cur_inventar(TRANSLATOR_INV)) {
@@ -112,12 +112,12 @@ int16 Room35::use_cat() {
 		}
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
 void Room35::talk_cat() {
-	hide_cur();
+	hideCur();
 	auto_move(4, P_CHEWY);
 
 	if (_G(spieler).R35TransCat) {
@@ -130,7 +130,7 @@ void Room35::talk_cat() {
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		switch_room(36);
-		show_cur();
+		showCur();
 		start_ads_wait(dia_nr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		switch_room(35);
@@ -140,7 +140,7 @@ void Room35::talk_cat() {
 		start_aad_wait(96, -1);
 	}
 
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

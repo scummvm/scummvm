@@ -42,11 +42,11 @@ void Room96::entry() {
 	if (_G(flags).LoadGame)
 		return;
 
-	hide_cur();
+	hideCur();
 	set_person_pos(93, 62, P_HOWARD, P_RIGHT);
 	set_person_pos(116, 74, P_CHEWY, P_RIGHT);
 	auto_move(1, P_CHEWY);
-	show_cur();
+	showCur();
 }
 
 void Room96::xit(int16 eib_nr) {

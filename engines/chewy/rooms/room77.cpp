@@ -55,11 +55,11 @@ void Room77::entry() {
 
 	} else if (_G(spieler).r76State == 1) {
 		_G(spieler).r76State = -1;
-		hide_cur();
+		hideCur();
 		_G(spieler).scrollx = 62;
 		set_person_pos(158, 127, P_CHEWY, P_RIGHT);
 		start_aad_wait(440, -1);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -71,7 +71,7 @@ int Room77::proc1() {
 	if (_G(spieler).flags29_4 || !is_cur_inventar(103))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	int diaNr, aniId;
 	if (_G(spieler).flags29_8) {
@@ -89,7 +89,7 @@ int Room77::proc1() {
 	cur_2_inventory();
 	start_spz(aniId, 255, false, P_CHEWY);
 	start_aad_wait(diaNr, -1);
-	show_cur();
+	showCur();
 	if (_G(spieler).flags29_10)
 		remove_inventory(103);
 
@@ -100,7 +100,7 @@ int Room77::proc2() {
 	if (_G(spieler).flags29_4 || !is_cur_inventar(100))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 
 	int diaNr, aniId;
@@ -120,7 +120,7 @@ int Room77::proc2() {
 	start_spz(aniId, 255, false, P_CHEWY);
 	start_aad_wait(diaNr, -1);
 
-	show_cur();
+	showCur();
 	return 1;
 }
 

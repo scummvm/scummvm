@@ -95,7 +95,7 @@ void Room3::entry() {
 }
 
 void Room3::terminal() {
-	show_cur();
+	showCur();
 	_G(auto_obj) = 0;
 	switch (Room4::sonde_comp()) {
 	case 0:
@@ -181,7 +181,7 @@ void Room3::sonde_knarre() {
 		{ {   4, 100, 180 }, 1, 3 },
 		{ {  13,  45,  75 }, 1, 3 }
 	};
-	hide_cur();
+	hideCur();
 	RoomDetailInfo *rdi = _G(det)->get_room_detail_info();
 
 	_G(det)->load_taf_seq(162, 17, nullptr);
@@ -270,7 +270,7 @@ void Room3::sonde_knarre() {
 	_G(zoom_horizont) = tmp;
 	init_sonde();
 
-	show_cur();
+	showCur();
 }
 
 void Room3::probeTransfer() {
@@ -293,7 +293,7 @@ void Room3::probeTransfer() {
 	};
 
 	_G(flags).AniUserAction = false;
-	hide_cur();
+	hideCur();
 	_G(det)->get_room_detail_info();
 	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
@@ -384,7 +384,7 @@ void Room3::probeTransfer() {
 
 		switch (i) {
 		case 0:
-			show_cur();
+			showCur();
 			start_aad(52);
 			_G(flags).AniUserAction = true;
 			spr_nr = 141;

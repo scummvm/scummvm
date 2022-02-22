@@ -45,11 +45,11 @@ void Room79::entry() {
 		set_person_pos(568, 65, P_HOWARD, P_LEFT);
 		set_person_pos(534, 75, P_NICHELLE, P_LEFT);
 		_G(spieler).scrollx = 300;
-		hide_cur();
+		hideCur();
 		start_aad_wait(484, -1);
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10026;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
-		show_cur();
+		showCur();
 	}
 
 	_G(SetUpScreenFunc) = setup_func;

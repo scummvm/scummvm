@@ -69,7 +69,7 @@ void Room12::entry() {
 
 	if (!_G(spieler).R12Betreten) {
 		_G(spieler).R12Betreten = true;
-		hide_cur();
+		hideCur();
 
 		for (int16 i = 7; i < 10; i++)
 			_G(det)->show_static_spr(i);
@@ -88,7 +88,7 @@ void Room12::entry() {
 		auto_move(5, P_CHEWY);
 		start_spz(CH_TALK12, 255, false, 0);
 		start_aad_wait(109, -1);
-		show_cur();
+		showCur();
 
 	} else if (_G(spieler).R12Talisman && !_G(spieler).R12BorkInRohr)
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
@@ -125,7 +125,7 @@ void Room12::init_bork() {
 			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 5, (const MovLine *)R12_BORK_MPKT);
 
 			if (!_G(spieler).R12TalismanOk) {
-				hide_cur();
+				hideCur();
 				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
 				auto_move(5, P_CHEWY);
 				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
@@ -139,7 +139,7 @@ void Room12::init_bork() {
 				}
 
 				wait_auto_obj(R12_BORK_OBJ);
-				show_cur();
+				showCur();
 			} else {
 				bork_ok();
 			}
@@ -156,7 +156,7 @@ void Room12::talk_bork() {
 }
 
 void Room12::bork_ok() {
-	hide_cur();
+	hideCur();
 	_G(flags).MausLinks = true;
 	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
 	auto_move(5, P_CHEWY);
@@ -186,7 +186,7 @@ void Room12::bork_ok() {
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
 	_G(flags).MausLinks = false;
-	show_cur();
+	showCur();
 }
 
 int16 Room12::use_terminal() {
@@ -211,7 +211,7 @@ int16 Room12::use_terminal() {
 				_G(atds)->set_ats_str(118, 0, ATS_DATEI);
 				_G(det)->hide_static_spr(12);
 				_G(menu_item) = CUR_WALK;
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				set_person_pos(108, 90, P_CHEWY, -1);
 				_G(spieler).R12ChewyBork = true;
 				_G(spieler).R12RaumOk = true;

@@ -77,7 +77,7 @@ int16 Files::execute(bool isInGame) {
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->set_pointer(_G(workptr));
-	show_cur();
+	showCur();
 
 	pt[SCROLL_UP] = pt[SCROLL_DOWN] = Common::Point(1, 0);
 	for (i = SAVE; i <= W7; i++)

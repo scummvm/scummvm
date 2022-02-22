@@ -138,11 +138,11 @@ void Inventory::menu() {
 
 	_G(invent_cur_mode) = CUR_USE;
 	if (_G(spieler).AkInvent != -1) {
-		cursor_wahl(CUR_AK_INVENT);
+		cursorChoice(CUR_AK_INVENT);
 
 	} else {
 		_G(invent_cur_mode) = CUR_USE;
-		cursor_wahl(CUR_USE);
+		cursorChoice(CUR_USE);
 	}
 
 	int16 menu_flag1 = MENU_EINBLENDEN;
@@ -182,9 +182,9 @@ void Inventory::menu() {
 					_G(invent_cur_mode) = CUR_USE;
 					_G(menu_item) = CUR_USE;
 					if (_G(spieler).AkInvent == -1) {
-						cursor_wahl(CUR_USE);
+						cursorChoice(CUR_USE);
 					} else {
-						cursor_wahl(CUR_AK_INVENT);
+						cursorChoice(CUR_AK_INVENT);
 					}
 					break;
 
@@ -198,7 +198,7 @@ void Inventory::menu() {
 					} else {
 						_G(invent_cur_mode) = CUR_LOOK;
 						_G(menu_item) = CUR_LOOK;
-						cursor_wahl(CUR_LOOK);
+						cursorChoice(CUR_LOOK);
 					}
 					break;
 
@@ -221,7 +221,7 @@ void Inventory::menu() {
 								if (calc_use_invent(_G(spieler).InventSlot[k]) == false) {
 									_G(menu_item) = CUR_USE;
 									_G(spieler).AkInvent = _G(spieler).InventSlot[k];
-									cursor_wahl(CUR_AK_INVENT);
+									cursorChoice(CUR_AK_INVENT);
 									del_invent_slot(_G(spieler).InventSlot[k]);
 								}
 							}
@@ -233,7 +233,7 @@ void Inventory::menu() {
 								_G(obj)->sort();
 								_G(spieler).AkInvent = -1;
 								_G(menu_item) = _G(invent_cur_mode);
-								cursor_wahl(_G(invent_cur_mode));
+								cursorChoice(_G(invent_cur_mode));
 							}
 						}
 					} else if (_G(invent_cur_mode) == CUR_LOOK) {
@@ -242,7 +242,7 @@ void Inventory::menu() {
 								_G(spieler).AkInvent = _G(spieler).InventSlot[k];
 								ret_look = look(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
 								_G(spieler).AkInvent = -1;
-								cursor_wahl(_G(invent_cur_mode));
+								cursorChoice(_G(invent_cur_mode));
 								taste_flag = Common::KEYCODE_ESCAPE;
 							}
 						}
@@ -264,9 +264,9 @@ void Inventory::menu() {
 			_G(invent_cur_mode) = CUR_USE;
 			_G(menu_item) = CUR_USE;
 			if (_G(spieler).AkInvent == -1)
-				cursor_wahl(CUR_USE);
+				cursorChoice(CUR_USE);
 			else
-				cursor_wahl(CUR_AK_INVENT);
+				cursorChoice(CUR_AK_INVENT);
 		} else if (ret_look == 5) {
 			taste_flag = false;
 			mouseFl = false;
@@ -312,7 +312,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_RIGHT:
-				if (_G(minfo).x < 320 - _G(spieler).CurBreite)
+				if (_G(minfo).x < 320 - _G(spieler)._curWidth)
 					_G(minfo).x += 3;
 				break;
 
@@ -327,7 +327,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_DOWN:
-				if (_G(minfo).y < 197 - _G(spieler).CurHoehe)
+				if (_G(minfo).y < 197 - _G(spieler)._curHeight)
 					_G(minfo).y += 3;
 				break;
 
@@ -369,7 +369,7 @@ void Inventory::menu() {
 			_G(out)->set_clip(0, 0, 320, 200);
 			_G(out)->back2screen(_G(workpage));
 		} else {
-			show_cur();
+			showCur();
 		}
 	}
 

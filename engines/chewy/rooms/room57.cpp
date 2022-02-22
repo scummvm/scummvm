@@ -41,7 +41,7 @@ void Room57::entry() {
 		_G(det)->hide_static_spr(4);
 	
 	if (!_G(flags).LoadGame &&_G(spieler).R48TaxiEntry) {
-		hide_cur();
+		hideCur();
 		_G(spieler).R48TaxiEntry = false;
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
@@ -49,7 +49,7 @@ void Room57::entry() {
 		set_person_pos(40, 160, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
 		_G(maus_links_click) = false;
-		show_cur();
+		showCur();
 	}
 }
 
@@ -81,7 +81,7 @@ int16 Room57::use_taxi() {
 	int16 action_ret = false;
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(3, P_CHEWY);
 		g_engine->_sound->playSound(3, 0);
 		g_engine->_sound->playSound(3);
@@ -113,7 +113,7 @@ int16 Room57::use_pfoertner() {
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
 	_G(det)->set_static_ani(3, -1);
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	if (is_cur_inventar(CUTMAG_INV)) {
 		action_ret = true;
@@ -147,14 +147,14 @@ int16 Room57::use_pfoertner() {
 		}
 		_G(SetUpScreenFunc) = setup_func;
 	}
-	show_cur();
+	showCur();
 	_G(room)->set_timer_status(1, TIMER_START);
 	_G(det)->set_static_ani(1, -1);
 	return action_ret;
 }
 
 void Room57::talk_pfoertner() {
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
@@ -167,7 +167,7 @@ void Room57::talk_pfoertner() {
 	start_aad_wait(aad_nr, -1);
 	_G(room)->set_timer_status(1, TIMER_START);
 	_G(det)->set_static_ani(1, -1);
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

@@ -47,7 +47,7 @@ void Room46::entry(int16 eib_nr) {
 
 		if (_G(spieler).flags33_8) {
 			_G(maus_links_click) = false;
-			hide_cur();
+			hideCur();
 			set_person_pos(175, 73, P_HOWARD, P_LEFT);
 			set_person_pos(147, 109, P_CHEWY, P_LEFT);
 			_G(spieler).flags33_8 = false;
@@ -62,7 +62,7 @@ void Room46::entry(int16 eib_nr) {
 			start_spz(65, 255, false, P_CHEWY);
 			start_aad_wait(495, -1);
 			_G(spieler).room_e_obj[78].Exit = 90;
-			show_cur();
+			showCur();
 		}
 	}
 
@@ -97,7 +97,7 @@ void Room46::setup_func() {
 }
 
 void Room46::bodo() {
-	hide_cur();
+	hideCur();
 	_G(det)->show_static_spr(0);
 	_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 	start_aad_wait(240, -1);
@@ -146,7 +146,7 @@ void Room46::bodo() {
 	invent_2_slot(UHR_INV);
 	invent_2_slot(RING_INV);
 	_G(spieler).R46GetLeder = true;
-	show_cur();
+	showCur();
 }
 
 void Room46::kloppe() {

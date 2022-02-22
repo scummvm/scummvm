@@ -120,9 +120,9 @@ void Room14::talk_eremit()  {
 			load_ads_dia(0);
 			_G(obj)->show_sib(46);
 		} else {
-			hide_cur();
+			hideCur();
 			start_aad_wait(24, -1);
-			show_cur();
+			showCur();
 			_G(flags).AutoAniPlay = false;
 		}
 	}
@@ -154,7 +154,7 @@ void Room14::feuer() {
 	_G(spieler).R14Feuer = true;
 	_G(cur_hide_flag) = false;
 	_G(flags).AutoAniPlay = true;
-	hide_cur();
+	hideCur();
 
 	if (is_cur_inventar(BWAFFE_INV)) {
 		auto_move(5, P_CHEWY);
@@ -191,7 +191,7 @@ void Room14::feuer() {
 	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
 	_G(spieler).R14FluxoFlex = true;
 	_G(flags).AutoAniPlay = false;
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

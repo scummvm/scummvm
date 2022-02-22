@@ -157,7 +157,7 @@ int Room71::proc1() {
 		return 0;
 	}
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	_G(flags).NoScroll = true;
 	auto_scroll(256, 0);
@@ -187,7 +187,7 @@ int Room71::proc1() {
 	if (!_G(spieler).R71LeopardVined)
 		start_aad_wait(432, -1);
 
-	show_cur();
+	showCur();
 	_G(flags).NoScroll = false;
 	return 1;
 }
@@ -221,7 +221,7 @@ void Room71::proc2() {
 	_G(spieler).R71LeopardVined = true;
 	_G(flags).NoScroll = false;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 	start_aad_wait(434, -1);
 }
 
@@ -261,7 +261,7 @@ int Room71::proc6() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hide_static_spr(3);
@@ -278,12 +278,12 @@ int Room71::proc6() {
 	auto_move(3, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	
-	show_cur();
+	showCur();
 	return 1;
 }
 
 void Room71::proc7() {
-	hide_cur();
+	hideCur();
 	auto_move(4, P_CHEWY);
 	start_aad_wait(429, -1);
 	_G(SetUpScreenFunc) = nullptr;
@@ -300,7 +300,7 @@ void Room71::proc7() {
 	_G(flags).NoScroll = false;
 	start_aad_wait(432, -1);
 
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

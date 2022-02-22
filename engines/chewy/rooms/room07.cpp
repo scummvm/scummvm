@@ -52,7 +52,7 @@ void Room7::haken(int16 sib_nr) {
 	del_inventar(8);
 	_G(spieler).AkInvent = -1;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(_G(menu_item));
+	cursorChoice(_G(menu_item));
 
 	if (_G(spieler).R7RHaken) {
 		_G(spieler).R7SeilOk = true;
@@ -74,7 +74,7 @@ void Room7::haken(int16 sib_nr) {
 }
 
 void Room7::klingel() {
-	hide_cur();
+	hideCur();
 	
 	if ((!_G(spieler).R7BellCount) ||
 		(_G(spieler).R7BellCount >= 2 && _G(spieler).R7SeilLeft && !_G(spieler).R7SeilOk)) {
@@ -166,7 +166,7 @@ void Room7::klingel() {
 
 	++_G(spieler).R7BellCount;
 
-	show_cur();
+	showCur();
 }
 
 void Room7::gedAction(int index) {

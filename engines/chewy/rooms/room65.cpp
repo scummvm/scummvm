@@ -47,9 +47,9 @@ void Room65::entry() {
 	_G(spieler_vector)[P_HOWARD].Xypos[1] = 10;
 	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		start_aad_wait(_G(spieler).PersonDia[P_HOWARD], -1);
-		show_cur();
+		showCur();
 	} else {
 		start_ads_wait(_G(spieler).PersonDia[P_HOWARD] - 10000);
 	}

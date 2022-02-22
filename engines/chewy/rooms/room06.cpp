@@ -65,7 +65,7 @@ void Room6::entry() {
 			++_G(spieler).R6RaumBetreten;
 
 		if (_G(spieler).R6RaumBetreten == 2) {
-			hide_cur();
+			hideCur();
 			_G(det)->stop_detail(7);
 			init_robo();
 			wait_auto_obj(0);
@@ -73,7 +73,7 @@ void Room6::entry() {
 			_G(obj)->show_sib(SIB_BOLA_KNOPF_R6);
 			_G(obj)->hide_sib(SIB_BOLA_R6);
 			_G(atds)->set_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
-			show_cur();
+			showCur();
 		}
 	}
 }

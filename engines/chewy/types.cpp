@@ -68,8 +68,8 @@ bool Spieler::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(AkInvent);
 	s.syncAsByte(inv_cur);
-	s.syncAsSint16LE(CurBreite);
-	s.syncAsSint16LE(CurHoehe);
+	s.syncAsSint16LE(_curWidth);
+	s.syncAsSint16LE(_curHeight);
 
 	for (int i = 0; i < MAX_MOV_OBJ; ++i)
 		room_m_obj[i].synchronize(s);

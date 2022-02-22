@@ -23,8 +23,6 @@
 #define CHEWY_MAIN_H
 
 #include "graphics/surface.h"
-#include "common/rect.h"
-#include "chewy/defines.h"
 #include "chewy/globals.h"
 
 namespace Chewy {
@@ -32,15 +30,14 @@ namespace Chewy {
 void game_main();
 void free_buffers();
 void plot_main_menu();
-void test_menu();
 void palcopy(byte *dipal, const byte *sipal, int16 distart,
              int16 sistart, int16 anz);
 short calc_maus_txt(int16 x, int16 y, int16 mode);
 void calc_ani_timer();
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr);
 int16 get_ani_richtung(int16 zustand);
-void menu_entry();
-void menu_exit();
+void menuEntry();
+void menuExit();
 
 
 class ChewyFont {

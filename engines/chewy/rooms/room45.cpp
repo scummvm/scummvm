@@ -167,7 +167,7 @@ void Room45::setup_func() {
 
 int16 Room45::use_taxi() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 
 	if (!_G(spieler).inv_cur) {
@@ -192,7 +192,7 @@ int16 Room45::use_taxi() {
 		talk_taxi(400);
 	}
 
-	show_cur();
+	showCur();
 	return action_ret;
 }
 
@@ -236,7 +236,7 @@ void Room45::taxi_mov() {
 
 int16 Room45::use_boy() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 
 	if (!_G(spieler).R45MagOk) {
@@ -256,13 +256,13 @@ int16 Room45::use_boy() {
 		start_aad_wait(259, -1);
 	}
 
-	show_cur();
+	showCur();
 	return action_ret;
 }
 
 void Room45::talk_boy() {
 	int16 aad_nr;
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).R45MagOk) {
 		auto_move(2, P_CHEWY);
@@ -272,7 +272,7 @@ void Room45::talk_boy() {
 	}
 
 	start_aad_wait(aad_nr, -1);
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms
