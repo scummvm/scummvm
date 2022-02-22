@@ -133,7 +133,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 			_G(det)->show_static_spr(16);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
-			hide_cur();
+			hideCur();
 			_G(det)->hide_static_spr(17);
 			start_detail_wait(9, 1, ANI_VOR);
 			_G(det)->show_static_spr(17);
@@ -151,7 +151,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 				monitor();
 			}
 
-			show_cur();
+			showCur();
 			_G(uhr)->reset_timer(_G(timer_nr)[1], 15);
 		}
 
@@ -204,7 +204,7 @@ int16 Room18::sonden_moni() {
 	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
 		action_flag = true;
 
-		hide_cur();
+		hideCur();
 		auto_move(8, P_CHEWY);
 		start_detail_wait(3, 1, ANI_VOR);
 		_G(det)->show_static_spr(10);
@@ -218,7 +218,7 @@ int16 Room18::sonden_moni() {
 		for (int16 i = 0; i < 5; i++)
 			_G(det)->hide_static_spr(i + 10);
 
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
@@ -229,7 +229,7 @@ int16 Room18::calc_surimy() {
 	if (is_cur_inventar(SURIMY_INV)) {
 		action_flag = true;
 
-		hide_cur();
+		hideCur();
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).R18SurimyWurf = true;
 		_G(det)->load_taf_seq(245, 50, nullptr);
@@ -318,7 +318,7 @@ int16 Room18::calc_surimy() {
 			_G(atds)->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATEI);
 
 		_G(atds)->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATEI);
-		show_cur();
+		showCur();
 		_G(det)->del_taf_tbl(245, 50, nullptr);
 	}
 
@@ -331,10 +331,10 @@ int16 Room18::calc_schalter() {
 	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
 		action_flag = true;
 
-		hide_cur();
+		hideCur();
 		auto_move(6, P_CHEWY);
 		monitor();
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -346,7 +346,7 @@ short Room18::use_cart_moni() {
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 
-		hide_cur();
+		hideCur();
 		auto_move(9, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -368,7 +368,7 @@ short Room18::use_cart_moni() {
 			}
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -380,10 +380,10 @@ int16 Room18::go_cyberspace() {
 	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
 		action_flag = true;
 
-		hide_cur();
+		hideCur();
 		auto_move(7, P_CHEWY);
 		cur_2_inventory();
-		show_cur();
+		showCur();
 
 		switch_room(24);
 	}

@@ -44,7 +44,7 @@ void Room93::entry() {
 
 	if (!_G(spieler).flags37_40) {
 		_G(det)->del_static_ani(1);
-		hide_cur();
+		hideCur();
 		start_detail_wait(3, 1, ANI_GO);
 		_G(det)->set_static_ani(0, -1);
 		start_aad_wait(549, -1);
@@ -57,7 +57,7 @@ void Room93::entry() {
 		start_detail_wait(6, 1, ANI_GO);
 		start_detail_wait(2, 1, ANI_VOR);
 		set_up_screen(DO_SETUP);
-		show_cur();
+		showCur();
 	}
 
 	_G(spieler).flags35_40 = true;
@@ -69,7 +69,7 @@ void Room93::xit() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 94;
 	_G(spieler).scrollx = _G(spieler).r94Scrollx;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 }
 
 } // namespace Rooms

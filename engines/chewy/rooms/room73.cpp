@@ -83,7 +83,7 @@ int Room73::proc1() {
 	if (_G(spieler).inv_cur && !_G(spieler).flags28_20)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	_G(spieler).flags28_20 = true;
 	auto_move(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
@@ -91,7 +91,7 @@ int Room73::proc1() {
 	_G(atds)->del_steuer_bit(432, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->set_ats_str(430, 1, ATS_DATEI);
 	_G(det)->show_static_spr(3);
-	show_cur();
+	showCur();
 
 	return 1;	
 }
@@ -100,7 +100,7 @@ int Room73::proc2() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	_G(spieler).flags28_40 = true;
 	auto_move(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
@@ -108,7 +108,7 @@ int Room73::proc2() {
 	_G(det)->hide_static_spr(4);
 	_G(atds)->set_steuer_bit(433, ATS_AKTIV_BIT, ATS_DATEI);
 	new_invent_2_cur(99);
-	show_cur();
+	showCur();
 
 	return 1;
 }

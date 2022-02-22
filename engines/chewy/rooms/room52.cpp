@@ -70,7 +70,7 @@ void Room52::gedAction(int index) {
 
 int16 Room52::use_hot_dog() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 
 	if (is_cur_inventar(BURGER_INV)) {
 		action_ret = true;
@@ -114,7 +114,7 @@ int16 Room52::use_hot_dog() {
 		_G(spieler).R52KakerWeg = true;
 	}
 
-	show_cur();
+	showCur();
 	return action_ret;
 }
 
@@ -129,9 +129,9 @@ void Room52::kaker_platt() {
 	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !_G(flags).ExitMov) {
 		_G(spieler).R52KakerJoke = true;
 		stop_person(P_CHEWY);
-		hide_cur();
+		hideCur();
 		start_aad_wait(289, -1);
-		show_cur();
+		showCur();
 	}
 }
 

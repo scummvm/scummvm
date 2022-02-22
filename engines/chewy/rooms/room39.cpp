@@ -78,7 +78,7 @@ short Room39::use_howard() {
 		int16 dia_nr;
 		if (_G(spieler).inv_cur) {
 			if (is_cur_inventar(MANUSKRIPT_INV)) {
-				hide_cur();
+				hideCur();
 				_G(spieler).R39HowardWach = true;
 				_G(spieler).R39ScriptOk = true;
 				auto_move(3, P_CHEWY);
@@ -99,7 +99,7 @@ short Room39::use_howard() {
 				_G(det)->set_static_ani(5, -1);
 				_G(atds)->set_ats_str(62, 1, ATS_DATEI);
 				start_aad_wait(169, -1);
-				show_cur();
+				showCur();
 
 				_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
 				_G(spieler).PersonDiaRoom[P_HOWARD] = true;;
@@ -126,7 +126,7 @@ short Room39::use_howard() {
 			action_flag = true;
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -162,7 +162,7 @@ void Room39::ok() {
 	switch_room(27);
 	start_aad_wait(192, -1);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(_G(menu_item));
+	cursorChoice(_G(menu_item));
 }
 
 int16 Room39::use_tv() {
@@ -170,7 +170,7 @@ int16 Room39::use_tv() {
 	int16 ani_nr = -1;
 	int16 action_flag = false;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	int16 cls_flag = false;
 
@@ -283,7 +283,7 @@ int16 Room39::use_tv() {
 		action_flag = true;
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 

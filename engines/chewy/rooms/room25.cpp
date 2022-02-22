@@ -57,7 +57,7 @@ void Room25::entry() {
 	}
 
 	if (!_G(spieler).R25FirstEntry) {
-		hide_cur();
+		hideCur();
 
 		if (_G(obj)->checkInventory(TRANSLATOR_INV)) {
 			_G(obj)->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
@@ -67,7 +67,7 @@ void Room25::entry() {
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_WALK;
 			_G(spieler).AkInvent = -1;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 		}
 
 		_G(spieler).R25FirstEntry = true;
@@ -79,7 +79,7 @@ void Room25::entry() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_VOR, P_CHEWY);
 		start_aad_wait(64, -1);
-		show_cur();
+		showCur();
 
 	} else if (_G(spieler).R25GleiterExit && !_G(flags).LoadGame) {
 		set_person_pos(127, 122, P_CHEWY, P_LEFT);
@@ -95,7 +95,7 @@ void Room25::entry() {
 
 int16 Room25::gleiter_loesch() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).R25GleiteLoesch && _G(spieler).R29Schlauch2) {
 		if (!_G(spieler).inv_cur) {
@@ -125,7 +125,7 @@ int16 Room25::gleiter_loesch() {
 		}
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
@@ -134,9 +134,9 @@ int16 Room25::use_gleiter() {
 
 	if (!_G(spieler).inv_cur && _G(spieler).R25GleiteLoesch) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		auto_move(3, P_CHEWY);
-		show_cur();
+		showCur();
 
 		_G(spieler).R23GleiterExit = 25;
 		Room23::cockpit();
@@ -146,7 +146,7 @@ int16 Room25::use_gleiter() {
 
 void Room25::xit_gleiter() {
 	if (!_G(spieler).R25SurimyLauf) {
-		hide_cur();
+		hideCur();
 		_G(spieler).R25SurimyLauf = true;
 		_G(det)->load_taf_seq(56, 8, nullptr);
 		_G(auto_obj) = 1;
@@ -167,7 +167,7 @@ void Room25::xit_gleiter() {
 		wait_auto_obj(SURIMY_OBJ);
 		_G(auto_obj) = 0;
 
-		show_cur();
+		showCur();
 	}
 }
 

@@ -65,7 +65,7 @@ void Room81::xit(int16 eib_nr) {
 
 void Room81::proc1() {
 	int diaNr = -1;
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	if (!_G(spieler).flags30_2)
 		diaNr = 458;
@@ -102,7 +102,7 @@ void Room81::proc1() {
 		start_aad_wait(diaNr, -1);
 	}
 
-	show_cur();
+	showCur();
 }
 
 int Room81::proc2() {
@@ -110,7 +110,7 @@ int Room81::proc2() {
 	int diaNr = -1;
 	int aniId = -1;
 
-	hide_cur();
+	hideCur();
 	if (is_cur_inventar(110)) {
 		auto_move(1, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
@@ -133,7 +133,7 @@ int Room81::proc2() {
 		proc3();
 	}
 
-	show_cur();
+	showCur();
 	return retVal;
 }
 

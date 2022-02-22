@@ -560,7 +560,7 @@ void start_aad(int16 dia_nr, int16 ssi_nr) {
 void start_ads_wait(int16 dia_nr) {
 	if (!_G(flags).AdsDialog) {
 		_G(menu_item) = CUR_TALK;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		load_ads_dia(dia_nr);
 		while (_G(flags).AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);

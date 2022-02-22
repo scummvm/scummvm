@@ -69,7 +69,7 @@ void Room8::hole_kohle() {
 	if (_G(spieler).R8Kohle) {
 		start_aad_wait(604, -1);
 	} else {
-		hide_cur();
+		hideCur();
 		_G(spieler).R8Kohle = true;
 		auto_move(4, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -77,12 +77,12 @@ void Room8::hole_kohle() {
 		cur_2_inventory();
 		invent_2_slot(KOHLE_HEISS_INV);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		show_cur();
+		showCur();
 	}
 }
 
 void Room8::start_verbrennen() {
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).inv_cur) {
 		auto_move(3, P_CHEWY);
@@ -108,14 +108,14 @@ void Room8::start_verbrennen() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
 
-	show_cur();
+	showCur();
 }
 
 bool Room8::gips_wurf() {
 	bool actionFl = false;
 	
 	if (is_cur_inventar(GIPS_EIMER_INV)) {
-		hide_cur();
+		hideCur();
 		actionFl = true;
 		_G(det)->load_taf_seq(116, 30, nullptr);
 		auto_move(2, P_CHEWY);
@@ -144,8 +144,8 @@ bool Room8::gips_wurf() {
 		start_detail_wait(20, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
-		cursor_wahl(_G(menu_item));
-		show_cur();
+		cursorChoice(_G(menu_item));
+		showCur();
 	}
 
 	return actionFl;

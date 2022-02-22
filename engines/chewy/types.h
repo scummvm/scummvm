@@ -407,8 +407,8 @@ struct Spieler : public SpielerFlags {
 
 	int16 AkInvent = 0;
 	bool inv_cur = 0;
-	int16 CurBreite = 0;
-	int16 CurHoehe = 0;
+	int16 _curWidth = 0;
+	int16 _curHeight = 0;
 
 	RoomMovObject room_m_obj[MAX_MOV_OBJ];
 	RoomStaticInventory room_s_obj[MAX_FEST_OBJ];

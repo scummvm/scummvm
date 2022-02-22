@@ -32,7 +32,7 @@ void Room92::entry() {
 	const int oldScrollX = _G(spieler.scrollx);
 	_G(spieler).scrollx = 0;
 	cur_2_inventory();
-	hide_cur();
+	hideCur();
 	hide_person();
 	start_aad_wait(_G(spieler).SVal2, -1);
 	switch (_G(spieler).SVal2) {

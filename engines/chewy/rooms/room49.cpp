@@ -114,7 +114,7 @@ void Room49::calc_boy_ani() {
 
 void Room49::calc_boy() {
 	if (!_G(spieler).R49WegFrei) {
-		hide_cur();
+		hideCur();
 		_G(room)->set_timer_status(255, TIMER_STOP);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
@@ -143,7 +143,7 @@ void Room49::calc_boy() {
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		_G(room)->set_timer_status(255, TIMER_START);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -152,13 +152,13 @@ int16 Room49::use_boy() {
 
 	if (is_cur_inventar(SPARK_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(3, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		talk_boy(265);
 		_G(spieler).R49WegFrei = true;
 		_G(spieler).room_e_obj[80].Attribut = AUSGANG_OBEN;
-		show_cur();
+		showCur();
 
 	} else if (is_cur_inventar(CIGAR_INV)) {
 		action_ret = true;
@@ -169,7 +169,7 @@ int16 Room49::use_boy() {
 }
 
 void Room49::use_boy_cigar() {
-	hide_cur();
+	hideCur();
 	del_inventar(_G(spieler).AkInvent);
 	talk_boy(263);
 	_G(SetUpScreenFunc) = nullptr;
@@ -201,7 +201,7 @@ void Room49::use_boy_cigar() {
 
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).R49BoyWeg = true;
-	show_cur();
+	showCur();
 }
 
 void Room49::talk_boy() {
@@ -243,7 +243,7 @@ int16 Room49::use_taxi() {
 
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		start_ani_block(2, ABLOCK34);
 		_G(det)->show_static_spr(7);
 		auto_move(2, P_CHEWY);

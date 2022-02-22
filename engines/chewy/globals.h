@@ -318,23 +318,23 @@ extern Globals *g_globals;
 
 #define _G(FIELD) g_globals->_##FIELD
 
-void cursor_wahl(int16 nr);
+void cursorChoice(int16 nr);
 
-void hide_cur();
+void hideCur();
 
-void show_cur();
+void showCur();
 
 void alloc_buffers();
 void free_buffers();
 
-bool main_loop(int16 mode);
+bool mainLoop(int16 mode);
 
 void set_up_screen(SetupScreenMode mode);
 
 void kb_mov(int16 mode);
 
 void kb_cur_action(int16 key, int16 mode);
-void maus_action();
+void mouseAction();
 
 void obj_auswerten(int16 test_nr, int16 txt_nr);
 

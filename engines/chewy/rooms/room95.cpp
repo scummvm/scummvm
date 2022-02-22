@@ -44,7 +44,7 @@ void Room95::entry(int16 eib_nr) {
 	if (_G(flags).LoadGame)
 		return;
 
-	hide_cur();
+	hideCur();
 	if (eib_nr == 138) {
 		set_person_pos(-20, 120, P_HOWARD, ANI_GO);
 		auto_move(2, P_CHEWY);
@@ -52,7 +52,7 @@ void Room95::entry(int16 eib_nr) {
 		set_person_pos(473, 83, P_HOWARD, P_RIGHT);
 	}
 
-	show_cur();
+	showCur();
 }
 
 void Room95::xit(int16 eib_nr) {
@@ -88,7 +88,7 @@ void Room95::setup_func() {
 }
 
 int Room95::proc2() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	if (is_cur_inventar(113)) {
 		del_inventar(_G(spieler).AkInvent);
@@ -97,12 +97,12 @@ int Room95::proc2() {
 		_G(spieler).flags35_20 = true;
 		_G(det)->show_static_spr(10);
 
-		show_cur();
+		showCur();
 		return 1;
 	}
 
 	if (_G(spieler).inv_cur) {
-		show_cur();
+		showCur();
 		return 0;
 	}
 
@@ -119,7 +119,7 @@ int Room95::proc2() {
 		start_aad_wait(548, -1);
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 

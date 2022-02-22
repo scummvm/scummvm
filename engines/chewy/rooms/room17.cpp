@@ -139,7 +139,7 @@ int16 Room17::use_seil() {
 
 	if (!_G(flags).AutoAniPlay && _G(spieler).R17Location == 1 && is_cur_inventar(SEIL_INV)) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 
 		del_inventar(_G(spieler).AkInvent);
 		_G(flags).AutoAniPlay = true;
@@ -154,7 +154,7 @@ int16 Room17::use_seil() {
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(119, -1);
 
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -212,7 +212,7 @@ void Room17::calc_seil() {
 			_G(auto_mov_obj)[CHEWY_OBJ].Id = AUTO_OBJ0;
 			_G(auto_mov_vector)[CHEWY_OBJ].Delay = _G(spieler).DelaySpeed;
 			_G(auto_mov_obj)[CHEWY_OBJ].Mode = true;
-			hide_cur();
+			hideCur();
 
 			if (_G(spieler).R17Location == 1) {
 				kletter_down();
@@ -223,9 +223,9 @@ void Room17::calc_seil() {
 			}
 
 			_G(menu_item) = CUR_WALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			wait_auto_obj(CHEWY_OBJ);
-			show_cur();
+			showCur();
 			set_person_spr(P_LEFT, P_CHEWY);
 			_G(spieler).ScrollyStep = 1;
 			_G(spieler).PersonHide[P_CHEWY] = false;
@@ -270,7 +270,7 @@ void Room17::close_door() {
 int16 Room17::energie_hebel() {
 	int16 action_flag = false;
 
-	hide_cur();
+	hideCur();
 	auto_move(7, P_CHEWY);
 
 	if (!_G(spieler).R17HebelOk) {
@@ -308,13 +308,13 @@ int16 Room17::energie_hebel() {
 		}
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
 int16 Room17::get_oel() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
@@ -333,7 +333,7 @@ int16 Room17::get_oel() {
 		inventory_2_cur(BECHER_VOLL_INV);
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 

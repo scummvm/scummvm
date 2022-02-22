@@ -42,7 +42,7 @@ void Room66::entry(int16 eib_nr) {
 		_G(det)->show_static_spr(4);
 		_G(det)->show_static_spr(8);
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		_G(spieler).flags26_4 = true;
 		_G(spieler).scrollx = 476;
 		set_person_pos(598, 101, P_CHEWY, P_RIGHT);
@@ -63,7 +63,7 @@ void Room66::entry(int16 eib_nr) {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(404, -1);
 		start_aad_wait(415, -1);
-		show_cur();
+		showCur();
 	} else if (!_G(flags).LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
 		switch (eib_nr) {
 		case 96:
@@ -148,10 +148,10 @@ void Room66::setup_func() {
 }
 
 void Room66::talk1() {
-	hide_cur();
+	hideCur();
 	auto_move(5, P_CHEWY);
 	start_aad_wait(407, -1);
-	show_cur();
+	showCur();
 }
 
 void Room66::talk2() {
@@ -167,12 +167,12 @@ void Room66::talk4() {
 }
 
 int Room66::proc2() {
-	hide_cur();
+	hideCur();
 	auto_move(0, P_CHEWY);
 	_G(spieler).flags26_40 = true;
 	_G(spieler).room_e_obj[100].Attribut = 3;
 	_G(atds)->set_ats_str(423, 1, ANI_GO);
-	show_cur();
+	showCur();
 	
 	return 0;
 }
@@ -181,7 +181,7 @@ int Room66::proc7() {
 	if (!is_cur_inventar(ARTE_INV))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(7, P_CHEWY);
 	if (_G(spieler).flags26_10) {
 		del_inventar(_G(spieler).AkInvent);
@@ -193,16 +193,16 @@ int Room66::proc7() {
 
 	proc8(7, 2, 3, 411 + (_G(spieler).flags26_10 ? 1 : 0));
 	_G(cur_hide_flag) = 0;
-	hide_cur();
+	hideCur();
 	if (_G(spieler).flags26_20)
 		start_detail_wait(4, 1, ANI_VOR);
-	show_cur();
+	showCur();
 
 	return 1;
 }
 
 void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, int transitionDiaNr) {
-	hide_cur();
+	hideCur();
 
 	if (chewyAutoMovNr != -1)
 		auto_move(chewyAutoMovNr, P_CHEWY);
@@ -214,7 +214,7 @@ void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, in
 	_G(det)->del_static_ani(transitionAniNr);
 	_G(det)->set_static_ani(restartAniNr, -1);
 	_G(room)->set_timer_status(restartAniNr, TIMER_START);
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

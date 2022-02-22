@@ -89,7 +89,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnBu
 		if (isWheelEnabled) {
 			if (--_G(menu_item) < 0)
 				_G(menu_item) = CUR_TALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 		}
 		return;
 
@@ -98,7 +98,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnBu
 		if (isWheelEnabled) {
 			if (++_G(menu_item) > CUR_TALK)
 				_G(menu_item) = CUR_WALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 		}
 		return;
 
@@ -106,7 +106,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnBu
 		// Toggle between walk and look cursor
 		if (isWheelEnabled) {
 			_G(menu_item) = (_G(menu_item) == CUR_WALK) ? CUR_LOOK : CUR_WALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 		}
 		return;
 

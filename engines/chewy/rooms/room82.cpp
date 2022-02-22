@@ -132,10 +132,10 @@ void Room82::talk1() {
 }
 
 void Room82::talk2() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	start_aad_wait(453, -1);
-	show_cur();
+	showCur();
 }
 
 void Room82::talk3() {
@@ -146,7 +146,7 @@ int Room82::proc3() {
 	if (!is_cur_inventar(FOOD_CERTIFICATE_INV))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(room)->set_timer_status(0, TIMER_STOP);
@@ -158,13 +158,13 @@ int Room82::proc3() {
 
 	del_inventar(_G(spieler).AkInvent);
 	new_invent_2_cur(104);
-	show_cur();
+	showCur();
 
 	return 1;
 }
 
 void Room82::proc4() {
-	hide_cur();
+	hideCur();
 	_G(spieler).flags30_8 = true;
 	auto_move(5, P_CHEWY);
 	_G(flags).NoScroll = true;
@@ -184,14 +184,14 @@ void Room82::proc4() {
 	_G(room)->set_timer_status(7, TIMER_START);
 	_G(flags).NoScroll = false;
 
-	show_cur();
+	showCur();
 }
 
 int Room82::proc6() {
 	if (!is_cur_inventar(105) && !is_cur_inventar(106))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 
 	if (_G(spieler).flags30_10) {
@@ -215,12 +215,12 @@ int Room82::proc6() {
 		start_aad_wait(276, -1);
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
 void Room82::proc8() {
-	hide_cur();
+	hideCur();
 	_G(spieler).flags30_10 = true;
 	start_aad_wait(447, -1);
 	auto_move(6, P_CHEWY);
@@ -237,7 +237,7 @@ void Room82::proc8() {
 	_G(det)->del_static_ani(4);
 	start_detail_wait(6, 2, ANI_VOR);
 	_G(det)->set_static_ani(4, -1);
-	show_cur();
+	showCur();
 }
 
 int Room82::proc9() {
@@ -249,7 +249,7 @@ int Room82::proc9() {
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
 	switch_room(88);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 
 	return 1;
 }

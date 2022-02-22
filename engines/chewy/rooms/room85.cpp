@@ -57,7 +57,7 @@ void Room85::entry(int16 eib_nr) {
 		return;
 
 	if (_G(spieler).flags30_1 || eib_nr == 124) {
-		hide_cur();
+		hideCur();
 		set_person_pos(278, 157, P_CHEWY, P_RIGHT);
 		set_person_pos(296, 142, P_HOWARD, P_RIGHT);
 		set_person_pos(322, 142, P_NICHELLE, P_RIGHT);
@@ -70,14 +70,14 @@ void Room85::entry(int16 eib_nr) {
 			set_person_pos(195, 146, P_CHEWY, P_RIGHT);
 			set_person_pos(186, 142, P_HOWARD, P_RIGHT);
 		}
-		show_cur();
+		showCur();
 	} else if (!_G(spieler.flags32_20)) {
 		set_person_pos(148, 152, P_CHEWY, P_RIGHT);
 		set_person_pos(98, 142, P_HOWARD, P_RIGHT);
 		set_person_pos(128, 142, P_NICHELLE, P_RIGHT);
 		_G(spieler).scrollx = 0;
 	} else {
-		hide_cur();
+		hideCur();
 		_G(spieler).scrollx = 0;
 		set_person_pos(133, 152, P_CHEWY, P_RIGHT);
 		_G(spieler).room_e_obj[127].Attribut = 255;
@@ -98,7 +98,7 @@ void Room85::entry(int16 eib_nr) {
 		register_cutscene(25);
 
 		switch_room(84);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -163,7 +163,7 @@ int Room85::proc2() {
 	remove_inventory(87);
 	switch_room(89);
 	
-	show_cur();
+	showCur();
 	return 1;
 }
 

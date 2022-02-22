@@ -58,12 +58,12 @@ int Room88::proc1() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(0, P_CHEWY);
 	switch_room(_G(spieler).r88DestRoom);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
-	show_cur();
+	cursorChoice(CUR_WALK);
+	showCur();
 	
 	return 1;
 }
@@ -72,7 +72,7 @@ int Room88::proc2() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->show_static_spr(0);
@@ -83,7 +83,7 @@ int Room88::proc2() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hide_static_spr(0);
 	
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -91,11 +91,11 @@ int Room88::proc3() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 
 	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
-		hide_cur();
+		hideCur();
 		if (_G(spieler).flags32_10) {
 			start_aad_wait(480, -1);
 			_G(out)->set_pointer(nullptr);
@@ -128,7 +128,7 @@ int Room88::proc3() {
 		_G(spieler).flags32_1 = true;
 		_G(out)->raster_col(0, 0, 0, 0);
 		switch_room(80);
-		hide_cur();
+		hideCur();
 		start_detail_wait(1, 1, ANI_VOR);
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
@@ -145,7 +145,7 @@ int Room88::proc3() {
 		_G(spieler).flags32_1 = false;
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 

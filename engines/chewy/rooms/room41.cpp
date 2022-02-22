@@ -36,7 +36,7 @@ static const AniBlock ABLOCK32[2] = {
 
 
 void Room41::entry() {
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).R41LolaOk) {
 		g_engine->_sound->playSound(6);
@@ -67,7 +67,7 @@ void Room41::entry() {
 		set_person_pos(241, 113, P_HOWARD, P_RIGHT);
 
 	_G(SetUpScreenFunc) = setup_func;
-	show_cur();
+	showCur();
 }
 
 void Room41::xit() {
@@ -98,7 +98,7 @@ void Room41::talk_hoggy1() {
 		first_talk();
 
 	} else if (!_G(spieler).R41Einbruch) {
-		show_cur();
+		showCur();
 		start_ads_wait(11);
 
 	} else if (_G(spieler).R41Einbruch) {
@@ -153,7 +153,7 @@ void Room41::first_talk() {
 }
 
 void Room41::start_hoggy() {
-	show_cur();
+	showCur();
 
 	for (int16 i = 0; i < 2; i++) {
 		_G(room)->set_timer_status(i, TIMER_START);
@@ -163,7 +163,7 @@ void Room41::start_hoggy() {
 }
 
 void Room41::stop_hoggy() {
-	hide_cur();
+	hideCur();
 
 	for (int16 i = 0; i < 2; i++) {
 		_G(room)->set_timer_status(i, TIMER_STOP);
@@ -191,7 +191,7 @@ int16 Room41::use_lola() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).inv_cur && !_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo) {
-		hide_cur();
+		hideCur();
 		action_flag = true;
 		_G(spieler).R41LolaOk = true;
 		auto_move(4, P_CHEWY);
@@ -203,7 +203,7 @@ int16 Room41::use_lola() {
 		_G(atds)->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(267, 1, ATS_DATEI);
 		_G(atds)->hide_item(11, 0, 3);
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -211,7 +211,7 @@ int16 Room41::use_lola() {
 
 int16 Room41::use_brief() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (is_cur_inventar(BRIEF_INV)) {
 		action_flag = true;
@@ -234,7 +234,7 @@ int16 Room41::use_brief() {
 		_G(spieler).R42BriefOk = true;
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 

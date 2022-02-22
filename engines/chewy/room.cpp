@@ -100,12 +100,12 @@ static const uint8 CHEWY_JM_PHASEN[8][8] = {
 
 void JungleRoom::topEntry() {
 	_G(cur_hide_flag) = 0;
-	hide_cur();
+	hideCur();
 	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
 	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
 	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
 	go_auto_xy(266, 113, P_HOWARD, ANI_WAIT);
-	show_cur();
+	showCur();
 }
 
 void JungleRoom::leftEntry() {

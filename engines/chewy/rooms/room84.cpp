@@ -92,7 +92,7 @@ void Room84::entry() {
 			}
 		}
 	} else if (_G(spieler).flags32_20) {
-		hide_cur();
+		hideCur();
 		set_person_pos(347, 130, P_CHEWY, P_RIGHT);
 		set_person_pos(408, 113, P_HOWARD, P_LEFT);
 		_G(spieler).scrollx = 250;
@@ -101,7 +101,7 @@ void Room84::entry() {
 		_G(spieler).room_e_obj[125].Attribut = 255;
 		_G(atds)->set_ats_str(485, 2, ATS_DATEI);
 		start_aad_wait(477, -1);
-		show_cur();
+		showCur();
 	} else {
 		set_person_pos(263, 136, P_CHEWY, P_LEFT);
 		set_person_pos(238, 113, P_HOWARD, P_RIGHT);
@@ -135,7 +135,7 @@ void Room84::setup_func() {
 	if (_G(spieler).R84GoonsPresent && !_flag) {
 		_flag = true;
 		_G(spieler).flags30_80 = true;
-		hide_cur();
+		hideCur();
 		auto_move(4, P_CHEWY);
 		_G(flags).NoScroll = true;
 		set_person_spr(P_LEFT, P_CHEWY);
@@ -149,7 +149,7 @@ void Room84::setup_func() {
 		_G(det)->set_static_ani(3, -1);
 		start_aad_wait(456, -1);
 		_G(flags).NoScroll = false;
-		show_cur();
+		showCur();
 	}
 
 	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
@@ -188,7 +188,7 @@ int Room84::proc4() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(5, P_CHEWY);
 
 	if (_G(spieler).flags32_10) {
@@ -201,8 +201,8 @@ int Room84::proc4() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
 	switch_room(88);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
-	show_cur();
+	cursorChoice(CUR_WALK);
+	showCur();
 
 	return 1;
 }

@@ -49,7 +49,7 @@ void Room31::entry() {
 void Room31::surimy_go() {
 	if (!_G(spieler).R39ScriptOk && _G(spieler).R25SurimyLauf) {
 		if (_G(spieler).R31SurimyGo >= 3) {
-			hide_cur();
+			hideCur();
 			_G(spieler).R31SurimyGo = 0;
 			_G(det)->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
@@ -65,7 +65,7 @@ void Room31::surimy_go() {
 			start_aad_wait(157, -1);
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
-			show_cur();
+			showCur();
 		} else {
 			++_G(spieler).R31SurimyGo;
 		}
@@ -96,13 +96,13 @@ int16 Room31::open_luke() {
 	
 	if (!_G(spieler).inv_cur && _G(spieler).R31KlappeZu) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = false;
 		g_engine->_sound->playSound(3);
 		calc_luke();
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -113,13 +113,13 @@ int16 Room31::close_luke_proc1() {
 
 	if (!_G(spieler).inv_cur && !_G(spieler).R31KlappeZu) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
 		g_engine->_sound->playSound(3);
 		calc_luke();
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -127,14 +127,14 @@ int16 Room31::close_luke_proc1() {
 
 void Room31::close_luke_proc3() {
 	if (!_G(spieler).R31KlappeZu) {
-		hide_cur();
+		hideCur();
 		auto_move(2, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(spieler).R31KlappeZu = true;
 		g_engine->_sound->playSound(3);
 		g_engine->_sound->playSound(3, 1, false);
 		calc_luke();
-		show_cur();
+		showCur();
 	}
 }
 
@@ -143,7 +143,7 @@ int16 Room31::use_topf() {
 	int16 ani_nr = 0;
 	int16 action_flag = false;
 
-	hide_cur();
+	hideCur();
 	if (_G(spieler).inv_cur) {
 		if (_G(spieler).R31PflanzeWeg) {
 			if (is_cur_inventar(K_KERNE_INV)) {
@@ -210,7 +210,7 @@ int16 Room31::use_topf() {
 		action_flag = true;
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 

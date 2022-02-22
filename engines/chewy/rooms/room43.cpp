@@ -36,7 +36,7 @@ void Room43::night_small() {
 	switch_room(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
-	hide_cur();
+	hideCur();
 	_G(flags).NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
 	start_aad_wait(188, -1);
@@ -62,7 +62,7 @@ void Room43::night_small() {
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	show_cur();
+	showCur();
 	show_person();
 }
 
@@ -73,7 +73,7 @@ void Room43::catch_pg() {
 	switch_room(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
-	hide_cur();
+	hideCur();
 	_G(flags).NoScroll = true;
 	_G(spieler).ScrollxStep = 1;
 	start_aad_wait(234, -1);
@@ -89,7 +89,7 @@ void Room43::catch_pg() {
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	show_cur();
+	showCur();
 	show_person();
 }
 

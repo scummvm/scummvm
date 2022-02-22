@@ -511,7 +511,7 @@ void exit_room(int16 eib_nr) {
 			break;
 		}
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 		_G(maus_links_click) = false;
 		break;
 
@@ -2036,11 +2036,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case 94:
 		_G(det)->show_static_spr(7);
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		start_aad_wait(406, -1);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 66)
 			start_aad_wait(613, -1);
-		show_cur();
+		showCur();
 		break;
 
 	case 100:

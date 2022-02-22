@@ -61,7 +61,7 @@ void Room90::entry(int16 eib_nr) {
 		}
 	}
 
-	hide_cur();
+	hideCur();
 	_G(HowardMov) = 1;
 
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
@@ -101,7 +101,7 @@ void Room90::entry(int16 eib_nr) {
 	}
 
 	_G(HowardMov) = 0;
-	show_cur();
+	showCur();
 }
 
 void Room90::xit(int16 eib_nr) {
@@ -226,9 +226,9 @@ void Room90::proc2() {
 			start_spz(65, 255, false, P_CHEWY);
 		}
 
-		hide_cur();
+		hideCur();
 		start_aad_wait(-1, diaNr);
-		show_cur();
+		showCur();
 	}
 	_G(flags).AutoAniPlay = false;
 }
@@ -237,7 +237,7 @@ int Room90::getHubcaps() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	start_aad_wait(515, -1);
 	start_spz_wait(14, 1, false, P_CHEWY);
@@ -274,7 +274,7 @@ int Room90::getHubcaps() {
 	_G(spieler).flags35_1 = false;
 	_G(atds)->set_steuer_bit(517, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->del_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATEI);
-	show_cur();
+	showCur();
 
 	return 1;
 }	
@@ -283,7 +283,7 @@ int Room90::shootControlUnit() {
 	if (!is_cur_inventar(111))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	del_inventar(_G(spieler).AkInvent);
 	_G(HowardMov) = 2;
 	_G(flags).ZoomMov = false;
@@ -311,7 +311,7 @@ int Room90::shootControlUnit() {
 	_G(atds)->del_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(flags).ZoomMov = true;
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -326,7 +326,7 @@ int Room90::useSurimyOnWreck() {
 		return 0;
 
 	_G(spieler).flags34_10 = true;
-	hide_cur();
+	hideCur();
 	cur_2_inventory();
 	auto_move(6, P_CHEWY);
 	_G(maus_links_click) = false;
@@ -342,7 +342,7 @@ int Room90::useSurimyOnWreck() {
 	start_aad_wait(519, -1);
 	_G(atds)->set_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATEI);
 
-	show_cur();
+	showCur();
 	return 1;
 }
 

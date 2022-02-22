@@ -62,7 +62,7 @@ void Room51::entry() {
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->show_static_spr(17);
 		_index = 0;
-		hide_cur();
+		hideCur();
 
 		for (int i = 0; i < 2; ++i) {
 			_enemyFlag[i] = false;
@@ -87,11 +87,11 @@ void Room51::entry() {
 			}
 
 			if (!_G(spieler).R51FirstEntry) {
-				hide_cur();
+				hideCur();
 				_G(spieler).R51FirstEntry = true;
 				set_person_spr(P_LEFT, P_CHEWY);
 				start_aad_wait(283, -1);
-				show_cur();
+				showCur();
 			}
 
 			_G(SetUpScreenFunc) = setup_func;
@@ -109,8 +109,8 @@ void Room51::xit(int16 eib_nr) {
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(_G(menu_item));
-		show_cur();
+		cursorChoice(_G(menu_item));
+		showCur();
 
 	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 		if (eib_nr == 85) {
@@ -209,7 +209,7 @@ int16 Room51::use_door(int16 txt_nr) {
 	int16 action_ret = false;
 
 	if (is_cur_inventar(KEY_INV)) {
-		hide_cur();
+		hideCur();
 		action_ret = true;
 
 		switch (txt_nr) {
@@ -228,7 +228,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				_G(SetUpScreenFunc) = setup_func;
 
 			} else {
-				show_cur();
+				showCur();
 				switch_room(52);
 			}
 			break;
@@ -339,7 +339,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			break;
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;

@@ -105,7 +105,7 @@ void Room97::entry() {
 		return;
 
 	if (_G(spieler).flags37_8) {
-		hide_cur();
+		hideCur();
 		_G(out)->set_pointer(nullptr);
 		_G(out)->cls();
 
@@ -115,7 +115,7 @@ void Room97::entry() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(19, 1, ANI_VOR);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		show_cur();
+		showCur();
 		switch_room(89);
 	} else {
 		_G(spieler).scrollx = 800;
@@ -200,9 +200,9 @@ void Room97::setup_func() {
 
 	if (_G(spieler).flags37_1 && _G(menu_item) == CUR_WALK) {
 		if (_G(spieler).scrollx + _G(minfo).x >= 487 && _G(spieler).scrollx + _G(minfo).x <= 522 && _G(minfo).y >= 23 && _G(minfo).y <= 59)
-			cursor_wahl(CUR_AUSGANG_OBEN);
+			cursorChoice(CUR_AUSGANG_OBEN);
 		else
-			cursor_wahl(CUR_WALK);
+			cursorChoice(CUR_WALK);
 	}
 
 	calc_person_look();
@@ -262,7 +262,7 @@ void Room97::proc2() {
 
 	_G(flags).AutoAniPlay = true;
 	stop_person(P_CHEWY);
-	hide_cur();
+	hideCur();
 	_G(Sdi)[6].z_ebene = 6;
 	_G(Sdi)[24].z_ebene = 6;
 	_G(spieler).flags36_1 = false;
@@ -275,7 +275,7 @@ void Room97::proc2() {
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(Sdi)[6].z_ebene = 166;
 	_G(Sdi)[24].z_ebene = 157;
-	show_cur();
+	showCur();
 	_G(flags).AutoAniPlay = false;
 }
 
@@ -284,7 +284,7 @@ void Room97::proc3() {
 		return;
 
 	_G(flags).AutoAniPlay = true;
-	hide_cur();
+	hideCur();
 	stop_person(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	
@@ -324,7 +324,7 @@ void Room97::proc3() {
 		_G(Sdi)[24].z_ebene = 157;
 		_G(spieler).flags36_80 = true;
 	}
-	show_cur();
+	showCur();
 	_G(flags).AutoAniPlay = false;
 }
 
@@ -334,7 +334,7 @@ void Room97::proc4() {
 
 	if (!_G(spieler).flags35_80) {
 		_G(flags).AutoAniPlay = true;
-		hide_cur();
+		hideCur();
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		stop_person(P_CHEWY);
 		g_engine->_sound->playSound(9, 0);
@@ -371,7 +371,7 @@ void Room97::proc4() {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
 		start_aad_wait(553, -1);
 		_G(HowardMov) = 0;
-		show_cur();
+		showCur();
 	}
 		
 	_G(flags).AutoAniPlay = false;
@@ -381,7 +381,7 @@ int Room97::proc5() {
 	if (!is_cur_inventar(114))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(0, P_CHEWY);
 	auto_scroll(800, 0);
 	
@@ -407,7 +407,7 @@ int Room97::proc5() {
 	g_engine->_sound->stopSound(0);
 	start_detail_wait(9, 0, ANI_GO);
 	
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -415,7 +415,7 @@ int Room97::proc6() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	go_auto_xy(298, 120, P_CHEWY, ANI_WAIT);
@@ -441,7 +441,7 @@ int Room97::proc6() {
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).flags36_8 = true;
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -449,7 +449,7 @@ int Room97::proc7() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(spieler).PersonHide[P_CHEWY] = true;
@@ -464,7 +464,7 @@ int Room97::proc7() {
 	auto_move(1, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -472,7 +472,7 @@ int Room97::proc8() {
 	if (!is_cur_inventar(94))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	int diaNr = -1;
 	if (!_G(spieler).flags36_2)
@@ -522,7 +522,7 @@ int Room97::proc8() {
 		start_aad_wait(diaNr, -1);
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -530,7 +530,7 @@ int Room97::proc9() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(5, P_CHEWY);
 	
 	if (!_G(spieler).flags36_20) {
@@ -550,7 +550,7 @@ int Room97::proc9() {
 		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -558,7 +558,7 @@ int Room97::proc10() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(8, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	g_engine->_sound->playSound(7, 0);
@@ -568,9 +568,9 @@ int Room97::proc10() {
 	_G(spieler).flags37_1 = true;
 	_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -578,7 +578,7 @@ int Room97::proc11() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	hide_cur();
+	hideCur();
 
 	if (!_G(spieler).flags37_2) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
@@ -602,10 +602,10 @@ int Room97::proc11() {
 		cur_2_inventory();
 		_G(spieler).flags37_8 = true;
 		switch_room(92);
-		show_cur(); // probably useless, but present in the original
+		showCur(); // probably useless, but present in the original
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -620,7 +620,7 @@ void Room97::proc12() {
 		return;
 
 	_G(flags).AutoAniPlay = true;
-	hide_cur();
+	hideCur();
 	stop_person(P_CHEWY);
 	_G(det)->show_static_spr(26);
 	go_auto_xy(481, 39, P_CHEWY, ANI_WAIT);
@@ -631,7 +631,7 @@ void Room97::proc12() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(det)->hide_static_spr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	show_cur();
+	showCur();
 	_G(flags).AutoAniPlay = false;
 }
 
@@ -640,7 +640,7 @@ void Room97::proc13() {
 		return;
 
 	_G(flags).AutoAniPlay = true;
-	hide_cur();
+	hideCur();
 	stop_person(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(det)->show_static_spr(26);
@@ -652,7 +652,7 @@ void Room97::proc13() {
 	auto_move(6, P_CHEWY);
 	_G(det)->hide_static_spr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	show_cur();
+	showCur();
 	_G(flags).AutoAniPlay = false;
 }
 
@@ -661,10 +661,10 @@ int Room97::throwSlime() {
 		return 0;
 
 	_slimeThrown = true;
-	hide_cur();
+	hideCur();
 	del_inventar(_G(spieler).AkInvent);
 	_G(menu_item) = CUR_USE;
-	cursor_wahl(CUR_USE);
+	cursorChoice(CUR_USE);
 	
 	return 1;
 }
@@ -676,7 +676,7 @@ void Room97::sensorAnim() {
 	_G(flags).AutoAniPlay = true;
 	stop_person(P_CHEWY);
 	_G(menu_item) = CUR_USE;
-	cursor_wahl(CUR_USE);
+	cursorChoice(CUR_USE);
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
 	_G(atds)->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
 	_slimeThrown = false;
@@ -693,7 +693,7 @@ void Room97::sensorAnim() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	hide_cur();
+	hideCur();
 	if (!_slimeThrown) {
 		start_detail_wait(17, 1, ANI_VOR);
 		_G(det)->start_detail(16, 1, true);
@@ -739,7 +739,7 @@ void Room97::sensorAnim() {
 	}
 
 	_G(atds)->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
-	show_cur();
+	showCur();
 	_G(flags).AutoAniPlay = false;
 }
 

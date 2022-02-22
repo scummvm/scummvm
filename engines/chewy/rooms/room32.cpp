@@ -38,7 +38,7 @@ int16 Room32::use_howard() {
 	int16 dia_nr = 0;
 	int16 ani_nr = 0;
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 
 	if (is_cur_inventar(TRICHTER_INV)) {
 		if (_G(spieler).R33MunterGet) {
@@ -86,7 +86,7 @@ int16 Room32::use_howard() {
 		action_flag = true;
 	}
 
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
@@ -94,7 +94,7 @@ void Room32::use_schreibmaschine() {
 	int16 dia_nr = -1;
 	int16 ani_nr = -1;
 
-	hide_cur();
+	hideCur();
 	if (_G(spieler).R32HowardWeg) {
 		if (_G(spieler).inv_cur) {
 			switch (_G(spieler).AkInvent) {
@@ -145,7 +145,7 @@ void Room32::use_schreibmaschine() {
 
 	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room32::get_script() {

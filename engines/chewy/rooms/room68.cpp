@@ -61,13 +61,13 @@ void Room68::entry() {
 		_G(det)->hide_static_spr(3);
 	
 	if (!_G(flags).LoadGame) {
-		hide_cur();
+		hideCur();
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 68) {
 			set_person_pos(524, 51, P_HOWARD, P_LEFT);
 			set_person_pos(550, 54, P_NICHELLE, P_LEFT);
 		}
 		auto_move(7, P_CHEWY);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -148,10 +148,10 @@ void Room68::setup_func() {
 }
 
 void Room68::look_kaktus() {
-	hide_cur();
+	hideCur();
 	auto_move(6, P_CHEWY);
 	start_aad_wait(383, -1);
-	show_cur();
+	showCur();
 }
 
 void Room68::talk_indigo() {
@@ -159,7 +159,7 @@ void Room68::talk_indigo() {
 }
 
 void Room68::talk_indigo(int16 aad_nr) {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	_G(room)->set_timer_status(8, TIMER_STOP);
 	_G(det)->del_static_ani(8);
@@ -175,22 +175,22 @@ void Room68::talk_indigo(int16 aad_nr) {
 	}
 	_G(room)->set_timer_status(8, TIMER_START);
 	_G(det)->set_static_ani(8, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room68::use_indigo() {
 	int16 action_flag = false;
-	hide_cur();
+	hideCur();
 	if (is_cur_inventar(CLINT_500_INV)) {
 		action_flag = true;
 		if (_G(spieler).R68Lied) {
-			hide_cur();
+			hideCur();
 			auto_move(3, P_CHEWY);
 			auto_scroll(78, 0);
 			del_inventar(_G(spieler).AkInvent);
 			talk_indigo(394);
 			_G(cur_hide_flag) = false;
-			hide_cur();
+			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stop_detail(8);
@@ -199,7 +199,7 @@ int16 Room68::use_indigo() {
 			_G(det)->set_static_ani(12, -1);
 			talk_indigo(398);
 			_G(cur_hide_flag) = false;
-			hide_cur();
+			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stop_detail(8);
@@ -215,35 +215,35 @@ int16 Room68::use_indigo() {
 		action_flag = true;
 		start_aad_wait(393, -1);
 	}
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
 void Room68::talk_keeper() {
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	_G(room)->set_timer_status(20, TIMER_STOP);
 	_G(det)->del_static_ani(20);
 	start_detail_wait(15, 1, ANI_VOR);
 	_G(det)->set_static_ani(16, -1);
-	show_cur();
+	showCur();
 	_G(ssi)[3].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
 	_G(ssi)[3].Y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
 	_G(atds)->set_split_win(3, &_G(ssi)[3]);
 	start_ads_wait(20);
 	_G(cur_hide_flag) = false;
-	hide_cur();
+	hideCur();
 	_G(det)->del_static_ani(16);
 	start_detail_wait(15, 1, ANI_RUECK);
 	_G(room)->set_timer_status(20, TIMER_START);
 	_G(det)->set_static_ani(20, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room68::use_papagei() {
 	int16 action_flag = false;
 	if (is_cur_inventar(PAPAGEI_INV)) {
-		hide_cur();
+		hideCur();
 		action_flag = true;
 		_G(spieler).R68Papagei = true;
 		del_inventar(_G(spieler).AkInvent);
@@ -253,7 +253,7 @@ int16 Room68::use_papagei() {
 		_G(det)->start_detail(21, 255, ANI_VOR);
 		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(407, 1, ATS_DATEI);
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
@@ -269,14 +269,14 @@ void Room68::calc_diva() {
 				_G(det)->start_detail(18, 255, ANI_VOR);
 			}
 		} else if (!_G(spieler).R68Gutschein && !is_chewy_busy()) {
-			hide_cur();
+			hideCur();
 			_G(spieler).R68Gutschein = true;
 			auto_move(4, P_CHEWY);
 			start_aad_wait(386, -1);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			new_invent_2_cur(BAR_GUT_INV);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
-			show_cur();
+			showCur();
 		}
 	}
 }
@@ -284,7 +284,7 @@ void Room68::calc_diva() {
 int16 Room68::use_keeper() {
 	int16 action_flag = false;
 	if (is_cur_inventar(BAR_GUT_INV)) {
-		hide_cur();
+		hideCur();
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = true;
 		auto_move(2, P_CHEWY);
@@ -295,14 +295,14 @@ int16 Room68::use_keeper() {
 		_G(room)->set_timer_status(20, TIMER_START);
 		_G(det)->set_static_ani(20, -1);
 		new_invent_2_cur(B_MARY_INV);
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
 
 int16 Room68::use_diva() {
 	int16 action_flag;
-	hide_cur();
+	hideCur();
 	if (is_cur_inventar(B_MARY_INV)) {
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = 1;
@@ -330,12 +330,12 @@ int16 Room68::use_diva() {
 		start_aad_wait(402, -1);
 	} else
 		action_flag = use_papagei();
-	show_cur();
+	showCur();
 	return action_flag;
 }
 
 void Room68::kostuem_aad(int16 aad_nr) {
-	hide_cur();
+	hideCur();
 	if (_G(spieler).DiaAMov != -1) {
 		auto_move(_G(spieler).DiaAMov, P_CHEWY);
 	}
@@ -421,13 +421,13 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			load_room_music(_G(spieler).PersonRoomNr[0]);
 		}
 	}
-	show_cur();
+	showCur();
 }
 
 void Room68::talk_papagei() {
-	hide_cur();
+	hideCur();
 	auto_move(5, P_CHEWY);
-	show_cur();
+	showCur();
 
 	_G(ssi)[2].X = 60;
 	_G(ssi)[2].Y = 80;

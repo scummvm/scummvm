@@ -42,7 +42,7 @@ void Room67::entry() {
 	} else
 		_G(det)->show_static_spr(0);
 	if (!_G(flags).LoadGame) {
-		hide_cur();
+		hideCur();
 		set_person_pos(102, 132, P_CHEWY, P_RIGHT);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67) {
 			set_person_pos(12, 100, P_HOWARD, P_RIGHT);
@@ -50,7 +50,7 @@ void Room67::entry() {
 			go_auto_xy(214, 112, P_NICHELLE, ANI_GO);
 		}
 		auto_move(7, P_CHEWY);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -79,7 +79,7 @@ void Room67::setup_func() {
 int16 Room67::use_grammo() {
 	int16 action_flag = false;
 	if (is_cur_inventar(SCHALL_INV)) {
-		hide_cur();
+		hideCur();
 		action_flag = true;
 		auto_move(6, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -91,22 +91,22 @@ int16 Room67::use_grammo() {
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->stop_detail(0);
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
 
 void Room67::look_brief() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	start_aad_wait(379, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room67::use_kommode() {
 	int16 action_flag = false;
 	if (!_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		if (!_G(spieler).R67KommodeAuf) {
 			action_flag = true;
 			_G(spieler).R67KommodeAuf = true;
@@ -122,28 +122,28 @@ int16 Room67::use_kommode() {
 			_G(atds)->set_ats_str(400, 2, ATS_DATEI);
 			new_invent_2_cur(GALA_INV);
 		}
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
 
 void Room67::kostuem_aad(int16 aad_nr) {
-	hide_cur();
+	hideCur();
 	if (_G(spieler).DiaAMov != -1) {
 		auto_move(_G(spieler).DiaAMov, P_CHEWY);
 	}
 	start_aad_wait(aad_nr, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room67::talk_papagei() {
 	int16 action_flag = false;
 	if (!_G(spieler).R67PapageiWeg && !_G(spieler).inv_cur) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		if (_G(menu_item) == CUR_HOWARD) {
-			show_cur();
+			showCur();
 
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
@@ -155,7 +155,7 @@ int16 Room67::talk_papagei() {
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_TALK) {
 			auto_move(5, P_CHEWY);
-			show_cur();
+			showCur();
 
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
@@ -163,7 +163,7 @@ int16 Room67::talk_papagei() {
 			start_ads_wait(18);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
-			hide_cur();
+			hideCur();
 			auto_move(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(spieler).R67PapageiWeg = true;
@@ -171,10 +171,10 @@ int16 Room67::talk_papagei() {
 			_G(det)->del_static_ani(1);
 			_G(det)->show_static_spr(0);
 			invent_2_slot(PAPAGEI_INV);
-			show_cur();
+			showCur();
 			_G(atds)->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATEI);
 		}
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }

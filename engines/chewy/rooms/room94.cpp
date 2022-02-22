@@ -84,11 +84,11 @@ void Room94::entry() {
 			_G(flags).NoScroll = false;
 		}
 	} else {
-		hide_cur();
+		hideCur();
 		_G(spieler).scrollx = 120;
 		set_person_pos(255, 86, P_HOWARD, P_LEFT);
 		auto_move(3, P_CHEWY);
-		show_cur();
+		showCur();
 	}
 }
 
@@ -120,16 +120,16 @@ void Room94::gedAction(int index) {
 }
 
 void Room94::talk1() {
-	hide_cur();
+	hideCur();
 	Room66::proc8(3, 3, 2, 552);
-	show_cur();
+	showCur();
 }
 
 int Room94::giveGhostBottle() {
 	if (!is_cur_inventar(LIKOER2_INV))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	auto_scroll(216, 0);
 	del_inventar(_G(spieler).AkInvent);
@@ -143,7 +143,7 @@ int Room94::giveGhostBottle() {
 	_G(det)->stop_detail(5);
 	_G(det)->show_static_spr(5);
 	Room66::proc8(3, 3, 2, 617);
-	hide_cur();
+	hideCur();
 	_G(det)->hide_static_spr(5);
 	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(622, -1);
@@ -157,7 +157,7 @@ int Room94::giveGhostBottle() {
 	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATEI);
 	new_invent_2_cur(114);
 	
-	show_cur();
+	showCur();
 	return 1;
 }
 

@@ -59,7 +59,7 @@ int16 Room4::sonde_comp() {
 
 	start_aad(46);
 	while (!ende) {
-		maus_action();
+		mouseAction();
 		if (_G(maus_links_click)) {
 			switch (_G(in)->mouseVector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
@@ -101,9 +101,9 @@ int16 Room4::sonde_comp() {
 			_G(curani).ani_anf = HAND_NORMAL;
 			_G(curani).ani_end = HAND_NORMAL;
 		}
-		cursor_wahl(CUR_USER);
-		_G(spieler).CurHoehe = 16;
-		_G(in)->rectangle(0, 123, 320 - _G(spieler).CurBreite, 194);
+		cursorChoice(CUR_USER);
+		_G(spieler)._curHeight = 16;
+		_G(in)->rectangle(0, 123, 320 - _G(spieler)._curWidth, 194);
 
 		if (_G(minfo).y < 124)
 			_G(minfo).y = 123;
@@ -116,7 +116,7 @@ int16 Room4::sonde_comp() {
 	clear_prog_ani();
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(_G(menu_item));
+	cursorChoice(_G(menu_item));
 
 	_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 	_G(maus_links_click) = false;

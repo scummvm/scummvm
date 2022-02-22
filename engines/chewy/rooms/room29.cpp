@@ -69,7 +69,7 @@ int16 Room29::use_pumpe() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).R29Pumpe) {
-		hide_cur();
+		hideCur();
 
 		if (is_cur_inventar(SCHLAUCH_INV)) {
 			action_flag = true;
@@ -85,7 +85,7 @@ int16 Room29::use_pumpe() {
 			start_aad_wait(62, -1);
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	return action_flag;
@@ -95,13 +95,13 @@ int16 Room29::get_schlauch() {
 	int16 action_flag = false;
 	if (_G(spieler).R29Schlauch1 && !_G(spieler).inv_cur) {
 		action_flag = true;
-		hide_cur();
+		hideCur();
 
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		new_invent_2_cur(PUMPE_INV);
 
-		show_cur();
+		showCur();
 	}
 	return action_flag;
 }
@@ -111,7 +111,7 @@ bool Room29::use_schlauch() {
 
 	if (is_cur_inventar(PUMPE_INV)) {
 		result = true;
-		hide_cur();
+		hideCur();
 
 		auto_move(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
@@ -128,7 +128,7 @@ bool Room29::use_schlauch() {
 		del_inventar(PUMPE_INV);
 		set_person_pos(308, 105, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		show_cur();
+		showCur();
 	}
 
 	return result;
@@ -136,7 +136,7 @@ bool Room29::use_schlauch() {
 
 void Room29::schlitz_sitz() {
 	if (!_G(spieler).R29AutoSitz) {
-		hide_cur();
+		hideCur();
 		_G(spieler).R29AutoSitz = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(det)->hide_static_spr(4);
@@ -153,7 +153,7 @@ void Room29::schlitz_sitz() {
 		_G(maus_links_click) = false;
 		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 
-		show_cur();
+		showCur();
 	}
 }
 
@@ -161,7 +161,7 @@ int16 Room29::zaun_sprung() {
 	int16 action_flag = false;
 
 	if (_G(spieler).R29AutoSitz && !_G(spieler).inv_cur) {
-		hide_cur();
+		hideCur();
 		
 		action_flag = true;
 		auto_move(3, P_CHEWY);
@@ -171,7 +171,7 @@ int16 Room29::zaun_sprung() {
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
 
-		show_cur();
+		showCur();
 		switch_room(37);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 

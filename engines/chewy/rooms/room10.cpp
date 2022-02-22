@@ -39,10 +39,10 @@ void Room10::entry() {
 		flic_cut(FCUT_003);
 		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
 		auto_move(2, P_CHEWY);
-		hide_cur();
+		hideCur();
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(101, 0);
-		show_cur();
+		showCur();
 
 	} else if (_G(spieler).R10SurimyOk) {
 		_G(room)->set_timer_status(3, TIMER_STOP);
@@ -50,7 +50,7 @@ void Room10::entry() {
 }
 
 void Room10::get_surimy() {
-	hide_cur();
+	hideCur();
 	auto_move(4, P_CHEWY);
 	start_aad(104, 0);
 	flic_cut(FCUT_005);
@@ -60,7 +60,7 @@ void Room10::get_surimy() {
 	invent_2_slot(18);
 
 	del_inventar(_G(spieler).AkInvent);
-	show_cur();
+	showCur();
 }
 
 int16 Room10::cut_serv(int16 frame) {

@@ -54,7 +54,7 @@ void game_main() {
 	_G(room_start_nr) = 0;
 	standard_init();
 	_G(out)->cls();
-	cursor_wahl(CUR_WALK);
+	cursorChoice(CUR_WALK);
 	_G(workptr) = _G(workpage) + 4l;
 
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -101,7 +101,7 @@ void free_buffers() {
 	free(_G(workpage));
 }
 
-void cursor_wahl(int16 nr) {
+void cursorChoice(int16 nr) {
 	int16 ok = true;
 	if (nr != CUR_USER) {
 		_G(curblk).sprite = _G(curtaf)->image;
@@ -222,13 +222,13 @@ void cursor_wahl(int16 nr) {
 		cur_move = true;
 		_G(cur)->set_cur_ani(&_G(curani));
 		int16 *xy = (int16 *)_G(curblk).sprite[_G(curani).ani_anf];
-		_G(spieler).CurBreite = xy[0];
-		_G(spieler).CurHoehe = xy[1];
+		_G(spieler)._curWidth = xy[0];
+		_G(spieler)._curHeight = xy[1];
 		_G(in)->rectangle(0, 0, 320 - xy[0], 210 - xy[1]);
 	}
 }
 
-void hide_cur() {
+void hideCur() {
 	if (!_G(cur_hide_flag)) {
 		_G(cur_hide_flag) = true;
 		_G(flags).ShowAtsInvTxt = false;
@@ -237,62 +237,34 @@ void hide_cur() {
 	}
 }
 
-void show_cur() {
+void showCur() {
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
 	_G(flags).CursorStatus = true;
 }
 
-void test_menu() {
-	_G(menu_lauflicht) = 0;
-	_G(inv_disp_ok) = false;
-	_G(spieler).inv_cur = false;
-	_G(menu_display) = 0;
-	_G(cur_display) = true;
-	_G(cur)->show_cur();
-	_G(spieler_vector)[P_CHEWY].Phase = 6;
-	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[_G(spieler_vector)[P_CHEWY].Phase];
-	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
-	_G(spieler_vector)[P_CHEWY].Count = 0;
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
-	_G(flags).main_maus_flag = false;
-	_G(tmp_menu_item) = false;
-	_G(maus_links_click) = false;
-	_G(spieler).PersonHide[P_CHEWY] = false;
-	_G(txt_aus_click) = false;
-	_G(fx_blend) = BLEND3;
-	_G(auto_obj) = 0;
-	_G(flags).MainInput = true;
-	_G(flags).ShowAtsInvTxt = true;
-	enter_room(-1);
-	_G(uhr)->reset_timer(0, 0);
-	bool endLoopFl = false;
-	while (!endLoopFl)
-		endLoopFl = main_loop(DO_SETUP);
-}
-
-void menu_entry() {
+void menuEntry() {
 	_G(det)->freeze_ani();
 	_G(uhr)->set_all_status(TIMER_FREEZE);
 }
 
-void menu_exit() {
+void menuExit() {
 	_G(det)->unfreeze_ani();
 	_G(uhr)->set_all_status(TIMER_UNFREEZE);
 	_G(uhr)->reset_timer(0, 0);
 	_G(FrameSpeed) = 0;
 }
 
-bool main_loop(int16 mode) {
-	bool ende = false;
+bool mainLoop(int16 mode) {
+	bool retValue = false;
 
-	maus_action();
+	mouseAction();
 	if (_G(flags).MainInput) {
 		switch (_G(kbinfo).scan_code) {
 		case Common::KEYCODE_F1:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_WALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_EINBLENDEN)
 				_G(menu_display) = MENU_AUSBLENDEN;
 			break;
@@ -300,7 +272,7 @@ bool main_loop(int16 mode) {
 		case Common::KEYCODE_F2:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_USE;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_EINBLENDEN)
 				_G(menu_display) = MENU_AUSBLENDEN;
 			break;
@@ -308,7 +280,7 @@ bool main_loop(int16 mode) {
 		case Common::KEYCODE_F3:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_LOOK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_EINBLENDEN)
 				_G(menu_display) = MENU_AUSBLENDEN;
 			break;
@@ -316,7 +288,7 @@ bool main_loop(int16 mode) {
 		case Common::KEYCODE_F4:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_TALK;
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_EINBLENDEN)
 				_G(menu_display) = MENU_AUSBLENDEN;
 			break;
@@ -327,19 +299,19 @@ bool main_loop(int16 mode) {
 			_G(maus_old_x) = _G(minfo).x;
 			_G(maus_old_y) = _G(minfo).y;
 			_G(menu_item) = CUR_USE;
-			menu_entry();
+			menuEntry();
 			Dialogs::Inventory::menu();
-			menu_exit();
+			menuExit();
 			_G(menu_flag) = MENU_AUSBLENDEN;
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
 			if (_G(spieler).AkInvent == -1) {
 				_G(menu_item) = _G(tmp_menu_item);
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				_G(spieler).inv_cur = false;
 			} else {
 				_G(menu_item) = CUR_USE;
-				cursor_wahl(CUR_AK_INVENT);
+				cursorChoice(CUR_AK_INVENT);
 
 				get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
@@ -353,15 +325,15 @@ bool main_loop(int16 mode) {
 			_G(out)->set_pointer(_G(screen0));
 			_G(out)->set_fontadr(_G(font6x8));
 			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
-			cursor_wahl(CUR_SAVE);
+			cursorChoice(CUR_SAVE);
 			if (Dialogs::Files::execute(true) == 1) {
-				ende = true;
+				retValue = true;
 				_G(fx_blend) = BLEND4;
 			}
 			if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1 && _G(menu_item) == CUR_USE) {
-				cursor_wahl(CUR_AK_INVENT);
+				cursorChoice(CUR_AK_INVENT);
 			} else
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 			_G(cur_display) = true;
 			_G(flags).SaveMenu = false;
 			_G(cur)->show_cur();
@@ -370,7 +342,7 @@ bool main_loop(int16 mode) {
 
 		case Common::KEYCODE_ESCAPE:
 			if (_G(menu_display) == 0) {
-				menu_entry();
+				menuEntry();
 				_G(tmp_menu_item) = _G(menu_item);
 				_G(maus_old_x) = _G(minfo).x;
 				_G(maus_old_y) = _G(minfo).y;
@@ -379,13 +351,13 @@ bool main_loop(int16 mode) {
 				_G(cur_display) = false;
 				_G(cur)->move(_G(maus_menu_x), 100);
 			} else {
-				menu_exit();
+				menuExit();
 				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_AUSBLENDEN;
 				if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1 && _G(menu_item) == CUR_USE) {
-					cursor_wahl(CUR_AK_INVENT);
+					cursorChoice(CUR_AK_INVENT);
 				} else
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 			}
 			break;
 
@@ -394,19 +366,19 @@ bool main_loop(int16 mode) {
 			case CUR_INVENT:
 
 				_G(menu_item) = CUR_USE;
-				menu_entry();
+				menuEntry();
 				Dialogs::Inventory::menu();
-				menu_exit();
+				menuExit();
 				_G(menu_flag) = MENU_AUSBLENDEN;
 				_G(menu_display) = 0;
 				_G(cur_display) = true;
 				if (_G(spieler).AkInvent == -1) {
 					_G(menu_item) = _G(tmp_menu_item);
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 					_G(spieler).inv_cur = false;
 				} else {
 					_G(menu_item) = CUR_USE;
-					cursor_wahl(CUR_AK_INVENT);
+					cursorChoice(CUR_AK_INVENT);
 					get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 				}
 				break;
@@ -421,10 +393,10 @@ bool main_loop(int16 mode) {
 				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
 
 				_G(out)->set_pointer(_G(screen0));
-				cursor_wahl(CUR_SAVE);
+				cursorChoice(CUR_SAVE);
 				int16 ret = Dialogs::Files::execute(true);
 				if (ret == IOG_END) {
-					ende = true;
+					retValue = true;
 					_G(fx_blend) = BLEND4;
 				}
 
@@ -433,9 +405,9 @@ bool main_loop(int16 mode) {
 				_G(menu_display) = MENU_AUSBLENDEN;
 
 				if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1 && _G(menu_item) == CUR_USE) {
-					cursor_wahl(CUR_AK_INVENT);
+					cursorChoice(CUR_AK_INVENT);
 				} else
-					cursor_wahl(_G(tmp_menu_item));
+					cursorChoice(_G(tmp_menu_item));
 				_G(cur_display) = true;
 
 				_G(flags).SaveMenu = false;
@@ -445,7 +417,7 @@ bool main_loop(int16 mode) {
 
 			default:
 				if (_G(menu_display) != 0) {
-					menu_exit();
+					menuExit();
 					_G(menu_flag) = MENU_AUSBLENDEN;
 					_G(menu_display) = 0;
 					_G(cur_display) = true;
@@ -453,7 +425,7 @@ bool main_loop(int16 mode) {
 					_G(minfo).x = _G(maus_old_x);
 					_G(minfo).y = _G(maus_old_y);
 					_G(spieler).inv_cur = false;
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 				}
 				break;
 			}
@@ -484,7 +456,7 @@ bool main_loop(int16 mode) {
 		}
 
 		if (_G(menu_display) == MENU_AUSBLENDEN) {
-			menu_exit();
+			menuExit();
 			_G(menu_flag) = MENU_AUSBLENDEN;
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
@@ -498,7 +470,7 @@ bool main_loop(int16 mode) {
 	if (mode == DO_SETUP)
 		set_up_screen(DO_MAIN_LOOP);
 
-	return ende;
+	return retValue;
 }
 
 static void showWalkAreas() {
@@ -770,7 +742,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 
 						_G(spieler).inv_cur = false;
 						_G(menu_item) = CUR_WALK;
-						cursor_wahl(_G(menu_item));
+						cursorChoice(_G(menu_item));
 						_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 
 						if (_G(spieler).AkInvent != -1)
@@ -790,7 +762,7 @@ void kb_mov(int16 mode) {
 	while (!ende) {
 		switch (_G(in)->get_switch_code()) {
 		case Common::KEYCODE_RIGHT:
-			if (_G(minfo).x < 320 - _G(spieler).CurBreite)
+			if (_G(minfo).x < 320 - _G(spieler)._curWidth)
 				_G(minfo).x += 2;
 			break;
 
@@ -805,7 +777,7 @@ void kb_mov(int16 mode) {
 			break;
 
 		case Common::KEYCODE_DOWN:
-			if (_G(minfo).y < 210 - _G(spieler).CurHoehe)
+			if (_G(minfo).y < 210 - _G(spieler)._curHeight)
 				_G(minfo).y += 2;
 			break;
 
@@ -866,7 +838,7 @@ void kb_cur_action(int16 key, int16 mode) {
 	}
 }
 
-void maus_action() {
+void mouseAction() {
 	int16 x = _G(minfo).x;
 	int16 y = _G(minfo).y;
 	if (x > invent_display[_G(spieler).InvDisp][0] &&
@@ -874,12 +846,12 @@ void maus_action() {
 	        y > invent_display[_G(spieler).InvDisp][1] &&
 	        y < invent_display[_G(spieler).InvDisp][1] + 48) {
 		if (!_G(spieler).inv_cur && !_G(inv_disp_ok) && _G(spieler).AkInvent != -1) {
-			cursor_wahl(CUR_USE);
+			cursorChoice(CUR_USE);
 		}
 		_G(inv_disp_ok) = true;
 	} else {
 		if (!_G(spieler).inv_cur && _G(inv_disp_ok)) {
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 		}
 		_G(inv_disp_ok) = false;
 	}
@@ -898,11 +870,11 @@ void maus_action() {
 						if (_G(inv_disp_ok)) {
 							if (_G(spieler).inv_cur) {
 								_G(menu_item) = CUR_USE;
-								cursor_wahl(_G(menu_item));
+								cursorChoice(_G(menu_item));
 								_G(spieler).inv_cur = false;
 							} else {
 								_G(menu_item) = CUR_USE;
-								cursor_wahl(CUR_AK_INVENT);
+								cursorChoice(CUR_AK_INVENT);
 								_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 							}
 						} else if (!_G(flags).MausLinks)
@@ -928,7 +900,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	case INVENTAR_NORMAL:
 		ret = _G(obj)->action_iib_iib(_G(spieler).AkInvent, test_nr);
 		if (ret != NO_ACTION) {
-			hide_cur();
+			hideCur();
 			if (_G(flags).InventMenu == false) {
 				if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
 					_G(maus_links_click) = false;
@@ -942,7 +914,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
 			}
-			show_cur();
+			showCur();
 		}
 		break;
 
@@ -950,7 +922,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 		ret = _G(obj)->action_iib_sib(_G(spieler).AkInvent, test_nr);
 		if (ret != NO_ACTION) {
 			_G(maus_links_click) = false;
-			hide_cur();
+			hideCur();
 			if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
 			}
@@ -973,12 +945,12 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
-			show_cur();
+			showCur();
 			sib_event_inv(test_nr);
 
 			if (!_G(spieler).inv_cur) {
 				_G(menu_item) = _G(menu_item_vorwahl);
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 			}
 			_G(obj)->calc_all_static_detail();
 		}
@@ -988,7 +960,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 		ret = _G(obj)->calc_static_use(test_nr);
 		if (ret == OBJECT_1) {
 			_G(maus_links_click) = false;
-			hide_cur();
+			hideCur();
 			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
 
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
@@ -1018,7 +990,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				action_flag = true;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
-			show_cur();
+			showCur();
 			int16 sib_ret = sib_event_no_inv(test_nr);
 
 			_G(obj)->calc_all_static_detail();
@@ -1027,12 +999,12 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 
 				if (sib_ret || action_flag) {
 					_G(menu_item) = _G(menu_item_vorwahl);
-					cursor_wahl(_G(menu_item));
+					cursorChoice(_G(menu_item));
 				}
 			}
 		} else if (ret == SIB_GET_INV) {
 			_G(maus_links_click) = false;
-			hide_cur();
+			hideCur();
 			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
 				auto_move(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
 			}
@@ -1061,12 +1033,12 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				invent_2_slot(_G(spieler).room_s_obj[test_nr].InvNr);
 			_G(obj)->calc_rsi_flip_flop(test_nr);
 			_G(menu_item_vorwahl) = CUR_WALK;
-			show_cur();
+			showCur();
 			sib_event_no_inv(test_nr);
 			_G(obj)->calc_all_static_detail();
 			if (!_G(spieler).inv_cur) {
 				_G(menu_item) = _G(menu_item_vorwahl);
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 			}
 		} else if (ret == NO_ACTION) {
 			txt_nr = _G(obj)->sib_txt_nr(test_nr);
@@ -1662,7 +1634,7 @@ void calc_ani_timer() {
 
 void get_user_key(int16 mode) {
 	_G(flags).StopAutoObj = true;
-	maus_action();
+	mouseAction();
 	_G(maus_links_click) = false;
 
 	if (!_G(inv_disp_ok)) {
@@ -1681,11 +1653,11 @@ void get_user_key(int16 mode) {
 			_G(cur_display) = true;
 			if (_G(spieler).AkInvent == -1) {
 				_G(menu_item) = _G(tmp_menu_item);
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				_G(spieler).inv_cur = false;
 			} else {
 				_G(menu_item) = CUR_USE;
-				cursor_wahl(CUR_AK_INVENT);
+				cursorChoice(CUR_AK_INVENT);
 
 				get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
@@ -1719,7 +1691,7 @@ void del_inventar(int16 nr) {
 	_G(spieler).inv_cur = false;
 	_G(menu_item) = CUR_WALK;
 	_G(spieler).AkInvent = -1;
-	cursor_wahl(_G(menu_item));
+	cursorChoice(_G(menu_item));
 	del_invent_slot(nr);
 	_G(maus_links_click) = false;
 }
@@ -1742,22 +1714,22 @@ void check_mouse_ausgang(int16 x, int16 y) {
 		switch (attr) {
 		case AUSGANG_LINKS:
 			_G(cur_ausgang_flag) = AUSGANG_LINKS;
-			cursor_wahl(CUR_AUSGANG_LINKS);
+			cursorChoice(CUR_AUSGANG_LINKS);
 			break;
 
 		case AUSGANG_RECHTS:
 			_G(cur_ausgang_flag) = AUSGANG_RECHTS;
-			cursor_wahl(CUR_AUSGANG_RECHTS);
+			cursorChoice(CUR_AUSGANG_RECHTS);
 			break;
 
 		case AUSGANG_OBEN:
 			_G(cur_ausgang_flag) = AUSGANG_OBEN;
-			cursor_wahl(CUR_AUSGANG_OBEN);
+			cursorChoice(CUR_AUSGANG_OBEN);
 			break;
 
 		case AUSGANG_UNTEN:
 			_G(cur_ausgang_flag) = AUSGANG_UNTEN;
-			cursor_wahl(CUR_AUSGANG_UNTEN);
+			cursorChoice(CUR_AUSGANG_UNTEN);
 			break;
 
 		default:
@@ -1766,7 +1738,7 @@ void check_mouse_ausgang(int16 x, int16 y) {
 		}
 
 		if (_G(cur_ausgang_flag) && !found) {
-			cursor_wahl(_G(menu_item));
+			cursorChoice(_G(menu_item));
 			_G(cur_ausgang_flag) = false;
 		}
 	}
@@ -1781,7 +1753,7 @@ void calc_ausgang(int16 x, int16 y) {
 			if (auto_move(_G(spieler).room_e_obj[nr].AutoMov, P_CHEWY) == true) {
 				_G(flags).ShowAtsInvTxt = false;
 				_G(menu_item) = CUR_DISK;
-				cursor_wahl(CUR_DISK);
+				cursorChoice(CUR_DISK);
 				set_up_screen(DO_SETUP);
 				_G(cur_hide_flag) = true;
 				exit_room(nr);
@@ -1810,7 +1782,7 @@ void calc_ausgang(int16 x, int16 y) {
 				_G(spieler_vector)[P_CHEWY].Yzoom = 0;
 				_G(flags).ShowAtsInvTxt = true;
 				_G(menu_item) = CUR_WALK;
-				cursor_wahl(_G(menu_item));
+				cursorChoice(_G(menu_item));
 				_G(flags).ExitMov = false;
 				enter_room(nr);
 			}

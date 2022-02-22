@@ -33,7 +33,7 @@ void Room78::entry() {
 	_G(spieler).r76State = -1;
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 1, false);
-	hide_cur();
+	hideCur();
 	_G(spieler).ScrollxStep = 1;
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).PersonHide[P_HOWARD] = true;
@@ -125,7 +125,7 @@ void Room78::entry() {
 	}
 
 	switch_room(destRoom);
-	show_cur();
+	showCur();
 }
 
 void Room78::xit() {

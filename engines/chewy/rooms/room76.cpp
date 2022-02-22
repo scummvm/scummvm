@@ -65,7 +65,7 @@ void Room76::entry() {
 		return;
 
 	if (!_G(spieler).flags29_2) {
-		hide_cur();
+		hideCur();
 		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).flags29_2 = true;
@@ -74,7 +74,7 @@ void Room76::entry() {
 		proc5();
 
 	} else if (!_G(spieler).r76State) {
-		hide_cur();
+		hideCur();
 		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).r76State = -1;
@@ -99,16 +99,16 @@ void Room76::setup_func() {
 }
 
 void Room76::talk1() {
-	hide_cur();
+	hideCur();
 	auto_move(4, P_CHEWY);
 	auto_scroll(172, 0);
 	const int diaNr = 425 + (_G(spieler).flags32_4 ? 1 : 0);
 	start_aad_wait(diaNr, -1);
-	show_cur();
+	showCur();
 }
 
 void Room76::talk2() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	int diaNr;
 	if (!_G(spieler).flags29_8)
@@ -122,7 +122,7 @@ void Room76::talk2() {
 	if (diaNr == 421)
 		proc5();
 
-	show_cur();
+	showCur();
 }
 
 void Room76::proc3(int diaNr) {
@@ -146,7 +146,7 @@ void Room76::proc5() {
 	go_auto_xy(669, 127, P_CHEWY, ANI_WAIT);
 	wait_show_screen(20);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	show_cur();
+	showCur();
 	set_person_pos(30, 150, P_CHEWY, P_RIGHT);
 	switch_room(78);
 }
@@ -155,7 +155,7 @@ int Room76::proc6() {
 	int retVal = 0;
 
 	if (is_cur_inventar(93)) {
-		hide_cur();
+		hideCur();
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).flags29_8 = true;
 		retVal = 1;
@@ -167,13 +167,13 @@ int Room76::proc6() {
 		_G(det)->set_static_ani(2, -1);
 		start_detail_wait(9, 1, ANI_VOR);
 		start_detail_wait(10, 1, ANI_VOR);
-		show_cur();
+		showCur();
 	} else if (is_cur_inventar(94)) {
-		hide_cur();
+		hideCur();
 		retVal = 1;
 		set_person_spr(P_RIGHT, P_CHEWY);
 		start_aad_wait(436, 1);
-		show_cur();
+		showCur();
 	}
 
 	return retVal;
@@ -184,7 +184,7 @@ int Room76::proc7() {
 		return 0;
 	
 	if (_G(spieler).flags29_4) {
-		hide_cur();
+		hideCur();
 		auto_move(6, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
@@ -205,18 +205,18 @@ int Room76::proc7() {
 			_G(det)->show_static_spr(8 + i);
 
 		start_aad_wait(427, -1);
-		show_cur();
+		showCur();
 		start_ads_wait(21);
-		hide_cur();
+		hideCur();
 		start_aad_wait(428, -1);
-		show_cur();
+		showCur();
 		_G(spieler).flags29_80 = true;
 		switch_room(78);
 	} else {
-		hide_cur();
+		hideCur();
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		start_aad_wait(577, -1);
-		show_cur();
+		showCur();
 	}
 
 	return 1;

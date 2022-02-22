@@ -53,7 +53,7 @@ void Room89::entry() {
 	}
 
 	if (_G(spieler).flags35_2) {
-		hide_cur();
+		hideCur();
 		_G(spieler).flags35_2 = false;
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 537;
@@ -70,10 +70,10 @@ void Room89::entry() {
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 538;
 		switch_room(92);
-		show_cur();
+		showCur();
 	} else if (_G(spieler).flags35_4) {
 		// End sequence
-		hide_cur();
+		hideCur();
 		set_person_pos(138, 82, P_CHEWY, P_RIGHT);
 		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
 		set_person_pos(260, 57, P_NICHELLE, P_LEFT);
@@ -171,7 +171,7 @@ int Room89::proc2() {
 	if (_G(spieler).inv_cur || _G(spieler.flags33_2))
 		return 0;
 
-	hide_cur();
+	hideCur();
 	_G(spieler).flags33_2 = true;
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 489;
@@ -186,7 +186,7 @@ int Room89::proc2() {
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 487;
 	switch_room(92);
-	show_cur();
+	showCur();
 
 	return 1;
 }
@@ -195,7 +195,7 @@ int Room89::proc4() {
 	if (_G(spieler).inv_cur || _G(spieler).flags32_80)
 		return 0;
 
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
@@ -213,7 +213,7 @@ int Room89::proc4() {
 		_G(atds)->set_ats_str(514, 1, ATS_DATEI);
 	}
 
-	show_cur();
+	showCur();
 	return 1;
 }
 
@@ -224,12 +224,12 @@ int Room89::proc5() {
 	if (!_G(spieler).flags32_80 || !_G(spieler).flags33_1 || !_G(spieler).flags33_2)
 		Room66::proc8(-1, 2, 3, 493);
 	else {
-		hide_cur();
+		hideCur();
 		Room66::proc8(-1, 2, 3, 486);
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 488;
 		switch_room(92);
-		show_cur();
+		showCur();
 	}
 	
 	return 1;

@@ -37,7 +37,7 @@ void Room63::entry() {
 		_G(det)->del_static_ani(5);
 	if (!_G(spieler).R63Uhr) {
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		_G(det)->start_detail(12, 255, ANI_VOR);
 		_G(det)->start_detail(10, 255, ANI_VOR);
 		_G(det)->start_detail(18, 255, ANI_VOR);
@@ -48,7 +48,7 @@ void Room63::entry() {
 		start_aad_wait(355, -1);
 		_G(det)->stop_detail(11);
 		_G(det)->start_detail(10, 255, ANI_VOR);
-		show_cur();
+		showCur();
 	} else if (!_G(spieler).R63Feuer) {
 		_G(det)->show_static_spr(10);
 		_G(det)->show_static_spr(12);
@@ -71,7 +71,7 @@ void Room63::setup_func() {
 
 	cur_2_inventory();
 	_G(menu_item) = CUR_USE;
-	cursor_wahl(CUR_USE);
+	cursorChoice(CUR_USE);
 	
 	switch (_G(r63ChewyAni)) {
 	case 0:
@@ -148,7 +148,7 @@ void Room63::bork_platt() {
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_079);
 	_G(fx_blend) = BLEND3;
-	show_cur();
+	showCur();
 	_G(flags).MainInput = true;
 	_G(spieler).R62Flucht = true;
 	_G(spieler).PersonRoomNr[P_HOWARD] = 56;
@@ -156,7 +156,7 @@ void Room63::bork_platt() {
 }
 
 void Room63::talk_hunter() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
 		_G(det)->hide_static_spr(10);
@@ -166,11 +166,11 @@ void Room63::talk_hunter() {
 		_G(det)->show_static_spr(10);
 		_G(det)->stop_detail(10);
 	}
-	show_cur();
+	showCur();
 }
 
 void Room63::talk_regie() {
-	hide_cur();
+	hideCur();
 	auto_move(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
 		_G(det)->hide_static_spr(12);
@@ -183,21 +183,21 @@ void Room63::talk_regie() {
 	} else {
 		_G(det)->start_detail(18, 255, ANI_VOR);
 	}
-	show_cur();
+	showCur();
 }
 
 void Room63::talk_fx_man() {
-	hide_cur();
+	hideCur();
 	auto_move(1, P_CHEWY);
 	start_aad_wait(358, -1);
-	show_cur();
+	showCur();
 }
 
 int16 Room63::use_fx_man() {
 	int16 action_ret = false;
 	if (is_cur_inventar(MASKE_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(1, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		remove_inventory(34);
@@ -210,7 +210,7 @@ int16 Room63::use_fx_man() {
 		start_detail_wait(8, 1, ANI_VOR);
 		_G(spieler).R63FxMannWeg = true;
 		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
-		show_cur();
+		showCur();
 	}
 	return action_ret;
 }
@@ -222,10 +222,10 @@ int16 Room63::use_schalter() {
 		if (_G(spieler).R63FxMannWeg) {
 			if (_G(spieler).R62LauraVerwandlung) {
 				_G(r63Schalter) = true;
-				hide_cur();
+				hideCur();
 				_G(flags).MainInput = false;
 			} else {
-				hide_cur();
+				hideCur();
 				auto_move(1, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 				_G(det)->show_static_spr(2);
@@ -239,12 +239,12 @@ int16 Room63::use_schalter() {
 				_G(det)->hide_static_spr(2);
 				start_aad_wait(364, -1);
 				_G(atds)->set_ats_str(385, 1, ATS_DATEI);
-				show_cur();
+				showCur();
 			}
 		} else {
-			hide_cur();
+			hideCur();
 			start_aad_wait(363, -1);
-			show_cur();
+			showCur();
 		}
 	}
 	return action_ret;
@@ -264,7 +264,7 @@ int16 Room63::use_girl() {
 	int16 action_ret = false;
 	if (is_cur_inventar(UHR_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		auto_move(2, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		_G(det)->stop_detail(12);
@@ -285,7 +285,7 @@ int16 Room63::use_girl() {
 		_G(atds)->set_ats_str(382, 1, ATS_DATEI);
 		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATEI);
 		start_aad_wait(367, -1);
-		show_cur();
+		showCur();
 	}
 	return action_ret;
 }
@@ -295,7 +295,7 @@ int16 Room63::use_aschenbecher() {
 	if (is_cur_inventar(ASCHE_INV)) {
 		action_ret = true;
 		_G(cur_hide_flag) = false;
-		hide_cur();
+		hideCur();
 		if (_G(spieler).R63Uhr) {
 			if (_G(spieler).R63FxMannWeg) {
 				auto_move(5, P_CHEWY);
@@ -325,7 +325,7 @@ int16 Room63::use_aschenbecher() {
 		} else
 			start_aad_wait(366, -1);
 		
-		show_cur();
+		showCur();
 	}
 	return action_ret;
 }

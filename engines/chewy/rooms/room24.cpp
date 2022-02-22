@@ -45,7 +45,7 @@ void Room24::entry() {
 	_G(curani).ani_anf = 7;
 	_G(curani).ani_end = 10;
 	_G(menu_item) = CUR_USER;
-	cursor_wahl(CUR_USER);
+	cursorChoice(CUR_USER);
 
 	if (_G(spieler).R16F5Exit)
 		_G(det)->show_static_spr(10);
@@ -64,7 +64,7 @@ void Room24::entry() {
 void Room24::xit() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
-	cursor_wahl(_G(menu_item));
+	cursorChoice(_G(menu_item));
 	set_person_pos(263, 144, P_CHEWY, -1);
 	_G(spieler).scrollx = 88;
 	_G(maus_links_click) = false;
@@ -125,7 +125,7 @@ void Room24::calc_hebel_spr() {
 
 void Room24::calc_animation(int16 kristall_nr) {
 	if (kristall_nr != 255) {
-		hide_cur();
+		hideCur();
 
 		if (KRISTALL_SPR[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 20) {
 			int16 ani_nr = _G(spieler).R24KristallLast[kristall_nr] == 13 ? 7 : 8;
@@ -145,7 +145,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_VOR);
 		}
 
-		show_cur();
+		showCur();
 	}
 
 	for (int16 i = 0; i < 6; i++)

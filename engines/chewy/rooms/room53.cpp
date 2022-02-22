@@ -41,13 +41,13 @@ static const AniBlock ABLOCK35[7] = {
 
 
 void Room53::entry() {
-	hide_cur();
+	hideCur();
 	_G(obj)->hide_sib(SIB_VISIT_R53);
 	_G(atds)->del_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 	start_detail_wait(0, 1, ANI_VOR);
 	_G(det)->set_static_ani(1, -1);
 	_G(timer_nr)[0] = _G(room)->set_timer(1, 7);
-	show_cur();
+	showCur();
 }
 
 void Room53::man_go() {
@@ -60,7 +60,7 @@ void Room53::man_go() {
 }
 
 void Room53::talk_man() {
-	hide_cur();
+	hideCur();
 	auto_move(2, P_CHEWY);
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
@@ -70,7 +70,7 @@ void Room53::talk_man() {
 	_G(det)->del_static_ani(3);
 	start_detail_wait(4, 1, ANI_VOR);
 	man_go();
-	show_cur();
+	showCur();
 }
 
 int16 Room53::use_man() {
@@ -78,7 +78,7 @@ int16 Room53::use_man() {
 
 	if (is_cur_inventar(BESTELL_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		_G(spieler).R53Kostuem = true;
 		del_inventar(_G(spieler).AkInvent);
 		auto_move(2, P_CHEWY);
@@ -89,7 +89,7 @@ int16 Room53::use_man() {
 		_G(obj)->addInventory(JMKOST_INV, &_G(room_blk));
 		inventory_2_cur(JMKOST_INV);
 		_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;

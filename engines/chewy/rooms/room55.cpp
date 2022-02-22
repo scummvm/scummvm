@@ -88,7 +88,7 @@ void Room55::entry() {
 
 			_G(det)->show_static_spr(8);
 			auto_move(1, P_CHEWY);
-			hide_cur();
+			hideCur();
 			_G(det)->hide_static_spr(8);
 
 			if (_G(spieler).R55SekWeg && !_G(spieler).R55Job) {
@@ -104,7 +104,7 @@ void Room55::entry() {
 				}
 			}
 
-			show_cur();
+			showCur();
 		}
 	}
 }
@@ -129,7 +129,7 @@ void Room55::gedAction(int index) {
 
 int16 Room55::use_stapel1() {
 	int16 action_ret = false;
-	hide_cur();
+	hideCur();
 	
 	if (!_G(spieler).inv_cur) {
 		if (!_G(spieler).R55ScriptWeg) {
@@ -159,7 +159,7 @@ int16 Room55::use_stapel1() {
 			start_aad_wait(326, -1);
 		}
 	}
-	show_cur();
+	showCur();
 
 	return action_ret;
 }
@@ -169,9 +169,9 @@ int16 Room55::use_stapel2() {
 
 	if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
-		hide_cur();
+		hideCur();
 		start_aad_wait(327, -1);
-		show_cur();
+		showCur();
 	}
 
 	return action_ret;
@@ -184,7 +184,7 @@ int16 Room55::use_telefon() {
 		action_ret = true;
 		if (_G(spieler).R55EscScriptOk) {
 			if (!_G(spieler).R55RaumOk) {
-				hide_cur();
+				hideCur();
 				_G(spieler).R55RaumOk = true;
 				auto_move(6, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
@@ -248,7 +248,7 @@ int16 Room55::use_telefon() {
 				load_chewy_taf(CHEWY_ROCKER);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 				_G(spieler_mi)[P_HOWARD].Mode = false;
-				show_cur();
+				showCur();
 				_G(spieler).R55R54First = true;
 				_G(spieler).R55ExitDia = 337;
 				_G(spieler).room_e_obj[89].Attribut = 255;
@@ -257,14 +257,14 @@ int16 Room55::use_telefon() {
 
 				switch_room(54);
 			} else {
-				hide_cur();
+				hideCur();
 				start_aad_wait(332, -1);
-				show_cur();
+				showCur();
 			}
 		} else {
-			hide_cur();
+			hideCur();
 			start_aad_wait(328, -1);
-			show_cur();
+			showCur();
 		}
 	}
 
@@ -279,7 +279,7 @@ void Room55::get_job() {
 	_G(spieler).scrolly = 0;
 	switch_room(61);
 
-	show_cur();
+	showCur();
 	start_ads_wait(15);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
@@ -363,7 +363,7 @@ int16 Room55::use_kammeraus() {
 		if (!_G(spieler).R52KakerWeg)
 			start_aad_wait(325, -1);
 		else if (!_G(spieler).R55SekWeg) {
-			hide_cur();
+			hideCur();
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(5, 1, ANI_VOR);
 			_G(det)->show_static_spr(10);
@@ -382,7 +382,7 @@ int16 Room55::use_kammeraus() {
 			_G(atds)->set_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(atds)->set_steuer_bit(346, ATS_AKTIV_BIT, ATS_DATEI);
 			strasse(1);
-			show_cur();
+			showCur();
 		}
 	}
 
@@ -424,7 +424,7 @@ void Room55::talk_line() {
 	if (_G(spieler).R55Location != 0 || _G(spieler).ChewyAni != CHEWY_ROCKER)
 		return;
 	
-	hide_cur();
+	hideCur();
 
 	int16 aad_nr = 0;
 	if (!_G(spieler).R55SekWeg) {
@@ -459,7 +459,7 @@ void Room55::talk_line() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 54;
 	_G(spieler_mi)[P_HOWARD].Mode = false;
 	switch_room(54);
-	show_cur();
+	showCur();
 }
 
 } // namespace Rooms

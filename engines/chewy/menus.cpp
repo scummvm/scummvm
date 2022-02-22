@@ -322,7 +322,7 @@ void cur_2_inventory() {
 		invent_2_slot(_G(spieler).AkInvent);
 		_G(spieler).AkInvent = -1;
 		_G(menu_item) = CUR_WALK;
-		cursor_wahl(_G(menu_item));
+		cursorChoice(_G(menu_item));
 	}
 	_G(spieler).inv_cur = false;
 }
@@ -332,7 +332,7 @@ void inventory_2_cur(int16 nr) {
 		del_invent_slot(nr);
 		_G(menu_item) = CUR_USE;
 		_G(spieler).AkInvent = nr;
-		cursor_wahl(CUR_AK_INVENT);
+		cursorChoice(CUR_AK_INVENT);
 		get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 	}
 }
