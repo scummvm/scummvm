@@ -51,6 +51,7 @@ namespace Chewy {
 #define ATDS_HANDLE 7
 
 enum DisplayMode {
+	DISPLAY_NONE = -1,
 	DISPLAY_TXT = 0,
 	DISPLAY_VOC = 1,
 	DISPLAY_ALL = 2
@@ -216,7 +217,7 @@ struct AtsTxtHeader {
 };
 
 struct AtsVar {
-	bool Display;
+	DisplayMode _display = DISPLAY_NONE;
 	AtsTxtHeader TxtHeader;
 	AtsStrHeader StrHeader;
 	char *Ptr;
@@ -272,9 +273,9 @@ public:
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
 	void init_ats_mode(int16 mode, uint8 *atsheader);
-	bool start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr);
+	DisplayMode start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr);
 	void stop_ats();
-	int16 ats_get_status();
+	DisplayMode &ats_get_status();
 	void print_ats(int16 x, int16 y, int16 scrx, int16 scry);
 	int16 get_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode);
 	void set_steuer_bit(int16 txt_nr, int16 bit_idx, int16 mode);

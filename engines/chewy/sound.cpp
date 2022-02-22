@@ -151,7 +151,7 @@ void Sound::setMusicVolume(uint volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 }
 
-void Sound::playSpeech(int num) {
+void Sound::playSpeech(int num, bool waitForFinish) {
 	// Get the speech data
 	SoundChunk *sound = _speechRes->getSound(num);
 	size_t size = sound->size;
@@ -169,7 +169,7 @@ void Sound::playSpeech(int num) {
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
 		&_speechHandle, stream);
 
-	if (_G(atds)->getAtdDisplay() == DISPLAY_VOC) {
+	if (waitForFinish) {
 		// Wait for speech to finish
 		while (isSpeechActive() && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
