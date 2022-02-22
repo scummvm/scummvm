@@ -46,7 +46,7 @@ void MainMenu::execute() {
 
 		// NOTE: Originally, this was set to play video 200, but this actually
 		// jumped to the very last video in the file, so we play it explicitly
-		flic_cut(FCUT_160);
+		flic_cut(g_engine->getLanguage() == Common::Language::DE_DEU ? FCUT_155 : FCUT_160);
 		_G(sndPlayer)->stopMod();
 	}
 
