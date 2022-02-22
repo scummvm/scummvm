@@ -772,7 +772,8 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str) {
 			*str = start_str + 2 + AtsTxtHeader::SIZE();
 
 			if (_atsv.TxtMode) {
-				Common::MemoryReadStream rs2((const byte *)*str, AtsStrHeader::SIZE());
+				Common::MemoryReadStream rs2((const byte *)*str,
+					AtsStrHeader::SIZE());
 				_atsv.StrHeader.load(&rs2);
 			}
 
@@ -842,6 +843,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 					*status = count;
 					*str = start_str;
 					start_str -= AtsStrHeader::SIZE();
+
 					if (_atsv.TxtMode != TXT_MARK_NAME) {
 						Common::MemoryReadStream rs((const byte *)start_str,
 							AtsStrHeader::SIZE());
@@ -849,8 +851,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 					}
 				} else {
 					++count;
-
-					tmp_str += AtsStrHeader::SIZE();
+					tmp_str += AtsStrHeader::SIZE() + 2;
 					start_str = tmp_str + 1;
 				}
 			} else if (*tmp_str == ATDS_END ||
