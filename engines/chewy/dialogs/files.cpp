@@ -50,12 +50,10 @@ static const int16 FILE_ICONS[8 * 4] = {
 
 int16 Files::execute(bool isInGame) {
 	int16 key = 0;
-	int16 i, j;
 	Common::Point pt[8];
 	int16 mode[9];
 	bool visibility[8];
 	int16 ret = 0;
-	int16 line;
 	bool flag = false;
 
 	if (!ConfMan.getBool("original_menus")) {
@@ -80,7 +78,7 @@ int16 Files::execute(bool isInGame) {
 	showCur();
 
 	pt[SCROLL_UP] = pt[SCROLL_DOWN] = Common::Point(1, 0);
-	for (i = SAVE; i <= W7; i++)
+	for (int16 i = SAVE; i <= W7; i++)
 		pt[i] = Common::Point(5, 5);
 
 	Common::fill(visibility, visibility + 8, true);
@@ -102,7 +100,7 @@ int16 Files::execute(bool isInGame) {
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 		// Draw the buttons at the bottom
-		for (i = 28, j = SCROLL_UP; j <= OPTIONS; i++, j++) {
+		for (int16 i = 28, j = SCROLL_UP; j <= OPTIONS; i++, j++) {
 			if (visibility[j]) {
 				if (!mode[j])
 					// Not pressed
@@ -118,7 +116,7 @@ int16 Files::execute(bool isInGame) {
 
 		// Write the list of savegame slots
 		char *tmp = fnames + (text_off * 40);
-		for (i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
+		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, "%2d.", text_off + i);
 				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
@@ -144,7 +142,7 @@ int16 Files::execute(bool isInGame) {
 		if (mode[QUIT])
 			--mode[QUIT];
 		if (mode[QUIT] == 1) {
-			_G(out)->printxy(120, 138, 255, 300, 0, QUIT_MSG);
+			_G(out)->printxy(120, 138, 255, 300, 0, g_engine->getLanguage() == Common::Language::DE_DEU ? QUIT_MSG_DE : QUIT_MSG_EN);
 			_G(out)->back2screen(_G(workpage));
 			_G(in)->alter_kb_handler();
 
@@ -177,8 +175,8 @@ int16 Files::execute(bool isInGame) {
 			case 1:
 				key = Common::KEYCODE_DOWN;
 				break;
-			case 2:
-				line = (_G(minfo).y - 68) / 10;
+			case 2: {
+				int16 line = (_G(minfo).y - 68) / 10;
 				if (line == active_slot)
 					key = Common::KEYCODE_RETURN;
 				else
@@ -188,6 +186,7 @@ int16 Files::execute(bool isInGame) {
 
 				if (!isInGame)
 					goto enter;
+				}
 				break;
 			case 3:
 				key = Common::KEYCODE_F1;

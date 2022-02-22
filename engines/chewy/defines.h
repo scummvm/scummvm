@@ -183,7 +183,8 @@ enum SetupScreenMode {
 
 #define ADSH_TMP "adsh.tmp"
 
-#define QUIT_MSG "QUIT ?? Y/N "
+#define QUIT_MSG_EN "QUIT ?? Y/N "
+#define QUIT_MSG_DE "BEENDEN ?? J/N "
 
 #define MAX_PERSON 3
 
