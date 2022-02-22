@@ -146,7 +146,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 	_ssret.StrPtr = _splitPtr;
 	_ssret.X = _splitX;
 	int16 zeichen_anz = (ssi_->Width / ssi_->Fvorx) + 1;
-	memset(_splitPtr, 0, sizeof(char *)*MAX_STR_SPLIT);
+	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
 	char *str_adr = ssi_->Str;
 	int16 count = 0;

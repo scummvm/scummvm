@@ -100,12 +100,14 @@ struct AdsDiaHeaders {
 	int16 Anz;
 };
 
+#include "common/pack-start.h"	// START STRUCT PACKING
 struct AdsBlock {
 	bool Show[ADS_MAX_BL_EIN];
 
 	uint8 Next[ADS_MAX_BL_EIN];
 	uint8 Steuer[ADS_MAX_BL_EIN];
-};
+} PACKED_STRUCT;
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 struct AtdsVar {
 	int16 Silent = 0;
