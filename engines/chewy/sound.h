@@ -56,7 +56,7 @@ public:
 	bool isMusicActive();
 	void setMusicVolume(uint volume);
 
-	void playSpeech(int num);
+	void playSpeech(int num, bool waitForFinish);
 	void pauseSpeech();
 	void resumeSpeech();
 	void stopSpeech();

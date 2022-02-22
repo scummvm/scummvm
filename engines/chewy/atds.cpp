@@ -80,7 +80,7 @@ Atdsys::Atdsys() {
 	_adsv.AutoDia = false;
 	_adsv.StrNr = -1;
 	_adsv.SilentCount = false;
-	_atsv.Display = false;
+	_atsv._display = DISPLAY_NONE;
 	_atsv.SilentCount = false;
 	_atdsv.Delay = &_tmpDelay;
 	_tmpDelay = 1;
@@ -510,60 +510,61 @@ void Atdsys::set_ats_mem(int16 mode) {
 	}
 }
 
-bool Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr) {
+DisplayMode Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 mode, int16 *voc_nr) {
 	*voc_nr = -1;
 	set_ats_mem(mode);
 
+	_atsv._display = DISPLAY_NONE;
+
 	if (_atsmem) {
-		if (_atsv.Display)
+		if (_atsv._display != DISPLAY_NONE)
 			stop_ats();
 
 		int16 txt_anz;
 		_atsv.Ptr = ats_get_txt(txt_nr, txt_mode, &txt_anz, mode);
 
 		if (_atsv.Ptr) {
-			_atsv.Display = true;
+			_atsv._display = _atdsv.Display;
 			char *ptr = _atsv.Ptr;
 			_atsv.TxtLen = 0;
 
 			while (*ptr++ != ATDS_END_TEXT)
 				++_atsv.TxtLen;
 
+			*voc_nr = _atsv.StrHeader.VocNr - ATDS_VOC_OFFSET;
+
 			if ((byte)*_atsv.Ptr == 248) {
 				// Special code for no message to display
-				_atsv.Display = false;
+				_atsv._display = (_atdsv.Display == DISPLAY_TXT || *voc_nr == -1) ?
+					DISPLAY_NONE : DISPLAY_VOC;
+
 			} else {
 				_atsv.DelayCount = get_delay(_atsv.TxtLen);
 				_printDelayCount1 = _atsv.DelayCount / 10;
 				_atsv.Color = color;
 				_mousePush = true;
-			}
 
-			*voc_nr = _atsv.StrHeader.VocNr - ATDS_VOC_OFFSET;
-
-			if ((_atdsv.Display == DISPLAY_VOC) && (*voc_nr != -1)) {
-				_atsv.Display = false;
+				if (*voc_nr == -1) {
+					_atsv._display = (_atdsv.Display == DISPLAY_VOC) ?
+						DISPLAY_NONE : DISPLAY_TXT;
+				}
 			}
-		} else {
-			_atsv.Display = false;
 		}
-	} else {
-		_atsv.Display = false;
 	}
 
-	return _atsv.Display;
+	return _atsv._display;
 }
 
 void Atdsys::stop_ats() {
-	_atsv.Display = false;
+	_atsv._display = DISPLAY_NONE;
 }
 
-int16 Atdsys::ats_get_status() {
-	return _atsv.Display;
+DisplayMode &Atdsys::ats_get_status() {
+	return _atsv._display;
 }
 
 void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
-	if (_atsv.Display) {
+	if (_atsv._display == DISPLAY_TXT || _atsv._display == DISPLAY_ALL) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->get_switch_code()) {
 			case Common::KEYCODE_ESCAPE:
@@ -625,7 +626,8 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			str_null2leer(start_ptr, start_ptr + _atsv.TxtLen - 1);
 			if (_atsv.DelayCount <= 0) {
 				if (_ssr->Next == false) {
-					_atsv.Display = false;
+					_atsv._display = (_atsv._display == DISPLAY_ALL) ?
+						DISPLAY_VOC : DISPLAY_NONE;
 				} else {
 					_atsv.Ptr = tmp_ptr;
 					_atsv.TxtLen = 0;
@@ -980,7 +982,8 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 					(_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) != -1) {
 				if (_atdsv.VocNr != _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) {
 					_atdsv.VocNr = _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv.VocNr);
+					g_engine->_sound->playSpeech(_atdsv.VocNr,
+						_atdsv.Display == DISPLAY_VOC);
 					int16 vocx = _G(spieler_vector)[_aadv.StrHeader->AkPerson].Xypos[0] -
 								 _G(spieler).scrollx + _G(spieler_mi)[_aadv.StrHeader->AkPerson].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));

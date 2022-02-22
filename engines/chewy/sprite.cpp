@@ -475,7 +475,10 @@ void start_aad(int16 dia_nr) {
 }
 
 bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
-	bool ret = false;
+	int16 VocNr;
+	int16 vocx;
+	DisplayMode ret = DISPLAY_NONE;
+
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 
@@ -485,23 +488,29 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			if (_G(menu_item) != CUR_WALK)
 				atds_string_start(30000, 0, 0, AAD_STR_START);
 
-			int16 VocNr;
 			ret = _G(atds)->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
-			if (ret) {
-				while (_G(atds)->ats_get_status() != false && !SHOULD_QUIT)
-					set_up_screen(DO_SETUP);
 
-			// WORKAROUND: There are a few cases in the game with no text,
-			// but a voice sample the game would fall back on even in
-			// subtitles only mode. Don't allow this in ScummVM
-			} else if (VocNr != -1 && g_engine->_sound->getSpeechSubtitlesMode() != DISPLAY_TXT) {
-				ret = true;
-				int16 vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+			if (ret == DISPLAY_VOC || ret == DISPLAY_ALL) {
+				vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+
 				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
-				g_engine->_sound->playSpeech(VocNr);
+				g_engine->_sound->playSpeech(VocNr,
+					_G(atds)->getAtdDisplay() == DISPLAY_VOC);
 				//warning("FIXME - unknown constant SMP_PLAYING");
 
 				set_up_screen(DO_SETUP);
+			}
+
+			if (ret != DISPLAY_NONE) {
+ 				DisplayMode &dMode = _G(atds)->ats_get_status();
+				while (!SHOULD_QUIT && dMode != DISPLAY_NONE) {
+					if (dMode != DISPLAY_TXT && !g_engine->_sound->isSpeechActive()) {
+						dMode = (dMode == DISPLAY_ALL) ?
+							DISPLAY_TXT : DISPLAY_NONE;
+					}
+
+					set_up_screen(DO_SETUP);
+				}
 			}
 
 			if (_G(menu_item) != CUR_WALK)
@@ -517,7 +526,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	_G(maus_links_click) = _G(tmp_maus_links);
 
-	return ret;
+	return ret != DISPLAY_NONE;
 }
 
 void aad_wait(int16 str_nr) {
