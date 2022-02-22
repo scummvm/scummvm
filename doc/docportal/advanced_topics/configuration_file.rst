@@ -374,7 +374,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	For example:
 	- COM3
 	- ttyACM2 "
-		":ref:`retrowaveopl3_spi_cs <adlib>`",string,,Specifies the GPIO chip and line that the RetroWave OPL3 is connected to. Use the format <chip>,<line>.
+		":ref:`retrowaveopl3_spi_cs <adlib>`",string,,"Specifies the GPIO chip and line that the RetroWave OPL3 is connected to. Use the format <chip>,<line>."
 		":ref:`rootpath <rootpath>`",string,,
 		":ref:`savepath <savepath>`",string,,
 		save_slot,integer,autosave, Specifies the saved game slot to load

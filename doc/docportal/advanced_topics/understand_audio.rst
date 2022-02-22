@@ -175,7 +175,7 @@ AdLib devices do not use MIDI. They instead have a chip that produces sound thro
 
 The AdLib emulator setting offers MAME, DOSBox and Nuked emulation, with MAME being the least accurate and using the least CPU power, and Nuked being the most accurate and also using the most CPU power - DOSBox is somewhere in between.
 
-There is also the option to select the OPL2LPT, OPL3LPT and RetroWave OPL3 devices, which are external hardware devices with a real OPL chip, connected through the parallel port (OPLxLPT) or a USB port (RetroWave OPL3) of a computer. To use these devices you must specify some configuration settings in the :doc:`configuration file <../advanced_topics/configuration_file>` (the keys start with ``opl2lpt_`` and ``retrowaveopl3_``).
+There is also the option to select the OPL2LPT, OPL3LPT and RetroWave OPL3 devices, which are external hardware devices with a real OPL chip, connected through the parallel port (OPLxLPT) or a USB port (RetroWave OPL3) of a computer. To use these devices you must specify some configuration settings in the :doc:`configuration file <../advanced_topics/configuration_file>`. The keys start with ``opl2lpt_`` and ``retrowaveopl3_``.
 
 AdLib does not require a SoundFont or ROMs, so for many games it might be the easiest to configure. However, if an MT-32 or GS emulator or device is available, ScummVM will prioritize this over AdLib.
 
