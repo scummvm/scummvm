@@ -33,6 +33,24 @@ static const int oIndexYE[9] = {4, 3, 2, 1, 0};
 static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
+void SpiderEngine::initSegment(ArcadeShooting *arc) {
+	_segmentShootSequenceOffset = 0;
+	_segmentShootSequenceMax = 0;
+
+	uint32 randomSegmentShootSequence = _segmentShootSequenceOffset + _rnd->getRandomNumber(_segmentShootSequenceMax);
+	SegmentShoots segmentShoots = arc->shootSequence[randomSegmentShootSequence];
+	_shootSequence = segmentShoots.shootSequence;
+	_segmentRepetitionMax = segmentShoots.segmentRepetition; // Usually zero
+	_segmentRepetition = 0;
+	_segmentOffset = 0;
+	_segmentIdx = _segmentOffset;
+}
+
+void SpiderEngine::findNextSegment(ArcadeShooting *arc) {
+	_segmentIdx = _segmentIdx + 1;
+}
+
+
 void SpiderEngine::hitPlayer() {
 	if (_playerFrameSep < (int)_playerFrames.size()) {
 		if (_playerFrameIdx < _playerFrameSep)

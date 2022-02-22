@@ -45,8 +45,6 @@ void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String
 					break;
 				list += x;
 			}
-			if (list[1] == 'L')
-				list = "";
 			break; // No need to keep parsing
 		}
 	}
@@ -72,8 +70,9 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->segments.clear();
 }
 
-ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
+SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", filename.c_str());
+	debugC(1, kHypnoDebugParser, "%s", data.c_str());
 	// Preparsing
 	Common::String pdata;
 	Common::StringTokenizer lines(data, "\n");
@@ -86,29 +85,63 @@ ShootSequence HypnoEngine::parseShootList(const Common::String &filename, const 
 			continue;
 		pdata += "\n" + t;
 	}
-
-	// Parsing
-	Common::StringTokenizer tok(pdata, " ,.\t");
 	Common::String n;
 	ShootInfo si;
-	ShootSequence seq;
-	while (!tok.empty()) {
-		t = tok.nextToken();
-		if (t[0] == '\n')
-			continue;
-		n = tok.nextToken();
-		if (t == "Z")
-			break;
+	SegmentShootsSequence seq;
+	// Parsing
 
-		Common::replace(n, "\nS", "");
-		Common::replace(n, "\nZ\n", "");
-		si.name = n;
-		si.timestamp = atoi(t.c_str());
-		if (si.timestamp == 0)
-			error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
-		seq.push_back(si);
-		debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
-	}
+	if (pdata[1] == 'L') { // List of elements
+		SegmentShoots ss;
+		ss.segmentRepetition = 0;
+		Common::StringTokenizer tok(pdata, " ,.\n\t");
+		while (!tok.empty()) {
+		t = tok.nextToken();
+			while (t == "L") {
+				if (ss.segmentRepetition > 0)
+					seq.push_back(ss);
+				t = tok.nextToken();
+				ss.segmentRepetition = atoi(t.c_str());
+				ss.shootSequence.clear();
+				t = tok.nextToken();
+			}
+
+			n = tok.nextToken();
+			if (t == "Z") {
+				seq.push_back(ss);
+				break;
+			}
+
+			si.name = n;
+			si.timestamp = atoi(t.c_str());
+			if (si.timestamp == 0)
+				error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
+			ss.shootSequence.push_back(si);
+			debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
+		}
+	} else if (pdata[1] == 'S' ) { // Single element
+		SegmentShoots ss;
+		Common::StringTokenizer tok(pdata, " ,.\t");
+		while (!tok.empty()) {
+			t = tok.nextToken();
+			if (t[0] == '\n')
+				continue;
+			n = tok.nextToken();
+			if (t == "Z")
+				break;
+
+			Common::replace(n, "\nS", "");
+			Common::replace(n, "\nZ\n", "");
+			si.name = n;
+			si.timestamp = atoi(t.c_str());
+			if (si.timestamp == 0)
+				error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
+			ss.shootSequence.push_back(si);
+			debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());
+		}
+		seq.push_back(ss);
+	} else
+		error("Invalid shoot sequence to parse: %c", pdata[1]);
+
 	return seq;
 }
 
@@ -133,19 +166,24 @@ void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCT
 
 void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 
+void HypnoEngine::initSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
+
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
-	ShootSequence shootSequence = arc->shootSequence;
+
+	// segment/shoots
+	Segments segments = arc->segments;
+	initSegment(arc);
+
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
 	_hitSound = arc->hitSound;
 	_health = arc->health;
 	_maxHealth = _health;
-	Segments segments = arc->segments;
-	uint32 segmentIdx = 0;
-	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[segmentIdx].type);
+	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);
 	changeCursor("arcade");
 	_shoots.clear();
 	if (!arc->player.empty())
@@ -179,7 +217,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	playVideo(background);
 	float rate = background.decoder->getFrameRate().toDouble();
 	if (rate < 10) {
-		debugC(1, kHypnoDebugArcade, "Using frame rate looks odd: %f, increasing x 10", rate);
+		debugC(1, kHypnoDebugArcade, "Used frame rate looks odd: %f, increasing x 10", rate);
 		background.decoder->setRate(10.0);
 	}
 	loadPalette(arc->backgroundPalette);
@@ -187,12 +225,19 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	bool shootingSecondary = false;
 	bool needsUpdate = true;
 	bool transition = false;
-	_obj1KillsCount = 0;
-	_obj1MissesCount = 0;
+
+	_objIdx = 0;
+	_objKillsCount[0] = 0;
+	_objKillsCount[1] = 0;
+	_objMissesCount[0] = 0;
+	_objMissesCount[1] = 0;
+
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
 
 	Common::Event event;
+	bool levelComplete = false;
 	while (!shouldQuit()) {
+		//debug("frame: %d", background.decoder->getCurFrame());
 		needsUpdate = background.decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -287,45 +332,35 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			drawScreen();
 		}
 
-		if (background.decoder && background.decoder->getCurFrame() >= int(segments[segmentIdx].start + segments[segmentIdx].size - 1)) {
-			debugC(1, kHypnoDebugArcade, "Finished segment %d of type %x", segmentIdx, segments[segmentIdx].type);
+		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 1)) {
+			debugC(1, kHypnoDebugArcade, "Finished segment %d of type %x", _segmentIdx, segments[_segmentIdx].type);
 
-			if (segments[segmentIdx].type == 0xb3)
-				if (_rnd->getRandomBit() || segments.size() == 2)
-					segmentIdx = segmentIdx + 1;
-				else 
-					segmentIdx = segmentIdx + 5;
-			else if (segments[segmentIdx].type == 0xc5) {
-				if (mousePos.x <= 100)
-					segmentIdx = segmentIdx + 1;
-				else if (mousePos.x >= 300)
-					segmentIdx = segmentIdx + 3;
-				else 
-					segmentIdx = segmentIdx + 2;
-			} else if (segments[segmentIdx].type == 0xc2) {
-				if (mousePos.x <= 160)
-					segmentIdx = segmentIdx + 1;
-				else 
-					segmentIdx = segmentIdx + 2;
-			} else {
-				segmentIdx = 0;
+			// Clear shoots
+			/*for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+				if (it->video && it->video->decoder)
+					skipVideo(*it->video);
+				delete it->video;
 			}
+			_shoots.clear();*/
+			findNextSegment(arc);
 
-			if (segmentIdx >= segments.size())
-				error("Invalid segment %d", segmentIdx); 
+			if (_segmentIdx >= segments.size())
+				error("Invalid segment %d", _segmentIdx); 
 
-			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", segmentIdx, segments[segmentIdx].type, segments[segmentIdx].start);
-			if (!segments[segmentIdx].end) { // If it is not the end segment
-				background.decoder->forceSeekToFrame(segments[segmentIdx].start);
+			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", _segmentIdx, segments[_segmentIdx].type, segments[_segmentIdx].start);
+			if (!segments[_segmentIdx].end) { // If it is not the end segment
+				background.decoder->forceSeekToFrame(segments[_segmentIdx].start+2);
+				needsUpdate = true;
 				continue;
-			}
+			} else 
+				levelComplete = true;
 		}
 
-		if (segments[segmentIdx].end || checkArcadeLevelCompleted(background, segments[segmentIdx])) {
+		if (segments[_segmentIdx].end || levelComplete) {
 			skipVideo(background);
 			// Objectives
-			if ((arc->obj1KillsRequired > 0 || arc->obj1MissesAllowed) > 0 && !_skipLevel) {
-				if (_obj1KillsCount < arc->obj1KillsRequired || _obj1MissesCount > arc->obj1MissesAllowed) {
+			if ((_objKillsCount[_objIdx] > 0 || _objMissesCount[_objIdx] > 0) && !_skipLevel) {
+				if (_objKillsCount[_objIdx] < arc->objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > arc->objMissesAllowed[_objIdx]) {
 					if (!arc->defeatMissBossVideo.empty()) {
 						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
 						runIntro(video);
@@ -352,10 +387,14 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (shootSequence.size() > 0) {
-			ShootInfo si = shootSequence.front();
-			if ((int)si.timestamp <= background.decoder->getCurFrame()) {
-				shootSequence.pop_front();
+		if (_shootSequence.size() > 0) {
+			ShootInfo si = _shootSequence.front();
+			int idx = (int)segments[_segmentIdx].size * _segmentRepetition \
+					+ background.decoder->getCurFrame() \
+					- (int)segments[_segmentIdx].start; 
+			//debug("%d %d", si.timestamp, idx);
+			if ((int)si.timestamp <= idx) {
+				_shootSequence.pop_front();
 				for (Shoots::iterator it = arc->shoots.begin(); it != arc->shoots.end(); ++it) {
 					if (it->name == si.name) {
 						Shoot s = *it;
@@ -504,13 +543,15 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 					break;
 				explosionFrame = *it;
 			}
-
+			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
+			if (_shoots[i].video->decoder->getFrameCount() < explosionFrame + 12)
+				explosionFrame = _shoots[i].video->decoder->getFrameCount() - 12;
 			_shoots[i].video->decoder->forceSeekToFrame(explosionFrame + 2);
 		} else {
 			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
 			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
-			_obj1KillsCount = _obj1KillsCount + _shoots[i].obj1KillsCount;
+			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 			if (!_shoots[i].explosionAnimation.empty()) {
 				_shoots[i].video = new MVideo(_shoots[i].explosionAnimation, mousePos, true, false, false);
 				playVideo(*_shoots[i].video);

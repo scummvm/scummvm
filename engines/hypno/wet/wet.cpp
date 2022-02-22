@@ -28,20 +28,22 @@
 namespace Hypno {
 
 static const chapterEntry rawChapterTable[] = {
-	{11, {44, 172}, {218, 172}, {0, 0}}, 		// c11
-	{20, {44, 172}, {218, 172}, {0, 0}}, 		// c20
+	{11, {44, 172}, {218, 172}, {0,   0}}, 		// c11
+	{10, {19, 3},   {246, 3}, 	{246, 11}}, 	// c10
+	{20, {44, 172}, {218, 172}, {0,   0}}, 		// c20
 	{21, {70, 160}, {180, 160}, {220, 185}}, 	// c21
 	{22, {70, 160}, {180, 160}, {220, 185}}, 	// c22
 	{23, {70, 160}, {180, 160}, {220, 185}}, 	// c23
 	{31, {70, 160}, {180, 160}, {220, 185}}, 	// c31
 	{32, {70, 160}, {180, 160}, {220, 185}}, 	// c32
+	{33, {70, 160}, {180, 160}, {220, 185}}, 	// c33
 	{41, {70, 160}, {180, 160}, {220, 185}}, 	// c41
 	{42, {70, 160}, {180, 160}, {220, 185}}, 	// c42
 	{43, {70, 160}, {180, 160}, {220, 185}}, 	// c43
 	{44, {70, 160}, {180, 160}, {220, 185}}, 	// c44
 	{51, {60, 167}, {190, 167}, {135, 187}}, 	// c51
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
-	{50, {60, 167}, {190, 167}, {135, 187}}, 	// c50
+	{50, {19, 3},   {246, 3}, 	{246, 11}}, 	// c50 (fixed)
 	{61, {44, 172}, {218, 172}, {0, 0}}, 		// c61
 	{60, {44, 172}, {218, 172}, {0, 0}}, 		// c60
 	{0,  {0,  0},   {0,   0},   {0,   0}}    	// NULL
@@ -256,7 +258,6 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c111.mi_", "c10", "<check_lives>", "");
 	loadArcadeLevel("c112.mi_", "c10", "<check_lives>", "");
 
-
 	loadArcadeLevel("c100.mi_", "c21", "<check_lives>", "");
 	loadArcadeLevel("c101.mi_", "c21", "<check_lives>", "");
 	loadArcadeLevel("c102.mi_", "c21", "<check_lives>", "");
@@ -285,11 +286,11 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c321.mi_", "c41", "<check_lives>", "");
 	loadArcadeLevel("c322.mi_", "c41", "<check_lives>", "");
 
-	//loadArcadeLevel("c330.mi_", "???", "");
+	//loadArcadeLevel("c330.mi_", "???", "", "");
 	//loadArcadeLevel("c331.mi_", "???", "");
 	//loadArcadeLevel("c332.mi_", "???", "");
 
-	//loadArcadeLevel("c300.mi_", "???", "");
+	//loadArcadeLevel("c300.mi_", "???", "", "");
 	//loadArcadeLevel("c301.mi_", "???", "");
 	//loadArcadeLevel("c302.mi_", "???", "");
 
@@ -321,7 +322,10 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c521.mi_", "c61", "<check_lives>", "");
 	loadArcadeLevel("c522.mi_", "c61", "<check_lives>", "");
 
-	//loadArcadeLevel("c500.mi_", "???", "");
+	loadArcadeLevel("c500.mi_", "c61", "<check_lives>", "");
+	ArcadeShooting *arc = (ArcadeShooting*) _levels["c500.mi_"];
+	arc->id = 50; // Fixed from the original (5)
+
 	//loadArcadeLevel("c501.mi_", "???", "");
 	//loadArcadeLevel("c502.mi_", "???", "");
 

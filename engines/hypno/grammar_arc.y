@@ -60,7 +60,7 @@ using namespace Hypno;
 %token<i> NUM BYTE
 // header
 %token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK RESTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK NTOK NSTOK RTOK R0TOK ITOK JTOK ZTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK NTOK NSTOK RTOK R01TOK ITOK I1TOK JTOK ZTOK
 
 // body
 %token NONETOK A0TOK P0TOK WTOK
@@ -101,21 +101,29 @@ hline: 	CTOK NUM {
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
 	| OTOK NUM NUM {
-		g_parsedArc->obj1KillsRequired = $2;
-		g_parsedArc->obj1MissesAllowed = $3;
+		g_parsedArc->objKillsRequired[0] = $2;
+		g_parsedArc->objMissesAllowed[0] = $3;
 		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3);
 	}
 	| ONTOK NUM NUM { 
 		if (Common::String("O0") == $1) {
-			g_parsedArc->obj1KillsRequired = $2;
-			g_parsedArc->obj1MissesAllowed = $3;
+			g_parsedArc->objKillsRequired[0] = $2;
+			g_parsedArc->objMissesAllowed[0] = $3;
 		} else if (Common::String("O1") == $1) {
-			g_parsedArc->obj2KillsRequired = $2;
-			g_parsedArc->obj2MissesAllowed = $3;
+			g_parsedArc->objKillsRequired[1] = $2;
+			g_parsedArc->objMissesAllowed[1] = $3;
 		} else 
 			error("Invalid objective: '%s'", $1);
 		debugC(1, kHypnoDebugParser, "ON %d %d", $2, $3); }
-	| ONTOK NUM { debugC(1, kHypnoDebugParser, "ON %d", $2); }
+	| ONTOK NUM { 
+		if (Common::String("O0") == $1) {
+			g_parsedArc->objKillsRequired[0] = $2;
+		} else if (Common::String("O1") == $1) {
+			g_parsedArc->objKillsRequired[1] = $2;
+		} else 
+			error("Invalid objective: '%s'", $1);
+		debugC(1, kHypnoDebugParser, "ON %d", $2);
+	}
 	| TPTOK FILENAME NUM FILENAME {
 		g_parsedArc->transitionVideo = $2;
 		g_parsedArc->transitionTime = $3;
@@ -142,13 +150,16 @@ hline: 	CTOK NUM {
 	| ITOK FILENAME { 
 		g_parsedArc->player = $2; 
 		debugC(1, kHypnoDebugParser, "I %s", $2); 
-		}
+	}
+	| I1TOK FILENAME { 
+		debugC(1, kHypnoDebugParser, "I1 %s", $2); 
+	}
 	| QTOK NUM NUM { debugC(1, kHypnoDebugParser, "Q %d %d", $2, $3); }
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
 			g_parsedArc->beforeVideo = $2;
 		//else if (Common::String("B1") == $1) 
-		//	g_parsedArc->nextLevelVideo = $2;
+		//	g_parsedArc->beforeVideo = $2;
 		else if (Common::String("B2") == $1)
 			g_parsedArc->nextLevelVideo = $2;
 		else if (Common::String("B3") == $1)
@@ -199,6 +210,27 @@ hline: 	CTOK NUM {
 		Segment segment($2, $4, $3);
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "HU %x %d %d", $2, $3, $4); 
+	}
+	| HTOK NAME NUM NUM {
+		assert(Common::String($2).size() == 1);
+		Segment segment($2[0], $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "H %s %d %d", $2, $3, $4); 
+	}
+	| HTOK RTOK NUM NUM { // Workaround for BYTE == R
+		Segment segment('R', $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "H R %d %d", $3, $4); 
+	}
+	| HTOK ATOK NUM NUM { // Workaround for BYTE == A
+		Segment segment('A', $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "H A %d %d", $3, $4); 
+	}
+	| HTOK PTOK NUM NUM { // Workaround for BYTE == P
+		Segment segment('P', $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "H P %d %d", $3, $4); 
 	}
 	| HTOK BYTE NUM NUM {
 		Segment segment($2, $4, $3);
@@ -306,11 +338,14 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "A0 %d %d", $2, $3); 
 	}
 	| RTOK NUM NUM  {
-		shoot->obj1KillsCount = $2;
-		shoot->obj1MissesCount = $3; 
+		shoot->objKillsCount = $2;
+		shoot->objMissesCount = $3; 
 		debugC(1, kHypnoDebugParser, "R %d %d", $2, $3); 
 	}
-	| R0TOK NUM NUM  { debugC(1, kHypnoDebugParser, "R0 %d %d", $2, $3); }
+	| R01TOK NUM NUM  { 
+		shoot->objKillsCount = $2;
+		shoot->objMissesCount = $3;
+		debugC(1, kHypnoDebugParser, "R0/1 %d %d", $2, $3); }
 	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
 	| KNTOK NUM NUM { 
 		shoot->explosionFrames.push_front($3);
@@ -327,6 +362,7 @@ bline: FNTOK FILENAME {
 	| HTOK NUM  {
 		shoot->attackFrames.push_back($2); 
 		debugC(1, kHypnoDebugParser, "H %d", $2); }
+	| VTOK NUM  { debugC(1, kHypnoDebugParser, "V %d", $2); }
 	| WTOK NUM  {
 		shoot->attackWeight = $2;  
 		debugC(1, kHypnoDebugParser, "W %d", $2); }

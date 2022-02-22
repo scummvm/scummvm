@@ -70,7 +70,6 @@ enum PlayerPosition {
 
 class HypnoEngine : public Engine {
 private:
-	Common::RandomSource *_rnd;
 	Image::ImageDecoder *_image;
 
 public:
@@ -111,7 +110,7 @@ public:
 	// Parsing
 	void splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list);
 	void parseArcadeShooting(const Common::String &prefix, const Common::String &name, const Common::String &data);
-	ShootSequence parseShootList(const Common::String &name, const Common::String &data);
+	SegmentShootsSequence parseShootList(const Common::String &name, const Common::String &data);
 	void loadArcadeLevel(const Common::String &current, const Common::String &nextWin, const Common::String &nextLose, const Common::String &prefix);
 	void loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
 	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
@@ -223,6 +222,17 @@ public:
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual void shoot(const Common::Point &mousePos);
 	virtual void hitPlayer();
+
+	// Segments
+	uint32 _segmentIdx;
+	uint32 _segmentOffset;
+	uint32 _segmentRepetition;
+	uint32 _segmentRepetitionMax;
+	uint32 _segmentShootSequenceOffset;
+	uint32 _segmentShootSequenceMax;
+	ShootSequence _shootSequence;
+	virtual void findNextSegment(ArcadeShooting *arc);
+	virtual void initSegment(ArcadeShooting *arc);
 	virtual bool checkArcadeLevelCompleted(MVideo &background, Segment segment);
 	Common::String _difficulty;
 	bool _skipLevel;
@@ -242,8 +252,9 @@ public:
 	int _playerFrameSep;
 
 	// Objectives
-	uint32 _obj1KillsCount;
-	uint32 _obj1MissesCount;
+	uint32 _objIdx;
+	uint32 _objKillsCount[2];
+	uint32 _objMissesCount[2];
 
 	// Fonts
 	virtual void loadFonts();
@@ -265,6 +276,9 @@ public:
 	bool startAlarm(uint32, Common::String *);
 	bool startCountdown(uint32);
 	void removeTimers();
+
+	// Random
+	Common::RandomSource *_rnd;
 };
 
 struct chapterEntry {
@@ -296,7 +310,11 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
+	// Arcade
 	void runBeforeArcade(ArcadeShooting *arc) override;
+	void findNextSegment(ArcadeShooting *arc) override;
+	void initSegment(ArcadeShooting *arc) override;
+
 private:
 	void runMainMenu(Code *code);
 	void runCheckLives(Code *code);
@@ -318,6 +336,9 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void hitPlayer() override;
+
+	void findNextSegment(ArcadeShooting *arc) override;
+	void initSegment(ArcadeShooting *arc) override;
 	bool checkArcadeLevelCompleted(MVideo &background, Segment segment) override;
 
 	void drawBackToMenu(Hotspot *h) override;

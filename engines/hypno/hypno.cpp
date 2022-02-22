@@ -55,7 +55,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _countdown(0), _timerStarted(false), _score(0), _lives(0),
 	  _defaultCursor(""), _checkpoint(""),
 	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft),
-	  _obj1KillsCount(0), _obj1MissesCount(0),
+	  //_obj1KillsCount(0), _obj1MissesCount(0),
 	  _screenW(0), _screenH(0) { // Every games initializes its own resolution
 	_rnd = new Common::RandomSource("hypno");
 
