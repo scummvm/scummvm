@@ -211,7 +211,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "vengeanceofthechicken", "Vengeance of the Chicken" },
 	{ "waitkey", "WaitKey();" },
 	{ "zakagsremake", "Zak McKracken and the Alien Mindbenders AGS Remake" },
-	
+
 
 	// Commercial games
 	{ "3geeks", "3 GEEKS" },
@@ -400,7 +400,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "agsjukebox", "AGS JukeBox" },
 	{ "agslife", "AGSLife" },
 	{ "agsmagus", "AGS Magus" },
-	{ "agsmastermind", "AGS Mastermind" },	
+	{ "agsmastermind", "AGS Mastermind" },
 	{ "agsmittensshooter", "AGS Mittens Shooter" },
 	{ "agsmoduletester", "AGS Module Tester" },
 	{ "agsyahtzee", "AGS Yahtzee" },
@@ -425,7 +425,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alientimezone", "Alien Time Zone" },
 	{ "allgonesoon", "All Gone Soon" },
 	{ "allgonesoon2", "All Gone Soon 2" },
-	{ "allhallowseve", "All Hallows' Eve" },	
+	{ "allhallowseve", "All Hallows' Eve" },
 	{ "allpigs", "All Pigs Deserve To Burn In Hell" },
 	{ "allthewaydown", "All The Way Down" },
 	{ "alluminum", "P.I. Al Luminum: Haunted House" },
@@ -2650,12 +2650,12 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zugzwang", "Zugzwang" },
 
 	// RuCOMM games and demos (Russian Only)
-	
+
 	// RuCOMM #1. The Best Man
 	{ "evildead4", "Evil Dead 4" },
 	{ "goodman", "Good Man" },
 	{ "tbdiy", "The BAD day in year" },
-	
+
 	// RuCOMM #2. Laboratory / Hotel between worlds
 	{ "einsteinmachine", "Einstein Machine" },
 
@@ -2681,7 +2681,7 @@ const char *const PRE_25 = "Pre 2.5";
 
 #define PRE_25_ENTRY_EN(ID, FILENAME, MD5, SIZE) \
 	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, Common::EN_ANY, "Pre 2.5", nullptr, ADGF_UNSTABLE)
-	
+
 #define PRE_25_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
 	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, "Pre 2.5", nullptr, ADGF_UNSTABLE)
 
@@ -3327,7 +3327,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("battlewarriorsrt", "battle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16314318),
 	DEMO_ENTRY("beforeww2", "beforeww.exe", "4d17844029d8910fbaae1bdc99e250f2", 9759616),
 	DEMO_ENTRY("bizarreearthquake", "bizarre.exe", "7e7c92d697b3cc9610d86854a00e517b", 29387739),
-	DEMO_ENTRY("blackmorph", "liechi.exe", "46859c6f77bdb311266daa589561fa6b", 14476030),  // MAGS 
+	DEMO_ENTRY("blackmorph", "liechi.exe", "46859c6f77bdb311266daa589561fa6b", 14476030),  // MAGS
 	DEMO_ENTRY("blackmorph", "Black Morph.exe", "cd37b1dbdff2c7092e05f5abed2f5dee", 16333092),  // v1.0
 	DEMO_ENTRY("blackwell1", "blackwell demo.exe", "2eeca6bae968dc61b5ed36561efc0fca", 53342880),
 	DEMO_ENTRY("blackwell2", "unbound_demo.exe", "6ee842f73649ced615c44d4eb303687c", 30057537),
@@ -3919,7 +3919,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLATFORM("bookofspellscomplete", "bos2.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 5724377, "Beta"),
 	GAME_ENTRY("bovinebyproduct", "cow.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 134670383),
 	GAME_ENTRY("bowanddork", "BowAndDork.exe", "7db052bc30700d1f30f5330f5814f519", 17121243),  // Windows
-	GAME_ENTRY("bowanddork", "BowAndDork.ags", "8728011855017e243bb95682d2898004", 14086087),  // Linux 
+	GAME_ENTRY("bowanddork", "BowAndDork.ags", "8728011855017e243bb95682d2898004", 14086087),  // Linux
 	GAME_ENTRY("bowserquirkquest", "bowser quirk quest.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3046623),
 	GAME_ENTRY("box", "box.exe", "0b7529a76f38283d6e850b8d56526fc1", 748638),
 	GAME_ENTRY("boxfight", "boxen.exe", "3128b9f90e2f954ba704414ae854d10b", 3132938),
@@ -4168,7 +4168,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("detention", "little.exe", "c16204dc8aa338e3199b2c62da0b33f4", 2362176),
 	GAME_ENTRY("devochkaquest", "DevochkaQuest.exe", "84faea68bf7277610c2229be7b3e74af", 32769660),
 	GAME_ENTRY("dexter", "DexterIntro.exe", "2ca80bd50763378b72cd1e1cf25afac3", 4630186),
-	GAME_ENTRY_LANG("dgsearchbatteries", "dgsfb.exe", "88cf59aad15ca331ab0f854e16c84df3", 1664209, Common::EN_ANY),  // English  
+	GAME_ENTRY_LANG("dgsearchbatteries", "dgsfb.exe", "88cf59aad15ca331ab0f854e16c84df3", 1664209, Common::EN_ANY),  // English
 	GAME_ENTRY_LANG("dgsearchbatteries", "dgf.exe", "88cf59aad15ca331ab0f854e16c84df3", 1619269, Common::FR_FRA),  //French
 	GAME_ENTRY("dicklarenzo", "LaRenzo.exe", "0500aacb6c176d47ac0f8158f055db83", 36844867),
 	GAME_ENTRY("diemaskennyarlathoteps", "ags_masken.exe", "74dc062c5f68f3d70da911f2db5737b6", 129219473),
@@ -4273,8 +4273,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("encounters", "Encounters of the Closest Kind.exe", "06a03fe35791b0578068ab1873455463", 4393673),
 	GAME_ENTRY("endlessloop", "Endless Loop.exe", "615e73fc1874e92d60a1996c2330ea36", 1920165),
 	GAME_ENTRY("enoworld", "Enoworld.exe", "465f972675db2da6040518221af5b0ba", 16151170),
-	GAME_ENTRY("entrapment", "Entrapment.exe", "fa876182475fd84bc104e3458b7ba362", 24899784),  
-	GAME_ENTRY("entrapped", "Cellar.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 4644055),  
+	GAME_ENTRY("entrapment", "Entrapment.exe", "fa876182475fd84bc104e3458b7ba362", 24899784),
+	GAME_ENTRY("entrapped", "Cellar.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 4644055),
 	GAME_ENTRY("equilibrium", "EQ.exe", "0500aacb6c176d47ac0f8158f055db83", 8398394),
 	GAME_ENTRY("erictheanteater", "eric.exe", "e750ecac380dca709028fc0744b9f7f6", 3865602),
 	GAME_ENTRY("erkrealestate", "AISRE.exe", "41e8fa920589300ed8b4aec09a658c90", 5958575),
@@ -4393,7 +4393,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("fribbeldib", "firbbeldib.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 90835696),
 	GAME_ENTRY("fridgefollies", "Fridge.exe", "2ca80bd50763378b72cd1e1cf25afac3", 15002210),
 	GAME_ENTRY("frightfest", "FrightFest.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 162130501),
-	GAME_ENTRY("frightfest", "FrightFest.ags", "b0fbca28e8bd1e83878682b245734746", 159650357),  
+	GAME_ENTRY("frightfest", "FrightFest.ags", "b0fbca28e8bd1e83878682b245734746", 159650357),
 	GAME_ENTRY("fritz", "Fritz.exe", "a4e6ec808b347f4456eae7c808e90727", 70554365),  // Windows
 	GAME_ENTRY("fritz", "Fritz.ags", "df0330e366a4c3fd13e0e2ef491a2e3a", 67522793),  // Linux
 	GAME_ENTRY("frogisland", "frog_island.exe", "465f972675db2da6040518221af5b0ba", 4355477),
@@ -5432,7 +5432,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("projectlazarus", "plazarus.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13219923),
 	GAME_ENTRY("proofoffiction", "PoF.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2723885),
 	GAME_ENTRY("proposal", "Proposal.exe", "46aaeedf91c1763adc2978cacd9673e5", 4593850),
-	GAME_ENTRY("providence", "Providence.exe", "1c00b5d482f5531cb1eba7360b98b3e4", 625922261),	
+	GAME_ENTRY("providence", "Providence.exe", "1c00b5d482f5531cb1eba7360b98b3e4", 625922261),
 	GAME_ENTRY("psychofb", "Psycho Flashback.exe", "a524cbb1c51589903c4043b98917f1d9", 2285929),
 	GAME_ENTRY("psychopomp", "psychopomp.exe", "b142b43c146c25443a1d155d441a6a81", 23721476),  // Windows
 	GAME_ENTRY("psychopomp", "psychopomp.ags", "98a29b0b5e61d8c756c426b6945c869d", 21241332),  // Linux
@@ -5866,7 +5866,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047, Common::FR_FRA),  // Win French
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.ags", "50e4bd3554f1b1d5bf9b7b7c83920c8b", 33452975, Common::FR_FRA),  // Linux French
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35931108),  // Win
-	GAME_ENTRY("taospacetime", "Tao through space and time AGS.ags", "8d57cca10d3825240fd094aefb2db14d", 33454036),  // Linux	
+	GAME_ENTRY("taospacetime", "Tao through space and time AGS.ags", "8d57cca10d3825240fd094aefb2db14d", 33454036),  // Linux
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35931411),  // Win
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.ags", "721753956c697c3d9f134e69622af201", 33454339),  // Linux
 	GAME_ENTRY("tarthenia", "Tarthenia.exe", "a524cbb1c51589903c4043b98917f1d9", 1047988125),
