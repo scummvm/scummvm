@@ -24,7 +24,6 @@
 #include "chewy/chewy.h"
 #include "chewy/globals.h"
 #include "chewy/mcga.h"
-#include "chewy/mcga_graphics.h"
 
 namespace Chewy {
 
@@ -333,8 +332,7 @@ static void setYVals() {
 	} else {
 		spriteYVal1 = spriteHeight / spriteDeltaY2;
 		spriteYVal2 = 1000 * (spriteHeight % spriteDeltaY2);
-		if (spriteDeltaY2)
-			spriteYVal2 /= spriteDeltaY2;
+		spriteYVal2 /= spriteDeltaY2;
 	}
 }
 
