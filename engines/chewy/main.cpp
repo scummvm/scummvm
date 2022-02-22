@@ -254,7 +254,6 @@ void test_menu() {
 	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[_G(spieler_vector)[P_CHEWY].Phase];
 	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
 	_G(spieler_vector)[P_CHEWY].Count = 0;
-	bool ende = false;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	_G(flags).main_maus_flag = false;
 	_G(tmp_menu_item) = false;
@@ -267,8 +266,9 @@ void test_menu() {
 	_G(flags).ShowAtsInvTxt = true;
 	enter_room(-1);
 	_G(uhr)->reset_timer(0, 0);
-	while (!ende)
-		ende = main_loop(DO_SETUP);
+	bool endLoopFl = false;
+	while (!endLoopFl)
+		endLoopFl = main_loop(DO_SETUP);
 }
 
 void menu_entry() {
@@ -986,7 +986,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 
 	case STATIC_USE:
 		ret = _G(obj)->calc_static_use(test_nr);
-		if (ret == OBJEKT_1) {
+		if (ret == OBJECT_1) {
 			_G(maus_links_click) = false;
 			hide_cur();
 			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
@@ -1079,8 +1079,8 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	}
 
 	switch (ret) {
-	case OBJEKT_1:
-	case OBJEKT_2:
+	case OBJECT_1:
+	case OBJECT_2:
 		if (mode == INVENTAR_NORMAL)
 			calc_inv_use_txt(test_nr);
 		break;
@@ -1267,14 +1267,14 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 				}
 			}
 			if (_G(flags).ChAutoMov) {
-				bool ende = false;
+				bool endLoopFl = false;
 				_G(spieler_mi)[p_nr].XyzStart[0] = _G(spieler_vector)[p_nr].Xypos[0];
 				_G(spieler_mi)[p_nr].XyzStart[1] = _G(spieler_vector)[p_nr].Xypos[1];
 				_G(spieler_mi)[p_nr].XyzEnd[0] = _G(gpkt).Dx - _G(spieler_mi)[p_nr].HotX;
 				_G(spieler_mi)[p_nr].XyzEnd[1] = _G(gpkt).Dy - _G(spieler_mi)[p_nr].HotY;
 				_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[p_nr].XyzStart, _G(spieler_mi)[p_nr].Vorschub, &_G(spieler_vector)[p_nr]);
 				get_phase(&_G(spieler_vector)[p_nr], &_G(spieler_mi)[p_nr]);
-				while (!ende) {
+				while (!endLoopFl) {
 					if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE || key == Common::KEYCODE_ESCAPE) {
 						if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 							_G(spieler_vector)[p_nr].Count = 0;
@@ -1290,7 +1290,7 @@ bool auto_move(int16 mov_nr, int16 p_nr) {
 								               p_nr, _G(Rdi)->AutoMov[mov_nr].SprNr);
 							}
 						}
-						ende = true;
+						endLoopFl = true;
 					}
 					set_up_screen(DO_SETUP);
 					SHOULD_QUIT_RETURN0;
@@ -1322,8 +1322,8 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 		if (_G(spieler_vector)[p_nr].Count)
 			get_phase(&_G(spieler_vector)[p_nr], &_G(spieler_mi)[p_nr]);
 		if (mode == ANI_WAIT) {
-			bool ende = false;
-			while (!ende) {
+			bool endLoopFl = false;
+			while (!endLoopFl) {
 				if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 					if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 						_G(spieler_vector)[p_nr].Count = 0;
@@ -1335,7 +1335,7 @@ void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode) {
 						set_person_pos(_G(spieler_mi)[p_nr].XyzEnd[0],
 						               _G(spieler_mi)[p_nr].XyzEnd[1], p_nr, -1);
 					}
-					ende = true;
+					endLoopFl = true;
 				}
 				set_up_screen(DO_SETUP);
 				SHOULD_QUIT_RETURN;
@@ -1881,14 +1881,14 @@ void calc_scroll(int16 x, int16 y, int16 pic_x, int16 pic_y, int16 *sc_x, int16 
 }
 
 void auto_scroll(int16 scrx, int16 scry) {
-	int16 tmp_maus_click = _G(maus_links_click);
+	int16 tmpMouseClick = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	_G(spieler).scrollx >>= 1;
 	_G(spieler).scrollx <<= 1;
 	_G(spieler).scrolly >>= 1;
 	_G(spieler).scrolly <<= 1;
-	bool ende = false;
-	while (!ende) {
+	bool endLoopFl = false;
+	while (!endLoopFl) {
 		if (scrx < _G(spieler).scrollx)
 			_G(spieler).scrollx -= _G(spieler).ScrollxStep;
 		else if (scrx > _G(spieler).scrollx)
@@ -1898,11 +1898,11 @@ void auto_scroll(int16 scrx, int16 scry) {
 		else if (scry > _G(spieler).scrolly)
 			_G(spieler).scrolly += _G(spieler).ScrollyStep;
 		if (scrx == _G(spieler).scrollx && scry == _G(spieler).scrolly)
-			ende = true;
+			endLoopFl = true;
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 	}
-	_G(maus_links_click) = tmp_maus_click;
+	_G(maus_links_click) = tmpMouseClick;
 }
 
 void disable_timer() {

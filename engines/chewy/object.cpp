@@ -58,13 +58,13 @@ static const int16 SIB_ZUSTAND_TBL[] = {
 };
 
 Object::Object(Spieler *sp) {
-	max_inventar_obj = 0;
-	max_static_inventar = 0;
-	max_exit = 0;
-	Player = sp;
-	Rmo = sp->room_m_obj;
-	Rsi = sp->room_s_obj;
-	Re = sp->room_e_obj;
+	_maxInventoryObj = 0;
+	_maxStaticInventory = 0;
+	_maxExit = 0;
+	_player = sp;
+	_rmo = sp->room_m_obj;
+	_rsi = sp->room_s_obj;
+	_roomExit = sp->room_e_obj;
 }
 Object::~Object() {
 }
@@ -73,25 +73,25 @@ int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 	Common::File f;
 
 	if (f.open(fname_)) {
-		if (!iib_datei_header.load(&f)) {
+		if (!_iibFileHeader.load(&f)) {
 			error("Object::load error");
 		}
 
-		if (!scumm_strnicmp(iib_datei_header.Id, "IIB", 3)) {
-			if (iib_datei_header.Size) {
-				assert(iib_datei_header.Size % RoomMovObject::SIZE() == 0);
+		if (!scumm_strnicmp(_iibFileHeader.Id, "IIB", 3)) {
+			if (_iibFileHeader.Size) {
+				assert(_iibFileHeader.Size % RoomMovObject::SIZE() == 0);
 
 				bool valid = true;
-				for (uint i = 0; i < iib_datei_header.Size / RoomMovObject::SIZE() && valid; ++i, ++rmo) {
+				for (uint i = 0; i < _iibFileHeader.Size / RoomMovObject::SIZE() && valid; ++i, ++rmo) {
 					valid = rmo->load(&f);
 				}
 
 				if (!valid)
 					error("Object::load error");
 
-				max_inventar_obj = (int16)iib_datei_header.Size / RoomMovObject::SIZE();
+				_maxInventoryObj = (int16)_iibFileHeader.Size / RoomMovObject::SIZE();
 			} else
-				max_inventar_obj = 0;
+				_maxInventoryObj = 0;
 		} else {
 			error("Object::load error");
 		}
@@ -101,30 +101,30 @@ int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 		error("Object::load error");
 	}
 
-	return max_inventar_obj;
+	return _maxInventoryObj;
 }
 
-int16 Object::load(const char *fname_, RoomStaticInventar *rsi) {
+int16 Object::load(const char *fname_, RoomStaticInventory *rsi) {
 	Common::File f;
 
 	if (f.open(fname_)) {
-		if (!sib_datei_header.load(&f)) {
+		if (!_sibFileHeader.load(&f)) {
 			error("Object::load error");
 		}
 
-		if (!scumm_strnicmp(sib_datei_header.Id, "SIB", 3)) {
-			if (sib_datei_header.Anz) {
+		if (!scumm_strnicmp(_sibFileHeader.Id, "SIB", 3)) {
+			if (_sibFileHeader.Anz) {
 				bool valid = true;
-				for (int i = 0; i < sib_datei_header.Anz && valid; ++i, ++rsi) {
+				for (int i = 0; i < _sibFileHeader.Anz && valid; ++i, ++rsi) {
 					valid = rsi->load(&f);
 				}
 
 				if (!valid)
 					error("Object::load error");
 
-				max_static_inventar = sib_datei_header.Anz;
+				_maxStaticInventory = _sibFileHeader.Anz;
 			} else
-				max_static_inventar = 0;
+				_maxStaticInventory = 0;
 		} else {
 			error("Object::load error");
 		}
@@ -134,30 +134,30 @@ int16 Object::load(const char *fname_, RoomStaticInventar *rsi) {
 		error("Object::load error");
 	}
 
-	return max_static_inventar;
+	return _maxStaticInventory;
 }
 
-int16 Object::load(const char *fname_, RoomExit *RoomEx) {
+int16 Object::load(const char *fname_, RoomExit *roomExit) {
 	Common::File f;
 
 	if (f.open(fname_)) {
-		if (!eib_datei_header.load(&f)) {
+		if (!_eibFileHeader.load(&f)) {
 			error("Object::load error");
 		}
 
-		if (!scumm_strnicmp(eib_datei_header.Id, "EIB", 3)) {
-			if (sib_datei_header.Anz) {
+		if (!scumm_strnicmp(_eibFileHeader.Id, "EIB", 3)) {
+			if (_sibFileHeader.Anz) {
 				bool valid = true;
-				for (int i = 0; i < eib_datei_header.Anz && valid; ++i, ++RoomEx) {
-					valid = RoomEx->load(&f);
+				for (int i = 0; i < _eibFileHeader.Anz && valid; ++i, ++roomExit) {
+					valid = roomExit->load(&f);
 				}
 
 				if (!valid)
 					error("Object::load error");
 
-				max_exit = eib_datei_header.Anz;
+				_maxExit = _eibFileHeader.Anz;
 			} else
-				max_exit = 0;
+				_maxExit = 0;
 		} else {
 			error("Object::load error");
 		}
@@ -167,7 +167,7 @@ int16 Object::load(const char *fname_, RoomExit *RoomEx) {
 		error("Object::load error");
 	}
 
-	return max_exit;
+	return _maxExit;
 }
 
 void Object::sort() {
@@ -175,11 +175,11 @@ void Object::sort() {
 
 	spieler_invnr[0] = 0;
 	for (short i = 0; i < MAX_MOV_OBJ; i++) {
-		if (Rmo[i].RoomNr != -1) {
-			if (Rmo[i].RoomNr == 255) {
+		if (_rmo[i].RoomNr != -1) {
+			if (_rmo[i].RoomNr == 255) {
 				++spieler_invnr[0];
 				spieler_invnr[spieler_invnr[0]] = i;
-			} else if (Rmo[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
+			} else if (_rmo[i].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
 				++mov_obj_room[0];
 				mov_obj_room[mov_obj_room[0]] = i;
 			}
@@ -197,12 +197,12 @@ void Object::free_inv_spr(byte **inv_spr_adr) {
 
 int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 ret = -1;
-	for (int16 i = 0; i < max_static_inventar && ret == -1; i++) {
-		if (Rsi[i].RoomNr == Player->PersonRoomNr[P_CHEWY] && Rsi[i].HideSib == false) {
-			if (mouse_x >= Rsi[i].X &&
-			        mouse_x <= (Rsi[i].X + Rsi[i].XOff) &&
-			        mouse_y >= Rsi[i].Y &&
-			        mouse_y <= (Rsi[i].Y + Rsi[i].YOff))
+	for (int16 i = 0; i < _maxStaticInventory && ret == -1; i++) {
+		if (_rsi[i].RoomNr == _player->PersonRoomNr[P_CHEWY] && _rsi[i].HideSib == false) {
+			if (mouse_x >= _rsi[i].X &&
+			        mouse_x <= (_rsi[i].X + _rsi[i].XOff) &&
+			        mouse_y >= _rsi[i].Y &&
+			        mouse_y <= (_rsi[i].Y + _rsi[i].YOff))
 				ret = i;
 		}
 	}
@@ -212,22 +212,22 @@ int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 int16 Object::is_iib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 ret = -1;
 	for (int16 i = 1; i < mov_obj_room[0] + 1 && ret == -1; i++) {
-		if (Rmo[mov_obj_room[i]].X != -1 &&
-		        mouse_x >= Rmo[mov_obj_room[i]].X &&
-		        mouse_x <= (Rmo[mov_obj_room[i]].X + Rmo[mov_obj_room[i]].XOff) &&
-		        mouse_y >= Rmo[mov_obj_room[i]].Y &&
-		        mouse_y <= (Rmo[mov_obj_room[i]].Y + Rmo[mov_obj_room[i]].YOff))
+		if (_rmo[mov_obj_room[i]].X != -1 &&
+		        mouse_x >= _rmo[mov_obj_room[i]].X &&
+		        mouse_x <= (_rmo[mov_obj_room[i]].X + _rmo[mov_obj_room[i]].XOff) &&
+		        mouse_y >= _rmo[mov_obj_room[i]].Y &&
+		        mouse_y <= (_rmo[mov_obj_room[i]].Y + _rmo[mov_obj_room[i]].YOff))
 			ret = mov_obj_room[i];
 	}
 	return ret;
 }
 
 int16 Object::iib_txt_nr(int16 inv_nr) {
-	return Rmo[inv_nr].TxtNr;
+	return _rmo[inv_nr].TxtNr;
 }
 
 int16 Object::sib_txt_nr(int16 sib_nr) {
-	return Rsi[sib_nr].TxtNr;
+	return _rsi[sib_nr].TxtNr;
 }
 
 int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
@@ -243,12 +243,12 @@ int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 			tmp2 = maus_obj_nr;
 		}
 
-		if (Rmo[tmp1].ActionObj != -1) {
-			if (Rmo[tmp1].ActionObj < 30000 && Rmo[tmp1].ActionObj == tmp2) {
+		if (_rmo[tmp1].ActionObj != -1) {
+			if (_rmo[tmp1].ActionObj < 30000 && _rmo[tmp1].ActionObj == tmp2) {
 				actionFl = true;
-			} else if (Rmo[tmp1].ActionObj >= 30000) {
+			} else if (_rmo[tmp1].ActionObj >= 30000) {
 				int16 i = 0;
-				while (ACTION_OBJ_TBL[i] != Rmo[tmp1].ActionObj &&
+				while (ACTION_OBJ_TBL[i] != _rmo[tmp1].ActionObj &&
 				        ACTION_OBJ_TBL[i] != 32000) {
 					++i;
 				}
@@ -268,7 +268,7 @@ int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 	}
 
 	if (actionFl && calc_rmo_flip_flop(tmp2))
-		ret = (tmp2 == test_obj_nr) ? OBJEKT_2 : OBJEKT_1;
+		ret = (tmp2 == test_obj_nr) ? OBJECT_2 : OBJECT_1;
 
 	return ret;
 }
@@ -276,13 +276,13 @@ int16 Object::action_iib_iib(int16 maus_obj_nr, int16 test_obj_nr) {
 int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 	int16 action_flag = NO_ACTION;
 
-	if (Rmo[maus_obj_nr].ActionObj != -1) {
-		if (Rmo[maus_obj_nr].ActionObj < 30000 &&
-		        Rmo[maus_obj_nr].ActionObj == test_obj_nr) {
-			action_flag = OBJEKT_2;
-		} else if (Rmo[maus_obj_nr].ActionObj >= 30000) {
+	if (_rmo[maus_obj_nr].ActionObj != -1) {
+		if (_rmo[maus_obj_nr].ActionObj < 30000 &&
+		        _rmo[maus_obj_nr].ActionObj == test_obj_nr) {
+			action_flag = OBJECT_2;
+		} else if (_rmo[maus_obj_nr].ActionObj >= 30000) {
 			int16 i = 0;
-			while (ACTION_OBJ_TBL[i] != Rmo[maus_obj_nr].ActionObj &&
+			while (ACTION_OBJ_TBL[i] != _rmo[maus_obj_nr].ActionObj &&
 			        ACTION_OBJ_TBL[i] != 32000) {
 				++i;
 			}
@@ -292,18 +292,18 @@ int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 				while (ACTION_OBJ_TBL[i] < 30000 && !ok) {
 					if (ACTION_OBJ_TBL[i] == test_obj_nr) {
 						ok = 1;
-						action_flag = OBJEKT_2;
+						action_flag = OBJECT_2;
 					}
 					++i;
 				}
 			}
 		}
 	}
-	if (action_flag == OBJEKT_1) {
+	if (action_flag == OBJECT_1) {
 
 		if (!calc_rmo_flip_flop(maus_obj_nr))
 			action_flag = NO_ACTION;
-	} else if (action_flag == OBJEKT_2) {
+	} else if (action_flag == OBJECT_2) {
 
 		if (!calc_rsi_flip_flop(test_obj_nr))
 			action_flag = NO_ACTION;
@@ -312,15 +312,15 @@ int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 }
 
 void Object::hide_sib(int16 nr) {
-	Rsi[nr].HideSib = true;
+	_rsi[nr].HideSib = true;
 }
 
 void Object::show_sib(int16 nr) {
-	Rsi[nr].HideSib = false;
+	_rsi[nr].HideSib = false;
 }
 
 void Object::calc_all_static_detail() {
-	for (int16 i = 0; i < max_static_inventar; i++) {
+	for (int16 i = 0; i < _maxStaticInventory; i++) {
 		calc_static_detail(i);
 	}
 }
@@ -329,8 +329,8 @@ void Object::calc_static_detail(int16 det_nr) {
 	int16 i;
 	int16 n;
 
-	if (Rsi[det_nr].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
-		int16 nr = Rsi[det_nr].StaticAk;
+	if (_rsi[det_nr].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
+		int16 nr = _rsi[det_nr].StaticAk;
 		if (nr != -1) {
 			if (nr >= 30000) {
 				i = 0;
@@ -366,7 +366,7 @@ void Object::calc_static_detail(int16 det_nr) {
 			}
 		}
 
-		nr = Rsi[det_nr].StaticOff;
+		nr = _rsi[det_nr].StaticOff;
 		if (nr != -1) {
 			if (nr >= 30000) {
 				i = 0;
@@ -396,13 +396,13 @@ void Object::calc_static_detail(int16 det_nr) {
 
 int16 Object::calc_static_use(int16 nr) {
 	int16 ret;
-	switch (Rsi[nr].ZustandAk) {
+	switch (_rsi[nr].ZustandAk) {
 	case OBJZU_AUF:
 	case OBJZU_ZU:
 	case OBJZU_AN:
 	case OBJZU_AUS:
 		if (calc_rsi_flip_flop(nr))
-			ret = OBJEKT_1;
+			ret = OBJECT_1;
 		else
 			ret = NO_ACTION;
 		break;
@@ -422,17 +422,17 @@ int16 Object::calc_static_use(int16 nr) {
 
 int16 Object::calc_rsi_flip_flop(int16 nr) {
 	int16 ret = true;
-	if (Rsi[nr].ZustandFlipFlop > 0 && Rsi[nr].HideSib == false) {
-		int16 tmp = Rsi[nr].ZustandAk;
-		Rsi[nr].ZustandAk = Rsi[nr].ZustandOff;
-		Rsi[nr].ZustandOff = tmp;
-		tmp = Rsi[nr].StaticAk;
-		Rsi[nr].StaticAk = Rsi[nr].StaticOff;
-		Rsi[nr].StaticOff = tmp;
-		if (Rsi[nr].AniFlag == 255 && Rsi[nr].AutoMov == 255)
+	if (_rsi[nr].ZustandFlipFlop > 0 && _rsi[nr].HideSib == false) {
+		int16 tmp = _rsi[nr].ZustandAk;
+		_rsi[nr].ZustandAk = _rsi[nr].ZustandOff;
+		_rsi[nr].ZustandOff = tmp;
+		tmp = _rsi[nr].StaticAk;
+		_rsi[nr].StaticAk = _rsi[nr].StaticOff;
+		_rsi[nr].StaticOff = tmp;
+		if (_rsi[nr].AniFlag == 255 && _rsi[nr].AutoMov == 255)
 			calc_static_detail(nr);
-		if (Rsi[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
-			--Rsi[nr].ZustandFlipFlop;
+		if (_rsi[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
+			--_rsi[nr].ZustandFlipFlop;
 		}
 	} else {
 		ret = false;
@@ -442,18 +442,18 @@ int16 Object::calc_rsi_flip_flop(int16 nr) {
 }
 
 void Object::set_rsi_flip_flop(int16 nr, int16 anz) {
-	Rsi[nr].ZustandFlipFlop = anz;
+	_rsi[nr].ZustandFlipFlop = anz;
 }
 
 int16 Object::calc_rmo_flip_flop(int16 nr) {
 	int16 ret;
-	if (Rmo[nr].ZustandFlipFlop > 0) {
+	if (_rmo[nr].ZustandFlipFlop > 0) {
 		ret = true;
-		int16 tmp = Rmo[nr].ZustandAk;
-		Rmo[nr].ZustandAk = Rmo[nr].ZustandOff;
-		Rmo[nr].ZustandOff = tmp;
-		if (Rmo[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
-			--Rmo[nr].ZustandFlipFlop;
+		int16 tmp = _rmo[nr].ZustandAk;
+		_rmo[nr].ZustandAk = _rmo[nr].ZustandOff;
+		_rmo[nr].ZustandOff = tmp;
+		if (_rmo[nr].ZustandFlipFlop != ENDLOS_FLIP_FLOP) {
+			--_rmo[nr].ZustandFlipFlop;
 		}
 	} else
 		ret = false;
@@ -462,46 +462,46 @@ int16 Object::calc_rmo_flip_flop(int16 nr) {
 
 int16 Object::del_obj_use(int16 nr) {
 	int16 ret;
-	if (Rmo[nr].Del == 1) {
-		Rmo[nr].RoomNr = -1;
+	if (_rmo[nr].Del == 1) {
+		_rmo[nr].RoomNr = -1;
 		sort();
 		ret = true;
 	} else {
 		ret = false;
-		if (Rmo[nr].Del != 255) {
-			--Rmo[nr].Del;
+		if (_rmo[nr].Del != 255) {
+			--_rmo[nr].Del;
 		}
 	}
 	return ret;
 }
 
 void Object::addInventory(int16 nr, RaumBlk *Rb) {
-	Player->room_m_obj[nr].RoomNr = 255;
+	_player->room_m_obj[nr].RoomNr = 255;
 	sort();
-	_G(room)->calc_invent(Rb, Player);
+	_G(room)->calc_invent(Rb, _player);
 
 }
 
 void Object::delInventory(int16 nr, RaumBlk *Rb) {
-	Player->room_m_obj[nr].RoomNr = -1;
+	_player->room_m_obj[nr].RoomNr = -1;
 	sort();
 }
 
 void Object::changeInventory(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
-	Player->room_m_obj[old_inv].RoomNr = -1;
-	Player->room_m_obj[new_inv].RoomNr = 255;
+	_player->room_m_obj[old_inv].RoomNr = -1;
+	_player->room_m_obj[new_inv].RoomNr = 255;
 	sort();
-	_G(room)->calc_invent(Rb, Player);
+	_G(room)->calc_invent(Rb, _player);
 }
 
 void Object::setInventory(int16 nr, int16 x, int16 y, int16 automov, RaumBlk *Rb) {
 	++mov_obj_room[0];
 	mov_obj_room[mov_obj_room[0]] = nr;
-	Player->room_m_obj[nr].RoomNr = Player->PersonRoomNr[P_CHEWY];
-	Player->room_m_obj[nr].X = x;
-	Player->room_m_obj[nr].Y = y;
-	Player->room_m_obj[nr].AutoMov = automov;
-	_G(room)->calc_invent(Rb, Player);
+	_player->room_m_obj[nr].RoomNr = _player->PersonRoomNr[P_CHEWY];
+	_player->room_m_obj[nr].X = x;
+	_player->room_m_obj[nr].Y = y;
+	_player->room_m_obj[nr].AutoMov = automov;
+	_G(room)->calc_invent(Rb, _player);
 	sort();
 }
 
@@ -516,12 +516,12 @@ bool Object::checkInventory(int16 nr) {
 
 int16 Object::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 ret = -1;
-	for (int16 i = 0; i < max_exit && ret == -1; i++) {
-		if (Re[i].RoomNr == Player->PersonRoomNr[P_CHEWY]) {
-			if (mouse_x >= Re[i].X &&
-			        mouse_x <= (Re[i].X + Re[i].XOff) &&
-			        mouse_y >= Re[i].Y &&
-			        mouse_y <= (Re[i].Y + Re[i].YOff)) {
+	for (int16 i = 0; i < _maxExit && ret == -1; i++) {
+		if (_roomExit[i].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
+			if (mouse_x >= _roomExit[i].X &&
+			        mouse_x <= (_roomExit[i].X + _roomExit[i].XOff) &&
+			        mouse_y >= _roomExit[i].Y &&
+			        mouse_y <= (_roomExit[i].Y + _roomExit[i].YOff)) {
 				ret = i;
 			}
 		}

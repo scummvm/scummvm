@@ -31,17 +31,17 @@ namespace Chewy {
 #define LOAD_NEW_OBJ 1
 
 #define NO_ACTION 0
-#define OBJEKT_1 1
-#define OBJEKT_2 2
+#define OBJECT_1 1
+#define OBJECT_2 2
 
 class Object {
 public:
 	Object(Spieler *sp);
 	~Object();
 
-	short load(const char *fname, RoomMovObject *Rmo);
-	int16 load(const char *fname, RoomStaticInventar *Rsi);
-	int16 load(const char *fname, RoomExit *RoomEx);
+	short load(const char *fname, RoomMovObject *rmo);
+	int16 load(const char *fname, RoomStaticInventory *rsi);
+	int16 load(const char *fname, RoomExit *roomExit);
 	void sort();
 	void free_inv_spr(byte **inv_spr_adr);
 	int16 is_sib_mouse(int16 mouse_x, int16 mouse_y);
@@ -70,16 +70,16 @@ public:
 private:
 	int16 calc_rmo_flip_flop(int16 nr);
 
-	IibDateiHeader iib_datei_header;
-	SibDateiHeader sib_datei_header;
-	EibDateiHeader eib_datei_header;
-	int16 max_inventar_obj;
-	int16 max_static_inventar;
-	int16 max_exit;
-	Spieler *Player;
-	RoomMovObject *Rmo;
-	RoomStaticInventar *Rsi;
-	RoomExit *Re;
+	IibFileHeader _iibFileHeader;
+	SibFileHeader _sibFileHeader;
+	EibFileHeader _eibFileHeader;
+	int16 _maxInventoryObj;
+	int16 _maxStaticInventory;
+	int16 _maxExit;
+	Spieler *_player;
+	RoomMovObject *_rmo;
+	RoomStaticInventory *_rsi;
+	RoomExit *_roomExit;
 };
 
 } // namespace Chewy

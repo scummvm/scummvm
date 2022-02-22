@@ -60,7 +60,7 @@ struct RaumBlk {
 	byte **InvSprAdr;
 
 	RoomMovObject *Rmo;
-	RoomStaticInventar *Rsi;
+	RoomStaticInventory *Rsi;
 
 	char RoomDir[9];
 	int16 AkAblage;
