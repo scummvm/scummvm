@@ -408,12 +408,12 @@ void AGDSEngine::newGame() {
 
 void AGDSEngine::tick() {
 	loadNextScreen();
-	if (_dialog.tick()) {
-		runProcesses();
-		return;
-	}
+	bool dialogActive = _dialog.tick();
 	if (_currentScreen)
 		_currentScreen->tick();
+	runProcesses();
+	if (dialogActive)
+		return;
 	tickInventory();
 	tickCharacter();
 	runProcesses();
