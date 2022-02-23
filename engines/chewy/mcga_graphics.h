@@ -63,13 +63,9 @@ public:
 	void box_fill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 	void pop_box(int16 x, int16 y, int16 x1, int16 y1,
 	             int16 col1, int16 col2, int16 back_col);
-	void kreis(int16 x, int16 y, int16 r, int16 farbe);
-	void fkreis(int16 x, int16 y, int16 r, int16 farbe);
 
 	void back2screen(byte *ptr);
-	void screen2back(byte *ptr);
 	void back2back(byte *ptr1, byte *ptr2);
-	void back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske);
 
 	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
 	                 int16 hoehe, int16 scrwidth);

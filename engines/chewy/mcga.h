@@ -44,9 +44,7 @@ uint8 getpix(int16 x, int16 y);
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 
 void mem2mcga(const byte *ptr);
-void mcga2mem(byte *ptr);
 void mem2mem(const byte *ptr1, byte *ptr2);
-void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske);
 
 void map_spr_2screen(const byte *sptr, int16 x, int16 y);
 void spr_save_mcga(byte *sptr, int16 x, int16 y, int16 width,
