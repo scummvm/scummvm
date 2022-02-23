@@ -29,8 +29,6 @@ class Room10 {
 public:
 	static void entry();
 	static void get_surimy();
-
-	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

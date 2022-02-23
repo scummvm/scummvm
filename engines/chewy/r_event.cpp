@@ -943,16 +943,6 @@ void flic_cut(int16 nr) {
 
 	if (_G(Ci).Handle) {
 		switch (nr) {
-		case FCUT_005:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room10::cut_serv);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
 
 		case FCUT_009:
 #ifndef NEW_VIDEO_CODE
