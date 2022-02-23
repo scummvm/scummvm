@@ -746,8 +746,10 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 
 void AGDSEngine::skipFilm() {
 	debug("skip");
-	delete _mjpgPlayer;
-	_mjpgPlayer = NULL;
+	if (_mjpgPlayer) {
+		delete _mjpgPlayer;
+		_mjpgPlayer = NULL;
+	}
 	if (_syncSoundId >= 0) {
 		debug("skip: stopping sound %d", _syncSoundId);
 		_mixer->stopID(_syncSoundId);
