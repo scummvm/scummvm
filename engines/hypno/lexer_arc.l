@@ -46,6 +46,7 @@ D							return DTOK;
 HE							return HETOK;
 HL							return HLTOK;
 HU							return HUTOK;
+H[1-2]						return H12TOK;
 H							return HTOK;
 P							return PTOK;
 A							return ATOK;

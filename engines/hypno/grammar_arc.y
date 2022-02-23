@@ -59,7 +59,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK ONTOK
 %token<i> NUM BYTE
 // header
-%token COMMENT CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK RESTOK
+%token COMMENT CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
 %token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK NTOK NSTOK RTOK R01TOK ITOK I1TOK JTOK ZTOK
 
 // body
@@ -231,6 +231,11 @@ hline: 	CTOK NUM {
 		Segment segment('P', $4, $3);
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "H P %d %d", $3, $4); 
+	}
+	| H12TOK BYTE NUM NUM {
+		Segment segment('P', $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "HN %x %d %d", $2, $3, $4); 
 	}
 	| HTOK BYTE NUM NUM {
 		Segment segment($2, $4, $3);

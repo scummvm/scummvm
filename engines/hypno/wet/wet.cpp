@@ -286,13 +286,13 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c321.mi_", "c41", "<check_lives>", "");
 	loadArcadeLevel("c322.mi_", "c41", "<check_lives>", "");
 
-	//loadArcadeLevel("c330.mi_", "???", "", "");
-	//loadArcadeLevel("c331.mi_", "???", "");
-	//loadArcadeLevel("c332.mi_", "???", "");
+	loadArcadeLevel("c330.mi_", "c30", "<check_lives>", "");
+	loadArcadeLevel("c331.mi_", "c30", "<check_lives>", "");
+	loadArcadeLevel("c332.mi_", "c30", "<check_lives>", "");
 
-	//loadArcadeLevel("c300.mi_", "???", "", "");
-	//loadArcadeLevel("c301.mi_", "???", "");
-	//loadArcadeLevel("c302.mi_", "???", "");
+	loadArcadeLevel("c300.mi_", "c41", "<check_lives>", "");
+	loadArcadeLevel("c301.mi_", "c41", "<check_lives>", "");
+	loadArcadeLevel("c302.mi_", "c41", "<check_lives>", "");
 
 	loadArcadeLevel("c410.mi_", "c42", "<check_lives>", "");
 	loadArcadeLevel("c411.mi_", "c42", "<check_lives>", "");
