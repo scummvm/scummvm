@@ -536,8 +536,6 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 		_shoots[i].destroyed = true;
 
 		if (_shoots[i].animation != "NONE") {
-			int w = _shoots[i].video->decoder->getWidth();
-			int h = _shoots[i].video->decoder->getHeight();
 			if (_shoots[i].deathPosition.x != 0 && _shoots[i].deathPosition.y != 0)
 				_shoots[i].video->position = Common::Point(mousePos.x, mousePos.y) - _shoots[i].deathPosition;
 
