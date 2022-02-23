@@ -346,9 +346,14 @@ bline: FNTOK FILENAME {
 		shoot->objKillsCount = $2;
 		shoot->objMissesCount = $3;
 		debugC(1, kHypnoDebugParser, "R0/1 %d %d", $2, $3); }
-	| BNTOK NUM NUM { debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); }
-	| KNTOK NUM NUM { 
-		shoot->explosionFrames.push_front($3);
+	| BNTOK NUM NUM { 
+		FrameInfo fi($3, $2);
+		shoot->bodyFrames.push_back(fi);
+		debugC(1, kHypnoDebugParser, "BN %d %d", $2, $3); 
+	}
+	| KNTOK NUM NUM {
+		FrameInfo fi($3, $2);
+		shoot->explosionFrames.push_back(fi);
 		debugC(1, kHypnoDebugParser, "KN %d %d", $2, $3);
 	}
 	| P0TOK NUM NUM { 

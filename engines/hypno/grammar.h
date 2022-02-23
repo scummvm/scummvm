@@ -353,6 +353,20 @@ public:
 	Hotspots hots;
 };
 
+class FrameInfo {
+public:
+	FrameInfo(uint32 start_, uint32 length_) {
+		start = start_;
+		length = length_;
+	}
+
+	uint32 lastFrame() {
+		return start + length;
+	}
+	uint32 start;
+	uint32 length;
+};
+
 class Shoot {
 public:
 	Shoot() {
@@ -367,6 +381,7 @@ public:
 		objMissesCount = 0;
 		animation = "NONE";
 		explosionAnimation = "";
+		lastFrame = 1024;
 	}
 	Common::String name;
 	Filename animation;
@@ -391,7 +406,9 @@ public:
 
 	MVideo *video;
 	Common::List<uint32> attackFrames;
-	Common::List<uint32> explosionFrames;
+	Common::Array<FrameInfo> bodyFrames;
+	Common::Array<FrameInfo> explosionFrames;
+	uint32 lastFrame;
 	Filename explosionAnimation;
 	bool destroyed;
 };
