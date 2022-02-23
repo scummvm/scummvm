@@ -253,6 +253,47 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 
 	_music->loadMusic(_musicFile, fileSize);
 
+	// WORKAROUND The track playing during the character selection screen has a
+	// bug: towards the end of the track, pitch bend events are sent on two
+	// channels, but pitch bend is not reset to neutral when the track loops.
+	// This causes two instruments to be out of tune after the track loops.
+	// This occurs in both the MT-32 and GM versions, but in the GM version the
+	// pitch bend is smaller, so it is much less noticable. It was fixed in the
+	// CD version for MT-32 by adding pitch bend neutral events to the end of
+	// the track.
+	// It is fixed here for the MT-32 floppy version and both GM versions by
+	// moving the for loop event (indicating the start of the loop) before the
+	// pitch bend neutral events at the start of the track; position is swapped
+	// with the first pitch bend neutral event. (The pitch bend neutral events
+	// are sent in a different order, but that makes no practical difference.)
+	// The initial pitch bend neutral events are then sent again when the track
+	// loops.
+	if (file == "LOREINTR.XMI" && fileSize >= 0x6221 && _musicFile[0x6210] == 0xE1) {
+		// MT-32 floppy version.
+
+		// Overwrite first pitch bend event with for loop event.
+		_musicFile[0x6210] = 0xB6;
+		_musicFile[0x6211] = 0x74;
+		_musicFile[0x6212] = 0x00;
+
+		// Write pitch event in the old location of the for loop event.
+		_musicFile[0x621F] = 0xE1;
+		_musicFile[0x6220] = 0x00;
+		_musicFile[0x6221] = 0x40;
+	} else if (file == "LOREINTR.C55" && fileSize >= 0x216D && _musicFile[0x215C] == 0xE0) {
+		// GM floppy and CD version.
+
+		// Overwrite first pitch bend event with for loop event.
+		_musicFile[0x215C] = 0xB9;
+		_musicFile[0x215D] = 0x74;
+		_musicFile[0x215E] = 0x00;
+
+		// Write pitch event in the old location of the for loop event.
+		_musicFile[0x216B] = 0xE0;
+		_musicFile[0x216C] = 0x00;
+		_musicFile[0x216D] = 0x40;
+	}
+
 	// Since KYRA1 uses the same file for SFX and Music
 	// we setup sfx to play from music file as well
 	if (_vm->game() == GI_KYRA1) {
