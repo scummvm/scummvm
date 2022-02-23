@@ -235,7 +235,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
 
 	Common::Event event;
-	bool levelComplete = false;
 	while (!shouldQuit()) {
 		//debug("frame: %d", background.decoder->getCurFrame());
 		needsUpdate = background.decoder->needsUpdate();
@@ -353,10 +352,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				needsUpdate = true;
 				continue;
 			} else 
-				levelComplete = true;
+				_skipLevel = true;
 		}
 
-		if (segments[_segmentIdx].end || levelComplete) {
+		if (segments[_segmentIdx].end || _skipLevel) {
 			skipVideo(background);
 			// Objectives
 			if ((_objKillsCount[_objIdx] > 0 || _objMissesCount[_objIdx] > 0) && !_skipLevel) {
