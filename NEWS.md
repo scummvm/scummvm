@@ -18,6 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
+   - Added support for the RetroWave OPL3 sound card.
 
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
