@@ -360,7 +360,10 @@ bline: FNTOK FILENAME {
 		shoot->paletteSize = $2;
 		shoot->paletteOffset = $3;
 		debugC(1, kHypnoDebugParser, "P0 %d %d", $2, $3); }
-	| OTOK NUM NUM { 
+	| OTOK NUM NUM {
+		if ($2 == 0 && $3 == 0)
+			error("Invalid O command (0, 0)");
+		shoot->deathPosition = Common::Point($2, $3);
 		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3); 
 	}
 	| CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); } 

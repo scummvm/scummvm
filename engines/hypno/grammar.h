@@ -387,6 +387,8 @@ public:
 	Filename animation;
 	Filename startSound;
 	Common::Point position;
+	Common::Point deathPosition;
+
 
 	uint32 timesToShoot;
 	uint32 pointsToShoot;

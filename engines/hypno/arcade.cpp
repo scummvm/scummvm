@@ -538,7 +538,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 		if (_shoots[i].animation != "NONE") {
 			int w = _shoots[i].video->decoder->getWidth();
 			int h = _shoots[i].video->decoder->getHeight();
-			_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+			if (_shoots[i].deathPosition.x != 0 && _shoots[i].deathPosition.y != 0)
+				_shoots[i].video->position = Common::Point(mousePos.x, mousePos.y) - _shoots[i].deathPosition;
 
 			int currentFrame = _shoots[i].video->decoder->getCurFrame();
 			uint32 explosionIdx;
