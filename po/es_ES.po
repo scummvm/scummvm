@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-23 09:29+0000\n"
-"PO-Revision-Date: 2022-02-19 23:03+0000\n"
+"PO-Revision-Date: 2022-02-23 14:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -729,48 +729,36 @@ msgstr "Ninguno"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Letra inicial"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Distribuidora"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Idioma"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Plataforma"
@@ -6631,6 +6619,13 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"No se puede ejecutar esta versión de Monkey Island porque los archivos "
+"DISK04.LEC y 903.LFL que suministra Limited Run Games están dañados.\n"
+"\n"
+"Rogamos que contactes son su servicio de atención al cliente para solicitar "
+"los archivos corregidos o que busques en Internet algunas guías que te "
+"ayudarán a recuperar los archivos válidos a partir de los volcados de "
+"KryoFlux que también incluyó Limited Run Games."
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
