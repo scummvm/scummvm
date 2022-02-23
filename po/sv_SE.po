@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-21 20:53+0000\n"
+"POT-Creation-Date: 2022-02-23 00:22+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -93,7 +93,7 @@ msgstr "Välj"
 msgid "Select directory where to download game data"
 msgstr "Välj katalogen där du vill ladda ner speldata"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:272
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:283
 msgid "Select directory with game data"
 msgstr "Välj katalog med speldata"
 
@@ -131,7 +131,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
+#: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
@@ -143,7 +143,7 @@ msgstr "Ja"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:395 gui/launcher.cpp:424 gui/launcher.cpp:467
+#: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: engines/buried/buried.cpp:580 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
@@ -152,7 +152,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nej"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:564
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:575
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunde inte öppna den valda katalogen!"
 
@@ -165,7 +165,7 @@ msgstr ""
 "fil med samma namn."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:523 gui/launcher.cpp:527
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:534 gui/launcher.cpp:538
 #: gui/massadd.cpp:88 gui/options.cpp:2104 gui/saveload-dialog.cpp:1187
 #: engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -733,20 +733,8 @@ msgstr "Höger"
 msgid "???"
 msgstr "???"
 
-#: gui/launcher.cpp:192
-msgid "Select Group by"
-msgstr ""
-
-#: gui/launcher.cpp:197
-msgid "Group by: "
-msgstr "Grupera efter: "
-
-#: gui/launcher.cpp:199
-msgid "Select a criteria to group the entries"
-msgstr ""
-
 #. I18N: Group name for the game list
-#: gui/launcher.cpp:201
+#: gui/launcher.cpp:99
 #, fuzzy
 #| msgid "None"
 msgctxt "group"
@@ -754,122 +742,150 @@ msgid "None"
 msgstr "Ingen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
-#: gui/launcher.cpp:203
+#: gui/launcher.cpp:101
 #, fuzzy
+msgctxt "group"
 msgid "First letter"
 msgstr "Kasta besvärjelse"
 
 #. I18N: Group name for the game list, grouped by game engine
-#: gui/launcher.cpp:205
+#: gui/launcher.cpp:103
+#, fuzzy
+#| msgid "Engine"
+msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
 
 #. I18N: Group name for the game list, grouped by game series
-#: gui/launcher.cpp:207
+#: gui/launcher.cpp:105
+#, fuzzy
+#| msgid "Series"
+msgctxt "group"
 msgid "Series"
 msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
-#: gui/launcher.cpp:209
+#: gui/launcher.cpp:107
+#, fuzzy
+#| msgid "Publisher"
+msgctxt "group"
 msgid "Publisher"
 msgstr "Utgivare"
 
 #. I18N: Group name for the game list, grouped by language
-#: gui/launcher.cpp:211
+#: gui/launcher.cpp:109
+#, fuzzy
+#| msgid "Language"
+msgctxt "group"
 msgid "Language"
 msgstr "Språk"
 
 #. I18N: Group name for the game list, grouped by game platform
-#: gui/launcher.cpp:213
+#: gui/launcher.cpp:111
+#, fuzzy
+#| msgid "Platform"
+msgctxt "group"
 msgid "Platform"
 msgstr "Plattform"
 
-#: gui/launcher.cpp:229 engines/dialogs.cpp:94
+#: gui/launcher.cpp:210
+msgid "Select Group by"
+msgstr ""
+
+#: gui/launcher.cpp:215
+msgid "Group by: "
+msgstr "Grupera efter: "
+
+#: gui/launcher.cpp:217
+msgid "Select a criteria to group the entries"
+msgstr ""
+
+#: gui/launcher.cpp:240 engines/dialogs.cpp:94
 msgid "~Q~uit"
 msgstr "~A~vsluta"
 
-#: gui/launcher.cpp:229 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:240 backends/platform/sdl/macosx/appmenu_osx.mm:229
 msgid "Quit ScummVM"
 msgstr "Avsluta ScummVM"
 
-#: gui/launcher.cpp:230
+#: gui/launcher.cpp:241
 #, fuzzy
 #| msgid "A~b~out..."
 msgid "A~b~out"
 msgstr "O~m~..."
 
-#: gui/launcher.cpp:230 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:241 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
-#: gui/launcher.cpp:232
+#: gui/launcher.cpp:243
 #, fuzzy
 #| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
 msgstr "~I~nställningar..."
 
-#: gui/launcher.cpp:232 gui/launcher.cpp:234
+#: gui/launcher.cpp:243 gui/launcher.cpp:245
 msgid "Change global ScummVM options"
 msgstr "Redigera globala ScummVM-inställningar"
 
-#: gui/launcher.cpp:234
+#: gui/launcher.cpp:245
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~I~nställningar..."
 
-#: gui/launcher.cpp:239
+#: gui/launcher.cpp:250
 msgid "~A~dd Game..."
 msgstr "Lä~g~g till spel..."
 
-#: gui/launcher.cpp:239 gui/launcher.cpp:247
+#: gui/launcher.cpp:250 gui/launcher.cpp:258
 msgid "Add games to the list"
 msgstr "Lägg till spel till listan"
 
-#: gui/launcher.cpp:240
+#: gui/launcher.cpp:251
 msgid "Mass Add..."
 msgstr "Masstillägg..."
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:255
 msgid "~R~emove Game"
 msgstr "~R~adera spel"
 
-#: gui/launcher.cpp:244 gui/launcher.cpp:252
+#: gui/launcher.cpp:255 gui/launcher.cpp:263
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Radera spelet från listan. Spelets datafiler påverkas inte"
 
-#: gui/launcher.cpp:247
+#: gui/launcher.cpp:258
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "Lä~g~g till spel..."
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:259
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Masstillägg..."
 
-#: gui/launcher.cpp:252
+#: gui/launcher.cpp:263
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~R~adera spel"
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:271
 msgid "Search in game list"
 msgstr "Sök i spellistan"
 
-#: gui/launcher.cpp:264 gui/launcher.cpp:771
+#: gui/launcher.cpp:275 gui/launcher.cpp:782
 msgid "Search:"
 msgstr "Sök:"
 
-#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:286 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Ladda spel:"
 
-#: gui/launcher.cpp:275 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:286 engines/dialogs.cpp:97 engines/engine.cpp:864
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -878,12 +894,12 @@ msgstr "Ladda spel:"
 msgid "Load"
 msgstr "Ladda"
 
-#: gui/launcher.cpp:383
+#: gui/launcher.cpp:394
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Den här katalogen kan inte användas än, eftersom något laddas ner i den!"
 
-#: gui/launcher.cpp:394
+#: gui/launcher.cpp:405
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -891,79 +907,79 @@ msgstr ""
 "Vill du verkligen använda mass-speldetektorn? Processen kan potentiellt "
 "lägga till ett enormt antal spel."
 
-#: gui/launcher.cpp:424
+#: gui/launcher.cpp:435
 msgid "Do you really want to remove this game configuration?"
 msgstr "Vill du verkligen radera den här spelkonfigurationen?"
 
-#: gui/launcher.cpp:466
+#: gui/launcher.cpp:477
 msgid "Do you want to load saved game?"
 msgstr "Vill du ladda sparat spel?"
 
-#: gui/launcher.cpp:523
+#: gui/launcher.cpp:534
 msgid "This game does not support loading games from the launcher."
 msgstr "Det här spelet stöder inte laddning av spardata från launchern."
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:538
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunde inte hitta en motor kapabel till att köra det valda spelet!"
 
-#: gui/launcher.cpp:583
+#: gui/launcher.cpp:594
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunde inte hitta några spel i den valda katalogen!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:599
+#: gui/launcher.cpp:610
 msgid "Unknown variant"
 msgstr "Okänt fel"
 
-#: gui/launcher.cpp:605
+#: gui/launcher.cpp:616
 msgid "Pick the game:"
 msgstr "Välj spel:"
 
-#: gui/launcher.cpp:780
+#: gui/launcher.cpp:791
 msgid "Group by:"
 msgstr "Gruppera efter:"
 
-#: gui/launcher.cpp:820 gui/saveload-dialog.cpp:367
+#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:367
 msgid "List view"
 msgstr "Visa som lista"
 
-#: gui/launcher.cpp:821 gui/saveload-dialog.cpp:368
+#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:368
 msgid "Grid view"
 msgstr "Visa som rutnät"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:986
 msgid "~S~tart"
 msgstr "~S~tarta"
 
-#: gui/launcher.cpp:975
+#: gui/launcher.cpp:986
 msgid "Start selected game"
 msgstr "Starta det valda spelet"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:989
 msgid "~L~oad..."
 msgstr "~L~adda..."
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:989
 msgid "Load saved game for selected game"
 msgstr "Ladda spardata för det valda spelet"
 
-#: gui/launcher.cpp:980
+#: gui/launcher.cpp:991
 msgid "Record..."
 msgstr "Spela in..."
 
-#: gui/launcher.cpp:987
+#: gui/launcher.cpp:998
 #, fuzzy
 #| msgid "~O~ptions..."
 msgid "~G~ame Options..."
 msgstr "~I~nställningar..."
 
-#: gui/launcher.cpp:987 gui/launcher.cpp:990
+#: gui/launcher.cpp:998 gui/launcher.cpp:1001
 msgid "Change game options"
 msgstr "Redigera spelinställningarna"
 
-#: gui/launcher.cpp:990
+#: gui/launcher.cpp:1001
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
@@ -972,13 +988,13 @@ msgstr "~I~nställningar..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1112 gui/launcher.cpp:1299
+#: gui/launcher.cpp:1123 gui/launcher.cpp:1318
 msgid "Unknown Engine"
 msgstr "Okänd motor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1130 gui/launcher.cpp:1331
+#: gui/launcher.cpp:1141 gui/launcher.cpp:1350
 #, fuzzy
 #| msgid "Unknown Author"
 msgid "Unknown Publisher"
@@ -986,23 +1002,23 @@ msgstr "Okänd skapare"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1148 gui/launcher.cpp:1317
+#: gui/launcher.cpp:1159 gui/launcher.cpp:1336
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1163 gui/launcher.cpp:1350
+#: gui/launcher.cpp:1174 gui/launcher.cpp:1369
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1178 gui/launcher.cpp:1365
+#: gui/launcher.cpp:1189 gui/launcher.cpp:1384
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1376 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1395 gui/widgets/groupedlist.cpp:122
 #, fuzzy
 #| msgid "Alt"
 msgid "All"
