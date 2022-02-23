@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 09:14+0000\n"
+"POT-Creation-Date: 2022-02-23 09:29+0000\n"
 "PO-Revision-Date: 2022-02-11 14:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -6551,6 +6551,16 @@ msgstr "Далучыць плыўнае прагортваньне"
 #: engines/scumm/detection.cpp:211
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(замест звычайнага прагортваньня ў 8 піксэляў)"
+
+#: engines/scumm/detection_internal.h:358
+msgid ""
+"This version of Monkey Island can't be played, because Limited Run Games "
+"provided corrupted DISK04.LEC and 903.LFL files.\n"
+"\n"
+"Please contact their technical support for replacement files, or look online "
+"for some guides which can help you recover valid files from the KryoFlux "
+"dumps that Limited Run Games also provided."
+msgstr ""
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
