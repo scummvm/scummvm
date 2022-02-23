@@ -25,11 +25,10 @@
 #include "chewy/defines.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
-
-static void font_load();
 
 void standard_init() {
 	_G(mem) = new Memory();
@@ -89,7 +88,6 @@ void standard_init() {
 	_G(pal)[767] = 63;
 	_G(out)->einblenden(_G(pal), 0);
 	_G(room)->set_timer_start(1);
-	font_load();
 
 	_G(out)->cls();
 	_G(in)->neuer_kb_handler(&_G(kbinfo));
@@ -259,30 +257,6 @@ void new_game() {
 
 	_G(AkChewyTaf) = 0;
 	load_chewy_taf(CHEWY_NORMAL);
-}
-
-static void font_load() {
-
-	// Load the 8x8 font
-	_G(mem)->tff_adr(FONT8x8, &_G(font8x8));
-	_G(out)->set_fontadr(_G(font8x8));
-
-	int16 vorx;
-	int16 vory;
-	int16 fntbr;
-	int16 fnth;
-	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
-	_G(fvorx8x8) = vorx;
-	_G(fvory8x8) = vory;
-
-	// Load the 6x8 font
-	_G(mem)->tff_adr(FONT6x8, &_G(font6x8));
-	_G(out)->set_fontadr(_G(font6x8));
-	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
-	_G(fvorx6x8) = vorx - 2;
-	_G(fvory6x8) = vory;
-	_G(out)->set_vorschub(_G(fvorx6x8), vory);
-	_G(atds)->set_font(_G(font8x8), _G(fvorx8x8), 10);
 }
 
 void init_load() {

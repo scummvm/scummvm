@@ -117,12 +117,13 @@ int16 Files::execute(bool isInGame) {
 		// Write the list of savegame slots
 		char *tmp = fnames + (text_off * 40);
 		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
+			Common::String slot = Common::String::format("%2d.", text_off + i);
 			if (i != active_slot) {
-				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, "%2d.", text_off + i);
+				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
 				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
 			} else {
 				_G(out)->box_fill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
-				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, "%2d.", text_off + i);
+				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
 				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp);
 			}
 		}

@@ -25,6 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/menus.h"
 
 namespace Chewy {
@@ -407,7 +408,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		txt_name_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATEI);
 		txt_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATEI);
 		xoff = strlen(txt_name_adr);
-		xoff *= _G(fvorx8x8);
+		xoff *= _G(font8)->getDataWidth();
 		xoff = (254 - xoff) / 2;
 		txt_zeilen = 2;
 		yoff = 10;
@@ -504,15 +505,13 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 		set_up_screen(NO_SETUP);
 		plot_menu();
-		_G(out)->set_fontadr(_G(font8x8));
-		_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+		_G(fontMgr)->setFont(_G(font8));
 
 		if (mode == INV_ATS_MODE)
 			_G(out)->printxy(WIN_LOOK_X + xoff, WIN_LOOK_Y, 255, 300,
 				_G(scr_width), txt_name_adr);
 
-		_G(out)->set_fontadr(_G(font6x8));
-		_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+		_G(fontMgr)->setFont(_G(font6));
 
 		if (txt_anz > txt_zeilen) {
 			if (txt_start > 0) {
@@ -536,7 +535,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		int16 k = 0;
 		for (int16 i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
 			_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
-				_G(scr_width), "%s", _G(txt)->str_pos(txt_adr, i));
+				_G(scr_width), _G(txt)->str_pos(txt_adr, i));
 			++k;
 		}
 

@@ -49,8 +49,10 @@ public:
 	void setDisplaySize(uint16 width, uint16 height);
 	void setDeltaX(uint16 deltaX);
 
-	uint16 getDataWidth() { return _dataWidth; }
-	uint16 getDataHeight() { return _dataHeight; }
+	uint16 getDataWidth() const { return _dataWidth; }
+	uint16 getDataHeight() const { return _dataHeight; }
+	uint16 getFirst() const { return _first; }
+	uint16 getLast() const { return _last; }
 
 private:
 	uint16 _count, _first, _last;

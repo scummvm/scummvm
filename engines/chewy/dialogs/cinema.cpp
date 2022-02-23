@@ -23,6 +23,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -51,8 +52,7 @@ void Cinema::execute() {
 	Common::Array<int> cutscenes;
 	getCutscenes(cutscenes);
 
-	_G(out)->set_fontadr(_G(font6x8));
-	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+	_G(fontMgr)->setFont(_G(font6));
 	_G(atds)->load_atds(98, 1);
 
 	_G(room)->open_handle(GBOOK, 0);
@@ -74,7 +74,7 @@ void Cinema::execute() {
 
 				if (i == selected)
 					_G(out)->box_fill(37, yp, 308, yp + 10, 42);
-				_G(out)->printxy(40, yp, 14, 300, 0, "%s", csName);
+				_G(out)->printxy(40, yp, 14, 300, 0, csName);
 			}
 		} else {
 			// No cut-scene seen yet
@@ -164,8 +164,7 @@ void Cinema::execute() {
 			_G(flc)->set_custom_user_function(cut_serv);
 			flic_cut(CINEMA_FLICS[topIndex + selected]);
 			_G(flc)->remove_custom_user_function();
-			_G(out)->set_fontadr(_G(font6x8));
-			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+			_G(fontMgr)->setFont(_G(font6));
 			showCur();
 			delay = 0;
 			flag = false;

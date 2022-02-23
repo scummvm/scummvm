@@ -58,33 +58,6 @@ uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-void Data::load_tff(const char *fname, byte *speicher) {
-	strncpy(_filename, fname, MAXPATH - 5);
-	_filename[MAXPATH - 5] = '\0';
-
-	if (speicher) {
-		if (!strchr(_filename, '.'))
-			strcat(_filename, ".tff");
-
-		Common::File f;
-		if (f.open(_filename)) {
-			TffHeader *tff = (TffHeader *)speicher;
-			if (tff->load(&f)) {
-				uint32 size = tff->size;
-				if (f.read(speicher + sizeof(TffHeader), size) != size) {
-					error("load_tff error");
-				}
-			}
-
-			f.close();
-		} else {
-			error("load_tff error");
-		}
-	} else {
-		error("load_tff error");
-	}
-}
-
 uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead ch;

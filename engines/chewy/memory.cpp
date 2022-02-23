@@ -97,11 +97,4 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	return ts_info;
 }
 
-void Memory::tff_adr(const char *filename, byte **speicher) {
-	uint32 size = file->size(filename, TFFDATEI);
-
-	*speicher = (byte *)MALLOC(size);
-	file->load_tff(filename, *speicher);
-}
-
 } // namespace Chewy

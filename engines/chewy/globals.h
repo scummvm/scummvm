@@ -129,12 +129,6 @@ public:
 	BlendMode _fx_blend = BLEND_NONE;
 	void (*_SetUpScreenFunc)() = nullptr;
 
-	byte *_font6x8 = nullptr;
-	byte *_font8x8 = nullptr;
-	int16 _fvorx6x8 = 0;
-	int16 _fvorx8x8 = 0;
-	int16 _fvory6x8 = 0;
-	short _fvory8x8 = 0;
 	int16 _FrameSpeed = 0;
 	int16 _FrameSpeedTmp = 0;
 
@@ -285,13 +279,10 @@ public:
 	bool _screenHasDefault = false;
 	byte *_screenDefaultP = nullptr;
 	int _spriteWidth = 0;
-	byte *_fontAddr = nullptr;
-	size_t _fontWidth = 0, _fontHeight = 0;
-	int _fontFirst = 0, _fontLast = 0;
 
 	// mcga_graphics.cpp
 	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
-	int16 _gcurx = 0, _gcury = 0, _fvorx = 0, _fvory = 0;
+	int16 _gcurx = 0, _gcury = 0;
 	int16 _scr_w = 0, _scr_h = SCREEN_HEIGHT;
 
 	// menus.cpp

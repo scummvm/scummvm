@@ -26,6 +26,7 @@
 #include "chewy/globals.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/rooms.h"
+#include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/video/video_player.h"
@@ -775,17 +776,16 @@ void exit_room(int16 eib_nr) {
 }
 
 void print_rows(int16 id) {
-	_G(out)->set_fontadr(_G(font8x8));
-	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+	_G(fontMgr)->setFont(_G(font8));
 	int16 txt_anz;
 	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
 	_G(out)->set_pointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
 		char *s = _G(txt)->str_pos(txtStr, i);
-		int16 len = (strlen(s) * _G(fvorx8x8)) / 2;
+		int16 len = (strlen(s) * _G(fontMgr)->getFont()->getDataWidth()) / 2;
 
-		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, "%s", s);
+		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, s);
 	}
 }
 

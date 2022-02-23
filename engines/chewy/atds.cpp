@@ -26,6 +26,7 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -105,12 +106,6 @@ Atdsys::~Atdsys() {
 
 	if (_invUseMem)
 		free(_invUseMem);
-}
-
-void Atdsys::set_font(byte *font_adr, int16 fvorx, int16 fhoehe) {
-	_atdsv.Font = font_adr;
-	_atdsv.Fvorx = fvorx;
-	_atdsv.Fhoehe = fhoehe;
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
@@ -590,12 +585,10 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 
 		if (_atsv.SilentCount <= 0) {
 			char *tmp_ptr = _atsv.Ptr;
-			_G(out)->set_fontadr(_atdsv.Font);
-			_G(out)->set_vorschub(_atdsv.Fvorx, 0);
 			_atsSsi = _ssi[0];
 			_atsSsi.Str = tmp_ptr;
-			_atsSsi.Fvorx = _atdsv.Fvorx;
-			_atsSsi.FHoehe = _atdsv.Fhoehe;
+			_atsSsi.Fvorx = _G(fontMgr)->getFont()->getDataWidth();
+			_atsSsi.FHoehe = _G(fontMgr)->getFont()->getDataHeight();
 			_atsSsi.X = x - scrx;
 			_atsSsi.Y = y - scry;
 			char *start_ptr = tmp_ptr;
@@ -935,8 +928,6 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 
 		if (_aadv.SilentCount <= 0) {
 			char *tmp_ptr = _aadv.Ptr;
-			_G(out)->set_fontadr(_atdsv.Font);
-			_G(out)->set_vorschub(_atdsv.Fvorx, 0);
 			_ssi[_aadv.StrHeader->AkPerson].Str = tmp_ptr;
 			if (_aadv.Person[_aadv.StrHeader->AkPerson].X != -1) {
 				_ssi[_aadv.StrHeader->AkPerson].X = _aadv.Person[_aadv.StrHeader->AkPerson].X - scrx;
@@ -944,8 +935,8 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 			if (_aadv.Person[_aadv.StrHeader->AkPerson].Y != -1) {
 				_ssi[_aadv.StrHeader->AkPerson].Y = _aadv.Person[_aadv.StrHeader->AkPerson].Y - scry;
 			}
-			_ssi[_aadv.StrHeader->AkPerson].Fvorx = _atdsv.Fvorx;
-			_ssi[_aadv.StrHeader->AkPerson].FHoehe = _atdsv.Fhoehe;
+			_ssi[_aadv.StrHeader->AkPerson].Fvorx = _G(fontMgr)->getFont()->getDataWidth();
+			_ssi[_aadv.StrHeader->AkPerson].FHoehe = _G(fontMgr)->getFont()->getDataHeight();
 			char *start_ptr = tmp_ptr;
 			int16 txt_len;
 			aad_get_zeilen(start_ptr, &txt_len);

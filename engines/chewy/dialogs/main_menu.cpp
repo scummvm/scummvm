@@ -231,8 +231,7 @@ bool MainMenu::loadGame() {
 	_G(flags).SaveMenu = true;
 	savePersonAni();
 	_G(out)->set_pointer(_G(screen0));
-	_G(out)->set_fontadr(_G(font6x8));
-	_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+	_G(fontMgr)->setFont(_G(font6));
 	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
 	_G(minfo).x = 152;

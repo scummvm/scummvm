@@ -23,6 +23,7 @@
 #include "chewy/chewy.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/mcga.h"
 
@@ -353,15 +354,6 @@ void McgaGraphics::map_spr2screen(byte *sptr, int16 x, int16 y) {
 		map_spr_2screen(sptr, x, y);
 }
 
-void McgaGraphics::set_fontadr(byte *adr) {
-	TffHeader *tff = (TffHeader *)adr;
-
-	setfont(adr + sizeof(TffHeader), tff->width, tff->height,
-	        tff->first, tff->last);
-	_G(fvorx) = tff->width;
-	_G(fvory) = 0;
-}
-
 int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth,
                           const char *string, ...) {
 	int16 i, j, stelle, stellemax, mode = 0;
@@ -398,11 +390,13 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	move(x, y);
 	i = 0;
 
+	ChewyFont *font = _G(fontMgr)->getFont();
+
 	while (!ende) {
 		zeichen = string[i];
 		++i;
 
-		if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 127)) {
+		if ((zeichen >= font->getFirst()) && (zeichen <= font->getLast()) && (zeichen != 127)) {
 			if (zeichen == '%') {
 				zeichen = string[i];
 				++i;
@@ -562,7 +556,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								break;
 							}
 						}
-						plot_scan_cur((x + (disp_akt)*_G(fvorx)), _G(gcury), cur_col, 300, scrwidth, cursor_z);
+						const uint16 fontWidth = _G(fontMgr)->getFont()->getDataWidth();
+						plot_scan_cur((x + (disp_akt)*fontWidth), _G(gcury), cur_col, 300, scrwidth, cursor_z);
 						if (_svga == ON)
 							upd_scr();
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
@@ -599,8 +594,9 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 							getch();
 
 						if (stelle > 0) {
+							const uint16 fontWidth = _G(fontMgr)->getFont()->getDataWidth();
 							strcpy(zstring + stelle - 1, zstring + stelle);
-							plot_scan_cur((x + disp_akt * _G(fvorx)), _G(gcury), bcol, bcol, scrwidth, cursor_z);
+							plot_scan_cur((x + disp_akt * fontWidth), _G(gcury), bcol, bcol, scrwidth, cursor_z);
 							if (_svga == ON)
 								upd_scr();
 							--stelle;
@@ -800,522 +796,29 @@ void McgaGraphics::plot_scan_cur(int16 x, int16 y, int16 fcol, int16 bcol, int16
 	putz(cursor_z, fcol, bcol, scrwidth);
 }
 
-void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string, ...) {
-	int16 i = 0, k = 0, l;
-	char zstring[35];
-	int16 diff;
-	char *tempptr;
-	va_list parptr;
-	va_start(parptr, string);
-	_crlfx = x;
-	_crlfy = y + _fontH + 2;
-	_G(gcurx) = x;
-	_G(gcury) = y;
-	i = 0;
+void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string) {
+	ChewyFont *font = _G(fontMgr)->getFont();
+	Graphics::Surface *textSurface = font->getLine(string);
+	byte *data = (byte *)textSurface->getPixels();
 
-	unsigned char nextChar;
-	do {
-		nextChar = (unsigned char)string[i];
-		++i;
-		if ((nextChar < 32) || (nextChar == 127)) {
-			switch (nextChar) {
-			case 8:
-				_G(gcurx) -= _G(fvorx);
-				_G(gcury) -= _G(fvory);
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			case 10:
-				_G(gcury) = _crlfy;
-				_G(gcurx) = _crlfx;
-				_crlfx = _G(gcurx);
-				_crlfy = _G(gcury) + _fontH + 2;
-				break;
-
-			case 13:
-				_G(gcurx) = _crlfx;
-				break;
-
-			case 127 :
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			default :
-				if (nextChar >= _G(fontFirst))
-					putz(nextChar, fgCol, bgCol, scrwidth);
-				break;
-			}
-		} else if ((nextChar >= _G(fontFirst)) && (nextChar <= _G(fontLast))) {
-			if (nextChar != '%') {
-				putz(nextChar, fgCol, bgCol, scrwidth);
-				vors();
-			} else {
-				nextChar = string[i];
-				int16 count = 0;
-				if ((nextChar >= 0x30) && (nextChar <= 0x39))
-					count = atoi(string + i);
-				while ((nextChar >= 0x30) && (nextChar <= 0x39)) {
-					++i;
-					nextChar = string[i];
-				}
-				++i;
-				switch (nextChar) {
-				case '%':
-					putz(nextChar, fgCol, bgCol, scrwidth);
-					vors();
-					break;
-
-				case 'd':
-				case 'u':
-					if (nextChar == 'd') {
-						int16 izahl = va_arg(parptr, int);
-						itoa(izahl, zstring, 10);
-					} else {
-						uint16 uzahl = va_arg(parptr, unsigned int);
-						itoa(uzahl, zstring, 10);
-					}
-					k = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 'l':
-					if (string[i] != 'u') {
-						long lzahl = va_arg(parptr, long);
-						ltoa(lzahl, zstring, 10);
-					} else {
-						uint32 luzahl = va_arg(parptr, uint32);
-						ultoa(luzahl, zstring, 10);
-						++i;
-					}
-					k = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 's':
-					tempptr = va_arg(parptr, char *);
-					if (!count) {
-						while (*tempptr != 0) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					} else {
-						for (l = 0; l < count; l++) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					}
-					break;
-
-				default:
-					break;
-				}
-			}
-		}
-	} while ((i < MAXSTRING) && (nextChar != 0));
-	va_end(parptr);
-}
-
-void McgaGraphics::speed_printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth, const char *string) {
-	char zeichen;
-	_G(gcurx) = x;
-	_G(gcury) = y;
-	int16 i = 0;
-	do {
-		zeichen = string[i];
-		++i;
-		if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast))) {
-			putz(zeichen, fgCol, bgCol, scrwidth);
-			vors();
-		}
-	} while ((i < MAXSTRING) && (zeichen != 0));
-}
-
-void McgaGraphics::print(int16 fgCol, int16 bgCol, int16 scrwidth, const char *string, ...) {
-	int16 k = 0, l;
-	char zeichen, zstring[35];
-	char *tempptr;
-	int16 diff;
-	va_list parptr;
-	va_start(parptr, string);
-	_crlfx = _G(gcurx);
-	_crlfy = _G(gcury) + _fontH + 2;
-	int16 i = 0;
-	do {
-		zeichen = string[i];
-		++i;
-		if ((zeichen > 0 && zeichen < 32) || (zeichen == 127)) {
-			switch (zeichen) {
-			case 8:
-				_G(gcurx) -= _G(fvorx);
-				_G(gcury) -= _G(fvory);
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			case 10:
-				_G(gcury) = _crlfy;
-				_G(gcurx) = _crlfx;
-				_crlfx = _G(gcurx);
-				_crlfy = _G(gcury) + _fontH + 2;
-				break;
-
-			case 13:
-				_G(gcurx) = _crlfx;
-				break;
-
-			case 127 :
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			default :
-				if (zeichen >= _G(fontFirst)) {
-					putz(zeichen, fgCol, bgCol, scrwidth);
-					vors();
-				}
-				break;
-			}
-		} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 0)) {
-			if (zeichen != '%') {
-				putz(zeichen, fgCol, bgCol, scrwidth);
-				vors();
-			} else {
-				zeichen = string[i];
-				int16 count = 0;
-				if ((zeichen >= 0x30) && (zeichen <= 0x39))
-					count = atoi(string + i);
-				while ((zeichen >= 0x30) && (zeichen <= 0x39)) {
-					++i;
-					zeichen = string[i];
-				}
-				++i;
-				switch (zeichen) {
-				case '%':
-					putz(zeichen, fgCol, bgCol, scrwidth);
-					vors();
-					break;
-
-				case 'd':
-				case 'u':
-					if (zeichen == 'd') {
-						int16 izahl = va_arg(parptr, int);
-						itoa(izahl, zstring, 10);
-					} else {
-						uint16 uzahl = va_arg(parptr, unsigned int);
-						itoa(uzahl, zstring, 10);
-					}
-					k = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 'l':
-					if (string[i] != 'u') {
-						long lzahl = va_arg(parptr, long);
-						ltoa(lzahl, zstring, 10);
-					} else {
-						uint32 luzahl = va_arg(parptr, unsigned long);
-						ultoa(luzahl, zstring, 10);
-						++i;
-					}
-					k = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 's':
-					tempptr = va_arg(parptr, char *);
-					if (!count) {
-						while (*tempptr != 0) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					} else {
-						for (l = 0; l < count; l++) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					}
-
-					break;
-
-				default:
-					break;
-				}
-			}
-		}
-	} while ((i < MAXSTRING) && (zeichen != 0));
-
-	va_end(parptr);
-}
-
-void McgaGraphics::printnxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 menge,
-                           int16 scrwidth, const char *string, ...) {
-	int16 i = 0, k = 0, l;
-	char zstring[35];
-	char *tempptr;
-	int16 diff;
-	va_list parptr;
-	va_start(parptr, string);
-	_G(gcurx) = x;
-	_G(gcury) = y;
-	_crlfx = _G(gcurx);
-	_crlfy = y + _fontH + 2;
-	for (i = 0; i < menge;) {
-		char zeichen = string[i];
-		++i;
-		if ((zeichen < 32) || (zeichen == 127)) {
-			switch (zeichen) {
-			case 8:
-				_G(gcurx) -= _G(fvorx);
-				_G(gcury) -= _G(fvory);
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			case 10:
-				_G(gcury) = _crlfy;
-				_G(gcurx) = _crlfx;
-				_crlfx = _G(gcurx);
-				_crlfy = _G(gcury) + _fontH + 2;
-				break;
-
-			case 13:
-				_G(gcurx) = _crlfx;
-				break;
-
-			case 127 :
-				putz(32, fgCol, bgCol, scrwidth);
-				break;
-
-			default :
-				if (zeichen >= _G(fontFirst))
-					putz(zeichen, fgCol, bgCol, scrwidth);
-				break;
-			}
-		} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast))) {
-			if (zeichen != '%') {
-				putz(zeichen, fgCol, bgCol, scrwidth);
-				vors();
-			} else {
-				zeichen = string[i];
-				int16 count = 0;
-				if ((zeichen >= 0x30) && (zeichen <= 0x39))
-					count = atoi(string + i);
-				while ((zeichen >= 0x30) && (zeichen <= 0x39)) {
-					++i;
-					zeichen = string[i];
-				}
-				++i;
-				switch (zeichen) {
-				case '%':
-					putz(zeichen, fgCol, bgCol, scrwidth);
-					vors();
-					break;
-
-				case 'd':
-				case 'u':
-					if (zeichen == 'd') {
-						int16 izahl = va_arg(parptr, int);
-						itoa(izahl, zstring, 10);
-					} else {
-						uint16 uzahl = va_arg(parptr, unsigned int);
-						itoa(uzahl, zstring, 10);
-					}
-					k = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 'l':
-					if (string[i] != 'u') {
-						long lzahl = va_arg(parptr, long);
-						ltoa(lzahl, zstring, 10);
-					} else {
-						uint32 luzahl = va_arg(parptr, uint32);
-						ultoa(luzahl, zstring, 10);
-						++i;
-					} k
-					    = 0;
-					if (count) {
-						diff = check_stellen_anz(zstring, &k, count);
-						for (l = 0; l < diff; l++) {
-							putz(0x30, fgCol, bgCol, scrwidth);
-							vors();
-						}
-					}
-					while (zstring[k] != 0) {
-						putz(zstring[k], fgCol, bgCol, scrwidth);
-						vors();
-						++k;
-					}
-					break;
-
-				case 's':
-					tempptr = va_arg(parptr, char *);
-					if (!count) {
-						while (*tempptr != 0) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					}
-					else {
-						for (l = 0; l < count; l++) {
-							putz(*tempptr, fgCol, bgCol, scrwidth);
-							++tempptr;
-							vors();
-						}
-					}
-
-					break;
-
-				default:
-					break;
-				}
+	for (uint curX = 0; curX < textSurface->pitch; curX++) {
+		for (uint curY = 0; curY < textSurface->h; curY++) {
+			if (curX + x < 320 && curY + y < 200) {
+				byte *src = data + (curY * textSurface->pitch) + curX;
+				byte *dst = (byte *)_G(currentScreen).getBasePtr(curX + x, curY + y);
+				if (*src != 0xFF)
+					*dst = fgCol;
+				else if (*src == 0xFF && bgCol < 0xFF)
+					*dst = bgCol;
 			}
 		}
 	}
-	va_end(parptr);
-}
 
-void McgaGraphics::printcharxy(int16 x, int16 y, char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
-	_crlfx = x;
-	_crlfy = y + _fontH + 2;
-	if ((zeichen < 32) || (zeichen == 127)) {
-		switch (zeichen) {
-		case 8:
-			x -= _G(fvorx);
-			y -= _G(fvory);
-			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
-			break;
+	g_screen->addDirtyRect(Common::Rect(
+		x, y, x + textSurface->pitch, y + textSurface->h));
 
-		case 10:
-			_G(gcury) = _crlfy;
-			_G(gcurx) = _crlfx;
-			_crlfx = _G(gcurx);
-			_crlfy = _G(gcury) + _fontH + 2;
-			break;
-
-		case 13:
-			_G(gcurx) = _crlfx;
-			_G(gcury) = _crlfy;
-			break;
-
-		case 127:
-			putcxy(x, y, 32, fgCol, bgCol, scrwidth);
-			break;
-
-		default:
-			break;
-		}
-	} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 127)) {
-		putcxy(x, y, zeichen, fgCol, bgCol, scrwidth);
-		vors();
-	}
-}
-
-void McgaGraphics::printchar(char zeichen, int16 fgCol, int16 bgCol, int16 scrwidth) {
-	_crlfx = _G(gcurx);
-	_crlfy = _G(gcury) + _fontH + 2;
-	if ((zeichen < 32) || (zeichen == 127)) {
-		switch (zeichen) {
-		case 8:
-			_G(gcurx) -= _G(fvorx);
-			_G(gcury) -= _G(fvory);
-			putz(32, fgCol, bgCol, scrwidth);
-			break;
-
-		case 10:
-			_G(gcury) = _crlfy;
-			_G(gcurx) = _crlfx;
-			_crlfx = _G(gcurx);
-			_crlfy = _G(gcury) + _fontH + 2;
-			break;
-
-		case 13:
-			_G(gcurx) = _crlfx;
-			_G(gcury) = _crlfy;
-			break;
-
-		case 127:
-			putz(32, fgCol, bgCol, scrwidth);
-			break;
-
-		default:
-			break;
-		}
-	} else if ((zeichen >= _G(fontFirst)) && (zeichen <= _G(fontLast)) && (zeichen != 127)) {
-		putz(zeichen, fgCol, bgCol, scrwidth);
-		vors();
-	}
-}
-
-void McgaGraphics::set_vorschub(int16 x, int16 y) {
-	if (_G(fvorx) != -255)
-		_G(fvorx) = x;
-	if (_G(fvory) != -255)
-		_G(fvory) = y;
-}
-
-void McgaGraphics::get_fontinfo(int16 *vorx, int16 *vory, int16 *fntbr, int16 *fnth) {
-	*vorx = _G(fvorx);
-	*vory = _G(fvory);
-	*fntbr = _fontBr;
-	*fnth = _fontH;
+	textSurface->free();
+	delete textSurface;
 }
 
 void McgaGraphics::vorschub() {
@@ -1391,10 +894,6 @@ void McgaGraphics::ltoa(long N, char *str, int base) {
 
 void McgaGraphics::ultoa(uint32 N, char *str, int base) {
 	sprintf(str, "%u", N);
-}
-
-void McgaGraphics::itoa(int N, char *str, int base) {
-	sprintf(str, "%d", N);
 }
 
 } // namespace Chewy

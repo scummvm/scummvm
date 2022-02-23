@@ -93,7 +93,8 @@ void Options::execute(TafInfo *ti) {
 			8 + ti->korrektur[(surimy_ani << 1) + 1], 0);
 		short bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
 		_G(out)->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
-		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, "%d", _G(spieler).FramesPerSecond << 1);
+		Common::String fps = Common::String::format("%d", _G(spieler).FramesPerSecond << 1);
+		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
 		if (_G(spieler).SoundSwitch) {
 			_G(out)->sprite_set(ti->image[mund_ani],
