@@ -37,12 +37,14 @@ void SoundManager::tick() {
 		Sound &sound = *i;
 		auto &phaseVar = sound.phaseVar;
 
-		bool active = _mixer->isSoundHandleActive(sound.handle);
+		bool active = playing(sound.id);
 		if (!sound.phaseVar.empty()) {
 			int value = _engine->getGlobal(sound.phaseVar);
 			if (value <= 1) {
-				if (value == 1 && !active)
+				if (value == 1 && !active) {
+					debug("sample %s:%s resets phase var to 0", sound.resource.c_str(), sound.filename.c_str());
 					_engine->setGlobal(phaseVar, 0);
+				}
 			} else if (value & 2) {
 				debug("sample %s:%s restarts (via phase var)", sound.resource.c_str(), sound.filename.c_str());
 				_engine->setGlobal(phaseVar, 1);
@@ -106,7 +108,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
 		if (!phaseVar.empty())
-			_engine->setGlobal(phaseVar, 0);
+			_engine->setGlobal(phaseVar, 1);
 		warning("no sound %s", filename.c_str());
 		return -1;
 	}
@@ -124,7 +126,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		warning("could not play sound %s", filename.c_str());
 		delete file;
 		if (!phaseVar.empty())
-			_engine->setGlobal(phaseVar, 0);
+			_engine->setGlobal(phaseVar, _engine->getGlobal(phaseVar)? 1: 0);
 		else
 			_engine->reactivate(process);
 		return -1;
@@ -133,9 +135,9 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	if (id == -1)
 		id = _nextId++;
 
-	_sounds.push_back(Sound(id, process, resource, filename, phaseVar, handle));
+	_sounds.push_back(Sound(id, process, resource, filename, phaseVar));
 	if (startPlaying)
-		_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_sounds.back().handle, stream, id);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;

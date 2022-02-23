@@ -46,8 +46,8 @@ namespace AGDS {
 		int					leftVolume;
 		int					rightVolume;
 		bool				paused;
-		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String &file, const Common::String & var, Audio::SoundHandle h, int g = 0):
-			id(id_), process(p), resource(res), filename(file), phaseVar(var), handle(h), group(g), leftVolume(100), rightVolume(100), paused(false) {
+		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String &file, const Common::String & var, int g = 0):
+			id(id_), process(p), resource(res), filename(file), phaseVar(var), handle(), group(g), leftVolume(100), rightVolume(100), paused(false) {
 		}
 	};
 
