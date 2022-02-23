@@ -107,24 +107,8 @@ void mem2mcga(const byte *ptr) {
 	g_screen->markAllDirty();
 }
 
-void mcga2mem(byte *ptr) {
-	const byte *srcP = SCREEN;
-	*((uint16 *)ptr) = SCREEN_WIDTH;
-	*((uint16 *)(ptr + 2)) = SCREEN_HEIGHT;
-
-	Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), ptr + 4);
-}
-
 void mem2mem(const byte *ptr1, byte *ptr2) {
 	Common::copy(ptr1, ptr1 + (SCREEN_WIDTH * SCREEN_HEIGHT), ptr2);
-}
-
-void mem2mem_masked(const byte *ptr1, byte *ptr2, int16 maske) {
-	for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i, ++ptr1, ++ptr2) {
-		byte pixel = *ptr1;
-		if (pixel != maske)
-			*ptr2 = pixel;
-	}
 }
 
 void map_spr_2screen(const byte *sptr, int16 x, int16 y) {

@@ -258,60 +258,12 @@ void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int
 	linie(x, y, x, y1 + 1, col1);
 }
 
-void McgaGraphics::kreis(int16 x, int16 y, int16 r, int16 farbe) {
-	int16 b = 0, alt = 0;
-	for (int16 w = 0; w <= 91; w++) {
-		int16 a = (int16)(_sines[w] * ((float)r * 0.85));
-		if ((a - alt) > 1) {
-			int16 diff = a - alt;
-			for (int16 i = 0; i <= diff; i++) {
-				setpixel_mcga(x - b, (y - (alt + i)), farbe);
-				setpixel_mcga(x + b, (y - (alt + i)), farbe);
-				setpixel_mcga(x - b, (y + (alt + i)), farbe);
-				setpixel_mcga(x + b, (y + (alt + i)), farbe);
-			}
-		}
-		b = (int16)(_cosines[w] * (float)r);
-		setpixel_mcga(x - b, y - a, farbe);
-		setpixel_mcga(x + b, y - a, farbe);
-		setpixel_mcga(x - b, y + a, farbe);
-		setpixel_mcga(x + b, y + a, farbe);
-		alt = a;
-	}
-}
-
-void McgaGraphics::fkreis(int16 x, int16 y, int16 r, int16 farbe) {
-	int16 b = 0, alt = 0, i = 0, diff;
-	for (int16 w = 0; w <= 90; w++) {
-		int16 a = (int16)(_sines[w] * ((float)r * 0.85));
-		if ((a - alt) > 1) {
-			diff = a - alt;
-			for (i = 0; i < diff; i++) {
-				line_mcga(x - b, (y - (alt + i)), x + b, (y - (alt + i)), farbe);
-				line_mcga(x - b, (y + (alt + i)), x + b, (y + (alt + i)), farbe);
-			}
-		}
-		b = (int16)(_cosines[w] * ((float)r));
-		line_mcga(x - b, (y - (alt + i)), x + b, (y - (alt + i)), farbe);
-		line_mcga(x - b, (y + (alt + i)), x + b, (y + (alt + i)), farbe);
-		alt = a;
-	}
-}
-
 void McgaGraphics::back2screen(byte *ptr) {
 	mem2mcga(ptr);
 }
 
 void McgaGraphics::back2back(byte *ptr1, byte *ptr2) {
 	mem2mem(ptr1, ptr2);
-}
-
-void McgaGraphics::back2back_maskiert(byte *ptr1, byte *ptr2, int16 maske) {
-	mem2mem_masked(ptr1, ptr2, maske);
-}
-
-void McgaGraphics::screen2back(byte *ptr) {
-	mcga2mem(ptr);
 }
 
 void McgaGraphics::sprite_save(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
