@@ -329,13 +329,13 @@ void WetEngine::loadAssetsFullGame() {
 	//loadArcadeLevel("c501.mi_", "???", "");
 	//loadArcadeLevel("c502.mi_", "???", "");
 
-	loadArcadeLevel("c610.mi_", "<quit>", "<check_lives>", "");
-	loadArcadeLevel("c611.mi_", "<quit>", "<check_lives>", "");
-	loadArcadeLevel("c612.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c610.mi_", "c60", "<check_lives>", "");
+	loadArcadeLevel("c611.mi_", "c60", "<check_lives>", "");
+	loadArcadeLevel("c612.mi_", "c60", "<check_lives>", "");
 
-	//loadArcadeLevel("c600.mi_", "???", "");
-	//loadArcadeLevel("c601.mi_", "???", "");
-	//loadArcadeLevel("c602.mi_", "???", "");
+	loadArcadeLevel("c600.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c601.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c602.mi_", "<quit>", "<check_lives>", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
