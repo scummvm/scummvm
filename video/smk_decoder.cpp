@@ -428,12 +428,11 @@ bool SmackerDecoder::rewind() {
 }
 
 void SmackerDecoder::forceSeekToFrame(uint frame) {
-	if (frame < 10) {
-		rewind();
-		return;
-	}
-
-	const uint seekFrame = MAX<uint>(frame - 10, 0);
+	uint seekFrame;
+	if (frame >= 10)
+		seekFrame = MAX<uint>(frame - 10, 0);
+	else
+		seekFrame = 0;
 
 	if (!isVideoLoaded())
 		return;
