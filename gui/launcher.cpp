@@ -94,6 +94,24 @@ enum {
 	kCmdSavePathClear = 'PSAC'
 };
 
+const GroupingMode groupingModes[] = {
+	// I18N: Group name for the game list
+	{"none",     _sc("None", "group"),      kGroupByNone},
+	// I18N: Group name for the game list, grouped by the first letter of the game title
+	{"initial",  _sc("First letter", "group"), kGroupByFirstLetter},
+	// I18N: Group name for the game list, grouped by game engine
+	{"engine",   _sc("Engine", "group"),    kGroupByEngine},
+	// I18N: Group name for the game list, grouped by game series
+	{"series",   _sc("Series", "group"),    kGroupBySeries},
+	// I18N: Group name for the game list, grouped by game publisher
+	{"company",  _sc("Publisher", "group"), kGroupByCompany},
+	// I18N: Group name for the game list, grouped by language
+	{"language", _sc("Language", "group"),  kGroupByLanguage},
+	// I18N: Group name for the game list, grouped by game platform
+	{"platform", _sc("Platform", "group"),  kGroupByPlatform},
+	{nullptr, nullptr, kGroupByNone}
+};
+
 #pragma mark -
 
 bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, Common::U32String token) {
@@ -197,22 +215,15 @@ void LauncherDialog::build() {
 		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String(_("Group by: ")));
 
 	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String(_("Select a criteria to group the entries")), kSetGroupMethodCmd);
-	// I18N: Group name for the game list
-	_grpChooserPopup->appendEntry(_c("None", "group"), kGroupByNone);
-	// I18N: Group name for the game list, grouped by the first letter of the game title
-	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
-	// I18N: Group name for the game list, grouped by game engine
-	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
-	// I18N: Group name for the game list, grouped by game series
-	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
-	// I18N: Group name for the game list, grouped by game publisher
-	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
-	// I18N: Group name for the game list, grouped by language
-	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
-	// I18N: Group name for the game list, grouped by game platform
-	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
-	// TODO: Save the last grouping method in config
-	_grpChooserPopup->setSelected(kGroupByNone);
+	Common::String grouping = ConfMan.get("grouping");
+	const GroupingMode *mode = groupingModes;
+	while (mode->name) {
+		_grpChooserPopup->appendEntry(_c(mode->description, "group"), mode->id);
+		if (grouping == mode->name)
+			_groupBy = mode->id;
+		++mode;
+	}
+	_grpChooserPopup->setSelected(_groupBy);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, _title + ".Logo");
 		_logo->useThemeTransparency(true);
@@ -1232,6 +1243,14 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
 			_groupBy = newGroupBy;
+			const GroupingMode *mode = groupingModes;
+			while (mode->name) {
+				if (mode->id == newGroupBy) {
+					ConfMan.setAndFlush("grouping", mode->name);
+					break;
+				}
+				++mode;
+			}
 			updateListing();
 		}
 		break;
@@ -1426,6 +1445,14 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
 			_groupBy = newGroupBy;
+			const GroupingMode *mode = groupingModes;
+			while (mode->name) {
+				if (mode->id == newGroupBy) {
+					ConfMan.setAndFlush("grouping", mode->name);
+					break;
+				}
+				++mode;
+			}
 			updateListing();
 		}
 		break;

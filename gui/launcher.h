@@ -51,6 +51,23 @@ enum GroupingMethod {
 	kGroupByPlatform
 };
 
+struct GroupingMode {
+	/**
+	 * The name of the mode.  This is for example what is stored in the config file.
+	 */
+	const char *name;
+
+	/**
+	 * A human-readable description for the mode.
+	 */
+	const char *description;
+
+	/**
+	 * ID of he mode.
+	 */
+	GroupingMethod id;
+};
+
 class BrowserDialog;
 class CommandSender;
 class GroupedListWidget;
