@@ -204,9 +204,9 @@ void Character::tick() {
 			_phase = -1;
 			_frames = 0;
 			//animate(_direction, 100, false);
+			_engine->reactivate(_processName, true);
 		}
 	}
-	_engine->reactivate(_processName, true);
 }
 
 
