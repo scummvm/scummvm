@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-23 09:29+0000\n"
-"PO-Revision-Date: 2022-02-18 18:36+0000\n"
+"PO-Revision-Date: 2022-02-23 20:45+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -726,48 +726,36 @@ msgstr "Ei mikään"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Ensimmäinen kirjain"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Pelimoottori"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Sarja"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Julkaisija"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Kieli"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Alusta"
@@ -5703,22 +5691,20 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Käytetäänkö QuickTime-videoita vedenpintojen visuaalisiin efekteihin ("
+"väreet, aallot, yms.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Siirtymät:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Siirtymät ruutujen välillä päälle tai pois. Siirtymien poistaminen nopeuttaa "
-"pelissä liikkumista."
+"Säätää ruutujen välisten siirtymien nopeutta. Siirtymien poistaminen "
+"nopeuttaa pelissä liikkumista."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
@@ -6557,6 +6543,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"Tätä versiota Monkey Island:ista ei voi pelata, koska Limited Run Games "
+"toimitti sen mukana vialliset DISK04.LEC ja 903.LFL tiedostot.\n"
+"\n"
+"Ole hyvä ja ota yhteyttä heidän tekniseen tukeensa näiden tiedostojen "
+"korvaamiseksi, tai etsi netistä ohjeet joiden avulla voit palauttaa ehjät "
+"tiedostoversiot KryoFlux-dumpeista jotka Limited Run Games myös toimitti."
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
