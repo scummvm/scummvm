@@ -2894,7 +2894,7 @@ void ScummEngine_v5::decodeParseString() {
 					strcpy(tmpBuf + diff, "5000");
 					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
 					printString(textSlot, (byte *)tmpBuf);
-				} if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
+				} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
 					printPatchedMI1CannibalString(textSlot, _scriptPointer);
 				} else {
 					printString(textSlot, _scriptPointer);
