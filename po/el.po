@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-23 00:22+0000\n"
-"PO-Revision-Date: 2022-02-20 17:28+0000\n"
+"PO-Revision-Date: 2022-02-23 07:55+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -293,8 +293,8 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Γλώσσα του παιχνιδιού. Αυτό δε θα μετατρέψει την Ισπανική έκδοση του "
-"παιχνιδιού σας σε Αγγλική"
+"Γλώσσα του παιχνιδιού. Σημειώστε ότι αυτή η επιλογή δεν θα μετατρέψει την "
+"Ισπανική έκδοση του παιχνιδιού σας σε Αγγλική"
 
 #: gui/editgamedialog.cpp:163 gui/editgamedialog.cpp:178 gui/options.cpp:1368
 #: gui/options.cpp:1388 gui/options.cpp:1401 gui/options.cpp:1415
@@ -735,48 +735,36 @@ msgstr "Κανένα"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Αρχικό γράμμα"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Μηχανή"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Σειρά"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Εκδότης"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Γλώσσα"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Πλατφόρμα"
