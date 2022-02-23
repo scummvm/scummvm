@@ -137,7 +137,7 @@ public:
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
 
-	bool active() const { return !_mjpgPlayer && !(_soundManager.playing(_syncSoundId) || _tellTextTimer > 0); }
+	bool active() const { return !_mjpgPlayer; }
 	void playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles);
 	void skipFilm();
 
