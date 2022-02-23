@@ -554,9 +554,11 @@ void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			_G(out)->cls();
 			break;
 
-		default:
-			_G(out)->printxy(0, 10, 255, 0, 0, "Unknown Chunk %d ", chead.type);
+		default: {
+			Common::String err = Common::String::format("Unknown Chunk %d ", chead.type);
+			_G(out)->printxy(0, 10, 255, 0, 0, err.c_str());
 			break;
+		}
 		}
 	}
 }

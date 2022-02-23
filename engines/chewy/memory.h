@@ -34,7 +34,6 @@ public:
 
 	TafInfo *taf_adr(const char *filename);
 	TafSeqInfo *taf_seq_adr(int16 image_start, int16 image_anz);
-	void tff_adr(const char *filename, byte **speicher);
 
 	Data *file;
 };

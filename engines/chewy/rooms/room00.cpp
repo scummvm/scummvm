@@ -22,6 +22,7 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room00.h"
 #include "chewy/sound.h"
@@ -305,8 +306,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 			int16 anz;
 			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != 0) {
-				_G(out)->set_fontadr(_G(font8x8));
-				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
@@ -544,8 +544,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 			int16 anz;
 			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
 			if (str_ != nullptr) {
-				_G(out)->set_fontadr(_G(font8x8));
-				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);

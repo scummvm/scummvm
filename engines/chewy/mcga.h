@@ -58,8 +58,6 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xdiff,
 
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
 void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
-void setfont(byte *addr, int16 width, int16 height, int16 first,
-             int16 last);
 void vors();
 
 void upd_scr();

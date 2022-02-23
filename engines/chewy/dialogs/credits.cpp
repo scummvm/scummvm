@@ -23,6 +23,8 @@
 #include "chewy/events.h"
 #include "chewy/file.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
+#include "chewy/text.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -241,12 +243,10 @@ void Credits::execute() {
 
 			if (CREDITS_TYPE[i]) {
 				fontCol = 32;
-				_G(out)->set_fontadr(_G(font6x8));
-				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+				_G(fontMgr)->setFont(_G(font6));
 			} else {
 				fontCol = 1;
-				_G(out)->set_fontadr(_G(font8x8));
-				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+				_G(fontMgr)->setFont(_G(font8));
 			}
 			stillScrolling = true;
 
@@ -261,8 +261,7 @@ void Credits::execute() {
 		_G(out)->back2screen(_G(workpage));
 	}
 
-	_G(out)->set_fontadr(_G(font8x8));
-	_G(out)->set_vorschub(_G(fvorx8x8), _G(fvorx8x8));
+	_G(fontMgr)->setFont(_G(font8));
 	_G(room)->open_handle("back/episode1.tgp", R_GEPDATEI);
 
 	_G(room)->set_ak_pal(&_G(room_blk));

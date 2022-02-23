@@ -108,9 +108,6 @@ struct AdsBlock {
 };
 
 struct AtdsVar {
-	byte *Font = nullptr;
-	int16 Fvorx = 0;
-	int16 Fhoehe = 0;
 	int16 Silent = 0;
 	int16 *Delay = 0;
 	int16 DiaNr = 0;
@@ -255,7 +252,6 @@ public:
 	Atdsys();
 	~Atdsys();
 
-	void set_font(byte *font_adr, int16 fvorx, int16 fhoehe);
 	void set_delay(int16 *delay, int16 silent);
 	void setHasSpeech(bool hasSpeech);
 	void updateSoundSettings();

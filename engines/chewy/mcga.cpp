@@ -21,8 +21,10 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 #include "chewy/chewy.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/mcga.h"
 
 namespace Chewy {
@@ -254,51 +256,39 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 	}
 }
 
-void setfont(byte *addr, int16 width, int16 height, int16 first, int16 last) {
-	_G(fontAddr) = addr;
-	_G(fontWidth) = width;
-	_G(fontHeight) = height;
-	_G(fontFirst) = first;
-	_G(fontLast) = last;
-}
-
 void upd_scr() {
 	g_screen->markAllDirty();
 	g_screen->update();
 }
 
 void vors() {
-	_G(gcurx) += _G(fvorx);
-	_G(gcury) += _G(fvory);
+	_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
+	_G(gcury) += _G(fontMgr)->getFont()->getDataHeight();
 }
 
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
-	size_t charSize = (_G(fontWidth) / 8) * _G(fontHeight);
-	byte *charSrcP = _G(fontAddr) + (c - _G(fontFirst)) * charSize;
+	ChewyFont *font = _G(fontMgr)->getFont();
+	Graphics::Surface *textSurface = font->getLine(Common::String(c));
+	byte *data = (byte *)textSurface->getPixels();
 
-	if (scrWidth == 0)
-		scrWidth = SCREEN_WIDTH;
-	byte *destP = SCREEN + (y * scrWidth) + x;
-
-	for (size_t yp = 0; yp < _G(fontHeight); ++yp, destP += scrWidth) {
-		byte *destLineP = destP;
-
-		for (size_t byteCtr = 0; byteCtr < (_G(fontWidth) / 8); ++byteCtr) {
-			byte bits = *charSrcP++;
-
-			// Iterate through the 8 bits
-			for (size_t xp = 0; xp < 8; ++xp, ++destLineP, bits <<= 1) {
-				if (bits & 0x80)
-					*destLineP = fgCol;
-				else if (bgCol <= 0xff)
-					*destLineP = bgCol;
+	for (uint curX = 0; curX < textSurface->pitch; curX++) {
+		for (uint curY = 0; curY < textSurface->h; curY++) {
+			if (curX + x < 320 && curY + y < 200) {
+				byte *src = data + (curY * textSurface->pitch) + curX;
+				byte *dst = (byte *)_G(currentScreen).getBasePtr(curX + x, curY + y);
+				if (*src != 0xFF)
+					*dst = fgCol;
+				else if (*src == 0xFF && bgCol < 0xFF)
+					*dst = bgCol;
 			}
 		}
 	}
 
-	if (SCREEN == (byte *)g_screen->getPixels())
-		g_screen->addDirtyRect(Common::Rect(
-			x, y, x + _G(fontWidth), y + _G(fontHeight)));
+	g_screen->addDirtyRect(Common::Rect(
+		x, y, x + textSurface->pitch, y + textSurface->h));
+
+	textSurface->free();
+	delete textSurface;
 }
 
 void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {

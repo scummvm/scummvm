@@ -22,6 +22,7 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/main.h"
 #include "chewy/menus.h"
 #include "chewy/dialogs/inventory.h"
 
@@ -93,15 +94,13 @@ void maus_mov_menu() {
 }
 
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
-	int16 vorx, vory, fntbr, fnth;
-	_G(out)->get_fontinfo(&vorx, &vory, &fntbr, &fnth);
 	int16 len = 0;
 	for (int16 i = 0; i < txt_anz; i++) {
 		int16 tmp_len = strlen(_G(txt)->str_pos((char *)txt_adr, i));
 		if (tmp_len > len)
 			len = tmp_len;
 	}
-	len = len * vorx;
+	len = len * _G(fontMgr)->getFont()->getDataWidth();
 	int16 pix_len = len / 2;
 	*x = *x - pix_len + 12;
 	if (*x > (SCREEN_WIDTH - len))
@@ -214,7 +213,7 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 		if (x_pix < tmp)
 			x_pix = tmp;
 	}
-	x_pix *= _G(fvorx6x8);
+	x_pix *= _G(font8)->getDataWidth();
 	x_pix += 12;
 	tmp = x_pix;
 	if (x_pix % 16)
@@ -253,8 +252,7 @@ void ads_menu() {
 			_G(cur_display) = true;
 
 			build_menu(ADS_WIN);
-			_G(out)->set_fontadr(_G(font6x8));
-			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+			_G(fontMgr)->setFont(_G(font6));
 			if (_G(ads_item_anz) > 4)
 				cur_y_start = 190;
 			else

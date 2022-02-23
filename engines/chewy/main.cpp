@@ -50,6 +50,7 @@ void game_main() {
 	_G(font6) = new ChewyFont("TXT/6X8.TFF");
 	_G(font6)->setDisplaySize(_G(font6)->getDataWidth() - 2, _G(font6)->getDataHeight());
 	_G(font8)->setDeltaX(10);
+	_G(fontMgr)->setFont(_G(font8)); // set default font
 
 	_G(room_start_nr) = 0;
 	standard_init();
@@ -87,8 +88,6 @@ void free_buffers() {
 	for (int16 i = 0; i < MAX_PERSON; i++)
 		free((char *)_G(PersonTaf)[i]);
 	free((char *)_G(spz_tinfo));
-	free(_G(font6x8));
-	free(_G(font8x8));
 	free(_G(spblende));
 	free((char *)_G(menutaf));
 	free((char *)_G(chewy));
@@ -322,8 +321,7 @@ bool mainLoop(int16 mode) {
 			_G(flags).SaveMenu = true;
 
 			_G(out)->set_pointer(_G(screen0));
-			_G(out)->set_fontadr(_G(font6x8));
-			_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+			_G(fontMgr)->setFont(_G(font6));
 			cursorChoice(CUR_SAVE);
 			if (Dialogs::Files::execute(true) == 1) {
 				retValue = true;
@@ -388,8 +386,7 @@ bool mainLoop(int16 mode) {
 				_G(cur)->move(152, 92);
 				_G(minfo).x = 152;
 				_G(minfo).y = 92;
-				_G(out)->set_fontadr(_G(font6x8));
-				_G(out)->set_vorschub(_G(fvorx6x8), _G(fvory6x8));
+				_G(fontMgr)->setFont(_G(font6));
 
 				_G(out)->set_pointer(_G(screen0));
 				cursorChoice(CUR_SAVE);
@@ -703,8 +700,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 			}
 
 			if (str_adr) {
-				_G(out)->set_fontadr(_G(font8x8));
-				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_adr, anz);
@@ -1444,8 +1440,7 @@ int16 calc_maus_txt(int16 x, int16 y, int16 mode) {
 					char *str_ = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATEI);
 					if (str_ != 0) {
 						ret = txt_nr;
-						_G(out)->set_fontadr(_G(font8x8));
-						_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+						_G(fontMgr)->setFont(_G(font8));
 						calc_txt_xy(&x, &y, str_, anz);
 						for (int16 i = 0; i < anz; i++)
 							print_shad(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
@@ -1509,8 +1504,7 @@ void calc_mouse_person(int16 x, int16 y) {
 		int16 p_nr = is_mouse_person(x, y);
 		if (p_nr != -1) {
 			if (!_G(spieler).PersonHide[p_nr]) {
-				_G(out)->set_fontadr(_G(font8x8));
-				_G(out)->set_vorschub(_G(fvorx8x8), _G(fvory8x8));
+				_G(fontMgr)->setFont(_G(font8));
 				char *str_ = ch_txt[p_nr];
 				calc_txt_xy(&x, &y, str_, 1);
 				print_shad(x, y, 255, 300, 0, _G(scr_width), str_);
