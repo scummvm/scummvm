@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-09 10:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -300,6 +300,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<per defecte>"
 
@@ -4232,6 +4233,27 @@ msgstr ""
 "MT32. Intentarem convertir els instruments de\n"
 "Roland MT32 als de General MIDI. És possible\n"
 "que algunes pistes no es reprodueixin correctament."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "Idioma de la interfície:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib s'utilitza per la música de molts jocs"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+msgid "Force antialiased text"
+msgstr "Amb antialias (16bpp)"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8664,20 +8686,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Sincronització als jocs 3D"
-
-#, fuzzy
-#~| msgid "GUI language:"
-#~ msgid "Game language:"
-#~ msgstr "Idioma de la interfície:"
-
-#, fuzzy
-#~| msgid "AdLib is used for music in many games"
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "AdLib s'utilitza per la música de molts jocs"
-
-#, fuzzy
-#~ msgid "Force antialiased text"
-#~ msgstr "Amb antialias (16bpp)"
 
 #, fuzzy
 #~ msgid "Enable high resolution graphics"

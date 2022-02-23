@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-18 16:42+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -302,6 +302,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<standard>"
 
@@ -4230,6 +4231,27 @@ msgstr ""
 "Vi forsøker å koble Roland MT32-instrumentene til\n"
 "General MIDI-instrumentene. Allikevel, kan det\n"
 "skje at enkelte spor ikke vil spilles riktig."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+msgid "Game language:"
+msgstr "GUI-språk:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib brukes til musikk i mange spill"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Kantutjevnet"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8779,20 +8801,6 @@ msgstr ""
 
 #~ msgid "Enable cross fading of images and scenes"
 #~ msgstr "Aktiver kryssovergang for bilder og scener"
-
-#, fuzzy
-#~ msgid "Game language:"
-#~ msgstr "GUI-språk:"
-
-#, fuzzy
-#~| msgid "AdLib is used for music in many games"
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "AdLib brukes til musikk i mange spill"
-
-#, fuzzy
-#~| msgid "Antialiased"
-#~ msgid "Force antialiased text"
-#~ msgstr "Kantutjevnet"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Hopp over EGA dithering (fullfarge bakgrunner)"

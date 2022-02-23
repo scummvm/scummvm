@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -311,6 +311,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<padrão>"
 
@@ -4244,6 +4245,28 @@ msgstr ""
 "Foram mapeados os instrumentos \"Roland MT32\" aos de\n"
 "\"General MIDI\". É possível que no entanto\n"
 "algumas pistas não soem correctamente."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "Idioma da interface:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib é usado para música em vários jogos"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Suavizada"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8680,21 +8703,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Enable cross fade"
 #~ msgstr "Ativa batotas"
-
-#, fuzzy
-#~| msgid "GUI language:"
-#~ msgid "Game language:"
-#~ msgstr "Idioma da interface:"
-
-#, fuzzy
-#~| msgid "AdLib is used for music in many games"
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "AdLib é usado para música em vários jogos"
-
-#, fuzzy
-#~| msgid "Antialiased"
-#~ msgid "Force antialiased text"
-#~ msgstr "Suavizada"
 
 #~ msgid "Enable high resolution graphics"
 #~ msgstr "Activar gráficos em alta resolução"

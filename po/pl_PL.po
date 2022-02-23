@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -311,6 +311,7 @@ msgstr "Język gry. Nie zmieni to hiszpańskiej wersji gry w angielską"
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<domyślne>"
 
@@ -4298,6 +4299,28 @@ msgstr ""
 "MIDI Roland MT32.\n"
 "Próbujemy przypisać instrumenty Rolanda MT32 do instrumentów General MIDI. "
 "Niektóre utwory mogą być źle odtwarzane."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "Język interfejsu graficznego:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib jest używany do muzyki w wielu grach"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Wygładzany"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 #, fuzzy
@@ -8865,21 +8888,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync w grach 3D"
-
-#, fuzzy
-#~| msgid "GUI language:"
-#~ msgid "Game language:"
-#~ msgstr "Język interfejsu graficznego:"
-
-#, fuzzy
-#~| msgid "AdLib is used for music in many games"
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "AdLib jest używany do muzyki w wielu grach"
-
-#, fuzzy
-#~| msgid "Antialiased"
-#~ msgid "Force antialiased text"
-#~ msgstr "Wygładzany"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Pomiń dithering EGA (tła w pełnym kolorze)"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -303,6 +303,7 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -4225,6 +4226,28 @@ msgstr ""
 "אנו מנסים למפות את מכשירי רולנד MT32 ל\n"
 "MIDI כללי. זה עדיין אפשרי\n"
 "כמה רצועות נשמעות לא נכונות."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "שפת GUI:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib נמצא בשימוש על ידי הרבה משחקים"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "אנטי-מיועד"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 #, fuzzy
@@ -8786,21 +8809,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Enable cross fade"
 #~ msgstr "אפשר מצב רמאות"
-
-#, fuzzy
-#~| msgid "GUI language:"
-#~ msgid "Game language:"
-#~ msgstr "שפת GUI:"
-
-#, fuzzy
-#~| msgid "AdLib is used for music in many games"
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "AdLib נמצא בשימוש על ידי הרבה משחקים"
-
-#, fuzzy
-#~| msgid "Antialiased"
-#~ msgid "Force antialiased text"
-#~ msgstr "אנטי-מיועד"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "דלג על מעבר dithering של EGA (רקעים בצבע מלא)"

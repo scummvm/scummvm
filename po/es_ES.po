@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-19 23:03+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -301,6 +301,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -4255,6 +4256,25 @@ msgstr ""
 "Intentamos adaptar los instrumentos Roland MT32\n"
 "a los de General MIDI, pero es posible que algunas\n"
 "de las pistas no suenen correctamente."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Idioma del juego:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr ""
+"Selecciona el idioma a utilizar en los juegos que contengan varios idiomas"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Forzar textos con suavizado de bordes"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Muestra los textos con bordes suavizados aunque el juego no utilice este "
+"efecto"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8830,21 +8850,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Sincronización vertical en juegos 3D"
-
-#~ msgid "Game language:"
-#~ msgstr "Idioma del juego:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr ""
-#~ "Selecciona el idioma a utilizar en los juegos que contengan varios idiomas"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Forzar textos con suavizado de bordes"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Muestra los textos con bordes suavizados aunque el juego no utilice este "
-#~ "efecto"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Omitir difuminado EGA (fondos a todo color)"

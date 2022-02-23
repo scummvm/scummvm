@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-23 09:15+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -297,6 +297,7 @@ msgstr "ゲームの言語です。スペイン語版を英語版に変換はし
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<デフォルト>"
 
@@ -4180,6 +4181,22 @@ msgstr ""
 "使用中のデバイスをRolandデバイスとして\n"
 "マッピングを試みます。\n"
 "一部のトラックは正しく聞こえない事があります。"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "ゲームの言語："
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "多言語ゲームで使用する言語"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "テキストを強制的にアンチエイリアス"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8639,19 +8656,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "3Dゲームで垂直同期"
-
-#~ msgid "Game language:"
-#~ msgstr "ゲームの言語："
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "多言語ゲームで使用する言語"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "テキストを強制的にアンチエイリアス"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "EGAディザリングパスをスキップ(フルカラー背景)"

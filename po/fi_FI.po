@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-18 18:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -300,6 +300,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<oletus>"
 
@@ -4222,6 +4223,23 @@ msgstr ""
 "yhdistää Roland MT32 instrumentit sopiviin\n"
 "General MIDI instrumentteihin. Jotkut ääniraidat\n"
 "eivät ehkä kuulosta siltä miltä niiden pitäisi."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Pelin kieli:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "Monikielisissä peleissä käytetty kieli"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Pakota antialiasoitu teksti"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Käytä antialiasointia tekstin piirtämisessä vaikka peli ei sitä pyytäisi"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8747,19 +8765,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync 3D-peleissä"
-
-#~ msgid "Game language:"
-#~ msgstr "Pelin kieli:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "Monikielisissä peleissä käytetty kieli"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Pakota antialiasoitu teksti"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Käytä antialiasointia tekstin piirtämisessä vaikka peli ei sitä pyytäisi"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Ohita EGA dithering pass (täysväritaustat)"

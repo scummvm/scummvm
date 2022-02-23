@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-11 14:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -299,6 +299,7 @@ msgstr "Мова гульні. Гэта не ператворыць ангель
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<стандартна>"
 
@@ -4223,6 +4224,28 @@ msgstr ""
 "Мы паспрабуем параўнаць інструмэнты Roland MT32 да\n"
 "General MIDI. Але можа быць, што некаторая музыка\n"
 "будзе гучаць няправільна."
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "Language:"
+msgid "Game language:"
+msgstr "Мова:"
+
+#: engines/ags/dialogs.cpp:58
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib выкарыстоўваецца для музыкі ў многіх гульнях"
+
+#: engines/ags/dialogs.cpp:78
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "З памякчэньнем"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8712,8 +8735,3 @@ msgstr ""
 
 #~ msgid "Swap Menu and Back buttons"
 #~ msgstr "Памяняць кнопкі „Мэню“ й „Назад“"
-
-#, fuzzy
-#~| msgid "Language:"
-#~ msgid "Game language:"
-#~ msgstr "Мова:"

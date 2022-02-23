@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -303,6 +303,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -4238,6 +4239,23 @@ msgstr ""
 "MIDI. Ми спробуємо замапити інструменти Roland\n"
 "MT32 на General MIDI. Але в результаті може\n"
 "статися, що деякі треки будуть грати неправильно."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Мова гри.:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "Мова для використання багатомовними грами"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Примусово шрифти зі згладжуванням"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Використовувати шрифти зі згладжуванням, навіть коли гра цього не запитувала"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8740,20 +8758,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Вертикальна синхронізація у 3D іграх"
-
-#~ msgid "Game language:"
-#~ msgstr "Мова гри.:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "Мова для використання багатомовними грами"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Примусово шрифти зі згладжуванням"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Використовувати шрифти зі згладжуванням, навіть коли гра цього не "
-#~ "запитувала"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Не робити растрування EGA (фони у повному кольорі)"

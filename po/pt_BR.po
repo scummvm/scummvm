@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -301,6 +301,7 @@ msgstr "Idioma do jogo. Isto não irá mudar seu jogo de Inglês para Português
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<padrão>"
 
@@ -4244,6 +4245,23 @@ msgstr ""
 "Tentamos mapear os instrumentos Roland MT32 para\n"
 "os General MIDI. Ainda é possível que\n"
 "algumas faixas soem incorretamente."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Idioma do jogo:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "Idioma a ser usado para jogos multilíngues"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Forçar texto suave"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8804,19 +8822,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync em Jogos 3D"
-
-#~ msgid "Game language:"
-#~ msgstr "Idioma do jogo:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "Idioma a ser usado para jogos multilíngues"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Forçar texto suave"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Pular passagem de pontilhado EGA (fundos com cores completas)"

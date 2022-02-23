@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-20 21:08+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -300,6 +300,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<predefinito>"
 
@@ -4270,6 +4271,24 @@ msgstr ""
 "MT32 MIDI. Tenteremo di mappare gli strumenti\n"
 "Roland MT32 in quelli General MIDI. Alcune tracce\n"
 "potrebbero avere un suono non corretto."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Lingua gioco:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "Lingua da utilizzare nei giochi multilingua"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Forza antialiasing dei testi"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
+"esplicitamente"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8862,20 +8881,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync nei giochi 3D"
-
-#~ msgid "Game language:"
-#~ msgstr "Lingua gioco:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "Lingua da utilizzare nei giochi multilingua"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Forza antialiasing dei testi"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
-#~ "esplicitamente"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Non applicare l'effetto dithering EGA (usa sfondi a tinta unita)"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-20 17:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -300,6 +300,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<по умолчанию>"
 
@@ -4236,6 +4237,23 @@ msgstr ""
 "Мы попробуем подобрать General MIDI- инструменты,\n"
 "похожие на Roland MT32, но может оказаться, что\n"
 "некоторые треки будут сыграны неверно."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Язык игры:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "Язык для использвания в мультиязычных играх"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Принудительно шрифты со сглаживанием"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"Использовать шрифты со сглаживанием, даже если игра этого не запрашивала"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8745,19 +8763,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "Вертикальная синхронизация в 3D играх"
-
-#~ msgid "Game language:"
-#~ msgstr "Язык игры:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "Язык для использвания в мультиязычных играх"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Принудительно шрифты со сглаживанием"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "Использовать шрифты со сглаживанием, даже если игра этого не запрашивала"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Не делать аппроксимацию цветов EGA (полноцветные фоны)"

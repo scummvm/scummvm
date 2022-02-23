@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-01-13 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -299,6 +299,7 @@ msgstr ""
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<standaard>"
 
@@ -4279,6 +4280,22 @@ msgstr ""
 "We zullen proberen te Roland MT32 instrumenten te\n"
 "vertalen naar General MIDI instrumenten. Het is mogelijk\n"
 "dat sommige tracks niet goed klinken."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "Spel taal:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "De te gebruiken taal voor meertalige spellen"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "Forceer antialiasen van text"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8838,18 +8855,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync in 3D Spellen"
-
-#~ msgid "Game language:"
-#~ msgstr "Spel taal:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "De te gebruiken taal voor meertalige spellen"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "Forceer antialiasen van text"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "Sla EGA dithering stap over (volledige kleuren achtergronden)"

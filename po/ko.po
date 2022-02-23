@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-02-23 00:22+0000\n"
+"POT-Creation-Date: 2022-02-23 09:14+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -297,6 +297,7 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: gui/options.cpp:1427 gui/options.cpp:1447 gui/options.cpp:1459
 #: gui/options.cpp:1838 gui/options.cpp:2256 gui/options.cpp:2329
 #: gui/options.cpp:2509 gui/options.cpp:2948 audio/null.cpp:40
+#: engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<기본값>"
 
@@ -4209,6 +4210,23 @@ msgstr ""
 "하지만 이 게임은 Roland MT32 MIDI만 지원합니다.\n"
 "Roland MT32 악기를 General MIDI로 변환하는 경우\n"
 "일부 음악이 올바르지 않게 들릴 수 있습니다."
+
+#: engines/ags/dialogs.cpp:58
+msgid "Game language:"
+msgstr "게임 언어:"
+
+#: engines/ags/dialogs.cpp:58
+msgid "Language to use for multilingual games"
+msgstr "다중 언어 게임에서 사용할 언어"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Force antialiased text"
+msgstr "안티앨리어싱된 텍스트 강제 사용"
+
+#: engines/ags/dialogs.cpp:78
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+"게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
 #: engines/ags/ags.cpp:127
 msgid ""
@@ -8669,19 +8687,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "3D 게임에서 수직 동기화 사용"
-
-#~ msgid "Game language:"
-#~ msgstr "게임 언어:"
-
-#~ msgid "Language to use for multilingual games"
-#~ msgstr "다중 언어 게임에서 사용할 언어"
-
-#~ msgid "Force antialiased text"
-#~ msgstr "안티앨리어싱된 텍스트 강제 사용"
-
-#~ msgid "Use antialiasing to draw text even if the game does not ask for it"
-#~ msgstr ""
-#~ "게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
 #~ msgid "Skip EGA dithering pass (full color backgrounds)"
 #~ msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
