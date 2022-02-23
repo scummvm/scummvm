@@ -411,11 +411,10 @@ void AGDSEngine::tick() {
 	bool dialogActive = _dialog.tick();
 	if (_currentScreen)
 		_currentScreen->tick();
-	runProcesses();
-	if (dialogActive)
-		return;
-	tickInventory();
-	tickCharacter();
+	if (!dialogActive) {
+		tickInventory();
+		tickCharacter();
+	}
 	runProcesses();
 }
 
