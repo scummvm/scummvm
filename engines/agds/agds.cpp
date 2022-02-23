@@ -687,6 +687,7 @@ Common::Error AGDSEngine::run() {
 		if (_textLayout.valid()) {
 			if (_syncSoundId >= 0) {
 				if (!_soundManager.playing(_syncSoundId)) {
+					debug("sync sound %d finished, resetting text layout...", _syncSoundId);
 					_textLayout.reset(*this);
 					_syncSoundId = -1;
 					_tellTextTimer = 0;
@@ -695,6 +696,7 @@ Common::Error AGDSEngine::run() {
 				--_tellTextTimer;
 			} else {
 				_tellTextTimer = 0;
+				debug("text timer expired, resetting text layout");
 				_textLayout.reset(*this);
 			}
 		}
