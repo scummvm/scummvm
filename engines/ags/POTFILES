@@ -1,2 +1,2 @@
-engines/ags/detection.cpp
+engines/ags/dialogs.cpp
 engines/ags/ags.cpp
