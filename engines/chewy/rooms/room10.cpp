@@ -63,13 +63,5 @@ void Room10::get_surimy() {
 	showCur();
 }
 
-int16 Room10::cut_serv(int16 frame) {
-	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-	if (frame == 31)
-		start_aad(107, 0);
-
-	return 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy

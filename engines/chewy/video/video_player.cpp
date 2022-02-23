@@ -50,6 +50,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	bool skipVideo = false;
 	byte curPalette[256 * 3];
 	uint32 curFrame = 0;
+	bool customExit = false;
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
 	//save_palette(curPalette);
@@ -62,18 +63,22 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 	cfoDecoder->start();
 
-	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo && handleCustom(num, curFrame)) {
+	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo && !customExit) {
 		if (cfoDecoder->needsUpdate()) {
 			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
 			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+				byte *srcP = (byte *)frame->getPixels();
+				byte *destP = (byte *)g_screen->getPixels();
+				Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
+				g_screen->markAllDirty();
+				customExit = !handleCustom(num, curFrame);
 				curFrame = cfoDecoder->getCurFrame();
 
 				if (cfoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(cfoDecoder->getPalette(), 0, 256);
-				//setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
+					//setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
 
-				g_system->updateScreen();
+				g_screen->update();
 			}
 		}
 
@@ -104,14 +109,9 @@ bool VideoPlayer::handleCustom(uint num, uint frame) {
 		return (frame == 40) ? false : true;
 	case FCUT_005:
 		// Room10::cut_serv
-		// TODO: The text functions print to an overlay buffer
 		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-		if (frame == 31) {
+		if (frame == 31)
 			start_aad(107, 0);
-			//TextEntryList *text = _G(txt)->getDialog(107, 0);
-			//g_engine->_sound->playSpeech(text->front().speechId);
-			//delete text;
-		}
 		break;
 	case FCUT_094:
 		//Room87::proc3
