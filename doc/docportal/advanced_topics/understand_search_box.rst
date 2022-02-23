@@ -2,44 +2,36 @@
 Understanding the search box
 ======================================================
 
-This guide expands on the information contained on the :ref:`The search box <search_box>` section of the Launcher interface description.
+This guide expands on the information contained in the :ref:`the search box <search_box>` section of the Launcher interface description.
 
 
 Main functionality
 ===========================================
 
-The filter is applied as you type, there is no need to press Enter or click anything to perform the search.
-
-All searches are case insensitive.
-
-To reset the filter and get the full list of games, you could click on a cross icon next to the text input field.
+- A filter is applied as you type, so there is no need to press Enter or click anything to perform the search.
+- All searches are case insensitive.
+- To reset the filter and get the full list of games, click on the cross icon next to the text input field.
+- Whitespace breaks the search input into separate tokens or search patterns.
 
 
 Search patterns
 ===========================================
 
-Whitespace breaks the search input into separate tokens, search patterns.
 
 Simple patterns
 ___________________________________________
 
-If search pattern does not contain ``:``/``=``/``~`` characters and it does not start with ``!`` character, then it's used for a case insensitive substring search.
+The simplest way to search is to use the substring search functionality. For example, type ``m`` to get all the games containing an 'M' or 'm' in description, and type ``monkey`` to get games like "The Curse of Monkey Island (Demo/Windows)", "Infinite Monkeys" or "Three Monkeys, One Cage". Ensure the search pattern does not contain ``:``/``=``/``~`` characters and it does not start with the ``!`` character.
 
-For example, if you type ``m`` you would get all the games containing an 'M' or 'm' in description.
 
-If you type ``monkey``, you would get games like "The Curse of Monkey Island (Demo/Windows)", "Infinite Monkeys", "Three Monkeys, One Cage", etc.
-
-This is what you need in most simple cases, but is not enough to search for more complex things.
-
-Let's search the configuration key's values
+Searching configuration key values
 ___________________________________________
 
-Game properties listed at :doc:`configuration_file` can be checked with the filter as well.
 
 Advanced patterns
-*******************************************
+**************************
 
-There are currently 3 types of patterns, that can be used for accessing configuration file:
+To search for game properties listed in the :doc:`configuration_file` there are 3 available patterns:
 
 .. csv-table::
   	:header-rows: 1
@@ -50,14 +42,16 @@ There are currently 3 types of patterns, that can be used for accessing configur
 		"<key>:<value>", search substring at ``<key>``, ``description::``, games with ":" substring at description
 		"<key>~<value>", match wildcard against ``<key>``, ``path~D:\\games\\*``, games located at Windows folder D:\\Games\\
 
-Available configuration keys
-*******************************************
 
 .. note::
 
-	The ``\`` character used at Windows paths should be escaped as ``\\`` when using wildcards.
+	Escape the ``\`` character used in Windows paths by using ``\\`` when using wildcards.
 
-You can use any :ref:`configuration_keys` as a ``<key>`` part of the search pattern.
+
+Available configuration keys
+*******************************************
+
+You can use any :ref:`configuration key <configuration_keys>` as a ``<key>`` part of the search pattern.
 
 Here are some more examples:
 
@@ -66,17 +60,17 @@ Here are some more examples:
 - ``guioptions:noLang`` - games without displayed language
 - ``keymap_engine-default_LCLK:MOUSE_RIGHT`` - games with right mouse button remapped to left mouse button
 
-Abbrivating configuration keys
+Abbrevating configuration keys
 *******************************************
 
-Some common used configuration keys can be abbrivated, just type any prefix instead of full strings for those 6 keys:
+To abbreviate the 6 most common configuration keys, just type any prefix instead of full strings for those keys:
 
 .. csv-table::
   	:header-rows: 1
 	:class: config
 
 		Full key,Description,Examples
-		``description``, game description as displayed at the game list,"
+		``description``, game description as displayed on the game list,"
 
 	- ``d:monkey``
 	- ``desc:monkey``
@@ -86,13 +80,13 @@ Some common used configuration keys can be abbrivated, just type any prefix inst
 
 	- ``e:ags``
 	- ``engine:monkey``
-	- ``engineed:monkey``"
+	- ``engineid:monkey``"
 		``gameid``, internal ID of the game,"
 
 	- ``g:monkey``
 	- ``game:monkey``
 	- ``gameid:monkey``"
-		``language``, internal ID of the language (usually 2 letter code like "de"/"en"/"fr"/"jp"/etc),"
+		``language``, internal ID of the language (usually 2 letter code like "de"/"en"/"fr"/"jp","
 
 	- ``l=en``
 	- ``lang=en``
@@ -108,13 +102,13 @@ Some common used configuration keys can be abbrivated, just type any prefix inst
 
 .. note::
 
-	The ``platform`` key can't be abbrivated to ``p``, since ``p`` is already used for ``path``.
+	The ``platform`` key can't be abbrevated to ``p``, since ``p`` is already used for ``path``.
 
 
-Inverting any search pattern
+Inverting the search pattern
 ___________________________________________
 
-Prefixing search pattern with `!` character inverts the result:
+To invert the search result, prefix the search pattern with the`!` character. For example: 
 
 - ``!GOG`` - games that don't contain "GOG" substring in description
 - ``!lang=ru`` - games not in Russian languange
@@ -127,7 +121,7 @@ How do the search patterns work together?
 
 If you have provided several search patterns, only games that match all of them are displayed.
 
-The matches are independent and not ordered, which means that when you are looking for ``Open Quest``, you would get all the games with words "Open" and "Quest" in description. The results would contain games like "Open Quest (Windows/English)" and "Police Quest IV: Open Season (DOS/Demo)".
+The matches are independent and not ordered, which means that if you search for ``Open Quest``, you get all the games with words "Open" and "Quest" in description. The results would contain games like "Open Quest (Windows/English)" and "Police Quest IV: Open Season (DOS/Demo)".
 
 Here are some more examples of complex requests:
 
