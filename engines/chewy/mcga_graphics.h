@@ -36,27 +36,20 @@ public:
 	void init();
 	void set_writemode(char wm);
 	void init_mausmode(MouseInfo *mInfo);
-	void exit_mausmode();
 
 	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
 	void set_pointer(byte *ptr);
 	byte *get_zeiger();
 
-	void set_mono();
-	void calc_mono(byte *palette, int16 startcol, int16 anz);
 	void set_palette(byte *palette);
 	void palette_save(byte *palette = nullptr);
 	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);
-	void aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen,
-	               int16 frames);
 	void ausblenden(int16 frames);
-	void abblenden(int16 startcol, int16 anz, int16 stufen, int16 frames);
 	void set_teilpalette(const byte *palette, int16 startcol, int16 anz);
 
 	void cls();
-	void punkt(int16 xpos, int16 ypos, int16 farbn);
 	uint8 get_pixel(int16 xpos, int16 ypos);
 	void linie(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 	void box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
@@ -82,18 +75,14 @@ public:
 	    const char *format);
 	void vorschub();
 	void move(int16 x, int16 y);
-	void update_screen();
 
 private:
-	int16 check_stellen_anz(char *zstring, int16 *pos, int16 stellen);
 	int16 devices();
 
 	float _sines[360];
 	float _cosines[360];
 	byte _palTable[PALETTE_SIZE];
 	uint8 _writeMode = 0;
-	bool _mono = false;
-	bool _mausMode = false;
 	int16 _crlfx = 0, _crlfy = 0;
 	int16 _fontBr = 0, _fontH = 0;
 	uint8 _svga = 0;
