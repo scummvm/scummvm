@@ -100,9 +100,16 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_shape = _shapes->getShape(shapeNum);
 	si->_shapeNum = shapeNum;
 	si->_frame = frame_num;
-	const ShapeFrame *_frame = si->_shape ? si->_shape->getFrame(si->_frame) : nullptr;
-	if (!_frame) {
-		perr << "Invalid shape: " << si->_shapeNum << "," << si->_frame << Std::endl;
+	const ShapeFrame *frame = si->_shape ? si->_shape->getFrame(si->_frame) : nullptr;
+	if (!frame) {
+		// Keep the last shape we skipped so we don't spam the warnings too much
+		static uint32 last_invalid_shape = 0;
+		static uint32 last_invalid_frame = 0;
+		if (si->_shapeNum != last_invalid_shape || si->_frame != last_invalid_frame) {
+			warning("Skipping invalid shape in sorter: %d,%d", si->_shapeNum, si->_frame);
+			last_invalid_frame = si->_frame;
+			last_invalid_shape = si->_shapeNum;
+		}
 		return;
 	}
 
@@ -138,13 +145,13 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_syBot = si->_x / 8 + si->_y / 8 - si->_z - _camSy;
 
 	// Real Screenspace coords
-	si->_sx = si->_sxBot - _frame->_xoff;   // Left
-	si->_sy = si->_syBot - _frame->_yoff;   // Top
-	si->_sx2 = si->_sx + _frame->_width;    // Right
-	si->_sy2 = si->_sy + _frame->_height;   // Bottom
+	si->_sx = si->_sxBot - frame->_xoff;   // Left
+	si->_sy = si->_syBot - frame->_yoff;   // Top
+	si->_sx2 = si->_sx + frame->_width;    // Right
+	si->_sy2 = si->_sy + frame->_height;   // Bottom
 
 	// Do Clipping here
-	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx + _frame->_width, si->_sy + _frame->_height));
+	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx + frame->_width, si->_sy + frame->_height));
 	if (clipped < 0)
 		// Clipped away entirely - don't add to the list.
 		return;
