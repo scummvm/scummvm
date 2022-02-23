@@ -89,10 +89,6 @@ void clear_mcga() {
 		Common::fill(SCREEN, SCREEN + SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
 
-void setpixel_mcga(int16 x, int16 y, int16 farbe) {
-	line_mcga(x, y, x, y, farbe);
-}
-
 uint8 getpix(int16 x, int16 y) {
 	return *(byte *)SCREEN_S.getBasePtr(x, y);
 }

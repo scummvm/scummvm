@@ -72,29 +72,9 @@ byte *McgaGraphics::get_zeiger() {
 	return get_dispoff();
 }
 
-void McgaGraphics::set_mono() {
-	_mono = true;
-}
-
-void McgaGraphics::calc_mono(byte *palette, int16 startcol, int16 anz) {
-	int16 k = startcol * 3;
-	for (int16 i = 0; i < anz; i++) {
-		uint8 r = palette[k];
-		uint8 g = palette[k + 1];
-		uint8 b = palette[k + 2];
-		uint8 grau = (((float)r) * 0.30) + (((float)g) * 0.59) + (((float)b) * 0.11);
-		palette[k] = grau;
-		palette[k + 1] = grau;
-		palette[k + 2] = grau;
-		k += 3;
-	}
-}
-
 void McgaGraphics::set_palette(byte *palette) {
 	for (int16 i = 0; i < 768; i++)
 		_palTable[i] = palette[i];
-	if (_mono)
-		calc_mono(palette, 0, 256);
 	setpalette(palette);
 }
 
@@ -111,14 +91,10 @@ void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	_palTable[index] = r;
 	_palTable[index + 1] = g;
 	_palTable[index + 2] = b;
-	if (_mono)
-		calc_mono(_palTable, c, 1);
 	rastercol(c, r, g, b);
 }
 
 void McgaGraphics::einblenden(byte *palette, int16 frames) {
-	if (_mono)
-		calc_mono(palette, 0, 256);
 	for (int16 j = 63; j >= 0; j--) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -137,28 +113,6 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 			k += 3;
 		}
 		setpalette(_palTable);
-	}
-}
-
-void McgaGraphics::aufhellen(byte *palette, int16 startcol, int16 anz, int16 stufen, int16 frames) {
-	if (_mono)
-		calc_mono(palette, startcol, anz);
-	for (int16 j = stufen; j >= 0; j--) {
-		int16 endcol = startcol + anz;
-		int16 k = startcol * 3;
-		for (int16 i = startcol; i < endcol; i++) {
-			int16 r = _palTable[k];
-			int16 g = _palTable[k + 1];
-			int16 b = _palTable[k + 2];
-			if ((r + 1) <= palette[k]) ++r;
-			if ((g + 1) <= palette[k + 1]) ++g;
-			if ((b + 1) <= palette[k + 2]) ++b;
-			_palTable[k] = r;
-			_palTable[k + 1] = g;
-			_palTable[k + 2] = b;
-			k += 3;
-		}
-		set_palpart(_palTable, startcol, anz);
 	}
 }
 
@@ -181,26 +135,6 @@ void McgaGraphics::ausblenden(int16 frames) {
 	}
 }
 
-void McgaGraphics::abblenden(int16 startcol, int16 anz, int16 stufen, int16 frames) {
-	int16 endcol = startcol + anz;
-	for (int16 j = 0; j < stufen; j++) {
-		int16 k = startcol * 3;
-		for (int16 i = startcol; i < endcol; i++) {
-			int16 r = _palTable[k];
-			int16 g = _palTable[k + 1];
-			int16 b = _palTable[k + 2];
-			if (r > 0) --r;
-			if (g > 0) --g;
-			if (b > 0) --b;
-			_palTable[k] = r;
-			_palTable[k + 1] = g;
-			_palTable[k + 2] = b;
-			k += 3;
-		}
-		set_palpart(_palTable, startcol, anz);
-	}
-}
-
 void McgaGraphics::set_teilpalette(const byte *palette, int16 startcol, int16 anz) {
 	int16 k = startcol * 3;
 	int16 endcol = startcol + anz;
@@ -210,17 +144,11 @@ void McgaGraphics::set_teilpalette(const byte *palette, int16 startcol, int16 an
 		_palTable[k + 2] = palette[k + 2];
 		k += 3;
 	}
-	if (_mono)
-		calc_mono(_palTable, startcol, anz);
 	set_palpart(_palTable, startcol, anz);
 }
 
 void McgaGraphics::cls() {
 	clear_mcga();
-}
-
-void McgaGraphics::punkt(int16 xpos, int16 ypos, int16 farbn) {
-	setpixel_mcga(xpos, ypos, farbn);
 }
 
 uint8 McgaGraphics::get_pixel(int16 xpos, int16 ypos) {
@@ -783,49 +711,20 @@ void McgaGraphics::move(int16 x, int16 y) {
 }
 
 void McgaGraphics::init_mausmode(MouseInfo *mInfo) {
-	_mausMode = true;
 	_mInfo = mInfo;
-}
-
-void McgaGraphics::exit_mausmode() {
-	_mausMode = false;
-	_mInfo = nullptr;
 }
 
 int16 McgaGraphics::devices() {
 	int16 i = 0;
-	if (_mausMode != false) {
-		// TODO: This is wrong. 'i' should be initialized to "button status" (BX after a call to Int33h/03
-		if (i > 1) {
-			i = 27;
-		} else if (i == 1)
-			i = 13;
-		else
-			i = 0;
-	}
+	// TODO: This is wrong. 'i' should be initialized to "button status" (BX after a call to Int33h/03
+	if (i > 1) {
+		i = 27;
+	} else if (i == 1)
+		i = 13;
+	else
+		i = 0;
 
 	return i;
-}
-
-int16 McgaGraphics::check_stellen_anz(char *zstring, int16 *pos, int16 stellen) {
-	int16 diff;
-	int16 k = 0;
-	while (zstring[k] != 0)
-		++k;
-
-	if (k >= stellen) {
-		while ((k) && (stellen)) {
-			--k;
-			--stellen;
-		}
-		diff = 0;
-	} else {
-		diff = stellen - k;
-		k = 0;
-	}
-	*pos = k;
-
-	return diff;
 }
 
 void McgaGraphics::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrwidth) {
@@ -833,11 +732,6 @@ void McgaGraphics::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 y
 		zoom_set(sptr, x, y, xdiff_, ydiff_, scrwidth);
 	else
 		mspr_set_mcga(sptr, x, y, scrwidth);
-}
-
-void McgaGraphics::update_screen() {
-	if (_svga == ON)
-		upd_scr();
 }
 
 void McgaGraphics::ltoa(long N, char *str, int base) {

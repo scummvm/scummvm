@@ -39,7 +39,6 @@ void rastercol(int16 color, int16 r, int16 g, int16 b);
 void set_palpart(const byte *palette, int16 startcol, int16 anz);
 
 void clear_mcga();
-void setpixel_mcga(int16 x, int16 y, int16 farbe);
 uint8 getpix(int16 x, int16 y);
 void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 
