@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-21 20:53+0000\n"
-"PO-Revision-Date: 2022-02-20 17:58+0000\n"
+"PO-Revision-Date: 2022-02-23 00:19+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -745,7 +745,7 @@ msgstr "Aucun"
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:203
 msgid "First letter"
-msgstr "Première lettre"
+msgstr "Initiale"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:205
