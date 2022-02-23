@@ -91,21 +91,22 @@ extern int HYPNO_ARC_debug;
     ATOK = 284,                    /* ATOK  */
     VTOK = 285,                    /* VTOK  */
     OTOK = 286,                    /* OTOK  */
-    NTOK = 287,                    /* NTOK  */
-    NSTOK = 288,                   /* NSTOK  */
-    RTOK = 289,                    /* RTOK  */
-    R01TOK = 290,                  /* R01TOK  */
-    ITOK = 291,                    /* ITOK  */
-    I1TOK = 292,                   /* I1TOK  */
-    JTOK = 293,                    /* JTOK  */
-    ZTOK = 294,                    /* ZTOK  */
-    NONETOK = 295,                 /* NONETOK  */
-    A0TOK = 296,                   /* A0TOK  */
-    P0TOK = 297,                   /* P0TOK  */
-    WTOK = 298,                    /* WTOK  */
-    XTOK = 299,                    /* XTOK  */
-    CB3TOK = 300,                  /* CB3TOK  */
-    C02TOK = 301                   /* C02TOK  */
+    LTOK = 287,                    /* LTOK  */
+    NTOK = 288,                    /* NTOK  */
+    NSTOK = 289,                   /* NSTOK  */
+    RTOK = 290,                    /* RTOK  */
+    R01TOK = 291,                  /* R01TOK  */
+    ITOK = 292,                    /* ITOK  */
+    I1TOK = 293,                   /* I1TOK  */
+    JTOK = 294,                    /* JTOK  */
+    ZTOK = 295,                    /* ZTOK  */
+    NONETOK = 296,                 /* NONETOK  */
+    A0TOK = 297,                   /* A0TOK  */
+    P0TOK = 298,                   /* P0TOK  */
+    WTOK = 299,                    /* WTOK  */
+    XTOK = 300,                    /* XTOK  */
+    CB3TOK = 301,                  /* CB3TOK  */
+    C02TOK = 302                   /* C02TOK  */
   };
   typedef enum HYPNO_ARC_tokentype HYPNO_ARC_token_kind_t;
 #endif
@@ -119,7 +120,7 @@ union HYPNO_ARC_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 123 "engines/hypno/tokens_arc.h"
+#line 124 "engines/hypno/tokens_arc.h"
 
 };
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;

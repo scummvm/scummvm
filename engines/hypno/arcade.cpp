@@ -113,7 +113,7 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 
 			si.name = n;
 			si.timestamp = atoi(t.c_str());
-			if (si.timestamp == 0)
+			if (si.timestamp == 0 && si.name != "0") // 0,0 is a special case
 				error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
 			ss.shootSequence.push_back(si);
 			debugC(1, kHypnoDebugParser, "%d -> %s", si.timestamp, si.name.c_str());

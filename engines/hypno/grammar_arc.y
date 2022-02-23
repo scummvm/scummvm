@@ -60,7 +60,7 @@ using namespace Hypno;
 %token<i> NUM BYTE
 // header
 %token COMMENT CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK NTOK NSTOK RTOK R01TOK ITOK I1TOK JTOK ZTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK LTOK NTOK NSTOK RTOK R01TOK ITOK I1TOK JTOK ZTOK
 
 // body
 %token NONETOK A0TOK P0TOK WTOK
@@ -232,6 +232,11 @@ hline: 	CTOK NUM {
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "H P %d %d", $3, $4); 
 	}
+	| HTOK LTOK NUM NUM { // Workaround for BYTE == P
+		Segment segment('L', $4, $3);
+		g_parsedArc->segments.push_back(segment);
+		debugC(1, kHypnoDebugParser, "H P %d %d", $3, $4); 
+	}
 	| H12TOK BYTE NUM NUM {
 		Segment segment('P', $4, $3);
 		g_parsedArc->segments.push_back(segment);
@@ -335,6 +340,10 @@ bline: FNTOK FILENAME {
 		shoot->name = "T";
 		debugC(1, kHypnoDebugParser, "I T"); 
 	}
+	| ITOK LTOK  { // Workaround for NAME == L
+		shoot->name = "L";
+		debugC(1, kHypnoDebugParser, "I L"); 
+	}
 	| JTOK NUM  {
 		debugC(1, kHypnoDebugParser, "J %d", $2); 
 	}
@@ -382,6 +391,9 @@ bline: FNTOK FILENAME {
 	| DTOK NUM  {
 		shoot->pointsToShoot = $2;  
 		debugC(1, kHypnoDebugParser, "D %d", $2); 
+	}
+	| LTOK NUM NUM {
+		debugC(1, kHypnoDebugParser, "L %d %d", $2, $3); 
 	}
 	| SNTOK FILENAME enc { 
 		if (Common::String("S1") == $1)
