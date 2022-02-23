@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-02-23 09:29+0000\n"
-"PO-Revision-Date: 2022-02-20 17:10+0000\n"
+"PO-Revision-Date: 2022-02-23 12:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -729,48 +729,36 @@ msgstr "Без группировки"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Первая буква"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Движок"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Серия"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Издатель"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Язык"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Платформа"
@@ -6572,6 +6560,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"Эта версия Monkey Island не работает, потому что Limited Run Games "
+"предоставила поломанные файлы DISK04.LEC и 903.LFL.\n"
+"\n"
+"Пожалуйста, обратитесь в их техническую поддержку за заменой этих файлов или "
+"поищите онлайн-руководства, которые помогут вам извлечь эти файлы из дампов "
+"KryoFlux, которые также предоставляются Limited Run Games."
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
