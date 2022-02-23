@@ -1105,6 +1105,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		auto character = getCharacter(id);
 		if (character) {
 			character->loadState(agds_c.get());
+			character->visible(true);
 		} else
 			warning("no character");
 	}
@@ -1177,6 +1178,8 @@ void AGDSEngine::loadNextScreen() {
 		_nextScreenType = ScreenLoadingType::Normal;
 		loadScreen(nextScreenName, nextScreenType);
 	}
+	if (_currentCharacter)
+		_currentCharacter->visible(true);
 }
 
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
