@@ -411,7 +411,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							playVideo(*s.video);
 							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
 							if (s.attackFrames.size() == 0) {
-								uint32 lastFrame = s.explosionFrames.back().lastFrame(); 
+								uint32 lastFrame = s.bodyFrames.back().lastFrame();
 								s.attackFrames.push_back(lastFrame - 3);
 							}
 							s.lastFrame = s.bodyFrames[s.bodyFrames.size() - 1].lastFrame();
@@ -432,7 +432,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				int frame = it->video->decoder->getCurFrame();
 				if (it->attackFrames.size() > 0) {
 					uint32 attackFrame = it->attackFrames.front();
-					if (frame > 0 && frame >= (int)(attackFrame - 1) && !it->destroyed) {
+					if (frame > 0 && frame >= (int)(attackFrame - 2) && !it->destroyed) {
 						_health = _health - it->attackWeight;
 						hitPlayer();
 						it->attackFrames.pop_front();
