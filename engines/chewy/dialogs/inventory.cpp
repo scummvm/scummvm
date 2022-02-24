@@ -294,7 +294,6 @@ void Inventory::menu() {
 
 			case Common::KEYCODE_ESCAPE:
 				if (!menu_first) {
-					menu_first = true;
 					_G(cur)->show_cur();
 					while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 						set_up_screen(NO_SETUP);
@@ -363,9 +362,9 @@ void Inventory::menu() {
 				_G(cur)->plot_cur();
 			_G(out)->set_pointer(nullptr);
 			if (menu_flag1 == MENU_EINBLENDEN) {
-				_G(fx)->blende1(_G(workptr), _G(screen0), 0, 200, 0, 300);
+				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 0, 300);
 			} else if (menu_flag1 == MENU_AUSBLENDEN)
-				_G(fx)->blende1(_G(workptr), _G(screen0), 0, 200, 1, 300);
+				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
 			menu_flag1 = false;
 			_G(out)->set_clip(0, 0, 320, 200);
 			_G(out)->back2screen(_G(workpage));
