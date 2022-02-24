@@ -41,6 +41,7 @@ static const chapterEntry rawChapterTable[] = {
 	{42, {70, 160}, {180, 160}, {220, 185}}, 	// c42
 	{43, {70, 160}, {180, 160}, {220, 185}}, 	// c43
 	{44, {70, 160}, {180, 160}, {220, 185}}, 	// c44
+	{40, {70, 160}, {180, 160}, {220, 185}}, 	// c40
 	{51, {60, 167}, {190, 167}, {135, 187}}, 	// c51
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
 	{50, {19, 3},   {246, 3}, 	{246, 11}}, 	// c50 (fixed)
@@ -311,6 +312,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c442.mi_", "c51", "<check_lives>", "");
 
 	loadArcadeLevel("c400.mi_", "c51", "<check_lives>", "");
+	ArcadeShooting *arc = (ArcadeShooting*) _levels["c400.mi_"];
+	arc->id = 40; // Fixed from the original (4)
+
 	loadArcadeLevel("c401.mi_", "c51", "<check_lives>", "");
 	loadArcadeLevel("c402.mi_", "c51", "<check_lives>", "");
 
@@ -323,7 +327,7 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c522.mi_", "c61", "<check_lives>", "");
 
 	loadArcadeLevel("c500.mi_", "c61", "<check_lives>", "");
-	ArcadeShooting *arc = (ArcadeShooting*) _levels["c500.mi_"];
+	arc = (ArcadeShooting*) _levels["c500.mi_"];
 	arc->id = 50; // Fixed from the original (5)
 
 	loadArcadeLevel("c501.mi_", "c61", "<check_lives>", "");
@@ -345,7 +349,7 @@ void WetEngine::loadAssetsFullGame() {
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
 	loadLib("sound/", "c_misc/sound.lib", true);
-	_nextLevel = "<start>";
+	_nextLevel = "c400.mi_";
 }
 
 void WetEngine::showCredits() {
