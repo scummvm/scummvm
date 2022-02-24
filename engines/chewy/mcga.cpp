@@ -251,8 +251,8 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 	Graphics::Surface *textSurface = font->getLine(Common::String(c));
 	byte *data = (byte *)textSurface->getPixels();
 
-	for (uint curX = 0; curX < textSurface->pitch; curX++) {
-		for (uint curY = 0; curY < textSurface->h; curY++) {
+	for (int curX = 0; curX < textSurface->pitch; curX++) {
+		for (int curY = 0; curY < textSurface->h; curY++) {
 			if (curX + x < 320 && curY + y < 200) {
 				byte *src = data + (curY * textSurface->pitch) + curX;
 				byte *dst = (byte *)_G(currentScreen).getBasePtr(curX + x, curY + y);
