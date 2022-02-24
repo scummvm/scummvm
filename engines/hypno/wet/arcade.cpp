@@ -112,6 +112,11 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				_segmentIdx = _segmentIdx + 1;
 			else 
 				_segmentIdx = _segmentIdx + 2;
+		} else if (segments[_segmentIdx].type == 0xcc) {
+			if (mousePos.x <= 160)
+				_segmentIdx = _segmentIdx + 1;
+			else 
+				_segmentIdx = _segmentIdx + 2;
 		} else {
 
 			// Objective checking

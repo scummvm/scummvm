@@ -297,7 +297,12 @@ void WetEngine::loadAssetsFullGame() {
 	arc->id = 30; // Fixed from the original (3)
 
 	loadArcadeLevel("c301.mi_", "c41", "<check_lives>", "");
+	arc = (ArcadeShooting*) _levels["c301.mi_"];
+	arc->id = 30; // Fixed from the original (3)
+
 	loadArcadeLevel("c302.mi_", "c41", "<check_lives>", "");
+	arc = (ArcadeShooting*) _levels["c302.mi_"];
+	arc->id = 30; // Fixed from the original (3)
 
 	loadArcadeLevel("c410.mi_", "c42", "<check_lives>", "");
 	loadArcadeLevel("c411.mi_", "c42", "<check_lives>", "");
