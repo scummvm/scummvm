@@ -213,7 +213,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	Common::Event event;
 	while (!shouldQuit()) {
-		//debug("frame: %d", background.decoder->getCurFrame());
 		needsUpdate = background.decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -308,7 +307,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			drawScreen();
 		}
 
-		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 1)) {
+		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {
 			debugC(1, kHypnoDebugArcade, "Finished segment %d of type %x", _segmentIdx, segments[_segmentIdx].type);
 
 			// Clear shoots
@@ -325,8 +324,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", _segmentIdx, segments[_segmentIdx].type, segments[_segmentIdx].start);
 			if (!segments[_segmentIdx].end) { // If it is not the end segment
-				background.decoder->forceSeekToFrame(segments[_segmentIdx].start+2);
-				needsUpdate = true;
+				background.decoder->forceSeekToFrame(segments[_segmentIdx].start);
 				continue;
 			} else 
 				_skipLevel = true;
