@@ -98,11 +98,11 @@ int Room88::proc3() {
 		hideCur();
 		if (_G(spieler).flags32_10) {
 			start_aad_wait(480, -1);
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_087);
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(spieler).flags32_40 = true;
 			switch_room(84);
@@ -120,7 +120,7 @@ int Room88::proc3() {
 			start_detail_wait(aniNr, 1, ANI_GO);
 		}
 
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_088);
@@ -130,7 +130,7 @@ int Room88::proc3() {
 		switch_room(80);
 		hideCur();
 		start_detail_wait(1, 1, ANI_VOR);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_086);

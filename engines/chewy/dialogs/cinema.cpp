@@ -62,7 +62,7 @@ void Cinema::execute() {
 	_G(kbinfo).scan_code = 0;
 
 	for (bool endLoop = false; !endLoop;) {
-		_G(out)->set_pointer(_G(workptr));
+		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 
 		if (!cutscenes.empty()) {
@@ -157,7 +157,7 @@ void Cinema::execute() {
 		case Common::KEYCODE_RETURN:
 			hideCur();
 			_G(out)->cls();
-			_G(out)->set_pointer(_G(screen0));
+			_G(out)->setPointer(_G(screen0));
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
@@ -184,7 +184,7 @@ void Cinema::execute() {
 
 			if (flag) {
 				flag = false;
-				_G(out)->set_pointer(_G(screen0));
+				_G(out)->setPointer(_G(screen0));
 				_G(room)->set_ak_pal(&_G(room_blk));
 				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {

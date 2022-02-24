@@ -182,7 +182,7 @@ int16 Room39::use_tv() {
 			_G(spieler).R39TvKanal = -1;
 
 		_G(flags).NoPalAfterFlc = true;
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_042);
 		++_G(spieler).R39TvKanal;
@@ -222,16 +222,16 @@ int16 Room39::use_tv() {
 			flic_cut(FCUT_041);
 			_G(spieler).R39TvKanal = 0;
 			_G(spieler).R39ClintNews = 0;
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
-			_G(out)->set_palette(_G(pal));
+			_G(out)->setPalette(_G(pal));
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(TV_FLIC[0]);
 
 			_G(out)->cls();
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
-			_G(out)->set_palette(_G(pal));
+			_G(out)->setPalette(_G(pal));
 			set_tv();
 			start_spz(CH_TRANS, 255, ANI_VOR, P_CHEWY);
 			start_aad_wait(80, -1);
@@ -270,9 +270,9 @@ int16 Room39::use_tv() {
 
 	if (cls_flag) {
 		_G(out)->cls();
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		_G(out)->set_palette(_G(pal));
+		_G(out)->setPalette(_G(pal));
 		_G(flags).NoPalAfterFlc = false;
 	}
 
@@ -307,9 +307,9 @@ void Room39::look_tv(bool cls_mode) {
 			}
 
 			if (cls_mode) {
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
-				_G(out)->set_palette(_G(pal));
+				_G(out)->setPalette(_G(pal));
 				_G(flags).NoPalAfterFlc = true;
 			}
 
@@ -324,9 +324,9 @@ void Room39::look_tv(bool cls_mode) {
 
 			if (cls_mode) {
 				_G(out)->cls();
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
-				_G(out)->set_palette(_G(pal));
+				_G(out)->setPalette(_G(pal));
 				_G(flags).NoPalAfterFlc = false;
 
 				if (_G(spieler).R39TransMensch && dia_nr == 85)

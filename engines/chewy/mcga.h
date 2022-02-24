@@ -32,7 +32,7 @@ void init_mcga();
 byte *get_dispoff();
 
 void setScummVMPalette(const byte *palette, uint start, uint count);
-void setpalette(const byte *palette);
+void set_palette(const byte *palette);
 void save_palette(byte *palette);
 void restore_palette();
 void rastercol(int16 color, int16 r, int16 g, int16 b);

@@ -47,18 +47,18 @@ void McgaGraphics::init() {
 	init_mcga();
 }
 
-void McgaGraphics::set_writemode(char wm) {
+void McgaGraphics::setWriteMode(char wm) {
 	_writeMode = wm;
 }
 
-void McgaGraphics::set_clip(int16 x1, int16 y1, int16 x2, int16 y2) {
+void McgaGraphics::setClip(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_G(clipx1) = x1;
 	_G(clipx2) = x2;
 	_G(clipy1) = y1;
 	_G(clipy2) = y2;
 }
 
-void McgaGraphics::set_pointer(byte *ptr) {
+void McgaGraphics::setPointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
 	} else if (_G(screenHasDefault)) {
@@ -68,17 +68,17 @@ void McgaGraphics::set_pointer(byte *ptr) {
 	}
 }
 
-byte *McgaGraphics::get_zeiger() {
+byte *McgaGraphics::getPointer() {
 	return get_dispoff();
 }
 
-void McgaGraphics::set_palette(byte *palette) {
+void McgaGraphics::setPalette(byte *palette) {
 	for (int16 i = 0; i < 768; i++)
 		_palTable[i] = palette[i];
-	setpalette(palette);
+	set_palette(palette);
 }
 
-void McgaGraphics::palette_save(byte *palette) {
+void McgaGraphics::savePalette(byte *palette) {
 	save_palette(palette);
 }
 
@@ -112,7 +112,7 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 				_palTable[k + 2] = b1;
 			k += 3;
 		}
-		setpalette(_palTable);
+		set_palette(_palTable);
 	}
 }
 
@@ -131,7 +131,7 @@ void McgaGraphics::ausblenden(int16 frames) {
 			_palTable[k + 2] = b;
 			k += 3;
 		}
-		setpalette(_palTable);
+		set_palette(_palTable);
 	}
 }
 
@@ -710,7 +710,7 @@ void McgaGraphics::move(int16 x, int16 y) {
 	_G(gcury) = y;
 }
 
-void McgaGraphics::init_mausmode(MouseInfo *mInfo) {
+void McgaGraphics::initMouseMode(MouseInfo *mInfo) {
 	_mInfo = mInfo;
 }
 

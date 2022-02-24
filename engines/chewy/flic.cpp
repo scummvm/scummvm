@@ -146,9 +146,9 @@ int16 Flic::decode_frame() {
 				break;
 
 			case CLS:
-				_G(out)->set_pointer(_virtScreen);
+				_G(out)->setPointer(_virtScreen);
 				_G(out)->cls();
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 
 				update_flag = true;
 				break;
@@ -171,9 +171,9 @@ int16 Flic::decode_frame() {
 		}
 		if (update_flag != false) {
 			if (_flicUser) {
-				_G(out)->set_pointer(_virtScreen);
+				_G(out)->setPointer(_virtScreen);
 				action_ret = _flicUser(_currentFrame);
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 			}
 			_G(out)->back2screen(_virtScreen - 4);
 			if (_fadeFlag != false) {
@@ -200,10 +200,10 @@ void Flic::col256_chunk(byte *tmp) {
 		for (int i = 0; i < PALETTE_SIZE; i++)
 			tmp[i] >>= 2;
 		if (_fadeFlag == false)
-			_G(out)->set_palette(tmp);
+			_G(out)->setPalette(tmp);
 		else {
 			memset(_fadePal, 0, PALETTE_SIZE);
-			_G(out)->set_palette(_fadePal);
+			_G(out)->setPalette(_fadePal);
 			memcpy(_fadePal, tmp, PALETTE_SIZE);
 		}
 	} else {
@@ -233,10 +233,10 @@ void Flic::col64_chunk(byte *tmp) {
 
 	if (!tmp[1]) {
 		if (_fadeFlag == false)
-			_G(out)->set_palette(tmp + 2);
+			_G(out)->setPalette(tmp + 2);
 		else {
 			memset(_fadePal, 0, PALETTE_SIZE);
-			_G(out)->set_palette(_fadePal);
+			_G(out)->setPalette(_fadePal);
 			memcpy(_fadePal, tmp + 2, PALETTE_SIZE);
 		}
 	} else {
@@ -546,9 +546,9 @@ void Flic::decode_custom_frame(Common::SeekableReadStream *handle) {
 			break;
 
 		case CLEAR_SCREEN:
-			_G(out)->set_pointer(_virtScreen);
+			_G(out)->setPointer(_virtScreen);
 			_G(out)->cls();
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			break;
 
@@ -598,9 +598,9 @@ int16 Flic::decode_cframe() {
 				break;
 
 			case CLS:
-				_G(out)->set_pointer(_virtScreen);
+				_G(out)->setPointer(_virtScreen);
 				_G(out)->cls();
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 
 				update_flag = true;
 				break;
@@ -628,9 +628,9 @@ int16 Flic::decode_cframe() {
 		if (update_flag != false) {
 			if (_customUser) {
 				_G(out)->back2back(_virtScreen, _loadBuffer);
-				_G(out)->set_pointer(_virtScreen);
+				_G(out)->setPointer(_virtScreen);
 				action_ret = _customUser(_currentFrame);
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 				_G(out)->back2screen(_virtScreen - 4);
 				_G(out)->back2back(_loadBuffer, _virtScreen);
 			} else

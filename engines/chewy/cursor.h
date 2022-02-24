@@ -24,6 +24,7 @@
 
 #include "chewy/mcga_graphics.h"
 #include "chewy/ngstypes.h"
+#include "chewy/mouse.h"
 
 namespace Chewy {
 
@@ -38,7 +39,6 @@ public:
 	void hide_cur();
 	void set_cur_ani(CurAni *ani);
 	void move(int16 x, int16 y);
-	void wait_taste_los(bool maus_plot);
 
 	McgaGraphics *_out = nullptr;
 	InputMgr *_in = nullptr;

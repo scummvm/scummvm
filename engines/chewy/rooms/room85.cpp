@@ -85,7 +85,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(det)->show_static_spr(6);
 		start_aad_wait(474, -1);
 		flic_cut(FCUT_090);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_091);

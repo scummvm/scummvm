@@ -37,11 +37,11 @@ void Room92::entry() {
 	start_aad_wait(_G(spieler).SVal2, -1);
 	switch (_G(spieler).SVal2) {
 	case 487:
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_103);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(spieler).scrollx = oldScrollX;
 		show_person();
@@ -50,20 +50,20 @@ void Room92::entry() {
 	case 488:
 		_G(flags).StaticUseTxt = true;
 		flic_cut(FCUT_106);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_105);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_104);
 		register_cutscene(27);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_103);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
 		_G(spieler).flags33_8 = true;

@@ -23,7 +23,6 @@
 #define CHEWY_MCGA_GRAPHICS_H
 
 #include "graphics/screen.h"
-#include "chewy/mouse.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -34,15 +33,15 @@ public:
 	~McgaGraphics();
 
 	void init();
-	void set_writemode(char wm);
-	void init_mausmode(MouseInfo *mInfo);
+	void setWriteMode(char wm);
+	void initMouseMode(MouseInfo *mInfo);
 
-	void set_clip(int16 x1, int16 y1, int16 x2, int16 y2);
-	void set_pointer(byte *ptr);
-	byte *get_zeiger();
+	void setClip(int16 x1, int16 y1, int16 x2, int16 y2);
+	void setPointer(byte *ptr);
+	byte *getPointer();
 
-	void set_palette(byte *palette);
-	void palette_save(byte *palette = nullptr);
+	void setPalette(byte *palette);
+	void savePalette(byte *palette = nullptr);
 	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);
