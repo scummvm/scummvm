@@ -363,10 +363,10 @@ int16 Room39::setup_func(int16 frame) {
 	int16 action_ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
 
 	if (_flag) {
-		if (frame == 121)
-			start_aad(599, -1);
-
 		switch (frame) {
+		case 121:
+			start_aad(599, -1);
+			break;
 		case 247:
 			start_aad(600, -1);
 			break;
