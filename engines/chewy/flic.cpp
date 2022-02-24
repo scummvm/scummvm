@@ -74,12 +74,10 @@ void decode_rle(byte *vscr, const byte *dbuf, int br, int h) {
 			if (len < 0) {
 				// Copy a number of bytes specified in lower 7 bits
 				len = -len;
-				if (len) {
-					Common::copy(dbuf, dbuf + len, dest);
-					dbuf += len;
-					dest += len;
-					x += len;
-				}
+				Common::copy(dbuf, dbuf + len, dest);
+				dbuf += len;
+				dest += len;
+				x += len;
 			} else {
 				// Run length in the lower 7 bits of the next byte
 				byte v = *dbuf++;
@@ -110,9 +108,9 @@ int16 Flic::decode_frame() {
 	int16 action_ret = 0;
 
 	byte *tmp_buf = _loadBuffer;
-	bool update_flag = false;
 	if (_frameHeader.chunks != 0) {
 		_fadeFlag = false;
+		bool update_flag = false;
 		for (uint16 i = 0; i < _frameHeader.chunks; i++) {
 			Common::MemoryReadStream rs(tmp_buf, ChunkHead::SIZE());
 			chunk_header.load(&rs);
