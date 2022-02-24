@@ -49,9 +49,6 @@ private:
 
 		void readHeader() override;
 
-		bool isRewindable() const override { return false; }
-		bool rewind() override { return false; }
-
 		const ::Graphics::Surface *decodeNextFrame() override;
 
 	private:
