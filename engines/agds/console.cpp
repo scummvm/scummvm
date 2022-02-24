@@ -36,6 +36,7 @@ Console::Console(AGDSEngine *engine) : _engine(engine) {
 	registerCmd("run",			WRAP_METHOD(Console, run));
 	registerCmd("stop",			WRAP_METHOD(Console, stop));
 	registerCmd("set",			WRAP_METHOD(Console, setGlobal));
+	registerCmd("invadd",		WRAP_METHOD(Console, inventoryAdd));
 }
 
 bool Console::load(int argc, const char **argv) {
@@ -126,10 +127,24 @@ bool Console::setGlobal(int argc, const char **argv) {
 	}
 	int value;
 	if (sscanf(argv[2], "%d", &value) != 1) {
-		debugPrintf("invalid value");
+		debugPrintf("invalid value\n");
 		return true;
 	}
 	_engine->setGlobal(argv[1], value);
+	return true;
+}
+
+bool Console::inventoryAdd(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("usage: %s inv.object\n", argv[0]);
+		return true;
+	}
+	auto object = _engine->runObject(argv[1]);
+	if (!object) {
+		debugPrintf("failed to load %s\n", argv[1]);
+	}
+	_engine->inventory().add(object);
+	detach();
 	return true;
 }
 
