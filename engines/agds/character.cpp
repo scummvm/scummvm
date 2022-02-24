@@ -64,7 +64,7 @@ void Character::load(Common::SeekableReadStream *stream) {
 
 		AnimationDescription animation;
 		animation.filename = filename;
-		debug("%u: animation %s, frames: %d, format: %d", _animations.size(), animation.filename.c_str(), frames, format);
+		debug("%s:%u: animation %s, frames: %d, format: %d", _name.c_str(), _animations.size(), animation.filename.c_str(), frames, format);
 		while (frames--) {
 			int x = stream->readSint16LE();
 			int y = stream->readSint16LE();
