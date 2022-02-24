@@ -27,7 +27,7 @@ namespace Rooms {
 
 class Room39 {
 private:
-	static bool _flag;
+	static bool _watchingGaspHorrorShow;
 
 	static void ok();
 	static void set_tv();
@@ -38,8 +38,6 @@ public:
 	static short use_howard();
 	static void talk_howard();
 	static void look_tv(bool cls_mode);
-
-	static int16 setup_func(int16 frame);
 };
 
 } // namespace Rooms

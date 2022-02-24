@@ -24,17 +24,20 @@
 
 namespace Chewy {
 
+class CfoDecoder;
+
 class VideoPlayer {
 public:
 	/**
 	 * @Plays a video file
 	 * @param num - the video file number
+	 * @param stopMusic - stop music before starting the video
 	 * @return - true if played, false if skipped
 	*/
 	bool playVideo(uint num, bool stopMusic = true);
 
 private:
-	bool handleCustom(uint num, uint frame);
+	bool handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder);
 };
 
 } // End of namespace Chewy

@@ -21,6 +21,7 @@
 
 #include "chewy/video/cfo_decoder.h"
 #include "chewy/video/video_player.h"
+#include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
@@ -71,26 +72,30 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 				byte *destP = (byte *)g_screen->getPixels();
 				Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 				g_screen->markAllDirty();
-				keepPlaying = handleCustom(num, curFrame);
-				curFrame = cfoDecoder->getCurFrame();
 
 				if (cfoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(cfoDecoder->getPalette(), 0, 256);
 					//setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
 
+				keepPlaying = handleCustom(num, curFrame, cfoDecoder);
+				curFrame = cfoDecoder->getCurFrame();
+				
 				g_screen->update();
 			}
 		}
 
-		while (g_system->getEventManager()->pollEvent(event)) {
-			// FIXME: We ignore mouse events because the game checks
-			// for left mouse down, instead of up, so releasing the
-			// mouse button results in video skipping
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) /*|| event.type == Common::EVENT_LBUTTONUP*/)
-				skipVideo = true;
-		}
+		g_events->update();
 
-		g_system->delayMillis(10);
+		// FIXME: We ignore mouse events because the game checks
+		// for left mouse down, instead of up, so releasing the
+		// mouse button results in video skipping
+		if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE)
+			skipVideo = true;
+
+		// Clear any pending keys
+		_G(in)->_hotkey = 0;
+		_G(kbinfo).key_code = '\0';
+		_G(kbinfo).scan_code = 0;
 	}
 
 	cfoDecoder->close();
@@ -105,7 +110,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	return !skipVideo;
 }
 
-bool VideoPlayer::handleCustom(uint num, uint frame) {
+bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 	switch (num) {
 	case FCUT_004:
 		// Room6::cut_serv1
@@ -134,11 +139,52 @@ bool VideoPlayer::handleCustom(uint num, uint frame) {
 				start_aad(106, 0);
 		}
 		break;
+	case FCUT_032:
+	case FCUT_034:
+	case FCUT_035:
+	case FCUT_036:
+	case FCUT_037:
+	case FCUT_038:
+	case FCUT_039:
+	case FCUT_040:
+		// Room39::setup_func
+		if (!_G(spieler).R39TranslatorUsed)
+			return false;
+
+		if (num == FCUT_034) {
+			switch (frame) {
+			case 121:
+				start_aad(599, -1);
+				break;
+			case 247:
+				start_aad(600, -1);
+				break;
+			case 267:
+				start_aad(601, 0);
+				break;
+			case 297:
+				_G(in)->_hotkey = 1;
+				break;
+			case 171:
+			case 266:
+			case 370:
+				_G(atds)->stop_aad();
+				break;
+			default:
+				break;
+			}
+		}
+
+		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+
+		if (cfoDecoder->endOfVideo() && _G(atds)->aad_get_status() != -1)
+			cfoDecoder->rewind();
+		break;
 	case FCUT_094:
-		//Room87::proc3
+		// Room87::proc3
 		return (frame >= 12) ? false : true;
 	case FCUT_112:
-		//Room56::proc1
+		// Room56::proc1
 		return (_G(in)->get_switch_code() == 1) ? false : true;
 	default:
 		return true;
