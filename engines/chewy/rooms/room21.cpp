@@ -165,7 +165,7 @@ void Room21::setup_func() {
 void Room21::chewy_kolli() {
 	int16 kolli = false;
 
-	for (int16 i = 0; i < 3 && !kolli; i++) {
+	for (int16 i = 0; i < _G(auto_obj) && !kolli; i++) {
 		int16 spr_nr = _G(mov_phasen)[i].Phase[_G(auto_mov_vector)[i].Phase][0] + _G(auto_mov_vector)[i].PhNr;
 		int16 *xy = (int16 *)_G(room_blk).DetImage[spr_nr];
 		int16 *Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
