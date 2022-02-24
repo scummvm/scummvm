@@ -6473,11 +6473,11 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
-"Limited Run Games提供のファイルDISK04.LECと903.LFLが破損しており、このバージョンのMonkey "
-"Islandはプレイできません。\n"
+"Limited Run Games提供のファイルDISK04.LECと903.LFLが破損しており、このバー"
+"ジョンのMonkey Islandはプレイできません。\n"
 "\n"
-"テクニカルサポートに連絡して修正版をもらうか、Limited Run "
-"Games提供のKryoFluxダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
+"テクニカルサポートに連絡して修正版をもらうか、Limited Run Games提供のKryoFlux"
+"ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
