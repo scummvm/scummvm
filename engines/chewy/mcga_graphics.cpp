@@ -688,7 +688,7 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 				byte *dst = (byte *)_G(currentScreen).getBasePtr(curX + x, curY + y);
 				if (*src != 0xFF)
 					*dst = fgCol;
-				else if (*src == 0xFF && bgCol < 0xFF)
+				else if (bgCol < 0xFF)
 					*dst = bgCol;
 			}
 		}
