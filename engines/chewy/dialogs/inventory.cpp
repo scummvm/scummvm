@@ -127,9 +127,9 @@ void Inventory::plot_menu() {
 void Inventory::menu() {
 	keyVal = 0;
 	_G(flags).InventMenu = true;
-	int16 disp_tmp = _G(spieler).DispFlag;
+	const int16 oldDispFlag = _G(spieler).DispFlag;
 	_G(spieler).DispFlag = false;
-	int16 ani_tmp = _G(flags).AutoAniPlay;
+	const uint16 oldAutoAniPlay = _G(flags).AutoAniPlay;
 	_G(flags).AutoAniPlay = true;
 	_G(flags).StopAutoObj = true;
 	_G(menu_display) = 0;
@@ -157,7 +157,7 @@ void Inventory::menu() {
 	}
 
 	int16 ret_look = -1;
-	int16 menu_first = false;
+	bool menuFirstFl = false;
 	_G(show_invent_menu) = 1;
 
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
@@ -218,35 +218,27 @@ void Inventory::menu() {
 					k += _G(spieler).InventY * 5;
 					if (_G(invent_cur_mode) == CUR_USE) {
 						if (_G(spieler).AkInvent == -1) {
-							if (_G(spieler).InventSlot[k] != -1) {
-								if (calc_use_invent(_G(spieler).InventSlot[k]) == false) {
-									_G(menu_item) = CUR_USE;
-									_G(spieler).AkInvent = _G(spieler).InventSlot[k];
-									cursorChoice(CUR_AK_INVENT);
-									del_invent_slot(_G(spieler).InventSlot[k]);
-								}
-							}
-						} else {
-							if (_G(spieler).InventSlot[k] != -1)
-								obj_auswerten(_G(spieler).InventSlot[k], INVENTAR_NORMAL);
-							else {
-								_G(spieler).InventSlot[k] = _G(spieler).AkInvent;
-								_G(obj)->sort();
-								_G(spieler).AkInvent = -1;
-								_G(menu_item) = _G(invent_cur_mode);
-								cursorChoice(_G(invent_cur_mode));
-							}
-						}
-					} else if (_G(invent_cur_mode) == CUR_LOOK) {
-						if (_G(spieler).InventSlot[k] != -1) {
-							if (calc_use_invent(_G(spieler).InventSlot[k]) == false) {
+							if (_G(spieler).InventSlot[k] != -1 && calc_use_invent(_G(spieler).InventSlot[k]) == false) {
+								_G(menu_item) = CUR_USE;
 								_G(spieler).AkInvent = _G(spieler).InventSlot[k];
-								ret_look = look(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
-								_G(spieler).AkInvent = -1;
-								cursorChoice(_G(invent_cur_mode));
-								taste_flag = Common::KEYCODE_ESCAPE;
+								cursorChoice(CUR_AK_INVENT);
+								del_invent_slot(_G(spieler).InventSlot[k]);
 							}
+						} else if (_G(spieler).InventSlot[k] != -1)
+							obj_auswerten(_G(spieler).InventSlot[k], INVENTAR_NORMAL);
+						else {
+							_G(spieler).InventSlot[k] = _G(spieler).AkInvent;
+							_G(obj)->sort();
+							_G(spieler).AkInvent = -1;
+							_G(menu_item) = _G(invent_cur_mode);
+							cursorChoice(_G(invent_cur_mode));
 						}
+					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(spieler).InventSlot[k] != -1 && calc_use_invent(_G(spieler).InventSlot[k]) == false) {
+						_G(spieler).AkInvent = _G(spieler).InventSlot[k];
+						ret_look = look(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
+						_G(spieler).AkInvent = -1;
+						cursorChoice(_G(invent_cur_mode));
+						taste_flag = Common::KEYCODE_ESCAPE;
 					}
 					break;
 
@@ -293,7 +285,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_ESCAPE:
-				if (!menu_first) {
+				if (!menuFirstFl) {
 					_G(cur)->show_cur();
 					while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
 						set_up_screen(NO_SETUP);
@@ -346,7 +338,7 @@ void Inventory::menu() {
 			default:
 				break;
 			}
-			menu_first = true;
+			menuFirstFl = true;
 		}
 
 		if (_G(show_invent_menu) != 2) {
@@ -383,8 +375,8 @@ void Inventory::menu() {
 	}
 
 	_G(flags).InventMenu = false;
-	_G(flags).AutoAniPlay = ani_tmp;
-	_G(spieler).DispFlag = disp_tmp;
+	_G(flags).AutoAniPlay = oldAutoAniPlay;
+	_G(spieler).DispFlag = oldDispFlag;
 	_G(menu_display) = _G(tmp_menu);
 	_G(flags).StopAutoObj = false;
 }
