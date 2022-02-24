@@ -930,6 +930,7 @@ void flic_cut(int16 nr) {
 		FCUT_113, FCUT_106, FCUT_103, FCUT_118, FCUT_120
 	};
 	int16 i, ret = 0;
+	bool keepPlaying = true;
 
 	_G(out)->set_pointer(nullptr);
 	_G(det)->disable_room_sound();
@@ -943,48 +944,11 @@ void flic_cut(int16 nr) {
 
 	if (_G(Ci).Handle) {
 		switch (nr) {
-
-		case FCUT_009:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room11::cut_serv);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_010:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room11::cut_serv_2);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
 		case FCUT_SPACECHASE_18:
-		case FCUT_SPACECHASE_19:
-		case FCUT_SPACECHASE_20:
-		case FCUT_SPACECHASE_21:
-		case FCUT_SPACECHASE_22:
-		case FCUT_SPACECHASE_23:
-		case FCUT_SPACECHASE_24:
-		case FCUT_SPACECHASE_25:
-		case FCUT_SPACECHASE_26:
-		case FCUT_SPACECHASE_27:
-		case FCUT_SPACECHASE_28:
-			_G(sndPlayer)->stopMod();
-			_G(currentSong) = -1;
-			nr = FCUT_SPACECHASE_18;
 			_G(sndPlayer)->setLoopMode(1);
 
-			for (i = 0; i < 11; i++) {
-				g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
-				SHOULD_QUIT_RETURN;
+			for (i = 0; i < 11 && keepPlaying; i++) {
+				keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
 			}
 
 			_G(sndPlayer)->fadeOut(0);
@@ -1001,12 +965,6 @@ void flic_cut(int16 nr) {
 		case FCUT_037:
 		case FCUT_040:
 			// TV
-
-			if (nr == FCUT_034) {
-				_G(sndPlayer)->stopMod();
-				_G(currentSong) = -1;
-			}
-
 			if (nr != FCUT_036)
 				_G(flc)->set_custom_user_function(Room39::setup_func);
 

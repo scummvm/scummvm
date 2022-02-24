@@ -204,36 +204,5 @@ void Room11::put_card() {
 	}
 }
 
-int16 Room11::cut_serv(int16 frame) {
-	if (_G(spieler).R11DoorRightF)
-		_G(det)->plot_static_details(0, 0, 0, 0);
-
-	if (_G(spieler).R11DoorRightB)
-		_G(det)->plot_static_details(0, 0, 6, 6);
-
-	if (_G(spieler).R45MagOk)
-		_G(det)->plot_static_details(0, 0, 7, 7);
-
-	return 0;
-}
-
-int16 Room11::cut_serv_2(int16 frame) {
-	if (_G(spieler).R11DoorRightF)
-		_G(det)->plot_static_details(0, 0, 0, 0);
-
-	if (_G(spieler).R11DoorRightB)
-		_G(det)->plot_static_details(0, 0, 6, 6);
-
-	if (_G(spieler).R6DoorRightB)
-		_G(det)->plot_static_details(0, 0, 7, 7);
-
-	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-
-	if (frame == 43)
-		start_aad(106, 0);
-
-	return 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy

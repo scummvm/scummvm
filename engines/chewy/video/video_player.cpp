@@ -50,7 +50,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	bool skipVideo = false;
 	byte curPalette[256 * 3];
 	uint32 curFrame = 0;
-	bool customExit = false;
+	bool keepPlaying = true;
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
 	//save_palette(curPalette);
@@ -63,7 +63,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 	cfoDecoder->start();
 
-	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo && !customExit) {
+	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo && keepPlaying) {
 		if (cfoDecoder->needsUpdate()) {
 			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
 			if (frame) {
@@ -71,7 +71,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 				byte *destP = (byte *)g_screen->getPixels();
 				Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 				g_screen->markAllDirty();
-				customExit = !handleCustom(num, curFrame);
+				keepPlaying = handleCustom(num, curFrame);
 				curFrame = cfoDecoder->getCurFrame();
 
 				if (cfoDecoder->hasDirtyPalette())
@@ -83,7 +83,10 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		}
 
 		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+			// FIXME: We ignore mouse events because the game checks
+			// for left mouse down, instead of up, so releasing the
+			// mouse button results in video skipping
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) /*|| event.type == Common::EVENT_LBUTTONUP*/)
 				skipVideo = true;
 		}
 
@@ -112,6 +115,24 @@ bool VideoPlayer::handleCustom(uint num, uint frame) {
 		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 		if (frame == 31)
 			start_aad(107, 0);
+		break;
+	case FCUT_009:
+	case FCUT_010:
+		// Room11::cut_serv and Room11::cut_serv_2
+		if (_G(spieler).R11DoorRightF)
+			_G(det)->plot_static_details(0, 0, 0, 0);
+
+		if (_G(spieler).R11DoorRightB)
+			_G(det)->plot_static_details(0, 0, 6, 6);
+
+		if (_G(spieler).R6DoorRightB)
+			_G(det)->plot_static_details(0, 0, 7, 7);
+
+		if (num == FCUT_010) {
+			_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+			if (frame == 43)
+				start_aad(106, 0);
+		}
 		break;
 	case FCUT_094:
 		//Room87::proc3
