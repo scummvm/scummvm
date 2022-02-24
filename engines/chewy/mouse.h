@@ -37,16 +37,16 @@ public:
 	InputMgr();
 	~InputMgr();
 
-	void move_mouse(int16 x, int16 y);
+	void setMousePos(int16 x, int16 y);
 
 	void neuer_kb_handler(KbdInfo *key);
 	void alter_kb_handler();
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
-	KbdMouseInfo *get_in_zeiger();
+	KbdMouseInfo *getPointer();
 	int16 get_switch_code();
 
-	int16 _hotkey = 0;
+	int16 _hotkey = Common::KEYCODE_INVALID;
 
 private:
 	KbdInfo *_kbInfoBlk = nullptr;

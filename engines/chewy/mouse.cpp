@@ -31,7 +31,7 @@ bool mouse_links_los;
 bool mouse_active;
 // end of externals
 
-bool cur_move;
+bool _cursorMoveFl;
 
 
 void set_new_kb_handler(KbdInfo *key) {
@@ -49,7 +49,7 @@ InputMgr::InputMgr() {
 InputMgr::~InputMgr() {
 }
 
-void InputMgr::move_mouse(int16 x, int16 y) {
+void InputMgr::setMousePos(int16 x, int16 y) {
 	g_events->warpMouse(Common::Point(x, y));
 }
 
@@ -79,7 +79,7 @@ void InputMgr::alter_kb_handler() {
 #endif
 }
 
-KbdMouseInfo *InputMgr::get_in_zeiger() {
+KbdMouseInfo *InputMgr::getPointer() {
 	_inzeig.kbinfo = _kbInfoBlk;
 
 	return &_inzeig;
@@ -95,13 +95,12 @@ int16 InputMgr::get_switch_code() {
 	else if (_G(minfo).button == 4)
 		switch_code = 254;
 
-	if (_kbInfoBlk)
-		if (_kbInfoBlk->key_code != 0)
-			switch_code = (int16)_kbInfoBlk->key_code;
+	if (_kbInfoBlk && _kbInfoBlk->key_code != 0)
+		switch_code = (int16)_kbInfoBlk->key_code;
 
-	if (_hotkey != 0) {
-		switch_code = (int16)_hotkey;
-		_hotkey = 0;
+	if (_hotkey != Common::KEYCODE_INVALID) {
+		switch_code = _hotkey;
+		_hotkey = Common::KEYCODE_INVALID;
 	}
 
 	return switch_code;

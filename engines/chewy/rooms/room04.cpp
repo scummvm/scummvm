@@ -95,11 +95,11 @@ int16 Room4::sonde_comp() {
 		_G(spr_info)[0].Y = CUR_POS[cur_x][1];
 
 		if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
-			_G(curani).ani_anf = HAND_CLICK;
-			_G(curani).ani_end = HAND_CLICK;
+			_G(curani)._start = HAND_CLICK;
+			_G(curani)._end = HAND_CLICK;
 		} else {
-			_G(curani).ani_anf = HAND_NORMAL;
-			_G(curani).ani_end = HAND_NORMAL;
+			_G(curani)._start = HAND_NORMAL;
+			_G(curani)._end = HAND_NORMAL;
 		}
 		cursorChoice(CUR_USER);
 		_G(spieler)._curHeight = 16;

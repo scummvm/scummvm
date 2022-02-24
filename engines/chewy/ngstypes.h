@@ -209,9 +209,9 @@ struct CurBlk {
 };
 
 struct CurAni {
-	uint8 ani_anf = 0;
-	uint8 ani_end = 0;
-	int16 delay = 0;
+	uint8 _start = 0;
+	uint8 _end = 0;
+	int16 _delay = 0;
 };
 
 struct FCurBlk {

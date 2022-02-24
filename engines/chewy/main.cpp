@@ -104,109 +104,109 @@ void cursorChoice(int16 nr) {
 	int16 ok = true;
 	if (nr != CUR_USER) {
 		_G(curblk).sprite = _G(curtaf)->image;
-		_G(curani).delay = (1 + _G(spieler).DelaySpeed) * 5;
+		_G(curani)._delay = (1 + _G(spieler).DelaySpeed) * 5;
 	}
 	switch (nr) {
 	case CUR_WALK:
-		_G(curani).ani_anf = 0;
-		_G(curani).ani_end = 3;
+		_G(curani)._start = 0;
+		_G(curani)._end = 3;
 		break;
 
 	case CUR_NO_WALK:
-		_G(curani).ani_anf = 8;
-		_G(curani).ani_end = 8;
+		_G(curani)._start = 8;
+		_G(curani)._end = 8;
 		break;
 
 	case CUR_USE:
-		_G(curani).ani_anf = 4;
-		_G(curani).ani_end = 7;
+		_G(curani)._start = 4;
+		_G(curani)._end = 7;
 		break;
 
 	case CUR_NO_USE:
-		_G(curani).ani_anf = 4;
-		_G(curani).ani_end = 4;
+		_G(curani)._start = 4;
+		_G(curani)._end = 4;
 		break;
 
 	case CUR_NOPE:
-		_G(curani).ani_anf = 9;
-		_G(curani).ani_end = 12;
+		_G(curani)._start = 9;
+		_G(curani)._end = 12;
 		break;
 
 	case CUR_LOOK:
-		_G(curani).ani_anf = 13;
-		_G(curani).ani_end = 16;
+		_G(curani)._start = 13;
+		_G(curani)._end = 16;
 		break;
 
 	case CUR_NO_LOOK:
-		_G(curani).ani_anf = 16;
-		_G(curani).ani_end = 16;
+		_G(curani)._start = 16;
+		_G(curani)._end = 16;
 		break;
 
 	case CUR_TALK:
-		_G(curani).ani_anf = 17;
-		_G(curani).ani_end = 20;
+		_G(curani)._start = 17;
+		_G(curani)._end = 20;
 		break;
 
 	case CUR_NO_TALK:
-		_G(curani).ani_anf = 17;
-		_G(curani).ani_end = 17;
+		_G(curani)._start = 17;
+		_G(curani)._end = 17;
 		break;
 
 	case CUR_INVENT:
-		_G(curani).ani_anf = 21;
-		_G(curani).ani_end = 24;
+		_G(curani)._start = 21;
+		_G(curani)._end = 24;
 		break;
 
 	case CUR_AK_INVENT:
-		_G(curani).ani_anf = _G(spieler).AkInvent;
-		_G(curani).ani_end = _G(spieler).AkInvent;
+		_G(curani)._start = _G(spieler).AkInvent;
+		_G(curani)._end = _G(spieler).AkInvent;
 		_G(curblk).sprite = &_G(inv_spr)[0];
 		_G(spieler).inv_cur = true;
 		break;
 
 	case CUR_SAVE:
-		_G(curani).ani_anf = 25;
-		_G(curani).ani_end = 25;
+		_G(curani)._start = 25;
+		_G(curani)._end = 25;
 		break;
 
 	case CUR_AUSGANG_LINKS:
-		_G(curani).ani_anf = AUSGANG_LINKS_SPR;
-		_G(curani).ani_end = AUSGANG_LINKS_SPR;
+		_G(curani)._start = AUSGANG_LINKS_SPR;
+		_G(curani)._end = AUSGANG_LINKS_SPR;
 		break;
 
 	case CUR_AUSGANG_RECHTS:
-		_G(curani).ani_anf = AUSGANG_RECHTS_SPR;
-		_G(curani).ani_end = AUSGANG_RECHTS_SPR;
+		_G(curani)._start = AUSGANG_RECHTS_SPR;
+		_G(curani)._end = AUSGANG_RECHTS_SPR;
 		break;
 
 	case CUR_AUSGANG_OBEN:
-		_G(curani).ani_anf = AUSGANG_OBEN_SPR;
-		_G(curani).ani_end = AUSGANG_OBEN_SPR;
+		_G(curani)._start = AUSGANG_OBEN_SPR;
+		_G(curani)._end = AUSGANG_OBEN_SPR;
 		break;
 
 	case CUR_AUSGANG_UNTEN:
-		_G(curani).ani_anf = AUSGANG_UNTEN_SPR;
-		_G(curani).ani_end = AUSGANG_UNTEN_SPR;
+		_G(curani)._start = AUSGANG_UNTEN_SPR;
+		_G(curani)._end = AUSGANG_UNTEN_SPR;
 		break;
 
 	case CUR_DISK:
-		_G(curani).ani_anf = 30;
-		_G(curani).ani_end = 30;
+		_G(curani)._start = 30;
+		_G(curani)._end = 30;
 		break;
 
 	case CUR_HOWARD:
-		_G(curani).ani_anf = 31;
-		_G(curani).ani_end = 31;
+		_G(curani)._start = 31;
+		_G(curani)._end = 31;
 		break;
 
 	case CUR_NICHELLE:
-		_G(curani).ani_anf = 37;
-		_G(curani).ani_end = 37;
+		_G(curani)._start = 37;
+		_G(curani)._end = 37;
 		break;
 
 	case CUR_ZEIGE:
-		_G(curani).ani_anf = 9;
-		_G(curani).ani_end = 9;
+		_G(curani)._start = 9;
+		_G(curani)._end = 9;
 		break;
 	case CUR_USER:
 
@@ -218,10 +218,10 @@ void cursorChoice(int16 nr) {
 	}
 
 	if (ok) {
-		cur_move = true;
+		_cursorMoveFl = true;
 		_G(cur)->set_cur_ani(&_G(curani));
-		_G(spieler)._curWidth = READ_LE_INT16(_G(curblk).sprite[_G(curani).ani_anf]);
-		_G(spieler)._curHeight = READ_LE_INT16(_G(curblk).sprite[_G(curani).ani_anf] + 2);
+		_G(spieler)._curWidth = READ_LE_INT16(_G(curblk).sprite[_G(curani)._start]);
+		_G(spieler)._curHeight = READ_LE_INT16(_G(curblk).sprite[_G(curani)._start] + 2);
 	}
 }
 

@@ -42,16 +42,15 @@ public:
 
 	McgaGraphics *_out = nullptr;
 	InputMgr *_in = nullptr;
-	KbdMouseInfo *_inzeig = nullptr;
+	KbdMouseInfo *_pointer = nullptr;
 	CurBlk *_curblk = nullptr;
 	CurAni *_ani = nullptr;
 	int _scrWidth = 0;
 	int16 _cur_x_old = 0;
 	int16 _cur_y_old = 0;
-	int16 _cur_aufruf = 0;
-	int16 _ani_count = 0;
-	uint8 _maus_da = 0;
-	bool _sichtbar = false;
+	int16 _curAniCountdown = 0;
+	int16 _aniCount = 0;
+	bool _visible = false;
 };
 
 } // namespace Chewy
