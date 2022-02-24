@@ -144,8 +144,13 @@ struct AadInfo {
 	int16 Y;
 	int16 Color;
 
-	bool load(const void *src);
+	AadInfo() : X(0), Y(0), Color(0) {}
+	void load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 6; }
+};
+class AadInfoArray : public Common::Array<AadInfo> {
+public:
+	void load(const void *data, size_t count);
 };
 
 struct AadTxtHeader {
@@ -168,7 +173,7 @@ struct AadVar {
 
 	AadTxtHeader *TxtHeader;
 	AadStrHeader *StrHeader;
-	AadInfo *Person;
+	AadInfoArray Person;
 	char *Ptr;
 	int16 StrNr;
 	int16 _delayCount;
@@ -180,13 +185,14 @@ struct AdsTxtHeader {
 	int16 PerAnz;
 	int16 AMov;
 	int16 CurNr;
+	static constexpr int SIZE() { return 8; }
 };
 
 struct AdsVar {
 	int16 Dialog;
 	int16 AutoDia;
 	AdsTxtHeader *TxtHeader;
-	AadInfo *Person;
+	AadInfoArray Person;
 	char *Ptr;
 	char *BlkPtr;
 	int16 StrNr;

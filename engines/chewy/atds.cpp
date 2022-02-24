@@ -47,13 +47,18 @@ bool InvUse::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool AadInfo::load(const void *src) {
-	Common::MemoryReadStream rs((const byte *)src, 6);
+void AadInfo::load(Common::SeekableReadStream *src) {
+	X = src->readSint16LE();
+	Y = src->readSint16LE();
+	Color = src->readSint16LE();
+}
 
-	X = rs.readSint16LE();
-	Y = rs.readSint16LE();
-	Color = rs.readSint16LE();
-	return true;
+void AadInfoArray::load(const void *data, size_t count) {
+	resize(count);
+	Common::MemoryReadStream src((const byte *)data, count * AadInfo::SIZE());
+
+	for (uint i = 0; i < count; ++i)
+		(*this)[i].load(&src);
 }
 
 bool AadTxtHeader::load(const void *src) {
@@ -871,8 +876,9 @@ int16 Atdsys::start_aad(int16 dia_nr) {
 		_aadv.Ptr = _atdsmem[AAD_HANDLE];
 		aad_search_dia(dia_nr, &_aadv.Ptr);
 		if (_aadv.Ptr) {
-			_aadv.Person = (AadInfo *)_aadv.Ptr;
+			_aadv.Person.load(_aadv.Ptr, _aadv.TxtHeader->PerAnz);
 			_aadv.Ptr += _aadv.TxtHeader->PerAnz * sizeof(AadInfo);
+
 			_aadv.Dialog = true;
 			_aadv.StrNr = 0;
 			_aadv.StrHeader = (AadStrHeader *)_aadv.Ptr;
@@ -1105,18 +1111,20 @@ bool  Atdsys::ads_start(int16 dia_nr) {
 
 	load_atds(dia_nr, ADS_DATEI);
 	bool ende = false;
+
 	if (_atdsmem[ADS_HANDLE][0] == (char)BLOCKENDE &&
 		    _atdsmem[ADS_HANDLE][1] == (char)BLOCKENDE &&
 		    _atdsmem[ADS_HANDLE][2] == (char)BLOCKENDE)
 		ende = true;
+
 	if (!ende) {
 		_adsv.Ptr = _atdsmem[ADS_HANDLE];
 		_adsv.TxtHeader = (AdsTxtHeader *)_adsv.Ptr;
 		if (_adsv.TxtHeader->DiaNr == dia_nr) {
 			ret = true;
-			_adsv.Ptr += sizeof(AdsTxtHeader);
-			_adsv.Person = (AadInfo *) _adsv.Ptr;
-			_adsv.Ptr += _adsv.TxtHeader->PerAnz * sizeof(AadInfo);
+			_adsv.Ptr += AdsTxtHeader::SIZE();
+			_adsv.Person.load(_adsv.Ptr, _adsv.TxtHeader->PerAnz);
+			_adsv.Ptr += _adsv.TxtHeader->PerAnz * AadInfo::SIZE();
 			_adsv.Dialog = dia_nr;
 			_adsv.StrNr = 0;
 			_adsStack[0] = 0;
