@@ -112,7 +112,7 @@ Atdsys::Atdsys() {
 		_ssi[i] = init_ssi;
 	_invBlockNr = -1;
 	_invUseMem = nullptr;
-	_inzeig = _G(in)->get_in_zeiger();
+	_inzeig = _G(in)->getPointer();
 }
 
 Atdsys::~Atdsys() {

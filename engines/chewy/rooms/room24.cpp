@@ -42,8 +42,8 @@ void Room24::entry() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	_G(curblk).sprite = _G(room_blk).DetImage;
-	_G(curani).ani_anf = 7;
-	_G(curani).ani_end = 10;
+	_G(curani)._start = 7;
+	_G(curani)._end = 10;
 	_G(menu_item) = CUR_USER;
 	cursorChoice(CUR_USER);
 

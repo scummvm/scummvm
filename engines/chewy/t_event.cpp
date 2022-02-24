@@ -2185,7 +2185,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
-		while (_G(in)->get_switch_code() != 0) {
+		while (_G(in)->get_switch_code() != Common::KEYCODE_INVALID) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}

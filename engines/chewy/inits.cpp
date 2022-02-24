@@ -69,9 +69,9 @@ void standard_init() {
 	_G(curblk).sprite = _G(curtaf)->image;
 	_G(curblk).cur_back = _G(cur_back);
 	_G(curblk).no_back = true;
-	_G(curani).ani_anf = 0;
-	_G(curani).ani_end = 0;
-	_G(curani).delay = 0;
+	_G(curani)._start = 0;
+	_G(curani)._end = 0;
+	_G(curani)._delay = 0;
 	
 	_G(cur) = new Cursor(_G(out), _G(in), &_G(curblk));
 	_G(cur)->set_cur_ani(&_G(curani));

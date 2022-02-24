@@ -30,23 +30,22 @@ Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, CurBlk *curblkp) {
 	_in = iin;
 	_scrWidth = _G(scr_w);
 	_curblk = curblkp;
-	_inzeig = _in->get_in_zeiger();
+	_pointer = _in->getPointer();
 
-	_maus_da = true;
-	_sichtbar = false;
+	_visible = false;
 	_ani = nullptr;
-	_cur_aufruf = false;
-	_ani_count = false;
+	_curAniCountdown = 0;
+	_aniCount = 0;
 }
 
 Cursor::~Cursor() {
 }
 
 void Cursor::plot_cur() {
-	if (_maus_da && _sichtbar) {
-		if (cur_move) {
+	if (_visible) {
+		if (_cursorMoveFl) {
 			mouse_active = true;
-			cur_move = false;
+			_cursorMoveFl = false;
 			if (!_curblk->no_back) {
 
 				_out->blockcopy(_curblk->cur_back, _cur_x_old, _cur_y_old, _scrWidth);
@@ -60,23 +59,23 @@ void Cursor::plot_cur() {
 			_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
 		}
 
-		_cur_aufruf -= 1;
-		if ((_cur_aufruf <= 0) && (_ani != nullptr)) {
-			_cur_aufruf = _ani->delay;
-			++_ani_count;
-			if (_ani_count > _ani->ani_end)
-				_ani_count = _ani->ani_anf;
+		--_curAniCountdown;
+		if (_curAniCountdown <= 0 && _ani != nullptr) {
+			_curAniCountdown = _ani->_delay;
+			++_aniCount;
+			if (_aniCount > _ani->_end)
+				_aniCount = _ani->_start;
 		}
 
-		_out->sprite_set(_curblk->sprite[_ani_count], _cur_x_old, _cur_y_old,
+		_out->sprite_set(_curblk->sprite[_aniCount], _cur_x_old, _cur_y_old,
 		                 _scrWidth);
 		mouse_active = false;
 	}
 }
 
 void Cursor::show_cur() {
-	if ((_maus_da) && (!_sichtbar)) {
-		_sichtbar = true;
+	if (!_visible) {
+		_visible = true;
 		mouse_active = true;
 
 		_G(minfo).x = g_events->_mousePos.x;
@@ -90,41 +89,39 @@ void Cursor::show_cur() {
 
 		_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
 		_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
-		cur_move = true;
+		_cursorMoveFl = true;
 		plot_cur();
 	}
 }
 
 void Cursor::hide_cur() {
-	if ((_maus_da) && (_sichtbar)) {
+	if (_visible) {
 		if (!_curblk->no_back) {
 			_out->blockcopy(_curblk->cur_back, _cur_x_old, _cur_y_old, _scrWidth);
 		}
-		_sichtbar = false;
+		_visible = false;
 	}
 }
 
 void Cursor::set_cur_ani(CurAni *ani1) {
 	_ani = ani1;
-	_cur_aufruf = 0;
-	_ani_count = _ani->ani_anf;
+	_curAniCountdown = 0;
+	_aniCount = _ani->_start;
 }
 
 void Cursor::move(int16 x, int16 y) {
-	if (_maus_da) {
-		mouse_active = true;
+	mouse_active = true;
 
-		_G(minfo).x = x;
-		_G(minfo).y = y;
-		_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
-		_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
-		_in->move_mouse(x, y);
-		if (_sichtbar)
-			cur_move = true;
-		else
-			cur_move = false;
-		mouse_active = false;
-	}
+	_G(minfo).x = x;
+	_G(minfo).y = y;
+	_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
+	_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
+	_in->setMousePos(x, y);
+	if (_visible)
+		_cursorMoveFl = true;
+	else
+		_cursorMoveFl = false;
+	mouse_active = false;
 }
 
 } // namespace Chewy
