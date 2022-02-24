@@ -316,7 +316,12 @@ void WetEngine::loadAssetsFullGame() {
 	arc->id = 40; // Fixed from the original (4)
 
 	loadArcadeLevel("c401.mi_", "c51", "<check_lives>", "");
+	arc = (ArcadeShooting*) _levels["c401.mi_"];
+	arc->id = 40; // Fixed from the original (4)
+
 	loadArcadeLevel("c402.mi_", "c51", "<check_lives>", "");
+	arc = (ArcadeShooting*) _levels["c402.mi_"];
+	arc->id = 40; // Fixed from the original (4)
 
 	loadArcadeLevel("c510.mi_", "c52", "<check_lives>", "");
 	loadArcadeLevel("c511.mi_", "c52", "<check_lives>", "");
@@ -349,7 +354,7 @@ void WetEngine::loadAssetsFullGame() {
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
 	loadLib("sound/", "c_misc/sound.lib", true);
-	_nextLevel = "c400.mi_";
+	_nextLevel = "<start>";
 }
 
 void WetEngine::showCredits() {
