@@ -899,10 +899,11 @@ byte ROQPlayer::getCodingType() {
 
 void ROQPlayer::paint2(byte i, int destx, int desty) {
 	if (i > _num2blocks) {
-		error("Groovie::ROQ: Invalid 2x2 block %d (%d available)", i, _num2blocks);
+		warning("Groovie::ROQ: Invalid 2x2 block %d (%d available)", i, _num2blocks);
+		return;
 	}
 
-	uint32 *block = _codebook2 + i * 4;
+	uint32 *block = &_codebook2[i * 4];
 	uint32 *ptr = (uint32 *)_currBuf->getBasePtr(destx, desty);
 	uint32 pitch = _currBuf->pitch / 4;
 
@@ -914,7 +915,8 @@ void ROQPlayer::paint2(byte i, int destx, int desty) {
 
 void ROQPlayer::paint4(byte i, int destx, int desty) {
 	if (i > _num4blocks) {
-		error("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+		warning("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+		return;
 	}
 
 	byte *block4 = &_codebook4[i * 4];
@@ -928,13 +930,14 @@ void ROQPlayer::paint4(byte i, int destx, int desty) {
 
 void ROQPlayer::paint8(byte i, int destx, int desty) {
 	if (i > _num4blocks) {
-		error("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+		warning("Groovie::ROQ: Invalid 4x4 block %d (%d available)", i, _num4blocks);
+		return;
 	}
 
 	byte *block4 = &_codebook4[i * 4];
 	for (int y4 = 0; y4 < 2; y4++) {
 		for (int x4 = 0; x4 < 2; x4++) {
-			uint32 *block2 = _codebook2 + *block4++ * 4;
+			uint32 *block2 = &_codebook2[*block4++ * 4];
 
 			for (int y2 = 0; y2 < 2; y2++) {
 				for (int x2 = 0; x2 < 2; x2++) {
