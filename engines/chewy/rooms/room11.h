@@ -39,9 +39,6 @@ public:
 	static void put_card();
 	static int16 scanner();
 	static void talk_debug();
-
-	static int16 cut_serv(int16 frame);
-	static int16 cut_serv_2(int16 frame);
 };
 
 } // namespace Rooms
