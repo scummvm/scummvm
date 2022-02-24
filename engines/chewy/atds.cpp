@@ -341,8 +341,9 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 				if (Ch.size) {
 					if (!rs->read(_invUseMem, Ch.size)) {
 						error("Error reading from %s", fname);
-					} else
+					} else {
 						crypt(_invUseMem, Ch.size);
+					}
 				}
 				_invUseMem[Ch.size] = (char)BLOCKENDE;
 				_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
@@ -423,8 +424,9 @@ void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
 			if (Ch.size) {
 				if (stream->read(txt_adr, Ch.size) != Ch.size) {
 					error("load_atds error");
-				} else if (mode != ADH_DATEI)
+				} else if (mode != ADH_DATEI) {
 					crypt(txt_adr, Ch.size);
+				}
 			}
 			txt_adr[Ch.size] = (char)BLOCKENDE;
 			txt_adr[Ch.size + 1] = (char)BLOCKENDE;
@@ -645,10 +647,12 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 					_printDelayCount1 = _atsv.DelayCount / 10;
 					_atsv.SilentCount = _atdsv.Silent;
 				}
-			} else
+			} else {
 				--_atsv.DelayCount;
-		} else
+			}
+		} else {
 			--_atsv.SilentCount;
+		}
 	}
 }
 
@@ -1170,7 +1174,7 @@ int16 Atdsys::check_item(int16 block_nr, int16 item_nr) {
 
 char **Atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 	*anzahl = 0;
-	memset(_ePtr, 0, sizeof(char *)*ADS_MAX_BL_EIN);
+	memset(_ePtr, 0, sizeof(char *) * ADS_MAX_BL_EIN);
 	if (_adsv.Dialog != -1) {
 		_adsv.BlkPtr = _adsv.Ptr;
 		ads_search_block(block_nr, &_adsv.BlkPtr);
@@ -1256,9 +1260,11 @@ int16 Atdsys::return_block(AdsBlock *ab) {
 		if (anz) {
 			ret = blk_nr;
 			ende = true;
-		} else
+		} else {
 			--_adsStackPtr;
+		}
 	}
+
 	++_adsStackPtr;
 	return ret;
 }
