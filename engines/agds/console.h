@@ -42,6 +42,7 @@ private:
 	bool activate(int argc, const char **argv);
 	bool info(int argc, const char **argv);
 	bool setGlobal(int argc, const char **argv);
+	bool inventoryAdd(int argc, const char **argv);
 
 	AGDSEngine *_engine;
 };
