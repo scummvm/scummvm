@@ -172,7 +172,7 @@ struct SpielerFlags {
 	bool R37HundScham : 1;
 	bool R37Kloppe : 1;
 	bool R37Mes : 1;
-	bool R39TransMensch : 1;
+	bool R39TranslatorUsed : 1;
 	bool R39TvOn : 1;
 	bool R39ScriptOk : 1;
 

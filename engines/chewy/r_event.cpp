@@ -958,43 +958,6 @@ void flic_cut(int16 nr) {
 			_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
 			break;
 
-		case FCUT_032:
-		case FCUT_034:
-		case FCUT_035:
-		case FCUT_036:
-		case FCUT_037:
-		case FCUT_040:
-			// TV
-			if (nr != FCUT_036)
-				_G(flc)->set_custom_user_function(Room39::setup_func);
-
-			do {
-#ifndef NEW_VIDEO_CODE
-				_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-				ret = _G(flc)->custom_play(&_G(Ci));			
-#else
-				ret = g_engine->_video->playVideo(nr) ? 0 : -1;
-#endif
-				SHOULD_QUIT_RETURN;
-			} while (_G(atds)->aad_get_status() != -1 && ret != -1);
-
-			if (nr != FCUT_036)
-				_G(flc)->remove_custom_user_function();
-			break;
-
-		case FCUT_038:
-		case FCUT_039:
-			// TV
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room39::setup_func);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
 		case FCUT_047:
 		case FCUT_048:
 #ifndef NEW_VIDEO_CODE

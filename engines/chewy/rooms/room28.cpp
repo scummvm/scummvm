@@ -261,7 +261,7 @@ void Room28::set_pump() {
 			load_chewy_taf(CHEWY_PUMPKIN);
 			_G(spieler).R28ChewyPump = true;
 
-			if (_G(spieler).R39TransMensch) {
+			if (_G(spieler).R39TranslatorUsed) {
 				_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
 			} else {
 				_G(atds)->set_ats_str(209, 1, ATS_DATEI);

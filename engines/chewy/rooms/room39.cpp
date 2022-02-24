@@ -50,8 +50,6 @@ static const AniBlock ABLOCK29[2] = {
 	{ 9, 4, ANI_VOR, ANI_WAIT, 0 },
 };
 
-bool Room39::_flag;
-
 void Room39::entry() {
 	if (!_G(spieler).R41Einbruch) {
 		if (_G(spieler).R39HowardDa) {
@@ -197,7 +195,7 @@ int16 Room39::use_tv() {
 		set_tv();
 		cls_flag = true;
 
-		if (!_G(spieler).R39TransMensch) {
+		if (!_G(spieler).R39TranslatorUsed) {
 			ani_nr = CH_TALK11;
 			dia_nr = 78;
 		} else if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
@@ -217,7 +215,7 @@ int16 Room39::use_tv() {
 		action_flag = true;
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
-			_G(spieler).R39TransMensch = true;
+			_G(spieler).R39TranslatorUsed = true;
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_041);
 			_G(spieler).R39TvKanal = 0;
@@ -248,7 +246,7 @@ int16 Room39::use_tv() {
 	} else if (is_cur_inventar(RECORDER_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 		action_flag = true;
 		if (_G(spieler).R39TvOn) {
-			if (_G(spieler).R39TransMensch) {
+			if (_G(spieler).R39TranslatorUsed) {
 				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
 				start_aad_wait(98, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
@@ -288,8 +286,6 @@ int16 Room39::use_tv() {
 }
 
 void Room39::look_tv(bool cls_mode) {
-	_flag = false;
-
 	if (_G(spieler).R39TvOn) {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
@@ -313,11 +309,9 @@ void Room39::look_tv(bool cls_mode) {
 				_G(flags).NoPalAfterFlc = true;
 			}
 
-			if (_G(spieler).R39TransMensch) {
+			if (_G(spieler).R39TranslatorUsed) {
 				if (dia_nr != 85)
 					start_aad(dia_nr, -1);
-				else
-					_flag = true;
 			}
 
 			flic_cut(flic_nr);
@@ -329,7 +323,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(out)->setPalette(_G(pal));
 				_G(flags).NoPalAfterFlc = false;
 
-				if (_G(spieler).R39TransMensch && dia_nr == 85)
+				if (_G(spieler).R39TranslatorUsed && dia_nr == 85)
 					start_aad_wait(dia_nr, -1);
 			}
 		}
@@ -351,47 +345,12 @@ void Room39::set_tv() {
 			_G(det)->show_static_spr(_G(spieler).R39TvKanal + 4);
 		}
 
-		if (_G(spieler).R39TransMensch) {
+		if (_G(spieler).R39TranslatorUsed) {
 			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATEI);
 		} else {
 			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATEI);
 		}
 	}
-}
-
-int16 Room39::setup_func(int16 frame) {
-	int16 action_ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
-
-	if (_flag) {
-		switch (frame) {
-		case 121:
-			start_aad(599, -1);
-			break;
-		case 247:
-			start_aad(600, -1);
-			break;
-		case 267:
-			start_aad(601, 0);
-			break;
-		case 297:
-			_G(in)->_hotkey = 1;
-			break;
-		case 171:
-		case 266:
-		case 370:
-			_G(atds)->stop_aad();
-			break;
-		default:
-			break;
-		}
-	}
-
-	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-
-	if (!_flag && _G(atds)->aad_get_status() == -1)
-		action_ret = -1;
-
-	return action_ret;
 }
 
 } // namespace Rooms
