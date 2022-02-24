@@ -71,6 +71,16 @@ bool AadTxtHeader::load(const void *src) {
 	return true;
 }
 
+bool AdsTxtHeader::load(const void *src) {
+	Common::MemoryReadStream rs((const byte *)src, 8);
+
+	DiaNr = rs.readSint16LE();
+	PerAnz = rs.readSint16LE();
+	AMov = rs.readSint16LE();
+	CurNr = rs.readSint16LE();
+	return true;
+}
+
 bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 	VocNr = src->readUint16LE();
 	return true;
@@ -1119,12 +1129,13 @@ bool  Atdsys::ads_start(int16 dia_nr) {
 
 	if (!ende) {
 		_adsv.Ptr = _atdsmem[ADS_HANDLE];
-		_adsv.TxtHeader = (AdsTxtHeader *)_adsv.Ptr;
-		if (_adsv.TxtHeader->DiaNr == dia_nr) {
+		_adsv.TxtHeader.load(_adsv.Ptr);
+
+		if (_adsv.TxtHeader.DiaNr == dia_nr) {
 			ret = true;
 			_adsv.Ptr += AdsTxtHeader::SIZE();
-			_adsv.Person.load(_adsv.Ptr, _adsv.TxtHeader->PerAnz);
-			_adsv.Ptr += _adsv.TxtHeader->PerAnz * AadInfo::SIZE();
+			_adsv.Person.load(_adsv.Ptr, _adsv.TxtHeader.PerAnz);
+			_adsv.Ptr += _adsv.TxtHeader.PerAnz * AadInfo::SIZE();
 			_adsv.Dialog = dia_nr;
 			_adsv.StrNr = 0;
 			_adsStack[0] = 0;
@@ -1301,7 +1312,7 @@ int16 Atdsys::start_ads_auto_dia(char *item_adr) {
 		int16 txt_len;
 		aad_get_zeilen(_aadv.Ptr, &txt_len);
 		_aadv._delayCount = get_delay(txt_len);
-		_atdsv.DiaNr = _adsv.TxtHeader->DiaNr + 10000;
+		_atdsv.DiaNr = _adsv.TxtHeader.DiaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)
 			_atdsv.aad_str(_atdsv.DiaNr, 0, _aadv.StrHeader->AkPerson, AAD_STR_START);

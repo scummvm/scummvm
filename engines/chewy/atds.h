@@ -185,13 +185,15 @@ struct AdsTxtHeader {
 	int16 PerAnz;
 	int16 AMov;
 	int16 CurNr;
+
+	bool load(const void *src);
 	static constexpr int SIZE() { return 8; }
 };
 
 struct AdsVar {
 	int16 Dialog;
 	int16 AutoDia;
-	AdsTxtHeader *TxtHeader;
+	AdsTxtHeader TxtHeader;
 	AadInfoArray Person;
 	char *Ptr;
 	char *BlkPtr;
