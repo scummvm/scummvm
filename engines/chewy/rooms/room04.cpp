@@ -103,7 +103,6 @@ int16 Room4::sonde_comp() {
 		}
 		cursorChoice(CUR_USER);
 		_G(spieler)._curHeight = 16;
-		_G(in)->rectangle(0, 123, 320 - _G(spieler)._curWidth, 194);
 
 		if (_G(minfo).y < 124)
 			_G(minfo).y = 123;

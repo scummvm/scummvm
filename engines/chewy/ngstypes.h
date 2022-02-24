@@ -133,7 +133,6 @@ struct KbdInfo {
 };
 
 struct KbdMouseInfo {
-	MouseInfo *minfo = nullptr;
 	KbdInfo *kbinfo = nullptr;
 };
 

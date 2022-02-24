@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "chewy/mouse.h"
 #include "chewy/events.h"
+#include "chewy/globals.h"
 
 namespace Chewy {
 
@@ -42,24 +43,14 @@ void set_old_kb_handler() {
 }
 
 InputMgr::InputMgr() {
-	_mouseInfoBlk = nullptr;
 	_kbInfoBlk = nullptr;
 }
 
 InputMgr::~InputMgr() {
 }
 
-int InputMgr::init() {
-	// ScummVM supports three buttons
-	return 3;
-}
-
 void InputMgr::move_mouse(int16 x, int16 y) {
 	g_events->warpMouse(Common::Point(x, y));
-}
-
-void InputMgr::rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax) {
-	// Mouse clip rectangle isn't supported in ScummVM
 }
 
 int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz) {
@@ -88,12 +79,7 @@ void InputMgr::alter_kb_handler() {
 #endif
 }
 
-void InputMgr::neuer_maushandler(MouseInfo *mpos) {
-	_mouseInfoBlk = mpos;
-}
-
 KbdMouseInfo *InputMgr::get_in_zeiger() {
-	_inzeig.minfo = _mouseInfoBlk;
 	_inzeig.kbinfo = _kbInfoBlk;
 
 	return &_inzeig;
@@ -102,14 +88,12 @@ KbdMouseInfo *InputMgr::get_in_zeiger() {
 int16 InputMgr::get_switch_code() {
 	int16 switch_code = 0;
 
-	if (_mouseInfoBlk) {
-		if (_mouseInfoBlk->button == 2) {
-			switch_code = Common::KEYCODE_ESCAPE;
-		} else if (_mouseInfoBlk->button == 1)
-			switch_code = 255;
-		else if (_mouseInfoBlk->button == 4)
-			switch_code = 254;
-	}
+	if (_G(minfo).button == 2) {
+		switch_code = Common::KEYCODE_ESCAPE;
+	} else if (_G(minfo).button == 1)
+		switch_code = 255;
+	else if (_G(minfo).button == 4)
+		switch_code = 254;
 
 	if (_kbInfoBlk)
 		if (_kbInfoBlk->key_code != 0)

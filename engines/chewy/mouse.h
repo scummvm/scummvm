@@ -38,13 +38,10 @@ public:
 	InputMgr();
 	~InputMgr();
 
-	int init();
 	void move_mouse(int16 x, int16 y);
-	void rectangle(int16 xmin, int16 ymin, int16 xmax, int16 ymax);
 
 	void neuer_kb_handler(KbdInfo *key);
 	void alter_kb_handler();
-	void neuer_maushandler(MouseInfo *mpos);
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
 	KbdMouseInfo *get_in_zeiger();
@@ -53,7 +50,6 @@ public:
 	int16 _hotkey = 0;
 
 private:
-	MouseInfo *_mouseInfoBlk = nullptr;
 	KbdInfo *_kbInfoBlk = nullptr;
 	KbdMouseInfo _inzeig;
 };

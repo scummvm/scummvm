@@ -56,8 +56,6 @@ void standard_init() {
 	_G(screen0) = (byte *)g_screen->getPixels();
 	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
-	_G(in)->rectangle(0, 0, 320, 210);
-	_G(in)->neuer_maushandler(&_G(minfo));
 	_G(out)->init_mausmode(&_G(minfo));
 	_G(curblk).page_off_x = 0;
 	_G(curblk).page_off_y = 0;
@@ -284,7 +282,6 @@ void init_load() {
 void tidy() {
 	sound_exit();
 	_G(in)->alter_kb_handler();
-	_G(in)->init();
 	free_buffers();
 	_G(obj)->free_inv_spr(&_G(inv_spr)[0]);
 
