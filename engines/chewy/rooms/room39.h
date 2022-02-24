@@ -27,8 +27,6 @@ namespace Rooms {
 
 class Room39 {
 private:
-	static bool _watchingGaspHorrorShow;
-
 	static void ok();
 	static void set_tv();
 

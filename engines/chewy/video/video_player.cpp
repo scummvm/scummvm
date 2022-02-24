@@ -140,7 +140,6 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		}
 		break;
 	case FCUT_032:
-	case FCUT_034:
 	case FCUT_035:
 	case FCUT_036:
 	case FCUT_037:
@@ -151,34 +150,39 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		if (!_G(spieler).R39TranslatorUsed)
 			return false;
 
-		if (num == FCUT_034) {
-			switch (frame) {
-			case 121:
-				start_aad(599, -1);
-				break;
-			case 247:
-				start_aad(600, -1);
-				break;
-			case 267:
-				start_aad(601, 0);
-				break;
-			case 297:
-				_G(in)->_hotkey = 1;
-				break;
-			case 171:
-			case 266:
-			case 370:
-				_G(atds)->stop_aad();
-				break;
-			default:
-				break;
-			}
-		}
-
 		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 
 		if (cfoDecoder->endOfVideo() && _G(atds)->aad_get_status() != -1)
 			cfoDecoder->rewind();
+		break;
+	case FCUT_034:
+		// Room39::setup_func
+		if (!_G(spieler).R39TranslatorUsed)
+			return false;
+
+		switch (frame) {
+		case 121:
+			start_aad(599, -1);
+			break;
+		case 247:
+			start_aad(600, -1);
+			break;
+		case 267:
+			start_aad(601, 0);
+			break;
+		case 297:
+			_G(in)->_hotkey = 1;
+			break;
+		case 171:
+		case 266:
+		case 370:
+			_G(atds)->stop_aad();
+			break;
+		default:
+			break;
+		}
+
+		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
 		break;
 	case FCUT_094:
 		// Room87::proc3
