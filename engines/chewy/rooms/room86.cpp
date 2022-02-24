@@ -191,7 +191,7 @@ void Room86::proc3(bool cond) {
 		set_up_screen(NO_SETUP);
 		_G(det)->set_static_pos(0, 352, destY, false, false);
 		destY += deltaY;
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->back2screen(_G(workpage));
 	}
 

@@ -106,7 +106,7 @@ void Room97::entry() {
 
 	if (_G(spieler).flags37_8) {
 		hideCur();
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 
 		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 89;

@@ -54,7 +54,7 @@ void setScummVMPalette(const byte *palette, uint start, uint count) {
 	g_system->getPaletteManager()->setPalette(tempPal, start, count);
 }
 
-void setpalette(const byte *palette) {
+void set_palette(const byte *palette) {
 	setScummVMPalette(palette, 0, PALETTE_COUNT);
 }
 
@@ -66,7 +66,7 @@ void save_palette(byte *palette) {
 }
 
 void restore_palette() {
-	setpalette(_G(saved_palette));
+	set_palette(_G(saved_palette));
 }
 
 void rastercol(int16 color, int16 r, int16 g, int16 b) {

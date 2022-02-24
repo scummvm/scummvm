@@ -196,7 +196,7 @@ int Room76::proc7() {
 		start_aad_wait(443, -1);
 		_G(spieler).scrollx = 0;
 		_G(fx_blend) = BLEND3;
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
 		_G(det)->set_static_ani(2, -1);

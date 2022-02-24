@@ -49,14 +49,14 @@ void standard_init() {
 
 	_G(out)->init();
 	_G(out)->cls();
-	_G(out)->palette_save();
-	_G(out)->set_clip(0, 0, 320, 200);
-	_G(out)->set_writemode(0);
+	_G(out)->savePalette();
+	_G(out)->setClip(0, 0, 320, 200);
+	_G(out)->setWriteMode(0);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();
 	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
-	_G(out)->init_mausmode(&_G(minfo));
+	_G(out)->initMouseMode(&_G(minfo));
 	_G(curblk).page_off_x = 0;
 	_G(curblk).page_off_y = 0;
 	_G(curblk).xsize = 16;
@@ -276,7 +276,7 @@ void init_load() {
 	f.close();
 
 	_G(room)->load_room(&_G(room_blk), _G(room_start_nr), &_G(spieler));
-	_G(out)->set_palette(_G(pal));
+	_G(out)->setPalette(_G(pal));
 }
 
 void tidy() {

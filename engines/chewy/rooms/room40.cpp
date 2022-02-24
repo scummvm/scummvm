@@ -481,7 +481,7 @@ int16 Room40::use_haendler() {
 				_G(spieler).R40Wettbewerb = true;
 				_G(spieler).PersonRoomNr[P_HOWARD] = 28;
 				_G(flags).NoScroll = false;
-				_G(out)->set_pointer(nullptr);
+				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
 				switch_room(28);
 				_G(SetUpScreenFunc) = setup_func;

@@ -66,15 +66,15 @@ int16 Files::execute(bool isInGame) {
 
 	_G(room)->open_handle(GBOOK, 0);
 	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
-	_G(out)->set_pointer(_G(workptr));
+	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->set_pointer(_G(screen0));
+	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
 	char *fnames = _G(iog)->io_init(&_G(ioptr));
 	fnames += 1;
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
-	_G(out)->set_pointer(_G(workptr));
+	_G(out)->setPointer(_G(workptr));
 	showCur();
 
 	pt[SCROLL_UP] = pt[SCROLL_DOWN] = Common::Point(1, 0);
@@ -271,13 +271,13 @@ enter:
 				}
 			} else if (mode[SAVE]) {
 				_G(out)->back2screen(_G(workpage));
-				_G(out)->set_pointer(_G(screen0));
+				_G(out)->setPointer(_G(screen0));
 				_G(in)->alter_kb_handler();
 				tmp = fnames + ((text_off + active_slot) * 40);
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 					255, 42, 14, 0, "%36s36", tmp);
 				_G(in)->neuer_kb_handler(&_G(kbinfo));
-				_G(out)->set_pointer(_G(workptr));
+				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
 					_G(iog)->save_entry(text_off + active_slot,
 						_G(ioptr).save_path);

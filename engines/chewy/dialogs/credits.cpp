@@ -199,7 +199,7 @@ void Credits::execute() {
 	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	_G(out)->set_pointer(_G(screen0));
+	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 
@@ -221,7 +221,7 @@ void Credits::execute() {
 			break;
 
 		// Display the starfield background
-		_G(out)->set_pointer(_G(workptr));
+		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
 			_G(spieler).scrollx, _G(spieler).scrolly);
 
@@ -257,7 +257,7 @@ void Credits::execute() {
 		if (!stillScrolling)
 			break;
 
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->back2screen(_G(workpage));
 	}
 

@@ -779,7 +779,7 @@ void print_rows(int16 id) {
 	_G(fontMgr)->setFont(_G(font8));
 	int16 txt_anz;
 	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
-	_G(out)->set_pointer(nullptr);
+	_G(out)->setPointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
 		char *s = _G(txt)->str_pos(txtStr, i);
@@ -856,7 +856,7 @@ static void flic_proc1() {
 		else if (VALS1[i] == 143)
 			load_room_music(260);
 		if (VALS2[i]) {
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 		}
 
@@ -883,7 +883,7 @@ static void flic_proc1() {
 
 	_G(flc)->remove_custom_user_function();
 	if (ret == -1) {
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
 		start_aad(595);
@@ -896,7 +896,7 @@ static void flic_proc1() {
 		}
 	}
 
-	_G(out)->set_pointer(_G(workptr));
+	_G(out)->setPointer(_G(workptr));
 	_G(out)->cls();
 }
 
@@ -932,7 +932,7 @@ void flic_cut(int16 nr) {
 	int16 i, ret = 0;
 	bool keepPlaying = true;
 
-	_G(out)->set_pointer(nullptr);
+	_G(out)->setPointer(nullptr);
 	_G(det)->disable_room_sound();
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
@@ -1190,7 +1190,7 @@ void flic_cut(int16 nr) {
 				SHOULD_QUIT_RETURN;
 
 				if (i == 0 || i == 1) {
-					_G(out)->set_pointer(nullptr);
+					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 				}
 			}
@@ -1658,11 +1658,11 @@ void flic_cut(int16 nr) {
 	}
 
 	if (!_G(flags).NoPalAfterFlc)
-		_G(out)->set_palette(_G(pal));
+		_G(out)->setPalette(_G(pal));
 
 	_G(atds)->stop_aad();
 	_G(atds)->stop_ats();
-	_G(out)->set_pointer(_G(workptr));
+	_G(out)->setPointer(_G(workptr));
 	_G(flags).NoPalAfterFlc = false;
 }
 

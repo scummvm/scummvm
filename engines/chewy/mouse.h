@@ -29,9 +29,8 @@ namespace Chewy {
 void set_new_kb_handler(KbdInfo *key);
 void set_old_kb_handler();
 
-extern bool mouse_links_los;
 extern bool mouse_active;
-extern bool cur_move;
+extern bool _cursorMoveFl;
 
 class InputMgr {
 public:

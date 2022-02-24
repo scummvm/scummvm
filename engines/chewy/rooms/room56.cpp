@@ -120,7 +120,7 @@ void Room56::entry() {
 				_G(atds)->set_steuer_bit(366, ATS_AKTIV_BIT, ATS_DATEI);
 				_G(spieler).room_e_obj[137].Attribut = 3;
 				if (_G(spieler).flags33_80) {
-					_G(out)->set_pointer(nullptr);
+					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_113);
 					_G(spieler).PersonRoomNr[P_HOWARD] = 89;
@@ -160,19 +160,19 @@ void Room56::entry() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
 		_G(spieler).r88DestRoom = 82;
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_116);
 		register_cutscene(21);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = 1;
 		switch_room(66);
 		break;
 	case 2:
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_110);
 		_G(spieler).flags34_20 = true;
@@ -350,7 +350,7 @@ int16 Room56::use_kneipe() {
 		_G(maus_links_click) = false;
 		auto_move(4, P_CHEWY);
 		start_aad_wait(521, -1);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_112);

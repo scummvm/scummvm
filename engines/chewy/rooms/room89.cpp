@@ -59,11 +59,11 @@ void Room89::entry() {
 		_G(spieler).SVal2 = 537;
 		switch_room(92);
 		start_aad_wait(490, -1);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_103);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_118);
@@ -78,7 +78,7 @@ void Room89::entry() {
 		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
 		set_person_pos(260, 57, P_NICHELLE, P_LEFT);
 		_G(spieler).ZoomXy[P_NICHELLE][0] = _G(spieler).ZoomXy[P_NICHELLE][1] = 10;
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_117);
@@ -86,7 +86,7 @@ void Room89::entry() {
 
 		_G(fx_blend) = BLEND3;
 		Room66::proc8(-1, 2, 3, 563);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_119);
@@ -98,17 +98,17 @@ void Room89::entry() {
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
-			_G(out)->set_pointer(_G(workptr));
+			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
 			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		// Unsquish out thanks for playing screen
-		_G(out)->set_pointer(_G(workptr));
+		_G(out)->setPointer(_G(workptr));
 		_G(out)->cls();
 		// Those strings are also displayed in the the German version
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
@@ -120,10 +120,10 @@ void Room89::entry() {
 		for (int esi = 0; esi < 100; ++esi) {
 			edi += 3;
 			var30 += 2;
-			_G(out)->set_pointer(_G(workptr));
+			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
 			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
-			_G(out)->set_pointer(nullptr);
+			_G(out)->setPointer(nullptr);
 			_G(out)->back2screen(_G(workpage));
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
@@ -131,16 +131,16 @@ void Room89::entry() {
 
 		g_events->delay(3000);
 		_G(out)->ausblenden(2);
-		_G(out)->set_pointer(_G(workptr));
+		_G(out)->setPointer(_G(workptr));
 		_G(out)->cls();
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 
 		Dialogs::Credits::execute();
 		
 		_G(spieler).SVal4 = 1;
 		_G(out)->ausblenden(2);
-		_G(out)->set_pointer(nullptr);
+		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 	}
 
@@ -177,7 +177,7 @@ int Room89::proc2() {
 	_G(spieler).SVal2 = 489;
 	switch_room(92);
 	start_aad_wait(490, -1);
-	_G(out)->set_pointer(nullptr);
+	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_102);

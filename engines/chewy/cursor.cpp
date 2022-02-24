@@ -127,31 +127,4 @@ void Cursor::move(int16 x, int16 y) {
 	}
 }
 
-void Cursor::wait_taste_los(bool maus_plot) {
-	int16 is_mouse = 0;
-	if (_maus_da) {
-		g_events->update();
-		is_mouse = _G(minfo).button;
-	}
-
-	if (!is_mouse)
-		_in->_hotkey = 0;
-
-	int16 stay = 1;
-	int16 switch_code = 1;
-
-	while ((switch_code != 0) && (stay)) {
-		switch_code = _in->get_switch_code();
-		if (is_mouse) {
-			switch_code = 2;
-
-			g_events->update();
-			stay = _G(minfo).button;
-		}
-
-		if (maus_plot)
-			plot_cur();
-	}
-}
-
 } // namespace Chewy
