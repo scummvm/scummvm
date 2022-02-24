@@ -32,16 +32,11 @@ Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, CurBlk *curblkp) {
 	_curblk = curblkp;
 	_inzeig = _in->get_in_zeiger();
 
-	if (!_inzeig->minfo) {
-		_maus_da = false;
-	} else {
-		_maus_da = true;
-		_minfo = _inzeig->minfo;
-		_sichtbar = false;
-		_ani = nullptr;
-		_cur_aufruf = false;
-		_ani_count = false;
-	}
+	_maus_da = true;
+	_sichtbar = false;
+	_ani = nullptr;
+	_cur_aufruf = false;
+	_ani_count = false;
 }
 
 Cursor::~Cursor() {
@@ -56,13 +51,13 @@ void Cursor::plot_cur() {
 
 				_out->blockcopy(_curblk->cur_back, _cur_x_old, _cur_y_old, _scrWidth);
 
-				_out->sprite_save(_curblk->cur_back, (_minfo->x + _curblk->page_off_x),
-				                  (_minfo->y + _curblk->page_off_y), _curblk->xsize,
+				_out->sprite_save(_curblk->cur_back, (_G(minfo).x + _curblk->page_off_x),
+				                  (_G(minfo).y + _curblk->page_off_y), _curblk->xsize,
 				                  _curblk->ysize, _scrWidth);
 			}
 
-			_cur_x_old = (_minfo->x + _curblk->page_off_x);
-			_cur_y_old = (_minfo->y + _curblk->page_off_y);
+			_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
+			_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
 		}
 
 		_cur_aufruf -= 1;
@@ -84,17 +79,17 @@ void Cursor::show_cur() {
 		_sichtbar = true;
 		mouse_active = true;
 
-		_minfo->x = g_events->_mousePos.x;
-		_minfo->y = g_events->_mousePos.y;
+		_G(minfo).x = g_events->_mousePos.x;
+		_G(minfo).y = g_events->_mousePos.y;
 
 		if (!_curblk->no_back) {
-			_out->sprite_save(_curblk->cur_back, (_minfo->x + _curblk->page_off_x),
-			    (_minfo->y + _curblk->page_off_y), _curblk->xsize,
+			_out->sprite_save(_curblk->cur_back, (_G(minfo).x + _curblk->page_off_x),
+			    (_G(minfo).y + _curblk->page_off_y), _curblk->xsize,
 			    _curblk->ysize, _scrWidth);
 		}
 
-		_cur_x_old = (_minfo->x + _curblk->page_off_x);
-		_cur_y_old = (_minfo->y + _curblk->page_off_y);
+		_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
+		_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
 		cur_move = true;
 		plot_cur();
 	}
@@ -119,10 +114,10 @@ void Cursor::move(int16 x, int16 y) {
 	if (_maus_da) {
 		mouse_active = true;
 
-		_minfo->x = x;
-		_minfo->y = y;
-		_cur_x_old = (_minfo->x + _curblk->page_off_x);
-		_cur_y_old = (_minfo->y + _curblk->page_off_y);
+		_G(minfo).x = x;
+		_G(minfo).y = y;
+		_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
+		_cur_y_old = (_G(minfo).y + _curblk->page_off_y);
 		_in->move_mouse(x, y);
 		if (_sichtbar)
 			cur_move = true;
@@ -136,7 +131,7 @@ void Cursor::wait_taste_los(bool maus_plot) {
 	int16 is_mouse = 0;
 	if (_maus_da) {
 		g_events->update();
-		is_mouse = _minfo->button;
+		is_mouse = _G(minfo).button;
 	}
 
 	if (!is_mouse)
@@ -151,7 +146,7 @@ void Cursor::wait_taste_los(bool maus_plot) {
 			switch_code = 2;
 
 			g_events->update();
-			stay = _minfo->button;
+			stay = _G(minfo).button;
 		}
 
 		if (maus_plot)

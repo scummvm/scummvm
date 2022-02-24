@@ -222,7 +222,6 @@ void cursorChoice(int16 nr) {
 		_G(cur)->set_cur_ani(&_G(curani));
 		_G(spieler)._curWidth = READ_LE_INT16(_G(curblk).sprite[_G(curani).ani_anf]);
 		_G(spieler)._curHeight = READ_LE_INT16(_G(curblk).sprite[_G(curani).ani_anf] + 2);
-		_G(in)->rectangle(0, 0, 320 - _G(spieler)._curWidth, 210 - _G(spieler)._curHeight);
 	}
 }
 
