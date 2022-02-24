@@ -186,30 +186,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);
 	changeCursor("arcade");
 	_shoots.clear();
-	if (!arc->player.empty())
-		_playerFrames = decodeFrames(arc->player);
-	_playerFrameSep = 0;
-	// Only used in spider
-	_currentPlayerPosition = kPlayerLeft;
-	_lastPlayerPosition = kPlayerLeft;
 	_skipLevel = false;
-
-	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
-		if ((*it)->getPixel(0, 0) == 255)
-			break;
-		if ((*it)->getPixel(0, 0) == 252)
-			break;
-
-		_playerFrameSep++;
-	}
-
-	if (_playerFrameSep == (int)_playerFrames.size()) {
-		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
-		//_playerFrameSep = -1;
-	} else 
-		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
-
-	_playerFrameIdx = -1;
 
 	MVideo background = MVideo(arc->backgroundVideo, Common::Point(0, 0), false, false, false);
 

@@ -33,6 +33,30 @@ static const int oIndexYE[9] = {4, 3, 2, 1, 0};
 static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {68, 9}, {71, 22}, {57, 20}, {37, 14}, {37, 11}, {57, 20}};
 
+void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
+	assert(!arc->player.empty());
+	_playerFrames = decodeFrames(arc->player);
+	_playerFrameSep = 0;
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		if ((*it)->getPixel(0, 0) == 255)
+			break;
+		if ((*it)->getPixel(0, 0) == 252)
+			break;
+
+		_playerFrameSep++;
+	}
+
+	if (_playerFrameSep == (int)_playerFrames.size()) {
+		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
+	} else 
+		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
+
+	_playerFrameIdx = -1;
+	_currentPlayerPosition = kPlayerLeft;
+	_lastPlayerPosition = kPlayerLeft;
+}
+
 void SpiderEngine::initSegment(ArcadeShooting *arc) {
 	_segmentShootSequenceOffset = 0;
 	_segmentShootSequenceMax = 0;

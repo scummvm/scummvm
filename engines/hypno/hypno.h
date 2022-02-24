@@ -337,6 +337,8 @@ public:
 	void drawHealth() override;
 	void hitPlayer() override;
 
+	// Arcade
+	void runBeforeArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
 	bool checkArcadeLevelCompleted(MVideo &background, Segment segment) override;

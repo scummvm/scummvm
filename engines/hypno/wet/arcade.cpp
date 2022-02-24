@@ -195,6 +195,41 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		runIntro(*video);
 		delete video;
 	}
+
+	if (!arc->player.empty()) {
+		_playerFrames = decodeFrames(arc->player);
+	}
+
+	if (arc->mode == "Y5")  { // This image is flipped, for some reason
+		for (Frames::iterator it = _playerFrames.begin(); it != _playerFrames.end(); ++it) {
+			for (int i = 0 ; i < (*it)->w ; i++) 
+				for (int j = 0 ; j < (*it)->h/2 ; j++) {
+					uint32 p1 = (*it)->getPixel(i, j);
+					uint32 p2 = (*it)->getPixel(i, (*it)->h - j - 1);
+					(*it)->setPixel(i, j, p2);
+					(*it)->setPixel(i, (*it)->h - j - 1, p1);
+				}
+		}
+	}
+
+	_playerFrameSep = 0;
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		if ((*it)->getPixel(0, 0) == 255)
+			break;
+		if ((*it)->getPixel(0, 0) == 252)
+			break;
+
+		_playerFrameSep++;
+	}
+
+	if (_playerFrameSep == (int)_playerFrames.size()) {
+		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
+		//_playerFrameSep = -1;
+	} else 
+		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
+
+	_playerFrameIdx = -1;
 }
 
 bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
