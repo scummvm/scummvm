@@ -200,7 +200,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		_playerFrames = decodeFrames(arc->player);
 	}
 
-	if (arc->mode == "Y5")  { // This image is flipped, for some reason
+	if (arc->mode == "Y4" || arc->mode == "Y5")  { // These images are flipped, for some reason
 		for (Frames::iterator it = _playerFrames.begin(); it != _playerFrames.end(); ++it) {
 			for (int i = 0 ; i < (*it)->w ; i++) 
 				for (int j = 0 ; j < (*it)->h/2 ; j++) {
@@ -237,7 +237,7 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 }
 
 void WetEngine::hitPlayer() {
-	if (_arcadeMode != "Y1" && _arcadeMode != "Y5") {
+	if (_arcadeMode != "Y1" && _arcadeMode != "Y4" && _arcadeMode != "Y5") {
 		assert( _playerFrameSep < (int)_playerFrames.size());
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
@@ -288,6 +288,8 @@ void WetEngine::drawPlayer() {
 
 	if (_arcadeMode == "Y5")
 		_playerFrameIdx = 1;
+	else if (_arcadeMode == "Y4")
+		_playerFrameIdx = 2;
 
 	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + 1, true);
 }
