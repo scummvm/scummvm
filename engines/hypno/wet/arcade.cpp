@@ -30,7 +30,10 @@ namespace Hypno {
 void WetEngine::initSegment(ArcadeShooting *arc) {
 	if (_arcadeMode == "Y1") {
 		_segmentShootSequenceOffset = 0;
-		_segmentShootSequenceMax = 3;
+		_segmentShootSequenceMax = 7;
+	} else if (_arcadeMode == "Y3") {
+		_segmentShootSequenceOffset = 0;
+		_segmentShootSequenceMax = 7;
 	} else if (_arcadeMode == "Y5") {
 		_segmentShootSequenceOffset = 1;
 		_segmentShootSequenceMax = 9;
@@ -117,6 +120,11 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				_segmentIdx = _segmentIdx + 1;
 			else 
 				_segmentIdx = _segmentIdx + 2;
+		} else if (segments[_segmentIdx].type == 'Y') {
+			if (mousePos.x <= 160)
+				_segmentIdx = _segmentIdx + 2;
+			else 
+				_segmentIdx = _segmentIdx + 1;
 		} else {
 
 			// Objective checking
@@ -135,6 +143,16 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					}
 				}
 			}
+			if (segments[_segmentIdx].type == 0xc9) {
+				_segmentOffset = _segmentIdx + 1;
+				_segmentShootSequenceOffset = 8;
+				_segmentShootSequenceMax = 7;
+			} else if (segments[_segmentIdx].type == 0xbb) {
+				_segmentOffset = 0;
+				_segmentShootSequenceOffset = 0;
+				_segmentShootSequenceMax = 7;
+			}
+
 			_segmentIdx = _segmentOffset;
 			// select a new shoot sequence
 			uint32 randomSegmentShootSequence = _segmentShootSequenceOffset + _rnd->getRandomNumber(_segmentShootSequenceMax);
