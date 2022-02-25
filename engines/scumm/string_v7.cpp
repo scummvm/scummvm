@@ -4,10 +4,10 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -183,6 +182,7 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 #define SCUMM7_MAX_STRINGS		80
 
 void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
+
 	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawString(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), flags: 0x%02x)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, flags);
 
 	int totalLen = (int)strlen(str);
@@ -393,7 +393,7 @@ Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y
 	int width = getStringWidth(str);
 	if (_gameId == GID_CMI && _useCJKMode)
 		y += 2;
-	
+
 	if (flags & kStyleAlignCenter)
 		x -= width / 2;
 	else if (flags & kStyleAlignRight)
@@ -507,15 +507,22 @@ void ScummEngine_v8::printString(int m, const byte *msg) {
 #pragma mark -
 
 void ScummEngine_v7::processSubtitleQueue() {
+	bool usingOldSystem = (_game.id == GID_FT);
 	for (int i = 0; i < _subtitleQueuePos; ++i) {
 		SubtitleText *st = &_subtitleQueue[i];
 		if (!st->actorSpeechMsg && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0))
 			// no subtitles and there's a speech variant of the message, don't display the text
 			continue;
-		int flags = st->wrap ? kStyleWordWrap : 0;
-		if (st->center)
-			flags |= kStyleAlignCenter;
-		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)flags);
+		if (usingOldSystem) {
+			if (st->center || VAR(VAR_VOICE_MODE)) {
+				enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)0);
+			}
+		} else {
+			int flags = st->wrap ? kStyleWordWrap : 0;
+			if (st->center)
+				flags |= kStyleAlignCenter;
+			enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)flags);
+		}
 	}
 }
 
@@ -549,6 +556,12 @@ void ScummEngine_v7::clearSubtitleQueue() {
 void ScummEngine_v7::CHARSET_1() {
 	processSubtitleQueue();
 
+	bool usingOldSystem = (_game.id == GID_FT);
+
+	byte subtitleBuffer[200];
+	byte *subtitleLine = subtitleBuffer;
+	Common::Point subtitlePos;
+
 	if (!_haveMsg)
 		return;
 
@@ -566,15 +579,41 @@ void ScummEngine_v7::CHARSET_1() {
 		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 		s = a->_scaley * a->_talkPosY / 255;
 		_string[0].ypos += (a->_talkPosY - s) / 2 + s;
+
+		if (usingOldSystem) {
+			if (_string[0].ypos > _screenHeight - 40)
+				_string[0].ypos = _screenHeight - 40;
+
+			if (_string[0].ypos < 1)
+				_string[0].ypos = 1;
+
+			if (_string[0].xpos < 80)
+				_string[0].xpos = 80;
+
+			if (_string[0].xpos > _screenWidth - 80)
+				_string[0].xpos = _screenWidth - 80;
+		}
+	}
+	_charset->setColor(_charsetColor);
+
+	if (usingOldSystem) {
+		_charset->_top = _string[0].ypos + _screenTop;
+		_charset->_startLeft = _charset->_left = _string[0].xpos;
+		_charset->_right = _string[0].right;
+		_charset->_center = _string[0].center;
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 	}
 
-	_charset->setColor(_charsetColor);
-	_charset->setCurID(_string[0].charset);
+	if (usingOldSystem && a && a->_charset) {
+		_charset->setCurID(a->_charset);
+	} else {
+		_charset->setCurID(_string[0].charset);
+	}
 
 	if (_talkDelay)
 		return;
 
-	if (VAR(VAR_HAVE_MSG)) {
+	if ((!usingOldSystem && VAR(VAR_HAVE_MSG)) || (usingOldSystem && _haveMsg != 1)) {
 		if ((_sound->_sfxMode & 2) == 0) {
 			stopTalk();
 		}
@@ -585,20 +624,92 @@ void ScummEngine_v7::CHARSET_1() {
 		a->runActorTalkScript(a->_talkStartFrame);
 	}
 
-	if (!_keepText)
+	int tmpNextLeft = _string[0].xpos;
+
+	if (!_keepText) {
 		clearSubtitleQueue();
+		if (usingOldSystem) {
+			_nextLeft = _string[0].xpos;
+			_nextTop = _string[0].ypos + _screenTop;
+		}
+	} else {
+		tmpNextLeft = _nextLeft;
+	}
 
-	_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
-	int newPos = _charsetBufPos;
-	while (_charsetBuffer[newPos++])
-		_talkDelay += VAR(VAR_CHARINC);
+	if (usingOldSystem) {
+		int maxwidth = _charset->_right - tmpNextLeft - 1;
+		if (_charset->_center) {
+			if (maxwidth > _nextLeft)
+				maxwidth = _nextLeft;
+			maxwidth *= 2;
+		}
 
-	Common::Point subtitlePos(_string[0].xpos, _string[0].ypos);
-	addSubtitleToQueue(_charsetBuffer + _charsetBufPos, subtitlePos, _charsetColor, _charset->getCurID(), _string[0].center, _string[0].wrapping);
-	_charsetBufPos = newPos;
+		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxwidth);
 
-	_haveMsg = VAR(VAR_HAVE_MSG) = (_game.version == 8 && _string[0].no_talk_anim) ? 2 : 1;
-	_keepText = false;
+		if (_charset->_center) {
+			_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+			if (_nextLeft <= 0)
+				_nextLeft = 0;
+		}
+
+		int c = 0;
+
+		while (handleNextCharsetCode(a, &c)) {
+			if (c == 0) {
+				// End of text
+				_haveMsg =  2;
+				_keepText = false;
+				break;
+			}
+
+			if (c == 13) {
+				// New line
+				if (subtitleLine != subtitleBuffer) {
+					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), false, false);
+					subtitleLine = subtitleBuffer;
+				}
+
+				if (!newLine())
+					break;
+				continue;
+			}
+
+			_charset->_left = _nextLeft;
+			_charset->_top = _nextTop;
+
+			if (subtitleLine == subtitleBuffer) {
+				subtitlePos.x = _charset->_left;
+				// BlastText position is relative to the top of the screen, adjust y-coordinate
+				subtitlePos.y = _charset->_top - _screenTop;
+			}
+			*subtitleLine++ = c;
+			*subtitleLine = '\0';
+
+			_talkDelay += (int)VAR(VAR_CHARINC);
+		}
+
+		_haveMsg = 1;
+		_keepText = false;
+
+		if (subtitleLine != subtitleBuffer) {
+			addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), false, false);
+		}
+	} else {
+		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
+		int newPos = _charsetBufPos;
+		while (_charsetBuffer[newPos++])
+			_talkDelay += VAR(VAR_CHARINC);
+
+		subtitlePos.x = _string[0].xpos;
+		subtitlePos.y = _string[0].ypos;
+
+		addSubtitleToQueue(_charsetBuffer + _charsetBufPos, subtitlePos, _charsetColor, _charset->getCurID(), _string[0].center, _string[0].wrapping);
+		_charsetBufPos = newPos;
+
+		_haveMsg = VAR(VAR_HAVE_MSG) = (_game.version == 8 && _string[0].no_talk_anim) ? 2 : 1;
+		_keepText = false;
+	}
+
 	_string[0] = saveStr;
 }
 
