@@ -688,9 +688,6 @@ void ScummEngine_v7::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 
-		_haveMsg = 1;
-		_keepText = false;
-
 		if (subtitleLine != subtitleBuffer) {
 			addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), false, false);
 		}
