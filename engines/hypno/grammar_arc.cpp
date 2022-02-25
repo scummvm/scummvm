@@ -1549,7 +1549,7 @@ yyreduce:
   case 37: /* hline: H12TOK BYTE NUM NUM  */
 #line 240 "engines/hypno/grammar_arc.y"
                               {
-		Segment segment('P', (yyvsp[0].i), (yyvsp[-1].i));
+		Segment segment((yyvsp[-2].i), (yyvsp[0].i), (yyvsp[-1].i));
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "HN %x %d %d", (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i)); 
 	}

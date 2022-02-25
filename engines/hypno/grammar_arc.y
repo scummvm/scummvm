@@ -238,7 +238,7 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "H P %d %d", $3, $4); 
 	}
 	| H12TOK BYTE NUM NUM {
-		Segment segment('P', $4, $3);
+		Segment segment($2, $4, $3);
 		g_parsedArc->segments.push_back(segment);
 		debugC(1, kHypnoDebugParser, "HN %x %d %d", $2, $3, $4); 
 	}
