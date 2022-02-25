@@ -456,7 +456,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
-	int width = 1;
+	int width = (_vm->_game.id == GID_FT) ? 0 : 1;
 	int chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
