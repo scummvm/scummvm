@@ -1338,7 +1338,8 @@ void ScummEngine_v5::o5_isLess() {
 }
 
 void ScummEngine_v5::o5_isLessEqual() {
-	int16 a = getVar();
+	int var = fetchScriptWord();
+	int16 a = readVar(var);
 	int16 b = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #1266 : Work around a bug in Indy3Town.
@@ -1347,6 +1348,16 @@ void ScummEngine_v5::o5_isLessEqual() {
 	    _currentRoom == 70 && b == -256) {
 		o5_jumpRelative();
 		return;
+	}
+
+	// WORKAROUND: When Mandible uses the distaff, it seems to light up
+	// only three times with no animation for the second note. Actually,
+	// the animations for the first and second notes are played so closely
+	// together that they look like one. This adjusts the timing of the
+	// second one.
+
+	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708) {
+		b = 1815;
 	}
 
 	jumpRelative(b <= a);
