@@ -887,7 +887,7 @@ void ScummEngine_v5::o5_doSentence() {
 	//	Giving it to non-actor objects crashes the game.
 	//	The sentence doesn't run a script if the recipient is not an actor.
 	//	Trac #13196
-	if (verb == 3 && ((objectA == 458 && !isValidActor(objectB))))
+	if (_game.id == GID_MONKEY_VGA && verb == 3 && objectA == 458 && !isValidActor(objectB))
 		return;
 
 	doSentence(verb, objectA, objectB);
