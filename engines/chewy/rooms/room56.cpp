@@ -33,8 +33,9 @@ void Room56::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
-	int esi = 0; //TODO: rename this variable
 	_G(spieler_mi)[P_HOWARD].Mode = true;
+	int mode = 0;
+
 	if (_G(spieler).flags32_10) {
 		_G(det)->show_static_spr(10);
 		_G(room)->set_timer_status(0, TIMER_STOP);
@@ -102,7 +103,7 @@ void Room56::entry() {
 			start_aad_wait(306, -1);
 			showCur();
 			flic_cut(FCUT_076);
-			esi = 1;
+			mode = 1;
 			cur_2_inventory();
 			remove_inventory(56);
 			remove_inventory(66);
@@ -113,7 +114,7 @@ void Room56::entry() {
 		} else if (_G(spieler).flags32_10) {
 			if (!_G(spieler).flags34_8) {
 				_G(spieler).flags34_8 = true;
-				esi = 2;
+				mode = 2;
 			} else if (_G(spieler).flags34_40) {
 				_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI);
 				_G(atds)->set_steuer_bit(367, ATS_AKTIV_BIT, ATS_DATEI);
@@ -128,7 +129,7 @@ void Room56::entry() {
 					_G(spieler).mi[P_HOWARD] = 0;
 					_G(spieler).SVal2 = 0;
 					_G(spieler).flags35_2 = true;
-					esi = 3;
+					mode = 3;
 				} else {
 					hideCur();
 					_G(spieler).scrollx = _G(spieler).scrolly = 0;
@@ -145,17 +146,18 @@ void Room56::entry() {
 				}
 				showCur();
 			} else {
-				esi = 2;
+				mode = 2;
 			}
 		}
 	}
+
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	_G(zoom_horizont) = 114;
 	_G(room)->set_zoom(70);
 
-	switch(esi) {
+	switch(mode) {
 	case 1:
 		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
