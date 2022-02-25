@@ -48,6 +48,7 @@ void Room94::entry() {
 		return;
 
 	if (_G(spieler).flags35_8) {
+		// Initial arrival at Ghost Town
 		_G(zoom_horizont) = 140;
 		_G(spieler).flags35_8 = false;
 		_G(spieler).scrollx = 0;
@@ -65,11 +66,13 @@ void Room94::entry() {
 	}
 
 	if (_G(spieler).flags35_40) {
+		// Ghost shooting dolls during initial arrival
 		set_person_pos(373, 122, P_CHEWY, P_LEFT);
 		set_person_pos(393, 94, P_HOWARD, P_LEFT);
 		_G(spieler).flags35_40 = false;
 		_G(spieler).scrollx = 150;
-		if (_G(spieler).flags37_40) {
+
+		if (!_G(spieler).flags37_40) {
 			_G(spieler).flags37_40 = true;
 			_G(flags).NoScroll = true;
 			_G(out)->setPointer(nullptr);
@@ -84,6 +87,7 @@ void Room94::entry() {
 			_G(flags).NoScroll = false;
 		}
 	} else {
+		// Normal scene entry after having dealt with Ghost
 		hideCur();
 		_G(spieler).scrollx = 120;
 		set_person_pos(255, 86, P_HOWARD, P_LEFT);
