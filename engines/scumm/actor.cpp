@@ -2540,7 +2540,7 @@ void Actor::startAnimActor(int f) {
 			if (_vm->_game.version >= 3 && f == _initFrame) {
 				_cost.reset();
 				if (_vm->_game.heversion != 0) {
-				((ActorHE *)this)->_auxBlock.reset();
+					((ActorHE *)this)->_auxBlock.reset();
 				}
 			}
 			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
