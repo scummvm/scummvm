@@ -883,11 +883,11 @@ void ScummEngine_v5::o5_doSentence() {
 	int objectA = getVarOrDirectWord(PARAM_2);
 	int objectB = getVarOrDirectWord(PARAM_3);
 
-	//	HACK: breathe mint(object 458) should only be given to actors.
+	//	HACK: breath mint(object 458) should only be given to actors.
 	//	Giving it to non-actor objects crashes the game.
 	//	The sentence doesn't run a script if the recipient is not an actor.
 	//	Trac #13196
-	if(verb == 3 && ((objectA == 458 && !isValidActor(objectB))))
+	if (verb == 3 && ((objectA == 458 && !isValidActor(objectB))))
 		return;
 
 	doSentence(verb, objectA, objectB);
