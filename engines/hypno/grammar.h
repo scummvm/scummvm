@@ -63,7 +63,7 @@ enum HotspotType {
 
 enum ActionType {
 	MiceAction,
-	TimerAction,	
+	TimerAction,
 	PaletteAction,
 	BackgroundAction,
 	OverlayAction,
@@ -382,6 +382,7 @@ public:
 		animation = "NONE";
 		explosionAnimation = "";
 		lastFrame = 1024;
+		noEnemySound = false;
 	}
 	Common::String name;
 	Filename animation;
@@ -413,6 +414,7 @@ public:
 	uint32 lastFrame;
 	Filename explosionAnimation;
 	bool destroyed;
+	bool noEnemySound;
 };
 
 typedef Common::Array<Shoot> Shoots;
@@ -530,7 +532,7 @@ public:
 		frameNumber = 0;
 		frameImage = "";
 	}
-	
+
 	Transition(Common::String easy, Common::String hard)  {
 		type = TransitionLevel;
 		levelEasy = easy;
