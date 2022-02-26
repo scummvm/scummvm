@@ -138,7 +138,7 @@ void Room56::entry() {
 					set_person_pos(3, 42, P_CHEWY, P_RIGHT);
 					_G(room)->set_zoom(23);
 					_G(spieler).ZoomXy[P_HOWARD][0] = 17;
-					_G(spieler).ZoomXy[P_HOWARD][0] = 37;
+					_G(spieler).ZoomXy[P_HOWARD][1] = 37;
 					_G(SetUpScreenFunc) = setup_func;
 					_G(spieler_mi)[P_CHEWY].Mode = true;
 					auto_move(1, P_CHEWY);
