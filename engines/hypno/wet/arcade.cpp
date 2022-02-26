@@ -50,6 +50,13 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	_segmentRepetition = 0;
 	_segmentOffset = 0;
 	_segmentIdx = _segmentOffset;
+
+	if (_arcadeMode == "Y3") {
+		ShootInfo si;
+		si.name = "SP_CBREAKER_L";
+		si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3; 
+		_shootSequence.push_back(si);
+	}
 }
 
 void WetEngine::findNextSegment(ArcadeShooting *arc) {
@@ -160,6 +167,17 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 			SegmentShoots segmentShoots = arc->shootSequence[randomSegmentShootSequence];
 			_shootSequence = segmentShoots.shootSequence;
 			_segmentRepetitionMax = segmentShoots.segmentRepetition; // Usually one
+
+			if (_arcadeMode == "Y3") {
+				ShootInfo si;
+				if (_segmentOffset == 0)
+					si.name = "SP_CBREAKER_L";
+				else 
+					si.name = "SP_CBREAKER_U";
+
+				si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3; 
+				_shootSequence.push_back(si);
+			}
 		}
 	}
 }
