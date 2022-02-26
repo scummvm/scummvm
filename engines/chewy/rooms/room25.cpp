@@ -48,7 +48,7 @@ void Room25::entry() {
 		g_engine->_sound->playSound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
-			_G(det)->start_detail(i, 255, ANI_VOR);
+			_G(det)->start_detail(i, 255, ANI_FRONT);
 	}
 
 	if (!_G(spieler).R29Schlauch2) {
@@ -77,7 +77,7 @@ void Room25::entry() {
 		_G(fx_blend) = BLEND_NONE;
 		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		start_spz(CH_TALK11, 255, ANI_VOR, P_CHEWY);
+		start_spz(CH_TALK11, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(64, -1);
 		showCur();
 
@@ -101,7 +101,7 @@ int16 Room25::gleiter_loesch() {
 		if (!_G(spieler).inv_cur) {
 			action_flag = true;
 			_G(spieler).R25GleiteLoesch = true;
-			auto_move(2, P_CHEWY);
+			autoMove(2, P_CHEWY);
 			flic_cut(FCUT_030);
 			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			_G(atds)->set_ats_str(219, 1, ATS_DATEI);
@@ -115,7 +115,7 @@ int16 Room25::gleiter_loesch() {
 	} else if (_G(spieler).R25GleiteLoesch) {
 		if (is_cur_inventar(MILCH_LEER_INV)) {
 			action_flag = true;
-			auto_move(2, P_CHEWY);
+			autoMove(2, P_CHEWY);
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
 			del_inventar(_G(spieler).AkInvent);
@@ -135,7 +135,7 @@ int16 Room25::use_gleiter() {
 	if (!_G(spieler).inv_cur && _G(spieler).R25GleiteLoesch) {
 		action_flag = true;
 		hideCur();
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		showCur();
 
 		_G(spieler).R23GleiterExit = 25;
@@ -161,7 +161,7 @@ void Room25::xit_gleiter() {
 		_G(fx_blend) = BLEND1;
 		set_up_screen(DO_SETUP);
 
-		start_spz(CH_TALK12, 255, ANI_VOR, P_CHEWY);
+		start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(65, -1);
 		_G(fx_blend) = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);

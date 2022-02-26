@@ -36,7 +36,7 @@ void Room46::entry(int16 eib_nr) {
 
 		if (eib_nr == 79) {
 			set_person_pos(140, 90, P_HOWARD, P_LEFT);
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			set_person_spr(P_LEFT, P_CHEWY);
 		}
 	}
@@ -93,7 +93,7 @@ void Room46::setup_func() {
 		y = 200;
 	}
 
-	go_auto_xy(x, y, P_HOWARD, ANI_GO);
+	goAutoXy(x, y, P_HOWARD, ANI_GO);
 }
 
 void Room46::bodo() {
@@ -102,34 +102,34 @@ void Room46::bodo() {
 	_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 	start_aad_wait(240, -1);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
-	go_auto_xy(42, 76, P_CHEWY, ANI_WAIT);
+	goAutoXy(42, 76, P_CHEWY, ANI_WAIT);
 	start_aad_wait(250, -1);
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	set_person_spr(P_RIGHT, P_CHEWY);
 	start_aad_wait(251, -1);
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	start_detail_wait(0, 1, ANI_VOR);
-	_G(det)->start_detail(5, 255, ANI_VOR);
+	start_detail_wait(0, 1, ANI_FRONT);
+	_G(det)->start_detail(5, 255, ANI_FRONT);
 	start_aad_wait(241, -1);
 	_G(det)->stop_detail(5);
 	_G(det)->show_static_spr(5);
 	start_aad_wait(609, -1);
 	_G(det)->hide_static_spr(5);
-	start_detail_wait(2, 1, ANI_VOR);
-	start_detail_wait(3, 1, ANI_VOR);
-	_G(det)->start_detail(4, 255, ANI_VOR);
+	start_detail_wait(2, 1, ANI_FRONT);
+	start_detail_wait(3, 1, ANI_FRONT);
+	_G(det)->start_detail(4, 255, ANI_FRONT);
 	start_aad_wait(242, -1);
 	_G(det)->stop_detail(4);
 
 	_G(det)->show_static_spr(6);
 	start_aad_wait(610, -1);
 	_G(det)->hide_static_spr(6);
-	start_detail_wait(6, 1, ANI_VOR);
+	start_detail_wait(6, 1, ANI_FRONT);
 	_G(det)->show_static_spr(3);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(1, 1, ANI_VOR);
+	start_detail_wait(1, 1, ANI_FRONT);
 	flic_cut(FCUT_065);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
@@ -188,7 +188,7 @@ int16 Room46::use_schloss() {
 		action_ret = true;
 
 		if (!_G(spieler).R46GetLeder) {
-			auto_move(1, P_CHEWY);
+			autoMove(1, P_CHEWY);
 			switch_room(47);
 		} else {
 			start_aad_wait(252, -1);

@@ -346,9 +346,9 @@ void Object::calc_static_detail(int16 det_nr) {
 							n = nr - 40;
 							AniDetailInfo *adi = _G(det)->get_ani_detail(n);
 							if (adi->repeat)
-								_G(det)->start_detail(n, 0, ANI_VOR);
+								_G(det)->start_detail(n, 0, ANI_FRONT);
 							else
-								_G(det)->start_detail(n, 1, ANI_VOR);
+								_G(det)->start_detail(n, 1, ANI_FRONT);
 						} else
 							_G(det)->show_static_spr(nr);
 						++i;
@@ -358,9 +358,9 @@ void Object::calc_static_detail(int16 det_nr) {
 				n = nr - 40;
 				AniDetailInfo *adi = _G(det)->get_ani_detail(n);
 				if (adi->repeat)
-					_G(det)->start_detail(n, 0, ANI_VOR);
+					_G(det)->start_detail(n, 0, ANI_FRONT);
 				else
-					_G(det)->start_detail(n, 1, ANI_VOR);
+					_G(det)->start_detail(n, 1, ANI_FRONT);
 			} else {
 				_G(det)->show_static_spr(nr);
 			}

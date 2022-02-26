@@ -28,17 +28,17 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK26[3] = {
-	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
-	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 0, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 0, 1, ANI_BACK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 static const AniBlock ABLOCK27[5] = {
-	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
-	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
-	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 0, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_BACK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 0, 1, ANI_BACK, ANI_WAIT, 0 },
+	{ 0, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 0, 1, ANI_BACK, ANI_WAIT, 0 },
 };
 
 
@@ -75,7 +75,7 @@ int16 Room29::use_pumpe() {
 			action_flag = true;
 			_G(spieler).R29Pumpe = true;
 			_G(spieler).R29Schlauch1 = true;
-			auto_move(1, P_CHEWY);
+			autoMove(1, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->show_static_spr(7);
 			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
@@ -97,7 +97,7 @@ int16 Room29::get_schlauch() {
 		action_flag = true;
 		hideCur();
 
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		new_invent_2_cur(PUMPE_INV);
 
@@ -113,11 +113,11 @@ bool Room29::use_schlauch() {
 		result = true;
 		hideCur();
 
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hide_static_spr(7);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(4, 1, ANI_VOR);
+		start_detail_wait(4, 1, ANI_FRONT);
 		_G(det)->show_static_spr(8);
 		_G(det)->show_static_spr(10);
 		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
@@ -144,7 +144,7 @@ void Room29::schlitz_sitz() {
 		start_ani_block(3, ABLOCK26);
 		_G(det)->show_static_spr(9);
 		_G(det)->hide_static_spr(11);
-		_G(det)->start_detail(2, 255, ANI_VOR);
+		_G(det)->start_detail(2, 255, ANI_FRONT);
 		start_aad_wait(63, -1);
 
 		_G(det)->stop_detail(2);
@@ -164,9 +164,9 @@ int16 Room29::zaun_sprung() {
 		hideCur();
 		
 		action_flag = true;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_frame(3, 1, ANI_VOR, 7);
+		start_detail_frame(3, 1, ANI_FRONT, 7);
 		_G(det)->hide_static_spr(9);
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);

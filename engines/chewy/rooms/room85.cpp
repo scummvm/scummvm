@@ -145,17 +145,17 @@ void Room85::setup_func() {
 		nicDestX = 128;
 	}
 
-	go_auto_xy(howDestX, 142, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, 142, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, 142, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, 142, P_NICHELLE, ANI_GO);
 }
 
 int Room85::proc2() {
 	if (_G(spieler).inv_cur)
 		return 0;
 
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(1);
-	start_detail_wait(2, 1, ANI_VOR);
+	start_detail_wait(2, 1, ANI_FRONT);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();
 	remove_inventory(109);

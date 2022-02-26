@@ -136,7 +136,7 @@ void Room84::setup_func() {
 		_flag = true;
 		_G(spieler).flags30_80 = true;
 		hideCur();
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(flags).NoScroll = true;
 		set_person_spr(P_LEFT, P_CHEWY);
 		auto_scroll(150, 0);
@@ -145,7 +145,7 @@ void Room84::setup_func() {
 		start_aad_wait(455, -1);
 		_G(det)->del_static_ani(4);
 		start_spz(62, 1, false, P_HOWARD);
-		start_detail_wait(5, 1, ANI_VOR);
+		start_detail_wait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(3, -1);
 		start_aad_wait(456, -1);
 		_G(flags).NoScroll = false;
@@ -167,12 +167,12 @@ void Room84::setup_func() {
 		nicDestX = 523;
 	}
 
-	go_auto_xy(howDestX, 113, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, 113, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
 void Room84::talk1() {
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	_G(flags).NoScroll = true;
 	set_person_spr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
@@ -189,11 +189,11 @@ int Room84::proc4() {
 		return 0;
 
 	hideCur();
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 
 	if (_G(spieler).flags32_10) {
 		_G(det)->stop_detail(7);
-		start_detail_wait(8, 1, ANI_VOR);
+		start_detail_wait(8, 1, ANI_FRONT);
 	} else {
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
 	}

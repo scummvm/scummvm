@@ -29,10 +29,10 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK15[4] = {
-	{ 0, 2, ANI_VOR, ANI_GO, 0 },
-	{ 1, 255, ANI_VOR, ANI_GO, 0 },
-	{ 2, 255, ANI_VOR, ANI_GO, 0 },
-	{ 3, 255, ANI_VOR, ANI_GO, 0 },
+	{ 0, 2, ANI_FRONT, ANI_GO, 0 },
+	{ 1, 255, ANI_FRONT, ANI_GO, 0 },
+	{ 2, 255, ANI_FRONT, ANI_GO, 0 },
+	{ 3, 255, ANI_FRONT, ANI_GO, 0 },
 };
 
 
@@ -96,7 +96,7 @@ int16 Room23::start_gleiter() {
 
 					switch_room(_G(spieler).R23GleiterExit);
 					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
-					start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
+					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
 					_G(spieler).DelaySpeed = 10;
 					start_aad_wait(59, -1);
@@ -134,7 +134,7 @@ void Room23::use_cartridge() {
 	if (_G(spieler).R18CartSave) {
 		_G(atds)->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(111, 2, ATS_DATEI);
-		start_detail_wait(4, 1, ANI_VOR);
+		start_detail_wait(4, 1, ANI_FRONT);
 		_G(det)->show_static_spr(3);
 	} else {
 		_G(atds)->set_ats_str(111, 1, ATS_DATEI);

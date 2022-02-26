@@ -56,7 +56,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	case ROOM_8_17:
 		start_aad(100, 0);
-		_G(det)->start_detail(21, 4, ANI_VOR);
+		_G(det)->start_detail(21, 4, ANI_FRONT);
 		break;
 
 	case ROOM_18_20:
@@ -125,7 +125,7 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && _G(flags).AutoAniPlay == false) {
-		_G(det)->start_detail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
+		_G(det)->start_detail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->reset_timer(t_nr, 0);
 	}
 
@@ -728,7 +728,7 @@ void exit_room(int16 eib_nr) {
 
 	if (x != -1 && y != -1) {
 		_G(spieler_mi)[P_CHEWY].Mode = true;
-		go_auto_xy(x, y, P_CHEWY, ANI_WAIT);
+		goAutoXy(x, y, P_CHEWY, ANI_WAIT);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 	}
 
@@ -1301,7 +1301,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		if (_G(spieler).R7SeilLeft) {
 			if (_G(spieler).R7RHaken) {
 				_G(spieler).R7SeilOk = true;
-				auto_move(4, P_CHEWY);
+				autoMove(4, P_CHEWY);
 				_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
@@ -1338,7 +1338,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (_G(spieler).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
-				_G(det)->start_detail(i, 255, ANI_VOR);
+				_G(det)->start_detail(i, 255, ANI_FRONT);
 		} else {
 			for (int i = 0; i < 5; ++i)
 				_G(det)->stop_detail(i);
@@ -1478,7 +1478,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(det)->del_static_ani(6);
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(spieler).R40Geld = true;
-		start_spz(CH_PUMP_TALK, 255, ANI_VOR, P_CHEWY);
+		start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(201, -1);
 		break;
 
@@ -1539,7 +1539,7 @@ void sib_event_inv(int16 sib_nr) {
 			cur_2_inventory();
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
-			_G(det)->start_detail(6, 255, ANI_VOR);
+			_G(det)->start_detail(6, 255, ANI_FRONT);
 			_G(atds)->set_ats_str(27, 1, ATS_DATEI);
 			_G(atds)->set_ats_str(30, 1, ATS_DATEI);
 		}

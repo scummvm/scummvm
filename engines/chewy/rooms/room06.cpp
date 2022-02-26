@@ -42,14 +42,14 @@ static const MovLine ROBO_MPKT[3] = {
 };
 
 static const AniBlock ABLOCK6[3] = {
-	{  3, 1, ANI_VOR, ANI_GO, 0 },
-	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 14, 4, ANI_VOR, ANI_GO, 0 },
+	{  3, 1, ANI_FRONT, ANI_GO, 0 },
+	{ 13, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 14, 4, ANI_FRONT, ANI_GO, 0 },
 };
 
 static const AniBlock ABLOCK7[2] = {
-	{ 1, 2, ANI_VOR, ANI_WAIT, 0 },
-	{ 2, 1, ANI_VOR, ANI_GO, 0 },
+	{ 1, 2, ANI_FRONT, ANI_WAIT, 0 },
+	{ 2, 1, ANI_FRONT, ANI_GO, 0 },
 };
 
 
@@ -59,7 +59,7 @@ void Room6::entry() {
 	_G(zoom_mov_fak) = 2;
 
 	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
-		_G(det)->start_detail(7, 255, ANI_VOR);
+		_G(det)->start_detail(7, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATEI);
 		if (!_G(flags).LoadGame)
 			++_G(spieler).R6RaumBetreten;
@@ -94,7 +94,7 @@ void Room6::init_robo() {
 void Room6::bola_knopf() {
 	if (!_G(spieler).R6BolaBecher) {
 		_G(det)->hide_static_spr(0);
-		start_detail_wait(0, 1, ANI_VOR);
+		start_detail_wait(0, 1, ANI_FRONT);
 		if (_G(spieler).R6BolaOk) {
 			_G(spieler).R6BolaBecher = true;
 			_G(det)->show_static_spr(0);

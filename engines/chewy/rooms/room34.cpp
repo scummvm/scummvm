@@ -41,7 +41,7 @@ bool Room34::use_kuehlschrank() {
 
 		if (!_G(flags).LoadGame) {
 			hideCur();
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(maus_links_click) = false;
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? CH_ROCK_GET2 : CH_LGET_O, 1, false, P_CHEWY);
 			showCur();

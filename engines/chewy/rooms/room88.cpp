@@ -59,7 +59,7 @@ int Room88::proc1() {
 		return 0;
 
 	hideCur();
-	auto_move(0, P_CHEWY);
+	autoMove(0, P_CHEWY);
 	switch_room(_G(spieler).r88DestRoom);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
@@ -73,10 +73,10 @@ int Room88::proc2() {
 		return 0;
 
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->show_static_spr(0);
-	start_detail_wait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_VOR);
+	start_detail_wait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_FRONT);
 	_G(det)->hide_static_spr(1 + (_G(spieler).flags30_10 ? 1 : 0));
 	_G(spieler).flags31_10 = false;
 	_G(det)->show_static_spr(1 + (!_G(spieler).flags30_10 ? 1 : 0));
@@ -92,7 +92,7 @@ int Room88::proc3() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
 		hideCur();
@@ -116,7 +116,7 @@ int Room88::proc3() {
 		const int aniNr = 1 + (_G(spieler).flags31_10 ? 1 : 0);
 
 		for (int i = 0; i < 3; ++i) {
-			start_detail_wait(aniNr, 1, ANI_VOR);
+			start_detail_wait(aniNr, 1, ANI_FRONT);
 			start_detail_wait(aniNr, 1, ANI_GO);
 		}
 
@@ -129,7 +129,7 @@ int Room88::proc3() {
 		_G(out)->raster_col(0, 0, 0, 0);
 		switch_room(80);
 		hideCur();
-		start_detail_wait(1, 1, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;

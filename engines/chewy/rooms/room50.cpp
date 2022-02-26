@@ -29,8 +29,8 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK36[2] = {
-	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 7, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 bool Room50::_wasser;
@@ -57,7 +57,7 @@ void Room50::entry(int16 eib_nr) {
 		if (_G(spieler).R50Zigarre) {
 			stop_cigar();
 		} else {
-			_G(det)->start_detail(0, 255, ANI_VOR);
+			_G(det)->start_detail(0, 255, ANI_FRONT);
 		}
 
 		if (!_G(spieler).R50KeyOK) {
@@ -118,7 +118,7 @@ void Room50::stop_cigar() {
 void Room50::calc_wasser() {
 	if (!_wasser) {
 		stop_page();
-		_G(det)->start_detail(4, 1, ANI_VOR);
+		_G(det)->start_detail(4, 1, ANI_FRONT);
 		_wasser = true;
 	}
 }
@@ -149,7 +149,7 @@ void Room50::calc_treppe() {
 			stop_page();
 			_G(det)->set_static_ani(5, -1);
 			start_aad_wait(272, -1);
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			aad_page(273, 5);
 			_G(flags).NoScroll = false;
 		}
@@ -165,7 +165,7 @@ int16 Room50::use_gutschein() {
 		action_ret = true;
 		if (!_G(spieler).R50KeyOK) {
 			hideCur();
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			stop_page();
@@ -190,30 +190,30 @@ int16 Room50::use_gum() {
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
 		stop_page();
-		start_detail_wait(6, 1, ANI_VOR);
+		start_detail_wait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
-		go_auto_xy(75, 92, P_CHEWY, ANI_WAIT);
+		goAutoXy(75, 92, P_CHEWY, ANI_WAIT);
 		_G(SetUpScreenFunc) = nullptr;
-		go_auto_xy(112, 57, P_HOWARD, ANI_WAIT);
+		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
 		set_person_spr(P_LEFT, P_HOWARD);
 		del_inventar(_G(spieler).AkInvent);
 		hide_person();
-		start_detail_wait(2, 1, ANI_VOR);
+		start_detail_wait(2, 1, ANI_FRONT);
 		_G(det)->show_static_spr(4);
-		start_detail_wait(2, 1, ANI_RUECK);
+		start_detail_wait(2, 1, ANI_BACK);
 		show_person();
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_aad_wait(275, -1);
 		_G(det)->del_static_ani(5);
-		start_detail_wait(9, 1, ANI_VOR);
+		start_detail_wait(9, 1, ANI_FRONT);
 		_G(det)->del_static_ani(5);
 		_G(det)->set_static_ani(10, -1);
 		start_aad_wait(277, -1);
 		_G(SetUpScreenFunc) = setup_func;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		_G(det)->del_static_ani(10);
 		go_page();
@@ -237,7 +237,7 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	_G(det)->set_static_ani(ani_nr, -1);
 	start_aad_wait(aad_nr, -1);
 	_G(det)->del_static_ani(ani_nr);
-	start_detail_wait(6, 1, ANI_RUECK);
+	start_detail_wait(6, 1, ANI_BACK);
 	go_page();
 
 	if (!_G(spieler).R50KeyOK)
@@ -271,9 +271,9 @@ void Room50::setup_func() {
 		if (_G(HowardMov) && _G(flags).ExitMov) {
 			_G(SetUpScreenFunc) = nullptr;
 			_G(HowardMov) = 0;
-			auto_move(4, P_HOWARD);
+			autoMove(4, P_HOWARD);
 		} else {
-			go_auto_xy(x, y, P_HOWARD, ANI_GO);
+			goAutoXy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
 }

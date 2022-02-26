@@ -55,7 +55,7 @@ void Room33::surimy_go() {
 			_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
-			start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
+			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(158, -1);
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
@@ -70,7 +70,7 @@ void Room33::look_schublade() {
 	if (!_G(spieler).R33SchubFirst) {
 		_G(spieler).R33SchubFirst = true;
 		hideCur();
-		auto_move(1, P_CHEWY);
+		autoMove(1, P_CHEWY);
 		_G(atds)->set_ats_str(210, TXT_MARK_NAME, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 1, ATS_DATEI);
 		showCur();
@@ -88,7 +88,7 @@ int16 Room33::use_schublade() {
 		_G(atds)->set_ats_str(210, TXT_MARK_NAME, 0, ATS_DATEI);
 		_G(atds)->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATEI);
-		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
 		invent_2_slot(MESSER_INV);
 		showCur();
 	}
@@ -102,7 +102,7 @@ void Room33::use_maschine() {
 	hideCur();
 
 	if (!_G(spieler).R33MunterOk) {
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 
 		bool hocker = false;
 		if (_G(spieler).inv_cur) {
@@ -134,7 +134,7 @@ void Room33::use_maschine() {
 
 			if (action) {
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_detail_wait(0, 1, ANI_VOR);
+				start_detail_wait(0, 1, ANI_FRONT);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				set_person_pos(128, 65, P_CHEWY, P_LEFT);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -157,22 +157,22 @@ void Room33::use_maschine() {
 			dia_nr = 66;
 		}
 
-		start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+		start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
 
 		if (_G(spieler).R33MunterOk) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(2, 1, ANI_VOR);
+			start_detail_wait(2, 1, ANI_FRONT);
 			flic_cut(FCUT_031);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(71, -1);
 			_G(atds)->del_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 
 		if (hocker) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(1, 1, ANI_VOR);
+			start_detail_wait(1, 1, ANI_FRONT);
 			set_person_pos(64, 100, P_CHEWY, P_LEFT);
 		}
 
@@ -202,12 +202,12 @@ int16 Room33::get_munter() {
 		action_flag = true;
 		hideCur();
 		_G(spieler).R33MunterGet = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(MUNTER_INV);
 		_G(atds)->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(det)->hide_static_spr(3);
-		start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+		start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(72, -1);
 		showCur();
 	}

@@ -98,7 +98,7 @@ void Room78::entry() {
 						if (flag1 == 0) {
 							_G(det)->start_detail(5, 1, false);
 						} else {
-							start_detail_wait(5, 1, ANI_VOR);
+							start_detail_wait(5, 1, ANI_FRONT);
 						}
 					} else {
 						if (det4DestX <= 0)

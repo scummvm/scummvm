@@ -54,8 +54,8 @@ static const MovLine BORK_MPKT2[2] = {
 };
 
 AniBlock ABLOCK14[2] = {
-	{0, 1, ANI_VOR, ANI_WAIT, 0},
-	{3, 255, ANI_VOR, ANI_GO, 0},
+	{0, 1, ANI_FRONT, ANI_WAIT, 0},
+	{3, 255, ANI_FRONT, ANI_GO, 0},
 };
 
 
@@ -83,11 +83,11 @@ int16 Room22::chewy_amboss() {
 		_G(flags).AutoAniPlay = true;
 		hideCur();
 
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(1, 1, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_006);
 		_G(spieler).R22ChewyPlatt = true;
@@ -105,9 +105,9 @@ void Room22::bork(int16 t_nr) {
 
 		if (!_G(spieler).R22BorkPlatt) {
 			hideCur();
-			start_spz(CH_TALK2, 255, ANI_VOR, P_CHEWY);
+			start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(10, -1);
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(auto_obj) = 1;
 			_G(mov_phasen)[BORK_OBJ].AtsText = 0;
 			_G(mov_phasen)[BORK_OBJ].Lines = 2;
@@ -140,7 +140,7 @@ void Room22::bork_walk1() {
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
-	start_detail_wait(2, 1, ANI_VOR);
+	start_detail_wait(2, 1, ANI_FRONT);
 
 	_G(mov_phasen)[BORK_OBJ].Repeat = 1;
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);
@@ -161,7 +161,7 @@ void Room22::bork_walk2() {
 
 void Room22::get_bork() {
 	if (!_G(spieler).R22GetBork && _G(spieler).R22BorkPlatt) {
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(det)->hide_static_spr(4);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ABLOCK14);
@@ -184,7 +184,7 @@ int16 Room22::malen() {
 	if (!_G(flags).AutoAniPlay && is_cur_inventar(17)) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
-		auto_move(8, P_CHEWY);
+		autoMove(8, P_CHEWY);
 		flic_cut(FCUT_007);
 		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).R22Paint = true;

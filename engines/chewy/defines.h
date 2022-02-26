@@ -126,8 +126,8 @@ enum SetupScreenMode {
 #define MAX_TIMER_OBJ 10
 #define MAX_ROOM_TIMER 10
 
-#define ANI_VOR 0
-#define ANI_RUECK 1
+#define ANI_FRONT 0
+#define ANI_BACK 1
 #define ANI_WAIT 0
 #define ANI_GO 1
 #define MAX_PROG_ANI 10

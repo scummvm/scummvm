@@ -100,7 +100,7 @@ void Room76::setup_func() {
 
 void Room76::talk1() {
 	hideCur();
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	auto_scroll(172, 0);
 	const int diaNr = 425 + (_G(spieler).flags32_4 ? 1 : 0);
 	start_aad_wait(diaNr, -1);
@@ -109,7 +109,7 @@ void Room76::talk1() {
 
 void Room76::talk2() {
 	hideCur();
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	int diaNr;
 	if (!_G(spieler).flags29_8)
 		diaNr = 423;
@@ -128,8 +128,8 @@ void Room76::talk2() {
 void Room76::proc3(int diaNr) {
 	start_aad_wait(diaNr, -1);
 	_G(det)->del_static_ani(2);
-	start_detail_wait(3, 1, ANI_VOR);
-	start_detail_wait(4, 2, ANI_VOR);
+	start_detail_wait(3, 1, ANI_FRONT);
+	start_detail_wait(4, 2, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 }
 
@@ -139,11 +139,11 @@ void Room76::proc5() {
 	_G(det)->start_detail(6, 1, false);
 	_G(flags).NoScroll = false;
 	wait_show_screen(15);
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 	_G(det)->hide_static_spr(10);
 	_G(det)->start_detail(13, 1, false);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
-	go_auto_xy(669, 127, P_CHEWY, ANI_WAIT);
+	goAutoXy(669, 127, P_CHEWY, ANI_WAIT);
 	wait_show_screen(20);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
@@ -159,14 +159,14 @@ int Room76::proc6() {
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).flags29_8 = true;
 		retVal = 1;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		proc3(424);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(det)->del_static_ani(2);
-		start_detail_wait(5, 1, ANI_VOR);
+		start_detail_wait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(2, -1);
-		start_detail_wait(9, 1, ANI_VOR);
-		start_detail_wait(10, 1, ANI_VOR);
+		start_detail_wait(9, 1, ANI_FRONT);
+		start_detail_wait(10, 1, ANI_FRONT);
 		showCur();
 	} else if (is_cur_inventar(94)) {
 		hideCur();
@@ -185,7 +185,7 @@ int Room76::proc7() {
 	
 	if (_G(spieler).flags29_4) {
 		hideCur();
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		invent_2_slot(106);

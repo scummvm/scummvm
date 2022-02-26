@@ -104,8 +104,8 @@ void Room82::setup_func() {
 		nicDestX = 543;
 	}
 
-	go_auto_xy(howDestX, 111, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, 111, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
 void Room82::talk1() {
@@ -133,7 +133,7 @@ void Room82::talk1() {
 
 void Room82::talk2() {
 	hideCur();
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	start_aad_wait(453, -1);
 	showCur();
 }
@@ -147,12 +147,12 @@ int Room82::proc3() {
 		return 0;
 
 	hideCur();
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	start_detail_wait(2, 1, ANI_VOR);
-	start_detail_wait(3, 1, ANI_VOR);
+	start_detail_wait(2, 1, ANI_FRONT);
+	start_detail_wait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
@@ -166,7 +166,7 @@ int Room82::proc3() {
 void Room82::proc4() {
 	hideCur();
 	_G(spieler).flags30_8 = true;
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 	_G(flags).NoScroll = true;
 	auto_scroll(270, 0);
 	_G(room)->set_timer_status(7, TIMER_STOP);
@@ -192,7 +192,7 @@ int Room82::proc6() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	if (_G(spieler).flags30_10) {
 		start_aad_wait(450, -1);
@@ -223,7 +223,7 @@ void Room82::proc8() {
 	hideCur();
 	_G(spieler).flags30_10 = true;
 	start_aad_wait(447, -1);
-	auto_move(6, P_CHEWY);
+	autoMove(6, P_CHEWY);
 
 	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
 		set_up_screen(DO_SETUP);
@@ -235,7 +235,7 @@ void Room82::proc8() {
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	start_aad_wait(448, -1);
 	_G(det)->del_static_ani(4);
-	start_detail_wait(6, 2, ANI_VOR);
+	start_detail_wait(6, 2, ANI_FRONT);
 	_G(det)->set_static_ani(4, -1);
 	showCur();
 }
@@ -244,7 +244,7 @@ int Room82::proc9() {
 	if (_G(spieler).inv_cur || !_G(spieler).flags30_40)
 		return 0;
 
-	auto_move(7, P_CHEWY);
+	autoMove(7, P_CHEWY);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
 	switch_room(88);

@@ -31,13 +31,13 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK12[2] = {
-	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 9, 2, ANI_VOR, ANI_GO, 0 },
+	{ 8, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 9, 2, ANI_FRONT, ANI_GO, 0 },
 };
 
 static const AniBlock ABLOCK13[2] = {
-	{10, 1, ANI_VOR, ANI_WAIT, 0},
-	{11, 255, ANI_VOR, ANI_GO, 0},
+	{10, 1, ANI_FRONT, ANI_WAIT, 0},
+	{11, 255, ANI_FRONT, ANI_GO, 0},
 };
 
 void Room8::entry() {
@@ -52,12 +52,12 @@ void Room8::entry() {
 void Room8::start_folter() {
 	_G(atds)->set_ats_str(67, 1, ATS_DATEI);
 	_G(det)->stop_detail(19);
-	_G(det)->start_detail(13, 255, ANI_VOR);
+	_G(det)->start_detail(13, 255, ANI_FRONT);
 }
 
 void Room8::stop_folter() {
 	_G(atds)->set_ats_str(67, 0, ATS_DATEI);
-	_G(det)->start_detail(19, 255, ANI_VOR);
+	_G(det)->start_detail(19, 255, ANI_FRONT);
 
 	_G(det)->stop_detail(13);
 
@@ -71,9 +71,9 @@ void Room8::hole_kohle() {
 	} else {
 		hideCur();
 		_G(spieler).R8Kohle = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(12, 1, ANI_VOR);
+		start_detail_wait(12, 1, ANI_FRONT);
 		cur_2_inventory();
 		invent_2_slot(KOHLE_HEISS_INV);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -85,7 +85,7 @@ void Room8::start_verbrennen() {
 	hideCur();
 
 	if (!_G(spieler).inv_cur) {
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ABLOCK12);
@@ -118,16 +118,16 @@ bool Room8::gips_wurf() {
 		hideCur();
 		actionFl = true;
 		_G(det)->load_taf_seq(116, 30, nullptr);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(maus_links_click) = false;
 
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		del_inventar(GIPS_EIMER_INV);
-		start_detail_wait(4, 1, ANI_VOR);
+		start_detail_wait(4, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 
-		start_detail_frame(5, 1, ANI_VOR, 16);
-		start_detail_wait(6, 1, ANI_VOR);
+		start_detail_frame(5, 1, ANI_FRONT, 16);
+		start_detail_wait(6, 1, ANI_FRONT);
 		_G(obj)->show_sib(33);
 		_G(det)->show_static_spr(14);
 		wait_detail(5);
@@ -135,13 +135,13 @@ bool Room8::gips_wurf() {
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
 		_G(obj)->setInventory(MASKE_INV, 181, 251, 8, &_G(room_blk));
 		_G(det)->del_taf_tbl(116, 30, nullptr);
-		auto_move(8, P_CHEWY);
+		autoMove(8, P_CHEWY);
 		_G(flags).AtsAction = false;
 		_G(menu_item) = CUR_USE;
 		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
 		_G(flags).AtsAction = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(20, 1, ANI_VOR);
+		start_detail_wait(20, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
 		cursorChoice(_G(menu_item));
@@ -155,7 +155,7 @@ void Room8::open_gdoor() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->show_static_spr(17);
 	set_up_screen(DO_SETUP);
-	start_detail_wait(7, 1, ANI_VOR);
+	start_detail_wait(7, 1, ANI_FRONT);
 	_G(det)->show_static_spr(15);
 	_G(det)->hide_static_spr(17);
 	_G(spieler).PersonHide[P_CHEWY] = false;
@@ -167,7 +167,7 @@ void Room8::open_gdoor() {
 }
 
 void Room8::talk_nimoy() {
-	auto_move(9, P_CHEWY);
+	autoMove(9, P_CHEWY);
 	_G(flags).NoScroll = true;
 	auto_scroll(0, 120);
 	if (_G(spieler).R8Folter) {

@@ -91,13 +91,13 @@ void Room91::setup_func() {
 		calc_person_look();
 		const int xyPos = _G(spieler_vector)[0].Xypos[0];
 		if (xyPos < 130)
-			go_auto_xy(40, 97, P_HOWARD, ANI_GO);
+			goAutoXy(40, 97, P_HOWARD, ANI_GO);
 		else if (xyPos < 312)
-			go_auto_xy(221, 94, P_HOWARD, ANI_GO);
+			goAutoXy(221, 94, P_HOWARD, ANI_GO);
 		else if (xyPos < 445)
-			go_auto_xy(342, 93, P_HOWARD, ANI_GO);
+			goAutoXy(342, 93, P_HOWARD, ANI_GO);
 		else
-			go_auto_xy(536, 90, P_HOWARD, ANI_GO);
+			goAutoXy(536, 90, P_HOWARD, ANI_GO);
 	} else {
 		if (_G(menu_display))
 			return;
@@ -115,7 +115,7 @@ void Room91::setup_func() {
 		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
 		hideCur();
 		_G(det)->stop_detail(0);
-		start_detail_wait(aniNr, 1, ANI_VOR);
+		start_detail_wait(aniNr, 1, ANI_FRONT);
 		_click = oldClick;
 		_G(det)->start_detail(0, 255, false);
 		_G(det)->start_detail(aniNr + 2, 1, false);
@@ -127,11 +127,11 @@ void Room91::setup_func() {
 			_G(det)->stop_detail(0);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			hideCur();
-			auto_move(1, P_CHEWY);
+			autoMove(1, P_CHEWY);
 			stop_spz();
 			start_aad_wait(505, -1);
 			_G(spieler).PersonHide[P_HOWARD] = true;
-			start_detail_wait(9, 1, ANI_VOR);
+			start_detail_wait(9, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_HOWARD] = false;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 			_G(spieler).flags34_4 = false;

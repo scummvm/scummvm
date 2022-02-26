@@ -30,8 +30,8 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK34[2] = {
-	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 7, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 6, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 
@@ -63,7 +63,7 @@ void Room49::entry(int16 eib_nr) {
 			_G(maus_links_click) = false;
 			_G(spieler).scrollx = 320;
 			_G(spieler).scrolly = 0;
-			_G(det)->start_detail(5, 1, ANI_VOR);
+			_G(det)->start_detail(5, 1, ANI_FRONT);
 		} else if (eib_nr == 83) {
 			set_person_pos(377, 78, P_HOWARD, P_LEFT);
 		}
@@ -108,7 +108,7 @@ void Room49::calc_boy_ani() {
 	}
 
 	_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-	_G(det)->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_VOR);
+	_G(det)->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_FRONT);
 	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 }
 
@@ -127,15 +127,15 @@ void Room49::calc_boy() {
 		_G(SetUpScreenFunc) = nullptr;
 		start_aad_wait(262, -1);
 		_G(SetUpScreenFunc) = nullptr;
-		auto_move(3, P_CHEWY);
-		go_auto_xy(374, 79, P_HOWARD, ANI_WAIT);
+		autoMove(3, P_CHEWY);
+		goAutoXy(374, 79, P_HOWARD, ANI_WAIT);
 		set_person_spr(P_LEFT, P_HOWARD);
 		_G(det)->del_static_ani(2);
-		start_detail_wait(3, 1, ANI_VOR);
+		start_detail_wait(3, 1, ANI_FRONT);
 
 		_G(det)->show_static_spr(9);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		start_detail_wait(8, 1, ANI_VOR);
+		start_detail_wait(8, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(det)->hide_static_spr(9);
 		start_detail_wait(4, 1, ANI_GO);
@@ -153,7 +153,7 @@ int16 Room49::use_boy() {
 	if (is_cur_inventar(SPARK_INV)) {
 		action_ret = true;
 		hideCur();
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		talk_boy(265);
 		_G(spieler).R49WegFrei = true;
@@ -173,11 +173,11 @@ void Room49::use_boy_cigar() {
 	del_inventar(_G(spieler).AkInvent);
 	talk_boy(263);
 	_G(SetUpScreenFunc) = nullptr;
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 
 	const int16 zoom = _G(room)->_roomInfo->ZoomFak;
 	_G(room)->set_zoom(zoom);
-	go_auto_xy(416, 79, P_HOWARD, ANI_WAIT);
+	goAutoXy(416, 79, P_HOWARD, ANI_WAIT);
 	set_person_spr(P_LEFT, P_HOWARD);
 	_G(flags).NoScroll = true;
 
@@ -206,7 +206,7 @@ void Room49::use_boy_cigar() {
 
 void Room49::talk_boy() {
 	if (!_G(spieler).R49BoyWeg) {
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		talk_boy(266 + (_G(spieler).R49WegFrei ? 1 : 0));
 	}
 }
@@ -246,20 +246,20 @@ int16 Room49::use_taxi() {
 		hideCur();
 		start_ani_block(2, ABLOCK34);
 		_G(det)->show_static_spr(7);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
-			go_auto_xy(507, 74, P_HOWARD, ANI_WAIT);
-			go_auto_xy(490, 58, P_HOWARD, ANI_WAIT);
+			goAutoXy(507, 74, P_HOWARD, ANI_WAIT);
+			goAutoXy(490, 58, P_HOWARD, ANI_WAIT);
 			_G(spieler).PersonHide[P_HOWARD] = true;
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 
 		_G(det)->hide_static_spr(7);
-		start_detail_wait(5, 1, ANI_VOR);
+		start_detail_wait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}
@@ -287,7 +287,7 @@ void Room49::setup_func() {
 			y = 90;
 		}
 
-		go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 }
 

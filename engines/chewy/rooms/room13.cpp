@@ -120,9 +120,9 @@ void Room13::talk_bork() {
 		_G(auto_mov_vector)[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 		_G(auto_mov_obj)[R13_BORK_OBJ].Mode = true;
 		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], 3, (const MovLine *)R13_BORK_MPKT);
-		auto_move(9, P_CHEWY);
+		autoMove(9, P_CHEWY);
 		wait_auto_obj(R13_BORK_OBJ);
-		auto_move(11, P_CHEWY);
+		autoMove(11, P_CHEWY);
 		_G(flags).NoScroll = true;
 		auto_scroll(41, 0);
 
@@ -159,16 +159,16 @@ void Room13::jmp_band() {
 			_G(spieler).room_e_obj[25].Attribut = 255;
 			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(spieler).R13Band = true;
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(8, 1, ANI_VOR);
+			start_detail_wait(8, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			set_person_pos(292, 98, P_CHEWY, P_RIGHT);
 
 		} else {
 			_G(spieler).R13Surf = true;
 			_G(maus_links_click) = false;
-			auto_move(12, P_CHEWY);
+			autoMove(12, P_CHEWY);
 			start_aad_wait(117, -1);
 			_G(flags).NoScroll = true;
 			auto_scroll(76, 0);
@@ -203,9 +203,9 @@ void Room13::jmp_boden() {
 		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R13Band = false;
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(7, 1, ANI_VOR);
+		start_detail_wait(7, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		set_person_pos(176, 138, P_CHEWY, P_LEFT);
 	}
@@ -221,9 +221,9 @@ int16 Room13::monitor_knopf() {
 
 		} else if (!_G(spieler).R12ChewyBork) {
 			action_flag = true;
-			auto_move(8, P_CHEWY);
+			autoMove(8, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(6, 1, ANI_VOR);
+			start_detail_wait(6, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 
 			if (_G(spieler).R13MonitorStatus)

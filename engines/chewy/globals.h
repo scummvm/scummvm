@@ -331,10 +331,10 @@ void obj_auswerten(int16 test_nr, int16 txt_nr);
 
 void swap_if_l(int16 *x1, int16 *x2);
 
-void print_shad(int16 x, int16 y, int16 fcol, int16 bcol, int16 scol,
-	int16 scr_w, char *txtptr);
+void printShadowed(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 shadowFgCol,
+	int16 scrWidth, char *txtPtr);
 
-bool auto_move(int16 mov_nr, int16 p_nr);
+bool autoMove(int16 movNr, int16 playerNum);
 void get_user_key(int16 mode);
 void clear_prog_ani();
 
@@ -360,7 +360,7 @@ void check_mouse_ausgang(int16 x, int16 y);
 
 void calc_ausgang(int16 x, int16 y);
 
-void go_auto_xy(int16 x, int16 y, int16 p_nr, int16 mode);
+void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode);
 
 void calc_auto_go();
 

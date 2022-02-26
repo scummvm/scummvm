@@ -32,19 +32,19 @@ namespace Rooms {
 #define GITTER_BLITZEN 7
 
 static const AniBlock ABLOCK4[2] = {
-	{ GITTER_BLITZEN, 3, ANI_VOR, ANI_WAIT, 0 },
-	{ GITTER_BLITZEN, 12, ANI_VOR, ANI_GO, 0 }
+	{ GITTER_BLITZEN, 3, ANI_FRONT, ANI_WAIT, 0 },
+	{ GITTER_BLITZEN, 12, ANI_FRONT, ANI_GO, 0 }
 };
 
 
 void Room2::entry() {
 	if (!_G(spieler).R2ElectrocutedBork)
-		_G(det)->start_detail(5, 255, ANI_VOR);
+		_G(det)->start_detail(5, 255, ANI_FRONT);
 }
 
 void Room2::jump_out_r1(int16 nr) {
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(nr, 1, ANI_VOR);
+	start_detail_wait(nr, 1, ANI_FRONT);
 	set_up_screen(DO_SETUP);
 	_G(det)->stop_detail(6);
 	set_person_pos(32, 127, P_CHEWY, P_LEFT);
@@ -55,12 +55,12 @@ void Room2::jump_out_r1(int16 nr) {
 }
 
 void Room2::electrifyWalkway1() {
-	_G(det)->start_detail(ANI_5, 255, ANI_VOR);
-	start_spz(CH_TALK6, 255, false, ANI_VOR);
+	_G(det)->start_detail(ANI_5, 255, ANI_FRONT);
+	start_spz(CH_TALK6, 255, false, ANI_FRONT);
 	start_aad_wait(49, -1);
 	_G(det)->stop_detail(ANI_5);
 
-	_G(det)->start_detail(GITTER_BLITZEN, 12, ANI_VOR);
+	_G(det)->start_detail(GITTER_BLITZEN, 12, ANI_FRONT);
 	_G(spieler).R2ElectrocutedBork = true;
 	del_inventar(_G(spieler).AkInvent);
 
@@ -81,7 +81,7 @@ void Room2::gedAction(int index) {
 	if (index == 0) {
 		_G(det)->stop_detail(5);
 		if (!_G(spieler).R2ElectrocutedBork)
-			_G(det)->start_detail(6, 2, ANI_VOR);
+			_G(det)->start_detail(6, 2, ANI_FRONT);
 		else
 			start_ani_block(2, ABLOCK4);
 

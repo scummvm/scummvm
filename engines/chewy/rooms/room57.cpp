@@ -47,7 +47,7 @@ void Room57::entry() {
 		_G(spieler).scrolly = 0;
 		set_person_pos(4, 144, P_HOWARD, P_LEFT);
 		set_person_pos(40, 160, P_CHEWY, P_RIGHT);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(maus_links_click) = false;
 		showCur();
 	}
@@ -73,7 +73,7 @@ void Room57::setup_func() {
 			x = 176;
 			y = 142;
 		}
-		go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 }
 
@@ -82,16 +82,16 @@ int16 Room57::use_taxi() {
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hideCur();
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		g_engine->_sound->playSound(3, 0);
 		g_engine->_sound->playSound(3);
 		_G(det)->show_static_spr(7);
-		go_auto_xy(16, 160, P_CHEWY, ANI_WAIT);
+		goAutoXy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 57) {
 			_G(SetUpScreenFunc) = nullptr;
-			go_auto_xy(11, 144, P_HOWARD, ANI_WAIT);
+			goAutoXy(11, 144, P_HOWARD, ANI_WAIT);
 			_G(spieler).PersonHide[P_HOWARD] = true;
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
@@ -101,7 +101,7 @@ int16 Room57::use_taxi() {
 		g_engine->_sound->playSound(3);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
-		start_detail_wait(5, 1, ANI_VOR);
+		start_detail_wait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}
@@ -114,7 +114,7 @@ int16 Room57::use_pfoertner() {
 	_G(det)->del_static_ani(1);
 	_G(det)->set_static_ani(3, -1);
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	if (is_cur_inventar(CUTMAG_INV)) {
 		action_ret = true;
 		if (_G(spieler).flags37_10)
@@ -130,10 +130,10 @@ int16 Room57::use_pfoertner() {
 	} else if (is_cur_inventar(EINLAD_INV)) {
 		action_ret = true;
 		_G(SetUpScreenFunc) = nullptr;
-		go_auto_xy(132, 130, P_HOWARD, ANI_WAIT);
+		goAutoXy(132, 130, P_HOWARD, ANI_WAIT);
 		if (_G(spieler).R56AbfahrtOk) {
 			start_aad_wait(341, -1);
-			go_auto_xy(176, 130, P_HOWARD, ANI_WAIT);
+			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
 			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
@@ -143,7 +143,7 @@ int16 Room57::use_pfoertner() {
 			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);
 		} else {
 			start_aad_wait(349, -1);
-			go_auto_xy(176, 130, P_HOWARD, ANI_WAIT);
+			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 		}
 		_G(SetUpScreenFunc) = setup_func;
 	}
@@ -155,7 +155,7 @@ int16 Room57::use_pfoertner() {
 
 void Room57::talk_pfoertner() {
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
 	_G(det)->set_static_ani(3, -1);

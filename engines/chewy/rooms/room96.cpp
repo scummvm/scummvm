@@ -45,7 +45,7 @@ void Room96::entry() {
 	hideCur();
 	set_person_pos(93, 62, P_HOWARD, P_RIGHT);
 	set_person_pos(116, 74, P_CHEWY, P_RIGHT);
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	showCur();
 }
 
@@ -70,7 +70,7 @@ void Room96::setup_func() {
 		destY = 60;
 	}
 
-	go_auto_xy(destX, destY, P_HOWARD, ANI_GO);
+	goAutoXy(destX, destY, P_HOWARD, ANI_GO);
 }
 
 } // namespace Rooms

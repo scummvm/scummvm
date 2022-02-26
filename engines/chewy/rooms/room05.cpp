@@ -31,18 +31,18 @@ namespace Rooms {
 
 void Room5::entry() {
 	if (_G(spieler).R5Terminal)
-		_G(det)->start_detail(6, 255, ANI_VOR);
+		_G(det)->start_detail(6, 255, ANI_FRONT);
 }
 
 void Room5::pushButton() {
 	if (_G(spieler).R5Terminal) {
 		int16 str_nr;
 		if (_G(spieler).R5Tuer == false) {
-			start_detail_wait(9, 1, ANI_VOR);
+			start_detail_wait(9, 1, ANI_FRONT);
 			_G(spieler).room_e_obj[6].Attribut = AUSGANG_OBEN;
 			str_nr = 1;
 		} else {
-			start_detail_wait(9, 1, ANI_RUECK);
+			start_detail_wait(9, 1, ANI_BACK);
 			_G(spieler).room_e_obj[6].Attribut = 255;
 			str_nr = 0;
 		}

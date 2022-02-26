@@ -79,11 +79,11 @@ void Room90::entry(int16 eib_nr) {
 	if (!_G(spieler).flags33_10) {
 		_G(flags).ZoomMov = false;
 		start_aad_wait(498, -1);
-		go_auto_xy(-20, 121, P_HOWARD, ANI_GO);
-		auto_move(1, P_CHEWY);
-		start_detail_frame(2, 1, ANI_VOR, 3);
+		goAutoXy(-20, 121, P_HOWARD, ANI_GO);
+		autoMove(1, P_CHEWY);
+		start_detail_frame(2, 1, ANI_FRONT, 3);
 		_G(det)->start_detail(0, 1, false);
-		start_detail_wait(1, 1, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
 		_G(spieler).flags33_10 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
 		switch_room(91);
@@ -177,7 +177,7 @@ void Room90::setup_func() {
 	if (_G(HowardMov) == 2)
 		destX = 18;
 
-	go_auto_xy(destX, 132, P_HOWARD, ANI_GO);
+	goAutoXy(destX, 132, P_HOWARD, ANI_GO);
 }
 
 void Room90::proc2() {
@@ -238,7 +238,7 @@ int Room90::getHubcaps() {
 		return 0;
 
 	hideCur();
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	start_aad_wait(515, -1);
 	start_spz_wait(14, 1, false, P_CHEWY);
 	start_spz_wait(43, 1, false, P_CHEWY);
@@ -254,7 +254,7 @@ int Room90::getHubcaps() {
 	start_aad_wait(516, -1);
 	_G(spieler).flags34_40 = true;
 	_G(spieler).flags35_1 = true;
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	auto_scroll(176, 0);
 	_G(det)->set_detail_pos(12, 495, 15);
 	_G(det)->start_detail(12, 255, false);
@@ -287,12 +287,12 @@ int Room90::shootControlUnit() {
 	del_inventar(_G(spieler).AkInvent);
 	_G(HowardMov) = 2;
 	_G(flags).ZoomMov = false;
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
-	go_auto_xy(232, 142, P_CHEWY, ANI_WAIT);
+	goAutoXy(232, 142, P_CHEWY, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(176, 0);
-	start_detail_wait(13, 1, ANI_VOR);
+	start_detail_wait(13, 1, ANI_FRONT);
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_107);
 	_G(spieler).scrollx = 0;
@@ -328,7 +328,7 @@ int Room90::useSurimyOnWreck() {
 	_G(spieler).flags34_10 = true;
 	hideCur();
 	cur_2_inventory();
-	auto_move(6, P_CHEWY);
+	autoMove(6, P_CHEWY);
 	_G(maus_links_click) = false;
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();

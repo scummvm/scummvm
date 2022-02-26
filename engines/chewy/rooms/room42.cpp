@@ -33,7 +33,7 @@ namespace Rooms {
 void Room42::entry() {
 	if (!_G(spieler).R42BeamterWach) {
 		g_engine->_sound->playSound(0);
-		_G(det)->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_FRONT);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
@@ -77,15 +77,15 @@ void Room42::setup_func() {
 
 void Room42::get_kuerbis(int16 aad_nr) {
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(7, 1, ANI_RUECK);
+	start_detail_wait(7, 1, ANI_BACK);
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
+	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 	start_aad_wait(aad_nr, -1);
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(7, 1, ANI_VOR);
+	start_detail_wait(7, 1, ANI_FRONT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	showCur();
 }
@@ -102,25 +102,25 @@ int16 Room42::use_psack() {
 		get_kuerbis(136);
 	} else if (_G(spieler).R42HoToBeamter && !_G(spieler).inv_cur && !_G(spieler).R42MarkeOk) {
 		action_flag = true;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(10, 1, ANI_VOR);
+		start_detail_wait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_aad_wait(187, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(9, 1, ANI_VOR);
+		start_detail_wait(9, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
 		start_aad_wait(181, -1);
 		_G(spieler).R42MarkeOk = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		start_aad_wait(185, -1);
 		_G(spieler).R42HoToBeamter = false;
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(10, 1, ANI_VOR);
+		start_detail_wait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
 		start_aad_wait(183, -1);
@@ -147,13 +147,13 @@ int16 Room42::use_beamter() {
 		action_flag = true;
 		_G(atds)->set_ats_str(264, 2, ATS_DATEI);
 		hideCur();
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		start_aad_wait(184, -1);
 		_G(spieler).R42HoToBeamter = true;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 		showCur();
-		start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
+		start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
 		_G(flags).MausLinks = false;
 	}
 
@@ -162,7 +162,7 @@ int16 Room42::use_beamter() {
 
 void Room42::talk_beamter() {
 	int16 dia_nr;
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 
 	if (!_G(spieler).R42BeamterWach) {
 		dia_nr = 10;
@@ -189,16 +189,16 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		switch (str_end_nr) {
 		case 1:
-			start_detail_wait(3, 4, ANI_VOR);
+			start_detail_wait(3, 4, ANI_FRONT);
 			break;
 
 		case 2:
 			g_engine->_sound->playSound(4);
-			start_detail_wait(4, 13, ANI_VOR);
+			start_detail_wait(4, 13, ANI_FRONT);
 			break;
 
 		case 3:
-			start_detail_wait(5, 2, ANI_VOR);
+			start_detail_wait(5, 2, ANI_FRONT);
 			break;
 
 		default:
@@ -212,8 +212,8 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		_G(det)->stop_detail(0);
 		g_engine->_sound->stopSound(0);
-		start_detail_wait(1, 1, ANI_VOR);
-		_G(det)->start_detail(2, 255, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
+		_G(det)->start_detail(2, 255, ANI_FRONT);
 
 		while (_G(atds)->aad_get_status() != -1) {
 			set_up_screen(DO_SETUP);
@@ -221,13 +221,13 @@ void Room42::dia_beamter(int16 str_end_nr) {
 		}
 
 		_G(det)->stop_detail(2);
-		_G(det)->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_FRONT);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
 	}
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(det)->start_detail(6, 255, ANI_VOR);
+	_G(det)->start_detail(6, 255, ANI_FRONT);
 	start_aad_wait(135, -1);
 	_G(det)->stop_detail(6);
 	_G(flags).NoDiaBox = false;

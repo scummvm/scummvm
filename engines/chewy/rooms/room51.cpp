@@ -32,11 +32,11 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK37[5] = {
-	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 7, 3, ANI_VOR, ANI_WAIT, 0 },
-	{ 6, 1, ANI_RUECK, ANI_WAIT, 0 },
-	{ 5, 1, ANI_RUECK, ANI_WAIT, 0 },
-	{ 2, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 6, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 7, 3, ANI_FRONT, ANI_WAIT, 0 },
+	{ 6, 1, ANI_BACK, ANI_WAIT, 0 },
+	{ 5, 1, ANI_BACK, ANI_WAIT, 0 },
+	{ 2, 1, ANI_BACK, ANI_WAIT, 0 },
 };
 
 bool Room51::_flag;
@@ -76,7 +76,7 @@ void Room51::entry() {
 		_G(det)->hide_static_spr(17);
 
 		for (int i = 0; i < 2; i++)
-			_G(det)->start_detail(3 + i, 1, ANI_VOR);
+			_G(det)->start_detail(3 + i, 1, ANI_FRONT);
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
@@ -146,7 +146,7 @@ void Room51::setup_func() {
 		if ((_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
-			start_detail_wait(8, 1, ANI_VOR);
+			start_detail_wait(8, 1, ANI_FRONT);
 			_flag = false;
 			++_index;
 
@@ -198,9 +198,9 @@ void Room51::setup_func() {
 		if (_G(HowardMov) && _G(flags).ExitMov) {
 			_G(SetUpScreenFunc) = nullptr;
 			_G(HowardMov) = 0;
-			auto_move(9, P_HOWARD);
+			autoMove(9, P_HOWARD);
 		} else {
-			go_auto_xy(x, y, P_HOWARD, ANI_GO);
+			goAutoXy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
 }
@@ -214,12 +214,12 @@ int16 Room51::use_door(int16 txt_nr) {
 
 		switch (txt_nr) {
 		case 329:
-			auto_move(8, P_CHEWY);
+			autoMove(8, P_CHEWY);
 			_G(SetUpScreenFunc) = nullptr;
 			_G(det)->show_static_spr(0);
 
 			if (!_G(spieler).R51HotelRoom) {
-				auto_move(11, P_HOWARD);
+				autoMove(11, P_HOWARD);
 				set_person_spr(P_LEFT, P_HOWARD);
 				_G(spieler).R51HotelRoom = true;
 				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
@@ -234,18 +234,18 @@ int16 Room51::use_door(int16 txt_nr) {
 			break;
 
 		case 330:
-			auto_move(9, P_CHEWY);
+			autoMove(9, P_CHEWY);
 
 			if (!_G(spieler).R51KillerWeg) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(2);
 				_G(det)->show_static_spr(1);
-				start_detail_wait(2, 1, ANI_VOR);
-				_G(det)->start_detail(5, 255, ANI_VOR);
+				start_detail_wait(2, 1, ANI_FRONT);
+				_G(det)->start_detail(5, 255, ANI_FRONT);
 
 				if (!_G(spieler).R52HotDogOk) {
 					start_aad_wait(287, -1);
-					auto_move(12, P_CHEWY);
+					autoMove(12, P_CHEWY);
 					_G(det)->stop_detail(5);
 					start_ani_block(5, ABLOCK37);
 					_G(det)->hide_static_spr(1);
@@ -281,7 +281,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 		case 331:
 		case 334:
-			auto_move((txt_nr == 331) ? 10 : 7, P_CHEWY);
+			autoMove((txt_nr == 331) ? 10 : 7, P_CHEWY);
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
@@ -293,19 +293,19 @@ int16 Room51::use_door(int16 txt_nr) {
 			break;
 
 		case 332:
-			auto_move(6, P_CHEWY);
+			autoMove(6, P_CHEWY);
 			start_aad_wait(286, -1);
 			break;
 
 		case 333:
-			auto_move(4, P_CHEWY);
+			autoMove(4, P_CHEWY);
 
 			switch (_G(spieler).R51DoorCount) {
 			case 0:
 				_G(det)->show_static_spr(3);
 				start_aad_wait(278, -1);
-				start_detail_frame(0, 1, ANI_VOR, 3);
-				start_spz(HO_BRILL_JMP, 1, ANI_VOR, P_HOWARD);
+				start_detail_frame(0, 1, ANI_FRONT, 3);
+				start_spz(HO_BRILL_JMP, 1, ANI_FRONT, P_HOWARD);
 				wait_detail(0);
 
 				_G(det)->show_static_spr(14);
@@ -319,7 +319,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			case 1:
 				_G(det)->show_static_spr(3);
 				start_aad_wait(280, -1);
-				start_detail_wait(1, 1, ANI_VOR);
+				start_detail_wait(1, 1, ANI_FRONT);
 				++_G(spieler).R51DoorCount;
 				_G(obj)->show_sib(SIB_KAPPE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_KAPPE_R51);
@@ -353,12 +353,12 @@ int16 Room51::cut_serv(int16 frame) {
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
 		if (!_enemyFlag[obj_nr - 9]) {
-			_G(det)->start_detail(obj_nr, 1, ANI_VOR);
+			_G(det)->start_detail(obj_nr, 1, ANI_FRONT);
 			_enemyFlag[obj_nr - 9] = true;
 
 		} else if (!_G(det)->get_ani_status(obj_nr)) {
 			_G(det)->start_detail(obj_nr, 1, ANI_GO);
-			_G(det)->start_detail(obj_nr + 2, 1, ANI_VOR);
+			_G(det)->start_detail(obj_nr + 2, 1, ANI_FRONT);
 			_G(uhr)->reset_timer(t_nr, 0);
 			_enemyFlag[obj_nr - 9] = false;
 		}

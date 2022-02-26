@@ -57,7 +57,7 @@ void Room24::entry() {
 
 	for (int16 i = 0; i < 3; i++) {
 		if (KRISTALL_SPR[i][_G(spieler).R24Hebel[i]] == 20)
-			_G(det)->start_detail(5 + i * 4, 255, ANI_RUECK);
+			_G(det)->start_detail(5 + i * 4, 255, ANI_BACK);
 	}
 }
 
@@ -89,7 +89,7 @@ void Room24::use_hebel(int16 txt_nr) {
 		_G(spieler).R16F5Exit = true;
 		g_engine->_sound->playSound(1, 0);
 		g_engine->_sound->stopSound(1);
-		_G(det)->start_detail(1, 1, ANI_VOR);
+		_G(det)->start_detail(1, 1, ANI_FRONT);
 		_G(det)->show_static_spr(10);
 		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 1, ATS_DATEI);
 
@@ -97,7 +97,7 @@ void Room24::use_hebel(int16 txt_nr) {
 		_G(det)->hide_static_spr(10);
 		g_engine->_sound->playSound(1, 1);
 		g_engine->_sound->stopSound(0);
-		_G(det)->start_detail(1, 1, ANI_RUECK);
+		_G(det)->start_detail(1, 1, ANI_BACK);
 		_G(spieler).R16F5Exit = false;
 		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 0, ATS_DATEI);
 	}
@@ -132,17 +132,17 @@ void Room24::calc_animation(int16 kristall_nr) {
 			g_engine->_sound->playSound(ani_nr + kristall_nr * 4, 0);
 			g_engine->_sound->stopSound(0);
 			_G(det)->hide_static_spr(_G(spieler).R24KristallLast[kristall_nr] + kristall_nr * 2);
-			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_RUECK);
-			start_detail_wait(6 + kristall_nr * 4, 1, ANI_RUECK);
-			_G(det)->start_detail(5 + kristall_nr * 4, 255, ANI_RUECK);
+			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_BACK);
+			start_detail_wait(6 + kristall_nr * 4, 1, ANI_BACK);
+			_G(det)->start_detail(5 + kristall_nr * 4, 255, ANI_BACK);
 
 		} else if (_G(spieler).R24KristallLast[kristall_nr] == 20) {
 			int16 ani_nr = KRISTALL_SPR[kristall_nr][_G(spieler).R24Hebel[kristall_nr]] == 13 ? 7 : 8;
 			g_engine->_sound->stopSound(0);
 			g_engine->_sound->playSound(5 + ani_nr + kristall_nr * 4, 0);
 			_G(det)->stop_detail(5 + kristall_nr * 4);
-			start_detail_wait(6 + kristall_nr * 4, 1, ANI_VOR);
-			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_VOR);
+			start_detail_wait(6 + kristall_nr * 4, 1, ANI_FRONT);
+			start_detail_wait(ani_nr + kristall_nr * 4, 1, ANI_FRONT);
 		}
 
 		showCur();
