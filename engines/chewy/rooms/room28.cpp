@@ -62,13 +62,13 @@ void Room28::entry(int16 eib_nr) {
 				if (!_G(spieler).R28EntryHaus) {
 					_G(spieler).R28EntryHaus = true;
 					set_person_pos(232, 100, P_HOWARD, P_RIGHT);
-					auto_move(3, P_HOWARD);
-					go_auto_xy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
+					autoMove(3, P_HOWARD);
+					goAutoXy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
 					start_aad_wait(176, -1);
 				} else if (_G(spieler).R31SurFurz && !_G(spieler).R28RKuerbis) {
 					_G(spieler).R28RKuerbis = true;
 					_G(spieler).ScrollxStep = 2;
-					auto_move(6, P_CHEWY);
+					autoMove(6, P_CHEWY);
 					wait_show_screen(10);
 					start_aad_wait(194, -1);
 					_G(spieler).room_e_obj[62].Attribut = 255;
@@ -117,15 +117,15 @@ void Room28::entry(int16 eib_nr) {
 					_G(fx_blend) = BLEND_NONE;
 					_G(flags).ExitMov = false;
 					_G(spieler_mi)[P_HOWARD].Mode = true;
-					go_auto_xy(420, 113, P_HOWARD, ANI_WAIT);
+					goAutoXy(420, 113, P_HOWARD, ANI_WAIT);
 					_G(spieler_mi)[P_HOWARD].Mode = false;
 					set_person_pos(440, 146, P_CHEWY, P_LEFT);
 					start_aad_wait(193, -1);
 				} else {
 					set_person_pos(480, 100, P_HOWARD, P_LEFT);
-					go_auto_xy(420, 113, P_HOWARD, ANI_GO);
+					goAutoXy(420, 113, P_HOWARD, ANI_GO);
 					_G(flags).ExitMov = false;
-					auto_move(6, P_CHEWY);
+					autoMove(6, P_CHEWY);
 				}
 				break;
 
@@ -151,7 +151,7 @@ void Room28::xit(int16 eib_nr) {
 		}
 
 		_G(flags).ExitMov = false;
-		auto_move(6, P_HOWARD);
+		autoMove(6, P_HOWARD);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
 	}
 
@@ -189,9 +189,9 @@ void Room28::haendler() {
 	_G(det)->set_static_ani(4, -1);
 	start_aad_wait(198, -1);
 	_G(SetUpScreenFunc) = setup_func;
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	hideCur();
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	set_person_spr(P_RIGHT, P_CHEWY);
 	_G(det)->del_static_ani(4);
 	wait_show_screen(28);
@@ -203,7 +203,7 @@ void Room28::setup_func() {
 	calc_person_look();
 
 	int16 x = (_G(spieler_vector)[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
-	go_auto_xy(x, 113, P_HOWARD, ANI_GO);
+	goAutoXy(x, 113, P_HOWARD, ANI_GO);
 }
 
 void Room28::use_surimy() {
@@ -230,7 +230,7 @@ void Room28::use_surimy() {
 	}
 
 	_G(obj)->calc_all_static_detail();
-	start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+	start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 	start_aad_wait(dia_nr, -1);
 	_G(flags).NoScroll = false;
 	showCur();
@@ -243,7 +243,7 @@ void Room28::set_pump() {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
 			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
-				auto_move(5, P_CHEWY);
+				autoMove(5, P_CHEWY);
 
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
@@ -255,7 +255,7 @@ void Room28::set_pump() {
 				++_G(spieler).R28PumpTxt1;
 			}
 
-			start_detail_wait(tmp, 1, ANI_VOR);
+			start_detail_wait(tmp, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 
 			load_chewy_taf(CHEWY_PUMPKIN);
@@ -296,7 +296,7 @@ void Room28::get_pump() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		_G(det)->set_detail_pos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		start_detail_wait(tmp, 1, ANI_RUECK);
+		start_detail_wait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
 		_G(atds)->set_ats_str(209, 0, ATS_DATEI);
@@ -305,7 +305,7 @@ void Room28::get_pump() {
 		load_chewy_taf(CHEWY_NORMAL);
 
 		if (_G(spieler).R28PumpTxt1 < 3) {
-			start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(138, -1);
 		}
 
@@ -320,13 +320,13 @@ int16 Room28::use_breifkasten() {
 		action_flag = true;
 		hideCur();
 		_G(spieler).R28Briefkasten = false;
-		auto_move(7, P_CHEWY);
+		autoMove(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->hide_static_spr(8);
 		_G(det)->hide_static_spr(9);
 		_G(det)->show_static_spr(7);
-		auto_move(8, P_CHEWY);
-		start_spz(CH_LGET_O, 1, ANI_VOR, P_CHEWY);
+		autoMove(8, P_CHEWY);
+		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
 		start_aad_wait(179, -1);
 		_G(atds)->set_ats_str(206, 0, ATS_DATEI);
 		showCur();

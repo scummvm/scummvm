@@ -102,7 +102,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 
 				}
 				if (ani_nr != -1)
-					start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+					start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -112,13 +112,13 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 			if (mode == AAD_STR_START) {
 				switch (_G(spieler).mi[1]) {
 				case 2:
-					start_spz(50, 255, ANI_VOR, P_HOWARD);
+					start_spz(50, 255, ANI_FRONT, P_HOWARD);
 					break;
 				case 3:
-					start_spz(57, 255, ANI_VOR, P_HOWARD);
+					start_spz(57, 255, ANI_FRONT, P_HOWARD);
 					break;
 				default:
-					start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
+					start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
 					break;
 				}
 			} else {
@@ -128,7 +128,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 
 		case 3:
 			if (mode == AAD_STR_START) {
-				start_spz(NI_TALK_L, 255, ANI_VOR, P_NICHELLE);
+				start_spz(NI_TALK_L, 255, ANI_FRONT, P_NICHELLE);
 			} else {
 				stop_spz();
 			}
@@ -138,7 +138,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 			break;
 		}
 	} else if (mode == AAD_STR_START) {
-		_G(det)->start_detail(person_nr, 255, ANI_VOR);
+		_G(det)->start_detail(person_nr, 255, ANI_FRONT);
 	} else {
 		_G(det)->stop_detail(person_nr);
 	}

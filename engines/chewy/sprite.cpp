@@ -406,7 +406,7 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	_G(maus_links_click) = false;
 	_G(det)->start_detail(ani_nr, rep, mode);
 	AniDetailInfo *adi = _G(det)->get_ani_detail(ani_nr);
-	if (mode == ANI_VOR)
+	if (mode == ANI_FRONT)
 		frame = adi->ani_count + frame;
 	else
 		frame = adi->ani_count - frame;

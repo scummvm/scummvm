@@ -30,8 +30,8 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK32[2] = {
-	{ 6, 255, ANI_VOR, ANI_GO, 0 },
-	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 255, ANI_FRONT, ANI_GO, 0 },
+	{ 2, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 
@@ -49,7 +49,7 @@ void Room41::entry() {
 			_G(det)->set_static_ani(0, -1);
 			start_aad_wait(127, -1);
 		} else {
-			_G(det)->start_detail(6, 255, ANI_VOR);
+			_G(det)->start_detail(6, 255, ANI_FRONT);
 		}
 	}
 
@@ -83,16 +83,16 @@ void Room41::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
 		if (_G(spieler_vector)->Xypos[P_HOWARD] == 160) {
-			go_auto_xy(258, 75, P_HOWARD, ANI_GO);
+			goAutoXy(258, 75, P_HOWARD, ANI_GO);
 		} else {
-			go_auto_xy(246, 120, P_HOWARD, ANI_GO);
+			goAutoXy(246, 120, P_HOWARD, ANI_GO);
 		}
 	}
 }
 
 void Room41::talk_hoggy1() {
 	stop_hoggy();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 
 	if (!_G(spieler).R41FirstTalk) {
 		first_talk();
@@ -109,7 +109,7 @@ void Room41::talk_hoggy1() {
 		} else if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
 			start_aad_wait(131, -1);
-			auto_move(5, P_CHEWY);
+			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
 		} else {
 			start_aad_wait(130, -1);
@@ -123,7 +123,7 @@ void Room41::talk_hoggy1() {
 
 void Room41::talk_hoggy2() {
 	stop_hoggy();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	if (!_G(spieler).R41FirstTalk) {
 		first_talk();
@@ -132,7 +132,7 @@ void Room41::talk_hoggy2() {
 		if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
 			start_aad_wait(131, -1);
-			auto_move(5, P_CHEWY);
+			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
 
 		} else {
@@ -179,7 +179,7 @@ int16 Room41::use_kasse() {
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		stop_hoggy();
-		auto_move(1, P_CHEWY);
+		autoMove(1, P_CHEWY);
 		start_aad_wait(133, -1);
 		start_hoggy();
 	}
@@ -194,7 +194,7 @@ int16 Room41::use_lola() {
 		hideCur();
 		action_flag = true;
 		_G(spieler).R41LolaOk = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		g_engine->_sound->stopSound(0);
 		flic_cut(FCUT_057);
 		set_person_pos(127, 112, P_CHEWY, P_LEFT);
@@ -216,13 +216,13 @@ int16 Room41::use_brief() {
 	if (is_cur_inventar(BRIEF_INV)) {
 		action_flag = true;
 		stop_hoggy();
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		start_aad_wait(126, -1);
 		start_hoggy();
 
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		stop_hoggy();
 		start_aad_wait(186, -1);
@@ -246,7 +246,7 @@ void Room41::sub_dia() {
 		start_aad_wait(163, -1);
 		_G(atds)->hide_item(11, 0, 2);
 		stop_ads_dialog();
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);
 
 	} else {

@@ -71,7 +71,7 @@ void Room64::chewy_entry() {
 	if (!_G(flags).LoadGame) {
 		hideCur();
 		_G(det)->show_static_spr(3);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(det)->hide_static_spr(3);
 		showCur();
 	}
@@ -91,7 +91,7 @@ void Room64::calc_monitor() {
 
 	case 5:
 		str_nr = 1;
-		_G(det)->start_detail(5, 255, ANI_VOR);
+		_G(det)->start_detail(5, 255, ANI_FRONT);
 		break;
 
 	default:
@@ -127,7 +127,7 @@ void Room64::setup_func() {
 			_G(r64TalkAni) = _G(spieler).R64Moni2Ani;
 
 		if (_G(r64TalkAni) != 0)
-			_G(det)->start_detail(_G(r64TalkAni), 255, ANI_VOR);
+			_G(det)->start_detail(_G(r64TalkAni), 255, ANI_FRONT);
 	} else
 		--_G(r62Delay);
 }
@@ -139,7 +139,7 @@ void Room64::talk_man() {
 void Room64::talk_man(int16 aad_nr) {
 	if (!_G(spieler).R64ManWeg) {
 		hideCur();
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);
 		_G(det)->stop_detail(1);
@@ -158,7 +158,7 @@ int16 Room64::use_tasche() {
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).R64ManWeg) {
 			if (!_G(atds)->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI)) {
-				auto_move(3, P_CHEWY);
+				autoMove(3, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 				new_invent_2_cur(GERAET_INV);
 				_G(atds)->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI);
@@ -168,7 +168,7 @@ int16 Room64::use_tasche() {
 				return 0;
 			}
 		} else {
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_G(det)->del_static_ani(1);
 			_G(det)->stop_detail(1);

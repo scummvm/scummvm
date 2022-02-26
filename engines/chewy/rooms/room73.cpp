@@ -85,7 +85,7 @@ int Room73::proc1() {
 
 	hideCur();
 	_G(spieler).flags28_20 = true;
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(atds)->del_steuer_bit(433, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->del_steuer_bit(432, ATS_AKTIV_BIT, ATS_DATEI);
@@ -102,7 +102,7 @@ int Room73::proc2() {
 
 	hideCur();
 	_G(spieler).flags28_40 = true;
-	auto_move(4, P_CHEWY);
+	autoMove(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hide_static_spr(3);
 	_G(det)->hide_static_spr(4);

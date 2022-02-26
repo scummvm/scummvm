@@ -57,9 +57,9 @@ static const MovLine SPINNE_MPKT2[2] = {
 };
 
 static const AniBlock ABLOCK19[3] = {
-	{ 12, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 13, 4, ANI_VOR, ANI_WAIT, 0 },
-	{ 14, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 12, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 13, 4, ANI_FRONT, ANI_WAIT, 0 },
+	{ 14, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 void Room21::entry() {
@@ -90,7 +90,7 @@ void Room21::calc_laser() {
 		_G(atds)->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
 		_G(spieler).R21Laser1Weg = false;
-		_G(det)->start_detail(3, 255, ANI_VOR);
+		_G(det)->start_detail(3, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
 	}
@@ -109,7 +109,7 @@ void Room21::calc_laser() {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
 		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(spieler).R21Laser2Weg = false;
-		_G(det)->start_detail(4, 255, ANI_VOR);
+		_G(det)->start_detail(4, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 }
@@ -195,7 +195,7 @@ void Room21::chewy_kolli() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->set_detail_pos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		start_detail_wait(ani_nr, 1, ANI_VOR);
+		start_detail_wait(ani_nr, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
@@ -232,7 +232,7 @@ void Room21::use_gitter_energie() {
 
 	switch_room(17);
 	_G(det)->hide_static_spr(5);
-	start_detail_wait(9, 1, ANI_VOR);
+	start_detail_wait(9, 1, ANI_FRONT);
 	_G(spieler).R17GitterWeg = true;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 }
@@ -244,7 +244,7 @@ int16 Room21::use_fenster() {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		_G(spieler).R18Gitter = true;
-		auto_move(13, P_CHEWY);
+		autoMove(13, P_CHEWY);
 		set_person_pos(541, 66, P_CHEWY, P_LEFT);
 		switch_room(18);
 

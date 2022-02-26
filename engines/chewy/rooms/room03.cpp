@@ -62,30 +62,30 @@ static const int16 SONDE_PHASEN[4][2] = {
 };
 
 static const AniBlock ABLOCK0[5] = {
-	{ 6, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 7, 3, ANI_VOR, ANI_WAIT, 0 },
+	{ 6, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 7, 3, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 
 static const AniBlock ABLOCK1[2] = {
-	{ 10, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 10, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 13, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 static const AniBlock ABLOCK2[2] = {
-	{ 12, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ GITTER_BLITZEN, 1, ANI_VOR, ANI_GO, 0 }
+	{ 12, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ GITTER_BLITZEN, 1, ANI_FRONT, ANI_GO, 0 }
 };
 
 static const AniBlock ABLOCK3[2] = {
-	{  4, 2, ANI_VOR, ANI_GO, 0 },
-	{ 11, 255, ANI_VOR, ANI_GO, 0 }
+	{  4, 2, ANI_FRONT, ANI_GO, 0 },
+	{ 11, 255, ANI_FRONT, ANI_GO, 0 }
 };
 
 static const AniBlock ablock5[3] = {
-	{ 0, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 8, 9, ANI_VOR, ANI_GO, 0 },
-	{ 1, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 0, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 8, 9, ANI_FRONT, ANI_GO, 0 },
+	{ 1, 1, ANI_FRONT, ANI_WAIT, 0 },
 
 };
 
@@ -113,7 +113,7 @@ void Room3::terminal() {
 				_G(spieler).room_s_obj[SIB_SCHLEIM].ZustandFlipFlop = 1;
 			}
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(8, 1, ANI_VOR);
+			start_detail_wait(8, 1, ANI_FRONT);
 			set_up_screen(DO_SETUP);
 			_G(det)->stop_detail(6);
 			clear_prog_ani();
@@ -199,13 +199,13 @@ void Room3::sonde_knarre() {
 	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1)
 		set_ani_screen();
 
-	_G(det)->start_detail(SONDE_SHOOT, 1, ANI_VOR);
+	_G(det)->start_detail(SONDE_SHOOT, 1, ANI_FRONT);
 	int16 ende = 0;
 	while (!ende) {
 		clear_prog_ani();
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 170) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			_G(det)->start_detail(KOPF_SCHUSS, 1, ANI_VOR);
+			_G(det)->start_detail(KOPF_SCHUSS, 1, ANI_FRONT);
 		}
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
 		_G(spr_info)[0].ZEbene = 0;
@@ -218,7 +218,7 @@ void Room3::sonde_knarre() {
 		}
 		
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 178)
-			_G(det)->start_detail(SONDE_RET, 3, ANI_RUECK);
+			_G(det)->start_detail(SONDE_RET, 3, ANI_BACK);
 		
 		if (rdi->Ainfo[KOPF_SCHUSS].ani_count == 28)
 			ende = 1;
@@ -228,7 +228,7 @@ void Room3::sonde_knarre() {
 	}
 
 	clear_prog_ani();
-	_G(det)->start_detail(SONDE_RAUCH, 3, ANI_VOR);
+	_G(det)->start_detail(SONDE_RAUCH, 3, ANI_FRONT);
 	ende = 0;
 	while (_G(det)->get_ani_status(SONDE_RAUCH)) {
 
@@ -247,7 +247,7 @@ void Room3::sonde_knarre() {
 	start_spz(15, 255, false, P_CHEWY);
 	start_aad_wait(53, -1);
 	clear_prog_ani();
-	_G(det)->start_detail(SONDE_REIN, 1, ANI_RUECK);
+	_G(det)->start_detail(SONDE_REIN, 1, ANI_BACK);
 	while (_G(det)->get_ani_status(SONDE_REIN)) {
 
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
@@ -313,7 +313,7 @@ void Room3::probeTransfer() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(det)->start_detail(SONDE_GREIF, 1, ANI_VOR);
+	_G(det)->start_detail(SONDE_GREIF, 1, ANI_FRONT);
 	while (_G(det)->get_ani_status(SONDE_GREIF)) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_GREIF, SONDE_SPR_L, ANI_HIDE);

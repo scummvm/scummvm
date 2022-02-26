@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room1::gottenCard() {
 	_G(det)->hide_static_spr(2);
-	start_detail_wait(4, 1, ANI_VOR);
+	start_detail_wait(4, 1, ANI_FRONT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(atds)->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
 	int16 tmp;

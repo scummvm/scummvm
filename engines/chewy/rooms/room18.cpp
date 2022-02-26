@@ -59,30 +59,30 @@ static const MovLine SURIMY_MPKT3[2] = {
 };
 
 static const AniBlock ABLOCK20[3] = {
-	{ 5, 3, ANI_VOR, ANI_GO, 0 },
-	{ 6, 3, ANI_VOR, ANI_GO, 0 },
-	{ 7, 3, ANI_VOR, ANI_WAIT, 0 }
+	{ 5, 3, ANI_FRONT, ANI_GO, 0 },
+	{ 6, 3, ANI_FRONT, ANI_GO, 0 },
+	{ 7, 3, ANI_FRONT, ANI_WAIT, 0 }
 };
 
 
 static const AniBlock ABLOCK21[2] = {
-	{  8, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 23, 255, ANI_RUECK, ANI_GO, 0 },
+	{  8, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 23, 255, ANI_BACK, ANI_GO, 0 },
 };
 
 static const AniBlock ABLOCK22[2] = {
-	{ 13, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 14, 13, ANI_VOR, ANI_GO, 0 },
+	{ 13, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 14, 13, ANI_FRONT, ANI_GO, 0 },
 };
 
 static const AniBlock ABLOCK23[2] = {
-	{ 11, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 12, 1, ANI_VOR, ANI_GO, 0 },
+	{ 11, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 12, 1, ANI_FRONT, ANI_GO, 0 },
 };
 
 static const AniBlock ABLOCK24[2] = {
-	{ 15, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 16, 7, ANI_VOR, ANI_GO, 0 },
+	{ 15, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 16, 7, ANI_FRONT, ANI_GO, 0 },
 };
 
 
@@ -129,20 +129,20 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 
 		if (t_nr == _G(timer_nr)[0]) {
 			_G(det)->hide_static_spr(16);
-			start_detail_wait(10, 1, ANI_VOR);
+			start_detail_wait(10, 1, ANI_FRONT);
 			_G(det)->show_static_spr(16);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hideCur();
 			_G(det)->hide_static_spr(17);
-			start_detail_wait(9, 1, ANI_VOR);
+			start_detail_wait(9, 1, ANI_FRONT);
 			_G(det)->show_static_spr(17);
 
 			if (!_G(spieler).R18SondeMoni) {
 				_G(spieler).R18SondeMoni = true;
-				start_detail_wait(2, 1, ANI_VOR);
+				start_detail_wait(2, 1, ANI_FRONT);
 				_G(det)->show_static_spr(9);
-				start_detail_wait(4, 1, ANI_VOR);
+				start_detail_wait(4, 1, ANI_FRONT);
 				_G(det)->show_static_spr(11);
 				wait_show_screen(50);
 				_G(det)->hide_static_spr(9);
@@ -164,7 +164,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 void Room18::gedAction(int index) {
 	if (!index && !_G(spieler).R18SurimyWurf) {
 		stop_person(P_CHEWY);
-		auto_move(1, P_CHEWY);
+		autoMove(1, P_CHEWY);
 		start_aad(40, 0);
 	}
 }
@@ -205,8 +205,8 @@ int16 Room18::sonden_moni() {
 		action_flag = true;
 
 		hideCur();
-		auto_move(8, P_CHEWY);
-		start_detail_wait(3, 1, ANI_VOR);
+		autoMove(8, P_CHEWY);
+		start_detail_wait(3, 1, ANI_FRONT);
 		_G(det)->show_static_spr(10);
 		start_ani_block(3, ABLOCK20);
 
@@ -244,15 +244,15 @@ int16 Room18::calc_surimy() {
 		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 
 		if (_G(spieler_vector)[P_CHEWY].Xypos[1] < 150) {
-			start_detail_frame(18, 1, ANI_VOR, 8);
+			start_detail_frame(18, 1, ANI_FRONT, 8);
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
 			wait_detail(18);
 		} else {
-			auto_move(1, P_CHEWY);
+			autoMove(1, P_CHEWY);
 			stop_person(P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_frame(17, 1, ANI_VOR, 12);
+			start_detail_frame(17, 1, ANI_FRONT, 12);
 			_G(maus_links_click) = false;
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
@@ -264,8 +264,8 @@ int16 Room18::calc_surimy() {
 
 		_G(det)->set_detail_pos(21, 392, 170);
 		_G(det)->set_detail_pos(22, 447, 154);
-		start_detail_frame(21, 1, ANI_VOR, 14);
-		_G(det)->start_detail(22, 1, ANI_VOR);
+		start_detail_frame(21, 1, ANI_FRONT, 14);
+		_G(det)->start_detail(22, 1, ANI_FRONT);
 		wait_detail(21);
 		_G(det)->set_static_pos(26, 392, 170, false, true);
 		_G(det)->show_static_spr(26);
@@ -290,8 +290,8 @@ int16 Room18::calc_surimy() {
 
 		_G(det)->set_detail_pos(21, 143, 170);
 		_G(det)->set_detail_pos(22, 198, 154);
-		start_detail_frame(21, 1, ANI_VOR, 14);
-		_G(det)->start_detail(22, 1, ANI_VOR);
+		start_detail_frame(21, 1, ANI_FRONT, 14);
+		_G(det)->start_detail(22, 1, ANI_FRONT);
 		wait_detail(21);
 		_G(det)->set_static_pos(26, 143, 170, false, true);
 		_G(det)->show_static_spr(26);
@@ -332,7 +332,7 @@ int16 Room18::calc_schalter() {
 		action_flag = true;
 
 		hideCur();
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		monitor();
 		showCur();
 	}
@@ -347,7 +347,7 @@ short Room18::use_cart_moni() {
 		action_flag = true;
 
 		hideCur();
-		auto_move(9, P_CHEWY);
+		autoMove(9, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartTerminal ^= 1;
@@ -355,10 +355,10 @@ short Room18::use_cart_moni() {
 		if (!_G(spieler).R18CartTerminal) {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATEI);
 			_G(det)->hide_static_spr(23);
-			start_detail_wait(20, 1, ANI_RUECK);
+			start_detail_wait(20, 1, ANI_BACK);
 		} else {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATEI);
-			start_detail_wait(20, 1, ANI_VOR);
+			start_detail_wait(20, 1, ANI_FRONT);
 			_G(det)->show_static_spr(23);
 
 			if (_G(spieler).R18CartFach) {
@@ -381,7 +381,7 @@ int16 Room18::go_cyberspace() {
 		action_flag = true;
 
 		hideCur();
-		auto_move(7, P_CHEWY);
+		autoMove(7, P_CHEWY);
 		cur_2_inventory();
 		showCur();
 

@@ -133,7 +133,7 @@ void Room45::setup_func() {
 							x = 0;
 						}
 						_G(det)->set_detail_pos(3 + i, x, y);
-						_G(det)->start_detail(3 + i, 255, ANI_VOR);
+						_G(det)->start_detail(3 + i, 255, ANI_FRONT);
 					}
 				}
 			}
@@ -160,7 +160,7 @@ void Room45::setup_func() {
 				y = 122;
 			}
 
-			go_auto_xy(x, y, P_HOWARD, ANI_GO);
+			goAutoXy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
 }
@@ -168,7 +168,7 @@ void Room45::setup_func() {
 int16 Room45::use_taxi() {
 	int16 action_ret = false;
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).ChewyAni == CHEWY_PUMPKIN) {
@@ -199,11 +199,11 @@ int16 Room45::use_taxi() {
 void Room45::talk_taxi(int16 aad_nr) {
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
-	start_detail_wait(13, 1, ANI_VOR);
+	start_detail_wait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	start_aad_wait(aad_nr, -1);
 	_G(det)->del_static_ani(14);
-	start_detail_wait(13, 1, ANI_RUECK);
+	start_detail_wait(13, 1, ANI_BACK);
 	_G(det)->set_static_ani(12, -1);
 	_G(room)->set_timer_status(12, TIMER_START);
 }
@@ -214,12 +214,12 @@ void Room45::taxi_mov() {
 	_G(det)->del_static_ani(12);
 	g_engine->_sound->playSound(15, 1);
 	_G(det)->show_static_spr(11);
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
-		go_auto_xy(93, 127, P_HOWARD, ANI_WAIT);
+		goAutoXy(93, 127, P_HOWARD, ANI_WAIT);
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
@@ -229,7 +229,7 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 2);
 	g_engine->_sound->playSound(15, 2, false);
 	g_engine->_sound->playSound(15, 0);
-	start_detail_wait(15, 1, ANI_VOR);
+	start_detail_wait(15, 1, ANI_FRONT);
 	g_engine->_sound->stopSound(0);
 	switch_room(48);
 }
@@ -237,7 +237,7 @@ void Room45::taxi_mov() {
 int16 Room45::use_boy() {
 	int16 action_ret = false;
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	if (!_G(spieler).R45MagOk) {
 		if (is_cur_inventar(DOLLAR175_INV)) {
@@ -247,7 +247,7 @@ int16 Room45::use_boy() {
 			start_aad_wait(258, -1);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
-			start_detail_wait(1, 1, ANI_VOR);
+			start_detail_wait(1, 1, ANI_FRONT);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
 			_G(spieler).R45MagOk = true;
@@ -265,7 +265,7 @@ void Room45::talk_boy() {
 	hideCur();
 
 	if (!_G(spieler).R45MagOk) {
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		aad_nr = 257;
 	} else {
 		aad_nr = 259;

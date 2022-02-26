@@ -39,7 +39,7 @@ void Room55::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 22;
 
 	if (!_G(spieler).R54FputzerWeg)
-		_G(det)->start_detail(6, 255, ANI_VOR);
+		_G(det)->start_detail(6, 255, ANI_FRONT);
 
 	if (_G(spieler).R54FputzerWeg && !_G(spieler).R55Location)
 		_G(det)->hide_static_spr(6);
@@ -48,8 +48,8 @@ void Room55::entry() {
 		_G(det)->hide_static_spr(0);
 
 	if (!_G(spieler).R55SekWeg) {
-		_G(det)->start_detail(8, 255, ANI_VOR);
-		_G(det)->start_detail(9, 255, ANI_VOR);
+		_G(det)->start_detail(8, 255, ANI_FRONT);
+		_G(det)->start_detail(9, 255, ANI_FRONT);
 		_G(spieler).R55Entry ^= 1;
 		const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
 		_G(timer_nr)[0] = _G(room)->set_timer(aniNr, 10);
@@ -75,7 +75,7 @@ void Room55::entry() {
 		if (_G(spieler).R55Location) {
 			_G(spieler).scrollx = 136;
 			set_person_pos(404, 66, P_CHEWY, P_RIGHT);
-			start_detail_wait(3, 1, ANI_VOR);
+			start_detail_wait(3, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
 			_G(atds)->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
@@ -87,7 +87,7 @@ void Room55::entry() {
 			}
 
 			_G(det)->show_static_spr(8);
-			auto_move(1, P_CHEWY);
+			autoMove(1, P_CHEWY);
 			hideCur();
 			_G(det)->hide_static_spr(8);
 
@@ -135,9 +135,9 @@ int16 Room55::use_stapel1() {
 		if (!_G(spieler).R55ScriptWeg) {
 			action_ret = true;
 			_G(spieler).R55ScriptWeg = true;
-			auto_move(4, P_CHEWY);
+			autoMove(4, P_CHEWY);
 			_G(det)->hide_static_spr(0);
-			auto_move(5, P_CHEWY);
+			autoMove(5, P_CHEWY);
 			_G(det)->show_static_spr(1);
 			_G(atds)->set_ats_str(354, 1, ATS_DATEI);
 			_G(atds)->set_ats_str(355, 1, ATS_DATEI);
@@ -150,7 +150,7 @@ int16 Room55::use_stapel1() {
 		action_ret = true;
 
 		if (_G(spieler).R55ScriptWeg) {
-			auto_move(4, P_CHEWY);
+			autoMove(4, P_CHEWY);
 			_G(spieler).R55EscScriptOk = true;
 			_G(det)->show_static_spr(0);
 			del_inventar(_G(spieler).AkInvent);
@@ -186,29 +186,29 @@ int16 Room55::use_telefon() {
 			if (!_G(spieler).R55RaumOk) {
 				hideCur();
 				_G(spieler).R55RaumOk = true;
-				auto_move(6, P_CHEWY);
+				autoMove(6, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_detail_wait(10, 1, ANI_VOR);
-				_G(det)->start_detail(11, 255, ANI_VOR);
+				start_detail_wait(10, 1, ANI_FRONT);
+				_G(det)->start_detail(11, 255, ANI_FRONT);
 				start_aad_wait(329, -1);
 				_G(det)->stop_detail(11);
-				start_detail_wait(10, 1, ANI_RUECK);
+				start_detail_wait(10, 1, ANI_BACK);
 
 				_G(spieler).PersonHide[P_CHEWY] = false;
-				auto_move(7, P_CHEWY);
+				autoMove(7, P_CHEWY);
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
 				start_aad_wait(330, -1);
 				_G(det)->show_static_spr(8);
-				start_detail_wait(0, 1, ANI_VOR);
-				_G(det)->start_detail(1, 255, ANI_VOR);
+				start_detail_wait(0, 1, ANI_FRONT);
+				_G(det)->start_detail(1, 255, ANI_FRONT);
 				start_aad_wait(331, -1);
 				_G(det)->stop_detail(1);
 
 				_G(det)->show_static_spr(16);
 				start_aad_wait(608, -1);
 				_G(det)->hide_static_spr(16);
-				start_detail_wait(2, 1, ANI_VOR);
+				start_detail_wait(2, 1, ANI_FRONT);
 				_G(det)->hide_static_spr(0);
 				_G(det)->hide_static_spr(8);
 				_G(atds)->set_ats_str(354, 1, ATS_DATEI);
@@ -326,16 +326,16 @@ void Room55::rock2mans() {
 }
 
 void Room55::verleger_mov(int16 mode) {
-	start_detail_wait(7, 1, ANI_VOR);
+	start_detail_wait(7, 1, ANI_FRONT);
 	_G(det)->show_static_spr(11);
-	start_detail_wait(13, 1, ANI_VOR);
-	start_detail_wait(14, 1, ANI_VOR);
+	start_detail_wait(13, 1, ANI_FRONT);
+	start_detail_wait(14, 1, ANI_FRONT);
 
 	if (_G(spieler).ChewyAni == CHEWY_JMANS)
-		start_spz(CH_JM_TITS, 1, ANI_VOR, P_CHEWY);
+		start_spz(CH_JM_TITS, 1, ANI_FRONT, P_CHEWY);
 	
 	if (mode)
-		start_detail_wait(15, 1, ANI_VOR);
+		start_detail_wait(15, 1, ANI_FRONT);
 
 	_G(det)->set_static_ani(16, -1);
 }
@@ -347,7 +347,7 @@ void Room55::strasse(int16 mode) {
 		_G(det)->del_static_ani(4);
 		_G(det)->stop_detail(4);
 		_G(atds)->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
-		start_detail_wait(3, 1, ANI_RUECK);
+		start_detail_wait(3, 1, ANI_BACK);
 
 		_G(spieler).scrollx = 0;
 		switch_room(54);
@@ -365,7 +365,7 @@ int16 Room55::use_kammeraus() {
 		else if (!_G(spieler).R55SekWeg) {
 			hideCur();
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(5, 1, ANI_VOR);
+			start_detail_wait(5, 1, ANI_FRONT);
 			_G(det)->show_static_spr(10);
 			flic_cut(FCUT_070);
 			register_cutscene(18);
@@ -416,7 +416,7 @@ void Room55::setup_func() {
 			y = 110;
 		}
 
-		go_auto_xy(x, y, P_HOWARD, ANI_GO);
+		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 }
 
@@ -428,7 +428,7 @@ void Room55::talk_line() {
 
 	int16 aad_nr = 0;
 	if (!_G(spieler).R55SekWeg) {
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(flags).NoScroll = true;
 		auto_scroll(136, 0);
 		aad_nr = 320;
@@ -437,10 +437,10 @@ void Room55::talk_line() {
 		_G(room)->set_timer_status(aniNr, TIMER_STOP);
 		_G(det)->stop_detail(aniNr);
 		_G(det)->del_static_ani(aniNr);
-		start_detail_wait(22, 1, ANI_VOR);
+		start_detail_wait(22, 1, ANI_FRONT);
 		_G(det)->set_static_ani(21, -1);
 	} else if (!_G(spieler).R55RaumOk) {
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		aad_nr = 323;
 		_G(spieler).R55ExitDia = 324;
 	}
@@ -449,10 +449,10 @@ void Room55::talk_line() {
 
 	if (_G(spieler).R55SekWeg) {
 		_G(det)->del_static_ani(16);
-		start_detail_wait(14, 1, ANI_VOR);
+		start_detail_wait(14, 1, ANI_FRONT);
 	} else {
 		_G(det)->del_static_ani(21);
-		start_detail_wait(22, 1, ANI_VOR);
+		start_detail_wait(22, 1, ANI_FRONT);
 	}
 
 	_G(flags).NoScroll = false;

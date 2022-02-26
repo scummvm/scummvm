@@ -57,7 +57,7 @@ void Room69::entry(int16 eib_nr) {
 		set_person_pos(295, 118, P_CHEWY, P_RIGHT);
 		set_person_pos(237, 101, P_NICHELLE, P_RIGHT);
 		set_person_pos(347, 119, P_HOWARD, P_RIGHT);
-		go_auto_xy(351, 97, P_HOWARD, ANI_WAIT);
+		goAutoXy(351, 97, P_HOWARD, ANI_WAIT);
 		showCur();
 	}
 }
@@ -77,7 +77,7 @@ void Room69::setup_func() {
 
 void Room69::look_schild() {
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	start_aad_wait(382, -1);
 	showCur();
 }
@@ -91,24 +91,24 @@ int16 Room69::use_bruecke() {
 		if (!_G(spieler).R68KarteDa) {
 			calc_person_dia(P_HOWARD);
 		} else {
-			auto_move(3, P_CHEWY);
+			autoMove(3, P_CHEWY);
 			_G(spieler_mi)[P_CHEWY].Mode = true;
-			go_auto_xy(253, 103, P_CHEWY, ANI_WAIT);
-			go_auto_xy(141, 103, P_CHEWY, ANI_WAIT);
+			goAutoXy(253, 103, P_CHEWY, ANI_WAIT);
+			goAutoXy(141, 103, P_CHEWY, ANI_WAIT);
 
 			if (_G(spieler).PersonRoomNr[P_NICHELLE] == 69)
-				go_auto_xy(255, 84, 2, ANI_GO);
+				goAutoXy(255, 84, 2, ANI_GO);
 			
-			go_auto_xy(82, 95, P_CHEWY, ANI_WAIT);
-			go_auto_xy(46, 83, P_CHEWY, ANI_WAIT);
+			goAutoXy(82, 95, P_CHEWY, ANI_WAIT);
+			goAutoXy(46, 83, P_CHEWY, ANI_WAIT);
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 69) {
-				go_auto_xy(258, 86, P_HOWARD, ANI_GO);
-				go_auto_xy(147, 84, P_NICHELLE, ANI_WAIT);
-				go_auto_xy(140, 86, P_HOWARD, ANI_GO);
-				go_auto_xy(94, 77, P_NICHELLE, ANI_WAIT);
-				go_auto_xy(94, 82, P_HOWARD, ANI_GO);
-				go_auto_xy(59, 68, P_NICHELLE, ANI_WAIT);
+				goAutoXy(258, 86, P_HOWARD, ANI_GO);
+				goAutoXy(147, 84, P_NICHELLE, ANI_WAIT);
+				goAutoXy(140, 86, P_HOWARD, ANI_GO);
+				goAutoXy(94, 77, P_NICHELLE, ANI_WAIT);
+				goAutoXy(94, 82, P_HOWARD, ANI_GO);
+				goAutoXy(59, 68, P_NICHELLE, ANI_WAIT);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 70;
 				_G(spieler).PersonRoomNr[P_NICHELLE] = 70;
 			}
@@ -127,19 +127,19 @@ void Room69::proc1() {
 	set_person_pos(46, 83, P_CHEWY, P_RIGHT);
 	set_person_pos(59, 68, P_NICHELLE, P_RIGHT);
 	set_person_pos(94, 82, P_HOWARD, P_RIGHT);
-	go_auto_xy(59, 68, P_NICHELLE, ANI_GO);
-	go_auto_xy(94, 82, P_HOWARD, ANI_WAIT);
-	go_auto_xy(94, 77, P_NICHELLE, ANI_GO);
-	go_auto_xy(140, 86, P_HOWARD, ANI_WAIT);
-	go_auto_xy(82, 95, P_CHEWY, _G(spieler).PersonRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
-	go_auto_xy(147, 84, P_NICHELLE, ANI_GO);
-	go_auto_xy(278, 86, P_HOWARD, ANI_WAIT);
-	go_auto_xy(255, 84, P_NICHELLE, ANI_WAIT);
-	go_auto_xy(237, 101, P_NICHELLE, ANI_GO);
-	go_auto_xy(351, 97, P_HOWARD, ANI_GO);
-	go_auto_xy(141, 109, P_CHEWY, ANI_GO);
-	go_auto_xy(253, 106, P_CHEWY, ANI_WAIT);
-	auto_move(3, P_CHEWY);
+	goAutoXy(59, 68, P_NICHELLE, ANI_GO);
+	goAutoXy(94, 82, P_HOWARD, ANI_WAIT);
+	goAutoXy(94, 77, P_NICHELLE, ANI_GO);
+	goAutoXy(140, 86, P_HOWARD, ANI_WAIT);
+	goAutoXy(82, 95, P_CHEWY, _G(spieler).PersonRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
+	goAutoXy(147, 84, P_NICHELLE, ANI_GO);
+	goAutoXy(278, 86, P_HOWARD, ANI_WAIT);
+	goAutoXy(255, 84, P_NICHELLE, ANI_WAIT);
+	goAutoXy(237, 101, P_NICHELLE, ANI_GO);
+	goAutoXy(351, 97, P_HOWARD, ANI_GO);
+	goAutoXy(141, 109, P_CHEWY, ANI_GO);
+	goAutoXy(253, 106, P_CHEWY, ANI_WAIT);
+	autoMove(3, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 }
 

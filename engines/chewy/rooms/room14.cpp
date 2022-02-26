@@ -61,10 +61,10 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!_G(flags).AutoAniPlay && !_G(spieler).R14Feuer) {
 		_G(flags).AutoAniPlay = true;
 		_G(det)->hide_static_spr(9);
-		start_detail_wait(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_VOR);
+		start_detail_wait(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->reset_timer(t_nr, 0);
 		_G(det)->show_static_spr(9);
-		_G(det)->start_detail(7, 1, ANI_VOR);
+		_G(det)->start_detail(7, 1, ANI_FRONT);
 		_G(flags).AutoAniPlay = false;
 	}
 }
@@ -73,9 +73,9 @@ int16 Room14::use_schrott() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).inv_cur) {
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(12, 1, ANI_VOR);
+		start_detail_wait(12, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Waffe) {
@@ -93,12 +93,12 @@ int16 Room14::use_gleiter() {
 
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 
 		if (!_G(spieler).R14GleiterAuf) {
 			_G(spieler).R14GleiterAuf = true;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(10, 1, ANI_VOR);
+			start_detail_wait(10, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(det)->show_static_spr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
@@ -113,7 +113,7 @@ int16 Room14::use_gleiter() {
 
 void Room14::talk_eremit()  {
 	if (!_G(spieler).R14Feuer) {
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		_G(flags).AutoAniPlay = true;
 
 		if (_G(spieler).R14Translator) {
@@ -132,9 +132,9 @@ int16 Room14::use_schleim() {
 	int16 action_flag = false;
 
 	if (!_G(spieler).inv_cur) {
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(11, 1, ANI_VOR);
+		start_detail_wait(11, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Sicherung) {
@@ -157,35 +157,35 @@ void Room14::feuer() {
 	hideCur();
 
 	if (is_cur_inventar(BWAFFE_INV)) {
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		waffe = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_frame(8, 1, ANI_VOR, 11);
-		start_detail_wait(9, 1, ANI_VOR);
+		start_detail_frame(8, 1, ANI_FRONT, 11);
+		start_detail_wait(9, 1, ANI_FRONT);
 		wait_detail(8);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
-		auto_move(7, P_CHEWY);
+		autoMove(7, P_CHEWY);
 		_G(det)->hide_static_spr(9);
-		start_detail_frame(2, 1, ANI_VOR, 9);
+		start_detail_frame(2, 1, ANI_FRONT, 9);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(13, 1, ANI_VOR);
+		start_detail_wait(13, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		wait_detail(2);
-		start_detail_wait(5, 1, ANI_VOR);
+		start_detail_wait(5, 1, ANI_FRONT);
 		_G(det)->show_static_spr(9);
 	}
 
 	del_inventar(tmp);
-	_G(det)->start_detail(6, 255, ANI_VOR);
+	_G(det)->start_detail(6, 255, ANI_FRONT);
 	wait_show_screen(40);
 
 	if (waffe)
-		auto_move(7, P_CHEWY);
+		autoMove(7, P_CHEWY);
 
 	start_aad_wait(26, -1);
 	_G(det)->hide_static_spr(9);
-	start_detail_wait(3, 1, ANI_VOR);
+	start_detail_wait(3, 1, ANI_FRONT);
 	_G(det)->show_static_spr(9);
 	invent_2_slot(FLUXO_INV);
 	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);

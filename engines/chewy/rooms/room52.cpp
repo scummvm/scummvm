@@ -49,7 +49,7 @@ void Room52::entry() {
 		_G(spieler).R52TuerAuf = true;
 		set_person_pos(20, 50, P_HOWARD, P_LEFT);
 		set_person_pos(35, 74, P_CHEWY, P_RIGHT);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(spieler).R52TuerAuf = false;
 		_G(det)->hide_static_spr(4);
 		check_shad(2, 1);
@@ -74,28 +74,28 @@ int16 Room52::use_hot_dog() {
 
 	if (is_cur_inventar(BURGER_INV)) {
 		action_ret = true;
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		_G(det)->show_static_spr(0);
 		del_inventar(_G(spieler).AkInvent);
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(spieler).R52HotDogOk = true;
 		plot_armee(20);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
 		_G(atds)->set_ats_str(341, 1, ATS_DATEI);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_aad_wait(288, -1);
 
 	} else if (is_cur_inventar(KILLER_INV)) {
 		action_ret = true;
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(7, 1, ANI_VOR);
+		start_detail_wait(7, 1, ANI_FRONT);
 		g_engine->_sound->playSound(7, 0);
 		g_engine->_sound->playSound(7);
-		_G(det)->start_detail(8, 255, ANI_VOR);
+		_G(det)->start_detail(8, 255, ANI_FRONT);
 
 		for (int16 i = 0; i < 5; i++) {
 			wait_show_screen(20);
@@ -105,7 +105,7 @@ int16 Room52::use_hot_dog() {
 		g_engine->_sound->stopSound(0);
 		_G(det)->stop_detail(0);
 		_G(det)->stop_detail(8);
-		start_detail_wait(7, 1, ANI_RUECK);
+		start_detail_wait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
@@ -121,7 +121,7 @@ int16 Room52::use_hot_dog() {
 void Room52::plot_armee(int16 frame) {
 	for (int16 i = 0; i < 5; i++) {
 		wait_show_screen(frame);
-		_G(det)->start_detail(2 + i, 255, ANI_VOR);
+		_G(det)->start_detail(2 + i, 255, ANI_FRONT);
 	}
 }
 
@@ -139,7 +139,7 @@ void Room52::setup_func() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
 		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
-		go_auto_xy(1, y, P_HOWARD, ANI_GO);
+		goAutoXy(1, y, P_HOWARD, ANI_GO);
 	}
 }
 

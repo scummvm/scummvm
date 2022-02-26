@@ -75,12 +75,12 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_LOOK:
 					switch (txt_nr) {
 					case 229:
-						auto_move(2, P_CHEWY);
+						autoMove(2, P_CHEWY);
 						Room39::look_tv(true);
 						break;
 
 					case 268:
-						auto_move(3, P_CHEWY);
+						autoMove(3, P_CHEWY);
 						break;
 
 					case 294:
@@ -144,7 +144,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 73:
 						if (!_G(spieler).R9Gitter) {
 							_G(spieler).PersonHide[P_CHEWY] = true;
-							start_detail_wait(5, 1, ANI_VOR);
+							start_detail_wait(5, 1, ANI_FRONT);
 							_G(spieler).PersonHide[P_CHEWY] = false;
 						} else {
 							action_ret = false;
@@ -155,7 +155,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 77:
 						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
 							hideCur();
-							auto_move(3, P_CHEWY);
+							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_004);
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
 							start_aad_wait(108, 0);
@@ -171,7 +171,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 80:
 						if (_G(spieler).inv_cur)
-							auto_move(3, P_CHEWY);
+							autoMove(3, P_CHEWY);
 						break;
 
 					case 81:
@@ -192,7 +192,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 104:
 						if (is_cur_inventar(TRANSLATOR_INV)) {
-							auto_move(6, P_CHEWY);
+							autoMove(6, P_CHEWY);
 							_G(spieler).R14Translator = true;
 							start_aad_wait(25, -1);
 						} else
@@ -825,9 +825,9 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				case TXT_MARK_TALK:
 					switch (txt_nr) {
 					case 11:
-						auto_move(3, P_CHEWY);
+						autoMove(3, P_CHEWY);
 						_G(det)->stop_detail(5);
-						_G(det)->start_detail(6, 2, ANI_VOR);
+						_G(det)->start_detail(6, 2, ANI_FRONT);
 						Room2::jump_out_r1(9);
 						break;
 
@@ -845,7 +845,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 122:
 						if (!_G(spieler).R13BorkOk) {
-							auto_move(10, P_CHEWY);
+							autoMove(10, P_CHEWY);
 							Room13::talk_bork();
 						}
 						break;
@@ -1035,11 +1035,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 391:
-						auto_move(2, P_CHEWY);
+						autoMove(2, P_CHEWY);
 						break;
 
 					case 431:
-						auto_move(3, P_CHEWY);
+						autoMove(3, P_CHEWY);
 						break;
 
 					default:
@@ -1056,15 +1056,15 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 124:
 						if (!_G(spieler).R16F5Exit)
-							auto_move(5, P_CHEWY);
+							autoMove(5, P_CHEWY);
 						break;
 
 					case 134:
-						auto_move(10, P_CHEWY);
+						autoMove(10, P_CHEWY);
 						break;
 
 					case 210:
-						auto_move(1, P_CHEWY);
+						autoMove(1, P_CHEWY);
 						break;
 
 					case 225:
@@ -1208,7 +1208,7 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 
 				if (str_end_nr == 1) {
 					_G(spieler).PersonHide[P_CHEWY] = true;
-					start_detail_wait(28, 3, ANI_VOR);
+					start_detail_wait(28, 3, ANI_FRONT);
 
 					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
@@ -1230,13 +1230,13 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 		break;
 
 	case 5:
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		break;
 
 	case 22:
 		if (str_end_nr == 1) {
 			_G(det)->del_static_ani(3);
-			start_detail_wait(5, 1, ANI_VOR);
+			start_detail_wait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
 			start_aad_wait(456, -1);
 		}
@@ -1361,7 +1361,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			}
 
 			if (ani_nr != -1)
-				start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+				start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 
 		} else {
 			stop_spz();
@@ -1372,7 +1372,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case 249:
 		if (person_nr == 0) {
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK4, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK4, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1385,7 +1385,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case R8_NIMOYANER2_DIA:
 		if (person_nr <= P_CHEWY) {
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1438,7 +1438,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1478,7 +1478,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 0:
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1507,7 +1507,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1515,7 +1515,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 		case 1:
 			if (mode == AAD_STR_START) {
-				_G(det)->start_detail(5, 255, ANI_VOR);
+				_G(det)->start_detail(5, 255, ANI_FRONT);
 			} else {
 				_G(det)->stop_detail(5);
 			}
@@ -1550,7 +1550,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				else
 					ani_nr = CH_TALK3;
 
-				start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+				start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1569,7 +1569,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			}
 			for (int16 i = 0; i < anz; i++) {
 				if (mode == AAD_STR_START) {
-					_G(det)->start_detail(tmp, 255, ANI_VOR);
+					_G(det)->start_detail(tmp, 255, ANI_FRONT);
 				} else {
 					_G(det)->stop_detail(tmp);
 				}
@@ -1751,7 +1751,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 				}
 				if (ani_nr != -1)
-					start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+					start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 
 			} else {
 				stop_spz();
@@ -1762,13 +1762,13 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 			if (mode == AAD_STR_START) {
 				switch (_G(spieler).mi[1]) {
 				case 2:
-					start_spz(50, 255, ANI_VOR, P_HOWARD);
+					start_spz(50, 255, ANI_FRONT, P_HOWARD);
 					break;
 				case 3:
-					start_spz(57, 255, ANI_VOR, P_HOWARD);
+					start_spz(57, 255, ANI_FRONT, P_HOWARD);
 					break;
 				default:
-					start_spz(HO_TALK_L, 255, ANI_VOR, P_HOWARD);
+					start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
 					break;
 				}
 			} else {
@@ -2111,7 +2111,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 	case R61_VERLAG_DIA:
 		if (mode == AAD_STR_START) {
-			_G(det)->start_detail(person_nr, 255, ANI_VOR);
+			_G(det)->start_detail(person_nr, 255, ANI_FRONT);
 		} else {
 			_G(det)->stop_detail(person_nr);
 		}
@@ -2121,7 +2121,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -2151,12 +2151,12 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	}
 
 	if (altes_format) {
-		_G(det)->start_detail(_G(talk_start_ani), 255, ANI_VOR);
+		_G(det)->start_detail(_G(talk_start_ani), 255, ANI_FRONT);
 		_G(det)->stop_detail(talk_stop_ani);
 		_G(det)->hide_static_spr(_G(talk_hide_static));
 		_G(det)->show_static_spr(talk_show_static);
 	} else {
-		_G(det)->start_detail(talk_ani, 255, ANI_VOR);
+		_G(det)->start_detail(talk_ani, 255, ANI_FRONT);
 		_G(det)->stop_detail(stop_ani);
 	}
 }
@@ -2753,7 +2753,7 @@ void calc_person_dia(int16 p_nr) {
 
 		if (!room_nr) {
 			if (_G(spieler).DiaAMov != -1)
-				auto_move(_G(spieler).DiaAMov, P_CHEWY);
+				autoMove(_G(spieler).DiaAMov, P_CHEWY);
 
 			int16 tmp[3];
 			for (int i = 0; i < 3; ++i) {

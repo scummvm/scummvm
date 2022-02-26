@@ -48,7 +48,7 @@ int16 Room16::use_gleiter() {
 
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 		_G(spieler).R23GleiterExit = 16;
 		Room23::cockpit();
 	}

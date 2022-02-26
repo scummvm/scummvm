@@ -91,7 +91,7 @@ void Room94::entry() {
 		hideCur();
 		_G(spieler).scrollx = 120;
 		set_person_pos(255, 86, P_HOWARD, P_LEFT);
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		showCur();
 	}
 }
@@ -115,7 +115,7 @@ void Room94::setup_func() {
 		destY = 86;
 	}
 	
-	go_auto_xy(destX, destY, P_HOWARD, ANI_GO);
+	goAutoXy(destX, destY, P_HOWARD, ANI_GO);
 }
 
 void Room94::gedAction(int index) {
@@ -134,7 +134,7 @@ int Room94::giveGhostBottle() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	auto_scroll(216, 0);
 	del_inventar(_G(spieler).AkInvent);
 	_G(out)->setPointer(nullptr);
@@ -155,7 +155,7 @@ int Room94::giveGhostBottle() {
 	_G(det)->start_detail(6, 1, false);	
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
-	start_detail_wait(4, 1, ANI_VOR);
+	start_detail_wait(4, 1, ANI_FRONT);
 	_G(spieler).flags35_10 = true;
 	_G(spieler).room_e_obj[138].Attribut = AUSGANG_OBEN;
 	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATEI);

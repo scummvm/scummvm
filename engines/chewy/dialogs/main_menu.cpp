@@ -161,7 +161,7 @@ void MainMenu::animate() {
 
 	sprite_engine();
 	kb_mov(1);
-	calc_maus_txt(_G(minfo).x, _G(minfo).y, 1);
+	calcMouseTxt(_G(minfo).x, _G(minfo).y, 1);
 	_G(cur)->plot_cur();
 	_G(maus_links_click) = false;
 	_G(menu_flag) = 0;

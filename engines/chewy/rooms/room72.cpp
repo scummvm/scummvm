@@ -59,9 +59,9 @@ void Room72::entry(int16 eib_nr) {
 		set_person_pos(50, 129, P_CHEWY, P_RIGHT);
 		set_person_pos(15, 103, P_HOWARD, P_RIGHT);
 		set_person_pos(-15, 102, P_NICHELLE, P_RIGHT);
-		go_auto_xy(185, 130, P_CHEWY, ANI_GO);
-		go_auto_xy(147, 103, P_HOWARD, ANI_GO);
-		go_auto_xy(120, 104, P_NICHELLE, ANI_WAIT);
+		goAutoXy(185, 130, P_CHEWY, ANI_GO);
+		goAutoXy(147, 103, P_HOWARD, ANI_GO);
+		goAutoXy(120, 104, P_NICHELLE, ANI_WAIT);
 		proc1(84);
 		register_cutscene(23);
 		break;
@@ -69,9 +69,9 @@ void Room72::entry(int16 eib_nr) {
 		set_person_pos(213, 129, P_CHEWY, P_LEFT);
 		set_person_pos(262, 103, P_HOWARD, P_LEFT);
 		set_person_pos(293, 102, P_NICHELLE, P_LEFT);
-		go_auto_xy(120, 130, P_CHEWY, ANI_GO);
-		go_auto_xy(154, 102, P_HOWARD, ANI_GO);
-		go_auto_xy(186, 102, P_NICHELLE, ANI_WAIT);
+		goAutoXy(120, 130, P_CHEWY, ANI_GO);
+		goAutoXy(154, 102, P_HOWARD, ANI_GO);
+		goAutoXy(186, 102, P_NICHELLE, ANI_WAIT);
 		proc1(85);
 		register_cutscene(23);
 		break;

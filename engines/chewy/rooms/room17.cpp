@@ -52,9 +52,9 @@ static const MovLine CHEWY_MPKT1[2] = {
 
 void Room17::entry() {
 	if (!_G(spieler).R17EnergieOut) {
-		_G(det)->start_detail(1, 255, ANI_VOR);
+		_G(det)->start_detail(1, 255, ANI_FRONT);
 		for (int i = 0; i < 3; ++i)
-			_G(det)->start_detail(6 + i, 255, ANI_VOR);
+			_G(det)->start_detail(6 + i, 255, ANI_FRONT);
 	}
 
 	plot_seil();
@@ -143,9 +143,9 @@ int16 Room17::use_seil() {
 
 		del_inventar(_G(spieler).AkInvent);
 		_G(flags).AutoAniPlay = true;
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(10, 1, ANI_VOR);
+		start_detail_wait(10, 1, ANI_FRONT);
 		_G(spieler).R17Seil = true;
 		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATEI);
 		plot_seil();
@@ -168,10 +168,10 @@ void Room17::plot_seil() {
 }
 
 void Room17::kletter_down() {
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 	_G(det)->load_taf_seq(177, 1, nullptr);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(14, 1, ANI_VOR);
+	start_detail_wait(14, 1, ANI_FRONT);
 	_G(flags).ZoomMov = false;
 	_G(zoom_mov_fak) = 1;
 	_G(spieler).ScrollyStep = 2;
@@ -184,10 +184,10 @@ void Room17::kletter_down() {
 }
 
 void Room17::kletter_up() {
-	auto_move(6, P_CHEWY);
+	autoMove(6, P_CHEWY);
 	_G(det)->load_taf_seq(141, 4, nullptr);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(11, 1, ANI_VOR);
+	start_detail_wait(11, 1, ANI_FRONT);
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollyStep = 1;
@@ -244,7 +244,7 @@ void Room17::door_kommando(int16 mode) {
 			if (!_G(spieler).R17DoorKommand) {
 				_G(spieler).room_e_obj[36].Attribut = AUSGANG_OBEN;
 				_G(spieler).R17DoorKommand = true;
-				start_detail_wait(4, 1, ANI_VOR);
+				start_detail_wait(4, 1, ANI_FRONT);
 				stop_person(P_CHEWY);
 				_G(det)->show_static_spr(7);
 			}
@@ -263,7 +263,7 @@ void Room17::close_door() {
 		_G(spieler).R17DoorKommand = false;
 		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, ATS_DATEI);
 		_G(det)->hide_static_spr(7);
-		_G(det)->start_detail(4, 1, ANI_RUECK);
+		_G(det)->start_detail(4, 1, ANI_BACK);
 	}
 }
 
@@ -271,7 +271,7 @@ int16 Room17::energie_hebel() {
 	int16 action_flag = false;
 
 	hideCur();
-	auto_move(7, P_CHEWY);
+	autoMove(7, P_CHEWY);
 
 	if (!_G(spieler).R17HebelOk) {
 		if (is_cur_inventar(BECHER_VOLL_INV)) {
@@ -291,10 +291,10 @@ int16 Room17::energie_hebel() {
 		_G(spieler).R17EnergieOut ^= 1;
 
 		if (!_G(spieler).R17EnergieOut) {
-			_G(det)->start_detail(1, 255, ANI_VOR);
+			_G(det)->start_detail(1, 255, ANI_FRONT);
 
 			for (int i = 0; i < 3; ++i)
-				_G(det)->start_detail(i + 6, 255, ANI_VOR);
+				_G(det)->start_detail(i + 6, 255, ANI_FRONT);
 		}
 
 		_G(atds)->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
@@ -318,15 +318,15 @@ int16 Room17::get_oel() {
 
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
 		start_aad_wait(60, -1);
 	} else if (is_cur_inventar(BECHER_LEER_INV)) {
 		action_flag = true;
 		close_door();
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(13, 1, ANI_VOR);
+		start_detail_wait(13, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
 		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));

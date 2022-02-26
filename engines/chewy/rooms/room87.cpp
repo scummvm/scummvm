@@ -49,7 +49,7 @@ void Room87::entry() {
 
 	set_person_pos(11, 70, P_HOWARD, P_RIGHT);
 	set_person_pos(-3, 81, P_NICHELLE, P_RIGHT);
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 }
 
 void Room87::setup_func() {
@@ -79,8 +79,8 @@ void Room87::setup_func() {
 		nicDestY = 81;
 	}
 
-	go_auto_xy(howDestX, howDestY, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, howDestY, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
 }
 
 void Room87::xit(int16 eib_nr) {
@@ -93,9 +93,9 @@ void Room87::xit(int16 eib_nr) {
 	_G(HowardMov) = 1;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
-	go_auto_xy(20, 56, P_CHEWY, ANI_WAIT);
-	go_auto_xy(31, 56, P_CHEWY, ANI_WAIT);
-	go_auto_xy(9, 53, P_CHEWY, ANI_WAIT);
+	goAutoXy(20, 56, P_CHEWY, ANI_WAIT);
+	goAutoXy(31, 56, P_CHEWY, ANI_WAIT);
+	goAutoXy(9, 53, P_CHEWY, ANI_WAIT);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).ScrollxStep = 1;
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 87)
@@ -131,7 +131,7 @@ int Room87::proc2(int16 txt_nr) {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
 		start_aad_wait(diaNr, -1);
 	} else {
-		auto_move(movNr, P_CHEWY);
+		autoMove(movNr, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATEI);
@@ -153,7 +153,7 @@ int Room87::proc4() {
 		return 0;
 
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	flic_cut(FCUT_093);
 	flic_cut(FCUT_094);
 	start_aad(472);

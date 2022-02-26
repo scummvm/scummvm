@@ -94,9 +94,9 @@ int Room74::proc1() {
 	if (is_cur_inventar(MACHETE_INV)) {
 		retVal = 1;
 		_G(spieler).R74CutRubberPlant = true;
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(1, 1, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
 		set_person_pos(272, 116, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(det)->start_detail(0, 255, false);
@@ -105,7 +105,7 @@ int Room74::proc1() {
 
 	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
 		_G(atds)->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
-		auto_move(5, P_CHEWY);
+		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		new_invent_2_cur(RUBBER_INV);
 	}

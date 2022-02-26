@@ -38,7 +38,7 @@ void Room93::entry() {
 	_G(det)->set_static_ani(0, -1);
 	start_aad_wait(616, -1);
 	_G(det)->del_static_ani(0);
-	start_detail_wait(3, 1, ANI_VOR);
+	start_detail_wait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	start_ads_wait(27);
 
@@ -49,13 +49,13 @@ void Room93::entry() {
 		_G(det)->set_static_ani(0, -1);
 		start_aad_wait(549, -1);
 		_G(det)->del_static_ani(0);
-		start_detail_wait(3, 1, ANI_VOR);
-		start_detail_wait(6, 1, ANI_VOR);
+		start_detail_wait(3, 1, ANI_FRONT);
+		start_detail_wait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(7, -1);
 		start_aad_wait(550, -1);
 		_G(det)->del_static_ani(7);
 		start_detail_wait(6, 1, ANI_GO);
-		start_detail_wait(2, 1, ANI_VOR);
+		start_detail_wait(2, 1, ANI_FRONT);
 		set_up_screen(DO_SETUP);
 		showCur();
 	}

@@ -30,13 +30,13 @@ namespace Chewy {
 namespace Rooms {
 
 static const AniBlock ABLOCK35[7] = {
-	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 8, 3, ANI_VOR, ANI_WAIT, 0 },
-	{ 4, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 5, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 9, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 5, 1, ANI_VOR, ANI_WAIT, 0 },
+	{ 2, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 7, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 8, 3, ANI_FRONT, ANI_WAIT, 0 },
+	{ 4, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 5, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 9, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 5, 1, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 
@@ -44,7 +44,7 @@ void Room53::entry() {
 	hideCur();
 	_G(obj)->hide_sib(SIB_VISIT_R53);
 	_G(atds)->del_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
-	start_detail_wait(0, 1, ANI_VOR);
+	start_detail_wait(0, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	_G(timer_nr)[0] = _G(room)->set_timer(1, 7);
 	showCur();
@@ -53,7 +53,7 @@ void Room53::entry() {
 void Room53::man_go() {
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
-	start_detail_wait(5, 1, ANI_VOR);
+	start_detail_wait(5, 1, ANI_FRONT);
 	_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
 	if (!_G(spieler).R53Visit)
 		_G(obj)->show_sib(SIB_VISIT_R53);
@@ -61,14 +61,14 @@ void Room53::man_go() {
 
 void Room53::talk_man() {
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
-	start_detail_wait(2, 1, ANI_VOR);
+	start_detail_wait(2, 1, ANI_FRONT);
 	_G(det)->set_static_ani(3, -1);
 	start_aad_wait(269 + (_G(spieler).R53Kostuem ? 1 : 0), -1);
 	_G(det)->del_static_ani(3);
-	start_detail_wait(4, 1, ANI_VOR);
+	start_detail_wait(4, 1, ANI_FRONT);
 	man_go();
 	showCur();
 }
@@ -81,7 +81,7 @@ int16 Room53::use_man() {
 		hideCur();
 		_G(spieler).R53Kostuem = true;
 		del_inventar(_G(spieler).AkInvent);
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		start_aad_wait(271, -1);
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);

@@ -69,7 +69,7 @@ void Room86::entry(int16 eib_nr) {
 		set_person_pos(443, 66, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 84;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 0;
-		auto_move(2, P_CHEWY);
+		autoMove(2, P_CHEWY);
 		_G(flags).NoScroll = true;
 		_G(spieler.ScrollxStep = 2);
 		auto_scroll(30, 0);
@@ -80,13 +80,13 @@ void Room86::entry(int16 eib_nr) {
 		_G(det)->show_static_spr(4);
 		_G(det)->show_static_spr(5);
 		invent_2_slot(94);
-		auto_move(4, P_CHEWY);
+		autoMove(4, P_CHEWY);
 		_G(flags).NoScroll = true;
 		auto_scroll(246, 0);
 		proc3(false);
 		flic_cut(FCUT_092);
 		_G(flags).NoScroll = false;
-		auto_move(0, P_CHEWY);
+		autoMove(0, P_CHEWY);
 		_G(spieler).flags32_20 = true;
 		switch_room(85);
 		showCur();
@@ -137,8 +137,8 @@ void Room86::setup_func() {
 		nicDestX = 134;
 	}
 
-	go_auto_xy(howDestX, howDestY, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, howDestY, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
 }
 
 int Room86::proc2() {
@@ -146,13 +146,13 @@ int Room86::proc2() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->start_detail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	del_inventar(_G(spieler).AkInvent);
-	auto_move(3, P_CHEWY);
+	autoMove(3, P_CHEWY);
 	proc3(true);
 	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->set_ats_str(497, 1, ATS_DATEI);

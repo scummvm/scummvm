@@ -30,13 +30,13 @@ namespace Chewy {
 namespace Rooms {
 
 AniBlock ABLOCK17[2] = {
-	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 9, 255, ANI_VOR, ANI_GO, 0 },
+	{ 8, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 9, 255, ANI_FRONT, ANI_GO, 0 },
 };
 
 AniBlock ABLOCK18[2] = {
-	{ 7, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 7, 1, ANI_RUECK, ANI_WAIT, 0 },
+	{ 7, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 7, 1, ANI_BACK, ANI_WAIT, 0 },
 };
 
 
@@ -63,13 +63,13 @@ void Room11::entry() {
 
 		if (!_G(flags).LoadGame) {
 			start_ani_block(2, ABLOCK17);
-			auto_move(8, P_CHEWY);
+			autoMove(8, P_CHEWY);
 			start_aad_wait(31, -1);
 			_G(det)->stop_detail(9);
 		}
 		_G(det)->show_static_spr(8);
 		if (!_G(flags).LoadGame)
-			auto_move(6, P_CHEWY);
+			autoMove(6, P_CHEWY);
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 	}
 }
@@ -106,7 +106,7 @@ void Room11::bork_zwinkert() {
 void Room11::talk_debug() {
 	if (_G(spieler).R12ChewyBork) {
 		_G(flags).AutoAniPlay = true;
-		auto_move(8, P_CHEWY);
+		autoMove(8, P_CHEWY);
 		start_ads_wait(5);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
@@ -126,7 +126,7 @@ void Room11::chewy_bo_use() {
 		start_aad_wait(32, -1);
 		_G(det)->stop_detail(9);
 		_G(det)->show_static_spr(8);
-		auto_move(6, P_CHEWY);
+		autoMove(6, P_CHEWY);
 
 		_G(flags).AutoAniPlay = false;
 		showCur();
@@ -137,7 +137,7 @@ int16 Room11::scanner() {
 	int16 actionFl = false;
 
 	if (!_G(spieler).R12ChewyBork) {
-		auto_move(7, P_CHEWY);
+		autoMove(7, P_CHEWY);
 
 		if (!_G(spieler).R11CardOk) {
 			actionFl = true;
@@ -194,7 +194,7 @@ void Room11::put_card() {
 	if (is_cur_inventar(RED_CARD_INV) || is_cur_inventar(YEL_CARD_INV)) {
 		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
 		del_inventar(_G(spieler).R11IdCardNr);
-		_G(det)->start_detail(0, 255, ANI_VOR);
+		_G(det)->start_detail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATEI);
 		_G(spieler).R11CardOk = true;

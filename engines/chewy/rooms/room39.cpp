@@ -40,14 +40,14 @@ static const uint8 TV_FLIC[] = {
 };
 
 static const AniBlock ABLOCK33[2] = {
-	{ 2, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 3, 255, ANI_VOR, ANI_GO, 0 },
+	{ 2, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 3, 255, ANI_FRONT, ANI_GO, 0 },
 };
 
 
 static const AniBlock ABLOCK29[2] = {
-	{ 8, 1, ANI_VOR, ANI_WAIT, 0 },
-	{ 9, 4, ANI_VOR, ANI_WAIT, 0 },
+	{ 8, 1, ANI_FRONT, ANI_WAIT, 0 },
+	{ 9, 4, ANI_FRONT, ANI_WAIT, 0 },
 };
 
 void Room39::entry() {
@@ -55,7 +55,7 @@ void Room39::entry() {
 		if (_G(spieler).R39HowardDa) {
 			_G(det)->show_static_spr(10);
 			if (!_G(spieler).R39HowardWach)
-				_G(det)->start_detail(1, 255, ANI_VOR);
+				_G(det)->start_detail(1, 255, ANI_FRONT);
 			else
 				_G(det)->set_static_ani(5, -1);
 
@@ -79,21 +79,21 @@ short Room39::use_howard() {
 				hideCur();
 				_G(spieler).R39HowardWach = true;
 				_G(spieler).R39ScriptOk = true;
-				auto_move(3, P_CHEWY);
+				autoMove(3, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				_G(det)->start_detail(6, 255, ANI_VOR);
+				_G(det)->start_detail(6, 255, ANI_FRONT);
 				start_aad_wait(170, -1);
 				_G(det)->stop_detail(6);
-				start_detail_wait(7, 1, ANI_VOR);
+				start_detail_wait(7, 1, ANI_FRONT);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 
 				del_inventar(_G(spieler).AkInvent);
 				_G(det)->stop_detail(1);
 				start_ani_block(2, ABLOCK33);
-				start_spz(CH_TALK6, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 				start_aad_wait(167, -1);
 				_G(det)->stop_detail(3);
-				start_detail_wait(4, 1, ANI_VOR);
+				start_detail_wait(4, 1, ANI_FRONT);
 				_G(det)->set_static_ani(5, -1);
 				_G(atds)->set_ats_str(62, 1, ATS_DATEI);
 				start_aad_wait(169, -1);
@@ -119,7 +119,7 @@ short Room39::use_howard() {
 		}
 
 		if (dia_nr != -1) {
-			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+			start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(dia_nr, -1);
 			action_flag = true;
 		}
@@ -132,7 +132,7 @@ short Room39::use_howard() {
 
 void Room39::talk_howard() {
 	if (_G(spieler).R39HowardWach) {
-		auto_move(3, P_CHEWY);
+		autoMove(3, P_CHEWY);
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 		calc_person_dia(P_HOWARD);
@@ -141,7 +141,7 @@ void Room39::talk_howard() {
 			ok();
 		}
 	} else {
-		start_spz(CH_TALK5, 255, ANI_VOR, P_CHEWY);
+		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(168, -1);
 	}
 }
@@ -169,7 +169,7 @@ int16 Room39::use_tv() {
 	int16 action_flag = false;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	int16 cls_flag = false;
 
 	if (is_cur_inventar(ZAPPER_INV)) {
@@ -231,7 +231,7 @@ int16 Room39::use_tv() {
 			_G(out)->cls();
 			_G(out)->setPalette(_G(pal));
 			set_tv();
-			start_spz(CH_TRANS, 255, ANI_VOR, P_CHEWY);
+			start_spz(CH_TRANS, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(80, -1);
 
 			ani_nr = CH_TRANS;
@@ -247,7 +247,7 @@ int16 Room39::use_tv() {
 		action_flag = true;
 		if (_G(spieler).R39TvOn) {
 			if (_G(spieler).R39TranslatorUsed) {
-				start_spz(CH_TALK3, 255, ANI_VOR, P_CHEWY);
+				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 				start_aad_wait(98, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				start_ani_block(2, ABLOCK29);
@@ -276,7 +276,7 @@ int16 Room39::use_tv() {
 
 	if (dia_nr != -1) {
 		if (ani_nr != -1)
-			start_spz(ani_nr, 255, ANI_VOR, P_CHEWY);
+			start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(dia_nr, -1);
 		action_flag = true;
 	}
@@ -339,7 +339,7 @@ void Room39::set_tv() {
 
 	if (_G(spieler).R39TvOn) {
 		if (_G(spieler).R39TvKanal == 2) {
-			_G(det)->start_detail(0, 255, ANI_VOR);
+			_G(det)->start_detail(0, 255, ANI_FRONT);
 		} else {
 			_G(det)->stop_detail(0);
 			_G(det)->show_static_spr(_G(spieler).R39TvKanal + 4);

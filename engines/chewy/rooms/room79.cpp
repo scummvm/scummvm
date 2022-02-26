@@ -91,8 +91,8 @@ void Room79::setup_func() {
 		nicDestY = 75;
 	}
 
-	go_auto_xy(howDestX, howDestY, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, howDestY, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, nicDestY, P_NICHELLE, ANI_GO);
 }
 
 } // namespace Rooms

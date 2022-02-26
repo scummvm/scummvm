@@ -72,7 +72,7 @@ int Room77::proc1() {
 		return 0;
 
 	hideCur();
-	auto_move(1, P_CHEWY);
+	autoMove(1, P_CHEWY);
 	int diaNr, aniId;
 	if (_G(spieler).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
@@ -101,7 +101,7 @@ int Room77::proc2() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 
 	int diaNr, aniId;
 	if (_G(spieler).flags29_8) {

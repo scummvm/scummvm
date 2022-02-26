@@ -160,7 +160,7 @@ void Room89::setup_func() {
 	else
 		destX = 116;
 
-	go_auto_xy(destX, 114, P_HOWARD, ANI_GO);
+	goAutoXy(destX, 114, P_HOWARD, ANI_GO);
 }
 
 void Room89::talk1() {
@@ -196,7 +196,7 @@ int Room89::proc4() {
 		return 0;
 
 	hideCur();
-	auto_move(2, P_CHEWY);
+	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
 	if (_G(spieler).flags33_4) {

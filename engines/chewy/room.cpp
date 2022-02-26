@@ -104,7 +104,7 @@ void JungleRoom::topEntry() {
 	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
 	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
 	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
-	go_auto_xy(266, 113, P_HOWARD, ANI_WAIT);
+	goAutoXy(266, 113, P_HOWARD, ANI_WAIT);
 	showCur();
 }
 
@@ -140,8 +140,8 @@ void JungleRoom::setup_func() {
 		nicDestX = 543;
 	}
 
-	go_auto_xy(howDestX, 111, P_HOWARD, ANI_GO);
-	go_auto_xy(nicDestX, 110, P_NICHELLE, ANI_GO);
+	goAutoXy(howDestX, 111, P_HOWARD, ANI_GO);
+	goAutoXy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
 Room::Room() {
@@ -217,7 +217,7 @@ void Room::add_timer_new_room() {
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
 		} else if (adi->start_flag || adi->repeat) {
-			_G(det)->start_detail(i, 0, ANI_VOR);
+			_G(det)->start_detail(i, 0, ANI_FRONT);
 		}
 	}
 }

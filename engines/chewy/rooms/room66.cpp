@@ -49,15 +49,15 @@ void Room66::entry(int16 eib_nr) {
 		set_person_pos(644, 82, P_NICHELLE, P_LEFT);
 		set_person_pos(623, 81, P_HOWARD, P_LEFT);
 		start_aad_wait(413, -1);
-		auto_move(9, P_CHEWY);
+		autoMove(9, P_CHEWY);
 		_G(SetUpScreenFunc) = setup_func;
 		start_aad_wait(403, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(0, 1, ANI_VOR);
+		start_detail_wait(0, 1, ANI_FRONT);
 		_G(det)->show_static_spr(14);
 		wait_show_screen(15);
 		_G(det)->hide_static_spr(14);
-		start_detail_wait(1, 1, ANI_VOR);
+		start_detail_wait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
@@ -136,8 +136,8 @@ void Room66::setup_func() {
 		esi = 690;
 	}
 
-	go_auto_xy(edx, 114, P_HOWARD, ANI_GO);
-	go_auto_xy(esi, 114, P_NICHELLE, ANI_GO);
+	goAutoXy(edx, 114, P_HOWARD, ANI_GO);
+	goAutoXy(esi, 114, P_NICHELLE, ANI_GO);
 
 	if (posX >= 500 || _G(spieler).flags26_8)
 		return;
@@ -149,7 +149,7 @@ void Room66::setup_func() {
 
 void Room66::talk1() {
 	hideCur();
-	auto_move(5, P_CHEWY);
+	autoMove(5, P_CHEWY);
 	start_aad_wait(407, -1);
 	showCur();
 }
@@ -168,7 +168,7 @@ void Room66::talk4() {
 
 int Room66::proc2() {
 	hideCur();
-	auto_move(0, P_CHEWY);
+	autoMove(0, P_CHEWY);
 	_G(spieler).flags26_40 = true;
 	_G(spieler).room_e_obj[100].Attribut = 3;
 	_G(atds)->set_ats_str(423, 1, ANI_GO);
@@ -182,7 +182,7 @@ int Room66::proc7() {
 		return 0;
 
 	hideCur();
-	auto_move(7, P_CHEWY);
+	autoMove(7, P_CHEWY);
 	if (_G(spieler).flags26_10) {
 		del_inventar(_G(spieler).AkInvent);
 		invent_2_slot(92);
@@ -195,7 +195,7 @@ int Room66::proc7() {
 	_G(cur_hide_flag) = 0;
 	hideCur();
 	if (_G(spieler).flags26_20)
-		start_detail_wait(4, 1, ANI_VOR);
+		start_detail_wait(4, 1, ANI_FRONT);
 	showCur();
 
 	return 1;
@@ -205,7 +205,7 @@ void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, in
 	hideCur();
 
 	if (chewyAutoMovNr != -1)
-		auto_move(chewyAutoMovNr, P_CHEWY);
+		autoMove(chewyAutoMovNr, P_CHEWY);
 
 	_G(room)->set_timer_status(restartAniNr, TIMER_STOP);
 	_G(det)->del_static_ani(restartAniNr);
