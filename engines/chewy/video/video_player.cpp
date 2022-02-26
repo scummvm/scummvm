@@ -111,13 +111,16 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 }
 
 bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
+	const int16 scrollx = _G(spieler).scrollx;
+	const int16 scrolly = _G(spieler).scrolly;
+
 	switch (num) {
 	case FCUT_004:
 		// Room6::cut_serv1
 		return (frame == 40) ? false : true;
 	case FCUT_005:
 		// Room10::cut_serv
-		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+		_G(atds)->print_aad(scrollx, scrolly);
 		if (frame == 31)
 			start_aad(107, 0);
 		break;
@@ -134,7 +137,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 			_G(det)->plot_static_details(0, 0, 7, 7);
 
 		if (num == FCUT_010) {
-			_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+			_G(atds)->print_aad(scrollx, scrolly);
 			if (frame == 43)
 				start_aad(106, 0);
 		}
@@ -150,7 +153,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		if (!_G(spieler).R39TranslatorUsed)
 			return false;
 
-		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+		_G(atds)->print_aad(scrollx, scrolly);
 
 		if (cfoDecoder->endOfVideo() && _G(atds)->aad_get_status() != -1)
 			cfoDecoder->rewind();
@@ -182,7 +185,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 			break;
 		}
 
-		_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
+		_G(atds)->print_aad(scrollx, scrolly);
 		break;
 	case FCUT_094:
 		// Room87::proc3
