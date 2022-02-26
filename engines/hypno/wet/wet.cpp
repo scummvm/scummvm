@@ -284,9 +284,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c311.mi_", "c32", "<check_lives>", "");
 	loadArcadeLevel("c312.mi_", "c32", "<check_lives>", "");
 
-	loadArcadeLevel("c320.mi_", "c41", "<check_lives>", "");
-	loadArcadeLevel("c321.mi_", "c41", "<check_lives>", "");
-	loadArcadeLevel("c322.mi_", "c41", "<check_lives>", "");
+	loadArcadeLevel("c320.mi_", "c33", "<check_lives>", "");
+	loadArcadeLevel("c321.mi_", "c33", "<check_lives>", "");
+	loadArcadeLevel("c322.mi_", "c33", "<check_lives>", "");
 
 	loadArcadeLevel("c330.mi_", "c30", "<check_lives>", "");
 	loadArcadeLevel("c331.mi_", "c30", "<check_lives>", "");
@@ -316,9 +316,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c431.mi_", "c44", "<check_lives>", "");
 	loadArcadeLevel("c432.mi_", "c44", "<check_lives>", "");
 
-	loadArcadeLevel("c440.mi_", "c51", "<check_lives>", "");
-	loadArcadeLevel("c441.mi_", "c51", "<check_lives>", "");
-	loadArcadeLevel("c442.mi_", "c51", "<check_lives>", "");
+	loadArcadeLevel("c440.mi_", "c40", "<check_lives>", "");
+	loadArcadeLevel("c441.mi_", "c40", "<check_lives>", "");
+	loadArcadeLevel("c442.mi_", "c40", "<check_lives>", "");
 
 	loadArcadeLevel("c400.mi_", "c51", "<check_lives>", "");
 	arc = (ArcadeShooting*) _levels["c400.mi_"];
@@ -336,9 +336,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c511.mi_", "c52", "<check_lives>", "");
 	loadArcadeLevel("c512.mi_", "c52", "<check_lives>", "");
 
-	loadArcadeLevel("c520.mi_", "c61", "<check_lives>", "");
-	loadArcadeLevel("c521.mi_", "c61", "<check_lives>", "");
-	loadArcadeLevel("c522.mi_", "c61", "<check_lives>", "");
+	loadArcadeLevel("c520.mi_", "c50", "<check_lives>", "");
+	loadArcadeLevel("c521.mi_", "c50", "<check_lives>", "");
+	loadArcadeLevel("c522.mi_", "c50", "<check_lives>", "");
 
 	loadArcadeLevel("c500.mi_", "c61", "<check_lives>", "");
 	arc = (ArcadeShooting*) _levels["c500.mi_"];
