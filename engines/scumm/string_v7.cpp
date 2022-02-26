@@ -255,8 +255,8 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	if (!_newStyle) {
 		Common::String invalidChars("@\xff\x03\x09\x01\x02\x08");
 		for (int i = 0; i < len; ++i)
-		if (invalidChars.contains(str[i]))
-			assert(true == false);
+			if (invalidChars.contains(str[i]))
+				assert(true == false);
 	}
 
 	int16 substrByteLength[SCUMM7_MAX_STRINGS];
@@ -556,7 +556,7 @@ void ScummEngine_v7::clearSubtitleQueue() {
 void ScummEngine_v7::CHARSET_1() {
 	processSubtitleQueue();
 
-	bool usingOldSystem = (_game.id == GID_FT);
+	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
 
 	byte subtitleBuffer[200];
 	byte *subtitleLine = subtitleBuffer;
