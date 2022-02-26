@@ -18,6 +18,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
+   - Unterstützung für die RetroWave OPL3-Soundkarte hinzugefügt.
 
  AGI:
    - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
