@@ -168,6 +168,14 @@ hline: 	CTOK NUM {
 			g_parsedArc->defeatMissBossVideo = $2;
 		else if (Common::String("B5") == $1)
 			g_parsedArc->defeatNoEnergySecondVideo = $2;
+		else if (Common::String("B6") == $1)
+			g_parsedArc->hitBoss1Video = $2;
+		else if (Common::String("B7") == $1)
+			g_parsedArc->missBoss1Video = $2;
+		else if (Common::String("B8") == $1)
+			g_parsedArc->hitBoss2Video = $2;
+		else if (Common::String("B9") == $1)
+			g_parsedArc->missBoss2Video = $2;
 		else if (Common::String("BA") == $1)
 			g_parsedArc->briefingVideo = $2;
 

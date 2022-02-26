@@ -495,6 +495,10 @@ public:
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
 	Filename defeatMissBossVideo;
+	Filename hitBoss1Video;
+	Filename missBoss1Video;
+	Filename hitBoss2Video;
+	Filename missBoss2Video;
 	Filename beforeVideo;
 	Filename briefingVideo;
 
