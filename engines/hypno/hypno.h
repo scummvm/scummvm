@@ -220,7 +220,7 @@ public:
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
 	virtual void drawShoot(const Common::Point &mousePos);
-	virtual void shoot(const Common::Point &mousePos);
+	virtual void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background);
 	virtual void hitPlayer();
 
 	// Segments

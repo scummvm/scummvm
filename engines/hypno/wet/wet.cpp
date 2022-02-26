@@ -55,7 +55,7 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_screenW = 320;
 	_screenH = 200;
 	_lives = 2;
- 
+
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
 		_chapterTable[entry->id] = entry;
@@ -493,7 +493,7 @@ void WetEngine::runMainMenu(Code *code) {
 	}
 }
 
-Common::String WetEngine::findNextLevel(const Transition *trans) { 
+Common::String WetEngine::findNextLevel(const Transition *trans) {
 	if (trans->nextLevel.empty())
 		error("Invalid transition!");
 	return trans->nextLevel;

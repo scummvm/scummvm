@@ -55,7 +55,7 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	debugC(1, kHypnoDebugParser, "Parsing %s/%s", prefix.c_str(), filename.c_str());
 	parse_arc(data.c_str());
 	ArcadeShooting *arcade = new ArcadeShooting();
-	*arcade = *g_parsedArc; 
+	*arcade = *g_parsedArc;
 	_levels[filename] = (Level*) arcade;
 	g_parsedArc->backgroundVideo.clear();
 	g_parsedArc->transitionPalette.clear();
@@ -152,7 +152,7 @@ void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::
 	splitArcadeFile(arclevel, arc, list);
 	debugC(1, kHypnoDebugParser, "%s", arc.c_str());
 	parseArcadeShooting("", arclevel, arc);
-	ArcadeShooting *arcade = (ArcadeShooting *) _levels[arclevel]; 
+	ArcadeShooting *arcade = (ArcadeShooting *) _levels[arclevel];
 	arcade->shootSequence = parseShootList(arclevel, list);
 	arcade->prefix = prefix;
 	arcade->levelIfWin = nextWin;
@@ -232,7 +232,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (event.kbd.keycode == Common::KEYCODE_k) { // Added for testing
 					_health = 0;
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_lastPlayerPosition = _currentPlayerPosition; 
+					_lastPlayerPosition = _currentPlayerPosition;
 					_currentPlayerPosition = kPlayerLeft;
 				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					_lastPlayerPosition = _currentPlayerPosition;
@@ -320,13 +320,13 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			findNextSegment(arc);
 
 			if (_segmentIdx >= segments.size())
-				error("Invalid segment %d", _segmentIdx); 
+				error("Invalid segment %d", _segmentIdx);
 
 			debugC(1, kHypnoDebugArcade, "Starting segment %d of type %x at %d", _segmentIdx, segments[_segmentIdx].type, segments[_segmentIdx].start);
 			if (!segments[_segmentIdx].end) { // If it is not the end segment
 				background.decoder->forceSeekToFrame(segments[_segmentIdx].start);
 				continue;
-			} else 
+			} else
 				_skipLevel = true;
 		}
 
@@ -365,7 +365,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			ShootInfo si = _shootSequence.front();
 			int idx = (int)segments[_segmentIdx].size * _segmentRepetition \
 					+ background.decoder->getCurFrame() \
-					- (int)segments[_segmentIdx].start; 
+					- (int)segments[_segmentIdx].start;
 			//debug("%d %d", si.timestamp, idx);
 			if ((int)si.timestamp <= idx) {
 				_shootSequence.pop_front();
@@ -442,7 +442,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (needsUpdate) {
 			if (shootingPrimary || shootingSecondary) {
-				shoot(mousePos);
+				shoot(mousePos, arc, background);
 				drawShoot(mousePos);
 				shootingPrimary = false;
 			}
@@ -494,13 +494,13 @@ void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 		changeCursor("target");
 	else
 		changeCursor("arcade");
-		
+
 	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
 bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }
 
-void HypnoEngine::shoot(const Common::Point &mousePos) {
+void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
 	int i = detectTarget(mousePos);
 	if (i >= 0) {
 		if (!_shoots[i].hitSound.empty())
@@ -529,17 +529,33 @@ void HypnoEngine::shoot(const Common::Point &mousePos) {
 			_shoots[i].video->decoder->forceSeekToFrame(explosionStartFrame - 2);
 			_shoots[i].lastFrame = explosionLastFrame - 2;
 		} else {
-			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
-			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
-			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
-			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 			if (!_shoots[i].explosionAnimation.empty()) {
 				_shoots[i].video = new MVideo(_shoots[i].explosionAnimation, mousePos, true, false, false);
 				playVideo(*_shoots[i].video);
 				int w = _shoots[i].video->decoder->getWidth();
 				int h = _shoots[i].video->decoder->getHeight();
 				_shoots[i].video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+			} else if (_objIdx == 0 && !arc->hitBoss1Video.empty()) {
+				background.decoder->pauseVideo(true);
+				MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
+				runIntro(video);
+				loadPalette(arc->backgroundPalette);
+				background.decoder->pauseVideo(false);
+				updateScreen(background);
+				drawScreen();
+			} else if (_objIdx == 1 && !arc->hitBoss2Video.empty()) {
+				background.decoder->pauseVideo(true);
+				MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
+				runIntro(video);
+				loadPalette(arc->backgroundPalette);
+				background.decoder->pauseVideo(false);
+				updateScreen(background);
+				drawScreen();
 			}
+			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
+			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
+			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
+			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 		}
 	}
 }
