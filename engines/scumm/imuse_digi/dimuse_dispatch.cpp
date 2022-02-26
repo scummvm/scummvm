@@ -1631,27 +1631,14 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 		if (dispatchPtr->streamPtr) {
 			headerBuf = streamerGetStreamBufferAtOffset(dispatchPtr->streamPtr, 0, 0x30);
 			if (headerBuf || (headerBuf = streamerGetStreamBufferAtOffset(dispatchPtr->streamPtr, 0, 1)) != 0) {
-				// Little hack: avoid copying stuff from the resource to the
-				// header buffer beyond the resource size limit
-				resSize = _filesHandler->getSoundAddrDataSize(dispatchPtr->trackPtr->soundId, dispatchPtr->streamPtr != nullptr);
-				if ((resSize - dispatchPtr->currentOffset) < 0x30) {
-					memcpy(_currentVOCHeader, headerBuf, resSize - dispatchPtr->currentOffset);
-				} else {
-					memcpy(_currentVOCHeader, headerBuf, 0x30);
-				}
+				memcpy(_currentVOCHeader, headerBuf, 0x30);
 			} else {
 				return -3;
 			}
 		} else {
 			soundAddrData = _filesHandler->getSoundAddrData(dispatchPtr->trackPtr->soundId);
 			if (soundAddrData) {
-				// Little hack: see above
-				resSize = _filesHandler->getSoundAddrDataSize(dispatchPtr->trackPtr->soundId, dispatchPtr->streamPtr != nullptr);
-				if ((resSize - dispatchPtr->currentOffset) < 0x30) {
-					memcpy(_currentVOCHeader, &soundAddrData[dispatchPtr->currentOffset], resSize - dispatchPtr->currentOffset);
-				} else {
-					memcpy(_currentVOCHeader, &soundAddrData[dispatchPtr->currentOffset], 0x30);
-				}
+				memcpy(_currentVOCHeader, &soundAddrData[dispatchPtr->currentOffset], 0x30);
 			} else {
 				return -1;
 			}
@@ -1682,7 +1669,7 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 				dispatchPtr->audioRemaining = (READ_LE_UINT32(headerTag) >> 8) - 2;
 				dispatchPtr->currentOffset += 6;
 
-				// Another little hack to avoid click and pops artifacts:
+				// A little hack to avoid click and pops artifacts:
 				// read one audio sample less if this is the last audio chunk of the file
 				resSize = _filesHandler->getSoundAddrDataSize(dispatchPtr->trackPtr->soundId, dispatchPtr->streamPtr != nullptr);
 				if ((resSize - (dispatchPtr->currentOffset + dispatchPtr->audioRemaining)) < 0x30) {
