@@ -163,7 +163,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = true;
 			break;
 		case 3:
-			_haveMsg = 0xFF;
+			_haveMsg = _game.version == 7 ? 1 : 0xFF;
 			_keepText = false;
 			_msgCount = 0;
 			endLoop = true;
