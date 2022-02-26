@@ -89,7 +89,8 @@ void IMuseDigiFilesHandler::saveLoad(Common::Serializer &ser) {
 			ser.syncAsSint32LE(_ftSpeechFileSize, VER(103));
 			ser.syncAsSint32LE(_ftSpeechSubFileOffset, VER(103));
 			ser.syncArray(_ftSpeechFilename, sizeof(_ftSpeechFilename), Common::Serializer::SByte, VER(103));
-			_ftSpeechFile = _vm->_sound->restoreDiMUSESpeechFile(_ftSpeechFilename);
+			if (strlen(_ftSpeechFilename))
+				_ftSpeechFile = _vm->_sound->restoreDiMUSESpeechFile(_ftSpeechFilename);
 		}
 	}
 }
