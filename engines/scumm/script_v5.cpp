@@ -887,7 +887,16 @@ void ScummEngine_v5::o5_doSentence() {
 	//	Giving it to non-actor objects crashes the game.
 	//	The sentence doesn't run a script if the recipient is not an actor.
 	//	Trac #13196
-	if (_game.id == GID_MONKEY_VGA && verb == 3 && objectA == 458 && !isValidActor(objectB))
+	//	This bug occurred always when breath mint was given to non-actor objects
+	// 	and sometimes when other non actor objects were given to breathe mint
+	//	Giving pot or red herring to breath mint triggered the bug as these two objects' scripts
+	//	reverse the sentence (in case if the user had reversed the items), effectively making the sentence
+	//	such that the breath mint is being given to the pot/red herring.
+	// 	But giving hunk o' meat to breath mint didn't trigger the bug as such reversal is not done
+	//	by hunk o' meat's script.
+	if (((_game.id == GID_MONKEY_VGA && (_game.features & GF_DEMO)) ||
+		 (_game.id == GID_MONKEY_EGA && (_game.features & GF_DEMO)))
+		&& verb == 3 && objectA == 458 && !isValidActor(objectB))
 		return;
 
 	doSentence(verb, objectA, objectB);
