@@ -141,6 +141,7 @@ bool SmushMixer::stop() {
 				_channels[i].stream->finish();
 				_channels[i].stream = nullptr;
 			}
+			_mixer->stopHandle(_channels[i].handle);
 		}
 	}
 
