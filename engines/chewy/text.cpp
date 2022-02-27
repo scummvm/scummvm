@@ -51,11 +51,11 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 			TextEntry curDialog;
 			ptr++; // current entry
 			ptr += 2;
-			curDialog.speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+			curDialog._speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
 			ptr += 2;
 
 			do {
-				curDialog.text += *ptr++;
+				curDialog._text += *ptr++;
 
 				if (*ptr == 0 && *(ptr + 1) != kEndText) {
 					// TODO: Split lines
@@ -96,12 +96,12 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 
 	for (uint i = 0; i <= entryNum; i++) {
 		ptr += 13;
-		d->speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+		d->_speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
 		ptr += 2;
 
 		do {
 			if (i == entryNum)
-				d->text += *ptr++;
+				d->_text += *ptr++;
 			else
 				ptr++;
 
@@ -141,20 +141,16 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 
 
 void Text::crypt(char *txt, uint32 size) {
-	uint8 *sp;
-	uint32 i;
-	sp = (uint8 *)txt;
-	for (i = 0; i < size; i++) {
+	uint8 *sp = (uint8 *)txt;
+	for (uint32 i = 0; i < size; i++) {
 		*sp = -(*sp);
 		++sp;
 	}
 }
 
-char *Text::str_pos(char *txt_adr, int16 pos) {
-	char *ptr;
-	int16 i;
-	ptr = txt_adr;
-	for (i = 0; i < pos;) {
+char *Text::strPos(char *txtAdr, int16 pos) {
+	char *ptr = txtAdr;
+	for (int16 i = 0; i < pos;) {
 		if (*ptr == 0)
 			++i;
 		++ptr;

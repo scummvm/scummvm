@@ -79,7 +79,7 @@ void Room48::frage() {
 		_G(det)->showStaticSpr(6);
 		start_detail_wait(1, 1, ANI_BACK);
 		_G(det)->hideStaticSpr(6);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		showCur();
 		_G(flags).AutoAniPlay = false;
 	}

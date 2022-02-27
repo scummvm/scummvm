@@ -526,7 +526,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		int16 k = 0;
 		for (int16 i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
 			_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
-				_G(scr_width), _G(txt)->str_pos(txt_adr, i));
+				_G(scr_width), _G(txt)->strPos(txt_adr, i));
 			++k;
 		}
 

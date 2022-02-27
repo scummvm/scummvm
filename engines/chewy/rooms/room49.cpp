@@ -109,14 +109,14 @@ void Room49::calc_boy_ani() {
 
 	_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 	_G(det)->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_FRONT);
-	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+	_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 }
 
 void Room49::calc_boy() {
 	if (!_G(spieler).R49WegFrei) {
 		hideCur();
 		_G(room)->set_timer_status(255, TIMER_STOP);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		stop_person(P_CHEWY);
 		stop_person(P_HOWARD);
 		_G(person_end_phase)[P_CHEWY] = P_LEFT;
@@ -186,7 +186,7 @@ void Room49::use_boy_cigar() {
 	register_cutscene(17);
 	
 	_G(room)->set_timer_status(255, TIMER_STOP);
-	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+	_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 	_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 	_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
@@ -214,7 +214,7 @@ void Room49::talk_boy() {
 void Room49::talk_boy(int16 aad_nr) {
 	if (!_G(spieler).R49BoyWeg) {
 		_G(room)->set_timer_status(255, TIMER_STOP);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);

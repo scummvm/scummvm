@@ -131,7 +131,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 			_G(det)->hideStaticSpr(16);
 			start_detail_wait(10, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(16);
-			_G(uhr)->reset_timer(_G(timer_nr)[0], 10);
+			_G(uhr)->resetTimer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hideCur();
 			_G(det)->hideStaticSpr(17);
@@ -152,7 +152,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 			}
 
 			showCur();
-			_G(uhr)->reset_timer(_G(timer_nr)[1], 15);
+			_G(uhr)->resetTimer(_G(timer_nr)[1], 15);
 		}
 
 		_G(flags).AutoAniPlay = false;

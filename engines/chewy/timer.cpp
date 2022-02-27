@@ -33,7 +33,7 @@ Timer::Timer(int16 max_t, TimerBlk *t) {
 	_timerMax = max_t;
 	_G(timer_int) = false;
 	_G(timer_suspend) = false;
-	set_all_status(TIMER_STOP);
+	setAllStatus(TIMER_STOP);
 }
 
 Timer::~Timer() {
@@ -48,97 +48,90 @@ float timer_freq[6] = {
 	65520.0f
 };
 
-void Timer::calc_timer() {
-	int16 i;
-	int16 count;
-	int ak_time;
-	float freq;
-	ak_time = _G(timer_count);
-	for (i = 0; i < _timerMax; i++) {
-		if (_timerBlk[i].TimeStatus != TIMER_STOP) {
-			freq = timer_freq[_timerBlk[i].TimeMode];
+void Timer::calcTimer() {
+	int ak_time = _G(timer_count);
+	for (int16 i = 0; i < _timerMax; i++) {
+		if (_timerBlk[i]._timeStatus != TIMER_STOP) {
+			float freq = timer_freq[_timerBlk[i]._timeMode];
 
-			_timerBlk[i].TimeLast = ((float)ak_time - (float)_timerBlk[i].TimeLast);
+			_timerBlk[i]._timeLast = ((float)ak_time - (float)_timerBlk[i]._timeLast);
 
-			count = (int16)((float)_timerBlk[i].TimeLast / (float)freq);
-			if (_timerBlk[i].TimeStatus == TIMER_START)
-				_timerBlk[i].TimeCount += count;
+			int16 count = (int16)((float)_timerBlk[i]._timeLast / (float)freq);
+			if (_timerBlk[i]._timeStatus == TIMER_START)
+				_timerBlk[i]._timeCount += count;
 
-			_timerBlk[i].TimeLast = (float)ak_time - (float)(_timerBlk[i].TimeLast -
+			_timerBlk[i]._timeLast = (float)ak_time - (float)(_timerBlk[i]._timeLast -
 			                        (float)((float)count * (float)freq));
 
-			if (_timerBlk[i].TimeCount >= _timerBlk[i].TimeEnd) {
-				++_timerBlk[i].TimeFlag;
-				_timerBlk[i].TimeCount = 0;
+			if (_timerBlk[i]._timeCount >= _timerBlk[i]._timeEnd) {
+				++_timerBlk[i]._timeFlag;
+				_timerBlk[i]._timeCount = 0;
 			}
 		}
 	}
 }
 
-int16 Timer::set_new_timer(int16 timer_nr, int16 timer_end_wert, int16 timer_mode) {
+int16 Timer::setNewTimer(int16 timerNr, int16 timerEndValue, int16 timerMode) {
 	int16 ret;
-	if (timer_nr < _timerMax) {
-		ret = true;
-		_timerBlk[timer_nr].TimeCount = 0;
-		_timerBlk[timer_nr].TimeEnd = timer_end_wert;
-		_timerBlk[timer_nr].TimeFlag = 0;
-		_timerBlk[timer_nr].TimeLast = _G(timer_count);
-		_timerBlk[timer_nr].TimeMode = timer_mode;
-		_timerBlk[timer_nr].TimeStatus = true;
+	if (timerNr < _timerMax) {
+		ret = 1;
+		_timerBlk[timerNr]._timeCount = 0;
+		_timerBlk[timerNr]._timeEnd = timerEndValue;
+		_timerBlk[timerNr]._timeFlag = 0;
+		_timerBlk[timerNr]._timeLast = _G(timer_count);
+		_timerBlk[timerNr]._timeMode = timerMode;
+		_timerBlk[timerNr]._timeStatus = true;
 	} else
 		ret = -1;
 	return ret;
 }
 
-void Timer::reset_timer(int16 timer_nr, int16 timer_wert) {
-	if (timer_nr < _timerMax) {
-		_timerBlk[timer_nr].TimeCount = 0;
-		_timerBlk[timer_nr].TimeFlag = 0;
-		_timerBlk[timer_nr].TimeLast = _G(timer_count);
-		if (timer_wert)
-			_timerBlk[timer_nr].TimeEnd = timer_wert;
+void Timer::resetTimer(int16 timerNr, int16 timerValue) {
+	if (timerNr < _timerMax) {
+		_timerBlk[timerNr]._timeCount = 0;
+		_timerBlk[timerNr]._timeFlag = 0;
+		_timerBlk[timerNr]._timeLast = _G(timer_count);
+		if (timerValue)
+			_timerBlk[timerNr]._timeEnd = timerValue;
 	}
 }
 
-void Timer::reset_all_timer() {
-	int16 i;
-	for (i = 0; i < _timerMax; i++) {
-		_timerBlk[i].TimeCount = 0;
-		_timerBlk[i].TimeFlag = 0;
-		_timerBlk[i].TimeLast = _G(timer_count);
+void Timer::resetAllTimer() {
+	for (int16 i = 0; i < _timerMax; i++) {
+		_timerBlk[i]._timeCount = 0;
+		_timerBlk[i]._timeFlag = 0;
+		_timerBlk[i]._timeLast = _G(timer_count);
 	}
 }
 
-void Timer::set_status(int16 timer_nr, int16 status) {
-	if (timer_nr < _timerMax) {
-		_timerBlk[timer_nr].TimeStatus = status;
+void Timer::setStatus(int16 timerNr, int16 status) {
+	if (timerNr < _timerMax) {
+		_timerBlk[timerNr]._timeStatus = status;
 	}
 }
 
-void Timer::set_all_status(int16 status) {
-	int16 i;
+void Timer::setAllStatus(int16 status) {
 	if (status == TIMER_FREEZE) {
-		for (i = 0; i < _timerMax; i++) {
-			if (_timerBlk[i].TimeStatus != TIMER_STOP)
-				_timerBlk[i].TimeStatus = TIMER_FREEZE;
+		for (int16 i = 0; i < _timerMax; i++) {
+			if (_timerBlk[i]._timeStatus != TIMER_STOP)
+				_timerBlk[i]._timeStatus = TIMER_FREEZE;
 		}
-	}
-	else if (status == TIMER_UNFREEZE) {
-		for (i = 0; i < _timerMax; i++) {
-			if (_timerBlk[i].TimeStatus != TIMER_STOP)
-				_timerBlk[i].TimeStatus = TIMER_START;
+	} else if (status == TIMER_UNFREEZE) {
+		for (int16 i = 0; i < _timerMax; i++) {
+			if (_timerBlk[i]._timeStatus != TIMER_STOP)
+				_timerBlk[i]._timeStatus = TIMER_START;
 		}
 	} else {
-		for (i = 0; i < _timerMax; i++)
-			_timerBlk[i].TimeStatus = status;
+		for (int16 i = 0; i < _timerMax; i++)
+			_timerBlk[i]._timeStatus = status;
 	}
 }
 
-void Timer::disable_timer() {
+void Timer::disableTimer() {
 	_G(timer_suspend) = true;
 }
 
-void Timer::enable_timer() {
+void Timer::enableTimer() {
 	_G(timer_suspend) = false;
 }
 

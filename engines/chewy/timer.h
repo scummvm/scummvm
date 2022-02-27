@@ -38,31 +38,30 @@ namespace Chewy {
 #define TIMER_UNFREEZE 3
 
 struct TimerBlk {
-	int16 TimeCount;
+	int16 _timeCount;
 
-	int16 TimeEnd;
-	float TimeLast;
-	int16 TimeFlag;
+	int16 _timeEnd;
+	float _timeLast;
+	int16 _timeFlag;
 
-	int16 TimeMode;
+	int16 _timeMode;
 
-	int16 TimeStatus;
+	int16 _timeStatus;
 };
 
 class Timer {
 public:
-	Timer(int16 max_timer, TimerBlk *t);
+	Timer(int16 maxTimer, TimerBlk *t);
 	~Timer();
 
-	void calc_timer();
-	int16 set_new_timer(int16 timer_nr, int16 timer_end_wert,
-	                    int16 timer_mode);
-	void reset_timer(int16 timer_nr, int16 timer_wert);
-	void reset_all_timer();
-	void set_status(int16 timer_nr, int16 status);
-	void set_all_status(int16 status);
-	void disable_timer();
-	void enable_timer();
+	void calcTimer();
+	int16 setNewTimer(int16 timerNr, int16 timerEndValue, int16 timerMode);
+	void resetTimer(int16 timerNr, int16 timerValue);
+	void resetAllTimer();
+	void setStatus(int16 timerNr, int16 status);
+	void setAllStatus(int16 status);
+	void disableTimer();
+	void enableTimer();
 
 private:
 	TimerBlk *_timerBlk;

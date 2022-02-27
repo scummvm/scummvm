@@ -97,7 +97,7 @@ void Room11::bork_zwinkert() {
 		_G(flags).AutoAniPlay = true;
 		_G(det)->hideStaticSpr(8);
 		start_ani_block(2, ABLOCK18);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->showStaticSpr(8);
 		_G(flags).AutoAniPlay = false;
 	}

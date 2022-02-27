@@ -96,7 +96,7 @@ void maus_mov_menu() {
 void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
 	int16 len = 0;
 	for (int16 i = 0; i < txt_anz; i++) {
-		int16 tmp_len = strlen(_G(txt)->str_pos((char *)txt_adr, i));
+		int16 tmp_len = strlen(_G(txt)->strPos((char *)txt_adr, i));
 		if (tmp_len > len)
 			len = tmp_len;
 	}
@@ -209,7 +209,7 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 
 	int16 x_pix = 0;
 	for (int16 i = 0; i < zeilen_anz; i++) {
-		tmp = strlen(_G(txt)->str_pos(text, i));
+		tmp = strlen(_G(txt)->strPos(text, i));
 		if (x_pix < tmp)
 			x_pix = tmp;
 	}

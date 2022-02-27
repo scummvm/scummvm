@@ -111,7 +111,7 @@ bool Room17::timer(int16 t_nr, int16 ani_nr) {
 	if (_G(room)->_roomTimer.ObjNr[ani_nr] == 2 ||
 		_G(room)->_roomTimer.ObjNr[ani_nr] == 3) {
 		if (_G(spieler).R17EnergieOut)
-			_G(uhr)->reset_timer(t_nr, 0);
+			_G(uhr)->resetTimer(t_nr, 0);
 		else
 			return true;
 	}

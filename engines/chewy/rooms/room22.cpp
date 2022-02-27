@@ -131,7 +131,7 @@ void Room22::bork(int16 t_nr) {
 			showCur();
 		}
 
-		_G(uhr)->reset_timer(t_nr, 0);
+		_G(uhr)->resetTimer(t_nr, 0);
 		_G(flags).AutoAniPlay = false;
 	}
 }

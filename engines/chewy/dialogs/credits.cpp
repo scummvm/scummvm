@@ -266,7 +266,7 @@ void Credits::execute() {
 
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hideCur();
-	_G(uhr)->reset_timer(0, 5);
+	_G(uhr)->resetTimer(0, 5);
 }
 
 } // namespace Dialogs
