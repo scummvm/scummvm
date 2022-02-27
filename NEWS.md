@@ -81,6 +81,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      installation.
    - Fixed UI glitches in Serrated Scalpel.
 
+ Titainic:
+   - Fixed not being able to see House in Starfield puzzle.
+
  TwinE:
    - Fixed a bug in the collision code that made the game unfinishable due to the
      tank not moving any further in scene 63.

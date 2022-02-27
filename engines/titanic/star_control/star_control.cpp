@@ -234,7 +234,7 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 
 	case STAR_SET_REFERENCE: {
-		_view.takeCurrentHomePhoto();
+		_view.takeHomePhoto();
 		CPetControl *pet = getPetControl();
 		if (pet)
 			pet->starsSetReference();
