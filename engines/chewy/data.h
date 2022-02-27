@@ -39,10 +39,7 @@ public:
 	uint16 select_pool_item(Stream *stream, uint16 nr);
 	uint32 load_tmf(Stream *stream, TmfHeader *song);
 
-	uint32 size(const char *fname, int16 typ);
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
-
-	short get_id(char *id_code);
 	void fcopy(const char *d_fname, const char *s_fname);
 };
 
