@@ -188,7 +188,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_shoots.clear();
 	_skipLevel = false;
 
-	MVideo background = MVideo(arc->backgroundVideo, Common::Point(0, 0), false, false, false);
+	Common::Point offset;
+	MVideo background = MVideo(arc->backgroundVideo, offset, false, false, false);
 
 	changeCursor("arcade");
 	playVideo(background);
@@ -262,6 +263,22 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			case Common::EVENT_MOUSEMOVE:
 				drawCursorArcade(mousePos);
+				if (mousePos.x <= 100 && offset.x < 0) {
+					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+						if (it->video && it->video->decoder)
+							it->video->position.x = it->video->position.x + 1;
+					}
+					offset.x = offset.x + 1;
+					needsUpdate = true;
+				} else if (mousePos.x >= 300 && offset.x > 320 - background.decoder->getWidth()) {
+					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+						if (it->video && it->video->decoder)
+							it->video->position.x = it->video->position.x - 1;
+					}
+					offset.x = offset.x - 1;
+					needsUpdate = true;
+				}
+				background.position = offset;
 				break;
 
 			default:
@@ -382,7 +399,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							loadPalette((byte *) &p, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
 						} else {
-							s.video = new MVideo(it->animation, it->position, true, false, false);
+							s.video = new MVideo(it->animation, offset + it->position, true, false, false);
 							playVideo(*s.video);
 							s.video->decoder->decodeNextFrame(); // Make sure the palette is loaded
 							if (s.attackFrames.size() == 0) {
