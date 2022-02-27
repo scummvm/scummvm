@@ -90,10 +90,7 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 			--numBytesMax;
 			if (*str == 0 || *str == 3 || *str == 9 || *str == 1 || *str == 2)
 				return width;
-			// No handling for this, we shouldn't arrive here. FT still has the
-			// type 10 commmands for actor speech, but we should have handled them
-			// already...
-			assert(0);
+
 		} else if (*str != '\r' && !(_newStyle && *str == _lineBreakMarker)) {
 			width += _gr->getCharWidth((uint8)*str);
 		}
@@ -257,15 +254,13 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	Common::String spaceSeparators(Common::String::format(" %c", (char)_lineBreakMarker));
 	Common::String breakSeparators(Common::String::format(" \n%c", (char)_lineBreakMarker));
 
-	// This wouldn't work properly (at least not without careful extra work) with old style escape codes.
-	// I doubt very much that any SCUMM7 game would have them, since they don't always work properly when
-	// combined with speech playback and they also would be difficult to maintain with language bundles.
-	// Let's check for these, so I'll definitely notice during my tests...
+	// We have already handled the escape codes used by FT and DIG (demo),
+	// so the following assertion is there just for good measure.
 	if (!_newStyle) {
 		Common::String invalidChars("@\xff\x03\x09\x01\x02\x08");
-		for (int i = 0; i < len; ++i)
-			if (invalidChars.contains(str[i]))
-				assert(true == false);
+		for (int i = 0; i < len; ++i) {
+			assert(!invalidChars.contains(str[i]));
+		}
 	}
 
 	int16 substrByteLength[SCUMM7_MAX_STRINGS];
