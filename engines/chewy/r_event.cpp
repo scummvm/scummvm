@@ -1019,6 +1019,36 @@ void flic_cut(int16 nr) {
 			_G(currentSong) = -1;
 			break;
 
+		case FCUT_068:
+#ifndef NEW_VIDEO_CODE
+			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
+			_G(flc)->set_flic_user_function(Room51::cut_serv);
+			_G(flc)->custom_play(&_G(Ci));
+			_G(flc)->remove_flic_user_function();
+#else
+			g_engine->_video->playVideo(nr);
+#endif
+
+		case FCUT_069:
+#ifndef NEW_VIDEO_CODE
+			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
+			_G(flc)->set_flic_user_function(Room54::cut_serv);
+			_G(flc)->custom_play(&_G(Ci));
+			_G(flc)->remove_flic_user_function();
+#else
+			g_engine->_video->playVideo(nr);
+#endif
+
+		case FCUT_070:
+#ifndef NEW_VIDEO_CODE
+			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
+			_G(flc)->set_flic_user_function(Room55::cut_serv);
+			_G(flc)->custom_play(&_G(Ci));
+			_G(flc)->remove_flic_user_function();
+#else
+			g_engine->_video->playVideo(nr);
+#endif
+
 		case FCUT_071:
 			_G(sndPlayer)->stopMod();
 			_G(currentSong) = -1;
