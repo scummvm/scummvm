@@ -101,7 +101,7 @@ public:
 	void calc_invent(RaumBlk *Rb, Spieler *player);
 
 	RaumTimer _roomTimer;
-	RaumInfo *_roomInfo;
+	RoomInfo *_roomInfo;
 	GedChunkHeader _gedInfo[MAX_ABLAGE];
 	int16 _gedXAnz[MAX_ABLAGE];
 	int16 _gedYAnz[MAX_ABLAGE];

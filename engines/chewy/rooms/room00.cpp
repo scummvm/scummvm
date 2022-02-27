@@ -191,7 +191,7 @@ void Room0::eyeAnim() {
 }
 
 void Room0::eyeStart(EyeMode mode) {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
 	if (mode == EYE_START)
 		adi->ani_count = adi->start_ani;
 	else
@@ -265,7 +265,7 @@ void Room0::eyeStart(EyeMode mode) {
 }
 
 void Room0::eyeWait() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
 	adi->ani_count = 39;
 	adi->delay_count = 15;
 	_G(flags).AniUserAction = true;
@@ -325,7 +325,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 }
 
 void Room0::eyeShoot() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
 	adi->ani_count = 47;
 
 	bool ende = false;
@@ -376,7 +376,7 @@ void Room0::eyeShoot() {
 }
 
 void Room0::eyeSlimeBack() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
 	adi->ani_count = 53;
 
 	bool ende = false;
@@ -416,7 +416,7 @@ void Room0::eyeSlimeBack() {
 }
 
 void Room0::checkSlimeEye() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(CH_WIRFT_SCHLEIM);
+	AniDetailInfo *adi = _G(det)->getAniDetail(CH_WIRFT_SCHLEIM);
 	adi->ani_count = adi->start_ani;
 	if (adi->load_flag) {
 		_G(det)->load_taf_seq(adi->start_ani, (adi->end_ani - adi->start_ani) + 1, nullptr);
@@ -452,7 +452,7 @@ void Room0::checkSlimeEye() {
 }
 
 void Room0::feederStart(int16 mode) {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
 	if (!mode)
 		adi->ani_count = adi->start_ani;
 	else
@@ -563,7 +563,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 }
 
 void Room0::checkFeed() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
 	adi->ani_count = 136;
 
 	int16 i = 152;
@@ -657,7 +657,7 @@ void Room0::checkFeed() {
 }
 
 void Room0::checkPillow() {
-	AniDetailInfo *adi = _G(det)->get_ani_detail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
 	adi->ani_count = 161;
 
 	bool ende = false;

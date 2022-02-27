@@ -322,8 +322,8 @@ void enter_room(int16 eib_nr) {
 
 	_G(flags).ZoomMov = false;
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)_G(room)->_roomInfo->ZoomFak;
-	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)_G(room)->_roomInfo->ZoomFak;
+	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)_G(room)->_roomInfo->_zoomFactor;
+	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)_G(room)->_roomInfo->_zoomFactor;
 
 	_G(uhr)->reset_timer(0, 0);
 	_G(flags).AutoAniPlay = false;
@@ -1034,7 +1034,7 @@ void flic_cut(int16 nr) {
 #else
 			g_engine->_video->playVideo(nr);
 #endif
-
+			break;
 		case FCUT_083:
 		case 1083:
 			for (i = 0; i < 2 && ret != -1; ++i) {

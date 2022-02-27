@@ -119,7 +119,7 @@ void Room45::setup_func() {
 							_G(det)->stop_detail(3 + i);
 						}
 					}
-					_G(det)->set_detail_pos(3 + i, x, y);
+					_G(det)->setSetailPos(3 + i, x, y);
 				} else {
 					++_G(r45_pinfo)[i][2];
 
@@ -132,7 +132,7 @@ void Room45::setup_func() {
 						} else {
 							x = 0;
 						}
-						_G(det)->set_detail_pos(3 + i, x, y);
+						_G(det)->setSetailPos(3 + i, x, y);
 						_G(det)->start_detail(3 + i, 255, ANI_FRONT);
 					}
 				}

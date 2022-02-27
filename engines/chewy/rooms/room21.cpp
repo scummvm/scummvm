@@ -194,7 +194,7 @@ void Room21::chewy_kolli() {
 		_G(flags).AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
-		_G(det)->set_detail_pos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		start_detail_wait(ani_nr, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
@@ -212,7 +212,7 @@ void Room21::salto() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
-			_G(det)->set_detail_pos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
+			_G(det)->setSetailPos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
 				_G(spieler_vector)[P_CHEWY].Xypos[1]);
 		}
 

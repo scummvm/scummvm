@@ -80,7 +80,7 @@ void Room97::entry() {
 	}
 
 	if (_G(spieler).flags36_20) {
-		_G(det)->set_detail_pos(27, 272, 110);
+		_G(det)->setSetailPos(27, 272, 110);
 		for (int i = 0; i < 2; ++i) {
 			_G(det)->stop_detail(23 + i);
 			_G(det)->start_detail(27 + i, 255, ANI_FRONT);
@@ -192,7 +192,7 @@ void Room97::setup_func() {
 
 		_G(det)->setStaticPos(16, 699, _word18DB38, false, false);
 		if (_G(spieler).flags36_10) {
-			_G(det)->set_detail_pos(12, _word18DB34, _word18DB36);
+			_G(det)->setSetailPos(12, _word18DB34, _word18DB36);
 		} else {
 			_G(det)->setStaticPos(14, _word18DB34, _word18DB36, false, false);
 		}
@@ -511,7 +511,7 @@ int Room97::proc8() {
 		_G(det)->stop_detail(27);
 		_G(spieler).flags36_20 = true;
 		_G(det)->start_detail(28, 255, false);
-		_G(det)->set_detail_pos(27, 272, 110);
+		_G(det)->setSetailPos(27, 272, 110);
 		_G(det)->start_detail(27, 255, false);
 		_G(atds)->set_steuer_bit(533, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_steuer_bit(534, ATS_AKTIV_BIT, ATS_DATEI);

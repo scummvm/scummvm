@@ -102,7 +102,7 @@ void Room13::talk_bork() {
 		_G(spieler).R13BorkOk = true;
 		_G(spieler).R12ChewyBork = false;
 		_G(det)->showStaticSpr(13);
-		_G(det)->set_detail_pos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		_G(det)->setSetailPos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		_G(det)->setStaticPos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);

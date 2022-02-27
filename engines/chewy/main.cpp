@@ -241,7 +241,7 @@ void showCur() {
 }
 
 void menuEntry() {
-	_G(det)->freeze_ani();
+	_G(det)->freezeAni();
 	_G(uhr)->set_all_status(TIMER_FREEZE);
 }
 

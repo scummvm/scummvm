@@ -118,7 +118,7 @@ void Room12::init_bork() {
 			_G(mov_phasen)[R12_BORK_OBJ].AtsText = 120;
 			_G(mov_phasen)[R12_BORK_OBJ].Lines = 5;
 			_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
-			_G(mov_phasen)[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->ZoomFak + 20;
+			_G(mov_phasen)[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->_zoomFactor + 20;
 			_G(auto_mov_obj)[R12_BORK_OBJ].Id = AUTO_OBJ0;
 			_G(auto_mov_vector)[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
 			_G(auto_mov_obj)[R12_BORK_OBJ].Mode = true;
@@ -169,7 +169,7 @@ void Room12::bork_ok() {
 	wait_auto_obj(R12_BORK_OBJ);
 
 	_G(spieler).R12BorkInRohr = true;
-	_G(det)->set_detail_pos(3, 170, 145);
+	_G(det)->setSetailPos(3, 170, 145);
 	_G(det)->start_detail(3, 255, ANI_FRONT);
 	start_aad_wait(57, -1);
 	_G(det)->stop_detail(3);
