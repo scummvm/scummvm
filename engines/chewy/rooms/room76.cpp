@@ -54,7 +54,7 @@ void Room76::entry() {
 	} else {
 		_G(det)->del_static_ani(2);
 		for (int i = 0; i < 3; ++i)
-			_G(det)->hide_static_spr(8 + i);
+			_G(det)->hideStaticSpr(8 + i);
 
 		_G(atds)->set_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATEI);
@@ -140,7 +140,7 @@ void Room76::proc5() {
 	_G(flags).NoScroll = false;
 	wait_show_screen(15);
 	autoMove(5, P_CHEWY);
-	_G(det)->hide_static_spr(10);
+	_G(det)->hideStaticSpr(10);
 	_G(det)->start_detail(13, 1, false);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	goAutoXy(669, 127, P_CHEWY, ANI_WAIT);
@@ -202,7 +202,7 @@ int Room76::proc7() {
 		_G(det)->set_static_ani(2, -1);
 
 		for (int i = 0; i < 3; ++i)
-			_G(det)->show_static_spr(8 + i);
+			_G(det)->showStaticSpr(8 + i);
 
 		start_aad_wait(427, -1);
 		showCur();

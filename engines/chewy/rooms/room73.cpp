@@ -43,7 +43,7 @@ void Room73::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
 	if (_G(spieler).flags28_20)
-		_G(det)->show_static_spr(3+ (_G(spieler).R63Feuer ? 1 : 0)); // flags25_40
+		_G(det)->showStaticSpr(3+ (_G(spieler).R63Feuer ? 1 : 0)); // flags25_40
 
 	if (_G(flags).LoadGame)
 		return;
@@ -90,7 +90,7 @@ int Room73::proc1() {
 	_G(atds)->del_steuer_bit(433, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->del_steuer_bit(432, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->set_ats_str(430, 1, ATS_DATEI);
-	_G(det)->show_static_spr(3);
+	_G(det)->showStaticSpr(3);
 	showCur();
 
 	return 1;	
@@ -104,8 +104,8 @@ int Room73::proc2() {
 	_G(spieler).flags28_40 = true;
 	autoMove(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(det)->hide_static_spr(3);
-	_G(det)->hide_static_spr(4);
+	_G(det)->hideStaticSpr(3);
+	_G(det)->hideStaticSpr(4);
 	_G(atds)->set_steuer_bit(433, ATS_AKTIV_BIT, ATS_DATEI);
 	new_invent_2_cur(99);
 	showCur();

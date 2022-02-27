@@ -50,8 +50,8 @@ void Room63::entry() {
 		_G(det)->start_detail(10, 255, ANI_FRONT);
 		showCur();
 	} else if (!_G(spieler).R63Feuer) {
-		_G(det)->show_static_spr(10);
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(10);
+		_G(det)->showStaticSpr(12);
 	} else if (_G(spieler).R62LauraVerwandlung) {
 		_G(atds)->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(SetUpScreenFunc) = setup_func;
@@ -142,7 +142,7 @@ void Room63::bork_platt() {
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	start_aad_wait(370, -1);
 	start_detail_wait(4, 1, ANI_FRONT);
-	_G(det)->show_static_spr(13);
+	_G(det)->showStaticSpr(13);
 	start_aad_wait(361, -1);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
@@ -159,11 +159,11 @@ void Room63::talk_hunter() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
-		_G(det)->hide_static_spr(10);
+		_G(det)->hideStaticSpr(10);
 	_G(det)->start_detail(10, 255, ANI_FRONT);
 	start_aad_wait(356, -1);
 	if (_G(spieler).R63Uhr) {
-		_G(det)->show_static_spr(10);
+		_G(det)->showStaticSpr(10);
 		_G(det)->stop_detail(10);
 	}
 	showCur();
@@ -173,13 +173,13 @@ void Room63::talk_regie() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
-		_G(det)->hide_static_spr(12);
+		_G(det)->hideStaticSpr(12);
 	_G(det)->stop_detail(18);
 	_G(det)->start_detail(19, 255, ANI_FRONT);
 	start_aad_wait(357, -1);
 	_G(det)->stop_detail(19);
 	if (_G(spieler).R63Uhr) {
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(12);
 	} else {
 		_G(det)->start_detail(18, 255, ANI_FRONT);
 	}
@@ -228,15 +228,15 @@ int16 Room63::use_schalter() {
 				hideCur();
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
-				_G(det)->show_static_spr(2);
+				_G(det)->showStaticSpr(2);
 				set_person_spr(P_LEFT, P_CHEWY);
 				start_detail_wait(21, 1, ANI_FRONT);
-				_G(det)->show_static_spr(14);
+				_G(det)->showStaticSpr(14);
 				wait_show_screen(18);
-				_G(det)->hide_static_spr(14);
+				_G(det)->hideStaticSpr(14);
 				start_detail_wait(24, 1, ANI_FRONT);
-				_G(det)->show_static_spr(1);
-				_G(det)->hide_static_spr(2);
+				_G(det)->showStaticSpr(1);
+				_G(det)->hideStaticSpr(2);
 				start_aad_wait(364, -1);
 				_G(atds)->set_ats_str(385, 1, ATS_DATEI);
 				showCur();
@@ -279,8 +279,8 @@ int16 Room63::use_girl() {
 		_G(spieler).R63Uhr = true;
 		_G(det)->stop_detail(10);
 		_G(det)->stop_detail(18);
-		_G(det)->show_static_spr(10);
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(10);
+		_G(det)->showStaticSpr(12);
 		_G(atds)->set_ats_str(381, 1, ATS_DATEI);
 		_G(atds)->set_ats_str(382, 1, ATS_DATEI);
 		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATEI);
@@ -307,8 +307,8 @@ int16 Room63::use_aschenbecher() {
 				_G(det)->start_detail(20, 255, ANI_FRONT);
 				_G(det)->start_detail(10, 255, ANI_FRONT);
 				_G(det)->start_detail(18, 255, ANI_FRONT);
-				_G(det)->hide_static_spr(10);
-				_G(det)->hide_static_spr(12);
+				_G(det)->hideStaticSpr(10);
+				_G(det)->hideStaticSpr(12);
 				start_aad_wait(368, -1);
 				flic_cut(FCUT_080);
 				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);

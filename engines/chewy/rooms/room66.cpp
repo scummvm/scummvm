@@ -39,8 +39,8 @@ void Room66::entry(int16 eib_nr) {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	if (!_G(spieler).flags26_4) {
-		_G(det)->show_static_spr(4);
-		_G(det)->show_static_spr(8);
+		_G(det)->showStaticSpr(4);
+		_G(det)->showStaticSpr(8);
 		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(spieler).flags26_4 = true;
@@ -54,9 +54,9 @@ void Room66::entry(int16 eib_nr) {
 		start_aad_wait(403, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(0, 1, ANI_FRONT);
-		_G(det)->show_static_spr(14);
+		_G(det)->showStaticSpr(14);
 		wait_show_screen(15);
-		_G(det)->hide_static_spr(14);
+		_G(det)->hideStaticSpr(14);
 		start_detail_wait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler).PersonHide[P_CHEWY] = false;

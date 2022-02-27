@@ -62,16 +62,16 @@ void Room80::entry() {
 	_G(zoom_horizont) = 0;
 
 	if (_G(spieler).r88DestRoom == 84)
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 	else
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 
 	_G(SetUpScreenFunc) = setup_func;
 }
 
 void Room80::setup_func() {
 	for (int i = 0; i < 3; ++i)
-		_G(det)->hide_static_spr(i);
+		_G(det)->hideStaticSpr(i);
 
 	if (_G(spieler).flags32_1 || !_G(flags).ShowAtsInvTxt || _G(menu_display))
 		return;
@@ -88,7 +88,7 @@ void Room80::setup_func() {
 			return;
 	}
 
-	_G(det)->show_static_spr(vec);
+	_G(det)->showStaticSpr(vec);
 	if (!_G(maus_links_click))
 		return;
 
@@ -115,7 +115,7 @@ void Room80::setup_func() {
 		return;
 
 	_G(SetUpScreenFunc) = nullptr;
-	_G(det)->hide_static_spr(vec);
+	_G(det)->hideStaticSpr(vec);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	_G(spieler).flags30_1 = true;

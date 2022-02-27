@@ -145,10 +145,10 @@ int Room94::giveGhostBottle() {
 	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(541, -1);
 	_G(det)->stop_detail(5);
-	_G(det)->show_static_spr(5);
+	_G(det)->showStaticSpr(5);
 	Room66::proc8(3, 3, 2, 617);
 	hideCur();
-	_G(det)->hide_static_spr(5);
+	_G(det)->hideStaticSpr(5);
 	_G(det)->start_detail(5, 255, false);
 	start_aad_wait(622, -1);
 	_G(det)->stop_detail(5);

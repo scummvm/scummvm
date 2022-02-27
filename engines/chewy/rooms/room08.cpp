@@ -129,7 +129,7 @@ bool Room8::gips_wurf() {
 		start_detail_frame(5, 1, ANI_FRONT, 16);
 		start_detail_wait(6, 1, ANI_FRONT);
 		_G(obj)->show_sib(33);
-		_G(det)->show_static_spr(14);
+		_G(det)->showStaticSpr(14);
 		wait_detail(5);
 		_G(spieler).R8GipsWurf = true;
 		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
@@ -153,11 +153,11 @@ bool Room8::gips_wurf() {
 
 void Room8::open_gdoor() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(det)->show_static_spr(17);
+	_G(det)->showStaticSpr(17);
 	set_up_screen(DO_SETUP);
 	start_detail_wait(7, 1, ANI_FRONT);
-	_G(det)->show_static_spr(15);
-	_G(det)->hide_static_spr(17);
+	_G(det)->showStaticSpr(15);
+	_G(det)->hideStaticSpr(17);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	set_person_pos(204, 274, P_CHEWY, P_LEFT);
 	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATEI);

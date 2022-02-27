@@ -92,20 +92,20 @@ void Room18::entry() {
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).R18CartTerminal)
-		_G(det)->show_static_spr(23);
+		_G(det)->showStaticSpr(23);
 
 	if (!_G(spieler).R18SurimyWurf) {
 		init_borks();
 	} else {
 		for (int16 i = 0; i < 5; i++)
-			_G(det)->hide_static_spr(BORK_SPR[i]);
+			_G(det)->hideStaticSpr(BORK_SPR[i]);
 
 		for (int16 i = 0; i < (4 - (_G(spieler).R18Krone ? 1 : 0)); i++)
-			_G(det)->show_static_spr(BORK_SPR1[i]);
+			_G(det)->showStaticSpr(BORK_SPR1[i]);
 	}
 
 	if (_G(spieler).R16F5Exit)
-		_G(det)->hide_static_spr(19);
+		_G(det)->hideStaticSpr(19);
 	
 	if (_G(spieler).R17EnergieOut) {
 		_G(det)->stop_detail(0);
@@ -128,25 +128,25 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 		_G(flags).AutoAniPlay = true;
 
 		if (t_nr == _G(timer_nr)[0]) {
-			_G(det)->hide_static_spr(16);
+			_G(det)->hideStaticSpr(16);
 			start_detail_wait(10, 1, ANI_FRONT);
-			_G(det)->show_static_spr(16);
+			_G(det)->showStaticSpr(16);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hideCur();
-			_G(det)->hide_static_spr(17);
+			_G(det)->hideStaticSpr(17);
 			start_detail_wait(9, 1, ANI_FRONT);
-			_G(det)->show_static_spr(17);
+			_G(det)->showStaticSpr(17);
 
 			if (!_G(spieler).R18SondeMoni) {
 				_G(spieler).R18SondeMoni = true;
 				start_detail_wait(2, 1, ANI_FRONT);
-				_G(det)->show_static_spr(9);
+				_G(det)->showStaticSpr(9);
 				start_detail_wait(4, 1, ANI_FRONT);
-				_G(det)->show_static_spr(11);
+				_G(det)->showStaticSpr(11);
 				wait_show_screen(50);
-				_G(det)->hide_static_spr(9);
-				_G(det)->hide_static_spr(11);
+				_G(det)->hideStaticSpr(9);
+				_G(det)->hideStaticSpr(11);
 			} else {
 				monitor();
 			}
@@ -171,10 +171,10 @@ void Room18::gedAction(int index) {
 
 void Room18::init_borks() {
 	for (int16 i = 0; i < 5; i++)
-		_G(det)->show_static_spr(BORK_SPR[i]);
+		_G(det)->showStaticSpr(BORK_SPR[i]);
 	
 	for (int16 i = 0; i < 4; i++)
-		_G(det)->hide_static_spr(BORK_SPR1[i]);
+		_G(det)->hideStaticSpr(BORK_SPR1[i]);
 
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 	_G(timer_nr)[1] = _G(room)->set_timer(255, 15);
@@ -207,16 +207,16 @@ int16 Room18::sonden_moni() {
 		hideCur();
 		autoMove(8, P_CHEWY);
 		start_detail_wait(3, 1, ANI_FRONT);
-		_G(det)->show_static_spr(10);
+		_G(det)->showStaticSpr(10);
 		start_ani_block(3, ABLOCK20);
 
 		for (int16 i = 0; i < 3; i++)
-			_G(det)->show_static_spr(i + 12);
+			_G(det)->showStaticSpr(i + 12);
 
 		wait_show_screen(40);
 
 		for (int16 i = 0; i < 5; i++)
-			_G(det)->hide_static_spr(i + 10);
+			_G(det)->hideStaticSpr(i + 10);
 
 		showCur();
 	}
@@ -267,20 +267,20 @@ int16 Room18::calc_surimy() {
 		start_detail_frame(21, 1, ANI_FRONT, 14);
 		_G(det)->start_detail(22, 1, ANI_FRONT);
 		wait_detail(21);
-		_G(det)->set_static_pos(26, 392, 170, false, true);
-		_G(det)->show_static_spr(26);
+		_G(det)->setStaticPos(26, 392, 170, false, true);
+		_G(det)->showStaticSpr(26);
 
-		_G(det)->hide_static_spr(24);
+		_G(det)->hideStaticSpr(24);
 		start_ani_block(2, ABLOCK22);
-		_G(det)->show_static_spr(20);
+		_G(det)->showStaticSpr(20);
 
 		for (int16 i = 0; i < 3; i++)
-			_G(det)->hide_static_spr(i + 15);
+			_G(det)->hideStaticSpr(i + 15);
 
 		start_ani_block(2, ABLOCK23);
-		_G(det)->show_static_spr(18);
-		_G(det)->show_static_spr(19);
-		_G(det)->hide_static_spr(26);
+		_G(det)->showStaticSpr(18);
+		_G(det)->showStaticSpr(19);
+		_G(det)->hideStaticSpr(26);
 
 		_G(flags).NoScroll = true;
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
@@ -293,14 +293,14 @@ int16 Room18::calc_surimy() {
 		start_detail_frame(21, 1, ANI_FRONT, 14);
 		_G(det)->start_detail(22, 1, ANI_FRONT);
 		wait_detail(21);
-		_G(det)->set_static_pos(26, 143, 170, false, true);
-		_G(det)->show_static_spr(26);
+		_G(det)->setStaticPos(26, 143, 170, false, true);
+		_G(det)->showStaticSpr(26);
 
-		_G(det)->hide_static_spr(25);
+		_G(det)->hideStaticSpr(25);
 		start_ani_block(2, ABLOCK24);
-		_G(det)->show_static_spr(21);
+		_G(det)->showStaticSpr(21);
 
-		_G(det)->hide_static_spr(26);
+		_G(det)->hideStaticSpr(26);
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
@@ -354,12 +354,12 @@ short Room18::use_cart_moni() {
 
 		if (!_G(spieler).R18CartTerminal) {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATEI);
-			_G(det)->hide_static_spr(23);
+			_G(det)->hideStaticSpr(23);
 			start_detail_wait(20, 1, ANI_BACK);
 		} else {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATEI);
 			start_detail_wait(20, 1, ANI_FRONT);
-			_G(det)->show_static_spr(23);
+			_G(det)->showStaticSpr(23);
 
 			if (_G(spieler).R18CartFach) {
 				_G(spieler).R18CartSave = true;

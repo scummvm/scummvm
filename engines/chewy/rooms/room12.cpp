@@ -72,7 +72,7 @@ void Room12::entry() {
 		hideCur();
 
 		for (int16 i = 7; i < 10; i++)
-			_G(det)->show_static_spr(i);
+			_G(det)->showStaticSpr(i);
 
 		_G(flags).NoScroll = true;
 		auto_scroll(60, 0);
@@ -80,7 +80,7 @@ void Room12::entry() {
 		_G(flags).NoScroll = false;
 
 		for (int16 i = 7; i < 10; i++)
-			_G(det)->hide_static_spr(i);
+			_G(det)->hideStaticSpr(i);
 
 		_G(obj)->show_sib(SIB_TALISMAN_R12);
 		_G(obj)->calc_rsi_flip_flop(SIB_TALISMAN_R12);
@@ -93,7 +93,7 @@ void Room12::entry() {
 	} else if (_G(spieler).R12Talisman && !_G(spieler).R12BorkInRohr)
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
 	else if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk)
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(12);
 }
 
 bool Room12::timer(int16 t_nr, int16 ani_nr) {
@@ -178,10 +178,10 @@ void Room12::bork_ok() {
 	_G(mov_phasen)[R12_BORK_OBJ].Lines = 3;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 3, (const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
-	_G(det)->hide_static_spr(10);
+	_G(det)->hideStaticSpr(10);
 	start_detail_wait(4, 1, ANI_FRONT);
 	_G(talk_hide_static) = -1;
-	_G(det)->show_static_spr(12);
+	_G(det)->showStaticSpr(12);
 	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
@@ -209,7 +209,7 @@ int16 Room12::use_terminal() {
 				load_chewy_taf(CHEWY_BORK);
 				_G(flags).NoScroll = false;
 				_G(atds)->set_ats_str(118, 0, ATS_DATEI);
-				_G(det)->hide_static_spr(12);
+				_G(det)->hideStaticSpr(12);
 				_G(menu_item) = CUR_WALK;
 				cursorChoice(_G(menu_item));
 				set_person_pos(108, 90, P_CHEWY, -1);

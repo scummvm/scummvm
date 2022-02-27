@@ -62,12 +62,12 @@ void Room37::entry() {
 	}
 
 	if (_G(spieler).R37Gebiss) {
-		_G(det)->hide_static_spr(9);
+		_G(det)->hideStaticSpr(9);
 
 		if (_G(spieler).R37Kloppe) {
-			_G(det)->hide_static_spr(8);
+			_G(det)->hideStaticSpr(8);
 		} else if (_G(spieler).R37HundScham) {
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 		}
 	}
 }
@@ -138,7 +138,7 @@ int16 Room37::cut_serv1(int16 frame) {
 		if (!_G(spieler).R37Gebiss) {
 			_G(det)->plot_static_details(scrollx, scrolly, 9, 9);
 			_G(det)->plot_static_details(scrollx, scrolly, 11, 11);
-			_G(det)->show_static_spr(11);
+			_G(det)->showStaticSpr(11);
 		} else {
 			_G(det)->plot_static_details(scrollx, scrolly, 8, 8);
 			_G(det)->plot_static_details(scrollx, scrolly, 0, 0);
@@ -153,8 +153,8 @@ int16 Room37::cut_serv1(int16 frame) {
 int16 Room37::cut_serv2(int16 frame) {
 	static const int16 STATIC_NR[] = { 7, 14, 12, 10 };
 
-	_G(det)->show_static_spr(12);
-	_G(det)->show_static_spr(10);
+	_G(det)->showStaticSpr(12);
+	_G(det)->showStaticSpr(10);
 	for (short i = 0; i < 4; i++)
 		_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
 
@@ -178,7 +178,7 @@ int16 Room37::use_glas() {
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
-			_G(det)->hide_static_spr(9);
+			_G(det)->hideStaticSpr(9);
 			_G(atds)->set_ats_str(250, 1, ATS_DATEI);
 			_G(atds)->set_ats_str(256, 1, ATS_DATEI);
 			_G(atds)->del_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
@@ -216,7 +216,7 @@ void Room37::dog_bell() {
 			_G(det)->stop_detail(3);
 			_G(det)->del_static_ani(3);
 			start_detail_wait(5, 1, ANI_FRONT);
-			_G(det)->hide_static_spr(9);
+			_G(det)->hideStaticSpr(9);
 			start_detail_wait(6, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			_G(det)->start_detail(11, 255, ANI_FRONT);
@@ -225,7 +225,7 @@ void Room37::dog_bell() {
 			_G(det)->stop_detail(11);
 			set_person_pos(326, 85, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			_G(det)->show_static_spr(9);
+			_G(det)->showStaticSpr(9);
 			start_ani_block(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
@@ -247,7 +247,7 @@ void Room37::dog_bell() {
 			_G(spieler).scrollx = 104;
 			flic_cut(FCUT_054);
 			register_cutscene(10);
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 
 			_G(spieler).R37HundScham = true;
 			dia_nr = 148;
@@ -315,7 +315,7 @@ void Room37::use_hahn() {
 			}
 
 			_G(det)->start_detail(4, 1, ANI_FRONT);
-			_G(det)->hide_static_spr(0);
+			_G(det)->hideStaticSpr(0);
 			_G(det)->start_detail(10, 10, ANI_FRONT);
 			autoMove(8, P_CHEWY);
 			flic_cut(FCUT_053);
@@ -326,7 +326,7 @@ void Room37::use_hahn() {
 			_G(atds)->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(atds)->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATEI);
 			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATEI);
-			_G(det)->hide_static_spr(8);
+			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(141, -1);
 			_G(obj)->addInventory(EIER_INV, &_G(room_blk));

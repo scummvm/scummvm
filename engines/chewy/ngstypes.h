@@ -35,13 +35,13 @@ namespace Chewy {
 struct TafInfo {
 	int16 anzahl = 0;
 	byte *palette = nullptr;
-	int16 *korrektur = nullptr;
+	int16 *_correction = nullptr;
 	byte **image = nullptr;
 };
 
 struct TafSeqInfo {
 	int16 anzahl = 0;
-	int16 *korrektur = nullptr;
+	int16 *_correction = nullptr;
 	byte **image = nullptr;
 };
 

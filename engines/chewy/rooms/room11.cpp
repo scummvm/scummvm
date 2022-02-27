@@ -67,7 +67,7 @@ void Room11::entry() {
 			start_aad_wait(31, -1);
 			_G(det)->stop_detail(9);
 		}
-		_G(det)->show_static_spr(8);
+		_G(det)->showStaticSpr(8);
 		if (!_G(flags).LoadGame)
 			autoMove(6, P_CHEWY);
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
@@ -95,10 +95,10 @@ void Room11::gedAction(int index) {
 void Room11::bork_zwinkert() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
-		_G(det)->hide_static_spr(8);
+		_G(det)->hideStaticSpr(8);
 		start_ani_block(2, ABLOCK18);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
-		_G(det)->show_static_spr(8);
+		_G(det)->showStaticSpr(8);
 		_G(flags).AutoAniPlay = false;
 	}
 }
@@ -121,11 +121,11 @@ void Room11::chewy_bo_use() {
 		_G(flags).AutoAniPlay = true;
 
 		stop_person(P_CHEWY);
-		_G(det)->hide_static_spr(8);
+		_G(det)->hideStaticSpr(8);
 		start_ani_block(2, ABLOCK17);
 		start_aad_wait(32, -1);
 		_G(det)->stop_detail(9);
-		_G(det)->show_static_spr(8);
+		_G(det)->showStaticSpr(8);
 		autoMove(6, P_CHEWY);
 
 		_G(flags).AutoAniPlay = false;

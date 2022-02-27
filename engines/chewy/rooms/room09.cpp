@@ -51,17 +51,17 @@ void Room9::entry() {
 	if (!_G(spieler).R9Gitter)
 		set_person_pos(138, 91, P_CHEWY, P_LEFT);
 	else
-		_G(det)->show_static_spr(5);
+		_G(det)->showStaticSpr(5);
 
 	if (_G(spieler).R9Surimy) {
-		_G(det)->hide_static_spr(4);
+		_G(det)->hideStaticSpr(4);
 		_G(room)->set_timer_status(7, TIMER_STOP);
 	}
 }
 
 void Room9::gtuer() {
 	_G(spieler).R9Gitter = true;
-	_G(det)->show_static_spr(5);
+	_G(det)->showStaticSpr(5);
 	start_detail_wait(6, 1, ANI_FRONT);
 	set_person_pos(74, 93, P_CHEWY, P_LEFT);
 	_G(atds)->del_steuer_bit(74, ATS_AKTIV_BIT, ATS_DATEI);
@@ -77,7 +77,7 @@ void Room9::surimy() {
 	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 	stop_person(P_CHEWY);
 	_G(atds)->set_steuer_bit(75, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(det)->hide_static_spr(4);
+	_G(det)->hideStaticSpr(4);
 	_G(room)->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
@@ -106,7 +106,7 @@ void Room9::surimy_ani() {
 	wait_detail(0);
 	start_detail_wait(1, 1, ANI_FRONT);
 	start_spz(CH_EKEL, 2, ANI_FRONT, P_CHEWY);
-	_G(det)->hide_static_spr(4);
+	_G(det)->hideStaticSpr(4);
 	_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 	wait_auto_obj(SURIMY_OBJ);

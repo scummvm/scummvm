@@ -39,10 +39,10 @@ void Room87::entry() {
 	_G(spieler).ZoomXy[P_NICHELLE][1] = 28;
 	_G(zoom_horizont) = 176;
 	if (_G(spieler).flags32_4)
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 
 	if (_G(spieler).flags32_8)
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 
 	if (_G(flags).LoadGame)
 		return;
@@ -135,7 +135,7 @@ int Room87::proc2(int16 txt_nr) {
 		del_inventar(_G(spieler).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATEI);
-		_G(det)->show_static_spr(movNr);
+		_G(det)->showStaticSpr(movNr);
 		if (_G(spieler).flags32_4 && _G(spieler).flags32_8)
 			_G(atds)->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATEI);
 	}
@@ -159,7 +159,7 @@ int Room87::proc4() {
 	start_aad(472);
 	flic_cut(FCUT_095);
 	flic_cut(FCUT_096);
-	_G(det)->hide_static_spr(2);
+	_G(det)->hideStaticSpr(2);
 	_G(det)->start_detail(2, 255, false);
 	start_aad_wait(471, -1);
 	flic_cut(FCUT_097);

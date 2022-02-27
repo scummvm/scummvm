@@ -38,7 +38,7 @@ void plot_main_menu() {
 	}
 
 	maus_mov_menu();
-	int16 *korrektur = (int16 *)_G(menutaf)->korrektur;
+	int16 *korrektur = (int16 *)_G(menutaf)->_correction;
 
 	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
@@ -286,7 +286,7 @@ void ads_menu() {
 					                                  &_G(ads_item_anz));
 				}
 				_G(det)->stop_detail(_G(talk_start_ani));
-				_G(det)->show_static_spr(_G(talk_hide_static));
+				_G(det)->showStaticSpr(_G(talk_hide_static));
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
 				if (_G(flags).AdsDialog == false) {

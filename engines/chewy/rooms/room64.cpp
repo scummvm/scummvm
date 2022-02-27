@@ -70,9 +70,9 @@ void Room64::chewy_entry() {
 	calc_monitor();
 	if (!_G(flags).LoadGame) {
 		hideCur();
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 		autoMove(2, P_CHEWY);
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 		showCur();
 	}
 }

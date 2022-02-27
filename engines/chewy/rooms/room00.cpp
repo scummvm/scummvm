@@ -51,7 +51,7 @@ namespace Rooms {
 
 void Room0::entry() {
 	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow || _G(obj)->checkInventory(0))
-		_G(det)->hide_static_spr(6);
+		_G(det)->hideStaticSpr(6);
 
 	if (!_G(flags).LoadGame) {
 		set_person_pos(150, 100, P_CHEWY, P_RIGHT);
@@ -134,7 +134,7 @@ bool Room0::getPillow() {
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
 		_G(atds)->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(det)->hide_static_spr(6);
+		_G(det)->hideStaticSpr(6);
 
 		_G(flags).AutoAniPlay = false;
 		showCur();

@@ -98,7 +98,7 @@ void Room46::setup_func() {
 
 void Room46::bodo() {
 	hideCur();
-	_G(det)->show_static_spr(0);
+	_G(det)->showStaticSpr(0);
 	_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 	start_aad_wait(240, -1);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -114,20 +114,20 @@ void Room46::bodo() {
 	_G(det)->start_detail(5, 255, ANI_FRONT);
 	start_aad_wait(241, -1);
 	_G(det)->stop_detail(5);
-	_G(det)->show_static_spr(5);
+	_G(det)->showStaticSpr(5);
 	start_aad_wait(609, -1);
-	_G(det)->hide_static_spr(5);
+	_G(det)->hideStaticSpr(5);
 	start_detail_wait(2, 1, ANI_FRONT);
 	start_detail_wait(3, 1, ANI_FRONT);
 	_G(det)->start_detail(4, 255, ANI_FRONT);
 	start_aad_wait(242, -1);
 	_G(det)->stop_detail(4);
 
-	_G(det)->show_static_spr(6);
+	_G(det)->showStaticSpr(6);
 	start_aad_wait(610, -1);
-	_G(det)->hide_static_spr(6);
+	_G(det)->hideStaticSpr(6);
 	start_detail_wait(6, 1, ANI_FRONT);
-	_G(det)->show_static_spr(3);
+	_G(det)->showStaticSpr(3);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	start_detail_wait(1, 1, ANI_FRONT);
 	flic_cut(FCUT_065);
@@ -136,8 +136,8 @@ void Room46::bodo() {
 	register_cutscene(16);
 	
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	_G(det)->hide_static_spr(0);
-	_G(det)->hide_static_spr(3);
+	_G(det)->hideStaticSpr(0);
+	_G(det)->hideStaticSpr(3);
 	load_chewy_taf(CHEWY_ROCKER);
 	_G(spieler).R28ChewyPump = false;
 	

@@ -193,13 +193,13 @@ public:
 
 	void load_rdi_taf(const char *fname, int16 load_flag);
 
-	void set_static_spr(int16 nr, int16 spr_nr);
-	byte *get_static_image(int16 det_nr);
+	void setStaticSpr(int16 nr, int16 sprNr);
+	byte *getStaticImage(int16 detNr);
 
-	void set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag);
+	void setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag);
 	void set_detail_pos(int16 det_nr, int16 x, int16 y);
-	void hide_static_spr(int16 nr);
-	void show_static_spr(int16 nr);
+	void hideStaticSpr(int16 nr);
+	void showStaticSpr(int16 nr);
 	void freeze_ani();
 	void unfreeze_ani();
 	void get_ani_werte(int16 ani_nr, int16 *start, int16 *end);

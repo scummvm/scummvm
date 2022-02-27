@@ -89,8 +89,8 @@ void Options::execute(TafInfo *ti) {
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
-		_G(out)->sprite_set(ti->image[surimy_ani], 18 + ti->korrektur[surimy_ani << 1],
-			8 + ti->korrektur[(surimy_ani << 1) + 1], 0);
+		_G(out)->sprite_set(ti->image[surimy_ani], 18 + ti->_correction[surimy_ani << 1],
+			8 + ti->_correction[(surimy_ani << 1) + 1], 0);
 		short bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
 		_G(out)->box_fill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
 		Common::String fps = Common::String::format("%d", _G(spieler).FramesPerSecond << 1);
@@ -98,18 +98,18 @@ void Options::execute(TafInfo *ti) {
 
 		if (_G(spieler).SoundSwitch) {
 			_G(out)->sprite_set(ti->image[mund_ani],
-				18 + ti->korrektur[mund_ani << 1],
-				8 + ti->korrektur[(mund_ani << 1) + 1], 0);
+				18 + ti->_correction[mund_ani << 1],
+				8 + ti->_correction[(mund_ani << 1) + 1], 0);
 			_G(out)->sprite_set(ti->image[SCHNULL_OFF],
-				18 + ti->korrektur[SCHNULL_OFF << 1],
-				8 + ti->korrektur[(SCHNULL_OFF << 1) + 1], 0);
+				18 + ti->_correction[SCHNULL_OFF << 1],
+				8 + ti->_correction[(SCHNULL_OFF << 1) + 1], 0);
 		} else {
 			_G(out)->sprite_set(ti->image[SCHNULLER],
-				18 + ti->korrektur[SCHNULLER << 1],
-				8 + ti->korrektur[(SCHNULLER << 1) + 1], 0);
+				18 + ti->_correction[SCHNULLER << 1],
+				8 + ti->_correction[(SCHNULLER << 1) + 1], 0);
 			_G(out)->sprite_set(ti->image[SCHNULL_BAND],
-				18 + ti->korrektur[SCHNULL_BAND << 1],
-				8 + ti->korrektur[(SCHNULL_BAND << 1) + 1], 0);
+				18 + ti->_correction[SCHNULL_BAND << 1],
+				8 + ti->_correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
@@ -120,31 +120,31 @@ void Options::execute(TafInfo *ti) {
 		_G(out)->box_fill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
 		if (_G(spieler).MusicSwitch) {
 			_G(out)->sprite_set(ti->image[MUSIC_ON1],
-				18 + ti->korrektur[MUSIC_ON1 << 1],
-				8 + ti->korrektur[(MUSIC_ON1 << 1) + 1], 0);
+				18 + ti->_correction[MUSIC_ON1 << 1],
+				8 + ti->_correction[(MUSIC_ON1 << 1) + 1], 0);
 			_G(out)->sprite_set(ti->image[MUSIC_ON2],
-				18 + ti->korrektur[MUSIC_ON2 << 1],
-				8 + ti->korrektur[(MUSIC_ON2 << 1) + 1], 0);
+				18 + ti->_correction[MUSIC_ON2 << 1],
+				8 + ti->_correction[(MUSIC_ON2 << 1) + 1], 0);
 		} else
 			_G(out)->sprite_set(ti->image[MUSIC_OFF],
-				18 + ti->korrektur[MUSIC_OFF << 1],
-				8 + ti->korrektur[(MUSIC_OFF << 1) + 1], 0);
+				18 + ti->_correction[MUSIC_OFF << 1],
+				8 + ti->_correction[(MUSIC_OFF << 1) + 1], 0);
 
 		if (_G(spieler).DisplayText) {
 			_G(out)->sprite_set(ti->image[tdisp_ani],
-				18 + ti->korrektur[tdisp_ani << 1],
-				8 + ti->korrektur[(tdisp_ani << 1) + 1], 0);
+				18 + ti->_correction[tdisp_ani << 1],
+				8 + ti->_correction[(tdisp_ani << 1) + 1], 0);
 			_G(out)->sprite_set(ti->image[TDISP_EIN],
-				18 + ti->korrektur[TDISP_EIN << 1],
-				8 + ti->korrektur[(TDISP_EIN << 1) + 1], 0);
+				18 + ti->_correction[TDISP_EIN << 1],
+				8 + ti->_correction[(TDISP_EIN << 1) + 1], 0);
 		} else
 			_G(out)->sprite_set(ti->image[TDISP_AUS],
-				18 + ti->korrektur[TDISP_AUS << 1],
-				8 + ti->korrektur[(TDISP_AUS << 1) + 1], 0);
+				18 + ti->_correction[TDISP_AUS << 1],
+				8 + ti->_correction[(TDISP_AUS << 1) + 1], 0);
 
 		_G(out)->sprite_set(ti->image[EXIT],
-			18 + ti->korrektur[EXIT << 1],
-			8 + ti->korrektur[(EXIT << 1) + 1], 0);
+			18 + ti->_correction[EXIT << 1],
+			8 + ti->_correction[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->get_switch_code();
 		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {

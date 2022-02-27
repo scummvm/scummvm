@@ -35,12 +35,12 @@ void Room67::entry() {
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).DiaAMov = 7;
 	if (_G(spieler).R67KommodeAuf)
-		_G(det)->show_static_spr(9);
+		_G(det)->showStaticSpr(9);
 	if (!_G(spieler).R67PapageiWeg) {
 		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
 		_G(det)->set_static_ani(1, -1);
 	} else
-		_G(det)->show_static_spr(0);
+		_G(det)->showStaticSpr(0);
 	if (!_G(flags).LoadGame) {
 		hideCur();
 		set_person_pos(102, 132, P_CHEWY, P_RIGHT);
@@ -112,7 +112,7 @@ int16 Room67::use_kommode() {
 			_G(spieler).R67KommodeAuf = true;
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(det)->show_static_spr(9);
+			_G(det)->showStaticSpr(9);
 			_G(atds)->set_ats_str(400, 1, ATS_DATEI);
 		} else if (!_G(spieler).R67KostuemWeg) {
 			action_flag = true;
@@ -169,7 +169,7 @@ int16 Room67::talk_papagei() {
 			_G(spieler).R67PapageiWeg = true;
 			_G(det)->stop_detail(1);
 			_G(det)->del_static_ani(1);
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 			invent_2_slot(PAPAGEI_INV);
 			showCur();
 			_G(atds)->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATEI);

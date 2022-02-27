@@ -36,13 +36,13 @@ void Room28::entry(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).R28RKuerbis)
-		_G(det)->show_static_spr(6);
+		_G(det)->showStaticSpr(6);
 
 	if (_G(spieler).R28Briefkasten) {
-		_G(det)->show_static_spr(8);
-		_G(det)->show_static_spr(9);
+		_G(det)->showStaticSpr(8);
+		_G(det)->showStaticSpr(9);
 	} else {
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28) {
@@ -77,7 +77,7 @@ void Room28::entry(int16 eib_nr) {
 
 					auto_scroll(0, 0);
 					flic_cut(FCUT_064);
-					_G(det)->show_static_spr(6);
+					_G(det)->showStaticSpr(6);
 
 					if (!_G(spieler).R40TeilKarte) {
 						_G(out)->ausblenden(0);
@@ -322,9 +322,9 @@ int16 Room28::use_breifkasten() {
 		_G(spieler).R28Briefkasten = false;
 		autoMove(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(det)->hide_static_spr(8);
-		_G(det)->hide_static_spr(9);
-		_G(det)->show_static_spr(7);
+		_G(det)->hideStaticSpr(8);
+		_G(det)->hideStaticSpr(9);
+		_G(det)->showStaticSpr(7);
 		autoMove(8, P_CHEWY);
 		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
 		start_aad_wait(179, -1);

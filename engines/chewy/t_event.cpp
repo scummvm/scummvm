@@ -285,7 +285,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 165:
 						if (_G(spieler).R16F5Exit) {
 							invent_2_slot(29);
-							_G(det)->hide_static_spr(19);
+							_G(det)->hideStaticSpr(19);
 							_G(atds)->set_steuer_bit(158, ATS_AKTIV_BIT, ATS_DATEI);
 						}
 						switch_room(18);
@@ -2153,8 +2153,8 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	if (altes_format) {
 		_G(det)->start_detail(_G(talk_start_ani), 255, ANI_FRONT);
 		_G(det)->stop_detail(talk_stop_ani);
-		_G(det)->hide_static_spr(_G(talk_hide_static));
-		_G(det)->show_static_spr(talk_show_static);
+		_G(det)->hideStaticSpr(_G(talk_hide_static));
+		_G(det)->showStaticSpr(talk_show_static);
 	} else {
 		_G(det)->start_detail(talk_ani, 255, ANI_FRONT);
 		_G(det)->stop_detail(stop_ani);

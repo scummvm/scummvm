@@ -231,7 +231,7 @@ void Room21::use_gitter_energie() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 
 	switch_room(17);
-	_G(det)->hide_static_spr(5);
+	_G(det)->hideStaticSpr(5);
 	start_detail_wait(9, 1, ANI_FRONT);
 	_G(spieler).R17GitterWeg = true;
 	_G(spieler).PersonHide[P_CHEWY] = false;

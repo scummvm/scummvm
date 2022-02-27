@@ -165,9 +165,9 @@ void sprite_engine() {
 					                _G(scr_width));
 				} else {
 					spr_nr = _G(spz_spr_nr)[_G(spieler_vector)[P_CHEWY].PhNr];
-					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(spz_tinfo)->korrektur[spr_nr * 2] -
+					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(spz_tinfo)->_correction[spr_nr * 2] -
 					    _G(spieler).scrollx;
-					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(spz_tinfo)->korrektur[spr_nr * 2 + 1] -
+					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(spz_tinfo)->_correction[spr_nr * 2 + 1] -
 					    _G(spieler).scrolly;
 					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1],
 					          (int16)_G(room)->_roomInfo->ZoomFak,
@@ -194,8 +194,8 @@ void sprite_engine() {
 					spr_nr = _G(spz_spr_nr)[_G(spieler_vector)[p_nr].PhNr];
 				}
 
-				x = _G(spieler_mi)[p_nr].XyzStart[0] + ts_info->korrektur[spr_nr * 2] - _G(spieler).scrollx;
-				y = _G(spieler_mi)[p_nr].XyzStart[1] + ts_info->korrektur[spr_nr * 2 + 1] - _G(spieler).scrolly;
+				x = _G(spieler_mi)[p_nr].XyzStart[0] + ts_info->_correction[spr_nr * 2] - _G(spieler).scrollx;
+				y = _G(spieler_mi)[p_nr].XyzStart[1] + ts_info->_correction[spr_nr * 2 + 1] - _G(spieler).scrolly;
 				calc_zoom(_G(spieler_mi)[p_nr].XyzStart[1], _G(spieler).ZoomXy[p_nr][0],_G(spieler).ZoomXy[p_nr][1], &_G(spieler_vector)[p_nr]);
 				_G(out)->scale_set(ts_info->image[spr_nr], x, y, _G(spieler_vector)[p_nr].Xzoom, _G(spieler_vector)[p_nr].Yzoom, _G(scr_width));
 			}

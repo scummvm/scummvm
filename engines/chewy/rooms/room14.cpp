@@ -40,7 +40,7 @@ void Room14::entry() {
 	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R14GleiterAuf) {
 			set_person_pos(381, 264, P_CHEWY, P_LEFT);
-			_G(det)->show_static_spr(6);
+			_G(det)->showStaticSpr(6);
 			_G(spieler).scrollx = 160;
 			_G(spieler).scrolly = 120;
 		} else {
@@ -60,10 +60,10 @@ bool Room14::timer(int16 t_nr, int16 ani_nr) {
 void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!_G(flags).AutoAniPlay && !_G(spieler).R14Feuer) {
 		_G(flags).AutoAniPlay = true;
-		_G(det)->hide_static_spr(9);
+		_G(det)->hideStaticSpr(9);
 		start_detail_wait(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->reset_timer(t_nr, 0);
-		_G(det)->show_static_spr(9);
+		_G(det)->showStaticSpr(9);
 		_G(det)->start_detail(7, 1, ANI_FRONT);
 		_G(flags).AutoAniPlay = false;
 	}
@@ -100,7 +100,7 @@ int16 Room14::use_gleiter() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			start_detail_wait(10, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			_G(det)->show_static_spr(6);
+			_G(det)->showStaticSpr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
 		} else {
 			_G(spieler).R23GleiterExit = 14;
@@ -166,14 +166,14 @@ void Room14::feuer() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
 		autoMove(7, P_CHEWY);
-		_G(det)->hide_static_spr(9);
+		_G(det)->hideStaticSpr(9);
 		start_detail_frame(2, 1, ANI_FRONT, 9);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(13, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		wait_detail(2);
 		start_detail_wait(5, 1, ANI_FRONT);
-		_G(det)->show_static_spr(9);
+		_G(det)->showStaticSpr(9);
 	}
 
 	del_inventar(tmp);
@@ -184,9 +184,9 @@ void Room14::feuer() {
 		autoMove(7, P_CHEWY);
 
 	start_aad_wait(26, -1);
-	_G(det)->hide_static_spr(9);
+	_G(det)->hideStaticSpr(9);
 	start_detail_wait(3, 1, ANI_FRONT);
-	_G(det)->show_static_spr(9);
+	_G(det)->showStaticSpr(9);
 	invent_2_slot(FLUXO_INV);
 	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
 	_G(spieler).R14FluxoFlex = true;

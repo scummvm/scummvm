@@ -64,7 +64,7 @@ void Room50::entry(int16 eib_nr) {
 			_G(timer_nr)[0] = _G(room)->set_timer(1, 8);
 			_wasser = false;
 		} else {
-			_G(det)->show_static_spr(4);
+			_G(det)->showStaticSpr(4);
 		}
 
 		_G(SetUpScreenFunc) = setup_func;
@@ -202,7 +202,7 @@ int16 Room50::use_gum() {
 		del_inventar(_G(spieler).AkInvent);
 		hide_person();
 		start_detail_wait(2, 1, ANI_FRONT);
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 		start_detail_wait(2, 1, ANI_BACK);
 		show_person();
 		set_person_spr(P_LEFT, P_CHEWY);

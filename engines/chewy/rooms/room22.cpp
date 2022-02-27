@@ -64,7 +64,7 @@ void Room22::entry() {
 		_G(det)->load_taf_seq(36, 21, nullptr);
 		_G(room)->set_timer(255, 15);
 	} else if (!_G(spieler).R22GetBork) {
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 	}
 }
 
@@ -153,7 +153,7 @@ void Room22::bork_walk2() {
 
 	flic_cut(FCUT_008);
 	register_cutscene(3);
-	_G(det)->show_static_spr(4);
+	_G(det)->showStaticSpr(4);
 	_G(atds)->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).R22BorkPlatt = true;
 	_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
@@ -162,7 +162,7 @@ void Room22::bork_walk2() {
 void Room22::get_bork() {
 	if (!_G(spieler).R22GetBork && _G(spieler).R22BorkPlatt) {
 		autoMove(4, P_CHEWY);
-		_G(det)->hide_static_spr(4);
+		_G(det)->hideStaticSpr(4);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_ani_block(2, ABLOCK14);
 		set_person_pos(171, 120, P_CHEWY, P_LEFT);

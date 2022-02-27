@@ -72,8 +72,8 @@ void Room90::entry(int16 eib_nr) {
 	}
 
 	if (_G(spieler).flags33_40 && !_G(spieler).flags34_10) {
-		_G(det)->show_static_spr(4);
-		_G(det)->show_static_spr(5);
+		_G(det)->showStaticSpr(4);
+		_G(det)->showStaticSpr(5);
 	}
 
 	if (!_G(spieler).flags33_10) {
@@ -298,8 +298,8 @@ int Room90::shootControlUnit() {
 	_G(spieler).scrollx = 0;
 	set_person_pos(76, 145, P_CHEWY, P_LEFT);
 	_G(maus_links_click) = false;
-	_G(det)->show_static_spr(4);
-	_G(det)->show_static_spr(5);
+	_G(det)->showStaticSpr(4);
+	_G(det)->showStaticSpr(5);
 	set_up_screen(NO_SETUP);
 	_G(fx_blend) = BLEND3;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
@@ -335,8 +335,8 @@ int Room90::useSurimyOnWreck() {
 	flic_cut(FCUT_109);
 	register_cutscene(29);
 
-	_G(det)->hide_static_spr(4);
-	_G(det)->hide_static_spr(5);
+	_G(det)->hideStaticSpr(4);
+	_G(det)->hideStaticSpr(5);
 	_G(spieler).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
 	start_aad_wait(519, -1);

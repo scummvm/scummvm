@@ -60,10 +60,10 @@ void Room17::entry() {
 	plot_seil();
 
 	if (_G(spieler).R17GitterWeg)
-		_G(det)->hide_static_spr(5);
+		_G(det)->hideStaticSpr(5);
 
 	if (_G(spieler).R17DoorKommand)
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 
 	if (_G(spieler).R17Location == 1) {
 		_G(flags).ZoomMov = true;
@@ -163,7 +163,7 @@ int16 Room17::use_seil() {
 void Room17::plot_seil() {
 	if (_G(spieler).R17Seil) {
 		for (int16 i = 0; i < 3; i++)
-			_G(det)->show_static_spr(8 + i);
+			_G(det)->showStaticSpr(8 + i);
 	}
 }
 
@@ -246,7 +246,7 @@ void Room17::door_kommando(int16 mode) {
 				_G(spieler).R17DoorKommand = true;
 				start_detail_wait(4, 1, ANI_FRONT);
 				stop_person(P_CHEWY);
-				_G(det)->show_static_spr(7);
+				_G(det)->showStaticSpr(7);
 			}
 		} else {
 			close_door();
@@ -262,7 +262,7 @@ void Room17::close_door() {
 		_G(spieler).room_e_obj[36].Attribut = 255;
 		_G(spieler).R17DoorKommand = false;
 		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, ATS_DATEI);
-		_G(det)->hide_static_spr(7);
+		_G(det)->hideStaticSpr(7);
 		_G(det)->start_detail(4, 1, ANI_BACK);
 	}
 }
