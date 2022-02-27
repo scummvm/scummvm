@@ -32,7 +32,7 @@ void free_buffers();
 void plot_main_menu();
 void palcopy(byte *destPal, const byte *srcPal, int16 destStartIndex,
              int16 srcStartIndex, int16 colorNbr);
-short calcMouseTxt(int16 x, int16 y, int16 mode);
+short calcMouseText(int16 x, int16 y, int16 mode);
 void calc_ani_timer();
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr);
 int16 getAniDirection(int16 zustand);
