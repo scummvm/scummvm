@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_GLOBAL_H
-#define CHEWY_GLOBAL_H
+#ifndef CHEWY_GLOBALS_H
+#define CHEWY_GLOBALS_H
 
 #include "common/array.h"
 #include "chewy/chewy.h"

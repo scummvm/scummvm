@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHEWY_IOGame2_H
-#define CHEWY_IOGame2_H
+#ifndef CHEWY_IO_GAME_H
+#define CHEWY_IO_GAME_H
 
 #include "chewy/mcga.h"
 #include "chewy/cursor.h"
