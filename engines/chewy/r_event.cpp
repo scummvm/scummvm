@@ -1028,6 +1028,7 @@ void flic_cut(int16 nr) {
 #else
 			g_engine->_video->playVideo(nr);
 #endif
+			break;
 
 		case FCUT_069:
 #ifndef NEW_VIDEO_CODE
@@ -1038,6 +1039,7 @@ void flic_cut(int16 nr) {
 #else
 			g_engine->_video->playVideo(nr);
 #endif
+			break;
 
 		case FCUT_070:
 #ifndef NEW_VIDEO_CODE
@@ -1048,6 +1050,7 @@ void flic_cut(int16 nr) {
 #else
 			g_engine->_video->playVideo(nr);
 #endif
+			break;
 
 		case FCUT_071:
 			_G(sndPlayer)->stopMod();
