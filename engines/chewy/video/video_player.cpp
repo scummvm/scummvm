@@ -46,8 +46,8 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		return false;
 	}
 
-	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
+//	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
+//	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
 	bool skipVideo = false;
 	byte curPalette[256 * 3];
 	uint32 curFrame = 0;
@@ -68,7 +68,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		if (cfoDecoder->needsUpdate()) {
 			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
 			if (frame) {
-				byte *srcP = (byte *)frame->getPixels();
+				const byte *srcP = (const byte *)frame->getPixels();
 				byte *destP = (byte *)g_screen->getPixels();
 				Common::copy(srcP, srcP + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 				g_screen->markAllDirty();
