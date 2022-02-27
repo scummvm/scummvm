@@ -372,7 +372,7 @@ public:
 	Shoot() {
 		destroyed = false;
 		video = nullptr;
-		timesToShoot = 0;
+		timesToShoot = 1;
 		pointsToShoot = 0;
 		attackWeight = 0;
 		paletteOffset = 0;

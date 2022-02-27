@@ -506,6 +506,12 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 	if (i >= 0) {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
+
+		if (_shoots[i].timesToShoot > 1) {
+			_shoots[i].timesToShoot = _shoots[i].timesToShoot - 1;
+			return;
+		}
+
 		if (!_shoots[i].deathSound.empty())
 			playSound(_soundPath + _shoots[i].deathSound, 1);
 		_score = _score + _shoots[i].pointsToShoot;

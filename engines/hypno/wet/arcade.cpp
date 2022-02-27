@@ -30,7 +30,7 @@ namespace Hypno {
 void WetEngine::initSegment(ArcadeShooting *arc) {
 	if (_arcadeMode == "Y1") {
 		_segmentShootSequenceOffset = 0;
-		_segmentShootSequenceMax = 7;
+		_segmentShootSequenceMax = 3;
 	} else if (_arcadeMode == "Y3") {
 		_segmentShootSequenceOffset = 0;
 		_segmentShootSequenceMax = 7;
@@ -54,7 +54,7 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	if (_arcadeMode == "Y3") {
 		ShootInfo si;
 		si.name = "SP_CBREAKER_L";
-		si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3; 
+		si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3;
 		_shootSequence.push_back(si);
 	}
 }
@@ -65,7 +65,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 	Segments segments = arc->segments;
 
 	if (_segmentRepetition < _segmentRepetitionMax) {
-		_segmentRepetition = _segmentRepetition + 1; 
+		_segmentRepetition = _segmentRepetition + 1;
 	} else {
 		_segmentRepetition = 0;
 		_segmentRepetitionMax = 0;
@@ -73,7 +73,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 			if (_arcadeMode == "Y1") {
 				if (_rnd->getRandomBit())
 					_segmentIdx = _segmentIdx + 1;
-				else 
+				else
 					_segmentIdx = _segmentIdx + 5;
 			} else if (_arcadeMode == "Y5") {
 				int r = _rnd->getRandomNumber(4);
@@ -105,14 +105,14 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					_segmentIdx = _segmentIdx + 1;
 				else if (mousePos.x >= 300)
 					_segmentIdx = _segmentIdx + 3;
-				else 
+				else
 					_segmentIdx = _segmentIdx + 2;
 			} else if (_arcadeMode == "Y5") {
 				if (mousePos.x <= 100)
 					_segmentIdx = _segmentIdx + 2;
 				else if (mousePos.x >= 300)
 					_segmentIdx = _segmentIdx + 3;
-				else 
+				else
 					_segmentIdx = _segmentIdx + 1;
 			} else
 				error("Invalid segment type for mode: %s", _arcadeMode.c_str());
@@ -120,17 +120,17 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 		} else if (segments[_segmentIdx].type == 0xc2) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
-			else 
+			else
 				_segmentIdx = _segmentIdx + 2;
 		} else if (segments[_segmentIdx].type == 0xcc) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
-			else 
+			else
 				_segmentIdx = _segmentIdx + 2;
 		} else if (segments[_segmentIdx].type == 'Y') {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 2;
-			else 
+			else
 				_segmentIdx = _segmentIdx + 1;
 		} else {
 
@@ -172,10 +172,10 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				ShootInfo si;
 				if (_segmentOffset == 0)
 					si.name = "SP_CBREAKER_L";
-				else 
+				else
 					si.name = "SP_CBREAKER_U";
 
-				si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3; 
+				si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3;
 				_shootSequence.push_back(si);
 			}
 		}
@@ -243,7 +243,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	if (arc->mode == "Y4" || arc->mode == "Y5")  { // These images are flipped, for some reason
 		for (Frames::iterator it = _playerFrames.begin(); it != _playerFrames.end(); ++it) {
-			for (int i = 0 ; i < (*it)->w ; i++) 
+			for (int i = 0 ; i < (*it)->w ; i++)
 				for (int j = 0 ; j < (*it)->h/2 ; j++) {
 					uint32 p1 = (*it)->getPixel(i, j);
 					uint32 p2 = (*it)->getPixel(i, (*it)->h - j - 1);
@@ -267,7 +267,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	if (_playerFrameSep == (int)_playerFrames.size()) {
 		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
 		//_playerFrameSep = -1;
-	} else 
+	} else
 		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
 	_playerFrameIdx = -1;

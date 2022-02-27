@@ -388,7 +388,10 @@ bline: FNTOK FILENAME {
 		shoot->deathPosition = Common::Point($2, $3);
 		debugC(1, kHypnoDebugParser, "O %d %d", $2, $3);
 	}
-	| CTOK NUM  { debugC(1, kHypnoDebugParser, "C %d", $2); }
+	| CTOK NUM  {
+		shoot->timesToShoot = $2;
+		debugC(1, kHypnoDebugParser, "C %d", $2);
+	}
 	| HTOK NUM  {
 		shoot->attackFrames.push_back($2);
 		debugC(1, kHypnoDebugParser, "H %d", $2); }
