@@ -584,8 +584,10 @@ void GridWidget::reloadThumbnails() {
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
-				surf->free();
-				delete surf;
+				if (surf != scSurf) {
+					surf->free();
+					delete surf;
+				}
 			} else {
 				_loadedSurfaces[entry->thumbPath] = nullptr;
 			}
@@ -614,8 +616,10 @@ void GridWidget::loadPlatformIcons() {
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight, true);
 			_platformIcons[l->id] = scGfx;
-			gfx->free();
-			delete gfx;
+			if (gfx != scGfx) {
+				gfx->free();
+				delete gfx;
+			}
 		} else {
 			_platformIcons[l->id] = nullptr;
 		}
