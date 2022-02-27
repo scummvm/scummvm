@@ -777,7 +777,7 @@ const imuseFtSeqTable _ftSeqMusicTable[] = {
 	{"",         0,  0  },
 	{"",         0,  0  },
 
-	{"veltures", 2,  127},
+	{"vultures", 2,  127},
 	{"",         0,  0  },
 	{"",         0,  0  },
 	{"",         0,  0  },
