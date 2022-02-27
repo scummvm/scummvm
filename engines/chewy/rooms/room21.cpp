@@ -142,7 +142,7 @@ void Room21::init_spinne() {
 void Room21::restart_spinne2() {
 	_G(mov_phasen)[SPINNE2_OBJ].Repeat = 1;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], _G(mov_phasen)[SPINNE2_OBJ].Lines, (const MovLine *)SPINNE_MPKT1);
-	_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+	_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 	_G(e_streifen) = false;
 }
 

@@ -132,7 +132,7 @@ void Room12::init_bork() {
 
 				if (_G(spieler).R12BorkCount < 3) {
 					++_G(spieler).R12BorkCount;
-					_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+					_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 					wait_show_screen(10);
 					start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 					start_aad_wait(14, -1);
@@ -145,7 +145,7 @@ void Room12::init_bork() {
 			}
 		}
 
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 	}
 }
 
@@ -224,7 +224,7 @@ int16 Room12::use_terminal() {
 
 			} else {
 				_G(spieler).R12TransOn = true;
-				_G(uhr)->reset_timer(_G(timer_nr)[1], 0);
+				_G(uhr)->resetTimer(_G(timer_nr)[1], 0);
 			}
 		} else {
 			start_aad(114, 0);
@@ -237,7 +237,7 @@ int16 Room12::use_terminal() {
 void Room12::use_linke_rohr() {
 	_G(spieler).R12TalismanOk = false;
 	_G(spieler).R12KetteLinks = true;
-	_G(uhr)->disable_timer();
+	_G(uhr)->disableTimer();
 	_G(obj)->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 	_G(obj)->calc_all_static_detail();
@@ -270,7 +270,7 @@ int16 Room12::useTransformerTube() {
 
 		if (_G(spieler).R12KetteLinks) {
 			_G(spieler).R12KetteLinks = false;
-			_G(uhr)->enable_timer();
+			_G(uhr)->enableTimer();
 			_G(atds)->set_ats_str(117, 1, AAD_DATEI);
 		} else {
 			autoMove(7, P_CHEWY);

@@ -114,12 +114,12 @@ void Room40::xit(int16 eib_nr) {
 				_G(spieler).room_e_obj[72].Exit = 45;
 				_G(obj)->hide_sib(SIB_MUENZE_R40);
 
-				_G(uhr)->disable_timer();
+				_G(uhr)->disableTimer();
 				_G(out)->ausblenden(0);
 				hide_person();
 				set_up_screen(DO_SETUP);
 				_G(out)->einblenden(_G(pal), 0);
-				_G(uhr)->enable_timer();
+				_G(uhr)->enableTimer();
 
 				_G(maus_links_click) = false;
 				start_aad_wait(238, -1);
@@ -243,7 +243,7 @@ void Room40::setup_func() {
 			_G(spieler).R40PoliceStart = false;
 			_G(spieler).R40PoliceAniStatus = POLICE_LEFT;
 			_G(room)->set_timer_status(255, TIMER_STOP);
-			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			_G(det)->hideStaticSpr(15);
 			_G(det)->start_detail(POLICE_LEFT, 1, ANI_FRONT);
 			_G(atds)->set_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
@@ -270,7 +270,7 @@ void Room40::setup_func() {
 				_G(det)->showStaticSpr(15);
 				_G(spieler).R40PoliceAniStatus = 255;
 				_G(room)->set_timer_status(255, TIMER_START);
-				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 			}
 			break;
@@ -404,7 +404,7 @@ int16 Room40::use_schalter(int16 aad_nr) {
 		start_detail_wait(13, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(15);
 		_G(room)->set_timer_status(255, TIMER_START);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		showCur();
 	}
 
@@ -419,7 +419,7 @@ void Room40::talk_police() {
 		autoMove(7, P_CHEWY);
 		start_aad_wait(203, -1);
 		_G(room)->set_timer_status(255, TIMER_START);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		showCur();
 	}
 }
@@ -650,7 +650,7 @@ int16 Room40::use_tele() {
 
 			_G(spieler).R40PoliceAb = false;
 			_G(room)->set_timer_status(255, TIMER_START);
-			_G(uhr)->reset_timer(_G(timer_nr)[0], timer_wert);
+			_G(uhr)->resetTimer(_G(timer_nr)[0], timer_wert);
 		}
 
 		if (dia_nr1 != 223)

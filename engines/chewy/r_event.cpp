@@ -126,7 +126,7 @@ void timer_action(int16 t_nr) {
 
 	if (default_flag && _G(flags).AutoAniPlay == false) {
 		_G(det)->start_detail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
-		_G(uhr)->reset_timer(t_nr, 0);
+		_G(uhr)->resetTimer(t_nr, 0);
 	}
 
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
@@ -325,7 +325,7 @@ void enter_room(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_CHEWY][0] = (int16)_G(room)->_roomInfo->_zoomFactor;
 	_G(spieler).ZoomXy[P_CHEWY][1] = (int16)_G(room)->_roomInfo->_zoomFactor;
 
-	_G(uhr)->reset_timer(0, 0);
+	_G(uhr)->resetTimer(0, 0);
 	_G(flags).AutoAniPlay = false;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(HowardMov) = 0;
@@ -782,7 +782,7 @@ void print_rows(int16 id) {
 	_G(out)->setPointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
-		char *s = _G(txt)->str_pos(txtStr, i);
+		char *s = _G(txt)->strPos(txtStr, i);
 		int16 len = (strlen(s) * _G(fontMgr)->getFont()->getDataWidth()) / 2;
 
 		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, s);
@@ -1144,7 +1144,7 @@ void flic_cut(int16 nr) {
 		if (_G(spieler).SpeechSwitch)
 			_G(det)->enable_room_sound();
 
-		_G(uhr)->reset_timer(0, 0);
+		_G(uhr)->resetTimer(0, 0);
 	}
 
 	if (!_G(flags).NoPalAfterFlc)

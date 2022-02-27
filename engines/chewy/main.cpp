@@ -242,13 +242,13 @@ void showCur() {
 
 void menuEntry() {
 	_G(det)->freezeAni();
-	_G(uhr)->set_all_status(TIMER_FREEZE);
+	_G(uhr)->setAllStatus(TIMER_FREEZE);
 }
 
 void menuExit() {
 	_G(det)->unfreeze_ani();
-	_G(uhr)->set_all_status(TIMER_UNFREEZE);
-	_G(uhr)->reset_timer(0, 0);
+	_G(uhr)->setAllStatus(TIMER_UNFREEZE);
+	_G(uhr)->resetTimer(0, 0);
 	_G(FrameSpeed) = 0;
 }
 
@@ -497,10 +497,10 @@ void set_up_screen(SetupScreenMode mode) {
 	if (isMainLoop)
 		mode = DO_SETUP;
 
-	_G(uhr)->calc_timer();
+	_G(uhr)->calcTimer();
 
-	if (_G(ani_timer)[0].TimeFlag) {
-		_G(uhr)->reset_timer(0, 0);
+	if (_G(ani_timer)[0]._timeFlag) {
+		_G(uhr)->resetTimer(0, 0);
 		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
 		_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[P_CHEWY];
 		_G(FrameSpeed) = 0;
@@ -704,7 +704,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_adr, anz);
 				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos(str_adr, i));
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos(str_adr, i));
 			}
 		}
 	}
@@ -1441,7 +1441,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 						_G(fontMgr)->setFont(_G(font8));
 						calc_txt_xy(&x, &y, str_, anz);
 						for (int16 i = 0; i < anz; i++)
-							printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
+							printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 					}
 				}
 			} else {
@@ -1618,7 +1618,7 @@ int16 calc_mouse_mov_obj(int16 *auto_nr) {
 void calc_ani_timer() {
 	for (int16 i = _G(room)->_roomTimer.TimerStart;
 	     i < _G(room)->_roomTimer.TimerStart + _G(room)->_roomTimer.TimerAnz; i++) {
-		if (_G(ani_timer)[i].TimeFlag)
+		if (_G(ani_timer)[i]._timeFlag)
 			timer_action(i);
 	}
 }
@@ -1869,12 +1869,12 @@ void auto_scroll(int16 scrx, int16 scry) {
 }
 
 void disable_timer() {
-	_G(uhr)->disable_timer();
+	_G(uhr)->disableTimer();
 	_G(FrameSpeedTmp) = _G(FrameSpeed);
 }
 
 void enable_timer() {
-	_G(uhr)->enable_timer();
+	_G(uhr)->enableTimer();
 	_G(FrameSpeed) = _G(FrameSpeedTmp);
 }
 

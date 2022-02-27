@@ -224,7 +224,7 @@ void Room::add_timer_new_room() {
 
 void Room::del_timer_old_room() {
 	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
-		_G(uhr)->set_status(_roomTimer.TimerNr[i], TIMER_STOP);
+		_G(uhr)->setStatus(_roomTimer.TimerNr[i], TIMER_STOP);
 
 	}
 
@@ -234,7 +234,7 @@ void Room::del_timer_old_room() {
 int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 
 	int16 timer_nr_ = _roomTimer.TimerStart + _roomTimer.TimerAnz;
-	int16 ret = _G(uhr)->set_new_timer(timer_nr_, timer_end, SEC_MODE);
+	int16 ret = _G(uhr)->setNewTimer(timer_nr_, timer_end, SEC_MODE);
 	if (ret != -1) {
 		_roomTimer.ObjNr[_roomTimer.TimerAnz] = ani_nr;
 		_roomTimer.TimerNr[_roomTimer.TimerAnz] = timer_nr_;
@@ -247,7 +247,7 @@ int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 void Room::set_timer_status(int16 ani_nr, int16 status) {
 	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
 		if (_roomTimer.ObjNr[i] == ani_nr) {
-			_G(uhr)->set_status(_roomTimer.TimerNr[i], status);
+			_G(uhr)->setStatus(_roomTimer.TimerNr[i], status);
 		}
 	}
 }

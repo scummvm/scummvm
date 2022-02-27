@@ -359,7 +359,7 @@ void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 		} else if (!_G(det)->get_ani_status(obj_nr)) {
 			_G(det)->start_detail(obj_nr, 1, ANI_GO);
 			_G(det)->start_detail(obj_nr + 2, 1, ANI_FRONT);
-			_G(uhr)->reset_timer(t_nr, 0);
+			_G(uhr)->resetTimer(t_nr, 0);
 			_enemyFlag[obj_nr - 9] = false;
 		}
 	}

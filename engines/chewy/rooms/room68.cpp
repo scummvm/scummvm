@@ -123,7 +123,7 @@ void Room68::setup_func() {
 			_G(r68HohesC) = -1;
 			_G(det)->stop_detail(18);
 			_G(det)->showStaticSpr(3);
-			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		}
 		break;
 
@@ -262,7 +262,7 @@ void Room68::calc_diva() {
 	if (!_G(spieler).R68DivaWeg) {
 		if (!_G(spieler).R68Papagei) {
 			if (_G(r68HohesC) == -1) {
-				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
 				_G(det)->hideStaticSpr(3);
 				_G(det)->start_detail(_G(r68HohesC), 1, ANI_BACK);
@@ -275,7 +275,7 @@ void Room68::calc_diva() {
 			start_aad_wait(386, -1);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			new_invent_2_cur(BAR_GUT_INV);
-			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			showCur();
 		}
 	}
@@ -307,7 +307,7 @@ int16 Room68::use_diva() {
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
-		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->hideStaticSpr(3);
 		start_detail_wait(4, 1, ANI_FRONT);
 		_G(spieler).R68Gutschein = false;

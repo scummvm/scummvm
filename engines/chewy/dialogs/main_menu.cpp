@@ -141,8 +141,8 @@ void MainMenu::screenFunc() {
 }
 
 void MainMenu::animate() {
-	if (_G(ani_timer)->TimeFlag) {
-		_G(uhr)->reset_timer(0, 0);
+	if (_G(ani_timer)->_timeFlag) {
+		_G(uhr)->resetTimer(0, 0);
 		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
 		_G(spieler_vector)->Delay = _G(spieler).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
@@ -266,7 +266,7 @@ void MainMenu::playGame() {
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
 	_G(spieler_vector)[P_CHEWY].Count = 0;
-	_G(uhr)->reset_timer(0, 0);
+	_G(uhr)->resetTimer(0, 0);
 	_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {

@@ -59,7 +59,7 @@ void Room0::entry() {
 		hideCur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 
-		while (!_G(ani_timer)[_G(timer_nr)[0]].TimeFlag && !SHOULD_QUIT) {
+		while (!_G(ani_timer)[_G(timer_nr)[0]]._timeFlag && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}
 
@@ -74,7 +74,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 	bool retval = false;
 	if (ani_nr == 1) {
 		if (_G(timer_action_ctr) > 0) {
-			_G(uhr)->reset_timer(t_nr, 0);
+			_G(uhr)->resetTimer(t_nr, 0);
 			--_G(timer_action_ctr);
 		} else if (!is_chewy_busy()) {
 			if (!_G(spieler).R0FueterLab)
@@ -113,7 +113,7 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 			if (!_G(spieler).R0PillowThrow)
 				feederAni();
 
-			_G(uhr)->reset_timer(t_nr, 0);
+			_G(uhr)->resetTimer(t_nr, 0);
 			_G(flags).AutoAniPlay = false;
 		}
 	} else if (t_nr == 3)
@@ -311,7 +311,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
 		} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(SLIME_INV)) {
@@ -549,7 +549,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 				int16 y = _G(minfo).y;
 				calc_txt_xy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->str_pos((char *)str_, i));
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
 		} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
 			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {

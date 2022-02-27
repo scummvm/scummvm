@@ -59,8 +59,8 @@ enum TextEntryMarkers {
 #define VOICE_OFFSET 20
 
 struct TextEntry {
-	int16 speechId;
-	Common::String text;
+	int16 _speechId;
+	Common::String _text;
 };
 
 typedef Common::List<TextEntry> TextEntryList;
@@ -85,7 +85,7 @@ public:
 	TextEntry *getText(uint dialogNum, uint entryNum);
 
 	void crypt(char *txt, uint32 size);
-	char *str_pos(char *txt_adr, int16 pos);
+	char *strPos(char *txtAdr, int16 pos);
 };
 
 } // namespace Chewy

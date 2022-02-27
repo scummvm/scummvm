@@ -394,7 +394,7 @@ void Room56::setup_func() {
 			if (_G(det)->get_ani_status(10) == false) {
 				_G(r56koch_flug) = 0;
 
-				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
+				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			}
 			break;
 
