@@ -108,7 +108,7 @@ void standard_init() {
 }
 
 void var_init() {
-	_G(Rdi) = _G(det)->get_room_detail_info();
+	_G(Rdi) = _G(det)->getRoomDetailInfo();
 	_G(Sdi) = &_G(Rdi)->Sinfo[0];
 	_G(Adi) = &_G(Rdi)->Ainfo[0];
 

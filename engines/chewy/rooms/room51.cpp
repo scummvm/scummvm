@@ -145,7 +145,7 @@ void Room51::setup_func() {
 
 		if ((_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
-			_G(det)->set_detail_pos(8, _tmpx - 20, _tmpy + 41);
+			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
 			start_detail_wait(8, 1, ANI_FRONT);
 			_flag = false;
 			++_index;

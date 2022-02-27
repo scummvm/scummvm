@@ -27,19 +27,19 @@
 
 namespace Chewy {
 
-bool RaumInfo::load(Common::SeekableReadStream *src) {
-	RoomNr = src->readByte();
+bool RoomInfo::load(Common::SeekableReadStream *src) {
+	_roomNr = src->readByte();
 	BildNr = src->readByte();
 	AutoMovAnz = src->readByte();
 	TafLoad = src->readByte();
 	src->read(TafName, 14);
-	ZoomFak = src->readByte();
+	_zoomFactor = src->readByte();
 	Dummy = src->readByte();
 
 	return true;
 }
 
-bool RaumAutoMov::load(Common::SeekableReadStream *src) {
+bool RoomAutoMov::load(Common::SeekableReadStream *src) {
 	X = src->readSint16LE();
 	Y = src->readSint16LE();
 	SprNr = src->readByte();
@@ -170,8 +170,8 @@ void Detail::load_rdi(const char *fname_, int16 room_nr) {
 	TafInfo *tmprdi = _rdi.dptr;
 
 	if (fname_ && f.open(fname_)) {
-		if (_rdi_datei_header.load(&f)) {
-			if (!scumm_strnicmp(_rdi_datei_header.Id, "RDI", 3)) {
+		if (_rdiDataHeader.load(&f)) {
+			if (!scumm_strnicmp(_rdiDataHeader.Id, "RDI", 3)) {
 				f.seek(room_nr * RoomDetailInfo::SIZE(), SEEK_CUR);
 
 				if (!_rdi.load(&f)) {
@@ -284,15 +284,15 @@ void Detail::del_taf_tbl(int16 start, int16 anz, TafInfo *Tt) {
 	}
 }
 
-void Detail::load_taf_seq(int16 spr_nr, int16 spr_anz, TafInfo *Tt) {
+void Detail::load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
 
 	SpriteResource *res = new SpriteResource(_tafName);
 
-	for (int16 i = 0; i < spr_anz; i++) {
-		if (!Tt->image[spr_nr + i]) {
-			res->getSpriteData(spr_nr + i, &Tt->image[spr_nr + i], true);
+	for (int16 i = 0; i < sprCount; i++) {
+		if (!Tt->image[sprNr + i]) {
+			res->getSpriteData(sprNr + i, &Tt->image[sprNr + i], true);
 		}
 	}
 
@@ -315,7 +315,7 @@ void Detail::showStaticSpr(int16 nr) {
 
 byte *Detail::getStaticImage(int16 detNr) {
 	byte *ret = nullptr;
-	int16 index = _rdi.Sinfo[detNr].SprNr;
+	const int16 index = _rdi.Sinfo[detNr].SprNr;
 	if (index != -1)
 		ret = _rdi.dptr->image[index];
 	return ret;
@@ -323,7 +323,7 @@ byte *Detail::getStaticImage(int16 detNr) {
 
 void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
 	if (correctionFlag) {
-		int16 *Cxy = _rdi.dptr->_correction + (_rdi.Sinfo[detNr].SprNr << 1);
+		int16 *Cxy = &_rdi.dptr->_correction[_rdi.Sinfo[detNr].SprNr];
 		x += Cxy[0];
 		y += Cxy[1];
 	}
@@ -332,35 +332,35 @@ void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool corre
 	_rdi.Sinfo[detNr].Hide = hideFl;
 }
 
-void Detail::set_detail_pos(int16 det_nr, int16 x, int16 y) {
-	_rdi.Ainfo[det_nr].x = x;
-	_rdi.Ainfo[det_nr].y = y;
+void Detail::setSetailPos(int16 detNr, int16 x, int16 y) {
+	_rdi.Ainfo[detNr].x = x;
+	_rdi.Ainfo[detNr].y = y;
 }
 
-void Detail::get_ani_werte(int16 ani_nr, int16 *start, int16 *end) {
-	*start = _rdi.Ainfo[ani_nr].start_ani;
-	*end = _rdi.Ainfo[ani_nr].end_ani;
+void Detail::getAniValues(int16 aniNr, int16 *start, int16 *end) {
+	*start = _rdi.Ainfo[aniNr].start_ani;
+	*end = _rdi.Ainfo[aniNr].end_ani;
 }
 
-void Detail::set_ani(int16 ani_nr, int16 start, int16 end) {
+void Detail::setAni(int16 aniNr, int16 start, int16 end) {
 	if (start > end)
 		SWAP(start, end);
 
-	_rdi.Ainfo[ani_nr].start_ani = start;
-	_rdi.Ainfo[ani_nr].end_ani = end;
+	_rdi.Ainfo[aniNr].start_ani = start;
+	_rdi.Ainfo[aniNr].end_ani = end;
 }
 
-byte *Detail::get_image(int16 spr_nr) {
-	byte *ret = _rdi.dptr->image[spr_nr];
+byte *Detail::getImage(int16 sprNr) {
+	byte *ret = _rdi.dptr->image[sprNr];
 	return ret;
 }
 
-AniDetailInfo *Detail::get_ani_detail(int16 ani_nr) {
-	AniDetailInfo *ret = &_rdi.Ainfo[ani_nr];
+AniDetailInfo *Detail::getAniDetail(int16 aniNr) {
+	AniDetailInfo *ret = &_rdi.Ainfo[aniNr];
 	return ret;
 }
 
-int16 *Detail::get_korrektur_tbl() {
+int16 *Detail::getCorrectionArray() {
 	int16 *ret = _rdi.dptr->_correction;
 	return ret;
 }
@@ -374,11 +374,11 @@ TafInfo *Detail::get_taf_info() {
 	return ret;
 }
 
-RoomDetailInfo *Detail::get_room_detail_info() {
+RoomDetailInfo *Detail::getRoomDetailInfo() {
 	return &_rdi;
 }
 
-void Detail::freeze_ani() {
+void Detail::freezeAni() {
 	_aniFreezeflag = true;
 }
 
@@ -656,7 +656,7 @@ void Detail::clear_detail_sound(int16 nr) {
 		sdb->repeats[i] = 0;
 		sdb->stereo[i] = 0;
 	}
-	remove_unused_samples();
+	removeUnusedSamples();
 }
 
 void Detail::disable_room_sound() {
@@ -689,7 +689,7 @@ void Detail::clear_room_sound() {
 	}
 }
 
-void Detail::remove_unused_samples() {
+void Detail::removeUnusedSamples() {
 	for (int16 k = 0; k < MAXDETAILS * MAX_SOUNDS; k++) {
 		if (_rdi.tvp_index[k] != -1) {
 			bool found = false;

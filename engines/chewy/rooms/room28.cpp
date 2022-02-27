@@ -248,7 +248,7 @@ void Room28::set_pump() {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			del_inventar(K_MASKE_INV);
-			_G(det)->set_detail_pos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+			_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 
 			if (_G(spieler).R28PumpTxt1 < 3) {
 				start_aad(137);
@@ -295,7 +295,7 @@ void Room28::get_pump() {
 		_G(spieler).R28ChewyPump = false;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
-		_G(det)->set_detail_pos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		start_detail_wait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);

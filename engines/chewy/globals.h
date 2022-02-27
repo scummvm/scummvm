@@ -484,7 +484,7 @@ void wait_show_screen(int16 frames);
 
 void zoom_mov_anpass(ObjMov *om, MovInfo *mi);
 
-void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y,
+void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY,
                ObjMov *om);
 
 void load_chewy_taf(int16 taf_nr);

@@ -65,7 +65,7 @@ void Room90::entry(int16 eib_nr) {
 	_G(HowardMov) = 1;
 
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
-		_G(det)->set_detail_pos(12, 329, 15);
+		_G(det)->setSetailPos(12, 329, 15);
 		_G(det)->start_detail(12, 255, false);
 		g_engine->_sound->playSound(12, 0);
 		g_engine->_sound->playSound(12);
@@ -137,7 +137,7 @@ void Room90::setup_func() {
 						_G(det)->stop_detail(i + 4);
 					}
 				}
-				_G(det)->set_detail_pos(i + 4, destX, destY);
+				_G(det)->setSetailPos(i + 4, destX, destY);
 			} else {
 				++_G(spieler).r90_Array187030[i][2];
 				if (_G(spieler).r90_Array187030[i][2] < _G(spieler).r90_Array187030[i][3])
@@ -150,7 +150,7 @@ void Room90::setup_func() {
 				else
 					destX = 500;
 
-				_G(det)->set_detail_pos(i + 4, destX, _G(Adi)[i + 4].y);
+				_G(det)->setSetailPos(i + 4, destX, _G(Adi)[i + 4].y);
 				
 				if (!_G(spieler).flags34_40)
 					_G(det)->start_detail(i + 4, 255, false);
@@ -256,7 +256,7 @@ int Room90::getHubcaps() {
 	_G(spieler).flags35_1 = true;
 	autoMove(4, P_CHEWY);
 	auto_scroll(176, 0);
-	_G(det)->set_detail_pos(12, 495, 15);
+	_G(det)->setSetailPos(12, 495, 15);
 	_G(det)->start_detail(12, 255, false);
 	g_engine->_sound->playSound(12, 0);
 	g_engine->_sound->playSound(12);
@@ -265,7 +265,7 @@ int Room90::getHubcaps() {
 
 	while (destX > 329) {
 		destX -= 2;
-		_G(det)->set_detail_pos(12, destX, 15);
+		_G(det)->setSetailPos(12, destX, 15);
 		set_up_screen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}

@@ -344,7 +344,7 @@ void Object::calc_static_detail(int16 det_nr) {
 
 						if (nr >= 40) {
 							n = nr - 40;
-							AniDetailInfo *adi = _G(det)->get_ani_detail(n);
+							AniDetailInfo *adi = _G(det)->getAniDetail(n);
 							if (adi->repeat)
 								_G(det)->start_detail(n, 0, ANI_FRONT);
 							else
@@ -356,7 +356,7 @@ void Object::calc_static_detail(int16 det_nr) {
 				}
 			} else if (nr >= 40) {
 				n = nr - 40;
-				AniDetailInfo *adi = _G(det)->get_ani_detail(n);
+				AniDetailInfo *adi = _G(det)->getAniDetail(n);
 				if (adi->repeat)
 					_G(det)->start_detail(n, 0, ANI_FRONT);
 				else

@@ -181,7 +181,7 @@ void Room40::move_train(int16 mode) {
 	int16 delay = 0;
 
 	while (ax < 560) {
-		_G(det)->set_detail_pos(7, lx, 46);
+		_G(det)->setSetailPos(7, lx, 46);
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
 		if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)

@@ -34,13 +34,13 @@ namespace Chewy {
 
 #define MAX_AUTO_MOV 20
 
-struct RaumInfo {
-	uint8 RoomNr;
+struct RoomInfo {
+	uint8 _roomNr;
 	uint8 BildNr;
 	uint8 AutoMovAnz;
 	uint8 TafLoad;
 	char TafName[14];
-	uint8 ZoomFak;
+	uint8 _zoomFactor;
 	uint8 Dummy;
 
 	bool load(Common::SeekableReadStream *src);
@@ -49,7 +49,7 @@ struct RaumInfo {
 	}
 };
 
-struct RaumAutoMov {
+struct RoomAutoMov {
 	int16 X;
 	int16 Y;
 	uint8 SprNr;
@@ -138,8 +138,8 @@ struct RoomDetailInfo {
 	StaticDetailInfo Sinfo[MAXDETAILS];
 	int16 mvect[MAX_M_ITEMS * 4] = { 0 };
 	int16 mtxt[MAX_M_ITEMS] = { 0 };
-	RaumInfo Ri;
-	RaumAutoMov AutoMov[MAX_AUTO_MOV];
+	RoomInfo Ri;
+	RoomAutoMov AutoMov[MAX_AUTO_MOV];
 	int16 tvp_index[MAXDETAILS * MAX_SOUNDS] = { 0 };
 	byte *sample[MAXDETAILS * MAX_SOUNDS] = { 0 };
 
@@ -150,8 +150,8 @@ struct RoomDetailInfo {
 			(StaticDetailInfo::SIZE() * MAXDETAILS) +
 			(2 * MAX_M_ITEMS * 4) +
 			(2 * MAX_M_ITEMS) +
-			RaumInfo::SIZE() +
-			(RaumAutoMov::SIZE() * MAX_AUTO_MOV) +
+			RoomInfo::SIZE() +
+			(RoomAutoMov::SIZE() * MAX_AUTO_MOV) +
 			(2 * MAXDETAILS * MAX_SOUNDS) +
 			(4 * MAXDETAILS * MAX_SOUNDS);
 	}
@@ -197,19 +197,19 @@ public:
 	byte *getStaticImage(int16 detNr);
 
 	void setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag);
-	void set_detail_pos(int16 det_nr, int16 x, int16 y);
+	void setSetailPos(int16 detNr, int16 x, int16 y);
 	void hideStaticSpr(int16 nr);
 	void showStaticSpr(int16 nr);
-	void freeze_ani();
+	void freezeAni();
 	void unfreeze_ani();
-	void get_ani_werte(int16 ani_nr, int16 *start, int16 *end);
-	void set_ani(int16 ani_nr, int16 start, int16 end);
-	byte *get_image(int16 spr_nr);
-	AniDetailInfo *get_ani_detail(int16 ani_nr);
-	int16 *get_korrektur_tbl();
+	void getAniValues(int16 aniNr, int16 *start, int16 *end);
+	void setAni(int16 aniNr, int16 start, int16 end);
+	byte *getImage(int16 sprNr);
+	AniDetailInfo *getAniDetail(int16 aniNr);
+	int16 *getCorrectionArray();
 	void init_taf(TafInfo *dptr);
 	TafInfo *get_taf_info();
-	RoomDetailInfo *get_room_detail_info();
+	RoomDetailInfo *getRoomDetailInfo();
 
 	void set_static_ani(int16 ani_nr, int16 static_nr);
 
@@ -236,7 +236,7 @@ public:
 
 	void del_taf_tbl(int16 start, int16 anz, TafInfo *Tt);
 
-	void load_taf_seq(int16 spr_nr, int16 spr_anz, TafInfo *Tt);
+	void load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt);
 	void load_taf_tbl(TafInfo *fti);
 
 	void del_dptr();
@@ -259,14 +259,14 @@ public:
 private:
 	void load_taf_ani_sprite(int16 nr);
 
-	void remove_unused_samples();
+	void removeUnusedSamples();
 	RoomDetailInfo _rdi;
-	RdiDateiHeader _rdi_datei_header;
+	RdiDateiHeader _rdiDataHeader;
 	SprInfo _sprInfo;
 
 	int16 _globalDelay = 0;
-	int16 _aniFreezeflag = 0;
-	int16 _fullTaf = 0;
+	bool _aniFreezeflag = false;
+	bool _fullTaf = false;
 	char _tafName[80];
 	byte *_tafLoadBuffer = nullptr;
 	int16 _directTafAni = 0;

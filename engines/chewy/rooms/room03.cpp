@@ -182,7 +182,7 @@ void Room3::sonde_knarre() {
 		{ {  13,  45,  75 }, 1, 3 }
 	};
 	hideCur();
-	RoomDetailInfo *rdi = _G(det)->get_room_detail_info();
+	RoomDetailInfo *rdi = _G(det)->getRoomDetailInfo();
 
 	_G(det)->load_taf_seq(162, 17, nullptr);
 	int16 tmp = _G(zoom_horizont);
@@ -294,7 +294,7 @@ void Room3::probeTransfer() {
 
 	_G(flags).AniUserAction = false;
 	hideCur();
-	_G(det)->get_room_detail_info();
+	_G(det)->getRoomDetailInfo();
 	int16 tmp = _G(zoom_horizont);
 	_G(zoom_horizont) = 100;
 	int16 anistart = false;

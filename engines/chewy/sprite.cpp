@@ -131,7 +131,7 @@ void sprite_engine() {
 			if (_G(Adi)[nr].zoom) {
 
 				y = _G(Adi)[nr].y;
-				calc_zoom(y, (int16)_G(room)->_roomInfo->ZoomFak, (int16)_G(room)->_roomInfo->ZoomFak, &detmov);
+				calc_zoom(y, (int16)_G(room)->_roomInfo->_zoomFactor, (int16)_G(room)->_roomInfo->_zoomFactor, &detmov);
 			} else {
 				detmov.Xzoom = 0;
 				detmov.Yzoom = 0;
@@ -156,8 +156,8 @@ void sprite_engine() {
 					spr_nr = _G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr];
 					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(chewy_kor)[spr_nr * 2] - _G(spieler).scrollx;
 					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(chewy_kor)[spr_nr * 2 + 1] - _G(spieler).scrolly;
-					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->ZoomFak,
-					          (int16)_G(room)->_roomInfo->ZoomFak, &_G(spieler_vector)[P_CHEWY]);
+					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->_zoomFactor,
+					          (int16)_G(room)->_roomInfo->_zoomFactor, &_G(spieler_vector)[P_CHEWY]);
 
 					_G(out)->scale_set(_G(chewy)->image[spr_nr], x, y,
 					                _G(spieler_vector)[P_CHEWY].Xzoom,
@@ -170,8 +170,8 @@ void sprite_engine() {
 					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(spz_tinfo)->_correction[spr_nr * 2 + 1] -
 					    _G(spieler).scrolly;
 					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1],
-					          (int16)_G(room)->_roomInfo->ZoomFak,
-					          (int16)_G(room)->_roomInfo->ZoomFak,
+					          (int16)_G(room)->_roomInfo->_zoomFactor,
+					          (int16)_G(room)->_roomInfo->_zoomFactor,
 					          &_G(spieler_vector)[P_CHEWY]);
 
 					_G(out)->scale_set(_G(spz_tinfo)->image[spr_nr], x, y,
@@ -405,7 +405,7 @@ void start_detail_frame(int16 ani_nr, int16 rep, int16 mode, int16 frame) {
 	_G(tmp_maus_links) = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	_G(det)->start_detail(ani_nr, rep, mode);
-	AniDetailInfo *adi = _G(det)->get_ani_detail(ani_nr);
+	AniDetailInfo *adi = _G(det)->getAniDetail(ani_nr);
 	if (mode == ANI_FRONT)
 		frame = adi->ani_count + frame;
 	else
@@ -694,18 +694,18 @@ int16 auto_obj_status(int16 nr) {
 	return status;
 }
 
-void calc_zoom(int16 y, int16 zoomfak_x, int16 zoomfak_y, ObjMov *om) {
-	float zoom_fak_x = (float)zoomfak_x / (float)100.0;
-	zoom_fak_x = -zoom_fak_x;
-	float zoom_fak_y = (float)zoomfak_y / (float)100.0;
-	zoom_fak_y = -zoom_fak_y;
+void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY, ObjMov *om) {
+	float factorX = (float)zoomFactorX / (float)100.0;
+	factorX = -factorX;
+	float factorY = (float)zoomFactorY / (float)100.0;
+	factorY = -factorY;
 	if (!_G(zoom_horizont)) {
-		om->Xzoom = -zoomfak_x;
-		om->Yzoom = -zoomfak_y;
+		om->Xzoom = -zoomFactorX;
+		om->Yzoom = -zoomFactorY;
 	} else {
 		if (y < _G(zoom_horizont)) {
-			om->Xzoom = (_G(zoom_horizont) - y) * zoom_fak_x;
-			om->Yzoom = (_G(zoom_horizont) - y) * zoom_fak_y;
+			om->Xzoom = (_G(zoom_horizont) - y) * factorX;
+			om->Yzoom = (_G(zoom_horizont) - y) * factorY;
 		} else {
 			om->Xzoom = 0;
 			om->Yzoom = 0;
