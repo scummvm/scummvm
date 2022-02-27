@@ -254,10 +254,10 @@ TafInfo *Detail::init_taf_tbl(const char *fname_) {
 
 	Tt = (TafInfo *)tmp;
 	Tt->anzahl = anz;
-	Tt->korrektur = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
+	Tt->_correction = (int16 *)MALLOC((int32)Tt->anzahl * 2 * sizeof(int16));
 	Tt->image = (byte **)(tmp + sizeof(TafInfo));
-	memcpy(Tt->korrektur, (byte *)res->getSpriteCorrectionsTable(), Tt->anzahl * 2 * sizeof(int16));
-	Tt->palette = 0;
+	memcpy(Tt->_correction, (byte *)res->getSpriteCorrectionsTable(), Tt->anzahl * 2 * sizeof(int16));
+	Tt->palette = nullptr;
 
 	delete res;
 
@@ -271,7 +271,7 @@ void Detail::del_taf_tbl(TafInfo *Tt) {
 	for (int16 i = 0; i < Tt->anzahl; i++) {
 		free(Tt->image[i]);
 	}
-	free((char *) Tt->korrektur);
+	free((char *) Tt->_correction);
 	free((char *) Tt);
 }
 
@@ -280,7 +280,7 @@ void Detail::del_taf_tbl(int16 start, int16 anz, TafInfo *Tt) {
 		Tt = _rdi.dptr;
 	for (int16 i = start; i < start + anz && i < Tt->anzahl; i++) {
 		free(Tt->image[i]);
-		Tt->image[i] = 0;
+		Tt->image[i] = nullptr;
 	}
 }
 
@@ -299,39 +299,37 @@ void Detail::load_taf_seq(int16 spr_nr, int16 spr_anz, TafInfo *Tt) {
 	delete res;
 }
 
-void Detail::set_static_spr(int16 nr, int16 spr_nr) {
-	_rdi.Sinfo[nr].SprNr = spr_nr;
+void Detail::setStaticSpr(int16 nr, int16 sprNr) {
+	_rdi.Sinfo[nr].SprNr = sprNr;
 }
 
-void Detail::hide_static_spr(int16 nr) {
+void Detail::hideStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = true;
 }
 
-void Detail::show_static_spr(int16 nr) {
+void Detail::showStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = false;
 }
 
-byte *Detail::get_static_image(int16 det_nr) {
-	byte *ret;
-	int16 index = _rdi.Sinfo[det_nr].SprNr;
-	if (index == -1)
-		ret = nullptr;
-	else
+byte *Detail::getStaticImage(int16 detNr) {
+	byte *ret = nullptr;
+	int16 index = _rdi.Sinfo[detNr].SprNr;
+	if (index != -1)
 		ret = _rdi.dptr->image[index];
 	return ret;
 }
 
-void Detail::set_static_pos(int16 det_nr, int16 x, int16 y, bool hide, bool korr_flag) {
-	if (korr_flag) {
-		int16 *Cxy = _rdi.dptr->korrektur + (_rdi.Sinfo[det_nr].SprNr << 1);
+void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
+	if (correctionFlag) {
+		int16 *Cxy = _rdi.dptr->_correction + (_rdi.Sinfo[detNr].SprNr << 1);
 		x += Cxy[0];
 		y += Cxy[1];
 	}
-	_rdi.Sinfo[det_nr].x = x;
-	_rdi.Sinfo[det_nr].y = y;
-	_rdi.Sinfo[det_nr].Hide = hide;
+	_rdi.Sinfo[detNr].x = x;
+	_rdi.Sinfo[detNr].y = y;
+	_rdi.Sinfo[detNr].Hide = hideFl;
 }
 
 void Detail::set_detail_pos(int16 det_nr, int16 x, int16 y) {
@@ -363,7 +361,7 @@ AniDetailInfo *Detail::get_ani_detail(int16 ani_nr) {
 }
 
 int16 *Detail::get_korrektur_tbl() {
-	int16 *ret = _rdi.dptr->korrektur;
+	int16 *ret = _rdi.dptr->_correction;
 	return ret;
 }
 
@@ -412,7 +410,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->_correction + (sprnr << 1);
 			int16 kx = Cxy[0];
 			int16 ky = Cxy[1];
 			if (zoomx != 0 || zoomy != 0)
@@ -573,7 +571,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
 		spr_nr = adiptr->end_ani - 1;
-	int16 *Cxy = _rdi.dptr->korrektur + (spr_nr << 1);
+	int16 *Cxy = _rdi.dptr->_correction + (spr_nr << 1);
 	int16 *Xy = (int16 *)_rdi.dptr->image[spr_nr];
 	_sprInfo.Image = _rdi.dptr->image[spr_nr];
 	_sprInfo.X = adiptr->x + Cxy[0] - scrx;
@@ -715,7 +713,7 @@ int16 Detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = _rdi.dptr->korrektur + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->_correction + (sprnr << 1);
 			int16 x = adiptr->x + Cxy[0] - scrx;
 			int16 y = adiptr->y + Cxy[1] - scry;
 			int16 *Xy;

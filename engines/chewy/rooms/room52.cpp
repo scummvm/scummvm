@@ -45,13 +45,13 @@ void Room52::entry() {
 		_G(det)->stop_detail(0);
 
 	if (!_G(flags).LoadGame) {
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 		_G(spieler).R52TuerAuf = true;
 		set_person_pos(20, 50, P_HOWARD, P_LEFT);
 		set_person_pos(35, 74, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
 		_G(spieler).R52TuerAuf = false;
-		_G(det)->hide_static_spr(4);
+		_G(det)->hideStaticSpr(4);
 		check_shad(2, 1);
 	}
 }
@@ -76,7 +76,7 @@ int16 Room52::use_hot_dog() {
 		action_ret = true;
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
-		_G(det)->show_static_spr(0);
+		_G(det)->showStaticSpr(0);
 		del_inventar(_G(spieler).AkInvent);
 		autoMove(4, P_CHEWY);
 		_G(spieler).R52HotDogOk = true;

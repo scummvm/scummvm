@@ -43,7 +43,7 @@ void Room77::entry() {
 		_G(det)->set_static_ani(0, -1);
 
 		for (int i = 0; i < 3; ++i) {
-			_G(det)->show_static_spr(2 + i);
+			_G(det)->showStaticSpr(2 + i);
 			_G(atds)->del_steuer_bit(460 + i, ATS_AKTIV_BIT, ATS_DATEI);
 		}
 	}

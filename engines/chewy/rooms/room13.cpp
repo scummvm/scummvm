@@ -54,10 +54,10 @@ void Room13::entry() {
 		start_aad_wait(27, -1);
 	} else {
 		if (_G(spieler).R13MonitorStatus)
-			_G(det)->show_static_spr(11 - _G(spieler).R13MonitorStatus);
+			_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
 
 		if (!_G(spieler).R13BorkOk) {
-			_G(det)->show_static_spr(12);
+			_G(det)->showStaticSpr(12);
 			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			_G(spieler).R13Bandlauf = true;
 
@@ -80,7 +80,7 @@ void Room13::entry() {
 		}
 
 		if (_G(spieler).R21GitterMuell)
-			_G(det)->hide_static_spr(6);
+			_G(det)->hideStaticSpr(6);
 	}
 }
 
@@ -101,15 +101,15 @@ void Room13::talk_bork() {
 	if (!_G(spieler).R13BorkOk) {
 		_G(spieler).R13BorkOk = true;
 		_G(spieler).R12ChewyBork = false;
-		_G(det)->show_static_spr(13);
+		_G(det)->showStaticSpr(13);
 		_G(det)->set_detail_pos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		_G(det)->set_static_pos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
+		_G(det)->setStaticPos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_aad_wait(33, -1);
 		_G(det)->stop_detail(9);
 		_G(det)->load_taf_seq(86, 12, nullptr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(det)->hide_static_spr(12);
+		_G(det)->hideStaticSpr(12);
 		_G(auto_obj) = 1;
 
 		_G(mov_phasen)[R13_BORK_OBJ].AtsText = 122;
@@ -227,13 +227,13 @@ int16 Room13::monitor_knopf() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 
 			if (_G(spieler).R13MonitorStatus)
-				_G(det)->hide_static_spr(11 - _G(spieler).R13MonitorStatus);
+				_G(det)->hideStaticSpr(11 - _G(spieler).R13MonitorStatus);
 
 			++_G(spieler).R13MonitorStatus;
 			if (_G(spieler).R13MonitorStatus > 4)
 				_G(spieler).R13MonitorStatus = 0;
 			else
-				_G(det)->show_static_spr(11 - _G(spieler).R13MonitorStatus);
+				_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
 
 			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
 		}

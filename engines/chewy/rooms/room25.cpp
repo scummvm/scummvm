@@ -52,8 +52,8 @@ void Room25::entry() {
 	}
 
 	if (!_G(spieler).R29Schlauch2) {
-		_G(det)->hide_static_spr(0);
-		_G(det)->hide_static_spr(1);
+		_G(det)->hideStaticSpr(0);
+		_G(det)->hideStaticSpr(1);
 	}
 
 	if (!_G(spieler).R25FirstEntry) {

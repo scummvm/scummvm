@@ -667,7 +667,7 @@ void exit_room(int16 eib_nr) {
 	case 75:
 		x = 160;
 		y = 200;
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 		break;
 
 	case 84:
@@ -683,20 +683,20 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 86:
-		_G(det)->show_static_spr(0);
+		_G(det)->showStaticSpr(0);
 		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 44;
 		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 2;
 		break;
 
 	case 90:
-		_G(det)->show_static_spr(8);
+		_G(det)->showStaticSpr(8);
 		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 60;
 		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		break;
 
 	case 94:
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 40;
 		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 10;
 		break;
@@ -704,7 +704,7 @@ void exit_room(int16 eib_nr) {
 	case 127:
 		x = 196;
 		y = 133;
-		_G(det)->show_static_spr(0);
+		_G(det)->showStaticSpr(0);
 		break;
 
 	case 132:
@@ -1509,7 +1509,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case 94:
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		_G(cur_hide_flag) = false;
 		hideCur();
 		start_aad_wait(406, -1);
@@ -1563,7 +1563,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_BOLA_KNOPF_R6:
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).R6BolaSchild = true;
-		_G(det)->show_static_spr(2);
+		_G(det)->showStaticSpr(2);
 		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 		_G(obj)->hide_sib(SIB_BOLA_KNOPF_R6);
 		_G(obj)->show_sib(SIB_BOLA_R6);
@@ -1651,7 +1651,7 @@ void sib_event_inv(int16 sib_nr) {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = true;
 		del_inventar(_G(spieler).AkInvent);
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
 
 		if (_G(spieler).R18CartTerminal) {

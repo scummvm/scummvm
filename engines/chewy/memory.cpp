@@ -54,8 +54,8 @@ TafInfo *Memory::taf_adr(const char *filename) {
 		imgPtr += res->getSpriteData(i, &tinfo->image[i], false);
 	}
 
-	tinfo->korrektur = (int16 *)(tmp1 + (size + 768l));
-	memcpy(tinfo->korrektur, res->getSpriteCorrectionsTable(), imageCount * 2 * sizeof(int16));
+	tinfo->_correction = (int16 *)(tmp1 + (size + 768l));
+	memcpy(tinfo->_correction, res->getSpriteCorrectionsTable(), imageCount * 2 * sizeof(int16));
 
 	delete res;
 
@@ -81,7 +81,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	ts_info = (TafSeqInfo *)tmp1;
 	ts_info->anzahl = image_anz;
 	ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
-	ts_info->korrektur = (int16 *)(tmp1 + size);
+	ts_info->_correction = (int16 *)(tmp1 + size);
 	byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
 
 	for (int16 i = 0; i < image_anz; i++) {
@@ -90,7 +90,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	}
 
 	uint16 *correctionsTable = res->getSpriteCorrectionsTable() + image_start * 2;
-	memcpy(ts_info->korrektur, correctionsTable, image_anz * 2 * sizeof(int16));
+	memcpy(ts_info->_correction, correctionsTable, image_anz * 2 * sizeof(int16));
 
 	delete res;
 

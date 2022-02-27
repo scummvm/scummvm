@@ -213,7 +213,7 @@ void Room45::taxi_mov() {
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
 	g_engine->_sound->playSound(15, 1);
-	_G(det)->show_static_spr(11);
+	_G(det)->showStaticSpr(11);
 	autoMove(3, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -225,7 +225,7 @@ void Room45::taxi_mov() {
 		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 	}
 
-	_G(det)->hide_static_spr(11);
+	_G(det)->hideStaticSpr(11);
 	g_engine->_sound->playSound(15, 2);
 	g_engine->_sound->playSound(15, 2, false);
 	g_engine->_sound->playSound(15, 0);

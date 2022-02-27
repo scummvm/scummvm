@@ -105,12 +105,12 @@ int16 Files::execute(bool isInGame) {
 				if (!mode[j])
 					// Not pressed
 					_G(out)->sprite_set(
-						ti->image[i], 16 + ti->korrektur[i << 1] + pt[j].x,
-						76 + ti->korrektur[(i << 1) + 1] + pt[j].y, 0);
+						ti->image[i], 16 + ti->_correction[i << 1] + pt[j].x,
+						76 + ti->_correction[(i << 1) + 1] + pt[j].y, 0);
 				else
 					// Pressed
-					_G(out)->sprite_set(ti->image[i], 16 + ti->korrektur[i << 1],
-						76 + ti->korrektur[(i << 1) + 1], 0);
+					_G(out)->sprite_set(ti->image[i], 16 + ti->_correction[i << 1],
+						76 + ti->_correction[(i << 1) + 1], 0);
 			}
 		}
 

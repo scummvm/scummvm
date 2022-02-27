@@ -39,13 +39,13 @@ void Room82::entry() {
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 
 	if (_G(spieler).R88UsedMonkey) {
-		_G(det)->show_static_spr(6);
+		_G(det)->showStaticSpr(6);
 		_G(atds)->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
 	if (_G(spieler).flags37_20)
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 
 	if (_G(flags).LoadGame) {
 		_G(SetUpScreenFunc) = setup_func;
@@ -201,7 +201,7 @@ int Room82::proc6() {
 		_G(atds)->enableEvents(false);
 		start_aad_wait(598, -1);
 		_G(atds)->enableEvents(true);
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		_G(fx_blend) = BLEND3;
 		set_up_screen(DO_SETUP);
 		Room66::proc8(2, 7, 7, 451);

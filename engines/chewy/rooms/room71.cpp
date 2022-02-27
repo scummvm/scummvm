@@ -54,12 +54,12 @@ void Room71::entry(int16 eib_nr) {
 		_G(det)->set_static_ani(0, -1);
 	} else if (_G(spieler).R71LeopardVined) {
 		_G(det)->start_detail(2, 255, ANI_FRONT);
-		_G(det)->show_static_spr(8);
-		_G(det)->hide_static_spr(2);
-		_G(det)->hide_static_spr(3);
+		_G(det)->showStaticSpr(8);
+		_G(det)->hideStaticSpr(2);
+		_G(det)->hideStaticSpr(3);
 	} else if (_G(spieler).flags28_4) {
-		_G(det)->show_static_spr(5);
-		_G(det)->hide_static_spr(3);
+		_G(det)->showStaticSpr(5);
+		_G(det)->hideStaticSpr(3);
 	}
 
 	if (_G(flags).LoadGame)
@@ -109,9 +109,9 @@ void Room71::setup_func() {
 			_delay = (_G(spieler).DelaySpeed + 1) / 2;
 
 			if (_state == 1) {
-				_G(det)->set_static_pos(3, 244 + g_engine->_rnd.getRandomNumber(4), -1 * g_engine->_rnd.getRandomNumber(4), false, false);				
+				_G(det)->setStaticPos(3, 244 + g_engine->_rnd.getRandomNumber(4), -1 * g_engine->_rnd.getRandomNumber(4), false, false);				
 			} else {
-				_G(det)->set_static_pos(5, 198 + g_engine->_rnd.getRandomNumber(3), -1 * g_engine->_rnd.getRandomNumber(3), false, false);
+				_G(det)->setStaticPos(5, 198 + g_engine->_rnd.getRandomNumber(3), -1 * g_engine->_rnd.getRandomNumber(3), false, false);
 			}
 		}
 
@@ -205,14 +205,14 @@ void Room71::proc2() {
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	proc5(5);
-	_G(det)->hide_static_spr(2);
+	_G(det)->hideStaticSpr(2);
 	_G(det)->start_detail(5, 255, false);
 	auto_scroll(160, 0);
-	_G(det)->hide_static_spr(5);
+	_G(det)->hideStaticSpr(5);
 	start_detail_wait(1, 1, ANI_FRONT);
 	_G(det)->start_detail(2, 255, false);
 	_G(det)->stop_detail(5);
-	_G(det)->show_static_spr(8);
+	_G(det)->showStaticSpr(8);
 	_G(atds)->set_steuer_bit(442, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(atds)->set_steuer_bit(446, ATS_AKTIV_BIT, ATS_DATEI);
 	_G(spieler).PersonHide[P_HOWARD] = false;
@@ -251,9 +251,9 @@ void Room71::proc4() {
 
 void Room71::proc5(int16 val) {
 	_state = 1 + (_G(spieler).flags28_4 ? 1 : 0);
-	_G(det)->hide_static_spr(2);
+	_G(det)->hideStaticSpr(2);
 	start_detail_wait(val, 5, ANI_FRONT);
-	_G(det)->show_static_spr(2);
+	_G(det)->showStaticSpr(2);
 	_state = 0;
 }
 
@@ -264,13 +264,13 @@ int Room71::proc6() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(det)->hide_static_spr(3);
-	_G(det)->show_static_spr(4);
+	_G(det)->hideStaticSpr(3);
+	_G(det)->showStaticSpr(4);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	goAutoXy(244, 44, P_CHEWY, ANI_WAIT);
 	start_spz_wait(14, 1, false, P_CHEWY);
-	_G(det)->hide_static_spr(4);
-	_G(det)->show_static_spr(5);
+	_G(det)->hideStaticSpr(4);
+	_G(det)->showStaticSpr(5);
 	_G(spieler).flags28_4 = true;
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);

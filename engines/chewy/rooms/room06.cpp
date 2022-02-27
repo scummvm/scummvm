@@ -93,11 +93,11 @@ void Room6::init_robo() {
 
 void Room6::bola_knopf() {
 	if (!_G(spieler).R6BolaBecher) {
-		_G(det)->hide_static_spr(0);
+		_G(det)->hideStaticSpr(0);
 		start_detail_wait(0, 1, ANI_FRONT);
 		if (_G(spieler).R6BolaOk) {
 			_G(spieler).R6BolaBecher = true;
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 			start_ani_block(2, ABLOCK7);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
 			wait_detail(2);
@@ -116,7 +116,7 @@ void Room6::bola_knopf() {
 				}
 				set_up_screen(DO_SETUP);
 			}
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 			++_G(spieler).R6BolaJoke;
 			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
 			start_spz(CH_TALK5, 244, false, 0);

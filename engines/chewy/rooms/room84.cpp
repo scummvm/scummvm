@@ -59,7 +59,7 @@ void Room84::entry() {
 	}
 
 	if (_G(spieler).r88DestRoom == 84) {
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		_G(atds)->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
 	}

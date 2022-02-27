@@ -75,7 +75,7 @@ void Room31::surimy_go() {
 void Room31::calc_luke() {
 	if (!_G(spieler).R31KlappeZu) {
 		for (int16 i = 0; i < 3; i++)
-			_G(det)->show_static_spr(5 + i);
+			_G(det)->showStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 1, ATS_DATEI);
 		_G(atds)->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);
@@ -83,7 +83,7 @@ void Room31::calc_luke() {
 
 	} else {
 		for (int16 i = 0; i < 3; i++)
-			_G(det)->hide_static_spr(5 + i);
+			_G(det)->hideStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 0, ATS_DATEI);
 		_G(atds)->set_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATEI);

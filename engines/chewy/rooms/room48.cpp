@@ -61,13 +61,13 @@ void Room48::calc_pic() {
 	if (_G(obj)->checkInventory(VCARD_INV)) {
 		_G(spieler).R48Auswahl[3] = 1;
 		_G(atds)->del_steuer_bit(312, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 	}
 
 	if (_G(obj)->checkInventory(KAPPE_INV)) {
 		_G(spieler).R48Auswahl[4] = 1;
 		_G(atds)->del_steuer_bit(313, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 	}
 }
 
@@ -76,9 +76,9 @@ void Room48::frage() {
 		_G(flags).AutoAniPlay = true;
 		hideCur();
 		start_detail_wait(1, 1, ANI_FRONT);
-		_G(det)->show_static_spr(6);
+		_G(det)->showStaticSpr(6);
 		start_detail_wait(1, 1, ANI_BACK);
-		_G(det)->hide_static_spr(6);
+		_G(det)->hideStaticSpr(6);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		showCur();
 		_G(flags).AutoAniPlay = false;
@@ -87,7 +87,7 @@ void Room48::frage() {
 
 void Room48::setup_func() {
 	for (int16 i = 0; i < 5; i++)
-		_G(det)->hide_static_spr(1 + i);
+		_G(det)->hideStaticSpr(1 + i);
 
 	if (_G(flags).ShowAtsInvTxt) {
 		if (_G(menu_display) == 0) {
@@ -98,7 +98,7 @@ void Room48::setup_func() {
 
 			if (idx != -1) {
 				if (_G(spieler).R48Auswahl[idx]) {
-					_G(det)->show_static_spr(1 + idx);
+					_G(det)->showStaticSpr(1 + idx);
 
 					if (_G(maus_links_click)) {
 						int16 r_nr;
@@ -130,7 +130,7 @@ void Room48::setup_func() {
 
 						if (r_nr != -1) {
 							_G(SetUpScreenFunc) = nullptr;
-							_G(det)->hide_static_spr(1 + idx);
+							_G(det)->hideStaticSpr(1 + idx);
 							hideCur();
 							_G(room)->set_timer_status(255, TIMER_STOP);
 							_G(room)->set_timer_status(0, TIMER_STOP);

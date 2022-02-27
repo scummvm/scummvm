@@ -38,7 +38,7 @@ void Room57::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (_G(spieler).R57StudioAuf)
-		_G(det)->hide_static_spr(4);
+		_G(det)->hideStaticSpr(4);
 	
 	if (!_G(flags).LoadGame &&_G(spieler).R48TaxiEntry) {
 		hideCur();
@@ -85,7 +85,7 @@ int16 Room57::use_taxi() {
 		autoMove(3, P_CHEWY);
 		g_engine->_sound->playSound(3, 0);
 		g_engine->_sound->playSound(3);
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		goAutoXy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -96,7 +96,7 @@ int16 Room57::use_taxi() {
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
-		_G(det)->hide_static_spr(7);
+		_G(det)->hideStaticSpr(7);
 		g_engine->_sound->playSound(3, 1);
 		g_engine->_sound->playSound(3);
 		_G(room)->set_timer_status(3, TIMER_STOP);
@@ -137,7 +137,7 @@ int16 Room57::use_pfoertner() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
 			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
-			_G(det)->hide_static_spr(4);
+			_G(det)->hideStaticSpr(4);
 			start_detail_wait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
 			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATEI);

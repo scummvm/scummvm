@@ -36,7 +36,7 @@ static const MovLine SURIMY_MPKT[2] = {
 
 void Room33::entry() {
 	if (_G(spieler).R33MunterGet)
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 	surimy_go();
 }
 
@@ -206,7 +206,7 @@ int16 Room33::get_munter() {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(MUNTER_INV);
 		_G(atds)->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 		start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 		start_aad_wait(72, -1);
 		showCur();

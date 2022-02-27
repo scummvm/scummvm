@@ -188,7 +188,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
 		Rb->DetImage = Rb->Fti->image;
-		Rb->DetKorrekt = Rb->Fti->korrektur;
+		Rb->DetKorrekt = Rb->Fti->_correction;
 	}
 	_G(obj)->calc_all_static_detail();
 	load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
@@ -539,7 +539,7 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(spieler).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
 			_G(chewy) = _G(mem)->taf_adr(fname_);
-			_G(chewy_kor) = _G(chewy)->korrektur;
+			_G(chewy_kor) = _G(chewy)->_correction;
 		}
 	}
 }

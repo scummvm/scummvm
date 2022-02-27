@@ -29,9 +29,9 @@ namespace Rooms {
 
 void Room32::entry() {
 	if (_G(spieler).R32HowardWeg)
-		_G(det)->hide_static_spr(0);
+		_G(det)->hideStaticSpr(0);
 	if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib)
-		_G(det)->show_static_spr(5);
+		_G(det)->showStaticSpr(5);
 }
 
 int16 Room32::use_howard() {
@@ -57,13 +57,13 @@ int16 Room32::use_howard() {
 			start_aad_wait(125, -1);
 			wait_show_screen(10);
 
-			_G(det)->hide_static_spr(0);
+			_G(det)->hideStaticSpr(0);
 			start_detail_frame(0, 1, ANI_FRONT, 9);
 			start_detail_wait(1, 1, ANI_BACK);
-			_G(det)->show_static_spr(7);
-			_G(det)->show_static_spr(6);
+			_G(det)->showStaticSpr(7);
+			_G(det)->showStaticSpr(6);
 			wait_show_screen(20);
-			_G(det)->hide_static_spr(7);
+			_G(det)->hideStaticSpr(7);
 			start_detail_wait(1, 1, ANI_FRONT);
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			ani_nr = CH_TALK3;
@@ -109,7 +109,7 @@ void Room32::use_schreibmaschine() {
 						cur_2_inventory();
 						flic_cut(FCUT_044);
 						register_cutscene(12);
-						_G(det)->show_static_spr(5);
+						_G(det)->showStaticSpr(5);
 						_G(atds)->set_ats_str(203, 1, ATS_DATEI);
 						ani_nr = CH_TALK3;
 						dia_nr = 88;
@@ -157,7 +157,7 @@ int16 Room32::get_script() {
 		autoMove(4, P_CHEWY);
 		invent_2_slot(MANUSKRIPT_INV);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		_G(det)->hide_static_spr(5);
+		_G(det)->hideStaticSpr(5);
 		_G(atds)->set_ats_str(203, 0, ATS_DATEI);
 		start_spz(CH_TALK3, 1, ANI_FRONT, P_CHEWY);
 		start_aad_wait(91, -1);

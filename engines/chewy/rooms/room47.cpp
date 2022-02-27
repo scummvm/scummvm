@@ -86,16 +86,16 @@ int16 Room47::use_knopf(int16 txt_nr) {
 
 void Room47::set_detail() {
 	for (int16 i = 0; i < 10; i++)
-		_G(det)->hide_static_spr(i);
+		_G(det)->hideStaticSpr(i);
 
 	for (int16 i = 0; i < 3; i++) {
-		_G(det)->show_static_spr(_G(spieler).R47Schloss[i]);
-		_G(det)->set_static_pos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i, false, true);
+		_G(det)->showStaticSpr(_G(spieler).R47Schloss[i]);
+		_G(det)->setStaticPos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i, false, true);
 		_G(det)->plot_static_details(0, 0, _G(spieler).R47Schloss[i], _G(spieler).R47Schloss[i]);
 	}
 
 	for (int16 i = 0; i < 10; i++)
-		_G(det)->hide_static_spr(i);
+		_G(det)->hideStaticSpr(i);
 }
 
 } // namespace Rooms

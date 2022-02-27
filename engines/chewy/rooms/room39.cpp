@@ -53,7 +53,7 @@ static const AniBlock ABLOCK29[2] = {
 void Room39::entry() {
 	if (!_G(spieler).R41Einbruch) {
 		if (_G(spieler).R39HowardDa) {
-			_G(det)->show_static_spr(10);
+			_G(det)->showStaticSpr(10);
 			if (!_G(spieler).R39HowardWach)
 				_G(det)->start_detail(1, 255, ANI_FRONT);
 			else
@@ -335,14 +335,14 @@ void Room39::look_tv(bool cls_mode) {
 
 void Room39::set_tv() {
 	for (int16 i = 0; i < 6; i++)
-		_G(det)->hide_static_spr(i + 4);
+		_G(det)->hideStaticSpr(i + 4);
 
 	if (_G(spieler).R39TvOn) {
 		if (_G(spieler).R39TvKanal == 2) {
 			_G(det)->start_detail(0, 255, ANI_FRONT);
 		} else {
 			_G(det)->stop_detail(0);
-			_G(det)->show_static_spr(_G(spieler).R39TvKanal + 4);
+			_G(det)->showStaticSpr(_G(spieler).R39TvKanal + 4);
 		}
 
 		if (_G(spieler).R39TranslatorUsed) {

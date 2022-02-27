@@ -50,7 +50,7 @@ void Room68::entry() {
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
 	if (_G(spieler).R68Papagei) {
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(12);
 		_G(det)->start_detail(21, 255, ANI_FRONT);
 	}
 
@@ -58,7 +58,7 @@ void Room68::entry() {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(det)->set_static_ani(18, -1);
 	} else
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 	
 	if (!_G(flags).LoadGame) {
 		hideCur();
@@ -122,7 +122,7 @@ void Room68::setup_func() {
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = -1;
 			_G(det)->stop_detail(18);
-			_G(det)->show_static_spr(3);
+			_G(det)->showStaticSpr(3);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		}
 		break;
@@ -249,7 +249,7 @@ int16 Room68::use_papagei() {
 		del_inventar(_G(spieler).AkInvent);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(12);
 		_G(det)->start_detail(21, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(407, 1, ATS_DATEI);
@@ -264,7 +264,7 @@ void Room68::calc_diva() {
 			if (_G(r68HohesC) == -1) {
 				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
-				_G(det)->hide_static_spr(3);
+				_G(det)->hideStaticSpr(3);
 				_G(det)->start_detail(_G(r68HohesC), 1, ANI_BACK);
 				_G(det)->start_detail(18, 255, ANI_FRONT);
 			}
@@ -308,15 +308,15 @@ int16 Room68::use_diva() {
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 		start_detail_wait(4, 1, ANI_FRONT);
 		_G(spieler).R68Gutschein = false;
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 	} else if (is_cur_inventar(B_MARY2_INV)) {
 		del_inventar(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 		_G(spieler).R68DivaWeg = true;
 		start_ani_block(2, ABLOCK38);
 		flic_cut(FCUT_083);
@@ -408,11 +408,11 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(det)->stop_detail(27);
 		_G(det)->stop_detail(24);
-		_G(det)->show_static_spr(13);
+		_G(det)->showStaticSpr(13);
 		_G(spieler).R68Lied = true;
 		autoMove(1, P_CHEWY);
 		auto_scroll(216, 0);
-		_G(det)->hide_static_spr(13);
+		_G(det)->hideStaticSpr(13);
 		_G(spieler).PersonHide[P_NICHELLE] = false;
 		set_person_pos(150, -13, P_NICHELLE, P_RIGHT);
 

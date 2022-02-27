@@ -44,17 +44,17 @@ static const AniBlock ABLOCK27[5] = {
 
 void Room29::entry() {
 	if (_G(spieler).R29Schlauch1) {
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 	} else if (_G(spieler).R29Schlauch2) {
-		_G(det)->show_static_spr(8);
-		_G(det)->show_static_spr(10);
+		_G(det)->showStaticSpr(8);
+		_G(det)->showStaticSpr(10);
 	}
 
 	if (_G(spieler).R29AutoSitz) {
 		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
 			_G(atds)->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
 		else
-			_G(det)->show_static_spr(9);
+			_G(det)->showStaticSpr(9);
 	}
 
 	_G(spieler).ScrollxStep = 2;
@@ -77,7 +77,7 @@ int16 Room29::use_pumpe() {
 			_G(spieler).R29Schlauch1 = true;
 			autoMove(1, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(det)->show_static_spr(7);
+			_G(det)->showStaticSpr(7);
 			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
@@ -115,11 +115,11 @@ bool Room29::use_schlauch() {
 
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		_G(det)->hide_static_spr(7);
+		_G(det)->hideStaticSpr(7);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(4, 1, ANI_FRONT);
-		_G(det)->show_static_spr(8);
-		_G(det)->show_static_spr(10);
+		_G(det)->showStaticSpr(8);
+		_G(det)->showStaticSpr(10);
 		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(218, 1, ATS_DATEI);
 
@@ -139,11 +139,11 @@ void Room29::schlitz_sitz() {
 		hideCur();
 		_G(spieler).R29AutoSitz = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		_G(det)->hide_static_spr(4);
-		_G(det)->show_static_spr(11);
+		_G(det)->hideStaticSpr(4);
+		_G(det)->showStaticSpr(11);
 		start_ani_block(3, ABLOCK26);
-		_G(det)->show_static_spr(9);
-		_G(det)->hide_static_spr(11);
+		_G(det)->showStaticSpr(9);
+		_G(det)->hideStaticSpr(11);
 		_G(det)->start_detail(2, 255, ANI_FRONT);
 		start_aad_wait(63, -1);
 
@@ -167,7 +167,7 @@ int16 Room29::zaun_sprung() {
 		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_frame(3, 1, ANI_FRONT, 7);
-		_G(det)->hide_static_spr(9);
+		_G(det)->hideStaticSpr(9);
 		start_ani_block(5, ABLOCK27);
 		set_up_screen(DO_SETUP);
 

@@ -48,9 +48,9 @@ void Room23::cockpit() {
 	switch_room(23);
 
 	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
-		_G(det)->hide_static_spr(3);
+		_G(det)->hideStaticSpr(3);
 	else
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 }
 
 int16 Room23::start_gleiter() {
@@ -135,7 +135,7 @@ void Room23::use_cartridge() {
 		_G(atds)->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
 		_G(atds)->set_ats_str(111, 2, ATS_DATEI);
 		start_detail_wait(4, 1, ANI_FRONT);
-		_G(det)->show_static_spr(3);
+		_G(det)->showStaticSpr(3);
 	} else {
 		_G(atds)->set_ats_str(111, 1, ATS_DATEI);
 	}
@@ -148,7 +148,7 @@ void Room23::get_cartridge() {
 	_G(atds)->set_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATEI);
 
 	_G(spieler).R23Cartridge = false;
-	_G(det)->hide_static_spr(3);
+	_G(det)->hideStaticSpr(3);
 }
 
 } // namespace Rooms

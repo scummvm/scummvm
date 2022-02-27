@@ -37,7 +37,7 @@ void Room56::entry() {
 	int mode = 0;
 
 	if (_G(spieler).flags32_10) {
-		_G(det)->show_static_spr(10);
+		_G(det)->showStaticSpr(10);
 		_G(room)->set_timer_status(0, TIMER_STOP);
 		_G(det)->del_static_ani(0);
 		_G(det)->start_detail(13, 255, ANI_FRONT);
@@ -52,7 +52,7 @@ void Room56::entry() {
 			_G(spieler).scrolly = 0;
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			_G(spieler).PersonHide[P_HOWARD] = true;
-			_G(det)->hide_static_spr(2);
+			_G(det)->hideStaticSpr(2);
 			_G(zoom_horizont) = 0;
 			set_person_pos(-6, 16, P_HOWARD, P_RIGHT);
 			set_person_pos(3, 42, P_CHEWY, P_RIGHT);
@@ -67,7 +67,7 @@ void Room56::entry() {
 
 			if (!_G(spieler).R56GetTabak) {
 				flic_cut(FCUT_074);
-				_G(det)->show_static_spr(2);
+				_G(det)->showStaticSpr(2);
 			}
 
 			_G(room)->set_zoom(23);
@@ -92,8 +92,8 @@ void Room56::entry() {
 			set_person_pos(429, 146, P_CHEWY, P_LEFT);
 			_G(spieler).scrollx = 262;
 			_G(spieler).PersonHide[P_HOWARD] = false;
-			_G(det)->show_static_spr(9);
-			_G(det)->show_static_spr(8);
+			_G(det)->showStaticSpr(9);
+			_G(det)->showStaticSpr(8);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			_G(det)->set_static_ani(3, -1);

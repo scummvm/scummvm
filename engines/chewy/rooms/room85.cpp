@@ -49,7 +49,7 @@ void Room85::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 1;
 
 	if (_G(spieler).flags32_10) {
-		_G(det)->show_static_spr(4);
+		_G(det)->showStaticSpr(4);
 		_G(atds)->del_steuer_bit(495, ATS_AKTIV_BIT, ATS_DATEI);
 	}
 
@@ -81,15 +81,15 @@ void Room85::entry(int16 eib_nr) {
 		_G(spieler).scrollx = 0;
 		set_person_pos(133, 152, P_CHEWY, P_RIGHT);
 		_G(spieler).room_e_obj[127].Attribut = 255;
-		_G(det)->show_static_spr(5);
-		_G(det)->show_static_spr(6);
+		_G(det)->showStaticSpr(5);
+		_G(det)->showStaticSpr(6);
 		start_aad_wait(474, -1);
 		flic_cut(FCUT_090);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_091);
-		_G(det)->hide_static_spr(6);
+		_G(det)->hideStaticSpr(6);
 		_G(spieler).scrollx = 25;
 		_G(fx_blend) = BLEND3;
 		start_aad_wait(475, -1);

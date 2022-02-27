@@ -37,7 +37,7 @@ static const AniBlock ABLOCK28[2] = {
 
 void Room35::entry() {
 	if (_G(spieler).R35Schublade)
-		_G(det)->show_static_spr(1);
+		_G(det)->showStaticSpr(1);
 }
 
 int16 Room35::schublade() {
@@ -49,7 +49,7 @@ int16 Room35::schublade() {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(det)->show_static_spr(1);
+			_G(det)->showStaticSpr(1);
 			_G(spieler).R35Schublade = true;
 			_G(atds)->set_ats_str(234, 1, ATS_DATEI);
 		} else if (!_G(spieler).R35Falle) {
@@ -98,7 +98,7 @@ int16 Room35::use_cat() {
 			start_detail_wait(3, 1, ANI_FRONT);
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
-			_G(det)->show_static_spr(7);
+			_G(det)->showStaticSpr(7);
 			_G(atds)->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATEI);
 
 			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {

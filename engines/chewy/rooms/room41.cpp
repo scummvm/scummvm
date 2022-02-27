@@ -55,8 +55,8 @@ void Room41::entry() {
 
 	if (_G(spieler).R41Einbruch) {
 		_G(atds)->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(det)->show_static_spr(6);
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(6);
+		_G(det)->showStaticSpr(7);
 	}
 
 	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {

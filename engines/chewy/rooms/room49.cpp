@@ -46,7 +46,7 @@ void Room49::entry(int16 eib_nr) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 2);
 	} else {
 		_G(det)->del_static_ani(0);
-		_G(det)->hide_static_spr(5);
+		_G(det)->hideStaticSpr(5);
 		_G(det)->del_static_ani(0);
 		_G(det)->del_static_ani(1);
 	}
@@ -133,11 +133,11 @@ void Room49::calc_boy() {
 		_G(det)->del_static_ani(2);
 		start_detail_wait(3, 1, ANI_FRONT);
 
-		_G(det)->show_static_spr(9);
+		_G(det)->showStaticSpr(9);
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		start_detail_wait(8, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_HOWARD] = false;
-		_G(det)->hide_static_spr(9);
+		_G(det)->hideStaticSpr(9);
 		start_detail_wait(4, 1, ANI_GO);
 
 		_G(SetUpScreenFunc) = setup_func;
@@ -245,7 +245,7 @@ int16 Room49::use_taxi() {
 		action_ret = true;
 		hideCur();
 		start_ani_block(2, ABLOCK34);
-		_G(det)->show_static_spr(7);
+		_G(det)->showStaticSpr(7);
 		autoMove(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
@@ -258,7 +258,7 @@ int16 Room49::use_taxi() {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
 		}
 
-		_G(det)->hide_static_spr(7);
+		_G(det)->hideStaticSpr(7);
 		start_detail_wait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);

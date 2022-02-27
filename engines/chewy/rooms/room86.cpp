@@ -42,8 +42,8 @@ void Room86::entry(int16 eib_nr) {
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).flags32_2) {
 		_G(det)->start_detail(0, 255, false);
-		_G(det)->set_static_pos(0, 352, 107, false, false);
-		_G(det)->show_static_spr(0);
+		_G(det)->setStaticPos(0, 352, 107, false, false);
+		_G(det)->showStaticSpr(0);
 	}
 
 	if (_G(flags).LoadGame)
@@ -77,8 +77,8 @@ void Room86::entry(int16 eib_nr) {
 		_G(flags).NoScroll = false;
 		_G(spieler_mi)[P_CHEWY].Vorschub = 8;
 		_G(det)->stop_detail(0);
-		_G(det)->show_static_spr(4);
-		_G(det)->show_static_spr(5);
+		_G(det)->showStaticSpr(4);
+		_G(det)->showStaticSpr(5);
 		invent_2_slot(94);
 		autoMove(4, P_CHEWY);
 		_G(flags).NoScroll = true;
@@ -180,8 +180,8 @@ void Room86::proc3(bool cond) {
 	if (_G(flags).NoScroll)
 		auto_scroll(196, 0);
 
-	_G(det)->set_static_pos(0, 352, destY, false, false);
-	_G(det)->show_static_spr(0);
+	_G(det)->setStaticPos(0, 352, destY, false, false);
+	_G(det)->showStaticSpr(0);
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 2);
 	g_engine->_sound->playSound(0, 1, false);
@@ -189,7 +189,7 @@ void Room86::proc3(bool cond) {
 
 	for (int i = 0; i < 48; ++i) {
 		set_up_screen(NO_SETUP);
-		_G(det)->set_static_pos(0, 352, destY, false, false);
+		_G(det)->setStaticPos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setPointer(nullptr);
 		_G(out)->back2screen(_G(workpage));

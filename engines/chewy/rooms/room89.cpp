@@ -36,9 +36,9 @@ void Room89::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = _G(room)->set_timer(2, 10);
 	if (_G(spieler).flags33_4) {
-		_G(det)->show_static_spr(5);
+		_G(det)->showStaticSpr(5);
 		if (!_G(spieler).flags32_80)
-			_G(det)->show_static_spr(6);
+			_G(det)->showStaticSpr(6);
 	}
 
 	if (_G(flags).LoadGame) {
@@ -202,13 +202,13 @@ int Room89::proc4() {
 	if (_G(spieler).flags33_4) {
 		_G(atds)->set_ats_str(514, 2, ATS_DATEI);
 		_G(spieler).flags32_80 = true;
-		_G(det)->hide_static_spr(6);
+		_G(det)->hideStaticSpr(6);
 		new_invent_2_cur(111);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(491, -1);
 	} else {
-		_G(det)->show_static_spr(5);
-		_G(det)->show_static_spr(6);
+		_G(det)->showStaticSpr(5);
+		_G(det)->showStaticSpr(6);
 		_G(spieler).flags33_4 = true;
 		_G(atds)->set_ats_str(514, 1, ATS_DATEI);
 	}

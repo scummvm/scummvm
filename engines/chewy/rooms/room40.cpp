@@ -57,7 +57,7 @@ void Room40::entry(int16 eib_nr) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 	} else {
-		_G(det)->hide_static_spr(15);
+		_G(det)->hideStaticSpr(15);
 	}
 
 	_G(spieler).R40PoliceAniStatus = 255;
@@ -172,20 +172,20 @@ void Room40::move_train(int16 mode) {
 	int16 ax = -230;
 
 	_G(det)->start_detail(7, 20, ANI_FRONT);
-	_G(det)->show_static_spr(11);
+	_G(det)->showStaticSpr(11);
 
 	if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
-		_G(det)->show_static_spr(12);
+		_G(det)->showStaticSpr(12);
 
 	g_engine->_sound->playSound(7, 0);
 	int16 delay = 0;
 
 	while (ax < 560) {
 		_G(det)->set_detail_pos(7, lx, 46);
-		_G(det)->set_static_pos(11, ax, 62, false, false);
+		_G(det)->setStaticPos(11, ax, 62, false, false);
 
 		if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
-			_G(det)->set_static_pos(12, ax, 62, false, true);
+			_G(det)->setStaticPos(12, ax, 62, false, true);
 
 		if (!delay) {
 			lx += SPEED;
@@ -200,8 +200,8 @@ void Room40::move_train(int16 mode) {
 	}
 
 	_G(det)->stop_detail(7);
-	_G(det)->hide_static_spr(11);
-	_G(det)->hide_static_spr(12);
+	_G(det)->hideStaticSpr(11);
+	_G(det)->hideStaticSpr(12);
 
 	if (!mode) {
 		start_aad_wait(207, -1);
@@ -244,7 +244,7 @@ void Room40::setup_func() {
 			_G(spieler).R40PoliceAniStatus = POLICE_LEFT;
 			_G(room)->set_timer_status(255, TIMER_STOP);
 			_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
-			_G(det)->hide_static_spr(15);
+			_G(det)->hideStaticSpr(15);
 			_G(det)->start_detail(POLICE_LEFT, 1, ANI_FRONT);
 			_G(atds)->set_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
 		}
@@ -259,7 +259,7 @@ void Room40::setup_func() {
 
 		case POLICE_OFFEN:
 			if (_G(det)->get_ani_status(POLICE_OFFEN) == false) {
-				_G(det)->show_static_spr(0);
+				_G(det)->showStaticSpr(0);
 				_G(det)->start_detail(POLICE_FLASCHE, 1, ANI_FRONT);
 				_G(spieler).R40PoliceAniStatus = POLICE_FLASCHE;
 			}
@@ -267,7 +267,7 @@ void Room40::setup_func() {
 
 		case POLICE_RIGHT:
 			if (_G(det)->get_ani_status(POLICE_RIGHT) == false) {
-				_G(det)->show_static_spr(15);
+				_G(det)->showStaticSpr(15);
 				_G(spieler).R40PoliceAniStatus = 255;
 				_G(room)->set_timer_status(255, TIMER_START);
 				_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
@@ -277,7 +277,7 @@ void Room40::setup_func() {
 
 		case POLICE_FLASCHE:
 			if (_G(det)->get_ani_status(POLICE_FLASCHE) == false) {
-				_G(det)->hide_static_spr(0);
+				_G(det)->hideStaticSpr(0);
 				if (_G(spieler).R40DuengerTele) {
 					hideCur();
 					_G(spieler).R40PoliceWeg = true;
@@ -396,13 +396,13 @@ int16 Room40::use_schalter(int16 aad_nr) {
 			_G(spieler).R40HoUse = false;
 		}
 
-		_G(det)->hide_static_spr(15);
+		_G(det)->hideStaticSpr(15);
 		start_detail_wait(12, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
 		start_aad_wait(aad_nr, -1);
 		_G(det)->del_static_ani(14);
 		start_detail_wait(13, 1, ANI_FRONT);
-		_G(det)->show_static_spr(15);
+		_G(det)->showStaticSpr(15);
 		_G(room)->set_timer_status(255, TIMER_START);
 		_G(uhr)->reset_timer(_G(timer_nr)[0], 0);
 		showCur();
@@ -613,7 +613,7 @@ int16 Room40::use_tele() {
 
 		} else {
 			autoMove(13, P_CHEWY);
-			_G(det)->show_static_spr(0);
+			_G(det)->showStaticSpr(0);
 
 			int16 dia_nr;
 			if (!_G(spieler).R40DuengerMit) {
@@ -626,7 +626,7 @@ int16 Room40::use_tele() {
 
 			start_aad_wait(dia_nr, -1);
 			autoMove(11, P_HOWARD);
-			_G(det)->hide_static_spr(0);
+			_G(det)->hideStaticSpr(0);
 			autoMove(9, P_CHEWY);
 			start_aad_wait(dia_nr1, -1);
 			_G(spieler).R40HoUse = false;
