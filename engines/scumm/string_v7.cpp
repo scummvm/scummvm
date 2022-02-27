@@ -220,8 +220,17 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 				// with kStyleAlignLeft flag).
 				xpos = x - _direction * width;
 
-			if (!_newStyle)
-				xpos = (_direction == 1) ? CLIP<int>(xpos, clipRect.left, _screenWidth - width) : CLIP<int>(xpos, clipRect.left + width, _screenWidth - 1);
+			if (!_newStyle) {
+				int amax = _screenWidth - width;
+				int amin = (_direction == 1) ? clipRect.left : clipRect.left + width;
+				// Full Throttle has several lines which can fail the amin <= amax assertion in our CLIP()
+				// function; this is because said lines have a width higher than _screenWidth.
+				// Doing this restores the correct and accurate behaviour for those lines.
+				if (amin > amax) {
+					amax = amin;
+				}
+				xpos = CLIP<int>(xpos, amin, amax);
+			}
 
 			drawSubstring(str + lineStart, len, buffer, clipRect, xpos, y, pitch, col, flags);
 			y += height;
