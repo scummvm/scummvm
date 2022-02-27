@@ -599,7 +599,7 @@ void set_up_screen(SetupScreenMode mode) {
 			txt_nr = _G(obj)->iib_txt_nr(nr);
 			mous_obj_action(nr, mode, INVENTAR_NORMAL, txt_nr);
 		} else {
-			int16 tmp = calcMouseTxt(_G(minfo).x, _G(minfo).y, mode);
+			int16 tmp = calcMouseText(_G(minfo).x, _G(minfo).y, mode);
 			if (tmp == -1 || tmp == 255) {
 
 				nr = _G(obj)->is_sib_mouse(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
