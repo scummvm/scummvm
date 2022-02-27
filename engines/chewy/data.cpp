@@ -93,51 +93,6 @@ uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	return size;
 }
 
-// Only used in 1 place, will be removed eventually:
-// tff_adr() with type TFFDATEI
-uint32 Data::size(const char *fname, int16 typ) {
-	uint32 size = 0;
-
-	strncpy(_filename, fname, MAXPATH - 5);
-	_filename[MAXPATH - 5] = '\0';
-
-	if (!strchr(_filename, '.') && typ == TFFDATEI) {
-		strcat(_filename, ".tff");
-	}
-
-	// SCUMMVM: Note to self, use sizeof(structures) for
-	// allocating size, not custom ::SIZE() functions
-	Common::File f;
-	if (f.open(_filename)) {
-		switch (typ) {
-		case TFFDATEI: {
-			TffHeader tff;
-			if (tff.load(&f)) {
-				int16 id = get_id(tff.id);
-				if (id == TFFDATEI) {
-					size = tff.size + sizeof(TffHeader);
-				} else {
-					error("size error");
-				}
-			} else {
-				error("size error");
-			}
-			}
-			break;
-		default:
-			size = (uint32)f.size();
-			break;
-		}
-
-		f.close();
-	} else {
-		error("size error");
-		size = 0;
-	}
-
-	return size;
-}
-
 uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
 	NewPhead Nph;
 	uint32 size = 0;
@@ -171,14 +126,6 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 	}
 
 	return size;
-}
-
-int16 Data::get_id(char *id_code) {
-	int16 id = -1;
-	if (!(scumm_strnicmp(id_code, "TFF", 3)))
-		id = TFFDATEI;
-
-	return id;
 }
 
 void Data::fcopy(const char *d_fname, const char *s_fname) {
