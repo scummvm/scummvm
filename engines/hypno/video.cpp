@@ -26,7 +26,6 @@ namespace Hypno {
 
 MVideo::MVideo(Common::String path_, Common::Point position_, bool transparent_, bool scaled_, bool loop_) {
 	decoder = nullptr;
-	currentFrame = nullptr;
 	path = path_;
 	position = position_;
 	scaled = scaled_;

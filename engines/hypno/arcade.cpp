@@ -384,7 +384,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 						} else {
 							s.video = new MVideo(it->animation, it->position, true, false, false);
 							playVideo(*s.video);
-							s.video->currentFrame = s.video->decoder->decodeNextFrame(); // Skip the first frame
+							s.video->decoder->decodeNextFrame(); // Make sure the palette is loaded
 							if (s.attackFrames.size() == 0) {
 								uint32 lastFrame = s.bodyFrames.back().lastFrame();
 								s.attackFrames.push_back(lastFrame - 3);

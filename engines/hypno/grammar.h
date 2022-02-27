@@ -51,7 +51,6 @@ public:
 	bool transparent;
 	bool loop;
 	HypnoSmackerDecoder *decoder;
-	const Graphics::Surface *currentFrame;
 };
 
 typedef Common::Array<MVideo> Videos;

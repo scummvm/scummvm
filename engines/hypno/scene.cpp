@@ -412,8 +412,8 @@ void HypnoEngine::runScene(Scene *scene) {
 			if (it->decoder) {
 				if (it->decoder->endOfVideo()) {
 					if (it->scaled ||
-					(  it->currentFrame->w == _screenW 
-					&& it->currentFrame->h == _screenH 
+					(  it->decoder->getWidth() == _screenW
+					&& it->decoder->getHeight() == _screenH
 					&& it->decoder->getCurFrame() > 0)) {
 						runMenu(stack.back());
 						drawScreen();

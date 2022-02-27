@@ -430,7 +430,6 @@ void HypnoEngine::updateScreen(MVideo &video) {
 	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
 	bool dirtyPalette = video.decoder->hasDirtyPalette();
 
-	video.currentFrame = frame;
 	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
 		return;
 
@@ -522,7 +521,7 @@ void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32
 		if (file->open(name)) {
 			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-		} else 
+		} else
 			debugC(1, kHypnoDebugMedia, "%s not found!", name.c_str());
 	}
 }
