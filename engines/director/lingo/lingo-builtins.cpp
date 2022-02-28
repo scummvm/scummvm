@@ -2707,15 +2707,30 @@ void LB::b_xPlayAnim(int nargs){
 	Video::PacoDecoder *video = new Video::PacoDecoder();
 	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
 
+	Common::Event event;
+	video->start();
 	while (!video->endOfVideo()) {
 		warning("LB::b_xPlayAnim: loop");
-		Graphics::Surface const *frame = video->decodeNextFrame();
-		Graphics::ManagedSurface *surface = g_director->getCurrentWindow()->getSurface();
-		surface->copyRectToSurface(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
+		if (g_system->getEventManager()->pollEvent(event))
+			if (event.type == Common::EVENT_QUIT)
+				break;
+
+		if (!video->needsUpdate()) 
+			continue;
+
+		Graphics::Surface const *frame = video->decodeNextFrame();
+		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		g_system->updateScreen();
+
+		byte * palette = const_cast<byte *>(video->getPalette());
+		g_director->setPalette(palette, 256);
+
 		g_system->delayMillis(10);
+
 	}
+	video->close();
+	delete video;
 }
 
 void LB::b_getVolumes(int nargs) {
