@@ -216,7 +216,7 @@ void init_atds() {
 	_G(atds)->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		_G(atds)->set_split_win(i, &_G(ssi)[i]);
-	_G(atds)->set_string_end_func(&atds_string_start);
+	_G(atds)->set_string_end_func(&atdsStringStart);
 }
 
 void new_game() {

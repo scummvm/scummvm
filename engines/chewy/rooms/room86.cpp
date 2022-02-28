@@ -20,6 +20,7 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/detail.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/room.h"

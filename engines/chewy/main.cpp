@@ -605,7 +605,7 @@ void set_up_screen(SetupScreenMode mode) {
 				nr = _G(obj)->is_sib_mouse(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
 				if (nr != -1) {
 					txt_nr = _G(obj)->sib_txt_nr(nr);
-					mous_obj_action(nr, mode, INVENTAR_STATIC, txt_nr);
+					mous_obj_action(nr, mode, INVENTORY_STATIC, txt_nr);
 				} else
 					calc_mouse_person(_G(minfo).x, _G(minfo).y);
 			}
@@ -691,7 +691,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 
 			switch (txt_mode) {
 			case INVENTAR_NORMAL:
-			case INVENTAR_STATIC:
+			case INVENTORY_STATIC:
 				str_adr = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATA);
 				break;
 			default:
@@ -714,7 +714,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 			Dialogs::Inventory::look_screen(txt_mode, txt_nr);
 		else {
 			if (_G(spieler).inv_cur) {
-				obj_auswerten(nr, txt_mode);
+				evaluateObj(nr, txt_mode);
 			} else {
 				if (txt_mode == INVENTAR_NORMAL) {
 					if (!_G(flags).ChAutoMov) {
@@ -743,8 +743,8 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 							_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
 
 					}
-				} else if (txt_mode == INVENTAR_STATIC) {
-					obj_auswerten(nr, STATIC_USE);
+				} else if (txt_mode == INVENTORY_STATIC) {
+					evaluateObj(nr, STATIC_USE);
 				}
 			}
 		}
@@ -883,7 +883,7 @@ void mouseAction() {
 	}
 }
 
-void obj_auswerten(int16 test_nr, int16 mode) {
+void evaluateObj(int16 testNr, int16 mode) {
 	int16 ani_nr;
 	int16 txt_nr;
 	int16 tmp = _G(spieler).AkInvent;
@@ -892,19 +892,19 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 
 	switch (mode) {
 	case INVENTAR_NORMAL:
-		ret = _G(obj)->action_iib_iib(_G(spieler).AkInvent, test_nr);
+		ret = _G(obj)->action_iib_iib(_G(spieler).AkInvent, testNr);
 		if (ret != NO_ACTION) {
 			hideCur();
 			if (_G(flags).InventMenu == false) {
 				if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
 					_G(maus_links_click) = false;
-					autoMove(_G(spieler).room_m_obj[test_nr].AutoMov, P_CHEWY);
+					autoMove(_G(spieler).room_m_obj[testNr].AutoMov, P_CHEWY);
 				}
-				txt_nr = _G(obj)->iib_txt_nr(test_nr);
+				txt_nr = _G(obj)->iib_txt_nr(testNr);
 				Dialogs::Inventory::look_screen(INVENTAR_NORMAL, txt_nr);
-				if (_G(spieler).room_m_obj[test_nr].AniFlag != 255) {
-					_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_m_obj[test_nr].HeldHide;
-					play_scene_ani(_G(spieler).room_m_obj[test_nr].AniFlag, ANI_FRONT);
+				if (_G(spieler).room_m_obj[testNr].AniFlag != 255) {
+					_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_m_obj[testNr].HeldHide;
+					play_scene_ani(_G(spieler).room_m_obj[testNr].AniFlag, ANI_FRONT);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
 			}
@@ -912,27 +912,27 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 		}
 		break;
 
-	case INVENTAR_STATIC:
-		ret = _G(obj)->action_iib_sib(_G(spieler).AkInvent, test_nr);
+	case INVENTORY_STATIC:
+		ret = _G(obj)->action_iib_sib(_G(spieler).AkInvent, testNr);
 		if (ret != NO_ACTION) {
 			_G(maus_links_click) = false;
 			hideCur();
 			if (_G(spieler).room_m_obj[_G(spieler).AkInvent].AutoMov != 255) {
-				autoMove(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
+				autoMove(_G(spieler).room_s_obj[testNr].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(test_nr);
-			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
-			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
-				tmp = getAniDirection((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
-				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
+			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
+			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
+				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
+				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
 
 				if (ani_nr >= 150) {
 					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;
-					_G(obj)->calc_static_detail(test_nr);
+					_G(obj)->calc_static_detail(testNr);
 				}
 				if (ani_nr != -1)
 					play_scene_ani(ani_nr, tmp);
@@ -940,7 +940,7 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			sib_event_inv(test_nr);
+			sib_event_inv(testNr);
 
 			if (!_G(spieler).inv_cur) {
 				_G(menu_item) = _G(menu_item_vorwahl);
@@ -951,41 +951,41 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 		break;
 
 	case STATIC_USE:
-		ret = _G(obj)->calc_static_use(test_nr);
+		ret = _G(obj)->calc_static_use(testNr);
 		if (ret == OBJECT_1) {
 			_G(maus_links_click) = false;
 			hideCur();
-			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
+			if (_G(spieler).room_s_obj[testNr].AutoMov != 255) {
 
-				autoMove(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
+				autoMove(_G(spieler).room_s_obj[testNr].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(test_nr);
-			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
-			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
-				tmp = getAniDirection((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
+			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
+			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
+				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
 
-				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
+				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
 
 				if (ani_nr >= 150) {
 					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;
-					_G(obj)->calc_static_detail(test_nr);
+					_G(obj)->calc_static_detail(testNr);
 				}
 				if (ani_nr != -1)
 					play_scene_ani(ani_nr, tmp);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 
-			if (_G(spieler).room_s_obj[test_nr].InvNr != -1) {
-				invent_2_slot(_G(spieler).room_s_obj[test_nr].InvNr);
+			if (_G(spieler).room_s_obj[testNr].InvNr != -1) {
+				invent_2_slot(_G(spieler).room_s_obj[testNr].InvNr);
 				action_flag = true;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			int16 sib_ret = sib_event_no_inv(test_nr);
+			int16 sib_ret = sib_event_no_inv(testNr);
 
 			_G(obj)->calc_all_static_detail();
 
@@ -999,23 +999,23 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 		} else if (ret == SIB_GET_INV) {
 			_G(maus_links_click) = false;
 			hideCur();
-			if (_G(spieler).room_s_obj[test_nr].AutoMov != 255) {
-				autoMove(_G(spieler).room_s_obj[test_nr].AutoMov, P_CHEWY);
+			if (_G(spieler).room_s_obj[testNr].AutoMov != 255) {
+				autoMove(_G(spieler).room_s_obj[testNr].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(test_nr);
-			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
-			if (_G(spieler).room_s_obj[test_nr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[test_nr].HeldHide;
-				tmp = getAniDirection((int16)_G(spieler).room_s_obj[test_nr].ZustandAk);
+			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
+			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
+				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
 
-				ani_nr = _G(spieler).room_s_obj[test_nr].AniFlag;
+				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
 
 				if (ani_nr >= 150) {
 					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
 					ani_nr = -1;
 				} else if (ani_nr >= 100) {
 					ani_nr -= 100;
-					_G(obj)->calc_static_detail(test_nr);
+					_G(obj)->calc_static_detail(testNr);
 				}
 				if (ani_nr != -1) {
 					play_scene_ani(ani_nr, tmp);
@@ -1023,20 +1023,20 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 
-			if (_G(spieler).room_s_obj[test_nr].InvNr != -1)
-				invent_2_slot(_G(spieler).room_s_obj[test_nr].InvNr);
-			_G(obj)->calc_rsi_flip_flop(test_nr);
+			if (_G(spieler).room_s_obj[testNr].InvNr != -1)
+				invent_2_slot(_G(spieler).room_s_obj[testNr].InvNr);
+			_G(obj)->calc_rsi_flip_flop(testNr);
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			sib_event_no_inv(test_nr);
+			sib_event_no_inv(testNr);
 			_G(obj)->calc_all_static_detail();
 			if (!_G(spieler).inv_cur) {
 				_G(menu_item) = _G(menu_item_vorwahl);
 				cursorChoice(_G(menu_item));
 			}
 		} else if (ret == NO_ACTION) {
-			txt_nr = _G(obj)->sib_txt_nr(test_nr);
-			Dialogs::Inventory::look_screen(INVENTAR_STATIC, txt_nr);
+			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
 		}
 		break;
 
@@ -1048,14 +1048,14 @@ void obj_auswerten(int16 test_nr, int16 mode) {
 	case OBJECT_1:
 	case OBJECT_2:
 		if (mode == INVENTAR_NORMAL)
-			calc_inv_use_txt(test_nr);
+			calc_inv_use_txt(testNr);
 		break;
 
 	case NO_ACTION:
 		if (mode == STATIC_USE && _G(flags).StaticUseTxt == true)
 			_G(flags).StaticUseTxt = false;
 		else if (mode != STATIC_USE)
-			calc_inv_no_use(test_nr, mode);
+			calc_inv_no_use(testNr, mode);
 
 		break;
 
@@ -1087,7 +1087,7 @@ void palcopy(byte *destPal, const byte *srcPal, int16 destStartIndex, int16 srcS
 	}
 }
 
-void check_shad(int16 g_idx, int16 mode) {
+void check_shad(int16 palIdx, int16 mode) {
 	static const uint8 PAL_0[] = {
 		0, 0, 0,
 		39, 0, 26,
@@ -1151,7 +1151,7 @@ void check_shad(int16 g_idx, int16 mode) {
 		45, 6, 32
 	};
 
-	switch (g_idx) {
+	switch (palIdx) {
 	case 1:
 		if (mode)
 			_G(out)->set_teilpalette(PAL_1, 1, 11);
@@ -1311,11 +1311,11 @@ void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode) {
 	}
 }
 
-int16 getAniDirection(int16 zustand) {
+int16 getAniDirection(int16 status) {
 	int16 ret = ANI_FRONT;
-	switch (zustand) {
+	switch (status) {
 	case OBJZU_ZU:
-	case OBJZU_VERSCHLOSSEN:
+	case OBJZU_LOCKED:
 		ret = ANI_BACK;
 		break;
 	default:
@@ -1388,7 +1388,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 
 					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
-						action_ret = ats_action(txtNr, txtMode, ATS_ACTION_VOR);
+						action_ret = atsAction(txtNr, txtMode, ATS_ACTION_VOR);
 					}
 					
 					if (ok && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
@@ -1399,7 +1399,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
-						action_ret = ats_action(txtNr, txtMode, ATS_ACTION_NACH);
+						action_ret = atsAction(txtNr, txtMode, ATS_ACTION_NACH);
 						actionFl = true;
 						if (action_ret)
 							ret = 1;
@@ -1497,7 +1497,7 @@ int16 is_mouse_person(int16 x, int16 y) {
 void calc_mouse_person(int16 x, int16 y) {
 	int16 mode = 0;
 	char ch_txt[MAX_PERSON][9] = {"Chewy", "Howard", "Nichelle"};
-	int16 dia_nr = -1;
+	int16 diaNr = -1;
 	if (_G(flags).ShowAtsInvTxt && !_G(flags).InventMenu) {
 		int16 p_nr = is_mouse_person(x, y);
 		if (p_nr != -1) {
@@ -1555,7 +1555,7 @@ void calc_mouse_person(int16 x, int16 y) {
 							switch (p_nr) {
 							case P_HOWARD:
 							case P_NICHELLE:
-								dia_nr = true;
+								diaNr = true;
 								calc_person_dia(p_nr);
 								break;
 
@@ -1573,7 +1573,7 @@ void calc_mouse_person(int16 x, int16 y) {
 							break;
 
 						}
-						if (dia_nr == -1) {
+						if (diaNr == -1) {
 							if (txt_nr != 30000) {
 								if (_G(menu_item) != CUR_WALK) {
 									if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])

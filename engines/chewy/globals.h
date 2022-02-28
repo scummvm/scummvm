@@ -327,7 +327,7 @@ void kb_mov(int16 mode);
 void kb_cur_action(int16 key, int16 mode);
 void mouseAction();
 
-void obj_auswerten(int16 test_nr, int16 txt_nr);
+void evaluateObj(int16 testNr, int16 txt_nr);
 
 void swap_if_l(int16 *x1, int16 *x2);
 
@@ -344,7 +344,7 @@ void del_inventar(int16 nr);
 
 bool is_cur_inventar(int16 nr);
 
-void check_shad(int16 g_idx, int16 mode);
+void check_shad(int16 palIdx, int16 mode);
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
                     int16 *sc_x, int16 *sc_y);
@@ -450,17 +450,17 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag);
 
-int16 load_ads_dia(int16 dia_nr);
+int16 loadAdsDia(int16 diaNr);
 
-void set_ssi_xy();
+void setSsiPos();
 
-int16 ats_action(int16 txt_nr, int16 txt_mode, int16 MODE);
+int16 atsAction(int16 txtNr, int16 txtMode, int16 MODE);
 
-void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr);
+void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr);
 
-void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr);
+void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr);
 
-void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr,
+void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr,
                        int16 mode);
 void calc_inv_use_txt(int16 test_nr);
 bool calc_inv_no_use(int16 test_nr, int16 mode);

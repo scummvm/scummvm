@@ -97,8 +97,7 @@ void TempFileArchive::FileProxy::finalize() {
 TempFileArchive::TempFileArchive() {
 }
 
-const TempFileArchive::Entry *TempFileArchive::getEntry(
-		const Common::String &name) const {
+const TempFileArchive::Entry *TempFileArchive::getEntry(const Common::String &name) const {
 	for (EntryList::const_iterator it = _files.begin(); it != _files.end(); ++it) {
 		const Entry &e = *it;
 		if (e._name.equalsIgnoreCase(name))
@@ -132,8 +131,7 @@ const Common::ArchiveMemberPtr TempFileArchive::getMember(const Common::Path &pa
 	return Common::ArchiveMemberPtr();
 }
 
-Common::SeekableReadStream *TempFileArchive::createReadStreamForMember(
-		const Common::Path &path) const {
+Common::SeekableReadStream *TempFileArchive::createReadStreamForMember(const Common::Path &path) const {
 	const Entry *entry = getEntry(path.toString());
 	if (!entry)
 		return nullptr;

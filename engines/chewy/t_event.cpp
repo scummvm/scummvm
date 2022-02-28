@@ -28,13 +28,13 @@
 
 namespace Chewy {
 
-int16 load_ads_dia(int16 dia_nr) {
+int16 loadAdsDia(int16 diaNr) {
 	int16 ret = false;
 
 	if (_G(flags).AdsDialog == false) {
-		bool tmp = _G(atds)->ads_start(dia_nr);
+		bool tmp = _G(atds)->ads_start(diaNr);
 		if (tmp == true) {
-			_G(atds)->load_atds(dia_nr, ADH_DATA);
+			_G(atds)->load_atds(diaNr, ADH_DATA);
 			ret = true;
 			_G(ads_blk_nr) = 0;
 			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_anz));
@@ -43,8 +43,8 @@ int16 load_ads_dia(int16 dia_nr) {
 			_G(ads_tmp_dsp) = _G(spieler).DispFlag;
 			_G(spieler).DispFlag = false;
 
-			set_ssi_xy();
-			_G(ads_dia_nr) = dia_nr;
+			setSsiPos();
+			_G(ads_dia_nr) = diaNr;
 			_G(talk_start_ani) = -1;
 			_G(talk_hide_static) = -1;
 		}
@@ -52,7 +52,7 @@ int16 load_ads_dia(int16 dia_nr) {
 	return ret;
 }
 
-void set_ssi_xy() {
+void setSsiPos() {
 	int16 tmp = 0;
 
 	for (int16 i = 0; i < MAX_PERSON; i++) {
@@ -64,16 +64,16 @@ void set_ssi_xy() {
 	}
 }
 
-int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
-	int16 action_ret;
-	if (!_G(atds)->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATA)) {
-		action_ret = true;
+int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
+	int16 retValue;
+	if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
+		retValue = true;
 		if (_G(flags).AtsAction == false) {
 			_G(flags).AtsAction = true;
 			if (mode == ATS_ACTION_NACH) {
-				switch (txt_mode) {
+				switch (txtMode) {
 				case TXT_MARK_LOOK:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 229:
 						autoMove(2, P_CHEWY);
 						Room39::look_tv(true);
@@ -118,20 +118,20 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 
 					}
 					break;
 
 				case TXT_MARK_USE:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 62:
-						action_ret = Room39::use_howard();
+						retValue = Room39::use_howard();
 						break;
 
 					case 67:
-						action_ret = Room8::gips_wurf();
+						retValue = Room8::gips_wurf();
 						break;
 
 					case 71:
@@ -147,7 +147,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							start_detail_wait(5, 1, ANI_FRONT);
 							_G(spieler).PersonHide[P_CHEWY] = false;
 						} else {
-							action_ret = false;
+							retValue = false;
 						}
 						break;
 
@@ -161,12 +161,12 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							start_aad_wait(108, 0);
 							showCur();
 						} else {
-							action_ret = false;
+							retValue = false;
 						}
 						break;
 
 					case 79:
-						action_ret = Room22::chewy_amboss();
+						retValue = Room22::chewy_amboss();
 						break;
 
 					case 80:
@@ -179,15 +179,15 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 82:
-						action_ret = Room22::malen();
+						retValue = Room22::malen();
 						break;
 
 					case 84:
-						action_ret = Room11::scanner();
+						retValue = Room11::scanner();
 						break;
 
 					case 92:
-						action_ret = Room13::monitor_knopf();
+						retValue = Room13::monitor_knopf();
 						break;
 
 					case 104:
@@ -196,23 +196,23 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 							_G(spieler).R14Translator = true;
 							start_aad_wait(25, -1);
 						} else
-							action_ret = false;
+							retValue = false;
 						break;
 
 					case 107:
-						action_ret = Room14::use_gleiter();
+						retValue = Room14::use_gleiter();
 						break;
 
 					case 108:
-						action_ret = Room14::use_schrott();
+						retValue = Room14::use_schrott();
 						break;
 
 					case 109:
-						action_ret = Room14::use_schleim();
+						retValue = Room14::use_schleim();
 						break;
 
 					case 110:
-						action_ret = Room23::start_gleiter();
+						retValue = Room23::start_gleiter();
 						break;
 
 					case 114:
@@ -220,23 +220,23 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 117:
-						action_ret = Room12::chewy_trans();
+						retValue = Room12::chewy_trans();
 						break;
 
 					case 118:
-						action_ret = Room12::useTransformerTube();
+						retValue = Room12::useTransformerTube();
 						break;
 
 					case 119:
-						action_ret = Room12::use_terminal();
+						retValue = Room12::use_terminal();
 						break;
 
 					case 123:
-						action_ret = Room16::use_gleiter();
+						retValue = Room16::use_gleiter();
 						break;
 
 					case 133:
-						action_ret = Room21::use_fenster();
+						retValue = Room21::use_fenster();
 						break;
 
 					case 134:
@@ -244,7 +244,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 137:
-						action_ret = Room17::use_seil();
+						retValue = Room17::use_seil();
 						break;
 
 					case 139:
@@ -252,34 +252,34 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 142:
-						action_ret = Room17::energie_hebel();
+						retValue = Room17::energie_hebel();
 						break;
 
 					case 146:
-						action_ret = Room17::get_oel();
+						retValue = Room17::get_oel();
 						break;
 
 					case 149:
 					case 153:
-						action_ret = Room18::calc_surimy();
+						retValue = Room18::calc_surimy();
 						break;
 
 					case 154:
-						action_ret = Room18::use_cart_moni();
+						retValue = Room18::use_cart_moni();
 						break;
 
 					case 158:
-						action_ret = Room18::go_cyberspace();
+						retValue = Room18::go_cyberspace();
 						break;
 
 					case 159:
-						action_ret = Room18::calc_schalter();
+						retValue = Room18::calc_schalter();
 						break;
 
 					case 161:
 					case 162:
 					case 163:
-						Room24::use_hebel(txt_nr);
+						Room24::use_hebel(txtNr);
 						break;
 
 					case 165:
@@ -292,55 +292,55 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 174:
-						action_ret = Room0::getPillow();
+						retValue = Room0::getPillow();
 						break;
 
 					case 175:
-						action_ret = Room0::pullSlime();
+						retValue = Room0::pullSlime();
 						break;
 
 					case 179:
-						action_ret = Room18::sonden_moni();
+						retValue = Room18::sonden_moni();
 						break;
 
 					case 187:
-						action_ret = Room25::use_gleiter();
+						retValue = Room25::use_gleiter();
 						break;
 
 					case 203:
-						action_ret = Room32::get_script();
+						retValue = Room32::get_script();
 						break;
 
 					case 206:
-						action_ret = Room28::use_breifkasten();
+						retValue = Room28::use_breifkasten();
 						break;
 
 					case 210:
-						action_ret = Room33::use_schublade();
+						retValue = Room33::use_schublade();
 						break;
 
 					case 212:
-						action_ret = Room29::zaun_sprung();
+						retValue = Room29::zaun_sprung();
 						break;
 
 					case 215:
-						action_ret = Room29::use_schlauch();
+						retValue = Room29::use_schlauch();
 						break;
 
 					case 216:
-						action_ret = Room29::use_pumpe();
+						retValue = Room29::use_pumpe();
 						break;
 
 					case 218:
-						action_ret = Room29::get_schlauch();
+						retValue = Room29::get_schlauch();
 						break;
 
 					case 219:
-						action_ret = Room25::gleiter_loesch();
+						retValue = Room25::gleiter_loesch();
 						break;
 
 					case 220:
-						action_ret = Room34::use_kuehlschrank();
+						retValue = Room34::use_kuehlschrank();
 						break;
 
 					case 221:
@@ -352,11 +352,11 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 229:
-						action_ret = Room39::use_tv();
+						retValue = Room39::use_tv();
 						break;
 
 					case 230:
-						action_ret = Room32::use_howard();
+						retValue = Room32::use_howard();
 						break;
 
 					case 231:
@@ -364,27 +364,27 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 234:
-						action_ret = Room35::schublade();
+						retValue = Room35::schublade();
 						break;
 
 					case 235:
-						action_ret = Room35::use_cat();
+						retValue = Room35::use_cat();
 						break;
 
 					case 242:
-						action_ret = Room31::use_topf();
+						retValue = Room31::use_topf();
 						break;
 
 					case 244:
-						action_ret = Room31::open_luke();
+						retValue = Room31::open_luke();
 						break;
 
 					case 245:
-						action_ret = Room31::close_luke_proc1();
+						retValue = Room31::close_luke_proc1();
 						break;
 
 					case 249:
-						action_ret = Room37::use_wippe();
+						retValue = Room37::use_wippe();
 						break;
 
 					case 251:
@@ -392,53 +392,53 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 256:
-						action_ret = Room37::use_glas();
+						retValue = Room37::use_glas();
 						break;
 
 					case 263:
-						action_ret = Room42::use_beamter();
+						retValue = Room42::use_beamter();
 						break;
 
 					case 264:
-						action_ret = Room42::use_psack();
+						retValue = Room42::use_psack();
 						break;
 
 					case 266:
-						action_ret = Room41::use_brief();
+						retValue = Room41::use_brief();
 						break;
 
 					case 267:
-						action_ret = Room41::use_lola();
+						retValue = Room41::use_lola();
 						break;
 
 					case 269:
-						action_ret = Room41::use_kasse();
+						retValue = Room41::use_kasse();
 						break;
 
 					case 275:
-						action_ret = Room40::use_police();
+						retValue = Room40::use_police();
 						break;
 
 					case 276:
-						action_ret = Room40::use_tele();
+						retValue = Room40::use_tele();
 						break;
 
 					case 278:
-						action_ret = Room40::use_mr_pumpkin();
+						retValue = Room40::use_mr_pumpkin();
 						break;
 
 					case 284:
-						action_ret = Room40::use_bmeister();
+						retValue = Room40::use_bmeister();
 						break;
 
 					case 286:
 					case 292:
 					case 293:
-						Room47::use_knopf(txt_nr);
+						Room47::use_knopf(txtNr);
 						break;
 
 					case 288:
-						action_ret = Room46::use_schloss();
+						retValue = Room46::use_schloss();
 						break;
 
 					case 294:
@@ -447,27 +447,27 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 295:
 					case 297:
-						action_ret = Room45::use_boy();
+						retValue = Room45::use_boy();
 						break;
 
 					case 315:
-						action_ret = Room49::use_taxi();
+						retValue = Room49::use_taxi();
 						break;
 
 					case 318:
-						action_ret = Room49::use_boy();
+						retValue = Room49::use_boy();
 						break;
 
 					case 319:
-						action_ret = Room53::use_man();
+						retValue = Room53::use_man();
 						break;
 
 					case 323:
-						action_ret = Room50::use_gutschein();
+						retValue = Room50::use_gutschein();
 						break;
 
 					case 327:
-						action_ret = Room50::use_gum();
+						retValue = Room50::use_gum();
 						break;
 
 					case 329:
@@ -476,7 +476,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 					case 332:
 					case 333:
 					case 334:
-						action_ret = Room51::use_door(txt_nr);
+						retValue = Room51::use_door(txtNr);
 						break;
 
 					case 340:
@@ -484,50 +484,50 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 341:
-						action_ret = Room52::use_hot_dog();
+						retValue = Room52::use_hot_dog();
 						break;
 
 					case 343:
-						action_ret = Room54::use_zelle();
+						retValue = Room54::use_zelle();
 						break;
 
 					case 344:
-						action_ret = Room57::use_pfoertner();
+						retValue = Room57::use_pfoertner();
 						break;
 
 					case 345:
-						action_ret = Room54::use_azug();
+						retValue = Room54::use_azug();
 						break;
 
 					case 346:
-						action_ret = Room54::use_schalter();
+						retValue = Room54::use_schalter();
 						break;
 
 					case 347:
 					case 387:
-						action_ret = Room54::use_taxi();
+						retValue = Room54::use_taxi();
 						break;
 
 					case 351:
 					case 352:
-						action_ret = Room55::use_kammeraus();
+						retValue = Room55::use_kammeraus();
 						break;
 
 					case 354:
-						action_ret = Room55::use_stapel1();
+						retValue = Room55::use_stapel1();
 						break;
 
 					case 355:
-						action_ret = Room55::use_stapel2();
+						retValue = Room55::use_stapel2();
 						break;
 
 					case 357:
-						action_ret = Room55::use_telefon();
+						retValue = Room55::use_telefon();
 						break;
 
 					case 360:
 					case 388:
-						action_ret = Room57::use_taxi();
+						retValue = Room57::use_taxi();
 						break;
 
 					case 362:
@@ -535,131 +535,131 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 366:
-						action_ret = Room56::use_man();
+						retValue = Room56::use_man();
 						break;
 
 					case 367:
-						action_ret = Room56::use_taxi();
+						retValue = Room56::use_taxi();
 						break;
 
 					case 371:
-						action_ret = Room62::use_laura();
+						retValue = Room62::use_laura();
 						break;
 
 					case 375:
-						action_ret = Room64::use_tasche();
+						retValue = Room64::use_tasche();
 						break;
 
 					case 380:
-						action_ret = Room63::use_girl();
+						retValue = Room63::use_girl();
 						break;
 
 					case 383:
-						action_ret = Room63::use_aschenbecher();
+						retValue = Room63::use_aschenbecher();
 						break;
 
 					case 384:
-						action_ret = Room63::use_fx_man();
+						retValue = Room63::use_fx_man();
 						break;
 
 					case 385:
-						action_ret = Room63::use_schalter();
+						retValue = Room63::use_schalter();
 						break;
 
 					case 386:
-						action_ret = Room45::use_taxi();
+						retValue = Room45::use_taxi();
 						break;
 
 					case 394:
-						action_ret = Room67::talk_papagei();
+						retValue = Room67::talk_papagei();
 						break;
 
 					case 399:
-						action_ret = Room67::use_grammo();
+						retValue = Room67::use_grammo();
 						break;
 
 					case 400:
-						action_ret = Room67::use_kommode();
+						retValue = Room67::use_kommode();
 						break;
 
 					case 403:
 					case 405:
-						action_ret = Room69::use_bruecke();
+						retValue = Room69::use_bruecke();
 						break;
 
 					case 406:
-						action_ret = Room68::use_papagei();
+						retValue = Room68::use_papagei();
 						break;
 
 					case 407:
-						action_ret = Room68::use_diva();
+						retValue = Room68::use_diva();
 						break;
 
 					case 410:
-						action_ret = Room68::use_keeper();
+						retValue = Room68::use_keeper();
 						break;
 
 					case 414:
-						action_ret = Room68::use_indigo();
+						retValue = Room68::use_indigo();
 						break;
 
 					case 425:
-						action_ret = Room66::proc7();
+						retValue = Room66::proc7();
 						break;
 
 					case 430:
-						action_ret = Room73::proc1();
+						retValue = Room73::proc1();
 						break;
 
 					case 433:
-						action_ret = Room73::proc2();
+						retValue = Room73::proc2();
 						break;
 
 					case 435:
-						action_ret = Room74::proc1();
+						retValue = Room74::proc1();
 						break;
 
 					case 442:
-						action_ret = Room71::proc1();
+						retValue = Room71::proc1();
 						break;
 
 					case 443:
-						action_ret = Room71::proc6();
+						retValue = Room71::proc6();
 						break;
 
 					case 452:
-						action_ret = Room76::proc7();
+						retValue = Room76::proc7();
 						break;
 
 					case 458:
-						action_ret = Room76::proc6();
+						retValue = Room76::proc6();
 						break;
 
 					case 463:
-						action_ret = Room77::proc1();
+						retValue = Room77::proc1();
 						break;
 
 					case 464:
-						action_ret = Room77::proc2();
+						retValue = Room77::proc2();
 						break;
 
 					case 467:
 					case 473:
-						action_ret = Room82::proc9();
+						retValue = Room82::proc9();
 						break;
 
 					case 468:
-						action_ret = Room82::proc6();
+						retValue = Room82::proc6();
 						break;
 
 					case 471:
-						action_ret = Room82::proc3();
+						retValue = Room82::proc3();
 						break;
 
 
 					case 481:
 					case 482:
-						action_ret = Room84::proc4();
+						retValue = Room84::proc4();
 						break;
 
 					case 487:
@@ -667,111 +667,111 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 490:
-						action_ret = Room81::proc2();
+						retValue = Room81::proc2();
 						break;
 
 					case 492:
-						action_ret = Room88::proc2();
+						retValue = Room88::proc2();
 						break;
 
 					case 493:
-						action_ret = Room88::proc3();
+						retValue = Room88::proc3();
 						break;
 
 					case 494:
-						action_ret = Room88::proc1();
+						retValue = Room88::proc1();
 						break;
 
 					case 495:
-						action_ret = Room85::proc2();
+						retValue = Room85::proc2();
 						break;
 
 					case 497:
-						action_ret = Room86::proc2();
+						retValue = Room86::proc2();
 						break;
 
 					case 501:
 					case 503:
-						action_ret = Room87::proc2(txt_nr);
+						retValue = Room87::proc2(txtNr);
 						break;
 
 					case 502:
-						action_ret = Room87::proc4();
+						retValue = Room87::proc4();
 						break;
 
 					case 508:
-						action_ret = Room89::proc2();
+						retValue = Room89::proc2();
 						break;
 
 					case 509:
-						action_ret = Room89::proc5();
+						retValue = Room89::proc5();
 						break;
 
 					case 514:
-						action_ret = Room89::proc4();
+						retValue = Room89::proc4();
 						break;
 
 					case 517:
-						action_ret = Room90::getHubcaps();
+						retValue = Room90::getHubcaps();
 						break;
 
 					case 519:
-						action_ret = Room90::shootControlUnit();
+						retValue = Room90::shootControlUnit();
 						break;
 
 					case 520:
-						action_ret = Room90::useSurimyOnWreck();
+						retValue = Room90::useSurimyOnWreck();
 						break;
 
 					case 522:
-						action_ret = Room94::giveGhostBottle();
+						retValue = Room94::giveGhostBottle();
 						break;
 
 					case 525:
-						action_ret = Room95::proc2();
+						retValue = Room95::proc2();
 						break;
 
 					case 530:
-						action_ret = Room97::proc8();
+						retValue = Room97::proc8();
 						break;
 
 					case 531:
-						action_ret = Room97::proc6();
+						retValue = Room97::proc6();
 						break;
 
 					case 535:
-						action_ret = Room97::proc11();
+						retValue = Room97::proc11();
 						break;
 
 					case 538:
-						action_ret = Room97::proc7();
+						retValue = Room97::proc7();
 						break;
 
 					case 539:
-						action_ret = Room97::proc9();
+						retValue = Room97::proc9();
 						break;
 
 					case 541:
-						action_ret = Room97::throwSlime();
+						retValue = Room97::throwSlime();
 						break;
 
 					case 542:
-						action_ret = Room97::proc5();
+						retValue = Room97::proc5();
 						break;
 
 					case 543:
-						action_ret = Room97::proc10();
+						retValue = Room97::proc10();
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 
 					}
 					break;
 
 				case TXT_MARK_WALK:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 94:
 						Room13::jmp_band();
 						break;
@@ -802,12 +802,12 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 362:
-						action_ret = Room56::use_kneipe();
+						retValue = Room56::use_kneipe();
 						break;
 
 					case 403:
 					case 405:
-						action_ret = Room69::use_bruecke();
+						retValue = Room69::use_bruecke();
 						break;
 
 					case 487:
@@ -816,14 +816,14 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 						
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 
 					}
 					break;
 
 				case TXT_MARK_TALK:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 11:
 						autoMove(3, P_CHEWY);
 						_G(det)->stop_detail(5);
@@ -936,7 +936,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 394:
-						action_ret = Room67::talk_papagei();
+						retValue = Room67::talk_papagei();
 						break;
 
 					case 408:
@@ -1013,7 +1013,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 					}
 					break;
@@ -1023,9 +1023,9 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 				}
 
 			} else if (mode == ATS_ACTION_VOR) {
-				switch (txt_mode) {
+				switch (txtMode) {
 				case TXT_MARK_LOOK:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 210:
 						Room33::look_schublade();
 						break;
@@ -1043,13 +1043,13 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 					}
 					break;
 
 				case TXT_MARK_USE:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 90:
 						_G(atds)->set_ats_str(90, TXT_MARK_USE, _G(spieler).R13Band);
 						break;
@@ -1068,7 +1068,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 225:
-						action_ret = Room33::get_munter();
+						retValue = Room33::get_munter();
 						break;
 
 					case 267:
@@ -1077,25 +1077,25 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					case 283:
-						action_ret = Room40::use_haendler();
+						retValue = Room40::use_haendler();
 						break;
 
 					case 423:
-						action_ret = Room66::proc2();
+						retValue = Room66::proc2();
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 					}
 					break;
 
 				case TXT_MARK_WALK:
-					action_ret = false;
+					retValue = false;
 					break;
 
 				case TXT_MARK_TALK:
-					switch (txt_nr) {
+					switch (txtNr) {
 					case 104:
 						Room14::talk_eremit();
 						break;
@@ -1109,7 +1109,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						break;
 
 					default:
-						action_ret = false;
+						retValue = false;
 						break;
 
 					}
@@ -1123,26 +1123,26 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 			_G(flags).AtsAction = false;
 		}
 	} else {
-		action_ret = false;
+		retValue = false;
 	}
 
-	return action_ret;
+	return retValue;
 }
 
-void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
+void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	if (_G(flags).AdsAction == false) {
 		_G(flags).AdsAction = true;
 
-		switch (dia_nr) {
+		switch (diaNr) {
 		case 2:
-			if (blk_nr == 4 && str_end_nr == 0) {
+			if (blkNr == 4 && strEndNr == 0) {
 
 				_G(obj)->show_sib(31);
 			}
 			break;
 
 		case 3:
-			if (str_end_nr == 1) {
+			if (strEndNr == 1) {
 				if (_G(spieler).R11IdCardNr == RED_CARD_INV)
 					_G(spieler).R11IdCardNr = YEL_CARD_INV;
 				else
@@ -1151,67 +1151,55 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			break;
 
 		case 10:
-			Room42::dia_beamter(str_end_nr);
+			Room42::dia_beamter(strEndNr);
 			break;
 
 		case 11:
-			if (blk_nr == 3) {
+			if (blkNr == 3) {
 				Room41::sub_dia();
-			} else if (blk_nr == 0 && str_end_nr == 3) {
+			} else if (blkNr == 0 && strEndNr == 3) {
 				_G(spieler).R41RepairInfo = true;
 				stop_ads_dialog();
 			}
 			break;
 
 		case 12:
-			if (str_end_nr == 1) {
+			if (strEndNr == 1) {
 				_G(spieler).R41HowardDiaOK = true;
-
 			}
 			break;
 
 		case 15:
-			if (blk_nr == 1 && str_end_nr == 0) {
+			if (blkNr == 1 && strEndNr == 0) {
 				_G(spieler).R55Job = true;
 				stop_ads_dialog();
 			}
 			break;
 
 		case 16:
-			if (blk_nr == 0) {
-				if (str_end_nr == 2) {
-					if (!_G(spieler).R56Kneipe)
-						_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA);
-				}
-			}
+			if (blkNr == 0 && strEndNr == 2 && !_G(spieler).R56Kneipe)
+				_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA);
+
 			break;
 
 		case 17:
-			if (blk_nr == 0) {
-				if (str_end_nr == 2) {
-					_G(atds)->show_item(17, 0, 1);
-				}
-			}
+			if (blkNr == 0 && strEndNr == 2)
+				_G(atds)->show_item(17, 0, 1);
+
 			break;
 
 		case 18:
 		case 19:
-			if (blk_nr == 0) {
-				if (str_end_nr == 4) {
-					_G(spieler).R67LiedOk = true;
-				}
-			}
+			if (blkNr == 0 && strEndNr == 4)
+				_G(spieler).R67LiedOk = true;
+
 			break;
 
 		case 20:
-			if (blk_nr == 0) {
-
-				if (str_end_nr == 1) {
-					_G(spieler).PersonHide[P_CHEWY] = true;
-					start_detail_wait(28, 3, ANI_FRONT);
-
-					_G(spieler).PersonHide[P_CHEWY] = false;
-				}
+			if (blkNr == 0 && strEndNr == 1) {
+				_G(spieler).PersonHide[P_CHEWY] = true;
+				start_detail_wait(28, 3, ANI_FRONT);
+				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 			break;
 
@@ -1223,8 +1211,8 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 	}
 }
 
-void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
-	switch (dia_nr) {
+void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr) {
+	switch (diaNr) {
 	case 0:
 		_G(flags).AutoAniPlay = false;
 		break;
@@ -1234,7 +1222,7 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 		break;
 
 	case 22:
-		if (str_end_nr == 1) {
+		if (strEndNr == 1) {
 			_G(det)->del_static_ani(3);
 			start_detail_wait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
@@ -1247,7 +1235,7 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 	}
 }
 
-#define R14_EREMIT_DIA 10000
+#define R14_HERMIT_DIA 10000
 #define R8_NIMOYANER1_DIA 10001
 #define R8_NIMOYANER2_DIA 10002
 #define R12_BORK_DIA 10004
@@ -1271,27 +1259,27 @@ void ads_ende(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 
 #define START_STOP_TMP \
 	if (mode == AAD_STR_START) \
-		talk_ani = tmp; \
+		talkAni = tmp; \
 	else \
 		_G(det)->stop_detail(tmp)
 
 #define START_STOP(NUM) \
 	if (mode == AAD_STR_START) \
-		talk_ani = NUM; \
+		talkAni = NUM; \
 	else \
 		_G(det)->stop_detail(NUM) \
 
 
-void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {
-	int16 talk_stop_ani = -1;
-	int16 talk_show_static = -1;
-	int16 ani_nr;
-	int16 talk_ani = -1;
-	int16 stop_ani = -1;
-	int16 altes_format = false;
+void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
+	int16 talkStopAni = -1;
+	int16 talkShowStatic = -1;
+	int16 aniNr;
+	int16 talkAni = -1;
+	int16 stopAni = -1;
+	bool oldFormat = false;
 	int16 tmp = -1;
 
-	switch (dia_nr) {
+	switch (diaNr) {
 	case 30000:
 	case 25:
 	case 34:
@@ -1332,36 +1320,36 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		if (mode == AAD_STR_START) {
 			switch (_G(spieler).ChewyAni) {
 			case CHEWY_NORMAL:
-				ani_nr = CH_TALK3;
+				aniNr = CH_TALK3;
 				break;
 
 			case CHEWY_BORK:
-				ani_nr = 68;
+				aniNr = 68;
 				break;
 
 			case CHEWY_PUMPKIN:
-				ani_nr = CH_PUMP_TALK;
+				aniNr = CH_PUMP_TALK;
 				break;
 
 			case CHEWY_ROCKER:
-				ani_nr = CH_ROCK_TALK1;
+				aniNr = CH_ROCK_TALK1;
 				break;
 
 			case CHEWY_JMANS:
-				ani_nr = CH_JM_TALK;
+				aniNr = CH_JM_TALK;
 				break;
 
 			case CHEWY_ANI7:
-				ani_nr = 46;
+				aniNr = 46;
 				break;
 
 			default:
-				ani_nr = -1;
+				aniNr = -1;
 				break;
 			}
 
-			if (ani_nr != -1)
-				start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
+			if (aniNr != -1)
+				start_spz(aniNr, 255, ANI_FRONT, P_CHEWY);
 
 		} else {
 			stop_spz();
@@ -1370,7 +1358,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 	case R8_NIMOYANER3_DIA:
 	case 249:
-		if (person_nr == 0) {
+		if (personNr == 0) {
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK4, 255, ANI_FRONT, P_CHEWY);
 			} else {
@@ -1380,62 +1368,61 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		break;
 
 	case 61:
-	case R14_EREMIT_DIA:
+	case R14_HERMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
-		if (person_nr <= P_CHEWY) {
+		if (personNr <= P_CHEWY) {
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
-		} else if (person_nr == P_HOWARD) {
+		} else if (personNr == P_HOWARD) {
 			START_STOP(15);
 		}
 		break;
 
 	case R11_BORK_DIA:
-		altes_format = true;
-		switch (person_nr) {
-		case 1:
+		oldFormat = true;
+		if (personNr == 1) {
 			if (mode == AAD_STR_START) {
 				_G(talk_start_ani) = 9;
 				_G(talk_hide_static) = 8;
 			} else {
-				talk_stop_ani = 9;
-				talk_show_static = 8;
+				talkStopAni = 9;
+				talkShowStatic = 8;
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
 			}
-			break;
-
 		}
 		break;
 
 	case R13_BORK_DIA:
-		altes_format = true;
-		switch (person_nr) {
+		oldFormat = true;
+		switch (personNr) {
 		case 0:
-			talk_stop_ani = 9;
+			talkStopAni = 9;
 			_G(talk_start_ani) = 10;
-			talk_show_static = 13;
+			talkShowStatic = 13;
 			_G(talk_hide_static) = 12;
 			break;
 
 		case 1:
 			_G(talk_start_ani) = 9;
-			talk_stop_ani = 10;
+			talkStopAni = 10;
 			_G(talk_hide_static) = 13;
-			talk_show_static = 12;
+			talkShowStatic = 12;
 			break;
 
+		default:
+			break;
 		}
 		break;
 
 	case 24:
 	case 26:
-		altes_format = true;
-		switch (person_nr) {
+		oldFormat = true;
+		switch (personNr) {
 		case 0:
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -1449,13 +1436,15 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				_G(talk_start_ani) = 4;
 				_G(talk_hide_static) = 9;
 			} else {
-				talk_stop_ani = 4;
-				talk_show_static = 9;
+				talkStopAni = 4;
+				talkShowStatic = 9;
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
 			}
 			break;
 
+		default:
+			break;
 		}
 		break;
 
@@ -1463,19 +1452,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case 173:
 	case 174:
 	case 175:
-		switch (person_nr) {
-		case 1:
-			if (mode == AAD_STR_START) {
-				_G(room)->set_timer_status(0, TIMER_STOP);
-				_G(det)->del_static_ani(0);
-				talk_ani = 1;
-			} else {
-				_G(room)->set_timer_status(0, TIMER_START);
-				_G(det)->stop_detail(1);
-				_G(det)->set_static_ani(0, -1);
-			}
-			break;
-
+		switch (personNr) {
 		case 0:
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -1483,17 +1460,32 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				stop_spz();
 			}
 			break;
+
+		case 1:
+			if (mode == AAD_STR_START) {
+				_G(room)->set_timer_status(0, TIMER_STOP);
+				_G(det)->del_static_ani(0);
+				talkAni = 1;
+			} else {
+				_G(room)->set_timer_status(0, TIMER_START);
+				_G(det)->stop_detail(1);
+				_G(det)->set_static_ani(0, -1);
+			}
+			break;
+
+		default:
+			break;
 		}
 		break;
 
 	case R35_CAT_DIA2:
 	case R35_CAT_DIA1:
 	case R37_HAHN_DIA:
-		if (person_nr == 1) {
+		if (personNr == 1) {
 			if (mode == AAD_STR_START) {
 				_G(room)->set_timer_status(1, TIMER_STOP);
 				_G(det)->del_static_ani(1);
-				talk_ani = 0;
+				talkAni = 0;
 			} else {
 				_G(room)->set_timer_status(1, TIMER_START);
 				_G(det)->stop_detail(0);
@@ -1504,7 +1496,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 	case 169:
 
-		switch (person_nr) {
+		switch (personNr) {
 		case 0:
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -1540,17 +1532,17 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case 163:
 	case 186:
 	case R41_HOOGY_DIA:
-		switch (person_nr) {
+		switch (personNr) {
 		case P_CHEWY:
 			if (mode == AAD_STR_START) {
 				if (_G(spieler).R28ChewyPump)
-					ani_nr = CH_PUMP_TALK;
+					aniNr = CH_PUMP_TALK;
 				else if (_G(spieler).ChewyAni == CHEWY_ROCKER)
-					ani_nr = CH_ROCK_TALK1;
+					aniNr = CH_ROCK_TALK1;
 				else
-					ani_nr = CH_TALK3;
+					aniNr = CH_TALK3;
 
-				start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
+				start_spz(aniNr, 255, ANI_FRONT, P_CHEWY);
 			} else {
 				stop_spz();
 			}
@@ -1559,15 +1551,15 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		case P_HOWARD:
 		case P_NICHELLE:
 		case P_4: {
-			int16 anz;
-			if (person_nr == 4) {
-				anz = 2;
+			int16 nbr;
+			if (personNr == 4) {
+				nbr = 2;
 				tmp = 3;
 			} else {
-				anz = 1;
-				tmp = person_nr + 2;
+				nbr = 1;
+				tmp = personNr + 2;
 			}
-			for (int16 i = 0; i < anz; i++) {
+			for (int16 i = 0; i < nbr; i++) {
 				if (mode == AAD_STR_START) {
 					_G(det)->start_detail(tmp, 255, ANI_FRONT);
 				} else {
@@ -1717,41 +1709,41 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 	case R63_GIRL_DIA:
 	case R67_PAPA1_DIA:
 	case R67_PAPA2_DIA:
-		switch (person_nr) {
+		switch (personNr) {
 		case P_CHEWY:
 			if (mode == AAD_STR_START) {
 				switch (_G(spieler).ChewyAni) {
 				case CHEWY_NORMAL:
-					ani_nr = CH_TALK3;
+					aniNr = CH_TALK3;
 					break;
 
 				case CHEWY_BORK:
-					ani_nr = 68;
+					aniNr = 68;
 					break;
 
 				case CHEWY_PUMPKIN:
-					ani_nr = CH_PUMP_TALK;
+					aniNr = CH_PUMP_TALK;
 					break;
 
 				case CHEWY_ROCKER:
-					ani_nr = CH_ROCK_TALK1;
+					aniNr = CH_ROCK_TALK1;
 					break;
 
 				case CHEWY_JMANS:
-					ani_nr = CH_JM_TALK;
+					aniNr = CH_JM_TALK;
 					break;
 
 				case CHEWY_ANI7:
-					ani_nr = 46;
+					aniNr = 46;
 					break;
 
 				default:
-					ani_nr = -1;
+					aniNr = -1;
 					break;
 
 				}
-				if (ani_nr != -1)
-					start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
+				if (aniNr != -1)
+					start_spz(aniNr, 255, ANI_FRONT, P_CHEWY);
 
 			} else {
 				stop_spz();
@@ -1787,11 +1779,11 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		case P_NICHELLE:
 			switch (_G(spieler).PersonRoomNr[P_CHEWY]) {
 			case 28:
-				START_STOP(dia_nr - 194);
+				START_STOP(diaNr - 194);
 				break;
 
 			case 40:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 202:
 				case 209:
 				case 211:
@@ -1822,7 +1814,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				if (mode == AAD_STR_START) {
 					_G(room)->set_timer_status(8, TIMER_STOP);
 					_G(det)->del_static_ani(8);
-					talk_ani = 2;
+					talkAni = 2;
 				} else {
 					_G(room)->set_timer_status(8, TIMER_START);
 					_G(det)->stop_detail(2);
@@ -1831,14 +1823,14 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 45:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 257:
 				case 258:
 				case 259:
 					if (mode == AAD_STR_START) {
 						_G(room)->set_timer_status(0, TIMER_STOP);
 						_G(det)->del_static_ani(0);
-						talk_ani = 2;
+						talkAni = 2;
 					} else {
 						_G(room)->set_timer_status(0, TIMER_START);
 						_G(det)->stop_detail(2);
@@ -1864,7 +1856,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 50:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 272:
 				case 273:
 				case 275:
@@ -1891,7 +1883,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 55:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 323:
 					tmp = 16;
 					break;
@@ -1912,7 +1904,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 56:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 304:
 					tmp = 5;
 					break;
@@ -1939,7 +1931,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 63:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 358:
 					tmp = 5;
 					break;
@@ -1958,16 +1950,15 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 			case 67:
 				if (mode == AAD_STR_START) {
-					if (dia_nr != 376)
-						talk_ani = 1;
-				} else {
-					if (dia_nr != 376)
-						_G(det)->stop_detail(1);
-				}
+					if (diaNr != 376)
+						talkAni = 1;
+				} else if (diaNr != 376)
+					_G(det)->stop_detail(1);
+
 				break;
 
 			case 68:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 384:
 				case 385:
 					tmp = 9;
@@ -1991,7 +1982,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 82:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 446:
 					tmp = 8;
 					break;
@@ -2017,13 +2008,13 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 84:
-				if (dia_nr == 477 || dia_nr == 478 || dia_nr == 481) {
+				if (diaNr == 477 || diaNr == 478 || diaNr == 481) {
 					if (mode == AAD_STR_START) {
-						talk_ani = 6;
-						stop_ani = 7;
+						talkAni = 6;
+						stopAni = 7;
 					} else {
-						talk_ani = 7;
-						stop_ani = 6;
+						talkAni = 7;
+						stopAni = 6;
 					}
 				
 					START_STOP_TMP;
@@ -2032,30 +2023,30 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 			case 85:
 				if (mode == AAD_STR_START) {
-					talk_ani = 0;
+					talkAni = 0;
 				} else {
-					talk_ani = 1;
-					stop_ani = 0;
+					talkAni = 1;
+					stopAni = 0;
 				}
 				break;
 
 			case 87:
 				if (mode == AAD_STR_START) {
-					talk_ani = 1;
-					stop_ani = 2;
+					talkAni = 1;
+					stopAni = 2;
 				} else {
-					talk_ani = 2;
-					stop_ani = 1;
+					talkAni = 2;
+					stopAni = 1;
 				}
 				break;
 
 			case 88:
 				if (mode == AAD_STR_START) {
-					talk_ani = 3;
-					stop_ani = 4;
+					talkAni = 3;
+					stopAni = 4;
 				} else {
-					talk_ani = 4;
-					stop_ani = 3;
+					talkAni = 4;
+					stopAni = 3;
 				}
 				break;
 
@@ -2064,7 +2055,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 93:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 549:
 				case 616:
 					START_STOP(0);
@@ -2084,7 +2075,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 				break;
 
 			case 94:
-				switch (dia_nr) {
+				switch (diaNr) {
 				case 539:
 				case 551:
 					START_STOP(0);
@@ -2111,14 +2102,14 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 
 	case R61_VERLAG_DIA:
 		if (mode == AAD_STR_START) {
-			_G(det)->start_detail(person_nr, 255, ANI_FRONT);
+			_G(det)->start_detail(personNr, 255, ANI_FRONT);
 		} else {
-			_G(det)->stop_detail(person_nr);
+			_G(det)->stop_detail(personNr);
 		}
 		break;
 
 	case R68_KEEPER_DIA:
-		switch (person_nr) {
+		switch (personNr) {
 		case 0:
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -2134,7 +2125,7 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		case 3:
 			if (mode == AAD_STR_START) {
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				talk_ani = 29;
+				talkAni = 29;
 			} else {
 				_G(det)->stop_detail(29);
 				_G(spieler).PersonHide[P_CHEWY] = false;
@@ -2150,14 +2141,14 @@ void atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) 
 		break;
 	}
 
-	if (altes_format) {
+	if (oldFormat) {
 		_G(det)->start_detail(_G(talk_start_ani), 255, ANI_FRONT);
-		_G(det)->stop_detail(talk_stop_ani);
+		_G(det)->stop_detail(talkStopAni);
 		_G(det)->hideStaticSpr(_G(talk_hide_static));
-		_G(det)->showStaticSpr(talk_show_static);
+		_G(det)->showStaticSpr(talkShowStatic);
 	} else {
-		_G(det)->start_detail(talk_ani, 255, ANI_FRONT);
-		_G(det)->stop_detail(stop_ani);
+		_G(det)->start_detail(talkAni, 255, ANI_FRONT);
+		_G(det)->stop_detail(stopAni);
 	}
 }
 
@@ -2170,7 +2161,7 @@ void calc_inv_use_txt(int16 test_nr) {
 
 	switch (test_nr) {
 	case GBUCH_OPEN_INV:
-	case MONOKEL_INV:
+	case MONOCLE_INV:
 		scrollx = _G(spieler).scrollx;
 		scrolly = _G(spieler).scrolly;
 		_G(spieler).scrollx = 0;
@@ -2333,7 +2324,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 		inv_mode = IUID_IIB;
 		break;
 
-	case INVENTAR_STATIC:
+	case INVENTORY_STATIC:
 		inv_mode = IUID_SIB;
 		break;
 
@@ -2794,7 +2785,7 @@ void calc_person_dia(int16 p_nr) {
 			}
 		}
 
-		_G(atds)->set_string_end_func(&atds_string_start);
+		_G(atds)->set_string_end_func(&atdsStringStart);
 		break;
 
 	default:

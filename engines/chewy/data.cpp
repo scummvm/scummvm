@@ -37,10 +37,10 @@ Data::~Data() {
 
 uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	NewPhead ph;
 
 	if (rs) {
 		rs->seek(0, SEEK_SET);
+		NewPhead ph;
 		if (!ph.load(rs))
 			error("select_pool_item error");
 
@@ -59,11 +59,11 @@ uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 
 uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	ChunkHead ch;
 	uint32 size = 0;
 
 	if (rs) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
+		ChunkHead ch;
 		if (!ch.load(rs))
 			error("load_tmf error");
 
@@ -90,13 +90,13 @@ uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 }
 
 uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
-	NewPhead Nph;
 	uint32 size = 0;
 
 	Common::File f;
 	if (!f.open(fname))
 		error("get_poolsize error");
 
+	NewPhead Nph;
 	if (!Nph.load(&f))
 		error("get_poolsize error");
 

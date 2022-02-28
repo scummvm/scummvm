@@ -25,7 +25,6 @@
 #include "common/serializer.h"
 #include "chewy/defines.h"
 #include "chewy/object_extra.h"
-#include "chewy/detail.h"
 
 namespace Chewy {
 

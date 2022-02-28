@@ -24,12 +24,8 @@
 
 namespace Chewy {
 
-#define SEC_1000_MODE 0
-#define SEC_100_MODE 1
 #define SEC_10_MODE 2
 #define SEC_MODE 3
-#define MIN_MODE 4
-#define STD_MODE 5
 
 #define TIMER_STOP 0
 #define TIMER_START 1

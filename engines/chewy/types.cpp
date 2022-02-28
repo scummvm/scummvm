@@ -20,6 +20,7 @@
  */
 
 #include "chewy/types.h"
+#include "chewy/detail.h"
 #include "common/algorithm.h"
 
 namespace Chewy {

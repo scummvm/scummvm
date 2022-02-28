@@ -72,7 +72,8 @@ void Timer::calcTimer() {
 }
 
 int16 Timer::setNewTimer(int16 timerNr, int16 timerEndValue, int16 timerMode) {
-	int16 ret;
+	int16 ret = -1;
+
 	if (timerNr < _timerMax) {
 		ret = 1;
 		_timerBlk[timerNr]._timeCount = 0;
@@ -81,8 +82,8 @@ int16 Timer::setNewTimer(int16 timerNr, int16 timerEndValue, int16 timerMode) {
 		_timerBlk[timerNr]._timeLast = _G(timer_count);
 		_timerBlk[timerNr]._timeMode = timerMode;
 		_timerBlk[timerNr]._timeStatus = true;
-	} else
-		ret = -1;
+	}
+
 	return ret;
 }
 
