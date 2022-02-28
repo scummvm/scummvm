@@ -117,7 +117,7 @@ void Room14::talk_eremit()  {
 		_G(flags).AutoAniPlay = true;
 
 		if (_G(spieler).R14Translator) {
-			load_ads_dia(0);
+			loadAdsDia(0);
 			_G(obj)->show_sib(46);
 		} else {
 			hideCur();

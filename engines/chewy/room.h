@@ -22,6 +22,7 @@
 #ifndef CHEWY_ROOM_H
 #define CHEWY_ROOM_H
 
+#include "chewy/detail.h"
 #include "chewy/object_extra.h"
 
 namespace Chewy {

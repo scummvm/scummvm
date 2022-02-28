@@ -22,6 +22,7 @@
 #include "chewy/defines.h"
 #include "chewy/globals.h"
 #include "chewy/sound.h"
+#include "chewy/detail.h"
 
 namespace Chewy {
 
@@ -451,7 +452,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 	_G(maus_links_click) = false;
 	_G(talk_start_ani) = -1;
 	_G(talk_hide_static) = -1;
-	set_ssi_xy();
+	setSsiPos();
 	_G(atds)->start_aad(dia_nr);
 
 	while (!SHOULD_QUIT && (
@@ -470,7 +471,7 @@ void start_aad_wait(int16 dia_nr, int16 str_nr) {
 
 void start_aad(int16 dia_nr) {
 	g_engine->_sound->waitForSpeechToFinish();
-	set_ssi_xy();
+	setSsiPos();
 	_G(atds)->start_aad(dia_nr);
 }
 
@@ -486,7 +487,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 		_G(flags).AtsText = true;
 		if (txt_nr != -1) {
 			if (_G(menu_item) != CUR_WALK)
-				atds_string_start(30000, 0, 0, AAD_STR_START);
+				atdsStringStart(30000, 0, 0, AAD_STR_START);
 
 			ret = _G(atds)->start_ats(txt_nr, txt_mode, col, mode, &VocNr);
 
@@ -514,7 +515,7 @@ bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode) {
 			}
 
 			if (_G(menu_item) != CUR_WALK)
-				atds_string_start(30000, 0, 0, AAD_STR_END);
+				atdsStringStart(30000, 0, 0, AAD_STR_END);
 		}
 
 		_G(flags).AtsText = false;
@@ -561,7 +562,7 @@ void start_ads_wait(int16 dia_nr) {
 	if (!_G(flags).AdsDialog) {
 		_G(menu_item) = CUR_TALK;
 		cursorChoice(_G(menu_item));
-		load_ads_dia(dia_nr);
+		loadAdsDia(dia_nr);
 		while (_G(flags).AdsDialog && !SHOULD_QUIT) {
 			set_up_screen(DO_SETUP);
 		}

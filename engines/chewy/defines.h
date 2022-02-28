@@ -134,7 +134,7 @@ enum SetupScreenMode {
 
 #define INVENTAR_NORMAL 0
 
-#define INVENTAR_STATIC 1
+#define INVENTORY_STATIC 1
 #define STATIC_USE 2
 
 #define DETEDIT_REC 3
@@ -298,7 +298,7 @@ enum SetupScreenMode {
 #define SLIME_INV 1
 #define RED_CARD_INV 2
 #define KABEL_INV 3
-#define MONOKEL_INV 4
+#define MONOCLE_INV 4
 #define GBUCH_INV 5
 #define GBUCH_OPEN_INV 6
 #define DEFEKT_INV 7

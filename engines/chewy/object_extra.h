@@ -31,7 +31,7 @@ namespace Chewy {
 #define OBJZU_ZU 1
 #define OBJZU_AN 2
 #define OBJZU_AUS 3
-#define OBJZU_VERSCHLOSSEN 5
+#define OBJZU_LOCKED 5
 #define OBJZU_GEOEFFNET 6
 #define OBJZU_NASS 7
 #define OBJZU_TROCKEN 8

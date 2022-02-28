@@ -20,6 +20,7 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/detail.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
@@ -275,12 +276,12 @@ void ads_menu() {
 				_G(minfo).y = 159;
 				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), cur_y);
 				if (an_blk->BlkNr == -1) {
-					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
+					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					stop_ads_dialog();
 				} else {
 					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), cur_y);
-					ads_action(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
+					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					_G(ads_blk_nr) = an_blk->BlkNr;
 					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr),
 					                                  &_G(ads_item_anz));

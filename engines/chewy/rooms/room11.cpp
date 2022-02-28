@@ -156,7 +156,7 @@ int16 Room11::scanner() {
 			cursorChoice(_G(menu_item));
 			start_aad_wait(12, -1);
 			showCur();
-			load_ads_dia(3);
+			loadAdsDia(3);
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
 				actionFl = true;
@@ -167,7 +167,7 @@ int16 Room11::scanner() {
 				start_aad_wait(12, -1);
 				_G(menu_item) = CUR_TALK;
 				cursorChoice(_G(menu_item));
-				load_ads_dia(3);
+				loadAdsDia(3);
 			}
 		}
 	}

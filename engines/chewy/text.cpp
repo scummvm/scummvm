@@ -86,7 +86,6 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 	TextEntry *d = new TextEntry();
 	bool isText = (dialogNum >= kADSTextMax && dialogNum < kADSTextMax + kATSTextMax);
 	bool isAutoDialog = (dialogNum >= kADSTextMax + kATSTextMax && dialogNum < kADSTextMax + kATSTextMax + kAADTextMax);
-	//bool isInvText = (dialogNum >= kADSTextMax + kATSTextMax + kAADTextMax && dialogNum < kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax);
 
 	byte *data = getChunkData(dialogNum);
 	byte *ptr = data;

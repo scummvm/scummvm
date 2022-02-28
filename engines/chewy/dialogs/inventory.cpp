@@ -225,7 +225,7 @@ void Inventory::menu() {
 								del_invent_slot(_G(spieler).InventSlot[k]);
 							}
 						} else if (_G(spieler).InventSlot[k] != -1)
-							obj_auswerten(_G(spieler).InventSlot[k], INVENTAR_NORMAL);
+							evaluateObj(_G(spieler).InventSlot[k], INVENTAR_NORMAL);
 						else {
 							_G(spieler).InventSlot[k] = _G(spieler).AkInvent;
 							_G(obj)->sort();
@@ -554,7 +554,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 		if (txt_nr != -1) {
 			switch (txt_mode) {
 			case INVENTAR_NORMAL:
-			case INVENTAR_STATIC:
+			case INVENTORY_STATIC:
 				ok = true;
 				switch (_G(menu_item)) {
 				case CUR_LOOK:
@@ -583,14 +583,14 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 				}
 
 				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA)) {
-					ats_action(txt_nr, m_mode, ATS_ACTION_VOR);
+					atsAction(txt_nr, m_mode, ATS_ACTION_VOR);
 				}
 				if (ok) {
 					start_ats_wait(txt_nr, m_mode, 14, ATS_DATA);
 				}
 
 				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
-					ats_action(txt_nr, m_mode, ATS_ACTION_NACH);
+					atsAction(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (_G(menu_item) == CUR_USE)
 					_G(flags).StaticUseTxt = true;
 				break;
