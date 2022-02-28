@@ -1968,9 +1968,9 @@ if test -n "$CXX" && test_compiler "$CXX"; then
 	echo $CXX
 else
 	if test -n "$_host"; then
-		compilers="$_host_alias-g++ $_host_alias-c++ $_host-g++ $_host-c++"
+		compilers="$_host_alias-g++ $_host_alias-c++ $_host_alias-clang++ $_host-g++ $_host-c++ $_host-clang++"
 	else
-		compilers="g++ c++"
+		compilers="g++ c++ clang++"
 	fi
 
 	# Iterate over all candidates, pick the first working one
