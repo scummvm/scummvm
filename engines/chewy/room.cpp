@@ -199,10 +199,10 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	add_timer_new_room();
 
 	if (Rb->AtsLoad)
-		_G(atds)->load_atds(_roomInfo->_roomNr, ATS_DATEI);
+		_G(atds)->load_atds(_roomInfo->_roomNr, ATS_DATA);
 
 	if (Rb->AadLoad)
-		_G(atds)->load_atds(_roomInfo->_roomNr, AAD_DATEI);
+		_G(atds)->load_atds(_roomInfo->_roomNr, AAD_DATA);
 }
 
 void Room::set_timer_start(int16 timer_start) {
@@ -331,7 +331,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 
 		if (mode == GED_LOAD) {
 			Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
-				_roomHandle[R_GEPDATEI]);
+				_roomHandle[R_GEP_DATA]);
 			_G(ged)->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
 						        nr, _gedMem[Rb->AkAblage]);
 			_gedXAnz[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;

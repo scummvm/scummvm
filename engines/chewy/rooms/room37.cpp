@@ -179,9 +179,9 @@ int16 Room37::use_glas() {
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
 			_G(det)->hideStaticSpr(9);
-			_G(atds)->set_ats_str(250, 1, ATS_DATEI);
-			_G(atds)->set_ats_str(256, 1, ATS_DATEI);
-			_G(atds)->del_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_ats_str(250, 1, ATS_DATA);
+			_G(atds)->set_ats_str(256, 1, ATS_DATA);
+			_G(atds)->del_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATA);
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(spieler).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -323,9 +323,9 @@ void Room37::use_hahn() {
 
 			_G(spieler).scrollx = 320;
 			_G(flags).NoScroll = false;
-			_G(atds)->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATEI);
-			_G(atds)->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATEI);
-			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(251, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->set_steuer_bit(250, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATA);
 			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(141, -1);

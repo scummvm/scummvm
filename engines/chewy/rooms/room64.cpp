@@ -45,7 +45,7 @@ void Room64::entry() {
 			_G(spieler).R64ManWeg = true;
 			_G(det)->del_static_ani(1);
 			_G(room)->set_timer_status(1, TIMER_STOP);
-			_G(atds)->set_steuer_bit(376, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(376, ATS_AKTIV_BIT, ATS_DATA);
 			_G(spieler).R64Moni1Ani = 5;
 			calc_monitor();
 			hideCur();
@@ -98,7 +98,7 @@ void Room64::calc_monitor() {
 		break;
 	}
 
-	_G(atds)->set_ats_str(373, str_nr, ATS_DATEI);
+	_G(atds)->set_ats_str(373, str_nr, ATS_DATA);
 	switch (_G(spieler).R64Moni2Ani) {
 	case 0:
 		str_nr = 1;
@@ -112,7 +112,7 @@ void Room64::calc_monitor() {
 	default:
 		break;
 	}
-	_G(atds)->set_ats_str(374, str_nr, ATS_DATEI);
+	_G(atds)->set_ats_str(374, str_nr, ATS_DATA);
 }
 
 void Room64::setup_func() {
@@ -157,11 +157,11 @@ int16 Room64::use_tasche() {
 	hideCur();
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).R64ManWeg) {
-			if (!_G(atds)->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI)) {
+			if (!_G(atds)->get_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATA)) {
 				autoMove(3, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 				new_invent_2_cur(GERAET_INV);
-				_G(atds)->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATA);
 				start_aad_wait(353, -1);
 			} else {
 				showCur();

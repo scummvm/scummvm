@@ -184,30 +184,30 @@ void init_room() {
 	_G(room_blk).AtsLoad = true;
 	strcpy(_G(room_blk).RoomDir, "room/");
 
-	_G(room)->open_handle(EPISODE1_GEP, R_GEPDATEI);
+	_G(room)->open_handle(EPISODE1_GEP, R_GEP_DATA);
 }
 
 void init_atds() {
 	// Close any prior handles
-	_G(atds)->close_handle(AAD_DATEI);
-	_G(atds)->close_handle(ATS_DATEI);
-	_G(atds)->close_handle(ADS_DATEI);
-	_G(atds)->close_handle(INV_USE_DATEI);
-	_G(atds)->close_handle(INV_ATS_DATEI);
+	_G(atds)->close_handle(AAD_DATA);
+	_G(atds)->close_handle(ATS_DATA);
+	_G(atds)->close_handle(ADS_DATA);
+	_G(atds)->close_handle(INV_USE_DATA);
+	_G(atds)->close_handle(INV_ATS_DATA);
 	_G(atds)->close_handle(ATDS_HANDLE);
 
 	// New set up
 	Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
-	_G(atds)->set_handle(ATDS_TXT, ATS_DATEI, handle, ATS_TAP_OFF, ATS_TAP_MAX);
-	_G(atds)->init_ats_mode(ATS_DATEI, _G(spieler).Ats);
-	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATEI, handle, INV_TAP_OFF, INV_TAP_MAX);
-	_G(atds)->init_ats_mode(INV_ATS_DATEI, _G(spieler).InvAts);
-	_G(atds)->set_handle(ATDS_TXT, AAD_DATEI, handle, AAD_TAP_OFF, AAD_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, ADS_DATEI, handle, ADS_TAP_OFF, ADS_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATEI, handle, USE_TAP_OFF, USE_TAP_MAX);
-	_G(atds)->init_ats_mode(INV_USE_DATEI, _G(spieler).InvUse);
+	_G(atds)->set_handle(ATDS_TXT, ATS_DATA, handle, ATS_TAP_OFF, ATS_TAP_MAX);
+	_G(atds)->init_ats_mode(ATS_DATA, _G(spieler).Ats);
+	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATA, handle, INV_TAP_OFF, INV_TAP_MAX);
+	_G(atds)->init_ats_mode(INV_ATS_DATA, _G(spieler).InvAts);
+	_G(atds)->set_handle(ATDS_TXT, AAD_DATA, handle, AAD_TAP_OFF, AAD_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, ADS_DATA, handle, ADS_TAP_OFF, ADS_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, handle, USE_TAP_OFF, USE_TAP_MAX);
+	_G(atds)->init_ats_mode(INV_USE_DATA, _G(spieler).InvUse);
 	_G(atds)->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
-	_G(atds)->open_handle(INV_USE_IDX, INV_IDX_DATEI);
+	_G(atds)->open_handle(INV_USE_IDX, INV_IDX_DATA);
 	_G(mem)->file->fcopy(ADSH_TMP, "txt/diah.adh");
 	_G(atds)->open_handle(ADSH_TMP, 3);
 	_G(spieler).AadSilent = 10;
@@ -336,7 +336,7 @@ void sound_init() {
 	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 
-	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOCDATEI);
+	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOC_DATA);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_G(music_handle));
 	assert(rs);

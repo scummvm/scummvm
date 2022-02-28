@@ -113,13 +113,13 @@ int16 Room67::use_kommode() {
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(9);
-			_G(atds)->set_ats_str(400, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(400, 1, ATS_DATA);
 		} else if (!_G(spieler).R67KostuemWeg) {
 			action_flag = true;
 			_G(spieler).R67KostuemWeg = true;
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(atds)->set_ats_str(400, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(400, 2, ATS_DATA);
 			new_invent_2_cur(GALA_INV);
 		}
 		showCur();
@@ -172,7 +172,7 @@ int16 Room67::talk_papagei() {
 			_G(det)->showStaticSpr(0);
 			invent_2_slot(PAPAGEI_INV);
 			showCur();
-			_G(atds)->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(394, ATS_AKTIV_BIT, ATS_DATA);
 		}
 		showCur();
 	}

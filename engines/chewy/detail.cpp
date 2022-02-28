@@ -126,8 +126,8 @@ bool RoomDetailInfo::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool RdiDateiHeader::load(Common::SeekableReadStream *src) {
-	src->read(Id, 4);
+bool RdiDataHeader::load(Common::SeekableReadStream *src) {
+	src->read(_id, 4);
 	Anz = src->readSint16LE();
 
 	return true;
@@ -171,7 +171,7 @@ void Detail::load_rdi(const char *fname_, int16 room_nr) {
 
 	if (fname_ && f.open(fname_)) {
 		if (_rdiDataHeader.load(&f)) {
-			if (!scumm_strnicmp(_rdiDataHeader.Id, "RDI", 3)) {
+			if (!scumm_strnicmp(_rdiDataHeader._id, "RDI", 3)) {
 				f.seek(room_nr * RoomDetailInfo::SIZE(), SEEK_CUR);
 
 				if (!_rdi.load(&f)) {

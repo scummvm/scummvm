@@ -54,13 +54,13 @@ void Room41::entry() {
 	}
 
 	if (_G(spieler).R41Einbruch) {
-		_G(atds)->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(271, ATS_AKTIV_BIT, ATS_DATA);
 		_G(det)->showStaticSpr(6);
 		_G(det)->showStaticSpr(7);
 	}
 
 	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
-		_G(atds)->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(269, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (!_G(flags).LoadGame)
@@ -148,8 +148,8 @@ void Room41::talk_hoggy2() {
 void Room41::first_talk() {
 	_G(spieler).R41FirstTalk = true;
 	start_aad_wait(134, -1);
-	_G(atds)->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATEI);
-	_G(atds)->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATA);
+	_G(atds)->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATA);
 }
 
 void Room41::start_hoggy() {
@@ -200,8 +200,8 @@ int16 Room41::use_lola() {
 		set_person_pos(127, 112, P_CHEWY, P_LEFT);
 		_G(det)->stop_detail(6);
 
-		_G(atds)->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(267, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(267, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(267, 1, ATS_DATA);
 		_G(atds)->hide_item(11, 0, 3);
 		showCur();
 	}
@@ -227,7 +227,7 @@ int16 Room41::use_brief() {
 		stop_hoggy();
 		start_aad_wait(186, -1);
 		start_hoggy();
-		_G(atds)->set_ats_str(206, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(206, 1, ATS_DATA);
 		_G(spieler).R28Briefkasten = true;
 		_G(spieler).R40TrainMove = true;
 		_G(spieler).R28PostCar = true;

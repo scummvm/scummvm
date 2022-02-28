@@ -692,7 +692,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 			switch (txt_mode) {
 			case INVENTAR_NORMAL:
 			case INVENTAR_STATIC:
-				str_adr = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATEI);
+				str_adr = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATA);
 				break;
 			default:
 				break;
@@ -1378,7 +1378,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 
 					int16 action_ret = 0;
-					if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATEI)) {
+					if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
 						if (_G(menu_item) != CUR_WALK && _G(menu_item) != CUR_USE) {
 							if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
 								set_person_spr(P_RIGHT, P_CHEWY);
@@ -1387,18 +1387,18 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 						}
 					}
 
-					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATEI)) {
+					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
 						action_ret = ats_action(txtNr, txtMode, ATS_ACTION_VOR);
 					}
 					
-					if (ok && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATEI)) {
-						if (start_ats_wait(txtNr, txtMode, 14, ATS_DATEI))
+					if (ok && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
+						if (start_ats_wait(txtNr, txtMode, 14, ATS_DATA))
 							dispFl = false;
 					} else {
 						ret = -1;
 					}
 					
-					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATEI)) {
+					if (_G(atds)->get_steuer_bit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
 						action_ret = ats_action(txtNr, txtMode, ATS_ACTION_NACH);
 						actionFl = true;
 						if (action_ret)
@@ -1406,7 +1406,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (!ok && !action_ret) {
-						if (inv_no_use_mode != -1 && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATEI)) {
+						if (inv_no_use_mode != -1 && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
 							actionFl = calc_inv_no_use(idx + (_G(spieler).PersonRoomNr[P_CHEWY] * 100), inv_no_use_mode);
 							if (actionFl)
 								ret = txtNr;
@@ -1414,7 +1414,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (ok && !action_ret && txtMode == TXT_MARK_USE && dispFl) {
-						if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATEI)) {
+						if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
 							if (_G(menu_item) != CUR_WALK) {
 								if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
 									set_person_spr(P_RIGHT, P_CHEWY);
@@ -1435,7 +1435,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 
 				if (dispFl && !actionFl) {
 					int16 anz;
-					char *str_ = _G(atds)->ats_get_txt(txtNr, TXT_MARK_NAME, &anz, ATS_DATEI);
+					char *str_ = _G(atds)->ats_get_txt(txtNr, TXT_MARK_NAME, &anz, ATS_DATA);
 					if (str_ != 0) {
 						ret = txtNr;
 						_G(fontMgr)->setFont(_G(font8));
@@ -1581,7 +1581,7 @@ void calc_mouse_person(int16 x, int16 y) {
 									else
 										set_person_spr(P_LEFT, P_CHEWY);
 								}
-								if (!start_ats_wait(txt_nr, mode, 14, ATS_DATEI))
+								if (!start_ats_wait(txt_nr, mode, 14, ATS_DATA))
 									start_ats_wait(def_nr, TXT_MARK_USE, 14, INV_USE_DEF);
 							}
 						}

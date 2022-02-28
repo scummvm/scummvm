@@ -41,17 +41,16 @@ uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 
 	if (rs) {
 		rs->seek(0, SEEK_SET);
-		if (!ph.load(rs)) {
+		if (!ph.load(rs))
 			error("select_pool_item error");
-		} else {
-			if (!strncmp(ph.id, "NGS", 3)) {
-				if (nr >= ph.PoolAnz)
-					nr = ph.PoolAnz - 1;
 
-				rs->seek(-(int)((ph.PoolAnz - nr) * sizeof(uint32)), SEEK_END);
-				uint32 tmp1 = rs->readUint32LE();
-				rs->seek(tmp1, SEEK_SET);
-			}
+		if (!strncmp(ph.id, "NGS", 3)) {
+			if (nr >= ph.PoolAnz)
+				nr = ph.PoolAnz - 1;
+
+			rs->seek(-(int)((ph.PoolAnz - nr) * sizeof(uint32)), SEEK_END);
+			uint32 tmp1 = rs->readUint32LE();
+			rs->seek(tmp1, SEEK_SET);
 		}
 	}
 
@@ -65,27 +64,24 @@ uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
 
 	if (rs) {
 		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		if (!ch.load(rs)) {
+		if (!ch.load(rs))
 			error("load_tmf error");
-		} else {
-			if (ch.type == TMFDATEI) {
-				assert(ch.size > (uint32)TmfHeader::SIZE());
 
-				if (!song->load(rs)) {
-					error("load_tmf error");
-				} else {
-					size = ch.size + sizeof(TmfHeader);
-					byte *speicher = (byte *)song + sizeof(TmfHeader);
-					speicher += ((uint32)song->pattern_anz) * 1024l;
-					for (int16 i = 0; i < 31; ++i) {
-						if (song->instrument[i].laenge) {
-							song->ipos[i] = speicher;
-							speicher += song->instrument[i].laenge;
-						}
-					}
-				}
-			} else {
-				error("load_tmf error");
+		if (ch.type != TMFDATA)
+			error("load_tmf error");
+
+		assert(ch.size > (uint32)TmfHeader::SIZE());
+
+		if (!song->load(rs))
+			error("load_tmf error");
+
+		size = ch.size + sizeof(TmfHeader);
+		byte *speicher = (byte *)song + sizeof(TmfHeader);
+		speicher += ((uint32)song->pattern_anz) * 1024l;
+		for (int16 i = 0; i < 31; ++i) {
+			if (song->instrument[i].laenge) {
+				song->ipos[i] = speicher;
+				speicher += song->instrument[i].laenge;
 			}
 		}
 	}
@@ -98,32 +94,29 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 	uint32 size = 0;
 
 	Common::File f;
-	if (f.open(fname)) {
-		if (!Nph.load(&f)) {
-			error("get_poolsize error");
-		} else {
-			if (!strncmp(Nph.id, "NGS", 3)) {
-				select_pool_item(&f, chunk_start);
-				f.seek(-ChunkHead::SIZE(), SEEK_CUR);
-
-				for (int16 i = chunk_start; (i < Nph.PoolAnz) && i < (chunk_start + chunk_anz); i++) {
-					ChunkHead ch;
-					if (!ch.load(&f)) {
-						error("get_poolsize error");
-					} else {
-						if (ch.size > size)
-							size = ch.size;
-
-						f.seek(ch.size, SEEK_CUR);
-					}
-				}
-			}
-		}
-
-		f.close();
-	} else {
+	if (!f.open(fname))
 		error("get_poolsize error");
+
+	if (!Nph.load(&f))
+		error("get_poolsize error");
+
+	if (!strncmp(Nph.id, "NGS", 3)) {
+		select_pool_item(&f, chunk_start);
+		f.seek(-ChunkHead::SIZE(), SEEK_CUR);
+
+		for (int16 i = chunk_start; (i < Nph.PoolAnz) && i < (chunk_start + chunk_anz); i++) {
+			ChunkHead ch;
+			if (!ch.load(&f))
+				error("get_poolsize error");
+
+			if (ch.size > size)
+				size = ch.size;
+
+			f.seek(ch.size, SEEK_CUR);
+		}
 	}
+
+	f.close();
 
 	return size;
 }
@@ -132,13 +125,12 @@ void Data::fcopy(const char *d_fname, const char *s_fname) {
 	assert(!strcmp(d_fname, ADSH_TMP));
 
 	Common::File f;
-	if (f.open(s_fname)) {
-		Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
-		ws->writeStream(&f);
-		delete ws;
-	} else {
+	if (!f.open(s_fname))
 		error("Could not find - %s", s_fname);
-	}
+
+	Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
+	ws->writeStream(&f);
+	delete ws;
 }
 
 } // namespace Chewy

@@ -85,7 +85,7 @@ void Room72::xit(int16 eib_nr) {
 }
 
 void Room72::proc1(int16 flicNr) {
-	_G(atds)->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).flags28_10 = true;
 	wait_show_screen(7);
 	start_aad_wait(437, -1);

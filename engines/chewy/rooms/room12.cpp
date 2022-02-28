@@ -182,7 +182,7 @@ void Room12::bork_ok() {
 	start_detail_wait(4, 1, ANI_FRONT);
 	_G(talk_hide_static) = -1;
 	_G(det)->showStaticSpr(12);
-	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATEI);
+	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATA);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
 	_G(flags).MausLinks = false;
@@ -208,7 +208,7 @@ int16 Room12::use_terminal() {
 
 				load_chewy_taf(CHEWY_BORK);
 				_G(flags).NoScroll = false;
-				_G(atds)->set_ats_str(118, 0, ATS_DATEI);
+				_G(atds)->set_ats_str(118, 0, ATS_DATA);
 				_G(det)->hideStaticSpr(12);
 				_G(menu_item) = CUR_WALK;
 				cursorChoice(_G(menu_item));
@@ -241,8 +241,8 @@ void Room12::use_linke_rohr() {
 	_G(obj)->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 	_G(obj)->calc_all_static_detail();
-	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATEI);
-	_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 0, ATS_DATA);
+	_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 1, ATS_DATA);
 	start_aad(111, 0);
 }
 
@@ -271,7 +271,7 @@ int16 Room12::useTransformerTube() {
 		if (_G(spieler).R12KetteLinks) {
 			_G(spieler).R12KetteLinks = false;
 			_G(uhr)->enableTimer();
-			_G(atds)->set_ats_str(117, 1, AAD_DATEI);
+			_G(atds)->set_ats_str(117, 1, AAD_DATA);
 		} else {
 			autoMove(7, P_CHEWY);
 			start_aad_wait(29, -1);

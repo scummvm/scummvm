@@ -74,9 +74,9 @@ void Room97::entry() {
 	if (_G(spieler).flags36_40) {
 		_G(det)->start_detail(14, 255, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
-		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
-		_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (_G(spieler).flags36_20) {
@@ -434,10 +434,10 @@ int Room97::proc6() {
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(15);
 	_G(spieler).flags36_2 = true;
-	_G(atds)->del_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_steuer_bit(531, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_ats_str(530, 1, ATS_DATEI);
-	_G(atds)->set_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_steuer_bit(531, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_ats_str(530, 1, ATS_DATA);
+	_G(atds)->set_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).flags36_8 = true;
 
@@ -455,8 +455,8 @@ int Room97::proc7() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
 	start_detail_wait(22, 1, ANI_FRONT);
-	_G(atds)->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_ats_str(530, 2, ATS_DATEI);
+	_G(atds)->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
 	_G(spieler).flags36_4 = true;
 	set_person_pos(304, 102, P_CHEWY, P_RIGHT);
@@ -486,9 +486,9 @@ int Room97::proc8() {
 		_G(spieler).flags36_10 = true;
 		_G(spieler).flags36_8 = false;
 		_G(det)->start_detail(12, 255, false);
-		_G(atds)->set_ats_str(530, 3, ATS_DATEI);
-		_G(atds)->del_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(532, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(530, 3, ATS_DATA);
+		_G(atds)->del_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(532, 1, ATS_DATA);
 		_G(det)->start_detail(6, 255, false);
 		_G(det)->hideStaticSpr(14);
 		autoMove(3, P_CHEWY);
@@ -513,8 +513,8 @@ int Room97::proc8() {
 		_G(det)->start_detail(28, 255, false);
 		_G(det)->setSetailPos(27, 272, 110);
 		_G(det)->start_detail(27, 255, false);
-		_G(atds)->set_steuer_bit(533, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(534, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(533, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(534, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (diaNr != -1) {
@@ -544,10 +544,10 @@ int Room97::proc9() {
 		_G(det)->start_detail(14, 255, false);
 		start_aad_wait(555, -1);
 		_G(spieler).flags36_40 = true;
-		_G(atds)->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(535, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(535, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	showCur();
@@ -566,7 +566,7 @@ int Room97::proc10() {
 	start_detail_wait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(spieler).flags37_1 = true;
-	_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 
@@ -678,7 +678,7 @@ void Room97::sensorAnim() {
 	_G(menu_item) = CUR_USE;
 	cursorChoice(CUR_USE);
 	set_person_pos(294, 42, P_CHEWY, P_LEFT);
-	_G(atds)->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATA);
 	_slimeThrown = false;
 	_G(det)->start_detail(16, 1, 0);
 	
@@ -738,7 +738,7 @@ void Room97::sensorAnim() {
 		_G(spieler).flags37_2 = true;
 	}
 
-	_G(atds)->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATA);
 	showCur();
 	_G(flags).AutoAniPlay = false;
 }

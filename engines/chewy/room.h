@@ -39,9 +39,8 @@ extern const int16 SURIMY_TAF19_PHASEN[4][2];
 #define MAX_ROOM_HANDLE 4
 #define GED_LOAD 1
 
-#define R_VOCDATEI 1
-#define R_GEPDATEI 2
-#define R_SPEZTAF 3
+#define R_VOC_DATA 1
+#define R_GEP_DATA 2
 
 
 class JungleRoom {

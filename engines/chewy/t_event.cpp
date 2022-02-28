@@ -34,7 +34,7 @@ int16 load_ads_dia(int16 dia_nr) {
 	if (_G(flags).AdsDialog == false) {
 		bool tmp = _G(atds)->ads_start(dia_nr);
 		if (tmp == true) {
-			_G(atds)->load_atds(dia_nr, ADH_DATEI);
+			_G(atds)->load_atds(dia_nr, ADH_DATA);
 			ret = true;
 			_G(ads_blk_nr) = 0;
 			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_anz));
@@ -66,7 +66,7 @@ void set_ssi_xy() {
 
 int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 	int16 action_ret;
-	if (!_G(atds)->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATEI)) {
+	if (!_G(atds)->get_steuer_bit(txt_nr, ATS_AKTIV_BIT, ATS_DATA)) {
 		action_ret = true;
 		if (_G(flags).AtsAction == false) {
 			_G(flags).AtsAction = true;
@@ -286,7 +286,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 						if (_G(spieler).R16F5Exit) {
 							invent_2_slot(29);
 							_G(det)->hideStaticSpr(19);
-							_G(atds)->set_steuer_bit(158, ATS_AKTIV_BIT, ATS_DATEI);
+							_G(atds)->set_steuer_bit(158, ATS_AKTIV_BIT, ATS_DATA);
 						}
 						switch_room(18);
 						break;
@@ -1073,7 +1073,7 @@ int16 ats_action(int16 txt_nr, int16 txt_mode, int16 mode) {
 
 					case 267:
 						if (!_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo)
-							_G(atds)->set_ats_str(267, 1, ATS_DATEI);
+							_G(atds)->set_ats_str(267, 1, ATS_DATA);
 						break;
 
 					case 283:
@@ -1181,7 +1181,7 @@ void ads_action(int16 dia_nr, int16 blk_nr, int16 str_end_nr) {
 			if (blk_nr == 0) {
 				if (str_end_nr == 2) {
 					if (!_G(spieler).R56Kneipe)
-						_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATEI);
+						_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA);
 				}
 			}
 			break;
@@ -2246,7 +2246,7 @@ void calc_inv_use_txt(int16 test_nr) {
 
 	case WOLLE_INV:
 		remove_inventory(WOLLE_INV);
-		_G(atds)->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATEI);
+		_G(atds)->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATA);
 		_G(spieler).R56WhiskyMix = true;
 		break;
 
@@ -2266,13 +2266,13 @@ void calc_inv_use_txt(int16 test_nr) {
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		_G(flags).InventMenu = true;
-		_G(atds)->set_ats_str(88, 1, INV_ATS_DATEI);
+		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(spieler).flags26_10 = true;
 		start_aad_wait(350, -1);
-		_G(atds)->set_ats_str(88, 1, INV_ATS_DATEI);
+		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
 	case 102:
@@ -2309,7 +2309,7 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	const char *s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, 16);
 	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
 
-	_G(atds)->load_atds(cur_inv, INV_ATS_DATEI);
+	_G(atds)->load_atds(cur_inv, INV_ATS_DATA);
 
 	s = _G(atds)->ats_get_txt(cur_inv, TXT_MARK_NAME, &txt_anz, 6);
 	_G(calc_inv_text_str1) += s;
@@ -2317,7 +2317,7 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	s = _G(atds)->ats_get_txt(32, TXT_MARK_USE, &txt_anz, 16);
 	_G(calc_inv_text_str2) = Common::String::format("%s ", s);
 
-	_G(atds)->load_atds(test_nr, INV_ATS_DATEI);
+	_G(atds)->load_atds(test_nr, INV_ATS_DATA);
 
 	s = _G(atds)->ats_get_txt(test_nr, TXT_MARK_NAME, &txt_anz, 6);
 	_G(calc_inv_text_str2) += s;
@@ -2365,7 +2365,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 				if (txt_nr >= 15000) {
 					ret = start_ats_wait(txt_nr - 15000, TXT_MARK_USE, 14, INV_USE_DEF);
 				} else {
-					ret = start_ats_wait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATEI);
+					ret = start_ats_wait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATA);
 				}
 			} else {
 				Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, txt_nr);

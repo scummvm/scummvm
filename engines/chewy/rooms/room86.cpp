@@ -154,9 +154,9 @@ int Room86::proc2() {
 	del_inventar(_G(spieler).AkInvent);
 	autoMove(3, P_CHEWY);
 	proc3(true);
-	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_ats_str(497, 1, ATS_DATEI);
-	_G(atds)->set_ats_str(498, 1, ATS_DATEI);
+	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_ats_str(497, 1, ATS_DATA);
+	_G(atds)->set_ats_str(498, 1, ATS_DATA);
 	_G(spieler).flags32_2 = true;
 	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);

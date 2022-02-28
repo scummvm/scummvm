@@ -46,17 +46,17 @@ void Room8::entry() {
 		start_folter();
 	else
 		stop_folter();
-	_G(atds)->set_ats_str(60, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(60, 0, ATS_DATA);
 }
 
 void Room8::start_folter() {
-	_G(atds)->set_ats_str(67, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(67, 1, ATS_DATA);
 	_G(det)->stop_detail(19);
 	_G(det)->start_detail(13, 255, ANI_FRONT);
 }
 
 void Room8::stop_folter() {
-	_G(atds)->set_ats_str(67, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(67, 0, ATS_DATA);
 	_G(det)->start_detail(19, 255, ANI_FRONT);
 
 	_G(det)->stop_detail(13);
@@ -104,7 +104,7 @@ void Room8::start_verbrennen() {
 		_G(det)->stop_detail(9);
 		set_person_pos(129, 246, P_CHEWY, P_RIGHT);
 		start_ani_block(2, ABLOCK13);
-		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	}
 
@@ -160,7 +160,7 @@ void Room8::open_gdoor() {
 	_G(det)->hideStaticSpr(17);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	set_person_pos(204, 274, P_CHEWY, P_LEFT);
-	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATA);
 	_G(obj)->hide_sib(31);
 	_G(spieler).R8GTuer = true;
 	_G(spieler).room_e_obj[15].Attribut = AUSGANG_UNTEN;

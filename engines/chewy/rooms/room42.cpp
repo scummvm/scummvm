@@ -49,8 +49,8 @@ void Room42::entry() {
 			_G(SetUpScreenFunc) = setup_func;
 
 			set_person_pos(80, 43, P_HOWARD, P_LEFT);
-			_G(atds)->set_ats_str(263, 1, ATS_DATEI);
-			_G(atds)->set_ats_str(264, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(263, 1, ATS_DATA);
+			_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		}
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(spieler).R42BriefOk)
@@ -63,7 +63,7 @@ void Room42::entry() {
 
 void Room42::xit() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
-		_G(atds)->set_ats_str(264, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		stop_spz();
 		_G(spieler).R42HoToBeamter = false;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
@@ -125,7 +125,7 @@ int16 Room42::use_psack() {
 		del_inventar(_G(spieler).AkInvent);
 		start_aad_wait(183, -1);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
-		_G(atds)->set_ats_str(206, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(206, 1, ATS_DATA);
 		_G(spieler).R28Briefkasten = true;
 		_G(spieler).R40TrainMove = true;
 		_G(spieler).R28PostCar = true;
@@ -145,7 +145,7 @@ int16 Room42::use_beamter() {
 
 	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
-		_G(atds)->set_ats_str(264, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(264, 2, ATS_DATA);
 		hideCur();
 		autoMove(4, P_CHEWY);
 		start_aad_wait(184, -1);

@@ -83,7 +83,7 @@ int16 Room52::use_hot_dog() {
 		plot_armee(20);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
-		_G(atds)->set_ats_str(341, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(341, 1, ATS_DATA);
 		autoMove(2, P_CHEWY);
 		set_person_spr(P_LEFT, P_CHEWY);
 		start_aad_wait(288, -1);
@@ -108,9 +108,9 @@ int16 Room52::use_hot_dog() {
 		start_detail_wait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATA);
 		start_aad_wait(303, -1);
-		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATEI);
+		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(spieler).R52KakerWeg = true;
 	}
 

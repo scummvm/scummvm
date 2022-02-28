@@ -56,7 +56,7 @@ void Room10::get_surimy() {
 	flic_cut(FCUT_005);
 	_G(spieler).R10SurimyOk = true;
 	_G(room)->set_timer_status(3, TIMER_STOP);
-	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATA);
 	invent_2_slot(18);
 
 	del_inventar(_G(spieler).AkInvent);

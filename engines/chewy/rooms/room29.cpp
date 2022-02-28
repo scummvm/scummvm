@@ -52,7 +52,7 @@ void Room29::entry() {
 
 	if (_G(spieler).R29AutoSitz) {
 		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
-			_G(atds)->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);
 		else
 			_G(det)->showStaticSpr(9);
 	}
@@ -78,7 +78,7 @@ int16 Room29::use_pumpe() {
 			autoMove(1, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(7);
-			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATA);
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
 			action_flag = true;
@@ -120,8 +120,8 @@ bool Room29::use_schlauch() {
 		start_detail_wait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
-		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(218, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(218, 1, ATS_DATA);
 
 		_G(spieler).R29Schlauch1 = false;
 		_G(spieler).R29Schlauch2 = true;
@@ -148,7 +148,7 @@ void Room29::schlitz_sitz() {
 		start_aad_wait(63, -1);
 
 		_G(det)->stop_detail(2);
-		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(maus_links_click) = false;
 		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;

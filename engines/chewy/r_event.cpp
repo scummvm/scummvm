@@ -462,7 +462,7 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 11:
-		_G(atds)->set_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATA);
 		break;
 
 	case 13:
@@ -778,7 +778,7 @@ void exit_room(int16 eib_nr) {
 void print_rows(int16 id) {
 	_G(fontMgr)->setFont(_G(font8));
 	int16 txt_anz;
-	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATEI);
+	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATA);
 	_G(out)->setPointer(nullptr);
 
 	for (int i = 0; i < txt_anz; ++i) {
@@ -846,7 +846,7 @@ static void flic_proc1() {
 	};
 	int16 ret = 0;
 
-	_G(atds)->load_atds(98, AAD_DATEI);
+	_G(atds)->load_atds(98, AAD_DATA);
 	_G(flc)->set_custom_user_function(flic_user_function);
 	load_room_music(258);
 
@@ -1196,9 +1196,9 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 		_G(det)->start_detail(ani_nr, 1, flag);
 	flag ^= 1;
 	if (ats_nr1 != -1)
-		_G(atds)->set_ats_str(ats_nr1, flag, ATS_DATEI);
+		_G(atds)->set_ats_str(ats_nr1, flag, ATS_DATA);
 	if (ats_nr2 != -1)
-		_G(atds)->set_ats_str(ats_nr2, flag, ATS_DATEI);
+		_G(atds)->set_ats_str(ats_nr2, flag, ATS_DATA);
 	if (flag) {
 		if (eib_nr1 != -1)
 			_G(spieler).room_e_obj[eib_nr1].Attribut = spr_nr1;
@@ -1220,30 +1220,30 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	int16 ret = true;
 
 	switch (sib_nr) {
-	case SIB_KABEL_R1:
-		_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 1, ATS_DATEI);
+	case SIB_CABLE_R1:
+		_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 1, ATS_DATA);
 		break;
 
-	case SIB_MONOKEL:
-		_G(spieler).R0Monokel = true;
-		_G(obj)->hide_sib(SIB_MONOKEL);
+	case SIB_MONOCLE:
+		_G(spieler).R0Monocle = true;
+		_G(obj)->hide_sib(SIB_MONOCLE);
 		if (_G(spieler).R0GBuch)
-			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATA);
 		break;
 
 	case SIB_GBUCH:
 		_G(spieler).R0GBuch = true;
 		_G(obj)->hide_sib(SIB_GBUCH);
-		if (_G(spieler).R0Monokel)
-			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATEI);
+		if (_G(spieler).R0Monocle)
+			_G(atds)->del_steuer_bit(12, ATS_AKTIV_BIT, ATS_DATA);
 		break;
 
 	case SIB_TERMINAL_R5:
 		if (_G(spieler).R5Terminal) {
 			_G(spieler).R5Terminal = 0;
 			_G(det)->stop_detail(6);
-			_G(atds)->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATEI);
-			_G(atds)->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATA);
+			_G(atds)->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATA);
 		}
 		break;
 
@@ -1256,7 +1256,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_BOLA_SCHACHT:
-		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 0, ATS_DATA);
 		break;
 
 	case SIB_BOLA_KNOPF_R6:
@@ -1273,11 +1273,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(spieler).R7Hebel ^= 1;
 
 		if (!_G(spieler).R7Hebel)
-			_G(atds)->set_ats_str(50, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 0, ATS_DATA);
 		else if (!_G(spieler).R7BorkFlug)
-			_G(atds)->set_ats_str(50, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 1, ATS_DATA);
 		else
-			_G(atds)->set_ats_str(50, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(50, 2, ATS_DATA);
 		break;
 
 	case SIB_KLINGEL_R7:
@@ -1307,9 +1307,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				autoMove(4, P_CHEWY);
 				_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
-				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
-				_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
-				_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATA);
+				_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
+				_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATA);
 				start_aad(9);
 			} else {
 				_G(obj)->set_rsi_flip_flop(SIB_LHAKEN_R7, 2);
@@ -1347,9 +1347,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				_G(det)->stop_detail(i);
 		}
 
-		_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-		_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-		_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+		_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+		_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+		_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 		break;
 
 	case SIB_CARTRIDGE_R23:
@@ -1358,12 +1358,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = false;
-		_G(atds)->set_ats_str(112, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(112, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		_G(atds)->set_ats_str(113, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(113, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
@@ -1374,7 +1374,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_GITTER_R16:
-		_G(atds)->set_ats_str(125, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(125, 1, ATS_DATA);
 		_G(spieler).room_e_obj[33].Attribut = AUSGANG_OBEN;
 		break;
 
@@ -1382,25 +1382,25 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(det)->start_detail(0, 1, _G(spieler).R21Hebel1);
 		_G(spieler).R21Hebel1 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATEI);
+		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER2_R21:
 		_G(det)->start_detail(1, 1, _G(spieler).R21Hebel2);
 		_G(spieler).R21Hebel2 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATEI);
+		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER3_R21:
 		_G(det)->start_detail(2, 1, _G(spieler).R21Hebel3);
 		_G(spieler).R21Hebel3 ^= 1;
 		Room21::calc_laser();
-		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATEI);
+		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATA);
 		break;
 
 	case SIB_SEIL_R21:
-		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATA);
 		break;
 
 	case SIB_GITTER1_R21:
@@ -1408,7 +1408,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART1_R18:
-		_G(atds)->set_steuer_bit(155, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(155, ATS_AKTIV_BIT, ATS_DATA);
 		break;
 
 	case SIB_TUERKNOPF_R18:
@@ -1434,7 +1434,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartFach = 0;
 		cur_2_inventory();
-		_G(atds)->set_ats_str(157, 1, AAD_DATEI);
+		_G(atds)->set_ats_str(157, 1, AAD_DATA);
 		break;
 
 	case SIB_SCHLAUCH_R26:
@@ -1457,12 +1457,12 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_PUTE_R34:
-		_G(atds)->set_ats_str(226, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(226, 1, ATS_DATA);
 		break;
 
 	case SIB_TOPF_R31:
 		_G(obj)->hide_sib(SIB_TOPF_R31);
-		_G(atds)->set_ats_str(242, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(242, 1, ATS_DATA);
 		_G(spieler).R31PflanzeWeg = true;
 		break;
 
@@ -1495,7 +1495,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LAMPE_R52:
-		_G(atds)->del_steuer_bit(338, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(338, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R52LichtAn ^= 1;
 		check_shad(2 * (_G(spieler).R52LichtAn + 1), 1);
 		break;
@@ -1543,8 +1543,8 @@ void sib_event_inv(int16 sib_nr) {
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
 			_G(det)->start_detail(6, 255, ANI_FRONT);
-			_G(atds)->set_ats_str(27, 1, ATS_DATEI);
-			_G(atds)->set_ats_str(30, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(27, 1, ATS_DATA);
+			_G(atds)->set_ats_str(30, 1, ATS_DATA);
 		}
 		break;
 
@@ -1618,13 +1618,13 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_FLUXO_R23:
 		_G(spieler).R23FluxoFlex = true;
 		del_inventar(_G(spieler).AkInvent);
-		_G(atds)->set_ats_str(112, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(112, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
 		del_inventar(_G(spieler).AkInvent);
-		_G(atds)->set_ats_str(113, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(113, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
@@ -1635,7 +1635,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_ROEHRE_R12:
 		_G(spieler).R12TalismanOk = true;
 		del_inventar(_G(spieler).AkInvent);
-		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATA);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		start_aad_wait(115, 0);
 
@@ -1646,7 +1646,7 @@ void sib_event_inv(int16 sib_nr) {
 	case SIB_GITTER2_R21:
 		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
 			AUSGANG_RECHTS, AUSGANG_RECHTS, _G(spieler).R21GitterMuell);
-		_G(atds)->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATA);
 		break;
 
 	case SIB_CART_FACH_R18:
@@ -1655,11 +1655,11 @@ void sib_event_inv(int16 sib_nr) {
 		_G(spieler).R18CartFach = true;
 		del_inventar(_G(spieler).AkInvent);
 		_G(det)->showStaticSpr(7);
-		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATA);
 
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
-			_G(atds)->set_ats_str(26, 1, INV_ATS_DATEI);
+			_G(atds)->set_ats_str(26, 1, INV_ATS_DATA);
 			start_aad_wait(120, -1);
 		} else {
 			start_aad_wait(121, -1);

@@ -88,8 +88,8 @@ void Room66::entry(int16 eib_nr) {
 
 void Room66::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
-	_G(atds)->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATA);
 	if (_G(spieler).PersonRoomNr[P_HOWARD] != 66)
 		return;
 

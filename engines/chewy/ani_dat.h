@@ -24,8 +24,8 @@
 
 namespace Chewy {
 
-#define SIB_KABEL_R1 1
-#define SIB_MONOKEL 6
+#define SIB_CABLE_R1 1
+#define SIB_MONOCLE 6
 #define SIB_GBUCH 7
 #define SIB_TERMINAL_R5 8
 #define SIB_KNOPF_R5 9

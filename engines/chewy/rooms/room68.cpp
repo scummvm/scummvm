@@ -251,8 +251,8 @@ int16 Room68::use_papagei() {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
 		_G(det)->start_detail(21, 255, ANI_FRONT);
-		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(407, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(407, 1, ATS_DATA);
 		showCur();
 	}
 	return action_flag;
@@ -324,8 +324,8 @@ int16 Room68::use_diva() {
 		register_cutscene(22);
 		_G(det)->del_static_ani(18);
 		start_detail_wait(7, 1, ANI_FRONT);
-		_G(atds)->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(412, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(412, ATS_AKTIV_BIT, ATS_DATA);
 		set_person_spr(P_RIGHT, P_CHEWY);
 		start_aad_wait(402, -1);
 	} else

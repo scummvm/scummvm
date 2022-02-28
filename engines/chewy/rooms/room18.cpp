@@ -88,7 +88,7 @@ static const AniBlock ABLOCK24[2] = {
 
 void Room18::entry() {
 	_G(spieler).R18MoniSwitch = false;
-	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATEI);
+	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATA);
 	_G(spieler).ScrollxStep = 2;
 
 	if (_G(spieler).R18CartTerminal)
@@ -109,9 +109,9 @@ void Room18::entry() {
 	
 	if (_G(spieler).R17EnergieOut) {
 		_G(det)->stop_detail(0);
-		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATA);
 	} else {
-		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATA);
 	}
 
 	if (!_G(spieler).R18FirstEntry && !_G(spieler).R18Gitter) {
@@ -192,10 +192,10 @@ void Room18::monitor() {
 		nr = (_G(spieler).R17EnergieOut) ? 2 : 1;
 	} else {
 		_G(det)->stop_detail(23);
-		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
 	}
 
-	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, nr, ATS_DATEI);
+	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, nr, ATS_DATA);
 }
 
 int16 Room18::sonden_moni() {
@@ -311,13 +311,13 @@ int16 Room18::calc_surimy() {
 		_G(spieler).ScrollxStep = 2;
 		_G(auto_obj) = 0;
 
-		_G(atds)->set_ats_str(153, 1, ATS_DATEI);
-		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(153, 1, ATS_DATA);
+		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATA);
 
 		for (int16 i = 0; i < 3; i++)
-			_G(atds)->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATA);
 
-		_G(atds)->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATA);
 		showCur();
 		_G(det)->del_taf_tbl(245, 50, nullptr);
 	}
@@ -353,17 +353,17 @@ short Room18::use_cart_moni() {
 		_G(spieler).R18CartTerminal ^= 1;
 
 		if (!_G(spieler).R18CartTerminal) {
-			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(det)->hideStaticSpr(23);
 			start_detail_wait(20, 1, ANI_BACK);
 		} else {
-			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATA);
 			start_detail_wait(20, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(23);
 
 			if (_G(spieler).R18CartFach) {
 				_G(spieler).R18CartSave = true;
-				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATEI);
+				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATA);
 				start_aad_wait(120, -1);
 			}
 		}

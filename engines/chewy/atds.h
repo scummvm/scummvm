@@ -22,8 +22,6 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
-#include "chewy/file.h"
-
 namespace Chewy {
 
 #define ATDS_VOC_OFFSET 20
@@ -32,13 +30,13 @@ namespace Chewy {
 
 #define AAD_STR_START 0
 #define AAD_STR_END 1
-#define AAD_DATEI 0
-#define ATS_DATEI 1
-#define ADS_DATEI 2
-#define ADH_DATEI 3
-#define INV_USE_DATEI 4
-#define INV_IDX_DATEI 5
-#define INV_ATS_DATEI 6
+#define AAD_DATA 0
+#define ATS_DATA 1
+#define ADS_DATA 2
+#define ADH_DATA 3
+#define INV_USE_DATA 4
+#define INV_IDX_DATA 5
+#define INV_ATS_DATA 6
 
 #define MAX_HANDLE 8
 #define AAD_HANDLE 0

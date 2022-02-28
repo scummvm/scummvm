@@ -262,7 +262,7 @@ void Credits::execute() {
 	}
 
 	_G(fontMgr)->setFont(_G(font8));
-	_G(room)->open_handle("back/episode1.tgp", R_GEPDATEI);
+	_G(room)->open_handle("back/episode1.tgp", R_GEP_DATA);
 
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hideCur();

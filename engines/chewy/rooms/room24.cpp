@@ -91,7 +91,7 @@ void Room24::use_hebel(int16 txt_nr) {
 		g_engine->_sound->stopSound(1);
 		_G(det)->start_detail(1, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
-		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 1, ATS_DATA);
 
 	} else if (_G(spieler).R16F5Exit) {
 		_G(det)->hideStaticSpr(10);
@@ -99,7 +99,7 @@ void Room24::use_hebel(int16 txt_nr) {
 		g_engine->_sound->stopSound(0);
 		_G(det)->start_detail(1, 1, ANI_BACK);
 		_G(spieler).R16F5Exit = false;
-		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 0, ATS_DATA);
 	}
 }
 
@@ -119,7 +119,7 @@ void Room24::calc_hebel_spr() {
 			_G(det)->hideStaticSpr(1 + j + i * 3);
 
 		_G(det)->showStaticSpr(1 + _G(spieler).R24Hebel[i] + i * 3);
-		_G(atds)->set_ats_str(166 + i, TXT_MARK_NAME, _G(spieler).R24Hebel[i], ATS_DATEI);
+		_G(atds)->set_ats_str(166 + i, TXT_MARK_NAME, _G(spieler).R24Hebel[i], ATS_DATA);
 	}
 }
 
