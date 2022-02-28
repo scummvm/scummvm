@@ -91,21 +91,27 @@ void PacoDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((PacoVideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
+const byte* PacoDecoder::getPalette(){
+	Track *track = getTrack(0);
+
+	if (track)
+		return ((PacoVideoTrack *)track)->getPalette();
+	return nullptr;
+}
+
 PacoDecoder::PacoVideoTrack::PacoVideoTrack(
 	Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount, bool hasAudio, uint16 width, uint16 height) {
 
 	_fileStream = stream;
-	_frameDelay = 1000 / frameRate; // frameRate is in fps, ms per frame
+	_frameRate = frameRate;
 	_frameCount = frameCount;
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_palette = new byte[3 * 256]();
-	memcpy(_palette, quickTimeDefaultPalette256, 256 * 3);
+	_palette = const_cast<byte *>(quickTimeDefaultPalette256);
 	_dirtyPalette = false;
 
 	_curFrame = 0;
-	_nextFrameStartTime = 0;
 
 	for (uint i = 0; i < _frameCount; i++) {
 		_frameSizes[i] = stream->readUint32BE();
@@ -114,8 +120,6 @@ PacoDecoder::PacoVideoTrack::PacoVideoTrack(
 
 PacoDecoder::PacoVideoTrack::~PacoVideoTrack() {
 	delete _fileStream;
-	delete[] _palette;
-
 	_surface->free();
 	delete _surface;
 }
@@ -184,7 +188,6 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 	 }
 
 	_curFrame++;
-	_nextFrameStartTime += _frameDelay;
 
 	return _surface;
 }

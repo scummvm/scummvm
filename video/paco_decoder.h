@@ -53,9 +53,11 @@ public:
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+	const byte *getPalette();
 
 protected:
-	class PacoVideoTrack : public VideoTrack {
+
+	class PacoVideoTrack : public FixedRateVideoTrack {
 	public:
 		PacoVideoTrack(
 			Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount,
@@ -70,7 +72,6 @@ protected:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		virtual const Graphics::Surface *decodeNextFrame();
 		virtual void handleFrame(uint32 chunkSize);
 		const byte *getPalette() const { return _palette; }
@@ -79,6 +80,8 @@ protected:
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+		Common::Rational getFrameRate() const { return Common::Rational(_frameRate, 1); }
+
 
 	protected:
 		Common::SeekableReadStream *_fileStream;
@@ -87,12 +90,13 @@ protected:
 		int _curFrame;
 
 		byte *_palette;
+
 		int _frameSizes[65536]; // can be done differently?
 		mutable bool _dirtyPalette;
 
 		uint32 _frameCount;
 		uint32 _frameDelay;
-		uint32 _nextFrameStartTime;
+		uint16 _frameRate;
 
 		Common::List<Common::Rect> _dirtyRects;
 	};
