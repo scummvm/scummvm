@@ -61,11 +61,11 @@ void Room13::entry() {
 			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			_G(spieler).R13Bandlauf = true;
 
-			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 
-			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 
-			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 		}
 
 		if (_G(spieler).R13Bandlauf) {
@@ -75,7 +75,7 @@ void Room13::entry() {
 		
 		if (!_G(flags).LoadGame && _G(spieler).R13Band) {
 			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 			_G(spieler).R13Band = false;
 		}
 
@@ -86,7 +86,7 @@ void Room13::entry() {
 
 void Room13::xit() {
 	_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-	_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).R13Band = false;
 }
 
@@ -133,8 +133,8 @@ void Room13::talk_bork() {
 		_G(auto_obj) = 0;
 		_G(flags).NoScroll = false;
 
-		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATA);
 		_G(obj)->show_sib(SIB_BANDKNOPF_R13);
 		set_person_pos(153, 138, P_CHEWY, P_LEFT);
 
@@ -157,7 +157,7 @@ void Room13::jmp_band() {
 		if (!_G(spieler).R13Bandlauf) {
 			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			_G(spieler).room_e_obj[25].Attribut = 255;
-			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 			_G(spieler).R13Band = true;
 			autoMove(3, P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -177,9 +177,9 @@ void Room13::jmp_band() {
 			set_person_pos(195, 226, P_CHEWY, P_LEFT);
 
 			_G(spieler).R13Bandlauf = false;
-			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
-			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATEI);
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 			_G(obj)->calc_rsi_flip_flop(SIB_BANDKNOPF_R13);
 			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
 			switch_room(14);
@@ -201,7 +201,7 @@ void Room13::jmp_boden() {
 			_G(obj)->show_sib(SIB_BANDKNOPF_R13);
 
 		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
-		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R13Band = false;
 		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -235,7 +235,7 @@ int16 Room13::monitor_knopf() {
 			else
 				_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
 
-			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATEI);
+			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATA);
 		}
 	}
 

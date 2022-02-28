@@ -46,28 +46,28 @@ void Room84::entry() {
 		_G(det)->del_static_ani(3);
 		_G(det)->stop_detail(0);
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
-		_G(atds)->set_steuer_bit(478, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(479, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(485, 1, ATS_DATEI);	
+		_G(atds)->set_steuer_bit(478, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(479, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(485, 1, ATS_DATA);	
 	}
 
 	if (_G(spieler).flags32_10) {
 		_G(det)->start_detail(7, 255, false);
-		_G(atds)->del_steuer_bit(504, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(504, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).room_e_obj[124].Attribut = 255;
-		_G(atds)->set_ats_str(485, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 2, ATS_DATA);
 	}
 
 	if (_G(spieler).r88DestRoom == 84) {
 		_G(det)->showStaticSpr(7);
-		_G(atds)->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (_G(spieler).flags32_40) {
-		_G(atds)->set_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(485, 1, ATS_DATEI);		
+		_G(atds)->set_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(485, 1, ATS_DATA);		
 		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
 	}
 
@@ -99,7 +99,7 @@ void Room84::entry() {
 		_G(spieler).flags32_20 = false;
 		_G(spieler).room_e_obj[124].Attribut = 255;
 		_G(spieler).room_e_obj[125].Attribut = 255;
-		_G(atds)->set_ats_str(485, 2, ATS_DATEI);
+		_G(atds)->set_ats_str(485, 2, ATS_DATA);
 		start_aad_wait(477, -1);
 		showCur();
 	} else {

@@ -53,7 +53,7 @@ void Room63::entry() {
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
 	} else if (_G(spieler).R62LauraVerwandlung) {
-		_G(atds)->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(383, ATS_AKTIV_BIT, ATS_DATA);
 		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
@@ -209,7 +209,7 @@ int16 Room63::use_fx_man() {
 		_G(det)->stop_detail(7);
 		start_detail_wait(8, 1, ANI_FRONT);
 		_G(spieler).R63FxMannWeg = true;
-		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATA);
 		showCur();
 	}
 	return action_ret;
@@ -238,7 +238,7 @@ int16 Room63::use_schalter() {
 				_G(det)->showStaticSpr(1);
 				_G(det)->hideStaticSpr(2);
 				start_aad_wait(364, -1);
-				_G(atds)->set_ats_str(385, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(385, 1, ATS_DATA);
 				showCur();
 			}
 		} else {
@@ -281,9 +281,9 @@ int16 Room63::use_girl() {
 		_G(det)->stop_detail(18);
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
-		_G(atds)->set_ats_str(381, 1, ATS_DATEI);
-		_G(atds)->set_ats_str(382, 1, ATS_DATEI);
-		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_ats_str(381, 1, ATS_DATA);
+		_G(atds)->set_ats_str(382, 1, ATS_DATA);
+		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATA);
 		start_aad_wait(367, -1);
 		showCur();
 	}
@@ -311,9 +311,9 @@ int16 Room63::use_aschenbecher() {
 				_G(det)->hideStaticSpr(12);
 				start_aad_wait(368, -1);
 				flic_cut(FCUT_080);
-				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATEI);
-				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATEI);
-				_G(atds)->set_ats_str(383, 1, ATS_DATEI);
+				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATA);
+				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATA);
+				_G(atds)->set_ats_str(383, 1, ATS_DATA);
 				_G(spieler).R63Feuer = true;
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				_G(spieler).scrollx = 0;

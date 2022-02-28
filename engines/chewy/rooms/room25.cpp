@@ -61,7 +61,7 @@ void Room25::entry() {
 
 		if (_G(obj)->checkInventory(TRANSLATOR_INV)) {
 			_G(obj)->calc_rsi_flip_flop(SIB_TRANSLATOR_23);
-			_G(atds)->set_ats_str(113, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(113, 0, ATS_DATA);
 
 			remove_inventory(TRANSLATOR_INV);
 			_G(spieler).inv_cur = false;
@@ -104,8 +104,8 @@ int16 Room25::gleiter_loesch() {
 			autoMove(2, P_CHEWY);
 			flic_cut(FCUT_030);
 			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
-			_G(atds)->set_ats_str(219, 1, ATS_DATEI);
-			_G(atds)->set_ats_str(187, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(219, 1, ATS_DATA);
+			_G(atds)->set_ats_str(187, 1, ATS_DATA);
 			g_engine->_sound->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)

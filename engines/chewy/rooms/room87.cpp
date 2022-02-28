@@ -134,10 +134,10 @@ int Room87::proc2(int16 txt_nr) {
 		autoMove(movNr, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
 		if (_G(spieler).flags32_4 && _G(spieler).flags32_8)
-			_G(atds)->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(502, ATS_AKTIV_BIT, ATS_DATA);
 	}
 	showCur();
 	return 1;

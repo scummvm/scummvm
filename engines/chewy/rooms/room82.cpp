@@ -40,8 +40,8 @@ void Room82::entry() {
 
 	if (_G(spieler).R88UsedMonkey) {
 		_G(det)->showStaticSpr(6);
-		_G(atds)->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (_G(spieler).flags37_20)
@@ -124,8 +124,8 @@ void Room82::talk1() {
 		transitionAniNr = 7;
 
 		_G(spieler).flags30_40 = true;
-		_G(atds)->set_ats_str(473, 1, ATS_DATEI);
-		_G(atds)->set_ats_str(467, 1, ATS_DATEI);		
+		_G(atds)->set_ats_str(473, 1, ATS_DATA);
+		_G(atds)->set_ats_str(467, 1, ATS_DATA);		
 	}
 
 	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);

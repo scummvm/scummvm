@@ -35,11 +35,11 @@ void Room16::entry() {
 	if (!_G(spieler).R16F5Exit) {
 		_G(det)->showStaticSpr(4);
 		_G(spieler).room_e_obj[32].Attribut = 255;
-		_G(atds)->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		_G(det)->hideStaticSpr(4);
 		_G(spieler).room_e_obj[32].Attribut = AUSGANG_LINKS;
-		_G(atds)->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }
 

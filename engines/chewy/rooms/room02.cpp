@@ -64,12 +64,12 @@ void Room2::electrifyWalkway1() {
 	_G(spieler).R2ElectrocutedBork = true;
 	del_inventar(_G(spieler).AkInvent);
 
-	_G(atds)->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATEI);
-	_G(atds)->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATEI);
-	_G(atds)->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATEI);
-	_G(atds)->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATEI);
-	_G(atds)->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATEI);
-	_G(atds)->set_ats_str(11, 1, ATS_DATEI);
+	_G(atds)->del_steuer_bit(11, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->del_steuer_bit(11, ATS_ACTION_BIT, ATS_DATA);
+	_G(atds)->del_steuer_bit(19, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->del_steuer_bit(25, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_steuer_bit(8, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->set_ats_str(11, 1, ATS_DATA);
 }
 
 void Room2::electrifyWalkway2() {

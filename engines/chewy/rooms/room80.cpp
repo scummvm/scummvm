@@ -40,9 +40,9 @@ void Room80::entry() {
 	g_engine->_sound->playSound(0, 2, false);
 
 	if (_G(spieler).gottenDiary) {
-		_G(atds)->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
-		_G(atds)->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(476, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (_G(spieler).flags32_1) {

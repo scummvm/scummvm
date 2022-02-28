@@ -32,9 +32,9 @@ void Room27::entry() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		_G(timer_nr)[0] = _G(room)->set_timer(0, 5);
 		_G(det)->set_static_ani(0, -1);
-		_G(atds)->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
-		_G(atds)->set_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(274, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	_G(spieler).PersonHide[P_HOWARD] = true;

@@ -59,10 +59,10 @@ void Room39::entry() {
 			else
 				_G(det)->set_static_ani(5, -1);
 
-			_G(atds)->del_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATA);
 		}
 	} else {
-		_G(atds)->set_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(62, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	set_tv();
@@ -95,7 +95,7 @@ short Room39::use_howard() {
 				_G(det)->stop_detail(3);
 				start_detail_wait(4, 1, ANI_FRONT);
 				_G(det)->set_static_ani(5, -1);
-				_G(atds)->set_ats_str(62, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(62, 1, ATS_DATA);
 				start_aad_wait(169, -1);
 				showCur();
 
@@ -254,7 +254,7 @@ int16 Room39::use_tv() {
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
-				_G(atds)->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATEI);
+				_G(atds)->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATA);
 				_G(spieler).R39TvRecord = _G(spieler).R39TvKanal + 1;
 			} else {
 				ani_nr = CH_TALK12;
@@ -346,9 +346,9 @@ void Room39::set_tv() {
 		}
 
 		if (_G(spieler).R39TranslatorUsed) {
-			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATEI);
+			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATA);
 		} else {
-			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATA);
 		}
 	}
 }

@@ -395,9 +395,9 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	bool mouseFl = true;
 
 	if (mode == INV_ATS_MODE) {
-		_G(atds)->load_atds(invent_nr, INV_ATS_DATEI);
-		txt_name_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATEI);
-		txt_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATEI);
+		_G(atds)->load_atds(invent_nr, INV_ATS_DATA);
+		txt_name_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATA);
+		txt_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATA);
 		xoff = strlen(txt_name_adr);
 		xoff *= _G(font8)->getDataWidth();
 		xoff = (254 - xoff) / 2;
@@ -411,7 +411,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (ats_nr >= 15000) {
 			txt_adr = _G(atds)->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
 		} else {
-			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &txt_anz, INV_USE_DATEI);
+			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &txt_anz, INV_USE_DATA);
 		}
 		if (!txt_adr) {
 			endLoop = true;
@@ -582,14 +582,14 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 					break;
 				}
 
-				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI)) {
+				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA)) {
 					ats_action(txt_nr, m_mode, ATS_ACTION_VOR);
 				}
 				if (ok) {
-					start_ats_wait(txt_nr, m_mode, 14, ATS_DATEI);
+					start_ats_wait(txt_nr, m_mode, 14, ATS_DATA);
 				}
 
-				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATEI))
+				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
 					ats_action(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (_G(menu_item) == CUR_USE)
 					_G(flags).StaticUseTxt = true;

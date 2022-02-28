@@ -42,7 +42,7 @@ void Room88::entry() {
 
 	if (_G(spieler).flags32_10) {
 		_G(det)->start_detail(4, 255, false);
-		_G(atds)->del_steuer_bit(505, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(505, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }
 

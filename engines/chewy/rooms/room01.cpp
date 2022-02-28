@@ -32,9 +32,9 @@ void Room1::gottenCard() {
 	_G(det)->hideStaticSpr(2);
 	start_detail_wait(4, 1, ANI_FRONT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	_G(atds)->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATA);
 	int16 tmp;
-	_G(atds)->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATEI);
+	_G(atds)->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATA);
 }
 
 void Room1::gedAction(int index) {
@@ -53,7 +53,7 @@ void Room1::gedAction(int index) {
 
 		if (flag) {
 			start_aad_wait(54, -1);
-			_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATEI);
+			_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
 			_G(obj)->calc_rsi_flip_flop(KABELABDECKUNG);
 			_G(obj)->calc_all_static_detail();

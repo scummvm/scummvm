@@ -86,31 +86,31 @@ void Room21::calc_laser() {
 	if (_G(spieler).R21Hebel1 && !_G(spieler).R21Hebel2 && _G(spieler).R21Hebel3) {
 		_G(spieler).R21Laser1Weg = true;
 		_G(det)->stop_detail(3);
-		_G(atds)->set_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		_G(spieler).R21Laser1Weg = false;
 		_G(det)->start_detail(3, 255, ANI_FRONT);
-		_G(atds)->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (!_G(spieler).R21Hebel1 && _G(spieler).R21Hebel2 && !_G(spieler).R21Hebel3) {
 		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(spieler).R17Seil) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
-			_G(atds)->del_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATA);
 		}
 
 		_G(spieler).R21Laser2Weg = true;
 		_G(det)->stop_detail(4);
-		_G(atds)->set_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATA);
 
 	} else {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
-		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R21Laser2Weg = false;
 		_G(det)->start_detail(4, 255, ANI_FRONT);
-		_G(atds)->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }
 
@@ -205,7 +205,7 @@ void Room21::chewy_kolli() {
 }
 
 void Room21::salto() {
-	if (!_G(spieler).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATEI) == 8
+	if (!_G(spieler).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
 		&& !_G(spieler).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(spieler).R21Salto = true;
 		_G(flags).AutoAniPlay = true;

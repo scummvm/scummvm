@@ -78,7 +78,7 @@ void Room55::entry() {
 			start_detail_wait(3, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
-			_G(atds)->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
 		} else {
 			_G(spieler).scrollx = 0;
 
@@ -139,8 +139,8 @@ int16 Room55::use_stapel1() {
 			_G(det)->hideStaticSpr(0);
 			autoMove(5, P_CHEWY);
 			_G(det)->showStaticSpr(1);
-			_G(atds)->set_ats_str(354, 1, ATS_DATEI);
-			_G(atds)->set_ats_str(355, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(354, 1, ATS_DATA);
+			_G(atds)->set_ats_str(355, 1, ATS_DATA);
 
 		} else if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk) {
 			action_ret = true;
@@ -154,7 +154,7 @@ int16 Room55::use_stapel1() {
 			_G(spieler).R55EscScriptOk = true;
 			_G(det)->showStaticSpr(0);
 			del_inventar(_G(spieler).AkInvent);
-			_G(atds)->set_ats_str(354, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(354, 2, ATS_DATA);
 		} else {
 			start_aad_wait(326, -1);
 		}
@@ -211,7 +211,7 @@ int16 Room55::use_telefon() {
 				start_detail_wait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				_G(det)->hideStaticSpr(8);
-				_G(atds)->set_ats_str(354, 1, ATS_DATEI);
+				_G(atds)->set_ats_str(354, 1, ATS_DATA);
 				flic_cut(FCUT_071);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 
@@ -289,9 +289,9 @@ void Room55::get_job() {
 	int16 r_nr;
 	if (_G(spieler).R55Job) {
 		r_nr = 55;
-		_G(atds)->del_steuer_bit(357, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(354, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->del_steuer_bit(355, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(357, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(354, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->del_steuer_bit(355, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		r_nr = 54;
 		mans2rock();
@@ -346,7 +346,7 @@ void Room55::strasse(int16 mode) {
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);
 		_G(det)->stop_detail(4);
-		_G(atds)->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
 		start_detail_wait(3, 1, ANI_BACK);
 
 		_G(spieler).scrollx = 0;
@@ -377,10 +377,10 @@ int16 Room55::use_kammeraus() {
 			_G(det)->hideStaticSpr(10);
 			_G(spieler).R55ExitDia = 322;
 			_G(spieler).R55SekWeg = true;
-			_G(atds)->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATA);
 			del_inventar(_G(spieler).AkInvent);
-			_G(atds)->set_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATEI);
-			_G(atds)->set_steuer_bit(346, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->set_steuer_bit(346, ATS_AKTIV_BIT, ATS_DATA);
 			strasse(1);
 			showCur();
 		}

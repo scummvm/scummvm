@@ -55,7 +55,7 @@ void Room40::entry(int16 eib_nr) {
 
 	if (_G(spieler).R40PoliceWeg == false) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
-		_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		_G(det)->hideStaticSpr(15);
 	}
@@ -246,7 +246,7 @@ void Room40::setup_func() {
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			_G(det)->hideStaticSpr(15);
 			_G(det)->start_detail(POLICE_LEFT, 1, ANI_FRONT);
-			_G(atds)->set_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATA);
 		}
 
 		switch (_G(spieler).R40PoliceAniStatus) {
@@ -271,7 +271,7 @@ void Room40::setup_func() {
 				_G(spieler).R40PoliceAniStatus = 255;
 				_G(room)->set_timer_status(255, TIMER_START);
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
-				_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATEI);
+				_G(atds)->del_steuer_bit(275, ATS_AKTIV_BIT, ATS_DATA);
 			}
 			break;
 
@@ -295,7 +295,7 @@ void Room40::setup_func() {
 					_G(flags).MausLinks = false;
 					_G(flags).MainInput = true;
 					_G(spieler).R40HoUse = false;
-					_G(atds)->set_steuer_bit(276, ATS_AKTIV_BIT, ATS_DATEI);
+					_G(atds)->set_steuer_bit(276, ATS_AKTIV_BIT, ATS_DATA);
 
 				} else {
 					_G(det)->start_detail(POLICE_RIGHT, 1, ANI_FRONT);
@@ -454,7 +454,7 @@ int16 Room40::use_haendler() {
 			_G(spieler).R40HaendlerOk = true;
 			_G(spieler).R40TeilKarte = true;
 			_G(spieler).R40DuengerMit = true;
-			_G(atds)->set_steuer_bit(283, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(283, ATS_AKTIV_BIT, ATS_DATA);
 			autoMove(10, P_CHEWY);
 			autoMove(11, P_HOWARD);
 			start_aad_wait(208, -1);

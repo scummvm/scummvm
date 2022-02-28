@@ -328,7 +328,7 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 		_atdsmem[mode] = tmp_adr;
 		_atdspooloff[mode] = chunk_start;
 		switch (mode) {
-		case INV_USE_DATEI:
+		case INV_USE_DATA:
 			_G(mem)->file->select_pool_item(rs, _atdspooloff[mode]);
 			rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
@@ -357,7 +357,7 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 void Atdsys::open_handle(const char *fname, int16 mode) {
 	char *tmp_adr = nullptr;
 
-	if (mode != INV_IDX_DATEI)
+	if (mode != INV_IDX_DATA)
 		tmp_adr = atds_adr(fname, 0, 20000);
 	Common::File *f = new Common::File();
 	f->open(fname);
@@ -367,11 +367,11 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 		_atdsmem[mode] = tmp_adr;
 
 		switch (mode) {
-		case ADH_DATEI:
+		case ADH_DATA:
 			_adsBlock = (AdsBlock *)_atdsmem[ADH_HANDLE];
 			break;
 
-		case INV_IDX_DATEI:
+		case INV_IDX_DATA:
 			_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_ANZ * sizeof(InvUse));
 			break;
 
@@ -424,7 +424,7 @@ void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
 			if (Ch.size) {
 				if (stream->read(txt_adr, Ch.size) != Ch.size) {
 					error("load_atds error");
-				} else if (mode != ADH_DATEI) {
+				} else if (mode != ADH_DATA) {
 					crypt(txt_adr, Ch.size);
 				}
 			}
@@ -474,11 +474,11 @@ void Atdsys::crypt(char *txt, uint32 size) {
 
 void Atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
 	switch (mode) {
-	case ATS_DATEI:
+	case ATS_DATA:
 		_ats_st_header[0] = atsheader;
 		break;
 
-	case INV_USE_DATEI:
+	case INV_USE_DATA:
 		_ats_st_header[1] = atsheader;
 		break;
 
@@ -486,7 +486,7 @@ void Atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
 		_ats_st_header[2] = atsheader;
 		break;
 
-	case INV_ATS_DATEI:
+	case INV_ATS_DATA:
 		_ats_st_header[3] = atsheader;
 		break;
 
@@ -497,12 +497,12 @@ void Atdsys::init_ats_mode(int16 mode, uint8 *atsheader) {
 
 void Atdsys::set_ats_mem(int16 mode) {
 	switch (mode) {
-	case ATS_DATEI:
+	case ATS_DATA:
 		_ats_sheader = _ats_st_header[0];
 		_atsmem = _atdsmem[mode];
 		break;
 
-	case INV_USE_DATEI:
+	case INV_USE_DATA:
 		_ats_sheader = _ats_st_header[1];
 		_atsmem = _atdsmem[mode];
 		break;
@@ -512,7 +512,7 @@ void Atdsys::set_ats_mem(int16 mode) {
 		_atsmem = _invUseMem;
 		break;
 
-	case INV_ATS_DATEI:
+	case INV_ATS_DATA:
 		_ats_sheader = _ats_st_header[3];
 		_atsmem = _atdsmem[mode];
 		break;
@@ -1123,7 +1123,7 @@ void Atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 bool  Atdsys::ads_start(int16 dia_nr) {
 	bool ret = false;
 
-	load_atds(dia_nr, ADS_DATEI);
+	load_atds(dia_nr, ADS_DATA);
 	bool ende = false;
 
 	if (_atdsmem[ADS_HANDLE][0] == (char)BLOCKENDE &&
@@ -1336,7 +1336,7 @@ void Atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = false;
 	} else {
-		load_atds(dia_nr, ADH_DATEI);
+		load_atds(dia_nr, ADH_DATA);
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = false;
 		save_ads_header(dia_nr);
@@ -1348,7 +1348,7 @@ void Atdsys::show_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = true;
 	} else {
-		load_atds(dia_nr, ADH_DATEI);
+		load_atds(dia_nr, ADH_DATA);
 		if (check_item(blk_nr, item_nr))
 			_adsBlock[blk_nr].Show[item_nr] = true;
 		save_ads_header(dia_nr);
@@ -1360,7 +1360,7 @@ int16 Atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 	if (cur_inv != -1) {
 		if (_invBlockNr != cur_inv) {
 			_invBlockNr = cur_inv + 1;
-			load_atds(_invBlockNr + _atdspooloff[mode], INV_USE_DATEI);
+			load_atds(_invBlockNr + _atdspooloff[mode], INV_USE_DATA);
 
 			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
 				_atdshandle[INV_IDX_HANDLE]);

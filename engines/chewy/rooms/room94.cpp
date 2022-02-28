@@ -158,7 +158,7 @@ int Room94::giveGhostBottle() {
 	start_detail_wait(4, 1, ANI_FRONT);
 	_G(spieler).flags35_10 = true;
 	_G(spieler).room_e_obj[138].Attribut = AUSGANG_OBEN;
-	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATA);
 	new_invent_2_cur(114);
 	
 	showCur();

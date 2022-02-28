@@ -147,7 +147,7 @@ int16 Room17::use_seil() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		start_detail_wait(10, 1, ANI_FRONT);
 		_G(spieler).R17Seil = true;
-		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATA);
 		plot_seil();
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
@@ -253,7 +253,7 @@ void Room17::door_kommando(int16 mode) {
 		}
 
 		_G(flags).AutoAniPlay = false;
-		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand, ATS_DATEI);
+		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand, ATS_DATA);
 	}
 }
 
@@ -261,7 +261,7 @@ void Room17::close_door() {
 	if (_G(spieler).R17DoorKommand) {
 		_G(spieler).room_e_obj[36].Attribut = 255;
 		_G(spieler).R17DoorKommand = false;
-		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, ATS_DATEI);
+		_G(atds)->set_ats_str(144, _G(spieler).R17DoorKommand ? 1 : 0, ATS_DATA);
 		_G(det)->hideStaticSpr(7);
 		_G(det)->start_detail(4, 1, ANI_BACK);
 	}
@@ -297,8 +297,8 @@ int16 Room17::energie_hebel() {
 				_G(det)->start_detail(i + 6, 255, ANI_FRONT);
 		}
 
-		_G(atds)->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
-		_G(atds)->set_ats_str(140, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATEI);
+		_G(atds)->set_ats_str(142, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_ats_str(140, _G(spieler).R17EnergieOut ? 1 : 0, ATS_DATA);
 		g_engine->_sound->playSound(12);
 
 		if (_G(spieler).R17EnergieOut) {

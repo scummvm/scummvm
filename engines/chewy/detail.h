@@ -157,8 +157,8 @@ struct RoomDetailInfo {
 	}
 };
 
-struct RdiDateiHeader {
-	char Id[4];
+struct RdiDataHeader {
+	char _id[4];
 	int16 Anz;
 
 	bool load(Common::SeekableReadStream *src);
@@ -261,7 +261,7 @@ private:
 
 	void removeUnusedSamples();
 	RoomDetailInfo _rdi;
-	RdiDateiHeader _rdiDataHeader;
+	RdiDataHeader _rdiDataHeader;
 	SprInfo _sprInfo;
 
 	int16 _globalDelay = 0;

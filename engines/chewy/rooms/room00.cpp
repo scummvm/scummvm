@@ -133,7 +133,7 @@ bool Room0::getPillow() {
 		invent_2_slot(0);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(174, ATS_AKTIV_BIT, ATS_DATA);
 		_G(det)->hideStaticSpr(6);
 
 		_G(flags).AutoAniPlay = false;
@@ -159,7 +159,7 @@ bool Room0::pullSlime() {
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(175, ATS_AKTIV_BIT, ATS_DATA);
 
 		_G(flags).AutoAniPlay = false;
 		showCur();
@@ -304,7 +304,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 	if (mouse_on_prog_ani() == ani_nr) {
 		if (_G(minfo).button != 1 && _G(kbinfo).key_code != Common::KEYCODE_RETURN) {
 			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATEI);
+			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
@@ -318,7 +318,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
 			} else if (is_cur_inventar(PILLOW_INV)) {
-				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATEI);
+				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}
 	}
@@ -542,7 +542,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 	if (mouse_on_prog_ani() == ani_nr) {
 		if (_G(minfo).button != 1 && _G(kbinfo).key_code != Common::KEYCODE_RETURN) {
 			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATEI);
+			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != nullptr) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
@@ -556,7 +556,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;
 			} else if (is_cur_inventar(SLIME_INV)) {
-				start_ats_wait(173, TXT_MARK_WALK, 14, ATS_DATEI);
+				start_ats_wait(173, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}
 	}

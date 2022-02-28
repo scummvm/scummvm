@@ -101,10 +101,10 @@ int Room74::proc1() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(det)->start_detail(0, 255, false);
 		_G(spieler).flags29_1 = true;
-		_G(atds)->set_ats_str(435, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 
 	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
-		_G(atds)->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATA);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		new_invent_2_cur(RUBBER_INV);

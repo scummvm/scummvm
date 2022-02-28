@@ -34,7 +34,7 @@ namespace Chewy {
 struct SpielerFlags {
 	bool R0SlimeUsed : 1;
 	bool R0PillowThrow : 1;
-	bool R0Monokel : 1;
+	bool R0Monocle : 1;
 	bool R0GBuch : 1;
 	bool R2ElectrocutedBork : 1;
 	bool R2FussSchleim : 1;

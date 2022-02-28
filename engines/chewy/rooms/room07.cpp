@@ -60,8 +60,8 @@ void Room7::haken(int16 sib_nr) {
 			_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 			_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 		}
-		_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATEI);
-		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->del_steuer_bit(56, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
 		dia_nr = 9;
 	} else {
 		_G(spieler).R7SeilLeft = true;
@@ -69,7 +69,7 @@ void Room7::haken(int16 sib_nr) {
 	}
 
 	_G(obj)->calc_all_static_detail();
-	_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATA);
 	start_aad_wait(dia_nr, -1);
 }
 

@@ -43,7 +43,7 @@ static const AniBlock ABLOCK35[7] = {
 void Room53::entry() {
 	hideCur();
 	_G(obj)->hide_sib(SIB_VISIT_R53);
-	_G(atds)->del_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATA);
 	start_detail_wait(0, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	_G(timer_nr)[0] = _G(room)->set_timer(1, 7);
@@ -54,7 +54,7 @@ void Room53::man_go() {
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
 	start_detail_wait(5, 1, ANI_FRONT);
-	_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATA);
 	if (!_G(spieler).R53Visit)
 		_G(obj)->show_sib(SIB_VISIT_R53);
 }
@@ -88,7 +88,7 @@ int16 Room53::use_man() {
 		start_ani_block(7, ABLOCK35);
 		_G(obj)->addInventory(JMKOST_INV, &_G(room_blk));
 		inventory_2_cur(JMKOST_INV);
-		_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(319, ATS_AKTIV_BIT, ATS_DATA);
 		showCur();
 	}
 

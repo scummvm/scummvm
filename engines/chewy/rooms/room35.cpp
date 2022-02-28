@@ -51,7 +51,7 @@ int16 Room35::schublade() {
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(1);
 			_G(spieler).R35Schublade = true;
-			_G(atds)->set_ats_str(234, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(234, 1, ATS_DATA);
 		} else if (!_G(spieler).R35Falle) {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
@@ -63,7 +63,7 @@ int16 Room35::schublade() {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			start_aad_wait(93, -1);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			_G(atds)->set_ats_str(234, 2, ATS_DATEI);
+			_G(atds)->set_ats_str(234, 2, ATS_DATA);
 		}
 	}
 
@@ -99,7 +99,7 @@ int16 Room35::use_cat() {
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);
-			_G(atds)->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATA);
 
 			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {
 				set_up_screen(DO_SETUP);

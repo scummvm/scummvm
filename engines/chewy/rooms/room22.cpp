@@ -91,7 +91,7 @@ int16 Room22::chewy_amboss() {
 		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_006);
 		_G(spieler).R22ChewyPlatt = true;
-		_G(atds)->set_ats_str(79, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(79, 1, ATS_DATA);
 		_G(flags).AutoAniPlay = false;
 
 		showCur();
@@ -121,7 +121,7 @@ void Room22::bork(int16 t_nr) {
 				bork_walk1();
 			} else {
 				if (!_G(spieler).R22ChewyPlatt) {
-					_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
+					_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
 					_G(spieler).R22ChewyPlatt = true;
 				}
 
@@ -154,9 +154,9 @@ void Room22::bork_walk2() {
 	flic_cut(FCUT_008);
 	register_cutscene(3);
 	_G(det)->showStaticSpr(4);
-	_G(atds)->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).R22BorkPlatt = true;
-	_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
+	_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
 }
 
 void Room22::get_bork() {
@@ -169,7 +169,7 @@ void Room22::get_bork() {
 		start_aad_wait(11, -1);
 		_G(det)->stop_detail(3);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);
 		invent_2_slot(BORK_INV);
 
 		_G(spieler).R22GetBork = true;
@@ -186,7 +186,7 @@ int16 Room22::malen() {
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);
 		flic_cut(FCUT_007);
-		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(spieler).R22Paint = true;
 		_G(obj)->calc_rsi_flip_flop(SIB_PAINT_R22);
 		_G(obj)->hide_sib(SIB_PAINT_R22);
@@ -196,7 +196,7 @@ int16 Room22::malen() {
 
 		if (!_G(spieler).R22ChewyPlatt) {
 			_G(spieler).R22ChewyPlatt = true;
-			_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
 		}
 	}
 

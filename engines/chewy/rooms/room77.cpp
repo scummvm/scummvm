@@ -36,7 +36,7 @@ void Room77::entry() {
 	_G(spieler).ScrollxStep = 2;
 	if (_G(spieler).r76State == 1) {
 		_G(spieler).flags29_4 = true;
-		_G(atds)->set_ats_str(452, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(452, 1, ATS_DATA);
 	}
 
 	if (_G(spieler).flags29_4) {
@@ -44,7 +44,7 @@ void Room77::entry() {
 
 		for (int i = 0; i < 3; ++i) {
 			_G(det)->showStaticSpr(2 + i);
-			_G(atds)->del_steuer_bit(460 + i, ATS_AKTIV_BIT, ATS_DATEI);
+			_G(atds)->del_steuer_bit(460 + i, ATS_AKTIV_BIT, ATS_DATA);
 		}
 	}
 
@@ -76,7 +76,7 @@ int Room77::proc1() {
 	int diaNr, aniId;
 	if (_G(spieler).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(atds)->set_ats_str(463, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(463, 1, ATS_DATA);
 		_G(spieler).flags29_10 = true;
 		_G(spieler).flags29_40 = true;
 		diaNr = 441;

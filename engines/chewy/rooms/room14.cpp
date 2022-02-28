@@ -101,7 +101,7 @@ int16 Room14::use_gleiter() {
 			start_detail_wait(10, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(6);
-			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATEI);
+			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATA);
 		} else {
 			_G(spieler).R23GleiterExit = 14;
 			Room23::cockpit();
@@ -188,7 +188,7 @@ void Room14::feuer() {
 	start_detail_wait(3, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(9);
 	invent_2_slot(FLUXO_INV);
-	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATEI);
+	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATA);
 	_G(spieler).R14FluxoFlex = true;
 	_G(flags).AutoAniPlay = false;
 	showCur();

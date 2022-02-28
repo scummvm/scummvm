@@ -59,7 +59,7 @@ void Room11::entry() {
 		_G(obj)->hide_sib(SIB_TKNOPF3_R11);
 		_G(spieler).room_e_obj[20].Attribut = 255;
 		_G(spieler).room_e_obj[21].Attribut = 255;
-		_G(atds)->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATEI);
+		_G(atds)->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATA);
 
 		if (!_G(flags).LoadGame) {
 			start_ani_block(2, ABLOCK17);
@@ -185,8 +185,8 @@ void Room11::get_card() {
 		cursorChoice(CUR_AK_INVENT);
 		cursorChoice(CUR_AK_INVENT);
 		_G(det)->stop_detail(0);
-		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATEI);
-		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATEI);
+		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATA);
+		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATA);
 	}
 }
 
@@ -195,8 +195,8 @@ void Room11::put_card() {
 		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
 		del_inventar(_G(spieler).R11IdCardNr);
 		_G(det)->start_detail(0, 255, ANI_FRONT);
-		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATEI);
-		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATEI);
+		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);
+		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(spieler).R11CardOk = true;
 
 		if (!_G(spieler).R11TerminalOk)
