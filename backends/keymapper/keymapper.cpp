@@ -160,11 +160,9 @@ void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
 	_enabledKeymapType = type;
 }
 
-List<Event> Keymapper::mapEvent(const Event &ev) {
+bool Keymapper::mapEvent(const Event &ev, List<Event> &mappedEvents) {
 	if (!_enabled) {
-		List<Event> originalEvent;
-		originalEvent.push_back(ev);
-		return originalEvent;
+		return false;
 	}
 
 	hardcodedEventMapping(ev);
@@ -183,7 +181,6 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	}
 
 	bool matchedAction = !actions.empty();
-	List<Event> mappedEvents;
 	for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
 		Event mappedEvent = executeAction(*it, ev);
 		if (mappedEvent.type == EVENT_INVALID) {
@@ -213,12 +210,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		}
 	}
 
-	if (!matchedAction) {
-		// if it didn't get mapped, just pass it through
-		mappedEvents.push_back(ev);
-	}
-
-	return mappedEvents;
+	return matchedAction;
 }
 
 Keymap::KeymapMatch Keymapper::getMappedActions(const Event &event, Keymap::ActionArray &actions, Keymap::KeymapType keymapType) const {
