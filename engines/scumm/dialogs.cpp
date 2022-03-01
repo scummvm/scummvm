@@ -707,13 +707,17 @@ EgaLoomOptionsWidget::EgaLoomOptionsWidget(GuiObject *boss, const Common::String
 
 	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicks", _("When using replacement music, this adjusts the time when the Overture changes to the scene with the Lucasfilm and Loom logotypes."), kOvertureTicksChanged);
 
-	// This allows the transition in the Loom Overture to be changed by
-	// 20 seconds in each direction. I think it's nice if the interval is
-	// small enough that you can set the slider back to default at any
-	// reasonable screen resolution.
+	// In the Ozawa recording, the transition happens at about 1:56. At is
+	// turns out, this is a fairly fast version of the tune. After checking
+	// a number of different recordings, I've settled on an interval of
+	// 1:40 - 2:50. This is larger than I had hoped, but I guess it's
+	// really necessary.
+	//
+	// Hopefully that still means you can set the slider back to its default
+	// value at most reasonable screen resolutions.
 
-	_overtureTicksSlider->setMinValue(-200);
-	_overtureTicksSlider->setMaxValue(200);
+	_overtureTicksSlider->setMinValue(-160);
+	_overtureTicksSlider->setMaxValue(540);
 
 	_overtureTicksLabel = new GUI::StaticTextWidget(widgetsBoss(), "EgaLoomOptionsDialog.OvertureTicksLabel", Common::U32String());
 
