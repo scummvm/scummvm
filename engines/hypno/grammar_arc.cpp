@@ -583,8 +583,8 @@ static const yytype_int16 yyrline[] =
      261,   264,   265,   266,   269,   277,   282,   287,   291,   295,
      299,   303,   307,   311,   315,   319,   323,   327,   331,   335,
      339,   343,   347,   351,   355,   358,   362,   367,   371,   376,
-     381,   385,   391,   395,   398,   399,   402,   406,   409,   416,
-     419
+     381,   385,   391,   395,   398,   399,   402,   406,   409,   418,
+     421
 };
 #endif
 
@@ -1899,36 +1899,38 @@ yyreduce:
   case 78: /* bline: SNTOK FILENAME enc  */
 #line 409 "engines/hypno/grammar_arc.y"
                              {
-		if (Common::String("S1") == (yyvsp[-2].s))
+		if (Common::String("S0") == (yyvsp[-2].s))
+			shoot->enemySound = (yyvsp[-1].s);
+		else if (Common::String("S1") == (yyvsp[-2].s))
 			shoot->deathSound = (yyvsp[-1].s);
 		else if (Common::String("S2") == (yyvsp[-2].s))
 			shoot->hitSound = (yyvsp[-1].s);
 
 		debugC(1, kHypnoDebugParser, "SN %s", (yyvsp[-1].s)); }
-#line 1909 "engines/hypno/grammar_arc.cpp"
+#line 1911 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 79: /* bline: NTOK  */
-#line 416 "engines/hypno/grammar_arc.y"
+#line 418 "engines/hypno/grammar_arc.y"
                {
 		shoot->noEnemySound = true;
 		debugC(1, kHypnoDebugParser, "N"); }
-#line 1917 "engines/hypno/grammar_arc.cpp"
+#line 1919 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 80: /* bline: ZTOK  */
-#line 419 "engines/hypno/grammar_arc.y"
+#line 421 "engines/hypno/grammar_arc.y"
                {
 		g_parsedArc->shoots.push_back(*shoot);
 		//delete shoot;
 		//shoot = nullptr;
 		debugC(1, kHypnoDebugParser, "Z");
 	}
-#line 1928 "engines/hypno/grammar_arc.cpp"
+#line 1930 "engines/hypno/grammar_arc.cpp"
     break;
 
 
-#line 1932 "engines/hypno/grammar_arc.cpp"
+#line 1934 "engines/hypno/grammar_arc.cpp"
 
       default: break;
     }

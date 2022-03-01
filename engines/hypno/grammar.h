@@ -403,6 +403,7 @@ public:
 	uint32 paletteSize;
 
 	// Sounds
+	Filename enemySound;
 	Filename deathSound;
 	Filename hitSound;
 

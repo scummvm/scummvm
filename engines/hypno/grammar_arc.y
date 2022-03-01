@@ -407,7 +407,9 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "L %d %d", $2, $3);
 	}
 	| SNTOK FILENAME enc {
-		if (Common::String("S1") == $1)
+		if (Common::String("S0") == $1)
+			shoot->enemySound = $2;
+		else if (Common::String("S1") == $1)
 			shoot->deathSound = $2;
 		else if (Common::String("S2") == $1)
 			shoot->hitSound = $2;
