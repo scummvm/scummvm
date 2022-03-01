@@ -1419,8 +1419,8 @@ yyreduce:
                          {
 		if (Common::String("B0") == (yyvsp[-1].s))
 			g_parsedArc->beforeVideo = (yyvsp[0].s);
-		//else if (Common::String("B1") == $1)
-		//	g_parsedArc->beforeVideo = $2;
+		else if (Common::String("B1") == (yyvsp[-1].s))
+			g_parsedArc->additionalVideo = (yyvsp[0].s);
 		else if (Common::String("B2") == (yyvsp[-1].s))
 			g_parsedArc->nextLevelVideo = (yyvsp[0].s);
 		else if (Common::String("B3") == (yyvsp[-1].s))

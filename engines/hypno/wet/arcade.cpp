@@ -277,6 +277,21 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }
 
+void WetEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
+	if (s->name == "SP_SWITCH_R" || s->name == "SP_SWITCH_L") {
+		_health = 0;
+	} else if (s->name == "SP_LIZARD1") {
+		_health = _health - 15;
+		background.decoder->pauseVideo(true);
+		MVideo video(arc->additionalVideo, Common::Point(0, 0), false, true, false);
+		runIntro(video);
+		loadPalette(arc->backgroundPalette);
+		background.decoder->pauseVideo(false);
+		updateScreen(background);
+		drawScreen();
+	}
+}
+
 void WetEngine::hitPlayer() {
 	if (_arcadeMode != "Y1" && _arcadeMode != "Y3" && _arcadeMode != "Y4" && _arcadeMode != "Y5") {
 		assert( _playerFrameSep < (int)_playerFrames.size());

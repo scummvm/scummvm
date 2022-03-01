@@ -163,6 +163,7 @@ void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {}
 
 void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 
@@ -434,6 +435,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > 0 && frame >= (int)(bodyLastFrame - 3) && !it->destroyed) {
+					missTarget(it, arc, background);
 					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
 				} else if (frame > 0 && frame >= (int)(it->lastFrame)) {

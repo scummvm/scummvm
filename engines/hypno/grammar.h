@@ -501,6 +501,7 @@ public:
 	Filename hitBoss2Video;
 	Filename missBoss2Video;
 	Filename beforeVideo;
+	Filename additionalVideo;
 	Filename briefingVideo;
 
 	Filename backgroundVideo;

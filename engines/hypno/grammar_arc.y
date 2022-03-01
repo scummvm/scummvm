@@ -158,8 +158,8 @@ hline: 	CTOK NUM {
 	| BNTOK FILENAME {
 		if (Common::String("B0") == $1)
 			g_parsedArc->beforeVideo = $2;
-		//else if (Common::String("B1") == $1)
-		//	g_parsedArc->beforeVideo = $2;
+		else if (Common::String("B1") == $1)
+			g_parsedArc->additionalVideo = $2;
 		else if (Common::String("B2") == $1)
 			g_parsedArc->nextLevelVideo = $2;
 		else if (Common::String("B3") == $1)
