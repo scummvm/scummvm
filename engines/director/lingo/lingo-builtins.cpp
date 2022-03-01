@@ -2708,8 +2708,9 @@ void LB::b_xPlayAnim(int nargs){
 	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
 
 	// save the current palette
-	byte *origPalette = const_cast<byte *>(g_director->getPalette());
+	byte origPalette[256 * 3];
 	uint16 origCount = g_director->getPaletteColorCount();
+	memcpy(origPalette, g_director->getPalette(), origCount * 3);
 
 	Common::Event event;
 	video->start();
