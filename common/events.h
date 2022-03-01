@@ -348,7 +348,7 @@ public:
 	/**
 	 * Map an incoming event to one or more action events.
 	 */
-	virtual List<Event> mapEvent(const Event &ev) = 0;
+	virtual bool mapEvent(const Event &ev, List<Event> &mappedEvents) = 0;
 };
 
 /**
@@ -384,9 +384,16 @@ public:
 	void clearEvents();
 
 	/**
-	 * Register an event mapper with the dispatcher.
+	 * Register a new EventMapper with the dispatcher.
 	 */
-	void registerMapper(EventMapper *mapper);
+	void registerMapper(EventMapper *mapper, bool autoFree);
+
+	/**
+	 * Unregister an EventMapper.
+	 *
+	 * This takes the "autoFree" flag passed to registerSource into account.
+	 */
+	void unregisterMapper(EventMapper *mapper);
 
 	/**
 	 * Register a new EventSource with the Dispatcher.
@@ -421,12 +428,16 @@ public:
 	 */
 	void unregisterObserver(EventObserver *obs);
 private:
-	EventMapper *_mapper;
-
 	struct Entry {
 		bool autoFree;
 		bool ignore;
 	};
+
+	struct MapperEntry : public Entry {
+		EventMapper *mapper;
+	};
+
+	List<MapperEntry> _mappers;
 
 	struct SourceEntry : public Entry {
 		EventSource *source;

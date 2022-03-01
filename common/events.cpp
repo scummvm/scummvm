@@ -49,10 +49,15 @@ EventMapper::~EventMapper() {}
 
 EventManager::~EventManager() {}
 
-EventDispatcher::EventDispatcher() : _mapper(nullptr) {
+EventDispatcher::EventDispatcher() {
 }
 
 EventDispatcher::~EventDispatcher() {
+	for (List<MapperEntry>::iterator i = _mappers.begin(); i != _mappers.end(); ++i) {
+		if (i->autoFree)
+			delete i->mapper;
+	}
+
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
 		if (i->autoFree)
 			delete i->source;
@@ -76,7 +81,7 @@ void EventDispatcher::dispatch() {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
 			if (i->source->allowMapping()) {
-				assert(_mapper);
+				bool matchedAction = false;
 
 				// Backends may not produce directly action event types, those are meant
 				// to be the output of the event mapper.
@@ -85,13 +90,21 @@ void EventDispatcher::dispatch() {
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_START);
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_END);
 
+				for (List<MapperEntry>::iterator m = _mappers.begin(); m != _mappers.end(); ++m) {
+					List<Event> mappedEvents;
+					if (!m->mapper->mapEvent(event, mappedEvents))
+						continue;
 
-				List<Event> mappedEvents = _mapper->mapEvent(event);
+					for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
+						const Event mappedEvent = *j;
+						dispatchEvent(mappedEvent);
+					}
 
-				for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
-					const Event mappedEvent = *j;
-					dispatchEvent(mappedEvent);
+					matchedAction = true;
 				}
+
+				if (!matchedAction);
+					dispatchEvent(event);
 			} else {
 				dispatchEvent(event);
 			}
@@ -109,11 +122,27 @@ void EventDispatcher::clearEvents() {
 	}
 }
 
+void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
+	MapperEntry newEntry;
 
-void EventDispatcher::registerMapper(EventMapper *mapper) {
-	_mapper = mapper;
+	newEntry.mapper = mapper;
+	newEntry.autoFree = autoFree;
+	newEntry.ignore = false;
+
+	_mappers.push_back(newEntry);
 }
 
+void EventDispatcher::unregisterMapper(EventMapper *mapper) {
+	for (List<MapperEntry>::iterator i = _mappers.begin(); i != _mappers.end(); ++i) {
+		if (i->mapper == mapper) {
+			if (i->autoFree)
+				delete mapper;
+
+			_mappers.erase(i);
+			return;
+		}
+	}
+}
 
 void EventDispatcher::registerSource(EventSource *source, bool autoFree) {
 	SourceEntry newEntry;
