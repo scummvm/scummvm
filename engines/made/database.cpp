@@ -754,7 +754,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
 	Object *obj = getObject(objectIndex);
 	if (obj->getClass() >= 0x7FFE) {
-		error("GameDatabaseV2::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
+		error("GameDatabaseV3::findObjectProperty(%04X, %04X) Not an object", objectIndex, propertyId);
 	}
 
 	int16 *prop = (int16 *)obj->getData();
