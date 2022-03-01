@@ -80,7 +80,7 @@ const char *const g_lookUpFragmentShader =
 // Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
 const char *const g_precisionDefines =
 	"#ifdef GL_ES\n"
-	"\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
+	"\t#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
 	"\t\tprecision highp float;\n"
 	"\t#else\n"
 	"\t\tprecision mediump float;\n"
@@ -253,6 +253,8 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	const GLchar *versionSource = g_context.type == kContextGLES2 ? "#version 100\n" : "#version 110\n";
+	const GLchar *compatSource = shaderType == GL_VERTEX_SHADER ? "" : g_precisionDefines;
+
 	GLshader handle;
 	GL_ASSIGN(handle, glCreateShader(shaderType));
 	if (!handle) {
@@ -261,7 +263,7 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 
 	const char *const shaderSources[] = {
 		versionSource,
-		g_precisionDefines,
+		compatSource,
 		source
 	};
 
@@ -276,7 +278,7 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 
 		GLchar *log = new GLchar[logSize];
 		GL_CALL(glGetShaderInfoLog(handle, logSize, nullptr, log));
-		warning("Could not compile shader \"%s\": \"%s\"", source, log);
+		warning("Could not compile shader \"%s%s%s\": \"%s\"", versionSource, compatSource, source, log);
 		delete[] log;
 
 		GL_CALL(glDeleteShader(handle));
