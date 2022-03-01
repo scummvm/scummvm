@@ -74,8 +74,9 @@ protected:
 		int getFrameCount() const { return _frameCount; }
 		virtual const Graphics::Surface *decodeNextFrame();
 		virtual void handleFrame(uint32 chunkSize);
-		const byte *getPalette() const { return _palette; }
-		bool hasDirtyPalette() const { return false; }
+		void handlePalette();
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }

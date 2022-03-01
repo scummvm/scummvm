@@ -99,6 +99,11 @@ const byte* PacoDecoder::getPalette(){
 	return nullptr;
 }
 
+const byte* PacoDecoder::PacoVideoTrack::getPalette() const {
+	_dirtyPalette = false;
+	return _palette;
+}
+
 PacoDecoder::PacoVideoTrack::PacoVideoTrack(
 	Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount, bool hasAudio, uint16 width, uint16 height) {
 
@@ -109,7 +114,7 @@ PacoDecoder::PacoVideoTrack::PacoVideoTrack(
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = const_cast<byte *>(quickTimeDefaultPalette256);
-	_dirtyPalette = false;
+	_dirtyPalette = true;
 
 	_curFrame = 0;
 
@@ -176,7 +181,7 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 			handleFrame(chunkSize - 4);
 			break;
 		case PALLETE:
-			warning("PacoDecode::decodeFrame(): Palette not implemented");
+			handlePalette();
 			break;
 		case EOC:
 			break;
@@ -191,6 +196,21 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 
 	return _surface;
 }
+
+void PacoDecoder::PacoVideoTrack::handlePalette() {
+	uint32 header = _fileStream->readUint32BE();
+	if (header == 0x30000000) { // default quicktime palette
+		_palette = const_cast<byte *>(quickTimeDefaultPalette256);
+	} else {
+		_fileStream->readUint32BE(); // 4 bytes of 00
+		_palette = new byte[256 * 3]();
+		for (int i = 0; i < 256 * 3; i++){
+			_palette[i] = _fileStream->readByte();
+		}
+	}
+	_dirtyPalette = true;
+}
+
 
 enum {
 	COPY = 0,		// raw copy pixels
