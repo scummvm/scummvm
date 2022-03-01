@@ -87,7 +87,7 @@ void Room12::entry() {
 		_G(obj)->calc_all_static_detail();
 		autoMove(5, P_CHEWY);
 		start_spz(CH_TALK12, 255, false, 0);
-		startAadWait(109, -1);
+		startAadWait(109);
 		showCur();
 
 	} else if (_G(spieler).R12Talisman && !_G(spieler).R12BorkInRohr)
@@ -102,7 +102,7 @@ bool Room12::timer(int16 t_nr, int16 ani_nr) {
 			init_bork();
 	} else if (t_nr == _G(timer_nr)[1] && _G(spieler).R12TransOn) {
 		_G(spieler).R12TransOn = false;
-		startAadWait(30, -1);
+		startAadWait(30);
 	}
 
 	return false;
@@ -135,7 +135,7 @@ void Room12::init_bork() {
 					_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 					waitShowScreen(10);
 					start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-					startAadWait(14, -1);
+					startAadWait(14);
 				}
 
 				wait_auto_obj(R12_BORK_OBJ);
@@ -151,7 +151,7 @@ void Room12::init_bork() {
 
 void Room12::talk_bork() {
 	if (!_G(spieler).R12TalismanOk) {
-		startAadWait(28, -1);
+		startAadWait(28);
 	}
 }
 
@@ -171,7 +171,7 @@ void Room12::bork_ok() {
 	_G(spieler).R12BorkInRohr = true;
 	_G(det)->setSetailPos(3, 170, 145);
 	_G(det)->startDetail(3, 255, ANI_FRONT);
-	startAadWait(57, -1);
+	startAadWait(57);
 	_G(det)->stop_detail(3);
 
 	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
@@ -196,11 +196,11 @@ int16 Room12::use_terminal() {
 
 		if (!_G(spieler).R12ChewyBork) {
 			autoMove(6, P_CHEWY);
-			startAadWait(110, -1);
+			startAadWait(110);
 
 			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
 				start_spz(CH_TALK5, 255, false, P_CHEWY);
-				startAadWait(112, -1);
+				startAadWait(112);
 				_G(flags).NoScroll = true;
 				auto_scroll(46, 0);
 				flic_cut(FCUT_016);
@@ -217,7 +217,7 @@ int16 Room12::use_terminal() {
 				_G(spieler).R12RaumOk = true;
 				autoMove(4, P_CHEWY);
 				start_spz(68, 255, false, P_CHEWY);
-				startAadWait(113, 0);
+				startAadWait(113);
 
 			} else if (_G(spieler).R12TalismanOk && !_G(spieler).R12RaumOk) {
 				use_linke_rohr();
@@ -274,7 +274,7 @@ int16 Room12::useTransformerTube() {
 			_G(atds)->set_ats_str(117, 1, AAD_DATA);
 		} else {
 			autoMove(7, P_CHEWY);
-			startAadWait(29, -1);
+			startAadWait(29);
 		}
 	}
 

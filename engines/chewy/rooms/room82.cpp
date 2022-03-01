@@ -134,7 +134,7 @@ void Room82::talk1() {
 void Room82::talk2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	startAadWait(453, -1);
+	startAadWait(453);
 	showCur();
 }
 
@@ -175,7 +175,7 @@ void Room82::proc4() {
 	_G(room)->set_timer_status(4, TIMER_STOP);
 	_G(det)->del_static_ani(4);
 	_G(det)->set_static_ani(5, 3);
-	startAadWait(445, -1);
+	startAadWait(445);
 	_G(det)->del_static_ani(5);
 	_G(det)->set_static_ani(4, -1);
 	_G(room)->set_timer_status(4, TIMER_START);
@@ -195,11 +195,11 @@ int Room82::proc6() {
 	autoMove(2, P_CHEWY);
 
 	if (_G(spieler).flags30_10) {
-		startAadWait(450, -1);
+		startAadWait(450);
 		_G(out)->ausblenden(0);
 		_G(out)->set_teilpalette(_G(pal), 255, 1);
 		_G(atds)->enableEvents(false);
-		startAadWait(598, -1);
+		startAadWait(598);
 		_G(atds)->enableEvents(true);
 		_G(det)->showStaticSpr(7);
 		_G(fx_blend) = BLEND3;
@@ -212,7 +212,7 @@ int Room82::proc6() {
 		remove_inventory(106);
 	} else {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		startAadWait(276, -1);
+		startAadWait(276);
 	}
 
 	showCur();
@@ -222,7 +222,7 @@ int Room82::proc6() {
 void Room82::proc8() {
 	hideCur();
 	_G(spieler).flags30_10 = true;
-	startAadWait(447, -1);
+	startAadWait(447);
 	autoMove(6, P_CHEWY);
 
 	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
@@ -230,10 +230,10 @@ void Room82::proc8() {
 
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 	_G(det)->startDetail(10, 255, false);
-	startAadWait(625, -1);
+	startAadWait(625);
 	_G(det)->stop_detail(10);
 	_G(spieler).PersonHide[P_NICHELLE] = false;
-	startAadWait(448, -1);
+	startAadWait(448);
 	_G(det)->del_static_ani(4);
 	startSetailWait(6, 2, ANI_FRONT);
 	_G(det)->set_static_ani(4, -1);

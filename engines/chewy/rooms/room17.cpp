@@ -152,7 +152,7 @@ int16 Room17::use_seil() {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(119, -1);
+		startAadWait(119);
 
 		showCur();
 	}
@@ -201,7 +201,7 @@ void Room17::kletter_up() {
 void Room17::calc_seil() {
 	if (_G(spieler).R17Seil) {
 		if (_G(spieler).R17Location == 2) {
-			startAadWait(619, -1);
+			startAadWait(619);
 		} else if (!_G(flags).AutoAniPlay && !_G(spieler).inv_cur) {
 			close_door();
 			_G(flags).AutoAniPlay = true;
@@ -277,10 +277,10 @@ int16 Room17::energie_hebel() {
 		if (is_cur_inventar(BECHER_VOLL_INV)) {
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R17HebelOk = true;
-			startAadWait(38, -1);
+			startAadWait(38);
 			action_flag = true;
 		} else if (!_G(spieler).inv_cur) {
-			startAadWait(37, -1);
+			startAadWait(37);
 			action_flag = true;
 		}
 
@@ -320,7 +320,7 @@ int16 Room17::get_oel() {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
-		startAadWait(60, -1);
+		startAadWait(60);
 	} else if (is_cur_inventar(BECHER_LEER_INV)) {
 		action_flag = true;
 		close_door();

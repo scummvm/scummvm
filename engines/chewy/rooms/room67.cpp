@@ -85,9 +85,9 @@ int16 Room67::use_grammo() {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67)
-			startAadWait(376, -1);
+			startAadWait(376);
 		else
-			startAadWait(614, -1);
+			startAadWait(614);
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->stop_detail(0);
@@ -99,7 +99,7 @@ int16 Room67::use_grammo() {
 void Room67::look_brief() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	startAadWait(379, -1);
+	startAadWait(379);
 	showCur();
 }
 
@@ -132,7 +132,7 @@ void Room67::kostuem_aad(int16 aad_nr) {
 	if (_G(spieler).DiaAMov != -1) {
 		autoMove(_G(spieler).DiaAMov, P_CHEWY);
 	}
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 	showCur();
 }
 
@@ -148,10 +148,10 @@ int16 Room67::talk_papagei() {
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
 			_G(atds)->set_split_win(2, &_G(ssi)[2]);
-			start_ads_wait(19);
+			startAdsWait(19);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
-			startAadWait(380, -1);
+			startAadWait(380);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_TALK) {
 			autoMove(5, P_CHEWY);
@@ -160,7 +160,7 @@ int16 Room67::talk_papagei() {
 			_G(ssi)[2].X = 270 - _G(spieler).scrollx;
 			_G(ssi)[2].Y = 10;
 			_G(atds)->set_split_win(2, &_G(ssi)[2]);
-			start_ads_wait(18);
+			startAdsWait(18);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
 			hideCur();

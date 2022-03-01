@@ -47,7 +47,7 @@ void Room27::xit(int16 eib_nr) {
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
 		if (eib_nr == 55) {
-			startAadWait(175, -1);
+			startAadWait(175);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			startSetailWait(2, 1, ANI_FRONT);
@@ -55,7 +55,7 @@ void Room27::xit(int16 eib_nr) {
 			_G(spieler_mi)[P_HOWARD].Id = HOWARD_OBJ;
 		} else if (_G(spieler).R27HowardGed < 3 && eib_nr != -1) {
 			++_G(spieler).R27HowardGed;
-			startAadWait(174, -1);
+			startAadWait(174);
 		}
 	}
 
@@ -68,7 +68,7 @@ void Room27::get_surimy() {
 	autoMove(4, P_CHEWY);
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 27) {
-		startAadWait(171, -1);
+		startAadWait(171);
 	}
 
 	showCur();
@@ -78,7 +78,7 @@ void Room27::get_surimy() {
 void Room27::talk_howard() {
 	hideCur();
 	autoMove(4, P_CHEWY);
-	startAadWait(173, -1);
+	startAadWait(173);
 	showCur();
 }
 

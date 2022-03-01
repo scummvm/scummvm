@@ -161,7 +161,7 @@ int Room86::proc2() {
 	_G(spieler).flags32_2 = true;
 	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
-	startAadWait(468, -1);
+	startAadWait(468);
 
 	showCur();
 	return 1;

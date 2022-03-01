@@ -116,7 +116,7 @@ int Room95::proc2() {
 		switch_room(97);
 	} else {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
-		startAadWait(548, -1);
+		startAadWait(548);
 	}
 
 	showCur();

@@ -61,7 +61,7 @@ int16 Room35::schublade() {
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			setPersonPos(33, 90, P_CHEWY, P_LEFT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(93, -1);
+			startAadWait(93);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(atds)->set_ats_str(234, 2, ATS_DATA);
 		}
@@ -83,7 +83,7 @@ int16 Room35::use_cat() {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			flic_cut(FCUT_045);
 			start_spz(CH_TRANS, 1, ANI_FRONT, P_CHEWY);
-			startAadWait(94, -1);
+			startAadWait(94);
 		} else if (is_cur_inventar(PUTENKEULE_INV)) {
 			action_flag = true;
 			disable_timer();
@@ -108,7 +108,7 @@ int16 Room35::use_cat() {
 			_G(det)->set_static_ani(0, -1);
 			enable_timer();
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(95, -1);
+			startAadWait(95);
 		}
 	}
 
@@ -131,13 +131,13 @@ void Room35::talk_cat() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		switch_room(36);
 		showCur();
-		start_ads_wait(dia_nr);
+		startAdsWait(dia_nr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		switch_room(35);
 
 	} else {
 		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(96, -1);
+		startAadWait(96);
 	}
 
 	showCur();

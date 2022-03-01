@@ -103,7 +103,7 @@ void Room76::talk1() {
 	autoMove(4, P_CHEWY);
 	auto_scroll(172, 0);
 	const int diaNr = 425 + (_G(spieler).flags32_4 ? 1 : 0);
-	startAadWait(diaNr, -1);
+	startAadWait(diaNr);
 	showCur();
 }
 
@@ -126,7 +126,7 @@ void Room76::talk2() {
 }
 
 void Room76::proc3(int diaNr) {
-	startAadWait(diaNr, -1);
+	startAadWait(diaNr);
 	_G(det)->del_static_ani(2);
 	startSetailWait(3, 1, ANI_FRONT);
 	startSetailWait(4, 2, ANI_FRONT);
@@ -172,7 +172,7 @@ int Room76::proc6() {
 		hideCur();
 		retVal = 1;
 		setPersonSpr(P_RIGHT, P_CHEWY);
-		startAadWait(436, 1);
+		startAadWait(436);
 		showCur();
 	}
 
@@ -190,10 +190,10 @@ int Room76::proc7() {
 		del_inventar(_G(spieler).AkInvent);
 		invent_2_slot(106);
 		invent_2_slot(105);
-		startAadWait(444, -1);
+		startAadWait(444);
 		_G(out)->ausblenden(0);
 		_G(out)->set_teilpalette(_G(pal), 255, 1);
-		startAadWait(443, -1);
+		startAadWait(443);
 		_G(spieler).scrollx = 0;
 		_G(fx_blend) = BLEND3;
 		_G(out)->setPointer(nullptr);
@@ -204,18 +204,18 @@ int Room76::proc7() {
 		for (int i = 0; i < 3; ++i)
 			_G(det)->showStaticSpr(8 + i);
 
-		startAadWait(427, -1);
+		startAadWait(427);
 		showCur();
-		start_ads_wait(21);
+		startAdsWait(21);
 		hideCur();
-		startAadWait(428, -1);
+		startAadWait(428);
 		showCur();
 		_G(spieler).flags29_80 = true;
 		switch_room(78);
 	} else {
 		hideCur();
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		startAadWait(577, -1);
+		startAadWait(577);
 		showCur();
 	}
 

@@ -54,10 +54,10 @@ void Room42::entry() {
 		}
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(spieler).R42BriefOk)
-			startAadWait(302, -1);
+			startAadWait(302);
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk)
-			startAadWait(301, -1);
+			startAadWait(301);
 	}
 }
 
@@ -82,7 +82,7 @@ void Room42::get_kuerbis(int16 aad_nr) {
 	startSetailWait(7, 1, ANI_BACK);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	startSetailWait(7, 1, ANI_FRONT);
@@ -106,15 +106,15 @@ int16 Room42::use_psack() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		startSetailWait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		startAadWait(187, -1);
+		startAadWait(187);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		startSetailWait(9, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
-		startAadWait(181, -1);
+		startAadWait(181);
 		_G(spieler).R42MarkeOk = true;
 		autoMove(4, P_CHEWY);
-		startAadWait(185, -1);
+		startAadWait(185);
 		_G(spieler).R42HoToBeamter = false;
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
@@ -123,7 +123,7 @@ int16 Room42::use_psack() {
 		startSetailWait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
-		startAadWait(183, -1);
+		startAadWait(183);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
 		_G(spieler).R28Briefkasten = true;
@@ -133,7 +133,7 @@ int16 Room42::use_psack() {
 
 	} else if (is_cur_inventar(BRIEF_INV)) {
 		action_flag = true;
-		startAadWait(182, -1);
+		startAadWait(182);
 	}
 
 	showCur();
@@ -148,7 +148,7 @@ int16 Room42::use_beamter() {
 		_G(atds)->set_ats_str(264, 2, ATS_DATA);
 		hideCur();
 		autoMove(4, P_CHEWY);
-		startAadWait(184, -1);
+		startAadWait(184);
 		_G(spieler).R42HoToBeamter = true;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
@@ -172,7 +172,7 @@ void Room42::talk_beamter() {
 		dia_nr = 14;
 	}
 
-	start_ads_wait(dia_nr);
+	startAdsWait(dia_nr);
 }
 
 void Room42::dia_beamter(int16 str_end_nr) {
@@ -228,7 +228,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->startDetail(6, 255, ANI_FRONT);
-	startAadWait(135, -1);
+	startAadWait(135);
 	_G(det)->stop_detail(6);
 	_G(flags).NoDiaBox = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;

@@ -81,7 +81,7 @@ void Room9::surimy() {
 	_G(room)->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
-	startAadWait(56, -1);
+	startAadWait(56);
 	_G(spieler).room_e_obj[17].Attribut = AUSGANG_RECHTS;
 	_G(spieler_vector)[P_CHEWY].Count = tmp;
 	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);

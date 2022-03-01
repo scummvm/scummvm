@@ -64,7 +64,7 @@ void Room11::entry() {
 		if (!_G(flags).LoadGame) {
 			startAniBlock(2, ABLOCK17);
 			autoMove(8, P_CHEWY);
-			startAadWait(31, -1);
+			startAadWait(31);
 			_G(det)->stop_detail(9);
 		}
 		_G(det)->showStaticSpr(8);
@@ -107,7 +107,7 @@ void Room11::talk_debug() {
 	if (_G(spieler).R12ChewyBork) {
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);
-		start_ads_wait(5);
+		startAdsWait(5);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
 
@@ -123,7 +123,7 @@ void Room11::chewy_bo_use() {
 		stopPerson(P_CHEWY);
 		_G(det)->hideStaticSpr(8);
 		startAniBlock(2, ABLOCK17);
-		startAadWait(32, -1);
+		startAadWait(32);
 		_G(det)->stop_detail(9);
 		_G(det)->showStaticSpr(8);
 		autoMove(6, P_CHEWY);
@@ -141,7 +141,7 @@ int16 Room11::scanner() {
 
 		if (!_G(spieler).R11CardOk) {
 			actionFl = true;
-			startAadWait(13, -1);
+			startAadWait(13);
 		} else if (is_cur_inventar(BORK_INV)) {
 			hideCur();
 			setupScreen(DO_SETUP);
@@ -154,17 +154,17 @@ int16 Room11::scanner() {
 			cur_2_inventory();
 			_G(menu_item) = CUR_TALK;
 			cursorChoice(_G(menu_item));
-			startAadWait(12, -1);
+			startAadWait(12);
 			showCur();
 			loadAdsDia(3);
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);
-				startAadWait(20, -1);
+				startAadWait(20);
 			} else {
 				actionFl = true;
-				startAadWait(12, -1);
+				startAadWait(12);
 				_G(menu_item) = CUR_TALK;
 				cursorChoice(_G(menu_item));
 				loadAdsDia(3);
@@ -200,7 +200,7 @@ void Room11::put_card() {
 		_G(spieler).R11CardOk = true;
 
 		if (!_G(spieler).R11TerminalOk)
-			startAadWait(16, -1);
+			startAadWait(16);
 	}
 }
 

@@ -36,23 +36,23 @@ void Room93::entry() {
 	hide_person();
 	startSetailWait(3, 0, ANI_GO);
 	_G(det)->set_static_ani(0, -1);
-	startAadWait(616, -1);
+	startAadWait(616);
 	_G(det)->del_static_ani(0);
 	startSetailWait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
-	start_ads_wait(27);
+	startAdsWait(27);
 
 	if (!_G(spieler).flags37_40) {
 		_G(det)->del_static_ani(1);
 		hideCur();
 		startSetailWait(3, 1, ANI_GO);
 		_G(det)->set_static_ani(0, -1);
-		startAadWait(549, -1);
+		startAadWait(549);
 		_G(det)->del_static_ani(0);
 		startSetailWait(3, 1, ANI_FRONT);
 		startSetailWait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(7, -1);
-		startAadWait(550, -1);
+		startAadWait(550);
 		_G(det)->del_static_ani(7);
 		startSetailWait(6, 1, ANI_GO);
 		startSetailWait(2, 1, ANI_FRONT);

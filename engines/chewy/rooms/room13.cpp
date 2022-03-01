@@ -51,7 +51,7 @@ void Room13::entry() {
 		setPersonPos(106, 65, P_CHEWY, P_RIGHT);
 		switch_room(11);
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		startAadWait(27, -1);
+		startAadWait(27);
 	} else {
 		if (_G(spieler).R13MonitorStatus)
 			_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
@@ -105,7 +105,7 @@ void Room13::talk_bork() {
 		_G(det)->setSetailPos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		_G(det)->setStaticPos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		startAadWait(33, -1);
+		startAadWait(33);
 		_G(det)->stop_detail(9);
 		_G(det)->load_taf_seq(86, 12, nullptr);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -127,7 +127,7 @@ void Room13::talk_bork() {
 		auto_scroll(41, 0);
 
 		start_spz(68, 255, false, P_CHEWY);
-		startAadWait(248, -1);
+		startAadWait(248);
 		flic_cut(FCUT_013);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(auto_obj) = 0;
@@ -138,8 +138,8 @@ void Room13::talk_bork() {
 		_G(obj)->show_sib(SIB_BANDKNOPF_R13);
 		setPersonPos(153, 138, P_CHEWY, P_LEFT);
 
-		startAadWait(34, -1);
-		startAadWait(249, -1);
+		startAadWait(34);
+		startAadWait(249);
 
 		_G(obj)->show_sib(SIB_TKNOPF1_R11);
 		_G(obj)->show_sib(SIB_SCHLITZ_R11);
@@ -169,7 +169,7 @@ void Room13::jmp_band() {
 			_G(spieler).R13Surf = true;
 			_G(maus_links_click) = false;
 			autoMove(12, P_CHEWY);
-			startAadWait(117, -1);
+			startAadWait(117);
 			_G(flags).NoScroll = true;
 			auto_scroll(76, 0);
 			flic_cut(FCUT_014);
@@ -217,7 +217,7 @@ int16 Room13::monitor_knopf() {
 	if (!_G(spieler).inv_cur) {
 		if (_G(spieler).R13Band) {
 			action_flag = true;
-			startAadWait(620, -1);
+			startAadWait(620);
 
 		} else if (!_G(spieler).R12ChewyBork) {
 			action_flag = true;

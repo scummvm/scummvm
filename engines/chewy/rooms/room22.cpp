@@ -106,7 +106,7 @@ void Room22::bork(int16 t_nr) {
 		if (!_G(spieler).R22BorkPlatt) {
 			hideCur();
 			start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(10, -1);
+			startAadWait(10);
 			autoMove(3, P_CHEWY);
 			_G(auto_obj) = 1;
 			_G(mov_phasen)[BORK_OBJ].AtsText = 0;
@@ -166,7 +166,7 @@ void Room22::get_bork() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK14);
 		setPersonPos(171, 120, P_CHEWY, P_LEFT);
-		startAadWait(11, -1);
+		startAadWait(11);
 		_G(det)->stop_detail(3);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);

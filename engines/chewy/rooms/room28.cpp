@@ -64,13 +64,13 @@ void Room28::entry(int16 eib_nr) {
 					setPersonPos(232, 100, P_HOWARD, P_RIGHT);
 					autoMove(3, P_HOWARD);
 					goAutoXy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
-					startAadWait(176, -1);
+					startAadWait(176);
 				} else if (_G(spieler).R31SurFurz && !_G(spieler).R28RKuerbis) {
 					_G(spieler).R28RKuerbis = true;
 					_G(spieler).ScrollxStep = 2;
 					autoMove(6, P_CHEWY);
 					waitShowScreen(10);
-					startAadWait(194, -1);
+					startAadWait(194);
 					_G(spieler).room_e_obj[62].Attribut = 255;
 					_G(atds)->set_ats_str(208, 1, ATS_DATA);
 					_G(flags).NoScroll = true;
@@ -82,7 +82,7 @@ void Room28::entry(int16 eib_nr) {
 					if (!_G(spieler).R40TeilKarte) {
 						_G(out)->ausblenden(0);
 						_G(out)->set_teilpalette(_G(pal), 255, 1);
-						startAadWait(607, -1);
+						startAadWait(607);
 						_G(fx_blend) = BLEND3;
 					}
 
@@ -92,7 +92,7 @@ void Room28::entry(int16 eib_nr) {
 						haendler();
 					} else {
 						waitShowScreen(60);
-						startAadWait(195, -1);
+						startAadWait(195);
 					}
 
 					_G(spieler).ScrollxStep = 2;
@@ -120,7 +120,7 @@ void Room28::entry(int16 eib_nr) {
 					goAutoXy(420, 113, P_HOWARD, ANI_WAIT);
 					_G(spieler_mi)[P_HOWARD].Mode = false;
 					setPersonPos(440, 146, P_CHEWY, P_LEFT);
-					startAadWait(193, -1);
+					startAadWait(193);
 				} else {
 					setPersonPos(480, 100, P_HOWARD, P_LEFT);
 					goAutoXy(420, 113, P_HOWARD, ANI_GO);
@@ -146,7 +146,7 @@ void Room28::xit(int16 eib_nr) {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
 		_G(SetUpScreenFunc) = nullptr;
 		if (!_G(spieler).R28ExitTown) {
-			startAadWait(178, -1);
+			startAadWait(178);
 			_G(spieler).R28ExitTown = true;
 		}
 
@@ -181,13 +181,13 @@ void Room28::haendler() {
 		setupScreen(DO_SETUP);
 	}
 
-	startAadWait(196, -1);
+	startAadWait(196);
 	_G(det)->del_static_ani(2);
 	_G(det)->set_static_ani(3, -1);
-	startAadWait(197, -1);
+	startAadWait(197);
 	_G(det)->del_static_ani(3);
 	_G(det)->set_static_ani(4, -1);
-	startAadWait(198, -1);
+	startAadWait(198);
 	_G(SetUpScreenFunc) = setup_func;
 	autoMove(4, P_CHEWY);
 	hideCur();
@@ -195,7 +195,7 @@ void Room28::haendler() {
 	setPersonSpr(P_RIGHT, P_CHEWY);
 	_G(det)->del_static_ani(4);
 	waitShowScreen(28);
-	startAadWait(199, -1);
+	startAadWait(199);
 	invent_2_slot(DOLLAR175_INV);
 }
 
@@ -231,7 +231,7 @@ void Room28::use_surimy() {
 
 	_G(obj)->calc_all_static_detail();
 	start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-	startAadWait(dia_nr, -1);
+	startAadWait(dia_nr);
 	_G(flags).NoScroll = false;
 	showCur();
 }
@@ -272,7 +272,7 @@ void Room28::set_pump() {
 				_G(SetUpScreenFunc) = nullptr;
 				g_engine->_sound->waitForSpeechToFinish();
 
-				startAadWait(177, -1);
+				startAadWait(177);
 				_G(SetUpScreenFunc) = setup_func;
 				++_G(spieler).R28PumpTxt;
 			}
@@ -306,7 +306,7 @@ void Room28::get_pump() {
 
 		if (_G(spieler).R28PumpTxt1 < 3) {
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(138, -1);
+			startAadWait(138);
 		}
 
 		showCur();
@@ -327,7 +327,7 @@ int16 Room28::use_breifkasten() {
 		_G(det)->showStaticSpr(7);
 		autoMove(8, P_CHEWY);
 		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
-		startAadWait(179, -1);
+		startAadWait(179);
 		_G(atds)->set_ats_str(206, 0, ATS_DATA);
 		showCur();
 		invent_2_slot(MANUSKRIPT_INV);

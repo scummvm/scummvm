@@ -129,7 +129,7 @@ int Room87::proc2(int16 txt_nr) {
 
 	if (diaNr) {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
-		startAadWait(diaNr, -1);
+		startAadWait(diaNr);
 	} else {
 		autoMove(movNr, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
@@ -161,7 +161,7 @@ int Room87::proc4() {
 	flic_cut(FCUT_096);
 	_G(det)->hideStaticSpr(2);
 	_G(det)->startDetail(2, 255, false);
-	startAadWait(471, -1);
+	startAadWait(471);
 	flic_cut(FCUT_097);
 	flic_cut(FCUT_098);
 	flic_cut(FCUT_099);

@@ -48,10 +48,10 @@ void Room66::entry(int16 eib_nr) {
 		setPersonPos(598, 101, P_CHEWY, P_RIGHT);
 		setPersonPos(644, 82, P_NICHELLE, P_LEFT);
 		setPersonPos(623, 81, P_HOWARD, P_LEFT);
-		startAadWait(413, -1);
+		startAadWait(413);
 		autoMove(9, P_CHEWY);
 		_G(SetUpScreenFunc) = setup_func;
-		startAadWait(403, -1);
+		startAadWait(403);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(14);
@@ -61,8 +61,8 @@ void Room66::entry(int16 eib_nr) {
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		startAadWait(404, -1);
-		startAadWait(415, -1);
+		startAadWait(404);
+		startAadWait(415);
 		showCur();
 	} else if (!_G(flags).LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
 		switch (eib_nr) {
@@ -144,13 +144,13 @@ void Room66::setup_func() {
 
 	_G(spieler).flags26_8 = true;
 	_G(det)->startDetail(9, 5, false);
-	startAadWait(405, -1);
+	startAadWait(405);
 }
 
 void Room66::talk1() {
 	hideCur();
 	autoMove(5, P_CHEWY);
-	startAadWait(407, -1);
+	startAadWait(407);
 	showCur();
 }
 
@@ -210,7 +210,7 @@ void Room66::proc8(int chewyAutoMovNr, int restartAniNr, int transitionAniNr, in
 	_G(room)->set_timer_status(restartAniNr, TIMER_STOP);
 	_G(det)->del_static_ani(restartAniNr);
 	_G(det)->set_static_ani(transitionAniNr, -1);
-	startAadWait(transitionDiaNr, -1);
+	startAadWait(transitionDiaNr);
 	_G(det)->del_static_ani(transitionAniNr);
 	_G(det)->set_static_ani(restartAniNr, -1);
 	_G(room)->set_timer_status(restartAniNr, TIMER_START);

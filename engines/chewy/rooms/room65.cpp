@@ -48,10 +48,10 @@ void Room65::entry() {
 	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hideCur();
-		startAadWait(_G(spieler).PersonDia[P_HOWARD], -1);
+		startAadWait(_G(spieler).PersonDia[P_HOWARD]);
 		showCur();
 	} else {
-		start_ads_wait(_G(spieler).PersonDia[P_HOWARD] - 10000);
+		startAdsWait(_G(spieler).PersonDia[P_HOWARD] - 10000);
 	}
 	_G(flags).LoadGame = true;
 	show_person();

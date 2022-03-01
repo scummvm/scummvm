@@ -50,7 +50,7 @@ void Room5::pushButton() {
 		_G(spieler).R5Tuer ^= 1;
 		_G(obj)->calc_rsi_flip_flop(SIB_TUERE_R5);
 	} else {
-		startAadWait(1, -1);
+		startAadWait(1);
 	}
 }
 

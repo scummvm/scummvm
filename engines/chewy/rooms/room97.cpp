@@ -290,11 +290,11 @@ void Room97::proc3() {
 	
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(557, -1);
+		startAadWait(557);
 		goAutoXy(588, 129, P_CHEWY, ANI_WAIT);
 	} else if (!_G(spieler).flags36_40) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(568, -1);
+		startAadWait(568);
 		goAutoXy(588, 129, P_CHEWY, ANI_WAIT);
 	} else {
 		_G(spieler).flags36_1 = true;
@@ -317,7 +317,7 @@ void Room97::proc3() {
 		if (!_G(spieler).flags36_80) {
 			goAutoXy(442, 35, P_HOWARD, ANI_WAIT);
 			goAutoXy(497, 31, P_HOWARD, ANI_WAIT);
-			startAadWait(562, -1);
+			startAadWait(562);
 		}
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(Sdi)[6].z_ebene = 166;
@@ -369,7 +369,7 @@ void Room97::proc4() {
 		_G(det)->hideStaticSpr(2);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(553, -1);
+		startAadWait(553);
 		_G(HowardMov) = 0;
 		showCur();
 	}
@@ -401,7 +401,7 @@ int Room97::proc5() {
 	del_inventar(_G(spieler).AkInvent);
 	_G(det)->showStaticSpr(21);
 	_G(spieler).flags35_80 = true;
-	startAadWait(546, -1);
+	startAadWait(546);
 	_G(det)->hideStaticSpr(21);
 	g_engine->_sound->playSound(9, 1);
 	g_engine->_sound->stopSound(0);
@@ -429,7 +429,7 @@ int Room97::proc6() {
 	startSetailWait(15, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(17);
 	start_spz(CH_TALK5, 255, false, P_CHEWY);
-	startAadWait(558, -1);
+	startAadWait(558);
 	_G(det)->hideStaticSpr(28);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(15);
@@ -504,9 +504,9 @@ int Room97::proc8() {
 		waitShowScreen(80);
 		autoMove(4, P_CHEWY);
 		auto_scroll(646, 0);
-		startAadWait(566, -1);
+		startAadWait(566);
 		waitShowScreen(60);
-		startAadWait(567, -1);
+		startAadWait(567);
 		_G(det)->stop_detail(26);
 		_G(det)->stop_detail(27);
 		_G(spieler).flags36_20 = true;
@@ -519,7 +519,7 @@ int Room97::proc8() {
 
 	if (diaNr != -1) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(diaNr, -1);
+		startAadWait(diaNr);
 	}
 
 	showCur();
@@ -535,14 +535,14 @@ int Room97::proc9() {
 	
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(556, -1);
+		startAadWait(556);
 	} else {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
 		startSetailWait(13, 1, ANI_FRONT);
 		_G(det)->startDetail(14, 255, false);
-		startAadWait(555, -1);
+		startAadWait(555);
 		_G(spieler).flags36_40 = true;
 		_G(atds)->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATA);
@@ -582,21 +582,21 @@ int Room97::proc11() {
 
 	if (!_G(spieler).flags37_2) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		startAadWait(569, -1);
+		startAadWait(569);
 	} else {
 		autoMove(9, P_CHEWY);
-		startAadWait(570, -1);
+		startAadWait(570);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		autoMove(7, P_CHEWY);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(571, -1);
+		startAadWait(571);
 		g_engine->_sound->playSound(4, 0);
 		g_engine->_sound->playSound(4);
 		_G(det)->startDetail(4, 1, false);
 		autoMove(12, P_CHEWY);
 		start_spz_wait(64, 1, false, P_CHEWY);
 		start_spz(65, 255, false, P_CHEWY);
-		startAadWait(561, -1);
+		startAadWait(561);
 		_G(spieler).SVal1 = 97;
 		_G(spieler).SVal2 = 523;
 		cur_2_inventory();
@@ -717,7 +717,7 @@ void Room97::sensorAnim() {
 		_G(det)->showStaticSpr(20);
 		autoMove(10, P_CHEWY);
 		auto_scroll(60, 0);
-		startAadWait(544, -1);
+		startAadWait(544);
 		_bool18DB32 = true;
 		autoMove(11, P_CHEWY);
 		_bool18DB32 = false;

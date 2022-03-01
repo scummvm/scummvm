@@ -158,7 +158,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_004);
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
-							startAadWait(108, 0);
+							startAadWait(108);
 							showCur();
 						} else {
 							retValue = false;
@@ -194,7 +194,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						if (is_cur_inventar(TRANSLATOR_INV)) {
 							autoMove(6, P_CHEWY);
 							_G(spieler).R14Translator = true;
-							startAadWait(25, -1);
+							startAadWait(25);
 						} else
 							retValue = false;
 						break;
@@ -778,7 +778,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 95:
 						if (_G(spieler).R13Band == true)
-							startAadWait(116, -1);
+							startAadWait(116);
 						break;
 
 					case 100:
@@ -997,11 +997,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 505:
-						startAadWait(482, -1);
+						startAadWait(482);
 						break;
 
 					case 506:
-						startAadWait(483, -1);
+						startAadWait(483);
 						break;
 
 					case 512:
@@ -1226,7 +1226,7 @@ void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr) {
 			_G(det)->del_static_ani(3);
 			startSetailWait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
-			startAadWait(456, -1);
+			startAadWait(456);
 		}
 		break;
 
@@ -2215,7 +2215,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			invent_2_slot(K_KERNE_INV);
 		} else if (_G(spieler).AkInvent == 88) {
 			_G(spieler).flags26_10 = true;
-			startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
+			startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350);
 		}
 		break;
 
@@ -2255,14 +2255,14 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).flags26_10 = true;
 		_G(flags).InventMenu = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
+		startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
 		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(spieler).flags26_10 = true;
-		startAadWait(350, -1);
+		startAadWait(350);
 		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
@@ -2753,7 +2753,7 @@ void calc_person_dia(int16 p_nr) {
 				_G(stopAutoMove)[i] = true;
 			}
 
-			startAadWait(_G(spieler).PersonDia[p_nr], -1);
+			startAadWait(_G(spieler).PersonDia[p_nr]);
 
 			for (int i = 0; i < 3; ++i) {
 				_G(spieler).PersonDiaRoom[i] = tmp[i];
@@ -2776,11 +2776,11 @@ void calc_person_dia(int16 p_nr) {
 				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hideCur();
-					startAadWait(_G(spieler).PersonDia[P_NICHELLE], -1);
+					startAadWait(_G(spieler).PersonDia[P_NICHELLE]);
 					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE];
 					showCur();
 				} else {
-					start_ads_wait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
+					startAdsWait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
 				}
 			}
 		}

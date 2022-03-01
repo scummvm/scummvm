@@ -118,21 +118,21 @@ int16 Room57::use_pfoertner() {
 	if (is_cur_inventar(CUTMAG_INV)) {
 		action_ret = true;
 		if (_G(spieler).flags37_10)
-			startAadWait(596, -1);
+			startAadWait(596);
 		else {
 			_G(spieler).flags37_10 = true;
-			startAadWait(339, -1);
+			startAadWait(339);
 			new_invent_2_cur(BESTELL_INV);
 		}
 	} else if (is_cur_inventar(JMKOST_INV)) {
 		action_ret = true;
-		startAadWait(340, -1);
+		startAadWait(340);
 	} else if (is_cur_inventar(EINLAD_INV)) {
 		action_ret = true;
 		_G(SetUpScreenFunc) = nullptr;
 		goAutoXy(132, 130, P_HOWARD, ANI_WAIT);
 		if (_G(spieler).R56AbfahrtOk) {
-			startAadWait(341, -1);
+			startAadWait(341);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
@@ -142,7 +142,7 @@ int16 Room57::use_pfoertner() {
 			g_engine->_sound->stopSound(0);
 			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATA);
 		} else {
-			startAadWait(349, -1);
+			startAadWait(349);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 		}
 		_G(SetUpScreenFunc) = setup_func;
@@ -164,7 +164,7 @@ void Room57::talk_pfoertner() {
 		aad_nr = 338;
 	} else
 		aad_nr = 342;
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 	_G(room)->set_timer_status(1, TIMER_START);
 	_G(det)->set_static_ani(1, -1);
 	showCur();

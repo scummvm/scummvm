@@ -67,7 +67,7 @@ void Room8::stop_folter() {
 
 void Room8::hole_kohle() {
 	if (_G(spieler).R8Kohle) {
-		startAadWait(604, -1);
+		startAadWait(604);
 	} else {
 		hideCur();
 		_G(spieler).R8Kohle = true;
@@ -176,9 +176,9 @@ void Room8::talk_nimoy() {
 		if (!_G(spieler).R8GTuer)
 			loadAdsDia(diaNr);
 		else
-			startAadWait(61, -1);
+			startAadWait(61);
 	} else {
-		startAadWait(603, -1);
+		startAadWait(603);
 		loadAdsDia(6);
 	}
 

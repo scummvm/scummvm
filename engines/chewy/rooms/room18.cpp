@@ -115,7 +115,7 @@ void Room18::entry() {
 	}
 
 	if (!_G(spieler).R18FirstEntry && !_G(spieler).R18Gitter) {
-		startAadWait(39, -1);
+		startAadWait(39);
 		_G(spieler).R18FirstEntry = true;
 	}
 
@@ -364,7 +364,7 @@ short Room18::use_cart_moni() {
 			if (_G(spieler).R18CartFach) {
 				_G(spieler).R18CartSave = true;
 				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATA);
-				startAadWait(120, -1);
+				startAadWait(120);
 			}
 		}
 

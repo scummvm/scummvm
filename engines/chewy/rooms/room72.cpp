@@ -88,7 +88,7 @@ void Room72::proc1(int16 flicNr) {
 	_G(atds)->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).flags28_10 = true;
 	waitShowScreen(7);
-	startAadWait(437, -1);
+	startAadWait(437);
 	flic_cut(flicNr);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;

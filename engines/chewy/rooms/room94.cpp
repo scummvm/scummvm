@@ -143,14 +143,14 @@ int Room94::giveGhostBottle() {
 	flic_cut(FCUT_062);
 	_G(fx_blend) = BLEND3;
 	_G(det)->startDetail(5, 255, false);
-	startAadWait(541, -1);
+	startAadWait(541);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(5);
 	Room66::proc8(3, 3, 2, 617);
 	hideCur();
 	_G(det)->hideStaticSpr(5);
 	_G(det)->startDetail(5, 255, false);
-	startAadWait(622, -1);
+	startAadWait(622);
 	_G(det)->stop_detail(5);
 	_G(det)->startDetail(6, 1, false);	
 	_G(room)->set_timer_status(3, TIMER_STOP);
