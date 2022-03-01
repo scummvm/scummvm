@@ -2707,6 +2707,10 @@ void LB::b_xPlayAnim(int nargs){
 	Video::PacoDecoder *video = new Video::PacoDecoder();
 	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
 
+	// save the current palette
+	byte *origPalette = const_cast<byte *>(g_director->getPalette());
+	uint16 origCount = g_director->getPaletteColorCount();
+
 	Common::Event event;
 	video->start();
 	while (!video->endOfVideo()) {
@@ -2716,21 +2720,23 @@ void LB::b_xPlayAnim(int nargs){
 			if (event.type == Common::EVENT_QUIT)
 				break;
 
-		if (!video->needsUpdate()) 
-			continue;
+		if (video->needsUpdate()) {
+			Graphics::Surface const *frame = video->decodeNextFrame();
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+		}
+		if (video->hasDirtyPalette()) {
+			byte *palette = const_cast<byte *>(video->getPalette());
+			g_director->setPalette(palette, 256);
+		}
 
-		Graphics::Surface const *frame = video->decodeNextFrame();
-		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		g_system->updateScreen();
-
-		byte * palette = const_cast<byte *>(video->getPalette());
-		g_director->setPalette(palette, 256);
-
 		g_system->delayMillis(10);
 
 	}
 	video->close();
 	delete video;
+	// restore the palette
+	g_director->setPalette(origPalette, origCount);
 }
 
 void LB::b_getVolumes(int nargs) {
