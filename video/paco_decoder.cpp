@@ -164,14 +164,14 @@ enum frameTypes {
 const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
 
-	debug(" frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], _fileStream->pos());
+	debug(2, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], _fileStream->pos());
 
 	while (_fileStream->pos() < nextFrame) {
 		int64 currentPos = _fileStream->pos();
 		int frameType = _fileStream->readByte();
 		int v = _fileStream->readByte();
 		uint32 chunkSize =  (v << 16 ) | _fileStream->readUint16BE();
-		debug("  slot type %d size %d @ %lX", frameType, chunkSize, _fileStream->pos() - 4);
+		debug(2, "  slot type %d size %d @ %lX", frameType, chunkSize, _fileStream->pos() - 4);
 
 		switch (frameType) {
 		case AUDIO:
@@ -210,7 +210,6 @@ void PacoDecoder::PacoVideoTrack::handlePalette() {
 	}
 	_dirtyPalette = true;
 }
-
 
 enum {
 	COPY = 0,		// raw copy pixels
@@ -257,13 +256,13 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 	uint compr = _fileStream->readByte();	    	// compression method and flags
 	_fileStream->readByte();						// padding
 
-	debug("    +%d,%d - %dx%d compr %X", x, y, bw, bh, compr);
+	debug(5, "    +%d,%d - %dx%d compr %X", x, y, bw, bh, compr);
 
 	compr = compr & 0xF;
 
 	uint8 *fdata = new uint8[1048576];              // 0x100000 copied from original pacodec
 	_fileStream->read(fdata, chunkSize - 10);       // remove header length
-	debug("pos: %ld", _fileStream->pos());
+	debug(5, "pos: %ld", _fileStream->pos());
 	int16 xpos = x, ypos = y, ypos2 = y;
 	byte *dst = (byte *)_surface->getPixels() + x + y * w;
 
@@ -274,13 +273,13 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 
 	while (ypos < y + bh) {
 		c = *src++;
-		debug("debug info: ypos %d y %d bh %d src: %d", ypos, y, bh, c);
+		debug(5, "debug info: ypos %d y %d bh %d src: %d", ypos, y, bh, c);
 
 		if (c == 0 ){ // long operation
 			int16 op = src[0] >> 4;
 			int16 len = ((src[0] & 0xF) << 8) | src[1];
 			src += 2;
-			debug("    long operation: opcode: %d", op);
+			debug(5, "    long operation: opcode: %d", op);
 			switch (op) {
 			case COPY:
 				while (len--)
@@ -327,15 +326,15 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 				break;
 			default:
 				PUTPIX(0xFF);
-				debug("PacoDecoder::PacoVideoTrack::handleFrame: Long op: 0x0 op %d", op);
+				debug(5, "PacoDecoder::PacoVideoTrack::handleFrame: Long op: 0x0 op %d", op);
 			}
 
 		} else if (c < 128) { // copy the same amount of pixels
-			debug("    copy pixels: %d", c);
+			debug(5, "    copy pixels: %d", c);
 			while (c--)
 				PUTPIX(*src++);
 		} else if (c < 254) { // repeat the following value 256 - op times
-			debug("    copy pixels -op: %d", 256 - c);
+			debug(5, "    copy pixels -op: %d", 256 - c);
 			c1 = *src++;
 			c = 256 - c;
 			while (c--)
@@ -348,7 +347,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 			if (!c) {                                   // compact RLE mode
 				unsigned mask = (src[0] << 8) | src[1];
 				src += 2;
-				debug("debug info compact RLE: c: %d mask: %d", c, mask);
+				debug(5, "debug info compact RLE: c: %d mask: %d", c, mask);
 
 				for (i = 0; i < 16; i++, mask >>= 1) {
 					if (mask & 1)
@@ -361,10 +360,10 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 					if (op == 0) {                      // low nibble....
 						op = len;
 						len = *src++;
-						debug("debug info compact: op: %d", op);
+						debug(5, "debug info compact: op: %d", op);
 						switch (op) {
 						case COPY:
-							debug("debug info COPY: %d", len);
+							debug(5, "debug info COPY: %d", len);
 							while (len--) {
 								c = *src++;
 								PUTPIX(clrs[c >> 4]);
@@ -375,13 +374,13 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 							}
 							break;
 						case RLE:
-							debug("debug info RLE: %d", len);
+							debug(5, "debug info RLE: %d", len);
 							c = *src++;
 							while (len--)
 								PUTPIX(clrs[c & 0xF]);
 							break;
 						case PRLE:
-							debug("debug info PRLE: %d", len);
+							debug(5, "debug info PRLE: %d", len);
 							c = *src++;
 							c1 = clrs[c >> 4];
 							c2 = clrs[c & 0xF];
@@ -391,7 +390,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 							}
 							break;
 						case QRLE:
-							debug("debug info QRLE: %d", len);
+							debug(5, "debug info QRLE: %d", len);
 							c = *src++;
 							c1 = clrs[c >> 4];
 							c2 = clrs[c & 0xF];
@@ -406,19 +405,19 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 							}
 							break;
 						case SKIP:
-							debug("debug info SKIP: %d", len);
+							debug(5, "debug info SKIP: %d", len);
 							while (len--)
 								SKIP();
 							break;
 						case ENDCURRENTLINE:
-							debug("debug info ENDCURRENTLINE: %d", len);
+							debug(5, "debug info ENDCURRENTLINE: %d", len);
 							xpos = x + bw;
 							break;
 						default:
 							warning("PacoDecoder::PacoVideoTrack::handleFrame: Compact RLE mode: 0x0 op %d", op);
 						}
 					} else if (op < 8) {                // copy 1-7 colors
-						debug("debug info copy 1-7 colors: %d", len);
+						debug(5, "debug info copy 1-7 colors: %d", len);
 						PUTPIX(clrs[len]);
 						op--;
 						while (op--) {
@@ -430,17 +429,17 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 							PUTPIX(clrs[c & 0xF]);
 						}
 					} else if (op < 14) {              // repeat color
-						debug("debug info Repeat color: %d", len);
+						debug(5, "debug info Repeat color: %d", len);
 						op = 16 - op;
 						while (op--)
 							PUTPIX(clrs[len]);
 					} else if (op < 15) {               // skip number of pixels in low nibbel
-						debug("debug info Skip number of pixels: %d", len);
+						debug(5, "debug info Skip number of pixels: %d", len);
 						while (len--)
 							SKIP();
 					} else {
 						if (len < 8) {                  // Pair run
-							debug("debug info pair run: %d", len);
+							debug(5, "debug info pair run: %d", len);
 							c = *src++;
 							c1 = clrs[c >> 4];
 							c2 = clrs[c & 0xF];
@@ -449,7 +448,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 								PUTPIX(c2);
 							}
 						} else {                        // Quad run
-							debug("debug info quad run: %d", len);
+							debug(5, "debug info quad run: %d", len);
 							len = 16 - len;
 							c = *src++;
 							c1 = clrs[c >> 4];
@@ -467,7 +466,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 					}
 				}
 			} else {
-				debug("debug info SKIP: %d", c);
+				debug(5, "debug info SKIP: %d", c);
 				while (c--)
 					SKIP();
 			}
@@ -477,7 +476,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 			// (but 256 - len times)
 			c = *src++;
 			if (c < 128) {                             // pair run
-				debug("debug info PAIR RUN: %d", c);
+				debug(5, "debug info PAIR RUN: %d", c);
 
 				c1 = *src++;
 				c2 = *src++;
@@ -486,7 +485,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 					PUTPIX(c2);
 				}
 			} else {                                    // quad run
-				debug("debug info QUAD RUN: %d", c);
+				debug(5, "debug info QUAD RUN: %d", c);
 				c = 256 - c;
 				c1 = *src++;
 				c2 = *src++;
@@ -500,9 +499,9 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 				}
 			}
 		}
-		if (xpos > x + bw) debug("!!!");
+		if (xpos > x + bw) debug(5, "!!!");
 		if (xpos >= x + bw) {
-			debug("debug info ADJUST LINE");
+			debug(5, "debug info ADJUST LINE");
 			xpos = x;
 			ypos++;
 			ADJUST_LINE;
