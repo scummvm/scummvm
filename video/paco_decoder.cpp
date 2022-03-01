@@ -491,8 +491,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
 	}
 
 	_dirtyRects.clear();
-	_dirtyRects.push_back(Common::Rect(x, y, bw, bh));
-
+	_dirtyRects.push_back(Common::Rect(x, y, x + bw, y + bh));
 }
 
 void PacoDecoder::PacoVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
