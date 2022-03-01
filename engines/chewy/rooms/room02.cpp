@@ -57,7 +57,7 @@ void Room2::jump_out_r1(int16 nr) {
 void Room2::electrifyWalkway1() {
 	_G(det)->startDetail(ANI_5, 255, ANI_FRONT);
 	start_spz(CH_TALK6, 255, false, ANI_FRONT);
-	startAadWait(49, -1);
+	startAadWait(49);
 	_G(det)->stop_detail(ANI_5);
 
 	_G(det)->startDetail(GITTER_BLITZEN, 12, ANI_FRONT);
@@ -74,7 +74,7 @@ void Room2::electrifyWalkway1() {
 
 void Room2::electrifyWalkway2() {
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
-	startAadWait(47, -1);
+	startAadWait(47);
 }
 
 void Room2::gedAction(int index) {

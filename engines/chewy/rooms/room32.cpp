@@ -49,12 +49,12 @@ int16 Room32::use_howard() {
 			flic_cut(FCUT_043);
 			_G(atds)->set_steuer_bit(230, ATS_AKTIV_BIT, ATS_DATA);
 			start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(75, -1);
+			startAadWait(75);
 			waitShowScreen(5);
 			autoMove(5, P_CHEWY);
 			waitShowScreen(10);
 			start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(125, -1);
+			startAadWait(125);
 			waitShowScreen(10);
 
 			_G(det)->hideStaticSpr(0);
@@ -82,7 +82,7 @@ int16 Room32::use_howard() {
 
 	if (dia_nr) {
 		start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(dia_nr, -1);
+		startAadWait(dia_nr);
 		action_flag = true;
 	}
 
@@ -144,7 +144,7 @@ void Room32::use_schreibmaschine() {
 	}
 
 	start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-	startAadWait(dia_nr, -1);
+	startAadWait(dia_nr);
 	showCur();
 }
 
@@ -160,7 +160,7 @@ int16 Room32::get_script() {
 		_G(det)->hideStaticSpr(5);
 		_G(atds)->set_ats_str(203, 0, ATS_DATA);
 		start_spz(CH_TALK3, 1, ANI_FRONT, P_CHEWY);
-		startAadWait(91, -1);
+		startAadWait(91);
 	}
 
 	return action_flag;

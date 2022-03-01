@@ -81,7 +81,7 @@ int16 Room14::use_schrott() {
 		if (!_G(spieler).R14Waffe) {
 			action_flag = true;
 			_G(spieler).R14Waffe = true;
-			startAadWait(21, -1);
+			startAadWait(21);
 			invent_2_slot(BWAFFE_INV);
 		}
 	}
@@ -121,7 +121,7 @@ void Room14::talk_eremit()  {
 			_G(obj)->show_sib(46);
 		} else {
 			hideCur();
-			startAadWait(24, -1);
+			startAadWait(24);
 			showCur();
 			_G(flags).AutoAniPlay = false;
 		}
@@ -140,7 +140,7 @@ int16 Room14::use_schleim() {
 		if (!_G(spieler).R14Sicherung) {
 			action_flag = true;
 			_G(spieler).R14Sicherung = true;
-			startAadWait(22, -1);
+			startAadWait(22);
 			invent_2_slot(SICHERUNG_INV);
 		}
 	}
@@ -183,7 +183,7 @@ void Room14::feuer() {
 	if (waffe)
 		autoMove(7, P_CHEWY);
 
-	startAadWait(26, -1);
+	startAadWait(26);
 	_G(det)->hideStaticSpr(9);
 	startSetailWait(3, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(9);

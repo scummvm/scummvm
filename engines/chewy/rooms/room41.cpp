@@ -47,7 +47,7 @@ void Room41::entry() {
 			startAniBlock(2, ABLOCK32);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
-			startAadWait(127, -1);
+			startAadWait(127);
 		} else {
 			_G(det)->startDetail(6, 255, ANI_FRONT);
 		}
@@ -99,23 +99,23 @@ void Room41::talk_hoggy1() {
 
 	} else if (!_G(spieler).R41Einbruch) {
 		showCur();
-		start_ads_wait(11);
+		startAdsWait(11);
 
 	} else if (_G(spieler).R41Einbruch) {
 		if (!_G(spieler).R41BruchInfo) {
 			_G(spieler).R41BruchInfo = true;
-			startAadWait(132, -1);
-			startAadWait(128, -1);
+			startAadWait(132);
+			startAadWait(128);
 		} else if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
-			startAadWait(131, -1);
+			startAadWait(131);
 			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
 		} else {
-			startAadWait(130, -1);
+			startAadWait(130);
 		}
 	} else {
-		startAadWait(130, -1);
+		startAadWait(130);
 	}
 
 	start_hoggy();
@@ -131,15 +131,15 @@ void Room41::talk_hoggy2() {
 	} else if (_G(spieler).R41BruchInfo) {
 		if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
 			_G(spieler).R41KuerbisInfo = true;
-			startAadWait(131, -1);
+			startAadWait(131);
 			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
 
 		} else {
-			startAadWait(129, -1);
+			startAadWait(129);
 		}
 	} else {
-		startAadWait(129, -1);
+		startAadWait(129);
 	}
 
 	start_hoggy();
@@ -147,7 +147,7 @@ void Room41::talk_hoggy2() {
 
 void Room41::first_talk() {
 	_G(spieler).R41FirstTalk = true;
-	startAadWait(134, -1);
+	startAadWait(134);
 	_G(atds)->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATA);
 	_G(atds)->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATA);
 }
@@ -180,7 +180,7 @@ int16 Room41::use_kasse() {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(1, P_CHEWY);
-		startAadWait(133, -1);
+		startAadWait(133);
 		start_hoggy();
 	}
 
@@ -217,7 +217,7 @@ int16 Room41::use_brief() {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(6, P_CHEWY);
-		startAadWait(126, -1);
+		startAadWait(126);
 		start_hoggy();
 
 	} else if (is_cur_inventar(BRIEF2_INV)) {
@@ -225,7 +225,7 @@ int16 Room41::use_brief() {
 		autoMove(6, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		stop_hoggy();
-		startAadWait(186, -1);
+		startAadWait(186);
 		start_hoggy();
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
 		_G(spieler).R28Briefkasten = true;
@@ -240,17 +240,17 @@ int16 Room41::use_brief() {
 
 void Room41::sub_dia() {
 	aadWait(-1);
-	startAadWait(161, -1);
+	startAadWait(161);
 
 	if (_G(spieler).R41LolaOk) {
-		startAadWait(163, -1);
+		startAadWait(163);
 		_G(atds)->hide_item(11, 0, 2);
 		stop_ads_dialog();
 		autoMove(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);
 
 	} else {
-		startAadWait(162, -1);
+		startAadWait(162);
 	}
 }
 

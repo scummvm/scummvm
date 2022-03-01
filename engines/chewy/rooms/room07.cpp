@@ -70,7 +70,7 @@ void Room7::haken(int16 sib_nr) {
 
 	_G(obj)->calc_all_static_detail();
 	_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATA);
-	startAadWait(dia_nr, -1);
+	startAadWait(dia_nr);
 }
 
 void Room7::klingel() {

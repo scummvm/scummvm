@@ -489,11 +489,11 @@ void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY,
 void load_chewy_taf(int16 taf_nr);
 
 bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode);
-void startAadWait(int16 diaNr, int16 strNr);
+void startAadWait(int16 diaNr);
 
 void start_aad(int16 diaNr);
 void aadWait(int16 strNr);
-void start_ads_wait(int16 diaNr);
+void startAdsWait(int16 diaNr);
 void start_aad(int16 diaNr, int16 ssiNr);
 void wait_auto_obj(int16 nr);
 

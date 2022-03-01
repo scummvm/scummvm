@@ -56,7 +56,7 @@ void Room33::surimy_go() {
 			_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(158, -1);
+			startAadWait(158);
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
 			showCur();
@@ -158,7 +158,7 @@ void Room33::use_maschine() {
 		}
 
 		start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(dia_nr, -1);
+		startAadWait(dia_nr);
 
 		if (_G(spieler).R33MunterOk) {
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -166,7 +166,7 @@ void Room33::use_maschine() {
 			flic_cut(FCUT_031);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(71, -1);
+			startAadWait(71);
 			_G(atds)->del_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATA);
 		}
 
@@ -178,7 +178,7 @@ void Room33::use_maschine() {
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
-		startAadWait(70, -1);
+		startAadWait(70);
 	}
 
 	showCur();
@@ -208,7 +208,7 @@ int16 Room33::get_munter() {
 		_G(atds)->set_steuer_bit(225, ATS_AKTIV_BIT, ATS_DATA);
 		_G(det)->hideStaticSpr(3);
 		start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(72, -1);
+		startAadWait(72);
 		showCur();
 	}
 

@@ -218,7 +218,7 @@ void Room21::salto() {
 
 		startAniBlock(3, ABLOCK19);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		startAadWait(36, -1);
+		startAadWait(36);
 		_G(flags).AutoAniPlay = false;
 	}
 }
@@ -249,7 +249,7 @@ int16 Room21::use_fenster() {
 		switch_room(18);
 
 		if (!_G(spieler).R18FirstEntry) {
-			startAadWait(39, -1);
+			startAadWait(39);
 			_G(spieler).R18FirstEntry = true;
 		}
 

@@ -58,7 +58,7 @@ void Room89::entry() {
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 537;
 		switch_room(92);
-		startAadWait(490, -1);
+		startAadWait(490);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -176,7 +176,7 @@ int Room89::proc2() {
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 489;
 	switch_room(92);
-	startAadWait(490, -1);
+	startAadWait(490);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
@@ -205,7 +205,7 @@ int Room89::proc4() {
 		_G(det)->hideStaticSpr(6);
 		new_invent_2_cur(111);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(491, -1);
+		startAadWait(491);
 	} else {
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);

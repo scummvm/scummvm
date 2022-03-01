@@ -120,7 +120,7 @@ void Room6::bola_knopf() {
 			++_G(spieler).R6BolaJoke;
 			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
 			start_spz(CH_TALK5, 244, false, 0);
-			startAadWait(diaNr, -1);
+			startAadWait(diaNr);
 		}
 		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 	}

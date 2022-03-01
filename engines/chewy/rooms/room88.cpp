@@ -98,7 +98,7 @@ int Room88::proc3() {
 	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
 		hideCur();
 		if (_G(spieler).flags32_10) {
-			startAadWait(480, -1);
+			startAadWait(480);
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
@@ -108,10 +108,10 @@ int Room88::proc3() {
 			_G(spieler).flags32_40 = true;
 			switch_room(84);
 		} else {
-			startAadWait(465, -1);
+			startAadWait(465);
 		}
 	} else {
-		startAadWait(466, -1);
+		startAadWait(466);
 		start_spz_wait(13, 1, false, P_CHEWY);
 
 		const int aniNr = 1 + (_G(spieler).flags31_10 ? 1 : 0);

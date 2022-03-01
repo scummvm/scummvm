@@ -41,7 +41,7 @@ void Room10::entry() {
 		autoMove(2, P_CHEWY);
 		hideCur();
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(101, 0);
+		startAadWait(101);
 		showCur();
 
 	} else if (_G(spieler).R10SurimyOk) {

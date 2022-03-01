@@ -78,7 +78,7 @@ void Room69::setup_func() {
 void Room69::look_schild() {
 	hideCur();
 	autoMove(1, P_CHEWY);
-	startAadWait(382, -1);
+	startAadWait(382);
 	showCur();
 }
 

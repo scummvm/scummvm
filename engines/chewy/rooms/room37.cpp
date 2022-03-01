@@ -81,7 +81,7 @@ void Room37::gedAction(int index) {
 			stopPerson(P_CHEWY);
 			_G(spieler).R37Mes = true;
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(142, -1);
+			startAadWait(142);
 		}
 	}
 }
@@ -111,7 +111,7 @@ short Room37::use_wippe() {
 			_G(flags).NoScroll = true;
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(159, -1);
+			startAadWait(159);
 			del_inventar(_G(spieler).AkInvent);
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
@@ -123,7 +123,7 @@ short Room37::use_wippe() {
 
 		} else {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(160, -1);
+			startAadWait(160);
 		}
 	}
 
@@ -173,7 +173,7 @@ int16 Room37::use_glas() {
 			_G(flags).NoScroll = true;
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(147, -1);
+			startAadWait(147);
 			del_inventar(_G(spieler).AkInvent);
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
@@ -185,7 +185,7 @@ int16 Room37::use_glas() {
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(spieler).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(146, -1);
+			startAadWait(146);
 			showCur();
 			_G(flags).NoScroll = false;
 			g_engine->_sound->playSound(3);
@@ -258,7 +258,7 @@ void Room37::dog_bell() {
 
 		if (dia_nr != -1) {
 			start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(dia_nr, -1);
+			startAadWait(dia_nr);
 		}
 	}
 
@@ -274,7 +274,7 @@ void Room37::talk_hahn() {
 	if (!_G(spieler).R37TransHahn) {
 		_G(cur_hide_flag) = 0;
 		hideCur();
-		startAadWait(145, -1);
+		startAadWait(145);
 		showCur();
 	} else {
 		hahn_dia();
@@ -328,13 +328,13 @@ void Room37::use_hahn() {
 			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATA);
 			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(141, -1);
+			startAadWait(141);
 			_G(obj)->addInventory(EIER_INV, &_G(room_blk));
 			inventory_2_cur(EIER_INV);
 			showCur();
 		}
 	} else if (_G(spieler).inv_cur) {
-		startAadWait(143, -1);
+		startAadWait(143);
 	}
 }
 
@@ -345,7 +345,7 @@ void Room37::hahn_dia() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	switch_room(38);
-	start_ads_wait(9);
+	startAdsWait(9);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(spieler).scrollx = tmp_scrollx;

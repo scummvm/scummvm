@@ -82,7 +82,7 @@ int16 Room29::use_pumpe() {
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
 			action_flag = true;
-			startAadWait(62, -1);
+			startAadWait(62);
 		}
 
 		showCur();
@@ -145,7 +145,7 @@ void Room29::schlitz_sitz() {
 		_G(det)->showStaticSpr(9);
 		_G(det)->hideStaticSpr(11);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
-		startAadWait(63, -1);
+		startAadWait(63);
 
 		_G(det)->stop_detail(2);
 		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);

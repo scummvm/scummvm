@@ -124,7 +124,7 @@ void Room3::terminal() {
 		} else if (!_G(spieler).R2FussSchleim) {
 			startAniBlock(2, ABLOCK2);
 			Room2::jump_out_r1(9);
-			startAadWait(45, -1);
+			startAadWait(45);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
 			startAniBlock(2, ABLOCK1);
@@ -146,7 +146,7 @@ void Room3::terminal() {
 		_G(minfo).button = 0;
 		stopPerson(P_CHEWY);
 		start_spz(15, 255, false, P_CHEWY);
-		startAadWait(51, -1);
+		startAadWait(51);
 		setupScreen(DO_SETUP);
 		break;
 
@@ -245,7 +245,7 @@ void Room3::sonde_knarre() {
 	}
 
 	start_spz(15, 255, false, P_CHEWY);
-	startAadWait(53, -1);
+	startAadWait(53);
 	clear_prog_ani();
 	_G(det)->startDetail(SONDE_REIN, 1, ANI_BACK);
 	while (_G(det)->get_ani_status(SONDE_REIN)) {

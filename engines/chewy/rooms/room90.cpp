@@ -78,7 +78,7 @@ void Room90::entry(int16 eib_nr) {
 
 	if (!_G(spieler).flags33_10) {
 		_G(flags).ZoomMov = false;
-		startAadWait(498, -1);
+		startAadWait(498);
 		goAutoXy(-20, 121, P_HOWARD, ANI_GO);
 		autoMove(1, P_CHEWY);
 		startDetailFrame(2, 1, ANI_FRONT, 3);
@@ -89,7 +89,7 @@ void Room90::entry(int16 eib_nr) {
 		switch_room(91);
 
 	} else if (!_G(spieler).flags33_20) {
-		startAadWait(499, -1);
+		startAadWait(499);
 		_G(spieler).flags33_20 = true;
 
 	} else if (_G(spieler).flags34_20) {
@@ -97,7 +97,7 @@ void Room90::entry(int16 eib_nr) {
 		setPersonPos(440, 132, P_HOWARD, P_RIGHT);
 		_G(spieler).scrollx = 176;
 		_G(spieler).flags34_20 = false;
-		startAadWait(520, -1);
+		startAadWait(520);
 	}
 
 	_G(HowardMov) = 0;
@@ -227,7 +227,7 @@ void Room90::proc2() {
 		}
 
 		hideCur();
-		startAadWait(-1, diaNr);
+		startAadWait(diaNr);
 		showCur();
 	}
 	_G(flags).AutoAniPlay = false;
@@ -239,7 +239,7 @@ int Room90::getHubcaps() {
 
 	hideCur();
 	autoMove(3, P_CHEWY);
-	startAadWait(515, -1);
+	startAadWait(515);
 	start_spz_wait(14, 1, false, P_CHEWY);
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
@@ -251,7 +251,7 @@ int Room90::getHubcaps() {
 
 	start_spz_wait(47, 1, false, P_HOWARD);
 	_G(spieler).mi[1] = 2;
-	startAadWait(516, -1);
+	startAadWait(516);
 	_G(spieler).flags34_40 = true;
 	_G(spieler).flags35_1 = true;
 	autoMove(4, P_CHEWY);
@@ -270,7 +270,7 @@ int Room90::getHubcaps() {
 		SHOULD_QUIT_RETURN0;
 	}
 
-	startAadWait(517, -1);
+	startAadWait(517);
 	_G(spieler).flags35_1 = false;
 	_G(atds)->set_steuer_bit(517, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->del_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATA);
@@ -339,7 +339,7 @@ int Room90::useSurimyOnWreck() {
 	_G(det)->hideStaticSpr(5);
 	_G(spieler).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
-	startAadWait(519, -1);
+	startAadWait(519);
 	_G(atds)->set_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATA);
 
 	showCur();

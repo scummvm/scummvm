@@ -51,7 +51,7 @@ void Room91::entry() {
 		setPersonPos(536, 90, P_HOWARD, P_RIGHT);
 		if (!_G(spieler).flags34_2) {
 			_G(spieler).flags34_2 = true;
-			startAadWait(503, -1);
+			startAadWait(503);
 		}
 	} else {
 		_G(flags).MainInput = false;
@@ -61,7 +61,7 @@ void Room91::entry() {
 		setPersonPos(312, 75, P_HOWARD, P_RIGHT);
 		_G(spieler).SVal3 = 0;
 		_G(spieler).flags34_4 = true;
-		startAadWait(502, -1);
+		startAadWait(502);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(det)->startDetail(0, 255, false);
 
@@ -129,7 +129,7 @@ void Room91::setup_func() {
 			hideCur();
 			autoMove(1, P_CHEWY);
 			stop_spz();
-			startAadWait(505, -1);
+			startAadWait(505);
 			_G(spieler).PersonHide[P_HOWARD] = true;
 			startSetailWait(9, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_HOWARD] = false;

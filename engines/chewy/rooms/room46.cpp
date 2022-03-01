@@ -56,11 +56,11 @@ void Room46::entry(int16 eib_nr) {
 
 			start_spz_wait(64, 1, false, P_CHEWY);
 			start_spz(65, 255, false, P_CHEWY);
-			startAadWait(494, -1);
+			startAadWait(494);
 			_G(spieler).SVal2 = 504;
 			switch_room(92);
 			start_spz(65, 255, false, P_CHEWY);
-			startAadWait(495, -1);
+			startAadWait(495);
 			_G(spieler).room_e_obj[78].Exit = 90;
 			showCur();
 		}
@@ -100,31 +100,31 @@ void Room46::bodo() {
 	hideCur();
 	_G(det)->showStaticSpr(0);
 	_G(person_end_phase)[P_CHEWY] = P_RIGHT;
-	startAadWait(240, -1);
+	startAadWait(240);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	goAutoXy(42, 76, P_CHEWY, ANI_WAIT);
-	startAadWait(250, -1);
+	startAadWait(250);
 	autoMove(1, P_CHEWY);
 	setPersonSpr(P_RIGHT, P_CHEWY);
-	startAadWait(251, -1);
+	startAadWait(251);
 	autoMove(2, P_CHEWY);
 
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	startSetailWait(0, 1, ANI_FRONT);
 	_G(det)->startDetail(5, 255, ANI_FRONT);
-	startAadWait(241, -1);
+	startAadWait(241);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(5);
-	startAadWait(609, -1);
+	startAadWait(609);
 	_G(det)->hideStaticSpr(5);
 	startSetailWait(2, 1, ANI_FRONT);
 	startSetailWait(3, 1, ANI_FRONT);
 	_G(det)->startDetail(4, 255, ANI_FRONT);
-	startAadWait(242, -1);
+	startAadWait(242);
 	_G(det)->stop_detail(4);
 
 	_G(det)->showStaticSpr(6);
-	startAadWait(610, -1);
+	startAadWait(610);
 	_G(det)->hideStaticSpr(6);
 	startSetailWait(6, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(3);
@@ -142,7 +142,7 @@ void Room46::bodo() {
 	_G(spieler).R28ChewyPump = false;
 	
 	setPersonPos(213, 118, P_CHEWY, P_RIGHT);
-	startAadWait(243, -1);
+	startAadWait(243);
 	invent_2_slot(UHR_INV);
 	invent_2_slot(RING_INV);
 	_G(spieler).R46GetLeder = true;
@@ -191,7 +191,7 @@ int16 Room46::use_schloss() {
 			autoMove(1, P_CHEWY);
 			switch_room(47);
 		} else {
-			startAadWait(252, -1);
+			startAadWait(252);
 		}
 	}
 

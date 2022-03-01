@@ -62,7 +62,7 @@ void Room31::surimy_go() {
 			_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			startAadWait(157, -1);
+			startAadWait(157);
 			wait_auto_obj(SURIMY_OBJ);
 			_G(auto_obj) = 0;
 			showCur();
@@ -206,7 +206,7 @@ int16 Room31::use_topf() {
 	
 	if (dia_nr != -1) {
 		start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(dia_nr, -1);
+		startAadWait(dia_nr);
 		action_flag = true;
 	}
 

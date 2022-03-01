@@ -66,7 +66,7 @@ void Room53::talk_man() {
 	_G(det)->del_static_ani(1);
 	startSetailWait(2, 1, ANI_FRONT);
 	_G(det)->set_static_ani(3, -1);
-	startAadWait(269 + (_G(spieler).R53Kostuem ? 1 : 0), -1);
+	startAadWait(269 + (_G(spieler).R53Kostuem ? 1 : 0));
 	_G(det)->del_static_ani(3);
 	startSetailWait(4, 1, ANI_FRONT);
 	man_go();
@@ -82,7 +82,7 @@ int16 Room53::use_man() {
 		_G(spieler).R53Kostuem = true;
 		del_inventar(_G(spieler).AkInvent);
 		autoMove(2, P_CHEWY);
-		startAadWait(271, -1);
+		startAadWait(271);
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);
 		startAniBlock(7, ABLOCK35);

@@ -83,7 +83,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(spieler).room_e_obj[127].Attribut = 255;
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);
-		startAadWait(474, -1);
+		startAadWait(474);
 		flic_cut(FCUT_090);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -92,7 +92,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(det)->hideStaticSpr(6);
 		_G(spieler).scrollx = 25;
 		_G(fx_blend) = BLEND3;
-		startAadWait(475, -1);
+		startAadWait(475);
 		start_aad(476, -1);
 		flic_cut(FCUT_089);
 		register_cutscene(25);

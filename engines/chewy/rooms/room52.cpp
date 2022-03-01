@@ -86,7 +86,7 @@ int16 Room52::use_hot_dog() {
 		_G(atds)->set_ats_str(341, 1, ATS_DATA);
 		autoMove(2, P_CHEWY);
 		setPersonSpr(P_LEFT, P_CHEWY);
-		startAadWait(288, -1);
+		startAadWait(288);
 
 	} else if (is_cur_inventar(KILLER_INV)) {
 		action_ret = true;
@@ -109,7 +109,7 @@ int16 Room52::use_hot_dog() {
 		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATA);
-		startAadWait(303, -1);
+		startAadWait(303);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(spieler).R52KakerWeg = true;
 	}
@@ -130,7 +130,7 @@ void Room52::kaker_platt() {
 		_G(spieler).R52KakerJoke = true;
 		stopPerson(P_CHEWY);
 		hideCur();
-		startAadWait(289, -1);
+		startAadWait(289);
 		showCur();
 	}
 }

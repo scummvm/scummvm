@@ -448,7 +448,7 @@ void startAniBlock(int16 nr, const AniBlock *ab) {
 	_G(maus_links_click) = oldMouseLinksClick;
 }
 
-void startAadWait(int16 diaNr, int16 strNr) {
+void startAadWait(int16 diaNr) {
 	const int16 oldMouseLinksClick = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	_G(talk_start_ani) = -1;
@@ -558,7 +558,7 @@ void start_aad(int16 diaNr, int16 ssiNr) {
 	_G(atds)->start_aad(diaNr);
 }
 
-void start_ads_wait(int16 diaNr) {
+void startAdsWait(int16 diaNr) {
 	if (!_G(flags).AdsDialog) {
 		_G(menu_item) = CUR_TALK;
 		cursorChoice(_G(menu_item));

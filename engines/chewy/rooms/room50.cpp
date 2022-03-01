@@ -45,7 +45,7 @@ void Room50::entry(int16 eib_nr) {
 		_G(maus_links_click) = false;
 		setPersonPos(1, 64, P_HOWARD, P_RIGHT);
 		setPersonPos(92, 123, P_CHEWY, P_LEFT);
-		startAadWait(510, -1);
+		startAadWait(510);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -148,7 +148,7 @@ void Room50::calc_treppe() {
 			auto_scroll(40, 0);
 			stop_page();
 			_G(det)->set_static_ani(5, -1);
-			startAadWait(272, -1);
+			startAadWait(272);
 			autoMove(3, P_CHEWY);
 			aad_page(273, 5);
 			_G(flags).NoScroll = false;
@@ -173,7 +173,7 @@ int16 Room50::use_gutschein() {
 			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
-			startAadWait(276, -1);
+			startAadWait(276);
 		}
 	}
 
@@ -206,12 +206,12 @@ int16 Room50::use_gum() {
 		startSetailWait(2, 1, ANI_BACK);
 		show_person();
 		setPersonSpr(P_LEFT, P_CHEWY);
-		startAadWait(275, -1);
+		startAadWait(275);
 		_G(det)->del_static_ani(5);
 		startSetailWait(9, 1, ANI_FRONT);
 		_G(det)->del_static_ani(5);
 		_G(det)->set_static_ani(10, -1);
-		startAadWait(277, -1);
+		startAadWait(277);
 		_G(SetUpScreenFunc) = setup_func;
 		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -230,12 +230,12 @@ int16 Room50::use_gum() {
 }
 
 void Room50::talk_page() {
-	startAadWait(276, -1);
+	startAadWait(276);
 }
 
 void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	_G(det)->set_static_ani(ani_nr, -1);
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 	_G(det)->del_static_ani(ani_nr);
 	startSetailWait(6, 1, ANI_BACK);
 	go_page();

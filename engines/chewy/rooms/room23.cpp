@@ -59,20 +59,20 @@ int16 Room23::start_gleiter() {
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		if (!_G(spieler).R23FluxoFlex)
-			startAadWait(23, -1);
+			startAadWait(23);
 		else {
 			bool start_ok = true;
 
 			if (_G(spieler).R23GleiterExit == 16) {
 				if (!_G(spieler).R16F5Exit) {
 					start_ok = false;
-					startAadWait(35, -1);
+					startAadWait(35);
 				} else if (!_G(spieler).R23Cartridge || !_G(spieler).R18CartSave) {
 					start_ok = false;
-					startAadWait(41, -1);
+					startAadWait(41);
 				} else if (!_G(spieler).R17EnergieOut) {
 					start_ok = false;
-					startAadWait(300, -1);
+					startAadWait(300);
 				}
 			}
 
@@ -99,7 +99,7 @@ int16 Room23::start_gleiter() {
 					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
 					_G(spieler).DelaySpeed = 10;
-					startAadWait(59, -1);
+					startAadWait(59);
 					stopPerson(P_CHEWY);
 					_G(maus_links_click) = false;
 

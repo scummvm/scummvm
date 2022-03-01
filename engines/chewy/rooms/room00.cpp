@@ -64,7 +64,7 @@ void Room0::entry() {
 		}
 
 		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(2, -1);
+		startAadWait(2);
 
 		showCur();
 	}
@@ -82,27 +82,27 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 
 			_G(flags).AutoAniPlay = true;
 			if (!_G(spieler).R0SlimeUsed) {
-				startAadWait(42, -1);
+				startAadWait(42);
 				autoMove(5, P_CHEWY);
 				setPersonSpr(P_LEFT, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
 					start_spz(CH_TALK3, 255, false, P_CHEWY);
 					if (_G(spieler).R0FueterLab)
-						startAadWait(618, -1);
+						startAadWait(618);
 					else
-						startAadWait(43, -1);
+						startAadWait(43);
 
 					++_G(spieler).R0FueterLab;
 				}
 
 				eyeAnim();
 			} else if (!_G(spieler).R0PillowThrow) {
-				startAadWait(42, -1);
+				startAadWait(42);
 				start_spz(CH_TALK3, 255, false, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
-					startAadWait(43, -1);
+					startAadWait(43);
 					++_G(spieler).R0FueterLab;
 				}
 

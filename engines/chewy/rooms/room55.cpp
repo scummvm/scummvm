@@ -144,7 +144,7 @@ int16 Room55::use_stapel1() {
 
 		} else if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk) {
 			action_ret = true;
-			startAadWait(333, -1);
+			startAadWait(333);
 		}
 	} else if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
@@ -156,7 +156,7 @@ int16 Room55::use_stapel1() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(atds)->set_ats_str(354, 2, ATS_DATA);
 		} else {
-			startAadWait(326, -1);
+			startAadWait(326);
 		}
 	}
 	showCur();
@@ -170,7 +170,7 @@ int16 Room55::use_stapel2() {
 	if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
 		hideCur();
-		startAadWait(327, -1);
+		startAadWait(327);
 		showCur();
 	}
 
@@ -190,7 +190,7 @@ int16 Room55::use_telefon() {
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				startSetailWait(10, 1, ANI_FRONT);
 				_G(det)->startDetail(11, 255, ANI_FRONT);
-				startAadWait(329, -1);
+				startAadWait(329);
 				_G(det)->stop_detail(11);
 				startSetailWait(10, 1, ANI_BACK);
 
@@ -198,15 +198,15 @@ int16 Room55::use_telefon() {
 				autoMove(7, P_CHEWY);
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
-				startAadWait(330, -1);
+				startAadWait(330);
 				_G(det)->showStaticSpr(8);
 				startSetailWait(0, 1, ANI_FRONT);
 				_G(det)->startDetail(1, 255, ANI_FRONT);
-				startAadWait(331, -1);
+				startAadWait(331);
 				_G(det)->stop_detail(1);
 
 				_G(det)->showStaticSpr(16);
-				startAadWait(608, -1);
+				startAadWait(608);
 				_G(det)->hideStaticSpr(16);
 				startSetailWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
@@ -219,9 +219,9 @@ int16 Room55::use_telefon() {
 				setPersonPos(66, 73, P_HOWARD, P_RIGHT);
 				_G(SetUpScreenFunc) = nullptr;
 				_G(det)->set_static_ani(18, -1);
-				startAadWait(334, -1);
-				startAadWait(335, -1);
-				startAadWait(336, -1);
+				startAadWait(334);
+				startAadWait(335);
+				startAadWait(336);
 				const int16 tmp_delay = _G(spieler).DelaySpeed;
 
 				for (int16 i = 0; i < 7; i++) {
@@ -258,12 +258,12 @@ int16 Room55::use_telefon() {
 				switch_room(54);
 			} else {
 				hideCur();
-				startAadWait(332, -1);
+				startAadWait(332);
 				showCur();
 			}
 		} else {
 			hideCur();
-			startAadWait(328, -1);
+			startAadWait(328);
 			showCur();
 		}
 	}
@@ -280,7 +280,7 @@ void Room55::get_job() {
 	switch_room(61);
 
 	showCur();
-	start_ads_wait(15);
+	startAdsWait(15);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(spieler).scrollx = oldScrollx;
@@ -361,7 +361,7 @@ int16 Room55::use_kammeraus() {
 		action_ret = true;
 
 		if (!_G(spieler).R52KakerWeg)
-			startAadWait(325, -1);
+			startAadWait(325);
 		else if (!_G(spieler).R55SekWeg) {
 			hideCur();
 			_G(spieler).PersonHide[P_CHEWY] = true;
@@ -445,7 +445,7 @@ void Room55::talk_line() {
 		_G(spieler).R55ExitDia = 324;
 	}
 
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 
 	if (_G(spieler).R55SekWeg) {
 		_G(det)->del_static_ani(16);

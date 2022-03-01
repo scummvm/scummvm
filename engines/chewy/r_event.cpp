@@ -1482,7 +1482,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(spieler).R40Geld = true;
 		start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(201, -1);
+		startAadWait(201);
 		break;
 
 	case SIB_VISIT_R53:
@@ -1515,9 +1515,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(det)->showStaticSpr(7);
 		_G(cur_hide_flag) = false;
 		hideCur();
-		startAadWait(406, -1);
+		startAadWait(406);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 66)
-			startAadWait(613, -1);
+			startAadWait(613);
 		showCur();
 		break;
 
@@ -1637,7 +1637,7 @@ void sib_event_inv(int16 sib_nr) {
 		del_inventar(_G(spieler).AkInvent);
 		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATA);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(115, 0);
+		startAadWait(115);
 
 		if (_G(spieler).R12TransOn)
 			Room12::use_linke_rohr();
@@ -1660,9 +1660,9 @@ void sib_event_inv(int16 sib_nr) {
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
 			_G(atds)->set_ats_str(26, 1, INV_ATS_DATA);
-			startAadWait(120, -1);
+			startAadWait(120);
 		} else {
-			startAadWait(121, -1);
+			startAadWait(121);
 		}
 		break;
 

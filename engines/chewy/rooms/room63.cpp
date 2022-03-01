@@ -45,7 +45,7 @@ void Room63::entry() {
 		_G(det)->stop_detail(10);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		auto_scroll(58, 0);
-		startAadWait(355, -1);
+		startAadWait(355);
 		_G(det)->stop_detail(11);
 		_G(det)->startDetail(10, 255, ANI_FRONT);
 		showCur();
@@ -140,10 +140,10 @@ void Room63::bork_platt() {
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	autoMove(6, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	startAadWait(370, -1);
+	startAadWait(370);
 	startSetailWait(4, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(13);
-	startAadWait(361, -1);
+	startAadWait(361);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_079);
@@ -161,7 +161,7 @@ void Room63::talk_hunter() {
 	if (_G(spieler).R63Uhr)
 		_G(det)->hideStaticSpr(10);
 	_G(det)->startDetail(10, 255, ANI_FRONT);
-	startAadWait(356, -1);
+	startAadWait(356);
 	if (_G(spieler).R63Uhr) {
 		_G(det)->showStaticSpr(10);
 		_G(det)->stop_detail(10);
@@ -176,7 +176,7 @@ void Room63::talk_regie() {
 		_G(det)->hideStaticSpr(12);
 	_G(det)->stop_detail(18);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
-	startAadWait(357, -1);
+	startAadWait(357);
 	_G(det)->stop_detail(19);
 	if (_G(spieler).R63Uhr) {
 		_G(det)->showStaticSpr(12);
@@ -189,7 +189,7 @@ void Room63::talk_regie() {
 void Room63::talk_fx_man() {
 	hideCur();
 	autoMove(1, P_CHEWY);
-	startAadWait(358, -1);
+	startAadWait(358);
 	showCur();
 }
 
@@ -201,11 +201,11 @@ int16 Room63::use_fx_man() {
 		autoMove(1, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		remove_inventory(34);
-		startAadWait(359, -1);
+		startAadWait(359);
 		_G(det)->del_static_ani(5);
 		startSetailWait(6, 1, ANI_FRONT);
 		_G(det)->startDetail(7, 255, ANI_FRONT);
-		startAadWait(362, -1);
+		startAadWait(362);
 		_G(det)->stop_detail(7);
 		startSetailWait(8, 1, ANI_FRONT);
 		_G(spieler).R63FxMannWeg = true;
@@ -237,13 +237,13 @@ int16 Room63::use_schalter() {
 				startSetailWait(24, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(1);
 				_G(det)->hideStaticSpr(2);
-				startAadWait(364, -1);
+				startAadWait(364);
 				_G(atds)->set_ats_str(385, 1, ATS_DATA);
 				showCur();
 			}
 		} else {
 			hideCur();
-			startAadWait(363, -1);
+			startAadWait(363);
 			showCur();
 		}
 	}
@@ -255,7 +255,7 @@ void Room63::talk_girl() {
 	_G(det)->stop_detail(12);
 	startSetailWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
-	start_ads_wait(17);
+	startAdsWait(17);
 	_G(det)->del_static_ani(14);
 	_G(det)->startDetail(12, 255, ANI_FRONT);
 }
@@ -270,10 +270,10 @@ int16 Room63::use_girl() {
 		_G(det)->stop_detail(12);
 		startSetailWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
-		startAadWait(365, -1);
+		startAadWait(365);
 		_G(det)->del_static_ani(14);
 		_G(det)->startDetail(15, 255, ANI_FRONT);
-		startAadWait(360, -1);
+		startAadWait(360);
 		_G(det)->stop_detail(15);
 		startSetailWait(16, 1, ANI_FRONT);
 		_G(spieler).R63Uhr = true;
@@ -284,7 +284,7 @@ int16 Room63::use_girl() {
 		_G(atds)->set_ats_str(381, 1, ATS_DATA);
 		_G(atds)->set_ats_str(382, 1, ATS_DATA);
 		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATA);
-		startAadWait(367, -1);
+		startAadWait(367);
 		showCur();
 	}
 	return action_ret;
@@ -309,7 +309,7 @@ int16 Room63::use_aschenbecher() {
 				_G(det)->startDetail(18, 255, ANI_FRONT);
 				_G(det)->hideStaticSpr(10);
 				_G(det)->hideStaticSpr(12);
-				startAadWait(368, -1);
+				startAadWait(368);
 				flic_cut(FCUT_080);
 				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATA);
 				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATA);
@@ -321,9 +321,9 @@ int16 Room63::use_aschenbecher() {
 				switch_room(64);
 				_G(flags).NoScroll = false;
 			} else
-				startAadWait(369, -1);
+				startAadWait(369);
 		} else
-			startAadWait(366, -1);
+			startAadWait(366);
 		
 		showCur();
 	}

@@ -52,7 +52,7 @@ void Room1::gedAction(int index) {
 		}
 
 		if (flag) {
-			startAadWait(54, -1);
+			startAadWait(54);
 			_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
 			_G(obj)->calc_rsi_flip_flop(KABELABDECKUNG);

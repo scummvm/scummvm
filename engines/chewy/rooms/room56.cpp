@@ -100,7 +100,7 @@ void Room56::entry() {
 			_G(maus_links_click) = false;
 			_G(atds)->stop_aad();
 			hideCur();
-			startAadWait(306, -1);
+			startAadWait(306);
 			showCur();
 			flic_cut(FCUT_076);
 			mode = 1;
@@ -239,10 +239,10 @@ int16 Room56::use_taxi() {
 void Room56::talk_man() {
 	autoMove(3, P_CHEWY);
 	if (!_G(spieler).R56AbfahrtOk) {
-		start_ads_wait(16);
+		startAdsWait(16);
 	} else if (!_G(spieler).R62Flucht) {
 		hideCur();
-		startAadWait(343, -1);
+		startAadWait(343);
 		showCur();
 	}
 }
@@ -263,7 +263,7 @@ int16 Room56::use_man() {
 		startSetailWait(4, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(5, -1);
-		startAadWait(304, -1);
+		startAadWait(304);
 		_G(det)->del_static_ani(5);
 		_G(room)->set_timer_status(0, TIMER_START);
 		_G(det)->set_static_ani(0, -1);
@@ -273,7 +273,7 @@ int16 Room56::use_man() {
 		startSetailWait(6, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(1, -1);
-		startAadWait(305, -1);
+		startAadWait(305);
 		_G(det)->del_static_ani(1);
 	}
 	_G(room)->set_timer_status(0, TIMER_START);
@@ -290,7 +290,7 @@ int16 Room56::use_kneipe() {
 			action_ret = true;
 			hideCur();
 			if (_G(spieler).R56Kneipe) {
-				startAadWait(344, -1);
+				startAadWait(344);
 			} else {
 				_G(SetUpScreenFunc) = nullptr;
 				autoMove(4, P_CHEWY);
@@ -305,7 +305,7 @@ int16 Room56::use_kneipe() {
 				g_engine->_sound->stopSound(0);
 				g_engine->_sound->playSound(9);
 				_G(det)->startDetail(10, 6, ANI_FRONT);
-				startAadWait(307, -1);
+				startAadWait(307);
 				_G(det)->stop_detail(10);
 				g_engine->_sound->playSound(10, 0);
 				_G(out)->ausblenden(0);
@@ -316,13 +316,13 @@ int16 Room56::use_kneipe() {
 				setPersonPos(23, 70, P_HOWARD, P_RIGHT);
 				setPersonPos(50, 81, P_CHEWY, P_LEFT);
 				_G(fx_blend) = BLEND3;
-				startAadWait(308, -1);
+				startAadWait(308);
 
 				_G(SetUpScreenFunc) = setup_func;
 				_G(flags).NoScroll = false;
 				if (_G(obj)->checkInventory(SACKGELD_INV)) {
 					remove_inventory(SACKGELD_INV);
-					startAadWait(309, -1);
+					startAadWait(309);
 				}
 			}
 			showCur();
@@ -334,16 +334,16 @@ int16 Room56::use_kneipe() {
 			autoMove(4, P_CHEWY);
 			flic_cut(FCUT_111);
 			_G(fx_blend) = BLEND3;
-			startAadWait(522, -1);
+			startAadWait(522);
 			start_spz_wait(66, 1, false, P_CHEWY);
 			start_spz(67, 255, false, P_CHEWY);
-			startAadWait(524, -1);
+			startAadWait(524);
 			_G(spieler).SVal1 = 56;
 			_G(spieler).SVal2 = 523;
 			cur_2_inventory();
 			switch_room(92);
 		} else {
-			startAadWait(518, -1);
+			startAadWait(518);
 		}
 		showCur();
 	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(spieler).inv_cur)){
@@ -351,7 +351,7 @@ int16 Room56::use_kneipe() {
 		action_ret = 1;
 		_G(maus_links_click) = false;
 		autoMove(4, P_CHEWY);
-		startAadWait(521, -1);
+		startAadWait(521);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;

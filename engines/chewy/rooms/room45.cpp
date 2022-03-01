@@ -201,7 +201,7 @@ void Room45::talk_taxi(int16 aad_nr) {
 	_G(det)->del_static_ani(12);
 	startSetailWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 	_G(det)->del_static_ani(14);
 	startSetailWait(13, 1, ANI_BACK);
 	_G(det)->set_static_ani(12, -1);
@@ -244,7 +244,7 @@ int16 Room45::use_boy() {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
 			_G(atds)->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATA);
-			startAadWait(258, -1);
+			startAadWait(258);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			startSetailWait(1, 1, ANI_FRONT);
@@ -253,7 +253,7 @@ int16 Room45::use_boy() {
 			_G(spieler).R45MagOk = true;
 		}
 	} else {
-		startAadWait(259, -1);
+		startAadWait(259);
 	}
 
 	showCur();
@@ -271,7 +271,7 @@ void Room45::talk_boy() {
 		aad_nr = 259;
 	}
 
-	startAadWait(aad_nr, -1);
+	startAadWait(aad_nr);
 	showCur();
 }
 

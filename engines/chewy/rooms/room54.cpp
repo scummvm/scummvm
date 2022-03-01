@@ -71,7 +71,7 @@ void Room54::entry(int16 eib_nr) {
 		}
 
 		if (_G(spieler).R55ExitDia) {
-			startAadWait(_G(spieler).R55ExitDia, -1);
+			startAadWait(_G(spieler).R55ExitDia);
 			showCur();
 			_G(spieler).R55ExitDia = false;
 		}
@@ -144,7 +144,7 @@ int16 Room54::use_schalter() {
 
 			startSetailWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(3, 255, ANI_FRONT);
-			startAadWait(292 + _G(spieler).R54LiftCount, -1);
+			startAadWait(292 + _G(spieler).R54LiftCount);
 			_G(det)->stop_detail(3);
 			++_G(spieler).R54LiftCount;
 
@@ -170,11 +170,11 @@ int16 Room54::use_schalter() {
 				_G(atds)->set_ats_str(351, 1, ATS_DATA);
 			}
 
-			startAadWait(aad_nr, -1);
+			startAadWait(aad_nr);
 			_G(spieler).R54HowardVorne = 0;
 
 		} else {
-			startAadWait(297, -1);
+			startAadWait(297);
 		}
 
 		showCur();
@@ -197,18 +197,18 @@ void Room54::talk_verkauf() {
 		_G(spieler).R54HotDogOk = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler).R54HowardVorne = 1;
-		startAadWait(299, -1);
+		startAadWait(299);
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(det)->del_static_ani(6);
 		startSetailWait(7, 1, ANI_FRONT);
 		_G(det)->startDetail(8, 255, ANI_FRONT);
-		startAadWait(310, -1);
+		startAadWait(310);
 
 		_G(det)->stop_detail(8);
 		startSetailWait(9, 1, ANI_FRONT);
 		startSetailWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
-		startAadWait(311, -1);
+		startAadWait(311);
 		_G(det)->stop_detail(11);
 		_G(room)->set_timer_status(6, TIMER_START);
 		_G(det)->set_static_ani(6, -1);
@@ -218,7 +218,7 @@ void Room54::talk_verkauf() {
 		_G(obj)->addInventory(BURGER_INV, &_G(room_blk));
 		inventory_2_cur(BURGER_INV);
 	} else {
-		startAadWait(313, -1);
+		startAadWait(313);
 	}
 
 	showCur();
@@ -233,7 +233,7 @@ int16 Room54::use_zelle() {
 			action_ret = true;
 
 			if (!_G(spieler).R54Schild) {
-				startAadWait(318, -1);
+				startAadWait(318);
 			} else {
 				autoMove(5, P_CHEWY);
 				_G(spieler).R54HowardVorne = 1;
@@ -249,9 +249,9 @@ int16 Room54::use_zelle() {
 
 				setPersonPos(283, 93, P_CHEWY, P_LEFT);
 				setPersonPos(238, 99, P_HOWARD, P_RIGHT);
-				startAadWait(315, -1);
+				startAadWait(315);
 				goAutoXy(241, 74, P_CHEWY, ANI_WAIT);
-				startAadWait(316, -1);
+				startAadWait(316);
 
 				_G(spieler_mi)[P_HOWARD].Mode = true;
 				switch_room(55);
@@ -261,7 +261,7 @@ int16 Room54::use_zelle() {
 		action_ret = true;
 		autoMove(6, P_CHEWY);
 		_G(spieler).R54HowardVorne = 1;
-		startAadWait(319, -1);
+		startAadWait(319);
 	}
 
 	showCur();
@@ -284,7 +284,7 @@ int16 Room54::use_azug() {
 			if (_G(spieler).R54FputzerWeg) {
 				autoMove(8, P_CHEWY);
 				_G(spieler).R54HowardVorne = 0;
-				startAadWait(298, -1);
+				startAadWait(298);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				_G(det)->showStaticSpr(12);
 				_G(spieler).R55Location = true;
@@ -316,7 +316,7 @@ int16 Room54::use_azug() {
 				switch_room(55);
 			}
 		} else {
-			startAadWait(314, -1);
+			startAadWait(314);
 		}
 
 		showCur();

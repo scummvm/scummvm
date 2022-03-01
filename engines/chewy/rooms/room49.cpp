@@ -79,7 +79,7 @@ void Room49::xit(int16 eib_nr) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		} else if (eib_nr == 81) {
 			_G(SetUpScreenFunc) = nullptr;
-			startAadWait(268, -1);
+			startAadWait(268);
 		}
 	}
 }
@@ -125,7 +125,7 @@ void Room49::calc_boy() {
 		_G(det)->set_static_ani(2, -1);
 
 		_G(SetUpScreenFunc) = nullptr;
-		startAadWait(262, -1);
+		startAadWait(262);
 		_G(SetUpScreenFunc) = nullptr;
 		autoMove(3, P_CHEWY);
 		goAutoXy(374, 79, P_HOWARD, ANI_WAIT);
@@ -192,7 +192,7 @@ void Room49::use_boy_cigar() {
 
 	_G(flags).NoScroll = false;
 	setPersonSpr(P_RIGHT, P_CHEWY);
-	startAadWait(264, -1);
+	startAadWait(264);
 	_G(room)->set_zoom(zoom);
 
 	_G(obj)->addInventory(GUM_INV, &_G(room_blk));
@@ -221,7 +221,7 @@ void Room49::talk_boy(int16 aad_nr) {
 		_G(det)->set_static_ani(2, -1);
 		_G(SetUpScreenFunc) = nullptr;
 		stopPerson(P_HOWARD);
-		startAadWait(aad_nr, -1);
+		startAadWait(aad_nr);
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->del_static_ani(2);
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
@@ -233,7 +233,7 @@ void Room49::look_hotel() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		_G(SetUpScreenFunc) = nullptr;
 		stopPerson(P_HOWARD);
-		startAadWait(261, -1);
+		startAadWait(261);
 		_G(SetUpScreenFunc) = setup_func;
 	}
 }

@@ -78,12 +78,12 @@ void Room81::proc1() {
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
 		goAutoXy(112, 60, P_CHEWY, ANI_WAIT);
-		startAadWait(461, -1);
+		startAadWait(461);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
-		startAadWait(459, -1);
+		startAadWait(459);
 		_G(det)->stop_detail(1);
 		startSetailWait(0, 1, ANI_GO);
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -99,7 +99,7 @@ void Room81::proc1() {
 	
 	if (diaNr != -1) {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		startAadWait(diaNr, -1);
+		startAadWait(diaNr);
 	}
 
 	showCur();
@@ -129,7 +129,7 @@ int Room81::proc2() {
 	if (diaNr != -1) {
 		retVal = 1;
 		start_spz(aniId, 255, false, P_CHEWY);
-		startAadWait(diaNr, -1);
+		startAadWait(diaNr);
 		proc3();
 	}
 

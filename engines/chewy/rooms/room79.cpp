@@ -46,7 +46,7 @@ void Room79::entry() {
 		setPersonPos(534, 75, P_NICHELLE, P_LEFT);
 		_G(spieler).scrollx = 300;
 		hideCur();
-		startAadWait(484, -1);
+		startAadWait(484);
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10026;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 		showCur();

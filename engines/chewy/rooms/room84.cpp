@@ -87,7 +87,7 @@ void Room84::entry() {
 			setPersonPos(408, 113, P_HOWARD, P_LEFT);
 			_G(spieler).scrollx = 250;
 			if (_G(spieler).flags32_40) {
-				startAadWait(481, -1);
+				startAadWait(481);
 				_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
 			}
 		}
@@ -100,7 +100,7 @@ void Room84::entry() {
 		_G(spieler).room_e_obj[124].Attribut = 255;
 		_G(spieler).room_e_obj[125].Attribut = 255;
 		_G(atds)->set_ats_str(485, 2, ATS_DATA);
-		startAadWait(477, -1);
+		startAadWait(477);
 		showCur();
 	} else {
 		setPersonPos(263, 136, P_CHEWY, P_LEFT);
@@ -142,12 +142,12 @@ void Room84::setup_func() {
 		auto_scroll(150, 0);
 		_G(det)->del_static_ani(3);
 		_G(det)->set_static_ani(4, -1);
-		startAadWait(455, -1);
+		startAadWait(455);
 		_G(det)->del_static_ani(4);
 		start_spz(62, 1, false, P_HOWARD);
 		startSetailWait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(3, -1);
-		startAadWait(456, -1);
+		startAadWait(456);
 		_G(flags).NoScroll = false;
 		showCur();
 	}
@@ -176,12 +176,12 @@ void Room84::talk1() {
 	_G(flags).NoScroll = true;
 	setPersonSpr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
-	start_ads_wait(22);
+	startAdsWait(22);
 	_G(flags).NoScroll = false;
 }
 
 void Room84::talk2() {
-	startAadWait(478, -1);
+	startAadWait(478);
 }
 
 int Room84::proc4() {

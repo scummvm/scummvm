@@ -78,7 +78,7 @@ void Room25::entry() {
 		setPersonPos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(64, -1);
+		startAadWait(64);
 		showCur();
 
 	} else if (_G(spieler).R25GleiterExit && !_G(flags).LoadGame) {
@@ -121,7 +121,7 @@ int16 Room25::gleiter_loesch() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
-			startAadWait(253, -1);
+			startAadWait(253);
 		}
 	}
 
@@ -162,7 +162,7 @@ void Room25::xit_gleiter() {
 		setupScreen(DO_SETUP);
 
 		start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-		startAadWait(65, -1);
+		startAadWait(65);
 		_G(fx_blend) = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
 		_G(auto_obj) = 0;
