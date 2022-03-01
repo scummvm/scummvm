@@ -82,7 +82,7 @@ int16 Room29::use_pumpe() {
 			del_inventar(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
 			action_flag = true;
-			start_aad_wait(62, -1);
+			startAadWait(62, -1);
 		}
 
 		showCur();
@@ -117,7 +117,7 @@ bool Room29::use_schlauch() {
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(7);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(4, 1, ANI_FRONT);
+		startSetailWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATA);
@@ -126,7 +126,7 @@ bool Room29::use_schlauch() {
 		_G(spieler).R29Schlauch1 = false;
 		_G(spieler).R29Schlauch2 = true;
 		del_inventar(PUMPE_INV);
-		set_person_pos(308, 105, P_CHEWY, P_RIGHT);
+		setPersonPos(308, 105, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		showCur();
 	}
@@ -141,11 +141,11 @@ void Room29::schlitz_sitz() {
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(det)->hideStaticSpr(4);
 		_G(det)->showStaticSpr(11);
-		start_ani_block(3, ABLOCK26);
+		startAniBlock(3, ABLOCK26);
 		_G(det)->showStaticSpr(9);
 		_G(det)->hideStaticSpr(11);
-		_G(det)->start_detail(2, 255, ANI_FRONT);
-		start_aad_wait(63, -1);
+		_G(det)->startDetail(2, 255, ANI_FRONT);
+		startAadWait(63, -1);
 
 		_G(det)->stop_detail(2);
 		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);
@@ -166,10 +166,10 @@ int16 Room29::zaun_sprung() {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_frame(3, 1, ANI_FRONT, 7);
+		startDetailFrame(3, 1, ANI_FRONT, 7);
 		_G(det)->hideStaticSpr(9);
-		start_ani_block(5, ABLOCK27);
-		set_up_screen(DO_SETUP);
+		startAniBlock(5, ABLOCK27);
+		setupScreen(DO_SETUP);
 
 		showCur();
 		switch_room(37);

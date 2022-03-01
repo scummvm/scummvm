@@ -39,7 +39,7 @@ void Room55::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 22;
 
 	if (!_G(spieler).R54FputzerWeg)
-		_G(det)->start_detail(6, 255, ANI_FRONT);
+		_G(det)->startDetail(6, 255, ANI_FRONT);
 
 	if (_G(spieler).R54FputzerWeg && !_G(spieler).R55Location)
 		_G(det)->hideStaticSpr(6);
@@ -48,8 +48,8 @@ void Room55::entry() {
 		_G(det)->hideStaticSpr(0);
 
 	if (!_G(spieler).R55SekWeg) {
-		_G(det)->start_detail(8, 255, ANI_FRONT);
-		_G(det)->start_detail(9, 255, ANI_FRONT);
+		_G(det)->startDetail(8, 255, ANI_FRONT);
+		_G(det)->startDetail(9, 255, ANI_FRONT);
 		_G(spieler).R55Entry ^= 1;
 		const int aniNr = 19 + (_G(spieler).R55Entry ? 1 : 0);
 		_G(timer_nr)[0] = _G(room)->set_timer(aniNr, 10);
@@ -64,7 +64,7 @@ void Room55::entry() {
 	}
 
 	if (_G(spieler).ChewyAni == CHEWY_JMANS) {
-		set_person_pos(51, 75, P_CHEWY, P_RIGHT);
+		setPersonPos(51, 75, P_CHEWY, P_RIGHT);
 		_G(room)->set_zoom(10);
 	}
 
@@ -74,8 +74,8 @@ void Room55::entry() {
 	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R55Location) {
 			_G(spieler).scrollx = 136;
-			set_person_pos(404, 66, P_CHEWY, P_RIGHT);
-			start_detail_wait(3, 1, ANI_FRONT);
+			setPersonPos(404, 66, P_CHEWY, P_RIGHT);
+			startSetailWait(3, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
 			_G(atds)->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
@@ -83,7 +83,7 @@ void Room55::entry() {
 			_G(spieler).scrollx = 0;
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 55) {
-				set_person_pos(21, 77, P_HOWARD, P_RIGHT);
+				setPersonPos(21, 77, P_HOWARD, P_RIGHT);
 			}
 
 			_G(det)->showStaticSpr(8);
@@ -92,7 +92,7 @@ void Room55::entry() {
 			_G(det)->hideStaticSpr(8);
 
 			if (_G(spieler).R55SekWeg && !_G(spieler).R55Job) {
-				set_person_spr(P_LEFT, P_CHEWY);
+				setPersonSpr(P_LEFT, P_CHEWY);
 
 				if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
 					verleger_mov(0);
@@ -144,7 +144,7 @@ int16 Room55::use_stapel1() {
 
 		} else if (_G(spieler).R55EscScriptOk && !_G(spieler).R55RaumOk) {
 			action_ret = true;
-			start_aad_wait(333, -1);
+			startAadWait(333, -1);
 		}
 	} else if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
@@ -156,7 +156,7 @@ int16 Room55::use_stapel1() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(atds)->set_ats_str(354, 2, ATS_DATA);
 		} else {
-			start_aad_wait(326, -1);
+			startAadWait(326, -1);
 		}
 	}
 	showCur();
@@ -170,7 +170,7 @@ int16 Room55::use_stapel2() {
 	if (is_cur_inventar(MANUSKRIPT_INV)) {
 		action_ret = true;
 		hideCur();
-		start_aad_wait(327, -1);
+		startAadWait(327, -1);
 		showCur();
 	}
 
@@ -188,40 +188,40 @@ int16 Room55::use_telefon() {
 				_G(spieler).R55RaumOk = true;
 				autoMove(6, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_detail_wait(10, 1, ANI_FRONT);
-				_G(det)->start_detail(11, 255, ANI_FRONT);
-				start_aad_wait(329, -1);
+				startSetailWait(10, 1, ANI_FRONT);
+				_G(det)->startDetail(11, 255, ANI_FRONT);
+				startAadWait(329, -1);
 				_G(det)->stop_detail(11);
-				start_detail_wait(10, 1, ANI_BACK);
+				startSetailWait(10, 1, ANI_BACK);
 
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				autoMove(7, P_CHEWY);
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
-				start_aad_wait(330, -1);
+				startAadWait(330, -1);
 				_G(det)->showStaticSpr(8);
-				start_detail_wait(0, 1, ANI_FRONT);
-				_G(det)->start_detail(1, 255, ANI_FRONT);
-				start_aad_wait(331, -1);
+				startSetailWait(0, 1, ANI_FRONT);
+				_G(det)->startDetail(1, 255, ANI_FRONT);
+				startAadWait(331, -1);
 				_G(det)->stop_detail(1);
 
 				_G(det)->showStaticSpr(16);
-				start_aad_wait(608, -1);
+				startAadWait(608, -1);
 				_G(det)->hideStaticSpr(16);
-				start_detail_wait(2, 1, ANI_FRONT);
+				startSetailWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				_G(det)->hideStaticSpr(8);
 				_G(atds)->set_ats_str(354, 1, ATS_DATA);
 				flic_cut(FCUT_071);
 				_G(spieler).PersonRoomNr[P_HOWARD] = 55;
 
-				set_person_pos(178, 75, P_CHEWY, P_LEFT);
-				set_person_pos(66, 73, P_HOWARD, P_RIGHT);
+				setPersonPos(178, 75, P_CHEWY, P_LEFT);
+				setPersonPos(66, 73, P_HOWARD, P_RIGHT);
 				_G(SetUpScreenFunc) = nullptr;
 				_G(det)->set_static_ani(18, -1);
-				start_aad_wait(334, -1);
-				start_aad_wait(335, -1);
-				start_aad_wait(336, -1);
+				startAadWait(334, -1);
+				startAadWait(335, -1);
+				startAadWait(336, -1);
 				const int16 tmp_delay = _G(spieler).DelaySpeed;
 
 				for (int16 i = 0; i < 7; i++) {
@@ -234,7 +234,7 @@ int16 Room55::use_telefon() {
 						--delay;
 					}
 
-					set_up_screen(DO_SETUP);
+					setupScreen(DO_SETUP);
 					SHOULD_QUIT_RETURN0;
 				}
 
@@ -258,12 +258,12 @@ int16 Room55::use_telefon() {
 				switch_room(54);
 			} else {
 				hideCur();
-				start_aad_wait(332, -1);
+				startAadWait(332, -1);
 				showCur();
 			}
 		} else {
 			hideCur();
-			start_aad_wait(328, -1);
+			startAadWait(328, -1);
 			showCur();
 		}
 	}
@@ -303,7 +303,7 @@ void Room55::get_job() {
 	if (r_nr == 54)
 		_G(flags).LoadGame = false;
 
-	set_person_pos(118, 96, P_CHEWY, P_LEFT);
+	setPersonPos(118, 96, P_CHEWY, P_LEFT);
 	switch_room(r_nr);
 	_G(flags).LoadGame = false;
 }
@@ -326,16 +326,16 @@ void Room55::rock2mans() {
 }
 
 void Room55::verleger_mov(int16 mode) {
-	start_detail_wait(7, 1, ANI_FRONT);
+	startSetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(11);
-	start_detail_wait(13, 1, ANI_FRONT);
-	start_detail_wait(14, 1, ANI_FRONT);
+	startSetailWait(13, 1, ANI_FRONT);
+	startSetailWait(14, 1, ANI_FRONT);
 
 	if (_G(spieler).ChewyAni == CHEWY_JMANS)
 		start_spz(CH_JM_TITS, 1, ANI_FRONT, P_CHEWY);
 	
 	if (mode)
-		start_detail_wait(15, 1, ANI_FRONT);
+		startSetailWait(15, 1, ANI_FRONT);
 
 	_G(det)->set_static_ani(16, -1);
 }
@@ -347,7 +347,7 @@ void Room55::strasse(int16 mode) {
 		_G(det)->del_static_ani(4);
 		_G(det)->stop_detail(4);
 		_G(atds)->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
-		start_detail_wait(3, 1, ANI_BACK);
+		startSetailWait(3, 1, ANI_BACK);
 
 		_G(spieler).scrollx = 0;
 		switch_room(54);
@@ -361,11 +361,11 @@ int16 Room55::use_kammeraus() {
 		action_ret = true;
 
 		if (!_G(spieler).R52KakerWeg)
-			start_aad_wait(325, -1);
+			startAadWait(325, -1);
 		else if (!_G(spieler).R55SekWeg) {
 			hideCur();
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_wait(5, 1, ANI_FRONT);
+			startSetailWait(5, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(10);
 			flic_cut(FCUT_070);
 			register_cutscene(18);
@@ -437,7 +437,7 @@ void Room55::talk_line() {
 		_G(room)->set_timer_status(aniNr, TIMER_STOP);
 		_G(det)->stop_detail(aniNr);
 		_G(det)->del_static_ani(aniNr);
-		start_detail_wait(22, 1, ANI_FRONT);
+		startSetailWait(22, 1, ANI_FRONT);
 		_G(det)->set_static_ani(21, -1);
 	} else if (!_G(spieler).R55RaumOk) {
 		autoMove(3, P_CHEWY);
@@ -445,14 +445,14 @@ void Room55::talk_line() {
 		_G(spieler).R55ExitDia = 324;
 	}
 
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 
 	if (_G(spieler).R55SekWeg) {
 		_G(det)->del_static_ani(16);
-		start_detail_wait(14, 1, ANI_FRONT);
+		startSetailWait(14, 1, ANI_FRONT);
 	} else {
 		_G(det)->del_static_ani(21);
-		start_detail_wait(22, 1, ANI_FRONT);
+		startSetailWait(22, 1, ANI_FRONT);
 	}
 
 	_G(flags).NoScroll = false;

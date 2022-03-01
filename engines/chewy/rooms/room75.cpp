@@ -86,9 +86,9 @@ void Room75::xit(int16 eib_nr) {
 void Room75::proc1() {
 	_G(cur_hide_flag) = 0;
 	hideCur();
-	set_person_pos(363, 110, P_CHEWY, P_LEFT);
-	set_person_pos(322, 85, P_NICHELLE, P_RIGHT);
-	set_person_pos(317, 96, P_HOWARD, P_RIGHT);
+	setPersonPos(363, 110, P_CHEWY, P_LEFT);
+	setPersonPos(322, 85, P_NICHELLE, P_RIGHT);
+	setPersonPos(317, 96, P_HOWARD, P_RIGHT);
 	goAutoXy(318, 110, P_NICHELLE, ANI_WAIT);
 	showCur();
 }

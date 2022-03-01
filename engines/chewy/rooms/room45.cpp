@@ -71,8 +71,8 @@ void Room45::entry(int16 eib_nr) {
 			}
 		}
 
-		set_person_pos(ch_x, ch_y, P_CHEWY, P_LEFT);
-		set_person_pos(ho_x, ho_y, P_HOWARD, P_LEFT);
+		setPersonPos(ch_x, ch_y, P_CHEWY, P_LEFT);
+		setPersonPos(ho_x, ho_y, P_HOWARD, P_LEFT);
 	}
 }
 
@@ -133,7 +133,7 @@ void Room45::setup_func() {
 							x = 0;
 						}
 						_G(det)->setSetailPos(3 + i, x, y);
-						_G(det)->start_detail(3 + i, 255, ANI_FRONT);
+						_G(det)->startDetail(3 + i, 255, ANI_FRONT);
 					}
 				}
 			}
@@ -199,11 +199,11 @@ int16 Room45::use_taxi() {
 void Room45::talk_taxi(int16 aad_nr) {
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
-	start_detail_wait(13, 1, ANI_FRONT);
+	startSetailWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 	_G(det)->del_static_ani(14);
-	start_detail_wait(13, 1, ANI_BACK);
+	startSetailWait(13, 1, ANI_BACK);
 	_G(det)->set_static_ani(12, -1);
 	_G(room)->set_timer_status(12, TIMER_START);
 }
@@ -229,7 +229,7 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 2);
 	g_engine->_sound->playSound(15, 2, false);
 	g_engine->_sound->playSound(15, 0);
-	start_detail_wait(15, 1, ANI_FRONT);
+	startSetailWait(15, 1, ANI_FRONT);
 	g_engine->_sound->stopSound(0);
 	switch_room(48);
 }
@@ -244,16 +244,16 @@ int16 Room45::use_boy() {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
 			_G(atds)->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATA);
-			start_aad_wait(258, -1);
+			startAadWait(258, -1);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
-			start_detail_wait(1, 1, ANI_FRONT);
+			startSetailWait(1, 1, ANI_FRONT);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
 			_G(spieler).R45MagOk = true;
 		}
 	} else {
-		start_aad_wait(259, -1);
+		startAadWait(259, -1);
 	}
 
 	showCur();
@@ -271,7 +271,7 @@ void Room45::talk_boy() {
 		aad_nr = 259;
 	}
 
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 	showCur();
 }
 

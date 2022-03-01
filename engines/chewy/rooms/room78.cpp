@@ -39,13 +39,13 @@ void Room78::entry() {
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 	_G(spieler).scrollx = 320;
-	set_person_pos(0, 0, P_CHEWY, P_RIGHT);
+	setPersonPos(0, 0, P_CHEWY, P_RIGHT);
 
 	int delay = 0;
 	int destRoom;
 
 	if (_G(spieler).flags29_80) {
-		_G(det)->start_detail(3, 255, false);
+		_G(det)->startDetail(3, 255, false);
 
 		int destX = 592;
 		while (destX > 0) {
@@ -56,14 +56,14 @@ void Room78::entry() {
 				delay = _G(spieler).DelaySpeed / 2;
 				destX -= 4;
 			}
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_101);
 		destRoom = 79;
 	} else {
-		_G(det)->start_detail(0, 255, false);
-		_G(det)->start_detail(4, 255, false);
+		_G(det)->startDetail(0, 255, false);
+		_G(det)->startDetail(4, 255, false);
 		int det0DestX = 608;
 		int det4DestX = 570;
 		bool exitLoopFlag = false;
@@ -85,7 +85,7 @@ void Room78::entry() {
 					} else {
 						flag1 = true;
 						_G(det)->stop_detail(0);
-						_G(det)->start_detail(1, 1, false);
+						_G(det)->startDetail(1, 1, false);
 					}
 				}
 
@@ -96,9 +96,9 @@ void Room78::entry() {
 						flag2 = true;
 						_G(det)->stop_detail(4);
 						if (flag1 == 0) {
-							_G(det)->start_detail(5, 1, false);
+							_G(det)->startDetail(5, 1, false);
 						} else {
-							start_detail_wait(5, 1, ANI_FRONT);
+							startSetailWait(5, 1, ANI_FRONT);
 						}
 					} else {
 						if (det4DestX <= 0)
@@ -112,7 +112,7 @@ void Room78::entry() {
 			if (flag1 && flag2)
 				exitLoopFlag = true;
 
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 
 		if (_G(spieler).flags29_10 && _G(spieler).flags29_20) {

@@ -54,9 +54,9 @@ void Room69::entry(int16 eib_nr) {
 	if (eib_nr == 102)
 		proc1();
 	else {
-		set_person_pos(295, 118, P_CHEWY, P_RIGHT);
-		set_person_pos(237, 101, P_NICHELLE, P_RIGHT);
-		set_person_pos(347, 119, P_HOWARD, P_RIGHT);
+		setPersonPos(295, 118, P_CHEWY, P_RIGHT);
+		setPersonPos(237, 101, P_NICHELLE, P_RIGHT);
+		setPersonPos(347, 119, P_HOWARD, P_RIGHT);
 		goAutoXy(351, 97, P_HOWARD, ANI_WAIT);
 		showCur();
 	}
@@ -78,7 +78,7 @@ void Room69::setup_func() {
 void Room69::look_schild() {
 	hideCur();
 	autoMove(1, P_CHEWY);
-	start_aad_wait(382, -1);
+	startAadWait(382, -1);
 	showCur();
 }
 
@@ -124,9 +124,9 @@ int16 Room69::use_bruecke() {
 void Room69::proc1() {
 	_G(spieler).scrollx = 0;
 	_G(spieler_mi)[P_CHEWY].Mode = true;
-	set_person_pos(46, 83, P_CHEWY, P_RIGHT);
-	set_person_pos(59, 68, P_NICHELLE, P_RIGHT);
-	set_person_pos(94, 82, P_HOWARD, P_RIGHT);
+	setPersonPos(46, 83, P_CHEWY, P_RIGHT);
+	setPersonPos(59, 68, P_NICHELLE, P_RIGHT);
+	setPersonPos(94, 82, P_HOWARD, P_RIGHT);
 	goAutoXy(59, 68, P_NICHELLE, ANI_GO);
 	goAutoXy(94, 82, P_HOWARD, ANI_WAIT);
 	goAutoXy(94, 77, P_NICHELLE, ANI_GO);

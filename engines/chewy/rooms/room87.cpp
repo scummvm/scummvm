@@ -47,8 +47,8 @@ void Room87::entry() {
 	if (_G(flags).LoadGame)
 		return;
 
-	set_person_pos(11, 70, P_HOWARD, P_RIGHT);
-	set_person_pos(-3, 81, P_NICHELLE, P_RIGHT);
+	setPersonPos(11, 70, P_HOWARD, P_RIGHT);
+	setPersonPos(-3, 81, P_NICHELLE, P_RIGHT);
 	autoMove(2, P_CHEWY);
 }
 
@@ -129,7 +129,7 @@ int Room87::proc2(int16 txt_nr) {
 
 	if (diaNr) {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
-		start_aad_wait(diaNr, -1);
+		startAadWait(diaNr, -1);
 	} else {
 		autoMove(movNr, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
@@ -160,8 +160,8 @@ int Room87::proc4() {
 	flic_cut(FCUT_095);
 	flic_cut(FCUT_096);
 	_G(det)->hideStaticSpr(2);
-	_G(det)->start_detail(2, 255, false);
-	start_aad_wait(471, -1);
+	_G(det)->startDetail(2, 255, false);
+	startAadWait(471, -1);
 	flic_cut(FCUT_097);
 	flic_cut(FCUT_098);
 	flic_cut(FCUT_099);

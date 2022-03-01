@@ -126,7 +126,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		_G(obj)->sort();
 
 		for (int i = 0; i < MAX_PERSON; i++) {
-			set_person_pos(_G(spieler).X[i], _G(spieler).Y[i], i, _G(spieler).Phase[i]);
+			setPersonPos(_G(spieler).X[i], _G(spieler).Y[i], i, _G(spieler).Phase[i]);
 		}
 
 		_G(auto_obj) = 0;

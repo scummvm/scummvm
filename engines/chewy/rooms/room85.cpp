@@ -58,32 +58,32 @@ void Room85::entry(int16 eib_nr) {
 
 	if (_G(spieler).flags30_1 || eib_nr == 124) {
 		hideCur();
-		set_person_pos(278, 157, P_CHEWY, P_RIGHT);
-		set_person_pos(296, 142, P_HOWARD, P_RIGHT);
-		set_person_pos(322, 142, P_NICHELLE, P_RIGHT);
+		setPersonPos(278, 157, P_CHEWY, P_RIGHT);
+		setPersonPos(296, 142, P_HOWARD, P_RIGHT);
+		setPersonPos(322, 142, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags30_1 = false;
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 78;
 		if (_G(spieler).flags32_40) {
 			_G(atds)->del_steuer_bit(506, ATS_AKTIV_BIT, ATS_DATA);
-			_G(det)->start_detail(1, 255, false);
-			set_person_pos(195, 146, P_CHEWY, P_RIGHT);
-			set_person_pos(186, 142, P_HOWARD, P_RIGHT);
+			_G(det)->startDetail(1, 255, false);
+			setPersonPos(195, 146, P_CHEWY, P_RIGHT);
+			setPersonPos(186, 142, P_HOWARD, P_RIGHT);
 		}
 		showCur();
 	} else if (!_G(spieler.flags32_20)) {
-		set_person_pos(148, 152, P_CHEWY, P_RIGHT);
-		set_person_pos(98, 142, P_HOWARD, P_RIGHT);
-		set_person_pos(128, 142, P_NICHELLE, P_RIGHT);
+		setPersonPos(148, 152, P_CHEWY, P_RIGHT);
+		setPersonPos(98, 142, P_HOWARD, P_RIGHT);
+		setPersonPos(128, 142, P_NICHELLE, P_RIGHT);
 		_G(spieler).scrollx = 0;
 	} else {
 		hideCur();
 		_G(spieler).scrollx = 0;
-		set_person_pos(133, 152, P_CHEWY, P_RIGHT);
+		setPersonPos(133, 152, P_CHEWY, P_RIGHT);
 		_G(spieler).room_e_obj[127].Attribut = 255;
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);
-		start_aad_wait(474, -1);
+		startAadWait(474, -1);
 		flic_cut(FCUT_090);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -92,7 +92,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(det)->hideStaticSpr(6);
 		_G(spieler).scrollx = 25;
 		_G(fx_blend) = BLEND3;
-		start_aad_wait(475, -1);
+		startAadWait(475, -1);
 		start_aad(476, -1);
 		flic_cut(FCUT_089);
 		register_cutscene(25);
@@ -155,7 +155,7 @@ int Room85::proc2() {
 
 	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(1);
-	start_detail_wait(2, 1, ANI_FRONT);
+	startSetailWait(2, 1, ANI_FRONT);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();
 	remove_inventory(109);

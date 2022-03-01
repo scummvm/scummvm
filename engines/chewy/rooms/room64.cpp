@@ -34,7 +34,7 @@ void Room64::entry() {
 	_G(r64TalkAni) = _G(spieler).R64Moni1Ani;
 
 	if (_G(spieler).flags38_1)
-		_G(det)->start_detail(0, 255, false);
+		_G(det)->startDetail(0, 255, false);
 	
 	if (!_G(spieler).R64ManWeg) {
 		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
@@ -49,7 +49,7 @@ void Room64::entry() {
 			_G(spieler).R64Moni1Ani = 5;
 			calc_monitor();
 			hideCur();
-			start_aad_wait(354, -1);
+			startAadWait(354, -1);
 			showCur();
 		}
 	} else
@@ -91,7 +91,7 @@ void Room64::calc_monitor() {
 
 	case 5:
 		str_nr = 1;
-		_G(det)->start_detail(5, 255, ANI_FRONT);
+		_G(det)->startDetail(5, 255, ANI_FRONT);
 		break;
 
 	default:
@@ -127,7 +127,7 @@ void Room64::setup_func() {
 			_G(r64TalkAni) = _G(spieler).R64Moni2Ani;
 
 		if (_G(r64TalkAni) != 0)
-			_G(det)->start_detail(_G(r64TalkAni), 255, ANI_FRONT);
+			_G(det)->startDetail(_G(r64TalkAni), 255, ANI_FRONT);
 	} else
 		--_G(r62Delay);
 }
@@ -144,7 +144,7 @@ void Room64::talk_man(int16 aad_nr) {
 		_G(det)->del_static_ani(1);
 		_G(det)->stop_detail(1);
 		_G(det)->set_static_ani(2, -1);
-		start_aad_wait(aad_nr, -1);
+		startAadWait(aad_nr, -1);
 		_G(det)->del_static_ani(2);
 		_G(room)->set_timer_status(1, TIMER_START);
 		_G(det)->set_static_ani(1, -1);
@@ -162,7 +162,7 @@ int16 Room64::use_tasche() {
 				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 				new_invent_2_cur(GERAET_INV);
 				_G(atds)->set_steuer_bit(375, ATS_AKTIV_BIT, ATS_DATA);
-				start_aad_wait(353, -1);
+				startAadWait(353, -1);
 			} else {
 				showCur();
 				return 0;
@@ -172,8 +172,8 @@ int16 Room64::use_tasche() {
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_G(det)->del_static_ani(1);
 			_G(det)->stop_detail(1);
-			_G(det)->start_detail(6, 255, false);
-			start_aad_wait(352, -1);
+			_G(det)->startDetail(6, 255, false);
+			startAadWait(352, -1);
 			_G(det)->stop_detail(6);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(1, -1);

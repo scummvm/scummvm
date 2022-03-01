@@ -47,7 +47,7 @@ void Room37::entry() {
 
 	if (!_G(flags).LoadGame) {
 		_G(spieler).scrollx = 124;
-		set_person_pos(219, 66, P_CHEWY, P_RIGHT);
+		setPersonPos(219, 66, P_CHEWY, P_RIGHT);
 	}
 
 	if (!_G(spieler).R37Kloppe) {
@@ -78,10 +78,10 @@ void Room37::gedAction(int index) {
 
 	} else if (index == 1) {
 		if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
-			stop_person(P_CHEWY);
+			stopPerson(P_CHEWY);
 			_G(spieler).R37Mes = true;
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(142, -1);
+			startAadWait(142, -1);
 		}
 	}
 }
@@ -111,19 +111,19 @@ short Room37::use_wippe() {
 			_G(flags).NoScroll = true;
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(159, -1);
+			startAadWait(159, -1);
 			del_inventar(_G(spieler).AkInvent);
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
 			showCur();
 			_G(spieler).scrollx = 269;
-			set_person_pos(388, 119, P_CHEWY, P_RIGHT);
+			setPersonPos(388, 119, P_CHEWY, P_RIGHT);
 			switch_room(29);
 			_G(maus_links_click) = false;
 
 		} else {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(160, -1);
+			startAadWait(160, -1);
 		}
 	}
 
@@ -173,7 +173,7 @@ int16 Room37::use_glas() {
 			_G(flags).NoScroll = true;
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(147, -1);
+			startAadWait(147, -1);
 			del_inventar(_G(spieler).AkInvent);
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
@@ -185,7 +185,7 @@ int16 Room37::use_glas() {
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(spieler).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(146, -1);
+			startAadWait(146, -1);
 			showCur();
 			_G(flags).NoScroll = false;
 			g_engine->_sound->playSound(3);
@@ -207,26 +207,26 @@ void Room37::dog_bell() {
 		g_engine->_sound->stopSound(0); // nr 3, sslot 0
 
 		if (!_G(spieler).R37Gebiss) {
-			stop_person(P_CHEWY);
+			stopPerson(P_CHEWY);
 			_G(flags).ChAutoMov = false;
-			set_person_spr(P_LEFT, P_CHEWY);
+			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			disable_timer();
 			_G(det)->stop_detail(3);
 			_G(det)->del_static_ani(3);
-			start_detail_wait(5, 1, ANI_FRONT);
+			startSetailWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
-			start_detail_wait(6, 1, ANI_FRONT);
+			startSetailWait(6, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			_G(det)->start_detail(11, 255, ANI_FRONT);
+			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
-			start_detail_wait(6, 1, ANI_BACK);
+			startSetailWait(6, 1, ANI_BACK);
 			_G(det)->stop_detail(11);
-			set_person_pos(326, 85, P_CHEWY, P_LEFT);
+			setPersonPos(326, 85, P_CHEWY, P_LEFT);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(9);
-			start_ani_block(3, ABLOCK31);
+			startAniBlock(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
 //			g_engine->_sound->playSound(3);
@@ -235,14 +235,14 @@ void Room37::dog_bell() {
 			ani_nr = CH_TALK12;
 
 		} else if (!_G(spieler).R37HundScham) {
-			stop_person(P_CHEWY);
-			set_person_spr(P_LEFT, P_CHEWY);
+			stopPerson(P_CHEWY);
+			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			_G(room)->set_timer_status(3, TIMER_STOP);
 			_G(det)->del_static_ani(3);
 			_G(det)->stop_detail(3);
-			start_detail_wait(4, 1, ANI_FRONT);
+			startSetailWait(4, 1, ANI_FRONT);
 			flic_cut(FCUT_051);
 			_G(spieler).scrollx = 104;
 			flic_cut(FCUT_054);
@@ -258,7 +258,7 @@ void Room37::dog_bell() {
 
 		if (dia_nr != -1) {
 			start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(dia_nr, -1);
+			startAadWait(dia_nr, -1);
 		}
 	}
 
@@ -274,7 +274,7 @@ void Room37::talk_hahn() {
 	if (!_G(spieler).R37TransHahn) {
 		_G(cur_hide_flag) = 0;
 		hideCur();
-		start_aad_wait(145, -1);
+		startAadWait(145, -1);
 		showCur();
 	} else {
 		hahn_dia();
@@ -303,20 +303,20 @@ void Room37::use_hahn() {
 			_G(room)->set_timer_status(7, TIMER_STOP);
 			_G(det)->stop_detail(7);
 			_G(det)->del_static_ani(7);
-			_G(det)->start_detail(9, 1, ANI_FRONT);
+			_G(det)->startDetail(9, 1, ANI_FRONT);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			del_inventar(GEBISS_INV);
 			_G(flags).NoScroll = true;
 			auto_scroll(177, 0);
 
 			while (_G(det)->get_ani_status(9)) {
-				set_up_screen(DO_SETUP);
+				setupScreen(DO_SETUP);
 				SHOULD_QUIT_RETURN;
 			}
 
-			_G(det)->start_detail(4, 1, ANI_FRONT);
+			_G(det)->startDetail(4, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(0);
-			_G(det)->start_detail(10, 10, ANI_FRONT);
+			_G(det)->startDetail(10, 10, ANI_FRONT);
 			autoMove(8, P_CHEWY);
 			flic_cut(FCUT_053);
 			_G(det)->stop_detail(10);
@@ -328,13 +328,13 @@ void Room37::use_hahn() {
 			_G(atds)->set_steuer_bit(256, ATS_AKTIV_BIT, ATS_DATA);
 			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(141, -1);
+			startAadWait(141, -1);
 			_G(obj)->addInventory(EIER_INV, &_G(room_blk));
 			inventory_2_cur(EIER_INV);
 			showCur();
 		}
 	} else if (_G(spieler).inv_cur) {
-		start_aad_wait(143, -1);
+		startAadWait(143, -1);
 	}
 }
 

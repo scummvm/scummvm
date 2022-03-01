@@ -46,10 +46,10 @@ void Room95::entry(int16 eib_nr) {
 
 	hideCur();
 	if (eib_nr == 138) {
-		set_person_pos(-20, 120, P_HOWARD, ANI_GO);
+		setPersonPos(-20, 120, P_HOWARD, ANI_GO);
 		autoMove(2, P_CHEWY);
 	} else {
-		set_person_pos(473, 83, P_HOWARD, P_RIGHT);
+		setPersonPos(473, 83, P_HOWARD, P_RIGHT);
 	}
 
 	showCur();
@@ -116,7 +116,7 @@ int Room95::proc2() {
 		switch_room(97);
 	} else {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
-		start_aad_wait(548, -1);
+		startAadWait(548, -1);
 	}
 
 	showCur();

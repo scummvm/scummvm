@@ -41,8 +41,8 @@ void Room76::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_state = 0;
 
-	set_person_pos(308, 84, P_NICHELLE, P_RIGHT);
-	set_person_pos(365, 84, P_HOWARD, P_RIGHT);
+	setPersonPos(308, 84, P_NICHELLE, P_RIGHT);
+	setPersonPos(365, 84, P_HOWARD, P_RIGHT);
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	_G(spieler).PersonHide[P_NICHELLE] = true;
 
@@ -69,7 +69,7 @@ void Room76::entry() {
 		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).flags29_2 = true;
-		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
+		setPersonPos(128, 135, P_CHEWY, P_RIGHT);
 		proc3(420);
 		proc5();
 
@@ -78,7 +78,7 @@ void Room76::entry() {
 		_G(flags).NoScroll = true;
 		_G(spieler).scrollx = 122;
 		_G(spieler).r76State = -1;
-		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
+		setPersonPos(128, 135, P_CHEWY, P_RIGHT);
 		proc3(422);
 		_G(flags).NoScroll = false;
 	}
@@ -94,8 +94,8 @@ void Room76::setup_func() {
 		return;
 
 	_state = 0;
-	_G(det)->start_detail(11, 1, false);
-	_G(det)->start_detail(12, 1, false);
+	_G(det)->startDetail(11, 1, false);
+	_G(det)->startDetail(12, 1, false);
 }
 
 void Room76::talk1() {
@@ -103,7 +103,7 @@ void Room76::talk1() {
 	autoMove(4, P_CHEWY);
 	auto_scroll(172, 0);
 	const int diaNr = 425 + (_G(spieler).flags32_4 ? 1 : 0);
-	start_aad_wait(diaNr, -1);
+	startAadWait(diaNr, -1);
 	showCur();
 }
 
@@ -126,28 +126,28 @@ void Room76::talk2() {
 }
 
 void Room76::proc3(int diaNr) {
-	start_aad_wait(diaNr, -1);
+	startAadWait(diaNr, -1);
 	_G(det)->del_static_ani(2);
-	start_detail_wait(3, 1, ANI_FRONT);
-	start_detail_wait(4, 2, ANI_FRONT);
+	startSetailWait(3, 1, ANI_FRONT);
+	startSetailWait(4, 2, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 }
 
 void Room76::proc5() {
 	_state = 1;
 	_G(det)->del_static_ani(2);
-	_G(det)->start_detail(6, 1, false);
+	_G(det)->startDetail(6, 1, false);
 	_G(flags).NoScroll = false;
-	wait_show_screen(15);
+	waitShowScreen(15);
 	autoMove(5, P_CHEWY);
 	_G(det)->hideStaticSpr(10);
-	_G(det)->start_detail(13, 1, false);
+	_G(det)->startDetail(13, 1, false);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	goAutoXy(669, 127, P_CHEWY, ANI_WAIT);
-	wait_show_screen(20);
+	waitShowScreen(20);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
-	set_person_pos(30, 150, P_CHEWY, P_RIGHT);
+	setPersonPos(30, 150, P_CHEWY, P_RIGHT);
 	switch_room(78);
 }
 
@@ -163,16 +163,16 @@ int Room76::proc6() {
 		proc3(424);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(det)->del_static_ani(2);
-		start_detail_wait(5, 1, ANI_FRONT);
+		startSetailWait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(2, -1);
-		start_detail_wait(9, 1, ANI_FRONT);
-		start_detail_wait(10, 1, ANI_FRONT);
+		startSetailWait(9, 1, ANI_FRONT);
+		startSetailWait(10, 1, ANI_FRONT);
 		showCur();
 	} else if (is_cur_inventar(94)) {
 		hideCur();
 		retVal = 1;
-		set_person_spr(P_RIGHT, P_CHEWY);
-		start_aad_wait(436, 1);
+		setPersonSpr(P_RIGHT, P_CHEWY);
+		startAadWait(436, 1);
 		showCur();
 	}
 
@@ -190,32 +190,32 @@ int Room76::proc7() {
 		del_inventar(_G(spieler).AkInvent);
 		invent_2_slot(106);
 		invent_2_slot(105);
-		start_aad_wait(444, -1);
+		startAadWait(444, -1);
 		_G(out)->ausblenden(0);
 		_G(out)->set_teilpalette(_G(pal), 255, 1);
-		start_aad_wait(443, -1);
+		startAadWait(443, -1);
 		_G(spieler).scrollx = 0;
 		_G(fx_blend) = BLEND3;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		set_person_pos(128, 135, P_CHEWY, P_RIGHT);
+		setPersonPos(128, 135, P_CHEWY, P_RIGHT);
 		_G(det)->set_static_ani(2, -1);
 
 		for (int i = 0; i < 3; ++i)
 			_G(det)->showStaticSpr(8 + i);
 
-		start_aad_wait(427, -1);
+		startAadWait(427, -1);
 		showCur();
 		start_ads_wait(21);
 		hideCur();
-		start_aad_wait(428, -1);
+		startAadWait(428, -1);
 		showCur();
 		_G(spieler).flags29_80 = true;
 		switch_room(78);
 	} else {
 		hideCur();
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		start_aad_wait(577, -1);
+		startAadWait(577, -1);
 		showCur();
 	}
 

@@ -48,13 +48,13 @@ void Room90::entry(int16 eib_nr) {
 		case 78:
 		case 136:
 			_G(spieler).scrollx = 0;
-			set_person_pos(32, 137, P_CHEWY, P_RIGHT);
-			set_person_pos(20, 121, P_HOWARD, P_RIGHT);
+			setPersonPos(32, 137, P_CHEWY, P_RIGHT);
+			setPersonPos(20, 121, P_HOWARD, P_RIGHT);
 			break;
 		case 137:
 			_G(spieler).scrollx = 176;
-			set_person_pos(411, 146, P_CHEWY, P_RIGHT);
-			set_person_pos(440, 132, P_HOWARD, P_RIGHT);
+			setPersonPos(411, 146, P_CHEWY, P_RIGHT);
+			setPersonPos(440, 132, P_HOWARD, P_RIGHT);
 			break;
 		default:
 			break;
@@ -66,7 +66,7 @@ void Room90::entry(int16 eib_nr) {
 
 	if (_G(spieler).flags34_40 && !_G(spieler).flags33_40) {
 		_G(det)->setSetailPos(12, 329, 15);
-		_G(det)->start_detail(12, 255, false);
+		_G(det)->startDetail(12, 255, false);
 		g_engine->_sound->playSound(12, 0);
 		g_engine->_sound->playSound(12);
 	}
@@ -78,26 +78,26 @@ void Room90::entry(int16 eib_nr) {
 
 	if (!_G(spieler).flags33_10) {
 		_G(flags).ZoomMov = false;
-		start_aad_wait(498, -1);
+		startAadWait(498, -1);
 		goAutoXy(-20, 121, P_HOWARD, ANI_GO);
 		autoMove(1, P_CHEWY);
-		start_detail_frame(2, 1, ANI_FRONT, 3);
-		_G(det)->start_detail(0, 1, false);
-		start_detail_wait(1, 1, ANI_FRONT);
+		startDetailFrame(2, 1, ANI_FRONT, 3);
+		_G(det)->startDetail(0, 1, false);
+		startSetailWait(1, 1, ANI_FRONT);
 		_G(spieler).flags33_10 = true;
 		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
 		switch_room(91);
 
 	} else if (!_G(spieler).flags33_20) {
-		start_aad_wait(499, -1);
+		startAadWait(499, -1);
 		_G(spieler).flags33_20 = true;
 
 	} else if (_G(spieler).flags34_20) {
-		set_person_pos(411, 146, P_CHEWY, P_RIGHT);
-		set_person_pos(440, 132, P_HOWARD, P_RIGHT);
+		setPersonPos(411, 146, P_CHEWY, P_RIGHT);
+		setPersonPos(440, 132, P_HOWARD, P_RIGHT);
 		_G(spieler).scrollx = 176;
 		_G(spieler).flags34_20 = false;
-		start_aad_wait(520, -1);
+		startAadWait(520, -1);
 	}
 
 	_G(HowardMov) = 0;
@@ -153,7 +153,7 @@ void Room90::setup_func() {
 				_G(det)->setSetailPos(i + 4, destX, _G(Adi)[i + 4].y);
 				
 				if (!_G(spieler).flags34_40)
-					_G(det)->start_detail(i + 4, 255, false);
+					_G(det)->startDetail(i + 4, 255, false);
 			}
 		}
 	}
@@ -217,7 +217,7 @@ void Room90::proc2() {
 	}
 
 	if (diaNr != -1) {
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		if (_G(spieler).ChewyAni == CHEWY_ANI7) {
 			start_spz_wait(66, 1, false, P_CHEWY);
 			start_spz(67, 255, false, P_CHEWY);
@@ -227,7 +227,7 @@ void Room90::proc2() {
 		}
 
 		hideCur();
-		start_aad_wait(-1, diaNr);
+		startAadWait(-1, diaNr);
 		showCur();
 	}
 	_G(flags).AutoAniPlay = false;
@@ -239,25 +239,25 @@ int Room90::getHubcaps() {
 
 	hideCur();
 	autoMove(3, P_CHEWY);
-	start_aad_wait(515, -1);
+	startAadWait(515, -1);
 	start_spz_wait(14, 1, false, P_CHEWY);
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
 
 	while (_G(spieler_vector)[P_HOWARD].Xypos[0] != 176) {
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 
 	start_spz_wait(47, 1, false, P_HOWARD);
 	_G(spieler).mi[1] = 2;
-	start_aad_wait(516, -1);
+	startAadWait(516, -1);
 	_G(spieler).flags34_40 = true;
 	_G(spieler).flags35_1 = true;
 	autoMove(4, P_CHEWY);
 	auto_scroll(176, 0);
 	_G(det)->setSetailPos(12, 495, 15);
-	_G(det)->start_detail(12, 255, false);
+	_G(det)->startDetail(12, 255, false);
 	g_engine->_sound->playSound(12, 0);
 	g_engine->_sound->playSound(12);
 
@@ -266,11 +266,11 @@ int Room90::getHubcaps() {
 	while (destX > 329) {
 		destX -= 2;
 		_G(det)->setSetailPos(12, destX, 15);
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 
-	start_aad_wait(517, -1);
+	startAadWait(517, -1);
 	_G(spieler).flags35_1 = false;
 	_G(atds)->set_steuer_bit(517, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->del_steuer_bit(519, ATS_AKTIV_BIT, ATS_DATA);
@@ -292,15 +292,15 @@ int Room90::shootControlUnit() {
 	goAutoXy(232, 142, P_CHEWY, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(176, 0);
-	start_detail_wait(13, 1, ANI_FRONT);
+	startSetailWait(13, 1, ANI_FRONT);
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_107);
 	_G(spieler).scrollx = 0;
-	set_person_pos(76, 145, P_CHEWY, P_LEFT);
+	setPersonPos(76, 145, P_CHEWY, P_LEFT);
 	_G(maus_links_click) = false;
 	_G(det)->showStaticSpr(4);
 	_G(det)->showStaticSpr(5);
-	set_up_screen(NO_SETUP);
+	setupScreen(NO_SETUP);
 	_G(fx_blend) = BLEND3;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(flags).NoScroll = false;
@@ -339,7 +339,7 @@ int Room90::useSurimyOnWreck() {
 	_G(det)->hideStaticSpr(5);
 	_G(spieler).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
-	start_aad_wait(519, -1);
+	startAadWait(519, -1);
 	_G(atds)->set_steuer_bit(520, ATS_AKTIV_BIT, ATS_DATA);
 
 	showCur();

@@ -172,7 +172,7 @@ void Sound::playSpeech(int num, bool waitForFinish) {
 	if (waitForFinish) {
 		// Wait for speech to finish
 		while (isSpeechActive() && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 	}
 }
@@ -275,7 +275,7 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 void Sound::waitForSpeechToFinish() {
 	if (_G(spieler).SpeechSwitch) {
 		while (g_engine->_sound->isSpeechActive() && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 	}
 }

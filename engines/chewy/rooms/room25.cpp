@@ -48,7 +48,7 @@ void Room25::entry() {
 		g_engine->_sound->playSound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
-			_G(det)->start_detail(i, 255, ANI_FRONT);
+			_G(det)->startDetail(i, 255, ANI_FRONT);
 	}
 
 	if (!_G(spieler).R29Schlauch2) {
@@ -75,14 +75,14 @@ void Room25::entry() {
 		flic_cut(FCUT_029);
 		g_engine->_sound->playSound(0, 0);
 		_G(fx_blend) = BLEND_NONE;
-		set_person_pos(219, 141, P_CHEWY, P_RIGHT);
+		setPersonPos(219, 141, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(64, -1);
+		startAadWait(64, -1);
 		showCur();
 
 	} else if (_G(spieler).R25GleiterExit && !_G(flags).LoadGame) {
-		set_person_pos(127, 122, P_CHEWY, P_LEFT);
+		setPersonPos(127, 122, P_CHEWY, P_LEFT);
 
 		if (!_G(spieler).R25SurimyGo) {
 			_G(spieler).R25SurimyGo = 1;
@@ -121,7 +121,7 @@ int16 Room25::gleiter_loesch() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
-			start_aad_wait(253, -1);
+			startAadWait(253, -1);
 		}
 	}
 
@@ -159,10 +159,10 @@ void Room25::xit_gleiter() {
 		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 		_G(fx_blend) = BLEND1;
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 
 		start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(65, -1);
+		startAadWait(65, -1);
 		_G(fx_blend) = BLEND_NONE;
 		wait_auto_obj(SURIMY_OBJ);
 		_G(auto_obj) = 0;

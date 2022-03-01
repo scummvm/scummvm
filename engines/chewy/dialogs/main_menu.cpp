@@ -159,7 +159,7 @@ void MainMenu::animate() {
 		_G(out)->setPointer(_G(workptr));
 	}
 
-	sprite_engine();
+	spriteEngine();
 	kb_mov(1);
 	calcMouseText(_G(minfo).x, _G(minfo).y, 1);
 	_G(cur)->plot_cur();
@@ -218,7 +218,7 @@ void MainMenu::startGame() {
 
 	_G(spieler_vector)[P_CHEWY].Phase = 6;
 	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
-	set_person_pos(160, 80, P_CHEWY, P_RIGHT);
+	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;

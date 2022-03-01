@@ -43,9 +43,9 @@ void Room50::entry(int16 eib_nr) {
 		hideCur();
 		stop_page();
 		_G(maus_links_click) = false;
-		set_person_pos(1, 64, P_HOWARD, P_RIGHT);
-		set_person_pos(92, 123, P_CHEWY, P_LEFT);
-		start_aad_wait(510, -1);
+		setPersonPos(1, 64, P_HOWARD, P_RIGHT);
+		setPersonPos(92, 123, P_CHEWY, P_LEFT);
+		startAadWait(510, -1);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -57,7 +57,7 @@ void Room50::entry(int16 eib_nr) {
 		if (_G(spieler).R50Zigarre) {
 			stop_cigar();
 		} else {
-			_G(det)->start_detail(0, 255, ANI_FRONT);
+			_G(det)->startDetail(0, 255, ANI_FRONT);
 		}
 
 		if (!_G(spieler).R50KeyOK) {
@@ -74,9 +74,9 @@ void Room50::entry(int16 eib_nr) {
 
 			if (!_G(flags).LoadGame) {
 				if (eib_nr == 85)
-					set_person_pos(298, 56, P_HOWARD, P_RIGHT);
+					setPersonPos(298, 56, P_HOWARD, P_RIGHT);
 				else
-					set_person_pos(1, 64, P_HOWARD, P_RIGHT);
+					setPersonPos(1, 64, P_HOWARD, P_RIGHT);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ void Room50::stop_cigar() {
 void Room50::calc_wasser() {
 	if (!_wasser) {
 		stop_page();
-		_G(det)->start_detail(4, 1, ANI_FRONT);
+		_G(det)->startDetail(4, 1, ANI_FRONT);
 		_wasser = true;
 	}
 }
@@ -141,14 +141,14 @@ void Room50::calc_treppe() {
 
 		if (!_G(spieler).R50KeyOK) {
 			hideCur();
-			stop_person(P_CHEWY);
+			stopPerson(P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			_G(flags).NoScroll = true;
 			auto_scroll(40, 0);
 			stop_page();
 			_G(det)->set_static_ani(5, -1);
-			start_aad_wait(272, -1);
+			startAadWait(272, -1);
 			autoMove(3, P_CHEWY);
 			aad_page(273, 5);
 			_G(flags).NoScroll = false;
@@ -170,10 +170,10 @@ int16 Room50::use_gutschein() {
 			_wasser = false;
 			stop_page();
 			del_inventar(_G(spieler).AkInvent);
-			start_ani_block(2, ABLOCK36);
+			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
-			start_aad_wait(276, -1);
+			startAadWait(276, -1);
 		}
 	}
 
@@ -190,7 +190,7 @@ int16 Room50::use_gum() {
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
 		stop_page();
-		start_detail_wait(6, 1, ANI_FRONT);
+		startSetailWait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
 		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -198,20 +198,20 @@ int16 Room50::use_gum() {
 		_G(SetUpScreenFunc) = nullptr;
 		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
-		set_person_spr(P_LEFT, P_HOWARD);
+		setPersonSpr(P_LEFT, P_HOWARD);
 		del_inventar(_G(spieler).AkInvent);
 		hide_person();
-		start_detail_wait(2, 1, ANI_FRONT);
+		startSetailWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
-		start_detail_wait(2, 1, ANI_BACK);
+		startSetailWait(2, 1, ANI_BACK);
 		show_person();
-		set_person_spr(P_LEFT, P_CHEWY);
-		start_aad_wait(275, -1);
+		setPersonSpr(P_LEFT, P_CHEWY);
+		startAadWait(275, -1);
 		_G(det)->del_static_ani(5);
-		start_detail_wait(9, 1, ANI_FRONT);
+		startSetailWait(9, 1, ANI_FRONT);
 		_G(det)->del_static_ani(5);
 		_G(det)->set_static_ani(10, -1);
-		start_aad_wait(277, -1);
+		startAadWait(277, -1);
 		_G(SetUpScreenFunc) = setup_func;
 		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -230,14 +230,14 @@ int16 Room50::use_gum() {
 }
 
 void Room50::talk_page() {
-	start_aad_wait(276, -1);
+	startAadWait(276, -1);
 }
 
 void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	_G(det)->set_static_ani(ani_nr, -1);
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 	_G(det)->del_static_ani(ani_nr);
-	start_detail_wait(6, 1, ANI_BACK);
+	startSetailWait(6, 1, ANI_BACK);
 	go_page();
 
 	if (!_G(spieler).R50KeyOK)

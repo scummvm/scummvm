@@ -85,7 +85,7 @@ int16 Room22::chewy_amboss() {
 
 		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(1, 1, ANI_FRONT);
+		startSetailWait(1, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
@@ -106,7 +106,7 @@ void Room22::bork(int16 t_nr) {
 		if (!_G(spieler).R22BorkPlatt) {
 			hideCur();
 			start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(10, -1);
+			startAadWait(10, -1);
 			autoMove(3, P_CHEWY);
 			_G(auto_obj) = 1;
 			_G(mov_phasen)[BORK_OBJ].AtsText = 0;
@@ -140,7 +140,7 @@ void Room22::bork_walk1() {
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
-	start_detail_wait(2, 1, ANI_FRONT);
+	startSetailWait(2, 1, ANI_FRONT);
 
 	_G(mov_phasen)[BORK_OBJ].Repeat = 1;
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);
@@ -164,9 +164,9 @@ void Room22::get_bork() {
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(4);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_ani_block(2, ABLOCK14);
-		set_person_pos(171, 120, P_CHEWY, P_LEFT);
-		start_aad_wait(11, -1);
+		startAniBlock(2, ABLOCK14);
+		setPersonPos(171, 120, P_CHEWY, P_LEFT);
+		startAadWait(11, -1);
 		_G(det)->stop_detail(3);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);

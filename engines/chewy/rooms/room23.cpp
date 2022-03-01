@@ -38,7 +38,7 @@ static const AniBlock ABLOCK15[4] = {
 
 void Room23::entry() {
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	set_person_pos(135, 69, P_CHEWY, -1);
+	setPersonPos(135, 69, P_CHEWY, -1);
 }
 
 void Room23::cockpit() {
@@ -59,27 +59,27 @@ int16 Room23::start_gleiter() {
 	if (!_G(spieler).inv_cur) {
 		action_flag = true;
 		if (!_G(spieler).R23FluxoFlex)
-			start_aad_wait(23, -1);
+			startAadWait(23, -1);
 		else {
 			bool start_ok = true;
 
 			if (_G(spieler).R23GleiterExit == 16) {
 				if (!_G(spieler).R16F5Exit) {
 					start_ok = false;
-					start_aad_wait(35, -1);
+					startAadWait(35, -1);
 				} else if (!_G(spieler).R23Cartridge || !_G(spieler).R18CartSave) {
 					start_ok = false;
-					start_aad_wait(41, -1);
+					startAadWait(41, -1);
 				} else if (!_G(spieler).R17EnergieOut) {
 					start_ok = false;
-					start_aad_wait(300, -1);
+					startAadWait(300, -1);
 				}
 			}
 
 			if (start_ok) {
 				hideCur();
-				start_ani_block(4, ABLOCK15);
-				wait_show_screen(30);
+				startAniBlock(4, ABLOCK15);
+				waitShowScreen(30);
 
 				for (int16 i = 0; i < 4; i++)
 					_G(det)->stop_detail(i);
@@ -92,15 +92,15 @@ int16 Room23::start_gleiter() {
 					register_cutscene(7);
 					_G(out)->cls();
 					_G(spieler).R23GleiterExit = 16;
-					set_person_pos(126, 110, P_CHEWY, P_RIGHT);
+					setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 
 					switch_room(_G(spieler).R23GleiterExit);
 					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
 					_G(spieler).DelaySpeed = 10;
-					start_aad_wait(59, -1);
-					stop_person(P_CHEWY);
+					startAadWait(59, -1);
+					stopPerson(P_CHEWY);
 					_G(maus_links_click) = false;
 
 				} else if (_G(spieler).R23GleiterExit == 16) {
@@ -134,7 +134,7 @@ void Room23::use_cartridge() {
 	if (_G(spieler).R18CartSave) {
 		_G(atds)->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(111, 2, ATS_DATA);
-		start_detail_wait(4, 1, ANI_FRONT);
+		startSetailWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(3);
 	} else {
 		_G(atds)->set_ats_str(111, 1, ATS_DATA);

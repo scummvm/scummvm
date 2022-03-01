@@ -144,7 +144,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 73:
 						if (!_G(spieler).R9Gitter) {
 							_G(spieler).PersonHide[P_CHEWY] = true;
-							start_detail_wait(5, 1, ANI_FRONT);
+							startSetailWait(5, 1, ANI_FRONT);
 							_G(spieler).PersonHide[P_CHEWY] = false;
 						} else {
 							retValue = false;
@@ -158,7 +158,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_004);
 							start_spz(CH_TALK5, -1, false, P_CHEWY);
-							start_aad_wait(108, 0);
+							startAadWait(108, 0);
 							showCur();
 						} else {
 							retValue = false;
@@ -194,7 +194,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						if (is_cur_inventar(TRANSLATOR_INV)) {
 							autoMove(6, P_CHEWY);
 							_G(spieler).R14Translator = true;
-							start_aad_wait(25, -1);
+							startAadWait(25, -1);
 						} else
 							retValue = false;
 						break;
@@ -778,7 +778,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 95:
 						if (_G(spieler).R13Band == true)
-							start_aad_wait(116, -1);
+							startAadWait(116, -1);
 						break;
 
 					case 100:
@@ -827,7 +827,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 11:
 						autoMove(3, P_CHEWY);
 						_G(det)->stop_detail(5);
-						_G(det)->start_detail(6, 2, ANI_FRONT);
+						_G(det)->startDetail(6, 2, ANI_FRONT);
 						Room2::jump_out_r1(9);
 						break;
 
@@ -997,11 +997,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 505:
-						start_aad_wait(482, -1);
+						startAadWait(482, -1);
 						break;
 
 					case 506:
-						start_aad_wait(483, -1);
+						startAadWait(483, -1);
 						break;
 
 					case 512:
@@ -1198,7 +1198,7 @@ void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 20:
 			if (blkNr == 0 && strEndNr == 1) {
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				start_detail_wait(28, 3, ANI_FRONT);
+				startSetailWait(28, 3, ANI_FRONT);
 				_G(spieler).PersonHide[P_CHEWY] = false;
 			}
 			break;
@@ -1224,9 +1224,9 @@ void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	case 22:
 		if (strEndNr == 1) {
 			_G(det)->del_static_ani(3);
-			start_detail_wait(5, 1, ANI_FRONT);
+			startSetailWait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
-			start_aad_wait(456, -1);
+			startAadWait(456, -1);
 		}
 		break;
 
@@ -1507,7 +1507,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 		case 1:
 			if (mode == AAD_STR_START) {
-				_G(det)->start_detail(5, 255, ANI_FRONT);
+				_G(det)->startDetail(5, 255, ANI_FRONT);
 			} else {
 				_G(det)->stop_detail(5);
 			}
@@ -1561,7 +1561,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 			}
 			for (int16 i = 0; i < nbr; i++) {
 				if (mode == AAD_STR_START) {
-					_G(det)->start_detail(tmp, 255, ANI_FRONT);
+					_G(det)->startDetail(tmp, 255, ANI_FRONT);
 				} else {
 					_G(det)->stop_detail(tmp);
 				}
@@ -2102,7 +2102,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case R61_VERLAG_DIA:
 		if (mode == AAD_STR_START) {
-			_G(det)->start_detail(personNr, 255, ANI_FRONT);
+			_G(det)->startDetail(personNr, 255, ANI_FRONT);
 		} else {
 			_G(det)->stop_detail(personNr);
 		}
@@ -2142,12 +2142,12 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	}
 
 	if (oldFormat) {
-		_G(det)->start_detail(_G(talk_start_ani), 255, ANI_FRONT);
+		_G(det)->startDetail(_G(talk_start_ani), 255, ANI_FRONT);
 		_G(det)->stop_detail(talkStopAni);
 		_G(det)->hideStaticSpr(_G(talk_hide_static));
 		_G(det)->showStaticSpr(talkShowStatic);
 	} else {
-		_G(det)->start_detail(talkAni, 255, ANI_FRONT);
+		_G(det)->startDetail(talkAni, 255, ANI_FRONT);
 		_G(det)->stop_detail(stopAni);
 	}
 }
@@ -2215,7 +2215,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			invent_2_slot(K_KERNE_INV);
 		} else if (_G(spieler).AkInvent == 88) {
 			_G(spieler).flags26_10 = true;
-			start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
+			startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		}
 		break;
 
@@ -2255,14 +2255,14 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(spieler).flags26_10 = true;
 		_G(flags).InventMenu = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		start_aad_wait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
+		startAadWait(_G(spieler).PersonRoomNr[P_CHEWY] + 350, -1);
 		_G(flags).InventMenu = true;
 		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(spieler).flags26_10 = true;
-		start_aad_wait(350, -1);
+		startAadWait(350, -1);
 		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
 		break;
 
@@ -2354,9 +2354,9 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 		if (txt_nr != -1) {
 			if (!_G(flags).InventMenu) {
 				if (txt_nr >= 15000) {
-					ret = start_ats_wait(txt_nr - 15000, TXT_MARK_USE, 14, INV_USE_DEF);
+					ret = startAtsWait(txt_nr - 15000, TXT_MARK_USE, 14, INV_USE_DEF);
 				} else {
-					ret = start_ats_wait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATA);
+					ret = startAtsWait(txt_nr, TXT_MARK_USE, 14, INV_USE_DATA);
 				}
 			} else {
 				Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, txt_nr);
@@ -2372,7 +2372,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
 					Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
 				} else {
-					ret = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+					ret = startAtsWait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 				}
 			}
 		}
@@ -2753,7 +2753,7 @@ void calc_person_dia(int16 p_nr) {
 				_G(stopAutoMove)[i] = true;
 			}
 
-			start_aad_wait(_G(spieler).PersonDia[p_nr], -1);
+			startAadWait(_G(spieler).PersonDia[p_nr], -1);
 
 			for (int i = 0; i < 3; ++i) {
 				_G(spieler).PersonDiaRoom[i] = tmp[i];
@@ -2776,7 +2776,7 @@ void calc_person_dia(int16 p_nr) {
 				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hideCur();
-					start_aad_wait(_G(spieler).PersonDia[P_NICHELLE], -1);
+					startAadWait(_G(spieler).PersonDia[P_NICHELLE], -1);
 					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE];
 					showCur();
 				} else {

@@ -463,7 +463,7 @@ bool mainLoop(int16 mode) {
 
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
-		set_up_screen(DO_MAIN_LOOP);
+		setupScreen(DO_MAIN_LOOP);
 
 	return retValue;
 }
@@ -489,7 +489,7 @@ static void showWalkAreas() {
 	}
 }
 
-void set_up_screen(SetupScreenMode mode) {
+void setupScreen(SetupScreenMode mode) {
 	int16 i;
 	int16 txt_nr;
 
@@ -518,7 +518,7 @@ void set_up_screen(SetupScreenMode mode) {
 		_G(out)->setPointer(_G(workptr));
 	}
 
-	sprite_engine();
+	spriteEngine();
 	if (_G(menu_display) == MENU_EINBLENDEN || _G(flags).InventMenu) {
 		if (!_G(flags).InventMenu)
 			plot_main_menu();
@@ -784,7 +784,7 @@ void kb_mov(int16 mode) {
 		if (mode)
 			ende = true;
 		else
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 	}
 }
@@ -1229,7 +1229,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 							movingFl = false;
 						}
 					}
-					set_up_screen(DO_SETUP);
+					setupScreen(DO_SETUP);
 				}
 			}
 			if (_G(flags).ChAutoMov) {
@@ -1251,14 +1251,14 @@ bool autoMove(int16 movNr, int16 playerNum) {
 						if (movingFl) {
 							if (_G(flags).ExitMov == false && _G(flags).ChAutoMov) {
 
-								set_person_pos(_G(spieler_mi)[playerNum].XyzEnd[0],
+								setPersonPos(_G(spieler_mi)[playerNum].XyzEnd[0],
 								               _G(spieler_mi)[playerNum].XyzEnd[1],
 								               playerNum, _G(Rdi)->AutoMov[movNr].SprNr);
 							}
 						}
 						endLoopFl = true;
 					}
-					set_up_screen(DO_SETUP);
+					setupScreen(DO_SETUP);
 					SHOULD_QUIT_RETURN0;
 				}
 			}
@@ -1297,12 +1297,12 @@ void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode) {
 				}
 				if (!_G(spieler_vector)[personNum].Count) {
 					if (move_status) {
-						set_person_pos(_G(spieler_mi)[personNum].XyzEnd[0],
+						setPersonPos(_G(spieler_mi)[personNum].XyzEnd[0],
 						               _G(spieler_mi)[personNum].XyzEnd[1], personNum, -1);
 					}
 					endLoopFl = true;
 				}
-				set_up_screen(DO_SETUP);
+				setupScreen(DO_SETUP);
 				SHOULD_QUIT_RETURN;
 			}
 		}
@@ -1381,9 +1381,9 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
 						if (_G(menu_item) != CUR_WALK && _G(menu_item) != CUR_USE) {
 							if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
-								set_person_spr(P_RIGHT, P_CHEWY);
+								setPersonSpr(P_RIGHT, P_CHEWY);
 							else
-								set_person_spr(P_LEFT, P_CHEWY);
+								setPersonSpr(P_LEFT, P_CHEWY);
 						}
 					}
 
@@ -1392,7 +1392,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (ok && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
-						if (start_ats_wait(txtNr, txtMode, 14, ATS_DATA))
+						if (startAtsWait(txtNr, txtMode, 14, ATS_DATA))
 							dispFl = false;
 					} else {
 						ret = -1;
@@ -1417,12 +1417,12 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 						if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
 							if (_G(menu_item) != CUR_WALK) {
 								if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
-									set_person_spr(P_RIGHT, P_CHEWY);
+									setPersonSpr(P_RIGHT, P_CHEWY);
 								else
-									set_person_spr(P_LEFT, P_CHEWY);
+									setPersonSpr(P_LEFT, P_CHEWY);
 							}
 							int16 r_val = g_engine->_rnd.getRandomNumber(MAX_RAND_NO_USE - 1);
-							actionFl = start_ats_wait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
+							actionFl = startAtsWait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
 							if (actionFl)
 								ret = txtNr;
 						}
@@ -1577,20 +1577,20 @@ void calc_mouse_person(int16 x, int16 y) {
 							if (txt_nr != 30000) {
 								if (_G(menu_item) != CUR_WALK) {
 									if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
-										set_person_spr(P_RIGHT, P_CHEWY);
+										setPersonSpr(P_RIGHT, P_CHEWY);
 									else
-										set_person_spr(P_LEFT, P_CHEWY);
+										setPersonSpr(P_LEFT, P_CHEWY);
 								}
-								if (!start_ats_wait(txt_nr, mode, 14, ATS_DATA))
-									start_ats_wait(def_nr, TXT_MARK_USE, 14, INV_USE_DEF);
+								if (!startAtsWait(txt_nr, mode, 14, ATS_DATA))
+									startAtsWait(def_nr, TXT_MARK_USE, 14, INV_USE_DEF);
 							}
 						}
 					} else {
 						if (_G(menu_item) != CUR_WALK) {
 							if (x + _G(spieler).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
-								set_person_spr(P_RIGHT, P_CHEWY);
+								setPersonSpr(P_RIGHT, P_CHEWY);
 							else
-								set_person_spr(P_LEFT, P_CHEWY);
+								setPersonSpr(P_LEFT, P_CHEWY);
 						}
 						calc_inv_no_use(p_nr, SPIELER_OBJ);
 					}
@@ -1674,7 +1674,7 @@ void clear_prog_ani() {
 void set_ani_screen() {
 	if (_G(flags).AniUserAction)
 		get_user_key(NO_SETUP);
-	set_up_screen(DO_SETUP);
+	setupScreen(DO_SETUP);
 }
 
 void del_inventar(int16 nr) {
@@ -1745,12 +1745,12 @@ void calc_ausgang(int16 x, int16 y) {
 				_G(flags).ShowAtsInvTxt = false;
 				_G(menu_item) = CUR_DISK;
 				cursorChoice(CUR_DISK);
-				set_up_screen(DO_SETUP);
+				setupScreen(DO_SETUP);
 				_G(cur_hide_flag) = true;
 				exit_room(nr);
 				_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).room_e_obj[nr].Exit;
 				_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-				set_person_pos(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].X -
+				setPersonPos(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].X -
 				               _G(spieler_mi)[_G(auto_p_nr)].HotMovX,
 				               _G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].Y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
 				               , P_CHEWY, -1);
@@ -1765,7 +1765,7 @@ void calc_ausgang(int16 x, int16 y) {
 				                               _G(room)->_gedXAnz[_G(room_blk).AkAblage],
 				                               _G(ged_mem)[_G(room_blk).AkAblage]);
 				check_shad(u_idx, 0);
-				set_person_spr(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
+				setPersonSpr(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
 				_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 				_G(fx_blend) = BLEND1;
 				_G(auto_obj) = 0;
@@ -1778,7 +1778,7 @@ void calc_ausgang(int16 x, int16 y) {
 				enter_room(nr);
 			}
 			_G(flags).ExitMov = false;
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 	}
 }
@@ -1862,7 +1862,7 @@ void auto_scroll(int16 scrx, int16 scry) {
 			_G(spieler).scrolly += _G(spieler).ScrollyStep;
 		if (scrx == _G(spieler).scrollx && scry == _G(spieler).scrolly)
 			endLoopFl = true;
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 	}
 	_G(maus_links_click) = tmpMouseClick;

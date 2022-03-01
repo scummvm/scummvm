@@ -58,14 +58,14 @@ void Room49::entry(int16 eib_nr) {
 	if (!_G(flags).LoadGame) {
 		if (_G(spieler).R48TaxiEntry) {
 			_G(spieler).R48TaxiEntry = false;
-			set_person_pos(527, 76, P_HOWARD, P_LEFT);
-			set_person_pos(491, 98, P_CHEWY, P_LEFT);
+			setPersonPos(527, 76, P_HOWARD, P_LEFT);
+			setPersonPos(491, 98, P_CHEWY, P_LEFT);
 			_G(maus_links_click) = false;
 			_G(spieler).scrollx = 320;
 			_G(spieler).scrolly = 0;
-			_G(det)->start_detail(5, 1, ANI_FRONT);
+			_G(det)->startDetail(5, 1, ANI_FRONT);
 		} else if (eib_nr == 83) {
-			set_person_pos(377, 78, P_HOWARD, P_LEFT);
+			setPersonPos(377, 78, P_HOWARD, P_LEFT);
 		}
 	}
 }
@@ -79,7 +79,7 @@ void Room49::xit(int16 eib_nr) {
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 		} else if (eib_nr == 81) {
 			_G(SetUpScreenFunc) = nullptr;
-			start_aad_wait(268, -1);
+			startAadWait(268, -1);
 		}
 	}
 }
@@ -108,7 +108,7 @@ void Room49::calc_boy_ani() {
 	}
 
 	_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
-	_G(det)->start_detail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_FRONT);
+	_G(det)->startDetail(_G(spieler).R49BoyAni ? 1 : 0, 1, ANI_FRONT);
 	_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 }
 
@@ -117,28 +117,28 @@ void Room49::calc_boy() {
 		hideCur();
 		_G(room)->set_timer_status(255, TIMER_STOP);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
-		stop_person(P_CHEWY);
-		stop_person(P_HOWARD);
+		stopPerson(P_CHEWY);
+		stopPerson(P_HOWARD);
 		_G(person_end_phase)[P_CHEWY] = P_LEFT;
 		_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 		_G(det)->del_static_ani(_G(spieler).R49BoyAni ? 1 : 0);
 		_G(det)->set_static_ani(2, -1);
 
 		_G(SetUpScreenFunc) = nullptr;
-		start_aad_wait(262, -1);
+		startAadWait(262, -1);
 		_G(SetUpScreenFunc) = nullptr;
 		autoMove(3, P_CHEWY);
 		goAutoXy(374, 79, P_HOWARD, ANI_WAIT);
-		set_person_spr(P_LEFT, P_HOWARD);
+		setPersonSpr(P_LEFT, P_HOWARD);
 		_G(det)->del_static_ani(2);
-		start_detail_wait(3, 1, ANI_FRONT);
+		startSetailWait(3, 1, ANI_FRONT);
 
 		_G(det)->showStaticSpr(9);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		start_detail_wait(8, 1, ANI_FRONT);
+		startSetailWait(8, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_HOWARD] = false;
 		_G(det)->hideStaticSpr(9);
-		start_detail_wait(4, 1, ANI_GO);
+		startSetailWait(4, 1, ANI_GO);
 
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
@@ -178,7 +178,7 @@ void Room49::use_boy_cigar() {
 	const int16 zoom = _G(room)->_roomInfo->_zoomFactor;
 	_G(room)->set_zoom(zoom);
 	goAutoXy(416, 79, P_HOWARD, ANI_WAIT);
-	set_person_spr(P_LEFT, P_HOWARD);
+	setPersonSpr(P_LEFT, P_HOWARD);
 	_G(flags).NoScroll = true;
 
 	auto_scroll(164, 0);
@@ -191,8 +191,8 @@ void Room49::use_boy_cigar() {
 	_G(det)->stop_detail(_G(spieler).R49BoyAni ? 1 : 0);
 
 	_G(flags).NoScroll = false;
-	set_person_spr(P_RIGHT, P_CHEWY);
-	start_aad_wait(264, -1);
+	setPersonSpr(P_RIGHT, P_CHEWY);
+	startAadWait(264, -1);
 	_G(room)->set_zoom(zoom);
 
 	_G(obj)->addInventory(GUM_INV, &_G(room_blk));
@@ -220,8 +220,8 @@ void Room49::talk_boy(int16 aad_nr) {
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
 		_G(det)->set_static_ani(2, -1);
 		_G(SetUpScreenFunc) = nullptr;
-		stop_person(P_HOWARD);
-		start_aad_wait(aad_nr, -1);
+		stopPerson(P_HOWARD);
+		startAadWait(aad_nr, -1);
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->del_static_ani(2);
 		_G(det)->set_static_ani(_G(spieler).R49BoyAni ? 1 : 0, -1);
@@ -232,8 +232,8 @@ void Room49::talk_boy(int16 aad_nr) {
 void Room49::look_hotel() {
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 49) {
 		_G(SetUpScreenFunc) = nullptr;
-		stop_person(P_HOWARD);
-		start_aad_wait(261, -1);
+		stopPerson(P_HOWARD);
+		startAadWait(261, -1);
 		_G(SetUpScreenFunc) = setup_func;
 	}
 }
@@ -244,7 +244,7 @@ int16 Room49::use_taxi() {
 	if (!_G(spieler).inv_cur) {
 		action_ret = true;
 		hideCur();
-		start_ani_block(2, ABLOCK34);
+		startAniBlock(2, ABLOCK34);
 		_G(det)->showStaticSpr(7);
 		autoMove(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
@@ -259,7 +259,7 @@ int16 Room49::use_taxi() {
 		}
 
 		_G(det)->hideStaticSpr(7);
-		start_detail_wait(5, 1, ANI_FRONT);
+		startSetailWait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}

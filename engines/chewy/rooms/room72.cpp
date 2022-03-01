@@ -56,9 +56,9 @@ void Room72::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 112:
-		set_person_pos(50, 129, P_CHEWY, P_RIGHT);
-		set_person_pos(15, 103, P_HOWARD, P_RIGHT);
-		set_person_pos(-15, 102, P_NICHELLE, P_RIGHT);
+		setPersonPos(50, 129, P_CHEWY, P_RIGHT);
+		setPersonPos(15, 103, P_HOWARD, P_RIGHT);
+		setPersonPos(-15, 102, P_NICHELLE, P_RIGHT);
 		goAutoXy(185, 130, P_CHEWY, ANI_GO);
 		goAutoXy(147, 103, P_HOWARD, ANI_GO);
 		goAutoXy(120, 104, P_NICHELLE, ANI_WAIT);
@@ -66,9 +66,9 @@ void Room72::entry(int16 eib_nr) {
 		register_cutscene(23);
 		break;
 	case 113:
-		set_person_pos(213, 129, P_CHEWY, P_LEFT);
-		set_person_pos(262, 103, P_HOWARD, P_LEFT);
-		set_person_pos(293, 102, P_NICHELLE, P_LEFT);
+		setPersonPos(213, 129, P_CHEWY, P_LEFT);
+		setPersonPos(262, 103, P_HOWARD, P_LEFT);
+		setPersonPos(293, 102, P_NICHELLE, P_LEFT);
 		goAutoXy(120, 130, P_CHEWY, ANI_GO);
 		goAutoXy(154, 102, P_HOWARD, ANI_GO);
 		goAutoXy(186, 102, P_NICHELLE, ANI_WAIT);
@@ -87,14 +87,14 @@ void Room72::xit(int16 eib_nr) {
 void Room72::proc1(int16 flicNr) {
 	_G(atds)->set_steuer_bit(389, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).flags28_10 = true;
-	wait_show_screen(7);
-	start_aad_wait(437, -1);
+	waitShowScreen(7);
+	startAadWait(437, -1);
 	flic_cut(flicNr);
 	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(0);
-	set_up_screen(DO_SETUP);
+	setupScreen(DO_SETUP);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();

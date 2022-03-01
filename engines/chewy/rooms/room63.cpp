@@ -38,16 +38,16 @@ void Room63::entry() {
 	if (!_G(spieler).R63Uhr) {
 		_G(cur_hide_flag) = false;
 		hideCur();
-		_G(det)->start_detail(12, 255, ANI_FRONT);
-		_G(det)->start_detail(10, 255, ANI_FRONT);
-		_G(det)->start_detail(18, 255, ANI_FRONT);
+		_G(det)->startDetail(12, 255, ANI_FRONT);
+		_G(det)->startDetail(10, 255, ANI_FRONT);
+		_G(det)->startDetail(18, 255, ANI_FRONT);
 		autoMove(4, P_CHEWY);
 		_G(det)->stop_detail(10);
-		_G(det)->start_detail(11, 255, ANI_FRONT);
+		_G(det)->startDetail(11, 255, ANI_FRONT);
 		auto_scroll(58, 0);
-		start_aad_wait(355, -1);
+		startAadWait(355, -1);
 		_G(det)->stop_detail(11);
-		_G(det)->start_detail(10, 255, ANI_FRONT);
+		_G(det)->startDetail(10, 255, ANI_FRONT);
 		showCur();
 	} else if (!_G(spieler).R63Feuer) {
 		_G(det)->showStaticSpr(10);
@@ -57,11 +57,11 @@ void Room63::entry() {
 		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
-		set_person_pos(424, 78, P_CHEWY, P_LEFT);
+		setPersonPos(424, 78, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		_G(spieler).room_e_obj[95].Attribut = 255;
 		_G(r63ChewyAni) = 0;
-		_G(det)->start_detail(0, 1, ANI_FRONT);
+		_G(det)->startDetail(0, 1, ANI_FRONT);
 	}
 }
 
@@ -79,7 +79,7 @@ void Room63::setup_func() {
 			if (_G(r63RunDia) < 4)
 				++_G(r63RunDia);
 			start_aad(370 + _G(r63RunDia));
-			_G(det)->start_detail(1, 1, ANI_FRONT);
+			_G(det)->startDetail(1, 1, ANI_FRONT);
 			_G(r63ChewyAni) = 1;
 		}
 		break;
@@ -87,9 +87,9 @@ void Room63::setup_func() {
 	case 1:
 		if (_G(det)->get_ani_status(1) == false) {
 			_G(spieler).ScrollxStep = 4;
-			set_person_pos(0, 0, P_CHEWY, P_RIGHT);
-			_G(det)->start_detail(22, 1, ANI_FRONT);
-			_G(det)->start_detail(2, 1, ANI_FRONT);
+			setPersonPos(0, 0, P_CHEWY, P_RIGHT);
+			_G(det)->startDetail(22, 1, ANI_FRONT);
+			_G(det)->startDetail(2, 1, ANI_FRONT);
 			_G(atds)->stop_aad();
 			_G(r63ChewyAni) = 2;
 		}
@@ -97,7 +97,7 @@ void Room63::setup_func() {
 
 	case 2:
 		if (_G(det)->get_ani_status(2) == false) {
-			_G(det)->start_detail(3, 1, ANI_FRONT);
+			_G(det)->startDetail(3, 1, ANI_FRONT);
 			_G(r63ChewyAni) = 3;
 		}
 		break;
@@ -111,11 +111,11 @@ void Room63::setup_func() {
 				_G(spieler).ScrollxStep = 16;
 				_G(spieler).scrollx -= _G(spieler).scrollx % 16;
 				auto_scroll(176, 0);
-				set_person_pos(424, 78, P_CHEWY, P_LEFT);
+				setPersonPos(424, 78, P_CHEWY, P_LEFT);
 				_G(flags).NoScroll = false;
 				_G(spieler).ScrollxStep = 4;
 				if (!_G(r63Schalter)) {
-					_G(det)->start_detail(0, 1, ANI_FRONT);
+					_G(det)->startDetail(0, 1, ANI_FRONT);
 					_G(r63ChewyAni) = 0;
 				} else
 					bork_platt();
@@ -140,10 +140,10 @@ void Room63::bork_platt() {
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	autoMove(6, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	start_aad_wait(370, -1);
-	start_detail_wait(4, 1, ANI_FRONT);
+	startAadWait(370, -1);
+	startSetailWait(4, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(13);
-	start_aad_wait(361, -1);
+	startAadWait(361, -1);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_079);
@@ -160,8 +160,8 @@ void Room63::talk_hunter() {
 	autoMove(3, P_CHEWY);
 	if (_G(spieler).R63Uhr)
 		_G(det)->hideStaticSpr(10);
-	_G(det)->start_detail(10, 255, ANI_FRONT);
-	start_aad_wait(356, -1);
+	_G(det)->startDetail(10, 255, ANI_FRONT);
+	startAadWait(356, -1);
 	if (_G(spieler).R63Uhr) {
 		_G(det)->showStaticSpr(10);
 		_G(det)->stop_detail(10);
@@ -175,13 +175,13 @@ void Room63::talk_regie() {
 	if (_G(spieler).R63Uhr)
 		_G(det)->hideStaticSpr(12);
 	_G(det)->stop_detail(18);
-	_G(det)->start_detail(19, 255, ANI_FRONT);
-	start_aad_wait(357, -1);
+	_G(det)->startDetail(19, 255, ANI_FRONT);
+	startAadWait(357, -1);
 	_G(det)->stop_detail(19);
 	if (_G(spieler).R63Uhr) {
 		_G(det)->showStaticSpr(12);
 	} else {
-		_G(det)->start_detail(18, 255, ANI_FRONT);
+		_G(det)->startDetail(18, 255, ANI_FRONT);
 	}
 	showCur();
 }
@@ -189,7 +189,7 @@ void Room63::talk_regie() {
 void Room63::talk_fx_man() {
 	hideCur();
 	autoMove(1, P_CHEWY);
-	start_aad_wait(358, -1);
+	startAadWait(358, -1);
 	showCur();
 }
 
@@ -201,13 +201,13 @@ int16 Room63::use_fx_man() {
 		autoMove(1, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		remove_inventory(34);
-		start_aad_wait(359, -1);
+		startAadWait(359, -1);
 		_G(det)->del_static_ani(5);
-		start_detail_wait(6, 1, ANI_FRONT);
-		_G(det)->start_detail(7, 255, ANI_FRONT);
-		start_aad_wait(362, -1);
+		startSetailWait(6, 1, ANI_FRONT);
+		_G(det)->startDetail(7, 255, ANI_FRONT);
+		startAadWait(362, -1);
 		_G(det)->stop_detail(7);
-		start_detail_wait(8, 1, ANI_FRONT);
+		startSetailWait(8, 1, ANI_FRONT);
 		_G(spieler).R63FxMannWeg = true;
 		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATA);
 		showCur();
@@ -229,21 +229,21 @@ int16 Room63::use_schalter() {
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 				_G(det)->showStaticSpr(2);
-				set_person_spr(P_LEFT, P_CHEWY);
-				start_detail_wait(21, 1, ANI_FRONT);
+				setPersonSpr(P_LEFT, P_CHEWY);
+				startSetailWait(21, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(14);
-				wait_show_screen(18);
+				waitShowScreen(18);
 				_G(det)->hideStaticSpr(14);
-				start_detail_wait(24, 1, ANI_FRONT);
+				startSetailWait(24, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(1);
 				_G(det)->hideStaticSpr(2);
-				start_aad_wait(364, -1);
+				startAadWait(364, -1);
 				_G(atds)->set_ats_str(385, 1, ATS_DATA);
 				showCur();
 			}
 		} else {
 			hideCur();
-			start_aad_wait(363, -1);
+			startAadWait(363, -1);
 			showCur();
 		}
 	}
@@ -253,11 +253,11 @@ int16 Room63::use_schalter() {
 void Room63::talk_girl() {
 	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(12);
-	start_detail_wait(13, 1, ANI_FRONT);
+	startSetailWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	start_ads_wait(17);
 	_G(det)->del_static_ani(14);
-	_G(det)->start_detail(12, 255, ANI_FRONT);
+	_G(det)->startDetail(12, 255, ANI_FRONT);
 }
 
 int16 Room63::use_girl() {
@@ -268,14 +268,14 @@ int16 Room63::use_girl() {
 		autoMove(2, P_CHEWY);
 		del_inventar(_G(spieler).AkInvent);
 		_G(det)->stop_detail(12);
-		start_detail_wait(13, 1, ANI_FRONT);
+		startSetailWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
-		start_aad_wait(365, -1);
+		startAadWait(365, -1);
 		_G(det)->del_static_ani(14);
-		_G(det)->start_detail(15, 255, ANI_FRONT);
-		start_aad_wait(360, -1);
+		_G(det)->startDetail(15, 255, ANI_FRONT);
+		startAadWait(360, -1);
 		_G(det)->stop_detail(15);
-		start_detail_wait(16, 1, ANI_FRONT);
+		startSetailWait(16, 1, ANI_FRONT);
 		_G(spieler).R63Uhr = true;
 		_G(det)->stop_detail(10);
 		_G(det)->stop_detail(18);
@@ -284,7 +284,7 @@ int16 Room63::use_girl() {
 		_G(atds)->set_ats_str(381, 1, ATS_DATA);
 		_G(atds)->set_ats_str(382, 1, ATS_DATA);
 		_G(atds)->set_steuer_bit(380, ATS_AKTIV_BIT, ATS_DATA);
-		start_aad_wait(367, -1);
+		startAadWait(367, -1);
 		showCur();
 	}
 	return action_ret;
@@ -304,12 +304,12 @@ int16 Room63::use_aschenbecher() {
 				auto_scroll(70, 0);
 				autoMove(1, P_CHEWY);
 				_G(spieler).PersonHide[P_CHEWY] = true;
-				_G(det)->start_detail(20, 255, ANI_FRONT);
-				_G(det)->start_detail(10, 255, ANI_FRONT);
-				_G(det)->start_detail(18, 255, ANI_FRONT);
+				_G(det)->startDetail(20, 255, ANI_FRONT);
+				_G(det)->startDetail(10, 255, ANI_FRONT);
+				_G(det)->startDetail(18, 255, ANI_FRONT);
 				_G(det)->hideStaticSpr(10);
 				_G(det)->hideStaticSpr(12);
-				start_aad_wait(368, -1);
+				startAadWait(368, -1);
 				flic_cut(FCUT_080);
 				_G(atds)->set_steuer_bit(381, ATS_AKTIV_BIT, ATS_DATA);
 				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATA);
@@ -317,13 +317,13 @@ int16 Room63::use_aschenbecher() {
 				_G(spieler).R63Feuer = true;
 				_G(spieler).PersonHide[P_CHEWY] = false;
 				_G(spieler).scrollx = 0;
-				set_person_pos(187, 42, P_CHEWY, P_RIGHT);
+				setPersonPos(187, 42, P_CHEWY, P_RIGHT);
 				switch_room(64);
 				_G(flags).NoScroll = false;
 			} else
-				start_aad_wait(369, -1);
+				startAadWait(369, -1);
 		} else
-			start_aad_wait(366, -1);
+			startAadWait(366, -1);
 		
 		showCur();
 	}

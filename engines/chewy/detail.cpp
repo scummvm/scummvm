@@ -502,7 +502,7 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 	}
 }
 
-void Detail::start_detail(int16 nr, int16 rep, int16 reverse) {
+void Detail::startDetail(int16 nr, int16 rep, int16 reverse) {
 	if (nr != -1) {
 		AniDetailInfo *adiptr;
 		adiptr = &_rdi.Ainfo[nr];

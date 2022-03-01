@@ -54,17 +54,17 @@ void Room0::entry() {
 		_G(det)->hideStaticSpr(6);
 
 	if (!_G(flags).LoadGame) {
-		set_person_pos(150, 100, P_CHEWY, P_RIGHT);
+		setPersonPos(150, 100, P_CHEWY, P_RIGHT);
 		_G(cur_hide_flag) = 0;
 		hideCur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 
 		while (!_G(ani_timer)[_G(timer_nr)[0]]._timeFlag && !SHOULD_QUIT) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		}
 
 		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(2, -1);
+		startAadWait(2, -1);
 
 		showCur();
 	}
@@ -82,32 +82,32 @@ bool Room0::timer(int16 t_nr, int16 ani_nr) {
 
 			_G(flags).AutoAniPlay = true;
 			if (!_G(spieler).R0SlimeUsed) {
-				start_aad_wait(42, -1);
+				startAadWait(42, -1);
 				autoMove(5, P_CHEWY);
-				set_person_spr(P_LEFT, P_CHEWY);
+				setPersonSpr(P_LEFT, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
 					start_spz(CH_TALK3, 255, false, P_CHEWY);
 					if (_G(spieler).R0FueterLab)
-						start_aad_wait(618, -1);
+						startAadWait(618, -1);
 					else
-						start_aad_wait(43, -1);
+						startAadWait(43, -1);
 
 					++_G(spieler).R0FueterLab;
 				}
 
 				eyeAnim();
 			} else if (!_G(spieler).R0PillowThrow) {
-				start_aad_wait(42, -1);
+				startAadWait(42, -1);
 				start_spz(CH_TALK3, 255, false, P_CHEWY);
 
 				if (_G(spieler).R0FueterLab < 3) {
-					start_aad_wait(43, -1);
+					startAadWait(43, -1);
 					++_G(spieler).R0FueterLab;
 				}
 
 				autoMove(3, P_CHEWY);
-				set_person_pos(191, 120, P_CHEWY, P_LEFT);
+				setPersonPos(191, 120, P_CHEWY, P_LEFT);
 			}
 
 			if (!_G(spieler).R0PillowThrow)
@@ -152,9 +152,9 @@ bool Room0::pullSlime() {
 		_G(flags).AutoAniPlay = true;
 		autoMove(2, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(3, 1, ANI_FRONT);
-		start_detail_wait(17, 2, ANI_FRONT);
-		set_person_pos(222, 106, P_CHEWY, P_LEFT);
+		startSetailWait(3, 1, ANI_FRONT);
+		startSetailWait(17, 2, ANI_FRONT);
+		setPersonPos(222, 106, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
@@ -181,10 +181,10 @@ void Room0::eyeAnim() {
 			checkSlimeEye();
 			eyeSlimeBack();
 			autoMove(FUETTER_POS, P_CHEWY);
-			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+			setPersonPos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		} else {
 			eyeShoot();
-			set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+			setPersonPos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 			eyeStart(EYE_END);
 		}
 	}
@@ -233,7 +233,7 @@ void Room0::eyeStart(EyeMode mode) {
 		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3].ZEbene = 193;
 		get_user_key(NO_SETUP);
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		SHOULD_QUIT_RETURN;
 
 		_G(cur)->plot_cur();
@@ -280,7 +280,7 @@ void Room0::eyeWait() {
 		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[2].ZEbene = 192;
 		get_user_key(NO_SETUP);
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcEyeClick(2);
 		_G(out)->back2screen(_G(workpage));
@@ -318,7 +318,7 @@ void Room0::calcEyeClick(int16 ani_nr) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
 			} else if (is_cur_inventar(PILLOW_INV)) {
-				start_ats_wait(172, TXT_MARK_WALK, 14, ATS_DATA);
+				startAtsWait(172, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}
 	}
@@ -329,7 +329,7 @@ void Room0::eyeShoot() {
 	adi->ani_count = 47;
 
 	bool ende = false;
-	_G(det)->start_detail(CH_BLITZ, 1, ANI_FRONT);
+	_G(det)->startDetail(CH_BLITZ, 1, ANI_FRONT);
 
 	while (!ende) {
 		clear_prog_ani();
@@ -349,7 +349,7 @@ void Room0::eyeShoot() {
 				ende = true;
 		}
 
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 
 		if (adi->delay_count > 0)
@@ -360,7 +360,7 @@ void Room0::eyeShoot() {
 		}
 	}
 
-	_G(det)->start_detail(STERNE_STEHEN, 255, ANI_FRONT);
+	_G(det)->startDetail(STERNE_STEHEN, 255, ANI_FRONT);
 	clear_prog_ani();
 	_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 	_G(spr_info)[0].ZEbene = 190;
@@ -369,9 +369,9 @@ void Room0::eyeShoot() {
 	_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
 	_G(spr_info)[2].ZEbene = 192;
 
-	wait_show_screen(30);
+	waitShowScreen(30);
 	clear_prog_ani();
-	set_person_pos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+	setPersonPos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 }
 
@@ -433,7 +433,7 @@ void Room0::checkSlimeEye() {
 		_G(spr_info)[2].ZEbene = 192;
 		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, CH_WIRFT_SCHLEIM, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3].ZEbene = 193;
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -488,7 +488,7 @@ void Room0::feederStart(int16 mode) {
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		if (!mode)
 			calcPillowClick(1);
@@ -514,7 +514,7 @@ void Room0::feederStart(int16 mode) {
 	_G(flags).AniUserAction = false;
 
 	if (mode) {
-		_G(det)->start_detail(FLAP_DETAIL, 1, ANI_BACK);
+		_G(det)->startDetail(FLAP_DETAIL, 1, ANI_BACK);
 		while (_G(det)->get_ani_status(FLAP_DETAIL))
 			set_ani_screen();
 
@@ -529,7 +529,7 @@ void Room0::feederExtend() {
 		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 136, ANI_HIDE);
 		_G(spr_info)[1].ZEbene = 191;
 		get_user_key(NO_SETUP);
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcPillowClick(1);
 		_G(out)->back2screen(_G(workpage));
@@ -556,7 +556,7 @@ void Room0::calcPillowClick(int16 ani_nr) {
 				del_inventar(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;
 			} else if (is_cur_inventar(SLIME_INV)) {
-				start_ats_wait(173, TXT_MARK_WALK, 14, ATS_DATA);
+				startAtsWait(173, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}
 	}
@@ -616,7 +616,7 @@ void Room0::checkFeed() {
 	}
 
 	adi->ani_count = 138;
-	_G(det)->start_detail(CH_NACH_FUETTERN, 2, ANI_FRONT);
+	_G(det)->startDetail(CH_NACH_FUETTERN, 2, ANI_FRONT);
 
 	ende = false;
 	while (!ende) {
@@ -662,7 +662,7 @@ void Room0::checkPillow() {
 
 	bool ende = false;
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(det)->start_detail(CH_WIRFT_KISSEN, 1, ANI_FRONT);
+	_G(det)->startDetail(CH_WIRFT_KISSEN, 1, ANI_FRONT);
 	bool mode = false;
 
 	while (!ende) {
@@ -670,7 +670,7 @@ void Room0::checkPillow() {
 		if (!_G(det)->get_ani_status(CH_WIRFT_KISSEN)) {
 			mode = true;
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			set_person_pos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
+			setPersonPos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		}
 
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
@@ -683,7 +683,7 @@ void Room0::checkPillow() {
 			_G(spr_info)[2].ZEbene = 192;
 		}
 
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 
 		if (mode) {
@@ -702,7 +702,7 @@ void Room0::checkPillow() {
 }
 
 void Room0::trapDoorOpen() {
-	_G(det)->start_detail(FLAP_DETAIL, 1, ANI_FRONT);
+	_G(det)->startDetail(FLAP_DETAIL, 1, ANI_FRONT);
 	while (_G(det)->get_ani_status(FLAP_DETAIL)) {
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
@@ -723,7 +723,7 @@ void Room0::trapDoorOpen() {
 }
 
 void Room0::trapDoorClose() {
-	_G(det)->start_detail(FLAP_DETAIL, 1, ANI_BACK);
+	_G(det)->startDetail(FLAP_DETAIL, 1, ANI_BACK);
 
 	while (_G(det)->get_ani_status(FLAP_DETAIL)) {
 		set_ani_screen();
@@ -742,7 +742,7 @@ void Room0::feederAni() {
 			checkPillow();
 			feederStart(1);
 			autoMove(VERSTECK_POS, P_CHEWY);
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			_G(out)->cls();
 			flic_cut(FCUT_000);
 
@@ -750,13 +750,13 @@ void Room0::feederAni() {
 
 			_G(spieler).PersonRoomNr[P_CHEWY] = 1;
 			_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
-			set_person_pos(_G(Rdi)->AutoMov[4].X - CH_HOT_MOV_X,
+			setPersonPos(_G(Rdi)->AutoMov[4].X - CH_HOT_MOV_X,
 			               _G(Rdi)->AutoMov[4].Y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			_G(spieler_vector)[P_CHEWY].DelayCount = 0;
 
 			check_shad(4, 0);
 			_G(fx_blend) = BLEND1;
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 		} else {
 			action = true;
 		}

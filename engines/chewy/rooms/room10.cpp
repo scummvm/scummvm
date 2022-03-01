@@ -37,11 +37,11 @@ void Room10::entry() {
 		_G(spieler).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
 		flic_cut(FCUT_003);
-		set_person_pos(0, 130, P_CHEWY, P_RIGHT);
+		setPersonPos(0, 130, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
 		hideCur();
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		start_aad_wait(101, 0);
+		startAadWait(101, 0);
 		showCur();
 
 	} else if (_G(spieler).R10SurimyOk) {

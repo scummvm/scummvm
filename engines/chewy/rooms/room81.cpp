@@ -47,9 +47,9 @@ void Room81::entry() {
 	if (_G(flags).LoadGame || !_G(spieler).flags30_1)
 		return;
 
-	set_person_pos(155, 146, P_CHEWY, P_LEFT);
-	set_person_pos(103, 115, P_HOWARD, P_RIGHT);
-	set_person_pos(62, 112, P_NICHELLE, P_RIGHT);
+	setPersonPos(155, 146, P_CHEWY, P_LEFT);
+	setPersonPos(103, 115, P_HOWARD, P_RIGHT);
+	setPersonPos(62, 112, P_NICHELLE, P_RIGHT);
 	_G(spieler).flags30_1 = false;
 	_G(maus_links_click) = false;
 	_G(spieler).scrollx = 0;
@@ -78,14 +78,14 @@ void Room81::proc1() {
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
 		goAutoXy(112, 60, P_CHEWY, ANI_WAIT);
-		start_aad_wait(461, -1);
+		startAadWait(461, -1);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(0, 1, ANI_FRONT);
-		_G(det)->start_detail(1, 255, false);
-		start_aad_wait(459, -1);
+		startSetailWait(0, 1, ANI_FRONT);
+		_G(det)->startDetail(1, 255, false);
+		startAadWait(459, -1);
 		_G(det)->stop_detail(1);
-		start_detail_wait(0, 1, ANI_GO);
+		startSetailWait(0, 1, ANI_GO);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(100, 96, P_CHEWY, ANI_WAIT);
@@ -99,7 +99,7 @@ void Room81::proc1() {
 	
 	if (diaNr != -1) {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		start_aad_wait(diaNr, -1);
+		startAadWait(diaNr, -1);
 	}
 
 	showCur();
@@ -129,7 +129,7 @@ int Room81::proc2() {
 	if (diaNr != -1) {
 		retVal = 1;
 		start_spz(aniId, 255, false, P_CHEWY);
-		start_aad_wait(diaNr, -1);
+		startAadWait(diaNr, -1);
 		proc3();
 	}
 
@@ -139,12 +139,12 @@ int Room81::proc2() {
 
 void Room81::proc3() {
 	if (!_G(spieler).flags30_2) {
-		_G(det)->start_detail(2, 255, false);
+		_G(det)->startDetail(2, 255, false);
 		return;
 	}
 
 	for (int i = 0; i < 3; ++i)
-		_G(det)->start_detail(3 + i, 255, false);
+		_G(det)->startDetail(3 + i, 255, false);
 
 	_G(det)->stop_detail(2);
 	_G(atds)->del_steuer_bit(486, ATS_AKTIV_BIT, ATS_DATA);

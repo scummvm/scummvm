@@ -297,7 +297,6 @@ public:
 	int16 _z_count = 0;
 	ZObjSort _z_obj_sort[MAX_ZOBJ];
 	char _new_vector = false;
-	int16 _tmp_maus_links = 0;
 
 	// timer.cpp
 	bool _timer_int = false;
@@ -320,7 +319,7 @@ void free_buffers();
 
 bool mainLoop(int16 mode);
 
-void set_up_screen(SetupScreenMode mode);
+void setupScreen(SetupScreenMode mode);
 
 void kb_mov(int16 mode);
 
@@ -467,20 +466,20 @@ bool calc_inv_no_use(int16 test_nr, int16 mode);
 int16 calc_person_txt(int16 p_nr);
 int16 calc_person_click(int16 p_nr);
 void calc_person_dia(int16 p_nr);
-void sprite_engine();
+void spriteEngine();
 
 void calc_z_ebene();
 
-void start_ani_block(int16 anz, const AniBlock *ab);
+void startAniBlock(int16 nr, const AniBlock *ab);
 
-void start_detail_wait(int16 ani_nr, int16 rep, int16 mode);
+void startSetailWait(int16 aniNr, int16 rep, int16 mode);
 
-void start_detail_frame(int16 ani_nr, int16 rep, int16 mode,
+void startDetailFrame(int16 aniNr, int16 rep, int16 mode,
                         int16 frame);
 
-void wait_detail(int16 det_nr);
+void waitDetail(int16 detNr);
 
-void wait_show_screen(int16 frames);
+void waitShowScreen(int16 frames);
 
 void zoom_mov_anpass(ObjMov *om, MovInfo *mi);
 
@@ -489,13 +488,13 @@ void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY,
 
 void load_chewy_taf(int16 taf_nr);
 
-bool start_ats_wait(int16 txt_nr, int16 txt_mode, int16 col, int16 mode);
-void start_aad_wait(int16 dia_nr, int16 str_nr);
+bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode);
+void startAadWait(int16 diaNr, int16 strNr);
 
-void start_aad(int16 dia_nr);
-void aad_wait(int16 str_nr);
-void start_ads_wait(int16 dia_nr);
-void start_aad(int16 dia_nr, int16 ssi_nr);
+void start_aad(int16 diaNr);
+void aadWait(int16 strNr);
+void start_ads_wait(int16 diaNr);
+void start_aad(int16 diaNr, int16 ssiNr);
 void wait_auto_obj(int16 nr);
 
 void stop_auto_obj(int16 nr);
@@ -522,11 +521,11 @@ void stop_spz();
 
 void calc_person_spz_ani(ObjMov *om);
 
-void set_person_pos(int16 x, int16 y, int16 p_nr, int16 richtung);
+void setPersonPos(int16 x, int16 y, int16 personNr, int16 direction);
 
-void set_person_spr(int16 nr, int16 p_nr);
+void setPersonSpr(int16 nr, int16 personNr);
 
-void stop_person(int16 p_nr);
+void stopPerson(int16 personNr);
 
 void mov_objekt(ObjMov *om, MovInfo *mi);
 
