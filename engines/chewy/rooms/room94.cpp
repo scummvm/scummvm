@@ -52,8 +52,8 @@ void Room94::entry() {
 		_G(zoom_horizont) = 140;
 		_G(spieler).flags35_8 = false;
 		_G(spieler).scrollx = 0;
-		set_person_pos(156, 149, P_CHEWY, P_RIGHT);
-		set_person_pos(153, 122, P_HOWARD, P_RIGHT);
+		setPersonPos(156, 149, P_CHEWY, P_RIGHT);
+		setPersonPos(153, 122, P_HOWARD, P_RIGHT);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_120);
@@ -67,8 +67,8 @@ void Room94::entry() {
 
 	if (_G(spieler).flags35_40) {
 		// Ghost shooting dolls during initial arrival
-		set_person_pos(373, 122, P_CHEWY, P_LEFT);
-		set_person_pos(393, 94, P_HOWARD, P_LEFT);
+		setPersonPos(373, 122, P_CHEWY, P_LEFT);
+		setPersonPos(393, 94, P_HOWARD, P_LEFT);
 		_G(spieler).flags35_40 = false;
 		_G(spieler).scrollx = 150;
 
@@ -90,7 +90,7 @@ void Room94::entry() {
 		// Normal scene entry after having dealt with Ghost
 		hideCur();
 		_G(spieler).scrollx = 120;
-		set_person_pos(255, 86, P_HOWARD, P_LEFT);
+		setPersonPos(255, 86, P_HOWARD, P_LEFT);
 		autoMove(3, P_CHEWY);
 		showCur();
 	}
@@ -142,20 +142,20 @@ int Room94::giveGhostBottle() {
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_062);
 	_G(fx_blend) = BLEND3;
-	_G(det)->start_detail(5, 255, false);
-	start_aad_wait(541, -1);
+	_G(det)->startDetail(5, 255, false);
+	startAadWait(541, -1);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(5);
 	Room66::proc8(3, 3, 2, 617);
 	hideCur();
 	_G(det)->hideStaticSpr(5);
-	_G(det)->start_detail(5, 255, false);
-	start_aad_wait(622, -1);
+	_G(det)->startDetail(5, 255, false);
+	startAadWait(622, -1);
 	_G(det)->stop_detail(5);
-	_G(det)->start_detail(6, 1, false);	
+	_G(det)->startDetail(6, 1, false);	
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
-	start_detail_wait(4, 1, ANI_FRONT);
+	startSetailWait(4, 1, ANI_FRONT);
 	_G(spieler).flags35_10 = true;
 	_G(spieler).room_e_obj[138].Attribut = AUSGANG_OBEN;
 	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATA);

@@ -65,14 +65,14 @@ void Room97::entry() {
 	}
 	
 	if (_G(spieler).flags36_10) {
-		_G(det)->start_detail(11, 255, ANI_FRONT);
+		_G(det)->startDetail(11, 255, ANI_FRONT);
 		_G(det)->stop_detail(5);
-		_G(det)->start_detail(6, 255, ANI_FRONT);
-		_G(det)->start_detail(12, 255, ANI_FRONT);
+		_G(det)->startDetail(6, 255, ANI_FRONT);
+		_G(det)->startDetail(12, 255, ANI_FRONT);
 	}
 
 	if (_G(spieler).flags36_40) {
-		_G(det)->start_detail(14, 255, ANI_FRONT);
+		_G(det)->startDetail(14, 255, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
 		_G(atds)->del_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
@@ -83,7 +83,7 @@ void Room97::entry() {
 		_G(det)->setSetailPos(27, 272, 110);
 		for (int i = 0; i < 2; ++i) {
 			_G(det)->stop_detail(23 + i);
-			_G(det)->start_detail(27 + i, 255, ANI_FRONT);
+			_G(det)->startDetail(27 + i, 255, ANI_FRONT);
 		}
 		g_engine->_sound->stopSound(0);
 		g_engine->_sound->stopSound(0);
@@ -113,15 +113,15 @@ void Room97::entry() {
 		_G(spieler).SVal2 = 0;
 		_G(spieler).flags35_4 = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(19, 1, ANI_FRONT);
+		startSetailWait(19, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		showCur();
 		switch_room(89);
 	} else {
 		_G(spieler).scrollx = 800;
-		set_person_pos(1067, 98, P_CHEWY, P_LEFT);
-		set_person_pos(1092, 83, P_HOWARD, P_LEFT);
-		set_person_pos(130, 29, P_NICHELLE, P_RIGHT);
+		setPersonPos(1067, 98, P_CHEWY, P_LEFT);
+		setPersonPos(1092, 83, P_HOWARD, P_LEFT);
+		setPersonPos(130, 29, P_NICHELLE, P_RIGHT);
 	}
 }
 
@@ -164,7 +164,7 @@ void Room97::setup_func() {
 	_G(spieler_mi)[P_NICHELLE].Vorschub = 4;
 
 	if (_G(spieler).flags35_80 && _G(spieler_vector)->Xypos[P_CHEWY] > 830)
-		set_person_pos(830, 98, P_CHEWY, P_RIGHT);
+		setPersonPos(830, 98, P_CHEWY, P_RIGHT);
 
 	if (_word18DB2E)
 		--_word18DB2E;
@@ -261,7 +261,7 @@ void Room97::proc2() {
 		return;
 
 	_G(flags).AutoAniPlay = true;
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	hideCur();
 	_G(Sdi)[6].z_ebene = 6;
 	_G(Sdi)[24].z_ebene = 6;
@@ -285,16 +285,16 @@ void Room97::proc3() {
 
 	_G(flags).AutoAniPlay = true;
 	hideCur();
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(557, -1);
+		startAadWait(557, -1);
 		goAutoXy(588, 129, P_CHEWY, ANI_WAIT);
 	} else if (!_G(spieler).flags36_40) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(568, -1);
+		startAadWait(568, -1);
 		goAutoXy(588, 129, P_CHEWY, ANI_WAIT);
 	} else {
 		_G(spieler).flags36_1 = true;
@@ -317,7 +317,7 @@ void Room97::proc3() {
 		if (!_G(spieler).flags36_80) {
 			goAutoXy(442, 35, P_HOWARD, ANI_WAIT);
 			goAutoXy(497, 31, P_HOWARD, ANI_WAIT);
-			start_aad_wait(562, -1);
+			startAadWait(562, -1);
 		}
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(Sdi)[6].z_ebene = 166;
@@ -336,14 +336,14 @@ void Room97::proc4() {
 		_G(flags).AutoAniPlay = true;
 		hideCur();
 		_G(spieler_mi)[P_CHEWY].Mode = true;
-		stop_person(P_CHEWY);
+		stopPerson(P_CHEWY);
 		g_engine->_sound->playSound(9, 0);
 		g_engine->_sound->stopSound(1);
-		start_detail_wait(9, 1, ANI_FRONT);
+		startSetailWait(9, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(21);
 
 		while (_G(spieler_vector)[P_HOWARD].Xypos[0] > 996) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
@@ -357,11 +357,11 @@ void Room97::proc4() {
 		goAutoXy(995, 77, P_HOWARD, ANI_WAIT);
 		goAutoXy(1047, 87, P_HOWARD, ANI_WAIT);
 
-		start_detail_wait(29, 1, ANI_FRONT);
+		startSetailWait(29, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(21);
 		g_engine->_sound->playSound(9, 1);
 		g_engine->_sound->stopSound(0);
-		start_detail_wait(9, 0, ANI_BACK);
+		startSetailWait(9, 0, ANI_BACK);
 
 		goAutoXy(1008, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(967, 111, P_CHEWY, ANI_WAIT);
@@ -369,7 +369,7 @@ void Room97::proc4() {
 		_G(det)->hideStaticSpr(2);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(553, -1);
+		startAadWait(553, -1);
 		_G(HowardMov) = 0;
 		showCur();
 	}
@@ -386,7 +386,7 @@ int Room97::proc5() {
 	auto_scroll(800, 0);
 	
 	while (_G(spieler_vector)[P_HOWARD].Xypos[0] < 1080) {
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 
@@ -396,16 +396,16 @@ int Room97::proc5() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	_G(spieler).scrollx = 720;
-	set_person_pos(822, 98, P_CHEWY, P_LEFT);
-	set_person_pos(861, 81, P_HOWARD, P_LEFT);
+	setPersonPos(822, 98, P_CHEWY, P_LEFT);
+	setPersonPos(861, 81, P_HOWARD, P_LEFT);
 	del_inventar(_G(spieler).AkInvent);
 	_G(det)->showStaticSpr(21);
 	_G(spieler).flags35_80 = true;
-	start_aad_wait(546, -1);
+	startAadWait(546, -1);
 	_G(det)->hideStaticSpr(21);
 	g_engine->_sound->playSound(9, 1);
 	g_engine->_sound->stopSound(0);
-	start_detail_wait(9, 0, ANI_GO);
+	startSetailWait(9, 0, ANI_GO);
 	
 	showCur();
 	return 1;
@@ -419,17 +419,17 @@ int Room97::proc6() {
 	autoMove(1, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	goAutoXy(298, 120, P_CHEWY, ANI_WAIT);
-	set_person_spr(P_LEFT, P_CHEWY);
+	setPersonSpr(P_LEFT, P_CHEWY);
 	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(15);
-	start_detail_wait(1, 1, ANI_FRONT);
+	startSetailWait(1, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(28);
 	autoMove(1, P_CHEWY);
 	_G(det)->hideStaticSpr(18);
-	start_detail_wait(15, 1, ANI_FRONT);
+	startSetailWait(15, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(17);
 	start_spz(CH_TALK5, 255, false, P_CHEWY);
-	start_aad_wait(558, -1);
+	startAadWait(558, -1);
 	_G(det)->hideStaticSpr(28);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(15);
@@ -454,12 +454,12 @@ int Room97::proc7() {
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(spieler).PersonHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
-	start_detail_wait(22, 1, ANI_FRONT);
+	startSetailWait(22, 1, ANI_FRONT);
 	_G(atds)->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->set_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
 	_G(spieler).flags36_4 = true;
-	set_person_pos(304, 102, P_CHEWY, P_RIGHT);
+	setPersonPos(304, 102, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	autoMove(1, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
@@ -481,45 +481,45 @@ int Room97::proc8() {
 		diaNr = 560;
 	else {
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(det)->start_detail(11, 255, false);
+		_G(det)->startDetail(11, 255, false);
 		del_inventar(_G(spieler).AkInvent);
 		_G(spieler).flags36_10 = true;
 		_G(spieler).flags36_8 = false;
-		_G(det)->start_detail(12, 255, false);
+		_G(det)->startDetail(12, 255, false);
 		_G(atds)->set_ats_str(530, 3, ATS_DATA);
 		_G(atds)->del_steuer_bit(532, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(532, 1, ATS_DATA);
-		_G(det)->start_detail(6, 255, false);
+		_G(det)->startDetail(6, 255, false);
 		_G(det)->hideStaticSpr(14);
 		autoMove(3, P_CHEWY);
 		auto_scroll(406, 0);
-		wait_show_screen(40);
+		waitShowScreen(40);
 		_G(det)->stop_detail(24);
 		g_engine->_sound->playSound(26, 0);
 		g_engine->_sound->playSound(26);
-		start_detail_wait(25, 1, ANI_FRONT);
-		_G(det)->start_detail(26, 255, false);
+		startSetailWait(25, 1, ANI_FRONT);
+		_G(det)->startDetail(26, 255, false);
 		_G(det)->stop_detail(23);
-		_G(det)->start_detail(27, 255, false);
-		wait_show_screen(80);
+		_G(det)->startDetail(27, 255, false);
+		waitShowScreen(80);
 		autoMove(4, P_CHEWY);
 		auto_scroll(646, 0);
-		start_aad_wait(566, -1);
-		wait_show_screen(60);
-		start_aad_wait(567, -1);
+		startAadWait(566, -1);
+		waitShowScreen(60);
+		startAadWait(567, -1);
 		_G(det)->stop_detail(26);
 		_G(det)->stop_detail(27);
 		_G(spieler).flags36_20 = true;
-		_G(det)->start_detail(28, 255, false);
+		_G(det)->startDetail(28, 255, false);
 		_G(det)->setSetailPos(27, 272, 110);
-		_G(det)->start_detail(27, 255, false);
+		_G(det)->startDetail(27, 255, false);
 		_G(atds)->set_steuer_bit(533, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_steuer_bit(534, ATS_AKTIV_BIT, ATS_DATA);
 	}
 
 	if (diaNr != -1) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(diaNr, -1);
+		startAadWait(diaNr, -1);
 	}
 
 	showCur();
@@ -535,14 +535,14 @@ int Room97::proc9() {
 	
 	if (!_G(spieler).flags36_20) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(556, -1);
+		startAadWait(556, -1);
 	} else {
 		start_spz_wait(13, 1, false, P_CHEWY);
-		start_detail_wait(0, 1, ANI_FRONT);
+		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
-		start_detail_wait(13, 1, ANI_FRONT);
-		_G(det)->start_detail(14, 255, false);
-		start_aad_wait(555, -1);
+		startSetailWait(13, 1, ANI_FRONT);
+		_G(det)->startDetail(14, 255, false);
+		startAadWait(555, -1);
 		_G(spieler).flags36_40 = true;
 		_G(atds)->set_steuer_bit(539, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->del_steuer_bit(537, ATS_AKTIV_BIT, ATS_DATA);
@@ -563,7 +563,7 @@ int Room97::proc10() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	g_engine->_sound->playSound(7, 0);
 	g_engine->_sound->stopSound(1);
-	start_detail_wait(7, 1, ANI_FRONT);
+	startSetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(spieler).flags37_1 = true;
 	_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
@@ -582,21 +582,21 @@ int Room97::proc11() {
 
 	if (!_G(spieler).flags37_2) {
 		start_spz(CH_TALK5, 255, false, P_CHEWY);
-		start_aad_wait(569, -1);
+		startAadWait(569, -1);
 	} else {
 		autoMove(9, P_CHEWY);
-		start_aad_wait(570, -1);
+		startAadWait(570, -1);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		autoMove(7, P_CHEWY);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		start_aad_wait(571, -1);
+		startAadWait(571, -1);
 		g_engine->_sound->playSound(4, 0);
 		g_engine->_sound->playSound(4);
-		_G(det)->start_detail(4, 1, false);
+		_G(det)->startDetail(4, 1, false);
 		autoMove(12, P_CHEWY);
 		start_spz_wait(64, 1, false, P_CHEWY);
 		start_spz(65, 255, false, P_CHEWY);
-		start_aad_wait(561, -1);
+		startAadWait(561, -1);
 		_G(spieler).SVal1 = 97;
 		_G(spieler).SVal2 = 523;
 		cur_2_inventory();
@@ -611,8 +611,8 @@ int Room97::proc11() {
 
 void Room97::proc12() {
 	if (!_G(spieler).flags37_1) {
-		stop_person(P_CHEWY);
-		set_person_pos(491, 42, P_CHEWY, P_RIGHT);
+		stopPerson(P_CHEWY);
+		setPersonPos(491, 42, P_CHEWY, P_RIGHT);
 		return;
 	}
 
@@ -621,13 +621,13 @@ void Room97::proc12() {
 
 	_G(flags).AutoAniPlay = true;
 	hideCur();
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	_G(det)->showStaticSpr(26);
 	goAutoXy(481, 39, P_CHEWY, ANI_WAIT);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	set_person_pos(327, 42, P_CHEWY, P_LEFT);
-	wait_show_screen(50);
-	set_person_pos(347, 42, P_CHEWY, P_LEFT);
+	setPersonPos(327, 42, P_CHEWY, P_LEFT);
+	waitShowScreen(50);
+	setPersonPos(347, 42, P_CHEWY, P_LEFT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(det)->hideStaticSpr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
@@ -641,13 +641,13 @@ void Room97::proc13() {
 
 	_G(flags).AutoAniPlay = true;
 	hideCur();
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(det)->showStaticSpr(26);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	set_person_pos(508, 41, P_CHEWY, P_LEFT);
-	wait_show_screen(50);
-	set_person_pos(488, 41, P_CHEWY, P_LEFT);
+	setPersonPos(508, 41, P_CHEWY, P_LEFT);
+	waitShowScreen(50);
+	setPersonPos(488, 41, P_CHEWY, P_LEFT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	autoMove(6, P_CHEWY);
 	_G(det)->hideStaticSpr(26);
@@ -674,13 +674,13 @@ void Room97::sensorAnim() {
 		return;
 
 	_G(flags).AutoAniPlay = true;
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	_G(menu_item) = CUR_USE;
 	cursorChoice(CUR_USE);
-	set_person_pos(294, 42, P_CHEWY, P_LEFT);
+	setPersonPos(294, 42, P_CHEWY, P_LEFT);
 	_G(atds)->del_steuer_bit(541, ATS_AKTIV_BIT, ATS_DATA);
 	_slimeThrown = false;
-	_G(det)->start_detail(16, 1, 0);
+	_G(det)->startDetail(16, 1, 0);
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
@@ -689,35 +689,35 @@ void Room97::sensorAnim() {
 				_G(maus_links_click) = true;
 		}
 
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 	}
 
 	hideCur();
 	if (!_slimeThrown) {
-		start_detail_wait(17, 1, ANI_FRONT);
-		_G(det)->start_detail(16, 1, true);
+		startSetailWait(17, 1, ANI_FRONT);
+		_G(det)->startDetail(16, 1, true);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(20, 1, false);
-		set_person_pos(318, 42, P_CHEWY, P_LEFT);
+		startSetailWait(20, 1, false);
+		setPersonPos(318, 42, P_CHEWY, P_LEFT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 	} else {
 		_G(spieler).flags37_4 = true;
 		del_inventar(_G(spieler).AkInvent);
 		_G(det)->showStaticSpr(27);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(21, 1, ANI_FRONT);
+		startSetailWait(21, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(27);
-		start_detail_wait(18, 1, ANI_FRONT);
+		startSetailWait(18, 1, ANI_FRONT);
 
 		g_engine->_sound->playSound(8, 0);
 		g_engine->_sound->stopSound(1);
-		start_detail_wait(8, 1, ANI_FRONT);
+		startSetailWait(8, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(20);
 		autoMove(10, P_CHEWY);
 		auto_scroll(60, 0);
-		start_aad_wait(544, -1);
+		startAadWait(544, -1);
 		_bool18DB32 = true;
 		autoMove(11, P_CHEWY);
 		_bool18DB32 = false;
@@ -727,12 +727,12 @@ void Room97::sensorAnim() {
 		autoMove(7, P_CHEWY);
 
 		while (_G(spieler).scrollx < 368) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
 		_G(det)->showStaticSpr(26);
-		set_person_pos(482, 24, P_NICHELLE, P_RIGHT);
+		setPersonPos(482, 24, P_NICHELLE, P_RIGHT);
 		goAutoXy(477, 29, P_NICHELLE, ANI_WAIT);
 		_G(det)->hideStaticSpr(26);
 		_G(spieler).flags37_2 = true;

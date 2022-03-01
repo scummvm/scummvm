@@ -115,7 +115,7 @@ void Room18::entry() {
 	}
 
 	if (!_G(spieler).R18FirstEntry && !_G(spieler).R18Gitter) {
-		start_aad_wait(39, -1);
+		startAadWait(39, -1);
 		_G(spieler).R18FirstEntry = true;
 	}
 
@@ -129,22 +129,22 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 
 		if (t_nr == _G(timer_nr)[0]) {
 			_G(det)->hideStaticSpr(16);
-			start_detail_wait(10, 1, ANI_FRONT);
+			startSetailWait(10, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(16);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hideCur();
 			_G(det)->hideStaticSpr(17);
-			start_detail_wait(9, 1, ANI_FRONT);
+			startSetailWait(9, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(17);
 
 			if (!_G(spieler).R18SondeMoni) {
 				_G(spieler).R18SondeMoni = true;
-				start_detail_wait(2, 1, ANI_FRONT);
+				startSetailWait(2, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(9);
-				start_detail_wait(4, 1, ANI_FRONT);
+				startSetailWait(4, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(11);
-				wait_show_screen(50);
+				waitShowScreen(50);
 				_G(det)->hideStaticSpr(9);
 				_G(det)->hideStaticSpr(11);
 			} else {
@@ -163,7 +163,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 
 void Room18::gedAction(int index) {
 	if (!index && !_G(spieler).R18SurimyWurf) {
-		stop_person(P_CHEWY);
+		stopPerson(P_CHEWY);
 		autoMove(1, P_CHEWY);
 		start_aad(40, 0);
 	}
@@ -188,7 +188,7 @@ void Room18::monitor() {
 
 	int16 nr = 0;
 	if (_G(spieler).R18MoniSwitch) {
-		start_ani_block(2, ABLOCK21);
+		startAniBlock(2, ABLOCK21);
 		nr = (_G(spieler).R17EnergieOut) ? 2 : 1;
 	} else {
 		_G(det)->stop_detail(23);
@@ -206,14 +206,14 @@ int16 Room18::sonden_moni() {
 
 		hideCur();
 		autoMove(8, P_CHEWY);
-		start_detail_wait(3, 1, ANI_FRONT);
+		startSetailWait(3, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
-		start_ani_block(3, ABLOCK20);
+		startAniBlock(3, ABLOCK20);
 
 		for (int16 i = 0; i < 3; i++)
 			_G(det)->showStaticSpr(i + 12);
 
-		wait_show_screen(40);
+		waitShowScreen(40);
 
 		for (int16 i = 0; i < 5; i++)
 			_G(det)->hideStaticSpr(i + 10);
@@ -244,19 +244,19 @@ int16 Room18::calc_surimy() {
 		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 
 		if (_G(spieler_vector)[P_CHEWY].Xypos[1] < 150) {
-			start_detail_frame(18, 1, ANI_FRONT, 8);
+			startDetailFrame(18, 1, ANI_FRONT, 8);
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
-			wait_detail(18);
+			waitDetail(18);
 		} else {
 			autoMove(1, P_CHEWY);
-			stop_person(P_CHEWY);
+			stopPerson(P_CHEWY);
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_detail_frame(17, 1, ANI_FRONT, 12);
+			startDetailFrame(17, 1, ANI_FRONT, 12);
 			_G(maus_links_click) = false;
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
-			wait_detail(17);
+			waitDetail(17);
 		}
 
 		_G(spieler).PersonHide[P_CHEWY] = false;
@@ -264,20 +264,20 @@ int16 Room18::calc_surimy() {
 
 		_G(det)->setSetailPos(21, 392, 170);
 		_G(det)->setSetailPos(22, 447, 154);
-		start_detail_frame(21, 1, ANI_FRONT, 14);
-		_G(det)->start_detail(22, 1, ANI_FRONT);
-		wait_detail(21);
+		startDetailFrame(21, 1, ANI_FRONT, 14);
+		_G(det)->startDetail(22, 1, ANI_FRONT);
+		waitDetail(21);
 		_G(det)->setStaticPos(26, 392, 170, false, true);
 		_G(det)->showStaticSpr(26);
 
 		_G(det)->hideStaticSpr(24);
-		start_ani_block(2, ABLOCK22);
+		startAniBlock(2, ABLOCK22);
 		_G(det)->showStaticSpr(20);
 
 		for (int16 i = 0; i < 3; i++)
 			_G(det)->hideStaticSpr(i + 15);
 
-		start_ani_block(2, ABLOCK23);
+		startAniBlock(2, ABLOCK23);
 		_G(det)->showStaticSpr(18);
 		_G(det)->showStaticSpr(19);
 		_G(det)->hideStaticSpr(26);
@@ -290,14 +290,14 @@ int16 Room18::calc_surimy() {
 
 		_G(det)->setSetailPos(21, 143, 170);
 		_G(det)->setSetailPos(22, 198, 154);
-		start_detail_frame(21, 1, ANI_FRONT, 14);
-		_G(det)->start_detail(22, 1, ANI_FRONT);
-		wait_detail(21);
+		startDetailFrame(21, 1, ANI_FRONT, 14);
+		_G(det)->startDetail(22, 1, ANI_FRONT);
+		waitDetail(21);
 		_G(det)->setStaticPos(26, 143, 170, false, true);
 		_G(det)->showStaticSpr(26);
 
 		_G(det)->hideStaticSpr(25);
-		start_ani_block(2, ABLOCK24);
+		startAniBlock(2, ABLOCK24);
 		_G(det)->showStaticSpr(21);
 
 		_G(det)->hideStaticSpr(26);
@@ -348,23 +348,23 @@ short Room18::use_cart_moni() {
 
 		hideCur();
 		autoMove(9, P_CHEWY);
-		set_person_spr(P_LEFT, P_CHEWY);
+		setPersonSpr(P_LEFT, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(spieler).R18CartTerminal ^= 1;
 
 		if (!_G(spieler).R18CartTerminal) {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(det)->hideStaticSpr(23);
-			start_detail_wait(20, 1, ANI_BACK);
+			startSetailWait(20, 1, ANI_BACK);
 		} else {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATA);
-			start_detail_wait(20, 1, ANI_FRONT);
+			startSetailWait(20, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(23);
 
 			if (_G(spieler).R18CartFach) {
 				_G(spieler).R18CartSave = true;
 				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATA);
-				start_aad_wait(120, -1);
+				startAadWait(120, -1);
 			}
 		}
 

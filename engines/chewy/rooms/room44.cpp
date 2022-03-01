@@ -39,7 +39,7 @@ void Room44::look_news() {
 	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
 	_G(room)->load_room(&_G(room_blk), 44, &_G(spieler));
 
-	start_aad_wait(172, -1);
+	startAadWait(172, -1);
 	_G(spieler).scrollx = tmpsx;
 	_G(spieler).scrolly = tmpsy;
 	switch_room(tmproom);

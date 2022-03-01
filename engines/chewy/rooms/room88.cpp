@@ -31,9 +31,9 @@ namespace Rooms {
 
 void Room88::entry() {
 	_G(spieler).scrollx = 0;
-	set_person_pos(163, 122, P_CHEWY, P_LEFT);
-	set_person_pos(59, 107, P_HOWARD, P_RIGHT);
-	set_person_pos(91, 110, P_NICHELLE, P_RIGHT);
+	setPersonPos(163, 122, P_CHEWY, P_LEFT);
+	setPersonPos(59, 107, P_HOWARD, P_RIGHT);
+	setPersonPos(91, 110, P_NICHELLE, P_RIGHT);
 	
 	_G(det)->showStaticSpr(1 + (_G(spieler).flags30_10 ? 1 : 0));
 	if (_G(spieler).r88DestRoom == 0)
@@ -42,7 +42,7 @@ void Room88::entry() {
 	_G(SetUpScreenFunc) = calc_person_look;
 
 	if (_G(spieler).flags32_10) {
-		_G(det)->start_detail(4, 255, false);
+		_G(det)->startDetail(4, 255, false);
 		_G(atds)->del_steuer_bit(505, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }
@@ -77,7 +77,7 @@ int Room88::proc2() {
 	autoMove(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->showStaticSpr(0);
-	start_detail_wait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_FRONT);
+	startSetailWait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_FRONT);
 	_G(det)->hideStaticSpr(1 + (_G(spieler).flags30_10 ? 1 : 0));
 	_G(spieler).flags31_10 = false;
 	_G(det)->showStaticSpr(1 + (!_G(spieler).flags30_10 ? 1 : 0));
@@ -98,7 +98,7 @@ int Room88::proc3() {
 	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
 		hideCur();
 		if (_G(spieler).flags32_10) {
-			start_aad_wait(480, -1);
+			startAadWait(480, -1);
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
@@ -108,17 +108,17 @@ int Room88::proc3() {
 			_G(spieler).flags32_40 = true;
 			switch_room(84);
 		} else {
-			start_aad_wait(465, -1);
+			startAadWait(465, -1);
 		}
 	} else {
-		start_aad_wait(466, -1);
+		startAadWait(466, -1);
 		start_spz_wait(13, 1, false, P_CHEWY);
 
 		const int aniNr = 1 + (_G(spieler).flags31_10 ? 1 : 0);
 
 		for (int i = 0; i < 3; ++i) {
-			start_detail_wait(aniNr, 1, ANI_FRONT);
-			start_detail_wait(aniNr, 1, ANI_GO);
+			startSetailWait(aniNr, 1, ANI_FRONT);
+			startSetailWait(aniNr, 1, ANI_GO);
 		}
 
 		_G(out)->setPointer(nullptr);
@@ -130,7 +130,7 @@ int Room88::proc3() {
 		_G(out)->raster_col(0, 0, 0, 0);
 		switch_room(80);
 		hideCur();
-		start_detail_wait(1, 1, ANI_FRONT);
+		startSetailWait(1, 1, ANI_FRONT);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;

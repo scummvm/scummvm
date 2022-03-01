@@ -54,7 +54,7 @@ bool Room34::use_kuehlschrank() {
 			switch_room(34);
 		}
 
-		set_person_pos(160, 70, P_CHEWY, -1);
+		setPersonPos(160, 70, P_CHEWY, -1);
 	}
 
 	return result;
@@ -62,7 +62,7 @@ bool Room34::use_kuehlschrank() {
 
 void Room34::xit_kuehlschrank() {
 	_G(spieler).PersonHide[P_CHEWY] = false;
-	set_person_pos(54, 111, P_CHEWY, -1);
+	setPersonPos(54, 111, P_CHEWY, -1);
 	switch_room(33);
 	_G(flags).ChewyDontGo = false;
 	_G(maus_links_click) = false;

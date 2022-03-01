@@ -43,10 +43,10 @@ void Room67::entry() {
 		_G(det)->showStaticSpr(0);
 	if (!_G(flags).LoadGame) {
 		hideCur();
-		set_person_pos(102, 132, P_CHEWY, P_RIGHT);
+		setPersonPos(102, 132, P_CHEWY, P_RIGHT);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67) {
-			set_person_pos(12, 100, P_HOWARD, P_RIGHT);
-			set_person_pos(47, 106, P_NICHELLE, P_RIGHT);
+			setPersonPos(12, 100, P_HOWARD, P_RIGHT);
+			setPersonPos(47, 106, P_NICHELLE, P_RIGHT);
 			goAutoXy(214, 112, P_NICHELLE, ANI_GO);
 		}
 		autoMove(7, P_CHEWY);
@@ -83,11 +83,11 @@ int16 Room67::use_grammo() {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(det)->start_detail(0, 255, ANI_FRONT);
+		_G(det)->startDetail(0, 255, ANI_FRONT);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67)
-			start_aad_wait(376, -1);
+			startAadWait(376, -1);
 		else
-			start_aad_wait(614, -1);
+			startAadWait(614, -1);
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->stop_detail(0);
@@ -99,7 +99,7 @@ int16 Room67::use_grammo() {
 void Room67::look_brief() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	start_aad_wait(379, -1);
+	startAadWait(379, -1);
 	showCur();
 }
 
@@ -132,7 +132,7 @@ void Room67::kostuem_aad(int16 aad_nr) {
 	if (_G(spieler).DiaAMov != -1) {
 		autoMove(_G(spieler).DiaAMov, P_CHEWY);
 	}
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 	showCur();
 }
 
@@ -151,7 +151,7 @@ int16 Room67::talk_papagei() {
 			start_ads_wait(19);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
-			start_aad_wait(380, -1);
+			startAadWait(380, -1);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_TALK) {
 			autoMove(5, P_CHEWY);

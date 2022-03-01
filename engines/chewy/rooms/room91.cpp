@@ -47,28 +47,28 @@ void Room91::entry() {
 	hideCur();
 
 	if (_G(spieler).flags34_1) {
-		set_person_pos(499, 106, P_CHEWY, P_RIGHT);
-		set_person_pos(536, 90, P_HOWARD, P_RIGHT);
+		setPersonPos(499, 106, P_CHEWY, P_RIGHT);
+		setPersonPos(536, 90, P_HOWARD, P_RIGHT);
 		if (!_G(spieler).flags34_2) {
 			_G(spieler).flags34_2 = true;
-			start_aad_wait(503, -1);
+			startAadWait(503, -1);
 		}
 	} else {
 		_G(flags).MainInput = false;
 		_G(flags).NoScroll = true;
 		_G(spieler).flags34_1 = true;
-		set_person_pos(326, 99, P_CHEWY, P_RIGHT);
-		set_person_pos(312, 75, P_HOWARD, P_RIGHT);
+		setPersonPos(326, 99, P_CHEWY, P_RIGHT);
+		setPersonPos(312, 75, P_HOWARD, P_RIGHT);
 		_G(spieler).SVal3 = 0;
 		_G(spieler).flags34_4 = true;
-		start_aad_wait(502, -1);
+		startAadWait(502, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		_G(det)->start_detail(0, 255, false);
+		_G(det)->startDetail(0, 255, false);
 
 		for (int i = 0; i < 3; ++i) {
 			_G(timer_nr)[i] = _G(room)->set_timer(5 + i, 3 + (2 * i));
 		}
-		_G(det)->start_detail(5, 2, false);
+		_G(det)->startDetail(5, 2, false);
 	}
 
 	showCur();
@@ -115,11 +115,11 @@ void Room91::setup_func() {
 		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
 		hideCur();
 		_G(det)->stop_detail(0);
-		start_detail_wait(aniNr, 1, ANI_FRONT);
+		startSetailWait(aniNr, 1, ANI_FRONT);
 		_click = oldClick;
-		_G(det)->start_detail(0, 255, false);
-		_G(det)->start_detail(aniNr + 2, 1, false);
-		_G(det)->start_detail(7, 1, false);
+		_G(det)->startDetail(0, 255, false);
+		_G(det)->startDetail(aniNr + 2, 1, false);
+		_G(det)->startDetail(7, 1, false);
 		start_spz_wait(62, 1, false, P_HOWARD);
 		_G(spieler).SVal3 += 1;
 		showCur();
@@ -129,9 +129,9 @@ void Room91::setup_func() {
 			hideCur();
 			autoMove(1, P_CHEWY);
 			stop_spz();
-			start_aad_wait(505, -1);
+			startAadWait(505, -1);
 			_G(spieler).PersonHide[P_HOWARD] = true;
-			start_detail_wait(9, 1, ANI_FRONT);
+			startSetailWait(9, 1, ANI_FRONT);
 			_G(spieler).PersonHide[P_HOWARD] = false;
 			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
 			_G(spieler).flags34_4 = false;

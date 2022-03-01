@@ -62,9 +62,9 @@ void Room11::entry() {
 		_G(atds)->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATA);
 
 		if (!_G(flags).LoadGame) {
-			start_ani_block(2, ABLOCK17);
+			startAniBlock(2, ABLOCK17);
 			autoMove(8, P_CHEWY);
-			start_aad_wait(31, -1);
+			startAadWait(31, -1);
 			_G(det)->stop_detail(9);
 		}
 		_G(det)->showStaticSpr(8);
@@ -96,7 +96,7 @@ void Room11::bork_zwinkert() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 		_G(det)->hideStaticSpr(8);
-		start_ani_block(2, ABLOCK18);
+		startAniBlock(2, ABLOCK18);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->showStaticSpr(8);
 		_G(flags).AutoAniPlay = false;
@@ -120,10 +120,10 @@ void Room11::chewy_bo_use() {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 
-		stop_person(P_CHEWY);
+		stopPerson(P_CHEWY);
 		_G(det)->hideStaticSpr(8);
-		start_ani_block(2, ABLOCK17);
-		start_aad_wait(32, -1);
+		startAniBlock(2, ABLOCK17);
+		startAadWait(32, -1);
 		_G(det)->stop_detail(9);
 		_G(det)->showStaticSpr(8);
 		autoMove(6, P_CHEWY);
@@ -141,10 +141,10 @@ int16 Room11::scanner() {
 
 		if (!_G(spieler).R11CardOk) {
 			actionFl = true;
-			start_aad_wait(13, -1);
+			startAadWait(13, -1);
 		} else if (is_cur_inventar(BORK_INV)) {
 			hideCur();
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			actionFl = true;
 
 			start_aad(105, 0);
@@ -154,17 +154,17 @@ int16 Room11::scanner() {
 			cur_2_inventory();
 			_G(menu_item) = CUR_TALK;
 			cursorChoice(_G(menu_item));
-			start_aad_wait(12, -1);
+			startAadWait(12, -1);
 			showCur();
 			loadAdsDia(3);
 		} else if (!_G(spieler).inv_cur) {
 			if (!_G(spieler).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);
-				start_aad_wait(20, -1);
+				startAadWait(20, -1);
 			} else {
 				actionFl = true;
-				start_aad_wait(12, -1);
+				startAadWait(12, -1);
 				_G(menu_item) = CUR_TALK;
 				cursorChoice(_G(menu_item));
 				loadAdsDia(3);
@@ -194,13 +194,13 @@ void Room11::put_card() {
 	if (is_cur_inventar(RED_CARD_INV) || is_cur_inventar(YEL_CARD_INV)) {
 		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
 		del_inventar(_G(spieler).R11IdCardNr);
-		_G(det)->start_detail(0, 255, ANI_FRONT);
+		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(spieler).R11CardOk = true;
 
 		if (!_G(spieler).R11TerminalOk)
-			start_aad_wait(16, -1);
+			startAadWait(16, -1);
 	}
 }
 

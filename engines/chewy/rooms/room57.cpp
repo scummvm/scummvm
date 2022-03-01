@@ -45,8 +45,8 @@ void Room57::entry() {
 		_G(spieler).R48TaxiEntry = false;
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
-		set_person_pos(4, 144, P_HOWARD, P_LEFT);
-		set_person_pos(40, 160, P_CHEWY, P_RIGHT);
+		setPersonPos(4, 144, P_HOWARD, P_LEFT);
+		setPersonPos(40, 160, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
 		_G(maus_links_click) = false;
 		showCur();
@@ -101,7 +101,7 @@ int16 Room57::use_taxi() {
 		g_engine->_sound->playSound(3);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
-		start_detail_wait(5, 1, ANI_FRONT);
+		startSetailWait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switch_room(48);
 	}
@@ -118,31 +118,31 @@ int16 Room57::use_pfoertner() {
 	if (is_cur_inventar(CUTMAG_INV)) {
 		action_ret = true;
 		if (_G(spieler).flags37_10)
-			start_aad_wait(596, -1);
+			startAadWait(596, -1);
 		else {
 			_G(spieler).flags37_10 = true;
-			start_aad_wait(339, -1);
+			startAadWait(339, -1);
 			new_invent_2_cur(BESTELL_INV);
 		}
 	} else if (is_cur_inventar(JMKOST_INV)) {
 		action_ret = true;
-		start_aad_wait(340, -1);
+		startAadWait(340, -1);
 	} else if (is_cur_inventar(EINLAD_INV)) {
 		action_ret = true;
 		_G(SetUpScreenFunc) = nullptr;
 		goAutoXy(132, 130, P_HOWARD, ANI_WAIT);
 		if (_G(spieler).R56AbfahrtOk) {
-			start_aad_wait(341, -1);
+			startAadWait(341, -1);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 			del_inventar(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
 			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
 			_G(det)->hideStaticSpr(4);
-			start_detail_wait(6, 1, ANI_WAIT);
+			startSetailWait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
 			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATA);
 		} else {
-			start_aad_wait(349, -1);
+			startAadWait(349, -1);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 		}
 		_G(SetUpScreenFunc) = setup_func;
@@ -164,7 +164,7 @@ void Room57::talk_pfoertner() {
 		aad_nr = 338;
 	} else
 		aad_nr = 342;
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 	_G(room)->set_timer_status(1, TIMER_START);
 	_G(det)->set_static_ani(1, -1);
 	showCur();

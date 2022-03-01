@@ -56,7 +56,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 
 	case ROOM_8_17:
 		start_aad(100, 0);
-		_G(det)->start_detail(21, 4, ANI_FRONT);
+		_G(det)->startDetail(21, 4, ANI_FRONT);
 		break;
 
 	case ROOM_18_20:
@@ -67,7 +67,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	start_detail_wait(nr, 1, mode);
+	startSetailWait(nr, 1, mode);
 
 	switch (r_nr) {
 	case ROOM_1_1:
@@ -125,7 +125,7 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && _G(flags).AutoAniPlay == false) {
-		_G(det)->start_detail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
+		_G(det)->startDetail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->resetTimer(t_nr, 0);
 	}
 
@@ -501,7 +501,7 @@ void exit_room(int16 eib_nr) {
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		switch (_G(spieler).R23GleiterExit) {
 		case 16:
-			set_person_pos(126, 110, P_CHEWY, P_RIGHT);
+			setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 			break;
 
 		case 25:
@@ -633,9 +633,9 @@ void exit_room(int16 eib_nr) {
 	case 50:
 	case 65:
 	case 126:
-		set_person_pos(_G(spieler_vector)[P_CHEWY].Xypos[0],
+		setPersonPos(_G(spieler_vector)[P_CHEWY].Xypos[0],
 		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		break;
 
 	case 8:
@@ -649,9 +649,9 @@ void exit_room(int16 eib_nr) {
 	case 36:
 	case 71:
 	case 96:
-		set_person_pos(_G(spieler_vector)[P_CHEWY].Xypos[0],
+		setPersonPos(_G(spieler_vector)[P_CHEWY].Xypos[0],
 		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_LEFT);
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		break;
 
 	case 62:
@@ -1193,7 +1193,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag) {
 	if (ani_nr != -1)
-		_G(det)->start_detail(ani_nr, 1, flag);
+		_G(det)->startDetail(ani_nr, 1, flag);
 	flag ^= 1;
 	if (ats_nr1 != -1)
 		_G(atds)->set_ats_str(ats_nr1, flag, ATS_DATA);
@@ -1341,7 +1341,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (_G(spieler).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
-				_G(det)->start_detail(i, 255, ANI_FRONT);
+				_G(det)->startDetail(i, 255, ANI_FRONT);
 		} else {
 			for (int i = 0; i < 5; ++i)
 				_G(det)->stop_detail(i);
@@ -1379,21 +1379,21 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SCHALTER1_R21:
-		_G(det)->start_detail(0, 1, _G(spieler).R21Hebel1);
+		_G(det)->startDetail(0, 1, _G(spieler).R21Hebel1);
 		_G(spieler).R21Hebel1 ^= 1;
 		Room21::calc_laser();
 		_G(atds)->set_ats_str(126, TXT_MARK_LOOK, _G(spieler).R21Hebel1, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER2_R21:
-		_G(det)->start_detail(1, 1, _G(spieler).R21Hebel2);
+		_G(det)->startDetail(1, 1, _G(spieler).R21Hebel2);
 		_G(spieler).R21Hebel2 ^= 1;
 		Room21::calc_laser();
 		_G(atds)->set_ats_str(127, TXT_MARK_LOOK, _G(spieler).R21Hebel2, ATS_DATA);
 		break;
 
 	case SIB_SCHALTER3_R21:
-		_G(det)->start_detail(2, 1, _G(spieler).R21Hebel3);
+		_G(det)->startDetail(2, 1, _G(spieler).R21Hebel3);
 		_G(spieler).R21Hebel3 ^= 1;
 		Room21::calc_laser();
 		_G(atds)->set_ats_str(128, TXT_MARK_LOOK, _G(spieler).R21Hebel3, ATS_DATA);
@@ -1482,7 +1482,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(spieler).R40Geld = true;
 		start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(201, -1);
+		startAadWait(201, -1);
 		break;
 
 	case SIB_VISIT_R53:
@@ -1515,9 +1515,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(det)->showStaticSpr(7);
 		_G(cur_hide_flag) = false;
 		hideCur();
-		start_aad_wait(406, -1);
+		startAadWait(406, -1);
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 66)
-			start_aad_wait(613, -1);
+			startAadWait(613, -1);
 		showCur();
 		break;
 
@@ -1542,7 +1542,7 @@ void sib_event_inv(int16 sib_nr) {
 			cur_2_inventory();
 			del_inventar(RED_CARD_INV);
 			start_aad(103, -1);
-			_G(det)->start_detail(6, 255, ANI_FRONT);
+			_G(det)->startDetail(6, 255, ANI_FRONT);
 			_G(atds)->set_ats_str(27, 1, ATS_DATA);
 			_G(atds)->set_ats_str(30, 1, ATS_DATA);
 		}
@@ -1637,7 +1637,7 @@ void sib_event_inv(int16 sib_nr) {
 		del_inventar(_G(spieler).AkInvent);
 		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATA);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		start_aad_wait(115, 0);
+		startAadWait(115, 0);
 
 		if (_G(spieler).R12TransOn)
 			Room12::use_linke_rohr();
@@ -1660,9 +1660,9 @@ void sib_event_inv(int16 sib_nr) {
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
 			_G(atds)->set_ats_str(26, 1, INV_ATS_DATA);
-			start_aad_wait(120, -1);
+			startAadWait(120, -1);
 		} else {
-			start_aad_wait(121, -1);
+			startAadWait(121, -1);
 		}
 		break;
 

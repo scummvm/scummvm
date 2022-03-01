@@ -34,7 +34,7 @@ void Room92::entry() {
 	cur_2_inventory();
 	hideCur();
 	hide_person();
-	start_aad_wait(_G(spieler).SVal2, -1);
+	startAadWait(_G(spieler).SVal2, -1);
 	switch (_G(spieler).SVal2) {
 	case 487:
 		_G(out)->setPointer(nullptr);

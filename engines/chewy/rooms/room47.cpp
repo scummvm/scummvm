@@ -30,7 +30,7 @@ namespace Rooms {
 
 void Room47::entry() {
 	hide_person();
-	set_person_pos(40, 170, P_CHEWY, P_RIGHT);
+	setPersonPos(40, 170, P_CHEWY, P_RIGHT);
 	_G(SetUpScreenFunc) = set_detail;
 	_G(flags).MainInput = false;
 }
@@ -38,7 +38,7 @@ void Room47::entry() {
 void Room47::xit() {
 	_G(flags).MainInput = true;
 	show_person();
-	set_person_pos(114, 102, P_CHEWY, P_LEFT);
+	setPersonPos(114, 102, P_CHEWY, P_LEFT);
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 }
 

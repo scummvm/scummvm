@@ -50,9 +50,9 @@ void Room80::entry() {
 		return;
 	}
 
-	set_person_pos(37, 10, P_CHEWY, P_RIGHT);
-	set_person_pos(22, -1, P_HOWARD, P_RIGHT);
-	set_person_pos(6, 2, P_NICHELLE, P_RIGHT);
+	setPersonPos(37, 10, P_CHEWY, P_RIGHT);
+	setPersonPos(22, -1, P_HOWARD, P_RIGHT);
+	setPersonPos(6, 2, P_NICHELLE, P_RIGHT);
 	_G(spieler).scrollx = 10;
 	_G(flags).NoScroll = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
@@ -120,7 +120,7 @@ void Room80::setup_func() {
 	cursorChoice(CUR_WALK);
 	_G(spieler).flags30_1 = true;
 	_G(maus_links_click) = false;
-	set_up_screen(DO_SETUP);
+	setupScreen(DO_SETUP);
 	
 	for (int i = P_CHEWY; i <= P_NICHELLE; ++i) {
 		if (_G(spieler).R79Val[i] != 0) {

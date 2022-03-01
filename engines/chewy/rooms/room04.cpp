@@ -107,7 +107,7 @@ int16 Room4::sonde_comp() {
 		if (_G(minfo).y < 124)
 			_G(minfo).y = 123;
 
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 	g_events->delay(500);
@@ -122,7 +122,7 @@ int16 Room4::sonde_comp() {
 	_G(minfo).button = 0;
 	_G(spieler).PersonRoomNr[P_CHEWY] = 3;
 	_G(room)->load_room(&_G(room_blk), 3, &_G(spieler));
-	set_person_pos(110, 139, P_CHEWY, P_LEFT);
+	setPersonPos(110, 139, P_CHEWY, P_LEFT);
 
 	_G(fx_blend) = BLEND1;
 	_G(atds)->stop_aad();

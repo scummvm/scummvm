@@ -75,9 +75,9 @@ void Room48::frage() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 		hideCur();
-		start_detail_wait(1, 1, ANI_FRONT);
+		startSetailWait(1, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(6);
-		start_detail_wait(1, 1, ANI_BACK);
+		startSetailWait(1, 1, ANI_BACK);
 		_G(det)->hideStaticSpr(6);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		showCur();
@@ -136,14 +136,14 @@ void Room48::setup_func() {
 							_G(room)->set_timer_status(0, TIMER_STOP);
 							_G(det)->stop_detail(0);
 							_G(det)->del_static_ani(0);
-							start_detail_wait(2, 1, ANI_FRONT);
+							startSetailWait(2, 1, ANI_FRONT);
 							g_engine->_sound->stopSound(0);
 							_G(menu_item) = CUR_WALK;
 							cursorChoice(_G(menu_item));
 							showCur();
 							_G(spieler).R48TaxiEntry = true;
 							_G(maus_links_click) = false;
-							set_up_screen(DO_SETUP);
+							setupScreen(DO_SETUP);
 
 							for (int16 i = 0; i < MAX_PERSON; i++) {
 								if (_G(spieler).R48TaxiPerson[i]) {

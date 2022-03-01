@@ -57,8 +57,8 @@ void Room51::entry() {
 		_G(spieler).PersonHide[P_HOWARD] = true;
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 0;
-		set_person_pos(34, 120, P_HOWARD, P_RIGHT);
-		set_person_pos(234, 69, P_CHEWY, P_LEFT);
+		setPersonPos(34, 120, P_HOWARD, P_RIGHT);
+		setPersonPos(234, 69, P_CHEWY, P_LEFT);
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->showStaticSpr(17);
 		_index = 0;
@@ -76,21 +76,21 @@ void Room51::entry() {
 		_G(det)->hideStaticSpr(17);
 
 		for (int i = 0; i < 2; i++)
-			_G(det)->start_detail(3 + i, 1, ANI_FRONT);
+			_G(det)->startDetail(3 + i, 1, ANI_FRONT);
 
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 
 			if (!_G(flags).LoadGame) {
-				set_person_pos(88, 93, P_HOWARD, P_RIGHT);
+				setPersonPos(88, 93, P_HOWARD, P_RIGHT);
 			}
 
 			if (!_G(spieler).R51FirstEntry) {
 				hideCur();
 				_G(spieler).R51FirstEntry = true;
-				set_person_spr(P_LEFT, P_CHEWY);
-				start_aad_wait(283, -1);
+				setPersonSpr(P_LEFT, P_CHEWY);
+				startAadWait(283, -1);
 				showCur();
 			}
 
@@ -146,29 +146,29 @@ void Room51::setup_func() {
 		if ((_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
-			start_detail_wait(8, 1, ANI_FRONT);
+			startSetailWait(8, 1, ANI_FRONT);
 			_flag = false;
 			++_index;
 
 			switch (_index) {
 			case 2:
-				start_aad_wait(512, -1);
+				startAadWait(512, -1);
 				_index = 1000;
 				break;
 
 			case 1006:
-				start_aad_wait(513, -1);
+				startAadWait(513, -1);
 				_index = 2000;
 				break;
 
 			case 2003:
-				start_aad_wait(615, -1);
+				startAadWait(615, -1);
 				_index = 10000;
 				break;
 
 			case 10012:
-				start_aad_wait(514, -1);
-				wait_show_screen(5);
+				startAadWait(514, -1);
+				waitShowScreen(5);
 				_G(flags).NoPalAfterFlc = true;
 				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
@@ -220,10 +220,10 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			if (!_G(spieler).R51HotelRoom) {
 				autoMove(11, P_HOWARD);
-				set_person_spr(P_LEFT, P_HOWARD);
+				setPersonSpr(P_LEFT, P_HOWARD);
 				_G(spieler).R51HotelRoom = true;
 				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
-				start_aad_wait(285, -1);
+				startAadWait(285, -1);
 				_G(atds)->set_ats_str(329, 1, ATS_DATA);
 				_G(SetUpScreenFunc) = setup_func;
 
@@ -240,20 +240,20 @@ int16 Room51::use_door(int16 txt_nr) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(2);
 				_G(det)->showStaticSpr(1);
-				start_detail_wait(2, 1, ANI_FRONT);
-				_G(det)->start_detail(5, 255, ANI_FRONT);
+				startSetailWait(2, 1, ANI_FRONT);
+				_G(det)->startDetail(5, 255, ANI_FRONT);
 
 				if (!_G(spieler).R52HotDogOk) {
-					start_aad_wait(287, -1);
+					startAadWait(287, -1);
 					autoMove(12, P_CHEWY);
 					_G(det)->stop_detail(5);
-					start_ani_block(5, ABLOCK37);
+					startAniBlock(5, ABLOCK37);
 					_G(det)->hideStaticSpr(1);
 					g_engine->_sound->stopSound(0);
-					start_aad_wait(284, -1);
+					startAadWait(284, -1);
 				} else {
 					_G(spieler).R51KillerWeg = true;
-					start_aad_wait(290, -1);
+					startAadWait(290, -1);
 					g_engine->_sound->stopSound(0);
 					_G(out)->ausblenden(1);
 					_G(out)->setPointer(nullptr);
@@ -271,11 +271,11 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(det)->hideStaticSpr(1);
 
 					_G(fx_blend) = BLEND3;
-					set_up_screen(DO_SETUP);
-					start_aad_wait(291, -1);
+					setupScreen(DO_SETUP);
+					startAadWait(291, -1);
 				}
 			} else {
-				start_aad_wait(401, -1);
+				startAadWait(401, -1);
 			}
 			break;
 
@@ -286,15 +286,15 @@ int16 Room51::use_door(int16 txt_nr) {
 			_G(out)->cls();
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_114);
-			set_person_pos(115, 144, P_CHEWY, P_LEFT);
+			setPersonPos(115, 144, P_CHEWY, P_LEFT);
 			_G(fx_blend) = BLEND3;
-			set_up_screen(NO_SETUP);
-			start_aad_wait(564, -1);
+			setupScreen(NO_SETUP);
+			startAadWait(564, -1);
 			break;
 
 		case 332:
 			autoMove(6, P_CHEWY);
-			start_aad_wait(286, -1);
+			startAadWait(286, -1);
 			break;
 
 		case 333:
@@ -303,13 +303,13 @@ int16 Room51::use_door(int16 txt_nr) {
 			switch (_G(spieler).R51DoorCount) {
 			case 0:
 				_G(det)->showStaticSpr(3);
-				start_aad_wait(278, -1);
-				start_detail_frame(0, 1, ANI_FRONT, 3);
+				startAadWait(278, -1);
+				startDetailFrame(0, 1, ANI_FRONT, 3);
 				start_spz(HO_BRILL_JMP, 1, ANI_FRONT, P_HOWARD);
-				wait_detail(0);
+				waitDetail(0);
 
 				_G(det)->showStaticSpr(14);
-				start_aad_wait(279, -1);
+				startAadWait(279, -1);
 				++_G(spieler).R51DoorCount;
 				_G(obj)->show_sib(SIB_FLASCHE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_FLASCHE_R51);
@@ -318,8 +318,8 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			case 1:
 				_G(det)->showStaticSpr(3);
-				start_aad_wait(280, -1);
-				start_detail_wait(1, 1, ANI_FRONT);
+				startAadWait(280, -1);
+				startSetailWait(1, 1, ANI_FRONT);
 				++_G(spieler).R51DoorCount;
 				_G(obj)->show_sib(SIB_KAPPE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_KAPPE_R51);
@@ -328,9 +328,9 @@ int16 Room51::use_door(int16 txt_nr) {
 				break;
 
 			default:
-				start_aad_wait(281, -1);
+				startAadWait(281, -1);
 				if (_G(spieler).PersonRoomNr[P_HOWARD] == 51)
-					start_aad_wait(282, -1);
+					startAadWait(282, -1);
 				break;
 			}
 			break;
@@ -353,12 +353,12 @@ int16 Room51::cut_serv(int16 frame) {
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
 		if (!_enemyFlag[obj_nr - 9]) {
-			_G(det)->start_detail(obj_nr, 1, ANI_FRONT);
+			_G(det)->startDetail(obj_nr, 1, ANI_FRONT);
 			_enemyFlag[obj_nr - 9] = true;
 
 		} else if (!_G(det)->get_ani_status(obj_nr)) {
-			_G(det)->start_detail(obj_nr, 1, ANI_GO);
-			_G(det)->start_detail(obj_nr + 2, 1, ANI_FRONT);
+			_G(det)->startDetail(obj_nr, 1, ANI_GO);
+			_G(det)->startDetail(obj_nr + 2, 1, ANI_FRONT);
 			_G(uhr)->resetTimer(t_nr, 0);
 			_enemyFlag[obj_nr - 9] = false;
 		}

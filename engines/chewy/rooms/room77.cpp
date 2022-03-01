@@ -57,8 +57,8 @@ void Room77::entry() {
 		_G(spieler).r76State = -1;
 		hideCur();
 		_G(spieler).scrollx = 62;
-		set_person_pos(158, 127, P_CHEWY, P_RIGHT);
-		start_aad_wait(440, -1);
+		setPersonPos(158, 127, P_CHEWY, P_RIGHT);
+		startAadWait(440, -1);
 		showCur();
 	}
 }
@@ -88,7 +88,7 @@ int Room77::proc1() {
 
 	cur_2_inventory();
 	start_spz(aniId, 255, false, P_CHEWY);
-	start_aad_wait(diaNr, -1);
+	startAadWait(diaNr, -1);
 	showCur();
 	if (_G(spieler).flags29_10)
 		remove_inventory(103);
@@ -118,7 +118,7 @@ int Room77::proc2() {
 	}
 
 	start_spz(aniId, 255, false, P_CHEWY);
-	start_aad_wait(diaNr, -1);
+	startAadWait(diaNr, -1);
 
 	showCur();
 	return 1;

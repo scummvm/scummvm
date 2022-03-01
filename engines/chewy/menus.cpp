@@ -304,7 +304,7 @@ void ads_menu() {
 }
 
 void stop_ads_dialog() {
-	aad_wait(-1);
+	aadWait(-1);
 	_G(spieler).DispFlag = _G(ads_tmp_dsp);
 	_G(cur_display) = true;
 	_G(flags).ShowAtsInvTxt = true;

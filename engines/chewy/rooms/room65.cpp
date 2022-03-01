@@ -48,7 +48,7 @@ void Room65::entry() {
 	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hideCur();
-		start_aad_wait(_G(spieler).PersonDia[P_HOWARD], -1);
+		startAadWait(_G(spieler).PersonDia[P_HOWARD], -1);
 		showCur();
 	} else {
 		start_ads_wait(_G(spieler).PersonDia[P_HOWARD] - 10000);
@@ -62,8 +62,8 @@ void Room65::xit() {
 	_G(spieler).scrollx = _G(r65tmp_scrollx);
 	_G(spieler).scrolly = _G(r65tmp_scrolly);
 	set_person_rnr();
-	set_person_pos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
-	set_person_pos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
+	setPersonPos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
+	setPersonPos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
 	_G(maus_links_click) = false;
@@ -138,7 +138,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 			break;
 		}
 	} else if (mode == AAD_STR_START) {
-		_G(det)->start_detail(person_nr, 255, ANI_FRONT);
+		_G(det)->startDetail(person_nr, 255, ANI_FRONT);
 	} else {
 		_G(det)->stop_detail(person_nr);
 	}

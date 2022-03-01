@@ -43,8 +43,8 @@ void Room96::entry() {
 		return;
 
 	hideCur();
-	set_person_pos(93, 62, P_HOWARD, P_RIGHT);
-	set_person_pos(116, 74, P_CHEWY, P_RIGHT);
+	setPersonPos(93, 62, P_HOWARD, P_RIGHT);
+	setPersonPos(116, 74, P_CHEWY, P_RIGHT);
 	autoMove(1, P_CHEWY);
 	showCur();
 }

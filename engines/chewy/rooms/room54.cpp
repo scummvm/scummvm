@@ -49,10 +49,10 @@ void Room54::entry(int16 eib_nr) {
 
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 				_G(spieler).R54HowardVorne = 0;
-				set_person_pos(290, 61, P_HOWARD, P_RIGHT);
+				setPersonPos(290, 61, P_HOWARD, P_RIGHT);
 			}
 
-			set_person_pos(300, 80, P_CHEWY, P_LEFT);
+			setPersonPos(300, 80, P_CHEWY, P_LEFT);
 			_G(maus_links_click) = false;
 			_G(spieler).scrollx = 134;
 			_G(spieler).scrolly = 0;
@@ -63,15 +63,15 @@ void Room54::entry(int16 eib_nr) {
 		} else if (eib_nr == 90 || _G(spieler).R55ExitDia) {
 			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
 				_G(spieler).R54HowardVorne = 0;
-				set_person_pos(212, 61, P_HOWARD, P_RIGHT);
+				setPersonPos(212, 61, P_HOWARD, P_RIGHT);
 			}
 
 			_G(spieler).scrollx = 66;
-			set_person_pos(241, 85, P_CHEWY, P_LEFT);
+			setPersonPos(241, 85, P_CHEWY, P_LEFT);
 		}
 
 		if (_G(spieler).R55ExitDia) {
-			start_aad_wait(_G(spieler).R55ExitDia, -1);
+			startAadWait(_G(spieler).R55ExitDia, -1);
 			showCur();
 			_G(spieler).R55ExitDia = false;
 		}
@@ -142,27 +142,27 @@ int16 Room54::use_schalter() {
 			g_engine->_sound->playSound(0, 1);
 			g_engine->_sound->stopSound(2);
 
-			start_detail_wait(1, 1, ANI_FRONT);
-			_G(det)->start_detail(3, 255, ANI_FRONT);
-			start_aad_wait(292 + _G(spieler).R54LiftCount, -1);
+			startSetailWait(1, 1, ANI_FRONT);
+			_G(det)->startDetail(3, 255, ANI_FRONT);
+			startAadWait(292 + _G(spieler).R54LiftCount, -1);
 			_G(det)->stop_detail(3);
 			++_G(spieler).R54LiftCount;
 
 			int16 aad_nr;
 			if (_G(spieler).R54LiftCount < 3) {
-				start_detail_wait(2, 1, ANI_FRONT);
+				startSetailWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				g_engine->_sound->stopSound(0);
 				g_engine->_sound->stopSound(1);
 				g_engine->_sound->playSound(1, 2);
-				start_detail_wait(1, 1, ANI_BACK);
+				startSetailWait(1, 1, ANI_BACK);
 				g_engine->_sound->stopSound(2);
 				aad_nr = 295;
 
 			} else {
-				start_detail_wait(5, 1, ANI_FRONT);
+				startSetailWait(5, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(9);
-				start_detail_wait(4, 1, ANI_FRONT);
+				startSetailWait(4, 1, ANI_FRONT);
 				aad_nr = 296;
 				_G(spieler).R54FputzerWeg = true;
 				_G(atds)->del_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATA);
@@ -170,11 +170,11 @@ int16 Room54::use_schalter() {
 				_G(atds)->set_ats_str(351, 1, ATS_DATA);
 			}
 
-			start_aad_wait(aad_nr, -1);
+			startAadWait(aad_nr, -1);
 			_G(spieler).R54HowardVorne = 0;
 
 		} else {
-			start_aad_wait(297, -1);
+			startAadWait(297, -1);
 		}
 
 		showCur();
@@ -197,18 +197,18 @@ void Room54::talk_verkauf() {
 		_G(spieler).R54HotDogOk = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler).R54HowardVorne = 1;
-		start_aad_wait(299, -1);
+		startAadWait(299, -1);
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(det)->del_static_ani(6);
-		start_detail_wait(7, 1, ANI_FRONT);
-		_G(det)->start_detail(8, 255, ANI_FRONT);
-		start_aad_wait(310, -1);
+		startSetailWait(7, 1, ANI_FRONT);
+		_G(det)->startDetail(8, 255, ANI_FRONT);
+		startAadWait(310, -1);
 
 		_G(det)->stop_detail(8);
-		start_detail_wait(9, 1, ANI_FRONT);
-		start_detail_wait(10, 1, ANI_FRONT);
-		_G(det)->start_detail(11, 255, ANI_FRONT);
-		start_aad_wait(311, -1);
+		startSetailWait(9, 1, ANI_FRONT);
+		startSetailWait(10, 1, ANI_FRONT);
+		_G(det)->startDetail(11, 255, ANI_FRONT);
+		startAadWait(311, -1);
 		_G(det)->stop_detail(11);
 		_G(room)->set_timer_status(6, TIMER_START);
 		_G(det)->set_static_ani(6, -1);
@@ -218,7 +218,7 @@ void Room54::talk_verkauf() {
 		_G(obj)->addInventory(BURGER_INV, &_G(room_blk));
 		inventory_2_cur(BURGER_INV);
 	} else {
-		start_aad_wait(313, -1);
+		startAadWait(313, -1);
 	}
 
 	showCur();
@@ -233,7 +233,7 @@ int16 Room54::use_zelle() {
 			action_ret = true;
 
 			if (!_G(spieler).R54Schild) {
-				start_aad_wait(318, -1);
+				startAadWait(318, -1);
 			} else {
 				autoMove(5, P_CHEWY);
 				_G(spieler).R54HowardVorne = 1;
@@ -247,11 +247,11 @@ int16 Room54::use_zelle() {
 				load_chewy_taf(CHEWY_JMANS);
 				_G(zoom_horizont) = 90;
 
-				set_person_pos(283, 93, P_CHEWY, P_LEFT);
-				set_person_pos(238, 99, P_HOWARD, P_RIGHT);
-				start_aad_wait(315, -1);
+				setPersonPos(283, 93, P_CHEWY, P_LEFT);
+				setPersonPos(238, 99, P_HOWARD, P_RIGHT);
+				startAadWait(315, -1);
 				goAutoXy(241, 74, P_CHEWY, ANI_WAIT);
-				start_aad_wait(316, -1);
+				startAadWait(316, -1);
 
 				_G(spieler_mi)[P_HOWARD].Mode = true;
 				switch_room(55);
@@ -261,7 +261,7 @@ int16 Room54::use_zelle() {
 		action_ret = true;
 		autoMove(6, P_CHEWY);
 		_G(spieler).R54HowardVorne = 1;
-		start_aad_wait(319, -1);
+		startAadWait(319, -1);
 	}
 
 	showCur();
@@ -284,7 +284,7 @@ int16 Room54::use_azug() {
 			if (_G(spieler).R54FputzerWeg) {
 				autoMove(8, P_CHEWY);
 				_G(spieler).R54HowardVorne = 0;
-				start_aad_wait(298, -1);
+				startAadWait(298, -1);
 				_G(spieler).PersonHide[P_CHEWY] = true;
 				_G(det)->showStaticSpr(12);
 				_G(spieler).R55Location = true;
@@ -309,14 +309,14 @@ int16 Room54::use_azug() {
 						--delay;
 					}
 
-					set_up_screen(DO_SETUP);
+					setupScreen(DO_SETUP);
 					SHOULD_QUIT_RETURN0;
 				}
 
 				switch_room(55);
 			}
 		} else {
-			start_aad_wait(314, -1);
+			startAadWait(314, -1);
 		}
 
 		showCur();
@@ -326,8 +326,8 @@ int16 Room54::use_azug() {
 }
 
 void Room54::aufzug_ab() {
-	set_person_pos(91, 62, P_HOWARD, P_RIGHT);
-	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
+	setPersonPos(91, 62, P_HOWARD, P_RIGHT);
+	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).scrollx = 0;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(det)->showStaticSpr(12);
@@ -350,16 +350,16 @@ void Room54::aufzug_ab() {
 			--delay;
 		}
 
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN;
 	}
 
 	g_engine->_sound->stopSound(0);
 	_G(det)->hideStaticSpr(12);
-	set_person_pos(99, 82, P_CHEWY, P_RIGHT);
+	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	_G(maus_links_click) = false;
-	stop_person(P_CHEWY);
+	stopPerson(P_CHEWY);
 	_G(spieler).R55Location = false;
 }
 

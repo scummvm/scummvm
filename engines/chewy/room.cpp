@@ -101,23 +101,23 @@ static const uint8 CHEWY_JM_PHASEN[8][8] = {
 void JungleRoom::topEntry() {
 	_G(cur_hide_flag) = 0;
 	hideCur();
-	set_person_pos(236, 110, P_CHEWY, P_RIGHT);
-	set_person_pos(263, 85, P_NICHELLE, P_RIGHT);
-	set_person_pos(285, 78, P_HOWARD, P_RIGHT);
+	setPersonPos(236, 110, P_CHEWY, P_RIGHT);
+	setPersonPos(263, 85, P_NICHELLE, P_RIGHT);
+	setPersonPos(285, 78, P_HOWARD, P_RIGHT);
 	goAutoXy(266, 113, P_HOWARD, ANI_WAIT);
 	showCur();
 }
 
 void JungleRoom::leftEntry() {
-	set_person_pos(31, 118, P_CHEWY, P_RIGHT);
-	set_person_pos(71, 104, P_NICHELLE, P_RIGHT);
-	set_person_pos(6, 111, P_HOWARD, P_RIGHT);
+	setPersonPos(31, 118, P_CHEWY, P_RIGHT);
+	setPersonPos(71, 104, P_NICHELLE, P_RIGHT);
+	setPersonPos(6, 111, P_HOWARD, P_RIGHT);
 }
 
 void JungleRoom::rightEntry() {
-	set_person_pos(587, 114, P_CHEWY, P_LEFT);
-	set_person_pos(613, 103, P_NICHELLE, P_LEFT);
-	set_person_pos(561, 112, P_HOWARD, P_LEFT);
+	setPersonPos(587, 114, P_CHEWY, P_LEFT);
+	setPersonPos(613, 103, P_NICHELLE, P_LEFT);
+	setPersonPos(561, 112, P_HOWARD, P_LEFT);
 }
 
 void JungleRoom::setup_func() {
@@ -217,7 +217,7 @@ void Room::add_timer_new_room() {
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
 		} else if (adi->start_flag || adi->repeat) {
-			_G(det)->start_detail(i, 0, ANI_FRONT);
+			_G(det)->startDetail(i, 0, ANI_FRONT);
 		}
 	}
 }
@@ -550,7 +550,7 @@ void switch_room(int16 nr) {
 	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
 	_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
 	enter_room(-1);
-	set_up_screen(DO_SETUP);
+	setupScreen(DO_SETUP);
 }
 
 void calc_person_look() {

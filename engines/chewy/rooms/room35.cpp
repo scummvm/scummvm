@@ -57,11 +57,11 @@ int16 Room35::schublade() {
 			autoMove(3, P_CHEWY);
 			_G(spieler).R35Falle = true;
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(2, ABLOCK28);
+			startAniBlock(2, ABLOCK28);
 			_G(spieler).PersonHide[P_CHEWY] = false;
-			set_person_pos(33, 90, P_CHEWY, P_LEFT);
+			setPersonPos(33, 90, P_CHEWY, P_LEFT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(93, -1);
+			startAadWait(93, -1);
 			_G(spieler).PersonHide[P_CHEWY] = false;
 			_G(atds)->set_ats_str(234, 2, ATS_DATA);
 		}
@@ -83,7 +83,7 @@ int16 Room35::use_cat() {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 			flic_cut(FCUT_045);
 			start_spz(CH_TRANS, 1, ANI_FRONT, P_CHEWY);
-			start_aad_wait(94, -1);
+			startAadWait(94, -1);
 		} else if (is_cur_inventar(PUTENKEULE_INV)) {
 			action_flag = true;
 			disable_timer();
@@ -93,22 +93,22 @@ int16 Room35::use_cat() {
 			del_inventar(_G(spieler).AkInvent);
 			_G(det)->stop_detail(0);
 			_G(det)->del_static_ani(0);
-			start_detail_wait(1, 1, ANI_FRONT);
-			_G(det)->start_detail(2, 1, ANI_FRONT);
-			start_detail_wait(3, 1, ANI_FRONT);
+			startSetailWait(1, 1, ANI_FRONT);
+			_G(det)->startDetail(2, 1, ANI_FRONT);
+			startSetailWait(3, 1, ANI_FRONT);
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);
 			_G(atds)->del_steuer_bit(237, ATS_AKTIV_BIT, ATS_DATA);
 
 			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {
-				set_up_screen(DO_SETUP);
+				setupScreen(DO_SETUP);
 			}
 
 			_G(det)->set_static_ani(0, -1);
 			enable_timer();
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(95, -1);
+			startAadWait(95, -1);
 		}
 	}
 
@@ -137,7 +137,7 @@ void Room35::talk_cat() {
 
 	} else {
 		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(96, -1);
+		startAadWait(96, -1);
 	}
 
 	showCur();

@@ -288,7 +288,7 @@ void Inventory::menu() {
 				if (!menuFirstFl) {
 					_G(cur)->show_cur();
 					while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
-						set_up_screen(NO_SETUP);
+						setupScreen(NO_SETUP);
 						inv_rand_x = -1;
 						inv_rand_y = -1;
 						plot_menu();
@@ -342,7 +342,7 @@ void Inventory::menu() {
 		}
 
 		if (_G(show_invent_menu) != 2) {
-			set_up_screen(NO_SETUP);
+			setupScreen(NO_SETUP);
 			_G(cur)->move(_G(minfo).x, _G(minfo).y);
 			_G(cur)->show_cur();
 			if (menu_flag1 != MENU_AUSBLENDEN) {
@@ -369,7 +369,7 @@ void Inventory::menu() {
 	_G(minfo).x = _G(maus_old_x);
 	_G(minfo).y = _G(maus_old_y);
 	while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		_G(out)->back2screen(_G(workpage));
 	}
@@ -494,7 +494,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		}
 
 		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(fontMgr)->setFont(_G(font8));
 
@@ -536,7 +536,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 
 	while (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(cur)->plot_cur();
 		_G(out)->back2screen(_G(workpage));
@@ -586,7 +586,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 					atsAction(txt_nr, m_mode, ATS_ACTION_VOR);
 				}
 				if (ok) {
-					start_ats_wait(txt_nr, m_mode, 14, ATS_DATA);
+					startAtsWait(txt_nr, m_mode, 14, ATS_DATA);
 				}
 
 				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
@@ -668,7 +668,7 @@ void Inventory::showDiary() {
 	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 	_G(spieler).scrollx = scrollx;
 	_G(spieler).scrolly = scrolly;
-	set_up_screen(NO_SETUP);
+	setupScreen(NO_SETUP);
 	plot_menu();
 	_G(out)->setPointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));

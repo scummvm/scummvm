@@ -215,7 +215,7 @@ public:
 
 	void del_static_ani(int16 ani_nr);
 	void set_ani_delay(int16 nr, int16 del);
-	void start_detail(int16 nr, int16 rep, int16 reverse);
+	void startDetail(int16 nr, int16 rep, int16 reverse);
 	void stop_detail(int16 nr);
 	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 	                      int16 zoomx, int16 zoomy);

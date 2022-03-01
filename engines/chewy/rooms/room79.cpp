@@ -41,12 +41,12 @@ void Room79::entry() {
 	_G(spieler).PersonRoomNr[P_HOWARD] = 79;
 	_G(spieler).PersonRoomNr[P_NICHELLE] = 79;
 	if (!_G(flags).LoadGame) {
-		set_person_pos(459, 114, P_CHEWY, P_LEFT);
-		set_person_pos(568, 65, P_HOWARD, P_LEFT);
-		set_person_pos(534, 75, P_NICHELLE, P_LEFT);
+		setPersonPos(459, 114, P_CHEWY, P_LEFT);
+		setPersonPos(568, 65, P_HOWARD, P_LEFT);
+		setPersonPos(534, 75, P_NICHELLE, P_LEFT);
 		_G(spieler).scrollx = 300;
 		hideCur();
-		start_aad_wait(484, -1);
+		startAadWait(484, -1);
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10026;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
 		showCur();

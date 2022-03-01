@@ -90,7 +90,7 @@ void Room21::calc_laser() {
 		_G(atds)->del_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		_G(spieler).R21Laser1Weg = false;
-		_G(det)->start_detail(3, 255, ANI_FRONT);
+		_G(det)->startDetail(3, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(134, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_steuer_bit(133, ATS_AKTIV_BIT, ATS_DATA);
 	}
@@ -109,7 +109,7 @@ void Room21::calc_laser() {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
 		_G(atds)->set_steuer_bit(129, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R21Laser2Weg = false;
-		_G(det)->start_detail(4, 255, ANI_FRONT);
+		_G(det)->startDetail(4, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(135, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }
@@ -190,12 +190,12 @@ void Room21::chewy_kolli() {
 
 	if (kolli && !_G(flags).AutoAniPlay) {
 		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
-		stop_person(P_CHEWY);
+		stopPerson(P_CHEWY);
 		_G(flags).AutoAniPlay = true;
 		_G(spieler).PersonHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		start_detail_wait(ani_nr, 1, ANI_FRONT);
+		startSetailWait(ani_nr, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
@@ -216,9 +216,9 @@ void Room21::salto() {
 				_G(spieler_vector)[P_CHEWY].Xypos[1]);
 		}
 
-		start_ani_block(3, ABLOCK19);
+		startAniBlock(3, ABLOCK19);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		start_aad_wait(36, -1);
+		startAadWait(36, -1);
 		_G(flags).AutoAniPlay = false;
 	}
 }
@@ -232,7 +232,7 @@ void Room21::use_gitter_energie() {
 
 	switch_room(17);
 	_G(det)->hideStaticSpr(5);
-	start_detail_wait(9, 1, ANI_FRONT);
+	startSetailWait(9, 1, ANI_FRONT);
 	_G(spieler).R17GitterWeg = true;
 	_G(spieler).PersonHide[P_CHEWY] = false;
 }
@@ -245,11 +245,11 @@ int16 Room21::use_fenster() {
 		_G(flags).AutoAniPlay = true;
 		_G(spieler).R18Gitter = true;
 		autoMove(13, P_CHEWY);
-		set_person_pos(541, 66, P_CHEWY, P_LEFT);
+		setPersonPos(541, 66, P_CHEWY, P_LEFT);
 		switch_room(18);
 
 		if (!_G(spieler).R18FirstEntry) {
-			start_aad_wait(39, -1);
+			startAadWait(39, -1);
 			_G(spieler).R18FirstEntry = true;
 		}
 

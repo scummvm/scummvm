@@ -49,22 +49,22 @@ int16 Room32::use_howard() {
 			flic_cut(FCUT_043);
 			_G(atds)->set_steuer_bit(230, ATS_AKTIV_BIT, ATS_DATA);
 			start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(75, -1);
-			wait_show_screen(5);
+			startAadWait(75, -1);
+			waitShowScreen(5);
 			autoMove(5, P_CHEWY);
-			wait_show_screen(10);
+			waitShowScreen(10);
 			start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
-			start_aad_wait(125, -1);
-			wait_show_screen(10);
+			startAadWait(125, -1);
+			waitShowScreen(10);
 
 			_G(det)->hideStaticSpr(0);
-			start_detail_frame(0, 1, ANI_FRONT, 9);
-			start_detail_wait(1, 1, ANI_BACK);
+			startDetailFrame(0, 1, ANI_FRONT, 9);
+			startSetailWait(1, 1, ANI_BACK);
 			_G(det)->showStaticSpr(7);
 			_G(det)->showStaticSpr(6);
-			wait_show_screen(20);
+			waitShowScreen(20);
 			_G(det)->hideStaticSpr(7);
-			start_detail_wait(1, 1, ANI_FRONT);
+			startSetailWait(1, 1, ANI_FRONT);
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			ani_nr = CH_TALK3;
 			dia_nr = 164;
@@ -82,7 +82,7 @@ int16 Room32::use_howard() {
 
 	if (dia_nr) {
 		start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-		start_aad_wait(dia_nr, -1);
+		startAadWait(dia_nr, -1);
 		action_flag = true;
 	}
 
@@ -144,7 +144,7 @@ void Room32::use_schreibmaschine() {
 	}
 
 	start_spz(ani_nr, 255, ANI_FRONT, P_CHEWY);
-	start_aad_wait(dia_nr, -1);
+	startAadWait(dia_nr, -1);
 	showCur();
 }
 
@@ -160,7 +160,7 @@ int16 Room32::get_script() {
 		_G(det)->hideStaticSpr(5);
 		_G(atds)->set_ats_str(203, 0, ATS_DATA);
 		start_spz(CH_TALK3, 1, ANI_FRONT, P_CHEWY);
-		start_aad_wait(91, -1);
+		startAadWait(91, -1);
 	}
 
 	return action_flag;

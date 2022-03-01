@@ -47,8 +47,8 @@ void Room52::entry() {
 	if (!_G(flags).LoadGame) {
 		_G(det)->showStaticSpr(4);
 		_G(spieler).R52TuerAuf = true;
-		set_person_pos(20, 50, P_HOWARD, P_LEFT);
-		set_person_pos(35, 74, P_CHEWY, P_RIGHT);
+		setPersonPos(20, 50, P_HOWARD, P_LEFT);
+		setPersonPos(35, 74, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
 		_G(spieler).R52TuerAuf = false;
 		_G(det)->hideStaticSpr(4);
@@ -85,31 +85,31 @@ int16 Room52::use_hot_dog() {
 		g_engine->_sound->playSound(0);
 		_G(atds)->set_ats_str(341, 1, ATS_DATA);
 		autoMove(2, P_CHEWY);
-		set_person_spr(P_LEFT, P_CHEWY);
-		start_aad_wait(288, -1);
+		setPersonSpr(P_LEFT, P_CHEWY);
+		startAadWait(288, -1);
 
 	} else if (is_cur_inventar(KILLER_INV)) {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(7, 1, ANI_FRONT);
+		startSetailWait(7, 1, ANI_FRONT);
 		g_engine->_sound->playSound(7, 0);
 		g_engine->_sound->playSound(7);
-		_G(det)->start_detail(8, 255, ANI_FRONT);
+		_G(det)->startDetail(8, 255, ANI_FRONT);
 
 		for (int16 i = 0; i < 5; i++) {
-			wait_show_screen(20);
+			waitShowScreen(20);
 			_G(det)->stop_detail(2 + i);
 		}
 
 		g_engine->_sound->stopSound(0);
 		_G(det)->stop_detail(0);
 		_G(det)->stop_detail(8);
-		start_detail_wait(7, 1, ANI_BACK);
+		startSetailWait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATA);
-		start_aad_wait(303, -1);
+		startAadWait(303, -1);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(spieler).R52KakerWeg = true;
 	}
@@ -120,17 +120,17 @@ int16 Room52::use_hot_dog() {
 
 void Room52::plot_armee(int16 frame) {
 	for (int16 i = 0; i < 5; i++) {
-		wait_show_screen(frame);
-		_G(det)->start_detail(2 + i, 255, ANI_FRONT);
+		waitShowScreen(frame);
+		_G(det)->startDetail(2 + i, 255, ANI_FRONT);
 	}
 }
 
 void Room52::kaker_platt() {
 	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !_G(flags).ExitMov) {
 		_G(spieler).R52KakerJoke = true;
-		stop_person(P_CHEWY);
+		stopPerson(P_CHEWY);
 		hideCur();
-		start_aad_wait(289, -1);
+		startAadWait(289, -1);
 		showCur();
 	}
 }

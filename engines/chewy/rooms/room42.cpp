@@ -33,7 +33,7 @@ namespace Rooms {
 void Room42::entry() {
 	if (!_G(spieler).R42BeamterWach) {
 		g_engine->_sound->playSound(0);
-		_G(det)->start_detail(0, 255, ANI_FRONT);
+		_G(det)->startDetail(0, 255, ANI_FRONT);
 	}
 
 	if (_G(spieler).PersonRoomNr[P_HOWARD] == 42) {
@@ -48,16 +48,16 @@ void Room42::entry() {
 
 			_G(SetUpScreenFunc) = setup_func;
 
-			set_person_pos(80, 43, P_HOWARD, P_LEFT);
+			setPersonPos(80, 43, P_HOWARD, P_LEFT);
 			_G(atds)->set_ats_str(263, 1, ATS_DATA);
 			_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		}
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(spieler).R42BriefOk)
-			start_aad_wait(302, -1);
+			startAadWait(302, -1);
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk)
-			start_aad_wait(301, -1);
+			startAadWait(301, -1);
 	}
 }
 
@@ -79,13 +79,13 @@ void Room42::get_kuerbis(int16 aad_nr) {
 	hideCur();
 	autoMove(1, P_CHEWY);
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(7, 1, ANI_BACK);
+	startSetailWait(7, 1, ANI_BACK);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	start_detail_wait(7, 1, ANI_FRONT);
+	startSetailWait(7, 1, ANI_FRONT);
 	_G(spieler).PersonHide[P_CHEWY] = false;
 	showCur();
 }
@@ -104,26 +104,26 @@ int16 Room42::use_psack() {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(10, 1, ANI_FRONT);
+		startSetailWait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		start_aad_wait(187, -1);
+		startAadWait(187, -1);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(9, 1, ANI_FRONT);
+		startSetailWait(9, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
-		start_aad_wait(181, -1);
+		startAadWait(181, -1);
 		_G(spieler).R42MarkeOk = true;
 		autoMove(4, P_CHEWY);
-		start_aad_wait(185, -1);
+		startAadWait(185, -1);
 		_G(spieler).R42HoToBeamter = false;
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(10, 1, ANI_FRONT);
+		startSetailWait(10, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
 		del_inventar(_G(spieler).AkInvent);
-		start_aad_wait(183, -1);
+		startAadWait(183, -1);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
 		_G(spieler).R28Briefkasten = true;
@@ -133,7 +133,7 @@ int16 Room42::use_psack() {
 
 	} else if (is_cur_inventar(BRIEF_INV)) {
 		action_flag = true;
-		start_aad_wait(182, -1);
+		startAadWait(182, -1);
 	}
 
 	showCur();
@@ -148,7 +148,7 @@ int16 Room42::use_beamter() {
 		_G(atds)->set_ats_str(264, 2, ATS_DATA);
 		hideCur();
 		autoMove(4, P_CHEWY);
-		start_aad_wait(184, -1);
+		startAadWait(184, -1);
 		_G(spieler).R42HoToBeamter = true;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
@@ -180,7 +180,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 	if (str_end_nr != 4) {
 		while (_G(atds)->aad_get_status() != -1) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
@@ -189,16 +189,16 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		switch (str_end_nr) {
 		case 1:
-			start_detail_wait(3, 4, ANI_FRONT);
+			startSetailWait(3, 4, ANI_FRONT);
 			break;
 
 		case 2:
 			g_engine->_sound->playSound(4);
-			start_detail_wait(4, 13, ANI_FRONT);
+			startSetailWait(4, 13, ANI_FRONT);
 			break;
 
 		case 3:
-			start_detail_wait(5, 2, ANI_FRONT);
+			startSetailWait(5, 2, ANI_FRONT);
 			break;
 
 		default:
@@ -206,29 +206,29 @@ void Room42::dia_beamter(int16 str_end_nr) {
 		}
 	} else {
 		while (_G(atds)->aad_get_status() < 2) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
 		_G(det)->stop_detail(0);
 		g_engine->_sound->stopSound(0);
-		start_detail_wait(1, 1, ANI_FRONT);
-		_G(det)->start_detail(2, 255, ANI_FRONT);
+		startSetailWait(1, 1, ANI_FRONT);
+		_G(det)->startDetail(2, 255, ANI_FRONT);
 
 		while (_G(atds)->aad_get_status() != -1) {
-			set_up_screen(DO_SETUP);
+			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
 
 		_G(det)->stop_detail(2);
-		_G(det)->start_detail(0, 255, ANI_FRONT);
+		_G(det)->startDetail(0, 255, ANI_FRONT);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
 	}
 
 	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(det)->start_detail(6, 255, ANI_FRONT);
-	start_aad_wait(135, -1);
+	_G(det)->startDetail(6, 255, ANI_FRONT);
+	startAadWait(135, -1);
 	_G(det)->stop_detail(6);
 	_G(flags).NoDiaBox = false;
 	_G(spieler).PersonHide[P_CHEWY] = false;

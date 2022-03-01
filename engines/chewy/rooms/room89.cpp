@@ -48,8 +48,8 @@ void Room89::entry() {
 
 	if (_G(spieler).scrollx != 5000) {
 		_G(spieler).scrollx = 0;
-		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
-		set_person_pos(93, 98, P_CHEWY, P_RIGHT);
+		setPersonPos(116, 114, P_HOWARD, P_RIGHT);
+		setPersonPos(93, 98, P_CHEWY, P_RIGHT);
 	}
 
 	if (_G(spieler).flags35_2) {
@@ -58,7 +58,7 @@ void Room89::entry() {
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 537;
 		switch_room(92);
-		start_aad_wait(490, -1);
+		startAadWait(490, -1);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -74,9 +74,9 @@ void Room89::entry() {
 	} else if (_G(spieler).flags35_4) {
 		// End sequence
 		hideCur();
-		set_person_pos(138, 82, P_CHEWY, P_RIGHT);
-		set_person_pos(116, 114, P_HOWARD, P_RIGHT);
-		set_person_pos(260, 57, P_NICHELLE, P_LEFT);
+		setPersonPos(138, 82, P_CHEWY, P_RIGHT);
+		setPersonPos(116, 114, P_HOWARD, P_RIGHT);
+		setPersonPos(260, 57, P_NICHELLE, P_LEFT);
 		_G(spieler).ZoomXy[P_NICHELLE][0] = _G(spieler).ZoomXy[P_NICHELLE][1] = 10;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -176,7 +176,7 @@ int Room89::proc2() {
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 489;
 	switch_room(92);
-	start_aad_wait(490, -1);
+	startAadWait(490, -1);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
@@ -205,7 +205,7 @@ int Room89::proc4() {
 		_G(det)->hideStaticSpr(6);
 		new_invent_2_cur(111);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		start_aad_wait(491, -1);
+		startAadWait(491, -1);
 	} else {
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);

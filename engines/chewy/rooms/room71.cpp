@@ -53,7 +53,7 @@ void Room71::entry(int16 eib_nr) {
 		_G(timer_nr)[0] = _G(room)->set_timer(0, 10);
 		_G(det)->set_static_ani(0, -1);
 	} else if (_G(spieler).R71LeopardVined) {
-		_G(det)->start_detail(2, 255, ANI_FRONT);
+		_G(det)->startDetail(2, 255, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->hideStaticSpr(2);
 		_G(det)->hideStaticSpr(3);
@@ -67,14 +67,14 @@ void Room71::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 110:
-		set_person_pos(500, 67, P_CHEWY, P_LEFT);
-		set_person_pos(568, 31, P_NICHELLE, P_LEFT);
-		set_person_pos(538, 35, P_HOWARD, P_LEFT);
+		setPersonPos(500, 67, P_CHEWY, P_LEFT);
+		setPersonPos(568, 31, P_NICHELLE, P_LEFT);
+		setPersonPos(538, 35, P_HOWARD, P_LEFT);
 		break;
 	case 114:
-		set_person_pos(70, 48, P_CHEWY, P_RIGHT);
-		set_person_pos(165, 16, P_NICHELLE, P_RIGHT);
-		set_person_pos(120, 18, P_HOWARD, P_RIGHT);
+		setPersonPos(70, 48, P_CHEWY, P_RIGHT);
+		setPersonPos(165, 16, P_NICHELLE, P_RIGHT);
+		setPersonPos(120, 18, P_HOWARD, P_RIGHT);
 		break;
 	default:
 		break;
@@ -185,7 +185,7 @@ int Room71::proc1() {
 	}
 
 	if (!_G(spieler).R71LeopardVined)
-		start_aad_wait(432, -1);
+		startAadWait(432, -1);
 
 	showCur();
 	_G(flags).NoScroll = false;
@@ -193,8 +193,8 @@ int Room71::proc1() {
 }
 
 void Room71::proc2() {
-	start_aad_wait(432, -1);
-	start_aad_wait(433, -1);
+	startAadWait(432, -1);
+	startAadWait(433, -1);
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(518, 35, P_HOWARD, ANI_GO);
 	goAutoXy(568, 36, P_NICHELLE, ANI_WAIT);
@@ -206,11 +206,11 @@ void Room71::proc2() {
 	_G(spieler).PersonHide[P_HOWARD] = true;
 	proc5(5);
 	_G(det)->hideStaticSpr(2);
-	_G(det)->start_detail(5, 255, false);
+	_G(det)->startDetail(5, 255, false);
 	auto_scroll(160, 0);
 	_G(det)->hideStaticSpr(5);
-	start_detail_wait(1, 1, ANI_FRONT);
-	_G(det)->start_detail(2, 255, false);
+	startSetailWait(1, 1, ANI_FRONT);
+	_G(det)->startDetail(2, 255, false);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(8);
 	_G(atds)->set_steuer_bit(442, ATS_AKTIV_BIT, ATS_DATA);
@@ -222,11 +222,11 @@ void Room71::proc2() {
 	_G(flags).NoScroll = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
-	start_aad_wait(434, -1);
+	startAadWait(434, -1);
 }
 
 void Room71::proc3() {
-	start_aad_wait(431, -1);
+	startAadWait(431, -1);
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(510, 34, P_NICHELLE, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
@@ -238,7 +238,7 @@ void Room71::proc3() {
 }
 
 void Room71::proc4() {
-	start_aad_wait(430, -1);
+	startAadWait(430, -1);
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(518, 35, P_HOWARD, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
@@ -252,7 +252,7 @@ void Room71::proc4() {
 void Room71::proc5(int16 val) {
 	_state = 1 + (_G(spieler).flags28_4 ? 1 : 0);
 	_G(det)->hideStaticSpr(2);
-	start_detail_wait(val, 5, ANI_FRONT);
+	startSetailWait(val, 5, ANI_FRONT);
 	_G(det)->showStaticSpr(2);
 	_state = 0;
 }
@@ -285,20 +285,20 @@ int Room71::proc6() {
 void Room71::proc7() {
 	hideCur();
 	autoMove(4, P_CHEWY);
-	start_aad_wait(429, -1);
+	startAadWait(429, -1);
 	_G(SetUpScreenFunc) = nullptr;
-	set_person_spr(P_LEFT, P_CHEWY);
+	setPersonSpr(P_LEFT, P_CHEWY);
 	goAutoXy(323, 28, P_NICHELLE, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(200, 0);
 	_G(spieler).PersonHide[P_NICHELLE] = true;
-	_G(det)->start_detail(7, 255, false);
-	start_aad_wait(624, -1);
+	_G(det)->startDetail(7, 255, false);
+	startAadWait(624, -1);
 	_G(det)->stop_detail(7);
 	_G(spieler).PersonHide[P_NICHELLE] = false;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = false;
-	start_aad_wait(432, -1);
+	startAadWait(432, -1);
 
 	showCur();
 }

@@ -53,15 +53,15 @@ void Room82::entry() {
 	}
 
 	if (_G(spieler).flags30_1) {
-		set_person_pos(635, 144, P_CHEWY, P_LEFT);
-		set_person_pos(592, 115, P_HOWARD, P_RIGHT);
-		set_person_pos(543, 110, P_NICHELLE, P_RIGHT);
+		setPersonPos(635, 144, P_CHEWY, P_LEFT);
+		setPersonPos(592, 115, P_HOWARD, P_RIGHT);
+		setPersonPos(543, 110, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags30_1 = false;
 		_G(spieler).scrollx = 479;
 	} else if (_G(spieler).flags31_8) {
-		set_person_pos(130, 138, P_CHEWY, P_LEFT);
-		set_person_pos(104, 111, P_HOWARD, P_RIGHT);
-		set_person_pos(153, 110, P_NICHELLE, P_RIGHT);
+		setPersonPos(130, 138, P_CHEWY, P_LEFT);
+		setPersonPos(104, 111, P_HOWARD, P_RIGHT);
+		setPersonPos(153, 110, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags31_8 = false;
 		_G(spieler).scrollx = 0;
 	}
@@ -134,7 +134,7 @@ void Room82::talk1() {
 void Room82::talk2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	start_aad_wait(453, -1);
+	startAadWait(453, -1);
 	showCur();
 }
 
@@ -151,8 +151,8 @@ int Room82::proc3() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	start_detail_wait(2, 1, ANI_FRONT);
-	start_detail_wait(3, 1, ANI_FRONT);
+	startSetailWait(2, 1, ANI_FRONT);
+	startSetailWait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
@@ -175,7 +175,7 @@ void Room82::proc4() {
 	_G(room)->set_timer_status(4, TIMER_STOP);
 	_G(det)->del_static_ani(4);
 	_G(det)->set_static_ani(5, 3);
-	start_aad_wait(445, -1);
+	startAadWait(445, -1);
 	_G(det)->del_static_ani(5);
 	_G(det)->set_static_ani(4, -1);
 	_G(room)->set_timer_status(4, TIMER_START);
@@ -195,15 +195,15 @@ int Room82::proc6() {
 	autoMove(2, P_CHEWY);
 
 	if (_G(spieler).flags30_10) {
-		start_aad_wait(450, -1);
+		startAadWait(450, -1);
 		_G(out)->ausblenden(0);
 		_G(out)->set_teilpalette(_G(pal), 255, 1);
 		_G(atds)->enableEvents(false);
-		start_aad_wait(598, -1);
+		startAadWait(598, -1);
 		_G(atds)->enableEvents(true);
 		_G(det)->showStaticSpr(7);
 		_G(fx_blend) = BLEND3;
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 		Room66::proc8(2, 7, 7, 451);
 		_G(spieler).flags30_20 = true;
 		_G(spieler).flags37_20 = true;
@@ -212,7 +212,7 @@ int Room82::proc6() {
 		remove_inventory(106);
 	} else {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
-		start_aad_wait(276, -1);
+		startAadWait(276, -1);
 	}
 
 	showCur();
@@ -222,20 +222,20 @@ int Room82::proc6() {
 void Room82::proc8() {
 	hideCur();
 	_G(spieler).flags30_10 = true;
-	start_aad_wait(447, -1);
+	startAadWait(447, -1);
 	autoMove(6, P_CHEWY);
 
 	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
-		set_up_screen(DO_SETUP);
+		setupScreen(DO_SETUP);
 
 	_G(spieler).PersonHide[P_NICHELLE] = true;
-	_G(det)->start_detail(10, 255, false);
-	start_aad_wait(625, -1);
+	_G(det)->startDetail(10, 255, false);
+	startAadWait(625, -1);
 	_G(det)->stop_detail(10);
 	_G(spieler).PersonHide[P_NICHELLE] = false;
-	start_aad_wait(448, -1);
+	startAadWait(448, -1);
 	_G(det)->del_static_ani(4);
-	start_detail_wait(6, 2, ANI_FRONT);
+	startSetailWait(6, 2, ANI_FRONT);
 	_G(det)->set_static_ani(4, -1);
 	showCur();
 }

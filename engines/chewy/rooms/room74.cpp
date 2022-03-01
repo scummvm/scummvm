@@ -45,7 +45,7 @@ void Room74::entry(int16 eib_nr) {
 	_G(SetUpScreenFunc) = setup_func;
 
 	if (_G(spieler).flags29_1)
-		_G(det)->start_detail(0, 255, false);
+		_G(det)->startDetail(0, 255, false);
 
 	if (_G(flags).LoadGame)
 		return;
@@ -96,10 +96,10 @@ int Room74::proc1() {
 		_G(spieler).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);
 		_G(spieler).PersonHide[P_CHEWY] = true;
-		start_detail_wait(1, 1, ANI_FRONT);
-		set_person_pos(272, 116, P_CHEWY, P_RIGHT);
+		startSetailWait(1, 1, ANI_FRONT);
+		setPersonPos(272, 116, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(det)->start_detail(0, 255, false);
+		_G(det)->startDetail(0, 255, false);
 		_G(spieler).flags29_1 = true;
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 

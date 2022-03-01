@@ -42,7 +42,7 @@ void Room86::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 110;
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).flags32_2) {
-		_G(det)->start_detail(0, 255, false);
+		_G(det)->startDetail(0, 255, false);
 		_G(det)->setStaticPos(0, 352, 107, false, false);
 		_G(det)->showStaticSpr(0);
 	}
@@ -51,15 +51,15 @@ void Room86::entry(int16 eib_nr) {
 		return;
 
 	if (eib_nr == 127) {
-		set_person_pos(82, 56, P_HOWARD, P_RIGHT);
-		set_person_pos(134, 56, P_NICHELLE, P_LEFT);
+		setPersonPos(82, 56, P_HOWARD, P_RIGHT);
+		setPersonPos(134, 56, P_NICHELLE, P_LEFT);
 		return;
 	}
 
 	if (!_G(spieler).flags32_10) {
-		set_person_pos(260, 66, P_CHEWY, P_RIGHT);
-		set_person_pos(298, 44, P_HOWARD, P_LEFT);
-		set_person_pos(320, 42, P_NICHELLE, P_LEFT);
+		setPersonPos(260, 66, P_CHEWY, P_RIGHT);
+		setPersonPos(298, 44, P_HOWARD, P_LEFT);
+		setPersonPos(320, 42, P_NICHELLE, P_LEFT);
 		_G(spieler).scrollx = 164;
 	} else {
 		_G(spieler_mi)[P_CHEWY].Vorschub = 16;
@@ -67,7 +67,7 @@ void Room86::entry(int16 eib_nr) {
 		_G(flags).ZoomMov = false;
 		_G(spieler).scrollx = 246;
 		_G(spieler).ScrollxStep = 8;
-		set_person_pos(443, 66, P_CHEWY, P_RIGHT);
+		setPersonPos(443, 66, P_CHEWY, P_RIGHT);
 		_G(spieler).PersonRoomNr[P_HOWARD] = 84;
 		_G(spieler).PersonRoomNr[P_NICHELLE] = 0;
 		autoMove(2, P_CHEWY);
@@ -149,7 +149,7 @@ int Room86::proc2() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(det)->start_detail(0, 255, false);
+	_G(det)->startDetail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	del_inventar(_G(spieler).AkInvent);
@@ -161,7 +161,7 @@ int Room86::proc2() {
 	_G(spieler).flags32_2 = true;
 	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
-	start_aad_wait(468, -1);
+	startAadWait(468, -1);
 
 	showCur();
 	return 1;
@@ -189,7 +189,7 @@ void Room86::proc3(bool cond) {
 	g_engine->_sound->playSound(0, 2, false);
 
 	for (int i = 0; i < 48; ++i) {
-		set_up_screen(NO_SETUP);
+		setupScreen(NO_SETUP);
 		_G(det)->setStaticPos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setPointer(nullptr);

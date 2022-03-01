@@ -59,7 +59,7 @@ void Room6::entry() {
 	_G(zoom_mov_fak) = 2;
 
 	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
-		_G(det)->start_detail(7, 255, ANI_FRONT);
+		_G(det)->startDetail(7, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(44, ATS_AKTIV_BIT, ATS_DATA);
 		if (!_G(flags).LoadGame)
 			++_G(spieler).R6RaumBetreten;
@@ -94,13 +94,13 @@ void Room6::init_robo() {
 void Room6::bola_knopf() {
 	if (!_G(spieler).R6BolaBecher) {
 		_G(det)->hideStaticSpr(0);
-		start_detail_wait(0, 1, ANI_FRONT);
+		startSetailWait(0, 1, ANI_FRONT);
 		if (_G(spieler).R6BolaOk) {
 			_G(spieler).R6BolaBecher = true;
 			_G(det)->showStaticSpr(0);
-			start_ani_block(2, ABLOCK7);
+			startAniBlock(2, ABLOCK7);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
-			wait_detail(2);
+			waitDetail(2);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_SCHACHT);
 			_G(atds)->del_steuer_bit(42, ATS_AKTIV_BIT, ATS_DATA);
 			_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
@@ -108,19 +108,19 @@ void Room6::bola_knopf() {
 			_G(obj)->hide_sib(SIB_BOLA_KNOPF_R6);
 		} else {
 			_G(spieler).PersonHide[P_CHEWY] = true;
-			start_ani_block(3, ABLOCK6);
+			startAniBlock(3, ABLOCK6);
 			while (_G(det)->get_ani_status(3) && !SHOULD_QUIT) {
 				if (!_G(det)->get_ani_status(14)) {
-					set_person_pos(220, 89, P_CHEWY, P_LEFT);
+					setPersonPos(220, 89, P_CHEWY, P_LEFT);
 					_G(spieler).PersonHide[P_CHEWY] = false;
 				}
-				set_up_screen(DO_SETUP);
+				setupScreen(DO_SETUP);
 			}
 			_G(det)->showStaticSpr(0);
 			++_G(spieler).R6BolaJoke;
 			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
 			start_spz(CH_TALK5, 244, false, 0);
-			start_aad_wait(diaNr, -1);
+			startAadWait(diaNr, -1);
 		}
 		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_KNOPF_R6);
 	}

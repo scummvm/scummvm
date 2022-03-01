@@ -51,7 +51,7 @@ void Room68::entry() {
 	
 	if (_G(spieler).R68Papagei) {
 		_G(det)->showStaticSpr(12);
-		_G(det)->start_detail(21, 255, ANI_FRONT);
+		_G(det)->startDetail(21, 255, ANI_FRONT);
 	}
 
 	if (!_G(spieler).R68DivaWeg) {
@@ -63,8 +63,8 @@ void Room68::entry() {
 	if (!_G(flags).LoadGame) {
 		hideCur();
 		if (_G(spieler).PersonRoomNr[P_HOWARD] == 68) {
-			set_person_pos(524, 51, P_HOWARD, P_LEFT);
-			set_person_pos(550, 54, P_NICHELLE, P_LEFT);
+			setPersonPos(524, 51, P_HOWARD, P_LEFT);
+			setPersonPos(550, 54, P_NICHELLE, P_LEFT);
 		}
 		autoMove(7, P_CHEWY);
 		showCur();
@@ -93,7 +93,7 @@ void Room68::setup_func() {
 	case 0:
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 1;
-			_G(det)->start_detail(_G(r68HohesC), 1, ANI_FRONT);
+			_G(det)->startDetail(_G(r68HohesC), 1, ANI_FRONT);
 		}
 		break;
 
@@ -103,18 +103,18 @@ void Room68::setup_func() {
 			if (_G(spieler).SpeechSwitch) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(_G(r68HohesC));
-				_G(det)->start_detail(_G(r68HohesC), 255, ANI_FRONT);
+				_G(det)->startDetail(_G(r68HohesC), 255, ANI_FRONT);
 
 				// TODO
 				//while (_G(sndPlayer)->getSampleStatus(1) == 4)
-				//	set_up_screen(DO_SETUP);
+				//	setupScreen(DO_SETUP);
 				_G(det)->stop_detail(_G(r68HohesC));
 			} else {
-				_G(det)->start_detail(_G(r68HohesC), 3, ANI_FRONT);
+				_G(det)->startDetail(_G(r68HohesC), 3, ANI_FRONT);
 			}
 			
 			
-			_G(det)->start_detail(_G(r68HohesC), 3, ANI_FRONT);
+			_G(det)->startDetail(_G(r68HohesC), 3, ANI_FRONT);
 		}
 		break;
 
@@ -150,7 +150,7 @@ void Room68::setup_func() {
 void Room68::look_kaktus() {
 	hideCur();
 	autoMove(6, P_CHEWY);
-	start_aad_wait(383, -1);
+	startAadWait(383, -1);
 	showCur();
 }
 
@@ -165,12 +165,12 @@ void Room68::talk_indigo(int16 aad_nr) {
 	_G(det)->del_static_ani(8);
 	if (aad_nr == -1) {
 		_G(det)->set_static_ani(9, -1);
-		start_aad_wait(384 + (int16)_G(spieler).R68IndigoDia, -1);
+		startAadWait(384 + (int16)_G(spieler).R68IndigoDia, -1);
 		_G(spieler).R68IndigoDia ^= 1;
 		_G(det)->del_static_ani(9);
 	} else {
 		_G(det)->set_static_ani(12, -1);
-		start_aad_wait(aad_nr, -1);
+		startAadWait(aad_nr, -1);
 		_G(det)->del_static_ani(12);
 	}
 	_G(room)->set_timer_status(8, TIMER_START);
@@ -194,8 +194,8 @@ int16 Room68::use_indigo() {
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stop_detail(8);
-			start_detail_wait(13, 3, ANI_FRONT);
-			start_detail_wait(25, 1, ANI_FRONT);
+			startSetailWait(13, 3, ANI_FRONT);
+			startSetailWait(25, 1, ANI_FRONT);
 			_G(det)->set_static_ani(12, -1);
 			talk_indigo(398);
 			_G(cur_hide_flag) = false;
@@ -203,7 +203,7 @@ int16 Room68::use_indigo() {
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stop_detail(8);
-			start_detail_wait(26, 1, ANI_FRONT);
+			startSetailWait(26, 1, ANI_FRONT);
 			_G(room)->set_timer_status(8, TIMER_START);
 			_G(det)->set_static_ani(8, -1);
 			new_invent_2_cur(KARTE_INV);
@@ -213,7 +213,7 @@ int16 Room68::use_indigo() {
 		}
 	} else if (is_cur_inventar(CLINT_1500_INV) || is_cur_inventar(CLINT_3000_INV)) {
 		action_flag = true;
-		start_aad_wait(393, -1);
+		startAadWait(393, -1);
 	}
 	showCur();
 	return action_flag;
@@ -224,7 +224,7 @@ void Room68::talk_keeper() {
 	autoMove(2, P_CHEWY);
 	_G(room)->set_timer_status(20, TIMER_STOP);
 	_G(det)->del_static_ani(20);
-	start_detail_wait(15, 1, ANI_FRONT);
+	startSetailWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
 	_G(ssi)[3].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
@@ -234,7 +234,7 @@ void Room68::talk_keeper() {
 	_G(cur_hide_flag) = false;
 	hideCur();
 	_G(det)->del_static_ani(16);
-	start_detail_wait(15, 1, ANI_BACK);
+	startSetailWait(15, 1, ANI_BACK);
 	_G(room)->set_timer_status(20, TIMER_START);
 	_G(det)->set_static_ani(20, -1);
 	showCur();
@@ -250,7 +250,7 @@ int16 Room68::use_papagei() {
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
-		_G(det)->start_detail(21, 255, ANI_FRONT);
+		_G(det)->startDetail(21, 255, ANI_FRONT);
 		_G(atds)->del_steuer_bit(408, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(407, 1, ATS_DATA);
 		showCur();
@@ -265,14 +265,14 @@ void Room68::calc_diva() {
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
 				_G(det)->hideStaticSpr(3);
-				_G(det)->start_detail(_G(r68HohesC), 1, ANI_BACK);
-				_G(det)->start_detail(18, 255, ANI_FRONT);
+				_G(det)->startDetail(_G(r68HohesC), 1, ANI_BACK);
+				_G(det)->startDetail(18, 255, ANI_FRONT);
 			}
 		} else if (!_G(spieler).R68Gutschein && !is_chewy_busy()) {
 			hideCur();
 			_G(spieler).R68Gutschein = true;
 			autoMove(4, P_CHEWY);
-			start_aad_wait(386, -1);
+			startAadWait(386, -1);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			new_invent_2_cur(BAR_GUT_INV);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
@@ -291,7 +291,7 @@ int16 Room68::use_keeper() {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(room)->set_timer_status(20, TIMER_STOP);
 		_G(det)->del_static_ani(20);
-		start_ani_block(3, ABLOCK39);
+		startAniBlock(3, ABLOCK39);
 		_G(room)->set_timer_status(20, TIMER_START);
 		_G(det)->set_static_ani(20, -1);
 		new_invent_2_cur(B_MARY_INV);
@@ -309,7 +309,7 @@ int16 Room68::use_diva() {
 		autoMove(4, P_CHEWY);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->hideStaticSpr(3);
-		start_detail_wait(4, 1, ANI_FRONT);
+		startSetailWait(4, 1, ANI_FRONT);
 		_G(spieler).R68Gutschein = false;
 		_G(det)->showStaticSpr(3);
 	} else if (is_cur_inventar(B_MARY2_INV)) {
@@ -318,16 +318,16 @@ int16 Room68::use_diva() {
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(3);
 		_G(spieler).R68DivaWeg = true;
-		start_ani_block(2, ABLOCK38);
+		startAniBlock(2, ABLOCK38);
 		flic_cut(FCUT_083);
 		_G(det)->del_static_ani(18);
 		register_cutscene(22);
 		_G(det)->del_static_ani(18);
-		start_detail_wait(7, 1, ANI_FRONT);
+		startSetailWait(7, 1, ANI_FRONT);
 		_G(atds)->set_steuer_bit(407, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_steuer_bit(412, ATS_AKTIV_BIT, ATS_DATA);
-		set_person_spr(P_RIGHT, P_CHEWY);
-		start_aad_wait(402, -1);
+		setPersonSpr(P_RIGHT, P_CHEWY);
+		startAadWait(402, -1);
 	} else
 		action_flag = use_papagei();
 	showCur();
@@ -340,12 +340,12 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		autoMove(_G(spieler).DiaAMov, P_CHEWY);
 	}
 
-	start_aad_wait(aad_nr, -1);
+	startAadWait(aad_nr, -1);
 
 	if (!_G(spieler).R68DivaWeg)
-		start_aad_wait(388, -1);
+		startAadWait(388, -1);
 	else if (!_G(spieler).R67LiedOk)
-		start_aad_wait(389, -1);
+		startAadWait(389, -1);
 	else {
 		if (_G(spieler).DisplayText == 0)
 			_G(sndPlayer)->fadeOut(5);
@@ -356,17 +356,17 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(spieler).PersonHide[P_NICHELLE] = true;
 		goAutoXy(161, 59, P_HOWARD, ANI_GO);
 		autoMove(4, P_CHEWY);
-		start_aad_wait(390, -1);
-		start_detail_wait(22, 1, ANI_FRONT);
+		startAadWait(390, -1);
+		startSetailWait(22, 1, ANI_FRONT);
 		_G(spieler).PersonHide[P_HOWARD] = true;
-		_G(det)->start_detail(27, 255, ANI_FRONT);
+		_G(det)->startDetail(27, 255, ANI_FRONT);
 
 		if (_G(spieler).DisplayText)
-			start_detail_wait(23, 3, ANI_FRONT);
+			startSetailWait(23, 3, ANI_FRONT);
 		else {
-			_G(det)->start_detail(23, 255, ANI_FRONT);
+			_G(det)->startDetail(23, 255, ANI_FRONT);
 			g_engine->_sound->playSound(109, 1, false);
-			wait_show_screen(2);
+			waitShowScreen(2);
 
 			g_engine->_sound->waitForSpeechToFinish();
 
@@ -377,31 +377,31 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			g_engine->_sound->playSound(108, 1, false);
 		}
 		
-		_G(det)->start_detail(24, 255, ANI_FRONT);
-		set_person_pos(26, 40, P_NICHELLE, P_RIGHT);
+		_G(det)->startDetail(24, 255, ANI_FRONT);
+		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);
 		if (_G(spieler).DisplayText) {
-			start_aad_wait(391, -1);
+			startAadWait(391, -1);
 		} else {
-			wait_show_screen(100);
-			start_aad_wait(602, -1);
-			wait_show_screen(100);
+			waitShowScreen(100);
+			startAadWait(602, -1);
+			waitShowScreen(100);
 		}
 
 		_G(room)->set_timer_status(8, TIMER_STOP);
 		_G(det)->del_static_ani(8);
-		start_detail_wait(10, 1, ANI_FRONT);
-		_G(det)->start_detail(11, 255, ANI_FRONT);
-		start_aad_wait(396, -1);
+		startSetailWait(10, 1, ANI_FRONT);
+		_G(det)->startDetail(11, 255, ANI_FRONT);
+		startAadWait(396, -1);
 		_G(det)->stop_detail(11);
 		_G(det)->set_static_ani(12, -1);
-		start_aad_wait(611, -1);
+		startAadWait(611, -1);
 		_G(det)->del_static_ani(12);
-		_G(det)->start_detail(14, 255, ANI_FRONT);
-		start_aad_wait(395, -1);
+		_G(det)->startDetail(14, 255, ANI_FRONT);
+		startAadWait(395, -1);
 		_G(det)->stop_detail(14);
 		_G(room)->set_timer_status(8, TIMER_START);
 		_G(det)->set_static_ani(8, -1);
-		start_aad_wait(392, -1);
+		startAadWait(392, -1);
 
 		g_engine->_sound->waitForSpeechToFinish();
 		
@@ -414,7 +414,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		auto_scroll(216, 0);
 		_G(det)->hideStaticSpr(13);
 		_G(spieler).PersonHide[P_NICHELLE] = false;
-		set_person_pos(150, -13, P_NICHELLE, P_RIGHT);
+		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
 		if (_G(spieler).DisplayText) {
 			_G(currentSong) = -1;
