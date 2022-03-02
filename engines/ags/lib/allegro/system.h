@@ -38,7 +38,6 @@ namespace AGS3 {
 #define SYSTEM_NONE        AL_ID('N','O','N','E')
 
 #define GFX_SCUMMVM             AL_ID('S', 'C', 'V', 'M')
-#define GFX_SCUMMVM_FULLSCREEN  AL_ID('S', 'C', 'V', 'M')
 
 #define SWITCH_NONE           0
 #define SWITCH_PAUSE          1

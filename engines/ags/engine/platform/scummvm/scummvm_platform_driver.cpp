@@ -146,7 +146,7 @@ void ScummVMPlatformDriver::UnlockMouse() {
 
 void ScummVMPlatformDriver::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
 	dms.clear();
-	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_SCUMMVM_FULLSCREEN);
+	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_SCUMMVM);
 	for (int i = 0; i < gmlist->num_modes; ++i) {
 		const GFX_MODE &m = gmlist->mode[i];
 		dms.push_back(Engine::DisplayMode(Engine::GraphicResolution(m.width, m.height, m.bpp)));

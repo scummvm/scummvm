@@ -114,7 +114,7 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	if (!IsModeSupported(mode))
 		return false;
 
-	const int driver = mode.Windowed ? GFX_SCUMMVM : GFX_SCUMMVM_FULLSCREEN;
+	const int driver = GFX_SCUMMVM;
 	if (set_gfx_mode(driver, mode.Width, mode.Height, mode.ColorDepth) != 0)
 		return false;
 
