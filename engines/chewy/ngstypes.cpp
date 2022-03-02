@@ -31,61 +31,6 @@ bool NewPhead::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool Button::load(Common::SeekableReadStream *src) {
-	typ = src->readSint16LE();
-	enable = src->readSint16LE();
-	x1 = src->readSint16LE();
-	y1 = src->readSint16LE();
-	x2 = src->readSint16LE();
-	y2 = src->readSint16LE();
-	spritenr1 = src->readSint16LE();
-	spritenr2 = src->readSint16LE();
-	src->skip(4);
-	storlen = src->readSint16LE();
-	viewspr3 = src->readSint16LE();
-	textptr = src->readSint16LE();
-
-	return true;
-}
-
-bool Menu::load(Common::SeekableReadStream *src) {
-	nr = src->readSint16LE();
-	disp = src->readSint16LE();
-	typ = src->readSint16LE();
-	x = src->readSint16LE();
-	y = src->readSint16LE();
-	width = src->readSint16LE();
-	height = src->readSint16LE();
-	anzknoepfe = src->readSint16LE();
-	src->skip(4 * MAXKNOPF);
-	spritenr = src->readSint16LE();
-	src->readUint32LE();
-	src->readUint32LE();
-
-	return true;
-}
-
-bool Dialogue::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	anzmenue = src->readSint16LE();
-	src->skip(4 * MAXMENUE);
-	src->read(menuetaf, D_GR);
-	src->read(knopftaf, D_GR);
-
-	return true;
-}
-
-bool Dialogue::save(Common::WriteStream *dest) {
-	dest->write(id, 4);
-	dest->writeSint16LE(anzmenue);
-	for (int i = 0; i < MAXMENUE; ++i)
-		dest->writeUint32LE(0);
-	dest->write(menuetaf, D_GR);
-	dest->write(knopftaf, D_GR);
-
-	return true;
-}
-
 bool TmfInst::load(Common::SeekableReadStream *src) {
 	finetune = src->readByte();
 	insvol = src->readByte();
