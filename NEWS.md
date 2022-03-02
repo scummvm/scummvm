@@ -81,7 +81,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      installation.
    - Fixed UI glitches in Serrated Scalpel.
 
- Titainic:
+ Titanic:
    - Fixed not being able to see House in Starfield puzzle.
 
  TwinE:
