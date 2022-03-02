@@ -104,6 +104,8 @@ static const char *const selectorNameTable[] = {
 	"handsOff",     // system selector
 	"handsOn",      // system selector
 	"type",         // system selector
+	"client",       // system selector
+	"state",        // system selector
 	"localize",     // Freddy Pharkas
 	"roomFlags",    // Iceman
 	"put",          // Police Quest 1 VGA
@@ -189,7 +191,6 @@ static const char *const selectorNameTable[] = {
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
 	"plane",        // RAMA
-	"state",        // RAMA
 	"getSubscriberObj", // RAMA
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
@@ -234,6 +235,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handsOff,
 	SELECTOR_handsOn,
 	SELECTOR_type,
+	SELECTOR_client,
+	SELECTOR_state,
 	SELECTOR_localize,
 	SELECTOR_roomFlags,
 	SELECTOR_put,
@@ -320,7 +323,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
 	SELECTOR_plane,
-	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
@@ -18369,6 +18371,57 @@ static const uint16 sq3EndCreditsPatch[] = {
 	PATCH_END
 };
 
+// In the ScumSoft office there are two announcement messages which randomly
+//  appear at most once per game, but they never appear in the later versions.
+//  This is due to a script bug that was exposed when Sierra upgraded the Script
+//  class in SQ3 version 1.018. The messages are displayed by the `announce`
+//  Script object, but announce is never properly initialized with setScript.
+//  This happened to work at first, but the newer Script:cue requires the client
+//  property to be set. This prevents announce:changeState from ever running.
+//
+// We fix this by setting announce:client when initializing the scumSoft region
+//  so that announce:changeState runs in all versions. We set announce as its
+//  own client since any object will do and this ensures there are no conflicts.
+//
+// Responsible method: scumSoft:init
+// Applies to: English PC 1.018, French PC, German PC, German Amiga, Macintosh
+// Fixes bug: #13318
+static const uint16 sq3AnnouncementsSignature[] = {
+	0x39, SIG_SELECTOR8(state),         // pushi state
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x89, 0xf2,                         // lsg f2
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa announce
+	0x4a, 0x06,                         // send 06 [ announce state: global242 ]
+	0x81, 0xe9,                         // lag e9
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ end of method ]
+	0x89, 0x0c,                         // lsg 0c
+	0x35, 0x5a,                         // ldi 5a
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x000f),           // bnt 000f
+	0x35, 0x00,                         // ldi 00
+	0xa1, 0xe9,                         // sag e9
+	0x35, 0x00,                         // ldi 00 [ redundant ]
+	SIG_END
+};
+
+static const uint16 sq3AnnouncementsPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x39, PATCH_SELECTOR8(client),      // pushi client
+	0x78,                               // push1
+	0x36,                               // push
+	0x4a, 0x0c,                         // send 0c [ announce state: global242, client: announce ]
+	0x81, 0xe9,                         // lag e9
+	0x30, PATCH_GETORIGINALUINT16ADJUST(+13, -04), // bnt [ end of method ]
+	0x89, 0x0c,                         // lsg 0c
+	0x35, 0x5a,                         // ldi 5a
+	0x1a,                               // eq?
+	0x31, 0x0c,                         // bnt 0c
+	0x18,                               // not [ acc = 0 ]
+	0xa1, 0xe9,                         // sag e9
+	PATCH_END
+};
+
 // Space Quest 3 has some strings hard coded in the scripts file
 // We need to patch them for the Hebrew translation
 
@@ -18400,6 +18453,7 @@ static const uint16 sq3HebrewStatusBarNamePatch[] = {
 static const SciScriptPatcherEntry sq3Signatures[] = {
 	{ false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
 	{  true, 117, "Fix end credits",                       1, sq3EndCreditsSignature,                              sq3EndCreditsPatch },
+	{  true, 702, "Fix scumsoft announcements",            1, sq3AnnouncementsSignature,                           sq3AnnouncementsPatch },
 	{ false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
