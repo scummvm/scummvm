@@ -293,7 +293,7 @@ public:
 	void ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str);
 	void set_ats_mem(int16 mode);
 	int16 start_aad(int16 dia_nr);
-	void stop_aad();
+	void stopAad();
 	void print_aad(int16 scrx, int16 scry);
 	int16 aad_get_status();
 	void set_string_end_func(void (*str_func)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode));

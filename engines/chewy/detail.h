@@ -67,10 +67,10 @@ struct RoomAutoMov {
 #define MAX_RDI_ROOM 100
 
 struct SprInfo {
-	byte *Image = nullptr;
-	int16 ZEbene = 0;
-	int16 X = 0;
-	int16 Y = 0;
+	byte *_image = nullptr;
+	int16 _zLevel = 0;
+	int16 _x = 0;
+	int16 _y = 0;
 	int16 X1 = 0;
 	int16 Y1 = 0;
 };

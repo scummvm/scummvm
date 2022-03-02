@@ -34,7 +34,7 @@ void Room59::look_poster() {
 		_G(atds)->set_ats_str(301, 1, ATS_DATA);
 		_G(spieler).R59PosterWeg = true;
 		invent_2_slot(SPARK_INV);
-		switch_room(60);
+		switchRoom(60);
 	}
 }
 

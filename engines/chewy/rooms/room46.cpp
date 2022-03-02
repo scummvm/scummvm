@@ -30,8 +30,8 @@ namespace Chewy {
 namespace Rooms {
 
 void Room46::entry(int16 eib_nr) {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 45) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 46;
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (eib_nr == 79) {
@@ -41,7 +41,7 @@ void Room46::entry(int16 eib_nr) {
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 46) {
 		_G(spieler_mi)[P_HOWARD].Mode = true;
 		_G(SetUpScreenFunc) = setup_func;
 
@@ -58,7 +58,7 @@ void Room46::entry(int16 eib_nr) {
 			start_spz(65, 255, false, P_CHEWY);
 			startAadWait(494);
 			_G(spieler).SVal2 = 504;
-			switch_room(92);
+			switchRoom(92);
 			start_spz(65, 255, false, P_CHEWY);
 			startAadWait(495);
 			_G(spieler).room_e_obj[78].Exit = 90;
@@ -71,7 +71,7 @@ void Room46::entry(int16 eib_nr) {
 }
 
 void Room46::xit() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 46) {
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
@@ -128,14 +128,14 @@ void Room46::bodo() {
 	_G(det)->hideStaticSpr(6);
 	startSetailWait(6, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(3);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	startSetailWait(1, 1, ANI_FRONT);
 	flic_cut(FCUT_065);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	register_cutscene(16);
 	
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(det)->hideStaticSpr(0);
 	_G(det)->hideStaticSpr(3);
 	load_chewy_taf(CHEWY_ROCKER);
@@ -189,7 +189,7 @@ int16 Room46::use_schloss() {
 
 		if (!_G(spieler).R46GetLeder) {
 			autoMove(1, P_CHEWY);
-			switch_room(47);
+			switchRoom(47);
 		} else {
 			startAadWait(252);
 		}

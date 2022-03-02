@@ -27,9 +27,9 @@ namespace Rooms {
 
 class Room3 {
 private:
-	static void sonde_knarre();
+	static void probeCreak();
 	static void probeTransfer();
-	static void init_sonde();
+	static void probeInit();
 public:
 	static void entry();
 	static void terminal();

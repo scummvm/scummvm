@@ -51,7 +51,7 @@ void Room50::entry(int16 eib_nr) {
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_108);
 		showCur();
-		switch_room(51);
+		switchRoom(51);
 
 	} else {
 		if (_G(spieler).R50Zigarre) {
@@ -69,7 +69,7 @@ void Room50::entry(int16 eib_nr) {
 
 		_G(SetUpScreenFunc) = setup_func;
 
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
 			_G(spieler_mi)[P_HOWARD].Mode = true;
 
 			if (!_G(flags).LoadGame) {
@@ -85,11 +85,11 @@ void Room50::entry(int16 eib_nr) {
 void Room50::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
 		if (eib_nr == 83)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 49;
+			_G(spieler)._personRoomNr[P_HOWARD] = 49;
 		else
-			_G(spieler).PersonRoomNr[P_HOWARD] = 51;
+			_G(spieler)._personRoomNr[P_HOWARD] = 51;
 
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
@@ -169,7 +169,7 @@ int16 Room50::use_gutschein() {
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			stop_page();
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
@@ -199,7 +199,7 @@ int16 Room50::use_gum() {
 		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
 		setPersonSpr(P_LEFT, P_HOWARD);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		hide_person();
 		startSetailWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
@@ -252,7 +252,7 @@ void Room50::setup_func() {
 		go_page();
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 50) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
 		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 

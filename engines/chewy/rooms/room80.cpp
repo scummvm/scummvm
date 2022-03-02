@@ -124,19 +124,19 @@ void Room80::setup_func() {
 	
 	for (int i = P_CHEWY; i <= P_NICHELLE; ++i) {
 		if (_G(spieler).R79Val[i] != 0) {
-			_G(spieler).PersonHide[i] = false;
+			_G(spieler)._personHide[i] = false;
 			_G(spieler).R79Val[i] = 0;
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 80)
-		_G(spieler).PersonRoomNr[P_HOWARD] = nextRoom;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 80)
+		_G(spieler)._personRoomNr[P_HOWARD] = nextRoom;
 
-	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 80)
-		_G(spieler).PersonRoomNr[P_NICHELLE] = nextRoom;
+	if (_G(spieler)._personRoomNr[P_NICHELLE] == 80)
+		_G(spieler)._personRoomNr[P_NICHELLE] = nextRoom;
 
 	_G(flags).NoScroll = false;
-	switch_room(nextRoom);
+	switchRoom(nextRoom);
 }
 
 } // namespace Rooms

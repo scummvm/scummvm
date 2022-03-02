@@ -36,17 +36,17 @@ void Room5::entry() {
 
 void Room5::pushButton() {
 	if (_G(spieler).R5Terminal) {
-		int16 str_nr;
+		int16 strNr;
 		if (_G(spieler).R5Tuer == false) {
 			startSetailWait(9, 1, ANI_FRONT);
 			_G(spieler).room_e_obj[6].Attribut = AUSGANG_OBEN;
-			str_nr = 1;
+			strNr = 1;
 		} else {
 			startSetailWait(9, 1, ANI_BACK);
 			_G(spieler).room_e_obj[6].Attribut = 255;
-			str_nr = 0;
+			strNr = 0;
 		}
-		_G(atds)->set_ats_str(29, str_nr, ATS_DATA);
+		_G(atds)->set_ats_str(29, strNr, ATS_DATA);
 		_G(spieler).R5Tuer ^= 1;
 		_G(obj)->calc_rsi_flip_flop(SIB_TUERE_R5);
 	} else {

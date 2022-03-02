@@ -55,7 +55,7 @@ void Room65::entry() {
 	}
 	_G(flags).LoadGame = true;
 	show_person();
-	switch_room(_G(spieler).PersonDiaTmpRoom[P_HOWARD]);
+	switchRoom(_G(spieler).PersonDiaTmpRoom[P_HOWARD]);
 }
 
 void Room65::xit() {

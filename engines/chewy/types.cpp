@@ -82,8 +82,8 @@ bool Spieler::synchronize(Common::Serializer &s) {
 	syncArray(s, X, MAX_PERSON);
 	syncArray(s, Y, MAX_PERSON);
 	syncArray(s, Phase, MAX_PERSON);
-	syncArray(s, PersonHide, MAX_PERSON);
-	syncArray(s, PersonRoomNr, MAX_PERSON);
+	syncArray(s, _personHide, MAX_PERSON);
+	syncArray(s, _personRoomNr, MAX_PERSON);
 	syncArray(s, &ZoomXy[0][0], MAX_PERSON * 2);
 	s.syncAsSint16LE(ChewyAni);
 	syncArray(s, PersonGlobalDia, MAX_PERSON);

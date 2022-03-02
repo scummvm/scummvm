@@ -53,8 +53,8 @@ void Room51::entry() {
 
 	if (_G(spieler).flags32_10) {
 		_G(atds)->enableEvents(false);
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_HOWARD] = true;
 		_G(maus_links_click) = false;
 		_G(spieler).scrollx = 0;
 		setPersonPos(34, 120, P_HOWARD, P_RIGHT);
@@ -78,7 +78,7 @@ void Room51::entry() {
 		for (int i = 0; i < 2; i++)
 			_G(det)->startDetail(3 + i, 1, ANI_FRONT);
 
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 30;
 
@@ -105,18 +105,18 @@ void Room51::xit(int16 eib_nr) {
 
 	if (_G(spieler).flags32_10) {
 		_G(flags).MainInput = true;
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(spieler).PersonHide[P_HOWARD] = false;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
+		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_HOWARD] = false;
+		_G(spieler)._personRoomNr[P_HOWARD] = 91;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 		showCur();
 
-	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+	} else if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
 		if (eib_nr == 85) {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
+			_G(spieler)._personRoomNr[P_HOWARD] = 50;
 		} else {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 52;
+			_G(spieler)._personRoomNr[P_HOWARD] = 52;
 		}
 
 		_G(spieler_mi)[P_HOWARD].Mode = false;
@@ -143,7 +143,7 @@ void Room51::setup_func() {
 
 		_G(det)->setStaticPos(17, _tmpx, _tmpy, false, false);
 
-		if ((_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
+		if ((_G(minfo)._button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
 			startSetailWait(8, 1, ANI_FRONT);
@@ -175,14 +175,14 @@ void Room51::setup_func() {
 				flic_cut(FCUT_115);
 				register_cutscene(28);
 				
-				switch_room(91);
+				switchRoom(91);
 				break;
 
 			default:
 				break;
 			}
 		}
-	} else if (_G(spieler).PersonRoomNr[P_HOWARD] == 51) {
+	} else if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
 		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 
@@ -229,7 +229,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			} else {
 				showCur();
-				switch_room(52);
+				switchRoom(52);
 			}
 			break;
 
@@ -329,7 +329,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			default:
 				startAadWait(281);
-				if (_G(spieler).PersonRoomNr[P_HOWARD] == 51)
+				if (_G(spieler)._personRoomNr[P_HOWARD] == 51)
 					startAadWait(282);
 				break;
 			}

@@ -29,20 +29,20 @@ namespace Chewy {
 namespace Rooms {
 
 void Room44::look_news() {
-	int16 tmproom = _G(spieler).PersonRoomNr[P_CHEWY];
+	int16 tmproom = _G(spieler)._personRoomNr[P_CHEWY];
 	int16 tmpsx = _G(spieler).scrollx;
 	int16 tmpsy = _G(spieler).scrolly;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	hide_person();
 	_G(fx_blend) = BLEND1;
-	_G(spieler).PersonRoomNr[P_CHEWY] = 44;
-	_G(room)->load_room(&_G(room_blk), 44, &_G(spieler));
+	_G(spieler)._personRoomNr[P_CHEWY] = 44;
+	_G(room)->loadRoom(&_G(room_blk), 44, &_G(spieler));
 
 	startAadWait(172);
 	_G(spieler).scrollx = tmpsx;
 	_G(spieler).scrolly = tmpsy;
-	switch_room(tmproom);
+	switchRoom(tmproom);
 	show_person();
 }
 

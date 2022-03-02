@@ -64,10 +64,10 @@ void Room40::entry(int16 eib_nr) {
 	_G(spieler).R40PoliceStart = false;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 41)
+		_G(spieler)._personRoomNr[P_HOWARD] = 40;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 40) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 40) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
 
@@ -102,15 +102,15 @@ void Room40::xit(int16 eib_nr) {
 	stop_spz();
 	_G(SetUpScreenFunc) = nullptr;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 40) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 40) {
 		if (eib_nr == 70 || eib_nr == 77) {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 28;
+			_G(spieler)._personRoomNr[P_HOWARD] = 28;
 
 		} else if (eib_nr == 72) {
 			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk && _G(spieler).R28Manuskript)
 				|| _G(spieler).R40TrainOk) {
 				_G(spieler).R40TrainOk = true;
-				_G(spieler).PersonRoomNr[P_HOWARD] = 45;
+				_G(spieler)._personRoomNr[P_HOWARD] = 45;
 				_G(spieler).room_e_obj[72].Exit = 45;
 				_G(obj)->hide_sib(SIB_MUENZE_R40);
 
@@ -138,10 +138,10 @@ void Room40::xit(int16 eib_nr) {
 				show_person();
 
 			} else {
-				_G(spieler).PersonRoomNr[P_HOWARD] = 42;
+				_G(spieler)._personRoomNr[P_HOWARD] = 42;
 			}
 		} else {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 41;
+			_G(spieler)._personRoomNr[P_HOWARD] = 41;
 		}
 	}
 
@@ -213,7 +213,7 @@ void Room40::move_train(int16 mode) {
 }
 
 void Room40::setup_func() {
-	if (!_G(spieler).R40HoUse && _G(spieler).PersonRoomNr[P_HOWARD] == 40) {
+	if (!_G(spieler).R40HoUse && _G(spieler)._personRoomNr[P_HOWARD] == 40) {
 		calc_person_look();
 
 		int16 x, y;
@@ -324,7 +324,7 @@ int16 Room40::use_mr_pumpkin() {
 			case CENT_INV:
 				action_ret = true;
 				autoMove(5, P_CHEWY);
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				startSetailWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
@@ -340,13 +340,13 @@ int16 Room40::use_mr_pumpkin() {
 						hideCur();
 						autoMove(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
-						del_inventar(_G(spieler).AkInvent);
+						delInventory(_G(spieler).AkInvent);
 						_G(out)->ausblenden(1);
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
 						_G(obj)->addInventory(LIKOER2_INV, &_G(room_blk));
 						inventory_2_cur(LIKOER2_INV);
-						switch_room(40);
+						switchRoom(40);
 						startAadWait(236);
 					}
 				} else {
@@ -479,11 +479,11 @@ int16 Room40::use_haendler() {
 				startAadWait(212);
 				_G(out)->ausblenden(0);
 				_G(spieler).R40Wettbewerb = true;
-				_G(spieler).PersonRoomNr[P_HOWARD] = 28;
+				_G(spieler)._personRoomNr[P_HOWARD] = 28;
 				_G(flags).NoScroll = false;
 				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
-				switch_room(28);
+				switchRoom(28);
 				_G(SetUpScreenFunc) = setup_func;
 
 			} else {
@@ -634,7 +634,7 @@ int16 Room40::use_tele() {
 
 			if (dia_nr1 == 223) {
 				if (is_cur_inventar(DUENGER_INV)) {
-					del_inventar(_G(spieler).AkInvent);
+					delInventory(_G(spieler).AkInvent);
 				} else {
 					remove_inventory(DUENGER_INV);
 				}

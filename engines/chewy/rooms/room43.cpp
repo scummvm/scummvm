@@ -33,7 +33,7 @@ void Room43::night_small() {
 	hide_person();
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	switch_room(43);
+	switchRoom(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hideCur();
@@ -70,7 +70,7 @@ void Room43::catch_pg() {
 	hide_person();
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	switch_room(43);
+	switchRoom(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hideCur();

@@ -126,9 +126,9 @@ void Room12::init_bork() {
 
 			if (!_G(spieler).R12TalismanOk) {
 				hideCur();
-				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
+				_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 1000;
 				autoMove(5, P_CHEWY);
-				_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
+				_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 0;
 
 				if (_G(spieler).R12BorkCount < 3) {
 					++_G(spieler).R12BorkCount;
@@ -158,9 +158,9 @@ void Room12::talk_bork() {
 void Room12::bork_ok() {
 	hideCur();
 	_G(flags).MausLinks = true;
-	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 1000;
+	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 1000;
 	autoMove(5, P_CHEWY);
-	_G(auto_mov_vector)[R12_BORK_OBJ].DelayCount = 0;
+	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 0;
 	_G(spieler).R12BorkTalk = true;
 
 	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
@@ -252,10 +252,10 @@ int16 Room12::chewy_trans() {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		autoMove(9, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK16);
 		setPersonPos(108, 82, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(spieler).R12TransOn = false;
 		_G(flags).AutoAniPlay = false;
 	}

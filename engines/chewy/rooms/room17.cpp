@@ -141,15 +141,15 @@ int16 Room17::use_seil() {
 		action_flag = true;
 		hideCur();
 
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(flags).AutoAniPlay = true;
 		autoMove(5, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(10, 1, ANI_FRONT);
 		_G(spieler).R17Seil = true;
 		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATA);
 		plot_seil();
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(119);
@@ -170,7 +170,7 @@ void Room17::plot_seil() {
 void Room17::kletter_down() {
 	autoMove(5, P_CHEWY);
 	_G(det)->load_taf_seq(177, 1, nullptr);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	startSetailWait(14, 1, ANI_FRONT);
 	_G(flags).ZoomMov = false;
 	_G(zoom_mov_fak) = 1;
@@ -186,7 +186,7 @@ void Room17::kletter_down() {
 void Room17::kletter_up() {
 	autoMove(6, P_CHEWY);
 	_G(det)->load_taf_seq(141, 4, nullptr);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	startSetailWait(11, 1, ANI_FRONT);
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
@@ -228,7 +228,7 @@ void Room17::calc_seil() {
 			showCur();
 			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(spieler).ScrollyStep = 1;
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(flags).AutoAniPlay = false;
 			_G(auto_obj) = 0;
 			xit();
@@ -275,7 +275,7 @@ int16 Room17::energie_hebel() {
 
 	if (!_G(spieler).R17HebelOk) {
 		if (is_cur_inventar(BECHER_VOLL_INV)) {
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			_G(spieler).R17HebelOk = true;
 			startAadWait(38);
 			action_flag = true;
@@ -325,10 +325,10 @@ int16 Room17::get_oel() {
 		action_flag = true;
 		close_door();
 		autoMove(4, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(13, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		del_inventar(_G(spieler).AkInvent);
+		_G(spieler)._personHide[P_CHEWY] = false;
+		delInventory(_G(spieler).AkInvent);
 		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));
 		inventory_2_cur(BECHER_VOLL_INV);
 	}

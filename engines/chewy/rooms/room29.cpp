@@ -62,7 +62,7 @@ void Room29::entry() {
 
 void Room29::xit() {
 	if (_G(obj)->checkInventory(PUMPE_INV))
-		del_inventar(PUMPE_INV);
+		delInventory(PUMPE_INV);
 }
 
 int16 Room29::use_pumpe() {
@@ -79,7 +79,7 @@ int16 Room29::use_pumpe() {
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(7);
 			_G(atds)->del_steuer_bit(218, ATS_AKTIV_BIT, ATS_DATA);
-			del_inventar(SCHLAUCH_INV);
+			delInventory(SCHLAUCH_INV);
 		} else if (!_G(spieler).inv_cur) {
 			action_flag = true;
 			startAadWait(62);
@@ -116,7 +116,7 @@ bool Room29::use_schlauch() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(7);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
@@ -125,9 +125,9 @@ bool Room29::use_schlauch() {
 
 		_G(spieler).R29Schlauch1 = false;
 		_G(spieler).R29Schlauch2 = true;
-		del_inventar(PUMPE_INV);
+		delInventory(PUMPE_INV);
 		setPersonPos(308, 105, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		showCur();
 	}
 
@@ -138,7 +138,7 @@ void Room29::schlitz_sitz() {
 	if (!_G(spieler).R29AutoSitz) {
 		hideCur();
 		_G(spieler).R29AutoSitz = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(det)->hideStaticSpr(4);
 		_G(det)->showStaticSpr(11);
 		startAniBlock(3, ABLOCK26);
@@ -149,7 +149,7 @@ void Room29::schlitz_sitz() {
 
 		_G(det)->stop_detail(2);
 		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(maus_links_click) = false;
 		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 
@@ -165,15 +165,15 @@ int16 Room29::zaun_sprung() {
 		
 		action_flag = true;
 		autoMove(3, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startDetailFrame(3, 1, ANI_FRONT, 7);
 		_G(det)->hideStaticSpr(9);
 		startAniBlock(5, ABLOCK27);
 		setupScreen(DO_SETUP);
 
 		showCur();
-		switch_room(37);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		switchRoom(37);
+		_G(spieler)._personHide[P_CHEWY] = false;
 
 	}
 

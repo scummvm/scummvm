@@ -153,10 +153,10 @@ void var_init() {
 
 		_G(ani_stand_flag)[i] = false;
 		_G(spz_delay)[i] = 0;
-		_G(spieler).PersonRoomNr[i] = -1;
+		_G(spieler)._personRoomNr[i] = -1;
 		_G(spieler).PersonDia[i] = -1;
 	}
-	_G(spieler).PersonRoomNr[P_CHEWY] = _G(room_start_nr);
+	_G(spieler)._personRoomNr[P_CHEWY] = _G(room_start_nr);
 
 	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
@@ -275,7 +275,7 @@ void init_load() {
 	f.read(_G(spblende) + sizeof(uint32), f.size());
 	f.close();
 
-	_G(room)->load_room(&_G(room_blk), _G(room_start_nr), &_G(spieler));
+	_G(room)->loadRoom(&_G(room_blk), _G(room_start_nr), &_G(spieler));
 	_G(out)->setPalette(_G(pal));
 }
 

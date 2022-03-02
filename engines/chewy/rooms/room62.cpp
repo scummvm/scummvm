@@ -70,10 +70,10 @@ void Room62::entry() {
 		_G(spieler).R64Moni2Ani = 4;
 		setPersonPos(187, 43, P_CHEWY, P_RIGHT);
 		_G(spieler).R62TShow = true;
-		switch_room(64);
+		switchRoom(64);
 	} else {
 		_G(det)->del_static_ani(0);
-		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler)._personHide[P_HOWARD] = true;
 		_G(det)->set_static_ani(4, -1);
 		_G(det)->set_static_ani(8, -1);
 		_G(r62Delay) = 0;
@@ -105,18 +105,18 @@ int16 Room62::use_laura() {
 		_G(SetUpScreenFunc) = nullptr;
 		_G(det)->del_static_ani(8);
 		_G(det)->stop_detail(8);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(399);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		flic_cut(FCUT_077);
 		showCur();
 		_G(spieler).R64Moni1Ani = 0;
 		_G(spieler).R64Moni2Ani = 0;
 		_G(spieler).R62TShow = false;
 		_G(spieler).R62LauraVerwandlung = true;
-		switch_room(63);
+		switchRoom(63);
 	}
 	return action_ret;
 }

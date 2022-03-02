@@ -64,13 +64,13 @@ void Room70::entry(int16 eib_nr) {
 void Room70::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 70) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 70) {
 		if (eib_nr == 102) {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 69;
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 69;
+			_G(spieler)._personRoomNr[P_HOWARD] = 69;
+			_G(spieler)._personRoomNr[P_NICHELLE] = 69;
 		} else if (eib_nr == 103 || eib_nr == 104) {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 75;
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 75;
+			_G(spieler)._personRoomNr[P_HOWARD] = 75;
+			_G(spieler)._personRoomNr[P_NICHELLE] = 75;
 		}
 	}
 }

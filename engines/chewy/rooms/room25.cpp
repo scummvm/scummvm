@@ -71,12 +71,12 @@ void Room25::entry() {
 		}
 
 		_G(spieler).R25FirstEntry = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		flic_cut(FCUT_029);
 		g_engine->_sound->playSound(0, 0);
 		_G(fx_blend) = BLEND_NONE;
 		setPersonPos(219, 141, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_FRONT, P_CHEWY);
 		startAadWait(64);
 		showCur();
@@ -118,7 +118,7 @@ int16 Room25::gleiter_loesch() {
 			autoMove(2, P_CHEWY);
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
 			startAadWait(253);

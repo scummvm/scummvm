@@ -312,7 +312,7 @@ void stop_ads_dialog() {
 	_G(flags).AdsDialog = false;
 	_G(maus_links_click) = false;
 	_G(atds)->stop_ads();
-	if (_G(minfo).button)
+	if (_G(minfo)._button)
 		_G(flags).main_maus_flag = 1;
 }
 
@@ -368,7 +368,7 @@ int16 del_invent_slot(int16 nr) {
 
 void remove_inventory(int16 nr) {
 	if (nr == _G(spieler).AkInvent) {
-		del_inventar(nr);
+		delInventory(nr);
 	} else {
 		_G(obj)->delInventory(nr, &_G(room_blk));
 		del_invent_slot(nr);

@@ -62,11 +62,11 @@ void Room93::entry() {
 
 	_G(spieler).flags35_40 = true;
 	show_person();
-	switch_room(94);
+	switchRoom(94);
 }
 
 void Room93::xit() {
-	_G(spieler).PersonRoomNr[P_HOWARD] = 94;
+	_G(spieler)._personRoomNr[P_HOWARD] = 94;
 	_G(spieler).scrollx = _G(spieler).r94Scrollx;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);

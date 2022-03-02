@@ -173,7 +173,7 @@ Stream *Room::open_handle(const char *fname1, int16 mode) {
 	return _roomHandle[mode];
 }
 
-void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
+void Room::loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 	clear_prog_ani();
 	_G(det)->load_rdi(Rb->DetFile, room_nr);
 
@@ -187,7 +187,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		strcat(tmp_str, _roomInfo->TafName);
 		_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
-		Rb->DetImage = Rb->Fti->_image;
+		Rb->_detImage = Rb->Fti->_image;
 		Rb->DetKorrekt = Rb->Fti->_correction;
 	}
 	_G(obj)->calc_all_static_detail();
@@ -544,11 +544,11 @@ void load_chewy_taf(int16 taf_nr) {
 	}
 }
 
-void switch_room(int16 nr) {
+void switchRoom(int16 nr) {
 	_G(fx_blend) = BLEND1;
 	exit_room(-1);
-	_G(spieler).PersonRoomNr[P_CHEWY] = nr;
-	_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+	_G(spieler)._personRoomNr[P_CHEWY] = nr;
+	_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
 	enter_room(-1);
 	setupScreen(DO_SETUP);
 }

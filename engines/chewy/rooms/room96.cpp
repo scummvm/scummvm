@@ -53,7 +53,7 @@ void Room96::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
 	if (eib_nr == 141)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 95;
+		_G(spieler)._personRoomNr[P_HOWARD] = 95;
 }
 
 void Room96::setup_func() {

@@ -35,11 +35,11 @@ void Room79::entry() {
 	_G(spieler).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).PersonHide[P_CHEWY] = false;
-	_G(spieler).PersonHide[P_HOWARD] = false;
-	_G(spieler).PersonHide[P_NICHELLE] = false;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 79;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 79;
+	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_HOWARD] = false;
+	_G(spieler)._personHide[P_NICHELLE] = false;
+	_G(spieler)._personRoomNr[P_HOWARD] = 79;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 79;
 	if (!_G(flags).LoadGame) {
 		setPersonPos(459, 114, P_CHEWY, P_LEFT);
 		setPersonPos(568, 65, P_HOWARD, P_LEFT);
@@ -58,9 +58,9 @@ void Room79::entry() {
 void Room79::xit() {
 	_G(spieler).R79Val[P_CHEWY] = 1;
 	_G(spieler).R79Val[P_HOWARD] = 1;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 80;
+	_G(spieler)._personRoomNr[P_HOWARD] = 80;
 	_G(spieler).R79Val[P_NICHELLE] = 1;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 80;
 }
 
 void Room79::setup_func() {

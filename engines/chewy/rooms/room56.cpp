@@ -50,8 +50,8 @@ void Room56::entry() {
 			_G(spieler).R48TaxiEntry = false;
 			_G(spieler).scrollx = 0;
 			_G(spieler).scrolly = 0;
-			_G(spieler).PersonHide[P_CHEWY] = true;
-			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_HOWARD] = true;
 			_G(det)->hideStaticSpr(2);
 			_G(zoom_horizont) = 0;
 			setPersonPos(-6, 16, P_HOWARD, P_RIGHT);
@@ -73,8 +73,8 @@ void Room56::entry() {
 			_G(room)->set_zoom(23);
 			_G(spieler).ZoomXy[P_HOWARD][0] = 17;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 37;
-			_G(spieler).PersonHide[P_CHEWY] = false;
-			_G(spieler).PersonHide[P_HOWARD] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_HOWARD] = false;
 			_G(SetUpScreenFunc) = setup_func;
 			_G(spieler_mi)[P_CHEWY].Mode = true;
 			autoMove(1, P_CHEWY);
@@ -91,14 +91,14 @@ void Room56::entry() {
 			setPersonPos(308, 97, P_HOWARD, P_RIGHT);
 			setPersonPos(429, 146, P_CHEWY, P_LEFT);
 			_G(spieler).scrollx = 262;
-			_G(spieler).PersonHide[P_HOWARD] = false;
+			_G(spieler)._personHide[P_HOWARD] = false;
 			_G(det)->showStaticSpr(9);
 			_G(det)->showStaticSpr(8);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			_G(det)->set_static_ani(3, -1);
 			_G(maus_links_click) = false;
-			_G(atds)->stop_aad();
+			_G(atds)->stopAad();
 			hideCur();
 			startAadWait(306);
 			showCur();
@@ -124,7 +124,7 @@ void Room56::entry() {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_113);
-					_G(spieler).PersonRoomNr[P_HOWARD] = 89;
+					_G(spieler)._personRoomNr[P_HOWARD] = 89;
 					load_chewy_taf(CHEWY_NORMAL);
 					_G(spieler).mi[P_HOWARD] = 0;
 					_G(spieler).SVal2 = 0;
@@ -159,8 +159,8 @@ void Room56::entry() {
 
 	switch(mode) {
 	case 1:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
+		_G(spieler)._personRoomNr[P_HOWARD] = 66;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
 		_G(spieler).r88DestRoom = 82;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -171,18 +171,18 @@ void Room56::entry() {
 		_G(out)->cls();
 		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
 		_G(spieler).PersonDiaRoom[P_HOWARD] = 1;
-		switch_room(66);
+		switchRoom(66);
 		break;
 	case 2:
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_110);
 		_G(spieler).flags34_20 = true;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
-		switch_room(90);
+		_G(spieler)._personRoomNr[P_HOWARD] = 90;
+		switchRoom(90);
 		break;
 	case 3:
-		switch_room(89);
+		switchRoom(89);
 		break;
 	default:
 		break;
@@ -223,15 +223,15 @@ int16 Room56::use_taxi() {
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		goAutoXy(3, 42, P_CHEWY, ANI_WAIT);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
-			_G(spieler).PersonHide[P_HOWARD] = true;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 56) {
+			_G(spieler)._personHide[P_HOWARD] = true;
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
+			_G(spieler)._personRoomNr[P_HOWARD] = 48;
 		}
 		showCur();
-		switch_room(48);
+		switchRoom(48);
 	}
 	return action_ret;
 }
@@ -268,7 +268,7 @@ int16 Room56::use_man() {
 		_G(room)->set_timer_status(0, TIMER_START);
 		_G(det)->set_static_ani(0, -1);
 	} else {
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(spieler).R56AbfahrtOk = true;
 		startSetailWait(6, 1, ANI_FRONT);
 
@@ -294,9 +294,9 @@ int16 Room56::use_kneipe() {
 			} else {
 				_G(SetUpScreenFunc) = nullptr;
 				autoMove(4, P_CHEWY);
-				_G(spieler).PersonHide[P_CHEWY] = true;
+				_G(spieler)._personHide[P_CHEWY] = true;
 				goAutoXy(160, 58, P_HOWARD, ANI_FRONT);
-				_G(spieler).PersonHide[P_HOWARD] = true;
+				_G(spieler)._personHide[P_HOWARD] = true;
 				_G(spieler).R56Kneipe = true;
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
@@ -310,8 +310,8 @@ int16 Room56::use_kneipe() {
 				g_engine->_sound->playSound(10, 0);
 				_G(out)->ausblenden(0);
 				setupScreen(DO_SETUP);
-				_G(spieler).PersonHide[P_CHEWY] = false;
-				_G(spieler).PersonHide[P_HOWARD] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_HOWARD] = false;
 				_G(spieler).scrollx = 0;
 				setPersonPos(23, 70, P_HOWARD, P_RIGHT);
 				setPersonPos(50, 81, P_CHEWY, P_LEFT);
@@ -341,7 +341,7 @@ int16 Room56::use_kneipe() {
 			_G(spieler).SVal1 = 56;
 			_G(spieler).SVal2 = 523;
 			cur_2_inventory();
-			switch_room(92);
+			switchRoom(92);
 		} else {
 			startAadWait(518);
 		}
@@ -417,7 +417,7 @@ void Room56::setup_func() {
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 56) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
 		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];

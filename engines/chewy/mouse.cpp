@@ -66,7 +66,7 @@ int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 void InputMgr::neuer_kb_handler(KbdInfo *key) {
 	set_new_kb_handler(key);
 	_kbInfoBlk = key;
-	_kbInfoBlk->key_code = '\0';
+	_kbInfoBlk->_keyCode = '\0';
 }
 
 void InputMgr::alter_kb_handler() {
@@ -88,15 +88,15 @@ KbdMouseInfo *InputMgr::getPointer() {
 int16 InputMgr::get_switch_code() {
 	int16 switch_code = 0;
 
-	if (_G(minfo).button == 2) {
+	if (_G(minfo)._button == 2) {
 		switch_code = Common::KEYCODE_ESCAPE;
-	} else if (_G(minfo).button == 1)
+	} else if (_G(minfo)._button == 1)
 		switch_code = 255;
-	else if (_G(minfo).button == 4)
+	else if (_G(minfo)._button == 4)
 		switch_code = 254;
 
-	if (_kbInfoBlk && _kbInfoBlk->key_code != 0)
-		switch_code = (int16)_kbInfoBlk->key_code;
+	if (_kbInfoBlk && _kbInfoBlk->_keyCode != 0)
+		switch_code = (int16)_kbInfoBlk->_keyCode;
 
 	if (_hotkey != Common::KEYCODE_INVALID) {
 		switch_code = _hotkey;

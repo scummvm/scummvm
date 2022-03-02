@@ -43,8 +43,8 @@ void Room76::entry() {
 
 	setPersonPos(308, 84, P_NICHELLE, P_RIGHT);
 	setPersonPos(365, 84, P_HOWARD, P_RIGHT);
-	_G(spieler).PersonHide[P_HOWARD] = true;
-	_G(spieler).PersonHide[P_NICHELLE] = true;
+	_G(spieler)._personHide[P_HOWARD] = true;
+	_G(spieler)._personHide[P_NICHELLE] = true;
 
 	if (!_G(spieler).flags29_4) {
 		_G(atds)->del_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATA);
@@ -148,7 +148,7 @@ void Room76::proc5() {
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
 	setPersonPos(30, 150, P_CHEWY, P_RIGHT);
-	switch_room(78);
+	switchRoom(78);
 }
 
 int Room76::proc6() {
@@ -156,7 +156,7 @@ int Room76::proc6() {
 
 	if (is_cur_inventar(93)) {
 		hideCur();
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(spieler).flags29_8 = true;
 		retVal = 1;
 		autoMove(3, P_CHEWY);
@@ -187,7 +187,7 @@ int Room76::proc7() {
 		hideCur();
 		autoMove(6, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		invent_2_slot(106);
 		invent_2_slot(105);
 		startAadWait(444);
@@ -211,7 +211,7 @@ int Room76::proc7() {
 		startAadWait(428);
 		showCur();
 		_G(spieler).flags29_80 = true;
-		switch_room(78);
+		switchRoom(78);
 	} else {
 		hideCur();
 		start_spz(CH_TALK12, 255, false, P_CHEWY);

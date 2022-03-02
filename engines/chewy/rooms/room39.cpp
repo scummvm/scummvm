@@ -80,14 +80,14 @@ short Room39::use_howard() {
 				_G(spieler).R39HowardWach = true;
 				_G(spieler).R39ScriptOk = true;
 				autoMove(3, P_CHEWY);
-				_G(spieler).PersonHide[P_CHEWY] = true;
+				_G(spieler)._personHide[P_CHEWY] = true;
 				_G(det)->startDetail(6, 255, ANI_FRONT);
 				startAadWait(170);
 				_G(det)->stop_detail(6);
 				startSetailWait(7, 1, ANI_FRONT);
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				_G(det)->stop_detail(1);
 				startAniBlock(2, ABLOCK33);
 				start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
@@ -150,14 +150,14 @@ void Room39::ok() {
 	_G(spieler).R41Einbruch = true;
 
 	Room43::night_small();
-	_G(spieler).PersonRoomNr[P_HOWARD] = 27;
+	_G(spieler)._personRoomNr[P_HOWARD] = 27;
 	_G(obj)->show_sib(SIB_SURIMY_R27);
 	_G(obj)->show_sib(SIB_ZEITUNG_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_SURIMY_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
 	invent_2_slot(BRIEF_INV);
 
-	switch_room(27);
+	switchRoom(27);
 	startAadWait(192);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
@@ -249,9 +249,9 @@ int16 Room39::use_tv() {
 			if (_G(spieler).R39TranslatorUsed) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(98);
-				_G(spieler).PersonHide[P_CHEWY] = true;
+				_G(spieler)._personHide[P_CHEWY] = true;
 				startAniBlock(2, ABLOCK29);
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
 				_G(atds)->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATA);

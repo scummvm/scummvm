@@ -51,7 +51,7 @@ void Room97::entry() {
 	_G(spieler).ZoomXy[P_HOWARD][1] = 42;
 
 	_bool18DB32 = false;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 97;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 97;
 	_G(zoom_mov_fak) = 0;
 	_G(spieler).ScrollxStep = 2;
 	_G(det)->hideStaticSpr(14);
@@ -109,14 +109,14 @@ void Room97::entry() {
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 
-		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 89;
+		_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler)._personRoomNr[P_NICHELLE] = 89;
 		_G(spieler).SVal2 = 0;
 		_G(spieler).flags35_4 = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(19, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		showCur();
-		switch_room(89);
+		switchRoom(89);
 	} else {
 		_G(spieler).scrollx = 800;
 		setPersonPos(1067, 98, P_CHEWY, P_LEFT);
@@ -398,7 +398,7 @@ int Room97::proc5() {
 	_G(spieler).scrollx = 720;
 	setPersonPos(822, 98, P_CHEWY, P_LEFT);
 	setPersonPos(861, 81, P_HOWARD, P_LEFT);
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	_G(det)->showStaticSpr(21);
 	_G(spieler).flags35_80 = true;
 	startAadWait(546);
@@ -452,7 +452,7 @@ int Room97::proc7() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
 	startSetailWait(22, 1, ANI_FRONT);
 	_G(atds)->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATA);
@@ -460,7 +460,7 @@ int Room97::proc7() {
 	new_invent_2_cur(SLIME_INV);
 	_G(spieler).flags36_4 = true;
 	setPersonPos(304, 102, P_CHEWY, P_RIGHT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	autoMove(1, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 
@@ -482,7 +482,7 @@ int Room97::proc8() {
 	else {
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(det)->startDetail(11, 255, false);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(spieler).flags36_10 = true;
 		_G(spieler).flags36_8 = false;
 		_G(det)->startDetail(12, 255, false);
@@ -601,7 +601,7 @@ int Room97::proc11() {
 		_G(spieler).SVal2 = 523;
 		cur_2_inventory();
 		_G(spieler).flags37_8 = true;
-		switch_room(92);
+		switchRoom(92);
 		showCur(); // probably useless, but present in the original
 	}
 
@@ -624,11 +624,11 @@ void Room97::proc12() {
 	stopPerson(P_CHEWY);
 	_G(det)->showStaticSpr(26);
 	goAutoXy(481, 39, P_CHEWY, ANI_WAIT);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	setPersonPos(327, 42, P_CHEWY, P_LEFT);
 	waitShowScreen(50);
 	setPersonPos(347, 42, P_CHEWY, P_LEFT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(det)->hideStaticSpr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
@@ -644,11 +644,11 @@ void Room97::proc13() {
 	stopPerson(P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(det)->showStaticSpr(26);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	setPersonPos(508, 41, P_CHEWY, P_LEFT);
 	waitShowScreen(50);
 	setPersonPos(488, 41, P_CHEWY, P_LEFT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	autoMove(6, P_CHEWY);
 	_G(det)->hideStaticSpr(26);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
@@ -662,7 +662,7 @@ int Room97::throwSlime() {
 
 	_slimeThrown = true;
 	hideCur();
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	_G(menu_item) = CUR_USE;
 	cursorChoice(CUR_USE);
 	
@@ -684,7 +684,7 @@ void Room97::sensorAnim() {
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (_G(minfo).button == 1 || _G(in)->get_switch_code() == 28) {
+		if (_G(minfo)._button == 1 || _G(in)->get_switch_code() == 28) {
 			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}
@@ -697,17 +697,17 @@ void Room97::sensorAnim() {
 	if (!_slimeThrown) {
 		startSetailWait(17, 1, ANI_FRONT);
 		_G(det)->startDetail(16, 1, true);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(20, 1, false);
 		setPersonPos(318, 42, P_CHEWY, P_LEFT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 	} else {
 		_G(spieler).flags37_4 = true;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(det)->showStaticSpr(27);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(21, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(27);
 		startSetailWait(18, 1, ANI_FRONT);
 

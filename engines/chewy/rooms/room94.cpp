@@ -61,7 +61,7 @@ void Room94::entry() {
 		_G(fx_blend) = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
 		_G(spieler).r94Scrollx = _G(spieler).scrollx;
-		switch_room(93);
+		switchRoom(93);
 		return;
 	}
 
@@ -98,7 +98,7 @@ void Room94::entry() {
 
 void Room94::xit() {
 	_G(spieler).ScrollxStep = 1;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 95;
+	_G(spieler)._personRoomNr[P_HOWARD] = 95;
 }
 
 void Room94::setup_func() {
@@ -120,7 +120,7 @@ void Room94::setup_func() {
 
 void Room94::gedAction(int index) {
 	if (!index && !_G(spieler).flags35_10)
-		switch_room(93);
+		switchRoom(93);
 }
 
 void Room94::talk1() {
@@ -136,7 +136,7 @@ int Room94::giveGhostBottle() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	auto_scroll(216, 0);
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;

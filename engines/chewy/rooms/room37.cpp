@@ -112,13 +112,13 @@ short Room37::use_wippe() {
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(159);
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
 			showCur();
 			_G(spieler).scrollx = 269;
 			setPersonPos(388, 119, P_CHEWY, P_RIGHT);
-			switch_room(29);
+			switchRoom(29);
 			_G(maus_links_click) = false;
 
 		} else {
@@ -174,7 +174,7 @@ int16 Room37::use_glas() {
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(147);
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
@@ -218,13 +218,13 @@ void Room37::dog_bell() {
 			startSetailWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
 			startSetailWait(6, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
 			startSetailWait(6, 1, ANI_BACK);
 			_G(det)->stop_detail(11);
 			setPersonPos(326, 85, P_CHEWY, P_LEFT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(9);
 			startAniBlock(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
@@ -305,7 +305,7 @@ void Room37::use_hahn() {
 			_G(det)->del_static_ani(7);
 			_G(det)->startDetail(9, 1, ANI_FRONT);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			del_inventar(GEBISS_INV);
+			delInventory(GEBISS_INV);
 			_G(flags).NoScroll = true;
 			auto_scroll(177, 0);
 
@@ -339,18 +339,18 @@ void Room37::use_hahn() {
 }
 
 void Room37::hahn_dia() {
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	int16 tmp_scrollx = _G(spieler).scrollx;
 	int16 tmp_scrolly = _G(spieler).scrolly;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	switch_room(38);
+	switchRoom(38);
 	startAdsWait(9);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(spieler).scrollx = tmp_scrollx;
 	_G(spieler).scrolly = tmp_scrolly;
-	switch_room(37);
+	switchRoom(37);
 	_G(flags).LoadGame = false;
 }
 

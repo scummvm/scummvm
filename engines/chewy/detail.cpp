@@ -573,13 +573,13 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		spr_nr = adiptr->end_ani - 1;
 	int16 *Cxy = _rdi.dptr->_correction + (spr_nr << 1);
 	int16 *Xy = (int16 *)_rdi.dptr->_image[spr_nr];
-	_sprInfo.Image = _rdi.dptr->_image[spr_nr];
-	_sprInfo.X = adiptr->x + Cxy[0] - scrx;
-	_sprInfo.Y = adiptr->y + Cxy[1] - scry;
-	_sprInfo.X1 = _sprInfo.X + Xy[0];
-	_sprInfo.Y1 = _sprInfo.Y + Xy[1];
+	_sprInfo._image = _rdi.dptr->_image[spr_nr];
+	_sprInfo._x = adiptr->x + Cxy[0] - scrx;
+	_sprInfo._y = adiptr->y + Cxy[1] - scry;
+	_sprInfo.X1 = _sprInfo._x + Xy[0];
+	_sprInfo.Y1 = _sprInfo._y + Xy[1];
 	if (mode)
-		_G(out)->sprite_set(_sprInfo.Image, _sprInfo.X, _sprInfo.Y, 0);
+		_G(out)->sprite_set(_sprInfo._image, _sprInfo._x, _sprInfo._y, 0);
 
 	Sound *sound = g_engine->_sound;
 

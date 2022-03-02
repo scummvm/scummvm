@@ -44,7 +44,7 @@ void Room67::entry() {
 	if (!_G(flags).LoadGame) {
 		hideCur();
 		setPersonPos(102, 132, P_CHEWY, P_RIGHT);
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 67) {
 			setPersonPos(12, 100, P_HOWARD, P_RIGHT);
 			setPersonPos(47, 106, P_NICHELLE, P_RIGHT);
 			goAutoXy(214, 112, P_NICHELLE, ANI_GO);
@@ -57,9 +57,9 @@ void Room67::entry() {
 void Room67::xit() {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 67) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 67) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 66;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -84,7 +84,7 @@ int16 Room67::use_grammo() {
 		autoMove(6, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 67)
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 67)
 			startAadWait(376);
 		else
 			startAadWait(614);

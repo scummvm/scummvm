@@ -49,10 +49,10 @@ void Room88::entry() {
 
 void Room88::xit() {
 	_G(spieler).flags31_8 = true;
-	_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).r88DestRoom;
+	_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler).r88DestRoom;
 
-	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 88)
-		_G(spieler).PersonRoomNr[P_NICHELLE] = _G(spieler).PersonRoomNr[P_HOWARD];
+	if (_G(spieler)._personRoomNr[P_NICHELLE] == 88)
+		_G(spieler)._personRoomNr[P_NICHELLE] = _G(spieler)._personRoomNr[P_HOWARD];
 }
 
 int Room88::proc1() {
@@ -61,7 +61,7 @@ int Room88::proc1() {
 
 	hideCur();
 	autoMove(0, P_CHEWY);
-	switch_room(_G(spieler).r88DestRoom);
+	switchRoom(_G(spieler).r88DestRoom);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	showCur();
@@ -106,7 +106,7 @@ int Room88::proc3() {
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(spieler).flags32_40 = true;
-			switch_room(84);
+			switchRoom(84);
 		} else {
 			startAadWait(465);
 		}
@@ -125,10 +125,10 @@ int Room88::proc3() {
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_088);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(spieler).flags32_1 = true;
 		_G(out)->raster_col(0, 0, 0, 0);
-		switch_room(80);
+		switchRoom(80);
 		hideCur();
 		startSetailWait(1, 1, ANI_FRONT);
 		_G(out)->setPointer(nullptr);
@@ -137,10 +137,10 @@ int Room88::proc3() {
 		flic_cut(FCUT_086);
 		register_cutscene(24);
 
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 88;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
-		switch_room(88);
+		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(spieler)._personRoomNr[P_HOWARD] = 88;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 88;
+		switchRoom(88);
 		_G(spieler).r88DestRoom = 84;
 		_G(spieler).R88UsedMonkey = true;
 		_G(spieler).flags32_1 = false;

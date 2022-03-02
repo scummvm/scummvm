@@ -122,7 +122,7 @@ void Room32::use_schreibmaschine() {
 				autoMove(2, P_CHEWY);
 				_G(spieler).R32PapierOk = true;
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				_G(atds)->set_ats_str(231, TXT_MARK_LOOK, 1, ATS_DATA);
 				ani_nr = CH_TALK3;
 				dia_nr = 86;

@@ -151,7 +151,7 @@ void spriteEngine() {
 			break;
 
 		case ZOBJ_CHEWY:
-			if (!_G(spieler).PersonHide[P_CHEWY]) {
+			if (!_G(spieler)._personHide[P_CHEWY]) {
 				if (!_G(spz_ani)[P_CHEWY]) {
 					int16 sprNr = _G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr];
 					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(chewy_kor)[sprNr * 2] - _G(spieler).scrollx;
@@ -185,7 +185,7 @@ void spriteEngine() {
 		case ZOBJ_HOWARD:
 		case ZOBJ_NICHELLE: {
 			int16 personNr = _G(z_obj_sort)[min_zeiger].ObjArt - 6;
-			if (!_G(spieler).PersonHide[personNr]) {
+			if (!_G(spieler)._personHide[personNr]) {
 				int16 sprNr;
 				if (!_G(spz_ani)[personNr]) {
 					ts_info = _G(PersonTaf)[personNr];
@@ -203,7 +203,7 @@ void spriteEngine() {
 			}
 			break;
 		case ZOBJ_PROGANI:
-			_G(out)->sprite_set(_G(spr_info)[nr].Image, _G(spr_info)[nr].X - _G(spieler).scrollx, _G(spr_info)[nr].Y - _G(spieler).scrolly, 0);
+			_G(out)->sprite_set(_G(spr_info)[nr]._image, _G(spr_info)[nr]._x - _G(spieler).scrollx, _G(spr_info)[nr]._y - _G(spieler).scrolly, 0);
 			break;
 
 		case ZOBJ_AUTO_OBJ: {
@@ -214,7 +214,7 @@ void spriteEngine() {
 			          _G(mov_phasen)[nr].ZoomFak,
 			          _G(mov_phasen)[nr].ZoomFak,
 			          &_G(auto_mov_vector)[nr]);
-			_G(out)->scale_set(_G(room_blk).DetImage[sprNr],
+			_G(out)->scale_set(_G(room_blk)._detImage[sprNr],
 			                _G(auto_mov_vector)[nr].Xypos[0] + cxy[0] - _G(spieler).scrollx,
 			                _G(auto_mov_vector)[nr].Xypos[1] + cxy[1] - _G(spieler).scrolly,
 			                _G(auto_mov_vector)[nr].Xzoom,
@@ -233,7 +233,7 @@ void calc_z_ebene() {
 	_G(z_count) = 0;
 
 	for (int16 i = 0; i < MAX_PERSON; i++) {
-		if (_G(spieler).PersonRoomNr[P_CHEWY + i] == _G(spieler).PersonRoomNr[P_CHEWY] &&
+		if (_G(spieler)._personRoomNr[P_CHEWY + i] == _G(spieler)._personRoomNr[P_CHEWY] &&
 		        _G(spieler_mi)[P_CHEWY + i].Id != NO_MOV_OBJ) {
 			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_CHEWY + i;
 			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spieler_vector)[P_CHEWY + i].Xypos[1] +
@@ -269,10 +269,10 @@ void calc_z_ebene() {
 	}
 
 	for (int16 i = 0; i < MAX_PROG_ANI; i++) {
-		if (_G(spr_info)[i].ZEbene < 200) {
+		if (_G(spr_info)[i]._zLevel < 200) {
 			_G(z_obj_sort)[_G(z_count)].ObjArt = ZOBJ_PROGANI;
 			_G(z_obj_sort)[_G(z_count)].ObjNr = i;
-			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spr_info)[i].ZEbene;
+			_G(z_obj_sort)[_G(z_count)].ObjZ = _G(spr_info)[i]._zLevel;
 			++_G(z_count);
 		}
 	}
@@ -290,8 +290,8 @@ void calc_z_ebene() {
 int16 mouse_on_prog_ani() {
 	int16 aniNr = -1;
 	for (int16 i = 0; i < MAX_PROG_ANI && aniNr == -1; i++) {
-		if (_G(minfo).x >= _G(spr_info)[i].X && _G(minfo).x <= _G(spr_info)[i].X1 &&
-		        _G(minfo).y >= _G(spr_info)[i].Y && _G(minfo).y <= _G(spr_info)[i].Y1) {
+		if (_G(minfo).x >= _G(spr_info)[i]._x && _G(minfo).x <= _G(spr_info)[i].X1 &&
+		        _G(minfo).y >= _G(spr_info)[i]._y && _G(minfo).y <= _G(spr_info)[i].Y1) {
 			aniNr = i;
 		}
 	}
@@ -308,7 +308,7 @@ void setPersonPos(int16 x, int16 y, int16 personNr, int16 direction) {
 	_G(spieler_mi)[personNr].XyzStart[1] = y;
 	_G(spieler_vector)[personNr].Count = 0;
 	_G(spieler_vector)[personNr].Delay = _G(spieler).DelaySpeed;
-	_G(spieler_vector)[personNr].DelayCount = 0;
+	_G(spieler_vector)[personNr]._delayCount = 0;
 	calc_zoom(_G(spieler_mi)[personNr].XyzStart[1],
 	          _G(spieler).ZoomXy[personNr][0],
 	          _G(spieler).ZoomXy[personNr][1],
@@ -464,7 +464,7 @@ void startAadWait(int16 diaNr) {
 	}
 
 	_G(maus_links_click) = oldMouseLinksClick;
-	if (_G(minfo).button)
+	if (_G(minfo)._button)
 		_G(flags).main_maus_flag = 1;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	stop_spz();
@@ -521,7 +521,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 		_G(flags).AtsText = false;
 	}
 
-	if (_G(minfo).button)
+	if (_G(minfo)._button)
 		_G(flags).main_maus_flag = 1;
 
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
@@ -543,7 +543,7 @@ void aadWait(int16 strNr) {
 		}
 	}
 	_G(maus_links_click) = oldMouseLinksClick;
-	if (_G(minfo).button)
+	if (_G(minfo)._button)
 		_G(flags).main_maus_flag = 1;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 }
@@ -616,7 +616,7 @@ void init_auto_obj(int16 auto_nr, const int16 *phasen, int16 lines, const MovLin
 
 	_G(auto_mov_vector)[auto_nr].Count = 0;
 	_G(auto_mov_vector)[auto_nr].StNr = 0;
-	_G(auto_mov_vector)[auto_nr].DelayCount = 0;
+	_G(auto_mov_vector)[auto_nr]._delayCount = 0;
 	new_auto_line(auto_nr);
 }
 
@@ -665,7 +665,7 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 	if (_G(mov_phasen)[nr].Start == 1) {
 		int16 spr_nr = _G(mov_phasen)[nr].Phase[_G(auto_mov_vector)[nr].Phase][0] +
 		               _G(auto_mov_vector)[nr].PhNr;
-		int16 *xy = (int16 *)_G(room_blk).DetImage[spr_nr];
+		int16 *xy = (int16 *)_G(room_blk)._detImage[spr_nr];
 		int16 *Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 
 		if (!xoff) {
@@ -717,10 +717,10 @@ void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY, ObjMov *om) {
 void mov_objekt(ObjMov *om, MovInfo *mi) {
 	int16 u_index = 0;
 
-	if (om->DelayCount > 0)
-		--om->DelayCount;
+	if (om->_delayCount > 0)
+		--om->_delayCount;
 	else {
-		om->DelayCount = om->Delay;
+		om->_delayCount = om->Delay;
 		if (om->Count > 0) {
 
 			--om->Count;
@@ -1069,7 +1069,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		_G(spieler_vector)[p_nr].PhNr = 0;
 		_G(spieler_vector)[p_nr].PhAnz = spr_anz;
 		_G(spieler_vector)[p_nr].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[p_nr];
-		_G(spieler_vector)[p_nr].DelayCount = 0;
+		_G(spieler_vector)[p_nr]._delayCount = 0;
 		_G(spz_count) = count;
 		_G(flags).MausLinks = true;
 		ret = true;

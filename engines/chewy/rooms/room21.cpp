@@ -167,7 +167,7 @@ void Room21::chewy_kolli() {
 
 	for (int16 i = 0; i < _G(auto_obj) && !kolli; i++) {
 		int16 spr_nr = _G(mov_phasen)[i].Phase[_G(auto_mov_vector)[i].Phase][0] + _G(auto_mov_vector)[i].PhNr;
-		int16 *xy = (int16 *)_G(room_blk).DetImage[spr_nr];
+		int16 *xy = (int16 *)_G(room_blk)._detImage[spr_nr];
 		int16 *Cxy = _G(room_blk).DetKorrekt + (spr_nr << 1);
 		int16 xoff = xy[0];
 		int16 yoff = xy[1];
@@ -192,11 +192,11 @@ void Room21::chewy_kolli() {
 		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 		stopPerson(P_CHEWY);
 		_G(flags).AutoAniPlay = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		startSetailWait(ani_nr, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
 		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
@@ -209,7 +209,7 @@ void Room21::salto() {
 		&& !_G(spieler).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(spieler).R21Salto = true;
 		_G(flags).AutoAniPlay = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
 			_G(det)->setSetailPos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
@@ -217,7 +217,7 @@ void Room21::salto() {
 		}
 
 		startAniBlock(3, ABLOCK19);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		startAadWait(36);
 		_G(flags).AutoAniPlay = false;
 	}
@@ -228,13 +228,13 @@ void Room21::use_gitter_energie() {
 		AUSGANG_UNTEN, AUSGANG_OBEN, (int16)_G(spieler).R21GitterEnergie);
 	_G(auto_obj) = 0;
 	_G(spieler).R17Location = 1;
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 
-	switch_room(17);
+	switchRoom(17);
 	_G(det)->hideStaticSpr(5);
 	startSetailWait(9, 1, ANI_FRONT);
 	_G(spieler).R17GitterWeg = true;
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 }
 
 int16 Room21::use_fenster() {
@@ -246,7 +246,7 @@ int16 Room21::use_fenster() {
 		_G(spieler).R18Gitter = true;
 		autoMove(13, P_CHEWY);
 		setPersonPos(541, 66, P_CHEWY, P_LEFT);
-		switch_room(18);
+		switchRoom(18);
 
 		if (!_G(spieler).R18FirstEntry) {
 			startAadWait(39);

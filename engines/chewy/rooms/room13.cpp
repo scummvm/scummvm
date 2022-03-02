@@ -49,7 +49,7 @@ void Room13::entry() {
 		_G(out)->cls();
 		flic_cut(FCUT_012);
 		setPersonPos(106, 65, P_CHEWY, P_RIGHT);
-		switch_room(11);
+		switchRoom(11);
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		startAadWait(27);
 	} else {
@@ -58,7 +58,7 @@ void Room13::entry() {
 
 		if (!_G(spieler).R13BorkOk) {
 			_G(det)->showStaticSpr(12);
-			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
+			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
 			_G(spieler).R13Bandlauf = true;
 
 			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
@@ -104,11 +104,11 @@ void Room13::talk_bork() {
 		_G(det)->showStaticSpr(13);
 		_G(det)->setSetailPos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		_G(det)->setStaticPos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startAadWait(33);
 		_G(det)->stop_detail(9);
 		_G(det)->load_taf_seq(86, 12, nullptr);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(12);
 		_G(auto_obj) = 1;
 
@@ -135,16 +135,16 @@ void Room13::talk_bork() {
 
 		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATA);
-		_G(obj)->show_sib(SIB_BANDKNOPF_R13);
+		_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 		setPersonPos(153, 138, P_CHEWY, P_LEFT);
 
 		startAadWait(34);
 		startAadWait(249);
 
-		_G(obj)->show_sib(SIB_TKNOPF1_R11);
+		_G(obj)->show_sib(SIB_TBUTTON1_R11);
 		_G(obj)->show_sib(SIB_SCHLITZ_R11);
-		_G(obj)->show_sib(SIB_TKNOPF2_R11);
-		_G(obj)->show_sib(SIB_TKNOPF3_R11);
+		_G(obj)->show_sib(SIB_TBUTTON2_R11);
+		_G(obj)->show_sib(SIB_TBUTTON3_R11);
 
 		if (_G(spieler).R6DoorRightB)
 			_G(spieler).room_e_obj[20].Attribut = AUSGANG_LINKS;
@@ -155,14 +155,14 @@ void Room13::talk_bork() {
 void Room13::jmp_band() {
 	if (!_G(spieler).R13Band && !_G(spieler).R12ChewyBork) {
 		if (!_G(spieler).R13Bandlauf) {
-			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
+			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
 			_G(spieler).room_e_obj[25].Attribut = 255;
 			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 			_G(spieler).R13Band = true;
 			autoMove(3, P_CHEWY);
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			startSetailWait(8, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			setPersonPos(292, 98, P_CHEWY, P_RIGHT);
 
 		} else {
@@ -180,38 +180,38 @@ void Room13::jmp_band() {
 			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
 			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
-			_G(obj)->calc_rsi_flip_flop(SIB_BANDKNOPF_R13);
-			_G(obj)->hide_sib(SIB_BANDKNOPF_R13);
-			switch_room(14);
+			_G(obj)->calc_rsi_flip_flop(SIB_BANDBUTTON_R13);
+			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
+			switchRoom(14);
 
 			flic_cut(FCUT_017);
 			register_cutscene(6);
 			_G(spieler).scrollx = 92;
 			_G(spieler).scrolly = 120;
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			waitShowScreen(20);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 		}
 	}
 }
 
-void Room13::jmp_boden() {
+void Room13::jmp_floor() {
 	if (_G(spieler).R13Band) {
 		if (!_G(spieler).R13Surf)
-			_G(obj)->show_sib(SIB_BANDKNOPF_R13);
+			_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 
 		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
 		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R13Band = false;
 		autoMove(5, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(7, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		setPersonPos(176, 138, P_CHEWY, P_LEFT);
 	}
 }
 
-int16 Room13::monitor_knopf() {
+int16 Room13::monitor_button() {
 	int16 action_flag = false;
 	
 	if (!_G(spieler).inv_cur) {
@@ -222,9 +222,9 @@ int16 Room13::monitor_knopf() {
 		} else if (!_G(spieler).R12ChewyBork) {
 			action_flag = true;
 			autoMove(8, P_CHEWY);
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			startSetailWait(6, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 
 			if (_G(spieler).R13MonitorStatus)
 				_G(det)->hideStaticSpr(11 - _G(spieler).R13MonitorStatus);

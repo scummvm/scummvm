@@ -31,7 +31,7 @@ private:
 
 public:
 	static void entry();
-	static void bola_knopf();
+	static void bola_button();
 };
 
 } // namespace Rooms

@@ -37,7 +37,7 @@ static const AniBlock ABLOCK15[4] = {
 
 
 void Room23::entry() {
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	setPersonPos(135, 69, P_CHEWY, -1);
 }
 
@@ -45,7 +45,7 @@ void Room23::cockpit() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	_G(maus_links_click) = false;
-	switch_room(23);
+	switchRoom(23);
 
 	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
 		_G(det)->hideStaticSpr(3);
@@ -94,7 +94,7 @@ int16 Room23::start_gleiter() {
 					_G(spieler).R23GleiterExit = 16;
 					setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 
-					switch_room(_G(spieler).R23GleiterExit);
+					switchRoom(_G(spieler).R23GleiterExit);
 					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
@@ -116,7 +116,7 @@ int16 Room23::start_gleiter() {
 					remove_inventory(4);
 					remove_inventory(15);
 					remove_inventory(16);
-					switch_room(_G(spieler).R23GleiterExit);
+					switchRoom(_G(spieler).R23GleiterExit);
 				}
 
 				showCur();
@@ -128,7 +128,7 @@ int16 Room23::start_gleiter() {
 }
 
 void Room23::use_cartridge() {
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	_G(spieler).R23Cartridge = true;
 
 	if (_G(spieler).R18CartSave) {

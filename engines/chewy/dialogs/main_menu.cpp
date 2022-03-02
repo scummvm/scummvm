@@ -67,15 +67,15 @@ void MainMenu::execute() {
 		cursorChoice(CUR_ZEIGE);
 		_selection = -1;
 		_G(spieler).scrollx = _G(spieler).scrolly = 0;
-		_G(spieler).PersonRoomNr[P_CHEWY] = 98;
-		_G(room)->load_room(&_G(room_blk), 98, &_G(spieler));
+		_G(spieler)._personRoomNr[P_CHEWY] = 98;
+		_G(room)->loadRoom(&_G(room_blk), 98, &_G(spieler));
 
 		_G(currentSong) = -1;
 		load_room_music(98);
 		_G(fx)->border(_G(workpage), 100, 0, 0);
 
 		_G(out)->setPalette(_G(pal));
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		showCur();
 
 		// Wait for a selection to be made on the main menu
@@ -135,7 +135,7 @@ void MainMenu::execute() {
 void MainMenu::screenFunc() {
 	int vec = _G(det)->maus_vector(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
 
-	if (_G(in)->get_switch_code() == 28 || _G(minfo).button == 1) {
+	if (_G(in)->get_switch_code() == 28 || _G(minfo)._button == 1) {
 		_selection = vec;
 	}
 }
@@ -213,14 +213,14 @@ void MainMenu::startGame() {
 	_G(spieler).DisplayText = displayText;
 	_G(spieler).soundLoopMode = sndLoopMode;
 
-	_G(spieler).PersonRoomNr[P_CHEWY] = 0;
-	_G(room)->load_room(&_G(room_blk), 0, &_G(spieler));
+	_G(spieler)._personRoomNr[P_CHEWY] = 0;
+	_G(room)->loadRoom(&_G(room_blk), 0, &_G(spieler));
 
 	_G(spieler_vector)[P_CHEWY].Phase = 6;
 	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	enter_room(-1);

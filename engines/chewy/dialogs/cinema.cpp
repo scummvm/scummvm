@@ -86,7 +86,7 @@ void Cinema::execute() {
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
 		}
 
-		if (_G(minfo).button == 1 && !flag) {
+		if (_G(minfo)._button == 1 && !flag) {
 			flag = true;
 			switch (_G(in)->mouseVector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
 			case 0:
@@ -115,10 +115,10 @@ void Cinema::execute() {
 			default:
 				break;
 			}
-		} else if (_G(minfo).button == 2 && !flag) {
+		} else if (_G(minfo)._button == 2 && !flag) {
 			_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
 			flag = true;
-		} else if (_G(minfo).button != 1) {
+		} else if (_G(minfo)._button != 1) {
 			flag = false;
 			delay = 0;
 		} else if (flag) {
@@ -180,7 +180,7 @@ void Cinema::execute() {
 
 		// The below are hacks to get the dialog to work in ScummVM
 		_G(kbinfo).scan_code = 0;
-		_G(minfo).button = 0;
+		_G(minfo)._button = 0;
 		txt_anz = 0;
 
 		if (!txt_anz) {

@@ -22,8 +22,6 @@
 #ifndef CHEWY_ROOMS_ROOM13_H
 #define CHEWY_ROOMS_ROOM13_H
 
-#include "chewy/ngsdefs.h"
-
 namespace Chewy {
 namespace Rooms {
 
@@ -33,9 +31,9 @@ public:
 	static void xit();
 	static void gedAction(int index);
 
-	static int16 monitor_knopf();
+	static int16 monitor_button();
 	static void jmp_band();
-	static void jmp_boden();
+	static void jmp_floor();
 	static void talk_bork();
 };
 

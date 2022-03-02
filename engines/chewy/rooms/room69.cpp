@@ -65,9 +65,9 @@ void Room69::entry(int16 eib_nr) {
 void Room69::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 69 && eib_nr == 97) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 69 && eib_nr == 97) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 66;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -96,25 +96,25 @@ int16 Room69::use_bruecke() {
 			goAutoXy(253, 103, P_CHEWY, ANI_WAIT);
 			goAutoXy(141, 103, P_CHEWY, ANI_WAIT);
 
-			if (_G(spieler).PersonRoomNr[P_NICHELLE] == 69)
+			if (_G(spieler)._personRoomNr[P_NICHELLE] == 69)
 				goAutoXy(255, 84, 2, ANI_GO);
 			
 			goAutoXy(82, 95, P_CHEWY, ANI_WAIT);
 			goAutoXy(46, 83, P_CHEWY, ANI_WAIT);
 
-			if (_G(spieler).PersonRoomNr[P_HOWARD] == 69) {
+			if (_G(spieler)._personRoomNr[P_HOWARD] == 69) {
 				goAutoXy(258, 86, P_HOWARD, ANI_GO);
 				goAutoXy(147, 84, P_NICHELLE, ANI_WAIT);
 				goAutoXy(140, 86, P_HOWARD, ANI_GO);
 				goAutoXy(94, 77, P_NICHELLE, ANI_WAIT);
 				goAutoXy(94, 82, P_HOWARD, ANI_GO);
 				goAutoXy(59, 68, P_NICHELLE, ANI_WAIT);
-				_G(spieler).PersonRoomNr[P_HOWARD] = 70;
-				_G(spieler).PersonRoomNr[P_NICHELLE] = 70;
+				_G(spieler)._personRoomNr[P_HOWARD] = 70;
+				_G(spieler)._personRoomNr[P_NICHELLE] = 70;
 			}
 
 			_G(spieler_mi)[P_CHEWY].Mode = false;
-			switch_room(70);
+			switchRoom(70);
 		}
 		showCur();
 	}
@@ -131,7 +131,7 @@ void Room69::proc1() {
 	goAutoXy(94, 82, P_HOWARD, ANI_WAIT);
 	goAutoXy(94, 77, P_NICHELLE, ANI_GO);
 	goAutoXy(140, 86, P_HOWARD, ANI_WAIT);
-	goAutoXy(82, 95, P_CHEWY, _G(spieler).PersonRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
+	goAutoXy(82, 95, P_CHEWY, _G(spieler)._personRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
 	goAutoXy(147, 84, P_NICHELLE, ANI_GO);
 	goAutoXy(278, 86, P_HOWARD, ANI_WAIT);
 	goAutoXy(255, 84, P_NICHELLE, ANI_WAIT);

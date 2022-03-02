@@ -148,7 +148,7 @@ void Inventory::menu() {
 
 	int16 menu_flag1 = MENU_EINBLENDEN;
 	int16 taste_flag = 28;
-	_G(kbinfo).key_code = '\0';
+	_G(kbinfo)._keyCode = '\0';
 	bool mouseFl = true;
 
 	for (int16 i = 0; i < 3; i++) {
@@ -161,12 +161,12 @@ void Inventory::menu() {
 	_G(show_invent_menu) = 1;
 
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
-		if (!_G(minfo).button)
+		if (!_G(minfo)._button)
 			mouseFl = false;
-		if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN || keyVal) {
+		if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN || keyVal) {
 			if (!mouseFl) {
 				mouseFl = true;
-				_G(kbinfo).key_code = '\0';
+				_G(kbinfo)._keyCode = '\0';
 
 				int16 k = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 				if (keyVal == Common::KEYCODE_F1)
@@ -246,7 +246,7 @@ void Inventory::menu() {
 					break;
 				}
 			}
-		} else if (_G(minfo).button == 2 || _G(kbinfo).key_code == Common::KEYCODE_ESCAPE) {
+		} else if (_G(minfo)._button == 2 || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE) {
 			if (!mouseFl) {
 				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
 				mouseFl = true;
@@ -263,7 +263,7 @@ void Inventory::menu() {
 		} else if (ret_look == 5) {
 			taste_flag = false;
 			mouseFl = false;
-			_G(minfo).button = 1;
+			_G(minfo)._button = 1;
 			keyVal = Common::KEYCODE_RETURN;
 		}
 
@@ -326,13 +326,13 @@ void Inventory::menu() {
 			case Common::KEYCODE_PAGEUP:
 				if (_G(spieler).InventY > 0)
 					--_G(spieler).InventY;
-				_G(kbinfo).key_code = '\0';
+				_G(kbinfo)._keyCode = '\0';
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
 				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
 					++_G(spieler).InventY;
-				_G(kbinfo).key_code = '\0';
+				_G(kbinfo)._keyCode = '\0';
 				break;
 
 			default:
@@ -423,11 +423,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	while (!endLoop) {
 		int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 
-		if (_G(minfo).button) {
-			if (_G(minfo).button == 2) {
+		if (_G(minfo)._button) {
+			if (_G(minfo)._button == 2) {
 				if (!mouseFl)
 					_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
-			} else if (_G(minfo).button == 1) {
+			} else if (_G(minfo)._button == 1) {
 				if (!mouseFl) {
 					switch (rect) {
 					case 0:
@@ -665,7 +665,7 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(spieler)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 	_G(spieler).scrollx = scrollx;
 	_G(spieler).scrolly = scrolly;
 	setupScreen(NO_SETUP);

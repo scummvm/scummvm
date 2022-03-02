@@ -69,17 +69,17 @@ void Room74::entry(int16 eib_nr) {
 void Room74::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 74)
+	if (_G(spieler)._personRoomNr[P_HOWARD] != 74)
 		return;
 
 	switch (eib_nr) {
 	case 112:
 	case 113:
-		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 72;
+		_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler)._personRoomNr[P_NICHELLE] = 72;
 		break;
 
 	case 114:
-		_G(spieler).PersonRoomNr[P_HOWARD] = _G(spieler).PersonRoomNr[P_NICHELLE] = 71;
+		_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler)._personRoomNr[P_NICHELLE] = 71;
 		break;
 
 	default:
@@ -95,10 +95,10 @@ int Room74::proc1() {
 		retVal = 1;
 		_G(spieler).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(1, 1, ANI_FRONT);
 		setPersonPos(272, 116, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(det)->startDetail(0, 255, false);
 		_G(spieler).flags29_1 = true;
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);

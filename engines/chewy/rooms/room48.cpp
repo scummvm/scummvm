@@ -147,15 +147,15 @@ void Room48::setup_func() {
 
 							for (int16 i = 0; i < MAX_PERSON; i++) {
 								if (_G(spieler).R48TaxiPerson[i]) {
-									_G(spieler).PersonHide[i] = false;
+									_G(spieler)._personHide[i] = false;
 									_G(spieler).R48TaxiPerson[i] = false;
 								}
 							}
 
-							if (_G(spieler).PersonRoomNr[P_HOWARD] == 48) {
-								_G(spieler).PersonRoomNr[P_HOWARD] = r_nr;
+							if (_G(spieler)._personRoomNr[P_HOWARD] == 48) {
+								_G(spieler)._personRoomNr[P_HOWARD] = r_nr;
 							}
-							switch_room(r_nr);
+							switchRoom(r_nr);
 						}
 					}
 				}

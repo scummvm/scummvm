@@ -45,7 +45,7 @@ void Room28::entry(int16 eib_nr) {
 		_G(det)->showStaticSpr(7);
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 28) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
 		hideCur();
@@ -53,7 +53,7 @@ void Room28::entry(int16 eib_nr) {
 
 		if (_G(spieler).R40Wettbewerb) {
 			_G(spieler).scrollx = 320;
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			haendler();
 			_G(spieler).R40Wettbewerb = false;
 		} else {
@@ -143,7 +143,7 @@ void Room28::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	hideCur();
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
 		_G(SetUpScreenFunc) = nullptr;
 		if (!_G(spieler).R28ExitTown) {
 			startAadWait(178);
@@ -152,7 +152,7 @@ void Room28::xit(int16 eib_nr) {
 
 		_G(flags).ExitMov = false;
 		autoMove(6, P_HOWARD);
-		_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+		_G(spieler)._personRoomNr[P_HOWARD] = 40;
 	}
 
 	showCur();
@@ -167,7 +167,7 @@ void Room28::haendler() {
 	hideCur();
 	_G(SetUpScreenFunc) = nullptr;
 	_G(spieler).R28ChewyPump = true;
-	del_inventar(K_MASKE_INV);
+	delInventory(K_MASKE_INV);
 	_G(atds)->set_ats_str(209, 1, ATS_DATA);
 	_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
 	load_chewy_taf(CHEWY_PUMPKIN);
@@ -239,15 +239,15 @@ void Room28::use_surimy() {
 void Room28::set_pump() {
 	hideCur();
 
-	if (_G(spieler).PersonRoomNr[P_CHEWY] == 28) {
+	if (_G(spieler)._personRoomNr[P_CHEWY] == 28) {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
 			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
 				autoMove(5, P_CHEWY);
 
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
-			del_inventar(K_MASKE_INV);
+			delInventory(K_MASKE_INV);
 			_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 
 			if (_G(spieler).R28PumpTxt1 < 3) {
@@ -256,7 +256,7 @@ void Room28::set_pump() {
 			}
 
 			startSetailWait(tmp, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 
 			load_chewy_taf(CHEWY_PUMPKIN);
 			_G(spieler).R28ChewyPump = true;
@@ -267,7 +267,7 @@ void Room28::set_pump() {
 				_G(atds)->set_ats_str(209, 1, ATS_DATA);
 			}
 
-			if (_G(spieler).PersonRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
+			if (_G(spieler)._personRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
 				stopPerson(P_HOWARD);
 				_G(SetUpScreenFunc) = nullptr;
 				g_engine->_sound->waitForSpeechToFinish();
@@ -293,7 +293,7 @@ void Room28::get_pump() {
 
 		stopPerson(P_CHEWY);
 		_G(spieler).R28ChewyPump = false;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		startSetailWait(tmp, 1, ANI_BACK);
@@ -301,7 +301,7 @@ void Room28::get_pump() {
 		invent_2_slot(K_MASKE_INV);
 		_G(atds)->set_ats_str(209, 0, ATS_DATA);
 		_G(spieler).room_e_obj[69].Attribut = 255;
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		load_chewy_taf(CHEWY_NORMAL);
 
 		if (_G(spieler).R28PumpTxt1 < 3) {

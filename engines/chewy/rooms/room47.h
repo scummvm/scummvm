@@ -32,7 +32,7 @@ private:
 public:
 	static void entry();
 	static void xit();
-	static int16 use_knopf(int16 txt_nr);
+	static int16 use_button(int16 txt_nr);
 };
 
 } // namespace Rooms

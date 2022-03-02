@@ -94,7 +94,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 		// Clear any pending keys
 		_G(in)->_hotkey = 0;
-		_G(kbinfo).key_code = '\0';
+		_G(kbinfo)._keyCode = '\0';
 		_G(kbinfo).scan_code = 0;
 	}
 
@@ -179,7 +179,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		case 171:
 		case 266:
 		case 370:
-			_G(atds)->stop_aad();
+			_G(atds)->stopAad();
 			break;
 		default:
 			break;

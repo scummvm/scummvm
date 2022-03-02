@@ -339,7 +339,7 @@ void clear_prog_ani();
 
 void set_ani_screen();
 
-void del_inventar(int16 nr);
+void delInventory(int16 nr);
 
 bool is_cur_inventar(int16 nr);
 

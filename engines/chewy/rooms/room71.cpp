@@ -83,17 +83,17 @@ void Room71::entry(int16 eib_nr) {
 
 void Room71::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 71)
+	if (_G(spieler)._personRoomNr[P_HOWARD] != 71)
 		return;
 
 	switch (eib_nr) {
 	case 105:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 74;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 74;
+		_G(spieler)._personRoomNr[P_HOWARD] = 74;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 74;
 		break;
 	case 106:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 73;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 73;
+		_G(spieler)._personRoomNr[P_HOWARD] = 73;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 73;
 	default:
 		break;
 	}
@@ -179,9 +179,9 @@ int Room71::proc1() {
 				_G(spieler).R71Val2 = 1;
 		}
 	} else {
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		proc5(3);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 	}
 
 	if (!_G(spieler).R71LeopardVined)
@@ -201,9 +201,9 @@ void Room71::proc2() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = true;
 	auto_scroll(284, 0);
-	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(spieler).PersonHide[P_NICHELLE] = true;
-	_G(spieler).PersonHide[P_HOWARD] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_NICHELLE] = true;
+	_G(spieler)._personHide[P_HOWARD] = true;
 	proc5(5);
 	_G(det)->hideStaticSpr(2);
 	_G(det)->startDetail(5, 255, false);
@@ -215,9 +215,9 @@ void Room71::proc2() {
 	_G(det)->showStaticSpr(8);
 	_G(atds)->set_steuer_bit(442, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->set_steuer_bit(446, ATS_AKTIV_BIT, ATS_DATA);
-	_G(spieler).PersonHide[P_HOWARD] = false;
-	_G(spieler).PersonHide[P_NICHELLE] = false;
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_HOWARD] = false;
+	_G(spieler)._personHide[P_NICHELLE] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(spieler).R71LeopardVined = true;
 	_G(flags).NoScroll = false;
 	_G(menu_item) = CUR_WALK;
@@ -230,11 +230,11 @@ void Room71::proc3() {
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(510, 34, P_NICHELLE, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(spieler).PersonHide[P_NICHELLE] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_NICHELLE] = true;
 	proc5(6);
-	_G(spieler).PersonHide[P_NICHELLE] = false;
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_NICHELLE] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 }
 
 void Room71::proc4() {
@@ -242,11 +242,11 @@ void Room71::proc4() {
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(518, 35, P_HOWARD, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).PersonHide[P_CHEWY] = true;
-	_G(spieler).PersonHide[P_HOWARD] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_HOWARD] = true;
 	proc5(4);
-	_G(spieler).PersonHide[P_HOWARD] = false;
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_HOWARD] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 }
 
 void Room71::proc5(int16 val) {
@@ -291,11 +291,11 @@ void Room71::proc7() {
 	goAutoXy(323, 28, P_NICHELLE, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(200, 0);
-	_G(spieler).PersonHide[P_NICHELLE] = true;
+	_G(spieler)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(7, 255, false);
 	startAadWait(624);
 	_G(det)->stop_detail(7);
-	_G(spieler).PersonHide[P_NICHELLE] = false;
+	_G(spieler)._personHide[P_NICHELLE] = false;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = false;
 	startAadWait(432);
