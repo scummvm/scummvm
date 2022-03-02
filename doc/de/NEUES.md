@@ -74,6 +74,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      wenn die Spieldateien über eine minimale Installation bereitgestellt werden.
    - Fehler in der Darstellung der Benutzeroberfläche in Serrated Scalpel behoben.
 
+ Titanic:
+   - Das Haus im Sternenfeld-Puzzle wird nun korrekt dargestellt.
+
  TwinE:
    - Fehler in der Kollisionserkennung behoben, der dazu führt, dass das Spiel nicht beendet werden kann,
      da sich der Panzer in Szene 63 nicht mehr bewegen kann.
