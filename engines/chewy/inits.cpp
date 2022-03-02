@@ -63,10 +63,10 @@ void standard_init() {
 	_G(curblk).ysize = 16;
 
 	// WORKAROUND: Moved from init_load because the original
-	// uses _G(curtaf)->image below before _G(curtaf) was initialized
+	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
 	_G(curtaf) = _G(mem)->taf_adr(CURSOR);
 
-	_G(curblk).sprite = _G(curtaf)->image;
+	_G(curblk).sprite = _G(curtaf)->_image;
 	_G(curblk).cur_back = _G(cur_back);
 	_G(curblk).no_back = true;
 	_G(curani)._start = 0;

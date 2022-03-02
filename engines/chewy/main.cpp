@@ -103,7 +103,7 @@ void free_buffers() {
 void cursorChoice(int16 nr) {
 	int16 ok = true;
 	if (nr != CUR_USER) {
-		_G(curblk).sprite = _G(curtaf)->image;
+		_G(curblk).sprite = _G(curtaf)->_image;
 		_G(curani)._delay = (1 + _G(spieler).DelaySpeed) * 5;
 	}
 	switch (nr) {
@@ -614,7 +614,7 @@ void setupScreen(SetupScreenMode mode) {
 			_G(cur)->plot_cur();
 
 			if ((_G(spieler).inv_cur) && (_G(flags).CursorStatus == true))
-				_G(out)->sprite_set(_G(curtaf)->image[_G(pfeil_ani) + 32], _G(minfo).x, _G(minfo).y,
+				_G(out)->sprite_set(_G(curtaf)->_image[_G(pfeil_ani) + 32], _G(minfo).x, _G(minfo).y,
 				                _G(scr_width));
 			if (_G(pfeil_delay) == 0) {
 				_G(pfeil_delay) = _G(spieler).DelaySpeed;
@@ -1464,21 +1464,21 @@ int16 is_mouse_person(int16 x, int16 y) {
 				if (!_G(spz_ani)[i]) {
 					switch (i) {
 					case P_CHEWY:
-						xy = (int16 *)_G(chewy)->image[_G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr]];
+						xy = (int16 *)_G(chewy)->_image[_G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr]];
 						break;
 
 					case P_HOWARD:
 					case P_NICHELLE:
 						if (_G(spieler).PersonRoomNr[i] != _G(spieler).PersonRoomNr[P_CHEWY])
 							check = false;
-						xy = (int16 *)_G(PersonTaf)[i]->image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
+						xy = (int16 *)_G(PersonTaf)[i]->_image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
 						break;
 
 					default:
 						break;
 					}
 				} else
-					xy = (int16 *)_G(spz_tinfo)->image[_G(spz_spr_nr)[_G(spieler_vector)[i].PhNr]];
+					xy = (int16 *)_G(spz_tinfo)->_image[_G(spz_spr_nr)[_G(spieler_vector)[i].PhNr]];
 				if (check) {
 					if (x + _G(spieler).scrollx >= _G(spieler_vector)[i].Xypos[0] &&
 					        x + _G(spieler).scrollx <= _G(spieler_vector)[i].Xypos[0] + xy[0] + _G(spieler_vector)[i].Xzoom &&

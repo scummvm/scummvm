@@ -57,7 +57,7 @@ void plot_main_menu() {
 				deltaX = -40;
 		}
 
-		_G(out)->scale_set(_G(menutaf)->image[i],
+		_G(out)->scale_set(_G(menutaf)->_image[i],
 			MENU_X + deltaX + korrektur[i * 2],
 		    _G(spieler).MainMenuY + korrektur[i * 2 + 1],
 			zoomx, zoomy, 0);
@@ -74,7 +74,7 @@ void plot_main_menu() {
 			deltaX = 40;
 
 		int img = IMAGES[_G(menu_item)];
-		_G(out)->scale_set(_G(menutaf)->image[img],
+		_G(out)->scale_set(_G(menutaf)->_image[img],
 		    MENU_X + deltaX + korrektur[img * 2] - 5,
 		    _G(spieler).MainMenuY + korrektur[img * 2 + 1] - 10,
 			zoomx, zoomy, 0);
@@ -149,14 +149,14 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 	xy[3][1] = y + 16 * (yanz - 1);
 
 	for (i = 0; i < 4; i++)
-		_G(out)->sprite_set(_G(menutaf)->image[(int16)sprite_eckenr[i]],
+		_G(out)->sprite_set(_G(menutaf)->_image[(int16)sprite_eckenr[i]],
 		                 xy[i][0], xy[i][1], _G(scr_width));
 
 	int16 s_nr = BAU_MENU_SEITE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
 		for (i = 0; i < yanz - 2; i++) {
-			_G(out)->sprite_set(_G(menutaf)->image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
+			_G(out)->sprite_set(_G(menutaf)->_image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
 		}
 		++s_nr;
 	}
@@ -166,7 +166,7 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		x = xy[j * 2][0] + 16;
 		if ((!mode) || (mode == 1 && j == 1)) {
 			for (i = 0; i < xanz - 2; i++) {
-				_G(out)->sprite_set(_G(menutaf)->image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
+				_G(out)->sprite_set(_G(menutaf)->_image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
@@ -191,15 +191,15 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 		x = xy[0][0] + 16;
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
-				_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN], x + i * 16, xy[0][1], _G(scr_width));
+				_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN], x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
-		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
+		_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
 		for (i = 0; i < mitte; i++)
-			_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_M], x + i * 16, xy[0][1], _G(scr_width));
-		_G(out)->sprite_set(_G(menutaf)->image[BAU_MENU_OBEN_R], x + i * 16, xy[0][1], _G(scr_width));
+			_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_M], x + i * 16, xy[0][1], _G(scr_width));
+		_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_R], x + i * 16, xy[0][1], _G(scr_width));
 	}
 
 	_G(out)->box_fill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xanz - 2) * 16, xy[0][1] + 16 + (yanz - 2) * 16, col);

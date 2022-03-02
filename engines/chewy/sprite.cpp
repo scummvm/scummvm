@@ -159,7 +159,7 @@ void spriteEngine() {
 					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->_zoomFactor,
 					          (int16)_G(room)->_roomInfo->_zoomFactor, &_G(spieler_vector)[P_CHEWY]);
 
-					_G(out)->scale_set(_G(chewy)->image[sprNr], x, y,
+					_G(out)->scale_set(_G(chewy)->_image[sprNr], x, y,
 					                _G(spieler_vector)[P_CHEWY].Xzoom,
 					                _G(spieler_vector)[P_CHEWY].Yzoom,
 					                _G(scr_width));
@@ -174,7 +174,7 @@ void spriteEngine() {
 					          (int16)_G(room)->_roomInfo->_zoomFactor,
 					          &_G(spieler_vector)[P_CHEWY]);
 
-					_G(out)->scale_set(_G(spz_tinfo)->image[sprNr], x, y,
+					_G(out)->scale_set(_G(spz_tinfo)->_image[sprNr], x, y,
 					                _G(spieler_vector)[P_CHEWY].Xzoom,
 					                _G(spieler_vector)[P_CHEWY].Yzoom,
 					                _G(scr_width));
@@ -198,7 +198,7 @@ void spriteEngine() {
 				x = _G(spieler_mi)[personNr].XyzStart[0] + ts_info->_correction[sprNr * 2] - _G(spieler).scrollx;
 				y = _G(spieler_mi)[personNr].XyzStart[1] + ts_info->_correction[sprNr * 2 + 1] - _G(spieler).scrolly;
 				calc_zoom(_G(spieler_mi)[personNr].XyzStart[1], _G(spieler).ZoomXy[personNr][0],_G(spieler).ZoomXy[personNr][1], &_G(spieler_vector)[personNr]);
-				_G(out)->scale_set(ts_info->image[sprNr], x, y, _G(spieler_vector)[personNr].Xzoom, _G(spieler_vector)[personNr].Yzoom, _G(scr_width));
+				_G(out)->scale_set(ts_info->_image[sprNr], x, y, _G(spieler_vector)[personNr].Xzoom, _G(spieler_vector)[personNr].Yzoom, _G(scr_width));
 			}
 			}
 			break;
