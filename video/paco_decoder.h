@@ -64,24 +64,24 @@ protected:
 			bool hasAudio, uint16 width, uint16 height);
 		~PacoVideoTrack();
 
-		bool endOfTrack() const;
-		virtual bool isRewindable() const { return false; }
+		bool endOfTrack() const override;
+		virtual bool isRewindable() const override { return false; }
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		virtual const Graphics::Surface *decodeNextFrame();
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		virtual const Graphics::Surface *decodeNextFrame() override;
 		virtual void handleFrame(uint32 chunkSize);
 		void handlePalette();
 		const byte *getPalette() const override;
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-		Common::Rational getFrameRate() const { return Common::Rational(_frameRate, 1); }
+		Common::Rational getFrameRate() const override { return Common::Rational(_frameRate, 1); }
 
 
 	protected:
