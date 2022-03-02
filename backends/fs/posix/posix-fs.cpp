@@ -271,6 +271,12 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
 		return makeNode("/");   // return a virtual root for a list of drives
+#elif defined(ANDROID_PLAIN_PORT)
+	Common::String pathCopy = _path;
+	pathCopy.trim();
+	if (pathCopy.empty()) {
+		return makeNode("/");   // return a virtual root for a list of drives
+	}
 #endif
 
 	const char *start = _path.c_str();
