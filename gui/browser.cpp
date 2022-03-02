@@ -116,7 +116,7 @@ void BrowserDialog::open() {
 	}
 	_node = Common::FSNode(blPath);
 #else
-	if (ConfMan.hasKey("browser_lastpath")
+	if (ConfMan.hasKey("browser_lastpath"))
 		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
 #endif
 
