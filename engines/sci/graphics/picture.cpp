@@ -1052,10 +1052,11 @@ static const byte vectorPatternTextureOffset[128] = {
 	0x06, 0x6f, 0xc6, 0x4a, 0x75, 0xa3, 0x97, 0xe1
 };
 
-void GfxPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte control) {
+void GfxPicture::vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	int y, x;
 
+	box.clip(clipBox);
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			_screen->vectorPutPixel(x, y, flag, color, prio, control);
@@ -1063,7 +1064,7 @@ void GfxPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte 
 	}
 }
 
-void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
+void GfxPicture::vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 	int y, x;
@@ -1071,14 +1072,16 @@ void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte pri
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (*textureData) {
-				_screen->vectorPutPixel(x, y, flag, color, prio, control);
+				if (clipBox.contains(x, y)) {
+					_screen->vectorPutPixel(x, y, flag, color, prio, control);
+				}
 			}
 			textureData++;
 		}
 	}
 }
 
-void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
+void GfxPicture::vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
@@ -1094,7 +1097,9 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, by
 				bitNo = 0;
 			}
 			if (bitmap & 1) {
-				_screen->vectorPutPixel(x, y, flag, color, prio, control);
+				if (clipBox.contains(x, y)) {
+					_screen->vectorPutPixel(x, y, flag, color, prio, control);
+				}
 			}
 			bitNo++;
 			bitmap >>= 1;
@@ -1102,7 +1107,7 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, by
 	}
 }
 
-void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
+void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
@@ -1120,7 +1125,9 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 			}
 			if (bitmap & 1) {
 				if (*textureData) {
-					_screen->vectorPutPixel(x, y, flag, color, prio, control);
+					if (clipBox.contains(x, y)) {
+						_screen->vectorPutPixel(x, y, flag, color, prio, control);
+					}
 				}
 				textureData++;
 			}
@@ -1132,34 +1139,49 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 
 void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
 	byte size = code & SCI_PATTERN_CODE_PENSIZE;
-	Common::Rect rect;
 
-	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
-	y -= size; if (y < 0) y = 0;
-	x -= size; if (x < 0) x = 0;
+	// The vector box is centered on x,y and one pixel wider than high
+	Common::Rect box(x - size, y - size, x + size + 2, y + size + 1);
+	_ports->offsetRect(box);
 
-	rect.top = y; rect.left = x;
-	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
-	_ports->offsetRect(rect);
-	rect.clip(_screen->getScriptWidth(), _screen->getScriptHeight());
+	// Adjust the vector box's position if it goes off the screen.
+	// Although, if it goes off the right edge, leave the last column
+	// beyond the screen edge even though it won't get drawn.
+	// We also can't just clip the box to the screen here, because the
+	// texture and circle data can only be properly consumed by evaluating
+	// every pixel during drawing, even the pixels that are then skipped
+	// for being out of bounds. (Example: SQ3 picture 2)
+	if (box.left < 0) {
+		box.moveTo(0, box.top);
+	} else if (box.right >= _screen->getScriptWidth()) {
+		box.moveTo(_screen->getScriptWidth() - box.width() + 1, box.top);
+	}
+	if (box.top < 0) {
+		box.moveTo(box.left, 0);
+	} else if (box.bottom >= _screen->getScriptHeight()) {
+		box.moveTo(box.left, _screen->getScriptHeight() - box.height());
+	}
+	_screen->vectorAdjustCoordinate(&box.left, &box.top);
+	_screen->vectorAdjustCoordinate(&box.right, &box.bottom);
 
-	_screen->vectorAdjustCoordinate(&rect.left, &rect.top);
-	_screen->vectorAdjustCoordinate(&rect.right, &rect.bottom);
+	// Create a box for the pattern drawing functions to clip to
+	Common::Rect clipBox(0, 0, _screen->getScriptWidth(), _screen->getScriptHeight());
+	_screen->vectorAdjustCoordinate(&clipBox.right, &clipBox.bottom);
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
 		// Rectangle
 		if (code & SCI_PATTERN_CODE_USE_TEXTURE) {
-			vectorPatternTexturedBox(rect, color, priority, control, texture);
+			vectorPatternTexturedBox(box, clipBox, color, priority, control, texture);
 		} else {
-			vectorPatternBox(rect, color, priority, control);
+			vectorPatternBox(box, clipBox, color, priority, control);
 		}
 
 	} else {
 		// Circle
 		if (code & SCI_PATTERN_CODE_USE_TEXTURE) {
-			vectorPatternTexturedCircle(rect, size, color, priority, control, texture);
+			vectorPatternTexturedCircle(box, clipBox, size, color, priority, control, texture);
 		} else {
-			vectorPatternCircle(rect, size, color, priority, control);
+			vectorPatternCircle(box, clipBox, size, color, priority, control);
 		}
 	}
 }
