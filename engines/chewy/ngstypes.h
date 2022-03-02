@@ -53,61 +53,6 @@ struct NewPhead {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct Button {
-	int16 typ = 0;
-	int16 enable = 0;
-	int16 x1 = 0;
-	int16 y1 = 0;
-	int16 x2 = 0;
-	int16 y2 = 0;
-	int16 spritenr1 = 0;
-	int16 spritenr2 = 0;
-	char *inhalt1 = nullptr;
-	int16 storlen = 0;
-	int16 viewspr3 = 0;
-	int16 textptr = 0;
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() {
-		return 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 2 + 2 + 2;
-	}
-};
-
-struct Menu {
-	int16 nr = 0;
-	int16 disp = 0;
-	int16 typ = 0;
-	int16 x = 0;
-	int16 y = 0;
-	int16 width = 0;
-	int16 height = 0;
-	int16 anzknoepfe = 0;
-	Button *knopfliste[MAXKNOPF] = { nullptr };
-	int16 spritenr = 0;
-	char *sprite = nullptr;
-	char *spritesave = nullptr;
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() {
-		return 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 +
-			4 * MAXKNOPF + 2 + 4 + 4;
-	}
-};
-
-struct Dialogue {
-	char id[4] = { 0 };
-	int16 anzmenue = 0;
-	Menu *menueliste[MAXMENUE] = { nullptr };
-	char menuetaf[D_GR] = { '\0' };
-	char knopftaf[D_GR] = { '\0' };
-
-	bool load(Common::SeekableReadStream *src);
-	bool save(Common::WriteStream *dest);
-	static constexpr int SIZE() {
-		return 4 + 2 + 4 * MAXMENUE + D_GR + D_GR;
-	}
-};
-
 struct MouseInfo {
 	int16 x = 0;
 	int16 y = 0;
@@ -199,16 +144,6 @@ struct CurAni {
 	uint8 _start = 0;
 	uint8 _end = 0;
 	int16 _delay = 0;
-};
-
-struct FCurBlk {
-	int16 page_off_x = 0;
-	int16 page_off_y = 0;
-	uint32 cur_back = 0;
-	int16 xsize = 0;
-	int16 ysize = 0;
-	uint32 *sprite = nullptr;
-	bool no_back = false;
 };
 
 struct FlicHead {
