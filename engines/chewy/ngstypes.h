@@ -33,16 +33,16 @@ namespace Chewy {
 #define MAXKNOPF 400
 
 struct TafInfo {
-	int16 anzahl = 0;
-	byte *palette = nullptr;
+	int16 _count = 0;
+	byte *_palette = nullptr;
 	int16 *_correction = nullptr;
-	byte **image = nullptr;
+	byte **_image = nullptr;
 };
 
 struct TafSeqInfo {
-	int16 anzahl = 0;
+	int16 _count = 0;
 	int16 *_correction = nullptr;
-	byte **image = nullptr;
+	byte **_image = nullptr;
 };
 
 struct NewPhead {
@@ -51,19 +51,6 @@ struct NewPhead {
 	uint16 PoolAnz = 0;
 
 	bool load(Common::SeekableReadStream *src);
-};
-
-struct TffHeader {
-	char id[4] = { 0 };
-	uint32 size = 0;
-	int16 count = 0;
-	int16 first = 0;
-	int16 last = 0;
-	int16 width = 0;
-	int16 height = 0;
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() { return 18; }
 };
 
 struct Button {

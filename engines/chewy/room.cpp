@@ -187,7 +187,7 @@ void Room::load_room(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		strcat(tmp_str, _roomInfo->TafName);
 		_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
-		Rb->DetImage = Rb->Fti->image;
+		Rb->DetImage = Rb->Fti->_image;
 		Rb->DetKorrekt = Rb->Fti->_correction;
 	}
 	_G(obj)->calc_all_static_detail();

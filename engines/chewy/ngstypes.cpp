@@ -31,18 +31,6 @@ bool NewPhead::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool TffHeader::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	size = src->readUint32LE();
-	count = src->readSint16LE();
-	first = src->readSint16LE();
-	last = src->readSint16LE();
-	width = src->readSint16LE();
-	height = src->readSint16LE();
-
-	return true;
-}
-
 bool Button::load(Common::SeekableReadStream *src) {
 	typ = src->readSint16LE();
 	enable = src->readSint16LE();

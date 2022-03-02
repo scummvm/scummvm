@@ -98,12 +98,12 @@ void Inventory::plot_menu() {
 			y = 3;
 		else
 			y = 0;
-		_G(out)->sprite_set(_G(curtaf)->image[_G(ani_count)[i]],
+		_G(out)->sprite_set(_G(curtaf)->_image[_G(ani_count)[i]],
 			WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, _G(scr_width));
 	}
 
 	for (int16 i = 0; i < 2; i++) {
-		_G(out)->sprite_set(_G(menutaf)->image[PFEIL_UP + i],
+		_G(out)->sprite_set(_G(menutaf)->_image[PFEIL_UP + i],
 			WIN_INF_X + 200 + i * 40, WIN_INF_Y + 12, _G(scr_width));
 	}
 
