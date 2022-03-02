@@ -214,8 +214,11 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 		walk_area_granularity[dd] /= walk_area_times[dd];
 		if (walk_area_granularity[dd] <= 4)
 			walk_area_granularity[dd] = 2;
+		// NB: Since MAX_GRANULARITY is 3, the following code is redundant causing compiler warnings
+#if 0
 		else if (walk_area_granularity[dd] <= 15)
 			walk_area_granularity[dd] = 3;
+#endif
 		else
 			walk_area_granularity[dd] = MAX_GRANULARITY;
 
