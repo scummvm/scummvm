@@ -105,11 +105,16 @@ fixed fixdiv(fixed x, fixed y) {
 }
 
 int fixfloor(fixed x) {
+	// FIXME: GCC warning "this condition has identical branches [-Wduplicated-branches]" on this code i.e. both branches are functionally identical. Remove?
+#if 0
 	/* (x >> 16) is not portable */
 	if (x >= 0)
 		return (x >> 16);
 	else
 		return ~((~x) >> 16);
+#else
+	return (x >> 16);
+#endif
 }
 
 
