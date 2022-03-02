@@ -2710,6 +2710,12 @@ void LB::b_xPlayAnim(int nargs){
 	// save the current palette
 	byte origPalette[256 * 3];
 	uint16 origCount = g_director->getPaletteColorCount();
+
+	if (origCount > 255) {
+		warning("b_xPlayAnim: too big palette, %d > 256", origCount);
+		origCount = 255;
+	}
+
 	memcpy(origPalette, g_director->getPalette(), origCount * 3);
 
 	Common::Event event;
