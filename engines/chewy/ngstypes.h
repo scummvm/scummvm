@@ -28,10 +28,6 @@
 
 namespace Chewy {
 
-#define D_GR 16
-#define MAXMENUE 50
-#define MAXKNOPF 400
-
 struct TafInfo {
 	int16 _count = 0;
 	byte *_palette = nullptr;
@@ -56,11 +52,11 @@ struct NewPhead {
 struct MouseInfo {
 	int16 x = 0;
 	int16 y = 0;
-	int16 button = 0;
+	int16 _button = 0;
 };
 
 struct KbdInfo {
-	char key_code = '\0';
+	char _keyCode = '\0';
 	int scan_code = Common::KEYCODE_INVALID;
 };
 

@@ -39,9 +39,9 @@ void Room45::entry(int16 eib_nr) {
 	_G(spieler).ZoomXy[P_HOWARD][0] = 80;
 	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 46) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 46) {
 		_G(spieler_mi)[P_HOWARD].Mode = true;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 45;
+		_G(spieler)._personRoomNr[P_HOWARD] = 45;
 	}
 
 	_G(spieler_mi)[P_HOWARD].Mode = true;
@@ -79,11 +79,11 @@ void Room45::entry(int16 eib_nr) {
 void Room45::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 45) {
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 
 		if (eib_nr == 87) {
-			_G(spieler).PersonRoomNr[P_HOWARD] = 40;
+			_G(spieler)._personRoomNr[P_HOWARD] = 40;
 		}
 	}
 
@@ -141,7 +141,7 @@ void Room45::setup_func() {
 			--_G(r45_delay);
 		}
 
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
 			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
@@ -183,7 +183,7 @@ int16 Room45::use_taxi() {
 		}
 	} else if (is_cur_inventar(RING_INV)) {
 		action_ret = true;
-		del_inventar(RING_INV);
+		delInventory(RING_INV);
 		talk_taxi(256);
 		_G(spieler).R45TaxiOk = true;
 		taxi_mov();
@@ -215,14 +215,14 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 1);
 	_G(det)->showStaticSpr(11);
 	autoMove(3, P_CHEWY);
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 45) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 45) {
 		goAutoXy(93, 127, P_HOWARD, ANI_WAIT);
-		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler)._personHide[P_HOWARD] = true;
 		_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 48;
+		_G(spieler)._personRoomNr[P_HOWARD] = 48;
 	}
 
 	_G(det)->hideStaticSpr(11);
@@ -231,7 +231,7 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 0);
 	startSetailWait(15, 1, ANI_FRONT);
 	g_engine->_sound->stopSound(0);
-	switch_room(48);
+	switchRoom(48);
 }
 
 int16 Room45::use_boy() {

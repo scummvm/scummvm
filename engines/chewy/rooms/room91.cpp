@@ -62,7 +62,7 @@ void Room91::entry() {
 		_G(spieler).SVal3 = 0;
 		_G(spieler).flags34_4 = true;
 		startAadWait(502);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(det)->startDetail(0, 255, false);
 
 		for (int i = 0; i < 3; ++i) {
@@ -80,7 +80,7 @@ void Room91::xit(int16 eib_nr) {
 	_G(spieler).scrollx = 0;
 
 	if (eib_nr == 136)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 90;
+		_G(spieler)._personRoomNr[P_HOWARD] = 90;
 
 	_G(spieler).flags34_4 = false;
 	_G(flags).NoScroll = false;
@@ -125,18 +125,18 @@ void Room91::setup_func() {
 		showCur();
 		if (_G(spieler).SVal3 == 4) {
 			_G(det)->stop_detail(0);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			hideCur();
 			autoMove(1, P_CHEWY);
 			stop_spz();
 			startAadWait(505);
-			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler)._personHide[P_HOWARD] = true;
 			startSetailWait(9, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_HOWARD] = false;
-			_G(spieler).PersonRoomNr[P_HOWARD] = 50;
+			_G(spieler)._personHide[P_HOWARD] = false;
+			_G(spieler)._personRoomNr[P_HOWARD] = 50;
 			_G(spieler).flags34_4 = false;
 			showCur();
-			switch_room(50);
+			switchRoom(50);
 		}
 	}
 }

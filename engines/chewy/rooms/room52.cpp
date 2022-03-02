@@ -57,8 +57,8 @@ void Room52::entry() {
 }
 
 void Room52::xit() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 51;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 52) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 51;
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
@@ -77,7 +77,7 @@ int16 Room52::use_hot_dog() {
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(0);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		autoMove(4, P_CHEWY);
 		_G(spieler).R52HotDogOk = true;
 		plot_armee(20);
@@ -91,7 +91,7 @@ int16 Room52::use_hot_dog() {
 	} else if (is_cur_inventar(KILLER_INV)) {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(7, 1, ANI_FRONT);
 		g_engine->_sound->playSound(7, 0);
 		g_engine->_sound->playSound(7);
@@ -107,7 +107,7 @@ int16 Room52::use_hot_dog() {
 		_G(det)->stop_detail(8);
 		startSetailWait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(341, ATS_AKTIV_BIT, ATS_DATA);
 		startAadWait(303);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
@@ -136,7 +136,7 @@ void Room52::kaker_platt() {
 }
 
 void Room52::setup_func() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 52) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
 		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
 		goAutoXy(1, y, P_HOWARD, ANI_GO);

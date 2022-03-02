@@ -42,7 +42,7 @@ void Room47::xit() {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 }
 
-int16 Room47::use_knopf(int16 txt_nr) {
+int16 Room47::use_button(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
 

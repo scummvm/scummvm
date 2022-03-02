@@ -25,8 +25,6 @@
 namespace Chewy {
 namespace Rooms {
 
-#include "chewy/ngsdefs.h"
-
 /**
  * Prison Cell - Starting room
  */
@@ -62,12 +60,12 @@ private:
 	static void trapDoorOpen();
 	static void trapDoorClose();
 
-	static void calcEyeClick(int16 ani_nr);
+	static void calcEyeClick(int16 aniNr);
 
-	static void calcPillowClick(int16 ani_nr);
+	static void calcPillowClick(int16 aniNr);
 public:
 	static void entry();
-	static bool timer(int16 t_nr, int16 ani_nr);
+	static bool timer(int16 timerNr, int16 aniNr);
 
 	static void eyeAnim();
 	static void feederAni();

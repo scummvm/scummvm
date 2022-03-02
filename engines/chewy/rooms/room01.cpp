@@ -31,7 +31,7 @@ namespace Rooms {
 void Room1::gottenCard() {
 	_G(det)->hideStaticSpr(2);
 	startSetailWait(4, 1, ANI_FRONT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(atds)->del_steuer_bit(7, ATS_COUNT_BIT, ATS_DATA);
 	int16 tmp;
 	_G(atds)->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATA);
@@ -44,7 +44,7 @@ void Room1::gedAction(int index) {
 		bool flag = false;
 		if (_G(spieler).AkInvent == KABEL_INV) {
 			flag = true;
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 		} else if (_G(obj)->checkInventory(KABEL_INV)) {
 			flag = true;
 			_G(obj)->del_obj_use(KABEL_INV);

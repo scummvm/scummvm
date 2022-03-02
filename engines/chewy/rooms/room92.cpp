@@ -45,7 +45,7 @@ void Room92::entry() {
 		_G(out)->cls();
 		_G(spieler).scrollx = oldScrollX;
 		show_person();
-		switch_room(_G(spieler).SVal1);
+		switchRoom(_G(spieler).SVal1);
 		break;
 	case 488:
 		_G(flags).StaticUseTxt = true;
@@ -65,23 +65,23 @@ void Room92::entry() {
 		flic_cut(FCUT_103);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		_G(spieler).PersonRoomNr[P_HOWARD] = 46;
+		_G(spieler)._personRoomNr[P_HOWARD] = 46;
 		_G(spieler).flags33_8 = true;
 		show_person();
-		switch_room(46);
+		switchRoom(46);
 		break;
 	case 538:
 		_G(flags).StaticUseTxt = true;
 		flic_cut(FCUT_106);
 		show_person();
-		_G(spieler).PersonRoomNr[P_HOWARD] = 94;
+		_G(spieler)._personRoomNr[P_HOWARD] = 94;
 		_G(spieler).flags35_8 = true;
-		switch_room(94);
+		switchRoom(94);
 		break;
 	default:
 		show_person();
 		_G(spieler).scrollx = oldScrollX;
-		switch_room(_G(spieler).SVal1);
+		switchRoom(_G(spieler).SVal1);
 		break;
 	}
 	_G(spieler).SVal2 = 5000;

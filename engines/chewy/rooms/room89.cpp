@@ -57,7 +57,7 @@ void Room89::entry() {
 		_G(spieler).flags35_2 = false;
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 537;
-		switch_room(92);
+		switchRoom(92);
 		startAadWait(490);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -69,7 +69,7 @@ void Room89::entry() {
 		flic_cut(FCUT_118);
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 538;
-		switch_room(92);
+		switchRoom(92);
 		showCur();
 	} else if (_G(spieler).flags35_4) {
 		// End sequence
@@ -175,7 +175,7 @@ int Room89::proc2() {
 	_G(spieler).flags33_2 = true;
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 489;
-	switch_room(92);
+	switchRoom(92);
 	startAadWait(490);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
@@ -185,7 +185,7 @@ int Room89::proc2() {
 
 	_G(spieler).SVal1 = 89;
 	_G(spieler).SVal2 = 487;
-	switch_room(92);
+	switchRoom(92);
 	showCur();
 
 	return 1;
@@ -228,7 +228,7 @@ int Room89::proc5() {
 		Room66::proc8(-1, 2, 3, 486);
 		_G(spieler).SVal1 = 89;
 		_G(spieler).SVal2 = 488;
-		switch_room(92);
+		switchRoom(92);
 		showCur();
 	}
 	

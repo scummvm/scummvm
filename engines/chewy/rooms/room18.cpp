@@ -230,7 +230,7 @@ int16 Room18::calc_surimy() {
 		action_flag = true;
 
 		hideCur();
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(spieler).R18SurimyWurf = true;
 		_G(det)->load_taf_seq(245, 50, nullptr);
 		_G(det)->load_taf_seq(116, 55, nullptr);
@@ -251,7 +251,7 @@ int16 Room18::calc_surimy() {
 		} else {
 			autoMove(1, P_CHEWY);
 			stopPerson(P_CHEWY);
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			startDetailFrame(17, 1, ANI_FRONT, 12);
 			_G(maus_links_click) = false;
 
@@ -259,7 +259,7 @@ int16 Room18::calc_surimy() {
 			waitDetail(17);
 		}
 
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		wait_auto_obj(SURIMY_OBJ);
 
 		_G(det)->setSetailPos(21, 392, 170);
@@ -385,7 +385,7 @@ int16 Room18::go_cyberspace() {
 		cur_2_inventory();
 		showCur();
 
-		switch_room(24);
+		switchRoom(24);
 	}
 
 	return action_flag;

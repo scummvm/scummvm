@@ -56,7 +56,7 @@ struct ObjMov {
 
 	int16 Delay = 0;
 
-	int16 DelayCount = 0;
+	int16 _delayCount = 0;
 
 	int16 Phase = 0;
 	int16 PhNr = 0;

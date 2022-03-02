@@ -64,7 +64,7 @@ struct RaumBlk {
 
 	char RoomDir[9];
 	int16 AkAblage;
-	byte **DetImage;
+	byte **_detImage;
 	int16 *DetKorrekt;
 	TafInfo *Fti;
 	int16 AadLoad;
@@ -85,7 +85,7 @@ public:
 	~Room();
 
 	Stream *open_handle(const char *fname, int16 mode);
-	void load_room(RaumBlk *Rb, int16 room_nr, Spieler *player);
+	void loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player);
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
 	byte **get_ablage();
@@ -126,7 +126,7 @@ private:
 };
 
 extern void load_chewy_taf(int16 taf_nr);
-extern void switch_room(int16 nr);
+extern void switchRoom(int16 nr);
 extern void calc_person_look();
 
 } // namespace Chewy

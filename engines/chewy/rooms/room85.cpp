@@ -97,7 +97,7 @@ void Room85::entry(int16 eib_nr) {
 		flic_cut(FCUT_089);
 		register_cutscene(25);
 
-		switch_room(84);
+		switchRoom(84);
 		showCur();
 	}
 }
@@ -105,18 +105,18 @@ void Room85::entry(int16 eib_nr) {
 void Room85::xit(int16 eib_nr) {
 	switch (eib_nr) {
 	case 126:
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 85)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 84;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 85)
+			_G(spieler)._personRoomNr[P_HOWARD] = 84;
 		
-		if (_G(spieler).PersonRoomNr[P_NICHELLE] == 85)
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 84;
+		if (_G(spieler)._personRoomNr[P_NICHELLE] == 85)
+			_G(spieler)._personRoomNr[P_NICHELLE] = 84;
 		break;
 	case 127:
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 85)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 86;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 85)
+			_G(spieler)._personRoomNr[P_HOWARD] = 86;
 
-		if (_G(spieler).PersonRoomNr[P_NICHELLE] == 85)
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 86;
+		if (_G(spieler)._personRoomNr[P_NICHELLE] == 85)
+			_G(spieler)._personRoomNr[P_NICHELLE] = 86;
 		break;
 	default:
 		break;
@@ -156,12 +156,12 @@ int Room85::proc2() {
 	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(1);
 	startSetailWait(2, 1, ANI_FRONT);
-	_G(spieler).PersonRoomNr[P_HOWARD] = 89;
+	_G(spieler)._personRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();
 	remove_inventory(109);
 	remove_inventory(98);
 	remove_inventory(87);
-	switch_room(89);
+	switchRoom(89);
 	
 	showCur();
 	return 1;

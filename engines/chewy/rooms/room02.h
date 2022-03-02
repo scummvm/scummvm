@@ -25,8 +25,6 @@
 namespace Chewy {
 namespace Rooms {
 
-#include "chewy/ngsdefs.h"
-
 class Room2 {
 public:
 	static void entry();

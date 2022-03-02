@@ -36,7 +36,7 @@ void Room90::entry(int16 eib_nr) {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_delay = 0;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 90;
+	_G(spieler)._personRoomNr[P_HOWARD] = 90;
 	_G(zoom_horizont) = 150;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
@@ -85,8 +85,8 @@ void Room90::entry(int16 eib_nr) {
 		_G(det)->startDetail(0, 1, false);
 		startSetailWait(1, 1, ANI_FRONT);
 		_G(spieler).flags33_10 = true;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
-		switch_room(91);
+		_G(spieler)._personRoomNr[P_HOWARD] = 91;
+		switchRoom(91);
 
 	} else if (!_G(spieler).flags33_20) {
 		startAadWait(499);
@@ -107,9 +107,9 @@ void Room90::entry(int16 eib_nr) {
 void Room90::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	if (eib_nr == 134)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 91;
+		_G(spieler)._personRoomNr[P_HOWARD] = 91;
 	else if (eib_nr == 135)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 56;
+		_G(spieler)._personRoomNr[P_HOWARD] = 56;
 }
 
 void Room90::setup_func() {
@@ -158,7 +158,7 @@ void Room90::setup_func() {
 		}
 	}
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 90 || _G(HowardMov) == 1)
+	if (_G(spieler)._personRoomNr[P_HOWARD] != 90 || _G(HowardMov) == 1)
 		return;
 
 	calc_person_look();
@@ -187,7 +187,7 @@ void Room90::proc2() {
 	_G(flags).AutoAniPlay = true;
 	int diaNr = -1;
 
-	switch (_G(spieler).PersonRoomNr[0]) {
+	switch (_G(spieler)._personRoomNr[0]) {
 	case 46:
 		diaNr = 496;
 		break;
@@ -284,7 +284,7 @@ int Room90::shootControlUnit() {
 		return 0;
 
 	hideCur();
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	_G(HowardMov) = 2;
 	_G(flags).ZoomMov = false;
 	autoMove(5, P_CHEWY);

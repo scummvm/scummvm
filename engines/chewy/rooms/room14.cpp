@@ -74,9 +74,9 @@ int16 Room14::use_schrott() {
 
 	if (!_G(spieler).inv_cur) {
 		autoMove(3, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(12, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Waffe) {
 			action_flag = true;
@@ -97,9 +97,9 @@ int16 Room14::use_gleiter() {
 
 		if (!_G(spieler).R14GleiterAuf) {
 			_G(spieler).R14GleiterAuf = true;
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			startSetailWait(10, 1, ANI_FRONT);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATA);
 		} else {
@@ -133,9 +133,9 @@ int16 Room14::use_schleim() {
 
 	if (!_G(spieler).inv_cur) {
 		autoMove(2, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(11, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Sicherung) {
 			action_flag = true;
@@ -159,24 +159,24 @@ void Room14::feuer() {
 	if (is_cur_inventar(BWAFFE_INV)) {
 		autoMove(5, P_CHEWY);
 		waffe = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startDetailFrame(8, 1, ANI_FRONT, 11);
 		startSetailWait(9, 1, ANI_FRONT);
 		waitDetail(8);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 	} else {
 		autoMove(7, P_CHEWY);
 		_G(det)->hideStaticSpr(9);
 		startDetailFrame(2, 1, ANI_FRONT, 9);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(13, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		waitDetail(2);
 		startSetailWait(5, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(9);
 	}
 
-	del_inventar(tmp);
+	delInventory(tmp);
 	_G(det)->startDetail(6, 255, ANI_FRONT);
 	waitShowScreen(40);
 

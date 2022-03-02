@@ -59,9 +59,9 @@ void Room95::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
 	if (eib_nr == 139)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 94;
+		_G(spieler)._personRoomNr[P_HOWARD] = 94;
 	else if (eib_nr == 140)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 96;
+		_G(spieler)._personRoomNr[P_HOWARD] = 96;
 }
 
 void Room95::setup_func() {
@@ -91,7 +91,7 @@ int Room95::proc2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (is_cur_inventar(113)) {
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(spieler).flags35_20 = true;
@@ -112,8 +112,8 @@ int Room95::proc2() {
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_133);
 		register_cutscene(33);
-		_G(spieler).PersonRoomNr[P_HOWARD] = 97;
-		switch_room(97);
+		_G(spieler)._personRoomNr[P_HOWARD] = 97;
+		switchRoom(97);
 	} else {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);
 		startAadWait(548);

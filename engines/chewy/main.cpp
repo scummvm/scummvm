@@ -41,7 +41,7 @@ static const int16 invent_display[4][2] = {
 	{5, 0}, { 265, 0 }, { 265, 149 }, { 5, 149 }
 };
 
-extern void switch_room(int16 nr);
+extern void switchRoom(int16 nr);
 
 void game_main() {
 	_G(fontMgr) = new FontMgr();
@@ -313,7 +313,7 @@ bool mainLoop(int16 mode) {
 				get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
 
-			_G(kbinfo).key_code = '\0';
+			_G(kbinfo)._keyCode = '\0';
 			break;
 
 		case Common::KEYCODE_F6:
@@ -567,7 +567,7 @@ void setupScreen(SetupScreenMode mode) {
 						_G(spieler_mi)[P_CHEWY].XyzEnd[1] = _G(gpkt).Dy - _G(spieler_mi)[P_CHEWY].HotY;
 						_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[P_CHEWY].XyzStart, _G(spieler_mi)[P_CHEWY].Vorschub, &_G(spieler_vector)[P_CHEWY]);
 						get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
-						_G(spieler_vector)[P_CHEWY].DelayCount = 0;
+						_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 						_G(auto_p_nr) = P_CHEWY;
 					}
 				}
@@ -727,17 +727,17 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 						if (_G(spieler).room_m_obj[nr].AniFlag == 255) {
 							invent_2_slot(nr);
 						} else {
-							_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_m_obj[nr].HeldHide;
+							_G(spieler)._personHide[P_CHEWY] = _G(spieler).room_m_obj[nr].HeldHide;
 							play_scene_ani(_G(spieler).room_m_obj[nr].AniFlag, ANI_FRONT);
 							invent_2_slot(nr);
 
-							_G(spieler).PersonHide[P_CHEWY] = false;
+							_G(spieler)._personHide[P_CHEWY] = false;
 						}
 
 						_G(spieler).inv_cur = false;
 						_G(menu_item) = CUR_WALK;
 						cursorChoice(_G(menu_item));
-						_G(spieler_vector)[P_CHEWY].DelayCount = 0;
+						_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 
 						if (_G(spieler).AkInvent != -1)
 							_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
@@ -850,13 +850,13 @@ void mouseAction() {
 		_G(inv_disp_ok) = false;
 	}
 	if (_G(atds)->aad_get_status() == -1) {
-		if (_G(minfo).button || _G(kbinfo).key_code == Common::KEYCODE_ESCAPE || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
+		if (_G(minfo)._button || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
 
-			if (_G(minfo).button == 2 || _G(kbinfo).key_code == Common::KEYCODE_ESCAPE) {
+			if (_G(minfo)._button == 2 || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE) {
 				if (!_G(flags).main_maus_flag) {
 					_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
 				}
-			} else if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
+			} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
 				if (!_G(flags).main_maus_flag) {
 					if (_G(menu_display) == MENU_EINBLENDEN)
 						_G(kbinfo).scan_code = Common::KEYCODE_RETURN;
@@ -903,9 +903,9 @@ void evaluateObj(int16 testNr, int16 mode) {
 				txt_nr = _G(obj)->iib_txt_nr(testNr);
 				Dialogs::Inventory::look_screen(INVENTAR_NORMAL, txt_nr);
 				if (_G(spieler).room_m_obj[testNr].AniFlag != 255) {
-					_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_m_obj[testNr].HeldHide;
+					_G(spieler)._personHide[P_CHEWY] = _G(spieler).room_m_obj[testNr].HeldHide;
 					play_scene_ani(_G(spieler).room_m_obj[testNr].AniFlag, ANI_FRONT);
-					_G(spieler).PersonHide[P_CHEWY] = false;
+					_G(spieler)._personHide[P_CHEWY] = false;
 				}
 			}
 			showCur();
@@ -923,7 +923,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 			txt_nr = _G(obj)->sib_txt_nr(testNr);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				_G(spieler)._personHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
 				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
 				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
 
@@ -936,7 +936,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 				}
 				if (ani_nr != -1)
 					play_scene_ani(ani_nr, tmp);
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
@@ -962,7 +962,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 			txt_nr = _G(obj)->sib_txt_nr(testNr);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				_G(spieler)._personHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
 				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
 
 				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
@@ -976,7 +976,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 				}
 				if (ani_nr != -1)
 					play_scene_ani(ani_nr, tmp);
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 			}
 
 			if (_G(spieler).room_s_obj[testNr].InvNr != -1) {
@@ -1005,7 +1005,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 			txt_nr = _G(obj)->sib_txt_nr(testNr);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
 			if (_G(spieler).room_s_obj[testNr].AniFlag != 255) {
-				_G(spieler).PersonHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
+				_G(spieler)._personHide[P_CHEWY] = _G(spieler).room_s_obj[testNr].HeldHide;
 				tmp = getAniDirection((int16)_G(spieler).room_s_obj[testNr].ZustandAk);
 
 				ani_nr = _G(spieler).room_s_obj[testNr].AniFlag;
@@ -1020,7 +1020,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 				if (ani_nr != -1) {
 					play_scene_ani(ani_nr, tmp);
 				}
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 			}
 
 			if (_G(spieler).room_s_obj[testNr].InvNr != -1)
@@ -1216,7 +1216,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart,
 				_G(spieler_mi)[playerNum].Vorschub, &_G(spieler_vector)[playerNum]);
 			get_phase(&_G(spieler_vector)[playerNum], &_G(spieler_mi)[playerNum]);
-			_G(spieler_vector)[playerNum].DelayCount = 0;
+			_G(spieler_vector)[playerNum]._delayCount = 0;
 
 			if (_G(mov)->auto_go_status()) {
 				while (_G(mov)->auto_go_status()) {
@@ -1272,7 +1272,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 }
 
 void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode) {
-	if (!_G(stopAutoMove)[personNum] && _G(spieler).PersonRoomNr[personNum] == _G(spieler).PersonRoomNr[P_CHEWY]) {
+	if (!_G(stopAutoMove)[personNum] && _G(spieler)._personRoomNr[personNum] == _G(spieler)._personRoomNr[P_CHEWY]) {
 		int16 move_status = true;
 		int16 tmp = _G(maus_links_click);
 		_G(maus_links_click) = false;
@@ -1407,7 +1407,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					
 					if (!ok && !action_ret) {
 						if (inv_no_use_mode != -1 && !_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
-							actionFl = calc_inv_no_use(idx + (_G(spieler).PersonRoomNr[P_CHEWY] * 100), inv_no_use_mode);
+							actionFl = calc_inv_no_use(idx + (_G(spieler)._personRoomNr[P_CHEWY] * 100), inv_no_use_mode);
 							if (actionFl)
 								ret = txtNr;
 						}
@@ -1469,7 +1469,7 @@ int16 is_mouse_person(int16 x, int16 y) {
 
 					case P_HOWARD:
 					case P_NICHELLE:
-						if (_G(spieler).PersonRoomNr[i] != _G(spieler).PersonRoomNr[P_CHEWY])
+						if (_G(spieler)._personRoomNr[i] != _G(spieler)._personRoomNr[P_CHEWY])
 							check = false;
 						xy = (int16 *)_G(PersonTaf)[i]->_image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
 						break;
@@ -1501,7 +1501,7 @@ void calc_mouse_person(int16 x, int16 y) {
 	if (_G(flags).ShowAtsInvTxt && !_G(flags).InventMenu) {
 		int16 p_nr = is_mouse_person(x, y);
 		if (p_nr != -1) {
-			if (!_G(spieler).PersonHide[p_nr]) {
+			if (!_G(spieler)._personHide[p_nr]) {
 				_G(fontMgr)->setFont(_G(font8));
 				char *str_ = ch_txt[p_nr];
 				calc_txt_xy(&x, &y, str_, 1);
@@ -1653,7 +1653,7 @@ void get_user_key(int16 mode) {
 				get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
 
-			_G(kbinfo).key_code = '\0';
+			_G(kbinfo)._keyCode = '\0';
 			break;
 
 		default:
@@ -1666,8 +1666,8 @@ void get_user_key(int16 mode) {
 
 void clear_prog_ani() {
 	for (int16 i = 0; i < MAX_PROG_ANI; i++) {
-		_G(spr_info)[i].Image = nullptr;
-		_G(spr_info)[i].ZEbene = 255;
+		_G(spr_info)[i]._image = nullptr;
+		_G(spr_info)[i]._zLevel = 255;
 	}
 }
 
@@ -1677,7 +1677,7 @@ void set_ani_screen() {
 	setupScreen(DO_SETUP);
 }
 
-void del_inventar(int16 nr) {
+void delInventory(int16 nr) {
 	_G(obj)->delInventory(nr, &_G(room_blk));
 	_G(spieler).inv_cur = false;
 	_G(menu_item) = CUR_WALK;
@@ -1748,8 +1748,8 @@ void calc_ausgang(int16 x, int16 y) {
 				setupScreen(DO_SETUP);
 				_G(cur_hide_flag) = true;
 				exit_room(nr);
-				_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).room_e_obj[nr].Exit;
-				_G(room)->load_room(&_G(room_blk), _G(spieler).PersonRoomNr[P_CHEWY], &_G(spieler));
+				_G(spieler)._personRoomNr[P_CHEWY] = _G(spieler).room_e_obj[nr].Exit;
+				_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
 				setPersonPos(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].X -
 				               _G(spieler_mi)[_G(auto_p_nr)].HotMovX,
 				               _G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].Y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
@@ -1766,7 +1766,7 @@ void calc_ausgang(int16 x, int16 y) {
 				                               _G(ged_mem)[_G(room_blk).AkAblage]);
 				check_shad(u_idx, 0);
 				setPersonSpr(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
-				_G(spieler_vector)[P_CHEWY].DelayCount = 0;
+				_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 				_G(fx_blend) = BLEND1;
 				_G(auto_obj) = 0;
 				_G(spieler_vector)[P_CHEWY].Xzoom = 0;
@@ -1899,8 +1899,8 @@ void calc_auto_go() {
 void hide_person() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 
-		if (!_G(spieler).PersonHide[i]) {
-			_G(spieler).PersonHide[i] = true;
+		if (!_G(spieler)._personHide[i]) {
+			_G(spieler)._personHide[i] = true;
 			_G(person_tmp_hide)[i] = true;
 		} else
 			_G(person_tmp_hide)[i] = false;
@@ -1911,20 +1911,20 @@ void show_person() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 
 		if (_G(person_tmp_hide)[i])
-			_G(spieler).PersonHide[i] = false;
+			_G(spieler)._personHide[i] = false;
 	}
 }
 
 void save_person_rnr() {
 	for (int16 i = 0; i < MAX_PERSON; i++)
-		_G(person_tmp_room)[i] = _G(spieler).PersonRoomNr[i];
+		_G(person_tmp_room)[i] = _G(spieler)._personRoomNr[i];
 	_G(flags).SavePersonRnr = true;
 }
 
 void set_person_rnr() {
 	if (_G(flags).SavePersonRnr) {
 		for (int16 i = 0; i < MAX_PERSON; i++)
-			_G(spieler).PersonRoomNr[i] = _G(person_tmp_room)[i];
+			_G(spieler)._personRoomNr[i] = _G(person_tmp_room)[i];
 		_G(flags).SavePersonRnr = false;
 	}
 }

@@ -68,8 +68,8 @@ void Room86::entry(int16 eib_nr) {
 		_G(spieler).scrollx = 246;
 		_G(spieler).ScrollxStep = 8;
 		setPersonPos(443, 66, P_CHEWY, P_RIGHT);
-		_G(spieler).PersonRoomNr[P_HOWARD] = 84;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 0;
+		_G(spieler)._personRoomNr[P_HOWARD] = 84;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 0;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoScroll = true;
 		_G(spieler.ScrollxStep = 2);
@@ -89,7 +89,7 @@ void Room86::entry(int16 eib_nr) {
 		_G(flags).NoScroll = false;
 		autoMove(0, P_CHEWY);
 		_G(spieler).flags32_20 = true;
-		switch_room(85);
+		switchRoom(85);
 		showCur();
 	}
 }
@@ -98,18 +98,18 @@ void Room86::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	switch (eib_nr) {
 	case 128:
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 86)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 85;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 86)
+			_G(spieler)._personRoomNr[P_HOWARD] = 85;
 		
-		if (_G(spieler).PersonRoomNr[P_NICHELLE] == 86)
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 85;
+		if (_G(spieler)._personRoomNr[P_NICHELLE] == 86)
+			_G(spieler)._personRoomNr[P_NICHELLE] = 85;
 		break;
 	case 132:
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 86)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 87;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 86)
+			_G(spieler)._personRoomNr[P_HOWARD] = 87;
 
-		if (_G(spieler).PersonRoomNr[P_NICHELLE] == 86)
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 87;
+		if (_G(spieler)._personRoomNr[P_NICHELLE] == 86)
+			_G(spieler)._personRoomNr[P_NICHELLE] = 87;
 		break;
 	default:
 		break;
@@ -152,7 +152,7 @@ int Room86::proc2() {
 	_G(det)->startDetail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	autoMove(3, P_CHEWY);
 	proc3(true);
 	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATA);

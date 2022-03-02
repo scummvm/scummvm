@@ -84,9 +84,9 @@ int16 Room22::chewy_amboss() {
 		hideCur();
 
 		autoMove(5, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(1, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_006);
@@ -163,12 +163,12 @@ void Room22::get_bork() {
 	if (!_G(spieler).R22GetBork && _G(spieler).R22BorkPlatt) {
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(4);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK14);
 		setPersonPos(171, 120, P_CHEWY, P_LEFT);
 		startAadWait(11);
 		_G(det)->stop_detail(3);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);
 		invent_2_slot(BORK_INV);
 
@@ -190,7 +190,7 @@ int16 Room22::malen() {
 		_G(spieler).R22Paint = true;
 		_G(obj)->calc_rsi_flip_flop(SIB_PAINT_R22);
 		_G(obj)->hide_sib(SIB_PAINT_R22);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(obj)->calc_all_static_detail();
 		_G(flags).AutoAniPlay = false;
 

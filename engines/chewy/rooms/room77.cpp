@@ -106,7 +106,7 @@ int Room77::proc2() {
 	int diaNr, aniId;
 	if (_G(spieler).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(atds)->set_ats_str(464, 1, 1);
 		_G(spieler).flags29_20 = true;
 		_G(spieler).flags29_40 = true;

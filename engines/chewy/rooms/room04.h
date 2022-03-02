@@ -27,7 +27,7 @@ namespace Rooms {
 
 class Room4 {
 public:
-	static int16 sonde_comp();
+	static int16 comp_probe();
 };
 
 } // namespace Rooms

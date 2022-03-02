@@ -65,23 +65,23 @@ void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnBu
 
 	// Different event types handling
 	if (event.type != Common::EVENT_MOUSEMOVE)
-		_G(minfo).button = 0;
+		_G(minfo)._button = 0;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 		if (updateOnButtonUp && event.type == Common::EVENT_LBUTTONUP)
-			_G(minfo).button = 1;
+			_G(minfo)._button = 1;
 		if (!updateOnButtonUp && event.type == Common::EVENT_LBUTTONDOWN)
-			_G(minfo).button = 1;
+			_G(minfo)._button = 1;
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 		if (updateOnButtonUp && event.type == Common::EVENT_RBUTTONUP)
-			_G(minfo).button = 2;
+			_G(minfo)._button = 2;
 		if (!updateOnButtonUp && event.type == Common::EVENT_RBUTTONDOWN)
-			_G(minfo).button = 2;
+			_G(minfo)._button = 2;
 		break;
 
 	case Common::EVENT_WHEELUP:
@@ -125,13 +125,13 @@ void EventsManager::handleMouseEvent(const Common::Event &event, bool updateOnBu
 void EventsManager::handleKbdEvent(const Common::Event &event) {
 	if (_kbInfo) {
 		if (event.type == Common::EVENT_KEYDOWN) {
-			_kbInfo->key_code = event.kbd.ascii;
+			_kbInfo->_keyCode = event.kbd.ascii;
 			_kbInfo->scan_code = event.kbd.keycode;
 			if (event.kbd.flags & Common::KBD_ALT)
 				_kbInfo->scan_code |= ALT;
 		} else if (event.type == Common::EVENT_KEYUP) {
-			if (event.kbd.ascii == _kbInfo->key_code)
-				_kbInfo->key_code = '\0';
+			if (event.kbd.ascii == _kbInfo->_keyCode)
+				_kbInfo->_keyCode = '\0';
 		}
 	}
 }
@@ -149,10 +149,10 @@ void EventsManager::delay(size_t time) {
 void EventsManager::clearEvents() {
 	if (_kbInfo) {
 		_kbInfo->scan_code = Common::KEYCODE_INVALID;
-		_kbInfo->key_code = '\0';
+		_kbInfo->_keyCode = '\0';
 	}
 
-	_G(minfo).button = 0;
+	_G(minfo)._button = 0;
 }
 
 KbdInfo *EventsManager::setKbdInfo(KbdInfo *kbInfo) {
@@ -171,13 +171,13 @@ void delay(size_t time) {
 }
 
 bool kbhit() {
-	return g_events->_kbInfo && g_events->_kbInfo->key_code != 0;
+	return g_events->_kbInfo && g_events->_kbInfo->_keyCode != 0;
 }
 
 char getch() {
-	if (g_events->_kbInfo && g_events->_kbInfo->key_code) {
-		char c = g_events->_kbInfo->key_code;
-		g_events->_kbInfo->key_code = 0;
+	if (g_events->_kbInfo && g_events->_kbInfo->_keyCode) {
+		char c = g_events->_kbInfo->_keyCode;
+		g_events->_kbInfo->_keyCode = 0;
 		g_events->_kbInfo->scan_code = 0;
 
 		return c;

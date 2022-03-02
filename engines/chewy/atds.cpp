@@ -587,7 +587,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 						_mousePush = true;
 						_atsv.DelayCount = 0;
 						_inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-						_inzeig->kbinfo->key_code = '\0';
+						_inzeig->kbinfo->_keyCode = '\0';
 					}
 				}
 				break;
@@ -884,7 +884,7 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 
 int16 Atdsys::start_aad(int16 dia_nr) {
 	if (_aadv.Dialog)
-		stop_aad();
+		stopAad();
 
 	if (_atdsmem[AAD_HANDLE]) {
 		_aadv.Ptr = _atdsmem[AAD_HANDLE];
@@ -914,7 +914,7 @@ int16 Atdsys::start_aad(int16 dia_nr) {
 	return _aadv.Dialog;
 }
 
-void Atdsys::stop_aad() {
+void Atdsys::stopAad() {
 	_aadv.Dialog = false;
 	_aadv.StrNr = -1;
 }
@@ -933,7 +933,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
 						_inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-						_inzeig->kbinfo->key_code = '\0';
+						_inzeig->kbinfo->_keyCode = '\0';
 					}
 				}
 				break;

@@ -82,8 +82,8 @@ void Room82::xit(int16 eib_nr) {
 		_G(spieler).R79Val[P_CHEWY] = 1;
 		_G(spieler).R79Val[P_HOWARD] = 1;
 		_G(spieler).R79Val[P_NICHELLE] = 1;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 80;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
+		_G(spieler)._personRoomNr[P_HOWARD] = 80;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 80;
 	}
 }
 
@@ -156,7 +156,7 @@ int Room82::proc3() {
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	new_invent_2_cur(104);
 	showCur();
 
@@ -207,7 +207,7 @@ int Room82::proc6() {
 		Room66::proc8(2, 7, 7, 451);
 		_G(spieler).flags30_20 = true;
 		_G(spieler).flags37_20 = true;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		remove_inventory(105);
 		remove_inventory(106);
 	} else {
@@ -228,11 +228,11 @@ void Room82::proc8() {
 	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
 		setupScreen(DO_SETUP);
 
-	_G(spieler).PersonHide[P_NICHELLE] = true;
+	_G(spieler)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(10, 255, false);
 	startAadWait(625);
 	_G(det)->stop_detail(10);
-	_G(spieler).PersonHide[P_NICHELLE] = false;
+	_G(spieler)._personHide[P_NICHELLE] = false;
 	startAadWait(448);
 	_G(det)->del_static_ani(4);
 	startSetailWait(6, 2, ANI_FRONT);
@@ -245,9 +245,9 @@ int Room82::proc9() {
 		return 0;
 
 	autoMove(7, P_CHEWY);
-	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
-	switch_room(88);
+	_G(spieler)._personRoomNr[P_HOWARD] = 88;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 88;
+	switchRoom(88);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 

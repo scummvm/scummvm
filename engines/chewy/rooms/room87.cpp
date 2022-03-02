@@ -98,11 +98,11 @@ void Room87::xit(int16 eib_nr) {
 	goAutoXy(9, 53, P_CHEWY, ANI_WAIT);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 87)
-		_G(spieler).PersonRoomNr[P_HOWARD] = 86;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 87)
+		_G(spieler)._personRoomNr[P_HOWARD] = 86;
 
-	if (_G(spieler).PersonRoomNr[P_NICHELLE] == 87)
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 86;
+	if (_G(spieler)._personRoomNr[P_NICHELLE] == 87)
+		_G(spieler)._personRoomNr[P_NICHELLE] = 86;
 }
 
 int Room87::proc2(int16 txt_nr) {
@@ -132,7 +132,7 @@ int Room87::proc2(int16 txt_nr) {
 		startAadWait(diaNr);
 	} else {
 		autoMove(movNr, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
@@ -170,7 +170,7 @@ int Room87::proc4() {
 	_G(spieler).PersonDiaRoom[P_HOWARD] = false;
 	_G(spieler).flags32_10 = true;
 
-	switch_room(86);
+	switchRoom(86);
 	showCur();
 	return 1;
 }

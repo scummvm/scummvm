@@ -62,7 +62,7 @@ void Room68::entry() {
 	
 	if (!_G(flags).LoadGame) {
 		hideCur();
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 68) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 68) {
 			setPersonPos(524, 51, P_HOWARD, P_LEFT);
 			setPersonPos(550, 54, P_NICHELLE, P_LEFT);
 		}
@@ -73,9 +73,9 @@ void Room68::entry() {
 
 void Room68::xit() {
 	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 68) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 66;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 66;
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 68) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 66;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -187,7 +187,7 @@ int16 Room68::use_indigo() {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			auto_scroll(78, 0);
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			talk_indigo(394);
 			_G(cur_hide_flag) = false;
 			hideCur();
@@ -246,7 +246,7 @@ int16 Room68::use_papagei() {
 		hideCur();
 		action_flag = true;
 		_G(spieler).R68Papagei = true;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
@@ -285,7 +285,7 @@ int16 Room68::use_keeper() {
 	int16 action_flag = false;
 	if (is_cur_inventar(BAR_GUT_INV)) {
 		hideCur();
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		action_flag = true;
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -304,7 +304,7 @@ int16 Room68::use_diva() {
 	int16 action_flag;
 	hideCur();
 	if (is_cur_inventar(B_MARY_INV)) {
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
@@ -313,7 +313,7 @@ int16 Room68::use_diva() {
 		_G(spieler).R68Gutschein = false;
 		_G(det)->showStaticSpr(3);
 	} else if (is_cur_inventar(B_MARY2_INV)) {
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(3);
@@ -351,14 +351,14 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			_G(sndPlayer)->fadeOut(5);
 		
 		_G(SetUpScreenFunc) = nullptr;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		goAutoXy(150, -13, P_NICHELLE, ANI_WAIT);
-		_G(spieler).PersonHide[P_NICHELLE] = true;
+		_G(spieler)._personHide[P_NICHELLE] = true;
 		goAutoXy(161, 59, P_HOWARD, ANI_GO);
 		autoMove(4, P_CHEWY);
 		startAadWait(390);
 		startSetailWait(22, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_HOWARD] = true;
+		_G(spieler)._personHide[P_HOWARD] = true;
 		_G(det)->startDetail(27, 255, ANI_FRONT);
 
 		if (_G(spieler).DisplayText)
@@ -405,7 +405,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 		g_engine->_sound->waitForSpeechToFinish();
 		
-		_G(spieler).PersonHide[P_HOWARD] = false;
+		_G(spieler)._personHide[P_HOWARD] = false;
 		_G(det)->stop_detail(27);
 		_G(det)->stop_detail(24);
 		_G(det)->showStaticSpr(13);
@@ -413,12 +413,12 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		autoMove(1, P_CHEWY);
 		auto_scroll(216, 0);
 		_G(det)->hideStaticSpr(13);
-		_G(spieler).PersonHide[P_NICHELLE] = false;
+		_G(spieler)._personHide[P_NICHELLE] = false;
 		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
 		if (_G(spieler).DisplayText) {
 			_G(currentSong) = -1;
-			load_room_music(_G(spieler).PersonRoomNr[0]);
+			load_room_music(_G(spieler)._personRoomNr[0]);
 		}
 	}
 	showCur();

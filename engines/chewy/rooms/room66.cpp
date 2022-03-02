@@ -52,19 +52,19 @@ void Room66::entry(int16 eib_nr) {
 		autoMove(9, P_CHEWY);
 		_G(SetUpScreenFunc) = setup_func;
 		startAadWait(403);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(14);
 		waitShowScreen(15);
 		_G(det)->hideStaticSpr(14);
 		startSetailWait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		startAadWait(404);
 		startAadWait(415);
 		showCur();
-	} else if (!_G(flags).LoadGame && _G(spieler).PersonRoomNr[P_HOWARD] == 66) {
+	} else if (!_G(flags).LoadGame && _G(spieler)._personRoomNr[P_HOWARD] == 66) {
 		switch (eib_nr) {
 		case 96:
 			setPersonPos(488, 114, P_HOWARD, P_RIGHT);
@@ -90,23 +90,23 @@ void Room66::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 	_G(atds)->set_steuer_bit(415, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->set_steuer_bit(417, ATS_AKTIV_BIT, ATS_DATA);
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 66)
+	if (_G(spieler)._personRoomNr[P_HOWARD] != 66)
 		return;
 
 	switch (eib_nr) {
 	case 98:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 69;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 69;
+		_G(spieler)._personRoomNr[P_HOWARD] = 69;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 69;
 		break;
 
 	case 99:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 68;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 68;
+		_G(spieler)._personRoomNr[P_HOWARD] = 68;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 68;
 		break;
 
 	case 100:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 67;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 67;
+		_G(spieler)._personRoomNr[P_HOWARD] = 67;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 67;
 		break;
 
 	default:
@@ -184,7 +184,7 @@ int Room66::proc7() {
 	hideCur();
 	autoMove(7, P_CHEWY);
 	if (_G(spieler).flags26_10) {
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		invent_2_slot(92);
 		invent_2_slot(93);
 		invent_2_slot(94);

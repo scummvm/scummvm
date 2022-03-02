@@ -58,7 +58,7 @@ void Room63::entry() {
 		cur_2_inventory();
 		_G(spieler).scrollx = 176;
 		setPersonPos(424, 78, P_CHEWY, P_LEFT);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(spieler).room_e_obj[95].Attribut = 255;
 		_G(r63ChewyAni) = 0;
 		_G(det)->startDetail(0, 1, ANI_FRONT);
@@ -90,7 +90,7 @@ void Room63::setup_func() {
 			setPersonPos(0, 0, P_CHEWY, P_RIGHT);
 			_G(det)->startDetail(22, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);
-			_G(atds)->stop_aad();
+			_G(atds)->stopAad();
 			_G(r63ChewyAni) = 2;
 		}
 		break;
@@ -135,7 +135,7 @@ void Room63::bork_platt() {
 	_G(spieler).room_e_obj[95].Attribut = AUSGANG_OBEN;
 	flic_cut(FCUT_081);
 	flic_cut(FCUT_082);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	check_shad(4, 1);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	autoMove(6, P_CHEWY);
@@ -151,8 +151,8 @@ void Room63::bork_platt() {
 	showCur();
 	_G(flags).MainInput = true;
 	_G(spieler).R62Flucht = true;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 56;
-	switch_room(56);
+	_G(spieler)._personRoomNr[P_HOWARD] = 56;
+	switchRoom(56);
 }
 
 void Room63::talk_hunter() {
@@ -199,7 +199,7 @@ int16 Room63::use_fx_man() {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		remove_inventory(34);
 		startAadWait(359);
 		_G(det)->del_static_ani(5);
@@ -266,7 +266,7 @@ int16 Room63::use_girl() {
 		action_ret = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(det)->stop_detail(12);
 		startSetailWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
@@ -299,11 +299,11 @@ int16 Room63::use_aschenbecher() {
 		if (_G(spieler).R63Uhr) {
 			if (_G(spieler).R63FxMannWeg) {
 				autoMove(5, P_CHEWY);
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				_G(flags).NoScroll = true;
 				auto_scroll(70, 0);
 				autoMove(1, P_CHEWY);
-				_G(spieler).PersonHide[P_CHEWY] = true;
+				_G(spieler)._personHide[P_CHEWY] = true;
 				_G(det)->startDetail(20, 255, ANI_FRONT);
 				_G(det)->startDetail(10, 255, ANI_FRONT);
 				_G(det)->startDetail(18, 255, ANI_FRONT);
@@ -315,10 +315,10 @@ int16 Room63::use_aschenbecher() {
 				_G(atds)->set_steuer_bit(382, ATS_AKTIV_BIT, ATS_DATA);
 				_G(atds)->set_ats_str(383, 1, ATS_DATA);
 				_G(spieler).R63Feuer = true;
-				_G(spieler).PersonHide[P_CHEWY] = false;
+				_G(spieler)._personHide[P_CHEWY] = false;
 				_G(spieler).scrollx = 0;
 				setPersonPos(187, 42, P_CHEWY, P_RIGHT);
-				switch_room(64);
+				switchRoom(64);
 				_G(flags).NoScroll = false;
 			} else
 				startAadWait(369);

@@ -56,13 +56,13 @@ int16 Room35::schublade() {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
 			_G(spieler).R35Falle = true;
-			_G(spieler).PersonHide[P_CHEWY] = true;
+			_G(spieler)._personHide[P_CHEWY] = true;
 			startAniBlock(2, ABLOCK28);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			setPersonPos(33, 90, P_CHEWY, P_LEFT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(93);
-			_G(spieler).PersonHide[P_CHEWY] = false;
+			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(atds)->set_ats_str(234, 2, ATS_DATA);
 		}
 	}
@@ -90,7 +90,7 @@ int16 Room35::use_cat() {
 			autoMove(4, P_CHEWY);
 			_G(spieler).R35CatEat = true;
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			del_inventar(_G(spieler).AkInvent);
+			delInventory(_G(spieler).AkInvent);
 			_G(det)->stop_detail(0);
 			_G(det)->del_static_ani(0);
 			startSetailWait(1, 1, ANI_FRONT);
@@ -128,12 +128,12 @@ void Room35::talk_cat() {
 			dia_nr = 8;
 		}
 
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		switch_room(36);
+		_G(spieler)._personHide[P_CHEWY] = true;
+		switchRoom(36);
 		showCur();
 		startAdsWait(dia_nr);
-		_G(spieler).PersonHide[P_CHEWY] = false;
-		switch_room(35);
+		_G(spieler)._personHide[P_CHEWY] = false;
+		switchRoom(35);
 
 	} else {
 		start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);

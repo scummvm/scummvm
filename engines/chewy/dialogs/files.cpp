@@ -164,7 +164,7 @@ int16 Files::execute(bool isInGame) {
 			Dialogs::Options::execute(ti);
 		}
 
-		if (!flag && _G(minfo).button == 1) {
+		if (!flag && _G(minfo)._button == 1) {
 			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, FILE_ICONS, 8);
 			flag = true;
 			key = 0;
@@ -209,7 +209,7 @@ int16 Files::execute(bool isInGame) {
 				break;
 			}
 
-		} else if (flag && _G(minfo).button == 0) {
+		} else if (flag && _G(minfo)._button == 0) {
 			flag = false;
 		}
 
@@ -299,7 +299,7 @@ enter:
 	free(ti);
 
 	_G(room)->open_handle(EPISODE1, 0);
-	_G(room)->load_tgp(_G(spieler).PersonRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(spieler)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
 	_G(room)->set_ak_pal(&_G(room_blk));

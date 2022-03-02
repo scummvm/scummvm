@@ -80,7 +80,7 @@ void Room41::xit() {
 }
 
 void Room41::setup_func() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 41) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
 		if (_G(spieler_vector)->Xypos[P_HOWARD] == 160) {
 			goAutoXy(258, 75, P_HOWARD, ANI_GO);
@@ -223,7 +223,7 @@ int16 Room41::use_brief() {
 	} else if (is_cur_inventar(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		stop_hoggy();
 		startAadWait(186);
 		start_hoggy();

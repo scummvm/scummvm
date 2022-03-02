@@ -37,11 +37,11 @@ static const uint8 KRISTALL_SPR[3][3] = {
 
 void Room24::entry() {
 	_G(flags).MainInput = false;
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	setPersonPos(0, 0, P_CHEWY, -1);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	_G(curblk).sprite = _G(room_blk).DetImage;
+	_G(curblk).sprite = _G(room_blk)._detImage;
 	_G(curani)._start = 7;
 	_G(curani)._end = 10;
 	_G(menu_item) = CUR_USER;
@@ -62,7 +62,7 @@ void Room24::entry() {
 }
 
 void Room24::xit() {
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 	setPersonPos(263, 144, P_CHEWY, -1);

@@ -59,7 +59,7 @@ void Room10::get_surimy() {
 	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATA);
 	invent_2_slot(18);
 
-	del_inventar(_G(spieler).AkInvent);
+	delInventory(_G(spieler).AkInvent);
 	showCur();
 }
 

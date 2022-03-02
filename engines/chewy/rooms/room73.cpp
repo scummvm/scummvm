@@ -62,17 +62,17 @@ void Room73::entry(int16 eib_nr) {
 void Room73::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (_G(spieler).PersonRoomNr[P_HOWARD] != 73)
+	if (_G(spieler)._personRoomNr[P_HOWARD] != 73)
 		return;
 
 	switch (eib_nr) {
 	case 110:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 71;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 71;
+		_G(spieler)._personRoomNr[P_HOWARD] = 71;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 71;
 		break;
 	case 111:
-		_G(spieler).PersonRoomNr[P_HOWARD] = 75;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 75;
+		_G(spieler)._personRoomNr[P_HOWARD] = 75;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 75;
 		break;
 	default:
 		break;

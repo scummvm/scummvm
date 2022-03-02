@@ -47,16 +47,16 @@ void Room11::entry() {
 
 	if (_G(spieler).R12ChewyBork) {
 		if (!_G(spieler).R11DoorRightB) {
-			_G(obj)->calc_rsi_flip_flop(SIB_TKNOPF2_R11);
+			_G(obj)->calc_rsi_flip_flop(SIB_TBUTTON2_R11);
 			_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
 				AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
 			_G(obj)->calc_all_static_detail();
 		}
 
-		_G(obj)->hide_sib(SIB_TKNOPF1_R11);
+		_G(obj)->hide_sib(SIB_TBUTTON1_R11);
 		_G(obj)->hide_sib(SIB_SCHLITZ_R11);
-		_G(obj)->hide_sib(SIB_TKNOPF2_R11);
-		_G(obj)->hide_sib(SIB_TKNOPF3_R11);
+		_G(obj)->hide_sib(SIB_TBUTTON2_R11);
+		_G(obj)->hide_sib(SIB_TBUTTON3_R11);
 		_G(spieler).room_e_obj[20].Attribut = 255;
 		_G(spieler).room_e_obj[21].Attribut = 255;
 		_G(atds)->del_steuer_bit(121, ATS_AKTIV_BIT, ATS_DATA);
@@ -193,7 +193,7 @@ void Room11::get_card() {
 void Room11::put_card() {
 	if (is_cur_inventar(RED_CARD_INV) || is_cur_inventar(YEL_CARD_INV)) {
 		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
-		del_inventar(_G(spieler).R11IdCardNr);
+		delInventory(_G(spieler).R11IdCardNr);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATA);

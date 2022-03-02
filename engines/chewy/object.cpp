@@ -179,7 +179,7 @@ void Object::sort() {
 			if (_rmo[i].RoomNr == 255) {
 				++spieler_invnr[0];
 				spieler_invnr[spieler_invnr[0]] = i;
-			} else if (_rmo[i].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
+			} else if (_rmo[i].RoomNr == _player->_personRoomNr[P_CHEWY]) {
 				++mov_obj_room[0];
 				mov_obj_room[mov_obj_room[0]] = i;
 			}
@@ -198,7 +198,7 @@ void Object::free_inv_spr(byte **inv_spr_adr) {
 int16 Object::is_sib_mouse(int16 mouse_x, int16 mouse_y) {
 	int16 ret = -1;
 	for (int16 i = 0; i < _maxStaticInventory && ret == -1; i++) {
-		if (_rsi[i].RoomNr == _player->PersonRoomNr[P_CHEWY] && _rsi[i].HideSib == false) {
+		if (_rsi[i].RoomNr == _player->_personRoomNr[P_CHEWY] && _rsi[i].HideSib == false) {
 			if (mouse_x >= _rsi[i].X &&
 			        mouse_x <= (_rsi[i].X + _rsi[i].XOff) &&
 			        mouse_y >= _rsi[i].Y &&
@@ -329,7 +329,7 @@ void Object::calc_static_detail(int16 det_nr) {
 	int16 i;
 	int16 n;
 
-	if (_rsi[det_nr].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
+	if (_rsi[det_nr].RoomNr == _player->_personRoomNr[P_CHEWY]) {
 		int16 nr = _rsi[det_nr].StaticAk;
 		if (nr != -1) {
 			if (nr >= 30000) {
@@ -497,7 +497,7 @@ void Object::changeInventory(int16 old_inv, int16 new_inv, RaumBlk *Rb) {
 void Object::setInventory(int16 nr, int16 x, int16 y, int16 automov, RaumBlk *Rb) {
 	++mov_obj_room[0];
 	mov_obj_room[mov_obj_room[0]] = nr;
-	_player->room_m_obj[nr].RoomNr = _player->PersonRoomNr[P_CHEWY];
+	_player->room_m_obj[nr].RoomNr = _player->_personRoomNr[P_CHEWY];
 	_player->room_m_obj[nr].X = x;
 	_player->room_m_obj[nr].Y = y;
 	_player->room_m_obj[nr].AutoMov = automov;
@@ -517,7 +517,7 @@ bool Object::checkInventory(int16 nr) {
 int16 Object::is_exit(int16 mouse_x, int16 mouse_y) {
 	int16 ret = -1;
 	for (int16 i = 0; i < _maxExit && ret == -1; i++) {
-		if (_roomExit[i].RoomNr == _player->PersonRoomNr[P_CHEWY]) {
+		if (_roomExit[i].RoomNr == _player->_personRoomNr[P_CHEWY]) {
 			if (mouse_x >= _roomExit[i].X &&
 			        mouse_x <= (_roomExit[i].X + _roomExit[i].XOff) &&
 			        mouse_y >= _roomExit[i].Y &&

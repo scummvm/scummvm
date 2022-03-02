@@ -147,7 +147,7 @@ void Options::execute(TafInfo *ti) {
 			8 + ti->_correction[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->get_switch_code();
-		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
+		if ((_G(minfo)._button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 
 			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, OPTION_ICONS, 9);
@@ -188,7 +188,7 @@ void Options::execute(TafInfo *ti) {
 				} else {
 					_G(spieler).MusicSwitch = true;
 					_G(currentSong) = -1;
-					load_room_music(_G(spieler).PersonRoomNr[P_CHEWY]);
+					load_room_music(_G(spieler)._personRoomNr[P_CHEWY]);
 				}
 				break;
 			case 6:
@@ -206,7 +206,7 @@ void Options::execute(TafInfo *ti) {
 			default:
 				break;
 			}
-			_G(minfo).button = 0;
+			_G(minfo)._button = 0;
 		}
 		switch (key) {
 

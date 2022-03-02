@@ -80,7 +80,7 @@ int16 Room53::use_man() {
 		action_ret = true;
 		hideCur();
 		_G(spieler).R53Kostuem = true;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		autoMove(2, P_CHEWY);
 		startAadWait(271);
 		_G(room)->set_timer_status(1, TIMER_STOP);

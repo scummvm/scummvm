@@ -150,7 +150,7 @@ int16 Room31::use_topf() {
 				_G(spieler).R31KoernerDa = true;
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
 				_G(atds)->set_ats_str(242, 2, ATS_DATA);
@@ -159,10 +159,10 @@ int16 Room31::use_topf() {
 				if (_G(spieler).R31KoernerDa) {
 					_G(spieler).R31Wasser = true;
 					autoMove(1, P_CHEWY);
-					_G(spieler).PersonHide[P_CHEWY] = true;
+					_G(spieler)._personHide[P_CHEWY] = true;
 					startAniBlock(3, ABLOCK30);
-					_G(spieler).PersonHide[P_CHEWY] = false;
-					del_inventar(_G(spieler).AkInvent);
+					_G(spieler)._personHide[P_CHEWY] = false;
+					delInventory(_G(spieler).AkInvent);
 					_G(obj)->addInventory(MILCH_LEER_INV, &_G(room_blk));
 					inventory_2_cur(MILCH_LEER_INV);
 					ani_nr = CH_TALK6;

@@ -119,13 +119,13 @@ void Room84::xit(int16 eib_nr) {
 		_G(spieler).R79Val[P_CHEWY] = 1;
 		_G(spieler).R79Val[P_HOWARD] = 1;
 		_G(spieler).R79Val[P_NICHELLE] = 1;
-		_G(spieler).PersonRoomNr[P_HOWARD] = 80;
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
+		_G(spieler)._personRoomNr[P_HOWARD] = 80;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 80;
 	} else {
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 84)
-			_G(spieler).PersonRoomNr[P_HOWARD] = 85;
-		if (_G(spieler).PersonRoomNr[P_NICHELLE] == 84)
-			_G(spieler).PersonRoomNr[P_NICHELLE] = 85;
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 84)
+			_G(spieler)._personRoomNr[P_HOWARD] = 85;
+		if (_G(spieler)._personRoomNr[P_NICHELLE] == 84)
+			_G(spieler)._personRoomNr[P_NICHELLE] = 85;
 	}
 }
 
@@ -195,11 +195,11 @@ int Room84::proc4() {
 		_G(det)->stop_detail(7);
 		startSetailWait(8, 1, ANI_FRONT);
 	} else {
-		_G(spieler).PersonRoomNr[P_NICHELLE] = 88;
+		_G(spieler)._personRoomNr[P_NICHELLE] = 88;
 	}
 
-	_G(spieler).PersonRoomNr[P_HOWARD] = 88;
-	switch_room(88);
+	_G(spieler)._personRoomNr[P_HOWARD] = 88;
+	switchRoom(88);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	showCur();

@@ -90,15 +90,15 @@ void Room72::proc1(int16 flicNr) {
 	waitShowScreen(7);
 	startAadWait(437);
 	flic_cut(flicNr);
-	_G(spieler).PersonRoomNr[P_HOWARD] = 76;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 76;
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personRoomNr[P_HOWARD] = 76;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 76;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(0);
 	setupScreen(DO_SETUP);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
-	switch_room(76);
+	switchRoom(76);
 }
 
 } // namespace Rooms

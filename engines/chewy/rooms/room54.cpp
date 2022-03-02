@@ -47,7 +47,7 @@ void Room54::entry(int16 eib_nr) {
 		if (_G(spieler).R48TaxiEntry) {
 			_G(spieler).R48TaxiEntry = false;
 
-			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+			if (_G(spieler)._personRoomNr[P_HOWARD] == 54) {
 				_G(spieler).R54HowardVorne = 0;
 				setPersonPos(290, 61, P_HOWARD, P_RIGHT);
 			}
@@ -61,7 +61,7 @@ void Room54::entry(int16 eib_nr) {
 			aufzug_ab();
 
 		} else if (eib_nr == 90 || _G(spieler).R55ExitDia) {
-			if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+			if (_G(spieler)._personRoomNr[P_HOWARD] == 54) {
 				_G(spieler).R54HowardVorne = 0;
 				setPersonPos(212, 61, P_HOWARD, P_RIGHT);
 			}
@@ -85,14 +85,14 @@ void Room54::entry(int16 eib_nr) {
 void Room54::xit(int16 eib_nr) {
 	_G(spieler).ScrollxStep = 1;
 
-	if (eib_nr == 89 && _G(spieler).PersonRoomNr[P_HOWARD] == 54) {
-		_G(spieler).PersonRoomNr[P_HOWARD] = 55;
+	if (eib_nr == 89 && _G(spieler)._personRoomNr[P_HOWARD] == 54) {
+		_G(spieler)._personRoomNr[P_HOWARD] = 55;
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
 
 void Room54::setup_func() {
-	if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+	if (_G(spieler)._personRoomNr[P_HOWARD] == 54) {
 		calc_person_look();
 
 		if (_G(spieler).R54HowardVorne != 255) {
@@ -189,7 +189,7 @@ void Room54::talk_verkauf() {
 	if (!_G(spieler).R54HotDogOk) {
 		if (_G(spieler).R45MagOk) {
 			if (_G(spieler).AkInvent == DOLLAR175_INV)
-				del_inventar(DOLLAR175_INV);
+				delInventory(DOLLAR175_INV);
 			else
 				remove_inventory(DOLLAR175_INV);
 		}
@@ -242,7 +242,7 @@ int16 Room54::use_zelle() {
 				goAutoXy(239, 101, P_HOWARD, ANI_WAIT);
 				flic_cut(FCUT_069);
 
-				del_inventar(_G(spieler).AkInvent);
+				delInventory(_G(spieler).AkInvent);
 				invent_2_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_JMANS);
 				_G(zoom_horizont) = 90;
@@ -254,7 +254,7 @@ int16 Room54::use_zelle() {
 				startAadWait(316);
 
 				_G(spieler_mi)[P_HOWARD].Mode = true;
-				switch_room(55);
+				switchRoom(55);
 			}
 		}
 	} else {
@@ -285,7 +285,7 @@ int16 Room54::use_azug() {
 				autoMove(8, P_CHEWY);
 				_G(spieler).R54HowardVorne = 0;
 				startAadWait(298);
-				_G(spieler).PersonHide[P_CHEWY] = true;
+				_G(spieler)._personHide[P_CHEWY] = true;
 				_G(det)->showStaticSpr(12);
 				_G(spieler).R55Location = true;
 				_G(SetUpScreenFunc) = nullptr;
@@ -313,7 +313,7 @@ int16 Room54::use_azug() {
 					SHOULD_QUIT_RETURN0;
 				}
 
-				switch_room(55);
+				switchRoom(55);
 			}
 		} else {
 			startAadWait(314);
@@ -357,7 +357,7 @@ void Room54::aufzug_ab() {
 	g_engine->_sound->stopSound(0);
 	_G(det)->hideStaticSpr(12);
 	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(maus_links_click) = false;
 	stopPerson(P_CHEWY);
 	_G(spieler).R55Location = false;
@@ -372,19 +372,19 @@ short Room54::use_taxi() {
 		autoMove(7, P_CHEWY);
 		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
 
-		if (_G(spieler).PersonRoomNr[P_HOWARD] == 54) {
+		if (_G(spieler)._personRoomNr[P_HOWARD] == 54) {
 			if (_G(spieler).R54HowardVorne) {
 				_G(spieler).R54HowardVorne = 0;
 				goAutoXy(290, 61, P_HOWARD, ANI_WAIT);
 			}
 
-			_G(spieler).PersonHide[P_HOWARD] = true;
+			_G(spieler)._personHide[P_HOWARD] = true;
 			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-			_G(spieler).PersonRoomNr[P_HOWARD] = 48;
+			_G(spieler)._personRoomNr[P_HOWARD] = 48;
 		}
 
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		switch_room(48);
+		_G(spieler)._personHide[P_CHEWY] = true;
+		switchRoom(48);
 	}
 
 	return action_ret;

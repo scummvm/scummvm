@@ -44,14 +44,14 @@ void Room58::xit() {
 	show_person();
 	set_person_rnr();
 	const int16 tmp = _G(spieler).R58TmpRoom1;
-	_G(spieler).PersonRoomNr[P_CHEWY] = _G(spieler).R58TmpRoom;
+	_G(spieler)._personRoomNr[P_CHEWY] = _G(spieler).R58TmpRoom;
 
-	switch_room(tmp);
+	switchRoom(tmp);
 }
 
 void Room58::look_cut_mag(int16 r_nr) {
 	_G(spieler).R58TmpRoom = r_nr;
-	_G(spieler).R58TmpRoom1 = _G(spieler).PersonRoomNr[P_CHEWY];;
+	_G(spieler).R58TmpRoom1 = _G(spieler)._personRoomNr[P_CHEWY];;
 
 	_G(spieler).R58TmpSx = _G(spieler).scrollx;
 	_G(spieler).R58TmpSy = _G(spieler).scrolly;
@@ -63,7 +63,7 @@ void Room58::look_cut_mag(int16 r_nr) {
 	_G(spieler).scrolly = 0;
 	_G(flags).MainInput = false;
 	hide_person();
-	switch_room(r_nr);
+	switchRoom(r_nr);
 }
 
 void Room58::setup_func() {

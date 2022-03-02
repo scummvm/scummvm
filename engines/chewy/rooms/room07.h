@@ -22,16 +22,14 @@
 #ifndef CHEWY_ROOMS_ROOM7_H
 #define CHEWY_ROOMS_ROOM7_H
 
-#include "chewy/ngsdefs.h"
-
 namespace Chewy {
 namespace Rooms {
 
 class Room7 {
 public:
 	static void entry();
-	static void haken(int16 sib_nr);
-	static void klingel();
+	static void hook(int16 sibNr);
+	static void bell();
 	static void gedAction(int index);
 };
 

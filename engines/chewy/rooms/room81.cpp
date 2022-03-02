@@ -58,9 +58,9 @@ void Room81::entry() {
 void Room81::xit(int16 eib_nr) {
 	_G(spieler).R79Val[P_CHEWY] = 1;
 	_G(spieler).R79Val[P_HOWARD] = 1;
-	_G(spieler).PersonRoomNr[P_HOWARD] = 80;
+	_G(spieler)._personRoomNr[P_HOWARD] = 80;
 	_G(spieler).R79Val[P_NICHELLE] = 1;
-	_G(spieler).PersonRoomNr[P_NICHELLE] = 80;
+	_G(spieler)._personRoomNr[P_NICHELLE] = 80;
 }
 
 void Room81::proc1() {
@@ -80,13 +80,13 @@ void Room81::proc1() {
 		goAutoXy(112, 60, P_CHEWY, ANI_WAIT);
 		startAadWait(461);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
 		startAadWait(459);
 		_G(det)->stop_detail(1);
 		startSetailWait(0, 1, ANI_GO);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(100, 96, P_CHEWY, ANI_WAIT);
 		goAutoXy(222, 97, P_CHEWY, ANI_WAIT);
@@ -116,7 +116,7 @@ int Room81::proc2() {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		aniId = 5;
 		diaNr = 462;
-		del_inventar(_G(spieler).AkInvent);
+		delInventory(_G(spieler).AkInvent);
 		_G(spieler).flags30_2 = true;
 	} else if (is_cur_inventar(104)) {
 		aniId = 4;

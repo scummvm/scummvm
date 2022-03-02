@@ -72,11 +72,11 @@ void Room8::hole_kohle() {
 		hideCur();
 		_G(spieler).R8Kohle = true;
 		autoMove(4, P_CHEWY);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(12, 1, ANI_FRONT);
 		cur_2_inventory();
 		invent_2_slot(KOHLE_HEISS_INV);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		showCur();
 	}
 }
@@ -87,14 +87,14 @@ void Room8::start_verbrennen() {
 	if (!_G(spieler).inv_cur) {
 		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK12);
 
 		while (_G(det)->get_ani_status(9)) {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
-			if (_G(minfo).button == 1 || _G(kbinfo).key_code == Common::KEYCODE_RETURN) {
+			if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
 				if (_G(minfo).x > 146 && _G(minfo).x < 208 &&
 					_G(minfo).y > 107 && _G(minfo).y < 155)
 					break;
@@ -105,7 +105,7 @@ void Room8::start_verbrennen() {
 		setPersonPos(129, 246, P_CHEWY, P_RIGHT);
 		startAniBlock(2, ABLOCK13);
 		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATA);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 	}
 
 	showCur();
@@ -121,10 +121,10 @@ bool Room8::gips_wurf() {
 		autoMove(2, P_CHEWY);
 		_G(maus_links_click) = false;
 
-		_G(spieler).PersonHide[P_CHEWY] = true;
-		del_inventar(GIPS_EIMER_INV);
+		_G(spieler)._personHide[P_CHEWY] = true;
+		delInventory(GIPS_EIMER_INV);
 		startSetailWait(4, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 
 		startDetailFrame(5, 1, ANI_FRONT, 16);
 		startSetailWait(6, 1, ANI_FRONT);
@@ -140,9 +140,9 @@ bool Room8::gips_wurf() {
 		_G(menu_item) = CUR_USE;
 		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
 		_G(flags).AtsAction = true;
-		_G(spieler).PersonHide[P_CHEWY] = true;
+		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(20, 1, ANI_FRONT);
-		_G(spieler).PersonHide[P_CHEWY] = false;
+		_G(spieler)._personHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
 		cursorChoice(_G(menu_item));
 		showCur();
@@ -152,13 +152,13 @@ bool Room8::gips_wurf() {
 }
 
 void Room8::open_gdoor() {
-	_G(spieler).PersonHide[P_CHEWY] = true;
+	_G(spieler)._personHide[P_CHEWY] = true;
 	_G(det)->showStaticSpr(17);
 	setupScreen(DO_SETUP);
 	startSetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(15);
 	_G(det)->hideStaticSpr(17);
-	_G(spieler).PersonHide[P_CHEWY] = false;
+	_G(spieler)._personHide[P_CHEWY] = false;
 	setPersonPos(204, 274, P_CHEWY, P_LEFT);
 	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATA);
 	_G(obj)->hide_sib(31);
