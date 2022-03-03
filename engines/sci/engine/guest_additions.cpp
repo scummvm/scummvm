@@ -157,6 +157,12 @@ static Common::String getUserObject(SciGameId gameId) {
 		return "oUser";
 	case GID_PHANTASMAGORIA2:
 		return "p2User";
+	case GID_LSL3:
+	case GID_SQ3:
+		// German Amiga versions
+		if (getSciVersion() == SCI_VERSION_1_MIDDLE)
+			return "PUser";
+		// fallthrough intended
 	default:
 		return "User";
 	}
