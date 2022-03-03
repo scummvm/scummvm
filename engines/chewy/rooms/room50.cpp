@@ -161,7 +161,7 @@ void Room50::calc_treppe() {
 int16 Room50::use_gutschein() {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(HOTEL_INV)) {
+	if (isCurInventory(HOTEL_INV)) {
 		action_ret = true;
 		if (!_G(spieler).R50KeyOK) {
 			hideCur();
@@ -183,7 +183,7 @@ int16 Room50::use_gutschein() {
 int16 Room50::use_gum() {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(GUM_INV)) {
+	if (isCurInventory(GUM_INV)) {
 		action_ret = true;
 		hideCur();
 		_G(spieler).R50KeyOK = true;
@@ -222,7 +222,7 @@ int16 Room50::use_gum() {
 		inventory_2_cur(KEY_INV);
 		_G(atds)->set_ats_str(323, 1, ATS_DATA);
 		_G(atds)->set_ats_str(327, 1, ATS_DATA);
-		_G(spieler).room_e_obj[84].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[84].Attribut = EXIT_TOP;
 		showCur();
 	}
 

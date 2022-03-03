@@ -111,17 +111,17 @@ int Room81::proc2() {
 	int aniId = -1;
 
 	hideCur();
-	if (is_cur_inventar(110)) {
+	if (isCurInventory(110)) {
 		autoMove(1, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		aniId = 5;
 		diaNr = 462;
 		delInventory(_G(spieler).AkInvent);
 		_G(spieler).flags30_2 = true;
-	} else if (is_cur_inventar(104)) {
+	} else if (isCurInventory(104)) {
 		aniId = 4;
 		diaNr = 463;
-	} else if (is_cur_inventar(102)) {
+	} else if (isCurInventory(102)) {
 		aniId = 4;
 		diaNr = 464;
 	}

@@ -130,7 +130,7 @@ void Room94::talk1() {
 }
 
 int Room94::giveGhostBottle() {
-	if (!is_cur_inventar(LIKOER2_INV))
+	if (!isCurInventory(LIKOER2_INV))
 		return 0;
 
 	hideCur();
@@ -157,7 +157,7 @@ int Room94::giveGhostBottle() {
 	_G(det)->del_static_ani(3);
 	startSetailWait(4, 1, ANI_FRONT);
 	_G(spieler).flags35_10 = true;
-	_G(spieler).room_e_obj[138].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[138].Attribut = EXIT_TOP;
 	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATA);
 	new_invent_2_cur(114);
 	

@@ -78,7 +78,7 @@ void Room67::setup_func() {
 
 int16 Room67::use_grammo() {
 	int16 action_flag = false;
-	if (is_cur_inventar(SCHALL_INV)) {
+	if (isCurInventory(SCHALL_INV)) {
 		hideCur();
 		action_flag = true;
 		autoMove(6, P_CHEWY);

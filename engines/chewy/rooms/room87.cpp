@@ -106,7 +106,7 @@ void Room87::xit(int16 eib_nr) {
 }
 
 int Room87::proc2(int16 txt_nr) {
-	if (!is_cur_inventar(107) && !is_cur_inventar(108))
+	if (!isCurInventory(107) && !isCurInventory(108))
 		return 0;
 
 	hideCur();

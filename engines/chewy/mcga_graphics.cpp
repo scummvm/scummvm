@@ -168,7 +168,7 @@ void McgaGraphics::box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
 	line_mcga(x2, y1, x2, y2, farbe);
 }
 
-void McgaGraphics::box_fill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
+void McgaGraphics::boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
 	if (x2 == x1)x2++;
 	int16 h = abs(y2 - y1);
 	if (h == 0)
@@ -179,7 +179,7 @@ void McgaGraphics::box_fill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe)
 
 void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int16 col2, int16 back_col) {
 	if (back_col < 255)
-		box_fill(x, y, x1, y1, back_col);
+		boxFill(x, y, x1, y1, back_col);
 	linie(x, y1, x1, y1, col2);
 	linie(x1, y, x1, y1, col2);
 	linie(x, y, x1, y, col1);
@@ -219,7 +219,7 @@ void McgaGraphics::sprite_save(byte *sptr, int16 x, int16 y, int16 breite, int16
 	spr_save_mcga(sptr, x, y, breite, hoehe, scrwidth);
 }
 
-void McgaGraphics::sprite_set(byte *sptr, int16 x, int16 y, int16 scrwidth) {
+void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	mspr_set_mcga(sptr, x, y, scrwidth);
 }
 

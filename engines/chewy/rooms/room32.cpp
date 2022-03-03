@@ -40,7 +40,7 @@ int16 Room32::use_howard() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (is_cur_inventar(TRICHTER_INV)) {
+	if (isCurInventory(TRICHTER_INV)) {
 		if (_G(spieler).R33MunterGet) {
 			autoMove(1, P_CHEWY);
 			cur_2_inventory();
@@ -75,7 +75,7 @@ int16 Room32::use_howard() {
 			ani_nr = CH_TALK12;
 			dia_nr = 73;
 		}
-	} else if (is_cur_inventar(MUNTER_INV)) {
+	} else if (isCurInventory(MUNTER_INV)) {
 		ani_nr = CH_TALK12;
 		dia_nr = 74;
 	}

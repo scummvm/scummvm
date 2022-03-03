@@ -150,17 +150,17 @@ void Room49::calc_boy() {
 int16 Room49::use_boy() {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(SPARK_INV)) {
+	if (isCurInventory(SPARK_INV)) {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
 		delInventory(_G(spieler).AkInvent);
 		talk_boy(265);
 		_G(spieler).R49WegFrei = true;
-		_G(spieler).room_e_obj[80].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[80].Attribut = EXIT_TOP;
 		showCur();
 
-	} else if (is_cur_inventar(CIGAR_INV)) {
+	} else if (isCurInventory(CIGAR_INV)) {
 		action_ret = true;
 		use_boy_cigar();
 	}

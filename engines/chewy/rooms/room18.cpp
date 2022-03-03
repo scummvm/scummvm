@@ -226,7 +226,7 @@ int16 Room18::sonden_moni() {
 int16 Room18::calc_surimy() {
 	int16 action_flag = false;
 
-	if (is_cur_inventar(SURIMY_INV)) {
+	if (isCurInventory(SURIMY_INV)) {
 		action_flag = true;
 
 		hideCur();

@@ -50,7 +50,7 @@ namespace Rooms {
 #define KOPF3 48
 
 void Room0::entry() {
-	if (is_cur_inventar(0) || _G(spieler).R0PillowThrow || _G(obj)->checkInventory(0))
+	if (isCurInventory(0) || _G(spieler).R0PillowThrow || _G(obj)->checkInventory(0))
 		_G(det)->hideStaticSpr(6);
 
 	if (!_G(flags).LoadGame) {
@@ -309,15 +309,15 @@ void Room0::calcEyeClick(int16 aniNr) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
 				int16 y = _G(minfo).y;
-				calc_txt_xy(&x, &y, str_, anz);
+				calcTxtXy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
 		} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
-			if (is_cur_inventar(SLIME_INV)) {
+			if (isCurInventory(SLIME_INV)) {
 				delInventory(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
-			} else if (is_cur_inventar(PILLOW_INV)) {
+			} else if (isCurInventory(PILLOW_INV)) {
 				startAtsWait(172, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}
@@ -547,15 +547,15 @@ void Room0::calcPillowClick(int16 aniNr) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = _G(minfo).x;
 				int16 y = _G(minfo).y;
-				calc_txt_xy(&x, &y, str_, anz);
+				calcTxtXy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
 		} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
-			if (is_cur_inventar(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
+			if (isCurInventory(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
 				delInventory(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;
-			} else if (is_cur_inventar(SLIME_INV)) {
+			} else if (isCurInventory(SLIME_INV)) {
 				startAtsWait(173, TXT_MARK_WALK, 14, ATS_DATA);
 			}
 		}

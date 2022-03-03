@@ -85,12 +85,12 @@ void Room17::entry() {
 		_G(spieler).room_e_obj[38].Attribut = 255;
 
 		if (_G(spieler).R6DoorLeftF)
-			_G(spieler).room_e_obj[39].Attribut = AUSGANG_RECHTS;
+			_G(spieler).room_e_obj[39].Attribut = EXIT_RIGHT;
 		else
 			_G(spieler).room_e_obj[39].Attribut = 255;
 
 		if (_G(spieler).R18DoorBruecke)
-			_G(spieler).room_e_obj[35].Attribut = AUSGANG_LINKS;
+			_G(spieler).room_e_obj[35].Attribut = EXIT_LEFT;
 		else
 			_G(spieler).room_e_obj[35].Attribut = 255;
 	}
@@ -98,13 +98,13 @@ void Room17::entry() {
 
 void Room17::xit() {
 	if (_G(spieler).R17DoorKommand)
-		_G(spieler).room_e_obj[36].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[36].Attribut = EXIT_TOP;
 	else
 		_G(spieler).room_e_obj[36].Attribut = 255;
 
 	_G(spieler).room_e_obj[35].Attribut = 255;
 	_G(spieler).room_e_obj[39].Attribut = 255;
-	_G(spieler).room_e_obj[38].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[38].Attribut = EXIT_TOP;
 }
 
 bool Room17::timer(int16 t_nr, int16 ani_nr) {
@@ -137,7 +137,7 @@ void Room17::gedAction(int index) {
 int16 Room17::use_seil() {
 	int16 action_flag = false;
 
-	if (!_G(flags).AutoAniPlay && _G(spieler).R17Location == 1 && is_cur_inventar(SEIL_INV)) {
+	if (!_G(flags).AutoAniPlay && _G(spieler).R17Location == 1 && isCurInventory(SEIL_INV)) {
 		action_flag = true;
 		hideCur();
 
@@ -242,7 +242,7 @@ void Room17::door_kommando(int16 mode) {
 
 		if (!mode) {
 			if (!_G(spieler).R17DoorKommand) {
-				_G(spieler).room_e_obj[36].Attribut = AUSGANG_OBEN;
+				_G(spieler).room_e_obj[36].Attribut = EXIT_TOP;
 				_G(spieler).R17DoorKommand = true;
 				startSetailWait(4, 1, ANI_FRONT);
 				stopPerson(P_CHEWY);
@@ -274,7 +274,7 @@ int16 Room17::energie_hebel() {
 	autoMove(7, P_CHEWY);
 
 	if (!_G(spieler).R17HebelOk) {
-		if (is_cur_inventar(BECHER_VOLL_INV)) {
+		if (isCurInventory(BECHER_VOLL_INV)) {
 			delInventory(_G(spieler).AkInvent);
 			_G(spieler).R17HebelOk = true;
 			startAadWait(38);
@@ -321,7 +321,7 @@ int16 Room17::get_oel() {
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
 		startAadWait(60);
-	} else if (is_cur_inventar(BECHER_LEER_INV)) {
+	} else if (isCurInventory(BECHER_LEER_INV)) {
 		action_flag = true;
 		close_door();
 		autoMove(4, P_CHEWY);

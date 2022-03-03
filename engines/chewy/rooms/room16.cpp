@@ -38,7 +38,7 @@ void Room16::entry() {
 		_G(atds)->del_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATA);
 	} else {
 		_G(det)->hideStaticSpr(4);
-		_G(spieler).room_e_obj[32].Attribut = AUSGANG_LINKS;
+		_G(spieler).room_e_obj[32].Attribut = EXIT_LEFT;
 		_G(atds)->set_steuer_bit(124, ATS_AKTIV_BIT, ATS_DATA);
 	}
 }

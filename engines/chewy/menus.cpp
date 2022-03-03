@@ -29,27 +29,27 @@
 
 namespace Chewy {
 
-void plot_main_menu() {
+void plotMainMenu() {
 	static const int IMAGES[] = { 7, 8, 9, 10, 12, 11 };
-	int16 zoomx, zoomy;
+	int16 zoomX, zoomY;
 
 	if (_G(menu_item) != _G(tmp_menu)) {
 		_G(m_flip) = 0;
 		_G(tmp_menu) = _G(menu_item);
 	}
 
-	maus_mov_menu();
-	int16 *korrektur = (int16 *)_G(menutaf)->_correction;
+	mouseMovMenu();
+	int16 *correction = (int16 *)_G(menutaf)->_correction;
 
 	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
 
 		if (i <= 8) {
-			zoomx = 0;
-			zoomy = 0;
+			zoomX = 0;
+			zoomY = 0;
 		} else {
-			zoomx = -3;
-			zoomy = -3;
+			zoomX = -3;
+			zoomY = -3;
 
 			if (i == 11)
 				deltaX = 40;
@@ -58,13 +58,13 @@ void plot_main_menu() {
 		}
 
 		_G(out)->scale_set(_G(menutaf)->_image[i],
-			MENU_X + deltaX + korrektur[i * 2],
-		    _G(spieler).MainMenuY + korrektur[i * 2 + 1],
-			zoomx, zoomy, 0);
+			MENU_X + deltaX + correction[i * 2],
+		    _G(spieler).MainMenuY + correction[i * 2 + 1],
+			zoomX, zoomY, 0);
 	}
 
-	zoomx = 16;
-	zoomy = 16;
+	zoomX = 16;
+	zoomY = 16;
 	++_G(m_flip);
 	if (_G(m_flip) < 12 * (_G(spieler).DelaySpeed + 1)) {
 		int deltaX = 0;
@@ -75,45 +75,45 @@ void plot_main_menu() {
 
 		int img = IMAGES[_G(menu_item)];
 		_G(out)->scale_set(_G(menutaf)->_image[img],
-		    MENU_X + deltaX + korrektur[img * 2] - 5,
-		    _G(spieler).MainMenuY + korrektur[img * 2 + 1] - 10,
-			zoomx, zoomy, 0);
+		    MENU_X + deltaX + correction[img * 2] - 5,
+		    _G(spieler).MainMenuY + correction[img * 2 + 1] - 10,
+			zoomX, zoomY, 0);
 	} else {
 		if (_G(m_flip) > 15 * (_G(spieler).DelaySpeed + 1))
 			_G(m_flip) = 0;
 	}
 }
 
-void maus_mov_menu() {
+void mouseMovMenu() {
 	_G(maus_menu_x) = g_events->_mousePos.x;
 	if (_G(maus_menu_x) > 200) {
 		g_events->warpMouse(Common::Point(200, g_events->_mousePos.y));
 		_G(maus_menu_x) = 200;
 	}
 
-	_G(menu_item) = (_G(maus_menu_x) / (MAUS_MENU_MAX_X / 5));
+	_G(menu_item) = (_G(maus_menu_x) / (MOUSE_MENU_MAX_X / 5));
 }
 
-void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz) {
+void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr) {
 	int16 len = 0;
-	for (int16 i = 0; i < txt_anz; i++) {
-		int16 tmp_len = strlen(_G(txt)->strPos((char *)txt_adr, i));
-		if (tmp_len > len)
-			len = tmp_len;
+	for (int16 i = 0; i < txtNr; i++) {
+		int16 tmpLen = strlen(_G(txt)->strPos(txtAdr, i));
+		if (tmpLen > len)
+			len = tmpLen;
 	}
 	len = len * _G(fontMgr)->getFont()->getDataWidth();
-	int16 pix_len = len / 2;
-	*x = *x - pix_len + 12;
+	int16 pixLen = len / 2;
+	*x = *x - pixLen + 12;
 	if (*x > (SCREEN_WIDTH - len))
 		*x = SCREEN_WIDTH - len;
 	else if (*x < 0)
 		*x = 0;
-	*y = *y - (10 * txt_anz);
+	*y = *y - (10 * txtNr);
 	if (*y < 0)
 		*y = 0;
 }
 
-void get_display_xy(int16 *x, int16 *y, int16 nr) {
+void getDisplayCoord(int16 *x, int16 *y, int16 nr) {
 	int16 *xy = (int16 *)_G(inv_spr)[nr];
 	int16 x1 = 48 - xy[0];
 	x1 /= 2;
@@ -123,50 +123,50 @@ void get_display_xy(int16 *x, int16 *y, int16 nr) {
 	*y = y1;
 }
 
-void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode) {
-#define BAU_MENU_ECKE_LO 15
-#define BAU_MENU_ECKE_RO 16
-#define BAU_MENU_ECKE_LU 17
-#define BAU_MENU_ECKE_RU 18
-#define BAU_MENU_UNTEN 19
-#define BAU_MENU_SEITE_L 20
-#define BAU_MENU_SEITE_R 21
-#define BAU_MENU_OBEN 22
-#define BAU_MENU_OBEN_L 23
-#define BAU_MENU_OBEN_R 24
-#define BAU_MENU_OBEN_M 25
+void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
+#define BUILDING_MENU_CORNER_LO 15
+#define BUILDING_MENU_CORNER_RO 16
+#define BUILDING_MENU_CORNER_LU 17
+#define BUILDING_MENU_CORNER_RU 18
+#define BUILDING_MENU_BELOW 19
+#define BUILDING_MENU_SIDE_L 20
+#define BUILDING_MENU_SIDE_R 21
+#define BUILDING_MENU_ABOVE 22
+#define BUILDING_MENU_ABOVE_L 23
+#define BUILDING_MENU_ABOVE_R 24
+#define BUILDING_MENU_ABOVE_M 25
 	int16 i, j;
 	int16 xy[4][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};
-	uint8 sprite_eckenr[4] = { BAU_MENU_ECKE_LO, BAU_MENU_ECKE_RO, BAU_MENU_ECKE_LU, BAU_MENU_ECKE_RU };
+	uint8 spriteCornerNr[4] = { BUILDING_MENU_CORNER_LO, BUILDING_MENU_CORNER_RO, BUILDING_MENU_CORNER_LU, BUILDING_MENU_CORNER_RU };
 
 	xy[0][0] = x;
 	xy[0][1] = y;
-	xy[1][0] = x + 16 * (xanz - 1);
+	xy[1][0] = x + 16 * (xNr - 1);
 	xy[1][1] = y;
 	xy[2][0] = x;
-	xy[2][1] = y + 16 * (yanz - 1);
-	xy[3][0] = x + 16 * (xanz - 1);
-	xy[3][1] = y + 16 * (yanz - 1);
+	xy[2][1] = y + 16 * (yNr - 1);
+	xy[3][0] = x + 16 * (xNr - 1);
+	xy[3][1] = y + 16 * (yNr - 1);
 
 	for (i = 0; i < 4; i++)
-		_G(out)->sprite_set(_G(menutaf)->_image[(int16)sprite_eckenr[i]],
+		_G(out)->spriteSet(_G(menutaf)->_image[(int16)spriteCornerNr[i]],
 		                 xy[i][0], xy[i][1], _G(scr_width));
 
-	int16 s_nr = BAU_MENU_SEITE_L;
+	int16 s_nr = BUILDING_MENU_SIDE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
-		for (i = 0; i < yanz - 2; i++) {
-			_G(out)->sprite_set(_G(menutaf)->_image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
+		for (i = 0; i < yNr - 2; i++) {
+			_G(out)->spriteSet(_G(menutaf)->_image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
 		}
 		++s_nr;
 	}
 
-	s_nr = BAU_MENU_OBEN;
+	s_nr = BUILDING_MENU_ABOVE;
 	for (j = 0; j < 2; j++) {
 		x = xy[j * 2][0] + 16;
 		if ((!mode) || (mode == 1 && j == 1)) {
-			for (i = 0; i < xanz - 2; i++) {
-				_G(out)->sprite_set(_G(menutaf)->_image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
+			for (i = 0; i < xNr - 2; i++) {
+				_G(out)->spriteSet(_G(menutaf)->_image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
@@ -174,42 +174,42 @@ void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode)
 
 	if (mode) {
 		int16 leer = 0;
-		int16 mitte;
-		i = xanz - 7;
+		int16 center;
+		i = xNr - 7;
 		if (i == 0)
-			mitte = 1;
+			center = 1;
 		else if (i < 6)
-			mitte = i + 1;
+			center = i + 1;
 		else if (i < 8) {
 			leer = 1;
-			mitte = i - 1;
+			center = i - 1;
 		} else {
 			leer = 2;
-			mitte = i - 3;
+			center = i - 3;
 		}
 
 		x = xy[0][0] + 16;
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
-				_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN], x + i * 16, xy[0][1], _G(scr_width));
+				_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE], x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
-		_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
-		for (i = 0; i < mitte; i++)
-			_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_M], x + i * 16, xy[0][1], _G(scr_width));
-		_G(out)->sprite_set(_G(menutaf)->_image[BAU_MENU_OBEN_R], x + i * 16, xy[0][1], _G(scr_width));
+		for (i = 0; i < center; i++)
+			_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_M], x + i * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_R], x + i * 16, xy[0][1], _G(scr_width));
 	}
 
-	_G(out)->box_fill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xanz - 2) * 16, xy[0][1] + 16 + (yanz - 2) * 16, col);
+	_G(out)->boxFill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xNr - 2) * 16, xy[0][1] + 16 + (yNr - 2) * 16, col);
 }
 
-void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, int16 mode) {
+void autoMenu(int16 *x, int16 *y, int16 lineNr, int16 height, char *text, int16 mode) {
 	int16 tmp;
 
 	int16 x_pix = 0;
-	for (int16 i = 0; i < zeilen_anz; i++) {
+	for (int16 i = 0; i < lineNr; i++) {
 		tmp = strlen(_G(txt)->strPos(text, i));
 		if (x_pix < tmp)
 			x_pix = tmp;
@@ -219,68 +219,68 @@ void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 hoehe, char *text, in
 	tmp = x_pix;
 	if (x_pix % 16)
 		tmp += 16;
-	int16 tmp1 = zeilen_anz * hoehe + 6 + 11;
+	int16 tmp1 = lineNr * height + 6 + 11;
 	if (tmp1 % 16)
 		tmp1 += 16;
 	*x -= ((tmp / 16) * 16) / 2;
 	*y -= ((tmp1 / 16) * 16) / 2;
-	build_menu(*x, *y, tmp / 16, tmp1 / 16, 60, mode);
+	buildMenu(*x, *y, tmp / 16, tmp1 / 16, 60, mode);
 	*x += 6 + (((tmp / 16) * 16) - x_pix) / 2;
-	*y += 5 + ((((tmp1 / 16) * 16) - 4) - (zeilen_anz * hoehe)) / 2;
+	*y += 5 + ((((tmp1 / 16) * 16) - 4) - (lineNr * height)) / 2;
 }
 
 #define ADS_WIN 0,153,20,3,60,1
 
-void ads_menu() {
-	int16 cur_y_start;
+void adsMenu() {
+	int16 curYStart;
 	int16 col;
 
 	if (_G(flags).AdsDialog) {
 		_G(flags).ShowAtsInvTxt = false;
 		_G(flags).MainInput = false;
 		if (_G(ads_item_anz) > 4)
-			cur_y_start = 190;
+			curYStart = 190;
 		else
-			cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
-		int16 cur_y = _G(minfo).y;
-		if (cur_y < 160 || cur_y > cur_y_start + 10)
-			cur_y = 255;
+			curYStart = 190 - (4 - _G(ads_item_anz)) * 10;
+		int16 curY = _G(minfo).y;
+		if (curY < 160 || curY > curYStart + 10)
+			curY = 255;
 		else
-			cur_y = (cur_y_start + 5 - cur_y) / 10;
+			curY = (curYStart + 5 - curY) / 10;
 
-		if (_G(atds)->aad_get_status() == -1 && _G(ads_push) == false &&
+		if (_G(atds)->aadGetStatus() == -1 && _G(ads_push) == false &&
 		        _G(flags).NoDiaBox == false) {
 			_G(cur_display) = true;
 
-			build_menu(ADS_WIN);
+			buildMenu(ADS_WIN);
 			_G(fontMgr)->setFont(_G(font6));
 			if (_G(ads_item_anz) > 4)
-				cur_y_start = 190;
+				curYStart = 190;
 			else
-				cur_y_start = 190 - (4 - _G(ads_item_anz)) * 10;
+				curYStart = 190 - (4 - _G(ads_item_anz)) * 10;
 			for (int16 i = 0; i < _G(ads_item_anz) && i < 4; i++) {
-				if (cur_y == i)
+				if (curY == i)
 					col = 255;
 				else
 					col = 14;
-				_G(out)->printxy(4, cur_y_start - i * 10, col, 300, 0, _G(ads_item_ptr)[i]);
+				_G(out)->printxy(4, curYStart - i * 10, col, 300, 0, _G(ads_item_ptr)[i]);
 			}
 		}
 
-		switch (_G(in)->get_switch_code()) {
+		switch (_G(in)->getSwitchCode()) {
 		case 255:
 		case Common::KEYCODE_RETURN:
-			if (cur_y < _G(ads_item_anz) && cur_y >= 0 && _G(ads_push) == false) {
+			if (curY < _G(ads_item_anz) && curY >= 0 && _G(ads_push) == false) {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
 				_G(minfo).y = 159;
-				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), cur_y);
+				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), curY);
 				if (an_blk->BlkNr == -1) {
 					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					stop_ads_dialog();
 				} else {
-					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), cur_y);
+					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), curY);
 					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					_G(ads_blk_nr) = an_blk->BlkNr;
 					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr),
@@ -332,7 +332,7 @@ void inventory_2_cur(int16 nr) {
 		_G(menu_item) = CUR_USE;
 		_G(spieler).AkInvent = nr;
 		cursorChoice(CUR_AK_INVENT);
-		get_display_xy(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
+		getDisplayCoord(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 	}
 }
 

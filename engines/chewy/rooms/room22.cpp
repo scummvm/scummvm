@@ -181,7 +181,7 @@ void Room22::get_bork() {
 int16 Room22::malen() {
 	int16 action_flag = false;
 
-	if (!_G(flags).AutoAniPlay && is_cur_inventar(17)) {
+	if (!_G(flags).AutoAniPlay && isCurInventory(17)) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);

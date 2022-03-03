@@ -72,7 +72,7 @@ int16 Room52::use_hot_dog() {
 	int16 action_ret = false;
 	hideCur();
 
-	if (is_cur_inventar(BURGER_INV)) {
+	if (isCurInventory(BURGER_INV)) {
 		action_ret = true;
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
@@ -88,7 +88,7 @@ int16 Room52::use_hot_dog() {
 		setPersonSpr(P_LEFT, P_CHEWY);
 		startAadWait(288);
 
-	} else if (is_cur_inventar(KILLER_INV)) {
+	} else if (isCurInventory(KILLER_INV)) {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;

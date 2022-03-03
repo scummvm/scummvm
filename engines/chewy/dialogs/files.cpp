@@ -104,12 +104,12 @@ int16 Files::execute(bool isInGame) {
 			if (visibility[j]) {
 				if (!mode[j])
 					// Not pressed
-					_G(out)->sprite_set(
+					_G(out)->spriteSet(
 						ti->_image[i], 16 + ti->_correction[i << 1] + pt[j].x,
 						76 + ti->_correction[(i << 1) + 1] + pt[j].y, 0);
 				else
 					// Pressed
-					_G(out)->sprite_set(ti->_image[i], 16 + ti->_correction[i << 1],
+					_G(out)->spriteSet(ti->_image[i], 16 + ti->_correction[i << 1],
 						76 + ti->_correction[(i << 1) + 1], 0);
 			}
 		}
@@ -122,13 +122,13 @@ int16 Files::execute(bool isInGame) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
 				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
 			} else {
-				_G(out)->box_fill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
+				_G(out)->boxFill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
 				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
 				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp);
 			}
 		}
 
-		key = _G(in)->get_switch_code();
+		key = _G(in)->getSwitchCode();
 
 		if (mode[SCROLL_UP])
 			--mode[SCROLL_UP];

@@ -154,7 +154,7 @@ void Room76::proc5() {
 int Room76::proc6() {
 	int retVal = 0;
 
-	if (is_cur_inventar(93)) {
+	if (isCurInventory(93)) {
 		hideCur();
 		delInventory(_G(spieler).AkInvent);
 		_G(spieler).flags29_8 = true;
@@ -168,7 +168,7 @@ int Room76::proc6() {
 		startSetailWait(9, 1, ANI_FRONT);
 		startSetailWait(10, 1, ANI_FRONT);
 		showCur();
-	} else if (is_cur_inventar(94)) {
+	} else if (isCurInventory(94)) {
 		hideCur();
 		retVal = 1;
 		setPersonSpr(P_RIGHT, P_CHEWY);
@@ -180,7 +180,7 @@ int Room76::proc6() {
 }
 
 int Room76::proc7() {
-	if (!is_cur_inventar(96))
+	if (!isCurInventory(96))
 		return 0;
 	
 	if (_G(spieler).flags29_4) {

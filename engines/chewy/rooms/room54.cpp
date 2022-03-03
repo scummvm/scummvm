@@ -229,7 +229,7 @@ int16 Room54::use_zelle() {
 	hideCur();
 
 	if (_G(spieler).inv_cur) {
-		if (is_cur_inventar(JMKOST_INV)) {
+		if (isCurInventory(JMKOST_INV)) {
 			action_ret = true;
 
 			if (!_G(spieler).R54Schild) {

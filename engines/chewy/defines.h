@@ -75,10 +75,10 @@ enum SetupScreenMode {
 #define CUR_NO_USE 10
 #define CUR_NO_LOOK 11
 #define CUR_NO_TALK 12
-#define CUR_AUSGANG_LINKS 13
-#define CUR_AUSGANG_RECHTS 14
-#define CUR_AUSGANG_OBEN 15
-#define CUR_AUSGANG_UNTEN 16
+#define CUR_EXIT_LEFT 13
+#define CUR_EXIT_RIGHT 14
+#define CUR_EXIT_TOP 15
+#define CUR_EXIT_BOTTOM 16
 #define CUR_USER 17
 
 #define CUR_DISK 18
@@ -86,10 +86,10 @@ enum SetupScreenMode {
 #define CUR_ZEIGE 20
 #define CUR_NICHELLE 21
 #define CUR_22 22
-#define AUSGANG_LINKS_SPR 26
-#define AUSGANG_RECHTS_SPR 27
-#define AUSGANG_OBEN_SPR 28
-#define AUSGANG_UNTEN_SPR 29
+#define EXIT_LEFT_SPR 26
+#define EXIT_RIGHT_SPR 27
+#define EXIT_ABOVE_SPR 28
+#define EXIT_BOTTOM_SPR 29
 
 #define MENU_X 26
 #define MENU_Y 21
@@ -111,7 +111,7 @@ enum SetupScreenMode {
 #define INV_ATS_MODE 0
 #define INV_USE_ATS_MODE 1
 
-#define WIN_INVENTAR WIN_INF_X,WIN_INF_Y,18,11,60,1
+#define WIN_INVENTORY WIN_INF_X,WIN_INF_Y,18,11,60,1
 #define WIN_TEST 24,36,2,8,60,0
 #define WIN_LOOK WIN_LOOK_X,WIN_LOOK_Y,10,6,60,1
 #define WIN_LOOK2 WIN_LOOK_X+4,WIN_LOOK_Y+4,3,3,60,0
@@ -132,7 +132,7 @@ enum SetupScreenMode {
 #define ANI_GO 1
 #define MAX_PROG_ANI 10
 
-#define INVENTAR_NORMAL 0
+#define INVENTORY_NORMAL 0
 
 #define INVENTORY_STATIC 1
 #define STATIC_USE 2
@@ -142,10 +142,10 @@ enum SetupScreenMode {
 #define DETAIL_OBJ 5
 #define SPIELER_OBJ 6
 
-#define CURSOR "misc/cursor.taf"
-#define INVENTAR "misc/inventar.taf"
-#define INVENTAR_IIB "misc/inventar.iib"
-#define INVENTAR_SIB "misc/inventar.sib"
+#define CURSOR_TAF "misc/cursor.taf"
+#define INVENTORY_TAF "misc/inventar.taf"
+#define INVENTORY_IIB "misc/inventar.iib"
+#define INVENTORY_SIB "misc/inventar.sib"
 #define EXIT_EIB "misc/exit.eib"
 #define CHEWY_TAF "misc/ch_walk.taf"
 #define CHEWY_BO_TAF "misc/ch_bork.taf"
@@ -398,7 +398,7 @@ enum SetupScreenMode {
 #define FOOD_CERTIFICATE_INV 101
 #define DIARY_INV 109
 
-#define SIB_SCHLEIM 3
+#define SIB_SLIME 3
 
 #define NO_MOV_OBJ 127
 #define CHEWY_OBJ 255
@@ -573,19 +573,17 @@ enum SetupScreenMode {
 #define FCUT_154 154 // Red space ship being chased (custom callback: flic_user_function)
 #define FCUT_155 155 // Intro logos (German)
 #define FCUT_156 156 // Red space ship entering black hole (custom callback: flic_user_function)
-#define FCUT_157 157 // Red space ship travelling inside black hole (custom callback: flic_user_function)
+#define FCUT_157 157 // Red space ship traveling inside black hole (custom callback: flic_user_function)
 #define FCUT_158 158 // Howard and Chewy waking up
 #define FCUT_159 159 // Credits
 #define FCUT_160 160 // Intro logos (English)
 
-#define AUSGANG_LINKS 1
-#define AUSGANG_RECHTS 2
-#define AUSGANG_OBEN 3
-#define AUSGANG_UNTEN 4
-#define WAIT_TASTE_LOS while (_G(in)->get_switch_code() != 0 \
+#define EXIT_LEFT 1
+#define EXIT_RIGHT 2
+#define EXIT_TOP 3
+#define EXIT_BOTTOM 4
+#define WAIT_TASTE_LOS while (_G(in)->getSwitchCode() != 0 \
 	&& !SHOULD_QUIT) { g_events->update(); }
-
-#define FILEMENUE 1
 
 } // namespace Chewy
 

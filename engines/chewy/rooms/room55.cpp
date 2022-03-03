@@ -146,7 +146,7 @@ int16 Room55::use_stapel1() {
 			action_ret = true;
 			startAadWait(333);
 		}
-	} else if (is_cur_inventar(MANUSKRIPT_INV)) {
+	} else if (isCurInventory(MANUSKRIPT_INV)) {
 		action_ret = true;
 
 		if (_G(spieler).R55ScriptWeg) {
@@ -167,7 +167,7 @@ int16 Room55::use_stapel1() {
 int16 Room55::use_stapel2() {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(MANUSKRIPT_INV)) {
+	if (isCurInventory(MANUSKRIPT_INV)) {
 		action_ret = true;
 		hideCur();
 		startAadWait(327);
@@ -357,7 +357,7 @@ void Room55::strasse(int16 mode) {
 int16 Room55::use_kammeraus() {
 	int16 action_ret = false;
 
-	if (_G(spieler).R55Location && is_cur_inventar(KILLER_INV)) {
+	if (_G(spieler).R55Location && isCurInventory(KILLER_INV)) {
 		action_ret = true;
 
 		if (!_G(spieler).R52KakerWeg)

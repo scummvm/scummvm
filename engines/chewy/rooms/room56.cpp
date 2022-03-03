@@ -249,7 +249,7 @@ void Room56::talk_man() {
 
 int16 Room56::use_man() {
 	int16 action_ret = false;
-	if (_G(spieler).flags32_10 || !is_cur_inventar(FLASCHE_INV))
+	if (_G(spieler).flags32_10 || !isCurInventory(FLASCHE_INV))
 		return action_ret;
 	
 	action_ret = true;
@@ -327,7 +327,7 @@ int16 Room56::use_kneipe() {
 			}
 			showCur();
 		}
-	} else if (is_cur_inventar(18)) {
+	} else if (isCurInventory(18)) {
 		hideCur();
 		if (_G(spieler).flags34_10) {
 			_G(spieler).flags33_80 = true;
@@ -370,7 +370,7 @@ int16 Room56::use_kneipe() {
 int16 Room56::proc1(int16 key) {
 	int16 retVal = 0;
 
-	if (_G(in)->get_switch_code() == 1)
+	if (_G(in)->getSwitchCode() == 1)
 		retVal = -1;
 
 	return retVal;
@@ -443,7 +443,7 @@ void Room56::setup_func() {
 	
 	if (!_G(atds)->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA) && _G(menu_item) == CUR_WALK) {
 		if (_G(minfo).x + _G(spieler).scrollx >= 157 && _G(minfo).x + _G(spieler).scrollx <= 204 && _G(minfo).y >= 28 && _G(minfo).y <= 89)
-			cursorChoice(CUR_AUSGANG_OBEN);
+			cursorChoice(CUR_EXIT_TOP);
 		else
 			cursorChoice(CUR_WALK);
 	}

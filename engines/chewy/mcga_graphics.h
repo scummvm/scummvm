@@ -52,7 +52,7 @@ public:
 	uint8 get_pixel(int16 xpos, int16 ypos);
 	void linie(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 	void box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
-	void box_fill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
+	void boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
 	void pop_box(int16 x, int16 y, int16 x1, int16 y1,
 	             int16 col1, int16 col2, int16 back_col);
 
@@ -62,7 +62,7 @@ public:
 	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
 	                 int16 hoehe, int16 scrwidth);
 	void blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth);
-	void sprite_set(byte *sptr, int16 x, int16 y, int16 scrwidth);
+	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
 	void map_spr2screen(byte *sptr, int16 x, int16 y);

@@ -90,7 +90,7 @@ void Room95::setup_func() {
 int Room95::proc2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	if (is_cur_inventar(113)) {
+	if (isCurInventory(113)) {
 		delInventory(_G(spieler).AkInvent);
 
 		start_spz_wait(14, 1, false, P_CHEWY);

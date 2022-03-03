@@ -213,14 +213,14 @@ int16 Room41::use_brief() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (is_cur_inventar(BRIEF_INV)) {
+	if (isCurInventory(BRIEF_INV)) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(6, P_CHEWY);
 		startAadWait(126);
 		start_hoggy();
 
-	} else if (is_cur_inventar(BRIEF2_INV)) {
+	} else if (isCurInventory(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
 		delInventory(_G(spieler).AkInvent);

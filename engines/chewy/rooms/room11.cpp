@@ -49,7 +49,7 @@ void Room11::entry() {
 		if (!_G(spieler).R11DoorRightB) {
 			_G(obj)->calc_rsi_flip_flop(SIB_TBUTTON2_R11);
 			_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
-				AUSGANG_OBEN, -1, (int16)_G(spieler).R11DoorRightB);
+				EXIT_TOP, -1, (int16)_G(spieler).R11DoorRightB);
 			_G(obj)->calc_all_static_detail();
 		}
 
@@ -142,7 +142,7 @@ int16 Room11::scanner() {
 		if (!_G(spieler).R11CardOk) {
 			actionFl = true;
 			startAadWait(13);
-		} else if (is_cur_inventar(BORK_INV)) {
+		} else if (isCurInventory(BORK_INV)) {
 			hideCur();
 			setupScreen(DO_SETUP);
 			actionFl = true;
@@ -191,7 +191,7 @@ void Room11::get_card() {
 }
 
 void Room11::put_card() {
-	if (is_cur_inventar(RED_CARD_INV) || is_cur_inventar(YEL_CARD_INV)) {
+	if (isCurInventory(RED_CARD_INV) || isCurInventory(YEL_CARD_INV)) {
 		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
 		delInventory(_G(spieler).R11IdCardNr);
 		_G(det)->startDetail(0, 255, ANI_FRONT);

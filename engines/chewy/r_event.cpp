@@ -478,7 +478,7 @@ void exit_room(int16 eib_nr) {
 		_G(flags).NoScroll = false;
 		_G(spieler).R18Gitter = false;
 		_G(spieler).room_e_obj[50].Attribut = 255;
-		_G(spieler).room_e_obj[41].Attribut = AUSGANG_UNTEN;
+		_G(spieler).room_e_obj[41].Attribut = EXIT_BOTTOM;
 		break;
 
 	case 19:
@@ -790,7 +790,7 @@ void print_rows(int16 id) {
 }
 
 int16 flic_user_function(int16 keys) {
-	if (_G(atds)->aad_get_status() != -1) {
+	if (_G(atds)->aadGetStatus() != -1) {
 		switch (_G(flic_val1)) {
 		case 579:
 		case 584:
@@ -809,14 +809,14 @@ int16 flic_user_function(int16 keys) {
 	if (_G(flic_val1) == 594 && keys == 18)
 		_G(atds)->stopAad();
 
-	int ret = _G(in)->get_switch_code() == Common::KEYCODE_ESCAPE ? -1 : 0;
+	int ret = _G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE ? -1 : 0;
 	if (_G(flic_val2) == 140 && keys == 15)
 		ret = -2;
 	if (_G(flic_val2) == 144 && keys == 7)
 		ret = -2;
 	if (_G(flic_val2) == 145 || _G(flic_val2) == 142 ||
 			_G(flic_val2) == 141 || _G(flic_val2) == 146) {
-		if (_G(atds)->aad_get_status() == -1)
+		if (_G(atds)->aadGetStatus() == -1)
 			ret = -2;
 	}
 
@@ -875,7 +875,7 @@ static void flic_proc1() {
 #else
 			g_engine->_video->playVideo(_G(flic_val2));
 #endif
-			flag = VALS4[i] && _G(atds)->aad_get_status() != -1;
+			flag = VALS4[i] && _G(atds)->aadGetStatus() != -1;
 		} while (flag && ret != -1 && ret != -2);
 
 		_G(atds)->stopAad();
@@ -1090,7 +1090,7 @@ void flic_cut(int16 nr) {
 		case FCUT_095:
 			_G(flc)->set_custom_user_function(Room87::proc5);
 
-			while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
+			while (_G(atds)->aadGetStatus() != -1 && !SHOULD_QUIT) {
 #ifndef NEW_VIDEO_CODE
 				_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
 				_G(flc)->custom_play(&_G(Ci));
@@ -1265,7 +1265,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_TBUTTON1_R7:
 		_G(spieler).R6DoorLeftB = exit_flip_flop(3, 12, 9, 49, 35, SIB_TBUTTON2_R6,
-		                                     AUSGANG_OBEN, AUSGANG_LINKS,
+		                                     EXIT_TOP, EXIT_LEFT,
 		                                     (int16)_G(spieler).R6DoorLeftB);
 		break;
 
@@ -1292,7 +1292,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_TBUTTON2_R7:
 		_G(spieler).R7DoorRight = exit_flip_flop(4, 13, 14, 53, 68, SIB_TUER_R8,
-		                                     AUSGANG_RECHTS, AUSGANG_RECHTS,
+		                                     EXIT_RIGHT, EXIT_RIGHT,
 		                                     (int16)_G(spieler).R7DoorRight);
 		break;
 
@@ -1324,7 +1324,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_TUER_R8:
 		_G(spieler).R7DoorRight = exit_flip_flop(-1, 14, 13, 68, 53, SIB_TBUTTON2_R7,
-		                                     AUSGANG_RECHTS, AUSGANG_RECHTS,
+		                                     EXIT_RIGHT, EXIT_RIGHT,
 		                                     (int16)_G(spieler).R7DoorRight);
 		break;
 
@@ -1375,7 +1375,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_GITTER_R16:
 		_G(atds)->set_ats_str(125, 1, ATS_DATA);
-		_G(spieler).room_e_obj[33].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[33].Attribut = EXIT_TOP;
 		break;
 
 	case SIB_SCHALTER1_R21:
@@ -1422,11 +1422,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 		if (!_G(spieler).R6DoorLeftF) {
 			_G(spieler).R6DoorLeftF = exit_flip_flop(-1, 8, -1, 33, -1, SIB_TBUTTON1_R6,
-				AUSGANG_LINKS, -1,
+				EXIT_LEFT, -1,
 				(int16)_G(spieler).R6DoorLeftF);
 		}
 		_G(spieler).R18DoorBruecke = exit_flip_flop(19, 40, 35, 148, -1, -1,
-			AUSGANG_OBEN, AUSGANG_LINKS,
+			EXIT_TOP, EXIT_LEFT,
 			(int16)_G(spieler).R18DoorBruecke);
 		break;
 
@@ -1550,17 +1550,17 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_TBUTTON1_R6:
 		_G(spieler).R6DoorLeftF = exit_flip_flop(4, 8, -1, 33, -1, -1,
-			AUSGANG_LINKS, -1, _G(spieler).R6DoorLeftF);
+			EXIT_LEFT, -1, _G(spieler).R6DoorLeftF);
 		break;
 
 	case SIB_TBUTTON2_R6:
 		_G(spieler).R6DoorLeftB = exit_flip_flop(5, 9, 12, 35, 49, SIB_TBUTTON1_R7,
-			AUSGANG_LINKS, AUSGANG_OBEN, _G(spieler).R6DoorLeftB);
+			EXIT_LEFT, EXIT_TOP, _G(spieler).R6DoorLeftB);
 		break;
 
 	case SIB_TBUTTON3_R6:
 		_G(spieler).R6DoorRightB = exit_flip_flop(6, 11, 20, 37, 99, SIB_TBUTTON3_R11,
-			AUSGANG_RECHTS, AUSGANG_LINKS, _G(spieler).R6DoorRightB);
+			EXIT_RIGHT, EXIT_LEFT, _G(spieler).R6DoorRightB);
 		break;
 
 	case SIB_BOLA_BUTTON_R6:
@@ -1597,17 +1597,17 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_TBUTTON1_R11:
 		_G(spieler).R11DoorRightF = exit_flip_flop(1, 23, -1, 87, -1, -1,
-			AUSGANG_OBEN, -1, _G(spieler).R11DoorRightF);
+			EXIT_TOP, -1, _G(spieler).R11DoorRightF);
 		break;
 
 	case SIB_TBUTTON2_R11:
 		_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
-			AUSGANG_OBEN, -1, _G(spieler).R11DoorRightB);
+			EXIT_TOP, -1, _G(spieler).R11DoorRightB);
 		break;
 
 	case SIB_TBUTTON3_R11:
 		_G(spieler).R6DoorRightB = exit_flip_flop(6, 20, 11, 99, 37, SIB_TBUTTON3_R6,
-			AUSGANG_LINKS, AUSGANG_RECHTS, _G(spieler).R6DoorRightB);
+			EXIT_LEFT, EXIT_RIGHT, _G(spieler).R6DoorRightB);
 		break;
 
 	case SIB_CARTRIDGE_R23:
@@ -1645,7 +1645,7 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_GITTER2_R21:
 		_G(spieler).R21GitterMuell = exit_flip_flop(-1, 46, 27, 132, 90, -1,
-			AUSGANG_RECHTS, AUSGANG_RECHTS, _G(spieler).R21GitterMuell);
+			EXIT_RIGHT, EXIT_RIGHT, _G(spieler).R21GitterMuell);
 		_G(atds)->set_ats_str(90, TXT_MARK_USE, 2, ATS_DATA);
 		break;
 

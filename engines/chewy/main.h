@@ -29,7 +29,7 @@ namespace Chewy {
 
 void game_main();
 void free_buffers();
-void plot_main_menu();
+void plotMainMenu();
 void palcopy(byte *destPal, const byte *srcPal, int16 destStartIndex,
              int16 srcStartIndex, int16 colorNbr);
 short calcMouseText(int16 x, int16 y, int16 mode);

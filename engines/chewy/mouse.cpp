@@ -85,7 +85,7 @@ KbdMouseInfo *InputMgr::getPointer() {
 	return &_inzeig;
 }
 
-int16 InputMgr::get_switch_code() {
+int16 InputMgr::getSwitchCode() {
 	int16 switch_code = 0;
 
 	if (_G(minfo)._button == 2) {

@@ -156,7 +156,7 @@ void Room14::feuer() {
 	_G(flags).AutoAniPlay = true;
 	hideCur();
 
-	if (is_cur_inventar(BWAFFE_INV)) {
+	if (isCurInventory(BWAFFE_INV)) {
 		autoMove(5, P_CHEWY);
 		waffe = true;
 		_G(spieler)._personHide[P_CHEWY] = true;

@@ -89,7 +89,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		// FIXME: We ignore mouse events because the game checks
 		// for left mouse down, instead of up, so releasing the
 		// mouse button results in video skipping
-		if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE)
+		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
 			skipVideo = true;
 
 		// Clear any pending keys
@@ -155,7 +155,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 
 		_G(atds)->print_aad(scrollx, scrolly);
 
-		if (cfoDecoder->endOfVideo() && _G(atds)->aad_get_status() != -1)
+		if (cfoDecoder->endOfVideo() && _G(atds)->aadGetStatus() != -1)
 			cfoDecoder->rewind();
 		break;
 	case FCUT_034:
@@ -192,7 +192,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		return (frame >= 12) ? false : true;
 	case FCUT_112:
 		// Room56::proc1
-		return (_G(in)->get_switch_code() == 1) ? false : true;
+		return (_G(in)->getSwitchCode() == 1) ? false : true;
 	default:
 		return true;
 	}

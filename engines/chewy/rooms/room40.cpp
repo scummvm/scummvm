@@ -521,7 +521,7 @@ int16 Room40::use_bmeister() {
 		cursorChoice(_G(menu_item));
 		showCur();
 
-	} else if (is_cur_inventar(LIKOER2_INV)) {
+	} else if (isCurInventory(LIKOER2_INV)) {
 		action_flag = true;
 		if (_G(spieler).flags37_80) {
 			startAadWait(605);
@@ -633,7 +633,7 @@ int16 Room40::use_tele() {
 			int16 timer_wert = 0;
 
 			if (dia_nr1 == 223) {
-				if (is_cur_inventar(DUENGER_INV)) {
+				if (isCurInventory(DUENGER_INV)) {
 					delInventory(_G(spieler).AkInvent);
 				} else {
 					remove_inventory(DUENGER_INV);

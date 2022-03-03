@@ -225,7 +225,7 @@ void Room21::salto() {
 
 void Room21::use_gitter_energie() {
 	_G(spieler).R21GitterEnergie = exit_flip_flop(-1, 47, -1, 131, 138, -1,
-		AUSGANG_UNTEN, AUSGANG_OBEN, (int16)_G(spieler).R21GitterEnergie);
+		EXIT_BOTTOM, EXIT_TOP, (int16)_G(spieler).R21GitterEnergie);
 	_G(auto_obj) = 0;
 	_G(spieler).R17Location = 1;
 	_G(spieler)._personHide[P_CHEWY] = true;
@@ -253,7 +253,7 @@ int16 Room21::use_fenster() {
 			_G(spieler).R18FirstEntry = true;
 		}
 
-		_G(spieler).room_e_obj[50].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[50].Attribut = EXIT_TOP;
 		_G(spieler).room_e_obj[41].Attribut = 255;
 		_G(flags).AutoAniPlay = false;
 	}

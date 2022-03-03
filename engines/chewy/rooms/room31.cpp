@@ -79,7 +79,7 @@ void Room31::calc_luke() {
 
 		_G(atds)->set_ats_str(244, 1, ATS_DATA);
 		_G(atds)->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATA);
-		_G(spieler).room_e_obj[75].Attribut = AUSGANG_UNTEN;
+		_G(spieler).room_e_obj[75].Attribut = EXIT_BOTTOM;
 
 	} else {
 		for (int16 i = 0; i < 3; i++)
@@ -146,7 +146,7 @@ int16 Room31::use_topf() {
 	hideCur();
 	if (_G(spieler).inv_cur) {
 		if (_G(spieler).R31PflanzeWeg) {
-			if (is_cur_inventar(K_KERNE_INV)) {
+			if (isCurInventory(K_KERNE_INV)) {
 				_G(spieler).R31KoernerDa = true;
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -155,7 +155,7 @@ int16 Room31::use_topf() {
 				dia_nr = 150;
 				_G(atds)->set_ats_str(242, 2, ATS_DATA);
 
-			} else if (is_cur_inventar(MILCH_WAS_INV)) {
+			} else if (isCurInventory(MILCH_WAS_INV)) {
 				if (_G(spieler).R31KoernerDa) {
 					_G(spieler).R31Wasser = true;
 					autoMove(1, P_CHEWY);
@@ -172,7 +172,7 @@ int16 Room31::use_topf() {
 					ani_nr = CH_TALK5;
 					dia_nr = 152;
 				}
-			} else if (is_cur_inventar(SURIMY_INV)) {
+			} else if (isCurInventory(SURIMY_INV)) {
 				if (!_G(spieler).R31SurFurz) {
 					if (_G(spieler).R31Wasser) {
 						if (!_G(spieler).R28SurimyCar) {

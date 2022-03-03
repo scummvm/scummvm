@@ -41,7 +41,7 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 				x = (rnd_zeiger[i] - (40 * (y / 8))) * 8;
 			else
 				x = rnd_zeiger[i] * 8;
-			_G(out)->box_fill(x, y, x + 8, y + 8, col);
+			_G(out)->boxFill(x, y, x + 8, y + 8, col);
 		}
 		_G(out)->setPalette(palette);
 	}
@@ -55,7 +55,7 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 		_G(out)->setPointer(sram_speicher);
 		_G(out)->sprite_save(sp, x, y, 8, 8, 0);
 		_G(out)->setPointer(screen);
-		_G(out)->sprite_set(sp, x, y, 0);
+		_G(out)->spriteSet(sp, x, y, 0);
 	}
 	free(sp);
 }
@@ -67,13 +67,13 @@ void Effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 		for (i = 0; i < 13; i++) {
 			int16 x, y, x1;
 			for (x = i; x < 39 - i; x++)
-				_G(out)->box_fill(x * 8, i * 8, x * 8 + 8, i * 8 + 8, col);
+				_G(out)->boxFill(x * 8, i * 8, x * 8 + 8, i * 8 + 8, col);
 			for (y = i; y < 24 - i; y++)
-				_G(out)->box_fill(x * 8, y * 8, x * 8 + 8, y * 8 + 8, col);
+				_G(out)->boxFill(x * 8, y * 8, x * 8 + 8, y * 8 + 8, col);
 			for (x1 = 39 - i; x1 > i; x1--)
-				_G(out)->box_fill(x1 * 8, y * 8, x1 * 8 + 8, y * 8 + 8, col);
+				_G(out)->boxFill(x1 * 8, y * 8, x1 * 8 + 8, y * 8 + 8, col);
 			for (int16 y1 = 24 - i; y1 >= i; y1--)
-				_G(out)->box_fill(x1 * 8, y1 * 8, x1 * 8 + 8, y1 * 8 + 8, col);
+				_G(out)->boxFill(x1 * 8, y1 * 8, x1 * 8 + 8, y1 * 8 + 8, col);
 		}
 		_G(out)->setPalette(palette);
 	}
@@ -85,25 +85,25 @@ void Effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x * 8, i * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x * 8, i * 8, 0);
+				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x * 8, y * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x * 8, y * 8, 0);
+				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x1 * 8, y * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x1 * 8, y * 8, 0);
+				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x1 * 8, y1 * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x1 * 8, y1 * 8, 0);
+				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}
 		}
 		break;
@@ -115,25 +115,25 @@ void Effect::blende1(byte *sram_speicher, byte *screen, byte *palette, int16 fra
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x * 8, i * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x * 8, i * 8, 0);
+				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x * 8, y * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x * 8, y * 8, 0);
+				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x1 * 8, y * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x1 * 8, y * 8, 0);
+				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(sram_speicher);
 				_G(out)->sprite_save(sp, x1 * 8, y1 * 8, 8, 8, 0);
 				_G(out)->setPointer(screen);
-				_G(out)->sprite_set(sp, x1 * 8, y1 * 8, 0);
+				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}
 		}
 		break;
@@ -148,15 +148,15 @@ void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 farbe) {
 	if (mode) {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
-			_G(out)->box_fill(152 - x, 0, 152 - x + 8, 200, farbe);
-			_G(out)->box_fill(x + 160, 0, x + 168, 200, farbe);
+			_G(out)->boxFill(152 - x, 0, 152 - x + 8, 200, farbe);
+			_G(out)->boxFill(x + 160, 0, x + 168, 200, farbe);
 			_G(out)->back2screen(workpage_);
 		}
 	} else {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
-			_G(out)->box_fill(x, 0, x + 8, 200, farbe);
-			_G(out)->box_fill(312 - x, 0, 31 - x + 8, 200, farbe);
+			_G(out)->boxFill(x, 0, x + 8, 200, farbe);
+			_G(out)->boxFill(312 - x, 0, 31 - x + 8, 200, farbe);
 			_G(out)->back2screen(workpage_);
 		}
 	}
@@ -166,15 +166,15 @@ void Effect::spr_blende(byte *wrkPage, int16 lines, bool mode, int16 col) {
 	if (mode) {
 		for (int i = 0, y = 0; i < 20; ++i, y += 8) {
 			_G(out)->setPointer(wrkPage + 4);
-			_G(out)->box_fill(0, 92 - y, 320, 92 - y + 8, col);
-			_G(out)->box_fill(0, 100 + y, 320, 108 + y, col);
+			_G(out)->boxFill(0, 92 - y, 320, 92 - y + 8, col);
+			_G(out)->boxFill(0, 100 + y, 320, 108 + y, col);
 			_G(out)->back2screen(wrkPage);
 		}
 	} else {
 		for (int i = 0; i < 20; ++i) {
 			_G(out)->setPointer(wrkPage + 4);
-			_G(out)->box_fill(0, i, 320, i + 8, col);
-			_G(out)->box_fill(0, 192 - i, 320, 200 - i, col);
+			_G(out)->boxFill(0, i, 320, i + 8, col);
+			_G(out)->boxFill(0, 192 - i, 320, 200 - i, col);
 			_G(out)->back2screen(wrkPage);
 		}
 	}

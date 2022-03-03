@@ -97,7 +97,7 @@ void Room62::setup_func() {
 
 int16 Room62::use_laura() {
 	int16 action_ret = false;
-	if (is_cur_inventar(GERAET_INV)) {
+	if (isCurInventory(GERAET_INV)) {
 		action_ret = true;
 		hideCur();
 		autoMove(2, P_CHEWY);

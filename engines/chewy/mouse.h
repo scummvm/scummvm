@@ -44,7 +44,7 @@ public:
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
 	KbdMouseInfo *getPointer();
-	int16 get_switch_code();
+	int16 getSwitchCode();
 
 	int16 _hotkey = Common::KEYCODE_INVALID;
 

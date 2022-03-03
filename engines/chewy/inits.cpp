@@ -64,7 +64,7 @@ void standard_init() {
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
-	_G(curtaf) = _G(mem)->taf_adr(CURSOR);
+	_G(curtaf) = _G(mem)->taf_adr(CURSOR_TAF);
 
 	_G(curblk).sprite = _G(curtaf)->_image;
 	_G(curblk).cur_back = _G(cur_back);
@@ -114,7 +114,7 @@ void var_init() {
 
 	_G(auto_p_nr) = 0;
 	_G(menu_item) = CUR_WALK;
-	_G(inventar_nr) = 0;
+	_G(inventoryNr) = 0;
 	_G(ged_mov_ebene) = 1;
 	new_game();
 	_G(spieler).MainMenuY = MENU_Y;
@@ -175,7 +175,7 @@ void var_init() {
 void init_room() {
 	_G(room_blk).AkAblage = 0;
 	_G(room_blk).LowPalMem = _G(pal);
-	_G(room_blk).InvFile = INVENTAR;
+	_G(room_blk).InvFile = INVENTORY_TAF;
 	_G(room_blk).DetFile = DETAILTEST;
 	_G(room_blk).InvSprAdr = &_G(inv_spr)[0];
 	_G(room_blk).Rmo = _G(spieler).room_m_obj;
@@ -231,8 +231,8 @@ void new_game() {
 	for (int16 i = 0; i < MAX_EXIT; i++)
 		_G(spieler).room_e_obj[i].RoomNr = -1;
 
-	_G(obj)->load(INVENTAR_IIB, &_G(spieler).room_m_obj[0]);
-	_G(obj)->load(INVENTAR_SIB, &_G(spieler).room_s_obj[0]);
+	_G(obj)->load(INVENTORY_IIB, &_G(spieler).room_m_obj[0]);
+	_G(obj)->load(INVENTORY_SIB, &_G(spieler).room_s_obj[0]);
 	_G(obj)->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
 
 	Common::File f;

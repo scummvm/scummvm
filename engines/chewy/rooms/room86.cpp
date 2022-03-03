@@ -143,7 +143,7 @@ void Room86::setup_func() {
 }
 
 int Room86::proc2() {
-	if (!is_cur_inventar(94))
+	if (!isCurInventory(94))
 		return 0;
 
 	hideCur();
@@ -159,7 +159,7 @@ int Room86::proc2() {
 	_G(atds)->set_ats_str(497, 1, ATS_DATA);
 	_G(atds)->set_ats_str(498, 1, ATS_DATA);
 	_G(spieler).flags32_2 = true;
-	_G(spieler).room_e_obj[132].Attribut = AUSGANG_RECHTS;
+	_G(spieler).room_e_obj[132].Attribut = EXIT_RIGHT;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
 	startAadWait(468);
 

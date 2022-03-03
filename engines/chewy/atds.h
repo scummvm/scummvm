@@ -295,7 +295,7 @@ public:
 	int16 start_aad(int16 dia_nr);
 	void stopAad();
 	void print_aad(int16 scrx, int16 scry);
-	int16 aad_get_status();
+	int16 aadGetStatus();
 	void set_string_end_func(void (*str_func)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode));
 	void aad_search_dia(int16 dia_nr, char **ptr);
 	int16 aad_get_zeilen(char *str, int16 *txt_len);

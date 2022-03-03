@@ -74,7 +74,7 @@ void Room13::entry() {
 		}
 		
 		if (!_G(flags).LoadGame && _G(spieler).R13Band) {
-			_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
+			_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
 			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 			_G(spieler).R13Band = false;
 		}
@@ -85,7 +85,7 @@ void Room13::entry() {
 }
 
 void Room13::xit() {
-	_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
 	_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 	_G(spieler).R13Band = false;
 }
@@ -147,8 +147,8 @@ void Room13::talk_bork() {
 		_G(obj)->show_sib(SIB_TBUTTON3_R11);
 
 		if (_G(spieler).R6DoorRightB)
-			_G(spieler).room_e_obj[20].Attribut = AUSGANG_LINKS;
-		_G(spieler).room_e_obj[21].Attribut = AUSGANG_OBEN;
+			_G(spieler).room_e_obj[20].Attribut = EXIT_LEFT;
+		_G(spieler).room_e_obj[21].Attribut = EXIT_TOP;
 	}
 }
 
@@ -200,7 +200,7 @@ void Room13::jmp_floor() {
 		if (!_G(spieler).R13Surf)
 			_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 
-		_G(spieler).room_e_obj[25].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
 		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler).R13Band = false;
 		autoMove(5, P_CHEWY);

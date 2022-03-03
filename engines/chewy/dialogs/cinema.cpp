@@ -77,7 +77,7 @@ void Cinema::execute() {
 				int yp = i * 10 + 68;
 
 				if (i == selected)
-					_G(out)->box_fill(37, yp, 308, yp + 10, 42);
+					_G(out)->boxFill(37, yp, 308, yp + 10, 42);
 				_G(out)->printxy(40, yp, 14, 300, 0, csName);
 			}
 		} else {
@@ -207,7 +207,7 @@ void Cinema::execute() {
 }
 
 int16 Cinema::cut_serv(int16 frame) {
-	if (_G(in)->get_switch_code() == Common::KEYCODE_ESCAPE) {
+	if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 		_G(sndPlayer)->stopMod();
 		g_engine->_sound->stopAllSounds();
 		return -1;

@@ -181,13 +181,13 @@ int16 Room45::use_taxi() {
 			action_ret = true;
 			taxi_mov();
 		}
-	} else if (is_cur_inventar(RING_INV)) {
+	} else if (isCurInventory(RING_INV)) {
 		action_ret = true;
 		delInventory(RING_INV);
 		talk_taxi(256);
 		_G(spieler).R45TaxiOk = true;
 		taxi_mov();
-	} else if (is_cur_inventar(UHR_INV)) {
+	} else if (isCurInventory(UHR_INV)) {
 		action_ret = true;
 		talk_taxi(400);
 	}
@@ -240,7 +240,7 @@ int16 Room45::use_boy() {
 	autoMove(2, P_CHEWY);
 
 	if (!_G(spieler).R45MagOk) {
-		if (is_cur_inventar(DOLLAR175_INV)) {
+		if (isCurInventory(DOLLAR175_INV)) {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
 			_G(atds)->set_ats_str(DOLLAR175_INV, 1, INV_ATS_DATA);

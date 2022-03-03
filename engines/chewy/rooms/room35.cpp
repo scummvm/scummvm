@@ -76,7 +76,7 @@ int16 Room35::use_cat() {
 	hideCur();
 
 	if (_G(spieler).ChewyAni != CHEWY_ROCKER) {
-		if (is_cur_inventar(TRANSLATOR_INV)) {
+		if (isCurInventory(TRANSLATOR_INV)) {
 			action_flag = true;
 			autoMove(4, P_CHEWY);
 			_G(spieler).R35TransCat = true;
@@ -84,7 +84,7 @@ int16 Room35::use_cat() {
 			flic_cut(FCUT_045);
 			start_spz(CH_TRANS, 1, ANI_FRONT, P_CHEWY);
 			startAadWait(94);
-		} else if (is_cur_inventar(PUTENKEULE_INV)) {
+		} else if (isCurInventory(PUTENKEULE_INV)) {
 			action_flag = true;
 			disable_timer();
 			autoMove(4, P_CHEWY);
