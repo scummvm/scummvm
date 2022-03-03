@@ -280,7 +280,7 @@ int Room90::getHubcaps() {
 }	
 
 int Room90::shootControlUnit() {
-	if (!is_cur_inventar(111))
+	if (!isCurInventory(111))
 		return 0;
 
 	hideCur();
@@ -322,7 +322,7 @@ int16 Room90::proc5(int16 key) {
 }
 
 int Room90::useSurimyOnWreck() {
-	if (!is_cur_inventar(18))
+	if (!isCurInventory(18))
 		return 0;
 
 	_G(spieler).flags34_10 = true;

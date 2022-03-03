@@ -145,7 +145,7 @@ void spriteEngine() {
 			break;
 
 		case ZOBJ_INVENTORY:
-			_G(out)->sprite_set(_G(inv_spr)[nr],
+			_G(out)->spriteSet(_G(inv_spr)[nr],
 			                 _G(spieler).room_m_obj[nr].X - _G(spieler).scrollx,
 			                 _G(spieler).room_m_obj[nr].Y - _G(spieler).scrolly, 0);
 			break;
@@ -203,7 +203,7 @@ void spriteEngine() {
 			}
 			break;
 		case ZOBJ_PROGANI:
-			_G(out)->sprite_set(_G(spr_info)[nr]._image, _G(spr_info)[nr]._x - _G(spieler).scrollx, _G(spr_info)[nr]._y - _G(spieler).scrolly, 0);
+			_G(out)->spriteSet(_G(spr_info)[nr]._image, _G(spr_info)[nr]._x - _G(spieler).scrollx, _G(spr_info)[nr]._y - _G(spieler).scrolly, 0);
 			break;
 
 		case ZOBJ_AUTO_OBJ: {
@@ -457,7 +457,7 @@ void startAadWait(int16 diaNr) {
 	_G(atds)->start_aad(diaNr);
 
 	while (!SHOULD_QUIT && (
-		_G(atds)->aad_get_status() != -1 ||
+		_G(atds)->aadGetStatus() != -1 ||
 		g_engine->_sound->isSpeechActive()
 		)) {
 		setupScreen(DO_SETUP);
@@ -534,11 +534,11 @@ void aadWait(int16 strNr) {
 	const int16 oldMouseLinksClick = _G(maus_links_click);
 	_G(maus_links_click) = false;
 	if (strNr == -1) {
-		while (_G(atds)->aad_get_status() != -1 && !SHOULD_QUIT) {
+		while (_G(atds)->aadGetStatus() != -1 && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
 	} else {
-		while (_G(atds)->aad_get_status() < strNr && !SHOULD_QUIT) {
+		while (_G(atds)->aadGetStatus() < strNr && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
 	}

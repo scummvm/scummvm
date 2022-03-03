@@ -116,7 +116,7 @@ int16 Room42::use_psack() {
 		autoMove(4, P_CHEWY);
 		startAadWait(185);
 		_G(spieler).R42HoToBeamter = false;
-	} else if (is_cur_inventar(BRIEF2_INV)) {
+	} else if (isCurInventory(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
@@ -131,7 +131,7 @@ int16 Room42::use_psack() {
 		_G(spieler).R28PostCar = true;
 		_G(spieler).R42BriefOk = true;
 
-	} else if (is_cur_inventar(BRIEF_INV)) {
+	} else if (isCurInventory(BRIEF_INV)) {
 		action_flag = true;
 		startAadWait(182);
 	}
@@ -179,7 +179,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 	hideCur();
 
 	if (str_end_nr != 4) {
-		while (_G(atds)->aad_get_status() != -1) {
+		while (_G(atds)->aadGetStatus() != -1) {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
@@ -205,7 +205,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 			break;
 		}
 	} else {
-		while (_G(atds)->aad_get_status() < 2) {
+		while (_G(atds)->aadGetStatus() < 2) {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
@@ -215,7 +215,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 		startSetailWait(1, 1, ANI_FRONT);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 
-		while (_G(atds)->aad_get_status() != -1) {
+		while (_G(atds)->aadGetStatus() != -1) {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}

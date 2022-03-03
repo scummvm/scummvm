@@ -24,12 +24,9 @@
 
 namespace Chewy {
 
-#define MAUS_MENU_MAX_X 200
-#define MENU_EINBLENDEN 1
-#define MENU_AUSBLENDEN 2
-#define MENU_INVENTAR 3
-#define MENU_IOMENU 4
-#define MENU_MAIN 5
+#define MOUSE_MENU_MAX_X 200
+#define MENU_DISPLAY 1
+#define MENU_HIDE 2
 
 } // namespace Chewy
 

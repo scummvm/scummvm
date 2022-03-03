@@ -109,7 +109,7 @@ void Room3::terminal() {
 			startAniBlock(2, ABLOCK3);
 			if (_G(spieler).R2FussSchleim) {
 				_G(spieler).R2FussSchleim = false;
-				_G(spieler).room_s_obj[SIB_SCHLEIM].ZustandFlipFlop = 1;
+				_G(spieler).room_s_obj[SIB_SLIME].ZustandFlipFlop = 1;
 			}
 			_G(spieler)._personHide[P_CHEWY] = true;
 			startSetailWait(8, 1, ANI_FRONT);
@@ -349,7 +349,7 @@ void Room3::probeTransfer() {
 			if (i == 2 || i == 1) {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
 					if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
-						if (is_cur_inventar(SPINAT_INV)) {
+						if (isCurInventory(SPINAT_INV)) {
 							_G(ssi)[0].X = 120;
 							_G(ssi)[0].Y = 100;
 							if (_G(spieler)._personRoomNr[P_CHEWY] == 3)

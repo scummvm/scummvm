@@ -76,7 +76,7 @@ void Room53::talk_man() {
 int16 Room53::use_man() {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(BESTELL_INV)) {
+	if (isCurInventory(BESTELL_INV)) {
 		action_ret = true;
 		hideCur();
 		_G(spieler).R53Kostuem = true;

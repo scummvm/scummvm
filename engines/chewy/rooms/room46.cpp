@@ -165,7 +165,7 @@ void Room46::kloppe() {
 			continue;
 		}
 		
-		while (_G(in)->get_switch_code() == Common::KEYCODE_INVALID && delay) {
+		while (_G(in)->getSwitchCode() == Common::KEYCODE_INVALID && delay) {
 			--delay;
 			SHOULD_QUIT_RETURN;
 		}

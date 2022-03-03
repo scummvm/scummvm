@@ -181,7 +181,7 @@ void Room68::talk_indigo(int16 aad_nr) {
 int16 Room68::use_indigo() {
 	int16 action_flag = false;
 	hideCur();
-	if (is_cur_inventar(CLINT_500_INV)) {
+	if (isCurInventory(CLINT_500_INV)) {
 		action_flag = true;
 		if (_G(spieler).R68Lied) {
 			hideCur();
@@ -211,7 +211,7 @@ int16 Room68::use_indigo() {
 		} else {
 			talk_indigo(397);
 		}
-	} else if (is_cur_inventar(CLINT_1500_INV) || is_cur_inventar(CLINT_3000_INV)) {
+	} else if (isCurInventory(CLINT_1500_INV) || isCurInventory(CLINT_3000_INV)) {
 		action_flag = true;
 		startAadWait(393);
 	}
@@ -242,7 +242,7 @@ void Room68::talk_keeper() {
 
 int16 Room68::use_papagei() {
 	int16 action_flag = false;
-	if (is_cur_inventar(PAPAGEI_INV)) {
+	if (isCurInventory(PAPAGEI_INV)) {
 		hideCur();
 		action_flag = true;
 		_G(spieler).R68Papagei = true;
@@ -283,7 +283,7 @@ void Room68::calc_diva() {
 
 int16 Room68::use_keeper() {
 	int16 action_flag = false;
-	if (is_cur_inventar(BAR_GUT_INV)) {
+	if (isCurInventory(BAR_GUT_INV)) {
 		hideCur();
 		delInventory(_G(spieler).AkInvent);
 		action_flag = true;
@@ -303,7 +303,7 @@ int16 Room68::use_keeper() {
 int16 Room68::use_diva() {
 	int16 action_flag;
 	hideCur();
-	if (is_cur_inventar(B_MARY_INV)) {
+	if (isCurInventory(B_MARY_INV)) {
 		delInventory(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
@@ -312,7 +312,7 @@ int16 Room68::use_diva() {
 		startSetailWait(4, 1, ANI_FRONT);
 		_G(spieler).R68Gutschein = false;
 		_G(det)->showStaticSpr(3);
-	} else if (is_cur_inventar(B_MARY2_INV)) {
+	} else if (isCurInventory(B_MARY2_INV)) {
 		delInventory(_G(spieler).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);

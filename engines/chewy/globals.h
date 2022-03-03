@@ -153,7 +153,7 @@ public:
 	int16 _maus_menu_x = 0;
 	int16 _maus_old_x = 0;
 	int16 _maus_old_y = 0;
-	int16 _inventar_nr = 0;
+	int16 _inventoryNr = 0;
 	int16 _invent_cur_mode = 0;
 	byte *_inv_spr[MAX_MOV_OBJ] = { nullptr };
 	int16 _person_tmp_hide[MAX_PERSON] = { 0 };
@@ -341,7 +341,7 @@ void set_ani_screen();
 
 void delInventory(int16 nr);
 
-bool is_cur_inventar(int16 nr);
+bool isCurInventory(int16 nr);
 
 void check_shad(int16 palIdx, int16 mode);
 
@@ -400,12 +400,12 @@ void init_atds();
 
 void init_room();
 
-void build_menu(int16 x, int16 y, int16 xanz, int16 yanz, int16 col, int16 mode);
+void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode);
 
-void auto_menu(int16 *x, int16 *y, int16 zeilen_anz, int16 zeilen_hoehe,
+void autoMenu(int16 *x, int16 *y, int16 lineNr, int16 zeilen_hoehe,
                char *txt, int16 mode);
 
-void maus_mov_menu();
+void mouseMovMenu();
 
 void cur_2_inventory();
 
@@ -419,9 +419,9 @@ int16 del_invent_slot(int16 nr);
 
 void remove_inventory(int16 nr);
 
-void get_display_xy(int16 *x, int16 *y, int16 nr);
-void calc_txt_xy(int16 *x, int16 *y, char *txt_adr, int16 txt_anz);
-void ads_menu();
+void getDisplayCoord(int16 *x, int16 *y, int16 nr);
+void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr);
+void adsMenu();
 
 void stop_ads_dialog();
 

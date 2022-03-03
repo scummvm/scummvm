@@ -71,7 +71,7 @@ int16 Room29::use_pumpe() {
 	if (!_G(spieler).R29Pumpe) {
 		hideCur();
 
-		if (is_cur_inventar(SCHLAUCH_INV)) {
+		if (isCurInventory(SCHLAUCH_INV)) {
 			action_flag = true;
 			_G(spieler).R29Pumpe = true;
 			_G(spieler).R29Schlauch1 = true;
@@ -109,7 +109,7 @@ int16 Room29::get_schlauch() {
 bool Room29::use_schlauch() {
 	bool result = false;
 
-	if (is_cur_inventar(PUMPE_INV)) {
+	if (isCurInventory(PUMPE_INV)) {
 		result = true;
 		hideCur();
 

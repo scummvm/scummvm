@@ -178,7 +178,7 @@ int Room66::proc2() {
 }
 
 int Room66::proc7() {
-	if (!is_cur_inventar(ARTE_INV))
+	if (!isCurInventory(ARTE_INV))
 		return 0;
 
 	hideCur();

@@ -169,7 +169,7 @@ void Room28::haendler() {
 	_G(spieler).R28ChewyPump = true;
 	delInventory(K_MASKE_INV);
 	_G(atds)->set_ats_str(209, 1, ATS_DATA);
-	_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[69].Attribut = EXIT_TOP;
 	load_chewy_taf(CHEWY_PUMPKIN);
 
 	setPersonPos(480, 113, P_HOWARD, P_RIGHT);
@@ -262,7 +262,7 @@ void Room28::set_pump() {
 			_G(spieler).R28ChewyPump = true;
 
 			if (_G(spieler).R39TranslatorUsed) {
-				_G(spieler).room_e_obj[69].Attribut = AUSGANG_OBEN;
+				_G(spieler).room_e_obj[69].Attribut = EXIT_TOP;
 			} else {
 				_G(atds)->set_ats_str(209, 1, ATS_DATA);
 			}

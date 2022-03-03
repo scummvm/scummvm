@@ -114,7 +114,7 @@ void Room8::start_verbrennen() {
 bool Room8::gips_wurf() {
 	bool actionFl = false;
 	
-	if (is_cur_inventar(GIPS_EIMER_INV)) {
+	if (isCurInventory(GIPS_EIMER_INV)) {
 		hideCur();
 		actionFl = true;
 		_G(det)->load_taf_seq(116, 30, nullptr);
@@ -138,7 +138,7 @@ bool Room8::gips_wurf() {
 		autoMove(8, P_CHEWY);
 		_G(flags).AtsAction = false;
 		_G(menu_item) = CUR_USE;
-		Dialogs::Inventory::look_screen(INVENTAR_NORMAL, 178);
+		Dialogs::Inventory::look_screen(INVENTORY_NORMAL, 178);
 		_G(flags).AtsAction = true;
 		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetailWait(20, 1, ANI_FRONT);
@@ -163,7 +163,7 @@ void Room8::open_gdoor() {
 	_G(atds)->del_steuer_bit(69, ATS_AKTIV_BIT, ATS_DATA);
 	_G(obj)->hide_sib(31);
 	_G(spieler).R8GTuer = true;
-	_G(spieler).room_e_obj[15].Attribut = AUSGANG_UNTEN;
+	_G(spieler).room_e_obj[15].Attribut = EXIT_BOTTOM;
 }
 
 void Room8::talk_nimoy() {

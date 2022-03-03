@@ -105,7 +105,7 @@ short Room37::use_wippe() {
 	if (_G(spieler).inv_cur) {
 		action_flag = true;
 
-		if (is_cur_inventar(H_FUTTER_INV)) {
+		if (isCurInventory(H_FUTTER_INV)) {
 			hideCur();
 			autoMove(0, P_CHEWY);
 			_G(flags).NoScroll = true;
@@ -166,7 +166,7 @@ int16 Room37::use_glas() {
 
 	if (!_G(spieler).R37Gebiss) {
 		action_flag = true;
-		if (is_cur_inventar(ANGEL2_INV)) {
+		if (isCurInventory(ANGEL2_INV)) {
 			_G(flags).NoScroll = true;
 			hideCur();
 			autoMove(5, P_CHEWY);
@@ -282,7 +282,7 @@ void Room37::talk_hahn() {
 }
 
 void Room37::use_hahn() {
-	if (is_cur_inventar(TRANSLATOR_INV)) {
+	if (isCurInventory(TRANSLATOR_INV)) {
 		hideCur();
 		autoMove(7, P_CHEWY);
 		_G(spieler).R37TransHahn = true;
@@ -295,7 +295,7 @@ void Room37::use_hahn() {
 		hahn_dia();
 
 	} else if (_G(spieler).R37TransHahn) {
-		if (is_cur_inventar(GEBISS_INV)) {
+		if (isCurInventory(GEBISS_INV)) {
 			_G(spieler).R37Kloppe = true;
 			hideCur();
 			autoMove(6, P_CHEWY);

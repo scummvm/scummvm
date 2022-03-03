@@ -200,7 +200,7 @@ void Room97::setup_func() {
 
 	if (_G(spieler).flags37_1 && _G(menu_item) == CUR_WALK) {
 		if (_G(spieler).scrollx + _G(minfo).x >= 487 && _G(spieler).scrollx + _G(minfo).x <= 522 && _G(minfo).y >= 23 && _G(minfo).y <= 59)
-			cursorChoice(CUR_AUSGANG_OBEN);
+			cursorChoice(CUR_EXIT_TOP);
 		else
 			cursorChoice(CUR_WALK);
 	}
@@ -378,7 +378,7 @@ void Room97::proc4() {
 }
 
 int Room97::proc5() {
-	if (!is_cur_inventar(114))
+	if (!isCurInventory(114))
 		return 0;
 
 	hideCur();
@@ -469,7 +469,7 @@ int Room97::proc7() {
 }
 
 int Room97::proc8() {
-	if (!is_cur_inventar(94))
+	if (!isCurInventory(94))
 		return 0;
 
 	hideCur();
@@ -657,7 +657,7 @@ void Room97::proc13() {
 }
 
 int Room97::throwSlime() {
-	if (!is_cur_inventar(SLIME_INV))
+	if (!isCurInventory(SLIME_INV))
 		return 0;
 
 	_slimeThrown = true;
@@ -684,7 +684,7 @@ void Room97::sensorAnim() {
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (_G(minfo)._button == 1 || _G(in)->get_switch_code() == 28) {
+		if (_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) {
 			if (_G(spieler).inv_cur)
 				_G(maus_links_click) = true;
 		}

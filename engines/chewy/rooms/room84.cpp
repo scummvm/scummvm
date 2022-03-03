@@ -45,7 +45,7 @@ void Room84::entry() {
 	if (_G(spieler).R88UsedMonkey) {
 		_G(det)->del_static_ani(3);
 		_G(det)->stop_detail(0);
-		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[124].Attribut = EXIT_TOP;
 		_G(atds)->set_steuer_bit(478, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_steuer_bit(479, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(485, 1, ATS_DATA);	
@@ -68,7 +68,7 @@ void Room84::entry() {
 		_G(atds)->set_steuer_bit(481, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_steuer_bit(482, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(485, 1, ATS_DATA);		
-		_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
+		_G(spieler).room_e_obj[124].Attribut = EXIT_TOP;
 	}
 
 	if (_G(flags).LoadGame) {
@@ -88,7 +88,7 @@ void Room84::entry() {
 			_G(spieler).scrollx = 250;
 			if (_G(spieler).flags32_40) {
 				startAadWait(481);
-				_G(spieler).room_e_obj[124].Attribut = AUSGANG_OBEN;
+				_G(spieler).room_e_obj[124].Attribut = EXIT_TOP;
 			}
 		}
 	} else if (_G(spieler).flags32_20) {

@@ -91,7 +91,7 @@ int Room74::proc1() {
 	int retVal = 0;
 	hideCur();
 
-	if (is_cur_inventar(MACHETE_INV)) {
+	if (isCurInventory(MACHETE_INV)) {
 		retVal = 1;
 		_G(spieler).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);

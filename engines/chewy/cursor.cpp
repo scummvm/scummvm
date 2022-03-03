@@ -67,7 +67,7 @@ void Cursor::plot_cur() {
 				_aniCount = _ani->_start;
 		}
 
-		_out->sprite_set(_curblk->sprite[_aniCount], _cur_x_old, _cur_y_old,
+		_out->spriteSet(_curblk->sprite[_aniCount], _cur_x_old, _cur_y_old,
 		                 _scrWidth);
 		mouse_active = false;
 	}

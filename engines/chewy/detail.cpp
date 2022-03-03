@@ -497,7 +497,7 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 			int16 x = _rdi.Sinfo[i].x - scrx;
 			int16 y = _rdi.Sinfo[i].y - scry;
 			byte *simage = _rdi.dptr->_image[_rdi.Sinfo[i].SprNr];
-			_G(out)->sprite_set(simage, x, y, 0);
+			_G(out)->spriteSet(simage, x, y, 0);
 		}
 	}
 }
@@ -579,7 +579,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 	_sprInfo.X1 = _sprInfo._x + Xy[0];
 	_sprInfo.Y1 = _sprInfo._y + Xy[1];
 	if (mode)
-		_G(out)->sprite_set(_sprInfo._image, _sprInfo._x, _sprInfo._y, 0);
+		_G(out)->spriteSet(_sprInfo._image, _sprInfo._x, _sprInfo._y, 0);
 
 	Sound *sound = g_engine->_sound;
 

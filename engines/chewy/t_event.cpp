@@ -135,7 +135,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 71:
-						if (is_cur_inventar(ZANGE_INV))
+						if (isCurInventory(ZANGE_INV))
 							Room8::hole_kohle();
 						else if (!_G(spieler).inv_cur)
 							Room8::start_verbrennen();
@@ -191,7 +191,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 104:
-						if (is_cur_inventar(TRANSLATOR_INV)) {
+						if (isCurInventory(TRANSLATOR_INV)) {
 							autoMove(6, P_CHEWY);
 							_G(spieler).R14Translator = true;
 							startAadWait(25);
@@ -2172,11 +2172,11 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->back2screen(_G(workpage));
 
-		while (_G(in)->get_switch_code() != Common::KEYCODE_ESCAPE) {
+		while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
-		while (_G(in)->get_switch_code() != Common::KEYCODE_INVALID) {
+		while (_G(in)->getSwitchCode() != Common::KEYCODE_INVALID) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
@@ -2320,7 +2320,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	bool ret = false;
 
 	switch (mode) {
-	case INVENTAR_NORMAL:
+	case INVENTORY_NORMAL:
 		inv_mode = IUID_IIB;
 		break;
 

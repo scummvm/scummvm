@@ -578,7 +578,7 @@ DisplayMode &Atdsys::ats_get_status() {
 void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 	if (_atsv._display == DISPLAY_TXT || _atsv._display == DISPLAY_ALL) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->get_switch_code()) {
+			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
 			case MAUS_LINKS:
@@ -922,7 +922,7 @@ void Atdsys::stopAad() {
 void Atdsys::print_aad(int16 scrx, int16 scry) {
 	if (_aadv.Dialog) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->get_switch_code()) {
+			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
 			case MAUS_LINKS:
@@ -1063,7 +1063,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 	}
 }
 
-int16 Atdsys::aad_get_status() {
+int16 Atdsys::aadGetStatus() {
 	return _aadv.StrNr;
 }
 

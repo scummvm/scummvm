@@ -68,7 +68,7 @@ void Room77::xit() {
 }
 
 int Room77::proc1() {
-	if (_G(spieler).flags29_4 || !is_cur_inventar(103))
+	if (_G(spieler).flags29_4 || !isCurInventory(103))
 		return 0;
 
 	hideCur();
@@ -97,7 +97,7 @@ int Room77::proc1() {
 }
 
 int Room77::proc2() {
-	if (_G(spieler).flags29_4 || !is_cur_inventar(100))
+	if (_G(spieler).flags29_4 || !isCurInventory(100))
 		return 0;
 
 	hideCur();

@@ -143,7 +143,7 @@ void Room51::setup_func() {
 
 		_G(det)->setStaticPos(17, _tmpx, _tmpy, false, false);
 
-		if ((_G(minfo)._button == 1 || _G(in)->get_switch_code() == 28) && !_flag) {
+		if ((_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
 			startSetailWait(8, 1, ANI_FRONT);
@@ -208,7 +208,7 @@ void Room51::setup_func() {
 int16 Room51::use_door(int16 txt_nr) {
 	int16 action_ret = false;
 
-	if (is_cur_inventar(KEY_INV)) {
+	if (isCurInventory(KEY_INV)) {
 		hideCur();
 		action_ret = true;
 
@@ -222,7 +222,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				autoMove(11, P_HOWARD);
 				setPersonSpr(P_LEFT, P_HOWARD);
 				_G(spieler).R51HotelRoom = true;
-				_G(spieler).room_e_obj[86].Attribut = AUSGANG_LINKS;
+				_G(spieler).room_e_obj[86].Attribut = EXIT_LEFT;
 				startAadWait(285);
 				_G(atds)->set_ats_str(329, 1, ATS_DATA);
 				_G(SetUpScreenFunc) = setup_func;

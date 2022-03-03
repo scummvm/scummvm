@@ -132,7 +132,7 @@ void Room63::setup_func() {
 void Room63::bork_platt() {
 	_G(spieler).R62LauraVerwandlung = false;
 	_G(r63Schalter) = false;
-	_G(spieler).room_e_obj[95].Attribut = AUSGANG_OBEN;
+	_G(spieler).room_e_obj[95].Attribut = EXIT_TOP;
 	flic_cut(FCUT_081);
 	flic_cut(FCUT_082);
 	_G(spieler)._personHide[P_CHEWY] = false;
@@ -195,7 +195,7 @@ void Room63::talk_fx_man() {
 
 int16 Room63::use_fx_man() {
 	int16 action_ret = false;
-	if (is_cur_inventar(MASKE_INV)) {
+	if (isCurInventory(MASKE_INV)) {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
@@ -262,7 +262,7 @@ void Room63::talk_girl() {
 
 int16 Room63::use_girl() {
 	int16 action_ret = false;
-	if (is_cur_inventar(UHR_INV)) {
+	if (isCurInventory(UHR_INV)) {
 		action_ret = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
@@ -292,7 +292,7 @@ int16 Room63::use_girl() {
 
 int16 Room63::use_aschenbecher() {
 	int16 action_ret = false;
-	if (is_cur_inventar(ASCHE_INV)) {
+	if (isCurInventory(ASCHE_INV)) {
 		action_ret = true;
 		_G(cur_hide_flag) = false;
 		hideCur();

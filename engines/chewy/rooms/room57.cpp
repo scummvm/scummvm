@@ -115,7 +115,7 @@ int16 Room57::use_pfoertner() {
 	_G(det)->set_static_ani(3, -1);
 	hideCur();
 	autoMove(1, P_CHEWY);
-	if (is_cur_inventar(CUTMAG_INV)) {
+	if (isCurInventory(CUTMAG_INV)) {
 		action_ret = true;
 		if (_G(spieler).flags37_10)
 			startAadWait(596);
@@ -124,10 +124,10 @@ int16 Room57::use_pfoertner() {
 			startAadWait(339);
 			new_invent_2_cur(BESTELL_INV);
 		}
-	} else if (is_cur_inventar(JMKOST_INV)) {
+	} else if (isCurInventory(JMKOST_INV)) {
 		action_ret = true;
 		startAadWait(340);
-	} else if (is_cur_inventar(EINLAD_INV)) {
+	} else if (isCurInventory(EINLAD_INV)) {
 		action_ret = true;
 		_G(SetUpScreenFunc) = nullptr;
 		goAutoXy(132, 130, P_HOWARD, ANI_WAIT);
@@ -136,7 +136,7 @@ int16 Room57::use_pfoertner() {
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
 			delInventory(_G(spieler).AkInvent);
 			_G(spieler).R57StudioAuf = true;
-			_G(spieler).room_e_obj[91].Attribut = AUSGANG_OBEN;
+			_G(spieler).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
 			startSetailWait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);

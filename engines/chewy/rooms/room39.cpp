@@ -75,7 +75,7 @@ short Room39::use_howard() {
 	if (!_G(spieler).R39HowardWach) {
 		int16 dia_nr;
 		if (_G(spieler).inv_cur) {
-			if (is_cur_inventar(MANUSKRIPT_INV)) {
+			if (isCurInventory(MANUSKRIPT_INV)) {
 				hideCur();
 				_G(spieler).R39HowardWach = true;
 				_G(spieler).R39ScriptOk = true;
@@ -172,7 +172,7 @@ int16 Room39::use_tv() {
 	autoMove(2, P_CHEWY);
 	int16 cls_flag = false;
 
-	if (is_cur_inventar(ZAPPER_INV)) {
+	if (isCurInventory(ZAPPER_INV)) {
 		_G(maus_links_click) = false;
 		
 		_G(spieler).R39TvOn = true;
@@ -211,7 +211,7 @@ int16 Room39::use_tv() {
 		}
 
 		action_flag = true;
-	} else if (is_cur_inventar(TRANSLATOR_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+	} else if (isCurInventory(TRANSLATOR_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 		action_flag = true;
 		if (_G(spieler).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
@@ -243,7 +243,7 @@ int16 Room39::use_tv() {
 
 		set_tv();
 
-	} else if (is_cur_inventar(RECORDER_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+	} else if (isCurInventory(RECORDER_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
 		action_flag = true;
 		if (_G(spieler).R39TvOn) {
 			if (_G(spieler).R39TranslatorUsed) {

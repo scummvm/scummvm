@@ -113,7 +113,7 @@ int16 Room25::gleiter_loesch() {
 		}
 
 	} else if (_G(spieler).R25GleiteLoesch) {
-		if (is_cur_inventar(MILCH_LEER_INV)) {
+		if (isCurInventory(MILCH_LEER_INV)) {
 			action_flag = true;
 			autoMove(2, P_CHEWY);
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
