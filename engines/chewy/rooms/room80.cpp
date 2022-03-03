@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room80::entry() {
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	g_engine->_sound->playSound(0, 0);
@@ -89,7 +89,7 @@ void Room80::setup_func() {
 	}
 
 	_G(det)->showStaticSpr(vec);
-	if (!_G(maus_links_click))
+	if (!_G(mouseLeftClick))
 		return;
 
 	int nextRoom;
@@ -119,7 +119,7 @@ void Room80::setup_func() {
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	_G(spieler).flags30_1 = true;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	setupScreen(DO_SETUP);
 	
 	for (int i = P_CHEWY; i <= P_NICHELLE; ++i) {

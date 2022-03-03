@@ -141,7 +141,7 @@ void Room3::terminal() {
 
 	case 1:
 		_G(auto_obj) = 1;
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		_G(minfo)._button = 0;
 		stopPerson(P_CHEWY);
 		start_spz(15, 255, false, P_CHEWY);

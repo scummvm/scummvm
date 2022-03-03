@@ -167,7 +167,7 @@ void Room13::jmp_band() {
 
 		} else {
 			_G(spieler).R13Surf = true;
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			autoMove(12, P_CHEWY);
 			startAadWait(117);
 			_G(flags).NoScroll = true;

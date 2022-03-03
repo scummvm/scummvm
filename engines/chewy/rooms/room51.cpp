@@ -55,7 +55,7 @@ void Room51::entry() {
 		_G(atds)->enableEvents(false);
 		_G(spieler)._personHide[P_CHEWY] = true;
 		_G(spieler)._personHide[P_HOWARD] = true;
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		_G(spieler).scrollx = 0;
 		setPersonPos(34, 120, P_HOWARD, P_RIGHT);
 		setPersonPos(234, 69, P_CHEWY, P_LEFT);

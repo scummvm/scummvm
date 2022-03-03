@@ -48,7 +48,7 @@ void Room57::entry() {
 		setPersonPos(4, 144, P_HOWARD, P_LEFT);
 		setPersonPos(40, 160, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		showCur();
 	}
 }

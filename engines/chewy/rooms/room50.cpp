@@ -42,7 +42,7 @@ void Room50::entry(int16 eib_nr) {
 	if (_G(spieler).flags32_10) {
 		hideCur();
 		stop_page();
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		setPersonPos(1, 64, P_HOWARD, P_RIGHT);
 		setPersonPos(92, 123, P_CHEWY, P_LEFT);
 		startAadWait(510);

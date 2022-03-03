@@ -310,10 +310,10 @@ void stop_ads_dialog() {
 	_G(flags).ShowAtsInvTxt = true;
 	_G(flags).MainInput = true;
 	_G(flags).AdsDialog = false;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(atds)->stop_ads();
 	if (_G(minfo)._button)
-		_G(flags).main_maus_flag = 1;
+		_G(flags).mainMouseFlag = 1;
 }
 
 void cur_2_inventory() {

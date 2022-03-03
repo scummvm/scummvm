@@ -53,7 +53,7 @@ void Room54::entry(int16 eib_nr) {
 			}
 
 			setPersonPos(300, 80, P_CHEWY, P_LEFT);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			_G(spieler).scrollx = 134;
 			_G(spieler).scrolly = 0;
 
@@ -358,7 +358,7 @@ void Room54::aufzug_ab() {
 	_G(det)->hideStaticSpr(12);
 	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
 	_G(spieler)._personHide[P_CHEWY] = false;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	stopPerson(P_CHEWY);
 	_G(spieler).R55Location = false;
 }

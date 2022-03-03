@@ -157,7 +157,7 @@ void Room12::talk_bork() {
 
 void Room12::bork_ok() {
 	hideCur();
-	_G(flags).MausLinks = true;
+	_G(flags).MouseLeft = true;
 	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 1000;
 	autoMove(5, P_CHEWY);
 	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 0;
@@ -185,7 +185,7 @@ void Room12::bork_ok() {
 	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATA);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
 
-	_G(flags).MausLinks = false;
+	_G(flags).MouseLeft = false;
 	showCur();
 }
 

@@ -513,7 +513,7 @@ void exit_room(int16 eib_nr) {
 		}
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		break;
 
 	case 24: Room24::xit(); break;

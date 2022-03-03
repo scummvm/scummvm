@@ -121,7 +121,7 @@ void Room40::xit(int16 eib_nr) {
 				_G(out)->einblenden(_G(pal), 0);
 				_G(uhr)->enableTimer();
 
-				_G(maus_links_click) = false;
+				_G(mouseLeftClick) = false;
 				startAadWait(238);
 				move_train(1);
 				register_cutscene(15);
@@ -292,7 +292,7 @@ void Room40::setup_func() {
 					_G(spieler).R40PoliceWeg = true;
 					showCur();
 
-					_G(flags).MausLinks = false;
+					_G(flags).MouseLeft = false;
 					_G(flags).MainInput = true;
 					_G(spieler).R40HoUse = false;
 					_G(atds)->set_steuer_bit(276, ATS_AKTIV_BIT, ATS_DATA);
@@ -495,7 +495,7 @@ int16 Room40::use_haendler() {
 			cursorChoice(_G(menu_item));
 			showCur();
 			_G(flags).NoScroll = false;
-			_G(flags).MausLinks = false;
+			_G(flags).MouseLeft = false;
 			_G(spieler).R40HoUse = false;
 		}
 	}
@@ -590,7 +590,7 @@ bool Room40::use_police() {
 			_G(menu_item) = CUR_WALK;
 			cursorChoice(_G(menu_item));
 			showCur();
-			_G(flags).MausLinks = false;
+			_G(flags).MouseLeft = false;
 		}
 	} else {
 		startAadWait(225);
@@ -643,7 +643,7 @@ int16 Room40::use_tele() {
 				autoMove(1, P_CHEWY);
 				_G(spieler).R40DuengerMit = false;
 				_G(spieler).R40DuengerTele = true;
-				_G(flags).MausLinks = true;
+				_G(flags).MouseLeft = true;
 				_G(flags).MainInput = false;
 				timer_wert = 3;
 			}

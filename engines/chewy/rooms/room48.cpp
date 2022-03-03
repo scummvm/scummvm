@@ -30,7 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room48::entry() {
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
 	showCur();
@@ -100,7 +100,7 @@ void Room48::setup_func() {
 				if (_G(spieler).R48Auswahl[idx]) {
 					_G(det)->showStaticSpr(1 + idx);
 
-					if (_G(maus_links_click)) {
+					if (_G(mouseLeftClick)) {
 						int16 r_nr;
 						switch (idx) {
 						case 0:
@@ -142,7 +142,7 @@ void Room48::setup_func() {
 							cursorChoice(_G(menu_item));
 							showCur();
 							_G(spieler).R48TaxiEntry = true;
-							_G(maus_links_click) = false;
+							_G(mouseLeftClick) = false;
 							setupScreen(DO_SETUP);
 
 							for (int16 i = 0; i < MAX_PERSON; i++) {

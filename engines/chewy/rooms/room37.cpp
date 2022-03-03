@@ -87,14 +87,14 @@ void Room37::gedAction(int index) {
 }
 
 void Room37::setup_func() {
-	if (_G(maus_links_click) && !_G(spieler).R37Kloppe &&
+	if (_G(mouseLeftClick) && !_G(spieler).R37Kloppe &&
 			_G(menu_item) == CUR_WALK) {
 		if ((_G(minfo).x + _G(spieler).scrollx > 380 && _G(minfo).y > 120) ||
 			(_G(minfo).x + _G(spieler).scrollx > 482)) {
 			// Don't allow moving into chicken coop area
 			// until the rooster has left
 			autoMove(7, P_CHEWY);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 		}
 	}
 }
@@ -119,7 +119,7 @@ short Room37::use_wippe() {
 			_G(spieler).scrollx = 269;
 			setPersonPos(388, 119, P_CHEWY, P_RIGHT);
 			switchRoom(29);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 
 		} else {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);

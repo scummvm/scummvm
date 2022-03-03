@@ -55,7 +55,7 @@ void Room45::entry(int16 eib_nr) {
 			ho_y = 129;
 
 			_G(spieler).R48TaxiEntry = false;
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 		} else {
 			if (eib_nr == 72) {
 				ch_x = 259;

@@ -119,7 +119,7 @@ bool Room8::gips_wurf() {
 		actionFl = true;
 		_G(det)->load_taf_seq(116, 30, nullptr);
 		autoMove(2, P_CHEWY);
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 
 		_G(spieler)._personHide[P_CHEWY] = true;
 		delInventory(GIPS_EIMER_INV);

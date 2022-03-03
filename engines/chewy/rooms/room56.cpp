@@ -79,10 +79,10 @@ void Room56::entry() {
 			_G(spieler_mi)[P_CHEWY].Mode = true;
 			autoMove(1, P_CHEWY);
 			_G(spieler_mi)[P_CHEWY].Mode = false;
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			showCur();
 		} else if (_G(spieler).R62Flucht && !_G(spieler).flags32_10) {
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 			_G(spieler).ZoomXy[P_HOWARD][1] = 86;
 			_G(zoom_horizont) = 114;
@@ -97,7 +97,7 @@ void Room56::entry() {
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			_G(det)->set_static_ani(3, -1);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			_G(atds)->stopAad();
 			hideCur();
 			startAadWait(306);
@@ -349,7 +349,7 @@ int16 Room56::use_kneipe() {
 	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(spieler).inv_cur)){
 		hideCur();
 		action_ret = 1;
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		autoMove(4, P_CHEWY);
 		startAadWait(521);
 		_G(out)->setPointer(nullptr);

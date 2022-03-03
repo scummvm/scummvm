@@ -394,18 +394,18 @@ void stopPerson(int16 personNr) {
 }
 
 void startSetailWait(int16 aniNr, int16 rep, int16 mode) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	_G(det)->startDetail(aniNr, rep, mode);
 	while (_G(det)->get_ani_status(aniNr) && !SHOULD_QUIT) {
 		setupScreen(DO_SETUP);
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 }
 
 void startDetailFrame(int16 aniNr, int16 rep, int16 mode, int16 frame) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	_G(det)->startDetail(aniNr, rep, mode);
 	AniDetailInfo *adi = _G(det)->getAniDetail(aniNr);
 	if (mode == ANI_FRONT)
@@ -415,7 +415,7 @@ void startDetailFrame(int16 aniNr, int16 rep, int16 mode, int16 frame) {
 	while (_G(det)->get_ani_status(aniNr) && adi->ani_count != frame && !SHOULD_QUIT) {
 		setupScreen(DO_SETUP);
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 }
 
 void waitDetail(int16 detNr) {
@@ -424,8 +424,8 @@ void waitDetail(int16 detNr) {
 }
 
 void waitShowScreen(int16 frames) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	if (_G(spieler).DelaySpeed > 0)
 		frames *= _G(spieler).DelaySpeed;
 	while (--frames > 0 && !SHOULD_QUIT) {
@@ -433,24 +433,24 @@ void waitShowScreen(int16 frames) {
 			get_user_key(NO_SETUP);
 		setupScreen(DO_SETUP);
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 }
 
 void startAniBlock(int16 nr, const AniBlock *ab) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	for (int16 i = 0; i < nr; i++) {
 		if (ab[i].Mode == ANI_WAIT)
 			startSetailWait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 		else
 			_G(det)->startDetail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 }
 
 void startAadWait(int16 diaNr) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	_G(talk_start_ani) = -1;
 	_G(talk_hide_static) = -1;
 	setSsiPos();
@@ -463,9 +463,9 @@ void startAadWait(int16 diaNr) {
 		setupScreen(DO_SETUP);
 	}
 
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
-		_G(flags).main_maus_flag = 1;
+		_G(flags).mainMouseFlag = 1;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 	stop_spz();
 }
@@ -479,8 +479,8 @@ void start_aad(int16 diaNr) {
 bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 	DisplayMode ret = DISPLAY_NONE;
 
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 
 	if (!_G(flags).AtsText) {
 		_G(flags).AtsText = true;
@@ -522,17 +522,17 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 	}
 
 	if (_G(minfo)._button)
-		_G(flags).main_maus_flag = 1;
+		_G(flags).mainMouseFlag = 1;
 
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 
 	return ret != DISPLAY_NONE;
 }
 
 void aadWait(int16 strNr) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	if (strNr == -1) {
 		while (_G(atds)->aadGetStatus() != -1 && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
@@ -542,9 +542,9 @@ void aadWait(int16 strNr) {
 			setupScreen(DO_SETUP);
 		}
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
-		_G(flags).main_maus_flag = 1;
+		_G(flags).mainMouseFlag = 1;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 }
 
@@ -570,12 +570,12 @@ void startAdsWait(int16 diaNr) {
 }
 
 void wait_auto_obj(int16 nr) {
-	const int16 oldMouseLinksClick = _G(maus_links_click);
-	_G(maus_links_click) = false;
+	const int16 oldMouseLeftClick = _G(mouseLeftClick);
+	_G(mouseLeftClick) = false;
 	while (_G(mov_phasen)[nr].Repeat != -1 && !SHOULD_QUIT) {
 		setupScreen(DO_SETUP);
 	}
-	_G(maus_links_click) = oldMouseLinksClick;
+	_G(mouseLeftClick) = oldMouseLeftClick;
 }
 
 void stop_auto_obj(int16 nr) {
@@ -1071,7 +1071,7 @@ bool start_spz(int16 ani_id, int16 count, bool reverse, int16 p_nr) {
 		_G(spieler_vector)[p_nr].Delay = _G(spieler).DelaySpeed + _G(spz_delay)[p_nr];
 		_G(spieler_vector)[p_nr]._delayCount = 0;
 		_G(spz_count) = count;
-		_G(flags).MausLinks = true;
+		_G(flags).MouseLeft = true;
 		ret = true;
 	}
 	return ret;
@@ -1095,7 +1095,7 @@ void calc_person_spz_ani(ObjMov *om) {
 void stop_spz() {
 	if (_G(flags).SpzAni) {
 		_G(flags).SpzAni = false;
-		_G(flags).MausLinks = false;
+		_G(flags).MouseLeft = false;
 		_G(spz_ani)[_G(spz_p_nr)] = false;
 		_G(spieler_vector)[_G(spz_p_nr)].Count = 0;
 		_G(spieler_vector)[_G(spz_p_nr)].PhNr = 0;

@@ -42,7 +42,7 @@ bool Room34::use_kuehlschrank() {
 		if (!_G(flags).LoadGame) {
 			hideCur();
 			autoMove(3, P_CHEWY);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? CH_ROCK_GET2 : CH_LGET_O, 1, false, P_CHEWY);
 			showCur();
 		}
@@ -65,7 +65,7 @@ void Room34::xit_kuehlschrank() {
 	setPersonPos(54, 111, P_CHEWY, -1);
 	switchRoom(33);
 	_G(flags).ChewyDontGo = false;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 }
 
 } // namespace Rooms

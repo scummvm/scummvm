@@ -46,7 +46,7 @@ void Room46::entry(int16 eib_nr) {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (_G(spieler).flags33_8) {
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			hideCur();
 			setPersonPos(175, 73, P_HOWARD, P_LEFT);
 			setPersonPos(147, 109, P_CHEWY, P_LEFT);
