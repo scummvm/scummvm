@@ -149,15 +149,15 @@ void Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1)
 		return;
 
+	_stopped = false;
 	auto character = jokes? _engine->jokes(): this;
 	_description = character->animationDescription(direction);
-	_animation = _description? _engine->loadAnimation(_description->filename): nullptr;
-	if (!_animation) {
+	auto animation = _description? _engine->loadAnimation(_description->filename): nullptr;
+	if (!animation) {
 		warning("no %s animation %d", jokes? "jokes": "character", direction);
-		_phase = -1;
-		_frames = 0;
 		return;
 	}
+	_animation = animation;
 	_animation->speed(speed);
 	_animation->rewind();
 	if (!_jokes)
@@ -182,12 +182,11 @@ void Character::animate(const Common::String & processName, Common::Point pos, i
 
 void Character::stop() {
 	debug("character %s: stop", _object->getName().c_str());
-	_phase = -1;
-	_frames = 0;
+	_stopped = true;
 }
 
 void Character::tick() {
-	if (!_enabled || !_visible || !_animation)
+	if (!_enabled || !_visible || !_animation || _stopped)
 		return;
 
 	auto screen = _engine->getCurrentScreen();
