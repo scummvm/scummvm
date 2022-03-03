@@ -173,7 +173,7 @@ int16 Room39::use_tv() {
 	int16 cls_flag = false;
 
 	if (isCurInventory(ZAPPER_INV)) {
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		
 		_G(spieler).R39TvOn = true;
 		if (_G(spieler).R39TvKanal >= 5)
@@ -328,7 +328,7 @@ void Room39::look_tv(bool cls_mode) {
 			}
 		}
 
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		_G(flags).AutoAniPlay = false;
 	}
 }

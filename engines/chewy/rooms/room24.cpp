@@ -67,7 +67,7 @@ void Room24::xit() {
 	cursorChoice(_G(menu_item));
 	setPersonPos(263, 144, P_CHEWY, -1);
 	_G(spieler).scrollx = 88;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(flags).MainInput = true;
 }
 

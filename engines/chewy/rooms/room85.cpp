@@ -62,7 +62,7 @@ void Room85::entry(int16 eib_nr) {
 		setPersonPos(296, 142, P_HOWARD, P_RIGHT);
 		setPersonPos(322, 142, P_NICHELLE, P_RIGHT);
 		_G(spieler).flags30_1 = false;
-		_G(maus_links_click) = false;
+		_G(mouseLeftClick) = false;
 		_G(spieler).scrollx = 78;
 		if (_G(spieler).flags32_40) {
 			_G(atds)->del_steuer_bit(506, ATS_AKTIV_BIT, ATS_DATA);

@@ -51,7 +51,7 @@ void Room81::entry() {
 	setPersonPos(103, 115, P_HOWARD, P_RIGHT);
 	setPersonPos(62, 112, P_NICHELLE, P_RIGHT);
 	_G(spieler).flags30_1 = false;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(spieler).scrollx = 0;
 }
 

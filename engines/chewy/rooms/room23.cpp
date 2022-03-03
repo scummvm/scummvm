@@ -44,7 +44,7 @@ void Room23::entry() {
 void Room23::cockpit() {
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	switchRoom(23);
 
 	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
@@ -101,7 +101,7 @@ int16 Room23::start_gleiter() {
 					_G(spieler).DelaySpeed = 10;
 					startAadWait(59);
 					stopPerson(P_CHEWY);
-					_G(maus_links_click) = false;
+					_G(mouseLeftClick) = false;
 
 				} else if (_G(spieler).R23GleiterExit == 16) {
 					_G(out)->setPointer(nullptr);

@@ -297,7 +297,7 @@ int Room90::shootControlUnit() {
 	flic_cut(FCUT_107);
 	_G(spieler).scrollx = 0;
 	setPersonPos(76, 145, P_CHEWY, P_LEFT);
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(det)->showStaticSpr(4);
 	_G(det)->showStaticSpr(5);
 	setupScreen(NO_SETUP);
@@ -329,7 +329,7 @@ int Room90::useSurimyOnWreck() {
 	hideCur();
 	cur_2_inventory();
 	autoMove(6, P_CHEWY);
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	flic_cut(FCUT_109);

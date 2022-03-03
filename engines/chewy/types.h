@@ -580,12 +580,12 @@ struct Flags {
 	uint16 ExitMov : 1;
 	uint16 MausTxt : 1;
 	uint16 LoadGame : 1;
-	uint16 main_maus_flag: 1;
+	uint16 mainMouseFlag: 1;
 	uint16 ZoomMov : 1;
 	uint16 SaveMenu : 1;
 
 	uint16 SpzAni : 1;
-	uint16 MausLinks : 1;
+	uint16 MouseLeft : 1;
 	uint16 ChewyDontGo : 1;
 	uint16 NoPalAfterFlc : 1;
 	uint16 NoDiaBox : 1;

@@ -106,11 +106,11 @@ void Room91::setup_func() {
 		cur_2_inventory();
 		cursorChoice(CUR_22);
 
-		if (_G(maus_links_click) == 0 || _click)
+		if (_G(mouseLeftClick) == 0 || _click)
 			return;
 
 		const int oldClick = _click;
-		_G(maus_links_click) = oldClick;
+		_G(mouseLeftClick) = oldClick;
 		_click = 1;
 		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
 		hideCur();

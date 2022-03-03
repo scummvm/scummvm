@@ -66,7 +66,7 @@ void Room65::xit() {
 	setPersonPos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 }
 
 void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {

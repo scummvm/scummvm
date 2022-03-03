@@ -163,7 +163,7 @@ void MainMenu::animate() {
 	kb_mov(1);
 	calcMouseText(_G(minfo).x, _G(minfo).y, 1);
 	_G(cur)->plot_cur();
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(menu_flag) = 0;
 	_G(out)->setPointer(nullptr);
 	_G(out)->back2screen(_G(workpage));
@@ -258,10 +258,10 @@ void MainMenu::playGame() {
 	_G(inv_disp_ok) = false;
 	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
 
-	_G(flags).main_maus_flag = false;
+	_G(flags).mainMouseFlag = false;
 	_G(flags).MainInput = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();

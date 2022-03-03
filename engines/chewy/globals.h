@@ -99,7 +99,7 @@ public:
 	int16 _ged_mov_ebene = 0;
 
 	bool _cur_display = false;
-	int16 _maus_links_click = 0;
+	int16 _mouseLeftClick = 0;
 	Common::String _calc_inv_text_str1, _calc_inv_text_str2;
 	bool _calc_inv_text_set = false;
 	bool _stopAutoMove[3] = { false };

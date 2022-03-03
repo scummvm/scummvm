@@ -253,7 +253,7 @@ int16 Room18::calc_surimy() {
 			stopPerson(P_CHEWY);
 			_G(spieler)._personHide[P_CHEWY] = true;
 			startDetailFrame(17, 1, ANI_FRONT, 12);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 			waitDetail(17);

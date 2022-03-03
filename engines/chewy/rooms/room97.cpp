@@ -686,7 +686,7 @@ void Room97::sensorAnim() {
 		get_user_key(NO_SETUP);
 		if (_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) {
 			if (_G(spieler).inv_cur)
-				_G(maus_links_click) = true;
+				_G(mouseLeftClick) = true;
 		}
 
 		setupScreen(DO_SETUP);

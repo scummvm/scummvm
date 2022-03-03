@@ -60,7 +60,7 @@ void Room49::entry(int16 eib_nr) {
 			_G(spieler).R48TaxiEntry = false;
 			setPersonPos(527, 76, P_HOWARD, P_LEFT);
 			setPersonPos(491, 98, P_CHEWY, P_LEFT);
-			_G(maus_links_click) = false;
+			_G(mouseLeftClick) = false;
 			_G(spieler).scrollx = 320;
 			_G(spieler).scrolly = 0;
 			_G(det)->startDetail(5, 1, ANI_FRONT);

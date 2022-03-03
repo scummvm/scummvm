@@ -60,7 +60,7 @@ int16 Room4::comp_probe() {
 	start_aad(46);
 	while (!endLoop) {
 		mouseAction();
-		if (_G(maus_links_click)) {
+		if (_G(mouseLeftClick)) {
 			switch (_G(in)->mouseVector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
 				if (curX > 0)
@@ -118,7 +118,7 @@ int16 Room4::comp_probe() {
 	cursorChoice(_G(menu_item));
 
 	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
-	_G(maus_links_click) = false;
+	_G(mouseLeftClick) = false;
 	_G(minfo)._button = 0;
 	_G(spieler)._personRoomNr[P_CHEWY] = 3;
 	_G(room)->loadRoom(&_G(room_blk), 3, &_G(spieler));

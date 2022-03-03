@@ -154,7 +154,7 @@ int16 Room42::use_beamter() {
 		cursorChoice(_G(menu_item));
 		showCur();
 		start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
-		_G(flags).MausLinks = false;
+		_G(flags).MouseLeft = false;
 	}
 
 	return action_flag;
