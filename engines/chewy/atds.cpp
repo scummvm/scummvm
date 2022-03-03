@@ -581,7 +581,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MAUS_LINKS:
+			case MOUSE_LEFT:
 				if (_mousePush == false) {
 					if (_atsv.SilentCount <= 0 && _atsv.DelayCount > _printDelayCount1) {
 						_mousePush = true;
@@ -925,7 +925,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MAUS_LINKS:
+			case MOUSE_LEFT:
 				EVENTS_CLEAR;
 
 				if (_mousePush == false) {

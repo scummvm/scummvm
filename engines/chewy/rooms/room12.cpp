@@ -236,7 +236,7 @@ int16 Room12::use_terminal() {
 
 void Room12::use_linke_rohr() {
 	_G(spieler).R12TalismanOk = false;
-	_G(spieler).R12KetteLinks = true;
+	_G(spieler).R12ChainLeft = true;
 	_G(uhr)->disableTimer();
 	_G(obj)->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
@@ -268,8 +268,8 @@ int16 Room12::useTransformerTube() {
 	if (!_G(spieler).inv_cur) {
 		result = true;
 
-		if (_G(spieler).R12KetteLinks) {
-			_G(spieler).R12KetteLinks = false;
+		if (_G(spieler).R12ChainLeft) {
+			_G(spieler).R12ChainLeft = false;
 			_G(uhr)->enableTimer();
 			_G(atds)->set_ats_str(117, 1, AAD_DATA);
 		} else {

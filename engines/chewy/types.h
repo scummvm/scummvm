@@ -79,7 +79,7 @@ struct SpielerFlags {
 	bool R12BorkTalk : 1;
 	bool R12BorkInRohr : 1;
 	bool R12TransOn : 1;
-	bool R12KetteLinks : 1;
+	bool R12ChainLeft : 1;
 	bool R13BorkOk : 1;
 	bool R13Band : 1;
 	bool R13Bandlauf : 1;
