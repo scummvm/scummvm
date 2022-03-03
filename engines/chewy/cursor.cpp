@@ -44,7 +44,6 @@ Cursor::~Cursor() {
 void Cursor::plot_cur() {
 	if (_visible) {
 		if (_cursorMoveFl) {
-			mouse_active = true;
 			_cursorMoveFl = false;
 			if (!_curblk->no_back) {
 
@@ -67,16 +66,13 @@ void Cursor::plot_cur() {
 				_aniCount = _ani->_start;
 		}
 
-		_out->spriteSet(_curblk->sprite[_aniCount], _cur_x_old, _cur_y_old,
-		                 _scrWidth);
-		mouse_active = false;
+		_out->spriteSet(_curblk->sprite[_aniCount], _cur_x_old, _cur_y_old, _scrWidth);
 	}
 }
 
 void Cursor::show_cur() {
 	if (!_visible) {
 		_visible = true;
-		mouse_active = true;
 
 		_G(minfo).x = g_events->_mousePos.x;
 		_G(minfo).y = g_events->_mousePos.y;
@@ -110,8 +106,6 @@ void Cursor::set_cur_ani(CurAni *ani1) {
 }
 
 void Cursor::move(int16 x, int16 y) {
-	mouse_active = true;
-
 	_G(minfo).x = x;
 	_G(minfo).y = y;
 	_cur_x_old = (_G(minfo).x + _curblk->page_off_x);
@@ -121,7 +115,6 @@ void Cursor::move(int16 x, int16 y) {
 		_cursorMoveFl = true;
 	else
 		_cursorMoveFl = false;
-	mouse_active = false;
 }
 
 } // namespace Chewy

@@ -26,13 +26,7 @@
 
 namespace Chewy {
 
-// FIXME. Externals
-bool mouse_links_los;
-bool mouse_active;
-// end of externals
-
 bool _cursorMoveFl;
-
 
 void set_new_kb_handler(KbdInfo *key) {
 	g_events->setKbdInfo(key);
@@ -91,9 +85,9 @@ int16 InputMgr::getSwitchCode() {
 	if (_G(minfo)._button == 2) {
 		switch_code = Common::KEYCODE_ESCAPE;
 	} else if (_G(minfo)._button == 1)
-		switch_code = 255;
+		switch_code = MOUSE_LEFT;
 	else if (_G(minfo)._button == 4)
-		switch_code = 254;
+		switch_code = MOUSE_CENTER;
 
 	if (_kbInfoBlk && _kbInfoBlk->_keyCode != 0)
 		switch_code = (int16)_kbInfoBlk->_keyCode;

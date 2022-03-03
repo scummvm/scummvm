@@ -55,9 +55,9 @@ namespace Chewy {
 
 #define ALT 0x1000
 
-#define MAUS_LINKS 255
-#define MAUS_RECHTS 1
-#define MAUS_MITTE 254
+#define MOUSE_LEFT 255
+#define MOUSE_RIGHT 1
+#define MOUSE_CENTER 254
 
 #define SOUND 5
 #define BASE 0x220
