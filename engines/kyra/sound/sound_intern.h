@@ -533,6 +533,47 @@ private:
 	bool _ready;
 };
 
+class CapcomPC98AudioDriver;
+class SoundPC98_Darkmoon : public Sound {
+public:
+	SoundPC98_Darkmoon(KyraEngine_v1 *vm, MidiDriver::DeviceHandle dev, Audio::Mixer *mixer);
+	~SoundPC98_Darkmoon() override;
+
+	kType getMusicType() const override;
+
+	bool init() override;
+
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override { return true; }
+	void loadSoundFile(uint file) override {}
+	void loadSoundFile(Common::String name) override;
+
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	bool isPlaying() const override;
+
+	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
+	void stopAllSoundEffects() override;
+
+	void beginFadeOut() override;
+
+	void updateVolumeSettings() override;
+
+	int checkTrigger() override;
+
+	void resetTrigger() override;
+
+private:
+	KyraEngine_v1 *_vm;
+	CapcomPC98AudioDriver *_driver;
+
+	int _currentResourceSet;
+
+	kType _drvType;
+	bool _ready;
+};
+
 class SegaAudioDriver;
 class SoundSegaCD_EoB : public Sound {
 public:

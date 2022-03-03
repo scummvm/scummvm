@@ -353,32 +353,20 @@ void DarkMoonEngine::seq_playIntro() {
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
-		if (_configRenderMode == Common::kRenderEGA) {
-			for (int i = 0; i < 35; i++) {
-				uint32 endtime = _system->getMillis() + 2 * _tickLength;
-				_screen->copyRegion(16, 8, 8, 8, 296, 128, 0, 0, Screen::CR_NO_P_CHECK);
-				_screen->copyRegion(i << 3, 0, 304, 8, 8, 128, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->updateScreen();
-				if (i == 12)
-					sq.animCommand(_flags.platform == Common::kPlatformPC98 ? 40 : 42);
-				else if (i == 25)
-					snd_playSoundEffect(11);
-				delayUntil(endtime);
+		for (int i = 0; i < 280; ++i) {
+			uint32 endtime = _system->getMillis() + 18;
+			_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(i, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			if (_flags.platform == Common::kPlatformAmiga) {
+				if (i == 4 || i == 24 || i == 36)
+					sq.animCommand(39);
+			} else if (i == 96) {
+				sq.animCommand(_flags.platform == Common::kPlatformPC98 ? 40 : 42);
+			} else if (i == 200) {
+				snd_playSoundEffect(11);
 			}
-		} else {
-			for (int i = 0; i < 280; i += 3) {
-				uint32 endtime = _system->getMillis() + _tickLength;
-				_screen->copyRegion(11, 8, 8, 8, 301, 128, 0, 0, Screen::CR_NO_P_CHECK);
-				_screen->copyRegion(i, 0, 309, 8, 3, 128, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->updateScreen();
-				if (_flags.platform == Common::kPlatformAmiga) {
-					if (i == 4 || i == 24 || i == 36)
-						sq.animCommand(39);
-				} else if (i == 96) {
-					sq.animCommand(_flags.platform == Common::kPlatformPC98 ? 40 : 42);
-				}
-				delayUntil(endtime);
-			}
+			delayUntil(endtime);
 		}
 	}
 
@@ -1792,8 +1780,10 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		index = _sndMarkersFMTowns[index - 1];
-	else if (_vm->sound()->getMusicType() != Sound::kAdLib)
+	else if (_vm->sound()->getMusicType() != Sound::kAdLib && _vm->gameFlags().platform != Common::kPlatformPC98)
 		return;
+
+	debug("waitForSongNotifier %d - waiting for trigger...", index);
 
 	int seq = 0;
 
@@ -1808,6 +1798,8 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 
 		_vm->updateInput();
 	}
+
+	debug("waitForSongNotifier %d - ...finished", index);
 }
 
 void DarkmoonSequenceHelper::updateAmigaSound() {

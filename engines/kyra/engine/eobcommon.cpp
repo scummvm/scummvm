@@ -429,7 +429,7 @@ Common::Error EoBCoreEngine::init() {
 			_sound = new SoundPC98_EoB(this, _mixer);
 		} else {
 			dev = MidiDriver::detectDevice(MDT_PC98 | MDT_MIDI);
-			/**/
+			_sound = new SoundPC98_Darkmoon(this, dev, _mixer);
 		}
 		break;
 	case Common::kPlatformAmiga:
@@ -575,6 +575,9 @@ void EoBCoreEngine::loadFonts() {
 		else
 			AmigaDOSFont::errorDialog(0);
 
+	} else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformPC98) {
+		_screen->loadFont(Screen::FID_6_FNT, "FONT6B.FNT");
+		_screen->loadFont(Screen::FID_8_FNT, "FONT8B.FNT");
 	} else if (_flags.platform != Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -582,7 +585,7 @@ void EoBCoreEngine::loadFonts() {
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
-	} else if (_flags.platform == Common::kPlatformPC98) {
+	} else if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
