@@ -42,7 +42,7 @@ static const chapterEntry rawChapterTable[] = {
 	{42, {70, 160}, {180, 160}, {220, 185}}, 	// c42
 	{43, {70, 160}, {180, 160}, {220, 185}}, 	// c43
 	{44, {70, 160}, {180, 160}, {220, 185}}, 	// c44
-	{40, {70, 160}, {180, 160}, {220, 185}}, 	// c40
+	{40, {19, 3},   {246, 3}, 	{246, 11}}, 	// c40
 	{51, {60, 167}, {190, 167}, {135, 187}}, 	// c51
 	{52, {60, 167}, {190, 167}, {135, 187}}, 	// c52
 	{50, {19, 3},   {246, 3}, 	{246, 11}}, 	// c50 (fixed)
@@ -55,6 +55,9 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_screenW = 320;
 	_screenH = 200;
 	_lives = 2;
+
+	_c40SegmentIdx = -1;
+	_c40lastTurn = -1;
 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {

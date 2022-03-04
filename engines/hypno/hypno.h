@@ -323,6 +323,10 @@ private:
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
+	Common::Array<uint32> _c40SegmentPath;
+	Common::Array<uint32> _c40SegmentNext;
+	int _c40SegmentIdx;
+	int _c40lastTurn;
 };
 
 class SpiderEngine : public HypnoEngine {
