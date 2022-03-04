@@ -26,7 +26,7 @@ Transferring game files
 
 Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.
 
-To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`.
+To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`, or use LAN functionality :doc:`../use_scummvm/LAN`.
 
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
@@ -79,7 +79,7 @@ Paths
 Saved games
 *******************
 
-```/hdd0/game/SCUM12000/USRDIR/saves/``
+``/hdd0/game/SCUM12000/USRDIR/saves/``
 
 Configuration file
 **************************
