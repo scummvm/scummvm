@@ -81,7 +81,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 	_numAudioNames = 0;
 
 	_emptyMarker[0] = '\0';
-	_internalMixer = new IMuseDigiInternalMixer(mixer);
+	_internalMixer = new IMuseDigiInternalMixer(mixer, _isEarlyDiMUSE);
 	_groupsHandler = new IMuseDigiGroupsHandler(this);
 	_fadesHandler = new IMuseDigiFadesHandler(this);
 	_triggersHandler = new IMuseDigiTriggersHandler(this);

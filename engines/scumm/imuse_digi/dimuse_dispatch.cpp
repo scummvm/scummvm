@@ -492,7 +492,8 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 				effFeedSize,
 				0,
 				mixVolume,
-				trackPtr->pan);
+				trackPtr->pan,
+				false);
 
 			dispatchPtr->fadeOffset += effRemainingFade;
 			dispatchPtr->fadeRemaining -= effRemainingFade;
@@ -565,7 +566,8 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 					effFeedSize,
 					mixStartingPoint,
 					mixVolume,
-					trackPtr->pan);
+					trackPtr->pan,
+					false);
 
 				dispatchPtr->fadeOffset += effRemainingFade;
 				dispatchPtr->fadeRemaining -= effRemainingFade;
@@ -699,7 +701,8 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 			effFeedSize,
 			mixStartingPoint,
 			mixVolume,
-			trackPtr->pan);
+			trackPtr->pan,
+			false);
 
 		_internalMixer->clearRadioChatter();
 		mixStartingPoint += effFeedSize;
@@ -736,7 +739,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 		}
 
 		mixVolume = dispatchUpdateFadeMixVolume(dispatchPtr, fadeChunkSize);
-		_internalMixer->mix(dispatchPtr->fadeBuf, fadeChunkSize, 8, 1, feedSize, 0, mixVolume, trackPtr->pan);
+		_internalMixer->mix(dispatchPtr->fadeBuf, fadeChunkSize, 8, 1, feedSize, 0, mixVolume, trackPtr->pan, (dispatchPtr->sampleRate == 11025));
 		dispatchPtr->fadeRemaining -= fadeChunkSize;
 		dispatchPtr->fadeBuf += fadeChunkSize;
 		if (dispatchPtr->fadeRemaining == fadeChunkSize)
@@ -793,7 +796,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 				mixVolume = trackPtr->effVol;
 			}
 
-			_internalMixer->mix(buffer, inFrameCount, 8, 1, feedSize, mixStartingPoint, mixVolume, trackPtr->pan);
+			_internalMixer->mix(buffer, inFrameCount, 8, 1, feedSize, mixStartingPoint, mixVolume, trackPtr->pan, (dispatchPtr->sampleRate == 11025));
 			mixStartingPoint += inFrameCount;
 			tentativeFeedSize -= inFrameCount;
 			dispatchPtr->currentOffset += inFrameCount;
@@ -1625,7 +1628,6 @@ void IMuseDigital::dispatchVOCLoopCallback(int soundId) {
 int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 	uint8 *headerBuf;
 	uint8 *soundAddrData;
-	int32 resSize;
 
 	while (1) {
 		if (dispatchPtr->streamPtr) {
@@ -1660,21 +1662,12 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 			return -1;
 		} else {
 			uint8 *headerTag = _currentVOCHeader;
-			if (headerTag[0] != 1 && headerTag[0] != 4 && headerTag[0] != 6 && headerTag[0] != 7)
-				headerTag += 2;
 
 			switch (headerTag[0]) {
 			case 1:
 				dispatchPtr->sampleRate = headerTag[4] > 196 ? 22050 : 11025;
 				dispatchPtr->audioRemaining = (READ_LE_UINT32(headerTag) >> 8) - 2;
 				dispatchPtr->currentOffset += 6;
-
-				// A little hack to avoid click and pops artifacts:
-				// read one audio sample less if this is the last audio chunk of the file
-				resSize = _filesHandler->getSoundAddrDataSize(dispatchPtr->trackPtr->soundId, dispatchPtr->streamPtr != nullptr);
-				if ((resSize - (dispatchPtr->currentOffset + dispatchPtr->audioRemaining)) < 0x30) {
-					dispatchPtr->audioRemaining -= 2;
-				}
 
 				if (dispatchPtr->streamPtr) {
 					streamerGetStreamBuffer(dispatchPtr->streamPtr, 6);
