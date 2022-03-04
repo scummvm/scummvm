@@ -124,9 +124,11 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		// We don't need SDL for the iOS target
 		static const std::string sdl_directory = "/sdl/";
 		static const std::string surfacesdl_directory = "/surfacesdl/";
+		static const std::string openglsdl_directory = "/openglsdl/";
 		static const std::string doublebufferdl_directory = "/doublebuffersdl/";
 		if (fileID.find(sdl_directory) != std::string::npos
 		 || fileID.find(surfacesdl_directory) != std::string::npos
+		 || fileID.find(openglsdl_directory) != std::string::npos
 		 || fileID.find(doublebufferdl_directory) != std::string::npos) {
 			return true;
 		 }
