@@ -20156,16 +20156,24 @@ static const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
 	PATCH_END
 };
 
-// In Ulence Flats, there is a space ship, that you will use at some point.
+// In Ulence Flats, there is a space ship that you will use in room 45.
 //  Near that space ship are 2 force field generators. When you look at the top
 //  of those generators, the game will crash. This happens also in Sierra SCI.
-//  It's caused by a jump, that goes out of bounds.
+//  It's caused by a branch that goes out of bounds.
 //
-// We currently do not know if this was caused by a compiler glitch or if it
-//  was a developer error. Anyway we patch this glitchy code, so that the game
-//  won't crash anymore.
+// This was due to a compiler bug that produced bogus bnt targets when the body
+//  of the last switch or cond condition was empty. These appear in other games
+//  but in each case the final condition always evaluated to true, or was never
+//  reached, and so the bug went unnoticed. In this case it appears that the
+//  intended body of the else statement was a call to super:doVerb but instead
+//  it was entered as the final condition. This created an empty body and a
+//  condition which happened to evaluate to zero, and so a bogus branch was
+//  finally taken and crashed. The script was fixed in later versions and the
+//  compiler was fixed to no longer emit these broken bnt instructions.
 //
-// Applies to at least: English Floppy
+// We fix this by patching out the bogus branch instruction.
+//
+// Applies to: English PC VGA
 // Responsible method: radar1::doVerb
 // Fixes bug: #6816
 static const uint16 sq1vgaSignatureUlenceFlatsGeneratorGlitch[] = {
