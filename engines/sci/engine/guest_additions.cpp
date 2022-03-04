@@ -172,6 +172,12 @@ bool GuestAdditions::userHasControl() {
 	const SciGameId gameId = g_sci->getGameId();
 	const reg_t user = _segMan->findObjectByName(getUserObject(gameId));
 	const Object *userObject = _segMan->getObject(user);
+	if (userObject == nullptr) {
+		// Several Mac games like QFG1VGA don't contain object names, and some
+		// third party localizations like SQ1VGA Russian altered object names.
+		warning("User object not found");
+		return false;
+	}
 
 	// Selectors input/canInput and controls should be available at all times, except
 	// in games that don't have selector vocab 997 (e.g. some game demos and LB2 floppy)
