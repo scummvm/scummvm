@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef CHEWY_ROOMS_ROOM38_H
+#ifndef CHEWY_ROOMS_ROOM48_H
 #define CHEWY_ROOMS_ROOM48_H
 
 namespace Chewy {
