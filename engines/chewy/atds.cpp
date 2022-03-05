@@ -111,7 +111,6 @@ Atdsys::Atdsys() {
 		_ssi[i] = init_ssi;
 	_invBlockNr = -1;
 	_invUseMem = nullptr;
-	_inzeig = _G(in)->getPointer();
 
 	_atdsStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	Common::File tmp;
@@ -590,8 +589,9 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 					if (_atsv.SilentCount <= 0 && _atsv.DelayCount > _printDelayCount1) {
 						_mousePush = true;
 						_atsv.DelayCount = 0;
-						_inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-						_inzeig->kbinfo->_keyCode = '\0';
+						KbdInfo *kbInfo = _G(in)->getPointer()->kbinfo;
+						kbInfo->scan_code = Common::KEYCODE_INVALID;
+						kbInfo->_keyCode = '\0';
 					}
 				}
 				break;
@@ -936,8 +936,9 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 					if (_aadv.SilentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
-						_inzeig->kbinfo->scan_code = Common::KEYCODE_INVALID;
-						_inzeig->kbinfo->_keyCode = '\0';
+						KbdInfo *kbInfo = _G(in)->getPointer()->kbinfo;
+						kbInfo->scan_code = Common::KEYCODE_INVALID;
+						kbInfo->_keyCode = '\0';
 					}
 				}
 				break;
