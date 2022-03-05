@@ -36,6 +36,11 @@ jobs:
         uses: actions/checkout@v2
       - uses: ilammy/setup-nasm@v1
         if: ${{ matrix.useNasm }} == 'true'
+      - name: Install ccache
+        run: |
+          curl -LO https://github.com/ccache/ccache/releases/download/v4.6/ccache-4.6-windows-64.zip
+          unzip -j ccache-4.6-windows-64.zip ccache-4.6-windows-64/ccache.exe
+          copy ccache.exe cl.exe
       - name: Install vcpkg and packages
         uses: lukka/run-vcpkg@v7
         id: runvcpkg
@@ -51,7 +56,7 @@ jobs:
       - name: Build create_project
         run: |
           cd devtools/create_project/cmake
-          cmake .
+          cmake -DCMAKE_CXX_COMPILER_LAUNCHER=${env:GITHUB_WORKSPACE}\\ccache .
           cmake --build . -j 2
           ls
           cd ../../../
@@ -71,7 +76,7 @@ jobs:
         run: |
           cd build-scummvm
           ls
-          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }}
+          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }} /p:CLToolPath=${env:GITHUB_WORKSPACE}
 #      - name: Upload scummvm
 #        uses: actions/upload-artifact@v2
 #        with:
