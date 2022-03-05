@@ -22,9 +22,9 @@
 #ifndef VIDEO_PACODECODER_H
 #define VIDEO_PACODECODER_H
 
-#include "video/video_decoder.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "video/video_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -33,7 +33,7 @@ class SeekableReadStream;
 namespace Graphics {
 struct PixelFormat;
 struct Surface;
-}
+} // namespace Graphics
 
 namespace Video {
 
@@ -54,14 +54,14 @@ public:
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	const byte *getPalette();
+	virtual void readNextPacket() override;
+
 
 protected:
-
 	class PacoVideoTrack : public FixedRateVideoTrack {
 	public:
 		PacoVideoTrack(
-			Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount,
-			bool hasAudio, uint16 width, uint16 height);
+			uint16 frameRate, uint16 frameCount,  uint16 width, uint16 height);
 		~PacoVideoTrack();
 
 		bool endOfTrack() const override;
@@ -73,8 +73,8 @@ protected:
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
 		virtual const Graphics::Surface *decodeNextFrame() override;
-		virtual void handleFrame(uint32 chunkSize);
-		void handlePalette();
+		virtual void handleFrame(Common::SeekableReadStream *fileStream, uint32 chunkSize, int curFrame);
+		void handlePalette(Common::SeekableReadStream *fileStream);
 		const byte *getPalette() const override;
 		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
@@ -83,24 +83,27 @@ protected:
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 		Common::Rational getFrameRate() const override { return Common::Rational(_frameRate, 1); }
 
-
 	protected:
-		Common::SeekableReadStream *_fileStream;
 		Graphics::Surface *_surface;
-
-		int _curFrame;
 
 		byte *_palette;
 
-		int _frameSizes[65536]; // can be done differently?
 		mutable bool _dirtyPalette;
 
+		int _curFrame;
 		uint32 _frameCount;
 		uint32 _frameDelay;
 		uint16 _frameRate;
 
 		Common::List<Common::Rect> _dirtyRects;
 	};
+
+private:
+	PacoVideoTrack *_videoTrack;
+	Common::SeekableReadStream *_fileStream;
+	int _curFrame = 0;
+	int _frameSizes[65536]; // can be done differently?
+
 };
 
 } // End of namespace Video

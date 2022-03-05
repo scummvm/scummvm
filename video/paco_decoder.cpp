@@ -44,6 +44,7 @@ PacoDecoder::~PacoDecoder() {
 bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	_curFrame = 0;
 	stream->readUint16BE(); // 1
 	stream->readUint16BE(); // 0x26
 
@@ -64,7 +65,15 @@ bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	stream->readUint32BE(); // flags
 	stream->readUint16BE(); // 0
 
-	addTrack(new PacoVideoTrack(stream, frameRate, frameCount, hasAudio, width, height));
+	for (uint i = 0; i < frameCount; i++) {
+		_frameSizes[i] = stream->readUint32BE();
+	}
+
+	_fileStream = stream;
+
+	_videoTrack = new PacoVideoTrack(frameRate, frameCount, width, height);
+	addTrack(_videoTrack);
+
 	return true;
 }
 
@@ -105,9 +114,8 @@ const byte* PacoDecoder::PacoVideoTrack::getPalette() const {
 }
 
 PacoDecoder::PacoVideoTrack::PacoVideoTrack(
-	Common::SeekableReadStream *stream, uint16 frameRate, uint16 frameCount, bool hasAudio, uint16 width, uint16 height) {
-
-	_fileStream = stream;
+	uint16 frameRate, uint16 frameCount, uint16 width, uint16 height) {
+	_curFrame = 0;
 	_frameRate = frameRate;
 	_frameCount = frameCount;
 
@@ -115,16 +123,9 @@ PacoDecoder::PacoVideoTrack::PacoVideoTrack(
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = const_cast<byte *>(quickTimeDefaultPalette256);
 	_dirtyPalette = true;
-
-	_curFrame = 0;
-
-	for (uint i = 0; i < _frameCount; i++) {
-		_frameSizes[i] = stream->readUint32BE();
-	}
 }
 
 PacoDecoder::PacoVideoTrack::~PacoVideoTrack() {
-	delete _fileStream;
 	_surface->free();
 	delete _surface;
 }
@@ -161,10 +162,12 @@ enum frameTypes {
 	EOC = 11 // - end of chunk marker
 };
 
-const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
+void PacoDecoder::readNextPacket() {
 	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
 
 	debug(2, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], _fileStream->pos());
+
+	_curFrame++;
 
 	while (_fileStream->pos() < nextFrame) {
 		int64 currentPos = _fileStream->pos();
@@ -178,10 +181,10 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 			warning("PacoDecode::decodeFrame(): Audio not implemented");
 			break;
 		case VIDEO:
-			handleFrame(chunkSize - 4);
+			_videoTrack->handleFrame(_fileStream, chunkSize - 4, _curFrame);
 			break;
 		case PALLETE:
-			handlePalette();
+			_videoTrack->handlePalette(_fileStream);
 			break;
 		case EOC:
 			break;
@@ -192,20 +195,22 @@ const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 		_fileStream->seek(currentPos + chunkSize);
 	 }
 
-	_curFrame++;
 
+}
+
+const Graphics::Surface *PacoDecoder::PacoVideoTrack::decodeNextFrame() {
 	return _surface;
 }
 
-void PacoDecoder::PacoVideoTrack::handlePalette() {
-	uint32 header = _fileStream->readUint32BE();
+void PacoDecoder::PacoVideoTrack::handlePalette(Common::SeekableReadStream *fileStream) {
+	uint32 header = fileStream->readUint32BE();
 	if (header == 0x30000000) { // default quicktime palette
 		_palette = const_cast<byte *>(quickTimeDefaultPalette256);
 	} else {
-		_fileStream->readUint32BE(); // 4 bytes of 00
+		fileStream->readUint32BE(); // 4 bytes of 00
 		_palette = new byte[256 * 3]();
 		for (int i = 0; i < 256 * 3; i++){
-			_palette[i] = _fileStream->readByte();
+			_palette[i] = fileStream->readByte();
 		}
 	}
 	_dirtyPalette = true;
@@ -246,23 +251,24 @@ enum {
 	} while(0);
 
 
-void PacoDecoder::PacoVideoTrack::handleFrame(uint32 chunkSize) {
+void PacoDecoder::PacoVideoTrack::handleFrame(Common::SeekableReadStream *fileStream, uint32 chunkSize, int curFrame) {
+	_curFrame = curFrame;
 	uint16 w = getWidth();
 
-	uint16 x = _fileStream->readUint16BE();			// x offset of the updated area
-	uint16 y = _fileStream->readUint16BE();			// y offset of the updated area
-	uint16 bw = _fileStream->readUint16BE();		// updated area width
-	uint16 bh = _fileStream->readUint16BE();		// updated area height
-	uint compr = _fileStream->readByte();	    	// compression method and flags
-	_fileStream->readByte();						// padding
+	uint16 x = fileStream->readUint16BE();			// x offset of the updated area
+	uint16 y = fileStream->readUint16BE();			// y offset of the updated area
+	uint16 bw = fileStream->readUint16BE();			// updated area width
+	uint16 bh = fileStream->readUint16BE();			// updated area height
+	uint compr = fileStream->readByte();	    	// compression method and flags
+	fileStream->readByte();							// padding
 
 	debug(5, "    +%d,%d - %dx%d compr %X", x, y, bw, bh, compr);
 
 	compr = compr & 0xF;
 
 	uint8 *fdata = new uint8[1048576];              // 0x100000 copied from original pacodec
-	_fileStream->read(fdata, chunkSize - 10);       // remove header length
-	debug(5, "pos: %ld", _fileStream->pos());
+	fileStream->read(fdata, chunkSize - 10);       // remove header length
+	debug(5, "pos: %ld", fileStream->pos());
 	int16 xpos = x, ypos = y, ypos2 = y;
 	byte *dst = (byte *)_surface->getPixels() + x + y * w;
 
