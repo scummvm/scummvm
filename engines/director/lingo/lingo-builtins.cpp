@@ -2717,18 +2717,26 @@ void LB::b_xPlayAnim(int nargs){
 	}
 
 	memcpy(origPalette, g_director->getPalette(), origCount * 3);
-
+	Graphics::Surface const *frame;
 	Common::Event event;
+	bool keepPlaying = true;
 	video->start();
-	while (!video->endOfVideo()) {
+	while (!video->endOfVideo() && keepPlaying) {
 		warning("LB::b_xPlayAnim: loop");
 
-		if (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_QUIT)
-				break;
-
+		if (g_system->getEventManager()->pollEvent(event)) {
+			switch(event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RBUTTONUP:
+				case Common::EVENT_LBUTTONUP:
+					keepPlaying = false;
+					break;
+				default:
+					continue;
+			}
+		}
 		if (video->needsUpdate()) {
-			Graphics::Surface const *frame = video->decodeNextFrame();
+			frame = video->decodeNextFrame();
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 		}
 		if (video->hasDirtyPalette()) {
@@ -2740,6 +2748,11 @@ void LB::b_xPlayAnim(int nargs){
 		g_system->delayMillis(10);
 
 	}
+	// Display the last frame after the video is done
+	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+		frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
+	);
+
 	video->close();
 	delete video;
 	// restore the palette
