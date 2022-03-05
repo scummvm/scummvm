@@ -789,101 +789,47 @@ void print_rows(int16 id) {
 	}
 }
 
-int16 flic_user_function(int16 keys) {
-	if (_G(atds)->aadGetStatus() != -1) {
-		switch (_G(flic_val1)) {
-		case 579:
-		case 584:
-		case 588:
-		case 591:
-			_G(out)->raster_col(254, 63, 12, 46);
-			break;
-		default:
-			break;
-		}
-	}
-
-	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-	if (_G(flic_val1) == 593 && keys == 35)
-		_G(atds)->stopAad();
-	if (_G(flic_val1) == 594 && keys == 18)
-		_G(atds)->stopAad();
-
-	int ret = _G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE ? -1 : 0;
-	if (_G(flic_val2) == 140 && keys == 15)
-		ret = -2;
-	if (_G(flic_val2) == 144 && keys == 7)
-		ret = -2;
-	if (_G(flic_val2) == 145 || _G(flic_val2) == 142 ||
-			_G(flic_val2) == 141 || _G(flic_val2) == 146) {
-		if (_G(atds)->aadGetStatus() == -1)
-			ret = -2;
-	}
-
-	return ret;
-}
-
-static void flic_proc1() {
-	const int16 VALS1[] = {
-		135,  145,  142,  140,  145,  144,  142,  134,  148,  138,
-		143,  142,  146,  154,  142,  139,  146,  156,  157,  147,
-		153,  152,  141,  137,  136,  151,  151,  149,  150
+static void playIntroSequence() {
+	const int16 introVideo[] = {
+		FCUT_135, FCUT_145, FCUT_142, FCUT_140, FCUT_145,
+		FCUT_144, FCUT_142, FCUT_134, FCUT_148, FCUT_138,
+		FCUT_143, FCUT_142, FCUT_146, FCUT_154, FCUT_142,
+		FCUT_139, FCUT_146, FCUT_156, FCUT_157, FCUT_147,
+		FCUT_153, FCUT_152, FCUT_141, FCUT_137, FCUT_136,
+		FCUT_151, FCUT_151, FCUT_149, FCUT_150
 	};
-	const byte VALS2[] = {
-		1,  1,  0,  0,  0,  0,  0,  1,  1,  1,
-		1,  0,  0,  1,  1,  1,  1,  1,  0,  1,
-		1,  1,  1,  1,  0,  1,  0,  1,  0
-	};
-	const int16 VALS3[] = {
-		579, 580, 581,  -1, 582, -1, 583, 584, -1, -1,
-		585, 586, 587, 588, 589, -1, 590, 591, -1, -1,
-		 -1,  -1, 592, 593, 594, -1,  -1,  -1, -1
-	};
-	const byte VALS4[] = {
-		0,  1,  1,  0,  1,  0,  1,  0,  0,  0,
-		1,  1,  1,  0,  1,  0,  1,  0,  0,  0,
-		0,  0,  1,  0,  0,  0,  0,  0,  0
+	const int16 introDialog[] = {
+		579, 580, 581,  -1, 582,
+		 -1, 583, 584,  -1,  -1,
+		585, 586, 587, 588, 589,
+		 -1, 590, 591,  -1,  -1,
+		 -1,  -1, 592, 593, 594,
+		 -1,  -1,  -1,  -1
 	};
 	int16 ret = 0;
 
 	_G(atds)->load_atds(98, AAD_DATA);
-	_G(flc)->set_custom_user_function(flic_user_function);
-	load_room_music(258);
+
+	_G(out)->setPointer(nullptr);
+	_G(out)->cls();
 
 	for (int i = 0; i < 29 && ret != -1; ++i) {
-		if (VALS1[i] == 148)
+		if (introVideo[i] == FCUT_135)
+			load_room_music(258);
+		else if (introVideo[i] == FCUT_148)
 			load_room_music(259);
-		else if (VALS1[i] == 143)
+		else if (introVideo[i] == FCUT_143)
 			load_room_music(260);
-		if (VALS2[i]) {
-			_G(out)->setPointer(nullptr);
-			_G(out)->cls();
-		}
 
-		_G(flic_val1) = 0;
-		if (VALS3[i] != -1) {
-			start_aad(VALS3[i], -1);
-			_G(flic_val1) = VALS3[i];
-		}
+		if (introDialog[i] != -1)
+			start_aad(introDialog[i], -1);
 
-		bool flag;
-		do {
-			SHOULD_QUIT_RETURN;
-			_G(flic_val2) = VALS1[i];
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, _G(flic_val2));
-			ret = _G(flc)->custom_play(&_G(Ci));
-#else
-			g_engine->_video->playVideo(_G(flic_val2));
-#endif
-			flag = VALS4[i] && _G(atds)->aadGetStatus() != -1;
-		} while (flag && ret != -1 && ret != -2);
-
+		ret = g_engine->_video->playVideo(introVideo[i]) ? 0 : -1;
 		_G(atds)->stopAad();
+		SHOULD_QUIT_RETURN;
 	}
 
-	_G(flc)->remove_custom_user_function();
-	if (ret == -1) {
+	//if (ret == -1) {
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
@@ -895,7 +841,7 @@ static void flic_proc1() {
 		} else {
 			delay(6000);
 		}
-	}
+	//}
 
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->cls();
@@ -915,256 +861,74 @@ void flic_cut(int16 nr) {
 	_G(det)->disable_room_sound();
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
-//#ifndef NEW_VIDEO_CODE
-	Common::File *f = new Common::File();
-	f->open("cut/cut.tap");
-	_G(Ci).Handle = f;
-//#endif
 
-	if (_G(Ci).Handle) {
-		switch (nr) {
-		case FCUT_SPACECHASE_18:
-			_G(sndPlayer)->setLoopMode(1);
+	switch (nr) {
+	case FCUT_SPACECHASE_18:
+		_G(sndPlayer)->setLoopMode(1);
 
-			for (i = 0; i < 11 && keepPlaying; i++) {
-				keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
-			}
-
-			_G(sndPlayer)->fadeOut(0);
-			_G(out)->ausblenden(1);
-			_G(out)->cls();
-			while (_G(sndPlayer)->musicPlaying());
-			_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
-			break;
-
-		case FCUT_047:
-		case FCUT_048:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(nr == FCUT_047 ? Room37::cut_serv1 : Room37::cut_serv2);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_053:
-			for (i = 0; i < 3; ++i) {
-				g_engine->_video->playVideo(nr);
-				SHOULD_QUIT_RETURN;
-			}
-			break;
-
-		case FCUT_054:
-			g_engine->_video->playVideo(nr);
-			g_engine->_video->playVideo(nr);
-			break;
-
-		case FCUT_055:
-		case FCUT_056:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(nr == FCUT_055 ? Room28::cut_serv2 : Room28::cut_serv1);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_058:
-			load_room_music(255);
-			g_engine->_video->playVideo(FCUT_058);
-			g_engine->_video->playVideo(FCUT_059);
-
-			if (!_G(spieler).R43GetPgLady) {
-				g_engine->_video->playVideo(FCUT_060);
-			} else {
-					start_aad(623, -1);
-#ifndef NEW_VIDEO_CODE
-				_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-				_G(flc)->set_custom_user_function(Room43::setup_func);
-				_G(flc)->custom_play(&_G(Ci));
-				_G(flc)->remove_custom_user_function();
-#else
-				g_engine->_video->playVideo(FCUT_061);
-#endif
-
-				g_engine->_video->playVideo(FCUT_062);
-			}
-			_G(sndPlayer)->fadeOut(0);
-			_G(out)->ausblenden(1);
-			_G(out)->cls();
-			while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT);
-			break;
-
-		case FCUT_064:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room28::cut_serv1);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_065:
-			_G(sndPlayer)->stopMod();
-			_G(currentSong) = -1;
-			load_room_music(256);
-			_G(sndPlayer)->setLoopMode(1);
-			Room46::kloppe();
-			_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
-			_G(currentSong) = -1;
-			break;
-
-		case FCUT_068:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(Room51::cut_serv);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_069:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(Room54::cut_serv);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_070:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(Room55::cut_serv);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_071:
-			_G(sndPlayer)->stopMod();
-			_G(currentSong) = -1;
-			g_engine->_video->playVideo(nr);
-			break;
-
-		case FCUT_078:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_flic_user_function(Room64::cut_sev);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_flic_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-		case FCUT_083:
-		case 1083:
-			for (i = 0; i < 2 && ret != -1; ++i) {
-				g_engine->_video->playVideo(FCUT_083);
-				SHOULD_QUIT_RETURN;
-			}
-			break;
-
-		case FCUT_089:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room87::proc5);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_095:
-			_G(flc)->set_custom_user_function(Room87::proc5);
-
-			while (_G(atds)->aadGetStatus() != -1 && !SHOULD_QUIT) {
-#ifndef NEW_VIDEO_CODE
-				_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-				_G(flc)->custom_play(&_G(Ci));
-#else
-				g_engine->_video->playVideo(nr);
-#endif
-			}
-
-			_G(flc)->remove_custom_user_function();
-			break;
-
-		case FCUT_107:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Room90::proc5);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		case FCUT_112:
-			g_engine->_sound->setMusicVolume(32 * Audio::Mixer::kMaxChannelVolume / 120);
-			g_engine->_video->playVideo(nr);
-			g_engine->_video->playVideo(nr);
-			g_engine->_sound->setMusicVolume(5 * Audio::Mixer::kMaxChannelVolume / 120);
-			break;
-
-		case FCUT_116:
-			for (i = 0; i < 6; ++i) {
-				g_engine->_video->playVideo(nr);
-				SHOULD_QUIT_RETURN;
-			}
-			break;
-
-		case FCUT_133:
-		case 1123:
-			for (i = 0; i < 13 && ret != -1; ++i) {
-				ret = g_engine->_video->playVideo(FLIC_CUT_133[i]) ? 0 : -1;
-				SHOULD_QUIT_RETURN;
-
-				if (i == 0 || i == 1) {
-					_G(out)->setPointer(nullptr);
-					_G(out)->cls();
-				}
-			}
-			break;
-
-		case FCUT_135:
-			flic_proc1();
-			break;
-
-		case FCUT_159:
-#ifndef NEW_VIDEO_CODE
-			_G(mem)->file->select_pool_item(_G(Ci).Handle, nr);
-			_G(flc)->set_custom_user_function(Dialogs::MainMenu::creditsFn);
-			_G(flc)->custom_play(&_G(Ci));
-			_G(flc)->remove_custom_user_function();
-#else
-			g_engine->_video->playVideo(nr);
-#endif
-			break;
-
-		default:
-			g_engine->_video->playVideo(nr);
-			break;
+		for (i = 0; i < 11 && keepPlaying; i++) {
+			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
 		}
 
-		delete _G(Ci).Handle;
-		_G(Ci).Handle = nullptr;
-	} else {
-		error("flic_cut error");
+		_G(sndPlayer)->fadeOut(0);
+		_G(out)->ausblenden(1);
+		_G(out)->cls();
+		while (_G(sndPlayer)->musicPlaying());
+		_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
+		break;
+
+	case FCUT_058:
+		load_room_music(255);
+		g_engine->_video->playVideo(FCUT_058);
+		g_engine->_video->playVideo(FCUT_059);
+
+		if (!_G(spieler).R43GetPgLady) {
+			g_engine->_video->playVideo(FCUT_060);
+		} else {
+			start_aad(623, -1);
+			g_engine->_video->playVideo(FCUT_061);
+			g_engine->_video->playVideo(FCUT_062);
+		}
+
+		_G(sndPlayer)->fadeOut(0);
+		_G(out)->ausblenden(1);
+		_G(out)->cls();
+		while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT);
+		break;
+
+	case FCUT_065:
+		_G(sndPlayer)->stopMod();
+		_G(currentSong) = -1;
+		load_room_music(256);
+		_G(sndPlayer)->setLoopMode(1);
+		Room46::kloppe();
+		_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
+		_G(currentSong) = -1;
+		break;
+
+	case FCUT_112:
+		g_engine->_sound->setMusicVolume(32 * Audio::Mixer::kMaxChannelVolume / 120);
+		g_engine->_video->playVideo(nr);
+		g_engine->_sound->setMusicVolume(5 * Audio::Mixer::kMaxChannelVolume / 120);
+		break;
+
+	case FCUT_133:
+		_G(out)->setPointer(nullptr);
+		_G(out)->cls();
+
+		for (i = 0; i < 13 && ret != -1; ++i) {
+			ret = g_engine->_video->playVideo(FLIC_CUT_133[i]) ? 0 : -1;
+			SHOULD_QUIT_RETURN;
+		}
+		break;
+
+	case FCUT_135:
+		playIntroSequence();
+		break;
+
+	default:
+		g_engine->_video->playVideo(nr);
+		break;
 	}
 
 	g_engine->_sound->stopSound();
@@ -1174,7 +938,7 @@ void flic_cut(int16 nr) {
 	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 
-	if (nr < 1000 && nr != 135) {
+	if (nr != FCUT_135) {
 		load_room_music(_G(spieler)._personRoomNr[0]);
 
 		if (_G(spieler).SpeechSwitch)

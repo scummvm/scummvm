@@ -84,7 +84,7 @@ public:
 	Room();
 	~Room();
 
-	Stream *open_handle(const char *fname, int16 mode);
+	Common::Stream *open_handle(const char *fname, int16 mode);
 	void loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player);
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
@@ -122,7 +122,7 @@ private:
 	int16 _ablageInfo[MAX_ABLAGE][2];
 
 	byte *_gedMem[MAX_ABLAGE];
-	Stream *_roomHandle[MAX_ROOM_HANDLE];
+	Common::Stream *_roomHandle[MAX_ROOM_HANDLE];
 };
 
 extern void load_chewy_taf(int16 taf_nr);

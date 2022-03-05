@@ -38,8 +38,6 @@ public:
 	static int16 use_zelle();
 	static short use_taxi();
 	static int16 use_azug();
-
-	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

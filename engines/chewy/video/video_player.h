@@ -28,6 +28,8 @@ class CfoDecoder;
 
 class VideoPlayer {
 public:
+	VideoPlayer() { _playCount = 0; }
+
 	/**
 	 * @Plays a video file
 	 * @param num - the video file number
@@ -38,6 +40,7 @@ public:
 
 private:
 	bool handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder);
+	int _playCount;
 };
 
 } // End of namespace Chewy

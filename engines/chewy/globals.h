@@ -164,7 +164,7 @@ public:
 	int16 _frequenz = 0;
 	int16 _currentSong = -1;
 	bool _savegameFlag = false;
-	Stream *_music_handle = nullptr;
+	Common::Stream *_music_handle = nullptr;
 	int16 _EndOfPool = 0;
 	int _timer_action_ctr = 0;
 
@@ -204,7 +204,6 @@ public:
 	Detail *_det = nullptr;
 	Effect *_fx = nullptr;
 	Atdsys *_atds = nullptr;
-	Flic *_flc = nullptr;
 	MovClass *_mov = nullptr;
 
 	ObjMov _spieler_vector[MAX_PERSON];
@@ -289,9 +288,6 @@ public:
 	int8 _m_flip = 0;
 	int16 _tmp_menu = 0;
 	int16 _show_invent_menu = 0;
-
-	// r_event.cpp
-	int16 _flic_val1 = 0, _flic_val2 = 0;
 
 	// sprite.cpp
 	int16 _z_count = 0;

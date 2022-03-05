@@ -82,11 +82,6 @@ public:
 	 * Plays the game
 	 */
 	static void playGame();
-
-	/**
-	 * Support function for controlling the credits flic playback
-	 */
-	static int16 creditsFn(int16 key);
 };
 
 } // namespace Dialogs

@@ -268,11 +268,6 @@ int16 Room54::use_zelle() {
 	return action_ret;
 }
 
-int16 Room54::cut_serv(int16 frame) {
-	_G(det)->plot_static_details(176, 0, 9, 9);
-	return 0;
-}
-
 int16 Room54::use_azug() {
 	int16 action_ret = false;
 

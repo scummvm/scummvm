@@ -389,13 +389,6 @@ int16 Room55::use_kammeraus() {
 	return action_ret;
 }
 
-int16 Room55::cut_serv(int16 frame) {
-	if (frame < 29 )
-		_G(det)->plot_static_details(136, 0, 10, 10);
-
-	return 0;
-}
-
 void Room55::setup_func() {
 	if (_G(spieler)._personRoomNr[P_HOWARD] == 55) {
 		calc_person_look();

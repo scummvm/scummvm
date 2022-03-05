@@ -345,11 +345,6 @@ int16 Room51::use_door(int16 txt_nr) {
 	return action_ret;
 }
 
-int16 Room51::cut_serv(int16 frame) {
-	_G(det)->plot_static_details(0, 0, 16, 16);
-	return 0;
-}
-
 void Room51::timer_action(int16 t_nr, int16 obj_nr) {
 	if (obj_nr == 9 || obj_nr == 10) {
 		if (!_enemyFlag[obj_nr - 9]) {

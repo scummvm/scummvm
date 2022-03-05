@@ -25,6 +25,7 @@
 #include "chewy/room.h"
 #include "chewy/rooms/room46.h"
 #include "chewy/sound.h"
+#include "chewy/video/video_player.h"
 
 namespace Chewy {
 namespace Rooms {
@@ -151,8 +152,7 @@ void Room46::bodo() {
 
 void Room46::kloppe() {
 	for (int16 i = 0; i < 4; i++) {
-		_G(mem)->file->select_pool_item(_G(Ci).Handle, FCUT_065);
-		_G(flc)->custom_play(&_G(Ci));
+		g_engine->_video->playVideo(FCUT_065);
 		
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -171,8 +171,7 @@ void Room46::kloppe() {
 		}
 	}
 
-	_G(mem)->file->select_pool_item(_G(Ci).Handle, 66);
-	_G(flc)->custom_play(&_G(Ci));
+	g_engine->_video->playVideo(FCUT_066);
 	_G(sndPlayer)->fadeOut(0);
 	_G(out)->cls();
 

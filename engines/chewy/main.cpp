@@ -75,7 +75,6 @@ void alloc_buffers() {
 	_G(workpage) = (byte *)MALLOC(64004l);
 	_G(pal) = (byte *)MALLOC(768l);
 	_G(cur_back) = (byte *)MALLOC(16 * 16 + 4);
-	_G(Ci).VirtScreen = _G(workpage);
 	_G(Ci).TempArea = (byte *)MALLOC(64004l);
 	_G(det)->set_taf_ani_mem(_G(Ci).TempArea);
 	_G(Ci).MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);

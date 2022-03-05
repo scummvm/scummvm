@@ -23,7 +23,6 @@
 #include "chewy/dialogs/files.h"
 #include "chewy/dialogs/options.h"
 #include "chewy/events.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 
 namespace Chewy {

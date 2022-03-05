@@ -44,8 +44,6 @@ public:
 	static int16 use_kammeraus();
 	static void strasse(int16 mode);
 	static void talk_line();
-
-	static int16 cut_serv(int16 frame);
 };
 
 } // namespace Rooms

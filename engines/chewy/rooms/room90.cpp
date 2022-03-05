@@ -315,12 +315,6 @@ int Room90::shootControlUnit() {
 	return 1;
 }
 
-int16 Room90::proc5(int16 key) {
-	_G(det)->plot_static_details(_G(spieler).scrollx, 0, 3, 3);
-	
-	return 0;
-}
-
 int Room90::useSurimyOnWreck() {
 	if (!isCurInventory(18))
 		return 0;

@@ -36,7 +36,6 @@ public:
 	static void proc2();
 	static int getHubcaps();
 	static int shootControlUnit();
-	static int16 proc5(int16 key);
 	static int useSurimyOnWreck();
 };
 

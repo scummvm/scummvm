@@ -172,22 +172,6 @@ void MainMenu::animate() {
 	g_events->update();
 }
 
-int16 MainMenu::creditsFn(int16 key) {
-	if (key == 32 || key == 72 || key == 92 ||
-		key == 128 || key == 165 || key == 185 ||
-		key == 211 || key == 248 || key == 266) {
-		for (int idx = 0; idx < 2000; ++idx) {
-			if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
-				return -1;
-			g_events->update();
-		}
-		return 0;
-
-	} else {
-		return _G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE ? -1 : 0;
-	}
-}
-
 void MainMenu::startGame() {
 	hideCur();
 	animate();

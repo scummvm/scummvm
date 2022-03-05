@@ -159,7 +159,7 @@ Room::~Room() {
 	free_ablage();
 }
 
-Stream *Room::open_handle(const char *fname1, int16 mode) {
+Common::Stream *Room::open_handle(const char *fname1, int16 mode) {
 	Common::File *f = new Common::File();
 	f->open(fname1);
 	if (f->isOpen()) {

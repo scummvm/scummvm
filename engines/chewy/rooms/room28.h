@@ -41,9 +41,6 @@ public:
 	static void use_surimy();
 	static void set_pump();
 	static int16 use_breifkasten();
-
-	static int16 cut_serv1(int16 frame);
-	static int16 cut_serv2(int16 frame);
 };
 
 } // namespace Rooms

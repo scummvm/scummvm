@@ -23,7 +23,6 @@
 #include "chewy/rooms/room44.h"
 #include "chewy/rooms/room58.h"
 #include "chewy/events.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/menus.h"

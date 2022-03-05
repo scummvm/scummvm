@@ -23,7 +23,6 @@
 #include "common/memstream.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/sound.h"
@@ -44,7 +43,6 @@ void standard_init() {
 	_G(det) = new Detail();
 	_G(atds) = new Atdsys();
 	_G(sndPlayer) = new SoundPlayer();
-	_G(flc) = new Flic();
 	_G(mov) = new MovClass();
 
 	_G(out)->init();
@@ -197,7 +195,7 @@ void init_atds() {
 	_G(atds)->close_handle(ATDS_HANDLE);
 
 	// New set up
-	Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
+	Common::Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
 	_G(atds)->set_handle(ATDS_TXT, ATS_DATA, handle, ATS_TAP_OFF, ATS_TAP_MAX);
 	_G(atds)->init_ats_mode(ATS_DATA, _G(spieler).Ats);
 	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATA, handle, INV_TAP_OFF, INV_TAP_MAX);
@@ -287,7 +285,6 @@ void tidy() {
 	delete _G(iog);
 	delete _G(cur);
 	delete _G(mov);
-	delete _G(flc);
 	delete _G(sndPlayer);
 	delete _G(atds);
 	delete _G(det);
@@ -305,7 +302,6 @@ void tidy() {
 	_G(iog) = nullptr;
 	_G(cur) = nullptr;
 	_G(mov) = nullptr;
-	_G(flc) = nullptr;
 	_G(sndPlayer) = nullptr;
 	_G(atds) = nullptr;
 	_G(det) = nullptr;

@@ -28,9 +28,6 @@ namespace Chewy {
 namespace Dialogs {
 
 class Cinema {
-private:
-	static int16 cut_serv(int16 frame);
-
 public:
 	static void execute();
 };

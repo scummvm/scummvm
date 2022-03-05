@@ -367,15 +367,6 @@ int16 Room56::use_kneipe() {
 	return action_ret;
 }
 
-int16 Room56::proc1(int16 key) {
-	int16 retVal = 0;
-
-	if (_G(in)->getSwitchCode() == 1)
-		retVal = -1;
-
-	return retVal;
-}
-
 void Room56::start_flug() {
 	if (!_G(spieler).flags32_10 && !_G(r56koch_flug)) {
 		_G(r56koch_flug) = 12;

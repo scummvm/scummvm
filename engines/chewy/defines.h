@@ -549,7 +549,7 @@ enum SetupScreenMode {
 #define FCUT_132 132 // Wagon moving
 #define FCUT_133 133 // Howard and Chewy on wagon
 #define FCUT_134 134 // Red spaceships (custom callback: flic_user_function)
-#define FCUT_135 135 // Red spaceships (custom callback: flic_user_function)
+#define FCUT_135 135 // Intro - red spaceships (custom callback: flic_user_function)
 #define FCUT_136 136 // Red spaceship shooting spaceship (custom callback: flic_user_function)
 #define FCUT_137 137 // Dogfight between red spaceship and spaceship (custom callback: flic_user_function)
 #define FCUT_138 138 // Spaceships flying from F5 (custom callback: flic_user_function)

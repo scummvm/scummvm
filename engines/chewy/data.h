@@ -36,8 +36,8 @@ public:
 	Data();
 	~Data();
 
-	uint16 select_pool_item(Stream *stream, uint16 nr);
-	uint32 load_tmf(Stream *stream, TmfHeader *song);
+	uint16 select_pool_item(Common::Stream *stream, uint16 nr);
+	uint32 load_tmf(Common::Stream *stream, TmfHeader *song);
 
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
 };

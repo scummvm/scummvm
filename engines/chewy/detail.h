@@ -23,7 +23,6 @@
 #define CHEWY_DETAIL_H
 
 #include "chewy/defines.h"
-#include "chewy/file.h"
 #include "chewy/ngshext.h"
 
 namespace Chewy {

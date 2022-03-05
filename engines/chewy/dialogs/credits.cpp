@@ -21,7 +21,6 @@
 
 #include "chewy/dialogs/credits.h"
 #include "chewy/events.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/text.h"

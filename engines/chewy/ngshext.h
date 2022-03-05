@@ -27,7 +27,6 @@
 #include "chewy/mouse.h"
 #include "chewy/io_game.h"
 #include "chewy/cursor.h"
-#include "chewy/flic.h"
 #include "chewy/sound_player.h"
 
 #endif

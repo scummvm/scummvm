@@ -23,7 +23,6 @@
 #include "audio/decoders/raw.h"
 #include "chewy/chewy.h"
 #include "chewy/sound_player.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/ngshext.h"
 #include "chewy/sound.h"

@@ -36,8 +36,6 @@ public:
 	static int16 use_tasche();
 	static void talk_man();
 	static void talk_man(int16 aad_nr);
-
-	static int16 cut_sev(int16 frame);
 };
 
 } // namespace Rooms

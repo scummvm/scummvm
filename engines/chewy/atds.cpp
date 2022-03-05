@@ -24,7 +24,6 @@
 #include "chewy/atds.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/sound.h"
@@ -317,7 +316,7 @@ void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
 	_ssi[nr] = ssinit[0];
 }
 
-Stream *Atdsys::pool_handle(const char *fname) {
+Common::Stream *Atdsys::pool_handle(const char *fname) {
 	Common::File *f = new Common::File();
 	f->open(fname);
 	if (f->isOpen()) {
@@ -328,7 +327,7 @@ Stream *Atdsys::pool_handle(const char *fname) {
 	return f;
 }
 
-void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chunk_start, int16 chunk_anz) {
+void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunk_start, int16 chunk_anz) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname, chunk_start, chunk_anz);
@@ -394,7 +393,7 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 }
 
 void Atdsys::close_handle(int16 mode) {
-	Stream *stream = _atdshandle[mode];
+	Common::Stream *stream = _atdshandle[mode];
 	if (stream) {
 		delete _atdshandle[mode];
 		_atdshandle[mode] = nullptr;

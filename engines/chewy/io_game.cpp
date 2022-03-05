@@ -23,7 +23,6 @@
 #include "chewy/chewy.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/file.h"
 #include "chewy/io_game.h"
 
 namespace Chewy {

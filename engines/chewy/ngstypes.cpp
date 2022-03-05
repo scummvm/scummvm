@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
@@ -70,62 +71,9 @@ bool GedChunkHeader::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool FlicHead::load(Common::SeekableReadStream *src) {
-	size = src->readUint32LE();
-	type = src->readUint16LE();
-	frames = src->readUint16LE();
-	width = src->readUint16LE();
-	height = src->readUint16LE();
-	depth = src->readUint16LE();
-	flags = src->readUint16LE();
-	speed = src->readUint32LE();
-	reserved1 = src->readUint16LE();
-	created = src->readUint32LE();
-	creator = src->readUint32LE();
-	updated = src->readUint32LE();
-	updater = src->readUint32LE();
-	aspect_dx = src->readUint16LE();
-	aspect_dy = src->readUint16LE();
-	src->read(reserved2, 38);
-	oframe1 = src->readUint32LE();
-	oframe2 = src->readUint32LE();
-	src->read(reserved3, 40);
-
-	return true;
-}
-
-bool FrameHead::load(Common::SeekableReadStream *src) {
-	size = src->readUint32LE();
-	type = src->readUint16LE();
-	chunks = src->readUint16LE();
-	src->read(reserved, 8);
-
-	return true;
-}
-
 bool ChunkHead::load(Common::SeekableReadStream *src) {
 	size = src->readUint32LE();
 	type = src->readUint16LE();
-
-	return true;
-}
-
-bool CustomFlicHead::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	size = src->readUint32LE();
-	frames = src->readUint16LE();
-	width = src->readUint16LE();
-	height = src->readUint16LE();
-	speed = src->readUint32LE();
-	oframe1 = src->readUint32LE();
-
-	return true;
-}
-
-bool CustomFrameHead::load(Common::SeekableReadStream *src) {
-	size = src->readUint32LE();
-	type = src->readUint16LE();
-	chunks = src->readUint16LE();
 
 	return true;
 }

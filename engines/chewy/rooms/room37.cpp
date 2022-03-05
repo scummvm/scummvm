@@ -130,37 +130,6 @@ short Room37::use_wippe() {
 	return action_flag;
 }
 
-int16 Room37::cut_serv1(int16 frame) {
-	const int16 scrollx = _G(spieler).scrollx;
-	const int16 scrolly = _G(spieler).scrolly;
-
-	if (!_G(spieler).R37Kloppe) {
-		if (!_G(spieler).R37Gebiss) {
-			_G(det)->plot_static_details(scrollx, scrolly, 9, 9);
-			_G(det)->plot_static_details(scrollx, scrolly, 11, 11);
-			_G(det)->showStaticSpr(11);
-		} else {
-			_G(det)->plot_static_details(scrollx, scrolly, 8, 8);
-			_G(det)->plot_static_details(scrollx, scrolly, 0, 0);
-		}
-	}
-
-	_G(det)->plot_static_details(scrollx, scrolly, 7, 7);
-	_G(det)->plot_static_details(scrollx, scrolly, 14, 14);
-	return 0;
-}
-
-int16 Room37::cut_serv2(int16 frame) {
-	static const int16 STATIC_NR[] = { 7, 14, 12, 10 };
-
-	_G(det)->showStaticSpr(12);
-	_G(det)->showStaticSpr(10);
-	for (short i = 0; i < 4; i++)
-		_G(det)->plot_static_details(_G(spieler).scrollx, _G(spieler).scrolly, STATIC_NR[i], STATIC_NR[i]);
-
-	return 0;
-}
-
 int16 Room37::use_glas() {
 	int16 action_flag = false;
 

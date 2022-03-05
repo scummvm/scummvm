@@ -25,6 +25,7 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "video/flic_decoder.h"
+#include "chewy/globals.h"
 #include "chewy/mcga.h"
 #include "chewy/sound.h"
 #include "chewy/video/cfo_decoder.h"
@@ -279,9 +280,8 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkMusicFadeOut:
 			// Used in videos 0, 71
-			warning("kChunkMusicFadeOut");
-			// TODO
-			_fileStream->skip(frameSize);
+			channel = _fileStream->readUint16LE();
+			_G(sndPlayer)->fadeOut(channel);
 			break;
 		case kChunkSetBalance:
 			channel = _fileStream->readUint16LE();

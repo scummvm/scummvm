@@ -337,21 +337,5 @@ int16 Room28::use_breifkasten() {
 	return action_flag;
 }
 
-int16 Room28::cut_serv1(int16 frame) {
-	if (_G(spieler).R28Briefkasten) {
-		_G(det)->plot_static_details(0, 0, 8, 9);
-	} else {
-		_G(det)->plot_static_details(0, 0, 7, 7);
-	}
-	return 0;
-}
-
-int16 Room28::cut_serv2(int16 frame) {
-	if (frame < 23)
-		cut_serv1(frame);
-
-	return 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy

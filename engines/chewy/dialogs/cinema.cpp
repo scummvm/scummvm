@@ -21,7 +21,6 @@
 
 #include "chewy/dialogs/cinema.h"
 #include "chewy/events.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/sound.h"
@@ -165,9 +164,7 @@ void Cinema::execute() {
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			print_rows(546 + topIndex);
 
-			_G(flc)->set_custom_user_function(cut_serv);
 			flic_cut(CINEMA_FLICS[topIndex + selected]);
-			_G(flc)->remove_custom_user_function();
 			_G(fontMgr)->setFont(_G(font6));
 			showCur();
 			delay = 0;
@@ -204,16 +201,6 @@ void Cinema::execute() {
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hideCur();
 	_G(uhr)->resetTimer(0, 5);
-}
-
-int16 Cinema::cut_serv(int16 frame) {
-	if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
-		_G(sndPlayer)->stopMod();
-		g_engine->_sound->stopAllSounds();
-		return -1;
-	}
-
-	return 0;
 }
 
 } // namespace Dialogs

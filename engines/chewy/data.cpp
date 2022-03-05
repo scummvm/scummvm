@@ -24,7 +24,6 @@
 #include "chewy/data.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
-#include "chewy/file.h"
 #include "chewy/globals.h"
 
 namespace Chewy {
@@ -35,7 +34,7 @@ Data::Data() {
 Data::~Data() {
 }
 
-uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
+uint16 Data::select_pool_item(Common::Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 
 	if (rs) {
@@ -57,7 +56,7 @@ uint16 Data::select_pool_item(Stream *stream, uint16 nr) {
 	return nr;
 }
 
-uint32 Data::load_tmf(Stream *handle, TmfHeader *song) {
+uint32 Data::load_tmf(Common::Stream *handle, TmfHeader *song) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
 	uint32 size = 0;
 

@@ -93,11 +93,5 @@ void Room43::catch_pg() {
 	show_person();
 }
 
-int16 Room43::setup_func(int16 frame) {
-	_G(atds)->print_aad(_G(spieler).scrollx, _G(spieler).scrolly);
-
-	return 0;
-}
-
 } // namespace Rooms
 } // namespace Chewy

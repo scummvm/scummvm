@@ -24,7 +24,6 @@
 
 #include "graphics/screen.h"
 #include "chewy/ngsdefs.h"
-#include "chewy/file.h"
 
 namespace Chewy {
 
@@ -142,40 +141,6 @@ struct CurAni {
 	int16 _delay = 0;
 };
 
-struct FlicHead {
-	uint32 size = 0;
-	uint16 type = 0;
-	uint16 frames = 0;
-	uint16 width = 0;
-	uint16 height = 0;
-	uint16 depth = 0;
-	uint16 flags = 0;
-	uint32 speed = 0;
-	uint16 reserved1 = 0;
-	uint32 created = 0;
-	uint32 creator = 0;
-	uint32 updated = 0;
-	uint32 updater = 0;
-	uint16 aspect_dx = 0;
-	uint16 aspect_dy = 0;
-	uint8 reserved2[38] = { 0 };
-	uint32 oframe1 = 0;
-	uint32 oframe2 = 0;
-	uint8 reserved3[40] = { 0 };
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct FrameHead {
-	uint32 size = 0;
-	uint16 type = 0;
-	uint16 chunks = 0;
-	uint8 reserved[8] = { 0 };
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() { return 16; }
-};
-
 struct ChunkHead {
 	uint32 size = 0;
 	uint16 type = 0;
@@ -184,29 +149,7 @@ struct ChunkHead {
 	static constexpr int SIZE() { return 6; }
 };
 
-struct CustomFlicHead {
-	char id[4] = { 0 };
-	uint32 size = 0;
-	uint16 frames = 0;
-	uint16 width = 0;
-	uint16 height = 0;
-	uint32 speed = 0;
-	uint32 oframe1 = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct CustomFrameHead {
-	uint32 size = 0;
-	uint16 type = 0;
-	uint16 chunks = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct CustomInfo {
-	Stream *Handle = nullptr;
-	byte *VirtScreen = 0;
 	byte *TempArea = 0;
 	byte *MusicSlot = 0;
 	uint32 MaxMusicSize = 0;
