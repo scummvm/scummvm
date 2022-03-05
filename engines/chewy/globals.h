@@ -185,7 +185,7 @@ public:
 	int16 _AkChewyTaf = 0;
 	int16 _PersonAni[MAX_PERSON] = { 0 };
 	TafSeqInfo *_PersonTaf[MAX_PERSON] = { nullptr };
-	uint8 _PersonSpr[MAX_PERSON][8] = { 0 };
+	uint8 _PersonSpr[MAX_PERSON][8] = {{ 0 }};
 
 	RoomDetailInfo *_Rdi = nullptr;
 	StaticDetailInfo *_Sdi = nullptr;

@@ -417,7 +417,7 @@ struct Spieler : public SpielerFlags {
 	int16 Phase[MAX_PERSON] = { 0 };
 	int16 _personHide[MAX_PERSON] = { 0 };
 	int16 _personRoomNr[MAX_PERSON] = { 0 };
-	int16 ZoomXy[MAX_PERSON][2] = { 0 };
+	int16 ZoomXy[MAX_PERSON][2] = {{ 0 }};
 	int16 PersonGlobalDia[MAX_PERSON] = { 0 };
 	int16 PersonDia[MAX_PERSON] = { 0 };
 	int16 PersonDiaRoom[MAX_PERSON] = { 0 };
