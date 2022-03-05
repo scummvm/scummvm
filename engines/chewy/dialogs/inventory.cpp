@@ -367,6 +367,8 @@ void Inventory::menu() {
 	_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 	_G(minfo).x = _G(maus_old_x);
 	_G(minfo).y = _G(maus_old_y);
+	_G(minfo)._button = 0;
+
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
