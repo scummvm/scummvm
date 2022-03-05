@@ -32,7 +32,6 @@
 #include "common/random.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
-#include "chewy/temp_file.h"
 
 namespace Chewy {
 
