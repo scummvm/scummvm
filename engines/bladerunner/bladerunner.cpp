@@ -1394,8 +1394,9 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if (_vqaIsPlaying
 	    && (event.kbd.keycode == Common::KEYCODE_RETURN
 	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_SPACE
 	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		// Note: Original only uses the Esc key here
+		// Note: Original allows Esc, Spacebar and Return/KP_Enter to skip cutscenes
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
 
@@ -1405,6 +1406,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if (_vqaStopIsRequested
 	    && (event.kbd.keycode == Common::KEYCODE_RETURN
 	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+	        || event.kbd.keycode == Common::KEYCODE_SPACE
 	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		 return;
 	}
@@ -1413,7 +1415,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	    && (event.kbd.keycode == Common::KEYCODE_RETURN
 	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
 	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		// Note: Original only uses the Return key here
+		// Note: Original only uses the Return/KP_Enter key here
 		_actorSpeakStopIsRequested = true;
 		_actorIsSpeaking = false;
 
