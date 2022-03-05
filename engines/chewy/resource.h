@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/memstream.h"
 #include "common/random.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
@@ -113,6 +114,15 @@ struct VideoChunk {
 	uint32 firstFrameOffset;
 };
 
+// Item chunk header (AdsBlock)
+// Original values are in diah.adh, and are synced
+// to saved games
+struct ItemChunk {
+	bool show[6];
+	uint8 next[6];
+	uint8 flags[6];
+};
+
 enum VideoFrameType {
 	kVideoFrameNormal = 0xF1FA,
 	kVideoFrameCustom = 0xFAF1
@@ -128,6 +138,9 @@ public:
 
 	ResourceType getType() const {
 		return _resType;
+	}
+	uint32 getSize() const {
+		return _stream.size();
 	}
 	uint32 getChunkCount() const;
 	Chunk *getChunk(uint num);
@@ -188,6 +201,35 @@ public:
 
 	VideoChunk *getVideoHeader(uint num);
 	Common::SeekableReadStream *getVideoStream(uint num);
+};
+
+class ItemResource : public Resource {
+public:
+	ItemResource(Common::String filename);
+	virtual ~ItemResource();
+
+	ItemChunk *getItem(uint block);
+	bool isItemShown(uint block, uint num);
+	void setItemShown(uint block, uint num, bool shown);
+	bool hasExitBit(uint block, uint num);
+	bool hasRestartBit(uint block, uint num);
+	bool hasShowBit(uint block, uint num);
+
+	void loadStream(Common::SeekableReadStream *s);
+	void saveStream(Common::WriteStream *s);
+
+	uint32 getStreamSize() const {
+		return _stream.size();
+	}
+
+	// HACK: The following functions allow direct access
+	// to the stream, and should be removed
+	void readFromStream(byte *data);
+	void writeToStream(byte *data);
+
+private:
+	Common::MemorySeekableReadWriteStream *_itemStream;
+	byte *_itemBuffer;
 };
 
 } // namespace Chewy

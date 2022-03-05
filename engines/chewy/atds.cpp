@@ -112,22 +112,21 @@ Atdsys::Atdsys() {
 	_invBlockNr = -1;
 	_invUseMem = nullptr;
 
-	_atdsStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-	Common::File tmp;
-	tmp.open(ADS_TXT_STEUER);
-	_atdsStreamSize = tmp.size();
-	_atdsStream->writeStream(&tmp, _atdsStreamSize);
-	tmp.close();
+	_itemResource = new ItemResource(ADS_TXT_STEUER);
 }
 
 Atdsys::~Atdsys() {
-	for (int16 i = 0; i < MAX_HANDLE; i++)
+	for (int16 i = 0; i < MAX_HANDLE; i++) {
+		if (i == ADH_HANDLE)
+			continue;
+
 		close_handle(i);
+	}
 
 	if (_invUseMem)
 		free(_invUseMem);
 
-	// NOTE: _atdsStream is deleted by close_handle() above
+	delete _itemResource;
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
@@ -368,8 +367,11 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 		if (_atdsmem[mode])
 			free(_atdsmem[mode]);
 
-		_atdshandle[mode] = _atdsStream;
-		_atdsmem[mode] = (char *)MALLOC(_atdsStreamSize + 3);
+		// Set to nullptr on purpose, this shouldn't be used
+		_atdshandle[mode] = nullptr;
+		// +3 bytes to signify the end of the stream (BLOCKENDE)
+		_atdsmem[mode] = (char *)MALLOC(_itemResource->getStreamSize() + 3);
+		_itemResource->readFromStream((byte *)_atdsmem[mode]);
 		_adsBlock = (AdsBlock *)_atdsmem[mode];
 		return;
 	}
@@ -398,6 +400,9 @@ void Atdsys::close_handle(int16 mode) {
 		_atdshandle[mode] = nullptr;
 
 		for (int i = 0; i < MAX_HANDLE; ++i) {
+			if (i == ADH_HANDLE)
+				continue;
+
 			if (_atdshandle[i] == stream)
 				_atdshandle[i] = nullptr;
 		}
@@ -419,8 +424,18 @@ char *Atdsys::atds_adr(const char *fname, int16 chunk_start, int16 chunk_anz) {
 }
 
 void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
-	ChunkHead Ch;
 	char *txt_adr = _atdsmem[mode];
+
+	if (mode == ADH_DATA) {
+		uint32 streamSize = _itemResource->getStreamSize();
+		_itemResource->writeToStream((byte *)_atdsmem[ADH_HANDLE]);
+		txt_adr[streamSize] = (char)BLOCKENDE;
+		txt_adr[streamSize + 1] = (char)BLOCKENDE;
+		txt_adr[streamSize + 2] = (char)BLOCKENDE;
+		return;
+	}
+
+	ChunkHead Ch;
 	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdshandle[mode]);
 
 	if (stream && txt_adr) {
@@ -446,25 +461,7 @@ void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
 }
 
 void Atdsys::save_ads_header(int16 dia_nr) {
-	ChunkHead Ch;
-	if (_atdshandle[ADH_HANDLE]) {
-		_G(mem)->file->select_pool_item(_atdshandle[ADH_HANDLE], dia_nr);
-		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
-			_atdshandle[ADH_HANDLE]);
-
-		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-
-		if (!Ch.load(rs)) {
-			error("save_ads_header error");
-		} else {
-			if (Ch.size) {
-				_atdsStream->seek(rs->pos(), SEEK_SET);
-				_atdsStream->write(_atdsmem[ADH_HANDLE], Ch.size);
-			}
-		}
-	} else {
-		error("save_ads_header error");
-	}
+	_itemResource->writeToStream((byte *)_atdsmem[ADH_HANDLE]);
 }
 
 void Atdsys::crypt(char *txt, uint32 size) {
@@ -1416,16 +1413,14 @@ int16 Atdsys::getStereoPos(int16 x) {
 }
 
 void Atdsys::saveAtdsStream(Common::WriteStream *stream) {
-	_atdsStream->seek(0, SEEK_SET);
-	stream->writeStream(_atdsStream, _atdsStreamSize);
+	_itemResource->saveStream(stream);
 }
 
 void Atdsys::loadAtdsStream(Common::SeekableReadStream* stream) {
-	_atdsStream->seek(0, SEEK_SET);
-	_atdsStream->writeStream(stream, _atdsStreamSize);
+	_itemResource->loadStream(stream);
 }
 
 uint32 Atdsys::getAtdsStreamSize() const {
-	return _atdsStreamSize;
+	return _itemResource->getStreamSize();
 }
 } // namespace Chewy

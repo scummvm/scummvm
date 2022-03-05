@@ -26,6 +26,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "chewy/atds.h"
 #include "chewy/chewy.h"
 #include "chewy/resource.h"
 
@@ -325,6 +326,93 @@ Common::SeekableReadStream *VideoResource::getVideoStream(uint num) {
 
 	Chunk *chunk = &_chunkList[num];
 	return new Common::SeekableSubReadStream(&_stream, chunk->pos, chunk->pos + chunk->size);
+}
+
+ItemResource::ItemResource(Common::String filename) : Resource(filename) {
+	_itemBuffer = new byte[_stream.size()];
+	_stream.seek(0, SEEK_SET);
+	_itemStream = new Common::MemorySeekableReadWriteStream(_itemBuffer, _stream.size());
+	_itemStream->writeStream(&_stream);
+}
+
+ItemResource::~ItemResource() {
+	delete _itemStream;
+	delete _itemBuffer;
+}
+
+ItemChunk *ItemResource::getItem(uint block) {
+	Chunk *chunk = &_chunkList[block];
+	ItemChunk *item = new ItemChunk();
+
+	_itemStream->seek(chunk->pos, SEEK_SET);
+
+	_itemStream->read(item->show, 6);
+	_itemStream->read(item->next, 6);
+	_itemStream->read(item->flags, 6);
+
+	return item;
+}
+
+bool ItemResource::isItemShown(uint block, uint num) {
+	Chunk *chunk = &_chunkList[block];
+
+	_itemStream->seek(chunk->pos, SEEK_SET);
+
+	_itemStream->skip(num);
+	return _itemStream->readByte();
+}
+
+void ItemResource::setItemShown(uint block, uint num, bool shown) {
+	Chunk *chunk = &_chunkList[block];
+
+	_itemStream->seek(chunk->pos, SEEK_SET);
+
+	_itemStream->skip(num);
+	_itemStream->writeByte(shown ? 1 : 0);
+}
+
+bool ItemResource::hasExitBit(uint block, uint num) {
+	ItemChunk *item = getItem(block);
+	const bool isExit = (item->flags[num] & ADS_EXIT_BIT) != 0;
+	delete item;
+
+	return isExit;
+}
+
+bool ItemResource::hasRestartBit(uint block, uint num) {
+	ItemChunk *item = getItem(block);
+	const bool isRestart = (item->flags[num] & ADS_RESTART_BIT) != 0;
+	delete item;
+
+	return isRestart;
+}
+
+bool ItemResource::hasShowBit(uint block, uint num) {
+	ItemChunk *item = getItem(block);
+	const bool isShown = (item->flags[num] & ADS_SHOW_BIT) != 0;
+	delete item;
+
+	return isShown;
+}
+
+void ItemResource::loadStream(Common::SeekableReadStream *s) {
+	_itemStream->seek(0, SEEK_SET);
+	_itemStream->writeStream(s, _stream.size());
+}
+
+void ItemResource::saveStream(Common::WriteStream* s) {
+	_itemStream->seek(0, SEEK_SET);
+	s->writeStream(_itemStream, _stream.size());
+}
+
+void ItemResource::readFromStream(byte *data) {
+	_itemStream->seek(0, SEEK_SET);
+	_itemStream->read(data, _stream.size());
+}
+
+void ItemResource::writeToStream(byte *data) {
+	_itemStream->seek(0, SEEK_SET);
+	_itemStream->write(data, _stream.size());
 }
 
 }
