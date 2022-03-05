@@ -276,7 +276,6 @@ void init_load() {
 }
 
 void tidy() {
-	sound_exit();
 	free_buffers();
 	_G(obj)->free_inv_spr(&_G(inv_spr)[0]);
 
@@ -315,13 +314,9 @@ void tidy() {
 	_G(mem) = nullptr;
 }
 
-#define GRAVIS 8
-#define RAP10 9
-
 void sound_init() {
 	_G(spieler).SoundSwitch = false;
 	_G(spieler).MusicSwitch = false;
-	_G(frequenz) = 22050;
 
 	_G(sndPlayer)->initMixMode();
 	_G(spieler).MusicVol = 63;
@@ -348,10 +343,6 @@ void sound_init() {
 	_G(spieler).SoundSwitch = true;
 	_G(spieler).MusicSwitch = true;
 	_G(spieler).SpeechSwitch = true;
-}
-
-void sound_exit() {
-	_G(sndPlayer)->exitMixMode();
 }
 
 void show_intro() {

@@ -182,19 +182,6 @@ void SoundPlayer::initMixMode() {
 	StereoPos[3] = 90;
 }
 
-void SoundPlayer::exitMixMode() {
-	warning("STUB: ailclass::exitMixMode()");
-
-#if 0
-	if (SoundEnable) {
-		if (TimerEnabled) {
-			AIL_stop_timer(TimerHandle);
-			AIL_release_timer_handle(TimerHandle);
-		}
-	}
-#endif
-}
-
 void SoundPlayer::playMod(TmfHeader *th) {
 	char *tmp;
 	int16 i;
@@ -301,7 +288,6 @@ void mod_irq() {
 	if (!InInterrupt) {
 		++InInterrupt;
 		if (MusicStatus == ON) {
-			checkSampleEnd();
 			if (PatternCount <= 0) {
 				PatternCount = CurrentTempo;
 				DecodePatternLine();
@@ -339,31 +325,6 @@ void mod_irq() {
 		}
 	}
 	--InInterrupt;
-}
-
-void checkSampleEnd() {
-	warning("STUB: ailclass::checkSampleEnd()");
-
-#if 0
-	int16 i;
-	for (i = 0; i < 4; i++) {
-		if (AIL_sample_status(smp[i]) != SMP_PLAYING) {
-			if (Instrument[i].replen >= 10) {
-				AIL_init_sample(smp[i]);
-				AIL_set_sample_type(smp[i], DIG_F_MONO_8, 0);
-				AIL_set_sample_address(smp[i], Sample[i] +
-				                       Instrument[i].repstart,
-				                       Instrument[i].replen);
-				AIL_set_sample_playback_rate(smp[i], InsFreq[i]);
-				if ((byte)Instrument[i].insvol > (byte)(MusicMasterVol))
-					Instrument[i].insvol = (byte)MusicMasterVol;
-				AIL_set_sample_volume(smp[i], Instrument[i].insvol);
-				AIL_set_sample_pan(smp[i], StereoPos[i]);
-				AIL_start_sample(smp[i]);
-			}
-		}
-	}
-#endif
 }
 
 void DecodePatternLine() {

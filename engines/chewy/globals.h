@@ -161,7 +161,6 @@ public:
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
-	int16 _frequenz = 0;
 	int16 _currentSong = -1;
 	bool _savegameFlag = false;
 	Common::Stream *_music_handle = nullptr;
@@ -387,7 +386,6 @@ void var_init();
 
 void new_game();
 void sound_init();
-void sound_exit();
 void show_intro();
 void register_cutscene(int cutsceneNum);
 void getCutscenes(Common::Array<int> &cutscenes);

@@ -28,7 +28,6 @@
 namespace Chewy {
 
 void mod_irq();
-void checkSampleEnd();
 void DecodePatternLine();
 void DecodeChannel(int16 ch);
 
@@ -42,7 +41,6 @@ public:
 
 	void initNoteTable(uint16 sfreq);
 	void initMixMode();
-	void exitMixMode();
 	void playMod(TmfHeader *th);
 	void stopMod();
 	void continueMusic();
