@@ -22,6 +22,7 @@
 #ifndef VIDEO_PACODECODER_H
 #define VIDEO_PACODECODER_H
 
+#include "audio/audiostream.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "video/video_decoder.h"
@@ -98,12 +99,26 @@ protected:
 		Common::List<Common::Rect> _dirtyRects;
 	};
 
+	class PacoAudioTrack : public AudioTrack {
+	public:
+		PacoAudioTrack(int samplingRate);
+		void queueSound(Common::SeekableReadStream *fileStream, uint32 chunkSize);
+
+	protected:
+		Audio::AudioStream *getAudioStream() const { return _packetStream; }
+
+	private:
+		Audio::PacketizedAudioStream *_packetStream;
+		int _samplingRate;
+	};
+
 private:
 	PacoVideoTrack *_videoTrack;
+	PacoAudioTrack *_audioTrack;
 	Common::SeekableReadStream *_fileStream;
 	int _curFrame = 0;
 	int _frameSizes[65536]; // can be done differently?
-
+	int getAudioSamplingRate();
 };
 
 } // End of namespace Video

@@ -34,6 +34,21 @@
 
 namespace Video {
 
+enum frameTypes {
+	NOP = 0, // nop
+	// 1 - old initialisation data?
+	PALLETE = 2, // - new initialisation data (usually 0x30 0x00 0x00 ... meaning 8-bit with default QuickTime palette)
+	DELAY = 3, //  - delay information
+	AUDIO = 4, // - audio data (8-bit unsigned PCM)
+	// 5 - should not be present
+	// 6 - should not be present
+	// 7 - unknown
+	VIDEO = 8, // - video frame
+	// 9 - unknown
+	// 10 - dummy?
+	EOC = 11 // - end of chunk marker
+};
+
 PacoDecoder::PacoDecoder() {
 }
 
@@ -73,8 +88,40 @@ bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_videoTrack = new PacoVideoTrack(frameRate, frameCount, width, height);
 	addTrack(_videoTrack);
-
+	if (hasAudio) {
+		_audioTrack = new PacoAudioTrack(getAudioSamplingRate());
+		addTrack(_audioTrack);
+	}
 	return true;
+}
+
+int PacoDecoder::getAudioSamplingRate() {
+	/**
+	 * SamplingRate is found inside the audio packets
+	 * Search for the first audio packet and use it.
+	 */
+	const Common::Array<int> samplingRates = {5563, 7418, 11127, 22254};
+	int index;
+
+	int64 startPos = _fileStream->pos();
+
+	while (true){
+		int64 currentPos = _fileStream->pos();
+		int frameType = _fileStream->readByte();
+		int v = _fileStream->readByte();
+		uint32 chunkSize =  (v << 16 ) | _fileStream->readUint16BE();
+		if (frameType != AUDIO) {
+			_fileStream->seek(currentPos + chunkSize);
+			continue;
+		}
+		uint16 header = _fileStream->readUint16BE();
+		_fileStream->readUint16BE();
+		index = (header >> 10) & 7;
+		break;
+	}
+	_fileStream->seek(startPos);
+
+	return samplingRates[index];
 }
 
 const Common::List<Common::Rect> *PacoDecoder::getDirtyRects() const {
@@ -146,22 +193,6 @@ Graphics::PixelFormat PacoDecoder::PacoVideoTrack::getPixelFormat() const {
 	return _surface->format;
 }
 
-
-enum frameTypes {
-	NOP = 0, // nop
-	// 1 - old initialisation data?
-	PALLETE = 2, // - new initialisation data (usually 0x30 0x00 0x00 ... meaning 8-bit with default QuickTime palette)
-	DELAY = 3, //  - delay information
-	AUDIO = 4, // - audio data (8-bit unsigned PCM)
-	// 5 - should not be present
-	// 6 - should not be present
-	// 7 - unknown
-	VIDEO = 8, // - video frame
-	// 9 - unknown
-	// 10 - dummy?
-	EOC = 11 // - end of chunk marker
-};
-
 void PacoDecoder::readNextPacket() {
 	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
 
@@ -178,7 +209,7 @@ void PacoDecoder::readNextPacket() {
 
 		switch (frameType) {
 		case AUDIO:
-			warning("PacoDecode::decodeFrame(): Audio not implemented");
+			_audioTrack->queueSound(_fileStream, chunkSize - 4);
 			break;
 		case VIDEO:
 			_videoTrack->handleFrame(_fileStream, chunkSize - 4, _curFrame);
@@ -528,5 +559,25 @@ void PacoDecoder::PacoVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch)
 	}
 	clearDirtyRects();
 }
+
+PacoDecoder::PacoAudioTrack::PacoAudioTrack(int samplingRate)
+	: AudioTrack(Audio::Mixer::kPlainSoundType) {
+	_samplingRate = samplingRate;
+	byte audioFlags = Audio::FLAG_UNSIGNED;
+	_packetStream = Audio::makePacketizedRawStream(samplingRate, audioFlags);
+}
+
+void PacoDecoder::PacoAudioTrack::queueSound(Common::SeekableReadStream *fileStream, uint32 chunkSize) {
+	const Common::Array<int> samplingRates = {5563, 7418, 11127, 22254};
+	uint16 header = fileStream->readUint16BE();
+	fileStream->readUint16BE();
+	int index = (header >> 10) & 7;
+	int currentRate = samplingRates[index];
+	if ( currentRate != _samplingRate)
+		warning("PacoDecoder::PacoAudioTrack: Sampling rate differs from first frame: %i != %i", currentRate, _samplingRate);
+
+	_packetStream->queuePacket(fileStream->readStream(chunkSize - 4));
+}
+
 
 } // End of namespace Video
