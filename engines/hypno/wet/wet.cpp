@@ -129,7 +129,14 @@ void WetEngine::loadAssetsDemoDisc() {
 	start->hots = hs;
 	_levels["<start>"] = start;
 
-	Transition *intro = new Transition("c31");
+	Transition *intro;
+	if (_language == Common::EN_USA)
+		intro = new Transition("c31");
+	else if (_language == Common::HE_ISR)
+		intro = new Transition("c31.mis");
+	else
+		error("Unsupported language");
+
 	intro->intros.push_back("movie/nw_logo.smk");
 	intro->intros.push_back("movie/hypnotix.smk");
 	intro->intros.push_back("movie/wetlogo.smk");
@@ -378,7 +385,7 @@ void WetEngine::showCredits() {
 		return;
 	}
 
-	if (!isDemo() || _variant == "Demo") {
+	if (!isDemo() || _variant == "Demo" || _language == Common::EN_USA) {
 		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 	}

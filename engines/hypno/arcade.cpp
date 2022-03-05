@@ -89,6 +89,8 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 	ShootInfo si;
 	SegmentShootsSequence seq;
 	// Parsing
+	pdata.trim();
+	pdata = "\n" + pdata;
 
 	if (pdata[1] == 'L') { // List of elements
 		SegmentShoots ss;
@@ -120,7 +122,7 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 		}
 	} else if (pdata[1] == 'S' ) { // Single element
 		SegmentShoots ss;
-		Common::StringTokenizer tok(pdata, " ,.\t");
+		Common::StringTokenizer tok(pdata, " ,.\t\r");
 		while (!tok.empty()) {
 			t = tok.nextToken();
 			if (t[0] == '\n')
