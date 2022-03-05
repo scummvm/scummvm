@@ -121,16 +121,4 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 	return size;
 }
 
-void Data::fcopy(const char *d_fname, const char *s_fname) {
-	assert(!strcmp(d_fname, ADSH_TMP));
-
-	Common::File f;
-	if (!f.open(s_fname))
-		error("Could not find - %s", s_fname);
-
-	Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
-	ws->writeStream(&f);
-	delete ws;
-}
-
 } // namespace Chewy

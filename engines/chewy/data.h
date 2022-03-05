@@ -40,7 +40,6 @@ public:
 	uint32 load_tmf(Stream *stream, TmfHeader *song);
 
 	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
-	void fcopy(const char *d_fname, const char *s_fname);
 };
 
 } // namespace Chewy

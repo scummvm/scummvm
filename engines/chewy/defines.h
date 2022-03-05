@@ -181,8 +181,6 @@ enum SetupScreenMode {
 
 #define DETAIL_TVP "sound/details.tap"
 
-#define ADSH_TMP "adsh.tmp"
-
 #define QUIT_MSG_EN "QUIT ?? Y/N "
 #define QUIT_MSG_DE "BEENDEN ?? J/N "
 

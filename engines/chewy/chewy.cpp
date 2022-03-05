@@ -73,8 +73,6 @@ void ChewyEngine::initialize() {
 	_sound = new Sound(_mixer);
 	_video = new VideoPlayer();
 
-	_tempFiles.add(ADSH_TMP, 5710);
-	SearchMan.add("temp", &_tempFiles, 99, false);
 	setDebugger(new Debugger());
 }
 
@@ -101,11 +99,10 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return Common::kReadingFailed;
 
 	} else {
-		Common::SeekableWriteStream *adh = _tempFiles.createWriteStreamForMember(ADSH_TMP);
 		if (stream->readUint32BE() != SCUMMVM_TAG ||
-			stream->readUint32LE() != adh->size())
+			stream->readUint32LE() != _G(atds)->getAtdsStreamSize())
 			return Common::kReadingFailed;
-		adh->writeStream(stream, adh->size());
+		_G(atds)->loadAtdsStream(stream);
 
 		_G(flags).LoadGame = true;
 
@@ -150,10 +147,9 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	if (!_G(spieler).synchronize(s))
 		return Common::kWritingFailed;
 
-	Common::SeekableReadStream *rs = _tempFiles.createReadStreamForMember(ADSH_TMP);
 	stream->writeUint32BE(SCUMMVM_TAG);
-	stream->writeUint32LE(rs->size());
-	stream->writeStream(rs);
+	stream->writeUint32LE(_G(atds)->getAtdsStreamSize());
+	_G(atds)->saveAtdsStream(stream);
 
 	return Common::kNoError;
 }

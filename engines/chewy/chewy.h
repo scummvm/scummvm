@@ -69,7 +69,6 @@ protected:
 public:
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
-	TempFileArchive _tempFiles;
 	EventsManager *_events = nullptr;
 	Globals *_globals = nullptr;
 	Sound *_sound = nullptr;

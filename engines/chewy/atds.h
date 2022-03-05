@@ -22,6 +22,8 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
+#include "common/memstream.h"
+
 namespace Chewy {
 
 #define ATDS_VOC_OFFSET 20
@@ -321,6 +323,10 @@ public:
 		return _atdsv.Display;	
 	}
 
+	void saveAtdsStream(Common::WriteStream *stream);
+	void loadAtdsStream(Common::SeekableReadStream *stream);
+	uint32 getAtdsStreamSize() const;
+
 private:
 	int16 get_delay(int16 txt_len);
 
@@ -355,6 +361,8 @@ private:
 	bool _hasSpeech = false;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
+	Common::MemoryReadWriteStream *_atdsStream;
+	uint32 _atdsStreamSize;
 };
 
 } // namespace Chewy

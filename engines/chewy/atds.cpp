@@ -113,6 +113,13 @@ Atdsys::Atdsys() {
 	_invBlockNr = -1;
 	_invUseMem = nullptr;
 	_inzeig = _G(in)->getPointer();
+
+	_atdsStream = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	Common::File tmp;
+	tmp.open(ADS_TXT_STEUER);
+	_atdsStreamSize = tmp.size();
+	_atdsStream->writeStream(&tmp, _atdsStreamSize);
+	tmp.close();
 }
 
 Atdsys::~Atdsys() {
@@ -121,6 +128,8 @@ Atdsys::~Atdsys() {
 
 	if (_invUseMem)
 		free(_invUseMem);
+
+	// NOTE: _atdsStream is deleted by close_handle() above
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
@@ -357,8 +366,19 @@ void Atdsys::set_handle(const char *fname, int16 mode, Stream *handle, int16 chu
 void Atdsys::open_handle(const char *fname, int16 mode) {
 	char *tmp_adr = nullptr;
 
+	if (mode == ADH_DATA) {
+		if (_atdsmem[mode])
+			free(_atdsmem[mode]);
+
+		_atdshandle[mode] = _atdsStream;
+		_atdsmem[mode] = (char *)MALLOC(_atdsStreamSize + 3);
+		_adsBlock = (AdsBlock *)_atdsmem[mode];
+		return;
+	}
+
 	if (mode != INV_IDX_DATA)
 		tmp_adr = atds_adr(fname, 0, 20000);
+
 	Common::File *f = new Common::File();
 	f->open(fname);
 	if (f->isOpen()) {
@@ -366,18 +386,8 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 		_atdshandle[mode] = f;
 		_atdsmem[mode] = tmp_adr;
 
-		switch (mode) {
-		case ADH_DATA:
-			_adsBlock = (AdsBlock *)_atdsmem[ADH_HANDLE];
-			break;
-
-		case INV_IDX_DATA:
+		if (mode == INV_IDX_DATA)
 			_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_ANZ * sizeof(InvUse));
-			break;
-
-		default:
-			break;
-		}
 	} else {
 		error("Error reading from %s", fname);
 	}
@@ -404,7 +414,7 @@ char *Atdsys::atds_adr(const char *fname, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr = nullptr;
 	uint32 size = _G(mem)->file->get_poolsize(fname, chunk_start, chunk_anz);
 	if (size) {
-		tmp_adr = (char *)MALLOC(size + 3l);
+		tmp_adr = (char *)MALLOC(size + 3);
 	}
 
 	return tmp_adr;
@@ -450,13 +460,8 @@ void Atdsys::save_ads_header(int16 dia_nr) {
 			error("save_ads_header error");
 		} else {
 			if (Ch.size) {
-				Common::SeekableWriteStream *ws = g_engine->_tempFiles.createWriteStreamForMember(ADSH_TMP);
-				ws->seek(rs->pos());
-				if (ws->write(_atdsmem[ADH_HANDLE], Ch.size) != Ch.size) {
-					error("save_ads_header error");
-				}
-
-				delete ws;
+				_atdsStream->seek(rs->pos(), SEEK_SET);
+				_atdsStream->write(_atdsmem[ADH_HANDLE], Ch.size);
 			}
 		}
 	} else {
@@ -1410,4 +1415,17 @@ int16 Atdsys::getStereoPos(int16 x) {
 #endif
 }
 
+void Atdsys::saveAtdsStream(Common::WriteStream *stream) {
+	_atdsStream->seek(0, SEEK_SET);
+	stream->writeStream(_atdsStream, _atdsStreamSize);
+}
+
+void Atdsys::loadAtdsStream(Common::SeekableReadStream* stream) {
+	_atdsStream->seek(0, SEEK_SET);
+	_atdsStream->writeStream(stream, _atdsStreamSize);
+}
+
+uint32 Atdsys::getAtdsStreamSize() const {
+	return _atdsStreamSize;
+}
 } // namespace Chewy

@@ -67,7 +67,6 @@ void game_main() {
 		Dialogs::MainMenu::execute();
 	}
 
-	remove(ADSH_TMP);
 	tidy();
 	_G(out)->rest_palette();
 }

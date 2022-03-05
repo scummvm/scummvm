@@ -35,7 +35,6 @@ MODULE_OBJS = \
 	sound_player.o \
 	sprite.o \
 	t_event.o \
-	temp_file.o \
 	text.o \
 	timer.o \
 	types.o \
