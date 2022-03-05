@@ -20,6 +20,7 @@
  */
 
 #include "chewy/defines.h"
+#include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/sound.h"
 #include "chewy/detail.h"
@@ -451,6 +452,7 @@ void startAniBlock(int16 nr, const AniBlock *ab) {
 void startAadWait(int16 diaNr) {
 	const int16 oldMouseLeftClick = _G(mouseLeftClick);
 	_G(mouseLeftClick) = false;
+	_G(minfo)._button = 0;
 	_G(talk_start_ani) = -1;
 	_G(talk_hide_static) = -1;
 	setSsiPos();
@@ -460,6 +462,10 @@ void startAadWait(int16 diaNr) {
 		_G(atds)->aadGetStatus() != -1 ||
 		g_engine->_sound->isSpeechActive()
 		)) {
+
+		if (_G(minfo)._button && _G(atds)->aadGetStatus() == -1)
+			g_engine->_sound->stopSpeech();
+
 		setupScreen(DO_SETUP);
 	}
 
@@ -481,6 +487,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 
 	const int16 oldMouseLeftClick = _G(mouseLeftClick);
 	_G(mouseLeftClick) = false;
+	_G(minfo)._button = 0;
 
 	if (!_G(flags).AtsText) {
 		_G(flags).AtsText = true;
@@ -509,6 +516,9 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 						dMode = (dMode == DISPLAY_ALL) ?
 							DISPLAY_TXT : DISPLAY_NONE;
 					}
+
+					if (_G(minfo)._button)
+						g_engine->_sound->stopSpeech();
 
 					setupScreen(DO_SETUP);
 				}
