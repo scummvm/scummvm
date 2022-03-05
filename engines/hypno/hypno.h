@@ -320,6 +320,7 @@ public:
 private:
 	void runMainMenu(Code *code);
 	void runCheckLives(Code *code);
+	void endCredits(Code *code);
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;

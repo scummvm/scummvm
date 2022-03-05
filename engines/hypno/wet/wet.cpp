@@ -259,6 +259,9 @@ void WetEngine::loadAssetsFullGame() {
 	Code *check_lives = new Code("<check_lives>");
 	_levels["<check_lives>"] = check_lives;
 
+	Code *end_credits = new Code("<credits>");
+	_levels["<credits>"] = end_credits;
+
 	loadArcadeLevel("c110.mi_", "c10", "<check_lives>", "");
 	loadArcadeLevel("c111.mi_", "c10", "<check_lives>", "");
 	loadArcadeLevel("c112.mi_", "c10", "<check_lives>", "");
@@ -359,9 +362,9 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c611.mi_", "c60", "<check_lives>", "");
 	loadArcadeLevel("c612.mi_", "c60", "<check_lives>", "");
 
-	loadArcadeLevel("c600.mi_", "<quit>", "<check_lives>", "");
-	loadArcadeLevel("c601.mi_", "<quit>", "<check_lives>", "");
-	loadArcadeLevel("c602.mi_", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c600.mi_", "<credits>", "<check_lives>", "");
+	loadArcadeLevel("c601.mi_", "<credits>", "<check_lives>", "");
+	loadArcadeLevel("c602.mi_", "<credits>", "<check_lives>", "");
 
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
@@ -376,9 +379,14 @@ void WetEngine::showCredits() {
 	}
 
 	if (!isDemo() || _variant == "Demo") {
-		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, false, false);
+		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 	}
+}
+
+void WetEngine::endCredits(Code *code) {
+	showCredits();
+	_nextLevel = "<main_menu>";
 }
 
 void WetEngine::runCode(Code *code) {
@@ -387,6 +395,8 @@ void WetEngine::runCode(Code *code) {
 		runMainMenu(code);
 	else if (code->name == "<check_lives>")
 		runCheckLives(code);
+	else if (code->name == "<credits>")
+		endCredits(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }

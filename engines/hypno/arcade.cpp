@@ -229,8 +229,16 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				if (event.kbd.keycode == Common::KEYCODE_c) {
 					background.decoder->pauseVideo(true);
 					showCredits();
+
+					if (transition && !arc->transitionPalette.empty())
+						loadPalette(arc->transitionPalette);
+					else
+						loadPalette(arc->backgroundPalette);
+
 					changeScreenMode("320x200");
 					background.decoder->pauseVideo(false);
+					updateScreen(background);
+					drawScreen();
 				} else if (event.kbd.keycode == Common::KEYCODE_k) { // Added for testing
 					_health = 0;
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
