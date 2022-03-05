@@ -162,7 +162,7 @@ static Common::String getUserObject(SciGameId gameId) {
 		// German Amiga versions
 		if (getSciVersion() == SCI_VERSION_1_MIDDLE)
 			return "PUser";
-		// fallthrough intended
+		// fallthrough
 	default:
 		return "User";
 	}
