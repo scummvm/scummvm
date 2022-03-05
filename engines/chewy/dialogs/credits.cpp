@@ -194,7 +194,6 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	_G(room)->open_handle(GBOOK, AAD_DATA);
 	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
@@ -261,7 +260,6 @@ void Credits::execute() {
 	}
 
 	_G(fontMgr)->setFont(_G(font8));
-	_G(room)->open_handle("back/episode1.tgp", R_GEP_DATA);
 
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hideCur();

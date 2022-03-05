@@ -37,11 +37,11 @@ extern const int16 SURIMY_TAF19_PHASEN[4][2];
 
 #define ABLAGE_BLOCK_SIZE 64000l
 #define GED_BLOCK_SIZE 3000l
-#define MAX_ROOM_HANDLE 4
+#define MAX_ROOM_HANDLE 2
 #define GED_LOAD 1
 
-#define R_VOC_DATA 1
-#define R_GEP_DATA 2
+#define R_VOC_DATA 0
+#define R_GEP_DATA 1
 
 
 class JungleRoom {

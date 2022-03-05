@@ -58,7 +58,6 @@ void Cinema::execute() {
 	_G(fontMgr)->setFont(_G(font6));
 	_G(atds)->load_atds(98, 1);
 
-	_G(room)->open_handle(GBOOK, AAD_DATA);
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	showCur();
 	EVENTS_CLEAR;
@@ -197,7 +196,6 @@ void Cinema::execute() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->open_handle(EPISODE1, AAD_DATA);
 	_G(room)->set_ak_pal(&_G(room_blk));
 	hideCur();
 	_G(uhr)->resetTimer(0, 5);
