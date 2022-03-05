@@ -144,7 +144,6 @@ int16 Files::execute(bool isInGame) {
 		if (mode[QUIT] == 1) {
 			_G(out)->printxy(120, 138, 255, 300, 0, g_engine->getLanguage() == Common::Language::DE_DEU ? QUIT_MSG_DE : QUIT_MSG_EN);
 			_G(out)->back2screen(_G(workpage));
-			_G(in)->alter_kb_handler();
 
 			key = getch();
 			if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
@@ -271,7 +270,6 @@ enter:
 			} else if (mode[SAVE]) {
 				_G(out)->back2screen(_G(workpage));
 				_G(out)->setPointer(_G(screen0));
-				_G(in)->alter_kb_handler();
 				tmp = fnames + ((text_off + active_slot) * 40);
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 					255, 42, 14, 0, "%36s36", tmp);

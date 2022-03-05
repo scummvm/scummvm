@@ -28,14 +28,6 @@ namespace Chewy {
 
 bool _cursorMoveFl;
 
-void set_new_kb_handler(KbdInfo *key) {
-	g_events->setKbdInfo(key);
-}
-
-void set_old_kb_handler() {
-	g_events->setKbdInfo(nullptr);
-}
-
 InputMgr::InputMgr() {
 	_kbInfoBlk = nullptr;
 }
@@ -58,19 +50,9 @@ int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 }
 
 void InputMgr::neuer_kb_handler(KbdInfo *key) {
-	set_new_kb_handler(key);
+	g_events->setKbdInfo(key);
 	_kbInfoBlk = key;
 	_kbInfoBlk->_keyCode = '\0';
-}
-
-void InputMgr::alter_kb_handler() {
-	set_old_kb_handler();
-	_kbInfoBlk = nullptr;
-	warning("STUB - InputMgr::alter_kb_handler");
-#if 0
-	while (kbhit())
-		getch();
-#endif
 }
 
 KbdMouseInfo *InputMgr::getPointer() {

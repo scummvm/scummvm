@@ -34,7 +34,6 @@ public:
 
 	void init();
 	void setWriteMode(char wm);
-	void initMouseMode(MouseInfo *mInfo);
 
 	void setClip(int16 x1, int16 y1, int16 x2, int16 y2);
 	void setPointer(byte *ptr);
@@ -57,7 +56,6 @@ public:
 	             int16 col1, int16 col2, int16 back_col);
 
 	void back2screen(byte *ptr);
-	void back2back(byte *ptr1, byte *ptr2);
 
 	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
 	                 int16 hoehe, int16 scrwidth);
@@ -86,7 +84,6 @@ private:
 	int16 _fontBr = 0, _fontH = 0;
 	uint8 _svga = 0;
 	uint8 _einfuegen = 0;
-	MouseInfo *_mInfo = nullptr;
 
 	void ltoa(long N, char *str, int base);
 	void ultoa(uint32 N, char *str, int base);

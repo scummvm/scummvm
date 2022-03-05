@@ -30,7 +30,6 @@ Cursor::Cursor(McgaGraphics *iout, InputMgr *iin, CurBlk *curblkp) {
 	_in = iin;
 	_scrWidth = _G(scr_w);
 	_curblk = curblkp;
-	_pointer = _in->getPointer();
 
 	_visible = false;
 	_ani = nullptr;

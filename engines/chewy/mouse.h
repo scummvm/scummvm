@@ -26,9 +26,6 @@
 
 namespace Chewy {
 
-void set_new_kb_handler(KbdInfo *key);
-void set_old_kb_handler();
-
 extern bool _cursorMoveFl;
 
 class InputMgr {
@@ -39,7 +36,6 @@ public:
 	void setMousePos(int16 x, int16 y);
 
 	void neuer_kb_handler(KbdInfo *key);
-	void alter_kb_handler();
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 
 	KbdMouseInfo *getPointer();

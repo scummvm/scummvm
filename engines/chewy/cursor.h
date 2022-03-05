@@ -42,7 +42,6 @@ public:
 
 	McgaGraphics *_out = nullptr;
 	InputMgr *_in = nullptr;
-	KbdMouseInfo *_pointer = nullptr;
 	CurBlk *_curblk = nullptr;
 	CurAni *_ani = nullptr;
 	int _scrWidth = 0;

@@ -190,10 +190,6 @@ void McgaGraphics::back2screen(byte *ptr) {
 	mem2mcga(ptr);
 }
 
-void McgaGraphics::back2back(byte *ptr1, byte *ptr2) {
-	mem2mem(ptr1, ptr2);
-}
-
 void McgaGraphics::sprite_save(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
 	if (breite < 4)
 		breite = 4;
@@ -708,10 +704,6 @@ void McgaGraphics::vorschub() {
 void McgaGraphics::move(int16 x, int16 y) {
 	_G(gcurx) = x;
 	_G(gcury) = y;
-}
-
-void McgaGraphics::initMouseMode(MouseInfo *mInfo) {
-	_mInfo = mInfo;
 }
 
 int16 McgaGraphics::devices() {
