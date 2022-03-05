@@ -112,7 +112,14 @@ void EditTextWidget::drawWidget() {
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2 + _leftPadding, 1, _w - 1 - _rightPadding, _h);
+	// Calculate (right - left) difference for editRect's X-axis coordinates:
+	// (_w - 1 - _rightPadding) - (2 + _leftPadding)
+	int editWidth = _w - _rightPadding - _leftPadding - 3;
+	// Ensure r will always be a valid rect
+	if (editWidth < 0) {
+		editWidth = 0;
+	}
+	Common::Rect r(2 + _leftPadding, 1, 2 + _leftPadding + editWidth, _h);
 
 	return r;
 }
