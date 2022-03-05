@@ -868,6 +868,7 @@ static void flic_proc1() {
 
 		bool flag;
 		do {
+			SHOULD_QUIT_RETURN;
 			_G(flic_val2) = VALS1[i];
 #ifndef NEW_VIDEO_CODE
 			_G(mem)->file->select_pool_item(_G(Ci).Handle, _G(flic_val2));
@@ -1167,6 +1168,8 @@ void flic_cut(int16 nr) {
 	}
 
 	g_engine->_sound->stopSound();
+	SHOULD_QUIT_RETURN;
+
 	g_events->delay(50);
 	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
