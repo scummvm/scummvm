@@ -194,7 +194,7 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	_G(room)->open_handle(GBOOK, 0);
+	_G(room)->open_handle(GBOOK, AAD_DATA);
 	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
 	_G(spieler).scrollx = 0;
 	_G(spieler).scrolly = 0;
