@@ -49,7 +49,7 @@ void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	if (_playerFrameSep == (int)_playerFrames.size()) {
 		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
-	} else 
+	} else
 		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
 
 	_playerFrameIdx = -1;
@@ -242,26 +242,6 @@ void SpiderEngine::drawHealth() {
 	_compositeSurface->frameRect(r, c);
 
 	drawString("block05.fgx", "ENERGY", 248, 180, 38, c);
-}
-
-bool SpiderEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {
-	if (_skipLevel)
-		return true;
-
-	if (_arcadeMode == "YF") {
-		if (!background.decoder || background.decoder->endOfVideo())
-			_health = 0;
-
-		if (_shoots.size() == 0)
-			return false;
-
-		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it)
-			if (!it->destroyed)
-				return false;
-
-		return true;
-	}
-	return !background.decoder || background.decoder->endOfVideo();
 }
 
 } // End of namespace Hypno

@@ -235,7 +235,6 @@ public:
 	ShootSequence _shootSequence;
 	virtual void findNextSegment(ArcadeShooting *arc);
 	virtual void initSegment(ArcadeShooting *arc);
-	virtual bool checkArcadeLevelCompleted(MVideo &background, Segment segment);
 
 	void resetStatistics();
 
@@ -375,7 +374,6 @@ public:
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
-	bool checkArcadeLevelCompleted(MVideo &background, Segment segment) override;
 
 	void drawBackToMenu(Hotspot *h) override;
 	void runCode(Code *code) override;

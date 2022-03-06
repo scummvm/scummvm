@@ -124,7 +124,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("mainmenu.mi_");
 	sc->hots[6].actions.push_back(cl);
 
-	sc = (Scene *) _levels["options.mi_"]; 
+	sc = (Scene *) _levels["options.mi_"];
 
 	cl = new ChangeLevel("combmenu.mi_");
 	sc->hots[1].actions.push_back(cl);
@@ -135,7 +135,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("<credits>");
 	sc->hots[5].actions.push_back(cl);
 
-	sc = (Scene *) _levels["combmenu.mi_"]; 
+	sc = (Scene *) _levels["combmenu.mi_"];
 
 	cl = new ChangeLevel("options.mi_");
 	sc->hots[1].actions.push_back(cl);
@@ -316,7 +316,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	cl = new ChangeLevel("<add_ingredient>");
 	sc->hots[3].actions.push_back(cl);
 
-	gl = new Global("", "CLEAR"); 
+	gl = new Global("", "CLEAR");
 	sc->hots[4].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH1", "TURNON"); // hairspray
@@ -455,7 +455,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	Code *office = new Code("<office>");
 	office->prefix = prefix;
 	_levels["<office>"] = office;
-	
+
 	cl = new ChangeLevel("<back_roof_1>");
 	sc->hots[2].actions.push_back(cl);
 
@@ -968,7 +968,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_h1Area = Common::Rect(9, 45, 28, 60);
 	_h2Area = Common::Rect(37, 45, 56, 60);
 	_h3Area = Common::Rect(64, 45, 83, 60);
-	_nextLevel = "<start>";
+	_nextLevel = "c6.mi_";
 }
 
 void SpiderEngine::loadAssetsDemo() {
@@ -1048,7 +1048,7 @@ void SpiderEngine::loadAssetsDemo() {
 	_nextLevel = "<start>";
 }
 
-Common::String SpiderEngine::findNextLevel(const Transition *trans) { 
+Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 	if (trans->nextLevel.empty())
 		return _sceneState["GS_PUZZLELEVEL"] == 0 ? trans->levelEasy : trans->levelHard;
 
@@ -1173,7 +1173,7 @@ void SpiderEngine::drawBackToMenu(Hotspot *h) {
 				if (_currentLevel != "mainmenu.mi_" && _currentLevel != "options.mi_" && _currentLevel != "combmenu.mi_")
 					menu = decodeFrame("int_main/menu.smk", 0);
 			}
-		} 
+		}
 
 		if (menu) {
 			h->rect = Common::Rect(0, 0, menu->w, menu->h);

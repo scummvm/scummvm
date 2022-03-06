@@ -358,8 +358,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			if (!segments[_segmentIdx].end) { // If it is not the end segment
 				background.decoder->forceSeekToFrame(segments[_segmentIdx].start);
 				continue;
-			} else
-				_skipLevel = true;
+			}
 		}
 
 		if (segments[_segmentIdx].end || _skipLevel) {
@@ -659,10 +658,6 @@ void HypnoEngine::resetStatistics() {
 	_targetsDestroyed = 0;
 	_targetsMissed = 0;
 	_bonus = 0;
-}
-
-bool HypnoEngine::checkArcadeLevelCompleted(MVideo &background, Segment segment) {
-	return !background.decoder || background.decoder->endOfVideo() || segment.end || _skipLevel;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
