@@ -49,7 +49,7 @@ public:
 	PacoDecoder();
 	virtual ~PacoDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream);
+	virtual bool loadStream(Common::SeekableReadStream *stream) override;
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
