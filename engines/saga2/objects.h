@@ -1454,9 +1454,6 @@ void doBackgroundSimulation();
 void pauseBackgroundSimulation();
 void resumeBackgroundSimulation();
 
-// cleanup the ready container stuff
-void cleanupReadyContainers();
-
 //  This function simply calls the GameObject::updateState() method
 //  for all active objects directly within a world.
 void updateObjectStates();
