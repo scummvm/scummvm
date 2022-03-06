@@ -1684,7 +1684,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 
 	_screen->setScreenPalette(*_palettes[0]);
 	_prevFont = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
-				     _vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
+				     _vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : (_vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT));
 	_screen->hideMouse();
 
 	_vm->delay(150);
@@ -1783,8 +1783,6 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 	else if (_vm->sound()->getMusicType() != Sound::kAdLib && _vm->gameFlags().platform != Common::kPlatformPC98)
 		return;
 
-	debug("waitForSongNotifier %d - waiting for trigger...", index);
-
 	int seq = 0;
 
 	while (_vm->sound()->musicEnabled() && _vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
@@ -1798,8 +1796,6 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 
 		_vm->updateInput();
 	}
-
-	debug("waitForSongNotifier %d - ...finished", index);
 }
 
 void DarkmoonSequenceHelper::updateAmigaSound() {

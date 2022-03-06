@@ -66,11 +66,14 @@ Common::Error DarkMoonEngine::init() {
 	_screen->loadPalette(_flags.platform == Common::kPlatformFMTowns ? "MENU.PAL" : "PALETTE.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
 
+	// adjust menu settings for EOB II FM-Towns/PC-98 versions
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		// adjust menu settings for EOB II FM-Towns
 		_screen->modifyScreenDim(6, 10, 100, 21, 40);
 		_screen->modifyScreenDim(27, 0, 0, 21, 2);
 		_vcnFilePattern = "%s.VCC";
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_screen->modifyScreenDim(6, 10, 100, 21, 40);
+		_screen->modifyScreenDim(27, 0, 0, 21, 5);
 	}
 
 	return Common::kNoError;
