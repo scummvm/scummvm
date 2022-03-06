@@ -1137,9 +1137,38 @@ void LB::b_openResFile(int nargs) {
 void LB::b_openXlib(int nargs) {
 	// TODO: When Xtras are implemented, determine whether to initialize
 	// the XObject or Xtra version of FileIO
+	Common::String xlibName;
 
 	Datum d = g_lingo->pop();
-	Common::String xlibName = d.asString();
+	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
+		// try opening the file as a resfile
+		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+		if (!g_director->_openResFiles.contains(resPath)) {
+			MacArchive *resFile = new MacArchive();
+
+			if (resFile->openFile(pathMakeRelative(resPath))) {
+				g_director->_openResFiles.setVal(resPath, resFile);
+				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
+				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
+
+				Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
+
+				for (uint i = 0; i < rsrcList.size(); i++) {
+					xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
+					g_lingo->openXLib(xlibName, kXObj);
+				}
+
+				rsrcList = resFile->getResourceIDList(XCMD);
+				for (uint i = 0; i < rsrcList.size(); i++) {
+					xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
+					g_lingo->openXLib(xlibName, kXObj);
+				}
+				return;
+			}
+		}
+	}
+
+	xlibName = d.asString();
 	g_lingo->openXLib(xlibName, kXObj);
 }
 
