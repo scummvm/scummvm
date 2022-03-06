@@ -96,6 +96,7 @@ public:
 	void runLevel(Common::String &name);
 	void runScene(Scene *scene);
 	virtual void runBeforeArcade(ArcadeShooting *arc);
+	virtual void runAfterArcade(ArcadeShooting *arc);
 	void runArcade(ArcadeShooting *arc);
 	// For some menus and hardcoded puzzles
 	virtual void runCode(Code *code);
@@ -235,6 +236,30 @@ public:
 	virtual void findNextSegment(ArcadeShooting *arc);
 	virtual void initSegment(ArcadeShooting *arc);
 	virtual bool checkArcadeLevelCompleted(MVideo &background, Segment segment);
+
+	void resetStatistics();
+
+	void incShotsFired();
+	uint32 _shootsFired;
+
+	void incEnemyHits();
+	uint32 _enemyHits;
+
+	void incEnemyTargets();
+	uint32 _enemyTargets;
+
+	void incTargetsDestroyed();
+	uint32 _targetsDestroyed;
+
+	void incTargetsMissed();
+	uint32 _targetsMissed;
+
+	void incScore(int inc);
+	void incBonus(int inc);
+
+	uint32 killRatio();
+	uint32 accuracyRatio();
+
 	Common::String _difficulty;
 	bool _skipLevel;
 
@@ -244,6 +269,7 @@ public:
 	int _health;
 	int _maxHealth;
 	int _score;
+	int _bonus;
 	int _lives;
 	Filename _shootSound;
 	Filename _hitSound;
@@ -314,6 +340,7 @@ public:
 
 	// Arcade
 	void runBeforeArcade(ArcadeShooting *arc) override;
+	void runAfterArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
 

@@ -226,7 +226,68 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 	}
 }
 
+void WetEngine::runAfterArcade(ArcadeShooting *arc) {
+	_checkpoint = _currentLevel;
+	if (!isDemo() || _variant == "Demo") {
+		byte *palette;
+		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
+		loadPalette(palette, 0, 256);
+		uint32 c = 251; // green
+		int bonusCounter = 0;
+		int scoreCounter = _score - _bonus;
+		assert(scoreCounter >= 0);
+		bool skip = false;
+		Common::Event event;
+		while (!shouldQuit() && !skip) {
+
+			drawImage(*frame, 0, 0, false);
+			drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _shootsFired), 60, 46, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _enemyTargets), 60, 56, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _targetsDestroyed), 60, 66, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _targetsMissed), 60, 76, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "KILL RATIO", killRatio()), 60, 86, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ACCURACY", accuracyRatio()), 60, 96, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ENERGY", _health), 60, 106, 0, c);
+
+			while (g_system->getEventManager()->pollEvent(event)) {
+				// Events
+				switch (event.type) {
+
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
+					break;
+
+				case Common::EVENT_KEYDOWN:
+					bonusCounter = _bonus;
+					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", _bonus), 60, 116, 0, c);
+					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", _score), 60, 126, 0, c);
+					skip = true;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (bonusCounter < _bonus) {
+				bonusCounter++;
+				scoreCounter++;
+				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", bonusCounter), 60, 116, 0, c);
+				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", scoreCounter), 60, 126, 0, c);
+			}
+
+			drawScreen();
+			g_system->delayMillis(25);
+		}
+		frame->free();
+		delete frame;
+	}
+
+}
+
+
 void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
+	resetStatistics();
 	_checkpoint = _currentLevel;
 	MVideo *video;
 	if (!isDemo()) {
@@ -242,6 +303,9 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		bool showedBriefing = false;
 		bool endedBriefing = false;
 		Common::Event event;
+
+		uint32 c = 251; // green
+		drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
 		while (!shouldQuit() && !endedBriefing) {
 
 			while (g_system->getEventManager()->pollEvent(event)) {
@@ -318,6 +382,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 }
 
 bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
+	incShotsFired();
 	return clickedPrimaryShoot(mousePos);
 }
 
