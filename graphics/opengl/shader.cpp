@@ -110,9 +110,11 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE) {
-		char buffer[512];
-		glGetShaderInfoLog(shader, 512, NULL, buffer);
-		error("Could not compile shader %s: %s", name.c_str(), buffer);
+		GLint logSize;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GLchar *log = new GLchar[logSize];
+		glGetShaderInfoLog(shader, logSize, nullptr, log);
+		error("Could not compile shader %s: %s", name.c_str(), log);
 	}
 
 	return shader;
@@ -135,9 +137,11 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE) {
-		char buffer[512];
-		glGetShaderInfoLog(shader, 512, NULL, buffer);
-		error("Could not compile shader %s: %s", name.c_str(), buffer);
+		GLint logSize;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GLchar *log = new GLchar[logSize];
+		glGetShaderInfoLog(shader, logSize, nullptr, log);
+		error("Could not compile shader %s: %s", name.c_str(), log);
 	}
 
 	return shader;
@@ -184,9 +188,11 @@ ShaderGL::ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragm
 	GLint status;
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
 	if (status != GL_TRUE) {
-		char buffer[512];
-		glGetProgramInfoLog(shaderProgram, 512, NULL, buffer);
-		error("Could not link shader %s: %s", name.c_str(), buffer);
+		GLint logSize;
+		glGetShaderiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
+		GLchar *log = new GLchar[logSize];
+		glGetShaderInfoLog(shaderProgram, logSize, nullptr, log);
+		error("Could not link shader %s: %s", name.c_str(), log);
 	}
 
 	glDetachShader(shaderProgram, vertexShader);
