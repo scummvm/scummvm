@@ -968,7 +968,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	_h1Area = Common::Rect(9, 45, 28, 60);
 	_h2Area = Common::Rect(37, 45, 56, 60);
 	_h3Area = Common::Rect(64, 45, 83, 60);
-	_nextLevel = "c6.mi_";
+	_nextLevel = "<start>";
 }
 
 void SpiderEngine::loadAssetsDemo() {
