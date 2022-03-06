@@ -322,7 +322,7 @@ void setPersonPos(int16 x, int16 y, int16 personNr, int16 direction) {
 	_G(ssi)[tmpNr].Y = _G(spieler_vector)[personNr].Xypos[1] - _G(spieler).scrolly;
 	if (!_G(flags).ExitMov && personNr == P_CHEWY) {
 		int16 u_index = _G(ged)->ged_idx(x + _G(spieler_mi)[personNr].HotX, y + _G(spieler_mi)[personNr].HotY,
-		                                 _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+		                                 _G(room)->_gedXNr[_G(room_blk).AkAblage],
 		                                 _G(ged_mem)[_G(room_blk).AkAblage]);
 		check_shad(u_index, 1);
 	}
@@ -340,14 +340,14 @@ void setPersonSpr(int16 nr, int16 personNr) {
 		case P_LEFT:
 			_G(spieler_vector)[P_CHEWY].Phase = CH_L_STEHEN;
 			_G(spieler_vector)[P_CHEWY].PhNr = 0;
-			_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[CH_L_STEHEN];
+			_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[CH_L_STEHEN];
 			_G(person_end_phase)[P_CHEWY] = P_LEFT;
 			break;
 
 		case P_RIGHT:
 			_G(spieler_vector)[P_CHEWY].Phase = CH_R_STEHEN;
 			_G(spieler_vector)[P_CHEWY].PhNr = 0;
-			_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[CH_R_STEHEN];
+			_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[CH_R_STEHEN];
 			_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 			break;
 
@@ -472,7 +472,7 @@ void startAadWait(int16 diaNr) {
 	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 	stop_spz();
 }
 
@@ -536,7 +536,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
 
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 	_G(mouseLeftClick) = oldMouseLeftClick;
 
 	return ret != DISPLAY_NONE;
@@ -557,7 +557,7 @@ void aadWait(int16 strNr) {
 	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 }
 
 void start_aad(int16 diaNr, int16 ssiNr) {
@@ -777,17 +777,17 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 			if (!mi->Mode) {
 				if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 				                              om->Xypos[1] + mi->HotY + tmpy,
-				                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+				                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
 				                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 
 					if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX + tmpx,
 					                              om->Xypos[1] + mi->HotY,
-					                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+					                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
 					                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 
 						if (!(u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 						                              om->Xypos[1] + mi->HotY + tmpy,
-						                              _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+						                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
 						                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
 							om->Count = 0;
 						} else {
@@ -892,7 +892,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				if (mi->Id == CHEWY_OBJ) {
 					u_index = _G(ged)->ged_idx(om->Xypos[0] + mi->HotX,
 					                        om->Xypos[1] + mi->HotY,
-					                        _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+					                        _G(room)->_gedXNr[_G(room_blk).AkAblage],
 					                        _G(ged_mem)[_G(room_blk).AkAblage]);
 					check_shad(u_index, 1);
 				}

@@ -90,11 +90,11 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 }
 
 void timer_action(int16 t_nr) {
-	int16 ani_nr = t_nr - _G(room)->_roomTimer.TimerStart;
+	int16 ani_nr = t_nr - _G(room)->_roomTimer._timerStart;
 	bool default_flag = false;
 
 	if (g_engine->_sound->isSpeechActive())
@@ -125,11 +125,11 @@ void timer_action(int16 t_nr) {
 #undef TIMER
 
 	if (default_flag && _G(flags).AutoAniPlay == false) {
-		_G(det)->startDetail(_G(room)->_roomTimer.ObjNr[ani_nr], 1, ANI_FRONT);
+		_G(det)->startDetail(_G(room)->_roomTimer._objNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->resetTimer(t_nr, 0);
 	}
 
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 }
 
 void check_ged_action(int16 index) {
@@ -174,7 +174,7 @@ void check_ged_action(int16 index) {
 		_G(flags).GedAction = false;
 	}
 
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 }
 
 int16 ged_user_func(int16 idx_nr) {

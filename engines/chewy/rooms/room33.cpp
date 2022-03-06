@@ -54,7 +54,7 @@ void Room33::surimy_go() {
 			_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
 			_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
 			_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
-			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASES[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(158);
 			wait_auto_obj(SURIMY_OBJ);

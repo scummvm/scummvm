@@ -325,7 +325,7 @@ void sound_init() {
 	if (!Nph.load(rs)) {
 		error("sound_init error");
 	} else {
-		_G(EndOfPool) = Nph.PoolAnz - 1;
+		_G(EndOfPool) = Nph._poolNr - 1;
 	}
 
 	_G(atds)->setHasSpeech(true);

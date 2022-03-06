@@ -35,12 +35,12 @@ namespace Chewy {
 
 struct RoomInfo {
 	uint8 _roomNr;
-	uint8 BildNr;
-	uint8 AutoMovAnz;
-	uint8 TafLoad;
-	char TafName[14];
+	uint8 _imageNr;
+	uint8 _autoMovNr;
+	uint8 _tafLoad;
+	char _tafName[14];
 	uint8 _zoomFactor;
-	uint8 Dummy;
+	uint8 _dummy;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() {
@@ -49,10 +49,10 @@ struct RoomInfo {
 };
 
 struct RoomAutoMov {
-	int16 X;
-	int16 Y;
-	uint8 SprNr;
-	uint8 dummy;
+	int16 _x;
+	int16 _y;
+	uint8 _sprNr;
+	uint8 _dummy;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() {
@@ -60,10 +60,8 @@ struct RoomAutoMov {
 	}
 };
 
-#define MAXTAF 10
 #define MAXDETAILS 32
 #define MAX_M_ITEMS 50
-#define MAX_RDI_ROOM 100
 
 struct SprInfo {
 	byte *_image = nullptr;
@@ -130,8 +128,8 @@ struct StaticDetailInfo {
 };
 
 struct RoomDetailInfo {
-	int16 StaticDetailAnz = 0;
-	int16 AniDetailAnz = 0;
+	int16 _staticDetailNr = 0;
+	int16 _aniDetailNr = 0;
 	TafInfo *dptr = nullptr;
 	AniDetailInfo Ainfo[MAXDETAILS];
 	StaticDetailInfo Sinfo[MAXDETAILS];
@@ -158,7 +156,7 @@ struct RoomDetailInfo {
 
 struct RdiDataHeader {
 	char _id[4];
-	int16 Anz;
+	int16 _nr;
 
 	bool load(Common::SeekableReadStream *src);
 };
@@ -233,7 +231,7 @@ public:
 
 	void del_taf_tbl(TafInfo *Tt);
 
-	void del_taf_tbl(int16 start, int16 anz, TafInfo *Tt);
+	void del_taf_tbl(int16 start, int16 nr, TafInfo *Tt);
 
 	void load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt);
 	void load_taf_tbl(TafInfo *fti);

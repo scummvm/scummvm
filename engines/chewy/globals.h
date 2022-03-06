@@ -120,7 +120,7 @@ public:
 	int16 _r68HohesC = 0;
 
 	// global.cpp
-	const uint8 *_chewy_ph_anz;
+	const uint8 *_chewy_ph_nr;
 	const uint8 *_chewy_ph;
 	byte *_pal = nullptr;
 	byte *_screen0 = nullptr;
@@ -139,7 +139,7 @@ public:
 	char **_ads_item_ptr = nullptr;
 
 	int16 _ads_dia_nr = 0;
-	int16 _ads_item_anz = 0;
+	int16 _ads_item_nr = 0;
 	int16 _ads_blk_nr = 0;
 	int16 _ads_push = 0;
 

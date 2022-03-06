@@ -235,10 +235,10 @@ void adsMenu() {
 	if (_G(flags).AdsDialog) {
 		_G(flags).ShowAtsInvTxt = false;
 		_G(flags).MainInput = false;
-		if (_G(ads_item_anz) > 4)
+		if (_G(ads_item_nr) > 4)
 			curYStart = 190;
 		else
-			curYStart = 190 - (4 - _G(ads_item_anz)) * 10;
+			curYStart = 190 - (4 - _G(ads_item_nr)) * 10;
 		int16 curY = g_events->_mousePos.y;
 		if (curY < 160 || curY > curYStart + 10)
 			curY = 255;
@@ -251,11 +251,11 @@ void adsMenu() {
 
 			buildMenu(ADS_WIN);
 			_G(fontMgr)->setFont(_G(font6));
-			if (_G(ads_item_anz) > 4)
+			if (_G(ads_item_nr) > 4)
 				curYStart = 190;
 			else
-				curYStart = 190 - (4 - _G(ads_item_anz)) * 10;
-			for (int16 i = 0; i < _G(ads_item_anz) && i < 4; i++) {
+				curYStart = 190 - (4 - _G(ads_item_nr)) * 10;
+			for (int16 i = 0; i < _G(ads_item_nr) && i < 4; i++) {
 				if (curY == i)
 					col = 255;
 				else
@@ -267,7 +267,7 @@ void adsMenu() {
 		switch (_G(in)->getSwitchCode()) {
 		case 255:
 		case Common::KEYCODE_RETURN:
-			if (curY < _G(ads_item_anz) && curY >= 0 && _G(ads_push) == false) {
+			if (curY < _G(ads_item_nr) && curY >= 0 && _G(ads_push) == false) {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
@@ -280,8 +280,7 @@ void adsMenu() {
 					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), curY);
 					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
 					_G(ads_blk_nr) = an_blk->BlkNr;
-					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr),
-					                                  &_G(ads_item_anz));
+					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_nr));
 				}
 				_G(det)->stop_detail(_G(talk_start_ani));
 				_G(det)->showStaticSpr(_G(talk_hide_static));

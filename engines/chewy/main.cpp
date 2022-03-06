@@ -253,7 +253,7 @@ bool mainLoop(int16 mode) {
 
 	mouseAction();
 	if (_G(flags).MainInput) {
-		switch (_G(kbinfo).scan_code) {
+		switch (_G(kbinfo)._scanCode) {
 		case Common::KEYCODE_F1:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_WALK;
@@ -425,7 +425,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_DOWN:
-			kb_cur_action(_G(kbinfo).scan_code, 0);
+			kb_cur_action(_G(kbinfo)._scanCode, 0);
 			break;
 
 		case 41:
@@ -456,7 +456,7 @@ bool mainLoop(int16 mode) {
 		}
 	}
 
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
 		setupScreen(DO_MAIN_LOOP);
 
@@ -470,7 +470,7 @@ static void showWalkAreas() {
 	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
 		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
 			int idx = _G(ged)->ged_idx(xp, yp,
-				_G(room)->_gedXAnz[_G(room_blk).AkAblage],
+				_G(room)->_gedXNr[_G(room_blk).AkAblage],
 				_G(ged_mem)[_G(room_blk).AkAblage]);
 
 			if (idx) {
@@ -550,8 +550,8 @@ void setupScreen(SetupScreenMode mode) {
 						          _G(spieler_mi)[P_CHEWY].HotX;
 						_G(gpkt).Sy = _G(spieler_vector)[P_CHEWY].Xypos[1] +
 						          _G(spieler_mi)[P_CHEWY].HotY;
-						_G(gpkt).Breite = _G(room)->_gedXAnz[_G(room_blk).AkAblage];
-						_G(gpkt).Hoehe = _G(room)->_gedYAnz[_G(room_blk).AkAblage];
+						_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
+						_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
 						_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
 						_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
 						_G(gpkt).AkMovEbene = 1;
@@ -575,7 +575,7 @@ void setupScreen(SetupScreenMode mode) {
 			int16 idx = _G(ged)->ged_idx(
 				_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				_G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
-				_G(room)->_gedXAnz[_G(room_blk).AkAblage],
+				_G(room)->_gedXNr[_G(room_blk).AkAblage],
 				_G(ged_mem)[_G(room_blk).AkAblage]);
 			check_shad(idx, 0);
 		} else {
@@ -847,12 +847,12 @@ void mouseAction() {
 
 			if (_G(minfo)._button == 2 || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE) {
 				if (!_G(flags).mainMouseFlag) {
-					_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
+					_G(kbinfo)._scanCode = Common::KEYCODE_ESCAPE;
 				}
 			} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
 				if (!_G(flags).mainMouseFlag) {
 					if (_G(menu_display) == MENU_DISPLAY)
-						_G(kbinfo).scan_code = Common::KEYCODE_RETURN;
+						_G(kbinfo)._scanCode = Common::KEYCODE_RETURN;
 					else if (_G(spieler).AkInvent != -1) {
 						if (_G(inv_disp_ok)) {
 							if (_G(spieler).inv_cur) {
@@ -862,7 +862,7 @@ void mouseAction() {
 							} else {
 								_G(menu_item) = CUR_USE;
 								cursorChoice(CUR_AK_INVENT);
-								_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+								_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 							}
 						} else if (!_G(flags).MouseLeft)
 							_G(mouseLeftClick) = true;
@@ -1189,14 +1189,14 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(auto_p_nr) = playerNum;
 			int16 tmp = _G(mouseLeftClick);
 			_G(mouseLeftClick) = false;
-			_G(gpkt).Dx = _G(Rdi)->AutoMov[movNr].X -
+			_G(gpkt).Dx = _G(Rdi)->AutoMov[movNr]._x -
 						  _G(spieler_mi)[playerNum].HotMovX + _G(spieler_mi)[playerNum].HotX;
-			_G(gpkt).Dy = _G(Rdi)->AutoMov[movNr].Y -
+			_G(gpkt).Dy = _G(Rdi)->AutoMov[movNr]._y -
 						  _G(spieler_mi)[playerNum].HotMovY + _G(spieler_mi)[playerNum].HotY;
 			_G(gpkt).Sx = _G(spieler_vector)[playerNum].Xypos[0] + _G(spieler_mi)[playerNum].HotX;
 			_G(gpkt).Sy = _G(spieler_vector)[playerNum].Xypos[1] + _G(spieler_mi)[playerNum].HotY;
-			_G(gpkt).Breite = _G(room)->_gedXAnz[_G(room_blk).AkAblage];
-			_G(gpkt).Hoehe = _G(room)->_gedYAnz[_G(room_blk).AkAblage];
+			_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
+			_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
 			_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
 			_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
 			_G(gpkt).AkMovEbene = 1;
@@ -1246,7 +1246,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 
 								setPersonPos(_G(spieler_mi)[playerNum].XyzEnd[0],
 								               _G(spieler_mi)[playerNum].XyzEnd[1],
-								               playerNum, _G(Rdi)->AutoMov[movNr].SprNr);
+								               playerNum, _G(Rdi)->AutoMov[movNr]._sprNr);
 							}
 						}
 						endLoopFl = true;
@@ -1609,8 +1609,8 @@ int16 calc_mouse_mov_obj(int16 *auto_nr) {
 }
 
 void calc_ani_timer() {
-	for (int16 i = _G(room)->_roomTimer.TimerStart;
-	     i < _G(room)->_roomTimer.TimerStart + _G(room)->_roomTimer.TimerAnz; i++) {
+	for (int16 i = _G(room)->_roomTimer._timerStart;
+	     i < _G(room)->_roomTimer._timerStart + _G(room)->_roomTimer._timerMaxNr; i++) {
 		if (_G(ani_timer)[i]._timeFlag)
 			timer_action(i);
 	}
@@ -1743,9 +1743,9 @@ void calc_ausgang(int16 x, int16 y) {
 				exit_room(nr);
 				_G(spieler)._personRoomNr[P_CHEWY] = _G(spieler).room_e_obj[nr].Exit;
 				_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
-				setPersonPos(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].X -
+				setPersonPos(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov]._x -
 				               _G(spieler_mi)[_G(auto_p_nr)].HotMovX,
-				               _G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].Y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
+				               _G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov]._y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
 				               , P_CHEWY, -1);
 				int16 *ScrXy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 				get_scroll_off(_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
@@ -1755,10 +1755,10 @@ void calc_ausgang(int16 x, int16 y) {
 
 				int16 u_idx = _G(ged)->ged_idx(_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				                               _G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
-				                               _G(room)->_gedXAnz[_G(room_blk).AkAblage],
+				                               _G(room)->_gedXNr[_G(room_blk).AkAblage],
 				                               _G(ged_mem)[_G(room_blk).AkAblage]);
 				check_shad(u_idx, 0);
-				setPersonSpr(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov].SprNr, P_CHEWY);
+				setPersonSpr(_G(Rdi)->AutoMov[_G(spieler).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
 				_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 				_G(fx_blend) = BLEND1;
 				_G(auto_obj) = 0;

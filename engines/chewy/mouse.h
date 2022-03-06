@@ -34,7 +34,7 @@ public:
 	~InputMgr();
 
 	void neuer_kb_handler(KbdInfo *key);
-	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
+	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 nr);
 
 	KbdMouseInfo *getPointer();
 	int16 getSwitchCode();

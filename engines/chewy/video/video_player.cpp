@@ -96,7 +96,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		// Clear any pending keys
 		_G(in)->_hotkey = 0;
 		_G(kbinfo)._keyCode = '\0';
-		_G(kbinfo).scan_code = 0;
+		_G(kbinfo)._scanCode = 0;
 	}
 
 	cfoDecoder->close();

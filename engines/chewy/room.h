@@ -31,7 +31,7 @@ namespace Chewy {
 #define ANI_SHOW 1
 #define SURIMY_OBJ 0
 
-extern const int16 SURIMY_TAF19_PHASEN[4][2];
+extern const int16 SURIMY_TAF19_PHASES[4][2];
 
 #define MAX_ABLAGE 4
 
@@ -72,11 +72,11 @@ struct RaumBlk {
 };
 
 struct RaumTimer {
-	int16 TimerStart;
-	int16 TimerAnz;
+	int16 _timerStart;
+	int16 _timerMaxNr;
 
-	uint8 ObjNr[MAX_ROOM_TIMER];
-	uint8 TimerNr[MAX_ROOM_TIMER];
+	uint8 _objNr[MAX_ROOM_TIMER];
+	uint8 _timerNr[MAX_ROOM_TIMER];
 };
 
 class Room {
@@ -103,8 +103,8 @@ public:
 	RaumTimer _roomTimer;
 	RoomInfo *_roomInfo;
 	GedChunkHeader _gedInfo[MAX_ABLAGE];
-	int16 _gedXAnz[MAX_ABLAGE];
-	int16 _gedYAnz[MAX_ABLAGE];
+	int16 _gedXNr[MAX_ABLAGE];
+	int16 _gedYNr[MAX_ABLAGE];
 
 private:
 	void init_ablage();

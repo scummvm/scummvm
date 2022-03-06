@@ -25,9 +25,9 @@
 namespace Chewy {
 
 bool NewPhead::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	type = src->readUint16LE();
-	PoolAnz = src->readUint16LE();
+	src->read(_id, 4);
+	_type = src->readUint16LE();
+	_poolNr = src->readUint16LE();
 
 	return true;
 }
@@ -48,16 +48,16 @@ bool TmfHeader::load(Common::SeekableReadStream *src) {
 		instrument[i].load(src);
 
 	lied_len = src->readByte();
-	pattern_anz = src->readByte();
-	src->read(sequenz, 128);
+	_patternNr = src->readByte();
+	src->read(_sequence, 128);
 	src->skip(4 * 31);
 
 	return true;
 }
 
 bool GedPoolHeader::load(Common::SeekableReadStream *src) {
-	src->read(Id, 4);
-	Anz = src->readUint16LE();
+	src->read(_id, 4);
+	_nr = src->readUint16LE();
 
 	return true;
 }

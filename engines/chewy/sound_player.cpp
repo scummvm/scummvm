@@ -194,7 +194,7 @@ void SoundPlayer::playMod(TmfHeader *th) {
 	}
 	SeqPointer = 0;
 	PatLine = 0;
-	PatPointer = ActiveSong->sequenz[SeqPointer];
+	PatPointer = ActiveSong->_sequence[SeqPointer];
 	CurrentLine = Patterns[PatPointer];
 	CurrentTempo = 6;
 	PatternCount = 0;
@@ -231,7 +231,7 @@ void SoundPlayer::playSequence(int16 startPos, int16 endPos) {
 		EndPos = endPos;
 		SeqPointer = StartPos;
 		PatLine = 0;
-		PatPointer = ActiveSong->sequenz[SeqPointer];
+		PatPointer = ActiveSong->_sequence[SeqPointer];
 		CurrentLine = Patterns[PatPointer];
 		MusicStatus = ON;
 	}
@@ -339,7 +339,7 @@ void DecodePatternLine() {
 		switch (PlaybackMode) {
 		case NORMAL_PLAYBACK:
 			if (SeqPointer < ActiveSong->lied_len) {
-				PatPointer = ActiveSong->sequenz[SeqPointer];
+				PatPointer = ActiveSong->_sequence[SeqPointer];
 				CurrentLine = Patterns[PatPointer];
 			} else {
 				if (LoopEnable == OFF)
@@ -347,7 +347,7 @@ void DecodePatternLine() {
 				else {
 					PatLine = 0;
 					SeqPointer = 0;
-					PatPointer = ActiveSong->sequenz[SeqPointer];
+					PatPointer = ActiveSong->_sequence[SeqPointer];
 					CurrentLine = Patterns[PatPointer];
 				}
 			}
@@ -355,7 +355,7 @@ void DecodePatternLine() {
 
 		case SEQUENCE_PLAYBACK:
 			if (SeqPointer != EndPos) {
-				PatPointer = ActiveSong->sequenz[SeqPointer];
+				PatPointer = ActiveSong->_sequence[SeqPointer];
 				CurrentLine = Patterns[PatPointer];
 			} else {
 				if (LoopEnable == OFF)
@@ -363,7 +363,7 @@ void DecodePatternLine() {
 				else {
 					PatLine = 0;
 					SeqPointer = StartPos;
-					PatPointer = ActiveSong->sequenz[SeqPointer];
+					PatPointer = ActiveSong->_sequence[SeqPointer];
 					CurrentLine = Patterns[PatPointer];
 				}
 			}

@@ -28,21 +28,21 @@ namespace Chewy {
 
 bool RoomInfo::load(Common::SeekableReadStream *src) {
 	_roomNr = src->readByte();
-	BildNr = src->readByte();
-	AutoMovAnz = src->readByte();
-	TafLoad = src->readByte();
-	src->read(TafName, 14);
+	_imageNr = src->readByte();
+	_autoMovNr = src->readByte();
+	_tafLoad = src->readByte();
+	src->read(_tafName, 14);
 	_zoomFactor = src->readByte();
-	Dummy = src->readByte();
+	_dummy = src->readByte();
 
 	return true;
 }
 
 bool RoomAutoMov::load(Common::SeekableReadStream *src) {
-	X = src->readSint16LE();
-	Y = src->readSint16LE();
-	SprNr = src->readByte();
-	dummy = src->readByte();
+	_x = src->readSint16LE();
+	_y = src->readSint16LE();
+	_sprNr = src->readByte();
+	_dummy = src->readByte();
 
 	return true;
 }
@@ -104,8 +104,8 @@ bool StaticDetailInfo::load(Common::SeekableReadStream *src) {
 bool RoomDetailInfo::load(Common::SeekableReadStream *src) {
 	int i;
 
-	StaticDetailAnz = src->readSint16LE();
-	AniDetailAnz = src->readSint16LE();
+	_staticDetailNr = src->readSint16LE();
+	_aniDetailNr = src->readSint16LE();
 	src->skip(4);	// dptr
 	for (i = 0; i < MAXDETAILS; ++i)
 		Ainfo[i].load(src);
@@ -127,7 +127,7 @@ bool RoomDetailInfo::load(Common::SeekableReadStream *src) {
 
 bool RdiDataHeader::load(Common::SeekableReadStream *src) {
 	src->read(_id, 4);
-	Anz = src->readSint16LE();
+	_nr = src->readSint16LE();
 
 	return true;
 }
@@ -248,11 +248,11 @@ void Detail::load_taf_tbl(TafInfo *fti) {
 TafInfo *Detail::init_taf_tbl(const char *fname_) {
 	TafInfo *Tt = nullptr;
 	SpriteResource *res = new SpriteResource(_tafName);
-	int16 anz = res->getChunkCount();
-	byte *tmp = (byte *)MALLOC((int32)anz * sizeof(byte *) + sizeof(TafInfo));
+	int16 nr = res->getChunkCount();
+	byte *tmp = (byte *)MALLOC((int32)nr * sizeof(byte *) + sizeof(TafInfo));
 
 	Tt = (TafInfo *)tmp;
-	Tt->_count = anz;
+	Tt->_count = nr;
 	Tt->_correction = (int16 *)MALLOC((int32)Tt->_count * 2 * sizeof(int16));
 	Tt->_image = (byte **)(tmp + sizeof(TafInfo));
 	memcpy(Tt->_correction, (byte *)res->getSpriteCorrectionsTable(), Tt->_count * 2 * sizeof(int16));
@@ -274,10 +274,10 @@ void Detail::del_taf_tbl(TafInfo *Tt) {
 	free((char *) Tt);
 }
 
-void Detail::del_taf_tbl(int16 start, int16 anz, TafInfo *Tt) {
+void Detail::del_taf_tbl(int16 start, int16 nr, TafInfo *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
-	for (int16 i = start; i < start + anz && i < Tt->_count; i++) {
+	for (int16 i = start; i < start + nr && i < Tt->_count; i++) {
 		free(Tt->_image[i]);
 		Tt->_image[i] = nullptr;
 	}
@@ -570,7 +570,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
 		spr_nr = adiptr->end_ani - 1;
-	int16 *Cxy = _rdi.dptr->_correction + (spr_nr << 1);
+	int16 *Cxy = &_rdi.dptr->_correction[spr_nr];
 	int16 *Xy = (int16 *)_rdi.dptr->_image[spr_nr];
 	_sprInfo._image = _rdi.dptr->_image[spr_nr];
 	_sprInfo._x = adiptr->x + Cxy[0] - scrx;

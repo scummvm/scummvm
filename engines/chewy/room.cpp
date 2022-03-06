@@ -27,14 +27,14 @@
 
 namespace Chewy {
 
-const int16 SURIMY_TAF19_PHASEN[4][2] = {
+const int16 SURIMY_TAF19_PHASES[4][2] = {
 	{ 0, 0 },
 	{ 39, 46 },
 	{ 0, 0 },
 	{ 0, 0 }
 };
 
-static const uint8 CHEWY_PHASEN[8][8] = {
+static const uint8 CHEWY_PHASES[8][8] = {
 	{  0, 1, 2, 3, 4, 5, 6, 7 },
 	{  8, 9, 10, 11, 12, 13, 14, 15 },
 	{ 16, 17, 18, 19, 20, 21, 22, 23 },
@@ -45,9 +45,9 @@ static const uint8 CHEWY_PHASEN[8][8] = {
 	{ 51, 52, 53, 52, 51 }
 };
 
-static const uint8 CHEWY_PHASEN_ANZ[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
+static const uint8 CHEWY_PHASE_NR[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
 
-static const uint8 CHEWY_BO_PHASEN[8][8] = {
+static const uint8 CHEWY_BO_PHASES[8][8] = {
 	{  0, 1, 2, 3, 4, 5 },
 	{  6, 7, 8, 9, 10, 11 },
 	{ 12, 13, 14, 15, 16, 17 },
@@ -58,9 +58,9 @@ static const uint8 CHEWY_BO_PHASEN[8][8] = {
 	{ 27, 28, 29, 28, 27 }
 };
 
-static const uint8 CHEWY_BO_PHASEN_ANZ[] = { 6, 6, 6, 6, 5, 6, 6, 5 };
+static const uint8 CHEWY_BO_PHASE_NR[] = { 6, 6, 6, 6, 5, 6, 6, 5 };
 
-static const uint8 CHEWY_MI_PHASEN[8][8] = {
+static const uint8 CHEWY_MI_PHASES[8][8] = {
 	{  0, 1, 2, 3, 4, 5, 6, 7 },
 	{  8, 9, 10, 11, 12, 13, 14, 15 },
 	{ 24, 25, 26, 27, 28, 29, 30, 31 },
@@ -71,9 +71,9 @@ static const uint8 CHEWY_MI_PHASEN[8][8] = {
 	{ 35, 36, 37, 36, 35 }
 };
 
-static const uint8 CHEWY_MI_PHASEN_ANZ[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
+static const uint8 CHEWY_MI_PHASE_NR[] = { 8, 8, 8, 8, 5, 8, 8, 5 };
 
-static const uint8 CHEWY_RO_PHASEN[8][8] = {
+static const uint8 CHEWY_RO_PHASES[8][8] = {
 	{  0, 1, 2, 3, 4, 5, 6, 7 },
 	{  8, 9, 10, 11, 12, 13, 14, 15 },
 	{ 24, 25, 26, 27, 28, 29, 30, 31 },
@@ -84,19 +84,20 @@ static const uint8 CHEWY_RO_PHASEN[8][8] = {
 	{ 37, 38, 39, 40, 41, 40, 39, 38 }
 };
 
-static const uint8 CHEWY_RO_PHASEN_ANZ[] = { 8, 8, 8, 8, 8, 8, 8, 8 };
+static const uint8 CHEWY_RO_PHASE_NR[] = { 8, 8, 8, 8, 8, 8, 8, 8 };
 
-static const uint8 CHEWY_JM_PHASEN[8][8] = {
-	{  0, 1, 2, 3, 4, 5, 6, 7 },
-	{  8, 9, 10, 11, 12, 13, 14, 15 },
+static const uint8 CHEWY_JM_PHASES[8][8] = {
+	{  0,  1,  2,  3,  4,  5,  6,  7 },
+	{  8,  9, 10, 11, 12, 13, 14, 15 },
 	{ 16, 17, 18, 19, 20, 21, 22, 23 },
 	{ 16, 17, 18, 19, 20, 21, 22, 23 },
 	{ 24, 25, 26, 27, 27, 26, 25, 24 },
-	{  8, 9, 10, 11, 12, 13, 14, 15 },
-	{  8, 9, 10, 11, 12, 13, 14, 15 },
+	{  8,  9, 10, 11, 12, 13, 14, 15 },
+	{  8,  9, 10, 11, 12, 13, 14, 15 },
 	{ 28, 29, 30, 31, 31, 30, 29, 28 }
 };
 
+static const uint8 CHEWY_JM_PHASE_NR[] = {8, 8, 8, 8, 8, 8, 8, 8};
 
 void JungleRoom::topEntry() {
 	_G(cur_hide_flag) = 0;
@@ -145,17 +146,19 @@ void JungleRoom::setup_func() {
 }
 
 Room::Room() {
-	_roomTimer.TimerAnz = 0;
-	_roomTimer.TimerStart = 0;
+	_roomTimer._timerMaxNr = 0;
+	_roomTimer._timerStart = 0;
 	init_ablage();
 	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
-		_roomHandle[i] = 0;
+		_roomHandle[i] = nullptr;
 }
 
 Room::~Room() {
-	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
+	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++) {
 		if (_roomHandle[i])
 			delete _roomHandle[i];
+	}
+
 	free_ablage();
 }
 
@@ -183,17 +186,17 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		_G(det)->disable_room_sound();
 	RoomDetailInfo *Rdi_ = _G(det)->getRoomDetailInfo();
 	_roomInfo = &Rdi_->Ri;
-	if (_roomInfo->TafLoad != 255) {
+	if (_roomInfo->_tafLoad != 255) {
 		char tmp_str[MAXPATH];
 		strcpy(tmp_str, Rb->RoomDir);
-		strcat(tmp_str, _roomInfo->TafName);
-		_G(det)->load_rdi_taf(tmp_str, _roomInfo->TafLoad);
+		strcat(tmp_str, _roomInfo->_tafName);
+		_G(det)->load_rdi_taf(tmp_str, _roomInfo->_tafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
 		Rb->_detImage = Rb->Fti->_image;
 		Rb->DetKorrekt = Rb->Fti->_correction;
 	}
 	_G(obj)->calc_all_static_detail();
-	load_tgp(_roomInfo->BildNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
+	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 	calc_invent(Rb, player);
 
@@ -208,13 +211,13 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 }
 
 void Room::set_timer_start(int16 timer_start) {
-	_roomTimer.TimerStart = timer_start;
+	_roomTimer._timerStart = timer_start;
 }
 
 void Room::add_timer_new_room() {
-	_roomTimer.TimerAnz = 0;
+	_roomTimer._timerMaxNr = 0;
 
-	for (int i = 0; i < MAXDETAILS && _roomTimer.TimerAnz < MAX_ROOM_TIMER; i++) {
+	for (int i = 0; i < MAXDETAILS && _roomTimer._timerMaxNr < MAX_ROOM_TIMER; i++) {
 		AniDetailInfo *adi = _G(det)->getAniDetail(i);
 		if (adi->timer_start != 0) {
 			set_timer(i, adi->timer_start);
@@ -225,31 +228,31 @@ void Room::add_timer_new_room() {
 }
 
 void Room::del_timer_old_room() {
-	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
-		_G(uhr)->setStatus(_roomTimer.TimerNr[i], TIMER_STOP);
+	for (int i = 0; i < _roomTimer._timerMaxNr; i++) {
+		_G(uhr)->setStatus(_roomTimer._timerNr[i], TIMER_STOP);
 
 	}
 
-	_roomTimer.TimerAnz = 0;
+	_roomTimer._timerMaxNr = 0;
 }
 
 int16 Room::set_timer(int16 ani_nr, int16 timer_end) {
 
-	int16 timer_nr_ = _roomTimer.TimerStart + _roomTimer.TimerAnz;
+	int16 timer_nr_ = _roomTimer._timerStart + _roomTimer._timerMaxNr;
 	int16 ret = _G(uhr)->setNewTimer(timer_nr_, timer_end, SEC_MODE);
 	if (ret != -1) {
-		_roomTimer.ObjNr[_roomTimer.TimerAnz] = ani_nr;
-		_roomTimer.TimerNr[_roomTimer.TimerAnz] = timer_nr_;
-		++_roomTimer.TimerAnz;
+		_roomTimer._objNr[_roomTimer._timerMaxNr] = ani_nr;
+		_roomTimer._timerNr[_roomTimer._timerMaxNr] = timer_nr_;
+		++_roomTimer._timerMaxNr;
 	}
 
 	return timer_nr_;
 }
 
 void Room::set_timer_status(int16 ani_nr, int16 status) {
-	for (int i = 0; i < _roomTimer.TimerAnz; i++) {
-		if (_roomTimer.ObjNr[i] == ani_nr) {
-			_G(uhr)->setStatus(_roomTimer.TimerNr[i], status);
+	for (int i = 0; i < _roomTimer._timerMaxNr; i++) {
+		if (_roomTimer._objNr[i] == ani_nr) {
+			_G(uhr)->setStatus(_roomTimer._timerNr[i], status);
 		}
 	}
 }
@@ -336,8 +339,8 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 				_roomHandle[R_GEP_DATA]);
 			_G(ged)->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
 						        nr, _gedMem[Rb->AkAblage]);
-			_gedXAnz[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
-			_gedYAnz[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
+			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
+			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
 		}
 	}
 
@@ -443,24 +446,24 @@ int16 Room::get_ablage(int16 pic_nr, uint32 pic_size) {
 
 int16 Room::get_ablage_g1(int16 ablage_bedarf, int16 ak_pos) {
 	short ret = 0;
-	int16 ende = 0;
+	bool endLoop = false;
 	int16 count = 0;
 	_lastAblageSave = ak_pos;
-	while (!ende) {
+	while (!endLoop) {
 		if (_lastAblageSave >= MAX_ABLAGE)
 			_lastAblageSave = 0;
 		if (ablage_bedarf == 1) {
-			ende = 1;
+			endLoop = true;
 			ret = _lastAblageSave;
 		} else if (ablage_bedarf <= MAX_ABLAGE - _lastAblageSave) {
-			ende = 1;
+			endLoop = true;
 			ret = _lastAblageSave;
 		} else
 			++_lastAblageSave;
 		++count;
 		if (count > MAX_ABLAGE) {
 			ret = -1;
-			ende = 1;
+			endLoop = true;
 		}
 	}
 	return ret;
@@ -487,60 +490,60 @@ void load_chewy_taf(int16 taf_nr) {
 		}
 		_G(spieler_mi)[P_CHEWY].HotY = CH_HOT_Y;
 
-		const char *fname_;
+		const char *filename;
 		switch (taf_nr) {
 		case CHEWY_NORMAL:
-			fname_ = CHEWY_TAF;
-			_G(chewy_ph_anz) = CHEWY_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_PHASEN;
+			filename = CHEWY_TAF;
+			_G(chewy_ph_nr) = CHEWY_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_PHASES;
 			break;
 
 		case CHEWY_BORK:
-			fname_ = CHEWY_BO_TAF;
-			_G(chewy_ph_anz) = CHEWY_BO_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_BO_PHASEN;
+			filename = CHEWY_BO_TAF;
+			_G(chewy_ph_nr) = CHEWY_BO_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_BO_PHASES;
 			break;
 
 		case CHEWY_MINI:
-			fname_ = CHEWY_MI_TAF;
-			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
+			filename = CHEWY_MI_TAF;
+			_G(chewy_ph_nr) = CHEWY_MI_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASES;
 			break;
 
 		case CHEWY_PUMPKIN:
-			fname_ = CHEWY_PUMP_TAF;
-			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
+			filename = CHEWY_PUMP_TAF;
+			_G(chewy_ph_nr) = CHEWY_MI_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASES;
 			break;
 
 		case CHEWY_ROCKER:
-			fname_ = CHEWY_ROCK_TAF;
-			_G(chewy_ph_anz) = CHEWY_RO_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_RO_PHASEN;
+			filename = CHEWY_ROCK_TAF;
+			_G(chewy_ph_nr) = CHEWY_RO_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_RO_PHASES;
 			break;
 
 		case CHEWY_JMANS:
-			fname_ = CHEWY_JMAN_TAF;
-			_G(chewy_ph_anz) = CHEWY_RO_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_JM_PHASEN;
+			filename = CHEWY_JMAN_TAF;
+			_G(chewy_ph_nr) = CHEWY_JM_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_JM_PHASES;
 			_G(spieler_mi)[P_CHEWY].HotY = 68;
 			break;
 
 		case CHEWY_ANI7:
-			fname_ = CHEWY_HELM_TAF;
-			_G(chewy_ph_anz) = CHEWY_MI_PHASEN_ANZ;
-			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASEN;
+			filename = CHEWY_HELM_TAF;
+			_G(chewy_ph_nr) = CHEWY_MI_PHASE_NR;
+			_G(chewy_ph) = (const uint8 *)CHEWY_MI_PHASES;
 			break;
 
 		default:
-			fname_ = NULL;
+			filename = nullptr;
 			break;
 
 		}
-		if (fname_ != NULL) {
+		if (filename != nullptr) {
 			_G(spieler).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
-			_G(chewy) = _G(mem)->taf_adr(fname_);
+			_G(chewy) = _G(mem)->taf_adr(filename);
 			_G(chewy_kor) = _G(chewy)->_correction;
 		}
 	}

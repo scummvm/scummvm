@@ -201,7 +201,7 @@ void MainMenu::startGame() {
 	_G(room)->loadRoom(&_G(room_blk), 0, &_G(spieler));
 
 	_G(spieler_vector)[P_CHEWY].Phase = 6;
-	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_anz)[6];
+	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(spieler)._personHide[P_CHEWY] = false;
@@ -243,7 +243,7 @@ void MainMenu::playGame() {
 	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
 	_G(mouseLeftClick) = false;
-	_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 
 	_G(flags).mainMouseFlag = false;
 	_G(flags).MainInput = true;

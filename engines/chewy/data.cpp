@@ -43,11 +43,11 @@ uint16 Data::select_pool_item(Common::Stream *stream, uint16 nr) {
 		if (!ph.load(rs))
 			error("select_pool_item error");
 
-		if (!strncmp(ph.id, "NGS", 3)) {
-			if (nr >= ph.PoolAnz)
-				nr = ph.PoolAnz - 1;
+		if (!strncmp(ph._id, "NGS", 3)) {
+			if (nr >= ph._poolNr)
+				nr = ph._poolNr - 1;
 
-			rs->seek(-(int)((ph.PoolAnz - nr) * sizeof(uint32)), SEEK_END);
+			rs->seek(-(int)((ph._poolNr - nr) * sizeof(uint32)), SEEK_END);
 			uint32 tmp1 = rs->readUint32LE();
 			rs->seek(tmp1, SEEK_SET);
 		}
@@ -76,7 +76,7 @@ uint32 Data::load_tmf(Common::Stream *handle, TmfHeader *song) {
 
 		size = ch.size + sizeof(TmfHeader);
 		byte *speicher = (byte *)song + sizeof(TmfHeader);
-		speicher += ((uint32)song->pattern_anz) * 1024l;
+		speicher += ((uint32)song->_patternNr) * 1024l;
 		for (int16 i = 0; i < 31; ++i) {
 			if (song->instrument[i].laenge) {
 				song->ipos[i] = speicher;
@@ -99,11 +99,11 @@ uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz)
 	if (!Nph.load(&f))
 		error("get_poolsize error");
 
-	if (!strncmp(Nph.id, "NGS", 3)) {
+	if (!strncmp(Nph._id, "NGS", 3)) {
 		select_pool_item(&f, chunk_start);
 		f.seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-		for (int16 i = chunk_start; (i < Nph.PoolAnz) && i < (chunk_start + chunk_anz); i++) {
+		for (int16 i = chunk_start; (i < Nph._poolNr) && i < (chunk_start + chunk_anz); i++) {
 			ChunkHead ch;
 			if (!ch.load(&f))
 				error("get_poolsize error");

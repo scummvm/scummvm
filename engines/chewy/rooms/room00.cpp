@@ -750,8 +750,8 @@ void Room0::feederAni() {
 
 			_G(spieler)._personRoomNr[P_CHEWY] = 1;
 			_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
-			setPersonPos(_G(Rdi)->AutoMov[4].X - CH_HOT_MOV_X,
-			               _G(Rdi)->AutoMov[4].Y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
+			setPersonPos(_G(Rdi)->AutoMov[4]._x - CH_HOT_MOV_X,
+			               _G(Rdi)->AutoMov[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 
 			check_shad(4, 0);

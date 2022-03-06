@@ -425,7 +425,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (_G(minfo)._button) {
 			if (_G(minfo)._button == 2) {
 				if (!mouseFl)
-					_G(kbinfo).scan_code = Common::KEYCODE_ESCAPE;
+					_G(kbinfo)._scanCode = Common::KEYCODE_ESCAPE;
 			} else if (_G(minfo)._button == 1) {
 				if (!mouseFl) {
 					switch (rect) {
@@ -441,12 +441,12 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 					case 3:
 					case 6:
-						_G(kbinfo).scan_code = Common::KEYCODE_UP;
+						_G(kbinfo)._scanCode = Common::KEYCODE_UP;
 						break;
 
 					case 4:
 					case 7:
-						_G(kbinfo).scan_code = Common::KEYCODE_DOWN;
+						_G(kbinfo)._scanCode = Common::KEYCODE_DOWN;
 						break;
 
 					case 5:
@@ -465,7 +465,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			mouseFl = false;
 		}
 
-		switch (_G(kbinfo).scan_code) {
+		switch (_G(kbinfo)._scanCode) {
 		case Common::KEYCODE_F1:
 			_G(in)->_hotkey = Common::KEYCODE_F1;
 			break;
@@ -492,7 +492,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 		}
 
-		_G(kbinfo).scan_code = Common::KEYCODE_INVALID;
+		_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(fontMgr)->setFont(_G(font8));

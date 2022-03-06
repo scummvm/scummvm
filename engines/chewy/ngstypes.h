@@ -41,9 +41,9 @@ struct TafSeqInfo {
 };
 
 struct NewPhead {
-	char id[4] = { 0 };
-	uint16 type = 0;
-	uint16 PoolAnz = 0;
+	char _id[4] = { 0 };
+	uint16 _type = 0;
+	uint16 _poolNr = 0;
 
 	bool load(Common::SeekableReadStream *src);
 };
@@ -54,7 +54,7 @@ struct MouseInfo {
 
 struct KbdInfo {
 	char _keyCode = '\0';
-	int scan_code = Common::KEYCODE_INVALID;
+	int _scanCode = Common::KEYCODE_INVALID;
 };
 
 struct KbdMouseInfo {
@@ -75,8 +75,8 @@ struct TmfHeader {
 	char id[4] = { 0 };
 	TmfInst instrument[31];
 	uint8 lied_len = 0;
-	uint8 pattern_anz = 0;
-	uint8 sequenz[128] = { 0 };
+	uint8 _patternNr = 0;
+	uint8 _sequence[128] = { 0 };
 	byte *ipos[31] = { nullptr };
 
 	bool load(Common::SeekableReadStream *src);
@@ -108,8 +108,8 @@ struct IogInit {
 };
 
 struct GedPoolHeader {
-	char Id[4] = { 0 };
-	int16 Anz = 0;
+	char _id[4] = { 0 };
+	int16 _nr = 0;
 
 	bool load(Common::SeekableReadStream *src);
 };

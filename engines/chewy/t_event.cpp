@@ -37,7 +37,7 @@ int16 loadAdsDia(int16 diaNr) {
 			_G(atds)->load_atds(diaNr, ADH_DATA);
 			ret = true;
 			_G(ads_blk_nr) = 0;
-			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_anz));
+			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_nr));
 			_G(flags).AdsDialog = true;
 			_G(ads_push) = true;
 			_G(ads_tmp_dsp) = _G(spieler).DispFlag;

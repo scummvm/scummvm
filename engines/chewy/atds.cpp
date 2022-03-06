@@ -593,7 +593,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 						_mousePush = true;
 						_atsv.DelayCount = 0;
 						KbdInfo *kbInfo = _G(in)->getPointer()->kbinfo;
-						kbInfo->scan_code = Common::KEYCODE_INVALID;
+						kbInfo->_scanCode = Common::KEYCODE_INVALID;
 						kbInfo->_keyCode = '\0';
 					}
 				}
@@ -940,7 +940,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
 						KbdInfo *kbInfo = _G(in)->getPointer()->kbinfo;
-						kbInfo->scan_code = Common::KEYCODE_INVALID;
+						kbInfo->_scanCode = Common::KEYCODE_INVALID;
 						kbInfo->_keyCode = '\0';
 					}
 				}
