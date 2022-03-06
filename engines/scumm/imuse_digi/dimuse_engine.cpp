@@ -103,13 +103,18 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SMUSH, 198000, 0, 0);
 
 	if (_mixer->getOutputBufSize() != 0) {
-		_maxQueuedStreams = (_mixer->getOutputBufSize() / _waveOutPreferredFeedSize) + 1;
-		// This mixer's optimal output sample rate for this audio engine is 44100
-		// if it's higher than that, compensate the number of queued streams in order
-		// to try to achieve a better latency compromise
-		if (_mixer->getOutputRate() > DIMUSE_SAMPLERATE * 2) {
-			_maxQueuedStreams -= 2;
+		// Let's find the optimal value for the maximum number of streams which can stay in the queue at once;
+		// (A number which is too low can lead to buffer underrun, while the higher the number is, the higher is the audio latency)
+		_maxQueuedStreams = (int)ceil((_mixer->getOutputBufSize() / _waveOutPreferredFeedSize) / ((float)_mixer->getOutputRate() / DIMUSE_SAMPLERATE));
+
+		// This mixer's optimal output sample rate for this audio engine is one which is a multiple of 22050Hz;
+		// if we're dealing with one which is a multiple of 48000Hz, compensate the number of queued streams...
+		if (_mixer->getOutputRate() % DIMUSE_SAMPLERATE) {
+			_maxQueuedStreams++;
 		}
+
+		// The lower optimal bound is always 5, except if we're operating in low latency mode
+		_maxQueuedStreams = MAX(_mixer->getOutputBufSize() <= 1024 ? 4 : 5, _maxQueuedStreams);
 	} else {
 		debug(5, "IMuseDigital::IMuseDigital(): WARNING: output audio buffer size not specified for this platform, defaulting _maxQueuedStreams to 4");
 		_maxQueuedStreams = 4;
