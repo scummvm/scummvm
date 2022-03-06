@@ -114,10 +114,10 @@ struct VideoChunk {
 	uint32 firstFrameOffset;
 };
 
-// Item chunk header (AdsBlock)
+// Dialog chunk header (AdsBlock)
 // Original values are in diah.adh, and are synced
 // to saved games
-struct ItemChunk {
+struct DialogChunk {
 	bool show[6];
 	uint8 next[6];
 	uint8 flags[6];
@@ -203,12 +203,12 @@ public:
 	Common::SeekableReadStream *getVideoStream(uint num);
 };
 
-class ItemResource : public Resource {
+class DialogResource : public Resource {
 public:
-	ItemResource(Common::String filename);
-	virtual ~ItemResource();
+	DialogResource(Common::String filename);
+	virtual ~DialogResource();
 
-	ItemChunk *getItem(uint block);
+	DialogChunk *getDialog(uint block);
 	bool isItemShown(uint block, uint num);
 	void setItemShown(uint block, uint num, bool shown);
 	bool hasExitBit(uint block, uint num);
@@ -222,14 +222,13 @@ public:
 		return _stream.size();
 	}
 
-	// HACK: The following functions allow direct access
+	// HACK: The following function allows direct access
 	// to the stream, and should be removed
-	void readFromStream(byte *data);
-	void writeToStream(byte *data);
+	void updateChunk(uint num, byte *data);
 
 private:
-	Common::MemorySeekableReadWriteStream *_itemStream;
-	byte *_itemBuffer;
+	Common::MemorySeekableReadWriteStream *_dialogStream;
+	byte *_dialogBuffer;
 };
 
 } // namespace Chewy

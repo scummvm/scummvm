@@ -328,91 +328,90 @@ Common::SeekableReadStream *VideoResource::getVideoStream(uint num) {
 	return new Common::SeekableSubReadStream(&_stream, chunk->pos, chunk->pos + chunk->size);
 }
 
-ItemResource::ItemResource(Common::String filename) : Resource(filename) {
-	_itemBuffer = new byte[_stream.size()];
+DialogResource::DialogResource(Common::String filename) : Resource(filename) {
+	_dialogBuffer = new byte[_stream.size()];
 	_stream.seek(0, SEEK_SET);
-	_itemStream = new Common::MemorySeekableReadWriteStream(_itemBuffer, _stream.size());
-	_itemStream->writeStream(&_stream);
+	_dialogStream = new Common::MemorySeekableReadWriteStream(_dialogBuffer, _stream.size());
+	_dialogStream->writeStream(&_stream);
 }
 
-ItemResource::~ItemResource() {
-	delete _itemStream;
-	delete _itemBuffer;
+DialogResource::~DialogResource() {
+	delete _dialogStream;
+	delete _dialogBuffer;
 }
 
-ItemChunk *ItemResource::getItem(uint block) {
+DialogChunk *DialogResource::getDialog(uint block) {
 	Chunk *chunk = &_chunkList[block];
-	ItemChunk *item = new ItemChunk();
+	DialogChunk *item = new DialogChunk();
 
-	_itemStream->seek(chunk->pos, SEEK_SET);
+	_dialogStream->seek(chunk->pos, SEEK_SET);
 
-	_itemStream->read(item->show, 6);
-	_itemStream->read(item->next, 6);
-	_itemStream->read(item->flags, 6);
+	_dialogStream->read(item->show, 6);
+	_dialogStream->read(item->next, 6);
+	_dialogStream->read(item->flags, 6);
 
 	return item;
 }
 
-bool ItemResource::isItemShown(uint block, uint num) {
+bool DialogResource::isItemShown(uint block, uint num) {
 	Chunk *chunk = &_chunkList[block];
 
-	_itemStream->seek(chunk->pos, SEEK_SET);
+	_dialogStream->seek(chunk->pos, SEEK_SET);
 
-	_itemStream->skip(num);
-	return _itemStream->readByte();
+	_dialogStream->skip(num);
+	return _dialogStream->readByte();
 }
 
-void ItemResource::setItemShown(uint block, uint num, bool shown) {
+void DialogResource::setItemShown(uint block, uint num, bool shown) {
 	Chunk *chunk = &_chunkList[block];
 
-	_itemStream->seek(chunk->pos, SEEK_SET);
+	_dialogStream->seek(chunk->pos, SEEK_SET);
 
-	_itemStream->skip(num);
-	_itemStream->writeByte(shown ? 1 : 0);
+	_dialogStream->skip(num);
+	_dialogStream->writeByte(shown ? 1 : 0);
 }
 
-bool ItemResource::hasExitBit(uint block, uint num) {
-	ItemChunk *item = getItem(block);
+bool DialogResource::hasExitBit(uint block, uint num) {
+	DialogChunk *item = getDialog(block);
 	const bool isExit = (item->flags[num] & ADS_EXIT_BIT) != 0;
 	delete item;
 
 	return isExit;
 }
 
-bool ItemResource::hasRestartBit(uint block, uint num) {
-	ItemChunk *item = getItem(block);
+bool DialogResource::hasRestartBit(uint block, uint num) {
+	DialogChunk *item = getDialog(block);
 	const bool isRestart = (item->flags[num] & ADS_RESTART_BIT) != 0;
 	delete item;
 
 	return isRestart;
 }
 
-bool ItemResource::hasShowBit(uint block, uint num) {
-	ItemChunk *item = getItem(block);
+bool DialogResource::hasShowBit(uint block, uint num) {
+	DialogChunk *item = getDialog(block);
 	const bool isShown = (item->flags[num] & ADS_SHOW_BIT) != 0;
 	delete item;
 
 	return isShown;
 }
 
-void ItemResource::loadStream(Common::SeekableReadStream *s) {
-	_itemStream->seek(0, SEEK_SET);
-	_itemStream->writeStream(s, _stream.size());
+void DialogResource::loadStream(Common::SeekableReadStream *s) {
+	_dialogStream->seek(0, SEEK_SET);
+	_dialogStream->writeStream(s, _stream.size());
 }
 
-void ItemResource::saveStream(Common::WriteStream* s) {
-	_itemStream->seek(0, SEEK_SET);
-	s->writeStream(_itemStream, _stream.size());
+void DialogResource::saveStream(Common::WriteStream* s) {
+	_dialogStream->seek(0, SEEK_SET);
+	s->writeStream(_dialogStream, _stream.size());
 }
 
-void ItemResource::readFromStream(byte *data) {
-	_itemStream->seek(0, SEEK_SET);
-	_itemStream->read(data, _stream.size());
-}
+void DialogResource::updateChunk(uint num, byte *data) {
+	assert(num < _chunkList.size());
 
-void ItemResource::writeToStream(byte *data) {
-	_itemStream->seek(0, SEEK_SET);
-	_itemStream->write(data, _stream.size());
+	Chunk *chunk = &_chunkList[num];
+
+	_stream.seek(chunk->pos, SEEK_SET);
+	_dialogStream->write(data, chunk->size);
 }
 
 }
