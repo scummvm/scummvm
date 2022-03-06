@@ -116,8 +116,8 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canLoadGameStateCurrently() { return true; }
-	bool canSaveGameStateCurrently() { return _userEnabled; }
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return false; }
 
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String(), bool allowInitialise = true);
 	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
