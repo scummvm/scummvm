@@ -75,23 +75,19 @@ extern SCNHANDLE GetSceneHandle();
 
 extern void ResetVarsDrives();
 extern void ResetVarsEvents();
-extern void RebootScalingReels();
 extern void ResetVarsMove();
 extern void ResetVarsPalette();
 extern void ResetVarsPCode();
 extern void ResetVarsPDisplay();
 extern void ResetVarsPlay();
 extern void ResetVarsPolygons();
-extern void RebootMovers();
 extern void ResetVarsSaveLoad();
 extern void ResetVarsSaveScn();
 extern void ResetVarsScene();
 extern void ResetVarsSched();
 extern void ResetVarsStrRes();
-extern void FreeTextBuffer();
 extern void ResetVarsSysVar();
 extern void FreeAllTokens();
-extern void RebootTimers();
 extern void ResetVarsTinlib();
 
 //----------------- FORWARD DECLARATIONS  ---------------------
