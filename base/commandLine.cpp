@@ -157,6 +157,9 @@ static const char HELP_STRING[] =
 #ifndef DISABLE_NUKED_OPL
 																	 ", nuked"
 #endif
+#ifdef USE_ALSA
+																	 ", alsa"
+#endif
 #ifdef ENABLE_OPL2LPT
 																	 ", opl2lpt"
 #endif
