@@ -364,7 +364,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (segments[_segmentIdx].end || _skipLevel) {
 			skipVideo(background);
 			// Objectives
-			if ((_objKillsCount[_objIdx] > 0 || _objMissesCount[_objIdx] > 0) && !_skipLevel) {
+			if ((arc->objKillsRequired[_objIdx] > 0 || arc->objMissesAllowed[_objIdx] > 0) && !_skipLevel) {
 				if (_objKillsCount[_objIdx] < arc->objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > arc->objMissesAllowed[_objIdx]) {
 					if (!arc->defeatMissBossVideo.empty()) {
 						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
