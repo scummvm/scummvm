@@ -84,6 +84,18 @@
 		#define GL_MAX_SAMPLES 0x8D57
 	#endif
 
+#elif USE_FORCED_GLES
+
+	#define GL_GLEXT_PROTOTYPES
+	#if defined(IPHONE)
+		#include <OpenGLES/ES1/gl.h>
+		#include <OpenGLES/ES1/glext.h>
+	#else
+		#include <GLES/gl.h>
+		#include <GLES/glext.h>
+	#endif
+	#undef GL_GLEXT_PROTOTYPES
+
 #endif
 #endif
 
