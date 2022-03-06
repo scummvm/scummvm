@@ -59,7 +59,6 @@ public:
 
 	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
 	                 int16 hoehe, int16 scrwidth);
-	void blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth);
 	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
@@ -70,7 +69,6 @@ public:
 	int16 scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth, const char *string, ...);
 	void printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
 	    const char *format);
-	void vorschub();
 	void move(int16 x, int16 y);
 
 private:

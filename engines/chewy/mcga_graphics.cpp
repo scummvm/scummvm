@@ -219,10 +219,6 @@ void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth) {
 	mspr_set_mcga(sptr, x, y, scrwidth);
 }
 
-void McgaGraphics::blockcopy(byte *sptr, int16 x, int16 y, int16 scrwidth) {
-	spr_set_mcga(sptr, x, y, scrwidth);
-}
-
 void McgaGraphics::map_spr2screen(byte *sptr, int16 x, int16 y) {
 	int16 br = ((int16 *)sptr)[0];
 	int16 h = ((int16 *)sptr)[1];
@@ -695,10 +691,6 @@ void McgaGraphics::printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scr
 
 	textSurface->free();
 	delete textSurface;
-}
-
-void McgaGraphics::vorschub() {
-	vors();
 }
 
 void McgaGraphics::move(int16 x, int16 y) {

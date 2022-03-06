@@ -103,10 +103,6 @@ void mem2mcga(const byte *ptr) {
 	g_screen->markAllDirty();
 }
 
-void mem2mem(const byte *ptr1, byte *ptr2) {
-	Common::copy(ptr1, ptr1 + (SCREEN_WIDTH * SCREEN_HEIGHT), ptr2);
-}
-
 void map_spr_2screen(const byte *sptr, int16 x, int16 y) {
 	const int width = *((const int16 *)sptr);
 	sptr += 4 + y * width + x;
