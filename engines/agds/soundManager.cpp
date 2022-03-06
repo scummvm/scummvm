@@ -94,7 +94,7 @@ void SoundManager::stopAll() {
 }
 
 int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int id) {
-	debug("SoundMan::play '%s' '%s' '%s' '%s' %d %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, id);
+	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d id: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, id);
 	if (filename.empty())
 		return -1;
 
