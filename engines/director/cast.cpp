@@ -224,7 +224,9 @@ bool Cast::loadConfig() {
 	_castArrayEnd = stream->readUint16();
 
 	// v3 and below use this, override for v4 and over
-	byte currentFrameRate = stream->readByte();
+	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
+	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
+	byte currentFrameRate = frameRates[stream->readByte()];
 
 	byte lightswitch = stream->readByte();
 	uint16 unk1 = stream->readUint16();
