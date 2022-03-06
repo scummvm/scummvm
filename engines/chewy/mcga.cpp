@@ -36,7 +36,7 @@ namespace Chewy {
 void init_mcga() {
 	_G(currentScreen) = (byte *)g_screen->getPixels();
 	_G(screenHasDefault) = false;
-	_G(screenDefaultP) = nullptr;
+	_G(screenDefaultPtr) = nullptr;
 	_G(spriteWidth) = 0;
 }
 

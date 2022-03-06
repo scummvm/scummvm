@@ -23,7 +23,6 @@
 #define CHEWY_MCGA_GRAPHICS_H
 
 #include "graphics/screen.h"
-#include "chewy/ngstypes.h"
 
 namespace Chewy {
 
@@ -33,11 +32,9 @@ public:
 	~McgaGraphics();
 
 	void init();
-	void setWriteMode(char wm);
 
 	void setClip(int16 x1, int16 y1, int16 x2, int16 y2);
 	void setPointer(byte *ptr);
-	byte *getPointer();
 
 	void setPalette(byte *palette);
 	void savePalette(byte *palette = nullptr);
@@ -74,17 +71,9 @@ public:
 private:
 	int16 devices();
 
-	float _sines[360];
-	float _cosines[360];
 	byte _palTable[PALETTE_SIZE];
-	uint8 _writeMode = 0;
-	int16 _crlfx = 0, _crlfy = 0;
-	int16 _fontBr = 0, _fontH = 0;
 	uint8 _svga = 0;
 	uint8 _einfuegen = 0;
-
-	void ltoa(long N, char *str, int base);
-	void ultoa(uint32 N, char *str, int base);
 };
 
 } // namespace Chewy

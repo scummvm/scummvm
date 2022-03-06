@@ -29,13 +29,7 @@
 
 namespace Chewy {
 
-#define MAXSTRING 255
-
 McgaGraphics::McgaGraphics() {
-	for (int i = 0; i < 360; i++) {
-		_sines[i] = sin(i * 3.14159265359 / 180);
-		_cosines[i] = cos(i * 3.14159265359 / 180);
-	}
 }
 
 McgaGraphics::~McgaGraphics() {
@@ -45,10 +39,6 @@ void McgaGraphics::init() {
 	_G(scr_w) = SCREEN_WIDTH;
 	_G(scr_h) = SCREEN_HEIGHT;
 	init_mcga();
-}
-
-void McgaGraphics::setWriteMode(char wm) {
-	_writeMode = wm;
 }
 
 void McgaGraphics::setClip(int16 x1, int16 y1, int16 x2, int16 y2) {
@@ -62,14 +52,10 @@ void McgaGraphics::setPointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
 	} else if (_G(screenHasDefault)) {
-		_G(currentScreen) = _G(screenDefaultP);
+		_G(currentScreen) = _G(screenDefaultPtr);
 	} else {
 		_G(currentScreen) = (byte *)g_screen->getPixels();
 	}
-}
-
-byte *McgaGraphics::getPointer() {
-	return get_dispoff();
 }
 
 void McgaGraphics::setPalette(byte *palette) {
@@ -716,14 +702,6 @@ void McgaGraphics::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 y
 		zoom_set(sptr, x, y, xdiff_, ydiff_, scrwidth);
 	else
 		mspr_set_mcga(sptr, x, y, scrwidth);
-}
-
-void McgaGraphics::ltoa(long N, char *str, int base) {
-	sprintf(str, "%ld", N);
-}
-
-void McgaGraphics::ultoa(uint32 N, char *str, int base) {
-	sprintf(str, "%u", N);
 }
 
 } // namespace Chewy

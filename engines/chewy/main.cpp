@@ -554,7 +554,7 @@ void setupScreen(SetupScreenMode mode) {
 						_G(gpkt).Hoehe = _G(room)->_gedYAnz[_G(room_blk).AkAblage];
 						_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
 						_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
-						_G(gpkt).AkMovEbene = _G(ged_mov_ebene);
+						_G(gpkt).AkMovEbene = 1;
 						_G(mov)->goto_xy(&_G(gpkt));
 						_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler_vector)[P_CHEWY].Xypos[0];
 						_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(spieler_vector)[P_CHEWY].Xypos[1];
@@ -1199,7 +1199,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(gpkt).Hoehe = _G(room)->_gedYAnz[_G(room_blk).AkAblage];
 			_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
 			_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
-			_G(gpkt).AkMovEbene = _G(ged_mov_ebene);
+			_G(gpkt).AkMovEbene = 1;
 			_G(mov)->goto_xy(&_G(gpkt));
 
 			_G(spieler_mi)[playerNum].XyzStart[0] = _G(spieler_vector)[playerNum].Xypos[0];

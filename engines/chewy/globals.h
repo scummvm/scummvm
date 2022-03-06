@@ -96,7 +96,6 @@ public:
 	int16 _zoom_mov_fak = 0;
 
 	int16 _auto_obj = 0;
-	int16 _ged_mov_ebene = 0;
 
 	bool _cur_display = false;
 	int16 _mouseLeftClick = 0;
@@ -273,7 +272,7 @@ public:
 	// mcga.cpp
 	byte _saved_palette[PALETTE_SIZE] = { 0 };
 	bool _screenHasDefault = false;
-	byte *_screenDefaultP = nullptr;
+	byte *_screenDefaultPtr = nullptr;
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp

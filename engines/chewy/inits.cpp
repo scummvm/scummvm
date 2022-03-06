@@ -49,7 +49,6 @@ void standard_init() {
 	_G(out)->cls();
 	_G(out)->savePalette();
 	_G(out)->setClip(0, 0, 320, 200);
-	_G(out)->setWriteMode(0);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();
 	_G(in)->neuer_kb_handler(&_G(kbinfo));
@@ -104,7 +103,6 @@ void var_init() {
 	_G(auto_p_nr) = 0;
 	_G(menu_item) = CUR_WALK;
 	_G(inventoryNr) = 0;
-	_G(ged_mov_ebene) = 1;
 	new_game();
 	_G(spieler).MainMenuY = MENU_Y;
 	_G(spieler).DispFlag = true;
