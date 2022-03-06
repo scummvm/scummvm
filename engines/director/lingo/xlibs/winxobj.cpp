@@ -41,6 +41,7 @@ const char *RearWindowXObj::xlibName = "RearWindow";
 const char *RearWindowXObj::fileNames[] = {
 	"RearWindow.Xobj",
 	"winXObj",
+	"RearWindow",
 	nullptr
 };
 

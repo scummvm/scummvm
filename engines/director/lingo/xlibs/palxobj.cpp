@@ -48,6 +48,7 @@ namespace Director {
 const char *PalXObj::xlibName = "FixPalette";
 const char *PalXObj::fileNames[] = {
 	"PalXObj",
+	"FixPalette",
 	nullptr
 };
 
