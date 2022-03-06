@@ -193,6 +193,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
 endif
+ifneq ($(DIST_FILES_SHADERS),)
+	cp $(DIST_FILES_SHADERS) $(bundle_name)/
+endif
 	$(STRIP) scummvm
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
@@ -308,6 +311,9 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
+endif
+ifneq ($(DIST_FILES_SHADERS),)
+	cp $(DIST_FILES_SHADERS) $(bundle_name)/
 endif
 	$(STRIP) scummvm
 	chmod 755 scummvm
