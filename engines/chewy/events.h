@@ -22,40 +22,128 @@
 #ifndef CHEWY_EVENTS_H
 #define CHEWY_EVENTS_H
 
-#include "chewy/events_base.h"
+#include "common/events.h"
+#include "common/queue.h"
+#include "graphics/screen.h"
 
 namespace Chewy {
 
 struct KbdInfo;
+typedef void (*TimerProc)();
 
-class EventsManager : public EventsBase {
+class EventsManager {
+	struct TimerRecord {
+		TimerProc _proc;
+		uint32 _interval;
+		uint32 _nextFrameTime;
+		TimerRecord(TimerProc proc, uint32 interval) : _proc(proc), _interval(interval), _nextFrameTime(0) {
+		}
+	};
+	typedef Common::List<TimerRecord> TimerList;
+
 private:
 	void init_timer_handler();
 	static void timer_handler();
 
 	void handleMouseEvent(const Common::Event &event);
 	void handleKbdEvent(const Common::Event &event);
-protected:
-	void handleEvent(const Common::Event &event) override;
+
+	TimerList _timers;
+	Common::Queue<Common::Event> _pendingEvents;
+	Common::Queue<Common::Event> _pendingKeyEvents;
+
+	/**
+	 * Checks for timer expiries
+	 */
+	void checkTimers();
+
+	/**
+	 * Timer proc for regularly updating the screen
+	 */
+	static void updateScreen();
+
+	/**
+	 * Adds a new timer method
+	 * @param proc		Timer method to execute
+	 * @param interval	Interval in milliseconds between calls
+	 */
+	void addTimer(TimerProc proc, uint interval) {
+		_timers.push_back(TimerRecord(proc, interval));
+	}
+
+	/**
+	 * Process any pending events
+	 */
+	void processEvents();
+
+	/**
+	 * Handles pending event
+	 */
+	void handleEvent(const Common::Event &event);
+
 public:
 	KbdInfo *_kbInfo = nullptr;
 	Common::Point _mousePos;
 	bool _flag1 = false;
 	bool _flag2 = false;
 
-	EventsManager(Graphics::Screen *screen);
+	EventsManager(Graphics::Screen *screen, uint refreshRate = 1000 / 50);
 	virtual ~EventsManager();
 
 	void delay(size_t time);
 
-	void clearEvents();
-
 	KbdInfo *setKbdInfo(KbdInfo *kbInfo);
 
+	Graphics::Screen *_screen;
+
 	/**
-	 * Set the mouse position
+	 * Handles doing a brief delay, checking for timer updates,
+	 * and polling events
 	 */
-	void setMousePos(const Common::Point &pt);
+	void update();
+
+	/**
+	 * Returns true if any unprocessed keyboard events are pending
+	 */
+	bool keyEventPending() {
+		processEvents();
+		return !_pendingKeyEvents.empty();
+	}
+
+	/**
+	 * Returns true if any unprocessed event other than key events
+	 * are pending
+	 */
+	bool eventPending() {
+		processEvents();
+		return !_pendingEvents.empty();
+	}
+
+	/**
+	 * Returns the next pending unprocessed keyboard event
+	 */
+	Common::Event getPendingKeyEvent() {
+		processEvents();
+		return _pendingKeyEvents.empty() ? Common::Event() : _pendingKeyEvents.pop();
+	}
+
+	/**
+	 * Returns the next event, if any
+	 */
+	Common::Event getPendingEvent() {
+		processEvents();
+		return _pendingEvents.empty() ? Common::Event() : _pendingEvents.pop();
+	}
+
+	/**
+	 * Sets the mouse position
+	 */
+	void warpMouse(const Common::Point &newPos);
+
+	/**
+	 * Clear any pending events
+	 */
+	void clearEvents();
 };
 
 extern EventsManager *g_events;

@@ -28,7 +28,8 @@ namespace Chewy {
 
 EventsManager *g_events;
 
-EventsManager::EventsManager(Graphics::Screen *screen) : EventsBase(screen) {
+EventsManager::EventsManager(Graphics::Screen *screen, uint refreshRate) : _screen(screen) {
+	addTimer(updateScreen, refreshRate);
 	g_events = this;
 	init_timer_handler();
 }
@@ -36,7 +37,6 @@ EventsManager::EventsManager(Graphics::Screen *screen) : EventsBase(screen) {
 EventsManager::~EventsManager() {
 	g_events = nullptr;
 }
-
 
 void EventsManager::init_timer_handler() {
 	_G(timer_int) = true;
@@ -50,14 +50,35 @@ void EventsManager::timer_handler() {
 		++_G(timer_count);
 }
 
+void EventsManager::checkTimers() {
+	uint32 currTime = g_system->getMillis();
+
+	for (TimerList::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+		TimerRecord &rec = *it;
+		if (currTime >= rec._nextFrameTime) {
+			rec._proc();
+			rec._nextFrameTime = currTime + rec._interval;
+		}
+	}
+}
+
+void EventsManager::updateScreen() {
+	if (g_events->_screen)
+		g_events->_screen->update();
+	else
+		g_system->updateScreen();
+}
+
 void EventsManager::handleEvent(const Common::Event &event) {
 	if (event.type >= Common::EVENT_MOUSEMOVE && event.type <= Common::EVENT_MBUTTONUP)
 		handleMouseEvent(event);
-	else if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
+	else if (event.type == Common::EVENT_KEYUP)
 		handleKbdEvent(event);
 }
 
 void EventsManager::handleMouseEvent(const Common::Event &event) {
+	_pendingEvents.push(event);
+
 	_mousePos = event.mouse;
 	bool isWheelEnabled = !_G(menu_display) && !_G(flags).InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
@@ -109,12 +130,14 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	// Set mouse position
 	if (!_cursorMoveFl) {
 		_cursorMoveFl = true;
-		_G(minfo).x = event.mouse.x;
-		_G(minfo).y = event.mouse.y;
+		g_events->_mousePos.x = event.mouse.x;
+		g_events->_mousePos.y = event.mouse.y;
 	}
 }
 
 void EventsManager::handleKbdEvent(const Common::Event &event) {
+	_pendingKeyEvents.push(event);
+
 	if (_kbInfo) {
 		if (event.type == Common::EVENT_KEYDOWN) {
 			_kbInfo->_keyCode = event.kbd.ascii;
@@ -145,6 +168,10 @@ void EventsManager::clearEvents() {
 	}
 
 	_G(minfo)._button = 0;
+
+	processEvents();
+	_pendingEvents.clear();
+	_pendingKeyEvents.clear();
 }
 
 KbdInfo *EventsManager::setKbdInfo(KbdInfo *kbInfo) {
@@ -153,9 +180,60 @@ KbdInfo *EventsManager::setKbdInfo(KbdInfo *kbInfo) {
 	return kb;
 }
 
-void EventsManager::setMousePos(const Common::Point &pt) {
-	g_system->warpMouse(pt.x, pt.y);
-	_mousePos = pt;
+void EventsManager::update() {
+	// Brief pause to prevent 100% CPU usage
+	g_system->delayMillis(10);
+
+	// Check for any timers that have to be triggered
+	checkTimers();
+
+	// Process events
+	processEvents();
+}
+
+#define MOUSE_MOVE                                 \
+	if (moveEvent.type != Common::EVENT_INVALID) { \
+		handleEvent(moveEvent);                    \
+		moveEvent.type = Common::EVENT_INVALID;    \
+	}
+
+void EventsManager::processEvents() {
+	Common::Event e;
+	Common::Event moveEvent;
+
+	while (g_system->getEventManager()->pollEvent(e)) {
+		switch (e.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			return;
+
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+			MOUSE_MOVE;
+			handleEvent(e);
+			break;
+
+		default:
+			if (e.type == Common::EVENT_MOUSEMOVE) {
+				// Mouse move events get cached so the engine isn't
+				// spammed with multiple sequential move events
+				moveEvent = e;
+			} else {
+				MOUSE_MOVE;
+				handleEvent(e);
+				return;
+			}
+			break;
+		}
+	}
+
+	MOUSE_MOVE;
+}
+
+#undef MOUSE_MOVE
+
+void EventsManager::warpMouse(const Common::Point &newPos) {
+	g_system->warpMouse(newPos.x, newPos.y);
 }
 
 void delay(size_t time) {

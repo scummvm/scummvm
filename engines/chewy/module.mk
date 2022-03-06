@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	detail.o \
 	effect.o \
 	events.o \
-	events_base.o \
 	gedclass.o \
 	globals.o \
 	inits.o \

@@ -22,7 +22,7 @@
 #ifndef CHEWY_MAIN_MENU_H
 #define CHEWY_MAIN_MENU_H
 
-#include "chewy/events_base.h"
+#include "chewy/events.h"
 
 namespace Chewy {
 namespace Dialogs {
