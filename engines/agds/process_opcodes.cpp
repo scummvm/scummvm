@@ -165,7 +165,7 @@ void Process::loadAnimation() {
 void Process::loadSample() {
 	Common::String name = popString();
 	debug("loadSample %s, phaseVar: %s, ambient: %d", name.c_str(), _phaseVar.c_str(), _sampleAmbient);
-	int id = _engine->playSound(getName(), name, _engine->loadText(name), _phaseVar, _sampleAmbient || _phaseVar.empty());
+	int id = _engine->playSound(getName(), name, _engine->loadText(name), _phaseVar, _sampleAmbient || !_phaseVarControlled || _phaseVar.empty());
 	if (_sampleAmbient)
 		_engine->setAmbientSoundId(id);
 }
