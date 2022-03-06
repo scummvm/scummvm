@@ -385,8 +385,8 @@ void OSystem_iOS7::clearOverlay() {
 
 void OSystem_iOS7::grabOverlay(Graphics::Surface &surface) {
 	//printf("grabOverlay()\n");
-	assert(surface.w >= _videoContext->overlayWidth);
-	assert(surface.h >= _videoContext->overlayHeight);
+	assert(surface.w >= (int16)_videoContext->overlayWidth);
+	assert(surface.h >= (int16)_videoContext->overlayHeight);
 	assert(surface.format.bytesPerPixel == sizeof(uint16));
 
 	const byte *src = (const byte *)_videoContext->overlayTexture.getPixels();
@@ -491,7 +491,7 @@ void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 #endif
 	assert(pixelFormat.bytesPerPixel == 1 || pixelFormat.bytesPerPixel == 2 || pixelFormat.bytesPerPixel == 4);
 
-	if (_mouseBuffer.w != w || _mouseBuffer.h != h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.getPixels())
+	if (_mouseBuffer.w != (int16)w || _mouseBuffer.h != (int16)h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.getPixels())
 		_mouseBuffer.create(w, h, pixelFormat);
 
 	_videoContext->mouseWidth = w;
@@ -524,8 +524,8 @@ void OSystem_iOS7::setCursorPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_iOS7::updateMouseTexture() {
-	uint texWidth = getSizeNextPOT(_videoContext->mouseWidth);
-	uint texHeight = getSizeNextPOT(_videoContext->mouseHeight);
+	int texWidth = getSizeNextPOT(_videoContext->mouseWidth);
+	int texHeight = getSizeNextPOT(_videoContext->mouseHeight);
 
 	Graphics::Surface &mouseTexture = _videoContext->mouseTexture;
 	if (mouseTexture.w != texWidth || mouseTexture.h != texHeight)
@@ -557,9 +557,9 @@ void OSystem_iOS7::updateMouseTexture() {
 
 			uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
 
-			for (uint y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
+			for (int y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
 				uint16 *dst = (uint16 *)dstRaw;
-				for (uint x = 0; x < _mouseBuffer.w; ++x, ++dst, src += srcBpp) {
+				for (int x = 0; x < _mouseBuffer.w; ++x, ++dst, src += srcBpp) {
 					if (
 						(srcBpp == 2 && *((const uint16*)src) == _mouseKeyColor) ||
 						(srcBpp == 4 && *((const uint32*)src) == _mouseKeyColor)
