@@ -196,7 +196,7 @@ Graphics::PixelFormat PacoDecoder::PacoVideoTrack::getPixelFormat() const {
 void PacoDecoder::readNextPacket() {
 	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
 
-	debug(2, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], _fileStream->pos());
+	debug(2, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], long(_fileStream->pos()));
 
 	_curFrame++;
 
@@ -205,7 +205,7 @@ void PacoDecoder::readNextPacket() {
 		int frameType = _fileStream->readByte();
 		int v = _fileStream->readByte();
 		uint32 chunkSize =  (v << 16 ) | _fileStream->readUint16BE();
-		debug(2, "  slot type %d size %d @ %lX", frameType, chunkSize, _fileStream->pos() - 4);
+		debug(2, "  slot type %d size %d @ %lX", frameType, chunkSize, long(_fileStream->pos() - 4));
 
 		switch (frameType) {
 		case AUDIO:
@@ -299,7 +299,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(Common::SeekableReadStream *fileSt
 
 	uint8 *fdata = new uint8[1048576];              // 0x100000 copied from original pacodec
 	fileStream->read(fdata, chunkSize - 10);       // remove header length
-	debug(5, "pos: %ld", fileStream->pos());
+	debug(5, "pos: %ld", long(fileStream->pos()));
 	int16 xpos = x, ypos = y, ypos2 = y;
 	byte *dst = (byte *)_surface->getPixels() + x + y * w;
 
