@@ -341,6 +341,10 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 		output << "add_definitions(-DUSE_SDL2)\n";
 	}
 
+	if (getFeatureBuildState("opengl", setup.features)) {
+		output << "add_definitions(-DUSE_GLAD)\n";
+	}
+
 	if (setup.useStaticDetection) {
 		output << "add_definitions(-DDETECTION_STATIC)\n";
 	}
