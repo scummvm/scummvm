@@ -28,7 +28,7 @@ public class ExternalStorage {
 	public static final String EXTERNAL_SD_CARD = "externalSdCard";
 	public static final String DATA_DIRECTORY = "ScummVM data";
 	public static final String DATA_DIRECTORY_INT = "ScummVM data (Int)";
-	public static final String DATA_DIRECTORY_EXT = "ScummVM data (Ext))";
+	public static final String DATA_DIRECTORY_EXT = "ScummVM data (Ext)";
 
 
 	// Find candidate removable sd card paths
