@@ -22,9 +22,6 @@
 #ifndef CHEWY_MCGA_H
 #define CHEWY_MCGA_H
 
-#include "chewy/mouse.h"
-#include "chewy/ngstypes.h"
-
 namespace Chewy {
 
 void init_mcga();
@@ -36,11 +33,11 @@ void set_palette(const byte *palette);
 void save_palette(byte *palette);
 void restore_palette();
 void rastercol(int16 color, int16 r, int16 g, int16 b);
-void set_palpart(const byte *palette, int16 startcol, int16 anz);
+void setPartialPalette(const byte *palette, int16 startCol, int16 nr);
 
 void clear_mcga();
 uint8 getpix(int16 x, int16 y);
-void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
+void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 
 void mem2mcga(const byte *ptr);
 

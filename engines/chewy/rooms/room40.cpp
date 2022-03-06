@@ -475,7 +475,7 @@ int16 Room40::use_haendler() {
 				_G(det)->set_static_ani(3, -1);
 				startAadWait(211);
 				_G(out)->ausblenden(0);
-				_G(out)->set_teilpalette(_G(pal), 255, 1);
+				_G(out)->set_partialpalette(_G(pal), 255, 1);
 				startAadWait(212);
 				_G(out)->ausblenden(0);
 				_G(spieler).R40Wettbewerb = true;

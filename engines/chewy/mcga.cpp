@@ -35,8 +35,6 @@ namespace Chewy {
 
 void init_mcga() {
 	_G(currentScreen) = (byte *)g_screen->getPixels();
-	_G(screenHasDefault) = false;
-	_G(screenDefaultPtr) = nullptr;
 	_G(spriteWidth) = 0;
 }
 
@@ -78,8 +76,8 @@ void rastercol(int16 color, int16 r, int16 g, int16 b) {
 	setScummVMPalette(&rgb[0], color, 1);
 }
 
-void set_palpart(const byte *palette, int16 startcol, int16 anz) {
-	setScummVMPalette(palette + startcol * 3, startcol, anz);
+void setPartialPalette(const byte *palette, int16 startCol, int16 nr) {
+	setScummVMPalette(palette + startCol * 3, startCol, nr);
 }
 
 void clear_mcga() {
@@ -93,8 +91,8 @@ uint8 getpix(int16 x, int16 y) {
 	return *(byte *)SCREEN_S.getBasePtr(x, y);
 }
 
-void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	return SCREEN_S.drawLine(x1, y1, x2, y2, farbe);
+void line_mcga(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+	return SCREEN_S.drawLine(x1, y1, x2, y2, color);
 }
 
 void mem2mcga(const byte *ptr) {
@@ -422,8 +420,8 @@ void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 sc
 
 } // namespace Zoom
 
-void zoom_set(byte *source, int16 x, int16 y, int16 xdiff_, int16 ydiff_, int16 scrWidth) {
-	Zoom::zoom_set(source, x, y, xdiff_, ydiff_, scrWidth);
+void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth) {
+	Zoom::zoom_set(source, x, y, xDiff, yDiff, scrWidth);
 }
 
 } // namespace Chewy

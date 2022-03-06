@@ -36,8 +36,6 @@ McgaGraphics::~McgaGraphics() {
 }
 
 void McgaGraphics::init() {
-	_G(scr_w) = SCREEN_WIDTH;
-	_G(scr_h) = SCREEN_HEIGHT;
 	init_mcga();
 }
 
@@ -51,8 +49,6 @@ void McgaGraphics::setClip(int16 x1, int16 y1, int16 x2, int16 y2) {
 void McgaGraphics::setPointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
-	} else if (_G(screenHasDefault)) {
-		_G(currentScreen) = _G(screenDefaultPtr);
 	} else {
 		_G(currentScreen) = (byte *)g_screen->getPixels();
 	}
@@ -121,84 +117,78 @@ void McgaGraphics::ausblenden(int16 frames) {
 	}
 }
 
-void McgaGraphics::set_teilpalette(const byte *palette, int16 startcol, int16 anz) {
-	int16 k = startcol * 3;
-	int16 endcol = startcol + anz;
-	for (int16 i = startcol; i < endcol; i++) {
+void McgaGraphics::set_partialpalette(const byte *palette, int16 startCol, int16 nr) {
+	int16 k = startCol * 3;
+	int16 endcol = startCol + nr;
+	for (int16 i = startCol; i < endcol; i++) {
 		_palTable[k] = palette[k];
 		_palTable[k + 1] = palette[k + 1];
 		_palTable[k + 2] = palette[k + 2];
 		k += 3;
 	}
-	set_palpart(_palTable, startcol, anz);
+	setPartialPalette(_palTable, startCol, nr);
 }
 
 void McgaGraphics::cls() {
 	clear_mcga();
 }
 
-uint8 McgaGraphics::get_pixel(int16 xpos, int16 ypos) {
-	uint8 pix = getpix(xpos, ypos);
-
-	return pix;
+void McgaGraphics::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+	line_mcga(x1, y1, x2, y2, color);
 }
 
-void McgaGraphics::linie(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	line_mcga(x1, y1, x2, y2, farbe);
+void McgaGraphics::box(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
+	line_mcga(x1, y1, x2, y1, color);
+	line_mcga(x1, y2 - 1, x2, y2 - 1, color);
+	line_mcga(x1, y1, x1, y2, color);
+	line_mcga(x2, y1, x2, y2, color);
 }
 
-void McgaGraphics::box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
-	line_mcga(x1, y1, x2, y1, farbe);
-	line_mcga(x1, y2 - 1, x2, y2 - 1, farbe);
-	line_mcga(x1, y1, x1, y2, farbe);
-	line_mcga(x2, y1, x2, y2, farbe);
-}
-
-void McgaGraphics::boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe) {
+void McgaGraphics::boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
 	if (x2 == x1)x2++;
 	int16 h = abs(y2 - y1);
 	if (h == 0)
 		h = 1;
 	for (int16 i = 0; i < h; i++)
-		line_mcga(x1, y1 + i, x2, y1 + i, farbe);
+		line_mcga(x1, y1 + i, x2, y1 + i, color);
 }
 
 void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int16 col2, int16 back_col) {
 	if (back_col < 255)
 		boxFill(x, y, x1, y1, back_col);
-	linie(x, y1, x1, y1, col2);
-	linie(x1, y, x1, y1, col2);
-	linie(x, y, x1, y, col1);
-	linie(x, y, x, y1 + 1, col1);
+	drawLine(x, y1, x1, y1, col2);
+	drawLine(x1, y, x1, y1, col2);
+	drawLine(x, y, x1, y, col1);
+	drawLine(x, y, x, y1 + 1, col1);
 }
 
 void McgaGraphics::back2screen(byte *ptr) {
 	mem2mcga(ptr);
 }
 
-void McgaGraphics::sprite_save(byte *sptr, int16 x, int16 y, int16 breite, int16 hoehe, int16 scrwidth) {
-	if (breite < 4)
-		breite = 4;
-	if (hoehe <= 0)
-		hoehe = 1;
+void McgaGraphics::spriteSave(byte *spritePtr, int16 x, int16 y, int16 width, int16 height, int16 screenWidth) {
+	if (width < 4)
+		width = 4;
+	if (height <= 0)
+		height = 1;
 	if (x < _G(clipx1)) {
 		x = _G(clipx1);
-		breite -= (_G(clipx1) - x);
+		width -= (_G(clipx1) - x);
 	}
-	if ((x + breite) > _G(clipx2) + 1)
-		breite = _G(clipx2) - x;
+	if ((x + width) > _G(clipx2) + 1)
+		width = _G(clipx2) - x;
 	if (y < _G(clipy1)) {
 		y = _G(clipy1);
-		hoehe -= (_G(clipy1) - y);
+		height -= (_G(clipy1) - y);
 	}
-	if ((y + hoehe) > _G(clipy2) + 1)
-		hoehe = _G(clipy2) - y;
-	if (breite < 1)
-		breite = 0;
-	if (hoehe <= 0)
-		hoehe = 0;
+	if ((y + height) > _G(clipy2) + 1)
+		height = _G(clipy2) - y;
+	if (width < 1)
+		width = 0;
+	if (height <= 0)
+		height = 0;
 
-	spr_save_mcga(sptr, x, y, breite, hoehe, scrwidth);
+	spr_save_mcga(spritePtr, x, y, width, height, screenWidth);
 }
 
 void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth) {

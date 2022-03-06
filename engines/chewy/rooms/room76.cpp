@@ -192,7 +192,7 @@ int Room76::proc7() {
 		invent_2_slot(105);
 		startAadWait(444);
 		_G(out)->ausblenden(0);
-		_G(out)->set_teilpalette(_G(pal), 255, 1);
+		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		startAadWait(443);
 		_G(spieler).scrollx = 0;
 		_G(fx_blend) = BLEND3;

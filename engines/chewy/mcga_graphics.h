@@ -42,20 +42,19 @@ public:
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);
 	void ausblenden(int16 frames);
-	void set_teilpalette(const byte *palette, int16 startcol, int16 anz);
+	void set_partialpalette(const byte *palette, int16 startCol, int16 nr);
 
 	void cls();
-	uint8 get_pixel(int16 xpos, int16 ypos);
-	void linie(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
-	void box(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
-	void boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 farbe);
+	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
+	void box(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
+	void boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 color);
 	void pop_box(int16 x, int16 y, int16 x1, int16 y1,
 	             int16 col1, int16 col2, int16 back_col);
 
 	void back2screen(byte *ptr);
 
-	void sprite_save(byte *sptr, int16 x, int16 y, int16 breite,
-	                 int16 hoehe, int16 scrwidth);
+	void spriteSave(byte *spritePtr, int16 x, int16 y, int16 width,
+	                 int16 height, int16 screenWidth);
 	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);

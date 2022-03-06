@@ -37,14 +37,13 @@ public:
 	Effect();
 	~Effect();
 
-	void blende1(byte *sram_speicher, byte *screen,
-		byte *palette, int16 frames, uint8 mode, int16 col);
-	void border(byte *screen, int16 val1, uint8 mode, int16 farbe);
+	void blende1(byte *memPtr, byte *screen,
+		byte *palette, int16 frames, uint8 mode, int16 color);
+	void border(byte *screen, int16 val1, uint8 mode, int16 color);
 
 	void rnd_blende(byte *rnd_speicher, byte *sram_speicher,
 		byte *screen, byte *palette, int16 col, int16 skip_line);
 
-	void spr_blende(byte *workpage, int16 lines, bool mode, int16 col);
 };
 
 } // namespace Chewy

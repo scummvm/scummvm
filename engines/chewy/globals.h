@@ -271,14 +271,11 @@ public:
 
 	// mcga.cpp
 	byte _saved_palette[PALETTE_SIZE] = { 0 };
-	bool _screenHasDefault = false;
-	byte *_screenDefaultPtr = nullptr;
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp
 	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0;
-	int16 _scr_w = 0, _scr_h = SCREEN_HEIGHT;
 
 	// menus.cpp
 	int8 _m_flip = 0;
