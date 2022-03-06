@@ -1647,8 +1647,6 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 //  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
 //  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
 
-extern void listSavegames(Common::Array<SavegameDesc> &saves);
-
 bool Console::cmdListSaves(int argc, const char **argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
