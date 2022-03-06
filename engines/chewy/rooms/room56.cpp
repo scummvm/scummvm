@@ -433,7 +433,7 @@ void Room56::setup_func() {
 		return;
 	
 	if (!_G(atds)->get_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA) && _G(menu_item) == CUR_WALK) {
-		if (_G(minfo).x + _G(spieler).scrollx >= 157 && _G(minfo).x + _G(spieler).scrollx <= 204 && _G(minfo).y >= 28 && _G(minfo).y <= 89)
+		if (g_events->_mousePos.x + _G(spieler).scrollx >= 157 && g_events->_mousePos.x + _G(spieler).scrollx <= 204 && g_events->_mousePos.y >= 28 && g_events->_mousePos.y <= 89)
 			cursorChoice(CUR_EXIT_TOP);
 		else
 			cursorChoice(CUR_WALK);

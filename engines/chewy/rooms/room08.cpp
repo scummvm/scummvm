@@ -95,8 +95,8 @@ void Room8::start_verbrennen() {
 			SHOULD_QUIT_RETURN;
 
 			if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
-				if (_G(minfo).x > 146 && _G(minfo).x < 208 &&
-					_G(minfo).y > 107 && _G(minfo).y < 155)
+				if (g_events->_mousePos.x > 146 && g_events->_mousePos.x < 208 &&
+					g_events->_mousePos.y > 107 && g_events->_mousePos.y < 155)
 					break;
 			}
 		}

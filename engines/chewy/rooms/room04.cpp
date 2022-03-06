@@ -61,7 +61,7 @@ int16 Room4::comp_probe() {
 	while (!endLoop) {
 		mouseAction();
 		if (_G(mouseLeftClick)) {
-			switch (_G(in)->mouseVector(_G(minfo).x + 17, _G(minfo).y + 7, &CONSOLE[0][0], 3)) {
+			switch (_G(in)->mouseVector(g_events->_mousePos.x + 17, g_events->_mousePos.y + 7, &CONSOLE[0][0], 3)) {
 			case 0:
 				if (curX > 0)
 					--curX;
@@ -104,8 +104,8 @@ int16 Room4::comp_probe() {
 		cursorChoice(CUR_USER);
 		_G(spieler)._curHeight = 16;
 
-		if (_G(minfo).y < 124)
-			_G(minfo).y = 123;
+		if (g_events->_mousePos.y < 124)
+			g_events->_mousePos.y = 123;
 
 		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;

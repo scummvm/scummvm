@@ -53,8 +53,8 @@ void MainMenu::execute() {
 	show_intro();
 
 	_G(cur)->move(152, 92);
-	_G(minfo).x = 152;
-	_G(minfo).y = 92;
+	g_events->_mousePos.x = 152;
+	g_events->_mousePos.y = 92;
 	_G(spieler).inv_cur = false;
 	_G(menu_display) = 0;
 	_G(spieler).soundLoopMode = 1;
@@ -107,8 +107,8 @@ void MainMenu::execute() {
 		case MM_CINEMA:
 			cursorChoice(CUR_SAVE);
 			_G(cur)->move(152, 92);
-			_G(minfo).x = 152;
-			_G(minfo).y = 92;
+			g_events->_mousePos.x = 152;
+			g_events->_mousePos.y = 92;
 			Dialogs::Cinema::execute();
 			break;
 
@@ -133,7 +133,7 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
-	int vec = _G(det)->maus_vector(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
+	int vec = _G(det)->maus_vector(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
 
 	if (_G(in)->getSwitchCode() == 28 || _G(minfo)._button == 1) {
 		_selection = vec;
@@ -161,7 +161,7 @@ void MainMenu::animate() {
 
 	spriteEngine();
 	kb_mov(1);
-	calcMouseText(_G(minfo).x, _G(minfo).y, 1);
+	calcMouseText(g_events->_mousePos.x, g_events->_mousePos.y, 1);
 	_G(cur)->plot_cur();
 	_G(mouseLeftClick) = false;
 	_G(menu_flag) = 0;
@@ -218,8 +218,8 @@ bool MainMenu::loadGame() {
 	_G(fontMgr)->setFont(_G(font6));
 	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
-	_G(minfo).x = 152;
-	_G(minfo).y = 92;
+	g_events->_mousePos.x = 152;
+	g_events->_mousePos.y = 92;
 	_G(savegameFlag) = true;
 	int result = Dialogs::Files::execute(false);
 

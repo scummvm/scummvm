@@ -89,8 +89,8 @@ void Room37::gedAction(int index) {
 void Room37::setup_func() {
 	if (_G(mouseLeftClick) && !_G(spieler).R37Kloppe &&
 			_G(menu_item) == CUR_WALK) {
-		if ((_G(minfo).x + _G(spieler).scrollx > 380 && _G(minfo).y > 120) ||
-			(_G(minfo).x + _G(spieler).scrollx > 482)) {
+		if ((g_events->_mousePos.x + _G(spieler).scrollx > 380 && g_events->_mousePos.y > 120) ||
+			(g_events->_mousePos.x + _G(spieler).scrollx > 482)) {
 			// Don't allow moving into chicken coop area
 			// until the rooster has left
 			autoMove(7, P_CHEWY);

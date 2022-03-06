@@ -112,7 +112,7 @@ void Room91::setup_func() {
 		const int oldClick = _click;
 		_G(mouseLeftClick) = oldClick;
 		_click = 1;
-		const int aniNr = 1 + (_G(minfo).y <= 100 ? 1 : 0);
+		const int aniNr = 1 + (g_events->_mousePos.y <= 100 ? 1 : 0);
 		hideCur();
 		_G(det)->stop_detail(0);
 		startSetailWait(aniNr, 1, ANI_FRONT);

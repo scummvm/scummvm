@@ -307,8 +307,8 @@ void Room0::calcEyeClick(int16 aniNr) {
 			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != 0) {
 				_G(fontMgr)->setFont(_G(font8));
-				int16 x = _G(minfo).x;
-				int16 y = _G(minfo).y;
+				int16 x = g_events->_mousePos.x;
+				int16 y = g_events->_mousePos.y;
 				calcTxtXy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
@@ -545,8 +545,8 @@ void Room0::calcPillowClick(int16 aniNr) {
 			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != nullptr) {
 				_G(fontMgr)->setFont(_G(font8));
-				int16 x = _G(minfo).x;
-				int16 y = _G(minfo).y;
+				int16 x = g_events->_mousePos.x;
+				int16 y = g_events->_mousePos.y;
 				calcTxtXy(&x, &y, str_, anz);
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));

@@ -149,7 +149,7 @@ void Options::execute(TafInfo *ti) {
 		if ((_G(minfo)._button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 
-			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, OPTION_ICONS, 9);
+			int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
 				if (_G(spieler).FramesPerSecond > 6)
@@ -194,11 +194,11 @@ void Options::execute(TafInfo *ti) {
 				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7:
-				_G(spieler).SoundVol = (136 - _G(minfo).y) << 1;
+				_G(spieler).SoundVol = (136 - g_events->_mousePos.y) << 1;
 				g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 			case 8:
-				_G(spieler).MusicVol = (136 - _G(minfo).y) << 1;
+				_G(spieler).MusicVol = (136 - g_events->_mousePos.y) << 1;
 				g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 
@@ -210,19 +210,19 @@ void Options::execute(TafInfo *ti) {
 		switch (key) {
 
 		case Common::KEYCODE_UP:
-			_G(cur)->move(_G(minfo).x, --_G(minfo).y);
+			_G(cur)->move(g_events->_mousePos.x, --g_events->_mousePos.y);
 			break;
 
 		case Common::KEYCODE_DOWN:
-			_G(cur)->move(_G(minfo).x, ++_G(minfo).y);
+			_G(cur)->move(g_events->_mousePos.x, ++g_events->_mousePos.y);
 			break;
 
 		case Common::KEYCODE_LEFT:
-			_G(cur)->move(--_G(minfo).x, _G(minfo).y);
+			_G(cur)->move(--g_events->_mousePos.x, g_events->_mousePos.y);
 			break;
 
 		case Common::KEYCODE_RIGHT:
-			_G(cur)->move(++_G(minfo).x, _G(minfo).y);
+			_G(cur)->move(++g_events->_mousePos.x, g_events->_mousePos.y);
 			break;
 
 		default:

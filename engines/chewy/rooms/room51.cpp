@@ -134,8 +134,8 @@ bool Room51::timer(int16 t_nr, int16 ani_nr) {
 
 void Room51::setup_func() {
 	if (_G(spieler).flags32_10) {
-		_tmpx = _G(minfo).x;
-		_tmpy = _G(minfo).y;
+		_tmpx = g_events->_mousePos.x;
+		_tmpy = g_events->_mousePos.y;
 		if (_tmpx > 215)
 			_tmpx = 215;
 		if (_tmpy < 81)

@@ -86,7 +86,7 @@ void Cinema::execute() {
 
 		if (_G(minfo)._button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->mouseVector(_G(minfo).x, _G(minfo).y, CINEMA_TBL, 3)) {
+			switch (_G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, CINEMA_TBL, 3)) {
 			case 0:
 				_G(kbinfo).scan_code = Common::KEYCODE_UP;
 				if (!endLoop)
@@ -103,7 +103,7 @@ void Cinema::execute() {
 
 			case 2:
 			{
-				int selIndex = (_G(minfo).y - 68) / 10 + topIndex;
+				int selIndex = (g_events->_mousePos.y - 68) / 10 + topIndex;
 				if (selIndex < (int)cutscenes.size())
 					selected = selIndex;
 				_G(kbinfo).scan_code = Common::KEYCODE_RETURN;

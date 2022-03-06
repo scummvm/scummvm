@@ -199,7 +199,7 @@ void Room97::setup_func() {
 	}
 
 	if (_G(spieler).flags37_1 && _G(menu_item) == CUR_WALK) {
-		if (_G(spieler).scrollx + _G(minfo).x >= 487 && _G(spieler).scrollx + _G(minfo).x <= 522 && _G(minfo).y >= 23 && _G(minfo).y <= 59)
+		if (_G(spieler).scrollx + g_events->_mousePos.x >= 487 && _G(spieler).scrollx + g_events->_mousePos.x <= 522 && g_events->_mousePos.y >= 23 && g_events->_mousePos.y <= 59)
 			cursorChoice(CUR_EXIT_TOP);
 		else
 			cursorChoice(CUR_WALK);

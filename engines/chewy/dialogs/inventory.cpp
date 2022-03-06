@@ -60,14 +60,14 @@ void Inventory::plot_menu() {
 	}
 
 	int16 y;
-	int16 k = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+	int16 k = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 	if (k != -1) {
 		if (k < 5)
 			_G(out)->boxFill(INVENTORY_HOTSPOTS[k][0], INVENTORY_HOTSPOTS[k][1],
 				INVENTORY_HOTSPOTS[k][2] + 1, INVENTORY_HOTSPOTS[k][3] + 5, 41);
 		else {
-			int16 x = (_G(minfo).x - (WIN_INF_X)) / 54;
-			y = (_G(minfo).y - (WIN_INF_Y + 4 + 30)) / 30;
+			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
+			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
 			k = x + (y * 5);
 			k += _G(spieler).InventY * 5;
 			if (k < (_G(spieler).InventY + 3) * 5)
@@ -133,8 +133,8 @@ void Inventory::menu() {
 	_G(flags).StopAutoObj = true;
 	_G(menu_display) = 0;
 	_G(cur)->move(152, 92);
-	_G(minfo).x = 152;
-	_G(minfo).y = 92;
+	g_events->_mousePos.x = 152;
+	g_events->_mousePos.y = 92;
 
 	_G(invent_cur_mode) = CUR_USE;
 	if (_G(spieler).AkInvent != -1) {
@@ -167,7 +167,7 @@ void Inventory::menu() {
 				mouseFl = true;
 				_G(kbinfo)._keyCode = '\0';
 
-				int16 k = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+				int16 k = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -211,8 +211,8 @@ void Inventory::menu() {
 					break;
 
 				case 5:
-					inv_rand_x = (_G(minfo).x - (WIN_INF_X)) / 54;
-					inv_rand_y = (_G(minfo).y - (WIN_INF_Y + 4 + 30)) / 30;
+					inv_rand_x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
+					inv_rand_y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
 					k = inv_rand_x + (inv_rand_y * 5);
 					k += _G(spieler).InventY * 5;
 					if (_G(invent_cur_mode) == CUR_USE) {
@@ -303,23 +303,23 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_RIGHT:
-				if (_G(minfo).x < 320 - _G(spieler)._curWidth)
-					_G(minfo).x += 3;
+				if (g_events->_mousePos.x < 320 - _G(spieler)._curWidth)
+					g_events->_mousePos.x += 3;
 				break;
 
 			case Common::KEYCODE_LEFT:
-				if (_G(minfo).x > 2)
-					_G(minfo).x -= 3;
+				if (g_events->_mousePos.x > 2)
+					g_events->_mousePos.x -= 3;
 				break;
 
 			case Common::KEYCODE_UP:
-				if (_G(minfo).y > 2)
-					_G(minfo).y -= 3;
+				if (g_events->_mousePos.y > 2)
+					g_events->_mousePos.y -= 3;
 				break;
 
 			case Common::KEYCODE_DOWN:
-				if (_G(minfo).y < 197 - _G(spieler)._curHeight)
-					_G(minfo).y += 3;
+				if (g_events->_mousePos.y < 197 - _G(spieler)._curHeight)
+					g_events->_mousePos.y += 3;
 				break;
 
 			case Common::KEYCODE_PAGEUP:
@@ -342,7 +342,7 @@ void Inventory::menu() {
 
 		if (_G(show_invent_menu) != 2) {
 			setupScreen(NO_SETUP);
-			_G(cur)->move(_G(minfo).x, _G(minfo).y);
+			_G(cur)->move(g_events->_mousePos.x, g_events->_mousePos.y);
 			_G(cur)->show_cur();
 			if (menu_flag1 != MENU_HIDE) {
 				inv_rand_x = -1;
@@ -365,8 +365,8 @@ void Inventory::menu() {
 	}
 
 	_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
-	_G(minfo).x = _G(maus_old_x);
-	_G(minfo).y = _G(maus_old_y);
+	g_events->_mousePos.x = _G(maus_old_x);
+	g_events->_mousePos.y = _G(maus_old_y);
 	_G(minfo)._button = 0;
 
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
@@ -422,7 +422,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 
 	while (!endLoop) {
-		int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
+		int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
 
 		if (_G(minfo)._button) {
 			if (_G(minfo)._button == 2) {

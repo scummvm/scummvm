@@ -162,7 +162,7 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		if (!flag && _G(minfo)._button == 1) {
-			int16 rect = _G(in)->mouseVector(_G(minfo).x, _G(minfo).y, FILE_ICONS, 8);
+			int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, FILE_ICONS, 8);
 			flag = true;
 			key = 0;
 
@@ -174,7 +174,7 @@ int16 Files::execute(bool isInGame) {
 				key = Common::KEYCODE_DOWN;
 				break;
 			case 2: {
-				int16 line = (_G(minfo).y - 68) / 10;
+				int16 line = (g_events->_mousePos.y - 68) / 10;
 				if (line == active_slot)
 					key = Common::KEYCODE_RETURN;
 				else
