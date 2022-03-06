@@ -5400,8 +5400,9 @@ if test "$_opengl_glad" = "no" -a "$_opengl_mode" != "none"; then
 	# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 	# 2) OpenGL/gl.h     This is used on macOS
 	# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
+	# 3) GLES/gl.h       This is used for OpenGL ES 1.x
 	_opengl_can_compile=no
-	for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h"; do
+	for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h" "GLES/gl.h"; do
 		# Test the current header for OpenGL
 		if test "$_opengl_mode" = "gl" -o "$_opengl_mode" = "any" ; then
 			cat > $TMPC << EOF
@@ -5449,6 +5450,11 @@ EOF
 					break
 				fi
 			done
+		elif test "$_opengl_mode" = "gles" ; then
+			OPENGL_LIBS="-lGLESv1_CM"
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS; then
+				_opengl_can_compile=yes
+			fi
 		else
 			case $_host_os in
 			darwin*)
