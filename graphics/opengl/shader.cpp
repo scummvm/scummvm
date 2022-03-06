@@ -66,6 +66,7 @@ static const char *compatFragment =
 
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
+	Common::String shaderDir;
 
 	// Allow load shaders from source code directory without install them.
 	// It's used for development purpose.
@@ -79,7 +80,10 @@ static const GLchar *readFile(const Common::String &filename) {
 	if (ConfMan.hasKey("extrapath")) {
 		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
 	}
-	file.open(Common::String("shaders/") + filename);
+#if !defined(IPHONE)
+	shaderDir = "shaders/";
+#endif
+	file.open(shaderDir + filename);
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
 	SearchMan.remove("GRIM_SHADERS");
