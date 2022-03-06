@@ -113,6 +113,7 @@ namespace Director {
 const char *CDROMXObj::xlibName = "AppleAudioCD";
 const char *CDROMXObj::fileNames[] = {
 	"CD-ROM XObj",
+	"AppleAudioCD",
 	nullptr
 };
 
