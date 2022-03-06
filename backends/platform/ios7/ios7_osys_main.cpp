@@ -27,6 +27,7 @@
 
 #include <sys/time.h>
 #include <QuartzCore/QuartzCore.h>
+#include <dlfcn.h>
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -411,4 +412,8 @@ void iOS7_main(int argc, char **argv) {
 		//*stderr = NULL;
 		fclose(newfp);
 	}
+}
+
+void *iOS7_getProcAddress(const char *name) {
+	return dlsym(RTLD_SELF, name);
 }

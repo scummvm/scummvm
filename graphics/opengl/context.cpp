@@ -47,6 +47,13 @@ static GLADapiproc loadFunc(void *userptr, const char *name) {
 	return (GLADapiproc)androidGLgetProcAddress(name);
 }
 
+#elif defined(IPHONE_IOS7)
+#include "backends/platform/ios7/ios7_common.h"
+
+static GLADapiproc loadFunc(void *userptr, const char *name) {
+	return (GLADapiproc)iOS7_getProcAddress(name);
+}
+
 #else
 #error Not implemented
 #endif
