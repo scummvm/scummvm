@@ -50,7 +50,8 @@ MODULE_OBJS = \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/videodiscxobj.o \
-	lingo/xlibs/winxobj.o
+	lingo/xlibs/winxobj.o \
+	lingo/xlibs/xplayanim.o
 
 # HACK: Skip this when including the file for detection objects.
 ifeq "$(USE_RULES)" "1"

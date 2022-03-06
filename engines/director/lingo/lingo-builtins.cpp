@@ -22,8 +22,6 @@
 #include "common/system.h"
 #include "common/tokenizer.h"
 
-#include "video/paco_decoder.h"
-
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -226,8 +224,6 @@ static BuiltinProto builtins[] = {
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,200,HBLTIN },
 
-	// Expose Paco
-	{ "XPlayAnim", LB::b_xPlayAnim, 3,3, 300, HBLTIN },
 	// XCMD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, 400, FBLTIN },
 
@@ -2725,70 +2721,6 @@ void LB::b_scummvmassertequal(int nargs) {
 		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}
 	assert(result == 1);
-}
-
-void LB::b_xPlayAnim(int nargs){
-	int y = g_lingo->pop().asInt();
-	int x = g_lingo->pop().asInt();
-	Common::String filename = g_lingo->pop().asString();
-
-	debugN(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
-	Video::PacoDecoder *video = new Video::PacoDecoder();
-	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
-
-	// save the current palette
-	byte origPalette[256 * 3];
-	uint16 origCount = g_director->getPaletteColorCount();
-
-	if (origCount > 256) {
-		warning("b_xPlayAnim: too big palette, %d > 256", origCount);
-		origCount = 256;
-	}
-
-	memcpy(origPalette, g_director->getPalette(), origCount * 3);
-	Graphics::Surface const *frame;
-	Common::Event event;
-	bool keepPlaying = true;
-	video->start();
-	while (!video->endOfVideo()) {
-		if (g_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
-				case Common::EVENT_QUIT:
-					g_director->processEventQUIT();
-					// fallthrough
-				case Common::EVENT_KEYDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-				case Common::EVENT_LBUTTONDOWN:
-					keepPlaying = false;
-					break;
-				default:
-					break;
-			}
-		}
-		if (!keepPlaying)
-			break;
-		if (video->needsUpdate()) {
-			frame = video->decodeNextFrame();
-			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
-		}
-		if (video->hasDirtyPalette()) {
-			byte *palette = const_cast<byte *>(video->getPalette());
-			g_director->setPalette(palette, 256);
-		}
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-
-	}
-	// Display the last frame after the video is done
-	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-		frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
-	);
-
-	video->close();
-	delete video;
-	// restore the palette
-	g_director->setPalette(origPalette, origCount);
 }
 
 void LB::b_getVolumes(int nargs) {

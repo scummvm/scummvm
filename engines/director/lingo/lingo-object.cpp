@@ -48,6 +48,7 @@
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
+#include "director/lingo/xlibs/xplayanim.h"
 
 namespace Director {
 
@@ -131,6 +132,7 @@ static struct XLibProto {
 	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
 	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ MoveMouseXObj::fileNames,		MoveMouseXObj::open,	MoveMouseXObj::close,		kXObj,					400 },	// D4
+	{ XPlayAnim::fileNames,			XPlayAnim::open,		XPlayAnim::close, 			kXObj,					300 },	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
 
 };
