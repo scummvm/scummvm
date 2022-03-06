@@ -64,7 +64,7 @@ bool DirectorEngine::processEvents(bool captureClick) {
 		// We want to handle these events regardless.
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+			processEventQUIT();
 			if (captureClick)
 				return true;
 			break;
@@ -78,6 +78,10 @@ bool DirectorEngine::processEvents(bool captureClick) {
 	}
 
 	return false;
+}
+
+void DirectorEngine::processEventQUIT() {
+	_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 }
 
 bool Window::processEvent(Common::Event &event) {

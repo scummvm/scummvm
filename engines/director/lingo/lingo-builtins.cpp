@@ -2703,7 +2703,7 @@ void LB::b_xPlayAnim(int nargs){
 	int x = g_lingo->pop().asInt();
 	Common::String filename = g_lingo->pop().asString();
 
-	warning("LB::b_xPlayAnim: x: %i y: %i", x, y);
+	debugN(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
 	Video::PacoDecoder *video = new Video::PacoDecoder();
 	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
 
@@ -2721,20 +2721,23 @@ void LB::b_xPlayAnim(int nargs){
 	Common::Event event;
 	bool keepPlaying = true;
 	video->start();
-	while (!video->endOfVideo() && keepPlaying) {
-		warning("LB::b_xPlayAnim: loop");
-
+	while (!video->endOfVideo()) {
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 				case Common::EVENT_QUIT:
-				case Common::EVENT_RBUTTONUP:
-				case Common::EVENT_LBUTTONUP:
+					g_director->processEventQUIT();
+					// fallthrough
+				case Common::EVENT_KEYDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+				case Common::EVENT_LBUTTONDOWN:
 					keepPlaying = false;
 					break;
 				default:
-					continue;
+					break;
 			}
 		}
+		if (!keepPlaying)
+			break;
 		if (video->needsUpdate()) {
 			frame = video->decodeNextFrame();
 			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
