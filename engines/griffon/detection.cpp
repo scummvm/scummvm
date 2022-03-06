@@ -30,6 +30,8 @@ static const PlainGameDescriptor griffonGames[] = {
 	{nullptr, nullptr}
 };
 
+#ifdef USE_TTS
+
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -44,6 +46,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
+
+#endif
 
 namespace Griffon {
 
