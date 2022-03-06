@@ -54,23 +54,16 @@ void standard_init() {
 	_G(screen0) = (byte *)g_screen->getPixels();
 	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
-	_G(curblk).page_off_x = 0;
-	_G(curblk).page_off_y = 0;
-	_G(curblk).xsize = 16;
-	_G(curblk).ysize = 16;
-
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
 	_G(curtaf) = _G(mem)->taf_adr(CURSOR_TAF);
 
 	_G(curblk).sprite = _G(curtaf)->_image;
-	_G(curblk).cur_back = _G(cur_back);
-	_G(curblk).no_back = true;
 	_G(curani)._start = 0;
 	_G(curani)._end = 0;
 	_G(curani)._delay = 0;
 	
-	_G(cur) = new Cursor(_G(out), _G(in), &_G(curblk));
+	_G(cur) = new Cursor(&_G(curblk));
 	_G(cur)->set_cur_ani(&_G(curani));
 
 	_G(iog) = new IOGame(_G(out), _G(in), _G(cur));
@@ -99,7 +92,6 @@ void standard_init() {
 	_G(out)->cls();
 	_G(uhr)->setNewTimer(0, 5, SEC_10_MODE);
 
-	_G(curblk).cur_back = _G(cur_back);
 	sound_init();
 	init_load();
 }

@@ -35,10 +35,6 @@ InputMgr::InputMgr() {
 InputMgr::~InputMgr() {
 }
 
-void InputMgr::setMousePos(int16 x, int16 y) {
-	g_events->warpMouse(Common::Point(x, y));
-}
-
 int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz) {
 	int16 i = -1;
 	for (int16 j = 0; (j < anz * 4) && (i == -1); j += 4) {

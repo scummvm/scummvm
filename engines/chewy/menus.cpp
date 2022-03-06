@@ -38,7 +38,14 @@ void plotMainMenu() {
 		_G(tmp_menu) = _G(menu_item);
 	}
 
-	mouseMovMenu();
+	// Don't allow the mouse to warp past the right edge, as this messes
+	// up the menu screen
+	if (g_events->_mousePos.x > 266)
+		g_events->warpMouse(Common::Point(266, g_events->_mousePos.y));
+
+	const int16 x = MAX(g_events->_mousePos.x - 32, 0);
+	_G(menu_item) = (x / (MOUSE_MENU_MAX_X / 5));
+
 	int16 *correction = (int16 *)_G(menutaf)->_correction;
 
 	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
@@ -82,16 +89,6 @@ void plotMainMenu() {
 		if (_G(m_flip) > 15 * (_G(spieler).DelaySpeed + 1))
 			_G(m_flip) = 0;
 	}
-}
-
-void mouseMovMenu() {
-	_G(maus_menu_x) = g_events->_mousePos.x;
-	if (_G(maus_menu_x) > 200) {
-		g_events->warpMouse(Common::Point(200, g_events->_mousePos.y));
-		_G(maus_menu_x) = 200;
-	}
-
-	_G(menu_item) = (_G(maus_menu_x) / (MOUSE_MENU_MAX_X / 5));
 }
 
 void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr) {
@@ -242,7 +239,7 @@ void adsMenu() {
 			curYStart = 190;
 		else
 			curYStart = 190 - (4 - _G(ads_item_anz)) * 10;
-		int16 curY = _G(minfo).y;
+		int16 curY = g_events->_mousePos.y;
 		if (curY < 160 || curY > curYStart + 10)
 			curY = 255;
 		else
@@ -273,7 +270,7 @@ void adsMenu() {
 			if (curY < _G(ads_item_anz) && curY >= 0 && _G(ads_push) == false) {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
-				_G(minfo).y = 159;
+				g_events->_mousePos.y = 159;
 				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), curY);
 				if (an_blk->BlkNr == -1) {
 					adsAction(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);

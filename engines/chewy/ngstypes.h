@@ -49,8 +49,6 @@ struct NewPhead {
 };
 
 struct MouseInfo {
-	int16 x = 0;
-	int16 y = 0;
 	int16 _button = 0;
 };
 
@@ -126,13 +124,7 @@ struct GedChunkHeader {
 };
 
 struct CurBlk {
-	int16 page_off_x = 0;
-	int16 page_off_y = 0;
-	byte *cur_back = nullptr;
-	int16 xsize = 0;
-	int16 ysize = 0;
 	byte **sprite = nullptr;
-	bool no_back = false;
 };
 
 struct CurAni {

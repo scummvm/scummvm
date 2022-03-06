@@ -31,7 +31,7 @@ namespace Chewy {
 class Cursor {
 public:
 	Cursor();
-	Cursor(McgaGraphics *out, InputMgr *in, CurBlk *curblk);
+	Cursor(CurBlk *curblk);
 	~Cursor();
 
 	void plot_cur();
@@ -40,16 +40,11 @@ public:
 	void set_cur_ani(CurAni *ani);
 	void move(int16 x, int16 y);
 
-	McgaGraphics *_out = nullptr;
-	InputMgr *_in = nullptr;
 	CurBlk *_curblk = nullptr;
 	CurAni *_ani = nullptr;
 	int _scrWidth = 0;
-	int16 _cur_x_old = 0;
-	int16 _cur_y_old = 0;
 	int16 _curAniCountdown = 0;
 	int16 _aniCount = 0;
-	bool _visible = false;
 };
 
 } // namespace Chewy

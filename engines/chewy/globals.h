@@ -135,7 +135,6 @@ public:
 	byte **_ablage = nullptr;
 	byte *_workpage = nullptr;
 	byte *_workptr = nullptr;
-	byte *_cur_back = nullptr;
 	byte **_ged_mem = nullptr;
 	byte *_spblende = nullptr;
 	char **_ads_item_ptr = nullptr;
@@ -150,7 +149,6 @@ public:
 	int16 _menu_lauflicht = 0;
 	int16 _menu_item = 0;
 	int16 _menu_item_vorwahl = 0;
-	int16 _maus_menu_x = 0;
 	int16 _maus_old_x = 0;
 	int16 _maus_old_y = 0;
 	int16 _inventoryNr = 0;
@@ -398,8 +396,6 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode);
 
 void autoMenu(int16 *x, int16 *y, int16 lineNr, int16 zeilen_hoehe,
                char *txt, int16 mode);
-
-void mouseMovMenu();
 
 void cur_2_inventory();
 

@@ -291,8 +291,8 @@ void calc_z_ebene() {
 int16 mouse_on_prog_ani() {
 	int16 aniNr = -1;
 	for (int16 i = 0; i < MAX_PROG_ANI && aniNr == -1; i++) {
-		if (_G(minfo).x >= _G(spr_info)[i]._x && _G(minfo).x <= _G(spr_info)[i].X1 &&
-		        _G(minfo).y >= _G(spr_info)[i]._y && _G(minfo).y <= _G(spr_info)[i].Y1) {
+		if (g_events->_mousePos.x >= _G(spr_info)[i]._x && g_events->_mousePos.x <= _G(spr_info)[i].X1 &&
+		        g_events->_mousePos.y >= _G(spr_info)[i]._y && g_events->_mousePos.y <= _G(spr_info)[i].Y1) {
 			aniNr = i;
 		}
 	}
@@ -502,9 +502,11 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 				int16 vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 
 				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
-				g_engine->_sound->playSpeech(VocNr,
-					_G(atds)->getAtdDisplay() == DISPLAY_VOC);
-				//warning("FIXME - unknown constant SMP_PLAYING");
+				if (VocNr >= 0) {
+					g_engine->_sound->playSpeech(VocNr,
+						_G(atds)->getAtdDisplay() == DISPLAY_VOC);
+					//warning("FIXME - unknown constant SMP_PLAYING");
+				}
 
 				setupScreen(DO_SETUP);
 			}
@@ -686,10 +688,10 @@ int16 mouse_auto_obj(int16 nr, int16 xoff, int16 yoff) {
 			yoff = xy ? xy[1] : 0;
 			yoff += _G(auto_mov_vector)[nr].Yzoom;
 		}
-		if (_G(minfo).x >= _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
-		        _G(minfo).x <= _G(auto_mov_vector)[nr].Xypos[0] + xoff + Cxy[0] - _G(spieler).scrollx &&
-		        _G(minfo).y >= _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly &&
-		        _G(minfo).y <= _G(auto_mov_vector)[nr].Xypos[1] + yoff + Cxy[1] - _G(spieler).scrolly)
+		if (g_events->_mousePos.x >= _G(auto_mov_vector)[nr].Xypos[0] + Cxy[0] - _G(spieler).scrollx &&
+		        g_events->_mousePos.x <= _G(auto_mov_vector)[nr].Xypos[0] + xoff + Cxy[0] - _G(spieler).scrollx &&
+		        g_events->_mousePos.y >= _G(auto_mov_vector)[nr].Xypos[1] + Cxy[1] - _G(spieler).scrolly &&
+		        g_events->_mousePos.y <= _G(auto_mov_vector)[nr].Xypos[1] + yoff + Cxy[1] - _G(spieler).scrolly)
 			ret = true;
 	}
 	return ret;

@@ -233,6 +233,7 @@ void EventsManager::processEvents() {
 #undef MOUSE_MOVE
 
 void EventsManager::warpMouse(const Common::Point &newPos) {
+	_mousePos = newPos;
 	g_system->warpMouse(newPos.x, newPos.y);
 }
 

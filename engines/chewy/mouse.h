@@ -33,8 +33,6 @@ public:
 	InputMgr();
 	~InputMgr();
 
-	void setMousePos(int16 x, int16 y);
-
 	void neuer_kb_handler(KbdInfo *key);
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 anz);
 

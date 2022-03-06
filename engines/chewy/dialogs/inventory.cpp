@@ -268,7 +268,7 @@ void Inventory::menu() {
 
 		ret_look = -1;
 		int16 abfrage = _G(in)->getSwitchCode();
-		_G(cur)->hide_cur();
+		// The original hid the cursor here
 
 		if (taste_flag) {
 			if (abfrage != taste_flag)
@@ -342,8 +342,6 @@ void Inventory::menu() {
 
 		if (_G(show_invent_menu) != 2) {
 			setupScreen(NO_SETUP);
-			_G(cur)->move(g_events->_mousePos.x, g_events->_mousePos.y);
-			_G(cur)->show_cur();
 			if (menu_flag1 != MENU_HIDE) {
 				inv_rand_x = -1;
 				inv_rand_y = -1;

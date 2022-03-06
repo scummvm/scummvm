@@ -74,7 +74,6 @@ void game_main() {
 void alloc_buffers() {
 	_G(workpage) = (byte *)MALLOC(64004l);
 	_G(pal) = (byte *)MALLOC(768l);
-	_G(cur_back) = (byte *)MALLOC(16 * 16 + 4);
 	_G(Ci).TempArea = (byte *)MALLOC(64004l);
 	_G(det)->set_taf_ani_mem(_G(Ci).TempArea);
 	_G(Ci).MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);
@@ -93,7 +92,6 @@ void free_buffers() {
 	free((char *)_G(curtaf));
 	free(_G(Ci).MusicSlot);
 	free(_G(Ci).TempArea);
-	free(_G(cur_back));
 	free(_G(pal));
 	free(_G(workpage));
 }
@@ -291,8 +289,8 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_SPACE:
 			_G(tmp_menu_item) = _G(menu_item);
-			_G(maus_old_x) = _G(minfo).x;
-			_G(maus_old_y) = _G(minfo).y;
+			_G(maus_old_x) = g_events->_mousePos.x;
+			_G(maus_old_y) = g_events->_mousePos.y;
 			_G(menu_item) = CUR_USE;
 			menuEntry();
 			Dialogs::Inventory::menu();
@@ -338,12 +336,11 @@ bool mainLoop(int16 mode) {
 			if (_G(menu_display) == 0) {
 				menuEntry();
 				_G(tmp_menu_item) = _G(menu_item);
-				_G(maus_old_x) = _G(minfo).x;
-				_G(maus_old_y) = _G(minfo).y;
+				_G(maus_old_x) = g_events->_mousePos.x;
+				_G(maus_old_y) = g_events->_mousePos.y;
 				_G(menu_display) = MENU_DISPLAY;
-				_G(maus_menu_x) = (MOUSE_MENU_MAX_X / 5) * (_G(menu_item));
 				_G(cur_display) = false;
-				_G(cur)->move(_G(maus_menu_x), 100);
+				_G(cur)->move((MOUSE_MENU_MAX_X / 5) * (_G(menu_item)), 100);
 			} else {
 				menuExit();
 				_G(menu_item) = _G(tmp_menu_item);
@@ -381,8 +378,8 @@ bool mainLoop(int16 mode) {
 				_G(flags).SaveMenu = true;
 				_G(menu_display) = MENU_DISPLAY;
 				_G(cur)->move(152, 92);
-				_G(minfo).x = 152;
-				_G(minfo).y = 92;
+				g_events->_mousePos.x = 152;
+				g_events->_mousePos.y = 92;
 				_G(fontMgr)->setFont(_G(font6));
 
 				_G(out)->setPointer(_G(screen0));
@@ -415,8 +412,8 @@ bool mainLoop(int16 mode) {
 					_G(menu_display) = 0;
 					_G(cur_display) = true;
 					_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
-					_G(minfo).x = _G(maus_old_x);
-					_G(minfo).y = _G(maus_old_y);
+					g_events->_mousePos.x = _G(maus_old_x);
+					g_events->_mousePos.y = _G(maus_old_y);
 					_G(spieler).inv_cur = false;
 					cursorChoice(_G(menu_item));
 				}
@@ -454,8 +451,8 @@ bool mainLoop(int16 mode) {
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
 			_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
-			_G(minfo).x = _G(maus_old_x);
-			_G(minfo).y = _G(maus_old_y);
+			g_events->_mousePos.x = _G(maus_old_x);
+			g_events->_mousePos.y = _G(maus_old_y);
 		}
 	}
 
@@ -523,7 +520,7 @@ void setupScreen(SetupScreenMode mode) {
 	} else {
 		kb_mov(1);
 		_G(det)->unfreeze_ani();
-		check_mouse_ausgang(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
+		check_mouse_ausgang(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
 
 		if (!_G(flags).SaveMenu)
 			calc_ani_timer();
@@ -542,12 +539,12 @@ void setupScreen(SetupScreenMode mode) {
 		if (_G(mouseLeftClick)) {
 			if (_G(menu_item) == CUR_WALK) {
 				if (_G(cur_ausgang_flag)) {
-					calc_ausgang(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
+					calc_ausgang(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
 				} else {
 					if (!_G(flags).ChewyDontGo) {
-						_G(gpkt).Dx = _G(minfo).x - _G(spieler_mi)[P_CHEWY].HotMovX +
+						_G(gpkt).Dx = g_events->_mousePos.x - _G(spieler_mi)[P_CHEWY].HotMovX +
 						          _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
-						_G(gpkt).Dy = _G(minfo).y - _G(spieler_mi)[P_CHEWY].HotMovY +
+						_G(gpkt).Dy = g_events->_mousePos.y - _G(spieler_mi)[P_CHEWY].HotMovY +
 						          _G(spieler).scrolly + _G(spieler_mi)[P_CHEWY].HotY;
 						_G(gpkt).Sx = _G(spieler_vector)[P_CHEWY].Xypos[0] +
 						          _G(spieler_mi)[P_CHEWY].HotX;
@@ -592,27 +589,27 @@ void setupScreen(SetupScreenMode mode) {
 		for (i = 0; i < _G(auto_obj) && !_G(flags).StopAutoObj; i++)
 			mov_objekt(&_G(auto_mov_vector)[i], &_G(auto_mov_obj)[i]);
 
-		int16 nr = _G(obj)->is_iib_mouse(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
+		int16 nr = _G(obj)->is_iib_mouse(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
 		if (nr != -1) {
 			txt_nr = _G(obj)->iib_txt_nr(nr);
 			mous_obj_action(nr, mode, INVENTORY_NORMAL, txt_nr);
 		} else {
-			int16 tmp = calcMouseText(_G(minfo).x, _G(minfo).y, mode);
+			int16 tmp = calcMouseText(g_events->_mousePos.x, g_events->_mousePos.y, mode);
 			if (tmp == -1 || tmp == 255) {
 
-				nr = _G(obj)->is_sib_mouse(_G(minfo).x + _G(spieler).scrollx, _G(minfo).y + _G(spieler).scrolly);
+				nr = _G(obj)->is_sib_mouse(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
 				if (nr != -1) {
 					txt_nr = _G(obj)->sib_txt_nr(nr);
 					mous_obj_action(nr, mode, INVENTORY_STATIC, txt_nr);
 				} else
-					calc_mouse_person(_G(minfo).x, _G(minfo).y);
+					calc_mouse_person(g_events->_mousePos.x, g_events->_mousePos.y);
 			}
 		}
 		if (_G(cur_display) == true && mode == DO_SETUP) {
 			_G(cur)->plot_cur();
 
 			if ((_G(spieler).inv_cur) && (_G(flags).CursorStatus == true))
-				_G(out)->spriteSet(_G(curtaf)->_image[_G(pfeil_ani) + 32], _G(minfo).x, _G(minfo).y,
+				_G(out)->spriteSet(_G(curtaf)->_image[_G(pfeil_ani) + 32], g_events->_mousePos.x, g_events->_mousePos.y,
 				                _G(scr_width));
 			if (_G(pfeil_delay) == 0) {
 				_G(pfeil_delay) = _G(spieler).DelaySpeed;
@@ -698,8 +695,8 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 
 			if (str_adr) {
 				_G(fontMgr)->setFont(_G(font8));
-				int16 x = _G(minfo).x;
-				int16 y = _G(minfo).y;
+				int16 x = g_events->_mousePos.x;
+				int16 y = g_events->_mousePos.y;
 				calcTxtXy(&x, &y, str_adr, anz);
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos(str_adr, i));
@@ -754,23 +751,23 @@ void kb_mov(int16 mode) {
 	while (!ende) {
 		switch (_G(in)->getSwitchCode()) {
 		case Common::KEYCODE_RIGHT:
-			if (_G(minfo).x < 320 - _G(spieler)._curWidth)
-				_G(minfo).x += 2;
+			if (g_events->_mousePos.x < 320 - _G(spieler)._curWidth)
+				_G(cur)->move(g_events->_mousePos.x + 2, g_events->_mousePos.y);
 			break;
 
 		case Common::KEYCODE_LEFT:
-			if (_G(minfo).x > 1)
-				_G(minfo).x -= 2;
+			if (g_events->_mousePos.x > 1)
+				_G(cur)->move(g_events->_mousePos.x - 2, g_events->_mousePos.y);
 			break;
 
 		case Common::KEYCODE_UP:
-			if (_G(minfo).y > 1)
-				_G(minfo).y -= 2;
+			if (g_events->_mousePos.y > 1)
+				_G(cur)->move(g_events->_mousePos.x, g_events->_mousePos.y - 2);
 			break;
 
 		case Common::KEYCODE_DOWN:
-			if (_G(minfo).y < 210 - _G(spieler)._curHeight)
-				_G(minfo).y += 2;
+			if (g_events->_mousePos.y < 210 - _G(spieler)._curHeight)
+				_G(cur)->move(g_events->_mousePos.x, g_events->_mousePos.y + 2);
 			break;
 
 		default:
@@ -778,7 +775,7 @@ void kb_mov(int16 mode) {
 			break;
 
 		}
-		_G(cur)->move(_G(minfo).x, _G(minfo).y);
+		
 		if (mode)
 			ende = true;
 		else
@@ -795,8 +792,7 @@ void kb_cur_action(int16 key, int16 mode) {
 				++_G(menu_item);
 			else
 				_G(menu_item) = CUR_WALK;
-			_G(maus_menu_x) = (_G(menu_item)) * (MOUSE_MENU_MAX_X / 5);
-			_G(cur)->move(_G(maus_menu_x), 100);
+			_G(cur)->move((_G(menu_item)) * (MOUSE_MENU_MAX_X / 5), 100);
 		}
 		break;
 
@@ -806,8 +802,7 @@ void kb_cur_action(int16 key, int16 mode) {
 				--_G(menu_item);
 			else
 				_G(menu_item) = CUR_INVENT;
-			_G(maus_menu_x) = (_G(menu_item)) * (MOUSE_MENU_MAX_X / 5);
-			_G(cur)->move(_G(maus_menu_x), 100);
+			_G(cur)->move((_G(menu_item)) * (MOUSE_MENU_MAX_X / 5), 100);
 		}
 		break;
 
@@ -831,8 +826,8 @@ void kb_cur_action(int16 key, int16 mode) {
 }
 
 void mouseAction() {
-	int16 x = _G(minfo).x;
-	int16 y = _G(minfo).y;
+	int16 x = g_events->_mousePos.x;
+	int16 y = g_events->_mousePos.y;
 	if (x > invent_display[_G(spieler).InvDisp][0] &&
 	        x < invent_display[_G(spieler).InvDisp][0] + 48 &&
 	        y > invent_display[_G(spieler).InvDisp][1] &&
@@ -1631,8 +1626,8 @@ void get_user_key(int16 mode) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_SPACE:
 		case Common::KEYCODE_ESCAPE:
-			_G(maus_old_x) = _G(minfo).x;
-			_G(maus_old_y) = _G(minfo).y;
+			_G(maus_old_x) = g_events->_mousePos.x;
+			_G(maus_old_y) = g_events->_mousePos.y;
 
 			_G(tmp_menu_item) = _G(menu_item);
 			_G(menu_item) = CUR_USE;
