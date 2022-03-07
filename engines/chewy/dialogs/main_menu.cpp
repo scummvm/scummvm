@@ -243,7 +243,7 @@ void MainMenu::playGame() {
 	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
 	_G(mouseLeftClick) = false;
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 
 	_G(flags).mainMouseFlag = false;
 	_G(flags).MainInput = true;

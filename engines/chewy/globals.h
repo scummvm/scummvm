@@ -215,7 +215,6 @@ public:
 	bool _ani_stand_flag[MAX_PERSON] = { false };
 
 	MouseInfo _minfo;
-	KbdInfo _kbinfo;
 	CurBlk _curblk;
 	CurAni _curani;
 	IogInit _ioptr;

@@ -473,7 +473,7 @@ void startAadWait(int16 diaNr) {
 	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	stop_spz();
 }
 
@@ -537,7 +537,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
 
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	_G(mouseLeftClick) = oldMouseLeftClick;
 
 	return ret != DISPLAY_NONE;
@@ -558,7 +558,7 @@ void aadWait(int16 strNr) {
 	_G(mouseLeftClick) = oldMouseLeftClick;
 	if (_G(minfo)._button)
 		_G(flags).mainMouseFlag = 1;
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
 void start_aad(int16 diaNr, int16 ssiNr) {

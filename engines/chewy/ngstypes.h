@@ -52,15 +52,6 @@ struct MouseInfo {
 	int16 _button = 0;
 };
 
-struct KbdInfo {
-	char _keyCode = '\0';
-	int _scanCode = Common::KEYCODE_INVALID;
-};
-
-struct KbdMouseInfo {
-	KbdInfo *kbinfo = nullptr;
-};
-
 struct TmfInst {
 	uint8 finetune;
 	uint8 insvol;

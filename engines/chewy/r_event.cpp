@@ -90,7 +90,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
 void timer_action(int16 t_nr) {
@@ -129,7 +129,7 @@ void timer_action(int16 t_nr) {
 		_G(uhr)->resetTimer(t_nr, 0);
 	}
 
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
 void check_ged_action(int16 index) {
@@ -174,7 +174,7 @@ void check_ged_action(int16 index) {
 		_G(flags).GedAction = false;
 	}
 
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
 int16 ged_user_func(int16 idx_nr) {

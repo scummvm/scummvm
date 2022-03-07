@@ -94,7 +94,7 @@ int16 Room4::comp_probe() {
 		_G(spr_info)[0]._x = CUR_POS[curX][0];
 		_G(spr_info)[0]._y = CUR_POS[curX][1];
 
-		if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+		if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			_G(curani)._start = HAND_CLICK;
 			_G(curani)._end = HAND_CLICK;
 		} else {

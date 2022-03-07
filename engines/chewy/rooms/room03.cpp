@@ -348,7 +348,7 @@ void Room3::probeTransfer() {
 
 			if (i == 2 || i == 1) {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
-					if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+					if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 						if (isCurInventory(SPINAT_INV)) {
 							_G(atds)->set_split_win(0, 120, 100);
 							if (_G(spieler)._personRoomNr[P_CHEWY] == 3)

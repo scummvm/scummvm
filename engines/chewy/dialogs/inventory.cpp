@@ -147,7 +147,7 @@ void Inventory::menu() {
 
 	int16 menu_flag1 = MENU_DISPLAY;
 	int16 taste_flag = 28;
-	_G(kbinfo)._keyCode = '\0';
+	g_events->_kbInfo._keyCode = '\0';
 	bool mouseFl = true;
 
 	for (int16 i = 0; i < 3; i++) {
@@ -162,10 +162,10 @@ void Inventory::menu() {
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
 		if (!_G(minfo)._button)
 			mouseFl = false;
-		if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN || keyVal) {
+		if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN || keyVal) {
 			if (!mouseFl) {
 				mouseFl = true;
-				_G(kbinfo)._keyCode = '\0';
+				g_events->_kbInfo._keyCode = '\0';
 
 				int16 k = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
 				if (keyVal == Common::KEYCODE_F1)
@@ -203,11 +203,11 @@ void Inventory::menu() {
 					break;
 
 				case 3:
-					_G(in)->_hotkey = Common::KEYCODE_PAGEUP;
+					g_events->_kbInfo._keyCode = Common::KEYCODE_PAGEUP;
 					break;
 
 				case 4:
-					_G(in)->_hotkey = Common::KEYCODE_PAGEDOWN;
+					g_events->_kbInfo._keyCode = Common::KEYCODE_PAGEDOWN;
 					break;
 
 				case 5:
@@ -245,9 +245,9 @@ void Inventory::menu() {
 					break;
 				}
 			}
-		} else if (_G(minfo)._button == 2 || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE) {
+		} else if (_G(minfo)._button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 			if (!mouseFl) {
-				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
+				g_events->_kbInfo._keyCode = Common::KEYCODE_ESCAPE;
 				mouseFl = true;
 			}
 		}
@@ -325,13 +325,13 @@ void Inventory::menu() {
 			case Common::KEYCODE_PAGEUP:
 				if (_G(spieler).InventY > 0)
 					--_G(spieler).InventY;
-				_G(kbinfo)._keyCode = '\0';
+				g_events->_kbInfo._keyCode = '\0';
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
 				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
 					++_G(spieler).InventY;
-				_G(kbinfo)._keyCode = '\0';
+				g_events->_kbInfo._keyCode = '\0';
 				break;
 
 			default:
@@ -425,7 +425,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		if (_G(minfo)._button) {
 			if (_G(minfo)._button == 2) {
 				if (!mouseFl)
-					_G(kbinfo)._scanCode = Common::KEYCODE_ESCAPE;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			} else if (_G(minfo)._button == 1) {
 				if (!mouseFl) {
 					switch (rect) {
@@ -441,12 +441,12 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 					case 3:
 					case 6:
-						_G(kbinfo)._scanCode = Common::KEYCODE_UP;
+						g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
 						break;
 
 					case 4:
 					case 7:
-						_G(kbinfo)._scanCode = Common::KEYCODE_DOWN;
+						g_events->_kbInfo._scanCode = Common::KEYCODE_DOWN;
 						break;
 
 					case 5:
@@ -465,15 +465,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			mouseFl = false;
 		}
 
-		switch (_G(kbinfo)._scanCode) {
-		case Common::KEYCODE_F1:
-			_G(in)->_hotkey = Common::KEYCODE_F1;
-			break;
-
-		case Common::KEYCODE_F2:
-			_G(in)->_hotkey = Common::KEYCODE_F2;
-			break;
-
+		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_ESCAPE:
 			endLoop = true;
 			break;
@@ -492,7 +484,6 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 		}
 
-		_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(fontMgr)->setFont(_G(font8));

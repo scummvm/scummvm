@@ -216,9 +216,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	va_list parptr;
 	va_start(parptr, string);
 
-	KbdInfo kbInfo;
-	KbdInfo *kb_old = g_events->setKbdInfo(&kbInfo);
-
 	if ((x == -1) || (y == -1)) {
 		x = _G(gcurx);
 		y = _G(gcury);
@@ -624,8 +621,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 
 	if (_svga == ON)
 		upd_scr();
-
-	g_events->setKbdInfo(kb_old);
 
 	va_end(parptr);
 	return ret;

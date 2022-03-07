@@ -302,7 +302,7 @@ void Room0::eyeWait() {
 
 void Room0::calcEyeClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && _G(kbinfo)._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			int16 anz;
 			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != 0) {
@@ -313,7 +313,7 @@ void Room0::calcEyeClick(int16 aniNr) {
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
-		} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
 				delInventory(_G(spieler).AkInvent);
 				_G(spieler).R0SlimeUsed = true;
@@ -540,7 +540,7 @@ void Room0::feederExtend() {
 
 void Room0::calcPillowClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && _G(kbinfo)._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			int16 anz;
 			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATA);
 			if (str_ != nullptr) {
@@ -551,7 +551,7 @@ void Room0::calcPillowClick(int16 aniNr) {
 				for (int16 i = 0; i < anz; i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
-		} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
 				delInventory(_G(spieler).AkInvent);
 				_G(spieler).R0PillowThrow = true;

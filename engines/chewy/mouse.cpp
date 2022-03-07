@@ -29,7 +29,6 @@ namespace Chewy {
 bool _cursorMoveFl;
 
 InputMgr::InputMgr() {
-	_kbInfoBlk = nullptr;
 }
 
 InputMgr::~InputMgr() {
@@ -45,18 +44,6 @@ int16 InputMgr::mouseVector(int16 x, int16 y, const int16 *tbl, int16 nr) {
 	return i;
 }
 
-void InputMgr::neuer_kb_handler(KbdInfo *key) {
-	g_events->setKbdInfo(key);
-	_kbInfoBlk = key;
-	_kbInfoBlk->_keyCode = '\0';
-}
-
-KbdMouseInfo *InputMgr::getPointer() {
-	_inzeig.kbinfo = _kbInfoBlk;
-
-	return &_inzeig;
-}
-
 int16 InputMgr::getSwitchCode() {
 	int16 switch_code = 0;
 
@@ -67,13 +54,8 @@ int16 InputMgr::getSwitchCode() {
 	else if (_G(minfo)._button == 4)
 		switch_code = MOUSE_CENTER;
 
-	if (_kbInfoBlk && _kbInfoBlk->_keyCode != 0)
-		switch_code = (int16)_kbInfoBlk->_keyCode;
-
-	if (_hotkey != Common::KEYCODE_INVALID) {
-		switch_code = _hotkey;
-		_hotkey = Common::KEYCODE_INVALID;
-	}
+	if (g_events->_kbInfo._keyCode != 0)
+		switch_code = (int16)g_events->_kbInfo._keyCode;
 
 	return switch_code;
 }

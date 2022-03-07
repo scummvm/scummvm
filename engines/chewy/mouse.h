@@ -33,17 +33,9 @@ public:
 	InputMgr();
 	~InputMgr();
 
-	void neuer_kb_handler(KbdInfo *key);
 	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 nr);
 
-	KbdMouseInfo *getPointer();
 	int16 getSwitchCode();
-
-	int16 _hotkey = Common::KEYCODE_INVALID;
-
-private:
-	KbdInfo *_kbInfoBlk = nullptr;
-	KbdMouseInfo _inzeig;
 };
 
 } // namespace Chewy

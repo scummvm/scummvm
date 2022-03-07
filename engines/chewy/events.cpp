@@ -32,6 +32,7 @@ EventsManager::EventsManager(Graphics::Screen *screen, uint refreshRate) : _scre
 	addTimer(updateScreen, refreshRate);
 	g_events = this;
 	init_timer_handler();
+	_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
 EventsManager::~EventsManager() {
@@ -138,16 +139,11 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 void EventsManager::handleKbdEvent(const Common::Event &event) {
 	_pendingKeyEvents.push(event);
 
-	if (_kbInfo) {
-		if (event.type == Common::EVENT_KEYDOWN) {
-			_kbInfo->_keyCode = event.kbd.ascii;
-			_kbInfo->_scanCode = event.kbd.keycode;
-			if (event.kbd.flags & Common::KBD_ALT)
-				_kbInfo->_scanCode |= ALT;
-		} else if (event.type == Common::EVENT_KEYUP) {
-			if (event.kbd.ascii == _kbInfo->_keyCode)
-				_kbInfo->_keyCode = '\0';
-		}
+	if (event.type == Common::EVENT_KEYUP) {
+		_kbInfo._keyCode = event.kbd.ascii;
+		_kbInfo._scanCode = event.kbd.keycode;
+		if (event.kbd.flags & Common::KBD_ALT)
+			_kbInfo._scanCode |= ALT;
 	}
 }
 
@@ -162,22 +158,13 @@ void EventsManager::delay(size_t time) {
 }
 
 void EventsManager::clearEvents() {
-	if (_kbInfo) {
-		_kbInfo->_scanCode = Common::KEYCODE_INVALID;
-		_kbInfo->_keyCode = '\0';
-	}
-
+	_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	_kbInfo._keyCode = '\0';
 	_G(minfo)._button = 0;
 
 	processEvents();
 	_pendingEvents.clear();
 	_pendingKeyEvents.clear();
-}
-
-KbdInfo *EventsManager::setKbdInfo(KbdInfo *kbInfo) {
-	KbdInfo *kb = _kbInfo;
-	_kbInfo = kbInfo;
-	return kb;
 }
 
 void EventsManager::update() {
@@ -242,14 +229,14 @@ void delay(size_t time) {
 }
 
 bool kbhit() {
-	return g_events->_kbInfo && g_events->_kbInfo->_keyCode != 0;
+	return g_events->_kbInfo._keyCode != 0;
 }
 
 char getch() {
-	if (g_events->_kbInfo && g_events->_kbInfo->_keyCode) {
-		char c = g_events->_kbInfo->_keyCode;
-		g_events->_kbInfo->_keyCode = 0;
-		g_events->_kbInfo->_scanCode = 0;
+	if (g_events->_kbInfo._keyCode) {
+		char c = g_events->_kbInfo._keyCode;
+		g_events->_kbInfo._keyCode = 0;
+		g_events->_kbInfo._scanCode = 0;
 
 		return c;
 	}

@@ -61,7 +61,7 @@ void Cinema::execute() {
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	showCur();
 	EVENTS_CLEAR;
-	_G(kbinfo)._scanCode = 0;
+	g_events->_kbInfo._scanCode = 0;
 
 	for (bool endLoop = false; !endLoop;) {
 		_G(out)->setPointer(_G(workptr));
@@ -88,14 +88,14 @@ void Cinema::execute() {
 			flag = true;
 			switch (_G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, CINEMA_TBL, 3)) {
 			case 0:
-				_G(kbinfo)._scanCode = Common::KEYCODE_UP;
+				g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
 				if (!endLoop)
 					endLoop = true;
 
 				break;
 
 			case 1:
-				_G(kbinfo)._scanCode = Common::KEYCODE_DOWN;
+				g_events->_kbInfo._scanCode = Common::KEYCODE_DOWN;
 				if (!endLoop)
 					endLoop = true;
 
@@ -106,7 +106,7 @@ void Cinema::execute() {
 				int selIndex = (g_events->_mousePos.y - 68) / 10 + topIndex;
 				if (selIndex < (int)cutscenes.size())
 					selected = selIndex;
-				_G(kbinfo)._scanCode = Common::KEYCODE_RETURN;
+				g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
 				break;
 			}
 
@@ -114,7 +114,7 @@ void Cinema::execute() {
 				break;
 			}
 		} else if (_G(minfo)._button == 2 && !flag) {
-			_G(kbinfo)._scanCode = Common::KEYCODE_ESCAPE;
+			g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			flag = true;
 		} else if (_G(minfo)._button != 1) {
 			flag = false;
@@ -125,10 +125,10 @@ void Cinema::execute() {
 				flag = false;
 		}
 
-		switch (_G(kbinfo)._scanCode) {
+		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_ESCAPE:
 			endLoop = true;
-			_G(kbinfo)._scanCode = 0;
+			g_events->_kbInfo._scanCode = 0;
 			break;
 
 		case Common::KEYCODE_UP:
@@ -138,7 +138,7 @@ void Cinema::execute() {
 			} else if (topIndex > 0) {
 				--topIndex;
 			}
-			_G(kbinfo)._scanCode = 0;
+			g_events->_kbInfo._scanCode = 0;
 			break;
 
 		case Common::KEYCODE_DOWN:
@@ -152,7 +152,7 @@ void Cinema::execute() {
 				if ((topIndex + newIndex) < (int)cutscenes.size())
 					++selected;
 			}
-			_G(kbinfo)._scanCode = 0;
+			g_events->_kbInfo._scanCode = 0;
 			break;
 		}
 
@@ -175,7 +175,7 @@ void Cinema::execute() {
 		}
 
 		// The below are hacks to get the dialog to work in ScummVM
-		_G(kbinfo)._scanCode = 0;
+		g_events->_kbInfo._scanCode = 0;
 		_G(minfo)._button = 0;
 		txt_anz = 0;
 

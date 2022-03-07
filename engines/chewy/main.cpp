@@ -250,7 +250,7 @@ bool mainLoop(int16 mode) {
 
 	mouseAction();
 	if (_G(flags).MainInput) {
-		switch (_G(kbinfo)._scanCode) {
+		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_F1:
 			_G(spieler).inv_cur = false;
 			_G(menu_item) = CUR_WALK;
@@ -306,7 +306,7 @@ bool mainLoop(int16 mode) {
 				getDisplayCoord(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
 
-			_G(kbinfo)._keyCode = '\0';
+			g_events->_kbInfo._keyCode = '\0';
 			break;
 
 		case Common::KEYCODE_F6:
@@ -422,7 +422,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_DOWN:
-			kb_cur_action(_G(kbinfo)._scanCode, 0);
+			kb_cur_action(g_events->_kbInfo._scanCode, 0);
 			break;
 
 		case 41:
@@ -453,7 +453,7 @@ bool mainLoop(int16 mode) {
 		}
 	}
 
-	_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._scanCode	= Common::KEYCODE_INVALID;
 	if (mode == DO_SETUP)
 		setupScreen(DO_MAIN_LOOP);
 
@@ -840,16 +840,16 @@ void mouseAction() {
 		_G(inv_disp_ok) = false;
 	}
 	if (_G(atds)->aadGetStatus() == -1) {
-		if (_G(minfo)._button || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+		if (_G(minfo)._button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 
-			if (_G(minfo)._button == 2 || _G(kbinfo)._keyCode == Common::KEYCODE_ESCAPE) {
+			if (_G(minfo)._button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 				if (!_G(flags).mainMouseFlag) {
-					_G(kbinfo)._scanCode = Common::KEYCODE_ESCAPE;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 				}
-			} else if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
+			} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 				if (!_G(flags).mainMouseFlag) {
 					if (_G(menu_display) == MENU_DISPLAY)
-						_G(kbinfo)._scanCode = Common::KEYCODE_RETURN;
+						g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
 					else if (_G(spieler).AkInvent != -1) {
 						if (_G(inv_disp_ok)) {
 							if (_G(spieler).inv_cur) {
@@ -859,7 +859,7 @@ void mouseAction() {
 							} else {
 								_G(menu_item) = CUR_USE;
 								cursorChoice(CUR_AK_INVENT);
-								_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+								g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 							}
 						} else if (!_G(flags).MouseLeft)
 							_G(mouseLeftClick) = true;
@@ -1643,7 +1643,7 @@ void get_user_key(int16 mode) {
 				getDisplayCoord(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
 			}
 
-			_G(kbinfo)._keyCode = '\0';
+			g_events->_kbInfo._keyCode = '\0';
 			break;
 
 		default:

@@ -151,7 +151,7 @@ void Room29::schlitz_sitz() {
 		_G(atds)->del_steuer_bit(212, ATS_AKTIV_BIT, ATS_DATA);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(mouseLeftClick) = false;
-		_G(kbinfo)._scanCode = Common::KEYCODE_INVALID;
+		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 
 		showCur();
 	}

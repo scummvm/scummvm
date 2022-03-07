@@ -50,7 +50,6 @@ void standard_init() {
 	_G(out)->setClip(0, 0, 320, 200);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();
-	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
@@ -76,7 +75,6 @@ void standard_init() {
 	_G(room)->set_timer_start(1);
 
 	_G(out)->cls();
-	_G(in)->neuer_kb_handler(&_G(kbinfo));
 
 	var_init();
 	_G(ablage) = _G(room)->get_ablage();

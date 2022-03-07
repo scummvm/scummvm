@@ -151,8 +151,6 @@ int16 Files::execute(bool isInGame) {
 			} else {
 				key = 0;
 			}
-
-			_G(in)->neuer_kb_handler(&_G(kbinfo));
 		}
 
 		if (mode[OPTIONS])
@@ -272,7 +270,6 @@ enter:
 				tmp = fnames + ((text_off + active_slot) * 40);
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 					255, 42, 14, 0, "%36s36", tmp);
-				_G(in)->neuer_kb_handler(&_G(kbinfo));
 				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
 					_G(iog)->save_entry(text_off + active_slot,

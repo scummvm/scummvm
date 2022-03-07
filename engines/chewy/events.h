@@ -28,7 +28,11 @@
 
 namespace Chewy {
 
-struct KbdInfo;
+struct KbdInfo {
+	char _keyCode = '\0';
+	int _scanCode = Common::KEYCODE_INVALID;
+};
+
 typedef void (*TimerProc)();
 
 class EventsManager {
@@ -82,7 +86,7 @@ private:
 	void handleEvent(const Common::Event &event);
 
 public:
-	KbdInfo *_kbInfo = nullptr;
+	KbdInfo _kbInfo;
 	Common::Point _mousePos;
 	bool _flag1 = false;
 	bool _flag2 = false;
@@ -91,8 +95,6 @@ public:
 	virtual ~EventsManager();
 
 	void delay(size_t time);
-
-	KbdInfo *setKbdInfo(KbdInfo *kbInfo);
 
 	Graphics::Screen *_screen;
 
