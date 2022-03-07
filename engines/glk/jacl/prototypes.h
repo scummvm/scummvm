@@ -27,7 +27,6 @@ extern strid_t open_glk_file(uint usage, uint mode, char *filename);
 extern glui32 glk_get_bin_line_stream(strid_t file_stream, char *buffer, glui32 max_length);
 extern glui32 parse_utf8(unsigned char *buf, glui32 buflen, glui32 *out, glui32 outlen);
 extern void convert_to_utf8(glui32 *text, int len);
-extern glui32 parse_utf8(unsigned char *buf, glui32 buflen, glui32 *out, glui32 outlen);
 #else
 extern void update_parameters();
 #endif
