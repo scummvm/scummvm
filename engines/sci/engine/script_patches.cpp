@@ -192,6 +192,7 @@ static const char *const selectorNameTable[] = {
 	"priority",     // RAMA
 	"plane",        // RAMA
 	"getSubscriberObj", // RAMA
+	"advance",      // QFG4
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
 	"cue",          // QFG4
@@ -199,6 +200,7 @@ static const char *const selectorNameTable[] = {
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
+	"retreat",      // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
@@ -324,6 +326,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_priority,
 	SELECTOR_plane,
 	SELECTOR_getSubscriberObj,
+	SELECTOR_advance,
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
 	SELECTOR_cue,
@@ -331,6 +334,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
+	SELECTOR_retreat,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
@@ -18217,6 +18221,65 @@ static const uint16 qfg4MagicShieldViewPatch[] = {
 	PATCH_END
 };
 
+// Pressing the up or down arrow keys on the character screen crashes the game.
+//  There are two character screens: the creation screen in room 140 and the
+//  read-only screen in script 15 that can be viewed during the game. Both are
+//  named charInitScreen and are similar. It appears that some event handling
+//  code from the former was copied into the latter. This code crashes upon
+//  attempting to select non-existent objects.
+//
+// We fix this by patching out the direction event handler.
+//
+// Applies to: All versions
+// Responsible method: charInitScreen:dispatchEvent
+static const uint16 qfg4CharScreenKeyboardSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x02,                         // lst 02 [ event type ]
+	0x35, 0x10,                         // ldi 10 [ direction ]
+	0x12,                               // and
+	SIG_END
+};
+
+static const uint16 qfg4CharScreenKeyboardPatch[] = {
+	0x39, 0x00,                         // pushi 00 [ ignore direction events ]
+	PATCH_END
+};
+
+// Pressing arrow keys or tab on the death screen crashes the game. The screen
+//  has code that attempts to cycle through and select the current control, but
+//  it's quite confused. DeathControls is an IconBar and all the screen elements
+//  are DeathIcons, but icons are expected to be clickable things that can be
+//  selected and highlighted. This doesn't make sense for the static picture and
+//  text, and they don't have any of the properties necessary to make that work.
+//  When the common IconBar code attempts to select these, DeathIcon:highlight
+//  proptly crashes upon trying to use and draw non-existant objects.
+//
+// We fix this by patching out the broken control cycling on the death screen.
+//  Note that this code was unable to even highlight the real clickable icons.
+//
+// Applies to: All versions
+// Responsible method: DeathControls:dispatchEvents
+static const uint16 qfg4DeathScreenKeyboardSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(advance),      // pushi advance
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // send 04 [ self advance: ]
+	SIG_END
+};
+
+static const uint16 qfg4DeathScreenKeyboardSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(retreat),      // pushi retreat
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // send 04 [ self retreat: ]
+	SIG_END
+};
+
+static const uint16 qfg4DeathScreenKeyboardPatch[] = {
+	0x32, PATCH_UINT16(0x0004),         // jmp 0004 [ don't cycle control ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -18229,6 +18292,9 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    11, "fix trigger after summon staff (1/2)",        1, qfg4TriggerStaffSignature1,    qfg4TriggerStaffPatch1 },
 	{  true,    11, "fix trigger after summon staff (2/2)",        1, qfg4TriggerStaffSignature2,    qfg4TriggerStaffPatch2 },
 	{  true,    13, "fix spell effect disposal",                   1, qfg4EffectDisposalSignature,   qfg4EffectDisposalPatch },
+	{  true,    15, "fix character screen keyboard crash",         1, qfg4CharScreenKeyboardSignature, qfg4CharScreenKeyboardPatch },
+	{  true,    26, "fix death screen keyboard crash",             3, qfg4DeathScreenKeyboardSignature1, qfg4DeathScreenKeyboardPatch },
+	{  true,    26, "fix death screen keyboard crash",             3, qfg4DeathScreenKeyboardSignature2, qfg4DeathScreenKeyboardPatch },
 	{  true,    28, "fix lingering rations icon after eating",     1, qfg4LeftoversSignature,        qfg4LeftoversPatch },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
@@ -18384,7 +18450,7 @@ static const uint16 sq3EndCreditsPatch[] = {
 //  own client since any object will do and this ensures there are no conflicts.
 //
 // Responsible method: scumSoft:init
-// Applies to: English PC 1.018, French PC, German PC, German Amiga, Macintosh
+// Applies to: English PC 1.018, German PC, German Amiga, Macintosh
 // Fixes bug: #13318
 static const uint16 sq3AnnouncementsSignature[] = {
 	0x39, SIG_SELECTOR8(state),         // pushi state
