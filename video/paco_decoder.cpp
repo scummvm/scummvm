@@ -449,6 +449,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(Common::SeekableReadStream *fileSt
 						case ENDCURRENTLINE:
 							debug(5, "debug info ENDCURRENTLINE: %d", len);
 							xpos = x + bw;
+							ypos += len;
 							break;
 						default:
 							warning("PacoDecoder::PacoVideoTrack::handleFrame: Compact RLE mode: 0x0 op %d", op);
