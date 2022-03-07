@@ -151,8 +151,8 @@ int Room82::proc3() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	startSetailWait(2, 1, ANI_FRONT);
-	startSetailWait(3, 1, ANI_FRONT);
+	startSetAILWait(2, 1, ANI_FRONT);
+	startSetAILWait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
@@ -235,7 +235,7 @@ void Room82::proc8() {
 	_G(spieler)._personHide[P_NICHELLE] = false;
 	startAadWait(448);
 	_G(det)->del_static_ani(4);
-	startSetailWait(6, 2, ANI_FRONT);
+	startSetAILWait(6, 2, ANI_FRONT);
 	_G(det)->set_static_ani(4, -1);
 	showCur();
 }

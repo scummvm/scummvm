@@ -38,11 +38,11 @@ void Room5::pushButton() {
 	if (_G(spieler).R5Terminal) {
 		int16 strNr;
 		if (_G(spieler).R5Tuer == false) {
-			startSetailWait(9, 1, ANI_FRONT);
+			startSetAILWait(9, 1, ANI_FRONT);
 			_G(spieler).room_e_obj[6].Attribut = EXIT_TOP;
 			strNr = 1;
 		} else {
-			startSetailWait(9, 1, ANI_BACK);
+			startSetAILWait(9, 1, ANI_BACK);
 			_G(spieler).room_e_obj[6].Attribut = 255;
 			strNr = 0;
 		}

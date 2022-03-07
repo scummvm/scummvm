@@ -145,7 +145,7 @@ int16 Room17::use_seil() {
 		_G(flags).AutoAniPlay = true;
 		autoMove(5, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(10, 1, ANI_FRONT);
+		startSetAILWait(10, 1, ANI_FRONT);
 		_G(spieler).R17Seil = true;
 		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATA);
 		plot_seil();
@@ -171,7 +171,7 @@ void Room17::kletter_down() {
 	autoMove(5, P_CHEWY);
 	_G(det)->load_taf_seq(177, 1, nullptr);
 	_G(spieler)._personHide[P_CHEWY] = true;
-	startSetailWait(14, 1, ANI_FRONT);
+	startSetAILWait(14, 1, ANI_FRONT);
 	_G(flags).ZoomMov = false;
 	_G(zoom_mov_fak) = 1;
 	_G(spieler).ScrollyStep = 2;
@@ -187,7 +187,7 @@ void Room17::kletter_up() {
 	autoMove(6, P_CHEWY);
 	_G(det)->load_taf_seq(141, 4, nullptr);
 	_G(spieler)._personHide[P_CHEWY] = true;
-	startSetailWait(11, 1, ANI_FRONT);
+	startSetAILWait(11, 1, ANI_FRONT);
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(spieler).ScrollyStep = 1;
@@ -244,7 +244,7 @@ void Room17::door_kommando(int16 mode) {
 			if (!_G(spieler).R17DoorKommand) {
 				_G(spieler).room_e_obj[36].Attribut = EXIT_TOP;
 				_G(spieler).R17DoorKommand = true;
-				startSetailWait(4, 1, ANI_FRONT);
+				startSetAILWait(4, 1, ANI_FRONT);
 				stopPerson(P_CHEWY);
 				_G(det)->showStaticSpr(7);
 			}
@@ -326,7 +326,7 @@ int16 Room17::get_oel() {
 		close_door();
 		autoMove(4, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		delInventory(_G(spieler).AkInvent);
 		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));

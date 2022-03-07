@@ -441,7 +441,7 @@ void setSsiPos();
 
 int16 atsAction(int16 txtNr, int16 txtMode, int16 MODE);
 
-void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr);
+void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr);
 
 void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr);
 
@@ -458,7 +458,7 @@ void calc_z_ebene();
 
 void startAniBlock(int16 nr, const AniBlock *ab);
 
-void startSetailWait(int16 aniNr, int16 rep, int16 mode);
+void startSetAILWait(int16 aniNr, int16 rep, int16 mode);
 
 void startDetailFrame(int16 aniNr, int16 rep, int16 mode,
                         int16 frame);

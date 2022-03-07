@@ -93,9 +93,9 @@ int16 Room35::use_cat() {
 			delInventory(_G(spieler).AkInvent);
 			_G(det)->stop_detail(0);
 			_G(det)->del_static_ani(0);
-			startSetailWait(1, 1, ANI_FRONT);
+			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);
-			startSetailWait(3, 1, ANI_FRONT);
+			startSetAILWait(3, 1, ANI_FRONT);
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);

@@ -28,16 +28,16 @@ namespace Rooms {
 class Room42 {
 private:
 	static void setup_func();
-	static void get_kuerbis(int16 aad_nr);
+	static void getPumpkin(int16 aad_nr);
 
 public:
 	static void entry();
 	static void xit();
 
-	static void talk_beamter();
-	static int16 use_psack();
-	static int16 use_beamter();
-	static void dia_beamter(int16 str_end_nr);
+	static void talkToStationEmployee();
+	static int16 useMailBag();
+	static int16 useStationEmployee();
+	static void dialogWithStationEmployee(int16 str_end_nr);
 };
 
 } // namespace Rooms

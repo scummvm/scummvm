@@ -53,11 +53,11 @@ void Room66::entry(int16 eib_nr) {
 		_G(SetUpScreenFunc) = setup_func;
 		startAadWait(403);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(0, 1, ANI_FRONT);
+		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(14);
 		waitShowScreen(15);
 		_G(det)->hideStaticSpr(14);
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
@@ -195,7 +195,7 @@ int Room66::proc7() {
 	_G(cur_hide_flag) = 0;
 	hideCur();
 	if (_G(spieler).flags26_20)
-		startSetailWait(4, 1, ANI_FRONT);
+		startSetAILWait(4, 1, ANI_FRONT);
 	showCur();
 
 	return 1;

@@ -161,7 +161,7 @@ void Room13::jmp_band() {
 			_G(spieler).R13Band = true;
 			autoMove(3, P_CHEWY);
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(8, 1, ANI_FRONT);
+			startSetAILWait(8, 1, ANI_FRONT);
 			_G(spieler)._personHide[P_CHEWY] = false;
 			setPersonPos(292, 98, P_CHEWY, P_RIGHT);
 
@@ -205,7 +205,7 @@ void Room13::jmp_floor() {
 		_G(spieler).R13Band = false;
 		autoMove(5, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(7, 1, ANI_FRONT);
+		startSetAILWait(7, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		setPersonPos(176, 138, P_CHEWY, P_LEFT);
 	}
@@ -223,7 +223,7 @@ int16 Room13::monitor_button() {
 			action_flag = true;
 			autoMove(8, P_CHEWY);
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(6, 1, ANI_FRONT);
+			startSetAILWait(6, 1, ANI_FRONT);
 			_G(spieler)._personHide[P_CHEWY] = false;
 
 			if (_G(spieler).R13MonitorStatus)

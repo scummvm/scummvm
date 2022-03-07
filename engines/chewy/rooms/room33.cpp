@@ -134,7 +134,7 @@ void Room33::use_maschine() {
 
 			if (action) {
 				_G(spieler)._personHide[P_CHEWY] = true;
-				startSetailWait(0, 1, ANI_FRONT);
+				startSetAILWait(0, 1, ANI_FRONT);
 				_G(spieler)._personHide[P_CHEWY] = false;
 				setPersonPos(128, 65, P_CHEWY, P_LEFT);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -162,7 +162,7 @@ void Room33::use_maschine() {
 
 		if (_G(spieler).R33MunterOk) {
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(2, 1, ANI_FRONT);
+			startSetAILWait(2, 1, ANI_FRONT);
 			flic_cut(FCUT_031);
 			_G(spieler)._personHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -172,7 +172,7 @@ void Room33::use_maschine() {
 
 		if (hocker) {
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(1, 1, ANI_FRONT);
+			startSetAILWait(1, 1, ANI_FRONT);
 			setPersonPos(64, 100, P_CHEWY, P_LEFT);
 		}
 

@@ -50,7 +50,7 @@ void Room27::xit(int16 eib_nr) {
 			startAadWait(175);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
-			startSetailWait(2, 1, ANI_FRONT);
+			startSetAILWait(2, 1, ANI_FRONT);
 			_G(spieler)._personRoomNr[P_HOWARD] = 28;
 			_G(spieler_mi)[P_HOWARD].Id = HOWARD_OBJ;
 		} else if (_G(spieler).R27HowardGed < 3 && eib_nr != -1) {

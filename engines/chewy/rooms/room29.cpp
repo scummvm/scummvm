@@ -117,7 +117,7 @@ bool Room29::use_schlauch() {
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(7);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(4, 1, ANI_FRONT);
+		startSetAILWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->del_steuer_bit(219, ATS_AKTIV_BIT, ATS_DATA);

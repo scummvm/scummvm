@@ -141,7 +141,7 @@ void Room63::bork_platt() {
 	autoMove(6, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	startAadWait(370);
-	startSetailWait(4, 1, ANI_FRONT);
+	startSetAILWait(4, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(13);
 	startAadWait(361);
 	_G(out)->cls();
@@ -203,11 +203,11 @@ int16 Room63::use_fx_man() {
 		remove_inventory(34);
 		startAadWait(359);
 		_G(det)->del_static_ani(5);
-		startSetailWait(6, 1, ANI_FRONT);
+		startSetAILWait(6, 1, ANI_FRONT);
 		_G(det)->startDetail(7, 255, ANI_FRONT);
 		startAadWait(362);
 		_G(det)->stop_detail(7);
-		startSetailWait(8, 1, ANI_FRONT);
+		startSetAILWait(8, 1, ANI_FRONT);
 		_G(spieler).R63FxMannWeg = true;
 		_G(atds)->set_steuer_bit(384, ATS_AKTIV_BIT, ATS_DATA);
 		showCur();
@@ -230,11 +230,11 @@ int16 Room63::use_schalter() {
 				start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 				_G(det)->showStaticSpr(2);
 				setPersonSpr(P_LEFT, P_CHEWY);
-				startSetailWait(21, 1, ANI_FRONT);
+				startSetAILWait(21, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(14);
 				waitShowScreen(18);
 				_G(det)->hideStaticSpr(14);
-				startSetailWait(24, 1, ANI_FRONT);
+				startSetAILWait(24, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(1);
 				_G(det)->hideStaticSpr(2);
 				startAadWait(364);
@@ -253,7 +253,7 @@ int16 Room63::use_schalter() {
 void Room63::talk_girl() {
 	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(12);
-	startSetailWait(13, 1, ANI_FRONT);
+	startSetAILWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	startAdsWait(17);
 	_G(det)->del_static_ani(14);
@@ -268,14 +268,14 @@ int16 Room63::use_girl() {
 		autoMove(2, P_CHEWY);
 		delInventory(_G(spieler).AkInvent);
 		_G(det)->stop_detail(12);
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
 		startAadWait(365);
 		_G(det)->del_static_ani(14);
 		_G(det)->startDetail(15, 255, ANI_FRONT);
 		startAadWait(360);
 		_G(det)->stop_detail(15);
-		startSetailWait(16, 1, ANI_FRONT);
+		startSetAILWait(16, 1, ANI_FRONT);
 		_G(spieler).R63Uhr = true;
 		_G(det)->stop_detail(10);
 		_G(det)->stop_detail(18);

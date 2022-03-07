@@ -146,7 +146,7 @@ void Room51::setup_func() {
 		if ((_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
-			startSetailWait(8, 1, ANI_FRONT);
+			startSetAILWait(8, 1, ANI_FRONT);
 			_flag = false;
 			++_index;
 
@@ -240,7 +240,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(2);
 				_G(det)->showStaticSpr(1);
-				startSetailWait(2, 1, ANI_FRONT);
+				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->startDetail(5, 255, ANI_FRONT);
 
 				if (!_G(spieler).R52HotDogOk) {
@@ -319,7 +319,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			case 1:
 				_G(det)->showStaticSpr(3);
 				startAadWait(280);
-				startSetailWait(1, 1, ANI_FRONT);
+				startSetAILWait(1, 1, ANI_FRONT);
 				++_G(spieler).R51DoorCount;
 				_G(obj)->show_sib(SIB_KAPPE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_KAPPE_R51);

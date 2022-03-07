@@ -85,7 +85,7 @@ int16 Room22::chewy_amboss() {
 
 		autoMove(5, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
@@ -140,7 +140,7 @@ void Room22::bork_walk1() {
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT);
 	wait_auto_obj(BORK_OBJ);
 
-	startSetailWait(2, 1, ANI_FRONT);
+	startSetAILWait(2, 1, ANI_FRONT);
 
 	_G(mov_phasen)[BORK_OBJ].Repeat = 1;
 	init_auto_obj(BORK_OBJ, &BORK_PHASEN[0][0], _G(mov_phasen)[BORK_OBJ].Lines, (const MovLine *)BORK_MPKT1);

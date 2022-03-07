@@ -75,22 +75,22 @@ void Room42::setup_func() {
 		calc_person_look();
 }
 
-void Room42::get_kuerbis(int16 aad_nr) {
+void Room42::getPumpkin(int16 aad_nr) {
 	hideCur();
 	autoMove(1, P_CHEWY);
 	_G(spieler)._personHide[P_CHEWY] = true;
-	startSetailWait(7, 1, ANI_BACK);
+	startSetAILWait(7, 1, ANI_BACK);
 	_G(spieler)._personHide[P_CHEWY] = false;
 	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 	startAadWait(aad_nr);
 
 	_G(spieler)._personHide[P_CHEWY] = true;
-	startSetailWait(7, 1, ANI_FRONT);
+	startSetAILWait(7, 1, ANI_FRONT);
 	_G(spieler)._personHide[P_CHEWY] = false;
 	showCur();
 }
 
-int16 Room42::use_psack() {
+int16 Room42::useMailBag() {
 	int16 action_flag = false;
 
 	if (_G(menu_item) == CUR_HOWARD)
@@ -99,16 +99,16 @@ int16 Room42::use_psack() {
 	hideCur();
 	if (!_G(spieler).R42BeamterWach && !_G(spieler).inv_cur) {
 		action_flag = true;
-		get_kuerbis(136);
+		getPumpkin(136);
 	} else if (_G(spieler).R42HoToBeamter && !_G(spieler).inv_cur && !_G(spieler).R42MarkeOk) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(10, 1, ANI_FRONT);
+		startSetAILWait(10, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		startAadWait(187);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(9, 1, ANI_FRONT);
+		startSetAILWait(9, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
 		startAadWait(181);
@@ -120,7 +120,7 @@ int16 Room42::use_psack() {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(10, 1, ANI_FRONT);
+		startSetAILWait(10, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		delInventory(_G(spieler).AkInvent);
 		startAadWait(183);
@@ -140,7 +140,7 @@ int16 Room42::use_psack() {
 	return action_flag;
 }
 
-int16 Room42::use_beamter() {
+int16 Room42::useStationEmployee() {
 	int16 action_flag = false;
 
 	if (_G(menu_item) == CUR_HOWARD) {
@@ -160,7 +160,7 @@ int16 Room42::use_beamter() {
 	return action_flag;
 }
 
-void Room42::talk_beamter() {
+void Room42::talkToStationEmployee() {
 	int16 dia_nr;
 	autoMove(1, P_CHEWY);
 
@@ -175,7 +175,7 @@ void Room42::talk_beamter() {
 	startAdsWait(dia_nr);
 }
 
-void Room42::dia_beamter(int16 str_end_nr) {
+void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 	hideCur();
 
 	if (str_end_nr != 4) {
@@ -189,16 +189,16 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		switch (str_end_nr) {
 		case 1:
-			startSetailWait(3, 4, ANI_FRONT);
+			startSetAILWait(3, 4, ANI_FRONT);
 			break;
 
 		case 2:
 			g_engine->_sound->playSound(4);
-			startSetailWait(4, 13, ANI_FRONT);
+			startSetAILWait(4, 13, ANI_FRONT);
 			break;
 
 		case 3:
-			startSetailWait(5, 2, ANI_FRONT);
+			startSetAILWait(5, 2, ANI_FRONT);
 			break;
 
 		default:
@@ -212,7 +212,7 @@ void Room42::dia_beamter(int16 str_end_nr) {
 
 		_G(det)->stop_detail(0);
 		g_engine->_sound->stopSound(0);
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 
 		while (_G(atds)->aadGetStatus() != -1) {

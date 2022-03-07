@@ -112,7 +112,7 @@ void Room3::terminal() {
 				_G(spieler).room_s_obj[SIB_SLIME].ZustandFlipFlop = 1;
 			}
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(8, 1, ANI_FRONT);
+			startSetAILWait(8, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 			_G(det)->stop_detail(6);
 			clear_prog_ani();

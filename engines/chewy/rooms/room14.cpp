@@ -61,7 +61,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 	if (!_G(flags).AutoAniPlay && !_G(spieler).R14Feuer) {
 		_G(flags).AutoAniPlay = true;
 		_G(det)->hideStaticSpr(9);
-		startSetailWait(_G(room)->_roomTimer._objNr[ani_nr], 1, ANI_FRONT);
+		startSetAILWait(_G(room)->_roomTimer._objNr[ani_nr], 1, ANI_FRONT);
 		_G(uhr)->resetTimer(t_nr, 0);
 		_G(det)->showStaticSpr(9);
 		_G(det)->startDetail(7, 1, ANI_FRONT);
@@ -75,7 +75,7 @@ int16 Room14::use_schrott() {
 	if (!_G(spieler).inv_cur) {
 		autoMove(3, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(12, 1, ANI_FRONT);
+		startSetAILWait(12, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Waffe) {
@@ -98,7 +98,7 @@ int16 Room14::use_gleiter() {
 		if (!_G(spieler).R14GleiterAuf) {
 			_G(spieler).R14GleiterAuf = true;
 			_G(spieler)._personHide[P_CHEWY] = true;
-			startSetailWait(10, 1, ANI_FRONT);
+			startSetAILWait(10, 1, ANI_FRONT);
 			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATA);
@@ -134,7 +134,7 @@ int16 Room14::use_schleim() {
 	if (!_G(spieler).inv_cur) {
 		autoMove(2, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(11, 1, ANI_FRONT);
+		startSetAILWait(11, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 
 		if (!_G(spieler).R14Sicherung) {
@@ -161,7 +161,7 @@ void Room14::feuer() {
 		waffe = true;
 		_G(spieler)._personHide[P_CHEWY] = true;
 		startDetailFrame(8, 1, ANI_FRONT, 11);
-		startSetailWait(9, 1, ANI_FRONT);
+		startSetAILWait(9, 1, ANI_FRONT);
 		waitDetail(8);
 		_G(spieler)._personHide[P_CHEWY] = false;
 	} else {
@@ -169,10 +169,10 @@ void Room14::feuer() {
 		_G(det)->hideStaticSpr(9);
 		startDetailFrame(2, 1, ANI_FRONT, 9);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		waitDetail(2);
-		startSetailWait(5, 1, ANI_FRONT);
+		startSetAILWait(5, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(9);
 	}
 
@@ -185,7 +185,7 @@ void Room14::feuer() {
 
 	startAadWait(26);
 	_G(det)->hideStaticSpr(9);
-	startSetailWait(3, 1, ANI_FRONT);
+	startSetAILWait(3, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(9);
 	invent_2_slot(FLUXO_INV);
 	_G(atds)->set_ats_str(105, TXT_MARK_LOOK, 1, ATS_DATA);

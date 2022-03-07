@@ -144,7 +144,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 73:
 						if (!_G(spieler).R9Gitter) {
 							_G(spieler)._personHide[P_CHEWY] = true;
-							startSetailWait(5, 1, ANI_FRONT);
+							startSetAILWait(5, 1, ANI_FRONT);
 							_G(spieler)._personHide[P_CHEWY] = false;
 						} else {
 							retValue = false;
@@ -396,11 +396,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 263:
-						retValue = Room42::use_beamter();
+						retValue = Room42::useStationEmployee();
 						break;
 
 					case 264:
-						retValue = Room42::use_psack();
+						retValue = Room42::useMailBag();
 						break;
 
 					case 266:
@@ -1105,7 +1105,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 263:
-						Room42::talk_beamter();
+						Room42::talkToStationEmployee();
 						break;
 
 					default:
@@ -1129,7 +1129,8 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 	return retValue;
 }
 
-void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr) {
+// Original name: adsAction
+void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	if (_G(flags).AdsAction == false) {
 		_G(flags).AdsAction = true;
 
@@ -1151,7 +1152,7 @@ void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr) {
 			break;
 
 		case 10:
-			Room42::dia_beamter(strEndNr);
+			Room42::dialogWithStationEmployee(strEndNr);
 			break;
 
 		case 11:
@@ -1198,7 +1199,7 @@ void adsAction(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 20:
 			if (blkNr == 0 && strEndNr == 1) {
 				_G(spieler)._personHide[P_CHEWY] = true;
-				startSetailWait(28, 3, ANI_FRONT);
+				startSetAILWait(28, 3, ANI_FRONT);
 				_G(spieler)._personHide[P_CHEWY] = false;
 			}
 			break;
@@ -1224,7 +1225,7 @@ void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	case 22:
 		if (strEndNr == 1) {
 			_G(det)->del_static_ani(3);
-			startSetailWait(5, 1, ANI_FRONT);
+			startSetAILWait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
 			startAadWait(456);
 		}

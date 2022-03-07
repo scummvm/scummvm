@@ -67,7 +67,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	startSetailWait(nr, 1, mode);
+	startSetAILWait(nr, 1, mode);
 
 	switch (r_nr) {
 	case ROOM_1_1:

@@ -75,9 +75,9 @@ void Room48::frage() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 		hideCur();
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(6);
-		startSetailWait(1, 1, ANI_BACK);
+		startSetAILWait(1, 1, ANI_BACK);
 		_G(det)->hideStaticSpr(6);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		showCur();
@@ -136,7 +136,7 @@ void Room48::setup_func() {
 							_G(room)->set_timer_status(0, TIMER_STOP);
 							_G(det)->stop_detail(0);
 							_G(det)->del_static_ani(0);
-							startSetailWait(2, 1, ANI_FRONT);
+							startSetAILWait(2, 1, ANI_FRONT);
 							g_engine->_sound->stopSound(0);
 							_G(menu_item) = CUR_WALK;
 							cursorChoice(_G(menu_item));

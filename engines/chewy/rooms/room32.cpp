@@ -59,12 +59,12 @@ int16 Room32::use_howard() {
 
 			_G(det)->hideStaticSpr(0);
 			startDetailFrame(0, 1, ANI_FRONT, 9);
-			startSetailWait(1, 1, ANI_BACK);
+			startSetAILWait(1, 1, ANI_BACK);
 			_G(det)->showStaticSpr(7);
 			_G(det)->showStaticSpr(6);
 			waitShowScreen(20);
 			_G(det)->hideStaticSpr(7);
-			startSetailWait(1, 1, ANI_FRONT);
+			startSetAILWait(1, 1, ANI_FRONT);
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			ani_nr = CH_TALK3;
 			dia_nr = 164;

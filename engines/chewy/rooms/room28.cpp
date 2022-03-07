@@ -255,7 +255,7 @@ void Room28::set_pump() {
 				++_G(spieler).R28PumpTxt1;
 			}
 
-			startSetailWait(tmp, 1, ANI_FRONT);
+			startSetAILWait(tmp, 1, ANI_FRONT);
 			_G(spieler)._personHide[P_CHEWY] = false;
 
 			load_chewy_taf(CHEWY_PUMPKIN);
@@ -296,7 +296,7 @@ void Room28::get_pump() {
 		_G(spieler)._personHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		startSetailWait(tmp, 1, ANI_BACK);
+		startSetAILWait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
 		_G(atds)->set_ats_str(209, 0, ATS_DATA);

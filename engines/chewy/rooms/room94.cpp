@@ -155,7 +155,7 @@ int Room94::giveGhostBottle() {
 	_G(det)->startDetail(6, 1, false);	
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
-	startSetailWait(4, 1, ANI_FRONT);
+	startSetAILWait(4, 1, ANI_FRONT);
 	_G(spieler).flags35_10 = true;
 	_G(spieler).room_e_obj[138].Attribut = EXIT_TOP;
 	_G(atds)->set_steuer_bit(522, ATS_AKTIV_BIT, ATS_DATA);

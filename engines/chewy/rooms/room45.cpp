@@ -199,11 +199,11 @@ int16 Room45::use_taxi() {
 void Room45::talk_taxi(int16 aad_nr) {
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
-	startSetailWait(13, 1, ANI_FRONT);
+	startSetAILWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	startAadWait(aad_nr);
 	_G(det)->del_static_ani(14);
-	startSetailWait(13, 1, ANI_BACK);
+	startSetAILWait(13, 1, ANI_BACK);
 	_G(det)->set_static_ani(12, -1);
 	_G(room)->set_timer_status(12, TIMER_START);
 }
@@ -229,7 +229,7 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 2);
 	g_engine->_sound->playSound(15, 2, false);
 	g_engine->_sound->playSound(15, 0);
-	startSetailWait(15, 1, ANI_FRONT);
+	startSetAILWait(15, 1, ANI_FRONT);
 	g_engine->_sound->stopSound(0);
 	switchRoom(48);
 }
@@ -247,7 +247,7 @@ int16 Room45::use_boy() {
 			startAadWait(258);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
-			startSetailWait(1, 1, ANI_FRONT);
+			startSetAILWait(1, 1, ANI_FRONT);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
 			_G(spieler).R45MagOk = true;

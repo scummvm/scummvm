@@ -286,7 +286,7 @@ void Room40::setup_func() {
 					_G(det)->stop_detail(17);
 					_G(spieler).R40HoUse = true;
 					_G(person_end_phase)[P_CHEWY] = P_RIGHT;
-					startSetailWait(10, 1, ANI_FRONT);
+					startSetAILWait(10, 1, ANI_FRONT);
 					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					startAadWait(224);
 					_G(spieler).R40PoliceWeg = true;
@@ -325,7 +325,7 @@ int16 Room40::use_mr_pumpkin() {
 				action_ret = true;
 				autoMove(5, P_CHEWY);
 				delInventory(_G(spieler).AkInvent);
-				startSetailWait(15, 1, ANI_FRONT);
+				startSetAILWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
 				break;
@@ -397,11 +397,11 @@ int16 Room40::use_schalter(int16 aad_nr) {
 		}
 
 		_G(det)->hideStaticSpr(15);
-		startSetailWait(12, 1, ANI_FRONT);
+		startSetAILWait(12, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
 		startAadWait(aad_nr);
 		_G(det)->del_static_ani(14);
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(15);
 		_G(room)->set_timer_status(255, TIMER_START);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
@@ -547,7 +547,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 	_G(det)->del_static_ani(0);
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->stop_detail(0);
-	startSetailWait(1, 1, ANI_FRONT);
+	startSetAILWait(1, 1, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 
 	if (aad_nr == 237) {

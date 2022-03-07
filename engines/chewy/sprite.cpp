@@ -394,7 +394,7 @@ void stopPerson(int16 personNr) {
 
 }
 
-void startSetailWait(int16 aniNr, int16 rep, int16 mode) {
+void startSetAILWait(int16 aniNr, int16 rep, int16 mode) {
 	const int16 oldMouseLeftClick = _G(mouseLeftClick);
 	_G(mouseLeftClick) = false;
 	_G(det)->startDetail(aniNr, rep, mode);
@@ -442,7 +442,7 @@ void startAniBlock(int16 nr, const AniBlock *ab) {
 	_G(mouseLeftClick) = false;
 	for (int16 i = 0; i < nr; i++) {
 		if (ab[i].Mode == ANI_WAIT)
-			startSetailWait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
+			startSetAILWait(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 		else
 			_G(det)->startDetail(ab[i].Nr, ab[i].Repeat, ab[i].Dir);
 	}

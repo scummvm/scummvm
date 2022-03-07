@@ -190,7 +190,7 @@ int16 Room50::use_gum() {
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
 		stop_page();
-		startSetailWait(6, 1, ANI_FRONT);
+		startSetAILWait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
 		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -201,14 +201,14 @@ int16 Room50::use_gum() {
 		setPersonSpr(P_LEFT, P_HOWARD);
 		delInventory(_G(spieler).AkInvent);
 		hide_person();
-		startSetailWait(2, 1, ANI_FRONT);
+		startSetAILWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
-		startSetailWait(2, 1, ANI_BACK);
+		startSetAILWait(2, 1, ANI_BACK);
 		show_person();
 		setPersonSpr(P_LEFT, P_CHEWY);
 		startAadWait(275);
 		_G(det)->del_static_ani(5);
-		startSetailWait(9, 1, ANI_FRONT);
+		startSetAILWait(9, 1, ANI_FRONT);
 		_G(det)->del_static_ani(5);
 		_G(det)->set_static_ani(10, -1);
 		startAadWait(277);
@@ -237,7 +237,7 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	_G(det)->set_static_ani(ani_nr, -1);
 	startAadWait(aad_nr);
 	_G(det)->del_static_ani(ani_nr);
-	startSetailWait(6, 1, ANI_BACK);
+	startSetAILWait(6, 1, ANI_BACK);
 	go_page();
 
 	if (!_G(spieler).R50KeyOK)

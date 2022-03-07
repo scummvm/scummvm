@@ -81,11 +81,11 @@ void Room81::proc1() {
 		startAadWait(461);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(0, 1, ANI_FRONT);
+		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
 		startAadWait(459);
 		_G(det)->stop_detail(1);
-		startSetailWait(0, 1, ANI_GO);
+		startSetAILWait(0, 1, ANI_GO);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(100, 96, P_CHEWY, ANI_WAIT);

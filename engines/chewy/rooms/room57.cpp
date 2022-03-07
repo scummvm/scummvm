@@ -101,7 +101,7 @@ int16 Room57::use_taxi() {
 		g_engine->_sound->playSound(3);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
-		startSetailWait(5, 1, ANI_FRONT);
+		startSetAILWait(5, 1, ANI_FRONT);
 		g_engine->_sound->stopSound(0);
 		switchRoom(48);
 	}
@@ -138,7 +138,7 @@ int16 Room57::use_pfoertner() {
 			_G(spieler).R57StudioAuf = true;
 			_G(spieler).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
-			startSetailWait(6, 1, ANI_WAIT);
+			startSetAILWait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
 			_G(atds)->set_steuer_bit(358, ATS_AKTIV_BIT, ATS_DATA);
 		} else {

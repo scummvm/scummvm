@@ -113,7 +113,7 @@ void Room97::entry() {
 		_G(spieler).SVal2 = 0;
 		_G(spieler).flags35_4 = true;
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(19, 1, ANI_FRONT);
+		startSetAILWait(19, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		showCur();
 		switchRoom(89);
@@ -339,7 +339,7 @@ void Room97::proc4() {
 		stopPerson(P_CHEWY);
 		g_engine->_sound->playSound(9, 0);
 		g_engine->_sound->stopSound(1);
-		startSetailWait(9, 1, ANI_FRONT);
+		startSetAILWait(9, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(21);
 
 		while (_G(spieler_vector)[P_HOWARD].Xypos[0] > 996) {
@@ -357,11 +357,11 @@ void Room97::proc4() {
 		goAutoXy(995, 77, P_HOWARD, ANI_WAIT);
 		goAutoXy(1047, 87, P_HOWARD, ANI_WAIT);
 
-		startSetailWait(29, 1, ANI_FRONT);
+		startSetAILWait(29, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(21);
 		g_engine->_sound->playSound(9, 1);
 		g_engine->_sound->stopSound(0);
-		startSetailWait(9, 0, ANI_BACK);
+		startSetAILWait(9, 0, ANI_BACK);
 
 		goAutoXy(1008, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(967, 111, P_CHEWY, ANI_WAIT);
@@ -405,7 +405,7 @@ int Room97::proc5() {
 	_G(det)->hideStaticSpr(21);
 	g_engine->_sound->playSound(9, 1);
 	g_engine->_sound->stopSound(0);
-	startSetailWait(9, 0, ANI_GO);
+	startSetAILWait(9, 0, ANI_GO);
 	
 	showCur();
 	return 1;
@@ -422,11 +422,11 @@ int Room97::proc6() {
 	setPersonSpr(P_LEFT, P_CHEWY);
 	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(15);
-	startSetailWait(1, 1, ANI_FRONT);
+	startSetAILWait(1, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(28);
 	autoMove(1, P_CHEWY);
 	_G(det)->hideStaticSpr(18);
-	startSetailWait(15, 1, ANI_FRONT);
+	startSetAILWait(15, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(17);
 	start_spz(CH_TALK5, 255, false, P_CHEWY);
 	startAadWait(558);
@@ -454,7 +454,7 @@ int Room97::proc7() {
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(spieler)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
-	startSetailWait(22, 1, ANI_FRONT);
+	startSetAILWait(22, 1, ANI_FRONT);
 	_G(atds)->set_steuer_bit(538, ATS_AKTIV_BIT, ATS_DATA);
 	_G(atds)->set_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
@@ -497,7 +497,7 @@ int Room97::proc8() {
 		_G(det)->stop_detail(24);
 		g_engine->_sound->playSound(26, 0);
 		g_engine->_sound->playSound(26);
-		startSetailWait(25, 1, ANI_FRONT);
+		startSetAILWait(25, 1, ANI_FRONT);
 		_G(det)->startDetail(26, 255, false);
 		_G(det)->stop_detail(23);
 		_G(det)->startDetail(27, 255, false);
@@ -538,9 +538,9 @@ int Room97::proc9() {
 		startAadWait(556);
 	} else {
 		start_spz_wait(13, 1, false, P_CHEWY);
-		startSetailWait(0, 1, ANI_FRONT);
+		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->startDetail(14, 255, false);
 		startAadWait(555);
 		_G(spieler).flags36_40 = true;
@@ -563,7 +563,7 @@ int Room97::proc10() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	g_engine->_sound->playSound(7, 0);
 	g_engine->_sound->stopSound(1);
-	startSetailWait(7, 1, ANI_FRONT);
+	startSetAILWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(spieler).flags37_1 = true;
 	_G(atds)->set_steuer_bit(543, ATS_AKTIV_BIT, ATS_DATA);
@@ -695,10 +695,10 @@ void Room97::sensorAnim() {
 
 	hideCur();
 	if (!_slimeThrown) {
-		startSetailWait(17, 1, ANI_FRONT);
+		startSetAILWait(17, 1, ANI_FRONT);
 		_G(det)->startDetail(16, 1, true);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(20, 1, false);
+		startSetAILWait(20, 1, false);
 		setPersonPos(318, 42, P_CHEWY, P_LEFT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 	} else {
@@ -706,14 +706,14 @@ void Room97::sensorAnim() {
 		delInventory(_G(spieler).AkInvent);
 		_G(det)->showStaticSpr(27);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(21, 1, ANI_FRONT);
+		startSetAILWait(21, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(27);
-		startSetailWait(18, 1, ANI_FRONT);
+		startSetAILWait(18, 1, ANI_FRONT);
 
 		g_engine->_sound->playSound(8, 0);
 		g_engine->_sound->stopSound(1);
-		startSetailWait(8, 1, ANI_FRONT);
+		startSetAILWait(8, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(20);
 		autoMove(10, P_CHEWY);
 		auto_scroll(60, 0);

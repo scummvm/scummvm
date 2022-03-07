@@ -132,8 +132,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 			g_engine->_sound->playSound(ani_nr + kristall_nr * 4, 0);
 			g_engine->_sound->stopSound(0);
 			_G(det)->hideStaticSpr(_G(spieler).R24KristallLast[kristall_nr] + kristall_nr * 2);
-			startSetailWait(ani_nr + kristall_nr * 4, 1, ANI_BACK);
-			startSetailWait(6 + kristall_nr * 4, 1, ANI_BACK);
+			startSetAILWait(ani_nr + kristall_nr * 4, 1, ANI_BACK);
+			startSetAILWait(6 + kristall_nr * 4, 1, ANI_BACK);
 			_G(det)->startDetail(5 + kristall_nr * 4, 255, ANI_BACK);
 
 		} else if (_G(spieler).R24KristallLast[kristall_nr] == 20) {
@@ -141,8 +141,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 			g_engine->_sound->stopSound(0);
 			g_engine->_sound->playSound(5 + ani_nr + kristall_nr * 4, 0);
 			_G(det)->stop_detail(5 + kristall_nr * 4);
-			startSetailWait(6 + kristall_nr * 4, 1, ANI_FRONT);
-			startSetailWait(ani_nr + kristall_nr * 4, 1, ANI_FRONT);
+			startSetAILWait(6 + kristall_nr * 4, 1, ANI_FRONT);
+			startSetAILWait(ani_nr + kristall_nr * 4, 1, ANI_FRONT);
 		}
 
 		showCur();

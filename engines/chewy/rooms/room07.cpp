@@ -83,8 +83,8 @@ void Room7::bell() {
 		startAniBlock(3, ABLOCK25);
 
 		_G(det)->showStaticSpr(7);
-		startSetailWait(12, 1, ANI_FRONT);
-		startSetailWait(11, 1, ANI_FRONT);
+		startSetAILWait(12, 1, ANI_FRONT);
+		startSetAILWait(11, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(7);
 		_G(det)->stop_detail(5);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
@@ -94,7 +94,7 @@ void Room7::bell() {
 		start_aad(6, 0);
 		startAniBlock(3, ABLOCK25);
 		_G(det)->showStaticSpr(7);
-		startSetailWait(10, 1, ANI_FRONT);
+		startSetAILWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(13, 1, ANI_FRONT);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
 		_G(det)->stop_detail(5);
@@ -105,7 +105,7 @@ void Room7::bell() {
 		_G(spieler)._personHide[P_CHEWY] = true;
 
 		_G(det)->startDetail(0, 255, ANI_FRONT);
-		startSetailWait(13, 1, ANI_FRONT);
+		startSetAILWait(13, 1, ANI_FRONT);
 		flic_cut(FCUT_001);
 		_G(det)->stop_detail(0);
 		_G(spieler).scrollx = 0;
@@ -152,7 +152,7 @@ void Room7::bell() {
 		_G(spieler).R7BorkFlug = true;
 		_G(spieler)._personHide[P_CHEWY] = true;
 		start_aad(8, 0);
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		_G(obj)->set_rsi_flip_flop(SIB_TBUTTON2_R7, 255);
 		_G(obj)->hide_sib(SIB_KLINGEL_R7);
 		_G(flags).NoPalAfterFlc = false;
@@ -173,7 +173,7 @@ void Room7::gedAction(int index) {
 	if (index == 0 && _G(spieler).R7BorkFlug && _G(spieler).R7ChewyFlug) {
 		_G(spieler)._personHide[P_CHEWY] = true;
 		setPersonPos(180, 124, P_CHEWY, P_LEFT);
-		startSetailWait(20, 1, ANI_FRONT);
+		startSetAILWait(20, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
 		waitShowScreen(10 * _G(spieler).DelaySpeed);
 		_G(det)->hideStaticSpr(10);

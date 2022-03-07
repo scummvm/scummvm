@@ -195,7 +195,7 @@ void Room21::chewy_kolli() {
 		_G(spieler)._personHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
-		startSetailWait(ani_nr, 1, ANI_FRONT);
+		startSetAILWait(ani_nr, 1, ANI_FRONT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
@@ -232,7 +232,7 @@ void Room21::use_gitter_energie() {
 
 	switchRoom(17);
 	_G(det)->hideStaticSpr(5);
-	startSetailWait(9, 1, ANI_FRONT);
+	startSetAILWait(9, 1, ANI_FRONT);
 	_G(spieler).R17GitterWeg = true;
 	_G(spieler)._personHide[P_CHEWY] = false;
 }

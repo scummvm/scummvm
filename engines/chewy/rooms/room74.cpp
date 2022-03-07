@@ -96,7 +96,7 @@ int Room74::proc1() {
 		_G(spieler).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;
-		startSetailWait(1, 1, ANI_FRONT);
+		startSetAILWait(1, 1, ANI_FRONT);
 		setPersonPos(272, 116, P_CHEWY, P_RIGHT);
 		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(det)->startDetail(0, 255, false);

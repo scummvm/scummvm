@@ -134,7 +134,7 @@ void Room23::use_cartridge() {
 	if (_G(spieler).R18CartSave) {
 		_G(atds)->del_steuer_bit(171, ATS_AKTIV_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(111, 2, ATS_DATA);
-		startSetailWait(4, 1, ANI_FRONT);
+		startSetAILWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(3);
 	} else {
 		_G(atds)->set_ats_str(111, 1, ATS_DATA);
