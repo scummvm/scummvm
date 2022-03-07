@@ -138,7 +138,6 @@ void aiListenBotInit(AIEntity *e);
 void aiListenBotInit2(AIEntity *e);
 void aiOmniBotInit(AIEntity *e);
 void aiOmniBotInit2(AIEntity *e);
-void aiLaserAction(AIEntity *e);
 void aiLaserInit(AIEntity *e);
 void aiLaserInit2(AIEntity *e);
 void aiDiverterInit(AIEntity *e);
