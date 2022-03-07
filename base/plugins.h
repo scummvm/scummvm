@@ -89,7 +89,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \
-	void dummyFuncToAllowTrailingSemicolon()
+	void dummyFuncToAllowTrailingSemicolon_##ID##_()
 
 #ifdef DYNAMIC_MODULES
 
@@ -113,7 +113,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 			return new PLUGINCLASS(); \
 		} \
 	} \
-	void dummyFuncToAllowTrailingSemicolon()
+	void dummyFuncToAllowTrailingSemicolon_##ID##_()
 
 #endif // DYNAMIC_MODULES
 
