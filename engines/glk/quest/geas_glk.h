@@ -82,7 +82,7 @@ extern strid_t inputwinstream;
 extern int ignore_lines;
 extern const bool use_inputwindow;
 
-extern void glk_put_cstring(const char *);
+void glk_put_cstring(const char *);
 extern void draw_banner();
 
 } // End of namespace Quest

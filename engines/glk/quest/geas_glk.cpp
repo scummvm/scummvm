@@ -28,9 +28,6 @@
 namespace Glk {
 namespace Quest {
 
-void glk_put_cstring(const char *);
-
-
 winid_t mainglkwin;
 winid_t inputwin;
 winid_t bannerwin;
