@@ -86,8 +86,6 @@ struct ArtSVP {
 
 void art_svp_free(ArtSVP *svp);
 
-int art_svp_seg_compare(const void *s1, const void *s2);
-
 /* Basic data structures and constructors for bezier paths */
 
 enum ArtPathcode {
