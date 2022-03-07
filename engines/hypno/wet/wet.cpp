@@ -471,13 +471,19 @@ void WetEngine::runMainMenu(Code *code) {
 	Common::Event event;
 	uint32 c = 252; // green
 	byte *palette;
-	Graphics::Surface *frame = decodeFrame("c_misc/menus.smk", 16, &palette);
+	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
+	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
 	Common::String _name = "";
-	drawImage(*frame, 0, 0, false);
-	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
-	while (!shouldQuit()) {
 
+	Common::Rect subName(21, 10, 159, 24);
+
+	drawImage(*menu, 0, 0, false);
+	Graphics::Surface surName = overlay->getSubArea(subName);
+	drawImage(surName, subName.left, subName.top, false);
+	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
 			switch (event.type) {
@@ -490,14 +496,15 @@ void WetEngine::runMainMenu(Code *code) {
 				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
-					_nextLevel = code->levelIfWin;
-					return;
+					cont = false;
 				}
 				else if (Common::isAlnum(event.kbd.keycode)) {
+					playSound("sound/m_choice.raw", 1);
 					_name = _name + char(event.kbd.keycode - 32);
 				}
 
-				drawImage(*frame, 0, 0, false);
+				drawImage(*menu, 0, 0, false);
+				drawImage(surName, subName.left, subName.top, false);
 				drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
 				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 				break;
@@ -511,6 +518,73 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	Common::Rect subDifficulty(20, 104, 233, 119);
+	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);
+	drawImage(*menu, 0, 0, false);
+	drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+
+	Common::Rect subWet(145, 149, 179, 159);
+	Graphics::Surface surWet = overlay->getSubArea(subWet);
+	drawImage(surWet, subWet.left, subWet.top, false);
+	playSound("sound/no_rapid.raw", 1, 11025);
+
+	Common::Rect subDamp(62, 149, 110, 159);
+	Graphics::Surface surDamp = overlay->getSubArea(subDamp);
+
+	Common::Rect subSoaked(204, 149, 272, 159);
+	Graphics::Surface surSoaked = overlay->getSubArea(subSoaked);
+
+	Common::Array<Common::String> difficulties;
+	difficulties.push_back("0");
+	difficulties.push_back("1");
+	difficulties.push_back("2");
+	uint32 idx = 1;
+
+	cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_LEFT && idx > 0) {
+					playSound("sound/no_rapid.raw", 1, 11025);
+					idx--;
+				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT && idx < 2) {
+					playSound("sound/no_rapid.raw", 1, 11025);
+					idx++;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN)
+					cont = false;
+
+				drawImage(*menu, 0, 0, false);
+				drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+
+				if (difficulties[idx] == "0")
+					drawImage(surDamp, subDamp.left, subDamp.top, false);
+				else if (difficulties[idx] == "1")
+					drawImage(surWet, subWet.left, subWet.top, false);
+				else if (difficulties[idx] == "2")
+					drawImage(surSoaked, subSoaked.left, subSoaked.top, false);
+				else
+					error("Invalid difficulty: %s", difficulties[idx].c_str());
+
+				break;
+			default:
+				break;
+			}
+		}
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+
+	_difficulty = difficulties[idx];
+	_nextLevel = code->levelIfWin;
+
 }
 
 Common::String WetEngine::findNextLevel(const Transition *trans) {
