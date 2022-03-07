@@ -25,6 +25,8 @@
 #include "file.h"
 #include "script_preresponses.h"
 
+extern void writeEntryHeader(const char *name, uint offset, uint size);
+
 static const PreResponse BARBOT_PRERESPONSES_EN[] = {
 	{ 0x0CA02, 0x3D102 },
 	{ 0x0CA68, 0x3D102 },

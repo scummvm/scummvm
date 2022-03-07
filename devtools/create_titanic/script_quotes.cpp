@@ -25,6 +25,8 @@
 #include "file.h"
 #include "script_quotes.h"
 
+extern void writeEntryHeader(const char *name, uint offset, uint size);
+
 static const ScriptQuote BARBOT_QUOTES[] = {
 	{ 0x0003d722, 0x0003d372, 0x0000001e },
 	{ 0x0003d722, 0x0003d372, 0x00000032 },

@@ -25,6 +25,8 @@
 #include "file.h"
 #include "script_states.h"
 
+extern void writeEntryHeader(const char *name, uint offset, uint size);
+
 static const UpdateState12 BARBOT_STATES[] = {
 	{ 0x0003AB24, 0x00000005, 0x00 },
 	{ 0x0003AD33, 0x00000005, 0x00 },

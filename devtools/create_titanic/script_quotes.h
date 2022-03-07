@@ -31,7 +31,6 @@ struct ScriptQuote {
 };
 
 extern void writeAllScriptQuotes();
-extern void writeEntryHeader(const char *name, uint offset, uint size);
 extern uint dataOffset;
 
 #endif

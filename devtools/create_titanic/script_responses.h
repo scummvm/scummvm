@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 
 extern void writeAllScriptResponses();
-extern void writeEntryHeader(const char *name, uint offset, uint size);
 extern uint dataOffset;
 
 #endif

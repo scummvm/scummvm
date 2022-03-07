@@ -25,6 +25,8 @@
 #include "file.h"
 #include "script_ranges.h"
 
+extern void writeEntryHeader(const char *name, uint offset, uint size);
+
 const uint BARBOT_RANGE1[] = { 250062, 250064, 250065, 250066, 250067, 250068, 250069, 250070, 250071, 250063, 0 };
 const uint BARBOT_RANGE2[] = { 250200, 250201, 250202, 250203, 250204, 250205, 250206, 250207, 0 };
 const uint BARBOT_RANGE3[] = { 250160, 250161, 250162, 250163, 0 };

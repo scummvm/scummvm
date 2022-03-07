@@ -25,6 +25,8 @@
 #include "file.h"
 #include "script_responses.h"
 
+extern void writeEntryHeader(const char *name, uint offset, uint size);
+
 static const int DESKBOT_RESPONSES[128][5] = {
 	{ MKTAG('P','K','U','P'), 240573, 0, 0, 0 },
 	{ MKTAG('S','E','X','1'), 240573, 0, 0, 0 },

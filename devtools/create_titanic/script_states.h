@@ -36,7 +36,6 @@ struct UpdateState8 {
 };
 
 extern void writeAllUpdateStates();
-extern void writeEntryHeader(const char *name, uint offset, uint size);
 extern uint dataOffset;
 
 #endif
