@@ -69,7 +69,6 @@ size_t writeArray(FILE *fp, T const *array, U elems) {
 void NORETURN_PRE error(const char *s, ...) NORETURN_POST;
 void warning(const char *s, ...);
 void debug(int level, const char *s, ...);
-int scumm_stricmp(const char *s1, const char *s2);
 
 using namespace Common;
 
