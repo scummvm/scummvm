@@ -122,8 +122,6 @@ extern int nscript_obj_new(lua_State *L, Obj *obj);
 extern int nscript_u6llist_iter(lua_State *L);
 extern int nscript_init_u6link_iter(lua_State *L, U6LList *list, bool is_recursive);
 
-bool nscript_new_actor_var(lua_State *L, uint16 actor_num);
-
 static int nscript_actor_new(lua_State *L);
 static int nscript_actor_clone(lua_State *L);
 static int nscript_get_actor_from_num(lua_State *L);

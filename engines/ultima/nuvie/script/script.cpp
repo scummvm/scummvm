@@ -107,8 +107,6 @@ An actor schedule entry
 @int z
  */
 
-extern bool nscript_new_actor_var(lua_State *L, uint16 actor_num);
-
 struct ScriptObjRef {
 	uint16 refcount;
 	iAVLKey key;

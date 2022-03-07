@@ -43,8 +43,6 @@ namespace Ultima4 {
 
 MapMgr *MapMgr::_instance = nullptr;
 
-extern bool shrineCanEnter(const Portal *p);
-
 MapMgr *MapMgr::getInstance() {
 	if (_instance == nullptr)
 		_instance = new MapMgr();

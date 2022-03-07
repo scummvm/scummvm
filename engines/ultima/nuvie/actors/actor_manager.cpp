@@ -49,8 +49,6 @@ namespace Nuvie {
 #define ACTOR_TEMP_INIT 255
 #define SCHEDULE_SIZE 5
 
-void config_get_path(Configuration *config, Std::string filename, Std::string &path);
-
 ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c) {
 	uint16 i;
 
