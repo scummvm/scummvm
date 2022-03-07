@@ -361,7 +361,7 @@ private:
 	bool _hasSpeech = false;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
-	ItemResource *_itemResource;
+	DialogResource *_dialogResource;
 };
 
 } // namespace Chewy
