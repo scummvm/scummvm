@@ -5321,15 +5321,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_PALETTEMODS	},
 
-	// Space Quest 3 - English Mac (from Fingolfin)
-	{"sq3", "", {
-		{"resource.map", 0, "5c931675c6e01c4b418faca85d76c92c", 5844},
-		{"resource.001", 0, "0d8dfe42683b46f3131823233a91ce6a", 771917},
-		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794072},
-		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776536},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS },
-
 	// Space Quest 3 - German DOS (from Tobis87, also includes english language)
 	// SCI interpreter version 0.000.453 (?)
 	{"sq3", "", {
@@ -5342,7 +5333,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "9107c2aa5398e28b5c5406df13491f85", 320643},
 		{"resource.007", 0, "9107c2aa5398e28b5c5406df13491f85", 344287},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_MAC_PALETTEMODS },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_PALETTEMODS },
 
 	// Space Quest 3 v1.052 - German DOS (supplied by markcoolio in bug report #4281, also includes english language)
 	// Executable scanning reports "S.old.114"
@@ -5354,6 +5345,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_PALETTEMODS	},
 
+	// Space Quest 3 - English Mac (from Fingolfin)
+	{"sq3", "", {
+		{"resource.map", 0, "5c931675c6e01c4b418faca85d76c92c", 5844},
+		{"resource.001", 0, "0d8dfe42683b46f3131823233a91ce6a", 771917},
+		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794072},
+		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776536},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS },
+
 	// Space Quest 3 v1.1 (game says 0.016) - English Mac (supplied by misterhands in bug report #6484)
 	// Executable scanning reports "0.024"
 	{"sq3", "", {
@@ -5363,7 +5363,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776554},
 		{"resource.004", 0, "0d8dfe42683b46f3131823233a91ce6a", 787066},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_PALETTEMODS	},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS	},
 
 #define GUIO_SQ4_CD GUIO5(GAMEOPTION_SQ4_SILVER_CURSORS,	\
 						  GAMEOPTION_PREFER_DIGITAL_SFX,	\
