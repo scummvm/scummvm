@@ -304,7 +304,6 @@ void hideCur();
 void showCur();
 
 void alloc_buffers();
-void free_buffers();
 
 bool mainLoop(int16 mode);
 
@@ -471,8 +470,6 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi);
 
 void calc_zoom(int16 y, int16 zoomFactorX, int16 zoomFactorY,
                ObjMov *om);
-
-void load_chewy_taf(int16 taf_nr);
 
 bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode);
 void startAadWait(int16 diaNr);

@@ -41,8 +41,6 @@ static const int16 invent_display[4][2] = {
 	{5, 0}, { 265, 0 }, { 265, 149 }, { 5, 149 }
 };
 
-extern void switchRoom(int16 nr);
-
 void game_main() {
 	_G(fontMgr) = new FontMgr();
 

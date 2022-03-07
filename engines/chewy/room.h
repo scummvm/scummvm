@@ -125,7 +125,7 @@ private:
 	Common::Stream *_roomHandle[MAX_ROOM_HANDLE];
 };
 
-extern void load_chewy_taf(int16 taf_nr);
+void load_chewy_taf(int16 taf_nr);
 extern void switchRoom(int16 nr);
 extern void calc_person_look();
 
