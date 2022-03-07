@@ -32,7 +32,7 @@
 typedef unsigned char byte;
 typedef unsigned int uint32;
 
-extern void error(const char *s);
+#include "create_ultima.h"
 
 class File {
 private:
