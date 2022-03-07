@@ -3,6 +3,7 @@
 
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lbuiltin.h"
 
 namespace Grim {
 
@@ -24,17 +25,8 @@ void lua_taskinit(lua_Task *task, lua_Task *next, StkId tbase, int results);
 void lua_taskresume(lua_Task *task, Closure *closure, TProtoFunc *protofunc, StkId tbase);
 StkId luaV_execute(lua_Task *task);
 
-void start_script();
-void stop_script();
-void next_script();
-void identify_script();
 void pause_script();
-void pause_scripts();
 void unpause_script();
-void unpause_scripts();
-void find_script();
-void break_here();
-void sleep_for();
 
 void runtasks(LState *const rootState);
 
