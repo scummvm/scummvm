@@ -123,7 +123,6 @@ int scene18_updateCursor();
 void scene19_preload();
 void scene19_setMovements(Scene *sc, int entranceId);
 void scene19_initScene2();
-void scene19_setMovements(Scene *sc, int key);
 int sceneHandler19(ExCommand *cmd);
 int scene19_updateCursor();
 void scene19_setSugarState(Scene *sc);
