@@ -108,7 +108,6 @@ void navigatePath(TilePoint pick);
 
 void moveActors(int32 deltaTime);
 
-void drawMainDisplay();
 void updateMainDisplay();
 
 #if DEBUG

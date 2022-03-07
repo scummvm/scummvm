@@ -294,11 +294,6 @@ void PlayModeCleanup() {
    REM: These should probably be moved elsewhere...
  * ===================================================================== */
 
-extern void unpackImage(gPixelMap *map,
-                                  int32 width,
-                                  int32 rowCount,
-                                  int8 *srcData);
-
 typedef struct {
 	Point16     size;
 	int16       compress;

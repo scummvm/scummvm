@@ -61,13 +61,6 @@ extern BackWindow       *mainWindow;
 
 APPFUNC(cmdDialogQuit);
 int16 MsgBox(const char *msg, const char *btnMsg1, const char *btnMsg2);
-void writePlaqText(gPort            &port,
-                   const Rect16    &r,
-                   gFont           *font,
-                   int16           textPos,
-                   textPallete     &pal,
-                   bool            hiLite,
-                   const char      *msg, ...);
 
 inline Rect16 butBox(int n, int i) {
 	return (n > 1 ? *mbButtonRects[i] : mbOneBtnRect);

@@ -49,7 +49,7 @@ static MetaTilePtr  prevMeta;
    Prototypes
  * ===================================================================== */
 
-blockageType checkNontact(Effectron *obj, const TilePoint &loc, GameObject **blockResultObj);
+blockageType checkNontact(Effectron *obj, const TilePoint &loc, GameObject **blockResultObj = nullptr);
 int32 scatterer(int32 i, int32 m, int32 s);
 
 /* ===================================================================== *
@@ -860,13 +860,6 @@ int16 tileNopeHeight(
     const TilePoint &pt,
     Effectron *obj,
     StandingTileInfo *sti = nullptr);
-
-//-----------------------------------------------------------------------
-// clone of checkContact()
-blockageType checkNontact(
-    Effectron *obj,
-    const TilePoint &loc,
-    GameObject **blockResultObj = nullptr);
 
 //-----------------------------------------------------------------------
 // clone of objectCollision()

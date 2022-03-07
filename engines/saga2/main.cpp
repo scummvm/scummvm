@@ -45,6 +45,7 @@
 #include "saga2/tromode.h"
 #include "saga2/saveload.h"
 #include "saga2/gamerate.h"
+#include "saga2/modal.h"
 #include "saga2/msgbox.h"
 #include "saga2/grabinfo.h"
 
@@ -133,19 +134,12 @@ void findProgramDir(char *argv);     // save program home directory
 APPFUNC(cmdWindowFunc);                      // main window event handler
 
 //  Exportable prototypes
-void EventLoop(bool &running, bool modal);           // handles input and distributes
 void SystemEventLoop();
 
 void runPathFinder();
 
-bool setupGame();
-
-void mainEnable();
-void mainDisable();
 void updateMainDisplay();
 
-void cleanupGame();                  // auto-cleanup function
-void parseCommandLine(int argc, char *argv[]);
 const char *getExeFromCommandLine(int argc, char *argv[]);
 void WriteStatusF2(int16 line, const char *msg, ...);
 bool initUserDialog();
@@ -194,7 +188,6 @@ void main_saga2() {
 // Inner chunk of main - this bizzare nesting is required because VC++
 // doesn't like  try{} catch(){ } blocks in the same routine as its
 // __try{} __except(){} blocks
-void updateActiveRegions();
 
 static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 	const char *exeFile = getExeFromCommandLine(argc, argv);

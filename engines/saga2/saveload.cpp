@@ -37,6 +37,7 @@
 #include "saga2/mission.h"
 #include "saga2/tilemode.h"
 #include "saga2/magic.h"
+#include "saga2/display.h"
 #include "saga2/intrface.h"
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
@@ -48,7 +49,6 @@ namespace Saga2 {
 void updateMainDisplay();
 void fadeUp();
 void fadeDown();
-void enablePaletteChanges();
 
 const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
 

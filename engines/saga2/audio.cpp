@@ -57,17 +57,10 @@ extern hResource *voiceResFile;          // script resources
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
 
 bool haveKillerSoundCard();
-void writeConfig();
 void disableBGLoop(bool s = true);
 void enableBGLoop();
 void audioStressTest();
 extern GameObject *getViewCenterObject();
-void playSoundAt(uint32 s, Location playAt);
-void playSoundAt(uint32 s, Point32 playAt);
-bool sayVoiceAt(uint32 s[], Location l);
-bool sayVoiceAt(uint32 s[], Point32 l);
-void playLoopAt(uint32 s, Location l);
-void playLoopAt(uint32 s, Point32 l);
 
 bool bufCheckResID(hResContext *hrc, uint32 s);
 bool hResCheckResID(hResContext *hrc, uint32 s);

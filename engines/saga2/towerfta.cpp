@@ -90,7 +90,6 @@ TowerLayer tower[fullyInitialized] = {
  * ===================================================================== */
 
 //#include "saga2/loadmsg.h"
-bool initGUIMessagers();
 void cleanupGUIMessagers();
 bool openResources();
 void closeResources();
@@ -133,15 +132,11 @@ TERMINATOR(termPlayOutro) {
 
 // ------------------------------------------------------------------------
 
-extern INITIALIZER(initSystemTimer);
-
 TERMINATOR(termSystemTimer) {
 	cleanupSystemTimer();
 }
 
 // ------------------------------------------------------------------------
-
-extern INITIALIZER(initAudio);
 
 TERMINATOR (termAudio)
 {
@@ -289,8 +284,6 @@ TERMINATOR(termMainWindow) {
 
 
 // ------------------------------------------------------------------------
-
-extern INITIALIZER(initGUIMessagers);
 
 TERMINATOR(termGUIMessagers) {
 	cleanupGUIMessagers();

@@ -144,7 +144,6 @@ bool unstickObject(GameObject *obj);
 
 void **LoadImageRes(hResContext *con, int16 resID, int16 numRes, char a, char b, char c);
 void UnloadImageRes(void **images, int16 numRes);
-void drown(GameObject *obj);
 
 /* ===================================================================== *
    class Location member functions

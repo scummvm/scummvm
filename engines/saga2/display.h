@@ -76,7 +76,6 @@ bool paletteChangesEnabled();
 void delayedDisplayEnable();
 void externalPaletteIntrusion();
 void reDrawScreen();
-void blackOut();
 void showLoadMessage();
 
 // ------------------------------------------------------------------------
@@ -84,12 +83,6 @@ void showLoadMessage();
 
 void pushVidState();
 void popVidState();
-
-// ------------------------------------------------------------------------
-// Calls to suspend audio
-
-void suspendAudio();
-void resumeAudio();
 
 // ------------------------------------------------------------------------
 // The display may be disabled for several reasons these track them

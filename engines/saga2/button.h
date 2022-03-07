@@ -28,6 +28,7 @@
 
 #include "saga2/panel.h"
 #include "saga2/cmisc.h"
+#include "saga2/floating.h"
 #include "saga2/idtypes.h"
 
 //#include "saga2/sprite.h"
@@ -391,10 +392,7 @@ public:
 /* ===================================================================== *
    Misc functions
  * ===================================================================== */
-// duplicate declaration in floating.h
 
-void drawCompressedImage(gPort &port, const Point16 pos, void *image);
-void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image);
 void drawCompressedImageToMap(gPixelMap &map, void *image);
 
 void writePlaqText(gPort            &port,

@@ -56,10 +56,8 @@ static bool paletteSuspendFlag = false;
    Prototypes
  * ===================================================================== */
 
-void reDrawScreen();
 void localCursorOn();
 void localCursorOff();
-void loadingScreen();
 void resetInputDevices();
 APPFUNC(cmdWindowFunc);                      // main window event handler
 static void switchOn();

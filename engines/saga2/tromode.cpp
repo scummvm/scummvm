@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 
 #include "saga2/saga2.h"
+#include "saga2/annoy.h"
 #include "saga2/detection.h"
 #include "saga2/fta.h"
 #include "saga2/player.h"
@@ -60,7 +61,6 @@ int16 OptionsDialog(bool disableSaveResume = false);
 void SystemEventLoop();
 void freeAllTileBanks();
 void resetInputDevices();
-void blackOut();
 void cursorFullHide(bool onOff);
 
 static void doIntro();

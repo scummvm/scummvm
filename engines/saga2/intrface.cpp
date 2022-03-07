@@ -198,20 +198,6 @@ public:
    Imports
  * ===================================================================== */
 
-#ifndef FTAASM_H
-extern void compositePixels(
-    gPixelMap       *compMap,
-    gPixelMap       *sprMap,
-    int32           xpos,
-    int32           ypos,
-    uint8           *lookup);
-
-extern void unpackImage(gPixelMap *map,
-                                  int32 width,
-                                  int32 rowCount,
-                                  int8 *srcData);
-#endif
-
 // this is a redeclare of the struct in playmode.cpp
 typedef struct {
 	Point16     size;
@@ -388,8 +374,6 @@ class CPortrait *Portrait;
 
 // which brother is set in the individual controls
 uint16  indivBrother;
-
-bool isBrotherDead(PlayerActorID brotherID);
 
 /* ===================================================================== *
    Global class declarations

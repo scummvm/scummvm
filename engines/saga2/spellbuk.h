@@ -215,7 +215,6 @@ SPECIALSPELL(CreateWraith);
 SPECIALSPELL(SagaSpellCall);
 SPECIALSPELL(CreateWWisp);
 SPECIALSPELL(CreateFWisp);
-SPECIALSPELL(CreateWraith);
 SPECIALSPELL(CreateFood);
 
 } // End of namespace Saga2

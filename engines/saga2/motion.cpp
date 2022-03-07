@@ -135,7 +135,6 @@ extern uint16   uMaxMasks[4],
        vMinMasks[4];
 
 extern SpellStuff *spellBook;
-void fallingDamage(GameObject *obj, int16 speed);
 
 /* ===================================================================== *
    PathMinder

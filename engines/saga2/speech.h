@@ -35,10 +35,7 @@ namespace Saga2 {
 #define CHARSPERSECOND  22
 #define SHORTEST_DURATION   TICKSPERSECOND
 
-void    TileToScreenCoords(const TilePoint &tp, Point16 &p);
-void    TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p);
 void    updateSpeech();
-extern  TilePoint centerActorCoords();
 bool    isVisible(GameObject *obj);
 
 #ifdef FRANKC

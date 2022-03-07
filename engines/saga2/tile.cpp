@@ -142,7 +142,6 @@ extern void updateActorTasks();
 extern void updateObjectAppearances(int32 deltaTime);
 extern void getViewTrackPos(TilePoint &tp);
 extern GameObject *getViewCenterObject();
-extern TilePoint centerActorCoords();
 void freeAllTileBanks();
 
 void cycleTiles(uint32 elapsed);

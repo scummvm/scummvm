@@ -32,11 +32,6 @@ namespace Saga2 {
 
 struct textPallete;
 
-void ModalModeSetup();
-void ModalModeCleanup();
-void ModalModeHandleTask();
-void ModalModeHandleKey(short, short);
-
 //Modal Mode GameMode Object
 
 extern GameMode     ModalMode;

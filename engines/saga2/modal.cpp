@@ -37,7 +37,6 @@ APPFUNC(cmdModalWindow);
 void ModalModeSetup() {}
 void ModalModeCleanup() {}
 void ModalModeHandleTask() {}
-void ModalModeHandleKey(short, short);
 
 GameMode        ModalMode = {
 	nullptr,                                // no previous mode

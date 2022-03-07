@@ -95,13 +95,10 @@ void SystemEventLoop();
 //	Fade to black
 
 void clearTileAreaPort();
-void reDrawScreen() ;
 void updateMainDisplay();
 void updateActiveRegions();
-void drawMainDisplay();
 void fadeUp();
 void fadeDown();
-void clearTileAreaPort();
 void displayUpdate();
 void disableUserControls();
 void enableUserControls();

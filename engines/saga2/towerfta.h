@@ -36,10 +36,8 @@ INITIALIZER(initSystemConfig);
 INITIALIZER(initPlayIntro);
 TERMINATOR(termPlayOutro);
 
-INITIALIZER(initSystemTimer);
 TERMINATOR(termSystemTimer);
 
-INITIALIZER(initAudio);
 TERMINATOR (termAudio);
 
 INITIALIZER(initResourceFiles);

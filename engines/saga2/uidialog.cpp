@@ -762,17 +762,12 @@ int16 FileDialog(int16 fileProcess) {
 /* ===================================================================== *
    Options dialog box
  * ===================================================================== */
-void reDrawScreen() ;
 void updateMainDisplay();
-void updateActiveRegions();
 void drawMainDisplay();
 void fadeUp();
 void fadeDown();
 void clearTileAreaPort();
 void displayUpdate();
-void disableUserControls();
-void enableUserControls();
-void updateAllUserControls();
 
 int16 OptionsDialog(bool disableSaveResume) {
 	// Save back buffer before opening the dialog

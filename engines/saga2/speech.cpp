@@ -33,6 +33,7 @@
 #include "saga2/player.h"
 #include "saga2/annoy.h"
 #include "saga2/cmisc.h"
+#include "saga2/tile.h"
 #include "saga2/tilemode.h"
 
 namespace Saga2 {
