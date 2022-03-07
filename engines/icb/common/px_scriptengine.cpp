@@ -26,6 +26,7 @@
 
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/p4.h"
+#include "engines/icb/debug_pc.h"
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/common/px_common.h"          // common defs for tools & engine
 #include "engines/icb/common/px_globalvariables.h" // The global variable class
@@ -106,8 +107,6 @@ int32 stackPointer = 0;  // Position within stack
 
 #define UpdatePC                                                                                                                                                                   \
 	{ scriptData = actualScript; }
-
-void Zdebug(const char *, ...); // Debug logging functions
 
 #define ScriptTrace Zdebug
 

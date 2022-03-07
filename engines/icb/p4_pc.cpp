@@ -59,9 +59,6 @@ uint32 SONICS_BUFFER_SIZE;
 // private session data (scripts+objects+walkgrids) : 200KB
 #define PRIVATE_RESMAN_SIZE (400 * 1024)
 
-// local prototypes
-void Mission_and_console();
-
 uint32 getConfigValueWithDefault(const ConfigFile &config, const Common::String &section, const Common::String &key, uint32 defaultValue) {
 	if (scumm_stricmp("MusicVolume", key.c_str()) == 0) {
 		return ConfMan.getInt("music_volume") / 2;

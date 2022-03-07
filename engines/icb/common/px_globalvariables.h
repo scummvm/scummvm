@@ -33,8 +33,6 @@
 
 namespace ICB {
 
-void Fatal_error(const char *format, ...); // Game engine compatible error routine
-
 #define MAX_global_vars 256
 
 #define GLOBAL_VAR_NOT_SET (0)
