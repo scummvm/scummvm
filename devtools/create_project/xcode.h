@@ -314,7 +314,7 @@ private:
 	void setupFrameworksBuildPhase(const BuildSetup &setup);
 	void setupNativeTarget();
 	void setupProject();
-	void setupResourcesBuildPhase();
+	void setupResourcesBuildPhase(const BuildSetup &setup);
 	void setupSourcesBuildPhase();
 	void setupBuildConfiguration(const BuildSetup &setup);
 	void setupImageAssetCatalog(const BuildSetup &setup);
@@ -324,7 +324,7 @@ private:
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
 
 	// Retrieve information
-	ValueList& getResourceFiles() const;
+	ValueList& getResourceFiles(const BuildSetup &setup) const;
 
 	// Hash generation
 	std::string getHash(std::string key);
