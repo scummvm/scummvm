@@ -55,7 +55,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	bool keepPlaying = true;
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
-	//save_palette(curPalette);
 	_G(cur)->hide_cur();
 
 	// Clear events

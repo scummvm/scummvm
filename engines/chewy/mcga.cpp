@@ -56,17 +56,6 @@ void set_palette(const byte *palette) {
 	setScummVMPalette(palette, 0, PALETTE_COUNT);
 }
 
-void save_palette(byte *palette) {
-	if (!palette)
-		palette = _G(saved_palette);
-
-	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
-}
-
-void restore_palette() {
-	set_palette(_G(saved_palette));
-}
-
 void rastercol(int16 color, int16 r, int16 g, int16 b) {
 	byte rgb[3];
 	rgb[0] = r;

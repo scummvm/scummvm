@@ -47,7 +47,6 @@ void standard_init() {
 
 	_G(out)->init();
 	_G(out)->cls();
-	_G(out)->savePalette();
 	_G(out)->setClip(0, 0, 320, 200);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();

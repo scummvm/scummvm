@@ -37,8 +37,6 @@ public:
 	void setPointer(byte *ptr);
 
 	void setPalette(byte *palette);
-	void savePalette(byte *palette = nullptr);
-	void rest_palette();
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
 	void einblenden(byte *palette, int16 frames);
 	void ausblenden(int16 frames);

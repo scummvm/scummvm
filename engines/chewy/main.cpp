@@ -66,7 +66,6 @@ void game_main() {
 	}
 
 	tidy();
-	_G(out)->rest_palette();
 }
 
 void alloc_buffers() {

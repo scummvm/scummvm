@@ -60,14 +60,6 @@ void McgaGraphics::setPalette(byte *palette) {
 	set_palette(palette);
 }
 
-void McgaGraphics::savePalette(byte *palette) {
-	save_palette(palette);
-}
-
-void McgaGraphics::rest_palette() {
-	restore_palette();
-}
-
 void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	int16 index = c * 3;
 	_palTable[index] = r;

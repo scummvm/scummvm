@@ -258,7 +258,6 @@ public:
 	int16 _scroll_delay = 0;
 
 	// mcga.cpp
-	byte _saved_palette[PALETTE_SIZE] = { 0 };
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp
