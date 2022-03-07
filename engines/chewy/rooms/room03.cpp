@@ -350,8 +350,7 @@ void Room3::probeTransfer() {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
 					if (_G(minfo)._button == 1 || _G(kbinfo)._keyCode == Common::KEYCODE_RETURN) {
 						if (isCurInventory(SPINAT_INV)) {
-							_G(ssi)[0].X = 120;
-							_G(ssi)[0].Y = 100;
+							_G(atds)->set_split_win(0, 120, 100);
 							if (_G(spieler)._personRoomNr[P_CHEWY] == 3)
 								start_aad(50);
 							else

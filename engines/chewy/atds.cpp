@@ -312,8 +312,9 @@ void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	}
 }
 
-void Atdsys::set_split_win(int16 nr, SplitStringInit *ssinit) {
-	_ssi[nr] = ssinit[0];
+void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
+	_ssi[nr].X = x;
+	_ssi[nr].Y = y;
 }
 
 Common::Stream *Atdsys::pool_handle(const char *fname) {

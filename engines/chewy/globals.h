@@ -225,18 +225,6 @@ public:
 	CustomInfo _Ci;
 	GotoPkt _gpkt;
 
-	SplitStringInit _ssi[AAD_MAX_PERSON] = {
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
-	};
 	int16 _r45_pinfo[R45_MAX_PERSON][4] = {
 	   { 0, 4, 1490, 1500 },
 	   { 0, 1, 180, 190 },

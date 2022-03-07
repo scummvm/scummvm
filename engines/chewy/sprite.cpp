@@ -318,8 +318,9 @@ void setPersonPos(int16 x, int16 y, int16 personNr, int16 direction) {
 	if (personNr >= P_NICHELLE) {
 		++tmpNr;
 	}
-	_G(ssi)[tmpNr].X = _G(spieler_vector)[personNr].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[personNr].HotX;
-	_G(ssi)[tmpNr].Y = _G(spieler_vector)[personNr].Xypos[1] - _G(spieler).scrolly;
+	int16 x1 = _G(spieler_vector)[personNr].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[personNr].HotX;
+	int16 y1 = _G(spieler_vector)[personNr].Xypos[1] - _G(spieler).scrolly;
+	_G(atds)->set_split_win(tmpNr, x1, y1);
 	if (!_G(flags).ExitMov && personNr == P_CHEWY) {
 		int16 u_index = _G(ged)->ged_idx(x + _G(spieler_mi)[personNr].HotX, y + _G(spieler_mi)[personNr].HotY,
 		                                 _G(room)->_gedXNr[_G(room_blk).AkAblage],
@@ -562,9 +563,9 @@ void aadWait(int16 strNr) {
 
 void start_aad(int16 diaNr, int16 ssiNr) {
 	if (ssiNr == 0) {
-		_G(ssi)[0].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
-		_G(ssi)[0].Y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-		_G(atds)->set_split_win(0, &_G(ssi)[0]);
+		int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+		int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+		_G(atds)->set_split_win(0, x, y);
 	}
 
 	_G(atds)->start_aad(diaNr);

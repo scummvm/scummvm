@@ -58,9 +58,9 @@ void setSsiPos() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		if (i >= P_NICHELLE)
 			tmp = 1;
-		_G(ssi)[i + tmp].X = _G(spieler_vector)[i].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[i].HotX;
-		_G(ssi)[i + tmp].Y = _G(spieler_vector)[i].Xypos[1] - _G(spieler).scrolly;
-		_G(atds)->set_split_win(i + tmp, &_G(ssi)[i + tmp]);
+		int16 x = _G(spieler_vector)[i].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[i].HotX;
+		int16 y = _G(spieler_vector)[i].Xypos[1] - _G(spieler).scrolly;
+		_G(atds)->set_split_win(i + tmp, x, y);
 	}
 }
 

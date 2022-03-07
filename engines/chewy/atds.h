@@ -266,7 +266,7 @@ public:
 	void set_delay(int16 *delay, int16 silent);
 	void setHasSpeech(bool hasSpeech);
 	void updateSoundSettings();
-	void set_split_win(int16 nr, SplitStringInit *ssinit);
+	void set_split_win(int16 nr, int16 x, int16 y);
 	SplitStringRet *split_string(SplitStringInit *ssi);
 	void calc_txt_win(SplitStringInit *ssi);
 	void str_null2leer(char *str_start, char *str_end);
@@ -350,7 +350,20 @@ private:
 	int16 _adsStackPtr;
 	SplitStringRet _ssret;
 	SplitStringRet *_ssr = nullptr;
-	SplitStringInit _ssi[AAD_MAX_PERSON];
+
+	SplitStringInit _ssi[AAD_MAX_PERSON] = {
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_MITTE, 8, 8 },
+	};
+
 	SplitStringInit _atsSsi;
 
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };

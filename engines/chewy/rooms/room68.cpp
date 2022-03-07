@@ -227,9 +227,9 @@ void Room68::talk_keeper() {
 	startSetAILWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
-	_G(ssi)[3].X = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
-	_G(ssi)[3].Y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
-	_G(atds)->set_split_win(3, &_G(ssi)[3]);
+	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
+	int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+	_G(atds)->set_split_win(3, x, y);
 	startAdsWait(20);
 	_G(cur_hide_flag) = false;
 	hideCur();
@@ -429,9 +429,7 @@ void Room68::talk_papagei() {
 	autoMove(5, P_CHEWY);
 	showCur();
 
-	_G(ssi)[2].X = 60;
-	_G(ssi)[2].Y = 80;
-	_G(atds)->set_split_win(2, &_G(ssi)[2]);
+	_G(atds)->set_split_win(2, 60, 80);
 	startAdsWait(18);
 }
 
