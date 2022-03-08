@@ -703,6 +703,10 @@ char *Atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 			str_[39] = '\0';
 			str_[46] = ' ';
 		}
+		if (txt_nr == PAPIER_INV && str_[32] == ' ') {
+			str_[32] = '\0';
+			*txt_anz = 2;
+		}
 	}
 
 	return str_;
