@@ -40,7 +40,6 @@ extern int dscrstkp;        /* Point into describe stack */
 extern void sys(Aword fpos, Aword len);
 extern Boolean confirm(MsgKind msgno);
 extern Aptr attribute(Aword item, Aword atr);
-extern void say(Aword item);
 extern void saynum(Aword num);
 extern void saystr(char *str);
 extern Aptr strattr(Aword id, Aword atr);
