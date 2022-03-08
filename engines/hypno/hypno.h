@@ -318,6 +318,8 @@ class WetEngine : public HypnoEngine {
 public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 	Common::HashMap<int, const struct chapterEntry*> _chapterTable;
+	Common::Array<int> _ids;
+
 	void loadAssets() override;
 	void loadAssetsDemoDisc();
 	void loadAssetsPCW();

@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	spider/talk.o \
 	video.o \
 	wet/arcade.o \
+	wet/hard.o \
 	wet/wet.o
 
 MODULE_DIRS += \
