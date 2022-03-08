@@ -166,6 +166,9 @@ Short options are listed where they are available.
         ``--tempo=NUM``,,"Sets music tempo (in percent, 50-200) for SCUMM games (default: 100)"
         ``--themepath=PATH``,,":ref:`Specifies path to where GUI themes are stored <themepath>`"
         ``--version``,``-v``,"Displays ScummVM version information and exits"
+        ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first ``NUM`` bytes of the file given by ``PATH``"
+        ``--md5-path=PATH``,,"Used with ``--md5`` to specify path of file to calculate MD5 hash of (default: ./scummvm)"
+        ``--md5-length=NUM``,,"Used with ``--md5`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. (default: 0)"
 
 
 
