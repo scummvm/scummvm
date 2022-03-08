@@ -367,10 +367,6 @@ void runsign(runcxdef *ctx, int err);
 /* draw status line */
 void runstat();
 
-/* initialize output status */
-void runistat(struct voccxdef *vctx, struct runcxdef *rctx,
-			  struct tiocxdef *tctx);
-
 } // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

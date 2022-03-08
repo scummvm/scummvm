@@ -154,9 +154,6 @@ void outblank(void);
 /* start/end watchpoint evaluation */
 void outwx(int flag);
 
-/* Begin/end capturing */
-void tiocapture(tiocxdef *tioctx, mcmcxdef *memctx, int flag);
-
 /* clear all captured output */
 void tioclrcapture(tiocxdef *tioctx);
 
@@ -165,12 +162,6 @@ void tioclrcapture(tiocxdef *tioctx);
  *   remove captured output in an inner capture from an enclosing capture
  */
 void tiopopcapture(tiocxdef *tioctx, uint orig_size);
-
-/* get the object handle of the captured output */
-mcmon tiogetcapture(tiocxdef *ctx);
-
-/* get the amount of text captured */
-uint tiocapturesize(tiocxdef *ctx);
 
 /* turn MORE mode on or off */
 int setmore(int state);
