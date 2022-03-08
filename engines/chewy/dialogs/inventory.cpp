@@ -203,11 +203,11 @@ void Inventory::menu() {
 					break;
 
 				case 3:
-					g_events->_kbInfo._keyCode = Common::KEYCODE_PAGEUP;
+					_G(in)->_hotkey = Common::KEYCODE_PAGEUP;
 					break;
 
 				case 4:
-					g_events->_kbInfo._keyCode = Common::KEYCODE_PAGEDOWN;
+					_G(in)->_hotkey = Common::KEYCODE_PAGEDOWN;
 					break;
 
 				case 5:
@@ -247,7 +247,8 @@ void Inventory::menu() {
 			}
 		} else if (_G(minfo)._button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 			if (!mouseFl) {
-				g_events->_kbInfo._keyCode = Common::KEYCODE_ESCAPE;
+				// Set virtual key
+				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
 				mouseFl = true;
 			}
 		}
@@ -466,6 +467,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		}
 
 		switch (g_events->_kbInfo._scanCode) {
+		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+			_G(in)->_hotkey = g_events->_kbInfo._scanCode;
+			break;
+
 		case Common::KEYCODE_ESCAPE:
 			endLoop = true;
 			break;
@@ -484,6 +490,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 		}
 
+		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(fontMgr)->setFont(_G(font8));

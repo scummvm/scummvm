@@ -194,7 +194,6 @@ void EventsManager::processEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 
-		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			MOUSE_MOVE;
 			handleEvent(e);
@@ -247,7 +246,7 @@ char getch() {
 		g_events->update();
 
 		while (!g_system->getEventManager()->pollEvent(e) && !SHOULD_QUIT) {
-			if (e.type == Common::EVENT_KEYDOWN)
+			if (e.type == Common::EVENT_KEYUP)
 				return e.kbd.ascii;
 		}
 	}

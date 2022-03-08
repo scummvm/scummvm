@@ -57,6 +57,12 @@ int16 InputMgr::getSwitchCode() {
 	if (g_events->_kbInfo._keyCode != 0)
 		switch_code = (int16)g_events->_kbInfo._keyCode;
 
+	// Virtual key, set when an item is taken from the inventory
+	if (_hotkey != Common::KEYCODE_INVALID) {
+		switch_code = _hotkey;
+		_hotkey = Common::KEYCODE_INVALID;
+	}
+
 	return switch_code;
 }
 
