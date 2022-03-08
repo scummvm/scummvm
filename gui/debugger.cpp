@@ -651,17 +651,17 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			filename = filename + " " + argv[i];
 		}
 		Common::ArchiveMemberList list;
-		SearchMan.listMatchingMembers(list, filename);
-		if (list.empty()) {
-			debugPrintf("File '%s' not found\n", filename.c_str());
+		Common::Path Filename(filename, '/');
+		Common::FSNode path(Filename);
+		if (!path.exists()) {
+			debugPrintf("Non-existent file path\n");
+		} else if (!path.isReadable()) {
+			debugPrintf("Non-readable file path\n");
 		} else {
-			sort(list.begin(), list.end(), ArchiveMemberLess());
-			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-				Common::SeekableReadStream *stream = (*iter)->createReadStream();
-				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getName().c_str(), (int32)stream->size());
-				delete stream;
-			}
+			Common::SeekableReadStream *stream = path.createReadStream();
+			Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
+			debugPrintf("%s  %s  %d\n", md5.c_str(), path.getName().c_str(), (int32)stream->size());
+			delete stream;
 		}
 	}
 	return true;
