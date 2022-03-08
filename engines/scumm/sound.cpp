@@ -133,7 +133,10 @@ void Sound::updateMusicTimer() {
 	// this information at the time of writing.
 
 	if (!pollCD() && !isLoomOverture) {
+		_currentCDSound = 0;
 		_musicTimer = 0;
+		_replacementTrackStartTime = 0;
+		_replacementTrackPauseTime = 0;
 		return;
 	}
 
@@ -323,6 +326,7 @@ void Sound::playSound(int soundID) {
 		if (trackNr != -1) {
 			_currentCDSound = soundID;
 			_replacementTrackStartTime = g_system->getMillis();
+			_replacementTrackPauseTime = 0;
 			_musicTimer = 0;
 			g_system->getAudioCDManager()->play(trackNr, 1, 0, 0, true);
 			return;
@@ -1025,6 +1029,7 @@ void Sound::stopSound(int sound) {
 		_currentCDSound = 0;
 		_musicTimer = 0;
 		_replacementTrackStartTime = 0;
+		_replacementTrackPauseTime = 0;
 		stopCD();
 		stopCDTimer();
 	}
@@ -1051,6 +1056,9 @@ void Sound::stopSound(int sound) {
 void Sound::stopAllSounds() {
 	if (_currentCDSound != 0) {
 		_currentCDSound = 0;
+		_musicTimer = 0;
+		_replacementTrackStartTime = 0;
+		_replacementTrackPauseTime = 0;
 		stopCD();
 		stopCDTimer();
 	}
@@ -1385,15 +1393,43 @@ AudioCDManager::Status Sound::getCDStatus() {
 void Sound::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_currentCDSound, VER(35));
 	s.syncAsSint16LE(_currentMusic, VER(35));
-
-	if (s.isLoading() && _vm->VAR_MUSIC_TIMER != 0xFF) {
-		uint32 now = g_system->getMillis();
-		_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
-		_replacementTrackStartTime = now - 100 * TIMER_TO_TICKS(_musicTimer);
-		_replacementTrackPauseTime = now;
-	}
 }
 
+void Sound::restoreAfterLoad() {
+	_musicTimer = 0;
+	_replacementTrackStartTime = 0;
+	_replacementTrackPauseTime = 0;
+
+	if (_useReplacementAudioTracks && _currentCDSound) {
+		int trackNr = getReplacementAudioTrack(_currentCDSound);
+		if (trackNr != -1) {
+			uint32 now = g_system->getMillis();
+			uint32 frame;
+
+			_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
+			_replacementTrackPauseTime = 0;
+
+			// We try to resume the audio track from where it was
+			// saved. The timer isn't very accurate, but it should
+			// be good enough.
+
+			if (_musicTimer > 0) {
+				_replacementTrackStartTime = now - 100 * TIMER_TO_TICKS(_musicTimer);
+				frame = (75 * TIMER_TO_TICKS(_musicTimer)) / 10;
+			} else {
+				_replacementTrackStartTime = now;
+				frame = 0;
+			}
+
+			// If the user has fiddled with the Loom overture
+			// setting, the calculated position could be outside
+			// the track, but it seems a warning message is as bad
+			// as it gets.
+
+			g_system->getAudioCDManager()->play(trackNr, 1, frame, 0, true);
+		}
+	}
+}
 
 #pragma mark -
 #pragma mark --- Sound resource handling ---

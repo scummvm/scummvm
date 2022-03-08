@@ -594,6 +594,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 		}
 	}
 
+	_sound->restoreAfterLoad();
+
 	return true;
 }
 

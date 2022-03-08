@@ -155,6 +155,7 @@ public:
 	int getMusicTimer() const { return _musicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	void restoreAfterLoad();
 
 protected:
 	void setupSfxFile();
