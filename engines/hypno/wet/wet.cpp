@@ -253,11 +253,15 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<main_menu>"] = menu;
 	_levels["<main_menu>"]->levelIfWin = "<intros>";
 
+	Code *level_menu = new Code("<level_menu>");
+	_levels["<level_menu>"] = level_menu;
+	_levels["<level_menu>"]->levelIfWin = "?";
+
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("c_misc/gameover.smk");
 	_levels["<game_over>"] = over;
 
-	Transition *intros = new Transition("c11");
+	Transition *intros = new Transition("<level_menu>");
 	intros->intros.push_back("c_misc/stardate.smk");
 	intros->intros.push_back("c_misc/intros.smk");
 	intros->intros.push_back("c_misc/confs.smk");
@@ -400,6 +404,8 @@ void WetEngine::runCode(Code *code) {
 	changeScreenMode("320x200");
 	if (code->name == "<main_menu>")
 		runMainMenu(code);
+	else if (code->name == "<level_menu>")
+		runLevelMenu(code);
 	else if (code->name == "<check_lives>")
 		runCheckLives(code);
 	else if (code->name == "<credits>")
@@ -465,6 +471,69 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 		}
 	} else
 		error("Invalid font: '%s'", font.c_str());
+}
+
+void WetEngine::runLevelMenu(Code *code) {
+	Common::Event event;
+	byte *palette;
+	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 20, &palette);
+	loadPalette(palette, 0, 256);
+	byte black[3] = {0x00, 0x00, 0x00}; // Always red?
+	byte lime[3] = {0x00, 0xFF, 0x00}; // Always red?
+	byte green[3] = {0x2C, 0x82, 0x28}; // Always red?
+	int lastLevel = 20;
+	int maxLevel = 20;
+	int currentLevel = 0;
+	for (int i = 0; i < maxLevel; i++)
+		if (i < lastLevel)
+			loadPalette((byte *) &green, 192+i, 1);
+		else
+			loadPalette((byte *) &black, 192+i, 1);
+
+	loadPalette((byte *) &lime, 192+currentLevel, 1);
+	drawImage(*menu, 0, 0, false);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < lastLevel-1) {
+					playSound("sound/extra.raw", 1, 11025);
+					currentLevel++;
+				} else if (event.kbd.keycode == Common::KEYCODE_UP && currentLevel > 0) {
+					playSound("sound/extra.raw", 1, 11025);
+					currentLevel--;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ) {
+					_nextLevel = Common::String::format("c%d", rawChapterTable[currentLevel].id);
+					cont = false;
+				}
+
+				for (int i = 0; i < maxLevel; i++)
+					if (i < lastLevel)
+						loadPalette((byte *) &green, 192+i, 1);
+					else
+						loadPalette((byte *) &black, 192+i, 1);
+
+
+				loadPalette((byte *) &lime, 192+currentLevel, 1);
+				drawImage(*menu, 0, 0, false);
+				break;
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+	menu->free();
+	delete menu;
 }
 
 void WetEngine::runMainMenu(Code *code) {

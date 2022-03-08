@@ -345,6 +345,7 @@ public:
 
 private:
 	void runMainMenu(Code *code);
+	void runLevelMenu(Code *code);
 	void runCheckLives(Code *code);
 	void endCredits(Code *code);
 
