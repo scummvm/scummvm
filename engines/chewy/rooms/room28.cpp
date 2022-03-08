@@ -48,6 +48,7 @@ void Room28::entry(int16 eib_nr) {
 	if (_G(spieler)._personRoomNr[P_HOWARD] == 28) {
 		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
 		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
+		_G(spieler)._personHide[P_HOWARD] = false;
 		hideCur();
 		_G(SetUpScreenFunc) = setup_func;
 
