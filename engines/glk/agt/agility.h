@@ -963,7 +963,6 @@ rbool parse_config_line(char *s, rbool lastpass);
 descr_line *read_ttl(fc_type fc); /* This returns the title. The return string
 					  must be freed with free_ttl() and not
 					  with free_descr */
-void free_ttl(descr_line *title);
 
 void read_voc(fc_type fc);
 void init_verbrec(void);

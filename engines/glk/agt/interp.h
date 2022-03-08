@@ -454,7 +454,6 @@ global volatile int curr_x;
 
 extern void init_interface();
 extern void start_interface(fc_type fc);
-extern void close_interface(void);
 extern char *agt_input(int in_type); /* read line, return malloc'd string */
 extern char agt_getkey(rbool echo_char);
 extern void agt_clrscr(void);
