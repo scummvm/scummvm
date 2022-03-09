@@ -151,7 +151,7 @@ enum GlobalVar {
 	kGlobalVarVersion        = 27,
 	kGlobalVarGK2MusicVolume = 76, // 0 to 127
 	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
-	kGlobalVarPhant2User           = 80,
+	kGlobalVarUser                 = 80,
 	kGlobalVarFastCast             = 84, // SCI16
 	kGlobalVarMessageType          = 90,
 	kGlobalVarTextSpeed            = 94, // SCI32; 0 is fastest, 8 is slowest
