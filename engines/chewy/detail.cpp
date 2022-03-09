@@ -399,10 +399,10 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 	if (start > end)
 		SWAP(start, end);
 
-	if (start > MAXDETAILS)
+	if (start >= MAXDETAILS)
 		start = 0;
 
-	if (end > MAXDETAILS)
+	if (end >= MAXDETAILS)
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; (i <= end); i++) {
@@ -485,10 +485,10 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 	if (start > end)
 		SWAP(start, end);
 
-	if (start > MAXDETAILS)
+	if (start >= MAXDETAILS)
 		start = 0;
 	
-	if (end > MAXDETAILS)
+	if (end >= MAXDETAILS)
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; i <= end; i++) {
@@ -563,7 +563,7 @@ int16 Detail::get_ani_status(int16 det_nr) {
 }
 
 SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 spr_nr, int16 mode) {
-	if (det_nr > MAXDETAILS)
+	if (det_nr >= MAXDETAILS)
 		det_nr = MAXDETAILS - 1;
 	AniDetailInfo *adiptr = &_rdi.Ainfo[det_nr];
 	if (spr_nr < adiptr->start_ani)
