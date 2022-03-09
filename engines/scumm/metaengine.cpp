@@ -542,7 +542,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 		return nullptr;
 
 	// So we still can't be quite sure it's the EGA version. Oh well...
-	return new Scumm::LoomEgaOptionsWidget(boss, name, target);
+	return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

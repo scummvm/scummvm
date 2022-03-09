@@ -210,12 +210,12 @@ private:
 };
 
 /**
- * Options widget for EGA Loom
+ * Options widget for EGA Loom.
  */
-class LoomEgaOptionsWidget : public GUI::OptionsContainerWidget {
+class LoomEgaGameOptionsWidget : public GUI::OptionsContainerWidget {
 public:
-	LoomEgaOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
-	~LoomEgaOptionsWidget() override {};
+	LoomEgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~LoomEgaGameOptionsWidget() override {};
 
 	void load() override;
 	bool save() override;

@@ -699,13 +699,13 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 	}
 }
 
-LoomEgaOptionsWidget::LoomEgaOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "LoomEgaOptionsDialog", false, domain) {
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksLabel", _("Overture Timing:"));
+LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "LoomEgaGameOptionsDialog", false, domain) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.OvertureTicksLabel", _("Overture Timing:"));
 
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicks", _("When using replacement music, this adjusts the time when the Overture changes to the scene with the Lucasfilm and Loom logotypes."), kOvertureTicksChanged);
+	_overtureTicksSlider = new GUI::SliderWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.OvertureTicks", _("When using replacement music, this adjusts the time when the Overture changes to the scene with the Lucasfilm and Loom logotypes."), kOvertureTicksChanged);
 
 	// In the Ozawa recording, the transition happens at about 1:56. At is
 	// turns out, this is a fairly fast version of the tune. After checking
@@ -719,12 +719,12 @@ LoomEgaOptionsWidget::LoomEgaOptionsWidget(GuiObject *boss, const Common::String
 	_overtureTicksSlider->setMinValue(-160);
 	_overtureTicksSlider->setMaxValue(540);
 
-	_overtureTicksValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksValue", Common::U32String());
+	_overtureTicksValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.OvertureTicksValue", Common::U32String());
 
 	_overtureTicksValue->setFlags(GUI::WIDGET_CLEARBG);
 }
 
-void LoomEgaOptionsWidget::load() {
+void LoomEgaGameOptionsWidget::load() {
 	int loomOvertureTicks = 0;
 
 	if (ConfMan.hasKey("loom_overture_ticks", _domain))
@@ -734,12 +734,12 @@ void LoomEgaOptionsWidget::load() {
 	updateOvertureTicksValue();
 }
 
-bool LoomEgaOptionsWidget::save() {
+bool LoomEgaGameOptionsWidget::save() {
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
 	return true;
 }
 
-void LoomEgaOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+void LoomEgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 			.addPadding(0, 0, 16, 0)
@@ -750,7 +750,7 @@ void LoomEgaOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	.closeDialog();
 }
 
-void LoomEgaOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void LoomEgaGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 
 	switch (cmd) {
 	case kOvertureTicksChanged:
@@ -762,7 +762,7 @@ void LoomEgaOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	}
 }
 
-void LoomEgaOptionsWidget::updateOvertureTicksValue() {
+void LoomEgaGameOptionsWidget::updateOvertureTicksValue() {
 	int ticks = DEFAULT_LOOM_OVERTURE_TRANSITION + _overtureTicksSlider->getValue();
 
 	_overtureTicksValue->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
