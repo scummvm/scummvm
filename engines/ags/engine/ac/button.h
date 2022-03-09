@@ -22,6 +22,7 @@
 #ifndef AGS_ENGINE_AC_BUTTON_H
 #define AGS_ENGINE_AC_BUTTON_H
 
+#include "ags/globals.h"
 #include "ags/shared/gui/gui_button.h"
 
 namespace AGS3 {

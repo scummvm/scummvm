@@ -43,6 +43,8 @@
 
 namespace AGS3 {
 
+extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
+
 using namespace AGS::Shared;
 
 // For engine these are defined in ac.cpp

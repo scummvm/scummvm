@@ -64,7 +64,6 @@ float INIreadfloat(const ConfigTree &cfg, const String &sectn, const String &ite
 String INIreadstring(const ConfigTree &cfg, const String &sectn, const String &item, const String &def_value = "");
 void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int value);
 void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, const String &value);
-void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int value);
 
 } // namespace AGS3
 

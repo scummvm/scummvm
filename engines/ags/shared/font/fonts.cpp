@@ -35,10 +35,6 @@
 
 namespace AGS3 {
 
-// Project-dependent implementation
-extern int wgettextwidth_compensate(const char *tex, int font);
-extern int get_fixed_pixel_size(int pixels);
-
 using namespace AGS::Shared;
 
 namespace AGS {

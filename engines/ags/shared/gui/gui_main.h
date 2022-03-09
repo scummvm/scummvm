@@ -23,6 +23,8 @@
 #define AGS_SHARED_GUI_GUI_MAIN_H
 
 #include "ags/lib/std/vector.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h" // TODO: split out gui drawing helpers
 #include "ags/shared/gfx/gfx_def.h" // TODO: split out gui drawing helpers
 #include "ags/shared/gui/gui_defines.h"
@@ -239,20 +241,9 @@ extern int get_adjusted_spritewidth(int spr);
 extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
-// This function has distinct implementations in Engine and Editor
-extern void draw_gui_sprite(Shared::Bitmap *ds, int spr, int x, int y, bool use_alpha = true,
-                            Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
-
-extern AGS_INLINE int game_to_data_coord(int coord);
-extern AGS_INLINE int data_to_game_coord(int coord);
-extern AGS_INLINE void data_to_game_coords(int *x, int *y);
-extern AGS_INLINE int get_fixed_pixel_size(int pixels);
-
 // Those function have distinct implementations in Engine and Editor
-extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
 
-extern void set_our_eip(int eip);
 #define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();

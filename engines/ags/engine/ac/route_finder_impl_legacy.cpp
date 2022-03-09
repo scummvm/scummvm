@@ -39,8 +39,6 @@
 
 namespace AGS3 {
 
-extern void update_polled_stuff_if_runtime();
-
 using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
 

@@ -123,7 +123,7 @@ void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, 
                                Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_sprite_slot_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
                                     Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
-void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha, Shared::BlendMode blend_mode);
+void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 // Render game on screen
 void render_to_screen();
@@ -148,7 +148,7 @@ void setpal();
 // This conversion is done before anything else (like moving from room to
 // viewport on screen, or scaling game further in the window by the graphic
 // renderer).
-extern AGS_INLINE int get_fixed_pixel_size(int pixels);
+AGS_INLINE int get_fixed_pixel_size(int pixels);
 // coordinate conversion data,script ---> final game resolution
 extern AGS_INLINE int data_to_game_coord(int coord);
 extern AGS_INLINE void data_to_game_coords(int *x, int *y);

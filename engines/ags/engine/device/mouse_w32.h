@@ -34,7 +34,6 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-void msetgraphpos(int, int);
 void mgetgraphpos();
 // Sets the area of the game frame (zero-based coordinates) where the mouse cursor is allowed to move;
 // this function was meant to be used to achieve gameplay effect

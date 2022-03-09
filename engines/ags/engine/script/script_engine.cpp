@@ -47,9 +47,6 @@ class RoomStruct;
 
 using namespace AGS::Shared;
 
-extern void quit(const char *);
-// in script/script_common
-
 std::pair<String, String> cc_error_at_line(const char *error_msg) {
 	ccInstance *sci = ccInstance::GetCurrentInstance();
 	if (!sci) {

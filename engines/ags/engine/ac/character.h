@@ -192,7 +192,6 @@ int  doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *ch
 bool is_char_walking_ndirect(CharacterInfo *chi);
 int  find_nearest_walkable_area_within(int *xx, int *yy, int range, int step);
 void find_nearest_walkable_area(int *xx, int *yy);
-void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims);
 void FindReasonableLoopForCharacter(CharacterInfo *chap);
 void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int direct, bool isWalk);
 int  is_valid_character(int newchar);
@@ -210,7 +209,6 @@ int is_char_on_another(int sourceChar, int ww, int *fromxptr, int *cwidptr);
 int my_getpixel(Shared::Bitmap *blk, int x, int y);
 // X and Y co-ordinates must be in 320x200 format
 int check_click_on_character(int xx, int yy, int mood);
-int is_pos_on_character(int xx, int yy);
 void _DisplaySpeechCore(int chid, const char *displbuf);
 void _DisplayThoughtCore(int chid, const char *displbuf);
 void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int isThought);
