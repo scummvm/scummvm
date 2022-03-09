@@ -2342,7 +2342,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 		break;
 
 	case SPIELER_OBJ:
-		inv_mode = IUID_SPIELER;
+		inv_mode = IUID_PLAYER;
 		break;
 
 	default:
@@ -2364,7 +2364,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 			}
 		} else {
 			int16 ok = false;
-			if (inv_mode == IUID_SPIELER)
+			if (inv_mode == IUID_PLAYER)
 				ok = calc_person_click(test_nr);
 			if (!ok) {
 				int16 r_val = g_engine->getRandomNumber(5);

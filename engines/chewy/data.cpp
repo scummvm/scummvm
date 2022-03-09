@@ -34,14 +34,14 @@ Data::Data() {
 Data::~Data() {
 }
 
-uint16 Data::select_pool_item(Common::Stream *stream, uint16 nr) {
+uint16 Data::selectPoolItem(Common::Stream *stream, uint16 nr) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 
 	if (rs) {
 		rs->seek(0, SEEK_SET);
 		NewPhead ph;
 		if (!ph.load(rs))
-			error("select_pool_item error");
+			error("selectPoolItem error");
 
 		if (!strncmp(ph._id, "NGS", 3)) {
 			if (nr >= ph._poolNr)
@@ -75,12 +75,12 @@ uint32 Data::load_tmf(Common::Stream *handle, TmfHeader *song) {
 			error("load_tmf error");
 
 		size = ch.size + sizeof(TmfHeader);
-		byte *speicher = (byte *)song + sizeof(TmfHeader);
-		speicher += ((uint32)song->_patternNr) * 1024l;
+		byte *memPtr = (byte *)song + sizeof(TmfHeader);
+		memPtr += ((uint32)song->_patternNr) * 1024l;
 		for (int16 i = 0; i < 31; ++i) {
 			if (song->instrument[i].laenge) {
-				song->ipos[i] = speicher;
-				speicher += song->instrument[i].laenge;
+				song->ipos[i] = memPtr;
+				memPtr += song->instrument[i].laenge;
 			}
 		}
 	}
@@ -88,25 +88,25 @@ uint32 Data::load_tmf(Common::Stream *handle, TmfHeader *song) {
 	return size;
 }
 
-uint32 Data::get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz) {
+uint32 Data::getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr) {
 	uint32 size = 0;
 
 	Common::File f;
-	if (!f.open(fname))
-		error("get_poolsize error");
+	if (!f.open(filename))
+		error("getPoolSize error");
 
 	NewPhead Nph;
 	if (!Nph.load(&f))
-		error("get_poolsize error");
+		error("getPoolSize error");
 
 	if (!strncmp(Nph._id, "NGS", 3)) {
-		select_pool_item(&f, chunk_start);
+		selectPoolItem(&f, chunkStart);
 		f.seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-		for (int16 i = chunk_start; (i < Nph._poolNr) && i < (chunk_start + chunk_anz); i++) {
+		for (int16 i = chunkStart; (i < Nph._poolNr) && i < (chunkStart + chunkNr); i++) {
 			ChunkHead ch;
 			if (!ch.load(&f))
-				error("get_poolsize error");
+				error("getPoolSize error");
 
 			if (ch.size > size)
 				size = ch.size;

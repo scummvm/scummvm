@@ -23,23 +23,19 @@
 #define CHEWY_DATA_H
 
 #include "chewy/chewy.h"
-#include "chewy/defines.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
 
 class Data {
-private:
-	char _filename[MAXPATH] = { 0 };
-
 public:
 	Data();
 	~Data();
 
-	uint16 select_pool_item(Common::Stream *stream, uint16 nr);
+	uint16 selectPoolItem(Common::Stream *stream, uint16 nr);
 	uint32 load_tmf(Common::Stream *stream, TmfHeader *song);
 
-	uint32 get_poolsize(const char *fname, int16 chunk_start, int16 chunk_anz);
+	uint32 getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr);
 };
 
 } // namespace Chewy

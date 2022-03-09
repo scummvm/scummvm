@@ -272,14 +272,14 @@ void adsMenu() {
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
 				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), curY);
-				if (an_blk->BlkNr == -1) {
-					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
-					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
+				if (an_blk->_blkNr == -1) {
+					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
+					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					stop_ads_dialog();
 				} else {
 					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), curY);
-					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->EndNr);
-					_G(ads_blk_nr) = an_blk->BlkNr;
+					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
+					_G(ads_blk_nr) = an_blk->_blkNr;
 					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_nr));
 				}
 				_G(det)->stop_detail(_G(talk_start_ani));

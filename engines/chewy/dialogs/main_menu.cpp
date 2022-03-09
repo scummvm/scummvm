@@ -40,7 +40,7 @@ int MainMenu::_personAni[3];
 void MainMenu::execute() {
 	// Convenience during testing to not keep showing title sequence
 	if (!ConfMan.getBool("skip_title")) {
-		_G(mem)->file->select_pool_item(_G(music_handle), _G(EndOfPool) - 17);
+		_G(mem)->file->selectPoolItem(_G(music_handle), _G(EndOfPool) - 17);
 		_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
 		_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
 

@@ -98,26 +98,26 @@ enum DisplayMode {
 struct KbdMouseInfo;
 
 struct AdsDiaHeaders {
-	int16 Anz;
+	int16 _nr;
 };
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 struct AdsBlock {
-	bool Show[ADS_MAX_BL_EIN];
+	bool _show[ADS_MAX_BL_EIN];
 
-	uint8 Next[ADS_MAX_BL_EIN];
+	uint8 _next[ADS_MAX_BL_EIN];
 	uint8 Steuer[ADS_MAX_BL_EIN];
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 struct AtdsVar {
-	int16 Silent = 0;
-	int16 *Delay = 0;
-	int16 DiaNr = 0;
+	int16 _silent = 0;
+	int16 *_delay = 0;
+	int16 _diaNr = 0;
 
 	DisplayMode Display = DISPLAY_TXT;
 	bool _eventsEnabled = false;
-	int16 VocNr = 0;
+	int16 _vocNr = 0;
 
 	void (*aad_str)(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) = nullptr;
 };
@@ -127,25 +127,25 @@ struct AtdsVar {
 #define IUID_REC 2
 #define IUID_AUTO 3
 #define IUID_DET 4
-#define IUID_SPIELER 5
+#define IUID_PLAYER 5
 #define INV_USE_DEF 16
-#define INV_STRC_ANZ 30
+#define INV_STRC_NR 30
 
 struct InvUse {
-	int16 ObjId;
-	int16 ObjNr;
-	int16 TxtNr;
+	int16 _objId;
+	int16 _objNr;
+	int16 _txtNr;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 6; }
 };
 
 struct AadInfo {
-	int16 X;
-	int16 Y;
-	int16 Color;
+	int16 _x;
+	int16 _y;
+	int16 _color;
 
-	AadInfo() : X(0), Y(0), Color(0) {}
+	AadInfo() : _x(0), _y(0), _color(0) {}
 	void load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 6; }
 };
@@ -155,70 +155,70 @@ public:
 };
 
 struct AadTxtHeader {
-	int16 DiaNr;
-	int16 PerAnz;
-	int16 AMov;
-	int16 CurNr;
+	int16 _diaNr;
+	int16 _perNr;
+	int16 _aMov;
+	int16 _curNr;
 
 	bool load(const void *src);
 	static constexpr int SIZE() { return 8; }
 };
 
 struct AadStrHeader {
-	int16 AkPerson;
-	int16 VocNr;
+	int16 _akPerson;
+	int16 _vocNr;
 };
 
 struct AadVar {
-	int16 Dialog;
+	int16 _dialog;
 
-	AadTxtHeader *TxtHeader;
-	AadStrHeader *StrHeader;
-	AadInfoArray Person;
-	char *Ptr;
-	int16 StrNr;
+	AadTxtHeader *_txtHeader;
+	AadStrHeader *_strHeader;
+	AadInfoArray _person;
+	char *_ptr;
+	int16 _strNr;
 	int16 _delayCount;
-	int16 SilentCount;
+	int16 _silentCount;
 };
 
 struct AdsTxtHeader {
-	int16 DiaNr;
-	int16 PerAnz;
-	int16 AMov;
-	int16 CurNr;
+	int16 _diaNr;
+	int16 _perNr;
+	int16 _aMov;
+	int16 _curNr;
 
 	bool load(const void *src);
 	static constexpr int SIZE() { return 8; }
 };
 
 struct AdsVar {
-	int16 Dialog;
-	int16 AutoDia;
-	AdsTxtHeader TxtHeader;
-	AadInfoArray Person;
-	char *Ptr;
-	char *BlkPtr;
-	int16 StrNr;
-	int16 DelayCount;
-	int16 SilentCount;
+	int16 _dialog;
+	int16 _autoDia;
+	AdsTxtHeader _txtHeader;
+	AadInfoArray _person;
+	char *_ptr;
+	char *_blkPtr;
+	int16 _strNr;
+	int16 _delayCount;
+	int16 _silentCount;
 };
 
 struct AdsNextBlk {
-	int16 BlkNr;
-	int16 EndNr;
+	int16 _blkNr;
+	int16 _endNr;
 };
 
 struct AtsStrHeader {
-	uint16 VocNr = 0;
+	uint16 _vocNr = 0;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 2; }
 };
 
 struct AtsTxtHeader {
-	uint16 TxtNr = 0;
-	int16 AMov = 0;
-	int16 CurNr = 0;
+	uint16 _txtNr = 0;
+	int16 _aMov = 0;
+	int16 _curNr = 0;
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 8; }
@@ -226,33 +226,32 @@ struct AtsTxtHeader {
 
 struct AtsVar {
 	DisplayMode _display = DISPLAY_NONE;
-	AtsTxtHeader TxtHeader;
-	AtsStrHeader StrHeader;
-	char *Ptr;
-	int16 DelayCount;
-	int16 SilentCount;
-	int16 TxtLen;
-	int16 Color;
-	int16 TxtMode;
+	AtsTxtHeader _txtHeader;
+	AtsStrHeader _strHeader;
+	char *_ptr;
+	int16 _delayCount;
+	int16 _silentCount;
+	int16 _txtLen;
+	int16 _color;
+	int16 _txtMode;
 };
 
 struct SplitStringRet {
-	char **StrPtr;
-	int16 *X;
-	int16 Y;
-	short Anz;
-	int16 Next;
-
+	char **_strPtr;
+	int16 *_x;
+	int16 _y;
+	short _nr;
+	int16 _next;
 };
 
 struct SplitStringInit {
-	char *Str;
+	char *_str;
 
-	int16 X;
-	int16 Y;
-	int16 Width;
-	int16 Zeilen;
-	int16 Mode;
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _lines;
+	int16 _mode;
 
 	int16 Fvorx;
 	int16 FHoehe;

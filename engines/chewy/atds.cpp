@@ -33,25 +33,25 @@ namespace Chewy {
 #define MAX_DIALOG_DATA_SIZE 6 * 3 * 6
 
 bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
-	TxtNr = src->readUint16LE();
-	AMov = src->readSint16LE();
-	CurNr = src->readSint16LE();
+	_txtNr = src->readUint16LE();
+	_aMov = src->readSint16LE();
+	_curNr = src->readSint16LE();
 	src->skip(2);
 
 	return true;
 }
 
 bool InvUse::load(Common::SeekableReadStream *src) {
-	ObjId = src->readSint16LE();
-	ObjNr = src->readSint16LE();
-	TxtNr = src->readSint16LE();
+	_objId = src->readSint16LE();
+	_objNr = src->readSint16LE();
+	_txtNr = src->readSint16LE();
 	return true;
 }
 
 void AadInfo::load(Common::SeekableReadStream *src) {
-	X = src->readSint16LE();
-	Y = src->readSint16LE();
-	Color = src->readSint16LE();
+	_x = src->readSint16LE();
+	_y = src->readSint16LE();
+	_color = src->readSint16LE();
 }
 
 void AadInfoArray::load(const void *data, size_t count) {
@@ -65,49 +65,49 @@ void AadInfoArray::load(const void *data, size_t count) {
 bool AadTxtHeader::load(const void *src) {
 	Common::MemoryReadStream rs((const byte *)src, 8);
 
-	DiaNr = rs.readSint16LE();
-	PerAnz = rs.readSint16LE();
-	AMov = rs.readSint16LE();
-	CurNr = rs.readSint16LE();
+	_diaNr = rs.readSint16LE();
+	_perNr = rs.readSint16LE();
+	_aMov = rs.readSint16LE();
+	_curNr = rs.readSint16LE();
 	return true;
 }
 
 bool AdsTxtHeader::load(const void *src) {
 	Common::MemoryReadStream rs((const byte *)src, 8);
 
-	DiaNr = rs.readSint16LE();
-	PerAnz = rs.readSint16LE();
-	AMov = rs.readSint16LE();
-	CurNr = rs.readSint16LE();
+	_diaNr = rs.readSint16LE();
+	_perNr = rs.readSint16LE();
+	_aMov = rs.readSint16LE();
+	_curNr = rs.readSint16LE();
 	return true;
 }
 
 bool AtsStrHeader::load(Common::SeekableReadStream *src) {
-	VocNr = src->readUint16LE();
+	_vocNr = src->readUint16LE();
 	return true;
 }
 
 
 Atdsys::Atdsys() {
 	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_MITTE, 8, 8,};
-	_aadv.Dialog = false;
-	_aadv.StrNr = -1;
-	_aadv.SilentCount = false;
-	_adsv.Dialog = -1;
-	_adsv.AutoDia = false;
-	_adsv.StrNr = -1;
-	_adsv.SilentCount = false;
+	_aadv._dialog = false;
+	_aadv._strNr = -1;
+	_aadv._silentCount = false;
+	_adsv._dialog = -1;
+	_adsv._autoDia = false;
+	_adsv._strNr = -1;
+	_adsv._silentCount = false;
 	_atsv._display = DISPLAY_NONE;
-	_atsv.SilentCount = false;
-	_atdsv.Delay = &_tmpDelay;
+	_atsv._silentCount = false;
+	_atdsv._delay = &_tmpDelay;
 	_tmpDelay = 1;
-	_atdsv.Silent = false;
+	_atdsv._silent = false;
 	_atdsv.Display = DISPLAY_TXT;
-	_atdsv.DiaNr = -1;
+	_atdsv._diaNr = -1;
 	_atdsv.aad_str = 0;
-	_atdsv.VocNr = -1;
+	_atdsv._vocNr = -1;
 	_atdsv._eventsEnabled = true;
-	_ssret.Next = false;
+	_ssret._next = false;
 	_ssr = &_ssret;
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		_ssi[i] = init_ssi;
@@ -132,8 +132,8 @@ Atdsys::~Atdsys() {
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
-	_atdsv.Delay = delay;
-	_atdsv.Silent = silent;
+	_atdsv._delay = delay;
+	_atdsv._silent = silent;
 }
 
 void Atdsys::set_string_end_func
@@ -154,24 +154,24 @@ void Atdsys::updateSoundSettings() {
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {
-	int16 z_len = (_ssi->Width / _ssi->Fvorx) + 1;
-	int16 max_len = z_len * _ssi->Zeilen;
+	int16 z_len = (_ssi->_width / _ssi->Fvorx) + 1;
+	int16 max_len = z_len * _ssi->_lines;
 	if (txt_len > max_len)
 		txt_len = max_len;
 
-	int16 ret = *_atdsv.Delay * (txt_len + z_len);
+	int16 ret = *_atdsv._delay * (txt_len + z_len);
 	return ret;
 }
 
 SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
-	_ssret.Anz = 0;
-	_ssret.Next = false;
-	_ssret.StrPtr = _splitPtr;
-	_ssret.X = _splitX;
-	int16 zeichen_anz = (ssi_->Width / ssi_->Fvorx) + 1;
+	_ssret._nr = 0;
+	_ssret._next = false;
+	_ssret._strPtr = _splitPtr;
+	_ssret._x = _splitX;
+	int16 zeichen_anz = (ssi_->_width / ssi_->Fvorx) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
-	char *str_adr = ssi_->Str;
+	char *str_adr = ssi_->_str;
 	int16 count = 0;
 	int16 tmp_count = 0;
 	bool ende = false;
@@ -195,14 +195,14 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 				++str_adr;
 				++count;
 			} else {
-				_splitPtr[_ssret.Anz] = start_adr;
+				_splitPtr[_ssret._nr] = start_adr;
 				start_adr[tmp_count] = 0;
-				if (ssi_->Mode == SPLIT_MITTE)
-					_splitX[_ssret.Anz] = ssi_->X + ((ssi_->Width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
+				if (ssi_->_mode == SPLIT_MITTE)
+					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
 				else
-					_splitX[_ssret.Anz] = ssi_->X;
-				++_ssret.Anz;
-				if (_ssret.Anz == ssi_->Zeilen) {
+					_splitX[_ssret._nr] = ssi_->_x;
+				++_ssret._nr;
+				if (_ssret._nr == ssi_->_lines) {
 					ende = true;
 					bool ende1 = false;
 					while (!ende1) {
@@ -210,7 +210,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 							ende1 = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							ende1 = true;
-							_ssret.Next = true;
+							_ssret._next = true;
 						}
 						++str_adr;
 					}
@@ -237,25 +237,25 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					test_zeilen = 2;
 				++count;
 				++str_adr;
-				if ((_ssret.Anz + test_zeilen) >= ssi_->Zeilen) {
+				if ((_ssret._nr + test_zeilen) >= ssi_->_lines) {
 					if (count < zeichen_anz) {
 						tmp_count = count;
 						ende = true;
 					}
-					_splitPtr[_ssret.Anz] = start_adr;
+					_splitPtr[_ssret._nr] = start_adr;
 					start_adr[tmp_count] = 0;
-					if (ssi_->Mode == SPLIT_MITTE)
-						_splitX[_ssret.Anz] = ssi_->X + ((ssi_->Width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
+					if (ssi_->_mode == SPLIT_MITTE)
+						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
 					else
-						_splitX[_ssret.Anz] = ssi_->X;
-					++_ssret.Anz;
+						_splitX[_ssret._nr] = ssi_->_x;
+					++_ssret._nr;
 					bool ende1 = false;
 					while (!ende1) {
 						if (*str_adr == ATDS_END_TEXT)
 							ende1 = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							ende1 = true;
-							_ssret.Next = true;
+							_ssret._next = true;
 						}
 						++str_adr;
 					}
@@ -279,10 +279,10 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 
 		}
 	}
-	if (_ssret.Anz <= ssi_->Zeilen)
-		_ssret.Y = ssi_->Y + (ssi_->Zeilen - _ssret.Anz) * ssi_->FHoehe;
+	if (_ssret._nr <= ssi_->_lines)
+		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * ssi_->FHoehe;
 	else
-		_ssret.Y = ssi_->Y;
+		_ssret._y = ssi_->_y;
 
 	return &_ssret;
 }
@@ -296,25 +296,25 @@ void Atdsys::str_null2leer(char *str_start, char *str_end) {
 }
 
 void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
-	if (ssi_->X - (ssi_->Width >> 1) < 2)
-		ssi_->X = 2;
-	else if (ssi_->X + (ssi_->Width >> 1) > (SCREEN_WIDTH - 2))
-		ssi_->X = ((SCREEN_WIDTH - 2) - ssi_->Width);
+	if (ssi_->_x - (ssi_->_width >> 1) < 2)
+		ssi_->_x = 2;
+	else if (ssi_->_x + (ssi_->_width >> 1) > (SCREEN_WIDTH - 2))
+		ssi_->_x = ((SCREEN_WIDTH - 2) - ssi_->_width);
 	else
-		ssi_->X -= (ssi_->Width >> 1);
+		ssi_->_x -= (ssi_->_width >> 1);
 
-	if (ssi_->Y - (ssi_->Zeilen * ssi_->FHoehe) < 2) {
-		ssi_->Y = 2;
-	} else if (ssi_->Y + (ssi_->Zeilen * ssi_->FHoehe) > (SCREEN_HEIGHT - 2))
-		ssi_->Y = (SCREEN_HEIGHT - 2) - (ssi_->Zeilen * ssi_->FHoehe);
+	if (ssi_->_y - (ssi_->_lines * ssi_->FHoehe) < 2) {
+		ssi_->_y = 2;
+	} else if (ssi_->_y + (ssi_->_lines * ssi_->FHoehe) > (SCREEN_HEIGHT - 2))
+		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * ssi_->FHoehe);
 	else {
-		ssi_->Y -= (ssi_->Zeilen * ssi_->FHoehe);
+		ssi_->_y -= (ssi_->_lines * ssi_->FHoehe);
 	}
 }
 
 void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
-	_ssi[nr].X = x;
-	_ssi[nr].Y = y;
+	_ssi[nr]._x = x;
+	_ssi[nr]._y = y;
 }
 
 Common::Stream *Atdsys::pool_handle(const char *fname) {
@@ -338,7 +338,7 @@ void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, i
 		_atdspooloff[mode] = chunk_start;
 		switch (mode) {
 		case INV_USE_DATA:
-			_G(mem)->file->select_pool_item(rs, _atdspooloff[mode]);
+			_G(mem)->file->selectPoolItem(rs, _atdspooloff[mode]);
 			rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
 			if (!Ch.load(rs)) {
@@ -389,7 +389,7 @@ void Atdsys::open_handle(const char *fname, int16 mode) {
 		_atdsmem[mode] = tmp_adr;
 
 		if (mode == INV_IDX_DATA)
-			_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_ANZ * sizeof(InvUse));
+			_atdsmem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_NR * sizeof(InvUse));
 	} else {
 		error("Error reading from %s", fname);
 	}
@@ -417,7 +417,7 @@ void Atdsys::close_handle(int16 mode) {
 
 char *Atdsys::atds_adr(const char *fname, int16 chunk_start, int16 chunk_anz) {
 	char *tmp_adr = nullptr;
-	uint32 size = _G(mem)->file->get_poolsize(fname, chunk_start, chunk_anz);
+	uint32 size = _G(mem)->file->getPoolSize(fname, chunk_start, chunk_anz);
 	if (size) {
 		tmp_adr = (char *)MALLOC(size + 3);
 	}
@@ -446,7 +446,7 @@ void Atdsys::load_atds(int16 chunk_nr, int16 mode) {
 	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdshandle[mode]);
 
 	if (stream && txt_adr) {
-		_G(mem)->file->select_pool_item(stream, chunk_nr + _atdspooloff[mode]);
+		_G(mem)->file->selectPoolItem(stream, chunk_nr + _atdspooloff[mode]);
 		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
 		if (!Ch.load(stream)) {
 			error("load_atds error");
@@ -540,27 +540,27 @@ DisplayMode Atdsys::start_ats(int16 txt_nr, int16 txt_mode, int16 color, int16 m
 			stop_ats();
 
 		int16 txt_anz;
-		_atsv.Ptr = ats_get_txt(txt_nr, txt_mode, &txt_anz, mode);
+		_atsv._ptr = ats_get_txt(txt_nr, txt_mode, &txt_anz, mode);
 
-		if (_atsv.Ptr) {
+		if (_atsv._ptr) {
 			_atsv._display = _atdsv.Display;
-			char *ptr = _atsv.Ptr;
-			_atsv.TxtLen = 0;
+			char *ptr = _atsv._ptr;
+			_atsv._txtLen = 0;
 
 			while (*ptr++ != ATDS_END_TEXT)
-				++_atsv.TxtLen;
+				++_atsv._txtLen;
 
-			*voc_nr = _atsv.StrHeader.VocNr - ATDS_VOC_OFFSET;
+			*voc_nr = _atsv._strHeader._vocNr - ATDS_VOC_OFFSET;
 
-			if ((byte)*_atsv.Ptr == 248) {
+			if ((byte)*_atsv._ptr == 248) {
 				// Special code for no message to display
 				_atsv._display = (_atdsv.Display == DISPLAY_TXT || *voc_nr == -1) ?
 					DISPLAY_NONE : DISPLAY_VOC;
 
 			} else {
-				_atsv.DelayCount = get_delay(_atsv.TxtLen);
-				_printDelayCount1 = _atsv.DelayCount / 10;
-				_atsv.Color = color;
+				_atsv._delayCount = get_delay(_atsv._txtLen);
+				_printDelayCount1 = _atsv._delayCount / 10;
+				_atsv._color = color;
 				_mousePush = true;
 
 				if (*voc_nr == -1) {
@@ -590,9 +590,9 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			case Common::KEYCODE_RETURN:
 			case MOUSE_LEFT:
 				if (_mousePush == false) {
-					if (_atsv.SilentCount <= 0 && _atsv.DelayCount > _printDelayCount1) {
+					if (_atsv._silentCount <= 0 && _atsv._delayCount > _printDelayCount1) {
 						_mousePush = true;
-						_atsv.DelayCount = 0;
+						_atsv._delayCount = 0;
 						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 						g_events->_kbInfo._keyCode = '\0';
 					}
@@ -607,58 +607,58 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrx, int16 scry) {
 			_mousePush = false;
 		}
 
-		if (_atsv.SilentCount <= 0) {
-			char *tmp_ptr = _atsv.Ptr;
+		if (_atsv._silentCount <= 0) {
+			char *tmp_ptr = _atsv._ptr;
 			_atsSsi = _ssi[0];
-			_atsSsi.Str = tmp_ptr;
+			_atsSsi._str = tmp_ptr;
 			_atsSsi.Fvorx = _G(fontMgr)->getFont()->getDataWidth();
 			_atsSsi.FHoehe = _G(fontMgr)->getFont()->getDataHeight();
-			_atsSsi.X = x - scrx;
-			_atsSsi.Y = y - scry;
+			_atsSsi._x = x - scrx;
+			_atsSsi._y = y - scry;
 			char *start_ptr = tmp_ptr;
-			str_null2leer(start_ptr, start_ptr + _atsv.TxtLen - 1);
+			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
 			SplitStringInit tmp_ssi = _atsSsi;
 			_ssr = split_string(&tmp_ssi);
 
-			for (int16 i = 0; i < _ssr->Anz; i++) {
-				_G(out)->printxy(_ssr->X[i],
-				              _ssr->Y + (i * _atsSsi.FHoehe) + 1,
-				              0, 300, 0, _ssr->StrPtr[i]);
-				_G(out)->printxy(_ssr->X[i],
-				              _ssr->Y + (i * _atsSsi.FHoehe) - 1,
-				              0, 300, 0, _ssr->StrPtr[i]);
-				_G(out)->printxy(_ssr->X[i] + 1,
-				              _ssr->Y + (i * _atsSsi.FHoehe),
-				              0, 300, 0, _ssr->StrPtr[i]);
-				_G(out)->printxy(_ssr->X[i] - 1,
-				              _ssr->Y + (i * _atsSsi.FHoehe),
-				              0, 300, 0, _ssr->StrPtr[i]);
-				_G(out)->printxy(_ssr->X[i],
-				              _ssr->Y + (i * _atsSsi.FHoehe),
-				              _atsv.Color,
-				              300, 0, _ssr->StrPtr[i]);
-				tmp_ptr += strlen(_ssr->StrPtr[i]) + 1;
+			for (int16 i = 0; i < _ssr->_nr; i++) {
+				_G(out)->printxy(_ssr->_x[i],
+				              _ssr->_y + (i * _atsSsi.FHoehe) + 1,
+				              0, 300, 0, _ssr->_strPtr[i]);
+				_G(out)->printxy(_ssr->_x[i],
+				              _ssr->_y + (i * _atsSsi.FHoehe) - 1,
+				              0, 300, 0, _ssr->_strPtr[i]);
+				_G(out)->printxy(_ssr->_x[i] + 1,
+				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              0, 300, 0, _ssr->_strPtr[i]);
+				_G(out)->printxy(_ssr->_x[i] - 1,
+				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              0, 300, 0, _ssr->_strPtr[i]);
+				_G(out)->printxy(_ssr->_x[i],
+				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              _atsv._color,
+				              300, 0, _ssr->_strPtr[i]);
+				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
 			}
 
-			str_null2leer(start_ptr, start_ptr + _atsv.TxtLen - 1);
-			if (_atsv.DelayCount <= 0) {
-				if (_ssr->Next == false) {
+			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
+			if (_atsv._delayCount <= 0) {
+				if (_ssr->_next == false) {
 					_atsv._display = (_atsv._display == DISPLAY_ALL) ?
 						DISPLAY_VOC : DISPLAY_NONE;
 				} else {
-					_atsv.Ptr = tmp_ptr;
-					_atsv.TxtLen = 0;
+					_atsv._ptr = tmp_ptr;
+					_atsv._txtLen = 0;
 					while (*tmp_ptr++ != ATDS_END_TEXT)
-						++_atsv.TxtLen;
-					_atsv.DelayCount = get_delay(_atsv.TxtLen);
-					_printDelayCount1 = _atsv.DelayCount / 10;
-					_atsv.SilentCount = _atdsv.Silent;
+						++_atsv._txtLen;
+					_atsv._delayCount = get_delay(_atsv._txtLen);
+					_printDelayCount1 = _atsv._delayCount / 10;
+					_atsv._silentCount = _atdsv._silent;
 				}
 			} else {
-				--_atsv.DelayCount;
+				--_atsv._delayCount;
 			}
 		} else {
-			--_atsv.SilentCount;
+			--_atsv._silentCount;
 		}
 	}
 }
@@ -667,16 +667,16 @@ char *Atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 	char *str_ = nullptr;
 	set_ats_mem(mode);
 
-	_atsv.TxtMode = txt_mode;
+	_atsv._txtMode = txt_mode;
 
 	if (!get_steuer_bit(txt_nr, ATS_AKTIV_BIT, mode)) {
-		uint8 status = _ats_sheader[(txt_nr * MAX_ATS_STATUS) + (_atsv.TxtMode + 1) / 2];
-		int16 ak_nybble = (_atsv.TxtMode + 1) % 2;
+		uint8 status = _ats_sheader[(txt_nr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2];
+		int16 ak_nybble = (_atsv._txtMode + 1) % 2;
 
 		uint8 lo_hi[2];
 		lo_hi[1] = status >> 4;
 		lo_hi[0] = status &= 15;
-		str_ = ats_search_block(_atsv.TxtMode, _atsmem);
+		str_ = ats_search_block(_atsv._txtMode, _atsmem);
 		if (str_ != nullptr) {
 			ats_search_nr(txt_nr, &str_);
 			if (str_ != nullptr) {
@@ -687,7 +687,7 @@ char *Atdsys::ats_get_txt(int16 txt_nr, int16 txt_mode, int16 *txt_anz, int16 mo
 					lo_hi[1] <<= 4;
 					status |= lo_hi[0];
 					status |= lo_hi[1];
-					_ats_sheader[(txt_nr * MAX_ATS_STATUS) + (_atsv.TxtMode + 1) / 2] = status;
+					_ats_sheader[(txt_nr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2] = status;
 				}
 			}
 		}
@@ -789,17 +789,17 @@ void Atdsys::ats_search_nr(int16 txt_nr, char **str) {
 	bool done1 = false;
 	while (!done1) {
 		Common::MemoryReadStream rs1((const byte *)start_str + 2, AtsTxtHeader::SIZE());
-		_atsv.TxtHeader.load(&rs1);
+		_atsv._txtHeader.load(&rs1);
 
 		if (READ_LE_UINT16(start_str) == 0xFEF0 &&
-				_atsv.TxtHeader.TxtNr == txt_nr) {
+				_atsv._txtHeader._txtNr == txt_nr) {
 			// Found match
 			*str = start_str + 2 + AtsTxtHeader::SIZE();
 
-			if (_atsv.TxtMode) {
+			if (_atsv._txtMode) {
 				Common::MemoryReadStream rs2((const byte *)*str,
 					AtsStrHeader::SIZE());
-				_atsv.StrHeader.load(&rs2);
+				_atsv._strHeader.load(&rs2);
 			}
 
 			*str += AtsStrHeader::SIZE();
@@ -845,10 +845,10 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 				*str = start_str;
 				start_str -= AtsStrHeader::SIZE();
 
-				if (_atsv.TxtMode != TXT_MARK_NAME) {
+				if (_atsv._txtMode != TXT_MARK_NAME) {
 					Common::MemoryReadStream rs((const byte *)start_str,
 						AtsStrHeader::SIZE());
-					_atsv.StrHeader.load(&rs);
+					_atsv._strHeader.load(&rs);
 				}
 
 				if (tmp_str[1] != ATDS_END) {
@@ -869,10 +869,10 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 					*str = start_str;
 					start_str -= AtsStrHeader::SIZE();
 
-					if (_atsv.TxtMode != TXT_MARK_NAME) {
+					if (_atsv._txtMode != TXT_MARK_NAME) {
 						Common::MemoryReadStream rs((const byte *)start_str,
 							AtsStrHeader::SIZE());
-						_atsv.StrHeader.load(&rs);
+						_atsv._strHeader.load(&rs);
 					}
 				} else {
 					++count;
@@ -894,44 +894,44 @@ void Atdsys::ats_search_str(int16 *anz, uint8 *status, uint8 steuer, char **str)
 }
 
 int16 Atdsys::start_aad(int16 dia_nr) {
-	if (_aadv.Dialog)
+	if (_aadv._dialog)
 		stopAad();
 
 	if (_atdsmem[AAD_HANDLE]) {
-		_aadv.Ptr = _atdsmem[AAD_HANDLE];
-		aad_search_dia(dia_nr, &_aadv.Ptr);
-		if (_aadv.Ptr) {
-			_aadv.Person.load(_aadv.Ptr, _aadv.TxtHeader->PerAnz);
-			_aadv.Ptr += _aadv.TxtHeader->PerAnz * sizeof(AadInfo);
+		_aadv._ptr = _atdsmem[AAD_HANDLE];
+		aad_search_dia(dia_nr, &_aadv._ptr);
+		if (_aadv._ptr) {
+			_aadv._person.load(_aadv._ptr, _aadv._txtHeader->_perNr);
+			_aadv._ptr += _aadv._txtHeader->_perNr * sizeof(AadInfo);
 
-			_aadv.Dialog = true;
-			_aadv.StrNr = 0;
-			_aadv.StrHeader = (AadStrHeader *)_aadv.Ptr;
-			_aadv.Ptr += sizeof(AadStrHeader);
+			_aadv._dialog = true;
+			_aadv._strNr = 0;
+			_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
+			_aadv._ptr += sizeof(AadStrHeader);
 			int16 txt_len;
-			aad_get_zeilen(_aadv.Ptr, &txt_len);
+			aad_get_zeilen(_aadv._ptr, &txt_len);
 			_aadv._delayCount = get_delay(txt_len);
 			_printDelayCount1 = _aadv._delayCount / 10;
 
-			_atdsv.DiaNr = dia_nr;
+			_atdsv._diaNr = dia_nr;
 			if (_atdsv.aad_str != nullptr)
-				_atdsv.aad_str(_atdsv.DiaNr, 0, _aadv.StrHeader->AkPerson, AAD_STR_START);
+				_atdsv.aad_str(_atdsv._diaNr, 0, _aadv._strHeader->_akPerson, AAD_STR_START);
 			_mousePush = true;
 			stop_ats();
-			_atdsv.VocNr = -1;
+			_atdsv._vocNr = -1;
 		}
 	}
 
-	return _aadv.Dialog;
+	return _aadv._dialog;
 }
 
 void Atdsys::stopAad() {
-	_aadv.Dialog = false;
-	_aadv.StrNr = -1;
+	_aadv._dialog = false;
+	_aadv._strNr = -1;
 }
 
 void Atdsys::print_aad(int16 scrx, int16 scry) {
-	if (_aadv.Dialog) {
+	if (_aadv._dialog) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
@@ -940,7 +940,7 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 				EVENTS_CLEAR;
 
 				if (_mousePush == false) {
-					if (_aadv.SilentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
+					if (_aadv._silentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
 						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
@@ -957,109 +957,109 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 			_mousePush = false;
 		}
 
-		if (_aadv.SilentCount <= 0) {
-			char *tmp_ptr = _aadv.Ptr;
-			_ssi[_aadv.StrHeader->AkPerson].Str = tmp_ptr;
-			if (_aadv.Person[_aadv.StrHeader->AkPerson].X != -1) {
-				_ssi[_aadv.StrHeader->AkPerson].X = _aadv.Person[_aadv.StrHeader->AkPerson].X - scrx;
+		if (_aadv._silentCount <= 0) {
+			char *tmp_ptr = _aadv._ptr;
+			_ssi[_aadv._strHeader->_akPerson]._str = tmp_ptr;
+			if (_aadv._person[_aadv._strHeader->_akPerson]._x != -1) {
+				_ssi[_aadv._strHeader->_akPerson]._x = _aadv._person[_aadv._strHeader->_akPerson]._x - scrx;
 			}
-			if (_aadv.Person[_aadv.StrHeader->AkPerson].Y != -1) {
-				_ssi[_aadv.StrHeader->AkPerson].Y = _aadv.Person[_aadv.StrHeader->AkPerson].Y - scry;
+			if (_aadv._person[_aadv._strHeader->_akPerson]._y != -1) {
+				_ssi[_aadv._strHeader->_akPerson]._y = _aadv._person[_aadv._strHeader->_akPerson]._y - scry;
 			}
-			_ssi[_aadv.StrHeader->AkPerson].Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_ssi[_aadv.StrHeader->AkPerson].FHoehe = _G(fontMgr)->getFont()->getDataHeight();
+			_ssi[_aadv._strHeader->_akPerson].Fvorx = _G(fontMgr)->getFont()->getDataWidth();
+			_ssi[_aadv._strHeader->_akPerson].FHoehe = _G(fontMgr)->getFont()->getDataHeight();
 			char *start_ptr = tmp_ptr;
 			int16 txt_len;
 			aad_get_zeilen(start_ptr, &txt_len);
 			str_null2leer(start_ptr, start_ptr + txt_len - 1);
-			SplitStringInit tmp_ssi = _ssi[_aadv.StrHeader->AkPerson];
+			SplitStringInit tmp_ssi = _ssi[_aadv._strHeader->_akPerson];
 			_ssr = split_string(&tmp_ssi);
 
 			if (_atdsv.Display != DISPLAY_VOC ||
-			        (_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) == -1) {
-				for (int16 i = 0; i < _ssr->Anz; i++) {
-					_G(out)->printxy(_ssr->X[i] + 1,
-					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
-					              0, 300, 0, _ssr->StrPtr[i]);
-					_G(out)->printxy(_ssr->X[i] - 1,
-					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
-					              0, 300, 0, _ssr->StrPtr[i]);
-					_G(out)->printxy(_ssr->X[i],
-					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe) + 1,
-					              0, 300, 0, _ssr->StrPtr[i]);
-					_G(out)->printxy(_ssr->X[i],
-					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe) - 1,
-					              0, 300, 0, _ssr->StrPtr[i]);
-					_G(out)->printxy(_ssr->X[i],
-					              _ssr->Y + (i * _ssi[_aadv.StrHeader->AkPerson].FHoehe),
-					              _aadv.Person[_aadv.StrHeader->AkPerson].Color,
-					              300, 0, _ssr->StrPtr[i]);
-					tmp_ptr += strlen(_ssr->StrPtr[i]) + 1;
+			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
+				for (int16 i = 0; i < _ssr->_nr; i++) {
+					_G(out)->printxy(_ssr->_x[i] + 1,
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              0, 300, 0, _ssr->_strPtr[i]);
+					_G(out)->printxy(_ssr->_x[i] - 1,
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              0, 300, 0, _ssr->_strPtr[i]);
+					_G(out)->printxy(_ssr->_x[i],
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) + 1,
+					              0, 300, 0, _ssr->_strPtr[i]);
+					_G(out)->printxy(_ssr->_x[i],
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) - 1,
+					              0, 300, 0, _ssr->_strPtr[i]);
+					_G(out)->printxy(_ssr->_x[i],
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              _aadv._person[_aadv._strHeader->_akPerson]._color,
+					              300, 0, _ssr->_strPtr[i]);
+					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
 				}
 				str_null2leer(start_ptr, start_ptr + txt_len - 1);
 
 			}
 
 			if (_atdsv.Display != DISPLAY_TXT &&
-					(_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) != -1) {
-				if (_atdsv.VocNr != _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) {
-					_atdsv.VocNr = _aadv.StrHeader->VocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv.VocNr,
+					(_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) != -1) {
+				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
+					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
+					g_engine->_sound->playSpeech(_atdsv._vocNr,
 						_atdsv.Display == DISPLAY_VOC);
-					int16 vocx = _G(spieler_vector)[_aadv.StrHeader->AkPerson].Xypos[0] -
-								 _G(spieler).scrollx + _G(spieler_mi)[_aadv.StrHeader->AkPerson].HotX;
+					int16 vocx = _G(spieler_vector)[_aadv._strHeader->_akPerson].Xypos[0] -
+								 _G(spieler).scrollx + _G(spieler_mi)[_aadv._strHeader->_akPerson].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 
 					if (_atdsv.Display == DISPLAY_VOC) {
-						_aadv.StrNr = -1;
+						_aadv._strNr = -1;
 						_aadv._delayCount = 1;
 					}
 				}
 
 				if (_atdsv.Display != DISPLAY_ALL) {
-					for (int16 i = 0; i < _ssr->Anz; i++) {
-						tmp_ptr += strlen(_ssr->StrPtr[i]) + 1;
+					for (int16 i = 0; i < _ssr->_nr; i++) {
+						tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
 					}
 					str_null2leer(start_ptr, start_ptr + txt_len - 1);
 				}
 			}
 
 			if (_aadv._delayCount <= 0) {
-				_aadv.Ptr = tmp_ptr;
+				_aadv._ptr = tmp_ptr;
 				while (*tmp_ptr == ' ' || *tmp_ptr == 0)
 					++tmp_ptr;
 				if (tmp_ptr[1] == ATDS_END ||
 				        tmp_ptr[1] == ATDS_END_EINTRAG) {
 					if (_atdsv.aad_str != 0)
-						_atdsv.aad_str(_atdsv.DiaNr, _aadv.StrNr, _aadv.StrHeader->AkPerson, AAD_STR_END);
-					_aadv.Dialog = false;
-					_adsv.AutoDia = false;
-					_aadv.StrNr = -1;
-					_ssret.Next = false;
+						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, _aadv._strHeader->_akPerson, AAD_STR_END);
+					_aadv._dialog = false;
+					_adsv._autoDia = false;
+					_aadv._strNr = -1;
+					_ssret._next = false;
 				} else {
-					if (_ssr->Next == false) {
-						++_aadv.StrNr;
-						while (*_aadv.Ptr++ != ATDS_END_TEXT);
+					if (_ssr->_next == false) {
+						++_aadv._strNr;
+						while (*_aadv._ptr++ != ATDS_END_TEXT);
 
-						int16 tmp_person = _aadv.StrHeader->AkPerson;
-						int16 tmp_str_nr = _aadv.StrNr;
-						_aadv.StrHeader = (AadStrHeader *)_aadv.Ptr;
-						_aadv.Ptr += sizeof(AadStrHeader);
+						int16 tmp_person = _aadv._strHeader->_akPerson;
+						int16 tmp_str_nr = _aadv._strNr;
+						_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
+						_aadv._ptr += sizeof(AadStrHeader);
 						if (_atdsv.aad_str != nullptr) {
-							if (tmp_person != _aadv.StrHeader->AkPerson) {
-								_atdsv.aad_str(_atdsv.DiaNr, tmp_str_nr, tmp_person, AAD_STR_END);
-								_atdsv.aad_str(_atdsv.DiaNr, _aadv.StrNr, _aadv.StrHeader->AkPerson, AAD_STR_START);
+							if (tmp_person != _aadv._strHeader->_akPerson) {
+								_atdsv.aad_str(_atdsv._diaNr, tmp_str_nr, tmp_person, AAD_STR_END);
+								_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, _aadv._strHeader->_akPerson, AAD_STR_START);
 							}
 						}
 					}
-					aad_get_zeilen(_aadv.Ptr, &txt_len);
+					aad_get_zeilen(_aadv._ptr, &txt_len);
 					_aadv._delayCount = get_delay(txt_len);
 					_printDelayCount1 = _aadv._delayCount / 10;
-					_aadv.SilentCount = _atdsv.Silent;
+					_aadv._silentCount = _atdsv._silent;
 				}
 			} else {
 				if (_atdsv.Display != DISPLAY_VOC ||
-				        (_aadv.StrHeader->VocNr - ATDS_VOC_OFFSET) == -1)
+				        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1)
 					--_aadv._delayCount;
 
 				else if (_atdsv.Display == DISPLAY_VOC) {
@@ -1069,13 +1069,13 @@ void Atdsys::print_aad(int16 scrx, int16 scry) {
 				}
 			}
 		} else {
-			--_aadv.SilentCount;
+			--_aadv._silentCount;
 		}
 	}
 }
 
 int16 Atdsys::aadGetStatus() {
-	return _aadv.StrNr;
+	return _aadv._strNr;
 }
 
 int16 Atdsys::aad_get_zeilen(char *str, int16 *txt_len) {
@@ -1104,7 +1104,7 @@ void Atdsys::aad_search_dia(int16 dia_nr, char **ptr) {
 			uint16 *pos = (uint16 *)start_ptr;
 			if (pos[0] == dia_nr) {
 				ende = true;
-				_aadv.TxtHeader = (AadTxtHeader *)start_ptr;
+				_aadv._txtHeader = (AadTxtHeader *)start_ptr;
 				*ptr = start_ptr + sizeof(AadTxtHeader);
 			} else {
 				start_ptr += sizeof(AadTxtHeader) + pos[1] * sizeof(AadInfo);
@@ -1143,16 +1143,16 @@ bool  Atdsys::ads_start(int16 dia_nr) {
 		ende = true;
 
 	if (!ende) {
-		_adsv.Ptr = _atdsmem[ADS_HANDLE];
-		_adsv.TxtHeader.load(_adsv.Ptr);
+		_adsv._ptr = _atdsmem[ADS_HANDLE];
+		_adsv._txtHeader.load(_adsv._ptr);
 
-		if (_adsv.TxtHeader.DiaNr == dia_nr) {
+		if (_adsv._txtHeader._diaNr == dia_nr) {
 			ret = true;
-			_adsv.Ptr += AdsTxtHeader::SIZE();
-			_adsv.Person.load(_adsv.Ptr, _adsv.TxtHeader.PerAnz);
-			_adsv.Ptr += _adsv.TxtHeader.PerAnz * AadInfo::SIZE();
-			_adsv.Dialog = dia_nr;
-			_adsv.StrNr = 0;
+			_adsv._ptr += AdsTxtHeader::SIZE();
+			_adsv._person.load(_adsv._ptr, _adsv._txtHeader._perNr);
+			_adsv._ptr += _adsv._txtHeader._perNr * AadInfo::SIZE();
+			_adsv._dialog = dia_nr;
+			_adsv._strNr = 0;
 			_adsStack[0] = 0;
 			_adsStackPtr = 1;
 		}
@@ -1161,18 +1161,18 @@ bool  Atdsys::ads_start(int16 dia_nr) {
 }
 
 void Atdsys::stop_ads() {
-	_adsv.Dialog = -1;
-	_adsv.AutoDia = false;
+	_adsv._dialog = -1;
+	_adsv._autoDia = false;
 
 }
 
 int16 Atdsys::ads_get_status() {
-	return _adsv.Dialog;
+	return _adsv._dialog;
 }
 
 int16 Atdsys::check_item(int16 block_nr, int16 item_nr) {
 	int16 ret = true;
-	char *tmp_adr = _adsv.Ptr;
+	char *tmp_adr = _adsv._ptr;
 	ads_search_block(block_nr, &tmp_adr);
 	if (tmp_adr) {
 		ads_search_item(item_nr, &tmp_adr);
@@ -1186,17 +1186,17 @@ int16 Atdsys::check_item(int16 block_nr, int16 item_nr) {
 char **Atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 	*anzahl = 0;
 	memset(_ePtr, 0, sizeof(char *) * ADS_MAX_BL_EIN);
-	if (_adsv.Dialog != -1) {
-		_adsv.BlkPtr = _adsv.Ptr;
-		ads_search_block(block_nr, &_adsv.BlkPtr);
-		if (_adsv.BlkPtr) {
+	if (_adsv._dialog != -1) {
+		_adsv._blkPtr = _adsv._ptr;
+		ads_search_block(block_nr, &_adsv._blkPtr);
+		if (_adsv._blkPtr) {
 			for (int16 i = 0; i < ADS_MAX_BL_EIN; i++) {
-				char *tmp_adr = _adsv.BlkPtr;
+				char *tmp_adr = _adsv._blkPtr;
 				ads_search_item(i, &tmp_adr);
 				if (tmp_adr) {
 					char nr = tmp_adr[-1];
 					tmp_adr += sizeof(AadStrHeader);
-					if (_adsBlock[block_nr].Show[(int16)nr] == true) {
+					if (_adsBlock[block_nr]._show[(int16)nr] == true) {
 						_ePtr[*anzahl] = tmp_adr;
 						_eNr[*anzahl] = (int16)nr;
 						++(*anzahl);
@@ -1210,17 +1210,17 @@ char **Atdsys::ads_item_ptr(int16 block_nr, int16 *anzahl) {
 }
 
 AdsNextBlk *Atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
-	_adsnb.BlkNr = blk_nr;
-	if (!_aadv.Dialog) {
-		if (!_adsv.AutoDia) {
-			ads_search_item(_eNr[item_nr], &_adsv.BlkPtr);
-			if (_adsv.BlkPtr) {
-				if (start_ads_auto_dia(_adsv.BlkPtr))
-					_adsv.AutoDia = true;
+	_adsnb._blkNr = blk_nr;
+	if (!_aadv._dialog) {
+		if (!_adsv._autoDia) {
+			ads_search_item(_eNr[item_nr], &_adsv._blkPtr);
+			if (_adsv._blkPtr) {
+				if (start_ads_auto_dia(_adsv._blkPtr))
+					_adsv._autoDia = true;
 				if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_EXIT_BIT) == true) {
 					stop_ads();
-					_adsnb.EndNr = _eNr[item_nr];
-					_adsnb.BlkNr = -1;
+					_adsnb._endNr = _eNr[item_nr];
+					_adsnb._blkNr = -1;
 				}
 			}
 		}
@@ -1231,30 +1231,30 @@ AdsNextBlk *Atdsys::ads_item_choice(int16 blk_nr, int16 item_nr) {
 
 AdsNextBlk *Atdsys::calc_next_block(int16 blk_nr, int16 item_nr) {
 	if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_SHOW_BIT) == false)
-		_adsBlock[blk_nr].Show[_eNr[item_nr]] = false;
-	_adsnb.EndNr = _eNr[item_nr];
+		_adsBlock[blk_nr]._show[_eNr[item_nr]] = false;
+	_adsnb._endNr = _eNr[item_nr];
 	if (_G(bit)->is_bit((uint8)_adsBlock[blk_nr].Steuer[_eNr[item_nr]], ADS_RESTART_BIT) == true) {
-		_adsnb.BlkNr = 0;
+		_adsnb._blkNr = 0;
 
 		_adsStackPtr = 0;
 	} else {
-		if (_adsBlock[blk_nr].Next[_eNr[item_nr]]) {
-			_adsnb.BlkNr = _adsBlock[blk_nr].Next[_eNr[item_nr]];
+		if (_adsBlock[blk_nr]._next[_eNr[item_nr]]) {
+			_adsnb._blkNr = _adsBlock[blk_nr]._next[_eNr[item_nr]];
 
 			int16 anzahl = 0;
-			while (!anzahl && _adsnb.BlkNr != -1) {
+			while (!anzahl && _adsnb._blkNr != -1) {
 
 				anzahl = 0;
-				ads_item_ptr(_adsnb.BlkNr, &anzahl);
+				ads_item_ptr(_adsnb._blkNr, &anzahl);
 				if (!anzahl) {
-					_adsnb.BlkNr = return_block(_adsBlock);
+					_adsnb._blkNr = return_block(_adsBlock);
 				}
 			}
 		} else {
-			_adsnb.BlkNr = return_block(_adsBlock);
+			_adsnb._blkNr = return_block(_adsBlock);
 		}
 	}
-	_adsStack[_adsStackPtr] = _adsnb.BlkNr;
+	_adsStack[_adsStackPtr] = _adsnb._blkNr;
 	++_adsStackPtr;
 
 	return &_adsnb;
@@ -1318,50 +1318,50 @@ void Atdsys::ads_search_item(int16 item_nr, char **blk_adr) {
 }
 
 int16 Atdsys::start_ads_auto_dia(char *item_adr) {
-	_aadv.Dialog = false;
+	_aadv._dialog = false;
 	if (item_adr) {
-		_aadv.Person = _adsv.Person;
-		_aadv.Ptr = item_adr;
-		_aadv.Dialog = true;
-		_aadv.StrNr = 0;
-		_aadv.StrHeader = (AadStrHeader *)_aadv.Ptr;
-		_aadv.Ptr += sizeof(AadStrHeader);
+		_aadv._person = _adsv._person;
+		_aadv._ptr = item_adr;
+		_aadv._dialog = true;
+		_aadv._strNr = 0;
+		_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
+		_aadv._ptr += sizeof(AadStrHeader);
 		int16 txt_len;
-		aad_get_zeilen(_aadv.Ptr, &txt_len);
+		aad_get_zeilen(_aadv._ptr, &txt_len);
 		_aadv._delayCount = get_delay(txt_len);
-		_atdsv.DiaNr = _adsv.TxtHeader.DiaNr + 10000;
+		_atdsv._diaNr = _adsv._txtHeader._diaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)
-			_atdsv.aad_str(_atdsv.DiaNr, 0, _aadv.StrHeader->AkPerson, AAD_STR_START);
+			_atdsv.aad_str(_atdsv._diaNr, 0, _aadv._strHeader->_akPerson, AAD_STR_START);
 		_mousePush = true;
 		stop_ats();
 	} else {
-		_aadv.Dialog = false;
+		_aadv._dialog = false;
 	}
 
-	return _aadv.Dialog;
+	return _aadv._dialog;
 }
 
 void Atdsys::hide_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
-	if (_adsv.Dialog == dia_nr) {
+	if (_adsv._dialog == dia_nr) {
 		if (check_item(blk_nr, item_nr))
-			_adsBlock[blk_nr].Show[item_nr] = false;
+			_adsBlock[blk_nr]._show[item_nr] = false;
 	} else {
 		load_atds(dia_nr, ADH_DATA);
 		if (check_item(blk_nr, item_nr))
-			_adsBlock[blk_nr].Show[item_nr] = false;
+			_adsBlock[blk_nr]._show[item_nr] = false;
 		save_ads_header(dia_nr);
 	}
 }
 
 void Atdsys::show_item(int16 dia_nr, int16 blk_nr, int16 item_nr) {
-	if (_adsv.Dialog == dia_nr) {
+	if (_adsv._dialog == dia_nr) {
 		if (check_item(blk_nr, item_nr))
-			_adsBlock[blk_nr].Show[item_nr] = true;
+			_adsBlock[blk_nr]._show[item_nr] = true;
 	} else {
 		load_atds(dia_nr, ADH_DATA);
 		if (check_item(blk_nr, item_nr))
-			_adsBlock[blk_nr].Show[item_nr] = true;
+			_adsBlock[blk_nr]._show[item_nr] = true;
 		save_ads_header(dia_nr);
 	}
 }
@@ -1377,10 +1377,10 @@ int16 Atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 				_atdshandle[INV_IDX_HANDLE]);
 			if (rs) {
 				rs->seek(InvUse::SIZE() * _invBlockNr
-				      * INV_STRC_ANZ, SEEK_SET);
+				      * INV_STRC_NR, SEEK_SET);
 
 				InvUse *iu = (InvUse *)_atdsmem[INV_IDX_HANDLE];
-				for (int16 i = 0; i < INV_STRC_ANZ; ++i, ++iu) {
+				for (int16 i = 0; i < INV_STRC_NR; ++i, ++iu) {
 					if (!iu->load(rs)) {
 						error("calc_inv_no_use error");
 						break;
@@ -1394,10 +1394,10 @@ int16 Atdsys::calc_inv_no_use(int16 cur_inv, int16 test_nr, int16 mode) {
 		InvUse *iu = (InvUse *)_atdsmem[INV_IDX_HANDLE];
 		bool ok = false;
 
-		for (int16 i = 0; i < INV_STRC_ANZ && !ok; i++) {
-			if (iu[i].ObjId == mode) {
-				if (iu[i].ObjNr == test_nr) {
-					txt_nr = iu[i].TxtNr;
+		for (int16 i = 0; i < INV_STRC_NR && !ok; i++) {
+			if (iu[i]._objId == mode) {
+				if (iu[i]._objNr == test_nr) {
+					txt_nr = iu[i]._txtNr;
 					ok = true;
 				}
 			}
