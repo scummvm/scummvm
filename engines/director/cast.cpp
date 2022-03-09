@@ -228,23 +228,25 @@ bool Cast::loadConfig() {
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
 	byte readRate = stream->readByte();
 	byte currentFrameRate;
-	if (readRate <= 0xF)
+	if (readRate <= 0xF) {
 		currentFrameRate = frameRates[readRate];
-	switch (readRate) {
-		// rate when set via the tempo channel
-		// these rates are the actual framerates
-		case 212:
-			currentFrameRate = 1;
-			break;
-		case 242:
-			currentFrameRate = 2;
-			break;
-		case 252:
-			currentFrameRate = 3;
-			break;
-		default:
-			warning("BUILDBOT: Cast::loadConfig: unhandled framerate: %i", readRate);
-			currentFrameRate = readRate;
+	} else {
+		switch (readRate) {
+			// rate when set via the tempo channel
+			// these rates are the actual framerates
+			case 212:
+				currentFrameRate = 1;
+				break;
+			case 242:
+				currentFrameRate = 2;
+				break;
+			case 252:
+				currentFrameRate = 3;
+				break;
+			default:
+				warning("BUILDBOT: Cast::loadConfig: unhandled framerate: %i", readRate);
+				currentFrameRate = readRate;
+		}
 	}
 
 	byte lightswitch = stream->readByte();
