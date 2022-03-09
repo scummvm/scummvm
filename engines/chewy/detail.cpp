@@ -152,7 +152,7 @@ Detail::Detail() {
 	_aniFreezeflag = false;
 	_fullTaf = false;
 	_rdi.dptr = nullptr;
-	_tafName[0] = 0;
+	_tafName = "";
 	for (int16 i = 0; i < (MAXDETAILS * MAX_SOUNDS); i++) {
 		_rdi.sample[i] = nullptr;
 		_rdi.tvp_index[i] = -1;
@@ -192,7 +192,7 @@ void Detail::load_rdi(const char *fname_, int16 room_nr) {
 }
 
 void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
-	if (strcmp(_tafName, fname_)) {
+	if (_tafName.compareToIgnoreCase(fname_)) {
 		if (_rdi.dptr) {
 			if (_fullTaf) {
 				free(_rdi.dptr);
@@ -202,7 +202,7 @@ void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 				del_taf_tbl(_rdi.dptr);
 			}
 		}
-		strcpy(_tafName, fname_);
+		_tafName = Common::String(fname_);
 		if (!load_flag) {
 			_rdi.dptr = init_taf_tbl(fname_);
 			load_taf_tbl(_rdi.dptr);
@@ -210,10 +210,8 @@ void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 			_rdi.dptr = _G(mem)->taf_adr(fname_);
 			_fullTaf = true;
 		}
-	} else {
-		if (!_fullTaf)
-			load_taf_tbl(_rdi.dptr);
-	}
+	} else if (!_fullTaf)
+		load_taf_tbl(_rdi.dptr);
 }
 
 void Detail::del_dptr() {
@@ -223,7 +221,7 @@ void Detail::del_dptr() {
 		else {
 			del_taf_tbl(_rdi.dptr);
 			_rdi.dptr = nullptr;
-			_tafName[0] = 0;
+			_tafName = "";
 		}
 		_rdi.dptr = nullptr;
 	}

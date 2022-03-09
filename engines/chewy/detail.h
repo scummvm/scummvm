@@ -264,7 +264,7 @@ private:
 	int16 _globalDelay = 0;
 	bool _aniFreezeflag = false;
 	bool _fullTaf = false;
-	char _tafName[80];
+	Common::String _tafName;
 	byte *_tafLoadBuffer = nullptr;
 	int16 _directTafAni = 0;
 };
