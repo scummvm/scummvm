@@ -701,7 +701,7 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 
 LoomEgaOptionsWidget::LoomEgaOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		OptionsContainerWidget(boss, name, "LoomEgaOptionsDialog", false, domain) {
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksHeader", _("Overture Timing:"));
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksLabel", _("Overture Timing:"));
 
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
@@ -719,9 +719,9 @@ LoomEgaOptionsWidget::LoomEgaOptionsWidget(GuiObject *boss, const Common::String
 	_overtureTicksSlider->setMinValue(-160);
 	_overtureTicksSlider->setMaxValue(540);
 
-	_overtureTicksLabel = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksLabel", Common::U32String());
+	_overtureTicksValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaOptionsDialog.OvertureTicksValue", Common::U32String());
 
-	_overtureTicksLabel->setFlags(GUI::WIDGET_CLEARBG);
+	_overtureTicksValue->setFlags(GUI::WIDGET_CLEARBG);
 }
 
 void LoomEgaOptionsWidget::load() {
@@ -731,7 +731,7 @@ void LoomEgaOptionsWidget::load() {
 		loomOvertureTicks = ConfMan.getInt("loom_overture_ticks", _domain);
 
 	_overtureTicksSlider->setValue(loomOvertureTicks);
-	updateOvertureTicksLabel();
+	updateOvertureTicksValue();
 }
 
 bool LoomEgaOptionsWidget::save() {
@@ -743,9 +743,9 @@ void LoomEgaOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 			.addPadding(0, 0, 16, 0)
-			.addWidget("OvertureTicksHeader", "OptionsLabel")
+			.addWidget("OvertureTicksLabel", "OptionsLabel")
 			.addWidget("OvertureTicks", "WideSlider")
-			.addWidget("OvertureTicksLabel", "ShortOptionsLabel")
+			.addWidget("OvertureTicksValue", "ShortOptionsLabel")
 		.closeLayout()
 	.closeDialog();
 }
@@ -754,7 +754,7 @@ void LoomEgaOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 
 	switch (cmd) {
 	case kOvertureTicksChanged:
-		updateOvertureTicksLabel();
+		updateOvertureTicksValue();
 		break;
 	default:
 		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
@@ -762,10 +762,10 @@ void LoomEgaOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	}
 }
 
-void LoomEgaOptionsWidget::updateOvertureTicksLabel() {
+void LoomEgaOptionsWidget::updateOvertureTicksValue() {
 	int ticks = DEFAULT_LOOM_OVERTURE_TRANSITION + _overtureTicksSlider->getValue();
 
-	_overtureTicksLabel->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
+	_overtureTicksValue->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
 }
 
 } // End of namespace Scumm

@@ -229,9 +229,9 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::SliderWidget *_overtureTicksSlider;
-	GUI::StaticTextWidget *_overtureTicksLabel;
+	GUI::StaticTextWidget *_overtureTicksValue;
 
-	void updateOvertureTicksLabel();
+	void updateOvertureTicksValue();
 };
 
 } // End of namespace Scumm
