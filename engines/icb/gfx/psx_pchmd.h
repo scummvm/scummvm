@@ -237,7 +237,6 @@ typedef struct PolyGTL3 {
 #if (_PSX == 0) || (_PSX_ON_PC == 1)
 
 void MatrixToAngles(MATRIX *A, SVECTOR *rotvec);
-float AngleOfVector(float x, float y);
 
 #endif // #if (_PSX==0) || (_PSX_ON_PC==1)
 
