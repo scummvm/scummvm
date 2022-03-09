@@ -79,6 +79,8 @@ Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
 		_lang = 4;
 	else if (_vm->getLanguage() == Common::RU_RUS)
 		_lang = 5;
+	else if (_vm->getLanguage() == Common::HE_ISR)
+		_lang = 6;
 
 	_hintRqState = kRQNoHint;
 	_hintOffer = 0;

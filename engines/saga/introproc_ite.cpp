@@ -409,6 +409,8 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		lang = 4;
 	else if (_vm->getLanguage() == Common::RU_RUS)
 		lang = 5;
+	else if (_vm->getLanguage() == Common::HE_ISR)
+		lang = 6;
 
 	int n_dialogues = 0;
 

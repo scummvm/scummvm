@@ -494,6 +494,9 @@ const char *SagaEngine::getTextString(int textStringId) {
 		case Common::JA_JPN:
 			lang = 6;
 			break;
+		case Common::HE_ISR:
+			lang = 7;
+			break;
 		default:
 			lang = 0;
 			break;
