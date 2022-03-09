@@ -277,7 +277,9 @@ int IMuseDigiFilesHandler::openSound(int soundId) {
 		getFilenameFromSoundId(soundId, fileName, sizeof(fileName));
 
 		int groupId = soundId == kTalkSoundID ? IMUSE_VOLGRP_VOICE : IMUSE_VOLGRP_MUSIC;
-		s = _sound->openSound(soundId, fileName, IMUSE_BUNDLE, groupId, -1);
+		s = _sound->findSoundById(soundId);
+		if (!s)
+			s = _sound->openSound(soundId, fileName, IMUSE_BUNDLE, groupId, -1);
 		if (!s)
 			s = _sound->openSound(soundId, fileName, IMUSE_BUNDLE, groupId, 1);
 		if (!s)
