@@ -30,6 +30,7 @@
 #include "saga/render.h"
 
 #include "graphics/sjis.h"
+#include "common/unicode-bidi.h"
 
 namespace Saga {
 
@@ -281,7 +282,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 }
 
 int DefaultFont::translateChar(int charId) {
-	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 255))
+	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 255) || (_vm->getLanguage() == Common::HE_ISR && charId <= 255))
 		return charId;					// normal character
 	else
 		return _charMap[charId - 128];	// extended character
@@ -398,6 +399,11 @@ void DefaultFont::draw(FontId fontId, const char *text, size_t count, const Comm
 
 	Point offsetPoint(point);
 	FontData *font = getFont(fontId);
+
+	if (_vm->getLanguage() == Common::HE_ISR) {
+		Common::String textstr(text, count);
+		text = Common::convertBiDiString(textstr, Common::kWindows1255).c_str();
+	}
 
 	if (flags & kFontOutline) {
 		offsetPoint.x--;
