@@ -305,7 +305,7 @@ void Room3::probeTransfer() {
 	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 2, (const MovLine *)SONDE_MPKT1);
-	_G(atds)->set_ats_str(24, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->set_ats_str(24, ATS_ACTIVE_BIT, ATS_DATA);
 	
 	while (_G(mov_phasen)[SONDE_OBJ].Repeat != -1) {
 		set_ani_screen();

@@ -191,8 +191,8 @@ void Detail::load_rdi(const char *fname_, int16 room_nr) {
 	_rdi.dptr = tmprdi;
 }
 
-void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
-	if (_tafName.compareToIgnoreCase(fname_)) {
+void Detail::load_rdi_taf(const char *filename, int16 load_flag) {
+	if (_tafName.compareToIgnoreCase(filename)) {
 		if (_rdi.dptr) {
 			if (_fullTaf) {
 				free(_rdi.dptr);
@@ -202,12 +202,12 @@ void Detail::load_rdi_taf(const char *fname_, int16 load_flag) {
 				del_taf_tbl(_rdi.dptr);
 			}
 		}
-		_tafName = Common::String(fname_);
+		_tafName = Common::String(filename);
 		if (!load_flag) {
-			_rdi.dptr = init_taf_tbl(fname_);
+			_rdi.dptr = init_taf_tbl(filename);
 			load_taf_tbl(_rdi.dptr);
 		} else {
-			_rdi.dptr = _G(mem)->taf_adr(fname_);
+			_rdi.dptr = _G(mem)->taf_adr(filename);
 			_fullTaf = true;
 		}
 	} else if (!_fullTaf)

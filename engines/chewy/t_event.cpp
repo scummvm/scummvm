@@ -66,7 +66,7 @@ void setSsiPos() {
 
 int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 	int16 retValue;
-	if (!_G(atds)->get_steuer_bit(txtNr, ATS_AKTIV_BIT, ATS_DATA)) {
+	if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
 		retValue = true;
 		if (_G(flags).AtsAction == false) {
 			_G(flags).AtsAction = true;
@@ -286,7 +286,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						if (_G(spieler).R16F5Exit) {
 							invent_2_slot(29);
 							_G(det)->hideStaticSpr(19);
-							_G(atds)->set_steuer_bit(158, ATS_AKTIV_BIT, ATS_DATA);
+							_G(atds)->setControlBit(158, ATS_ACTIVE_BIT, ATS_DATA);
 						}
 						switchRoom(18);
 						break;
@@ -1179,7 +1179,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 
 		case 16:
 			if (blkNr == 0 && strEndNr == 2 && !_G(spieler).R56Kneipe)
-				_G(atds)->del_steuer_bit(362, ATS_AKTIV_BIT, ATS_DATA);
+				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
 
 			break;
 
@@ -2161,14 +2161,14 @@ void calc_inv_use_txt(int16 test_nr) {
 	int16 ret;
 
 	switch (test_nr) {
-	case GBUCH_OPEN_INV:
+	case NOTEBOOK_OPEN_INV:
 	case MONOCLE_INV:
 		scrollx = _G(spieler).scrollx;
 		scrolly = _G(spieler).scrolly;
 		_G(spieler).scrollx = 0;
 		_G(spieler).scrolly = 0;
 
-		_G(room)->load_tgp(BUCH_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
 		_G(out)->back2screen(_G(workpage));

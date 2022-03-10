@@ -26,10 +26,10 @@ namespace Chewy {
 
 #define SIB_CABLE_R1 1
 #define SIB_MONOCLE 6
-#define SIB_GBUCH 7
+#define SIB_NOTEBOOK 7
 #define SIB_TERMINAL_R5 8
 #define SIB_BUTTON_R5 9
-#define SIB_TUERE_R5 10
+#define SIB_DOOR_R5 10
 #define SIB_TBUTTON1_R6 11
 #define SIB_SEIL 12
 #define SIB_TBUTTON2_R6 13

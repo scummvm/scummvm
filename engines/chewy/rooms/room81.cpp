@@ -39,7 +39,7 @@ void Room81::entry() {
 	_G(spieler).DiaAMov = 0;
 	if (_G(spieler).r88DestRoom == 84) {
 		_G(det)->showStaticSpr(0);
-		_G(atds)->del_steuer_bit(488, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(488, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
 	proc3();
@@ -147,8 +147,8 @@ void Room81::proc3() {
 		_G(det)->startDetail(3 + i, 255, false);
 
 	_G(det)->stop_detail(2);
-	_G(atds)->del_steuer_bit(486, ATS_AKTIV_BIT, ATS_DATA);
-	_G(atds)->set_steuer_bit(490, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->delControlBit(486, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(490, ATS_ACTIVE_BIT, ATS_DATA);
 }
 
 } // namespace Rooms

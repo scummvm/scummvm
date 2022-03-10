@@ -75,7 +75,7 @@ void Room13::entry() {
 		
 		if (!_G(flags).LoadGame && _G(spieler).R13Band) {
 			_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
-			_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(spieler).R13Band = false;
 		}
 
@@ -86,7 +86,7 @@ void Room13::entry() {
 
 void Room13::xit() {
 	_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
-	_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(spieler).R13Band = false;
 }
 
@@ -133,8 +133,8 @@ void Room13::talk_bork() {
 		_G(auto_obj) = 0;
 		_G(flags).NoScroll = false;
 
-		_G(atds)->set_steuer_bit(122, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->del_steuer_bit(92, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(122, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(92, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 		setPersonPos(153, 138, P_CHEWY, P_LEFT);
 
@@ -157,7 +157,7 @@ void Room13::jmp_band() {
 		if (!_G(spieler).R13Bandlauf) {
 			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
 			_G(spieler).room_e_obj[25].Attribut = 255;
-			_G(atds)->del_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->delControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(spieler).R13Band = true;
 			autoMove(3, P_CHEWY);
 			_G(spieler)._personHide[P_CHEWY] = true;
@@ -201,7 +201,7 @@ void Room13::jmp_floor() {
 			_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 
 		_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
-		_G(atds)->set_steuer_bit(100, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(spieler).R13Band = false;
 		autoMove(5, P_CHEWY);
 		_G(spieler)._personHide[P_CHEWY] = true;

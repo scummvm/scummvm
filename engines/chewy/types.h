@@ -34,11 +34,11 @@ struct SpielerFlags {
 	bool R0SlimeUsed : 1;
 	bool R0PillowThrow : 1;
 	bool R0Monocle : 1;
-	bool R0GBuch : 1;
+	bool R0Noteboook : 1;
 	bool R2ElectrocutedBork : 1;
 	bool R2FussSchleim : 1;
 	bool R5Terminal : 1;
-	bool R5Tuer : 1;
+	bool R5Door : 1;
 
 	bool R6BolaSchild : 1;
 	bool R6BolaOk : 1;

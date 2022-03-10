@@ -78,7 +78,7 @@ void Room55::entry() {
 			startSetAILWait(3, 1, ANI_FRONT);
 			_G(spieler)._personHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
-			_G(atds)->del_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
 		} else {
 			_G(spieler).scrollx = 0;
 
@@ -289,9 +289,9 @@ void Room55::get_job() {
 	int16 r_nr;
 	if (_G(spieler).R55Job) {
 		r_nr = 55;
-		_G(atds)->del_steuer_bit(357, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->del_steuer_bit(354, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->del_steuer_bit(355, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(357, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(354, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(355, ATS_ACTIVE_BIT, ATS_DATA);
 	} else {
 		r_nr = 54;
 		mans2rock();
@@ -346,7 +346,7 @@ void Room55::strasse(int16 mode) {
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);
 		_G(det)->stop_detail(4);
-		_G(atds)->set_steuer_bit(340, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
 		startSetAILWait(3, 1, ANI_BACK);
 
 		_G(spieler).scrollx = 0;
@@ -377,10 +377,10 @@ int16 Room55::use_kammeraus() {
 			_G(det)->hideStaticSpr(10);
 			_G(spieler).R55ExitDia = 322;
 			_G(spieler).R55SekWeg = true;
-			_G(atds)->set_steuer_bit(352, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->setControlBit(352, ATS_ACTIVE_BIT, ATS_DATA);
 			delInventory(_G(spieler).AkInvent);
-			_G(atds)->set_steuer_bit(345, ATS_AKTIV_BIT, ATS_DATA);
-			_G(atds)->set_steuer_bit(346, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->setControlBit(345, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(346, ATS_ACTIVE_BIT, ATS_DATA);
 			strasse(1);
 			showCur();
 		}

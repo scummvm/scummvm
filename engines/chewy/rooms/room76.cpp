@@ -47,18 +47,18 @@ void Room76::entry() {
 	_G(spieler)._personHide[P_NICHELLE] = true;
 
 	if (!_G(spieler).flags29_4) {
-		_G(atds)->del_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->del_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->del_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(453, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(457, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(458, ATS_ACTIVE_BIT, ATS_DATA);
 
 	} else {
 		_G(det)->del_static_ani(2);
 		for (int i = 0; i < 3; ++i)
 			_G(det)->hideStaticSpr(8 + i);
 
-		_G(atds)->set_steuer_bit(453, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->set_steuer_bit(457, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->set_steuer_bit(458, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(453, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(457, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(458, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
 	if (_G(flags).LoadGame)

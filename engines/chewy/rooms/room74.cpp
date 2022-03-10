@@ -104,7 +104,7 @@ int Room74::proc1() {
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 
 	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
-		_G(atds)->set_steuer_bit(435, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT, ATS_DATA);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		new_invent_2_cur(RUBBER_INV);

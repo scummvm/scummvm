@@ -37,7 +37,7 @@ void Room5::entry() {
 void Room5::pushButton() {
 	if (_G(spieler).R5Terminal) {
 		int16 strNr;
-		if (_G(spieler).R5Tuer == false) {
+		if (_G(spieler).R5Door == false) {
 			startSetAILWait(9, 1, ANI_FRONT);
 			_G(spieler).room_e_obj[6].Attribut = EXIT_TOP;
 			strNr = 1;
@@ -47,8 +47,8 @@ void Room5::pushButton() {
 			strNr = 0;
 		}
 		_G(atds)->set_ats_str(29, strNr, ATS_DATA);
-		_G(spieler).R5Tuer ^= 1;
-		_G(obj)->calc_rsi_flip_flop(SIB_TUERE_R5);
+		_G(spieler).R5Door ^= 1;
+		_G(obj)->calc_rsi_flip_flop(SIB_DOOR_R5);
 	} else {
 		startAadWait(1);
 	}

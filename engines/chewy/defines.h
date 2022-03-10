@@ -165,7 +165,7 @@ enum SetupScreenMode {
 #define EPISODE1_TGP 0
 #define GBOOK_TGP 1
 #define EPISODE1 "back/episode1.tgp"
-#define BUCH_START 2
+#define NOTEBOOK_START 2
 #define DIARY_START 3
 
 #define EPISODE1_GEP "back/episode1.gep"
@@ -297,8 +297,8 @@ enum SetupScreenMode {
 #define RED_CARD_INV 2
 #define KABEL_INV 3
 #define MONOCLE_INV 4
-#define GBUCH_INV 5
-#define GBUCH_OPEN_INV 6
+#define NOTEBOOK_INV 5
+#define NOTEBOOK_OPEN_INV 6
 #define DEFEKT_INV 7
 #define STAHLSEIL_INV 8
 #define BECHER_LEER_INV 9

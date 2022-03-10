@@ -78,7 +78,7 @@ void Room31::calc_luke() {
 			_G(det)->showStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 1, ATS_DATA);
-		_G(atds)->del_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(spieler).room_e_obj[75].Attribut = EXIT_BOTTOM;
 
 	} else {
@@ -86,7 +86,7 @@ void Room31::calc_luke() {
 			_G(det)->hideStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 0, ATS_DATA);
-		_G(atds)->set_steuer_bit(245, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(spieler).room_e_obj[75].Attribut = 255;
 	}
 }

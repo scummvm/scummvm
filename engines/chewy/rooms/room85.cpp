@@ -50,7 +50,7 @@ void Room85::entry(int16 eib_nr) {
 
 	if (_G(spieler).flags32_10) {
 		_G(det)->showStaticSpr(4);
-		_G(atds)->del_steuer_bit(495, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(495, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
 	if (_G(flags).LoadGame)
@@ -65,7 +65,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(mouseLeftClick) = false;
 		_G(spieler).scrollx = 78;
 		if (_G(spieler).flags32_40) {
-			_G(atds)->del_steuer_bit(506, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->delControlBit(506, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(det)->startDetail(1, 255, false);
 			setPersonPos(195, 146, P_CHEWY, P_RIGHT);
 			setPersonPos(186, 142, P_HOWARD, P_RIGHT);

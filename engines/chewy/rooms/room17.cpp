@@ -147,7 +147,7 @@ int16 Room17::use_seil() {
 		_G(spieler)._personHide[P_CHEWY] = true;
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(spieler).R17Seil = true;
-		_G(atds)->del_steuer_bit(139, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(139, ATS_ACTIVE_BIT, ATS_DATA);
 		plot_seil();
 		_G(spieler)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;

@@ -155,7 +155,7 @@ int Room86::proc2() {
 	delInventory(_G(spieler).AkInvent);
 	autoMove(3, P_CHEWY);
 	proc3(true);
-	_G(atds)->del_steuer_bit(499, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(atds)->set_ats_str(497, 1, ATS_DATA);
 	_G(atds)->set_ats_str(498, 1, ATS_DATA);
 	_G(spieler).flags32_2 = true;

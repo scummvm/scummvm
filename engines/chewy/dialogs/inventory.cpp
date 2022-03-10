@@ -579,14 +579,14 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 					break;
 				}
 
-				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA)) {
+				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT, ATS_DATA)) {
 					atsAction(txt_nr, m_mode, ATS_ACTION_VOR);
 				}
 				if (ok) {
 					startAtsWait(txt_nr, m_mode, 14, ATS_DATA);
 				}
 
-				if (_G(atds)->get_steuer_bit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
+				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
 					atsAction(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (_G(menu_item) == CUR_USE)
 					_G(flags).StaticUseTxt = true;
@@ -629,10 +629,10 @@ bool Inventory::calc_use_invent(int16 invNr) {
 		default:
 			break;
 		}
-	} else if (_G(menu_item) == CUR_USE && invNr == GBUCH_INV) {
-		int16 id = del_invent_slot(GBUCH_INV);
-		_G(spieler).InventSlot[id] = GBUCH_OPEN_INV;
-		_G(obj)->changeInventory(GBUCH_INV, GBUCH_OPEN_INV, &_G(room_blk));
+	} else if (_G(menu_item) == CUR_USE && invNr == NOTEBOOK_INV) {
+		int16 id = del_invent_slot(NOTEBOOK_INV);
+		_G(spieler).InventSlot[id] = NOTEBOOK_OPEN_INV;
+		_G(obj)->changeInventory(NOTEBOOK_INV, NOTEBOOK_OPEN_INV, &_G(room_blk));
 		retVal = true;
 	}
 

@@ -315,9 +315,9 @@ int16 Room18::calc_surimy() {
 		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATA);
 
 		for (int16 i = 0; i < 3; i++)
-			_G(atds)->del_steuer_bit(158 + i, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->delControlBit(158 + i, ATS_ACTIVE_BIT, ATS_DATA);
 
-		_G(atds)->del_steuer_bit(179, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->delControlBit(179, ATS_ACTIVE_BIT, ATS_DATA);
 		showCur();
 		_G(det)->del_taf_tbl(245, 50, nullptr);
 	}

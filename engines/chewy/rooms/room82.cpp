@@ -40,8 +40,8 @@ void Room82::entry() {
 
 	if (_G(spieler).R88UsedMonkey) {
 		_G(det)->showStaticSpr(6);
-		_G(atds)->set_steuer_bit(473, ATS_AKTIV_BIT, ATS_DATA);
-		_G(atds)->set_steuer_bit(467, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(473, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(467, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
 	if (_G(spieler).flags37_20)

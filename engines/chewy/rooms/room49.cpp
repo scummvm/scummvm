@@ -197,7 +197,7 @@ void Room49::use_boy_cigar() {
 
 	_G(obj)->addInventory(GUM_INV, &_G(room_blk));
 	inventory_2_cur(GUM_INV);
-	_G(atds)->set_steuer_bit(318, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->setControlBit(318, ATS_ACTIVE_BIT, ATS_DATA);
 
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler).R49BoyWeg = true;

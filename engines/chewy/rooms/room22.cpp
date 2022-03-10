@@ -121,7 +121,7 @@ void Room22::bork(int16 t_nr) {
 				bork_walk1();
 			} else {
 				if (!_G(spieler).R22ChewyPlatt) {
-					_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
+					_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
 					_G(spieler).R22ChewyPlatt = true;
 				}
 
@@ -154,9 +154,9 @@ void Room22::bork_walk2() {
 	flic_cut(FCUT_008);
 	register_cutscene(3);
 	_G(det)->showStaticSpr(4);
-	_G(atds)->del_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->delControlBit(81, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(spieler).R22BorkPlatt = true;
-	_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
 }
 
 void Room22::get_bork() {
@@ -169,7 +169,7 @@ void Room22::get_bork() {
 		startAadWait(11);
 		_G(det)->stop_detail(3);
 		_G(spieler)._personHide[P_CHEWY] = false;
-		_G(atds)->set_steuer_bit(81, ATS_AKTIV_BIT, ATS_DATA);
+		_G(atds)->setControlBit(81, ATS_ACTIVE_BIT, ATS_DATA);
 		invent_2_slot(BORK_INV);
 
 		_G(spieler).R22GetBork = true;
@@ -196,7 +196,7 @@ int16 Room22::malen() {
 
 		if (!_G(spieler).R22ChewyPlatt) {
 			_G(spieler).R22ChewyPlatt = true;
-			_G(atds)->set_steuer_bit(79, ATS_AKTIV_BIT, ATS_DATA);
+			_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
 		}
 	}
 

@@ -64,9 +64,9 @@ void Room9::gtuer() {
 	_G(det)->showStaticSpr(5);
 	startSetAILWait(6, 1, ANI_FRONT);
 	setPersonPos(74, 93, P_CHEWY, P_LEFT);
-	_G(atds)->del_steuer_bit(74, ATS_AKTIV_BIT, ATS_DATA);
-	_G(atds)->del_steuer_bit(75, ATS_AKTIV_BIT, ATS_DATA);
-	_G(atds)->del_steuer_bit(76, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->delControlBit(74, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(75, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(76, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(obj)->show_sib(34);
 	_G(atds)->set_ats_str(73, 1, ATS_DATA);
 }
@@ -76,7 +76,7 @@ void Room9::surimy() {
 	_G(spieler).R9Surimy = true;
 	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 	stopPerson(P_CHEWY);
-	_G(atds)->set_steuer_bit(75, ATS_AKTIV_BIT, ATS_DATA);
+	_G(atds)->setControlBit(75, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(det)->hideStaticSpr(4);
 	_G(room)->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
