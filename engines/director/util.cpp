@@ -446,7 +446,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
 		for (uint i = 0; i < searchPath.u.farr->arr.size(); i++) {
 			Common::String searchIn = searchPath.u.farr->arr[i].asString();
-			debug(9, "athMakeRelative(): searchPath: %s", searchIn.c_str());
+			debug(9, "pathMakeRelative(): searchPath: %s", searchIn.c_str());
 
 			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
 			if (testPath(foundPath))
