@@ -3409,6 +3409,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL6HIRES_MAC },
 
+	// Larry 6 - English Macintosh CD - HIRES (provided by eriktorbjorn)
+	// This version has the same game resources as the previous entry.
+	// Data1 contains an additional six byte resource named DESCRIPT.ION
+	{"lsl6hires", "Hi-res", {
+		{"Data1", 0, "2c4e00a6910490831d4d84e9e6a49ec4", 3456235},
+		{"Data2", 0, "a7522b925dd5422c2db2b0a2337c76c3", 5856422},
+		{"Data3", 0, "9ebb490ec63721e5261111b918b5520e", 5577742},
+		{"Data4", 0, "d70687689ff3cf19a5e3c79dfced1c94", 3472064},
+		{"Data5", 0, "e91c3b681095a263fcb2f2c8d8fc74b6", 3273843},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL6HIRES_MAC },
+
 #undef GUIO_LSL6HIRES
 #undef GUIO_LSL6HIRES_MAC
 
