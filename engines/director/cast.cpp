@@ -254,6 +254,8 @@ bool Cast::loadConfig() {
 	}
 
 	byte lightswitch = stream->readByte();
+	if (lightswitch != 0 )
+		warning("BUILDBOT: lightswitch: %i", lightswitch);
 	uint16 unk1 = stream->readUint16();
 	uint16 commentFont = stream->readUint16();
 	uint16 commentSize = stream->readUint16();
