@@ -39,6 +39,7 @@ namespace Director {
 const char *FPlayXObj::xlibName = "FPlay";
 const char *FPlayXObj::fileNames[] = {
 	"FPlayXObj",
+	"FPlay",
 	nullptr
 };
 
