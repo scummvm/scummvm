@@ -22,6 +22,7 @@
 #include "common/bitarray.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 
 #include "hypno/hypno.h"
 
@@ -55,6 +56,7 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_screenW = 320;
 	_screenH = 200;
 	_lives = 2;
+	_lastLevel = 0;
 
 	_c40SegmentIdx = -1;
 	_c40lastTurn = -1;
@@ -446,6 +448,82 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 		}
 	} else
 		error("Invalid font: '%s'", font.c_str());
+}
+
+void WetEngine::saveGame(int levelId) {
+	Common::SaveFileManager *saveManager = getSaveFileManager();
+	Common::String namedPattern = Common::String::format("%s-wet.*", _name.c_str());
+	Common::String allPattern = "*-wet.*";
+	Common::StringArray namedSaves = saveManager->listSavefiles(namedPattern);
+	Common::StringArray allSaves = saveManager->listSavefiles(allPattern);
+
+	if (namedSaves.size() == 0) {
+		namedSaves.push_back(Common::String::format("%s-wet.%03d", _name.c_str(), allSaves.size()));
+	} else if (namedSaves.size() > 1)
+		error("Found %d saves to write!", namedSaves.size());
+	// Find the correct level index to before saving
+	for (uint32 i = 0; i < _ids.size(); i++) {
+		if (levelId == _ids[i]) {
+			_lastLevel = i;
+			break;
+		}
+	}
+	debugC(1, kHypnoDebugMedia, "Saving in %s", namedSaves[0].c_str());
+	Common::OutSaveFile *outf = saveManager->openForSaving(namedSaves[0]);
+	saveGameStream(outf, false);
+	outf->finalize();
+	delete outf;
+}
+
+bool WetEngine::loadGame(const Common::String &name) {
+	Common::SaveFileManager *saveManager = getSaveFileManager();
+	Common::StringArray saves = saveManager->listSavefiles("*-wet.*");
+
+	for (uint32 i = 0; i < saves.size(); i++) {
+		Common::String filename = Common::String::format("%s-wet.%03d", name.c_str(), i);
+		if (saves[i] == filename) {
+			debugC(1, kHypnoDebugMedia, "Loading %s", filename.c_str());
+			Common::InSaveFile *inf = saveManager->openForLoading(filename);
+			loadGameStream(inf);
+
+			if (_lastLevel == 0)
+				_nextLevel = Common::String::format("c%d", _ids[0]);
+			else
+				_nextLevel = "<level_menu>";
+			return true;
+		}
+	}
+	debugC(1, kHypnoDebugMedia, "Failed to load %s", name.c_str());
+	return false;
+}
+
+Common::Error WetEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	if (isAutosave)
+		return Common::kNoError;
+
+	if (_lastLevel < 0 || _lastLevel >= 20)
+		error("Invalid last level!");
+
+	stream->writeString(_name);
+	stream->writeByte(0);
+
+	stream->writeString(_difficulty);
+	stream->writeByte(0);
+
+	stream->writeUint32LE(_lives);
+	stream->writeUint32LE(_score);
+
+	stream->writeUint32LE(_lastLevel);
+	return Common::kNoError;
+}
+
+Common::Error WetEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	_name = stream->readString();
+	_difficulty = stream->readString();
+	_lives = stream->readUint32LE();
+	_score = stream->readUint32LE();
+	_lastLevel = stream->readUint32LE();
+	return Common::kNoError;
 }
 
 Common::String WetEngine::findNextLevel(const Transition *trans) {

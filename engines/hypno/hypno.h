@@ -319,6 +319,8 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 	Common::HashMap<int, const struct chapterEntry*> _chapterTable;
 	Common::Array<int> _ids;
+	int _lastLevel;
+	Common::String _name;
 
 	void loadAssets() override;
 	void loadAssetsDemoDisc();
@@ -338,6 +340,12 @@ public:
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
+
+	// Saves
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	bool loadGame(const Common::String &name);
+	void saveGame(int levelId);
 
 	// Arcade
 	void runBeforeArcade(ArcadeShooting *arc) override;

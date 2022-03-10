@@ -292,6 +292,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	MVideo *video;
 	if (!isDemo()) {
 
+		saveGame(int(arc->id));
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", (arc->id / 10 - 1) * 2, &palette);
 		loadPalette(palette, 0, 256);

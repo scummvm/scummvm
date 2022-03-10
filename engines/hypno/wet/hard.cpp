@@ -22,6 +22,7 @@
 #include "common/bitarray.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 
 #include "hypno/hypno.h"
 
@@ -54,6 +55,11 @@ void WetEngine::runCheckLives(Code *code) {
 }
 
 void WetEngine::runLevelMenu(Code *code) {
+	if (_lastLevel == 0) {
+		_nextLevel = Common::String::format("c%d", _ids[0]);
+		return;
+	}
+
 	Common::Event event;
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 20, &palette);
@@ -61,11 +67,10 @@ void WetEngine::runLevelMenu(Code *code) {
 	byte black[3] = {0x00, 0x00, 0x00}; // Always red?
 	byte lime[3] = {0x00, 0xFF, 0x00}; // Always red?
 	byte green[3] = {0x2C, 0x82, 0x28}; // Always red?
-	int lastLevel = 20;
 	int maxLevel = 20;
 	int currentLevel = 0;
 	for (int i = 0; i < maxLevel; i++)
-		if (i < lastLevel)
+		if (i <= _lastLevel)
 			loadPalette((byte *) &green, 192+i, 1);
 		else
 			loadPalette((byte *) &black, 192+i, 1);
@@ -83,7 +88,7 @@ void WetEngine::runLevelMenu(Code *code) {
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < lastLevel-1) {
+				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < _lastLevel) {
 					playSound("sound/extra.raw", 1, 11025);
 					currentLevel++;
 				} else if (event.kbd.keycode == Common::KEYCODE_UP && currentLevel > 0) {
@@ -95,7 +100,7 @@ void WetEngine::runLevelMenu(Code *code) {
 				}
 
 				for (int i = 0; i < maxLevel; i++)
-					if (i < lastLevel)
+					if (i <= _lastLevel)
 						loadPalette((byte *) &green, 192+i, 1);
 					else
 						loadPalette((byte *) &black, 192+i, 1);
@@ -123,8 +128,6 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
 	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
-	Common::String _name = "";
-
 	Common::Rect subName(21, 10, 159, 24);
 
 	drawImage(*menu, 0, 0, false);
@@ -167,6 +170,20 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	if (_name == "COOLCOLE") {
+		_lastLevel = 19;
+		playSound("sound/extra.raw", 1);
+	} else
+		_lastLevel = 0;
+
+	_name.toLowercase();
+	bool found = loadGame(_name);
+
+	if (found)
+		return;
+
+	saveGame(_ids[_lastLevel]);
 
 	Common::Rect subDifficulty(20, 104, 233, 119);
 	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);
