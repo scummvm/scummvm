@@ -333,7 +333,7 @@
 //
 #ifndef GCC_PRINTF
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
-		#if __USE_MINGW_ANSI_STDIO && !defined(__clang__)
+		#if defined(__USE_MINGW_ANSI_STDIO) && __USE_MINGW_ANSI_STDIO && !defined(__clang__)
 			#define GCC_PRINTF(x,y) __attribute__((__format__(__gnu_printf__, x, y)))
 		#else
 			#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
@@ -344,7 +344,7 @@
 #endif
 
 #ifndef MSVC_PRINTF
-	#if _MSC_VER > 1400
+	#if defined(_MSC_VER) && _MSC_VER > 1400
 		#define MSVC_PRINTF _Printf_format_string_
 	#else
 		#define MSVC_PRINTF
