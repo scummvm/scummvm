@@ -379,6 +379,7 @@ public:
 
 	// global kTheEntity
 	Common::u32char_type_t _itemDelimiter;
+	Datum _searchPath;
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

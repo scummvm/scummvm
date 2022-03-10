@@ -41,6 +41,8 @@ bool testPath(Common::String &path, bool directory = false);
 
 Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
 
+Common::String wrappedPathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
+
 bool hasExtension(Common::String filename);
 
 Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);

@@ -752,7 +752,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSearchCurrentFolder);
 		break;
 	case kTheSearchPath:
-		getTheEntitySTUB(kTheSearchPath);
+		d = g_lingo->_searchPath;
 		break;
 	case kTheSelection:
 		if (movie->_currentEditableTextChannel) {

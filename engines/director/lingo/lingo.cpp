@@ -164,6 +164,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	//kTheEntities
 	_itemDelimiter = ',';
 
+	_searchPath.type = ARRAY;
+	_searchPath.u.farr = new FArray;
+	
 	// events
 	_passEvent = false;
 	_perFrameHook = Datum();

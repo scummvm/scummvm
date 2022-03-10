@@ -32,6 +32,7 @@
 
 #include "director/director.h"
 #include "director/movie.h"
+#include "director/lingo/lingo.h"
 #include "director/util.h"
 
 namespace Director {
@@ -436,10 +437,32 @@ bool testPath(Common::String &path, bool directory) {
 	return true;
 }
 
+
+Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
+	//Wrap pathMakeRelative to search in extra paths defined by the game
+	Common::String foundPath;
+
+	Datum searchPath = g_director->getLingo()->_searchPath;
+	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
+		for (uint i = 0; i < searchPath.u.farr->arr.size(); i++) {
+			Common::String searchIn = searchPath.u.farr->arr[i].asString();
+			debug(9, "athMakeRelative(): searchPath: %s", searchIn.c_str());
+
+			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
+			if (testPath(foundPath))
+				return foundPath;
+		}
+	}
+
+	return wrappedPathMakeRelative(path, recursive, addexts, directory);
+}
+
+
 // if we are finding the file path, then this func will return exactly the executable file path
 // if we are finding the directory path, then we will get the path relative to the game data dir.
 // e.g. if we have game data dir as SSwarlock, then "A:SSwarlock" -> "", "A:SSwarlock:Nav" -> "Nav"
-Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
+Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
+
 	Common::String initialPath(path);
 
 	if (recursive) // first level
@@ -537,7 +560,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
 
 				debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
-				Common::String res = pathMakeRelative(newpath, false, false);
+				Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
 				if (testPath(res))
 					return res;
@@ -577,7 +600,7 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
 		debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
-		Common::String res = pathMakeRelative(newpath, false, false);
+		Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
 		if (testPath(res))
 			return res;

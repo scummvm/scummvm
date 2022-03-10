@@ -578,6 +578,7 @@ void LC::cb_varrefpush() {
 }
 
 void LC::cb_theassign() {
+	// cb_theassign is for setting script/factory-level properties
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
 	if (g_lingo->_currentMe.type == OBJECT) {
@@ -592,9 +593,16 @@ void LC::cb_theassign() {
 }
 
 void LC::cb_theassign2() {
+	// cb_theassign2 is for setting movie-level properties
+
+	// only seen in louis catorze with searchPath
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
-	warning("STUB: cb_theassign2(%s, %s)", name.c_str(), value.asString().c_str());
+	if (name == "searchPath") {
+		g_lingo->_searchPath = value;
+	} else {
+		warning("BUILDBOT: cb_theassign2 unkown name: %s", name.c_str());
+	}
 }
 
 void LC::cb_thepush() {
