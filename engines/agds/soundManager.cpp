@@ -49,7 +49,7 @@ void SoundManager::tick() {
 				debug("sample %s:%s restarts (via phase var)", sound.resource.c_str(), sound.filename.c_str());
 				_engine->setGlobal(phaseVar, 1);
 				_mixer->stopID(sound.id);
-				play(sound.process, sound.resource, sound.filename, sound.phaseVar, true, sound.id);
+				play(sound.process, sound.resource, sound.filename, sound.phaseVar, true, sound.volume, sound.pan, sound.id);
 			} else if (value & 4) {
 				debug("sample %s:%s stops (via phase var)", sound.resource.c_str(), sound.filename.c_str());
 				_mixer->stopID(sound.id);
@@ -93,8 +93,8 @@ void SoundManager::stopAll() {
 	_sounds.clear();
 }
 
-int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int id) {
-	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d id: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, id);
+int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id) {
+	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id);
 	if (filename.empty())
 		return -1;
 
@@ -135,9 +135,9 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	if (id == -1)
 		id = _nextId++;
 
-	_sounds.push_back(Sound(id, process, resource, filename, phaseVar));
+	_sounds.push_back(Sound(id, process, resource, filename, phaseVar, volume, pan));
 	if (startPlaying)
-		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_sounds.back().handle, stream, id);
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_sounds.back().handle, stream, id, volume * Audio::Mixer::kMaxChannelVolume / 100, pan * 127 / 100);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;

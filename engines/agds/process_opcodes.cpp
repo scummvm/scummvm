@@ -164,8 +164,8 @@ void Process::loadAnimation() {
 
 void Process::loadSample() {
 	Common::String name = popString();
-	debug("loadSample %s, phaseVar: %s, ambient: %d", name.c_str(), _phaseVar.c_str(), _sampleAmbient);
-	int id = _engine->playSound(getName(), name, _engine->loadText(name), _phaseVar, _sampleAmbient || !_phaseVarControlled || _phaseVar.empty());
+	debug("loadSample %s, phaseVar: %s, ambient: %d, volume: %d", name.c_str(), _phaseVar.c_str(), _sampleAmbient, _sampleVolume);
+	int id = _engine->soundManager().play(getName(), name, _engine->loadText(name), _phaseVar, _sampleAmbient || !_phaseVarControlled || _phaseVar.empty(), _sampleVolume, 0);
 	if (_sampleAmbient)
 		_engine->setAmbientSoundId(id);
 }
@@ -175,8 +175,8 @@ void Process::getSampleVolume() {
 	debug("getSampleVolume: %s", name.c_str());
 	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
 	if (sound) {
-		debug("\treturning %d", sound->leftVolume);
-		push(sound->leftVolume);
+		debug("\treturning %d", sound->leftVolume());
+		push(sound->leftVolume());
 	} else {
 		warning("could not find sample %s", name.c_str());
 		push(-1);
@@ -211,8 +211,8 @@ void Process::setSampleVolumeAndPan() {
 		r = volume;
 	}
 	debug("\tleft: %d, right: %d", l, r);
-	sound->leftVolume = l;
-	sound->rightVolume = r;
+	sound->volume = volume;
+	sound->pan = pan;
 }
 
 void Process::addSampleToSoundGroup() {
@@ -665,6 +665,7 @@ void Process::resetState() {
 	_animationSpeed = 100;
 	_samplePeriodic = false;
 	_sampleAmbient = false;
+	_sampleVolume = 100;
 
 	_tileWidth = 16;
 	_tileHeight = 16;
@@ -899,9 +900,9 @@ void Process::setObjectRegionOffset() {
 		warning("setObjectRegionOffset: object %s not found", objectName.c_str());
 }
 
-void Process::setSampleType() {
-	int value = pop();
-	debug("setSampleType: %d stub", value);
+void Process::setSampleVolume() {
+	_sampleVolume = pop();
+	debug("setSampleVolume: %d", _sampleVolume);
 }
 
 void Process::stub173() {
