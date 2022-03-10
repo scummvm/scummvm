@@ -234,6 +234,10 @@ bool Cast::loadConfig() {
 		switch (readRate) {
 			// rate when set via the tempo channel
 			// these rates are the actual framerates
+			case 0x10:
+				// defaults to 15 fps on D2 and D3. On D4 it shows as 120 fps
+				currentFrameRate = 15;
+				break;
 			case 212:
 				currentFrameRate = 1;
 				break;
