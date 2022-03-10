@@ -316,8 +316,6 @@ bool Cast::loadConfig() {
 	if (!_isShared) {
 		debugC(1, kDebugLoading, "Cast::loadConfig(): currentFrameRate: %d", currentFrameRate);
 		_movie->getScore()->_currentFrameRate = currentFrameRate;
-		if (_movie->getScore()->_currentFrameRate == 0)
-			_movie->getScore()->_currentFrameRate = 20;
 	}
 
 	uint16 humanVer = humanVersion(_version);
