@@ -336,6 +336,7 @@ IteFxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 };
 
 const char *ITEinterfaceTextStrings[][53] = {
+	// English
 	{
 		// Note that the "Load Successful!" string is never used in ScummVM
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
@@ -422,50 +423,6 @@ const char *ITEinterfaceTextStrings[][53] = {
 		NULL,
 		"Cardango una partida guardada"
 	},
-	// Russian IHNM & ITE fan translations
-	{
-		// "Идти", "Осмотреть", "Взять", "Говорить", "Открыть",
-		"\xC8\xE4\xF2\xE8", "\xCE\xF1\xEC\xEE\xF2\xF0\xE5\xF2\xFC", "\xC2\xE7\xFF\xF2\xFC", "\xC3\xEE\xE2\xEE\xF0\xE8\xF2\xFC", "\xCE\xF2\xEA\xF0\xFB\xF2\xFC",
-		// "Закрыть", "Применить", "Дать", "Настройки", "Тест",
-		"\xC7\xE0\xEA\xF0\xFB\xF2\xFC", "\xCF\xF0\xE8\xEC\xE5\xED\xE8\xF2\xFC", "\xC4\xE0\xF2\xFC", "\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8", "\xD2\xE5\xF1\xF2",
-		// "Demo", "Помощь", "Выйти из игры", "БЫСТ", "МЕДЛ",
-		"Demo", "\xCF\xEE\xEC\xEE\xF9\xFC", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB", "\xC1\xDB\xD1\xD2", "\xCC\xC5\xC4\xCB",
-		// "ВКЛ", "ВЫКЛ", "Продолжить", "Чтение", "Запись",
-		"\xC2\xCA\xCB", "\xC2\xDB\xCA\xCB", "\xCF\xF0\xEE\xE4\xEE\xEB\xE6\xE8\xF2\xFC", "\xD7\xF2\xE5\xED\xE8\xE5", "\xC7\xE0\xEF\xE8\xF1\xFC",
-		// "Настройки игры", "Субтитры", "Музыка", "Звук", "Отмена",
-		"\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8 \xE8\xE3\xF0\xFB", "\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB", "\xCC\xF3\xE7\xFB\xEA\xE0", "\xC7\xE2\xF3\xEA", "\xCE\xF2\xEC\xE5\xED\xE0",
-		// "Выход", "OK", "СРД", "Мышь", "10%",
-		"\xC2\xFB\xF5\xEE\xE4", "OK", "\xD1\xD0\xC4", "\xCC\xFB\xF8\xFC", "10%",
-		"20%", "30%", "40%", "50%", "60%",
-		// "70%", "80%", "90%", "МАКС", "Выйти из игры?",
-		"70%", "80%", "90%", "\xCC\xC0\xCA\xD1", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB?",
-		// "Игра загружена!",
-		"\xC8\xE3\xF0\xE0 \xE7\xE0\xE3\xF0\xF3\xE6\xE5\xED\xE0!",
-		// "Введите имя записи",
-		"\xC2\xE2\xE5\xE4\xE8\xF2\xE5 \xE8\xEC\xFF \xE7\xE0\xEF\xE8\xF1\xE8",
-		// "Дать -> %s -> %s",
-		"\xC4\xE0\xF2\xFC -> %s -> %s",
-		// "Использовать %s >> %s",
-		"\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s", //two different lines for IHNM & ITE; check in saga.cpp, SagaEngine::getTextString()
-		// "[Новая запись]",
-		"[\xCD\xEE\xE2\xE0\xFF \xE7\xE0\xEF\xE8\xF1\xFC]",
-		// "Я не могу это взять.",
-		"\xDF \xED\xE5 \xEC\xEE\xE3\xF3 \xFD\xF2\xEE \xE2\xE7\xFF\xF2\xFC.",
-		// "Ничего особенного.",
-		"\xCD\xE8\xF7\xE5\xE3\xEE \xEE\xF1\xEE\xE1\xE5\xED\xED\xEE\xE3\xEE.",
-		// "Здесь нечего открывать.",
-		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xEE\xF2\xEA\xF0\xFB\xE2\xE0\xF2\xFC.",
-		// "Здесь нечего закрыть.",
-		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xE7\xE0\xEA\xF0\xFB\xF2\xFC.",
-		// "Я не знаю, как это сделать.",
-		"\xDF \xED\xE5 \xE7\xED\xE0\xFE, \xEA\xE0\xEA \xFD\xF2\xEE \xF1\xE4\xE5\xEB\xE0\xF2\xFC.",
-		// "Субтитры",
-		"\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB",
-		// "Что скажет Риф?",
-		"\xD7\xF2\xEE \xF1\xEA\xE0\xE6\xE5\xF2 \xD0\xE8\xF4?",
-		// " Загрузка "
-		"       \xC7\xE0\xE3\xF0\xF3\xE7\xEA\xE0     "
-	},
 	// French fan translation : ACTIONS
 	{
 		"Aller vers", "Examiner", "Prendre", "Parler \205", "Ouvrir",
@@ -523,6 +480,50 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"\x83\x8A\x83t\x82\xCC\x95\xD4\x8E\x96\x82\xCD\x81H",
 		"?"
 	},
+	// Russian IHNM & ITE fan translations
+	{
+		// "Идти", "Осмотреть", "Взять", "Говорить", "Открыть",
+		"\xC8\xE4\xF2\xE8", "\xCE\xF1\xEC\xEE\xF2\xF0\xE5\xF2\xFC", "\xC2\xE7\xFF\xF2\xFC", "\xC3\xEE\xE2\xEE\xF0\xE8\xF2\xFC", "\xCE\xF2\xEA\xF0\xFB\xF2\xFC",
+		// "Закрыть", "Применить", "Дать", "Настройки", "Тест",
+		"\xC7\xE0\xEA\xF0\xFB\xF2\xFC", "\xCF\xF0\xE8\xEC\xE5\xED\xE8\xF2\xFC", "\xC4\xE0\xF2\xFC", "\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8", "\xD2\xE5\xF1\xF2",
+		// "Demo", "Помощь", "Выйти из игры", "БЫСТ", "МЕДЛ",
+		"Demo", "\xCF\xEE\xEC\xEE\xF9\xFC", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB", "\xC1\xDB\xD1\xD2", "\xCC\xC5\xC4\xCB",
+		// "ВКЛ", "ВЫКЛ", "Продолжить", "Чтение", "Запись",
+		"\xC2\xCA\xCB", "\xC2\xDB\xCA\xCB", "\xCF\xF0\xEE\xE4\xEE\xEB\xE6\xE8\xF2\xFC", "\xD7\xF2\xE5\xED\xE8\xE5", "\xC7\xE0\xEF\xE8\xF1\xFC",
+		// "Настройки игры", "Субтитры", "Музыка", "Звук", "Отмена",
+		"\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8 \xE8\xE3\xF0\xFB", "\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB", "\xCC\xF3\xE7\xFB\xEA\xE0", "\xC7\xE2\xF3\xEA", "\xCE\xF2\xEC\xE5\xED\xE0",
+		// "Выход", "OK", "СРД", "Мышь", "10%",
+		"\xC2\xFB\xF5\xEE\xE4", "OK", "\xD1\xD0\xC4", "\xCC\xFB\xF8\xFC", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		// "70%", "80%", "90%", "МАКС", "Выйти из игры?",
+		"70%", "80%", "90%", "\xCC\xC0\xCA\xD1", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB?",
+		// "Игра загружена!",
+		"\xC8\xE3\xF0\xE0 \xE7\xE0\xE3\xF0\xF3\xE6\xE5\xED\xE0!",
+		// "Введите имя записи",
+		"\xC2\xE2\xE5\xE4\xE8\xF2\xE5 \xE8\xEC\xFF \xE7\xE0\xEF\xE8\xF1\xE8",
+		// "Дать -> %s -> %s",
+		"\xC4\xE0\xF2\xFC -> %s -> %s",
+		// "Использовать %s >> %s",
+		"\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s", //two different lines for IHNM & ITE; check in saga.cpp, SagaEngine::getTextString()
+		// "[Новая запись]",
+		"[\xCD\xEE\xE2\xE0\xFF \xE7\xE0\xEF\xE8\xF1\xFC]",
+		// "Я не могу это взять.",
+		"\xDF \xED\xE5 \xEC\xEE\xE3\xF3 \xFD\xF2\xEE \xE2\xE7\xFF\xF2\xFC.",
+		// "Ничего особенного.",
+		"\xCD\xE8\xF7\xE5\xE3\xEE \xEE\xF1\xEE\xE1\xE5\xED\xED\xEE\xE3\xEE.",
+		// "Здесь нечего открывать.",
+		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xEE\xF2\xEA\xF0\xFB\xE2\xE0\xF2\xFC.",
+		// "Здесь нечего закрыть.",
+		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xE7\xE0\xEA\xF0\xFB\xF2\xFC.",
+		// "Я не знаю, как это сделать.",
+		"\xDF \xED\xE5 \xE7\xED\xE0\xFE, \xEA\xE0\xEA \xFD\xF2\xEE \xF1\xE4\xE5\xEB\xE0\xF2\xFC.",
+		// "Субтитры",
+		"\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB",
+		// "Что скажет Риф?",
+		"\xD7\xF2\xEE \xF1\xEA\xE0\xE6\xE5\xF2 \xD0\xE8\xF4?",
+		// " Загрузка "
+		"       \xC7\xE0\xE3\xF0\xF3\xE7\xEA\xE0     "
+	},
 	{
 		// Hebrew fan-translation
 		"\xEC\xEA \xE0\xEC", "\xE4\xE1\xE8 \xE0\xEC", "\xE4\xF8\xED", "\xE3\xE1\xF8 \xF2\xED", "\xF4\xFA\xE7",
@@ -566,26 +567,37 @@ const RawPoint pieceOrigins[PUZZLE_PIECES] = {
 
 // Objects
 const char *pieceNames[][PUZZLE_PIECES] = {
+	// English
 	{
 		"screwdriver", "pliers", "c-clamp", "wood clamp", "level",
 		"twine", "wood plane", "claw hammer", "tape measure", "hatchet",
 		"shears", "ruler", "saw", "mallet", "paint brush"
 	},
+	// German
 	{
 		"Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
 		"Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
 		"Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
 	},
+	// Italian
 	{
 		"cacciavite", "pinze", "morsa", "morsa da legno", "livella",
 		"spago", "pialla", "martello", "metro a nastro", "accetta",
 		"cesoie", "righello", "sega", "mazza", "pennello"
 	},
+	// Spanish
+	{
+		"", "", "", "", "",
+		"", "", "", "", "",
+		"", "", "", "", ""
+	},
+	// French
 	{
 		"tournevis", "pince", "\202tau \205 vis", "pince \205 bois", "niveau",
 		"ficelle", "rabot \205 bois", "marteau", "m\212tre ruban", "hachette",
 		"ciseaux", "r\212gle", "scie", "maillet", "pinceau"
 	},
+	// Japanese
 	{
 		// "ドライバー", "釘抜き", "Ｃ形クランプ", "木のクランプ", "レベル",
 		"\x83h\x83\x89\x83\x43\x83o\x81[", "\x93\x42\x94\xB2\x82\xAB", "\x82\x62\x8C`\x83N\x83\x89\x83\x93\x83v", "\x96\xD8\x82\xCC\x83N\x83\x89\x83\x93\x83v", "\x83\x8C\x83x\x83\x8B",
@@ -594,6 +606,7 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		// "ハサミ", "曲尺", "のこぎり", "木づち", "ペンキブラシ"
 		"\x83n\x83T\x83~", "\x8B\xC8\x8E\xDA", "\x82\xCC\x82\xB1\x82\xAC\x82\xE8", "\x96\xD8\x82\xC3\x82\xBF", "\x83y\x83\x93\x83L\x83u\x83\x89\x83V"
 	},
+	// Russian
 	{
 		// "отвертка", "клещи", "струбцина", "деревянный зажим", "уровень",
 		"\xEE\xF2\xE2\xE5\xF0\xF2\xEA\xE0", "\xEA\xEB\xE5\xF9\xE8", "\xF1\xF2\xF0\xF3\xE1\xF6\xE8\xED\xE0", "\xE4\xE5\xF0\xE5\xE2\xFF\xED\xED\xFB\xE9 \xE7\xE0\xE6\xE8\xEC", "\xF3\xF0\xEE\xE2\xE5\xED\xFC",
@@ -602,6 +615,7 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		// "ножницы", "линейка", "пила", "киянка", "кисть"
 		"\xED\xEE\xE6\xED\xE8\xF6\xFB", "\xEB\xE8\xED\xE5\xE9\xEA\xE0", "\xEF\xE8\xEB\xE0", "\xEA\xE8\xFF\xED\xEA\xE0", "\xEA\xE8\xF1\xF2\xFC"
 	},
+	// Hebrew
 	{
 		"\xEE\xE1\xF8\xE2", "\xF6\xE1\xFA", "\xEB\xEC\xE9\xE1\xE4", "\xEE\xEC\xE7\xF6\xE9\xE9\xED", "\xF4\xEC\xF1",
 		"\xE7\xE5\xE8 \xEE\xF9\xE9\xE7\xE4", "\xEE\xF7\xF6\xE5\xF2\xE4", "\xF4\xE8\xE9\xF9 \xF0\xE2\xF8\xE9\xED", "\xF1\xF8\xE8 \xEE\xE9\xE3\xE4", "\xF7\xF8\xE3\xE5\xED",
@@ -611,30 +625,42 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 
 // hints
 const char *hintStr[][4] = {
+	// English
 	{
 		"Check which pieces could fit in each corner first.",
 		"Check which corner has the least number of pieces that can fit and start from there.",
 		"Check each new corner and any new side for pieces that fit.",
 		"I don't see anything out of place."
 	},
+	// German
 	{
 		"\232berpr\201fe zun\204chst, welche die Eckteile sein k\224nnten.",
 		"Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
 		"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
 		"Ich sehe nichts an der falschen Stelle."
 	},
+	// Italian
 	{
 		"Controlla prima quali pezzi si inseriscono meglio in ogni angolo.",
 		"Controlla quale angolo ha il minor numero di pezzi che combaciano, e parti da quello.",
 		"Controlla ogni nuovo angolo e lato per ogni pezzo che combacia.",
 		"Non vedo nulla fuori posto."
 	},
+	// Spanish
+	{
+		"",
+		"",
+		"",
+		""
+	},
+	// French
 	{
 		"Trouve d'abord les pi\212ces qui correspondent aux coins.",
 		"V\202rifie quel coin a le moins de pi\212ces qui correspondent et part de l\205.",
 		"Evalue chaque coin et bord pour voir les pi\212ces qui collent.",
 		"Je ne vois rien de mal plac\202."
 	},
+	// Japanese
 	{
 		// "まず、四隅に合うピースを\n捜してごらん。",
 		"\x82\xDC\x82\xB8\x81\x41\x8El\x8B\xF7\x82\xC9\x8D\x87\x82\xA4\x83s\x81[\x83X\x82\xF0\n\x91{\x82\xB5\x82\xC4\x82\xB2\x82\xE7\x82\xF1\x81\x42",
@@ -645,6 +671,7 @@ const char *hintStr[][4] = {
 		// "置いたピースの位置は\nどれも合ってるよ。"
 		"\x92u\x82\xA2\x82\xBD\x83s\x81[\x83X\x82\xCC\x88\xCA\x92u\x82\xCD\n\x82\xC7\x82\xEA\x82\xE0\x8D\x87\x82\xC1\x82\xC4\x82\xE9\x82\xE6\x81\x42"
 	},
+	// Russian
 	{
 		// "Сперва посмотри, какие фрагменты в какой угол можно поставить.",
 		"\xD1\xEF\xE5\xF0\xE2\xE0 \xEF\xEE\xF1\xEC\xEE\xF2\xF0\xE8, \xEA\xE0\xEA\xE8\xE5 \xF4\xF0\xE0\xE3\xEC\xE5\xED\xF2\xFB \xE2 \xEA\xE0\xEA\xEE\xE9 \xF3\xE3\xEE\xEB \xEC\xEE\xE6\xED\xEE \xEF\xEE\xF1\xF2\xE0\xE2\xE8\xF2\xFC.",
@@ -655,6 +682,7 @@ const char *hintStr[][4] = {
 		// "Не вижу, чтобы что-нибудь было не так."
 		"\xCD\xE5 \xE2\xE8\xE6\xF3, \xF7\xF2\xEE\xE1\xFB \xF7\xF2\xEE-\xED\xE8\xE1\xF3\xE4\xFC \xE1\xFB\xEB\xEE \xED\xE5 \xF2\xE0\xEA."
 	},
+	// Hebrew
 	{
 		"\xE1\xE3\xF7\xE5 \xF7\xE5\xE3\xED \xE0\xE9\xEC\xE5 \xE7\xFA\xE9\xEB\xE5\xFA \xEE\xFA\xE0\xE9\xEE\xE5\xFA \xEC\xEB\xEC \xF4\xE9\xF0\xE4.",
 		"\xE1\xE3\xF7\xE5 \xEC\xE0\xE9\xEC\xE5 \xF4\xE9\xF0\xE4 \xE9\xF9 \xE4\xEB\xE9 \xEE\xF2\xE8 \xE7\xFA\xE9\xEB\xE5\xFA \xF9\xF2\xF9\xE5\xE9\xE5\xFA \xEC\xE4\xFA\xE0\xE9\xED \xE5\xE4\xFA\xE7\xE9\xEC\xE5 \xEE\xF9\xED.",
@@ -664,6 +692,7 @@ const char *hintStr[][4] = {
 };
 
 const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
+	// English
 	{
 		"Hey, Fox! Would you like a hint?",
 		"Would you like some help?",
@@ -671,6 +700,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Psst! want a hint?",
 		"I would have done this differently, you know."
 	},
+	// German
 	{
 		"Hey, Fuchs! Brauchst Du \047nen Tip?",
 		"M\224chtest Du etwas Hilfe?"
@@ -678,6 +708,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Psst! \047n Tip vielleicht?"
 		"Ja, wei$t Du... ich h\204tte das anders gemacht."
 	},
+	// Italian
 	{
 		"Hey, Volpe! Serve un suggerimento?",
 		"Hai bisogno di aiuto?",
@@ -685,6 +716,15 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Psst! Serve un aiutino?",
 		"Io, sai, l'avrei fatto diversamente."
 	},
+	// Spanish
+	{
+		"",
+		"",
+		"",
+		"",
+		""
+	},
+	// French
 	{
 		"H\202, Renard! Tu veux un coup de pouce?",
 		"T'as besoin d'aide?",
@@ -692,6 +732,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Psst! Un indice?",
 		"Tu sais, j'aurais fait ça autrement."
 	},
+	// Japanese
 	{
 		// "ねぇ君！\nヒント欲しい？",
 		"\x82\xCB\x82\xA5\x8CN\x81I\n\x83q\x83\x93\x83g\x97~\x82\xB5\x82\xA2\x81H",
@@ -704,6 +745,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		// "私なら違う方法で\nやってるだろうな。"
 		"\x8E\x84\x82\xC8\x82\xE7\x88\xE1\x82\xA4\x95\xFB\x96@\x82\xC5\n\x82\xE2\x82\xC1\x82\xC4\x82\xE9\x82\xBE\x82\xEB\x82\xA4\x82\xC8\x81\x42"
 	},
+	// Russian
 	{
 		// "Эй, лис! Подсказка не нужна?",
 		"\xDD\xE9, \xEB\xE8\xF1! \xCF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xE0 \xED\xE5 \xED\xF3\xE6\xED\xE0?",
@@ -716,6 +758,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		// "Знаешь, а я бы сделал по-другому."
 		"\xC7\xED\xE0\xE5\xF8\xFC, \xE0 \xFF \xE1\xFB \xF1\xE4\xE5\xEB\xE0\xEB \xEF\xEE-\xE4\xF0\xF3\xE3\xEE\xEC\xF3."
 	},
+	// Hebrew
 	{
 		"\xE4\xE9\xE9, \xF9\xE5\xF2\xEC! \xFA\xF8\xF6\xE4 \xF8\xEE\xE6?",
 		"\xEE\xF2\xE5\xF0\xE9\xE9\xEF \xE1\xEE\xF2\xE8 \xF2\xE6\xF8\xE4?",
@@ -726,26 +769,37 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 };
 
 const char *sakkaStr[][NUM_SAKKA] = {
+	// English
 	{
 		"Hey, you're not supposed to help the applicants!",
 		"Guys! This is supposed to be a test!",
 		"C'mon fellows, that's not in the rules!"
 	},
+	// German
 	{
 		"Hey, Du darfst dem Pr\201fling nicht helfen!",
 		"Hallo?! Dies soll eine Pr\201fung sein!",
 		"Also, Jungs. Schummeln steht nicht in den Regeln!"
 	},
+	// Italian
 	{
 		"Hey, non si dovrebbero aiutare i candidati!",
 		"Ragazzi! Questo dovrebbe essere un test!",
 		"Forza ragazzi, non si pu\225!"
 	},
+	// Spanish
+	{
+		"",
+		"",
+		""
+	},
+	// French
 	{
 		"H\202, vous n'\210tes pas suppos\202s aider les concurrents!",
 		"Les gars! C'est suppos\202 être un test!",
 		"Allez les gars, c'est pas dans les r\212gles!"
 	},
+	// Japanese
 	{
 		// "ねぇ、どう？",
 		"\x82\xCB\x82\xA5\x81\x41\x82\xC7\x82\xA4\x81H",
@@ -754,6 +808,7 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		// "どうしたの！"
 		"\x82\xC7\x82\xA4\x82\xB5\x82\xBD\x82\xCC\x81I"
 	},
+	// Russian
 	{
 		// "Эй, испытуемым помогать нельзя!",
 		"\xDD\xE9, \xE8\xF1\xEF\xFB\xF2\xF3\xE5\xEC\xFB\xEC \xEF\xEE\xEC\xEE\xE3\xE0\xF2\xFC \xED\xE5\xEB\xFC\xE7\xFF!",
@@ -762,6 +817,7 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		// "Да хватит вам, это не по правилам!"
 		"\xC4\xE0 \xF5\xE2\xE0\xF2\xE8\xF2 \xE2\xE0\xEC, \xFD\xF2\xEE \xED\xE5 \xEF\xEE \xEF\xF0\xE0\xE2\xE8\xEB\xE0\xEC!"
 	},
+	// Hebrew
 	{
 		"\xE4\xE9\xE9, \xE0\xFA\xE4 \xEC\xE0 \xE0\xEE\xE5\xF8 \xEC\xF1\xE9\xE9\xF2 \xEC\xEE\xE5\xF2\xEE\xE3\xE9\xED!",
 		"\xE7\xE1\xF8'\xE4! \xE6\xE4 \xE0\xEE\xE5\xF8 \xEC\xE4\xE9\xE5\xFA \xEE\xE1\xE7\xEF!",
@@ -770,6 +826,7 @@ const char *sakkaStr[][NUM_SAKKA] = {
 };
 
 const char *whineStr[][NUM_WHINES] = {
+	// English
 	{
 		"Aww, c'mon Sakka!",
 		"One hint won't hurt, will it?",
@@ -777,6 +834,7 @@ const char *whineStr[][NUM_WHINES] = {
 		"I think that clipboard has gone to your head, Sakka!",
 		"Well, I don't recall any specific rule against hinting."
 	},
+	// German
 	{
 		"Och, sei nicht so, Sakka!"
 		"EIN Tip wird schon nicht schaden, oder?",
@@ -784,6 +842,7 @@ const char *whineStr[][NUM_WHINES] = {
 		"Ich glaube, Du hast ein Brett vor dem Kopf, Sakka!",
 		"Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
 	},
+	// Italian
 	{
 		"Ooo, suvvia Sakka!",
 		"Un indizio non guaster\205, no?",
@@ -791,6 +850,15 @@ const char *whineStr[][NUM_WHINES] = {
 		"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
 		"Beh, non ricordo regole specifiche contro i suggerimenti."
 	},
+	// Spanish
+	{
+		"",
+		"",
+		"",
+		"",
+		""
+	},
+	// French
 	{
 		"Rohh, allez Sakka!",
 		"Un indice ne peut pas faire de mal.",
@@ -798,6 +866,7 @@ const char *whineStr[][NUM_WHINES] = {
 		"Je crois que ton carnet te monte \205 la t\210te, Sakka!",
 		"Bon, je ne me souviens d'aucune r\212gle concernant les indices."
 	},
+	// Japanese
 	{
 		// "アゥ、\nちょっと、サッカ！",
 		"\x83\x41\x83\x44\x81\x41\n\x82\xBF\x82\xE5\x82\xC1\x82\xC6\x81\x41\x83T\x83\x62\x83J\x81I",
@@ -810,6 +879,7 @@ const char *whineStr[][NUM_WHINES] = {
 		// "ああ、ヒントに対抗できる\nルールが思い出せない。"
 		"\x82\xA0\x82\xA0\x81\x41\x83q\x83\x93\x83g\x82\xC9\x91\xCE\x8DR\x82\xC5\x82\xAB\x82\xE9\n\x83\x8B\x81[\x83\x8B\x82\xAA\x8Ev\x82\xA2\x8Fo\x82\xB9\x82\xC8\x82\xA2\x81\x42"
 	},
+	// Russian
 	{
 		// "Ой, Сакка, да брось!",
 		"\xCE\xE9, \xD1\xE0\xEA\xEA\xE0, \xE4\xE0 \xE1\xF0\xEE\xF1\xFC!",
@@ -822,6 +892,7 @@ const char *whineStr[][NUM_WHINES] = {
 		// "Ну, я не помню ни одного правила, явно запрещающего подсказки."
 		"\xCD\xF3, \xFF \xED\xE5 \xEF\xEE\xEC\xED\xFE \xED\xE8 \xEE\xE4\xED\xEE\xE3\xEE \xEF\xF0\xE0\xE2\xE8\xEB\xE0, \xFF\xE2\xED\xEE \xE7\xE0\xEF\xF0\xE5\xF9\xE0\xFE\xF9\xE5\xE3\xEE \xEF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xE8."
 	},
+	// Hebrew
 	{
 		"\xF0\xE5, \xE1\xE7\xE9\xE9\xE0\xFA \xF1\xE0\xF7\xE4!",
 		"\xF8\xEE\xE6 \xE0\xE7\xE3 \xEC\xE0 \xE9\xEB\xE5\xEC \xEC\xE4\xE6\xE9\xF7, \xF0\xEB\xE5\xEF?",
@@ -832,30 +903,42 @@ const char *whineStr[][NUM_WHINES] = {
 };
 
 const char *optionsStr[][4] = {
+	// English
 	{
 		"\"I'll do this puzzle later.\"",
 		"\"Yes, I'd like a hint please.\"",
 		"\"No, thank you, I'd like to try and solve it myself.\"",
 		"I think the %s is in the wrong place."
 	},
+	// German
 	{
 		"\"Ich l\224se das Puzzle sp\204ter.\"",
 		"\"Ja, ich m\224chte einen Tip, bitte.\"",
 		"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
 		"Pssst... %s... falsche Stelle..."
 	},
+	// Italian
 	{
 		"\"Far\225 questo puzzle pi\227 tardi.\"",
 		"\"Si, grazie. Ne avrei bisogno.\"",
 		"\"No, grazie, voglio provare a risolverlo da solo.\"",
 		"Penso che la tessera %s sia nel posto sbagliato."
 	},
+	// Spanish
+	{
+		"",
+		"",
+		"",
+		""
+	},
+	// French
 	{
 		"\"Je r\202soudrai cette \202nigme plus tard.\"",
 		"\"Oui, j'aimerais un indice s'il vous plait.\"",
 		"\"Non merci, je voudrais r\202soudre cela par moi m\210me.\"",
 		"Je crois que t'as mal plac\202 l'%s."
 	},
+	// Japanese
 	{
 		// "「後でやろうかな。」",
 		"\x81u\x8C\xE3\x82\xC5\x82\xE2\x82\xEB\x82\xA4\x82\xA9\x82\xC8\x81\x42\x81v",
@@ -866,6 +949,7 @@ const char *optionsStr[][4] = {
 		// "%sの位置が違うんじゃないかな。"
 		"%s\x82\xCC\x88\xCA\x92u\x82\xAA\x88\xE1\x82\xA4\x82\xF1\x82\xB6\x82\xE1\x82\xC8\x82\xA2\x82\xA9\x82\xC8\x81\x42"
 	},
+	// Russian
 	{
 		// "\"Я решу эту головоломку в другой раз.\"",
 		"\"\xDF \xF0\xE5\xF8\xF3 \xFD\xF2\xF3 \xE3\xEE\xEB\xEE\xE2\xEE\xEB\xEE\xEC\xEA\xF3 \xE2 \xE4\xF0\xF3\xE3\xEE\xE9 \xF0\xE0\xE7.\"",
@@ -876,6 +960,7 @@ const char *optionsStr[][4] = {
 		// "Мне кажется, %s не на своем месте."
 		"\xCC\xED\xE5 \xEA\xE0\xE6\xE5\xF2\xF1\xFF, %s \xED\xE5 \xED\xE0 \xF1\xE2\xEE\xE5\xEC \xEC\xE5\xF1\xF2\xE5."
 	},
+	// Hebrew
 	{
 		"\"\xE0\xF4\xFA\xE5\xF8 \xE0\xFA \xE4\xE7\xE9\xE3\xE4 \xE4\xE6\xE5 \xE0\xE7\xF8 \xEB\xEA.\"",
 		"\"\xEB\xEF, \xE0\xF9\xEE\xE7 \xEC\xF8\xEE\xE6 \xE1\xE1\xF7\xF9\xE4.\"",
@@ -950,6 +1035,28 @@ const IntroDialogue introDialogueCave1[][4] = {
 		"immaginazione."
 	} },
 	// -----------------------------------------------------
+	{ { // Spanish
+		0,		// cave voice 0
+		""
+		""
+	},
+	{
+		1,		// cave voice 1
+		""
+		""
+	},
+	{
+		2,		// cave voice 2
+		""
+		""
+	},
+	{
+		3,		// cave voice 3
+		""
+		""
+		""
+	} },
+	// -----------------------------------------------------
 	{ { // French fan translation
 		0,		// cave voice 0
 		"Nous voyons le ciel, nous voyons les terres, "
@@ -1000,7 +1107,7 @@ const IntroDialogue introDialogueCave1[][4] = {
 		"\x89\xE4\x81X\x82\xCC\x91z\x91\x9C\x82\xF0\x89z\x82\xA6\x82\xBD\x91\xBD\x82\xAD\x82\xCC\x94\xE9\x96\xA7\x82\xF0\x92m\x82\xC1\x82\xC4\x82\xA2\x82\xBD\x82\xCC\x82\xC5\x82\xB7\x81\x42"
 	} },
 	// -----------------------------------------------------
-	{ {// Russian fan translation
+	{ {	// Russian fan translation
 		0,		// cave voice 0
 		// "Мы видим небо, видим землю, видим воду "
 		"\xCC\xFB \xE2\xE8\xE4\xE8\xEC \xED\xE5\xE1\xEE, \xE2\xE8\xE4\xE8\xEC \xE7\xE5\xEC\xEB\xFE, \xE2\xE8\xE4\xE8\xEC \xE2\xEE\xE4\xF3 "
@@ -1098,7 +1205,24 @@ const IntroDialogue introDialogueCave2[][3] = {
 		6,		// cave voice 6
 		"Siamo i loro figli."
 	} },
-	{ { // Fench fan translation
+	// -----------------------------------------------------
+	{ { // Spanish
+		4,		// cave voice 4
+		""
+		""
+
+	},
+	{
+		5,		// cave voice 5
+		""
+
+	},
+	{
+		6,		// cave voice 6
+		""
+	} },
+	// -----------------------------------------------------
+	{ { // French fan translation
 		4,		// cave voice 4
 		"Les humains connaissaient aussi le secret de "
 		"la Vie, et l'utilis\212rent pour nous offrir "
@@ -1205,7 +1329,6 @@ const IntroDialogue introDialogueCave3[][3] = {
 	{ { // Italian fan translation
 		7,		// cave voice 7
 		"Ci insegnarono come usare le mani e come parlare. "
-
 	},
 	{
 		8,		// cave voice 8
@@ -1218,6 +1341,23 @@ const IntroDialogue introDialogueCave3[][3] = {
 		"sicuramente svelato il Segreto della Felicit\205."
 
 	} },
+	// -----------------------------------------------------
+	{ { // Spanish
+		7,		// cave voice 7
+		""
+	},
+	{
+		8,		// cave voice 8
+		""
+		""
+	},
+	{
+		9,		// cave voice 9
+		""
+		""
+
+	} },
+	// -----------------------------------------------------
 	{ { // French fan translation
 		7,		// cave voice 7
 		"Ils nous apprirent \205 utiliser nos mains, et \205 "
@@ -1253,7 +1393,7 @@ const IntroDialogue introDialogueCave3[][3] = {
 		// "幸福の秘密も教えてくれていたことでしょう。"
 		"\x8DK\x95\x9F\x82\xCC\x94\xE9\x96\xA7\x82\xE0\x8B\xB3\x82\xA6\x82\xC4\x82\xAD\x82\xEA\x82\xC4\x82\xA2\x82\xBD\x82\xB1\x82\xC6\x82\xC5\x82\xB5\x82\xE5\x82\xA4\x81\x42"
 	} },
-	{ {// Russian fan translation
+	{ {	// Russian fan translation
 		7,		// cave voice 7
 		// "Они научили нас пользоваться "
 		"\xCE\xED\xE8 \xED\xE0\xF3\xF7\xE8\xEB\xE8 \xED\xE0\xF1 \xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC\xF1\xFF "
@@ -1350,6 +1490,28 @@ const IntroDialogue introDialogueCave4[][4] = {
 		"E un giorno, condivideremo anche noi lo stesso "
 		"destino?"
 	} },
+	// -----------------------------------------------------
+	{ { // Spanish
+		10,		// cave voice 10
+		""
+		""
+
+	},
+	{
+		11,		// cave voice 11
+		""
+		""
+	},
+	{
+		12,		// cave voice 12
+		""
+	},
+	{
+		13,		// cave voice 13
+		""
+		""
+	} },
+	// -----------------------------------------------------
 	{ { // French fan translation
 		10,		// cave voice 10
 		"Aujourd'hui nous voyons le ciel, les terres, et "
@@ -1399,7 +1561,7 @@ const IntroDialogue introDialogueCave4[][4] = {
 		// "ある日同じ運命に導かれるのだろうか？"
 		"\x82\xA0\x82\xE9\x93\xFA\x93\xAF\x82\xB6\x89^\x96\xBD\x82\xC9\x93\xB1\x82\xA9\x82\xEA\x82\xE9\x82\xCC\x82\xBE\x82\xEB\x82\xA4\x82\xA9\x81H"
 	} },
-	{ {// Russian fan translation
+	{ {	// Russian fan translation
 		10,		// cave voice 10
 		// "Теперь мы видим небо, землю "
 		"\xD2\xE5\xEF\xE5\xF0\xFC \xEC\xFB \xE2\xE8\xE4\xE8\xEC \xED\xE5\xE1\xEE, \xE7\xE5\xEC\xEB\xFE "

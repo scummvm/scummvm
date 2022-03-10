@@ -470,36 +470,32 @@ const char *SagaEngine::getObjectName(uint16 objectId) const {
 	return NULL;
 }
 
+int SagaEngine::getLanguageIndex() {
+	switch (getLanguage()) {
+	case Common::EN_ANY:
+		return 0;
+	case Common::DE_DEU:
+		return 1;
+	case Common::IT_ITA:
+		return 2;
+	case Common::ES_ESP:
+		return 3;
+	case Common::FR_FRA:
+		return 4;
+	case Common::JA_JPN:
+		return 5;
+	case Common::RU_RUS:
+		return 6;
+	case Common::HE_ISR:
+		return 7;
+	default:
+		return 0;
+	}
+}
+
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
-	int lang = 0;
-
-	switch (getLanguage()) {
-		case Common::DE_DEU:
-			lang = 1;
-			break;
-		case Common::IT_ITA:
-			lang = 2;
-			break;
-		case Common::ES_ESP:
-			lang = 3;
-			break;
-		case Common::RU_RUS:
-			lang = 4;
-			break;
-		case Common::FR_FRA:
-			lang = 5;
-			break;
-		case Common::JA_JPN:
-			lang = 6;
-			break;
-		case Common::HE_ISR:
-			lang = 7;
-			break;
-		default:
-			lang = 0;
-			break;
-	}
+	int lang = getLanguageIndex();
 
 	if (getLanguage() == Common::RU_RUS && textStringId == 43) {
 		if (getGameId() == GID_ITE)

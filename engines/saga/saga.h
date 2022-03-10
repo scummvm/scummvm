@@ -557,6 +557,7 @@ public:
 	bool canSaveGameStateCurrently() override;
 	const GameDisplayInfo &getDisplayInfo();
 
+	int getLanguageIndex();
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
 

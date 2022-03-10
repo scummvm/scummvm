@@ -395,22 +395,7 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 	Event event;
 	EventColumns *eventColumns = nullptr;
 	const IntroDialogue *dialogue;
-
-	int lang = 0;
-
-	if (_vm->getLanguage() == Common::DE_DEU)
-		lang = 1;
-	else if (_vm->getLanguage() == Common::IT_ITA)
-		lang = 2;
-	else if (_vm->getLanguage() == Common::FR_FRA)
-		lang = 3;
-	else if (_vm->getLanguage() == Common::JA_JPN)
-		lang = 4;
-	else if (_vm->getLanguage() == Common::RU_RUS)
-		lang = 5;
-	else if (_vm->getLanguage() == Common::HE_ISR)
-		lang = 6;
-
+	int lang = _vm->getLanguageIndex();
 	int n_dialogues = 0;
 
 	switch (caveScene) {
