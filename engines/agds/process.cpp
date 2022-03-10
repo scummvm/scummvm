@@ -36,7 +36,7 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_timer(0),
 	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
 	_phaseVarControlled(false), _animationSpeed(100),
-	_samplePeriodic(false), _sampleAmbient(false),
+	_samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
 	_filmSubtitlesResource(-1)
 	{
 	updateWithCurrentMousePosition();

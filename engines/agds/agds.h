@@ -235,14 +235,14 @@ public:
 	void tickInventory();
 	void tickCharacter();
 
-	int playSound(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool playing = true) {
-		return _soundManager.play(process, resource, filename, phaseVar, playing);
+	void playSoundSync(int syncSoundId) {
+		_syncSoundId = syncSoundId;
 	}
 
-	void playSoundSync(const Common::String &filename) {
-		_syncSoundId = playSound(Common::String(), Common::String(), filename, Common::String());
+	void setAmbientSoundId(int id) {
+		stopAmbientSound();
+		_ambientSoundId = id;
 	}
-	void setAmbientSoundId(int id) { stopAmbientSound(); _ambientSoundId = id; }
 
 	void tell(Process &process, const Common::String &region, Common::String text, Common::String sound, bool npc);
 

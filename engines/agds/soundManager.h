@@ -42,12 +42,20 @@ namespace AGDS {
 		Common::String		filename;
 		Common::String		phaseVar;
 		Audio::SoundHandle	handle;
+		int 				volume;
+		int					pan;
 		int					group;
-		int					leftVolume;
-		int					rightVolume;
 		bool				paused;
-		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String &file, const Common::String & var, int g = 0):
-			id(id_), process(p), resource(res), filename(file), phaseVar(var), handle(), group(g), leftVolume(100), rightVolume(100), paused(false) {
+		Sound(int id_, const Common::String &process_, const Common::String & res, const Common::String &filename_, const Common::String & var, int volume_, int pan_, int group_ = 0):
+			id(id_), process(process_), resource(res), filename(filename_), phaseVar(var), handle(), volume(volume_), pan(pan_), group(group_), paused(false) {
+		}
+
+		int leftVolume() const {
+			return pan < 0? volume: volume * (100 - pan) / 100;
+		}
+
+		int rightVolume() const {
+			return pan < 0? volume * (100 + pan) / 100: volume;
 		}
 	};
 
@@ -61,7 +69,7 @@ namespace AGDS {
 	public:
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _nextId(1), _engine(engine), _mixer(mixer) { }
 		void tick();
-		int play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying = true, int id = -1);
+		int play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id = -1);
 		bool playing(int id) const;
 		void stopAll();
 		const Sound *find(int id) const;

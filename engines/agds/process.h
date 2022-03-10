@@ -67,6 +67,7 @@ private:
 	int				_animationSpeed;
 	bool			_samplePeriodic;
 	bool			_sampleAmbient;
+	int32			_sampleVolume;
 	Common::Point	_mousePosition;
 	int				_filmSubtitlesResource;
 

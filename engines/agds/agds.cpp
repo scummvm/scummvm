@@ -743,7 +743,7 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video), subtitles);
 	_soundManager.stopAll();
 	_filmStarted = _system->getMillis();
-	_syncSoundId = _soundManager.play(process.getName(), Common::String(), audio, Common::String());
+	_syncSoundId = _soundManager.play(process.getName(), Common::String(), audio, Common::String(), true, 100, 0);
 }
 
 void AGDSEngine::skipFilm() {
@@ -934,7 +934,8 @@ void AGDSEngine::tell(Process &process, const Common::String &regionName, Common
 	_tellTextTimer = _dialog.textDelay(text);
 	_textLayout.layout(*this, process, text, pos, font_id, npc);
 	if (!sound.empty()) {
-		playSoundSync(sound);
+		int id = _soundManager.play(Common::String(), Common::String(), sound, Common::String(), true, 100, 0);
+		playSoundSync(id);
 	}
 }
 
@@ -1160,7 +1161,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		uint type = agds_a->readUint32LE();
 		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
 		debug("phase var for sample -> %d", getGlobal(phaseVar));
-		_ambientSoundId = playSound(Common::String(), resource, filename, phaseVar); //fixme: double check
+		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true, volume, 0); //fixme: double check
 		debug("ambient sound id = %d", _ambientSoundId);
 	}
 	{
