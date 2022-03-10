@@ -151,6 +151,17 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_conversePanel.buttons = _vm->getDisplayInfo().conversePanelButtons;
 	_conversePanel.buttonsCount = _vm->getDisplayInfo().conversePanelButtonsCount;
 
+	if (_vm->getLanguage() == Common::HE_ISR) {
+		int converseUpButtonIndex = _vm->getDisplayInfo().converseUpButtonIndex;
+		int converseDownButtonIndex = _vm->getDisplayInfo().converseDownButtonIndex;
+		for (i = 0; i < _conversePanel.buttonsCount; i++) {
+			if (i == converseUpButtonIndex || i == converseDownButtonIndex)
+				_conversePanel.buttons[i].xOffset = 54;
+			else
+				_conversePanel.buttons[i].xOffset = 72;
+		}
+	}
+
 	_vm->_resource->loadResource(_interfaceContext, _vm->getResourceDescription()->conversePanelResourceId, resourceData);
 	_vm->decodeBGImage(resourceData, _conversePanel.image, &_conversePanel.imageWidth, &_conversePanel.imageHeight);
 
@@ -2593,13 +2604,16 @@ void Interface::converseDisplayTextLines() {
 		}
 
 		_conversePanel.calcPanelButtonRect(&_conversePanel.buttons[i], rect);
-		rect.left += 8;
+		if (_vm->getLanguage() != Common::HE_ISR)
+			rect.left += 8;
+		else
+			rect.right -= 6;
 		_vm->_gfx->drawRect(rect, backgnd);
 
 		str = &_converseText[relPos].text.front();
 
 		if (_converseText[relPos].textNum == 0) { // first entry
-			textPoint.x = rect.left - 6;
+			textPoint.x = _vm->getLanguage() != Common::HE_ISR ? rect.left - 6 : rect.right;
 			textPoint.y = rect.top;
 
 			if (_vm->getGameId() == GID_ITE)
@@ -2607,7 +2621,10 @@ void Interface::converseDisplayTextLines() {
 			else
 				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
-		textPoint.x = rect.left + 1;
+		if (_vm->getLanguage() != Common::HE_ISR)
+			textPoint.x = rect.left + 1;
+		else
+			textPoint.x = rect.right - _vm->_font->getStringWidth(kKnownFontSmall, str, strlen(str), kFontNormal) - 1;
 		textPoint.y = rect.top;
 		if (_vm->getGameId() == GID_ITE)
 			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, _vm->getPlatform() == Common::kPlatformPC98 ?  kFontNormal : kFontShadow);
