@@ -351,7 +351,7 @@ const char *Lingo::field2str(int id) {
 }
 
 #define getTheEntitySTUB(entity) \
-	warning("Lingo::getTheEntity(): Unprocessed getting entity %s", entity2str(entity));
+	warning("BUILDBOT: Lingo::getTheEntity(): Unprocessed getting entity %s", entity2str(entity));
 
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
@@ -905,10 +905,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 }
 
 #define setTheEntitySTUB(entity) \
-	warning("Lingo::setTheEntity(): Unprocessed setting entity %s", entity2str(entity));
+	warning("BUILDBOT: Lingo::setTheEntity(): Unprocessed setting entity %s", entity2str(entity));
 
 #define setTheEntityReadOnly(entity) \
-	warning("Lingo::setTheEntity: Attempt to set read-only entity %s", entity2str(entity));
+	warning("BUILDBOT: Lingo::setTheEntity: Attempt to set read-only entity %s", entity2str(entity));
 
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
