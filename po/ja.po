@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-09 21:24+0000\n"
+"POT-Creation-Date: 2022-03-10 14:05+0000\n"
 "PO-Revision-Date: 2022-02-23 20:45+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4345,7 +4345,7 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1217 engines/saga/detection_tables.h:1276
-#: engines/sci/detection_tables.h:5040 engines/sci/detection_tables.h:5048
+#: engines/sci/detection_tables.h:5052 engines/sci/detection_tables.h:5060
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
 #: engines/zvision/detection_tables.h:190
@@ -6222,7 +6222,7 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr "リソースのロード中にエラーが発生しました。"
 
-#: engines/sci/detection_tables.h:4369
+#: engines/sci/detection_tables.h:4381
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "不完全なゲームが検出されました。全てのCDからデータをコピーする必要がありま"
