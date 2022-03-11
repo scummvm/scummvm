@@ -361,7 +361,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
 	bool result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
-	if (!result){
+	if (!result) {
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
 	}
