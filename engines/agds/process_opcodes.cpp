@@ -1546,12 +1546,14 @@ void Process::leaveCharacter() {
 	debug("leaveCharacter %s %s", arg1.c_str(), arg2.c_str());
 	RegionPtr region = _engine->loadRegion(arg2);
 	debug("region: %s", region->toString().c_str());
+	_engine->enableSystemUser(true); //called from update_music_screen_sound_curtain
 }
 void Process::leaveCharacterEx() {
 	int arg3 = pop();
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("leaveCharacterEx %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	_engine->enableSystemUser(true); //called from update_music_screen_sound_curtain
 }
 
 void Process::setCharacter() {
@@ -1712,6 +1714,7 @@ void Process::stub235() {
 	_engine->getSystemVariable("screen_curtain")->setInteger(fadeScreen);
 	_engine->getSystemVariable("sound_curtain")->setInteger(fadeSound);
 	_engine->getSystemVariable("music_curtain")->setInteger(fadeMusic);
+	_engine->enableSystemUser(true);
 }
 
 void Process::setCharacterNotifyVars() {
