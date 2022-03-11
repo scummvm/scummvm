@@ -26,6 +26,7 @@
 #include "director/castmember.h"
 #include "director/cursor.h"
 #include "director/channel.h"
+#include "director/frame.h"
 #include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"
@@ -463,7 +464,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.s = score->getFrameLabel(score->getCurrentFrame());
 		break;
 	case kTheFrameScript:
-		getTheEntitySTUB(kTheFrameScript);
+		d.type = INT;
+		d.u.i = score->_frames[score->getCurrentFrame()]->_actionId.member;
 		break;
 	case kTheFramePalette:
 		d.type = INT;
@@ -971,7 +973,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntityReadOnly(kTheFrameLabel);
 		break;
 	case kTheFrameScript:
-		setTheEntitySTUB(kTheFrameScript);
+		setTheEntityReadOnly(kTheFrameScript);
 		break;
 	case kTheFramePalette:
 		setTheEntityReadOnly(kTheFramePalette);
