@@ -383,9 +383,13 @@ void EoBCoreEngine::loadBlockProperties(const char *mazFile) {
 }
 
 const uint8 *EoBCoreEngine::getBlockFileData(int) {
-	Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
-	_screen->loadFileDataToPage(s, 15, s->size());
-	delete s;
+	if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformPC98) {
+		_screen->loadBitmap(_curBlockFile.c_str(), 15, 15, 0);
+	} else {
+		Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
+		_screen->loadFileDataToPage(s, 15, s->size());
+		delete s;
+	}
 	return _screen->getCPagePtr(15);
 }
 

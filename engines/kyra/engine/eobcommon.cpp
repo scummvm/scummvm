@@ -585,8 +585,8 @@ void EoBCoreEngine::loadFonts() {
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
-	} else if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98) {
-		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, _flags.gameID == GI_EOB1 ? "FONT12.FNT" : "FONT1206.FNT");
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
