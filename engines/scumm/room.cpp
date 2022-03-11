@@ -216,11 +216,24 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	// Hint the backend about the virtual keyboard during copy protection screens
 	if (_game.id == GID_MONKEY2) {
-		if (_system->getFeatureState(OSystem::kFeatureVirtualKeyboard)) {
-			if (room != 108)
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		} else if (room == 108)
-			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		bool hasCopyProtectionScreen = true;
+
+		// The Macintosh version skips the copy protection screen with
+		// a boot param, unless you ask it not to.
+		if (_game.platform == Common::kPlatformMacintosh && _bootParam == -7873)
+			hasCopyProtectionScreen = false;
+
+		// The unofficial talkie never shows any copy protection screen.
+		if (strcmp(_game.variant, "SE Talkie") == 0)
+			hasCopyProtectionScreen = false;
+
+		if (hasCopyProtectionScreen) {
+			if (_system->getFeatureState(OSystem::kFeatureVirtualKeyboard)) {
+				if (room != 108)
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			} else if (room == 108)
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		}
 	} else if (_game.id == GID_MONKEY_EGA) {	// this is my estimation that the room code is 90 (untested)
 		if (_system->getFeatureState(OSystem::kFeatureVirtualKeyboard)) {
 			if (room != 90)
