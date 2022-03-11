@@ -166,13 +166,13 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_actorList.u.farr = new FArray;
 
 	_itemDelimiter = ',';
-
 	_exitLock = false;
 
 	_searchPath.type = ARRAY;
 	_searchPath.u.farr = new FArray;
 
 	_traceLoad = 0;
+	_updateMovieEnabled = false;
 	
 	// events
 	_passEvent = false;

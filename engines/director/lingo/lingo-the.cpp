@@ -890,7 +890,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheTraceLogFile);
 		break;
 	case kTheUpdateMovieEnabled:
-		getTheEntitySTUB(kTheUpdateMovieEnabled);
+		d.type = INT;
+		d.u.i = g_lingo->_updateMovieEnabled;
 		break;
 	case kTheWindow:
 		g_lingo->push(id);
@@ -1122,7 +1123,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTraceLogFile);
 		break;
 	case kTheUpdateMovieEnabled:
-		setTheEntitySTUB(kTheUpdateMovieEnabled);
+		g_lingo->_updateMovieEnabled = bool(d.asInt());
 		break;
 	case kTheWindow:
 		g_lingo->push(id);

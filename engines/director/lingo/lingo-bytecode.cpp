@@ -603,6 +603,8 @@ void LC::cb_theassign2() {
 		g_lingo->_actorList = value;
 	} else if (name == "searchPath") {
 		g_lingo->_searchPath = value;
+	} else if (name == "updateMovieEnabled") {
+		g_lingo->_updateMovieEnabled = bool(value.asInt());
 	} else {
 		warning("BUILDBOT: cb_theassign2 unkown name: %s", name.c_str());
 	}
