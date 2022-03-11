@@ -217,6 +217,11 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_objMissesCount[0] = 0;
 	_objMissesCount[1] = 0;
 
+	_objKillsRequired[0] = arc->objKillsRequired[0];
+	_objKillsRequired[1] = arc->objKillsRequired[1];
+	_objMissesAllowed[0] = arc->objMissesAllowed[0];
+	_objMissesAllowed[1] = arc->objMissesAllowed[1];
+
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
 
 	Common::Event event;
@@ -364,8 +369,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (segments[_segmentIdx].end || _skipLevel) {
 			skipVideo(background);
 			// Objectives
-			if ((arc->objKillsRequired[_objIdx] > 0 || arc->objMissesAllowed[_objIdx] > 0) && !_skipLevel) {
-				if (_objKillsCount[_objIdx] < arc->objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > arc->objMissesAllowed[_objIdx]) {
+			if ((_objKillsRequired[_objIdx] > 0 || _objMissesAllowed[_objIdx] > 0) && !_skipLevel) {
+				if (_objKillsCount[_objIdx] < _objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > _objMissesAllowed[_objIdx]) {
 					if (!arc->defeatMissBossVideo.empty()) {
 						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
 						runIntro(video);

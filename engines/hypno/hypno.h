@@ -281,6 +281,8 @@ public:
 	uint32 _objIdx;
 	uint32 _objKillsCount[2];
 	uint32 _objMissesCount[2];
+	uint32 _objKillsRequired[2];
+	uint32 _objMissesAllowed[2];
 
 	// Fonts
 	virtual void loadFonts();

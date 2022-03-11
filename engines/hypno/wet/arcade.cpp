@@ -465,7 +465,7 @@ void WetEngine::drawHealth() {
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;
 	int mo = _objKillsCount[_objIdx];
-
+	int mm = _objKillsRequired[_objIdx];
 	if (_playerFrameIdx < _playerFrameSep) {
 		const chapterEntry *entry = _chapterTable[_levelId];
 		//uint32 id = _levelId;
@@ -473,7 +473,7 @@ void WetEngine::drawHealth() {
 		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
 		// Objectives are always in the zero in the demo
 		if (entry->objectivesPos[0] > 0 && entry->objectivesPos[1] > 0)
-			drawString("block05.fgx", Common::String::format("M.O.  %d/X", mo), entry->objectivesPos[0], entry->objectivesPos[1], 60, c);
+			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), entry->objectivesPos[0], entry->objectivesPos[1], 60, c);
 	}
 }
 
