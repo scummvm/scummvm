@@ -21,7 +21,6 @@
 
 #include "common/bitarray.h"
 #include "common/events.h"
-#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include "hypno/hypno.h"
@@ -451,8 +450,7 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 }
 
 void WetEngine::saveGame(int levelId) {
-	Common::String target = ConfMan.get("gameid") + "-" + ConfMan.get("language");
-	SaveStateList saves = getMetaEngine()->listSaves(target.c_str());
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 
 	// Find the correct level index to before saving
 	for (uint32 i = 0; i < _ids.size(); i++) {
@@ -474,8 +472,7 @@ void WetEngine::saveGame(int levelId) {
 }
 
 bool WetEngine::loadGame(const Common::String &name) {
-	Common::String target = ConfMan.get("gameid") + "-" + ConfMan.get("language");
-	SaveStateList saves = getMetaEngine()->listSaves(target.c_str());
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 	uint32 slot = 0;
 	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
 		if (save->getDescription() == _name)
