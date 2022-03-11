@@ -293,7 +293,6 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			// as well as sending it to the output device.
 			if (_autoLoop) {
 				jumpToTick(0);
-				parseNextEvent(_nextEvent);
 			} else {
 				stopPlaying();
 				if (fireEvents)
