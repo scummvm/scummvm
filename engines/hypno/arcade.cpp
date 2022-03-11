@@ -401,7 +401,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			ShootInfo si = _shootSequence.front();
 			int idx = (int)segments[_segmentIdx].size * _segmentRepetition \
 					+ background.decoder->getCurFrame() \
-					- (int)segments[_segmentIdx].start;
+					- (int)segments[_segmentIdx].start + 3;
 			//debug("%d %d", si.timestamp, idx);
 			if ((int)si.timestamp <= idx) {
 				_shootSequence.pop_front();
