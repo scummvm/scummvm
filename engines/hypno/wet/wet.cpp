@@ -451,16 +451,9 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 }
 
 void WetEngine::saveGame(int levelId) {
-	Common::SaveFileManager *saveManager = getSaveFileManager();
-	Common::String namedPattern = Common::String::format("%s-wet.*", _name.c_str());
-	Common::String allPattern = "*-wet.*";
-	Common::StringArray namedSaves = saveManager->listSavefiles(namedPattern);
-	Common::StringArray allSaves = saveManager->listSavefiles(allPattern);
+	Common::String target = ConfMan.get("gameid") + "-" + ConfMan.get("language");
+	SaveStateList saves = getMetaEngine()->listSaves(target.c_str());
 
-	if (namedSaves.size() == 0) {
-		namedSaves.push_back(Common::String::format("%s-wet.%03d", _name.c_str(), allSaves.size()));
-	} else if (namedSaves.size() > 1)
-		error("Found %d saves to write!", namedSaves.size());
 	// Find the correct level index to before saving
 	for (uint32 i = 0; i < _ids.size(); i++) {
 		if (levelId == _ids[i]) {
@@ -468,33 +461,39 @@ void WetEngine::saveGame(int levelId) {
 			break;
 		}
 	}
-	debugC(1, kHypnoDebugMedia, "Saving in %s", namedSaves[0].c_str());
-	Common::OutSaveFile *outf = saveManager->openForSaving(namedSaves[0]);
-	saveGameStream(outf, false);
-	outf->finalize();
-	delete outf;
+
+	uint32 slot = 0;
+	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
+		if (save->getDescription() == _name)
+			break;
+		slot++;
+	}
+
+	saveGameState(slot, _name, false);
 }
 
 bool WetEngine::loadGame(const Common::String &name) {
-	Common::SaveFileManager *saveManager = getSaveFileManager();
-	Common::StringArray saves = saveManager->listSavefiles("*-wet.*");
-
-	for (uint32 i = 0; i < saves.size(); i++) {
-		Common::String filename = Common::String::format("%s-wet.%03d", name.c_str(), i);
-		if (saves[i] == filename) {
-			debugC(1, kHypnoDebugMedia, "Loading %s", filename.c_str());
-			Common::InSaveFile *inf = saveManager->openForLoading(filename);
-			loadGameStream(inf);
-
-			if (_lastLevel == 0)
-				_nextLevel = Common::String::format("c%d", _ids[0]);
-			else
-				_nextLevel = "<level_menu>";
-			return true;
-		}
+	Common::String target = ConfMan.get("gameid") + "-" + ConfMan.get("language");
+	SaveStateList saves = getMetaEngine()->listSaves(target.c_str());
+	uint32 slot = 0;
+	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
+		if (save->getDescription() == _name)
+			break;
+		slot++;
 	}
-	debugC(1, kHypnoDebugMedia, "Failed to load %s", name.c_str());
-	return false;
+
+	if (slot == saves.size()) {
+		debugC(1, kHypnoDebugMedia, "Failed to load %s", name.c_str());
+		return false;
+	}
+
+	loadGameState(slot);
+	if (_lastLevel == 0)
+		_nextLevel = Common::String::format("c%d", _ids[0]);
+	else
+		_nextLevel = "<level_menu>";
+
+	return true;
 }
 
 Common::Error WetEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
