@@ -158,13 +158,13 @@ void EventsManager::delay(size_t time) {
 }
 
 void EventsManager::clearEvents() {
-	_kbInfo._scanCode = Common::KEYCODE_INVALID;
-	_kbInfo._keyCode = '\0';
-	_G(minfo)._button = 0;
-
 	processEvents();
 	_pendingEvents.clear();
 	_pendingKeyEvents.clear();
+
+	_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	_kbInfo._keyCode = '\0';
+	_G(minfo)._button = 0;
 }
 
 void EventsManager::update() {
