@@ -373,7 +373,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 	switch (entity) {
 	case kTheActorList:
-		getTheEntitySTUB(kTheActorList);
+		d = g_lingo->_actorList;
 		break;
 	case kTheBeepOn:
 		getTheEntitySTUB(kTheBeepOn);
@@ -921,7 +921,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 
 	switch (entity) {
 	case kTheActorList:
-		setTheEntitySTUB(kTheActorList);
+		g_lingo->_actorList = d;
 		break;
 	case kTheBeepOn:
 		setTheEntitySTUB(kTheBeepOn);

@@ -598,7 +598,10 @@ void LC::cb_theassign2() {
 	// only seen in louis catorze with searchPath
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
-	if (name == "searchPath") {
+
+	if (name == "actorList") {
+		g_lingo->_actorList = value;
+	} else if (name == "searchPath") {
 		g_lingo->_searchPath = value;
 	} else {
 		warning("BUILDBOT: cb_theassign2 unkown name: %s", name.c_str());

@@ -162,12 +162,16 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_localvars = nullptr;
 
 	//kTheEntities
+	_actorList.type = ARRAY;
+	_actorList.u.farr = new FArray;
+
 	_itemDelimiter = ',';
+
+	_exitLock = false;
 
 	_searchPath.type = ARRAY;
 	_searchPath.u.farr = new FArray;
 
-	_exitLock = false;
 	
 	// events
 	_passEvent = false;
@@ -1151,14 +1155,25 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 }
 
 void Lingo::executePerFrameHook(int frame, int subframe) {
-	if (_perFrameHook.type == OBJECT) {
-		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
-		if (method.type != VOIDSYM) {
-			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
-			push(_perFrameHook);
-			push(frame);
-			push(subframe);
-			LC::call(method, 3, false);
+	if (_vm->getVersion() < 400) {
+		if (_perFrameHook.type == OBJECT) {
+			Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
+			if (method.type != VOIDSYM) {
+				debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
+				push(_perFrameHook);
+				push(frame);
+				push(subframe);
+				LC::call(method, 3, false);
+				execute();
+			}
+		}
+	} else if (_actorList.u.farr->arr.size() > 0) {
+		for (uint i = 0; i < _actorList.u.farr->arr.size(); i++) {
+			Datum actor = _actorList.u.farr->arr[i];
+			Symbol method = actor.u.obj->getMethod("stepFrame");
+			if (method.nargs == 1)
+				push(actor);
+			LC::call(method, method.nargs, false);
 			execute();
 		}
 	}
