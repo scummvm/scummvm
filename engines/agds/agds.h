@@ -215,8 +215,13 @@ public:
 		_userEnabled = enabled;
 	}
 	void enableSystemUser(bool enabled) {
-		_systemUserEnabled = enabled;
+		if (enabled) {
+			if (_systemUserEnabled)
+				_userEnabled = true;
+		} else
+			_systemUserEnabled = enabled;
 	}
+
 	bool userEnabled() const {
 		return _userEnabled && _systemUserEnabled;
 	}
