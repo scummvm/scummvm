@@ -883,7 +883,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheTrace);
 		break;
 	case kTheTraceLoad:
-		getTheEntitySTUB(kTheTraceLoad);
+		d.type = INT;
+		d.u.i = g_lingo->_traceLoad;
 		break;
 	case kTheTraceLogFile:
 		getTheEntitySTUB(kTheTraceLogFile);
@@ -1115,7 +1116,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTrace);
 		break;
 	case kTheTraceLoad:
-		setTheEntitySTUB(kTheTraceLoad);
+		g_lingo->_traceLoad = d.asInt();
 		break;
 	case kTheTraceLogFile:
 		setTheEntitySTUB(kTheTraceLogFile);

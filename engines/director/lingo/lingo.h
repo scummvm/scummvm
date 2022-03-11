@@ -382,6 +382,7 @@ public:
 	Common::u32char_type_t _itemDelimiter;
 	bool _exitLock;
 	Datum _searchPath;
+	int _traceLoad; // internal Director verbosity level
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
