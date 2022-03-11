@@ -441,7 +441,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = (movie->_lastClickTime - movie->_lastClickTime2) <= 25 ? 1 : 0;
 		break;
 	case kTheExitLock:
-		getTheEntitySTUB(kTheExitLock);
+		d.type = INT;
+		d.u.i = g_lingo->_exitLock;
 		break;
 	case kTheField:
 		d = getTheField(id, field);
@@ -953,7 +954,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
 		break;
 	case kTheExitLock:
-		setTheEntitySTUB(kTheExitLock);
+		g_lingo->_exitLock = bool(d.asInt());
 		break;
 	case kTheFixStageSize:
 		setTheEntitySTUB(kTheFixStageSize);
