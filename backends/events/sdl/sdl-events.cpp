@@ -144,14 +144,8 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		// WORKAROUND:  Disable this change for AmigaOS as it's breaking numpad usage ("fighting") on that platform.
-		// This fixes bug #10558.
-		// The actual issue here is that the SCUMM engine uses ASCII codes instead of keycodes for input.
-		// See also the relevant FIXME in SCUMM's input.cpp.
-		#ifndef __amigaos4__
-			if ((mod & KMOD_NUM) == 0)
-				return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
-		#endif
+		if ((mod & KMOD_NUM) == 0)
+			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
@@ -635,7 +629,17 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = key;
-	event.kbd.ascii = mapKey(sdlKeycode, (SDL_Keymod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
+
+	SDL_Keymod mod = (SDL_Keymod)ev.key.keysym.mod;
+#if defined(__amigaos4__)
+	// On AmigaOS SDL always report numlock as off. However we get KEYCODE_KP# only when
+	// it is on, and get different keycodes (for example KEYCODE_PAGEDONW) when it is off.
+	if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+		event.kbd.flags |= Common::KBD_NUM;
+		mod = SDL_Keymod(mod | KMOD_NUM);
+	}
+#endif
+	event.kbd.ascii = mapKey(sdlKeycode, mod, obtainUnicode(ev.key.keysym));
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	event.kbdRepeat = ev.key.repeat;
@@ -648,18 +652,27 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
+	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+
 	SDL_Keycode sdlKeycode = obtainKeycode(ev.key.keysym);
-	SDL_Keymod mod = SDL_GetModState();
-
-	event.type = Common::EVENT_KEYUP;
-	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
-	event.kbd.ascii = mapKey(sdlKeycode, (SDL_Keymod)ev.key.keysym.mod, 0);
-
-	SDLModToOSystemKeyFlags(mod, event);
 
 	// Set the scroll lock sticky flag
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
+
+	event.type = Common::EVENT_KEYUP;
+	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
+
+	SDL_Keymod mod = (SDL_Keymod)ev.key.keysym.mod;
+#if defined(__amigaos4__)
+	// On AmigaOS SDL always report numlock as off. However we get KEYCODE_KP# only when
+	// it is on, and get different keycodes (for example KEYCODE_PAGEDONW) when it is off.
+	if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+		event.kbd.flags |= Common::KBD_NUM;
+		mod = SDL_Keymod(mod | KMOD_NUM);
+	}
+#endif
+	event.kbd.ascii = mapKey(sdlKeycode, mod, 0);
 
 	return true;
 }
