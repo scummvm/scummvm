@@ -218,8 +218,9 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 			_screen->updateScreen();
 
 		} else {
-			_screen->setFont(cf);
+			_screen->setFont(_invFont4);
 			gui_drawCharacterStatsPage();
+			_screen->setFont(cf);
 		}
 
 		_screen->_curPage = 0;
@@ -650,7 +651,7 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	int numTab = (_flags.gameID == GI_EOB1) ? 5 : 6;
 	_screen->copyRegion(64, 121, 64, 121, 112, 56, 0, 2, Screen::CR_NO_P_CHECK);
 
-	Screen::FontId of = (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98) ? _screen->setFont(Screen::FID_SJIS_SMALL_FNT) : _screen->_currentFont;
+	Screen::FontId of = _screen->setFont(_bookFont);
 
 	for (int i = 0; i < numTab; i++) {
 		int col1 = 0;
@@ -1512,9 +1513,10 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _numSlotsVisible(vm->gameFlags().platform == Common::kPlatformSegaCD ? 5 : 6) {
-	_menuStringsPrefsTemp = new char*[4]();
+GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _numSlotsVisible(vm->gameFlags().platform == Common::kPlatformSegaCD ? 5 : 6),
+	_menuFont(_vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : (_vm->_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT)) {
 
+	_menuStringsPrefsTemp = new char*[4]();
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
 		_saveSlotStringsTemp[i] = new char[52]();
@@ -2303,7 +2305,7 @@ void GUI_EoB::simpleMenu_flashSelection(const char *str, int x, int y, int color
 }
 
 void GUI_EoB::runCampMenu() {
-	Screen::FontId of = _screen->setFont(_vm->_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : _vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	Screen::FontId of = _screen->setFont(_menuFont);
 
 	Button *highlightButton = 0;
 	Button *prevHighlightButton = 0;
@@ -2633,7 +2635,7 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 
 bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 	int od = _screen->curDimIndex();
-	Screen::FontId of = _screen->setFont(_vm->_flags.lang == Common::Language::ZH_TWN ? Screen::FontId::FID_CHINESE_FNT : _vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	Screen::FontId of = _screen->setFont(_menuFont);
 	_screen->setScreenDim(dim);
 
 	drawTextBox(dim, id);
@@ -2702,7 +2704,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	Screen::FontId of = _screen->setFont(_vm->_flags.lang == Common::Language::ZH_TWN ? Screen::FontId::FID_CHINESE_FNT : _vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	Screen::FontId of = _screen->setFont(_menuFont);
 
 	drawTextBox(dim, id);
 	const ScreenDim *dm = _screen->getScreenDim(dim);

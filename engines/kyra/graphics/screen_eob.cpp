@@ -1708,12 +1708,16 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 		fnt = nullptr;
 	}
 
-	if (fontId == FID_SJIS_SMALL_FNT) {
+	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->game() == GI_EOB2) {
+		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
+		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, 256, fontId == FID_SJIS_SMALL_FNT);
+	} else if (fontId == FID_SJIS_SMALL_FNT) {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
-		else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+		else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
 			fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
 				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
+		}
 	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
 	} else if (_isSegaCD) {
@@ -1728,7 +1732,7 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 		return true;
 	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
-		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, 128);
 	}
 
 	assert(fnt);
@@ -1977,7 +1981,7 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _colorMap8bit(0), _colorMap16bit(0) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor, uint16 numGlyphMax, bool useOverlay) : _renderMode(mode), _shadowColor(shadowColor), _numGlyphMax(numGlyphMax), _useOverlay(useOverlay), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2045,11 +2049,11 @@ bool OldDOSFont::load(Common::SeekableReadStream &file) {
 	if (file.size() - 2 != READ_LE_UINT16(_data))
 		return false;
 
-	_width = _data[0x103];
-	_height = _data[0x102];
+	_width = _data[_numGlyphMax * 2 + 3];
+	_height = _data[_numGlyphMax * 2 + 2];
 	_numGlyphs = (READ_LE_UINT16(_data + 2) / 2) - 2;
 
-	_bitmapOffsets = (uint16 *)(_data + 2);
+	_bitmapOffsets = (uint16*)(_data + 2);
 
 	for (int i = 0; i < _numGlyphs; ++i)
 		_bitmapOffsets[i] = READ_LE_UINT16(&_bitmapOffsets[i]);

@@ -2086,7 +2086,7 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 
 int TransferPartyWiz::selectCharactersMenu() {
 	_screen->setCurPage(2);
-	_screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 	_screen->clearCurPage();
 
 	_vm->gui_drawBox(0, 0, 320, 163, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
@@ -2166,7 +2166,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 		_screen->updateScreen();
 
 		if (highlight == 6 || _vm->shouldQuit()) {
-			_screen->setFont(Screen::FID_8_FNT);
+			_screen->setFont(of);
 			return 0;
 		}
 
@@ -2184,7 +2184,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 		_screen->updateScreen();
 	}
 
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(of);
 	if (_vm->shouldQuit())
 		return 0;
 	else

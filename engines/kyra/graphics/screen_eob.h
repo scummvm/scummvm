@@ -262,7 +262,7 @@ private:
 */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor, uint16 _numGlyphMax, bool _useOverlay = false);
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
@@ -270,6 +270,7 @@ public:
 	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
+	bool usesOverlay() const override { return _useOverlay; }
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
@@ -292,6 +293,9 @@ private:
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
 	const uint16 *_colorMap16bit;
+
+	const uint16 _numGlyphMax;
+	const bool _useOverlay;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;

@@ -834,7 +834,9 @@ protected:
 	Screen::FontId _invFont1;
 	Screen::FontId _invFont2;
 	Screen::FontId _invFont3;
+	Screen::FontId _invFont4;
 	Screen::FontId _conFont;
+	Screen::FontId _bookFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
 	uint8 *_swapShape;

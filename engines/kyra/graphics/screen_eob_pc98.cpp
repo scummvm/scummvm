@@ -209,7 +209,7 @@ uint16 SJISFontEoB1PC98::convert(uint16 c) const {
 	return c;
 }
 
-Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12),
+Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12, 0),
 _convTable1(convTable1), _convTable2(convTable2) {
 	assert(convTable1);
 	assert(convTable2);

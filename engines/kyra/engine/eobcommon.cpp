@@ -197,7 +197,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
-	_invFont1 = _invFont2 = _conFont = Screen::FID_6_FNT;
+	_invFont1 = _invFont2 = _invFont4 = _conFont = _bookFont = Screen::FID_6_FNT;
 	_invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
@@ -578,6 +578,7 @@ void EoBCoreEngine::loadFonts() {
 	} else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformPC98) {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6B.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8B.FNT");
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT1206.FNT");
 	} else if (_flags.platform != Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -586,13 +587,16 @@ void EoBCoreEngine::loadFonts() {
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, _flags.gameID == GI_EOB1 ? "FONT12.FNT" : "FONT1206.FNT");
-		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
+		if (_flags.gameID == GI_EOB1) {
+			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
+			_invFont1 = _bookFont = Screen::FID_SJIS_SMALL_FNT;
+			_invFont4 = Screen::FID_SJIS_FNT;
+		}		
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
-		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
+		_invFont1 = _invFont2 = _invFont4 = _conFont = Screen::FID_8_FNT;
 	}
 
 	if (_flags.lang == Common::ZH_TWN) {

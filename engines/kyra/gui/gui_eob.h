@@ -174,6 +174,8 @@ private:
 	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
 
+	const Screen::FontId _menuFont;
+
 	const EoBRect16 *_highlightFrames;
 	static const EoBRect16 _highlightFramesDefault[];
 	static const uint8 _highlightColorTableVGA[];
