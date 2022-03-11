@@ -1174,7 +1174,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
 	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
-	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "8.0");
+	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "9.0");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
 	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
 	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
