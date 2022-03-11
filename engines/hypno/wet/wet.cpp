@@ -457,7 +457,8 @@ void WetEngine::saveGame(int levelId) {
 	// Find the correct level index to before saving
 	for (uint32 i = 0; i < _ids.size(); i++) {
 		if (levelId == _ids[i]) {
-			_lastLevel = i;
+			if (_lastLevel < int(i))
+				_lastLevel = int(i);
 			break;
 		}
 	}
