@@ -220,6 +220,13 @@ static const ExtraGuiOption mi1RestoreSmirkCigarSmoke = {
 	true
 };
 
+static const ExtraGuiOption mi1RestoreClockTowerBehavior = {
+	_s("Restore clock tower behavior"),
+	_s("Restore the original behavior of the clock tower."),
+	"restore_clock_tower_behavior",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -283,6 +290,7 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 
 		if (enhanced) {
 			options.push_back(mi1RestoreSmirkCigarSmoke);
+			options.push_back(mi1RestoreClockTowerBehavior);
 		}
 	}
 

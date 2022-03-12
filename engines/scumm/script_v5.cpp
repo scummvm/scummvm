@@ -670,7 +670,7 @@ void ScummEngine_v5::o5_add() {
 	// We restore the old behavior by adding 0, not 1, to the second
 	// variable when examining the clock tower.
 
-	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1) {
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1 && ConfMan.getBool("restore_clock_tower_behavior")) {
 		a = 0;
 	}
 
