@@ -213,6 +213,13 @@ static const ExtraGuiOption smoothScrolling = {
 	true
 };
 
+static const ExtraGuiOption mi1RestoreSmirkCigarSmoke = {
+	_s("Restore cigar smoke"),
+	_s("Show animated cigar smoke in the close-up of captain Smirk."),
+	"restore_smirk_cigar_smoke",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -255,6 +262,28 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 
 	if (target.empty() || (gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3CorrectFontSpacing);
+	}
+
+	// Add settings for turning off some of the more visible workarounds.
+	// The policy here is to add settings that make really noticeable
+	// changes, where people have expressed the desire to disable the
+	// workarounds.
+	//
+	// E.g. I don't think anyone's going to complain that ScummVM never
+	// draws Sam and Max in color when using the noir mode.
+
+	if (target.empty() || gameid == "monkey") {
+		// Note that we do not touch the unofficial talkie version,
+		// since that one patches a lot of scripts on its own.
+
+		bool enhanced = (extra == "CD" ||
+			platform == Common::kPlatformMacintosh ||
+			platform == Common::kPlatformFMTowns ||
+			platform == Common::kPlatformSegaCD);
+
+		if (enhanced) {
+			options.push_back(mi1RestoreSmirkCigarSmoke);
+		}
 	}
 
 	return options;
