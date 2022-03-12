@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-10 14:05+0000\n"
+"POT-Creation-Date: 2022-03-12 13:31+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4999,6 +4999,14 @@ msgstr ""
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
+msgstr ""
+
+#: engines/hypno/detection.cpp:197
+msgid "Enable restored content"
+msgstr ""
+
+#: engines/hypno/detection.cpp:198
+msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever

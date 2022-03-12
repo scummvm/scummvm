@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-10 14:05+0000\n"
+"POT-Creation-Date: 2022-03-12 13:31+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5288,6 +5288,15 @@ msgstr "Zapnout héliový režim"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
+msgstr ""
+
+#: engines/hypno/detection.cpp:197
+#, fuzzy
+msgid "Enable restored content"
+msgstr "Povolit cenzuru obsahu"
+
+#: engines/hypno/detection.cpp:198
+msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
