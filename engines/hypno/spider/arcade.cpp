@@ -106,8 +106,8 @@ void SpiderEngine::hitPlayer() {
 		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
 		drawScreen();
 	}
-	// if (!_hitSound.empty())
-	//	playSound(_soundPath + _hitSound, 1);
+	if (!_hitSound.empty())
+		playSound(_soundPath + _hitSound, 1, 11025);
 }
 
 void SpiderEngine::drawShoot(const Common::Point &target) {

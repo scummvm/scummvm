@@ -270,6 +270,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *trans_apt_1 = new Transition("busint.mi_");
 	trans_apt_1->intros.push_back("spider/cine/ross004s.smk");
+	trans_apt_1->intros.push_back("spider/cine/ross005s.smk");
 	trans_apt_1->intros.push_back("spider/cine/apts002s.smk");
 	trans_apt_1->intros.push_back("spider/cine/blcs00.smk");
 	_levels["<trans_apt_1>"] = trans_apt_1;
@@ -566,9 +567,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[4].actions.push_back(gl);
 
 	loadArcadeLevel("c5.mi_", "<trans_apt_6>", "<over_hob2>", prefix);
+	if (_restoredContentEnabled)
+		_levels["c5.mi_"]->intros.push_back("cine/ppv006bs.smk");
 	_levels["c5.mi_"]->intros.push_back("cine/ctss001s.smk");
 
 	loadArcadeLevel("c5h.mi_", "<trans_apt_6>", "<over_hob2>", prefix);
+	if (_restoredContentEnabled)
+		_levels["c5.mi_"]->intros.push_back("cine/ppv006bs.smk");
 	_levels["c5h.mi_"]->intros.push_back("cine/ctss001s.smk");
 
 	Transition *trans_apt_6 = new Transition("factory1.mi_");
@@ -579,6 +584,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("ball1.mi_", "<note>", prefix);
 	_levels["ball1.mi_"]->music = "sound.lib/ballroom.raw";
 	_levels["ball1.mi_"]->musicRate = 11025;
+	if (_restoredContentEnabled)
+		_levels["ball1.mi_"]->intros.push_back("cine/ppv006as.smk");
 	loadSceneLevel("coat.mi_", "ball2.mi_", prefix);
 	_levels["coat.mi_"]->music = "sound.lib/ballroom.raw";
 	_levels["coat.mi_"]->musicRate = 11025;
@@ -710,6 +717,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *after_c13 = new Transition("docoffi2.mi_");
 	after_c13->intros.push_back("spider/cine/vrfs06bs.smk");
+	after_c13->intros.push_back("spider/cine/spv064as.smk");
 	//after_c13->intros.push_back("spider/cine/spv064s.smk"); low-quality version?
 	_levels["<after_c13>"] = after_c13;
 
@@ -770,6 +778,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *after_c10 = new Transition("docoffic.mi_");
 	after_c10->intros.push_back("spider/cine/utns004s.smk");
+	after_c10->intros.push_back("spider/cine/bustitxs.smk");
 	_levels["<after_c10>"] = after_c10;
 
 	loadSceneLevel("docoffic.mi_", "decide9.mi_", prefix);
