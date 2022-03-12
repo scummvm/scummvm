@@ -486,11 +486,6 @@ bool WetEngine::loadGame(const Common::String &name) {
 	}
 
 	loadGameState(slot);
-	if (_lastLevel == 0)
-		_nextLevel = Common::String::format("c%d", _ids[0]);
-	else
-		_nextLevel = "<level_menu>";
-
 	return true;
 }
 
@@ -520,6 +515,12 @@ Common::Error WetEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_lives = stream->readUint32LE();
 	_score = stream->readUint32LE();
 	_lastLevel = stream->readUint32LE();
+
+	if (_lastLevel == 0)
+		_nextLevel = Common::String::format("c%d", _ids[0]);
+	else
+		_nextLevel = "<level_menu>";
+
 	return Common::kNoError;
 }
 
