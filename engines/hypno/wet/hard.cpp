@@ -178,12 +178,12 @@ void WetEngine::runMainMenu(Code *code) {
 		_lastLevel = 0;
 
 	_name.toLowercase();
-	bool found = loadGame(_name);
+	bool found = loadProfile(_name);
 
 	if (found)
 		return;
 
-	saveGame(_ids[_lastLevel]);
+	saveProfile(_name, _ids[_lastLevel]);
 
 	Common::Rect subDifficulty(20, 104, 233, 119);
 	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);

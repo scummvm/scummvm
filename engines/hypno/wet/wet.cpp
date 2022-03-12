@@ -449,7 +449,7 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 		error("Invalid font: '%s'", font.c_str());
 }
 
-void WetEngine::saveGame(int levelId) {
+void WetEngine::saveProfile(const Common::String &name, int levelId) {
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 
 	// Find the correct level index to before saving
@@ -463,19 +463,19 @@ void WetEngine::saveGame(int levelId) {
 
 	uint32 slot = 0;
 	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
-		if (save->getDescription() == _name)
+		if (save->getDescription() == name)
 			break;
 		slot++;
 	}
 
-	saveGameState(slot, _name, false);
+	saveGameState(slot, name, false);
 }
 
-bool WetEngine::loadGame(const Common::String &name) {
+bool WetEngine::loadProfile(const Common::String &name) {
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 	uint32 slot = 0;
 	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
-		if (save->getDescription() == _name)
+		if (save->getDescription() == name)
 			break;
 		slot++;
 	}

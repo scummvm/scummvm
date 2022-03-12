@@ -346,8 +346,8 @@ public:
 	// Saves
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-	bool loadGame(const Common::String &name);
-	void saveGame(int levelId);
+	bool loadProfile(const Common::String &name);
+	void saveProfile(const Common::String &name, int levelId);
 
 	// Arcade
 	void runBeforeArcade(ArcadeShooting *arc) override;
