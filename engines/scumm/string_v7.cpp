@@ -142,7 +142,7 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 		--numBytesMax;
 	}
 
-	return totalHeight + (lineHeight ? lineHeight : _gr->getFontHeight()) + 1;
+	return totalHeight + (lineHeight ? lineHeight : _gr->getFontHeight()) + (_newStyle ? 1 : 0);
 }
 
 void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 &col, TextStyleFlags flags) {
