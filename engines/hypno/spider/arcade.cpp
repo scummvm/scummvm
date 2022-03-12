@@ -57,6 +57,28 @@ void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_lastPlayerPosition = kPlayerLeft;
 }
 
+void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
+	_checkpoint = _currentLevel;
+	if (_restoredContentEnabled) {
+		Common::String message;
+		if (_health > 0)
+			message += "Spider-man won!\n";
+		else
+			message += "Spider-man was defeated!\n";
+
+		message += Common::String::format("%-21s = %7d\n", "Webs fired", _shootsFired);
+		message += Common::String::format("%-19s = %7d\n", "Enemy targets", _enemyTargets);
+		message += Common::String::format("%-18s = %7d\n", "Targets destroyed", _targetsDestroyed);
+		message += Common::String::format("%-19s = %7d\n", "Targets missed", _targetsMissed);
+		message += Common::String::format("%-24s = %5d %%\n", "Kill ratio", killRatio());
+		message += Common::String::format("%-21s = %5d %%\n", "Accuracy", accuracyRatio());
+		message += Common::String::format("%-22s = %5d %%\n", "Energy", _health);
+		message += Common::String::format("%-23s = %5d pts", "Score", _score);
+		GUI::MessageDialog dialog(message, "OK", "", Graphics::kTextAlignLeft);
+		dialog.runModal();
+	}
+}
+
 void SpiderEngine::initSegment(ArcadeShooting *arc) {
 	_segmentShootSequenceOffset = 0;
 	_segmentShootSequenceMax = 0;
