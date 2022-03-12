@@ -5116,6 +5116,33 @@ static const uint16 kq5PatchCrispinIntroSignal[] = {
 	PATCH_END
 };
 
+// Clicking Look or Do on the bandit's campfire in room 216 of the PC-98 version
+//  crashes the game or displays the wrong message after attempting to process
+//  hundreds of uninitialized parameters. The script has four calle instructions
+//  with frame size operands that don't match the number of parameters passed on
+//  the stack. The first real parameter, 216, is interpreted as the parameter
+//  count and chaos ensues.
+//
+// We fix this by setting the correct frame size. These instructions are correct
+//  in the later FM-Towns version so this appears to be a compiler bug.
+//
+// Applies to: Japanese PC-98
+// Responsible methods: fire:handleEvent, fireRing:handleEvent
+static const uint16 kq5SignaturePc98CampfireMessages[] = {
+	0x35, SIG_ADDTOOFFSET(+1),       // ldi
+	SIG_MAGICDWORD,
+	0x36,                            // push
+	0x46, SIG_UINT16(0x02f7),        // calle proc759_0 [ print message, 1 parameter ]
+	      SIG_UINT16(0x0000), 0x02,
+	SIG_END
+};
+
+static const uint16 kq5PatchPc98CampfireMessages[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x04,                            // calle proc759_0 [ print message, 2 parameters ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
@@ -5124,6 +5151,7 @@ static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
 	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
+	{  true,   216, "PC-98: campfire messages",                    4, kq5SignaturePc98CampfireMessages,     kq5PatchPc98CampfireMessages },
 	{  true,   973, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
