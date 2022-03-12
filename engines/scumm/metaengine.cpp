@@ -336,6 +336,12 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	// file transparently.
 	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
 
+	// If you added the game a long time ago, it may be missing its "extra"
+	// field. We need it to tell versions apart when adding game-specific
+	// settings to the options dialog.
+	if (res.game.variant && res.game.variant[0] && !ConfMan.hasKey("extra"))
+		ConfMan.setAndFlush("extra", res.game.variant);
+
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in
 	// our MD5 database but require a specific platform setting.
