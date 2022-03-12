@@ -186,10 +186,17 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-static const ExtraGuiOption hypnoExtraGuiOption = {
+static const ExtraGuiOption hypnoExtraGuiOptionCheats = {
 	_s("Enable cheats"),
 	_s("Allow cheats using the C key."),
 	"cheats",
+	false
+};
+
+static const ExtraGuiOption hypnoExtraGuiOptionRestoredContent = {
+	_s("Enable restored content"),
+	_s("Add additional content that is not enabled the original implementation."),
+	"restored",
 	false
 };
 
@@ -223,7 +230,8 @@ public:
 
 const ExtraGuiOptions HypnoMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
-	options.push_back(hypnoExtraGuiOption);
+	options.push_back(hypnoExtraGuiOptionCheats);
+	options.push_back(hypnoExtraGuiOptionRestoredContent);
 	return options;
 }
 

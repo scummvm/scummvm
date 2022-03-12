@@ -70,6 +70,8 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
 		error("Failed to parse bool from cheats options");
 
+	if (!Common::parseBool(ConfMan.get("restored"), _restoredContentEnabled))
+		error("Failed to parse bool from restored options");
 	// Add quit level
 	Hotspot q(MakeMenu);
 	Action *a = new Quit();
