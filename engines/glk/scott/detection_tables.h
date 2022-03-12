@@ -44,6 +44,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "pirateisle",        "Return to Pirate Isle" },
 	{ "buckaroobanzai",    "Buckaroo Banzai" },
 	{ "marveladventure",   "Marvel Adventure #1" },
+	{ "marveladventure2",  "Marvel Adventure #2" },
 	{ "scottsampler",      "Adventure International's Mini-Adventure Sampler" },
 
 	// 11 Mysterious Adventures by Brian Howarth
@@ -91,6 +92,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY0("pirateisle",        "6d98f422cc986d959a3c74351785aea3", 19013),
 	DT_ENTRY0("buckaroobanzai",    "ee2c7139d58423c5e25dd918fcb48383", 17989),
 	DT_ENTRY0("marveladventure",   "aadcc04e6b37eb9d30a58b5bc775842e", 18876),
+	DT_ENTRY0("marveladventure2",  "f7e772643a24eaf94cfb2d48e3949ec1", 18643),
 	DT_ENTRY0("scottsampler",      "d569a769f304dc02b3062d97458ddd01", 13854),
 
 	// PDA game versions
