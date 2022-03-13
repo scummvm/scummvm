@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-12 13:31+0000\n"
-"PO-Revision-Date: 2022-02-23 20:45+0000\n"
+"PO-Revision-Date: 2022-03-13 10:48+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5152,14 +5152,12 @@ msgid "Allow cheats using the C key."
 msgstr "Cキーでチートが使えます。"
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Discordとの連携を可能にする"
+msgstr "復元されたコンテンツを有効にする"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
+msgstr "オリジナルの実装を有効にしていないコンテンツを追加します。"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
