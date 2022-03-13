@@ -1088,7 +1088,7 @@ CompareResult Datum::compareTo(Datum &d) const {
 			return kCompareGreater;
 		}
 	} else {
-		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
+		warning("BUILDBOT: Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;
 	}
 }
