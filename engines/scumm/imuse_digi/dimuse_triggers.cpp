@@ -192,7 +192,7 @@ void IMuseDigiTriggersHandler::processTriggers(int soundId, char *marker) {
 		} else {
 			if (_trigs[l].opcode < 30) {
 				// Execute a command
-				_engine->cmdsHandleCmd(_trigs[l].opcode, nullptr,
+				_engine->cmdsHandleCmd(_trigs[l].opcode, (uint8 *)textBuffer,
 					_trigs[l].a, _trigs[l].b,
 					_trigs[l].c, _trigs[l].d,
 					_trigs[l].e, _trigs[l].f,
