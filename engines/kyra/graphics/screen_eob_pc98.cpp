@@ -209,8 +209,7 @@ uint16 SJISFontEoB1PC98::convert(uint16 c) const {
 	return c;
 }
 
-Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12, 0),
-_convTable1(convTable1), _convTable2(convTable2) {
+Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12), _convTable1(convTable1), _convTable2(convTable2) {
 	assert(convTable1);
 	assert(convTable2);
 	assert(lookupTable);
@@ -251,17 +250,15 @@ uint16 Font12x12PC98::convert(uint16 c) const {
 		c = _convTable2[l - 32];
 	} else if (l > 160 && l < 225) {
 		bool done = false;
-		if (1) {
-			if (h == 0xDE) {
-				if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
-					c = _convTable1[l - 182];
-					done = true;
-				}
-			} else if (h == 0xDF) {
-				if (l >= 202 && l <= 206) {
-					c = _convTable1[l - 177];
-					done = true;
-				}
+		if (h == 0xDE) {
+			if ((l >= 182 && l <= 196) || (l >= 202 && l <= 206)) {
+				c = _convTable1[l - 182];
+				done = true;
+			}
+		} else if (h == 0xDF) {
+			if (l >= 202 && l <= 206) {
+				c = _convTable1[l - 177];
+				done = true;
 			}
 		}
 		if (!done)
@@ -279,6 +276,32 @@ uint16 Font12x12PC98::convert(uint16 c) const {
 		c = 1;
 	else
 		c -= 0x828D;
+
+	return c;
+}
+
+PC98Font::PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable) : OldDOSFont(Common::kRenderVGA, shadowColor), _convTable(convTable), _outputWidth(0), _outputHeight(0) {
+	_numGlyphsMax = 256;
+	_useOverlay = useOverlay;
+	_scaleV = scaleV;
+
+}
+
+bool PC98Font::load(Common::SeekableReadStream &file) {
+	bool res = OldDOSFont::load(file);
+
+	_outputWidth = _width;
+	_outputHeight = _height * _scaleV;
+
+	if (_useOverlay) {
+		_outputWidth >>= 1;
+		_outputHeight >>= 1;
+	}
+
+	return res;
+}
+
+uint16 PC98Font::convert(uint16 c) const {
 
 	return c;
 }

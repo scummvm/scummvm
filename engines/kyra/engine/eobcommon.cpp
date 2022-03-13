@@ -589,10 +589,11 @@ void EoBCoreEngine::loadFonts() {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		if (_flags.gameID == GI_EOB1) {
 			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
-			_invFont1 = _bookFont = Screen::FID_SJIS_SMALL_FNT;
+			_bookFont = Screen::FID_SJIS_SMALL_FNT;
 			_invFont4 = Screen::FID_SJIS_FNT;
 		}		
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
+		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);

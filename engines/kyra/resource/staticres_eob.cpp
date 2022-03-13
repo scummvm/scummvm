@@ -1939,6 +1939,17 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
 	}
 };
 
+const KyraRpgGUISettings DarkMoonEngine::_guiSettingsPC98 = {
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
+};
+
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },

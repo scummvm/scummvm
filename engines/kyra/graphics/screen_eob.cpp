@@ -304,7 +304,7 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch) {
 	if (_isSegaCD && shadowCol) {
 		printText(string, x + 1, y + 1, shadowCol, 0, pitch);
-	} else if (!_isSegaCD && _vm->gameFlags().lang != Common::JA_JPN) {
+	} else if (!_isSegaCD && !_use16ColorMode && !_useHiColorScreen && (_fonts[_currentFont]->getType() == Font::kASCII || _fonts[_currentFont]->getType() == Font::kBIG5)) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
@@ -1709,12 +1709,14 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->game() == GI_EOB2) {
-		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
-		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, 256, fontId == FID_SJIS_SMALL_FNT);
+		if (fontId == FID_SJIS_SMALL_FNT)
+			fnt = new PC98Font(12, true, 2, _vm->staticres()->loadRawData(kEoB2FontConvertTbl, temp));
+		else
+			fnt = new PC98Font(12, false, 1);
 	} else if (fontId == FID_SJIS_SMALL_FNT) {
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
-		else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontLookupTbl, temp));
+		} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
 			fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
 				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
 		}
@@ -1732,7 +1734,7 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 		return true;
 	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
-		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, 128);
+		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
 	}
 
 	assert(fnt);
@@ -1981,7 +1983,7 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor, uint16 numGlyphMax, bool useOverlay) : _renderMode(mode), _shadowColor(shadowColor), _numGlyphMax(numGlyphMax), _useOverlay(useOverlay), _colorMap8bit(0), _colorMap16bit(0) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2049,8 +2051,8 @@ bool OldDOSFont::load(Common::SeekableReadStream &file) {
 	if (file.size() - 2 != READ_LE_UINT16(_data))
 		return false;
 
-	_width = _data[_numGlyphMax * 2 + 3];
-	_height = _data[_numGlyphMax * 2 + 2];
+	_width = _data[_numGlyphsMax * 2 + 3];
+	_height = _data[_numGlyphsMax * 2 + 2];
 	_numGlyphs = (READ_LE_UINT16(_data + 2) / 2) - 2;
 
 	_bitmapOffsets = (uint16*)(_data + 2);
@@ -2078,9 +2080,13 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color2 = _colorMap8bit[0];
 
 	if (_style == kStyleLeftShadow) {
-		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
-		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
-		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);
+		byte *dst2 = dst;
+		for (int i = 0; i < _scaleV; ++i) {
+			drawCharIntern(c, dst2 + pitch * _scaleV, pitch * _scaleV, 1, _shadowColor, 0);
+			drawCharIntern(c, dst2 - 1, pitch * _scaleV, 1, _shadowColor, 0);
+			drawCharIntern(c, dst2 - 1 + pitch * _scaleV, pitch * _scaleV, 1, _shadowColor, 0);
+			dst2 += pitch;
+		}
 	}
 
 	if (bpp == 2) {
@@ -2088,7 +2094,10 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 		color2 = _colorMap16bit[0];
 	}
 
-	drawCharIntern(c, dst, pitch, bpp, color1, color2);
+	for (int i = 0; i < _scaleV; ++i) {
+		drawCharIntern(c, dst, pitch * _scaleV, bpp, color1, color2);
+		dst += pitch;
+	}
 }
 
 void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const {

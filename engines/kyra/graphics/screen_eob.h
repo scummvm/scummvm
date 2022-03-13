@@ -262,7 +262,7 @@ private:
 */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, uint8 shadowColor, uint16 _numGlyphMax, bool _useOverlay = false);
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
@@ -288,14 +288,15 @@ protected:
 	int _numGlyphs;
 	uint8 _shadowColor;
 
+	uint16 _numGlyphsMax;
+	bool _useOverlay;
+	int _scaleV;
+
 private:
 	void drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const;
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
 	const uint16 *_colorMap16bit;
-
-	const uint16 _numGlyphMax;
-	const bool _useOverlay;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
@@ -387,7 +388,6 @@ private:
 	uint16 convert(uint16 c) const;
 	const uint16 *_convTable1, *_convTable2;
 	bool _defaultConv;
-	/*uint8 _shadowColor;*/
 };
 
 /**
@@ -409,6 +409,27 @@ private:
 	uint16 convert(uint16 c) const override;
 	const uint16 *_convTable1, *_convTable2;
 	uint16 *_bmpOffs;
+};
+
+/**
+* OldDOSFont variant used in EOB II PC-98. It uses the same drawing routine, but supports weird vertical scaling, can be drawn
+* on the SJIS overlay and has some character conversion.
+*/
+class PC98Font : public OldDOSFont {
+public:
+	PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable = 0);
+	~PC98Font() override {}
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _outputHeight; }
+	int getWidth() const override { return _outputWidth; }
+	int getCharWidth(uint16 c) const override { return _outputWidth; };
+
+private:
+	uint16 convert(uint16 c) const override;
+	const uint8 *_convTable;
+
+	int _outputHeight;
+	int _outputWidth;
 };
 
 /**

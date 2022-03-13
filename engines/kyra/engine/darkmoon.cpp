@@ -776,6 +776,8 @@ const KyraRpgGUISettings *DarkMoonEngine::guiSettings() const {
 		return &_guiSettingsAmiga;
 	else if (_flags.platform == Common::kPlatformFMTowns)
 		return &_guiSettingsFMTowns;
+	else if (_flags.platform == Common::kPlatformPC98)
+		return &_guiSettingsPC98;
 	else
 		return &_guiSettingsDOS;
 }

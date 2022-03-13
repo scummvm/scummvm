@@ -1144,7 +1144,8 @@ enum KyraResources {
 
 	kEoB2UtilMenuStrings,
 	kEoB2Config2431Strings,
-	kEoB2FontDmpSearchTbl,
+	kEoB2FontLookupTbl,
+	kEoB2FontConvertTbl,
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
 	kEoB2PcmSoundEffectsIngame,
