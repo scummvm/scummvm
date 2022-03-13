@@ -383,7 +383,7 @@ public:
 	bool _exitLock;
 	Datum _searchPath;
 	int _traceLoad; // internal Director verbosity level
-	bool _updateMovieEnabled ;
+	bool _updateMovieEnabled;
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

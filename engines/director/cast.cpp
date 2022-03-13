@@ -1081,7 +1081,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		}
 
 		// mark unused entries
-		int16 nextUnused = firstUnused ;
+		int16 nextUnused = firstUnused;
 		while (0 <= nextUnused && nextUnused < (int16)entries.size()) {
 			LingoContextEntry &entry = entries[nextUnused];
 			entry.unused = true;
