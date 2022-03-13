@@ -227,6 +227,13 @@ static const ExtraGuiOption mi1RestoreClockTowerBehavior = {
 	true
 };
 
+static const ExtraGuiOption mi1RestoreLemonheadDialog = {
+	_s("Restore missing Lemonhead dialog"),
+	_s("Restore a few lines of Lemonhead dialog that was present in earlier versions."),
+	"restore_lemonhead_dialog",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -235,6 +242,7 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String extra = ConfMan.get("extra", target);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	const Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
@@ -291,6 +299,10 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 		if (enhanced) {
 			options.push_back(mi1RestoreSmirkCigarSmoke);
 			options.push_back(mi1RestoreClockTowerBehavior);
+
+			if (lang == Common::EN_ANY || lang == Common::DE_DEU || lang == Common::IT_ITA || lang == Common::ES_ESP) {
+				options.push_back(mi1RestoreLemonheadDialog);
+			}
 		}
 	}
 
