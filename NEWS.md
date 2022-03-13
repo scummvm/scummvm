@@ -75,6 +75,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - It is now possible to replace the music in the floppy versions of Loom
      with audio tracks. The ScummVM Wiki has a list of which parts of the Swan
      Lake ballet the game uses.
+   - Added options for whether or not ScummVM should restore some of the
+     original MI1 behavior and fix a typo in VGA Loom.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
