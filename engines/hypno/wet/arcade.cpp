@@ -408,6 +408,9 @@ void WetEngine::hitPlayer() {
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	}
+	if (!_hitSound.empty()) {
+		playSound(_soundPath + _hitSound, 1, 11025);
+	}
 }
 
 void WetEngine::drawShoot(const Common::Point &mousePos) {
