@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-12 13:31+0000\n"
-"PO-Revision-Date: 2022-02-23 20:45+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"PO-Revision-Date: 2022-03-13 10:48+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5261,14 +5261,14 @@ msgid "Allow cheats using the C key."
 msgstr "Permet les tricheries en utilisant la touche C."
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Activer l'intégration de Discord"
+msgstr "Activer le contenu restauré"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
+"Ajoute le contenu additionnel qui n'est pas activé dans l'implémentation "
+"originale."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
