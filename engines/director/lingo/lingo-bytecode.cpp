@@ -173,7 +173,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 
 	{ 0x04, 0x01, kTheSoundEntity,		kTheVolume,			true, kTEAItemId },
 
-	{ 0x06, 0x01, kTheSprite,			kTheCursor,			true, kTEAItemId },
+	{ 0x06, 0x01, kTheSprite,			kTheType,			true, kTEAItemId },
 	{ 0x06, 0x02, kTheSprite,			kTheBackColor,		true, kTEAItemId },
 	{ 0x06, 0x03, kTheSprite,			kTheBottom,			true, kTEAItemId },
 	{ 0x06, 0x04, kTheSprite,			kTheCastNum,		true, kTEAItemId },
