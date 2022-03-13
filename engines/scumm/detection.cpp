@@ -234,6 +234,13 @@ static const ExtraGuiOption mi1RestoreLemonheadDialog = {
 	true
 };
 
+static const ExtraGuiOption loomCorrectVillainTypo = {
+	_s("Correct villain typo"),
+	_s("Correct the misspelling of the villain's name in one scene."),
+	"correct_villain_typo",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -303,6 +310,12 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 			if (lang == Common::EN_ANY || lang == Common::DE_DEU || lang == Common::IT_ITA || lang == Common::ES_ESP) {
 				options.push_back(mi1RestoreLemonheadDialog);
 			}
+		}
+	}
+
+	if (target.empty() || gameid == "loom") {
+		if (extra == "VGA" && lang == Common::EN_ANY) {
+			options.push_back(loomCorrectVillainTypo);
 		}
 	}
 
