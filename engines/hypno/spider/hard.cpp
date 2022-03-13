@@ -40,14 +40,16 @@ void SpiderEngine::runCode(Code *code) {
 		runRecept(code);
 	else if (code->name == "<office>")
 		runOffice(code);
-	else if (code->name == "<file_cabinet>") 
+	else if (code->name == "<file_cabinet>")
 		runFileCabinet(code);
-	else if (code->name == "<lock>") 
+	else if (code->name == "<lock>")
 		runLock(code);
 	else if (code->name == "<fuse_box>")
 		runFuseBox(code);
 	else if (code->name == "<credits>")
 		showCredits();
+	else if (code->name == "<give_up>")
+		runGiveUp();
 	else
 		error("invalid puzzle");
 }
@@ -234,8 +236,8 @@ void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
 	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
 
-	Common::Rect letterBoxES(22, 442, 554, 455); 
-	Common::Rect letterBoxEN(22, 442, 535, 455); 
+	Common::Rect letterBoxES(22, 442, 554, 455);
+	Common::Rect letterBoxEN(22, 442, 535, 455);
 
 	const char solEasyES1[] = "hable cpn el svtp z talwe a";
 	const char solEasyES2[] = "masz jane";
@@ -294,7 +296,7 @@ void SpiderEngine::runNote(Code *code) {
 			secondSolution = solEasyEN2;
 			firstSentenceBox = firstSentenceBoxEasyEN;
 			secondSentenceBox = secondSentenceBoxEasyEN;
-		} else { // hard 
+		} else { // hard
 			firstSentence = (char*) &placeHardEN;
 			secondSentence = (char*) &placeHardEN2;
 			firstSolution = solHardEN1;
@@ -303,18 +305,18 @@ void SpiderEngine::runNote(Code *code) {
 			secondSentenceBox = secondSentenceBoxHardEN;
 		}
 	break;
-	
+
 	case Common::ES_ESP:
 		alpha = alphaES;
 		letterBox = letterBoxES;
 		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
 			firstSentence = (char*) &placeEasyES;
 			secondSentence = (char*) &placeEasy2;
-			firstSolution = solEasyES1; 
+			firstSolution = solEasyES1;
 			secondSolution = solEasyES2;
 			firstSentenceBox = firstSentenceBoxEasyES;
 			secondSentenceBox = secondSentenceBoxEasyES;
-		} else { // hard 
+		} else { // hard
 			firstSentence = (char*) &placeHardES;
 			secondSentence = (char*) &placeHardES2;
 			firstSolution = solHardES1;
@@ -333,9 +335,9 @@ void SpiderEngine::runNote(Code *code) {
 	}
 
 	float firstSentenceLength = strlen(firstSentence);
-	float secondSentenceLength = strlen(secondSentence); 
+	float secondSentenceLength = strlen(secondSentence);
 	Frames letters = decodeFrames("int_ball/letters.smk");
-	Common::Point size(letters[0]->w, letters[0]->h); 
+	Common::Point size(letters[0]->w, letters[0]->h);
 	MVideo *v = nullptr;
 
 	if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
@@ -428,7 +430,7 @@ void SpiderEngine::runNote(Code *code) {
 					if (firstSentence[i] != '?' && firstSentence[i] != ' ') {
 						if (firstSentence[i] == '~')
 							drawImage(*letters[26], o1x, o1y, false); // ñ
-						else  
+						else
 							drawImage(*letters[firstSentence[i]-97], o1x, o1y, false);
 
 					}
@@ -439,7 +441,7 @@ void SpiderEngine::runNote(Code *code) {
 					if (secondSentence[i] != '?' && secondSentence[i] != ' ') {
 						if (secondSentence[i] == '~')
 							drawImage(*letters[26], o2x, o2y, false); // ñ
-						else  
+						else
 							drawImage(*letters[secondSentence[i]-97], o2x, o2y, false);
 					}
 					o2x = o2x + size.x;
@@ -480,7 +482,7 @@ void SpiderEngine::runRecept(Code *code) {
 		_nextLevel = "int_roof.mi_";
 		return;
 	}
-	
+
 	if (_sceneState["GS_SWITCH2"]) { // camera on
 		MVideo v("cine/iobs001s.smk", Common::Point(0, 0), false, true, false);
 		runIntro(v);
@@ -509,11 +511,11 @@ void SpiderEngine::runFusePanel(Code *code) {
 
 	defaultCursor();
 	Common::Rect fuses(363, 52, 598, 408);
-	Common::Rect back(0, 446, 640, 480); 
+	Common::Rect back(0, 446, 640, 480);
 
 	if (_sceneState["GS_PUZZLELEVEL"]) { // hard
 		if (_isFuseRust) {
-			Common::String intro = "cine/spv029s.smk"; 
+			Common::String intro = "cine/spv029s.smk";
 			if (!_intros.contains(intro)) {
 				MVideo v(intro, Common::Point(0, 0), false, false, false);
 				runIntro(v);
@@ -596,7 +598,7 @@ void SpiderEngine::runFusePanel(Code *code) {
 
 					int s = 10*x + y + 1;
 					if (s == 1) {
-						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"]; 
+						_sceneState["GS_SWITCH1"] = !_sceneState["GS_SWITCH1"];
 					} else if (s == 2) {
 						_sceneState["GS_SWITCH2"] = !_sceneState["GS_SWITCH2"];
 					} else if (s == 18) {
@@ -660,7 +662,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 	Graphics::Surface *menu = decodeFrame("int_main/hint1.smk", 0);
 	Common::Rect menuArea(0, 0, menu->w, menu->h);
 
-	Common::String intro = "cine/spv040s.smk"; 
+	Common::String intro = "cine/spv040s.smk";
 	if (!_intros.contains(intro)) {
 		v = new MVideo(intro, Common::Point(0, 0), false, false, false);
 		runIntro(*v);
@@ -854,7 +856,7 @@ void SpiderEngine::runLock(Code *code) {
 
 				if (_sceneState["GS_PUZZLELEVEL"] == 0) // easy
 					loadImage("factory/elockbg.smk", 0, 0, false, true);
-				else 
+				else
 					loadImage("factory/hlockbg.smk", 0, 0, false, true);
 
 				for (int i = 0; i < 5; i++) {
@@ -1020,7 +1022,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 					}
 
 					for (int i = 0; i < 8; i++) {
-						for (int j = 0; j < 9; j++) {	
+						for (int j = 0; j < 9; j++) {
 							if (hdata[i][j]) {
 								hcell.moveTo(i*dxHoriz, j*dyHoriz);
 								Graphics::Surface sub = fuses[0]->getSubArea(hcell);
@@ -1072,6 +1074,22 @@ void SpiderEngine::runFuseBox(Code *code) {
 	}
 }
 
+void SpiderEngine::runGiveUp() {
+
+	if (_restoredContentEnabled) {
+		showScore("Spider-man was defeated!");
+	}
+	_score = 0;
+	_nextLevel = "mainmenu.mi_";
+}
+
+void SpiderEngine::showScore(const Common::String prefix) {
+	Common::String message = Common::String::format("%s\n\
+	You finished the game with a score of %d points", prefix.c_str(), _score);
+	GUI::MessageDialog dialog(message);
+	dialog.runModal();
+}
+
 void SpiderEngine::showCredits() {
 	if (_cheatsEnabled && !_arcadeMode.empty()) {
 		_skipLevel = true;
@@ -1085,6 +1103,10 @@ void SpiderEngine::showCredits() {
 		changeScreenMode("640x480");
 		MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
+		if (_restoredContentEnabled) {
+			showScore("Spider-Man saved the day!");
+		}
+		_score = 0;
 		_nextLevel = "mainmenu.mi_";
 	}
 }

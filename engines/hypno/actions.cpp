@@ -218,7 +218,7 @@ void HypnoEngine::runLoad(Load *a) {
 void HypnoEngine::runLoadCheckpoint(LoadCheckpoint *a) {
 	if (_checkpoint.empty())
 		error("Invalid checkpoint!");
-	loadGame(_checkpoint, _sceneState["GS_PUZZLELEVEL"], _sceneState["GS_COMBATLEVEL"]);
+	loadGame(_checkpoint, _score, _sceneState["GS_PUZZLELEVEL"], _sceneState["GS_COMBATLEVEL"]);
 }
 
 void HypnoEngine::runQuit(Quit *a) {

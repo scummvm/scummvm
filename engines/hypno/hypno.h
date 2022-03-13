@@ -126,7 +126,7 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 
-	virtual void loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty);
+	virtual void loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty);
 	bool canLoadGameStateCurrently() override { return (isDemo() ? false : true); }
 	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently() override { return (isDemo() ? false : true); }
@@ -403,7 +403,7 @@ public:
 	void leftClickedConversation(const Common::Point &mousePos) override;
 	bool hoverConversation(const Common::Point &mousePos) override;
 
-	void loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) override;
+	void loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool hasFeature(EngineFeature f) const override {
@@ -421,6 +421,8 @@ private:
 	void runFileCabinet(Code *code);
 	void runLock(Code *code);
 	void runFuseBox(Code *code);
+	void runGiveUp();
+	void showScore(const Common::String prefix);
 
 	bool _fuseState[2][10] = {};
 	bool _isFuseRust = true;

@@ -78,7 +78,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	loadSceneLevel("mainmenu.mi_", "", prefix);
 	loadSceneLevel("tryagain.mi_", "", prefix);
 
-	cl = new ChangeLevel("mainmenu.mi_");
+	cl = new ChangeLevel("<give_up>");
 	sc = (Scene *) _levels["tryagain.mi_"];
 	sc->hots[1].actions.push_back(cl);
 
@@ -971,6 +971,11 @@ void SpiderEngine::loadAssetsFullGame() {
 	chip_lives_with_spiderman->intros.push_back("spider/cine/vrja003s.smk");
 	chip_lives_with_spiderman->intros.push_back("spider/cine/wins001s.smk");
 	_levels["<chip_lives_with_spiderman>"] = chip_lives_with_spiderman;
+
+	Code *give_up = new Code("<give_up>");
+	give_up->prefix = prefix;
+	_levels["<give_up>"] = give_up;
+
 	_defaultCursor = "mouse/cursor1.smk";
 
 	// hints areas
@@ -1124,17 +1129,19 @@ void SpiderEngine::drawString(const Common::String &font, const Common::String &
 Common::Error SpiderEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	int puzzleDifficulty = stream->readUint32LE();
 	int combatDifficulty = stream->readUint32LE();
+	int score = stream->readUint32LE();
 	const Common::String nextLevel = stream->readString();
-	loadGame(nextLevel, puzzleDifficulty, combatDifficulty);
+	loadGame(nextLevel, score, puzzleDifficulty, combatDifficulty);
 	return Common::kNoError;
 }
 
-void SpiderEngine::loadGame(const Common::String &nextLevel, int puzzleDifficulty, int combatDifficulty) {
+void SpiderEngine::loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty) {
 
 	// We don't want to continue with any sound from a previous game
 	stopSound();
 	_sceneState["GS_PUZZLELEVEL"] = puzzleDifficulty;
 	_sceneState["GS_COMBATLEVEL"] = combatDifficulty;
+	_score = score;
 	_nextLevel = nextLevel;
 	_checkpoint = _nextLevel;
 
@@ -1161,6 +1168,7 @@ Common::Error SpiderEngine::saveGameStream(Common::WriteStream *stream, bool isA
 
 	stream->writeUint32LE(_sceneState["GS_PUZZLELEVEL"]);
 	stream->writeUint32LE(_sceneState["GS_COMBATLEVEL"]);
+	stream->writeUint32LE(_score);
 	stream->writeString(_checkpoint);
 	stream->writeByte(0);
 	return Common::kNoError;
