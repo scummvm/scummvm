@@ -354,7 +354,12 @@ public:
 	int diMUSEGetParam(int soundId, int paramId);
 	int diMUSEFadeParam(int soundId, int opcode, int destValue, int fadeLength);
 	int diMUSESetHook(int soundId, int hookId);
-	int diMUSESetTrigger(int soundId, int marker, int opcode, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n);
+
+	int diMUSESetTrigger(int soundId, int marker, int opcode,
+		int d = -1, int e = -1, int f = -1, int g = -1,
+		int h = -1, int i = -1, int j = -1, int k = -1,
+		int l = -1, int m = -1, int n = -1);
+
 	int diMUSEStartStream(int soundId, int priority, int groupId);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, uint8 *crossfadeBuffer, int crossfadeBufferSize, int vocLoopFlag);
