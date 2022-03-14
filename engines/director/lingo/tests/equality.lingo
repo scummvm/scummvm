@@ -14,5 +14,8 @@ scummvmAssert("test" <> #test)
 scummvmAssert("string" > 0)
 scummvmAssert("1string" < 2)
 
+-- Mimic an object
+scummvmAssert("<Object:#FileIO" > 0)
+
 -- Invalid comparisons should return FALSE
 scummvmAssert(not (#test <= 0))

@@ -588,6 +588,10 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 		d1Type = INT;
 	if (d2Type == VOID)
 		d2Type = INT;
+	if (d1Type == OBJECT)
+		d1Type = STRING;
+	if (d2Type == OBJECT)
+		d2Type = STRING;
 
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
@@ -835,7 +839,9 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case OBJECT:
 		if (!printonly) {
-			s = Common::String::format("#%s", u.obj->getName().c_str());
+			// Object names in Director are: "<Object:hex>"
+			// the starting '<' is important, it's used when comparing objects and integers
+			s = Common::String::format("<Object:#%s", u.obj->getName().c_str());
 		} else {
 			s = u.obj->asString();
 		}
@@ -1090,7 +1096,7 @@ CompareResult Datum::compareTo(Datum &d) const {
 			return kCompareGreater;
 		}
 	} else {
-		warning("BUILDBOT: Invalid comparison between types %s and %s", type2str(), d.type2str());
+		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;
 	}
 }
