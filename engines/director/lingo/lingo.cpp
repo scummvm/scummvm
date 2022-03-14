@@ -173,7 +173,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_traceLoad = 0;
 	_updateMovieEnabled = false;
-	
+
 	// events
 	_passEvent = false;
 	_perFrameHook = Datum();
@@ -841,7 +841,7 @@ Common::String Datum::asString(bool printonly) const {
 		if (!printonly) {
 			// Object names in Director are: "<Object:hex>"
 			// the starting '<' is important, it's used when comparing objects and integers
-			s = Common::String::format("<Object:#%s", u.obj->getName().c_str());
+			s = Common::String::format("<Object:#%08x>", ((uint32)(intptr_t)((void *)u.obj)) & 0xffffffff);
 		} else {
 			s = u.obj->asString();
 		}
