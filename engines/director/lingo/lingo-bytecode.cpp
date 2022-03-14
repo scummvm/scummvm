@@ -595,7 +595,6 @@ void LC::cb_theassign() {
 void LC::cb_theassign2() {
 	// cb_theassign2 is for setting movie-level properties
 
-	// only seen in louis catorze with searchPath
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
 
