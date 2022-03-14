@@ -67,7 +67,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 103
+#define CURRENT_VER 104
 #define INFOSECTION_VERSION 2
 
 #pragma mark -

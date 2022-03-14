@@ -130,7 +130,15 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 
 		s.syncArray(_channel, _numberOfChannels, syncWithSerializer);
 		for (i = 0; i < _numberOfChannels; i++) {
-			syncWithSerializer(s, _channel[i]);
+			if (s.getVersion() >= 94 && s.getVersion() <= 103) {
+				// It was always the intention to save the instrument entries
+				// here. Unfortunately there was a regression in late 2017 that
+				// caused the channel data to be saved a second time, instead
+				// of the instrument data.
+				syncWithSerializer(s, _channel[i]);
+			} else {
+				syncWithSerializer(s, _channel[i]._instrument);
+			}
 		}
 
 		if (s.isLoading()) {
