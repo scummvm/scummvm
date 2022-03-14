@@ -37,6 +37,7 @@
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 
 
 namespace Director {
@@ -205,6 +206,11 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
+
+		if (g_lingo->_updateMovieEnabled) {
+			// Save the movie when branching to another movie.
+			LB::b_saveMovie(0);
+		}
 
 		score->_playState = kPlayStopped;
 

@@ -106,7 +106,7 @@ static BuiltinProto builtins[] = {
 	{ "openDA",	 		LB::b_openDA, 		1, 1, 200, CBLTIN },	// D2 c
 	{ "openResFile",	LB::b_openResFile,	1, 1, 200, CBLTIN },	// D2 c
 	{ "openXlib",		LB::b_openXlib,		1, 1, 200, CBLTIN },	// D2 c
-	{ "saveMovie",		LB::b_saveMovie,	1, 1, 400, CBLTIN },	//			D4 c
+	{ "saveMovie",		LB::b_saveMovie,	0, 1, 400, CBLTIN },	//			D4 c
 	{ "setCallBack",	LB::b_setCallBack,	2, 2, 200, CBLTIN },	// D2 c
 	{ "showResFile",	LB::b_showResFile,	0, 1, 200, CBLTIN },	// D2 c
 	{ "showXlib",		LB::b_showXlib,		0, 1, 200, CBLTIN },	// D2 c
