@@ -291,6 +291,20 @@ extern char *trim(char *t);
 String lastPathComponent(const String &path, const char sep);
 
 /**
+ * Returns the first components of a given path (complementary to lastPathComponent)
+ *
+ * Examples:
+ *          /foo/bar.txt    would return '/foo/'
+ *          /foo/bar/       would return '/foo/'
+ *          /foo/./bar//    would return '/foo/./'
+ *
+ * @param path the path of which we want to know the last component
+ * @param sep character used to separate path components
+ * @return The all the components of the path except the last one.
+ */
+String firstPathComponents(const String &path, const char sep);
+
+/**
  * Normalize a given path to a canonical form. In particular:
  * - trailing separators are removed:  /foo/bar/ -> /foo/bar
  * - double separators (= empty components) are removed:   /foo//bar -> /foo/bar

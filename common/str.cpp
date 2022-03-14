@@ -543,6 +543,29 @@ String lastPathComponent(const String &path, const char sep) {
 	return String(first, last);
 }
 
+String firstPathComponents(const String &path, const char sep) {
+	const char *str = path.c_str();
+	const char *last = str + path.size();
+
+	// Skip over trailing slashes
+	while (last > str && *(last - 1) == sep)
+		--last;
+
+	// Path consisted of only slashes -> return empty string
+	if (last == str)
+		return String();
+
+	// Now scan the whole component
+	const char *first = last - 1;
+	while (first > str && *first != sep)
+		--first;
+
+	if (*first == sep)
+		first++;
+
+	return String(str, first);
+}
+
 String normalizePath(const String &path, const char sep) {
 	if (path.empty())
 		return path;
