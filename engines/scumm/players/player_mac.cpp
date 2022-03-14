@@ -136,6 +136,9 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 				// caused the channel data to be saved a second time, instead
 				// of the instrument data.
 				syncWithSerializer(s, _channel[i]);
+
+				_channel[i]._instrument._pos = 0;
+				_channel[i]._instrument._subPos = 0;
 			} else {
 				syncWithSerializer(s, _channel[i]._instrument);
 			}
