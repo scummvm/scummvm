@@ -31,7 +31,7 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-#if !BLADERUNNER_ORIGINAL_BUG
+#if !BLADERUNNER_ORIGINAL_BUGS
 enum audioMixerAppTimers {
 	kAudioMixerAppTimerMusicNext    =  0,
 	kAudioMixerAppTimerMusicFadeOut =  1
