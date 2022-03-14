@@ -1228,6 +1228,11 @@ void LB::b_do(int nargs) {
 	Common::String code = g_lingo->pop().asString();
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
+
+	// Check if we have anything to execute
+	if (sym.type == VOIDSYM)
+		return;
+
 	LC::call(sym, 0, false);
 }
 
