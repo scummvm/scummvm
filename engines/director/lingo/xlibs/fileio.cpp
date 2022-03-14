@@ -82,7 +82,6 @@ void FileIO::close(int type) {
 FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 	_objType = objType;
 	_filename = nullptr;
-	_inFile = nullptr;
 	_inStream = nullptr;
 	_outFile = nullptr;
 	_outStream = nullptr;
@@ -90,7 +89,6 @@ FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 
 FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 	_filename = nullptr;
-	_inFile = nullptr;
 	_inStream = nullptr;
 	_outFile = nullptr;
 	_outStream = nullptr;
@@ -105,11 +103,8 @@ void FileObject::clear() {
 		delete _filename;
 		_filename = nullptr;
 	}
-	if (_inFile) {
-		delete _inFile;
-		if (_inStream != _inFile)
-			delete _inStream;
-		_inFile = nullptr;
+	if (_inStream) {
+		delete _inStream;
 		_inStream = nullptr;
 	}
 	if (_outFile) {
@@ -145,7 +140,8 @@ void FileIO::m_new(int nargs) {
 
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	Common::String option = d1.asString();
-	Common::String filename = d2.asString();
+	Common::String path = d2.asString();
+	Common::String origpath = path;
 
 	Common::String prefix = g_director->getTargetName() + '-';
 
@@ -158,24 +154,31 @@ void FileIO::m_new(int nargs) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
 		}
-		filename = browser.getResult();
-	} else if (!filename.hasSuffixIgnoreCase(".txt")) {
-		filename += ".txt";
+		path = browser.getResult();
+	} else if (!path.hasSuffixIgnoreCase(".txt")) {
+		path += ".txt";
 	}
 
 	// Enforce target to the created files so they do not mix up
-	if (!option.hasPrefix("?") || option.equalsIgnoreCase("write")) {
-		if (!filename.hasPrefixIgnoreCase(prefix))
-			filename = prefix + filename;
-	}
+	Common::String filename = lastPathComponent(path, '/');
+	Common::String dir = firstPathComponents(path, '/');
+
+	if (!filename.hasPrefixIgnoreCase(prefix))
+		filename = dir + prefix + filename;
 
 	if (option.equalsIgnoreCase("read")) {
-		me->_inFile = saves->openForLoading(filename);
-		me->_inStream = me->_inFile;
-		if (!me->_inFile) {
-			saveFileError();
-			me->dispose();
-			return;
+		me->_inStream = saves->openForLoading(filename);
+		if (!me->_inStream) {
+			// Maybe we're trying to read one of the game files
+			Common::File *f = new Common::File;
+
+			if (!f->open(origpath)) {
+				delete f;
+				saveFileError();
+				me->dispose();
+				return;
+			}
+			me->_inStream = f;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
 		// OutSaveFile is not seekable so create a separate seekable stream
@@ -188,19 +191,25 @@ void FileIO::m_new(int nargs) {
 			return;
 		}
 	} else if (option.equalsIgnoreCase("append")) {
-		Common::InSaveFile *_inFile = saves->openForLoading(filename);
-		if (!_inFile) {
-			saveFileError();
-			me->dispose();
-			return;
+		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
+		if (!inFile) {
+			Common::File *f = new Common::File;
+
+			if (!f->open(origpath)) {
+				delete f;
+				saveFileError();
+				me->dispose();
+				return;
+			}
+			inFile = f;
 		}
 		me->_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-		byte b = _inFile->readByte();
-		while (!_inFile->eos() && !_inFile->err()) {
+		byte b = inFile->readByte();
+		while (!inFile->eos() && !inFile->err()) {
 			me->_outStream->writeByte(b);
-			b = _inFile->readByte();
+			b = inFile->readByte();
 		}
-		delete _inFile;
+		delete inFile;
 		me->_outFile = saves->openForSaving(filename, false);
 		if (!me->_outFile) {
 			saveFileError();

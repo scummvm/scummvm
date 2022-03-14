@@ -52,7 +52,6 @@ enum FileIOError {
 class FileObject : public Object<FileObject> {
 public:
 	Common::String *_filename;
-	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
 	Common::OutSaveFile *_outFile;
 	Common::MemoryWriteStreamDynamic *_outStream;
