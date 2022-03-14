@@ -22,6 +22,8 @@
 #ifndef BLADERUNNER_SCREEN_EFFECTS_H
 #define BLADERUNNER_SCREEN_EFFECTS_H
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 #include "bladerunner/color.h"
 
 #include "common/array.h"

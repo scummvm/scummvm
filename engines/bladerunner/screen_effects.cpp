@@ -19,6 +19,8 @@
  *
  */
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 #include "bladerunner/screen_effects.h"
 
 #include "common/stream.h"

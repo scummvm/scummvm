@@ -22,6 +22,8 @@
 #ifndef BLADERUNNER_DEBUGGER_H
 #define BLADERUNNER_DEBUGGER_H
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 #include "bladerunner/vector.h"
 
 #include "gui/debugger.h"

@@ -27,6 +27,8 @@
 
 #include "common/mutex.h"
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;

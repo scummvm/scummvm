@@ -22,6 +22,8 @@
 #ifndef BLADERUNNER_SET_H
 #define BLADERUNNER_SET_H
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 #include "bladerunner/boundingbox.h"
 
 #include "common/scummsys.h"

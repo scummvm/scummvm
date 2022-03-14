@@ -29,6 +29,8 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
