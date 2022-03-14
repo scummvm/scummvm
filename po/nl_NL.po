@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-12 13:31+0000\n"
-"PO-Revision-Date: 2022-01-13 18:56+0000\n"
+"PO-Revision-Date: 2022-03-14 07:20+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -729,48 +729,36 @@ msgstr "Geen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Eerste letter"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Engine"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
-msgstr "Series"
+msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Uitgever"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Taal"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Platform"
@@ -785,7 +773,7 @@ msgstr "Groeperen met: "
 
 #: gui/launcher.cpp:217
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Selecteer een groepeercriteria"
 
 #: gui/launcher.cpp:240 engines/dialogs.cpp:94
 msgid "~Q~uit"
@@ -796,31 +784,25 @@ msgid "Quit ScummVM"
 msgstr "Hiermee verlaat u ScummVM"
 
 #: gui/launcher.cpp:241
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "O~v~er..."
+msgstr "O~v~er"
 
 #: gui/launcher.cpp:241 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "Over ScummVM"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~O~pties..."
+msgstr "Algemene ~O~pties..."
 
 #: gui/launcher.cpp:243 gui/launcher.cpp:245
 msgid "Change global ScummVM options"
 msgstr "Algemene ScummVM opties"
 
 #: gui/launcher.cpp:245
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~O~pties..."
+msgstr "Alg. ~O~pties..."
 
 #: gui/launcher.cpp:250
 msgid "~A~dd Game..."
@@ -957,21 +939,17 @@ msgid "Record..."
 msgstr "Opnemen..."
 
 #: gui/launcher.cpp:998
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~O~pties..."
+msgstr "~S~pel Opties..."
 
 #: gui/launcher.cpp:998 gui/launcher.cpp:1001
 msgid "Change game options"
 msgstr "Verander spel opties"
 
 #: gui/launcher.cpp:1001
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~O~pties..."
+msgstr "~S~pel Opties..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1210,13 +1188,11 @@ msgid "V-Sync"
 msgstr "V-Sync"
 
 #: gui/options.cpp:1439
-#, fuzzy
-#| msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"Wacht op verticale sync voordat het scherm ververst wordt bij 3D spellen"
+"Wacht op verticale sync voor het scherm verversem om tearing te voorkomen"
 
 #: gui/options.cpp:1442
 msgid "Game 3D Renderer:"
@@ -1518,18 +1494,13 @@ msgid "Theme Path:"
 msgstr "Thema Pad:"
 
 #: gui/options.cpp:2225
-#, fuzzy
-#| msgid "/root/ Path:"
 msgid "Icon Path:"
-msgstr "/root/ Pad:"
+msgstr "Icoon Pad:"
 
 #: gui/options.cpp:2227
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "/root/ Path:"
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "/root/ Pad:"
+msgstr "Icoon Pad:"
 
 #: gui/options.cpp:2233 gui/options.cpp:2235 gui/options.cpp:2236
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1577,13 +1548,13 @@ msgstr "Auto opslaan:"
 
 #: gui/options.cpp:2300
 msgid "Always return to the launcher when leaving a game"
-msgstr "Altijd teruggaan naar de launcher bij het verlaten van een spel"
+msgstr "Altijd teruggaan naar het startmenu bij het verlaten van een spel"
 
 #: gui/options.cpp:2301
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
-"Altijd teruggaan naar de launcher bij het verlaten van een spel in plaats "
+"Altijd teruggaan naar het startmenu bij het verlaten van een spel in plaats "
 "van ScummVM afsluiten."
 
 #: gui/options.cpp:2308
@@ -1954,10 +1925,8 @@ msgid "Select directory for GUI themes"
 msgstr "Selecteer map voor GUI themas"
 
 #: gui/options.cpp:2866
-#, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Selecteer map voor GUI themas"
+msgstr "Selecteer map voor GUI startmenu miniaturen"
 
 #: gui/options.cpp:2876
 msgid "Select directory for extra files"
@@ -2514,12 +2483,12 @@ msgstr "O~v~er"
 
 #: engines/dialogs.cpp:88 engines/dialogs.cpp:164
 msgid "~R~eturn to Launcher"
-msgstr "Terug naar s~t~artmenu"
+msgstr "~T~erug naar Startmenu"
 
 #: engines/dialogs.cpp:90 engines/dialogs.cpp:166
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "S~t~artmenu"
+msgstr "~T~erug naar Startmenu"
 
 #: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2865,7 +2834,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -3011,7 +2980,7 @@ msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Weet u zeker dat u een nieuw spel wilt starten?\n"
+"Weet u zeker dat u terug wilt naar het Startmenu?\n"
 "Alle niet opgeslagen voortgang zal verloren gaan."
 
 #: backends/events/default/default-events.cpp:218
@@ -3692,11 +3661,11 @@ msgid ""
 "Returning to Launcher..."
 msgstr ""
 "Vergroot Modus Uit. Sleep Modus wordt geheractiveerd.\n"
-"Terug naar startscherm..."
+"Terug naar Startmenu..."
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr "Vergroot Modus Uit. Terug naar Startscherm..."
+msgstr "Vergroot Modus Uit. Terug naar Startmenu..."
 
 #: backends/platform/3ds/osystem-events.cpp:395
 msgid "Hover Mode"
@@ -4344,6 +4313,8 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
+"Waarschuwing: U laadt een opgeslagen spel van een oudere versie: Versie %s / "
+"Build %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
@@ -5182,20 +5153,22 @@ msgstr "Speel films sneller af"
 
 #: engines/groovie/detection.cpp:295
 msgid "Easier AI"
-msgstr ""
+msgstr "Makkelijkere AI"
 
 #: engines/groovie/detection.cpp:296
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Verlaag de moeilijkheid van AI puzzels"
 
 #: engines/groovie/detection.cpp:305
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Bijgewerkte Muziek Credits"
 
 #: engines/groovie/detection.cpp:306
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Speel het lied The Final Hour gedurende de credits in plaats van de MIDI "
+"liedjes"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
@@ -5276,7 +5249,7 @@ msgstr "Zet valsspelen aan"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Sta cheaten toe met de C toets."
 
 #: engines/hypno/detection.cpp:197
 #, fuzzy
@@ -5287,6 +5260,7 @@ msgstr "Discord integratie inschakelen"
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
+"Voeg extra content toe die niet in de originele implementatie gebruikt werd."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
