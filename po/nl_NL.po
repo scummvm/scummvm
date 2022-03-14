@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-12 13:31+0000\n"
-"PO-Revision-Date: 2022-03-14 07:20+0000\n"
+"PO-Revision-Date: 2022-03-14 17:27+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2238,10 +2238,8 @@ msgid "Play"
 msgstr "Spelen"
 
 #: gui/widgets/grid.cpp:221
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
-msgstr "Opslaan"
+msgstr "Opgeslagen spellen"
 
 #: base/main.cpp:650
 msgid "Error running game:"
@@ -2381,31 +2379,23 @@ msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
-#, fuzzy
-#| msgid "B"
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
-#, fuzzy
-#| msgid "SMB"
 msgid "MB"
-msgstr "SMB"
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
-#, fuzzy
-#| msgid "B"
 msgid "GB"
-msgstr "B"
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
-#, fuzzy
-#| msgid "B"
 msgid "TB"
-msgstr "B"
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
@@ -4437,15 +4427,6 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spel is gepauzeerd. Klik OK om verder te gaan."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
-#| msgid ""
-#| "ScummVM found that you have old saved games for Drascula that should be "
-#| "converted.\n"
-#| "The old saved game format is no longer supported, so you will not be able "
-#| "to load your games if you don't convert them.\n"
-#| "\n"
-#| "Press OK to convert them now, otherwise you will be asked again the next "
-#| "time you start the game.\n"
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4455,13 +4436,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM heeft geconstateerd dat u oude opgeslagen spellen voor Drascula "
-"heeft, die geconverteerd zouden moeten worden.\n"
-"Het oude formaat wordt niet meer ondersteund, dus u zult uw opgeslagen "
-"spellen niet meer kunnen laden als u ze niet converteerd.\n"
+"ScummVM heeft opgeslagen spellen gevonden in het oorspronkelijke formaat, "
+"die geconverteerd dienen te worden.\n"
+"Het oorspronkelijke formaat wordt niet direct meer ondersteund, dus u zult "
+"uw opgeslagen spellen niet meer kunnen laden als u ze niet converteert.\n"
 "\n"
-"Klik OK om ze nu te converteren, anders zult u de volgende keer als u het "
-"spel start dit weer gevraagd worden.\n"
+"Klik OK om ze nu te converteren, anders wordt u dit weer gevraagd worden bij "
+"de volgende keer als u het spel start.\n"
 
 #: engines/buried/saveload.cpp:165
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
@@ -5252,10 +5233,8 @@ msgid "Allow cheats using the C key."
 msgstr "Sta cheaten toe met de C toets."
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Discord integratie inschakelen"
+msgstr "Gerestaureerde inhoud inschakelen"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
@@ -5544,18 +5523,6 @@ msgstr ""
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
-#, fuzzy
-#| msgid ""
-#| "This AMIGA version requires the following font files:\n"
-#| "\n"
-#| "EOBF6.FONT\n"
-#| "EOBF6/6\n"
-#| "EOBF8.FONT\n"
-#| "EOBF8/8\n"
-#| "\n"
-#| "If you used the orginal installer for the installation these files\n"
-#| "should be located in the AmigaDOS system 'Fonts/' folder.\n"
-#| "Please copy them into the EOB game data directory.\n"
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -5770,22 +5737,20 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Schakelt het gebruik van QuickTime videos voor visuele effecten m.b.t. water "
+"(rimpels, golven, etc.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "~O~vergangen:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Zet schermovergangen aan/uit. Zonder schermovergangen kunt u sneller door "
-"het spel navigeren."
+"Pas de snelheid van schermovergangen aan. Zonder schermovergangen kunt u "
+"sneller door het spel navigeren."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
@@ -6640,6 +6605,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"Deze versie van Monkey Island kan niet worden gespeeld omdat Limited Run "
+"Games gecorrumpeerde DISK04.LEC en 903.LFL bestanden leverde.\n"
+"\n"
+"Neem a.u.b. contact op met hun technische ondersteuning voor vervangende "
+"bestanden, of zoek online naar instructie die helpen de bestanden uit "
+"KryoFlux dumps te halen die Limited Run Games ook levert."
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
@@ -6755,13 +6726,15 @@ msgstr "Expert"
 
 #: engines/scumm/dialogs.cpp:704
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Ouverture Timing:"
 
 #: engines/scumm/dialogs.cpp:708
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
+"Bij gebruik van vervangende muziek past dit het moment aan wanneer de "
+"Ouverture verandert naar de scene met de Lucasfilm en Loom logotypes."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7311,12 +7284,6 @@ msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Ondersteuning voor SCUMM v7-8 is niet meegecompileerd"
 
 #: engines/scumm/scumm.cpp:542
-#, fuzzy
-#| msgid ""
-#| "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
-#| "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
-#| "Aspect ratio correction can be acheived by trimming the resolution to "
-#| "320x200, under 'engine' tab."
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7326,7 +7293,7 @@ msgstr ""
 "U heeft 'aspect ratio correctie' aangezet. Echter FM-TOWS's gebruikelijke "
 "resolutie is 320x240, wat aspect ratio correctie niet toestaat.\n"
 "Aspect ratio correctie kan gerealiseerd worden door de resolutie bij te "
-"knippen naar 320x200, onder de 'egine' bladwijzer."
+"knippen naar 320x200, onder de 'engine' bladwijzer."
 
 #: engines/scumm/scumm.cpp:1351
 msgid ""
@@ -7358,6 +7325,11 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"Met ScummVM Tools gecomprimeerde geluidsbestanten gedetecteerd; *.BUN/*/."
+"SOU\n"
+"compressie wordt niet meer ondersteund voor dit spel, geluid zal worden "
+"uitgeschakeld.\n"
+"Kopieer a.u.b. het spel van de originele media zonder compressie."
 
 #: engines/scumm/scumm.cpp:2144
 #, c-format
@@ -7509,10 +7481,8 @@ msgstr ""
 "Wanneer font anti-aliasing is ingeschakeld, ziet de tekst er gladder uit."
 
 #: engines/stark/stark.cpp:106
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "Engine plugin ondersteunt opgeslagen spellen niet"
+msgstr "Software renderer ondersteunt geen gemodde assets"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
@@ -8021,11 +7991,11 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:142
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Zet de kerst easter-egg altijd aan"
 
 #: engines/ultima/detection.cpp:143
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Gebruik de kerstmuziek het gehele jaar."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
