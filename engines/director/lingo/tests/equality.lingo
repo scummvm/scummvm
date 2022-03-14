@@ -10,5 +10,9 @@ scummvmAssert(0 <> "")
 scummvmAssert(1 <> cast 1)
 scummvmAssert("test" <> #test)
 
+-- Comparison between string and ints parses the int as string
+scummvmAssert("string" > 0)
+scummvmAssert("1string" < 2)
+
 -- Invalid comparisons should return FALSE
-scummvmAssert(not ("ST_INTRO" <= 0))
+scummvmAssert(not (#test <= 0))

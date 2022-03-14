@@ -593,6 +593,8 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 		opType = FLOAT;
 	} else if (d1Type == INT && d2Type == INT) {
 		opType = INT;
+	} else if ((d1Type == STRING && d2Type == INT) || (d1Type == INT && d2Type == STRING)) {
+		opType = STRING;
 	}
 
 	return opType;
