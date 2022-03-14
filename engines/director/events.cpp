@@ -20,6 +20,9 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -81,7 +84,12 @@ bool DirectorEngine::processEvents(bool captureClick) {
 }
 
 void DirectorEngine::processEventQUIT() {
-	_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+	Common::U32String message = _("The game wants to prevents you from quitting. Do you want to quit?");
+	GUI::MessageDialog dialog(message, _("OK"), _("Cancel"));
+	int result = dialog.runModal();
+	if (result == GUI::kMessageOK) {
+		_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+	}
 }
 
 bool Window::processEvent(Common::Event &event) {
