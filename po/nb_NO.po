@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-12 13:31+0000\n"
-"PO-Revision-Date: 2022-02-23 14:43+0000\n"
+"PO-Revision-Date: 2022-03-15 12:07+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -5222,14 +5222,12 @@ msgid "Allow cheats using the C key."
 msgstr "Tillat juksefunksjoner med C-tasten."
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Aktiver Discord-integrering"
+msgstr "Bruk restaurert innhold"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
+msgstr "Legg til ekstra innhold som ikke var en del av den utgitte opplevelsen."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
