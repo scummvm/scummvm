@@ -63,10 +63,7 @@ void standard_init() {
 	_G(cur) = new Cursor(&_G(curblk));
 	_G(cur)->set_cur_ani(&_G(curani));
 
-	_G(iog) = new IOGame(_G(out), _G(in), _G(cur));
-	strcpy(_G(ioptr).id, "CHE");
-	strcpy(_G(ioptr).save_path, SAVEDIR);
-	_G(ioptr).delay = 8;
+	_G(iog) = new IOGame();
 	alloc_buffers();
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;

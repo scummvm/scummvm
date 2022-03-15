@@ -68,7 +68,7 @@ int16 Files::execute(bool isInGame) {
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	char *fnames = _G(iog)->io_init(&_G(ioptr));
+	char *fnames = _G(iog)->io_init();
 	fnames += 1;
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -258,11 +258,16 @@ int16 Files::execute(bool isInGame) {
 		case Common::KEYCODE_RETURN + ALT:
 enter:
 			if (mode[LOAD]) {
-				tmp = fnames + ((text_off + active_slot) * 40);
-				if (tmp[0]) {
-					_G(currentSong) = -1;
-					_G(iog)->load(text_off + active_slot, _G(ioptr).save_path);
-					key = Common::KEYCODE_ESCAPE;
+				const int16 slotNum = text_off + active_slot;
+				SaveStateList saveList = g_engine->listSaves();
+				for (uint j = 0; j < saveList.size(); ++j) {
+					if (saveList[j].getSaveSlot() == slotNum) {
+						_G(currentSong) = -1;
+						_G(cur)->hide_cur();
+						g_engine->loadGameState(slotNum);
+						key = Common::KEYCODE_ESCAPE;
+						break;
+					}
 				}
 			} else if (mode[SAVE]) {
 				_G(out)->back2screen(_G(workpage));
@@ -272,8 +277,7 @@ enter:
 					255, 42, 14, 0, "%36s36", tmp);
 				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
-					_G(iog)->save_entry(text_off + active_slot,
-						_G(ioptr).save_path);
+					_G(iog)->save_entry(text_off + active_slot);
 				}
 				key = Common::KEYCODE_ESCAPE;
 			}

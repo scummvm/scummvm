@@ -83,21 +83,6 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct IogInit {
-	char id[4] = { 0 };
-	char save_path[30] = { 0 };
-
-	int16 popx = 0;
-	int16 popy = 0;
-	const byte *m_col = nullptr;
-	uint8 f1 = 0;
-	uint8 f2 = 0;
-	uint8 f3 = 0;
-	uint8 f4 = 0;
-	uint8 key_nr = 0;
-	int16 delay = 0;
-};
-
 struct GedPoolHeader {
 	char _id[4] = { 0 };
 	int16 _nr = 0;

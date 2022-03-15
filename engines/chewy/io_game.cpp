@@ -27,14 +27,7 @@
 
 namespace Chewy {
 
-IOGame::IOGame(McgaGraphics *out, InputMgr *in, Cursor *cur) {
-	_out = out;
-	_in = in;
-	_cur = cur;
-}
-
-char *IOGame::io_init(IogInit *iostruc) {
-	_io = iostruc;
+char *IOGame::io_init() {
 	for (int16 i = 0; i < 20; i++)
 		_fileFind[i][0] = 0;
 	get_savegame_files();
@@ -42,18 +35,9 @@ char *IOGame::io_init(IogInit *iostruc) {
 	return &_fileFind[0][0];
 }
 
-void IOGame::save_entry(int16 slotNum, char *fname) {
+void IOGame::save_entry(int16 slotNum) {
 	Common::String desc(&_fileFind[slotNum][1]);
 	g_engine->saveGameState(slotNum, desc);
-}
-
-void IOGame::load(int16 slotNum, char *fname) {
-	get_savegame_files();
-
-	_cur->hide_cur();
-	if (_fileFind[slotNum][0] == 1) {
-		(void)g_engine->loadGameState(slotNum);
-	}
 }
 
 int16 IOGame::get_savegame_files() {

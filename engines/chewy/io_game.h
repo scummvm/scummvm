@@ -29,30 +29,20 @@
 namespace Chewy {
 
 #define IOG_END 1
-#define IOG_LOAD 2
-#define IOG_SAVE 3
-#define IOG_BACK 4
 #define USER_NAME 36
-
-#define DOPPEL_KLICK 0.5
 
 class IOGame {
 private:
-	Cursor *_cur;
-	IogInit *_io;
-	InputMgr *_in;
-	McgaGraphics *_out;
 	char _fileFind[20][USER_NAME + 4];
 
 private:
 	int16 get_savegame_files();
 
 public:
-	IOGame(McgaGraphics *out, InputMgr *in, Cursor *cur);
+	IOGame() {}
 
-	char *io_init(IogInit *iostruc);
-	void load(int16 nr, char *fname);
-	void save_entry(int16 nr, char *fname);
+	char *io_init();
+	void save_entry(int16 nr);
 };
 
 } // namespace Chewy
