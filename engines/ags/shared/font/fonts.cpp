@@ -37,17 +37,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-namespace AGS {
-namespace Shared {
-
-Font::Font()
-	: Renderer(nullptr)
-	, Renderer2(nullptr) {
-}
-
-} // namespace Shared
-} // namespace AGS
-
 FontInfo::FontInfo()
 	: Flags(0)
 	, SizePt(0)
@@ -346,6 +335,12 @@ void set_fontinfo(size_t fontNumber, const FontInfo &finfo) {
 		_GP(fonts)[fontNumber].Info = finfo;
 }
 
+FontInfo get_fontinfo(size_t font_number) {
+	if (font_number < _GP(fonts).size())
+		return _GP(fonts)[font_number].Info;
+	return FontInfo();
+}
+
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 	if (_GP(fonts).size() <= fontNumber)
@@ -386,9 +381,39 @@ void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t 
 	wouttextxy(ds, xxx, yyy, fontNumber, text_color, tbuffer);
 }
 
+void alloc_font_outline_buffers(size_t font_number,
+	Bitmap **text_stencil, Bitmap **outline_stencil,
+	int text_width, int text_height, int color_depth) {
+	if (font_number >= _GP(fonts).size())
+		return;
+	Font &f = _GP(fonts)[font_number];
+	const int thick = 2 * f.Info.AutoOutlineThickness;
+	if (f.TextStencil.IsNull() || (f.TextStencil.GetColorDepth() != color_depth) ||
+		(f.TextStencil.GetWidth() < text_width) || (f.TextStencil.GetHeight() < text_height)) {
+		int sw = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetWidth();
+		int sh = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetHeight();
+		sw = std::max(text_width, sw);
+		sh = std::max(text_height, sh);
+		f.TextStencil.Create(sw, sh, color_depth);
+		f.OutlineStencil.Create(sw, sh + thick, color_depth);
+		f.TextStencilSub.CreateSubBitmap(&f.TextStencil, RectWH(Size(text_width, text_height)));
+		f.OutlineStencilSub.CreateSubBitmap(&f.OutlineStencil, RectWH(Size(text_width, text_height + thick)));
+	} else {
+		f.TextStencilSub.ResizeSubBitmap(text_width, text_height);
+		f.OutlineStencilSub.ResizeSubBitmap(text_width, text_height + thick);
+	}
+	*text_stencil = &f.TextStencilSub;
+	*outline_stencil = &f.OutlineStencilSub;
+}
+
 void wfreefont(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size())
 		return;
+
+	_GP(fonts)[fontNumber].TextStencilSub.Destroy();
+	_GP(fonts)[fontNumber].OutlineStencilSub.Destroy();
+	_GP(fonts)[fontNumber].TextStencil.Destroy();
+	_GP(fonts)[fontNumber].OutlineStencil.Destroy();
 
 	if (_GP(fonts)[fontNumber].Renderer != nullptr)
 		_GP(fonts)[fontNumber].Renderer->FreeMemory(fontNumber);

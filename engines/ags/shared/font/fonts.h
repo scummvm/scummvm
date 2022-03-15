@@ -50,7 +50,7 @@ struct Font {
 	Bitmap TextStencil, TextStencilSub;
 	Bitmap OutlineStencil, OutlineStencilSub;
 
-	Font();
+	Font() {}
 };
 
 } // namespace Shared

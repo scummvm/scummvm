@@ -90,6 +90,16 @@ bool Bitmap::CreateSubBitmap(Bitmap *src, const Rect &rc) {
 	return _alBitmap != nullptr;
 }
 
+bool Bitmap::ResizeSubBitmap(int width, int height) {
+	if (!isSubBitmap())
+		return false;
+	// TODO: can't clamp to parent size, because subs do not keep parent ref;
+	// might require amending allegro bitmap struct
+	_alBitmap->w = _alBitmap->cr = width;
+	_alBitmap->h = _alBitmap->cb = height;
+	return true;
+}
+
 bool Bitmap::CreateCopy(Bitmap *src, int color_depth) {
 	if (Create(src->_alBitmap->w, src->_alBitmap->h, color_depth ? color_depth : bitmap_color_depth(src->_alBitmap))) {
 		blit(src->_alBitmap, _alBitmap, 0, 0, 0, 0, _alBitmap->w, _alBitmap->h);

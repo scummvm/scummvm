@@ -57,6 +57,8 @@ public:
 	bool    CreateTransparent(int width, int height, int color_depth = 0);
 	// Allow this object to share existing bitmap data
 	bool    CreateSubBitmap(Bitmap *src, const Rect &rc);
+	// Resizes existing sub-bitmap within the borders of its parent
+	bool    ResizeSubBitmap(int width, int height);
 	// Create a copy of given bitmap
 	bool    CreateCopy(Bitmap *src, int color_depth = 0);
 	// TODO: a temporary solution for plugin support
