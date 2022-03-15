@@ -216,6 +216,14 @@ Common::Error DirectorEngine::run() {
 	bool loop = true;
 
 	while (loop) {
+#if defined(__EMSCRIPTEN__)
+		// If SDL_HINT_EMSCRIPTEN_ASYNCIFY is enabled, SDL pauses the application and gives 
+		// back control to the browser automatically by calling emscripten_sleep via SDL_Delay. 
+		// Without this the page would completely lock up. 
+		_system->delayMillis(0);
+#endif
+
+
 		if (_stage->getCurrentMovie())
 			processEvents();
 
