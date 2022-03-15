@@ -317,7 +317,7 @@ void Score::update() {
 
 		if (_waitForChannel) {
 			if (_soundManager->isChannelActive(_waitForChannel)) {
-				keepWaiting = true; 
+				keepWaiting = true;
 			} else {
 				_waitForChannel = 0;
 			}
@@ -936,7 +936,7 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 				ch = '\n';
 			comment += ch;
 		}
-	
+
 		label = _movie->getCast()->decodeString(label).encode(Common::kUtf8);
 
 		_labels->insert(new Label(label, frame, comment));
