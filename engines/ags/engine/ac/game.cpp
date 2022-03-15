@@ -961,7 +961,7 @@ bool read_savedgame_screenshot(const String &savedgame, int &want_shot) {
 		int slot = _GP(spriteset).GetFreeIndex();
 		if (slot > 0) {
 			// add it into the sprite set
-			add_dynamic_sprite(slot, ReplaceBitmapWithSupportedFormat(desc.UserImage.release()));
+			add_dynamic_sprite(slot, PrepareSpriteForUse(desc.UserImage.release(), false));
 			want_shot = slot;
 		}
 	}

@@ -48,7 +48,7 @@ int LoadImageFile(const char *filename) {
 	if (gotSlot <= 0)
 		return 0;
 
-	add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(loadedFile));
+	add_dynamic_sprite(gotSlot, PrepareSpriteForUse(loadedFile, false));
 
 	return gotSlot;
 }

@@ -178,11 +178,11 @@ extern AGS_INLINE int game_to_ctx_data_size(int size, bool hires_ctx);
 // This function converts game coordinates coming from script to the actual game resolution.
 extern AGS_INLINE void defgame_to_finalgame_coords(int &x, int &y);
 
-// Checks if the bitmap needs to be converted and **deletes original** if a new bitmap
-// had to be created (by default).
-// TODO: this helper function was meant to remove bitmap deletion from the GraphicsDriver's
-// implementations while keeping code changes to minimum. The proper solution would probably
-// be to use shared pointers when storing Bitmaps, or make Bitmap reference-counted object.
+// Creates bitmap of a format compatible with the gfxdriver;
+// if col_depth is 0, uses game's native color depth.
+Shared::Bitmap *CreateCompatBitmap(int width, int height, int col_depth = 0);
+// Checks if the bitmap is compatible with the gfxdriver;
+// returns same bitmap or its copy of a compatible format.
 Shared::Bitmap *ReplaceBitmapWithSupportedFormat(Shared::Bitmap *bitmap);
 // Checks if the bitmap needs any kind of adjustments before it may be used
 // in AGS sprite operations. Also handles number of certain special cases

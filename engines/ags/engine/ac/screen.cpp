@@ -85,7 +85,6 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 	if (_G(saved_viewport_bitmap) == nullptr)
 		quit("Crossfade: buffer is null attempting transition");
 
-	_G(saved_viewport_bitmap) = ReplaceBitmapWithSupportedFormat(_G(saved_viewport_bitmap));
 	const Rect &viewport = _GP(play).GetMainViewport();
 	if (_G(saved_viewport_bitmap)->GetHeight() < viewport.GetHeight()) {
 		Bitmap *enlargedBuffer = BitmapHelper::CreateBitmap(_G(saved_viewport_bitmap)->GetWidth(), viewport.GetHeight(), _G(saved_viewport_bitmap)->GetColorDepth());

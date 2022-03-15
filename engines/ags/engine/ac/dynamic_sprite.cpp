@@ -322,7 +322,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 	update_polled_stuff_if_runtime();
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(newPic));
+	add_dynamic_sprite(gotSlot, newPic);
 	ScriptDynamicSprite *new_spr = new ScriptDynamicSprite(gotSlot);
 	return new_spr;
 }
@@ -385,14 +385,15 @@ ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChanne
 	if (gotSlot <= 0)
 		return nullptr;
 
-	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, _GP(game).GetColorDepth());
+	Bitmap *newPic = CreateCompatBitmap(width, height);
 	if (newPic == nullptr)
 		return nullptr;
 
+	newPic->ClearTransparent();
 	if ((alphaChannel) && (_GP(game).GetColorDepth() < 32))
 		alphaChannel = false;
 
-	add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(newPic), alphaChannel != 0);
+	add_dynamic_sprite(gotSlot, newPic, alphaChannel != 0);
 	ScriptDynamicSprite *new_spr = new ScriptDynamicSprite(gotSlot);
 	return new_spr;
 }
