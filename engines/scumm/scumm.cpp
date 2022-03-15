@@ -2445,11 +2445,14 @@ Common::Error ScummEngine::go() {
 			delta = 6;
 		}
 
-		// Wait...
-		waitForTimer(delta * 1000 / 60 - diff);
+		// Wait, then start the stop watch. Assume that waiting is
+		// exact, even though it's almost certain to overshoot the
+		// target. That way we factor in the difference when timing
+		// how long the main loop takes.
+		int delayMsecs = delta * 1000 / 60 - diff;
+		diff = _system->getMillis() + delayMsecs;
 
-		// Start the stop watch!
-		diff = _system->getMillis();
+		waitForTimer(delayMsecs);
 
 		// Run the main loop
 		scummLoop(delta);
