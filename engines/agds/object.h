@@ -72,6 +72,7 @@ private:
 	Animation *						_mouseCursor;
 	Common::Point					_pos, _animationPos, _offset;
 	Common::Point					_regionOffset;
+	Common::Rect					_srcRect;
 	int								_z;
 	Common::String					_text;
 	Common::String					_title;
@@ -298,6 +299,8 @@ public:
 	{ return _alive; }
 
 	void alive(bool value);
+
+	void srcRect(Common::Rect srcRect) { _srcRect = srcRect; }
 
 	bool pointIn(Common::Point pos);
 };

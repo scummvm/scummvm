@@ -670,7 +670,7 @@ void Process::resetState() {
 	_tileWidth = 16;
 	_tileHeight = 16;
 	_tileIndex = 0;
-	_tileResource = 0;
+	_tileResource = -1;
 
 	_filmSubtitlesResource = -1;
 }
@@ -1114,8 +1114,10 @@ void Process::setObjectTile() {
 		return;
 	}
 
-	if (_tileResource <= 0) {
-		warning("invalid resource id, skipping");
+	if (_tileResource < 0) {
+		int x = _animationPosition.x;
+		int y = _animationPosition.y;
+		object->srcRect(Common::Rect(x, y, x + _tileWidth, y + _tileHeight));
 		return;
 	}
 	if (_tileHeight <= 0 || _tileWidth <= 0) {
