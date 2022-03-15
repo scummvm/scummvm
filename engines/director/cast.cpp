@@ -459,7 +459,8 @@ void Cast::loadCast() {
 
 	// Score Order List resources
 	if (_castArchive->hasResource(MKTAG('S', 'o', 'r', 'd'), -1)) {
-		debug("STUB: Unhandled 'Sord' resource");
+		loadSord(*(r = _castArchive->getFirstResource(MKTAG('S', 'o', 'r', 'd'))));
+		delete r;
 	}
 
 	// Now process STXTs
@@ -1316,6 +1317,36 @@ Common::U32String Cast::decodeString(const Common::String &str) {
 	}
 
 	return fixedStr.decode(encoding);
+}
+
+// Score order, 'Sord' resource
+//
+// Enlists all cast members as they're used in the movie
+// It is used for more effective preloading
+//
+// And as such, not currently used by the ScummVM
+void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
+	stream.readUint32();
+	stream.readUint32();
+	stream.readUint32();
+	stream.readUint32();
+	stream.readUint16();
+	stream.readUint16();
+
+	uint numEntries = 0;
+	uint16 castLibId = 0; // default for pre-D5
+	uint16 memberId;
+	while (!stream.eos()) {
+
+		if (_version >= kFileVer500)
+			castLibId = stream.readUint16LE();
+
+		memberId = stream.readUint16LE();
+
+		numEntries++;
+	}
+
+	debugC(1, kDebugLoading, "Cast::loadSord(): number of entries: %d", numEntries);
 }
 
 } // End of namespace Director

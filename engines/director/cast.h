@@ -83,6 +83,7 @@ public:
 	void loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadLingoContext(Common::SeekableReadStreamEndian &stream);
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
+	void loadSord(Common::SeekableReadStreamEndian &stream);
 
 	void loadCastChildren();
 	void loadSoundCasts();
