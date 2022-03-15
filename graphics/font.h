@@ -92,6 +92,11 @@ public:
 	virtual int getFontHeight() const = 0;
 
 	/**
+	 * Returns the font's name, if one is available
+	 */
+	virtual Common::String getFontName() const { return ""; }
+
+	/**
 	 * Return the ascent of the font.
 	 *
 	 * @return Font ascent in pixels. If it is unknown

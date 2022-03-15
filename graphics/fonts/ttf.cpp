@@ -147,7 +147,7 @@ public:
 	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 
 	virtual int getFontHeight() const;
-
+	Common::String getFontName() const override;
 	virtual int getFontAscent() const;
 
 	virtual int getMaxCharWidth() const;
