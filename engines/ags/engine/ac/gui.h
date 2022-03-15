@@ -78,7 +78,6 @@ int     convert_gui_disabled_style(int oldStyle);
 void    update_gui_disabled_status();
 int     adjust_x_for_guis(int xx, int yy);
 int     adjust_y_for_guis(int yy);
-void    recreate_guibg_image(GUIMain *tehgui);
 
 int     gui_get_interactable(int x, int y);
 int     gui_on_mouse_move();

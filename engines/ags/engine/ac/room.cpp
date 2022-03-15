@@ -302,31 +302,10 @@ void unload_old_room() {
 
 	croom_ptr_clear();
 
-	// clear the object cache
-	for (ff = 0; ff < MAX_ROOM_OBJECTS; ff++) {
-		delete _G(objcache)[ff].image;
-		_G(objcache)[ff].image = nullptr;
-	}
-	// clear the _G(actsps) buffers to save memory, since the
+	// clear the _GP(actsps) buffers to save memory, since the
 	// objects/characters involved probably aren't on the
 	// new screen. this also ensures all cached data is flushed
-	for (ff = 0; ff < MAX_ROOM_OBJECTS + _GP(game).numcharacters; ff++) {
-		delete _G(actsps)[ff];
-		_G(actsps)[ff] = nullptr;
-
-		if (_G(actspsbmp)[ff] != nullptr)
-			_G(gfxDriver)->DestroyDDB(_G(actspsbmp)[ff]);
-		_G(actspsbmp)[ff] = nullptr;
-
-		delete _G(actspswb)[ff];
-		_G(actspswb)[ff] = nullptr;
-
-		if (_G(actspswbbmp)[ff] != nullptr)
-			_G(gfxDriver)->DestroyDDB(_G(actspswbbmp)[ff]);
-		_G(actspswbbmp)[ff] = nullptr;
-
-		_G(actspswbcache)[ff].valid = 0;
-	}
+	clear_drawobj_cache();
 
 	// if Hide Player Character was ticked, restore it to visible
 	if (_GP(play).temporarily_turned_off_character >= 0) {
@@ -950,15 +929,6 @@ void new_room(int newnum, CharacterInfo *forchar) {
 		// Delete all cached sprites
 		_GP(spriteset).DisposeAll();
 
-		// Delete all gui background images
-		for (int i = 0; i < _GP(game).numgui; i++) {
-			delete _G(guibg)[i];
-			_G(guibg)[i] = nullptr;
-
-			if (_G(guibgbmp)[i])
-				_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[i]);
-			_G(guibgbmp)[i] = nullptr;
-		}
 		GUI::MarkAllGUIForUpdate();
 	}
 

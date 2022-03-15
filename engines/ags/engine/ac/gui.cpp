@@ -125,8 +125,6 @@ void GUI_SetSize(ScriptGUI *sgui, int widd, int hitt) {
 	tehgui->Width = widd;
 	tehgui->Height = hitt;
 
-	recreate_guibg_image(tehgui);
-
 	tehgui->MarkChanged();
 }
 
@@ -547,20 +545,6 @@ int adjust_y_for_guis(int yy) {
 			yy = _GP(guis)[aa].Y + _GP(guis)[aa].Height + 2;
 	}
 	return yy;
-}
-
-void recreate_guibg_image(GUIMain *tehgui) {
-	int ifn = tehgui->ID;
-	delete _G(guibg)[ifn];
-	_G(guibg)[ifn] = BitmapHelper::CreateBitmap(tehgui->Width, tehgui->Height, _GP(game).GetColorDepth());
-	if (_G(guibg)[ifn] == nullptr)
-		quit("SetGUISize: internal error: unable to reallocate gui cache");
-	_G(guibg)[ifn] = ReplaceBitmapWithSupportedFormat(_G(guibg)[ifn]);
-
-	if (_G(guibgbmp)[ifn] != nullptr) {
-		_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[ifn]);
-		_G(guibgbmp)[ifn] = nullptr;
-	}
 }
 
 int gui_get_interactable(int x, int y) {

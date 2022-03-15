@@ -73,12 +73,18 @@ class Camera;
 
 // Initializes drawing methods and optimisation
 void init_draw_method();
+// Initializes global game drawing resources
+void init_game_drawdata();
 // Initializes drawing resources upon entering new room
 void init_room_drawdata();
 // Disposes resources related to the current drawing methods
 void dispose_draw_method();
+// Disposes global game drawing resources
+void dispose_game_drawdata();
 // Disposes any temporary resources on leaving current room
 void dispose_room_drawdata();
+// Releases all the cached textures of game objects
+void clear_drawobj_cache();
 // Updates drawing settings depending on main viewport's size and position on screen
 void on_mainviewport_changed();
 // Notifies that a new room viewport was created
@@ -106,6 +112,7 @@ void invalidate_rect(int x1, int y1, int x2, int y2, bool in_room);
 
 void mark_current_background_dirty();
 void invalidate_cached_walkbehinds();
+
 // Avoid freeing and reallocating the memory if possible
 Shared::Bitmap *recycle_bitmap(Shared::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
 Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Shared::Bitmap *source, bool hasAlpha = false, bool opaque = false);
@@ -117,6 +124,9 @@ void construct_game_scene(bool full_redraw = false);
 void construct_game_screen_overlay(bool draw_mouse = true);
 // Construct engine overlay with debugging tools (fps, console)
 void construct_engine_overlay();
+// Clears black game borders in legacy letterbox mode
+void clear_letterbox_borders();
+
 void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
 void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Shared::Bitmap *image, bool src_has_alpha,
@@ -136,7 +146,10 @@ void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware);
-void clear_letterbox_borders();
+// Returns a cached character image prepared for the render
+Shared::Bitmap *get_cached_character_image(int charid);
+// Returns a cached object image prepared for the render
+Shared::Bitmap *get_cached_object_image(int objid);
 
 void draw_and_invalidate_text(Shared::Bitmap *ds, int x1, int y1, int font, color_t text_color, const char *text);
 

@@ -354,12 +354,8 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_G(charextra) = (CharacterExtras *)calloc(_GP(game).numcharacters, sizeof(CharacterExtras));
 	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * _GP(game).numcharacters + 5);
 	_G(mls) = (MoveList *)calloc(_GP(game).numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
-	_G(actSpsCount) = _GP(game).numcharacters + MAX_ROOM_OBJECTS + 2;
-	_G(actsps) = (Bitmap **)calloc(_G(actSpsCount), sizeof(Bitmap *));
-	_G(actspsbmp) = (IDriverDependantBitmap **)calloc(_G(actSpsCount), sizeof(IDriverDependantBitmap *));
-	_G(actspswb) = (Bitmap **)calloc(_G(actSpsCount), sizeof(Bitmap *));
-	_G(actspswbbmp) = (IDriverDependantBitmap **)calloc(_G(actSpsCount), sizeof(IDriverDependantBitmap *));
-	_G(actspswbcache) = (CachedActSpsData *)calloc(_G(actSpsCount), sizeof(CachedActSpsData));
+	init_game_drawdata();
+
 	_GP(play).charProps.resize(_GP(game).numcharacters);
 	_G(old_dialog_scripts) = ents.OldDialogScripts;
 	_G(old_speech_lines) = ents.OldSpeechLines;

@@ -569,18 +569,19 @@ public:
 
 	// actsps is used for temporary storage of the bitamp image
 	// of the latest version of the sprite
-	int _actSpsCount = 0;
-	AGS::Shared::Bitmap **_actsps = nullptr;
-	AGS::Engine::IDriverDependantBitmap **_actspsbmp = nullptr;
+	std::vector<Shared::Bitmap *> *_actsps;
+	std::vector<Engine::IDriverDependantBitmap *> *_actspsbmp;
 	// temporary cache of walk-behind for this actsps image
-	AGS::Shared::Bitmap **_actspswb = nullptr;
-	AGS::Engine::IDriverDependantBitmap **_actspswbbmp = nullptr;
-	CachedActSpsData *_actspswbcache = nullptr;
+	std::vector<Shared::Bitmap *> *_actspswb;
+	std::vector<Engine::IDriverDependantBitmap *> *_actspswbbmp;
+	std::vector<CachedActSpsData> *_actspswbcache;
+	// GUI surfaces
+	std::vector<Shared::Bitmap *> *_guibg;
+	std::vector<Engine::IDriverDependantBitmap *> *_guibgbmp;
+
 	bool _current_background_is_dirty = false;
 	// Room background sprite
 	AGS::Engine::IDriverDependantBitmap *_roomBackgroundBmp = nullptr;
-	AGS::Shared::Bitmap **_guibg = nullptr;
-	AGS::Engine::IDriverDependantBitmap **_guibgbmp = nullptr;
 	AGS::Shared::Bitmap *_debugConsoleBuffer = nullptr;
 	// whether there are currently remnants of a DisplaySpeech
 	bool _screen_is_dirty = false;

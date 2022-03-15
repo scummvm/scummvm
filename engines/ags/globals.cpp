@@ -173,6 +173,15 @@ Globals::Globals() {
 	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
 	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
+
+	_actsps = new std::vector<Shared::Bitmap *>();
+	_actspsbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_actspswb = new	std::vector<Shared::Bitmap *>();
+	_actspswbbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_actspswbcache = new std::vector<CachedActSpsData>();
+	_guibg = new std::vector<Shared::Bitmap *>();
+	_guibgbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
 	for (int i = 0; i < PALETTE_COUNT; ++i)
@@ -413,6 +422,13 @@ Globals::~Globals() {
 	delete _CameraDrawData;
 	delete _sprlist;
 	delete _thingsToDrawList;
+	delete _actsps;
+	delete _actspsbmp;
+	delete _actspswb;
+	delete _actspswbbmp;
+	delete _actspswbcache;
+	delete _guibg;
+	delete _guibgbmp;
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;

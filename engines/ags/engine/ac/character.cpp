@@ -2068,11 +2068,12 @@ void CheckViewFrameForCharacter(CharacterInfo *chi) {
 
 Bitmap *GetCharacterImage(int charid, int *isFlipped) {
 	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-		if (_G(actsps)[charid + MAX_ROOM_OBJECTS] != nullptr) {
-			// the actsps image is pre-flipped, so no longer register the image as such
+		Bitmap *actsp = get_cached_character_image(charid);
+		if (actsp) {
+			// the cached image is pre-flipped, so no longer register the image as such
 			if (isFlipped)
 				*isFlipped = 0;
-			return _G(actsps)[charid + MAX_ROOM_OBJECTS];
+			return actsp;
 		}
 	}
 	CharacterInfo *chin = &_GP(game).chars[charid];

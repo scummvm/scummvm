@@ -400,11 +400,8 @@ void unload_game_file() {
 	_GP(characterScriptObjNames).clear();
 	free(_G(charextra));
 	free(_G(mls));
-	free(_G(actsps));
-	free(_G(actspsbmp));
-	free(_G(actspswb));
-	free(_G(actspswbbmp));
-	free(_G(actspswbcache));
+
+	dispose_game_drawdata();
 
 	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
 		quit("Error: unload_game called while script still running");
@@ -472,13 +469,7 @@ void unload_game_file() {
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
-	for (int i = 0; i < _GP(game).numgui; ++i) {
-		free(_G(guibg)[i]);
-		_G(guibg)[i] = nullptr;
-	}
-
 	_GP(guiScriptObjNames).clear();
-	free(_G(guibg));
 	_GP(guis).clear();
 	free(_G(scrGui));
 

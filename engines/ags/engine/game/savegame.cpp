@@ -344,15 +344,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 		}
 	}
 
-	// cleanup GUI backgrounds
-	for (int i = 0; i < _GP(game).numgui; ++i) {
-		delete _G(guibg)[i];
-		_G(guibg)[i] = nullptr;
-
-		if (_G(guibgbmp)[i])
-			_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[i]);
-		_G(guibgbmp)[i] = nullptr;
-	}
+    // Cleanup drawn caches
+    clear_drawobj_cache();
 
 	// preserve script data sizes and cleanup scripts
 	pp.GlScDataSize = _G(gameinst)->globaldatasize;
@@ -607,11 +600,6 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 			PlayAmbientSound(i, r_data.DoAmbient[i], _GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 	}
 	update_directional_sound_vol();
-
-	for (int i = 0; i < _GP(game).numgui; ++i) {
-		_G(guibg)[i] = BitmapHelper::CreateBitmap(_GP(guis)[i].Width, _GP(guis)[i].Height, _GP(game).GetColorDepth());
-		_G(guibg)[i] = ReplaceBitmapWithSupportedFormat(_G(guibg)[i]);
-	}
 
 	recreate_overlay_ddbs();
 

@@ -577,9 +577,6 @@ void engine_init_game_settings() {
 
 	int ee;
 
-	for (ee = 0; ee < MAX_ROOM_OBJECTS + _GP(game).numcharacters; ee++)
-		_G(actsps)[ee] = nullptr;
-
 	for (ee = 0; ee < 256; ee++) {
 		if (_GP(game).paluses[ee] != PAL_BACKGROUND)
 			_G(palette)[ee] = _GP(game).defpal[ee];
@@ -601,9 +598,6 @@ void engine_init_game_settings() {
 	// may as well preload the character gfx
 	if (_G(playerchar)->view >= 0)
 		precache_view(_G(playerchar)->view);
-
-	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++)
-		_G(objcache)[ee].image = nullptr;
 
 	/*  dummygui.guiId = -1;
 	dummyguicontrol.guin = -1;
@@ -643,13 +637,6 @@ void engine_init_game_settings() {
 		_G(charextra)[ee].invorder_count = 0;
 		_G(charextra)[ee].slow_move_counter = 0;
 		_G(charextra)[ee].animwait = 0;
-	}
-	// multiply up gui positions
-	_G(guibg) = (Bitmap **)malloc(sizeof(Bitmap *) * _GP(game).numgui);
-	_G(guibgbmp) = (IDriverDependantBitmap **)malloc(sizeof(IDriverDependantBitmap *) * _GP(game).numgui);
-	for (ee = 0; ee < _GP(game).numgui; ee++) {
-		_G(guibg)[ee] = nullptr;
-		_G(guibgbmp)[ee] = nullptr;
 	}
 
 	_G(our_eip) = -5;
