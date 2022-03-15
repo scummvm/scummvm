@@ -49,6 +49,7 @@ public:
 	bool IsBitmapFont() override;
 	bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
 		FontMetrics *metrics) override;
+	const char *GetName(int fontNumber) override;
 
 private:
 	struct FontData {

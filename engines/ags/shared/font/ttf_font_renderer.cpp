@@ -22,17 +22,11 @@
 #include "ags/lib/alfont/alfont.h"
 #include "ags/shared/core/platform.h"
 #include "ags/globals.h"
-
-#define AGS_OUTLINE_FONT_FIX (!AGS_PLATFORM_OS_WINDOWS)
-
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/shared/util/stream.h"
-
-#if AGS_OUTLINE_FONT_FIX // TODO: factor out the hack in LoadFromDiskEx
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/fonts.h"
-#endif
 
 namespace AGS3 {
 
@@ -141,6 +135,10 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	}
 
 	return true;
+}
+
+const char *TTFFontRenderer::GetName(int fontNumber) {
+	return alfont_get_name(_fontData[fontNumber].AlFont);
 }
 
 void TTFFontRenderer::FreeMemory(int fontNumber) {

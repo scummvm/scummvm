@@ -59,10 +59,13 @@ struct FontMetrics {
 // NOTE: this extending interface is not yet exposed to plugins
 class IAGSFontRenderer2 {
 public:
+	// Tells if this is a bitmap font (otherwise it's a vector font)
 	virtual bool IsBitmapFont() = 0;
 	// Load font, applying extended font rendering parameters
 	virtual bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
 		FontMetrics *metrics) = 0;
+	// Gets font's name; must return an empty string if no name is available
+	virtual const char *GetName(int fontNumber) = 0;
 protected:
 	IAGSFontRenderer2() {}
 	~IAGSFontRenderer2() {}
