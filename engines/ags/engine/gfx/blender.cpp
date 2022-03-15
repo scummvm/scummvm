@@ -43,4 +43,9 @@ void set_opaque_alpha_blender() {
 	set_blender_mode(kOpaqueBlenderMode, 0, 0, 0, 0);
 }
 
+void set_argb2any_blender() {
+	// TODO: Properly implement this new mode
+	set_blender_mode(kArgbToArgbBlender, 0, 0, 0, 0xff);
+}
+
 } // namespace AGS3

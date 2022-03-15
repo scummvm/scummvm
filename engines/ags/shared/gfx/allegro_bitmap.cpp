@@ -198,6 +198,10 @@ void Bitmap::Blit(Bitmap *src, int src_x, int src_y, int dst_x, int dst_y, int w
 	}
 }
 
+void Bitmap::MaskedBlit(Bitmap *src, int dst_x, int dst_y) {
+	draw_sprite(_alBitmap, src->_alBitmap, dst_x, dst_y);
+}
+
 void Bitmap::StretchBlt(Bitmap *src, const Rect &dst_rc, BitmapMaskOption mask) {
 	BITMAP *al_src_bmp = src->_alBitmap;
 	// WARNING: For some evil reason Allegro expects dest and src bitmaps in different order for blit and draw_sprite

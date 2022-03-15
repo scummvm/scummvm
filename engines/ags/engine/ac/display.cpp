@@ -43,6 +43,7 @@
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/top_bar_settings.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/gfx/blender.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/engine/main/game_run.h"
@@ -452,31 +453,46 @@ bool ShouldAntiAliasText() {
 }
 
 void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *texx, int &xxp, int &yyp) {
-	using AGS::Shared::kBitmap_Transparency;
-
-	int thickness = _GP(game).fonts.at(font).AutoOutlineThickness;
-	auto style = _GP(game).fonts.at(font).AutoOutlineStyle;
+	int const thickness = _GP(game).fonts.at(font).AutoOutlineThickness;
+	auto const style = _GP(game).fonts.at(font).AutoOutlineStyle;
 	if (thickness <= 0)
 		return;
 
+	// 16-bit games should use 32-bit stencils to keep anti-aliasing working
+	// because 16-bit blending works correctly if there's an actual color
+	// on the destination bitmap (and our intermediate bitmaps are transparent).
+	int const  ds_cd = ds->GetColorDepth();
+	bool const antialias = ds_cd >= 16 && _GP(game).options[OPT_ANTIALIASFONTS] != 0 && !is_bitmap_font(font);
+	int const  stencil_cd = antialias ? 32 : ds_cd;
+	if (antialias) // This is to make sure TTFs render proper alpha channel in 16-bit games too
+		color |= makeacol32(0, 0, 0, 0xff);
+
 	size_t const t_width = wgettextwidth(texx, font);
 	size_t const t_height = wgettextheight(texx, font);
-	if (t_width == 0 || t_height == 0)
+	Bitmap texx_stencil, outline_stencil;
+	texx_stencil.CreateTransparent(t_width, t_height, stencil_cd);
+	outline_stencil.CreateTransparent(t_width, t_height + 2 * thickness, stencil_cd);
+	if (outline_stencil.IsNull() || texx_stencil.IsNull())
 		return;
+	wouttextxy(&texx_stencil, 0, 0, font, color, texx);
 
-	Bitmap *outline_stencil =
-		CreateTransparentBitmap(t_width, t_height + 2 * thickness, ds->GetColorDepth());
-	Bitmap *texx_stencil =
-		CreateTransparentBitmap(t_width, t_height, ds->GetColorDepth());
-	if (!outline_stencil || !texx_stencil)
-		return;
-	wouttextxy(texx_stencil, 0, 0, font, color, texx);
+	// Anti-aliased TTFs require to be alpha-blended, not blit,
+	// or the alpha values will be plain copied and final image will be broken.
+	void(Bitmap:: * pfn_drawstencil)(Bitmap * src, int dst_x, int dst_y);
+	if (antialias) { // NOTE: we must set out blender AFTER wouttextxy, or it will be overidden
+		set_argb2any_blender();
+		pfn_drawstencil = &Bitmap::TransBlendBlt;
+	} else {
+		pfn_drawstencil = &Bitmap::MaskedBlit;
+	}
 
 	// move start of text so that the outline doesn't drop off the bitmap
 	xxp += thickness;
 	int const outline_y = yyp;
 	yyp += thickness;
 
+	// What we do here: first we paint text onto outline_stencil offsetting vertically;
+	// then we paint resulting outline_stencil onto final dest offsetting horizontally.
 	int largest_y_diff_reached_so_far = -1;
 	for (int x_diff = thickness; x_diff >= 0; x_diff--) {
 		// Integer arithmetics: In the following, we use terms k*(k + 1) to account for rounding.
@@ -485,24 +501,21 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 		if (FontInfo::kRounded == style)
 			y_term_limit -= x_diff * x_diff;
 
-		// extend the outline stencil to the top and bottom
+		// Extend the outline stencil to the top and bottom
 		for (int y_diff = largest_y_diff_reached_so_far + 1;
 			y_diff <= thickness && y_diff * y_diff <= y_term_limit;
 			y_diff++) {
-			outline_stencil->Blit(texx_stencil, 0, thickness - y_diff, kBitmap_Transparency);
+			(outline_stencil.*pfn_drawstencil)(&texx_stencil, 0, thickness - y_diff);
 			if (y_diff > 0)
-				outline_stencil->Blit(texx_stencil, 0, thickness + y_diff, kBitmap_Transparency);
+				(outline_stencil.*pfn_drawstencil)(&texx_stencil, 0, thickness + y_diff);
 			largest_y_diff_reached_so_far = y_diff;
 		}
 
-		// stamp the outline stencil to the left and right of the text
-		ds->Blit(outline_stencil, xxp - x_diff, outline_y, kBitmap_Transparency);
+		// Stamp the outline stencil to the left and right of the text
+		(ds->*pfn_drawstencil)(&outline_stencil, xxp - x_diff, outline_y);
 		if (x_diff > 0)
-			ds->Blit(outline_stencil, xxp + x_diff, outline_y, kBitmap_Transparency);
+			(ds->*pfn_drawstencil)(&outline_stencil, xxp + x_diff, outline_y);
 	}
-
-	delete texx_stencil;
-	delete outline_stencil;
 }
 
 // Draw an outline if requested, then draw the text on top 

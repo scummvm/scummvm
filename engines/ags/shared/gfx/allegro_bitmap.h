@@ -176,7 +176,9 @@ public:
 	// Draw other bitmap over current one
 	void    Blit(Bitmap *src, int dst_x = 0, int dst_y = 0, BitmapMaskOption mask = kBitmap_Copy);
 	void    Blit(Bitmap *src, int src_x, int src_y, int dst_x, int dst_y, int width, int height, BitmapMaskOption mask = kBitmap_Copy);
-	// Copy other bitmap, stretching or shrinking its size to given values
+	// Draw other bitmap in a masked mode (kBitmap_Transparency)
+	void    MaskedBlit(Bitmap *src, int dst_x, int dst_y);
+	// Draw other bitmap, stretching or shrinking its size to given values
 	void    StretchBlt(Bitmap *src, const Rect &dst_rc, BitmapMaskOption mask = kBitmap_Copy);
 	void    StretchBlt(Bitmap *src, const Rect &src_rc, const Rect &dst_rc, BitmapMaskOption mask = kBitmap_Copy);
 	// Antia-aliased stretch-blit

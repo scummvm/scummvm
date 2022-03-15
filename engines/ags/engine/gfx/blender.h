@@ -50,6 +50,8 @@ void set_my_trans_blender(int r, int g, int b, int a);
 void set_additive_alpha_blender();
 // Opaque alpha blender plain copies src over, applying opaque alpha value.
 void set_opaque_alpha_blender();
+// Sets argb2argb for 32-bit mode, and provides appropriate funcs for blending 32-bit onto 15/16/24-bit destination
+void set_argb2any_blender();
 
 } // namespace AGS3
 
