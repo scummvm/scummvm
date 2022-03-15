@@ -5227,7 +5227,8 @@ msgstr "Bruk restaurert innhold"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
-msgstr "Legg til ekstra innhold som ikke var en del av den utgitte opplevelsen."
+msgstr ""
+"Legg til ekstra innhold som ikke var en del av den utgitte opplevelsen."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
