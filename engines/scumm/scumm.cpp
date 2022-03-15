@@ -2445,10 +2445,11 @@ Common::Error ScummEngine::go() {
 			delta = 6;
 		}
 
-		// Wait, then start the stop watch. Assume that waiting is
-		// exact, even though it's almost certain to overshoot the
-		// target. That way we factor in the difference when timing
-		// how long the main loop takes.
+		// Wait and start the stop watch at the time the wait is assumed
+		// to end. There is no guarantee that the wait is that exact,
+		// but this way if it overshoots that time will count as part
+		// of the main loop.
+
 		int delayMsecs = delta * 1000 / 60 - diff;
 		diff = _system->getMillis() + delayMsecs;
 
@@ -2471,14 +2472,14 @@ Common::Error ScummEngine::go() {
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {
-	uint32 start_time;
+	uint32 end_time;
 
 	if (_fastMode & 2)
 		msec_delay = 0;
 	else if (_fastMode & 1)
 		msec_delay = 10;
 
-	start_time = _system->getMillis();
+	end_time = _system->getMillis() + msec_delay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2500,9 +2501,9 @@ void ScummEngine::waitForTimer(int msec_delay) {
 		_refreshDuration[_refreshArrayPos] = (int)(cur - screenUpdateTimerStart);
 		_refreshArrayPos = (_refreshArrayPos + 1) % ARRAYSIZE(_refreshDuration);
 #endif
-		if (cur >= start_time + msec_delay)
+		if (cur >= end_time)
 			break;
-		_system->delayMillis(10);
+		_system->delayMillis(MIN<uint32>(10, end_time - cur));
 	}
 }
 
