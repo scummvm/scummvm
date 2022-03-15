@@ -134,7 +134,7 @@ class SciSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template <typename T, template <typename> class U> friend class SciSpanImpl;
 #endif
-#if CXXTEST_RUNNING
+#if defined(CXXTEST_RUNNING) && CXXTEST_RUNNING
 	friend class ::SpanTestSuite;
 #endif
 

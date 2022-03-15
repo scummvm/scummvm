@@ -913,7 +913,7 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 	for (uint16 i = _endColor + 1; i < ARRAYSIZE(palette.colors); ++i) {
 		palette.colors[i].used = false;
 	}
-#if SCI_VMD_BLACK_PALETTE
+#ifdef SCI_VMD_BLACK_PALETTE
 	if (_blackPalette) {
 		for (uint16 i = _startColor; i <= _endColor; ++i) {
 			palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
@@ -936,7 +936,7 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 		g_sci->_gfxPalette32->updateHardware();
 	}
 
-#if SCI_VMD_BLACK_PALETTE
+#ifdef SCI_VMD_BLACK_PALETTE
 	if (_blackPalette) {
 		fillPalette(rawPalette, palette);
 		if (_isComposited) {

@@ -105,7 +105,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //////////////////////////////////////////////////////////////////////
 
-//#define SCI_VERBOSE_RESMAN 1
+//#define SCI_VERBOSE_RESMAN
 
 static const char *const s_errorDescriptions[] = {
 	"No error",
@@ -1142,7 +1142,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size();
-#if SCI_VERBOSE_RESMAN
+#ifdef SCI_VERBOSE_RESMAN
 	debug("Adding %s (%d bytes) to lru control: %d bytes total",
 	      res->_id.toString().c_str(), res->size,
 	      _memoryLRU);
