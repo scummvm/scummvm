@@ -1343,6 +1343,8 @@ void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
 
 		memberId = stream.readUint16LE();
 
+		debugC(2, kDebugLoading, "Cast::loadSord(): entry %d - %u:%u", numEntries, castLibId, memberId);
+
 		numEntries++;
 	}
 
