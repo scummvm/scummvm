@@ -33,6 +33,7 @@ struct ALFONT_FONT {
 	Common::MemoryReadStream _ttfData;
 	int _size;
 	Common::HashMap<int, Graphics::Font *> _fonts;
+	Common::String _fontName;
 
 	ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
 	ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}

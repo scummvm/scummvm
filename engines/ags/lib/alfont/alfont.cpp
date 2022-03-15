@@ -48,6 +48,8 @@ Graphics::Font *ALFONT_FONT::getFont() {
 		}
 		_fonts[_size] = font;
 		assert(_fonts[_size]);
+
+		_fontName = _fonts[_size]->getFontName();
 	}
 
 	return _fonts[_size];
@@ -116,8 +118,8 @@ int alfont_get_font_real_height(ALFONT_FONT *font) {
 }
 
 const char *alfont_get_name(ALFONT_FONT *font) {
-	// TODO: Return ttf font name
-	return "Unsupported";
+	(void)font->getFont();	// Ensure a font is loaded
+	return font->_fontName.c_str();
 }
 
 } // namespace AGS3

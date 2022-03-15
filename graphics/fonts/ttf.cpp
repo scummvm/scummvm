@@ -540,6 +540,10 @@ int TTFFont::getFontHeight() const {
 	return _height;
 }
 
+Common::String TTFFont::getFontName() const {
+	return _face->family_name;
+}
+
 int TTFFont::getFontAscent() const {
 	return _ascent;
 }
