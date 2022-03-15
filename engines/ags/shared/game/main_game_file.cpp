@@ -716,6 +716,21 @@ HError GameDataExtReader::ReadBlock(int block_id, const String &ext_id,
     // {
     //     // read new gui properties
     // }
+	if (ext_id.CompareNoCase("v360_fonts") == 0) {
+		for (int i = 0; i < _ents.Game.numfonts; ++i) {
+			// adjustable font outlines
+			_ents.Game.fonts[i].AutoOutlineThickness = _in->ReadInt32();
+			_ents.Game.fonts[i].AutoOutlineStyle =
+				static_cast<enum FontInfo::AutoOutlineStyle>(_in->ReadInt32());
+			// reserved
+			_in->ReadInt32();
+			_in->ReadInt32();
+			_in->ReadInt32();
+			_in->ReadInt32();
+		}
+		return HError::None();
+	}
+
     return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));
 }
 
