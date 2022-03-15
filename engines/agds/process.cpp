@@ -212,7 +212,7 @@ void Process::run() {
 			break;
 		case kExitCodeLoadScreenObjectAs:
 		case kExitCodeLoadScreenObject:
-			_status = kStatusPassive;
+			deactivate();
 			_object->lock();
 			_engine->runObject(getExitArg1(), getExitArg2());
 			_object->unlock();
@@ -220,11 +220,10 @@ void Process::run() {
 			restart = true;
 			break;
 		case kExitCodeRunDialog:
-			_status = kStatusPassive;
+			deactivate();
 			_object->lock();
 			_engine->runDialog(getName(), getExitArg1());
 			_object->unlock();
-			deactivate();
 			break;
 		case kExitCodeSetNextScreen:
 		case kExitCodeSetNextScreenSaveOrLoad:
@@ -233,19 +232,19 @@ void Process::run() {
 			_engine->setNextScreenName(getExitArg1(), code == kExitCodeSetNextScreenSaveOrLoad? ScreenLoadingType::SaveOrLoad: ScreenLoadingType::Normal);
 			break;
 		case kExitCodeMouseAreaChange:
-			_status = kStatusPassive;
+			deactivate();
 			_object->lock();
 			_engine->changeMouseArea(getExitIntArg1(), getExitIntArg2());
 			_object->unlock();
-			deactivate();
+			activate();
 			restart = true;
 			break;
 		case kExitCodeLoadInventoryObject:
-			_status = kStatusPassive;
+			deactivate();
 			_object->lock();
 			_engine->inventory().add(_engine->runObject(getExitArg1()));
 			_object->unlock();
-			deactivate();
+			activate();
 			restart = true;
 			break;
 		case kExitCodeCloseInventory:
@@ -267,7 +266,7 @@ void Process::run() {
 			restart = true;
 			break;
 		case kExitCodeLoadGame:
-			_status = kStatusPassive;
+			deactivate();
 			_object->lock();
 			if (_engine->loadGameState(getExitIntArg1()).getCode() == Common::kNoError) {
 				done();
@@ -275,7 +274,7 @@ void Process::run() {
 				debug("save loading failed, resuming execution...");
 			}
 			_object->unlock();
-			_status = kStatusActive;
+			activate();
 			restart = true;
 			break;
 		case kExitCodeSaveGame:
