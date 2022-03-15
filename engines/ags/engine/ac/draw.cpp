@@ -155,7 +155,9 @@ Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 //
 Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	const int bmp_col_depth = bitmap->GetColorDepth();
+#if defined (AGS_INVERTED_COLOR_ORDER)
 	const int sys_col_depth = System_GetColorDepth();
+#endif
 	const int game_col_depth = _GP(game).GetColorDepth();
 	const int compat_col_depth = _G(gfxDriver)->GetCompatibleBitmapFormat(game_col_depth);
 
