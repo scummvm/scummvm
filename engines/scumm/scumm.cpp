@@ -286,6 +286,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_townsScreen = nullptr;
 	_scrollRequest = _scrollDeltaAdjust = 0;
 	_scrollDestOffset = _scrollTimer = 0;
+	_scrollNeedDeltaAdjust = scumm_stricmp(_game.gameid, "indyzak");
 	_refreshNeedCatchUp = false;
 	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));

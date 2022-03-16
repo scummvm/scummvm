@@ -203,7 +203,7 @@ void ScummEngine::towns_updateGfx() {
 				_scrollTimer = cur;
 			_scrollTimer += 1000 / 60;
 			_townsScreen->scrollLayers(1, _scrollRequest);
-			if (_townsScreen->isScrolling(0))
+			if (_scrollNeedDeltaAdjust && _townsScreen->isScrolling(0))
 				_scrollDeltaAdjust++;
 			_scrollRequest = 0;
 			if (!_refreshNeedCatchUp)

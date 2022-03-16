@@ -1397,6 +1397,7 @@ protected:
 	int _numCyclRects;
 	int _scrollRequest;
 	int _scrollDeltaAdjust;
+	bool _scrollNeedDeltaAdjust;
 	int _refreshDuration[20];
 	int _refreshArrayPos;
 	bool _refreshNeedCatchUp;
