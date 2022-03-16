@@ -2307,7 +2307,22 @@ void ScummEngine_v5::o5_stopMusic() {
 }
 
 void ScummEngine_v5::o5_stopSound() {
-	_sound->stopSound(getVarOrDirectByte(PARAM_1));
+	int sound = getVarOrDirectByte(PARAM_1);
+
+	// WORKAROUND: Don't stop the background audio when showing the close-up
+	// of captain Smirk. You are still outdoors, so it makes more sense if
+	// they keep playing like they do in the Special Edition. (Though there
+	// the background makes it more obvious.)
+	//
+	// The sound is stopped by the exit script, which always has number
+	// 10001 regardless of which room it is. We figure out which one by
+	// looking at which rooms we're moving between.
+
+	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76) {
+		return;
+	}
+
+	_sound->stopSound(sound);
 }
 
 void ScummEngine_v5::o5_isSoundRunning() {
