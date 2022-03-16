@@ -241,6 +241,14 @@ struct SplitStringRet {
 	int16 _y;
 	short _nr;
 	int16 _next;
+
+	SplitStringRet() {
+		_strPtr = nullptr;
+		_x = nullptr;
+		_y = 0;
+		_nr = 0;
+		_next = 0;
+	}
 };
 
 struct SplitStringInit {
@@ -361,8 +369,6 @@ private:
 		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
 		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
 	};
-
-	SplitStringInit _atsSsi;
 
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
 	int16 _splitX[MAX_STR_SPLIT] = { 0 };

@@ -23,7 +23,6 @@
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "chewy/atds.h"
@@ -116,15 +115,13 @@ uint8 *Resource::getChunkData(uint num) {
 }
 
 void Resource::initSprite(Common::String filename) {
-	uint32 nextSpriteOffset;
-
 	_resType = kResourceTAF;
 	_encrypted = false;
 	/*screenMode = */_stream.readUint16LE();
 	_chunkCount = _stream.readUint16LE();
 	_allSize = _stream.readUint32LE();
 	_stream.read(_spritePalette, 3 * 256);
-	nextSpriteOffset = _stream.readUint32LE();
+	uint32 nextSpriteOffset = _stream.readUint32LE();
 	_spriteCorrectionsCount = _stream.readUint16LE();
 
 	// Sometimes there's a filler byte
@@ -166,13 +163,11 @@ void Resource::initSprite(Common::String filename) {
 }
 
 void Resource::unpackRLE(uint8 *buffer, uint32 compressedSize, uint32 uncompressedSize) {
-	uint8 count;
-	uint8 value;
 	uint32 outPos = 0;
 
 	for (uint i = 0; i < (compressedSize) / 2 && outPos < uncompressedSize; i++) {
-		count = _stream.readByte();
-		value = _stream.readByte();
+		uint8 count = _stream.readByte();
+		uint8 value = _stream.readByte();
 		for (uint8 j = 0; j < count && outPos < uncompressedSize; j++) {
 			buffer[outPos++] = value;
 		}

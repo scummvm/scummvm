@@ -21,7 +21,6 @@
 
 #include "chewy/defines.h"
 #include "chewy/globals.h"
-#include "chewy/ngshext.h"
 #include "chewy/object.h"
 
 namespace Chewy {
@@ -69,10 +68,10 @@ Object::Object(Spieler *sp) {
 Object::~Object() {
 }
 
-int16 Object::load(const char *fname_, RoomMovObject *rmo) {
+int16 Object::load(const char *filename, RoomMovObject *rmo) {
 	Common::File f;
 
-	if (f.open(fname_)) {
+	if (f.open(filename)) {
 		if (!_iibFileHeader.load(&f)) {
 			error("Object::load error");
 		}
@@ -104,10 +103,10 @@ int16 Object::load(const char *fname_, RoomMovObject *rmo) {
 	return _maxInventoryObj;
 }
 
-int16 Object::load(const char *fname_, RoomStaticInventory *rsi) {
+int16 Object::load(const char *filename, RoomStaticInventory *rsi) {
 	Common::File f;
 
-	if (f.open(fname_)) {
+	if (f.open(filename)) {
 		if (!_sibFileHeader.load(&f)) {
 			error("Object::load error");
 		}
@@ -137,10 +136,10 @@ int16 Object::load(const char *fname_, RoomStaticInventory *rsi) {
 	return _maxStaticInventory;
 }
 
-int16 Object::load(const char *fname_, RoomExit *roomExit) {
+int16 Object::load(const char *filename, RoomExit *roomExit) {
 	Common::File f;
 
-	if (f.open(fname_)) {
+	if (f.open(filename)) {
 		if (!_eibFileHeader.load(&f)) {
 			error("Object::load error");
 		}

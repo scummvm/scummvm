@@ -75,6 +75,7 @@ struct IibFileHeader {
 	uint32 Size;
 
 	bool load(Common::SeekableReadStream *src);
+	IibFileHeader();
 };
 
 struct RoomStaticInventory {

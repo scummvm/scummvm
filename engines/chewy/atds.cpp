@@ -89,7 +89,7 @@ bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 
 
 Atdsys::Atdsys() {
-	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER, 8, 8,};
+	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER, 8, 8 };
 	_aadv._dialog = false;
 	_aadv._strNr = -1;
 	_aadv._silentCount = false;
@@ -115,6 +115,13 @@ Atdsys::Atdsys() {
 	_invUseMem = nullptr;
 
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
+
+	for (int i = 0; i < 4; ++i)
+		_ats_st_header[i] = nullptr;
+
+	_adsnb._blkNr = 0;
+	_adsnb._endNr = 0;
+	_adsStackPtr = 0;
 }
 
 Atdsys::~Atdsys() {
@@ -609,32 +616,31 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 
 		if (_atsv._silentCount <= 0) {
 			char *tmp_ptr = _atsv._ptr;
-			_atsSsi = _ssi[0];
-			_atsSsi._str = tmp_ptr;
-			_atsSsi.Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_atsSsi.FHoehe = _G(fontMgr)->getFont()->getDataHeight();
-			_atsSsi._x = x - scrX;
-			_atsSsi._y = y - scrY;
+			SplitStringInit *_atsSsi = &_ssi[0];
+			_atsSsi->_str = tmp_ptr;
+			_atsSsi->Fvorx = _G(fontMgr)->getFont()->getDataWidth();
+			_atsSsi->FHoehe = _G(fontMgr)->getFont()->getDataHeight();
+			_atsSsi->_x = x - scrX;
+			_atsSsi->_y = y - scrY;
 			char *start_ptr = tmp_ptr;
 			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
-			SplitStringInit tmp_ssi = _atsSsi;
-			_ssr = split_string(&tmp_ssi);
+			_ssr = split_string(_atsSsi);
 
 			for (int16 i = 0; i < _ssr->_nr; i++) {
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi.FHoehe) + 1,
+				              _ssr->_y + (i * _atsSsi->FHoehe) + 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi.FHoehe) - 1,
+				              _ssr->_y + (i * _atsSsi->FHoehe) - 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] + 1,
-				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              _ssr->_y + (i * _atsSsi->FHoehe),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] - 1,
-				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              _ssr->_y + (i * _atsSsi->FHoehe),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi.FHoehe),
+				              _ssr->_y + (i * _atsSsi->FHoehe),
 				              _atsv._color,
 				              300, 0, _ssr->_strPtr[i]);
 				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;

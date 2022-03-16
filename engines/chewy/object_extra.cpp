@@ -58,6 +58,12 @@ bool IibFileHeader::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
+IibFileHeader::IibFileHeader() {
+	memset(Id, 0, 4);
+	memset(Tafname, 14, 0);
+	Size = 0;
+}
+
 bool RoomStaticInventory::load(Common::SeekableReadStream *src) {
 	Common::Serializer s(src, nullptr);
 	synchronize(s);

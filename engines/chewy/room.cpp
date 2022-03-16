@@ -151,6 +151,7 @@ Room::Room() {
 	init_ablage();
 	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
 		_roomHandle[i] = nullptr;
+	_roomInfo = nullptr;
 }
 
 Room::~Room() {

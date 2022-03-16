@@ -39,9 +39,9 @@ public:
 	Object(Spieler *sp);
 	~Object();
 
-	short load(const char *fname, RoomMovObject *rmo);
-	int16 load(const char *fname, RoomStaticInventory *rsi);
-	int16 load(const char *fname, RoomExit *roomExit);
+	short load(const char *filename, RoomMovObject *rmo);
+	int16 load(const char *filename, RoomStaticInventory *rsi);
+	int16 load(const char *filename, RoomExit *roomExit);
 	void sort();
 	void free_inv_spr(byte **inv_spr_adr);
 	int16 is_sib_mouse(int16 mouse_x, int16 mouse_y);
