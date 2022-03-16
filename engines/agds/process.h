@@ -46,6 +46,7 @@ private:
 	Common::String	_parentScreen;
 	ObjectPtr		_object;
 	StackType		_stack;
+	unsigned		_entryPoint;
 	unsigned		_ip, _lastIp;
 	Status			_status;
 	bool			_exited;
@@ -128,6 +129,10 @@ private:
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
+	unsigned entryPoint() const {
+		return _entryPoint;
+	}
+
 	static Common::String disassemble(ObjectPtr object);
 
 	ObjectPtr getObject() const {
