@@ -51,8 +51,6 @@ void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 s
 void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
 void vors();
 
-void upd_scr();
-
 } // namespace Chewy
 
 #endif

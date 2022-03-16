@@ -380,8 +380,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								break;
 							}
 						}
-						if (_svga == ON)
-							upd_scr();
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
 
@@ -395,8 +393,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 						}
 						const uint16 fontWidth = _G(fontMgr)->getFont()->getDataWidth();
 						plot_scan_cur((x + (disp_akt)*fontWidth), _G(gcury), cur_col, 300, scrwidth, cursor_z);
-						if (_svga == ON)
-							upd_scr();
 						for (delay_flag = 0; (delay_flag < 10) && (!kbhit()); delay_flag++) {
 							izahl = devices();
 							if (izahl == Common::KEYCODE_RETURN) {
@@ -434,8 +430,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 							const uint16 fontWidth = _G(fontMgr)->getFont()->getDataWidth();
 							strcpy(zstring + stelle - 1, zstring + stelle);
 							plot_scan_cur((x + disp_akt * fontWidth), _G(gcury), bcol, bcol, scrwidth, cursor_z);
-							if (_svga == ON)
-								upd_scr();
 							--stelle;
 							--stellemax;
 							if (disp_stelle > 0)
@@ -618,9 +612,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 			break;
 		}
 	}
-
-	if (_svga == ON)
-		upd_scr();
 
 	va_end(parptr);
 	return ret;

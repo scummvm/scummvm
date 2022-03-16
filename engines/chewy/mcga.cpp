@@ -219,11 +219,6 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 	}
 }
 
-void upd_scr() {
-	g_screen->markAllDirty();
-	g_screen->update();
-}
-
 void vors() {
 	_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
 	_G(gcury) += _G(fontMgr)->getFont()->getDataHeight();

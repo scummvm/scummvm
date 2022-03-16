@@ -69,7 +69,6 @@ private:
 	int16 devices();
 
 	byte _palTable[PALETTE_SIZE];
-	uint8 _svga = 0;
 	uint8 _einfuegen = 0;
 };
 
