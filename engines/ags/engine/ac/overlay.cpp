@@ -156,6 +156,24 @@ ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colo
 	return sco;
 }
 
+int Overlay_GetTransparency(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+
+	return GfxDef::LegacyTrans255ToTrans100(_GP(screenover)[ovri].transparency);
+}
+
+void Overlay_SetTransparency(ScriptOverlay *scover, int trans) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	if ((trans < 0) | (trans > 100))
+		quit("!SetTransparency: transparency value must be between 0 and 100");
+
+	_GP(screenover)[ovri].transparency = GfxDef::Trans100ToLegacyTrans255(trans);
+}
+
 int Overlay_GetZOrder(ScriptOverlay *scover) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
@@ -411,6 +429,14 @@ RuntimeScriptValue Sc_Overlay_GetHeight(void *self, const RuntimeScriptValue *pa
 	API_OBJCALL_INT(ScriptOverlay, Overlay_GetHeight);
 }
 
+RuntimeScriptValue Sc_Overlay_GetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetTransparency);
+}
+
+RuntimeScriptValue Sc_Overlay_SetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetTransparency);
+}
+
 RuntimeScriptValue Sc_Overlay_GetZOrder(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptOverlay, Overlay_GetZOrder);
 }
@@ -444,6 +470,8 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
 	ccAddExternalObjectFunction("Overlay::get_Width", Sc_Overlay_GetWidth);
 	ccAddExternalObjectFunction("Overlay::get_Height", Sc_Overlay_GetHeight);
+	ccAddExternalObjectFunction("Overlay::get_Transparency", Sc_Overlay_GetTransparency);
+	ccAddExternalObjectFunction("Overlay::set_Transparency", Sc_Overlay_SetTransparency);
 	ccAddExternalObjectFunction("Overlay::get_ZOrder", Sc_Overlay_GetZOrder);
 	ccAddExternalObjectFunction("Overlay::set_ZOrder", Sc_Overlay_SetZOrder);
 }

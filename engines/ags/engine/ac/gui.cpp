@@ -192,12 +192,7 @@ void GUI_SetTransparency(ScriptGUI *tehgui, int trans) {
 }
 
 int GUI_GetTransparency(ScriptGUI *tehgui) {
-	if (_GP(guis)[tehgui->id].Transparency == 0)
-		return 0;
-	if (_GP(guis)[tehgui->id].Transparency == 255)
-		return 100;
-
-	return 100 - ((_GP(guis)[tehgui->id].Transparency * 10) / 25);
+	return GfxDef::LegacyTrans255ToTrans100(_GP(guis)[tehgui->id].Transparency);
 }
 
 void GUI_Centre(ScriptGUI *sgui) {

@@ -1952,6 +1952,10 @@ void draw_gui_and_overlays() {
 
 	// Add active overlays to the sprite list
 	for (auto &over : _GP(screenover)) {
+		if (over.transparency == 255)
+			continue; // skip fully transparent
+		over.bmp->SetTransparency(over.transparency);
+
 		int tdxp, tdyp;
 		get_overlay_position(over, &tdxp, &tdyp);
 		add_to_sprite_list(over.bmp, tdxp, tdyp, over.zorder, false);
