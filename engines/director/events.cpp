@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "audio/mixer.h"
+
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -89,10 +91,12 @@ void DirectorEngine::processEventQUIT() {
 		GUI::MessageDialog dialog(message, _("OK"), _("Cancel"));
 
 		g_system->getEventManager()->resetQuit(); // Clear the quit event
+		_mixer->pauseAll(true);
 
 		int result = dialog.runModal();
 		if (result == GUI::kMessageOK)
 			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+		_mixer->pauseAll(false);
 	} else {
 		_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 	}
