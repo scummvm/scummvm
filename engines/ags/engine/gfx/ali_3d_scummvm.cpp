@@ -225,7 +225,7 @@ void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *
 }
 
 void ScummVMRendererGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {
-	delete bitmap;
+	delete (ALSoftwareBitmap *)bitmap;
 }
 
 void ScummVMRendererGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) {
