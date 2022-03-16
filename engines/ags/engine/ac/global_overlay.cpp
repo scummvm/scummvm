@@ -52,7 +52,7 @@ int CreateGraphicOverlay(int xx, int yy, int slott, int trans) {
 	wputblock(screeno, 0, 0, _GP(spriteset)[slott], trans);
 	bool hasAlpha = (_GP(game).SpriteInfos[slott].Flags & SPF_ALPHACHANNEL) != 0;
 	int nse = add_screen_overlay(xx, yy, OVER_CUSTOM, screeno, hasAlpha);
-	return _G(screenover)[nse].type;
+	return _GP(screenover)[nse].type;
 }
 
 int CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int text_color, const char *text, int disp_type, int allowShrink) {
@@ -86,8 +86,8 @@ void MoveOverlay(int ovrid, int newx, int newy) {
 
 	int ovri = find_overlay_of_type(ovrid);
 	if (ovri < 0) quit("!MoveOverlay: invalid overlay ID specified");
-	_G(screenover)[ovri].x = newx;
-	_G(screenover)[ovri].y = newy;
+	_GP(screenover)[ovri].x = newx;
+	_GP(screenover)[ovri].y = newy;
 }
 
 int IsOverlayValid(int ovrid) {

@@ -35,7 +35,7 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 	// with that handle later
 	int overlayIndex = find_overlay_of_type(overlayId);
 	if (overlayIndex >= 0) {
-		_G(screenover)[overlayIndex].associatedOverlayHandle = 0;
+		_GP(screenover)[overlayIndex].associatedOverlayHandle = 0;
 	}
 
 	// if this is being removed voluntarily (ie. pointer out of

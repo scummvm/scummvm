@@ -220,12 +220,15 @@ void update_following_exactly_characters(int &numSheep, int *followingAsSheep) {
 
 void update_overlay_timers() {
 	// update overlay timers
-	for (int aa = 0; aa < _G(numscreenover); aa++) {
-		if (_G(screenover)[aa].timeout > 0) {
-			_G(screenover)[aa].timeout--;
-			if (_G(screenover)[aa].timeout == 0)
-				remove_screen_overlay(_G(screenover)[aa].type);
+	for (size_t i = 0; i < _GP(screenover).size();) {
+		if (_GP(screenover)[i].timeout > 0) {
+			_GP(screenover)[i].timeout--;
+			if (_GP(screenover)[i].timeout == 0) {
+				remove_screen_overlay_index(i);
+				continue;
+			}
 		}
+		i++;
 	}
 }
 
@@ -390,14 +393,14 @@ void update_sierra_speech() {
 				if (_G(facetalk_qfg4_override_placement_y)) {
 					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
-					view_frame_y = (_G(screenover)[_G(face_talking)].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
+					view_frame_y = (_GP(screenover)[_G(face_talking)].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
 				}
-				_G(screenover)[_G(face_talking)].pic->Clear(0);
+				_GP(screenover)[_G(face_talking)].pic->Clear(0);
 			} else {
-				_G(screenover)[_G(face_talking)].pic->ClearTransparent();
+				_GP(screenover)[_G(face_talking)].pic->ClearTransparent();
 			}
 
-			Bitmap *frame_pic = _G(screenover)[_G(face_talking)].pic;
+			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].pic;
 			const ViewFrame *face_vf = &_G(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)];
 			bool face_has_alpha = (_GP(game).SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 			DrawViewFrame(frame_pic, face_vf, view_frame_x, view_frame_y);
@@ -409,7 +412,7 @@ void update_sierra_speech() {
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}
 
-			_G(gfxDriver)->UpdateDDBFromBitmap(_G(screenover)[_G(face_talking)].bmp, _G(screenover)[_G(face_talking)].pic, face_has_alpha);
+			_G(gfxDriver)->UpdateDDBFromBitmap(_GP(screenover)[_G(face_talking)].bmp, _GP(screenover)[_G(face_talking)].pic, face_has_alpha);
 		}  // end if updatedFrame
 	}
 }

@@ -1149,9 +1149,8 @@ public:
 	 * @{
 	 */
 
-	ScreenOverlay *_screenover;
+	std::vector<ScreenOverlay> *_screenover;
 	int _is_complete_overlay = 0;
-	int _numscreenover = 0;
 
 	/**@}*/
 

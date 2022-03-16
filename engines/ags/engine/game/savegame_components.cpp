@@ -746,24 +746,23 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t cmp_ver, const PreservedParams
 }
 
 HSaveError WriteOverlays(Stream *out) {
-	out->WriteInt32(_G(numscreenover));
-	for (int i = 0; i < _G(numscreenover); ++i) {
-		_G(screenover)[i].WriteToFile(out);
-		serialize_bitmap(_G(screenover)[i].pic, out);
+	out->WriteInt32(_GP(screenover).size());
+	for (const auto &over : _GP(screenover)) {
+		over.WriteToFile(out);
+		serialize_bitmap(over.pic, out);
 	}
 	return HSaveError::None();
 }
 
 HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
-	int over_count = in->ReadInt32();
-	if (!AssertCompatLimit(err, over_count, MAX_SCREEN_OVERLAYS, "overlays"))
-		return err;
-	_G(numscreenover) = over_count;
-	for (int i = 0; i < _G(numscreenover); ++i) {
-		_G(screenover)[i].ReadFromFile(in, cmp_ver);
-		if (_G(screenover)[i].hasSerializedBitmap)
-			_G(screenover)[i].pic = read_serialized_bitmap(in);
+	size_t over_count = in->ReadInt32();
+	for (size_t i = 0; i < over_count; ++i) {
+		ScreenOverlay over;
+		over.ReadFromFile(in, cmp_ver);
+		if (over.hasSerializedBitmap)
+			over.pic = read_serialized_bitmap(in);
+		_GP(screenover).push_back(over);
 	}
 	return err;
 }

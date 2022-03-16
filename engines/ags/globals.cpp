@@ -303,7 +303,7 @@ Globals::Globals() {
 	_mouse = new Mouse();
 
 	// overlay.cpp globals
-	_screenover = new ScreenOverlay[MAX_SCREEN_OVERLAYS];
+	_screenover = new std::vector<ScreenOverlay>();
 
 	// plugins globals
 	_engineExports = new Plugins::Core::EngineExports();
@@ -540,7 +540,7 @@ Globals::~Globals() {
 	delete _mouse;
 
 	// overlay.cpp globals
-	delete[] _screenover;
+	delete _screenover;
 
 	// plugins globals
 	delete _engineExports;

@@ -707,7 +707,7 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
 
-	ScriptOverlay *scOver = create_scriptobj_for_overlay(_G(screenover)[ovri]);
+	ScriptOverlay *scOver = create_scriptobj_for_overlay(_GP(screenover)[ovri]);
 	scOver->borderHeight = 0;
 	scOver->borderWidth = 0;
 	scOver->isBackgroundSpeech = 1;
@@ -2265,14 +2265,13 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	_G(said_speech_line) = 1;
 
-	int aa;
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
-		for (aa = 0; aa < _G(numscreenover); aa++) {
-			if (_G(screenover)[aa].timeout > 0) {
-				remove_screen_overlay(_G(screenover)[aa].type);
-				aa--;
-			}
+		for (size_t i = 0; i < _GP(screenover).size();) {
+			if (_GP(screenover)[i].timeout > 0)
+				remove_screen_overlay(_GP(screenover)[i].type);
+			else
+				i++;
 		}
 	}
 	_G(said_text) = 1;
@@ -2283,7 +2282,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	int isPause = 1;
 	// if the message is all .'s, don't display anything
-	for (aa = 0; texx[aa] != 0; aa++) {
+	for (size_t aa = 0; texx[aa] != 0; aa++) {
 		if (texx[aa] != '.') {
 			isPause = 0;
 			break;
