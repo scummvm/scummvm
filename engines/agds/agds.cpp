@@ -249,6 +249,10 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
 	for(uint i = 0; i < _processes.size(); ++i) {
 		auto &process = _processes[i];
+		if (ip != 0 && process && process->entryPoint() == ip) {
+			debug("found existing process, skipping...");
+			return;
+		}
 		if (!process) {
 			process = ProcessPtr(new Process(this, object, ip));
 			process->run();
@@ -261,7 +265,6 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 	return _currentScreen? _currentScreen->find(name): ObjectPtr();
 }
-
 
 ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
 	debug("runObject %s %s", name.c_str(), prototype.c_str());
@@ -556,6 +559,12 @@ Common::Error AGDSEngine::run() {
 					if (!lclick && _currentInventoryObject && !_currentInventoryObject->useOnHandler()) {
 						returnCurrentInventoryObject();
 						break;
+					}
+
+					if (_currentCharacter && _currentCharacter->active()) {
+						// FIXME: some object requires character to be in "trap" region
+						// Remove this after movement implementation.
+						_currentCharacter->moveTo(Common::String(), _mouse, -1);
 					}
 
 					auto objects = _currentScreen->find(_mouse);

@@ -186,7 +186,7 @@ void Character::stop() {
 }
 
 void Character::tick() {
-	if (!_enabled || !_visible || !_animation || _stopped)
+	if (!active() || !_animation)
 		return;
 
 	auto screen = _engine->getCurrentScreen();

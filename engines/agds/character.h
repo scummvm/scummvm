@@ -101,6 +101,9 @@ public:
 	void visible(bool visible) {
 		_visible = visible;
 	}
+	bool active() const {
+		return _enabled && _visible && !_stopped;
+	}
 
 	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
 	void animate(int direction, int speed, bool jokes);
