@@ -755,7 +755,6 @@ HSaveError WriteOverlays(Stream *out) {
 }
 
 HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
-	HSaveError err;
 	size_t over_count = in->ReadInt32();
 	for (size_t i = 0; i < over_count; ++i) {
 		ScreenOverlay over;
@@ -764,7 +763,7 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams &pp, 
 			over.pic = read_serialized_bitmap(in);
 		_GP(screenover).push_back(over);
 	}
-	return err;
+	return HSaveError::None();
 }
 
 HSaveError WriteDynamicSurfaces(Stream *out) {
@@ -1071,7 +1070,7 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"Overlays",
-		1,
+		2,
 		0,
 		WriteOverlays,
 		ReadOverlays
