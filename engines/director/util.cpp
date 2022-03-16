@@ -465,6 +465,8 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 	Common::String initialPath(path);
 
+	debug(9, "pathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
+
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
@@ -599,7 +601,7 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
-		debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
 		Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
 		if (testPath(res))
