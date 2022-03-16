@@ -32,9 +32,9 @@ void Room66::entry(int16 eib_nr) {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 50;
+	_G(spieler).ZoomXy[P_HOWARD][1] = 50;
 	_G(spieler).ZoomXy[P_NICHELLE][0] = 36;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 50;
+	_G(spieler).ZoomXy[P_NICHELLE][1] = 50;
 	_G(zoom_horizont) = 130;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
