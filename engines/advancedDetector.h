@@ -386,6 +386,8 @@ public:
 
 	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 
+	uint getMD5Bytes() const {return _md5Bytes;}
+
 protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
