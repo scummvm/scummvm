@@ -737,6 +737,10 @@ Common::String convertMacFilename(const char *name) {
 
 			cnt++;
 		}
+
+		// If the result filename ends with '.', remove it
+		if (res.hasSuffix("."))
+			res = res.substr(0, res.size() - 1);
 	}
 
 	return res;
