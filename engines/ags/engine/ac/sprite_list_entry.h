@@ -27,15 +27,16 @@
 namespace AGS3 {
 
 struct SpriteListEntry {
-	AGS::Engine::IDriverDependantBitmap *bmp;
-	AGS::Shared::Bitmap *pic;
-	int baseline;
-	int x, y;
-	int transparent;
-	bool takesPriorityIfEqual;
-	bool hasAlphaChannel;
-
-	SpriteListEntry();
+	Engine::IDriverDependantBitmap *bmp = nullptr;
+	AGS::Shared::Bitmap *pic = nullptr;
+	int transparent = 0;
+	int x = 0, y = 0;
+	int baseline = 0;
+	// Tells if this item should take priority during sort if z1 == z2
+	// TODO: this is some compatibility feature - find out if may be omited and done without extra struct?
+	bool takesPriorityIfEqual = false;
+	// Mark for the render stage callback (if >= 0 other fields are ignored)
+	int renderStage = -1;
 };
 
 } // namespace AGS3

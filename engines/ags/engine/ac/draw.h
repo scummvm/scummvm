@@ -127,7 +127,6 @@ void construct_engine_overlay();
 // Clears black game borders in legacy letterbox mode
 void clear_letterbox_borders();
 
-void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
 void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Shared::Bitmap *image, bool src_has_alpha,
                                Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);

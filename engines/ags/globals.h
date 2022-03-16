@@ -559,8 +559,10 @@ public:
 	 */
 
 	std::vector<RoomCameraDrawData> *_CameraDrawData;
-	std::vector<SpriteListEntry> *_sprlist;
+	// Two lists of sprites to push into renderer during next render pass
+	// thingsToDrawList - is the main list, unsorted, drawn in the index order
 	std::vector<SpriteListEntry> *_thingsToDrawList;
+	std::vector<SpriteListEntry> *_sprlist;
 
 	AGS::Engine::IGraphicsDriver *_gfxDriver = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_blankImage = nullptr;

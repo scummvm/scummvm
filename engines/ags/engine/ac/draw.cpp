@@ -77,14 +77,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-SpriteListEntry::SpriteListEntry()
-	: bmp(nullptr)
-	, pic(nullptr)
-	, baseline(0), x(0), y(0)
-	, transparent(0)
-	, takesPriorityIfEqual(false), hasAlphaChannel(false) {
-}
-
 void setpal() {
 	set_palette_range(_G(palette), 0, 255, 0);
 }
@@ -763,6 +755,57 @@ IDriverDependantBitmap *recycle_ddb_bitmap(IDriverDependantBitmap *bimp, Bitmap 
 	return bimp;
 }
 
+//------------------------------------------------------------------------
+// Functions for filling the lists of sprites to render
+
+static void clear_draw_list() {
+	_GP(thingsToDrawList).clear();
+}
+
+static void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y, int trans) {
+	SpriteListEntry sprite;
+	sprite.bmp = bmp;
+	sprite.x = x;
+	sprite.y = y;
+	sprite.transparent = trans;
+	_GP(thingsToDrawList).push_back(sprite);
+}
+
+static void add_render_stage(int stage) {
+	SpriteListEntry sprite;
+	sprite.renderStage = stage;
+	_GP(thingsToDrawList).push_back(sprite);
+}
+
+static void clear_sprite_list() {
+	_GP(sprlist).clear();
+}
+
+static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, bool isWalkBehind) {
+	if (spp == nullptr)
+		quit("add_to_sprite_list: attempted to draw NULL sprite");
+	// completely invisible, so don't draw it at all
+	if (trans == 255)
+		return;
+
+	SpriteListEntry sprite;
+	sprite.bmp = spp;
+	sprite.baseline = baseline;
+	sprite.x = xx;
+	sprite.y = yy;
+	sprite.transparent = trans;
+
+	if (_G(walkBehindMethod) == DrawAsSeparateSprite)
+		sprite.takesPriorityIfEqual = !isWalkBehind;
+	else
+		sprite.takesPriorityIfEqual = isWalkBehind;
+
+	_GP(sprlist).push_back(sprite);
+}
+
+//
+//------------------------------------------------------------------------
+
 void invalidate_cached_walkbehinds() {
 	memset(&_GP(actspswbcache)[0], 0, sizeof(CachedActSpsData) * _GP(actspswbcache).size());
 }
@@ -901,56 +944,8 @@ void sort_out_char_sprite_walk_behind(int actspsIndex, int xx, int yy, int basel
 	}
 
 	if (_GP(actspswbcache)[actspsIndex].isWalkBehindHere) {
-		add_to_sprite_list(_GP(actspswbbmp)[actspsIndex], xx, yy, basel, 0, -1, true);
+		add_to_sprite_list(_GP(actspswbbmp)[actspsIndex], xx, yy, basel, 0, true);
 	}
-}
-
-void clear_draw_list() {
-	_GP(thingsToDrawList).clear();
-}
-void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y, int trans, bool alphaChannel) {
-	SpriteListEntry sprite;
-	sprite.pic = nullptr;
-	sprite.bmp = bmp;
-	sprite.x = x;
-	sprite.y = y;
-	sprite.transparent = trans;
-	sprite.hasAlphaChannel = alphaChannel;
-	_GP(thingsToDrawList).push_back(sprite);
-}
-
-// the sprite list is an intermediate list used to order
-// objects and characters by their baselines before everything
-// is added to the Thing To Draw List
-void clear_sprite_list() {
-	_GP(sprlist).clear();
-}
-void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind) {
-
-	if (spp == nullptr)
-		quit("add_to_sprite_list: attempted to draw NULL sprite");
-	// completely invisible, so don't draw it at all
-	if (trans == 255)
-		return;
-
-	SpriteListEntry sprite;
-	if ((sprNum >= 0) && ((_GP(game).SpriteInfos[sprNum].Flags & SPF_ALPHACHANNEL) != 0))
-		sprite.hasAlphaChannel = true;
-	else
-		sprite.hasAlphaChannel = false;
-
-	sprite.bmp = spp;
-	sprite.baseline = baseline;
-	sprite.x = xx;
-	sprite.y = yy;
-	sprite.transparent = trans;
-
-	if (_G(walkBehindMethod) == DrawAsSeparateSprite)
-		sprite.takesPriorityIfEqual = !isWalkBehind;
-	else
-		sprite.takesPriorityIfEqual = isWalkBehind;
-
-	_GP(sprlist).push_back(sprite);
 }
 
 void repair_alpha_channel(Bitmap *dest, Bitmap *bgpic) {
@@ -1008,12 +1003,11 @@ bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntry &e2) 
 
 
 void draw_sprite_list() {
-
 	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 		for (int ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
 			if (_G(walkBehindBitmap)[ee] != nullptr) {
 				add_to_sprite_list(_G(walkBehindBitmap)[ee], _G(walkBehindLeft)[ee], _G(walkBehindTop)[ee],
-				                   _G(croom)->walkbehind_base[ee], 0, -1, true);
+				                   _G(croom)->walkbehind_base[ee], 0, true);
 			}
 		}
 	}
@@ -1021,7 +1015,7 @@ void draw_sprite_list() {
 	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
 
 	if (pl_any_want_hook(AGSE_PRESCREENDRAW))
-		add_thing_to_draw(nullptr, AGSE_PRESCREENDRAW, 0, TRANS_RUN_PLUGIN, false);
+		add_render_stage(AGSE_PRESCREENDRAW);
 
 	// copy the sorted sprites into the Things To Draw list
 	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(), _GP(sprlist).begin(), _GP(sprlist).end());
@@ -1523,7 +1517,7 @@ void prepare_objects_for_drawing() {
 				_GP(actspsbmp)[useindx]->SetLightLevel(0);
 		}
 
-		add_to_sprite_list(_GP(actspsbmp)[useindx], atxp, atyp, usebasel, _G(objs)[aa].transparent, _G(objs)[aa].num);
+		add_to_sprite_list(_GP(actspsbmp)[useindx], atxp, atyp, usebasel, _G(objs)[aa].transparent, false);
 	}
 }
 
@@ -1815,7 +1809,7 @@ void prepare_characters_for_drawing() {
 		chin->actx = atxp;
 		chin->acty = atyp;
 
-		add_to_sprite_list(_GP(actspsbmp)[useindx], bgX, bgY, usebasel, chin->transparency, sppic);
+		add_to_sprite_list(_GP(actspsbmp)[useindx], bgX, bgY, usebasel, chin->transparency, false);
 	}
 }
 
@@ -1845,7 +1839,7 @@ void prepare_room_sprites() {
 				update_walk_behind_images();
 			}
 		}
-		add_thing_to_draw(_G(roomBackgroundBmp), 0, 0, 0, false);
+		add_thing_to_draw(_G(roomBackgroundBmp), 0, 0, 0);
 	}
 	_G(current_background_is_dirty) = false; // Note this is only place where this flag is checked
 
@@ -1959,17 +1953,17 @@ static inline bool is_over_above_gui(int type) {
 // Draw GUI and overlays of all kinds, anything outside the room space
 void draw_gui_and_overlays() {
 	if (pl_any_want_hook(AGSE_PREGUIDRAW))
-		add_thing_to_draw(nullptr, AGSE_PREGUIDRAW, 0, TRANS_RUN_PLUGIN, false);
+		add_render_stage(AGSE_PREGUIDRAW);
 
 	// draw overlays, except text boxes and portraits
 	for (const auto &over : _GP(screenover)) {
 		// complete overlay draw in non-transparent mode
 		if (over.type == OVER_COMPLETE)
-			add_thing_to_draw(over.bmp, over.x, over.y, TRANS_OPAQUE, false);
+			add_thing_to_draw(over.bmp, over.x, over.y, 0);
 		else if (!is_over_above_gui(over.type)) {
 			int tdxp, tdyp;
 			get_overlay_position(over, &tdxp, &tdyp);
-			add_thing_to_draw(over.bmp, tdxp, tdyp, 0, over.hasAlphaChannel);
+			add_thing_to_draw(over.bmp, tdxp, tdyp, 0);
 		}
 	}
 
@@ -2037,7 +2031,7 @@ void draw_gui_and_overlays() {
 			        (_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
 				continue;
 
-			add_thing_to_draw(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].Transparency, _GP(guis)[aa].HasAlphaChannel());
+			add_thing_to_draw(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].Transparency);
 
 			// only poll if the interface is enabled (mouseovers should not
 			// work while in Wait state)
@@ -2051,7 +2045,7 @@ void draw_gui_and_overlays() {
 		if (is_over_above_gui(over.type)) {
 			int tdxp, tdyp;
 			get_overlay_position(over, &tdxp, &tdyp);
-			add_thing_to_draw(over.bmp, tdxp, tdyp, 0, false);
+			add_thing_to_draw(over.bmp, tdxp, tdyp, 0);
 		}
 	}
 
@@ -2060,17 +2054,13 @@ void draw_gui_and_overlays() {
 
 // Push the gathered list of sprites into the active graphic renderer
 void put_sprite_list_on_screen(bool in_room) {
-	// *** Draw the Things To Draw List ***
-
-	SpriteListEntry *thisThing;
-
 	for (size_t i = 0; i < _GP(thingsToDrawList).size(); ++i) {
-		thisThing = &_GP(thingsToDrawList)[i];
+		const auto *thisThing = &_GP(thingsToDrawList)[i];
 
 		if (thisThing->bmp != nullptr) {
 			// mark the image's region as dirty
 			invalidate_sprite(thisThing->x, thisThing->y, thisThing->bmp, in_room);
-		} else if ((thisThing->transparent != TRANS_RUN_PLUGIN) &&
+		} else if ((thisThing->renderStage < 0) &&
 		           (thisThing->bmp == nullptr)) {
 			quit("Null pointer added to draw list");
 		}
@@ -2081,9 +2071,9 @@ void put_sprite_list_on_screen(bool in_room) {
 			}
 
 			_G(gfxDriver)->DrawSprite(thisThing->x, thisThing->y, thisThing->bmp);
-		} else if (thisThing->transparent == TRANS_RUN_PLUGIN) {
+		} else if (thisThing->renderStage >= 0) {
 			// meta entry to run the plugin hook
-			_G(gfxDriver)->DrawSprite(thisThing->x, thisThing->y, nullptr);
+			_G(gfxDriver)->DrawSprite(thisThing->renderStage, 0, nullptr);
 		} else
 			quit("Unknown entry in draw list");
 	}
