@@ -60,7 +60,7 @@ bool IibFileHeader::load(Common::SeekableReadStream *src) {
 
 IibFileHeader::IibFileHeader() {
 	memset(Id, 0, 4);
-	memset(Tafname, 14, 0);
+	memset(Tafname, 0, 14);
 	Size = 0;
 }
 
