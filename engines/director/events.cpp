@@ -84,10 +84,16 @@ bool DirectorEngine::processEvents(bool captureClick) {
 }
 
 void DirectorEngine::processEventQUIT() {
-	Common::U32String message = _("The game wants to prevents you from quitting. Do you want to quit?");
-	GUI::MessageDialog dialog(message, _("OK"), _("Cancel"));
-	int result = dialog.runModal();
-	if (result == GUI::kMessageOK) {
+	if (g_lingo->_exitLock) {
+		Common::U32String message = _("The game wants to prevents you from quitting. Do you want to quit?");
+		GUI::MessageDialog dialog(message, _("OK"), _("Cancel"));
+
+		g_system->getEventManager()->resetQuit(); // Clear the quit event
+
+		int result = dialog.runModal();
+		if (result == GUI::kMessageOK)
+			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+	} else {
 		_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 	}
 }
