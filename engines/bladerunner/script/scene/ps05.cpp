@@ -33,7 +33,7 @@ void SceneScriptPS05::InitializeScene() {
 		Setup_Scene_Information(630.72f, 0.38f, -469.26f, 400);
 #else
 		// exiting from PS15
-		Setup_Scene_Information(553.24f, 0.37f, -422.97f, 400);
+		Setup_Scene_Information(560.24f, 0.37f, -422.97f, 400);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(0, 218, 98, 280, 246, 3);
@@ -148,6 +148,12 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 bool SceneScriptPS05::ClickedOn2DRegion(int region) {
 	if (region == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 694.78f, 0.37f, -321.05f, 0, true, false, false)) {
 		Actor_Face_Heading(kActorMcCoy, 130, false);
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Add small delay so that McCoy can turn to the score board
+		// Otherwise Score board loads immediately
+		// and McCoy turns towards it after we exit the board UI
+		Delay(50);
+#endif
 		View_Score_Board();
 	}
 	return false;

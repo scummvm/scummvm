@@ -487,11 +487,11 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 	case kScenePS05:
 		if (objectId == 8 && _objects[objectId].name == "WIRE BASKET") {
 			// waste basket click box
-			_objects[objectId].bbox.setXYZ(706.32f, 0.0f, -350.80f, 724.90f, 15.15f, -330.09f);
+			_objects[objectId].bbox.setXYZ(707.30f, 0.14f, -350.80f, 724.90f, 15.15f, -330.09f);
 		} else if (objectId == 0 && _objects[objectId].name == "FIRE EXTINGISHER") {
 			// fire extinguisher is click-able (original game) but does nothing
-			// still it's best to fix its clickbox and remove clickable or restore functionality from
-			// the scene script
+			// still it's best to fix its clickbox and remove clickable
+			// or restore functionality from the scene script
 			_objects[objectId].bbox.setXYZ(695.63f, 42.65f, -628.10f, 706.71f, 69.22f, -614.47f);
 		}
 		break;
