@@ -492,8 +492,15 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 		debug(9, "pathMakeRelative(): s3 try %s", convPath.c_str());
 
-		if (!testPath(convPath, directory))
-			continue;
+		if (!testPath(convPath, directory)) {
+			// If we were supplied with parh with subdirectories,
+			// attempt to combine it with the current movie path at every iteration
+			Common::String locPath = Common::normalizePath(g_director->getCurrentPath() + convPath, g_director->_dirSeparator);
+			debug(9, "pathMakeRelative(): s3.1 try %s", locPath.c_str());
+
+			if (!testPath(locPath, directory))
+				continue;
+		}
 
 		debug(9, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
 
