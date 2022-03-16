@@ -105,7 +105,7 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	}
 
 	// TODO: move this somewhere, should not be right here
-#if AGS_OUTLINE_FONT_FIX
+#if defined(AGS_OUTLINE_FONT_FIX) && AGS_OUTLINE_FONT_FIX
 	// FIXME: (!!!) this fix should be done differently:
 	// 1. Find out which OUTLINE font was causing troubles;
 	// 2. Replace outline method ONLY if that troublesome font is used as outline.

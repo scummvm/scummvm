@@ -22,6 +22,9 @@
 #ifndef AGS_GLOBALS_H
 #define AGS_GLOBALS_H
 
+#include "ags/shared/core/platform.h"
+#define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
+
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
@@ -1074,7 +1077,7 @@ public:
 	int _psp_ignore_acsetup_cfg_file = 0;
 	int _psp_clear_cache_on_room_change = 0; // clear --sprite cache-- when room is unloaded
 
-#if AGS_PLATFORM_SCUMMVM
+#if defined(AGS_PLATFORM_SCUMMVM) && AGS_PLATFORM_SCUMMVM
 	int _psp_audio_cachesize = 10;
 #endif
 	const char *_psp_game_file_name = "";
