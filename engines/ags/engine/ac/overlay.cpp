@@ -156,6 +156,22 @@ ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colo
 	return sco;
 }
 
+int Overlay_GetZOrder(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+
+	return _GP(screenover)[ovri].zorder;
+}
+
+void Overlay_SetZOrder(ScriptOverlay *scover, int zorder) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+
+	_GP(screenover)[ovri].zorder = zorder;
+}
+
 //=============================================================================
 
 // Creates and registers a managed script object for existing overlay object
@@ -253,6 +269,9 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 	over.y = y;
 	over._offsetX = pic_offx;
 	over._offsetY = pic_offy;
+	// by default draw speech and portraits over GUI, and the rest under GUI
+	over.zorder = (type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
+		INT_MAX : INT_MIN;
 	over.type = type;
 	over.timeout = 0;
 	over.bgSpeechForChar = -1;
@@ -392,6 +411,14 @@ RuntimeScriptValue Sc_Overlay_GetHeight(void *self, const RuntimeScriptValue *pa
 	API_OBJCALL_INT(ScriptOverlay, Overlay_GetHeight);
 }
 
+RuntimeScriptValue Sc_Overlay_GetZOrder(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetZOrder);
+}
+
+RuntimeScriptValue Sc_Overlay_SetZOrder(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetZOrder);
+}
+
 //=============================================================================
 //
 // Exclusive API for Plugins
@@ -417,6 +444,8 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
 	ccAddExternalObjectFunction("Overlay::get_Width", Sc_Overlay_GetWidth);
 	ccAddExternalObjectFunction("Overlay::get_Height", Sc_Overlay_GetHeight);
+	ccAddExternalObjectFunction("Overlay::get_ZOrder", Sc_Overlay_GetZOrder);
+	ccAddExternalObjectFunction("Overlay::set_ZOrder", Sc_Overlay_SetZOrder);
 }
 
 } // namespace AGS3
