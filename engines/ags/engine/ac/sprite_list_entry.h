@@ -29,7 +29,6 @@ namespace AGS3 {
 struct SpriteListEntry {
 	Engine::IDriverDependantBitmap *bmp = nullptr;
 	AGS::Shared::Bitmap *pic = nullptr;
-	int transparent = 0;
 	int x = 0, y = 0;
 	int baseline = 0;
 	// Tells if this item should take priority during sort if z1 == z2

@@ -61,6 +61,9 @@ class ALSoftwareBitmap : public BaseDDB {
 public:
 	// Transparency is a bit counter-intuitive
 	// 0=not transparent, 255=invisible, 1..254 barely visible .. mostly visible
+	int  GetTransparency() const override {
+		return _transparency;
+	}
 	void SetTransparency(int transparency) override {
 		_transparency = transparency;
 	}

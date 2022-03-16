@@ -38,6 +38,7 @@ namespace Engine {
 
 class IDriverDependantBitmap {
 public:
+	virtual int  GetTransparency() const = 0;
 	virtual void SetTransparency(int transparency) = 0;  // 0-255
 	virtual void SetFlippedLeftRight(bool isFlipped) = 0;
 	virtual void SetStretch(int width, int height, bool useResampler = true) = 0;
