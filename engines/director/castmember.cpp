@@ -359,11 +359,13 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	_filename = path;
 	_video = new Video::QuickTimeDecoder();
 
-	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
-	bool result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
+	Common::String path1 = pathMakeRelative(path);
+
+	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), path1.c_str());
+	bool result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	if (!result) {
 		_video = new Video::AVIDecoder();
-		result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
+		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	}
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
