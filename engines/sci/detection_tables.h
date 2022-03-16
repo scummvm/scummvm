@@ -297,6 +297,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
+	// Codename: Iceman - English DOS (360kb disks)
+	// Executable scanning reports "0.000.685", Floppy label reports "1.033, 6.8.90", VERSION file reports "1.033"
+	// SCI interpreter version 0.000.685
+	{"iceman", "", {
+		{"resource.map", 0, "d4f2ab06146656619836587059ac1fc2", 6282},
+		{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26989},
+		{"resource.001", 0, "32b351072fccf76fc82234d73d28c08b", 126775},
+		{"resource.002", 0, "36670a917550757d57df84c96cf9e6d9", 307014},
+		{"resource.003", 0, "1ae7752a54802ab196115f8d8d34d9d5", 318066},
+		{"resource.004", 0, "5fb36f15dd68a7c32e49fc57f9b1c9cf", 324243},
+		{"resource.005", 0, "d97a96f1ab91b41cf46a02cc89b0a04e", 333091},
+		{"resource.006", 0, "c0881236945b1f61d4e11b23014eee41", 232696},
+		{"resource.007", 0, "8613c45fc771d658e5a505b9a4a54f31", 267741},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// Codename: Iceman - English DOS (from FRG)
 	// SCI interpreter version 0.000.668
 	{"iceman", "", {
