@@ -45,6 +45,7 @@
 #include "audio/musicplugin.h"
 
 #include "graphics/renderer.h"
+#include "advancedDetector.h"
 
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
@@ -211,8 +212,14 @@ static const char HELP_STRING[] =
 	"  --md5                    Shows MD5 hash of the file given by --md5-path=PATH\n"
 	"                           If --md5-length=NUM is passed then it shows the MD5 hash of\n"
 	"                           the first NUM bytes of the file given by PATH\n"
+    "                           If --md5-engine=ENGINE_ID is passed, it fetches the MD5 length\n"
+    "                           automatically, overriding --md5-length\n"
 	"  --md5-path=PATH          Used with --md5 to specify path of file to calculate MD5 hash of\n"
 	"  --md5-length=NUM         Used with --md5 to specify the number of bytes to be hashed\n"
+    "                           Is overriden when used with --md5-engine\n"
+    "  --md5-engine=ENGINE_ID   Used with --md5 to specify the engine for which number of bytes\n"
+    "                           to be hashed must be calculated. This option overrides --md5-length\n"
+    "                           if used along with it. Use --list-engines to find all engineIds\n"
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
 	"\"no-\", e.g. \"--no-aspect-ratio\".\n"
@@ -829,6 +836,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				}
 			END_OPTION
 
+			DO_LONG_OPTION("md5-engine")
+			END_OPTION
+
 			DO_LONG_OPTION_INT("talkspeed")
 			END_OPTION
 
@@ -1366,7 +1376,7 @@ static void calcMD5(Common::FSNode &path, long int length) {
 	Common::SeekableReadStream *stream = path.createReadStream();
 	if (stream) {
 		Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-		printf("(hash) : %s, (filename) : %s, (bytes) : %d\n", md5.c_str(), path.getName().c_str(), length ? (int32)length : (int32)stream->size());
+		printf("(hash) : %s, (filename) : %s, (bytes) : %d\n", md5.c_str(), path.getName().c_str(), length && length <= stream->size() ? (int32)length : (int32)stream->size());
 		delete stream;
 	} else {
 		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
@@ -1676,6 +1686,27 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		long int md5Length = 0;
 		if (settings.contains("md5-length"))
 			md5Length = settings["md5-length"].asUint64();
+		if (settings.contains("md5-engine")) {
+			Common::String engineID = settings["md5-engine"];
+			if (engineID == "scumm") {
+				// Hardcoding value as scumm doesn't use AdvancedMetaEngineDetection
+				md5Length = 1024 * 1024;
+			} else {
+				const Plugin *plugin = EngineMan.findPlugin(engineID);
+				if (!plugin) {
+					warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
+					return true;
+				}
+
+				const AdvancedMetaEngineDetection* advEnginePtr = dynamic_cast<AdvancedMetaEngineDetection*>(&(plugin->get<MetaEngineDetection>()));
+				if (advEnginePtr == nullptr) {
+					warning("This engine doesn't support MD5 based detection");
+					return true;
+				}
+				md5Length = (long int) advEnginePtr->getMD5Bytes();
+			}
+		}
+
 		calcMD5(path, md5Length);
 		return true;
 #ifdef DETECTOR_TESTING_HACK
