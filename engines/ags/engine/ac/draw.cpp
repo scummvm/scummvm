@@ -780,7 +780,7 @@ static void clear_sprite_list() {
 	_GP(sprlist).clear();
 }
 
-static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int baseline, bool isWalkBehind) {
+static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int zorder, bool isWalkBehind) {
 	if (spp == nullptr)
 		quit("add_to_sprite_list: attempted to draw NULL sprite");
 	// completely invisible, so don't draw it at all
@@ -789,7 +789,7 @@ static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int 
 
 	SpriteListEntry sprite;
 	sprite.bmp = spp;
-	sprite.baseline = baseline;
+	sprite.zorder = zorder;
 	sprite.x = xx;
 	sprite.y = yy;
 
@@ -801,15 +801,15 @@ static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int 
 	_GP(sprlist).push_back(sprite);
 }
 
-// function to sort the sprites into baseline order
+// function to sort the sprites into zorder order
 static bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
-	if (e1.baseline == e2.baseline) {
+	if (e1.zorder == e2.zorder) {
 		if (e1.takesPriorityIfEqual)
 			return false;
 		if (e2.takesPriorityIfEqual)
 			return true;
 	}
-	return e1.baseline < e2.baseline;
+	return e1.zorder < e2.zorder;
 }
 
 // copy the sorted sprites into the Things To Draw list
@@ -1952,20 +1952,23 @@ void draw_gui_and_overlays() {
 	if (pl_any_want_hook(AGSE_PREGUIDRAW))
 		add_render_stage(AGSE_PREGUIDRAW);
 
-	// draw overlays, except text boxes and portraits
-	for (const auto &over : _GP(screenover)) {
+	clear_sprite_list();
+
+	// Add active overlays to the sprite list
+	for (auto &over : _GP(screenover)) {
+		int tdxp, tdyp;
+		get_overlay_position(over, &tdxp, &tdyp);
 		// complete overlay draw in non-transparent mode
-		if (over.type == OVER_COMPLETE)
-			add_thing_to_draw(over.bmp, over.x, over.y);
-		else if (!is_over_above_gui(over.type)) {
-			int tdxp, tdyp;
-			get_overlay_position(over, &tdxp, &tdyp);
-			add_thing_to_draw(over.bmp, tdxp, tdyp);
+		if (over.type == OVER_COMPLETE) {
+			add_to_sprite_list(over.bmp, tdxp, tdyp, INT_MIN, false);
+		} else {
+			// draw speech and portraits over GUI and the rest under GUI
+			int zorder = is_over_above_gui(over.type) ? INT_MAX : INT_MIN;
+			add_to_sprite_list(over.bmp, tdxp, tdyp, zorder, false);
 		}
 	}
 
-	// Draw GUIs - they should always be on top of overlays like
-	// speech background text
+	// Add GUIs
 	_G(our_eip) = 35;
 	if (((_G(debug_flags) & DBG_NOIFACE) == 0) && (_G(displayed_room) >= 0)) {
 		int aa;
@@ -2029,7 +2032,7 @@ void draw_gui_and_overlays() {
 				continue;
 
 			_GP(guibgbmp)[aa]->SetTransparency(_GP(guis)[aa].Transparency);
-			add_thing_to_draw(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y);
+			add_to_sprite_list(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false);
 
 			// only poll if the interface is enabled (mouseovers should not
 			// work while in Wait state)
@@ -2038,14 +2041,8 @@ void draw_gui_and_overlays() {
 		}
 	}
 
-	// draw speech and portraits (so that they appear over GUIs)
-	for (const auto &over : _GP(screenover)) {
-		if (is_over_above_gui(over.type)) {
-			int tdxp, tdyp;
-			get_overlay_position(over, &tdxp, &tdyp);
-			add_thing_to_draw(over.bmp, tdxp, tdyp);
-		}
-	}
+	// sort and append ui sprites to the global draw things list
+	draw_sprite_list();
 
 	_G(our_eip) = 1099;
 }
@@ -2090,7 +2087,7 @@ void GfxDriverOnInitCallback(void *data) {
 static void construct_room_view() {
 	draw_preroom_background();
 	prepare_room_sprites();
-	// reset the Baselines Changed flag now that we've drawn stuff
+	// reset the zorders Changed flag now that we've drawn stuff
 	_G(walk_behind_baselines_changed) = 0;
 
 	for (const auto &viewport : _GP(play).GetRoomViewportsZOrdered()) {
