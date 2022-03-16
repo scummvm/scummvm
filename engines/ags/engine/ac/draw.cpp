@@ -803,6 +803,23 @@ static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int 
 	_GP(sprlist).push_back(sprite);
 }
 
+// function to sort the sprites into baseline order
+static bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
+	if (e1.baseline == e2.baseline) {
+		if (e1.takesPriorityIfEqual)
+			return false;
+		if (e2.takesPriorityIfEqual)
+			return true;
+	}
+	return e1.baseline < e2.baseline;
+}
+
+// copy the sorted sprites into the Things To Draw list
+static void draw_sprite_list() {
+	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
+	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(), _GP(sprlist).begin(), _GP(sprlist).end());
+}
+
 //
 //------------------------------------------------------------------------
 
@@ -986,39 +1003,6 @@ void draw_gui_sprite(Bitmap *ds, int pic, int x, int y, bool use_alpha, BlendMod
 
 void draw_gui_sprite_v330(Bitmap *ds, int pic, int x, int y, bool use_alpha, BlendMode blend_mode) {
 	draw_gui_sprite(ds, pic, x, y, use_alpha && (_G(loaded_game_file_version) >= kGameVersion_330), blend_mode);
-}
-
-// function to sort the sprites into baseline order
-bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
-	if (e1.baseline == e2.baseline) {
-		if (e1.takesPriorityIfEqual)
-			return false;
-		if (e2.takesPriorityIfEqual)
-			return true;
-	}
-	return e1.baseline < e2.baseline;
-}
-
-
-
-
-void draw_sprite_list() {
-	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-		for (int ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
-			if (_G(walkBehindBitmap)[ee] != nullptr) {
-				add_to_sprite_list(_G(walkBehindBitmap)[ee], _G(walkBehindLeft)[ee], _G(walkBehindTop)[ee],
-				                   _G(croom)->walkbehind_base[ee], 0, true);
-			}
-		}
-	}
-
-	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
-
-	if (pl_any_want_hook(AGSE_PRESCREENDRAW))
-		add_render_stage(AGSE_PRESCREENDRAW);
-
-	// copy the sorted sprites into the Things To Draw list
-	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(), _GP(sprlist).begin(), _GP(sprlist).end());
 }
 
 // Avoid freeing and reallocating the memory if possible
@@ -1851,6 +1835,19 @@ void prepare_room_sprites() {
 
 		if ((_G(debug_flags) & DBG_NODRAWSPRITES) == 0) {
 			_G(our_eip) = 34;
+
+			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
+				for (int ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
+					if (_G(walkBehindBitmap)[ee] != nullptr) {
+						add_to_sprite_list(_G(walkBehindBitmap)[ee], _G(walkBehindLeft)[ee], _G(walkBehindTop)[ee],
+							_G(croom)->walkbehind_base[ee], 0, true);
+					}
+				}
+			}
+
+			if (pl_any_want_hook(AGSE_PRESCREENDRAW))
+				add_render_stage(AGSE_PRESCREENDRAW);
+
 			draw_sprite_list();
 		}
 	}
