@@ -35,7 +35,6 @@ namespace Chewy {
 #define AAD_DATA 0
 #define ATS_DATA 1
 #define ADS_DATA 2
-#define ADH_DATA 3
 #define INV_USE_DATA 4
 #define INV_IDX_DATA 5
 #define INV_ATS_DATA 6
@@ -44,7 +43,6 @@ namespace Chewy {
 #define AAD_HANDLE 0
 #define ATS_HANDLE 1
 #define ADS_HANDLE 2
-#define ADH_HANDLE 3
 #define INV_USE_HANDLE 4
 #define INV_IDX_HANDLE 5
 #define INV_ATS_HANDLE 6
@@ -99,15 +97,6 @@ struct KbdMouseInfo;
 struct AdsDiaHeaders {
 	int16 _nr;
 };
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-struct AdsBlock {
-	bool _show[ADS_MAX_BL_EIN];
-
-	uint8 _next[ADS_MAX_BL_EIN];
-	uint8 _control[ADS_MAX_BL_EIN];
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
 
 struct AtdsVar {
 	int16 _silent = 0;
@@ -278,7 +267,6 @@ public:
 	void str_null2leer(char *strStart, char *strEnd);
 	char *atds_adr(const char *fname, int16 chunkStart, int16 chunkNr);
 	void load_atds(int16 chunkNr, int16 mode);
-	void save_ads_header(int16 diaNr);
 
 	Common::Stream *pool_handle(const char *fname);
 	void set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunkStart, int16 chunkNr);
@@ -310,17 +298,16 @@ public:
 	int16 aad_get_zeilen(char *str, int16 *txtLen);
 	bool ads_start(int16 diaNr);
 	void stop_ads();
-	char **ads_item_ptr(int16 blockNr, int16 *retNr);
-	AdsNextBlk *ads_item_choice(int16 blockNr, int16 itemNr);
-	AdsNextBlk *calc_next_block(int16 blockNr, int16 itemNr);
+	char **ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr);
+	AdsNextBlk *ads_item_choice(uint16 dialogNum, int16 blockNr, int16 itemNr);
+	AdsNextBlk *calc_next_block(uint16 dialogNum, int16 blockNr, int16 itemNr);
 	int16 ads_get_status();
 	void hide_item(int16 diaNr, int16 blockNr, int16 itemNr);
 	void show_item(int16 diaNr, int16 blockNr, int16 itemNr);
-	int16 return_block(AdsBlock *ab);
+	int16 return_block(uint16 dialogNum);
 	void ads_search_block(int16 blockNr, char **ptr);
 	void ads_search_item(int16 itemNr, char **blkAdr);
 	int16 start_ads_auto_dia(char *itemAdr);
-	int16 check_item(int16 blockNr, int16 itemNr);
 	int16 calc_inv_no_use(int16 curInv, int16 testNr, int16 mode);
 	int16 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
@@ -350,7 +337,6 @@ private:
 	AtdsVar _atdsv;
 	char *_ePtr[ADS_MAX_BL_EIN] = { nullptr };
 	int16 _eNr[ADS_MAX_BL_EIN] = { 0 };
-	AdsBlock *_adsBlock = nullptr;
 	AdsNextBlk _adsnb;
 	uint8 _adsStack[ADS_STACK_SIZE] = { 0 };
 	int16 _adsStackPtr;

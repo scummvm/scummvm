@@ -271,24 +271,21 @@ void adsMenu() {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
-				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_blk_nr), curY);
+				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 				if (an_blk->_blkNr == -1) {
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					stop_ads_dialog();
 				} else {
-					an_blk = _G(atds)->calc_next_block(_G(ads_blk_nr), curY);
+					an_blk = _G(atds)->calc_next_block(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					_G(ads_blk_nr) = an_blk->_blkNr;
-					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_blk_nr), &_G(ads_item_nr));
+					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
 				}
 				_G(det)->stop_detail(_G(talk_start_ani));
 				_G(det)->showStaticSpr(_G(talk_hide_static));
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
-				if (_G(flags).AdsDialog == false) {
-					_G(atds)->save_ads_header(_G(ads_dia_nr));
-				}
 			}
 			break;
 

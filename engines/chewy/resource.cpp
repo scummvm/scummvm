@@ -335,11 +335,11 @@ DialogResource::~DialogResource() {
 	delete _dialogBuffer;
 }
 
-DialogChunk *DialogResource::getDialog(uint block) {
-	Chunk *chunk = &_chunkList[block];
+DialogChunk *DialogResource::getDialog(uint dialog, uint block) {
+	Chunk *chunk = &_chunkList[dialog];
 	DialogChunk *item = new DialogChunk();
 
-	_dialogStream->seek(chunk->pos, SEEK_SET);
+	_dialogStream->seek(chunk->pos + 3 * 6 * block, SEEK_SET);
 
 	_dialogStream->read(item->show, 6);
 	_dialogStream->read(item->next, 6);
@@ -348,46 +348,53 @@ DialogChunk *DialogResource::getDialog(uint block) {
 	return item;
 }
 
-bool DialogResource::isItemShown(uint block, uint num) {
-	Chunk *chunk = &_chunkList[block];
+bool DialogResource::isItemShown(uint dialog, uint block, uint num) {
+	DialogChunk *item = getDialog(dialog, block);
+	bool isShown = item->show[num];
+	delete item;
 
-	_dialogStream->seek(chunk->pos, SEEK_SET);
-
-	_dialogStream->skip(num);
-	return _dialogStream->readByte();
+	return isShown;
 }
 
-void DialogResource::setItemShown(uint block, uint num, bool shown) {
-	Chunk *chunk = &_chunkList[block];
+void DialogResource::setItemShown(uint dialog, uint block, uint num, bool shown) {
+	Chunk *chunk = &_chunkList[dialog];
 
-	_dialogStream->seek(chunk->pos, SEEK_SET);
+	_dialogStream->seek(chunk->pos + 3 * 6 * block, SEEK_SET);
 
 	_dialogStream->skip(num);
 	_dialogStream->writeByte(shown ? 1 : 0);
 }
 
-bool DialogResource::hasExitBit(uint block, uint num) {
-	DialogChunk *item = getDialog(block);
+bool DialogResource::hasExitBit(uint dialog, uint block, uint num) {
+	DialogChunk *item = getDialog(dialog, block);
 	const bool isExit = (item->flags[num] & ADS_EXIT_BIT) != 0;
 	delete item;
 
 	return isExit;
 }
 
-bool DialogResource::hasRestartBit(uint block, uint num) {
-	DialogChunk *item = getDialog(block);
+bool DialogResource::hasRestartBit(uint dialog, uint block, uint num) {
+	DialogChunk *item = getDialog(dialog, block);
 	const bool isRestart = (item->flags[num] & ADS_RESTART_BIT) != 0;
 	delete item;
 
 	return isRestart;
 }
 
-bool DialogResource::hasShowBit(uint block, uint num) {
-	DialogChunk *item = getDialog(block);
+bool DialogResource::hasShowBit(uint dialog, uint block, uint num) {
+	DialogChunk *item = getDialog(dialog, block);
 	const bool isShown = (item->flags[num] & ADS_SHOW_BIT) != 0;
 	delete item;
 
 	return isShown;
+}
+
+uint8 DialogResource::getNextBlock(uint dialog, uint block, uint num) {
+	DialogChunk *item = getDialog(dialog, block);
+	const uint8 next = item->next[num];
+	delete item;
+
+	return next;
 }
 
 void DialogResource::loadStream(Common::SeekableReadStream *s) {
@@ -398,15 +405,6 @@ void DialogResource::loadStream(Common::SeekableReadStream *s) {
 void DialogResource::saveStream(Common::WriteStream* s) {
 	_dialogStream->seek(0, SEEK_SET);
 	s->writeStream(_dialogStream, _stream.size());
-}
-
-void DialogResource::updateChunk(uint num, byte *data) {
-	assert(num < _chunkList.size());
-
-	Chunk *chunk = &_chunkList[num];
-
-	_stream.seek(chunk->pos, SEEK_SET);
-	_dialogStream->write(data, chunk->size);
 }
 
 }

@@ -208,12 +208,13 @@ public:
 	DialogResource(Common::String filename);
 	virtual ~DialogResource();
 
-	DialogChunk *getDialog(uint block);
-	bool isItemShown(uint block, uint num);
-	void setItemShown(uint block, uint num, bool shown);
-	bool hasExitBit(uint block, uint num);
-	bool hasRestartBit(uint block, uint num);
-	bool hasShowBit(uint block, uint num);
+	DialogChunk *getDialog(uint dialog, uint block);
+	bool isItemShown(uint dialog, uint block, uint num);
+	void setItemShown(uint dialog, uint block, uint num, bool shown);
+	bool hasExitBit(uint dialog, uint block, uint num);
+	bool hasRestartBit(uint dialog, uint block, uint num);
+	bool hasShowBit(uint dialog, uint block, uint num);
+	uint8 getNextBlock(uint dialog, uint block, uint num);
 
 	void loadStream(Common::SeekableReadStream *s);
 	void saveStream(Common::WriteStream *s);
@@ -221,10 +222,6 @@ public:
 	uint32 getStreamSize() const {
 		return _stream.size();
 	}
-
-	// HACK: The following function allows direct access
-	// to the stream, and should be removed
-	void updateChunk(uint num, byte *data);
 
 private:
 	Common::MemorySeekableReadWriteStream *_dialogStream;

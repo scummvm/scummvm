@@ -126,9 +126,6 @@ Atdsys::Atdsys() {
 
 Atdsys::~Atdsys() {
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
-		if (i == ADH_HANDLE)
-			continue;
-
 		close_handle(i);
 	}
 
@@ -373,18 +370,6 @@ void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, i
 void Atdsys::open_handle(const char *fname, int16 mode) {
 	char *tmp_adr = nullptr;
 
-	if (mode == ADH_DATA) {
-		if (_atdsMem[mode])
-			free(_atdsMem[mode]);
-
-		// Set to nullptr on purpose, this shouldn't be used
-		_atdsHandle[mode] = nullptr;
-		// +3 bytes to signify the end of the stream (BLOCKENDE)
-		_atdsMem[mode] = (char *)MALLOC(MAX_DIALOG_DATA_SIZE + 3);
-		_adsBlock = (AdsBlock *)_atdsMem[mode];
-		return;
-	}
-
 	if (mode != INV_IDX_DATA)
 		tmp_adr = atds_adr(fname, 0, 20000);
 
@@ -409,9 +394,6 @@ void Atdsys::close_handle(int16 mode) {
 		_atdsHandle[mode] = nullptr;
 
 		for (int i = 0; i < MAX_HANDLE; ++i) {
-			if (i == ADH_HANDLE)
-				continue;
-
 			if (_atdsHandle[i] == stream)
 				_atdsHandle[i] = nullptr;
 		}
@@ -435,20 +417,6 @@ char *Atdsys::atds_adr(const char *fname, int16 chunkStart, int16 chunkNr) {
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	char *txt_adr = _atdsMem[mode];
 
-	if (mode == ADH_DATA) {
-		Chunk *chunk = _dialogResource->getChunk(chunkNr);
-		uint8 *chunkData = _dialogResource->getChunkData(chunkNr);
-
-		assert(chunk->size <= MAX_DIALOG_DATA_SIZE);
-		memcpy(_atdsMem[ADH_HANDLE], chunkData, chunk->size);
-		delete[] chunkData;
-
-		txt_adr[chunk->size] = (char)BLOCKENDE;
-		txt_adr[chunk->size + 1] = (char)BLOCKENDE;
-		txt_adr[chunk->size + 2] = (char)BLOCKENDE;
-		return;
-	}
-
 	ChunkHead Ch;
 	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle[mode]);
 
@@ -461,7 +429,7 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 			if (Ch.size) {
 				if (stream->read(txt_adr, Ch.size) != Ch.size) {
 					error("load_atds error");
-				} else if (mode != ADH_DATA) {
+				} else {
 					crypt(txt_adr, Ch.size);
 				}
 			}
@@ -472,10 +440,6 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	} else {
 		error("load_atds error");
 	}
-}
-
-void Atdsys::save_ads_header(int16 diaNr) {
-	_dialogResource->updateChunk(diaNr, (byte *)_atdsMem[ADH_HANDLE]);
 }
 
 void Atdsys::crypt(char *txt, uint32 size) {
@@ -1186,20 +1150,7 @@ int16 Atdsys::ads_get_status() {
 	return _adsv._dialog;
 }
 
-int16 Atdsys::check_item(int16 blockNr, int16 itemNr) {
-	int16 ret = true;
-	char *tmp_adr = _adsv._ptr;
-	ads_search_block(blockNr, &tmp_adr);
-	if (tmp_adr) {
-		ads_search_item(itemNr, &tmp_adr);
-		if (tmp_adr) {
-			ret = true;
-		}
-	}
-	return ret;
-}
-
-char **Atdsys::ads_item_ptr(int16 blockNr, int16 *retNr) {
+char **Atdsys::ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
 	*retNr = 0;
 	memset(_ePtr, 0, sizeof(char *) * ADS_MAX_BL_EIN);
 	if (_adsv._dialog != -1) {
@@ -1212,7 +1163,7 @@ char **Atdsys::ads_item_ptr(int16 blockNr, int16 *retNr) {
 				if (tmp_adr) {
 					char nr = tmp_adr[-1];
 					tmp_adr += sizeof(AadStrHeader);
-					if (_adsBlock[blockNr]._show[(int16)nr] == true) {
+					if (_dialogResource->isItemShown(dialogNum, blockNr, (int16)nr)) {
 						_ePtr[*retNr] = tmp_adr;
 						_eNr[*retNr] = (int16)nr;
 						++(*retNr);
@@ -1225,7 +1176,7 @@ char **Atdsys::ads_item_ptr(int16 blockNr, int16 *retNr) {
 	return _ePtr;
 }
 
-AdsNextBlk *Atdsys::ads_item_choice(int16 blockNr, int16 itemNr) {
+AdsNextBlk *Atdsys::ads_item_choice(uint16 dialogNum, int16 blockNr, int16 itemNr) {
 	_adsnb._blkNr = blockNr;
 	if (!_aadv._dialog) {
 		if (!_adsv._autoDia) {
@@ -1233,7 +1184,7 @@ AdsNextBlk *Atdsys::ads_item_choice(int16 blockNr, int16 itemNr) {
 			if (_adsv._blkPtr) {
 				if (start_ads_auto_dia(_adsv._blkPtr))
 					_adsv._autoDia = true;
-				if (_G(bit)->is_bit((uint8)_adsBlock[blockNr]._control[_eNr[itemNr]], ADS_EXIT_BIT) == true) {
+				if (_dialogResource->hasExitBit(dialogNum, blockNr, _eNr[itemNr])) {
 					stop_ads();
 					_adsnb._endNr = _eNr[itemNr];
 					_adsnb._blkNr = -1;
@@ -1245,29 +1196,31 @@ AdsNextBlk *Atdsys::ads_item_choice(int16 blockNr, int16 itemNr) {
 	return &_adsnb;
 }
 
-AdsNextBlk *Atdsys::calc_next_block(int16 blockNr, int16 itemNr) {
-	if (_G(bit)->is_bit((uint8)_adsBlock[blockNr]._control[_eNr[itemNr]], ADS_SHOW_BIT) == false)
-		_adsBlock[blockNr]._show[_eNr[itemNr]] = false;
+AdsNextBlk *Atdsys::calc_next_block(uint16 dialogNum, int16 blockNr, int16 itemNr) {
+	if (!_dialogResource->hasShowBit(dialogNum, blockNr, _eNr[itemNr]))
+		_dialogResource->setItemShown(dialogNum, blockNr, _eNr[itemNr], false);
 	_adsnb._endNr = _eNr[itemNr];
-	if (_G(bit)->is_bit((uint8)_adsBlock[blockNr]._control[_eNr[itemNr]], ADS_RESTART_BIT) == true) {
+
+	if (_dialogResource->hasRestartBit(dialogNum, blockNr, _eNr[itemNr])) {
 		_adsnb._blkNr = 0;
 
 		_adsStackPtr = 0;
 	} else {
-		if (_adsBlock[blockNr]._next[_eNr[itemNr]]) {
-			_adsnb._blkNr = _adsBlock[blockNr]._next[_eNr[itemNr]];
+		const uint8 nextBlock = _dialogResource->getNextBlock(dialogNum, blockNr, _eNr[itemNr]);
+		if (nextBlock) {
+			_adsnb._blkNr = nextBlock;
 
 			int16 anzahl = 0;
 			while (!anzahl && _adsnb._blkNr != -1) {
 
 				anzahl = 0;
-				ads_item_ptr(_adsnb._blkNr, &anzahl);
+				ads_item_ptr(dialogNum, _adsnb._blkNr, &anzahl);
 				if (!anzahl) {
-					_adsnb._blkNr = return_block(_adsBlock);
+					_adsnb._blkNr = return_block(dialogNum);
 				}
 			}
 		} else {
-			_adsnb._blkNr = return_block(_adsBlock);
+			_adsnb._blkNr = return_block(dialogNum);
 		}
 	}
 	_adsStack[_adsStackPtr] = _adsnb._blkNr;
@@ -1276,14 +1229,14 @@ AdsNextBlk *Atdsys::calc_next_block(int16 blockNr, int16 itemNr) {
 	return &_adsnb;
 }
 
-int16 Atdsys::return_block(AdsBlock *ab) {
+int16 Atdsys::return_block(uint16 dialogNum) {
 	_adsStackPtr -= 1;
 	int16 ret = -1;
 	bool ende = false;
 	while (_adsStackPtr >= 0 && !ende) {
 		short blk_nr = _adsStack[_adsStackPtr];
 		int16 anz;
-		ads_item_ptr(blk_nr, &anz);
+		ads_item_ptr(dialogNum, blk_nr, &anz);
 		if (anz) {
 			ret = blk_nr;
 			ende = true;
@@ -1359,27 +1312,11 @@ int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
 }
 
 void Atdsys::hide_item(int16 diaNr, int16 blockNr, int16 itemNr) {
-	if (_adsv._dialog == diaNr) {
-		if (check_item(blockNr, itemNr))
-			_adsBlock[blockNr]._show[itemNr] = false;
-	} else {
-		load_atds(diaNr, ADH_DATA);
-		if (check_item(blockNr, itemNr))
-			_adsBlock[blockNr]._show[itemNr] = false;
-		save_ads_header(diaNr);
-	}
+	_dialogResource->setItemShown(diaNr, blockNr, itemNr, false);
 }
 
 void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
-	if (_adsv._dialog == diaNr) {
-		if (check_item(blockNr, itemNr))
-			_adsBlock[blockNr]._show[itemNr] = true;
-	} else {
-		load_atds(diaNr, ADH_DATA);
-		if (check_item(blockNr, itemNr))
-			_adsBlock[blockNr]._show[itemNr] = true;
-		save_ads_header(diaNr);
-	}
+	_dialogResource->setItemShown(diaNr, blockNr, itemNr, true);
 }
 
 int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
