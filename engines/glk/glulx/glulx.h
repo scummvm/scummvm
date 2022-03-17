@@ -819,7 +819,7 @@ public:
 	int init_profile();
 	void profile_set_call_counts(int flag);
 
-	#if VM_PROFILING
+#ifdef VM_PROFILING
 	uint profile_opcount;
 	#define profile_tick() (profile_opcount++)
 	int profile_profiling_active();
@@ -827,16 +827,16 @@ public:
 	void profile_out(uint stackuse);
 	void profile_fail(const char *reason);
 	void profile_quit();
-	#else /* VM_PROFILING */
+#else /* VM_PROFILING */
 	void profile_tick() {}
 	void profile_profiling_active() {}
 	void profile_in(uint addr, uint stackuse, int accel) {}
 	void profile_out(uint stackuse)  {}
 	void profile_fail(const char *reason) {}
 	void profile_quit() {}
-	#endif /* VM_PROFILING */
+#endif /* VM_PROFILING */
 
-#if VM_DEBUGGER
+#ifdef VM_DEBUGGER
 	unsigned long debugger_opcount;
 	void debugger_tick() { debugger_opcount++ }
 	int debugger_load_info_stream(strid_t stream);

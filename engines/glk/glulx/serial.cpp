@@ -170,7 +170,7 @@ uint Glulx::perform_restoreundo() {
 	uint *heapsumarr = nullptr;
 
 	/* If profiling is enabled and active then fail. */
-#if VM_PROFILING
+#ifdef VM_PROFILING
 	if (profile_profiling_active())
 		return 1;
 #endif /* VM_PROFILING */

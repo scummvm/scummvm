@@ -567,7 +567,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				break;
 
 			case op_debugtrap:
-#if VM_DEBUGGER
+#ifdef VM_DEBUGGER
 				/* We block and handle debug commands, but only if the
 				   library has invoked debug features. (Meaning, has
 				   the cycle handler ever been called.) */
@@ -1046,7 +1046,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 		}
 	}
 	/* done executing */
-#if VM_DEBUGGER
+#ifdef VM_DEBUGGER
 	debugger_handle_quit();
 #endif /* VM_DEBUGGER */
 }
