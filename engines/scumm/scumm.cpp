@@ -2451,17 +2451,13 @@ Common::Error ScummEngine::go() {
 		// but this way if it overshoots that time will count as part
 		// of the main loop.
 
-		int delayMsecs = delta * 1000 / 60 - diff;
-		diff = _system->getMillis() + delayMsecs;
-
-		waitForTimer(delayMsecs);
+		diff = waitForTimer(delta * 1000 / 60 - diff);
 
 		// Run the main loop
 		scummLoop(delta);
 
 		// Halt the stop watch and compute how much time this iteration took.
 		diff = _system->getMillis() - diff;
-
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2472,7 +2468,7 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int msec_delay) {
+int ScummEngine::waitForTimer(int msec_delay) {
 	uint32 end_time;
 
 	if (_fastMode & 2)
@@ -2506,6 +2502,11 @@ void ScummEngine::waitForTimer(int msec_delay) {
 			break;
 		_system->delayMillis(MIN<uint32>(10, end_time - cur));
 	}
+
+	// Return the expected end time, which may be different from the actual
+	// time. This helps the main loop maintain consistent timing.
+
+	return end_time;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {

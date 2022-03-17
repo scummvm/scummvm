@@ -380,7 +380,7 @@ public:
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int msec_delay);
+	int waitForTimer(int msec_delay);
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();
