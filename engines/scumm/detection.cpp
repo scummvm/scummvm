@@ -229,7 +229,7 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
-	if (target.empty() || gameid == "monkey") {
+	if (target.empty() || gameid == "monkey" || gameid == "monkey2") {
 		options.push_back(enableEnhancements);
 	}
 
