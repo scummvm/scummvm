@@ -213,6 +213,13 @@ static const ExtraGuiOption smoothScrolling = {
 	true
 };
 
+static const ExtraGuiOption enableEnhancements {
+	_s("Enable game-specific enhancements"),
+	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
+	"enable_enhancements",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -221,6 +228,10 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String extra = ConfMan.get("extra", target);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+
+	if (target.empty() || gameid == "monkey") {
+		options.push_back(enableEnhancements);
+	}
 
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
