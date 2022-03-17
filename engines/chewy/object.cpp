@@ -298,15 +298,10 @@ int16 Object::action_iib_sib(int16 maus_obj_nr, int16 test_obj_nr) {
 			}
 		}
 	}
-	if (action_flag == OBJECT_1) {
 
-		if (!calc_rmo_flip_flop(maus_obj_nr))
-			action_flag = NO_ACTION;
-	} else if (action_flag == OBJECT_2) {
+	if (action_flag == OBJECT_2 && !calc_rsi_flip_flop(test_obj_nr))
+		action_flag = NO_ACTION;
 
-		if (!calc_rsi_flip_flop(test_obj_nr))
-			action_flag = NO_ACTION;
-	}
 	return action_flag;
 }
 
