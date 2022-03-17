@@ -780,7 +780,7 @@ int WaitImpl(int skip_type, int nloops) {
 
 	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
 		// < 3.6.0 return 1 is skipped by user input, otherwise 0
-		return (_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
+		return ((_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0) ? 1 : 0;
 	}
 	// >= 3.6.0 return positive keycode, negative mouse button code, or 0 as time-out
 	return _GP(play).GetWaitSkipResult();
