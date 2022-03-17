@@ -56,7 +56,7 @@ void Cinema::execute() {
 	getCutscenes(cutscenes);
 
 	_G(fontMgr)->setFont(_G(font6));
-	_G(atds)->load_atds(98, 1);
+	_G(atds)->load_atds(98, ATS_DATA);
 
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	showCur();
