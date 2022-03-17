@@ -457,7 +457,7 @@ void ScummEngine_v5::o5_actorOps() {
 			// But in the VGA CD version, only costume 0 is used
 			// and the close-up is missing the cigar smoke.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0) {
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0 && ConfMan.getBool("enable_enhancements")) {
 				i = 76;
 			}
 
@@ -1627,7 +1627,7 @@ void ScummEngine_v5::o5_putActor() {
 	// other coordinates. The difference is never more than a single pixel,
 	// so there's not much reason to correct those.
 
-	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12) {
+	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && ConfMan.getBool("enable_enhancements")) {
 		if (x == 176 && y == 80) {
 			x = 174;
 			y = 86;
@@ -1899,7 +1899,7 @@ void ScummEngine_v5::o5_roomOps() {
 			// we want the original color 3 for the cigar smoke. It
 			// should be ok since there is no GUI in this scene.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3)
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && ConfMan.getBool("enable_enhancements"))
 				break;
 
 			setPalColor(d, a, b, c);	/* index, r, g, b */
