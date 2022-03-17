@@ -1373,7 +1373,7 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// together that they look like one. This adjusts the timing of the
 	// second one.
 
-	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708) {
+	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708 && ConfMan.getBool("enable_enhancements")) {
 		b = 1815;
 	}
 
