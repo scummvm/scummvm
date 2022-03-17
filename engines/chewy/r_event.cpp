@@ -975,7 +975,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
 		if (eib_nr1 != -1)
 			_G(spieler).room_e_obj[eib_nr1].Attribut = 255;
 		if (eib_nr2 != -1)
-			_G(spieler).room_e_obj[eib_nr1].Attribut = 255;
+			_G(spieler).room_e_obj[eib_nr2].Attribut = 255;
 	}
 	if (sib_nr != -1)
 		_G(obj)->calc_rsi_flip_flop(sib_nr);
