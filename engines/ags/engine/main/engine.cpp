@@ -618,8 +618,8 @@ void engine_init_game_settings() {
 		_GP(game).chars[ee].activeinv = -1;
 		_GP(game).chars[ee].following = -1;
 		_GP(game).chars[ee].followinfo = 97 | (10 << 8);
-		_GP(game).chars[ee].idletime = 20; // can be overridden later with SetIdle or summink
-		_GP(game).chars[ee].idleleft = _GP(game).chars[ee].idletime;
+		if (_G(loaded_game_file_version) < kGameVersion_360)
+			_GP(game).chars[ee].idletime = 20; // default to 20 seconds		_GP(game).chars[ee].idleleft = _GP(game).chars[ee].idletime;
 		_GP(game).chars[ee].transparency = 0;
 		_GP(game).chars[ee].baseline = -1;
 		_GP(game).chars[ee].walkwaitcounter = 0;
