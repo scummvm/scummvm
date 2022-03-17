@@ -220,7 +220,7 @@ Globals::Globals() {
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
 	_game = new GameSetupStruct();
-	_spriteset = new SpriteCache(_game->SpriteInfos);
+	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos);
 	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
 	_usetup = new GameSetup();

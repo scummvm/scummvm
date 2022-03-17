@@ -25,13 +25,6 @@
 //
 //=============================================================================
 
-// Headers, as they are in sprcache.cpp
-#ifdef _MANAGED
-// ensure this doesn't get compiled to .NET IL
-#pragma unmanaged
-#pragma warning (disable: 4996 4312)  // disable deprecation warnings
-#endif
-
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/util/compress.h"
@@ -42,7 +35,7 @@ namespace AGS3 {
 // Engine-specific implementation split out of sprcache.cpp
 //=============================================================================
 
-void SpriteCache::InitNullSpriteParams(sprkey_t index) {
+void AGS::Shared::SpriteCache::InitNullSpriteParams(sprkey_t index) {
 	// make it a blue cup, to avoid crashes
 	_sprInfos[index].Width = _sprInfos[0].Width;
 	_sprInfos[index].Height = _sprInfos[0].Height;

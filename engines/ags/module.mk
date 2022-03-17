@@ -39,6 +39,7 @@ MODULE_OBJS = \
 	shared/ac/keycode.o \
 	shared/ac/mouse_cursor.o \
 	shared/ac/sprite_cache.o \
+	shared/ac/sprite_file.o \
 	shared/ac/view.o \
 	shared/ac/words_dictionary.o \
 	shared/core/asset.o \

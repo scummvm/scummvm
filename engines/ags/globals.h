@@ -75,6 +75,7 @@ class GUITextBox;
 struct InteractionVariable;
 struct PlaneScaling;
 class RoomStruct;
+class SpriteCache;
 struct Translation;
 
 } // namespace Shared
@@ -100,7 +101,6 @@ class EngineExports;
 
 class Navigation;
 class SplitLines;
-class SpriteCache;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
@@ -709,7 +709,7 @@ public:
 
 	GameSetupStruct *_game;
 	GameState *_play;
-	SpriteCache *_spriteset;
+	AGS::Shared::SpriteCache *_spriteset;
 	AGS::Shared::RoomStruct *_thisroom;
 	RoomStatus *_troom; // used for non-saveable rooms, eg. intro
 
