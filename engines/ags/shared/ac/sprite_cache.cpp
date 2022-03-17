@@ -105,7 +105,7 @@ void SpriteCache::Init() {
 }
 
 void SpriteCache::Reset() {
-	_file.Reset();
+	_file.Close();
 	// TODO: find out if it's safe to simply always delete _spriteData.Image with array element
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
 		if (_spriteData[i].Image) {
@@ -434,7 +434,7 @@ int SpriteCache::SaveToFile(const String &filename, bool compressOutput, SpriteF
 		pre_save_sprite(data.Image);
 		sprites.push_back(data.Image);
 	}
-	return _file.SaveToFile(filename, sprites, &_file, compressOutput, index);
+	return SaveSpriteFile(filename, sprites, &_file, compressOutput, index);
 }
 
 HError SpriteCache::InitFile(const String &filename, const String &sprindex_filename) {
@@ -465,7 +465,7 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 }
 
 void SpriteCache::DetachFile() {
-	_file.Reset();
+	_file.Close();
 }
 
 } // namespace Shared

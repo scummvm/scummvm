@@ -21,7 +21,10 @@
 
 //=============================================================================
 //
-// SpriteFile class handles sprite file loading and streaming.
+// SpriteFile class handles sprite file parsing and streaming sprites.
+// SpriteFileWriter manages writing sprites into the output stream one by one,
+// accumulating index information, and may therefore be suitable for a variety
+// of situations.
 //
 //=============================================================================
 
@@ -29,7 +32,9 @@
 #define AGS_SHARED_AC_SPRITE_FILE_H
 
 #include "ags/shared/core/types.h"
+#include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -61,14 +66,16 @@ typedef int32_t sprkey_t;
 // SpriteFileIndex contains sprite file's table of contents
 struct SpriteFileIndex {
 	int SpriteFileIDCheck = 0; // tag matching sprite file and index file
-	sprkey_t LastSlot = -1;
-	size_t SpriteCount = 0u;
 	std::vector<int16_t> Widths;
 	std::vector<int16_t> Heights;
 	std::vector<soff_t>  Offsets;
+
+	inline size_t GetCount() const { return Offsets.size(); }
+	inline sprkey_t GetLastSlot() const { return (sprkey_t)GetCount() - 1; }
 };
 
-
+// SpriteFile opens a sprite file for reading, reports general information,
+// and lets read sprites in any order.
 class SpriteFile {
 public:
 	// Standart sprite file and sprite index names
@@ -79,7 +86,8 @@ public:
 	// Loads sprite reference information and inits sprite stream
 	HError      OpenFile(const String &filename, const String &sprindex_filename,
 		std::vector<Size> &metrics);
-	void        Reset();
+	// Closes stream; no reading will be possible unless opened again
+	void        Close();
 
 	// Tells if bitmaps in the file are compressed
 	bool        IsFileCompressed() const;
@@ -93,21 +101,12 @@ public:
 	HError      RebuildSpriteIndex(Stream *in, sprkey_t topmost, SpriteFileVersion vers,
 		std::vector<Size> &metrics);
 
+	// Loads an image data and creates a ready bitmap
 	HError      LoadSprite(sprkey_t index, Bitmap *&sprite);
+	// Loads an image data into the buffer, reports the bitmap metrics and color depth
 	HError      LoadSpriteData(sprkey_t index, Size &metric, int &bpp, std::vector<char> &data);
 
-	// Saves all sprites to file; fills in index data for external use
-	// TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
-	static int  SaveToFile(const String &save_to_file,
-		const std::vector<Bitmap *> &sprites, // available sprites (may contain nullptrs)
-		SpriteFile *read_from_file, // optional file to read missing sprites from
-		bool compressOutput, SpriteFileIndex &index);
-	// Saves sprite index table in a separate file
-	static int  SaveSpriteIndex(const String &filename, const SpriteFileIndex &index);
-
 private:
-	// Finds the topmost occupied slot index. Warning: may be slow.
-	static sprkey_t FindTopmostSprite(const std::vector<Bitmap *> &sprites);
 	// Seek stream to sprite
 	void        SeekToSprite(sprkey_t index);
 
@@ -123,6 +122,49 @@ private:
 	bool _compressed; // are sprites compressed
 	sprkey_t _curPos; // current stream position (sprite slot)
 };
+
+// SpriteFileWriter class writes a sprite file in a requested format.
+// Start using it by calling Begin, write ready bitmaps or copy raw sprite data
+// over slot by slot, then call Finalize to let it close the format correctly.
+class SpriteFileWriter {
+public:
+	SpriteFileWriter(std::unique_ptr<Stream> &out);
+	~SpriteFileWriter() {}
+
+    // Get the sprite index, accumulated after write
+    const SpriteFileIndex &GetIndex() const { return _index; }
+
+    // Initializes new sprite file format
+    void Begin(bool compress, sprkey_t last_slot = -1);
+    // Writes a bitmap into file, compressing if necessary
+    void WriteBitmap(Bitmap *image);
+    // Writes an empty slot marker
+    void WriteEmptySlot();
+    // Writes a raw sprite data without additional processing
+    void WriteSpriteData(const char *pbuf, size_t len, int w, int h, int bpp);
+    void WriteSpriteData(const std::vector<char> &buf, int w, int h, int bpp)
+        { WriteSpriteData(&buf[0], buf.size(), w, h, bpp); }
+    // Finalizes current format; no further writing is possible after this
+    void Finalize();
+
+private:
+    std::unique_ptr<Stream> &_out;
+    bool _compress = false;
+    soff_t _lastSlotPos = -1; // last slot save position in file
+    // sprite index accumulated on write for reporting back to user
+    SpriteFileIndex _index;
+    // compression buffer
+    std::vector<char> _membuf;
+};
+
+// Saves all sprites to file; fills in index data for external use
+// TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
+int SaveSpriteFile(const String &save_to_file,
+    const std::vector<Bitmap*> &sprites, // available sprites (may contain nullptrs)
+    SpriteFile *read_from_file, // optional file to read missing sprites from
+    bool compressOutput, SpriteFileIndex &index);
+// Saves sprite index table in a separate file
+int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index);
 
 } // namespace Shared
 } // namespace AGS
