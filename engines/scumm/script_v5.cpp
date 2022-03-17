@@ -2318,7 +2318,7 @@ void ScummEngine_v5::o5_stopSound() {
 	// 10001 regardless of which room it is. We figure out which one by
 	// looking at which rooms we're moving between.
 
-	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && ConfMan.getBool("enable_enhancements")) {
 		return;
 	}
 
