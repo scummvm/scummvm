@@ -568,7 +568,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
 		spr_nr = adiptr->end_ani - 1;
-	int16 *Cxy = &_rdi.dptr->_correction[spr_nr];
+	int16 *Cxy = &_rdi.dptr->_correction[spr_nr << 1];
 	int16 *Xy = (int16 *)_rdi.dptr->_image[spr_nr];
 	_sprInfo._image = _rdi.dptr->_image[spr_nr];
 	_sprInfo._x = adiptr->x + Cxy[0] - scrx;
