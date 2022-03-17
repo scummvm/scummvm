@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-17 08:05+0000\n"
+"POT-Creation-Date: 2022-03-17 15:36+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4218,7 +4218,7 @@ msgstr "Ladda"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2766
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2767
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4229,7 +4229,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2756
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2757
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4240,7 +4240,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2779
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2780
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7309,7 +7309,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:3080
+#: engines/scumm/scumm.cpp:3081
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
