@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-18 12:21+0000\n"
+"POT-Creation-Date: 2022-03-18 12:22+0000\n"
 "PO-Revision-Date: 2022-03-13 10:55+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -1999,6 +1999,12 @@ msgid ""
 msgstr ""
 "Anfrage fehlgeschlagen.\n"
 "Bitte überprüfen Sie Ihre Internetverbindung."
+
+#: gui/predictivedialog.cpp:66
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter Text"
+msgstr "Enter"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101

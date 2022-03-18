@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-18 12:21+0000\n"
+"POT-Creation-Date: 2022-03-18 12:22+0000\n"
 "PO-Revision-Date: 2022-03-14 17:27+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1994,6 +1994,12 @@ msgid ""
 msgstr ""
 "Verzoek mislukt.\n"
 "Controleer uw Internet verbinding."
+
+#: gui/predictivedialog.cpp:66
+#, fuzzy
+#| msgid "Enter"
+msgid "Enter Text"
+msgstr "Enter"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
