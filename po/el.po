@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-18 21:48+0000\n"
+"POT-Creation-Date: 2022-03-18 22:46+0000\n"
 "PO-Revision-Date: 2022-03-18 18:26+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -68,8 +68,8 @@ msgstr "Μετάβαση πάνω"
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
 #: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
-#: engines/director/events.cpp:91 engines/drascula/saveload.cpp:48
-#: engines/grim/inputdialog.cpp:84 engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
+#: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -133,8 +133,8 @@ msgstr ""
 #: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
-#: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
-#: engines/kyra/gui/saveload_eob.cpp:628
+#: engines/director/events.cpp:91 engines/grim/grim.cpp:357
+#: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:927
 msgid "Yes"
@@ -144,8 +144,9 @@ msgstr "Ναι"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
-#: engines/buried/buried.cpp:580 engines/grim/grim.cpp:357
-#: engines/kyra/gui/saveload_eob.cpp:595 engines/kyra/gui/saveload_eob.cpp:628
+#: engines/buried/buried.cpp:580 engines/director/events.cpp:91
+#: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
+#: engines/kyra/gui/saveload_eob.cpp:628
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:927
 msgid "No"
@@ -169,7 +170,7 @@ msgstr ""
 #: gui/options.cpp:2104 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1187 engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
-#: engines/buried/saveload.cpp:69 engines/director/events.cpp:91
+#: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1652
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
@@ -4571,7 +4572,11 @@ msgstr ""
 "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/director/events.cpp:90
-msgid "The game wants to prevents you from quitting. Do you want to quit?"
+#, fuzzy
+#| msgid "The game wants to prevents you from quitting. Do you want to quit?"
+msgid ""
+"The game prevents quitting at this moment. Are you sure you want to quit "
+"anyway?"
 msgstr ""
 "Το παιχνίδι δεν επιτρέπει την έξοδό σας αυτή τη στιγμή. Θέλετε να γίνει "
 "έξοδος από το παιχνίδι παρ'ολ'αυτά;"
