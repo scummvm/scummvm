@@ -4520,7 +4520,8 @@ msgstr "No se ha incluido el soporte para Versailles 1685."
 
 #: engines/director/events.cpp:90
 msgid "The game wants to prevents you from quitting. Do you want to quit?"
-msgstr "El juego quiere impedir que salgas del mismo. ¿Quieres salir del juego?"
+msgstr ""
+"El juego quiere impedir que salgas del mismo. ¿Quieres salir del juego?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
