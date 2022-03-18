@@ -223,7 +223,9 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if (ags_stricmp(arg, "--conf") == 0 && (argc > ee + 1)) {
 			_GP(usetup).conf_path = argv[++ee];
 		} else if (ags_stricmp(arg, "--localuserconf") == 0) {
-			_GP(usetup).local_user_conf = true;
+			_GP(usetup).user_conf_dir = ".";
+		} else if ((ags_stricmp(arg, "--user-conf-dir") == 0) && (argc > ee + 1)) {
+			_GP(usetup).user_conf_dir = argv[++ee];
 		} else if (ags_stricmp(arg, "--runfromide") == 0 && (argc > ee + 4)) {
 			_GP(usetup).install_dir = argv[ee + 1];
 			_GP(usetup).opt_data_dir = argv[ee + 2];

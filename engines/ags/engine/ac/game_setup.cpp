@@ -24,7 +24,6 @@
 namespace AGS3 {
 
 GameSetup::GameSetup() {
-	local_user_conf = false;
 	audio_backend = 1;
 	no_speech_pack = false;
 	textheight = 0;

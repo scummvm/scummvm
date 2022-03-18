@@ -429,6 +429,8 @@ int engine_check_register_game() {
 
 // Setup paths and directories that may be affected by user configuration
 void engine_init_user_directories() {
+	if (!_GP(usetup).user_conf_dir.IsEmpty())
+		Debug::Printf(kDbgMsg_Info, "User config directory: %s", _GP(usetup).user_conf_dir.GetCStr());
 	if (!_GP(usetup).user_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "User data directory: %s", _GP(usetup).user_data_dir.GetCStr());
 	if (!_GP(usetup).shared_data_dir.IsEmpty())
@@ -964,14 +966,23 @@ void engine_read_config(ConfigTree &cfg) {
 	if (Path::ComparePaths(user_global_cfg_file, def_cfg_file) != 0)
 		IniUtil::Read(user_global_cfg_file, cfg);
 
-	// Handle directive to search for the user config inside the game directory;
-	// this option may come either from command line or default/global config.
-	_GP(usetup).local_user_conf |= INIreadint(cfg, "misc", "localuserconf", 0) != 0;
-	if (_GP(usetup).local_user_conf) {
-		// Test if the file is writeable, if it is then both engine and setup
-		// applications may actually use it fully as a user config, otherwise
-		// fallback to default behavior.
-		_GP(usetup).local_user_conf = File::TestWriteFile(def_cfg_file);
+	// Handle directive to search for the user config inside the custom directory;
+		// this option may come either from command line or default/global config.
+	if (_GP(usetup).user_conf_dir.IsEmpty())
+		_GP(usetup).user_conf_dir = INIreadstring(cfg, "misc", "user_conf_dir");
+	if (_GP(usetup).user_conf_dir.IsEmpty()) // also try deprecated option
+		_GP(usetup).user_conf_dir = INIreadint(cfg, "misc", "localuserconf") != 0 ? "." : "";
+	// Test if the file is writeable, if it is then both engine and setup
+	// applications may actually use it fully as a user config, otherwise
+	// fallback to default behavior.
+	if (!_GP(usetup).user_conf_dir.IsEmpty()) {
+		if (Path::IsRelativePath(_GP(usetup).user_conf_dir))
+			_GP(usetup).user_conf_dir = Path::ConcatPaths(_GP(usetup).startup_dir, _GP(usetup).user_conf_dir);
+		if (!File::TestWriteFile(Path::ConcatPaths(_GP(usetup).user_conf_dir, DefaultConfigFileName))) {
+			Debug::Printf(kDbgMsg_Warn, "Write test failed at user config dir '%s', using default path.",
+				_GP(usetup).user_conf_dir.GetCStr());
+			_GP(usetup).user_conf_dir = "";
+		}
 	}
 
 	// Read user configuration file

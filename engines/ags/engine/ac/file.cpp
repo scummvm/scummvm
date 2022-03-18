@@ -242,10 +242,10 @@ FSLocation GetGlobalUserConfigDir() {
 
 FSLocation GetGameUserConfigDir() {
 	String dir = _G(platform)->GetUserConfigDirectory();
-	if (Path::IsRelativePath(dir)) // relative dir is resolved relative to the game data dir
+	if (!_GP(usetup).user_conf_dir.IsEmpty()) // directive to use custom userconf location
+		return FSLocation(_GP(usetup).user_conf_dir);
+	else if (Path::IsRelativePath(dir)) // relative dir is resolved relative to the game data dir
 		return FSLocation(_GP(ResPaths).DataDir, dir);
-	else if (_GP(usetup).local_user_conf) // directive to use game dir location
-		return FSLocation(_GP(ResPaths).DataDir);
 	// For absolute dir, we assume it's a special directory prepared for AGS engine
 	// and therefore amend it with a game own subdir
 	return FSLocation(dir, _GP(game).saveGameFolderName);
