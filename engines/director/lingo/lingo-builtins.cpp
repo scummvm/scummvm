@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -1644,7 +1645,7 @@ void LB::b_alert(int nargs) {
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		g_director->_wm->clearHandlingWidgets();
-		GUI::MessageDialog dialog(alert.c_str(), "OK");
+		GUI::MessageDialog dialog(alert.c_str(), _("OK"));
 		dialog.runModal();
 	}
 }
