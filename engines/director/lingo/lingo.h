@@ -381,6 +381,7 @@ public:
 	Datum _actorList;
 	Common::u32char_type_t _itemDelimiter;
 	bool _exitLock;
+	bool _preLoadEventAbort; // no-op, everything is always preloaded
 	Datum _searchPath;
 	int _traceLoad; // internal Director verbosity level
 	bool _updateMovieEnabled;

@@ -717,7 +717,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = _perFrameHook;
 		break;
 	case kThePreloadEventAbort:
-		getTheEntitySTUB(kThePreloadEventAbort);
+		d.type = INT;
+		d.u.i = g_lingo->_preLoadEventAbort;
 		break;
 	case kThePreLoadRAM:
 		d.u.i = 0;		// We always have unlimited RAM
@@ -1017,7 +1018,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_perFrameHook = d;
 		break;
 	case kThePreloadEventAbort:
-		setTheEntitySTUB(kThePreloadEventAbort);
+		g_lingo->_preLoadEventAbort = bool(d.asInt());
 		break;
 	case kThePreLoadRAM:
 		// We always have the unlimited RAM, ignore

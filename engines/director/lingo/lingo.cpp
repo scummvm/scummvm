@@ -167,6 +167,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_itemDelimiter = ',';
 	_exitLock = false;
+	_preLoadEventAbort = false;
 
 	_searchPath.type = ARRAY;
 	_searchPath.u.farr = new FArray;

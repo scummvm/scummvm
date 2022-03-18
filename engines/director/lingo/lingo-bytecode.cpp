@@ -608,6 +608,8 @@ void LC::cb_theassign2() {
 		g_lingo->_updateMovieEnabled = bool(value.asInt());
 	} else if (name == "preloadRam") {
 		// We always have the unlimited RAM, ignore
+	} else if (name == "preLoadEventAbort") {
+		g_lingo->_preLoadEventAbort = bool(value.asInt());
 	} else {
 		warning("BUILDBOT: cb_theassign2 unkown name: %s", name.c_str());
 	}
