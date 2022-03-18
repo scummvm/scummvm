@@ -88,6 +88,8 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// A clip to play when player gains score in game
 	// TODO: find out why OPT_SCORESOUND option cannot be used to store this in >=3.2 games
 	int               scoreClipID;
+	// number of allowed game audio channels (the ones under direct user control)
+	int               numGameChannels = 0;
 
 	// TODO: I converted original array of sprite infos to vector here, because
 	// statistically in most games sprites go in long continious sequences with minimal

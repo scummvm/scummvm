@@ -177,7 +177,7 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 		priority--;
 
 	int startAtChannel = _G(reserved_channel_count);
-	int endBeforeChannel = MAX_GAME_CHANNELS;
+	int endBeforeChannel = _GP(game).numGameChannels;
 
 	if (_GP(game).audioClipTypes[clip->type].reservedChannels > 0) {
 		startAtChannel = 0;
@@ -471,7 +471,7 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
 	// don't update '_G(crossFading)' here as it is updated in all the cross-fading functions.
 
 	// destroyed an ambient sound channel
-	if (chid < MAX_GAME_CHANNELS) {
+	if (chid < _GP(game).numGameChannels) {
 		if (_GP(ambient)[chid].channel > 0)
 			_GP(ambient)[chid].channel = 0;
 	}
@@ -540,7 +540,7 @@ int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxD
 void update_directional_sound_vol() {
 	AudioChannelsLock lock;
 
-	for (int chnum = NUM_SPEECH_CHANS; chnum < MAX_GAME_CHANNELS; chnum++) {
+	for (int chnum = NUM_SPEECH_CHANS; chnum < _GP(game).numGameChannels; chnum++) {
 		auto *ch = lock.GetChannelIfPlaying(chnum);
 		if ((ch != nullptr) && (ch->_xSource >= 0)) {
 			ch->apply_directional_modifier(
@@ -556,7 +556,7 @@ void update_directional_sound_vol() {
 void update_ambient_sound_vol() {
 	AudioChannelsLock lock;
 
-	for (int chan = NUM_SPEECH_CHANS; chan < MAX_GAME_CHANNELS; chan++) {
+	for (int chan = NUM_SPEECH_CHANS; chan < _GP(game).numGameChannels; chan++) {
 		AmbientSound *thisSound = &_GP(ambient)[chan];
 
 		if (thisSound->channel == 0)
@@ -635,7 +635,7 @@ static int play_sound_priority(int val1, int priority) {
 	AudioChannelsLock lock;
 
 	// find a free channel to play it on
-	for (int i = SCHAN_NORMAL; i < MAX_GAME_CHANNELS; i++) {
+	for (int i = SCHAN_NORMAL; i < _GP(game).numGameChannels; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
 		if (val1 < 0) {
 			// Playing sound -1 means iterate through and stop all sound
@@ -775,7 +775,7 @@ int calculate_max_volume() {
 void apply_volume_drop_modifier(bool applyModifier) {
 	AudioChannelsLock lock;
 
-	for (int i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++) {
+	for (int i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
 		if (ch && ch->_sourceClip != nullptr) {
 			if (applyModifier)

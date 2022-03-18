@@ -26,6 +26,7 @@
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_video.h"
 #include "ags/engine/ac/path_helper.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -62,8 +63,8 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
 	int musplaying = _GP(play).cur_music_number, i;
-	int ambientWas[MAX_GAME_CHANNELS];
-	for (i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++)
+	int ambientWas[MAX_GAME_CHANNELS]{ 0 };
+	for (i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++)
 		ambientWas[i] = _GP(ambient)[i].channel;
 
 	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
@@ -85,7 +86,7 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 		// restart the music
 		if (musplaying >= 0)
 			newmusic(musplaying);
-		for (i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++) {
+		for (i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
 			if (ambientWas[i] > 0)
 				PlayAmbientSound(ambientWas[i], _GP(ambient)[i].num,
 					_GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);

@@ -337,7 +337,7 @@ HSaveError WriteAudio(Stream *out) {
 	// Game content assertion
 	out->WriteInt32(_GP(game).audioClipTypes.size());
 	out->WriteInt8(TOTAL_AUDIO_CHANNELS);
-	out->WriteInt8(MAX_GAME_CHANNELS);
+	out->WriteInt8(_GP(game).numGameChannels);
 	out->WriteInt16(0); // reserved 2 bytes (remains of int32)
 
 	// Audio types
@@ -375,7 +375,7 @@ HSaveError WriteAudio(Stream *out) {
 	out->WriteInt32(_G(current_music_type));
 
 	// Ambient sound
-	for (int i = 0; i < MAX_GAME_CHANNELS; ++i)
+	for (int i = 0; i < _GP(game).numGameChannels; ++i)
 		_GP(ambient)[i].WriteToFile(out);
 	return HSaveError::None();
 }

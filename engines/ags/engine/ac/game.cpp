@@ -95,9 +95,8 @@ using namespace AGS::Engine;
 void Game_StopAudio(int audioType) {
 	if (((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size())) && (audioType != SCR_NO_VALUE))
 		quitprintf("!Game.StopAudio: invalid audio type %d", audioType);
-	int aa;
 
-	for (aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
+	for (int aa = 0; aa < _GP(game).numGameChannels; aa++) {
 		if (audioType == SCR_NO_VALUE) {
 			stop_or_fade_out_channel(aa);
 		} else {
@@ -117,7 +116,7 @@ int Game_IsAudioPlaying(int audioType) {
 	if (_GP(play).fast_forward)
 		return 0;
 
-	for (int aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
+	for (int aa = 0; aa < _GP(game).numGameChannels; aa++) {
 		ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 		if (clip != nullptr) {
 			if ((clip->type == audioType) || (audioType == SCR_NO_VALUE)) {
@@ -147,7 +146,7 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 	if ((changeType == VOL_CHANGEEXISTING) ||
 	        (changeType == VOL_BOTH)) {
 		AudioChannelsLock lock;
-		for (int aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
+		for (int aa = 0; aa < _GP(game).numGameChannels; aa++) {
 			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 			if ((clip != nullptr) && (clip->type == audioType)) {
 				auto *ch = lock.GetChannel(aa);

@@ -48,7 +48,7 @@ int AudioClip_GetIsAvailable(ScriptAudioClip *clip) {
 
 void AudioClip_Stop(ScriptAudioClip *clip) {
 	AudioChannelsLock lock;
-	for (int i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++) {
+	for (int i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
 		if ((ch != nullptr) && (ch->_sourceClip == clip)) {
 			AudioChannel_Stop(&_G(scrAudioChannel)[i]);
@@ -72,9 +72,9 @@ ScriptAudioChannel *AudioClip_PlayQueued(ScriptAudioClip *clip, int priority, in
 }
 
 ScriptAudioChannel *AudioClip_PlayOnChannel(ScriptAudioClip *clip, int chan, int priority, int repeat) {
-	if (chan < NUM_SPEECH_CHANS || chan >= MAX_GAME_CHANNELS)
+	if (chan < NUM_SPEECH_CHANS || chan >= _GP(game).numGameChannels)
 		quitprintf("!AudioClip.PlayOnChannel: invalid channel %d, the range is %d - %d",
-			chan, NUM_SPEECH_CHANS, MAX_GAME_CHANNELS - 1);
+			chan, NUM_SPEECH_CHANS, _GP(game).numGameChannels - 1);
 	if (priority == SCR_NO_VALUE)
 		priority = clip->defaultPriority;
 	if (repeat == SCR_NO_VALUE)
