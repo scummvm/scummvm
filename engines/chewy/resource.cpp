@@ -43,6 +43,7 @@ Resource::Resource(Common::String filename) {
 	uint32 header = _stream.readUint32BE();
 	bool isText = (header == headerTxtDec || header == headerTxtEnc);
 	bool isSprite = (header == headerSprite);
+	bool isSpeech = filename.contains("speech.tvp");
 
 	if (header != headerGeneric && !isSprite && !isText)
 		error("Invalid resource - %s", filename.c_str());
@@ -77,6 +78,15 @@ Resource::Resource(Common::String filename) {
 		}	
 
 		cur.pos = _stream.pos();
+
+		// WORKAROUND: Patch invalid speech sample
+		if (isSpeech && i == 2277 && cur.size == 57028) {
+			cur.size = 152057;
+			_stream.skip(cur.size);
+			_chunkList.push_back(cur);
+			_chunkList.push_back(cur);
+			continue;
+		}
 
 		_stream.skip(cur.size);
 		_chunkList.push_back(cur);
