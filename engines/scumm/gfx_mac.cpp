@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "graphics/macega.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -51,9 +52,11 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 	// unmodified. At least, that's what Mini vMac did when I tried it.
 
 	if (_renderMode == Common::kRenderMacintoshBW) {
+		bool enableEnhancements = ConfMan.getBool("enable_enhancements");
+
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++) {
-				int color = _shadowPalette[pixels[w]];
+				int color = enableEnhancements ? _shadowPalette[pixels[w]] : pixels[w];
 				if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
 					mac[2 * w] = Graphics::macEGADither[color][0];
 				if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
