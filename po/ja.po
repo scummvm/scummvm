@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 12:22+0000\n"
-"PO-Revision-Date: 2022-03-13 10:48+0000\n"
+"PO-Revision-Date: 2022-03-18 19:21+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1964,10 +1964,8 @@ msgstr ""
 "インターネットへの接続状態を確認してください。"
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "テキストを入力"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4445,7 +4443,7 @@ msgstr "Versailles 1685のサポートはコンパイルされていません"
 
 #: engines/director/events.cpp:90
 msgid "The game wants to prevents you from quitting. Do you want to quit?"
-msgstr ""
+msgstr "ゲームは終了を防ぎたいようです。それでも終了しますか?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -4967,10 +4965,8 @@ msgid "Error: the game could not be saved."
 msgstr "エラー：ゲームをセーブできませんでした。"
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "入力"
+msgstr "入力テキスト"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
