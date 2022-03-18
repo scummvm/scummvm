@@ -2476,7 +2476,9 @@ int ScummEngine::waitForTimer(int msec_delay) {
 	else if (_fastMode & 1)
 		msec_delay = 10;
 
-	end_time = _system->getMillis() + msec_delay;
+	uint32 cur = _system->getMillis();;
+
+	end_time = cur + msec_delay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2489,7 +2491,7 @@ int ScummEngine::waitForTimer(int msec_delay) {
 		towns_updateGfx();
 #endif
 		_system->updateScreen();
-		uint32 cur = _system->getMillis();
+		cur = _system->getMillis();
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		// These measurements are used to determine whether the FM-Towns smooth scrolling is likely to fall behind and need to catch
@@ -2505,8 +2507,13 @@ int ScummEngine::waitForTimer(int msec_delay) {
 
 	// Return the expected end time, which may be different from the actual
 	// time. This helps the main loop maintain consistent timing.
+	//
+	// If it's lagging too far behind, we probably resumed from pausing, or
+	// the process was suspended, or any such thing. We probably can't
+	// sensibly detect all of them from within ScummVM, so in that case we
+	// simply return the current time to catch up.
 
-	return end_time;
+	return (cur > end_time + 50) ? cur : end_time;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
