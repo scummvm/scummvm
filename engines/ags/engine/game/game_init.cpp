@@ -265,8 +265,8 @@ void LoadFonts(GameDataVersion data_ver) {
 
 		const bool is_wfn = is_bitmap_font(i);
 		// Outline thickness corresponds to 1 game pixel by default;
-		// but if it's a scaled up bitmap font in a legacy hires game, then it equals to scale
-		if ((data_ver < kGameVersion_360) && _GP(game).IsLegacyHiRes()) {
+		// but if it's a scaled up bitmap font, then it equals to scale
+		if (data_ver < kGameVersion_360) {
 			if (is_wfn && (finfo.Outline == FONT_OUTLINE_AUTO)) {
 				set_font_outline(i, FONT_OUTLINE_AUTO, FontInfo::kSquared, get_font_scaling_mul(i));
 			}
