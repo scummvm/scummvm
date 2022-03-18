@@ -98,7 +98,7 @@ CheatDialog::CheatDialog() : GUI::Dialog(20, 20, 600, 440) {
 
 	GUI::TabWidget *_tabs = new GUI::TabWidget(this, 0, 0, 600, 370);
 	new GUI::ButtonWidget(this, 420, 410, 60, 20, _("Cancel"), Common::U32String(), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, 520, 410, 60, 20, _("Ok"), Common::U32String(), GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 520, 410, 60, 20, _("OK"), Common::U32String(), GUI::kOKCmd);
 
 	_tabs->addTab(_("General"), "Cheat.General");
 
