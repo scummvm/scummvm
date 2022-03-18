@@ -418,9 +418,6 @@ void post_config() {
 		_GP(usetup).Screen.FsGameFrame = GameFrameSetup(kFrame_MaxProportional);
 	if (!_GP(usetup).Screen.WinGameFrame.IsValid())
 		_GP(usetup).Screen.WinGameFrame = GameFrameSetup(kFrame_MaxRound);
-
-	_GP(usetup).user_data_dir = Path::MakePathNoSlash(_GP(usetup).user_data_dir);
-	_GP(usetup).shared_data_dir = Path::MakePathNoSlash(_GP(usetup).shared_data_dir);
 }
 
 void save_config_file() {
