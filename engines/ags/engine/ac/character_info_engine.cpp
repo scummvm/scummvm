@@ -26,6 +26,7 @@
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/math.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -455,7 +456,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 	else if ((doing_nothing == 0) || ((flags & CHF_FIXVIEW) != 0))
 		idleleft = idletime;
 	// count idle time
-	else if ((_G(loopcounter) % 40 == 0) || (chex->process_idle_this_time == 1)) {
+	else if ((_G(loopcounter) % GetGameSpeed() == 0) || (chex->process_idle_this_time == 1)) {
 		idleleft--;
 		if (idleleft == -1) {
 			int useloop = loop;
