@@ -36,6 +36,7 @@
 namespace Chewy {
 
 enum ResourceType {
+	kResourceUnknown = -1,
 	kResourcePCX = 0,		// unused
 	kResourceTBF = 1,		// background art, contained in TGPs
 	kResourceTAF = 2,

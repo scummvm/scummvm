@@ -62,15 +62,19 @@ Resource::Resource(Common::String filename) {
 		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
+	_chunkList.reserve(_chunkCount);
 
 	for (uint i = 0; i < _chunkCount; i++) {
 		Chunk cur;
 		cur.size = _stream.readUint32LE();
 
-		if (!isText)
+		if (!isText) {
 			cur.type = (ResourceType)_stream.readUint16LE();
-		else
+			cur.num = 0;
+		} else {
+			cur.type = kResourceUnknown;
 			cur.num = _stream.readUint16LE();
+		}	
 
 		cur.pos = _stream.pos();
 
