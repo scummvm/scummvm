@@ -229,7 +229,12 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
-	if (target.empty() || gameid == "monkey" || gameid == "monkey2" || gameid == "samnmax" || (gameid == "loom" && (extra == "VGA" || extra == "Steam"))) {
+	if (target.empty() ||
+		gameid == "monkey" ||
+		gameid == "monkey2" ||
+		gameid == "samnmax" ||
+		(gameid == "loom" && (extra == "VGA" || extra == "Steam")) ||
+		((gameid == "loom" || gameid == "indy3") && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(enableEnhancements);
 	}
 
