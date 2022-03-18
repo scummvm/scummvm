@@ -1,5 +1,6 @@
 engines/grim/detection.cpp
 engines/grim/grim.cpp
+engines/grim/inputdialog.cpp
 engines/grim/md5check.cpp
 engines/grim/md5checkdialog.cpp
 engines/grim/metaengine.cpp

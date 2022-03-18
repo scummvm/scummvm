@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -75,12 +76,12 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 	}
 	height += 10;
 	if (_hasTextField) {
-		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, Common::U32String(string), Common::U32String("input"));
+		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, Common::U32String(string), _("Input text"));
 		height += kLineHeight + 10;
 	}
 
-	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, Common::U32String("Ok"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
-	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, Common::U32String("Cancel"), Common::U32String(), GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
+	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, _("OK"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
+	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, _("Cancel"), Common::U32String(), GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
 }
 
 Common::String InputDialog::getString() {
