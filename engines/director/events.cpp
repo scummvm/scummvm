@@ -87,8 +87,8 @@ bool DirectorEngine::processEvents(bool captureClick) {
 
 void DirectorEngine::processEventQUIT() {
 	if (g_lingo->_exitLock) {
-		Common::U32String message = _("The game prevents quitting at this moment. Do you still want to quit?");
-		GUI::MessageDialog dialog(message, _("OK"), _("Cancel"));
+		Common::U32String message = _("The game prevents quitting at this moment. Are you sure you want to quit anyway?");
+		GUI::MessageDialog dialog(message, _("Yes"), _("No"));
 
 		g_system->getEventManager()->resetQuit(); // Clear the quit event
 		_mixer->pauseAll(true);
