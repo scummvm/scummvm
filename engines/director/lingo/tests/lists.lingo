@@ -84,3 +84,12 @@ setAt lst,3,5
 scummvmAssert(lst = [0,0,5])
 setAt lst,2,5
 scummvmAssert(lst = [0,5,5])
+
+-- rects
+set rct to rect(0, 0, 100, 100)
+set gA to getAt(rct, 2)
+scummvmAssertEqual(gA, 0)
+set gA to getAt(rct, 3)
+scummvmAssertEqual(gA, 100)
+setAt rct, 2, 20
+scummvmAssertEqual(getAt(rct, 2), 20)

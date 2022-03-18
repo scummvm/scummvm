@@ -741,6 +741,7 @@ void LB::b_getAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
+	case RECT:
 		ARRBOUNDSCHECK(index, list);
 		g_lingo->push(list.u.farr->arr[index - 1]);
 		break;
@@ -749,7 +750,7 @@ void LB::b_getAt(int nargs) {
 		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		TYPECHECK3(list, ARRAY, PARRAY, RECT);
 	}
 }
 
@@ -974,7 +975,7 @@ void LB::b_setAt(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK2(indexD, INT, FLOAT);
-	TYPECHECK2(list, ARRAY, PARRAY);
+	TYPECHECK3(list, ARRAY, PARRAY, RECT);
 	int index = indexD.asInt();
 
 	switch (list.type) {
@@ -992,6 +993,9 @@ void LB::b_setAt(int nargs) {
 		ARRBOUNDSCHECK(index, list);
 		list.u.parr->arr[index - 1].v = value;
 		break;
+	case RECT:
+		ARRBOUNDSCHECK(index, list);
+		list.u.farr->arr[index-1] = value;
 	default:
 		break;
 	}
