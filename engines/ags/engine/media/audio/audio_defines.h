@@ -29,12 +29,15 @@
 #define MUS_OGG  5
 
  // Max channels that are distributed among game's audio types
-#define MAX_GAME_CHANNELS         8
+#define MAX_GAME_CHANNELS         16
 #define SPECIAL_CROSSFADE_CHANNEL (MAX_GAME_CHANNELS)
 // Total number of channels: game chans + utility chans
 #define TOTAL_AUDIO_CHANNELS      (MAX_GAME_CHANNELS + 1)
 // Number of game channels reserved for speech voice-over
 #define NUM_SPEECH_CHANS          1
+// Legacy channel numbers
+#define MAX_GAME_CHANNELS_v320    8
+#define TOTAL_AUDIO_CHANNELS_v320 (MAX_GAME_CHANNELS_v320 + 1)
 
 #define SCHAN_SPEECH  0
 #define SCHAN_AMBIENT 1
