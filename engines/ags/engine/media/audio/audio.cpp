@@ -265,7 +265,7 @@ static void audio_update_polled_stuff() {
 		SOUNDCLIP *ch = lock.GetChannel(_GP(play).crossfading_out_channel);
 		int newVolume = ch ? ch->get_volume() - _GP(play).crossfade_out_volume_per_step : 0;
 		if (newVolume > 0) {
-			AudioChannel_SetVolume(&_G(scrAudioChannel)[_GP(play).crossfading_out_channel], newVolume);
+			ch->set_volume_percent(newVolume);
 		} else {
 			stop_and_destroy_channel(_GP(play).crossfading_out_channel);
 			_GP(play).crossfading_out_channel = 0;
@@ -282,7 +282,7 @@ static void audio_update_polled_stuff() {
 			newVolume = _GP(play).crossfade_final_volume_in;
 		}
 
-		AudioChannel_SetVolume(&_G(scrAudioChannel)[_GP(play).crossfading_in_channel], newVolume);
+		ch->set_volume_percent(newVolume);
 
 		if (newVolume >= _GP(play).crossfade_final_volume_in) {
 			_GP(play).crossfading_in_channel = 0;
