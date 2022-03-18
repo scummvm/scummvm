@@ -152,6 +152,9 @@ void Sound::setMusicVolume(uint volume) {
 }
 
 void Sound::playSpeech(int num, bool waitForFinish) {
+	if (isSpeechActive())
+		stopSpeech();
+
 	// Get the speech data
 	SoundChunk *sound = _speechRes->getSound(num);
 	size_t size = sound->size;
