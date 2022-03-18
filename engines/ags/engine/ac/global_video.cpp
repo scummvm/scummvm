@@ -62,8 +62,8 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
 	int musplaying = _GP(play).cur_music_number, i;
-	int ambientWas[MAX_SOUND_CHANNELS];
-	for (i = 1; i < MAX_SOUND_CHANNELS; i++)
+	int ambientWas[MAX_GAME_CHANNELS];
+	for (i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++)
 		ambientWas[i] = _GP(ambient)[i].channel;
 
 	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
@@ -85,9 +85,10 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 		// restart the music
 		if (musplaying >= 0)
 			newmusic(musplaying);
-		for (i = 1; i < MAX_SOUND_CHANNELS; i++) {
+		for (i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; i++) {
 			if (ambientWas[i] > 0)
-				PlayAmbientSound(ambientWas[i], _GP(ambient)[i].num, _GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
+				PlayAmbientSound(ambientWas[i], _GP(ambient)[i].num,
+					_GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 		}
 	}
 }

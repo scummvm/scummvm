@@ -105,9 +105,9 @@ struct RestoredData {
 		int YSource = -1;
 		int MaxDist = 0;
 	};
-	ChannelInfo             AudioChans[MAX_SOUND_CHANNELS + 1];
+	ChannelInfo             AudioChans[TOTAL_AUDIO_CHANNELS];
 	// Ambient sounds
-	int                     DoAmbient[MAX_SOUND_CHANNELS];
+	int                     DoAmbient[MAX_GAME_CHANNELS];
 	// Viewport and camera data, has to be preserved and applied only after
 	// room gets loaded, because we must clamp these to room parameters.
 	struct ViewportData {

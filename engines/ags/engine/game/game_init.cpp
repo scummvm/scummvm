@@ -89,7 +89,7 @@ String GetGameInitErrorText(GameInitErrorType err) {
 
 // Initializes audio channels and clips and registers them in the script system
 void InitAndRegisterAudioObjects() {
-	for (int i = 0; i <= MAX_SOUND_CHANNELS; ++i) {
+	for (int i = 0; i < MAX_GAME_CHANNELS; ++i) {
 		_G(scrAudioChannel)[i].id = i;
 		ccRegisterManagedObject(&_G(scrAudioChannel)[i], &_GP(ccDynamicAudio));
 	}

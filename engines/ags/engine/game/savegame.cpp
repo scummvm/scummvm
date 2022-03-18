@@ -386,7 +386,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	ccUnregisterAllObjects();
 
 	// NOTE: channels are array of MAX_SOUND_CHANNELS+1 size
-	for (int i = 0; i <= MAX_SOUND_CHANNELS; ++i) {
+	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
 		stop_and_destroy_channel_ex(i, false);
 	}
 
@@ -555,7 +555,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	{
 		AudioChannelsLock lock;
 		// NOTE: channels are array of MAX_SOUND_CHANNELS+1 size
-		for (int i = 0; i <= MAX_SOUND_CHANNELS; ++i) {
+		for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
 			const RestoredData::ChannelInfo &chan_info = r_data.AudioChans[i];
 			if (chan_info.ClipID < 0)
 				continue;
@@ -585,7 +585,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		// If there were synced audio tracks, the time taken to load in the
 		// different channels will have thrown them out of sync, so re-time it
 		// NOTE: channels are array of MAX_SOUND_CHANNELS+1 size
-		for (int i = 0; i <= MAX_SOUND_CHANNELS; ++i) {
+		for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
 			auto *ch = lock.GetChannelIfPlaying(i);
 			int pos = r_data.AudioChans[i].Pos;
 			if ((pos > 0) && (ch != nullptr)) {
@@ -595,7 +595,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	} // -- AudioChannelsLock
 
 	// TODO: investigate loop range
-	for (int i = 1; i < MAX_SOUND_CHANNELS; ++i) {
+	for (int i = NUM_SPEECH_CHANS; i < MAX_GAME_CHANNELS; ++i) {
 		if (r_data.DoAmbient[i])
 			PlayAmbientSound(i, r_data.DoAmbient[i], _GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 	}

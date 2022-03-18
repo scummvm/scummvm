@@ -121,10 +121,9 @@ Globals::Globals() {
 	_AssetMgr = new std::unique_ptr<Shared::AssetManager>();
 
 	// audio.cpp globals
-	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
-	// TODO: double check that ambient sounds array actually needs +1
-	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
-	_scrAudioChannel = new ScriptAudioChannel[MAX_SOUND_CHANNELS + 1];
+	_audioChannels = new std::array<SOUNDCLIP *>(TOTAL_AUDIO_CHANNELS);
+	_ambient = new std::array<AmbientSound>(MAX_GAME_CHANNELS);
+	_scrAudioChannel = new ScriptAudioChannel[MAX_GAME_CHANNELS];
 
 	// button.cpp globals
 	_animbuts = new AnimatingGUIButton[MAX_ANIMATING_BUTTONS];

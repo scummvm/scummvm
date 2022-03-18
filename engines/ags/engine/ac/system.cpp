@@ -162,11 +162,11 @@ void System_SetGamma(int newValue) {
 }
 
 int System_GetAudioChannelCount() {
-	return MAX_SOUND_CHANNELS;
+	return MAX_GAME_CHANNELS;
 }
 
 ScriptAudioChannel *System_GetAudioChannels(int index) {
-	if ((index < 0) || (index >= MAX_SOUND_CHANNELS))
+	if ((index < 0) || (index >= MAX_GAME_CHANNELS))
 		quit("!System.AudioChannels: invalid sound channel index");
 
 	return &_G(scrAudioChannel)[index];

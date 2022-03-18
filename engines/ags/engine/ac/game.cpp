@@ -97,7 +97,7 @@ void Game_StopAudio(int audioType) {
 		quitprintf("!Game.StopAudio: invalid audio type %d", audioType);
 	int aa;
 
-	for (aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
+	for (aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
 		if (audioType == SCR_NO_VALUE) {
 			stop_or_fade_out_channel(aa);
 		} else {
@@ -117,7 +117,7 @@ int Game_IsAudioPlaying(int audioType) {
 	if (_GP(play).fast_forward)
 		return 0;
 
-	for (int aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
+	for (int aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
 		ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 		if (clip != nullptr) {
 			if ((clip->type == audioType) || (audioType == SCR_NO_VALUE)) {
@@ -147,7 +147,7 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 	if ((changeType == VOL_CHANGEEXISTING) ||
 	        (changeType == VOL_BOTH)) {
 		AudioChannelsLock lock;
-		for (int aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
+		for (int aa = 0; aa < MAX_GAME_CHANNELS; aa++) {
 			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 			if ((clip != nullptr) && (clip->type == audioType)) {
 				auto *ch = lock.GetChannel(aa);
@@ -1133,7 +1133,7 @@ void stop_fast_forwarding() {
 		AudioChannelsLock lock;
 
 		// Restore actual volume of sounds
-		for (int aa = 0; aa <= MAX_SOUND_CHANNELS; aa++) {
+		for (int aa = 0; aa < TOTAL_AUDIO_CHANNELS; aa++) {
 			auto *ch = lock.GetChannelIfPlaying(aa);
 			if (ch) {
 				ch->set_mute(false);
@@ -1242,7 +1242,7 @@ void display_switch_out_suspend() {
 	{
 		// stop the sound stuttering
 		AudioChannelsLock lock;
-		for (int i = 0; i <= MAX_SOUND_CHANNELS; i++) {
+		for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 			auto *ch = lock.GetChannelIfPlaying(i);
 			if (ch) {
 				ch->pause();
@@ -1271,7 +1271,7 @@ void display_switch_in_resume() {
 
 	{
 		AudioChannelsLock lock;
-		for (int i = 0; i <= MAX_SOUND_CHANNELS; i++) {
+		for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 			auto *ch = lock.GetChannelIfPlaying(i);
 			if (ch) {
 				ch->resume();
