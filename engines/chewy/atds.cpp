@@ -41,13 +41,6 @@ bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool InvUse::load(Common::SeekableReadStream *src) {
-	_objId = src->readSint16LE();
-	_objNr = src->readSint16LE();
-	_txtNr = src->readSint16LE();
-	return true;
-}
-
 void AadInfo::load(Common::SeekableReadStream *src) {
 	_x = src->readSint16LE();
 	_y = src->readSint16LE();
@@ -122,6 +115,8 @@ Atdsys::Atdsys() {
 	_adsnb._blkNr = 0;
 	_adsnb._endNr = 0;
 	_adsStackPtr = 0;
+
+	initItemUseWith();
 }
 
 Atdsys::~Atdsys() {
@@ -133,6 +128,29 @@ Atdsys::~Atdsys() {
 		free(_invUseMem);
 
 	delete _dialogResource;
+}
+
+void Atdsys::initItemUseWith() {
+	int16 objA, objB, txtNum;
+
+	Common::File f;
+	f.open(INV_USE_IDX);
+
+	// The file is 25200 bytes, and contains 25200 / 50 / 6 = 84 blocks
+	int totalEntries = f.size() / 6;
+
+	for (int entry = 0; entry < totalEntries; entry++) {
+		objA = f.readSint16LE();
+		objB = f.readSint16LE();
+		txtNum = f.readSint16LE();
+
+		assert(objA <= 255 && objB <= 65535);
+
+		const uint32 key = (objA & 0xff) << 16 | objB;
+		_itemUseWithDesc[key] = txtNum;
+	}
+
+	f.close();
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
@@ -368,20 +386,13 @@ void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, i
 }
 
 void Atdsys::open_handle(const char *fname, int16 mode) {
-	char *tmp_adr = nullptr;
-
-	if (mode != INV_IDX_DATA)
-		tmp_adr = atds_adr(fname, 0, 20000);
+	_atdsMem[mode] = atds_adr(fname, 0, 20000);
 
 	Common::File *f = new Common::File();
 	f->open(fname);
 	if (f->isOpen()) {
 		close_handle(mode);
 		_atdsHandle[mode] = f;
-		_atdsMem[mode] = tmp_adr;
-
-		if (mode == INV_IDX_DATA)
-			_atdsMem[INV_IDX_HANDLE] = (char *)MALLOC(INV_STRC_NR * sizeof(InvUse));
 	} else {
 		error("Error reading from %s", fname);
 	}
@@ -1320,44 +1331,17 @@ void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
 }
 
 int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
-	int16 txt_nr = -1;
 	if (curInv != -1) {
 		if (_invBlockNr != curInv) {
 			_invBlockNr = curInv + 1;
 			load_atds(_invBlockNr + _atdsPoolOff[mode], INV_USE_DATA);
-
-			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(
-				_atdsHandle[INV_IDX_HANDLE]);
-			if (rs) {
-				rs->seek(InvUse::SIZE() * _invBlockNr
-				      * INV_STRC_NR, SEEK_SET);
-
-				InvUse *iu = (InvUse *)_atdsMem[INV_IDX_HANDLE];
-				for (int16 i = 0; i < INV_STRC_NR; ++i, ++iu) {
-					if (!iu->load(rs)) {
-						error("calc_inv_no_use error");
-						break;
-					}
-				}
-			} else {
-				error("calc_inv_no_use error");
-			}
-		}
-
-		InvUse *iu = (InvUse *)_atdsMem[INV_IDX_HANDLE];
-		bool ok = false;
-
-		for (int16 i = 0; i < INV_STRC_NR && !ok; i++) {
-			if (iu[i]._objId == mode) {
-				if (iu[i]._objNr == testNr) {
-					txt_nr = iu[i]._txtNr;
-					ok = true;
-				}
-			}
 		}
 	}
 
-	return txt_nr;
+	assert(mode <= 255 && testNr <= 65535);
+
+	const uint32 key = (mode & 0xff) << 16 | testNr;
+	return (_itemUseWithDesc.contains(key)) ? _itemUseWithDesc[key] : -1;
 }
 
 int16 Atdsys::getStereoPos(int16 x) {

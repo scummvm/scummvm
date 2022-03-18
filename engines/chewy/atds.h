@@ -36,7 +36,6 @@ namespace Chewy {
 #define ATS_DATA 1
 #define ADS_DATA 2
 #define INV_USE_DATA 4
-#define INV_IDX_DATA 5
 #define INV_ATS_DATA 6
 
 #define MAX_HANDLE 8
@@ -44,7 +43,6 @@ namespace Chewy {
 #define ATS_HANDLE 1
 #define ADS_HANDLE 2
 #define INV_USE_HANDLE 4
-#define INV_IDX_HANDLE 5
 #define INV_ATS_HANDLE 6
 #define ATDS_HANDLE 7
 
@@ -117,16 +115,6 @@ struct AtdsVar {
 #define IUID_DET 4
 #define IUID_PLAYER 5
 #define INV_USE_DEF 16
-#define INV_STRC_NR 30
-
-struct InvUse {
-	int16 _objId;
-	int16 _objNr;
-	int16 _txtNr;
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() { return 6; }
-};
 
 struct AadInfo {
 	int16 _x;
@@ -323,6 +311,7 @@ public:
 
 private:
 	int16 get_delay(int16 txt_len);
+	void initItemUseWith();
 
 	Common::Stream *_atdsHandle[MAX_HANDLE] = { nullptr };
 	char *_atdsMem[MAX_HANDLE] = { nullptr };
@@ -365,6 +354,8 @@ private:
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
 	DialogResource *_dialogResource;
+
+	Common::HashMap<uint32, uint16> _itemUseWithDesc;
 };
 
 } // namespace Chewy

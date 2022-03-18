@@ -188,7 +188,6 @@ void init_atds() {
 	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, handle, USE_TAP_OFF, USE_TAP_MAX);
 	_G(atds)->init_ats_mode(INV_USE_DATA, _G(spieler).InvUse);
 	_G(atds)->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
-	_G(atds)->open_handle(INV_USE_IDX, INV_IDX_DATA);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed;
