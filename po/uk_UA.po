@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 12:22+0000\n"
-"PO-Revision-Date: 2022-03-13 10:48+0000\n"
+"PO-Revision-Date: 2022-03-18 19:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1996,10 +1996,8 @@ msgstr ""
 "Перевірте ваше інтернет-з'єднання."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Введіть текст"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -5023,10 +5021,8 @@ msgid "Error: the game could not be saved."
 msgstr "Помилка: гру не вдалося зберегти."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Ввід"
+msgstr "Введіть текст"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
