@@ -84,7 +84,7 @@ private:
 	uint8 exclude[MAX_barriers];
 	uint8 temp_exclude[MAX_barriers];
 
-#if PRIM_BYTE_ARRAYS
+#if defined(PRIM_BYTE_ARRAYS) && PRIM_BYTE_ARRAYS
 	uint8 hits[MAX_barriers][MAX_barriers];
 	uint8 gohits[MAX_barriers][MAX_barriers];
 #endif
