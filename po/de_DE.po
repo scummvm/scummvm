@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-18 12:10+0000\n"
+"POT-Creation-Date: 2022-03-18 12:21+0000\n"
 "PO-Revision-Date: 2022-03-13 10:55+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -71,7 +71,7 @@ msgstr "Pfad hoch"
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
 #: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
 #: engines/director/events.cpp:91 engines/drascula/saveload.cpp:48
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/grim/inputdialog.cpp:84 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -168,13 +168,15 @@ msgstr ""
 "beinhaltet eine Datei mit dem gleichen Namen."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:534 gui/launcher.cpp:538
-#: gui/massadd.cpp:88 gui/options.cpp:2104 gui/saveload-dialog.cpp:1187
-#: engines/engine.cpp:525 engines/engine.cpp:549
+#: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
+#: gui/launcher.cpp:534 gui/launcher.cpp:538 gui/massadd.cpp:88
+#: gui/options.cpp:2104 gui/predictivedialog.cpp:69
+#: gui/saveload-dialog.cpp:1187 engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69 engines/director/events.cpp:91
 #: engines/director/lingo/lingo-builtins.cpp:1648
-#: engines/drascula/saveload.cpp:48 engines/groovie/script.cpp:652
+#: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
+#: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
 #: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1353
@@ -541,11 +543,6 @@ msgstr "Autor:"
 #: gui/editrecorddialog.cpp:59
 msgid "Notes:"
 msgstr "Notizen:"
-
-#: gui/editrecorddialog.cpp:67 gui/predictivedialog.cpp:69
-#: engines/nancy/dialogs.cpp:101
-msgid "Ok"
-msgstr "OK"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -5051,6 +5048,12 @@ msgstr "Untersuche/Betrachte"
 msgid "Error: the game could not be saved."
 msgstr "Fehler: Das Spiel konnte nicht gespeichert werden."
 
+#: engines/grim/inputdialog.cpp:79
+#, fuzzy
+#| msgid "Input"
+msgid "Input text"
+msgstr "Eingabe"
+
 #: engines/grim/md5check.cpp:558
 #, c-format
 msgid ""
@@ -8864,6 +8867,9 @@ msgstr ""
 "FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
 "gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
 "LiberationSerif oder FreeMono, FreeSans und FreeSerif."
+
+#~ msgid "Ok"
+#~ msgstr "OK"
 
 #~ msgid "~E~dit Game..."
 #~ msgstr "Spielo~p~tionen..."
