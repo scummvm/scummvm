@@ -35,7 +35,6 @@ void standard_init() {
 	_G(in) = new InputMgr();
 	_G(fx) = new Effect();
 	_G(txt) = new Text();
-	_G(bit) = new BitClass();
 	_G(ged) = new GedClass(&ged_user_func);
 	_G(room) = new Room();
 	_G(obj) = new Object(&_G(spieler));
@@ -269,7 +268,6 @@ void tidy() {
 	delete _G(obj);
 	delete _G(room);
 	delete _G(ged);
-	delete _G(bit);
 	delete _G(txt);
 	delete _G(fx);
 	delete _G(in);
@@ -286,7 +284,6 @@ void tidy() {
 	_G(obj) = nullptr;
 	_G(room) = nullptr;
 	_G(ged) = nullptr;
-	_G(bit) = nullptr;
 	_G(txt) = nullptr;
 	_G(fx) = nullptr;
 	_G(in) = nullptr;

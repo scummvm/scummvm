@@ -738,18 +738,17 @@ int16 Atdsys::get_ats_str(int16 txtNr, int16 txtMode, int16 mode) {
 
 int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
 	set_ats_mem(mode);
-	int16 ret = _G(bit)->is_bit(_ats_sheader[txtNr * MAX_ATS_STATUS], bitIdx);
-	return ret;
+	return (_ats_sheader[txtNr * MAX_ATS_STATUS] & bitIdx) != 0;
 }
 
 void Atdsys::setControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
 	set_ats_mem(mode);
-	_G(bit)->set_bit(&_ats_sheader[txtNr * MAX_ATS_STATUS], bitIdx);
+	_ats_sheader[txtNr * MAX_ATS_STATUS] |= bitIdx;
 }
 
 void Atdsys::delControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
 	set_ats_mem(mode);
-	_G(bit)->del_bit(&_ats_sheader[txtNr * MAX_ATS_STATUS], bitIdx);
+	_ats_sheader[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
 }
 
 char *Atdsys::ats_search_block(int16 txtMode, char *txtAdr) {
@@ -843,11 +842,10 @@ void Atdsys::ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **
 				}
 
 				if (tmp_str[1] != ATDS_END) {
-					if (!_G(bit)->is_bit(controlByte, ATS_COUNT_BIT))
+					if (!(controlByte & ATS_COUNT_BIT))
 						++*status;
 				} else {
-
-					if (_G(bit)->is_bit(controlByte, ATS_RESET_BIT))
+					if (controlByte & ATS_RESET_BIT)
 						*status = 0;
 				}
 			}
