@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 12:22+0000\n"
-"PO-Revision-Date: 2022-03-13 10:55+0000\n"
+"PO-Revision-Date: 2022-03-18 18:05+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2001,10 +2001,8 @@ msgstr ""
 "Bitte überprüfen Sie Ihre Internetverbindung."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Text eingeben"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4525,6 +4523,8 @@ msgstr "Unterstützung für Versailles 1685 ist nicht eingebaut"
 #: engines/director/events.cpp:90
 msgid "The game wants to prevents you from quitting. Do you want to quit?"
 msgstr ""
+"Das Spiel möchte dich daran hinden, es zu beenden. Möchtest du das Spiel "
+"wirklich verlassen?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5055,10 +5055,8 @@ msgid "Error: the game could not be saved."
 msgstr "Fehler: Das Spiel konnte nicht gespeichert werden."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Eingabe"
+msgstr "Text eingeben"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
