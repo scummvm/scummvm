@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 12:22+0000\n"
-"PO-Revision-Date: 2022-03-13 11:54+0000\n"
+"PO-Revision-Date: 2022-03-18 18:08+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2030,10 +2030,8 @@ msgstr ""
 "Ελέγξτε τη σύνδεσή σας στο Διαδίκτυο."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Εισάγετε Κείμενο"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
