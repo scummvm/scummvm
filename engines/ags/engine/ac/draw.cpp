@@ -413,6 +413,7 @@ void dispose_game_drawdata() {
 	_GP(actspswbbmp).clear();
 	_GP(actspswbcache).clear();
 	_GP(guibg).clear();
+	_GP(guibgbmp).clear();
 }
 
 void dispose_room_drawdata() {
