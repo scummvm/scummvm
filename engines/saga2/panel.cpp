@@ -27,6 +27,7 @@
 
 #include "saga2/saga2.h"
 #include "saga2/panel.h"
+#include "saga2/detection.h"
 #include "saga2/fontlib.h"
 #include "saga2/floating.h"
 #include "saga2/display.h"
@@ -775,12 +776,10 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	if (lockUINest > 0)
 		return;
 
-#if CURSOR_CYCLING
-	if (_curMouseState.right) {
+	if (g_vm->getGameId() == GID_DINO && _curMouseState.right) {
 		cycleCursor();
 		return;
 	}
-#endif
 
 	//  Code for "Tool tip delay"
 	if (prevState.pos != _curMouseState.pos

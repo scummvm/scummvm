@@ -46,12 +46,7 @@ namespace Saga2 {
                           Cursor Cycling Stuff
  * ===================================================================== */
 
-#if DINO
-#define CURSOR_CYCLING 1
-#endif
-#if CURSOR_CYCLING
 void cycleCursor();
-#endif
 
 /* ===================================================================== *
                           Forward declarations

@@ -724,7 +724,7 @@ enum platformFlags {
 	plCutVNeg = (1 << 13)
 };
 
-#if OLDPLATFLAAGS
+#ifdef OLDPLATFLAAGS
 enum platformFlags {
 	plCutaway = (1 << 0),                   // remove when player underneath
 

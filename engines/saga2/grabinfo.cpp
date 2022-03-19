@@ -349,42 +349,37 @@ void GrabInfo::clearGauge() {
 	if (grabObj == nullptr) clearMouseGauge();
 }
 
-#if CURSOR_CYCLING
-
-extern bool eyeEnabled;
-extern bool walkEnabled;
-
+// FIXME: This code is specific to Dinotopia. Was disabled for some time and needs updating
 void cycleCursor() {
-
-	if (! g_vm->_mouseInfo.cursorCyclingEnabled)
+#if 0
+	if (! g_vm->_mouseInfo->cursorCyclingEnabled) // FIXME: cursorCyclingEnabled not present in GrabInfo
 		return;
 
-	uint8 curIntent;
-	curIntent  = g_vm->_mouseInfo.getIntent();
+	uint8 curIntent = g_vm->_mouseInfo->getIntent();
 	if (++curIntent == GrabInfo::IntentCounts)
-		g_vm->_mouseInfo.setIntent(1); //Set Cursor First State Skip None
+		g_vm->_mouseInfo->setIntent(1); //Set Cursor First State Skip None
 	else {
-		if (!walkEnabled && curIntent == GrabInfo::WalkTo)
+		if (!walkEnabled && curIntent == GrabInfo::WalkTo) // FIXME: walkEnabled not present
 			++curIntent;
-		if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo.getObject() != nullptr)
+		if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo->getObject() != nullptr)
 			++curIntent;
-		if (curIntent == GrabInfo::Drop && g_vm->_mouseInfo.getObject() == nullptr)
+		if (curIntent == GrabInfo::Drop && g_vm->_mouseInfo->getObject() == nullptr)
 			++curIntent;
-		if (!eyeEnabled && curIntent == GrabInfo::LookAt)
+		if (!eyeEnabled && curIntent == GrabInfo::LookAt) // FIXME: eyeEnabled not present
 			++curIntent;
 		if (curIntent == GrabInfo::Navigate) {
 			if (walkEnabled)
 				curIntent = 1; //Set Cursor First State Skip None
 			else {
 				curIntent = 2;
-				if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo.getObject() != nullptr)
+				if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo->getObject() != nullptr)
 					++curIntent;
 			}
 		}
-		g_vm->_mouseInfo.setIntent(curIntent); //Set Cursor To Next State
-	}
 
-}
+		g_vm->_mouseInfo->setIntent(curIntent); //Set Cursor To Next State
+	}
 #endif
+}
 
 } // end of namespace Saga2
