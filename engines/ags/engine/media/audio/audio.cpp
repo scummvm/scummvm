@@ -352,7 +352,6 @@ ScriptAudioChannel *play_audio_clip_on_channel(int channel, ScriptAudioClip *cli
 
 	if (soundfx->play_from(fromOffset) == 0) {
 		// not assigned to a channel, so clean up manually.
-		soundfx->destroy();
 		delete soundfx;
 		soundfx = nullptr;
 		debug_script_log("AudioClip.Play: failed to play sound file");
@@ -431,7 +430,6 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
 	SOUNDCLIP *ch = AudioChans::GetChannel(chid);
 
 	if (ch != nullptr) {
-		ch->destroy();
 		delete ch;
 		AudioChans::SetChannel(chid, nullptr);
 		ch = nullptr;
@@ -571,7 +569,6 @@ SOUNDCLIP *load_sound_and_play(ScriptAudioClip *aclip, bool repeat) {
 
 	if (soundfx->play() == 0) {
 		// not assigned to a channel, so clean up manually.
-		soundfx->destroy();
 		delete soundfx;
 		return nullptr;
 	}
@@ -684,7 +681,6 @@ void process_scheduled_music_update() {
 void clear_music_cache() {
 
 	if (_G(cachedQueuedMusic) != nullptr) {
-		_G(cachedQueuedMusic)->destroy();
 		delete _G(cachedQueuedMusic);
 		_G(cachedQueuedMusic) = nullptr;
 	}
@@ -995,7 +991,6 @@ static void play_new_music(int mnum, SOUNDCLIP *music) {
 	if (ch != nullptr) {
 		if (!ch->play()) {
 			// previous behavior was to set channel[] to null on error, so continue to do that here.
-			ch->destroy();
 			delete ch;
 			ch = nullptr;
 			AudioChans::SetChannel(useChannel, nullptr);
