@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-18 19:20+0000\n"
+"PO-Revision-Date: 2022-03-19 12:58+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -4501,7 +4501,7 @@ msgstr "Поддержка для Versailles 1685 не скомпилирова�
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
-msgstr ""
+msgstr "Игра блокирует выход в данный момент. На самом ли деле вы хотите выйти?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
