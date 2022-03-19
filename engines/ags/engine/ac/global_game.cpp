@@ -325,14 +325,14 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 		if ((data1 < 1) || (data1 > _GP(game).numviews)) {
 			quitprintf("!GetGameParameter: invalid view specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
-		if ((data2 < 0) || (data2 >= _G(views)[data1 - 1].numLoops)) {
+		if ((data2 < 0) || (data2 >= _GP(views)[data1 - 1].numLoops)) {
 			quitprintf("!GetGameParameter: invalid loop specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
-		if ((data3 < 0) || (data3 >= _G(views)[data1 - 1].loops[data2].numFrames)) {
+		if ((data3 < 0) || (data3 >= _GP(views)[data1 - 1].loops[data2].numFrames)) {
 			quitprintf("!GetGameParameter: invalid frame specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
 
-		ViewFrame *pvf = &_G(views)[data1 - 1].loops[data2].frames[data3];
+		ViewFrame *pvf = &_GP(views)[data1 - 1].loops[data2].frames[data3];
 
 		if (parm == GP_FRAMESPEED)
 			return pvf->speed;

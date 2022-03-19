@@ -344,10 +344,10 @@ static HSaveError restore_game_views(Stream *in) {
 	}
 
 	for (int bb = 0; bb < _GP(game).numviews; bb++) {
-		for (int cc = 0; cc < _G(views)[bb].numLoops; cc++) {
-			for (int dd = 0; dd < _G(views)[bb].loops[cc].numFrames; dd++) {
-				_G(views)[bb].loops[cc].frames[dd].sound = in->ReadInt32();
-				_G(views)[bb].loops[cc].frames[dd].pic = in->ReadInt32();
+		for (int cc = 0; cc < _GP(views)[bb].numLoops; cc++) {
+			for (int dd = 0; dd < _GP(views)[bb].loops[cc].numFrames; dd++) {
+				_GP(views)[bb].loops[cc].frames[dd].sound = in->ReadInt32();
+				_GP(views)[bb].loops[cc].frames[dd].pic = in->ReadInt32();
 			}
 		}
 	}

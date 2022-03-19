@@ -441,8 +441,7 @@ void unload_game_file() {
 	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(0);
 	_G(numScriptModules) = 0;
 
-	free(_G(views));
-	_G(views) = nullptr;
+	_GP(views).clear();
 
 	free(_G(charcache));
 	_G(charcache) = nullptr;
@@ -555,33 +554,33 @@ int Game_GetLoopCountForView(int viewNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
 
-	return _G(views)[viewNumber - 1].numLoops;
+	return _GP(views)[viewNumber - 1].numLoops;
 }
 
 int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
 
-	return (_G(views)[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
+	return (_GP(views)[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
 }
 
 int Game_GetFrameCountForLoop(int viewNumber, int loopNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
 
-	return _G(views)[viewNumber - 1].loops[loopNumber].numFrames;
+	return _GP(views)[viewNumber - 1].loops[loopNumber].numFrames;
 }
 
 ScriptViewFrame *Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
-	if ((frame < 0) || (frame >= _G(views)[viewNumber - 1].loops[loopNumber].numFrames))
+	if ((frame < 0) || (frame >= _GP(views)[viewNumber - 1].loops[loopNumber].numFrames))
 		quit("!GetGameParameter: invalid frame specified");
 
 	ScriptViewFrame *sdt = new ScriptViewFrame(viewNumber - 1, loopNumber, frame);
@@ -1441,10 +1440,10 @@ void game_sprite_deleted(int sprnum) {
 	}
 	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
-		for (size_t l = 0; l < (size_t)_G(views)[v].numLoops; ++l) {
-			for (size_t f = 0; f < (size_t)_G(views)[v].loops[l].numFrames; ++f) {
-				if (_G(views)[v].loops[l].frames[f].pic == sprnum)
-					_G(views)[v].loops[l].frames[f].pic = 0;
+		for (size_t l = 0; l < (size_t)_GP(views)[v].numLoops; ++l) {
+			for (size_t f = 0; f < (size_t)_GP(views)[v].loops[l].numFrames; ++f) {
+				if (_GP(views)[v].loops[l].frames[f].pic == sprnum)
+					_GP(views)[v].loops[l].frames[f].pic = 0;
 			}
 		}
 	}

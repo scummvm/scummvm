@@ -93,8 +93,8 @@ void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
 		if (frame < 0) frame = obj.frame;
 		const int vidx = view - 1;
 		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
-		loop = Math::Clamp(loop, 0, (int)_G(views)[vidx].numLoops - 1);
-		frame = Math::Clamp(frame, 0, (int)_G(views)[vidx].loops[loop].numFrames - 1);
+		loop = Math::Clamp(loop, 0, (int)_GP(views)[vidx].numLoops - 1);
+		frame = Math::Clamp(frame, 0, (int)_GP(views)[vidx].loops[loop].numFrames - 1);
 	}
 
 	SetObjectFrame(objj->id, view, loop, frame);

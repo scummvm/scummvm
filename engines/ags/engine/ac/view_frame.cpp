@@ -46,21 +46,21 @@ using AGS::Shared::Graphics;
 
 
 int ViewFrame_GetFlipped(ScriptViewFrame *svf) {
-	if (_G(views)[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
+	if (_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
 		return 1;
 	return 0;
 }
 
 int ViewFrame_GetGraphic(ScriptViewFrame *svf) {
-	return _G(views)[svf->view].loops[svf->loop].frames[svf->frame].pic;
+	return _GP(views)[svf->view].loops[svf->loop].frames[svf->frame].pic;
 }
 
 void ViewFrame_SetGraphic(ScriptViewFrame *svf, int newPic) {
-	_G(views)[svf->view].loops[svf->loop].frames[svf->frame].pic = newPic;
+	_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].pic = newPic;
 }
 
 ScriptAudioClip *ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) {
-	int soundIndex = _G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound;
+	int soundIndex = _GP(views)[svf->view].loops[svf->loop].frames[svf->frame].sound;
 	if (soundIndex < 0)
 		return nullptr;
 
@@ -72,31 +72,31 @@ void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip *clip) {
 	if (clip != nullptr)
 		newSoundIndex = clip->id;
 
-	_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound = newSoundIndex;
+	_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].sound = newSoundIndex;
 }
 
 int ViewFrame_GetSound(ScriptViewFrame *svf) {
 	// convert audio clip to old-style sound number
-	return get_old_style_number_for_sound(_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound);
+	return get_old_style_number_for_sound(_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].sound);
 }
 
 void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
 	if (newSound < 1) {
-		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = -1;
+		_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = -1;
 	} else {
 		// convert sound number to audio clip
 		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, newSound);
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", newSound);
 
-		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound =
+		_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].sound =
 			_GP(game).IsLegacyAudioSystem() ? newSound : clip->id;
-		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = clip->id;
+		_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = clip->id;
 	}
 }
 
 int ViewFrame_GetSpeed(ScriptViewFrame *svf) {
-	return _G(views)[svf->view].loops[svf->loop].frames[svf->frame].speed;
+	return _GP(views)[svf->view].loops[svf->loop].frames[svf->frame].speed;
 }
 
 int ViewFrame_GetView(ScriptViewFrame *svf) {
@@ -117,9 +117,9 @@ void precache_view(int view) {
 	if (view < 0)
 		return;
 
-	for (int i = 0; i < _G(views)[view].numLoops; i++) {
-		for (int j = 0; j < _G(views)[view].loops[i].numFrames; j++)
-			_GP(spriteset).Precache(_G(views)[view].loops[i].frames[j].pic);
+	for (int i = 0; i < _GP(views)[view].numLoops; i++) {
+		for (int j = 0; j < _GP(views)[view].loops[i].numFrames; j++)
+			_GP(spriteset).Precache(_GP(views)[view].loops[i].frames[j].pic);
 	}
 }
 
@@ -129,8 +129,8 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 	ScriptAudioChannel *channel = nullptr;
 	if (_GP(game).IsLegacyAudioSystem()) {
 		// sound field contains legacy sound num, so we also need an actual clip index
-		const int sound = _G(views)[view].loops[loop].frames[frame].sound;
-		int &clip_id = _G(views)[view].loops[loop].frames[frame].audioclip;
+		const int sound = _GP(views)[view].loops[loop].frames[frame].sound;
+		int &clip_id = _GP(views)[view].loops[loop].frames[frame].audioclip;
 		if (sound > 0) {
 			if (clip_id < 0) {
 				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, sound);
@@ -141,9 +141,9 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 			channel = play_audio_clip_by_index(clip_id);
 		}
 	} else {
-		if (_G(views)[view].loops[loop].frames[frame].sound >= 0) {
+		if (_GP(views)[view].loops[loop].frames[frame].sound >= 0) {
 			// play this sound (eg. footstep)
-			channel = play_audio_clip_by_index(_G(views)[view].loops[loop].frames[frame].sound);
+			channel = play_audio_clip_by_index(_GP(views)[view].loops[loop].frames[frame].sound);
 		}
 	}
 	if (sound_volume != SCR_NO_VALUE && channel != nullptr) {

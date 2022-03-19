@@ -34,22 +34,22 @@ void SetFrameSound(int vii, int loop, int frame, int sound) {
 		quit("!SetFrameSound: invalid view number");
 	vii--;
 
-	if (loop >= _G(views)[vii].numLoops)
+	if (loop >= _GP(views)[vii].numLoops)
 		quit("!SetFrameSound: invalid loop number");
 
-	if (frame >= _G(views)[vii].loops[loop].numFrames)
+	if (frame >= _GP(views)[vii].loops[loop].numFrames)
 		quit("!SetFrameSound: invalid frame number");
 
 	if (sound < 1) {
-		_G(views)[vii].loops[loop].frames[frame].sound = -1;
+		_GP(views)[vii].loops[loop].frames[frame].sound = -1;
 	} else {
 		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, sound);
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", sound);
 
-		_G(views)[vii].loops[loop].frames[frame].sound =
+		_GP(views)[vii].loops[loop].frames[frame].sound =
 			_GP(game).IsLegacyAudioSystem() ? sound : clip->id;
-		_G(views)[vii].loops[loop].frames[frame].audioclip = clip->id;
+		_GP(views)[vii].loops[loop].frames[frame].audioclip = clip->id;
 	}
 }
 

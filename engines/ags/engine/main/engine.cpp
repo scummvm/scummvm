@@ -640,7 +640,7 @@ void engine_init_game_settings() {
 			// set initial loop to 0
 			_GP(game).chars[ee].loop = 0;
 			// or to 1 if they don't have up/down frames
-			if (_G(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
+			if (_GP(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
 				_GP(game).chars[ee].loop = 1;
 		}
 		_G(charextra)[ee].process_idle_this_time = 0;

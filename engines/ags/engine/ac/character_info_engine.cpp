@@ -77,11 +77,11 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, in
 
 	// Fixup character's view when possible
 	if (view >= 0 &&
-		(loop >= _G(views)[view].numLoops || frame >= _G(views)[view].loops[loop].numFrames)) {
+		(loop >= _GP(views)[view].numLoops || frame >= _GP(views)[view].loops[loop].numFrames)) {
 		for (loop = 0;
-			(loop < _G(views)[view].numLoops) && (_G(views)[view].loops[loop].numFrames == 0); ++loop) {
+			(loop < _GP(views)[view].numLoops) && (_GP(views)[view].loops[loop].numFrames == 0); ++loop) {
 		}
-		if (loop == _G(views)[view].numLoops) {
+		if (loop == _GP(views)[view].numLoops) {
 			// view has no frames?!
 			// amazingly enough there are old games that allow this to happen...
 			if (_G(loaded_game_file_version) >= kGameVersion_300)
@@ -139,8 +139,8 @@ int CharacterInfo::update_character_walking(CharacterExtras *chex) {
 					wantloop = 0;
 				if (wantloop < 0)
 					wantloop = 7;
-				if ((turnlooporder[wantloop] >= _G(views)[view].numLoops) ||
-				        (_G(views)[view].loops[turnlooporder[wantloop]].numFrames < 1) ||
+				if ((turnlooporder[wantloop] >= _GP(views)[view].numLoops) ||
+				        (_GP(views)[view].loops[turnlooporder[wantloop]].numFrames < 1) ||
 				        ((turnlooporder[wantloop] >= 4) && ((flags & CHF_NODIAGONAL) != 0))) {
 					if (walking >= TURNING_BACKWARDS)
 						wantloop--;
@@ -204,11 +204,11 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				walkwaitcounter++;
 		}
 
-		if (loop >= _G(views)[view].numLoops)
+		if (loop >= _GP(views)[view].numLoops)
 			quitprintf("Unable to render character %d (%s) because loop %d does not exist in view %d", index_id, name, loop, view + 1);
 
 		// check don't overflow loop
-		int framesInLoop = _G(views)[view].loops[loop].numFrames;
+		int framesInLoop = _GP(views)[view].loops[loop].numFrames;
 		if (frame > framesInLoop) {
 			frame = 1;
 
@@ -235,15 +235,15 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 
 			if ((flags & CHF_MOVENOTWALK) == 0) {
 				frame++;
-				if (frame >= _G(views)[view].loops[loop].numFrames) {
+				if (frame >= _GP(views)[view].loops[loop].numFrames) {
 					// end of loop, so loop back round skipping the standing frame
 					frame = 1;
 
-					if (_G(views)[view].loops[loop].numFrames < 2)
+					if (_GP(views)[view].loops[loop].numFrames < 2)
 						frame = 0;
 				}
 
-				chex->animwait = _G(views)[view].loops[loop].frames[frame].speed + animspeed;
+				chex->animwait = _GP(views)[view].loops[loop].frames[frame].speed + animspeed;
 
 				if (flags & CHF_ANTIGLIDE)
 					walkwait = chex->animwait;
@@ -293,17 +293,17 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				if (frame < 0) {
 					// if the previous loop is a Run Next Loop one, go back to it
 					if ((loop > 0) &&
-					        (_G(views)[view].loops[loop - 1].RunNextLoop())) {
+					        (_GP(views)[view].loops[loop - 1].RunNextLoop())) {
 
 						loop--;
-						frame = _G(views)[view].loops[loop].numFrames - 1;
+						frame = _GP(views)[view].loops[loop].numFrames - 1;
 					} else if (animating & CHANIM_REPEAT) {
 
-						frame = _G(views)[view].loops[loop].numFrames - 1;
+						frame = _GP(views)[view].loops[loop].numFrames - 1;
 
-						while (_G(views)[view].loops[loop].RunNextLoop()) {
+						while (_GP(views)[view].loops[loop].RunNextLoop()) {
 							loop++;
-							frame = _G(views)[view].loops[loop].numFrames - 1;
+							frame = _GP(views)[view].loops[loop].numFrames - 1;
 						}
 					} else {
 						frame++;
@@ -323,10 +323,10 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				frame = 0;
 			}
 
-			if (frame >= _G(views)[view].loops[loop].numFrames) {
+			if (frame >= _GP(views)[view].loops[loop].numFrames) {
 
-				if (_G(views)[view].loops[loop].RunNextLoop()) {
-					if (loop + 1 >= _G(views)[view].numLoops)
+				if (_GP(views)[view].loops[loop].RunNextLoop()) {
+					if (loop + 1 >= _GP(views)[view].numLoops)
 						quit("!Animating character tried to overrun last loop in view");
 					loop++;
 					frame = 0;
@@ -349,12 +349,12 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 					// if it's a multi-loop animation, go back to start
 					if (_GP(play).no_multiloop_repeat == 0) {
 						while ((loop > 0) &&
-						        (_G(views)[view].loops[loop - 1].RunNextLoop()))
+						        (_GP(views)[view].loops[loop - 1].RunNextLoop()))
 							loop--;
 					}
 				}
 			}
-			wait = _G(views)[view].loops[loop].frames[frame].speed;
+			wait = _GP(views)[view].loops[loop].frames[frame].speed;
 			// idle anim doesn't have speed stored cos animating==0
 			if (idleleft < 0)
 				wait += animspeed + 5;
@@ -464,7 +464,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 			Character_LockView(this, idleview + 1);
 			// SetCharView resets it to 0
 			idleleft = -2;
-			int maxLoops = _G(views)[idleview].numLoops;
+			int maxLoops = _GP(views)[idleview].numLoops;
 			// if the char is set to "no diagonal loops", don't try
 			// to use diagonal idle loops either
 			if ((maxLoops > 4) && (useDiagonal(this)))
@@ -475,7 +475,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 				do {
 					useloop = ::AGS::g_vm->getRandomNumber(maxLoops - 1);
 					// don't select a loop which is a continuation of a previous one
-				} while ((useloop > 0) && (_G(views)[idleview].loops[useloop - 1].RunNextLoop()));
+				} while ((useloop > 0) && (_GP(views)[idleview].loops[useloop - 1].RunNextLoop()));
 			}
 			// Normal idle anim - just reset to loop 0 if not enough to
 			// use the current one

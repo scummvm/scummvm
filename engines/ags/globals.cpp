@@ -228,6 +228,7 @@ Globals::Globals() {
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+	_views = new std::vector<ViewStruct>();
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
 	// game_init.cpp globals
@@ -474,6 +475,7 @@ Globals::~Globals() {
 	delete[] _scrRegion;
 	delete[] _scrInv;
 	delete[] _objcache;
+	delete _views;
 
 	// game_init.cpp globals
 	delete _StaticCharacterArray;

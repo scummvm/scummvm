@@ -36,6 +36,7 @@
 #include "ags/engine/ac/dynobj/all_script_classes.h"
 #include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/engine/ac/statobj/static_array.h"
+#include "ags/shared/ac/view.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
@@ -374,6 +375,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * _GP(game).numcharacters + 5);
 	_G(mls) = (MoveList *)calloc(_GP(game).numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
 	init_game_drawdata();
+	_GP(views) = std::move(ents.Views);
 
 	_GP(play).charProps.resize(_GP(game).numcharacters);
 	_G(old_dialog_scripts) = ents.OldDialogScripts;

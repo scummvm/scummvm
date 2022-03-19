@@ -685,12 +685,12 @@ HSaveError ReadMouseCursors(Stream *in, int32_t cmp_ver, const PreservedParams &
 HSaveError WriteViews(Stream *out) {
 	out->WriteInt32(_GP(game).numviews);
 	for (int view = 0; view < _GP(game).numviews; ++view) {
-		out->WriteInt32(_G(views)[view].numLoops);
-		for (int loop = 0; loop < _G(views)[view].numLoops; ++loop) {
-			out->WriteInt32(_G(views)[view].loops[loop].numFrames);
-			for (int frame = 0; frame < _G(views)[view].loops[loop].numFrames; ++frame) {
-				out->WriteInt32(_G(views)[view].loops[loop].frames[frame].sound);
-				out->WriteInt32(_G(views)[view].loops[loop].frames[frame].pic);
+		out->WriteInt32(_GP(views)[view].numLoops);
+		for (int loop = 0; loop < _GP(views)[view].numLoops; ++loop) {
+			out->WriteInt32(_GP(views)[view].loops[loop].numFrames);
+			for (int frame = 0; frame < _GP(views)[view].loops[loop].numFrames; ++frame) {
+				out->WriteInt32(_GP(views)[view].loops[loop].frames[frame].sound);
+				out->WriteInt32(_GP(views)[view].loops[loop].frames[frame].pic);
 			}
 		}
 	}
@@ -702,16 +702,16 @@ HSaveError ReadViews(Stream *in, int32_t cmp_ver, const PreservedParams &pp, Res
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numviews, "Views"))
 		return err;
 	for (int view = 0; view < _GP(game).numviews; ++view) {
-		if (!AssertGameObjectContent(err, in->ReadInt32(), _G(views)[view].numLoops,
+		if (!AssertGameObjectContent(err, in->ReadInt32(), _GP(views)[view].numLoops,
 		                             "Loops", "View", view))
 			return err;
-		for (int loop = 0; loop < _G(views)[view].numLoops; ++loop) {
-			if (!AssertGameObjectContent2(err, in->ReadInt32(), _G(views)[view].loops[loop].numFrames,
+		for (int loop = 0; loop < _GP(views)[view].numLoops; ++loop) {
+			if (!AssertGameObjectContent2(err, in->ReadInt32(), _GP(views)[view].loops[loop].numFrames,
 			                              "Frame", "View", view, "Loop", loop))
 				return err;
-			for (int frame = 0; frame < _G(views)[view].loops[loop].numFrames; ++frame) {
-				_G(views)[view].loops[loop].frames[frame].sound = in->ReadInt32();
-				_G(views)[view].loops[loop].frames[frame].pic = in->ReadInt32();
+			for (int frame = 0; frame < _GP(views)[view].loops[loop].numFrames; ++frame) {
+				_GP(views)[view].loops[loop].frames[frame].sound = in->ReadInt32();
+				_GP(views)[view].loops[loop].frames[frame].pic = in->ReadInt32();
 			}
 		}
 	}

@@ -737,7 +737,7 @@ public:
 	ScriptRegion *_scrRegion;
 	ScriptInvItem *_scrInv;
 	ScriptDialog *_scrDialog = nullptr;
-	ViewStruct *_views = nullptr;
+	std::vector<ViewStruct> *_views;
 	CharacterCache *_charcache = nullptr;
 	ObjectCache *_objcache;
 	MoveList *_mls = nullptr;

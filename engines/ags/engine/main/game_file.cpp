@@ -170,7 +170,7 @@ HError LoadGameScripts(LoadedGameEntities &ents, GameDataVersion data_ver) {
 
 HError load_game_file() {
 	MainGameSource src;
-	LoadedGameEntities ents(_GP(game), _G(dialog), _G(views));
+	LoadedGameEntities ents(_GP(game), _G(dialog));
 	HError err = (HError)OpenMainGameFileFromDefaultAsset(src);
 	if (err) {
 		err = (HError)ReadGameData(ents, src.InputStream.get(), src.DataVersion);

@@ -433,12 +433,12 @@ AGSViewFrame *IAGSEngine::GetViewFrame(int32 view, int32 loop, int32 frame) {
 	view--;
 	if ((view < 0) || (view >= _GP(game).numviews))
 		quit("!IAGSEngine::GetViewFrame: invalid view");
-	if ((loop < 0) || (loop >= _G(views)[view].numLoops))
+	if ((loop < 0) || (loop >= _GP(views)[view].numLoops))
 		quit("!IAGSEngine::GetViewFrame: invalid loop");
-	if ((frame < 0) || (frame >= _G(views)[view].loops[loop].numFrames))
+	if ((frame < 0) || (frame >= _GP(views)[view].loops[loop].numFrames))
 		return nullptr;
 
-	return (AGSViewFrame *)&_G(views)[view].loops[loop].frames[frame];
+	return (AGSViewFrame *)&_GP(views)[view].loops[loop].frames[frame];
 }
 
 int IAGSEngine::GetRawPixelColor(int32 color) {

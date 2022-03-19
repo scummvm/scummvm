@@ -1338,8 +1338,8 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	// check whether the image should be flipped
 	int isMirrored = 0;
 	if ((_G(objs)[aa].view != (uint16_t)-1) &&
-	        (_G(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].pic == _G(objs)[aa].num) &&
-	        ((_G(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
+	        (_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].pic == _G(objs)[aa].num) &&
+	        ((_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
 		isMirrored = 1;
 	}
 
@@ -1580,17 +1580,17 @@ void prepare_characters_for_drawing() {
 			           chin->name, _G(displayed_room));
 		}
 
-		if (chin->frame >= _G(views)[chin->view].loops[chin->loop].numFrames)
+		if (chin->frame >= _GP(views)[chin->view].loops[chin->loop].numFrames)
 			chin->frame = 0;
 
-		if ((chin->loop >= _G(views)[chin->view].numLoops) ||
-		        (_G(views)[chin->view].loops[chin->loop].numFrames < 1)) {
+		if ((chin->loop >= _GP(views)[chin->view].numLoops) ||
+		        (_GP(views)[chin->view].loops[chin->loop].numFrames < 1)) {
 			warning("The character '%s' could not be displayed because there were no frames in loop %d of view %d.",
 			           chin->name, chin->loop, chin->view + 1);
 			continue;
 		}
 
-		sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
+		sppic = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 		if (sppic < 0)
 			sppic = 0;  // in case it's screwed up somehow
 		_G(our_eip) = 331;
@@ -1637,7 +1637,7 @@ void prepare_characters_for_drawing() {
 
 		// adjust the sppic if mirrored, so it doesn't accidentally
 		// cache the mirrored frame as the real one
-		if (_G(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
+		if (_GP(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
 			isMirrored = 1;
 			specialpic = -sppic;
 		}
@@ -2197,16 +2197,16 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		else {
 			int viewnum = _GP(game).mcurs[_G(cur_cursor)].view;
 			int loopnum = 0;
-			if (loopnum >= _G(views)[viewnum].numLoops)
+			if (loopnum >= _GP(views)[viewnum].numLoops)
 				quitprintf("An animating mouse cursor is using view %d which has no loops", viewnum + 1);
-			if (_G(views)[viewnum].loops[loopnum].numFrames < 1)
+			if (_GP(views)[viewnum].loops[loopnum].numFrames < 1)
 				quitprintf("An animating mouse cursor is using view %d which has no frames in loop %d", viewnum + 1, loopnum);
 
 			_G(mouse_frame)++;
-			if (_G(mouse_frame) >= _G(views)[viewnum].loops[loopnum].numFrames)
+			if (_G(mouse_frame) >= _GP(views)[viewnum].loops[loopnum].numFrames)
 				_G(mouse_frame) = 0;
-			set_new_cursor_graphic(_G(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].pic);
-			_G(mouse_delay) = _G(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + 5;
+			set_new_cursor_graphic(_GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].pic);
+			_G(mouse_delay) = _GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + 5;
 			CheckViewFrame(viewnum, loopnum, _G(mouse_frame));
 		}
 		_G(lastmx) = _G(mousex);

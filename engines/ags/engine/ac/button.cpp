@@ -50,7 +50,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 		quit("!AnimateButton: invalid view specified");
 	view--;
 
-	if ((loop < 0) || (loop >= _G(views)[view].numLoops))
+	if ((loop < 0) || (loop >= _GP(views)[view].numLoops))
 		quit("!AnimateButton: invalid loop specified for view");
 
 	// if it's already animating, stop it
@@ -200,7 +200,7 @@ int UpdateAnimatingButton(int bu) {
 		_G(animbuts)[bu].wait--;
 		return 0;
 	}
-	ViewStruct *tview = &_G(views)[_G(animbuts)[bu].view];
+	ViewStruct *tview = &_GP(views)[_G(animbuts)[bu].view];
 
 	_G(animbuts)[bu].frame++;
 

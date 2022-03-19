@@ -91,7 +91,7 @@ void script_debug(int cmdd, int dataa) {
 		Display(toDisplay.GetCStr());
 		//    Display("shftR: %d  shftG: %d  shftB: %d", _G(_rgb_r_shift_16), _G(_rgb_g_shift_16), _G(_rgb_b_shift_16));
 		//    Display("Remaining memory: %d kb",_go32_dpmi_remaining_virtual_memory()/1024);
-		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_G(views)[_G(playerchar)->view].frames[_G(playerchar)->loop][_G(playerchar)->frame].pic]));
+		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_GP(views)[_G(playerchar)->view].frames[_G(playerchar)->loop][_G(playerchar)->frame].pic]));
 	} else if (cmdd == 2) {  // show walkable areas from here
 		// TODO: support multiple viewports?!
 		const int viewport_index = 0;

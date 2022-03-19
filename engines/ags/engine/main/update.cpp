@@ -294,12 +294,12 @@ void update_sierra_speech() {
 				}
 			} else if (_G(facetalkchar)->blinktimer < 0) {
 				// currently playing blink anim
-				if (_G(facetalkchar)->blinktimer < ((0 - 6) - _G(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].frames[_G(facetalkchar)->blinkframe].speed)) {
+				if (_G(facetalkchar)->blinktimer < ((0 - 6) - _GP(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].frames[_G(facetalkchar)->blinkframe].speed)) {
 					// time to advance to next frame
 					_G(facetalkchar)->blinktimer = -1;
 					_G(facetalkchar)->blinkframe++;
 					updatedFrame = 2;
-					if (_G(facetalkchar)->blinkframe >= _G(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].numFrames) {
+					if (_G(facetalkchar)->blinkframe >= _GP(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].numFrames) {
 						_G(facetalkchar)->blinkframe = 0;
 						_G(facetalkchar)->blinktimer = _G(facetalkchar)->blinkinterval;
 					}
@@ -322,7 +322,7 @@ void update_sierra_speech() {
 					else
 						_G(facetalkframe) = _G(splipsync)[_G(curLipLine)].frame[_G(curLipLinePhoneme)];
 
-					if (_G(facetalkframe) >= _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames)
+					if (_G(facetalkframe) >= _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames)
 						_G(facetalkframe) = 0;
 
 					updatedFrame |= 1;
@@ -354,11 +354,11 @@ void update_sierra_speech() {
 			} else {
 				// normal non-lip-sync
 				_G(facetalkframe)++;
-				if ((_G(facetalkframe) >= _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) ||
+				if ((_G(facetalkframe) >= _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) ||
 				        (!_GP(play).speech_has_voice && (_GP(play).messagetime < 1) && (_GP(play).close_mouth_speech_time > 0))) {
 
-					if ((_G(facetalkframe) >= _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) &&
-					        (_G(views)[_G(facetalkview)].loops[_G(facetalkloop)].RunNextLoop())) {
+					if ((_G(facetalkframe) >= _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) &&
+					        (_GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].RunNextLoop())) {
 						_G(facetalkloop)++;
 					} else {
 						_G(facetalkloop) = 0;
@@ -368,7 +368,7 @@ void update_sierra_speech() {
 						_G(facetalkwait) = 999999;
 				}
 				if ((_G(facetalkframe) != 0) || (_G(facetalkrepeat) == 1))
-					_G(facetalkwait) = _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)].speed + GetCharacterSpeechAnimationDelay(_G(facetalkchar));
+					_G(facetalkwait) = _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)].speed + GetCharacterSpeechAnimationDelay(_G(facetalkchar));
 			}
 			updatedFrame |= 1;
 		}
@@ -381,7 +381,7 @@ void update_sierra_speech() {
 			if (updatedFrame & 2)
 				CheckViewFrame(_G(facetalkchar)->blinkview, _G(facetalkBlinkLoop), _G(facetalkchar)->blinkframe);
 
-			int thisPic = _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)].pic;
+			int thisPic = _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)].pic;
 			int view_frame_x = 0;
 			int view_frame_y = 0;
 
@@ -401,12 +401,12 @@ void update_sierra_speech() {
 			}
 
 			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].pic;
-			const ViewFrame *face_vf = &_G(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)];
+			const ViewFrame *face_vf = &_GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)];
 			bool face_has_alpha = (_GP(game).SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 			DrawViewFrame(frame_pic, face_vf, view_frame_x, view_frame_y);
 
 			if ((_G(facetalkchar)->blinkview > 0) && (_G(facetalkchar)->blinktimer < 0)) {
-				ViewFrame *blink_vf = &_G(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].frames[_G(facetalkchar)->blinkframe];
+				ViewFrame *blink_vf = &_GP(views)[_G(facetalkchar)->blinkview].loops[_G(facetalkBlinkLoop)].frames[_G(facetalkchar)->blinkframe];
 				face_has_alpha |= (_GP(game).SpriteInfos[blink_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 				// draw the blinking sprite on top
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
