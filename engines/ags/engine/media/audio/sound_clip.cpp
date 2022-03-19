@@ -25,7 +25,7 @@
 namespace AGS3 {
 
 SOUNDCLIP::SOUNDCLIP() : _panning(12. / 8), _panningAsPercentage(0),
-	_sourceClip(nullptr), _sourceClipType(0), _speed(1000), _priority(50),
+	_sourceClipID(-1), _sourceClipType(0), _speed(1000), _priority(50),
 	_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0), _muted(false),
 	_volAsPercentage(0), _vol(0), _volModifier(0), _repeat(false), _directionalVolModifier(0) {
 }

@@ -222,7 +222,7 @@ SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
 	}
 	if (soundClip != nullptr) {
 		soundClip->set_volume_percent(audioClip->defaultVolume);
-		soundClip->_sourceClip = audioClip;
+		soundClip->_sourceClipID = audioClip->id;
 		soundClip->_sourceClipType = audioClip->type;
 	}
 	return soundClip;
@@ -742,7 +742,7 @@ int calculate_max_volume() {
 void apply_volume_drop_modifier(bool applyModifier) {
 	for (int i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
-		if (ch && ch->_sourceClip != nullptr) {
+		if (ch && ch->_sourceClipID >= 0) {
 			if (applyModifier)
 				apply_volume_drop_to_clip(ch);
 			else

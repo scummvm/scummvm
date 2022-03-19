@@ -57,7 +57,7 @@ struct SOUNDCLIP {
 	int _maximumPossibleDistanceAway;
 	int _directionalVolModifier;
 	bool _repeat;
-	void *_sourceClip;      // Pointer to source object that spawned the clip
+	int _sourceClipID;
 
 	virtual void poll() = 0;
 	virtual void destroy() = 0;

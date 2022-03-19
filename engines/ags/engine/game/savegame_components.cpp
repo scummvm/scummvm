@@ -347,8 +347,8 @@ HSaveError WriteAudio(Stream *out) {
 	// Audio clips and crossfade
 	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
-		if ((ch != nullptr) && (ch->_sourceClip != nullptr)) {
-			out->WriteInt32(((ScriptAudioClip *)ch->_sourceClip)->id);
+		if ((ch != nullptr) && (ch->_sourceClipID >= 0)) {
+			out->WriteInt32(ch->_sourceClipID);
 			out->WriteInt32(ch->get_pos());
 			out->WriteInt32(ch->_priority);
 			out->WriteInt32(ch->_repeat ? 1 : 0);

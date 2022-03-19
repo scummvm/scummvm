@@ -27,7 +27,7 @@
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/media/audio/audio_system.h"
-
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -80,8 +80,8 @@ void AudioChannel_SetPanning(ScriptAudioChannel *channel, int newPanning) {
 ScriptAudioClip *AudioChannel_GetPlayingClip(ScriptAudioChannel *channel) {
 	auto *ch = AudioChans::GetChannelIfPlaying(channel->id);
 
-	if (ch) {
-		return (ScriptAudioClip *)ch->_sourceClip;
+	if (ch && ch->_sourceClipID >= 0) {
+		return &_GP(game).audioClips[ch->_sourceClipID];
 	}
 	return nullptr;
 }

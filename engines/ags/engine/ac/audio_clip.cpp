@@ -49,7 +49,7 @@ int AudioClip_GetIsAvailable(ScriptAudioClip *clip) {
 void AudioClip_Stop(ScriptAudioClip *clip) {
 	for (int i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
-		if ((ch != nullptr) && (ch->_sourceClip == clip)) {
+		if ((ch != nullptr) && (ch->_sourceClipID == clip->id)) {
 			AudioChannel_Stop(&_G(scrAudioChannel)[i]);
 		}
 	}
