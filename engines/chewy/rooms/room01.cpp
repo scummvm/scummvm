@@ -33,8 +33,6 @@ void Room1::gottenCard() {
 	startSetAILWait(4, 1, ANI_FRONT);
 	_G(spieler)._personHide[P_CHEWY] = false;
 	_G(atds)->delControlBit(7, ATS_COUNT_BIT, ATS_DATA);
-	int16 tmp;
-	_G(atds)->ats_get_txt(7, TXT_MARK_LOOK, &tmp, ATS_DATA);
 }
 
 void Room1::gedAction(int index) {
