@@ -795,6 +795,21 @@ void update_audio_system_on_game_loop() {
 
 	_G(audio_doing_crossfade) = false;
 
+	if (_G(loopcounter) % 5 == 0) {
+		update_ambient_sound_vol();
+		update_directional_sound_vol();
+	}
+
+	// Update and sync logical game channels with the audio backend
+	for (int i = 0; i < _GP(game).numGameChannels; ++i) {
+		auto *ch = AudioChans::GetChannel(i);
+		if (ch) { // update the playing channel, and if it's finished then dispose it
+			if (ch->is_ready() && !ch->update()) {
+				delete ch;
+				AudioChans::SetChannel(i, nullptr);
+			}
+		}
+	}
 }
 
 void stopmusic() {

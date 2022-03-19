@@ -160,15 +160,24 @@ struct SOUNDCLIP {
 	 */
 	void apply_directional_modifier(int mod);
 
+	inline bool is_ready() { return is_playing(); }
+
+	/**
+	 * Returns if the clip is still playing, otherwise it's finished
+	 */
+	bool update();
+
 protected:
 	virtual void adjust_volume() = 0;
 
 	// mute mode overrides the volume; if set, any volume assigned is stored
 	// in properties, but not applied to playback itself
-	bool _muted;
+	bool _muted = false;
 
 	// speed of playback, in clip ms per real second
-	int _speed;
+	int _speed = 0;
+
+	bool _paramsChanged = false;
 
 	// helper function for calculating volume with applied modifiers
 	inline int get_final_volume() const {

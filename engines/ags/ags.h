@@ -51,19 +51,6 @@ namespace AGS {
 
 /* Synced up to upstream: ---
  * ----
- *
- * Commits still pending to be ported:
- * cae84d689019313cad49b6dca7e916866b90e49e
- * - We have slightly different blending code, commit needs
- * to be modified to take that into account
- *
- * Skipped upstream commits:
- * 22b0f2b93e314b167f80e89a9dd138202a7e28a7
- * * Engine: merged SOUNDCLIP and CLIP_OPENAL
- * ScummVM has it's own sound clip classes, so doesn't have CLIP_OPENAL
- * ff05f69f2361c34212b6ba1db0f22b2c1ba38d7b
- * Engine: "transactional" SOUNDCLIP
- * ScummVM doesn't have the OPENAL decoder
  */
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
