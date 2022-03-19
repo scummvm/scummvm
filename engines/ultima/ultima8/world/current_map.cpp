@@ -533,7 +533,7 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	while (iter != _items[cx][cy].end()) {
 		Item *item = *iter;
 		++iter;
-#if VALIDATE_CHUNKS
+#ifdef VALIDATE_CHUNKS
 		int32 x, y, z;
 		item->getLocation(x, y, z);
 		if (x / _mapChunkSize != cx || y / _mapChunkSize != cy) {
