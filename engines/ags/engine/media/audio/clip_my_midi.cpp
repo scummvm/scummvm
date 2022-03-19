@@ -94,8 +94,12 @@ int MYMIDI::play_from(int position) {
 	}
 }
 
-bool MYMIDI::is_playing() const {
+bool MYMIDI::is_playing() {
 	return ::AGS::g_music->isPlaying();
+}
+
+bool MYMIDI::is_paused() {
+	return false;
 }
 
 void MYMIDI::set_volume(int volume) {

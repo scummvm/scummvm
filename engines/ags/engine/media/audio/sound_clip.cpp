@@ -100,8 +100,12 @@ void SoundClipWaveBase::resume() {
 	poll();
 }
 
-bool SoundClipWaveBase::is_playing() const {
-	return _mixer->isSoundHandleActive(_soundHandle);
+bool SoundClipWaveBase::is_playing() {
+	return _mixer->isSoundHandleActive(_soundHandle) || is_paused();
+}
+
+bool SoundClipWaveBase::is_paused() {
+	return _state == SoundClipPaused;
 }
 
 void SoundClipWaveBase::seek(int offset) {

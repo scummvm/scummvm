@@ -49,6 +49,13 @@ int AudioChannel_GetIsPlaying(ScriptAudioChannel *channel) {
 	return channel_is_playing(channel->id) ? 1 : 0;
 }
 
+bool AudioChannel_GetIsPaused(ScriptAudioChannel *channel) {
+	AudioChannelsLock lock;
+	auto *ch = lock.GetChannelIfPlaying(channel->id);
+	if (ch) return ch->is_paused();
+	return false;
+}
+
 int AudioChannel_GetPanning(ScriptAudioChannel *channel) {
 	AudioChannelsLock lock;
 	auto *ch = lock.GetChannelIfPlaying(channel->id);
@@ -167,6 +174,18 @@ void AudioChannel_Stop(ScriptAudioChannel *channel) {
 		stop_or_fade_out_channel(channel->id, -1, nullptr);
 }
 
+void AudioChannel_Pause(ScriptAudioChannel *channel) {
+	AudioChannelsLock lock;
+	auto *ch = lock.GetChannelIfPlaying(channel->id);
+	if (ch) ch->pause();
+}
+
+void AudioChannel_Resume(ScriptAudioChannel *channel) {
+	AudioChannelsLock lock;
+	auto *ch = lock.GetChannelIfPlaying(channel->id);
+	if (ch) ch->resume();
+}
+
 void AudioChannel_Seek(ScriptAudioChannel *channel, int newPosition) {
 	if (newPosition < 0)
 		quitprintf("!AudioChannel.Seek: invalid seek position %d", newPosition);
@@ -275,11 +294,26 @@ RuntimeScriptValue Sc_AudioChannel_SetSpeed(void *self, const RuntimeScriptValue
 	API_OBJCALL_VOID_PINT(ScriptAudioChannel, AudioChannel_SetSpeed);
 }
 
+RuntimeScriptValue Sc_AudioChannel_Pause(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID(ScriptAudioChannel, AudioChannel_Pause);
+}
+
+RuntimeScriptValue Sc_AudioChannel_Resume(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID(ScriptAudioChannel, AudioChannel_Resume);
+}
+
+RuntimeScriptValue Sc_AudioChannel_GetIsPaused(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_BOOL(ScriptAudioChannel, AudioChannel_GetIsPaused);
+}
+
 void RegisterAudioChannelAPI() {
+	ccAddExternalObjectFunction("AudioChannel::Pause^0", Sc_AudioChannel_Pause);
+	ccAddExternalObjectFunction("AudioChannel::Resume^0", Sc_AudioChannel_Resume);
 	ccAddExternalObjectFunction("AudioChannel::Seek^1", Sc_AudioChannel_Seek);
 	ccAddExternalObjectFunction("AudioChannel::SetRoomLocation^2", Sc_AudioChannel_SetRoomLocation);
 	ccAddExternalObjectFunction("AudioChannel::Stop^0", Sc_AudioChannel_Stop);
 	ccAddExternalObjectFunction("AudioChannel::get_ID", Sc_AudioChannel_GetID);
+	ccAddExternalObjectFunction("AudioChannel::get_IsPaused", Sc_AudioChannel_GetIsPaused);
 	ccAddExternalObjectFunction("AudioChannel::get_IsPlaying", Sc_AudioChannel_GetIsPlaying);
 	ccAddExternalObjectFunction("AudioChannel::get_LengthMs", Sc_AudioChannel_GetLengthMs);
 	ccAddExternalObjectFunction("AudioChannel::get_Panning", Sc_AudioChannel_GetPanning);

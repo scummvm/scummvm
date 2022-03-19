@@ -78,7 +78,8 @@ struct SOUNDCLIP {
 	virtual void pause() = 0;
 	virtual void resume() = 0;
 
-	virtual bool is_playing() const = 0; // true if playing or paused. false if never played or stopped.
+	virtual bool is_playing() = 0; // true if playing or paused. false if never played or stopped.
+	virtual bool is_paused() = 0; // true if paused
 
 	inline int get_speed() const {
 		return _speed;
@@ -184,7 +185,8 @@ public:
 	int play_from(int position) override;
 	void pause() override;
 	void resume() override;
-	bool is_playing() const override;
+	bool is_playing() override;
+	bool is_paused() override;
 	void seek(int offset) override;
 	int get_pos() override;
 	int get_pos_ms() override;
