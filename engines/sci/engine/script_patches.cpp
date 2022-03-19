@@ -20169,6 +20169,37 @@ static const uint16 sq4FloppyPatchSoftwareStoreEasterEggs[] = {
 	PATCH_END
 };
 
+// In the laser beam hallway, the beams don't initialize their Look message
+//  correctly in the CD version. Instead of setting their lookStr property based
+//  on their loop, they set their noun property to the value it already has.
+//  This prevents the invisible beam message from ever occurring and prevents
+//  the visible beam message when re-entering the room.
+//
+// We fix this by setting the lookStr property for the correct message.
+//
+// Applies to: English PC CD
+// Responsible methods: beam0:init, beam1:init, beam2:init
+static const uint16 sq4CdSignatureLaserBeamMessages[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x38,                         // pToa loop [ 1 if visible, 0 if invisible ]
+	0x31, 0x06,                         // bnt 06
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x1a,                         // aTop noun [ noun = 0 (redundant) ]
+	0x33, 0x04,                         // jmp 04
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x1a,                         // aTop noun [ noun = 0 (redundant) ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchLaserBeamMessages[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x01,                         // ldi 01 [ "The laser beams glow in the smoky air." ]
+	0x33, 0x02,                         // jmp 02
+	0x35, 0x02,                         // ldi 02 [ "You see what looks like beam emitters, but no beams." ]
+	0x65, 0x66,                         // aTop lookStr
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -20207,6 +20238,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{ false,   531, "CD: disable timepod code for removed room",      1, sq4CdSignatureRemovedRoomTimepodCode,          sq4CdPatchRemovedRoomTimepodCode },
 	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
+	{  true,   541, "CD: laser beam messages",                        3, sq4CdSignatureLaserBeamMessages,               sq4CdPatchLaserBeamMessages },
 	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
 	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   611, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
