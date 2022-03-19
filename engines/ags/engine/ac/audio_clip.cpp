@@ -47,9 +47,8 @@ int AudioClip_GetIsAvailable(ScriptAudioClip *clip) {
 }
 
 void AudioClip_Stop(ScriptAudioClip *clip) {
-	AudioChannelsLock lock;
 	for (int i = NUM_SPEECH_CHANS; i < _GP(game).numGameChannels; i++) {
-		auto *ch = lock.GetChannelIfPlaying(i);
+		auto *ch = AudioChans::GetChannelIfPlaying(i);
 		if ((ch != nullptr) && (ch->_sourceClip == clip)) {
 			AudioChannel_Stop(&_G(scrAudioChannel)[i]);
 		}

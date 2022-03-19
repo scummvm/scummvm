@@ -318,7 +318,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			// Special behavior when coupled with a voice-over
 			if (_GP(play).speech_has_voice) {
 				// extend life of text if the voice hasn't finished yet
-				if (channel_is_playing(SCHAN_SPEECH) && (_GP(play).fast_forward == 0)) {
+				if (AudioChans::ChannelIsPlaying(SCHAN_SPEECH) && (_GP(play).fast_forward == 0)) {
 					if (countdown <= 1)
 						countdown = 1;
 				} else  // if the voice has finished, remove the speech

@@ -235,8 +235,7 @@ void update_overlay_timers() {
 void update_speech_and_messages() {
 	bool is_voice_playing = false;
 	if (_GP(play).speech_has_voice) {
-		AudioChannelsLock lock;
-		auto *ch = lock.GetChannel(SCHAN_SPEECH);
+		auto *ch = AudioChans::GetChannel(SCHAN_SPEECH);
 		is_voice_playing = ch && ch->is_playing();
 	}
 	// determine if speech text should be removed
@@ -276,8 +275,7 @@ void update_speech_and_messages() {
 void update_sierra_speech() {
 	int voice_pos_ms = -1;
 	if (_GP(play).speech_has_voice) {
-		AudioChannelsLock lock;
-		auto *ch = lock.GetChannel(SCHAN_SPEECH);
+		auto *ch = AudioChans::GetChannel(SCHAN_SPEECH);
 		voice_pos_ms = ch ? ch->get_pos_ms() : -1;
 	}
 	if ((_G(face_talking) >= 0) && (_GP(play).fast_forward == 0)) {

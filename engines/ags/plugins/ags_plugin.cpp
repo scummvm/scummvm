@@ -529,7 +529,7 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 	} else
 		quit("!IAGSEngine::PlaySoundChannel: unknown sound type");
 
-	set_clip_to_channel(channel, newcha);
+	AudioChans::SetChannel(channel, newcha);
 }
 // Engine interface 12 and above are below
 void IAGSEngine::MarkRegionDirty(int32 left, int32 top, int32 right, int32 bottom) {
