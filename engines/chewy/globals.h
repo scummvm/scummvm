@@ -302,7 +302,7 @@ void evaluateObj(int16 testNr, int16 txt_nr);
 void swap_if_l(int16 *x1, int16 *x2);
 
 void printShadowed(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 shadowFgCol,
-	int16 scrWidth, char *txtPtr);
+	int16 scrWidth, const char *txtPtr);
 
 bool autoMove(int16 movNr, int16 playerNum);
 void get_user_key(int16 mode);
@@ -406,8 +406,6 @@ void enter_room(int16 eib_nr);
 void exit_room(int16 eib_nr);
 
 void flic_cut(int16 nr);
-
-void print_rows(int16 id);
 
 int16 sib_event_no_inv(int16 sib_nr);
 

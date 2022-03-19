@@ -53,10 +53,11 @@ void Cinema::execute() {
 	bool flag = false;
 	int delay = 0;
 	Common::Array<int> cutscenes;
+	Common::String cutsceneName;
+
 	getCutscenes(cutscenes);
 
 	_G(fontMgr)->setFont(_G(font6));
-	_G(atds)->load_atds(98, ATS_DATA);
 
 	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
 	showCur();
@@ -69,19 +70,19 @@ void Cinema::execute() {
 
 		if (!cutscenes.empty()) {
 			// Render cut-scene list
+
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				char *csName = _G(atds)->ats_get_txt(546 + i + topIndex,
-					0, &txt_anz, 1);
+				cutsceneName = _G(atds)->getTextEntry(98 + 500, i + topIndex + 1);
 				int yp = i * 10 + 68;
 
 				if (i == selected)
 					_G(out)->boxFill(37, yp, 308, yp + 10, 42);
-				_G(out)->printxy(40, yp, 14, 300, 0, csName);
+				_G(out)->printxy(40, yp, 14, 300, 0, cutsceneName.c_str());
 			}
 		} else {
 			// No cut-scene seen yet
-			char *none = _G(atds)->ats_get_txt(545, 0, &txt_anz, 1);
-			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), none);
+			cutsceneName = _G(atds)->getTextEntry(98 + 500, 0);
+			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), cutsceneName.c_str());
 		}
 
 		if (_G(minfo)._button == 1 && !flag) {
@@ -161,7 +162,6 @@ void Cinema::execute() {
 			_G(out)->cls();
 			_G(out)->setPointer(_G(screen0));
 			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
-			print_rows(546 + topIndex);
 
 			flic_cut(CINEMA_FLICS[topIndex + selected]);
 			_G(fontMgr)->setFont(_G(font6));

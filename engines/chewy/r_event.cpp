@@ -775,20 +775,6 @@ void exit_room(int16 eib_nr) {
 	}
 }
 
-void print_rows(int16 id) {
-	_G(fontMgr)->setFont(_G(font8));
-	int16 txt_anz;
-	char *txtStr = _G(atds)->ats_get_txt(id, TXT_MARK_NAME, &txt_anz, ATS_DATA);
-	_G(out)->setPointer(nullptr);
-
-	for (int i = 0; i < txt_anz; ++i) {
-		char *s = _G(txt)->strPos(txtStr, i);
-		int16 len = (strlen(s) * _G(fontMgr)->getFont()->getDataWidth()) / 2;
-
-		_G(out)->printxy(160 - len, 50 + i * 10, 14, 300, 0, s);
-	}
-}
-
 static void playIntroSequence() {
 	const int16 introVideo[] = {
 		FCUT_135, FCUT_145, FCUT_142, FCUT_140, FCUT_145,

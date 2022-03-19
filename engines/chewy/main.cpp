@@ -1171,7 +1171,7 @@ void check_shad(int16 palIdx, int16 mode) {
 	}
 }
 
-void printShadowed(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 shadowFgCol, int16 scrWidth, char *txtPtr) {
+void printShadowed(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 shadowFgCol, int16 scrWidth, const char *txtPtr) {
 	_G(out)->printxy(x + 1, y + 1, shadowFgCol, bgCol, scrWidth, txtPtr);
 	_G(out)->printxy(x, y, fgCol, bgCol, scrWidth, txtPtr);
 }
@@ -1427,6 +1427,8 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					int16 anz;
 					char *str_ = _G(atds)->ats_get_txt(txtNr, TXT_MARK_NAME, &anz, ATS_DATA);
 					if (str_ != 0) {
+						//const uint8 roomNr = _G(room)->_roomInfo->_roomNr;
+						//Common::StringArray s = _G(atds)->getTextArray(roomNr + 500, txtNr);
 						ret = txtNr;
 						_G(fontMgr)->setFont(_G(font8));
 						calcTxtXy(&x, &y, str_, anz);
