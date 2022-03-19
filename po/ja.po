@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-18 19:21+0000\n"
+"PO-Revision-Date: 2022-03-19 08:48+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4443,12 +4443,10 @@ msgid "Versailles 1685 support is not compiled in"
 msgstr "Versailles 1685のサポートはコンパイルされていません"
 
 #: engines/director/events.cpp:90
-#, fuzzy
-#| msgid "The game wants to prevents you from quitting. Do you want to quit?"
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
-msgstr "ゲームは終了を防ぎたいようです。それでも終了しますか?"
+msgstr "このまま進めるとゲームが終了します。それでもよろしいですか?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
