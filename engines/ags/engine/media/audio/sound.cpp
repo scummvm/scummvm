@@ -39,22 +39,22 @@
 
 namespace AGS3 {
 
-SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, bool loop) {
+SOUNDCLIP *my_load_wave(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeWAVStream(data, DisposeAfterUse::YES);
-		return new SoundClipWave<MUS_WAVE>(audioStream, voll, loop);
+		return new SoundClipWave<MUS_WAVE>(audioStream, loop);
 	} else {
 		return nullptr;
 	}
 }
 
-SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop) {
+SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, bool loop) {
 #ifdef USE_MAD
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(data, DisposeAfterUse::YES);
-		return new SoundClipWave<MUS_MP3>(audioStream, voll, false);
+		return new SoundClipWave<MUS_MP3>(audioStream, false);
 	} else {
 		return nullptr;
 	}
@@ -63,16 +63,16 @@ SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop) 
 #endif
 }
 
-SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
-	return my_load_static_mp3(asset_name, voll, false);
+SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, bool loop) {
+	return my_load_static_mp3(asset_name, loop);
 }
 
-SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop) {
+SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, bool loop) {
 #ifdef USE_VORBIS
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeVorbisStream(data, DisposeAfterUse::YES);
-		return new SoundClipWave<MUS_OGG>(audioStream, voll, loop);
+		return new SoundClipWave<MUS_OGG>(audioStream, loop);
 	} else {
 		return nullptr;
 	}
@@ -81,8 +81,8 @@ SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop) 
 #endif
 }
 
-SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll) {
-	return my_load_static_ogg(asset_name, voll, false);
+SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, bool loop) {
+	return my_load_static_ogg(asset_name, loop);
 }
 
 SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool loop) {
@@ -125,7 +125,7 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop) {
 			return nullptr;
 		}
 
-		return new SoundClipWave<MUS_MOD>(audioStream, 255, loop);
+		return new SoundClipWave<MUS_MOD>(audioStream, loop);
 	} else {
 		return nullptr;
 	}

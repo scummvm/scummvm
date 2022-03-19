@@ -202,14 +202,14 @@ SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
 	AssetPath asset_name = get_audio_clip_assetpath(audioClip->bundlingType, audioClip->fileName);
 	switch (audioClip->fileType) {
 	case eAudioFileOGG:
-		soundClip = my_load_static_ogg(asset_name, audioClip->defaultVolume, repeat);
+		soundClip = my_load_static_ogg(asset_name, repeat);
 		break;
 	case eAudioFileMP3:
-		soundClip = my_load_static_mp3(asset_name, audioClip->defaultVolume, repeat);
+		soundClip = my_load_static_mp3(asset_name, repeat);
 		break;
 	case eAudioFileWAV:
 	case eAudioFileVOC:
-		soundClip = my_load_wave(asset_name, audioClip->defaultVolume, repeat);
+		soundClip = my_load_wave(asset_name, repeat);
 		break;
 	case eAudioFileMIDI:
 		soundClip = my_load_midi(asset_name, repeat);

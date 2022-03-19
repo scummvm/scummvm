@@ -172,7 +172,7 @@ public:
 	SoundClipState _state;
 	bool _waitingToPlay = false;
 
-	SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat = false);
+	SoundClipWaveBase(Audio::AudioStream *stream, bool repeat = false);
 	~SoundClipWaveBase() override {
 		destroy();
 	}
@@ -199,8 +199,8 @@ public:
 
 template<int SOUND_TYPE>
 struct SoundClipWave : public SoundClipWaveBase {
-	SoundClipWave(Audio::AudioStream *stream, int volume, bool repeat = false) :
-		SoundClipWaveBase(stream, volume, repeat) {}
+	SoundClipWave(Audio::AudioStream *stream, bool repeat = false) :
+		SoundClipWaveBase(stream, repeat) {}
 	int get_sound_type() const {
 		return SOUND_TYPE;
 	}

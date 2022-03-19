@@ -32,11 +32,11 @@ SOUNDCLIP::SOUNDCLIP() : _panning(12. / 8), _panningAsPercentage(0),
 
 /*------------------------------------------------------------------*/
 
-SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat) :
+SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, bool repeat) :
 	SOUNDCLIP(), _state(SoundClipInitial), _stream(stream) {
 	_mixer = ::AGS::g_vm->_mixer;
 	_repeat = repeat;
-	_vol = volume;
+	_vol = 255;
 
 	if (repeat) {
 		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);

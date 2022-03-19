@@ -33,11 +33,11 @@
 
 namespace AGS3 {
 
-SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, bool loop);
-SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll);
-SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop);
-SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop);
-SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll);
+SOUNDCLIP *my_load_wave(const AssetPath &asset_name, bool loop);
+SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, bool loop);
+SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, bool loop);
+SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, bool loop);
+SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, bool doLoop);
 SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool loop);
 SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop);
 
