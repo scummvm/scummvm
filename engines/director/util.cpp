@@ -394,6 +394,10 @@ Common::String getPath(Common::String path, Common::String cwd) {
 bool testPath(Common::String &path, bool directory) {
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 
+	// Test if we have it right in the SearchMan
+	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)))
+		return true;
+
 	// check for the game data dir
 	if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
 		if (!directory)
