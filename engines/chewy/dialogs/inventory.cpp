@@ -382,36 +382,39 @@ void Inventory::menu() {
 }
 
 int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
-	int16 txt_anz = 0;
+	int16 lineCount = 0;
 	int16 xoff = 0;
 	int16 yoff = 0;
-	int16 txt_zeilen = 0;
+	int16 visibleCount = 0;
+	Common::String itemName;
+	Common::StringArray itemDesc;
 	char *txt_adr = nullptr;
-	char *txt_name_adr = nullptr;
 	char c[2] = { 0 };
 	int16 ret = -1;
 	bool endLoop = false;
-	int16 txt_start = 0;
+	int16 startLine = 0;
 	bool mouseFl = true;
 
 	if (mode == INV_ATS_MODE) {
-		_G(atds)->load_atds(invent_nr, INV_ATS_DATA);
-		txt_name_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_NAME, &txt_anz, INV_ATS_DATA);
-		txt_adr = _G(atds)->ats_get_txt(invent_nr, TXT_MARK_LOOK, &txt_anz, INV_ATS_DATA);
-		xoff = strlen(txt_name_adr);
+		itemName = _G(atds)->getTextEntry(invent_nr + 700, TXT_MARK_NAME);
+		itemDesc = _G(atds)->getTextArray(invent_nr + 700, TXT_MARK_LOOK);
+		lineCount = itemDesc.size();
+		xoff = itemName.size();
 		xoff *= _G(font8)->getDataWidth();
 		xoff = (254 - xoff) / 2;
-		txt_zeilen = 2;
+		visibleCount = 2;
 		yoff = 10;
-
 	} else if (mode == INV_USE_ATS_MODE) {
-		txt_zeilen = 3;
+		visibleCount = 3;
 		yoff = 0;
 
+		//Common::StringArray tmp;
 		if (ats_nr >= 15000) {
-			txt_adr = _G(atds)->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
+			txt_adr = _G(atds)->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &lineCount, INV_USE_DEF);
+			//tmp = _G(atds)->getText(ats_nr - 15000 + 800, 0);
 		} else {
-			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &txt_anz, INV_USE_DATA);
+			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &lineCount, INV_USE_DATA);
+			//tmp = _G(atds)->getText(ats_nr + 800, 0);
 		}
 		if (!txt_adr) {
 			endLoop = true;
@@ -477,13 +480,13 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			break;
 
 		case Common::KEYCODE_UP:
-			if (txt_start > 0)
-				--txt_start;
+			if (startLine > 0)
+				--startLine;
 			break;
 
 		case Common::KEYCODE_DOWN:
-			if (txt_start < txt_anz - txt_zeilen)
-				++txt_start;
+			if (startLine < lineCount - visibleCount)
+				++startLine;
 			break;
 
 		default:
@@ -493,16 +496,17 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 		setupScreen(NO_SETUP);
 		plot_menu();
-		_G(fontMgr)->setFont(_G(font8));
 
-		if (mode == INV_ATS_MODE)
+		if (mode == INV_ATS_MODE) {
+			_G(fontMgr)->setFont(_G(font8));
 			_G(out)->printxy(WIN_LOOK_X + xoff, WIN_LOOK_Y, 255, 300,
-				_G(scr_width), txt_name_adr);
+							 _G(scr_width), itemName.c_str());
+		}
 
 		_G(fontMgr)->setFont(_G(font6));
 
-		if (txt_anz > txt_zeilen) {
-			if (txt_start > 0) {
+		if (lineCount > visibleCount) {
+			if (startLine > 0) {
 				if (rect == 6)
 					_G(out)->boxFill(WIN_INF_X + 262, WIN_INF_Y + 136, WIN_INF_X + 272,
 						WIN_INF_Y + 136 + 14, 41);
@@ -511,7 +515,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 					_G(scr_width), c);
 			}
 
-			if (txt_start < txt_anz - txt_zeilen) {
+			if (startLine < lineCount - visibleCount) {
 				if (rect == 7)
 					_G(out)->boxFill(WIN_INF_X + 262, WIN_INF_Y + 156, WIN_INF_X + 272,
 						WIN_INF_Y + 156 + 14, 41);
@@ -521,10 +525,19 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		}
 
 		int16 k = 0;
-		for (int16 i = txt_start; i < txt_anz && i < txt_start + txt_zeilen; i++) {
-			_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
-				_G(scr_width), _G(txt)->strPos(txt_adr, i));
-			++k;
+
+		if (mode == INV_ATS_MODE) {
+			for (int16 i = startLine; i < lineCount && i < startLine + visibleCount; i++) {
+				_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
+								 _G(scr_width), itemDesc[i].c_str());
+				++k;
+			}
+		} else {
+			for (int16 i = startLine; i < lineCount && i < startLine + visibleCount; i++) {
+				_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
+								 _G(scr_width), _G(txt)->strPos(txt_adr, i));
+				++k;
+			}
 		}
 
 		_G(cur)->plot_cur();
