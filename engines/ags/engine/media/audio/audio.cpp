@@ -184,7 +184,8 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 		for (int i = 0; i < clip->type; i++) {
 			startAtChannel += _GP(game).audioClipTypes[i].reservedChannels;
 		}
-		endBeforeChannel = startAtChannel + _GP(game).audioClipTypes[clip->type].reservedChannels;
+		endBeforeChannel = MIN(_GP(game).numGameChannels,
+			startAtChannel + _GP(game).audioClipTypes[clip->type].reservedChannels);
 	}
 
 	for (int i = startAtChannel; i < endBeforeChannel; i++) {
