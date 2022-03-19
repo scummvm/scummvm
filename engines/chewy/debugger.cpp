@@ -49,6 +49,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
 	registerCmd("video", WRAP_METHOD(Debugger, Cmd_PlayVideo));
 	registerCmd("walk", WRAP_METHOD(Debugger, Cmd_WalkAreas));
+	registerCmd("text", WRAP_METHOD(Debugger, Cmd_Text));
 }
 
 Debugger::~Debugger() {
@@ -97,6 +98,21 @@ bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
 bool Debugger::Cmd_WalkAreas(int argc, const char **argv) {
 	g_engine->_showWalkAreas = (argc == 2) && !strcmp(argv[1], "on");
 	return false;
+}
+
+bool Debugger::Cmd_Text(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Usage: text <chunk> <entry>\n");
+		return true;
+	}
+
+	int chunk = atoi(argv[1]);
+	int entry = atoi(argv[2]);
+	Common::StringArray text = _G(atds)->getTextArray(chunk, entry);
+	for (int i = 0; i < text.size(); i++) {
+		debugPrintf("%d: %s\n", i, text[i].c_str());
+	}
+	return true;
 }
 
 } // namespace Chewy

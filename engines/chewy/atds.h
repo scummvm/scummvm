@@ -22,6 +22,8 @@
 #ifndef CHEWY_ATDS_H
 #define CHEWY_ATDS_H
 
+#include "common/str.h"
+#include "common/str-array.h"
 #include "chewy/resource.h"
 
 namespace Chewy {
@@ -91,6 +93,7 @@ enum DisplayMode {
 #define ADS_RESTART_BIT 4
 
 struct KbdMouseInfo;
+class Text;
 
 struct AdsDiaHeaders {
 	int16 _nr;
@@ -125,6 +128,7 @@ struct AadInfo {
 	void load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() { return 6; }
 };
+
 class AadInfoArray : public Common::Array<AadInfo> {
 public:
 	void load(const void *data, size_t count);
@@ -309,6 +313,9 @@ public:
 	void loadAtdsStream(Common::SeekableReadStream *stream);
 	uint32 getAtdsStreamSize() const;
 
+	Common::StringArray getTextArray(uint dialogNum, uint entryNum);
+	Common::String getTextEntry(uint dialogNum, uint entryNum);
+
 private:
 	int16 get_delay(int16 txt_len);
 	void initItemUseWith();
@@ -354,6 +361,7 @@ private:
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
 	DialogResource *_dialogResource;
+	Text *_text;
 
 	Common::HashMap<uint32, uint16> _itemUseWithDesc;
 };

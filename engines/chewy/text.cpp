@@ -31,13 +31,13 @@ Text::Text() : Resource("atds.tap") {
 Text::~Text() {
 }
 
-TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
-	if (dialogNum >= kADSTextMax)
-		error("getDialog(): Invalid entry number requested, %d (max %d)", dialogNum, kADSTextMax - 1);
+TextEntryList *Text::getDialog(uint chunk, uint entry) {
+	if (chunk >= kADSTextMax)
+		error("getDialog(): Invalid entry number requested, %d (max %d)", chunk, kADSTextMax - 1);
 
 	TextEntryList *l = new TextEntryList();
 
-	byte *data = getChunkData(dialogNum);
+	byte *data = getChunkData(chunk);
 	byte *ptr = data;
 
 	ptr += 2;  // entry number
@@ -46,7 +46,7 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 	ptr += 2;  // cursor number
 	ptr += 13; // misc data
 
-	for (uint i = 0; i <= entryNum; i++) {
+	for (uint i = 0; i <= entry; i++) {
 		do {
 			TextEntry curDialog;
 			ptr++; // current entry
@@ -63,7 +63,7 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 				}
 			} while (*ptr != kEndText);
 
-			if (i == entryNum)
+			if (i == entry)
 				l->push_back(curDialog);
 
 		} while (*(ptr + 1) != kEndEntry);
@@ -79,39 +79,38 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 	return l;
 }
 
-TextEntry *Text::getText(uint dialogNum, uint entryNum) {
-	if (dialogNum < kADSTextMax)
-		error("getText(): Invalid entry number requested, %d (min %d)", dialogNum, kADSTextMax);
+TextEntry *Text::getText(uint chunk, uint entry) {
+	if (chunk < kADSTextMax)
+		error("getText(): Invalid entry number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
-	bool isText = (dialogNum >= kADSTextMax && dialogNum < kADSTextMax + kATSTextMax);
-	bool isAutoDialog = (dialogNum >= kADSTextMax + kATSTextMax && dialogNum < kADSTextMax + kATSTextMax + kAADTextMax);
+	bool isText = (chunk >= kADSTextMax && chunk < kADSTextMax + kATSTextMax);
+	bool isAutoDialog = (chunk >= kADSTextMax + kATSTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax);
 
-	byte *data = getChunkData(dialogNum);
+	byte *data = getChunkData(chunk);
 	byte *ptr = data;
 
 	if (isAutoDialog)
 		ptr += 3;
 
-	for (uint i = 0; i <= entryNum; i++) {
+	for (uint i = 0; i <= entry; i++) {
 		ptr += 13;
 		d->_speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
 		ptr += 2;
 
 		do {
-			if (i == entryNum)
+			if (i == entry)
 				d->_text += *ptr++;
 			else
 				ptr++;
 
 			if (*ptr == 0 && *(ptr + 1) != kEndText) {
-				// TODO: Split lines
-				*ptr = ' ';
+				*ptr = '|';
 			}
 		} while (*ptr);
 
 		if (*(ptr + 1) != kEndText || *(ptr + 2) != kEndChunk) {
-			warning("Invalid text resource - %d, %d", dialogNum, entryNum);
+			warning("Invalid text resource - %d, %d", chunk, entry);
 
 			delete[] data;
 			delete d;
@@ -124,7 +123,7 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 		if (isAutoDialog)
 			ptr += 3;
 
-		if (i == entryNum) {
+		if (i == entry) {
 			// Found
 			delete[] data;
 			return d;
@@ -138,6 +137,29 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 	return nullptr;
 }
 
+Common::StringArray Text::getTextArray(uint chunk, uint entry) {
+	TextEntry *textData = getText(chunk, entry);
+	Common::StringArray res;
+	Common::String txt = textData ? textData->_text : "";
+	char *text = new char[txt.size() + 1];
+	Common::strlcpy(text, txt.c_str(), txt.size() + 1);
+	char *line = strtok(text, "|");
+
+	while (line) {
+		res.push_back(line);
+		line = strtok(nullptr, "|");
+	}
+
+	delete[] text;
+	delete textData;
+
+	return res;
+}
+
+Common::String Text::getTextEntry(uint chunk, uint entry) {
+	Common::StringArray res = getTextArray(chunk, entry);
+	return res[0];
+}
 
 void Text::crypt(char *txt, uint32 size) {
 	uint8 *sp = (uint8 *)txt;
@@ -147,10 +169,10 @@ void Text::crypt(char *txt, uint32 size) {
 	}
 }
 
-char *Text::strPos(char *txtAdr, int16 pos) {
-	char *ptr = txtAdr;
+const char *Text::strPos(const char *txtAdr, int16 pos) {
+	const char *ptr = txtAdr;
 	for (int16 i = 0; i < pos;) {
-		if (*ptr == 0)
+		if (*ptr == 0 || *ptr == '|')
 			++i;
 		++ptr;
 	}

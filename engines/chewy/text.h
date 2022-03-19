@@ -82,10 +82,12 @@ public:
 	* - inventory text (INV) - 700 - 799
 	* - use text (USE) - 800 - 899
 	*/
-	TextEntry *getText(uint dialogNum, uint entryNum);
+	TextEntry *getText(uint chunk, uint entry);
+	Common::StringArray getTextArray(uint chunk, uint entry);
+	Common::String getTextEntry(uint chunk, uint entry);
 
 	void crypt(char *txt, uint32 size);
-	char *strPos(char *txtAdr, int16 pos);
+	const char *strPos(const char *txtAdr, int16 pos);
 };
 
 } // namespace Chewy

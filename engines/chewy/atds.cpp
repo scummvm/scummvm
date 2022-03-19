@@ -27,6 +27,7 @@
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/sound.h"
+#include "chewy/text.h"
 
 namespace Chewy {
 
@@ -108,6 +109,7 @@ Atdsys::Atdsys() {
 	_invUseMem = nullptr;
 
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
+	_text = new Text();
 
 	for (int i = 0; i < 4; ++i)
 		_ats_st_header[i] = nullptr;
@@ -1367,4 +1369,13 @@ void Atdsys::loadAtdsStream(Common::SeekableReadStream* stream) {
 uint32 Atdsys::getAtdsStreamSize() const {
 	return _dialogResource->getStreamSize();
 }
+
+Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum) {
+	return _text->getTextArray(dialogNum, entryNum);
+}
+
+Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum) {
+	return _text->getTextEntry(dialogNum, entryNum);
+}
+
 } // namespace Chewy
