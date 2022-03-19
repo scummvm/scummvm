@@ -374,9 +374,9 @@ static HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData
 			chan_info.Priority = in->ReadInt32();
 			chan_info.Repeat = in->ReadInt32();
 			chan_info.Vol = in->ReadInt32();
-			chan_info.Pan = in->ReadInt32();
+			in->ReadInt32(); // unused
 			chan_info.VolAsPercent = in->ReadInt32();
-			chan_info.PanAsPercent = in->ReadInt32();
+			chan_info.Pan = in->ReadInt32();
 			chan_info.Speed = 1000;
 			if (_G(loaded_game_file_version) >= kGameVersion_340_2)
 				chan_info.Speed = in->ReadInt32();

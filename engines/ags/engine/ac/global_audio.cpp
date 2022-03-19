@@ -154,7 +154,7 @@ int PlaySoundEx(int val1, int channel) {
 	}
 
 	soundfx->_priority = 10;
-	soundfx->set_volume(_GP(play).sound_volume);
+	soundfx->set_volume255(_GP(play).sound_volume);
 	AudioChans::SetChannel(channel, soundfx);
 	return channel;
 }
@@ -341,7 +341,7 @@ void SetChannelVolume(int chan, int newvol) {
 			_GP(ambient)[chan].vol = newvol;
 			update_ambient_sound_vol();
 		} else
-			ch->set_volume(newvol);
+			ch->set_volume255(newvol);
 	}
 }
 
@@ -388,7 +388,7 @@ void PlayMP3File(const char *filename) {
 	}
 
 	if (clip) {
-		clip->set_volume(150);
+		clip->set_volume255(150);
 		if (clip->play()) {
 			AudioChans::SetChannel(useChan, clip);
 			_G(current_music_type) = sound_type;
@@ -435,7 +435,7 @@ void PlaySilentMIDI(int mnum) {
 		clip = nullptr;
 		quitprintf("!PlaySilentMIDI: failed to play aMusic%d", mnum);
 	}
-	clip->set_volume_percent(0);
+	clip->set_volume100(0);
 }
 
 void SetSpeechVolume(int newvol) {
@@ -444,7 +444,7 @@ void SetSpeechVolume(int newvol) {
 
 	auto *ch = AudioChans::GetChannel(SCHAN_SPEECH);
 	if (ch)
-		ch->set_volume(newvol);
+		ch->set_volume255(newvol);
 	_GP(play).speech_volume = newvol;
 }
 
@@ -519,7 +519,7 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 	}
 
 	if (speechmp3 != nullptr) {
-		speechmp3->set_volume(_GP(play).speech_volume);
+		speechmp3->set_volume255(_GP(play).speech_volume);
 		if (!speechmp3->play()) {
 			// not assigned to a channel, so clean up manually.
 			delete speechmp3;

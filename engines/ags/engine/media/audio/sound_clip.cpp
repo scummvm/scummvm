@@ -27,7 +27,41 @@ namespace AGS3 {
 SOUNDCLIP::SOUNDCLIP() : _panning(12. / 8), _panningAsPercentage(0),
 	_sourceClipID(-1), _sourceClipType(0), _speed(1000), _priority(50),
 	_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0), _muted(false),
-	_volAsPercentage(0), _vol(0), _volModifier(0), _repeat(false), _directionalVolModifier(0) {
+	_vol100(0), _vol255(0), _volModifier(0), _repeat(false), _directionalVolModifier(0) {
+}
+
+void SOUNDCLIP::set_volume100(int volume) {
+	_vol100 = volume;
+	_vol255 = (volume * 255) / 100;
+	adjust_volume();
+}
+
+// Sets the current volume property in units of 255
+void SOUNDCLIP::set_volume255(int volume) {
+	_vol255 = volume;
+	_vol100 = (_vol255 * 100) / 255;
+	adjust_volume();
+}
+
+void SOUNDCLIP::set_volume_direct(int vol_percent, int vol_absolute) {
+	//vol255 = vol255;
+	_vol100 = vol_percent;
+	adjust_volume();
+}
+
+void SOUNDCLIP::set_mute(bool mute) {
+	_muted = mute;
+	adjust_volume();
+}
+
+void SOUNDCLIP::apply_volume_modifier(int mod) {
+	_volModifier = mod;
+	adjust_volume();
+}
+
+void SOUNDCLIP::apply_directional_modifier(int mod) {
+	_directionalVolModifier = mod;
+	adjust_volume();
 }
 
 /*------------------------------------------------------------------*/
@@ -36,7 +70,7 @@ SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, bool repeat) :
 	SOUNDCLIP(), _state(SoundClipInitial), _stream(stream) {
 	_mixer = ::AGS::g_vm->_mixer;
 	_repeat = repeat;
-	_vol = 255;
+	_vol255 = 255;
 
 	if (repeat) {
 		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);
@@ -45,7 +79,7 @@ SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, bool repeat) :
 	}
 }
 
-void SoundClipWaveBase::destroy() {
+SoundClipWaveBase::~SoundClipWaveBase() {
 	_mixer->stopHandle(_soundHandle);
 	delete _stream;
 	_stream = nullptr;
@@ -62,7 +96,7 @@ void SoundClipWaveBase::poll() {
 int SoundClipWaveBase::play() {
 	if (_soundType != Audio::Mixer::kPlainSoundType) {
 		_mixer->playStream(_soundType, &_soundHandle, _stream,
-			-1, _vol, 0, DisposeAfterUse::NO);
+			-1, _vol255, 0, DisposeAfterUse::NO);
 	} else {
 		_waitingToPlay = true;
 	}
@@ -139,11 +173,6 @@ int SoundClipWaveBase::get_length_ms() {
 	}
 }
 
-void SoundClipWaveBase::set_volume(int volume) {
-	_vol = volume;
-	_mixer->setChannelVolume(_soundHandle, volume);
-}
-
 void SoundClipWaveBase::set_panning(int newPanning) {
 	_mixer->setChannelBalance(_soundHandle, newPanning);
 }
@@ -154,7 +183,7 @@ void SoundClipWaveBase::set_speed(int new_speed) {
 }
 
 void SoundClipWaveBase::adjust_volume() {
-	// TODO: See if this method is needed
+	_mixer->setChannelVolume(_soundHandle, _vol255);
 }
 
 } // namespace AGS3

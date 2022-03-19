@@ -39,12 +39,6 @@ namespace AGS3 {
 using AGS::Shared::Bitmap;
 using AGS::Shared::Graphics;
 
-
-
-
-
-
-
 int ViewFrame_GetFlipped(ScriptViewFrame *svf) {
 	if (_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
 		return 1;
@@ -150,7 +144,7 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 		auto *ch = AudioChans::GetChannel(channel->id);
 
 		if (ch)
-			ch->set_volume_percent(ch->get_volume() * sound_volume / 100);
+			ch->set_volume100(ch->get_volume100() * sound_volume / 100);
 	}
 }
 

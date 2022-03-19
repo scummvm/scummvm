@@ -530,7 +530,7 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 		return;
 	}
 
-	newcha->set_volume(volume);
+	newcha->set_volume255(volume);
 	AudioChans::SetChannel(channel, newcha);
 }
 // Engine interface 12 and above are below

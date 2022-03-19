@@ -352,10 +352,10 @@ HSaveError WriteAudio(Stream *out) {
 			out->WriteInt32(ch->get_pos());
 			out->WriteInt32(ch->_priority);
 			out->WriteInt32(ch->_repeat ? 1 : 0);
-			out->WriteInt32(ch->_vol);
-			out->WriteInt32(ch->_panning);
-			out->WriteInt32(ch->_volAsPercentage);
-			out->WriteInt32(ch->_panningAsPercentage);
+			out->WriteInt32(ch->get_volume255());
+			out->WriteInt32(0); // unused
+			out->WriteInt32(ch->get_volume100());
+			out->WriteInt32(ch->get_panning());
 			out->WriteInt32(ch->get_speed());
 			// since version 1
 			out->WriteInt32(ch->_xSource);
@@ -415,9 +415,9 @@ HSaveError ReadAudio(Stream *in, int32_t cmp_ver, const PreservedParams &pp, Res
 			chan_info.Priority = in->ReadInt32();
 			chan_info.Repeat = in->ReadInt32();
 			chan_info.Vol = in->ReadInt32();
-			chan_info.Pan = in->ReadInt32();
+			in->ReadInt32(); // unused
 			chan_info.VolAsPercent = in->ReadInt32();
-			chan_info.PanAsPercent = in->ReadInt32();
+			chan_info.Pan = in->ReadInt32();
 			chan_info.Speed = 1000;
 			chan_info.Speed = in->ReadInt32();
 			if (cmp_ver >= 1) {

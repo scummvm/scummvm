@@ -57,7 +57,7 @@ namespace AGS {
  * - We have slightly different blending code, commit needs
  * to be modified to take that into account
  *
- * Skipped commits:
+ * Skipped upstream commits:
  * 22b0f2b93e314b167f80e89a9dd138202a7e28a7
  * * Engine: merged SOUNDCLIP and CLIP_OPENAL
  * ScummVM has it's own sound clip classes, so doesn't have CLIP_OPENAL

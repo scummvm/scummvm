@@ -98,7 +98,6 @@ struct RestoredData {
 		int Vol = 0;
 		int VolAsPercent = 0;
 		int Pan = 0;
-		int PanAsPercent = 0;
 		int Speed = 0;
 		// since version 1
 		int XSource = -1;

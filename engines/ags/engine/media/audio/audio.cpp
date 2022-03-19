@@ -124,7 +124,7 @@ static void move_track_to_crossfade_channel(int currentChannel, int crossfadeSpe
 
 	_GP(play).crossfading_out_channel = SPECIAL_CROSSFADE_CHANNEL;
 	_GP(play).crossfade_step = 0;
-	_GP(play).crossfade_initial_volume_out = cfade_clip->get_volume();
+	_GP(play).crossfade_initial_volume_out = cfade_clip->get_volume100();
 	_GP(play).crossfade_out_volume_per_step = crossfadeSpeed;
 
 	_GP(play).crossfading_in_channel = fadeInChannel;
@@ -221,7 +221,7 @@ SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
 		quitprintf("AudioClip.Play: invalid audio file type encountered: %d", audioClip->fileType);
 	}
 	if (soundClip != nullptr) {
-		soundClip->set_volume_percent(audioClip->defaultVolume);
+		soundClip->set_volume100(audioClip->defaultVolume);
 		soundClip->_sourceClipID = audioClip->id;
 		soundClip->_sourceClipType = audioClip->type;
 	}
@@ -238,9 +238,9 @@ static void audio_update_polled_stuff() {
 
 	if (_GP(play).crossfading_out_channel > 0) {
 		SOUNDCLIP *ch = AudioChans::GetChannel(_GP(play).crossfading_out_channel);
-		int newVolume = ch ? ch->get_volume() - _GP(play).crossfade_out_volume_per_step : 0;
+		int newVolume = ch ? ch->get_volume100() - _GP(play).crossfade_out_volume_per_step : 0;
 		if (newVolume > 0) {
-			ch->set_volume_percent(newVolume);
+			ch->set_volume100(newVolume);
 		} else {
 			stop_and_destroy_channel(_GP(play).crossfading_out_channel);
 			_GP(play).crossfading_out_channel = 0;
@@ -252,12 +252,12 @@ static void audio_update_polled_stuff() {
 
 	if (_GP(play).crossfading_in_channel > 0) {
 		SOUNDCLIP *ch = AudioChans::GetChannel(_GP(play).crossfading_in_channel);
-		int newVolume = ch ? ch->get_volume() + _GP(play).crossfade_in_volume_per_step : 0;
+		int newVolume = ch ? ch->get_volume100() + _GP(play).crossfade_in_volume_per_step : 0;
 		if (newVolume > _GP(play).crossfade_final_volume_in) {
 			newVolume = _GP(play).crossfade_final_volume_in;
 		}
 
-		ch->set_volume_percent(newVolume);
+		ch->set_volume100(newVolume);
 
 		if (newVolume >= _GP(play).crossfade_final_volume_in) {
 			_GP(play).crossfading_in_channel = 0;
@@ -332,7 +332,7 @@ ScriptAudioChannel *play_audio_clip_on_channel(int channel, ScriptAudioClip *cli
 	soundfx->_priority = priority;
 
 	if (_GP(play).crossfading_in_channel == channel) {
-		soundfx->set_volume_percent(0);
+		soundfx->set_volume100(0);
 	}
 
 	// Mute the audio clip if fast-forwarding the cutscene
@@ -347,7 +347,7 @@ ScriptAudioChannel *play_audio_clip_on_channel(int channel, ScriptAudioClip *cli
 		// channel for this audio type? It does not even check if
 		// anything of this type is currently playing.
 		if (_GP(game).audioClipTypes[clip->type].reservedChannels != 1)
-			soundfx->set_volume_percent(0);
+			soundfx->set_volume100(0);
 	}
 
 	if (soundfx->play_from(fromOffset) == 0) {
@@ -389,7 +389,7 @@ void update_queued_clips_volume(int audioType, int new_vol) {
 		if (sndclip) {
 			ScriptAudioClip *clip = &_GP(game).audioClips[_GP(play).new_music_queue[i].audioClipIndex];
 			if (clip->type == audioType)
-				sndclip->set_volume_percent(new_vol);
+				sndclip->set_volume100(new_vol);
 		}
 	}
 }
@@ -513,11 +513,11 @@ void update_directional_sound_vol() {
 		auto *ch = AudioChans::GetChannelIfPlaying(chnum);
 		if ((ch != nullptr) && (ch->_xSource >= 0)) {
 			ch->apply_directional_modifier(
-			    get_volume_adjusted_for_distance(ch->_vol,
-			                                     ch->_xSource,
-			                                     ch->_ySource,
-			                                     ch->_maximumPossibleDistanceAway) -
-			    ch->_vol);
+				get_volume_adjusted_for_distance(ch->get_volume255(),
+					ch->_xSource,
+					ch->_ySource,
+					ch->_maximumPossibleDistanceAway) -
+				ch->get_volume255());
 		}
 	}
 }
@@ -557,7 +557,7 @@ void update_ambient_sound_vol() {
 
 		auto *ch = AudioChans::GetChannelIfPlaying(thisSound->channel);
 		if (ch)
-			ch->set_volume(wantvol);
+			ch->set_volume255(wantvol);
 	}
 }
 
@@ -859,7 +859,7 @@ void update_music_volume() {
 				if (_G(crossFading) > 0) {
 					auto *ch = AudioChans::GetChannel(_G(crossFading));
 					if (ch)
-						ch->set_volume((curvol > targetVol) ? targetVol : curvol);
+						ch->set_volume255((curvol > targetVol) ? targetVol : curvol);
 				}
 
 				newvol -= curvol;
@@ -869,7 +869,7 @@ void update_music_volume() {
 		}
 		auto *ch = AudioChans::GetChannel(SCHAN_MUSIC);
 		if (ch)
-			ch->set_volume(newvol);
+			ch->set_volume255(newvol);
 	}
 }
 
@@ -882,7 +882,6 @@ void post_new_music_check(int newchannel) {
 		if (AudioChans::GetChannel(SCHAN_MUSIC) != nullptr)
 			_G(crossFading) = -1;
 	}
-
 }
 
 int prepare_for_new_music() {

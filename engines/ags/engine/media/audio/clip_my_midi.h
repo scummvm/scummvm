@@ -35,11 +35,7 @@ struct MYMIDI : public SOUNDCLIP {
 	SoundClipState _state;
 
 	MYMIDI(Common::SeekableReadStream *data, bool repeat);
-	~MYMIDI() override {
-		destroy();
-	}
-
-	void destroy() override;
+	~MYMIDI() override;
 
 	void poll() override;
 
@@ -63,7 +59,6 @@ struct MYMIDI : public SOUNDCLIP {
 	int play_from(int position) override;
 	bool is_playing() override;
 	bool is_paused() override;
-	void set_volume(int volume) override;
 	void set_panning(int newPanning) override;
 	void set_speed(int new_speed) override;
 	void adjust_volume() override;

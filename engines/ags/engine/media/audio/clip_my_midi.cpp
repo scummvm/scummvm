@@ -32,7 +32,7 @@ MYMIDI::MYMIDI(Common::SeekableReadStream *data, bool repeat) :
 	_repeat = repeat;
 }
 
-void MYMIDI::destroy() {
+MYMIDI::~MYMIDI() {
 	::AGS::g_music->stop();
 	delete _data;
 	_data = nullptr;
@@ -102,11 +102,6 @@ bool MYMIDI::is_paused() {
 	return false;
 }
 
-void MYMIDI::set_volume(int volume) {
-	_vol = volume;
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-}
-
 void MYMIDI::set_panning(int newPanning) {
 	// No implementation for MIDI
 }
@@ -117,7 +112,7 @@ void MYMIDI::set_speed(int new_speed) {
 }
 
 void MYMIDI::adjust_volume() {
-	// TODO: See if this method is needed
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _vol255);
 }
 
 } // namespace AGS3
