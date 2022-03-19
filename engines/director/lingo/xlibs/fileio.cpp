@@ -172,7 +172,7 @@ void FileIO::m_new(int nargs) {
 			// Maybe we're trying to read one of the game files
 			Common::File *f = new Common::File;
 
-			if (!f->open(origpath)) {
+			if (!f->open(Common::Path(pathMakeRelative(origpath), g_director->_dirSeparator))) {
 				delete f;
 				saveFileError();
 				me->dispose();
