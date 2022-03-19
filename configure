@@ -2900,6 +2900,10 @@ EOF
 		_freetype_found="true"
 		if test "$_debug_build" = no; then
 			_optimization_level=-O3 -g4
+	
+		append_var DEFINES "-DEMSCRIPTEN"
+		add_line_to_config_mk 'EMSCRIPTEN = 1'
+
 		else
 			_optimization_level=-O2
 		fi
