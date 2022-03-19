@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-18 18:26+0000\n"
+"PO-Revision-Date: 2022-03-19 08:48+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4572,8 +4572,6 @@ msgstr ""
 "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/director/events.cpp:90
-#, fuzzy
-#| msgid "The game wants to prevents you from quitting. Do you want to quit?"
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
