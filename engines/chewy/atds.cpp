@@ -26,12 +26,11 @@
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/ngsdefs.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 
 namespace Chewy {
-
-#define MAX_DIALOG_DATA_SIZE 6 * 3 * 6
 
 bool AtsTxtHeader::load(Common::SeekableReadStream *src) {
 	_txtNr = src->readUint16LE();
@@ -1004,7 +1003,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				} else {
 					if (_ssr->_next == false) {
 						++_aadv._strNr;
-						while (*_aadv._ptr++ != ATDS_END_TEXT);
+						while (*_aadv._ptr++ != ATDS_END_TEXT) {}
 
 						int16 tmp_person = _aadv._strHeader->_akPerson;
 						int16 tmp_str_nr = _aadv._strNr;
@@ -1243,7 +1242,7 @@ void Atdsys::ads_search_block(int16 blockNr, char **ptr) {
 			*ptr = start_ptr;
 		} else {
 			start_ptr += 2 + sizeof(AadStrHeader);
-			while (*start_ptr++ != ATDS_END_BLOCK);
+			while (*start_ptr++ != ATDS_END_BLOCK) {}
 			if (start_ptr[0] == ATDS_END &&
 			        start_ptr[1] == ATDS_END) {
 				ende = true;
@@ -1262,7 +1261,7 @@ void Atdsys::ads_search_item(int16 itemNr, char **blkAdr) {
 			*blkAdr = start_ptr + 1;
 		} else {
 			start_ptr += 1 + sizeof(AadStrHeader);
-			while (*start_ptr++ != ATDS_END_ENTRY);
+			while (*start_ptr++ != ATDS_END_ENTRY) {}
 			if (*start_ptr == ATDS_END_BLOCK) {
 				ende = true;
 				*blkAdr = nullptr;

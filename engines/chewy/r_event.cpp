@@ -33,11 +33,6 @@
 
 namespace Chewy {
 
-//#define NEW_VIDEO_CODE 1
-
-#define STERNE_ANI 17
-#define TUER_ZU_ANI 3
-
 void play_scene_ani(int16 nr, int16 mode) {
 #define ROOM_1_1 101
 #define ROOM_1_2 102
@@ -859,7 +854,7 @@ void flic_cut(int16 nr) {
 		_G(sndPlayer)->fadeOut(0);
 		_G(out)->ausblenden(1);
 		_G(out)->cls();
-		while (_G(sndPlayer)->musicPlaying());
+		while (_G(sndPlayer)->musicPlaying()) {}
 		_G(sndPlayer)->setLoopMode(_G(gameState).soundLoopMode);
 		break;
 
@@ -879,7 +874,7 @@ void flic_cut(int16 nr) {
 		_G(sndPlayer)->fadeOut(0);
 		_G(out)->ausblenden(1);
 		_G(out)->cls();
-		while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT);
+		while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {}
 		break;
 
 	case FCUT_065:

@@ -324,7 +324,6 @@ private:
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
 	char *_atsMem = nullptr;
 	uint8 *_ats_sheader = nullptr;
-	char *_atds_id_ptr = nullptr;
 	AadVar _aadv;
 	AtsVar _atsv;
 	AdsVar _adsv;

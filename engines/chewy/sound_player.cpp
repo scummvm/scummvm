@@ -20,11 +20,10 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
 #include "chewy/chewy.h"
-#include "chewy/sound_player.h"
 #include "chewy/globals.h"
-#include "chewy/ngshext.h"
+#include "chewy/ngsdefs.h"
+#include "chewy/sound_player.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -183,12 +182,10 @@ void SoundPlayer::initMixMode() {
 }
 
 void SoundPlayer::playMod(TmfHeader *th) {
-	char *tmp;
-	int16 i;
 	ActiveSong = th;
-	tmp = (char *)ActiveSong;
+	char *tmp = (char *)ActiveSong;
 	tmp += sizeof(TmfHeader);
-	for (i = 0; i < 128; i++) {
+	for (int16 i = 0; i < 128; i++) {
 		Patterns[i] = tmp;
 		tmp += 1024;
 	}
@@ -275,8 +272,7 @@ int16 SoundPlayer::musicPlaying() {
 }
 
 void SoundPlayer::initNoteTable(uint16 sfreq) {
-	float TimerFreq;
-	TimerFreq = 7093789.2f;
+	float TimerFreq = 7093789.2f;
 	for (int j = 0; j < 16; j++) {
 		for (int i = 0; i < 48; i++)
 			RealFreq[(j * 48) + i] = (uint16)(TimerFreq / (float)(FreqTable[(j * 48) + i] << 1));

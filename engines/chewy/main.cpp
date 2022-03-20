@@ -31,7 +31,6 @@
 
 namespace Chewy {
 
-#define AUSGANG_CHECK_PIX 8
 #define SCROLL_LEFT 120
 #define SCROLL_RIGHT SCREEN_WIDTH-SCROLL_LEFT
 #define SCROLL_UP 80

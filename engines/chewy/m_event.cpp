@@ -190,7 +190,7 @@ void load_room_music(int16 room_nr) {
 			_G(sndPlayer)->setLoopMode(lp_mode);
 			if (ttp_index != _G(currentSong)) {
 				_G(sndPlayer)->stopMod();
-				while (_G(sndPlayer)->musicPlaying());
+				while (_G(sndPlayer)->musicPlaying()) {}
 				memset(_G(Ci).MusicSlot, 0, MUSIC_SLOT_SIZE);
 				_G(mem)->file->selectPoolItem(_G(music_handle), _G(EndOfPool) - ttp_index);
 				_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
