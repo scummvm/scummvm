@@ -130,10 +130,20 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	const ArchiveMemberPtr archiveMember = archive.getMember(fileName);
 	const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
 	if (plainFsNode) {
+		// This could be a MacBinary file that still has a
+		// resource fork; if it is, it needs to get opened as MacBinary
+		// and not treated as raw.
+		SeekableReadStream *stream = archive.createReadStreamForMember(fileName);
+		bool isMacBinaryFile = false;
+		if (stream) {
+			isMacBinaryFile = isMacBinary(*stream);
+		}
+		delete stream;
+
 		String fullPath = plainFsNode->getPath() + "/..namedfork/rsrc";
 		FSNode resFsNode = FSNode(fullPath);
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
-		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
+		if (!isMacBinaryFile && macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = fileName;
 			return true;
 		}
