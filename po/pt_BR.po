@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-14 06:44+0000\n"
+"PO-Revision-Date: 2022-03-21 00:27+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1995,10 +1995,8 @@ msgstr ""
 "Verifique sua conexão à Internet."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Introduzir Texto"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4516,6 +4514,8 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"O jogo não permite sair neste momento. Tem certeza de que quer sair mesmo "
+"assim?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5039,10 +5039,8 @@ msgid "Error: the game could not be saved."
 msgstr "Erro: o jogo não pôde ser salvo."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Entrada"
+msgstr "Introduzir Texto"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
