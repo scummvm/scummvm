@@ -100,7 +100,7 @@ void Room68::setup_func() {
 	case 1:
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
-			if (_G(gameState).SpeechSwitch) {
+			if (g_engine->_sound->speechEnabled()) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(_G(r68HohesC));
 				_G(det)->startDetail(_G(r68HohesC), 255, ANI_FRONT);
@@ -347,7 +347,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 	else if (!_G(gameState).R67LiedOk)
 		startAadWait(389);
 	else {
-		if (_G(gameState).DisplayText == 0)
+		if (!g_engine->_sound->subtitlesEnabled())
 			_G(sndPlayer)->fadeOut(5);
 		
 		_G(SetUpScreenFunc) = nullptr;
@@ -361,7 +361,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(det)->startDetail(27, 255, ANI_FRONT);
 
-		if (_G(gameState).DisplayText)
+		if (g_engine->_sound->subtitlesEnabled())
 			startSetAILWait(23, 3, ANI_FRONT);
 		else {
 			_G(det)->startDetail(23, 255, ANI_FRONT);
@@ -373,13 +373,13 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			_G(det)->stop_detail(23);
 		}
 
-		if (_G(gameState).DisplayText) {
+		if (g_engine->_sound->subtitlesEnabled()) {
 			g_engine->_sound->playSound(108, 1, false);
 		}
 		
 		_G(det)->startDetail(24, 255, ANI_FRONT);
 		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);
-		if (_G(gameState).DisplayText) {
+		if (g_engine->_sound->subtitlesEnabled()) {
 			startAadWait(391);
 		} else {
 			waitShowScreen(100);
@@ -416,7 +416,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(gameState)._personHide[P_NICHELLE] = false;
 		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
-		if (_G(gameState).DisplayText) {
+		if (g_engine->_sound->subtitlesEnabled()) {
 			_G(currentSong) = -1;
 			load_room_music(_G(gameState)._personRoomNr[0]);
 		}

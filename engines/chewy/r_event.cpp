@@ -352,7 +352,7 @@ void enter_room(int16 eib_nr) {
 
 	case 17:
 		Room17::entry();
-		if (_G(gameState).SoundSwitch) {
+		if (g_engine->_sound->soundEnabled()) {
 			if (!_G(gameState).R17EnergieOut)
 				g_engine->_sound->playSound(15);
 		}
@@ -366,7 +366,7 @@ void enter_room(int16 eib_nr) {
 
 	case 24:
 		Room24::entry();
-		if (_G(gameState).SoundSwitch)
+		if (g_engine->_sound->soundEnabled())
 			g_engine->_sound->playSound(17);
 		break;
 
@@ -822,7 +822,7 @@ static void playIntroSequence() {
 		start_aad(595);
 		_G(atds)->print_aad(254, 0);
 
-		if (_G(gameState).SpeechSwitch) {
+		if (g_engine->_sound->speechEnabled()) {
 			g_engine->_sound->waitForSpeechToFinish();
 		} else {
 			delay(6000);
@@ -927,7 +927,7 @@ void flic_cut(int16 nr) {
 	if (nr != FCUT_135) {
 		load_room_music(_G(gameState)._personRoomNr[0]);
 
-		if (_G(gameState).SpeechSwitch)
+		if (g_engine->_sound->speechEnabled())
 			_G(det)->enable_room_sound();
 
 		_G(uhr)->resetTimer(0, 0);

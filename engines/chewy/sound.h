@@ -75,6 +75,18 @@ public:
 	 */
 	DisplayMode getSpeechSubtitlesMode() const;
 
+	bool soundEnabled() const;
+	void toggleSound(bool enable);
+
+	bool musicEnabled() const;
+	void toggleMusic(bool enable);
+
+	bool speechEnabled() const;
+	void toggleSpeech(bool enable);
+
+	bool subtitlesEnabled() const;
+	void toggleSubtitles(bool enable);
+
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];

@@ -177,24 +177,16 @@ void MainMenu::startGame() {
 	animate();
 	exit_room(-1);
 
-	bool soundSwitch = _G(gameState).SoundSwitch;
 	uint8 soundVol = _G(gameState).SoundVol;
-	bool musicSwitch = _G(gameState).MusicSwitch;
 	uint8 musicVol = _G(gameState).MusicVol;
-	bool speechSwitch = _G(gameState).SpeechSwitch;
 	uint8 framesPerSecond = _G(gameState).FramesPerSecond;
-	bool displayText = _G(gameState).DisplayText;
 	int sndLoopMode = _G(gameState).soundLoopMode;
 
 	var_init();
 
-	_G(gameState).SoundSwitch = soundSwitch;
 	_G(gameState).SoundVol = soundVol;
-	_G(gameState).MusicSwitch = musicSwitch;
 	_G(gameState).MusicVol = musicVol;
-	_G(gameState).SpeechSwitch = speechSwitch;
 	_G(gameState).FramesPerSecond = framesPerSecond;
-	_G(gameState).DisplayText = displayText;
 	_G(gameState).soundLoopMode = sndLoopMode;
 
 	_G(gameState)._personRoomNr[P_CHEWY] = 0;

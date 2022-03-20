@@ -142,7 +142,6 @@ void var_init() {
 	init_room();
 	init_atds();
 	_G(gameState).FramesPerSecond = 7;
-	_G(gameState).DisplayText = true;
 	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
@@ -288,9 +287,6 @@ void tidy() {
 }
 
 void sound_init() {
-	_G(gameState).SoundSwitch = false;
-	_G(gameState).MusicSwitch = false;
-
 	_G(sndPlayer)->initMixMode();
 	_G(gameState).MusicVol = 63;
 	_G(gameState).SoundVol = 63;
@@ -312,10 +308,6 @@ void sound_init() {
 	}
 
 	_G(atds)->setHasSpeech(true);
-	_G(gameState).DisplayText = false;
-	_G(gameState).SoundSwitch = true;
-	_G(gameState).MusicSwitch = true;
-	_G(gameState).SpeechSwitch = true;
 }
 
 void show_intro() {

@@ -51,6 +51,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 	if (sizeof(GameFlags) != SPIELER_FLAGS_SIZE)
 		error("Invalid flags structure size");
 
+	byte dummy = 0;
+
 	// Sync the structure's bitflags
 	s.syncBytes((byte *)_flags, SPIELER_FLAGS_SIZE);
 
@@ -147,13 +149,13 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(SVal3);
 	s.syncAsSint16LE(SVal4);
 	s.syncAsSint16LE(soundLoopMode);
-	s.syncAsByte(SoundSwitch);
+	s.syncAsByte(dummy);	// sound switch
 	s.syncAsByte(SoundVol);
-	s.syncAsByte(MusicSwitch);
+	s.syncAsByte(dummy);	// music switch
 	s.syncAsByte(MusicVol);
-	s.syncAsByte(SpeechSwitch);
+	s.syncAsByte(dummy);	// speech switch
 	s.syncAsByte(FramesPerSecond);
-	s.syncAsByte(DisplayText);
+	s.syncAsByte(dummy);	// subtitles switch
 
 	return true;
 }

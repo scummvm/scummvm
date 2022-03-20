@@ -37,7 +37,7 @@ void load_room_music(int16 room_nr) {
 	int16 volume = _G(gameState).MusicVol;
 	const int16 lp_mode = 1;
 	const int16 play_mode = NORMAL_PLAY;
-	if (_G(gameState).MusicSwitch && (_G(music_handle))) {
+	if (g_engine->_sound->musicEnabled() && (_G(music_handle))) {
 		switch (room_nr) {
 		case 0:
 			ttp_index = 0;

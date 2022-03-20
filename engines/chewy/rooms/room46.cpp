@@ -160,7 +160,7 @@ void Room46::kloppe() {
 		int16 delay = _G(gameState).DelaySpeed * 50;
 		_G(atds)->print_aad(0, 0);
 
-		if (_G(gameState).SpeechSwitch) {
+		if (g_engine->_sound->speechEnabled()) {
 			g_engine->_sound->waitForSpeechToFinish();
 			continue;
 		}

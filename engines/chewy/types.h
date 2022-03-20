@@ -517,13 +517,9 @@ struct GameState : public GameFlags {
 	int16 SVal3 = 0;
 	int16 SVal4 = 0;
 	int16 soundLoopMode = 0;
-	bool SoundSwitch = false;
 	uint8 SoundVol = 0;
-	bool MusicSwitch = false;
 	uint8 MusicVol = 0;
-	bool SpeechSwitch = false;
 	uint8 FramesPerSecond = 0;
-	bool DisplayText = false;
 };
 
 struct AutoMov {

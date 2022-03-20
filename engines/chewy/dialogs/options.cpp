@@ -95,7 +95,7 @@ void Options::execute(TafInfo *ti) {
 		Common::String fps = Common::String::format("%d", _G(gameState).FramesPerSecond << 1);
 		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
-		if (_G(gameState).SoundSwitch) {
+		if (g_engine->_sound->soundEnabled()) {
 			_G(out)->spriteSet(ti->_image[mund_ani],
 				18 + ti->_correction[mund_ani << 1],
 				8 + ti->_correction[(mund_ani << 1) + 1], 0);
@@ -117,7 +117,7 @@ void Options::execute(TafInfo *ti) {
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
 		_G(out)->boxFill(53, 136 - (_G(gameState).MusicVol >> 1), 62, 136, 31);
-		if (_G(gameState).MusicSwitch) {
+		if (g_engine->_sound->musicEnabled()) {
 			_G(out)->spriteSet(ti->_image[MUSIC_ON1],
 				18 + ti->_correction[MUSIC_ON1 << 1],
 				8 + ti->_correction[(MUSIC_ON1 << 1) + 1], 0);
@@ -129,7 +129,7 @@ void Options::execute(TafInfo *ti) {
 				18 + ti->_correction[MUSIC_OFF << 1],
 				8 + ti->_correction[(MUSIC_OFF << 1) + 1], 0);
 
-		if (_G(gameState).DisplayText) {
+		if (g_engine->_sound->subtitlesEnabled()) {
 			_G(out)->spriteSet(ti->_image[tdisp_ani],
 				18 + ti->_correction[tdisp_ani << 1],
 				8 + ti->_correction[(tdisp_ani << 1) + 1], 0);
@@ -160,32 +160,32 @@ void Options::execute(TafInfo *ti) {
 					++_G(gameState).FramesPerSecond;
 				break;
 			case 2:
-				if (_G(gameState).SoundSwitch) {
-					_G(gameState).SoundSwitch = false;
+				if (g_engine->_sound->soundEnabled()) {
+					g_engine->_sound->toggleSound(false);
 					_G(det)->disable_room_sound();
 				} else {
-					_G(gameState).SoundSwitch = true;
+					g_engine->_sound->toggleSound(true);
 					_G(det)->enable_room_sound();
 				}
 				break;
 			case 3:
 			case 4:
-				if (_G(gameState).DisplayText) {
-					_G(gameState).DisplayText = false;
+				if (g_engine->_sound->subtitlesEnabled()) {
+					g_engine->_sound->toggleSubtitles(false);
 					_G(atds)->setHasSpeech(true);
-					_G(gameState).SpeechSwitch = true;
+					g_engine->_sound->toggleSpeech(true);
 				} else {
-					_G(gameState).DisplayText = true;
+					g_engine->_sound->toggleSubtitles(true);
 					_G(atds)->setHasSpeech(false);
-					_G(gameState).SpeechSwitch = false;
+					g_engine->_sound->toggleSpeech(false);
 				}
 				break;
 			case 5:
-				if (_G(gameState).MusicSwitch) {
-					_G(gameState).MusicSwitch = false;
+				if (g_engine->_sound->musicEnabled()) {
+					g_engine->_sound->toggleMusic(false);
 					_G(sndPlayer)->stopMod();
 				} else {
-					_G(gameState).MusicSwitch = true;
+					g_engine->_sound->toggleMusic(true);
 					_G(currentSong) = -1;
 					load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
 				}

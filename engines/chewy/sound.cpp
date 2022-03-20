@@ -276,8 +276,8 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 }
 
 void Sound::waitForSpeechToFinish() {
-	if (_G(gameState).SpeechSwitch) {
-		while (g_engine->_sound->isSpeechActive() && !SHOULD_QUIT) {
+	if (speechEnabled()) {
+		while (isSpeechActive() && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
 	}
@@ -290,6 +290,38 @@ DisplayMode Sound::getSpeechSubtitlesMode() const {
 		return DISPLAY_ALL;
 	else
 		return DISPLAY_TXT;
+}
+
+bool Sound::soundEnabled() const {
+	return !ConfMan.getBool("sfx_mute");
+}
+
+void Sound::toggleSound(bool enable) {
+	return ConfMan.setBool("sfx_mute", !enable);
+}
+
+bool Sound::musicEnabled() const {
+	return !ConfMan.getBool("music_mute");
+}
+
+void Sound::toggleMusic(bool enable) {
+	return ConfMan.setBool("music_mute", !enable);
+}
+
+bool Sound::speechEnabled() const {
+	return !ConfMan.getBool("speech_mute");
+}
+
+void Sound::toggleSpeech(bool enable) {
+	return ConfMan.setBool("speech_mute", !enable);
+}
+
+bool Sound::subtitlesEnabled() const {
+	return !ConfMan.getBool("subtitles");
+}
+
+void Sound::toggleSubtitles(bool enable) {
+	return ConfMan.setBool("subtitles", !enable);
 }
 
 } // namespace Chewy
