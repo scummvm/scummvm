@@ -84,7 +84,7 @@ public:
 	int16 _timer_nr[MAX_TIMER_OBJ] = { 0 };
 public:
 	CurrentScreen _currentScreen;
-	Spieler _spieler;
+	GameState _spieler;
 
 	int16 _pfeil_ani = 0;
 	int16 _pfeil_delay = 0;

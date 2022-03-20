@@ -36,7 +36,7 @@ namespace Chewy {
 
 class Object {
 public:
-	Object(Spieler *sp);
+	Object(GameState *sp);
 	~Object();
 
 	short load(const char *filename, RoomMovObject *rmo);
@@ -76,7 +76,7 @@ private:
 	int16 _maxInventoryObj;
 	int16 _maxStaticInventory;
 	int16 _maxExit;
-	Spieler *_player;
+	GameState *_player;
 	RoomMovObject *_rmo;
 	RoomStaticInventory *_rsi;
 	RoomExit *_roomExit;

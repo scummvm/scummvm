@@ -85,7 +85,7 @@ public:
 	~Room();
 
 	Common::Stream *open_handle(const char *fname, int16 mode);
-	void loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player);
+	void loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player);
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
 	byte **get_ablage();
@@ -98,7 +98,7 @@ public:
 	void set_zoom(int16 zoom);
 	void set_pal(const byte *src_pal, byte *dest_pal);
 	void set_ak_pal(RaumBlk *Rb);
-	void calc_invent(RaumBlk *Rb, Spieler *player);
+	void calc_invent(RaumBlk *Rb, GameState *player);
 
 	RaumTimer _roomTimer;
 	RoomInfo *_roomInfo;

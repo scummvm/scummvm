@@ -179,7 +179,7 @@ Common::Stream *Room::open_handle(const char *fname1, int16 mode) {
 	return _roomHandle[mode];
 }
 
-void Room::loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player) {
+void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 	clear_prog_ani();
 	_G(det)->load_rdi(Rb->DetFile, room_nr);
 
@@ -276,7 +276,7 @@ void Room::set_ak_pal(RaumBlk *Rb) {
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 }
 
-void Room::calc_invent(RaumBlk *Rb, Spieler *player) {
+void Room::calc_invent(RaumBlk *Rb, GameState *player) {
 	byte *tmp_inv_spr[MAX_MOV_OBJ];
 
 	_G(obj)->sort();

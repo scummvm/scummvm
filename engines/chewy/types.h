@@ -30,7 +30,7 @@ namespace Chewy {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-struct SpielerFlags {
+struct GameFlags {
 	bool R0SlimeUsed : 1;
 	bool R0PillowThrow : 1;
 	bool R0Monocle : 1;
@@ -370,13 +370,13 @@ struct SpielerFlags {
 	bool flags38_2 : 1;
 	uint8 flags38_unused : 6;
 
-	SpielerFlags() { clear(); }
+	GameFlags() { clear(); }
 	void clear();
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-struct Spieler : public SpielerFlags {
-	Spieler() : SpielerFlags(), _flags(this) {
+struct GameState : public GameFlags {
+	GameState() : GameFlags(), _flags(this) {
 		_flags->clear();
 	}
 
@@ -390,7 +390,7 @@ struct Spieler : public SpielerFlags {
 	 */
 	bool synchronize(Common::Serializer &s);
 
-	SpielerFlags *_flags = nullptr;
+	GameFlags *_flags = nullptr;
 	uint8 Ats[ROOM_ATS_MAX * 3] = { 0 };
 	uint8 InvAts[MAX_MOV_OBJ * 3] = { 0 };
 	uint8 InvUse[INV_USE_ATS_MAX * 3] = { 0 };

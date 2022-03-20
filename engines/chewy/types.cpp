@@ -25,13 +25,13 @@
 
 namespace Chewy {
 
-void SpielerFlags::clear() {
+void GameFlags::clear() {
 	// TODO: Not sure how to do this any better
-	Common::fill((byte *)this, (byte *)this + sizeof(SpielerFlags), 0);
+	Common::fill((byte *)this, (byte *)this + sizeof(GameFlags), 0);
 }
 
-void Spieler::clear() {
-	*this = Spieler();
+void GameState::clear() {
+	*this = GameState();
 	_flags = this;
 	_flags->clear();
 }
@@ -47,8 +47,8 @@ static void syncArray(Common::Serializer &s, int16 *arr, size_t count) {
 
 #define SPIELER_FLAGS_SIZE 38
 
-bool Spieler::synchronize(Common::Serializer &s) {
-	if (sizeof(SpielerFlags) != SPIELER_FLAGS_SIZE)
+bool GameState::synchronize(Common::Serializer &s) {
+	if (sizeof(GameFlags) != SPIELER_FLAGS_SIZE)
 		error("Invalid flags structure size");
 
 	// Sync the structure's bitflags

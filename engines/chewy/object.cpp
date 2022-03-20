@@ -56,7 +56,7 @@ static const int16 SIB_ZUSTAND_TBL[] = {
 	32000
 };
 
-Object::Object(Spieler *sp) {
+Object::Object(GameState *sp) {
 	_maxInventoryObj = 0;
 	_maxStaticInventory = 0;
 	_maxExit = 0;
