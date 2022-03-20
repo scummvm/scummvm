@@ -100,7 +100,7 @@ short Room39::use_howard() {
 				showCur();
 
 				_G(gameState).PersonGlobalDia[P_HOWARD] = 10012;
-				_G(gameState).PersonDiaRoom[P_HOWARD] = true;;
+				_G(gameState).PersonDiaRoom[P_HOWARD] = true;
 				calc_person_dia(P_HOWARD);
 
 				if (_G(gameState).R41HowardDiaOK) {

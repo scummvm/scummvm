@@ -51,7 +51,7 @@ void Room58::xit() {
 
 void Room58::look_cut_mag(int16 r_nr) {
 	_G(gameState).R58TmpRoom = r_nr;
-	_G(gameState).R58TmpRoom1 = _G(gameState)._personRoomNr[P_CHEWY];;
+	_G(gameState).R58TmpRoom1 = _G(gameState)._personRoomNr[P_CHEWY];
 
 	_G(gameState).R58TmpSx = _G(gameState).scrollx;
 	_G(gameState).R58TmpSy = _G(gameState).scrolly;

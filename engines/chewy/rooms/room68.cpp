@@ -227,7 +227,7 @@ void Room68::talk_keeper() {
 	startSetAILWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
-	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
+	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 	int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(3, x, y);
 	startAdsWait(20);

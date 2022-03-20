@@ -37,10 +37,10 @@ void Room65::entry() {
 	_G(r65tmp_scrolly) = _G(gameState).scrolly;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];;
-	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];;
-	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];;
-	_G(r65tmp_ho_y) = _G(spieler_vector)[P_HOWARD].Xypos[1];;
+	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];
+	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];
+	_G(r65tmp_ho_y) = _G(spieler_vector)[P_HOWARD].Xypos[1];
 	_G(spieler_vector)[P_CHEWY].Xypos[0] = 10;
 	_G(spieler_vector)[P_CHEWY].Xypos[1] = 80;
 	_G(spieler_vector)[P_HOWARD].Xypos[0] = 150;

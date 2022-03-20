@@ -661,9 +661,9 @@ void new_auto_line(int16 nr) {
 				_G(auto_mov_obj)[nr].XyzStart[0] = _G(auto_mov_obj)[nr].XyzEnd[0];
 				_G(auto_mov_obj)[nr].XyzStart[1] = _G(auto_mov_obj)[nr].XyzEnd[1];
 				_G(auto_mov_obj)[nr].XyzStart[2] = _G(auto_mov_obj)[nr].XyzEnd[2];
-				_G(auto_mov_obj)[nr].XyzEnd[0] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[0] ;
-				_G(auto_mov_obj)[nr].XyzEnd[1] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[1] ;;
-				_G(auto_mov_obj)[nr].XyzEnd[2] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[2] ;;
+				_G(auto_mov_obj)[nr].XyzEnd[0] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[0];
+				_G(auto_mov_obj)[nr].XyzEnd[1] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[1];
+				_G(auto_mov_obj)[nr].XyzEnd[2] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[2];
 				_G(mov)->get_mov_vector((int16 *)_G(auto_mov_obj)[nr].XyzStart,
 				                     _G(auto_mov_obj)[nr].Vorschub, &_G(auto_mov_vector)[nr]);
 			}
