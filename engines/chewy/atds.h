@@ -265,7 +265,6 @@ public:
 	void open_handle(const char *fname, int16 mode);
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
-	void init_ats_mode(int16 mode, uint8 *atsHeader);
 	DisplayMode start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
 	DisplayMode &ats_get_status();
@@ -325,7 +324,6 @@ private:
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
 	char *_atsMem = nullptr;
 	uint8 *_ats_sheader = nullptr;
-	uint8 *_ats_st_header[4];
 	char *_atds_id_ptr = nullptr;
 	AadVar _aadv;
 	AtsVar _atsv;

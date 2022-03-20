@@ -111,9 +111,6 @@ Atdsys::Atdsys() {
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
 	_text = new Text();
 
-	for (int i = 0; i < 4; ++i)
-		_ats_st_header[i] = nullptr;
-
 	_adsnb._blkNr = 0;
 	_adsnb._endNr = 0;
 	_adsStackPtr = 0;
@@ -463,48 +460,25 @@ void Atdsys::crypt(char *txt, uint32 size) {
 	}
 }
 
-void Atdsys::init_ats_mode(int16 mode, uint8 *atsHeader) {
-	switch (mode) {
-	case ATS_DATA:
-		_ats_st_header[0] = atsHeader;
-		break;
-
-	case INV_USE_DATA:
-		_ats_st_header[1] = atsHeader;
-		break;
-
-	case INV_USE_DEF:
-		_ats_st_header[2] = atsHeader;
-		break;
-
-	case INV_ATS_DATA:
-		_ats_st_header[3] = atsHeader;
-		break;
-
-	default:
-		break;
-	}
-}
-
 void Atdsys::set_ats_mem(int16 mode) {
 	switch (mode) {
 	case ATS_DATA:
-		_ats_sheader = _ats_st_header[0];
+		_ats_sheader = _G(spieler).Ats;
 		_atsMem = _atdsMem[mode];
 		break;
 
 	case INV_USE_DATA:
-		_ats_sheader = _ats_st_header[1];
+		_ats_sheader = _G(spieler).InvUse;
 		_atsMem = _atdsMem[mode];
 		break;
 
 	case INV_USE_DEF:
-		_ats_sheader = _ats_st_header[2];
+		_ats_sheader = _G(spieler).InvUseDef;
 		_atsMem = _invUseMem;
 		break;
 
 	case INV_ATS_DATA:
-		_ats_sheader = _ats_st_header[3];
+		_ats_sheader = _G(spieler).InvAts;
 		_atsMem = _atdsMem[mode];
 		break;
 

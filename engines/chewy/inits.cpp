@@ -179,14 +179,10 @@ void init_atds() {
 	// New set up
 	Common::Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
 	_G(atds)->set_handle(ATDS_TXT, ATS_DATA, handle, ATS_TAP_OFF, ATS_TAP_MAX);
-	_G(atds)->init_ats_mode(ATS_DATA, _G(spieler).Ats);
 	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATA, handle, INV_TAP_OFF, INV_TAP_MAX);
-	_G(atds)->init_ats_mode(INV_ATS_DATA, _G(spieler).InvAts);
 	_G(atds)->set_handle(ATDS_TXT, AAD_DATA, handle, AAD_TAP_OFF, AAD_TAP_MAX);
 	_G(atds)->set_handle(ATDS_TXT, ADS_DATA, handle, ADS_TAP_OFF, ADS_TAP_MAX);
 	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, handle, USE_TAP_OFF, USE_TAP_MAX);
-	_G(atds)->init_ats_mode(INV_USE_DATA, _G(spieler).InvUse);
-	_G(atds)->init_ats_mode(INV_USE_DEF, _G(spieler).InvUseDef);
 	_G(spieler).AadSilent = 10;
 	_G(spieler).DelaySpeed = 5;
 	_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed;
