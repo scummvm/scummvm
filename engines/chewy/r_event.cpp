@@ -1412,7 +1412,7 @@ void sib_event_inv(int16 sib_nr) {
 
 		if (_G(spieler).R18CartTerminal) {
 			_G(spieler).R18CartSave = true;
-			_G(atds)->set_ats_str(26, 1, INV_ATS_DATA);
+			_G(atds)->set_ats_str(CARTRIDGE_INV, 1, INV_ATS_DATA);
 			startAadWait(120);
 		} else {
 			startAadWait(121);

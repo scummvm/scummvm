@@ -99,7 +99,6 @@ public:
 	bool _cur_display = false;
 	int16 _mouseLeftClick = 0;
 	Common::String _calc_inv_text_str1, _calc_inv_text_str2;
-	bool _calc_inv_text_set = false;
 	bool _stopAutoMove[3] = { false };
 	bool _e_streifen = false;
 	int16 _r45_delay = 0;

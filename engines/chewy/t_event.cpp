@@ -2257,13 +2257,13 @@ void calc_inv_use_txt(int16 test_nr) {
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(_G(spieler)._personRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
-		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
+		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(spieler).flags26_10 = true;
 		startAadWait(350);
-		_G(atds)->set_ats_str(88, 1, INV_ATS_DATA);
+		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 102:
@@ -2312,7 +2312,6 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 
 	s = _G(atds)->ats_get_txt(test_nr, TXT_MARK_NAME, &txt_anz, 6);
 	_G(calc_inv_text_str2) += s;
-	_G(calc_inv_text_set) = true;
 }
 
 bool calc_inv_no_use(int16 test_nr, int16 mode) {
