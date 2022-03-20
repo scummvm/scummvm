@@ -179,11 +179,11 @@ protected:
 	// free the memory associated with the instance
 	void    Free();
 
-	bool    ResolveScriptImports(PScript scri);
-	bool    CreateGlobalVars(PScript scri);
+	bool    ResolveScriptImports(const ccScript *scri);
+	bool    CreateGlobalVars(const ccScript *scri);
 	bool    AddGlobalVar(const ScriptVariable &glvar);
 	ScriptVariable *FindGlobalVar(int32_t var_addr);
-	bool    CreateRuntimeCodeFixups(PScript scri);
+	bool    CreateRuntimeCodeFixups(const ccScript *scri);
 	//bool    ReadOperation(ScriptOperation &op, int32_t at_pc);
 
 	// Runtime fixups

@@ -1392,13 +1392,13 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 		resolved_imports = joined->resolved_imports;
 		code_fixups = joined->code_fixups;
 	} else {
-		if (!ResolveScriptImports(scri)) {
+		if (!ResolveScriptImports(scri.get())) {
 			return false;
 		}
-		if (!CreateGlobalVars(scri)) {
+		if (!CreateGlobalVars(scri.get())) {
 			return false;
 		}
-		if (!CreateRuntimeCodeFixups(scri)) {
+		if (!CreateRuntimeCodeFixups(scri.get())) {
 			return false;
 		}
 	}
@@ -1481,7 +1481,7 @@ void ccInstance::Free() {
 	code_fixups = nullptr;
 }
 
-bool ccInstance::ResolveScriptImports(PScript scri) {
+bool ccInstance::ResolveScriptImports(const ccScript *scri) {
 	// When the import is referenced in code, it's being addressed
 	// by it's index in the script imports array. That index is
 	// NOT unique and relative to script only.
@@ -1526,7 +1526,7 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 // certain accuracy after all global vars are registered. Each
 // global var's size would be limited by closest next var's ScAddress
 // and globaldatasize.
-bool ccInstance::CreateGlobalVars(PScript scri) {
+bool ccInstance::CreateGlobalVars(const ccScript *scri) {
 	ScriptVariable glvar;
 
 	// Step One: deduce global variables from fixups
@@ -1605,7 +1605,7 @@ ScriptVariable *ccInstance::FindGlobalVar(int32_t var_addr) {
 	return it != globalvars->end() ? &it->_value : nullptr;
 }
 
-static int DetermineScriptLine(int32_t *code, size_t codesz, size_t at_pc) {
+static int DetermineScriptLine(const int32_t *code, size_t codesz, size_t at_pc) {
 	int line = -1;
 	for (size_t pc = 0; (pc <= at_pc) && (pc < codesz); ++pc) {
 		int op = code[pc] & INSTANCE_ID_REMOVEMASK;
@@ -1618,7 +1618,7 @@ static int DetermineScriptLine(int32_t *code, size_t codesz, size_t at_pc) {
 	return line;
 }
 
-static void cc_error_fixups(ccScript *scri, size_t pc, const char *fmt, ...) {
+static void cc_error_fixups(const ccScript *scri, size_t pc, const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
 	String displbuf = String::FromFormatV(fmt, ap);
@@ -1632,7 +1632,7 @@ static void cc_error_fixups(ccScript *scri, size_t pc, const char *fmt, ...) {
 	}
 }
 
-bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
+bool ccInstance::CreateRuntimeCodeFixups(const ccScript *scri) {
 	code_fixups = new char[scri->codesize]();
 	for (int i = 0; i < scri->numfixups; ++i) {
 		if (scri->fixuptypes[i] == FIXUP_DATADATA) {
@@ -1646,7 +1646,7 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 		case FIXUP_GLOBALDATA: {
 			ScriptVariable *gl_var = FindGlobalVar((int32_t)code[fixup]);
 			if (!gl_var) {
-				cc_error_fixups(scri.get(), fixup, "cannot resolve global variable (bytecode pos %d, key %d)", fixup, (int32_t)code[fixup]);
+				cc_error_fixups(scri, fixup, "cannot resolve global variable (bytecode pos %d, key %d)", fixup, (int32_t)code[fixup]);
 				return false;
 			}
 			code[fixup] = (intptr_t)gl_var;
@@ -1664,7 +1664,7 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 			int import_index = resolved_imports[code[fixup]];
 			const ScriptImport *import = _GP(simp).getByIndex(import_index);
 			if (!import) {
-				cc_error_fixups(scri.get(), fixup, "cannot resolve import (bytecode pos %d, key %d)", fixup, import_index);
+				cc_error_fixups(scri, fixup, "cannot resolve import (bytecode pos %d, key %d)", fixup, import_index);
 				return false;
 			}
 			code[fixup] = import_index;
@@ -1676,7 +1676,7 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 		}
 		break;
 		default:
-			cc_error_fixups(scri.get(), (size_t)-1, "unknown fixup type: %d (fixup num %d)", scri->fixuptypes[i], i);
+			cc_error_fixups(scri, (size_t)-1, "unknown fixup type: %d (fixup num %d)", scri->fixuptypes[i], i);
 			return false;
 		}
 	}
