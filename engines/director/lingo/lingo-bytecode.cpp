@@ -594,24 +594,17 @@ void LC::cb_theassign() {
 
 void LC::cb_theassign2() {
 	// cb_theassign2 is for setting movie-level properties
-
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
 
-	if (name == "actorList") {
-		g_lingo->_actorList = value;
-	} else if (name == "searchPath") {
-		g_lingo->_searchPath = value;
-	} else if (name == "traceLoad") {
-		g_lingo->_traceLoad = value.asInt();
-	} else if (name == "updateMovieEnabled") {
-		g_lingo->_updateMovieEnabled = bool(value.asInt());
-	} else if (name == "preloadRam") {
-		// We always have the unlimited RAM, ignore
-	} else if (name == "preLoadEventAbort") {
-		g_lingo->_preLoadEventAbort = bool(value.asInt());
+	if (g_lingo->_theEntities.contains(name)) {
+		TheEntity *entity = g_lingo->_theEntities[name];
+		Datum id;
+		id.u.i = 0;
+		id.type = VOID;
+		g_lingo->setTheEntity(entity->entity, id, kTEANOArgs, value);
 	} else {
-		warning("BUILDBOT: cb_theassign2 unkown name: %s", name.c_str());
+		warning("LC::cb_theassign2 Can't assign theEntity: (%s)", name.c_str());
 	}
 }
 
