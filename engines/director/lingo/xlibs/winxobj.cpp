@@ -50,6 +50,7 @@ static MethodProto xlibMethods[] = {
 	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4
 	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
 	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
+	{ "RGBColorToWindow",   RearWindowXObj::m_rgbColorToWindow,     3,  3,  400 },  // D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -89,6 +90,15 @@ void RearWindowXObj::m_patToWindow(int nargs) {
 
 void RearWindowXObj::m_indexColorToWindow(int nargs) {
 	g_lingo->pop();
+}
+
+void RearWindowXObj::m_rgbColorToWindow(int nargs) {
+	Datum r = g_lingo->pop();
+	Datum g = g_lingo->pop();
+	Datum b = g_lingo->pop();
+	Graphics::MacWindowManager *window = g_director->getMacWindowManager();
+
+	window->setDesktopColor(r.asInt(), g.asInt(), b.asInt());
 }
 
 } // End of namespace Director
