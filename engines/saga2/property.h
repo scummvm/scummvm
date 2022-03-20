@@ -114,9 +114,8 @@ CompoundProperty< T >::CompoundProperty(
 
 	//  Allocate memory to copy the array.
 	propertyArray = (Property< T > **)malloc(arrayBytes);
-#if DEBUG
 	assert(propertyArray);
-#endif
+
 	//  Copy the array
 	memcpy(propertyArray, array, arrayBytes);
 	arraySize = size;

@@ -104,15 +104,6 @@ void audioEnvironmentSetWorld(int mapNum);
 void clearActiveFactions();
 void useActiveFactions();
 
-
-//-----------------------------------------------------------------------
-//	prototypes
-
-#if DEBUG
-int annoyingTestSound(int32);          // prototype for annoying test sound calls
-int annoyingTestMusic(int32);
-#endif
-
 }
 
 #endif  //ANNOY_H
