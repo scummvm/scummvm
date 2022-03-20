@@ -323,11 +323,9 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 			if (om.Xyna[2][1] < 0) {
 				if (om.Xyna[2][0] < -1000) {
 					om.Xyna[2][0] += 1000;
-					--tmpz;
 				}
 			} else if (om.Xyna[2][0] > 1000) {
 				om.Xyna[2][0] -= 1000;
-				++tmpz;
 			}
 
 			tmpz = 0;
