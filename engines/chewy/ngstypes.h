@@ -23,7 +23,6 @@
 #define CHEWY_NGSTYPES_H
 
 #include "graphics/screen.h"
-#include "chewy/ngsdefs.h"
 
 namespace Chewy {
 

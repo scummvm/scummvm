@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"
-#include "common/textconsole.h"
 #include "chewy/chewy.h"
 #include "chewy/defines.h"
 #include "chewy/globals.h"

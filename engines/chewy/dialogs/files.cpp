@@ -24,6 +24,7 @@
 #include "chewy/dialogs/options.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/ngsdefs.h"
 
 namespace Chewy {
 namespace Dialogs {

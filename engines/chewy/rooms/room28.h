@@ -22,13 +22,10 @@
 #ifndef CHEWY_ROOMS_ROOM28_H
 #define CHEWY_ROOMS_ROOM28_H
 
-#include "chewy/room.h"
-
 namespace Chewy {
 namespace Rooms {
 
 class Room28 {
-private:
 	static void haendler();
 	static void setup_func();
 	static void get_pump();

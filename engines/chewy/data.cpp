@@ -22,8 +22,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "chewy/data.h"
-#include "chewy/chewy.h"
-#include "chewy/defines.h"
+#include "chewy/ngsdefs.h"
 #include "chewy/globals.h"
 
 namespace Chewy {

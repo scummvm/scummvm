@@ -22,7 +22,6 @@
 #ifndef CHEWY_GEDCLASS_H
 #define CHEWY_GEDCLASS_H
 
-#include "common/stream.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {

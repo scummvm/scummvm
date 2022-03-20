@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/timer.h"
+#include "chewy/ngsdefs.h"
 
 namespace Chewy {
 

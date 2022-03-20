@@ -22,7 +22,7 @@
 #ifndef CHEWY_MOUSE_H
 #define CHEWY_MOUSE_H
 
-#include "chewy/ngstypes.h"
+#include "common/keyboard.h"
 
 namespace Chewy {
 

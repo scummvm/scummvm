@@ -21,6 +21,7 @@
 
 #include "chewy/detail.h"
 #include "chewy/globals.h"
+#include "chewy/ngsdefs.h"
 #include "chewy/sound.h"
 #include "chewy/resource.h"
 
@@ -501,8 +502,7 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 
 void Detail::startDetail(int16 nr, int16 rep, int16 reverse) {
 	if (nr != -1) {
-		AniDetailInfo *adiptr;
-		adiptr = &_rdi.Ainfo[nr];
+		AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
 		if (rep)
 			adiptr->start_flag = rep;
 		else

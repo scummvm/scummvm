@@ -22,20 +22,13 @@
 #ifndef CHEWY_IO_GAME_H
 #define CHEWY_IO_GAME_H
 
-#include "chewy/mcga.h"
-#include "chewy/cursor.h"
-#include "chewy/ngstypes.h"
-
 namespace Chewy {
 
 #define IOG_END 1
 #define USER_NAME 36
 
 class IOGame {
-private:
 	char _fileFind[20][USER_NAME + 4];
-
-private:
 	int16 get_savegame_files();
 
 public:

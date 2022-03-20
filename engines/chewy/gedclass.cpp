@@ -23,7 +23,6 @@
 #include "chewy/chewy.h"
 #include "chewy/globals.h"
 #include "chewy/gedclass.h"
-#include "chewy/ngshext.h"
 
 namespace Chewy {
 

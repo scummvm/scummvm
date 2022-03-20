@@ -22,8 +22,6 @@
 #ifndef CHEWY_ROOMS_ROOM14_H
 #define CHEWY_ROOMS_ROOM14_H
 
-#include "chewy/ngsdefs.h"
-
 namespace Chewy {
 namespace Rooms {
 
