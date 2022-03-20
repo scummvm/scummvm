@@ -129,6 +129,7 @@ void construct_engine_overlay();
 void clear_letterbox_borders();
 
 void debug_draw_room_mask(RoomAreaMask mask);
+void debug_draw_movelist(int charnum);
 void update_room_debug();
 
 void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);

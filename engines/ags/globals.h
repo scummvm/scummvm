@@ -586,6 +586,9 @@ public:
 	// For debugging room masks
 	RoomAreaMask _debugRoomMask = kRoomAreaNone;
 	Engine::IDriverDependantBitmap *_debugRoomMaskDDB = nullptr;
+	int _debugMoveListChar = -1;
+	Shared::Bitmap *_debugMoveListBmp = nullptr;
+	Engine::IDriverDependantBitmap *_debugMoveListDDB = nullptr;
 
 	bool _current_background_is_dirty = false;
 	// Room background sprite
