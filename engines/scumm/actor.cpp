@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
-#include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/actor_he.h"
@@ -1610,7 +1609,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	// WORKAROUND: The green transparency of the tank in the Hall of Oddities
 	// is positioned one pixel too far to the left. This appears to be a bug
 	// in the original game as well.
-	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && ConfMan.getBool("enable_enhancements"))
+	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && _vm->_enableEnhancements)
 		dstX++;
 
 	_pos.x = dstX;
